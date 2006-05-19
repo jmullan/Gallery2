@@ -28,7 +28,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-05-10 20:20+0200\n"
@@ -204,6 +204,12 @@ msgstr "Tömmer snabb-nerladdnings cachen"
 msgid "Converting MySQL data to UTF8"
 msgstr "Konverterar MySQL databasen till UTF8"
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Siteadministratörer"
 
@@ -275,14 +281,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d kilobyte"
 msgstr[1] "%d kilobyte"
 
-msgid "From Local Server"
-msgstr "Från Lokal Server"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Foto"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Från Webbsida"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Galleriets Objektadministration"
@@ -343,6 +356,9 @@ msgstr "Generellt"
 
 msgid "Movie Size"
 msgstr "Filmstorlek"
+
+msgid "Photo"
+msgstr "Foto"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Miniatyrbilden beskärdes framgångsrikt"
@@ -895,49 +911,6 @@ msgstr "Användare"
 msgid "user"
 msgstr "användare"
 
-#, fuzzy
-msgid "Integrity Check"
-msgstr "Intigritets kontrol av index misslyckades"
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "Markerade %d filer"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "Misslyckades att lägga till %s"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Optimera databas"
 
@@ -1126,55 +1099,6 @@ msgstr "Nya kataloger"
 msgid "New files"
 msgstr "Nya filer"
 
-msgid "Local Server Upload Paths"
-msgstr "Lokala sökvägar på servern för uppladdning"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Specificera de gällande katalogerna på den lokala servern där en användare kan spara filer "
-"och ladda sen upp dem till Gallery med användning av <i>Hämta från lokal server</i>.  "
-"Sökvägarna du skriver in här och alla filerna och katalogerna under dessa sökvägar kommer "
-"att bli tillgängliga för alla Galleryanvändare som har uppladdningsprivilegier. Så du bör "
-"begränsa detta till kataloger som inte innehåller känslig information (t.ex. /tmp eller /usr/"
-"incoming)"
-
-msgid "Path"
-msgstr "Sökväg"
-
-msgid "Action"
-msgstr "Händelse"
-
-msgid "remove"
-msgstr "ta bort"
-
-msgid "Add"
-msgstr "Lägg till"
-
-msgid "You must enter a directory to add."
-msgstr "Du måste skriva in en katalog att lägga till."
-
-msgid "open_basedir documentation"
-msgstr "open_basedir dokumentation"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Din webbserver är konfigurerad för att hindra dig att komma åt den katalogen.  Vänligen vänd "
-"dig till %s och konsultera din webbserveradministratör."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "Webbservern har inga rättigheter att läsa den katalogen."
-
-msgid "The path you specified is not a valid directory."
-msgstr "Sökvägen du skrev in är inte en giltig katalog."
-
 msgid "Session Settings"
 msgstr "Sessionsinställningar"
 
@@ -1300,6 +1224,9 @@ msgstr ""
 "När du har ändrat cookie inställningarna, kommer <b>alla registrerade användare</b> av ditt "
 "Gallery behöva <b>radera web läsarens cookie cache</b>. Om dom inte gör det kommer dom få "
 "problem med inloggning / utloggning / förlorade sessioner."
+
+msgid "Path"
+msgstr "Sökväg"
 
 msgid "Invalid cookie path"
 msgstr "Ogiltig cookie-sökväg"
@@ -1539,6 +1466,9 @@ msgstr "Du kan inte ta bort dig själv från denna gruppen"
 msgid "Add Member"
 msgstr "Lägg till Medlem"
 
+msgid "Add"
+msgstr "Lägg till"
+
 msgid "You must enter a username."
 msgstr "Du måste skriva in ett användarnamn."
 
@@ -1609,6 +1539,9 @@ msgstr "Du kan inte redigera denna gruppens användare"
 
 msgid "Edit Group (by list)"
 msgstr "Redigera Grupp (genom lista)"
+
+msgid "Action"
+msgstr "Händelse"
 
 msgid "edit"
 msgstr "redigera"
@@ -2405,154 +2338,6 @@ msgstr "Sätt item titel från:"
 msgid "Assign caption to:"
 msgstr "Ange rubrik till:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"För över filer som redan finns på din server till ditt Gallery.  Filerna måste redan ha "
-"laddats upp till din server på annat sätt (t.ex. FTP) och måste vara placerade i en katalog "
-"där de är tillgängliga för alla på servern.  Om du använder Unix så betyder detta att "
-"filerna och katalogen filerna är i ska ha rättigheter satta till minst 755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Av säkerhetsändamål så kan du inte använda denna egenskap förräns Gallery sidadministratören "
-"konfigurerar en uppsättning av giltiga uppladdningskataloger."
-
-msgid "Server Path"
-msgstr "Serversökväg"
-
-msgid "You must enter a directory."
-msgstr "Du måste skriva in ett katalognamn."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"Katalogen du skrev in är inte giltig. Se till att katalogen är läsbar av alla användare."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"Katalogen du skrev in är inte giltig. Den måste vara en underkatalog till en av katalogerna "
-"listade här nedan."
-
-msgid "An item with the same name already exists."
-msgstr "En fil med samma namn existerar redan"
-
-msgid "Legal Directories"
-msgstr "Giltiga Kataloger"
-
-msgid "modify"
-msgstr "ändra"
-
-msgid "Recent Directories"
-msgstr "Senaste Katalogerna"
-
-msgid "Find Files"
-msgstr "Hitta filer"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Katalog: %s"
-
-msgid "File name"
-msgstr "Filnamn"
-
-msgid "Type"
-msgstr "Typ"
-
-msgid "Size"
-msgstr "Storlek"
-
-msgid "Use Symlink"
-msgstr "Använd Symbolisk Länk"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d byte"
-msgstr[1] "%d bytes"
-
-msgid "Parent Directory"
-msgstr "Överliggande Katalog"
-
-msgid "Directory"
-msgstr "Katalog"
-
-msgid "(Un)check all known types"
-msgstr "(Av)markera alla kända typer"
-
-msgid "(Un)check symlinks"
-msgstr "(Av)markera symboliska länkar"
-
-msgid "for selected items"
-msgstr "för valda objekt"
-
-msgid "Copy base filenames to:"
-msgstr "Kopiera basfilnamn till:"
-
-msgid "Add Files"
-msgstr "Lägg till Filer"
-
-msgid "Start Over"
-msgstr "Börja Om"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Importera filer till Gallery från en annan webbsida. Skriv in en URL till en webbsida "
-"någonstans på internet nedan så kommer Gallery att tillåta dig att ladda upp alla mediafiler "
-"som det hittar på den sidan. Observera att om du skriver in en URL till en katalog så bör du "
-"avsluta URL'en med ett framåtsträck (t.ex. http://example.com/directory/). "
-
-msgid "URL"
-msgstr "URL"
-
-msgid "You must enter a URL to a web page"
-msgstr "Du måste skriva in en URL till en webbsida"
-
-msgid "The URL entered must begin with http://"
-msgstr "Den inskrivna webbadressen måste börja med http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "Webbsidan du skrev in är inte tillgänglig"
-
-msgid "Nothing to add found from this URL"
-msgstr "Inget att lägga till från denna URL"
-
-msgid "Nothing added since no items were selected"
-msgstr "Inget inlagt eftersom inget var valt"
-
-msgid "Recent URLs"
-msgstr "Senaste URL:erna"
-
-#, c-format
-msgid "URL: %s"
-msgstr "URL: %s"
-
-msgid "change"
-msgstr "ändra"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "%d webbadress hittades"
-msgstr[1] "%d webbadresser hittades"
-
-msgid "(Un)check all"
-msgstr "(Av)markera alla"
-
-msgid "Add URLs"
-msgstr "Lägg till Webbadresser"
-
 msgid "No Thumbnail"
 msgstr "Ingen miniatyrbild"
 
@@ -3220,6 +3005,9 @@ msgid ""
 msgstr ""
 "Detta album har en automatisk sorteringsordning angiven så du kan inte ändra ordningen av "
 "objekt manuellt. Du måste ta bort automatisk sorteringsordning för att forsätta."
+
+msgid "change"
+msgstr "ändra"
 
 msgid "Change the order of the items in this album."
 msgstr "Ändra ordning på objekten i detta album."

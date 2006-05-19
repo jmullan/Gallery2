@@ -19,7 +19,7 @@
 # Darius Žitkevičius <skystis@splius.lt>, 2005, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-12 22:28+0200\n"
 "PO-Revision-Date: 2006-03-12 23:02+0200\n"
@@ -199,6 +199,12 @@ msgstr "Trinama sena greito gavimo talpyklė"
 msgid "Converting MySQL data to UTF8"
 msgstr "Keičiami MySQL duomenys į UTF8"
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Svetainės adminai"
 
@@ -272,14 +278,21 @@ msgstr[0] "%d kilobaitas"
 msgstr[1] "%d kilobaitai"
 msgstr[2] "%d kilobaitų"
 
-msgid "From Local Server"
-msgstr "Iš lokalaus serverio"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Foto"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Iš interneto puslapio"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Galerijos elemento administravimas"
@@ -340,6 +353,9 @@ msgstr "Bedra"
 
 msgid "Movie Size"
 msgstr "Video dydis"
+
+msgid "Photo"
+msgstr "Foto"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Miniatiūra iškirpta sėkmingai"
@@ -890,49 +906,6 @@ msgstr "Vartotojas"
 msgid "user"
 msgstr "vartotojas"
 
-#, fuzzy
-msgid "Integrity Check"
-msgstr "Indeksas nėra vientisas."
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "Patikrinta %d elementų"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "Nepavyko įkelti %s"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Optimizuoti duombazę"
 
@@ -1122,54 +1095,6 @@ msgstr "Nauji aplankai"
 msgid "New files"
 msgstr "Nauji failai"
 
-msgid "Local Server Upload Paths"
-msgstr "Lokalaus serverio failų įkėlimo keliai"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Nurodykite aplankus lokaliame serveryje į kuriuos vartotojai gali įkelti (upload) failus ir "
-"vėliau juos įkelti į galeriją pasinaudodami <i>Įkelti iš lokalaus serverio</i> galimybe.  "
-"Aplankai, kuriuos čia nurodysite ir visi failai, esantys juose, bus prieinami visiems "
-"Galerijos vartotojams, kurie turi teisę įkelti elementus, taigi šiuose aplankuose neturėtu "
-"būti svarbios informacijos (pvz.: /tmp ar /home/ftp/incoming)."
-
-msgid "Path"
-msgstr "Kelias"
-
-msgid "Action"
-msgstr "Veiksmas"
-
-msgid "remove"
-msgstr "pašalinti"
-
-msgid "Add"
-msgstr "Pridėti"
-
-msgid "You must enter a directory to add."
-msgstr "Reikia nurodyti kokį aplanką pridedate."
-
-msgid "open_basedir documentation"
-msgstr "open_basedir dokumetacija"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Jūsų web serveris suderintas taip kad nepasiektu nurodyto aplanko.  Paskaitykite %s arba "
-"kreipkitės į serverio administratorių."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "Web serveris šiam aplankui neturi prieigos teisių."
-
-msgid "The path you specified is not a valid directory."
-msgstr "Nurodytas kelias nėra tinkamas aplankas."
-
 msgid "Session Settings"
 msgstr "Sesijos nustatymai"
 
@@ -1277,6 +1202,9 @@ msgid ""
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
 msgstr ""
+
+msgid "Path"
+msgstr "Kelias"
 
 msgid "Invalid cookie path"
 msgstr "Netinkamas sausainuko kelias"
@@ -1518,6 +1446,9 @@ msgstr "Jūs negalite iš šios grupės pašalinti savęs."
 msgid "Add Member"
 msgstr "Pridėti narį"
 
+msgid "Add"
+msgstr "Pridėti"
+
 msgid "You must enter a username."
 msgstr "Reikia įvesti vartotojo vardą."
 
@@ -1589,6 +1520,9 @@ msgstr "Jūs negalite keisti šios grupės narių sąrašo."
 
 msgid "Edit Group (by list)"
 msgstr "Redaguoti grupę (pagal sąrašą)"
+
+msgid "Action"
+msgstr "Veiksmas"
 
 msgid "edit"
 msgstr "redaguoti"
@@ -2405,156 +2339,6 @@ msgstr "Nustatyti antraštes pagal:"
 msgid "Assign caption to:"
 msgstr "Antraštę priskirti:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Įkelti į galeriją failus, kurie jau yra serveryje. Failai į serverį jau turi būti įkelti "
-"kažkokiu kitu būdu (pvz.: FTP). Failai turi būti prieinami visiems serverio vartotojams.  "
-"Jei galerija veikia Unix serveryje, tuomet tai reiškia, kad visi failai ir aplankai turi "
-"turėti prieigos teises mažiausiai 755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Saugumo sumetimais šia galimybe naudotis uždrausta. Kad aktyvuoti šį metodą Galerijos "
-"administratorius turi nuodyti failų įkėlimui tinkamus aplankus. "
-
-msgid "Server Path"
-msgstr "Serverio kelias"
-
-msgid "You must enter a directory."
-msgstr "Reikia nurodyti aplanką."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"Nurodytas aplankas netinkamas.  Įsitikinkite kad šis aplankas yra prieinamas visiems "
-"sistemos vartotojams."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"Nurodytas negalimas aplankas.  Jis turi būti vieno iš žemiau išvardintų aplankų poaplankis."
-
-msgid "An item with the same name already exists."
-msgstr "Elementas tokiu pat pavadinimų jau yra."
-
-msgid "Legal Directories"
-msgstr "Tinkami aplankai"
-
-msgid "modify"
-msgstr "keisti"
-
-msgid "Recent Directories"
-msgstr "Paskutiniai naudoti aplankai"
-
-msgid "Find Files"
-msgstr "Rasti failus"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Aplankas: %s"
-
-msgid "File name"
-msgstr "Failo pavadinimas"
-
-msgid "Type"
-msgstr "Tipas"
-
-msgid "Size"
-msgstr "Dydis"
-
-msgid "Use Symlink"
-msgstr "Naudoti simbolinę nuorodą"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d baitas"
-msgstr[1] "%d baitai"
-msgstr[2] "%d baitų"
-
-msgid "Parent Directory"
-msgstr "Aukštesnio lygmens aplankas"
-
-msgid "Directory"
-msgstr "Aplankas"
-
-msgid "(Un)check all known types"
-msgstr "Žimėti/Nežimėti visus žinomus tipus"
-
-msgid "(Un)check symlinks"
-msgstr "Žimėti/Nežimėti simbolines nuorodas"
-
-msgid "for selected items"
-msgstr "pažymėtiems elementams"
-
-msgid "Copy base filenames to:"
-msgstr "Kopijuoti pagrindinius failų pavadinimus į:"
-
-msgid "Add Files"
-msgstr "Pridėti failus"
-
-msgid "Start Over"
-msgstr "Pradėti iš naujo"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Importuoti failus į galeriją iš kito web serverio.  Įveskite bet kokios interneto svetainės "
-"adresą ir Galerija suteiks galimybę įkelti bet kokius failus, kuriuos ras šiame puslapyje.  "
-"Atkreipkite dėmesį į tai, kad jei įvedate adresą į aplanką, tuomet  adresą reikia užbaigti "
-"pakreiptu brūkšniu (pvz.: http://example.com/directory/)."
-
-msgid "URL"
-msgstr "Adresas"
-
-msgid "You must enter a URL to a web page"
-msgstr "Reikia įvesti svetainės adresą"
-
-msgid "The URL entered must begin with http://"
-msgstr "Įvestas adresas turi prasidėti http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "Jūsų nurodytas puslapis nepasiekiamas"
-
-msgid "Nothing to add found from this URL"
-msgstr "Nurodytu adresu nerasta nieko ką būtu galima įkelti"
-
-msgid "Nothing added since no items were selected"
-msgstr "Nėra ko įkelti, kadangi nieko nepažymėta"
-
-msgid "Recent URLs"
-msgstr "Paskutiniai naudoti adresai"
-
-#, c-format
-msgid "URL: %s"
-msgstr "Adresas: %s"
-
-msgid "change"
-msgstr "keisti"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "Rastas %d failas"
-msgstr[1] "Rasti %d failai"
-msgstr[2] "Rasta %d failų"
-
-msgid "(Un)check all"
-msgstr "Žymėti/Nežymėti viską"
-
-msgid "Add URLs"
-msgstr "Pridėti adresą"
-
 msgid "No Thumbnail"
 msgstr "Be miniatiūros"
 
@@ -3229,6 +3013,9 @@ msgstr ""
 "Šiam albumui nurodyta automatinė rūšiavimo tvarka, todėl elementų išdėstymo tvarkos rankiniu "
 "būdu keisti negalima.  Pirma išjunkite automatinį rūšiavimą."
 
+msgid "change"
+msgstr "keisti"
+
 msgid "Change the order of the items in this album."
 msgstr "Keisti albumo elementų išdėstymo tvarką."
 
@@ -3694,9 +3481,6 @@ msgstr "[test] antra teisė"
 
 msgid "Unit test theme"
 msgstr "Elemento testavimo tema"
-
-#~ msgid "Display"
-#~ msgstr "Vaizdas"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Modulis %s sėkmingai įdiegtas ir automatiškai sukonfigūruotas"

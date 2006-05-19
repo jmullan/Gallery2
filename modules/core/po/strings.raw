@@ -63,6 +63,8 @@ gettext("Detecting broken derivatives")
 gettext("Clearing fast-download cache")
 gettext("Deleting old fast-download cache")
 gettext("Converting MySQL data to UTF8")
+gettext("Updating panorama items")
+gettext("Optimizing AccessSubscriberMap table")
 gettext("Site Admins")
 gettext("Everybody")
 gettext("Guest")
@@ -92,13 +94,10 @@ gettext("Blank")
 gettext("From Web Browser")
 ngettext("%d megabyte", "%d megabytes")
 ngettext("%d kilobytes", "%d kilobytes")
-
-/* ItemAddFromServer.inc */
-gettext("From Local Server")
-
-/* ItemAddFromWeb.inc */
-gettext("Photo") /* also in: ItemEditPhoto.inc classes/GalleryPhotoItem.class */
-gettext("From Web Page")
+gettext("Input file %s exceeds maximum permitted file size") /* also in: test/phpunit/ItemAddFromBrowserTest.class */
+gettext("Input file %s exceeds file size specified in the form") /* also in: test/phpunit/ItemAddFromBrowserTest.class */
+gettext("Input file %s was only partially uploaded")
+gettext("Input file %s was not uploaded. Error %d")
 
 /* ItemAdmin.inc */
 gettext("Gallery Item Administration")
@@ -142,6 +141,9 @@ gettext("General") /* also in: module.inc */
 
 /* ItemEditMovie.inc */
 gettext("Movie Size")
+
+/* ItemEditPhoto.inc */
+gettext("Photo") /* also in: classes/GalleryPhotoItem.class */
 
 /* ItemEditPhotoThumbnail.inc */
 gettext("Thumbnail cropped successfully") /* also in: test/phpunit/ItemEditPhotoThumbnailPluginTest.class */
@@ -189,7 +191,7 @@ gettext("Maintenance") /* also in: module.inc templates/MaintenanceMode.tpl */
 
 /* SiteAdmin.inc */
 gettext("Gallery Site Administration")
-gettext("site admin") /* also in: templates/ItemAddFromServer.tpl templates/ItemEditItem.tpl templates/ItemEditPhoto.tpl templates/ItemEditPhotoThumbnail.tpl templates/ItemEditRotateAndScalePhoto.tpl */
+gettext("site admin") /* also in: templates/ItemEditItem.tpl templates/ItemEditPhoto.tpl templates/ItemEditPhotoThumbnail.tpl templates/ItemEditRotateAndScalePhoto.tpl */
 
 /* UserAdmin.inc */
 gettext("Gallery User Administration")
@@ -251,7 +253,7 @@ gettext("Ensure data files for all derivatives (thumbnails, etc) have been built
 gettext("Build All Thumbnails/Resizes")
 gettext("Debug output for failed items:")
 gettext("Checked %d items")
-gettext("%d items built") /* also in: classes/IntegrityCheckTask.class */
+gettext("%d items built")
 gettext("%d items failed")
 
 /* classes/DeleteSessionsTask.class */
@@ -283,10 +285,10 @@ gettext("Search descriptions")
 gettext("Search keywords")
 gettext("Search summaries")
 gettext("Search titles")
-gettext("Description") /* also in: classes/GallerySortInterface_1_1.class templates/AdminPlugins.tpl templates/AdminRepository.tpl templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemAddFromServer.tpl templates/ItemAddFromWeb.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
+gettext("Description") /* also in: classes/GallerySortInterface_1_1.class templates/AdminPlugins.tpl templates/AdminRepository.tpl templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
 gettext("Keywords") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
-gettext("Summary") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemAddFromServer.tpl templates/ItemAddFromWeb.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
-gettext("Title") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemAddFromServer.tpl templates/ItemAddFromWeb.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
+gettext("Summary") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
+gettext("Title") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
 gettext("Owner") /* also in: templates/ItemPermissions.tpl test/phpunit/CoreSearchTest.class */
 
 /* classes/GalleryGroup.class */
@@ -379,20 +381,6 @@ gettext("Back to %s") /* also in: test/phpunit/UrlGeneratorTest.class */
 gettext("User")
 gettext("user")
 
-/* classes/IntegrityCheckTask.class */
-gettext("Integrity Check")
-gettext("Check data integrity and report any inconsistencies.")
-gettext("Loading all entities")
-gettext("Checking for orphaned entity data")
-gettext("Checking for orphaned item data")
-gettext("Checking for orphaned plugin data")
-gettext("Checked %d entities")
-gettext("Failed to load entity ids: %s")
-gettext("Orphaned data in table %s with missing parent entity; ids: %s")
-gettext("Orphaned data in table %s with no row in %s table; ids: %s")
-gettext("Orphaned data in table %s with missing derivative source; ids: %s")
-gettext("Unknown plugin: %s %s")
-
 /* classes/OptimizeDatabaseTask.class */
 gettext("Optimize database")
 gettext("Improve the performance of your database.  Results will vary depending on which database you're using, but this routine maintenance will make your Gallery run faster.  Especially useful after adding or deleting many items.")
@@ -432,7 +420,7 @@ gettext("Settings saved successfully") /* also in: templates/AdminToolkitPriorit
 gettext("Added local upload directory successfully")
 gettext("Removed local upload directory successfully")
 gettext("Test email sent successfully")
-gettext("There was a problem processing your request, see below for details.")
+gettext("There was a problem processing your request, see below for details.") /* also in: templates/ItemAddFromBrowser.tpl */
 gettext("Error sending test email, see below for details.")
 gettext("Language Settings")
 gettext("Select language defaults for Gallery. Individual users can override this setting in their personal preferences or via the language selector block if available. Gallery will try to automatically detect the language preference of each user if the browser preference check is enabled.")
@@ -452,17 +440,6 @@ gettext("Filesystem Permissions")
 gettext("Specify the default permissions for files and directories that Gallery creates. This doesn't apply to files/directories that Gallery has already created.")
 gettext("New directories")
 gettext("New files")
-gettext("Local Server Upload Paths")
-gettext("Specify the legal directories on the local server where a user can store files and then upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you enter here and all the files and directories under those paths will be available to any Gallery user who has upload privileges, so you should limit this to directories that won't contain sensitive data (eg. /tmp or /usr/ftp/incoming)")
-gettext("Path")
-gettext("Action") /* also in: templates/AdminGroups.tpl templates/AdminMaintenance.tpl templates/AdminUsers.tpl templates/ItemPermissions.tpl */
-gettext("remove")
-gettext("Add") /* also in: templates/AdminEditGroupUsers.tpl templates/AdminThemes.tpl templates/ItemEditTheme.tpl */
-gettext("You must enter a directory to add.")
-gettext("open_basedir documentation")
-gettext("Your webserver is configured to prevent you from accessing that directory.  Please refer to the %s and consult your webserver administrator.")
-gettext("The webserver does not have permissions to read that directory.")
-gettext("The path you specified is not a valid directory.")
 gettext("Session Settings")
 gettext("Session Lifetime")
 gettext("Inactivity Timeout")
@@ -484,6 +461,7 @@ gettext("When Gallery is embedded in another application (portal, CMS, forum, et
 gettext("If your Gallery is embedded and you leave the following fields empty, then all DownloadItem links (the URLs of the images and other items) in the embedded Gallery have <b>an appended GALLERYSID string</b> in the URL which is <b>a minor security risk</b> when your Gallery users start copy'n'pasting image URLs in forums, guestbooks, etc. The alternative is to set the <b>cookie path</b>. Gallery will then <b>not append the GALLERYSID to the embedded DownloadItem URLs</b>. E.g. when Gallery is reachable at http://www.example.com/application/gallery2/ and the embedding application is at http://www.example.com/application/, then you have to compare the path /application/gallery2/ with /application/. The cookie path is the part of the paths that is equal, in this case it is '/application/'. Most often it is just '/'.")
 gettext("The <b>cookie domain</b> is also only needed for embedded Gallery installs and only if you want to get rid of the GALLERYSID string in the embedded DownloadItem URLs. <b>In most cases, the cookie domain can be left blank.</b> Set it only, if Gallery and the embedding application are only reachable with <b>different subdomains</b>. E.g. when Gallery is at http://photos.example.com/ and the application is at http://www.example.com/, then you have to set the cookie domain example.com (the part of the host string that is common to both, Gallery and the embedding application).")
 gettext("Once you change the cookie settings, <b>all registered users</b> of your Gallery will <b>have to clear their browser cookie cache</b>. If they do not, they will experience login / logout / lost session problems.")
+gettext("Path")
 gettext("Invalid cookie path")
 gettext("Domain")
 gettext("Invalid cookie domain")
@@ -558,6 +536,7 @@ gettext("Remove selected")
 gettext("You must select a user to remove.")
 gettext("You can't remove yourself from this group.")
 gettext("Add Member")
+gettext("Add") /* also in: templates/AdminThemes.tpl templates/ItemEditTheme.tpl */
 gettext("You must enter a username.")
 gettext("User '%s' does not exist.") /* also in: templates/AdminUsers.tpl */
 gettext("This user already is in this group.")
@@ -583,6 +562,7 @@ gettext("Group '%s' does not exist.")
 gettext("You cannot delete that group")
 gettext("You cannot edit that group's users")
 gettext("Edit Group (by list)")
+gettext("Action") /* also in: templates/AdminMaintenance.tpl templates/AdminUsers.tpl templates/ItemPermissions.tpl */
 gettext("edit") /* also in: templates/AdminUsers.tpl */
 gettext("delete") /* also in: templates/AdminUsers.tpl */
 gettext("members")
@@ -813,48 +793,6 @@ gettext("More..")
 gettext("Set item titles from:")
 gettext("Assign caption to:")
 
-/* templates/ItemAddFromServer.tpl */
-gettext("Transfer files that are already on your server into your Gallery.  The files must already have been uploaded to your server some other way (like FTP) and must be placed in a directory where they are accessibly by any element on the server.  If you're on Unix this means that the files and the directory the files are in should have modes of at least 755.")
-gettext("For security purposes, you can't use this feature until the Gallery Site Administrator configures a set of legal upload directories.")
-gettext("Server Path")
-gettext("You must enter a directory.")
-gettext("The directory you entered is invalid.  Make sure that the directory is readable by all users.")
-gettext("The directory you entered is illegal.  It must be a sub directory of one of the directories listed below.")
-gettext("An item with the same name already exists.")
-gettext("Legal Directories")
-gettext("modify")
-gettext("Recent Directories")
-gettext("Find Files") /* also in: templates/ItemAddFromWeb.tpl */
-gettext("Directory: %s")
-gettext("File name")
-gettext("Type") /* also in: templates/ItemAddFromWeb.tpl */
-gettext("Size")
-gettext("Use Symlink")
-ngettext("%d byte", "%d bytes")
-gettext("Parent Directory")
-gettext("Directory")
-gettext("(Un)check all known types")
-gettext("(Un)check symlinks")
-gettext("for selected items")
-gettext("Copy base filenames to:") /* also in: templates/ItemAddFromWeb.tpl */
-gettext("Add Files")
-gettext("Start Over")
-
-/* templates/ItemAddFromWeb.tpl */
-gettext("Import files into Gallery from another website.  Enter a URL below to a web page anywhere on the net and Gallery will allow you to upload any media files that it finds on that page.  Note that if you're entering a URL to a directory, you should end the URL with a trailing slash (eg, http://example.com/directory/). ")
-gettext("URL")
-gettext("You must enter a URL to a web page")
-gettext("The URL entered must begin with http://")
-gettext("The web page you specified is unavailable")
-gettext("Nothing to add found from this URL")
-gettext("Nothing added since no items were selected")
-gettext("Recent URLs")
-gettext("URL: %s")
-gettext("change") /* also in: templates/ItemReorder.tpl */
-ngettext("%d url found", "%d urls found")
-gettext("(Un)check all")
-gettext("Add URLs")
-
 /* templates/ItemAdmin.tpl */
 gettext("No Thumbnail")
 gettext("Options")
@@ -1066,6 +1004,7 @@ gettext("The user already has this permission (check sub-permissions)")
 gettext("Reorder Album")
 gettext("Order saved successfully")
 gettext("This album has an automatic sort order specified, so you cannot change the order of items manually.  You must remove the automatic sort order to continue.")
+gettext("change")
 gettext("Change the order of the items in this album.")
 gettext("Move this item")
 gettext("before")

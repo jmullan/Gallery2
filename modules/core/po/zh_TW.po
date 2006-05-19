@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2005-07-27 23:11-0400\n"
 "PO-Revision-Date: 2005-08-24 14:00-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -188,6 +188,12 @@ msgstr "正在清除舊的快速下載快取"
 msgid "Converting MySQL data to UTF8"
 msgstr "將 MySQL 資料轉成 UTF8 中"
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "網站管理員"
 
@@ -257,14 +263,21 @@ msgid "%d kilobytes"
 msgid_plural "%d kilobytes"
 msgstr[0] "%d KB"
 
-msgid "From Local Server"
-msgstr "從本地伺服器"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "照片"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "從網頁"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Gallery 項目管理"
@@ -325,6 +338,9 @@ msgstr "一般"
 
 msgid "Movie Size"
 msgstr "影片大小"
+
+msgid "Photo"
+msgstr "照片"
 
 msgid "Thumbnail cropped successfully"
 msgstr "縮略圖裁切成功"
@@ -866,49 +882,6 @@ msgstr "用戶"
 msgid "user"
 msgstr "用戶"
 
-#, fuzzy
-msgid "Integrity Check"
-msgstr "索引完整性驗証失敗。"
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "檢查了 %d 個項目"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "無法增加%s"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "資料庫最佳化"
 
@@ -1087,50 +1060,6 @@ msgstr "新目錄"
 msgid "New files"
 msgstr "新檔案"
 
-msgid "Local Server Upload Paths"
-msgstr "本地伺服器上傳路徑"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"指定在本地伺服器上用戶可儲存檔案並透過「從本地伺服器上傳」功能上傳到 Gallery 的合法目錄。你在"
-"這裡輸入的路徑以及這個路徑下的所有檔案和目錄將會對所有擁有上傳權限的 Gallery 用戶開放，所以請"
-"限制這個目錄於不含敏感資料的目錄（如：/tmp 或 /usr/ftp/incoming）"
-
-msgid "Path"
-msgstr "路徑"
-
-msgid "Action"
-msgstr "操作"
-
-msgid "remove"
-msgstr "刪除"
-
-msgid "Add"
-msgstr "增加"
-
-msgid "You must enter a directory to add."
-msgstr "你必須輸入一個目錄來增加。"
-
-msgid "open_basedir documentation"
-msgstr "open_basedir 說明文件"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr "你的伺服器的設定不允許你存取這個目錄。請參考 %s 並與你的系統管理員協商。"
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "網站伺服器沒有讀取這個目錄的權限。"
-
-msgid "The path you specified is not a valid directory."
-msgstr "你指定的路徑不是一個有效的目錄。"
-
 msgid "Session Settings"
 msgstr "連線期間設定"
 
@@ -1249,6 +1178,9 @@ msgid ""
 msgstr ""
 "在你改變了 cookie 設定後，你的 Gallery 中<b>所有登錄的用戶</b>都<b>必需清除他們瀏覽程式中的 "
 "cookie 快取</b>。否則他們會遭還登入、登出和連線方面的問題。"
+
+msgid "Path"
+msgstr "路徑"
 
 msgid "Invalid cookie path"
 msgstr "無效的 cookie 路徑"
@@ -1477,6 +1409,9 @@ msgstr "你不能從這個成員組中將自己刪除。"
 msgid "Add Member"
 msgstr "增加會員"
 
+msgid "Add"
+msgstr "增加"
+
 msgid "You must enter a username."
 msgstr "你必須輸入一個用戶名。"
 
@@ -1546,6 +1481,9 @@ msgstr "你不能編輯該成員組的用戶"
 
 msgid "Edit Group (by list)"
 msgstr "編輯成員組（列表）"
+
+msgid "Action"
+msgstr "操作"
 
 msgid "edit"
 msgstr "編輯"
@@ -2291,144 +2229,6 @@ msgstr "設定項目主題為："
 msgid "Assign caption to:"
 msgstr "將說明設為："
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"將已儲存在你伺服器上的檔案傳輸到 Gallery 中。檔案必須已經通過其他方式（如FTP）上傳到伺服器，"
-"並放置在可由任何伺服器程式處理的目錄中。如果你使用的是UNIX系統則目錄權限至少要是755。"
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr "出於安全考慮，在網站管理員設定允許的上傳目錄前，你不能使用這個功能。"
-
-msgid "Server Path"
-msgstr "伺服器路徑"
-
-msgid "You must enter a directory."
-msgstr "你必須輸入一個目錄。"
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr "你輸入的目錄不合法。請確認這個目錄是所有用戶可讀取的。"
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr "你輸入的目錄不合法。它必須是下列目錄之一的一個子目錄。"
-
-msgid "An item with the same name already exists."
-msgstr "同名項目已經存在。"
-
-msgid "Legal Directories"
-msgstr "合法目錄"
-
-msgid "modify"
-msgstr "修改"
-
-msgid "Recent Directories"
-msgstr "近期目錄"
-
-msgid "Find Files"
-msgstr "查找檔案"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "目錄：%s"
-
-msgid "File name"
-msgstr "檔案名稱"
-
-msgid "Type"
-msgstr "類型"
-
-msgid "Size"
-msgstr "大小"
-
-msgid "Use Symlink"
-msgstr "使用鏈接"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d 字元"
-
-msgid "Parent Directory"
-msgstr "上層目錄"
-
-msgid "Directory"
-msgstr "目錄"
-
-msgid "(Un)check all known types"
-msgstr "選擇／取消選擇所有已知類型"
-
-msgid "(Un)check symlinks"
-msgstr "選擇／取消選擇鏈接"
-
-msgid "for selected items"
-msgstr "對已選擇項目"
-
-msgid "Copy base filenames to:"
-msgstr "複製檔案名到："
-
-msgid "Add Files"
-msgstr "增加檔案"
-
-msgid "Start Over"
-msgstr "重新開始"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"從其他網站引進檔案到 Gallery。請在下面輸入網路上任何一個網頁的地址，Gallery 會讓你上傳在那會"
-"網頁中找到的任何媒體檔案。請注意，如果你輸入的位置是一個目錄，請用以反斜線作為地址結尾（例"
-"如：http://example.com/directory/）。"
-
-msgid "URL"
-msgstr "網址"
-
-msgid "You must enter a URL to a web page"
-msgstr "你必須為網頁輸入一個網址"
-
-msgid "The URL entered must begin with http://"
-msgstr "輸入網址必須以 http:// 開始"
-
-msgid "The web page you specified is unavailable"
-msgstr "你指定的網頁無法找到"
-
-msgid "Nothing to add found from this URL"
-msgstr "在這個網址中找不到可以加的項目"
-
-msgid "Nothing added since no items were selected"
-msgstr "由於未選擇項目，沒有內容被增加"
-
-msgid "Recent URLs"
-msgstr "近期網址"
-
-#, c-format
-msgid "URL: %s"
-msgstr "網址：%s"
-
-msgid "change"
-msgstr "變更"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "找到 %d 個網址"
-
-msgid "(Un)check all"
-msgstr "選擇／取消選擇全部"
-
-msgid "Add URLs"
-msgstr "增加網址"
-
 msgid "No Thumbnail"
 msgstr "無縮略圖"
 
@@ -3050,6 +2850,9 @@ msgid ""
 "manually.  You must remove the automatic sort order to continue."
 msgstr ""
 "此相簿已指定了自動排序方式，因此你不能手動更改項目排序。你必須先刪除自動排序方式才能繼續。"
+
+msgid "change"
+msgstr "變更"
 
 msgid "Change the order of the items in this album."
 msgstr "在此相簿中變更項目順序。"

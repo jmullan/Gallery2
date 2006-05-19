@@ -34,6 +34,24 @@
 class ItemAddFromServer extends ItemAddPlugin {
 
     /**
+     * @see ItemAddPlugin::isAppropriate
+     */
+    function isAppropriate() {
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'itemadd', 'fromserver');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($param == 'admin') {
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $param = $isAdmin ? 'on' : 'off';
+	}
+	return array(null, $param == 'on');
+    }
+
+    /**
      * @see ItemAddPlugin::handleRequest
      */
     function handleRequest($form, &$item) {
@@ -295,7 +313,7 @@ class ItemAddFromServer extends ItemAddPlugin {
      *                array of system charset strings localServerDirList)
      */
     function fetchLocalServerDirList() {
-	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'itemadd');
 	if ($ret) {
 	    return array($ret, null, null);
 	}
@@ -370,10 +388,11 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    /* Add path to the recent path list */
 		    $session =& $gallery->getSession();
 		    $recentPaths =
-			$session->get('core.view.ItemAdd.ItemAddFromServer.recentPaths');
+			$session->get('itemadd.view.ItemAdd.ItemAddFromServer.recentPaths');
 		    /* Use the UTF-8 string, recent paths is only for the output */
 		    $recentPaths[$form['localServerPath']] = 1;
-		    $session->put('core.view.ItemAdd.ItemAddFromServer.recentPaths', $recentPaths);
+		    $session->put('itemadd.view.ItemAdd.ItemAddFromServer.recentPaths',
+				  $recentPaths);
 
 		    while (($fileName = $platform->readdir($handle)) !== false) {
 			if ($fileName == '.') {
@@ -477,7 +496,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	}
 
 	$session =& $gallery->getSession();
-	$recentPaths = $session->get('core.view.ItemAdd.ItemAddFromServer.recentPaths');
+	$recentPaths = $session->get('itemadd.view.ItemAdd.ItemAddFromServer.recentPaths');
 	if (!isset($recentPaths)) {
 	    $recentPaths = array();
 	}
@@ -505,15 +524,15 @@ class ItemAddFromServer extends ItemAddPlugin {
 	$template->setVariable('ItemAddFromServer', $ItemAddFromServer);
 
 	return array(null,
-		     'modules/core/templates/ItemAddFromServer.tpl',
-		     'modules_core');
+		     'modules/itemadd/templates/ItemAddFromServer.tpl',
+		     'modules_itemadd');
     }
 
     /**
      * @see ItemAddPlugin::getTitle
      */
     function getTitle() {
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'itemadd');
 	if ($ret) {
 	    return array($ret, null);
 	}

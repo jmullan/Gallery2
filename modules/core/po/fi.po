@@ -23,7 +23,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2003-05-16 09:41+0300\n"
 "PO-Revision-Date: 2005-12-11 14:35+0200\n"
 "Last-Translator: Marko Kohtala <marko.kohtala@gmail.com>\n"
@@ -201,6 +201,12 @@ msgstr "Tyhjentää nopean latauksen välimuistia"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Gallerian Ylläpitäjät"
 
@@ -272,14 +278,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d kilotavu"
 msgstr[1] "%d kilotavua"
 
-msgid "From Local Server"
-msgstr "Paikalliselta Palvelimelta"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Kuva"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Web-sivulta"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Gallerian Kohteen Ylläpito"
@@ -343,6 +356,9 @@ msgstr "Yleinen"
 
 msgid "Movie Size"
 msgstr "Elokuvan Koko"
+
+msgid "Photo"
+msgstr "Kuva"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Esikatselukuva leikattu"
@@ -895,48 +911,6 @@ msgstr "Käyttäjä"
 msgid "user"
 msgstr "käyttäjä"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "%d kohdetta tarkistettu"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "Ei voinut lisätä tiedostoa %s"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Optimoi tietokanta"
 
@@ -1126,54 +1100,6 @@ msgstr "Uudet hakemistot"
 msgid "New files"
 msgstr "Uudet tiedostot"
 
-msgid "Local Server Upload Paths"
-msgstr "Paikallisen Palvelimen Siirtohakemistot"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Määritä hakemisto paikallisella palveimella, jonne käyttäjät voivat tallettaa tiedostojaan "
-"ja sitten lähettää ne Galleriaan käyttämällä <i>Lähetä paikalliselta palvelimelta</i> -"
-"ominaisuutta. Antamasi hakemisto ja tiedostot näkyvät kaikille Gallerian käyttäjille, joilla "
-"on lähetysoikeudet, joten älä laita tähän hakemistoja jotka sisältävät arkaluontoista "
-"materiaalia! (esim. /tmp tai /usr/ftp/incoming)"
-
-msgid "Path"
-msgstr "Polku"
-
-msgid "Action"
-msgstr "Toiminto"
-
-msgid "remove"
-msgstr "poista"
-
-msgid "Add"
-msgstr "Lisää"
-
-msgid "You must enter a directory to add."
-msgstr "Sinun on annettava hakemisto jonka haluat lisätä."
-
-msgid "open_basedir documentation"
-msgstr "open_basedir dokumentaatio"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Palvelin on asetettu estämään sinua käyttämästä kyseistä hakemistoa. Ole hyvä ja katso "
-"hakemistoon %s ja selvitä asia palvelimen ylläpitäjän kanssa."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "Palvelimella ei ole oikeuksia lukea kyseistä hakemistoa."
-
-msgid "The path you specified is not a valid directory."
-msgstr "Polku jonka annoit ei ole hakemisto."
-
 msgid "Session Settings"
 msgstr "Istunnon Asetukset"
 
@@ -1289,6 +1215,9 @@ msgid ""
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
 msgstr ""
+
+msgid "Path"
+msgstr "Polku"
 
 msgid "Invalid cookie path"
 msgstr "Virheellinen polku evästeisiin"
@@ -1520,6 +1449,9 @@ msgstr "Et voi lisätä tai poistaa itseäsi tästä ryhmästä"
 msgid "Add Member"
 msgstr "Lisää Jäsen"
 
+msgid "Add"
+msgstr "Lisää"
+
 msgid "You must enter a username."
 msgstr "Sinun tulee syöttää käyttäjätunnus."
 
@@ -1590,6 +1522,9 @@ msgstr "Et voi muokata kyseisen ryhmän käyttäjiä"
 
 msgid "Edit Group (by list)"
 msgstr "Muokkaa Ryhmää (valitse listasta)"
+
+msgid "Action"
+msgstr "Toiminto"
 
 msgid "edit"
 msgstr "muokkaa"
@@ -2350,153 +2285,6 @@ msgstr "Aseta kohteiden otsikot täältä:"
 msgid "Assign caption to:"
 msgstr "Aseta otsakke tähän:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Siirrä palvelimella jo sijaitsevat tiedostot Galleriaan. Tiedostojen pitää olla jo siirretty "
-"palvelimelle jollain tavalla (kuten FTP) ja ne täytyy sijaita jossain hakemistossa minne "
-"kaikilla palvelimella on lukuoikeudet. UNIX:issa tämä tarkoittaa yleensä sitä, että "
-"hakemistoilla ja tiedostoilla täytyy olla käyttöoikeudet 0755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Turvallisuussyistä et voi käyttää tätä ominaisuutta ennenkuin Gallerian ylläpitäjä "
-"määrittelee paikalliset kopiointihakemistot."
-
-msgid "Server Path"
-msgstr "Palvelimen Polku"
-
-msgid "You must enter a directory."
-msgstr "Sinun on annettava hakemisto."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"Antamasi hakemisto ei kelpaa. Tarkista, että hakemiston lukeminen onnistuu kaikilta "
-"käyttäjiltä."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr "Antamasi hakemisto ei käy. Sen täytyy olla allaolevien hakemistojen alahakemisto."
-
-msgid "An item with the same name already exists."
-msgstr "Kohde samalla nimellä on jo olemassa."
-
-msgid "Legal Directories"
-msgstr "Luvalliset Hakemistot"
-
-msgid "modify"
-msgstr "muokkaa"
-
-msgid "Recent Directories"
-msgstr "Viimeaikaiset Hakemistot"
-
-msgid "Find Files"
-msgstr "Etsi Tiedostoja"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Hakemisto: %s"
-
-msgid "File name"
-msgstr "Tiedostonnimi"
-
-msgid "Type"
-msgstr "Tyyppi"
-
-msgid "Size"
-msgstr "Koko"
-
-msgid "Use Symlink"
-msgstr "Käytä Symbolista Linkkiä"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d tavu"
-msgstr[1] "%d tavua"
-
-msgid "Parent Directory"
-msgstr "Ylempi Hakemisto"
-
-msgid "Directory"
-msgstr "Hakemisto"
-
-msgid "(Un)check all known types"
-msgstr "Valitse/Poista kaikki tunnistetut tyypit"
-
-msgid "(Un)check symlinks"
-msgstr "Valitse/Poista symboliset linkit"
-
-msgid "for selected items"
-msgstr "valituille kohteille"
-
-msgid "Copy base filenames to:"
-msgstr "Kopioi tiedostonimet tänne:"
-
-msgid "Add Files"
-msgstr "Lisää tiedostoja"
-
-msgid "Start Over"
-msgstr "Aloita Alusta"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Tuo tiedostoja Galleriaan toiselta web-sivustolta. Kirjoita sivun URL ja Galleria antaa "
-"sinun siirtää mitä hyvänsä mediatiedostoja jotka se löytää kyseiseltä sivulta. Huomaa että "
-"jos annat URL:n hakemistoon, sinun tulee päättää URL kauttaviivalla (esim. http://example."
-"com/hakemisto/)."
-
-msgid "URL"
-msgstr "URL"
-
-msgid "You must enter a URL to a web page"
-msgstr "Sinun tulee antaa URL web-sivulle"
-
-msgid "The URL entered must begin with http://"
-msgstr "URL täytyy alkaa http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "Antamasi web-sivu ei ole saatavilla"
-
-msgid "Nothing to add found from this URL"
-msgstr "Sivulta ei löytynyt mitään lisättävää"
-
-msgid "Nothing added since no items were selected"
-msgstr "Mitään ei lisätty sillä yhtään kohdetta ei valittu"
-
-msgid "Recent URLs"
-msgstr "Viimeaikaiset URL:t"
-
-#, c-format
-msgid "URL: %s"
-msgstr "URL: %s"
-
-msgid "change"
-msgstr "muuta"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "yksi url löytyi"
-msgstr[1] "%d url:aa löytyi"
-
-msgid "(Un)check all"
-msgstr "Valitse/Poista kaikki"
-
-msgid "Add URLs"
-msgstr "Lisää URL:ia"
-
 msgid "No Thumbnail"
 msgstr "Ei Esikatselukuvaa"
 
@@ -3160,6 +2948,9 @@ msgstr ""
 "Tässä albumissa on automaattinen järjestely päällä, joten et voi vaihtaa järjestystä käsin "
 "ennen kuin otat automaattisen järjestelyn pois päältä."
 
+msgid "change"
+msgstr "muuta"
+
 msgid "Change the order of the items in this album."
 msgstr "Muokkaa tämän albumin kohteiden järjestystä."
 
@@ -3620,9 +3411,6 @@ msgstr "[test] Toinen oikeus"
 msgid "Unit test theme"
 msgstr "Yksikkötestauksen teema"
 
-#~ msgid "Display"
-#~ msgstr "Näyttö"
-
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Asennettu ja itse-konfiguroitu moduuli %s"
 
@@ -3667,9 +3455,6 @@ msgstr "Yksikkötestauksen teema"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Ei mitään &raquo;"
-
-#~ msgid "some text to be spit out in different languages"
-#~ msgstr "jotain tekstiä näytettäväksi eri kielillä"
 
 #~ msgid "You did it right!"
 #~ msgstr "Teit sen oikein!"

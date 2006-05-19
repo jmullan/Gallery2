@@ -36,7 +36,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "Report-Msgid-Bugs-To: <gallery-devel@lists.sourceforge.net>\n"
 "POT-Creation-Date: 2003-05-30 17:11-0700\n"
 "PO-Revision-Date: 2003-09-24 22:04-0700\n"
@@ -234,6 +234,12 @@ msgstr "ceadeanna"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 #, fuzzy
 msgid "Site Admins"
 msgstr "Riarachán an Ghailearaí"
@@ -317,14 +323,21 @@ msgstr[2] "%d ochtáin"
 msgstr[3] "%d ochtáin"
 msgstr[4] "%d ochtáin"
 
-msgid "From Local Server"
-msgstr "Cuir as do dáileoir áitiúil"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Grianghraf"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Cuir as clár cinn eile"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Riarachán Mír an Ghailearaí"
@@ -396,6 +409,9 @@ msgstr "Ginearálta"
 #, fuzzy
 msgid "Movie Size"
 msgstr "Roghanna an Chuntais"
+
+msgid "Photo"
+msgstr "Grianghraf"
 
 #, fuzzy
 msgid "Thumbnail cropped successfully"
@@ -1001,48 +1017,6 @@ msgstr "Úsáideora"
 msgid "user"
 msgstr "Úsáideora"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "cuir míreanna ann"
-
-#, c-format
-msgid "Failed to load entity ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr ""
 
@@ -1240,52 +1214,6 @@ msgstr "Comhadlanna nua"
 msgid "New files"
 msgstr "Comhaid nua"
 
-msgid "Local Server Upload Paths"
-msgstr "Comhadlanna áitiúil d'uaslodáil"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Iontráil comhadlanna údaracha (ar an dáileoir áitiúil) ina bhféadann úsáideora comhaid a "
-"stóráil agus ansin a uaslodáil sa nGailearaí leis an bhfeidhmiú <i>Cuir as do dáileoir "
-"áitiúil</i>. Beidh na comhadlanna seo, agus gach uile comhad/comhadlann istigh, infhaighte "
-"go gach üsáideoir atá teacht uaslodáil aige. Mar sin, ní ceart duit comhadlanna íogaire a "
-"iontráil (mar shampla, beidh /tmp nó /usr/ftp/poiblí oiriúnach)."
-
-msgid "Path"
-msgstr "Comhadlann"
-
-msgid "Action"
-msgstr "Aicsean"
-
-msgid "remove"
-msgstr "scrios"
-
-msgid "Add"
-msgstr "Cuir"
-
-msgid "You must enter a directory to add."
-msgstr "Caithfidh tú comhadlann a chur a iontráil."
-
-msgid "open_basedir documentation"
-msgstr ""
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr ""
-
-msgid "The path you specified is not a valid directory."
-msgstr ""
-
 msgid "Session Settings"
 msgstr "Roghanna an Seisiún"
 
@@ -1384,6 +1312,9 @@ msgid ""
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
 msgstr ""
+
+msgid "Path"
+msgstr "Comhadlann"
 
 msgid "Invalid cookie path"
 msgstr ""
@@ -1623,6 +1554,9 @@ msgstr "Scrios grúpa"
 msgid "Add Member"
 msgstr "Cuir Ball"
 
+msgid "Add"
+msgstr "Cuir"
+
 msgid "You must enter a username."
 msgstr "Caithfidh tú logainm a iontráil."
 
@@ -1699,6 +1633,9 @@ msgstr ""
 
 msgid "Edit Group (by list)"
 msgstr "Athraigh Grúpa (faoi liosta)"
+
+msgid "Action"
+msgstr "Aicsean"
 
 msgid "edit"
 msgstr "athraigh"
@@ -2469,165 +2406,6 @@ msgstr ""
 msgid "Assign caption to:"
 msgstr "Riarachán an Ghailearaí"
 
-#, fuzzy
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Aistrigh comhaid as do dáileoir i do Ghailearaí. Caithfidh na comhaid uaslodáilte ar do "
-"dáileoir cheana féin (i FTP, mar shampla) agus curtha i gcomhadlann infheichthe. Má bhíonn "
-"tú ar meaisín Unix, caithfidh ceadanna 755 (ar a laghad) ag na gcomhaid agus ag an "
-"gcomhadlann."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Mar gheall ar chúiseanna slándálacha, ní bheidh an feidhmiú seo oibriú go gcuirfidh an "
-"Riarthóir an Ghailearaí foireann comhadlanna d'uaslodáil údaracha."
-
-msgid "Server Path"
-msgstr "Comhadlann an dáileoir"
-
-msgid "You must enter a directory."
-msgstr "Caithfidh tú comhadlann a iontráil."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"Níl an comhadlann seo bailí. Deimhnigh go bhfuil an comhadlann infheicthe ag gach úsáideoir."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"Níl an comhadlann seo údarach. Caithfidh sé fo-chomhadlann ceann a chomadlann ar an liosta "
-"thíos."
-
-msgid "An item with the same name already exists."
-msgstr ""
-
-msgid "Legal Directories"
-msgstr "Comhadlanna údaracha"
-
-msgid "modify"
-msgstr "modhnaigh"
-
-#, fuzzy
-msgid "Recent Directories"
-msgstr "Comhadlanna údaracha"
-
-msgid "Find Files"
-msgstr "Aimsigh comhaid"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Comhadlann: %s"
-
-msgid "File name"
-msgstr "Ainm Chomhaid"
-
-msgid "Type"
-msgstr "Cineál"
-
-msgid "Size"
-msgstr "Méid"
-
-msgid "Use Symlink"
-msgstr ""
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "náid ochtán"
-msgstr[1] "ochtán amháin"
-msgstr[2] "%d ochtáin"
-msgstr[3] "%d ochtáin"
-msgstr[4] "%d ochtáin"
-
-#, fuzzy
-msgid "Parent Directory"
-msgstr "Comhadlann: %s"
-
-#, fuzzy
-msgid "Directory"
-msgstr "Comhadlann: %s"
-
-msgid "(Un)check all known types"
-msgstr ""
-
-msgid "(Un)check symlinks"
-msgstr ""
-
-#, fuzzy
-msgid "for selected items"
-msgstr "[croí] Scrios míreanna"
-
-msgid "Copy base filenames to:"
-msgstr ""
-
-msgid "Add Files"
-msgstr "Cuir Comhaid"
-
-#, fuzzy
-msgid "Start Over"
-msgstr "Ord sóirt"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-
-msgid "URL"
-msgstr ""
-
-#, fuzzy
-msgid "You must enter a URL to a web page"
-msgstr "Caithfidh tú logainm a iontráil"
-
-msgid "The URL entered must begin with http://"
-msgstr ""
-
-#, fuzzy
-msgid "The web page you specified is unavailable"
-msgstr "Níl an logainm seo bailí"
-
-msgid "Nothing to add found from this URL"
-msgstr ""
-
-msgid "Nothing added since no items were selected"
-msgstr ""
-
-msgid "Recent URLs"
-msgstr ""
-
-#, c-format
-msgid "URL: %s"
-msgstr ""
-
-msgid "change"
-msgstr "athraigh"
-
-#, fuzzy, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "aon chomhad aimsithe"
-msgstr[1] "comhad amháin aimsithe"
-msgstr[2] "%d comhad aimsithe"
-msgstr[3] "%d gcomhad aimsithe"
-msgstr[4] "%d chomhad aimsithe"
-
-msgid "(Un)check all"
-msgstr ""
-
-#, fuzzy
-msgid "Add URLs"
-msgstr "%s curtha"
-
 msgid "No Thumbnail"
 msgstr "Níl pictiúrín ann"
 
@@ -3316,6 +3094,9 @@ msgstr ""
 "Tá ord sóirt uathoibríoch ag an albam seo, agus mar sin ní féidir leat an t-ord míreanna a "
 "athrú go láimhe. Caitfidh tú an t-ord sóirt a chur as ar an gcéad."
 
+msgid "change"
+msgstr "athraigh"
+
 msgid "Change the order of the items in this album."
 msgstr "Athraigh ord na míreanna san albam seo."
 
@@ -3764,65 +3545,5 @@ msgstr "ceadeanna"
 msgid "Unit test theme"
 msgstr ""
 
-#, fuzzy
-#~ msgid "Successfully installed and auto-configured module %s"
-#~ msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-#~ msgid "Successfully installed module %s"
-#~ msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-#~ msgid "Successfully configured module %s"
-#~ msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-#~ msgid "Successfully upgraded module %s"
-#~ msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-#~ msgid "Successfully activated module %s"
-#~ msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-#~ msgid "Successfully deactivated module %s"
-#~ msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-#~ msgid "Successfully uninstalled module %s"
-#~ msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-#~ msgid "All Themes"
-#~ msgstr "Téama"
-
-#, fuzzy
-#~ msgid "(default)"
-#~ msgstr "Luachanna"
-
-#, fuzzy
-#~ msgid "$ cd %s"
-#~ msgstr "Athraigh Úsáideoir"
-
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Aon cheann &raquo;"
-
-#, fuzzy
-#~ msgid "add album"
-#~ msgstr "cuir albam ann"
-
-#, fuzzy
-#~ msgid "edit permissions"
-#~ msgstr "ceadeanna"
-
-#, fuzzy
-#~ msgid "view permissions"
-#~ msgstr "ceadeanna"
-
-#, fuzzy
-#~ msgid "Successfully deleted directory: /cache/entity"
-#~ msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy
-#~ msgid "Unable to delete directory: /cache/theme"
-#~ msgstr "Ní raibh aon chomhad curtha."

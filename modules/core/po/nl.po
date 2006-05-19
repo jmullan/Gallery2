@@ -23,7 +23,7 @@
 # Gidie <gidie at users.sourceforge REMOVE THIS dot net>, 2005
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-03-17 19:49+0100\n"
 "Last-Translator: Buut <buut at users.sourceforge Remove - This dot net>\n"
@@ -196,6 +196,12 @@ msgstr "Oude fast-download cache verwijderen"
 msgid "Converting MySQL data to UTF8"
 msgstr "Converteer MySQL data naar UTF8"
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Site Beheer"
 
@@ -267,14 +273,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d kilobyte"
 msgstr[1] "%d kilobytes"
 
-msgid "From Local Server"
-msgstr "Toevoegen Vanuit Uw Server"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Foto"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Vanuit een Web Pagina"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Gallery item administratie"
@@ -335,6 +348,9 @@ msgstr "Algemeen"
 
 msgid "Movie Size"
 msgstr "Film Grootte"
+
+msgid "Photo"
+msgstr "Foto"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Miniatuur succesvol bijgesneden"
@@ -886,49 +902,6 @@ msgstr "Gebruiker"
 msgid "user"
 msgstr "gebruiker"
 
-#, fuzzy
-msgid "Integrity Check"
-msgstr "Index integriteit controle mislukt."
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "%d items gecontroleerd"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "Toevoegen van %s mislukt"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Optimaliseer database"
 
@@ -1121,55 +1094,6 @@ msgstr "Nieuwe directories"
 msgid "New files"
 msgstr "Nieuwe bestanden"
 
-msgid "Local Server Upload Paths"
-msgstr "Lokale Server Upload Paden"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Specificeer de toegestane directories op de lokale server van waaruit gebruikers bestanden "
-"kunnen opslaan en daarna uploaden in Gallery met behulp van de <i>Uploaden van lokale "
-"Server</i> functionaliteit. De paden die u hier ingeeft en alle bestanden en directories "
-"onder deze paden zullen beschikbaar zijn voor elke Gallery gebruiker met upload rechten. U "
-"moet daarom alleen paden ingeven die geen gevoelige informatie bevatten (bijv. /tmp of /usr/"
-"ftp/incoming)"
-
-msgid "Path"
-msgstr "Pad"
-
-msgid "Action"
-msgstr "Actie"
-
-msgid "remove"
-msgstr "verwijderen"
-
-msgid "Add"
-msgstr "Toevoegen"
-
-msgid "You must enter a directory to add."
-msgstr "U moet een directory opgeven om deze toe te voegen."
-
-msgid "open_basedir documentation"
-msgstr "open_basedir documentatie"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Uw web server is ingesteld om te voorkomen dat u toegang heeft tot deze directory. Raadpleeg "
-"de %s en overleg met uw beheerder van uw web server."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "De webserver heeft geen rechten om de directory te lezen."
-
-msgid "The path you specified is not a valid directory."
-msgstr "Het opgegeven pad is geen geldige directory"
-
 msgid "Session Settings"
 msgstr "Sessie Instellingen"
 
@@ -1299,6 +1223,9 @@ msgstr ""
 "Wanneer u de cookie instellingen veranderd, zullen <b>alle geregistreerde gebruikers</b> van "
 "uw Gallery <b>hun browser cookie cache moeten legen</b>. Als zij dat niet doen kunnen ze "
 "inlog / uitlog / verloren sessie problemen ervaren."
+
+msgid "Path"
+msgstr "Pad"
 
 msgid "Invalid cookie path"
 msgstr "Ongeldig cookie pad"
@@ -1540,6 +1467,9 @@ msgstr "U kunt uzelf niet uit deze group verwijderen."
 msgid "Add Member"
 msgstr "Gebruiker Toevoegen"
 
+msgid "Add"
+msgstr "Toevoegen"
+
 msgid "You must enter a username."
 msgstr "U moet een gebruikersnaam opgeven"
 
@@ -1610,6 +1540,9 @@ msgstr "U mag de gebruikers van deze groep niet wijzigen"
 
 msgid "Edit Group (by list)"
 msgstr "Bewerken Groep (via lijst)"
+
+msgid "Action"
+msgstr "Actie"
 
 msgid "edit"
 msgstr "bewerken"
@@ -2424,155 +2357,6 @@ msgstr "Bepaald item titels van:"
 msgid "Assign caption to:"
 msgstr "Wijs bijschriften toe aan:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Bestanden die reeds op uw server staan overbrengen naar uw Gallery. De bestanden moeten "
-"reeds op een bepaalde manier naar uw server geupload zijn (zoals via FTP) en moeten zich in "
-"een directory bevinden van waaruit zij op alle benodigde manieren toegankelijk zijn. Als u "
-"Unix gebruikt betekend dit dat de bestanden en de directory op zijn minst op toegangsniveau "
-"755 ingesteld moeten zijn."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Vanwege beveiligingsredenen, kunt u niet van deze functionaliteit gebruik maken, totdat de "
-"beheerder van de Gallery site een aantal toegestane upload directories heeft gedefinieerd."
-
-msgid "Server Path"
-msgstr "Server Pad"
-
-msgid "You must enter a directory."
-msgstr "U moet een directory opgeven."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"De opgegeven directory is niet juist. Zorg ervoor dat de directory leesbaar is voor alle "
-"gebruikers."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"De opgegeven directory is niet toegestaan. Het moet één van de onderstaand directories zijn."
-
-msgid "An item with the same name already exists."
-msgstr "Een item met dezelfde naam bestaat reeds."
-
-msgid "Legal Directories"
-msgstr "Toegestane Directories"
-
-msgid "modify"
-msgstr "bewerken"
-
-msgid "Recent Directories"
-msgstr "Onlangs Geopende Directories"
-
-msgid "Find Files"
-msgstr "Zoek Bestanden"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Directory: %s"
-
-msgid "File name"
-msgstr "Bestandsnaam"
-
-msgid "Type"
-msgstr "Type"
-
-msgid "Size"
-msgstr "Grootte"
-
-msgid "Use Symlink"
-msgstr "Gebruik een Symlink"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d byte"
-msgstr[1] "%d bytes"
-
-msgid "Parent Directory"
-msgstr "Bovenliggende Directory"
-
-msgid "Directory"
-msgstr "Directory"
-
-msgid "(Un)check all known types"
-msgstr "(De)selecteer alle bekende typen"
-
-msgid "(Un)check symlinks"
-msgstr "(De)selecteer symlinks"
-
-msgid "for selected items"
-msgstr "voor geselecteerde items"
-
-msgid "Copy base filenames to:"
-msgstr "Kopieer bestandsnamen naar:"
-
-msgid "Add Files"
-msgstr "Bestanden Toevoegen"
-
-msgid "Start Over"
-msgstr "Opnieuw"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Importeer bestanden naar Gallery vanuit een andere website. Geef hieronder een URL naar een "
-"web pagina op internet and Gallery zal u de mogelijkheid geven om elk gevonden media bestand "
-"op deze pagina te uploaden. Let op, als u een URL ingeeft naar een directory moet de URL "
-"eindigen met een slash (bijv, http://www.voorbeeld.com/directory/)."
-
-msgid "URL"
-msgstr "URL"
-
-msgid "You must enter a URL to a web page"
-msgstr "U moet URL naar een web pagina opgeven"
-
-msgid "The URL entered must begin with http://"
-msgstr "The opgegeven URL moet beginnen met http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "De ingegeven web pagina is niet beschikbaar"
-
-msgid "Nothing to add found from this URL"
-msgstr "Niets gevonden om toe te voegen vanuit deze URL"
-
-msgid "Nothing added since no items were selected"
-msgstr "Geen items toegevoegd, aangezien er geen items waren geselecteerd"
-
-msgid "Recent URLs"
-msgstr "Onlangs geopende URLs"
-
-#, c-format
-msgid "URL: %s"
-msgstr "URL: %s"
-
-msgid "change"
-msgstr "Wijzigen"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "url gevonden"
-msgstr[1] "urls gevonden"
-
-msgid "(Un)check all"
-msgstr "(De)selecteer alles"
-
-msgid "Add URLs"
-msgstr "URLs Toevoegen"
-
 msgid "No Thumbnail"
 msgstr "Geen Miniatuur"
 
@@ -3248,6 +3032,9 @@ msgstr ""
 "van de items niet handmatig aanpassen. U moet de automatische sorteervolgorde uitschakelen "
 "om door te gaan."
 
+msgid "change"
+msgstr "Wijzigen"
+
 msgid "Change the order of the items in this album."
 msgstr "Verander de volgorde van de item in dit album."
 
@@ -3718,9 +3505,6 @@ msgstr "[test] Een tweede recht"
 
 msgid "Unit test theme"
 msgstr "Eenheids test thema"
-
-#~ msgid "Display"
-#~ msgstr "Weergave"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Succesvol geïnstalleerd en automatische configuratie module %s"

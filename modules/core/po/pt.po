@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2003-09-18 12:00+0900\n"
 "PO-Revision-Date: 2003-10-01 15:46+0900\n"
 "Last-Translator: Hugo Cruz <hugo.cruz@netcabo.pt>\n"
@@ -203,6 +203,12 @@ msgstr "permissões"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 #, fuzzy
 msgid "Site Admins"
 msgstr "Administração"
@@ -279,14 +285,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d byte"
 msgstr[1] "%d bytes"
 
-msgid "From Local Server"
-msgstr "Do Servidor Local"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Foto"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Da Página Web"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Administração do Item"
@@ -357,6 +370,9 @@ msgstr "Geral"
 #, fuzzy
 msgid "Movie Size"
 msgstr "Parâmetros do filme"
+
+msgid "Photo"
+msgstr "Foto"
 
 #, fuzzy
 msgid "Thumbnail cropped successfully"
@@ -961,48 +977,6 @@ msgstr "Utilizadores"
 msgid "user"
 msgstr "Utilizadores"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "adicionar item"
-
-#, c-format
-msgid "Failed to load entity ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr ""
 
@@ -1200,53 +1174,6 @@ msgstr "Novas directorias"
 msgid "New files"
 msgstr "Novos ficheiros"
 
-msgid "Local Server Upload Paths"
-msgstr "Caminhos para Upload de Servidor Local"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Especificar as directorias do servidor local onde o utilizador por colocar os ficheiros para "
-"inserir na Galeria usando a funcionalidade <i>Upload do servidor local</i>. Todos os "
-"caminhos aqui introduzidos e todos os ficheiros e directorias dentro dos mesmos, estarão "
-"disponíveis a qualquer utilizador da Galeria que tenham permissões de Upload. Estes caminhos "
-"devem estar limitados a directorias que não contenham dados sensíveis (ex. /tmp ou /usr/ftp/"
-"incoming)"
-
-msgid "Path"
-msgstr "Caminho"
-
-msgid "Action"
-msgstr "Acção"
-
-msgid "remove"
-msgstr "apagar"
-
-msgid "Add"
-msgstr "Adicionar"
-
-msgid "You must enter a directory to add."
-msgstr "Introduza um directório a adicionar."
-
-msgid "open_basedir documentation"
-msgstr ""
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr ""
-
-msgid "The path you specified is not a valid directory."
-msgstr ""
-
 msgid "Session Settings"
 msgstr "Parâmetros da Sessão"
 
@@ -1345,6 +1272,9 @@ msgid ""
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
 msgstr ""
+
+msgid "Path"
+msgstr "Caminho"
 
 msgid "Invalid cookie path"
 msgstr ""
@@ -1577,6 +1507,9 @@ msgstr "Apagar um Grupo"
 msgid "Add Member"
 msgstr "Adicionar Membro"
 
+msgid "Add"
+msgstr "Adicionar"
+
 msgid "You must enter a username."
 msgstr "Introduza o seu nome de utilizador."
 
@@ -1650,6 +1583,9 @@ msgstr ""
 
 msgid "Edit Group (by list)"
 msgstr "Editar Grupo (por lista)"
+
+msgid "Action"
+msgstr "Acção"
 
 msgid "edit"
 msgstr "editar"
@@ -2411,161 +2347,6 @@ msgstr ""
 msgid "Assign caption to:"
 msgstr "Editar Animação"
 
-#, fuzzy
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Transferir ficheiros que já se encontram no servidor para a Galeria. Os ficheiros já terão "
-"que estar no servidor, transferidos de outra forma exterior à Galeria (como FTP) e devem ser "
-"colocadas num directório em que possam ser acedidas a partir de qualquer elemento no "
-"servidor. Se o sistema é Unix significa que os ficheiros e o directório dos ficheiros devem "
-"ter como modo de acesso mínimo o valor 755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Por razões de segurança, não é possível usar esta funcionalidade enquanto o Administrador da "
-"Galleria não configurar um conjunto de directorias de upload."
-
-msgid "Server Path"
-msgstr "Caminho do Servidor"
-
-msgid "You must enter a directory."
-msgstr "Introduza um directório"
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"A directoria introduzida é inválida. Esta directoria tem que ser poder ser lida por todos os "
-"utilizadores."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"A directoria introduzida é inválida. Terá que ser uma sub directoria de uma das listadas "
-"abaixo."
-
-msgid "An item with the same name already exists."
-msgstr ""
-
-msgid "Legal Directories"
-msgstr "Directorias Válidas"
-
-msgid "modify"
-msgstr "modificar"
-
-#, fuzzy
-msgid "Recent Directories"
-msgstr "Directorias Válidas"
-
-msgid "Find Files"
-msgstr "Encontrar Ficheiros"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Directório: %s"
-
-msgid "File name"
-msgstr "Nome do ficheiro"
-
-msgid "Type"
-msgstr "Tipo"
-
-msgid "Size"
-msgstr "Tamanho"
-
-msgid "Use Symlink"
-msgstr ""
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d byte"
-msgstr[1] "%d bytes"
-
-#, fuzzy
-msgid "Parent Directory"
-msgstr "Directório: %s"
-
-#, fuzzy
-msgid "Directory"
-msgstr "Directório: %s"
-
-msgid "(Un)check all known types"
-msgstr ""
-
-msgid "(Un)check symlinks"
-msgstr ""
-
-#, fuzzy
-msgid "for selected items"
-msgstr "[core] Apagar item"
-
-msgid "Copy base filenames to:"
-msgstr ""
-
-msgid "Add Files"
-msgstr "Adicionar Ficheiros"
-
-#, fuzzy
-msgid "Start Over"
-msgstr "Ordenamento"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-
-msgid "URL"
-msgstr ""
-
-#, fuzzy
-msgid "You must enter a URL to a web page"
-msgstr "Introduza o seu nome de utilizador"
-
-msgid "The URL entered must begin with http://"
-msgstr ""
-
-#, fuzzy
-msgid "The web page you specified is unavailable"
-msgstr "O nome do utilizador introduzido é inválido"
-
-msgid "Nothing to add found from this URL"
-msgstr ""
-
-msgid "Nothing added since no items were selected"
-msgstr ""
-
-msgid "Recent URLs"
-msgstr ""
-
-#, c-format
-msgid "URL: %s"
-msgstr ""
-
-msgid "change"
-msgstr "alterar"
-
-#, fuzzy, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "foi encontrado %d ficheiro"
-msgstr[1] "foram encontrados %d ficheiros"
-
-msgid "(Un)check all"
-msgstr ""
-
-#, fuzzy
-msgid "Add URLs"
-msgstr "Adicionado %s"
-
 msgid "No Thumbnail"
 msgstr "Sem Thumbnail"
 
@@ -3260,6 +3041,9 @@ msgstr ""
 "Este album tem uma ordenação automática, portanto não é possível alterar a ordem dos items "
 "manualmente. É necessário remover a ordenação automática para continuar."
 
+msgid "change"
+msgstr "alterar"
+
 msgid "Change the order of the items in this album."
 msgstr "Altera a ordem dos items neste Album."
 
@@ -3702,65 +3486,5 @@ msgstr "permissões"
 msgid "Unit test theme"
 msgstr ""
 
-#, fuzzy
-#~ msgid "Successfully installed and auto-configured module %s"
-#~ msgstr "Foi adicionado %d ficheiro com sucesso."
-
-#, fuzzy
-#~ msgid "Successfully installed module %s"
-#~ msgstr "Foi adicionado %d ficheiro com sucesso."
-
-#, fuzzy
-#~ msgid "Successfully configured module %s"
-#~ msgstr "Foi adicionado %d ficheiro com sucesso."
-
-#, fuzzy
-#~ msgid "Successfully upgraded module %s"
-#~ msgstr "Foi adicionado %d ficheiro com sucesso."
-
-#, fuzzy
-#~ msgid "Successfully activated module %s"
-#~ msgstr "Foi adicionado %d ficheiro com sucesso."
-
-#, fuzzy
-#~ msgid "Successfully deactivated module %s"
-#~ msgstr "Foi adicionado %d ficheiro com sucesso."
-
-#, fuzzy
-#~ msgid "Successfully uninstalled module %s"
-#~ msgstr "Foi adicionado %d ficheiro com sucesso."
-
-#, fuzzy
-#~ msgid "All Themes"
-#~ msgstr "Tema"
-
-#, fuzzy
-#~ msgid "(default)"
-#~ msgstr "Parâmetros de defeito"
-
-#, fuzzy
-#~ msgid "$ cd %s"
-#~ msgstr "Editar Utilizador"
-
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Nenhum &raquo;"
-
-#, fuzzy
-#~ msgid "add album"
-#~ msgstr "adicional sub-album"
-
-#, fuzzy
-#~ msgid "edit permissions"
-#~ msgstr "permissões"
-
-#, fuzzy
-#~ msgid "view permissions"
-#~ msgstr "permissões"
-
-#, fuzzy
-#~ msgid "Successfully deleted directory: /cache/entity"
-#~ msgstr "Foi adicionado %d ficheiro com sucesso."
-
-#, fuzzy
-#~ msgid "Unable to delete directory: /cache/theme"
-#~ msgstr "Foi adicionado %d ficheiro com sucesso."

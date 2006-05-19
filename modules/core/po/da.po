@@ -23,7 +23,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-10-15 09:02+0200\n"
 "PO-Revision-Date: 2006-03-10 12:21+0100\n"
@@ -199,6 +199,12 @@ msgstr "Sletter gammel cache til hurtig download"
 msgid "Converting MySQL data to UTF8"
 msgstr "Konverterer MySQL data til UTF8 format"
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Administratorer"
 
@@ -270,14 +276,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d kilobyte"
 msgstr[1] "%d kilobytes"
 
-msgid "From Local Server"
-msgstr "Fra lokal server"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Foto"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Fra webside"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Gallery elementadministration"
@@ -338,6 +351,9 @@ msgstr "Generel"
 
 msgid "Movie Size"
 msgstr "Filmstørrelse"
+
+msgid "Photo"
+msgstr "Foto"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Miniaturen blev beskåret."
@@ -889,49 +905,6 @@ msgstr "Bruger"
 msgid "user"
 msgstr "bruger"
 
-#, fuzzy
-msgid "Integrity Check"
-msgstr "Kontrol af indeksintegritet fejlede."
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "Kontrollerede %d elementer"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "Fejl ved tilføjelse af %s"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Optimer databasen"
 
@@ -1123,54 +1096,6 @@ msgstr "Nye mapper"
 msgid "New files"
 msgstr "Nye filer"
 
-msgid "Local Server Upload Paths"
-msgstr "Stier til overførsel fra lokal server"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Angiv de tilladte mapper på den lokale server, hvor brugere kan gemme filer og overføre dem "
-"til Gallery, ved hjælp af <i>Overfør til lokal server</i> funktionen. Stierne du indtaster "
-"her og alle filer og mapper under disse, vil være tilgængelige for enhver Gallery bruger som "
-"har tilladelse til at overføre. Du skal derfor afgrænse det til mapper som ikke vil "
-"indeholde følsomme oplysninger (f.eks. /tmp eller /usr/ftp/incoming)"
-
-msgid "Path"
-msgstr "Sti"
-
-msgid "Action"
-msgstr "Handling"
-
-msgid "remove"
-msgstr "fjern"
-
-msgid "Add"
-msgstr "Tilføj"
-
-msgid "You must enter a directory to add."
-msgstr "Du skal indtaste en mappe som skal tilføjes."
-
-msgid "open_basedir documentation"
-msgstr "open_basedir dokumentation"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Din webserver er konfigureret til at nægte dig adgang til mappen. Se venligst %s og kontakt "
-"til webserver administrator."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "Webserveren har ikke tilladelse til at læse mappen."
-
-msgid "The path you specified is not a valid directory."
-msgstr "Den angivne sti er ikke en gyldig mappe."
-
 msgid "Session Settings"
 msgstr "Sessionsopsætning"
 
@@ -1298,6 +1223,9 @@ msgstr ""
 "Hvis du ændrer 'cookie' indstillingerne skal <b>alle registrede brugere</b> af dit galleri "
 "<b>slette deres browser cookie cache</b>. Hvis ikke vil de opleve problemer med log ind / "
 "log ud / mistede sessioner."
+
+msgid "Path"
+msgstr "Sti"
 
 msgid "Invalid cookie path"
 msgstr "Ugyldig 'cookie' sti"
@@ -1534,6 +1462,9 @@ msgstr "Du kan ikke fjerne dig selv fra gruppen."
 msgid "Add Member"
 msgstr "Tilføj medlem"
 
+msgid "Add"
+msgstr "Tilføj"
+
 msgid "You must enter a username."
 msgstr "Du skal indtaste et brugernavn."
 
@@ -1604,6 +1535,9 @@ msgstr "Du kan ikke redigere gruppens brugere"
 
 msgid "Edit Group (by list)"
 msgstr "Rediger gruppe (med liste)"
+
+msgid "Action"
+msgstr "Handling"
 
 msgid "edit"
 msgstr "rediger"
@@ -2377,151 +2311,6 @@ msgstr "Sæt titler fra:"
 msgid "Assign caption to:"
 msgstr "Tildel billedtekst til:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Overfør filer som allerede findes på din server til Gallery. Filerne skal allerede være "
-"overført til din server (FTP eksempelvis) og skal være placeret hvor alle elementer på "
-"serveren har adgang. Bruger du Unix bør filerne, og det bibliotek filerne er i, have en "
-"filtilstand på mindst 755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Du kan ikke bruge denne funktion, før administratoren konfigurerer lovlige overførselsmapper."
-
-msgid "Server Path"
-msgstr "Serversti"
-
-msgid "You must enter a directory."
-msgstr "Du skal indtaste en mappe."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr "Den indtastede mappe er ugyldig. Undersøg om mappen er læsbar af alle brugere."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"Den indtastede mappe er ulovlig. Det skal være en undermappe af en mappe angivet nedenfor."
-
-msgid "An item with the same name already exists."
-msgstr "Der eksisterer allerede et element med det navn."
-
-msgid "Legal Directories"
-msgstr "Gyldige mapper"
-
-msgid "modify"
-msgstr "ændre"
-
-msgid "Recent Directories"
-msgstr "Seneste mapper"
-
-msgid "Find Files"
-msgstr "Find filer"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Mappe: %s"
-
-msgid "File name"
-msgstr "Filnavn"
-
-msgid "Type"
-msgstr "Type"
-
-msgid "Size"
-msgstr "Størrelse"
-
-msgid "Use Symlink"
-msgstr "Brug symbolsk lænke"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d byte"
-msgstr[1] "%d bytes"
-
-msgid "Parent Directory"
-msgstr "Ejermappe"
-
-msgid "Directory"
-msgstr "Mappe"
-
-msgid "(Un)check all known types"
-msgstr "Afkryds/fjern alle kendte typer"
-
-msgid "(Un)check symlinks"
-msgstr "Sæt/fjern symbolske lænker"
-
-msgid "for selected items"
-msgstr "for de valgte elementer"
-
-msgid "Copy base filenames to:"
-msgstr "Kopier basisfilnavne til:"
-
-msgid "Add Files"
-msgstr "Tilføj filer"
-
-msgid "Start Over"
-msgstr "Start forfra"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Importer filer til Gallery fra et andet websted. Indtast en URL til en webside på nettet og "
-"Gallery vil muliggøre at overføre enhver multimediefil som findes på siden. Hvis du "
-"indtaster en URL til en mappe, skal du afslutte URL'en med en skråstreg (eks. http://"
-"eksempel.dk/mappe/)."
-
-msgid "URL"
-msgstr "URL"
-
-msgid "You must enter a URL to a web page"
-msgstr "Du skal indtaste en URL til en webside"
-
-msgid "The URL entered must begin with http://"
-msgstr "Den indtastede URL skal begynde med http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "Den angivne website er utilgængelig."
-
-msgid "Nothing to add found from this URL"
-msgstr "Kunne ikke finde noget at tilføje fra denne URL"
-
-msgid "Nothing added since no items were selected"
-msgstr "Ingenting blev tilføjet da ingen nye ting var valgt"
-
-msgid "Recent URLs"
-msgstr "Seneste URLs"
-
-#, c-format
-msgid "URL: %s"
-msgstr "URL: %s"
-
-msgid "change"
-msgstr "ændrer"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "%d url fundet"
-msgstr[1] "%d urls fundet"
-
-msgid "(Un)check all"
-msgstr "Afkryds/fjern alle"
-
-msgid "Add URLs"
-msgstr "Tilføj URLs"
-
 msgid "No Thumbnail"
 msgstr "Ingen miniature"
 
@@ -3183,6 +2972,9 @@ msgstr ""
 "Dette album har en automatisk sortering angivet og du kan derfor ikke ændre sorteringen "
 "manuelt. Du skal fjerne den automatisk sortering for at fortsætte."
 
+msgid "change"
+msgstr "ændrer"
+
 msgid "Change the order of the items in this album."
 msgstr "Ændrer rækkefølgen på elementer i dette album."
 
@@ -3649,9 +3441,6 @@ msgstr "[test] En anden tilladelse"
 
 msgid "Unit test theme"
 msgstr "Enhedstest tema"
-
-#~ msgid "Display"
-#~ msgstr "Vis"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Installerede og autokonfigurerede %s modulet"

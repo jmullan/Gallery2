@@ -2045,6 +2045,25 @@ class CoreModuleExtras {
 		}
 	    }
 
+	case '1.1.7':
+	    /* ItemAddFromServer and ItemAddFromWeb moved to separate module */
+	    /* Move uploadLocalServer.dir entries to itemadd module in case it is activated later */
+	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	    if ($ret) {
+		return $ret;
+	    }
+	    for ($i = 1; isset($params['uploadLocalServer.dir.' . $i]); $i++) {
+		$key = 'uploadLocalServer.dir.' . $i;
+		$ret = GalleryCoreApi::setPluginParameter('module', 'itemadd', $key, $params[$key]);
+		if ($ret) {
+		    return $ret;
+		}
+		$ret = $module->removeParameter($key);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+
 
 	case 'end of upgrade path':
 	    /*
@@ -2303,6 +2322,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.4':
 	case '1.1.5':
 	case '1.1.6':
+	case '1.1.7':
 
 	case 'end of upgrade path':
 	    /*
@@ -2742,8 +2762,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	$regs[] = array('ItemEditPlugin', 'ItemEditRotateAndScalePhoto', 'inc', null, 3);
 	$regs[] = array('ItemEditPlugin', 'ItemEditPhotoThumbnail', 'inc', null, 4);
 	$regs[] = array('ItemAddPlugin', 'ItemAddFromBrowser', 'inc', null, 2);
-	$regs[] = array('ItemAddPlugin', 'ItemAddFromServer', 'inc', null, 3);
-	$regs[] = array('ItemAddPlugin', 'ItemAddFromWeb', 'inc', null, 4);
 	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null);
 	$regs[] = array('MaintenanceTask', 'OptimizeDatabaseTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushTemplatesTask', 'class', null);

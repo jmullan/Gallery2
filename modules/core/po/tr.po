@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2005-05-23 02:14+0200\n"
 "PO-Revision-Date: 2006-02-27 00:00+0200\n"
 "Last-Translator: Goker ISIK <admin@ansolon.com>\n"
@@ -196,6 +196,12 @@ msgstr "Eski izin tabloları siliniyor"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Site Yöneticileri"
 
@@ -267,13 +273,20 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d kilobyte"
 msgstr[1] "%d kilobyte"
 
-msgid "From Local Server"
-msgstr "Lokal Server'dan"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Foto"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
 
 msgid "Gallery Item Administration"
@@ -337,6 +350,9 @@ msgstr "Genel"
 
 msgid "Movie Size"
 msgstr "Film Boyutu"
+
+msgid "Photo"
+msgstr "Foto"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Thumbnail başarıyla tıraşlandı"
@@ -884,48 +900,6 @@ msgstr "Kullanıcı"
 msgid "user"
 msgstr "kullanıcı"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "add item"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "%s eklemesi başarısız"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Veritabanı optimizasyonu"
 
@@ -1107,47 +1081,6 @@ msgstr "Yeni klasörler"
 msgid "New files"
 msgstr "Yeni Dosyalar"
 
-msgid "Local Server Upload Paths"
-msgstr "Local Server Yükleme Klasör Yolları"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-
-msgid "Path"
-msgstr "Klasör Yolu"
-
-msgid "Action"
-msgstr "Hareket"
-
-msgid "remove"
-msgstr "kaldır"
-
-msgid "Add"
-msgstr "Ekle"
-
-msgid "You must enter a directory to add."
-msgstr "Eklemek için klasör girmelisiniz."
-
-msgid "open_basedir documentation"
-msgstr "open_basedir dökümantasyonu"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "Webserverın bu klasörü okuma izni yok."
-
-msgid "The path you specified is not a valid directory."
-msgstr ""
-
 msgid "Session Settings"
 msgstr "Oturum Ayarları"
 
@@ -1242,6 +1175,9 @@ msgid ""
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
 msgstr ""
+
+msgid "Path"
+msgstr "Klasör Yolu"
 
 msgid "Invalid cookie path"
 msgstr "Geçersiz çerez klasör yolu"
@@ -1464,6 +1400,9 @@ msgstr "Kendiniz bu gruptan çıkartamazsınız."
 msgid "Add Member"
 msgstr "Üye Ekle"
 
+msgid "Add"
+msgstr "Ekle"
+
 msgid "You must enter a username."
 msgstr "Kullanıcıadı girmelisiniz."
 
@@ -1534,6 +1473,9 @@ msgstr "Bu grubun kullanıcılarını düzenleyemezsiniz"
 
 msgid "Edit Group (by list)"
 msgstr "Grup Düzenle (listeden)"
+
+msgid "Action"
+msgstr "Hareket"
 
 msgid "edit"
 msgstr "düzenle"
@@ -2263,144 +2205,6 @@ msgstr ""
 msgid "Assign caption to:"
 msgstr "Gallery Site Administration"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-
-msgid "Server Path"
-msgstr "Server Klasör Yolu"
-
-msgid "You must enter a directory."
-msgstr "Klasör girmelisiniz."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-
-msgid "An item with the same name already exists."
-msgstr ""
-
-msgid "Legal Directories"
-msgstr "Yasal Klasörler"
-
-msgid "modify"
-msgstr "modifiye et"
-
-msgid "Recent Directories"
-msgstr "Yeni Klasörler"
-
-msgid "Find Files"
-msgstr "Dosyaları Bul"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Klasör: %s"
-
-msgid "File name"
-msgstr "Dosya Adı"
-
-msgid "Type"
-msgstr "Tür"
-
-msgid "Size"
-msgstr "Boyut"
-
-msgid "Use Symlink"
-msgstr ""
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d byte"
-msgstr[1] "%d byte"
-
-msgid "Parent Directory"
-msgstr "Ana Klasör"
-
-msgid "Directory"
-msgstr "Klasör"
-
-msgid "(Un)check all known types"
-msgstr ""
-
-msgid "(Un)check symlinks"
-msgstr ""
-
-#, fuzzy
-msgid "for selected items"
-msgstr "[core] Delete item"
-
-msgid "Copy base filenames to:"
-msgstr "Temel dosya adlarını kopyala:"
-
-msgid "Add Files"
-msgstr "Dosya Ekle"
-
-msgid "Start Over"
-msgstr "Baştan Başla"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-
-msgid "URL"
-msgstr "URL"
-
-#, fuzzy
-msgid "You must enter a URL to a web page"
-msgstr "You must enter a user name"
-
-msgid "The URL entered must begin with http://"
-msgstr ""
-
-#, fuzzy
-msgid "The web page you specified is unavailable"
-msgstr "The user name you entered is invalid"
-
-msgid "Nothing to add found from this URL"
-msgstr ""
-
-msgid "Nothing added since no items were selected"
-msgstr ""
-
-msgid "Recent URLs"
-msgstr "Yeni URL'ler"
-
-#, c-format
-msgid "URL: %s"
-msgstr "URL: %s"
-
-msgid "change"
-msgstr "değiştir"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "%d url bulundu "
-msgstr[1] "%d url bulundu"
-
-msgid "(Un)check all"
-msgstr ""
-
-msgid "Add URLs"
-msgstr "URL'ler ekle"
-
 msgid "No Thumbnail"
 msgstr "Thumbnail Yok"
 
@@ -3024,6 +2828,9 @@ msgid ""
 "manually.  You must remove the automatic sort order to continue."
 msgstr ""
 
+msgid "change"
+msgstr "değiştir"
+
 msgid "Change the order of the items in this album."
 msgstr "Bu albümdeki ögelerin sıralanışını değiştir."
 
@@ -3442,9 +3249,6 @@ msgstr "[test] İkinci izin"
 
 msgid "Unit test theme"
 msgstr ""
-
-#~ msgid "Display"
-#~ msgstr "Görüntüle"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Modül %s başarıyla otomatik konfigüre edildi ve kuruldu"

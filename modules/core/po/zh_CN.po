@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2005-03-28 14:00+0800\n"
 "PO-Revision-Date: 2006-03-10 11:37+0800\n"
 "Last-Translator: Lyric <lyric@lyricli.com>\n"
@@ -192,6 +192,12 @@ msgstr "正在删除旧的快速下载缓存"
 msgid "Converting MySQL data to UTF8"
 msgstr "将 MySQL 数据转换到 UTF8"
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "网站管理"
 
@@ -263,14 +269,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d KB"
 msgstr[1] "%d KB"
 
-msgid "From Local Server"
-msgstr "从本地服务器"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "照片"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "从网页"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "图库项目管理"
@@ -331,6 +344,9 @@ msgstr "通用"
 
 msgid "Movie Size"
 msgstr "电影尺寸"
+
+msgid "Photo"
+msgstr "照片"
 
 msgid "Thumbnail cropped successfully"
 msgstr "缩略图裁切成功"
@@ -873,49 +889,6 @@ msgstr "用户"
 msgid "user"
 msgstr "用户"
 
-#, fuzzy
-msgid "Integrity Check"
-msgstr "索引完整性检查失败"
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "检查 %d 个项目"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "添加 %s 出错"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "优化数据库"
 
@@ -1095,50 +1068,6 @@ msgstr "新目录"
 msgid "New files"
 msgstr "新文件"
 
-msgid "Local Server Upload Paths"
-msgstr "本地服务器上传路径"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"在本地服务器中指定用户可保存文件的合法目录，用户可通过<i>从本地服务器上传</i>功能将这些保存文"
-"件上传到图库中。您在此输入的路径以及此路径下的所有文件和目录将会对所有拥有上传权限的图库用户"
-"开放，所以请限制此目录不要包含敏感数据（例如：/tmp 或 /usr/ftp/incoming 等）。"
-
-msgid "Path"
-msgstr "路径"
-
-msgid "Action"
-msgstr "操作"
-
-msgid "remove"
-msgstr "删除"
-
-msgid "Add"
-msgstr "添加"
-
-msgid "You must enter a directory to add."
-msgstr "您必须输入一个目录来添加。"
-
-msgid "open_basedir documentation"
-msgstr "open_basedir 文档"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr "您的服务器设定不允许您访问此目录。请参考 %s 并与您的系统管理员协商。"
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "网络服务器没有权限读取此目录。"
-
-msgid "The path you specified is not a valid directory."
-msgstr "您指定的路径不是一个有效的目录。"
-
 msgid "Session Settings"
 msgstr "Session设置"
 
@@ -1250,6 +1179,9 @@ msgid ""
 msgstr ""
 "一旦更改了Cookie设置，<b>所有注册用户</b>都将要清除浏览器的Cookie缓存。如果不这样做，将不能登"
 "录。"
+
+msgid "Path"
+msgstr "路径"
 
 msgid "Invalid cookie path"
 msgstr "非法的Cookie路径"
@@ -1482,6 +1414,9 @@ msgstr "您不能从这个成员组中将自己删除。"
 msgid "Add Member"
 msgstr "添加成员"
 
+msgid "Add"
+msgstr "添加"
+
 msgid "You must enter a username."
 msgstr "您必须输入一个用户名。"
 
@@ -1552,6 +1487,9 @@ msgstr "您不能编辑该成员组的用户"
 
 msgid "Edit Group (by list)"
 msgstr "编辑成员组(列表)"
+
+msgid "Action"
+msgstr "操作"
 
 msgid "edit"
 msgstr "编辑"
@@ -2301,146 +2239,6 @@ msgstr "设定项目标题从:"
 msgid "Assign caption to:"
 msgstr "指定标题到:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"将已保存在您服务器上的文件传输到图库中。文件必须已经通过其他方式（如FTP）上传到服务器，并放置"
-"在可由任何服务器程序处理的目录中。如果您使用的是UNIX系统则目录权限至少要是755。"
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr "出于安全考虑，在网站管理员设定允许的上传目录前，您不能使用此功能。"
-
-msgid "Server Path"
-msgstr "服务器路径"
-
-msgid "You must enter a directory."
-msgstr "您必须输入一个目录。"
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr "您输入的目录不合法。请确认此目录是所有用户可读取的。"
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr "您输入的目录不合法。它必须是下列目录之一的一个子目录。"
-
-msgid "An item with the same name already exists."
-msgstr "同名项目已经存在。"
-
-msgid "Legal Directories"
-msgstr "合法目录"
-
-msgid "modify"
-msgstr "修改"
-
-msgid "Recent Directories"
-msgstr "近期目录"
-
-msgid "Find Files"
-msgstr "查找文件"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "目录: %s"
-
-msgid "File name"
-msgstr "文件名"
-
-msgid "Type"
-msgstr "类型"
-
-msgid "Size"
-msgstr "尺寸"
-
-msgid "Use Symlink"
-msgstr "使用链接"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d 字节"
-msgstr[1] "%d 字节"
-
-msgid "Parent Directory"
-msgstr "上层目录"
-
-msgid "Directory"
-msgstr "目录"
-
-msgid "(Un)check all known types"
-msgstr "选择/取消选择所有已知类型"
-
-msgid "(Un)check symlinks"
-msgstr "选择/取消选择链接"
-
-msgid "for selected items"
-msgstr "对已选择项目"
-
-msgid "Copy base filenames to:"
-msgstr "复制文件名到:"
-
-msgid "Add Files"
-msgstr "添加文件"
-
-msgid "Start Over"
-msgstr "重新开始"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"从其他网站导入文件到图库。请在下方输入网络中的任意网页地址，图库将允许您上传在该网页中找到的"
-"任意媒体类型。请注意，如果您输入的是一个网站目录，请以反斜杠作为地址结尾。（例如：http://"
-"example.com/directory/）"
-
-msgid "URL"
-msgstr "网址"
-
-msgid "You must enter a URL to a web page"
-msgstr "您必须为网页输入一个网址"
-
-msgid "The URL entered must begin with http://"
-msgstr "输入网址必须以 http:// 开始"
-
-msgid "The web page you specified is unavailable"
-msgstr "您指定的网页无法找到"
-
-msgid "Nothing to add found from this URL"
-msgstr "从该URL不能找到和添加任何东西。"
-
-msgid "Nothing added since no items were selected"
-msgstr "由于未选择项目，没有内容被添加"
-
-msgid "Recent URLs"
-msgstr "近期网址"
-
-#, c-format
-msgid "URL: %s"
-msgstr "网址: %s"
-
-msgid "change"
-msgstr "变更"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "找到 %d 个网址"
-msgstr[1] "找到 %d 个网址"
-
-msgid "(Un)check all"
-msgstr "选择/取消选择全部"
-
-msgid "Add URLs"
-msgstr "添加网址"
-
 msgid "No Thumbnail"
 msgstr "无缩略图"
 
@@ -3067,6 +2865,9 @@ msgid ""
 msgstr ""
 "此相册已指定了自动排序方式，因此您不能手动更改项目排序。您必须先删除自动排序方式才能继续。"
 
+msgid "change"
+msgstr "变更"
+
 msgid "Change the order of the items in this album."
 msgstr "在此相册中变更项目顺序。"
 
@@ -3494,9 +3295,6 @@ msgstr "[测试]权限"
 
 msgid "Unit test theme"
 msgstr "公测主题"
-
-#~ msgid "Display"
-#~ msgstr "显示"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "模块 %s 安装并自动设置成功"

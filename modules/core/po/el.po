@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2003-03-06 16:30+0200\n"
 "PO-Revision-Date: 2003-03-06 16:30+0200\n"
 "Last-Translator: Nikos Batsis <nickthegreek@yahoo.com>\n"
@@ -203,6 +203,12 @@ msgstr "Δικαιώματα Αντικειμένου"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 #, fuzzy
 msgid "Site Admins"
 msgstr "Διαχείρηση της Γκαλλερύ"
@@ -282,14 +288,20 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d Λεπτό"
 msgstr[1] "%d Λεπτό"
 
-#, fuzzy
-msgid "From Local Server"
-msgstr "Προσθέστε αρχεία που βρίσκονται στο Διακομιστή"
-
-msgid "Photo"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
 msgstr ""
 
-msgid "From Web Page"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
 
 msgid "Gallery Item Administration"
@@ -361,6 +373,9 @@ msgstr "Γενικά"
 #, fuzzy
 msgid "Movie Size"
 msgstr "Ρυθμίσεις Λευκόματος"
+
+msgid "Photo"
+msgstr ""
 
 #, fuzzy
 msgid "Thumbnail cropped successfully"
@@ -958,48 +973,6 @@ msgstr "Πλήρες Πρόσβαση"
 msgid "user"
 msgstr "Επεξεργασία Χρήστη"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "Προσθέστε Φωτογραφίες"
-
-#, c-format
-msgid "Failed to load entity ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr ""
 
@@ -1194,48 +1167,6 @@ msgstr ""
 msgid "New files"
 msgstr "Προσθέστε Φωτογραφίες"
 
-msgid "Local Server Upload Paths"
-msgstr ""
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-
-msgid "Path"
-msgstr ""
-
-msgid "Action"
-msgstr "Ενέργεια"
-
-msgid "remove"
-msgstr ""
-
-msgid "Add"
-msgstr "Προσθήκη"
-
-#, fuzzy
-msgid "You must enter a directory to add."
-msgstr "Διαγραφή Χρήστη"
-
-msgid "open_basedir documentation"
-msgstr ""
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr ""
-
-msgid "The path you specified is not a valid directory."
-msgstr ""
-
 #, fuzzy
 msgid "Session Settings"
 msgstr "Ρυθμίσεις Λευκόματος"
@@ -1335,6 +1266,9 @@ msgid ""
 "Once you change the cookie settings, <b>all registered users</b> of your Gallery will "
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
+msgstr ""
+
+msgid "Path"
 msgstr ""
 
 msgid "Invalid cookie path"
@@ -1577,6 +1511,9 @@ msgstr "Διαγραφή Ομάδας"
 msgid "Add Member"
 msgstr "Προσθέστε Φωτογραφίες"
 
+msgid "Add"
+msgstr "Προσθήκη"
+
 #, fuzzy
 msgid "You must enter a username."
 msgstr "Διαγραφή Χρήστη"
@@ -1655,6 +1592,9 @@ msgstr ""
 #, fuzzy
 msgid "Edit Group (by list)"
 msgstr "Επεξεργασία ομάδας '%s'"
+
+msgid "Action"
+msgstr "Ενέργεια"
 
 #, fuzzy
 msgid "edit"
@@ -2400,151 +2340,6 @@ msgstr ""
 msgid "Assign caption to:"
 msgstr "Διαχείρηση της Γκαλλερύ"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-
-msgid "Server Path"
-msgstr ""
-
-#, fuzzy
-msgid "You must enter a directory."
-msgstr "Διαγραφή Χρήστη"
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-
-msgid "An item with the same name already exists."
-msgstr ""
-
-msgid "Legal Directories"
-msgstr ""
-
-msgid "modify"
-msgstr ""
-
-msgid "Recent Directories"
-msgstr ""
-
-#, fuzzy
-msgid "Find Files"
-msgstr "Προσθέστε Φωτογραφίες"
-
-#, fuzzy, c-format
-msgid "Directory: %s"
-msgstr "Λάθος"
-
-#, fuzzy
-msgid "File name"
-msgstr "Πλήρες Όνομα"
-
-msgid "Type"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-msgid "Use Symlink"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d Λεπτό"
-msgstr[1] "%d Λεπτό"
-
-#, fuzzy
-msgid "Parent Directory"
-msgstr "Λάθος"
-
-#, fuzzy
-msgid "Directory"
-msgstr "Λάθος"
-
-msgid "(Un)check all known types"
-msgstr ""
-
-msgid "(Un)check symlinks"
-msgstr ""
-
-#, fuzzy
-msgid "for selected items"
-msgstr "Διαγραφή Χρήστη"
-
-msgid "Copy base filenames to:"
-msgstr ""
-
-#, fuzzy
-msgid "Add Files"
-msgstr "Προσθέστε Φωτογραφίες"
-
-#, fuzzy
-msgid "Start Over"
-msgstr "* Χωρίς Ταξινόμιση *"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-
-msgid "URL"
-msgstr ""
-
-#, fuzzy
-msgid "You must enter a URL to a web page"
-msgstr "Διαγραφή Χρήστη"
-
-msgid "The URL entered must begin with http://"
-msgstr ""
-
-msgid "The web page you specified is unavailable"
-msgstr ""
-
-msgid "Nothing to add found from this URL"
-msgstr ""
-
-msgid "Nothing added since no items were selected"
-msgstr ""
-
-msgid "Recent URLs"
-msgstr ""
-
-#, c-format
-msgid "URL: %s"
-msgstr ""
-
-#, fuzzy
-msgid "change"
-msgstr "Αλλαγή"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "(Un)check all"
-msgstr ""
-
-msgid "Add URLs"
-msgstr ""
-
 msgid "No Thumbnail"
 msgstr ""
 
@@ -3202,6 +2997,10 @@ msgid ""
 "manually.  You must remove the automatic sort order to continue."
 msgstr ""
 
+#, fuzzy
+msgid "change"
+msgstr "Αλλαγή"
+
 msgid "Change the order of the items in this album."
 msgstr ""
 
@@ -3650,18 +3449,6 @@ msgstr "Δικαιώματα Αντικειμένου"
 
 msgid "Unit test theme"
 msgstr ""
-
-#, fuzzy
-#~ msgid "Successfully configured module %s"
-#~ msgstr "Η Ομάδα '%s' Διαγράφηκε με επιτυχία"
-
-#, fuzzy
-#~ msgid "All Themes"
-#~ msgstr "Πλήρες Πρόσβαση"
-
-#, fuzzy
-#~ msgid "(default)"
-#~ msgstr "Προεπιλογές"
 
 #, fuzzy
 #~ msgid "add album"

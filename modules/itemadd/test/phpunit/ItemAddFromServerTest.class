@@ -19,20 +19,20 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+ * @package ItemAdd
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
  * ItemAddFromServer plugin test
- * @package GalleryCore
+ * @package ItemAdd
  * @subpackage PHPUnit
  */
 class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
     function ItemAddFromServerTest($methodName) {
-	$this->ItemAddPluginTestCase($methodName, 'core', 'ItemAddFromServer');
+	$this->ItemAddPluginTestCase($methodName, 'itemadd', 'ItemAddFromServer');
     }
 
     function setUp() {
@@ -43,12 +43,14 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	list ($ret, $this->_rootAlbum) =
 	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_rootAlbum);
 
 	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -57,25 +59,27 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$this->_symlinkDisallowedPlatform =
 	    new ItemAddFromServerTestPlatform($gallery->getPlatform(), false);
 
-	$ret = $this->_markPluginParametersForCleanup('module', 'core');
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $ret;
-	}
-
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1',
-						  dirname(dirname(__FILE__)));
+	$ret = $this->_markPluginParametersForCleanup('module', 'itemadd');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.2',
+
+	$this->_baseDir = dirname(dirname(__FILE__));
+	$ret = GalleryCoreApi::setPluginParameter('module', 'itemadd', 'uploadLocalServer.dir.1',
+						  $this->_baseDir);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'itemadd', 'uploadLocalServer.dir.2',
 						  $gallery->getConfig('data.gallery.base'));
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.3');
+	$ret = GalleryCoreApi::removePluginParameter('module', 'itemadd',
+						     'uploadLocalServer.dir.3');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -91,6 +95,45 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	}
 
 	parent::tearDown();
+    }
+
+    function testIsAppropriate() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'itemadd', 'fromserver', 'off');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(false, $isAppropriate, 'off');
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'itemadd', 'fromserver', 'admin');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(true, $isAppropriate, 'admin for admin');
+
+	$this->_becomeGuestUser();
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(false, $isAppropriate, 'admin for guest');
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'itemadd', 'fromserver', 'on');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $isAppropriate) = $this->_plugin->isAppropriate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(true, $isAppropriate, 'on');
     }
 
     /*
@@ -225,7 +268,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	$platform =& $gallery->getPlatform();
 	$dirSep = $platform->getDirectorySeparator();
-	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data';
+	$baseDir = $this->_baseDir . $dirSep . 'data';
 	$fileKeys = array();
 
 	if ($addFiles) {
@@ -332,6 +375,10 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$i = 0;
 	foreach ($escapedBasenames as $base) {
 	    $item =& $items[$results[1]['addedFiles'][$i]['id']];
+	    if (!isset($item)) {
+		$this->assert(false, 'Item ' . $i++ . ' missing');
+		continue;
+	    }
 	    $expectedName = GalleryCoreApi::convertToUtf8($base);
 	    $this->assertEquals($setTitle ? $expectedName : '', $item->getTitle(), 'title');
 	    $this->assertEquals($setSummary ? $expectedName : '', $item->getSummary(),
@@ -364,7 +411,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$dirSep = $platform->getDirectorySeparator();
-	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data';
+	$baseDir = $this->_baseDir . $dirSep . 'data';
 
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
@@ -415,7 +462,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$dirSep = $platform->getDirectorySeparator();
-	$baseDir = dirname(dirname(__FILE__)) . $dirSep;
+	$baseDir = $this->_baseDir . $dirSep;
 
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
@@ -432,7 +479,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$dirSep = $platform->getDirectorySeparator();
-	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data' . $dirSep;
+	$baseDir = $this->_baseDir . $dirSep . 'data' . $dirSep;
 
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir . '<My "Files">');
@@ -453,7 +500,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 /**
  * Test platform
  *
- * @package GalleryCore
+ * @package ItemAdd
  * @subpackage PHPUnit
  */
 class ItemAddFromServerTestPlatform extends GalleryPlatform {

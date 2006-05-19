@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2005-05-04 16:46-0400\n"
 "PO-Revision-Date: 2005-08-29 14:16+0100\n"
 "Last-Translator: Trung Dong Huynh <trungdong@donggiang.com>\n"
@@ -197,6 +197,12 @@ msgstr "Đang xóa bảng quyền hạn cũ"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Quản trị trang"
 
@@ -268,14 +274,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d kilobyte"
 msgstr[1] "%d kilobyte"
 
-msgid "From Local Server"
-msgstr "Từ thư mục cục bộ của máy chủ"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Ảnh"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Từ trang web"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Quản trị đối tượng của Gallery"
@@ -339,6 +352,9 @@ msgstr "Tổng quát"
 
 msgid "Movie Size"
 msgstr "Kích thước phim"
+
+msgid "Photo"
+msgstr "Ảnh"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Đã cắt xén ảnh con"
@@ -890,48 +906,6 @@ msgstr "Thành viên"
 msgid "user"
 msgstr "thành viên"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "Đã kiểm tra %d đối tượng"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "Thất bại khi thêm %s"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Tối ưu hóa cơ sơ dữ liệu"
 
@@ -1125,54 +1099,6 @@ msgstr "Thư mục mới"
 msgid "New files"
 msgstr "Tập tin mới"
 
-msgid "Local Server Upload Paths"
-msgstr "Đường dẫn để tải lên thư mục cục bộ"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Quy định các thư mục hợp lệ trên máy chủ cục bộ để thành viên có thể tài tập tin lên và thêm "
-"vào Gallery bằng tính năng <i>Tải lên từ máy chủ cục bộ</i>. Đường dẫn mà bạn nhập ở đây và "
-"tất cả các tập tin và thư mục nằm trong đường dẫn này sẽ trở nên truy cập được đối với tất "
-"cả thành viên có quyền tải ảnh. Vì thế, bạn nên hạn chế các đường dẫn dưới đây chỉ trong các "
-"thư mục không chứa các thông tin nhạy cảm (ví dụ như /tmp or /usr/ftp/incoming)"
-
-msgid "Path"
-msgstr "Đường dẫn"
-
-msgid "Action"
-msgstr "Chọn lựa"
-
-msgid "remove"
-msgstr "xóa bỏ"
-
-msgid "Add"
-msgstr "Thêm"
-
-msgid "You must enter a directory to add."
-msgstr "Bạn phải điền một thư mục để thêm vào."
-
-msgid "open_basedir documentation"
-msgstr "tài liệu về open_basedir"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Webserver của bạn ngăn không cho bạn truy cập thư mục đó. Hãy xem %s và tham khảo quản trị "
-"webserver của bạn."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "Webserver không có quyền đọc thư mục đó."
-
-msgid "The path you specified is not a valid directory."
-msgstr "Đường dẫn bạn khai không phải là một thư mục hợp lệ."
-
 msgid "Session Settings"
 msgstr "Cài đặt về session"
 
@@ -1299,6 +1225,9 @@ msgstr ""
 "Một khi bạn thay đổi thông số cookie, <b>tất cả người dùng đã đăng ký</b> của Gallery sẽ "
 "<b>phải xóa cache cookie trong trình duyệt của họ</b>. Nếu không, họ sẽ gặp rắc rối khi đăng "
 "nhập / thoát khỏi Gallery hoặc mất session."
+
+msgid "Path"
+msgstr "Đường dẫn"
 
 msgid "Invalid cookie path"
 msgstr "Đường dẫn cookie không hợp lệ"
@@ -1533,6 +1462,9 @@ msgstr "Bạn không thể tự xóa bạn khỏi nhóm này được"
 msgid "Add Member"
 msgstr "Thêm thành viên"
 
+msgid "Add"
+msgstr "Thêm"
+
 msgid "You must enter a username."
 msgstr "Bạn phải điền một tên thành viên vào."
 
@@ -1603,6 +1535,9 @@ msgstr "Bạn không thể hiệu chỉnh các thành viên của nhóm đó"
 
 msgid "Edit Group (by list)"
 msgstr "Chỉnh sửa nhóm thành viên (theo danh sách)"
+
+msgid "Action"
+msgstr "Chọn lựa"
 
 msgid "edit"
 msgstr "chỉnh sửa"
@@ -2368,155 +2303,6 @@ msgstr "Đặt tiêu đề cho đối tượng từ:"
 msgid "Assign caption to:"
 msgstr "Đặt tiêu đề vào:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Chuyển các tập tin đang có sẵn trên máy chủ của bạn vào Gallery. Các tập tin này cần được "
-"tải lên máy chủ bằng một cách nào đó (chẳng hạn như FTP)và phải được đặt trong một thư mục "
-"mà webserver có thể truy cập được. Nếu bạn dùng Unix thì có nghĩa là các tập tin và thư mục "
-"phải được đặt quyền ít nhất là 755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Vì lý do an ninh, bạn chưa thể sử dụng tính năng này cho đến khi quản trị của Gallery cài "
-"đặt các thư mục hợp lệ để tải ảnh lên."
-
-msgid "Server Path"
-msgstr "Đường dẫn máy chủ"
-
-msgid "You must enter a directory."
-msgstr "Bạn phải điền một một thư mục vào."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"Thư mục bạn nhập vào không hợp lệ.. Bạn hãy kiểm tra để chắc là thư mục này tất cả người "
-"dùng có thể đọc được."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"Thư mục bạn nhập vào không hợp lệ. Nó phải là thư mục con của một trong các thư mục liệt kê "
-"dưới đây."
-
-msgid "An item with the same name already exists."
-msgstr "Đã có đối tượng có cùng tên"
-
-msgid "Legal Directories"
-msgstr "Các thư mục hợp lệ"
-
-msgid "modify"
-msgstr "hiệu chỉnh"
-
-msgid "Recent Directories"
-msgstr "Các thư mục dùng gần đây"
-
-msgid "Find Files"
-msgstr "Tìm các tập tin"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Thư mục: %s"
-
-msgid "File name"
-msgstr "Tên tập tin"
-
-msgid "Type"
-msgstr "Loại"
-
-msgid "Size"
-msgstr "Kích thước"
-
-msgid "Use Symlink"
-msgstr "Dùng Symlink"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d byte"
-msgstr[1] "%d byte"
-
-msgid "Parent Directory"
-msgstr "Thư mục cha"
-
-msgid "Directory"
-msgstr "Thư mục"
-
-msgid "(Un)check all known types"
-msgstr "(Bỏ) đánh dấu tất cả các loại tập tin đã biết"
-
-msgid "(Un)check symlinks"
-msgstr "(Bỏ) đánh dấu liên kết"
-
-msgid "for selected items"
-msgstr "cho các đối tượng được chọn"
-
-msgid "Copy base filenames to:"
-msgstr "Chép tên file vào:"
-
-msgid "Add Files"
-msgstr "Thêm tập tin"
-
-msgid "Start Over"
-msgstr "Làm lại từ đầu"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Nhập tập tin vào Gallery từ một trang web khác. Nhập địa chỉ trang web ở bất cứ đâu trên "
-"mạng và Gallery sẽ cho phép bạn tải bất cứ tập tin nào nó tìm được trên trang web đó. Lưu ý "
-"là nếu bạn nhập địa chỉ đến một thư mục thì bạn nên kết thúc địa chỉ bằng một dấu gạch chéo "
-"(ví dụ: http://example.com/directory/)."
-
-msgid "URL"
-msgstr "Đường dẫn"
-
-msgid "You must enter a URL to a web page"
-msgstr "Bạn phải điền một một đường dẫn đến một trang web"
-
-msgid "The URL entered must begin with http://"
-msgstr "Đường dẫn phải bắt đầu bằng http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "Trang web bạn nhập vào không truy cập được"
-
-msgid "Nothing to add found from this URL"
-msgstr "Không tìm thấy gì để thêm từ đường dẫn này"
-
-msgid "Nothing added since no items were selected"
-msgstr "Không thêm vì không đối tượng nào được chọn"
-
-msgid "Recent URLs"
-msgstr "Các đường dẫn dùng gần đây"
-
-#, c-format
-msgid "URL: %s"
-msgstr "Đường dẫn: %s"
-
-msgid "change"
-msgstr "đổi"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "tìm thấy %d đường đẫn"
-msgstr[1] "tìm thấy %d đường đẫn"
-
-msgid "(Un)check all"
-msgstr "(Bỏ) đánh dấu tất cả"
-
-msgid "Add URLs"
-msgstr "Thêm địa chỉ mạng"
-
 msgid "No Thumbnail"
 msgstr "Không có ảnh con"
 
@@ -3188,6 +2974,9 @@ msgstr ""
 "Album này đã được đặt thứ tự sắp xếp tự động nên bạn không thể chỉnh thứ tự của các đối "
 "tượng bằng tay. Bạn phải bỏ thứ tự sắp xếp tự động mới có thể tiếp tục được."
 
+msgid "change"
+msgstr "đổi"
+
 msgid "Change the order of the items in this album."
 msgstr "Thay đổi thứ tự các đối tượng trong album này"
 
@@ -3655,9 +3444,6 @@ msgstr "[kiểm tra] Một quyền hạn thứ hai"
 
 msgid "Unit test theme"
 msgstr "Kiểu trình bày thử"
-
-#~ msgid "Display"
-#~ msgstr "Hiển thị"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Đã cài và tự động đặt cấu hình cho module %s"

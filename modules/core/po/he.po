@@ -19,7 +19,7 @@
 # Guy Sheffer <guysoft@ort.org.il>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2004-12-18 15:28+0200\n"
 "PO-Revision-Date: 2006-04-05 16:36+0300\n"
 "Last-Translator: Guy Sheffer <guysoft@ort.org.il>\n"
@@ -193,6 +193,12 @@ msgstr "מוחקת את המטמון הישן של ההורדות-המהירות
 msgid "Converting MySQL data to UTF8"
 msgstr "ממיר את המידע במסד MySQL לקידוד utf8."
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "מנהלי מערכת"
 
@@ -264,14 +270,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "(%d קילובייט)"
 msgstr[1] "(%d קילובייט)"
 
-msgid "From Local Server"
-msgstr "מהשרת המקומי"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "תמונה"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "מאתר אינטרנט"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Gallery Item Administration"
@@ -332,6 +345,9 @@ msgstr "כללי"
 
 msgid "Movie Size"
 msgstr "גודל הסרט"
+
+msgid "Photo"
+msgstr "תמונה"
 
 msgid "Thumbnail cropped successfully"
 msgstr "תמונה מוקטנת נגזרה בהצלחה"
@@ -880,48 +896,6 @@ msgstr "משתמש"
 msgid "user"
 msgstr "משתמש"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "%d פריטים מסומנים"
-
-#, c-format
-msgid "Failed to load entity ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr ""
 
@@ -1117,51 +1091,6 @@ msgstr "סיפריות חדשות"
 msgid "New files"
 msgstr "קבצים חדשים"
 
-msgid "Local Server Upload Paths"
-msgstr "סיפריות העלאה בשרת מקומי"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"קבע סיפריות חוקיות בשרת שלך שבהן משתמשים יכולים לשים קבצים ואז להעלות אותם לגלרייה דרך "
-"<i>העלאה משרת מקומי</i>.  הסיפריות שאתה מגדיר כאן וכל הקבצים שבהן יהיו זמינים לכל משתמש בעל "
-"הרשאות העלאה, אז מומלץ שתגדיר רק סיפריות שלא מכילות מידע רגיש."
-
-msgid "Path"
-msgstr "סיפריה"
-
-msgid "Action"
-msgstr "פעולה"
-
-msgid "remove"
-msgstr "הסר"
-
-msgid "Add"
-msgstr "הוסף"
-
-msgid "You must enter a directory to add."
-msgstr "אתה מוכרח להכניס סיפריה להוספה."
-
-msgid "open_basedir documentation"
-msgstr "תיעוד עבור open_basedir"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"השרת שלך מוגדר כך שהוא לא מאפשר לך גישה לסיפריה זו.  אנא עיין ב %s והתייעץ במנהל השרת שלך."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "אין לשרת הרשאה מתאימה על מנת לקרוא את סיפריה זו."
-
-msgid "The path you specified is not a valid directory."
-msgstr "הסיפריה שהכנסת אינה סיפריה תיקנית"
-
 msgid "Session Settings"
 msgstr "הגדרות Session"
 
@@ -1261,6 +1190,9 @@ msgid ""
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
 msgstr ""
+
+msgid "Path"
+msgstr "סיפריה"
 
 msgid "Invalid cookie path"
 msgstr ""
@@ -1484,6 +1416,9 @@ msgstr "אינך יכול להסיר את עצמך מקבוצה זו."
 msgid "Add Member"
 msgstr "הוסף משתמש"
 
+msgid "Add"
+msgstr "הוסף"
+
 msgid "You must enter a username."
 msgstr "אתה מוכרח להכניס שם משתמש."
 
@@ -1555,6 +1490,9 @@ msgstr "אינך יכול לערוך משתמשים מקבוצה זו"
 
 msgid "Edit Group (by list)"
 msgstr "ערוך קבוצה (מתוך רשימה)"
+
+msgid "Action"
+msgstr "פעולה"
 
 msgid "edit"
 msgstr "עריכה"
@@ -2321,151 +2259,6 @@ msgstr ""
 msgid "Assign caption to:"
 msgstr ""
 
-#, fuzzy
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"העבר קבצים שכבר נמצאים על השרת שלך לתוך הגלרייה שלך.  הקבצים חייבים להיות בסיפריה בעלת "
-"הרשאות קריאה של לפחות 755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr "למטרות אבטחה, לא ניתן להשתמש באופציה זו עד שלא יוגדרו במערכת סיפריות מורשות להעלאה."
-
-msgid "Server Path"
-msgstr "סיפרית השרת"
-
-msgid "You must enter a directory."
-msgstr "אתה מוכרח להכניס סיפריה."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr "הסיפריה שבחרת אינה תיקנית.  וודא שהסיפריה נגישה עבור כל המשתמשים."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr "הסיפריה שהכנסת אינה חוקית.   היא חייבת להיות תת-סיפריה תחת אחת מהסיפריות הבאות."
-
-#, fuzzy
-msgid "An item with the same name already exists."
-msgstr "שם המשתמש '%s' כבר קיים"
-
-msgid "Legal Directories"
-msgstr "סיפריות חוקיות"
-
-msgid "modify"
-msgstr "שנה"
-
-msgid "Recent Directories"
-msgstr "סיפריות אחרונות"
-
-msgid "Find Files"
-msgstr "חפש קבצים"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "סיפריה: %s"
-
-msgid "File name"
-msgstr "שם קובץ"
-
-msgid "Type"
-msgstr "סוג"
-
-msgid "Size"
-msgstr "גודל"
-
-msgid "Use Symlink"
-msgstr ""
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "(%d בייט)"
-msgstr[1] "(%d בייט)"
-
-#, fuzzy
-msgid "Parent Directory"
-msgstr "סיפריה"
-
-msgid "Directory"
-msgstr "סיפריה"
-
-msgid "(Un)check all known types"
-msgstr "סמן/בטל את כל הסוגים המוכרים"
-
-#, fuzzy
-msgid "(Un)check symlinks"
-msgstr "סמן/בטל הכל"
-
-#, fuzzy
-msgid "for selected items"
-msgstr "[ליבה] מחק פריט"
-
-msgid "Copy base filenames to:"
-msgstr ""
-
-msgid "Add Files"
-msgstr "הוסף קבצים"
-
-msgid "Start Over"
-msgstr "התחל מחדש"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"ייבוא קבצים לגלרייה מאתר אחר.  הכנס כתובת לדף אינטרנט כלשהוא והמערכת תאפשר לך להעלות כל קובץ "
-"מדיה שהיא תמצא בדף זה.  שים לב, אם אתה נותן כתובת לסיפריה, אתה צריך לסיים אותה עם סלאש "
-"(לדוגמה, http://www.hwzone.co.il/directory/)."
-
-msgid "URL"
-msgstr "כתובת"
-
-msgid "You must enter a URL to a web page"
-msgstr "אתה מוכרח להכניס כתובת לעמוד האינטרנט"
-
-msgid "The URL entered must begin with http://"
-msgstr "הכתובת חייבת להתחיל ב http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "דף האינטרנט שהכנסת אינו זמין"
-
-msgid "Nothing to add found from this URL"
-msgstr ""
-
-msgid "Nothing added since no items were selected"
-msgstr ""
-
-msgid "Recent URLs"
-msgstr "כתובות אחרונות"
-
-#, c-format
-msgid "URL: %s"
-msgstr "כתובת: %s"
-
-msgid "change"
-msgstr "שנה"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "כתובת %d נמצאה"
-msgstr[1] "%d כתובות נמצאו"
-
-msgid "(Un)check all"
-msgstr "סמן/בטל הכל"
-
-msgid "Add URLs"
-msgstr "הוסף כתובות URL"
-
 msgid "No Thumbnail"
 msgstr "תמונה מוקטנת לא קיימת"
 
@@ -3130,6 +2923,9 @@ msgstr ""
 "אלבום זה מוגדר לסידור אוטומטי, ולכן אין באפשרותך לשנות את סדר הפריטים שבו בצורה ידנית.   בטל "
 "את אפשרות הסידור האוטומטי על-מנת להמשיך."
 
+msgid "change"
+msgstr "שנה"
+
 msgid "Change the order of the items in this album."
 msgstr "שנה את סדר הפריטים באלבום זה"
 
@@ -3566,9 +3362,6 @@ msgstr "עריכת הרשאות עבור %s"
 #, fuzzy
 msgid "Unit test theme"
 msgstr "מודול בדיקת יחידה"
-
-#~ msgid "Display"
-#~ msgstr "תצוגה"
 
 #~ msgid "Incompatible module!"
 #~ msgstr "מודול לא מתאים"

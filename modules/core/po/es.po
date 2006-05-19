@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "Report-Msgid-Bugs-To: <gallery-devel@lists.sourceforge.net>\n"
 "POT-Creation-Date: 2005-10-25 17:54+0200\n"
 "PO-Revision-Date: 2005-12-02 13:55+0100\n"
@@ -201,6 +201,12 @@ msgstr "Borrando la cache de descarga rápida"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Administradores del Sitio"
 
@@ -272,14 +278,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d kilobyte"
 msgstr[1] "%d kilobytes"
 
-msgid "From Local Server"
-msgstr "Desde el Servidor Local"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Foto"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Desde la Página Web"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Administración de Elementos de Gallery"
@@ -343,6 +356,9 @@ msgstr "General"
 
 msgid "Movie Size"
 msgstr "Tamaño de la Película"
+
+msgid "Photo"
+msgstr "Foto"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Miniatura recortada con éxito"
@@ -894,48 +910,6 @@ msgstr "Usuario"
 msgid "user"
 msgstr "usuario"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "%d elementos seleccionados"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "Fallo al agregar %s"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Optimizar base de datos"
 
@@ -1129,55 +1103,6 @@ msgstr "Nuevos directorios"
 msgid "New files"
 msgstr "Nuevos ficheros"
 
-msgid "Local Server Upload Paths"
-msgstr "Direcciones Locales del Servidor para Subida"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Especifica los directorios del servidor local donde un usuario puede almacenar ficheros y "
-"luego cargarlos en Gallery usando la característica <i>Cargar desde el Servidor Local</i>.  "
-"Las rutas que introduzcas aquí y todos los archivos y directorios por debajo de esas rutas "
-"estarán a disposición de cualquier usuario de Gallery que disponga de privilegios para subir "
-"informació, deberás limitar esto a directorios que no contengan datos importantes (ej. /tmp "
-"o /usr/ftp/incoming)"
-
-msgid "Path"
-msgstr "Ruta"
-
-msgid "Action"
-msgstr "Acción"
-
-msgid "remove"
-msgstr "eliminar"
-
-msgid "Add"
-msgstr "Agregar"
-
-msgid "You must enter a directory to add."
-msgstr "Debes introducir un directorio para agregar."
-
-msgid "open_basedir documentation"
-msgstr "documentación de open_basedir"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Tu servidor web esta configurado para impedirte tener acceso a ese directorio.  Por favor "
-"consulta la %s y habla con tu administrador del servidor web."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "El servidor web no tiene permisos para leer ese directorio."
-
-msgid "The path you specified is not a valid directory."
-msgstr "La ruta que has especificado no es un directorio válido."
-
 msgid "Session Settings"
 msgstr "Ajustes de la Sesión"
 
@@ -1308,6 +1233,9 @@ msgstr ""
 "Una vez que cambies las configuraciones de la cookie, <b>todos los usuarios registrados</b> "
 "de tu Gallery <b>deberán limpiar la caché de las cookies de sus navegadores</b>. Si no lo "
 "hacen, experimentaran problemas de autenticación / cierre de sesión / perdida de sesión."
+
+msgid "Path"
+msgstr "Ruta"
 
 msgid "Invalid cookie path"
 msgstr "La ruta a la cookie no es válida"
@@ -1544,6 +1472,9 @@ msgstr "No puedes eliminarte a ti mismo de este grupo."
 msgid "Add Member"
 msgstr "Agregar Miembro"
 
+msgid "Add"
+msgstr "Agregar"
+
 msgid "You must enter a username."
 msgstr "Debes introducir un nombre de usuario."
 
@@ -1614,6 +1545,9 @@ msgstr "No puedes editar los usuarios de ese grupo"
 
 msgid "Edit Group (by list)"
 msgstr "Editar Grupo (por lista)"
+
+msgid "Action"
+msgstr "Acción"
 
 msgid "edit"
 msgstr "editar"
@@ -2385,157 +2319,6 @@ msgstr "Establecer los títulos de los elementos de:"
 msgid "Assign caption to:"
 msgstr "Asignar etiqueta a:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Transferir archivos que ya se encuentran en el servidor a Gallery. Los archivos deben de "
-"haber sido ya subidos al servidor por alguna otra vía (como por ejemplo FTP) y deben de "
-"haberse colocado en un directorio que sea accesible para cualquier elemento del servidor.  "
-"Si estas en Unix esto significa que tanto los archivos como el directorio donde se "
-"encuentran debe de tener como mínimo los modos 755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Por razones de seguridad, no es posible utilizar esta característica a no ser que el "
-"Administrador de Gallery configure un juego de directorios válidos para subida."
-
-msgid "Server Path"
-msgstr "Ruta al Servidor"
-
-msgid "You must enter a directory."
-msgstr "Debes escribir un directorio."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"El directorio que has introducido no es valido.  Asegúrate que el directorio tiene permisos "
-"de lectura para todos los usuarios."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"El directorio que has introducido no esta permitido.  Debe ser un subdirectorio de uno de "
-"los directorios listados a continuación."
-
-msgid "An item with the same name already exists."
-msgstr "Ya existe un elemento con el mismo nombre."
-
-msgid "Legal Directories"
-msgstr "Directorios Permitidos"
-
-msgid "modify"
-msgstr "modificar"
-
-msgid "Recent Directories"
-msgstr "Directorios Recientes"
-
-msgid "Find Files"
-msgstr "Encontrar Archivos"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Directorio: %s"
-
-msgid "File name"
-msgstr "Nombre del archivo"
-
-msgid "Type"
-msgstr "Tipo"
-
-msgid "Size"
-msgstr "Tamaño"
-
-msgid "Use Symlink"
-msgstr "Usar Enlace Simbólico"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d byte"
-msgstr[1] "%d bytes"
-
-msgid "Parent Directory"
-msgstr "Directorio Superior"
-
-msgid "Directory"
-msgstr "Directorio"
-
-msgid "(Un)check all known types"
-msgstr "(De)seleccionar todos los tipos conocidos"
-
-msgid "(Un)check symlinks"
-msgstr "(De)seleccionar enlaces simbólicos"
-
-msgid "for selected items"
-msgstr "para elementos seleccionados"
-
-msgid "Copy base filenames to:"
-msgstr "Copiar nombres de archivo a:"
-
-msgid "Add Files"
-msgstr "Agregar Ficheros"
-
-msgid "Start Over"
-msgstr "Comenzar"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Importa archivos en Gallery desde otro sitio web.  Introduce una URL a continuación de una "
-"página web de cualquier parte de la red y Gallery te permitirá subir cualquier tipo de "
-"archivo de medios que encuentre en esa página.  Date cuenta de que si introduces una URL a "
-"un directorio, debes finalizar la URL con una barra normal (ej, http://example.com/"
-"directory/)."
-
-msgid "URL"
-msgstr "URL"
-
-msgid "You must enter a URL to a web page"
-msgstr "Debes escribir una URL a una página"
-
-msgid "The URL entered must begin with http://"
-msgstr "La URL debe comenzar con http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "La página web especificada no esta disponible"
-
-msgid "Nothing to add found from this URL"
-msgstr "No se ha encontrado nada que agregar desde esta URL"
-
-msgid "Nothing added since no items were selected"
-msgstr "Nada agregado desde elementos no seleccionados"
-
-msgid "Recent URLs"
-msgstr "URLs Recientes"
-
-#, c-format
-msgid "URL: %s"
-msgstr "URL: %s"
-
-msgid "change"
-msgstr "cambiar"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "%d url encontrada"
-msgstr[1] "%d urls encontradas"
-
-msgid "(Un)check all"
-msgstr "(De)seleccionar todo"
-
-msgid "Add URLs"
-msgstr "Agregar URLs"
-
 msgid "No Thumbnail"
 msgstr "Sin Miniatura"
 
@@ -3213,6 +2996,9 @@ msgstr ""
 "cambiar el orden de los elemento manualmente.  Deberías quitar el orden de colocación "
 "automático para continuar."
 
+msgid "change"
+msgstr "cambiar"
+
 msgid "Change the order of the items in this album."
 msgstr "Cambia el orden de los elementos en este álbum."
 
@@ -3690,9 +3476,6 @@ msgstr "[test] Un permiso secundario"
 msgid "Unit test theme"
 msgstr "Tema de prueba de unidad"
 
-#~ msgid "Display"
-#~ msgstr "Visualización"
-
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Módulo %s instalado y auto configurado con éxito"
 
@@ -3737,9 +3520,6 @@ msgstr "Tema de prueba de unidad"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; Ninguno &raquo;"
-
-#~ msgid "some text to be spit out in different languages"
-#~ msgstr "algún texto para ser escupido en diferentes idiomas"
 
 #~ msgid "You did it right!"
 #~ msgstr "&iexcl;Lo hiciste bien!"

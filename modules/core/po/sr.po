@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-14 16:52+0200\n"
 "PO-Revision-Date: 2005-09-06 17:10+0200\n"
@@ -199,6 +199,12 @@ msgstr "Brisanje fast-download keša"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Administratori"
 
@@ -270,14 +276,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d kilobajt"
 msgstr[1] "%d kilobajta"
 
-msgid "From Local Server"
-msgstr "Sa lokalnog servera"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Fotografija"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Sa web stranice"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Administracija objekta Galerije"
@@ -341,6 +354,9 @@ msgstr "Opšti parametri"
 
 msgid "Movie Size"
 msgstr "Veličina filma"
+
+msgid "Photo"
+msgstr "Fotografija"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Umanjen prikaz uspečno isečen"
@@ -892,48 +908,6 @@ msgstr "Korisnik"
 msgid "user"
 msgstr "korisnik"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "Provereno %d objekata"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "Nije uspelo dodavanje %s"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Optimizacija baze podataka"
 
@@ -1124,55 +1098,6 @@ msgstr "Novi direktorijumi"
 msgid "New files"
 msgstr "Nove datoteke"
 
-msgid "Local Server Upload Paths"
-msgstr "Putanje za slanje sa lokalnog servera"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Navedite dozvoljene direktorijuma na lokalnom serveru gde korisnik može da skladišti "
-"datoteke i posle ih prenese u Galeriju koristeći mogućnost <i>Prenosa sa lokalnog servera</"
-"i>. Putanje koje unesete ovde, kao i sve datoteke i direktorijume pod tim putanjama biće "
-"dostupne svakom korisniku Galerije koji ima dozvolu za slanje, tako da bi trebalo ovo da "
-"ograničite na direktorijume koji neće sadržati poverljive podatke (npr. /tmp ili /usr/ftp/"
-"incoming)."
-
-msgid "Path"
-msgstr "Putanja"
-
-msgid "Action"
-msgstr "Akcija"
-
-msgid "remove"
-msgstr "ukloni"
-
-msgid "Add"
-msgstr "Dodaj"
-
-msgid "You must enter a directory to add."
-msgstr "Morate uneti direktorijum koji će biti dodat."
-
-msgid "open_basedir documentation"
-msgstr "dokumentacija open_basedir"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Vaš webserver je konfigurisan da vas spreči da pristupite tom direktorijumu. Uputite se na %"
-"s i konsultujte se sa administratorom vašeg web servera."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "Web server nema dozvolu za čitanje tog direktorijuma."
-
-msgid "The path you specified is not a valid directory."
-msgstr "Putanja koju ste naveli nije ispravna."
-
 msgid "Session Settings"
 msgstr "Parametri sesije"
 
@@ -1300,6 +1225,9 @@ msgstr ""
 "Kada promenite parametre kolačića, <b>svi registrovani korisnici</b> vaše Galerije će morati "
 "da <b>isprazne keš kolačića svojih čitača</b>. Ako to ne urade, imaće problema sa prijavom, "
 "odjavom ili izgubljenim sesijama."
+
+msgid "Path"
+msgstr "Putanja"
 
 msgid "Invalid cookie path"
 msgstr "Neispravna putanja kolačića"
@@ -1531,6 +1459,9 @@ msgstr "Ne možete ukloniti sebe iz ove grupe."
 msgid "Add Member"
 msgstr "Dodaj člana"
 
+msgid "Add"
+msgstr "Dodaj"
+
 msgid "You must enter a username."
 msgstr "Morate uneti korisničko ime."
 
@@ -1601,6 +1532,9 @@ msgstr "Ne možete ažurirati korisnike te grupe"
 
 msgid "Edit Group (by list)"
 msgstr "Izmena groupe (po spisku)"
+
+msgid "Action"
+msgstr "Akcija"
 
 msgid "edit"
 msgstr "izmeni"
@@ -2367,155 +2301,6 @@ msgstr "Preuzmi naslove iz:"
 msgid "Assign caption to:"
 msgstr "Preuzmi natpise iz:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Prenos datoteka koje se već nalaze na vašem serveru u Galeriju. Datoteke na neki drugi način "
-"(kao što je FTP) već treba da su poslate na server i stavljene u direktorijum gde su "
-"dostupne bilo kom elementu na serveru. Ako koristite Unix, ovo znači da datoteke i "
-"direktorijum u kojem se nalaze moraju imati režime od bar 755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Iz bezbednosnih razloga, ovu mogućnost ne možete koristiti sve dok administrator Galerije ne "
-"podesi skup dozvoljenih direktorijuma za prenos."
-
-msgid "Server Path"
-msgstr "Putanja na serveru"
-
-msgid "You must enter a directory."
-msgstr "Morate uneti direktorijum."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"Direktorijum koji ste uneli je neispravan. Proverite da li je direktorijum moguće čitati od "
-"strane svih korisnika."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"Direktorijum koji ste uneli je neipravan. Mora biti poddirektorijum jednog od ispod "
-"navedenih direktorijuma."
-
-msgid "An item with the same name already exists."
-msgstr "Objekat sa istim imenom več postoji."
-
-msgid "Legal Directories"
-msgstr "Dozvoljeni direktorijumi."
-
-msgid "modify"
-msgstr "izmeni"
-
-msgid "Recent Directories"
-msgstr "Nedavno korišćeni direktorijumi"
-
-msgid "Find Files"
-msgstr "Pronađi datoteke"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Direktorijum: %s"
-
-msgid "File name"
-msgstr "Naziv datoteke"
-
-msgid "Type"
-msgstr "Tip"
-
-msgid "Size"
-msgstr "Veličina"
-
-msgid "Use Symlink"
-msgstr "Koristi simvezu"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d bajt"
-msgstr[1] "%d bajtova"
-
-msgid "Parent Directory"
-msgstr "Prethodni direktorijum"
-
-msgid "Directory"
-msgstr "Direktorijum"
-
-msgid "(Un)check all known types"
-msgstr "Obeleži/isključi sve poznate tipove"
-
-msgid "(Un)check symlinks"
-msgstr "Obeleži/isključi simveze"
-
-msgid "for selected items"
-msgstr "za izabrane objekte"
-
-msgid "Copy base filenames to:"
-msgstr "Kopiraj osnovne nazive datoteka u:"
-
-msgid "Add Files"
-msgstr "Dodaj datoteke"
-
-msgid "Start Over"
-msgstr "Počni ispočetka"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Unos datoteka u Galeriju sa druge web stranice. Unesite ispod adresu bilo koje web stranice "
-"na internetu, i Galerija će vam dozvoliti da prenesete bilo koji multimedijalni sadržaj "
-"pronađen na toj stranici. Obratite pažnju na to da ako unosite adresu direktorijuma, na kraj "
-"treba da stavite kosu crtu (npr. http://primer.com/direktorijum/)."
-
-msgid "URL"
-msgstr "Adresa"
-
-msgid "You must enter a URL to a web page"
-msgstr "Morate uneti adresu web stranice"
-
-msgid "The URL entered must begin with http://"
-msgstr "Uneta adresa mora početi sa http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "Web stranica koju ste naveli nije dostupna"
-
-msgid "Nothing to add found from this URL"
-msgstr "Na ovoj adresi nije pronađeno ništa što bi se moglo dodati"
-
-msgid "Nothing added since no items were selected"
-msgstr "Ništa nije dodato, pošto ni jedan objekat nije obeležen"
-
-msgid "Recent URLs"
-msgstr "Prethodno korišćene adrese"
-
-#, c-format
-msgid "URL: %s"
-msgstr "Adresa: %s"
-
-msgid "change"
-msgstr "promeni"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "%d adresa nije pronađena"
-msgstr[1] "%d adresa nije pronađeno"
-
-msgid "(Un)check all"
-msgstr "Obeleži/isključi sve"
-
-msgid "Add URLs"
-msgstr "Dodaj adrese"
-
 msgid "No Thumbnail"
 msgstr "Nema umanjenih prikaza"
 
@@ -3184,6 +2969,9 @@ msgstr ""
 "Ovaj album ima uključeno automatsko određivanje redosleda, tako da ne možete ručno promeniti "
 "redosled objekata. Morate isključiti automatsko određivanje redosleda da biste nastavili."
 
+msgid "change"
+msgstr "promeni"
+
 msgid "Change the order of the items in this album."
 msgstr "Promena redosleda objekata u ovom albumu."
 
@@ -3644,9 +3432,6 @@ msgstr "[test] Drugo pravo"
 
 msgid "Unit test theme"
 msgstr "Testni izgled"
-
-#~ msgid "Display"
-#~ msgstr "Prikaz"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Modul %s uspešno instaliran i automatski konfigurisan"

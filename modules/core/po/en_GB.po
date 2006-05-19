@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2003-06-25 11:44+0100\n"
 "PO-Revision-Date: 2003-06-25 15:57+0100\n"
 "Last-Translator: Joan McGalliard <gallery@joanhenge.plus.com>\n"
@@ -191,6 +191,12 @@ msgstr ""
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr ""
 
@@ -262,13 +268,20 @@ msgid_plural "%d kilobytes"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "From Local Server"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
 msgstr ""
 
-msgid "Photo"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
 msgstr ""
 
-msgid "From Web Page"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
 
 msgid "Gallery Item Administration"
@@ -329,6 +342,9 @@ msgid "General"
 msgstr ""
 
 msgid "Movie Size"
+msgstr ""
+
+msgid "Photo"
 msgstr ""
 
 msgid "Thumbnail cropped successfully"
@@ -869,48 +885,6 @@ msgstr "User"
 msgid "user"
 msgstr "user"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, c-format
-msgid "Checked %d entities"
-msgstr ""
-
-#, c-format
-msgid "Failed to load entity ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Optimize database"
 
@@ -1090,47 +1064,6 @@ msgstr ""
 msgid "New files"
 msgstr ""
 
-msgid "Local Server Upload Paths"
-msgstr ""
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-
-msgid "Path"
-msgstr ""
-
-msgid "Action"
-msgstr ""
-
-msgid "remove"
-msgstr ""
-
-msgid "Add"
-msgstr ""
-
-msgid "You must enter a directory to add."
-msgstr ""
-
-msgid "open_basedir documentation"
-msgstr ""
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr ""
-
-msgid "The path you specified is not a valid directory."
-msgstr ""
-
 msgid "Session Settings"
 msgstr ""
 
@@ -1224,6 +1157,9 @@ msgid ""
 "Once you change the cookie settings, <b>all registered users</b> of your Gallery will "
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
+msgstr ""
+
+msgid "Path"
 msgstr ""
 
 msgid "Invalid cookie path"
@@ -1447,6 +1383,9 @@ msgstr ""
 msgid "Add Member"
 msgstr ""
 
+msgid "Add"
+msgstr ""
+
 msgid "You must enter a username."
 msgstr ""
 
@@ -1516,6 +1455,9 @@ msgid "You cannot edit that group's users"
 msgstr ""
 
 msgid "Edit Group (by list)"
+msgstr ""
+
+msgid "Action"
 msgstr ""
 
 msgid "edit"
@@ -2223,141 +2165,6 @@ msgstr ""
 msgid "Assign caption to:"
 msgstr ""
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-
-msgid "Server Path"
-msgstr ""
-
-msgid "You must enter a directory."
-msgstr ""
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-
-msgid "An item with the same name already exists."
-msgstr ""
-
-msgid "Legal Directories"
-msgstr ""
-
-msgid "modify"
-msgstr ""
-
-msgid "Recent Directories"
-msgstr ""
-
-msgid "Find Files"
-msgstr ""
-
-#, c-format
-msgid "Directory: %s"
-msgstr ""
-
-msgid "File name"
-msgstr ""
-
-msgid "Type"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-msgid "Use Symlink"
-msgstr ""
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "Parent Directory"
-msgstr ""
-
-msgid "Directory"
-msgstr ""
-
-msgid "(Un)check all known types"
-msgstr ""
-
-msgid "(Un)check symlinks"
-msgstr ""
-
-msgid "for selected items"
-msgstr ""
-
-msgid "Copy base filenames to:"
-msgstr ""
-
-msgid "Add Files"
-msgstr ""
-
-msgid "Start Over"
-msgstr ""
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-
-msgid "URL"
-msgstr ""
-
-msgid "You must enter a URL to a web page"
-msgstr ""
-
-msgid "The URL entered must begin with http://"
-msgstr ""
-
-msgid "The web page you specified is unavailable"
-msgstr ""
-
-msgid "Nothing to add found from this URL"
-msgstr ""
-
-msgid "Nothing added since no items were selected"
-msgstr ""
-
-msgid "Recent URLs"
-msgstr ""
-
-#, c-format
-msgid "URL: %s"
-msgstr ""
-
-msgid "change"
-msgstr ""
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "(Un)check all"
-msgstr ""
-
-msgid "Add URLs"
-msgstr ""
-
 msgid "No Thumbnail"
 msgstr ""
 
@@ -2956,6 +2763,9 @@ msgstr ""
 msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "
 "manually.  You must remove the automatic sort order to continue."
+msgstr ""
+
+msgid "change"
 msgstr ""
 
 msgid "Change the order of the items in this album."

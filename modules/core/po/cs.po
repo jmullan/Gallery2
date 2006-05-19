@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-01-28 21:40+0100\n"
 "PO-Revision-Date: 2006-03-11 17:40+0100\n"
@@ -198,6 +198,12 @@ msgstr "Mažu starou cache rychlých downloadů"
 msgid "Converting MySQL data to UTF8"
 msgstr "Konvertuji MySQL data do UTF8"
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Správci"
 
@@ -271,14 +277,21 @@ msgstr[0] "%d kilobyte"
 msgstr[1] "%d kilobyty"
 msgstr[2] "%d kilobytů"
 
-msgid "From Local Server"
-msgstr "Z místního serveru"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Foto"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Z webové stránky"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Správa položky Galerie"
@@ -339,6 +352,9 @@ msgstr "Obecné"
 
 msgid "Movie Size"
 msgstr "Velikost videa"
+
+msgid "Photo"
+msgstr "Foto"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Náhled úspěšně oříznut"
@@ -891,49 +907,6 @@ msgstr "Uživatel"
 msgid "user"
 msgstr "uživatel"
 
-#, fuzzy
-msgid "Integrity Check"
-msgstr "Chyba při kontrole integrity indexu."
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "Zkontrolováno %d položek"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "Chyba při přidání %s"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Optimalizace databáze"
 
@@ -1122,54 +1095,6 @@ msgstr "Nové adresáře"
 msgid "New files"
 msgstr "Nové soubory"
 
-msgid "Local Server Upload Paths"
-msgstr "Cesty pro nové soubory na místním serveru"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Nastavení povolených adresářů na serveru, kam mohou uživatelé uložit soubory a pak je nahrát "
-"do Galerie pomocí vlastnosti <i>Nahrání z místního serveru</i>.  Cesty, soubory a adresáře, "
-"které zde uvedete, budou dostupné pro všechny uživatele, kteří mají oprávnění k uploadu. "
-"Měli byste je tedy omezit na adresáře, které neobsahují citlivá data (jako jsou /tmp nebo /"
-"usr/ftp/incoming)."
-
-msgid "Path"
-msgstr "Cesta"
-
-msgid "Action"
-msgstr "Akce"
-
-msgid "remove"
-msgstr "odstranit"
-
-msgid "Add"
-msgstr "Přidat"
-
-msgid "You must enter a directory to add."
-msgstr "Musíte zadat adresář, který chcete přidat."
-
-msgid "open_basedir documentation"
-msgstr "dokumentace open_basedir"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Konfigurace tohoto webového serveru Vám brání k přístupu k tomuto adresáři.  Prosím obraťte "
-"se na %s a konzultujte tento problém se správcem serveru."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "Webový server nemá oprávnění číst daný adresář."
-
-msgid "The path you specified is not a valid directory."
-msgstr "Cesta, kterou jste zadal, není platný adresář."
-
 msgid "Session Settings"
 msgstr "Nastavení sezení (session)"
 
@@ -1291,6 +1216,9 @@ msgstr ""
 "Pokud někdy změníte nastavení cookie, <b>všichni registrovaní uživatelé</b> Vaší Galerie "
 "<b>musí smazat cookie cache v jejich prohlížečích</b>. Pokud to neudělají, mohou narazit na "
 "problémy při přihlašování, odhlašovaní nebo i v průběhu prohlížení."
+
+msgid "Path"
+msgstr "Cesta"
 
 msgid "Invalid cookie path"
 msgstr "Neplatná cesta cookie"
@@ -1529,6 +1457,9 @@ msgstr "Z této skupiny nemůžete odebrat sám sebe."
 msgid "Add Member"
 msgstr "Přidat člena"
 
+msgid "Add"
+msgstr "Přidat"
+
 msgid "You must enter a username."
 msgstr "Musíte zadat uživatelské jméno."
 
@@ -1600,6 +1531,9 @@ msgstr "Uživatele této skupiny nemůžete upravit."
 
 msgid "Edit Group (by list)"
 msgstr "Upravit skupinu (podle seznamu)"
+
+msgid "Action"
+msgstr "Akce"
 
 msgid "edit"
 msgstr "upravit"
@@ -2401,156 +2335,6 @@ msgstr "Nastavit titulky z:"
 msgid "Assign caption to:"
 msgstr "Přiřadit popisek k:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Zde můžete do Galerie nahrát soubory, které už jsou na Vašem serveru.  Soubory již musí být "
-"přeneseny na server například protokolem FTP a musí být dostupné na serveru.  Pokud je tato "
-"Galerie na systému typu Unix, znamená to, že by soubory měli mít mod nejméně 644 a adresáře "
-"755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"Z bezpečnostních důvodů tuto vlastnost nemůžete použít, dokud správce Galerie nenastaví "
-"adresáře, kam je možné nahrát soubory."
-
-msgid "Server Path"
-msgstr "Cesta serveru"
-
-msgid "You must enter a directory."
-msgstr "Musíte zadat adresář."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"Adresář, který jste vybrali je neplatný.  Zkontrolujte prosím, jestli je tento adresář "
-"čitelný pro všechny uživatele."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"Adresář, který jste vybrali není povolený.  Musí jít o podadresář jednoho z následujících "
-"adresářů."
-
-msgid "An item with the same name already exists."
-msgstr "Položka se stejným jménem už existuje."
-
-msgid "Legal Directories"
-msgstr "Povolené adresáře lze"
-
-msgid "modify"
-msgstr "upravit"
-
-msgid "Recent Directories"
-msgstr "Naposledy použité adresáře"
-
-msgid "Find Files"
-msgstr "Najít soubory"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Adresář: %s"
-
-msgid "File name"
-msgstr "Jméno souboru"
-
-msgid "Type"
-msgstr "Typ"
-
-msgid "Size"
-msgstr "Velikost"
-
-msgid "Use Symlink"
-msgstr "Použít odkaz"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d byte"
-msgstr[1] "%d byty"
-msgstr[2] "%d bytů"
-
-msgid "Parent Directory"
-msgstr "Nadřazený adresář"
-
-msgid "Directory"
-msgstr "Adresář"
-
-msgid "(Un)check all known types"
-msgstr "Vybrat nebo zrušit výběr všech známých typů"
-
-msgid "(Un)check symlinks"
-msgstr "(zrušit) výběr všech"
-
-msgid "for selected items"
-msgstr "pro vybrané položky"
-
-msgid "Copy base filenames to:"
-msgstr "Zkopírovat jména souborů do:"
-
-msgid "Add Files"
-msgstr "Přidat soubory"
-
-msgid "Start Over"
-msgstr "Začít znovu"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Import souborů z jiného webu.  Zadejte URL ke stránkám kdekoliv na Internetu a Galerie Vám "
-"umožní nahrát jakékoliv soubory, které na této stránce najde.  Nezapomeňte zadat koncové "
-"lomítko, pokud adresa URL odkazuje na adresář (například http://domena.cz/adresar/)."
-
-msgid "URL"
-msgstr "URL"
-
-msgid "You must enter a URL to a web page"
-msgstr "Musíte zadat URL adresu nějakých webových stránek"
-
-msgid "The URL entered must begin with http://"
-msgstr "Adresa URL musí začínat http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "Webové stránky, které jste zadali, nejsou dostupné"
-
-msgid "Nothing to add found from this URL"
-msgstr "Na této URL nebylo nalezeno nic k přidání"
-
-msgid "Nothing added since no items were selected"
-msgstr "Nic nebylo přidáno, protože nebyly vybrány žádné položky"
-
-msgid "Recent URLs"
-msgstr "Naposledy použité URL"
-
-#, c-format
-msgid "URL: %s"
-msgstr "URL: %s"
-
-msgid "change"
-msgstr "změnit"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "nalezena %d URL"
-msgstr[1] "nalezeny %d URL"
-msgstr[2] "nalezeno %d URL"
-
-msgid "(Un)check all"
-msgstr "Vybrat nebo zrušit výběr všech"
-
-msgid "Add URLs"
-msgstr "Přidat URL"
-
 msgid "No Thumbnail"
 msgstr "Bez náhledu"
 
@@ -3220,6 +3004,9 @@ msgstr ""
 "Toto album má nastaveno automatické třídění, takže není možné měnit pořadí položek ručně.  "
 "Pokud chcete v tomto pokračovat, musíte zrušit automatické třídění."
 
+msgid "change"
+msgstr "změnit"
+
 msgid "Change the order of the items in this album."
 msgstr "Změňit pořadí položek v tomto albu."
 
@@ -3680,9 +3467,6 @@ msgstr "[test] Druhá oprávnění"
 msgid "Unit test theme"
 msgstr "Téma testovací jednotky"
 
-#~ msgid "Display"
-#~ msgstr "Zobrazení"
-
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Modul %s úspěšně nainstalován a nakonfigurován"
 
@@ -3727,9 +3511,6 @@ msgstr "Téma testovací jednotky"
 
 #~ msgid "Error downloading package from '%s'."
 #~ msgstr "Chyba při stahování balíku z '%s'."
-
-#~ msgid "As of the last update on"
-#~ msgstr "Jako při poslední aktualizaci"
 
 #~ msgid "Warning: `$errorMessage`"
 #~ msgstr "Varování: `$errorMessage`"

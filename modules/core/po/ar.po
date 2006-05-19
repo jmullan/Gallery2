@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-03-31 20:26+0200\n"
 "PO-Revision-Date: 2005-08-14 13:34+0300\n"
@@ -198,6 +198,12 @@ msgstr "حذف جداول الصلاحيات القديمة"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "مدراء الموقع"
 
@@ -269,14 +275,21 @@ msgid_plural "%d kilobytes"
 msgstr[0] "%d كيلو بايت"
 msgstr[1] ""
 
-msgid "From Local Server"
-msgstr "من السيرفر المحلي"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "صورة"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "من صفحة على الإنترنت"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "إدارة مادة جاليري"
@@ -340,6 +353,9 @@ msgstr "عام"
 
 msgid "Movie Size"
 msgstr "حجم الفلم"
+
+msgid "Photo"
+msgstr "صورة"
 
 msgid "Thumbnail cropped successfully"
 msgstr "تم تحديد جزء من الصورة المصغرة بنجاح"
@@ -889,48 +905,6 @@ msgstr "المستخدم"
 msgid "user"
 msgstr "مستخدم"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "تم إختيار %d مادة"
-
-#, c-format
-msgid "Failed to load entity ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "تحسين أداء قاعدة البيانات"
 
@@ -1124,54 +1098,6 @@ msgstr "مجلدات جديدة"
 msgid "New files"
 msgstr "ملفات جديدة"
 
-msgid "Local Server Upload Paths"
-msgstr "مسارات مجلدات رفع الملفات للسيرفرات المحلية"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"حدد المجلدات الصالحة على السيرفر المحلي اللتي يمكن للمستخدم تخزين المواد عليه و من ثم رفعها "
-"إلى الجاليري بإستخدام خاصية <i>Upload from Local Server</i> . المسارات المدخلة هنا و جميع "
-"الملفات و المجلدات اللتي تحتويها سوف تكون متوفرة لجميع المستخدمين المالكين لصلاحية رفع "
-"الملفات, لذلك يجب عليك تحديد المجلدات اللتي لا تحتوي على معلومات أو ملفات حساسة أو سرية. "
-"(مثال المسار الأمثل هو /tmp or /usr/ftp/incoming)"
-
-msgid "Path"
-msgstr "المسار"
-
-msgid "Action"
-msgstr "عملية"
-
-msgid "remove"
-msgstr "حذف"
-
-msgid "Add"
-msgstr "أضف"
-
-msgid "You must enter a directory to add."
-msgstr "يجب أن تدخل إسم المجلد لإضافته."
-
-msgid "open_basedir documentation"
-msgstr ""
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"سيرفرك تم إعداده لكي يمنعك من الدخول إلى هذا المجلد. فضلاً ارجع إلى %s   و قم بإستشارة مدير "
-"نظامك."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "السيرفر لا يملك الصلاحيات اللازمة لقراءة هذا المجلد."
-
-msgid "The path you specified is not a valid directory."
-msgstr "المسار الذي قمت بتحديده لا يحتوي على إسم مجلد صحيح."
-
 msgid "Session Settings"
 msgstr "خيارات الجلسة"
 
@@ -1271,6 +1197,9 @@ msgid ""
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
 msgstr ""
+
+msgid "Path"
+msgstr "المسار"
 
 msgid "Invalid cookie path"
 msgstr ""
@@ -1500,6 +1429,9 @@ msgstr "لا يمكنك حذف نفسك من هذه المجموعة."
 msgid "Add Member"
 msgstr "أضف عضو"
 
+msgid "Add"
+msgstr "أضف"
+
 msgid "You must enter a username."
 msgstr "يجب إدخال إسم المستخدم"
 
@@ -1570,6 +1502,9 @@ msgstr "لا يمكنك تعديل أعضاء هذه المجموعة"
 
 msgid "Edit Group (by list)"
 msgstr "تعديل مجموعه (من القائمة)"
+
+msgid "Action"
+msgstr "عملية"
 
 msgid "edit"
 msgstr "تعديل"
@@ -2324,150 +2259,6 @@ msgstr ""
 msgid "Assign caption to:"
 msgstr "إضافة تعليق ل :"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"نقل الملفات الموجودة على سيرفرك إلى الجاليري. الملفات يجب رفعها إلى السيرفر مسبقاً عن طريق "
-"(مثلاً الإف تي بي)و يجب وضعها داخل المجلدات اللتي يمكن دخولها عن طريق أية وسيلة على السيرفر. "
-"إذا كنت تستخدم Unix فذلك يعني أنه يجب أن تملك الملفات و المجلدات الصلاحية 755 على الأقل."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"لأسباب أمنية ,لايمكنك إستخدام هذه الخاصية , اتصل بمدير الموقع ليقوم بإنشاء و إعداد  ملف صالح "
-"لرفع الملفات"
-
-msgid "Server Path"
-msgstr "مسار السيرفر"
-
-msgid "You must enter a directory."
-msgstr "يجب إدخال إسم مجلد"
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr "المجلد اللذي قمت بإدخاله غير صحيح. تأكد أنه بإمكان جميع المستخدمين قرائته."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr "المجلد اللذي قمت بإدخاله غير صالح. يجب أن يكون مجلد فرعي لأحد المجلدات المذكورة أسفل."
-
-msgid "An item with the same name already exists."
-msgstr "هناك مادة أخرى بنفس الإسم"
-
-msgid "Legal Directories"
-msgstr "مجلدات صحيحة"
-
-msgid "modify"
-msgstr "تغيير"
-
-msgid "Recent Directories"
-msgstr "أحدث المجلدات"
-
-msgid "Find Files"
-msgstr "بحث عن ملفات"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "المجلد : %s"
-
-msgid "File name"
-msgstr "إسم الملف"
-
-msgid "Type"
-msgstr "النوع"
-
-msgid "Size"
-msgstr "الحجم"
-
-msgid "Use Symlink"
-msgstr ""
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "بايت واحد"
-msgstr[1] "%d بايت"
-
-msgid "Parent Directory"
-msgstr "المجلد الرئيسي"
-
-msgid "Directory"
-msgstr "المجلد"
-
-msgid "(Un)check all known types"
-msgstr "(اختيار/ ازالة الاختيار) لجميع الأنواع"
-
-msgid "(Un)check symlinks"
-msgstr "(اختيار / ازالة الاختيار) جميع الروابط"
-
-msgid "for selected items"
-msgstr "للمواد المحددة"
-
-msgid "Copy base filenames to:"
-msgstr "نسخ أسماء الملفات إلي :"
-
-msgid "Add Files"
-msgstr "أضف ملفات"
-
-msgid "Start Over"
-msgstr "البدء من جديد"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"إستيراد الملفات للجاليري من موقع إنترنت آخر. أدخل العنوان الإلكتروني لأي صفحة إنترنت و سوف "
-"يسمح لك الجاليري برفع أي نوع من ملفات الميديا اللتي يجدها في الصفحة. ملاحظة إذا قمت بإدخال "
-"عنوان صفحة داخل مجلد في الموقع فيجب  كتابة سلاش بعد إسم المجلد مثال (http://example.com/"
-"directory/)."
-
-msgid "URL"
-msgstr "عنوان إلكتروني"
-
-msgid "You must enter a URL to a web page"
-msgstr "يجب أن تدخل العنوان الإلكتروني لصفحة الإنترنت"
-
-msgid "The URL entered must begin with http://"
-msgstr "العنوان الإلكتروني المدخل يجب أن يبدأ بـ http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "صفحة الإنترنت التي قمت بتحديدها غير متوفرة"
-
-msgid "Nothing to add found from this URL"
-msgstr "لا يوجد ما يمكن إضافته من هذا العنوان"
-
-msgid "Nothing added since no items were selected"
-msgstr "لم تتم الإضافة لأنه لم يتم تحديد أي مادة"
-
-msgid "Recent URLs"
-msgstr "أحدث العناوين الإلكترونية"
-
-#, c-format
-msgid "URL: %s"
-msgstr "العنوان الإلكتروني :%s"
-
-msgid "change"
-msgstr "تغيير"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "%d عنوان إلكتروني موجود"
-msgstr[1] "%d عنوان إلكتروني موجود"
-
-msgid "(Un)check all"
-msgstr "اختيار الكل/ ازالة الاختيار"
-
-msgid "Add URLs"
-msgstr "أضف عناوين إلكترونية"
-
 msgid "No Thumbnail"
 msgstr "لا توجد صورة مصغرة"
 
@@ -3126,6 +2917,9 @@ msgstr ""
 "هذا الألبوم يستخدم طريقة أتوماتيكة للترتيب محددة مسبقاً, لذلك لا يمكن تغيير الترتيب لهذه "
 "المواد يدوياً. يجب عليك إلغاء الترتيب الأتوماتيكي للمتابعة."
 
+msgid "change"
+msgstr "تغيير"
+
 msgid "Change the order of the items in this album."
 msgstr "تغيير ترتيب المواد داخل هذا الألبوم."
 
@@ -3569,9 +3363,6 @@ msgstr ""
 msgid "Unit test theme"
 msgstr ""
 
-#~ msgid "Display"
-#~ msgstr "عرض"
-
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "تم تخزين و إعداد الموديول %s بنجاح"
 
@@ -3607,10 +3398,6 @@ msgstr ""
 
 #~ msgid "(default)"
 #~ msgstr "(افتراضي)"
-
-#, fuzzy
-#~ msgid "$ cd %s"
-#~ msgstr "%d. %s"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; لا يوجد &raquo;"

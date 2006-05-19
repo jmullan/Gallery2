@@ -25,8 +25,7 @@
  */
 
 /**
- * This controller will handle the addition of an item as a children to
- * another item.
+ * This controller will handle the addition of an item as a children to another item.
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -34,13 +33,30 @@
 class ItemAddFromWeb extends ItemAddPlugin {
 
     /**
+     * @see ItemAddPlugin::isAppropriate
+     */
+    function isAppropriate() {
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'itemadd', 'fromweb');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($param == 'admin') {
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $param = $isAdmin ? 'on' : 'off';
+	}
+	return array(null, $param == 'on');
+    }
+
+    /**
      * @see ItemAddPlugin::handleRequest
      */
     function handleRequest($form, &$item) {
 	global $gallery;
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 
 	if (isset($form['action']['findFilesFromWebPage'])) {
 	    /* Delegate back to the same view */
@@ -139,9 +155,9 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 		/* Add path to the recent path list */
 		$session =& $gallery->getSession();
-		$recentUrls = $session->get('core.view.ItemAddFromWeb.recentUrls');
+		$recentUrls = $session->get('itemadd.view.ItemAddFromWeb.recentUrls');
 		$recentUrls[$form['webPage']] = 1;
-		$session->put('core.view.ItemAddFromWeb.recentUrls', $recentUrls);
+		$session->put('itemadd.view.ItemAddFromWeb.recentUrls', $recentUrls);
 
 		$form['webPageUrls'] = array();
 
@@ -264,7 +280,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	    'webPageUrlCount' => isset($form['webPageUrls']) ? count($form['webPageUrls']) : 0);
 
 	$session =& $gallery->getSession();
-	$recentUrls = $session->get('core.view.ItemAddFromWeb.recentUrls');
+	$recentUrls = $session->get('itemadd.view.ItemAddFromWeb.recentUrls');
 	if (!isset($recentUrls)) {
 	    $recentUrls = array();
 	}
@@ -272,8 +288,8 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 	$template->setVariable('ItemAddFromWeb', $ItemAddFromWeb);
 	return array(null,
-		     'modules/core/templates/ItemAddFromWeb.tpl',
-		     'modules_core');
+		     'modules/itemadd/templates/ItemAddFromWeb.tpl',
+		     'modules_itemadd');
     }
 
     /**
@@ -361,7 +377,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
     function _getTypeName($url, $htmlAttribute=null, $headers=null) {
 	if (isset($htmlAttribute) && strtolower($htmlAttribute) == 'src') {
 	    /* For <img> src attribute just assume "Photo" and don't examine mime type */
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'itemadd');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -392,7 +408,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
      * @see ItemAddPlugin::getTitle
      */
     function getTitle() {
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'itemadd');
 	if ($ret) {
 	    return array($ret, null);
 	}

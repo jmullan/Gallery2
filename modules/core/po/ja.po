@@ -21,7 +21,7 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
 "PO-Revision-Date: 2006-05-03 23:51+0900\n"
@@ -191,6 +191,12 @@ msgstr "古くなった高速ダウンロードキャッシュをクリアして
 msgid "Converting MySQL data to UTF8"
 msgstr "MySQLのデータをUTF-8にコンバート中"
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "サイト管理者"
 
@@ -260,14 +266,21 @@ msgid "%d kilobytes"
 msgid_plural "%d kilobytes"
 msgstr[0] "%d kB"
 
-msgid "From Local Server"
-msgstr "ローカルサーバーから"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "画像"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "ウェブページから"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Gallery アイテム管理"
@@ -328,6 +341,9 @@ msgstr "全般"
 
 msgid "Movie Size"
 msgstr "動画のサイズ"
+
+msgid "Photo"
+msgstr "画像"
 
 msgid "Thumbnail cropped successfully"
 msgstr "サムネイルのトリミングに成功しました"
@@ -884,49 +900,6 @@ msgstr "ユーザー"
 msgid "user"
 msgstr "ユーザー"
 
-#, fuzzy
-msgid "Integrity Check"
-msgstr "インデックスの完全性の確認に失敗しました"
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "%d アイテムをチェック"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "%s の追加に失敗しました"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "データベースを最適化"
 
@@ -1113,54 +1086,6 @@ msgstr "新しいディレクトリ"
 msgid "New files"
 msgstr "新しいファイル"
 
-msgid "Local Server Upload Paths"
-msgstr "サーバのローカルアップロードパス"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"ユーザがファイルを保存して、それらを<i>Upload from Local Server</i>機能でGalleryへアップロー"
-"ドできるローカルサーバ上の適切なディレクトリを指定してください。ここへ入力したパスとそれ以下"
-"の全てのファイルとディレクトリはアップロード特権を持つあらゆるGalleryユーザから利用可能です。"
-"そのため、これを機密データの含まないディレクトリに制限すべきです。(例: /tmp、 /usr/ftp/"
-"incoming)"
-
-msgid "Path"
-msgstr "パス"
-
-msgid "Action"
-msgstr "アクション"
-
-msgid "remove"
-msgstr "削除"
-
-msgid "Add"
-msgstr "追加"
-
-msgid "You must enter a directory to add."
-msgstr "追加するディレクトリを入力しなくてはなりません"
-
-msgid "open_basedir documentation"
-msgstr "open_basedir ドキュメント"
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"ウェブサーバはそのディレクトリへアクセスできないように設定されています。%s を参照してウェブ"
-"サーバの管理者へ相談してください。"
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "ウェブサーバはそのディレクトリを読む権限がありません。"
-
-msgid "The path you specified is not a valid directory."
-msgstr "あなたが指定したパスは有効なディレクトリではありません。"
-
 msgid "Session Settings"
 msgstr "セッション設定"
 
@@ -1269,6 +1194,9 @@ msgstr ""
 "一度クッキーの設定を変更すると、このGalleryの<b>全ての登録済みユーザのブラウザのクッキーの"
 "キャッシュを削除しなければなりません</b>。できないならば、ログイン、ログアウト、セッション消"
 "失などの問題に見まわれるでしょう"
+
+msgid "Path"
+msgstr "パス"
 
 msgid "Invalid cookie path"
 msgstr "無効なクッキーパス"
@@ -1503,6 +1431,9 @@ msgstr "このグループからあなた自身を削除することはできま
 msgid "Add Member"
 msgstr "メンバー追加"
 
+msgid "Add"
+msgstr "追加"
+
 msgid "You must enter a username."
 msgstr "ユーザーネームを入力しなくてはなりません。"
 
@@ -1573,6 +1504,9 @@ msgstr "あなたはそのグループのユーザを編集することはでき
 
 msgid "Edit Group (by list)"
 msgstr "グループ編集 (リスト)"
+
+msgid "Action"
+msgstr "アクション"
 
 msgid "edit"
 msgstr "編集"
@@ -2372,155 +2306,6 @@ msgstr "アイテムのタイトル設定:"
 msgid "Assign caption to:"
 msgstr "キャプションを割り当て:"
 
-#, fuzzy
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"既にサーバにあるファイルをGalleryに転送します。それらのファイルはFTPなどの他の方法で、すでに"
-"サーバにアップロードされていて、誰からもアクセスできない場所に置いてなければなりません。Unix"
-"を使用しているなら、これは該当ファイルやそのファイルのあるディレクトリのアクセスモードを少な"
-"くとも755にしなくてはなりません。"
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"セキュリティ確保のため、Galleryサイト管理者が正当なアップロードディレクトリを設定するまで、こ"
-"の機能は使用することができません。"
-
-msgid "Server Path"
-msgstr "サーバのパス"
-
-msgid "You must enter a directory."
-msgstr "ディレクトリを入力しなくてはなりません"
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"入力されたディレクトリは無効です。全てのユーザからディレクトリが読み取り可能か確認してくださ"
-"い。"
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"入力されたディレクトリは不正です。以下にリストアップされたディレクトリのうちどれかのサブディ"
-"レクトリでないといけません。"
-
-msgid "An item with the same name already exists."
-msgstr "アイテムは同じ名前で既に存在しています。"
-
-msgid "Legal Directories"
-msgstr "適切なディレクトリ"
-
-msgid "modify"
-msgstr "変更"
-
-msgid "Recent Directories"
-msgstr "最近のディレクトリ"
-
-msgid "Find Files"
-msgstr "ファイル検索"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "ディレクトリ: %s"
-
-msgid "File name"
-msgstr "ファイル名"
-
-msgid "Type"
-msgstr "タイプ"
-
-msgid "Size"
-msgstr "サイズ"
-
-msgid "Use Symlink"
-msgstr "シンボリックリンクを使う"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d バイト"
-
-msgid "Parent Directory"
-msgstr "親ディレクトリ"
-
-msgid "Directory"
-msgstr "ディレクトリ"
-
-msgid "(Un)check all known types"
-msgstr "既知の全てのタイプをチェック(チェックを外す)"
-
-msgid "(Un)check symlinks"
-msgstr "シンボリックリンクをチェック(チェックを外す)"
-
-#, fuzzy
-msgid "for selected items"
-msgstr "選択されたアイテム向けに"
-
-msgid "Copy base filenames to:"
-msgstr "ベースのファイル名をコピー:"
-
-msgid "Add Files"
-msgstr "ファイル追加"
-
-msgid "Start Over"
-msgstr "やり直す"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Gallery に別のサイトからファイルをインポートします。 URLを下に入力してください。そのURLのサイ"
-"トにあるメディアファイルをアップロードできます。URLの入力は必ず、'/' で終わるようにしてくださ"
-"い。例えば http://example.com/directory/ のように"
-
-msgid "URL"
-msgstr "URL"
-
-msgid "You must enter a URL to a web page"
-msgstr "ウェブページへのURLを入力しなくてはなりません"
-
-msgid "The URL entered must begin with http://"
-msgstr "入力されたURLは http:// で始めなければなりません"
-
-msgid "The web page you specified is unavailable"
-msgstr "指定したウェブページは無効です"
-
-msgid "Nothing to add found from this URL"
-msgstr "このＵＲＬからは、追加する画像がありません"
-
-msgid "Nothing added since no items were selected"
-msgstr "アイテムが選択されなかったので、何も追加されませんでした"
-
-msgid "Recent URLs"
-msgstr "最近のURL"
-
-#, c-format
-msgid "URL: %s"
-msgstr "URL: %s"
-
-msgid "change"
-msgstr "変更"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "%d 個のURLを発見"
-msgstr[1] ""
-
-msgid "(Un)check all"
-msgstr "全てにチェック(チェックを外す)"
-
-msgid "Add URLs"
-msgstr "URLの追加"
-
 msgid "No Thumbnail"
 msgstr "サムネイルなし"
 
@@ -3177,6 +2962,9 @@ msgstr ""
 "このアルバムは、自動ソートが設定されています。手動で順番を変えることができません。続けるに"
 "は、自動ソートを解除する必要があります"
 
+msgid "change"
+msgstr "変更"
+
 msgid "Change the order of the items in this album."
 msgstr "このアルバム並べ替える順を変更"
 
@@ -3638,12 +3426,6 @@ msgstr "[test] 二番目のパーミッション"
 msgid "Unit test theme"
 msgstr ""
 
-#~ msgid "Display"
-#~ msgstr "ディスプレイ"
-
-#~ msgid "Gallery Modules"
-#~ msgstr "Gallery モジュール"
-
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "モジュール %s のインストールと自動設定に成功しました"
 
@@ -3689,9 +3471,6 @@ msgstr ""
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; なし &raquo;"
 
-#~ msgid "some text to be spit out in different languages"
-#~ msgstr "違う言語では、いくつかのテキストがはき出されます"
-
 #~ msgid "You did it right!"
 #~ msgstr "正しく実行しました"
 
@@ -3700,9 +3479,6 @@ msgstr ""
 
 #~ msgid "Error downloading package from '%s'."
 #~ msgstr "'%s' からパッケージのダウンロード中にエラーが発生しました。"
-
-#~ msgid "As of the last update on"
-#~ msgstr "最後の更新が実行中のため、"
 
 #~ msgid "Warning: `$errorMessage`"
 #~ msgstr "警告: `$errorMessage`"
@@ -3714,23 +3490,11 @@ msgstr ""
 #~ "Gallery のレポジトリからプラグインをダウンロードするには、データを格納することのできる特別"
 #~ "なディレクトリを作成する必要があります"
 
-#~ msgid "%s Layout Settings"
-#~ msgstr "%s レイアウト設定"
-
-#~ msgid "&laquo; default layout &raquo;"
-#~ msgstr "&laquo; デフォルトレイアウト &raquo;"
-
-#~ msgid "All Layouts"
-#~ msgstr "全てのレイアウト"
-
 #~ msgid "Both"
 #~ msgstr "両方"
 
 #~ msgid "Choose a theme for this album.  (The look and feel of this album)"
 #~ msgstr "このアルバムのテーマを選んでください。(このアルバムのルック&フィール)"
-
-#~ msgid "Default layout"
-#~ msgstr "デフォルトレイアウト"
 
 #~ msgid "Gallery Administrator"
 #~ msgstr "Gallery 管理者"
@@ -3738,71 +3502,17 @@ msgstr ""
 #~ msgid "Gallery Debug Output"
 #~ msgstr "Gallery デバッグ出力"
 
-#~ msgid "Gallery Layouts"
-#~ msgstr "Gallery レイアウト"
-
-#~ msgid "Layout Name"
-#~ msgstr "レイアウト名"
-
-#~ msgid "Layout"
-#~ msgstr "レイアウト"
-
-#~ msgid "Layouts and Themes"
-#~ msgstr "レイアウトとテーマ"
-
-#, fuzzy
-#~ msgid "Missing Layout"
-#~ msgstr "レイアウト"
-
-#, fuzzy
-#~ msgid "None"
-#~ msgstr "完了"
-
 #~ msgid "Redirect"
 #~ msgstr "リダイレクト"
 
 #~ msgid "Site Administration"
 #~ msgstr "サイト管理"
 
-#~ msgid "Successfully activated layout %s"
-#~ msgstr "%s レイアウトの有効化に成功しました"
-
-#~ msgid "Successfully deactivated layout %s"
-#~ msgstr "%s レイアウトの無効化に成功しました"
-
-#, fuzzy
-#~ msgid "Successfully installed layout %s"
-#~ msgstr "%d個のファイルの追加に成功しました。"
-
-#, fuzzy
-#~ msgid "Successfully uninstalled layout %s"
-#~ msgstr "%d個のファイルの追加に成功しました。"
-
-#, fuzzy
-#~ msgid "Successfully upgraded layout %s"
-#~ msgstr "%d個のファイルの追加に成功しました。"
-
-#, fuzzy
-#~ msgid "Use As Parent&rsquo;s Thumbnail?"
-#~ msgstr "親のサムネイルとして使用しますか?"
-
 #~ msgid "Yes, highlight this item!"
 #~ msgstr "はい、これをハイライト画像にします。"
 
 #~ msgid "You must enter a thumbnail size"
 #~ msgstr "サムネイルのサイズを入力しなくてはなりません"
-
-#, fuzzy
-#~ msgid "choose a new layout for this album"
-#~ msgstr "それらに対する新しいアルバムを選んでください"
-
-#, fuzzy
-#~ msgid "install or activate this layout"
-#~ msgstr "%d個のファイルの追加に成功しました。"
-
-#, fuzzy
-#~ msgid "login as a site administrator"
-#~ msgstr "サイト管理"
 
 #~ msgid "Back to Album View"
 #~ msgstr "アルバムビューに戻る"
@@ -3812,9 +3522,6 @@ msgstr ""
 
 #~ msgid "Edit Group Members"
 #~ msgstr "グループメンバーを編集中"
-
-#~ msgid "Layout Configuration"
-#~ msgstr "レイアウト設定"
 
 #~ msgid "Lifetime"
 #~ msgstr "寿命"
@@ -3843,77 +3550,20 @@ msgstr ""
 #~ msgid "save"
 #~ msgstr "保存"
 
-#, fuzzy
-#~ msgid "&laquo; Parent Directory &raquo;"
-#~ msgstr "&laquo; ソートなし &laquo;"
-
-#, fuzzy
-#~ msgid "Status: Not"
-#~ msgstr "アクティブ"
-
-#, fuzzy
-#~ msgid "Manual Sort Order"
-#~ msgstr "既定のソート順:"
-
-#, fuzzy
-#~ msgid "Rotate/Scale"
-#~ msgstr "回転"
-
-#, fuzzy
-#~ msgid "Sizes"
-#~ msgstr "サイズ"
-
 #~ msgid "&laquo; No Sort Order &raquo;"
 #~ msgstr "&laquo; ソートなし &laquo;"
-
-#, fuzzy
-#~ msgid "&laquo; no sort order &raquo;"
-#~ msgstr "&laquo; ソートなし &laquo;"
-
-#, fuzzy
-#~ msgid "Album Basics"
-#~ msgstr "アルバム設定"
 
 #~ msgid "Log in"
 #~ msgstr "ログイン"
 
-#, fuzzy
-#~ msgid "Restored original photo successfully"
-#~ msgstr "オリジナル画像へ戻すことに成功しました"
-
 #~ msgid "admin"
 #~ msgstr "管理者"
-
-#, fuzzy
-#~ msgid "no"
-#~ msgstr "やり直し"
-
-#, fuzzy
-#~ msgid "Filename"
-#~ msgstr "ファイル名"
-
-#, fuzzy
-#~ msgid "Powered by Gallery 2"
-#~ msgstr "Powered by Gallery %s"
 
 #~ msgid "Site admin"
 #~ msgstr "サイト管理"
 
-#, fuzzy
-#~ msgid "delete album"
-#~ msgstr "アルバム編集"
-
-#, fuzzy
-#~ msgid "edit album"
-#~ msgstr "アルバム編集"
-
 #~ msgid "Album Settings"
 #~ msgstr "アルバム設定"
-
-#~ msgid "%d file found"
-#~ msgid_plural "%d files found"
-#~ msgstr[0] "%d個のファイルを発見"
-#~ msgstr[1] ""
 
 #~ msgid "Changes saved successfully."
 #~ msgstr "変更の保存に成功しました。"
@@ -3933,46 +3583,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Galleryは任意のファイル形式を扱・ｽ・ｽことができます。しかし、特定のファイル形式のみ自動リ"
 #~ "サイズやサムネイル作成が可能です。"
-
-#, fuzzy
-#~ msgid "Layout Settings"
-#~ msgstr "アカウント設定"
-
-#, fuzzy
-#~ msgid "edit general"
-#~ msgstr "ユーザ編集"
-
-#, fuzzy
-#~ msgid "edit layout"
-#~ msgstr "デフォルトレイアウト"
-
-#, fuzzy
-#~ msgid "Animation Settings"
-#~ msgstr "アカウント設定"
-
-#, fuzzy
-#~ msgid "Edit Layout Settings"
-#~ msgstr "アカウント設定"
-
-#, fuzzy
-#~ msgid "Move Item"
-#~ msgstr "アイテム移動"
-
-#, fuzzy
-#~ msgid "Photo Settings"
-#~ msgstr "アカウント設定"
-
-#, fuzzy
-#~ msgid "edit movie"
-#~ msgstr "動画を編集"
-
-#, fuzzy
-#~ msgid "delete image"
-#~ msgstr "画像を削除"
-
-#, fuzzy
-#~ msgid "move animation"
-#~ msgstr "アニメーションを動かす"
 
 #~ msgid "Average"
 #~ msgstr "平均"
@@ -4018,39 +3628,16 @@ msgstr ""
 #~ msgid "Preserve Original Image"
 #~ msgstr "オリジナルの画像を保護"
 
-#, fuzzy
-#~ msgid "edit image"
-#~ msgstr "画像編集"
-
 #~ msgid "Anonymous"
 #~ msgstr "Anonymous(匿名)"
 
 #~ msgid "Group Edit"
 #~ msgstr "グループ編集"
 
-#~ msgid "Legal Paths"
-#~ msgstr "適切なパス"
-
 #~ msgid "Next >>"
 #~ msgstr "次 >>"
 
-#, fuzzy
-#~ msgid "User Edit"
-#~ msgstr "編集"
-
-#, fuzzy
-#~ msgid "You cannot delete the All Users group!"
-#~ msgstr "'all users'グループを削除することはできません。"
-
-#, fuzzy
-#~ msgid "You must select a directory to remove"
-#~ msgstr "削除するユーザーを選択しなくてはなりません。"
-
 #~ msgid "You must select a group"
-#~ msgstr "グループを選択しなくてはなりません"
-
-#, fuzzy
-#~ msgid "You must select a user"
 #~ msgstr "グループを選択しなくてはなりません"
 
 #~ msgid "anonymous"
@@ -4222,14 +3809,6 @@ msgstr ""
 #~ msgid "You must enter a name"
 #~ msgstr "名前を入力しなくてはなりません"
 
-#, fuzzy
-#~ msgid "after this item:"
-#~ msgstr "このアイテムを編集中"
-
-#, fuzzy
-#~ msgid "before this item:"
-#~ msgstr "[core] アイテムの閲覧"
-
 #~ msgid "preferences"
 #~ msgstr "設定"
 
@@ -4247,12 +3826,6 @@ msgstr ""
 
 #~ msgid "%d weeks"
 #~ msgstr "%d週間"
-
-#~ msgid "Add Files From Your Computer"
-#~ msgstr "ファイルのアップロード"
-
-#~ msgid "Add From a Website"
-#~ msgstr "ウェブサイトからファイルを転送"
 
 #~ msgid "Validate this Page"
 #~ msgstr "このページを検証する"
@@ -4293,10 +3866,6 @@ msgstr ""
 
 #~ msgid "Item"
 #~ msgstr "アイテム"
-
-#, fuzzy
-#~ msgid "Activate a toolkit here"
-#~ msgstr "ここでツールキットを有効化"
 
 #~ msgid ""
 #~ "Choose a graphics toolkit to use.  You can only choose from the list of currently active "

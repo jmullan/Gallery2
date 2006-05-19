@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2003-06-05 16:56-0300\n"
 "PO-Revision-Date: 2003-08-27 22:25-0700\n"
 "Last-Translator: Alvaro Cortizo <alvaro@netpandora.com>\n"
@@ -204,6 +204,12 @@ msgstr "permisos"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 #, fuzzy
 msgid "Site Admins"
 msgstr "site admin"
@@ -284,14 +290,20 @@ msgid_plural "%d kilobytes"
 msgstr[0] "minuto %d"
 msgstr[1] "minuto %d"
 
-#, fuzzy
-msgid "From Local Server"
-msgstr "Agregar desde su Servidor"
-
-msgid "Photo"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
 msgstr ""
 
-msgid "From Web Page"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
 
 msgid "Gallery Item Administration"
@@ -365,6 +377,9 @@ msgstr "General"
 #, fuzzy
 msgid "Movie Size"
 msgstr "Opciones Disponibles"
+
+msgid "Photo"
+msgstr ""
 
 #, fuzzy
 msgid "Thumbnail cropped successfully"
@@ -976,48 +991,6 @@ msgstr "Usuarios"
 msgid "user"
 msgstr "Usuarios"
 
-msgid "Integrity Check"
-msgstr ""
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "agregar item"
-
-#, c-format
-msgid "Failed to load entity ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr ""
 
@@ -1215,49 +1188,6 @@ msgstr "Nuevas carpetas"
 msgid "New files"
 msgstr "Nuevos archivos"
 
-msgid "Local Server Upload Paths"
-msgstr ""
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-
-msgid "Path"
-msgstr ""
-
-msgid "Action"
-msgstr "Acci&oacute;n"
-
-#, fuzzy
-msgid "remove"
-msgstr "Borrar"
-
-msgid "Add"
-msgstr "Agregar"
-
-#, fuzzy
-msgid "You must enter a directory to add."
-msgstr "Tiene que ingresar un tama&ntilde;o"
-
-msgid "open_basedir documentation"
-msgstr ""
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr ""
-
-msgid "The path you specified is not a valid directory."
-msgstr ""
-
 msgid "Session Settings"
 msgstr "Caracter&iacute;sticas de sesi&oacute;n"
 
@@ -1355,6 +1285,9 @@ msgid ""
 "Once you change the cookie settings, <b>all registered users</b> of your Gallery will "
 "<b>have to clear their browser cookie cache</b>. If they do not, they will experience "
 "login / logout / lost session problems."
+msgstr ""
+
+msgid "Path"
 msgstr ""
 
 msgid "Invalid cookie path"
@@ -1592,6 +1525,9 @@ msgstr "No puede agregar o borrar usuarios de este grupo"
 msgid "Add Member"
 msgstr "Agregar Items"
 
+msgid "Add"
+msgstr "Agregar"
+
 msgid "You must enter a username."
 msgstr "Tiene que ingresar un nombre de usuario."
 
@@ -1670,6 +1606,9 @@ msgstr "No puede borrar el usuario an&oacute;nimo!"
 #, fuzzy
 msgid "Edit Group (by list)"
 msgstr "Editando Grupo '%s'"
+
+msgid "Action"
+msgstr "Acci&oacute;n"
 
 #, fuzzy
 msgid "edit"
@@ -2430,154 +2369,6 @@ msgstr ""
 msgid "Assign caption to:"
 msgstr "Administrador de Gallery"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-
-msgid "Server Path"
-msgstr ""
-
-#, fuzzy
-msgid "You must enter a directory."
-msgstr "Tiene que ingresar un tama&ntilde;o"
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-
-msgid "An item with the same name already exists."
-msgstr ""
-
-#, fuzzy
-msgid "Legal Directories"
-msgstr "Nuevas carpetas"
-
-msgid "modify"
-msgstr ""
-
-#, fuzzy
-msgid "Recent Directories"
-msgstr "Nuevas carpetas"
-
-#, fuzzy
-msgid "Find Files"
-msgstr "Agregar Items"
-
-#, fuzzy, c-format
-msgid "Directory: %s"
-msgstr "Nuevas carpetas"
-
-#, fuzzy
-msgid "File name"
-msgstr "Nombre completo"
-
-msgid "Type"
-msgstr ""
-
-msgid "Size"
-msgstr ""
-
-msgid "Use Symlink"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "minuto %d"
-msgstr[1] "minuto %d"
-
-#, fuzzy
-msgid "Parent Directory"
-msgstr "Nuevas carpetas"
-
-#, fuzzy
-msgid "Directory"
-msgstr "Nuevas carpetas"
-
-msgid "(Un)check all known types"
-msgstr ""
-
-msgid "(Un)check symlinks"
-msgstr ""
-
-#, fuzzy
-msgid "for selected items"
-msgstr "[core] Borrar item"
-
-msgid "Copy base filenames to:"
-msgstr ""
-
-#, fuzzy
-msgid "Add Files"
-msgstr "Agregar Items"
-
-#, fuzzy
-msgid "Start Over"
-msgstr "Ordenar por"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-
-msgid "URL"
-msgstr ""
-
-#, fuzzy
-msgid "You must enter a URL to a web page"
-msgstr "Tiene que ingresar un nombre de usuario"
-
-msgid "The URL entered must begin with http://"
-msgstr ""
-
-#, fuzzy
-msgid "The web page you specified is unavailable"
-msgstr "El nombre de usuario que ingres&oacute; es inv&aacute;lido"
-
-msgid "Nothing to add found from this URL"
-msgstr ""
-
-msgid "Nothing added since no items were selected"
-msgstr ""
-
-msgid "Recent URLs"
-msgstr ""
-
-#, c-format
-msgid "URL: %s"
-msgstr ""
-
-#, fuzzy
-msgid "change"
-msgstr "Cambiar"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "(Un)check all"
-msgstr ""
-
-msgid "Add URLs"
-msgstr ""
-
 msgid "No Thumbnail"
 msgstr "Sin Miniatura"
 
@@ -3260,6 +3051,10 @@ msgid ""
 "This album has an automatic sort order specified, so you cannot change the order of items "
 "manually.  You must remove the automatic sort order to continue."
 msgstr ""
+
+#, fuzzy
+msgid "change"
+msgstr "Cambiar"
 
 #, fuzzy
 msgid "Change the order of the items in this album."

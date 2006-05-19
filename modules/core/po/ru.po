@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.4\n"
+"Project-Id-Version: Gallery: Core 1.1.8\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-03-17 18:20+0300\n"
 "Last-Translator: Konstantin Ivanov <Continental@vollen.ru>\n"
@@ -202,6 +202,12 @@ msgstr "Очистка старого кэша быстрой загрузки"
 msgid "Converting MySQL data to UTF8"
 msgstr "Преобразование данных в базе MySQL в кодировку UTF8"
 
+msgid "Updating panorama items"
+msgstr ""
+
+msgid "Optimizing AccessSubscriberMap table"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Администраторы сайта"
 
@@ -275,14 +281,21 @@ msgstr[0] "%d килобайт"
 msgstr[1] "%d килобайта"
 msgstr[2] "%d килобайта"
 
-msgid "From Local Server"
-msgstr "С сервера"
+#, c-format
+msgid "Input file %s exceeds maximum permitted file size"
+msgstr ""
 
-msgid "Photo"
-msgstr "Фото"
+#, c-format
+msgid "Input file %s exceeds file size specified in the form"
+msgstr ""
 
-msgid "From Web Page"
-msgstr "Веб-страница"
+#, c-format
+msgid "Input file %s was only partially uploaded"
+msgstr ""
+
+#, c-format
+msgid "Input file %s was not uploaded. Error %d"
+msgstr ""
 
 msgid "Gallery Item Administration"
 msgstr "Администрирование Элементов Галереи"
@@ -343,6 +356,9 @@ msgstr "Общие"
 
 msgid "Movie Size"
 msgstr "Размер видеоролика"
+
+msgid "Photo"
+msgstr "Фото"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Макет успешно обрезан"
@@ -901,49 +917,6 @@ msgstr "Пользователь"
 msgid "user"
 msgstr "пользователь"
 
-#, fuzzy
-msgid "Integrity Check"
-msgstr "Проверка целостности файлов не прошла."
-
-msgid "Check data integrity and report any inconsistencies."
-msgstr ""
-
-msgid "Loading all entities"
-msgstr ""
-
-msgid "Checking for orphaned entity data"
-msgstr ""
-
-msgid "Checking for orphaned item data"
-msgstr ""
-
-msgid "Checking for orphaned plugin data"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Checked %d entities"
-msgstr "Проверено %d элементов"
-
-#, fuzzy, c-format
-msgid "Failed to load entity ids: %s"
-msgstr "%s не добавлен"
-
-#, c-format
-msgid "Orphaned data in table %s with missing parent entity; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with no row in %s table; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Orphaned data in table %s with missing derivative source; ids: %s"
-msgstr ""
-
-#, c-format
-msgid "Unknown plugin: %s %s"
-msgstr ""
-
 msgid "Optimize database"
 msgstr "Оптимизация базы данных"
 
@@ -1135,54 +1108,6 @@ msgstr "Новые каталоги"
 msgid "New files"
 msgstr "Новые файлы"
 
-msgid "Local Server Upload Paths"
-msgstr "Путь к папке на сервере для загрузки"
-
-msgid ""
-"Specify the legal directories on the local server where a user can store files and then "
-"upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you "
-"enter here and all the files and directories under those paths will be available to any "
-"Gallery user who has upload privileges, so you should limit this to directories that won't "
-"contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-msgstr ""
-"Укажите доступные каталоги на локальном сервере, где пользователь сможет сохранять файлы с "
-"целью их дальнейшей загрузки в Галерею используя функцию <i>Загрузки из папки на сервере</"
-"i>. Путь, который Вы здесь укажите, а так же все файлы и каталоги ниже этого уровня будут "
-"доступны любому пользователю Галереи, кто имеет права на загрузку. Лучше не указывать путь к "
-"каталогам, содержащим  другие данные (например, /tmp или /usr/ftp/incoming)"
-
-msgid "Path"
-msgstr "Путь"
-
-msgid "Action"
-msgstr "Действие"
-
-msgid "remove"
-msgstr "удалить"
-
-msgid "Add"
-msgstr "Добавить"
-
-msgid "You must enter a directory to add."
-msgstr "Вам необходимо ввести каталог для добавления"
-
-msgid "open_basedir documentation"
-msgstr "документация по open_basedir "
-
-#, c-format
-msgid ""
-"Your webserver is configured to prevent you from accessing that directory.  Please refer to "
-"the %s and consult your webserver administrator."
-msgstr ""
-"Ваш веб-сервер сконфигурирован на запрет доступа к данному каталогу. Пожалуйста, обратитесь "
-"к %s и проконсультируйтесь с администратором Вашего веб-сервера."
-
-msgid "The webserver does not have permissions to read that directory."
-msgstr "Ваш веб-сервер не обладает правами для просмотра данного каталога. "
-
-msgid "The path you specified is not a valid directory."
-msgstr "Введенный Вами путь неверен."
-
 msgid "Session Settings"
 msgstr "Настройки Сессии"
 
@@ -1314,6 +1239,9 @@ msgstr ""
 "Поменяв настройки cookie, <b>все зарегистрированные пользователи</b> Галереи будут должны "
 "очистить кэш cookie. В противном случае, у них будут проблемы при Входе / Выходе и потери "
 "сессии."
+
+msgid "Path"
+msgstr "Путь"
 
 msgid "Invalid cookie path"
 msgstr "Неверный путь к cookie"
@@ -1560,6 +1488,9 @@ msgstr "Вы не можете исключить самого себя из э�
 msgid "Add Member"
 msgstr "Добавить Члена"
 
+msgid "Add"
+msgstr "Добавить"
+
 msgid "You must enter a username."
 msgstr "Вы должны ввести имя пользователя."
 
@@ -1631,6 +1562,9 @@ msgstr "Вы не можете редактировать пользовател
 
 msgid "Edit Group (by list)"
 msgstr "Редактировать Группы (по списку)"
+
+msgid "Action"
+msgstr "Действие"
 
 msgid "edit"
 msgstr "редактировать"
@@ -2456,156 +2390,6 @@ msgstr "Установить заголовки элементов как:"
 msgid "Assign caption to:"
 msgstr "Присвоить заголовок к:"
 
-msgid ""
-"Transfer files that are already on your server into your Gallery.  The files must already "
-"have been uploaded to your server some other way (like FTP) and must be placed in a "
-"directory where they are accessibly by any element on the server.  If you're on Unix this "
-"means that the files and the directory the files are in should have modes of at least 755."
-msgstr ""
-"Загружает файлы, уже расположенные на сервере в Галерее. Эти файлы должны быть ранее "
-"загружены на Ваш сервер любым другим способом (например, по ftp) и должны быть помещены в "
-"папку, доступную на сервере. Если Вы используете Unix систему, это означает, что файлы и "
-"папка, в которой они находятся, должны иметь права доступа не менее 755."
-
-msgid ""
-"For security purposes, you can't use this feature until the Gallery Site Administrator "
-"configures a set of legal upload directories."
-msgstr ""
-"В целях безопасности Вы не можете использовать данную функцию до тех пор, пока Администратор "
-"Веб-сервера Галереи не настроит папку с необходимым разрешениями для загрузки файлов. "
-
-msgid "Server Path"
-msgstr "Путь на сервере"
-
-msgid "You must enter a directory."
-msgstr "Вы должны ввести папку."
-
-msgid ""
-"The directory you entered is invalid.  Make sure that the directory is readable by all users."
-msgstr ""
-"Указанная Вами папка не верна. Удостовертесь, что папка имеет права доступа на чтение для "
-"всех пользователей."
-
-msgid ""
-"The directory you entered is illegal.  It must be a sub directory of one of the directories "
-"listed below."
-msgstr ""
-"Указанная Вами папка не верна. Это должна быть поддиректория любой из папок из списка ниже."
-
-msgid "An item with the same name already exists."
-msgstr "Элемент с таким названием уже существует."
-
-msgid "Legal Directories"
-msgstr "Разрешенные Папки"
-
-msgid "modify"
-msgstr "изменить"
-
-msgid "Recent Directories"
-msgstr "Последние Папки"
-
-msgid "Find Files"
-msgstr "Искать файлы"
-
-#, c-format
-msgid "Directory: %s"
-msgstr "Папка: %s"
-
-msgid "File name"
-msgstr "Имя файла"
-
-msgid "Type"
-msgstr "Тип"
-
-msgid "Size"
-msgstr "Размер"
-
-msgid "Use Symlink"
-msgstr "Использовать Symlink"
-
-#, c-format
-msgid "%d byte"
-msgid_plural "%d bytes"
-msgstr[0] "%d байт"
-msgstr[1] "%d байта"
-msgstr[2] "%d байт"
-
-msgid "Parent Directory"
-msgstr "Родительская папка"
-
-msgid "Directory"
-msgstr "Папка"
-
-msgid "(Un)check all known types"
-msgstr "Выделить/Снять выделение со всех известных типов"
-
-msgid "(Un)check symlinks"
-msgstr "Выделить/Снять выделение с symlinks"
-
-msgid "for selected items"
-msgstr "для отмеченных элементов"
-
-msgid "Copy base filenames to:"
-msgstr "Копировать основные имена файлов в:"
-
-msgid "Add Files"
-msgstr "Добавить Файлы"
-
-msgid "Start Over"
-msgstr "Начать заново"
-
-msgid ""
-"Import files into Gallery from another website.  Enter a URL below to a web page anywhere on "
-"the net and Gallery will allow you to upload any media files that it finds on that page.  "
-"Note that if you're entering a URL to a directory, you should end the URL with a trailing "
-"slash (eg, http://example.com/directory/). "
-msgstr ""
-"Импорт файлов в Галерею с другого веб-сайта. Введите адрес URL к любой веб-странице в сети и "
-"Галерея позволит Вам загрузить любые медиа-файлы, которые будут найдены на странице. "
-"Обратите внимание, что если Вы вводит путь к каталогу, адрес URL должен содержать слэш на "
-"конце (например, http://example.com/directory/)."
-
-msgid "URL"
-msgstr "URL"
-
-msgid "You must enter a URL to a web page"
-msgstr "Вы должны ввести адрес URL к веб-странице"
-
-msgid "The URL entered must begin with http://"
-msgstr "Вводимые адрес URL должен начинаться с http://"
-
-msgid "The web page you specified is unavailable"
-msgstr "Указанная Вами веб-страница недоступна"
-
-msgid "Nothing to add found from this URL"
-msgstr "По данному адресу URL ничего не может быть найдено для добавления"
-
-msgid "Nothing added since no items were selected"
-msgstr "Ничего не добавлено в виду того, что не было отмеченных элементов"
-
-msgid "Recent URLs"
-msgstr "Последние адреса URL"
-
-#, c-format
-msgid "URL: %s"
-msgstr "URL: %s"
-
-msgid "change"
-msgstr "измененить"
-
-#, c-format
-msgid "%d url found"
-msgid_plural "%d urls found"
-msgstr[0] "%d url найден"
-msgstr[1] "%d url найдены"
-msgstr[2] "%d url найдены"
-
-msgid "(Un)check all"
-msgstr "Выделить все/Снять выделение на все"
-
-msgid "Add URLs"
-msgstr "Добавить адреса URL"
-
 msgid "No Thumbnail"
 msgstr "Макет отсутствует"
 
@@ -3299,6 +3083,9 @@ msgstr ""
 "порядок элементов вручную. Вы должны снять автоматический порядок сортировки чтобы "
 "продолжнить"
 
+msgid "change"
+msgstr "измененить"
+
 msgid "Change the order of the items in this album."
 msgstr "Изменить порядок элементов в этом альбоме."
 
@@ -3778,9 +3565,6 @@ msgstr "[test] A second permission"
 msgid "Unit test theme"
 msgstr "Unit test theme"
 
-#~ msgid "Display"
-#~ msgstr "Отображение"
-
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Модуль %s успешно установлен и сконфигурирован автоматически."
 
@@ -3822,12 +3606,6 @@ msgstr "Unit test theme"
 
 #~ msgid "(default)"
 #~ msgstr "(по умолчанию)"
-
-#~ msgid "G2.1-RC-2: Double Down"
-#~ msgstr "G2.1-RC-2: Double Down"
-
-#~ msgid "G2.0: Unpossible!"
-#~ msgstr "Галерея 2.0: Невероятно!"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; отсутствует &raquo;"
