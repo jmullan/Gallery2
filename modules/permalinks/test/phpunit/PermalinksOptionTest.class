@@ -73,8 +73,6 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
     }
 
     function tearDown() {
-	parent::tearDown();
-
 	if (!empty($this->_aliasNamesToDelete)) {
 	    foreach ($this->_aliasNamesToDelete as $name) {
 		$ret =
@@ -84,6 +82,8 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 		}
 	    }
 	}
+
+	parent::tearDown();
     }
 
     function testPermalinksOptionCreate() {
