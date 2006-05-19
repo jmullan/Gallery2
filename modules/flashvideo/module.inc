@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$Date$
+ * @version $Revision$ $Date$
  * @package FlashVideo
  * @author Alan Harder <alan.harder@sun.com>
  * Flash Video player: @author Wayne Patterson <suprsidr@gmail.com>
