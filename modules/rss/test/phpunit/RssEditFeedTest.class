@@ -61,8 +61,6 @@ class RssEditFeedTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	parent::tearDown();
-
 	if (!empty($this->_feedsToDelete)) {
 	    foreach ($this->_feedsToDelete as $name) {
 		$ret = RssMapHelper::deleteFeed($name);
@@ -71,6 +69,8 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 		}
 	    }
 	}
+
+	parent::tearDown();
     }
 
     function testRssEditFeedCancel() {

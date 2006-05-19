@@ -55,8 +55,6 @@ class RssTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	parent::tearDown();
-
 	if (!empty($this->_feedsToDelete)) {
 	    foreach ($this->_feedsToDelete as $name) {
 		$ret = RssMapHelper::deleteFeed($name);
@@ -65,6 +63,8 @@ class RssTest extends GalleryTestCase {
 		}
 	    }
 	}
+
+	parent::tearDown();
     }
 
     function testDeleteItem() {
