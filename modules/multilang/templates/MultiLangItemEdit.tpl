@@ -14,11 +14,11 @@ function pick(idx) {
     return;
   }
   var o = document.getElementById('title');
-  o.value = document.getElementById('ttl_' + idx).innerHTML;
+  o.value = document.getElementById('ttl_' + idx).value;
   o = document.getElementById('summary');
-  o.value = document.getElementById('sum_' + idx).innerHTML;
+  o.value = document.getElementById('sum_' + idx).value;
   o = document.getElementById('description');
-  o.value = document.getElementById('dsc_' + idx).innerHTML;
+  o.value = document.getElementById('dsc_' + idx).value;
   index = idx;
   isChanged = 0;
 }
@@ -29,11 +29,13 @@ function changed() { isChanged = 1; }
 {counter start=-1 assign=idx}
 {foreach from=$form.languageList key=language item=label}{counter assign=idx}
 {if isset($form.languageData[$language])}
-<div id="ttl_{$idx}">{$form.languageData[$language].title}</div>
-<div id="sum_{$idx}">{$form.languageData[$language].summary}</div>
-<div id="dsc_{$idx}">{$form.languageData[$language].description}</div>
+<input id="ttl_{$idx}" type="hidden" value="{$form.languageData[$language].title}"/>
+<input id="sum_{$idx}" type="hidden" value="{$form.languageData[$language].summary}"/>
+<input id="dsc_{$idx}" type="hidden" value="{$form.languageData[$language].description}"/>
 {else}
-<div id="ttl_{$idx}"></div><div id="sum_{$idx}"></div><div id="dsc_{$idx}"></div>
+<input id="ttl_{$idx}" type="hidden" value=""/>
+<input id="sum_{$idx}" type="hidden" value=""/>
+<input id="dsc_{$idx}" type="hidden" value=""/>
 {/if}
 {/foreach}
 </div>
