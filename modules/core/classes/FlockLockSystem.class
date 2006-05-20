@@ -65,7 +65,7 @@ class FlockLockSystem extends GalleryLockSystem {
 		    $platform->fclose($fd);
 		    /*
 		     * Delete the lock files even if others are locking it too (releaseLock calls
-		     * are too often forgotten in error handling
+		     * are too often forgotten in error handling)
 		     */
 		    if ($platform->file_exists($lockFile)) {
 			@$platform->unlink($lockFile);
@@ -173,18 +173,7 @@ class FlockLockSystem extends GalleryLockSystem {
      */
     function _getLockFile($id) {
 	global $gallery;
-
-	$locksDir = $gallery->getConfig('data.gallery.locks');
-	$tmp = "$id";
-	if ($id < 100) {
-	    $first = '0';
-	    $second = $tmp[0];
-	} else {
-	    $first = $tmp[0];
-	    $second = $tmp[1];
-	}
-
-	return "$locksDir$first/$second/$id";
+	return $gallery->getConfig('data.gallery.locks') . (int)$id;
     }
 
     /**

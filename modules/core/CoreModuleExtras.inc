@@ -2064,6 +2064,13 @@ class CoreModuleExtras {
 		}
 	    }
 
+	case '1.1.8':
+	    /* Remove lock subdirs */
+	    $locksDir = $gallery->getConfig('data.gallery.locks');
+	    if ($platform->file_exists($locksDir)) {
+		@$platform->recursiveRmDir($locksDir);
+	    }
+	    @$platform->mkdir($locksDir);
 
 	case 'end of upgrade path':
 	    /*
@@ -2323,6 +2330,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.5':
 	case '1.1.6':
 	case '1.1.7':
+	case '1.1.8':
 
 	case 'end of upgrade path':
 	    /*

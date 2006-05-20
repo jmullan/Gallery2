@@ -281,24 +281,6 @@ function populateDataDirectory($dataBase) {
 	if (!is_writeable($dir)) {
 	    return false;
 	}
-
-	if ($key == 'locks') {
-	    for ($i = 0; $i <= 9; $i++) {
-		if (!file_exists("$dir/$i")) {
-		    if (!mkdir("$dir/$i", 0755)) {
-			return false;
-		    }
-		}
-
-		for ($j = 0; $j <= 9; $j++) {
-		    if (!file_exists("$dir/$i/$j")) {
-			if (!mkdir("$dir/$i/$j", 0755)) {
-			    return false;
-			}
-		    }
-		}
-	    }
-	}
     }
 
     return true;
