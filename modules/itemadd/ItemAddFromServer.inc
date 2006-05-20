@@ -474,10 +474,17 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    }
 	}
 
+	/* Do we have permission to add subalbums */
+        list ($ret, $canAddAlbum) = GalleryCoreApi::hasItemPermission($item->getId(),
+            'core.addAlbumItem');
+        if ($ret) {
+            return array($ret, null, null);
+        }
 	$ItemAddFromServer = array('pathSeparator' => $slash,
 				   'localServerDirList' => $localServerDirList,
 				   'localServerFileCount' =>
-				     isset($localServerFileCount) ? $localServerFileCount : null);
+				     isset($localServerFileCount) ? $localServerFileCount : null,
+                                   'canAddAlbum' => $canAddAlbum);
 
 	if (!empty($form['localServerFiles'])) {
 	    usort($form['localServerFiles'], array($this, '_sortFiles'));

@@ -209,7 +209,11 @@
 	   {if $ItemAddFromServer.showSymlink}
 	     onclick="toggleSymlinkEnabled('{$smarty.foreach.fileIndex.iteration}')"
 	   {/if}
-	   name="{g->formVar var="form[localServerDirectories][$key][selected]"}"/>
+	   name="{g->formVar var="form[localServerDirectories][$key][selected]"}"
+	   {if !$ItemAddFromServer.canAddAlbum}
+	     disabled="true"
+	   {/if}
+	   />
 	</td><td>
 	  {if $file.legal}{strip}
 	    <a href="{g->url arg1="controller=core.ItemAdd" arg2="addPlugin=ItemAddFromServer"
