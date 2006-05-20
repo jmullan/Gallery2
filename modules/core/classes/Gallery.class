@@ -563,7 +563,7 @@ class Gallery {
     function &getTranslator() {
 	return $this->_translator;
     }
-    
+
     /**
      * Initialize our GalleryTranslator
      *
@@ -610,7 +610,7 @@ class Gallery {
 	} else {
 	    $language = '';
 	}
-	
+
 	return array(null, $language);
     }
 
@@ -626,7 +626,7 @@ class Gallery {
 	if (!empty($session)) {
 	    $session->put('core.language', $language);
 	}
-	
+
 	return null;
     }
 
@@ -708,7 +708,8 @@ class Gallery {
 	    $this->clearDebugBuffer();
 	}
 	if (!empty($this->_debug)) {
-	    error_reporting(E_ALL);
+	    /* Hardcode the value to avoid E_STRICT without using the >=5.0.0 constant */
+	    error_reporting(2047);
 	    ini_set('short_open_tag', false);
 	    ini_set('allow_call_time_pass_reference', false);
 	}
