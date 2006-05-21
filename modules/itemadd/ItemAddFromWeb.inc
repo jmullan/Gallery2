@@ -19,7 +19,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+ * @package ItemAdd
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
  */
@@ -27,7 +27,7 @@
 /**
  * This controller will handle the addition of an item as a children to another item.
  *
- * @package GalleryCore
+ * @package ItemAdd
  * @subpackage UserInterface
  */
 class ItemAddFromWeb extends ItemAddPlugin {

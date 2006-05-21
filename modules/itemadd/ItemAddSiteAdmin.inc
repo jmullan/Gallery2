@@ -89,7 +89,8 @@ class ItemAddSiteAdminController extends GalleryController {
 		for ($i = $form['uploadLocalServer']['selectedDir'] + 1;
 			!empty($params['uploadLocalServer.dir.' . $i]); $i++) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'itemadd',
-			'uploadLocalServer.dir.' . ($i - 1), $params['uploadLocalServer.dir.' . $i]);
+			    'uploadLocalServer.dir.' . ($i - 1),
+			    $params['uploadLocalServer.dir.' . $i]);
 		    if ($ret) {
 			return array($ret, null);
 		    }
