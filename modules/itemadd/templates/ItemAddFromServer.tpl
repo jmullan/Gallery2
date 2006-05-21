@@ -75,7 +75,7 @@
   <div class="giWarning">
     {g->text text="For security purposes, you can't use this feature until the Gallery Site Administrator configures a set of legal upload directories."}
     {if $ItemAdd.isAdmin}
-      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminCore"}">
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=itemadd.ItemAddSiteAdmin"}">
 	{g->text text="site admin"}
       </a>
     {/if}
