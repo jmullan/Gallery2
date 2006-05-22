@@ -533,7 +533,8 @@ function formatData($type,$tag,$intel,$data) {
 			$data	= str_replace("00","",$data);
 		}
 		if($tag=="9286") { //UserComment
-			$data	= rtrim($data);
+			$encoding = rtrim(substr($data, 0, 8));
+			$data	= rtrim(substr($data, 8));
 		}
 	} else {
 		$data = bin2hex($data);
