@@ -177,6 +177,43 @@ class WatermarkTest extends GalleryTestCase {
 	}
     }
 
+    function testReplaceWatermark() {
+	/* Create an item to watermark */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Give it a thumbnail with a watermark */
+	list ($ret, $thumbnail) = $this->_createDerivative(
+	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'rotate|90',
+	    'test/file', array('postFilterOperations' => 'composite|plugins_data/modules/' .
+			       'watermark/foo,test/file,0,0,manual,9,8'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Apply a second watermark */
+	$ret = WatermarkHelper::watermarkItem($this->_watermark, $item, '1.1', '2.2',
+					      array(DERIVATIVE_TYPE_IMAGE_PREFERRED => false,
+						    DERIVATIVE_TYPE_IMAGE_THUMBNAIL => true,
+						    DERIVATIVE_TYPE_IMAGE_RESIZE => false));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify that it went properly */
+	$filter =
+	    sprintf('composite|plugins_data/modules/watermark/%s,test/file,0,0,manual,1.100,2.200',
+		    $this->_watermark->getFileName());
+
+	list ($ret, $thumbnail) = $thumbnail->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($filter, $thumbnail->getPostFilterOperations());
+    }
+
     function testWatermarkItemCreatedPreferred() {
 	/* Create an item to watermark */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');

@@ -344,10 +344,27 @@ class WatermarkHelper {
 			$watermark->getHeight(),
 			number_format($xPercent, 3, '.', ''),
 			number_format($yPercent, 3, '.', ''));
-		    list ($ret, $newPostFilters) = GalleryCoreApi::mergeDerivativeOperations(
-			$derivative->getPostFilterOperations(), $filter);
-		    if ($ret) {
-			return $ret;
+
+		    /* Replace existing watermark, or add a new one */
+		    $postFilterOps = $derivative->getPostFilterOperations();
+		    if ($postFilterOps) {
+			$ops = split(';', $postFilterOps);
+			$replaced = false;
+			for ($i = 0; $i < count($ops); $i++) {
+			    if (strncmp($ops[$i], 'composite|plugins_data/modules/watermark', 40)) {
+				continue;
+			    }
+
+			    $ops[$i] = $filter;
+			    $replaced = true;
+			    break;
+			}
+			if (!$replaced) {
+			    $ops[] = $filter;
+			}
+			$newPostFilters = join(';', $ops);
+		    } else {
+			$newPostFilters = $filter;
 		    }
 		} else if (in_array($derivative->getId(), $remove)) {
 		    $newPostFilters = GalleryCoreApi::removeDerivativeOperation(
