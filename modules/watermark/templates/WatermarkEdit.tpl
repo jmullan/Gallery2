@@ -4,62 +4,6 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{* Load up the WZ_DragDrop library *}
-<script type="text/javascript" src="{g->url href="lib/wz_dragdrop/wz_dragdrop.js"}"></script>
-
-<script type="text/javascript">
-  // <![CDATA[
-  function moveToOriginalLocation() {ldelim}
-    var orig = dd.elements.background, floater = dd.elements.floater, scale = 1.0;
-    if ({$watermark.width} > (0.9 * orig.w)) {ldelim}
-      scale = (0.9 * orig.w) / {$watermark.width};
-    {rdelim}
-    if ({$watermark.height} > (0.9 * orig.h)) {ldelim}
-      scale = Math.min(scale, (0.9 * orig.h) / {$watermark.height});
-    {rdelim}
-    floater.resizeTo({$watermark.width} * scale,
-		     {$watermark.height} * scale);
-    floater.moveTo(orig.x + Math.round({$form.xPercentage|default:0} / 100 * (orig.w - floater.w)),
-		   orig.y + Math.round({$form.yPercentage|default:0} / 100 * (orig.h - floater.h)));
-  {rdelim}
-
-  {literal}
-  function calculatePercentages() {
-    var orig = dd.elements.background, floater = dd.elements.floater;
-    document.getElementById("xPercentage").value =
-      100.0 * (floater.x - orig.x) / (orig.w - floater.w);
-    document.getElementById("yPercentage").value =
-      100.0 * (floater.y - orig.y) / (orig.h - floater.h);
-  }
-
-  function my_DragFunc() {
-    verifyBounds();
-  }
-
-  // Keep from dragging the watermark off the image
-  function verifyBounds() {
-    var orig = dd.elements.background, floater = dd.elements.floater,
-	newX = floater.x, newY = floater.y;
-    if (floater.x < orig.x) {
-      newX = orig.x;
-    } else if (floater.x + floater.w > orig.x + orig.w) {
-      newX = orig.x + (orig.w - floater.w);
-    }
-
-    if (floater.y < orig.y) {
-      newY = orig.y;
-    } else if (floater.y + floater.h > orig.y + orig.h) {
-      newY = orig.y + (orig.h - floater.h);
-    }
-
-    if (newX != floater.x || newY != floater.y) {
-      floater.moveTo(newX, newY);
-    }
-  }
-  {/literal}
-  // ]]>
-</script>
-
 <input type="hidden" name="{g->formVar var="watermarkId"}" value="{$watermark.id}"/>
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="Edit A Watermark"} </h2>
@@ -105,9 +49,9 @@
     {g->text text="Place your watermark on the canvas below in the location where you'd like it to appear when you watermark newly uploaded photos.  You'll be able to edit individual photos to move the watermark later on, if you choose."}
   </p>
 
-  <div id="background" class="gcBackground1"
+  <div id="watermark_background" class="gcBackground1"
    style="width: 400px; height: 300px; border-width: 1px; margin: 5px 0 10px 5px">
-    <img name="floater"
+    <img id="watermark_floater"
      src="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$watermark.id`"}"
      width="{$watermark.width}" height="{$watermark.height}" alt="" style="position: absolute"/>
   </div>
@@ -144,18 +88,18 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit" onclick="calculatePercentages(); return true"
+  <input type="submit" class="inputTypeSubmit" onclick="calculatePercentages('watermark_floater'); return true"
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>
 
 {g->addToTrailer}
-<script type="text/javascript">{literal}
+<script type="text/javascript">
 // <![CDATA[
-SET_DHTML("background"+NO_DRAG, "floater"+CURSOR_MOVE);
-moveToOriginalLocation();
-verifyBounds();
+initWatermarkFloater("watermark_floater", "watermark_background",
+	             {$watermark.width}, {$watermark.height},
+	             {$form.xPercentage|default:0}, {$form.yPercentage|default:0});
 // ]]>
-{/literal}</script>
+</script>
 {/g->addToTrailer}

@@ -252,6 +252,12 @@ class ItemEditWatermark extends ItemEditPlugin {
 	$ItemEditWatermark['derivative'] =
 	    isset($displayDerivative) ? (array)$displayDerivative : null;
 
+	$template->javascript('lib/yui/yahoo-min.js');
+	$template->javascript('lib/yui/dom-min.js');
+	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/dragdrop-min.js');
+	$template->javascript('modules/watermark/watermark.js');
+
 	$template->setVariable('ItemEditWatermark', $ItemEditWatermark);
 	$template->setVariable('controller', 'core.ItemEditWatermark');
 	return array(null,
