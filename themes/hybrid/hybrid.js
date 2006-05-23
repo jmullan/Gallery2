@@ -372,7 +372,7 @@ function slide_previndex() {
   return slide_nextindex(1);
 }
 function slide_next() {
-  var i = slide_nextindex(); if (i >= 0) image_show(i); else slide_onoff();
+  var i = slide_nextindex(); if (i >= 0) image_show(i); else { slide_inprog = 0; slide_onoff(); }
 }
 function slide_setorder(o) {
   slide_order = parseInt(o);
