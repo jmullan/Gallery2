@@ -30,6 +30,12 @@
       {g->text text="Keywords: "}{$theme.item.keywords|markup}
       <br/>
     {/if}
+    {g->text text="Link to this item:"}
+    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.item.id`"
+		     forceSessionId=false}">
+      {g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.item.id`"
+	      forceSessionId=false forceFullUrl=true}
+    </a>
   </td></tr></table>
   {* Show any other item blocks *}
   {foreach from=$theme.params.photoBlocks item=block}
