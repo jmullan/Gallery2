@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -44,13 +43,11 @@ class ItemMoveController extends GalleryController {
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['move'])) {
 
 	    /* First check if everything would be okay with the change */
-	    $canAddItem = false;
-	    $canAddAlbum = false;
+	    $canAddItem = $canAddAlbum = false;
 	    if (!empty($form['destination'])) {
 		/* Check if we can add albums or items here */
 		$newParentId = $form['destination'];
@@ -106,15 +103,15 @@ class ItemMoveController extends GalleryController {
 		    }
 
 		    /* Can we delete this item from here? */
-		    if (! isset($permissions['core.delete'])) {
+		    if (!isset($permissions['core.delete'])) {
 			$error[] = 'form[error][source][' . $selectedId . '][permission][delete]';
 		    }
 
 		    /* Check if the destination allows this source to be added */
-		    if ($selectedItem->getCanContainChildren() && ! $canAddAlbum) {
+		    if ($selectedItem->getCanContainChildren() && !$canAddAlbum) {
 			$error[] = 'form[error][source][' . $selectedId .
 				   '][permission][addAlbumItem]';
-		    } else if (! $selectedItem->getCanContainChildren() && ! $canAddItem) {
+		    } else if (!$selectedItem->getCanContainChildren() && !$canAddItem) {
 			$error[] = 'form[error][source][' . $selectedId .
 				   '][permission][addDataItem]';
 		    }
@@ -123,6 +120,7 @@ class ItemMoveController extends GalleryController {
 	    }
 
 	    if (empty($error) && !empty($selectedIds) && !empty($newParentId)) {
+		$storage =& $gallery->getStorage();
 
 		/* Read lock myself, my parent id and the new parent id */
 		$lockIds = array();
@@ -179,6 +177,11 @@ class ItemMoveController extends GalleryController {
 			GalleryCoreApi::releaseLocks($lockIds);
 			return array($ret, null);
 		    }
+		    $ret = $storage->checkPoint();
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockIds);
+			return array($ret, null);
+		    }
 		} while (!empty($selectedItems));
 
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
@@ -230,8 +233,7 @@ class ItemMoveController extends GalleryController {
 }
 
 /**
- * This view will prompt for which files to move/copy and which is the
- * destination.
+ * This view will prompt for which files to move and which is the destination.
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -269,15 +271,9 @@ class ItemMoveView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$albumIds = array();
-	$peers = array();
-	$peerTypes = array();
-	$peerTypes['album'] = array();
-	$peerTypes['data'] = array();
-	$peerDescendentCounts = array();
-	$albumTree = array();
+	$albumIds = $albumTree = $selectedIds = $peers = $peerDescendentCounts = array();
+	$peerTypes = array('album' => array(), 'data' => array());
 	$numPages = 1;
-	$selectedIds = array();
 	if (!empty($peerIds)) {
 	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
 	    if (empty($page)) {
