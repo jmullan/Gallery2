@@ -81,7 +81,8 @@ function init() {
 function setupMainImage() {
     mainPhoto = document.getElementById('main-image');
 
-    if (MAIN_PHOTO_WIDTH <= slideshowImageWidths[currentImageIndex]) {
+    if (slideshowImageWidths[currentImageIndex] < 0
+	    || MAIN_PHOTO_WIDTH <= slideshowImageWidths[currentImageIndex]) {
 	mainPhoto.style.width = MAIN_PHOTO_WIDTH + 'px';
     } else {
 	/*
@@ -126,7 +127,11 @@ function switchImages(thumbIndex, firstLoad) {
     }
     if (slideshowImageWidths[thumbIndex] < 0) {
 	/* This item is not a photo.. redirect to view it */
-	location = slideshowImages[thumbIndex];
+	if (!firstLoad) {
+	    location = slideshowImages[thumbIndex];
+	} else {
+	    hideLoadingMessage();
+	}
 	return;
     }
     highlightCurrentThumb(thumbIndex);
