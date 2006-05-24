@@ -120,7 +120,7 @@ class NewItemsModule extends GalleryModule {
      * @see GalleryModule::uninstall
      */
     function uninstall() {
-	$ret = GalleryCoreApi::removeSortOrderFromAllAlbums('NewItems');
+	$ret = GalleryCoreApi::deleteSortOrder('NewItems');
 	if ($ret) {
 	    return $ret;
 	}

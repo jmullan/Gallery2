@@ -281,7 +281,7 @@ class RatingModule extends GalleryModule {
      * @see GalleryModule::uninstall
      */
     function uninstall() {
-	$ret = GalleryCoreApi::removeSortOrderFromAllAlbums('RatingSortOrder');
+	$ret = GalleryCoreApi::deleteSortOrder('RatingSortOrder');
 	if ($ret) {
 	    return $ret;
 	}
