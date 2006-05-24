@@ -101,11 +101,6 @@ class SlideshowView extends GalleryView {
 		array(1024,1024),   /* 3: ..1024x768  */
 		array(1280,1280),   /* 4: ..1280x1024 */
 	    );                      /* 5:  >1280x1024 */
-	    list ($ret, $this->exifExtractor) =
-		GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
 	    $this->init = 1;
 	}
 	if (is_array($item)) {
@@ -142,15 +137,6 @@ class SlideshowView extends GalleryView {
 		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret) {
 		return array($ret, null, null);
-	    }
-	    /* If an Exif extractor is available try to get capture dates */
-	    $exif = array();
-	    if (isset($this->exifExtractor)) {
-		list ($ret, $exif) =
-		    $this->exifExtractor->getMetaData($childIds);
-		if ($ret) {
-		    return array($ret, null, null);
-		}
 	    }
 	}
 	if (!isset($startId)) {
@@ -251,9 +237,7 @@ class SlideshowView extends GalleryView {
 			'id' => $childId,
 			'data' => (array)$child,
 			'sources' => $images,
-			'sizeClassMap' => $sizeClassMap,
-			'exif' => isset($exif[$childId])
-				  ? $exif[$childId] : array());
+			'sizeClassMap' => $sizeClassMap);
 		}
 	    }
 	}

@@ -25,12 +25,8 @@
   <span id="title_{$i}">{$it.data.title|markup}</span>
   <span id="summary_{$i}">{$it.data.summary|markup}</span>
   <span id="date_{$i}">
-    {if isset($it.exif.DateTime)}
-      {$it.exif.DateTime.title}: {$it.exif.DateTime.value}
-    {else}
-      {capture name="date"}{g->date timestamp=$it.data.modificationTimestamp}{/capture}
-      {g->text text="Date: %s" arg1=$smarty.capture.date}
-    {/if}
+     {capture name="date"}{g->date timestamp=$it.data.originationTimestamp}{/capture}
+     {g->text text="Date: %s" arg1=$smarty.capture.date}
   </span>
   <span id="description_{$i}">{$it.data.description|markup}</span>
 </div>
