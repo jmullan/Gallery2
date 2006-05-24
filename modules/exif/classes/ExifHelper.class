@@ -70,7 +70,7 @@ class ExifHelper {
      * @static
      */
     function setDefaultProperties($viewMode) {
-	switch($viewMode) {
+	switch ($viewMode) {
 	case EXIF_SUMMARY:
 	    /*
 	     * This is an initial install. Make sure that we have some
@@ -146,12 +146,12 @@ class ExifHelper {
      * @static
      */
     function addDefaultIptcProperties($viewMode) {
-	list($ret, $properties) = ExifHelper::getProperties($viewMode);
+	list ($ret, $properties) = ExifHelper::getProperties($viewMode);
 	if ($ret) {
 	    return $ret;
 	}
 
-	switch($viewMode) {
+	switch ($viewMode) {
 	case EXIF_SUMMARY:
 	    $properties[] = 'IPTC/Caption';
 	    $properties[] = 'IPTC/CopyrightNotice';
@@ -193,11 +193,7 @@ class ExifHelper {
 	}
 	$rawExifData = read_exif_data_raw($path, false);
 	if ($gallery->getDebug()) {
-	    /* Capture old-school print_r() to support older PHP */
-	    ob_start();
-	    print_r($rawExifData);
-	    $buf = ob_get_contents();
-	    ob_end_clean();
+	    $buf = print_r($rawExifData, true);
 	    $gallery->debug(str_replace("\0", '', $buf));
 	}
     }
@@ -295,7 +291,7 @@ class ExifHelper {
 
 	GalleryUtilities::sanitizeInputValues($value);
 
-	switch($property) {
+	switch ($property) {
 	case 'ShutterSpeedValue':
 	    /* Convert "25/10000 sec" to "1/400 sec" */
 	    $results = sscanf($value, '%d/%d sec');
@@ -492,15 +488,15 @@ class ExifHelper {
 	global $gallery;
 
 	$query = '
-        SELECT
-          [ExifPropertiesMap::property], [ExifPropertiesMap::viewMode], ' .
-	    '[ExifPropertiesMap::sequence]
-        FROM
-          [ExifPropertiesMap]
-        WHERE
-          [ExifPropertiesMap::viewMode] = ?
-        ORDER BY
-          [ExifPropertiesMap::sequence] ASC';
+	SELECT
+	  [ExifPropertiesMap::property], [ExifPropertiesMap::viewMode], 
+	  [ExifPropertiesMap::sequence]
+	FROM
+	  [ExifPropertiesMap]
+	WHERE
+	  [ExifPropertiesMap::viewMode] = ?
+	ORDER BY
+	  [ExifPropertiesMap::sequence] ASC';
 	list ($ret, $searchResults) = $gallery->search($query, array((int)$viewMode));
 	if ($ret) {
 	    return array($ret, null);
