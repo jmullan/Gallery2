@@ -49,33 +49,27 @@ class PanoramaView extends GalleryView {
 	}
 	$image = $image[$item->getId()];
 
-	list ($ret, $viewWidth) = GalleryCoreApi::getPluginParameter('module', 'panorama', 'width');
+	list ($ret, $renderer) =
+	    GalleryCoreApi::newFactoryInstance('GalleryRenderer', 'PanoramaRenderer');
 	if ($ret) {
 	    return array($ret, null);
 	}
+	if (!isset($renderer)) {
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	}
 
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$src = $urlGenerator->generateUrl(
-	    array('view' => 'core.DownloadItem', 'itemId' => $image->getId(),
-		  'serialNumber' => $image->getSerialNumber()),
-	    array('forceSessionId' => true, 'forceFullUrl' => true));
+	$template->setVariable('Panorama', array(
+		    'item' => (array)$item,
+		    'appletHtml' => $renderer->render('HTML', $image, $item, array()),
+		    ));
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'panorama');
 	if ($ret) {
 	    return array($ret, null);
 	}
-
-	$Panorama['item'] = (array)$item;
-	$Panorama['image'] = (array)$image;
-	$Panorama['imageUrl'] = $src;
-	$Panorama['width'] = $viewWidth;
-	$Panorama['moduleUrl'] =
-	    GalleryUtilities::convertPathToUrl(dirname(__FILE__), array('forceFullUrl' => true));
-
-	$template->setVariable('Panorama', $Panorama);
 	$template->title($module->translate('Panorama'));
-	return array(null,
-	    array('body' => 'modules/panorama/templates/Panorama.tpl'));
+
+	return array(null, array('body' => 'modules/panorama/templates/Panorama.tpl'));
     }
 }
 ?>
