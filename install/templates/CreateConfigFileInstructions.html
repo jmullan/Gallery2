@@ -13,7 +13,22 @@
     </p>
 
     <p>
-      <?php printf(_("Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config.php</i>.  You must make sure that the webserver will be able to write to it.  If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything special.  When you've created this file and set the permissions properly, you can proceed.  If there's a problem, we'll tell you what to fix."), $templateData['galleryDir']) ?>
+    <?php if (empty($templateData['error'])): ?>
+      <?php printf(_("Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config.php</i>.  You must make sure that the webserver will be able to write to it."), $templateData['galleryDir']) ?>
+      <?php if ($templateData['OS'] == 'unix'): ?>
+	<div class="example">
+	  <h2> <?php print _("Unix (with shell access)"); ?> </h2>
+	  <pre> $ <b>touch config.php</b> <br/> $ <b>chmod 666 config.php</b> </pre>
+	</div>
+
+      <?php else: ?>
+	<div class="example">
+	  <h2> Windows </h2>
+	  <pre> On Windows, you shouldn't have to do anything special. </pre>
+	</div>
+      <?php endif; ?>
+    <?php endif; ?>
+    When you've created this file and set the permissions properly, you can proceed.  If there's a problem, we'll tell you what to fix.
     </p>
 
     <div class="go">

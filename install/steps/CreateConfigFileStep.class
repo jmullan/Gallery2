@@ -43,6 +43,11 @@ class CreateConfigFileStep extends InstallStep {
 			'<tt>' . basename($configDir) . '</tt>');
 	    $this->setInError(true);
 	    $templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
+	    if (!strncasecmp(PHP_OS, 'win', 3)) {
+		$templateData['OS'] = 'winnt';
+	    } else {
+		$templateData['OS'] = 'unix';
+	    }
 	    $templateData['galleryDir'] = basename($configDir);
 	} else {
 	    /* Don't (overwrite) the config file, if we recommend an upgrade */
