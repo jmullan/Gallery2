@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package PhotoAccess
@@ -37,8 +36,6 @@ class PrintPhotoController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-	global $gallery;
-
 	list ($itemId, $returnUrl) = GalleryUtilities::getRequestVariables('itemId', 'returnUrl');
 
 	GalleryCoreApi::requireOnce('modules/photoaccess/classes/PhotoAccessHelper.class');

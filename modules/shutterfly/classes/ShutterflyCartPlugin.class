@@ -57,8 +57,11 @@ class ShutterflyCartPlugin extends CartPluginInterface_1_0 {
 	$session =& $gallery->getSession();
 	$session->put('shutterfly.cart', $cartItemIds);
 
-	return array(null,
-		     array('view' => 'shutterfly.PrintPhotos', 'return' => 1));
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$returnUrl = $urlGenerator->generateUrl(
+		array('view' => 'cart.ViewCart'), array('forceFullUrl' => true));
+
+	return array(null, array('view' => 'shutterfly.PrintPhotos', 'returnUrl' => $returnUrl));
     }
 }
 ?>

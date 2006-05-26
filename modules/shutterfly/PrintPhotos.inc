@@ -47,7 +47,7 @@ class PrintPhotosView extends GalleryView {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	list ($itemId, $returnUrl) = GalleryUtilities::getRequestVariables('itemId', 'return');
+	list ($itemId, $returnUrl) = GalleryUtilities::getRequestVariables('itemId', 'returnUrl');
 	if (!empty($itemId)) {
 	    $cartItemIds = array($itemId => 1);
 	} else {

@@ -123,7 +123,6 @@ class ShutterflyModule extends GalleryModule {
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
-
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    if (isset($wantsDetailedLinks[$itemId]) &&
@@ -132,7 +131,7 @@ class ShutterflyModule extends GalleryModule {
 		$links[$itemId][] =
 		    array('text' => $this->translate('Print on Shutterfly.com'),
 			  'params' => array('view' => 'shutterfly.PrintPhotos',
-					    'itemId' => $itemId, 'return' => 1));
+					    'itemId' => $itemId, 'returnUrl' => '%CURRENT_URL%'));
 	    }
 	}
 
