@@ -44,19 +44,46 @@ class StorageSetupStep extends InstallStep {
 		if (substr($dir, -1) != DIRECTORY_SEPARATOR) {
 		    $dir .= DIRECTORY_SEPARATOR;
 		}
-		if (!is_dir($dir)) {
-		    $templateData['error']['missing_dir'] = 1;
-		} else if (!is_readable($dir)) {
-		    $templateData['error']['inaccessible_dir'] = 1;
-		} else if (!is_writeable($dir)) {
-		    $templateData['error']['readonly_dir'] = 1;
-		} else {
-		    /* Populate the dir */
-		    if (!populateDataDirectory($dir)) {
-			$templateData['error']['creation_error'] = 1;
+		/* 
+		 * Make the path absolute since relative to the install/ folder isn't the same as
+		 * relative to the main.php entry file. And also check if it exists. 
+		 */
+		$realPath = @realpath($dir); 
+		if (empty($realPath)) {
+		    /* 
+		     * The folder does not exist yet. If we have already write permission on the 
+		     * parent folder, create the storage folder.
+		     */
+		    $parentDir = realpath(dirname($dir));
+		    if (!empty($parentDir) && is_dir($parentDir) && is_readable($parentDir) && 
+		            is_writeable($parentDir)) {
+		        $dir = $parentDir . DIRECTORY_SEPARATOR . basename($dir) .
+		        	DIRECTORY_SEPARATOR;
+		        /* Create the storage folder with restrictive permissions. */
+		    	if (mkdir($dir)) {
+		    	    chmod($dir, 0700);
+		    	}
 		    } else {
-			$this->_dir = $dir;
-			$this->setComplete(true);
+			$templateData['error']['missing_dir'] = 1;
+		    }
+		}
+		
+		/* Check if the (newly created) dir exists, is writeable etc. */
+		if (empty($templateData['error'])) {
+		    if (!is_dir($dir)) {
+			$templateData['error']['missing_dir'] = 1;
+		    } else if (!is_readable($dir)) {
+			$templateData['error']['inaccessible_dir'] = 1;
+		    } else if (!is_writeable($dir)) {
+			$templateData['error']['readonly_dir'] = 1;
+		    } else {
+			/* Populate the dir */
+			if (!populateDataDirectory($dir)) {
+			    $templateData['error']['creation_error'] = 1;
+			} else {
+			    $this->_dir = $dir;
+			    $this->setComplete(true);
+			}
 		    }
 		}
 	    }
