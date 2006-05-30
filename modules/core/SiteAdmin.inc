@@ -178,9 +178,15 @@ class SiteAdminView extends GalleryView {
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if ($subViewName == 'core.SiteAdmin') {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
-	}
-	if (empty($subViewName)) {
+	} else if (empty($subViewName)) {
 	    $subViewName = 'core.AdminCore';
+	} else if ($subViewName == 'core.AdminModules') {
+	    /*
+	     * In 2.2, we changed core.AdminModules and core.AdminPlugins.  Remap the name
+	     * here to avoid breaking any existing modules.
+	     * TODO: Remove this when GalleryCoreApi is at 8.0+
+	     */
+	    $subViewName = 'core.AdminPlugins';
 	}
 
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
