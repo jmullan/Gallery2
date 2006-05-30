@@ -34,13 +34,12 @@ class {$ucModuleId}Module extends GalleryModule {ldelim}
 
     function {$ucModuleId}Module() {ldelim}
 	global $gallery;
-
 	$this->setId('{$moduleId}');
 	$this->setName($gallery->i18n('{$moduleName}'));
 	$this->setDescription($gallery->i18n('My {$moduleName} module'));
 	$this->setVersion('1.0.0');
 	$this->setCallbacks('getItemLinks');
-	$this->setGroup('other', $this->translate('Other'));
+	$this->setGroup('other', $gallery->i18n('Other'));
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredModuleApi(array(3, 0));
     {rdelim}
