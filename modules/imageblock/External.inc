@@ -52,8 +52,6 @@ class ExternalView extends GalleryView {
     function renderImmediate($status, $error) {
 	GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 	global $gallery;
-	$SlideShow = array();
-	$startId = null;
 
 	/* Force UrlGenerator to not add session id into urls.. */
 	$session =& $gallery->getSession();
