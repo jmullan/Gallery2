@@ -91,6 +91,10 @@
   <b>
     {g->text text="There are links to this photo, so you cannot change the original"}
   </b>
+  {elseif $ItemEditRotateAndScalePhoto.editPhoto.noToolkitSupport}
+  <b>
+    {g->text text="There is no toolkit support to modify the original so operations may only be applied to the copies"}
+  </b>
   {else}
     <input type="checkbox" id="cbPreserve"{if $form.preserveOriginal} checked="checked"{/if}
      name="{g->formVar var="form[preserveOriginal]"}"/>

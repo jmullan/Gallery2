@@ -211,14 +211,33 @@ class ItemEditPhoto extends ItemEditPlugin {
 	}
 
 	$ItemEditPhoto = array();
-
-	/* Figure out what options we can provide */
-	list ($ret, $toolkit) =
-	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
+	
+	/* Check to see if we have a preferred source */
+	list ($ret, $results) =
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	$ItemEditPhoto['editSizes']['can']['createResizes'] = isset($toolkit);
+
+	$sourceMimeTypes = array($item->getMimeType());
+	if (empty($results)) {
+	    $ItemEditPhoto['editPhoto']['hasPreferredSource'] = false;
+	} else {
+	    $preferred = $results[$item->getId()];
+	    if (preg_match("/(rotate|resize|scale)\|/", $preferred->getDerivativeOperations())) {
+		$ItemEditPhoto['editPhoto']['hasPreferredSource'] = true;
+	    } else {
+		$ItemEditPhoto['editPhoto']['hasPreferredSource'] = false;
+	    }
+	    $sourceMimeTypes[] = $preferred->getMimeType();
+	}
+
+	/* Figure out what options we can provide */
+	list ($ret, $ItemEditPhoto['editSizes']['can']['createResizes']) =
+	    $this->_checkForOperation('resize', $sourceMimeTypes);
+	if ($ret) {
+	    return array($ret, null, null);
+	}
 
 	$template->setVariable('ItemEditPhoto', $ItemEditPhoto);
 	$template->setVariable('controller', 'core.ItemEditPhoto');

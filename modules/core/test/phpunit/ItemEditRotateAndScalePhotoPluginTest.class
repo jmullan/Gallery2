@@ -86,6 +86,13 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemEditRotateAndScalePhotoPluginTestToolkit', array('test/blob'), 
+	    'convert-to-image/jpeg', array(), 'test-description', 'image/jpeg');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
 	list ($ret, $this->_item) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret) {
@@ -115,6 +122,22 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+	
+	list ($ret, $this->_blob) =
+	    $this->_createRandomDataItem($this->_album->getId(), 'test/blob');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $this->_blobDerivative[0]) = $this->_createDerivative(
+	    $this->_blob, $this->_blob->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, 
+	    'convert-to-image/jpeg');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
     }
 
     function testScalePreserveOriginal() {
@@ -251,6 +274,29 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 			    $this->_derivative[0]->getDerivativeOperations());
     }
 
+    function testScaleConvertedPreferred() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][resize]', 1);
+	GalleryUtilities::putRequestVariable('form[resize][width]', 200);
+	GalleryUtilities::putRequestVariable('form[resize][height]', 200);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_blob, $this->_blobDerivative[0]);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Scaled photo successfully')),
+			    $results);
+
+	/* Verify that the transform went ok */
+	list ($ret, $this->_blobDerivative[0]) = $this->_blobDerivative[0]->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('convert-to-image/jpeg;scale|200,200',
+			    $this->_blobDerivative[0]->getDerivativeOperations());
+    }
+
     function testScaleMissing() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][resize]', 1);
@@ -352,18 +398,9 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
     function testRotateFlipConvertedPreferred() {
 	/* Put a convert operation on our preferred */
-	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_derivative[0]->getId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->_derivative[0]->setDerivativeOperations('convert-to-image/jpeg');
-	$ret = $this->_derivative[0]->save();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$ret = GalleryCoreApi::releaseLocks($lockId);
+	list ($ret, $this->_blobDerivative[1]) = $this->_createDerivative(
+	    $this->_blob, $this->_blobDerivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'crop|10,10,30,40;thumbnail|200');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -373,25 +410,25 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$results = $this->handleRequest($this->_blob, $this->_blobDerivative[0]);
 	$this->assertEquals(array(array(), $this->_translate('Rotated photo successfully')),
 			    $results);
 
 	/* Verify that the transform went ok */
-	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
+	list ($ret, $this->_blobDerivative[0]) = $this->_blobDerivative[0]->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('convert-to-image/jpeg;rotate|180',
-			    $this->_derivative[0]->getDerivativeOperations());
-
+			    $this->_blobDerivative[0]->getDerivativeOperations());
+	
 	/* Verify that the thumbnail's crop was adjusted */
-	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	list ($ret, $this->_blobDerivative[1]) = $this->_blobDerivative[1]->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('crop|60,50,30,40;thumbnail|200',
-			    $this->_derivative[1]->getDerivativeOperations());
+			    $this->_blobDerivative[1]->getDerivativeOperations());
     }
 
     function testRevertToOriginal() {

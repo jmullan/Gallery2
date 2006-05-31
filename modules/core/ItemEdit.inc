@@ -395,6 +395,29 @@ class ItemEditPlugin {
      */
     function getTitle() {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+    }    
+    
+    /**
+     * Check to see if a given operation is available for any of a set of mime types
+     *
+     * @param string the operation (eg, 'rotate', or 'scale')
+     * @param array mime types
+     * @return array object GalleryStatus a status code
+     *               bool true if any of the mime types are supported
+     */
+    function _checkForOperation($operation, $mimeTypes) {
+	foreach (array_unique($mimeTypes) as $mimeType) {
+	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, $operation);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    if (isset($toolkit)) {
+		break;
+	    }
+	}
+
+	return array(null, isset($toolkit));
     }
 }
 

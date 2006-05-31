@@ -107,7 +107,11 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $this->_derivative[0]) =
+	$this->_unused = null;
+    }
+
+    function testEditResizes() {
+	list ($ret, $derivative[0]) =
 	    $this->_createDerivative($this->_item, $this->_item->getId(),
 				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
 	if ($ret) {
@@ -115,28 +119,23 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $this->_derivative[1]) =
-	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
+	list ($ret, $derivative[1]) =
+	    $this->_createDerivative($this->_item, $derivative[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $this->_derivative[2]) =
+	list ($ret, $derivative[2]) =
 	    $this->_createDerivative(
-		$this->_item, $this->_derivative[0]->getId(),
+		$this->_item, $derivative[0]->getId(),
 		DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500,500;convert-to-image/jpeg', 'test/file',
 		array('postFilterOperations' => 'test-operation|0'));
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-
-	$this->_preferred =& $this->_derivative[0];
-    }
-
-    function testEditResizes() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
@@ -148,7 +147,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 600);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest($this->_item, $this->_preferred);
+	$results = $this->handleRequest($this->_item, $this->_unused);
 	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
 			    $results);
 
@@ -158,10 +157,13 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
+	
 	if (!empty($resizeTable[$this->_item->getId()])) {
 	    $this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
 	    for ($i = 0; $i < 3; $i++) {
+		$this->assertEquals($derivative[0]->getId(), 
+		    $resizeTable[$this->_item->getId()][$i]->getDerivativeSourceId(), 
+		    'Derivative Source id');
 		$expectedOperations =
 		    ($i < 2) ? ('scale|' . 100 * ($i+1) . ',' . 100 * ($i+1)) : 'scale|300,600';
 		$expectedOperations .= ';convert-to-image/jpeg';
@@ -186,7 +188,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest($this->_item, $this->_preferred);
+	$results = $this->handleRequest($this->_item, $this->_unused);
 	$this->assertEquals(array(array('form[error][resizes][0][size][missing]',
 					'form[error][resizes][1][size][missing]',
 					'form[error][resizes][2][size][missing]'),
@@ -207,13 +209,113 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 'x' . rand());
 
 	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest($this->_item, $this->_preferred);
+	$results = $this->handleRequest($this->_item, $this->_unused);
 	$this->assertEquals(array(array('form[error][resizes][0][size][invalid]',
 					'form[error][resizes][1][size][invalid]',
 					'form[error][resizes][2][size][invalid]'),
 				  null),
 			    $results);
     }
+    
+    function testEditResizesNoDerivative() {
+	$itemId = $this->_item->getId();
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	for ($i = 0; $i < 3; $i++) {
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][width]', 100 * ($i+1));
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][height]', 100 * ($i+1));
+	}
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 600);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item, $this->_unused);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	/* Examine the resizes and make sure they line up */
+	list ($ret, $resizeTable) =
+	    GalleryCoreApi::fetchResizesByItemIds(array($itemId));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $preferred) =
+	    GalleryCoreApi::fetchPreferredSource($this->_item);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	if (!empty($resizeTable[$itemId])) {
+	    $this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
+	    for ($i = 0; $i < 3; $i++) {
+		$this->assertEquals($itemId, $resizeTable[$itemId][$i]->
+		    getDerivativeSourceId(), 'Derivative Source id');
+		$expectedOperations =
+		    ($i < 2) ? ('scale|' . 100 * ($i+1) . ',' . 100 * ($i+1)) : 'scale|300,600';
+		$expectedOperations .= ';convert-to-image/jpeg';
+		$this->assertEquals(
+		    $expectedOperations,
+		    $resizeTable[$itemId][$i]->getDerivativeOperations());
+	    }
+	}
+    }
+
+    function testEditResizesRaw() {
+	/*
+	 * Test the situation when the original file is "raw" - cannot be resized or
+	 * rotated; however prefered can
+	 */
+	$itemId = $this->_item->getId();
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemEditPhotoPluginTestToolkit', array('test/blob'), 'convert-to-image/jpeg',
+	    array(), 'test-description', 'image/jpeg');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+	list ($ret, $this->_blob) =
+	    $this->_createRandomDataItem($this->_album->getId(), 'test/blob');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $derivative[0]) =
+	    $this->_createDerivative($this->_item, $itemId,
+				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'convert-to-image/jpeg');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	for ($i = 0; $i < 3; $i++) {
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][width]', 100 * ($i+1));
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][height]', 100 * ($i+1));
+	}
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item, $this->_unused);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+	list ($ret, $resizeTable) = GalleryCoreApi::fetchDerivativesByItemIds(
+	    array($this->_item->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert($resizeTable[$itemId], "no derivative");
+	$preferredId = $resizeTable[$itemId][0]->getId();
+	/* check that the derivatives are from the preferred source, not from the original */
+	$this->assertEquals(4, sizeof($resizeTable[$itemId]));
+	for ($i = 1; $i < 4; $i++) {
+	    $this->assertEquals($preferredId, $resizeTable[$itemId][$i]->
+		getDerivativeSourceId(), 'Derivative Source id');
+	    $this->assertEquals('scale|' . 100 * $i . ',' . 100 * $i . ';convert-to-image/jpeg', 
+		$resizeTable[$itemId][$i]->
+		getDerivativeOperations(), 'Derivative Source id');
+	}
+    }    
 }
 
 /**

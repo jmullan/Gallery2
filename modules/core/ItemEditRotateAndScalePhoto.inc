@@ -196,7 +196,26 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    return array($ret, null, null);
 	}
 
-	$sourceMimeTypes = array($item->getMimeType());
+	/* Can we allow to delete the original? */
+	$mimeType = $item->getMimeType();
+	list ($ret, $toolkit) =
+	    GalleryCoreApi::getToolkitByOperation($mimeType, 'rotate');
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$ItemEditRotateAndScalePhoto['editPhoto']['noToolkitSupport'] = !isset($toolkit);
+	/* get worst of rotate and resize */
+	if (isset($toolkit)) {
+	    list ($ret, $toolkit) =
+		GalleryCoreApi::getToolkitByOperation($mimeType, 'resize');
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    $ItemEditRotateAndScalePhoto['editPhoto']['noToolkitSupport'] = !isset($toolkit);
+	}
+	    
+	$sourceMimeTypes = array($mimeType);
+	
 	if (empty($results)) {
 	    $ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = false;
 	} else {
@@ -245,29 +264,6 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	}
 
 	return array(null, $module->translate('Modify Photo'));
-    }
-
-    /**
-     * Check to see if a given operation is available for any of a set of mime types
-     *
-     * @param string the operation (eg, 'rotate', or 'scale')
-     * @param array mime types
-     * @return array object GalleryStatus a status code
-     *               bool true if any of the mime types are supported
-     */
-    function _checkForOperation($operation, $mimeTypes) {
-	foreach (array_unique($mimeTypes) as $mimeType) {
-	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, $operation);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    if (isset($toolkit)) {
-		break;
-	    }
-	}
-
-	return array(null, isset($toolkit));
     }
 }
 ?>
