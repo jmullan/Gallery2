@@ -272,7 +272,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $url = $urlGenerator->generateUrl(
 		array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
-		array('forceSessionId' => true, 'forceFullUrl' => true));
+		array('forceSessionId' => true, 'forceFullUrl' => true, 'htmlEntities' => false));
 
 	    $ItemEditPhotoThumbnail['editThumbnail']['appletCodeBase'] =
 		GalleryUtilities::convertPathToUrl(dirname(__FILE__)) . '/plugins';
@@ -322,8 +322,8 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    $ItemEditPhotoThumbnail['editThumbnail']['aspectRatioList'] = $aspectRatioList;
 
 	    $orientationList = array();
-	    $orientationList['landscape'] = $module->translate("Landscape");
-	    $orientationList['portrait'] = $module->translate("Portrait");
+	    $orientationList['landscape'] = $module->translate('Landscape');
+	    $orientationList['portrait'] = $module->translate('Portrait');
 	    $ItemEditPhotoThumbnail['editThumbnail']['orientationList'] = $orientationList;
 
 
@@ -347,11 +347,11 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		$portraitCompare = round($aspect['height'] / $aspect['width'], 2);
 		if (abs($currentAspect - $landscapeCompare) <= 0.03) {
 		    $selectedAspect = $i;
-		    $selectedOrientation = "landscape";
+		    $selectedOrientation = 'landscape';
 		    break;
 		} else if (abs($currentAspect - $portraitCompare) <= 0.03) {
 		    $selectedAspect = $i;
-		    $selectedOrientation = "portrait";
+		    $selectedOrientation = 'portrait';
 		    break;
 		}
 		$i++;
@@ -363,6 +363,13 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioHeight'] =
 		$aspectRatioList[$selectedAspect]['height'];
 	}
+
+	$template->javascript('lib/yui/yahoo-min.js');
+	$template->javascript('lib/yui/dom-min.js');
+	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/dragdrop-min.js');
+	$template->javascript('lib/javascript/Cropper.js');
+	$template->style('modules/core/templates/ItemEditPhotoThumbnail.css');
 
 	$template->setVariable('ItemEditPhotoThumbnail', $ItemEditPhotoThumbnail);
 	$template->setVariable('controller', 'core.ItemEditPhotoThumbnail');
