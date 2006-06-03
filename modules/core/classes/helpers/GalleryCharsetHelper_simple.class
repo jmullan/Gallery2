@@ -94,15 +94,23 @@ class GalleryCharsetHelper_simple {
 	 * See http://cvsweb.xfree86.org/cvsweb/xc/nls/locale.alias?rev=1.44
 	 */
 	switch($sourceEncoding) {
-	case '1252':   /* Windows XP has LC_CTYPE=English_United States.1252 */
-	    $sourceEncoding = 'Windows-1252';
-	    break;
-	case '1251':   /* Windows XP has LC_CTYPE=Russian_Russia.1251 */
-	    $sourceEncoding = 'CP1251';
-	    break;
 	case '646':   /* Solaris iconv returns "646" for ASCII */
 	    $sourceEncoding = 'ASCII';
 	    break;
+	default:
+	    /*
+	     * Windows XP has LC_CTYPE=English_United States.1252, LC_CTYPE=Russian_Russia.1251,
+	     * etc.  Convert all the .125x types to CP125x, except Windows-1252 which we'll preserve
+	     * for backwards compatibility with G2.1
+	     */
+	    $intEncoding = (int)$sourceEncoding;
+	    if ($intEncoding >= 1250 && $intEncoding <= 1259) {
+	        if ($intEncoding == 1252) {
+		    $sourceEncoding = 'Windows-1252';
+		} else {
+		    $sourceEncoding = 'CP' . $intEncoding;
+		}
+	    }
 	}
 	/* FreeBSD may return charset with missing hyphen from nl_langinfo */
 	$sourceEncoding = str_replace('ISO8859', 'ISO-8859', $sourceEncoding);
