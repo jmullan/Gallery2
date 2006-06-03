@@ -110,6 +110,7 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 				substr($path, strlen($albumDir)) : basename($path);
 
 	    $itemId = $item->getId();
+	    $itemMimeType = $item->getMimeType();
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
 	    if ($ret) {
 		return array($ret, null);
@@ -144,6 +145,19 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 		    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($item->getId());
 		if ($ret) {
 		    return array($ret, null);
+		}
+		/* Bug 1462984: Make sure we use the right extension */
+		$derivativeMimeType = $item->getMimeType();
+		if ($derivativeMimeType != $itemMimeType) {
+		    list ($ret, $mimeExtensions) =
+			GalleryCoreApi::convertMimeToExtensions($derivativeMimeType);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    if (!empty($mimeExtensions)) {
+			$base = GalleryUtilities::getFileBase($relativePath);
+			$relativePath = $base . '.' . $mimeExtensions[0];
+		    }
 		}
 	    }
 

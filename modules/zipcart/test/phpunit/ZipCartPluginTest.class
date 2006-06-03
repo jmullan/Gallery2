@@ -65,6 +65,13 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$ret = GalleryCoreApi::registerToolkitOperation('ZipCartToolkit',
+	    array('test/jpeg'), 'testconvert', array(), 'desc');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
 	/* Test album */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
@@ -118,8 +125,30 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	/* Photo with a derivative of different extension */
+	list ($ret, $this->_items[4]) = $this->_addItem($this->_album->getId(), 'GalleryPhotoItem',
+							'test/jpeg', 'core.viewSource');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $derivativeId) = $this->_addDerivative(
+	    $this->_items[4], DERIVATIVE_TYPE_IMAGE_PREFERRED, 'testconvert|test/out');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
 	$this->_savePlatform =& $gallery->getPlatform();
 	$gallery->setPlatform(new ZipCartPluginTestPlatform($this->_savePlatform));
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::removeMimeType(array('mimeType' => array('test/out')));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	parent::tearDown();
     }
 
     function _addItem($parentId, $itemType, $mimeType, $permission=null) {
@@ -146,7 +175,7 @@ class ZipCartPluginTest extends GalleryTestCase {
 	return array(null, $item);
     }
 
-    function _addDerivative($item, $derivativeType) {
+    function _addDerivative($item, $derivativeType, $operation = null) {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
 	if ($ret) {
@@ -161,7 +190,8 @@ class ZipCartPluginTest extends GalleryTestCase {
 	}
 	$derivative->setDerivativeSourceId($item->getId());
 	$derivative->setMimeType($item->getMimeType());
-	$derivative->setDerivativeOperations('testoperation|0');
+	$operation = empty($operation) ? 'testoperation|0' : $operation;
+	$derivative->setDerivativeOperations($operation);
 	$ret = $derivative->save();
 	if ($ret) {
 	    return array($ret, null);
@@ -179,6 +209,13 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    $cartItemIds[$this->_items[$i]->getId()] = 1;
 	}
 
+	/* Create a mock mime type for derivative */
+	$extension = 'test-' . rand(111, 999);
+	$ret = GalleryCoreApi::addMimeType($extension, 'test/out', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
 	GalleryCoreApi::requireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
 	GalleryCoreApi::requireOnce('modules/zipcart/classes/ZipCartPlugin.class');
 	$cartPlugin = new ZipCartPlugin();
@@ -199,10 +236,11 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    array($path . $slash . $this->_items[0]->getPathComponent(),
 		  $path . $slash . $this->_items[1]->getPathComponent(),
 		  $path . $slash . $this->_items[2]->getPathComponent(),
-		  $path . $slash . $this->_items[3]->getPathComponent()),
+		  $path . $slash . $this->_items[3]->getPathComponent(),
+		  $path . $slash . $this->_items[4]->getPathComponent() . '.' . $extension),
 	    $gallery->_zipCartFiles, 'zip files');
 	/* Check that derivatives were used appropriately.. */
-	$this->assertEquals(4, count($gallery->_zipCartSources), '4 sources');
+	$this->assertEquals(5, count($gallery->_zipCartSources), '5 sources');
 	$this->assert(strpos($gallery->_zipCartSources[0], "${slash}albums${slash}") !== false,
 		      'first item from original (' . $gallery->_zipCartSources[0] . ')');
 	$this->assert(strpos($gallery->_zipCartSources[1], "${slash}derivative/") !== false,
@@ -329,7 +367,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 class ZipCartToolkit extends GalleryToolkit {
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
-	/* Just copy file and return same mime type */
+	/* Just copy file and return appropriate mime type */
 	global $gallery;
 	if ($sourceFilename != $destFilename) {
 	    $platform =& $gallery->getPlatform();
@@ -338,7 +376,8 @@ class ZipCartToolkit extends GalleryToolkit {
 			     null, null);
 	    }
 	}
-	return array(null, $mimeType, $context);
+	$outputMimeType = ($operationName == 'testconvert' ? 'test/out' : $mimeType);
+	return array(null, $outputMimeType, $context);
     }
 }
 ?>
