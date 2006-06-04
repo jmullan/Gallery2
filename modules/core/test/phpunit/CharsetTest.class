@@ -360,10 +360,11 @@ class CharsetTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 	$phpVm->setFunctionExists('nl_langinfo', true);
 	$phpVm->setReturn('nl_langinfo', array(CODESET), false);
-	$gallery->_phpVm = $phpVm;
 	$phpVm->setReturn('setlocale', array(LC_ALL, '0'),
 			  'LC_CTYPE=Russian_Russia.1251;LC_NUMERIC=C;LC_TIME=C');
-	$this->assertEquals('CP1251', GalleryCharsetHelper_simple::detectSystemCharset());
+	$gallery->_phpVm = $phpVm;
+	$this->assertEquals('CP1251', GalleryCharsetHelper_simple::detectSystemCharset(),
+			    'Wrong system charset');
 
 	/* We can override what the system tells us using $gallery->setConfig */
 	$gallery->setConfig('systemCharset', 'xyz123');
