@@ -337,7 +337,7 @@ class SlideshowTest extends GalleryTestCase {
 	$slideIds = array();
 	foreach ($slideData as $slide) {
 	    foreach (array('id', 'sources.0.id', 'sources.0.serialNumber',
-			   'data', 'sizeClassMap', 'exif') as $attribute) {
+			   'data', 'sizeClassMap') as $attribute) {
 		$k = explode('.', $attribute);
 		$this->assert(
 		    (count($k)==1 && isset($slide[$attribute])) ||
