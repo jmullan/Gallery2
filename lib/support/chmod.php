@@ -45,15 +45,15 @@ $plugins = getPluginList();
 $path = getRequestVariable('path');
 if (empty($path)) {
     $path = getGalleryStoragePath();
+} else {
+    /* 
+     * $path is used in a chmod() call and we output the path in the HTML. 
+     * Just do some very basic sanitation.
+     */
+    GalleryUtilities::sanitizeInputValues($path);
 }
 /* Some basic sanitation */
-$path = str_replace('..', '', $path);
-/* 
- * $path is used in a chmod() call and we output the path in the HTML. 
- * Just do some very basic sanitation.
- */
-
-GalleryUtilities::sanitizeInputValues($path);
+$path = str_replace('..', '', $path); 
 if (!file_exists($path)) {
     /* TODO: add open_basedir check */
     $status['error'][] = "Folder or file '$path' does not exist!";
