@@ -135,8 +135,9 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	}
 
 	$html = $this->_renderer->render('HTML', $this->_item, $this->_item, array());
-	$this->assert(preg_match('{<object[^>]*archive="http}', $html),
-		      'item: jar full url: ' . htmlentities($html));
+	$this->assert(
+	    preg_match('{<param name="archive" value="http}', $html),
+	    'item: jar full url: ' . htmlentities($html));
 	$this->assert(preg_match('{<param[^>]*name="ScrollerThumb"[^>]*value="http}', $html),
 		      'item: slider full url: ' . htmlentities($html));
 	$this->assert(preg_match('{<param[^>]*name="PanoramaTile"[^>]*value="http[^"]*'
@@ -144,7 +145,7 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 		      'item: image full url: ' . htmlentities($html));
 
 	$html = $this->_renderer->render('HTML', $this->_derivative, $this->_item, array());
-	$this->assert(preg_match('{<object[^>]*archive="http}', $html),
+	$this->assert(preg_match('{<param name="archive" value="http}', $html),
 		      'deriv: jar full url: ' . htmlentities($html));
 	$this->assert(preg_match('{<param[^>]*name="ScrollerThumb"[^>]*value="http}', $html),
 		      'deriv: slider full url: ' . htmlentities($html));
