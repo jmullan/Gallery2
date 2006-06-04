@@ -4,7 +4,7 @@
   <head>
     <title> <?php print _('Welcome to the Gallery Upgrader') ?> </title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="<?php generateUrl('styles/style.css') ?>"/>
+    <link rel="stylesheet" type="text/css" href="<?php generateUrl('upgrade.css') ?>"/>
   </head>
 
   <body<?php global $translator; if (isset($translator)
@@ -17,7 +17,7 @@
  * This page is the main upgrade template. It shows a header, the navigation menu (overview over all upgrade
  * steps with links), the body of the current step by including the corresponding template, a "Continue to
  * step x" link, and an upgrade status bar.
- * In the UpgradeCoreModule / UpgradeOtherModule steps, it shows a active progress bar for the progress 
+ * In the UpgradeCoreModule / UpgradeOtherModule steps, it shows a active progress bar for the progress
  * within the step. Once the step is finished, it shows the overall progress bar and the redo/continue links
  * again.
  * Note: The page is divided into two <table>s because Internet Explorer doesn't start rendering a table
