@@ -554,6 +554,14 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 	$failsafe = true;
     }
 
+    /* Post Gallery::Error event */
+    $event = GalleryCoreApi::newEvent('Gallery::Error');
+    $event->setData(array('error' => $error));
+    list ($ret, $data) = GalleryCoreApi::postEvent($event);
+    if ($ret) {
+	$failsafe = true;
+    }
+
     if (!$failsafe) {
 	list ($ret, $themeId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
