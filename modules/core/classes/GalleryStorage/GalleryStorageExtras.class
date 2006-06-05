@@ -448,7 +448,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function newEntity(&$entity) {
 	$ret = $this->_dbInit();
 	if ($ret) {
-	    return array($ret, null);
+	    return $ret;
 	}
 
 	list ($ret, $id) = $this->_gs->getUniqueId();
