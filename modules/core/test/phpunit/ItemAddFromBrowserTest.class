@@ -281,26 +281,27 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
     function testAddFromBrowserFail() {
 	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
-	$files = array(1 => 'test1.gif', 2 => 'test2.gif');
-	foreach ($files as $errorCode => $file) {
-	    GalleryUtilities::putRequestVariable('form[name][' . $errorCode . ']', $file);
-	    GalleryUtilities::putRequestVariable('form[tmp_name][' . $errorCode . ']', '');
-	    GalleryUtilities::putRequestVariable('form[size][' . $errorCode . ']', 0);
-	    GalleryUtilities::putRequestVariable('form[error][' . $errorCode . ']', $errorCode);
+	$files = array(1 => array('test1.gif', UPLOAD_ERR_INI_SIZE),
+		       2 => array('test2.gif', UPLOAD_ERR_FORM_SIZE));
+	foreach ($files as $i => $data) {
+	    GalleryUtilities::putRequestVariable("form[name][$i]", $data[0]);
+	    GalleryUtilities::putRequestVariable("form[tmp_name][$i]", '');
+	    GalleryUtilities::putRequestVariable("form[size][$i]", 0);
+	    GalleryUtilities::putRequestVariable("form[error][$i]", $data[1]);
 	}
 
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array('form[error][upload][1]', 'form[error][upload][2]'),
 			    $results[0], 'Failure');
 
-	$this->assertEquals($files[1], $results[1]['addedFiles'][0]['fileName'], 'Filename');
+	$this->assertEquals($files[1][0], $results[1]['addedFiles'][0]['fileName'], 'Filename');
 	$this->assertEquals($this->_translate(array(
 	    'text' => 'Input file %s exceeds maximum permitted file size',
 	    'arg1' => 'test1.gif')),
 	    $results[1]['addedFiles'][0]['warnings'][0], 'Warning');
 	$this->assert(!isset($results[1]['addedFiles'][0]['id']), 'id');
 
-	$this->assertEquals($files[2], $results[1]['addedFiles'][1]['fileName'], 'Filename');
+	$this->assertEquals($files[2][0], $results[1]['addedFiles'][1]['fileName'], 'Filename');
 	$this->assertEquals($this->_translate(array(
 	    'text' => 'Input file %s exceeds file size specified in the form',
 	    'arg1' => 'test2.gif')),
