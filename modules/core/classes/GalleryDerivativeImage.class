@@ -221,8 +221,11 @@ class GalleryDerivativeImage extends GalleryDerivative {
 				      : $item->getPathComponent();
 	    }
 	    if (!isset($params['longdesc'])) {
-		$params['longdesc'] = preg_replace('/[\r\n]+/', ' ',
-		    GalleryUtilities::markup($item->getDescription(), 'strip'));
+		$longdesc = preg_replace('/[\r\n]+/', ' ',
+			GalleryUtilities::markup($item->getDescription(), 'strip'));
+		if (!empty($longdesc)) {
+		    $params['longdesc'] = $longdesc;
+		}
 	    }
 
 	    $html = sprintf('<img src="%s"%s', $src, $sizeStr);
