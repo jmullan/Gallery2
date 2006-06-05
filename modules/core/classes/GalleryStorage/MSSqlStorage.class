@@ -88,6 +88,9 @@ class MSSqlStorage extends GalleryStorage {
 	    break;
 
 	case 'SUBSTRING':
+	    if (count($args) == 2) {
+		$args[2] = 'LEN(' . $args[0] . ') - ' . $args[1] . ' + 1';
+	    }
 	    $sql = sprintf('SUBSTRING(%s)', implode(', ', $args));
 	    break;
 
