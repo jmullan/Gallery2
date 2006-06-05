@@ -42,15 +42,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
      * Return a non transactional database connection
      *
+     * On occasion we'll need a non-transactional connection to do things
+     * like locking and sequence handling, since they have to be consistent
+     * across may concurrent requests.
      * @return array object GalleryStatus a status code
      *               object ADOdb a database connection
      */
     function _getNonTransactionalDatabaseConnection() {
-	/*
-	 * If we're transactional, then we need another connection to
-	 * manipulate our locks, since they have to operate outside of a
-	 * transaction.
-	 */
 	if ($this->_gs->_isTransactional) {
 	    if (empty($this->_gs->_nonTransactionalDb)) {
 		list ($ret, $this->_gs->_nonTransactionalDb) = $this->_gs->_getConnection(true);
@@ -448,8 +446,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * @see GalleryStorage::newEntity
      */
     function newEntity(&$entity) {
-	/* getUniqueId does _dbInit */
-	list ($ret, $id) = $this->getUniqueId();
+	$ret = $this->_dbInit();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	list ($ret, $id) = $this->_gs->getUniqueId();
 	if ($ret) {
 	    return $ret;
 	}
@@ -470,18 +472,30 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return array($ret, null);
 	}
 
+	/*
+	 * Wrap _getUniqueIdWithConnection with the current connection.  This allows
+	 * subclasses to use a different connection if necessary, like MySQL which
+	 * wants a non-transactional connection.
+	 */
+	return $this->_getUniqueIdWithConnection($this->_gs->_db);
+    }
+
+    /**
+     * @see GalleryStorage::getUniqueId
+     */
+    function _getUniqueIdWithConnection($dbConn) {
 	/* In case we're embedded in an app that sets adodb hasGenID to false (xaraya/postnuke) */
-	if (isset($this->_gs->_db->hasGenID) && !$this->_gs->_db->hasGenID) {
-	    $this->_gs->_db->hasGenID = $setGenID = true;
+	if (isset($dbConn->hasGenID) && !$dbConn->hasGenID) {
+	    $dbConn->hasGenID = $setGenID = true;
 	}
 
 	/* Get the id of the next object from our sequence */
 	$this->_gs->_traceStart();
-	$id = (int)$this->_gs->_db->GenId($this->_gs->_tablePrefix . DATABASE_SEQUENCE_ID);
+	$id = (int)$dbConn->GenId($this->_gs->_tablePrefix . DATABASE_SEQUENCE_ID);
 	$this->_gs->_traceStop();
 
 	if (isset($setGenID)) {
-	    $this->_gs->_db->hasGenID = false;
+	    $dbConn->hasGenID = false;
 	}
 
 	return array(null, $id);
