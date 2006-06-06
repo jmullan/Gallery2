@@ -4,7 +4,6 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<script type="text/javascript" src="{g->url href="lib/prototype/prototype.js"}"></script>
 <script type="text/javascript">
   //<![CDATA[
   var pluginNames = {ldelim} "module" : {ldelim} {rdelim}, "theme" : {ldelim} {rdelim} {rdelim}
@@ -59,11 +58,11 @@
   var allActions = ["install", "configure", "upgrade", "activate", "deactivate", "uninstall"];
   function updatePluginState(pluginType, pluginId, state, visualChanges) {
     var pluginKey = pluginType + "-" + pluginId;
-    icon = $("plugin-icon-" + pluginKey);
+    icon = document.getElementById("plugin-icon-" + pluginKey);
     icon.src = stateData[state]['img.src'];
     icon.alt = stateData[state]['img.alt'];
     for (var i in allActions) {
-      var node = $("action-" + allActions[i] + "-" + pluginKey);
+      var node = document.getElementById("action-" + allActions[i] + "-" + pluginKey);
       if (node) {
 	node.style.display = stateData[state]['actions'][allActions[i]] ? 'inline' : 'none';
       }
@@ -88,19 +87,19 @@
   }
 
   function copyVersionToInstalledVersion(pluginType, pluginId) {
-    versionEl = $("plugin-" + pluginType + "-" + pluginId + "-version");
-    installedVersionEl = $("plugin-" + pluginType + "-" + pluginId + "-installedVersion");
+    versionEl = document.getElementById("plugin-" + pluginType + "-" + pluginId + "-version");
+    installedVersionEl = document.getElementById("plugin-" + pluginType + "-" + pluginId + "-installedVersion");
     installedVersionEl.innerHTML = versionEl.innerHTML;
   }
 
   function eraseInstalledVersion(pluginType, pluginId) {
-    installedVersionEl = $("plugin-" + pluginType + "-" + pluginId + "-installedVersion");
+    installedVersionEl = document.getElementById("plugin-" + pluginType + "-" + pluginId + "-installedVersion");
     installedVersionEl.innerHTML = '';
   }
 
   function setPluginBusyStatus(pluginType, pluginId, makeBusy) {
     var pluginKey = pluginType + "-" + pluginId;
-    var row = $("plugin-row-" + pluginKey);
+    var row = document.getElementById("plugin-row-" + pluginKey);
     if (makeBusy) {
       row.className = row.className + " gbBusy";
     } else {
@@ -115,11 +114,7 @@
 
     contexts[pluginType][pluginId] = Array();
 
-    var callback = function(response) {
-      if (response.readyState != 4) {
-	return;
-      }
-
+    var handleSuccess = function(response) {
       eval("var result = " + response.responseText)
       if (result['status'] == 'success') {
 	for (var stateChangePluginType in result['states']) {
@@ -138,8 +133,18 @@
       delete(contexts[pluginType][pluginId]);
     }
 
+    var handleFailure = function(response) {
+      // Ignore for now
+    }
+
+    var callback = {
+	success: handleSuccess,
+	failure: handleFailure,
+	scope: this
+    }
+
     url += '&rnd=' + Math.random();
-    new Ajax.Request(url, {method: 'get', parameters: '', onComplete: callback});
+    YAHOO.util.Connect.asyncRequest('GET', url, callback);
     setPluginBusyStatus(pluginType, pluginId, true);
 
     return false;
@@ -149,8 +154,8 @@
   function addMessage(pluginType, pluginId, messageText, messageType) {
     var pluginStatus = document.createElement("div");
     var detailsId = "plugin-status-details-" + pluginType + "-" + pluginId;
-    if ($(detailsId)) {
-      $(STATUS_BOX_ID).removeChild($(detailsId));
+    if (document.getElementById(detailsId)) {
+      document.getElementById(STATUS_BOX_ID).removeChild(document.getElementById(detailsId));
     }
 
     pluginStatus.className = messageType;
@@ -160,21 +165,22 @@
 
     pluginStatus.appendChild(document.createTextNode(text));
 
-    var containerEl = $(STATUS_BOX_ID);
+    var containerEl = document.getElementById(STATUS_BOX_ID);
     containerEl.appendChild(pluginStatus);
     containerEl.style.display = "block";
 
-    var statusDimensions = Element.getDimensions(containerEl);
-    var bodyDimensions = Element.getDimensions(document.body);
-    containerEl.style.left = ((bodyDimensions.width - statusDimensions.width) / 2) + "px";
+    var statusDimensions = YAHOO.util.Dom.getRegion(containerEl);
+    var bodyDimensions = YAHOO.util.Dom.getRegion(document.body);
+    containerEl.style.left = (((bodyDimensions.right - bodyDimensions.left) -
+	                       (statusDimensions.right - statusDimensions.left)) / 2) + "px";
 
     updateStatusPosition();
     setTimeout("removeMessage('" + pluginStatus.id + "')", 3000);
   }
 
   function removeMessage(pluginStatusId) {
-    var containerEl = $(STATUS_BOX_ID);
-    var statusMessage = $(pluginStatusId);
+    var containerEl = document.getElementById(STATUS_BOX_ID);
+    var statusMessage = document.getElementById(pluginStatusId);
     if (statusMessage != null) {
       containerEl.removeChild(statusMessage);
     }
@@ -185,11 +191,11 @@
   }
 
   function updateStatusPosition() {
-    var containerEl = $(STATUS_BOX_ID);
+    var containerEl = document.getElementById(STATUS_BOX_ID);
     containerEl.style.top = document.getElementsByTagName("html")[0].scrollTop + "px";
   }
 
-  Event.observe(window, "scroll", updateStatusPosition, false);
+  YAHOO.util.Event.addListener(window, "scroll", updateStatusPosition, false);
   //]]>
 </script>
 {/literal}
