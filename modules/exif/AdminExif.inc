@@ -23,6 +23,7 @@
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
+ * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
  */
 
 GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
@@ -314,7 +315,10 @@ class AdminExifController extends GalleryController {
 	} else if (isset($form['action']['save'])) {
 	    $addOption = (isset($form['item']['summary']) ? EXIF_ITEM_SUMMARY : 0) |
 			 (isset($form['item']['description']) ? EXIF_ITEM_DESCRIPTION : 0) |
-			 (isset($form['item']['keywords']) ? IPTC_ITEM_KEYWORDS : 0);
+			 (isset($form['item']['keywords']) ? IPTC_ITEM_KEYWORDS : 0) |
+			 (isset($form['item']['exifrotate']) ? EXIF_ITEM_ROTATE : 0) |
+			 (isset($form['item']['exifrotatepreserve']) ? EXIF_ITEM_ROTATE_PRESERVE : 0);
+
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', $addOption);
 	    if ($ret) {
 		return array($ret, null);
@@ -371,7 +375,9 @@ class AdminExifView extends GalleryView {
 	    }
 	    $form['item'] = array('summary' => $addOption & EXIF_ITEM_SUMMARY,
 				  'description' => $addOption & EXIF_ITEM_DESCRIPTION,
-				  'keywords' => $addOption & IPTC_ITEM_KEYWORDS);
+				  'keywords' => $addOption & IPTC_ITEM_KEYWORDS,
+				  'exifrotate' => $addOption & EXIF_ITEM_ROTATE,
+				  'exifrotatepreserve' => $addOption & EXIF_ITEM_ROTATE_PRESERVE);
 	}
 
 	$exifKeys = ExifHelper::getExifKeys();

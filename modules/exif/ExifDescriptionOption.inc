@@ -23,6 +23,7 @@
  * @subpackage UserInterface
  * @author Elliot Shepherd <elliot@jarofworms.com>
  * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
+ * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
  */
 
 /**
@@ -61,89 +62,130 @@ class ExifDescriptionOption extends ItemAddOption {
 	    return array($ret, null, null);
 	}
 
-	/* Copy the array because we will change it with do / while / array_splice */
-	$itemsInBatches = $items;
-	/*
-	 * Batch size should be <= ulimit max open files, as long as we don't query this value,
-	 * assume a value of 100 which is fairly low
-	 */
-	$batchSize = 100;
-	do {
-	    $currentItems = array_splice($itemsInBatches, 0, $batchSize);
-	    $itemIds = array();
-	    foreach ($currentItems as $item) {
-		$itemIds[] = $item->getId();
-	    }
-	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemIds);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
+	/* Check if we need to get/process any exifdata */
+	$needed = array();
+	if (($addOption & EXIF_ITEM_SUMMARY) || ($addOption & EXIF_ITEM_DESCRIPTION)) {
+	    $needed[] = 'IPTC/Caption';
+	    $needed[] = 'ImageDescription';
+	    $needed[] = 'UserComment';
+	}
+	if ($addOption & IPTC_ITEM_KEYWORDS) {
+	    $needed[] = 'IPTC/Keywords';
+	}
+	if ($addOption & EXIF_ITEM_ROTATE) {
+	    $needed[] = 'Orientation';
+	}
 
-	    for ($i = 0; $i < count($currentItems); $i++) {
-		$itemId = $currentItems[$i]->getId();
-
-		list ($ret, $exifData) =
-		    ExifExtractor::getMetaData(
-			array($itemId),
-			array('IPTC/Caption',
-			      'ImageDescription',
-			      'UserComment',
-			      'IPTC/Keywords',
-			      )
-			);
-		if ($ret) {
-		    GalleryCoreApi::releaseLocks($lockId);
-		    return array($ret, null, null);
-		}
-
-		$mustSave = false;
-
-		/* TODO(xlerb) reconsider, if ExifHelper should be changed to do the preferences. */
-		$itemDescription = '';
-		if (!empty($exifData[$itemId]['IPTC/Caption']['value'])) {
-		    $itemDescription = $exifData[$itemId]['IPTC/Caption']['value'];
-		}
-		elseif (!empty($exifData[$itemId]['ImageDescription']['value'])) {
-		    $itemDescription = $exifData[$itemId]['ImageDescription']['value'];
-		}
-		elseif (!empty($exifData[$itemId]['UserComment']['value'])) {
-		    $itemDescription = $exifData[$itemId]['UserComment']['value'];
-		}
-
-		if (!empty($itemDescription)) {
-		    if ($addOption & EXIF_ITEM_SUMMARY) {
-			$currentItems[$i]->setSummary($itemDescription);
-			$mustSave = true;
-		    }
-		    if ($addOption & EXIF_ITEM_DESCRIPTION) {
-			$currentItems[$i]->setDescription($itemDescription);
-			$mustSave = true;
-		    }
-		}
-
-		if (!empty($exifData[$itemId]['IPTC/Keywords']['value'])) {
-		    $iptcKeywords = $exifData[$itemId]['IPTC/Keywords']['value'];
-		    if ($addOption & IPTC_ITEM_KEYWORDS) {
-			$currentItems[$i]->setKeywords($iptcKeywords);
-			$mustSave = true;
-		    }
-		}
-
-		if ($mustSave) {
-		    $ret = $currentItems[$i]->save();
+	if (!empty($needed)) {
+	    /* Copy the array because we will change it with do / while / array_splice */
+	    $itemsInBatches = $items;
+	    /*
+	     * Batch size should be <= ulimit max open files, as long as we don't query this value,
+	     * assume a value of 100 which is fairly low
+	     */
+	    $batchSize = 100;
+	    do {
+		$currentItems = array_splice($itemsInBatches, 0, $batchSize);
+		for ($i = 0; $i < count($currentItems); $i++) {
+		    $itemId = $currentItems[$i]->getId();
+		    
+		    list ($ret, $exifData) = ExifExtractor::getMetaData(array($itemId), $needed);
 		    if ($ret) {
-			GalleryCoreApi::releaseLocks($lockId);
 			return array($ret, null, null);
 		    }
+
+		    $mustSave = false;
+
+		    /* TODO(xlerb) reconsider, if ExifHelper should be changed to do the 
+										preferences. */
+		    $itemDescription = '';
+		    if (!empty($exifData[$itemId]['IPTC/Caption']['value'])) {
+			$itemDescription = $exifData[$itemId]['IPTC/Caption']['value'];
+		    }
+		    else if (!empty($exifData[$itemId]['ImageDescription']['value'])) {
+			$itemDescription = $exifData[$itemId]['ImageDescription']['value'];
+		    }
+		    else if (!empty($exifData[$itemId]['UserComment']['value'])) {
+			$itemDescription = $exifData[$itemId]['UserComment']['value'];
+		    }
+
+		    if (!empty($itemDescription)) {
+			if ($addOption & EXIF_ITEM_SUMMARY) {
+			    $currentItems[$i]->setSummary($itemDescription);
+			    $mustSave = true;
+		        }
+			if ($addOption & EXIF_ITEM_DESCRIPTION) {
+			    $currentItems[$i]->setDescription($itemDescription);
+			    $mustSave = true;
+			}
+		    }
+
+		    if (!empty($exifData[$itemId]['IPTC/Keywords']['value']) && $addOption 
+									& IPTC_ITEM_KEYWORDS) {
+			$iptcKeywords = $exifData[$itemId]['IPTC/Keywords']['value'];
+			    $currentItems[$i]->setKeywords($iptcKeywords);
+			    $mustSave = true;
+		    }
+
+		    /* rotate item based on exifdata */
+		    if (!empty($exifData[$itemId]['Orientation']['value']) && $addOption 
+									& EXIF_ITEM_ROTATE) {
+
+			$orientation = $exifData[$itemId]['Orientation']['value'];
+			$args = array();
+			
+			/*
+			 *  Note: Not handling the Mirrored cases this time. 
+			 *  Additional operation needed.
+			 */
+			
+			 /*  
+			  //elseif ($orientation == 'Normal (O deg)') { leave $args empty }
+			  else if ($orientation == 'Mirrored') {}
+			  else if ($orientation == 'Upsidedown Mirrored') {}
+			  else if ($orientation == '90 deg CW Mirrored') {}
+			  else if ($orientation == '90 deg CCW Mirrored') {}
+			 */
+			
+			if ($orientation == 'Upsidedown') {
+			    $args = array(180);
+			}
+			else if ($orientation == '90 deg CW') {
+			    $args = array(-90);
+			}
+			else if ($orientation == '90 deg CCW') {
+			    $args = array(90);
+			}
+
+			$operation = 'rotate';
+			
+			$preserveOriginal = ($addOption & EXIF_ITEM_ROTATE_PRESERVE) ? 1 : 0;
+		
+			if (!empty($args)) {
+			    $ret = GalleryCoreApi::applyToolkitOperation($operation, $args, 
+						$preserveOriginal, $currentItems[$i]);
+			    if ($ret) {
+			        return array($ret, null, null);
+			    }
+			}
+		    }
+		
+		    if ($mustSave && empty($args)) {
+			list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
+			if ($ret) {
+			    return array($ret, null, null);
+			}
+
+			$ret = $currentItems[$i]->save();
+			GalleryCoreApi::releaseLocks($lockId);
+			if ($ret) {
+			    return array($ret, null, null);
+			}
+		    }
 		}
-	    }
 
-	    $ret = GalleryCoreApi::releaseLocks($lockId);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	} while (!empty($itemsInBatches));
-
+	    } while (!empty($itemsInBatches));
+	}
 	return array(null, $errors, $warnings);
     }
 }

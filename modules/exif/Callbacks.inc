@@ -30,6 +30,7 @@ class ExifCallbacks {
 
 	switch ($callback) {
 	case 'LoadExifInfo':
+
 	    GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
 
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['itemId']);

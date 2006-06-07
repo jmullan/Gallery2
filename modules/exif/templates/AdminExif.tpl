@@ -185,6 +185,23 @@
       {g->text text="Item Keywords"}
     </label>
   </p>
+  <p class="giDescription">
+    {g->text text="When photos are added should we rotate them based on EXIF orientation data?"}
+  </p>
+  <p class="giDescription">
+    <input type="checkbox" id="cbItemExifRotate"{if $form.item.exifrotate} checked="checked"{/if}
+     name="{g->formVar var="form[item][exifrotate]"}"/>
+    <label for="cbItemExifRotate">
+      {g->text text="Rotate pictures automatically"}
+    </label>
+  </p>
+  <p class="giDescription">
+    <input type="checkbox" id="cbItemExifRotatePreserve"{if $form.item.exifrotatepreserve} checked="checked"{/if}
+     name="{g->formVar var="form[item][exifrotatepreserve]"}"/>
+    <label for="cbItemExifRotatePreserve">
+      {g->text text="Preserve Original on Rotating"}
+    </label>
+  </p>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
 </div>

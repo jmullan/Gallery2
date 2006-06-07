@@ -23,6 +23,7 @@
  * @subpackage PHPUnit
  * @author Alan Harder <alan.harder@sun.com>
  * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
+ * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
  */
 
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
@@ -201,5 +202,224 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    'keywords mismatch');
     }
 
+    function testRotateOptionOff() {
+	list ($ret, $this->_items[0]) = 
+		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
+					     array(),
+					     dirname(__FILE__) . '/../data/descr.jpg');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+							EXIF_ITEM_ROTATE_PRESERVE);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+
+	/* Verify that we do *not* have a preferred */
+	list ($ret, $preferredIds) =
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_items[0]->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(0, sizeof($preferredIds), 'there should not be any preferred');
+    }
+
+    function testRotateNoExifDataOptionOn() {
+	list ($ret, $this->_items[0]) = 
+	    $this->_createRandomDataItem($this->_album->getId(), 'image/test');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+							EXIF_ITEM_ROTATE);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+	
+    }
+    
+
+    function testRotateOptionOnOverwriteOriginal() {
+	list ($ret, $this->_items[0]) = 
+		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
+					     array(),
+					     dirname(__FILE__) . '/../data/descr.jpg');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+	/* Register a dummy toolkit */
+	$path = 'modules/exif/test/phpunit/ExifDescriptionOptionTest.class';
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ExifDescriptionOptionTestToolkit',
+	    'ExifDescriptionOptionTestToolkit', $path, 'exifTest', null, 0);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markToolkitForCleanup('ExifDescriptionOptionTestToolkit');
+
+	/* Register operations that we can perform on our mock data items */
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ExifDescriptionOptionTestToolkit', array('image/jpeg'), 'rotate',
+	    array(array('type' => 'int', 'description' => 'test')), 'test-description', null, 0);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Register property for dimensions */
+	$ret = GalleryCoreApi::registerToolkitProperty('ExifDescriptionOptionTestToolkit',
+			array('image/test'), 'dimensions', 'int,int', 'Get the dimensions');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Save current size */
+	$originalWidth = $this->_items[0]->getWidth();
+	$originalHeight = $this->_items[0]->getHeight();
+
+	/* Save current serial */
+	$originalSerial = $this->_items[0]->getSerialNumber();
+	
+	/* Initialize a Flag for checking rotation */
+	global $gallery;
+	$gallery->setConfig('rotated', 0);
+	
+	/* Perform the request and verify that we succeeded */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+							EXIF_ITEM_ROTATE);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+	
+	/* Verify that we don't have a preferred */
+	list ($ret, $preferredIds) =
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_items[0]->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(0, sizeof($preferredIds), 'there should be no preferreds');
+
+	/* Verify that the item serial is NOT the same */
+	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($originalSerial != $this->_items[0]->getSerialNumber(), 
+		"Item serial should have changed ($originalSerial)");
+	
+	/* Verify that the item has been rotated - by our mock toolkit */
+	$this->assertEquals(1, $gallery->getConfig('rotated'), 'a rotation should have been done');
+
+	/* and that the new dimensions are correct, set by our toolkit */
+	$newWidth = $this->_items[0]->getWidth();
+	$newHeight = $this->_items[0]->getHeight();
+
+	$this->assertEquals(10, $newWidth, 'width should be 10');
+	$this->assertEquals(10, $newHeight, 'height should be 10');
+
+    }
+    
+    function testRotateOptionOnPreserveOriginal() {
+	list ($ret, $this->_items[0]) = 
+		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
+					     array(),
+					     dirname(__FILE__) . '/../data/descr.jpg');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Save current serial */
+	$originalSerial = $this->_items[0]->getSerialNumber();
+
+	/* Perform the request and verify that we succeeded */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+						(EXIF_ITEM_ROTATE | EXIF_ITEM_ROTATE_PRESERVE));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+
+	/* Verify that we have a preferred */
+	list ($ret, $preferredIds) =
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_items[0]->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(1, sizeof($preferredIds), 'there should be a preferred');
+
+	/* Verify that the item serial is the same */
+	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($originalSerial, $this->_items[0]->getSerialNumber());
+	
+	/* Verify that the item was rotated */
+	$this->_preferred = array_shift($preferredIds);
+	$this->assertEquals('rotate|90', $this->_preferred->getDerivativeOperations());
+    }
+    
+}
+
+
+/**
+ * Required by test toolkit
+ */
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
+
+/**
+ * Test toolkit
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ExifDescriptionOptionTestToolkit extends GalleryToolkit {
+    /**
+     * @see GalleryToolkit::performOperation()
+     * Dummy operation
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
+	global $gallery;
+
+	$platform =& $gallery->getPlatform();
+	if ($sourceFilename != $destFilename) {
+	    $platform->copy($sourceFilename, $destFilename);
+	}
+
+	$fd = $platform->fopen($destFilename, 'a');
+	$platform->fwrite($fd, $operationName);
+	$platform->fclose($fd);
+	/* Clear cache to ensure new filesize will be seen */
+	$platform->clearstatcache();
+	
+	/* Turn On the Flag */
+	$gallery->setConfig('rotated', 1);
+
+	return array(null, 'image/test', $context);
+    }
+
+    function getProperty($mimeType, $propertyName, $sourceFilename) {
+	if ($propertyName != 'dimensions') {
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      "$propertyName $sourceFilename"), null);
+	}
+
+	return array(null, array(10, 10));
+    }
 }
 ?>

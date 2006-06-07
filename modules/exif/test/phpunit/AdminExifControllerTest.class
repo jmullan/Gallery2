@@ -467,10 +467,11 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(0, (int)$addOption);
     }
 
-    function testSaveAddOptionExifIptc() {
+    function testSaveAddOptionExifIptcAndRotate() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[item][description]', 1);
 	GalleryUtilities::putRequestVariable('form[item][keywords]', 1);
+	GalleryUtilities::putRequestVariable('form[item][exifrotate]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -483,8 +484,8 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	$this->assertEquals((EXIF_ITEM_DESCRIPTION | IPTC_ITEM_KEYWORDS), (int)$addOption);
+	$this->assertEquals((EXIF_ITEM_DESCRIPTION | IPTC_ITEM_KEYWORDS | EXIF_ITEM_ROTATE), (int)$addOption);
     }
+
 }
 ?>
