@@ -35,6 +35,7 @@ install/images/ico_error.gif	3087634832	3087634832	1608	1608
 install/images/ico_success.gif	1603034537	1603034537	1629	1629
 install/images/ico_warning.gif	3081259453	3081259453	1589	1589
 install/index.php	77165751	703253760	11549	11924
+install/install.css	1220223671	140336359	9080	9496
 install/locale/af/LC_MESSAGES/gallery2_install.mo	3024349487	3024349487	43565	43565
 install/locale/bg/LC_MESSAGES/gallery2_install.mo	2112787314	2112787314	30178	30178
 install/locale/cs/LC_MESSAGES/gallery2_install.mo	1584473140	1584473140	49459	49459
@@ -89,7 +90,6 @@ install/steps/SecureStep.class	968264184	2597801280	2192	2250
 install/steps/StorageSetupStep.class	222875965	3516577552	3747	3869
 install/steps/SystemChecksStep.class	2020078190	164203097	17193	17662
 install/steps/WelcomeStep.class	1092961224	198677103	1427	1473
-R	install/styles/style.css
 install/templates/AdminUserSetupRequest.html	2665936849	1397545983	3653	3769
 install/templates/AdminUserSetupSuccess.html	4206166754	147542172	100	105
 install/templates/AuthenticateRequest.html	500598403	1259096118	1420	1443
@@ -107,7 +107,7 @@ install/templates/InstallCoreModuleError.html	2589349954	1077866568	1546	1574
 install/templates/InstallCoreModuleSuccess.html	1962461428	3347005861	434	443
 install/templates/InstallOtherModulesRequest.html	1365936676	918699111	4541	4655
 install/templates/InstallOtherModulesSuccess.html	1147008667	4183454253	1915	1960
-install/templates/MainPage.html	3184187006	937988509	6856	7019
+install/templates/MainPage.html	1087581717	3510353898	6851	7015
 install/templates/ManifestSystemCheck.html	1198978707	3679581028	3370	3432
 install/templates/Multisite.html	3039051795	3701003270	4955	5054
 install/templates/MultisiteSuccess.html	3637549020	2095741799	206	216
@@ -240,7 +240,7 @@ lib/smarty_plugins/modifier.split.php	270678715	870144074	1295	1328
 lib/smarty_plugins/modifier.utf8.php	2517903316	2643619320	1211	1244
 lib/smtp/smtp.php	760303610	836367459	5475	5654
 lib/support/cache.php	497587356	1658737476	4409	4566
-lib/support/chmod.php	3583458596	2546522752	25572	26272
+lib/support/chmod.php	4047732576	4043544930	25601	26301
 lib/support/gd.php	3079779648	2633690372	7242	7485
 lib/support/index.php	1066974696	2097630945	1723	1772
 lib/support/phpinfo.php	3303129836	2657748157	139	145
@@ -336,11 +336,12 @@ lib/tools/stubs/TestCase_stub.class	491616840	899350855	1090	1122
 lib/tools/uml/GNUmakefile	3017185505	848639846	105	113
 lib/tools/uml/JavaClasses.xsl	3359724433	3440151233	2176	2227
 lib/tools/uml/make-java-classes.pl	3765624927	2605669075	2734	2840
+lib/yui/connection-min.js	1726640323	1707059792	5875	5803
 lib/yui/dom-min.js	2423475577	2423475577	10175	10175
 lib/yui/dragdrop-min.js	4252827018	4252827018	20291	20291
 lib/yui/event-min.js	593189038	593189038	8472	8472
 lib/yui/yahoo-min.js	742735006	742735006	1169	1169
-main.php	594180081	3734651753	20307	20927
+main.php	3959543046	2190890489	20549	21177
 upgrade/GalleryStub.class	1361505071	2675176916	1162	1198
 upgrade/StatusTemplate.class	3749907157	1539514692	3281	3382
 upgrade/UpgradeStep.class	222090425	4039943321	2377	2484
@@ -411,14 +412,13 @@ upgrade/steps/SystemChecksStep.class	2978759023	3307975341	19318	19856
 upgrade/steps/UpgradeCoreModuleStep.class	36948790	1634580885	4303	4431
 upgrade/steps/UpgradeOtherModulesStep.class	2803718332	3350306527	13318	13733
 upgrade/steps/WelcomeStep.class	3902634916	2229012609	1616	1665
-R	upgrade/styles/style.css
 upgrade/templates/AuthenticateRequest.html	4038237541	1632306365	1157	1189
 upgrade/templates/AuthenticateSuccessful.html	2066199327	580023278	101	106
 upgrade/templates/CleanCache.html	40213118	491558812	1474	1505
 upgrade/templates/Finished.html	3352690101	4008685855	507	520
 upgrade/templates/Header.html	445714115	3021541490	658	681
 upgrade/templates/InvalidConfig.html	1476367480	3003024647	356	362
-upgrade/templates/MainPage.html	1999211528	13106538	6301	6465
+upgrade/templates/MainPage.html	1256209491	1516371651	6295	6459
 upgrade/templates/ManifestCleanupScript.html	3796652713	356607291	397	411
 upgrade/templates/ManifestSystemCheck.html	1797267660	3640971662	3656	3719
 upgrade/templates/NavBar.html	3813728563	2324884567	1223	1263
@@ -431,6 +431,7 @@ upgrade/templates/UpgradeCoreModuleUpToDate.html	2320865409	2029739622	354	372
 upgrade/templates/UpgradeOtherModulesRequest.html	4133389695	266287785	6177	6342
 upgrade/templates/UpgradeOtherModulesSuccess.html	3938263312	657151207	1977	2034
 upgrade/templates/Welcome.html	3749003252	2684446060	1636	1666
+upgrade/upgrade.css	1002400888	3340588053	8244	8611
 R	docs/DEVELOPER_GUIDELINES
 R	docs/EMBEDDING
 R	docs/LOCALIZING
@@ -483,6 +484,8 @@ R	install/po/nl_NL.po
 R	install/po/sr_YU.po
 R	install/po/tr_TR.po
 R	install/po/vi_VN.po
+R	install/styles/style.css
+R	install/styles
 R	install/templates/WelcomeMultiSite.html
 R	layouts/classic/MANIFEST
 R	layouts/classic/debug/viewableFiles.txt
@@ -1360,3 +1363,5 @@ R	upgrade/po/nl_NL.po
 R	upgrade/po/sr_YU.po
 R	upgrade/po/tr_TR.po
 R	upgrade/po/vi_VN.po
+R	upgrade/styles/style.css
+R	upgrade/styles
