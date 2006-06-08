@@ -37,8 +37,12 @@
 //
 // $Id: mime.php,v 1.56 2006/05/18 23:05:14 cipri Exp $
 
-require_once('PEAR.php');
-require_once('Mail/mimePart.php');
+//@G2 - skip PEAR.php/change error handling, skip classes already defined (if embedded)
+//require_once('PEAR.php');
+if (!class_exists('Mail_mimePart')) {
+  require_once(dirname(__FILE__) . '/mimePart.php');
+}
+if (class_exists('Mail_mime')) return;
 
 /**
  * Mime mail composer class. Can handle: text and html bodies, embedded html
@@ -160,7 +164,7 @@ class Mail_mime
             }
         } else {
             $cont = $this->_file2str($data);
-            if (PEAR::isError($cont)) {
+            if (!isset($cont) /*PEAR::isError($cont)*/) {
                 return $cont;
             }
             if (!$append) {
@@ -188,7 +192,7 @@ class Mail_mime
             $this->_htmlbody = $data;
         } else {
             $cont = $this->_file2str($data);
-            if (PEAR::isError($cont)) {
+            if (!isset($cont) /*PEAR::isError($cont)*/) {
                 return $cont;
             }
             $this->_htmlbody = $cont;
@@ -219,7 +223,7 @@ class Mail_mime
         } else {
             $filename = $name;
         }
-        if (PEAR::isError($filedata)) {
+        if (!isset($filedata) /*PEAR::isError($filedata)*/) {
             return $filedata;
         }
         $this->_html_images[] = array(
@@ -267,13 +271,13 @@ class Mail_mime
             $filename = $name;
         }
         if (empty($filename)) {
-            $err = PEAR::raiseError(
+            $err = null; /*PEAR::raiseError(
               "The supplied filename for the attachment can't be empty"
-            );
+            );*/
 	    return $err;
         }
         $filename = basename($filename);
-        if (PEAR::isError($filedata)) {
+        if (!isset($filedata) /*PEAR::isError($filedata)*/) {
             return $filedata;
         }
 
@@ -298,11 +302,11 @@ class Mail_mime
     function &_file2str($file_name)
     {
         if (!is_readable($file_name)) {
-            $err = PEAR::raiseError('File is not readable ' . $file_name);
+            $err = null; //PEAR::raiseError('File is not readable ' . $file_name);
             return $err;
         }
         if (!$fd = fopen($file_name, 'rb')) {
-            $err = PEAR::raiseError('Could not open ' . $file_name);
+            $err = null; //PEAR::raiseError('Could not open ' . $file_name);
             return $err;
         }
         $filesize = filesize($file_name);
