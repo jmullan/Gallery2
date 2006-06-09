@@ -91,7 +91,7 @@ class SystemInfoTask extends MaintenanceTask {
 	if ($ret) {
 	    $locale = $core->translate('unknown');
 	}
-
+        
 	$info = array(
 	    $core->translate('Gallery version') . ' = ' . $version,
 	    $core->translate('PHP version') . ' = ' . phpversion() . ' ' . php_sapi_name(),
@@ -104,6 +104,9 @@ class SystemInfoTask extends MaintenanceTask {
 	    $core->translate('Acceleration') . ' = ' . $acceleration,
 	    $core->translate('Operating system') . ' = ' . php_uname(),
 	    $core->translate('Default theme') . ' = ' . $params['default.theme'],
+	    $core->translate('gettext') . ' = ' . 
+                ( GalleryTranslator::canTranslate() ? $core->translate('enabled') : 
+                                                      $core->translate('disabled')),
 	    $core->translate('Locale') . ' = ' . $locale,
 	    $core->translate('Browser') . ' = ' . GalleryUtilities::getServerVar('HTTP_USER_AGENT')
 	);
