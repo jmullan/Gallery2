@@ -1,5 +1,10 @@
+    <script type="text/javascript" src="../lib/yui/yahoo-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/dom-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/event-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/connection-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/animation-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/autocomplete-min.js"></script>
     <script type="text/javascript" src="../lib/javascript/AutoComplete.js"></script>
-    <script type="text/javascript" src="../lib/javascript/XmlHttp.js"></script>
 
     <?php if (isset($templateData['error'])): ?>
 	<div class="error">
@@ -60,7 +65,10 @@
 	     value="<?php print $templateData['configPath'] ?>" autocomplete="off"/>
       <script type="text/javascript">
 	// <![CDATA[
-	autoCompleteAttach('dir', '<?php generateUrl(sprintf('%s?step=%s&%s=%s', INDEX_PHP, $currentStep->getStepNumber(), session_name(), session_id())) ?>&doAutoComplete=1&path=__VALUE__');
+        YAHOO.util.Event.addListener(
+          this, 'load',
+          function(e, data) { autoCompleteAttach(data[0], data[1]); },
+          ['dir', '<?php generateUrl(sprintf('%s?step=%s&%s=%s', INDEX_PHP, $currentStep->getStepNumber(), session_name(), session_id())) ?>&doAutoComplete=1&path=__VALUE__']);
 
 	function linkToggle(m) {
 	  document.getElementById('linkContinue').style.display = m ? 'none' : 'inline';

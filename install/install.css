@@ -371,28 +371,38 @@ input, select {
   border: 1px solid #999;
 }
 
-.autoCompleteBackground {
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-  margin: 0;
-  font-size: 1.2em;
-  text-align: left;
+.autoCompleteShadow {
+    position: absolute;
+    margin: .3em;
+    z-index: 5;
+    background: #a0a0a0;
 }
 
-.autoCompleteHighlight {
-  border-style: none;
-  text-decoration: underline;
+.autoCompleteContainer {
+    position: relative;
+    bottom: 4px;
+    right: 4px;
+    border: 1px solid #404040;
+    background: #fff;
+    overflow: hidden;
+    display: none;
 }
 
-.autoCompleteNotSelected {
-  background-color: #eee;
-  padding: 4px 4px 4px 0;
+.autoCompleteContainer ul {
+    position: relative;
+    padding: 5px 0;
+    list-style: none;
 }
 
-.autoCompleteSelected {
-  background-color: #ffc;
-  padding: 4px 4px 4px 0;
+.autoCompleteContainer li {
+    padding: 0 5px;
+    cursor: default;
+    white-space: nowrap;
+    display: list-item;
+}
+
+.autoCompleteContainer li.highlight {
+    background: #eee;
 }
 
 label.radio {

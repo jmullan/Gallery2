@@ -716,3 +716,37 @@ h2.giError {
     background: #fdf;
 }
 
+.autoCompleteShadow {
+    position: absolute;
+    margin: .3em;
+    z-index: 5;
+    background: #a0a0a0;
+}
+
+.autoCompleteContainer {
+    position: relative;
+    bottom: 4px;
+    right: 4px;
+    border: 1px solid #404040;
+    background: #000;
+    overflow: hidden;
+    display: none;
+}
+
+.autoCompleteContainer ul {
+    position: relative;
+    padding: 5px 0;
+    list-style: none;
+}
+
+.autoCompleteContainer li {
+    padding: 0 5px;
+    cursor: default;
+    white-space: nowrap;
+    display: list-item;
+}
+
+.autoCompleteContainer li.highlight {
+    background: #eee;
+    color: #111;
+}

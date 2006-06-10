@@ -473,26 +473,39 @@ div.gbTabBar span.o {
     background-image: url('../matrix/images/tab_right_on.jpg');
 }
 
-.autoCompleteBackground {
-    border: 1px solid #ccc;
-    border-top-style: none;
-    margin: 0;
+.autoCompleteShadow {
+    position: absolute;
+    margin: .3em;
+    z-index: 5;
+    background: #a0a0a0;
 }
 
-.autoCompleteHighlight {
-    text-decoration: underline;
+.autoCompleteContainer {
+    position: relative;
+    bottom: 4px;
+    right: 4px;
+    border: 1px solid #404040;
+    background: #fff;
+    overflow: hidden;
+    display: none;
 }
 
-.autoCompleteNotSelected {
-    background-color: #eee;
-    padding: 3px 4px 3px 17px;
+.autoCompleteContainer ul {
+    position: relative;
+    padding: 5px 0;
+    list-style: none;
 }
 
-.autoCompleteSelected {
-    background-color: #ffc;
-    padding: 3px 4px 3px 17px;
+.autoCompleteContainer li {
+    padding: 0 5px;
+    cursor: default;
+    white-space: nowrap;
+    display: list-item;
 }
 
+.autoCompleteContainer li.highlight {
+    background: #eee;
+}
 
 #gallery .gbMarkupBar input {
     font-size: 1.1em;

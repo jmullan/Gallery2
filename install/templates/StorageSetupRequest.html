@@ -1,5 +1,10 @@
+    <script type="text/javascript" src="../lib/yui/yahoo-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/dom-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/event-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/connection-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/animation-min.js"></script>
+    <script type="text/javascript" src="../lib/yui/autocomplete-min.js"></script>
     <script type="text/javascript" src="../lib/javascript/AutoComplete.js"></script>
-    <script type="text/javascript" src="../lib/javascript/XmlHttp.js"></script>
 
     <?php if (isset($templateData['error'])): ?>
     <div class="error">
@@ -14,7 +19,7 @@
     <p>
       <?php printf(_("Gallery needs a directory to store your images. The directory we chose for you will work, but is web accessible.")); ?>
     </p>
-    
+
     <div class="warning" style="padding-top: 0.8em; padding-bottom: 0.9em">
       <?php print _("For maximum security you should pick a directory that is not web accessible."); ?>
     </div>
@@ -29,7 +34,7 @@
       <?php print _("If you're using a modern browser, we'll try to autocomplete any path you enter here.  So if you're having trouble finding the right path to your g2data directory, try experimenting with paths in the text box below and see what completions it provides for you."); ?>
     </p>
 
-    <form method="post" action="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $stepNumber)) ?>"> 
+    <form method="post" action="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $stepNumber)) ?>">
 	<?php if (isset($templateData['error'])): ?>
 	  <div class="error">
 	    <?php if (isset($templateData['error']['missing_value'])): ?>
@@ -56,8 +61,11 @@
 	    <input type="hidden" name="action" value="save" />
 	    <script type="text/javascript">
 	      // <![CDATA[
-	      autoCompleteAttach('dir', '<?php generateUrl(sprintf('%s?step=%s&%s=%s', INDEX_PHP,
-		  $currentStep->getStepNumber(), session_name(), session_id())) ?>&doAutoComplete=1&path=__VALUE__');
+              YAHOO.util.Event.addListener(
+                this, 'load',
+                function(e, data) { autoCompleteAttach(data[0], data[1]); },
+                ['dir', '<?php generateUrl(sprintf('%s?step=%s&%s=%s', INDEX_PHP,
+		  $currentStep->getStepNumber(), session_name(), session_id())) ?>&doAutoComplete=1&path=__VALUE__']);
 	      // ]]>
 	    </script>
 
@@ -110,7 +118,7 @@
     <?php endif; ?>
 
     <div class="warning">
-      <?php printf(_("For information on how to secure your Gallery storage directory, please read the %sSecurity Guide%s."), '<a href="http://codex.gallery2.org/index.php/Gallery2:Security" target="_blank">', '</a>') ?> 
+      <?php printf(_("For information on how to secure your Gallery storage directory, please read the %sSecurity Guide%s."), '<a href="http://codex.gallery2.org/index.php/Gallery2:Security" target="_blank">', '</a>') ?>
     </div>
 
     <div class="go">
