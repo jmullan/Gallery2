@@ -30,7 +30,6 @@
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
 class ItemAdminView extends GalleryView {
 
@@ -114,7 +113,7 @@ class ItemAdminView extends GalleryView {
 
 	    /* Set the item id if necessary */
 	    if (!isset($params['itemId'])) {
-		$params['itemId'] = $item->getId();
+		$params['itemId'] = $itemId;
 	    }
 
 	    $subViewChoices[$name] = $params;
@@ -197,7 +196,7 @@ class ItemAdminView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	/* Get the description from the current subView */
@@ -205,6 +204,7 @@ class ItemAdminView extends GalleryView {
 	if (empty($subViewName)) {
 	    $subViewName = 'core.ItemEdit';
 	}
+
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret) {
 	    return array($ret, null);
@@ -219,7 +219,7 @@ class ItemAdminView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewType()
+     * @see GalleryView::getViewType
      */
     function getViewType() {
 	return VIEW_TYPE_ADMIN;

@@ -30,7 +30,6 @@
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
 class ItemEditController extends GalleryController {
 
@@ -55,14 +54,14 @@ class ItemEditController extends GalleryController {
 
 	/* Check to see if we have a preferred source */
 	list ($ret, $preferredTable) =
-	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($itemId));
 	if ($ret) {
 	    return array($ret, null);
 	}
 	$preferred = empty($preferredTable) ? null : array_shift($preferredTable);
 
 	/* Load the thumbnail */
-	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -131,7 +130,7 @@ class ItemEditController extends GalleryController {
 		$results['redirect'] = array('view' => 'core.ItemAdmin',
 					     'subView' => 'core.ItemEdit',
 					     'editPlugin' => $editPlugin,
-					     'itemId' => $item->getId());
+					     'itemId' => $itemId);
 	    } else {
 		$results['delegate']['view'] = 'core.ItemAdmin';
 		$results['delegate']['subView'] = 'core.ItemEdit';
@@ -165,7 +164,7 @@ class ItemEditController extends GalleryController {
 	$redirect = array();
 	$redirect['view'] = 'core.ItemAdmin';
 	$redirect['subView'] = 'core.ItemEdit';
-	$redirect['itemId'] = $item->getId();
+	$redirect['itemId'] = $itemId;
 	$redirect['editPlugin'] = $editPlugin;
 	$redirect['statusId'] = $session->putStatus($status);
 
@@ -204,13 +203,13 @@ class ItemEditView extends GalleryView {
 	}
 
 	/* Load the thumbnail */
-	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
 	if ($ret) {
 	    return array($ret, null);
 	}
 	if (!empty($thumbnails)) {
 	    list ($ret, $thumbnail) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
-						      $thumbnails[$item->getId()]->getId());
+						      $thumbnails[$itemId]->getId());
 	    if ($ret) {
 		/* Ignore thumbnail errors so we can edit items with broken thumbnail */
 	    }
@@ -314,7 +313,7 @@ class ItemEditView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	global $gallery;
@@ -395,8 +394,8 @@ class ItemEditPlugin {
      */
     function getTitle() {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
-    }    
-    
+    }
+
     /**
      * Check to see if a given operation is available for any of a set of mime types
      *

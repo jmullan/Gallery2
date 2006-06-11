@@ -29,7 +29,6 @@
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
 class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 
@@ -204,7 +203,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    return array($ret, null, null);
 	}
 	$ItemEditRotateAndScalePhoto['editPhoto']['noToolkitSupport'] = !isset($toolkit);
-	/* get worst of rotate and resize */
+	/* Get worst of rotate and resize */
 	if (isset($toolkit)) {
 	    list ($ret, $toolkit) =
 		GalleryCoreApi::getToolkitByOperation($mimeType, 'resize');
