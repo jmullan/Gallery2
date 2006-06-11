@@ -112,9 +112,9 @@ function formatGPSData($type,$tag,$intel,$data) {
 		
 		if($tag=="0002" || $tag=="0004") { //Latitude
 		
-			$seconds = GPSRational(substr($data,0,16),$intel);
+			$hour = GPSRational(substr($data,0,16),$intel);
 			$minutes = GPSRational(substr($data,16,16),$intel);
-			$hour = GPSRational(substr($data,32,16),$intel);
+			$seconds = GPSRational(substr($data,32,16),$intel);
 			
 			$data = $hour+$minutes/60+$seconds/3600;
 		} else if($tag=="0007") { //Time
