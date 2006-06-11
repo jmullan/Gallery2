@@ -121,25 +121,9 @@ class PrintPhotosController extends GalleryController {
 		/* Skip any cart items for which we don't have print permission */
 		continue;
 	    }
-	    if (isset($permissions['core.viewSource'])) {
-		$source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
-		$needSession = !isset($publicPermissions['core.viewSource']);
-	    } else if (isset($permissions['core.viewResizes']) && !empty($resizes[$itemId])) {
-		$maxSize = null;
-		foreach ($resizes[$itemId] as $resize) {
-		    $size = $resize->getDerivativeSize();
-		    if (!isset($maxSize) || $size > $maxSize) {
-			$source = $resize;
-			$maxSize = $size;
-		    }
-		}
-		$needSession = !isset($publicPermissions['core.viewResizes']);
-	    } else if (isset($thumbnails[$itemId])) {
-		$source = $thumbnails[$itemId];
-		$needSession = !isset($publicPermissions['core.view']);
-	    } else {
-		continue;
-	    }
+
+	    $source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
+	    $needSession = !isset($publicPermissions['core.viewSource']);
 
 	    if ($needSession && !isset($foSession)) {
 		/*
@@ -153,14 +137,15 @@ class PrintPhotosController extends GalleryController {
 		if ($ret) {
 		    return array($ret, null);
 		}
+
+		/* Mark this session so that it can be treated specially */
+		$foSession->put('core.isPrintService', 1);
+
 		/*
-		 * TODO: Would like to enforce a particular session timeout to ensure this
-		 * session lasts long enough for fotokasten to retrieve the images.  With
-		 * current file based sessions this would require modifying ctime of files
-		 * which we can't do.  Maybe if sessions move to the database we'll be able
-		 * to guarantee session lifetime.
-		 * When we can do this, maybe also store the sessionid in this session so we
-		 * can reuse it for multiple print requests (and just bump timeout each time).
+		 * TODO: Would like to enforce a particular session timeout to ensure this session
+		 * lasts long enough for fotokasten to retrieve the images.  Maybe also store the
+		 * sessionid in this session so we can reuse it for multiple print requests (and
+		 * just bump timeout each time).
 		 */
 		$ret = $foSession->save();
 		if ($ret) {
@@ -180,14 +165,20 @@ class PrintPhotosController extends GalleryController {
 		'height'        => $source->getHeight(),
 		'width'         => $source->getWidth()
 	    );
-	    if (isset($thumbnails[$itemId])) {
-		$basket_item['thumbnail_url'] = $urlGenerator->generateUrl(
-		    array_merge(array('view' => 'core.DownloadItem',
-				      'itemId' => $thumbnails[$itemId]->getId()),
-				$sessionParam),
-		    array('forceSessionId' => false, 'forceFullUrl' => true,
-			  'htmlEntities' => false));
+
+	    if (!isset($thumbnails[$itemId]) || $thumbnails[$itemId]->getPostFilterOperations()) {
+		/* Use the source if the thumbnail has a postfilter (like a watermark) */
+		$thumbSource = $source;
+	    } else {
+		$thumbSource = $thumbnails[$itemId];
 	    }
+
+	    $basket_item['thumbnail_url'] = $urlGenerator->generateUrl(
+		array_merge(array('view' => 'core.DownloadItem',
+				  'itemId' => $thumbSource->getId()),
+			    $sessionParam),
+		array('forceSessionId' => false, 'forceFullUrl' => true,
+		      'htmlEntities' => false));
 
 	    $basket["item" . ++$i] = $basket_item;
 	}

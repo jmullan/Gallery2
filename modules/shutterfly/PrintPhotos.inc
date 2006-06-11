@@ -116,25 +116,9 @@ class PrintPhotosView extends GalleryView {
 		/* Skip any cart items for which we don't have print permission */
 		continue;
 	    }
-	    if (isset($permissions['core.viewSource'])) {
-		$source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
-		$needSession = !isset($publicPermissions['core.viewSource']);
-	    } else if (isset($permissions['core.viewResizes']) && !empty($resizes[$itemId])) {
-		$maxSize = null;
-		foreach ($resizes[$itemId] as $resize) {
-		    $size = $resize->getDerivativeSize();
-		    if (!isset($maxSize) || $size > $maxSize) {
-			$source = $resize;
-			$maxSize = $size;
-		    }
-		}
-		$needSession = !isset($publicPermissions['core.viewResizes']);
-	    } else if (isset($thumbnails[$itemId])) {
-		$source = $thumbnails[$itemId];
-		$needSession = !isset($publicPermissions['core.view']);
-	    } else {
-		continue;
-	    }
+
+	    $source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
+	    $needSession = !isset($publicPermissions['core.viewSource']);
 
 	    if ($needSession && !isset($sfSession)) {
 		/*
@@ -148,14 +132,15 @@ class PrintPhotosView extends GalleryView {
 		if ($ret) {
 		    return $ret;
 		}
+
+		/* Mark this session so that it can be treated specially */
+		$sfSession->put('core.isPrintService', 1);
+
 		/*
-		 * TODO: Would like to enforce a particular session timeout to ensure this
-		 * session lasts long enough for shutterfly to retrieve the images.  With
-		 * current file based sessions this would require modifying ctime of files
-		 * which we can't do.  Maybe if sessions move to the database we'll be able
-		 * to guarantee session lifetime.
-		 * When we can do this, maybe also store the sessionid in this session so we
-		 * can reuse it for multiple print requests (and just bump timeout each time).
+		 * TODO: Would like to enforce a particular session timeout to ensure this session
+		 * lasts long enough for shutterfly to retrieve the images.  Maybe also store the
+		 * sessionid in this session so we can reuse it for multiple print requests (and
+		 * just bump timeout each time).
 		 */
 		$ret = $sfSession->save();
 		if ($ret) {
@@ -171,15 +156,20 @@ class PrintPhotosView extends GalleryView {
 			    $sessionParam),
 		array('forceSessionId' => false, 'forceFullUrl' => true));
 
-	    if (isset($thumbnails[$itemId])) {
-		$entry['thumbUrl'] = $urlGenerator->generateUrl(
-		    array_merge(array('view' => 'core.DownloadItem',
-				      'itemId' => $thumbnails[$itemId]->getId()),
-				$sessionParam),
-		    array('forceSessionId' => false, 'forceFullUrl' => true));
-		$entry['thumbWidth'] = $thumbnails[$itemId]->getWidth();
-		$entry['thumbHeight'] = $thumbnails[$itemId]->getHeight();
+	    if (!isset($thumbnails[$itemId]) || $thumbnails[$itemId]->getPostFilterOperations()) {
+		/* Use the source if the thumbnail has a postfilter (like a watermark) */
+		$thumbSource = $source;
+	    } else {
+		$thumbSource = $thumbnails[$itemId];
 	    }
+
+	    $entry['thumbUrl'] = $urlGenerator->generateUrl(
+		array_merge(array('view' => 'core.DownloadItem',
+				  'itemId' => $thumbSource->getId()),
+			    $sessionParam),
+		array('forceSessionId' => false, 'forceFullUrl' => true));
+	    $entry['thumbWidth'] = $thumbSource->getWidth();
+	    $entry['thumbHeight'] = $thumbSource->getHeight();
 	    $entry['imageWidth'] = $source->getWidth();
 	    $entry['imageHeight'] = $source->getHeight();
 

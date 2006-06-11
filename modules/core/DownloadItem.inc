@@ -120,9 +120,16 @@ class DownloadItemView extends GalleryView {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	/* Make sure we have permission */
-	$permission = 'core.viewSource';
-	switch($data['derivativeType']) {
+	$session =& $gallery->getSession();
+	if ($session->get('core.isPrintService')) {
+	    /*
+	     * Print services bypass security so that they can get access to the full size
+	     * version of prints.
+	     */
+	} else {
+	    /* Make sure we have permission */
+	    $permission = 'core.viewSource';
+	    switch($data['derivativeType']) {
 	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 		$permission = 'core.view';
 		break;
@@ -131,11 +138,12 @@ class DownloadItemView extends GalleryView {
 		$permission = 'core.viewResizes';
 		break;
 
-	    /* DERIVATIVE_TYPE_IMAGE_PREFERRED uses core.viewSource */
-	}
-	$ret = GalleryCoreApi::assertHasItemPermission($data['parentId'], $permission);
-	if ($ret) {
-	    return $ret;
+		/* DERIVATIVE_TYPE_IMAGE_PREFERRED uses core.viewSource */
+	    }
+	    $ret = GalleryCoreApi::assertHasItemPermission($data['parentId'], $permission);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	header('Content-type: ' . $data['mimeType']);
