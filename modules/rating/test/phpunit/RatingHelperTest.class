@@ -334,7 +334,6 @@ class RatingHelperTest extends GalleryTestCase {
 
 	/* Verify we get a non empty item summary for the item */
 	$permissions[$itemId]['rating.view'] = 1;
-	//$template = new RatingDummyGalleryTemplate();
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../..');
 	list ($ret, $content) = $module->getItemSummaries(array($this->_item), $permissions,
 		$template);
@@ -343,18 +342,10 @@ class RatingHelperTest extends GalleryTestCase {
 	}
 	$this->assert(isset($content[$itemId]) && !empty($content[$itemId]),
 		'Did not get item summary');
-	/* Can't do this now that we're using real template
-	$this->assertEquals(array('modules/rating/rating.css'), $template->style,
-		'Style array does not match.');
-	$this->assertEquals(array('lib/javascript/XmlHttp.js', 'modules/rating/rating.js'),
-		$template->javascript,
-		'Javascript array does not match.');
-	*/
 
 	/* Get the item summary again, but without having the permissions */
 	unset($content);
 	unset($template);
-	//$template = new RatingDummyGalleryTemplate();
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../..');
 	list ($ret, $content) = $module->getItemSummaries(array($this->_item),
 		array($itemId => array()), $template);
@@ -362,42 +353,6 @@ class RatingHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!isset($content[$itemId]), 'Got an item summary');
-
-	/* Do this again for kicks */
-	/* Can't do this now that we're using real template
-	$this->assertEquals(array('modules/rating/rating.css'), $template->style,
-		'Style array does not match.');
-	$this->assertEquals(array('lib/javascript/XmlHttp.js', 'modules/rating/rating.js'),
-		$template->javascript,
-		'Javascript array does not match.');
-	*/
-    }
-}
-
-
-/**
- * @package Rating
- * @subpackage PHPUnit
- */
-class RatingDummyGalleryTemplate {
-    var $style = array();
-    var $javascript = array();
-    var $variables = array();
-
-    function style($tpl) {
-	$this->style[] = $tpl;
-    }
-
-    function javascript($tpl) {
-	$this->javascript[] = $tpl;
-    }
-
-    function setVariable($key, $value) {
-	$this->variables[$key] = $value;
-    }
-
-    function fetch($thing_to_fetch) {
-	return array(null, null);
     }
 }
 ?>
