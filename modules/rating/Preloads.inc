@@ -32,7 +32,8 @@ class RatingPreloads {
 
 	$loaded[$preload] = 1;
 	$template->style('modules/rating/rating.css');
-	$template->javascript('lib/javascript/XmlHttp.js');
+	$template->javascript('lib/yui/yahoo-min.js');
+	$template->javascript('lib/yui/connection-min.js');
 	$template->javascript('modules/rating/rating.js');
 	return null;
 

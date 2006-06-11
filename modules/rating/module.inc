@@ -109,10 +109,6 @@ class RatingModule extends GalleryModule {
 	/* Load the G2 templating engine */
 	GalleryCoreApi::requireOnce('modules/rating/classes/RatingHelper.class');
 
-	$template->style('modules/rating/rating.css');
-	$template->javascript('lib/javascript/XmlHttp.js');
-	$template->javascript('modules/rating/rating.js');
-
 	$template->setVariable('l10Domain', $this->getL10Domain());
 	$RatingSummary = array('ratingValues' => array(1, 2, 3, 4, 5), 'firstCall' => true);
 
