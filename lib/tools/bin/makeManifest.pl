@@ -57,6 +57,7 @@ my $changed = 0;
 my $total = 0;
 foreach my $manifest (keys %sections) {
   open(my $out, ">$manifest.new") or die;
+  print $out "# \$Revision\$\n";
   print $out "# File crc32 crc32(crlf) size size(crlf)  or  R File\n";
   my @entries = @{$sections{$manifest}};
   my %deleted;
