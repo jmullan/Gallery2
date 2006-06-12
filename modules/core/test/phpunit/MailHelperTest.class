@@ -63,7 +63,10 @@ class MailHelperTest extends GalleryTestCase {
 	    'subject' => 'MailHelperTest subject',
 	    'body' => 'MailHelperTest test string');
 	$expectedData = $emailData;
-	$expectedData['headers'] = "Content-Type: text/plain; charset=\"utf-8\"\r\n";
+	$expectedData['headers'] = array(
+	    'Date: ELIDED',
+	    'Content-Type: text/plain; charset="utf-8"',
+	    '');
 
 	/* Test that the from header is empty */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
@@ -75,7 +78,11 @@ class MailHelperTest extends GalleryTestCase {
 
 	/* Set the from address and update the test data */
 	$from = 'mailhelpertest@test.com';
-	$expectedData['headers'] = "Content-Type: text/plain; charset=\"utf-8\"\r\nFrom: $from\r\n";
+	$expectedData['headers'] = array(
+	    'Date: ELIDED',
+	    'Content-Type: text/plain; charset="utf-8"',
+	    'From: ' . $from,
+	    '');
 
 	/* Test that the from header is retrieved from function input */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
@@ -100,7 +107,11 @@ class MailHelperTest extends GalleryTestCase {
 
 	/* Set the from address and update the test data */
 	$from = 'mailhelpertest2@test.com';
-	$expectedData['headers'] = "Content-Type: text/plain; charset=\"utf-8\"\r\nFrom: $from\r\n";
+	$expectedData['headers'] = array(
+	    'Date: ELIDED',
+	    'Content-Type: text/plain; charset="utf-8"',
+	    'From: ' . $from,
+	    '');
 
 	/* Test that the from header is preferred from the function over the core.smtp.from field */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
@@ -113,11 +124,15 @@ class MailHelperTest extends GalleryTestCase {
 
 	/* Specify content-type */
 	$emailData['headers'] = "Content-Type: text/html\r\n";
-	$expectedData['headers'] = "From: $from\r\nContent-Type: text/html\r\n";
+	$expectedData['headers'] = array(
+	    'Date: ELIDED',
+	    'From: ' . $from,
+	    'Content-Type: text/html',
+	    '');
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject'],
-								      $emailData['headers']);
+	    $this->templateFile, $emailData, $from, $emailData['to'],
+	    $emailData['subject'], $emailData['headers']);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -129,8 +144,8 @@ class MailHelperTest extends GalleryTestCase {
 	$expectedData['subject'] = '=?utf-8?q?s=c3=a5 utrolig?=';
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject'],
-								      $emailData['headers']);
+	    $this->templateFile, $emailData, $from, $emailData['to'],
+	    $emailData['subject'], $emailData['headers']);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -174,11 +189,16 @@ class MailHelperDummyPlatform {
     }
 
     function mail($to, $subject, $body, $headers=null) {
+
+	/* Normalize the date field in the headers to avoid having to worry about exact seconds */
+	$headers = preg_replace("/Date:.*?\r\n/", "Date: ELIDED\r\n", $headers);
+
 	$_REQUEST['maildata'] =
 	    array('to' => $to,
 		  'subject' => $subject,
 		  'body' => trim($body),
-		  'headers' => $headers);
+		  'headers' => split("\r\n", $headers));
+
 
 	$_REQUEST['mailedCount']++;
 	return true;
