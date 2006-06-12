@@ -633,16 +633,16 @@ class UrlGeneratorTest extends GalleryTestCase {
 	}
 	$this->assertEquals('http_host', $this->_urlGenerator->getHostName());
 
-	$_SERVER['HTTP_X_FORWARDED_SERVER'] = 'http_x_forwarded_server';
+	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_x_forwarded_host';
 	if ($ret = $this->_initNewUrlGenerator()) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals('http_x_forwarded_server', $this->_urlGenerator->getHostName());
+	$this->assertEquals('http_x_forwarded_host', $this->_urlGenerator->getHostName());
     }
 
     function testGetHostNameOverride() {
 	$_SERVER['HTTP_HOST'] = 'http_host';
-	$_SERVER['HTTP_X_FORWARDED_SERVER'] = 'http_host';
+	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_host';
 
 	if ($ret = $this->_initNewUrlGenerator('override/')) {
 	    return $this->failWithStatus($ret);
@@ -654,7 +654,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
     function testGetHostNameEmbeddedOverride() {
 	$_SERVER['HTTP_HOST'] = 'http_host';
-	$_SERVER['HTTP_X_FORWARDED_SERVER'] = 'http_host';
+	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_host';
 
 	if ($ret = $this->_initNewUrlGenerator('embedded_override/', 'http://direct_override/')) {
 	    return $this->failWithStatus($ret);
@@ -761,7 +761,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
     function testInitDefault() {
 	unset($_SERVER['HTTPS']);
-	$_SERVER['HTTP_X_FORWARDED_SERVER'] = 'http_x_forwarded_server';
+	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_x_forwarded_host';
 	$uG = new GalleryUrlGenerator();
 	if ($ret = $uG->init()) {
 	    return $this->failWithStatus($ret);
@@ -771,8 +771,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $this->assertEquals(GALLERY_MAIN_PHP, $uG->_file[$i], "file[$i]");
 	    $this->assert(empty($uG->_path[$i]), "path[$i]");
 	    $this->assertEquals('http', $uG->_protocol[$i], "protocol[$i]");
-	    $this->assertEquals('http_x_forwarded_server', $uG->_host[$i], "host[$i]");
-	    $this->assertEquals('http://http_x_forwarded_server', $uG->_currentBaseHost[$i],
+	    $this->assertEquals('http_x_forwarded_host', $uG->_host[$i], "host[$i]");
+	    $this->assertEquals('http://http_x_forwarded_host', $uG->_currentBaseHost[$i],
 				"currentBaseHost[$i]");
 	}
 	$this->assertEquals(null, $uG->_embedSessionString, 'embedSessionString');
@@ -780,7 +780,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
     function testInitOverride() {
 	unset($_SERVER['HTTPS']);
-	$_SERVER['HTTP_X_FORWARDED_SERVER'] = 'http_x_forwarded_server';
+	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_x_forwarded_host';
 	$uG = new GalleryUrlGenerator();
 	if ($ret = $uG->init('https://override:8080/new_path/index.php?foo=bar')) {
 	    return $this->failWithStatus($ret);
@@ -798,7 +798,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
     function testInitEmbedded() {
 	$_SERVER['HTTPS'] = 'on';
-	$_SERVER['HTTP_X_FORWARDED_SERVER'] = 'http_x_forwarded_server';
+	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_x_forwarded_host';
 	$uG = new GalleryUrlGenerator();
 	if ($ret = $uG->init('/cms/index.php?foo=bar', 'http://direct/gallery2/', 'session=123')) {
 	    return $this->failWithStatus($ret);
@@ -810,9 +810,9 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals('/gallery2/', $uG->_path[1], 'path[1]');
 	$this->assertEquals('https', $uG->_protocol[0], 'protocol[0]');
 	$this->assertEquals('http', $uG->_protocol[1], 'protocol[1]');
-	$this->assertEquals('http_x_forwarded_server', $uG->_host[0], 'host[0]');
+	$this->assertEquals('http_x_forwarded_host', $uG->_host[0], 'host[0]');
 	$this->assertEquals('direct', $uG->_host[1], 'host[1]');
-	$this->assertEquals('https://http_x_forwarded_server', $uG->_currentBaseHost[0],
+	$this->assertEquals('https://http_x_forwarded_host', $uG->_currentBaseHost[0],
 				'currentBaseHost[0]');
 	$this->assertEquals('http://direct', $uG->_currentBaseHost[1],
 				'currentBaseHost[1]');
@@ -997,7 +997,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 				array('text' => 'Back to %s', 'arg1' => 'I want a pony')))),
 			    $links, 'Navigation link was altered');
     }
-    
+
     /* Regression test to check that we handle embedUri = /foo/bar/ correctly (no file part) */
     function testInitNavigationHandlesEmbedUriWithoutFilePart() {
 	$urlGenerator = new GalleryUrlGenerator();
@@ -1005,14 +1005,14 @@ class UrlGeneratorTest extends GalleryTestCase {
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
+
 	GalleryUtilities::putRequestVariable('return', 'foo');
 	/* Assert that there's no PHP warning during the execution of this function */
 	$ret = $urlGenerator->initNavigation();
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	$this->assertEquals(null, $ret);
     }
 
@@ -1469,7 +1469,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	unset($_SERVER['HTTP_COOKIE']);
-	
+
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret) {
@@ -1495,7 +1495,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 						    array('forceSessionId' => true));
 	$expected = 'phpunit_test.php?g2_view=foo.Bar';
 	$this->assertEquals($expected, $actual, 'url without temp session id');
-	
+
 	$gallery->_session = $backup;
     }
 

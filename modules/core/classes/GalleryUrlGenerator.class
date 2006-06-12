@@ -290,7 +290,7 @@ class GalleryUrlGenerator {
 	foreach (array(false, true) as $forceDirect) {
 	    if (empty($this->_host[$forceDirect])) {
 		if (!isset($defaultHost) &&
-		    !($defaultHost = GalleryUtilities::getServerVar('HTTP_X_FORWARDED_SERVER'))) {
+		    !($defaultHost = GalleryUtilities::getServerVar('HTTP_X_FORWARDED_HOST'))) {
 		    $defaultHost = GalleryUtilities::getServerVar('HTTP_HOST');
 		}
 
@@ -672,7 +672,7 @@ class GalleryUrlGenerator {
 	    } else if (!$session->isPersistent()) {
 		unset($params['navId']);
 	    }
-	} 
+	}
 
 	/* Add parameters to url */
 	$url = GalleryUrlGenerator::appendParamsToUrl($url, $params);

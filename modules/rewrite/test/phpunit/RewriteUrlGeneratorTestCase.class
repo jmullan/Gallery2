@@ -31,7 +31,7 @@
  * @subpackage PHPUnit
  */
 class RewriteUrlGeneratorTestCase extends GalleryTestCase {
-    
+
     function setUp() {
 	global $gallery;
 	parent::setUp();
@@ -81,7 +81,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$this->_origEmbed = null;
 	if (GalleryDataCache::containsKey('G2_EMBED')) {
 	    $this->_origEmbed = GalleryDataCache::get('G2_EMBED');
@@ -99,7 +99,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	    GalleryDataCache::remove('G2_EMBED');
 	    $this->assert(!GalleryDataCache::containsKey('G2_EMBED'), 'Could not remove a GDC var');
 	}
-	
+
 	parent::tearDown();
     }
 
@@ -147,14 +147,14 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 
 	return null;
     }
-    
+
     function testGetCurrentUrl() {
 	$this->_urlGenerator = new $this->_urlGeneratorName();
 	$ret = $this->_urlGenerator->init();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$expected = 'http://example.com/gallery2/main.php?foo=1&bar=2';
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
 	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
@@ -309,12 +309,12 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 
 	/* SERVER vars */
 	foreach (array('REQUEST_URI', 'HTTP_HOST', 'SERVER_PORT', 'QUERY_STRING',
-		       'HTTP_X_FORWARDED_SERVER', 'SCRIPT_NAME', 'PATH_INFO', 'HTTPS') as $var) {
+		       'HTTP_X_FORWARDED_HOST', 'SCRIPT_NAME', 'PATH_INFO', 'HTTPS') as $var) {
 	    if (isset($env[$var])) {
 		$_SERVER[$var] = $env[$var];
 	    }
 	}
-	
+
 	/* Let the url generator know of the new cookie.path value */
 	$baseUri = isset($env['baseUri']) ? $env['baseUri'] : null;
 	$g2Uri = isset($env['g2Uri']) ? $env['g2Uri'] : null;
@@ -362,14 +362,14 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	    /* Give the URL Generator implementation a chance to override the expected result */
 	    if (isset($this->_expectedUrl[$i])) {
 		$expectedUrl[$i] = $this->_expectedUrl[$i];
-	    } 
+	    }
 
 	    /* Run the test */
 	    $this->assertEquals($expectedUrl[$i],
 				$this->_urlGenerator->generateUrl($params[$i], $options),
 				"Test URL $i");
 	}
-	
+
 	return null;
     }
 
@@ -414,10 +414,10 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$params[13] = array('view' => 'php.Unit', 'subView' => 'test.suffixExt',
 			    'itemId' => $this->_testItem->getId());
 	$params[14] = array('view' => 'php.Unit');
-	
+
 	return $params;
     }
-    
+
     /*
      * Make sure that we can generate first an URL that goes to embedded G2 and then another URL
      * that goes to G2 directly (2 base URLs)
@@ -439,18 +439,18 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrls[1] = sprintf('/gallery2/d/%d-%d/%s', $this->_testItem->getId(),
 					 $this->_testItem->getSerialNumber(),
 					 urlencode($this->_testItem->getPathComponent()));
-	
+
 	$ret = $this->_runGenerateUrlTest($env, $expectedUrls, $params);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
     }
-    
+
     function testGenerateUrlNonShortUrl() {
 	/* A normal long URL */
 	$expectedUrl = '/gallery2/main.php?g2_view=random3734.NoShortUrl&amp;g2_foo=bar';
 	$params = array('view' => 'random3734.NoShortUrl', 'foo' => 'bar');
-	
+
 	$ret = $this->_runGenerateUrlTest(array(), $expectedUrl, $params);
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -459,15 +459,15 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 
     /*
      * Try to cover the following cases:
-     * 
+     *
      * Environment paramaters:
      *  1. flag: embedded
      *  2. flag: cookiePath set (relevant for embedded G2)
      *  3. REQUEST_URI, set according to RewriteUrlGenerator used
-     *  4. HTTP_HOST / HTTP_X_FORWARDED_SERVER
+     *  4. HTTP_HOST / HTTP_X_FORWARDED_HOST
      *  5. HTTPS
      *  6. override for protocol / embedded
-     *  7. override for host / embedded 
+     *  7. override for host / embedded
      *  8. override for path
      *  9. override for file + query string
      * 10. Downloadable plugins
@@ -477,7 +477,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
      *  1. baseUrl => string; implicitly tested with normal URLs
      *  2. forceDirect => true; tested with embedded G2
      *  3. forceFullUrl => true; to generate absolute url instead of relative path url
-     *  4. forceSessionId => boolean; to force session id to be in/not in the url; 
+     *  4. forceSessionId => boolean; to force session id to be in/not in the url;
      *  5. htmlEntities => false; to use & parameter separator instead of &amp;
      *  6. forceServerRelativeUrl => (implicitly tested with normal URLs
      */
@@ -618,7 +618,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
     }
-    
+
     function testGenerateUrlEmbeddedCookieless() {
 	$env = array('REQUEST_URI' => '/cms/otherpage/?foo=bar',
 		     'G2_EMBED' => 1,
@@ -629,7 +629,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 		     'isNotUsingCookies' => true);
 	$params = $this->_getTestUrlParams();
 
-	$sessionString = 'cmssid=12345'; 
+	$sessionString = 'cmssid=12345';
 
 	$expectedUrl[0] = '/cms/index.php?mod=gallery2&amp;g2_view=rand164.NonShort&amp;' .
 	    'g2_foo=bar&amp;' . $sessionString;
@@ -655,13 +655,13 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	    $sessionString;
 	$expectedUrl[13] = '/cms/t' . $this->_testItemPath . '.test?' . $sessionString;
 	$expectedUrl[14] = '/cms/phpunit/?' . $sessionString;
-	
+
 	$ret = $this->_runGenerateUrlTest($env, $expectedUrl, $params);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
     }
-    
+
     function testGenerateUrlEmbedded() {
 	$env = array('REQUEST_URI' => '/cms/otherpage/?foo=bar',
 		     'G2_EMBED' => 1,
@@ -691,7 +691,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[12] = '/cms/t' . rtrim($this->_testAlbumPath, '/') . '.test';
 	$expectedUrl[13] = '/cms/t' . $this->_testItemPath . '.test';
 	$expectedUrl[14] = '/cms/phpunit/';
-	
+
 	$ret = $this->_runGenerateUrlTest($env, $expectedUrl, $params);
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -721,7 +721,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[12] = '/gallery2/t' . rtrim($this->_testAlbumPath, '/') . '.test';
 	$expectedUrl[13] = '/gallery2/t' . $this->_testItemPath . '.test';
 	$expectedUrl[14] = '/gallery2/phpunit/';
-	
+
 	$ret = $this->_runGenerateUrlTest($env, $expectedUrl, $params);
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -757,13 +757,13 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[12] = '/cms/t' . rtrim($this->_testAlbumPath, '/') . '.test';
 	$expectedUrl[13] = '/cms/t' . $this->_testItemPath . '.test';
 	$expectedUrl[14] = '/cms/phpunit/';
-	
+
 	$ret = $this->_runGenerateUrlTest($env, $expectedUrl, $params);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
     }
-    
+
     function testGenerateUrlEmbeddedCookiePathNotSet() {
 	global $gallery;
 	$session =& $gallery->getSession();
@@ -774,7 +774,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 		     'g2Uri' => '/gallery2/',
 		     'cookiePath' => '');
 	$params = $this->_getTestUrlParams();
-	
+
 	$expectedUrl[0] = '/cms/index.php?mod=gallery2&amp;g2_view=rand164.NonShort&amp;' .
 	    'g2_foo=bar';
 	$expectedUrl[1] = sprintf('/gallery2/d/%d-%d/%s?g2_%s=%s',
@@ -796,7 +796,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[12] = '/cms/t' . rtrim($this->_testAlbumPath, '/') . '.test';
 	$expectedUrl[13] = '/cms/t' . $this->_testItemPath . '.test';
 	$expectedUrl[14] = '/cms/phpunit/';
-	
+
 	$ret = $this->_runGenerateUrlTest($env, $expectedUrl, $params);
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -833,7 +833,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	$expectedUrl[12] = 'https://cms.com/cms/t' . rtrim($this->_testAlbumPath, '/') . '.test';
 	$expectedUrl[13] = 'https://cms.com/cms/t' . $this->_testItemPath . '.test';
 	$expectedUrl[14] = 'https://cms.com/cms/phpunit/';
-	
+
 	$ret = $this->_runGenerateUrlTest($env, $expectedUrl, $params, $options);
 	if ($ret) {
 	    $this->failWithStatus($ret);
