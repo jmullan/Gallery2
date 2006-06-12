@@ -73,7 +73,7 @@ class ItemEditPluginTestCase extends GalleryTestCase {
 
 	list ($ret, $error, $status, $needsProgressBar) =
 	    $this->_plugin->handleRequest($form, $item, $preferred);
-	if (isset($errorCode)) {
+	if ($ret) {
 	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
 		$this->assert(
 		    false,
