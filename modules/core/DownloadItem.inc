@@ -120,6 +120,10 @@ class DownloadItemView extends GalleryView {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
+	if (function_exists('apache_setenv')) {
+	    @apache_setenv('no-gzip', '1');
+	}
+
 	$session =& $gallery->getSession();
 	if ($session->get('core.isPrintService')) {
 	    /*

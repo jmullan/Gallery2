@@ -412,6 +412,11 @@ function _GalleryMain($embedded=false) {
 	    $template->setVariable('isEmbedded', $embedded);
 
 	    if ($viewName == 'core.ProgressBar') {
+		@ini_set('output_buffering', '0');
+		if (function_exists('apache_setenv')) {
+		    @apache_setenv('no-gzip', '1');
+		}
+
 		/* Render progress bar pages immediately so that the user sees the bar moving */
 		$ret = $template->display($templatePath);
 		if ($ret) {
