@@ -135,8 +135,8 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	 * If we have a command, then apply it to the correct object.
 	 */
 	if (!empty($operation)) {
-	    $ret = GalleryCoreApi::applyToolkitOperation($operation, $args, $preserveOriginal,
-							 $item, $preferred, $serialNumber);
+	    $ret = GalleryCoreApi::applyToolkitOperation(
+		$operation, $args, $preserveOriginal, $item, $preferred);
 	    if ($ret) {
 		return array($ret, null, null, null);
 	    }
@@ -212,9 +212,9 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    }
 	    $ItemEditRotateAndScalePhoto['editPhoto']['noToolkitSupport'] = !isset($toolkit);
 	}
-	    
+
 	$sourceMimeTypes = array($mimeType);
-	
+
 	if (empty($results)) {
 	    $ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = false;
 	} else {
