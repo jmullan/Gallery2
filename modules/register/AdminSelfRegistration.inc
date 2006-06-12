@@ -59,33 +59,39 @@ class AdminSelfRegistrationController extends GalleryController {
 		'modules/register/classes/GalleryPendingUserHelper.class');
 	    list ($ret, $pendingUser) = GalleryCoreApi::loadEntitiesById($form['userId']);
 	    if ($ret) {
-		return array($ret, null);
+		if (!($ret->getErrorCode() &  ERROR_MISSING_OBJECT)) {
+		    return array($ret, null);
+		}
+	    } else {
+		$userName = $pendingUser->getUserName();
+		$ret = GalleryPendingUserHelper::createGalleryUser($pendingUser);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$status['activated'] = $userName;
 	    }
-	    $userName = $pendingUser->getUserName();
-	    $ret = GalleryPendingUserHelper::createGalleryUser($pendingUser);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $status['activated'] = $userName;
 	} else if (isset($form['action']['delete'])) {
 	    list ($ret, $pendingUser) = GalleryCoreApi::loadEntitiesById($form['userId']);
 	    if ($ret) {
-		return array($ret, null);
+		if (!($ret->getErrorCode() &  ERROR_MISSING_OBJECT)) {
+		    return array($ret, null);
+		}
+	    } else {
+		$userName = $pendingUser->getUserName();
+		list($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($pendingUser->getId()));
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$ret = $pendingUser->delete();
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$ret = GalleryCoreApi::releaseLocks($lock);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$status['deleted'] = $userName;
 	    }
-	    $userName = $pendingUser->getUserName();
-	    list($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($pendingUser->getId()));
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $ret = $pendingUser->delete();
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $ret = GalleryCoreApi::releaseLocks($lock);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $status['deleted'] = $userName;
 	} /* else $form['action']['cancel'] */
 
 	if (empty($error)) {
