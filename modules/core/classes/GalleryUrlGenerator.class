@@ -343,13 +343,14 @@ class GalleryUrlGenerator {
     function _parseUri($uri) {
 	/*
 	 * baseUri / g2Uri can have the following patterns:
-	 *    - everything between the two last '/' is interpreted as path
-	 *    - thus URI with leading '/' are inerpreted as path (+ optional file)
-	 *    - if there is a '/' and no http://, everything before the first '/' is
-	 *      interpreted as host string
-	 *    - if there it starts with http://, everything after it up to the first '/'
-	 *      is interpreted as host string
-	 *    - everything after the last '/' is interpreted as file + query string
+	 *    - Everything before the two last '/' is interpreted as path 
+	 *      (minus the host part, if specified).
+	 *    - Thus URI with leading '/' are interpreted as path (+ optional file).
+	 *    - If there is a '/' and no http://, everything before the first '/' is
+	 *      interpreted as host string and the protocol defaults to http.
+	 *    - If it starts with http://, everything after it up to the first '/'
+	 *      is interpreted as the host string.
+	 *    - Everything after the last '/' is interpreted as file + query string.
 	 * Examples of allowed URI strings:
 	 *    http://www.example.com
 	 *    http://example.com/gallery2/
@@ -359,7 +360,7 @@ class GalleryUrlGenerator {
 	 *    /gallery2/main.php
 	 *    /main.php
 	 *    main.php
-	 * Note:
+	 * Notes (= what you shouldn't do):
 	 *    www.example.com (no '/' -> interpreted as file and not as host)
 	 *    main.php/ (everything before the last '/' is interpreted as path)
 	 */
