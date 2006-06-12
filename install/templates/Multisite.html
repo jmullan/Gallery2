@@ -43,17 +43,28 @@
       <br/>
       <br/>
       <?php if (isset($templateData['error'])): ?>
-    	<div class="error">
-    	  <?php if (isset($templateData['error']['missing_value'])) {
-    		print _('You must enter a directory'); } ?>
-    	  <?php if (isset($templateData['error']['missing_dir'])) {
-    		print _('The directory you entered does not exist'); } ?>
-              <?php if (isset($templateData['error']['codebase_dir'])) {
-    		print _('The directory you entered is the codebase directory. If you want to install a Gallery in the codebase directory, select the standard installation type. If you want to install a multisite, choose another directory.'); } ?>
-    	  <?php if (isset($templateData['error']['inaccessible_dir'])) {
-    		print _('The directory you entered is not accessible.  Change the permissions so that the webserver can read this directory.'); } ?>
-    	  <?php if (isset($templateData['error']['creation_error'])) {
-    		print _('Unable to create multisite files. Ensure the files listed below are writeable.'); } ?>
+    	<div class="error" style="padding-top: 0.8em; padding-bottom: 0.9em">
+    	  <?php if (isset($templateData['error']['missing_value'])): ?>
+	    <?php print _('You must enter a directory');?>
+	  <?php elseif (isset($templateData['error']['codebase_dir'])): ?>
+	    <?php print _('The directory you entered is the codebase directory. If you want to install a Gallery in the codebase directory, select the standard installation type. If you want to install a multisite, choose another directory.'); ?>
+    	  <?php elseif (isset($templateData['error']['missing_dir'])): ?>
+	    <?php if (!empty($templateData['openBasedir'])): ?>
+	      <?php print _('The directory you entered either does not exist, or is prohibited by your webserver configuration.  Your webserver is configured to only allow access to the following directories.  You must choose a directory under one of these, or you must modify the <b>open_basedir</b> setting in your PHP configuration to allow a new directory.'); ?>
+              <ul>
+              <?php foreach ($templateData['openBasedir'] as $dir): ?>
+                <li> <?php print $dir ?> </li>
+              <?php endforeach; ?>
+              </ul>
+              <?php print _('If your multisite install is in a different virtual host, you should contact your system administrator and request that they configure your <b>open_basedir</b> setting so that your virtual hosts can access each other.'); ?>
+            <?php else: ?>
+    	      <?php print _('The directory you entered does not exist'); ?>
+            <?php endif; ?>
+          <?php elseif (isset($templateData['error']['inaccessible_dir'])): ?>
+	      <?php print _('The directory you entered is not accessible.  Change the permissions so that the webserver can read this directory.'); ?>
+          <?php elseif (isset($templateData['error']['creation_error'])): ?>
+	    <?php print _('Unable to create multisite files. Ensure the files listed below are writeable.'); ?>
+          <?php endif; ?>
     	</div>
      	<br/>
       <?php endif; ?>

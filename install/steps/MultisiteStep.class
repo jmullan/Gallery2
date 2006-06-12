@@ -100,6 +100,14 @@ class MultisiteStep extends InstallStep {
 	$urlPath = preg_replace('|^(.*/)install/index.php(?:\?.*)?$|s', '$1',
 				   GalleryUrlGenerator::getCurrentRequestUri());
 
+	$openBasedir = ini_get('open_basedir');
+	if (!empty($openBasedir)) {
+	    $separator = strncasecmp(PHP_OS, 'win', 3) ? ':' : ';';
+	    $templateData['openBasedir'] = explode($separator, $openBasedir);
+	} else {
+	    $templateData['openBasedir'] = array();
+	}
+
 	$templateData['isMultisite'] = $this->_isMultisite;
 	$templateData['configPath'] = $this->_configPath;
 	$templateData['galleryDir'] = $galleryDir;
