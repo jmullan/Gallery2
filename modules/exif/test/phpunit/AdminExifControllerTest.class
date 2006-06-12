@@ -484,7 +484,8 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals((EXIF_ITEM_DESCRIPTION | IPTC_ITEM_KEYWORDS | EXIF_ITEM_ROTATE), (int)$addOption);
+	$this->assertEquals((EXIF_ITEM_DESCRIPTION | IPTC_ITEM_KEYWORDS | EXIF_ITEM_ROTATE),
+			    (int)$addOption);
     }
 
 }

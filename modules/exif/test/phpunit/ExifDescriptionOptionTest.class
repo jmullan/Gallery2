@@ -27,7 +27,6 @@
  */
 
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
-//GalleryCoreApi::requireOnce('modules/exif/ExifDescriptionOption.inc');
 
 /**
  * ExifDescriptionOption tests
@@ -61,11 +60,11 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	}
 
 	$this->_items = array();
-	list ($ret, $this->_items[0]) = 
+	list ($ret, $this->_items[0]) =
 	    $this->_createRandomDataItem(
 		$this->_album->getId(),
 		'image/jpeg',
-		array('summary' => 'original summary 0', 
+		array('summary' => 'original summary 0',
 		      'description' => 'original description 0',
 		      'keywords' => 'original keyword 0; original keyword 1'),
 		dirname(__FILE__) . '/../data/descr.jpg');
@@ -73,13 +72,13 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$this->_noWarnings = array();
 	$this->_noErrors = array();
     }
 
     function testCreateDescription() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 						  EXIF_ITEM_DESCRIPTION);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -98,12 +97,12 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
     }
 
     function testMultipleCreateDescription() {
-	
+
 	$totalTestItems = 3;
 	for ($j = 1; $j < $totalTestItems; $j++) {
-	    list ($ret, $this->_items[$j]) = 
+	    list ($ret, $this->_items[$j]) =
 		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
-					     array('summary' => "original summary $j", 
+					     array('summary' => "original summary $j",
 						   'description' => "original description $j"),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	    if ($ret) {
@@ -111,7 +110,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    }
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 						  EXIF_ITEM_DESCRIPTION);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -119,7 +118,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
 	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
-	
+
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $item) = $this->_items[$j]->refresh();
 	    if ($ret) {
@@ -154,15 +153,15 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 	$totalTestItems = 3;
 	for ($j = 1; $j < $totalTestItems; $j++) {
-	    list ($ret, $this->_items[$j]) = 
+	    list ($ret, $this->_items[$j]) =
 		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
-					     array('summary' => "original summary $j", 
+					     array('summary' => "original summary $j",
 						   'description' => "original description $j"),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	}  
+	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', '0');
 	if ($ret) {
@@ -171,20 +170,20 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
 	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
-	
+
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $item) = $this->_items[$j]->refresh();
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	    $this->assertEquals("original description $j", $item->getDescription(), 
+	    $this->assertEquals("original description $j", $item->getDescription(),
 				"description $j");
 	    $this->assertEquals("original summary $j", $item->getSummary(), "summary $j");
 	}
     }
 
     function testReturnKeywords() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 						  IPTC_ITEM_KEYWORDS);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -203,15 +202,15 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
     }
 
     function testRotateOptionOff() {
-	list ($ret, $this->_items[0]) = 
+	list ($ret, $this->_items[0]) =
 		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
 					     array(),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 							EXIF_ITEM_ROTATE_PRESERVE);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -230,33 +229,33 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
     }
 
     function testRotateNoExifDataOptionOn() {
-	list ($ret, $this->_items[0]) = 
+	list ($ret, $this->_items[0]) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'image/test');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 							EXIF_ITEM_ROTATE);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
 	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
-	
+
     }
-    
+
 
     function testRotateOptionOnOverwriteOriginal() {
-	list ($ret, $this->_items[0]) = 
+	list ($ret, $this->_items[0]) =
 		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
 					     array(),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	/* Register a dummy toolkit */
 	$path = 'modules/exif/test/phpunit/ExifDescriptionOptionTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -288,21 +287,21 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 	/* Save current serial */
 	$originalSerial = $this->_items[0]->getSerialNumber();
-	
+
 	/* Initialize a Flag for checking rotation */
 	global $gallery;
 	$gallery->setConfig('rotated', 0);
-	
+
 	/* Perform the request and verify that we succeeded */
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 							EXIF_ITEM_ROTATE);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
 	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
-	
+
 	/* Verify that we don't have a preferred */
 	list ($ret, $preferredIds) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_items[0]->getId()));
@@ -317,9 +316,9 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assert($originalSerial != $this->_items[0]->getSerialNumber(), 
+	$this->assert($originalSerial != $this->_items[0]->getSerialNumber(),
 		"Item serial should have changed ($originalSerial)");
-	
+
 	/* Verify that the item has been rotated - by our mock toolkit */
 	$this->assertEquals(1, $gallery->getConfig('rotated'), 'a rotation should have been done');
 
@@ -331,9 +330,9 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals(10, $newHeight, 'height should be 10');
 
     }
-    
+
     function testRotateOptionOnPreserveOriginal() {
-	list ($ret, $this->_items[0]) = 
+	list ($ret, $this->_items[0]) =
 		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
 					     array(),
 					     dirname(__FILE__) . '/../data/descr.jpg');
@@ -345,12 +344,12 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	$originalSerial = $this->_items[0]->getSerialNumber();
 
 	/* Perform the request and verify that we succeeded */
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 						(EXIF_ITEM_ROTATE | EXIF_ITEM_ROTATE_PRESERVE));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
 	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
 
@@ -368,12 +367,12 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($originalSerial, $this->_items[0]->getSerialNumber());
-	
+
 	/* Verify that the item was rotated */
 	$this->_preferred = array_shift($preferredIds);
 	$this->assertEquals('rotate|90', $this->_preferred->getDerivativeOperations());
     }
-    
+
 }
 
 
@@ -384,7 +383,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkit
- * @package GalleryCore
+ * @package Exif
  * @subpackage PHPUnit
  */
 class ExifDescriptionOptionTestToolkit extends GalleryToolkit {
@@ -406,7 +405,7 @@ class ExifDescriptionOptionTestToolkit extends GalleryToolkit {
 	$platform->fclose($fd);
 	/* Clear cache to ensure new filesize will be seen */
 	$platform->clearstatcache();
-	
+
 	/* Turn On the Flag */
 	$gallery->setConfig('rotated', 1);
 
