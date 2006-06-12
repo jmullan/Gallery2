@@ -55,6 +55,9 @@ class DownloadView extends GalleryView {
 	    $size = $platform->filesize($file);
 	    /* Disable output compression (if necessary) since IE seems to have problems with it */
 	    @$phpVm->ini_set('zlib.output_compression', 0);
+	    if (function_exists('apache_setenv')) {
+		@apache_setenv('no-gzip', '1');
+	    }
 
 	    /* preg i modifier is affected by locale */
 	    $sendMultipart = !preg_match('{[Mm][Ss][Ii][Ee] |[Ss][Aa][Ff][Aa][Rr][Ii]}',
