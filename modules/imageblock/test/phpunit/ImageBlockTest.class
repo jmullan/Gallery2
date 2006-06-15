@@ -76,6 +76,14 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 	$imagePath = GalleryCoreApi::getPluginBaseDir('module', 'core')
 	    . 'modules/core/test/data/test1.gif';
+	$resizeImagePath = GalleryCoreApi::getPluginBaseDir('module', 'core')
+	    . 'modules/core/test/data/test4.gif';
+	list ($ret, $this->_photo3, $this->_photo3Thumb) = $this->_addPhoto($this->_album->getId(), $resizeImagePath);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	sleep(1);
 	list ($ret, $this->_photo2) = $this->_addPhoto($this->_album->getId(), $imagePath);
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -317,6 +325,80 @@ class ImageBlockTest extends GalleryTestCase {
 			    $data['ImageBlockData']['blocks'][0]['id'], 'Photo id');
     }
 
+    function testExternalImageBlockMaxSize() {
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $resized) = $this->_addDerivative($this->_photo3, $this->_photo3,
+							DERIVATIVE_TYPE_IMAGE_RESIZE, 250);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Select specific item, with max size 250.. should match resize */
+	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
+	GalleryUtilities::putRequestVariable('itemId', $this->_photo3->getId());
+	GalleryUtilities::putRequestVariable('maxSize', '250');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($resized->getId(),
+                $data['ImageBlockData']['blocks'][0]['deriv']['id'],
+                'Derivative did not match resized image');
+
+
+	/* Select specific item, with max size 300.. should match full size */
+	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
+	GalleryUtilities::putRequestVariable('itemId', $this->_photo3->getId());
+	GalleryUtilities::putRequestVariable('maxSize', '300');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($this->_photo3->getId(),
+                $data['ImageBlockData']['blocks'][0]['deriv']['id'],
+                'Derivitave did not match full size image');
+
+	/* Select specific item, with max size 175.. should match thumb */
+	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
+	GalleryUtilities::putRequestVariable('itemId', $this->_photo3->getId());
+	GalleryUtilities::putRequestVariable('maxSize', '175');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($this->_photo3Thumb->getId(),
+                $data['ImageBlockData']['blocks'][0]['deriv']['id'],
+                'Derivitave did not match thumbnail');
+    }
+
     function testOverrideUserId() {
 	/* Test override userId (used to support guest-preview mode) */
 	global $gallery;
@@ -437,6 +519,10 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::removeItemPermissions($this->_photo2->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($this->_photo3->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

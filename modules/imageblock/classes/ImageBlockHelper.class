@@ -91,7 +91,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    list ($ret, $blockData[$block]) = ImageBlockHelper::_getBlockData(
 		($heading && isset($headings[$block])) ? $module->translate($headings[$block]) : '',
 		$itemType, $order, $count, $parentId, $fullSize,
-		isset($params['userId']) ? $params['userId'] : null);
+		isset($params['userId']) ? $params['userId'] : null,
+		isset($params['maxSize']) ? $params['maxSize'] : null);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -103,7 +104,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 
 	$ImageBlockData['show'] = $show;
-	if (array_key_exists('maxSize', $params)) {
+	if (isset($params['maxSize'])) {
 	    $ImageBlockData['maxSize'] = $params['maxSize'];
 	}
 	$ImageBlockData['link'] = isset($params['link']) ? $params['link'] : '';
@@ -146,7 +147,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @access private
      */
     function _getBlockData($title, $itemType, $order, $count,
-			   $parentId=null, $fullSize=false, $userId=null) {
+			   $parentId=null, $fullSize=false, $userId=null, $maxSize=null) {
 	$blocks = $data = array();
 	switch ($order) {
 	case 'specific':
@@ -259,20 +260,20 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		    /* Ignore permission error.. just don't add a block */
 		    continue;
 		}
-		list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($id));
-		if ($ret) {
-		    return array($ret, null);
-		}
-		$image = isset($preferred[$id]) ? $preferred[$id] : $item;
-	    } else {
-		list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
-		if ($ret) {
-		    return array($ret, null);
-		}
-		if (isset($thumbnail[$id])) {
-		    $image = $thumbnail[$id];
+                list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($id));
+                if ($ret) {
+                    return array($ret, null);
+                }
+                $image = isset($preferred[$id]) ? $preferred[$id] : $item;
+            } else {
+                list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
+                if ($ret) {
+                    return array($ret, null);
+                }
+                if (isset($thumbnail[$id])) {
+                    $image = $thumbnail[$id];
 
-		    if ($fullSize && GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+		    if (($fullSize || $maxSize) && GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 			/* Fullsize for album highlight.. get preferred derivative source */
 			$source = $image;
 			while (GalleryUtilities::isA($source, 'GalleryDerivative') &&
@@ -292,17 +293,99 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			    continue;
 			}
 			$image = $source;
-			/* {g->image} won't work with item!=image and image not a derivative */
-			if (!GalleryUtilities::isA($source, 'GalleryDerivative')) {
-			    $forceItem = true;
-			}
 		    }
+
+                    if ($maxSize && !$fullSize) {
+                        /* Get the preferred item object */
+                        if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+                            list ($ret, $preferred) =
+                                GalleryCoreApi::fetchPreferredsByItemIds(array($image->getId()));
+                            if ($ret) {
+                                return array($ret, null);
+                            }
+
+                            /* Fetch resized images for size comparisons */
+                            $image = isset($preferred[$id]) ? $preferred[$id] : $item;
+                        }
+
+                        /* Get the list of resizes */
+                        list ($ret, $resizes) =
+                            GalleryCoreApi::fetchResizesByItemIds(array($image->getId()));
+                        if ($ret) {
+                            return array($ret, null);
+                        }
+
+                        /* Fetch thumbnail for size comparison */
+                        if (isset($thumbnail[$id])) {
+                            $thmb = $thumbnail[$id];
+                        }
+
+                        /**
+                         * Gather the differences in image sizes from the requested max size
+                         *
+                         * We use absolute values for the differentials because they
+                         * could be a negative value.  We want the closest match, so
+                         * -100 is closer than +125.
+                         */
+                        $imageDifferential =
+                            abs(($image->height - $maxSize) + ($image->width - $maxSize));
+                        $thumbDifferential =
+                            abs(($thmb->height - $maxSize) + ($thmb->width - $maxSize));
+
+                        if (!empty($resizes)) {
+                            foreach ($resizes as $resizedImage) {
+                                foreach ($resizedImage as $imageObject) {
+                                    $resizeDifferential = abs(($imageObject->height - $maxSize)
+                                            + ($imageObject->width - $maxSize));
+                                    $resizeSize = $imageObject->height * $imageObject->width;
+
+                                    /**
+                                     * If this is the first resize, or if this differential is
+                                     * smaller than the last, update the image target and the
+                                     * comparison value
+                                     *
+                                     * If two differentials are equidistant, use the larger of the
+                                     * two based on image size
+                                     */
+                                    if ($resizeDifferential < $imageDifferential) {
+                                        if (!isset($lastDifferential)
+                                                || ($resizeDifferential <= $lastDifferential
+                                                    && $resizeSize > $lastSize)) {
+                                            $image = $imageObject;
+                                            $lastDifferential = abs($resizeDifferential);
+                                            $lastSize = $resizeSize;
+                                        } else {
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+
+                        /**
+                         * If the thumbnail is a closer match to the target than the full size image
+                         * or any of the resizes, use the thumbnail
+                         */
+                        if (!isset($lastDifferential)) {
+                            $lastDifferential = $imageDifferential;
+                        }
+                        if ($thumbDifferential < $lastDifferential) {
+                            $image = $thmb;
+                        }
+                    }
+
+                    /* {g->image} won't work with item!=image and image not a derivative */
+                    if (!GalleryUtilities::isA($image, 'GalleryDerivative')) {
+                        $forceItem = true;
+                    }
 		}
 	    }
 
 	    if (isset($image)) {
 		$itemData['title'] = $title;
 		$itemData['item'] = (array)$item;
+		$itemData['deriv'] = (array)$image;
 		$itemData['owner'] = (array)$owner;
 		$itemData['thumb'] = (array)$image;
 		if (isset($forceItem)) {
@@ -333,6 +416,11 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	if (!isset($userId)) {
 	    $userId = $gallery->getActiveUserId();
 	}
+
+        /* Someone probably typoed a blocks parameter */
+        if (empty($typeMap[$itemType])) {
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
+        }
 
 	/* Prepare the query */
 	$select[] = '[ImageBlockCacheMap::itemId]';
