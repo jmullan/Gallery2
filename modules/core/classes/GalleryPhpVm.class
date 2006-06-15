@@ -208,5 +208,19 @@ class GalleryPhpVm {
     function getAllHeaders() {
 	return getallheaders();
     }
+
+    /**
+     * Send mail
+     *
+     * @param string to
+     * @param string subject
+     * @param string message
+     * @param string addition headers (optional)
+     * @param string additional parameters (optional)
+     * @return bool true if the mail was successfully accepted for delivery
+     */
+    function mail($to, $subject, $message, $additionalHeaders=null, $additionalParameters=null) {
+	return mail($to, $subject, $message, $additionalHeaders, $additionalParameters);
+    }
 }
 ?>

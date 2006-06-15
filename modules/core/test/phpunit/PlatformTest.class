@@ -752,6 +752,22 @@ class PlatformTest extends GalleryTestCase {
 	$this->assertEquals(1083, $this->_platform->filesize($this->_destFile));
 	$this->assert($this->_platform->unlink($this->_destFile), 'unlink');
     }
+
+    function testMailUsesUnixLineEndings() {
+	global $gallery;
+
+	$this->_markPluginParametersForCleanup('module', 'core');
+	GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.host', null);
+
+	$gallery->_phpVm = new PlatformTestPhpVm(dirname(__FILE__));
+	$platform = new UnixPlatform();
+	$result = $platform->mail("foo@example.com", "subject",
+				  "body line1\nline2\r\nline3\r\n",
+				  "header line1\nline2\r\nline3\r\n");
+	$this->assert($result);
+	$this->assertEquals("body line1\nline2\nline3\n", $gallery->_phpVm->_mail['body']);
+	$this->assertEquals("header line1\nline2\nline3\n", $gallery->_phpVm->_mail['headers']);
+    }
 }
 
 class PlatformTestPhpVm extends GalleryPhpVm {
@@ -764,6 +780,15 @@ class PlatformTestPhpVm extends GalleryPhpVm {
 	    return $this->_iniVal;
 	}
 	return parent::ini_get($varname);
+    }
+
+    function mail($to, $subject, $body, $additionalHeaders=null, $additionalParameters=null) {
+	$this->_mail = array('to' => $to,
+			     'subj' => $subject,
+			     'body' => $body,
+			     'headers' => $additionalHeaders,
+			     'params' => $additionalParameters);
+	return true;
     }
 }
 

@@ -1011,7 +1011,8 @@ class GalleryPlatform {
     }
 
     /**
-     * mail -- Send an email
+     * mail -- Send an email.  Lines in the headers and body should be terminated
+     * with \r\n in accordance with RFC2821.
      *
      * @param string to address(es) (comma separated)
      * @param string subject
@@ -1042,10 +1043,21 @@ class GalleryPlatform {
 		$gallery->debug("smtpmail error: " . $ret->getAsText());
 	    }
 	    return !$ret;
-	} else if (isset($headers)) {
-	    return mail($to, $subject, $body, $headers);
 	} else {
-	    return mail($to, $subject, $body);
+	    $phpVm =& $gallery->getPhpVm();
+	    /* Convert \r\n to the appropriate line ending style */
+	    if ($this->getLineEnding() == "\n") {
+		if (isset($headers)) {
+		    $headers = preg_replace("#\r\n#si", "\n", $headers);
+		}
+		$body = preg_replace("#\r\n#si", "\n", $body);
+	    }
+
+	    if (isset($headers)) {
+		return $phpVm->mail($to, $subject, $body, $headers);
+	    } else {
+		return $phpVm->mail($to, $subject, $body);
+	    }
 	}
     }
 
