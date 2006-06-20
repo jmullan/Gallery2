@@ -675,6 +675,8 @@ function read_exif_data_raw($path,$verbose) {
 		return $result;
 	}
 
+        $GLOBALS['exiferFileSize'] = filesize($path);
+
 	//First 2 bytes of JPEG are 0xFFD8
 	$data = bin2hex(fread( $in, 2 ));
 	if($data=="ffd8") {
