@@ -83,8 +83,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('return' => 1,
-		  'redirect' => array(
+	    array('redirect' => array(
 		      'view' => 'comment.CommentChangeConfirmation',
 		      'itemId' => $this->_item->getId()),
 		  'status' => array('added' => 1),
@@ -197,8 +196,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('return' => 1,
-		  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+	    array('redirect' => array('view' => 'comment.CommentChangeConfirmation',
 				      'itemId' => $this->_item->getId()),
 		  'status' => array('added' => 1),
 		  'error' => array()),
@@ -212,8 +210,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	sleep(1);
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('return' => 1,
-		  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+	    array('redirect' => array('view' => 'comment.CommentChangeConfirmation',
 				      'itemId' => $this->_item->getId()),
 		  'status' => array('added' => 1),
 		  'error' => array()),
@@ -261,8 +258,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core.ShowItem',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_item->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -358,8 +354,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify comment was added (validation plugin skipped) */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('return' => 1,
-		  'redirect' => array(
+	    array('redirect' => array(
 		      'view' => 'comment.CommentChangeConfirmation',
 		      'itemId' => $this->_item->getId()),
 		  'status' => array('added' => 1),
