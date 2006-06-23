@@ -315,81 +315,85 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
                             $image = isset($preferred[$id]) ? $preferred[$id] : $item;
                         }
 
-                        /* Get the list of resizes */
-                        list ($ret, $resizes) =
-                            GalleryCoreApi::fetchResizesByItemIds(array($image->getId()));
-                        if ($ret) {
-                            return array($ret, null);
-                        }
-
                         /* Fetch thumbnail for size comparison */
                         if (isset($thumbnail[$id])) {
                             $thumb = $thumbnail[$id];
                         }
 
-                        /**
-                         * Gather the differences in image sizes from the requested max size
-                         *
-                         * We use absolute values for the differentials because they
-                         * could be a negative value.  We want the closest match, so
-                         * -100 is closer than +125.
-			 *
-			 * If $biggerOnly is set, then we don't want any negative differentials.
-                         */
-                        $imageDifferential =
-                            abs(($image->getHeight() - $maxSize) + ($image->getWidth() - $maxSize));
-                        $thumbDifferential =
-                            abs(($thumb->getHeight() - $maxSize) + ($thumb->getWidth() - $maxSize));
+			if ($thumb->getWidth() >= $maxSize || $thumb->getHeight() >= $maxSize) {
+			    $image = $thumb;
+			} else {
+			    /*
+			     * Gather the differences in image sizes from the requested max size
+			     *
+			     * We use absolute values for the differentials because they
+			     * could be a negative value.  We want the closest match, so
+			     * -100 is closer than +125.
+			     *
+			     * If $biggerOnly is set, then we don't want any negative differentials.
+			     */
+			    $imageDifferential = abs(($image->getHeight() - $maxSize) +
+						     ($image->getWidth() - $maxSize));
+			    $thumbDifferential = abs(($thumb->getHeight() - $maxSize) +
+						     ($thumb->getWidth() - $maxSize));
 
-                        if (!empty($resizes)) {
-                            foreach ($resizes as $resizedImage) {
-                                foreach ($resizedImage as $imageObject) {
-				    $rawDifferential = ($imageObject->getHeight() - $maxSize) +
-					($imageObject->getWidth() - $maxSize);
-				    if ($biggerOnly && $rawDifferential < 0) {
-					continue;
-				    }
-                                    $resizeDifferential = abs($rawDifferential);
-                                    $resizeSize =
-					$imageObject->getHeight() * $imageObject->getWidth();
+			    /* Get the list of resizes */
+			    list ($ret, $resizes) =
+				GalleryCoreApi::fetchResizesByItemIds(array($image->getId()));
+			    if ($ret) {
+				return array($ret, null);
+			    }
 
-                                    /**
-                                     * If this is the first resize, or if this differential is
-                                     * smaller than the last, update the image target and the
-                                     * comparison value
-                                     *
-                                     * If two differentials are equidistant, use the larger of the
-                                     * two based on image size
-                                     */
-                                    if ($resizeDifferential < $imageDifferential) {
-                                        if (!isset($lastDifferential)
+			    if (!empty($resizes)) {
+				foreach ($resizes as $resizedImage) {
+				    foreach ($resizedImage as $imageObject) {
+					$rawDifferential = ($imageObject->getHeight() - $maxSize) +
+					    ($imageObject->getWidth() - $maxSize);
+					if ($biggerOnly && $rawDifferential < 0) {
+					    continue;
+					}
+					$resizeDifferential = abs($rawDifferential);
+					$resizeSize =
+					    $imageObject->getHeight() * $imageObject->getWidth();
+
+					/*
+					 * If this is the first resize, or if this differential is
+					 * smaller than the last, update the image target and the
+					 * comparison value
+					 *
+					 * If two differentials are equidistant, use the larger of
+					 * the two based on image size
+					 */
+					if ($resizeDifferential < $imageDifferential) {
+					    if (!isset($lastDifferential)
                                                 || ($resizeDifferential <= $lastDifferential
                                                     && $resizeSize > $lastSize)) {
-                                            $image = $imageObject;
-                                            $lastDifferential = abs($resizeDifferential);
-                                            $lastSize = $resizeSize;
-                                        } else {
-                                            continue;
-                                        }
-                                    }
-                                }
-                            }
-                        }
+						$image = $imageObject;
+						$lastDifferential = abs($resizeDifferential);
+						$lastSize = $resizeSize;
+					    } else {
+						continue;
+					    }
+					}
+				    }
+				}
+			    }
 
 
-                        /**
-                         * If the thumbnail is a closer match to the target than the full size image
-                         * or any of the resizes, use the thumbnail, unless we only want to use
-                         * bigger images to avoid having whitespace.
-                         */
-                        if (!isset($lastDifferential)) {
-                            $lastDifferential = $imageDifferential;
-                        }
+			    /*
+			     * If the thumbnail is a closer match to the target than the full size
+			     * image or any of the resizes, use the thumbnail, unless we only want
+			     * to use bigger images to avoid having whitespace.
+			     */
+			    if (!isset($lastDifferential)) {
+				$lastDifferential = $imageDifferential;
+			    }
 
-			if (!$biggerOnly && $thumbDifferential < $lastDifferential) {
-			    $image = $thumb;
+			    if (!$biggerOnly && $thumbDifferential < $lastDifferential) {
+				$image = $thumb;
+			    }
 			}
-                    }
+		    }
 
                     /* {g->image} won't work with item!=image and image not a derivative */
                     if (!GalleryUtilities::isA($image, 'GalleryDerivative')) {
