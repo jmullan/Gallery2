@@ -432,6 +432,45 @@ class ImageBlockTest extends GalleryTestCase {
 			    'Derivative did not match resized');
     }
 
+    function testExternalImageBlockExactSizeUsePreferredNotOriginal() {
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $resized) = $this->_addDerivative(
+	    $this->_photo3, $this->_photo3, DERIVATIVE_TYPE_IMAGE_RESIZE, 250);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $preferred) = $this->_addDerivative(
+	    $this->_photo3, $this->_photo3, DERIVATIVE_TYPE_IMAGE_PREFERRED, 500);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Match the resize because the thumbnail will be too small */
+	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
+	GalleryUtilities::putRequestVariable('itemId', $this->_photo3->getId());
+	GalleryUtilities::putRequestVariable('exactSize', '400');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($preferred->getId(),
+			    $data['ImageBlockData']['blocks'][0]['deriv']['id'],
+			    'Derivative did not match preferred');
+    }
+
     function testOverrideUserId() {
 	/* Test override userId (used to support guest-preview mode) */
 	global $gallery;

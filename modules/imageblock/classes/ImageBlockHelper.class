@@ -306,7 +306,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
                         /* Get the preferred item object */
                         if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
                             list ($ret, $preferred) =
-                                GalleryCoreApi::fetchPreferredsByItemIds(array($image->getId()));
+                                GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
                             if ($ret) {
                                 return array($ret, null);
                             }
