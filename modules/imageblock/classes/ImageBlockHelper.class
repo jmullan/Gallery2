@@ -337,20 +337,21 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			 * If $biggerOnly is set, then we don't want any negative differentials.
                          */
                         $imageDifferential =
-                            abs(($image->height - $maxSize) + ($image->width - $maxSize));
+                            abs(($image->getHeight() - $maxSize) + ($image->getWidth() - $maxSize));
                         $thumbDifferential =
-                            abs(($thumb->height - $maxSize) + ($thumb->width - $maxSize));
+                            abs(($thumb->getHeight() - $maxSize) + ($thumb->getWidth() - $maxSize));
 
                         if (!empty($resizes)) {
                             foreach ($resizes as $resizedImage) {
                                 foreach ($resizedImage as $imageObject) {
-				    $rawDifferential = ($imageObject->height - $maxSize) +
-					($imageObject->width - $maxSize);
+				    $rawDifferential = ($imageObject->getHeight() - $maxSize) +
+					($imageObject->getWidth() - $maxSize);
 				    if ($biggerOnly && $rawDifferential < 0) {
 					continue;
 				    }
                                     $resizeDifferential = abs($rawDifferential);
-                                    $resizeSize = $imageObject->height * $imageObject->width;
+                                    $resizeSize =
+					$imageObject->getHeight() * $imageObject->getWidth();
 
                                     /**
                                      * If this is the first resize, or if this differential is
