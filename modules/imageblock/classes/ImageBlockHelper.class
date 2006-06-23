@@ -83,20 +83,25 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 	    $blockCount[$block]++;
 	}
+	$maxSize = isset($params['maxSize']) ? $params['maxSize'] :
+	    (isset($params['exactSize']) ? $params['exactSize'] : null);
+
 	foreach ($blockCount as $block => $count) {
 	    if (!preg_match('{^(.*?)([A-Z].*)$}', $block, $matches)) {
 		continue;
 	    }
 	    list ($tmp, $order, $itemType) = $matches;
+
 	    list ($ret, $blockData[$block]) = ImageBlockHelper::_getBlockData(
 		($heading && isset($headings[$block])) ? $module->translate($headings[$block]) : '',
 		$itemType, $order, $count, $parentId, $fullSize,
 		isset($params['userId']) ? $params['userId'] : null,
-		isset($params['maxSize']) ? $params['maxSize'] : null);
+		$maxSize, isset($params['exactSize']));
 	    if ($ret) {
 		return $ret;
 	    }
 	}
+
 	foreach ($blockList as $block) {
 	    if (!empty($blockData[$block])) {
 		$blocks[] = array_shift($blockData[$block]);
@@ -104,8 +109,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 
 	$ImageBlockData['show'] = $show;
-	if (isset($params['maxSize'])) {
-	    $ImageBlockData['maxSize'] = $params['maxSize'];
+	if (isset($params['maxSize']) || isset($params['exactSize'])) {
+	    $ImageBlockData['maxSize'] = $maxSize;
 	}
 	$ImageBlockData['link'] = isset($params['link']) ? $params['link'] : '';
 	if (isset($params['linkTarget'])) {
@@ -147,7 +152,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @access private
      */
     function _getBlockData($title, $itemType, $order, $count,
-			   $parentId=null, $fullSize=false, $userId=null, $maxSize=null) {
+			   $parentId=null, $fullSize=false, $userId=null, $maxSize=null,
+			   $biggerOnly=false) {
 	$blocks = $data = array();
 	switch ($order) {
 	case 'specific':
@@ -273,11 +279,12 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
                 if (isset($thumbnail[$id])) {
                     $image = $thumbnail[$id];
 
-		    if (($fullSize || $maxSize) && GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+		    if (($fullSize || $maxSize) &&
+			    GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 			/* Fullsize for album highlight.. get preferred derivative source */
 			$source = $image;
 			while (GalleryUtilities::isA($source, 'GalleryDerivative') &&
-				 $source->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
+			       $source->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
 			    list ($ret, $source) =
 				GalleryCoreApi::loadEntitiesById($source->getDerivativeSourceId());
 			    if ($ret) {
@@ -326,6 +333,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
                          * We use absolute values for the differentials because they
                          * could be a negative value.  We want the closest match, so
                          * -100 is closer than +125.
+			 *
+			 * If $biggerOnly is set, then we don't want any negative differentials.
                          */
                         $imageDifferential =
                             abs(($image->height - $maxSize) + ($image->width - $maxSize));
@@ -335,8 +344,12 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
                         if (!empty($resizes)) {
                             foreach ($resizes as $resizedImage) {
                                 foreach ($resizedImage as $imageObject) {
-                                    $resizeDifferential = abs(($imageObject->height - $maxSize)
-                                            + ($imageObject->width - $maxSize));
+				    $rawDifferential = ($imageObject->height - $maxSize) +
+					($imageObject->width - $maxSize);
+				    if ($biggerOnly && $rawDifferential < 0) {
+					continue;
+				    }
+                                    $resizeDifferential = abs($rawDifferential);
                                     $resizeSize = $imageObject->height * $imageObject->width;
 
                                     /**
@@ -361,18 +374,20 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
                                 }
                             }
                         }
-                        
+
 
                         /**
                          * If the thumbnail is a closer match to the target than the full size image
-                         * or any of the resizes, use the thumbnail
+                         * or any of the resizes, use the thumbnail, unless we only want to use
+                         * bigger images to avoid having whitespace.
                          */
                         if (!isset($lastDifferential)) {
                             $lastDifferential = $imageDifferential;
                         }
-                        if ($thumbDifferential < $lastDifferential) {
-                            $image = $thmb;
-                        }
+
+			if (!$biggerOnly && $thumbDifferential < $lastDifferential) {
+			    $image = $thmb;
+			}
                     }
 
                     /* {g->image} won't work with item!=image and image not a derivative */

@@ -332,7 +332,7 @@ class ImageBlockTest extends GalleryTestCase {
 	}
 
 	list ($ret, $resized) = $this->_addDerivative($this->_photo3, $this->_photo3,
-							DERIVATIVE_TYPE_IMAGE_RESIZE, 250);
+						      DERIVATIVE_TYPE_IMAGE_RESIZE, 250);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -376,7 +376,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($this->_photo3->getId(),
                 $data['ImageBlockData']['blocks'][0]['deriv']['id'],
-                'Derivitave did not match full size image');
+                'Derivative did not match full size image');
 
 	/* Select specific item, with max size 175.. should match thumb */
 	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
@@ -396,7 +396,40 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($this->_photo3Thumb->getId(),
                 $data['ImageBlockData']['blocks'][0]['deriv']['id'],
-                'Derivitave did not match thumbnail');
+                'Derivative did not match thumbnail');
+    }
+
+    function testExternalImageBlockExactSize() {
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $resized) = $this->_addDerivative(
+	    $this->_photo3, $this->_photo3, DERIVATIVE_TYPE_IMAGE_RESIZE, 250);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Match the resize because the thumbnail will be too small */
+	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
+	GalleryUtilities::putRequestVariable('itemId', $this->_photo3->getId());
+	GalleryUtilities::putRequestVariable('exactSize', '175');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($resized->getId(),
+			    $data['ImageBlockData']['blocks'][0]['deriv']['id'],
+			    'Derivative did not match resized');
     }
 
     function testOverrideUserId() {
