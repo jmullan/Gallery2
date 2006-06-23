@@ -324,7 +324,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
                         /* Fetch thumbnail for size comparison */
                         if (isset($thumbnail[$id])) {
-                            $thmb = $thumbnail[$id];
+                            $thumb = $thumbnail[$id];
                         }
 
                         /**
@@ -339,7 +339,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
                         $imageDifferential =
                             abs(($image->height - $maxSize) + ($image->width - $maxSize));
                         $thumbDifferential =
-                            abs(($thmb->height - $maxSize) + ($thmb->width - $maxSize));
+                            abs(($thumb->height - $maxSize) + ($thumb->width - $maxSize));
 
                         if (!empty($resizes)) {
                             foreach ($resizes as $resizedImage) {
@@ -386,7 +386,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
                         }
 
 			if (!$biggerOnly && $thumbDifferential < $lastDifferential) {
-			    $image = $thmb;
+			    $image = $thumb;
 			}
                     }
 
