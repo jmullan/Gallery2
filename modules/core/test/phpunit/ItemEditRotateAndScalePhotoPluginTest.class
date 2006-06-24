@@ -145,7 +145,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[preserveOriginal]', 'on');
 	GalleryUtilities::putRequestVariable('form[action][resize]', 1);
 	GalleryUtilities::putRequestVariable('form[resize][width]', 270);
-	GalleryUtilities::putRequestVariable('form[resize][height]', 250);
+	GalleryUtilities::putRequestVariable('form[resize][height]', '80%');
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Reparent the thumbnail cause we're going to want to check it later */

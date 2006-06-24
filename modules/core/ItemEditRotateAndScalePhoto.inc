@@ -49,8 +49,10 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	if (isset($form['action']['resize'])) {
 	    if (empty($form['resize']['width']) || empty($form['resize']['height'])) {
 		$error[] = 'form[error][resize][size][missing]';
-	    } else if (!is_numeric($form['resize']['width']) || $form['resize']['width'] < 1
-		       || !is_numeric($form['resize']['height']) || $form['resize']['height'] < 1) {
+	    } else if (!($tmp = rtrim($form['resize']['width'], '%'))
+		    || !is_numeric($tmp) || $tmp < 1
+		    || !($tmp = rtrim($form['resize']['height'], '%'))
+		    || !is_numeric($tmp) || $tmp < 1) {
 		$error[] = 'form[error][resize][size][invalid]';
 	    } else {
 		$operation = 'scale';
