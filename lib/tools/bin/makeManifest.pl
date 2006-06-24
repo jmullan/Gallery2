@@ -66,7 +66,7 @@ foreach my $manifest (keys %sections) {
     $oldContent = join('', @old_lines);
   }
   open(my $out, ">$manifest.new") or die;
-  print $out "# \$Revision$oldRevision\$\n";
+  print $out '# $Revision' . "$oldRevision\$\n";
   print $out "# File crc32 crc32(crlf) size size(crlf)  or  R File\n";
   my @entries = @{$sections{$manifest}};
   my %deleted;
