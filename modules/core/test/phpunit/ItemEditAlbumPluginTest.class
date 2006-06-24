@@ -126,7 +126,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 543);
 	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
 	GalleryUtilities::putRequestVariable('form[resizes][2][width]', 456);
-	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 456);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', '80%');
 	GalleryUtilities::putRequestVariable('form[serialNumber]',
 					     $this->_album->getSerialNumber());
 
@@ -302,13 +302,13 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	/* 
+	/*
 	 * Test that during rebuild thumbnails and rebuild resizes
 	 * we are using album-specific settings for each derivative
 	 * http://sourceforge.net/tracker/?func=detail&aid=1401336&group_id=7130&atid=107130
 	 */
        $ret = GalleryCoreApi::removeDerivativePreferenceForItemType(
-	    $this->_childAlbum->getId(), 
+	    $this->_childAlbum->getId(),
 	    array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, DERIVATIVE_TYPE_IMAGE_RESIZE));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -323,7 +323,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	 
+
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
@@ -541,7 +541,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	 * just return children
 	 */
 	list ($ret, $this->_grandchildAlbum) = $this->_createRandomAlbum(
-            $this->_childAlbum->getId());
+	    $this->_childAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -550,7 +550,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(array(array(),
 				  $this->_translate('Settings saved successfully.')),
 			    $results);
-        /* On the album itself */
+	/* On the album itself */
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -565,12 +565,12 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-        usort ($preferences, "ItemEditAlbumPluginTestCmp");
+	usort($preferences, "ItemEditAlbumPluginTestCmp");
 	$this->assertEquals(array(
 			    array('order' => 0,
 				  'derivativeType' => 1,
 				  'derivativeOperations' => 'thumbnail|123'),
-                            array('order' => 0,
+			    array('order' => 0,
 				  'derivativeType' => 2,
 				  'derivativeOperations' => 'scale|50,50')),
 		      $preferences);
@@ -588,12 +588,12 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	usort ($preferences, "ItemEditAlbumPluginTestCmp");
+	usort($preferences, "ItemEditAlbumPluginTestCmp");
 	$this->assertEquals(array(
 			    array('order' => 0,
 				  'derivativeType' => 1,
 				  'derivativeOperations' => 'thumbnail|123'),
-                            array('order' => 0,
+			    array('order' => 0,
 				  'derivativeType' => 2,
 				  'derivativeOperations' => 'scale|50,50')),
 		      $preferences, 'child');
@@ -611,18 +611,18 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	usort ($preferences, "ItemEditAlbumPluginTestCmp");
+	usort($preferences, "ItemEditAlbumPluginTestCmp");
 	$this->assertEquals(array(
 			    array('order' => 0,
 				  'derivativeType' => 1,
 				  'derivativeOperations' => 'thumbnail|123'),
-                            array('order' => 0,
+			    array('order' => 0,
 				  'derivativeType' => 2,
 				  'derivativeOperations' => 'scale|50,50')),
 		      $preferences, 'grandchild');
 
     }
-    
+
     /**
      * Test applying options from 'Album' tab to sub-albums with no subalbums
      */
@@ -649,7 +649,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(array(array(),
 				  $this->_translate('Settings saved successfully.')),
 			    $results);
-        /* On the album itself */
+	/* On the album itself */
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -664,12 +664,12 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-        usort ($preferences, "ItemEditAlbumPluginTestCmp");
+	usort($preferences, "ItemEditAlbumPluginTestCmp");
 	$this->assertEquals(array(
 			    array('order' => 0,
 				  'derivativeType' => 1,
 				  'derivativeOperations' => 'thumbnail|123'),
-                            array('order' => 0,
+			    array('order' => 0,
 				  'derivativeType' => 2,
 				  'derivativeOperations' => 'scale|50,50')),
 		      $preferences);

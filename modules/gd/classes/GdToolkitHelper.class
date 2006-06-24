@@ -81,32 +81,27 @@ class GdToolkitHelper {
 
 	if (GdToolkitHelper::isOperationSupported('scale', $gd)) {
 	    /* Scale */
-	    $operations['scale']['params'][] =
-		array('type' => 'int',
-		      'description' => $gallery->i18n('target width'));
-	    $operations['scale']['params'][] =
-		array('type' => 'int',
-		      'description' =>
-		      $gallery->i18n('(optional) target height, defaults to same as width'));
-	    $operations['scale']['description'] = $gallery->i18n(
-		'Scale the image to the target size, maintain aspect ratio');
+	    $operations['scale']['params'][] = array('type' => 'int', 'description' =>
+		    $gallery->i18n('target width (# pixels or #% of full size)'));
+	    $operations['scale']['params'][] = array('type' => 'int', 'description' =>
+		    $gallery->i18n('(optional) target height, defaults to same as width'));
+	    $operations['scale']['description'] =
+		$gallery->i18n('Scale the image to the target size, maintain aspect ratio');
 	    $operations['scale']['mimeTypes'] = $mimeTypes;
 	}
 
-	if (GdToolkitHelper::isOperationSupported('thumbnail', $gd) &&
-	        isset($operations['scale'])) {
+	if (GdToolkitHelper::isOperationSupported('thumbnail', $gd)
+		&& isset($operations['scale'])) {
 	    /* Thumbnail is an alias for scale */
 	    $operations['thumbnail'] = $operations['scale'];
 	}
 
 	if (GdToolkitHelper::isOperationSupported('resize', $gd)) {
 	    /* Resize */
-	    $operations['resize']['params'][] =
-		array('type' => 'int',
-		      'description' => $gallery->i18n('target width'));
-	    $operations['resize']['params'][] =
-		array('type' => 'int',
-		      'description' => $gallery->i18n('target height'));
+	    $operations['resize']['params'][] = array('type' => 'int', 'description' =>
+		    $gallery->i18n('target width (# pixels or #% of full size)'));
+	    $operations['resize']['params'][] = array('type' => 'int', 'description' =>
+		    $gallery->i18n('target height (# pixels or #% of full size)'));
 	    $operations['resize']['description'] =
 		$gallery->i18n('Resize the image to the target dimensions');
 	    $operations['resize']['mimeTypes'] = $mimeTypes;

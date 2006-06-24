@@ -80,22 +80,22 @@ class NetPbmToolkitHelper {
 	$operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 
 	/* Scale */
-	$operations['scale']['params'][] = array('type' => 'int',
-						 'description' => $gallery->i18n('target width'));
-	$operations['scale']['params'][] = array('type' => 'int',
-	    'description' => $gallery->i18n('(optional) target height, defaults to same as width'));
-	$operations['scale']['description'] = $gallery->i18n(
-	    'Scale the image to the target size, maintain aspect ratio');
+	$operations['scale']['params'][] = array('type' => 'int', 'description' =>
+		$gallery->i18n('target width (# pixels or #% of full size)'));
+	$operations['scale']['params'][] = array('type' => 'int', 'description' =>
+		$gallery->i18n('(optional) target height, defaults to same as width'));
+	$operations['scale']['description'] =
+	    $gallery->i18n('Scale the image to the target size, maintain aspect ratio');
 	$operations['scale']['mimeTypes'] = $mimeTypes;
 
 	/* Thumbnail is an alias for scale */
 	$operations['thumbnail'] = $operations['scale'];
 
 	/* Resize */
-	$operations['resize']['params'][] =
-	    array('type' => 'int', 'description' => $gallery->i18n('target width'));
-	$operations['resize']['params'][] =
-	    array('type' => 'int', 'description' => $gallery->i18n('target height'));
+	$operations['resize']['params'][] = array('type' => 'int', 'description' =>
+		$gallery->i18n('target width (# pixels or #% of full size)'));
+	$operations['resize']['params'][] = array('type' => 'int', 'description' =>
+		$gallery->i18n('target height (# pixels or #% of full size)'));
 	$operations['resize']['description'] =
 	    $gallery->i18n('Resize the image to the target dimensions');
 	$operations['resize']['mimeTypes'] = $mimeTypes;

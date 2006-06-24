@@ -315,6 +315,36 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	}
     }
 
+    function testPercentParameters() {
+	foreach ($this->_environments as $environment) {
+	    $this->_setEnvironment($environment);
+
+	    $ret = $this->_testOperation('image/gif', 'thumbnail',
+					 'test[1000x1000].gif', 'output.gif',
+					 array('15%'),
+					 array('width' => 150, 'height' => 150));
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $ret = $this->_testOperation('image/jpeg', 'scale',
+					 'test[1000x1000].jpg', 'output.jpg',
+					 array('50%', 400),
+					 array('width' => 500, 'height' => 400));
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $ret = $this->_testOperation('image/png', 'resize',
+					 'test[1000x1000].png', 'output.png',
+					 array('60%', '80%'),
+					 array('width' => 600, 'height' => 800));
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+    }
+
     function testPngQuality() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality', 94);
 	if ($ret) {

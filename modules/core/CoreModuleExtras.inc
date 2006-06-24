@@ -2072,6 +2072,9 @@ class CoreModuleExtras {
 	    }
 	    @$platform->mkdir($locksDir);
 
+	case '1.1.9':
+	    /* Graphics toolkits now support percentages for thumbnail/scale/resize */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -2331,6 +2334,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.6':
 	case '1.1.7':
 	case '1.1.8':
+	case '1.1.9':
 
 	case 'end of upgrade path':
 	    /*

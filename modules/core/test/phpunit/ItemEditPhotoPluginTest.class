@@ -144,6 +144,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][width]', 100 * ($i+1));
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][height]', 100 * ($i+1));
 	}
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', '50%');
 	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 600);
 
 	/* Perform the request and verify that we succeeded */
@@ -157,24 +158,23 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	if (!empty($resizeTable[$this->_item->getId()])) {
 	    $this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
 	    for ($i = 0; $i < 3; $i++) {
-		$this->assertEquals($derivative[0]->getId(), 
-		    $resizeTable[$this->_item->getId()][$i]->getDerivativeSourceId(), 
-		    'Derivative Source id');
+		$resize = $resizeTable[$this->_item->getId()][$i];
+		if (!isset($resize)) {
+		    continue;
+		}
+		$this->assertEquals($derivative[0]->getId(), $resize->getDerivativeSourceId(),
+			'Derivative Source id');
 		$expectedOperations =
-		    ($i < 2) ? ('scale|' . 100 * ($i+1) . ',' . 100 * ($i+1)) : 'scale|300,600';
+		    ($i < 2) ? ('scale|' . 100 * ($i+1) . ',' . 100 * ($i+1)) : 'scale|50%,600';
 		$expectedOperations .= ';convert-to-image/jpeg';
-		$this->assertEquals(
-		    $expectedOperations,
-		    $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
+		$this->assertEquals($expectedOperations, $resize->getDerivativeOperations());
 		/* check that postfilteroperations are maintained and added to new resizes.. */
-		$this->assertEquals(
-		    'test-operation|0',
-		    $resizeTable[$this->_item->getId()][$i]->getPostFilterOperations(),
-		    "postfilter $i");
+		$this->assertEquals('test-operation|0', $resize->getPostFilterOperations(),
+			"postfilter $i");
 	    }
 	}
     }
@@ -216,7 +216,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 				  null),
 			    $results);
     }
-    
+
     function testEditResizesNoDerivative() {
 	$itemId = $this->_item->getId();
 	/* Use valid inputs */
@@ -273,7 +273,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	list ($ret, $this->_blob) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'test/blob');
 	if ($ret) {
@@ -311,11 +311,11 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	for ($i = 1; $i < 4; $i++) {
 	    $this->assertEquals($preferredId, $resizeTable[$itemId][$i]->
 		getDerivativeSourceId(), 'Derivative Source id');
-	    $this->assertEquals('scale|' . 100 * $i . ',' . 100 * $i . ';convert-to-image/jpeg', 
+	    $this->assertEquals('scale|' . 100 * $i . ',' . 100 * $i . ';convert-to-image/jpeg',
 		$resizeTable[$itemId][$i]->
 		getDerivativeOperations(), 'Derivative Source id');
 	}
-    }    
+    }
 }
 
 /**

@@ -57,13 +57,13 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
 		if (!empty($form['resizes'][$i]['active'])) {
-		    if (empty($form['resizes'][$i]['width']) ||
-			    empty($form['resizes'][$i]['height'])) {
+		    if (empty($form['resizes'][$i]['width'])
+			    || empty($form['resizes'][$i]['height'])) {
 			$error[] = 'form[error][resizes][' . $i . '][size][missing]';
-		    } else if (!is_numeric($form['resizes'][$i]['width'])
-			      || $form['resizes'][$i]['width'] < 1
-			      || !is_numeric($form['resizes'][$i]['height'])
-			      || $form['resizes'][$i]['height'] < 1) {
+		    } else if (!($tmp = rtrim($form['resizes'][$i]['width'], '%'))
+			    || !is_numeric($tmp) || $tmp < 1
+			    || !($tmp = rtrim($form['resizes'][$i]['height'], '%'))
+			    || !is_numeric($tmp) || $tmp < 1) {
 			$error[] = 'form[error][resizes][' . $i . '][size][invalid]';
 		    }
 		}
@@ -273,9 +273,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    }
 
 	    foreach ($preferences as $preference) {
-		if (preg_match('/(?:resize|scale|thumbnail)\|(\d+)(?:,(\d+))?/',
-			       $preference['derivativeOperations'],
-			       $matches)) {
+		if (preg_match('/(?:resize|scale|thumbnail)\|(\d+%?)(?:,(\d+%?))?/',
+			       $preference['derivativeOperations'], $matches)) {
 		    $size = $matches[1];
 		    $height = empty($matches[2]) ? $size : $matches[2];
 		}

@@ -51,13 +51,13 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    continue;
 		}
 
-		if (empty($form['resizes'][$i]['width']) ||
-		    empty($form['resizes'][$i]['height'])) {
+		if (empty($form['resizes'][$i]['width'])
+			|| empty($form['resizes'][$i]['height'])) {
 		    $error[] = sprintf('form[error][resizes][%d][size][missing]', $i);
-		} else if (!is_numeric($form['resizes'][$i]['width'])
-			   || !is_numeric($form['resizes'][$i]['height'])
-			   || $form['resizes'][$i]['width'] <= 0
-			   || $form['resizes'][$i]['height'] <= 0) {
+		} else if (!($tmp = rtrim($form['resizes'][$i]['width'], '%'))
+			|| !is_numeric($tmp) || $tmp <= 0
+			|| !($tmp = rtrim($form['resizes'][$i]['height'], '%'))
+			|| !is_numeric($tmp) || $tmp <= 0) {
 		    $error[] = sprintf('form[error][resizes][%d][size][invalid]', $i);
 		}
 	    }
@@ -177,9 +177,8 @@ class ItemEditPhoto extends ItemEditPlugin {
 
 	    if (!empty($resizes)) {
 		foreach ($resizes[$item->getId()] as $resize) {
-		    if (preg_match('/(?:scale|resize)\|(\d+)(?:,(\d+))?/',
-				   $resize->getDerivativeOperations(),
-				   $matches)) {
+		    if (preg_match('/(?:scale|resize)\|(\d+%?)(?:,(\d+%?))?/',
+				   $resize->getDerivativeOperations(), $matches)) {
 			$width = $matches[1];
 			$height = empty($matches[2]) ? $width : $matches[2];
 			$form['resizes'][] = array('active' => 1,

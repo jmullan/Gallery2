@@ -129,6 +129,34 @@ class GdToolkitTest extends GalleryTestCase {
 			array('x' => '100', 'y' => '100', 'mimeType' => $mimeType));
 		}
 
+		if (GdToolkitHelper::isOperationSupported('scale', $gd)) {
+		    list ($ret, $mimeType) =
+			$this->_toolkit->performOperation($mimeType, 'scale',
+							  '600x400.ext',
+							  '/valid/thumbnail.ext',
+							  array('75%'));
+		    if ($ret) {
+			return $this->failWithStatus($ret);
+		    }
+		    $this->assertEquals(
+			$this->_gdFunctionality->getOutputFileData('/valid/thumbnail.ext'),
+			array('x' => '450', 'y' => '300', 'mimeType' => $mimeType));
+		}
+
+		if (GdToolkitHelper::isOperationSupported('resize', $gd)) {
+		    list ($ret, $mimeType) =
+			$this->_toolkit->performOperation($mimeType, 'resize',
+							  '600x400.ext',
+							  '/valid/thumbnail.ext',
+							  array('150%', 500));
+		    if ($ret) {
+			return $this->failWithStatus($ret);
+		    }
+		    $this->assertEquals(
+			$this->_gdFunctionality->getOutputFileData('/valid/thumbnail.ext'),
+			array('x' => '900', 'y' => '500', 'mimeType' => $mimeType));
+		}
+
 		if (GdToolkitHelper::isOperationSupported('crop', $gd)) {
 		    list ($ret, $mimeType) =
 			$this->_toolkit->performOperation($mimeType, 'crop',

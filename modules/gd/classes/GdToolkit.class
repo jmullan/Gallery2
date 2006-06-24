@@ -148,18 +148,34 @@ class GdToolkit extends GalleryToolkit {
 	    return array($ret, null, null);
 	}
 
+	if (in_array($operationName, array('thumbnail', 'scale', 'resize'))) {
+	    $usePercent = substr($parameters[0], -1) == '%'
+		|| (isset($parameters[1]) && substr($parameters[1], -1) == '%');
+	    if ($usePercent || $operationName != 'resize') {
+		list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+	    }
+	    if ($usePercent) {
+		/* Convert percentages to real image dimensions */
+		if (substr($parameters[0], -1) == '%') {
+		    $parameters[0] = (int)round($width * rtrim($parameters[0], '%') / 100);
+		}
+		if (isset($parameters[1]) && substr($parameters[1], -1) == '%') {
+		    $parameters[1] = (int)round($height * rtrim($parameters[1], '%') / 100);
+		}
+	    }
+	}
+
 	switch($operationName) {
 	case 'thumbnail':
 	case 'scale':
 	    /* $parameters[0]: target width, [1]: optional target height */
 	    $targetHeight = empty($parameters[1]) ? $parameters[0] : $parameters[1];
-	    list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
 	    /* Don't enlarge images for a thumbnail */
-	    if ($operationName == 'thumbnail' &&
-		    $width <= $parameters[0] && $height <= $targetHeight) {
+	    if ($operationName == 'thumbnail'
+		    && $width <= $parameters[0] && $height <= $targetHeight) {
 		break;
 	    }
 
@@ -342,7 +358,7 @@ class GdToolkit extends GalleryToolkit {
 
 	    $dataDir = $gallery->getConfig('data.gallery.base');
 	    list ($ret, $overlayRes) = $this->_getImageResource($compositeOverlayMimeType,
-							        $dataDir . $compositeOverlayPath);
+								$dataDir . $compositeOverlayPath);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

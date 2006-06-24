@@ -118,11 +118,25 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $queueIt = false;
 	}
 
-	if (!isset($width) &&
-		($queueIt || in_array($operationName, array('thumbnail', 'crop', 'composite')))) {
+	$usePercent = in_array($operationName, array('thumbnail', 'scale', 'resize'))
+	    && (substr($parameters[0], -1) == '%'
+		    || (isset($parameters[1]) && substr($parameters[1], -1) == '%'));
+
+	if (!isset($width) && ($queueIt || $usePercent
+		    || in_array($operationName, array('thumbnail', 'crop', 'composite')))) {
 	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
 	    if ($ret) {
 		return array($ret, null, null);
+	    }
+	}
+
+	if ($usePercent) {
+	    /* Convert percentages to real image dimensions */
+	    if (substr($parameters[0], -1) == '%') {
+		$parameters[0] = (int)round($width * rtrim($parameters[0], '%') / 100);
+	    }
+	    if (isset($parameters[1]) && substr($parameters[1], -1) == '%') {
+		$parameters[1] = (int)round($height * rtrim($parameters[1], '%') / 100);
 	    }
 	}
 
