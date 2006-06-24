@@ -56,8 +56,17 @@ quietprint("Generating checksums...");
 my $changed = 0;
 my $total = 0;
 foreach my $manifest (keys %sections) {
+  my @old_lines = ();
+  my $oldContent = '';
+  my $oldRevision = '';
+  if (open(FD, "<$manifest")) {
+    @old_lines = <FD>;
+    close(FD);
+    $oldRevision = $1 if ($old_lines[0] =~ /Revision(: \d+\s*)\$/);
+    $oldContent = join('', @old_lines);
+  }
   open(my $out, ">$manifest.new") or die;
-  print $out "# \$Revision\$\n";
+  print $out "# \$Revision$oldRevision\$\n";
   print $out "# File crc32 crc32(crlf) size size(crlf)  or  R File\n";
   my @entries = @{$sections{$manifest}};
   my %deleted;
@@ -94,13 +103,7 @@ foreach my $manifest (keys %sections) {
       print $out "$file\t$cksum\t$cksum_crlf\t$size\t$size_crlf\n";
     }
   }
-  my $oldContent = '';
-  if (open(FD, "<$manifest")) {
-    my @old_lines = <FD>;
-
-    $oldContent = join('', @old_lines);
-    close(FD);
-
+  if (@old_lines) {
     foreach (@old_lines) {
       next if /^\#/;
       if (/^R\t(.*)$/) {
