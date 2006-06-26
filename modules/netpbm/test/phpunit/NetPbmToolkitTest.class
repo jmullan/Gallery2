@@ -506,8 +506,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 		      'mimeTypes' => array('image/x-portable-pixmap', 'image/tiff'),
 		      'outputMimeType' => 'image/jpeg'),
 		  'scale' => array('params' =>
-				   array(array('type' => 'int',
-					       'description' => 'target width'),
+				   array(array('type' => 'int', 'description' =>
+					   'target width (# pixels or #% of full size)'),
 					 array('type' => 'int',
 					       'description' => '(optional) ' .
 					       'target height, defaults to same as width')),
@@ -515,8 +515,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 						    'maintain aspect ratio',
 				   'mimeTypes' => $mimeTypes),
 		  'thumbnail' => array('params' =>
-				       array(array('type' => 'int',
-						   'description' => 'target width'),
+				       array(array('type' => 'int', 'description' =>
+					       'target width (# pixels or #% of full size)'),
 					     array('type' => 'int',
 						   'description' => '(optional) ' .
 						   'target height, defaults to same as width')),
@@ -524,10 +524,10 @@ class NetPbmToolkitTest extends GalleryTestCase {
 							'size, maintain aspect ratio',
 				       'mimeTypes' => $mimeTypes),
 		  'resize' => array('params' =>
-				    array(array('type' => 'int',
-						'description' => 'target width'),
-					  array('type' => 'int',
-						'description' => 'target height')),
+				    array(array('type' => 'int', 'description' =>
+					    'target width (# pixels or #% of full size)'),
+					  array('type' => 'int', 'description' =>
+					      'target height (# pixels or #% of full size)')),
 				    'description' => 'Resize the image to the target dimensions',
 				    'mimeTypes' => $mimeTypes),
 		  'rotate' => array('params' =>

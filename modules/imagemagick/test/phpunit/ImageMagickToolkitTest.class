@@ -760,7 +760,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		    'params' => array(
 			array(
 			    'type' => 'int',
-			    'description' => 'target width'),
+			    'description' => 'target width (# pixels or #% of full size)'),
 			array(
 			    'type' => 'int',
 			    'description' => '(optional) target height, defaults to same as width')
@@ -772,7 +772,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		    'params' => array(
 			array(
 			    'type' => 'int',
-			    'description' => 'target width'),
+			    'description' => 'target width (# pixels or #% of full size)'),
 			array(
 			    'type' => 'int',
 			    'description' => '(optional) target height, defaults to same as width')
@@ -784,10 +784,10 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		    'params' => array(
 			array(
 			    'type' => 'int',
-			    'description' => 'target width'),
+			    'description' => 'target width (# pixels or #% of full size)'),
 			array(
 			    'type' => 'int',
-			    'description' => 'target height')
+			    'description' => 'target height (# pixels or #% of full size)')
 		    ),
 		    'description' => 'Resize the image to the target dimensions',
 		    'mimeTypes' => $environment['mimeTypes'],
