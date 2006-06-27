@@ -286,8 +286,7 @@ class GalleryPendingUserHelper {
 	}
 
 	/* notify gallery event system */
-	$eventName = "GalleryPendingUser::createGalleryUser";
-	$event = GalleryCoreApi::newEvent($eventName);
+	$event = GalleryCoreApi::newEvent('GalleryPendingUser::createGalleryUser');
 	$event->setEntity($pendingUser);
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
