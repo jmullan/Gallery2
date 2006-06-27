@@ -50,7 +50,7 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners();
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
@@ -297,7 +297,7 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews();
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	$data = array(array('name' => $this->translate('General'),
@@ -362,7 +362,7 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getUserAdminViews();
+     * @see GalleryModule::getUserAdminViews
      */
     function getUserAdminViews($user) {
 	global $gallery;
@@ -389,7 +389,7 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemAdminViews();
+     * @see GalleryModule::getItemAdminViews
      */
     function getItemAdminViews($item) {
 	global $gallery;
@@ -570,7 +570,7 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	GalleryCoreApi::requireOnce('modules/core/CoreModuleExtras.inc');
