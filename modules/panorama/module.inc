@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Additional copyrights:
- *   Metamorphose applet Copyright (C) 2000 Rüdiger Appel
+ *   Metamorphose applet Copyright (C) 2000 R?diger Appel
  */
 /**
  * @version $Revision$ $Date$
  * @package Panorama
  * @author Alan Harder <alan.harder@sun.com>
- * Java applet: @author Rüdiger Appel
+ * Java applet: @author R?diger Appel
  *              http://www.3quarks.com/Applets/Metamorphose/
  */
 
@@ -128,7 +128,7 @@ class PanoramaModule extends GalleryModule {
 	    }
 	    foreach ($items as $item) {
 		$itemId = $item->getId();
-		if (!isset($wantsDetailedLinks[$itemId]) || !isset($images[$itemId])) {
+		if (!isset($images[$itemId])) {
 		    continue;
 		}
 		$image = $images[$itemId];
