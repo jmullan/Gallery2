@@ -110,7 +110,8 @@ class RatingModule extends GalleryModule {
 	GalleryCoreApi::requireOnce('modules/rating/classes/RatingHelper.class');
 
 	$template->style('modules/rating/rating.css');
-	$template->javascript('lib/javascript/XmlHttp.js');
+	$template->javascript('lib/yui/yahoo-min.js');
+	$template->javascript('lib/yui/connection-min.js');
 	$template->javascript('modules/rating/rating.js');
 
 	$template->setVariable('l10Domain', $this->getL10Domain());

@@ -10,12 +10,12 @@
 
 <div class="giRatingUI">
 	{foreach from=$RatingSummary.ratingValues item=ratingValue}{if $RatingData.canRate}<a
-		href="javascript:rateItem({$RatingData.itemId}, {$ratingValue},
-		'{g->url arg1="view=rating.RatingCallback" arg2="command=rate"
+		href="javascript:rateItem({$RatingData.itemId}, {$ratingValue}, '{g->url
+			arg1="view=rating.RatingCallback" arg2="command=rate"
 			arg3="itemId=`$RatingData.itemId`"
 			arg4="rating=$ratingValue" forJavascript=true}')"
-		onMouseOver="updateStarDisplay({$RatingData.itemId}, {$ratingValue}); return true"
-		onMouseOut="resetStarDisplay({$RatingData.itemId}); return true">{/if}<img
+		onmouseover="updateStarDisplay({$RatingData.itemId}, {$ratingValue}); return true"
+		onmouseout="resetStarDisplay({$RatingData.itemId}); return true">{/if}<img
 		src="{g->url href="modules/rating/images/transparent.gif"}"
 		id="rating.star.{$RatingData.itemId}.{$ratingValue}" class="giRatingUnit" alt=""
 		title="{g->text text="Click a star to rate this item!"}"/>{if $RatingData.canRate}</a>{/if}{/foreach}
