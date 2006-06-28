@@ -437,7 +437,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    if (empty($matches[4])) {
 			$matches[4] = $matches[2];
 		    }
-		    if ($item->getWidth() <= $matches[2] && $item->getHeight() <= $matches[4]) {
+		    if ($source->getWidth() <= $matches[2] && $source->getHeight() <= $matches[4]) {
 			continue;
 		    }
 		}
