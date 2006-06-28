@@ -320,7 +320,18 @@ class ItemEditItem extends ItemEditPlugin {
 		    $can['editThumbnail'] = false;
 		}
 	    }
-	} else if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
+	} else if (isset($thumbnail) && $thumbnail->getDerivativeSourceId() != $item->getId()) {
+	    list ($ret, $source) =
+		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    list ($ret, $can['createThumbnail']) = GalleryCoreApi::isSupportedOperationSequence(
+		    $source->getMimeType(), $thumbnail->getDerivativeOperations());
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	} else if (method_exists($item, 'getMimeType')) {
 	    list ($ret, $operations) = GalleryCoreApi::makeSupportedViewableOperationSequence(
 						       $item->getMimeType(), 'thumbnail|150');
 	    if ($ret) {
