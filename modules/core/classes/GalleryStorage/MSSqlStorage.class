@@ -121,10 +121,10 @@ class MSSqlStorage extends GalleryStorage {
 	     * 2 - number of rows
 	     */
 	    $markers = GalleryUtilities::makeMarkers(sizeof($args[1]));
-	    $rowList = rtrim(str_repeat('(' . $markers . '), ', $args[2]), ', ');
+	    $rowList = array_fill(0, $args[2], 'SELECT ' . $markers);
 	    $sql = 'INSERT INTO ' . $args[0] . ' (';
 	    $sql .= implode(', ', $args[1]);
-	    $sql .= ') VALUES ' . $rowList;
+	    $sql .= ') ' . implode(' UNION ALL ', $rowList);
 	    break;
 
 	case 'AVG':
