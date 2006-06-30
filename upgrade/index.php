@@ -98,7 +98,11 @@ if (!empty($sessionId)) {
     }
 }
 
-if (!@ini_get('session.save_handler')) {
+if (@ini_get('session.save_handler') == 'user') {
+    /*
+     * Escape hatch to avoid conflicting with an application specific session handler, which can
+     * happen in the case where Gallery2 is installed in a subdir of some other app.
+     */
     @ini_set('session.save_handler', 'files');
     session_start();
 } else if (!ini_get('session.auto_start')) {
