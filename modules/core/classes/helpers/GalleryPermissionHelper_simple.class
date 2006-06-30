@@ -283,13 +283,20 @@ class GalleryPermissionHelper_simple {
 	    }
 	}
 	$entityIdMarkers = GalleryUtilities::makeMarkers(count($groupIds) + 1);
+	$groupBy = 'GROUP BY [GalleryAccessSubscriberMap::itemId]';
 
 	$storage =& $gallery->getStorage();
 	list ($ret, $bitOr) = $storage->getFunctionSql(
 	    'BIT_OR', array('[GalleryAccessMap::permission]',
 			    '[GalleryAccessSubscriberMap::itemId]'));
 	if ($ret) {
-	    return array($ret, null);
+	    /* Try to OR permissions using aggregate function in DB; fallback to OR in PHP */
+	    if ($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION) {
+		$bitOr = '[GalleryAccessMap::permission]';
+		$groupBy = '';
+	    } else {
+		return array($ret, null);
+	    }
 	}
 
 	$query = '
@@ -304,9 +311,7 @@ class GalleryPermissionHelper_simple {
 	    [GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
 	    AND
 	    [GalleryAccessMap::userOrGroupId] IN (' . $entityIdMarkers . ')
-	GROUP BY
-	    [GalleryAccessSubscriberMap::itemId]
-	';
+	' . $groupBy;
 
 	$data = $itemIds;
 	$data[] = (int)$userId;
@@ -317,12 +322,15 @@ class GalleryPermissionHelper_simple {
 	    return array($ret, null);
 	}
 
-	$storage =& $gallery->getStorage();
-
-	$permTable = array();
+	$permTable = $bitsTable = array();
+	$gallery->guaranteeTimeLimit(30);
 	while ($result = $searchResults->nextResult()) {
-	    $gallery->guaranteeTimeLimit(10);
-	    $bits = $storage->convertBitsToInt($result[1]);
+	    if (!isset($bitsTable[$result[0]])) {
+		$bitsTable[$result[0]] = 0;
+	    }
+	    $bitsTable[$result[0]] |= $storage->convertBitsToInt($result[1]);
+	}
+	foreach ($bitsTable as $itemId => $bits) {
 	    if (!empty($bits)) {
 		list ($ret, $permissions) = GalleryCoreApi::convertPermissionBitsToIds($bits);
 		if ($ret) {
@@ -333,12 +341,11 @@ class GalleryPermissionHelper_simple {
 	    }
 
 	    foreach ($permissions as $permission) {
-		/* $result[0] = itemId */
 		/* $permission['id'] = the permission name for that bit */
-		$permTable[$result[0]][$permission['id']] = 1;
+		$permTable[$itemId][$permission['id']] = 1;
 		/* Only cache permissions in the session for the activeUser */
 		if ($userId == $gallery->getActiveUserId()) {
-		    GalleryDataCache::cachePermissions($result[0], $permission['id']);
+		    GalleryDataCache::cachePermissions($itemId, $permission['id']);
 		}
 	    }
 	}

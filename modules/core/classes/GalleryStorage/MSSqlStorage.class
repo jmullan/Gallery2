@@ -76,8 +76,7 @@ class MSSqlStorage extends GalleryStorage {
 	    break;
 
 	case 'BIT_OR':
-	    $sql = 'MAX('.$args[0] . ' | ' . $args[1].')';
-	    break;
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION), null);
 
 	case 'UNIX_TIMESTAMP':
 	    $sql = 'DATEDIFF(s,1970-01-01 00:00:00, ' . $args[0] . ')';
@@ -133,7 +132,7 @@ class MSSqlStorage extends GalleryStorage {
 
 	default:
 	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
-					      $functionName . ' ' . implode(' ', $args)), null);
+					       $functionName . ' ' . implode(' ', $args)), null);
 	}
 
 	return array(null, $sql);
