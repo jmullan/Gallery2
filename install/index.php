@@ -103,8 +103,8 @@ if (!empty($sessionId)) {
     }
 }
 
-if (@ini_get('session.save_handler') != 'files') {
-    @ini_set('session.save_handler','files');
+if (!@ini_get('session.save_handler')) {
+    @ini_set('session.save_handler', 'files');
     session_start();
 } else if (!ini_get('session.auto_start')) {
     session_start();
