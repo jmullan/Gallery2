@@ -1155,6 +1155,11 @@ class GalleryPlatform {
      * @return boolean true on success
      */
     function chmod($path, $mode=null) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("chmod($path, $mode)");
+	}
+
 	if (!isset($mode)) {
 	    if (!isset($this->_filePerms) || !isset($this->_dirPerms)) {
 		$this->_loadPermissionPreferences();
@@ -1173,6 +1178,11 @@ class GalleryPlatform {
      * @return boolean true on success
      */
     function recursiveChmod($path, $dirMode=null, $fileMode=null) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("recursiveChmod($path, $dirMode, $fileMode)");
+	}
+
 	if (!isset($this->_filePerms) || !isset($this->_dirPerms)) {
 	    $this->_loadPermissionPreferences();
 	}
@@ -1225,6 +1235,11 @@ class GalleryPlatform {
      * @deprecated -- TODO: remove at the next major version bump of core api
      */
     function recursiveFixDirPermissions($path) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("recursiveFixDirPermissions($path)");
+	}
+
 	if (!$this->is_dir($path)) {
 	    return true;
 	} else if (!$this->chmod($path)) {
@@ -1253,6 +1268,11 @@ class GalleryPlatform {
      * @return string
      */
     function strftime($format, $timestamp=null) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("strftime($format, $timestamp)");
+	}
+
 	$i = 0;
 	$newFormat = '';
 	$textPieces = array('');
