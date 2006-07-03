@@ -119,7 +119,7 @@
             {/foreach}
         </div>
         {/if}
-        
+
         {* Show any other album blocks (comments, etc) *}
         <div id="gbAlbumBlocks">
         {foreach from=$theme.params.albumBlocks item=block}
@@ -140,7 +140,7 @@
 
         {g->block type="core.GuestPreview" class="gbBlock"}
 
-        {* Our emergency edit link, if the user all blocks containing edit links *}
+        {* Our emergency edit link, if the user removes all blocks containing edit links *}
         {g->block type="core.EmergencyEditItemLink" class="gbBlock"
                   checkSidebarBlocks=true
                   checkAlbumBlocks=true}

@@ -40,7 +40,7 @@
           {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
         </div>
         {/if}
-        
+
         <div id="gsImageViewContainer" style="width: {$image.width}px">
           <div id="gsImageView" class="gbBlock">
             {if !empty($theme.imageViews)}
@@ -50,7 +50,7 @@
                 {g->text text="Download %s" arg1=$theme.sourceImage.itemTypeName.1}
               </a>
               {/capture}
-    
+
               {if $image.viewInline}
 		{if count($theme.imageViews) > 1}
 		  {if $theme.imageViewsIndex==1 && count($theme.imageViews)==2}
@@ -92,13 +92,13 @@
             </a>
           </div>
           {/if}
-    
+
           {* Show any other photo blocks (comments, exif etc) *}
           {foreach from=$theme.params.photoBlocks item=block}
             {g->block type=$block.0 params=$block.1}
           {/foreach}
         </div>
-        
+
         {if !empty($theme.navigator)}
         <div class="gbBlock gcBackground2 gbNavigator">
           {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
@@ -107,7 +107,7 @@
 
         {g->block type="core.GuestPreview" class="gbBlock"}
 
-        {* Our emergency edit link, if the user all blocks containing edit links *}
+        {* Our emergency edit link, if the user removes all blocks containing edit links *}
         {g->block type="core.EmergencyEditItemLink" class="gbBlock"
                 checkSidebarBlocks=true
                 checkPhotoBlocks=true}
