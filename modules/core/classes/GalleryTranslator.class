@@ -113,7 +113,7 @@ class GalleryTranslator {
 	static $defaultCountry = array();
 
 	if (empty($supportedLanguages)) {
-	    /* XXX: Move this information into a configuration file */
+	    /* TODO: Move this information into a configuration file */
 	    /* English */
 	    $supportedLanguages['en']['US']['description'] = 'English (US)';
 	    $supportedLanguages['en']['GB']['description'] = 'English (UK)';
@@ -122,6 +122,10 @@ class GalleryTranslator {
 	    /* Afrikaans */
 	    $supportedLanguages['af']['ZA']['description'] = 'Afrikaans';
 	    $defaultCountry['af'] = 'ZA';
+
+	    /* Catalan */
+	    $supportedLanguages['ca']['ES']['description'] = 'Catalan';
+	    $defaultCountry['ca'] = 'ES';
 
 	    /* Czech */
 	    $supportedLanguages['cs']['CZ']['description'] = '&#x010c;esky';

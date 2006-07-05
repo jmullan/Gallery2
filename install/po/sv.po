@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-15 16:15+0100\n"
-"PO-Revision-Date: 2006-05-10 19:40+0100\n"
+"PO-Revision-Date: 2006-07-04 10:54+0200\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -283,9 +283,8 @@ msgstr "Kan ej utföra databastransaktionen"
 msgid "Core module is only partially installed."
 msgstr "Kärnmodulen är bara delvis installerad."
 
-#, fuzzy
 msgid "Install Plugins"
-msgstr "Installations Steg"
+msgstr "Installera Pluginer"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Kan ej initiera Gallerysessionen"
@@ -684,16 +683,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Innan vi kan fortsätta, så bör du skapa en fil i din <b>%s</b> katalog kallad <i>config.php</"
-"i>. Du måste säkerställa att webbservern kan skriva till filen. Om du befinner dig på en "
-"unix maskin, pröva kommandot <i>chmod 666 config.php</i>. På Windows, behöver du inte göra "
-"något speciellt. När du har skapat filen och satt acesserna rätt, så kan du fortsätta. Om "
-"det är något problem, så talar vi om vad du behöver göra."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (med shell access)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Skapar konfigurations fil"
@@ -1016,9 +1018,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "Du måste ange en katalog"
 
-msgid "The directory you entered does not exist"
-msgstr "Katalogen du angav existerar inte"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1027,6 +1026,22 @@ msgstr ""
 "Katalogen du angav är kodförvaringsplatsens katalog. Om du vill installera ett Gallery i "
 "kodförvaringsplatsens katalog, välj en standard installation. Om du vil installera en "
 "multisite, välj en annan katalog."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "Katalogen du angav existerar inte"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1150,6 +1165,41 @@ msgid "Directory path:"
 msgstr "Sökväg till katalogen:"
 
 msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+"Din webbserver behöver kunna skriva till denna katalog. För att få det att fungera, kan du "
+"följa detta exempel."
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr "OBS: detta är bara ett exempel! Det kan hända att dom inte fungerar."
+
+#, c-format
+msgid "mkdir %s"
+msgstr "mkdir %s"
+
+#, c-format
+msgid "chmod 777 %s"
+msgstr "chmod 777 %s"
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (med ftp access)"
+
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems"
+msgstr ""
+"OBS ftpservrar och klienter kan variera så dessa instruktioner fungerar inte alltid. Se i "
+"manualen för din FTP klient eller tala med systemadministratören för att få hjälp om du har "
+"problem"
+
+#, c-format
+msgid "cd %s"
+msgstr "cd %s"
+
+msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
 "same paths that PHP sees.  In order to find out the real path to your data directory, you "
 "can try creating a PHP script called <b>dir.php</b> containing the following code in it and "
@@ -1181,44 +1231,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>OBS</b>: Glöm inte att ta bort dir.php när du är klar!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-"Din webbserver behöver kunna skriva till denna katalog. För att få det att fungera, kan du "
-"följa detta exempel."
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr "OBS: detta är bara ett exempel! Det kan hända att dom inte fungerar."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (med shell access)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (med ftp access)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"OBS ftpservrar och klienter kan variera så dessa instruktioner fungerar inte alltid. Se i "
-"manualen för din FTP klient eller tala med systemadministratören för att få hjälp om du har "
-"problem"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1302,6 +1314,19 @@ msgstr "Utför"
 
 msgid "Begin Installation&raquo;"
 msgstr "Börja Installationen&raquo;"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Innan vi kan fortsätta, så bör du skapa en fil i din <b>%s</b> katalog kallad <i>config."
+#~ "php</i>. Du måste säkerställa att webbservern kan skriva till filen. Om du befinner dig "
+#~ "på en unix maskin, pröva kommandot <i>chmod 666 config.php</i>. På Windows, behöver du "
+#~ "inte göra något speciellt. När du har skapat filen och satt acesserna rätt, så kan du "
+#~ "fortsätta. Om det är något problem, så talar vi om vad du behöver göra."
 
 #~ msgid "Install More Modules"
 #~ msgstr "Installera Fler Moduler"

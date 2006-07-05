@@ -56,17 +56,16 @@ msgstr "昇級完畢"
 msgid "System Checks"
 msgstr "系統檢查"
 
-#, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
-msgstr "PHP 版本大於或等於 4.1.0 或大於或等於 5.0.4"
+msgstr "PHP 版本大於等於 4.3.0 或大於等於 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
-"錯誤：Gallery 2 需要 PHP 版本 4.1.0 以上或 5.0.4 以上。你安裝的 PHP 版本是 %s。請要求你的網頁"
+"錯誤：Gallery 2 需要 PHP 版本 4.3.0 以上或 5.0.4 以上。你安裝的 PHP 版本是 %s。請要求你的網頁"
 "伺服器管理員昇級。新的版本在 %sPHP 的網站上%s。"
 
 msgid "PHP Version"
@@ -275,10 +274,8 @@ msgstr "找不到或無法存取檔案清單"
 msgid "Upgrade Core"
 msgstr "昇級核心"
 
-msgid "Unable to verify plugins"
-msgstr "無法驗證插入組件"
-
-msgid "Upgrade Modules"
+#, fuzzy
+msgid "Upgrade Plugins"
 msgstr "昇級模組"
 
 msgid "Unable to initialize Gallery session"
@@ -316,11 +313,27 @@ msgstr "無法取得模組列表"
 msgid "Unable to get the theme list"
 msgstr "無法取得佈景主題列表"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s module"
+msgstr "無法昇級%s模組"
+
 msgid "Other"
 msgstr "其他"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s theme"
+msgstr "無法昇級%s佈景主題"
+
 msgid "Themes"
 msgstr "佈景主題"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s theme"
+msgstr "無法載入%s佈景主題"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s module"
+msgstr "無法載入%s模組"
 
 msgid "Welcome"
 msgstr "歡迎"
@@ -421,26 +434,24 @@ msgstr "Gallery：<strong>你的照片</strong>、<strong>你的網站</strong>"
 msgid "Missing files (%d)"
 msgstr "缺少的檔案（%d）"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
-"注意：你正在執行由 CVS 中下載的 Gallery，所以有些最近移除的檔案可能會出現在這裡。可能可以安全"
+"注意：你正在執行由 SVN 中下載的 Gallery，所以有些最近移除的檔案可能會出現在這裡。可能可以安全"
 "的忽略它們。"
 
 #, c-format
 msgid "Modified files (%d)"
 msgstr "修改過的檔案（%d）"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'svn update' before "
 "continuing."
 msgstr ""
-"注意：你正在執行由 CVS 中下載的 Gallery，所以會有些修改過的檔案。你大概可以忽略這些檔案，可是"
-"為了安全起見，你最好先執行「cvs update -Pd」指令再繼續。"
+"注意：你正在執行由 SVN 中下載的 Gallery，所以會有些修改過的檔案。你大概可以忽略這些檔案，可是"
+"為了安全起見，你最好先執行「svn update」指令再繼續。"
 
 #, c-format
 msgid "Old files (%d)"
@@ -555,27 +566,6 @@ msgstr ""
 "目前安裝的版本比你要昇級的版本還新。你不能把 G2 降級。請把 Gallery 2 的檔案換成目前安裝或更新"
 "的版本"
 
-msgid "the Gallery website"
-msgstr " Gallery 網站"
-
-#, c-format
-msgid ""
-"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-"missing.  You must either locate more recent versions of these modules or themes, or revert "
-"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
-"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
-"distribution of Gallery than what you originally installed.  You can download a larger "
-"distribution from %s."
-msgstr ""
-"無法開始你的昇級動作，因為有些使用中的模組或佈景主題並不相容或找不到了。你必需找到這些模組或"
-"佈景主題更新的版本，或回復到你原始的 Gallery 版本。程式和資料都沒有被更動，所以可以安全的回"
-"復。如果下面列有很多不相容的模組，可能是你下載了比你原來安裝的 Gallery 還小的安裝版本。你可以"
-"在%s下載一個比較大的安裝版本。"
-
-#, c-format
-msgid "Download replacement modules from %s"
-msgstr "從%s下載替換模組"
-
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -624,9 +614,6 @@ msgstr "<b>提示</b>：請檢查 config.php 檔案的存取權限並確定它�
 msgid "Your Gallery Core Module is up to date!"
 msgstr "你的 Gallery 核心模組已經是最新版！"
 
-msgid "Upgrade Other Modules"
-msgstr "昇級其他模組"
-
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
@@ -637,16 +624,14 @@ msgstr ""
 "可以在網站管理頁面中昇級或停用這些模組，或稍後回到這個頁面。所以你在這裡做的任何決定都不是不"
 "能改變的。"
 
-msgid "Missing Code"
-msgstr "找不到程式碼"
+msgid "Deactivated Plugins"
+msgstr ""
 
 msgid ""
-"The code for some plugins that were previously active can no longer be found. You must "
-"restore code for these plugins before this upgrade can continue. Code for the plugins must "
-"be the same version or newer than what was installed before."
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
-"找不到之前啟用的某些插入組件的程式碼。你必需復原這些插入組件的程式才能繼續昇級的動作。這些插"
-"入組件的程式碼必需和原來安裝的版本相同或更新。"
 
 msgid "Module"
 msgstr "模組"
@@ -665,6 +650,9 @@ msgstr "新版"
 
 msgid "Description"
 msgstr "詳細描述"
+
+msgid "Incompatible with this version of Gallery"
+msgstr ""
 
 msgid "(un)check all"
 msgstr "全部勾選或全部不選"
@@ -709,3 +697,39 @@ msgstr "選擇語言："
 
 msgid "Go"
 msgstr "開始"
+
+#~ msgid "Unable to verify plugins"
+#~ msgstr "無法驗證插入組件"
+
+#~ msgid "the Gallery website"
+#~ msgstr " Gallery 網站"
+
+#~ msgid ""
+#~ "Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+#~ "missing.  You must either locate more recent versions of these modules or themes, or "
+#~ "revert to your original version of Gallery.  No changes have been made so it's safe to "
+#~ "revert.  If you have many incompatible modules listed below, it's possible that you "
+#~ "downloaded a smaller distribution of Gallery than what you originally installed.  You can "
+#~ "download a larger distribution from %s."
+#~ msgstr ""
+#~ "無法開始你的昇級動作，因為有些使用中的模組或佈景主題並不相容或找不到了。你必需找到這些模組"
+#~ "或佈景主題更新的版本，或回復到你原始的 Gallery 版本。程式和資料都沒有被更動，所以可以安全"
+#~ "的回復。如果下面列有很多不相容的模組，可能是你下載了比你原來安裝的 Gallery 還小的安裝版"
+#~ "本。你可以在%s下載一個比較大的安裝版本。"
+
+#~ msgid "Download replacement modules from %s"
+#~ msgstr "從%s下載替換模組"
+
+#~ msgid "Upgrade Other Modules"
+#~ msgstr "昇級其他模組"
+
+#~ msgid "Missing Code"
+#~ msgstr "找不到程式碼"
+
+#~ msgid ""
+#~ "The code for some plugins that were previously active can no longer be found. You must "
+#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
+#~ "must be the same version or newer than what was installed before."
+#~ msgstr ""
+#~ "找不到之前啟用的某些插入組件的程式碼。你必需復原這些插入組件的程式才能繼續昇級的動作。這些"
+#~ "插入組件的程式碼必需和原來安裝的版本相同或更新。"

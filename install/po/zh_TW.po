@@ -90,9 +90,8 @@ msgstr "資料庫設定"
 msgid "You must have the MySQL PHP module installed"
 msgstr "你必需裝有 MySQL PHP 模組"
 
-#, fuzzy
 msgid "You must have the MySQL Improved PHP module installed"
-msgstr "你必需裝有 MySQL PHP 模組"
+msgstr "你必需裝有 MySQL Improved PHP 模組"
 
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "你必需裝有 ibm_db2 PHP 模組"
@@ -103,9 +102,8 @@ msgstr "你必需裝有 PostgreSQL PHP 模組"
 msgid "You must have the Oracle OCI8 PHP module installed"
 msgstr "你必需裝有 Oracle OCI8 PHP 模組"
 
-#, fuzzy
 msgid "You must have the Component Object Model(COM) PHP module installed"
-msgstr "你必需裝有 Oracle OCI8 PHP 模組"
+msgstr "你必需裝有 Component Object Model(COM) PHP 模組"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
@@ -186,13 +184,11 @@ msgid ""
 "directory manually."
 msgstr "無法載入 G2 API。請手動刪除 Gallery 資料庫表格和儲存目錄。"
 
-#, fuzzy
 msgid "MySQL (v3.23.34a and newer)"
-msgstr "MySQL with Transactions（v3.23.34a 和更新版）"
+msgstr "MySQL（v3.23.34a 和更新版）"
 
-#, fuzzy
 msgid "MySQL (versions before v3.23.34a)"
-msgstr "MySQL（所有版本）"
+msgstr "MySQL（v3.23.34a 之前的版本）"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x 和更新版"
@@ -204,7 +200,7 @@ msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2（v8.2 和更新版）"
 
 msgid "MSSQL (Experimental!)"
-msgstr ""
+msgstr "MSSQL（實驗中！）"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "不明資料庫類型或沒有表格資訊。"
@@ -268,8 +264,9 @@ msgstr "無法送出資料庫異動"
 msgid "Core module is only partially installed."
 msgstr "核心模組安裝不完全。"
 
-msgid "Install More Modules"
-msgstr "安裝其他模組"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "安裝步驟"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "無法初始化我們的 Gallery 連線資料"
@@ -310,17 +307,16 @@ msgstr "系統檢查"
 msgid "Performing system checks"
 msgstr "進行系統檢查中"
 
-#, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
-msgstr "PHP 版本大於或等於 4.1.0 或大於或等於 5.0.4"
+msgstr "PHP 版本大於等於 4.3.0 或大於等於 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
-"錯誤：Gallery 2 需要 PHP 版本 4.1.0 以上或 5.0.4 以上。你安裝的 PHP 版本是 %s。請要求你的網頁"
+"錯誤：Gallery 2 需要 PHP 版本 4.3.0 以上或 5.0.4 以上。你安裝的 PHP 版本是 %s。請要求你的網頁"
 "伺服器管理員昇級。新的版本在 %sPHP 的網站上%s。"
 
 msgid "PHP Version"
@@ -649,15 +645,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"在我們繼續之前，你必需先在你的 <b>%s</b> 目錄中產生一個叫「config.php」的檔案。你必需確定網頁"
-"伺服器可以寫到這個檔案。如果你在使用 Unix，試著使用「chmod 666 config.php」。在 Windows 上，"
-"你應該不必特別做什麼。在你產生了這個檔案並設定好存取權限之後，就可以繼續。如果發生了問題，我"
-"們會告訴你該修改什麼。"
+
+msgid "Unix (with shell access)"
+msgstr "Unix（指今列）"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "產生設定檔"
@@ -810,9 +810,6 @@ msgstr ""
 "我們已經成功地安裝了 Gallery 的核心。雖然現在所有功能都會正常動作，你還是應該繼續安裝程式並加"
 "入其他選用的模組。這樣你才能得到你想要的 Gallery 功能。"
 
-msgid "Install Other Modules"
-msgstr "安裝其他模組"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -894,26 +891,24 @@ msgstr "Gallery：<strong>你的照片</strong>、<strong>你的網站</strong>"
 msgid "Missing files (%d)"
 msgstr "缺少的檔案（%d）"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
-"注意：你正在執行由 CVS 中下載的 Gallery，所以有些最近移除的檔案可能會出現在這裡。可能可以安全"
+"注意：你正在執行由 SVN 中下載的 Gallery，所以有些最近移除的檔案可能會出現在這裡。可能可以安全"
 "的忽略它們。"
 
 #, c-format
 msgid "Modified files (%d)"
 msgstr "修改過的檔案（%d）"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'svn update' before "
 "continuing."
 msgstr ""
-"注意：你正在執行由 CVS 中下載的 Gallery，所以會有些修改過的檔案。你大概可以忽略這些檔案，可是"
-"為了安全起見，你最好先執行「cvs update -Pd」指令再繼續。"
+"注意：你正在執行由 SVN 中下載的 Gallery，所以會有些修改過的檔案。你大概可以忽略這些檔案，可是"
+"為了安全起見，你最好先執行「svn update」指令再繼續。"
 
 #, c-format
 msgid "Old files (%d)"
@@ -964,9 +959,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "你必需輸入一個目錄"
 
-msgid "The directory you entered does not exist"
-msgstr "你輸入的目錄不存在"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -974,6 +966,22 @@ msgid ""
 msgstr ""
 "你所輸入的目錄是程式所在的目錄。如果你要把一個 Gallery 安裝到程式目錄中，請選擇標準安裝類型。"
 "如果你要安裝多站台，請選一個不同的目錄。"
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "你輸入的目錄不存在"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1079,6 +1087,38 @@ msgid "Directory path:"
 msgstr "目錄路徑："
 
 msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr "你的網頁伺服器必需能寫入這個目錄。要讓它可以使用，請遵循下面的例子。"
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr "注意：這些只是範例！它們可能不適用於你的系統。"
+
+#, c-format
+msgid "mkdir %s"
+msgstr "mkdir %s"
+
+#, c-format
+msgid "chmod 777 %s"
+msgstr "chmod 777 %s"
+
+msgid "Unix (with ftp access)"
+msgstr "Unix（使用 FTP）"
+
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems"
+msgstr ""
+"請注意 FTP 伺服器和用戶端程式種類變化很多所以這些指令可能不適用於你的情況。如果發生問題，請參"
+"考你的FTP 用戶端程式手冊或詢問你的系統管理員。"
+
+#, c-format
+msgid "cd %s"
+msgstr "cd %s"
+
+msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
 "same paths that PHP sees.  In order to find out the real path to your data directory, you "
 "can try creating a PHP script called <b>dir.php</b> containing the following code in it and "
@@ -1107,41 +1147,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>注意</b>：不要忘了在完成後刪除 dir.php 檔案！"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr "你的網頁伺服器必需能寫入這個目錄。要讓它可以使用，請遵循下面的例子。"
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr "注意：這些只是範例！它們可能不適用於你的系統。"
-
-msgid "Unix (with shell access)"
-msgstr "Unix（指今列）"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix（使用 FTP）"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"請注意 FTP 伺服器和用戶端程式種類變化很多所以這些指令可能不適用於你的情況。如果發生問題，請參"
-"考你的FTP 用戶端程式手冊或詢問你的系統管理員。"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1216,5 +1221,20 @@ msgstr "開始"
 msgid "Begin Installation&raquo;"
 msgstr "開始安裝&raquo;"
 
-#~ msgid "PostgreSQL v6.x (not well tested)"
-#~ msgstr "PostgreSQL v6.x（並未充分測試）"
+#~ msgid "Install More Modules"
+#~ msgstr "安裝其他模組"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "在我們繼續之前，你必需先在你的 <b>%s</b> 目錄中產生一個叫「config.php」的檔案。你必需確定"
+#~ "網頁伺服器可以寫到這個檔案。如果你在使用 Unix，試著使用「chmod 666 config.php」。在 "
+#~ "Windows 上，你應該不必特別做什麼。在你產生了這個檔案並設定好存取權限之後，就可以繼續。如果"
+#~ "發生了問題，我們會告訴你該修改什麼。"
+
+#~ msgid "Install Other Modules"
+#~ msgstr "安裝其他模組"

@@ -178,7 +178,10 @@ gettext("Try Again")
 /* templates/CreateConfigFileInstructions.html */
 gettext("Create a config file")
 gettext("Now we need to write out all the information you provided into a file called <b>config.php</b> in your <b>%s</b> directory.  This is a very important file that gives Gallery all the information that it needs to operate.  After we create it, you can read through this file and make changes to it if you want.")
-gettext("Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config.php</i>.  You must make sure that the webserver will be able to write to it.  If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything special.  When you've created this file and set the permissions properly, you can proceed.  If there's a problem, we'll tell you what to fix.")
+gettext("Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config.php</i>.  You must make sure that the webserver will be able to write to it.")
+gettext("Unix (with shell access)") /* also in: templates/StorageSetupRequest.html */
+gettext("On Windows, you shouldn't have to do anything special.")
+gettext("When you've created this file and set the permissions properly, you can proceed.  If there's a problem, we'll tell you what to fix.")
 gettext("Create config file")
 
 /* templates/CreateConfigFileSuccess.html */
@@ -271,8 +274,10 @@ gettext("Multisite installation")
 gettext("Gallery can support multiple independent sites with a single installation of the code. Choose this installation type if you want to install a new Gallery on the same webserver but in a different path, subdomain or URL domain.")
 gettext("The multisites don't share albums, photos, users, or anything else. They all need their own database and their own storage directory. For more information and explanations about Multisite installations, visit the %s page.")
 gettext("You must enter a directory") /* also in: templates/StorageSetupRequest.html */
-gettext("The directory you entered does not exist") /* also in: templates/StorageSetupRequest.html */
 gettext("The directory you entered is the codebase directory. If you want to install a Gallery in the codebase directory, select the standard installation type. If you want to install a multisite, choose another directory.")
+gettext("The directory you entered either does not exist, or is prohibited by your webserver configuration.  Your webserver is configured to only allow access to the following directories.  You must choose a directory under one of these, or you must modify the <b>open_basedir</b> setting in your PHP configuration to allow a new directory.")
+gettext("If your multisite install is in a different virtual host, you should contact your system administrator and request that they configure your <b>open_basedir</b> setting so that your virtual hosts can access each other.")
+gettext("The directory you entered does not exist") /* also in: templates/StorageSetupRequest.html */
 gettext("The directory you entered is not accessible.  Change the permissions so that the webserver can read this directory.") /* also in: templates/StorageSetupRequest.html */
 gettext("Unable to create multisite files. Ensure the files listed below are writeable.")
 gettext("All multisites are installed from this central code repository (codebase).")
@@ -303,18 +308,17 @@ gettext("If you're using a modern browser, we'll try to autocomplete any path yo
 gettext("The directory you entered is read only")
 gettext("There was an error creating the directory structure within the storage directory.")
 gettext("Directory path:")
-gettext("In some web hosting environments, the paths that you see in the shell or via FTP are not the same paths that PHP sees.  In order to find out the real path to your data directory, you can try creating a PHP script called <b>dir.php</b> containing the following code in it and put it into your data directory.")
-gettext("then figure out the URL to dir.php and open it in your web browser (eg, %s).  This will tell you the exact path to enter here.")
-gettext("<b>Note</b>: This requires that your data directory is web accessible, which we don't recommend because it circumvents our image firewall.  Once you figure out the path this way, we recommend that you move your data directory outside of your web accessible area and then update the path here accordingly.")
-gettext("<b>Note</b>: Don't forget to delete dir.php when you're done!")
 gettext("Your webserver needs to be able to write to this directory. To get it working, you can follow these examples.")
 gettext("Note: these are only examples!  You may find that they don't work quite right on your system.")
-gettext("Unix (with shell access)")
 gettext("mkdir %s")
 gettext("chmod 777 %s")
 gettext("Unix (with ftp access)")
 gettext("Note that ftp servers and clients vary so these instructions may not work for you. Consult the manual for your FTP client or talk to a system administrator for help with this if you have problems")
 gettext("cd %s")
+gettext("In some web hosting environments, the paths that you see in the shell or via FTP are not the same paths that PHP sees.  In order to find out the real path to your data directory, you can try creating a PHP script called <b>dir.php</b> containing the following code in it and put it into your data directory.")
+gettext("then figure out the URL to dir.php and open it in your web browser (eg, %s).  This will tell you the exact path to enter here.")
+gettext("<b>Note</b>: This requires that your data directory is web accessible, which we don't recommend because it circumvents our image firewall.  Once you figure out the path this way, we recommend that you move your data directory outside of your web accessible area and then update the path here accordingly.")
+gettext("<b>Note</b>: Don't forget to delete dir.php when you're done!")
 gettext("For information on how to secure your Gallery storage directory, please read the %sSecurity Guide%s.")
 
 /* templates/StorageSetupSuccess.html */

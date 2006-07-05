@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-31 18:07+0000\n"
-"PO-Revision-Date: 2006-03-15 16:18+0100\n"
+"PO-Revision-Date: 2006-06-08 11:40+0100\n"
 "Last-Translator: Ermanno Baschiera <ebaschiera@gmail.com>\n"
 "Language-Team: Italian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -94,9 +94,8 @@ msgstr "Configurazione Database"
 msgid "You must have the MySQL PHP module installed"
 msgstr "Devi avere il modulo PHP per MySQL installato"
 
-#, fuzzy
 msgid "You must have the MySQL Improved PHP module installed"
-msgstr "Devi avere il modulo PHP per MySQL installato"
+msgstr "Devi avere installato il modulo PHP Improved MySQL"
 
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "Devi avere il modulo PHP per ibm_db2 installato"
@@ -107,9 +106,8 @@ msgstr "Devi avere il modulo PHP per PostgresSQL installato"
 msgid "You must have the Oracle OCI8 PHP module installed"
 msgstr "Devi avere il modulo PHP per Oracle OCI8 installato"
 
-#, fuzzy
 msgid "You must have the Component Object Model(COM) PHP module installed"
-msgstr "Devi avere il modulo PHP per Oracle OCI8 installato"
+msgstr "Devi avere installato il modulo PHP Component Object Model(COM)"
 
 #, c-format
 msgid "You must specify a column prefix (we recommend %s)"
@@ -204,13 +202,11 @@ msgstr ""
 "Non ho potuto caricare l'API di G2. Per favore cancella le tabelle del database di Gallery e "
 "la cartella di memorizzazione manualmente."
 
-#, fuzzy
 msgid "MySQL (v3.23.34a and newer)"
-msgstr "MySQL con Transactions (v3.23.34a e pi&ugrave; recente)"
+msgstr "MySQL (v3.23.34a e pi&ugrave; recente)"
 
-#, fuzzy
 msgid "MySQL (versions before v3.23.34a)"
-msgstr "MySQL (tutte le versioni)"
+msgstr "MySQL (versioni precedenti alla v3.23.34a)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x e pi&ugrave; recente"
@@ -222,7 +218,7 @@ msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 e pi&ugrave; recente)"
 
 msgid "MSSQL (Experimental!)"
-msgstr ""
+msgstr "MSSQL (Sperimentale!)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Tipo di DB sconosciuto oppure nessuna informazione conosciuta nelle tabelle."
@@ -289,8 +285,9 @@ msgstr "Impossibile compiere la transazione nel database"
 msgid "Core module is only partially installed."
 msgstr "Il modulo core &egrave; installato solo parzialmente."
 
-msgid "Install More Modules"
-msgstr "Installa Moduli Aggiuntivi"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Fasi Installazione"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Impossibile inizializzare la sessione di Gallery"
@@ -331,17 +328,16 @@ msgstr "Controlli sul Sistema"
 msgid "Performing system checks"
 msgstr "Esecuzione controlli sul sistema"
 
-#, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
-msgstr "versione PHP >= 4.1.0 oppure >= 5.0.4"
+msgstr "versione PHP >= 4.3.0 oppure >= 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
-"Errore: Gallery 2 necessita di PHP versione 4.1.0 o pi&ugrave; recente oppure 5.0.4 o "
+"Errore: Gallery 2 necessita di PHP versione 4.3.0 o pi&ugrave; recente oppure 5.0.4 o "
 "pi&ugrave; recente. Attualmente hai PHP versione %s. Contatta l'amministratore del tuo "
 "server web per chiedere un upgrade, disponibile al %ssito di PHP%s."
 
@@ -699,16 +695,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Prima di procedere, dovresti creare un file nella directory di <b>%s</b> chiamato <i>config."
-"php</i>. Devi assicurarti che il webserver sia in grado di scriverci dentro. Se sei su unix, "
-"prova a fare <i>chmod 666 config.php</i>. Su Windows, non dovrebbe essere necessario fare "
-"nulla di speciale. Quando hai creato questo file e impostato correttamente i permessi, puoi "
-"procedere. Se ci sono problemi, ti diremo cosa mettere a posto."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (con accesso shell)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Crea file config"
@@ -882,9 +881,6 @@ msgstr ""
 "opzionali, in modo da ottenere il giusto set di funzionalit&agrave; che vorresti per la tua "
 "Gallery."
 
-msgid "Install Other Modules"
-msgstr "Installa Altri Moduli"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -974,27 +970,25 @@ msgstr "Gallery: <strong>le tue foto</strong> sul <strong>tuo sito</strong>"
 msgid "Missing files (%d)"
 msgstr "File Mancanti (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
-"Nota: Stai eseguendo una versione CVS di Gallery, quindi file rimossi di recente potrebbero "
+"Nota: Stai eseguendo una versione SVN di Gallery, quindi file rimossi di recente potrebbero "
 "comparire qui. Puoi tranquillamente ignorarli."
 
 #, c-format
 msgid "Modified files (%d)"
 msgstr "File modificati (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'svn update' before "
 "continuing."
 msgstr ""
-"Nota: Stai eseguendo una versione CVS di Gallery, quindi aspettati di trovare dei file "
-"modificati. Puoi tranquillamente ignorarli, ma per essere sicuri dovresti eseguire 'cvs "
-"update -Pd' prima di continuare."
+"Nota: Stai eseguendo una versione SVN di Gallery, quindi aspettati di trovare dei file "
+"modificati. Puoi tranquillamente ignorarli, ma per essere sicuro dovresti eseguire 'svn "
+"update' prima di continuare."
 
 #, c-format
 msgid "Old files (%d)"
@@ -1050,9 +1044,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "Devi inserire una directory"
 
-msgid "The directory you entered does not exist"
-msgstr "La directory che hai inserito non esiste."
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1061,6 +1052,22 @@ msgstr ""
 "La cartella che hai inserito &egrave; la cartella del codebase. Se vuoi installare una "
 "Gallery nella cartella del codebase, seleziona il tipo di installazione standard. Se vuoi "
 "installare un sito multiplo, scegli un'altra cartella."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "La directory che hai inserito non esiste."
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1193,6 +1200,41 @@ msgid "Directory path:"
 msgstr "Path directory:"
 
 msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+"Il webserver deve essere in grado di scrivere in questa cartella. Per farlo funzionare, puoi "
+"seguire questi esempi."
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr "Nota: questi sono solo esempi! Potrebbe darsi che non funzionino bene sul tuo sistema."
+
+#, c-format
+msgid "mkdir %s"
+msgstr "mkdir %s"
+
+#, c-format
+msgid "chmod 777 %s"
+msgstr "chmod 777 %s"
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (con accesso ftp)"
+
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems"
+msgstr ""
+"Nota che i server e i client FTP variano quindi queste istruzioni potrebbero non funzionare "
+"da te. Consulta il manuale del tuo client FTP o parla con un amministratore di sistema per "
+"cercare aiuto se hai problemi"
+
+#, c-format
+msgid "cd %s"
+msgstr "cd %s"
+
+msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
 "same paths that PHP sees.  In order to find out the real path to your data directory, you "
 "can try creating a PHP script called <b>dir.php</b> containing the following code in it and "
@@ -1224,44 +1266,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Nota</b>: Non dimenticare di eliminare dir.php quando hai finito!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-"Il webserver deve essere in grado di scrivere in questa cartella. Per farlo funzionare, puoi "
-"seguire questi esempi."
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr "Nota: questi sono solo esempi! Potrebbe darsi che non funzionino bene sul tuo sistema."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (con accesso shell)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (con accesso ftp)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"Nota che i server e i client FTP variano quindi queste istruzioni potrebbero non funzionare "
-"da te. Consulta il manuale del tuo client FTP o parla con un amministratore di sistema per "
-"cercare aiuto se hai problemi"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1347,60 +1351,22 @@ msgstr "Vai"
 msgid "Begin Installation&raquo;"
 msgstr "Inizia Installazione&raquo;"
 
-#~ msgid "PostgreSQL v6.x (not well tested)"
-#~ msgstr "PostgreSQL v6.x (non ancora testato per bene)"
-
-#~ msgid "chmod 644 %s"
-#~ msgstr "chmod 644 %s"
-
-#~ msgid "chmod 755 %s"
-#~ msgstr "chmod 755 %s"
+#~ msgid "Install More Modules"
+#~ msgstr "Installa Moduli Aggiuntivi"
 
 #~ msgid ""
-#~ "Gallery needs to store data in a directory on your server. It will use this directory to "
-#~ "store your images as well as other important data. For security, we suggest that you "
-#~ "place this directory <b>outside</b> of your web site so that it cannot be browsed "
-#~ "directly via the web. This is necessary if you wish to have your images accessible only "
-#~ "via Gallery [%s]. Note that the default path provided below is inside the webserver area. "
-#~ "This is because we are unable to reliably guess a directory outside of your web site. You "
-#~ "should update it with a secure location, such as a path under your user home directory, "
-#~ "if possible. If you access your site via FTP, you might not have this option."
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
 #~ msgstr ""
-#~ "Gallery necessita di memorizzare i dati in una directory del server. Utilizzer&agrave; "
-#~ "questa directory per memorizzare le immagini assieme ad altri dati importanti. Per "
-#~ "sicurezza, ti consigliamo di piazzare questa directory <b>fuori</b> del server web, in "
-#~ "modo che non sia sfogliabile direttamente dal web. Questo si rende necessario se desideri "
-#~ "che le immagini siano accessibili solo attraverso Gallery [%s]. Nota che il path "
-#~ "predefinito fornito qui sotto si trova all'interno della area del webserver. Questo "
-#~ "perch&eacute; non siamo in grado di trovare correttamente una directory fuori del sito "
-#~ "web. Ti conviene modificarlo con un path sicuro, come ad esempio un path sotto la tua "
-#~ "directory home, se possibile. Se accedi al tuo sito solamente via FTP, potresti non avere "
-#~ "questa opzione."
+#~ "Prima di procedere, dovresti creare un file nella directory di <b>%s</b> chiamato "
+#~ "<i>config.php</i>. Devi assicurarti che il webserver sia in grado di scriverci dentro. Se "
+#~ "sei su unix, prova a fare <i>chmod 666 config.php</i>. Su Windows, non dovrebbe essere "
+#~ "necessario fare nulla di speciale. Quando hai creato questo file e impostato "
+#~ "correttamente i permessi, puoi procedere. Se ci sono problemi, ti diremo cosa mettere a "
+#~ "posto."
 
-#~ msgid ""
-#~ "Your webserver needs to be able to write to this directory. Permission systems vary from "
-#~ "host to host. You can set a very relaxed set of permissions on this directory to get "
-#~ "Gallery working, but if you're concerned about security you should consult your system "
-#~ "adminstrator to figure out how to make this as secure as possible. To get it working, you "
-#~ "can follow these examples."
-#~ msgstr ""
-#~ "Il tuo webserver deve avere la possibilit&agrave; di scrivere in questa directory. Il "
-#~ "sistema di permessi varia da host a host. Puoi impostare un set di permessi molto "
-#~ "rilassato per far funzionare Gallery, ma se la sicurezza ti preoccupa, dovresti "
-#~ "consultare il tuo amministratore di sistema per capire come rendere questo pi&ugrave; "
-#~ "sicuro possibile. Per far funzionare la cosa, puoi provare questi esempi."
-
-#~ msgid "This is sometimes known as an <b>image firewall</b>."
-#~ msgstr "Questo a volte &egrave; conosciuto come un <b>image firewall</b>."
-
-#~ msgid "You must have the ODBC module installed"
-#~ msgstr "Devi avere il modulo ODBC installato"
-
-#~ msgid "Finished"
-#~ msgstr "Finito"
-
-#~ msgid "Installation Status"
-#~ msgstr "Stato Installazione"
-
-#~ msgid "SQL test file \"%s\" not found."
-#~ msgstr "File di test per SQL \"%s\" non trovato."
+#~ msgid "Install Other Modules"
+#~ msgstr "Installa Altri Moduli"
