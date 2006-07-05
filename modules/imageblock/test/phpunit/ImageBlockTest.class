@@ -78,7 +78,8 @@ class ImageBlockTest extends GalleryTestCase {
 	    . 'modules/core/test/data/test1.gif';
 	$resizeImagePath = GalleryCoreApi::getPluginBaseDir('module', 'core')
 	    . 'modules/core/test/data/test4.gif';
-	list ($ret, $this->_photo3, $this->_photo3Thumb) = $this->_addPhoto($this->_album->getId(), $resizeImagePath);
+	list ($ret, $this->_photo3, $this->_photo3Thumb) =
+	    $this->_addPhoto($this->_album->getId(), $resizeImagePath);
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
