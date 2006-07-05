@@ -127,7 +127,7 @@ class MSSqlStorage extends GalleryStorage {
 	    break;
 
 	case 'AVG':
-	    $sql = sprintf('AVG(%s)', $args[0]);
+	    $sql = sprintf('AVG(CAST(%s AS FLOAT))', $args[0]);
 	    break;
 
 	default:
