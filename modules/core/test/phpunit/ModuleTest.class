@@ -398,7 +398,12 @@ class ModuleTest extends GalleryTestCase {
 				'BIT_OR', array('[GalleryAccessMap::permission]',
 						'[GalleryAccessSubscriberMap::itemId]'));
 	if ($ret) {
-	    return array($ret, null);
+	    /* Try to OR permissions using aggregate function in DB; fallback to OR in PHP */
+	    if ($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION) {
+		$bitOr = '[GalleryAccessMap::permission]';
+	    } else {
+		return array($ret, null);
+	    }
 	}
 
 	$query = '
@@ -417,14 +422,16 @@ class ModuleTest extends GalleryTestCase {
 	$data = array($itemId, $userId);
 	array_splice($data, count($data), 0, $groupIds);
 
-	list($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	$permTable = array();
-	$result = $searchResults->nextResult();
-	$bits = $storage->convertBitsToInt($result[0]);
+	$bits = 0;
+	while ($result = $searchResults->nextResult()) {
+	    $bits |= $storage->convertBitsToInt($result[0]);
+	}
 	return array(null, $bits);
     }
 }
