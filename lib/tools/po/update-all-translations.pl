@@ -66,7 +66,7 @@ if ($OPTS{'SVN_ADD'}) {
     foreach my $poFile (@_) {
       if (exists $svn{$poFile}) {
 	$_ = 'locale/' . substr($poFile, 0, -3);
-	my_system("svn add po/$poFile" . (-d $_ ? " $_/LC_MESSAGES/*.mo" : ''));
+	my_system("svn add po/$poFile" . (-d $_ ? " $_" : ''));
 	-d $_ and
 	  my_system("svn propset svn:mime-type application/octet-stream $_/LC_MESSAGES/*.mo");
       }
