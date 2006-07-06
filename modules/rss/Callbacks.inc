@@ -35,10 +35,12 @@ class RssCallbacks {
 		/* we're called during preload, so we have to find the params another way */
 		$blocks = $smarty->_tpl_vars['theme']['params']['sidebarBlocks'];
 
-		foreach ($blocks as $block) {
-		    if ($block[0] == 'rss.RssBlock') {
-			$params = $block[1];
-			break;
+		if (isset($blocks)) {
+		    foreach ($blocks as $block) {
+			if ($block[0] == 'rss.RssBlock') {
+			    $params = $block[1];
+			    break;
+			}
 		    }
 		}
 
