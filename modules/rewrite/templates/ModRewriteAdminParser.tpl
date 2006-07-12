@@ -13,13 +13,13 @@
 
   <table class="gbDataTable"><tr>
     <td>
-      {g->text text="Htaccess path:"}
+      {g->text text="Absolute path to the embedded .htacces:"}
     </td><td>
       <input type="text" size="60" name="{g->formVar var="form[embeddedHtaccess]"}" value="{$form.embeddedHtaccess}" id="embeddedHtaccess"/><br/>
     </td>
   </tr><tr>
     <td>
-      {g->text text="Public path:"}
+      {g->text text="Please enter the path to your gallery. E.g. http://www.mySite.com/myNiceCMS/modules/gallery2"}
     </td><td>
       {$AdminParser.host}<input type="text" size="40" name="{g->formVar var="form[embeddedLocation]"}" value="{$form.embeddedLocation}" id="embeddedLocation"/><br/>
     </td>
