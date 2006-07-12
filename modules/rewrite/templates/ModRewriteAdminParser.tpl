@@ -8,12 +8,12 @@
   <h3> {g->text text="Embedded Setup"} </h3>
 
   <p class="giDescription">
-    {g->text text="For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file to hold the mod_rewrite rules."}
+    {g->text text="For URL Rewrite to work in an embedded environment you need to set up an extra .htaccess file to hold the mod_rewrite rules."}
   </p>
 
   <table class="gbDataTable"><tr>
     <td>
-      {g->text text="Absolute path to the embedded .htacces:"}
+      {g->text text="Absolute path to the embedded .htaccess:"}
     </td><td>
       <input type="text" size="60" name="{g->formVar var="form[embeddedHtaccess]"}" value="{$form.embeddedHtaccess}" id="embeddedHtaccess"/><br/>
     </td>
