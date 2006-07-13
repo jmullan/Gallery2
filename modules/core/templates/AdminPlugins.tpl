@@ -299,7 +299,7 @@
 	</td>
 
 	<td style="width: 150px">
-          {if ($plugin.type == 'module' && $plugin.id == 'core') || $plugin.state == 'incompatible' || ($plugin.type == 'theme' && $plugin.id == $AdminPlugins.defaultTheme)}
+          {if ($plugin.type == 'module' && $plugin.id == 'core') || $plugin.state == 'incompatible' || ($plugin.type == 'theme' && $plugin.id == $AdminPlugins.defaultTheme && $plugin.state == 'active')}
 	    &nbsp;
 	  {else}
             <span id="action-install-{$plugin.type}-{$plugin.id}" style="display: none">
