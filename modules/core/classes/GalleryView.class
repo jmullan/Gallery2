@@ -284,6 +284,7 @@ class GalleryView {
 	    if ($this->getViewType() == VIEW_TYPE_ADMIN) {
 		$theme = new GalleryTheme();
 		$theme->setId('fallbackTheme');
+		$isFallbackTheme = true;
 	    } else {
 		$redirect = array('view' => 'core.ShowItemError', 'problem' => 'missingTheme');
 		if ($wasSpecified) {

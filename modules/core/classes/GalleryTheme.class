@@ -762,7 +762,8 @@ class GalleryTheme extends GalleryPlugin {
 	if ($this->getId() == 'fallbackTheme') {
 	    /* If theme failed to load then we're done */
 	    $theme['isFallback'] = true;
-	    return array(null, $viewResults);
+	    $theme['fallbackTemplate'] = $viewResults['body'];
+	    return array(null, array('body' => 'modules/core/templates/FallbackTheme.tpl'));
 	}
 
 	if (!$gallery->getConfig('showSidebarBlocks') && !empty($params['sidebarBlocks'])) {
