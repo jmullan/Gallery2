@@ -17,26 +17,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+ * @package Replica
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
- * This controller will handle linking one or more items from one album to
- * another.
+ * This controller will handle replicating one item from one album to another.
  *
- * @package GalleryCore
+ * @package Replica
  * @subpackage UserInterface
  *
  */
-class ItemCreateLinkSingleController extends GalleryController {
+class ItemCreateReplicaSingleController extends GalleryController {
 
     /**
-     * Link the selected items into the destination album, if all the
+     * Replicate the selected item into the destination album, if all the
      * permissions are set correctly.
      */
     function handleRequest($form) {
@@ -62,13 +60,11 @@ class ItemCreateLinkSingleController extends GalleryController {
 		}
 
 		if (!isset($permissions[$destinationId]['core.addDataItem'])) {
-		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
-				 null);
+		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 		}
 
 		if (!isset($permissions[$itemId]['core.viewSource'])) {
-		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
-				 null);
+		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 		}
 
 		/* Load the item */
@@ -79,8 +75,7 @@ class ItemCreateLinkSingleController extends GalleryController {
 
 		/* Look out for monkey business */
 		if (!$item->getIsLinkable()) {
-		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
-				 null);
+		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 		}
 
 		/*
@@ -147,7 +142,7 @@ class ItemCreateLinkSingleController extends GalleryController {
 
 		/* Figure out where to redirect upon success */
 		$redirect['view'] = 'core.ItemAdmin';
-		$redirect['subView'] = 'core.ItemCreateLinkSingle';
+		$redirect['subView'] = 'replica.ItemCreateReplicaSingle';
 		$redirect['itemId'] = $itemId;
 	    }
 	}
@@ -156,7 +151,7 @@ class ItemCreateLinkSingleController extends GalleryController {
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core.ItemAdmin';
-	    $results['delegate']['subView'] = 'core.ItemCreateLinkSingle';
+	    $results['delegate']['subView'] = 'replica.ItemCreateReplicaSingle';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -166,13 +161,13 @@ class ItemCreateLinkSingleController extends GalleryController {
 }
 
 /**
- * This view lets you choose where you want to put the new link
+ * This view lets you choose where you want to put the new replica
  *
- * @package GalleryCore
+ * @package Replica
  * @subpackage UserInterface
  *
  */
-class ItemCreateLinkSingleView extends GalleryView {
+class ItemCreateReplicaSingleView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate
@@ -181,10 +176,10 @@ class ItemCreateLinkSingleView extends GalleryView {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	if ($form['formName'] != 'ItemCreateLinkSingle') {
+	if ($form['formName'] != 'ItemCreateReplicaSingle') {
 	    /* First time around, load the form with item data */
 	    $form['destination'] = '';
-	    $form['formName'] = 'ItemCreateLinkSingle';
+	    $form['formName'] = 'ItemCreateReplicaSingle';
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -205,26 +200,26 @@ class ItemCreateLinkSingleView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$ItemCreateLinkSingle = array();
-	$ItemCreateLinkSingle['albumTree'] = GalleryUtilities::createAlbumTree($albums);
-	$ItemCreateLinkSingle['itemTypeNames'] = $item->itemTypeName();
+	$ItemCreateReplicaSingle = array();
+	$ItemCreateReplicaSingle['albumTree'] = GalleryUtilities::createAlbumTree($albums);
+	$ItemCreateReplicaSingle['itemTypeNames'] = $item->itemTypeName();
 
-	$template->setVariable('ItemCreateLinkSingle', $ItemCreateLinkSingle);
-	$template->setVariable('controller', 'core.ItemCreateLinkSingle');
+	$template->setVariable('ItemCreateReplicaSingle', $ItemCreateReplicaSingle);
+	$template->setVariable('controller', 'replica.ItemCreateReplicaSingle');
 	return array(null,
-		     array('body' => 'modules/core/templates/ItemCreateLinkSingle.tpl'));
+		     array('body' => 'modules/replica/templates/ItemCreateReplicaSingle.tpl'));
     }
 
     /**
      * @see GalleryView::getViewDescription()
      */
     function getViewDescription() {
-	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'replica');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	return array(null, $core->translate('link an item'));
+	return array(null, $module->translate('replicate an item'));
     }
 }
 ?>

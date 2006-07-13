@@ -25,14 +25,14 @@
  */
 
 /**
- * ItemCreateLinkSingle controller tests
+ * ItemCreateReplicaSingle controller tests
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
+class ItemCreateReplicaSingleControllerTest extends GalleryControllerTestCase {
 
-    function ItemCreateLinkSingleControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core.ItemCreateLinkSingle');
+    function ItemCreateReplicaSingleControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'replica.ItemCreateReplicaSingle');
     }
 
     function setUp() {
@@ -65,7 +65,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
     /**
      * Test linking an album
      */
-    function testLinkItem() {
+    function testReplica() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
@@ -74,8 +74,8 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'core.ItemCreateLinkSingle',
-						      'itemId' => $this->_item->getId()),
+						   'subView' => 'replica.ItemCreateReplicaSingle',
+						    'itemId' => $this->_item->getId()),
 				  'status' => array('linked' => 1),
 				  'error' => array()),
 			    $results);
@@ -84,7 +84,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
     /**
      * Test linking an album (shouldn't succeeed)
      */
-    function testLinkAlbum() {
+    function testAlbumReplica() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
@@ -97,7 +97,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
     /**
      * Test linking an item with no read perms
      */
-    function testLinkItemWithNoViewPermissions() {
+    function testReplicaWithNoViewPermissions() {
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -115,14 +115,14 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
     /**
      * Test moving an item to a bogus destination
      */
-    function testLinkItemIntoEmptyDestination() {
+    function testReplicaIntoEmptyDestination() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
-						      'subView' => 'core.ItemCreateLinkSingle'),
+						   'subView' => 'replica.ItemCreateReplicaSingle'),
 				  'status' => array(),
 				  'error' => array('form[error][destination][empty]')),
 			    $results);
@@ -131,7 +131,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
     /**
      * Test linking an item into a container where we have no add permissions
      */
-    function testLinkItemIntoAlbumWithNoPermissions() {
+    function testReplicaIntoAlbumWithNoPermissions() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
@@ -143,7 +143,7 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	// The UI never displays targets that we can't add to
+	/* The UI never displays targets that we can't add to */
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
 }

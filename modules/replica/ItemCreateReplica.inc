@@ -20,23 +20,22 @@
 
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+ * @package Replica
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
- * This controller will handle linking one or more items from one album to
- * another.
+ * This controller will handle replicating one or more items from one album to another.
  *
- * @package GalleryCore
+ * @package Replica
  * @subpackage UserInterface
  *
  */
-class ItemCreateLinkController extends GalleryController {
+class ItemCreateReplicaController extends GalleryController {
 
     /**
-     * Link the selected items into the destination album, if all the
+     * Replicate the selected items into the destination album, if all the
      * permissions are set correctly.
      */
     function handleRequest($form) {
@@ -162,7 +161,7 @@ class ItemCreateLinkController extends GalleryController {
 
 		/* Figure out where to redirect upon success */
 		$redirect['view'] = 'core.ItemAdmin';
-		$redirect['subView'] = 'core.ItemCreateLink';
+		$redirect['subView'] = 'replica.ItemCreateReplica';
 		$redirect['itemId'] = $itemId;
 	    }
 	} else if (isset($form['action']['next'])) {
@@ -190,7 +189,7 @@ class ItemCreateLinkController extends GalleryController {
 	} else {
 	    if (empty($results['return'])) {
 		$results['delegate']['view'] = 'core.ItemAdmin';
-		$results['delegate']['subView'] = 'core.ItemCreateLink';
+		$results['delegate']['subView'] = 'replica.ItemCreateReplica';
 	    }
 	}
 	$results['status'] = $status;
@@ -201,13 +200,13 @@ class ItemCreateLinkController extends GalleryController {
 }
 
 /**
- * This view lets you choose where you want to put the new link
+ * This view lets you choose where you want to put the new replicas
  *
- * @package GalleryCore
+ * @package Replica
  * @subpackage UserInterface
  *
  */
-class ItemCreateLinkView extends GalleryView {
+class ItemCreateReplicaView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate
@@ -217,13 +216,13 @@ class ItemCreateLinkView extends GalleryView {
 
 	list ($itemId, $selectedId, $page) =
 	    GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
-	if ($form['formName'] != 'ItemCreateLink') {
+	if ($form['formName'] != 'ItemCreateReplica') {
 	    /* First time around, load the form with item data */
 	    if ($selectedId) {
 		$form['selectedIds'][$selectedId] = true;
 	    }
 	    $form['destination'] = '';
-	    $form['formName'] = 'ItemCreateLink';
+	    $form['formName'] = 'ItemCreateReplica';
 	    $form['numPerPage'] = 15;
 	}
 
@@ -308,31 +307,31 @@ class ItemCreateLinkView extends GalleryView {
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	$ItemCreateLink = array();
-	$ItemCreateLink['canCancel'] = $urlGenerator->isNavigationBackPossible();
-	$ItemCreateLink['peers'] = $peers;
-	$ItemCreateLink['albumTree'] = GalleryUtilities::createAlbumTree($albums);
-	$ItemCreateLink['page'] = $page;
-	$ItemCreateLink['numPages'] = $numPages;
-	$ItemCreateLink['numPerPage'] = $form['numPerPage'];
-	$ItemCreateLink['selectedIds'] = array_keys($selectedIds);
+	$ItemCreateReplica = array();
+	$ItemCreateReplica['canCancel'] = $urlGenerator->isNavigationBackPossible();
+	$ItemCreateReplica['peers'] = $peers;
+	$ItemCreateReplica['albumTree'] = GalleryUtilities::createAlbumTree($albums);
+	$ItemCreateReplica['page'] = $page;
+	$ItemCreateReplica['numPages'] = $numPages;
+	$ItemCreateReplica['numPerPage'] = $form['numPerPage'];
+	$ItemCreateReplica['selectedIds'] = array_keys($selectedIds);
 
-	$template->setVariable('ItemCreateLink', $ItemCreateLink);
-	$template->setVariable('controller', 'core.ItemCreateLink');
+	$template->setVariable('ItemCreateReplica', $ItemCreateReplica);
+	$template->setVariable('controller', 'replica.ItemCreateReplica');
 	return array(null,
-		     array('body' => 'modules/core/templates/ItemCreateLink.tpl'));
+		     array('body' => 'modules/replica/templates/ItemCreateReplica.tpl'));
     }
 
     /**
      * @see GalleryView::getViewDescription()
      */
     function getViewDescription() {
-	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'replica');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	return array(null, $core->translate('create link'));
+	return array(null, $module->translate('create replica'));
     }
 }
 ?>

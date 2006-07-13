@@ -2074,6 +2074,8 @@ class CoreModuleExtras {
 
 	case '1.1.9':
 	    /* Graphics toolkits now support percentages for thumbnail/scale/resize */
+	case '1.1.10':
+	    /* Moved ItemCreateLink[Single] to Replica module */
 
 	case 'end of upgrade path':
 	    /*
@@ -2335,6 +2337,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.7':
 	case '1.1.8':
 	case '1.1.9':
+	case '1.1.10':
 
 	case 'end of upgrade path':
 	    /*

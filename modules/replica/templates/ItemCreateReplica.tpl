@@ -5,30 +5,34 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="Link an Item"} </h2>
+  <h2> {g->text text="Create Replicas"} </h2>
 </div>
 
 {if isset($status.linked)}
 <div class="gbBlock"><h2 class="giSuccess">
-  {g->text one="Successfully linked %d item" many="Successfully linked %d items"
+  {g->text one="Successfully replicated %d item" many="Successfully replicated %d items"
 	   count=$status.linked.count arg1=$status.linked.count}
 </h2></div>
 {/if}
 
 <div class="gbBlock">
-{if empty($ItemCreateLink.peers)}
+{if empty($ItemCreateReplica.peers)}
   <p class="giDescription">
-    {g->text text="This album contains no items to link."}
+    {g->text text="This album contains no items to replicate."}
   </p>
 {else}
+  <p class="giDescription">
+    {g->text text="A replica is an item that shares the original data file with another item, to save disk space. In all other respects it is a separate item, with its own captions, thumbnail, resizes, comments, etc. Captions are initially copied from the source item but may be changed. Either the replica or the source may be moved or deleted without affecting the other."}
+  </p>
+
   <h3> {g->text text="Source"} </h3>
 
   <p class="giDescription">
-    {g->text text="Choose the items you want to link"}
-    {if ($ItemCreateLink.numPages > 1) }
+    {g->text text="Choose the items you want to replicate"}
+    {if ($ItemCreateReplica.numPages > 1) }
       {g->text text="(page %d of %d)"
-	       arg1=$ItemCreateLink.page
-	       arg2=$ItemCreateLink.numPages}
+	       arg1=$ItemCreateReplica.page
+	       arg2=$ItemCreateReplica.numPages}
     {/if}
   </p>
   
@@ -42,13 +46,13 @@
     // <![CDATA[
     function setCheck(val) {ldelim}
       var frm = document.getElementById('itemAdminForm');
-      {foreach from=$ItemCreateLink.peers item=peer}
+      {foreach from=$ItemCreateReplica.peers item=peer}
 	frm.elements['g2_form[selectedIds][{$peer.id}]'].checked = val;
       {/foreach}
     {rdelim}
     function invertCheck(val) {ldelim}
       var frm = document.getElementById('itemAdminForm');
-      {foreach from=$ItemCreateLink.peers item=peer}
+      {foreach from=$ItemCreateReplica.peers item=peer}
 	frm.elements['g2_form[selectedIds][{$peer.id}]'].checked =
 	    !frm.elements['g2_form[selectedIds][{$peer.id}]'].checked;
       {/foreach}
@@ -58,7 +62,7 @@
   
   <table>
     <colgroup width="60"/>
-    {foreach from=$ItemCreateLink.peers item=peer}
+    {foreach from=$ItemCreateReplica.peers item=peer}
     <tr>
       <td align="center">
 	{if isset($peer.thumbnail)}
@@ -87,11 +91,11 @@
   <input type="button" class="inputTypeButton" onclick="invertCheck()"
    name="{g->formVar var="form[action][invert]"}" value="{g->text text="Invert"}"/>
 
-  {if ($ItemCreateLink.page > 1)}
+  {if ($ItemCreateReplica.page > 1)}
     <input type="submit" class="inputTypeSubmit"
      name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>
   {/if}
-  {if ($ItemCreateLink.page < $ItemCreateLink.numPages)}
+  {if ($ItemCreateReplica.page < $ItemCreateReplica.numPages)}
     <input type="submit" class="inputTypeSubmit"
      name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}"/>
   {/if}
@@ -101,11 +105,11 @@
   <h3> {g->text text="Destination"} </h3>
 
   <p class="giDescription">
-    {g->text text="Choose a new album for the link"}
+    {g->text text="Choose a new album for the replica"}
   </p>
 
   <select name="{g->formVar var="form[destination]"}">
-    {foreach from=$ItemCreateLink.albumTree item=album}
+    {foreach from=$ItemCreateReplica.albumTree item=album}
       <option value="{$album.data.id}">
 	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
 	{$album.data.title|default:$album.data.pathComponent}
@@ -121,16 +125,16 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="hidden" name="{g->formVar var="page"}" value="{$ItemCreateLink.page}"/>
+  <input type="hidden" name="{g->formVar var="page"}" value="{$ItemCreateReplica.page}"/>
   <input type="hidden"
-   name="{g->formVar var="form[numPerPage]"}" value="{$ItemCreateLink.numPerPage}"/>
-  {foreach from=$ItemCreateLink.selectedIds item=selectedId}
+   name="{g->formVar var="form[numPerPage]"}" value="{$ItemCreateReplica.numPerPage}"/>
+  {foreach from=$ItemCreateReplica.selectedIds item=selectedId}
     <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>
   {/foreach}
 
   <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][link]"}" value="{g->text text="Link"}"/>
-  {if $ItemCreateLink.canCancel}
+   name="{g->formVar var="form[action][link]"}" value="{g->text text="Create"}"/>
+  {if $ItemCreateReplica.canCancel}
     <input type="submit" class="inputTypeSubmit"
      name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
   {/if}

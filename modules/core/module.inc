@@ -38,7 +38,7 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.2-svn');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.1.10');
+	$this->setVersion('1.1.11');
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
@@ -128,36 +128,6 @@ class CoreModule extends GalleryModule {
 					    'subView' => 'core.ItemEdit',
 					    'itemId' => $itemId,
 					    'return' => 1));
-	    }
-
-	    if (isset($wantsDetailedLinks[$itemId]) &&
-		    isset($permissions[$itemId]['core.viewSource']) &&
-		    $gallery->getConfig('link')) {
-		if ($item->getIsLinkable()) {
-		    if ($isAlbum) {
-			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
-			    'GalleryAlbumItem', 'core.addAlbumItem', $userId);
-			if ($ret) {
-			    return array($ret, null);
-			}
-		    } else {
-			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
-			    'GalleryAlbumItem', 'core.addDataItem', $userId);
-			if ($ret) {
-			    return array($ret, null);
-			}
-		    }
-
-		    if ($count > 0) {
-			$links[$itemId][] =
-			    array('text' => $this->_translate('Create Link'),
-				  'params' => array('view' => 'core.ItemAdmin',
-						    'subView' => 'core.ItemCreateLink',
-						    'itemId' => $item->getParentId(),
-						    'selectedId' => $itemId,
-						    'return' => 1));
-		    }
-		}
 	    }
 
 	    if (isset($wantsDetailedLinks[$itemId]) &&
@@ -454,32 +424,6 @@ class CoreModule extends GalleryModule {
 	if (!empty($parentId) && $hasThumb && isset($parentPermissions['core.edit'])) {
 	    $views[] = array('name' => $this->_translate('Make Highlight'),
 			     'view' => 'core.ItemMakeHighlight');
-	}
-
-	if (isset($permissions['core.viewSource']) && $gallery->getConfig('link')) {
-	    if ($item->getIsLinkable()) {
-		if ($isAlbum) {
-		    list ($ret, $count) =
-			GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
-		    if ($ret) {
-			return array($ret, null);
-		    }
-		} else {
-		    list ($ret, $count) =
-			GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
-		    if ($ret) {
-			return array($ret, null);
-		    }
-		}
-
-		if ($count > 0) {
-		    /* Specific translations: _('Link Album') _('Link Photo') _('Link Movie') */
-		    $views[] = array('name' => $this->_translate(
-					array('text' => 'Link %s', 'arg1' => $itemTypeNames[0]),
-					$itemTypeNames[2]),
-				     'view' => 'core.ItemCreateLinkSingle');
-		}
-	    }
 	}
 
 	if (isset($permissions['core.delete'])) {
