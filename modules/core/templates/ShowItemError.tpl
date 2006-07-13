@@ -29,7 +29,7 @@
       <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin" arg3="return=1"}">
     {/capture}
     {capture name="adminLink"}
-      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins"
 	 arg3="mode=config" arg4="return=1"}">
     {/capture}
 
