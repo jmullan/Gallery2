@@ -38,7 +38,7 @@ class ReplicaModule extends GalleryModule {
 	$this->setDescription(
 		$gallery->i18n('Create item copies sharing the same original data file'));
 	$this->setVersion('0.9.0');
-	$this->setGroup('import', $gallery->i18n('Import'));
+	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getItemLinks|getItemAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredModuleApi(array(3, 0));
