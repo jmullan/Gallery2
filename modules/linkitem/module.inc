@@ -30,9 +30,9 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('linkitem');
 	$this->setName($gallery->i18n('Link Items'));
 	$this->setDescription($gallery->i18n('Create links to other albums or external urls'));
-	$this->setVersion('1.0.5');
+	$this->setVersion('1.1.0');
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('registerEventListeners');
+	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredModuleApi(array(3, 0));
     }
@@ -49,14 +49,14 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	list ($success) = GalleryUtilities::guaranteeDirExists($imageDir);
 	if (!$success) {
 	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					"Unable to create directory: $imageDir");
+					 "Unable to create directory: $imageDir");
 	}
 
 	$imageFile = "$imageDir${slash}arrow.png";
 	if (!$platform->is_file($imageFile) &&
 	    !$platform->copy(dirname(__FILE__) . "${slash}images${slash}arrow.png", $imageFile)) {
 	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					"Unable to copy arrow.png to $imageDir");
+					 "Unable to copy arrow.png to $imageDir");
 	}
 
 	if (!empty($currentVersion) && version_compare($currentVersion, '1.0.4', '<=')) {
@@ -64,6 +64,21 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	    $ret = $storage->configureStore($this->getId(), array('GalleryLinkItem:1.0'));
 	    if ($ret) {
 		return $ret;
+	    }
+	}
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'linkitem');
+	if ($ret) {
+	    return $ret;
+	}
+	foreach (array('arrowWatermark' => 1, 'urlSnapshot' => 0,
+		    'snapshotExec' => 'khtml2png --width %WIDTH% --height %HEIGHT% %URL% %OUTFILE%')
+		 as $key => $value) {
+	    if (!isset($params[$key])) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 	}
 
@@ -95,6 +110,13 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $ret;
 	}
 
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'LinkItemToolkit', 'LinkItemToolkit',
+	    'modules/linkitem/classes/LinkItemToolkit.class', 'linkitem', null);
+	if ($ret) {
+	    return $ret;
+	}
+
 	return null;
     }
 
@@ -110,6 +132,36 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function getModuleEntityTypes() {
 	return array('GalleryLinkItem');
+    }
+
+    /**
+     * @see GalleryModule::activate()
+     */
+    function activate($postActivationEvent=true) {
+	global $gallery;
+
+	$ret = GalleryCoreApi::registerToolkitOperation(
+		'LinkItemToolkit', array('gallery/linkitem'), 'convert-to-image/jpeg', array(),
+		$gallery->i18n('Get image for linkitem thumbnail'), 'image/jpeg');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, $redirect);
+    }
+
+    /**
+     * @see GalleryModule::getSiteAdminViews()
+     */
+    function getSiteAdminViews() {
+	return array(null,
+		     array(array('name' => $this->translate('Link Items'),
+				 'view' => 'linkitem.LinkItemSiteAdmin')));
     }
 
     /**

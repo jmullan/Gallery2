@@ -54,16 +54,14 @@ class ItemAddLinkItem extends ItemAddPlugin {
 		}
 		if (empty($newItem)) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
-				 null, null);
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
 		}
 
 		$link = ($form['linkType'] == 'album') ? (int)$form['linkedAlbumId']
 						       : $form['linkUrl'];
 		$ret = $newItem->create($item->getId(), $link);
 		if ($ret) {
-		    if (($ret->getErrorCode() & ERROR_MISSING_OBJECT) ||
-			    ($ret->getErrorCode() & ERROR_BAD_PARAMETER)) {
+		    if ($ret->getErrorCode() & (ERROR_MISSING_OBJECT | ERROR_BAD_PARAMETER)) {
 			$error[] = 'form[error][linkedAlbumId][invalid]';
 		    } else {
 			GalleryCoreApi::releaseLocks($lockId);
@@ -135,29 +133,37 @@ class ItemAddLinkItem extends ItemAddPlugin {
 			GalleryCoreApi::releaseLocks($lockIds);
 			return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null, null);
 		    }
-		    list ($ret, $isSupported, $outputMimeType) =
-			GalleryCoreApi::isSupportedOperationSequence(
+		    list ($ret, $derivativeOperations, $outputMimeType) =
+			GalleryCoreApi::makeSupportedViewableOperationSequence(
 			    $source->getMimeType(), $derivativeOperations);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
 			return array($ret, null, null);
 		    }
-		    if ($isSupported) {
+		    if (!empty($derivativeOperations)) {
 			$derivative->setDerivativeOperations($derivativeOperations);
 			$derivative->setMimeType($outputMimeType);
 
-			$watermarkOp = 'composite|plugins_data/modules/linkitem/arrow.png,' .
-				       'image/png,14,14,bottom-right,0,0';
-			list ($ret, $isSupported, $outputMimeType) =
-			    GalleryCoreApi::isSupportedOperationSequence(
-				$outputMimeType, $watermarkOp);
+			list ($ret, $isSupported) = GalleryCoreApi::getPluginParameter(
+				'module', 'linkitem', 'arrowWatermark');
 			if ($ret) {
 			    GalleryCoreApi::releaseLocks($lockIds);
 			    return array($ret, null, null);
 			}
 			if ($isSupported) {
-			    $derivative->setPostFilterOperations($watermarkOp);
-			    $derivative->setMimeType($outputMimeType);
+			    $watermarkOp = 'composite|plugins_data/modules/linkitem/arrow.png,'
+					 . 'image/png,14,14,bottom-right,0,0';
+			    list ($ret, $isSupported, $outputMimeType) =
+				GalleryCoreApi::isSupportedOperationSequence(
+					$outputMimeType, $watermarkOp);
+			    if ($ret) {
+				GalleryCoreApi::releaseLocks($lockIds);
+				return array($ret, null, null);
+			    }
+			    if ($isSupported) {
+				$derivative->setPostFilterOperations($watermarkOp);
+				$derivative->setMimeType($outputMimeType);
+			    }
 			}
 
 			$derivative->setDerivativeSourceId($source->getId());

@@ -174,16 +174,16 @@ class GalleryLinkItem extends GalleryItem {
 
     /* Add functions to make this entity thumbnail-able */
     function fetchPath() {
-	return array(null, dirname(dirname(__FILE__)) . '/images/link.jpg');
+	return array(null, $this->getLink());
     }
     function getMimeType() {
-	return 'image/jpeg';
+	return 'gallery/linkitem';
     }
     function getWidth() {
-	return 270;
+	return 0;
     }
     function getHeight() {
-	return 224;
+	return 0;
     }
 
     /**

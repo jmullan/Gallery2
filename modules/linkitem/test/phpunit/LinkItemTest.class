@@ -224,6 +224,74 @@ class LinkItemTest extends GalleryTestCase {
 	
         $gallery->_session = $backup;
     }
+
+    function testToolkit() {
+	global $gallery;
+	$this->_markForCleanup($this->_targetAlbum);
+
+	list ($ret, $toolkit, $mimeType) =
+	    GalleryCoreApi::getToolkitByOperation('gallery/linkitem', 'convert-to-image/jpeg');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('image/jpeg', $mimeType);
+	if (!GalleryUtilities::isExactlyA($toolkit, 'LinkItemToolkit')) {
+	    return $this->assert(false, 'LinkItemToolkit');
+	}
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'linkitem');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'linkitem', 'urlSnapshot', '0');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('copy', array('fuzzy' => '{/images/link.jpg$}', 'outputFile'), true);
+	$gallery->setPlatform($platform);
+
+	list ($ret, $mimeType, $context) = $toolkit->performOperation('gallery/linkitem',
+		'convert-to-image/jpeg', 'theURL', 'outputFile', array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('image/jpeg', $mimeType);
+	$this->assertEquals(array('width' => 270, 'height' => 224), $context);
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'linkitem', 'urlSnapshot', '1');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'linkitem', 'snapshotExec',
+		'getSnapshot %URL% %WIDTH% %HEIGHT% %OUTFILE%');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('tempnam', array('fuzzy' => '{.}', 'lnk_'), 'tmpfile');
+	$platform->setReply('exec',
+		array(array(array('getSnapshot', 'theURL', 1024, 768, 'tmpfile.jpg'))),
+		array(true, '', ''));
+	$platform->setReply('unlink', array('tmpfile'), true);
+	$platform->setReply('copy', array('tmpfile.jpg', 'outputFile'), true);
+	$platform->setReply('unlink', array('tmpfile.jpg'), true);
+	$gallery->setPlatform($platform);
+
+	list ($ret, $mimeType, $context) = $toolkit->performOperation('gallery/linkitem',
+		'convert-to-image/jpeg', 'theURL', 'outputFile', array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('image/jpeg', $mimeType);
+	$this->assertEquals(array('width' => 1024, 'height' => 768), $context);
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
 }
 
 class LinkItemTestMockPhpVm extends GalleryPhpVm {
