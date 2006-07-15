@@ -38,7 +38,7 @@ class GalleryChildEntityHelper_simple {
      * where we (the active user) has the 'core.changePermissions' permission
      * bit set.  This allows us to cascade permission updates.
      *
-     * @param array item ids
+     * @param int item id
      * @param int permission id
      * @return array object GalleryStatus a status code
      *               array integer ids
@@ -112,7 +112,7 @@ class GalleryChildEntityHelper_simple {
      */
     function fetchChildItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-	    $item, $offset, $count, 'GalleryItem', null, false, $userId);
+	    $item, $offset, $count, 'GalleryItem', 'core.view', false, $userId);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -135,7 +135,7 @@ class GalleryChildEntityHelper_simple {
      */
     function fetchChildDataItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-	    $item, $offset, $count, 'GalleryDataItem', null, false, $userId);
+	    $item, $offset, $count, 'GalleryDataItem', 'core.view', false, $userId);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -158,7 +158,7 @@ class GalleryChildEntityHelper_simple {
      */
     function fetchChildAlbumItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-	    $item, $offset, $count, 'GalleryAlbumItem', null, false, $userId);
+	    $item, $offset, $count, 'GalleryAlbumItem', 'core.view', false, $userId);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -206,9 +206,6 @@ class GalleryChildEntityHelper_simple {
 				$requiredPermission, $linkableOnly, $userId) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-	if (!isset($requiredPermission)) {
-	    $requiredPermission = 'core.view';
-	}
 	if (!isset($userId)) {
 	    $userId = $gallery->getActiveUserId();
 	}
