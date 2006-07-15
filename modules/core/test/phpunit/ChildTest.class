@@ -231,7 +231,7 @@ class ChildTest extends GalleryTestCase {
 	$this->assertEquals($expectedIds, $childIds);
     }
 
-    function testAlbumFirstOrder() {
+    function testAlbumsFirstOrder() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId(),
 				      array('orderBy' => 'albumsFirst|creationTimestamp',
 					    'orderDirection' => ORDER_DESCENDING));
@@ -269,6 +269,32 @@ class ChildTest extends GalleryTestCase {
 		  $child[2]->getId(),
 		  $child[0]->getId()),
 	    $childIds);
+    }
+
+    function testMultisortConflict() {
+	/* Previously a sort and presort both with a left join could create bad SQL */
+	$ret = GalleryCoreApi::registerFactoryImplementation('GallerySortInterface_1_1',
+		'ChildTestSortOrder', 'ChildTestSortOrder',
+		'modules/core/test/phpunit/ChildTest.class', 'coreTest', null);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
+
+	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId(),
+				      array('orderBy' => 'albumsFirst|ChildTestSortOrder',
+					    'orderDirection' => ORDER_DESCENDING));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Don't need any results.. just validating that SQL query is ok, no error returned */
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($album);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), $childIds, 'child ids');
     }
 
     function testDescendentItemIds() {
@@ -408,6 +434,25 @@ class ChildTest extends GalleryTestCase {
 	}
 	sort($childIds);
 	$this->assertEquals($itemIds, $childIds, 'descendents');
+    }
+}
+
+GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_1.class');
+
+/**
+ * Test sort order
+ */
+class ChildTestSortOrder extends GallerySortInterface_1_1 {
+    function getSortInfo() {
+	return array(null, 'ChildTestSort', false);
+    }
+
+    function getSortOrder($direction) {
+	/* Won't match anything.. just used to ensure valid SQL is constructed */
+	return array(null, '[GalleryUser::userName]' . $direction,
+		'[GalleryUser::userName]', null,
+		'[GalleryChildEntity] LEFT JOIN [GalleryUser] ON '
+		. '[GalleryChildEntity::id] = [GalleryUser::id]');
     }
 }
 ?>

@@ -215,7 +215,8 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	/* List of classes that we will need */
-	$classes = array('[GalleryChildEntity]', "[$class]");
+	$classes = array('[GalleryChildEntity]' => '[GalleryChildEntity]',
+			 "[$class]" => "[$class]");
 
 	if ($requiredPermission) {
 	    list ($ret, $aclIds) =
@@ -224,7 +225,7 @@ class GalleryChildEntityHelper_simple {
 		return array($ret, null);
 	    }
 	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
-	    $classes[] = '[GalleryAccessSubscriberMap]';
+	    $classes['[GalleryAccessSubscriberMap]'] = '[GalleryAccessSubscriberMap]';
 
 	    if (empty($aclIds)) {
 		return array(null, array());
@@ -232,7 +233,7 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	if ($linkableOnly) {
-	    $classes[] = '[GalleryEntity]';
+	    $classes['[GalleryEntity]'] = '[GalleryEntity]';
 	}
 
 	list ($ret, $orderBy, $orderColumn, $extraWhere, $extraJoin) =
@@ -251,7 +252,11 @@ class GalleryChildEntityHelper_simple {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    $classes = array_unique(array_merge($classes, $orderClasses));
+	    foreach ($orderClasses as $c) {
+		if (!isset($classes[$c])) {
+		    $classes[$c] = $c;
+		}
+	    }
 	}
 
 	if (!empty($orderBy)) {
@@ -263,21 +268,17 @@ class GalleryChildEntityHelper_simple {
 	    $orderClause = $selectExtra = '';
 	}
 
-
 	if (!empty($extraJoin)) {
-	    /*
-	     * $extraJoin can contain classes also.  If it does, we should
-	     * remove them from $classes so that they're not in the FROM
-	     * clause twice.
-	     */
-	    $classes = array_flip($classes);
-	    foreach ($classes as $key => $unused) {
-		if (strstr($extraJoin, $key) !== false) {
-		    unset($classes[$key]);
+	    /* Merge joins into classes array */
+	    foreach (explode(',', $extraJoin) as $join) {
+		if (preg_match('{^\s*(\[.*?\])\s*(.*?)\s*$}', $join, $match)) {
+		    if (!isset($classes[$match[1]])) {
+			$classes[$match[1]] = $join;
+		    } else if (!empty($match[2])) {
+			$classes[$match[1]] .= ' ' . $match[2];
+		    }
 		}
 	    }
-	    $classes = array_flip($classes);
-	    $classes[] = $extraJoin;
 	}
 
 	/* Prepare the query */
@@ -285,7 +286,7 @@ class GalleryChildEntityHelper_simple {
 	SELECT
 	  [GalleryChildEntity::id] ' . $selectExtra . '
 	FROM
-	  ' . join(', ', $classes) . '
+	  ' . implode(', ', $classes) . '
 	WHERE
 	  [GalleryChildEntity::parentId] = ?
 	  AND
@@ -417,7 +418,7 @@ class GalleryChildEntityHelper_simple {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	$sequence = join('/', $sequence);
+	$sequence = implode('/', $sequence);
 	if (!empty($sequence)) {
 	    $sequence .= '/';
 	}
@@ -687,7 +688,7 @@ class GalleryChildEntityHelper_simple {
 			return GalleryChildEntityHelper_simple::_getOrderInfo(
 			    'orderWeight', ORDER_ASCENDING);
 		    } else {
-			return GalleryChildEntityHelper_simple::_getOrderInfo();
+			return GalleryChildEntityHelper_simple::_getOrderInfo(null, null);
 		    }
 		}
 	    }
@@ -699,7 +700,7 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	return array(null, implode(', ', $order),
-		     implode(', ', $select), implode(' AND ', $condition), implode(' ', $join));
+		     implode(', ', $select), implode(' AND ', $condition), implode(', ', $join));
     }
 }
 ?>
