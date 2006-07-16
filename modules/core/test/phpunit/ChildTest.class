@@ -297,6 +297,22 @@ class ChildTest extends GalleryTestCase {
 	$this->assertEquals(array(), $childIds, 'child ids');
     }
 
+    function testFetchAlbumConflict() {
+	/* Previously albumsFirst and fetchChildAlbumItemIds would create bad SQL */
+	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId(),
+				      array('orderBy' => 'albumsFirst|creationTimestamp',
+					    'orderDirection' => ORDER_ASCENDING));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/* Don't need any results.. just validating that SQL query is ok, no error returned */
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildAlbumItemIds($album);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), $childIds, 'child ids');
+    }
+
     function testDescendentItemIds() {
 	list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[0]->getId());
 	if ($ret) {
