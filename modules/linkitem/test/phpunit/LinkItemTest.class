@@ -248,7 +248,7 @@ class LinkItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$savePlatform = $gallery->getPlatform();
+	$savePlatform =& $gallery->getPlatform();
 	$platform = new UnitTestPlatform();
 	$platform->setReply('copy', array('fuzzy' => '{/images/link.jpg$}', 'outputFile'), true);
 	$gallery->setPlatform($platform);
