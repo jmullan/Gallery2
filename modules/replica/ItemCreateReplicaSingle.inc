@@ -29,7 +29,6 @@
  *
  * @package Replica
  * @subpackage UserInterface
- *
  */
 class ItemCreateReplicaSingleController extends GalleryController {
 
