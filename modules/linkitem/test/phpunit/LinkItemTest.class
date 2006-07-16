@@ -164,36 +164,36 @@ class LinkItemTest extends GalleryTestCase {
 	    $this->assert(false, 'expected error');
 	}
     }
-    
+
     function testShowLinkItemNoPersistentSession() {
-    	global $gallery;
-    	$backup = $gallery->_session;
-    	/* Make sure the redirect has no sessionId in it */
-    	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+	global $gallery;
+	$backup = $gallery->_session;
+	/* Make sure the redirect has no sessionId in it */
+	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	unset($_SERVER['HTTP_COOKIE']);
-    	$session = new GallerySession();
-    	$ret = $session->init();
-    	if ($ret) {
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp session id');
-	
+
 	$gallery->_phpVm = $phpVm = new LinkItemTestMockPhpVm();
 	$_REQUEST['phpVmHeaders'] = array();
 	$_REQUEST['phpVmExitCalls'] = 0;
-	
-        $this->_link->setLink($this->_targetAlbum->getId());
-        $this->_markForCleanup($this->_targetAlbum);
-        $this->_lockId = array($this->_lockId);
-        list ($ret, $this->_lockId[]) = 
-        		GalleryCoreApi::acquireWriteLock(array($this->_link->getId()));
+
+	$this->_link->setLink($this->_targetAlbum->getId());
+	$this->_markForCleanup($this->_targetAlbum);
+	$this->_lockId = array($this->_lockId);
+	list ($ret, $this->_lockId[]) =
+	    GalleryCoreApi::acquireWriteLock(array($this->_link->getId()));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-        $ret = $this->_link->save();
-        if ($ret) {
+	$ret = $this->_link->save();
+	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$gallery->_session = $session;
@@ -204,8 +204,8 @@ class LinkItemTest extends GalleryTestCase {
 	GalleryDataCache::setMemoryCachingEnabled(false);
 	/* Execute the test */
 	list ($ret, $link) = GalleryCoreApi::loadEntitiesById($this->_link->getId());
-        if ($ret) {
-            $gallery->_session = $backup;
+	if ($ret) {
+	    $gallery->_session = $backup;
 	    return $this->failWithStatus($ret);
 	}
 	GalleryDataCache::setMemoryCachingEnabled(true);
@@ -215,14 +215,14 @@ class LinkItemTest extends GalleryTestCase {
 	$baseUrl = $urlGenerator->getCurrentUrlDir();
 	if (!empty($_REQUEST['phpVmHeaders']['Location'])) {
 	    $this->assertEquals($urlGenerator->getCurrentUrlDir() . 'main.php?g2_itemId=' .
-			   			$this->_targetAlbum->getId(), 
-			    	trim($_REQUEST['phpVmHeaders']['Location']),
-			    	'redirect URL');
+				  $this->_targetAlbum->getId(),
+				trim($_REQUEST['phpVmHeaders']['Location']),
+				'redirect URL');
 	} else {
-	    $this->assert(false, 'no Location header');	
+	    $this->assert(false, 'no Location header');
 	}
-	
-        $gallery->_session = $backup;
+
+	$gallery->_session = $backup;
     }
 
     function testToolkit() {
@@ -248,6 +248,7 @@ class LinkItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$savePlatform = $gallery->getPlatform();
 	$platform = new UnitTestPlatform();
 	$platform->setReply('copy', array('fuzzy' => '{/images/link.jpg$}', 'outputFile'), true);
 	$gallery->setPlatform($platform);
@@ -291,16 +292,17 @@ class LinkItemTest extends GalleryTestCase {
 	$this->assertEquals('image/jpeg', $mimeType);
 	$this->assertEquals(array('width' => 1024, 'height' => 768), $context);
 	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$gallery->setPlatform($savePlatform);
     }
 }
 
 class LinkItemTestMockPhpVm extends GalleryPhpVm {
     function header($string, $replace=null) {
-        if ($pos = strpos($string, ':')) {
+	if ($pos = strpos($string, ':')) {
 	    $_REQUEST['phpVmHeaders'][substr($string, 0, $pos)] = substr($string, $pos+1);
-	} 
+	}
     }
-    
+
     function exit_($status=null) {
 	$_REQUEST['phpVmExitCalls']++;
     }
