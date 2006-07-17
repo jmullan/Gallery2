@@ -345,6 +345,10 @@ class GalleryTranslator {
 		return $ret;
 	    }
 	}
+	/* For Norwegian try nb language code in addition to no */
+	if (substr($locale, 0, 2) == 'no') {
+	    return GalleryTranslator::_setlocale($category, 'nb' . substr($locale, 2));
+	}
 	$gallery->debug("Warning: Unable to select locale $locale");
 	return false;
     }
