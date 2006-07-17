@@ -1044,7 +1044,7 @@ class GalleryPlatform {
 	    }
 	    return !$ret;
 	} else {
-	    $phpVm =& $gallery->getPhpVm();
+	    $phpVm = $gallery->getPhpVm();
 	    /* Convert \r\n to the appropriate line ending style */
 	    if ($this->getLineEnding() == "\n") {
 		if (isset($headers)) {

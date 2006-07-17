@@ -474,7 +474,7 @@ class PlatformTest extends GalleryTestCase {
 
 	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__), 'this file');
 
-	$gallery->_phpVm = new PlatformTestPhpVm(dirname(__FILE__));
+	$gallery->_phpVm = new PlatformTestPhpVm(dirname(__FILE__), $this);
 	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__), 'simple case');
 
 	/* Bad paths are still checked even though no realpath */
@@ -484,7 +484,7 @@ class PlatformTest extends GalleryTestCase {
 	$this->assert(
 	    $this->_platform->isRestrictedByOpenBaseDir(dirname(__FILE__) . '/../bogus/path'),
 	    'bogus path using .. to get outside valid dir');
-	$gallery->_phpVm = new PlatformTestPhpVm('');
+	$gallery->_phpVm = new PlatformTestPhpVm('', $this);
 	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir('/bogus/path'),
 		      'bogus path with no restriction');
 
@@ -500,7 +500,8 @@ class PlatformTest extends GalleryTestCase {
 					 'c:\\TEST\\file' => 'C:\\Test\\file',
 					 '/TEST/file' => '/TEST/file'));
 
-	$gallery->_phpVm = new PlatformTestPhpVm($isWin ? 'C:\\Test;D:\\Fun\\' : '/test:/fun/');
+	$gallery->_phpVm =
+	    new PlatformTestPhpVm($isWin ? 'C:\\Test;D:\\Fun\\' : '/test:/fun/', $this);
 	$this->assert(
 	    !$platform->isRestrictedByOpenBaseDir($isWin ? 'C:\\Test\\file' : '/test/file'),
 	    'first path');
@@ -520,7 +521,7 @@ class PlatformTest extends GalleryTestCase {
 					     '/test/real/linktoetc/passwd' => '/etc/passwd',
 					     '/test/link/linktoetc/passwd' => '/etc/passwd'));
 
-	    $gallery->_phpVm = new PlatformTestPhpVm('/test/real');
+	    $gallery->_phpVm = new PlatformTestPhpVm('/test/real', $this);
 	    $this->assert(!$platform->isRestrictedByOpenBaseDir('/test/link/file'),
 			  'path with symlink, open_basedir has realpath');
 	    $this->assert($platform->isRestrictedByOpenBaseDir('/test/real/linktoetc/passwd'),
@@ -528,7 +529,7 @@ class PlatformTest extends GalleryTestCase {
 	    $this->assert($platform->isRestrictedByOpenBaseDir('/test/link/bogus/path'),
 			  'invalid path with symlink, open_basedir has realpath');
 
-	    $gallery->_phpVm = new PlatformTestPhpVm('/test/link');
+	    $gallery->_phpVm = new PlatformTestPhpVm('/test/link', $this);
 	    $this->assert(!$platform->isRestrictedByOpenBaseDir('/test/real/file'),
 			  'realpath given, open_basedir has symlink');
 	    $this->assert($platform->isRestrictedByOpenBaseDir('/test/link/linktoetc/passwd'),
@@ -546,7 +547,7 @@ class PlatformTest extends GalleryTestCase {
 					 '/toast/file' => '/toast/file',
 					 '/link/file' => '/test/file'));
 
-	$gallery->_phpVm = new PlatformTestPhpVm('/tes');
+	$gallery->_phpVm = new PlatformTestPhpVm('/tes', $this);
 	$this->assert(!$platform->isRestrictedByOpenBaseDir('/testfile'), 'file with prefix');
 	$this->assert(!$platform->isRestrictedByOpenBaseDir('/test/file'), 'dir with prefix');
 	$this->assert(!$platform->isRestrictedByOpenBaseDir('/tes/bad/path'),
@@ -565,13 +566,13 @@ class PlatformTest extends GalleryTestCase {
 					     '/lonk/file' => '/lonk/file',
 					     '/link/fu' => false, '/link/fun' => '/test/fun',
 					     '/test/fun' => '/test/fun'));
-	    $gallery->_phpVm = new PlatformTestPhpVm('/lin');
+	    $gallery->_phpVm = new PlatformTestPhpVm('/lin', $this);
 	    $this->assert(!$platform->isRestrictedByOpenBaseDir('/linnen'), 'nonlink with prefix');
 	    $this->assert($platform->isRestrictedByOpenBaseDir('/linkfile'), 'link with prefix');
 	    $this->assert($platform->isRestrictedByOpenBaseDir('/link/file'), 'dir with prefix');
 	    $this->assert($platform->isRestrictedByOpenBaseDir('/lonk/file'), 'not match prefix');
 
-	    $gallery->_phpVm = new PlatformTestPhpVm('/link/fu');
+	    $gallery->_phpVm = new PlatformTestPhpVm('/link/fu', $this);
 	    $this->assert($platform->isRestrictedByOpenBaseDir('/test/fun'),
 			  'realpath given, open_basedir has prefix with link parent');
 	    $this->assert($platform->isRestrictedByOpenBaseDir('/link/fun'),
@@ -581,7 +582,7 @@ class PlatformTest extends GalleryTestCase {
 	}
 
 	/* Open_basedir with . */
-	$gallery->_phpVm = new PlatformTestPhpVm('.');
+	$gallery->_phpVm = new PlatformTestPhpVm('.', $this);
 	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(
 	    dirname(__FILE__) . '/../../../../lib/tools/phpunit/index.php'), 'dot basedir');
 
@@ -589,14 +590,14 @@ class PlatformTest extends GalleryTestCase {
 	$s = $this->_platform->getDirectorySeparator();
 	$platform->setRealpathData(array("${s}test${s}" => "${s}test",
 					 "${s}testing" => "${s}testing"));
-	$gallery->_phpVm = new PlatformTestPhpVm("${s}test${s}");
+	$gallery->_phpVm = new PlatformTestPhpVm("${s}test${s}", $this);
 	$this->assert(!$platform->isRestrictedByOpenBaseDir("${s}test"), 'no trailing slash');
 	$this->assert($platform->isRestrictedByOpenBaseDir("${s}testing"),
 		      'should not match basedir with trailing slash');
 
 	/* Invalid paths (realpath returns false, our code does relative path and .. handling) */
 	$platform->setRealpathData(array("${s}test" => "${s}test"));
-	$gallery->_phpVm = new PlatformTestPhpVm("${s}test");
+	$gallery->_phpVm = new PlatformTestPhpVm("${s}test", $this);
 	$this->assert(!$platform->isRestrictedByOpenBaseDir("${s}test${s}bogus"),
 		      'valid bogus path');
 	$this->assert(!$platform->isRestrictedByOpenBaseDir("${s}test${s}bogus${s}..${s}path"),
@@ -756,23 +757,30 @@ class PlatformTest extends GalleryTestCase {
     function testMailUsesUnixLineEndings() {
 	global $gallery;
 
-	$this->_markPluginParametersForCleanup('module', 'core');
-	GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.host', null);
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.host', null);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
-	$gallery->_phpVm = new PlatformTestPhpVm(dirname(__FILE__));
+	$gallery->_phpVm = new PlatformTestPhpVm(dirname(__FILE__), $this);
 	$platform = new UnixPlatform();
 	$result = $platform->mail("foo@example.com", "subject",
 				  "body line1\nline2\r\nline3\r\n",
 				  "header line1\nline2\r\nline3\r\n");
 	$this->assert($result);
-	$this->assertEquals("body line1\nline2\nline3\n", $gallery->_phpVm->_mail['body']);
-	$this->assertEquals("header line1\nline2\nline3\n", $gallery->_phpVm->_mail['headers']);
+	$this->assertEquals("body line1\nline2\nline3\n", $this->_mail['body']);
+	$this->assertEquals("header line1\nline2\nline3\n", $this->_mail['headers']);
     }
 }
 
 class PlatformTestPhpVm extends GalleryPhpVm {
-    function PlatformTestPhpVm($iniVal) {
+    function PlatformTestPhpVm($iniVal, &$test) {
 	$this->_iniVal = $iniVal;
+	$this->_test =& $test;
     }
 
     function ini_get($varname) {
@@ -783,11 +791,11 @@ class PlatformTestPhpVm extends GalleryPhpVm {
     }
 
     function mail($to, $subject, $body, $additionalHeaders=null, $additionalParameters=null) {
-	$this->_mail = array('to' => $to,
-			     'subj' => $subject,
-			     'body' => $body,
-			     'headers' => $additionalHeaders,
-			     'params' => $additionalParameters);
+	$this->_test->_mail = array('to' => $to,
+				    'subj' => $subject,
+				    'body' => $body,
+				    'headers' => $additionalHeaders,
+				    'params' => $additionalParameters);
 	return true;
     }
 }
