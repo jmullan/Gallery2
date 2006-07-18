@@ -93,6 +93,17 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+	/* Watermarked thumbnail for one*/
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $this->_thumbs[$i]) = $this->_createDerivative(
+		    $this->_items[$i], $this->_items[$i]->getId(),
+		    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'test-operation|100', 'test/jpeg',
+		    $i ? array() : array('postFilterOperations' => 'test-watermark|yes'));
+	    if ($ret) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret);
+	    }
+	}
     }
 
     function testFulfillCart() {
@@ -136,12 +147,29 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 	    $this->assert(strpos($form, '"imnum" value="4"'),
 		'form should include 4 photos: qty 1 of item 0, none of item 1 ' .
 		'(no print permission), qty 3 of item 2');
-	    preg_match_all('/' . GalleryUtilities::prefixFormVariable($session->getKey()) .
-		'=([A-Za-z0-9]+)/', $form, $matches);
-	    /* Only first photo should add sessionid; the other is viewable to guests */
-	    $this->assert(!empty($matches[1]), 'missing sessionid for shutterfly access');
-	    $this->assert(1, count($matches[1]), 'number of urls with sessionid');
-	    $this->assert($matches[1][0] != $session->getId(), 'wrong sessionid in form');
+	    $this->assert(preg_match('{"imraw-1" value="http://[^"]*'
+			. $this->_items[0]->getId() . '[^"]*'
+			. GalleryUtilities::prefixFormVariable($session->getKey())
+			. '=([A-Za-z0-9]+)}', $form, $matches),
+		    'URL for first image should include a session id');
+	    $this->assert($matches[1] != $session->getId(),
+		    'session id in URL for first image should be a new id, not my session');
+	    $this->assert(preg_match('{"imthumb-1" value="http://[^"]*'
+			. $this->_items[0]->getId() . '[^"]*'
+			. GalleryUtilities::prefixFormVariable($session->getKey())
+			. '=([A-Za-z0-9]+)}', $form, $matches),
+		    'URL for first thumbnail should include a session id'
+		    . ' and use itemId not thumbId due to watermark');
+	    $this->assertEquals($session->getId(), $matches[1],
+		    'session id in URL for first thumbnail should be my session');
+	    $this->assert(preg_match('{"imraw-4" value="http://[^"]*'
+			. $this->_items[2]->getId() . '(?![^"]*'
+			. $session->getKey() . '=)}', $form, $matches),
+		    'URL for second image should not include a session id');
+	    $this->assert(preg_match('{"imthumb-4" value="http://[^"]*'
+			. $this->_thumbs[2]->getId() . '(?![^"]*'
+			. $session->getKey() . '=)}', $form, $matches),
+		    'URL for second thumbnail should not include a session id');
 	}
 
 	$printCart = $session->get('shutterfly.cart');

@@ -78,26 +78,11 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 		return $this->failWithStatus($ret);
 	    }
 
-
-	    /* Create a stub thumbnail */
-	    list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
-		'GalleryDerivative', $this->_items[$i]->getEntityType());
-	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
-	    }
-
-	    $ret = $derivative->create($this->_items[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
-	    }
-
-	    $derivative->setDerivativeSourceId($this->_items[$i]->getId());
-	    $derivative->setDerivativeOperations('thumbnail|150');
-	    $derivative->setMimeType('test/file');
-
-	    $ret = $derivative->save();
+	    /* Create a thumbnail, watermark one of them */
+	    list ($ret, $derivative) = $this->_createDerivative(
+		    $this->_items[$i], $this->_items[$i]->getId(),
+		    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|150', 'test/file',
+		    $i ? array() : array('postFilterOperations' => 'watermark|yes'));
 	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret);
@@ -111,26 +96,10 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    $this->_sourceIds[$i] = $this->_items[$i]->getId();
 	}
 
-	/* Create a least one preferred */
-	list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
-	    'GalleryDerivative', $this->_items[2]->getEntityType());
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-
-	$ret = $derivative->create($this->_items[2]->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
-
-	$derivative->setDerivativeSourceId($this->_items[2]->getId());
-	$derivative->setDerivativeOperations('thumbnail|150');
-	$derivative->setMimeType('test/file');
-	$derivative->setWidth(0);
-	$derivative->setHeight(0);
-	$ret = $derivative->save();
+	/* Create a preferred */
+	list ($ret, $derivative) = $this->_createDerivative(
+		$this->_items[2], $this->_items[2]->getId(),
+		DERIVATIVE_TYPE_IMAGE_PREFERRED, 'scale|400', 'test/file');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -138,9 +107,23 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	$this->_sourceIds[2] = $derivative->getId();
 
-        /* Print permission on all but one */
+	/* Print permission on all but one */
 	$ret = GalleryCoreApi::removeUserPermission(
 	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'photoaccess.print');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Public view permission on one */
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_items[2]->getId(), $anonymousUserId, 'core.viewAll');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -184,6 +167,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
     function testFulfillCart() {
 	global $gallery;
+	$session =& $gallery->getSession();
 	GalleryCoreApi::requireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
 	GalleryCoreApi::requireOnce(
 	    'modules/photoaccess/classes/PhotoAccessCartPlugin.class');
@@ -196,9 +180,18 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply('fsockopen', array('www.photoworks.com', 80, '', '', 1), 'testFd');
-	$postPattern = str_repeat('.*image\+id', count($this->_items) - 1) . '(?!.*image\+id)';
 	$platform->setReply('fwrite', array('testFd',
-	    'fuzzy' => '{POST /sbo/anonCartXML.jsp HTTP/1\.0' . $postPattern . '}s', ''), 100);
+	    'fuzzy' => '{POST /sbo/anonCartXML.jsp HTTP/1\.0.*xml_request.*return-url.*ViewCart'
+	    /* First image/url/thumb use new sessionid */
+	    . '.*image\+id%3D%22' . $this->_sourceIds[0] . '%.*url.*' . $this->_sourceIds[0]
+	    . '.*' . $session->getKey() . '%3D(?!' . $session->getId() . ')[A-Za-z0-9]+%'
+	    . '.*thumb-url.*' . $this->_sourceIds[0] /* src not thumb, as thumb has watermark */
+	    . '.*' . $session->getKey() . '%3D(?!' . $session->getId() . ')[A-Za-z0-9]+%'
+	    /* Second image not included (not print perm), 3rd is public so no session ids */
+	    . '(?!.*' . $session->getKey() . ')'
+	    . '.*image\+id%3D%22' . $this->_sourceIds[2] . '%.*url.*' . $this->_sourceIds[2]
+	    . '.*thumb-url.*' . $this->_thumbIds[2]
+	    . '}s', ''), 100);
 	$platform->setReply('fflush', array('testFd'), true);
 	$platform->setReply('fgets', array('testFd', 4096), 'HTTP/1.1 200 OK');
 	$platform->setReply('feof', array('testFd'), false);

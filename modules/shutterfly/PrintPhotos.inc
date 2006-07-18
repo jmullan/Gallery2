@@ -155,6 +155,8 @@ class PrintPhotosView extends GalleryView {
 		array_merge(array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
 			    $sessionParam),
 		array('forceSessionId' => false, 'forceFullUrl' => true));
+	    $entry['imageWidth'] = $source->getWidth();
+	    $entry['imageHeight'] = $source->getHeight();
 
 	    if (!isset($thumbnails[$itemId]) || $thumbnails[$itemId]->getPostFilterOperations()) {
 		/* Use the source if the thumbnail has a postfilter (like a watermark) */
@@ -164,14 +166,10 @@ class PrintPhotosView extends GalleryView {
 	    }
 
 	    $entry['thumbUrl'] = $urlGenerator->generateUrl(
-		array_merge(array('view' => 'core.DownloadItem',
-				  'itemId' => $thumbSource->getId()),
-			    $sessionParam),
-		array('forceSessionId' => false, 'forceFullUrl' => true));
+		array('view' => 'core.DownloadItem', 'itemId' => $thumbSource->getId()),
+		array('forceSessionId' => $needSession, 'forceFullUrl' => true));
 	    $entry['thumbWidth'] = $thumbSource->getWidth();
 	    $entry['thumbHeight'] = $thumbSource->getHeight();
-	    $entry['imageWidth'] = $source->getWidth();
-	    $entry['imageHeight'] = $source->getHeight();
 
 	    /*
 	     * Ugh, the Shutterfly api doesn't have a parameter for quantity.

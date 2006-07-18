@@ -150,6 +150,8 @@ class PhotoAccessHelper {
 		array_merge(array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
 			    $sessionParam),
 		array('forceSessionId' => false, 'forceFullUrl' => true));
+	    $entry['imageWidth'] = $source->getWidth();
+	    $entry['imageHeight'] = $source->getHeight();
 
 	    if (!isset($thumbnails[$itemId]) || $thumbnails[$itemId]->getPostFilterOperations()) {
 		/* Use the source if the thumbnail has a postfilter (like a watermark) */
@@ -163,8 +165,6 @@ class PhotoAccessHelper {
 				  'itemId' => $thumbSource->getId()),
 			    $sessionParam),
 		array('forceSessionId' => false, 'forceFullUrl' => true));
-	    $entry['imageWidth'] = $source->getWidth();
-	    $entry['imageHeight'] = $source->getHeight();
 
 	    $entries[] = $entry;
 	    /* We should scan the results for a "200 OK" result */
