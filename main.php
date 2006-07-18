@@ -551,83 +551,8 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
     }
 }
 
-/* TODO: move this out of main.php so that we don't have load it on every page view */
 function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
-    global $gallery;
-    $failsafe = false;
-    if (!$initOk) {
-	$failsafe = true;
-    }
-
-    /* Post Gallery::Error event */
-    $event = GalleryCoreApi::newEvent('Gallery::Error');
-    $event->setData(array('error' => $error));
-    list ($ret, $data) = GalleryCoreApi::postEvent($event);
-    if ($ret) {
-	$failsafe = true;
-    }
-
-    if (!$failsafe) {
-	list ($ret, $themeId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
-	if ($ret) {
-	    $failsafe = true;
-	}
-    }
-
-    if (!$failsafe) {
-	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
-	if ($ret) {
-	    $failsafe = true;
-	}
-	$templateAdapter =& $gallery->getTemplateAdapter();
-	$templateAdapter->setTheme($theme);
-    }
-
-    if (!$failsafe) {
-	list ($ret, $view) = GalleryView::loadView('core.ErrorPage');
-	if ($ret) {
-	    $failsafe = true;
-	}
-    }
-
-    if (!$failsafe) {
-	$dummyForm = array();
-	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
-	$template = new GalleryTemplate(dirname(__FILE__));
-	$view->setError($error);
-	list ($ret, $results) = $view->loadTemplate($template, $dummyForm);
-	if ($ret) {
-	    $failsafe = true;
-	}
-
-	$t =& $template->getVariableByReference('theme');
-	$t['errorTemplate'] = $results['body'];
-    }
-
-    if (!$failsafe) {
-	$template->setVariable('l10Domain', 'modules_core');
-	list ($ret, $templatePath) = $theme->showErrorPage($template);
-	if ($ret) {
-	    $failsafe = true;
-	}
-    }
-
-    if (!$failsafe) {
-	$template->setVariable('l10Domain', 'themes_' . $themeId);
-	$ret = $template->display("themes/$themeId/templates/$templatePath");
-	if ($ret) {
-	    $failsafe = true;
-	}
-    }
-
-    if ($failsafe) {
-	/* Some kind of catastrophic failure.  Just dump the error out to the browser. */
-	print '<h2>Error</h2>' . $error->getAsHtml(false);
-	if ($gallery->getDebug() == 'buffered') {
-	    print '<h3>Debug Output</h3><pre>' . $gallery->getDebugBuffer() . '</pre>';
-	}
-	return;
-    }
+    GalleryCoreApi::requireOnce('modules/core/ErrorPage.inc');
+    ErrorPageView::errorHandler($error, $g2Data, $initOk);
 }
 ?>

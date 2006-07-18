@@ -50,6 +50,10 @@
       {if $ErrorPage.isAdmin && !isset($ErrorPage.debug)}
 	{g->text text="The exact nature of the platform error is unknown. A common cause are insufficient file system permissions. This can happen if you or your webhost changed something in the file system, e.g. by restoring data from a backup."}
       {/if}
+    {elseif isset($ErrorPage.code.missingObject)}
+      <p class="giDescription">
+	{g->text text="Item not found."}
+      </p>
     {else}
       <p class="giDescription">
 	{g->text text="An error has occurred."}

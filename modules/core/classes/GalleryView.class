@@ -269,6 +269,10 @@ class GalleryView {
 	if ($ret) {
 	    return array($ret, null, null);
 	}
+	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
+	    /* Invalid itemId given.. return MISSING_OBJECT to get standard error page */
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
+	}
 
 	list ($ret, $theme) = $this->loadThemeForItem($wasSpecified ? $item : null);
 	if ($ret) {

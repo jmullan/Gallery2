@@ -122,8 +122,19 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 		}
 	    }
 	}
+	return null;
+    }
 
+    /**
+     * @see GalleryUrlGenerator::initNavigation
+     */
+    function initNavigation() {
 	$ret = $this->_onLoad();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = parent::initNavigation();
 	if ($ret) {
 	    return $ret;
 	}

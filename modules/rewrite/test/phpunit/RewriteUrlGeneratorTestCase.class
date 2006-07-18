@@ -255,8 +255,12 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
 	GalleryUtilities::putRequestVariable('path', $this->_testAlbumPath);
 	$urlGenerator = new $this->_urlGeneratorName();
-	/* Execute init and with it _onLoad() should be called */
+	/* Execute init and initNavigation.. with it _onLoad() should be called */
 	$ret = $urlGenerator->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = $urlGenerator->initNavigation();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

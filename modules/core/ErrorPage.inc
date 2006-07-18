@@ -71,7 +71,7 @@ class ErrorPageView extends GalleryView {
 	}
 
 	/* Landing page for errors.. */
-	$errorCode = $error->getErrorCode();
+	$errorCode = $ErrorPage['errorCode'] = $error->getErrorCode();
 	if ($errorCode & ERROR_OBSOLETE_DATA) {
 	    $ErrorPage['code']['obsoleteData'] = true;
 	}
@@ -83,6 +83,9 @@ class ErrorPageView extends GalleryView {
 	}
 	if ($errorCode & ERROR_PLATFORM_FAILURE) {
 	    $ErrorPage['code']['platformFailure'] = true;
+	}
+	if ($errorCode & ERROR_MISSING_OBJECT) {
+	    $ErrorPage['code']['missingObject'] = true;
 	}
 
 	if ($ErrorPage['isAdmin']) {
@@ -115,6 +118,96 @@ class ErrorPageView extends GalleryView {
 	$template->setVariable('ErrorPage', $ErrorPage);
 	return array(null,
 		     array('body' => 'modules/core/templates/ErrorPage.tpl'));
+    }
+
+    /**
+     * Entry point from main.php
+     * @param object GalleryStatus
+     * @param mixed GalleryMain result, if available
+     * @param boolean (default true) false if G2 has not initialized (can't use theme system)
+     * @static
+     */
+    function errorHandler($error, $g2Data=null, $initOk=true) {
+	global $gallery;
+	$failsafe = false;
+	if (!$initOk) {
+	    $failsafe = true;
+	}
+
+	/* Return HTTP 404 status for ERROR_MISSING_OBJECT */
+	if ($error->getErrorCode() & ERROR_MISSING_OBJECT) {
+	    header('HTTP/1.0 404 Not Found');
+	}
+
+	/* Post Gallery::Error event */
+	$event = GalleryCoreApi::newEvent('Gallery::Error');
+	$event->setData(array('error' => $error));
+	list ($ret, $data) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    $failsafe = true;
+	}
+
+	if (!$failsafe) {
+	    list ($ret, $themeId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+	    if ($ret) {
+		$failsafe = true;
+	    }
+	}
+
+	if (!$failsafe) {
+	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
+	    if ($ret) {
+		$failsafe = true;
+	    }
+	    $templateAdapter =& $gallery->getTemplateAdapter();
+	    $templateAdapter->setTheme($theme);
+	}
+
+	if (!$failsafe) {
+	    list ($ret, $view) = GalleryView::loadView('core.ErrorPage');
+	    if ($ret) {
+		$failsafe = true;
+	    }
+	}
+
+	if (!$failsafe) {
+	    $dummyForm = array();
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
+	    $template = new GalleryTemplate(dirname(dirname(dirname(__FILE__))));
+	    $view->setError($error);
+	    list ($ret, $results) = $view->loadTemplate($template, $dummyForm);
+	    if ($ret) {
+		$failsafe = true;
+	    }
+
+	    $t =& $template->getVariableByReference('theme');
+	    $t['errorTemplate'] = $results['body'];
+	}
+
+	if (!$failsafe) {
+	    $template->setVariable('l10Domain', 'modules_core');
+	    list ($ret, $templatePath) = $theme->showErrorPage($template);
+	    if ($ret) {
+		$failsafe = true;
+	    }
+	}
+
+	if (!$failsafe) {
+	    $template->setVariable('l10Domain', 'themes_' . $themeId);
+	    $ret = $template->display("themes/$themeId/templates/$templatePath");
+	    if ($ret) {
+		$failsafe = true;
+	    }
+	}
+
+	if ($failsafe) {
+	    /* Some kind of catastrophic failure.  Just dump the error out to the browser. */
+	    print '<h2>Error</h2>' . $error->getAsHtml(false);
+	    if ($gallery->getDebug() == 'buffered') {
+		print '<h3>Debug Output</h3><pre>' . $gallery->getDebugBuffer() . '</pre>';
+	    }
+	}
     }
 }
 ?>

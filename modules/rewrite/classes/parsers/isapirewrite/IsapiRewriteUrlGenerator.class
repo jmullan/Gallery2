@@ -37,15 +37,15 @@ GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class')
 class IsapiRewriteUrlGenerator extends RewriteUrlGenerator {
 
     /**
-     * @see GalleryUrlGenerator::init
+     * @see GalleryUrlGenerator::initNavigation
      */
-    function init($baseUri=null, $g2Uri=null, $embedSessionString=null) {
-	$ret = parent::init($baseUri, $g2Uri, $embedSessionString);
+    function initNavigation() {
+	$ret = $this->_onLoad();
 	if ($ret) {
 	    return $ret;
 	}
 
-	$ret = $this->_onLoad();
+	$ret = parent::initNavigation();
 	if ($ret) {
 	    return $ret;
 	}
