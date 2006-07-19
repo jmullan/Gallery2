@@ -67,10 +67,19 @@ class RatingCallbackView extends GalleryView {
 	    if ($ret) {
 		return $ret;
 	    }
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rating');
+	    if ($ret) {
+		return $ret;
+	    }
+	    $results['votesString'] = 
+		$module->translate(array('one' => '%d vote', 
+					 'many' => '%d votes', 
+					 'count' => $results['votes'], 
+					 'arg1' => $results['votes']));
 
 	    print $results['itemId'] . "\n"
 		. $results['rating'] . "\n"
-		. $results['votes'] . "\n"
+		. $results['votesString'] . "\n"
 		. $results['userRating'];
 
 	    break;

@@ -98,7 +98,11 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	$this->assertEquals($rating, (int)$results[3]);
 
 	/* Vote count */
-	$this->assertEquals(1, (int)$results[2]);
+	$votesString = $this->_module->translate(array('one' => '%d vote',
+						       'many' => '%d votes',
+						       'count' => 1,
+						       'arg1' => 1));
+	$this->assertEquals($votesString, $results[2]);
     }
 
     function testNoRatingPermissions() {
@@ -127,7 +131,11 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	$this->assertEquals($rating, (int)$results[3], 'Seed user rating is incorrect.');
 
 	/* Vote count */
-	$this->assertEquals(1, (int)$results[2], 'Seed vote count is incorrect.');
+	$votesString = $this->_module->translate(array('one' => '%d vote',
+						       'many' => '%d votes',
+						       'count' => 1,
+						       'arg1' => 1));
+	$this->assertEquals($votesString, $results[2], 'Seed vote count is incorrect.'); 
 
 	/* Remove all permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
@@ -188,7 +196,11 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	$this->assertEquals($rating, (int)$results[3], 'Seed user rating is incorrect.');
 
 	/* Vote count */
-	$this->assertEquals(1, (int)$results[2], 'Seed vote count is incorrect.');
+	$votesString = $this->_module->translate(array('one' => '%d vote',
+						       'many' => '%d votes',
+						       'count' => 1,
+						       'arg1' => 1));
+	$this->assertEquals($votesString, $results[2], 'Seed vote count is incorrect.');
 
 	/* Remove all permissions */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
@@ -231,7 +243,11 @@ class RatingCallbackViewTest extends GalleryTestCase {
 	$this->assertEquals($newRating, (int)$results[3], 'User rating is incorrect.');
 
 	/* Vote count (should be same since duplicate user votes ignored) */
-	$this->assertEquals(1, (int)$results[2], 'Vote count is incorrect.');
+	$votesString = $this->_module->translate(array('one' => '%d vote',
+						       'many' => '%d votes',
+						       'count' => 1,
+						       'arg1' => 1));
+	$this->assertEquals($votesString, $results[2], 'Vote count is incorrect.');
     }
 
 }
