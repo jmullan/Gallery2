@@ -43,7 +43,8 @@ class RatingHelperTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
-	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
+		array('orderBy' => 'RatingSortOrder', 'orderDirection' => ORDER_DESCENDING));
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -57,7 +58,7 @@ class RatingHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$numUsers = rand(7, 17);
+	$numUsers = rand(3, 10);
 	$this->_users = array();
 	for ($i=0; $i < $numUsers; $i++) {
 	    list ($ret, $this->_users[$i]) = $this->_createRandomUser();
@@ -182,7 +183,7 @@ class RatingHelperTest extends GalleryTestCase {
 	list ($ret, $RatingData) =
 	    RatingHelper::rateItem(-1, $testRating, $this->_users[0]->getId());
 	/* This *should* fail. */
-	$this->assert($ret);
+	$this->assert($ret, 'expected error');
 	if ($ret) {
 	    $this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 'Wrong error status');
 	}
@@ -353,6 +354,48 @@ class RatingHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!isset($content[$itemId]), 'Got an item summary');
+    }
+
+    function testSortOrder() {
+	$items = array($this->_item);
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $items[]) = $this->_createRandomDataItem($this->_album->getId(),
+		    'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+	/* Four items: *, *****, * + random votes, ***** x3; order = 4 2 3 1 */
+	foreach ($items as $i => $item) {
+	    list ($ret) = RatingHelper::rateItem(
+		    $item->getId(), ($i % 2) ? 5 : 1, $this->_users[0]->getId());
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+	for ($i = 1; $i <= 2; $i++) {
+	    list ($ret) = RatingHelper::rateItem($items[3]->getId(), 5, $this->_users[$i]->getId());
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+	for ($i = 1; $i < count($this->_users); $i++) {
+	    $testRating = rand(1, 5);
+	    list ($ret) = RatingHelper::rateItem(
+		    $items[2]->getId(), $testRating, $this->_users[$i]->getId());
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array($items[3]->getId(), $items[1]->getId(), $items[2]->getId(), $items[0]->getId()),
+	    $childIds, 'order of child ids');
     }
 }
 ?>
