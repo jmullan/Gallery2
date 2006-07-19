@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -24,9 +25,9 @@
  */
 
 /**
- * Extra, rarely used core module code.  Most modules will not need to push
- * their extra code into a separate class, but the core module has a lot of
- * install code that is very rarely used so we tuck it out of the way.
+ * Extra, rarely used core module code.  Most modules will not need to push their extra code into a
+ * separate class, but the core module has a lot of install code that is very rarely used so we tuck
+ * it out of the way
  *
  * @package GalleryCore
  * @static
@@ -34,7 +35,7 @@
 class CoreModuleExtras {
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      * @param object GalleryModule the core module
      * @param string the current installed version
      * @static
@@ -46,19 +47,18 @@ class CoreModuleExtras {
 	$gallery->debug('Entering CoreModuleExtras::upgrade');
 
 	/*
-	 * We store our version outside of the database so that we can upgrade
-	 * even if the database is in an undependable state.
+	 * We store our version outside of the database so that we can upgrade even if the database
+	 * is in an undependable state
 	 */
 	$versions = $module->getInstalledVersions();
 	$currentVersion = $versions['core'];
 	if (!isset($currentVersion)) {
 	    $gallery->debug('Current version not set');
 	    /*
-	     * This is either an initial install or an upgrade from version
-	     * 0.8 (which didn't have the core versions.dat file).  Use a module
-	     * parameter as our acid test.
+	     * This is either an initial install or an upgrade from version 0.8 (which didn't have
+	     * the core versions.dat file).  Use a module parameter as our acid test
 	     *
-	     * TODO: Get rid of this when we stop supporting upgrades from alphas.
+	     * TODO: Get rid of this when we stop supporting upgrades from alphas
 	     */
 	    list ($ret, $paramValue) = $module->getParameter('permissions.directory');
 	    if (isset($paramValue)) {
@@ -71,10 +71,10 @@ class CoreModuleExtras {
 	$currentVersion = preg_replace('/^(1\.[01]\.0)\.\d+$/', '$1.x', $currentVersion);
 
 	/**
-	 * README: How to update the block below.
+	 * README: How to update the block below
 	 *
 	 * If you add a new feature to the core module and revise the version, you should do the
-	 * following.  Supposing the current version is 1.0.1 and you're adding 1.0.2. Go to the
+	 * following.  Supposing the current version is 1.0.1 and you're adding 1.0.2.  Go to the
 	 * end of the switch and find the 'end of upgrade path' case.  Create a new case *above*
 	 * that one with the old version number.  For our example you'd add: "case '1.0.1':" and
 	 * then your code.  Do *not* put in a break statement. (Update _prepareConfigUpgrade too)
@@ -84,11 +84,11 @@ class CoreModuleExtras {
 	case '0':
 	    $gallery->debug('Install core module');
 	    /*
-	     * Checkpoint (commit configurStore transaction)
-	     * Later in the installation code, we create the root album and therefore need
-	     * locking. Locks are acquired with a non-transactional db connection. So before we
-	     * can query the db with a second connection, the INSERT id into SequenceLock needs to
-	     * be committed. Related g2 bug id: 1235284.
+	     * Checkpoint (commit configureStore transaction)
+	     * Later in the installation code, we create the root album and therefore need locking.
+	     * Locks are acquired with a non-transactional db connection.  So before we can query
+	     * the db with a second connection, the INSERT id into SequenceLock needs to be
+	     * committed.  Related bug 1235284
 	     */
 	    $ret = $storage->checkPoint();
 	    if ($ret) {
@@ -115,7 +115,7 @@ class CoreModuleExtras {
 		$platform->fclose($fileToLock);
 	    }
 	    $gallery->debug(sprintf('Locktype %s selected', $flockType));
-	    /* Initial install.  Make sure all our module parameters are set. */
+	    /* Initial install.  Make sure all our module parameters are set */
 	    $gallery->debug('Set core module parameters');
 	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTranslator.class');
 	    foreach (array('permissions.directory' => '0755',
@@ -128,8 +128,8 @@ class CoreModuleExtras {
 			   'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
 			   'language.useBrowserPref' => '0',
 			   'default.newAlbumsUseDefaults' => 'false',
-			   'session.lifetime' => 21 * 86400, /* three weeks */
-			   'session.inactivityTimeout' => 7 * 86400, /* one week */
+			   'session.lifetime' => 21 * 86400, /* Three weeks */
+			   'session.inactivityTimeout' => 7 * 86400, /* One week */
 			   'misc.markup' => 'bbcode',
 			   'lock.system' => $flockType,
 			   'format.date' => '%x',
@@ -144,8 +144,8 @@ class CoreModuleExtras {
 		    $ret = $module->setParameter($key, (string)$value);
 		    if ($ret) {
 			$gallery->debug(sprintf('Error: Failed to set core module parameter %s, ' .
-					       'this is the error stack trace: %s', $key,
-					       $ret->getAsText()));
+						'this is the error stack trace: %s', $key,
+						$ret->getAsText()));
 			return $ret;
 		    }
 		}
@@ -205,11 +205,10 @@ class CoreModuleExtras {
 	    $gallery->guaranteeTimeLimit(180);
 
 	    /*
-	     * Register our permissions.  Since we're storing internationalized
-	     * strings in the database, we have to give our internationalized
-	     * string extractor a clue that these strings get translated.  So
-	     * put a line like this translate('key') in for each description so
-	     * that our extractor can find it.
+	     * Register our permissions.  Since we're storing internationalized strings in the
+	     * database, we have to give our internationalized string extractor a clue that these
+	     * strings get translated.  So put a line like this translate('key') in for each
+	     * description so that our extractor can find it
 	     */
 	    $gallery->debug('Register core module permissions');
 	    $permissions[] = array('all', $gallery->i18n('All access'),
@@ -297,8 +296,8 @@ class CoreModuleExtras {
 	case '0.8.1':
 	case '0.8.2':
 	    /*
-	     * Update our framework module parameters to have a leading
-	     * underscore so that we have our own separate namespace.
+	     * Update our framework module parameters to have a leading underscore so that we have
+	     * our own separate namespace
 	     */
 	    $query = '
 	    UPDATE
@@ -358,9 +357,9 @@ class CoreModuleExtras {
 
 	case '0.8.8':
 	    /*
-	     * This was not originally part of the 0.8.9 upgrade, but added much later.
-	     * Upgrade code after this will need valid factory registrations so we can't
-	     * wait until upgrade() completes to register during reactivate()..
+	     * This was not originally part of the 0.8.9 upgrade, but added much later.  Upgrade
+	     * code after this will need valid factory registrations so we can't wait until
+	     * upgrade() completes to register during reactivate()
 	     */
 	    $ret = CoreModuleExtras::performFactoryRegistrations($module);
 	    if ($ret) {
@@ -369,9 +368,8 @@ class CoreModuleExtras {
 
 	case '0.8.9':
 	    /*
-	     * Set all factory implementation weights to 5.  We'll re-register
-	     * all core implementations with a weight of 4 so that they get
-	     * precedence.
+	     * Set all factory implementation weights to 5.  We'll re-register all core
+	     * implementations with a weight of 4 so that they get precedence
 	     */
 	    $query = 'UPDATE [GalleryFactoryMap] SET [::orderWeight] = 5';
 	    $ret = $storage->execute($query, array());
@@ -443,9 +441,9 @@ class CoreModuleExtras {
 	    }
 
 	    /*
-	     * Choose an item that has permission rows.  Find all other items with the same
-	     * exact permissions.  Create a new ACL, assign all those items to the ACL, delete
-	     * those rows from the permissions table.  Repeat.
+	     * Choose an item that has permission rows.  Find all other items with the same exact
+	     * permissions.  Create a new ACL, assign all those items to the ACL, delete those rows
+	     * from the permissions table.  Repeat
 	     */
 	    $totalRowsQuery = '
 	    SELECT
@@ -587,11 +585,11 @@ class CoreModuleExtras {
 		}
 
 		/*
-		 * Find all items that share the same permissions as the target.  I haven't
-		 * figured out a good way to do aggregation without using temporary tables,
-		 * which I'd like to avoid for portability.  So, figure out how many rows
-		 * have at least as many matching permissions as our target item.  These
-		 * are potentially dupes.  We'll refine them later on.
+		 * Find all items that share the same permissions as the target.  I haven't figured
+		 * out a good way to do aggregation without using temporary tables, which I'd like
+		 * to avoid for portability.  So, figure out how many rows have at least as many
+		 * matching permissions as our target item.  These are potentially dupes.  We'll
+		 * refine them later on
 		 */
 		list ($ret, $results) = $gallery->search(
 		    $findPossibleDupesQuery, array($targetItemId, $permissionRowCount));
@@ -605,7 +603,7 @@ class CoreModuleExtras {
 
 		/*
 		 * Process these queries in chunks since we may have thousands of items with the
-		 * same permissions and we don't want to give the database a heart attack.
+		 * same permissions and we don't want to give the database a heart attack
 		 */
 		$chunkSize = 200;
 		while (!empty($possibleDupeIds)) {
@@ -613,9 +611,9 @@ class CoreModuleExtras {
 		    $count = count($chunk);
 
 		    /*
-		     * Refine our dupes by eliminating ones that don't have exactly the same
-		     * number of permission rows as our target.  Our target item is included
-		     * in the dupes, so this will always return at least 1 row.
+		     * Refine our dupes by eliminating ones that don't have exactly the same number
+		     * of permission rows as our target.  Our target item is included in the dupes,
+		     * so this will always return at least 1 row
 		     */
 		    $markers = GalleryUtilities::makeMarkers($count);
 		    $query = sprintf($refineDupesQuery, $markers);
@@ -682,8 +680,8 @@ class CoreModuleExtras {
 
 	case '0.9.7':
 	    /*
-	     * Change GalleryMaintenance::details column to be a serialized array.  The old data
-	     * is transient so just delete it. Added FlushTemplatesTask, FlushDatabaseCacheTask
+	     * Change GalleryMaintenance::details column to be a serialized array.  The old data is
+	     * transient so just delete it.  Added FlushTemplatesTask, FlushDatabaseCacheTask
 	     */
 	    $gallery->guaranteeTimeLimit(30);
 	    $ret = GalleryCoreApi::removeAllMapEntries('GalleryMaintenanceMap');
@@ -693,11 +691,11 @@ class CoreModuleExtras {
 
 	case '0.9.8':
 	    /*
-	     * Create 'plugins' and 'plugins_data' directories in g2data.  Remove trailing slash
-	     * for config paths using substr so file_exists can detect either file or dir.
-	     * Update: in core 1.0.6 the data.gallery.plugins dir moved under gallery2 basedir,
-	     * not in g2data anymore; we may not have permission to create a dir here.
-	     * So code below is now updated to not require those mkdirs to succeed.
+	     * Create 'plugins' and 'plugins_data' directories in g2data.  Remove trailing slash for
+	     * config paths using substr so file_exists can detect either file or dir.  Update: in
+	     * core 1.0.6 the data.gallery.plugins dir moved under gallery2 basedir, not in g2data
+	     * anymore; we may not have permission to create a dir here.  So code below is now
+	     * updated to not require those mkdirs to succeed
 	     */
 	    $gallery->guaranteeTimeLimit(30);
 	    foreach (array(substr($gallery->getConfig('data.gallery.plugins'), 0, -1) => false,
@@ -709,7 +707,7 @@ class CoreModuleExtras {
 		    as $dir => $isRequired) {
 		if ($platform->file_exists($dir)) {
 		    if ($platform->is_dir($dir)) {
-			/* No need to do anything.  Except maybe we could check permissions here. */
+			/* No need to do anything.  Except maybe we could check permissions here */
 		    } else {
 			/* There's a file there.  There shouldn't be.  Move it out of the way */
 			if (!@$platform->rename($newDir, "$newDir.old") ||
@@ -737,8 +735,10 @@ class CoreModuleExtras {
 
 	case '0.9.12':
 	    /* Added ResetViewCountsTask */
+
 	case '0.9.13':
 	    /* Added SystemInfoTask */
+
 	case '0.9.14':
 	    /* Added SetOriginationTimestampTask */
 
@@ -822,10 +822,12 @@ class CoreModuleExtras {
 
 	case '0.9.19':
 	    /* New multisite system and support for config.php upgrades */
+
 	case '0.9.20':
 	    /* Change view/controller separator: core:ShowItem -> core.ShowItem */
 	case '0.9.21':
 	    /* Session cookie change, requires new config.php variable */
+
 	case '0.9.22':
 	    /* GalleryModule::getItemLinks API change (GalleryModule API bumped to 0.13) */
 
@@ -867,9 +869,9 @@ class CoreModuleExtras {
 	    /* Mark old broken derivatives as such with our new isBroken flag */
 	    /*
 	     * This is the filesize and the crc32 checksum of the broken derivative placeholder
-	     * image that we used in beta 3 and earlier versions. We may have replaced this image
-	     * by the time this upgrade code is run. Thus we hardcode filesize(oldImage) and
-	     * crc32(oldImageData) here.
+	     * image that we used in beta 3 and earlier versions. We may have replaced this image by
+	     * the time this upgrade code is run. Thus we hardcode filesize(oldImage) and
+	     * crc32(oldImageData) here
 	     */
 	    $referenceSize = 1589;
 	    /* CRC is a good measure to compare files (not to detect malicous attacks though) */
@@ -901,11 +903,11 @@ class CoreModuleExtras {
 		$totalDerivatives = sizeof($derivativeIds);
 
 		/*
-		 * The following process is very expensive.
-		 * We have to deal with a potentially huge (10^6) amount of derivatives.
-		 * To not exceed the memory limit we do everything in batches.
-		 * To not exceed the PHP execution time limit and to not exceed the apache timeout
-		 * we add a progress bar and manipulate the PHP execution time limit periodically.
+		 * The following process is very expensive.  We have to deal with a potentially huge
+		 * (10^6) amount of derivatives.  To not exceed the memory limit we do everything in
+		 * batches.  To not exceed the PHP execution time limit and to not exceed the apache
+		 * timeout we add a progress bar and manipulate the PHP execution time limit
+		 * periodically
 		 */
 		$gallery->guaranteeTimeLimit(60);
 
@@ -918,11 +920,11 @@ class CoreModuleExtras {
 
 		/*
 		 * The outer loop is for each derivativeId and we upgrade a progress bar every
-		 * $progressStepSize ids. We don't load entity by entity, but in batches of
-		 * $loadBatchSize. And we don't save the items that were detected as broken
+		 * $progressStepSize ids.  We don't load entity by entity, but in batches of
+		 * $loadBatchSize.  And we don't save the items that were detected as broken
 		 * derivatives one by one, but also in batches of $saveBatchSize, i.e. we acquire
-		 * and release the locks in this batch size, but still have to save entity by
-		 * entity because G2 has no mass entity save like loadEntitiesById().
+		 * and release the locks in this batch size, but still have to save entity by entity
+		 * because Gallery has no mass entity save like loadEntitiesById()
 		 */
 		$derivatives = array();
 		$progressStepSize = min(500, intval($totalDerivatives / 10));
@@ -1078,8 +1080,8 @@ class CoreModuleExtras {
 			}
 		    }
 		    /*
-		     * Continue if there are either unloaded ids, unchecked derivatives or
-		     * unsaved derivatives
+		     * Continue if there are either unloaded ids, unchecked derivatives or unsaved
+		     * derivatives
 		     */
 		} while (!empty($derivativeIds) || !empty($brokenDerivatives) ||
 			 !empty($derivatives));
@@ -1135,8 +1137,8 @@ class CoreModuleExtras {
 	    }
 
 	    /*
-	     * Rename g2data 'layouts' directories to be 'themes', or create them
-	     * if they don't already exist (they should exist, though).
+	     * Rename g2data 'layouts' directories to be 'themes', or create them if they don't
+	     * already exist (they should exist, though)
 	     */
 	    foreach (array($gallery->getConfig('data.gallery.plugins'),
 			   $gallery->getConfig('data.gallery.plugins_data')) as $base) {
@@ -1163,9 +1165,9 @@ class CoreModuleExtras {
 
 	    /*
 	     * If we're coming from 0.8.13 or earlier, then our themes don't have version
-	     * information, so take care of that here by calling installOrUpgrade() on the
-	     * currently active themes to let them update their bookkeeping.  Reactivate them too
-	     * for good measure.
+	     * information, so take care of that here by calling installOrUpgrade() on the currently
+	     * active themes to let them update their bookkeeping.  Reactivate them too for good
+	     * measure
 	     */
 	    if (version_compare($currentVersion, '0.8.13', '<=')) {
 		list ($ret, $themes) = GalleryCoreApi::fetchPluginStatus('theme');
@@ -1192,7 +1194,7 @@ class CoreModuleExtras {
 			    !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 			    /*
 			     * Theme getSettings may try to load ImageFrame interface, but
-			     * ImageFrame may need to be upgraded.. ignore version mismatch here.
+			     * ImageFrame may need to be upgraded.. ignore version mismatch here
 			     */
 			    return $ret;
 			}
@@ -1229,7 +1231,7 @@ class CoreModuleExtras {
 	case '0.9.31':
 	    /* Beta 4! */
 	case '0.9.32':
-	    /* Minor core api change */
+	    /* Minor core API change */
 	case '0.9.33':
 	    /* Release Candidate 1! */
 
@@ -1248,8 +1250,8 @@ class CoreModuleExtras {
 
 	case '0.9.36':
 	    /*
-	     * Fixed GalleryUtilities::getPseudoFileName for derivatives.
-	     * Delete fast-download files that may have cached incorrect filenames.
+	     * Fixed GalleryUtilities::getPseudoFileName for derivatives.  Delete fast-download
+	     * files that may have cached incorrect filenames
 	     */
 	    $slash = $platform->getDirectorySeparator();
 	    $baseDir = $gallery->getConfig('data.gallery.cache') . 'derivative' . $slash;
@@ -1351,9 +1353,9 @@ class CoreModuleExtras {
 	    }
 
 	    /*
-	     * Combine AccessMap userId/groupId into single userOrGroupId,
-	     * and remove unused GALLERY_PERMISSION_ITEM_ADMIN permission flag.
-	     * Also increase size of GalleryUser::email column.
+	     * Combine AccessMap userId/groupId into single userOrGroupId, and remove unused
+	     * GALLERY_PERMISSION_ITEM_ADMIN permission flag.  Also increase size of
+	     * GalleryUser::email column
 	     */
 	    $ret = $storage->configureStore($module->getId(),
 					    array('GalleryAccessMap:1.0', 'GalleryUser:1.0'));
@@ -1451,8 +1453,8 @@ class CoreModuleExtras {
 	    /* GalleryCoreApi 7.0 and GalleryModule 3.0 */
 	case '1.0.15':
 	    /*
-	     * Add fast-download for GalleryDataItems too. Fast-download files are now in
-	     * cache/entity/. Delete the old files in cache/derivative/.
+	     * Add fast-download for GalleryDataItems too.  Fast-download files are now in
+	     * cache/entity/.  Delete the old files in cache/derivative/
 	     */
 	    $gallery->guaranteeTimeLimit(60);
 	    $query = 'SELECT [GalleryDerivativeImage::id]
@@ -1677,12 +1679,12 @@ class CoreModuleExtras {
 
 	    /*
 	     * Also add a single column index on AccessMap.accessListId since it was forgotten in
-	     * the initial upgrade code. Ignore errors since some installations already have it.
+	     * the initial upgrade code. Ignore errors since some installations already have it
 	     */
 	    $gallery->debug('Adding an index to the AccessMap table, ignore errors');
 	    $storage->configureStore($module->getId(), array('GalleryAccessMap:1.2'));
 
-	    /* Postgres will abort the transaction if the index exists, so checkpoint here. */
+	    /* Postgres will abort the transaction if the index exists, so checkpoint here */
 	    $ret = $storage->checkPoint();
 	    if ($ret) {
 		return $ret;
@@ -1690,8 +1692,8 @@ class CoreModuleExtras {
 
 	    $gallery->debug('Finished adding an index to the AccessMap table');
 	    /*
-	     * Make sure the schema update is stored, can't use updateMapEntry because Schema is
-	     * not in Maps.xml
+	     * Make sure the schema update is stored, can't use updateMapEntry because Schema is not
+	     * in Maps.xml
 	     */
 	    $query = sprintf('
 	    UPDATE %sSchema
@@ -1908,8 +1910,8 @@ class CoreModuleExtras {
 	    }
 
 	    /*
-	     * Switch PanoramaPhotoItem and PanoramaDerivativeImage entities back to their
-	     * base classes and set the items to use the PanoramaRenderer instead.
+	     * Switch PanoramaPhotoItem and PanoramaDerivativeImage entities back to their base
+	     * classes and set the items to use the PanoramaRenderer instead
 	     */
 	    $gallery->guaranteeTimeLimit(60);
 	    $query = '
@@ -2077,10 +2079,16 @@ class CoreModuleExtras {
 	case '1.1.10':
 	    /* Moved ItemCreateLink[Single] to Replica module */
 
+	case '1.1.11':
+	    /*
+	     * Added GalleryAuthPlugin.  Setting active user from session's user id now handled by
+	     * SessionAuthPlugin
+	     */
+
 	case 'end of upgrade path':
 	    /*
-	     * Leave this bogus case at the end of the legitimate case statements so that we
-	     * always properly terminate our upgrade path with a break.
+	     * Leave this bogus case at the end of the legitimate case statements so that we always
+	     * properly terminate our upgrade path with a break
 	     */
 	    break;
 
@@ -2115,7 +2123,8 @@ class CoreModuleExtras {
     }
 
     /**
-     * Determine what changes to config.php are required for this upgrade.
+     * Determine what changes to config.php are required for this upgrade
+     *
      * @param string current core version
      * @return array of array('remove' => array of string regexp removals,
      *                        'add' => array of string additions)
@@ -2129,10 +2138,10 @@ class CoreModuleExtras {
 	$currentVersion = preg_replace('/^(1\.[01]\.0)\.\d+$/', '$1.x', $currentVersion);
 
 	/**
-	 * README: How to update the block below.
+	 * README: How to update the block below
 	 *
 	 * If you add a new feature to the core module and revise the version, you should do the
-	 * following.  Supposing the current version is 1.0.1 and you're adding 1.0.2. Go to the
+	 * following.  Supposing the current version is 1.0.1 and you're adding 1.0.2.  Go to the
 	 * end of the switch and find the 'end of upgrade path' case.  Create a new case *above*
 	 * that one with the old version number.  For our example you'd add: "case '1.0.1':" and
 	 * then your code.  Do *not* put in a break statement. (Update upgrade function too)
@@ -2175,8 +2184,8 @@ class CoreModuleExtras {
 	    $add = array();
 	    if (!isset($gallery->_config['allowSessionAccess'])) {
 		/*
-		 * This item was added to config.php before config.php upgrades were supported.
-		 * Add it only if not already present.
+		 * This item was added to config.php before config.php upgrades were supported.  Add
+		 * it only if not already present
 		 */
 		$add[] =
 '/*
@@ -2278,7 +2287,7 @@ $gallery->setConfig(\'mode.maintenance\', false);
 	case '1.0.11':
 	case '1.0.12':
 	case '1.0.13':
-	    /* Add config parameter: 'baseUri'*/
+	    /* Add config parameter: 'baseUri' */
 	    $add[] =
 '
 /*
@@ -2338,11 +2347,12 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.8':
 	case '1.1.9':
 	case '1.1.10':
+	case '1.1.11':
 
 	case 'end of upgrade path':
 	    /*
-	     * Leave this bogus case at the end of the legitimate case statements so that we
-	     * always properly terminate our upgrade path with a break.
+	     * Leave this bogus case at the end of the legitimate case statements so that we always
+	     * properly terminate our upgrade path with a break
 	     */
 	    break;
 
@@ -2354,7 +2364,8 @@ $gallery->setConfig(\'baseUri\', \'\');';
     }
 
     /**
-     * Check if any changes to config.php are required for this upgrade.
+     * Check if any changes to config.php are required for this upgrade
+     *
      * @param string current core version
      * @return boolean true if change is required
      * @static
@@ -2365,7 +2376,8 @@ $gallery->setConfig(\'baseUri\', \'\');';
     }
 
     /**
-     * Perform upgrade of config.php file.
+     * Perform upgrade of config.php file
+     *
      * @param string current core version
      * @return object GalleryStatus a status code
      * @static
@@ -2614,8 +2626,8 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	$user = new GalleryUser();
 
 	/*
-	 * Get the admin name and data from the installer and default to 'admin' if it's
-	 * not available for some reason
+	 * Get the admin name and data from the installer and default to 'admin' if it's not
+	 * available for some reason
 	 */
 	$userName = $gallery->getConfig('setup.admin.userName');
 	$userName = !strlen($userName) ? 'admin' : $userName;
@@ -2641,8 +2653,8 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	}
 
 	/*
-	 * The rest of the bootstrap code won't work so well unless we're
-	 * logged in, so log in as the admin user now.
+	 * The rest of the bootstrap code won't work so well unless we're logged in, so log in as
+	 * the admin user now
 	 */
 	$gallery->setActiveUser($user);
 
@@ -2787,6 +2799,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	$regs[] = array('MaintenanceTask', 'SetOriginationTimestampTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'DeleteSessionsTask', 'class', null);
 	$regs[] = array('CaptchaAdminOption', 'CoreCaptchaAdminOption', 'class', null);
+	$regs[] = array('GalleryAuthPlugin', 'SessionAuthPlugin', 'class', null);
 
 	/*
 	 * Unlike other modules, the core module doesn't get deactivated so its

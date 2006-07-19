@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Gallery
@@ -32,7 +33,7 @@ function GalleryInitFirstPass($params=array()) {
     ini_set('magic_quotes_runtime', 0);
     ini_set('magic_quotes_sybase', 0);
 
-    /* Specify that when an assertion fails, we terminate right away. */
+    /* Specify that when an assertion fails, we terminate right away */
     assert_options(ASSERT_WARNING, 1);
     assert_options(ASSERT_BAIL, 1);
 
@@ -64,7 +65,7 @@ function GalleryInitFirstPass($params=array()) {
 
     /* Sanitize the data path */
     $dataBase = $gallery->getConfig('data.gallery.base');
-    if ($dataBase{strlen($dataBase)-1} != $slash) {
+    if ($dataBase{strlen($dataBase) - 1} != $slash) {
 	$dataBase .= $slash;
 	$gallery->setConfig('data.gallery.base', $dataBase);
     }
@@ -89,8 +90,8 @@ function GalleryInitFirstPass($params=array()) {
     /* Configure our url generator */
     if (!isset($params['noDatabase'])) {
 	/*
-	 * Swallow error to prevent GalleryFactoryHelper_loadRegistry
-	 * cache from breaking upgrade to core 1.0.6.
+	 * Swallow error to prevent GalleryFactoryHelper_loadRegistry cache from breaking upgrade to
+	 * core 1.0.6
 	 */
 	list ($ret, $urlGenerator) = @GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	/* Swallow ERROR_STORAGE_FAILURE, or automatic upgrading fails */
@@ -153,40 +154,48 @@ function GalleryInitSecondPass() {
     if ($ret) {
 	return $ret;
     }
-    
+
     /*
-     * Set our active user id.  Check to see if we have one in our session.  If
-     * not, make us the anonymous user.  If we don't have a session, this will
-     * initiate one for us.
+     * Set our active user.  Try getting our active user from registered authentication plugins.  If
+     * not, make us the anonymous user.  If we don't have a session, this will initiate one for us
      */
-    $activeUserId = $session->getUserId();
-    if (empty($activeUserId)) {
-	/* No active user -- be anonymous */
-	list ($ret, $activeUserId) = GalleryCoreApi::getAnonymousUserId();
+    list ($ret, $pluginIds) = GalleryCoreApi::getAllFactoryImplementationIds('GalleryAuthPlugin');
+    if ($ret) {
+	return $ret;
+    }
+
+    foreach ($pluginIds as $pluginId) {
+	list ($ret, $plugin) =
+	    GalleryCoreApi::newFactoryInstanceById('GalleryAuthPlugin', $pluginId);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $user) = $plugin->getUser();
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (isset($user)) {
+	    break;
+	}
+    }
+
+    if (!isset($user)) {
+
+	/* Missing user.  Be anonymous */
+	list ($ret, $userId) = GalleryCoreApi::getAnonymousUserId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret) {
 	    return $ret;
 	}
     }
 
-    list ($ret, $activeUser) = GalleryCoreApi::loadEntitiesById($activeUserId);
-    if ($ret) {
-	if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-	    /* Missing user -- be anonymous */
-	    list ($ret, $activeUserId) = GalleryCoreApi::getAnonymousUserId();
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    list ($ret, $activeUser) = GalleryCoreApi::loadEntitiesById($activeUserId);
-	    if ($ret) {
-		return $ret;
-	    }
-	} else {
-	    return $ret;
-	}
-    }
-
-    $gallery->setActiveUser($activeUser);
+    $gallery->setActiveUser($user);
 
     return null;
 }
