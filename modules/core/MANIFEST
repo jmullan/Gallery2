@@ -19,10 +19,10 @@ modules/core/AdminToolkitPriority.inc	3070993138	359494437	3428	3543
 modules/core/AdminUsers.inc	1528235542	4068599305	6623	6851
 modules/core/Callbacks.inc	3537596465	3473489994	6172	6367
 modules/core/ChangeLanguage.inc	1619583524	3144070289	1635	1690
-modules/core/CoreModuleExtras.inc	397634917	3171553882	87941	90758
+modules/core/CoreModuleExtras.inc	2876948803	2717323928	88152	90982
 modules/core/CreateThumbnailOption.inc	3738908498	1105429808	2423	2506
 modules/core/DownloadItem.inc	699303209	1285967916	5090	5273
-modules/core/ErrorPage.inc	1697364890	1749310955	3788	3908
+modules/core/ErrorPage.inc	211433115	3441818060	6377	6590
 modules/core/ItemAdd.inc	2362740862	1973358395	18354	18964
 modules/core/ItemAddAlbum.inc	2355318335	3640899939	5167	5358
 modules/core/ItemAddConfirmation.inc	99176226	1968577122	2896	2991
@@ -74,6 +74,7 @@ modules/core/classes/GNUmakefile	1995366819	843025639	51	52
 modules/core/classes/Gallery.class	1284819157	3655234811	26847	27830
 modules/core/classes/GalleryAlbumItem.class	267742151	2478626465	11729	12207
 modules/core/classes/GalleryAnimationItem.class	4089774581	2808557924	10165	10519
+modules/core/classes/GalleryAuthPlugin.class	3417232956	1798449988	1678	1729
 modules/core/classes/GalleryCapabilities.class	3085032789	124391432	2207	2286
 modules/core/classes/GalleryChildEntity.class	2633248359	346111558	4147	4327
 modules/core/classes/GalleryConstants.class	2506213887	509038178	7834	8213
@@ -152,15 +153,16 @@ modules/core/classes/GalleryTheme.class	1023096491	223322014	60430	62344
 modules/core/classes/GalleryToolkit.class	1586474384	1188858298	9452	9724
 modules/core/classes/GalleryTranslator.class	3673152446	3196480510	17643	18206
 modules/core/classes/GalleryUnknownItem.class	2040330740	596799030	3759	3875
-modules/core/classes/GalleryUrlGenerator.class	3642509727	2289890881	34916	35892
+modules/core/classes/GalleryUrlGenerator.class	4288238471	652864369	34922	35898
 modules/core/classes/GalleryUser.class	1178003503	3909000791	9987	10374
 modules/core/classes/GalleryUtilities.class	580847041	2753720358	51373	53051
 modules/core/classes/GalleryValidationPlugin.class	1183184987	2179866846	2605	2673
-modules/core/classes/GalleryView.class	3180889243	2975883446	12955	13390
+modules/core/classes/GalleryView.class	3702327509	56019594	13170	13609
 modules/core/classes/Maps.inc	2987869947	117194758	8767	8792
 modules/core/classes/Maps.xml	3925633210	512631202	18453	19143
 modules/core/classes/OptimizeDatabaseTask.class	1630551619	2857254448	2294	2371
 modules/core/classes/ResetViewCountsTask.class	3897739904	998312012	2699	2794
+modules/core/classes/SessionAuthPlugin.class	2138175012	6785080	1689	1747
 modules/core/classes/SetOriginationTimestampTask.class	3641965577	1657282343	4821	4986
 modules/core/classes/SystemInfoTask.class	1155283813	3212003905	4060	4177
 modules/core/classes/helpers/GalleryCharsetHelper_medium.class	999350446	873819896	47715	48433
@@ -245,7 +247,7 @@ modules/core/locale/tr/LC_MESSAGES/modules_core.mo	2913483013	2913483013	39692	3
 modules/core/locale/vi/LC_MESSAGES/modules_core.mo	616949295	616949295	94126	94126
 modules/core/locale/zh_CN/LC_MESSAGES/modules_core.mo	228543503	228543503	95811	95811
 modules/core/locale/zh_TW/LC_MESSAGES/modules_core.mo	1518742016	1518742016	93535	93535
-modules/core/module.inc	2939565030	3314586950	16754	17282
+modules/core/module.inc	1235556553	716043488	16754	17282
 modules/core/po/GNUmakefile	1866879166	2808215985	98	103
 modules/core/po/af.po	861882226	3223685674	95620	99136
 modules/core/po/ar.po	1587688565	4256783868	101820	105226
@@ -308,7 +310,7 @@ modules/core/templates/CreateThumbnailOption.tpl	909061593	2739105434	943	962
 modules/core/templates/DefaultButton.tpl	793193403	1726200774	1374	1398
 modules/core/templates/Dimensions.tpl	4233446345	1605409076	1353	1388
 modules/core/templates/EmailTest.tpl	1223251544	1316309802	331	338
-modules/core/templates/ErrorPage.tpl	4006568557	2604766701	4627	4773
+modules/core/templates/ErrorPage.tpl	2637865452	49911277	4754	4904
 modules/core/templates/FallbackTheme.tpl	3410495165	383222202	527	542
 modules/core/templates/ItemAdd.tpl	2619357768	1033541452	1455	1495
 modules/core/templates/ItemAddAlbum.tpl	1921139594	469858623	3168	3267
@@ -463,6 +465,7 @@ modules/core/test/phpunit/RepositoryIndexTest.class	2261835991	4090855962	14876	
 modules/core/test/phpunit/RepositoryTest.class	2872195796	1732853035	30827	31619
 modules/core/test/phpunit/RepositoryTestStorage.class	2995305253	1815684260	3246	3366
 modules/core/test/phpunit/RepositoryUtilitiesTest.class	2808075785	1068068767	14871	15271
+modules/core/test/phpunit/SessionAuthPluginTest.class	288805422	81531165	2780	2882
 modules/core/test/phpunit/SessionTest.class	1008796172	3886646488	103005	105934
 modules/core/test/phpunit/ShowItemControllerTest.class	1453378142	2833450669	2960	3062
 modules/core/test/phpunit/ShowItemTest.class	779025554	3670205915	8383	8643
@@ -479,7 +482,7 @@ modules/core/test/phpunit/TruncateTest.class	1105544881	39773310	6472	6644
 modules/core/test/phpunit/UrlGeneratorTest.class	89358659	3321565100	59645	61194
 modules/core/test/phpunit/UserAndGroupTest.class	463877105	3915900245	43323	44802
 modules/core/test/phpunit/UserChangePasswordControllerTest.class	434356230	1085812767	7179	7376
-modules/core/test/phpunit/UserLoginControllerTest.class	1007591740	3748771397	14080	14483
+modules/core/test/phpunit/UserLoginControllerTest.class	21319464	39218081	13777	14169
 modules/core/test/phpunit/UserPreferencesControllerTest.class	388344174	994821791	13597	13958
 modules/core/test/phpunit/UserRecoverPasswordAdminControllerTest.class	2285784153	3114110040	11583	11927
 modules/core/test/phpunit/UserRecoverPasswordConfirmControllerTest.class	2285729219	758621060	7140	7367
