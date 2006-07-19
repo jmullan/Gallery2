@@ -24,7 +24,7 @@
 			style="width:{$RatingData.averagePercent}%"></div></div>
 	<div class="giRatingVotes">{capture assign="voteSpan"}<span
 		id="rating.votes.{$RatingData.itemId}">{$RatingData.votes}</span>{/capture}{g->text
-		text="%s votes" arg1=$voteSpan}</div>
+		one="%s vote" many="%s votes" count=$RatingData.votes arg1=$voteSpan}</div>
 	<span class="giRatingHidden"
 		id="rating.rating.{$RatingData.itemId}">{$RatingData.rating}</span>
 	<span class="giRatingHidden"
