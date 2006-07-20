@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -79,9 +80,8 @@ class CoreModule extends GalleryModule {
 
 	/*
 	 * We're not doing this as the acting user id, but that's ok because we're not displaying
-	 * the result; we're only using it as a gating factor for whether or not we show a link,
-	 * and that'll also be gated by the permissions we receive which *will* be for the acting
-	 * user.
+	 * the result; we're only using it as a gating factor for whether or not we show a link, and
+	 * that'll also be gated by the permissions we receive which *will* be for the acting user
 	 */
 	list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($itemIds);
 	if ($ret) {
@@ -456,8 +456,8 @@ class CoreModule extends GalleryModule {
     /**
      * @see GalleryModule::install
      *
-     * We pushed all this code into its own file since we need it very rarely so it doesn't
-     * make sense to load it every single time.
+     * We pushed all this code into its own file since we need it very rarely so it doesn't make
+     * sense to load it every single time
      */
     function upgrade($currentVersion, $statusMonitor) {
 	GalleryCoreApi::requireOnce('modules/core/CoreModuleExtras.inc');
@@ -483,10 +483,9 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * Get the version of the core module and of Gallery itself.  We store this
-     * on disk to avoid having to load up the database (which can be problematic
-     * if we're doing an upgrade and don't want to count a specific database
-     * schema.
+     * Get the version of the core module and of Gallery itself.  We store this on disk to avoid
+     * having to load up the database (which can be problematic if we're doing an upgrade and don't
+     * want to count a specific database schema
      *
      * @return array 'core' => core module version, 'gallery' => gallery version
      * @static

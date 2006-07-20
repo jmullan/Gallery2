@@ -17,29 +17,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
+ * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
  * The prefix for all HTTP GET/POST arguments
- *
  */
 define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
 
 /**
  * A collection of useful utilities that have no obvious home
  *
- * All of these utilities should be accessed in a static sense,
- * ie:
+ * All of these utilities should be accessed in a static sense, ie:
  *
  *   GalleryUtilities::getFileExtension($filename);
  *
- * Try not to jam too many methods into this class.  Only put methods here if
- * they are of obvious value to the class layer and there's no other home for
- * them.
+ * Try not to jam too many methods into this class.  Only put methods here if they are of obvious
+ * value to the class layer and there's no other home for them
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -76,10 +75,10 @@ class GalleryUtilities {
 
 	/* If it's the last char in the name, just return the base */
 	if ($pos >= strlen($filename)) {
-	    return array(substr($filename, 0, $pos-1), '');
+	    return array(substr($filename, 0, $pos - 1), '');
 	}
 
-	return array(substr($filename, 0, $pos-1), substr($filename, $pos));
+	return array(substr($filename, 0, $pos - 1), substr($filename, $pos));
     }
 
     /**
@@ -114,7 +113,7 @@ class GalleryUtilities {
      * Return data about file attached to request
      *
      * @param string a key
-     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
      * @return array file data
      * @static
      */
@@ -125,11 +124,9 @@ class GalleryUtilities {
 	}
 	if (isset($_FILES[$key])) {
 	    /*
-	     * Later on during our sanitization process we're going to call
-	     * stripslashes on our file name.  But it may legitimately have
-	     * backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure those
-	     * are escaped at this time.  There's gotta be a better way to
-	     * handle this.
+	     * Later during our sanitization process we call stripslashes on our file name.  But it
+	     * may legitimately have backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure
+	     * those are escaped at this time.  There's gotta be a better way to handle this
 	     */
 	    $file = $_FILES[$key];
 	    if (get_magic_quotes_gpc()) {
@@ -147,7 +144,7 @@ class GalleryUtilities {
      * Return all request variables that match the prefix
      *
      * @param string a key
-     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
      * @return array key value pairs
      * @static
      */
@@ -162,11 +159,9 @@ class GalleryUtilities {
 
 	if (isset($_FILES[$key])) {
 	    /*
-	     * Later on during our sanitization process we're going to call
-	     * stripslashes on our file name.  But it may legitimately have
-	     * backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure those
-	     * are escaped at this time.  There's gotta be a better way to
-	     * handle this.
+	     * Later during our sanitization process we call stripslashes on our file name.  But it
+	     * may legitimately have backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure
+	     * those are escaped at this time.  There's gotta be a better way to handle this
 	     */
 	    $postForm = $_FILES[$key];
 	    if (get_magic_quotes_gpc()) {
@@ -212,11 +207,10 @@ class GalleryUtilities {
     }
 
     /**
-     * Merges two arrays and replace existing Entrys
+     * Merges two arrays and replace existing entries
      *
-     * Merges two array like the PHP function array_merge_recursive.
-     * The main difference is that existing keys will be replaced with new values,
-     * not combined in a new sub array.
+     * Merges two array like the PHP function array_merge_recursive.  The main difference is that
+     * existing keys will be replaced with new values, not combined in a new sub array
      *
      * Usage:
      *        $newArray = array_merge_replace( $array, $newValues );
@@ -255,7 +249,7 @@ class GalleryUtilities {
      * Remove all request variables that match the prefix
      *
      * @param string a prefix
-     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
      * @static
      */
     function removeFormVariables($key, $prefix=true) {
@@ -272,7 +266,7 @@ class GalleryUtilities {
     /**
      * Return the specified request variables
      *
-     * Accept any number of keys and return that number of values, in order.
+     * Accept any number of keys and return that number of values, in order
      *
      * @param mixed a single key or many keys
      * @return mixed a single value or many values
@@ -326,7 +320,7 @@ class GalleryUtilities {
      *
      * @param string the key
      * @param string the value
-     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
      * @static
      */
     function putRequestVariable($key, $value, $prefix=true) {
@@ -368,7 +362,7 @@ class GalleryUtilities {
      *
      * @param string the key
      * @param string the value
-     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
      * @static
      */
     function hasRequestVariable($key, $prefix=true) {
@@ -383,7 +377,7 @@ class GalleryUtilities {
      * Remove a request variable
      *
      * @param string the key
-     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
      * @static
      */
     function removeRequestVariable($key, $prefix=true) {
@@ -396,8 +390,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Take a path in the form of ('foo', 'bar', 'baz') and a source array
-     * and remove the value from it like this:
+     * Take a path in the form of ('foo', 'bar', 'baz') and a source array and remove the value from
+     * it like this:
      *
      *   unset($source['foo']['bar']['baz']);
      *
@@ -452,14 +446,14 @@ class GalleryUtilities {
     }
 
     /**
-     * Convert a filesystem path inside the gallery directory to an absolute URL
+     * Convert a filesystem path inside the Gallery directory to an absolute URL
      *
-     *  ie /path/to/gallery/themes/classic/styles/style.css =>
+     * ie. /path/to/gallery/themes/classic/styles/style.css =>
      *     http://example.com/gallery/themes/classic/styles/style.css
      *
-     * @param string path to a file in the gallery directory tree
+     * @param string path to a file in the Gallery directory tree
      * @param array (optional) options to pass to UrlGenerator
-     * @return string a url
+     * @return string a URL
      * @static
      */
     function convertPathToUrl($path, $options=array()) {
@@ -468,8 +462,8 @@ class GalleryUtilities {
 	$dirbase = $platform->realpath(dirname(__FILE__) . '/../../..') . '/';
 
 	/*
-	 * Factor the gallery code base out of the path, accounting for
-	 * differences in directory separators between platforms.
+	 * Factor the Gallery code base out of the path, accounting for differences in directory
+	 * separators between platforms
 	 */
 	$slash = $platform->getDirectorySeparator();
 	if ($slash != '/') {
@@ -478,15 +472,14 @@ class GalleryUtilities {
 	}
 	$relativePath = str_replace($dirbase, '', $path);
 
-	/* Prepend the G2 base URL */
+	/* Prepend the Gallery base URL */
 	$urlGenerator =& $gallery->getUrlGenerator();
 	return $urlGenerator->generateUrl(array('href' => $relativePath), $options);
     }
 
     /**
-     * Scale the given width/height to a new target size, maintaining
-     * aspect ratio, but only if the dimensions are already larger than the
-     * target (in other words, don't increase the dimensions)
+     * Scale the given width/height to a new target size, maintaining aspect ratio, but only if the
+     * dimensions are already larger than the target (in other words, don't increase the dimensions)
      *
      * @param int width
      * @param int height
@@ -507,8 +500,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Scale the given width/height to a new target size, maintaining
-     * aspect ratio
+     * Scale the given width/height to a new target size, maintaining aspect ratio
      *
      * @param int width
      * @param int height
@@ -533,8 +525,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Round a float and convert to a string.
-     * Replace , with . in case current locale uses comma as fraction separator.
+     * Round a float and convert to a string.  Replace , with . in case current locale uses comma as
+     * fraction separator
      *
      * @param float value to round
      * @param int precision, defaults to zero
@@ -546,10 +538,10 @@ class GalleryUtilities {
     }
 
     /**
-     * Cast to float taking into account that older php versions will not treat "."
-     * as a decimal separator if the current locale uses "," - when we stop supporting
-     * these older versions we can ditch this method and just cast to (float).
-     * (Note that newer php versions may accept only "." even if locale uses ",")
+     * Cast to float taking into account that older php versions will not treat "." as a decimal
+     * separator if the current locale uses "," - when we stop supporting these older versions we
+     * can ditch this method and just cast to (float).  (Note that newer php versions may accept
+     * only "." even if locale uses ",")
      */
     function castToFloat($value) {
 	if (is_string($value) && (float)'1.1' != 1.1
@@ -560,8 +552,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Figure out if the object specified is an instance of or an instance of a
-     * sub class of the class specified.
+     * Figure out if the object specified is an instance of or an instance of a sub class of the
+     * class specified
      *
      * @param object any kind of object
      * @param string a class name
@@ -573,8 +565,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Figure out if the object specified is an instance of the class specified,
-     * excluding subclasses
+     * Figure out if the object specified is an instance of the class specified, excluding
+     * subclasses
      *
      * @param object any kind of object
      * @param string a class name
@@ -655,31 +647,30 @@ class GalleryUtilities {
 
 
     /**
-     * Takes a string of utf-8 encoded characters and converts it to a string
-     * of unicode entities.  Each unicode entity has the form &#nnnnn; n={0..9}
-     * and can be displayed by utf-8 supporting browsers.
+     * Takes a string of UTF-8 encoded characters and converts it to a string of unicode entities.
+     * Each unicode entity has the form &#nnnnn; n={0..9} and can be displayed by UTF-8 supporting
+     * browsers
      *
      * This function was posted in a comment here:
      *   http://www.php.net/manual/en/function.utf8-decode.php
      * by "ronen at greyzone dot com".
      *
-     * @param $source string encoded using utf-8 [STRING]
+     * @param $source string encoded using UTF-8 [STRING]
      * @return string of unicode entities [STRING]
      * @access public
      * @static
      */
     function utf8ToUnicodeEntities($source) {
 	/*
-	 * array used to figure what number to decrement from character order
-	 * value according to number of characters used to map unicode to ascii by
-	 * utf-8
+	 * Array used to figure what number to decrement from character order value according to
+	 * number of characters used to map unicode to ASCII by UTF-8
 	 */
 	$decrement[4] = 240;
 	$decrement[3] = 224;
 	$decrement[2] = 192;
 	$decrement[1] = 0;
 
-	/* the number of bits to shift each charNum by */
+	/* Number of bits to shift each charNum by */
 	$shift[1][0] = 0;
 	$shift[2][0] = 6;
 	$shift[2][1] = 0;
@@ -712,12 +703,12 @@ class GalleryUtilities {
 		$pos += 2;
 	    }
 	    else {
-		/* 1 char (lower ascii) */
+		/* 1 char (lower ASCII) */
 		$thisLetter = substr($source, $pos, 1);
 		$pos += 1;
 	    }
 
-	    /* process the string representing the letter to a unicode entity */
+	    /* Process the string representing the letter to a unicode entity */
 	    $thisLen = strlen ($thisLetter);
 	    $thisPos = 0;
 	    $decimalCode = 0;
@@ -743,9 +734,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Perform necessary pre-processing on the "value" part of the incoming
-     * array (which may be an associative array or a simple list of values).
-     * We do the following:
+     * Perform necessary pre-processing on the value part of the incoming array (which may be an
+     * associative array or a simple list of values).  We do the following:
      * 1.  Convert UTF-8 values to Unicode entities
      * 2.  Sanitize any input values to remove dangerous values
      */
@@ -763,10 +753,10 @@ class GalleryUtilities {
 	    }
 	} else {
 	    /*
-	     * Simulate calling htmlspecialchars($value, ENT_COMPAT, 'UTF-8')
-	     * We avoid using htmlspecialchars directly because on some versions
-	     * of PHP (notable PHP 4.1.2) it changes the character set of the input
-	     * data (in one environment it converted the UTF-8 data to ISO-8859-1).
+	     * Simulate calling htmlspecialchars($value, ENT_COMPAT, 'UTF-8') We avoid using
+	     * htmlspecialchars directly because on some versions of PHP (notable PHP 4.1.2) it
+	     * changes the character set of the input data (in one environment it converted the
+	     * UTF-8 data to ISO-8859-1)
 	     */
 	    $value = str_replace(array('&', '"', '<', '>'),
 				 array('&amp;', '&quot;', '&lt;', '&gt;'),
@@ -782,8 +772,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Undo the preprocessing done in sanitizeInputValues (useful when we
-     * put values back into the request)
+     * Undo the preprocessing done in sanitizeInputValues (useful when we put values back into the
+     * request)
      */
     function unsanitizeInputValues(&$value, $adaptForMagicQuotes=true) {
 	if (is_array($value)) {
@@ -817,7 +807,7 @@ class GalleryUtilities {
     }
 
     /**
-     * A multibyte safe version of substr() for UTF8.
+     * A multibyte safe version of substr() for UTF-8
      *
      * @param string the input string containing raw UTF-8
      * @return string a multibyte safe substring of input value
@@ -836,15 +826,16 @@ class GalleryUtilities {
     }
 
     /**
-     * A multibyte safe version of substr() for UTF8.
+     * A multibyte safe version of substr() for UTF-8
      *
-     * Convert UTF8 to Unicode entities, run our entity safe substr() routine
-     * on that, then convert it back to unicode when we're done.
+     * Convert UTF-8 to Unicode entities, run our entity safe substr() routine on that, then convert
+     * it back to unicode when we're done
      *
-     * This is going to be a whole lot slower than mb_substr, so we should use
-     * that instead, whenever we can.
-     * Note: this function treats all html entities like &amp; as single characters,
-     *       but mb_substr would treat this as 5 characters.
+     * This is going to be a whole lot slower than mb_substr, so we should use that instead,
+     * whenever we can
+     *
+     * Note: this function treats all html entities like &amp; as single characters, but mb_substr
+     * would treat this as 5 characters.
      *
      * @param string the input string containing raw UTF-8
      * @return string a multibyte safe substring of input value
@@ -858,8 +849,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Convert a numerical unicode value to a multibyte UTF-8 string
-     * Adapted from code found here: http://us2.php.net/utf8_encode
+     * Convert a numerical unicode value to a multibyte UTF-8 string.  Adapted from code found here:
+     * http://us2.php.net/utf8_encode
      *
      * @param num the unicode value
      * @return string the UTF-8 string
@@ -892,7 +883,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Equivalent to html_entity_decode() for PHP <4.3.0 which doesn't have it.
+     * Equivalent to html_entity_decode() for PHP <4.3.0 which doesn't have it
      *
      * @param string with html entities
      * @return same string without them
@@ -903,7 +894,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Apply markup to given text.
+     * Apply markup to given text
      *
      * @param string (optional) markup type, defaults from core markup parameter
      * @return string resulting text
@@ -914,7 +905,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Strip out all potentially dangerous content within HTML.
+     * Strip out all potentially dangerous content within HTML
      *
      * @param string html
      * @param boolean (optional) true to decode entities, process, then recode
@@ -937,7 +928,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Return a specified request variable from the GET or POST vars.
+     * Return a specified request variable from the GET or POST vars
      *
      * @param string a single key
      * @return string a single value
@@ -953,8 +944,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Take a path in the form of ('foo', 'bar', 'baz') and a source array
-     * and get the value from it like this:
+     * Take a path in the form of ('foo', 'bar', 'baz') and a source array and get the value from it
+     * like this:
      *
      *   return $source['foo']['bar']['baz'];
      *
@@ -998,8 +989,8 @@ class GalleryUtilities {
 		continue;
 	    }
 	    /*
-	     * Make sure the compare directory has a trailing slash so that
-	     * /tmp doesn't accidentally match /tmpfoo
+	     * Make sure the compare directory has a trailing slash so that /tmp doesn't
+	     * accidentally match /tmpfoo
 	     */
 	    if ($element{strlen($element)-1} != $slash) {
 		$element .= $slash;
@@ -1016,6 +1007,7 @@ class GalleryUtilities {
      * Is this address a trusted proxy?
      *
      * Right now we consider any RFC1918 host trustworthy
+     *
      * @param string an address in dotted quad form
      * @return boolean true or false
      */
@@ -1027,7 +1019,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Return the address of the remote host.
+     * Return the address of the remote host
      *
      * @return string the remote host address (or null)
      */
@@ -1089,12 +1081,11 @@ class GalleryUtilities {
     }
 
     /**
-     * Turn a set of albums into a depth tree suitable for display in a
-     * hierarchical format.
+     * Turn a set of albums into a depth tree suitable for display in a hierarchical format
      *
      * @param array the GalleryAlbumItem instances
      * @return array An associative array of tree data.  Each node has a 'depth' element, and
-     *               a 'data' element that contains all the members of the current album item.
+     *               a 'data' element that contains all the members of the current album item
      *
      * @access private
      */
@@ -1116,9 +1107,8 @@ class GalleryUtilities {
 	}
 
 	/*
-	 * Prune parents that don't exist.  This can occur if we have multiple
-	 * roots (unusual) or an album in the middle of the hierarchy that is
-	 * not viewable.
+	 * Prune parents that don't exist.  This can occur if we have multiple roots (unusual) or an
+	 * album in the middle of the hierarchy that is not viewable
 	 */
 	foreach ($map as $id => $info) {
 	    if (isset($info['parent']) && !isset($map[$info['parent']]['instance'])) {
@@ -1143,7 +1133,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Recursively walk a parent/child map and build the depth tree.
+     * Recursively walk a parent/child map and build the depth tree
      *
      * @access private
      */
@@ -1161,8 +1151,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Return an approximate filename of the given GalleryEntity, or "unknown"
-     * if we can't figure it out
+     * Return approximate filename of given GalleryEntity, or 'unknown' if we can't figure it out
      *
      * @param object entity a GalleryEntity
      * @return array object GalleryStatus a status code
@@ -1170,11 +1159,10 @@ class GalleryUtilities {
      */
     function getPseudoFileName($entity) {
 	/*
-	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a
-	 * path component so we're cool.  If it's a derivative, then get the
-	 * pseudo filename of its parent and use that instead (but make sure
-	 * the extension matches derivative, as parent mime type may differ).
-	 * If it's neither, then return 'unknown' for now.
+	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a path component so
+	 * we're cool.  If it's a derivative, then get the pseudo filename of its parent and use
+	 * that instead (but make sure the extension matches derivative, as parent mime type may
+	 * differ).  If it's neither, then return 'unknown' for now
 	 */
 	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
 	    $pseudoFileName = $entity->getPathComponent();
@@ -1216,16 +1204,13 @@ class GalleryUtilities {
      * @param integer the unix timestamp of the date we want to return,
      *                empty if we want the current time
      * @return string a date-string conformant to the RFC 2616
-     *
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3
      */
     function getHttpDate($time = '') {
 	if ($time == '') {
 	    $time = time();
 	}
-	/* Use fixed list of weekdays and months, so we don't have to
-	 * fiddle with locale stuff
-	 */
+	/* Use fixed list of weekdays and months, so we don't have to fiddle with locale stuff */
 	$months = array('01' => 'Jan', '02' => 'Feb', '03' => 'Mar',
 			'04' => 'Apr', '05' => 'May', '06' => 'Jun',
 			'07' => 'Jul', '08' => 'Aug', '09' => 'Sep',
@@ -1246,7 +1231,7 @@ class GalleryUtilities {
      */
     function readManifest() {
 	/*
-	 * Be careful not to reference $gallery here; this method is called from the installer
+	 * Be careful not to reference $gallery here; this method is called from the installer.
 	 * Look in (modules|themes)/.../MANIFEST and top level MANIFEST
 	 */
 	$base = realpath(dirname(__FILE__) . '/../../..') . '/';
@@ -1293,7 +1278,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Validate string is valid format for an email address.
+     * Validate string is valid format for an email address
      *
      * @param string email address
      * @return boolean true if valid format
@@ -1334,10 +1319,10 @@ class GalleryUtilities {
     }
 
     /**
-     * Verify that the API provided is compatible with the API that we require.
+     * Verify that the API provided is compatible with the API that we require
      *
-     * We're only compatible if the major numbers are the same, and the required
-     * minor number is less than or equal to the provided minor number.
+     * We're only compatible if the major numbers are the same, and the required minor number is
+     * less than or equal to the provided minor number
      *
      * @param array required (major, minor)
      * @param array provided (major, minor)
@@ -1364,7 +1349,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Get all array keys, looking even in arrays contained within the array.
+     * Get all array keys, looking even in arrays contained within the array
      *
      * @param array
      * @return array of keys
@@ -1403,8 +1388,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Return the id of the search engine currently crawling the site by
-     * analyzing the current request.
+     * Return id of the search engine currently crawling the site by analyzing the current request
      *
      * @return string the crawler id, or null if it's a regular user
      */
@@ -1433,7 +1417,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Return a sanitized version of the given variable from the _SERVER superglobal.
+     * Return a sanitized version of the given variable from the _SERVER superglobal
+     *
      * @param string the key in the _SERVER superglobal
      * @return string the value
      */
@@ -1448,7 +1433,8 @@ class GalleryUtilities {
     }
 
     /**
-     * Return a sanitized version of the given variable from the _COOKIE superglobal.
+     * Return a sanitized version of the given variable from the _COOKIE superglobal
+     *
      * @param string the key in the _COOKIE superglobal
      * @return string the value
      */
@@ -1517,16 +1503,16 @@ class GalleryUtilities {
 	    $fixed = true;
 	    if (isset($_SERVER['HTTP_COOKIE']) && !empty($_SERVER['HTTP_COOKIE'])) {
 		/*
-		 * Array to keep track of fixed cookies to not make the same mistake as php, i.e.
-		 * don't assign values to cookies that were already fixed / set before.
+		 * Array to keep track of fixed cookies to not make the same mistake as PHP, ie.
+		 * don't assign values to cookies that were already fixed / set before
 		 */
 		$fixedCookies = array();
 		/* Check if the Cookie header contains quoted-strings */
 		if (strstr($_SERVER['HTTP_COOKIE'], '"') === false) {
 		    /*
-		     * Use fast method, no quoted-strings in the header.
-		     * Get rid of less specific cookies if multiple cookies with the same NAME
-		     * are present. Do this by going from left/first cookie to right/last cookie.
+		     * Use fast method, no quoted-strings in the header.  Get rid of less specific
+		     * cookies if multiple cookies with the same NAME are present. Do this by going
+		     * from left/first cookie to right/last cookie
 		     */
 		    $tok = strtok($_SERVER['HTTP_COOKIE'], ',;');
 		    while ($tok) {
@@ -1537,8 +1523,7 @@ class GalleryUtilities {
 		    /*
 		     * We can't just tokenize the Cookie header string because there are
 		     * quoted-strings and delimiters in quoted-string should be handled as values
-		     * and not as delimiters.
-		     * Thus, we have to parse it character by character.
+		     * and not as delimiters.  Thus, we have to parse it character by character
 		     */
 		    $quotedStringOpen = false;
 		    $string = $_SERVER['HTTP_COOKIE'];
@@ -1547,30 +1532,30 @@ class GalleryUtilities {
 		    $lastPos = 0;
 		    while ($i < $len) {
 			switch ($string{$i}) {
-			    /* the two attr-pair separators */
+			    /* Two attr-pair separators */
 			case ',':
 			case ';':
 			    if ($quotedStringOpen) {
 				/* Ignore separators within quoted-strings */
 			    } else {
-				/* else, this is an attr[=value] pair */
+				/* An attr[=value] pair */
 				GalleryUtilities::_registerCookieAttr(substr($string, $lastPos,
 									     $i - $lastPos),
 								      $fixedCookies);
-				$lastPos = $i+1; /* next attr starts at next char */
+				$lastPos = $i + 1; /* Next attr starts at next char */
 			    }
 			    break;
 			case '"':
 			    $quotedStringOpen = !$quotedStringOpen;
 			    break;
 			case '\\':
-			    /* escape the next character = jump over it */
+			    /* Escape the next character = jump over it */
 			    $i++;
 			    break;
 			}
 			$i++;
 		    }
-		    /* register last attr in header, but only if the syntax is correct */
+		    /* Register last attr in header, but only if the syntax is correct */
 		    if (!$quotedStringOpen) {
 			GalleryUtilities::_registerCookieAttr(substr($string, $lastPos),
 							      $fixedCookies);
@@ -1581,9 +1566,9 @@ class GalleryUtilities {
 
 	/*
 	 * To test methods that call fixCookieVars, we have to first unset the static $fixed
-	 * variable to enable testability of these functions.
-	 * This way, fixCookieVars will repopulate $_COOKIE on the next call, i.e. it simulates a
-	 * case, where fixCookieVars has not been called before on the request.
+	 * variable to enable testability of these functions.  This way, fixCookieVars will
+	 * repopulate $_COOKIE on the next call, ie. it simulates a case, where fixCookieVars has
+	 * not been called before on the request
 	 */
 	if ($unset) {
 	    $fixed = null;
@@ -1594,22 +1579,20 @@ class GalleryUtilities {
     /**
      * Register a Cookie Var safely
      *
-     * Creates an entry in $_COOKIE for $attr, which is a name=value pair.
-     * We try to mimic the PHP source code here: make the entry binary safe, don't register
-     * non-NAME attributes (e.g. cookie version,...). The one thing we don't do here is treat
-     * array cookies correctly because it would but too involving. But we gracefully just don't
-     * replace these array cookies in $_COOKIE, so if they are used somewhere, they will be
-     * left intact by fixCookieVars().
+     * Creates an entry in $_COOKIE for $attr, which is a name=value pair.  We try to mimic the PHP
+     * source code here: make the entry binary safe, don't register non-NAME attributes (eg. cookie
+     * version, ...)
+     *
+     * The one thing we don't do here is treat array cookies correctly because it would but too
+     * involving.  But we gracefully just don't replace these array cookies in $_COOKIE, so if they
+     * are used somewhere, they will be left intact by fixCookieVars()
      *
      * @param string the cookie var attr, NAME [=VALUE]
      * @param array (string already registered cookie name, ...)
      */
     function _registerCookieAttr($attr, &$fixedCookies) {
 	global $gallery;
-	/*
-	 * Split NAME [=VALUE], value is optional for all attributes
-	 * but the cookie name
-	 */
+	/* Split NAME [=VALUE], value is optional for all attributes but the cookie name */
 	if (($pos = strpos($attr, '=')) !== false) {
 	    $val = substr($attr, $pos + 1);
 	    $key = substr($attr, 0, $pos);
@@ -1635,15 +1618,15 @@ class GalleryUtilities {
 	    }
 	}
 	/*
-	 * Don't register non-NAME attributes like domain, path, ... which are all
-	 * starting with a dollar sign according to RFC 2965.
+	 * Don't register non-NAME attributes like domain, path, ... which are all starting with a
+	 * dollar sign according to RFC 2965
 	 */
 	if (strpos($key, '$') === 0) {
 	    return;
 	}
 	/* Urldecode value */
 	$val = trim(urldecode($val));
-	/* Addslashes if magic_quotes_gpc is on */
+	/* Add slashes if magic_quotes_gpc is on */
 	$phpVm = $gallery->getPhpVm();
 	if ($phpVm->get_magic_quotes_gpc()) {
 	    $key = addslashes($key);
@@ -1657,8 +1640,8 @@ class GalleryUtilities {
 
     /**
      * ASCII version of PHP's strtolower()
-     * PHP's strtolower doesn't work in all locales as expected, e.g. in Turkish, we get
-     * non-ASCII characters for an ASCII input string
+     * PHP's strtolower doesn't work in all locales as expected, eg. in Turkish, we get non-ASCII
+     * characters for an ASCII input string
      *
      * @return string lower-case version of the string
      */
