@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Rewrite
@@ -24,15 +25,16 @@
  * @author Douglas Cau <douglas@cau.se>
  */
 
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+GalleryCoreApi::requireOnce('modules/rewrite/classes/parsers/isapirewrite/parser.inc');
+GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteParserTestCase.class');
+
 /**
  * Isapi Rewrite Parser tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
  */
-GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
-GalleryCoreApi::requireOnce('modules/rewrite/classes/parsers/isapirewrite/parser.inc');
-GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteParserTestCase.class');
 class IsapiRewriteParserTest extends RewriteParserTestCase {
 
     function IsapiRewriteParserTest($methodName) {

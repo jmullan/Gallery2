@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Rewrite
@@ -24,13 +25,14 @@
  * @author Douglas Cau <douglas@cau.se>
  */
 
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+
 /**
- * Rewrite Helper tests
+ * Rewrite helper tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
  */
-GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 class RewriteHelperTest extends GalleryTestCase {
 
     function RewriteHelperTest($methodName) {
@@ -81,12 +83,14 @@ class RewriteHelperTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
 	/* Install it */
 	$ret = $this->_module->installOrUpgrade();
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
 	/* Activate the module */
 	list ($ret, $redirect) = $this->_module->activate(false);
 	if ($ret) {

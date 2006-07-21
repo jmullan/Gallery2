@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Rewrite
@@ -24,15 +25,16 @@
  * @author Douglas Cau <douglas@cau.se>
  */
 
+GalleryCoreApi::requireOnce(
+    'modules/rewrite/classes/parsers/isapirewrite/IsapiRewriteUrlGenerator.class');
+GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteUrlGeneratorTestCase.class');
+
 /**
- * Isapi Rewrite URL Generator tests
+ * Isapi rewrite URL generator tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
  */
-GalleryCoreApi::requireOnce(
-    'modules/rewrite/classes/parsers/isapirewrite/IsapiRewriteUrlGenerator.class');
-GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteUrlGeneratorTestCase.class');
 class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
     function IsapiRewriteUrlGeneratorTest($methodName) {
@@ -65,13 +67,12 @@ class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	    return $this->failWithStatus($ret);
 	}
     }
-
     
     /*
-     * It should generate a server-relative URL (and not a relative URL) if
-     * REQUEST_URI is gallery2/main.php?g2_view=core.ShowItem&g2_itemId=15 which was rewritten from
+     * It should generate a server-relative URL (and not a relative URL) if REQUEST_URI is
+     * gallery2/main.php?g2_view=core.ShowItem&g2_itemId=15 which was rewritten from
      * gallery2/v/foobar/randomAlbum/ -> isapi_rewrite changes REQUEST_URI so we'd still assume that
-     * a relativ URL is alright. But it isn't, we should use server-relative URLs in this case.
+     * a relative URL is alright.  But it isn't, we should use server-relative URLs in this case
      */
      function testGenerateUrlMustBeServerRelative() {
 	$env = array('REQUEST_URI' => '/gallery2/' . GALLERY_MAIN_PHP .

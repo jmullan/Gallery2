@@ -37,7 +37,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
 class RewriteUrlGenerator extends GalleryUrlGenerator {
 
     /**
-     * If there's an error, use parent GalleryUrlGenerator functions.
+     * If there's an error, use parent GalleryUrlGenerator functions
      *
      * @var bool has an error occured?
      * @access private
@@ -45,7 +45,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     var $_error = false;
 
     /**
-     * Short URL map.
+     * Short URL map
      *
      * @var array of view => short URL pattern
      * @access private
@@ -218,7 +218,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * Return the base URL for all generated short URLs
      *
-     * @param boolean (optional) if true, ensure G2 base url is returned (different when embedded)
+     * @param boolean (optional) if true, return Gallery base URL (different when embedded)
      * @return string the base URL
      * @access private
      */
@@ -227,9 +227,9 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     }
 
     /**
-     * Return the base URL parameters for all generated short URLs, e.g. '?module=gallery'
+     * Return the base URL parameters for all generated short URLs, eg. '?module=gallery'
      *
-     * @param boolean (optional) if true, ensure G2 base url is returned (different when embedded)
+     * @param boolean (optional) if true, return Gallery base URL (different when embedded)
      * @return string the base URL parameters
      * @access private
      */

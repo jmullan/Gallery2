@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -25,7 +26,7 @@
  */
 
 /**
- * Test Utilities functionality
+ * Test utilities functionality
  *
  * @package GalleryCore
  * @subpackage PHPUnit
@@ -86,7 +87,6 @@ class UtilitiesTest extends GalleryTestCase {
     function testGetFileBase() {
 	$this->assertEquals('base', GalleryUtilities::getFileBase('base.extension'));
     }
-
 
     function testMaliciousBrowserInput1() {
 	GalleryUtilities::putRequestVariable('test[a]',
@@ -277,7 +277,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    GalleryUtilities::convertPathToUrl($file, array('forceFullUrl' => true)),
 	    'test forceFullUrl');
 
-	/* Simulate embedded (request uri doesn't reference g2 install dir) */
+	/* Simulate embedded (request URI doesn't reference Gallery install dir) */
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php?test=on', '/gallery2/');
 	if ($ret) {
@@ -868,7 +868,6 @@ class UtilitiesTest extends GalleryTestCase {
 			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
 			    'php version');
 
-
 	/* Hebrew */
 	$utf8 = ("\xd7\x90\xd7\xa0\xd7\x99 \xd7\x99\xd7\x9b\xd7\x95\xd7" .
 		 "\x9c \xd7\x9c\xd7\x90\xd7\x9b\xd7\x95\xd7\x9c \xd7\x96" .
@@ -1039,7 +1038,7 @@ class UtilitiesTest extends GalleryTestCase {
 
 	/*
 	 * Check for quoted-string cookies (don't urlencode cookie values, e.g. by using header()
-	 * instead of setCookie()).
+	 * instead of setCookie())
 	 */
 	$key1 = 'foo1';
 	$val1 = '" sdsd , wsdsds ;  wewew"';
@@ -1055,10 +1054,9 @@ class UtilitiesTest extends GalleryTestCase {
 	/* Use one time commas as delimiters, the other time semicolons */
 	foreach(array(',', ';') as $sep) {
 	    /*
-	     * Check for quoted-string cookies (don't urlencode cookie values, e.g. by using
-	     * header() instead of setCookie()).
-	     * And check for ordinary cookies (netscape standard) where values are assumed to be
-	     * urlencoded
+	     * Check for quoted-string cookies (don't urlencode cookie values, eg. by using header()
+	     * instead of setCookie()).  And check for ordinary cookies (Netscape standard) where
+	     * values are assumed to be urlencoded
 	     */
 	    foreach (array(true, false) as $urlEncoded) {
 		if ($urlEncoded) {
@@ -1239,8 +1237,8 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testGuaranteeDirExistsLoop() {
 	/*
-	 * Ensure no infinite loop if getPluginParameter call from guaranteeDirExists
-	 * results in another guaranteeDirExists call (from GalleryDataCache)..
+	 * Ensure no infinite loop if getPluginParameter call from guaranteeDirExists results in
+	 * another guaranteeDirExists call (from GalleryDataCache)
 	 */
 	GalleryDataCache::setFileCachingEnabled(true);
 	GalleryDataCache::reset();
@@ -1260,9 +1258,8 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testGuaranteeDirExistsLoop2() {
 	/*
-	 * Ensure mkdir of same dir isn't performed twice if guaranteeDirExists is
-	 * called and the nested call from getPluginParameter actually creates the
-	 * original dir that was requested.
+	 * Ensure mkdir of same dir isn't performed twice if guaranteeDirExists is called and the
+	 * nested call from getPluginParameter actually creates the original dir that was requested
 	 */
 	GalleryDataCache::setFileCachingEnabled(true);
 	GalleryDataCache::reset();
@@ -1332,35 +1329,40 @@ class UtilitiesTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
 	list ($ret, $item) = $this->_createRandomDataItem($album->getId(), 'test/movie',
-					   array('pathComponent' => 'testitem.phpunit_movie'));
+	    array('pathComponent' => 'testitem.phpunit_movie'));
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
 	    return $this->failWithStatus($ret);
 	}
+
 	list ($ret, $clip) = $this->_createDerivative($item, $item->getId(),
 	    DERIVATIVE_TYPE_IMAGE_PREFERRED, 'movieclip|5,10', 'test/movie');
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
 	    return $this->failWithStatus($ret);
 	}
+
 	$ret = GalleryCoreApi::addMimeType('phpunit_image', 'test/image', true);
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
 	    return $this->failWithStatus($ret);
 	}
+
 	list ($ret, $thumb) = $this->_createDerivative($item, $item->getId(),
 	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'convert-to-test/image;thumbnail|150', 'test/image');
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(
-			    array('extension' => array('phpunit_movie', 'phpunit_image')));
+		array('extension' => array('phpunit_movie', 'phpunit_image')));
 	    return $this->failWithStatus($ret);
 	}
+
 	list ($ret, $highlight) = $this->_createDerivative($album, $thumb->getId(),
 	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200', 'test/image');
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(
-			    array('extension' => array('phpunit_movie', 'phpunit_image')));
+		array('extension' => array('phpunit_movie', 'phpunit_image')));
 	    return $this->failWithStatus($ret);
 	}
 
@@ -1401,7 +1403,7 @@ class UtilitiesTest extends GalleryTestCase {
 
 	/* Cleanup */
 	$ret = GalleryCoreApi::removeMimeType(
-			       array('extension' => array('phpunit_movie', 'phpunit_image')));
+	    array('extension' => array('phpunit_movie', 'phpunit_image')));
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -1582,12 +1584,13 @@ class UtilitiesTestWinPlatform extends WinNtPlatform {
     }
 }
 
-/* used for testRegisterCookieAttr */
+/* Used for testRegisterCookieAttr */
 class UtilitiesTestAddSlashesPhpVm extends GalleryPhpVm {
     function get_magic_quotes_gpc() {
 	return true;
     }
 }
+
 class UtilitiesTestDoNotAddSlashesPhpVm extends GalleryPhpVm {
     function get_magic_quotes_gpc() {
 	return false;

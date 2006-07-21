@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Rewrite
@@ -29,7 +30,6 @@
  *
  * @package Rewrite
  * @subpackage PHPUnit
- *
  */
 class AdminRewriteControllerTest extends GalleryControllerTestCase {
     function AdminRewriteControllerTest($methodName) {
@@ -79,12 +79,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
 	/* Install it */
 	$ret = $this->_module->installOrUpgrade();
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
 	/* Activate the module */
 	list ($ret, $redirect) = $this->_module->activate(false);
 	if ($ret) {
@@ -234,8 +236,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'rewrite.AdminRewrite',
 						      'mode' => 'rules'),
 				  'error' => array('form[error][dupe][dupe/]'),
-				  'status' => array()),
-			    $results, 'handleRequest');
+				  'status' => array()), $results, 'handleRequest');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
@@ -309,6 +310,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
 
+    /* It might be desirable to activate two rules for one Gallery view */
     function testSaveDupeMatch() {
 	GalleryUtilities::putRequestVariable('form[action][rules]', 1);
 	GalleryUtilities::putRequestVariable('form[rules][adminrewritemock][0][active]', 1);

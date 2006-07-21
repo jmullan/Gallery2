@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Rewrite
@@ -156,6 +157,7 @@ class RewriteParserTestCase extends GalleryTestCase {
 	$this->assertEquals($expected, unserialize($activeRules));
     }
 
+    /* It might be desirable to activate two rules for one Gallery view */
     function testSaveDupeShortUrl() {
 	$testRules['rewriteparsermock'][0] = 'bogus1';
 	$testRules['rewriteparsermock'][1] = 'bogus2';

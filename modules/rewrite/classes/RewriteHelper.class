@@ -77,7 +77,7 @@ class RewriteHelper {
 
     /**
      * Parse active rules into an array of regular expresions for parsing URLs during page
-     * requests and build an array for the url generator to use when generating short URLs.
+     * requests and build an array for the URL generator to use when generating short URLs
      *
      * @param array active rules by reference
      * @param object RewriteParser
@@ -86,7 +86,7 @@ class RewriteHelper {
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      *               array parsed patterns translated to regular expressions
-     *               array short urls which will used by to generate urls
+     *               array short URLs which will used by to generate URLs
      *               array string module (on error)
      *                     int rule id (on error)
      */
@@ -188,7 +188,7 @@ class RewriteHelper {
 		    }
 		}
 
-		/* Build the list of flags to apply to this rule. */
+		/* Build the list of flags to apply to this rule */
 		$settings['flags'] = isset($flags) ? $flags['default'] : array();
 		if (isset($rules[$ruleId]['flags']) && isset($flags)) {
 		    $settings['flags'] = array_merge($rules[$ruleId]['flags'], $flags['mandatory']);
@@ -227,9 +227,9 @@ class RewriteHelper {
     }
 
     /**
-     * Replaces all keywords with an appropriate pattern and append to $regexRules.
+     * Replaces all keywords with an appropriate pattern and append to $regexRules
      *
-     * @param string url pattern
+     * @param string URL pattern
      * @param array of keywords => regular expresion for the htaccess file
      * @param array of query string params (key => value)
      * @param array of parsed rules
@@ -270,14 +270,14 @@ class RewriteHelper {
     }
 
     /**
-     * Comparison function used to order rewrite rules.
+     * Comparison function used to order rewrite rules
      *
      * @access private
      */
     function _sortRules($a, $b) {
 	if (isset($a['settings']['restrict']) || isset($b['settings']['restrict'])) {
 	    if (isset($a['settings']['restrict']) && isset($b['settings']['restrict'])) {
-		$diff = sizeof($a['settings']['restrict']) - sizeof($b['settings']['restrict']);
+		$diff = count($a['settings']['restrict']) - count($b['settings']['restrict']);
 		return $diff;
 	    }
 

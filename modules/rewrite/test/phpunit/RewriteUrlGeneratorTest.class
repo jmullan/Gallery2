@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Rewrite
@@ -24,13 +25,14 @@
  * @author Douglas Cau <douglas@cau.se>
  */
 
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
+
 /**
  * Rewrite URL Generator Helper tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
  */
-GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
 class RewriteUrlGeneratorTest extends GalleryTestCase {
 
     function RewriteUrlGeneratorTest($methodName) {
