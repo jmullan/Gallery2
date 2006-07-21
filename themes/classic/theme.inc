@@ -121,40 +121,12 @@ class ClassicTheme extends GalleryTheme {
 	/* Add in our extra stuff */
 	$theme =& $template->getVariableByReference('theme');
 	if ($params['showSubalbums']) {
-	    if ($params['subalbumSort']) {
-		$theme['tree'] = $theme['treeItems'] = array();
-		$ret = $this->_buildTree($item, $theme['tree'], $theme['treeItems'],
+	    $theme['tree'] = $theme['treeItems'] = array();
+	    $ret = $this->_buildTree($childIds, $theme['tree'], $theme['treeItems'],
 		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] : null,
-		    $theme['actingUserId']);
-		if ($ret) {
-		    return array($ret, null);
-		}
-	    } else {
-		list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId(),
-		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] + 1 : null,
-		    $theme['actingUserId']);
-		if ($ret) {
-		    return array($ret, null);
-		}
-		$treeIds = $treeList = $treeItems = array();
-		foreach ($theme['children'] as $child) {
-		    $childId = $child['id'];
-		    if (isset($tree[$childId])) {
-			$treeList[$childId] = array();
-			$this->_parseTree($tree[$childId], $treeList[$childId], $treeIds);
-		    }
-		}
-		if (!empty($treeIds)) {
-		    list ($ret, $treeItems) = GalleryCoreApi::loadEntitiesById($treeIds);
-		    if ($ret) {
-			return array($ret, null);
-		    }
-		}
-		$theme['tree'] = $treeList;
-		$theme['treeItems'] = array();
-		foreach ($treeItems as $treeItem) {
-		    $theme['treeItems'][$treeItem->getId()] = (array)$treeItem;
-		}
+		    $params['subalbumSort'], $theme['actingUserId']);
+	    if ($ret) {
+		return array($ret, null);
 	    }
 	}
 
@@ -227,25 +199,54 @@ class ClassicTheme extends GalleryTheme {
 
     /**
      * Build template data for subalbum tree
-     * @access private
-     */
-    function _parseTree($tree, &$treeList, &$treeIds, $depth=0) {
-	foreach ($tree as $id => $list) {
-	    $treeIds[] = $id;
-	    $treeList[] = array('id' => $id, 'depth' => $depth);
-	    if (!empty($list)) {
-		$this->_parseTree($list, $treeList, $treeIds, $depth+1);
-	    }
-	}
-    }
-
-    /**
-     * Build template data for subalbum tree (apply sort preference of each album)
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _buildTree($album, &$treeList, &$treeItems, $maxDepth, $userId,
-			$depth=0, $branchId=0) {
+    function _buildTree($childIds, &$treeList, &$treeItems, $maxDepth, $subalbumSort, $userId) {
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($childIds);
+	if ($ret) {
+	    return $ret;
+	}
+	$treeIds = array();
+	foreach ($items as $item) {
+	    if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+		continue;
+	    }
+	    if ($subalbumSort) {
+		/* Apply sort preference of each album */
+		$ret = $this->_doBuildTree($item, $item->getId(), $treeList, $treeItems,
+					   $maxDepth, $userId, 1);
+		if ($ret) {
+		    return $ret;
+		}
+	    } else {
+		$id = $item->getId();
+		list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($id, $maxDepth, $userId);
+		if ($ret) {
+		    return $ret;
+		}
+		$treeList[$id] = array();
+		$this->_parseTree($tree, $treeList[$id], $treeIds);
+	    }
+	}
+	if (!empty($treeIds)) {
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($treeIds);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    foreach ($items as $item) {
+		$treeItems[$item->getId()] = (array)$item;
+	    }
+	}
+	return null;
+    }
+
+    /**
+     * Helper function for _buildTree
+     * @return object GalleryStatus a status code
+     * @access private
+     */
+    function _doBuildTree($album, $branchId, &$treeList, &$treeItems, $maxDepth, $userId, $depth) {
 	list ($ret, $subAlbumIds) =
 	    GalleryCoreApi::fetchChildAlbumItemIds($album, null, null, $userId);
 	if ($ret) {
@@ -258,15 +259,11 @@ class ClassicTheme extends GalleryTheme {
 	    }
 	    foreach ($subAlbums as $subAlbum) {
 		$id = $subAlbum->getId();
-		if (!$depth) {
-		    $branchId = $id;
-		} else {
-		    $treeList[$branchId][] = array('id' => $id, 'depth' => $depth - 1);
-		}
+		$treeList[$branchId][] = array('id' => $id, 'depth' => $depth - 1);
 		$treeItems[$id] = (array)$subAlbum;
 		if (!isset($maxDepth) || $depth < $maxDepth) {
-		    $ret = $this->_buildTree($subAlbum, $treeList, $treeItems, $maxDepth, $userId,
-					     $depth + 1, $branchId);
+		    $ret = $this->_doBuildTree($subAlbum, $branchId, $treeList, $treeItems,
+					       $maxDepth, $userId, $depth + 1);
 		    if ($ret) {
 			return $ret;
 		    }
@@ -274,6 +271,20 @@ class ClassicTheme extends GalleryTheme {
 	    }
 	}
 	return null;
+    }
+
+    /**
+     * Helper function for _buildTree
+     * @access private
+     */
+    function _parseTree($tree, &$treeList, &$treeIds, $depth=1) {
+	foreach ($tree as $id => $list) {
+	    $treeIds[] = $id;
+	    $treeList[] = array('id' => $id, 'depth' => $depth);
+	    if (!empty($list)) {
+		$this->_parseTree($list, $treeList, $treeIds, $depth+1);
+	    }
+	}
     }
 }
 ?>
