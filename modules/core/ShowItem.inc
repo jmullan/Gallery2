@@ -113,7 +113,10 @@ class ShowItemView extends GalleryView {
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	/* Always return wasSpecified==true no itemId param still uses root album theme/params */
+	if (!$wasSpecified) {
+	    GalleryUtilities::putRequestVariable('itemId', $item->getId());
+	}
+	/* Always return wasSpecified==true so w/o itemId we still use root album theme/params */
 	return array(null, $item, true);
     }
 
