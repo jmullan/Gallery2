@@ -105,17 +105,15 @@ class GalleryTemplateAdapter {
     function url($params, &$smarty) {
 	global $gallery;
 
-	if (isset($params['params'])) {
-	    /* Allow the user to pass in bulk params */
-	    $hrefParams = $params['params'];
-	} else {
-	    /* Search for args and add them to the params */
-	    $hrefParams = array();
-	    for ($i = 1; ($arg = "arg$i") && isset($params[$arg]); $i++) {
-		list ($key, $value) = explode('=', $params[$arg], 2);
-		$hrefParams[$key] = $value;
-		unset($params[$arg]);
-	    }
+	/* Allow the user to pass in bulk params */
+	$hrefParams = isset($params['params']) ? $params['params'] : array();
+	unset($params['params']);
+
+	/* Search for args and add them to the params */
+	for ($i = 1; ($arg = "arg$i") && isset($params[$arg]); $i++) {
+	    list ($key, $value) = explode('=', $params[$arg], 2);
+	    $hrefParams[$key] = $value;
+	    unset($params[$arg]);
 	}
 	if (isset($params['href'])) {
 	    $hrefParams['href'] = $params['href'];
