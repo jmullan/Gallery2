@@ -24,11 +24,11 @@
  */
 
  /**
- * This is a helper for the Apache mod_rewrite parser.
- *
- * @package Rewrite
- * @subpackage Parsers
- */
+  * This is a helper for the Apache mod_rewrite parser
+  *
+  * @package Rewrite
+  * @subpackage Parsers
+  */
 class ModRewriteHelper {
 
     /**
@@ -165,8 +165,8 @@ class ModRewriteHelper {
 	if (strpos($urlGenerator->getCurrentUrlDir(true), 'install/index.php') !== false &&
 		$gallery->getConfig('galleryBaseUrl')) {
 	    /*
-	     * We can't autoconfigure from installer in a multisite install because
-	     * the current url is for the primary site, not the site being installed.
+	     * We can't autoconfigure from installer in a multisite install because the current URL
+	     * is for the primary site, not the site being installed
 	     */
 	    return array(null, true);
 	}
@@ -209,12 +209,12 @@ class ModRewriteHelper {
     }
 
     /**
-     * Returns the .htaccess content given a set or rewrite rules.
+     * Returns the .htaccess content given a set or rewrite rules
      *
      * @param array regular expression rules with settings
      * @param boolean (optional) true if the embedded .htaccess is wanted
      * @return array object GalleryStatus a status code
-     *               string the gallery .htaccess section
+     *               string the Gallery .htaccess section
      */
     function getHtaccessContent($regexRules, $embedded=false) {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
@@ -304,7 +304,7 @@ class ModRewriteHelper {
     }
 
     /**
-     * Checks if the .htaccess file is writeable.
+     * Checks if the .htaccess file is writeable
      *
      * @param boolean (optional) if true then the embedded .htaccess is checked
      * @return array object GalleryStatus a status code
@@ -346,7 +346,7 @@ class ModRewriteHelper {
     }
 
     /**
-     * Writes Gallery2 data to the .htaccess file.
+     * Writes Gallery data to the .htaccess file
      *
      * @param array regular expression rules with settings
      * @param boolean (optional) if true then the embedded .htaccess is written
@@ -439,9 +439,9 @@ class ModRewriteHelper {
 	$baseUrl .= 'modules/rewrite/data/';
 
 	/*
-	 * Testing mod_rewrite functionality.  In order for mod_rewrite to work
-	 * properly, it needs a .htaccess file containing a RewriteBase
-	 * directive that matches the URL of its containing directory.
+	 * Testing mod_rewrite functionality.  In order for mod_rewrite to work properly, it needs a
+	 * .htaccess file containing a RewriteBase directive that matches the URL of its containing
+	 * directory
 	 */
 	if ($path == '/gallery2/') {
 	    $target = 'gallery2';
@@ -465,8 +465,8 @@ class ModRewriteHelper {
 	}
 
 	/*
-	 * Apache mod_rewrite needs Options +FollowSymlinks, and we might need to explicitly
-	 * require it in the .htaccess file.
+	 * Apache mod_rewrite needs Options +FollowSymlinks, and we might need to explicitly require
+	 * it in the .htaccess file
 	 */
 	$fetch = $baseUrl . "mod_rewrite/$target/Rewrite.txt";
 	list ($success, $body) = GalleryCoreAPI::fetchWebPage($fetch);
@@ -482,8 +482,8 @@ class ModRewriteHelper {
 	}
 
 	/*
-	 * If we fail trying to test with the custom setup don't whine too much. Instead give
-	 * the user directions to edit the custom .htaccess file and then test again.
+	 * If we fail trying to test with the custom setup don't whine too much. Instead give the
+	 * user directions to edit the custom .htaccess file and then test again
 	 */
 	if ($target == 'custom') {
 	    return array(null,
@@ -546,7 +546,7 @@ class ModRewriteHelper {
     	    }
 	}
 
-	/* Create test urls for manually testing mod_rewrite */
+	/* Create test URLs for manually testing mod_rewrite */
     	if ($TestResults['gallery']['modRewrite'] != REWRITE_STATUS_OK &&
     		$TestResults['gallery']['modRewrite'] != REWRITE_STATUS_MULTISITE) {
 	    if ($baseUrlComponents['path'] == '/gallery2') {

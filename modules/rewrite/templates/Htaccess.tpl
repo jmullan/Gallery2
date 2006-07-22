@@ -20,7 +20,6 @@
     RewriteCond %{ldelim}REQUEST_URI{rdelim} !{$Htaccess.matchBaseFile}$
     RewriteRule .   -   [L]
 
-
 {foreach from=$Htaccess.rules item=rule}
 {if isset($rule.settings.restrict)}
   {foreach from=$rule.settings.restrict item=condition}

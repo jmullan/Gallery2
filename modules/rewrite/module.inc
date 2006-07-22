@@ -84,7 +84,7 @@ class RewriteModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners();
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	$listener = new RewriteModule();
@@ -140,8 +140,8 @@ class RewriteModule extends GalleryModule {
 	if (empty($activeRules)) {
 	    $activeRules = array('rewrite' => array(0 => 'v/%path%'));
 	    /*
-	     * We'll break fast download cache if we activate the short url for download items
-	     * with an inGallery parser
+	     * We'll break fast download cache if we activate the short URL for download items with
+	     * an inGallery parser
 	     */
 	    if ($rewriteParser->getParserType() != 'inGallery') {
 		$activeRules['rewrite'][1] = 'd/%itemId%-%serialNumber%/%fileName%';
@@ -153,8 +153,7 @@ class RewriteModule extends GalleryModule {
 	    return array($ret, null);
 	}
 	if ($code != REWRITE_STATUS_OK) {
-	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED),
-			 null);
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
@@ -214,8 +213,8 @@ class RewriteModule extends GalleryModule {
 	$rewriteUrlGenerator = $rewriteParser->getUrlGeneratorId();
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryUrlGenerator', $rewriteUrlGenerator, $rewriteUrlGenerator,
-	    'modules/rewrite/classes/parsers/' . $rewriteParser->getParserId() . '/' .
-	    $rewriteUrlGenerator . '.class', 'rewrite', null, 2);
+	    'modules/rewrite/classes/parsers/' . $rewriteParser->getParserId() . '/'
+	    . $rewriteUrlGenerator . '.class', 'rewrite', null, 2);
 	if ($ret) {
 	    return $ret;
 	}
@@ -250,7 +249,7 @@ class RewriteModule extends GalleryModule {
     function getRewriteRules() {
 	$rules = array();
 
-	/* Rule 0: Show Item*/
+	/* Rule 0: Show Item */
 	$rules[0] = array(
 	    'comment' => $this->translate('Show Item'),
 	    'match' => array('view' => 'core.ShowItem'),
@@ -279,8 +278,8 @@ class RewriteModule extends GalleryModule {
 	    'keywords' => array(
 		'serialNumber' => array(
 		    'pattern' => '([0-9]+)',
-		    'help' => $this->translate('Ensures browsers do not use cached version ' .
-			'when image has changed'),
+		    'help' => $this->translate(
+			'Ensures browsers do not use cached version when image has changed'),
 		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parseSerialNumber')),
 		'fileName' => array(
 		    'pattern' => '([^\/\?]+)',

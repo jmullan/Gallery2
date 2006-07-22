@@ -55,7 +55,7 @@ class AdminRewriteController extends GalleryController {
 		foreach (array_keys($form['rules']) as $moduleId) {
 		    foreach (array_keys($form['rules'][$moduleId]) as $ruleId) {
 			if (isset($form['rules'][$moduleId][$ruleId]['active'])) {
-			    /* Empty or just '/' ? */
+			    /* Empty or just '/'? */
 			    if (empty($form['rules'][$moduleId][$ruleId]['pattern']) ||
 				    $form['rules'][$moduleId][$ruleId]['pattern'] == '/') {
 				$error[] = 'form[error][empty][' . $moduleId . '][' . $ruleId . ']';
@@ -218,14 +218,14 @@ class AdminRewriteView extends GalleryView {
 	    $activeRules = unserialize($activeRules);
 
 	    /* Get all modules to walk through and get any rules it provieds */
-	    list($ret, $modules) = GalleryCoreAPi::fetchPluginStatus('module');
+	    list ($ret, $modules) = GalleryCoreAPi::fetchPluginStatus('module');
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
 	    foreach ($modules as $moduleId => $status) {
 		if (isset($status['active']) && $status['active']) {
-		    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		    if ($ret) {
 			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			    continue;

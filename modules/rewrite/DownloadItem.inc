@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Rewrite
@@ -25,9 +26,10 @@
  */
 
 /**
- * Send a binary item as HTML instead.
- * This allows viewing via direct URL (browser will see it is HTML), but not using
- * images directly in a <img> tag on another site.
+ * Send a binary item as HTML instead
+ *
+ * This allows viewing via direct URL (browser will see it is HTML), but not using images directly
+ * in a <img> tag on another site
  *
  * @package Rewrite
  * @subpackage UserInterface
@@ -35,28 +37,28 @@
 class DownloadItemView extends GalleryView {
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::isAllowedInEmbedOnly()
+     * @see GalleryView::isAllowedInEmbedOnly
      */
     function isAllowedInEmbedOnly() {
 	return true;
     }
 
     /**
-     * @see GalleryView::shouldSaveSession()
+     * @see GalleryView::shouldSaveSession
      */
     function shouldSaveSession() {
 	return false;
     }
 
     /**
-     * @see GalleryView::renderImmediate()
+     * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');

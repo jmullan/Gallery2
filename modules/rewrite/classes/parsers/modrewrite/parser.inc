@@ -270,5 +270,4 @@ class ModRewriteParser extends RewriteParser {
 	    ($code != REWRITE_STATUS_OK) ? $this->getErrorMessage($code) : null);
     }
 }
-
 ?>
