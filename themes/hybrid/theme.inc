@@ -120,7 +120,7 @@ class HybridTheme extends GalleryTheme {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	$data = array('parents', 'systemLinks', 'itemLinks',
+	$data = array('parents', 'systemLinks', 'itemLinks', 'childCount',
 		      'itemSummaries', 'childItemLinksDetailed', 'permissions', 'jumpRange');
 	if ($params['showSize']) {
 	    $data[] = 'descendentCount';
