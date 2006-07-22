@@ -218,6 +218,12 @@ class RewriteModuleExtras {
 	case '1.1.2':
 	case '1.1.3':
 	case '1.1.4':
+	case '1.1.5':
+	    /*
+	     * Support rewrite rules with 'match' => array('controller' => 'webdav.WebDav').  Check
+	     * if 'match' is subset of URL params, instead of indexing by "$view|$subView".  Means
+	     * adding 'match' to $shortUrls
+	     */
 
 	case 'end of upgrade path':
 	    break;
