@@ -232,7 +232,7 @@ class ClassicTheme extends GalleryTheme {
 	if (!empty($treeIds)) {
 	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($treeIds);
 	    if ($ret) {
-		return array($ret, null);
+		return $ret;
 	    }
 	    foreach ($items as $item) {
 		$treeItems[$item->getId()] = (array)$item;
