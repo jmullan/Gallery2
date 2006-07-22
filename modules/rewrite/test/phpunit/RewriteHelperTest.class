@@ -169,7 +169,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][2] = 'php/%unit%';
 	$expectedActiveRules = $activeRules;
-	$expectedShortUrls = array('php.Unit' => array(
+	$expectedShortUrls = array(array('match' => array('view' => 'php.Unit'),
 		'pattern' => 'php/%unit%',
 		'functions' => array('unit' => array('bogus', 'BogusFile', 'BogusFunction1')),
 		'onLoad' => array('bogus', 'BogusFile', 'BogusFunction2')));
@@ -194,7 +194,9 @@ class RewriteHelperTest extends GalleryTestCase {
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][4] = 'php/%unit%';
 	$expectedActiveRules = $activeRules;
-	$expectedShortUrls = array('php.Unit|php.Sub' => array('pattern' => 'php/%unit%'));
+	$expectedShortUrls = array(array('match' => array('view' => 'php.Unit',
+		    'subView' => 'php.Sub'),
+		'pattern' => 'php/%unit%'));
 	$expectedRegexRules = array(array('pattern' => 'php/(.*)',
 		'queryString' => 'g2_view=php.Unit&g2_subView=php.Sub&g2_static=value&g2_unit=$1',
 		'settings' => array('flags' => '')));
@@ -276,11 +278,11 @@ class RewriteHelperTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(REWRITE_STATUS_BAD_KEYWORD, $code, 'code ');
-	$this->assertEquals(null, $regexRules, 'regex rules ');
-	$this->assertEquals(null, $shortUrls, 'short urls ');
-	$this->assertEquals(array('rewritehelpermock', 0), $errno, 'errno ');
-	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules ');
+	$this->assertEquals(REWRITE_STATUS_BAD_KEYWORD, $code, 'code');
+	$this->assertEquals(null, $regexRules, 'regex rules');
+	$this->assertEquals(null, $shortUrls, 'short urls');
+	$this->assertEquals(array('rewritehelpermock', 0), $errno, 'errno');
+	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules');
     }
 
     function testParseBadParser() {
@@ -294,13 +296,14 @@ class RewriteHelperTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(REWRITE_STATUS_INVALID_PATTERN, $code, 'code ');
-	$this->assertEquals(null, $regexRules, 'regex rules ');
-	$this->assertEquals(null, $shortUrls, 'short urls ');
-	$this->assertEquals(array('rewritehelpermock', 8), $errno, 'errno ');
-	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules ');
+	$this->assertEquals(REWRITE_STATUS_INVALID_PATTERN, $code, 'code');
+	$this->assertEquals(null, $regexRules, 'regex rules');
+	$this->assertEquals(null, $shortUrls, 'short urls');
+	$this->assertEquals(array('rewritehelpermock', 8), $errno, 'errno');
+	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules');
     }
 
+    /* It might be desirable to activate two rules for one Gallery view */
     function testParseDupeShortUrl() {
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][2] = 'phpunit1';
@@ -313,11 +316,21 @@ class RewriteHelperTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(REWRITE_STATUS_DUPE_SHORT_URL, $code, 'code ');
-	$this->assertEquals(null, $regexRules, 'regex rules ');
-	$this->assertEquals(null, $shortUrls, 'short urls ');
-	$this->assertEquals(array('php.Unit'), $errno, 'errno ');
-	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules ');
+	$this->assertEquals(REWRITE_STATUS_OK, $code, 'code');
+	$this->assertEquals(array(array('pattern' => 'phpunit2',
+		'queryString' => 'g2_view=php.Unit',
+		'settings' => array('flags' => '')),
+	    array('pattern' => 'phpunit1',
+		'queryString' => 'g2_view=php.Unit',
+		'settings' => array('flags' => ''))), $regexRules, 'regex rules');
+	$this->assertEquals(array(array('match' => array('view' => 'php.Unit'),
+		'pattern' => 'phpunit1',
+		'functions' => array('unit' => array('bogus', 'BogusFile', 'BogusFunction1')),
+		'onLoad' => array('bogus', 'BogusFile', 'BogusFunction2')),
+	    array('match' => array('view' => 'php.Unit'),
+		'pattern' => 'phpunit2')), $shortUrls, 'short urls');
+	$this->assertEquals(null, $errno, 'errno');
+	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules');
     }
 }
 
@@ -359,17 +372,17 @@ class RewriteHelperMockModule extends GalleryModule {
 	    array('pattern' => 'phpunit'),
 	    array('pattern' => 'php/%unit%',
 		  'keywords' => array('unit' => array('pattern' => '(.*)'))),
-	    array('pattern' => 'php/%unit%',
+	    array('match' => array('view' => 'php.Unit'),
+		  'pattern' => 'php/%unit%',
 		  'keywords' => array('unit' => array('pattern' => '(.*)',
 			'function' => array('bogus', 'BogusFile', 'BogusFunction1'))),
-		  'onLoad' => array('bogus', 'BogusFile', 'BogusFunction2'),
-		  'match' => array('view' => 'php.Unit')),
+		  'onLoad' => array('bogus', 'BogusFile', 'BogusFunction2')),
 	    array('pattern' => 'php/%unit%',
 		  'keywords' => array('unit' => array('pattern' => '([1])'),
 				      'php' => array('pattern' => '([2])'))),
-	    array('pattern' => 'php/%unit%',
+	    array('match' => array('view' => 'php.Unit', 'subView' => 'php.Sub'),
+		  'pattern' => 'php/%unit%',
 		  'keywords' => array('unit' => array('pattern' => '(.*)')),
-		  'match' => array('view' => 'php.Unit', 'subView' => 'php.Sub'),
 		  'queryString' => array('static' => 'value')),
 	    array('pattern' => 'phpunit',
 		  'flags' => array('C1', 'C2')),
@@ -381,8 +394,8 @@ class RewriteHelperMockModule extends GalleryModule {
 		  'parser' => 'mock'),
 	    array('pattern' => 'phpunit',
 		  'parser' => 'bogus'),
-	    array('pattern' => 'p',
-		  'match' => array('view' => 'php.Unit')));
+	    array('match' => array('view' => 'php.Unit'),
+		  'pattern' => 'p'));
     }
 }
 

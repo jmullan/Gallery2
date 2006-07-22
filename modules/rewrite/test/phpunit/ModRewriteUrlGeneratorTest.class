@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package Rewrite
@@ -24,15 +25,16 @@
  * @author Douglas Cau <douglas@cau.se>
  */
 
+GalleryCoreApi::requireOnce(
+    'modules/rewrite/classes/parsers/modrewrite/ModRewriteUrlGenerator.class');
+GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteUrlGeneratorTestCase.class');
+
 /**
- * Mod Rewrite URL Generator tests
+ * Mod rewrite URL generator tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
  */
-GalleryCoreApi::requireOnce(
-    'modules/rewrite/classes/parsers/modrewrite/ModRewriteUrlGenerator.class');
-GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteUrlGeneratorTestCase.class');
 class ModRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
     function ModRewriteUrlGeneratorTest($methodName) {
@@ -87,7 +89,8 @@ class ModRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	$this->_expectedUrl[11] = ltrim($this->_testItemPath, '/') . '/test.html';
 	$this->_expectedUrl[12] = 't' . rtrim($this->_testAlbumPath, '/') . '.test';
 	$this->_expectedUrl[13] = 't' . $this->_testItemPath . '.test';
-	$this->_expectedUrl[14] = 'phpunit/';
+	$this->_expectedUrl[14] = 'phpunit1/';
+	$this->_expectedUrl[15] = 'phpunit2/';
 
 	parent::testGenerateUrlOverrideBaseUri();
     }

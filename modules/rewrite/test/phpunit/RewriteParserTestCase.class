@@ -172,9 +172,10 @@ class RewriteParserTestCase extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$expected['rewriteparsermock'][0] = 'bogus';
-	$this->assertEquals(REWRITE_STATUS_DUPE_SHORT_URL, $code);
-	$this->assertEquals(array('php.Unit'), $errno);
+	$expected['rewriteparsermock'][0] = 'bogus1';
+	$expected['rewriteparsermock'][1] = 'bogus2';
+	$this->assertEquals(REWRITE_STATUS_OK, $code);
+	$this->assertEquals(null, $errno);
 	$this->assertEquals($expected, unserialize($activeRules));
     }
 

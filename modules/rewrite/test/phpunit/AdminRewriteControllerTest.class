@@ -152,21 +152,18 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$expected = array();
-	$expected['core.ShowItem']['pattern'] = 'uv/%path%';
-	$expected['core.ShowItem']['functions']['path'] = array('rewrite', 'RewriteSimpleHelper',
-	    'parsePath');
-	$expected['core.ShowItem']['onLoad'] = array('rewrite', 'RewriteSimpleHelper',
-	    'loadItemIdFromPath');
-	$expected['core.ShowItem']['functions']['page'] = array('rewrite',
-	    'RewriteSimpleHelper', 'parsePage');
-	$expected['core.ShowItem']['functions']['language'] = array('rewrite',
-	    'RewriteSimpleHelper', 'parseLanguage');
-	$expected['core.DownloadItem']['pattern'] = 'ud/%itemId%-%serialNumber%/%fileName%';
-	$expected['core.DownloadItem']['functions']['fileName'] = array('rewrite',
-	    'RewriteSimpleHelper', 'parseFileName');
-	$expected['core.DownloadItem']['functions']['serialNumber'] = array('rewrite',
-	    'RewriteSimpleHelper', 'parseSerialNumber');
+	$expected = array(array('match' => array('view' => 'core.ShowItem'),
+		'pattern' => 'uv/%path%',
+		'functions' => array('path' => array('rewrite', 'RewriteSimpleHelper', 'parsePath'),
+		    'page' => array('rewrite', 'RewriteSimpleHelper', 'parsePage'),
+		    'language' => array('rewrite', 'RewriteSimpleHelper', 'parseLanguage')),
+		'onLoad' => array('rewrite', 'RewriteSimpleHelper', 'loadItemIdFromPath')),
+	    array('match' => array('view' => 'core.DownloadItem'),
+		'pattern' => 'ud/%itemId%-%serialNumber%/%fileName%',
+		'functions' => array('fileName' => array('rewrite', 'RewriteSimpleHelper',
+			'parseFileName'),
+		    'serialNumber' => array('rewrite', 'RewriteSimpleHelper',
+			'parseSerialNumber'))));
 	$this->assertEquals($expected, unserialize($value), 'shortUrls');
     }
 
@@ -321,26 +318,29 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    'phpunit/1/');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'rewrite.AdminRewrite',
 						      'mode' => 'rules'),
-				  'error' => array('form[error][3][phpunit.Test]'),
-				  'status' => array()),
-			    $results, 'handleRequest');
+				  'error' => array(),
+				  'status' => array('saved' => 1)), $results, 'handleRequest');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array(), unserialize($value), 'activeRules');
+	$this->assertEquals(array('adminrewritemock' => array('phpunit/0/', 'phpunit/1/')),
+	    unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'shortUrls');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array(), unserialize($value), 'shortUrls');
+	$this->assertEquals(array(array('match' => array('view' => 'phpunit.Test'),
+		'pattern' => 'phpunit/0/'),
+	    array('match' => array('view' => 'phpunit.Test'),
+		'pattern' => 'phpunit/1/')), unserialize($value), 'shortUrls');
     }
 
     function testSaveAccessList1() {

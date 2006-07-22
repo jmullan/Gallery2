@@ -143,7 +143,7 @@ class UtilitiesTest extends GalleryTestCase {
 
     /**
      * Test the error condition where we have a value in _POST and we put the same value back via
-     * putRequestVariable -- make sure that the new value overwrites the old.
+     * putRequestVariable -- make sure that the new value overwrites the old
      */
     function testGetFormVariables3() {
 	$_POST[GalleryUtilities::prefixFormVariable('utilitiestest')]['list']['filter'] = 'x';
@@ -190,8 +190,26 @@ class UtilitiesTest extends GalleryTestCase {
     function testGetRequestVariables() {
 	GalleryUtilities::putRequestVariable('utilitiestest[x]', 'blah');
 	$this->assertEquals('blah', GalleryUtilities::getRequestVariables('utilitiestest[x]'));
+
 	GalleryUtilities::putRequestVariable('testutilities', 'blah', false);
 	$this->assertEquals('blah', GalleryUtilities::getRequestVariablesNoPrefix('testutilities'));
+    }
+
+    function testGetAllRequestVariables() {
+	$expectedValues = array();
+	$prefixLength = strlen(GALLERY_FORM_VARIABLE_PREFIX);
+	foreach ($_POST as $key => $value) {
+	    if (substr($key, 0, $prefixLength) == GALLERY_FORM_VARIABLE_PREFIX) {
+		$expectedValues[substr($key, $prefixLength)] = $value;
+	    }
+	}
+
+	foreach ($_GET as $key => $value) {
+	    if (substr($key, 0, $prefixLength) == GALLERY_FORM_VARIABLE_PREFIX) {
+		$expectedValues[substr($key, $prefixLength)] = $value;
+	    }
+	}
+	$this->assertEquals($expectedValues, GalleryUtilities::getAllRequestVariables());
     }
 
     function testSanitizeInputValue1() {
@@ -201,7 +219,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    . '&lt;b&gt; foo &lt;/b&gt; &lt;/IFRAME&gt;', $rawInput);
     }
 
-    /* We don't convert UTF8 to entities (we used to) */
+    /* We don't convert UTF-8 to entities (we used to) */
     function testSanitizeInputValue2() {
 	$rawInput = "Op\xf0\x88\xb4\xa5s de Administra\xf0\x88\xa2\xaf";
 	GalleryUtilities::sanitizeInputValues($rawInput);
@@ -315,7 +333,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$results = GalleryUtilities::shrinkDimensionsToFit(800, 600, 1600, 300);
 	$this->assertEquals(array(400, 300), $results);
 
-	/* make sure ints are returned even if size param is a string */
+	/* Make sure ints are returned even if size param is a string */
 	$results = GalleryUtilities::shrinkDimensionsToFit(150, 201, "150");
 	$this->assertEquals(array(112, 150), $results);
 	$this->assertEquals(150, $results[1]);
@@ -479,8 +497,8 @@ class UtilitiesTest extends GalleryTestCase {
     /* Right now we only trust RFC1918 addresses */
     function testIsTrustedProxy() {
 	/*
-	 * Hard to verify this completely because it takes too long to test 255^4 addresses.  Try
-	 * the approach of testing 15^4 (50625) addresses at random instead.
+	 * Hard to verify this completely because it takes too long to test 2^32 addresses.  Try the
+	 * approach of testing 15^4 (50625) addresses at random instead
 	 */
 	for ($i = 0; $i < 15; $i++) {
 	    $aa[] = rand(0, 255);
@@ -598,7 +616,7 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testCreateAlbumTree() {
-	/* Make up some bogus albums that we can use to simulate our tree. */
+	/* Make up some bogus albums that we can use to simulate our tree */
 	for ($i = 0; $i < 7; $i++) {
 	    list ($ret, $albums[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
@@ -1009,7 +1027,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals($val1, $_COOKIE[$key],
 			    'multiple cookies, superglobal _COOKIE');
 
-	/* Performance check. It shouldn't be executed when it was already executed */
+	/* Performance check.  It shouldn't be executed when it was already executed */
 	$_COOKIE = array();
 	$_SERVER['HTTP_COOKIE'] = '';
 	GalleryUtilities::fixCookieVars(true);

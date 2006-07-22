@@ -27,7 +27,7 @@
 define('REWRITE_STATUS_OK', 0);
 define('REWRITE_STATUS_BAD_KEYWORD', 1);
 define('REWRITE_STATUS_MULTISITE', 2);
-define('REWRITE_STATUS_DUPE_SHORT_URL', 3);
+define('REWRITE_STATUS_DUPE_SHORT_URL', 3); /* Deprecated */
 define('REWRITE_STATUS_INVALID_PATTERN', 4);
 define('REWRITE_STATUS_EMPTY_VALUE', 5);
 
@@ -142,28 +142,24 @@ class RewriteHelper {
 
 	    	/* Save the pattern for the URL generator to use */
 		if (isset($rules[$ruleId]['match'])) {
-		    $match = join('|', $rules[$ruleId]['match']);
-		    if (isset($shortUrls[$match])) {
-			return array(null, REWRITE_STATUS_DUPE_SHORT_URL,
-			    null, null, array($match));
-		    }
-
-		    $shortUrls[$match] = array(
+		    $shortUrl = array('match' => $rules[$ruleId]['match'],
 			'pattern' => $activeRules[$moduleId][$ruleId]);
 
 		    /* Get custom function information */
 		    if (isset($rules[$ruleId]['keywords'])) {
 			foreach ($rules[$ruleId]['keywords'] as $key => $info) {
 			    if (isset($info['function'])) {
-				$shortUrls[$match]['functions'][$key] = $info['function'];
+				$shortUrl['functions'][$key] = $info['function'];
 			    }
 			}
 		    }
 
 		    /* Save the onLoad handler for this rule */
 		    if (isset($rules[$ruleId]['onLoad'])) {
-			$shortUrls[$match]['onLoad'] = $rules[$ruleId]['onLoad'];
+			$shortUrl['onLoad'] = $rules[$ruleId]['onLoad'];
 		    }
+
+		    $shortUrls[] = $shortUrl;
 		}
 
 		/* Parse the pattern and create regular expressions with conditions */

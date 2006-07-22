@@ -55,7 +55,7 @@ class GalleryUtilities {
     /**
      * Get the type of the file from its filename
      *
-     * Eg, "foo.jpg" yields 'foo', 'jpg'
+     * eg. "foo.jpg" yields 'foo', 'jpg'
      *     "foo.bar.jpeg" yields 'foo.bar', 'jpeg'
      *
      * @param string the filename
@@ -84,7 +84,7 @@ class GalleryUtilities {
     /**
      * Return the file's extension
      *
-     * Eg, "foo.jpg" yields "jpg"
+     * eg. "foo.jpg" yields "jpg"
      *
      * @param string the filename
      * @return array the file extension
@@ -98,7 +98,7 @@ class GalleryUtilities {
     /**
      * Return the file's extension
      *
-     * Eg, "foo.jpg" yields "foo"
+     * eg. "foo.jpg" yields "foo"
      *
      * @param string the filename
      * @return array the file base
@@ -244,7 +244,6 @@ class GalleryUtilities {
 	return $array;
     }
 
-
     /**
      * Remove all request variables that match the prefix
      *
@@ -261,7 +260,6 @@ class GalleryUtilities {
 	unset($_FILES[$key]);
 	unset($_GET[$key]);
     }
-
 
     /**
      * Return the specified request variables
@@ -282,18 +280,44 @@ class GalleryUtilities {
 	/* Sanitize the input */
 	GalleryUtilities::sanitizeInputValues($values);
 
-	if (sizeof($values) == 1) {
-	    return $values[0];
-	} else {
-	    return $values;
+	if (func_num_args() == 1) {
+	    return array_shift($values);
 	}
+	return $values;
     }
 
     /**
-     * Return the specified request variables (omit gallery variable prefix).
-     * Should be used only when interacting with an external api where prefix can't be used.
+     * Return all request variables with the Gallery variable prefix
      *
-     * Accept any number of keys and return that number of values, in order.
+     * @return array request variable name => value
+     * @static
+     */
+    function getAllRequestVariables() {
+	$values = array();
+	$prefixLength = strlen(GALLERY_FORM_VARIABLE_PREFIX);
+	foreach ($_POST as $key => $value) {
+	    if (substr($key, 0, $prefixLength) == GALLERY_FORM_VARIABLE_PREFIX) {
+		$values[substr($key, $prefixLength)] = $value;
+	    }
+	}
+
+	foreach ($_GET as $key => $value) {
+	    if (substr($key, 0, $prefixLength) == GALLERY_FORM_VARIABLE_PREFIX) {
+		$values[substr($key, $prefixLength)] = $value;
+	    }
+	}
+
+	/* Sanitize the input */
+	GalleryUtilities::sanitizeInputValues($values);
+
+	return $values;
+    }
+
+    /**
+     * Return the specified request variables (omit Gallery variable prefix).  Should be used only
+     * when interacting with an external api where prefix can't be used
+     *
+     * Accept any number of keys and return that number of values, in order
      *
      * @param mixed a single key or many keys
      * @return mixed a single value or many values
@@ -308,11 +332,10 @@ class GalleryUtilities {
 	/* Sanitize the input */
 	GalleryUtilities::sanitizeInputValues($values);
 
-	if (sizeof($values) == 1) {
-	    return $values[0];
-	} else {
-	    return $values;
+	if (func_num_args() == 1) {
+	    return array_shift($values);
 	}
+	return $values;
     }
 
     /**
@@ -348,13 +371,14 @@ class GalleryUtilities {
      * @access private
      * @static
      */
-    function _internalPutRequestVariable($keyPath, $value, &$destination) {
+    function _internalPutRequestVariable($keyPath, $value, &$array) {
 	$key = array_shift($keyPath);
-	if (empty($keyPath)) {
-	    $destination[$key] = $value;
-	} else {
-	    GalleryUtilities::_internalPutRequestVariable($keyPath, $value, $destination[$key]);
+	while (!empty($keyPath)) {
+	    $array =& $array[$key];
+	    $key = array_shift($keyPath);
 	}
+
+	$array[$key] = $value;
     }
 
     /**
@@ -402,13 +426,16 @@ class GalleryUtilities {
      */
     function _internalRemoveRequestVariable($keyPath, &$array) {
 	$key = array_shift($keyPath);
-	if (empty($keyPath)) {
-	    unset($array[$key]);
-	} else {
-	    if (isset($array[$key])) {
-		GalleryUtilities::_internalRemoveRequestVariable($keyPath, $array[$key]);
+	while (!empty($keyPath)) {
+	    if (empty($array[$key])) {
+		return null;
 	    }
+
+	    $array =& $array[$key];
+	    $key = array_shift($keyPath);
 	}
+
+	unset($array[$key]);
     }
 
     /**
@@ -431,7 +458,7 @@ class GalleryUtilities {
      */
     function makeMarkers($count, $markerFragment='?') {
 	if (is_array($count)) {
-	    $count = sizeof($count);
+	    $count = count($count);
 	}
 
 	$markers = '';
@@ -644,7 +671,6 @@ class GalleryUtilities {
 	    return array(strlen($newString), $newString);
 	}
     }
-
 
     /**
      * Takes a string of UTF-8 encoded characters and converts it to a string of unicode entities.
@@ -955,17 +981,22 @@ class GalleryUtilities {
      * @access private
      * @static
      */
-    function _internalGetRequestVariable($keyPath, &$array) {
+    function _internalGetRequestVariable($keyPath, $array) {
 	$key = array_shift($keyPath);
-	if (empty($keyPath)) {
-	    if (isset($array[$key])) {
-		return $array[$key];
-	    } else {
+	while (!empty($keyPath)) {
+	    if (empty($array[$key])) {
 		return null;
 	    }
-	} else {
-	    return GalleryUtilities::_internalGetRequestVariable($keyPath, $array[$key]);
+
+	    $array = $array[$key];
+	    $key = array_shift($keyPath);
 	}
+
+	if (empty($array[$key])) {
+	    return null;
+	}
+
+	return $array[$key];
     }
 
     /**
@@ -1575,7 +1606,6 @@ class GalleryUtilities {
 	}
     }
 
-
     /**
      * Register a Cookie Var safely
      *
@@ -1598,18 +1628,18 @@ class GalleryUtilities {
 	    $key = substr($attr, 0, $pos);
 	} else {
 	    /* No cookie name=value attr, we can ignore it */
-	    return;
+	    return null;
 	}
 	/* Urldecode header data (php-style of name = attr handling) */
 	$key = trim(urldecode($key));
 	/* Don't accept zero length key */
 	if (($len = strlen($key)) == 0) {
-	    return;
+	    return null;
 	}
 	/* Don't fix cookies with '[', ']' or any array-cookies (for simplicity) */
 	$pos = strchr($key, '[');
 	if (strchr($key, '[') !== false || strchr($key, ']') !== false) {
-	    return;
+	    return null;
 	}
 	/* Make it a binary safe variable name */
 	for ($i = 0; $i < $len; $i++) {
@@ -1622,7 +1652,7 @@ class GalleryUtilities {
 	 * dollar sign according to RFC 2965
 	 */
 	if (strpos($key, '$') === 0) {
-	    return;
+	    return null;
 	}
 	/* Urldecode value */
 	$val = trim(urldecode($val));
