@@ -825,13 +825,16 @@ class GalleryTheme extends GalleryPlugin {
 		}
 	    }
 
-	    /* Albums have their own settings.  Photos use their parent album's settings */
+	    /* Albums page or Photo page */
 	    if ($item->getCanContainChildren()) {
 		$theme['pageType'] = 'album';
+		if (!isset($theme['pageUrl'])) {
+		    $theme['pageUrl'] =
+			array('view' => 'core.ShowItem', 'itemId' => $item->getId());
+		}
 
 		/* If we care about pagination, then figure out the current page and total pages */
 		$perPage = $this->getPageSize($params);
-
 		$page = GalleryUtilities::getRequestVariables('page');
 		if ($perPage == 0) {
 		    $page = 1;
@@ -842,13 +845,17 @@ class GalleryTheme extends GalleryPlugin {
 		     */
 		    $highlightId = GalleryUtilities::getRequestVariables('highlightId');
 		    if (!empty($highlightId)) {
-			list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-			if ($ret) {
-			    return array($ret, null);
+			if (isset($theme['allChildIds'])) {
+			    $childIds = $theme['allChildIds'];
+			} else {
+			    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+			    if ($ret) {
+				return array($ret, null);
+			    }
 			}
 
 			$page = 1;
-			for ($i = 0; $i < sizeof($childIds); $i++) {
+			for ($i = 0; $i < count($childIds); $i++) {
 			    if ($childIds[$i] == $highlightId) {
 				/* Found it */
 				$page = ceil(($i+1) / $perPage);
@@ -857,7 +864,7 @@ class GalleryTheme extends GalleryPlugin {
 			}
 
 			/* Redirect to the new page */
-			$redirect = array('view' => 'core.ShowItem', 'itemId' => $item->getId());
+			$redirect = $theme['pageUrl'];
 			if ($page != 1) {
 			    $redirect['page'] = $page;
 			}
@@ -867,37 +874,45 @@ class GalleryTheme extends GalleryPlugin {
 		    }
 		}
 
-		if (!empty($perPage)) {
-		    if (empty($page)) {
-			$page = 1;
-		    }
+		if (isset($theme['item']) && isset($theme['allChildIds'])) {
+		    /* Dynamic album has already loaded child ids */
+		    $isDynamicAlbum = true;
+		    $this->_cacheablePage = false;
+		    $item = $theme['item'];
+		}
 
+		if (!empty($perPage)) {
 		    /* Use the pagination to calculate the child item ids to load */
 		    $start = $perPage * ($page - 1);
-		    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds(
-			$item, $start, $perPage, $theme['actingUserId']);
-		    if ($ret) {
-			return array($ret, null);
-		    }
+		    if (isset($isDynamicAlbum)) {
+			$childIds = array_slice($theme['allChildIds'], $start, $perPage);
+			$theme['totalPages'] = ceil(count($theme['allChildIds']) / $perPage);
+		    } else {
+			list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds(
+				$item, $start, $perPage, $theme['actingUserId']);
+			if ($ret) {
+			    return array($ret, null);
+			}
 
-		    /*
-		     * Load up our child count so that we can figure out the max pages.  We do this
-		     * after we get the child ids because the 'childCount' common template data also
-		     * gets the child counts for the child albums.
-		     */
-		    $ret = $this->loadCommonTemplateData(
-			$template, $item, $params, array('childCount'), $childIds, false);
-		    if ($ret) {
-			return array($ret, null);
-		    }
+			/*
+			 * Load up our child count so that we can figure out the max pages.  We do
+			 * this after we get the child ids because the 'childCount' common template
+			 * data also gets the child counts for the child albums.
+			 */
+			$ret = $this->loadCommonTemplateData(
+				$template, $item, $params, array('childCount'), $childIds, false);
+			if ($ret) {
+			    return array($ret, null);
+			}
 
-		    /* Store the total pages in the theme */
-		    $theme['totalPages'] = ceil($theme['childCount'] / $perPage);
+			/* Store the total pages in the theme */
+			$theme['totalPages'] = ceil($theme['childCount'] / $perPage);
+		    }
 		    $theme['currentPage'] = $page;
 
 		    /* If our page is over the max, redirect the user to the max page */
-		    if ($page > $theme['totalPages'] && $theme['childCount'] > 0) {
-			$redirect = array('view' => 'core.ShowItem', 'itemId' => $item->getId());
+		    if ($page > $theme['totalPages'] && $theme['totalPages'] > 0) {
+			$redirect = $theme['pageUrl'];
 			if ($theme['totalPages'] != 1) {
 			    $redirect['page'] = $theme['totalPages'];
 			}
@@ -905,18 +920,21 @@ class GalleryTheme extends GalleryPlugin {
 		    }
 		} else {
 		    /*
-		     * No pagination; load all children (this isn't going to scale, but the theme is
-		     * the boss... for now).
+		     * No pagination; load all children (this isn't going to scale, but the theme
+		     * is the boss... for now).
 		     */
-		    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds(
-			$item, null, null, $theme['actingUserId']);
-		    if ($ret) {
-			return array($ret, null);
+		    if (isset($isDynamicAlbum)) {
+			$childIds = $theme['allChildIds'];
+		    } else {
+			list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds(
+				$item, null, null, $theme['actingUserId']);
+			if ($ret) {
+			    return array($ret, null);
+			}
 		    }
 		}
 
-		list ($ret, $result) =
-		    $this->showAlbumPage($template, $item, $params, $childIds);
+		list ($ret, $result) = $this->showAlbumPage($template, $item, $params, $childIds);
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -1158,8 +1176,8 @@ class GalleryTheme extends GalleryPlugin {
 	    }
 	}
 	$itemId = $item->getId();
-	$allItems = array_merge(array($item), $childItems);
-	$allItemIds = array_merge(array($itemId), $childIds);
+	$allItems = array_merge($itemId ? array($item) : array(), $childItems);
+	$allItemIds = array_merge($itemId ? array($itemId) : array(), $childIds);
 	$allAlbumIds = array();
 	foreach ($allItems as $it) {
 	    if ($it->getCanContainChildren()) {
@@ -1198,9 +1216,17 @@ class GalleryTheme extends GalleryPlugin {
 	     * TODO: Should we have this obey the acting user permission?  It may make navigation
 	     * strange for the active user.
 	     */
-	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
-	    if ($ret) {
-		return $ret;
+	    if ($itemId) {
+		list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+		if ($ret) {
+		    return $ret;
+		}
+	    } else {
+		list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
+		if ($ret) {
+		    return $ret;
+		}
+		$parentSequence = array($rootId);
 	    }
 	    if (!empty($parentSequence)) {
 		$ret = GalleryCoreApi::studyPermissions($parentSequence, $theme['actingUserId']);
@@ -1215,7 +1241,7 @@ class GalleryTheme extends GalleryPlugin {
 	if (isset($load['itemNavigator'])) {
 	    $navigator = array();
 	    $canViewParent = false;
-	    if ($item->getParentId() != null) {
+	    if ($item->getParentId()) {
 		list ($ret, $canViewParent) = GalleryCoreApi::hasItemPermission(
 		    $item->getParentId(), 'core.view', $theme['actingUserId']);
 		if ($ret) {
@@ -1301,7 +1327,7 @@ class GalleryTheme extends GalleryPlugin {
 	    if ($ret) {
 		return $ret;
 	    }
-	    $theme['item']['viewCount'] = $viewCount[$itemId];
+	    $theme['item']['viewCount'] = isset($viewCount[$itemId]) ? $viewCount[$itemId] : 0;
 	    $childData[] = 'viewCount';
 	}
 
@@ -1310,17 +1336,20 @@ class GalleryTheme extends GalleryPlugin {
 	 * 'childCount'
 	 */
 	if (isset($load['childCount']) && !isset($theme['childCount'])) {
-	    list ($ret, $childCount) =
-		GalleryCoreApi::fetchChildCounts($allAlbumIds, $theme['actingUserId']);
-	    if ($ret) {
-		return $ret;
+	    if (!empty($allAlbumIds)) {
+		list ($ret, $childCount) =
+		    GalleryCoreApi::fetchChildCounts($allAlbumIds, $theme['actingUserId']);
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 	    foreach ($allAlbumIds as $id) {
 		if (!isset($childCount[$id])) {
 		    $childCount[$id] = 0;
 		}
 	    }
-	    $theme['childCount'] = isset($childCount[$itemId]) ? $childCount[$itemId] : 0;
+	    $theme['childCount'] = isset($childCount[$itemId]) ? $childCount[$itemId]
+		: (isset($theme['allChildIds']) ? count($theme['allChildIds']) : 0);
 	    $childData[] = 'childCount';
 	}
 	if (isset($theme['childCount'])) {
@@ -1332,10 +1361,12 @@ class GalleryTheme extends GalleryPlugin {
 	 * 'descendentCount'
 	 */
 	if (isset($load['descendentCount'])) {
-	    list ($ret, $descendentCount) =
-		GalleryCoreApi::fetchDescendentCounts($allAlbumIds, $theme['actingUserId']);
-	    if ($ret) {
-		return $ret;
+	    if (!empty($allAlbumIds)) {
+		list ($ret, $descendentCount) =
+		    GalleryCoreApi::fetchDescendentCounts($allAlbumIds, $theme['actingUserId']);
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 	    foreach ($allAlbumIds as $id) {
 		if (!isset($descendentCount[$id])) {
@@ -1541,16 +1572,16 @@ class GalleryTheme extends GalleryPlugin {
 	    $navigator = array();
 	    if ($page > 1) {
 		$navigator['first']['urlParams'] = $navigator['back']['urlParams'] =
-		    array('view' => 'core.ShowItem', 'itemId' => $itemId);
+		    $theme['pageUrl'];
 		if ($page - 1 != 1) {
 		    $navigator['back']['urlParams']['page'] = $page - 1;
 		}
 	    }
 	    if ($page < $theme['totalPages']) {
-		$navigator['next']['urlParams'] = array(
-		    'view' => 'core.ShowItem', 'itemId' => $itemId, 'page' => $page + 1);
-		$navigator['last']['urlParams'] = array(
-		    'view' => 'core.ShowItem', 'itemId' => $itemId, 'page' => $theme['totalPages']);
+		$navigator['next']['urlParams'] = $navigator['last']['urlParams'] =
+		    $theme['pageUrl'];
+		$navigator['next']['urlParams']['page'] = $page + 1;
+		$navigator['last']['urlParams']['page'] = $theme['totalPages'];
 	    }
 	    $theme['navigator'] = $navigator;
 	}
@@ -1718,7 +1749,7 @@ class GalleryTheme extends GalleryPlugin {
 	}
 
 	/* -------------------------------------------------------------------------------------- */
-	if (isset($load['permissions']) && !isset($theme['permissions'])) {
+	if (isset($load['permissions']) && !isset($theme['permissions']) && $itemId) {
 	    list ($ret, $permissions) =
 		GalleryCoreApi::getPermissions($itemId, $theme['actingUserId']);
 	    if ($ret) {

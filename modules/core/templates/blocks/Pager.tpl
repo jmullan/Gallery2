@@ -11,7 +11,7 @@
   {if ($page - $lastPage >= 2)}
   <span>
     {if ($page - $lastPage == 2)}
-    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.item.id`" arg3="page=`$page-1`"}">{$page-1}</a>
+    <a href="{g->url params=$theme.pageUrl arg1="page=`$page-1`"}">{$page-1}</a>
     {else}
     ...
     {/if}
@@ -22,7 +22,7 @@
     {if ($theme.currentPage == $page)}
     {$page}
     {else}
-    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.item.id`" arg3="page=$page"}">{$page}</a>
+    <a href="{g->url params=$theme.pageUrl arg1="page=$page"}">{$page}</a>
     {/if}
   </span>
   {assign var="lastPage" value=$page}
