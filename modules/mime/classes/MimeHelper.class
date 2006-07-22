@@ -43,16 +43,9 @@ class MimeHelper {
      * @static
      */
     function getMimeTypeMap() {
-        global $gallery;
-
-        $query = '
-            SELECT [GalleryMimeTypeMap::mimeType],
-                [GalleryMimeTypeMap::extension],
-                [GalleryMimeTypeMap::viewable]
-            FROM [GalleryMimeTypeMap]
-            ORDER BY [GalleryMimeTypeMap::mimeType]
-        ';
-        list ($ret, $searchResults) = $gallery->search($query);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryMimeTypeMap',
+	    array('mimeType', 'extension', 'viewable'), array(),
+	    array('orderBy' => array('mimeType' => ORDER_ASCENDING)));
         if ($ret) {
             return array($ret, null);
         }

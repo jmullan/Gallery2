@@ -405,21 +405,6 @@ class RepositoryTest extends GalleryTestCase {
 
     function testUpdatePackageMetaData() {
 	$this->_testStorage->reset();
-	$expectedQuery = '
-	    SELECT
-	      [GalleryPluginPackageMap::packageVersion],
-	      [GalleryPluginPackageMap::packageBuild]
-	    FROM
-	      [GalleryPluginPackageMap]
-	    WHERE
-	      [GalleryPluginPackageMap::pluginType] = ?
-	      AND
-	      [GalleryPluginPackageMap::pluginId] = ?
-	      AND
-	      [GalleryPluginPackageMap::packageName] = ?
-	    ';
-	$expectedArguments = array('module', 'testModule', 'package');
-
 	/* Test initial map entry add scenario. */
 	$this->_testStorage->setSearchResults(array());
 
@@ -438,9 +423,11 @@ class RepositoryTest extends GalleryTestCase {
 			    'Invalid data added.');
 
 	$searches = $this->_testStorage->getSearches();
-	$this->assertEquals(array('query' => $expectedQuery, 'arguments' => $expectedArguments),
-			    $searches[0],
-			    'Unexpected query on map addition.');
+	$this->assertEquals(array('map' => 'GalleryPluginPackageMap', 
+	    'select' => array('packageVersion', 'packageBuild'),
+	    'where' => array('pluginType' => 'module', 'pluginId' => 'testModule',
+		'packageName' => 'package')),
+	    $searches[0], 'Unexpected query on map addition.');
 
 	/* Test map entry update scenario. */
 	$this->_testStorage->setSearchResults(array('someResults'));
@@ -461,9 +448,11 @@ class RepositoryTest extends GalleryTestCase {
 			    'Wrong data updated.');
 
 	$searches = $this->_testStorage->getSearches();
-	$this->assertEquals(array('query' => $expectedQuery, 'arguments' => $expectedArguments),
-			    $searches[0],
-			    'Unexpected query on map update.');
+	$this->assertEquals(array('map' => 'GalleryPluginPackageMap',
+	    'select' => array('packageVersion', 'packageBuild'),
+	    'where' => array('pluginType' => 'module', 'pluginId' => 'testModule',
+		'packageName' => 'package')), 
+	    $searches[1], 'Unexpected query on map update.');
     }
 
     function testCreatePluginDirectory() {

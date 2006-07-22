@@ -42,36 +42,11 @@ class PermalinksMapHelper {
      * @static
      */
     function fetchAliasesForItem($itemId=null) {
-	global $gallery;
-
-	if (isset($itemId)) {
-	    $query = '
-	    SELECT
-	      [PermalinksMap::aliasName]
-	    FROM
-	      [PermalinksMap]
-	    WHERE
-	      [PermalinksMap::destId] = ?
-	    ';
-
-	    $data = array((int)$itemId);
-
-	    list ($ret, $searchResults) = $gallery->search($query, $data);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	} else {
-	    $query = '
-	    SELECT
-	      [PermalinksMap::aliasName]
-	    FROM
-	      [PermalinksMap]
-	    ';
-
-	    list ($ret, $searchResults) = $gallery->search($query);
-	    if ($ret) {
-		return array($ret, null);
-	    }
+	$match = isset($itemId) ? array('destId' => (int)$itemId) : array();
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('PermalinksMap',
+	    array('aliasName'), $match);
+	if ($ret) {
+	    return array($ret, null);
 	}
 
 	$aliases = array();
@@ -90,20 +65,8 @@ class PermalinksMapHelper {
      * @static
      */
     function fetchItemIdForAlias($aliasName) {
-	global $gallery;
-
-	$query = '
-	SELECT
-	  [PermalinksMap::destId]
-	FROM
-	  [PermalinksMap]
-	WHERE
-	  [PermalinksMap::aliasName] = ?
-	';
-
-	$data = array($aliasName);
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('PermalinksMap',
+	    array('destId'), array('aliasName' => $aliasName));
 	if ($ret) {
 	    return array($ret, null);
 	}

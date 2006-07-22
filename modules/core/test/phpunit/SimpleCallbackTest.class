@@ -189,7 +189,7 @@ class SimpleCallbackTest extends GalleryTestCase {
     function testLookupDirectoriesWithEntity() {
 	/* Filesystem isn't entitized.. search for < should match literal < */
 	global $gallery;
-	$platform = new UnitTestPlatform();
+	$platform = new SimpleCallbackTestPlatform();	
 	$platform->setReply('file_exists', array('/php<unit'), true);
 	$platform->setReply('is_dir', array('/php<unit'), true);
 	$platform->setReply('getDirectorySeparator', array(), '/');
@@ -212,7 +212,7 @@ class SimpleCallbackTest extends GalleryTestCase {
 	/* Filesystem doesn't accept / return UTF-8 characters */
 	global $gallery;
 	$gallery->_phpVm = new SimpleCallbackTestPhpVm();
-	$platform = new UnitTestPlatform();
+	$platform = new SimpleCallbackTestPlatform();	
 	$platform->setReply('file_exists', array('/phpäunit'), true);
 	$platform->setReply('is_dir', array('/phpäunit'), true);
 	$platform->setReply('getDirectorySeparator', array(), '/');
@@ -273,7 +273,7 @@ class SimpleCallbackTest extends GalleryTestCase {
     function testLookupFilesWithEntity() {
 	/* Filesystem isn't entitized.. search for & should match literal & */
 	global $gallery;
-	$platform = new UnitTestPlatform();
+	$platform = new SimpleCallbackTestPlatform();	
 	$platform->setReply('file_exists', array('/php&unit'), true);
 	$platform->setReply('is_dir', array('/php&unit'), true);
 	$platform->setReply('getDirectorySeparator', array(), '/');
@@ -300,7 +300,7 @@ class SimpleCallbackTest extends GalleryTestCase {
 	/* Filesystem doesn't accepts / return UTF-8 characters */
 	global $gallery;
 	$gallery->_phpVm = new SimpleCallbackTestPhpVm();
-	$platform = new UnitTestPlatform();
+	$platform = new SimpleCallbackTestPlatform();	
 	$platform->setReply('file_exists', array('/phpäunit'), true);
 	$platform->setReply('is_dir', array('/phpäunit'), true);
 	$platform->setReply('getDirectorySeparator', array(), '/');
@@ -371,4 +371,55 @@ class SimpleCallbackTestPhpVm {
 	}
     }
 }
+
+class SimpleCallbackTestPlatform extends UnitTestPlatform {
+    var $_originalPlatform;
+    
+    function SimpleCallbackTestPlatform() {
+	global $gallery;
+	$this->_originalPlatform = & $gallery->getPlatform();
+	$this->UnitTestPlatform();
+    }
+    
+    function opendir($path) {
+	if (strpos($path, 'module')) {
+	    return $this->_originalPlatform->opendir($path);
+	} else {
+	    return $this->_makeReply('opendir', array($path));
+	}
+    }
+    
+    function closedir($resource) {
+	if (!is_string($resource)) {
+	    return $this->_originalPlatform->closedir($resource);
+	} else {
+	    return $this->_makeReply('closedir', array($resource));
+	}
+    }
+    
+    function is_dir($path) {
+	if (strpos($path, 'module')) {
+	    return $this->_originalPlatform->is_dir($path);
+	} else {
+	    return $this->_makeReply('is_dir', array($path));
+	}
+    }
+    
+    function readdir($resource) {
+	if (!is_string($resource)) {
+	    return $this->_originalPlatform->readdir($resource);
+	} else {
+	    return $this->_makeReply('readdir', array($resource));
+	}
+    }
+    
+    function file_exists($filename) {
+	if (strpos($filename, 'module')) {
+	    return $this->_originalPlatform->file_exists($filename);
+	} else {
+	    return $this->_makeReply('file_exists', array($filename));
+	}
+    }
+}
 ?>
+

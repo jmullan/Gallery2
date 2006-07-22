@@ -121,22 +121,12 @@ class GalleryItemHelper_advanced {
      * @static
      */
     function fetchPropertyKeys($itemId) {
-	global $gallery;
-
 	if (empty($itemId)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
-	$query = '
-        SELECT
-          [GalleryItemPropertiesMap::key]
-        FROM
-          [GalleryItemPropertiesMap]
-        WHERE
-          [GalleryItemPropertiesMap::itemId] = ?
-        ';
-
-	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryItemPropertiesMap',
+	    array('key'), array('itemId' => (int)$itemId));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -158,25 +148,11 @@ class GalleryItemHelper_advanced {
      * @static
      */
     function fetchProperty($itemId, $key) {
-	global $gallery;
-
 	if (empty($itemId) || empty($key)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
-
-	$query = '
-        SELECT
-          [GalleryItemPropertiesMap::value]
-        FROM
-          [GalleryItemPropertiesMap]
-        WHERE
-          [GalleryItemPropertiesMap::itemId] = ?
-          AND
-          [GalleryItemPropertiesMap::key] = ?
-        ';
-
-	list ($ret, $searchResults) =
-	    $gallery->search($query, array((int)$itemId, $key));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryItemPropertiesMap',
+	    array('value'), array('itemId' => (int)$itemId, 'key' => $key));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -200,23 +176,11 @@ class GalleryItemHelper_advanced {
      * @static
      */
     function fetchAllProperties($itemId) {
-	global $gallery;
-
 	if (empty($itemId)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
-
-	$query = '
-        SELECT
-          [GalleryItemPropertiesMap::key],
-          [GalleryItemPropertiesMap::value]
-        FROM
-          [GalleryItemPropertiesMap]
-        WHERE
-          [GalleryItemPropertiesMap::itemId] = ?
-        ';
-
-	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryItemPropertiesMap',
+	    array('key', 'value'), array('itemId' => (int)$itemId));
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -64,16 +64,8 @@ class GalleryItemAttributesHelper_medium {
 	foreach ($itemIds as $idx => $id) {
 	    $itemIds[$idx] = (int)$id;
 	}
-	$query = '
-        SELECT
-          [GalleryItemAttributesMap::itemId], [GalleryItemAttributesMap::orderWeight]
-        FROM
-          [GalleryItemAttributesMap]
-        WHERE
-          [GalleryItemAttributesMap::itemId] IN (' .
-	    GalleryUtilities::makeMarkers(sizeof($itemIds)) . ')
-        ';
-	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryItemAttributesMap',
+	    array('itemId', 'orderWeight'), array('itemId' => $itemIds));
 	if ($ret) {
 	    return array($ret, null);
 	}

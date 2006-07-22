@@ -81,20 +81,9 @@ class GalleryFactoryHelper_simple {
 	    /* Don't get by reference here, it'll detach $registry from the singleton */
 	    $registry = GalleryDataCache::getFromDisk($cacheParams);
 	    if (!isset($registry)) {
-		$query = '
-                SELECT
-                  [GalleryFactoryMap::classType],
-                  [GalleryFactoryMap::className],
-                  [GalleryFactoryMap::implId],
-                  [GalleryFactoryMap::implPath],
-                  [GalleryFactoryMap::hints],
-                  [GalleryFactoryMap::implModuleId]
-                FROM
-                  [GalleryFactoryMap]
-                ORDER BY
-                  [GalleryFactoryMap::orderWeight] ASC
-                ';
-		list ($ret, $searchResults) = $gallery->search($query);
+		list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryFactoryMap',
+		    array('classType', 'className', 'implId', 'implPath', 'hints', 'implModuleId'),
+		    array(), array('orderBy' => array('orderWeight' => ORDER_ASCENDING)));
 		if ($ret) {
 		    $ret = array($ret, null);
 		    return $ret;

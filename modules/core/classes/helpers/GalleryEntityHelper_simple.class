@@ -129,9 +129,8 @@ class GalleryEntityHelper_simple {
     function loadEntityByExternalId($externalId, $entityType) {
 	global $gallery;
 
-	$query = 'SELECT [ExternalIdMap::entityId] FROM [ExternalIdMap] ' .
-		 'WHERE [ExternalIdMap::externalId] = ? AND [ExternalIdMap::entityType] = ?';
-	list ($ret, $results) = $gallery->search($query, array($externalId, $entityType));
+	list ($ret, $results) = GalleryCoreApi::getMapEntry('ExternalIdMap',
+	    array('entityId'), array('externalId' => $externalId, 'entityType' => $entityType));
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -377,25 +377,11 @@ class GalleryRepository {
      */
     function updatePackageMetaData($pluginType, $pluginId,
 	    $packageName, $packageVersion, $packageBuild) {
-	global $gallery;
-
 	/* Check if specified package exists in the database. */
-	$query = '
-	    SELECT
-	      [GalleryPluginPackageMap::packageVersion],
-	      [GalleryPluginPackageMap::packageBuild]
-	    FROM
-	      [GalleryPluginPackageMap]
-	    WHERE
-	      [GalleryPluginPackageMap::pluginType] = ?
-	      AND
-	      [GalleryPluginPackageMap::pluginId] = ?
-	      AND
-	      [GalleryPluginPackageMap::packageName] = ?
-	    ';
-
-	list ($ret, $searchResults) =
-	    $gallery->search($query, array($pluginType, $pluginId, $packageName));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPluginPackageMap',
+	    array('packageVersion', 'packageBuild'), 
+	    array('pluginType' => $pluginType, 'pluginId' => $pluginId, 
+		  'packageName' => $packageName));
 	if ($ret) {
 	    return $ret;
 	}

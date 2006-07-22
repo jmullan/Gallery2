@@ -884,17 +884,12 @@ class GalleryEmbed {
      * @static
      */
     function getExternalIdMap($key) {
-	global $gallery;
 	/* Input validation */
 	if ($key != 'externalId' && $key != 'entityId') {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
-
-	$query = '
-	SELECT [ExternalIdMap::entityId], [ExternalIdMap::externalId], [ExternalIdMap::entityType]
-	FROM [ExternalIdMap]
-	';
-	list ($ret, $results) = $gallery->search($query);
+	list ($ret, $results) = GalleryCoreApi::getMapEntry('ExternalIdMap',
+	    array('entityId', 'externalId', 'entityType')); 
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -925,13 +920,8 @@ class GalleryEmbed {
      * @static
      */
     function isExternalIdMapped($externalId, $entityType) {
-	global $gallery;
-
-	$query = '
-	SELECT [ExternalIdMap::entityId] FROM [ExternalIdMap]
-	WHERE [ExternalIdMap::externalId] = ? AND [ExternalIdMap::entityType] = ?
-	';
-	list ($ret, $results) = $gallery->search($query, array($externalId, $entityType));
+	list ($ret, $results) = GalleryCoreApi::getMapEntry('ExternalIdMap',
+	    array('entityId'), array('externalId' => $externalId, 'entityType' => $entityType));
 	if ($ret) {
 	    return $ret;
 	}
@@ -939,7 +929,6 @@ class GalleryEmbed {
 	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
 					"$externalId $entityType");
 	}
-
 	return null;
     }
 }

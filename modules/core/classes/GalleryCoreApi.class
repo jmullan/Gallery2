@@ -61,7 +61,7 @@ class GalleryCoreApi {
      * - remove 'link' entry in Gallery.class constructor
      */
     function getApiVersion() {
-	return array(7, 9);
+	return array(7, 10);
     }
 
     /**
@@ -2925,6 +2925,33 @@ class GalleryCoreApi {
 	    return $ret;
 	}
 	return null;
+    }
+
+    /**
+     * Get entries in a map that match a criteria and return selected fields
+     *
+     * @param string the map we're working on
+     * @param array the columns to return
+     * @param array the entries to match
+     * @param array optional arguments (eg, limit, orderBy)
+     *              array('limit' => array('count' => #, 'offset' => #),
+     *                    'orderBy' => array(columnName => ORDER_ASCENDING|ORDER_DESCENDING, ...))
+     * @return object GalleryStatus a status code
+     */
+    function getMapEntry($mapName, $select, $match=array(), $optional=array()) {
+	global $gallery;
+
+	if (empty($mapName) || empty($select) || !is_array($match) || !is_array($optional)) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
+	}
+
+	$storage =& $gallery->getStorage();
+	list ($ret, $searchResults) = $storage->getMapEntry($mapName, $select, $match, $optional);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, $searchResults);
     }
 
     /**

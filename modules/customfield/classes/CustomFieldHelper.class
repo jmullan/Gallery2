@@ -223,12 +223,8 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 	    }
 	}
 
-	$query = '
-	SELECT [CustomFieldMap::itemId], [CustomFieldMap::field], [CustomFieldMap::value]
-	FROM [CustomFieldMap]
-	WHERE [CustomFieldMap::itemId] IN (' . GalleryUtilities::makeMarkers($itemIds) . ')';
-
-	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('CustomFieldMap',
+	    array('itemId', 'field', 'value'), array('itemId' => $itemIds));
 	if ($ret) {
 	    return array($ret, null, null, null);
 	}

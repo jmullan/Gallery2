@@ -898,13 +898,10 @@ class GallerySession {
 	    $lifetimeCutoff = $phpVm->time() - $lifetime;
 	    $inactiveCutoff = $phpVm->time() - $inactivityTimeout;
 
-	    $query = '
-                SELECT [GallerySessionMap::id], [GallerySessionMap::userId],
-                    [GallerySessionMap::remoteIdentifier],[GallerySessionMap::creationTimestamp],
-                    [GallerySessionMap::modificationTimestamp], [GallerySessionMap::data]
-                FROM [GallerySessionMap]
-                WHERE [GallerySessionMap::id] = ?';
-	    list ($ret, $results) = $gallery->search($query, array($this->_sessionId));
+	    list ($ret, $results) = GalleryCoreApi::getMapEntry('GallerySessionMap',
+		array('userId', 'remoteIdentifier', 'creationTimestamp',
+		      'modificationTimestamp', 'data'), 
+		array('id' => $this->_sessionId));
 	    if ($ret) {
 		/* When upgrading from versions before 1.0.22, there's no DB table yet */
 		list ($ret2, $module) = GalleryCoreApi::loadPlugin('module', 'core');
@@ -922,13 +919,13 @@ class GallerySession {
 
 	    if ($results->resultCount()) {
 		$pSession = $results->nextResult();
-		if ($pSession[4] > $inactiveCutoff && $pSession[3] > $lifetimeCutoff) {
+		if ($pSession[3] > $inactiveCutoff && $pSession[2] > $lifetimeCutoff) {
 		    /* A session exists and it's valid */
-		    $this->_userId = (int)$pSession[1];
-		    $this->_remoteIdentifier = unserialize($pSession[2]);
-		    $this->_creationTime = (int)$pSession[3];
-		    $this->_modificationTime = (int)$pSession[4];
-		    $this->_sessionData = unserialize($pSession[5]);
+		    $this->_userId = (int)$pSession[0];
+		    $this->_remoteIdentifier = unserialize($pSession[1]);
+		    $this->_creationTime = (int)$pSession[2];
+		    $this->_modificationTime = (int)$pSession[3];
+		    $this->_sessionData = unserialize($pSession[4]);
 		    $this->_loadedSessionData = $this->_getSerializedSession();
 
 		    $this->_isPersistent = true;

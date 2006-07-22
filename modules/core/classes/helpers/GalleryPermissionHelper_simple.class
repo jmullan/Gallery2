@@ -168,19 +168,8 @@ class GalleryPermissionHelper_simple {
 	$cacheKey = 'GalleryPermissionHelper::_allPermissions';
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $permissions = array();
-
-	    $query = '
-	    SELECT
-	      [GalleryPermissionSetMap::module],
-	      [GalleryPermissionSetMap::permission],
-	      [GalleryPermissionSetMap::description],
-	      [GalleryPermissionSetMap::bits],
-	      [GalleryPermissionSetMap::flags]
-	    FROM
-	      [GalleryPermissionSetMap]
-	    ';
-
-	    list ($ret, $searchResults) = $gallery->search($query);
+	    list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPermissionSetMap',
+		array('module', 'permission', 'description', 'bits', 'flags'));
 	    if ($ret) {
 		return array($ret, null);
 	    }

@@ -226,22 +226,14 @@ class GalleryToolkitHelper_simple {
      * @static
      */
     function getToolkitPriorityById($toolkitId) {
-	global $gallery;
-
-	$query = 
-	    'SELECT 
-		[GalleryToolkitOperationMimeTypeMap::priority]
-	     FROM 
-		[GalleryToolkitOperationMimeTypeMap]
-	     WHERE 
-		[GalleryToolkitOperationMimeTypeMap::toolkitId] = ?';
-
-	list ($ret, $results) = $gallery->search($query, array((string)$toolkitId));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+	    'GalleryToolkitOperationMimeTypeMap',
+	    array('priority'), array('toolkitId' => (string)$toolkitId));
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	if ($result = $results->nextResult()) {
+	if ($result = $searchResults->nextResult()) {
 	    $priority = (int)$result[0];
 	}
 	if (empty($priority)) {

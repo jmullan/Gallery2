@@ -68,8 +68,6 @@ class GalleryUserGroupHelper_simple {
      * @static
      */
     function isUserInGroup($userId, $groupId) {
-	global $gallery;
-
 	$userId = (int) $userId;
 	$groupId = (int) $groupId;
 
@@ -78,21 +76,9 @@ class GalleryUserGroupHelper_simple {
 	    return array(null, GalleryDataCache::get($cacheKey));
 	}
 
-	$query = '
-	SELECT
-	  [GalleryUserGroupMap::userId]
-	FROM
-	  [GalleryUserGroupMap]
-	WHERE
-	  [GalleryUserGroupMap::userId] = ?
-	  AND
-	  [GalleryUserGroupMap::groupId] = ?
-	';
-
-	list ($ret, $searchResults) =
-	    $gallery->search($query,
-			     array($userId, $groupId),
-			     array('limit' => array('count' => 1)));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryUserGroupMap',
+	    array('userId'), array('userId' => $userId, 'groupId' => $groupId),
+	    array('limit' => array('count' => 1)));
 	if ($ret) {
 	    return array($ret, null);
 	}

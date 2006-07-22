@@ -96,22 +96,9 @@ class GalleryUserHelper_simple {
 	 * TODO: We could get and cache the accessListId here, and then do a
 	 * hash lookup to see if it's in our valid aclid list.
 	 */
-	$query = sprintf('
-	SELECT
-	  [GalleryAccessSubscriberMap::itemId]
-	FROM
-	  [GalleryAccessSubscriberMap]
-	WHERE
-	  [GalleryAccessSubscriberMap::itemId] = ?
-	  AND
-	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
-	', $aclMarkers);
-
-	$data = array((int)$itemId);
-	$data = array_merge($data, $aclIds);
-
-	list($ret, $searchResults) =
-	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryAccessSubscriberMap',
+	    array('itemId'), array('itemId' => (int)$itemId, 'accessListId' => $aclIds),
+	    array('limit' => array('count' => 1)));
 	if ($ret) {
 	    return array($ret, null);
 	}

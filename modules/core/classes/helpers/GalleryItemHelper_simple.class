@@ -167,22 +167,9 @@ class GalleryItemHelper_simple {
 	foreach ($itemIds as $idx => $id) {
 	    $itemIds[$idx] = (int)$id;
 	}
-	$query = sprintf('
-         SELECT
-           [GalleryDescendentCountsMap::itemId], [GalleryDescendentCountsMap::descendentCount]
-         FROM
-           [GalleryDescendentCountsMap]
-         WHERE
-           [GalleryDescendentCountsMap::userId] = ?
-           AND
-           [GalleryDescendentCountsMap::itemId] IN (%s)
-        ', GalleryUtilities::makeMarkers(sizeof($itemIds)));
-
-	$data = array();
-	$data[] = (int)$userId;
-	array_splice($data, sizeof($data), 0, $itemIds);
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryDescendentCountsMap',
+	    array('itemId', 'descendentCount'), 
+	    array('userId' => $userId, 'itemId' => $itemIds));	
 	if ($ret) {
 	    return array($ret, null);
 	}

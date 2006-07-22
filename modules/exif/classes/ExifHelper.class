@@ -495,19 +495,9 @@ class ExifHelper {
      * @static
      */
     function getProperties($viewMode) {
-	global $gallery;
-
-	$query = '
-	SELECT
-	  [ExifPropertiesMap::property], [ExifPropertiesMap::viewMode], 
-	  [ExifPropertiesMap::sequence]
-	FROM
-	  [ExifPropertiesMap]
-	WHERE
-	  [ExifPropertiesMap::viewMode] = ?
-	ORDER BY
-	  [ExifPropertiesMap::sequence] ASC';
-	list ($ret, $searchResults) = $gallery->search($query, array((int)$viewMode));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('ExifPropertiesMap',
+	    array('property', 'sequence'), array('viewMode' => $viewMode), 
+	    array('orderBy' => array('sequence' => ORDER_ASCENDING)));
 	if ($ret) {
 	    return array($ret, null);
 	}

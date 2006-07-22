@@ -48,18 +48,9 @@ class RssMapHelper {
 	global $gallery;
 
 	if (isset($itemId)) {
-	    $query = '
-	    SELECT
-	      [RssMap::feedName], [RssMap::itemId], [RssMap::ownerId], [RssMap::params]
-	    FROM
-	      [RssMap]
-	    WHERE
-	      [RssMap::itemId] = ?
-	    ';
-
-	    $data = array($itemId);
-
-	    list ($ret, $searchResults) = $gallery->search($query, $data);
+	    list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('RssMap',
+		array('feedName', 'itemId', 'ownerId', 'params'), 
+		array('itemId' => $itemId));
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -140,20 +131,8 @@ class RssMapHelper {
      * @static
      */
     function fetchFeed($feedName) {
-	global $gallery;
-
-	$query = '
-	SELECT
-	  [RssMap::params]
-	FROM
-	  [RssMap]
-	WHERE
-	  [RssMap::feedName] = ?
-	';
-
-	$data = array($feedName);
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('RssMap',
+	    array('params'), array('feedName' => $feedName));
 	if ($ret) {
 	    return array($ret, null);
 	}

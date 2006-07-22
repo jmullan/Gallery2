@@ -323,28 +323,14 @@ class GalleryRepositoryUtilities {
      *		     array[$packageName] => array('version' => $version, 'build' => $build)
      */
     function getPluginPackages($pluginType, $pluginId) {
-	global $gallery;
-
 	if (empty($pluginType) || empty($pluginId)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					 "Missing plugin type [$pluginType] and/or ID [$pluginId]"),
 			 null);
 	}
-
-	$query = '
-	    SELECT
-	      [GalleryPluginPackageMap::packageName],
-	      [GalleryPluginPackageMap::packageVersion],
-	      [GalleryPluginPackageMap::packageBuild]
-	    FROM
-	      [GalleryPluginPackageMap]
-	    WHERE
-	      [GalleryPluginPackageMap::pluginType] = ?
-	      AND
-	      [GalleryPluginPackageMap::pluginId] = ?
-	    ';
-
-	list ($ret, $searchResults) = $gallery->search($query, array($pluginType, $pluginId));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPluginPackageMap',
+	    array('packageName', 'packageVersion', 'packageBuild'), 
+	    array('pluginType' => $pluginType, 'pluginId' => $pluginId));
 	if ($ret) {
 	    return array($ret, null);
 	}

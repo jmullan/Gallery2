@@ -410,18 +410,9 @@ class Getid3Helper {
      * @static
      */
     function getProperties($viewMode) {
-	global $gallery;
-
-	$query = '
-	SELECT
-	  [Getid3PropsMap::property], [Getid3PropsMap::viewMode], [Getid3PropsMap::sequence]
-	FROM
-	  [Getid3PropsMap]
-	WHERE
-	  [Getid3PropsMap::viewMode] = ?
-	ORDER BY
-	  [Getid3PropsMap::sequence] ASC';
-	list ($ret, $searchResults) = $gallery->search($query, array($viewMode));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('Getid3PropsMap',
+	    array('property', 'sequence'), array('viewMode' => $viewMode),
+	    array('orderBy' => array('sequence' => ORDER_ASCENDING)));
 	if ($ret) {
 	    return array($ret, null);
 	}

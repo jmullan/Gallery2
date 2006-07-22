@@ -295,6 +295,148 @@ class StorageTest extends GalleryTestCase {
 	    $this->_results);
     }
 
+    function testGetMapEntry() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$mapName = 'ExternalIdMap';
+	$select = array('entityType', 'externalId', 'entityId');
+	$match = array('externalId' => 40);
+
+	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf('SELECT %2$sentityType, %2$sexternalId, %2$sentityId ' . 
+			'FROM %1$sExternalIdMap WHERE %2$sexternalId=?',
+			$storage->_tablePrefix, $storage->_columnPrefix),
+		array(40))),
+	    $this->_results);
+    }
+
+    function testGetMapEntries() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$mapName = 'ExternalIdMap';
+	$select = array('entityType');
+	$match = array('externalId' => array(38, 40, 42));
+
+	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf(
+		    'SELECT %2$sentityType FROM %1$sExternalIdMap ' . 
+		    'WHERE %2$sexternalId IN (?,?,?)',
+		    $storage->_tablePrefix, $storage->_columnPrefix),
+		array(38, 40, 42))),
+	    $this->_results);
+    }
+    
+    function testGetMapEntriesAll() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$mapName = 'ExternalIdMap';
+	$select = array('entityType');
+	$match = array();
+
+	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf(
+		    'SELECT %2$sentityType FROM %1$sExternalIdMap',
+		    $storage->_tablePrefix, $storage->_columnPrefix),
+		array())),
+	    $this->_results);
+    }
+    
+    function testGetMapEntriesLimited() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$mapName = 'ExternalIdMap';
+	$select = array('entityType');
+	$match = array('externalId' => array(38, 40, 42));
+	$optional = array('limit' => array('count' => 1, 'offset' => 2));
+
+	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match, 
+								 $optional);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf(
+		    'SELECT %2$sentityType FROM %1$sExternalIdMap WHERE %2$sexternalId IN (?,?,?)',
+		    $storage->_tablePrefix, $storage->_columnPrefix),
+		1,
+		2,
+		array(38, 40, 42))),
+	    $this->_results);
+    }
+    
+    function testGetMapEntriesOrdered() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$mapName = 'ExternalIdMap';
+	$select = array('entityType');
+	$match = array('externalId' => array(38, 40, 42));
+	$optional = array('orderBy' => array('entityType' => ORDER_DESCENDING,
+					     'externalId' => ORDER_ASCENDING));
+
+	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, 
+	        $select, $match, $optional);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf(
+		    'SELECT %2$sentityType FROM %1$sExternalIdMap ' .
+		    'WHERE %2$sexternalId IN (?,?,?) ' .
+		    'ORDER BY %2$sentityType DESC, %2$sexternalId ASC',
+		    $storage->_tablePrefix, $storage->_columnPrefix),
+		array(38, 40, 42))),
+	    $this->_results);
+    }
+    
+    function testUpdateMapEntry() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$mapName = 'ExternalIdMap';
+	$match = array('externalId' => array(38, 40, 42));
+	$set = array('entityType' => 54);
+
+	$ret = GalleryCoreApi::updateMapEntry($mapName, $match, $set);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf('UPDATE %1$sExternalIdMap SET %2$sentityType=? ' . 
+			'WHERE %2$sexternalId IN (?,?,?)',
+			$storage->_tablePrefix, $storage->_columnPrefix),
+			array(54, 38, 40, 42))),
+	    $this->_results);
+    }
+
     function testSaveEntity() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
@@ -646,6 +788,11 @@ class StorageTestDB {
 
     function execute($query, $data) {
 	$this->_testCase->_results[] = array($query, $data);
+	return 1;
+    }
+
+    function SelectLimit($query, $nrows=-1, $offset=-1, $inputarr=false) {
+	$this->_testCase->_results[] = array($query, $nrows, $offset, $inputarr);
 	return 1;
     }
 

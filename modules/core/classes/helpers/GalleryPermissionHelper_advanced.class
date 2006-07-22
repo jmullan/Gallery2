@@ -292,22 +292,16 @@ class GalleryPermissionHelper_advanced {
 	    $data[] = $itemId;
 	    $data[] = "$parentSequence/%";
 	    $data = array_merge($data, $aclIds);
+	    list ($ret, $searchResults) = $gallery->search($query, $data);
+	    if ($ret) {
+		return $ret;
+	    }
 	} else {
-	    $query = '
-            SELECT
-              [GalleryAccessSubscriberMap::accessListId],
-              [GalleryAccessSubscriberMap::itemId]
-            FROM
-              [GalleryAccessSubscriberMap]
-            WHERE
-              [GalleryAccessSubscriberMap::itemId] = ?
-            ';
-	    $data[] = $itemId;
-	}
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
-	if ($ret) {
-	    return $ret;
+	    list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryAccessSubscriberMap',
+		array('accessListId', 'itemId'), array('itemId' => $itemId));
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	/*
@@ -634,26 +628,14 @@ class GalleryPermissionHelper_advanced {
 	if(empty($itemId)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
-
-	$query = '
-	SELECT
-	    [GalleryAccessSubscriberMap::accessListId]
-	FROM
-	    [GalleryAccessSubscriberMap]
-	WHERE
-	    [GalleryAccessSubscriberMap::itemId] = ?
-	';
-
-	$data = array((int)$itemId);
-
-	list ($ret, $searchResults) =
-	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryAccessSubscriberMap',
+	    array('accessListId'), array('itemId' => (int)$itemId),
+	    array('limit' => array('count' => 1)));
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	$result = $searchResults->nextResult();
-
 	return array(null, empty($result) ? null : $result[0]);
     }
 
@@ -676,18 +658,8 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	if (!empty($oldAccessListId)) {
-	    $query = '
-            SELECT
-                [GalleryAccessMap::userOrGroupId],
-                [GalleryAccessMap::permission]
-            FROM
-                [GalleryAccessMap]
-            WHERE
-                [GalleryAccessMap::accessListId] = ?
-            ';
-	    $data = array($oldAccessListId);
-
-	    list($ret, $searchResults) = $gallery->search($query, $data);
+	    list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryAccessMap',
+		array('userOrGroupId', 'permission'), array('accessListId' => $oldAccessListId));
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -1201,19 +1173,10 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	/* Load the entire access list into memory */
-	$query = '
-	SELECT
-	  [GalleryAccessMap::accessListId],
-	  [GalleryAccessMap::userOrGroupId],
-	  [GalleryAccessMap::permission]
-	FROM
-	  [GalleryAccessMap]
-	ORDER BY
-	  [GalleryAccessMap::userOrGroupId] ASC,
-	  [GalleryAccessMap::accessListId] DESC
-	';
-
-	list ($ret, $searchResults) = $gallery->search($query);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryAccessMap',
+	    array('accessListId', 'userOrGroupId', 'permission'), array(),
+	    array('orderBy' => array('userOrGroupId' => ORDER_ASCENDING, 
+				     'accessListId' => ORDER_DESCENDING)));
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret;

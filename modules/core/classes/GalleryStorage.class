@@ -541,6 +541,22 @@ class GalleryStorage {
     }
 
     /**
+     * Get entries in a map that match a criteria and return selected fields
+     *
+     * @param string the map we're working on
+     * @param array the columns to return
+     * @param array the entries to match
+     * @param array optional arguments (eg, limit, orderBy)
+     *              array('limit' => array('count' => #, 'offset' => #),
+     *                    'orderBy' => array(columnName => ORDER_ASCENDING|ORDER_DESCENDING, ...))
+     * @return object GalleryStatus a status code
+     */
+    function getMapEntry($mapName, $select, $match=array(), $optional=array()) {
+	$extras =& $this->_getExtras();
+	return $extras->getMapEntry($mapName, $select, $match, $optional);
+    }
+
+    /**
      * Update entries in a map
      *
      * @param string the map we're working on
@@ -570,29 +586,8 @@ class GalleryStorage {
 
 	foreach ($mapInfo as $memberName => $memberData) {
 	    if (array_key_exists($memberName, $match)) {
-		if (GalleryUtilities::isA($match[$memberName], 'GallerySqlFragment')) {
-		    $where[] = $this->_translateColumnName($memberName) . ' ' .
-				$this->_translateQuery($match[$memberName]->getFragment());
-		    foreach ($match[$memberName]->getValues() as $value) {
-			$wheredata[] = $value;
-		    }
-		} else if (is_array($match[$memberName])) {
-		    $qs = array();
-		    foreach ($match[$memberName] as $value) {
-			$qs[] = '?';
-			$wheredata[] = $this->_normalizeValue($value, $memberData);
-		    }
-		    $where[] = $this->_translateColumnName($memberName) . ' IN ('
-			     . implode(',', $qs) . ')';
-		} else {
-		    $value = $this->_normalizeValue($match[$memberName], $memberData);
-		    if (is_null($value)) {
-			$where[] = $this->_translateColumnName($memberName) . ' IS NULL';
-		    } else {
-			$where[] = $this->_translateColumnName($memberName) . '=?';
-			$wheredata[] = $value;
-		    }
-		}
+		$this->_getWhereSql($memberName, $memberData, $match[$memberName], 
+			$where, $wheredata);
 	    }
 
 	    if (array_key_exists($memberName, $change)) {
@@ -627,6 +622,41 @@ class GalleryStorage {
 	}
 
 	return null;
+    }
+
+    /**
+     * Accepts a $mapInfo pair and $match value to add match information to supplied array.
+     *
+     * @param string Name of map field
+     * @param array Data about map field
+     * @param mixed Values that the map should match on
+     * @param array All match keys
+     * @param array All match values
+     */
+    function _getWhereSql($memberName, $memberData, $matchValue, &$where, &$wheredata) {
+	if (GalleryUtilities::isA($matchValue, 'GallerySqlFragment')) {
+	    $where[] = $this->_translateColumnName($memberName) . ' ' .
+			$this->_translateQuery($matchValue->getFragment());
+	    foreach ($matchValue->getValues() as $value) {
+		$wheredata[] = $value;
+	    }
+	} else if (is_array($matchValue)) {
+	    $qs = array();
+	    foreach ($matchValue as $value) {
+		$qs[] = '?';
+		$wheredata[] = $this->_normalizeValue($value, $memberData);
+	    }
+	    $where[] = $this->_translateColumnName($memberName) . ' IN ('
+			. implode(',', $qs) . ')';
+	} else {
+	    $value = $this->_normalizeValue($matchValue, $memberData);
+	    if (is_null($value)) {
+		$where[] = $this->_translateColumnName($memberName) . ' IS NULL';
+	    } else {
+		$where[] = $this->_translateColumnName($memberName) . '=?';
+		$wheredata[] = $value;
+	    }
+	}
     }
 
     /**

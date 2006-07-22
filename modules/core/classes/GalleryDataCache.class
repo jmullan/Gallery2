@@ -646,22 +646,13 @@ class GalleryDataCache {
 	$key = md5(serialize($keyData) . '|' . $extraKey . '|' . implode(",", $aclIds));
 	$userId = $gallery->getActiveUserId();
 
-	$storage =& $gallery->getStorage();
-	$query = '
-        SELECT
-          [GalleryCacheMap::value]
-        FROM
-          [GalleryCacheMap]
-        WHERE
-          [GalleryCacheMap::key] = ?
-          AND
-          [GalleryCacheMap::type] = ?
-          AND
-          [GalleryCacheMap::userId] = ?
-          AND
-          [GalleryCacheMap::timestamp] > ?
-        ';
-	list ($ret, $results) = $storage->search($query, array($key, $type, $userId, $cutoff));
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
+
+	list ($ret, $results) = GalleryCoreApi::getMapEntry('GalleryCacheMap',
+	    array('value'), 
+	    array('key' => $key, 'type' => $type, 'userId' => $userId, 
+		  'timestamp' => new GallerySqlFragment('>?', $cutoff)));
 	if ($ret) {
 	    return array($ret, null);
 	}

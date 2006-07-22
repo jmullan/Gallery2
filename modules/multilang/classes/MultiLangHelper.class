@@ -40,16 +40,10 @@ class MultiLangHelper {
      * @static
      */
     function getItemData($itemId) {
-	global $gallery;
-
-	$query = '
-	SELECT [MultiLangItemMap::language], [MultiLangItemMap::title],
-	       [MultiLangItemMap::summary], [MultiLangItemMap::description]
-	FROM [MultiLangItemMap]
-	WHERE [MultiLangItemMap::itemId] = ?
-	';
-
-	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('MultiLangItemMap',
+	    array('language', 'title', 'summary', 'description'), 
+	    array('itemId' => (int)$itemId));
+	
 	if ($ret) {
 	    return array($ret, null);
 	}

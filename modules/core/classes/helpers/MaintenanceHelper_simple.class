@@ -70,28 +70,13 @@ class MaintenanceHelper_simple {
      * @access private
      */
     function fetchLastRun($taskId) {
-	global $gallery;
-
-	$query = '
-        SELECT
-          [GalleryMaintenanceMap::runId],
-          [GalleryMaintenanceMap::timestamp],
-          [GalleryMaintenanceMap::success],
-          [GalleryMaintenanceMap::details]
-        FROM
-          [GalleryMaintenanceMap]
-        WHERE
-          [GalleryMaintenanceMap::taskId] = ?
-        ORDER BY
-          [GalleryMaintenanceMap::timestamp] DESC
-        ';
-
-	list ($ret, $searchResults) =
-	    $gallery->search($query, array($taskId), array('limit' => array('count' => 1)));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryMaintenanceMap',
+	    array('runId', 'timestamp', 'success', 'details'), array('taskId' => $taskId),
+	    array('orderBy' => array('timestamp' => ORDER_DESCENDING),
+		  'limit' => array('count' => 1)));
 	if ($ret) {
 	    return array($ret, null);
 	}
-
 	$result = $searchResults->nextResult();
 	$info = null;
 	if ($searchResults->resultCount() == 1) {

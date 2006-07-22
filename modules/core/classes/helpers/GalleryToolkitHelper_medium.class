@@ -74,18 +74,9 @@ class GalleryToolkitHelper_medium {
 	}
 	$crc = sprintf('%u', crc32($signature));
 
-	$query = '
-	SELECT
-	  [GalleryToolkitOperationMap::parametersCrc],
-	  [GalleryToolkitOperationMap::outputMimeType]
-	FROM
-	  [GalleryToolkitOperationMap]
-	WHERE
-	  [GalleryToolkitOperationMap::name] = ?
-	';
-	list ($ret, $searchResults) = $gallery->search($query,
-						       array($operationName),
-						       array('limit' => array('count' => 1)));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryToolkitOperationMap',
+	    array('parametersCrc', 'outputMimeType'),
+	    array('name' => $operationName), array('limit' => array('count' => 1)));
 	if ($ret) {
 	    return $ret;
 	}
@@ -177,16 +168,9 @@ class GalleryToolkitHelper_medium {
 	global $gallery;
 
 	/* Check to see if the property name exists, but with a different unique id. */
-	$query = '
-	SELECT
-	  [GalleryToolkitPropertyMap::type]
-	FROM
-	  [GalleryToolkitPropertyMap]
-	WHERE
-	  [GalleryToolkitPropertyMap::name] = ?
-	';
-	list ($ret, $searchResults) =
-	    $gallery->search($query, array($propertyName), array('limit' => array('count' => 1)));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryToolkitPropertyMap',
+	    array('type'),
+	    array('name' => $propertyName), array('limit' => array('count' => 1)));
 	if ($ret) {
 	    return $ret;
 	}
@@ -360,16 +344,8 @@ class GalleryToolkitHelper_medium {
      * @static
      */
     function unregisterToolkitsByModuleId($moduleId) {
-	global $gallery;
-	$query = '
-        SELECT
-          [GalleryFactoryMap::implId]
-        FROM
-          [GalleryFactoryMap]
-        WHERE
-          [GalleryFactoryMap::implModuleId] = ?
-        ';
-	list($ret, $searchResults) = $gallery->search($query, array($moduleId));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryFactoryMap',
+	    array('implId'), array('implModuleId' => $moduleId));
 	if ($ret) {
 	    return $ret;
 	}
@@ -531,20 +507,12 @@ class GalleryToolkitHelper_medium {
 	if (empty($operationName)) {
 	    $data = array();
 	} else if (!GalleryDataCache::containsKey($cacheKey)) {
-	    $query = '
-	    SELECT
-	      [GalleryToolkitOperationMimeTypeMap::mimeType],
-	      [GalleryToolkitOperationMimeTypeMap::toolkitId]
-	    FROM
-	      [GalleryToolkitOperationMimeTypeMap]
-	    WHERE
-	      [GalleryToolkitOperationMimeTypeMap::operationName] = ?
-	    ORDER BY
-	      [GalleryToolkitOperationMimeTypeMap::mimeType] ASC,
-	      [GalleryToolkitOperationMimeTypeMap::priority] ASC
-	    ';
-
-	    list ($ret, $searchResults) = $gallery->search($query, array($operationName));
+	    list ($ret, $searchResults) = 
+	    	GalleryCoreApi::getMapEntry('GalleryToolkitOperationMimeTypeMap',
+		array('mimeType', 'toolkitId'),
+		array('operationName' => $operationName), 
+		array('orderBy' => array('mimeType' => ORDER_ASCENDING, 
+		    			 'priority' => ORDER_ASCENDING)));
 	    if ($ret) {
 		return array($ret, null);
 	    }

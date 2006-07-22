@@ -76,6 +76,14 @@ class RepositoryTestStorage {
 	return null;
     }
 
+    function getMapEntry($map, $data, $match) {
+	$singleton =& $this->getSingleton();
+	$singleton->_searches[] = array('map' => $map, 'select' => $data, 'where' => $match);
+
+	return array(null,
+		     new RepositoryTestSearchResults($singleton->_searchResults));
+    }
+    
     function getAddedMapData() {
 	$singleton =& $this->getSingleton();
 	return $singleton->_addedMapData;

@@ -47,19 +47,9 @@ class RatingHelper {
     function fetchRatings($itemIds, $userId) {
 	global $gallery;
 
-	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
-	$query = '
-	    SELECT
-	    [RatingCacheMap::itemId],
-	    [RatingCacheMap::averageRating],
-	    [RatingCacheMap::voteCount]
-		FROM
-		[RatingCacheMap]
-		WHERE
-		[RatingCacheMap::itemId] IN (' . $markers . ')
-		';
-
-	list($ret, $searchResults) = $gallery->search($query, $itemIds);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('RatingCacheMap',
+	    array('itemId', 'averageRating', 'voteCount'), 
+	    array('itemId' => $itemIds));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -78,19 +68,7 @@ class RatingHelper {
 	 * user hasn't rated any item yet
 	 */
 	if ($session->isPersistent()) {
-	    $query = '
-	    SELECT
-	    [RatingMap::itemId], [RatingMap::rating]
-	    FROM
-	    [RatingMap]
-	    WHERE
-	    [RatingMap::itemId] IN (' . $markers . ')
-	    AND
-	    [RatingMap::userId] = ?
-	    ';
-
-	    $searchParams = $itemIds;
-	    $searchParams[] = (int)$userId;
+	    $searchParams = array('itemId' => $itemIds, 'userId' => (int)$userId);
 
 	    /* Handle extra checks for anonymous users */
 	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($userId);
@@ -100,21 +78,12 @@ class RatingHelper {
 	    if ($isAnonymous) {
 		$sessionId = $session->getId();
 		$remoteId = $session->getRemoteIdentifier();
-
-		$query .= '
-		AND
-		(
-		[RatingMap::sessionId] = ?
-		OR
-		[RatingMap::remoteIdentifier] = ?
-		)
-		';
-
-		$searchParams[] = $sessionId;
-		$searchParams[] = implode(":", $remoteId);
+		$searchParams['sessionId'] = $sessionId;
+		$searchParams['remoteIdentifier'] = implode(':', $remoteId);
 	    }
 
-	    list ($ret, $searchResults) = $gallery->search($query, $searchParams);
+	    list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('RatingMap',
+		array('itemId', 'rating'), $searchParams);
 	    if ($ret) {
 		return array($ret, null);
 	    }

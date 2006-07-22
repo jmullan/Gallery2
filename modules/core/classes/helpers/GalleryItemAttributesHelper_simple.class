@@ -122,20 +122,11 @@ class GalleryItemAttributesHelper_simple {
      * @static
      */
     function fetchViewCounts($itemIds) {
-	global $gallery;
-
 	foreach ($itemIds as $idx => $id) {
 	    $itemIds[$idx] = (int)$id;
 	}
-	$query = sprintf('
-        SELECT
-          [GalleryItemAttributesMap::itemId], [GalleryItemAttributesMap::viewCount]
-        FROM
-          [GalleryItemAttributesMap]
-        WHERE
-          [GalleryItemAttributesMap::itemId] IN (%s)
-        ', GalleryUtilities::makeMarkers($itemIds));
-	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryItemAttributesMap',
+	    array('itemId', 'viewCount'), array('itemId' => $itemIds));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -162,15 +153,8 @@ class GalleryItemAttributesHelper_simple {
     function fetchParentSequence($itemId) {
 	global $gallery;
 
-	$query = '
-        SELECT
-          [GalleryItemAttributesMap::parentSequence]
-        FROM
-          [GalleryItemAttributesMap]
-        WHERE
-          [GalleryItemAttributesMap::itemId] = ?
-        ';
-	list ($ret, $searchResults) = $gallery->search($query, array((int)$itemId));
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryItemAttributesMap',
+	    array('parentSequence'), array('itemId' => (int)$itemId));
 	if ($ret) {
 	    return array($ret, null);
 	}
