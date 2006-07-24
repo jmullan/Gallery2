@@ -507,11 +507,11 @@ class GalleryToolkitHelper_medium {
 	if (empty($operationName)) {
 	    $data = array();
 	} else if (!GalleryDataCache::containsKey($cacheKey)) {
-	    list ($ret, $searchResults) = 
+	    list ($ret, $searchResults) =
 	    	GalleryCoreApi::getMapEntry('GalleryToolkitOperationMimeTypeMap',
-		array('mimeType', 'toolkitId'),
-		array('operationName' => $operationName), 
-		array('orderBy' => array('mimeType' => ORDER_ASCENDING, 
+		array('mimeType', 'toolkitId', 'priority'),
+		array('operationName' => $operationName),
+		array('orderBy' => array('mimeType' => ORDER_ASCENDING,
 		    			 'priority' => ORDER_ASCENDING)));
 	    if ($ret) {
 		return array($ret, null);

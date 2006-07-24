@@ -82,7 +82,8 @@ class GalleryFactoryHelper_simple {
 	    $registry = GalleryDataCache::getFromDisk($cacheParams);
 	    if (!isset($registry)) {
 		list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryFactoryMap',
-		    array('classType', 'className', 'implId', 'implPath', 'hints', 'implModuleId'),
+		    array('classType', 'className', 'implId', 'implPath',
+			  'hints', 'implModuleId', 'orderWeight'),
 		    array(), array('orderBy' => array('orderWeight' => ORDER_ASCENDING)));
 		if ($ret) {
 		    $ret = array($ret, null);
