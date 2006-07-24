@@ -357,22 +357,12 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 			    $packages);
 
 	/* The following assertion isn't really necessary. */
-	$expectedQuery = '
-	    SELECT
-	      [GalleryPluginPackageMap::packageName],
-	      [GalleryPluginPackageMap::packageVersion],
-	      [GalleryPluginPackageMap::packageBuild]
-	    FROM
-	      [GalleryPluginPackageMap]
-	    WHERE
-	      [GalleryPluginPackageMap::pluginType] = ?
-	      AND
-	      [GalleryPluginPackageMap::pluginId] = ?
-	    ';
-	$expectedArguments = array('module', 'testModule');
+	$expectedQuery = array(
+		'map' => 'GalleryPluginPackageMap',
+		'select' => array('packageName', 'packageVersion', 'packageBuild'),
+		'where' => array('pluginType' => 'module', 'pluginId' => 'testModule'));
 	$searches = $this->_testStorage->getSearches();
-	$this->assertEquals(array('query' => $expectedQuery, 'arguments' => $expectedArguments),
-			    $searches[0]);
+	$this->assertEquals($expectedQuery, $searches[0]);
     }
 
     function testGetPluginVersion() {
