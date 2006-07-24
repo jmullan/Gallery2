@@ -155,19 +155,19 @@ class ImageUploadHelper {
 
 	$createDirUrl = $urlGen->generateUrl(
 	    array('controller' => 'nokiaupload.NewDirectory'),
-	    array('forceFullUrl' => true, 'htmlEntities' => false)) . '&';
+	    array('forceFullUrl' => true, 'htmlEntities' => false, 'forceSessionId' => false));
 
 	$uploadUrl = $urlGen->generateUrl(
 	    array('controller' => 'nokiaupload.Upload'),
-	    array('forceFullUrl' => true, 'htmlEntities' => false)) . '&';
+	    array('forceFullUrl' => true, 'htmlEntities' => false, 'forceSessionId' => false));
 
 	$albumListUrl = $urlGen->generateUrl(
 	    array('controller' => 'nokiaupload.DirectoryListing'),
-	    array('forceFullUrl' => true, 'htmlEntities' => false)) . '&';
+	    array('forceFullUrl' => true, 'htmlEntities' => false, 'forceSessionId' => false));
 
-	$create = 'CreateDirURL=' . $createDirUrl . "\r\n";
-	$upload = 'UploadURL=' . $uploadUrl . "\r\n";
-	$dirList = 'DirListURL=' . $albumListUrl . "\r\n";
+	$create = 'CreateDirURL=' . $createDirUrl . "&\r\n";
+	$upload = 'UploadURL=' . $uploadUrl . "&\r\n";
+	$dirList = 'DirListURL=' . $albumListUrl . "&\r\n";
 
 	return array($create, $upload, $dirList);
     }
