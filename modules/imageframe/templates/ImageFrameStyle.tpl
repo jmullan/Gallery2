@@ -44,6 +44,8 @@ table.ImageFrame_{$id} .RR div.V {ldelim} width:{$data.widthRR}px; {rdelim}
 {/if}
 {if !empty($data.imageBR)}table.ImageFrame_{$id} .BR {ldelim} width:{$data.widthBR}px; height:{$data.heightBR}px; background:url({$data.imageBR}) no-repeat; {rdelim}
 {/if}
+{if !empty($data.imageCC)}table.ImageFrame_{$id} .IMG {ldelim} background:url({$data.imageCC}) repeat center center; {rdelim}
+{/if}
 table.ImageFrame_{$id} td {ldelim} font-size:1px {rdelim} /* For IE */
 {/if}
 {/foreach}
