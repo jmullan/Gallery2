@@ -984,7 +984,7 @@ class GalleryUtilities {
     function _internalGetRequestVariable($keyPath, $array) {
 	$key = array_shift($keyPath);
 	while (!empty($keyPath)) {
-	    if (empty($array[$key])) {
+	    if (!isset($array[$key])) {
 		return null;
 	    }
 
@@ -992,11 +992,7 @@ class GalleryUtilities {
 	    $key = array_shift($keyPath);
 	}
 
-	if (empty($array[$key])) {
-	    return null;
-	}
-
-	return $array[$key];
+	return isset($array[$key]) ? $array[$key] : null;
     }
 
     /**
