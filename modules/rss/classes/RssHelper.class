@@ -464,7 +464,13 @@ class RssHelper {
 
 	$timestamp = $newOnly ? 'creationTimestamp' : 'modificationTimestamp';
 	$table = $allowPhotos ? 'GalleryDataItem' : 'GalleryAlbumItem';
-	$timeCutOff = time() - 3600 * 24 * 20; /* 20 days in the past */
+
+	list ($ret, $newDays) =
+	    GalleryCoreApi::getPluginParameter('module', 'newitems', 'days.new');
+	if ($ret || !$newDays) {
+	    $newDays = 1; /* Use default on error or zero setting */
+	}
+	$timeCutOff = time() - 3600 * 24 * $newDays;
 
 	$query = "
 	    SELECT
