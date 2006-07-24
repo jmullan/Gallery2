@@ -144,10 +144,10 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	    return parent::generateUrl($trueParams, $options);
 	}
 
-	$forceDirect = ($trueParams['view'] == 'core.DownloadItem'
-	    || !empty($options['forceDirect']));
-	$options['baseUrl'] = $this->_getBaseUrl($forceDirect) . $url
-	    . $this->_getBaseParamString($forceDirect);
+	$forceDirect = !empty($options['forceDirect'])
+	    || (isset($trueParams['view']) && $trueParams['view'] == 'core.DownloadItem');
+	$options['baseUrl'] =
+	    $this->_getBaseUrl($forceDirect) . $url . $this->_getBaseParamString($forceDirect);
 
 	foreach ($shortUrl['match'] as $key => $value) {
 	    unset($params[$key]);
