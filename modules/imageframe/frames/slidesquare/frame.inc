@@ -3,7 +3,6 @@
 $frameData = array(
 
 'name' => $gallery->i18n('Slide (square)'),
-/*'description' => $gallery->i18n('A photo slide to be put into your diascope'),*/
 'square' => true,
 
 /* Center, no width/height setting neccessary */

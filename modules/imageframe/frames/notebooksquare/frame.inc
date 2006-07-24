@@ -2,7 +2,7 @@
   /* Contributed by: carlandtracey.com */
 $frameData = array(
 
-'name' => $gallery->i18n('Spiral Book (square)'),
+'name' => $gallery->i18n('Spiral Notebook (square)'),
 'square' => true,
 
 /* Center */

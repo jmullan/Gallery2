@@ -16,7 +16,9 @@
   {$content|replace:"%ID%":$objectId|replace:"%CLASS%":"ImageFrame_`$frame`"}
 {elseif $data.type=='image'}
   {if isset($data.square) && $data.square && isset($width) && isset($height)}
-    {capture assign="squaresize"}{$width|max:$height}{/capture}
+    {assign var="isSquare" value=true}
+    {if $width > $height}{assign var="height" value=$width}
+    {else}{assign var="width" value=$height}{/if}
   {/if}
   <table class="ImageFrame_{$frame}" border="0" cellspacing="0" cellpadding="0">
   {if !empty($data.imageTT) || !empty($data.imageTL) || !empty($data.imageTR) ||
@@ -25,11 +27,7 @@
     <td class="TL"></td>
     {if $data.wHL}<td class="TTL"></td>{/if}
     <td class="TT"{if $data.wHL or $data.wHR}
-      {if isset($squaresize)}
-     style="width:{$squaresize-$data.wHL-$data.wHR}px"
-      {else}
      style="width:{if isset($width)}{$width-$data.wHL-$data.wHR}px{else}expression((document.getElementById('{$objectId}').width-{$data.wHL+$data.wHR})+'px'){/if}"
-      {/if}
     {/if}><div class="H"></div></td>
     {if $data.wHR}<td class="TTR"></td>{/if}
     <td class="TR"></td>
@@ -38,25 +36,17 @@
   <tr>
   {capture name="LL"}
     <td class="LL"{if $data.hVT or $data.hVB}
-      {if isset($squaresize)}
-     style="height:{$squaresize-$data.hVT-$data.hVB}px"
-      {else}
      style="height:{if isset($height)}{$height-$data.hVT-$data.hVB}px{else}expression((document.getElementById('{$objectId}').height-{$data.hVT+$data.hVB})+'px'){/if}"
-      {/if}
     {/if}><div class="V">&nbsp;</div></td>
   {/capture}
   {capture name="RR"}
     <td class="RR"{if $data.hVT or $data.hVB}
-      {if isset($squaresize)}
-     style="height:{$squaresize-$data.hVT-$data.hVB}px"
-      {else}
      style="height:{if isset($height)}{$height-$data.hVT-$data.hVB}px{else}expression((document.getElementById('{$objectId}').height-{$data.hVT+$data.hVB})+'px'){/if}"
-      {/if}
     {/if}><div class="V">&nbsp;</div></td>
   {/capture}
   {if $data.hVT}<td class="LLT"></td>{else}{$smarty.capture.LL}{/if}
-  <td rowspan="{$data.rowspan}" colspan="{$data.colspan}" class="IMG"{if isset($squaresize)}
-   align="center" valign="middle" style="width:{$squaresize}px;height:{$squaresize}px;"
+  <td rowspan="{$data.rowspan}" colspan="{$data.colspan}" class="IMG"{if isset($isSquare)}
+   align="center" valign="middle" style="width:{$width}px;height:{$height}px;"
   {/if}>
   {$content|replace:"%ID%":$objectId|replace:"%CLASS%":"ImageFrame_image"}</td>
   {if $data.hVT}<td class="RRT"></td>{else}{$smarty.capture.RR}{/if}
@@ -79,11 +69,7 @@
     <td class="BL"></td>
     {if $data.wHL}<td class="BBL"></td>{/if}
     <td class="BB"{if $data.wHL or $data.wHR}
-      {if isset($squaresize)}
-     style="width:{$squaresize-$data.wHL-$data.wHR}px"
-      {else}
      style="width:{if isset($width)}{$width-$data.wHL-$data.wHR}px{else}expression((document.getElementById('{$objectId}').width-{$data.wHL+$data.wHR})+'px'){/if}"
-      {/if}
     {/if}><div class="H"></div></td>
     {if $data.wHR}<td class="BBR"></td>{/if}
     <td class="BR"></td>
