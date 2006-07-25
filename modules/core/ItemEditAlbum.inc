@@ -262,7 +262,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    }
 	    $form['orderDirection'] = $item->getOrderDirection();
 	    $form['theme'] = $item->getTheme();
-	    $form['theme'] = $item->getTheme();
 	    $form['formName'] = 'ItemEditAlbum';
 
 	    /* Load up the data for the resizes table */
@@ -623,7 +622,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    $sourceId = $thumbnail->getDerivativeSourceId();
 
 		    /* Load the source of the thumbnail */
-		    list($ret, $source) = GalleryCoreApi::loadEntitiesById($sourceId);
+		    list ($ret, $source) = GalleryCoreApi::loadEntitiesById($sourceId);
 		    if ($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 			/*
 			 * Someone deleted the source image, we can do
