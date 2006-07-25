@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{g->callback type="albumselect.LoadAlbumData" albumTree=true stripTitles="true"}
+{g->callback type="albumselect.LoadAlbumData" albumTree=true stripTitles=true}
 
 {if isset($block.albumselect)}
 <div class="{$class}">
@@ -49,12 +49,12 @@
       {$albumTree}.config.useIcons = {if $params.treeIcons}true{else}false{/if};
       {$albumTree}.config.useCookies = {if $params.treeCookies}true{else}false{/if};
       {$albumTree}.config.closeSameLevel = {if $params.treeCloseSameLevel}true{else}false{/if};
-      {$albumTree}.add(0, -1, " {$block.albumselect.LoadAlbumData.albumTree.titlesForJs.root}",
-		    '{g->url}');
-      {foreach from=$block.albumselect.LoadAlbumData.albumTree.tree item=node}
-	{assign var="title" value=$block.albumselect.LoadAlbumData.albumTree.titlesForJs[$node.id]}
-	{$albumTree}.add({$node.nodeId}, {$node.parentNode}, "{$title}", 'javascript:albumSelect_goToNode({$node.id})');
-      {/foreach}
+      {assign var="data" value=$block.albumselect.LoadAlbumData.albumTree}
+      {$albumTree}.add(0, -1, " {$data.titlesForJs.root}", '{g->url}');
+      {ldelim} var pf = '{$data.links.prefix}';
+      {foreach from=$data.tree item=node}
+	{$albumTree}.add({$node.nodeId}, {$node.parentNode}, "{$data.titlesForJs[$node.id]}", pf+'{$data.links[$node.id]}');
+      {/foreach} {rdelim}
       document.write({$albumTree});
       // ]]>
     </script>

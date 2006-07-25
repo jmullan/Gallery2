@@ -48,15 +48,14 @@ class AlbumSelectCallbacks {
 				   'module' => 'albumselect',
 				   'itemId' => $userId . '_' . $languageCode .
 				   '_' . substr(md5(serialize($callbackParams)), 0, 5));
-	    list ($treeList, $titles, $titlesForJs) = 
-	    				GalleryDataCache::getFromDisk($cachePathInfo);
-	    if (!isset($titles) || !isset($treeList) || !isset($titlesForJs)) {
+	    list ($treeList, $titles, $titlesForJs, $links) =
+		GalleryDataCache::getFromDisk($cachePathInfo);
+	    if (!isset($titles) || !isset($treeList) || !isset($titlesForJs) || !isset($links)) {
 		if (isset($callbackParams['stripTitles'])) {
 		    GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
 		}
 		if (isset($callbackParams['truncateTitles'])) {
-		    GalleryCoreApi::requireOnce(
-			'lib/smarty_plugins/modifier.entitytruncate.php');
+		    GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.entitytruncate.php');
 		}
 		list ($ret, $rootAlbumId) = GalleryCoreApi::getDefaultAlbumId();
 		if ($ret) {
@@ -130,17 +129,42 @@ class AlbumSelectCallbacks {
 			return null;
 		    }
 		}
-		
+
 		/* Need to double escape for javascript (double-quote delimiter, backslash, ..) */
 		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
-		$titlesForJs = array();
+		$urlGenerator =& $gallery->getUrlGenerator();
+		$titlesForJs = $links = array();
 		foreach ($titles as $id => $title) {
 		    $titlesForJs[$id] = smarty_modifier_escape($title, 'javascript');
+		    if ($id == 'root') {
+			continue;
+		    }
+		    $links[$id] = $urlGenerator->generateUrl(
+			    array('view' => 'core.ShowItem', 'itemId' => $id),
+			    array('htmlEntities' => false));
+		    /* Find common prefix across all URLs */
+		    if (!isset($links['prefix'])) {
+			$links['prefix'] = $links[$id];
+			$prefixLength = strlen($links['prefix']);
+		    } else {
+			while ($prefixLength
+				&& strncmp($links[$id], $links['prefix'], $prefixLength)) {
+			    $links['prefix'] = substr($links['prefix'], 0, -1);
+			    $prefixLength--;
+			}
+		    }
 		}
-		
+		if (!empty($prefixLength)) {
+		    foreach ($links as $id => $link) {
+			if ($id != 'prefix') {
+			    $links[$id] = substr($link, $prefixLength);
+			}
+		    }
+		}
+
 		GalleryDataCache::putToDisk($cachePathInfo,
-					    $dataToCache = 
-					       array($treeList, $titles, $titlesForJs));
+					    $dataToCache =
+					       array($treeList, $titles, $titlesForJs, $links));
 	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
@@ -149,6 +173,7 @@ class AlbumSelectCallbacks {
 		'tree' => $treeList,
 		'titles' => $titles,
 		'titlesForJs' => $titlesForJs,
+		'links' => $links,
 		'params' => $params);
 	    if (isset($albumTreeName)) {
 		$block['albumselect']['LoadAlbumData'][$type]['albumTreeName'] = $albumTreeName;
