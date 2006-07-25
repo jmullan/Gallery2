@@ -185,22 +185,23 @@ class GalleryUtilities {
     /**
      * Return all request variables from the URL except the listed keys
      *
-     * @param array keys to skip
-     * @return array key value pairs
+     * @param array (optional) keys to skip
+     * @param boolean (optional) if true, remove form variable prefix from keys in result
+     * @return array unsanitized key value pairs
      * @static
      */
-    function getUrlVariablesFiltered($skip = null) {
+    function getUrlVariablesFiltered($skip=array(), $removePrefix=false) {
 	$filter = array();
 	foreach ($skip as $key) {
-	    $filter[] = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	    $filter[GALLERY_FORM_VARIABLE_PREFIX . $key] = true;
 	}
 
 	$vars = array();
+	$prefixLength = strlen(GALLERY_FORM_VARIABLE_PREFIX);
 	foreach ($_GET as $key => $value) {
-	    if (in_array($key, $filter)) {
-		continue;
+	    if (!isset($filter[$key])) {
+		$vars[$removePrefix ? substr($key, $prefixLength) : $key] = $value;
 	    }
-	    $vars[$key] = $value;
 	}
 
 	return $vars;

@@ -880,12 +880,8 @@ class GalleryUrlGenerator {
 	    return $formUrl;
 	}
 
-	$params = array();
-	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(
-	    array('return', 'returnName', 'navId', 'fromNavId'));
-	foreach ($urlVariables as $key => $value) {
-	    $params[substr($key, strlen(GALLERY_FORM_VARIABLE_PREFIX))] = $value;
-	}
+	$params = GalleryUtilities::getUrlVariablesFiltered(
+		array('return', 'returnName', 'navId', 'fromNavId'), true);
 
 	return $this->generateUrl($params);
     }
