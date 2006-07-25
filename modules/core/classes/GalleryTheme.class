@@ -874,11 +874,10 @@ class GalleryTheme extends GalleryPlugin {
 		    }
 		}
 
-		if (isset($theme['item']) && isset($theme['allChildIds'])) {
+		if (isset($theme['allChildIds'])) {
 		    /* Dynamic album has already loaded child ids */
 		    $isDynamicAlbum = true;
 		    $this->_cacheablePage = false;
-		    $item = $theme['item'];
 		}
 
 		if (!empty($perPage)) {
@@ -1323,9 +1322,11 @@ class GalleryTheme extends GalleryPlugin {
 	 * 'viewCount'
 	 */
 	if (isset($load['viewCount'])) {
-	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCounts($allItemIds);
-	    if ($ret) {
-		return $ret;
+	    if (!empty($allItemIds)) {
+		list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCounts($allItemIds);
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 	    $theme['item']['viewCount'] = isset($viewCount[$itemId]) ? $viewCount[$itemId] : 0;
 	    $childData[] = 'viewCount';
@@ -1406,10 +1407,12 @@ class GalleryTheme extends GalleryPlugin {
 	 */
 	if (isset($load['systemLinks'])
 		|| isset($load['itemLinks']) || isset($load['itemSummaries'])) {
-	    list ($ret, $permissions) =
-		GalleryCoreApi::fetchPermissionsForItems($allItemIds, $theme['actingUserId']);
-	    if ($ret) {
-		return $ret;
+	    if (!empty($allItemIds)) {
+		list ($ret, $permissions) =
+		    GalleryCoreApi::fetchPermissionsForItems($allItemIds, $theme['actingUserId']);
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 
 	    if (isset($load['systemLinks'])) {
@@ -1482,7 +1485,7 @@ class GalleryTheme extends GalleryPlugin {
 		    }
 		}
 
-		if (isset($itemLinks) && isset($callbacks['getItemLinks'])) {
+		if (isset($itemLinks) && isset($callbacks['getItemLinks']) && !empty($allItems)) {
 		    list ($ret, $links) = $module->getItemLinks(
 			$allItems, $wantsDetailedLinks, $permissions, $theme['actingUserId']);
 		    if ($ret) {

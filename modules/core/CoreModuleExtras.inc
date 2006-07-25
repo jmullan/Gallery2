@@ -2082,6 +2082,8 @@ class CoreModuleExtras {
 	    /* GalleryAuthPlugin: set active user from session now handled by SessionAuthPlugin */
 	case '1.1.12':
 	    /* GalleryCoreApi::getMapEntry */
+	case '1.1.13':
+	    /* GalleryDynamicAlbum */
 
 	case 'end of upgrade path':
 	    /*
@@ -2347,6 +2349,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.10':
 	case '1.1.11':
 	case '1.1.12':
+	case '1.1.13':
 
 	case 'end of upgrade path':
 	    /*
@@ -2778,6 +2781,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	$regs[] = array('GalleryItem', 'GalleryAnimationItem', 'class',
 			array('application/x-director', 'application/x-shockwave-flash'));
 	$regs[] = array('GalleryItem', 'GalleryUnknownItem', 'class', array('*'));
+	$regs[] = array('GalleryDynamicAlbum', 'GalleryDynamicAlbum', 'class', null);
 	$regs[] = array('GallerySearchInterface_1_0', 'GalleryCoreSearch', 'class', null);
 	$regs[] = array('ItemEditPlugin', 'ItemEditItem', 'inc', null, 1);
 	$regs[] = array('ItemEditPlugin', 'ItemEditAnimation', 'inc', null, 2);

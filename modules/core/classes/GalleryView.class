@@ -265,19 +265,9 @@ class GalleryView {
 
 	/* -------------------------------------------------- */
 	/* Load up the theme. */
-	list ($ret, $item, $wasSpecified) = $this->_getItem();
+	list ($ret, $theme, $params, $item) = $this->loadThemeAndParameters();
 	if ($ret) {
 	    return array($ret, null, null);
-	}
-	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
-	    /* Invalid itemId given.. return MISSING_OBJECT to get standard error page */
-	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null);
-	}
-
-	list ($ret, $theme) = $this->loadThemeForItem($wasSpecified ? $item : null);
-	if ($ret) {
-	    /* Ignore errors here so fallback theme can be used */
-	    $gallery->debug_r($ret);
 	}
 
 	if (!isset($theme)) {
@@ -291,22 +281,12 @@ class GalleryView {
 		$isFallbackTheme = true;
 	    } else {
 		$redirect = array('view' => 'core.ShowItemError', 'problem' => 'missingTheme');
-		if ($wasSpecified) {
-		    $redirect['itemId'] = $item->getId();
+		$itemId = GalleryUtilities::getRequestVariables('itemId');
+		if ($itemId) {
+		    $redirect['itemId'] = $itemId;
 		}
 		return array(null, array('redirect' => $redirect), null);
 	    }
-	}
-
-	/* Albums have their own settings.  Items use their parent album's settings */
-	if (GalleryUtilities::isA($item, 'GalleryItem') && !$item->getCanContainChildren()) {
-	    $targetId = $item->getParentId();
-	} else {
-	    $targetId = $item->getId();
-	}
-	list ($ret, $params) = $theme->fetchParameters($wasSpecified ? $targetId : null);
-	if ($ret) {
-	    return array($ret, null, null);
 	}
 
 	$templateAdapter =& $gallery->getTemplateAdapter();
@@ -383,6 +363,44 @@ class GalleryView {
     }
 
     /**
+     * Load theme, theme parameters and item to use for this view.
+     *
+     * @return array object GalleryStatus a status code
+     *               object GalleryTheme a theme instance, or null on loadPlugin failure
+     *               array theme parameters
+     *               object GalleryEntity item context
+     */
+    function loadThemeAndParameters() {
+	list ($ret, $item, $wasSpecified) = $this->_getItem();
+	if ($ret) {
+	    return array($ret, null, null, null);
+	}
+	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
+	    /* Invalid itemId given.. return MISSING_OBJECT to get standard error page */
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null, null);
+	}
+
+	list ($ret, $theme) = $this->loadThemeForItem($wasSpecified ? $item : null);
+	if ($ret || !isset($theme)) {
+	    /* Ignore errors here so fallback theme can be used */
+	    return array(null, null, array(), $item);
+	}
+
+	/* Albums have their own settings.  Items use their parent album's settings */
+	if (GalleryUtilities::isA($item, 'GalleryItem') && !$item->getCanContainChildren()) {
+	    $targetId = $item->getParentId();
+	} else {
+	    $targetId = $item->getId();
+	}
+	list ($ret, $params) = $theme->fetchParameters($wasSpecified ? $targetId : null);
+	if ($ret) {
+	    return array($ret, null, null, null);
+	}
+
+	return array(null, $theme, $params, $item);
+    }
+
+    /**
      * Get the theme for this item by finding the theme id for the nearest album.
      *
      * @param GalleryItem (optional) item (omit or pass null to load default theme)
@@ -415,6 +433,23 @@ class GalleryView {
 	    }
 	}
 
+	list ($ret, $theme) = GalleryView::_loadTheme($themeId);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	return array(null, $theme);
+    }
+
+    /**
+     * Load theme; return null if not active.
+     *
+     * @param string theme id
+     * @return array object GalleryStatus a status code
+     *               object GalleryTheme theme or null
+     * @access private
+     * @static
+     */
+    function _loadTheme($themeId) {
 	$validTheme = false;
 	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, false, true);
 	if ($ret) {
@@ -427,7 +462,6 @@ class GalleryView {
 		return array($ret, null);
 	    }
 	}
-
 	if (!$validTheme) {
 	    $theme = null;
 	}
