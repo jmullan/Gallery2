@@ -50,6 +50,7 @@ class RedirectController extends GalleryController {
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
+	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
 
 	$results = array('delegate' => array('view' => 'core.ShowItem'),
 			 'status' => array(),
