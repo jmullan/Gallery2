@@ -43,7 +43,7 @@ if (GalleryUtilities::isEmbedded()) {
 	if (GalleryUtilities::getServerVar('HTTP_IF_MODIFIED_SINCE') ||
 	        (function_exists('getallheaders') && ($headers = GetAllHeaders()) &&
 		 (isset($headers['If-Modified-Since']) || isset($headers['If-modified-since'])))) {
-	    header('HTTP/1.x 304 Not Modified');
+	    header('HTTP/1.0 304 Not Modified');
 	    return;
 	}
 

@@ -80,7 +80,7 @@ class CSSView extends GalleryView {
 		    }
 		}
 		if (!isset($new)) {
-		    header('HTTP/1.x 304 Not Modified');
+		    header('HTTP/1.0 304 Not Modified');
 		    return null;
 		}
 	    }
