@@ -101,12 +101,12 @@ class DiskQuotaOption extends ItemAddOption {
 		    $gallery->addShutdownAction(
 			array('GalleryCoreApi', 'deleteEntityById'), array($item->getId()));
 		} else {
-		    list ($ret, $userDiskQuotaHumanReadable, $userDiskQuotaHumanReadableUnit) = 
+		    list ($ret, $userDiskQuotaHumanReadable, $userDiskQuotaHumanReadableUnit) =
 			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskQuota);
 		    if ($ret) {
 			return array($ret, null, null);
 		    }
-		    list ($ret, $userDiskUsageHumanReadable, $userDiskUsageHumanReadableUnit) = 
+		    list ($ret, $userDiskUsageHumanReadable, $userDiskUsageHumanReadableUnit) =
 			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskUsage);
 		    if ($ret) {
 			return array($ret, null, null);
@@ -123,6 +123,5 @@ class DiskQuotaOption extends ItemAddOption {
         }
 	return array(null, $errors, $warnings);
     }
-
 }
 ?>
