@@ -293,7 +293,7 @@ function populateDataDirectory($dataBase) {
 /* Returns something like https://example.com */
 function getBaseUrl() {
     /* Can't use GalleryUrlGenerator::makeUrl since it's an object method */
-    if (!($hostName = GalleryUtilities::getServerVar('HTTP_X_FORWARDED_SERVER'))) {
+    if (!($hostName = GalleryUtilities::getServerVar('HTTP_X_FORWARDED_HOST'))) {
 	$hostName = GalleryUtilities::getServerVar('HTTP_HOST');
     }
     $protocol = (GalleryUtilities::getServerVar('HTTPS') == 'on') ? 'https' : 'http';
