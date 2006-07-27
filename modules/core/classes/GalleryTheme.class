@@ -29,7 +29,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlugin.class');
 
 /**
  * This interface provides functionality to user-interfaces have a customizable theme.  A theme
- * should implement this class
+ * should implement this class.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -37,7 +37,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlugin.class');
 class GalleryTheme extends GalleryPlugin {
 
     /**
-     * The version of the GalleryTheme API required by this theme
+     * The version of the GalleryTheme API required by this theme.
      *
      * @var array _requiredThemeApi
      * @access private
@@ -45,7 +45,7 @@ class GalleryTheme extends GalleryPlugin {
     var $_requiredThemeApi;
 
     /**
-     * Which of the standard theme settings this theme supports
+     * Which of the standard theme settings this theme supports.
      *
      * @var array _standardSettings
      * @access private
@@ -58,11 +58,9 @@ class GalleryTheme extends GalleryPlugin {
     var $_cacheablePage = false;
 
     /**
-     * Constructor
-     *
      * Constructor to prevent PHP Notices in upgrader and AdminThemes.inc when old themes with a
-     * theme.inc are still in the themes folder The old themes call $this->GalleryTheme() in their
-     * constructor
+     * theme.inc are still in the themes folder.  The old themes call $this->GalleryTheme() in their
+     * constructor.
      *
      * @access public
      */
@@ -70,7 +68,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Return the major and minor version of the GalleryTheme API
+     * Return the major and minor version of the GalleryTheme API.
      *
      * This follows the same rules as the core API
      * @see GalleryCoreApi::getApiVersion()
@@ -85,10 +83,9 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Return whether the theme uses simple or advanced settings
-     * To support simple settings the theme needs to implement getSettings and validateSettings
-     * To support advanced settings the theme must implement loadSettingsTemplate and
-     * handleSettingsRequest
+     * Return whether the theme uses simple or advanced settings.  To support simple settings the
+     * theme needs to implement getSettings and validateSettings To support advanced settings the
+     * theme must implement loadSettingsTemplate and handleSettingsRequest.
      *
      * @return boolean true for advanced settings, false for simple
      */
@@ -126,7 +123,7 @@ class GalleryTheme extends GalleryPlugin {
 	    return array($ret, null, null);
 	}
 
-	/**
+	/*
 	 * For simplicity in upgrading, we don't require themes to delete their old settings.  So
 	 * any item may be carting around extra settings that are no longer valid.  We could fix
 	 * this in the future, but for now, just leave those out of the settings list
@@ -288,9 +285,9 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Return true if all the values are legal, or false if not.  If there are errors, return an
-     * array of localized error messages to display for each invalid setting.  Used for theme with
-     * simple settings (@see isAdvancedSettings)
+     * Check the values of the settings for legality.  If there are errors, return an array of
+     * localized error messages to display for each invalid setting.  Used for theme with simple
+     * settings (@see isAdvancedSettings)
      *
      * @param settings array('key' => array(value, ...), ...)
      * @return array errors in the form of array('key' => 'translated text', ...)
@@ -408,7 +405,8 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Unpack a packed setting (@see GalleryTheme::packSetting)
+     * Unpack a packed setting.
+     * @see GalleryTheme::packSetting
      *
      * @param string the pack type
      * @param mixed the packed value
@@ -457,8 +455,10 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Load the template with data to define the theme settings
-     * Used for theme with advanced settings (@see isAdvancedSettings)
+     * Load the template with data to define the theme settings.  Used for theme with advanced
+     * settings.
+     *
+     * @see isAdvancedSettings
      *
      * @param array object GalleryTemplate the template instance
      * @param array array the form values
@@ -471,8 +471,9 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Let the theme handle the incoming request
-     * Used for theme with advanced settings (@see isAdvancedSettings)
+     * Let the theme handle the incoming request.  Used for theme with advanced settings.
+     *
+     * @see isAdvancedSettings
      * @see GalleryController::handleRequest
      *
      * @param array the form values
@@ -532,9 +533,8 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Perform the module installation or upgrade, whatever is required
-     *
-     * It will do the following:
+     * Perform the module installation or upgrade, whatever is required.  It will do the
+     * following:
      * 1. Get the current version of the theme (if its already installed)
      * 2. Let the theme perform any necessary upgrade tasks.
      * 3. Set the new theme version and api requirements into the database
@@ -621,7 +621,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Remove this theme from all albums
+     * Remove this theme from all albums.
      *
      * @return object GalleryStatus a status code
      */
@@ -706,7 +706,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Load the template with data from this view
+     * Load the template with data from this view.
      *
      * @param object GalleryView the view
      * @param object GalleryTemplate the template instance
@@ -842,7 +842,7 @@ class GalleryTheme extends GalleryPlugin {
 		} else if (empty($page)) {
 		    /*
 		     * We don't have a page number.  If we have a highlight id, then figure out what
-		     * page that id is on and redirect to that page
+		     * page that id is on and redirect to that page.
 		     */
 		    $highlightId = GalleryUtilities::getRequestVariables('highlightId');
 		    if (!empty($highlightId)) {
@@ -897,7 +897,7 @@ class GalleryTheme extends GalleryPlugin {
 			/*
 			 * Load up our child count so that we can figure out the max pages.  We do
 			 * this after we get the child ids because the 'childCount' common template
-			 * data also gets the child counts for the child albums
+			 * data also gets the child counts for the child albums.
 			 */
 			$ret = $this->loadCommonTemplateData(
 				$template, $item, $params, array('childCount'), $childIds, false);
@@ -920,8 +920,8 @@ class GalleryTheme extends GalleryPlugin {
 		    }
 		} else {
 		    /*
-		     * No pagination; load all children (this isn't going to scale, but the theme
-		     * is the boss... for now)
+		     * No pagination; load all children.  This isn't going to scale, but the theme
+		     * is the boss.
 		     */
 		    if (isset($isDynamicAlbum)) {
 			$childIds = $theme['allChildIds'];
@@ -1038,7 +1038,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Call preload for given block if the module is active and a preload exists
+     * Call preload for given block if the module is active and a preload exists.
      *
      * @param object GalleryTemplate the template instance
      * @param string block id (module.blockName)
@@ -1078,7 +1078,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Load commonly used data into theme template
+     * Load commonly used data into theme template.
      * Always loaded:
      *   item        item data
      *   children    array of child item data
@@ -1214,7 +1214,7 @@ class GalleryTheme extends GalleryPlugin {
 	if (isset($load['parents'])) {
 	    /*
 	     * TODO: Should we have this obey the acting user permission?  It may make navigation
-	     * strange for the active user
+	     * strange for the active user.
 	     */
 	    if ($itemId) {
 		list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
@@ -1788,7 +1788,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Sort an array of associative arrays on the 'text' key
+     * Sort an array of associative arrays on the 'text' key.
      * @access private
      */
     function _sortItemLinks($a, $b) {
@@ -1796,7 +1796,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Return the number of items per page, or 0 if there is no pagination in this theme
+     * Return the number of items per page, or 0 if there is no pagination in this theme.
      *
      * @param array the theme parameters
      * @return int
@@ -1814,7 +1814,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Load all the necessary template data to render a page for an album
+     * Load all the necessary template data to render a page for an album.
      *
      * @param array object GalleryTemplate the template instance
      * @param object GalleryAlbumItem the album item to render.
@@ -1829,7 +1829,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Load all the necessary template data to render a page for a single item
+     * Load all the necessary template data to render a page for a single item.
      *
      * @param array object GalleryTemplate the template instance
      * @param object GalleryItem the item to render.  Can be any subclass of GalleryItem
@@ -1843,7 +1843,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Load all the necessary template data to render a page for an administrative (or other) view
+     * Load all the necessary template data to render a page for an administrative (or other) view.
      *
      * @param array object GalleryTemplate the template instance
      * @param object GalleryItem the item to render.
@@ -1859,7 +1859,7 @@ class GalleryTheme extends GalleryPlugin {
 
     /**
      * Load all the necessary template data to render a page for a module view (any views that
-     * aren't user, site, or item admin eg slideshow or members list)
+     * aren't user, site, or item admin eg slideshow or members list).
      *
      * @param array object GalleryTemplate the template instance
      * @param object GalleryItem the item to render
@@ -1874,7 +1874,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Load all the necessary template data to render an error page
+     * Load all the necessary template data to render an error page.
      *
      * @param array object GalleryTemplate the template instance
      * @return array object GalleryStatus a status code
@@ -1886,7 +1886,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Load all the necessary template data to render a progress bar page
+     * Load all the necessary template data to render a progress bar page.
      *
      * @param array object GalleryTemplate the template instance
      * @param object GalleryItem the item to render
@@ -1900,7 +1900,7 @@ class GalleryTheme extends GalleryPlugin {
     }
 
     /**
-     * Split the HTML content into its various component pieces
+     * Split the HTML content into its various component pieces.
      *
      * @param string the main html (<head>, <body>, etc)
      * @param array any extra html that we've generated, like sidebar HTML

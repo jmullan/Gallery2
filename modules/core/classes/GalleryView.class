@@ -26,10 +26,10 @@
  */
 
 /**
- * The API for module views
+ * The API for module views.
  *
  * This class defines the API for view classes used by the various modules to render HTML and binary
- * data to the browser
+ * data to the browser.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -43,7 +43,7 @@ class GalleryView {
      */
 
     /**
-     * The localization domain for this view
+     * The localization domain for this view.
      *
      * @access private
      */
@@ -56,7 +56,7 @@ class GalleryView {
      */
 
     /**
-     * Initialize the view
+     * Initialize the view.
      *
      * @param string the name of the module
      */
@@ -76,7 +76,7 @@ class GalleryView {
 
     /**
      * Print out the immediate output for this view.  This will bypass any global templating.  This
-     * style of view should be reserved for binary data
+     * style of view should be reserved for binary data.
      *
      * @param array any status information from a delegating controller
      * @param array any error information from a delegating controller
@@ -87,7 +87,7 @@ class GalleryView {
     }
 
     /**
-     * Load the template with data from this view
+     * Load the template with data from this view.
      *
      * @param object GalleryTemplate the template instance
      * @param array the form values
@@ -126,7 +126,7 @@ class GalleryView {
     }
 
     /**
-     * Type of view
+     * Type of view.
      *
      * @return view type contant
      */
@@ -135,7 +135,7 @@ class GalleryView {
     }
 
     /**
-     * Load a view
+     * Load a view.
      *
      * Be very security conscious about checking the inputs for possible misuse. The view name is in
      * the format <module>.<classname>, where
@@ -221,7 +221,7 @@ class GalleryView {
     /**
      * Prepare all the various things that a view requires in order to load up the template properly
      * (like the theme, the form variables, the status variables, etc then call the view's
-     * loadTemplate() method and pass in the given template
+     * loadTemplate() method and pass in the given template.
      *
      * @return array object GalleryStatus a status code
      *               array ('body' => string template or 'redirect' => array)
@@ -312,7 +312,7 @@ class GalleryView {
     }
 
     /**
-     * This should return a description of the current view
+     * This should return a description of the current view.
      *
      * It might return a static description or generate a dynamic description using the current
      * request status
@@ -325,7 +325,7 @@ class GalleryView {
     }
 
     /**
-     * Get the localization domain for this view
+     * Get the localization domain for this view.
      *
      * @return string
      */
@@ -334,7 +334,7 @@ class GalleryView {
     }
 
     /**
-     * Return the current item, as specified in the itemId request variable
+     * Return the current item, as specified in the itemId request variable.
      *
      * @return array object GalleryStatus a status code
      *               object GalleryItem an item
@@ -364,7 +364,7 @@ class GalleryView {
     }
 
     /**
-     * Load theme, theme parameters and item to use for this view
+     * Load theme, theme parameters and item to use for this view.
      *
      * @return array object GalleryStatus a status code
      *               object GalleryTheme a theme instance, or null on loadPlugin failure
@@ -402,7 +402,7 @@ class GalleryView {
     }
 
     /**
-     * Get the theme for this item by finding the theme id for the nearest album
+     * Get the theme for this item by finding the theme id for the nearest album.
      *
      * @param GalleryItem (optional) item (omit or pass null to load default theme)
      * @return array object GalleryStatus a status code
@@ -442,7 +442,7 @@ class GalleryView {
     }
 
     /**
-     * Load theme; return null if not active
+     * Load the given theme if it's active.
      *
      * @param string theme id
      * @return array object GalleryStatus a status code

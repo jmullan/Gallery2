@@ -21,7 +21,7 @@ include(dirname(__FILE__) . '/bootstrap.inc');
 
 /*
  * If they don't have a setup password, we assume that the config.php is empty and this is an
- * initial install
+ * initial install.
  */
 if (!@$gallery->getConfig('setup.password')) {
     /* May be invalid if a multisite install lost its config.php; galleryBaseUrl unknown */
@@ -36,8 +36,8 @@ if (GalleryUtilities::isEmbedded()) {
     list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
     if ($view == 'core.DownloadItem' && !empty($itemId)) {
 	/*
-	 * Our URLs are immutable because they have the serial numbers embedded.  So if the browser
-	 * presents us with an If-Modified-Since then it has the latest version of the file already
+	 * Our URLs are immutable because they have the serial numbers embedded.  If the browser
+	 * presents us with an If-Modified-Since then it has the latest version of the file already.
 	 */
 	if (GalleryUtilities::getServerVar('HTTP_IF_MODIFIED_SINCE')
 		|| (function_exists('getallheaders')
@@ -50,7 +50,7 @@ if (GalleryUtilities::isEmbedded()) {
 
 	/*
 	 * Fast download depends on having data.gallery.cache set, so set it now.  If for some
-	 * reason we fail, we'll reset it in init.inc (but that's OK)
+	 * reason we fail, we'll reset it in init.inc (but that's OK).
 	 */
 	$gallery->setConfig(
 	    'data.gallery.cache', $gallery->getConfig('data.gallery.base') . 'cache/');
@@ -266,10 +266,15 @@ function _GalleryMain($embedded=false) {
 
 	    /* Save the view name, put the rest into the request so the view can get it */
 	    foreach ($results['delegate'] as $key => $value) {
-		if ($key == 'view') {
+		switch($key) {
+		case 'view':
 		    $viewName = $value;
+		    break;
+
+		default:
+		    GalleryUtilities::putRequestVariable($key, $value);
+		    break;
 		}
-		GalleryUtilities::putRequestVariable($key, $value);
 	    }
 	}
     }
@@ -330,10 +335,7 @@ function _GalleryMain($embedded=false) {
     }
 
     if (!empty($html)) {
-	/*
-	 * TODO: If we cache all the headers and replay them here, we could send a 304 not modified
-	 * back
-	 */
+	/* TODO: If we cache all the headers and replay them here, we could send a 304 back */
 	$session =& $gallery->getSession();
 	$html = $session->replaceTempSessionIdIfNecessary($html);
 

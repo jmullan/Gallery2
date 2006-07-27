@@ -49,7 +49,7 @@ class ShowItemController extends GalleryController {
 }
 
 /**
- * This controller will handle the rendering of an album or item
+ * This controller will handle the rendering of an album or item.
  *
  * @package GalleryCore
  * @subpackage UserInterface
