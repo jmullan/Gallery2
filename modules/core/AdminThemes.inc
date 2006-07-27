@@ -413,7 +413,7 @@ class AdminThemesView extends GalleryView {
 		return array($ret, null);
 	    }
 
-	    list ($ret, $AdminThemes['availableBlocks']) = $this->loadAvailableBlocks();
+	    list ($ret, $AdminThemes['availableBlocks']) = GalleryCoreApi::loadAvailableBlocks();
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -454,44 +454,6 @@ class AdminThemesView extends GalleryView {
 	$template->setVariable('controller', 'core.AdminThemes');
 	return array(null,
 		     array('body' => 'modules/core/templates/AdminThemes.tpl'));
-    }
-
-    /**
-     * Load the block configuration files from every module.
-     *
-     * @return array object GalleryStatus a status code
-     *               array block configurations
-     */
-    function loadAvailableBlocks() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	$data = array();
-	$base = dirname(dirname(__FILE__));
-	foreach ($pluginStatus as $pluginId => $status) {
-	    if (empty($status['active'])) {
-		continue;
-	    }
-
-	    $configFile = "$base/$pluginId/templates/blocks/blocks.inc";
-	    if (!$platform->file_exists($configFile)) {
-		continue;
-	    }
-
-	    $blocks = array();
-	    include($configFile);
-
-	    if (!empty($blocks)) {
-		$data[$pluginId] = $blocks;
-	    }
-	}
-
-	return array(null, $data);
     }
 }
 ?>

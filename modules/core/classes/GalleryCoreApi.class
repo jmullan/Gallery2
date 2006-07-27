@@ -3162,5 +3162,46 @@ class GalleryCoreApi {
 	    'modules/core/classes/helpers/GalleryItemHelper_advanced.class');
 	return GalleryItemHelper_advanced::deleteRenderer($rendererClassName);
     }
+
+    /**
+     * Load template data for a theme settings form
+     *
+     * @param string themeId; if empty, site default theme is used
+     * @param int itemId
+     * @param object GalleryTemplate template
+     * @param array form
+     * @return object GalleryStatus a status code
+     */
+    function loadThemeSettingsForm($themeId, $itemId, &$template, &$form) {
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryThemeHelper_medium.class');
+	return GalleryThemeHelper_medium::loadThemeSettingsForm(
+		$themeId, $itemId, $template, $form);
+    }
+
+    /**
+     * Load the block configuration files from every module
+     *
+     * @return array object GalleryStatus a status code
+     *               array block configurations
+     */
+    function loadAvailableBlocks() {
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryThemeHelper_medium.class');
+	return GalleryThemeHelper_medium::loadAvailableBlocks();
+    }
+
+    /**
+     * Handle theme settings form submission
+     *
+     * @param string themeId; if empty, site default theme is used
+     * @param int itemId
+     * @param array form values
+     * @return array object GalleryStatus a status code
+     *               array error messages
+     *               string localized status message
+     */
+    function handleThemeSettingsRequest($themeId, $itemId, $form) {
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryThemeHelper_medium.class');
+	return GalleryThemeHelper_medium::handleThemeSettingsRequest($themeId, $itemId, $form);
+    }
 }
 ?>
