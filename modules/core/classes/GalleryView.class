@@ -17,17 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
+ * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
  * The API for module views
  *
- * This class defines the API for view classes used by the various modules to
- * render HTML and binary data to the browser.
+ * This class defines the API for view classes used by the various modules to render HTML and binary
+ * data to the browser
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -66,16 +68,15 @@ class GalleryView {
     /**
      * Is this an immediate or a buffered view?
      *
-     * @return boolean true if it's an immediate view.
+     * @return boolean true if it's an immediate view
      */
     function isImmediate() {
 	return false;
     }
 
     /**
-     * Print out the immediate output for this view.  This will bypass any
-     * global templating.  This style of view should be reserved for binary
-     * data.
+     * Print out the immediate output for this view.  This will bypass any global templating.  This
+     * style of view should be reserved for binary data
      *
      * @param array any status information from a delegating controller
      * @param array any error information from a delegating controller
@@ -86,7 +87,7 @@ class GalleryView {
     }
 
     /**
-     * Load the template with data from this view.
+     * Load the template with data from this view
      *
      * @param object GalleryTemplate the template instance
      * @param array the form values
@@ -125,7 +126,7 @@ class GalleryView {
     }
 
     /**
-     * Type of view.
+     * Type of view
      *
      * @return view type contant
      */
@@ -136,8 +137,8 @@ class GalleryView {
     /**
      * Load a view
      *
-     * Be very security conscious about checking the inputs for possible
-     * misuse. The view name is in the format <module>.<classname>, where
+     * Be very security conscious about checking the inputs for possible misuse. The view name is in
+     * the format <module>.<classname>, where
      * - <module> is the module the view belongs to
      * - <classname> is the name of the .inc-file to be loaded. The class
      *   that is loaded is the <classname>View, that must extend GalleryView class
@@ -193,8 +194,8 @@ class GalleryView {
 	    }
 
 	    /*
-	     * We bundle view and controller classes together, so we need the controller
-	     * superclass to load the view
+	     * We bundle view and controller classes together, so we need the controller superclass
+	     * to load the view
 	     */
 	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
 	    GalleryCoreApi::requireOnce($fileName);
@@ -218,9 +219,9 @@ class GalleryView {
     }
 
     /**
-     * Prepare all the various things that a view requires in order to load up the
-     * template properly (like the theme, the form variables, the status variables, etc
-     * then call the view's loadTemplate() method and pass in the given template.
+     * Prepare all the various things that a view requires in order to load up the template properly
+     * (like the theme, the form variables, the status variables, etc then call the view's
+     * loadTemplate() method and pass in the given template
      *
      * @return array object GalleryStatus a status code
      *               array ('body' => string template or 'redirect' => array)
@@ -272,8 +273,8 @@ class GalleryView {
 
 	if (!isset($theme)) {
 	    /*
-	     * Need to be able to show error page, login and site admin even if we have
-	     * no theme!  (In case our default theme is incompatible with current APIs)
+	     * Need to be able to show error page, login and site admin even if we have no theme!
+	     * (In case our default theme is incompatible with current APIs)
 	     */
 	    if ($this->getViewType() == VIEW_TYPE_ADMIN) {
 		$theme = new GalleryTheme();
@@ -311,10 +312,10 @@ class GalleryView {
     }
 
     /**
-     * This should return a description of the current view.
+     * This should return a description of the current view
      *
-     * It might return a static description or generate a dynamic description
-     * using the current request status.
+     * It might return a static description or generate a dynamic description using the current
+     * request status
      *
      * @return array object GalleryStatus
      *               string localized description
@@ -333,7 +334,7 @@ class GalleryView {
     }
 
     /**
-     * Return the current item, as specified in the 'itemId' request variable
+     * Return the current item, as specified in the itemId request variable
      *
      * @return array object GalleryStatus a status code
      *               object GalleryItem an item
@@ -363,7 +364,7 @@ class GalleryView {
     }
 
     /**
-     * Load theme, theme parameters and item to use for this view.
+     * Load theme, theme parameters and item to use for this view
      *
      * @return array object GalleryStatus a status code
      *               object GalleryTheme a theme instance, or null on loadPlugin failure
@@ -376,7 +377,7 @@ class GalleryView {
 	    return array($ret, null, null, null);
 	}
 	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
-	    /* Invalid itemId given.. return MISSING_OBJECT to get standard error page */
+	    /* Invalid itemId given, return MISSING_OBJECT to get standard error page */
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null, null);
 	}
 
@@ -401,7 +402,7 @@ class GalleryView {
     }
 
     /**
-     * Get the theme for this item by finding the theme id for the nearest album.
+     * Get the theme for this item by finding the theme id for the nearest album
      *
      * @param GalleryItem (optional) item (omit or pass null to load default theme)
      * @return array object GalleryStatus a status code
@@ -419,7 +420,7 @@ class GalleryView {
 	    }
 	}
 
-	/* Load the theme, fallback to the default theme if none is specified. */
+	/* Load the theme, fallback to the default theme if none is specified */
 	if (isset($nearestAlbum)) {
 	    list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($nearestAlbum);
 	    if ($ret) {
@@ -441,7 +442,7 @@ class GalleryView {
     }
 
     /**
-     * Load theme; return null if not active.
+     * Load theme; return null if not active
      *
      * @param string theme id
      * @return array object GalleryStatus a status code

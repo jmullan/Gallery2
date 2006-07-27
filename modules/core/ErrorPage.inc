@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -25,8 +26,7 @@
  */
 
 /**
- * This view prepares all the information the theme requires to render
- * an error page.
+ * This view prepares all the information the theme requires to render an error page
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -38,7 +38,7 @@ class ErrorPageView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewType()
+     * @see GalleryView::getViewType
      */
     function getViewType() {
 	return VIEW_TYPE_ERROR;
@@ -70,7 +70,7 @@ class ErrorPageView extends GalleryView {
 	    $ErrorPage['stackTrace'] = $error->getAsHtml($isAdmin);
 	}
 
-	/* Landing page for errors.. */
+	/* Landing page for errors */
 	$errorCode = $ErrorPage['errorCode'] = $error->getErrorCode();
 	if ($errorCode & ERROR_OBSOLETE_DATA) {
 	    $ErrorPage['code']['obsoleteData'] = true;
@@ -124,7 +124,7 @@ class ErrorPageView extends GalleryView {
      * Entry point from main.php
      * @param object GalleryStatus
      * @param mixed GalleryMain result, if available
-     * @param boolean (default true) false if G2 has not initialized (can't use theme system)
+     * @param boolean (default true) false if Gallery has not initialized (can't use theme system)
      * @static
      */
     function errorHandler($error, $g2Data=null, $initOk=true) {
@@ -202,7 +202,7 @@ class ErrorPageView extends GalleryView {
 	}
 
 	if ($failsafe) {
-	    /* Some kind of catastrophic failure.  Just dump the error out to the browser. */
+	    /* Some kind of catastrophic failure.  Just dump the error out to the browser */
 	    print '<h2>Error</h2>' . $error->getAsHtml(false);
 	    if ($gallery->getDebug() == 'buffered') {
 		print '<h3>Debug Output</h3><pre>' . $gallery->getDebugBuffer() . '</pre>';

@@ -30,33 +30,32 @@
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
 class DownloadItemView extends GalleryView {
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::isAllowedInEmbedOnly()
+     * @see GalleryView::isAllowedInEmbedOnly
      */
     function isAllowedInEmbedOnly() {
 	return true;
     }
 
     /**
-     * @see GalleryView::shouldSaveSession()
+     * @see GalleryView::shouldSaveSession
      */
     function shouldSaveSession() {
 	return false;
     }
 
     /**
-     * @see GalleryView::renderImmediate()
+     * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
 	/* Figure out which item we're talking about */
@@ -76,6 +75,7 @@ class DownloadItemView extends GalleryView {
 	if ($ret) {
 	    return $ret;
 	}
+
 	/* Don't allow malicious URLs */
 	$fileName = GalleryUtilities::getRequestVariables('fileName');
 	if (!empty($fileName) && $fileName != $pseudoFileName) {
@@ -89,16 +89,16 @@ class DownloadItemView extends GalleryView {
 	}
 
 	/* Rebuild derivative cache, if necessary */
+	$itemForPermission = $itemId;
+	$derivativeType = null;
 	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
-	    list ($ret, $item) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($item->getId());
+	    list ($ret, $item) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($itemId);
 	    if ($ret) {
 		return $ret;
 	    }
+
 	    $itemForPermission = $item->getParentId();
 	    $derivativeType = $item->getDerivativeType();
-	} else {
-	    $itemForPermission = $item->getId();
-	    $derivativeType = null;
 	}
 
 	$ret = $this->_sendFile(array('derivativePath' => $path,
@@ -119,18 +119,15 @@ class DownloadItemView extends GalleryView {
     function _sendFile($data) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
+	$session =& $gallery->getSession();
 
 	if (function_exists('apache_setenv')) {
 	    @apache_setenv('no-gzip', '1');
 	}
 
-	$session =& $gallery->getSession();
-	if ($session->get('core.isPrintService')) {
-	    /*
-	     * Print services bypass security so that they can get access to the full size
-	     * version of prints.
-	     */
-	} else {
+	/* Print services bypass security so they can get access to full size version of prints */
+	if (!$session->get('core.isPrintService')) {
+
 	    /* Make sure we have permission */
 	    $permission = 'core.viewSource';
 	    switch($data['derivativeType']) {
@@ -160,10 +157,9 @@ class DownloadItemView extends GalleryView {
 	header('Expires: ' . GalleryUtilities::getHttpDate(time() + 31536000));
 
 	/*
-	 * Don't use readfile() because it buffers the entire file in memory
-	 * Profiling shows that this approach is as efficient as fpassthru()
-	 * but we get to call guaranteeTimeLimit which prevents it from failing on
-	 * very large files.
+	 * Don't use readfile() because it buffers the entire file in memory.  Profiling shows that
+	 * this approach is as efficient as fpassthru() but we get to call guaranteeTimeLimit which
+	 * prevents it from failing on very large files
 	 */
 	if ($fd = $platform->fopen($data['derivativePath'], 'rb')) {
 	    while (true) {

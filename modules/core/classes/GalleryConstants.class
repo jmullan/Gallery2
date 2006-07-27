@@ -17,9 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
+ * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
@@ -162,7 +164,7 @@ define('HIGHER_WEIGHT', 1);
  */
 
 /**
- * This is the special "All Access" permission.
+ * This is the special "All Access" permission
  */
 define('GALLERY_PERMISSION_ALL_ACCESS', 0x00000001);
 
@@ -241,26 +243,26 @@ define('GALLERY_DEFAULT_VIEW', 'core.ShowItem');
 define('GALLERY_ERROR', 0x00000001);
 
 /**
- * A name collision happened in the filesystem or database as a result of this
- * operation.  A common cause for this is attempting to use an existing filename
- * when moving an item from one location to another.
+ * A name collision happened in the filesystem or database as a result of this operation.  A common
+ * cause of this is attempting to use an existing filename when moving an item from one location to
+ * another
  */
 define('ERROR_COLLISION', 0x00000002);
 
 /**
- * The object you're trying to access is no longer available.  Perhaps it was
- * deleted.  You shouldn't get this when an object has simply moved.
+ * The object you're trying to access is no longer available.  Perhaps it was deleted.  You
+ * shouldn't get this when an object has simply moved
  */
 define('ERROR_MISSING_OBJECT', 0x00000004);
 
 /**
- * The lock you're trying to acquire is currently in use and was not released
- * within the timeout period you specified.
+ * The lock you're trying to acquire is currently in use and was not released within the timeout
+ * period you specified
  */
 define('ERROR_LOCK_IN_USE', 0x00000008);
 
 /**
- * One of the parameters passed to this function is bad.
+ * One of the parameters passed to this function is bad
  */
 define('ERROR_BAD_PARAMETER', 0x00000010);
 
@@ -280,13 +282,13 @@ define('ERROR_STORAGE_FAILURE', 0x00000040);
 define('ERROR_STORAGE_CONNECTION', 0x00000080);
 
 /**
- * You attempted to modify an object using an in-memory version that
- * is out of date with the version that's in the storage
+ * You attempted to modify an object using an in-memory version that is out of date with the version
+ * that's in the storage
  */
 define('ERROR_OBSOLETE_DATA', 0x00000200);
 
 /**
- * You attempted an operation which requires a lock.
+ * You attempted an operation which requires a lock
  */
 define('ERROR_LOCK_REQUIRED', 0x00000400);
 
@@ -361,8 +363,7 @@ define('ERROR_PERMISSION_DENIED', 0x00800000);
 define('ERROR_OUT_OF_SPACE', 0x01000000);
 
 /**
- * The plugin exists, but the version on disk doesn't match the
- * version in the database.
+ * The plugin exists, but the version on disk doesn't match the version in the database
  */
 define('ERROR_PLUGIN_VERSION_MISMATCH', 0x02000000);
 
