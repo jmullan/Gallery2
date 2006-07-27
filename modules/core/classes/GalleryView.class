@@ -229,6 +229,7 @@ class GalleryView {
      */
     function doLoadTemplate(&$template) {
 	global $gallery;
+	$session =& $gallery->getSession();
 
 	/* -------------------------------------------------- */
 	/* Get our form variables */
@@ -242,7 +243,6 @@ class GalleryView {
 	/* Get our status */
 	$statusId = GalleryUtilities::getRequestVariables('statusId');
 	if (!empty($statusId)) {
-	    $session =& $gallery->getSession();
 	    $status = $session->getStatus($statusId);
 	} else {
 	    $status = array();
@@ -251,8 +251,7 @@ class GalleryView {
 
 	/* -------------------------------------------------- */
 	/* Standard user info available for every view */
-	$user = $gallery->getActiveUser();
-	$user = (array)$user;
+	$user = (array)$gallery->getActiveUser();
 	list ($ret, $user['isGuest']) = GalleryCoreApi::isAnonymousUser($user['id']);
 	if ($ret) {
 	    return array($ret, null, null);
@@ -263,6 +262,16 @@ class GalleryView {
 	    $user['isAdmin'] = false;
 	}
 	$template->setVariable('user', $user);
+	$themeVars = array('guestPreviewMode' => $session->get('theme.guestPreviewMode') ? 1 : 0);
+	if (!$themeVars['guestPreviewMode']) {
+	    $themeVars['actingUserId'] = $gallery->getActiveUserId();
+	} else {
+	    list ($ret, $themeVars['actingUserId']) = GalleryCoreApi::getAnonymousUserId();
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	}
+	$template->setVariable('theme', $themeVars);
 
 	/* -------------------------------------------------- */
 	/* Load up the theme. */

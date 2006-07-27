@@ -724,10 +724,6 @@ class GalleryTheme extends GalleryPlugin {
 	$theme['themeUrl'] =
 	    $urlGenerator->generateUrl(array('href' => 'themes/' . $this->getId()));
 
-	/* By default we're not in preview mode, and are the active user */
-	$theme['guestPreviewMode'] = 0;
-	$theme['actingUserId'] = $gallery->getActiveUserId();
-
 	list ($ret, $theme['markupType']) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
 	if ($ret) {
@@ -817,14 +813,6 @@ class GalleryTheme extends GalleryPlugin {
 	case VIEW_TYPE_SHOW_ITEM:
 	    $this->_cacheablePage = true;
 	    $session =& $gallery->getSession();
-
-	    if ($session->get('theme.guestPreviewMode')) {
-		$theme['guestPreviewMode'] = 1;
-		list ($ret, $theme['actingUserId']) = GalleryCoreApi::getAnonymousUserId();
-		if ($ret) {
-		    return array($ret, null);
-		}
-	    }
 
 	    /* Albums page or Photo page */
 	    if ($item->getCanContainChildren()) {
