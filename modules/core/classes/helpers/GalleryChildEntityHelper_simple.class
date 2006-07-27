@@ -242,12 +242,9 @@ class GalleryChildEntityHelper_simple {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	$extraIds = 0;
 
 	if (!empty($extraWhere)) {
-	    $extraIds = substr_count($extraWhere, '?');
 	    $extraWhere = 'AND ' . $extraWhere;
-
 	    list ($ret, $orderClasses) = $storage->extractClasses($extraWhere);
 	    if ($ret) {
 		return array($ret, null);
@@ -262,7 +259,7 @@ class GalleryChildEntityHelper_simple {
 	if (!empty($orderBy)) {
 	    $orderClause = $orderBy . ', ';
 
-	    /* Postgres requires the order by column to be in the select list.. */
+	    /* Postgres requires the order by column to be in the select list */
 	    $selectExtra = !empty($orderColumn) ? (', ' . $orderColumn) : '';
 	} else {
 	    $orderClause = $selectExtra = '';
@@ -313,19 +310,12 @@ class GalleryChildEntityHelper_simple {
 	/* Add additional sort by id to ensure a consistent order (if selected sort has ties) */
 	$query .= $extraWhere . ' ORDER BY ' . $orderClause . '[GalleryChildEntity::id]';
 
-	$data[] = $item->getId();
+	$data = array($item->getId());
 	if ($requiredPermission) {
 	    $data = array_merge($data, $aclIds);
 	}
-	for ($i = 0; $i < $extraIds; $i++) {
-	    /* add the data for $orderWhere's extra ?'s */
-	    $data[] = $item->getId();
-	}
 	$options = array();
 	$options['limit'] = array('count' => $count, 'offset' => $offset);
-	if ($gallery->getDebug()) {
-	    $gallery->debug_r($options);
-	}
 
 	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
 	if ($ret) {
