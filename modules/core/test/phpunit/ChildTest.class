@@ -105,6 +105,32 @@ class ChildTest extends GalleryTestCase {
 	$this->assertEquals(array(), $childIds, "child 0's children");
     }
 
+    function testFetchChildIdsByTitle() {
+	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId(),
+							array('orderBy' => 'title',
+							      'orderDirection' => ORDER_ASCENDING));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $child1) = $this->_createRandomAlbum($album->getId(), array('title' => 'ZZZ'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $child2) = $this->_createRandomAlbum($album->getId(), array('title' => 'AAA'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($album);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array($child2->getId(), $child1->getId()), $ids);
+    }
+
     function testFetchChildItemIdsDifferentUser() {
 	/* Create a new user and give him limited view permissions on our tree */
 	list ($ret, $user) = $this->_createRandomUser();
@@ -163,21 +189,17 @@ class ChildTest extends GalleryTestCase {
     function testChildItemIdsWithPermission() {
 	global $gallery;
 
+	$permission = array('core.view', 'core.all', 'core.edit');
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = GalleryCoreApi::removeItemPermissions($this->_child[$i]->getId());
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	}
-	$ret = GalleryCoreApi::addUserPermission(
-	    $this->_child[1]->getId(), $gallery->getActiveUserId(), 'core.edit', false);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$ret = GalleryCoreApi::addUserPermission(
-	    $this->_child[2]->getId(), $gallery->getActiveUserId(), 'core.view', false);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    $ret = GalleryCoreApi::addUserPermission(
+		    $this->_child[$i]->getId(), $gallery->getActiveUserId(), $permission[$i]);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
 	}
 
 	list ($ret, $childIds) =
@@ -186,7 +208,28 @@ class ChildTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(array($this->_child[1]->getId()), $childIds, 'root children');
+	$this->assertEquals(array($this->_child[1]->getId(), $this->_child[2]->getId()),
+			    $childIds, 'editable children');
+
+	/* verify all permission bits must match, not just one bit */
+	list ($ret, $childIds) =
+	    GalleryCoreApi::fetchChildItemIdsWithPermission($this->_root->getId(), 'core.viewAll');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array($this->_child[1]->getId()), $childIds, 'match all bits failed');
+    }
+
+    function testFetchLinkableChildItemIdsWithPermission() {
+	list ($ret, $childIds) =
+	    GalleryCoreApi::fetchLinkableChildItemIdsWithPermission($this->_root->getId(),
+								    'core.view');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array($this->_child[1]->getId()), $childIds);
     }
 
     function testChildItemIdsIgnorePermission() {

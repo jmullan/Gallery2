@@ -120,32 +120,6 @@ class ItemTest extends GalleryTestCase {
 	}
     }
 
-    function testFetchChildIdsByTitle() {
-	list ($ret, $album) = $this->_createRandomAlbum($this->_album->getId(),
-							array('orderBy' => 'title',
-							      'orderDirection' => ORDER_ASCENDING));
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $child1) = $this->_createRandomAlbum($album->getId(), array('title' => 'ZZZ'));
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $child2) = $this->_createRandomAlbum($album->getId(), array('title' => 'AAA'));
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($album);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->assertEquals(array($child2->getId(), $child1->getId()), $ids);
-    }
-
     function testNewItemByMimeType() {
 	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('image/jpeg');
 	if ($ret) {
@@ -343,70 +317,6 @@ class ItemTest extends GalleryTestCase {
 
 	/* We can view child[0] and child[2] */
 	$this->assertEquals(array($this->_album->getId() => 2), $counts);
-    }
-
-    function testFetchChildItemIdsWithPermission() {
-	for ($i = 0; $i < 3; $i++) {
-	    list ($ret, $child[$i]) = $this->_createRandomAlbum($this->_album->getId());
-	    if ($ret) {
-		return $this->failWithStatus($ret);
-	    }
-
-	    /* Remove all permissions */
-	    $ret = GalleryCoreApi::removeItemPermissions($child[$i]->getId());
-	    if ($ret) {
-		return $this->failWithStatus($ret);
-	    }
-
-	    /* Give permissions */
-	    if ($i != 1) {
-		$ret = GalleryCoreApi::addUserPermission($child[$i]->getId(), $this->_userId,
-					($i==0) ? 'core.delete' : 'core.all', false);
-		if ($ret) {
-		    return $this->failWithStatus($ret);
-		}
-	    }
-	}
-
-	list ($ret, $itemIds) =
-	    GalleryCoreApi::fetchChildItemIdsWithPermission($this->_album->getId(),
-							    'core.delete');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->assertEquals(array($child[0]->getId(), $child[2]->getId()), $itemIds);
-
-	/* permission bundle should match all, not any bits.. */
-	list ($ret, $itemIds) =
-	    GalleryCoreApi::fetchChildItemIdsWithPermission($this->_album->getId(),
-							    'core.all');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->assertEquals(array($child[2]->getId()), $itemIds, 'match all bits failed');
-    }
-
-    function testFetchLinkableChildItemIdsWithPermission() {
-	list ($ret, $dataItem) = $this->_createRandomDataItem($this->_album->getId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $albumItem) = $this->_createRandomAlbum($this->_album->getId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $itemIds) =
-	    GalleryCoreApi::fetchLinkableChildItemIdsWithPermission($this->_album->getId(),
-								    'core.view');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->assertEquals(array($dataItem->getId()), $itemIds);
     }
 
     function testGetPermissions() {
