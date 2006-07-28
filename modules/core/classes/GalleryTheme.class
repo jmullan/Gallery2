@@ -1753,8 +1753,6 @@ class GalleryTheme extends GalleryPlugin {
 	    }
 	}
 
-	$template->setVariable('theme', $theme);
-
 	if ($useCache && $this->_cacheablePage) {
 	    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('write', 'partial');
 	    if ($ret) {

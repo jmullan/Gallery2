@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
@@ -58,10 +59,16 @@ class ThemeTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($this->_item);
     }
 
     function tearDown() {
-	/* If a unitest fails it might not deactivate/uninstall the mock theme properly */
+	/* If a unit test fails it might not deactivate/uninstall the mock theme properly */
 	list ($ret, $isActive) = $this->_theme->isActive();
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -93,33 +100,20 @@ class ThemeTest extends GalleryTestCase {
     }
 
     function testPackSettingBlockList2() {
-	$this->assertEquals(
-	    array(true,
-		  serialize(
-		      array(
-			  array('module.BlockName',
-				array('param1' => 'value1')),
-			  array('module2.Block2',
-				array()),
-			  array('module.BlockName',
-				array('param1' => 'value1',
-				      'param2' => 'value2'))))),
-	    $this->_theme->packSetting('block-list',
-				'[module.BlockName param1=value1] ' .
-				'[module2.Block2] ' .
-				'[module.BlockName param1=value1 param2=value2]'));
+	$this->assertEquals(array(true, serialize(array(array('module.BlockName',
+			array('param1' => 'value1')),
+		    array('module2.Block2', array()),
+		    array('module.BlockName', array('param1' => 'value1', 'param2' => 'value2'))))),
+	    $this->_theme->packSetting('block-list', '[module.BlockName param1=value1] '
+		. '[module2.Block2] '
+		. '[module.BlockName param1=value1 param2=value2]'));
     }
 
     function testPackSettingBlockListTrueFalse() {
-	$this->assertEquals(
-	    array(true,
-		  serialize(
-		      array(
-			  array('module.BlockName',
-				array('param1' => false,
-				      'param2' => true))))),
+	$this->assertEquals(array(true, serialize(array(array('module.BlockName',
+			array('param1' => false, 'param2' => true))))),
 	    $this->_theme->packSetting('block-list',
-				       '[module.BlockName param1=false param2=true]'));
+		'[module.BlockName param1=false param2=true]'));
     }
 
     function testPackSettingBlockListWhitespace1() {
@@ -150,14 +144,12 @@ class ThemeTest extends GalleryTestCase {
     }
 
     function testPackSettingBlockListMissingRightBracket2() {
-	$this->assertEquals(
-	    array(false, serialize(array())),
+	$this->assertEquals(array(false, serialize(array())),
 	    $this->_theme->packSetting('block-list', '[foo.Bar a=b [foo.Baz b=c]'));
     }
 
     function testPackSettingBlockListMissingLeftBracket() {
-	$this->assertEquals(
-	    array(false, serialize(array())),
+	$this->assertEquals(array(false, serialize(array())),
 	    $this->_theme->packSetting('block-list', 'foo.Bar]'));
     }
 
@@ -184,18 +176,14 @@ class ThemeTest extends GalleryTestCase {
     }
 
     function testUnpackSettingBlockList2() {
-	$this->assertEquals(
-	    array(true, '[a.B foo=bar] [c.D]'),
+	$this->assertEquals(array(true, '[a.B foo=bar] [c.D]'),
 	    $this->_theme->unpackSetting('block-list',
-					 serialize(array(array('a.B', array('foo' => 'bar')),
-							 array('c.D')))));
+		serialize(array(array('a.B', array('foo' => 'bar')), array('c.D')))));
     }
 
     function testUnpackSettingBlockListTrueFalse() {
-	$this->assertEquals(
-	    array(true, '[a.B foo=true bar=false]'),
-	    $this->_theme->unpackSetting(
-		'block-list',
+	$this->assertEquals(array(true, '[a.B foo=true bar=false]'),
+	    $this->_theme->unpackSetting('block-list',
 		serialize(array(array('a.B', array('foo' => true, 'bar' => false))))));
     }
 
@@ -210,13 +198,11 @@ class ThemeTest extends GalleryTestCase {
     }
 
     function testUnpackSettingBlockListMalformed2() {
-	$this->assertEquals(
-	    array(false, ''),
+	$this->assertEquals(array(false, ''),
 	    $this->_theme->unpackSetting('block-list', serialize(array('x' => 'y'))));
     }
 
     function testInstallBadThemeApi() {
-
 	list ($major, $minor) = $this->_theme->getRequiredThemeApi();
 	$this->_theme->setRequiredThemeApi(array($major - 1, $minor));
 
@@ -241,8 +227,7 @@ class ThemeTest extends GalleryTestCase {
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
-	    'success?');
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
 
 	list ($ret, $isActive) = $this->_theme->isActive();
 	if ($ret) {
@@ -259,8 +244,7 @@ class ThemeTest extends GalleryTestCase {
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
-	    'success?');
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
     }
 
     function testActivateBadCoreApiActivate() {
@@ -276,8 +260,7 @@ class ThemeTest extends GalleryTestCase {
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
-	    'success?');
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
 
 	list ($ret, $isActive) = $this->_theme->isActive();
 	if ($ret) {
@@ -299,6 +282,20 @@ class ThemeTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array('href' => 'upgrade/'), $redirect);
+    }
+
+    function testVariableReferenceAccrossLoadCommonTemplateData() {
+	$template = new GalleryTemplate('/path/to/fake/templatedir');
+	$theme =& $template->getVariableByReference('theme');
+
+	$ret = $this->_theme->loadCommonTemplateData($template, $this->_item, array(), array(), array(), false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$theme['foo'] = 'bar';
+	$theme =& $template->getVariableByReference('theme');
+	$this->assertEquals('bar', $theme['foo']);
     }
 }
 
