@@ -62,15 +62,26 @@ class MP3AudioRenderer extends GalleryRenderer {
 
 	$itemId = $item->getId();
 	list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
-	if ($ret) {
-	    return $ret;
-	}
-	if (!empty($thumbnail)) {
+	if (!$ret && !empty($thumbnail)) {
 	    $artUrl = $urlGenerator->generateUrl(
 		array('view' => 'core.DownloadItem', 'itemId' => $thumbnail[$itemId]->getId(),
 		      'serialNumber' => $thumbnail[$itemId]->getSerialNumber()),
 		array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
 	    $flashVars .= '&artUrl=' . urlencode($artUrl);
+	}
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'mp3audio');
+	if ($ret) {
+	    return null;
+	}
+	foreach (array('Artist' => $module->translate('Artist'),
+		       'Album' => $module->translate('Album'),
+		       'Song' => $module->translate('Song'),
+		       'Track' => $module->translate('Track'),
+		       'Genre' => $module->translate('Genre'),
+		       'Year' => $module->translate('Year'),
+		    ) as $key => $value) {
+	    $flashVars .= '&' . $key . '=' . urlencode($value);
 	}
 
 	$playerUrl = $urlGenerator->generateUrl(
