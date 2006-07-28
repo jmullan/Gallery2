@@ -258,7 +258,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
 	GalleryUtilities::putRequestVariable('path', $this->_testAlbumPath);
 	$urlGenerator = new $this->_urlGeneratorName();
-	/* Execute init and initNavigation.. with it _onLoad() should be called */
+	/* Execute init and initNavigation, they should call _onLoad() */
 	$ret = $urlGenerator->init();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -298,7 +298,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	}
 	/*
 	 * Configure the cookie path:
-	 *  - if empty (=not set): g2 should append the session id to embedded DownloadItem requests
+	 *  - if empty (not set): Gallery should append session id to embedded DownloadItem requests
 	 *  - else, no session id has to be appended
 	 */
 	$cookiePath = isset($env['cookiePath']) ? $env['cookiePath'] : '';
@@ -393,7 +393,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	 *  6. core.ShowItem for existing filesystem entity (album) (short URL)
 	 *  7. core.ShowItem for data item entity (short URL, .html suffix)
 	 *  8. core.ShowItem for non-existing filesystem entity (short URL)
-	 *  9. core.ShowItem for non-filesystem entity (e.g. derivative, short URL)
+	 *  9. core.ShowItem for non-filesystem entity (eg. derivative, short URL)
 	 * 10. php.Unit with path suffix for albumItem (short URL)
 	 * 11. php.Unit with path suffix for data Item (short URL)
 	 * 12. php.Unit with extension suffix for album item (short URL)
@@ -472,10 +472,10 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
      *  1. flag: embedded
      *  2. flag: cookiePath set (relevant for embedded Gallery)
      *  3. REQUEST_URI, set according to RewriteUrlGenerator used
-     *  4. HTTP_HOST / HTTP_X_FORWARDED_HOST
+     *  4. HTTP_HOST/HTTP_X_FORWARDED_HOST
      *  5. HTTPS
-     *  6. override for protocol / embedded
-     *  7. override for host / embedded
+     *  6. override for protocol/embedded
+     *  7. override for host/embedded
      *  8. override for path
      *  9. override for file + query string
      * 10. Downloadable plugins
@@ -489,7 +489,6 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
      *  5. htmlEntities => false; to use & parameter separator instead of &amp;
      *  6. forceServerRelativeUrl => (implicitly tested with normal URLs
      */
-
     function testGenerateUrl() {
 	$params = $this->_getTestUrlParams();
 

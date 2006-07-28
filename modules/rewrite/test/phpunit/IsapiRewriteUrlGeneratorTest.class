@@ -30,7 +30,7 @@ GalleryCoreApi::requireOnce(
 GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteUrlGeneratorTestCase.class');
 
 /**
- * Isapi rewrite URL generator tests
+ * ISAPI rewrite URL generator tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
@@ -72,7 +72,7 @@ class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
      * It should generate a server-relative URL (and not a relative URL) if REQUEST_URI is
      * gallery2/main.php?g2_view=core.ShowItem&g2_itemId=15 which was rewritten from
      * gallery2/v/foobar/randomAlbum/ -> isapi_rewrite changes REQUEST_URI so we'd still assume that
-     * a relative URL is alright.  But it isn't, we should use server-relative URLs in this case
+     * a relative URL is alright.  But it isn't, we should use server-relative URLs in this case.
      */
      function testGenerateUrlMustBeServerRelative() {
 	$env = array('REQUEST_URI' => '/gallery2/' . GALLERY_MAIN_PHP .

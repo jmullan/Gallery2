@@ -32,7 +32,7 @@ define('REWRITE_STATUS_INVALID_PATTERN', 4);
 define('REWRITE_STATUS_EMPTY_VALUE', 5);
 
 /**
- * A helper class for the URL Rewrite module
+ * A helper class for the URL rewrite module
  *
  * @package Rewrite
  * @subpackage Classes
@@ -40,7 +40,7 @@ define('REWRITE_STATUS_EMPTY_VALUE', 5);
 class RewriteHelper {
 
     /**
-     * Load and initialize the rewrite plugin. If no plugin has been configured yet
+     * Load and initialize the rewrite plugin.  If no plugin has been configured yet
      * it returns a GalleryStatus ERROR_MISSING_VALUE.
      *
      * @param boolean true if we need a new instance
@@ -76,13 +76,13 @@ class RewriteHelper {
     }
 
     /**
-     * Parse active rules into an array of regular expresions for parsing URLs during page
-     * requests and build an array for the URL generator to use when generating short URLs
+     * Parse active rules into an array of regular expresions for parsing URLs during page requests
+     * and build an array for the URL generator to use when generating short URLs.
      *
      * @param array active rules by reference
      * @param object RewriteParser
      * @param object RewriteModule (optional) passed in during activate/upgrade
-     * @param array optional defenition of default and mandator flags.
+     * @param array optional defenition of default and mandator flags
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      *               array parsed patterns translated to regular expressions
@@ -116,8 +116,8 @@ class RewriteHelper {
 		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			/*
-			 * Add CONFIGURATION_REQUIRED code to more gracefully abort upgrade
-			 * if a dependent module for one of our rules also needs upgrading.
+			 * Add CONFIGURATION_REQUIRED code to more gracefully abort upgrade if a
+			 * dependent module for one of our rules also needs upgrading.
 			 */
 			$ret->addErrorCode(ERROR_CONFIGURATION_REQUIRED);
 		    }
@@ -127,7 +127,7 @@ class RewriteHelper {
 
 	    $rules = $module->getRewriteRules();
 	    foreach (array_keys($activeRules[$moduleId]) as $ruleId) {
-		/* Make sure this rule still exists, if not silently continue. */
+		/* Make sure this rule still exists, if not silently continue */
 		if (!isset($rules[$ruleId])) {
 		    unset($activeRules[$moduleId][$ruleId]);
 		    continue;
@@ -223,7 +223,7 @@ class RewriteHelper {
     }
 
     /**
-     * Replaces all keywords with an appropriate pattern and append to $regexRules
+     * Replaces all keywords with an appropriate pattern and append to $regexRules.
      *
      * @param string URL pattern
      * @param array of keywords => regular expresion for the htaccess file
@@ -266,7 +266,7 @@ class RewriteHelper {
     }
 
     /**
-     * Comparison function used to order rewrite rules
+     * Comparison function used to order rewrite rules.
      *
      * @access private
      */

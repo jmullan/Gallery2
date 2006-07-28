@@ -29,7 +29,7 @@
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
 
 /**
- * Generic Rewrite URL Generator class
+ * Generic rewrite URL generator class
  *
  * @package Rewrite
  * @subpackage Classes
@@ -37,7 +37,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
 class RewriteUrlGenerator extends GalleryUrlGenerator {
 
     /**
-     * If there's an error, use parent GalleryUrlGenerator functions
+     * If there's an error, use parent GalleryUrlGenerator functions.
      *
      * @var bool has an error occured?
      * @access private
@@ -45,7 +45,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     var $_error = false;
 
     /**
-     * Short URL map
+     * Short URL map.
      *
      * @var array of view => short URL pattern
      * @access private
@@ -93,7 +93,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * This function is called at the end of URL generator initialization.  If an onLoad function is
      * specified for the current view it loads the needed file and calls the function which should
-     * parse any request params that wasn't parsed by the rewrite parser (eg %path% to itemId)
+     * parse any request params that wasn't parsed by the rewrite parser (eg. %path% to itemId).
      *
      * @return object GalleryStatus a status code
      * @private
@@ -183,11 +183,11 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	    } else if (!empty($params[$arg])) {
 		$url = str_replace('%' . $arg . '%', urlencode($params[$arg]), $url);
 
-		/* We cant unset the itemId until we have replaced all keywords. a keyword */
+		/* We can't unset the itemId until we have replaced all keywords */
 		if ($arg != 'itemId') {
 		    unset($params[$arg]);
 		} else {
-		    $unsetItemId = 1;
+		    $unsetItemId = true;
 		}
 	    } else {
 		return false;

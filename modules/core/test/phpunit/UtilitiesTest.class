@@ -1027,7 +1027,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals($val1, $_COOKIE[$key],
 			    'multiple cookies, superglobal _COOKIE');
 
-	/* Performance check.  It shouldn't be executed when it was already executed */
+	/* Performance check.  It shouldn't be executed when it was already executed. */
 	$_COOKIE = array();
 	$_SERVER['HTTP_COOKIE'] = '';
 	GalleryUtilities::fixCookieVars(true);
@@ -1049,13 +1049,13 @@ class UtilitiesTest extends GalleryTestCase {
 
 	/*
 	 * Check if $_SERVER['HTTP_COOKIE'] is set (more as a feedback once we know that there are
-	 * still login / auth problems)
+	 * still login/auth problems)
 	 */
 	$this->assertEquals(empty($this->_originalCookie), empty($this->_originalServerHttpCookie),
 			    'HTTP_COOKIE not set although $_COOKIE is nonempty!');
 
 	/*
-	 * Check for quoted-string cookies (don't urlencode cookie values, e.g. by using header()
+	 * Check for quoted-string cookies (don't urlencode cookie values, eg. by using header()
 	 * instead of setCookie())
 	 */
 	$key1 = 'foo1';
@@ -1074,7 +1074,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    /*
 	     * Check for quoted-string cookies (don't urlencode cookie values, eg. by using header()
 	     * instead of setCookie()).  And check for ordinary cookies (Netscape standard) where
-	     * values are assumed to be urlencoded
+	     * values are assumed to be urlencoded.
 	     */
 	    foreach (array(true, false) as $urlEncoded) {
 		if ($urlEncoded) {
@@ -1190,7 +1190,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$tests[] = array('add' => array('foo=bar', 'foo2.=bar2'),
 			 'er' => array(array('key' => 'foo', 'val' => 'bar'),
 				       array('key' => 'foo2_', 'val' => 'bar2')));
-	/* 13. try key with leading $ sign,  unsuccessfully*/
+	/* 13. try key with leading $ sign, unsuccessfully */
 	$tests[] = array('add' => array('foo=bar', '$foo2=bar2'),
 			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
 	/* 14. try a value that changed with urldecode, successfully */
