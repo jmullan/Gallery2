@@ -195,9 +195,8 @@ class RewriteModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	return array(null,
-		    array(array('name' => $this->translate('URL Rewrite'),
-			    'view' => 'rewrite.AdminRewrite')));
+	return array(null, array(array('name' => $this->translate('URL Rewrite'),
+	    'view' => 'rewrite.AdminRewrite')));
     }
 
     /**

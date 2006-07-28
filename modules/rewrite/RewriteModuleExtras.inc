@@ -110,7 +110,7 @@ class RewriteModuleExtras {
 	    /*
 	     * Previously we changed all module:View names to module.View.  Since we no longer store
 	     * view names in the active rules list, and the old table is deleted in version 1.1.0 we
-	     * no longer need to do this
+	     * no longer need to do this.
 	     */
 
 	case '0.9.6':
@@ -150,9 +150,9 @@ class RewriteModuleExtras {
 	    ';
 
 	    /*
-	     * If this is an upgrade from Beta 2 we dont have a RewriteMap.  Previous to 0.9.3 rules
+	     * If this is an upgrade from beta 2 we dont have a RewriteMap.  Previous to 0.9.3 rules
 	     * were static, therefore leave $activeRules empty.  It'll get populated with the
-	     * default rules when activate() is called
+	     * default rules when activate() is called.
 	     */
 	    $activeRules = array();
 	    if (version_compare($currentVersion, '0.9.3', '>=')) {
@@ -222,7 +222,7 @@ class RewriteModuleExtras {
 	    /*
 	     * Support rewrite rules with 'match' => array('controller' => 'webdav.WebDav').  Check
 	     * if 'match' is subset of URL params, instead of indexing by "$view|$subView".  Means
-	     * adding 'match' to $shortUrls
+	     * adding 'match' to $shortUrls.
 	     */
 
 	case 'end of upgrade path':

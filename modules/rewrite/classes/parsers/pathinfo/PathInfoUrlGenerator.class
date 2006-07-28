@@ -29,7 +29,7 @@
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
 
 /**
- * URL generator for PHP Path Info parser
+ * URL generator for PHP Path Info parser.
  *
  * @package Rewrite
  * @subpackage Parsers
@@ -154,7 +154,7 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 	 * Since the baseFile (eg. main.php) is in the REQUEST_URI, eg.
 	 *     http://example.com/gallery2/main.php/albumA/itemB.jpg.htm
 	 * GalleryUrlGenerator::makeRelativeUrl would generate relative URLs when it actually should
-	 * generate server-relative URLs.  Thus enforce server-relative URLs
+	 * generate server-relative URLs.  Thus enforce server-relative URLs.
 	 */
 	$options['forceServerRelativeUrl'] = true;
 	return parent::generateUrl($params, $options);
@@ -188,8 +188,8 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
      *
      * Note that the URL parts can all be overidden
      *
-     * @param boolean (optional) if true, ensure G2 base url is returned (different when embedded)
-     * @return string thebase URL directory
+     * @param boolean (optional) ensure Gallery base URL is returned (different when embedded)
+     * @return string the base URL directory
      */
     function getCurrentUrlDir($forceDirect=false) {
 	if (!isset($this->_currentUrlBaseDir[$forceDirect])) {
