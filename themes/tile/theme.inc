@@ -349,6 +349,9 @@ class TileTheme extends GalleryTheme {
 	if ($ret) {
 	    return array($ret, null);
 	}
+	if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    return array(null, null);
+	}
 	list ($ret, $params) = $this->fetchParameters($itemId);
 	if ($ret) {
 	    return array($ret, null);
