@@ -288,7 +288,8 @@ class ThemeTest extends GalleryTestCase {
 	$template = new GalleryTemplate('/path/to/fake/templatedir');
 	$theme =& $template->getVariableByReference('theme');
 
-	$ret = $this->_theme->loadCommonTemplateData($template, $this->_item, array(), array(), array(), false);
+	$ret = $this->_theme->loadCommonTemplateData($template, $this->_item,
+						     array(), array(), array(), false);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
