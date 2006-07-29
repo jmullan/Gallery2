@@ -12,13 +12,13 @@ $langpath = preg_replace('{(..)_..\.po$}', '$1.po', $path);
 
 if ($langpath == $path || !file_exists($langpath)) {
     if ($langpath != $path && !in_array(basename($langpath), array('en.po', 'zh.po'))) {
-	fwrite(STDERR, "\nWarning: $path without $langpath\n");
+	fwrite(stdErr(), "\nWarning: $path without $langpath\n");
     }
     list ($po, $header) = readPo($path);
     print $header;
     foreach ($po as $id => $data) {
 	if (strpos($id, '<!--') !== false && $data['msgstr'] == "msgstr \"\"\n") {
-	    fwrite(STDERR, "\nWarning: Unhandled translator hint in $path\n");
+	    fwrite(stdErr(), "\nWarning: Unhandled translator hint in $path\n");
 	}
 	if (substr($id, 5) != substr($data['msgstr'], 6)) {
 	    print $data['before'] . $id . $data['msgstr'] . "\n";
@@ -69,5 +69,15 @@ function readPo($path) {
 	$data[$key] = array('msgstr' => $value, 'before' => $before);
     }
     return array($data, implode('', $header));
+}
+
+function stdErr() {
+    static $stdErr;
+    if (!defined('STDERR')) {
+	/* Already defined for CLI but not for CGI */
+	$stdErr = fopen('php://stderr', 'w');
+	define('STDERR', $stdErr);
+    }
+    return STDERR;
 }
 ?>
