@@ -2614,6 +2614,31 @@ class GalleryCoreApi {
     }
 
     /**
+     * Build query to select items in a given sort order
+     *
+     * @param string base table to query
+     * @param string name of id column in this table
+     * @param string where clause for query
+     * @param string order for results
+     * @param string order direction for results
+     * @param string a class to restrict children to (eg 'GalleryAlbumItem'; can be null)
+     * @param string a required permission (can be null)
+     * @param boolean whether to restrict to linkable items only
+     * @param int the userid we're doing this for
+     * @return array object GalleryStatus a status code
+     *               string query
+     *               array data items for query (not including any ? marks in baseQuery)
+     */
+    function buildItemQuery($baseTable, $baseIdColumn, $baseQuery, $orderBy, $orderDirection,
+			    $class, $requiredPermission, $linkableOnly, $userId) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
+	return GalleryChildEntityHelper_simple::buildItemQuery($baseTable, $baseIdColumn,
+		$baseQuery, $orderBy, $orderDirection, $class, $requiredPermission,
+		$linkableOnly, $userId);
+    }
+
+    /**
      * Convert a file extension to a mime type
      *
      * @param string a file extension

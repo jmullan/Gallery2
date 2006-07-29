@@ -23,7 +23,7 @@
  * @author Don Seiler <don@seiler.us>
  */
 
-GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_1.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_2.class');
 
 /**
  * Sort by average rating.
@@ -31,10 +31,10 @@ GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_1.class
  * @package Rating
  * @subpackage Classes
  */
-class RatingSortOrder extends GallerySortInterface_1_1 {
+class RatingSortOrder extends GallerySortInterface_1_2 {
 
     /**
-     * @see GallerySortInterface_1_1::getSortInfo
+     * @see GallerySortInterface_1_2::getSortInfo
      */
     function getSortInfo() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rating');
@@ -46,14 +46,13 @@ class RatingSortOrder extends GallerySortInterface_1_1 {
     }
 
     /**
-     * @see GallerySortInterface_1_1::getSortOrder
+     * @see GallerySortInterface_1_2::getSortOrder
      */
     function getSortOrder($direction) {
 	return array(null,
 	    '[RatingCacheMap::averageRating]' . $direction . ', [RatingCacheMap::voteCount] DESC',
 	    '[RatingCacheMap::averageRating], [RatingCacheMap::voteCount]', null,
-	    '[GalleryChildEntity] LEFT JOIN [RatingCacheMap] ON '
-		. '[GalleryChildEntity::id] = [RatingCacheMap::itemId]');
+	    'LEFT JOIN [RatingCacheMap] ON [BASE::ID] = [RatingCacheMap::itemId]');
     }
 }
 ?>

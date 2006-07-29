@@ -323,9 +323,9 @@ class ItemEditAlbum extends ItemEditPlugin {
 	}
 
 	/* Set up our sort order selection list */
-	GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_1.class');
+	GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_2.class');
 	list ($ret, $orderByList, $presortList, $orderDirectionList) =
-	    GallerySortInterface_1_1::getAllSortOrders();
+	    GallerySortInterface_1_2::getAllSortOrders();
 	if ($ret) {
 	    return array($ret, null, null);
 	}

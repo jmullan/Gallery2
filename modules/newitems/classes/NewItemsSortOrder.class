@@ -23,7 +23,7 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_1.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_2.class');
 
 /**
  * Sort with new items shown first, followed by other items sorted by view count.
@@ -31,10 +31,10 @@ GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_1.class
  * @package NewItems
  * @subpackage Classes
  */
-class NewItemsSortOrder extends GallerySortInterface_1_1 {
+class NewItemsSortOrder extends GallerySortInterface_1_2 {
 
     /**
-     * @see GallerySortInterface_1_1::getSortInfo
+     * @see GallerySortInterface_1_2::getSortInfo
      */
     function getSortInfo() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'newitems');
@@ -46,7 +46,7 @@ class NewItemsSortOrder extends GallerySortInterface_1_1 {
     }
 
     /**
-     * @see GallerySortInterface_1_1::getSortOrder
+     * @see GallerySortInterface_1_2::getSortOrder
      */
     function getSortOrder($direction) {
 	global $gallery;
@@ -64,8 +64,8 @@ class NewItemsSortOrder extends GallerySortInterface_1_1 {
 	    return array($ret, null, null, null, null);
 	}
 
-	return array(null, '%1%', $case,
-		     '[GalleryEntity::id] = [GalleryChildEntity::id]', null);
+	return array(null, '%1%', $case, null,
+		     'JOIN [GalleryEntity] ON [BASE::ID] = [GalleryEntity::id]');
     }
 }
 ?>

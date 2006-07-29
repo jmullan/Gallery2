@@ -24,13 +24,13 @@
  */
 
 /**
- * This is an interface for adding custom sort orders for albums.
+ * This is an interface for adding custom sort orders for displaying items.
  *
  * @package GalleryCore
  * @subpackage Classes
  * @abstract
  */
-class GallerySortInterface_1_1 {
+class GallerySortInterface_1_2 {
 
     /**
      * Return information about this sort
@@ -47,6 +47,9 @@ class GallerySortInterface_1_1 {
      * Get the query fragments used to perform this sort.
      * Order by clause may contain %1%, %2% or %3% to reference the corresponding
      * items in the select clause.
+     * A join should be of the form: JOIN [Class] ON [BASE::ID] = [Class::Column]
+     * Replace "Class" and "Column" with appropriate values, but BASE::ID is literal.
+     * This references the base table and id column in the query.
      *
      * @param string either '' for ascending or ' DESC' for descending
      * @return array object GalleryStatus a status code
@@ -56,8 +59,7 @@ class GallerySortInterface_1_1 {
      *               string optional join clause
      */
     function getSortOrder($direction) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
-		     null, null, null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null, null, null);
     }
 
     /**
@@ -97,14 +99,14 @@ class GallerySortInterface_1_1 {
 		    'viewedFirst' => $module->translate('Most Viewed First'));
 
 	list ($ret, $implIds) =
-	    GalleryCoreApi::getAllFactoryImplementationIds('GallerySortInterface_1_1');
+	    GalleryCoreApi::getAllFactoryImplementationIds('GallerySortInterface_1_2');
 	if ($ret) {
 	    return array($ret, null, null, null);
 	}
 
 	foreach ($implIds as $sortId => $className) {
 	    list ($ret, $sort) =
-		GalleryCoreApi::newFactoryInstance('GallerySortInterface_1_1', $className);
+		GalleryCoreApi::newFactoryInstance('GallerySortInterface_1_2', $className);
 	    if ($ret) {
 		return array($ret, null, null, null);
 	    }

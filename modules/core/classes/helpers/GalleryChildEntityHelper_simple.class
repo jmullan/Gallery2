@@ -188,18 +188,17 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Helper function for getting child ids.  This method has gotten a little
-     * bit out of control, but it's got reasonably good unit tests so it's ripe
-     * for a refactor.
+     * Helper function for getting child ids
      *
      * @param object GalleryItem an item
      * @param int an offset into the child item list (null for no offset)
      * @param int a count of how many child items to return (null for unlimited)
      * @param string a class to restrict children to (eg 'GalleryAlbumItem')
-     * @param string a required permission (defaults to 'core.view')
+     * @param string a required permission (can be null)
      * @param boolean whether to restrict to linkable items only
      * @param int the userid we're doing this for (defaults to active user id)
-     *
+     * @return array object GalleryStatus a status code
+     *               array of item ids
      * @access private
      */
     function _fetchChildItemIds($item, $offset, $count, $class,
@@ -214,108 +213,18 @@ class GalleryChildEntityHelper_simple {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
-	/* List of classes that we will need */
-	$classes = array('[GalleryChildEntity]' => '[GalleryChildEntity]',
-			 "[$class]" => "[$class]");
-
-	if ($requiredPermission) {
-	    list ($ret, $aclIds) =
-		GalleryCoreApi::fetchAccessListIds($requiredPermission, $userId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
-	    $classes['[GalleryAccessSubscriberMap]'] = '[GalleryAccessSubscriberMap]';
-
-	    if (empty($aclIds)) {
-		return array(null, array());
-	    }
-	}
-
-	if ($linkableOnly) {
-	    $classes['[GalleryEntity]'] = '[GalleryEntity]';
-	}
-
-	list ($ret, $orderBy, $orderColumn, $extraWhere, $extraJoin) =
-	    GalleryChildEntityHelper_simple::_getOrderInfo(
-		$item->getOrderBy(), $item->getOrderDirection());
+	list ($ret, $query, $data) = GalleryChildEntityHelper_simple::buildItemQuery(
+		'GalleryChildEntity', 'id', '[GalleryChildEntity::parentId] = ?',
+		$item->getOrderBy(), $item->getOrderDirection(),
+		$class, $requiredPermission, $linkableOnly, $userId);
 	if ($ret) {
 	    return array($ret, null);
 	}
-
-	if (!empty($extraWhere)) {
-	    $extraWhere = 'AND ' . $extraWhere;
-	    list ($ret, $orderClasses) = $storage->extractClasses($extraWhere);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    foreach ($orderClasses as $c) {
-		if (!isset($classes[$c])) {
-		    $classes[$c] = $c;
-		}
-	    }
+	if (empty($query)) {
+	    return array(null, array());
 	}
-
-	if (!empty($orderBy)) {
-	    $orderClause = $orderBy . ', ';
-
-	    /* Postgres requires the order by column to be in the select list */
-	    $selectExtra = !empty($orderColumn) ? (', ' . $orderColumn) : '';
-	} else {
-	    $orderClause = $selectExtra = '';
-	}
-
-	if (!empty($extraJoin)) {
-	    /* Merge joins into classes array */
-	    foreach (explode(',', $extraJoin) as $join) {
-		if (preg_match('{^\s*(\[.*?\])\s*(.*?)\s*$}', $join, $match)) {
-		    if (!isset($classes[$match[1]])) {
-			$classes[$match[1]] = $join;
-		    } else if (!empty($match[2])) {
-			$classes[$match[1]] .= ' ' . $match[2];
-		    }
-		}
-	    }
-	}
-
-	/* Prepare the query */
-	$query = '
-	SELECT
-	  [GalleryChildEntity::id] ' . $selectExtra . '
-	FROM
-	  ' . implode(', ', $classes) . '
-	WHERE
-	  [GalleryChildEntity::parentId] = ?
-	  AND
-	  [GalleryChildEntity::id] = [' . $class . '::id]
-	';
-
-	if ($linkableOnly) {
-	    $query .= ' AND [GalleryChildEntity::id] = [GalleryEntity::id] ';
-	}
-
-	if ($requiredPermission) {
-	    if ($linkableOnly) {
-		$query .= ' AND [GalleryEntity::isLinkable] = 1 ';
-	    }
-
-	    $query .= '
-	     AND
-	     [GalleryAccessSubscriberMap::itemId] = [GalleryChildEntity::id]
-	     AND
-	     [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
-	    ';
-	}
-
-	/* Add additional sort by id to ensure a consistent order (if selected sort has ties) */
-	$query .= $extraWhere . ' ORDER BY ' . $orderClause . '[GalleryChildEntity::id]';
-
-	$data = array($item->getId());
-	if ($requiredPermission) {
-	    $data = array_merge($data, $aclIds);
-	}
-	$options = array();
-	$options['limit'] = array('count' => $count, 'offset' => $offset);
+	array_unshift($data, $item->getId());
+	$options = array('limit' => array('count' => $count, 'offset' => $offset));
 
 	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
 	if ($ret) {
@@ -328,6 +237,75 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	return array(null, $ids);
+    }
+
+    /**
+     * Build query to select items in a given sort order
+     *
+     * @param string base table to query
+     * @param string name of id column in this table
+     * @param string where clause for query
+     * @param string order for results
+     * @param string order direction for results
+     * @param string a class to restrict children to (eg 'GalleryAlbumItem'; can be null)
+     * @param string a required permission (can be null)
+     * @param boolean whether to restrict to linkable items only
+     * @param int the userid we're doing this for
+     * @return array object GalleryStatus a status code
+     *               string query
+     *               array data items for query (not including any ? marks in baseQuery)
+     */
+    function buildItemQuery($baseTable, $baseIdColumn, $baseQuery, $orderBy, $orderDirection,
+			    $class, $requiredPermission, $linkableOnly, $userId) {
+	list ($ret, $select, $join, $where, $order) =
+	    GalleryChildEntityHelper_simple::_getOrderInfo($orderBy, $orderDirection);
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$join = array_flip($join);
+
+	$idJoins = $class ? array($class => 'id') : array();
+	if ($requiredPermission) {
+	    list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds($requiredPermission, $userId);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    if (empty($aclIds)) {
+		return array(null, null, null);
+	    }
+	    $idJoins['GalleryAccessSubscriberMap'] = 'itemId';
+	    $where[] = '[GalleryAccessSubscriberMap::accessListId] IN ('
+		     . GalleryUtilities::makeMarkers(count($aclIds)) . ')';
+	}
+	if ($linkableOnly) {
+	    $idJoins['GalleryEntity'] = 'id';
+	    $where[] = '[GalleryEntity::isLinkable] = 1';
+	}
+
+	foreach ($idJoins as $table => $column) {
+	    /* Add joins to id column of these tables if not already joined */
+	    $join['JOIN [' . $table . '] ON [BASE::ID] = [' . $table . '::' . $column . ']'] = 1;
+	}
+	/* Don't self join */
+	$baseId = '[' . $baseTable . '::' . $baseIdColumn . ']';
+	unset($join['JOIN [' . $baseTable . '] ON [BASE::ID] = ' . $baseId]);
+
+	/* Postgres requires the order by column to be in the select list */
+	$select = empty($select) ? '' : ', ' . implode(', ', $select);
+	$join = str_replace('[BASE::ID]', $baseId, implode(' ', array_keys($join)));
+	$where = empty($where) ? '' : ' AND ' . implode(' AND ', $where);
+	$order = empty($order) ? '' : implode(', ', $order) . ', ';
+
+	$query = '
+	SELECT
+	  [' . $baseTable . '::' . $baseIdColumn . ']' . $select . '
+	FROM
+	  [' . $baseTable . '] ' . $join . '
+	WHERE
+	  ' . $baseQuery . $where . '
+	ORDER BY ' . $order . '[' . $baseTable . '::' . $baseIdColumn . ']';
+
+	return array(null, $query, isset($aclIds) ? $aclIds : array());
     }
 
     /**
@@ -569,64 +547,68 @@ class GalleryChildEntityHelper_simple {
 	    $column = null;
 	    switch ($orderType) {
 	    case 'id':
-		/* We always add a sort by id, see _fetchChildItemIds */
+		/* We always add a sort by id, see buildItemQuery */
 		break;
 
 	    case 'title':
 		$column = '[GalleryItem::title]';
-		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'summary':
 		$column = '[GalleryItem::summary]';
-		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'creationTimestamp':
 		$column = '[GalleryEntity::creationTimestamp]';
-		$condition[] = '[GalleryEntity::id] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryEntity] ON [BASE::ID] = [GalleryEntity::id]';
 		break;
 
 	    case 'modificationTimestamp':
 		$column = '[GalleryEntity::modificationTimestamp]';
-		$condition[] = '[GalleryEntity::id] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryEntity] ON [BASE::ID] = [GalleryEntity::id]';
 		break;
 
 	    case 'description':
 		$column = '[GalleryItem::description]';
-		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'keywords':
 		$column = '[GalleryItem::keywords]';
-		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'pathComponent':
 		$column = '[GalleryFileSystemEntity::pathComponent]';
-		$condition[] = '[GalleryFileSystemEntity::id] = [GalleryChildEntity::id]';
+		$join[] =
+		    'JOIN [GalleryFileSystemEntity] ON [BASE::ID] = [GalleryFileSystemEntity::id]';
 		break;
 
 	    case 'viewCount':
 		$column = '[GalleryItemAttributesMap::viewCount]';
-		$condition[] = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryItemAttributesMap] ON '
+			. '[BASE::ID] = [GalleryItemAttributesMap::itemId]';
 		break;
 
 	    case 'viewedFirst':
 		$order[] = '[GalleryItemAttributesMap::viewCount] DESC';
 		$select[] = '[GalleryItemAttributesMap::viewCount]';
-		$condition[] = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryItemAttributesMap] ON '
+			. '[BASE::ID] = [GalleryItemAttributesMap::itemId]';
 		break;
 
 	    case 'orderWeight':
 		$order[] = '[GalleryItemAttributesMap::orderWeight]';
 		$select[] = '[GalleryItemAttributesMap::orderWeight]';
-		$condition[] = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryItemAttributesMap] ON '
+			. '[BASE::ID] = [GalleryItemAttributesMap::itemId]';
 		break;
 
 	    case 'originationTimestamp':
 		$column = '[GalleryItem::originationTimestamp]';
-		$condition[] = '[GalleryItem::id] = [GalleryChildEntity::id]';
+		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'random':
@@ -642,15 +624,14 @@ class GalleryChildEntityHelper_simple {
 		if ($ret) {
 		    return array($ret, null, null, null, null);
 		}
-		$join[] = '[GalleryChildEntity] LEFT JOIN [GalleryAlbumItem=1] ON ' .
-		    '[GalleryChildEntity::id] = [GalleryAlbumItem=1::id]';
-		$select[] = $case;
 		$order[] = 2 + count($order);
+		$select[] = $case;
+		$join[] = 'LEFT JOIN [GalleryAlbumItem=1] ON [BASE::ID] = [GalleryAlbumItem=1::id]';
 		break;
 
 	    default:
 		list ($ret, $sort) =
-		    GalleryCoreApi::newFactoryInstanceById('GallerySortInterface_1_1', $orderType);
+		    GalleryCoreApi::newFactoryInstanceById('GallerySortInterface_1_2', $orderType);
 		if ($ret) {
 		    return array($ret, null, null, null, null);
 		}
@@ -662,7 +643,7 @@ class GalleryChildEntityHelper_simple {
 		    }
 
 		    for ($i = 1; $i <= 3; $i++) {
-			$orderClause = preg_replace("{%$i%}", $i + 1 + count($order), $orderClause);
+			$orderClause = str_replace("%$i%", $i + 1 + count($order), $orderClause);
 		    }
 		    $order[] = $orderClause;
 		    if (!empty($conditionClause)) {
@@ -689,8 +670,7 @@ class GalleryChildEntityHelper_simple {
 	    }
 	}
 
-	return array(null, implode(', ', $order),
-		     implode(', ', $select), implode(' AND ', $condition), implode(', ', $join));
+	return array(null, $select, $join, $condition, $order);
     }
 }
 ?>

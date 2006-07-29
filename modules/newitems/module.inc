@@ -38,10 +38,10 @@ class NewItemsModule extends GalleryModule {
 	$this->setId('newitems');
 	$this->setName($gallery->i18n('New Items'));
 	$this->setDescription($gallery->i18n('Highlight new/updated Gallery items'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.0.4');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 10));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 
@@ -68,7 +68,7 @@ class NewItemsModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'GallerySortInterface_1_1', 'NewItemsSortOrder', 'NewItems',
+	    'GallerySortInterface_1_2', 'NewItemsSortOrder', 'NewItems',
 	    'modules/newitems/classes/NewItemsSortOrder.class', 'newitems', null);
 	if ($ret) {
 	    return $ret;

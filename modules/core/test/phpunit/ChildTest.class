@@ -105,30 +105,88 @@ class ChildTest extends GalleryTestCase {
 	$this->assertEquals(array(), $childIds, "child 0's children");
     }
 
-    function testFetchChildIdsByTitle() {
-	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId(),
-							array('orderBy' => 'title',
-							      'orderDirection' => ORDER_ASCENDING));
+    function testFetchChildIdsWithSort() {
+	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $child1) = $this->_createRandomAlbum($album->getId(), array('title' => 'ZZZ'));
+	list ($ret, $child[1]) = $this->_createRandomDataItem($album->getId(), 'test/file',
+		array('title' => 'ZZZ', 'summary' => 'mno', 'description' => 'ZZdesc',
+		      'keywords' => 'def', 'originationTimestamp' => time() - 1000,
+		      'creationTimestamp' => time() - 10));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $child2) = $this->_createRandomAlbum($album->getId(), array('title' => 'AAA'));
+	list ($ret, $child[2]) = $this->_createRandomAlbum($album->getId(),
+		array('title' => 'AAA', 'summary' => 'zzz', 'description' => 'MMdesc',
+		      'keywords' => 'abc', 'originationTimestamp' => time() - 100,
+		      'creationTimestamp' => time() - 5));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::incrementItemViewCount($child[2]->getId(), 3);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($album);
+	list ($ret, $child[3]) = $this->_createRandomDataItem($album->getId(), 'test/file',
+		array('title' => 'MMM', 'summary' => 'abc', 'description' => 'ABdesc',
+		      'keywords' => 'zyx', 'originationTimestamp' => time() - 500));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::incrementItemViewCount($child[3]->getId(), 3);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(array($child2->getId(), $child1->getId()), $ids);
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($album->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	foreach (array('title' => array(ORDER_ASCENDING, 2, 3, 1),
+		       'summary' => array(ORDER_DESCENDING, 2, 1, 3),
+		       'description' => array(ORDER_ASCENDING, 3, 2, 1),
+		       'keywords' => array(ORDER_DESCENDING, 3, 1, 2),
+		       'originationTimestamp' => array(ORDER_ASCENDING, 1, 3, 2),
+		       'creationTimestamp' => array(ORDER_DESCENDING, 3, 2, 1),
+		       'viewCount' => array(ORDER_DESCENDING, 2, 3, 1), /* Tie break by Id */
+		       'pathComponent' => array(ORDER_ASCENDING, '?'),
+		       'random' => array(ORDER_ASCENDING, '?'),
+		       'viewedFirst|summary' => array(ORDER_ASCENDING, 3, 2, 1),
+		       'albumsFirst|description' => array(ORDER_DESCENDING, 2, 1, 3),
+		    ) as $orderBy => $data) {
+	    $album->setOrderBy($orderBy);
+	    $album->setOrderDirection(array_shift($data));
+	    $ret = $album->save();
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $this->failWithStatus($ret);
+	    }
+
+	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($album);
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $this->failWithStatus($ret);
+	    }
+
+	    if (count($data) < 3) {
+		/* Don't know exact order to expect, just make sure all 3 items are there */
+		$data = array(1, 2, 3);
+		sort($childIds);
+	    }
+
+	    $this->assertEquals(array($child[$data[0]]->getId(), $child[$data[1]]->getId(),
+				      $child[$data[2]]->getId()), $childIds, $orderBy);
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
     }
 
     function testFetchChildItemIdsDifferentUser() {
@@ -228,8 +286,31 @@ class ChildTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
 	$this->assertEquals(array($this->_child[1]->getId()), $childIds);
+
+	/* Verify 2 references to GalleryEntity table don't produce bad sql (2 joins) */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_root->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_root->setOrderBy('modificationTimestamp');
+	$ret = $this->_root->save();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $childIds) =
+	    GalleryCoreApi::fetchLinkableChildItemIdsWithPermission($this->_root->getId(),
+								    'core.view');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array($this->_child[1]->getId()), $childIds, 'with sort');
     }
 
     function testChildItemIdsIgnorePermission() {
@@ -316,11 +397,10 @@ class ChildTest extends GalleryTestCase {
 
     function testMultisortConflict() {
 	/* Previously a sort and presort both with a left join could create bad SQL */
-	$ret = GalleryCoreApi::registerFactoryImplementation('GallerySortInterface_1_1',
+	$ret = GalleryCoreApi::registerFactoryImplementation('GallerySortInterface_1_2',
 		'ChildTestSortOrder', 'ChildTestSortOrder',
 		'modules/core/test/phpunit/ChildTest.class', 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
@@ -350,6 +430,31 @@ class ChildTest extends GalleryTestCase {
 	}
 	/* Don't need any results.. just validating that SQL query is ok, no error returned */
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildAlbumItemIds($album);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), $childIds, 'child ids');
+    }
+
+    function testNoSelfJoin() {
+	/* Verify a self join is avoided */
+	$ret = GalleryCoreApi::registerFactoryImplementation('GallerySortInterface_1_2',
+		'ChildTestSortOrder2', 'ChildTestSortOrder2',
+		'modules/core/test/phpunit/ChildTest.class', 'coreTest', null);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
+
+	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId(),
+				      array('orderBy' => 'ChildTestSortOrder2',
+					    'orderDirection' => ORDER_ASCENDING));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Don't need any results.. just validating that SQL query is ok, no error returned */
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($album);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -496,12 +601,12 @@ class ChildTest extends GalleryTestCase {
     }
 }
 
-GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_1.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_2.class');
 
 /**
  * Test sort order
  */
-class ChildTestSortOrder extends GallerySortInterface_1_1 {
+class ChildTestSortOrder extends GallerySortInterface_1_2 {
     function getSortInfo() {
 	return array(null, 'ChildTestSort', false);
     }
@@ -510,8 +615,22 @@ class ChildTestSortOrder extends GallerySortInterface_1_1 {
 	/* Won't match anything.. just used to ensure valid SQL is constructed */
 	return array(null, '[GalleryUser::userName]' . $direction,
 		'[GalleryUser::userName]', null,
-		'[GalleryChildEntity] LEFT JOIN [GalleryUser] ON '
-		. '[GalleryChildEntity::id] = [GalleryUser::id]');
+		'LEFT JOIN [GalleryUser] ON [BASE::ID] = [GalleryUser::id]');
+    }
+}
+
+/**
+ * Test sort order to verify self-join is avoided
+ */
+class ChildTestSortOrder2 extends GallerySortInterface_1_2 {
+    function getSortInfo() {
+	return array(null, 'ChildTestSort2', false);
+    }
+
+    function getSortOrder($direction) {
+	return array(null, '[GalleryChildEntity::parentId]' . $direction,
+		'[GalleryChildEntity::parentId]', null,
+		'JOIN [GalleryChildEntity] ON [BASE::ID] = [GalleryChildEntity::id]');
     }
 }
 ?>
