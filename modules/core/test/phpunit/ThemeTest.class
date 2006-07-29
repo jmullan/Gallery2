@@ -96,7 +96,7 @@ class ThemeTest extends GalleryTestCase {
     function testPackSettingBlockList1() {
 	$this->assertEquals(
 	    array(true, serialize(array(array('module.BlockName', array('param1' => 'value1'))))),
-	    $this->_theme->packSetting('block-list', '[module.BlockName param1=value1]'));
+	    $this->_theme->packSetting('block-list', '[["module.BlockName",{"param1":"value1"}]]'));
     }
 
     function testPackSettingBlockList2() {
@@ -104,28 +104,37 @@ class ThemeTest extends GalleryTestCase {
 			array('param1' => 'value1')),
 		    array('module2.Block2', array()),
 		    array('module.BlockName', array('param1' => 'value1', 'param2' => 'value2'))))),
-	    $this->_theme->packSetting('block-list', '[module.BlockName param1=value1] '
-		. '[module2.Block2] '
-		. '[module.BlockName param1=value1 param2=value2]'));
+	    $this->_theme->packSetting(
+		'block-list',
+		'[["module.BlockName", {"param1":"value1"}],' .
+		' ["module2.Block2"],' .
+		' ["module.BlockName",{"param1":"value1","param2":"value2"}]]'));
     }
 
     function testPackSettingBlockListTrueFalse() {
 	$this->assertEquals(array(true, serialize(array(array('module.BlockName',
 			array('param1' => false, 'param2' => true))))),
 	    $this->_theme->packSetting('block-list',
-		'[module.BlockName param1=false param2=true]'));
+		'[["module.BlockName",{"param1":false,"param2":true}]]'));
     }
 
     function testPackSettingBlockListWhitespace1() {
 	$this->assertEquals(
 	    array(true, serialize(array(array('a.B', array('x' => 'y')), array('b.c', array())))),
-	    $this->_theme->packSetting('block-list', '[a.B x=y][b.c]'));
+	    $this->_theme->packSetting('block-list', '[["a.B",{"x":"y"}],    ["b.c"]]'));
     }
 
     function testPackSettingBlockListWhitespace2() {
 	$this->assertEquals(
-	    array(true, serialize(array(array('a.B', array('x' => 'y')), array('b.c', array())))),
-	    $this->_theme->packSetting('block-list', "[a.B\n\r\tx=y]\n\n\t\n[b.c]"));
+	    array(true, serialize(
+		      array(array('a.B', array('x' => "y \n y")), array('b.c', array())))),
+	    $this->_theme->packSetting('block-list', '[["a.B",{"x":"y \n y"}],["b.c"]]'));
+    }
+
+    function testPackSettingBlockListQuotedValue() {
+	$this->assertEquals(
+	    array(true, serialize(array(array('a.B', array('x' => 'foo "bar" baz'))))),
+	    $this->_theme->packSetting('block-list', '[["a.B",{"x":"foo \"bar\" baz"}]]'));
     }
 
     function testPackSettingBlockListEmpty() {
@@ -159,36 +168,48 @@ class ThemeTest extends GalleryTestCase {
     }
 
     function testPackSettingBlockListVeryLongList() {
-	$count = 100;
-	$value = str_repeat('[a.b c=d]', $count);
+	$count = 3;
+	$data_pattern = '["a.b",{"c":"d"}]';
+	$expected_pattern = array('a.b', array('c' => 'd'));
+
+	$data = '';
 	for ($i = 0; $i < $count; $i++) {
-	    $expected[] = array('a.b', array('c' => 'd'));
+	    $expected[] = $expected_pattern;
+	    if ($i) {
+		$data .= ',';
+	    }
+	    $data .= $data_pattern;
 	}
-	$this->assertEquals(array(true, serialize($expected)),
-			    $this->_theme->packSetting('block-list', $value));
+	$data = '[' . $data . ']';
+
+	$actual = $this->_theme->packSetting('block-list', $data);
+
+	$this->assertEquals(array(true, $expected),
+			    array($actual[0], unserialize($actual[1])));
     }
 
     function testUnpackSettingBlockList1() {
 	$this->assertEquals(
-	    array(true, '[a.B foo=bar]'),
+	    array(true, '[["a.B",{"foo":"bar"}]]'),
 	    $this->_theme->unpackSetting('block-list',
 					 serialize(array(array('a.B', array('foo' => 'bar'))))));
     }
 
     function testUnpackSettingBlockList2() {
-	$this->assertEquals(array(true, '[a.B foo=bar] [c.D]'),
+	$this->assertEquals(
+	    array(true, '[["a.B",{"foo":"bar"}],["c.D",{}]]'),
 	    $this->_theme->unpackSetting('block-list',
 		serialize(array(array('a.B', array('foo' => 'bar')), array('c.D')))));
     }
 
     function testUnpackSettingBlockListTrueFalse() {
-	$this->assertEquals(array(true, '[a.B foo=true bar=false]'),
+	$this->assertEquals(array(true, '[["a.B",{"foo":true,"bar":false}]]'),
 	    $this->_theme->unpackSetting('block-list',
 		serialize(array(array('a.B', array('foo' => true, 'bar' => false))))));
     }
 
     function testUnpackSettingBlockListEmpty() {
-	$this->assertEquals(array(true, ''),
+	$this->assertEquals(array(true, '[]'),
 			    $this->_theme->unpackSetting('block-list', serialize(array())));
     }
 

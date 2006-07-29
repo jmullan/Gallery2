@@ -230,7 +230,7 @@
 	      <input type="hidden"
 		     id="albumBlockValue_{$setting.key}" size="60"
 		     name="{g->formVar var="form[key][`$setting.key`]"}"
-		     value="{$form.key[$setting.key]}"/>
+		     value="{$form.key[$setting.key]|replace:'"':'&quot;'}"/>
 
 	      <script type="text/javascript">
 		// <![CDATA[

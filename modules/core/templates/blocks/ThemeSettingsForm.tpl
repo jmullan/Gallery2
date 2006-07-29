@@ -105,7 +105,7 @@
 		   onchange="changeSetting('{$settingKey}'); bsw_reInitAdminForm('{$settingKey}');"
 		   id="albumBlockValue_{$setting.key}" size="60"
 		   name="{g->formVar var="form[key][$settingKey]"}"
-		   value="{$form.key.$settingKey}"/>
+		   value="{$form.key.$settingKey|replace:'"':'&quot;'}"/>
 
 	    <script type="text/javascript">
 	      // <![CDATA[
@@ -174,9 +174,20 @@
   var isSaved = new Array;
   var savedValues = new Array;
   var globalValues = new Array;
+
+  {*
+   * Convert " to &quot; so that Javascript can parse embedded quotes in the
+   * the data.  Convert \ to \\ so that when we move this value around the
+   * backslash is preserved (else \" turns into ").
+   *}
   {foreach from=$ThemeSettingsForm.globalParams key=key item=value}
-    globalValues['{$key}'] = '{$value}';
+    globalValues['{$key}'] = "{$value|replace:'"':'&quot;'|replace:'\\':'\\\\'}";
   {/foreach}
+
+  {* Undo the quotes coercion here in Javascript so that we have the correct data *}
+  globalValues['albumBlocks'] = globalValues['albumBlocks'].replace(/&quot;/g, '"');
+  globalValues['photoBlocks'] = globalValues['photoBlocks'].replace(/&quot;/g, '"');
+  globalValues['sidebarBlocks'] = globalValues['sidebarBlocks'].replace(/&quot;/g, '"');
 
   function toggleGlobal(key) {ldelim}
     var frm = document.getElementById('{$formId}');
@@ -207,6 +218,7 @@
       }
     }
     if (inputWidget.type != 'checkbox') inputWidget.onchange();
+    bsw_showBlockOptions(key);
   }
 
   function changeSetting(key) {

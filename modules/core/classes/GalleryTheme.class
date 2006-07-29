@@ -355,49 +355,44 @@ class GalleryTheme extends GalleryPlugin {
 	switch ($packType) {
 	case 'block-list':
 	    /*
-	     * Expecting format:
-	     * [module.BlockName param1=value1 ...] [module.BlockName param1=value1 ...] ...
+	     * Expecting format (without line breaks):
+	     * [["module.BlockName",{"param1":"value1",...}],
+	     *  ["module.BlockName",{"param1":"value1",...}],
+	     *  ["module.BlockName2"]]
 	     *
 	     * Output is a serialized array of the format:
 	     * array(
-	     *    array('module.BlockName', array('param1' => 'value1'))
-	     *    array('module.BlockName', array('param1' => 'value1')))
+	     *    array('module.BlockName', array('param1' => 'value1')),
+	     *    array('module.BlockName', array('param1' => 'value1')),
+	     *    array('module.BlockName2', array()))
 	     *
 	     * The value can be empty.  There can be any number of blocks.  Blocks can be repeated.
 	     * There can be any number of parameters
 	     */
 	    $results = array();
-	    if (empty($value)) {
+	    if (empty($value) || $value == '[]') {
 		/* success */
-	    } else if (preg_match_all("/\[([\w]+\.[\w]+)\s*(.*?)\]/", $value, $matches)) {
-		for ($i = 0; $i < count($matches[0]); $i++) {
-		    $record = array($matches[1][$i], array());
-		    $matches[2][$i] = trim($matches[2][$i]);
-		    if (!empty($matches[2][$i])) {
-			$params = preg_split('/\s+/', $matches[2][$i]);
-			foreach ($params as $param) {
-			    $paramKeyValues = explode('=', $param);
-			    if (count($paramKeyValues) == 2) {
-				if (!strcasecmp($paramKeyValues[1], "false")) {
-				    $paramKeyValues[1] = false;
-				} else if (!strcasecmp($paramKeyValues[1], "true")) {
-				    $paramKeyValues[1] = true;
-				}
-				$record[1][$paramKeyValues[0]] = $paramKeyValues[1];
-			    } else {
-				$success = false;
-			    }
+	    } else {
+		GalleryCoreApi::requireOnce('lib/JSON/JSON.php');
+		$json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
+
+		/* The sanitizer will escape quotes, so unescape them */
+		$value = str_replace('&quot;', '"', $value);
+
+		$results = $json->decode($value);
+
+		if (empty($results) || !isset($results[0])) {
+		    $success = false;
+		    $results = array();
+		} else {
+		    for ($i = 0; $i < count($results); $i++) {
+			if (count($results[$i]) == 1) {
+			    array_push($results[$i], array());
 			}
 		    }
-		    $results[] = $record;
 		}
-	    } else {
-		$success = false;
 	    }
 
-	    if (!$success) {
-		$results = array();
-	    }
 	    $value = serialize($results);
 	}
 
@@ -419,36 +414,39 @@ class GalleryTheme extends GalleryPlugin {
 	case 'block-list':
 	    /*
 	     * Convert to this format:
-	     * [module.BlockName param1=value1 ...] [module.BlockName param1=value1 ...] ...
+	     * [["module.BlockName", {"param1":"value1",...}]
+	     *  ["module.BlockName", {"param1":"value1",...}]]
 	     *
 	     * Input is:
-	     * array('module.BlockName', array('param1' => 'value1'))
+	     * array('module.BlockName', array('param1' => 'value1'),
+	     *       'module.BlockName', array('param1' => 'value1'))
 	     */
 	    $result = '';
 	    $input = @unserialize($value);
 	    if (!is_array($input)) {
 		$success = false;
+	    } else if (empty($input)) {
+		$success = true;
+		$value = '[]';
 	    } else {
-		$i = 0;
-		foreach ($input as $record) {
-		    if (!is_array($record)) {
-			$success = false;
-			break;
+		GalleryCoreApi::requireOnce('lib/JSON/JSON.php');
+		$json = new Services_JSON();
+		for ($i = 0; $i < count($input); $i++) {
+		    if (empty($input[$i]) || !is_array($input[$i])) {
+			return array(false, '');
 		    }
-		    $result .= ($i ? ' ' : '') . '[' . $record[0];
-		    if (!empty($record[1])) {
-			foreach ($record[1] as $k => $v) {
-			    $v = ($v === false) ? 'false' : ($v === true ? 'true' : $v);
-			    $result .= ' ' . $k . '=' . $v;
-			}
+		    if (count($input[$i]) == 1) {
+			array_push($input[$i], array());
 		    }
-		    $result .= ']';
-		    $i++;
 		}
-		if (!$success) {
-		    $result = '';
-		}
-		$value = $result;
+		$value = $json->encode($input);
+		/*
+		 * JSON can't distinguish between regular arrays and assoc arrays if the array is
+		 * empty, so fix it up here.  This isn't essential, but it keeps our interchange
+		 * format cleaner (and we enforce this behaviour in our tests).
+		 */
+		$value = str_replace('[]', '{}', $value);
+		$success = true;
 	    }
 	}
 	return array($success, $value);
