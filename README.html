@@ -34,7 +34,7 @@
 	line-height: 1.2em;
       }
       ul, ol {
-	margin: 1.2em 0 1.2em 1.75em;
+	margin: 1.2em 0 1.2em 2.5em;
 	padding: 0;
       }
       li {
@@ -253,7 +253,8 @@
 	One of the following databases: <a href="http://mysql.com/" target="_blank">MySQL</a>
 	3.x, 4.x or 5.x, <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a>
 	7.x or 8.x, <a href="http://www.oracle.com/" target="_blank">Oracle</a> 9i or 10g,
-	<a href="http://www.ibm.com/software/data/db2/" target="_blank">DB2</a> 8.2
+	<a href="http://www.ibm.com/software/data/db2/" target="_blank">IBM DB2</a> 8.2,
+	<a href="http://www.microsoft.com/sql/" target="_blank">Microsoft SQL Server</a> 2005.
       </li>
       <li>
 	One of the following graphics toolkits: <a href="http://netpbm.sourceforge.net/"
@@ -1570,9 +1571,11 @@
 	<a href="http://dev.mysql.com/downloads/" target="_blank">MySQL</a>,
 	<a href="http://www.postgresql.org/mirrors-ftp.html" target="_blank">PostgreSQL</a>,
 	<a href="http://www.oracle.com/technology/software/index.html"
-	target="_blank">Oracle</a> and
-	<a href="http://www.ibm.com/software/data/db2/" target="_blank">DB2</a>.
-	MySQL is generally faster than PostgreSQL. Oracle and DB2 are barely tested.
+	target="_blank">Oracle</a>,
+	<a href="http://www.ibm.com/software/data/db2/" target="_blank">IBM DB2</a> and
+	<a href="http://www.microsoft.com/sql/" target="_blank">Microsoft SQL Server</a>.
+	The databases most commonly used with Gallery 2 are MySQL and PostgreSQL.
+	MySQL is generally faster than PostgreSQL.
 	We require you to create the database yourself.
 	In our examples below, we&rsquo;ll be creating a database called
 	<b>gallery2</b>.  You can use any database name that you
@@ -1621,14 +1624,71 @@
 	</div>
 
 	<div class="instructions">
-	  <h3>DB2</h3>
+	  <h3>IBM DB2</h3>
 	  <p>
 	    $ db2 "create database gallery2 using codeset utf-8 territory us pagesize 32 k"
 	  </p>
 	</div>
 	<ul class="note">
 	  <li> Also see our <a href="http://codex.gallery2.org/index.php/Gallery2:DB2"
-	    target="_blank">DB2 page</a>
+	    target="_blank">IBM DB2 documentation page</a>
+	  </li>
+	</ul>
+
+	<div class="instructions">
+	  <h3>Microsoft SQL Server</h3>
+	  <p>
+	    C:\>sqlcmd -S myhostname\SQLEXPRESS -e
+	  </p>
+	  <p>
+	    1>create database gallery2
+	  </p>
+	  <p>
+	    2>go
+	  </p>
+	  <p>
+	    1>use gallery2
+	  </p>
+	  <p>
+	    2>go
+	  </p>
+	  <p>
+	    1>create schema g2user
+	  </p>
+	  <p>
+	    2>go
+	  </p>
+	  <p>
+	    1>create login g2user with password = "g2pwd"
+	  </p>
+	  <p>
+	    2>go
+	  </p>
+	  <p>
+	    1>create user g2user for login g2user with default_schema = g2user
+	  </p>
+	  <p>
+	    2>go
+	  </p>
+	  <p>
+	    1>use master
+	  </p>
+	  <p>
+	    2>go
+	  </p>
+	  <p>
+	    1>grant CONTROL SERVER to g2user
+	  </p>
+	  <p>
+	    2>go
+	  </p>
+	  <p>
+	    1>quit
+	  </p>
+	</div>
+	<ul class="note">
+	  <li> Also see our <a href="http://codex.gallery2.org/index.php/Gallery2:MSSQL"
+	    target="_blank">Microsoft SQL Server documentation page</a>
 	  </li>
 	</ul>
       </li>
