@@ -83,7 +83,8 @@ class RssSiteAdminController extends GalleryController {
 				   'allowPhotos',
 				   'allowPhotosRecurse',
 				   'allowCommentsPhoto',
-				   'allowCommentsAlbum') as $setting) {
+				   'allowCommentsAlbum',
+				   'allowCommentsRecursive') as $setting) {
 			$ret = GalleryCoreApi::setPluginParameter('module', 'rss', $setting,
 			    (isset($form[$setting]) && $form[$setting]) ? 1 : 0);
 			if ($ret) {

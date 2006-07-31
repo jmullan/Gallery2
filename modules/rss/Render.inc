@@ -101,14 +101,18 @@ class RenderView extends GalleryView {
 
 	/* check render type */
 	$feedType = $params['feedType'];
-	if ($feedType != 'album' && $feedType != 'photos'  && $feedType != 'photosRecurse' &&
-		$feedType != 'commentsAlbum' && $feedType != 'commentsPhoto') {
+	if (!in_array($feedType, array('album',
+					'photos',
+					'photosRecurse',
+					'commentsAlbum',
+					'commentsPhoto',
+					'commentsRecursive'))) {
 	    $this->handleError($gallery->i18n('Incorrect feed type!'));
 	    return null;
 	}
 
 	/* check if we comments are active */
-	if ($params['feedType'] == 'commentsAlbum' || $params['feedType'] == 'commentsPhoto') {
+	if (in_array($feedType, array('commentsAlbum', 'commentsPhoto', 'commentsRecursive'))) {
 	    /* make sure that the comments module is active */
 	    list ($ret, $modulestatus) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret) {

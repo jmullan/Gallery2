@@ -228,6 +228,18 @@
     </td><td>
       {g->text text="Fast"}
     </td></tr>
+    <tr><td>
+    </td><td>
+      <input type="checkbox"{if $form.allowCommentsRecursive} checked="checked"{/if}
+        {if !$form.allowConfigurableFeed} disabled="disabled" {/if}
+        name="{g->formVar var="form[allowCommentsRecursive]"}" id="Rss_allowCommentsRecursive"/>
+    </td><td>
+      <label for="Rss_allowCommentsRecursive">
+        {g->text text="Allow RSS feeds comments for an album and its subalbums"}
+      </label>
+    </td><td>
+      {g->text text="Fast"}
+    </td></tr>
   </table>
 </div>
 
@@ -247,7 +259,8 @@
     form.elements.namedItem('{g->formVar var="form[allowPhotosRecurse]"}').disabled = !enabled;
     form.elements.namedItem('{g->formVar var="form[allowCommentsPhoto]"}').disabled = !enabled;
     form.elements.namedItem('{g->formVar var="form[allowCommentsAlbum]"}').disabled = !enabled;
-  {rdelim}
+    form.elements.namedItem('{g->formVar var="form[allowCommentsRecursive]"}').disabled = !enabled;
+    {rdelim}
   // ]]>
 </script>
 {/g->addToTrailer}
@@ -344,7 +357,7 @@
     </td>
   </tr><tr>
     <td></td>
-    <td colspan="2">
+    <td colspan="2" valign="top">
       <label for="RssSiteAdmin_typePhotosRecurseLimit">
         {g->text text="Limit the number of items per album"}
       </label>
@@ -359,7 +372,7 @@
       {g->text text="(enter 0 to disable the limit)"}
       {/if}
     </td>
-  </tr><tr valign="top">
+  </tr><tr>
     <td>
       <input type="radio" name="{g->formVar var="form[sfAlbumType]"}"
         value="commentsAlbum" {if $form.sfAlbumType=='commentsAlbum'}checked="checked"{/if}
@@ -367,6 +380,19 @@
     </td><td>
       <label for="RssSiteAdmin_typeCommentsAlbum">
         {g->text text="Comments for the album"}
+      </label>
+    </td><td>
+      {g->text text="Fast"}
+    </td>
+  </tr><tr>
+  <td></td>
+    <td>
+      <input type="radio" name="{g->formVar var="form[sfAlbumType]"}"
+        value="commentsRecursive" {if $form.sfAlbumType=='commentsRecursive'}checked="checked"{/if}
+	id="RssSiteAdmin_typeCommentsRecursive" />
+    </td><td>
+      <label for="RssSiteAdmin_typeCommentsRecursive">
+        {g->text text="Comments for an album and its subalbums"}
       </label>
     </td><td>
       {g->text text="Fast"}
@@ -393,7 +419,7 @@
   <tr>
     <td rowspan="2" valign="top">{g->text text="Which items"}</td>
     <td>
-      <input type="radio" name="{g->formVar var="form[sfDate]"}" value="new" 
+      <input type="radio" name="{g->formVar var="form[sfDate]"}" value="new"
         {if $form.sfDate=='new'}checked="checked"{/if} id="RssSiteAdmin_dateNew" />
     </td><td colspan="2">
       <label for="RssSiteAdmin_dateNew">{g->text text="New items only"}</label>

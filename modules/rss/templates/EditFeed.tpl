@@ -189,8 +189,21 @@
       <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be able to view them."}
     {/if}
     </td>
+  </tr><tr valign="top">
+    <td>
+      <input type="radio" name="{g->formVar var="form[feedType]"}"
+        value="commentsRecursive" {if $EditFeed.feedType=='commentsRecursive'}checked="checked"{/if}
+	id="EditFeed_typeCommentsRecursive" />
+    </td><td>
+      <label for="EditFeed_typeCommentsRecursive">
+        {g->text text="Comments for this album and its subalbums"}
+      </label>
+    {if !$param.allowCommentsRecursive}
+      <br/>{g->text text="Feeds of this type are disallowed by the administrator. Users won't be able to view them."}
+    {/if}
+    </td>
   </tr>
-{else}
+  {else}
   <tr valign="top">
     <td>{g->text text="Type of feed"}</td>
     <td><input type="radio" name="{g->formVar var="form[feedType]"}"
