@@ -60,7 +60,7 @@ class AddCommentController extends GalleryController {
 		'modules/comment/classes/GalleryCommentHelper.class');
 
 	    if (empty($form['subject'])) {
-		$error[] = 'form[error][subject][missing]';
+		$form['subject'] = '';
 	    }
 	    if (empty($form['comment'])) {
 		$error[] = 'form[error][comment][missing]';
@@ -151,7 +151,7 @@ class AddCommentController extends GalleryController {
 	    }
 	} else if (isset($form['action']['preview'])) {
 	    if (empty($form['subject'])) {
-		$error[] = 'form[error][subject][missing]';
+		$form['subject'] = '';
 	    }
 
 	    if (empty($form['comment'])) {

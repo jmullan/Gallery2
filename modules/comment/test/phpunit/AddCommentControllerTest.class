@@ -139,8 +139,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'comment.AddComment'),
 				  'status' => array(),
-				  'error' => array('form[error][subject][missing]',
-						   'form[error][comment][missing]')),
+				  'error' => array('form[error][comment][missing]')),
 			    $results);
 
 	/* Verify that there are no comments */
@@ -165,8 +164,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'comment.AddComment'),
 				  'status' => array(),
-				  'error' => array('form[error][subject][missing]',
-						   'form[error][comment][missing]')),
+				  'error' => array('form[error][comment][missing]')),
 			    $results);
 
 	/* Verify that there are no comments */
