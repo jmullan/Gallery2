@@ -65,7 +65,7 @@ class NewItemsSortOrder extends GallerySortInterface_1_2 {
 	}
 
 	return array(null, '%1%', $case, null,
-		     'JOIN [GalleryEntity] ON [BASE::ID] = [GalleryEntity::id]');
+		     'INNER JOIN [GalleryEntity] ON [BASE::ID] = [GalleryEntity::id]');
     }
 }
 ?>

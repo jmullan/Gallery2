@@ -630,7 +630,7 @@ class ChildTestSortOrder2 extends GallerySortInterface_1_2 {
     function getSortOrder($direction) {
 	return array(null, '[GalleryChildEntity::parentId]' . $direction,
 		'[GalleryChildEntity::parentId]', null,
-		'JOIN [GalleryChildEntity] ON [BASE::ID] = [GalleryChildEntity::id]');
+		'INNER JOIN [GalleryChildEntity] ON [BASE::ID] = [GalleryChildEntity::id]');
     }
 }
 ?>

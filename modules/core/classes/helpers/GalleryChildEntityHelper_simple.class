@@ -284,11 +284,12 @@ class GalleryChildEntityHelper_simple {
 
 	foreach ($idJoins as $table => $column) {
 	    /* Add joins to id column of these tables if not already joined */
-	    $join['JOIN [' . $table . '] ON [BASE::ID] = [' . $table . '::' . $column . ']'] = 1;
+	    $join['INNER JOIN [' . $table . '] ON [BASE::ID] = ['
+		  . $table . '::' . $column . ']'] = 1;
 	}
 	/* Don't self join */
 	$baseId = '[' . $baseTable . '::' . $baseIdColumn . ']';
-	unset($join['JOIN [' . $baseTable . '] ON [BASE::ID] = ' . $baseId]);
+	unset($join['INNER JOIN [' . $baseTable . '] ON [BASE::ID] = ' . $baseId]);
 
 	/* Postgres requires the order by column to be in the select list */
 	$select = empty($select) ? '' : ', ' . implode(', ', $select);
@@ -552,63 +553,63 @@ class GalleryChildEntityHelper_simple {
 
 	    case 'title':
 		$column = '[GalleryItem::title]';
-		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
+		$join[] = 'INNER JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'summary':
 		$column = '[GalleryItem::summary]';
-		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
+		$join[] = 'INNER JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'creationTimestamp':
 		$column = '[GalleryEntity::creationTimestamp]';
-		$join[] = 'JOIN [GalleryEntity] ON [BASE::ID] = [GalleryEntity::id]';
+		$join[] = 'INNER JOIN [GalleryEntity] ON [BASE::ID] = [GalleryEntity::id]';
 		break;
 
 	    case 'modificationTimestamp':
 		$column = '[GalleryEntity::modificationTimestamp]';
-		$join[] = 'JOIN [GalleryEntity] ON [BASE::ID] = [GalleryEntity::id]';
+		$join[] = 'INNER JOIN [GalleryEntity] ON [BASE::ID] = [GalleryEntity::id]';
 		break;
 
 	    case 'description':
 		$column = '[GalleryItem::description]';
-		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
+		$join[] = 'INNER JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'keywords':
 		$column = '[GalleryItem::keywords]';
-		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
+		$join[] = 'INNER JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'pathComponent':
 		$column = '[GalleryFileSystemEntity::pathComponent]';
-		$join[] =
-		    'JOIN [GalleryFileSystemEntity] ON [BASE::ID] = [GalleryFileSystemEntity::id]';
+		$join[] = 'INNER JOIN [GalleryFileSystemEntity] ON '
+			. '[BASE::ID] = [GalleryFileSystemEntity::id]';
 		break;
 
 	    case 'viewCount':
 		$column = '[GalleryItemAttributesMap::viewCount]';
-		$join[] = 'JOIN [GalleryItemAttributesMap] ON '
+		$join[] = 'INNER JOIN [GalleryItemAttributesMap] ON '
 			. '[BASE::ID] = [GalleryItemAttributesMap::itemId]';
 		break;
 
 	    case 'viewedFirst':
 		$order[] = '[GalleryItemAttributesMap::viewCount] DESC';
 		$select[] = '[GalleryItemAttributesMap::viewCount]';
-		$join[] = 'JOIN [GalleryItemAttributesMap] ON '
+		$join[] = 'INNER JOIN [GalleryItemAttributesMap] ON '
 			. '[BASE::ID] = [GalleryItemAttributesMap::itemId]';
 		break;
 
 	    case 'orderWeight':
 		$order[] = '[GalleryItemAttributesMap::orderWeight]';
 		$select[] = '[GalleryItemAttributesMap::orderWeight]';
-		$join[] = 'JOIN [GalleryItemAttributesMap] ON '
+		$join[] = 'INNER JOIN [GalleryItemAttributesMap] ON '
 			. '[BASE::ID] = [GalleryItemAttributesMap::itemId]';
 		break;
 
 	    case 'originationTimestamp':
 		$column = '[GalleryItem::originationTimestamp]';
-		$join[] = 'JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
+		$join[] = 'INNER JOIN [GalleryItem] ON [BASE::ID] = [GalleryItem::id]';
 		break;
 
 	    case 'random':
