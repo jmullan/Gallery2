@@ -94,5 +94,16 @@ class ModRewriteUrlGenerator extends RewriteUrlGenerator {
 
 	return $this->_currentUrl[$forceDirect];
     }
+
+    /**
+     * @see GalleryUrlGenerator::generateUrl
+     */
+    function generateUrl($params=array(), $options=array()) {
+	if (GalleryUtilities::isEmbedded()) {
+	    $options['forceServerRelativeUrl'] = 1;
+	}
+	
+	return parent::generateUrl($params, $options);
+    }
 }
 ?>
