@@ -70,24 +70,31 @@ class CoreCallbacks {
 
 	case 'LoadPeers':
 	    $item = $params['item'];
-	    $canViewParent = false;
-	    if ($item['parentId'] > 0) {
+	    if (isset($item['parent']->getChildrenFunction)) {
+		$parent = $item['parent'];
+		list ($ret, $peerIds) = call_user_func($parent->getChildrenFunction, $userId);
+		if ($ret) {
+		    return $ret;
+		}
+	    } else if ($item['parentId'] > 0) {
 		list ($ret, $canViewParent) =
 		    GalleryCoreApi::hasItemPermission($item['parentId'], 'core.view', $userId);
 		if ($ret) {
 		    return $ret;
 		}
+		if ($canViewParent) {
+		    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item['parentId']);
+		    if ($ret) {
+			return $ret;
+		    }
+		    list ($ret, $peerIds) =
+			GalleryCoreApi::fetchChildItemIds($parent, null, null, $userId);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
 	    }
-	    if ($canViewParent) {
-		list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item['parentId']);
-		if ($ret) {
-		    return $ret;
-		}
-		list ($ret, $peerIds) =
-		    GalleryCoreApi::fetchChildItemIds($parent, null, null, $userId);
-		if ($ret) {
-		    return $ret;
-		}
+	    if (!empty($peerIds)) {
 		foreach ($peerIds as $i => $id) {
 		    if ($id == $item['id']) {
 			$peerItemIndex = $i;

@@ -23,7 +23,7 @@
 	{g->text text="%d. %s" arg1=$peer.peerIndex arg2=$title|markup:strip|entitytruncate:14}
       </span>
     {else}
-      <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$peer.id`"}">
+      <a href="{g->url params=$theme.pageUrl arg1="itemId=`$peer.id`"}">
 	{g->text text="%d. %s" arg1=$peer.peerIndex arg2=$title|markup:strip|entitytruncate:14}
       </a>
     {/if}

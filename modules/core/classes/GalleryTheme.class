@@ -79,7 +79,7 @@ class GalleryTheme extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(2, 3);
+	return array(2, 4);
     }
 
     /**
@@ -811,14 +811,13 @@ class GalleryTheme extends GalleryPlugin {
 	case VIEW_TYPE_SHOW_ITEM:
 	    $this->_cacheablePage = true;
 	    $session =& $gallery->getSession();
+	    if (!isset($theme['pageUrl'])) {
+		$theme['pageUrl'] = array('view' => 'core.ShowItem', 'itemId' => $item->getId());
+	    }
 
 	    /* Albums page or Photo page */
 	    if ($item->getCanContainChildren()) {
 		$theme['pageType'] = 'album';
-		if (!isset($theme['pageUrl'])) {
-		    $theme['pageUrl'] =
-			array('view' => 'core.ShowItem', 'itemId' => $item->getId());
-		}
 
 		/* If we care about pagination, then figure out the current page and total pages */
 		$perPage = $this->getPageSize($params);
@@ -1202,7 +1201,7 @@ class GalleryTheme extends GalleryPlugin {
 	     * TODO: Should we have this obey the acting user permission?  It may make navigation
 	     * strange for the active user.
 	     */
-	    if ($itemId) {
+	    if ($itemId && !isset($item->parent)) {
 		list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
 		if ($ret) {
 		    return $ret;
@@ -1227,23 +1226,31 @@ class GalleryTheme extends GalleryPlugin {
 	if (isset($load['itemNavigator'])) {
 	    $navigator = array();
 	    $canViewParent = false;
-	    if ($item->getParentId()) {
+	    if (isset($item->parent->getChildrenFunction)) {
+		list ($ret, $peerDataItemIds) =
+		    call_user_func($item->parent->getChildrenFunction, $theme['actingUserId']);
+		if ($ret) {
+		    return $ret;
+		}
+	    } else if ($item->getParentId()) {
 		list ($ret, $canViewParent) = GalleryCoreApi::hasItemPermission(
 		    $item->getParentId(), 'core.view', $theme['actingUserId']);
 		if ($ret) {
 		    return $ret;
 		}
+		if ($canViewParent) {
+		    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+		    if ($ret) {
+			return $ret;
+		    }
+		    list ($ret, $peerDataItemIds) = GalleryCoreApi::fetchChildDataItemIds(
+			    $parent, null, null, $theme['actingUserId']);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
 	    }
-	    if ($canViewParent) {
-		list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-		if ($ret) {
-		    return $ret;
-		}
-		list ($ret, $peerDataItemIds) = GalleryCoreApi::fetchChildDataItemIds(
-						$parent, null, null, $theme['actingUserId']);
-		if ($ret) {
-		    return $ret;
-		}
+	    if (!empty($peerDataItemIds)) {
 		foreach ($peerDataItemIds as $i => $id) {
 		    if ($id == $itemId) {
 			$dataItemIndex = $i;
@@ -1381,6 +1388,20 @@ class GalleryTheme extends GalleryPlugin {
 		}
 		if ($canSee) {
 		    $theme['parents'][] = (array)$entities[$id];
+		}
+	    }
+	    if (isset($item->parent)) {
+		$theme['parents'][] = (array)$item->parent;
+	    }
+	    foreach ($theme['parents'] as $i => $parent) {
+		if (!isset($parent['urlParams'])) {
+		    $urlParams = array('view' => 'core.ShowItem', 'itemId' => $parent['id']);
+		    if (!empty($theme['parents'][$i + 1]['id'])) {
+			$urlParams['highlightId'] = $theme['parents'][$i + 1]['id'];
+		    } else if ($itemId && ($i + 1) == count($theme['parents'])) {
+			$urlParams['highlightId'] = $itemId;
+		    }
+		    $theme['parents'][$i]['urlParams'] = $urlParams;
 		}
 	    }
 	    $theme['parent'] = empty($theme['parents']) ? null :
@@ -1589,9 +1610,9 @@ class GalleryTheme extends GalleryPlugin {
 		}
 	    }
 	    foreach ($navigator as $key => $id) {
-		$navigator[$key] = array('urlParams' => array('view' => 'core.ShowItem',
-							      'itemId' => $id),
+		$navigator[$key] = array('urlParams' => $theme['pageUrl'],
 					 'item' => (array)$entities[$id]);
+		$navigator[$key]['urlParams']['itemId'] = $id;
 		if (isset($thumbTable[$id])) {
 		    $navigator[$key]['thumbnail'] = (array)$thumbTable[$id];
 		}
