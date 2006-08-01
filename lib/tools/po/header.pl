@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Ensure correct header (CVS Id tag, GPL header, Project-Id-Version)
+# Ensure correct header (Id tag, GPL header, Project-Id-Version)
 # Usage: perl -pi{ext} header.pl {po_file}
 # messages.po should exist in current dir
 
@@ -22,5 +22,8 @@ if ($. == 1) {
       $v =~ s/-.*$//;
     }
     $_ .= "$m $v\\n\"\n";
+} else {
+    s/^("Language-Team:.*?<)LL\@li.org(.*)$/${1}gallery-translations\@lists.sourceforge.net$2/;
+    s/^("Content-Type:.*?=)CHARSET(.*)$/${1}UTF-8$2/;
 }
 

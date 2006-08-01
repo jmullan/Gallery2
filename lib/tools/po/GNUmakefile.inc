@@ -58,6 +58,8 @@ messages.po:
 	    if [ -n "$(LANGPO)" ]; then \
 	      perl $(TOOLDIR)/po/premerge-messages.pl -2 messages.po $(LANGPO) > $@; \
 	    else cp messages.po $@; fi; \
+	    perl -pi~ $(TOOLDIR)/po/header.pl $@; \
+	    $(RM) $@~; \
 	  fi
 	@$(RM) messages.tmp
 
