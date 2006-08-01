@@ -92,24 +92,24 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	WHERE
 	  [GalleryChildEntity::id] = [GalleryComment::id]
 	  AND
-          [GalleryChildEntity::parentId] = [GalleryAccessSubscriberMap::itemId]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
-          AND
-          ([GalleryComment::subject] LIKE ?
-           OR
-           [GalleryComment::comment] LIKE ?)
-        ', $aclMarkers);
+	  [GalleryChildEntity::parentId] = [GalleryAccessSubscriberMap::itemId]
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	  AND
+	  ([GalleryComment::subject] LIKE ?
+	   OR
+	   [GalleryComment::comment] LIKE ?)
+	', $aclMarkers);
 
 	$query = sprintf('
 	SELECT
 	  [GalleryChildEntity::id],
-          [GalleryComment::subject],
-          [GalleryComment::comment],
-          [GalleryComment::date],
-          [GalleryUser::fullName],
-          [GalleryUser::userName],
-          [GalleryChildEntity::parentId]
+	  [GalleryComment::subject],
+	  [GalleryComment::comment],
+	  [GalleryComment::date],
+	  [GalleryUser::fullName],
+	  [GalleryUser::userName],
+	  [GalleryChildEntity::parentId]
 	FROM
 	  [GalleryChildEntity], [GalleryComment], [GalleryAccessSubscriberMap], [GalleryUser]
 	WHERE
@@ -117,16 +117,16 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	  AND
 	  [GalleryUser::id] = [GalleryComment::commenterId]
 	  AND
-          [GalleryChildEntity::parentId] = [GalleryAccessSubscriberMap::itemId]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
-          AND
-          ([GalleryComment::subject] LIKE ?
-           OR
-           [GalleryComment::comment] LIKE ?)
+	  [GalleryChildEntity::parentId] = [GalleryAccessSubscriberMap::itemId]
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	  AND
+	  ([GalleryComment::subject] LIKE ?
+	   OR
+	   [GalleryComment::comment] LIKE ?)
 	ORDER BY
 	  [GalleryComment::date] DESC, [GalleryChildEntity::id] DESC
-        ', $aclMarkers);
+	', $aclMarkers);
 
 	$data = $aclIds;
 	$data[] = '%' . $criteria . '%';
@@ -146,7 +146,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	    return array($ret, null);
 	}
 
-        list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -105,6 +105,28 @@ class CommentCallbacks {
 	    $block['comment']['LoadComments'] = $LoadComments;
 
 	    return null;
+
+	case 'AddComment':
+	    /* Load our item */
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['itemId']);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');
+	    $form =& $smarty->_tpl_vars['form'];
+	    list ($ret, $AddComment) = GalleryCommentHelper::getAddComment($item, $form);
+	    if ($ret) {
+		if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
+		    return null;
+		}
+		return $ret;
+	    }
+
+	    $block =& $smarty->_tpl_vars['block'];
+	    $block['comment']['AddComment'] = $AddComment;
+
+	    return null;
 	}
 
 	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);

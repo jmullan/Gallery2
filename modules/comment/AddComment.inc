@@ -199,57 +199,12 @@ class AddCommentView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	/* Make sure we have permission to add a comment */
-	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.add');
+	list ($ret, $AddComment) = GalleryCommentHelper::getAddComment($item, $form);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	if ($form['formName'] != 'AddComment') {
-	    $form['formName'] = 'AddComment';
-	    $form['subject'] = $form['comment'] = '';
-	} else {
-	    foreach (array('subject', 'comment') as $key) {
-		if (empty($form[$key])) {
-		    $form[$key] = '';
-		}
-	    }
-	}
-
-	/* Check if we should use validation plugins for new comments */
-	$plugins = array();
-	list ($ret, $useValidationPlugins) = GalleryCommentHelper::useValidationPlugins();
-	if ($ret) {
-	    return array($ret, null);
-	}
-	if ($useValidationPlugins) {
-	    list ($ret, $allPluginIds) =
-		GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
-	    if ( $ret) {
-		return array($ret, null);
-	    }
-
-	    /* Let each plugin load its template data */
-	    foreach (array_keys($allPluginIds) as $pluginId) {
-		list ($ret, $plugin) =
-		    GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin', $pluginId);
-		if ($ret) {
-		    return array($ret, null);
-		}
-		list ($ret, $data['file'], $data['l10Domain']) = $plugin->loadTemplate($form);
-		if ($ret) {
-		    return array($ret, null);
-		}
-		if (isset($data['file'])) {
-		    $plugins[] = $data;
-		}
-	    }
-	}
-
-	$template->setVariable('AddComment',
-	    array('itemId' => $item->getId(),
-		  'host' => GalleryUtilities::getRemoteHostAddress(),
-		  'plugins' => $plugins));
+	$template->setVariable('AddComment', $AddComment);
 	$template->setVariable('controller', 'comment.AddComment');
 
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');

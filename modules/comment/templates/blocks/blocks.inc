@@ -18,5 +18,7 @@ $blocks = array(
 		    '30' => $gallery->i18n('30'),
 		    '50' => $gallery->i18n('50'),
 		    '100' => $gallery->i18n('100'),
-		    '999' => $gallery->i18n('999'))))));
+		    '999' => $gallery->i18n('999'))))),
+    'AddComment' => array(
+	'description' => $gallery->i18n('Add Comment')));
 ?>

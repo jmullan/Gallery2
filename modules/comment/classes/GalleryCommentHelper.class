@@ -262,6 +262,67 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
     }
 
     /**
+     * Get information needed for the AddComment page
+     *
+     * @param object item to work from
+     * @param array form being modified
+     * @return array object GalleryStatus a status code
+     *               array values used for the AddComment page (itemId, host, validation plugins)
+     */
+    function getAddComment(&$item, &$form) {
+	/* Make sure we have permission to add a comment */
+	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.add');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($form['formName'] != 'AddComment') {
+	    $form['formName'] = 'AddComment';
+	    $form['subject'] = $form['comment'] = '';
+	} else {
+	    foreach (array('subject', 'comment') as $key) {
+		if (empty($form[$key])) {
+		    $form[$key] = '';
+		}
+	    }
+	}
+
+	/* Check if we should use validation plugins for new comments */
+	$plugins = array();
+	list ($ret, $useValidationPlugins) = GalleryCommentHelper::useValidationPlugins();
+	if ($ret) {
+	    return array($ret, null);
+	} else if ($useValidationPlugins) {
+	    list ($ret, $allPluginIds) =
+		GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
+	    if ( $ret) {
+		return array($ret, null);
+	    }
+
+	    /* Let each plugin load its template data */
+	    foreach (array_keys($allPluginIds) as $pluginId) {
+		list ($ret, $plugin) =
+		    GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin', $pluginId);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		list ($ret, $data['file'], $data['l10Domain']) = $plugin->loadTemplate($form);
+		if ($ret) {
+		    return array($ret, null);
+		} else if (isset($data['file'])) {
+		    $plugins[] = $data;
+		}
+	    }
+	}
+
+	$AddComment = array('itemId' => $item->getId(),
+		'host' => GalleryUtilities::getRemoteHostAddress(),
+		'plugins' => $plugins);
+
+	return array(null, $AddComment);
+    }
+
+    /**
      * Determine if we should use validation plugins for new comments.
      *
      * @return array object GalleryStatus a status code
