@@ -40,9 +40,9 @@ class AjaxianTheme extends GalleryTheme {
 	$this->setId('ajaxian');
 	$this->setName($gallery->i18n('Ajaxian'));
 	$this->setDescription($gallery->i18n('DHTML-enabled Slideshow theme'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setRequiredCoreApi(array(7, 1));
-	$this->setRequiredThemeApi(array(2, 3));
+	$this->setRequiredThemeApi(array(2, 4));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 8,
 		  'showAlbumOwner' => 0,

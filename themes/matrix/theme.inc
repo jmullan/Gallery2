@@ -40,9 +40,9 @@ class MatrixTheme extends GalleryTheme {
 	$this->setId('matrix');
 	$this->setName($gallery->i18n('Matrix'));
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('1.1.0');
+	$this->setVersion('1.1.1');
 	$this->setRequiredCoreApi(array(7, 0));
-	$this->setRequiredThemeApi(array(2, 1));
+	$this->setRequiredThemeApi(array(2, 4));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,

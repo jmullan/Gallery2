@@ -58,29 +58,32 @@
             <div class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}" style="width: {$theme.params.columnWidth}px; height: {$theme.params.rowHeight}px;">
 
             {if ($child.canContainChildren || $child.entityType == 'GalleryLinkItem')}
-                {assign var=frameType value="albumFrame"}
-            {else}
-                {assign var=frameType value="itemFrame"}
-            {/if}
+		{assign var=frameType value="albumFrame"}
+		{capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
+						arg2="itemId=`$child.id`"}{/capture}
+	    {else}
+		{assign var=frameType value="itemFrame"}
+		{capture assign=linkUrl}{g->url params=$theme.pageUrl
+						arg1="itemId=`$child.id`"}{/capture}
+	    {/if}
 
             {strip}
             {if isset($theme.params.$frameType) && isset($child.thumbnail)}
                 {g->container type="imageframe.ImageFrame" frame=$theme.params.$frameType
                               width=$child.thumbnail.width height=$child.thumbnail.height}
-                    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
-                      {g->image id="%ID%" item=$child image=$child.thumbnail
-                                class="%CLASS% giThumbnail"}
-                    </a>
+		    <a href="{$linkUrl}">
+		      {g->image id="%ID%" item=$child image=$child.thumbnail
+				class="%CLASS% giThumbnail"}
+		    </a>
                 {/g->container}
             {elseif isset($child.thumbnail)}
-                <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
-                    {g->image item=$child image=$child.thumbnail class="giThumbnail"}
-                </a>
+		<a href="{$linkUrl}">
+		    {g->image item=$child image=$child.thumbnail class="giThumbnail"}
+		</a>
             {else}
-                <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}"
-                   class="giMissingThumbnail">
-                     {g->text text="no thumbnail"}
-                </a>
+		<a href="{$linkUrl}" class="giMissingThumbnail">
+		    {g->text text="no thumbnail"}
+		</a>
             {/if}
             {/strip}
 

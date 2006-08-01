@@ -21,7 +21,7 @@
     {foreach from=$theme.parents item=parent}
       <li>
 	&raquo;
-	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$parent.id`"}">
+	<a href="{g->url params=$parent.urlParams}">
 	  {$parent.title|markup:strip|default:$parent.pathComponent}
 	</a>
       </li>

@@ -44,8 +44,8 @@
           </a>
         </div>
 
-        <h4><a href="{g->url arg1="view=core.ShowItem"
-               arg2="itemId=`$child.id`"}">{$child.title|default:$child.pathComponent|markup}</a></h4>
+	<h4><a href="{g->url arg1="view=core.ShowItem"
+	    arg2="itemId=`$child.id`"}">{$child.title|default:$child.pathComponent|markup}</a></h4>
 
 	<div class="meta">
 	  {if ($child.descendentCount > 0)}
@@ -74,13 +74,13 @@
         {assign var="firstItem" value=false}
       {/if}
       <div class="gallery-thumb">
-        <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
-          {if isset($child.thumbnail)}
-            {g->image item=$child image=$child.thumbnail}
-          {else}
-            {g->text text="no thumbnail"}
-          {/if}
-        </a>
+	<a href="{g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}">
+	  {if isset($child.thumbnail)}
+	    {g->image item=$child image=$child.thumbnail}
+	  {else}
+	    {g->text text="no thumbnail"}
+	  {/if}
+	</a>
       </div>
     {/if}
   {/foreach}

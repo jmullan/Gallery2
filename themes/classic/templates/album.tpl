@@ -73,25 +73,28 @@
 	      <td class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}">
 		{if ($child.canContainChildren || $child.entityType == 'GalleryLinkItem')}
 		{assign var=frameType value="albumFrame"}
+		{capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
+						arg2="itemId=`$child.id`"}{/capture}
 		{else}
 		{assign var=frameType value="itemFrame"}
+		{capture assign=linkUrl}{g->url params=$theme.pageUrl
+						arg1="itemId=`$child.id`"}{/capture}
 		{/if}
 		<div>
 		  {if isset($theme.params.$frameType) && isset($child.thumbnail)}
 		    {g->container type="imageframe.ImageFrame"
 				  frame=$theme.params.$frameType
 				  width=$child.thumbnail.width height=$child.thumbnail.height}
-		      <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
+		      <a href="{$linkUrl}">
 			{g->image id="%ID%" item=$child image=$child.thumbnail class="%CLASS% giThumbnail"}
 		      </a>
 		    {/g->container}
 		  {elseif isset($child.thumbnail)}
-		    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
+		    <a href="{$linkUrl}">
 		      {g->image item=$child image=$child.thumbnail class="giThumbnail"}
 		    </a>
 		  {else}
-		    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}"
-		       class="giMissingThumbnail">
+		    <a href="{$linkUrl}" class="giMissingThumbnail">
 		      {g->text text="no thumbnail"}
 		    </a>
 		  {/if}

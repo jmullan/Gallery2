@@ -68,17 +68,16 @@
 	    <td class="giItemCell">
 	      {if isset($theme.params.itemFrame) && isset($child.thumbnail)}
 		{g->container type="imageframe.ImageFrame" frame=$theme.params.itemFrame}
-		  <a href="{g->url arg1="view=core.ShowItem"
-	  		    arg2="itemId=`$child.id`"}">{g->image id="%ID%"
-			item=$child image=$child.thumbnail
+		  <a href="{g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}">{g->image
+			id="%ID%" item=$child image=$child.thumbnail
 			class="%CLASS% giThumbnail size:=`$child.size`= summary:=`$child.summary`= description:=`$child.description`="}</a>
 		{/g->container}
 	      {elseif isset($child.thumbnail)}
-		<a href="{g->url arg1="view=core.ShowItem"
-			  arg2="itemId=`$child.id`"}">{g->image item=$child image=$child.thumbnail
+		<a href="{g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}">{g->image
+			item=$child image=$child.thumbnail
 			class="r giThumbnail size:=`$child.size`= summary:=`$child.summary`= description:=`$child.description`="}</a>
 	      {else}
-		<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}"
+		<a href="{g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}"
 		   class="giMissingThumbnail">
 		  {g->text text="no thumbnail"}
 		</a>
@@ -165,7 +164,7 @@
     {if !$it.canContainChildren}
     slideshowImages.push('{if isset($it.image)}{g->url arg1="view=core.DownloadItem"
       arg2="itemId=`$it.image.id`" arg3="serialNumber=`$it.image.serialNumber`"
-      htmlEntities=false}{else}{g->url arg1="view=core.ShowItem" arg2="itemId=`$it.id`"
+      htmlEntities=false}{else}{g->url params=$theme.pageUrl arg1="itemId=`$it.id`"
       htmlEntities=false}{/if}');
     {/if}
   {/foreach}

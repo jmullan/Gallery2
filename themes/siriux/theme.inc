@@ -24,7 +24,7 @@
  */
 
 /**
- * This implements the standard gallery theme
+ * This implements the siriux.net gallery theme
  *
  * @package SiriuxTheme
  * @subpackage Theme
@@ -40,9 +40,9 @@ class SiriuxTheme extends GalleryTheme {
 	$this->setId('siriux');
 	$this->setName($gallery->i18n('Siriux'));
 	$this->setDescription($gallery->i18n('Siriux.net Gallery theme'));
-	$this->setVersion('1.1.0');
+	$this->setVersion('1.1.1');
 	$this->setRequiredCoreApi(array(7, 0));
-	$this->setRequiredThemeApi(array(2, 2));
+	$this->setRequiredThemeApi(array(2, 4));
 	$this->setStandardSettings(
 	    array('perPage' => 9,
 		  'contentWidth' => 700,

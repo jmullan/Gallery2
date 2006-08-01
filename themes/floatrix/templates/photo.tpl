@@ -51,17 +51,17 @@
               </a>
               {/capture}
 
-              {if $image.viewInline}
+	      {if $image.viewInline}
 		{if count($theme.imageViews) > 1}
 		  {if $theme.imageViewsIndex==1 && count($theme.imageViews)==2}
-		    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.item.id`"}">
+		    <a href="{g->url params=$theme.pageUrl arg1="itemId=`$theme.item.id`"}">
 		  {else}
 		    {assign var="imageViewsLink" value=$theme.imageViewsIndex+1}
 		    {if $imageViewsLink==count($theme.imageViews)}
 		      {assign var="imageViewsLink" value=$theme.imageViewsIndex-1}
 		    {/if}
-		    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.item.id`"
-				     arg3="imageViewsIndex=`$imageViewsLink`"}">
+		    <a href="{g->url params=$theme.pageUrl arg1="itemId=`$theme.item.id`"
+				     arg2="imageViewsIndex=`$imageViewsLink`"}">
 		  {/if}
 		{/if}
 		{if isset($theme.photoFrame)}

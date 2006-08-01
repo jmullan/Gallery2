@@ -36,17 +36,15 @@
 <div class="gbBlock gcBackground2 gbNavigator">
   {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true}
 
-  {section name=parent loop=$theme.parents}
-    {if $smarty.section.parent.last}
+  {foreach name=parent from=$theme.parents item=parent}
+    {if $smarty.foreach.parent.last}
       <div class="goback">
-      <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.parents[parent].id`"
-			arg3="highlightId=`$theme.item.id`"}" class="backtoalbum"
-			title="{g->text text="Back to %s"
-				arg1=$theme.parents[parent].title|markup:strip|default:$theme.parents[parent].pathComponent}">
+      <a href="{g->url params=$parent.urlParams}" class="backtoalbum"
+	 title="{g->text text="Back to %s" arg1=$theme.parents[parent].title|markup:strip|default:$theme.parents[parent].pathComponent}">
 	{g->text text="Go back to album"}
       </a></div>
     {/if}
-  {/section}
+  {/foreach}
 </div>
 {/if}{/capture}
 {$navigator}
