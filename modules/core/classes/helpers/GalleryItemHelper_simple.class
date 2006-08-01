@@ -211,12 +211,6 @@ class GalleryItemHelper_simple {
 	    foreach ($results as $key => $value) {
 		$counts[$key] = $value;
 	    }
-	    foreach ($itemIds as $itemId) {
-		if (!isset($counts[$itemId])) {
-		    $counts[$itemId] = 0;
-		}
-	    }
-	
 	}
 
 	return array(null, $counts);
@@ -302,6 +296,11 @@ class GalleryItemHelper_simple {
 	$counts = array();
 	while ($result = $searchResults->nextResult()) {
 	    $counts[$result[0]] = $result[1];
+	}
+	foreach ($itemIds as $itemId) {
+	    if (!isset($counts[$itemId])) {
+		$counts[$itemId] = 0;
+	    }
 	}
 
 	return array(null, $counts);
