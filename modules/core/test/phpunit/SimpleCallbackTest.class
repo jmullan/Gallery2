@@ -186,14 +186,22 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$this->assert(strstr($results, dirname(__FILE__)), 'Missing result');
     }
 
+    function testLookupDirectoriesWithPattern() {
+	GalleryUtilities::putRequestVariable('command', 'lookupDirectories');
+	GalleryUtilities::putRequestVariable('prefix', dirname(dirname(dirname(__FILE__))) . '/c');
+	$results = $this->_runCallback();
+
+	$this->assert(strstr($results, 'classes'), 'Missing classes in: ' . $results);
+	$this->assert(!strstr($results, 'templates'), 'Should not have templates in: ' . $results);
+    }
+
     function testLookupDirectoriesWithEntity() {
 	/* Filesystem isn't entitized.. search for < should match literal < */
 	global $gallery;
-	$platform = new SimpleCallbackTestPlatform();	
-	$platform->setReply('file_exists', array('/php<unit'), true);
+	$platform = new SimpleCallbackTestPlatform();
 	$platform->setReply('is_dir', array('/php<unit'), true);
-	$platform->setReply('getDirectorySeparator', array(), '/');
 	$platform->setReply('opendir', array('/php<unit'), 'dh');
+	$platform->setReply('getDirectorySeparator', array(), '/');
 	$platform->setReply('readdir', array('dh'), 'test');
 	$platform->setReply('is_dir', array('/php<unit/test'), true);
 	$platform->setReply('readdir', array('dh'), false);
@@ -212,11 +220,10 @@ class SimpleCallbackTest extends GalleryTestCase {
 	/* Filesystem doesn't accept / return UTF-8 characters */
 	global $gallery;
 	$gallery->_phpVm = new SimpleCallbackTestPhpVm();
-	$platform = new SimpleCallbackTestPlatform();	
-	$platform->setReply('file_exists', array('/phpäunit'), true);
+	$platform = new SimpleCallbackTestPlatform();
 	$platform->setReply('is_dir', array('/phpäunit'), true);
-	$platform->setReply('getDirectorySeparator', array(), '/');
 	$platform->setReply('opendir', array('/phpäunit'), 'dh');
+	$platform->setReply('getDirectorySeparator', array(), '/');
 	$platform->setReply('readdir', array('dh'), 'täst');
 	$platform->setReply('is_dir', array('/phpäunit/täst'), true);
 	$platform->setReply('readdir', array('dh'), false);
@@ -270,14 +277,23 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$this->assert(strstr($results, __FILE__), 'Missing result');
     }
 
+    function testLookupFilesWithPattern() {
+	GalleryUtilities::putRequestVariable('command', 'lookupFiles');
+	GalleryUtilities::putRequestVariable('prefix', dirname(__FILE__) . '/Si');
+	$results = $this->_runCallback();
+
+	$this->assert(strstr($results, __FILE__), 'Missing result in: ' . $results);
+	$this->assert(!strstr($results, 'CoreModuleTest'),
+		      'Should not have CoreModuleTest in: ' . $results);
+    }
+
     function testLookupFilesWithEntity() {
 	/* Filesystem isn't entitized.. search for & should match literal & */
 	global $gallery;
-	$platform = new SimpleCallbackTestPlatform();	
-	$platform->setReply('file_exists', array('/php&unit'), true);
+	$platform = new SimpleCallbackTestPlatform();
 	$platform->setReply('is_dir', array('/php&unit'), true);
-	$platform->setReply('getDirectorySeparator', array(), '/');
 	$platform->setReply('opendir', array('/php&unit'), 'dh');
+	$platform->setReply('getDirectorySeparator', array(), '/');
 	$platform->setReply('readdir', array('dh'), 'test');
 	$platform->setReply('is_dir', array('/php&unit/test'), false);
 	$platform->setReply('is_file', array('/php&unit/test'), true);
@@ -300,11 +316,10 @@ class SimpleCallbackTest extends GalleryTestCase {
 	/* Filesystem doesn't accepts / return UTF-8 characters */
 	global $gallery;
 	$gallery->_phpVm = new SimpleCallbackTestPhpVm();
-	$platform = new SimpleCallbackTestPlatform();	
-	$platform->setReply('file_exists', array('/phpäunit'), true);
+	$platform = new SimpleCallbackTestPlatform();
 	$platform->setReply('is_dir', array('/phpäunit'), true);
-	$platform->setReply('getDirectorySeparator', array(), '/');
 	$platform->setReply('opendir', array('/phpäunit'), 'dh');
+	$platform->setReply('getDirectorySeparator', array(), '/');
 	$platform->setReply('readdir', array('dh'), 'täst');
 	$platform->setReply('is_dir', array('/phpäunit/täst'), false);
 	$platform->setReply('is_file', array('/phpäunit/täst'), true);
@@ -374,13 +389,13 @@ class SimpleCallbackTestPhpVm {
 
 class SimpleCallbackTestPlatform extends UnitTestPlatform {
     var $_originalPlatform;
-    
+
     function SimpleCallbackTestPlatform() {
 	global $gallery;
 	$this->_originalPlatform = & $gallery->getPlatform();
 	$this->UnitTestPlatform();
     }
-    
+
     function opendir($path) {
 	if (strpos($path, 'module')) {
 	    return $this->_originalPlatform->opendir($path);
@@ -388,7 +403,7 @@ class SimpleCallbackTestPlatform extends UnitTestPlatform {
 	    return $this->_makeReply('opendir', array($path));
 	}
     }
-    
+
     function closedir($resource) {
 	if (!is_string($resource)) {
 	    return $this->_originalPlatform->closedir($resource);
@@ -396,7 +411,7 @@ class SimpleCallbackTestPlatform extends UnitTestPlatform {
 	    return $this->_makeReply('closedir', array($resource));
 	}
     }
-    
+
     function is_dir($path) {
 	if (strpos($path, 'module')) {
 	    return $this->_originalPlatform->is_dir($path);
@@ -404,7 +419,7 @@ class SimpleCallbackTestPlatform extends UnitTestPlatform {
 	    return $this->_makeReply('is_dir', array($path));
 	}
     }
-    
+
     function readdir($resource) {
 	if (!is_string($resource)) {
 	    return $this->_originalPlatform->readdir($resource);
@@ -412,7 +427,7 @@ class SimpleCallbackTestPlatform extends UnitTestPlatform {
 	    return $this->_makeReply('readdir', array($resource));
 	}
     }
-    
+
     function file_exists($filename) {
 	if (strpos($filename, 'module')) {
 	    return $this->_originalPlatform->file_exists($filename);

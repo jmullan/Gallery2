@@ -222,14 +222,24 @@ function processAutoCompleteRequest() {
 	$path = stripslashes($path);
     }
 
-    /* Find all matching paths */
+    if (is_dir($path)) {
+	$match = '';
+    } else {
+	$match = basename($path);
+	$matchLength = strlen($match);
+	$path = dirname($path);
+	if (!is_dir($path)) {
+	    return;
+	}
+    }
+
     $dirList = array();
-    if (file_exists($path) && is_dir($path) && ($dir = opendir($path))) {
+    if ($dir = opendir($path)) {
 	if ($path{strlen($path)-1} != DIRECTORY_SEPARATOR) {
 	    $path .= DIRECTORY_SEPARATOR;
 	}
 	while (($file = readdir($dir)) !== false) {
-	    if ($file == '.' || $file == '..') {
+	    if ($file == '.' || $file == '..' || ($match && strncmp($file, $match, $matchLength))) {
 		continue;
 	    }
 	    $file = $path . $file;

@@ -78,7 +78,7 @@ class SimpleCallbackView extends GalleryView {
 	    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	    if (!$ret && $isSiteAdmin) {
 		GalleryUtilities::unsanitizeInputValues($prefix, false);
-		$dirs = implode("\n", $this->_getAllImmediateSubdirs($prefix));
+		$dirs = implode("\n", $this->_getDirectoryListing($prefix, false));
 		GalleryUtilities::sanitizeInputValues($dirs, false);
 		print $dirs;
 	    }
@@ -88,7 +88,7 @@ class SimpleCallbackView extends GalleryView {
 	    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	    if (!$ret && $isSiteAdmin) {
 		GalleryUtilities::unsanitizeInputValues($prefix, false);
-		$files = implode("\n", $this->_getAllFiles($prefix));
+		$files = implode("\n", $this->_getDirectoryListing($prefix));
 		GalleryUtilities::sanitizeInputValues($files, false);
 		print $files;
 	    }
@@ -98,83 +98,50 @@ class SimpleCallbackView extends GalleryView {
 	return null;
     }
 
-    function _getAllImmediateSubdirs($path) {
+    function _getDirectoryListing($path, $getFiles=true) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
 	/* $path is UTF-8, we need it in the system charset for filesystem interactions */
 	$path = GalleryCoreApi::convertFromUtf8($path);
-	$dirList = array();
-	if (!$platform->file_exists($path) || !$platform->is_dir($path)) {
-	    return $dirList;
+
+	if ($platform->is_dir($path)) {
+	    $match = '';
+	} else {
+	    $match = basename($path);
+	    $matchLength = strlen($match);
+	    $path = dirname($path);
+	    if (!$platform->is_dir($path)) {
+		return array();
+	    }
 	}
 
-	$slash = $platform->getDirectorySeparator();
+	$dirList = $fileList = array();
 	if ($dir = $platform->opendir($path)) {
+	    $slash = $platform->getDirectorySeparator();
+	    if ($path{strlen($path)-1} != $slash) {
+		$path .= $slash;
+	    }
 	    while (($file = $platform->readdir($dir)) !== false) {
-		if ($file == '.' || $file == '..') {
+		if ($file == '.' || $file == '..'
+			|| ($match && strncmp($file, $match, $matchLength))) {
 		    continue;
 		}
-
-		if ($path[strlen($path)-1] == $slash) {
-		    $file = $path . $file;
-		} else {
-		    $file = sprintf('%s%s%s', $path, $slash, $file);
-		}
+		$file = $path . $file;
 
 		if ($platform->is_dir($file)) {
 		    /* Filesystem charset -> UTF-8 conversion required */
 		    $dirList[] = GalleryCoreApi::convertToUtf8($file);
-		}
-	    }
-	    $platform->closedir($dir);
-	}
-
-	sort($dirList);
-	return $dirList;
-    }
-
-    function _getAllFiles($path) {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	/* $path is UTF-8, we need it in the system charset for filesystem interactions */
-	$path = GalleryCoreApi::convertFromUtf8($path);
-	
-	$dirList = $fileList = array();
-	if (!$platform->file_exists($path) || !$platform->is_dir($path)) {
-	    return $dirList;
-	}
-
-	$slash = $platform->getDirectorySeparator();
-	if ($dir = $platform->opendir($path)) {
-	    while (($file = $platform->readdir($dir)) !== false) {
-		if ($file == '.' || $file == '..') {
-		    continue;
-		}
-
-		if ($path[strlen($path)-1] == $slash) {
-		    $file = $path . $file;
-		} else {
-		    $file = sprintf('%s%s%s', $path, $slash, $file);
-		}
-
-		if ($platform->is_dir($file)) {
-		    $dirList[] = GalleryCoreApi::convertToUtf8($file);
-		} else if ($platform->is_file($file)) {
+		} else if ($getFiles && $platform->is_file($file)) {
 		    $fileList[] = GalleryCoreApi::convertToUtf8($file);
 		}
 	    }
 	    $platform->closedir($dir);
+	    sort($dirList);
+	    sort($fileList);
 	}
 
-	$result = $dirList;
-	if (empty($result)) {
-	    $result = $fileList;
-	} else {
-	    $result = array_merge($result, $fileList);
-	}
-	return $result;
+	return empty($dirList) ? $fileList : array_merge($dirList, $fileList);
     }
 }
 ?>
