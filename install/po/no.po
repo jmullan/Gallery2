@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-02-15 09:26+0100\n"
-"PO-Revision-Date: 2006-05-11 16:40+0100\n"
+"PO-Revision-Date: 2006-07-28 22:17+0100\n"
 "Last-Translator: Sverre M. Vikan <sverre AT urven DOT net>\n"
 "Language-Team: Norwegian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -216,8 +216,9 @@ msgstr "Oracle (9i og nyere)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 og nyere)"
 
-msgid "MSSQL (Experimental!)"
-msgstr "MSSQL (Eksperimentelt)"
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL (v3.23.34a og nyere)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Ukjent DB-type eller ingen kjent tabellinformasjon."
@@ -283,9 +284,8 @@ msgstr "Kan ikke utføre databasetransaksjon"
 msgid "Core module is only partially installed."
 msgstr "Kjernemodulen er bare delvis installert."
 
-#, fuzzy
 msgid "Install Plugins"
-msgstr "Installasjonstrinn"
+msgstr "Installer programtillegg"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Kan ikke klargjøre Galleryøkt"
@@ -683,16 +683,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Før vi fortsetter bør du opprette en fil kalt <i>config.php</i> i katalogen <b>%s</b>. Du må "
-"sørge for at nettjeneren kan skrive til den. Du kan forsøke <i>chmod 666 config.php</i> om "
-"du bruker Unix. I Windows behøver du ikke gjøre noe spesielt. Når du har opprettet denne "
-"filen og gitt de rette tilgangene kan du fortsette. Om det oppstår et problem vil vi "
-"fortelle deg hva du må ordne."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (med shell-tilgang)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Opprett oppsettfil"
@@ -1015,9 +1018,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "Du må srkive inn en katalog"
 
-msgid "The directory you entered does not exist"
-msgstr "Katalogen du skrev inn finnes ikke"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1026,6 +1026,22 @@ msgstr ""
 "Katalogen du skrev inn er kodebasekatalogen. Om du ønsker å installere et galleri i "
 "kodebasekatalogen, velg standard installasjonstype. Om du ønsker å installere et flersted, "
 "velg en annen katalog."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "Katalogen du skrev inn finnes ikke"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1149,6 +1165,42 @@ msgid "Directory path:"
 msgstr "Katalogsti:"
 
 msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+"Nettjeneren din må kunne skrive til denne katalogen. Du kan følge disse eksemplene for å få "
+"det til å virke."
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr ""
+"Merknad: Dette er bare eksempler! Det kan hende de ikke virker ordentlig på ditt system."
+
+#, c-format
+msgid "mkdir %s"
+msgstr "mkdir %s"
+
+#, c-format
+msgid "chmod 777 %s"
+msgstr "chmod 777 %s"
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (med ftp-tilgang)"
+
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems"
+msgstr ""
+"Merk at FTP-tjenere og -klienter varierer, så disse instruksjonene virker ikke nødvendigvis "
+"for deg. Konsulter manualen for din FTP-klient eller snakk med en systemadministrator for "
+"hjelp med dette om du har problemer."
+
+#, c-format
+msgid "cd %s"
+msgstr "cd %s"
+
+msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
 "same paths that PHP sees.  In order to find out the real path to your data directory, you "
 "can try creating a PHP script called <b>dir.php</b> containing the following code in it and "
@@ -1179,45 +1231,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Merknad</b>: Ikke glem å slette dir.php når du er ferdig!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-"Nettjeneren din må kunne skrive til denne katalogen. Du kan følge disse eksemplene for å få "
-"det til å virke."
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr ""
-"Merknad: Dette er bare eksempler! Det kan hende de ikke virker ordentlig på ditt system."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (med shell-tilgang)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (med ftp-tilgang)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"Merk at FTP-tjenere og -klienter varierer, så disse instruksjonene virker ikke nødvendigvis "
-"for deg. Konsulter manualen for din FTP-klient eller snakk med en systemadministrator for "
-"hjelp med dette om du har problemer."
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1302,8 +1315,18 @@ msgstr "Gå"
 msgid "Begin Installation&raquo;"
 msgstr "Start installasjonen&raquo;"
 
-#~ msgid "Install More Modules"
-#~ msgstr "Installer flere moduler"
+#~ msgid "MSSQL (Experimental!)"
+#~ msgstr "MSSQL (Eksperimentelt)"
 
-#~ msgid "Install Other Modules"
-#~ msgstr "Installer andre moduler"
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Før vi fortsetter bør du opprette en fil kalt <i>config.php</i> i katalogen <b>%s</b>. Du "
+#~ "må sørge for at nettjeneren kan skrive til den. Du kan forsøke <i>chmod 666 config.php</"
+#~ "i> om du bruker Unix. I Windows behøver du ikke gjøre noe spesielt. Når du har opprettet "
+#~ "denne filen og gitt de rette tilgangene kan du fortsette. Om det oppstår et problem vil "
+#~ "vi fortelle deg hva du må ordne."
