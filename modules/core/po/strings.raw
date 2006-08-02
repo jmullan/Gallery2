@@ -102,12 +102,6 @@ gettext("Input file %s was not uploaded. Error %d")
 /* ItemAdmin.inc */
 gettext("Gallery Item Administration")
 
-/* ItemCreateLink.inc */
-gettext("create link")
-
-/* ItemCreateLinkSingle.inc */
-gettext("link an item")
-
 /* ItemDelete.inc */
 gettext("delete an item")
 
@@ -168,7 +162,6 @@ gettext("Scaled photo successfully") /* also in: test/phpunit/ItemEditRotateAndS
 gettext("Modify Photo")
 
 /* ItemEditTheme.inc */
-gettext("Successfully saved theme settings") /* also in: templates/AdminThemes.tpl test/phpunit/ItemEditThemePluginTest.class */
 gettext("Theme") /* also in: templates/ItemEditAlbum.tpl */
 
 /* ItemMakeHighlight.inc */
@@ -212,7 +205,6 @@ gettext("Add Items") /* also in: templates/ItemAdd.tpl templates/ItemAddFromBrow
 gettext("Edit Album")
 gettext("Edit Photo")
 gettext("Edit Movie")
-gettext("Create Link")
 gettext("Add Album") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Edit Permissions") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("View Permissions")
@@ -239,13 +231,9 @@ gettext("Graphics Toolkits")
 gettext("Defaults") /* also in: templates/AdminThemes.tpl */
 gettext("Account Settings") /* also in: templates/UserPreferences.tpl */
 gettext("Change Password") /* also in: templates/UserChangePassword.tpl templates/UserRecoverPasswordConfirm.tpl */
-gettext("Link Album")
-gettext("Link Photo")
-gettext("Link Movie")
 gettext("Edit %s") /* also in: templates/ItemEdit.tpl test/phpunit/CoreModuleTest.class */
 gettext("Delete %s") /* also in: templates/ItemDeleteSingle.tpl test/phpunit/CoreModuleTest.class */
 gettext("Move %s") /* also in: templates/ItemMoveSingle.tpl test/phpunit/CoreModuleTest.class */
-gettext("Link %s") /* also in: templates/ItemCreateLinkSingle.tpl */
 
 /* classes/BuildDerivativesTask.class */
 gettext("Build all thumbnails/resizes")
@@ -285,11 +273,15 @@ gettext("Search descriptions")
 gettext("Search keywords")
 gettext("Search summaries")
 gettext("Search titles")
-gettext("Description") /* also in: classes/GallerySortInterface_1_1.class templates/AdminPlugins.tpl templates/AdminRepository.tpl templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
-gettext("Keywords") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
-gettext("Summary") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
-gettext("Title") /* also in: classes/GallerySortInterface_1_1.class templates/ItemAddAlbum.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
+gettext("Description") /* also in: classes/GallerySortInterface_1_2.class templates/AdminPlugins.tpl templates/AdminRepository.tpl templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
+gettext("Keywords") /* also in: classes/GallerySortInterface_1_2.class templates/ItemAddAlbum.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
+gettext("Summary") /* also in: classes/GallerySortInterface_1_2.class templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
+gettext("Title") /* also in: classes/GallerySortInterface_1_2.class templates/ItemAddAlbum.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl test/phpunit/CoreSearchTest.class */
 gettext("Owner") /* also in: templates/ItemPermissions.tpl test/phpunit/CoreSearchTest.class */
+
+/* classes/GalleryDynamicAlbum.class */
+gettext("Dynamic Album")
+gettext("dynamic album")
 
 /* classes/GalleryGroup.class */
 gettext("Group")
@@ -317,7 +309,7 @@ gettext("Error downloading index from '%s'.")
 gettext("Error downloading index hash from '%s'.")
 gettext("Index integrity check failed.")
 
-/* classes/GallerySortInterface_1_1.class */
+/* classes/GallerySortInterface_1_2.class */
 gettext("&laquo; default sort order &raquo;")
 gettext("Manual sort order")
 gettext("Origination Date")
@@ -417,6 +409,9 @@ gettext("disabled") /* also in: templates/AdminPlugins.tpl */
 gettext("Locale")
 gettext("Browser") /* also in: templates/ErrorPage.tpl */
 
+/* classes/helpers/GalleryThemeHelper_medium.class */
+gettext("Successfully saved theme settings") /* also in: templates/AdminThemes.tpl test/phpunit/ItemEditThemePluginTest.class */
+
 /* templates/AdminCore.tpl */
 gettext("General Settings")
 gettext("Settings saved successfully") /* also in: templates/AdminToolkitPriority.tpl */
@@ -483,7 +478,7 @@ gettext("(required)") /* also in: templates/AdminCreateUser.tpl templates/AdminE
 gettext("You must enter a group name") /* also in: templates/AdminEditGroup.tpl templates/AdminGroups.tpl templates/ItemPermissions.tpl */
 gettext("Group '%s' already exists") /* also in: templates/AdminEditGroup.tpl */
 gettext("Create Group") /* also in: templates/AdminGroups.tpl */
-gettext("Cancel") /* also in: templates/AdminCreateUser.tpl templates/AdminDeleteGroup.tpl templates/AdminDeleteUser.tpl templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminModulesVerifyUninstall.tpl templates/AdminRepositoryDownload.tpl templates/ItemCreateLink.tpl templates/ItemDelete.tpl templates/ItemEditCaptions.tpl templates/ItemMakeHighlight.tpl templates/ItemMove.tpl templates/ItemMoveSingle.tpl templates/ItemReorder.tpl templates/UserChangePassword.tpl templates/UserLogin.tpl templates/UserPreferences.tpl templates/UserRecoverPassword.tpl templates/UserRecoverPasswordAdmin.tpl templates/UserRecoverPasswordConfirm.tpl */
+gettext("Cancel") /* also in: templates/AdminCreateUser.tpl templates/AdminDeleteGroup.tpl templates/AdminDeleteUser.tpl templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminModulesVerifyUninstall.tpl templates/AdminRepositoryDownload.tpl templates/ItemDelete.tpl templates/ItemEditCaptions.tpl templates/ItemMakeHighlight.tpl templates/ItemMove.tpl templates/ItemMoveSingle.tpl templates/ItemReorder.tpl templates/UserChangePassword.tpl templates/UserLogin.tpl templates/UserPreferences.tpl templates/UserRecoverPassword.tpl templates/UserRecoverPasswordAdmin.tpl templates/UserRecoverPasswordConfirm.tpl */
 
 /* templates/AdminCreateUser.tpl */
 gettext("Create A New User")
@@ -538,7 +533,7 @@ gettext("Remove selected")
 gettext("You must select a user to remove.")
 gettext("You can't remove yourself from this group.")
 gettext("Add Member")
-gettext("Add") /* also in: templates/AdminThemes.tpl templates/ItemEditTheme.tpl */
+gettext("Add") /* also in: templates/AdminThemes.tpl templates/blocks/ThemeSettingsForm.tpl */
 gettext("You must enter a username.")
 gettext("User '%s' does not exist.") /* also in: templates/AdminUsers.tpl */
 gettext("This user already is in this group.")
@@ -705,15 +700,15 @@ gettext("with") /* also in: templates/ItemEditAlbum.tpl */
 gettext("New albums")
 gettext("%s Theme Settings")
 gettext("These are the global settings for the theme.  They can be overridden at the album level.")
-gettext("Available") /* also in: templates/ItemEditTheme.tpl */
-gettext("Choose a block") /* also in: templates/ItemEditTheme.tpl */
-gettext("Selected") /* also in: templates/ItemEditTheme.tpl */
-gettext("Remove") /* also in: templates/ItemEditTheme.tpl templates/ItemPermissions.tpl */
-gettext("Move Up") /* also in: templates/ItemEditTheme.tpl */
-gettext("Move Down") /* also in: templates/ItemEditTheme.tpl */
-gettext("Parameter") /* also in: templates/ItemEditTheme.tpl */
-gettext("Value") /* also in: templates/ItemEditTheme.tpl */
-gettext("There are no settings for this theme") /* also in: templates/ItemEditTheme.tpl */
+gettext("Available") /* also in: templates/blocks/ThemeSettingsForm.tpl */
+gettext("Choose a block") /* also in: templates/blocks/ThemeSettingsForm.tpl */
+gettext("Selected") /* also in: templates/blocks/ThemeSettingsForm.tpl */
+gettext("Remove") /* also in: templates/ItemPermissions.tpl templates/blocks/ThemeSettingsForm.tpl */
+gettext("Move Up") /* also in: templates/blocks/ThemeSettingsForm.tpl */
+gettext("Move Down") /* also in: templates/blocks/ThemeSettingsForm.tpl */
+gettext("Parameter") /* also in: templates/blocks/ThemeSettingsForm.tpl */
+gettext("Value") /* also in: templates/blocks/ThemeSettingsForm.tpl */
+gettext("There are no settings for this theme") /* also in: templates/blocks/ThemeSettingsForm.tpl */
 
 /* templates/AdminToolkitPriority.tpl */
 gettext("The toolkits shown below have some overlap in supported operations and mime types.  Rank the toolkits here to determine which will perform these operations.")
@@ -755,6 +750,7 @@ gettext("An error has occurred while interacting with the database.")
 gettext("The exact nature of database errors is not captured unless Gallery debug mode is enabled in config.php.  Before seeking support for this error please enable buffered debug output and retry the operation.  Look near the bottom of the lengthy debug output to find error details.")
 gettext("An error has occurred while interacting with the platform.")
 gettext("The exact nature of the platform error is unknown. A common cause are insufficient file system permissions. This can happen if you or your webhost changed something in the file system, e.g. by restoring data from a backup.")
+gettext("Item not found.")
 gettext("An error has occurred.")
 gettext("Back to the Gallery")
 gettext("Error Detail")
@@ -798,39 +794,23 @@ gettext("Assign caption to:")
 gettext("No Thumbnail")
 gettext("Options")
 
-/* templates/ItemCreateLink.tpl */
-gettext("Link an Item")
-ngettext("Successfully linked %d item", "Successfully linked %d items")
-gettext("This album contains no items to link.")
-gettext("Source") /* also in: templates/ItemMove.tpl templates/blocks/PhotoSizes.tpl */
-gettext("Choose the items you want to link")
-gettext("(page %d of %d)") /* also in: templates/ItemDelete.tpl templates/ItemEditCaptions.tpl templates/ItemMove.tpl */
-gettext("No sources chosen")
-gettext("Check All") /* also in: templates/ItemDelete.tpl templates/ItemMove.tpl */
-gettext("Check None") /* also in: templates/ItemDelete.tpl templates/ItemMove.tpl */
-gettext("Invert") /* also in: templates/ItemDelete.tpl templates/ItemMove.tpl */
-gettext("Previous Page") /* also in: templates/ItemDelete.tpl templates/ItemMove.tpl */
-gettext("Next Page") /* also in: templates/ItemDelete.tpl templates/ItemMove.tpl */
-gettext("Destination") /* also in: templates/ItemCreateLinkSingle.tpl templates/ItemMove.tpl templates/ItemMoveSingle.tpl */
-gettext("Choose a new album for the link")
-gettext("No destination chosen") /* also in: templates/ItemCreateLinkSingle.tpl templates/ItemMove.tpl templates/ItemMoveSingle.tpl */
-gettext("Link") /* also in: templates/ItemCreateLinkSingle.tpl */
-
-/* templates/ItemCreateLinkSingle.tpl */
-gettext("Successfully linked")
-gettext("Choose a destination album") /* also in: templates/ItemMoveSingle.tpl */
-
 /* templates/ItemDelete.tpl */
 gettext("Delete Items")
 gettext("No items were selected for deletion")
 ngettext("Successfully deleted %d item", "Successfully deleted %d items")
 gettext("This album contains no items to delete")
 gettext("Choose the items you want to delete")
+gettext("(page %d of %d)") /* also in: templates/ItemEditCaptions.tpl templates/ItemMove.tpl */
 gettext("Items selected here will remain selected when moving between pages.") /* also in: templates/ItemMove.tpl */
 ngettext("One item selected on other pages.", "%d items selected on other pages.") /* also in: templates/ItemMove.tpl */
 gettext("(data)") /* also in: templates/ItemMove.tpl */
 ngettext("(album containing %d item)", "(album containing %d items)") /* also in: templates/ItemMove.tpl */
 gettext("(empty album)") /* also in: templates/ItemMove.tpl */
+gettext("Check All") /* also in: templates/ItemMove.tpl */
+gettext("Check None") /* also in: templates/ItemMove.tpl */
+gettext("Invert") /* also in: templates/ItemMove.tpl */
+gettext("Previous Page") /* also in: templates/ItemMove.tpl */
+gettext("Next Page") /* also in: templates/ItemMove.tpl */
 
 /* templates/ItemDeleteConfirmation.tpl */
 gettext("Deletion Complete")
@@ -943,8 +923,6 @@ gettext("Restore original")
 
 /* templates/ItemEditTheme.tpl */
 gettext("This album is configured to use the <b>%s</b> theme. These settings only apply to the theme for this album.")
-gettext("Setting")
-gettext("Use Global")
 gettext("Use these settings in all subalbums that use %s theme")
 gettext("Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab")
 
@@ -958,6 +936,7 @@ gettext("Highlight")
 gettext("Move an Item")
 ngettext("Successfully moved %d item", "Successfully moved %d items")
 gettext("This album contains no items to move.")
+gettext("Source") /* also in: templates/blocks/PhotoSizes.tpl */
 gettext("Choose the items you want to move")
 gettext("The destination you chose does not accept sub-albums, so all sub-albums have been deselected.")
 gettext("The destination you chose only accepts sub-albums, so all non-albums have been deselected.")
@@ -965,12 +944,15 @@ gettext("You are not allowed to move this item away from here.")
 gettext("You are not allowed to move an album to the chosen destination.")
 gettext("You are not allowed to move an item to the chosen destination.")
 gettext("You cannot move an album into its own subtree.") /* also in: templates/ItemMoveSingle.tpl */
+gettext("Destination") /* also in: templates/ItemMoveSingle.tpl */
 gettext("Choose a new album for them")
 gettext("You don't have the permission to add items in this album")
+gettext("No destination chosen") /* also in: templates/ItemMoveSingle.tpl */
 gettext("Move") /* also in: templates/ItemMoveSingle.tpl */
 
 /* templates/ItemMoveSingle.tpl */
 gettext("Successfully moved")
+gettext("Choose a destination album")
 
 /* templates/ItemPermissions.tpl */
 gettext("Permissions")
@@ -1156,6 +1138,10 @@ gettext("%d. %s")
 gettext("Size: ")
 gettext("Unknown")
 gettext("Full size: ")
+
+/* templates/blocks/ThemeSettingsForm.tpl */
+gettext("Setting")
+gettext("Use Global")
 
 /* templates/blocks/blocks.inc */
 gettext("Language selector")
