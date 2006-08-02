@@ -873,7 +873,7 @@ class SessionTest extends GalleryTestCase {
 	/* Verfiy the persistent cookie has been deleted */
 	list ($ret, $results) = $gallery->search(
 	    'SELECT [GallerySessionMap::id] FROM [GallerySessionMap]
-             WHERE [GallerySessionMap::id] = ?', array($sid));
+	     WHERE [GallerySessionMap::id] = ?', array($sid));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -1666,10 +1666,10 @@ class SessionTest extends GalleryTestCase {
 	    /* There should still be sessions left that need to be deleted */
 	    $params = array();
 	    $query = '
-           SELECT COUNT([GallerySessionMap::id]) FROM [GallerySessionMap]
-           WHERE [GallerySessionMap::creationTimestamp] < ? OR
-                  [GallerySessionMap::modificationTimestamp] < ? OR
-                 ([GallerySessionMap::userId] = ? AND [GallerySessionMap::creationTimestamp] < ?)';
+	   SELECT COUNT([GallerySessionMap::id]) FROM [GallerySessionMap]
+	   WHERE [GallerySessionMap::creationTimestamp] < ? OR
+		  [GallerySessionMap::modificationTimestamp] < ? OR
+		 ([GallerySessionMap::userId] = ? AND [GallerySessionMap::creationTimestamp] < ?)';
 	    $params[] = (int)(time() - 86400 * 14);
 	    $params[] = (int)(time() - 86400 * 8);
 	    $params[] = (int)$this->_anonymousUserId;
@@ -2200,9 +2200,9 @@ class SessionTest extends GalleryTestCase {
 
 	    /* Make sure the map entry was removed */
 	    list ($ret, $results) = $gallery->search(
-	        'SELECT [GallerySessionMap::id]
-                    FROM [GallerySessionMap]
-                    WHERE [GallerySessionMap::id] = ?', array($sid));
+		'SELECT [GallerySessionMap::id]
+		    FROM [GallerySessionMap]
+		    WHERE [GallerySessionMap::id] = ?', array($sid));
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
@@ -2362,8 +2362,12 @@ class SessionTest extends GalleryTestCase {
     /* Test if G2 creates cookies with the correct domain / path and name */
     function testSessionCookieHeaderAndPersistence() {
 	global $gallery;
-
 	$urlGenerator =& $gallery->getUrlGenerator();
+
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	/* Test cases */
 	$tests = array();
@@ -2377,6 +2381,11 @@ class SessionTest extends GalleryTestCase {
 	unset($_SERVER['HTTP_COOKIE']);
 
 	foreach ($tests as $testCase) {
+	    /* Skip if module isn't present */
+	    list ($moduleId) = explode('.', $testCase['value']);
+	    if (empty($moduleStatus[$moduleId]['active'])) {
+		continue;
+	    }
 	    foreach (array(true, false) as $addData) {
 		/* First replace the phpVm with a mock VM */
 		unset($_REQUEST['phpVmHeaders']);
@@ -2553,8 +2562,12 @@ class SessionTest extends GalleryTestCase {
      */
     function testIsPersistentSessionAllowedForRequest() {
 	global $gallery;
-
 	$session =& $gallery->getSession();
+
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	/* Test cases */
 	$tests = array();
@@ -2567,6 +2580,11 @@ class SessionTest extends GalleryTestCase {
 	$tests[] = array('type' => 'controller', 'value' => 'core.Logout', 'er' => true);
 
 	foreach ($tests as $testCase) {
+	    /* Skip if module isn't present */
+	    list ($moduleId) = explode('.', $testCase['value']);
+	    if (empty($moduleStatus[$moduleId]['active'])) {
+		continue;
+	    }
 	    /* Now set the request variables */
 	    GalleryUtilities::removeRequestVariable('view');
 	    GalleryUtilities::removeRequestVariable('controller');
@@ -2585,7 +2603,7 @@ class SessionTest extends GalleryTestCase {
 	GalleryUtilities::removeRequestVariable('controller');
 	unset($session->_isPersistentSessionAllowedForRequest);
 	$this->assertEquals(true, $session->_isPersistentSessionAllowedForRequest(), '1. call');
-	GalleryUtilities::putRequestVariable('view', 'imageframe.CSS');
+	GalleryUtilities::putRequestVariable('view', 'core.DownloadItem');
 	$this->assertEquals(true, $session->_isPersistentSessionAllowedForRequest(), '2. call');
     }
 
