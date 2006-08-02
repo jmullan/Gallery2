@@ -41,8 +41,7 @@ class EcardHelper {
      * @static
      */
     function getSmallestSize($itemId) {
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -89,7 +88,14 @@ class EcardHelper {
 	    }
 	    return array(null, empty($preferred) ? $item : $preferred[$itemId]);
 	}
-	return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
+	list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (isset($thumbnail[$itemId])) {
+	    return array(null, $thumbnail[$itemId]);
+	}
+	return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
     }
 
     /**

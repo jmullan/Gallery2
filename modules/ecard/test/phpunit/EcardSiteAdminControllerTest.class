@@ -61,8 +61,8 @@ class EcardSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[from]', 'nobody@nobody.org');
 	GalleryUtilities::putRequestVariable('form[subject]', 'An eCard has been sent to you');
 	GalleryUtilities::putRequestVariable('form[bcc]', 'nobody2@nobody.org');
-	GalleryUtilities::putRequestVariable('form[header]', 'Hi %toName% (%to%)!\r\n
-                                              %fromName% (%from%) has sent you an eCard.');
+	GalleryUtilities::putRequestVariable('form[header]', "Hi %toName% (%to%)!\r\n"
+                                             . '%fromName% (%from%) has sent you an eCard.');
 	GalleryUtilities::putRequestVariable('form[footer]', 'Sent via G2 Ecard tester');
 	GalleryUtilities::putRequestVariable('form[format]', 'html');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
@@ -77,8 +77,8 @@ class EcardSiteAdminControllerTest extends GalleryControllerTestCase {
 	foreach (array('from' => 'nobody@nobody.org',
 		       'subject' => 'An eCard has been sent to you',
 		       'bcc' => 'nobody2@nobody.org',
-		       'header' => 'Hi %toName% (%to%)!\r\n%fromName% (%from%) has sent you an
-                                   eCard.',
+		       'header' =>
+			    "Hi %toName% (%to%)!\r\n%fromName% (%from%) has sent you an eCard.",
 		       'footer' => 'Sent via G2 Ecard tester',
 		       'format' => 'html')
 		 as $key => $expectedValue) {

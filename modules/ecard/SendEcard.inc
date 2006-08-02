@@ -107,24 +107,22 @@ class SendEcardController extends GalleryController {
 			break;
 		    }
 		}
-	    }	    
+	    }
 	}
 	if (isset($form['action']['send']) && empty($error)) {
-	    if (!class_exists('Mail_mime')) {
-    		GalleryCoreApi::requireOnce('modules/ecard/lib/pear/mime.php');
-    	    }
-    
+	    GalleryCoreApi::requireOnce('lib/pear/mime.php');
+
             list ($ret, $config) = GalleryCoreApi::fetchAllPluginParameters('module', 'ecard');
     	    if ($ret) {
     		return array($ret, null);
     	    }
-    
+
     	    /* Get current item */
     	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
     	    if ($ret) {
                 return array($ret, null);
     	    }
-    
+
     	    list ($ret, $resize) = EcardHelper::getSmallestSize($itemId);
     	    if ($ret) {
     		return array($ret, null);
@@ -133,74 +131,65 @@ class SendEcardController extends GalleryController {
     	    if ($ret) {
     		return array($ret, null);
     	    }
-    
+
             /* Get pseudo filename and attach image */
     	    list ($ret, $filename) = GalleryUtilities::getPseudoFileName($item);
     	    if ($ret) {
     		return array($ret, null);
     	    }
-    	    $urlGenerator =& $gallery->getUrlGenerator();
-    	    $link = $urlGenerator->generateUrl(
-    		    array('view' => 'core.ShowItem', 'itemId' => $itemId),
-    		    array('forceFullUrl' => true));
-    
-            $data = array();
-            foreach ($form as $key => $value) {
-                $data[$key] = $value;
-            }
-            $data['header'] = EcardHelper::replaceKeywords($config['header'], $form);
-            $data['footer'] = EcardHelper::replaceKeywords($config['footer'], $form);
-    	    $data['image'] = $filename;
-    	    $data['link'] = $link;
-    
-    	    $dataPlain = $data;
-    	    foreach (array_keys($dataPlain) as $key) {
-    		if ($key !== 'image') {
-    		    GalleryUtilities::unsanitizeInputValues($dataPlain[$key], false);
-    		}
-    	    }
-    
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $link = $urlGenerator->generateUrl(
+		    array('view' => 'core.ShowItem', 'itemId' => $itemId),
+		    array('forceFullUrl' => true, 'forceSessionId' => false));
+
+	    $data = $form;
+	    $data['header'] = EcardHelper::replaceKeywords($config['header'], $form);
+	    $data['footer'] = EcardHelper::replaceKeywords($config['footer'], $form);
+	    $data['image'] = $filename;
+	    $data['link'] = $link;
+
+	    $dataPlain = $data;
+	    GalleryUtilities::unsanitizeInputValues($dataPlain, false);
+	    $dataPlain['image'] = $data['image'];
+
      	    $data['header'] = nl2br($data['header']);
     	    $data['footer'] = nl2br($data['footer']);
     	    $data['text'] = nl2br($data['text']);
-    
+
       	    $headers = array(
     		'from'    => empty($config['from']) ? $form['from'] : $config['from'],
     		'to'      => $form['to'],
     		'subject' => EcardHelper::replaceKeywords($config['subject'], $form)
     		);
-    
-    	    if (!empty($config['bcc'])) {
-    		$headers['bcc'] = $config['bcc'];
-    	    }
-    	    foreach (array_keys($headers) as $key) {
-    		GalleryUtilities::unsanitizeInputValues($headers[$key], false);
-    	    }
-    
-    	    $platform =& $gallery->getPlatform();
-    
-       	    $mime = new Mail_mime("\n");
-    	    
+
+	    if (!empty($config['bcc'])) {
+		$headers['bcc'] = $config['bcc'];
+	    }
+	    GalleryUtilities::unsanitizeInputValues($headers, false);
+
+	    $mime = new Mail_mime("\n");
+	    $platform =& $gallery->getPlatform();
+
     	    $messagePlain = $platform->file_get_contents(
     	        dirname(__FILE__) . '/templates/Message.txt');
     	    $messagePlain = EcardHelper::replaceKeywords($messagePlain, $dataPlain);
     	    $mime->setTXTBody($messagePlain);
-    
+
     	    /* Either add attachment (plain) or add HTML image (html) */
     	    if ($config['format'] == 'plain') {
     		$mime->addAttachment($path, $resize->getMimeType(), $filename);
     	    } else {
-    		$messageHtml = $platform->file_get_contents(
-    		    dirname(__FILE__) . '/templates/Message.html');
-    		$messageHtml = EcardHelper::replaceKeywords($messageHtml, $data);
+		$messageHtml = $platform->file_get_contents(
+		    dirname(__FILE__) . '/templates/Message.html');
+		$messageHtml = EcardHelper::replaceKeywords($messageHtml, $data);
+		$mime->setHTMLBody($messageHtml);
     		if ($resize->canBeViewedInline()) {
     		    $mime->addHTMLImage($path, $resize->getMimeType(), $filename);
     		} else {
     		    $mime->addAttachment($path, $resize->getMimeType(), $filename);
     		}
-    		$mime->setHTMLBody($messageHtml);
     	    }
-    
+
     	    $body = $mime->get(array(
     	        'html_charset'  => 'UTF-8',
                 'text_charset'  => 'UTF-8',
@@ -208,13 +197,13 @@ class SendEcardController extends GalleryController {
                 'head_charset'  => 'UTF-8'
                 )
             );
-    
-    	    $tmp = array( 'From' => $headers['from'] );
-    	    if ($config['bcc']) {
-    		$tmp['bcc'] = $config['bcc'];
-    	    }
-    	    $hdrs = '';
-    
+
+	    $tmp = array('From' => $headers['from']);
+	    if (isset($headers['bcc'])) {
+		$tmp['bcc'] = $headers['bcc'];
+	    }
+	    $hdrs = '';
+
     	    foreach ($mime->headers($tmp) as $key => $value) {
     		$hdrs .= $key . ': ' . $value . "\n";
     	    }
@@ -223,13 +212,13 @@ class SendEcardController extends GalleryController {
     		return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__,
     		     'Could not send mail to ' . $headers['to']), null);
     	    }
-    
+
     	    /* Put sender data into session */
     	    $session->put('ecard.from', $form['from']);
-    	    if(isset($form['fromName'])) {
+    	    if (isset($form['fromName'])) {
     	        $session->put('ecard.fromName', $form['fromName']);
     	    }
-    
+
     	    /* Send the user to a confirmation page, for now */
     	    $redirect['view'] = 'ecard.Confirmation';
     	    $redirect['itemId'] = (int)$itemId;
@@ -311,10 +300,9 @@ class SendEcardView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$tmp = (array)$resize;
-	$SendEcard['resize'] = $tmp;
+	$SendEcard['resize'] = (array)$resize;
 	$SendEcard['subject'] = EcardHelper::replaceKeywords($config['subject'], $form);
-	if(!empty($config['bcc'])) {
+	if (!empty($config['bcc'])) {
 	    $SendEcard['bcc'] = $config['bcc'];
 	}
 	$SendEcard['header'] = EcardHelper::replaceKeywords($config['header'], $form);

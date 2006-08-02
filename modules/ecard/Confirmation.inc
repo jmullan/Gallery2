@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Ecard
@@ -38,17 +37,12 @@ class ConfirmationView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
-	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	$Confirmation = array();
-	$Confirmation['itemId'] = $item->getId();
-
+	$Confirmation = array('itemId' => $item->getId());
 	$template->setVariable('Confirmation', $Confirmation);
 
 	return array(null, array('body' => 'modules/ecard/templates/Confirmation.tpl'));

@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Ecard
@@ -26,27 +25,25 @@
  */
 
 /**
- * eCard plugin
- * 
+ * eCard module
+ *
  * @package Ecard
  */
-
 class EcardModule extends GalleryModule {
 
     function EcardModule() {
 	global $gallery;
-	
+
 	$this->setId('ecard');
 	$this->setName($gallery->i18n('eCard'));
 	$this->setDescription($gallery->i18n('Send photos as eCards'));
-	
-	$this->setVersion('0.0.9');
+	$this->setVersion('0.9.0');
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 9));
 	$this->setRequiredModuleApi(array(3, 0));
     }
-    
+
     /**
      * @see GalleryModule::upgrade
      */
@@ -63,11 +60,14 @@ class EcardModule extends GalleryModule {
 	    return $ret;
 	}
 	foreach (array(
-		'from' => 'Gallery &lt;gallery&gt;',
-		'subject' => 'You have been sent an eCard',
+		'from' => $this->translate('Gallery &lt;gallery&gt;'),
+		'subject' => $this->translate('You have been sent an eCard'),
 		'bcc' => '',
-		'header' => 'Hi %toName%!<br />%fromName% (%from%) has sent you an eCard:',
-		'footer' => 'This eCard was sent with Gallery 2 - Your photos on your website',
+		'header' => $this->translate(array(
+			'text' => 'Hi %s%!%s%s (%s) has sent you an eCard:', 'arg1' => '%toName%',
+			'arg2' => "\n", 'arg3' => '%fromName%', 'arg4' => '%from%')),
+		'footer' => $this->translate(
+		    'This eCard was sent with Gallery 2 - Your photos on your website'),
 		'format' => 'html',
 		'validation.level' => 'HIGH')
 		as $key => $value) {
@@ -78,10 +78,8 @@ class EcardModule extends GalleryModule {
 		}
 	    }
 	}
-	
 
 	switch ($currentVersion) {
-
 	case '0':
 	case '0.0.6':
 	case '0.0.7':
@@ -91,7 +89,7 @@ class EcardModule extends GalleryModule {
 	    }
 
 	    /* Register our permissions */
-	    $ret = GalleryCoreApi::registerPermission($this->getId(), 
+	    $ret = GalleryCoreApi::registerPermission($this->getId(),
 		'ecard.send', $gallery->i18n('[ecard] Send eCards'), 0, array());
 	    if ($ret) {
 		return $ret;
@@ -106,7 +104,10 @@ class EcardModule extends GalleryModule {
 	    break;
 
 	case '0.0.8':
-		break;
+	case '0.0.9':
+	case '0.1.0':
+	case '0.1.1':
+
 	case 'end of upgrade path':
 	    break;
 
@@ -114,27 +115,31 @@ class EcardModule extends GalleryModule {
 	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 		sprintf('Unknown module version %s', $currentVersion));
 	}
-	
+
 	return null;
     }
-        
+
     /**
      * @see GalleryModule::getItemLinks()
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
 	foreach ($items as $item) {
-	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem') && !isset($permissions[$item->getId()]['ecard.send']) && isset($wantsDetailedLinks[$item->getId()])) {
+	    $itemId = $item->getId();
+	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem') &&
+		    isset($permissions[$itemId]['ecard.send']) &&
+		    isset($wantsDetailedLinks[$itemId])) {
 		$params['view'] = 'ecard.SendEcard';
-		$params['itemId'] = $item->getId();
+		$params['itemId'] = $itemId;
 		$params['return'] = 1;
-		$links[$item->getId()][] = array('text' => $this->translate('Send as eCard'), 'params' => $params);
+		$links[$itemId][] = array('text' => $this->translate('Send as eCard'),
+					  'params' => $params);
 	    }
 	}
 
 	return array(null, $links);
     }
-    
+
     /**
      * @see GalleryModule::getSiteAdminViews
      */
@@ -156,19 +161,5 @@ class EcardModule extends GalleryModule {
 
 	return null;
     }
-
-    /**
-     * @see GalleryModule::activate
-     */
-    function activate($postActivationEvent=true) {
-
-	list ($ret, $redirect) = parent::activate($postActivationEvent);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	return array(null, array());
-    }
-
 }
 ?>
