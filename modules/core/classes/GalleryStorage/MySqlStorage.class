@@ -79,15 +79,14 @@ class MySqlStorage extends GalleryStorage {
      * @see GalleryStorage::_getSqlReplacements
      */
     function _getSqlReplacements() {
+	/* 3.23.0-4.0.17 used TYPE, 5.2+ only accepts ENGINE, between accepts either */
+	$typeKeyword = ($this->_serverInfo && version_compare($this->_serverInfo, '4.0.18', '>='))
+		     ? 'ENGINE' : 'TYPE';
 
 	/* Use InnoDB for transactional tables */
-	if ($this->_isTransactional) {
-	    $tableType = 'InnoDB';
-	} else {
-	    $tableType = 'MyISAM';
-	}
+	$tableType = $this->_isTransactional ? 'InnoDB' : 'MyISAM';
 
-	return array('DB_TABLE_TYPE' => $tableType);
+	return array('DB_TABLE_TYPE' => $typeKeyword . '=' . $tableType);
     }
 
     /**

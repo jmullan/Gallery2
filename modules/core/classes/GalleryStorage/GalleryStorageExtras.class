@@ -1602,9 +1602,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$query = str_replace('DB_COLUMN_PREFIX', $this->_gs->_columnPrefix, $query);
 
 		/* Perform database specific replacements */
-		foreach ($this->_gs->_getSqlReplacements() as $key => $value) {
-		    $query = str_replace($key, $value, $query);
-		}
+		$query = strtr($query, $this->_gs->_getSqlReplacements());
 
 		$this->_gs->_traceStart();
 		$recordSet = $this->_gs->_db->Execute($query);

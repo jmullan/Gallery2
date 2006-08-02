@@ -228,7 +228,7 @@ class MySqlGenerator extends BaseGenerator {
 		}
 		$output .= "\n";
 	    }
-	    $output .= ") TYPE=DB_TABLE_TYPE\n";
+	    $output .= ") DB_TABLE_TYPE\n";
 	    /* Character set, enclosed in comments that are ignored by MySQL < 4.1.0 */
 	    $output .= "/*!40100 DEFAULT CHARACTER SET utf8 */;\n\n";
 

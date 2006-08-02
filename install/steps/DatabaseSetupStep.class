@@ -466,7 +466,7 @@ class DatabaseSetupStep extends InstallStep {
 		$query = str_replace('DB_TABLE_PREFIX', $tablePrefix, $query);
 		$query = str_replace('DB_COLUMN_PREFIX', $this->_config['columnPrefix'], $query);
 		/* For mysql, another replacement is required */
-		$query = str_replace('DB_TABLE_TYPE', 'MyISAM', $query);
+		$query = str_replace('DB_TABLE_TYPE', '', $query);
 
 		$result = $this->_db->Execute($query);
 		if (empty($result)) {
