@@ -16,7 +16,7 @@
 	<table class="gbDataTable">
 	<tr>
 		<td class="gbEven"><strong>{g->text text="From"}:</strong></td>
-		<td class="gbOdd">{$form.fromName} &lt;{$form.from}&gt;</td>
+		<td class="gbOdd">{$SendEcard.emailFrom}</td>
 	</tr>
 	<tr>
 		<td class="gbEven"><strong>{g->text text="To"}:</strong></td>
