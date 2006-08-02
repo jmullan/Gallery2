@@ -88,7 +88,8 @@ class CodeAuditTestCase extends GalleryTestCase {
 
 		case 'file':
 		    $file = $dirPath . '/' . $xmlValues[$entry]['attributes']['NAME'];
-		    if (preg_match('/\.(?:class|inc|php|tpl|po)$/', $file)
+		    if (empty($xmlValues[$entry]['attributes']['DELETED'])
+			    && preg_match('/\.(?:class|inc|php|tpl|po)$/', $file)
 			    && $this->shouldCheckFile($file)) {
 			$gallery->guaranteeTimeLimit(30);
 			$buf = $platform->file_get_contents($file);
