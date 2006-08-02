@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-	<h2>{g->text text="eCard"}</h2>
+	<h2>{g->text text="eCard Settings"}</h2>
 </div>
 
 {if !empty($status)}
@@ -25,7 +25,7 @@
 		<span class="giSubtitle"> {g->text text="(leave empty for user defined sender name)"}</span></h4>
 	<input type="text" id="giFormFrom" size="60"
 		name="{g->formVar var="form[from]"}" value="{$form.from}" />
-		
+
 	<h4>{g->text text="E-mail subject:"}</h4>
 	<input type="text" id="giFormSubject" size="60"
 		name="{g->formVar var="form[subject]"}" value="{$form.subject}" />
@@ -34,10 +34,10 @@
 	<input type="text" id="giFormBCC" size="60"
 		name="{g->formVar var="form[bcc]"}" value="{$form.bcc}" />
 
-	<h4>{g->text text="E-mail header:"}</h4>	
+	<h4>{g->text text="E-mail header:"}</h4>
 	<textarea rows="5" cols="60" id="giFormHeader"
 		name="{g->formVar var="form[header]"}">{$form.header}</textarea>
-	
+
 	<h4>{g->text text="E-mail footer:"}</h4>
 	<textarea rows="5" cols="60" id="giFormFooter"
 		name="{g->formVar var="form[footer]"}">{$form.footer}</textarea>
@@ -50,7 +50,7 @@
 
 <div class="gbBlock gcBackground1">
 	<input type="submit" class="inputTypeSubmit"
-		name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
+		name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
 	<input type="submit" class="inputTypeSubmit"
-		name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+		name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
 </div>

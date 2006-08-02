@@ -1,7 +1,5 @@
 <?php
 /*
- * $RCSfile: AddComment.inc,v $
- *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
  *
@@ -19,252 +17,283 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * @version $Revision$ $Date$
  * @package Ecard
  * @subpackage UserInterface
  * @author Nico Kaiser <nico@siriux.net>
+ * @author Dariush Molavi <dari@nukedgallery.net>
  */
 
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/ecard/classes/EcardHelper.class');
- 
+
 /**
  * Send photo as eCard
- * 
+ *
  * @package Ecard
  * @subpackage UserInterface
  */
 class SendEcardController extends GalleryController {
 
-    var $_subject;
-    var $_bcc;
-    var $_header;
-    var $_footer;
-
-    var $_text;
-    var $_from;
-    var $_fromName;
-    var $_to;
-    var $_toName;
+    /**
+     * ValidationPlugin instances to use when handling this request.  Only used by test code.
+     *
+     * @var array $_plugins (array of GalleryValidationPlugin)
+     * @access private
+     */
+    var $_pluginInstances;
 
     /**
      * @see GalleryController::handleRequest()
      */
     function handleRequest($form) {
-    	global $gallery;
-    	$session =& $gallery->getSession();
-	$itemId = GalleryUtilities::getRequestVariables('itemId');	
+	global $gallery;
+	$session =& $gallery->getSession();
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	$redirect = $status = $error = array();
 
-	list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($itemId, 'ecard.send');
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'ecard.send');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret, null);
 	}
-	if (! $hasPermission) {
-	    return null;
-	}
-	
-	if (isset($form['action']['send'])) {
-	    if (! class_exists('Mail_mime')) {
-		GalleryCoreApi::requireOnce('modules/ecard/lib/pear/mime.php');
-	    }
-	    
-	    list ($ret, $config) = GalleryCoreApi::fetchAllPluginParameters('module', 'ecard');
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
 
+	if (isset($form['action']['send']) || isset($form['action']['preview'])) {
 	    /* Validate form */
-	    if (!GalleryUtilities::isValidEmailString($form['to'])) {
+	    if (empty($form['to'])) {
 		$error[] = 'form[error][to][missing]';
+	    } else if (!GalleryUtilities::isValidEmailString($form['to'])) {
+		$error[] = 'form[error][to][invalid]';
 	    }
-	    if (!GalleryUtilities::isValidEmailString($form['from'])) {
+	    if (empty($form['from'])) {
 		$error[] = 'form[error][from][missing]';
+	    } else if (!GalleryUtilities::isValidEmailString($form['from'])) {
+		$error[] = 'form[error][from][invalid]';
 	    }
 	    if (empty($form['text'])) {
 		$error[] = 'form[error][text][missing]';
 	    }
 
-	    if (empty($error)) {
-
-		/* Get current item */
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-				    
-		/* Get item path */
-		list($ret, $path) = $item->fetchPath();
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		
-		list ($ret, $resize) = EcardHelper::getSmallestResize($itemId);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		list ($ret, $path) = $resize->fetchPath();
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		/* Get pseudo filename and attach image */
-		list ($ret, $filename) = GalleryUtilities::getPseudoFileName($item);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		$data = array (
-		    'from'     => $form['from'],
-		    'fromName' => $form['fromName'],
-		    'to'       => $form['to'],
-		    'toName'   => $form['toName'],
-		    'header'   => EcardHelper::replaceKeywords($config['header'], $form),
-		    'footer'   => EcardHelper::replaceKeywords($config['footer'], $form),
-		    'text'     => $form['text'],
-		    'image'    => $filename,
-		);
-		$data_plain = $data;
-		foreach (array_keys($data_plain) as $key) {
-		    GalleryUtilities::unsanitizeInputValues($data_plain[$key], false);
-		}
-
-		$data['header'] = nl2br($data['header']);
-		$data['footer'] = nl2br($data['footer']);
-		$data['text'] = nl2br($data['text']);
-
-		$headers = array (
-		    'from'    => empty($config['from']) ? $form['from'] : $config['from'],
-		    'to'      => $form['to'],
-		    'subject' => EcardHelper::replaceKeywords($config['subject'], $form)
-		);
-		if (!empty($config['bcc'])) {
-		    $headers['bcc'] = $config['bcc'];
-		}
-		foreach (array_keys($headers) as $key) {
-		    GalleryUtilities::unsanitizeInputValues($headers[$key], false);
-		}
-
-		$message_html = GalleryPlatform::file_get_contents(
-		    dirname(__FILE__).'/templates/Message.html');
-		$message_html = EcardHelper::replaceKeywords($message_html, $data);
-		
-		$message_plain = GalleryPlatform::file_get_contents(
-		    dirname(__FILE__).'/templates/Message.txt');
-		$message_plain = EcardHelper::replaceKeywords($message_plain, $data_plain);
-		
-		$mime = new Mail_mime("\n");
-		$mime->setTXTBody($message_plain);
-		
-		/* Either add attachment (plain) or add HTML image (html) */
-		if ($config['format'] == 'plain') {
-		    $mime->addAttachment($path, $item->getMimeType(), $filename);
+	    list ($ret, $useValidationPlugins) = EcardHelper::useValidationPlugins();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (isset($form['action']['send']) && $useValidationPlugins) {
+		if (isset($this->_pluginInstances)) {
+		    $pluginInstances = $this->_pluginInstances;
 		} else {
-		    $mime->addHTMLImage($path, $item->getMimeType(), $filename);
-		    $mime->setHTMLBody($message_html);
+		    list ($ret, $pluginInstances) =
+			GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    foreach (array_keys($pluginInstances) as $pluginId) {
+			list ($ret, $pluginInstances[$pluginId]) =
+			    GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin',
+								   $pluginId);
+			if ($ret) {
+			    return array($ret, null);
+			}
+		    }
 		}
-		
-		$body = $mime->get(array (
-		    'html_charset'  => 'UTF-8',
-		    'text_charset'  => 'UTF-8',
-		    'text_encoding' => '8bit',
-		    'head_charset'  => 'UTF-8'
-		));
-		$tmp = Array ( 'From' => $headers['from'] );
-		if ($headers['bcc']) {
-			$tmp['BCC'] = $headers['bcc'];
+
+		/* Let each plugin do its verification */
+		foreach ($pluginInstances as $plugin) {
+		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    $error = array_merge($error, $pluginErrors);
+		    if (!$continue) {
+			break;
+		    }
 		}
-		$hdrs = '';
-		foreach ($mime->headers($tmp) as $key => $value) {
-		    $hdrs .= $key . ': '.$value."\n";
-		}
-		$success = GalleryPlatform::mail(
-		    $headers['to'], $headers['subject'], $body, $hdrs);
-		if (! $success) {
-		    return GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__, 
-			'Could not send mail to ' . $headers['to']);
-		}
-		
-		/* Put sender data into session */
-		$session->put('ecard.from', $form['from']);
-		$session->put('ecard.fromName', $form['fromName']);
-		
-		/* Send the user to a confirmation page, for now */
-		$redirect['view'] = 'ecard.Confirmation';
-		$redirect['itemId'] = (int)$itemId;
-		$status['sent'] = 1;
-	    }
-	} else if (isset($form['action']['preview'])) {
-	    
-	    if (!GalleryUtilities::isValidEmailString($form['to'])) {
-		$error[] = 'form[error][to][missing]';
-	    }
-	    if (!GalleryUtilities::isValidEmailString($form['from'])) {
-		$error[] = 'form[error][from][missing]';
-	    }
-	    if (empty($form['text'])) {
-		$error[] = 'form[error][text][missing]';
-	    }
-	    
-	    /* Fall through back to the current view */
+	    }	    
+	}
+	if (isset($form['action']['send']) && empty($error)) {
+	    if (!class_exists('Mail_mime')) {
+    		GalleryCoreApi::requireOnce('modules/ecard/lib/pear/mime.php');
+    	    }
+    
+            list ($ret, $config) = GalleryCoreApi::fetchAllPluginParameters('module', 'ecard');
+    	    if ($ret) {
+    		return array($ret, null);
+    	    }
+    
+    	    /* Get current item */
+    	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+    	    if ($ret) {
+                return array($ret, null);
+    	    }
+    
+    	    list ($ret, $resize) = EcardHelper::getSmallestSize($itemId);
+    	    if ($ret) {
+    		return array($ret, null);
+    	    }
+    	    list ($ret, $path) = $resize->fetchPath();
+    	    if ($ret) {
+    		return array($ret, null);
+    	    }
+    
+            /* Get pseudo filename and attach image */
+    	    list ($ret, $filename) = GalleryUtilities::getPseudoFileName($item);
+    	    if ($ret) {
+    		return array($ret, null);
+    	    }
+    	    $urlGenerator =& $gallery->getUrlGenerator();
+    	    $link = $urlGenerator->generateUrl(
+    		    array('view' => 'core.ShowItem', 'itemId' => $itemId),
+    		    array('forceFullUrl' => true));
+    
+            $data = array();
+            foreach ($form as $key => $value) {
+                $data[$key] = $value;
+            }
+            $data['header'] = EcardHelper::replaceKeywords($config['header'], $form);
+            $data['footer'] = EcardHelper::replaceKeywords($config['footer'], $form);
+    	    $data['image'] = $filename;
+    	    $data['link'] = $link;
+    
+    	    $dataPlain = $data;
+    	    foreach (array_keys($dataPlain) as $key) {
+    		if ($key !== 'image') {
+    		    GalleryUtilities::unsanitizeInputValues($dataPlain[$key], false);
+    		}
+    	    }
+    
+     	    $data['header'] = nl2br($data['header']);
+    	    $data['footer'] = nl2br($data['footer']);
+    	    $data['text'] = nl2br($data['text']);
+    
+      	    $headers = array(
+    		'from'    => empty($config['from']) ? $form['from'] : $config['from'],
+    		'to'      => $form['to'],
+    		'subject' => EcardHelper::replaceKeywords($config['subject'], $form)
+    		);
+    
+    	    if (!empty($config['bcc'])) {
+    		$headers['bcc'] = $config['bcc'];
+    	    }
+    	    foreach (array_keys($headers) as $key) {
+    		GalleryUtilities::unsanitizeInputValues($headers[$key], false);
+    	    }
+    
+    	    $platform =& $gallery->getPlatform();
+    
+       	    $mime = new Mail_mime("\n");
+    	    
+    	    $messagePlain = $platform->file_get_contents(
+    	        dirname(__FILE__) . '/templates/Message.txt');
+    	    $messagePlain = EcardHelper::replaceKeywords($messagePlain, $dataPlain);
+    	    $mime->setTXTBody($messagePlain);
+    
+    	    /* Either add attachment (plain) or add HTML image (html) */
+    	    if ($config['format'] == 'plain') {
+    		$mime->addAttachment($path, $resize->getMimeType(), $filename);
+    	    } else {
+    		$messageHtml = $platform->file_get_contents(
+    		    dirname(__FILE__) . '/templates/Message.html');
+    		$messageHtml = EcardHelper::replaceKeywords($messageHtml, $data);
+    		if ($resize->canBeViewedInline()) {
+    		    $mime->addHTMLImage($path, $resize->getMimeType(), $filename);
+    		} else {
+    		    $mime->addAttachment($path, $resize->getMimeType(), $filename);
+    		}
+    		$mime->setHTMLBody($messageHtml);
+    	    }
+    
+    	    $body = $mime->get(array(
+    	        'html_charset'  => 'UTF-8',
+                'text_charset'  => 'UTF-8',
+                'text_encoding' => '8bit',
+                'head_charset'  => 'UTF-8'
+                )
+            );
+    
+    	    $tmp = array( 'From' => $headers['from'] );
+    	    if ($config['bcc']) {
+    		$tmp['bcc'] = $config['bcc'];
+    	    }
+    	    $hdrs = '';
+    
+    	    foreach ($mime->headers($tmp) as $key => $value) {
+    		$hdrs .= $key . ': ' . $value . "\n";
+    	    }
+    	    $success = $platform->mail($headers['to'], $headers['subject'], $body, $hdrs);
+    	    if (!$success) {
+    		return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__,
+    		     'Could not send mail to ' . $headers['to']), null);
+    	    }
+    
+    	    /* Put sender data into session */
+    	    $session->put('ecard.from', $form['from']);
+    	    if(isset($form['fromName'])) {
+    	        $session->put('ecard.fromName', $form['fromName']);
+    	    }
+    
+    	    /* Send the user to a confirmation page, for now */
+    	    $redirect['view'] = 'ecard.Confirmation';
+    	    $redirect['itemId'] = (int)$itemId;
+    	    $status['sent'] = 1;
 	} else if (isset($form['action']['cancel'])) {
 	    /* Where to go on a cancel?  Back to viewing the item. */
 	    $redirect['view'] = 'core.ShowItem';
 	    $redirect['itemId'] = (int)$itemId;
 	}
-	
+
 	/* Prepare our results */
 	if (!empty($redirect)) {
-	    //$results['return'] = 1;
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'ecard.SendEcard';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-	    
+
 	return array(null, $results);
+    }
+
+    /**
+     * Tests can use this method to hardwire a specific set of plugin instances to use.
+     * This avoids situations where some of the option instances will do unpredictable
+     * things and derail the tests.
+     *
+     * @param array of GalleryValidationPlugin
+     */
+    function setPluginInstances($pluginInstances) {
+	$this->_pluginInstances = $pluginInstances;
     }
 }
 
 /**
- * This view will show an ecard form
- * 
+ * This view will show an eCard form
+ *
  * @package Ecard
  * @subpackage UserInterface
  */
 class SendEcardView extends GalleryView {
-    
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
 	$session =& $gallery->getSession();
-	
+
 	/* Load our item */
 	list ($ret, $item) = $this->_getItem();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	list ($ret, $config) = GalleryCoreApi::fetchAllPluginParameters('module', 'ecard');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	if ($form['formName'] != 'SendEcard') {
 	    $form['formName'] = 'SendEcard';
-	    $form['to'] = '';
-	    $form['toName'] = '';
+	    $form['to'] = $form['toName'] = $form['text'] = '';
 	    $form['from'] = $session->get('ecard.from');
 	    $form['fromName'] = $session->get('ecard.fromName');
-	    $form['text'] = '';
 	} else {
 	    foreach (array('to', 'toName', 'from', 'fromName', 'text') as $key) {
 		if (empty($form[$key])) {
@@ -272,47 +301,80 @@ class SendEcardView extends GalleryView {
 		}
 	    }
 	}
-	
+
 	$SendEcard = array();
 	$SendEcard['itemId'] = $item->getId();
 	$SendEcard['item'] = (array)$item;
 
-	list ($ret, $resize) = EcardHelper::getSmallestResize($item->getId());
+	list ($ret, $resize) = EcardHelper::getSmallestSize($item->getId());
 	if ($ret) {
-	     return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
-	$tmp = (array)$resize;
-	$tmp['viewInline'] = 1;
-	$SendEcard['resize'] = $tmp;
 
+	$tmp = (array)$resize;
+	$SendEcard['resize'] = $tmp;
 	$SendEcard['subject'] = EcardHelper::replaceKeywords($config['subject'], $form);
-	$SendEcard['header'] = $config['bcc'];
+	if(!empty($config['bcc'])) {
+	    $SendEcard['bcc'] = $config['bcc'];
+	}
 	$SendEcard['header'] = EcardHelper::replaceKeywords($config['header'], $form);
 	$SendEcard['footer'] = EcardHelper::replaceKeywords($config['footer'], $form);
-	
+
+	/* Check if we should use validation plugins */
+	$plugins = array();
+	list ($ret, $useValidationPlugins) = EcardHelper::useValidationPlugins();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($useValidationPlugins) {
+	    list ($ret, $allPluginIds) =
+		GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
+	    if ( $ret) {
+		return array($ret, null);
+	    }
+
+	    /* Let each plugin load its template data */
+	    foreach (array_keys($allPluginIds) as $pluginId) {
+		list ($ret, $plugin) =
+		    GalleryCoreApi::newFactoryInstanceById('GalleryValidationPlugin', $pluginId);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		list ($ret, $data['file'], $data['l10Domain']) = $plugin->loadTemplate($form);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (isset($data['file'])) {
+		    $plugins[] = $data;
+		}
+	    }
+	}
+
+	$SendEcard['plugins'] = $plugins;
+
 	$template->setVariable('SendEcard', $SendEcard);
 	$template->setVariable('controller', 'ecard.SendEcard');
-	
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ecard');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
-	
+
 	$template->title($module->translate('Send eCard'));
-	
+
 	return array(null, array('body' => 'modules/ecard/templates/SendEcard.tpl'));
     }
-    
+
     /**
      * @see GalleryView::getViewDescription()
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ecard');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
-	
+
 	return array(null, $module->translate('Send eCard'));
-    }   
+    }
 }
 ?>

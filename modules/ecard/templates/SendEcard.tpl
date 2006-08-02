@@ -4,6 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
+
 <div class="gbBlock gcBackground1">
 	<h2>{g->text text="Send eCard"}</h2>
 </div>
@@ -15,30 +16,29 @@
 	<table class="gbDataTable">
 	<tr>
 		<td class="gbEven"><strong>{g->text text="From"}:</strong></td>
-		<td class="gbOdd">{$form.fromName|markup} &lt;{$form.from|markup}&gt;</td>
+		<td class="gbOdd">{$form.fromName} &lt;{$form.from}&gt;</td>
 	</tr>
 	<tr>
 		<td class="gbEven"><strong>{g->text text="To"}:</strong></td>
-		<td class="gbOdd">{$form.toName|markup} &lt;{$form.to|markup}&gt;</td>
+		<td class="gbOdd">{$form.toName} &lt;{$form.to}&gt;</td>
 	</tr>
 	<tr>
 		<td class="gbEven"><strong>{g->text text="Subject"}:</strong></td>
-		<td class="gbOdd">{$SendEcard.subject|markup}</td>
+		<td class="gbOdd">{$SendEcard.subject}</td>
 	</tr>
 	<tr>
 		<td colspan="2">
-			<p>{$SendEcard.header|markup}</p>
-			
-			<p>{$form.text|markup}</p>
-			
+			<p>{$SendEcard.header}</p>
+
+			<p>{$form.text}</p>
+
 			{g->image item=$SendEcard.item image=$SendEcard.resize}
 
 			<hr />
-			<small>{$SendEcard.footer|markup}</small>
+			<small>{$SendEcard.footer}</small>
 		</td>
 	</tr>
 	</table>
-	
 </div>
 {/if}
 
@@ -55,7 +55,7 @@
 	<input type="text" id="fromName" size="60" class="gcBackground1"
 		name="{g->formVar var="form[fromName]"}" value="{$form.fromName}"
 		onfocus="this.className=''" onblur="this.className='gcBackground1'" />
-	
+
 	<h4>{g->text text="Your e-mail address"}
 		<span class="giSubtitle"> {g->text text="(required)"}</span>
 	</h4>
@@ -63,6 +63,11 @@
 		name="{g->formVar var="form[from]"}" value="{$form.from}"
 		onfocus="this.className=''" onblur="this.className='gcBackground1'" />
 	{if isset($form.error.from.missing)}
+	<div class="giError">
+		{g->text text="You must enter an e-mail address!"}
+	</div>
+	{/if}
+	{if isset($form.error.from.invalid)}
 	<div class="giError">
 		{g->text text="You must enter a valid e-mail address!"}
 	</div>
@@ -72,7 +77,7 @@
 	<input type="text" id="toName" size="60" class="gcBackground1"
 		name="{g->formVar var="form[toName]"}" value="{$form.toName}"
 		onfocus="this.className=''" onblur="this.className='gcBackground1'" />
-	
+
 	<h4>{g->text text="Recipient's e-mail address"}
 		<span class="giSubtitle"> {g->text text="(required)"}</span>
 	</h4>
@@ -81,10 +86,15 @@
 		onfocus="this.className=''" onblur="this.className='gcBackground1'" />
 	{if isset($form.error.to.missing)}
 	<div class="giError">
+		{g->text text="You must enter an e-mail address!"}
+	</div>
+	{/if}
+	{if isset($form.error.to.invalid)}
+	<div class="giError">
 		{g->text text="You must enter a valid e-mail address!"}
 	</div>
 	{/if}
-	
+
 	<h4>{g->text text="Text"}
 		<span class="giSubtitle"> {g->text text="(required)"}</span>
 	</h4>
@@ -93,11 +103,16 @@
 		onfocus="this.className=''" onblur="this.className='gcBackground1'">{$form.text}</textarea>
 	{if isset($form.error.text.missing)}
 	<div class="giError">
-		{g->text text="You must enter a text!"}
+		{g->text text="You must enter text!"}
 	</div>
 	{/if}
-	
 </div>
+
+  {* Include validation plugins *}
+  {foreach from=$SendEcard.plugins item=plugin}
+     {include file="gallery:`$plugin.file`" l10Domain=$plugin.l10Domain}
+  {/foreach}
+
 
 <div class="gbBlock gcBackground1">
 	<input type="submit" class="inputTypeSubmit"

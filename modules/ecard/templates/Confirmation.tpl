@@ -16,19 +16,16 @@
 </h2></div>
 {/if}
 
-<form action="{g->url}" method="post" enctype="application/x-www-form-urlencoded" id="sendEcardForm">
-<div>
-	{g->hiddenFormVars}
-	<input type="hidden" name="{g->formVar var="controller"}" value="ecard.SendEcard" />
-	<input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}" />
-	<input type="hidden" name="{g->formVar var="itemId"}" value="{$Confirmation.itemId}"/>
-</div>
+<script type="text/javascript">
+// <![CDATA[
+var sendUrl = '{g->url arg1="view=ecard.SendEcard" arg2="itemId=`$Confirmation.itemId`" htmlEntities=false}';
+var doneUrl = '{g->url arg1="view=core.ShowItem" arg2="itemId=`$Confirmation.itemId`" htmlEntities=false}';
+// ]]>
+</script>
 
 <div class="gbBlock gcBackground1">
-	<input type="submit" class="inputTypeSubmit"
-	  name="{g->formVar var="form[action][new]"}" value="{g->text text="Send another eCard"}"/>
-	<input type="submit" class="inputTypeSubmit"
-	  name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Done"}"/>
+	<button onclick="window.location='sendUrl'" type="submit" class="inputTypeSubmit"
+	  name="{g->formVar var="form[action][new]"}">{g->text text="Send another eCard"}</button>
+	<button onclick="window.location='doneUrl'" type="submit" class="inputTypeSubmit"
+	  name="{g->formVar var="form[action][cancel]"}">{g->text text="Done"}</button>
 </div>
-
-</form>

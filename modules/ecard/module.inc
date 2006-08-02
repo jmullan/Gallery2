@@ -1,7 +1,5 @@
 <?php
 /*
- * $RCSfile: module.inc,v $
- *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
  *
@@ -24,6 +22,7 @@
  * @version $Revision$ $Date$
  * @package Ecard
  * @author Nico Kaiser <nico@siriux.net>
+ * @author Dariush Molavi <dari@nukedgallery.net>
  */
 
 /**
@@ -41,8 +40,8 @@ class EcardModule extends GalleryModule {
 	$this->setName($gallery->i18n('eCard'));
 	$this->setDescription($gallery->i18n('Send photos as eCards'));
 	
-	$this->setVersion('0.1.0');
-	$this->setGroup('commerce', $this->translate('Commerce'));
+	$this->setVersion('0.0.9');
+	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));
 	$this->setRequiredModuleApi(array(3, 0));
@@ -61,20 +60,21 @@ class EcardModule extends GalleryModule {
 	/* Set default parameters */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'ecard');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	foreach (array(
 		'from' => 'Gallery &lt;gallery&gt;',
 		'subject' => 'You have been sent an eCard',
 		'bcc' => '',
-		'header' => "Hi %toName%!<br />%fromName% (%from%) has sent you an eCard:",
-		'footer' => "This eCard was sent with Gallery 2 - Your photos on your website",
-		'format' => "html")
+		'header' => 'Hi %toName%!<br />%fromName% (%from%) has sent you an eCard:',
+		'footer' => 'This eCard was sent with Gallery 2 - Your photos on your website',
+		'format' => 'html',
+		'validation.level' => 'HIGH')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	}
@@ -87,25 +87,26 @@ class EcardModule extends GalleryModule {
 	case '0.0.7':
 	    list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    /* Register our permissions */
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 
 		'ecard.send', $gallery->i18n('[ecard] Send eCards'), 0, array());
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    /* Give everybody permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'ecard.send', true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    break;
 
 	case '0.0.8':
+		break;
 	case 'end of upgrade path':
 	    break;
 
@@ -123,15 +124,11 @@ class EcardModule extends GalleryModule {
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
 	foreach ($items as $item) {
-	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		if (!isset($permissions[$item->getId()]['ecard.send'])) {
-		    continue;
-		}
+	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem') && !isset($permissions[$item->getId()]['ecard.send']) && isset($wantsDetailedLinks[$item->getId()])) {
 		$params['view'] = 'ecard.SendEcard';
 		$params['itemId'] = $item->getId();
 		$params['return'] = 1;
-		$links[$item->getId()][] = array('text' => $this->translate('Send as eCard'),
-						 'params' => $params);
+		$links[$item->getId()][] = array('text' => $this->translate('Send as eCard'), 'params' => $params);
 	    }
 	}
 
@@ -145,5 +142,33 @@ class EcardModule extends GalleryModule {
 	return array(null, array(array('name' => $this->translate('eCard'),
 				       'view' => 'ecard.AdminEcard')));
     }
+
+    /**
+     * @see GalleryModule::performFactoryRegistrations()
+     */
+    function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'CaptchaAdminOption', 'EcardCaptchaAdminOption', 'EcardCaptchaAdminOption',
+	    'modules/ecard/classes/EcardCaptchaAdminOption.class', 'ecard', null);
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
+    }
+
+    /**
+     * @see GalleryModule::activate
+     */
+    function activate($postActivationEvent=true) {
+
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, array());
+    }
+
 }
 ?>
