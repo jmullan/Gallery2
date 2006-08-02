@@ -64,7 +64,7 @@ class EcardModule extends GalleryModule {
 		'subject' => $this->translate('You have been sent an eCard'),
 		'bcc' => '',
 		'header' => $this->translate(array(
-			'text' => 'Hi %s%!%s%s (%s) has sent you an eCard:', 'arg1' => '%toName%',
+			'text' => 'Hi %s!%s%s (%s) has sent you an eCard:', 'arg1' => '%toName%',
 			'arg2' => "\n", 'arg3' => '%fromName%', 'arg4' => '%from%')),
 		'footer' => $this->translate(
 		    'This eCard was sent with Gallery 2 - Your photos on your website'),
