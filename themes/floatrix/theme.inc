@@ -129,6 +129,7 @@ class FloatrixTheme extends GalleryTheme {
 		'slideshowapplet.SlideshowApplet' => true,
 		'comment.AddComment' => true,
 		'comment.ShowAllComments' => true,
+		'ecard.SendEcard' => true,
 		'rss.SimpleRender' => true,
 		);
 	$theme['userLinks'] = array();
