@@ -1,0 +1,97 @@
+<?php
+/*
+ * $RCSfile: EcardHelper.class,v $
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package Ecard
+ * @subpackage UserInterface
+ * @author Nico Kaiser <nico@siriux.net>
+ */
+ 
+/**
+ * Helper class for eCards
+ * 
+ * @package Ecard
+ * @subpackage Classes
+ */
+class EcardHelper {
+
+    /**
+     * Returns the smallest resize of an item
+     * @param itemId
+     * @return array object GalleryStatus a status code
+     *               object GalleryItem an item
+     * @static
+     */
+    function getSmallestResize($itemId) {
+	/* Try to get the smallest derivative */
+        list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($itemId));
+        if ($ret) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+	$item = null;
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+        if ($ret) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        if (!empty($resizes)) {
+            $currentDimensions = $item->getWidth() + $item->getHeight();
+            foreach ($resizes[$itemId] as $resize) {
+                /* Rebuild the derivative if we don't have its dimensions */
+                if ($resize->getWidth() == 0 || $resize->getHeight() == 0) {
+                    list ($ret, $resize) = 
+                	GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
+                            $resize->getId());
+                    if ($ret) {
+                        return array($ret->wrap(__FILE__, __LINE__), null);
+                    }
+                }
+                $dimensions = $resize->getWidth() + $resize->getHeight();
+                if ($dimensions < $currentDimensions) {
+                    $currentDimensions = $dimensions;
+		    $item = $resize;
+                }
+            }
+        }
+	return array(null, $item);
+    }
+
+    /**
+     * Replaces keywords from the Admin page
+     * 
+     * @param string source string
+     * @param array the submitted from
+     * @return string output string
+     * @static
+     */
+    function replaceKeywords($str, $array) {
+	$result = $str;
+	foreach (array("from", "fromName", "to", "toName", 
+	    "text", "header", "footer", "image") as $key) {
+	    if (isset($array[$key])) {
+		$result = preg_replace("/%".$key."%/", $array[$key], $result);
+	    }
+	}
+	return $result;
+    }
+}
+?>
