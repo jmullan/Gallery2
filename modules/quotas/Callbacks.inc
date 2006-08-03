@@ -29,6 +29,7 @@
  * @package Quotas
  */
 class QuotasCallbacks {
+
     /**
      * Load the data for the user's quota and used space into the template.
      * LoadQuotas: This will return various data about the user's usage and quota.
@@ -36,19 +37,16 @@ class QuotasCallbacks {
      *            their associated size, and a percent value of used/unused space.
      *
      * @return object GalleryStatus a status code
-     *
      */
-
     function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
 
 	$blocks =& $smarty->_tpl_vars['block'];
-
 	$block =& $blocks['quotas']['LoadQuotas'];
 
 	switch($callback) {
 	case 'LoadQuotas':
-           
+
 	    GalleryCoreApi::requireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 	    /* The user's quota, if any */
 	    list ($ret, $block['quotaExists'], $block['quotaValue']) =
@@ -90,4 +88,3 @@ class QuotasCallbacks {
     }
 }
 ?>
-
