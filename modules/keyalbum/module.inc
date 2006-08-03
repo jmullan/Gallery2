@@ -35,9 +35,9 @@ class KeyAlbumModule extends GalleryModule {
 	$this->setId('keyalbum');
 	$this->setName($gallery->i18n('Keyword Albums'));
 	$this->setDescription($gallery->i18n('Dynamic albums based on keyword search'));
-	$this->setVersion('0.9.0');
+	$this->setVersion('0.9.1');
 	$this->setGroup('display', $gallery->i18n('Display'));
-	$this->setCallbacks('getSiteAdminViews');
+	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
 	$this->setRequiredCoreApi(array(7, 10));
 	$this->setRequiredModuleApi(array(3, 2));
     }
@@ -50,7 +50,8 @@ class KeyAlbumModule extends GalleryModule {
 	if ($ret) {
 	    return $ret;
 	}
-	foreach (array('themeId' => '', 'orderBy' => '', 'orderDirection' => '')
+	foreach (array('themeId' => '', 'orderBy' => '', 'orderDirection' => '',
+		       'summaryLinks' => 'all')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$this->setParameter($key, $value);
@@ -82,6 +83,40 @@ class KeyAlbumModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(null, array(array('name' => $this->translate('Keyword Albums'),
 				       'view' => 'keyalbum.KeywordAlbumSiteAdmin')));
+    }
+
+    /**
+     * @see GalleryModule::getItemSummaries()
+     */
+    function getItemSummaries($items, $permissions) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	list ($ret, $mode) = $this->getParameter('summaryLinks');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($mode != 'all') {
+	    $view = GalleryUtilities::getRequestVariables('view');
+	    if ($mode == 'none' || ($mode == 'key' && $view != 'keyalbum.KeywordAlbum')
+		    || ($mode == 'album' && $view != 'core.ShowItem')) {
+		return array(null, array());
+	    }
+	}
+
+	$summaries = array();
+	foreach ($items as $item) {
+	    if ($item->getKeywords()) {
+		$itemId = $item->getId();
+		$summaries[$itemId] = $this->translate('Keywords:');
+		foreach (preg_split('/\s+/', $item->getKeywords()) as $keyword) {
+		    $summaries[$itemId] .= ' <a href="' . $urlGenerator->generateUrl(
+			array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $keyword,
+			      'highlightId' => $itemId)) . '">' . $keyword . '</a>';
+		}
+	    }
+	}
+	return array(null, $summaries);
     }
 
     /**

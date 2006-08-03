@@ -25,6 +25,13 @@
 
 <div class="gbBlock">
   <table class="gbDataTable"><tr>
+    <td> {g->text text="Keyword Links"} </td>
+    <td>
+      <select name="{g->formVar var="form[summaryLinks]"}">
+	{html_options options=$KeywordAlbumSiteAdmin.summaryList selected=$form.summaryLinks}
+      </select>
+    </td>
+  </tr><tr>
     <td> {g->text text="Sort order"} </td>
     <td>
       <select name="{g->formVar var="form[orderBy]"}" onchange="pickOrder()">

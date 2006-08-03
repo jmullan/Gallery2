@@ -54,6 +54,11 @@ class KeywordAlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'keyalbum');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
 	list ($ret, $this->_view) = GalleryView::loadView('keyalbum.KeywordAlbum');
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -158,6 +163,76 @@ class KeywordAlbumTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => $this->_getRootId())),
 	    $result, 'redirect');
+    }
+
+    function testItemSummaries() {
+	$itemList = array($this->_album, $this->_item);
+	$idList = array($this->_album->getId(), $this->_item->getId());
+	$permissions = array();
+	$ret = $this->_markPluginParametersForCleanup('module', 'keyalbum');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_module->setParameter('summaryLinks', 'all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	GalleryUtilities::putRequestVariable('view', 'test.TestView');
+
+	list ($ret, $summaries) = $this->_module->getItemSummaries($itemList, $permissions);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($idList, array_keys($summaries), 'all');
+
+	$ret = $this->_module->setParameter('summaryLinks', 'none');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	GalleryUtilities::putRequestVariable('view', 'keyalbum.KeywordAlbum');
+
+	list ($ret, $summaries) = $this->_module->getItemSummaries($itemList, $permissions);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), $summaries, 'none');
+
+	$ret = $this->_module->setParameter('summaryLinks', 'key');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $summaries) = $this->_module->getItemSummaries($itemList, $permissions);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($idList, array_keys($summaries), 'key');
+
+	GalleryUtilities::putRequestVariable('view', 'core.ShowItem');
+	list ($ret, $summaries) = $this->_module->getItemSummaries($itemList, $permissions);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), $summaries, 'key not');
+
+	$ret = $this->_module->setParameter('summaryLinks', 'album');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $summaries) = $this->_module->getItemSummaries($itemList, $permissions);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($idList, array_keys($summaries), 'album');
+
+	GalleryUtilities::putRequestVariable('view', 'keyalbum.KeywordAlbum');
+	list ($ret, $summaries) = $this->_module->getItemSummaries($itemList, $permissions);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), $summaries, 'album not');
     }
 }
 ?>
