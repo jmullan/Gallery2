@@ -38,7 +38,7 @@ define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
  *   GalleryUtilities::getFileExtension($filename);
  *
  * Try not to jam too many methods into this class.  Only put methods here if they are of obvious
- * value to the class layer and there's no other home for them
+ * value to the class layer and there's no other home for them.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -96,7 +96,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Return the file's extension
+     * Return the file's base name
      *
      * eg. "foo.jpg" yields "foo"
      *
@@ -125,8 +125,8 @@ class GalleryUtilities {
 	if (isset($_FILES[$key])) {
 	    /*
 	     * Later during our sanitization process we call stripslashes on our file name.  But it
-	     * may legitimately have backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure
-	     * those are escaped at this time.  There's gotta be a better way to handle this
+	     * may legitimately have backslashes in it (eg. c:\apache\tmp\php195.jpg), so make sure
+	     * those are escaped at this time.  There's gotta be a better way to handle this.
 	     */
 	    $file = $_FILES[$key];
 	    if (get_magic_quotes_gpc()) {
@@ -160,8 +160,8 @@ class GalleryUtilities {
 	if (isset($_FILES[$key])) {
 	    /*
 	     * Later during our sanitization process we call stripslashes on our file name.  But it
-	     * may legitimately have backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure
-	     * those are escaped at this time.  There's gotta be a better way to handle this
+	     * may legitimately have backslashes in it (eg. c:\apache\tmp\php195.jpg), so make sure
+	     * those are escaped at this time.  There's gotta be a better way to handle this.
 	     */
 	    $postForm = $_FILES[$key];
 	    if (get_magic_quotes_gpc()) {
@@ -190,37 +190,37 @@ class GalleryUtilities {
      * @return array unsanitized key value pairs
      * @static
      */
-    function getUrlVariablesFiltered($skip=array(), $removePrefix=false) {
+    function getUrlVariablesFiltered($skip=array(), $prefix=false) {
 	$filter = array();
 	foreach ($skip as $key) {
 	    $filter[GALLERY_FORM_VARIABLE_PREFIX . $key] = true;
 	}
 
-	$vars = array();
+	$values = array();
 	$prefixLength = strlen(GALLERY_FORM_VARIABLE_PREFIX);
 	foreach ($_GET as $key => $value) {
-	    if (!isset($filter[$key])) {
-		$vars[$removePrefix ? substr($key, $prefixLength) : $key] = $value;
+	    if (empty($filter[$key])) {
+		$values[$prefix ? substr($key, $prefixLength) : $key] = $value;
 	    }
 	}
 
-	return $vars;
+	return $values;
     }
 
     /**
      * Merges two arrays and replace existing entries
      *
      * Merges two array like the PHP function array_merge_recursive.  The main difference is that
-     * existing keys will be replaced with new values, not combined in a new sub array
+     * existing keys will be replaced with new values, not combined in a new sub array.
      *
      * Usage:
      *        $newArray = array_merge_replace( $array, $newValues );
      *
-     * @access public
      * @author Tobias Tom <t.tom@succont.de>
      * @param array $array first array with 'replaceable' values
      * @param array $newValues array which will be merged into first one
      * @return array resulting array
+     * @static
      */
     function array_merge_replace($array, $newValues) {
 	foreach ($newValues as $key => $value) {
@@ -316,7 +316,7 @@ class GalleryUtilities {
 
     /**
      * Return the specified request variables (omit Gallery variable prefix).  Should be used only
-     * when interacting with an external api where prefix can't be used
+     * when interacting with an external API where prefix can't be used.
      *
      * Accept any number of keys and return that number of values, in order
      *
@@ -366,10 +366,10 @@ class GalleryUtilities {
      *
      *   $destination['foo']['bar']['baz'] = $value;
      *
+     * @access private
      * @param array the key path
      * @param mixed the value
      * @param array the destination
-     * @access private
      * @static
      */
     function _internalPutRequestVariable($keyPath, $value, &$array) {
@@ -420,9 +420,9 @@ class GalleryUtilities {
      *
      *   unset($source['foo']['bar']['baz']);
      *
+     * @access private
      * @param array the key path
      * @param array the source
-     * @access private
      * @static
      */
     function _internalRemoveRequestVariable($keyPath, &$array) {
@@ -464,7 +464,7 @@ class GalleryUtilities {
 
 	$markers = '';
 	if ($count > 1) {
-	    $markers = str_repeat($markerFragment . ',', $count-1);
+	    $markers = str_repeat($markerFragment . ',', $count - 1);
 	}
 	if ($count != 0) {
 	    $markers .= $markerFragment;
@@ -554,7 +554,7 @@ class GalleryUtilities {
 
     /**
      * Round a float and convert to a string.  Replace , with . in case current locale uses comma as
-     * fraction separator
+     * fraction separator.
      *
      * @param float value to round
      * @param int precision, defaults to zero
@@ -566,10 +566,10 @@ class GalleryUtilities {
     }
 
     /**
-     * Cast to float taking into account that older php versions will not treat "." as a decimal
+     * Cast to float taking into account that older PHP versions will not treat "." as a decimal
      * separator if the current locale uses "," - when we stop supporting these older versions we
-     * can ditch this method and just cast to (float).  (Note that newer php versions may accept
-     * only "." even if locale uses ",")
+     * can ditch this method and just cast to (float).  (Note that newer PHP versions may accept
+     * only "." even if locale uses ",").
      */
     function castToFloat($value) {
 	if (is_string($value) && (float)'1.1' != 1.1
@@ -619,7 +619,7 @@ class GalleryUtilities {
      *                of characters. (default: true)
      * @return array int the number of entities in the string
      *               string the output string
-     *
+     * @static
      */
     function entitySubstr($string, $start, $length=null, $countEntitiesAsOne=true) {
 	$stringLength = strlen($string);
@@ -676,7 +676,7 @@ class GalleryUtilities {
     /**
      * Takes a string of UTF-8 encoded characters and converts it to a string of unicode entities.
      * Each unicode entity has the form &#nnnnn; n={0..9} and can be displayed by UTF-8 supporting
-     * browsers
+     * browsers.
      *
      * This function was posted in a comment here:
      *   http://www.php.net/manual/en/function.utf8-decode.php
@@ -684,7 +684,6 @@ class GalleryUtilities {
      *
      * @param $source string encoded using UTF-8 [STRING]
      * @return string of unicode entities [STRING]
-     * @access public
      * @static
      */
     function utf8ToUnicodeEntities($source) {
@@ -765,6 +764,10 @@ class GalleryUtilities {
      * associative array or a simple list of values).  We do the following:
      * 1.  Convert UTF-8 values to Unicode entities
      * 2.  Sanitize any input values to remove dangerous values
+     *
+     * @param mixed one value or many values
+     * @param boolean (optional) false to skip undoing the damage caused by magic_quotes
+     * @static
      */
     function sanitizeInputValues(&$value, $adaptForMagicQuotes=true) {
 	if (is_array($value)) {
@@ -801,6 +804,10 @@ class GalleryUtilities {
     /**
      * Undo the preprocessing done in sanitizeInputValues (useful when we put values back into the
      * request)
+     *
+     * @param mixed one value or many values
+     * @param boolean (optional) false to skip redoing the damage caused by magic_quotes
+     * @static
      */
     function unsanitizeInputValues(&$value, $adaptForMagicQuotes=true) {
 	if (is_array($value)) {
@@ -826,6 +833,7 @@ class GalleryUtilities {
      *
      * @param string the input string with UTF-8 entities
      * @return string the UTF-8 string
+     * @static
      */
     function unicodeEntitiesToUtf8($string) {
 	$string = preg_replace('/&#([xa-f\d]+);/mei',
@@ -838,6 +846,7 @@ class GalleryUtilities {
      *
      * @param string the input string containing raw UTF-8
      * @return string a multibyte safe substring of input value
+     * @static
      */
     function utf8Substring($string, $start, $length) {
 	static $hasMbSubstr;
@@ -861,12 +870,13 @@ class GalleryUtilities {
      * This is going to be a whole lot slower than mb_substr, so we should use that instead,
      * whenever we can
      *
-     * Note: this function treats all html entities like &amp; as single characters, but mb_substr
+     * Note: this function treats all HTML entities like &amp; as single characters, but mb_substr
      * would treat this as 5 characters.
      *
+     * @access private
      * @param string the input string containing raw UTF-8
      * @return string a multibyte safe substring of input value
-     * @access private
+     * @static
      */
     function _phpUtf8Substring($string, $start, $length) {
 	$string = GalleryUtilities::utf8ToUnicodeEntities($string);
@@ -881,6 +891,7 @@ class GalleryUtilities {
      *
      * @param num the unicode value
      * @return string the UTF-8 string
+     * @static
      */
     function unicodeValueToUtf8Value($num){
 	if ($num[0] == 'x') {
@@ -891,21 +902,25 @@ class GalleryUtilities {
 	if ($num < 128) {
 	    return chr($num);
 	}
+
 	if ($num < 2048) {
-	    return (chr(192 + ($num >> 6)) .
-		    chr(128 + ($num & 63)));
+	    return (chr(192 + ($num >> 6))
+		. chr(128 + ($num & 63)));
 	}
+
 	if ($num < 65535) {
-	    return (chr(224 + ($num >> 12)) .
-		    chr(128 + (($num >> 6 ) & 63)) .
-		    chr(128 + ($num & 63)));
+	    return (chr(224 + ($num >> 12))
+		. chr(128 + (($num >> 6 ) & 63))
+		. chr(128 + ($num & 63)));
 	}
+
 	if ($num < 2097152) {
-	    return (chr(240 + ($num >> 18)) .
-		    chr(128 + (($num >> 12) & 63)) .
-		    chr(128 + (($num >> 6) & 63)) .
-		    chr(128 + ($num & 63)));
+	    return (chr(240 + ($num >> 18))
+		. chr(128 + (($num >> 12) & 63))
+		. chr(128 + (($num >> 6) & 63))
+		. chr(128 + ($num & 63)));
 	}
+
 	return '';
     }
 
@@ -914,7 +929,8 @@ class GalleryUtilities {
      *
      * @param string with html entities
      * @return same string without them
-     * @deprecated -- TODO: remove at the next major version bump of core api
+     * @static
+     * @deprecated -- TODO: remove at the next major version bump of core API
      */
     function htmlEntityDecode($string) {
 	return empty($string) ? $string : html_entity_decode($string, ENT_COMPAT);
@@ -925,6 +941,7 @@ class GalleryUtilities {
      *
      * @param string (optional) markup type, defaults from core markup parameter
      * @return string resulting text
+     * @static
      */
     function markup($text, $markupType=null) {
 	GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
@@ -934,9 +951,9 @@ class GalleryUtilities {
     /**
      * Strip out all potentially dangerous content within HTML
      *
-     * @param string html
+     * @param string HTML
      * @param boolean (optional) true to decode entities, process, then recode
-     * @return string safe html
+     * @return string safe HTML
      */
     function htmlSafe($html, $decode=false) {
 	GalleryCoreApi::requireOnce('lib/pear/Safe.php');
@@ -957,6 +974,7 @@ class GalleryUtilities {
     /**
      * Return a specified request variable from the GET or POST vars
      *
+     * @access private
      * @param string a single key
      * @return string a single value
      * @static
@@ -976,10 +994,10 @@ class GalleryUtilities {
      *
      *   return $source['foo']['bar']['baz'];
      *
+     * @access private
      * @param array the key path
      * @param array the source
      * @return the value or null if it does not exist
-     * @access private
      * @static
      */
     function _internalGetRequestVariable($keyPath, $array) {
@@ -1038,18 +1056,19 @@ class GalleryUtilities {
      *
      * @param string an address in dotted quad form
      * @return boolean true or false
+     * @static
      */
     function isTrustedProxy($addr) {
- 	return (boolean)preg_match(
- 	    '/^((10\.\d{1,3}\.\d{1,3}\.\d{1,3})|' .
-	    '(172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3})|' .
- 	    '(192\.168\.\d{1,3}\.\d{1,3}))$/', $addr);
+ 	return (boolean)preg_match('/^((10\.\d{1,3}\.\d{1,3}\.\d{1,3})|'
+	    . '(172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3})|'
+	    . '(192\.168\.\d{1,3}\.\d{1,3}))$/', $addr);
     }
 
     /**
      * Return the address of the remote host
      *
      * @return string the remote host address (or null)
+     * @static
      */
     function getRemoteHostAddress() {
 	$addr = null;
@@ -1074,6 +1093,7 @@ class GalleryUtilities {
      * @param string the dir
      * @return array boolean true if dir exists or was created successfully
      *               array of directories that were created
+     * @static
      */
     function guaranteeDirExists($dir) {
 	global $gallery;
@@ -1090,7 +1110,7 @@ class GalleryUtilities {
 	    GalleryDataCache::put($cacheKey, 0);
 	    list ($ret, $dirPerms) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-	    /* Ignore error here.. then recheck $dir in case it was created in nested call */
+	    /* Ignore error here, then recheck $dir in case it was created in nested call */
 	    GalleryDataCache::put($cacheKey, $dirPerms);
 	    if ($platform->file_exists($dir)) {
 		return array($platform->is_dir($dir), array());
@@ -1112,10 +1132,9 @@ class GalleryUtilities {
      * Turn a set of albums into a depth tree suitable for display in a hierarchical format
      *
      * @param array the GalleryAlbumItem instances
-     * @return array An associative array of tree data.  Each node has a 'depth' element, and
-     *               a 'data' element that contains all the members of the current album item
-     *
-     * @access private
+     * @return array an associative array of tree data.  Each node has a 'depth' element, and a
+     *               'data' element that contains all the members of the current album item.
+     * @static
      */
     function createAlbumTree($albums) {
 	if (empty($albums)) {
@@ -1136,7 +1155,7 @@ class GalleryUtilities {
 
 	/*
 	 * Prune parents that don't exist.  This can occur if we have multiple roots (unusual) or an
-	 * album in the middle of the hierarchy that is not viewable
+	 * album in the middle of the hierarchy that is not viewable.
 	 */
 	foreach ($map as $id => $info) {
 	    if (isset($info['parent']) && !isset($map[$info['parent']]['instance'])) {
@@ -1164,6 +1183,10 @@ class GalleryUtilities {
      * Recursively walk a parent/child map and build the depth tree
      *
      * @access private
+     * @param array parent/child map
+     * @param int child id
+     * @param int (optional) current depth
+     * @static
      */
     function _createDepthTree(&$map, $id, $depth=0) {
 	$data = array();
@@ -1171,7 +1194,7 @@ class GalleryUtilities {
 	if (isset($map[$id]['children'])) {
 	    foreach ($map[$id]['children'] as $childId) {
 		$data = array_merge($data,
-				    GalleryUtilities::_createDepthTree($map, $childId, $depth+1));
+				    GalleryUtilities::_createDepthTree($map, $childId, $depth + 1));
 	    }
 	}
 
@@ -1184,13 +1207,14 @@ class GalleryUtilities {
      * @param object entity a GalleryEntity
      * @return array object GalleryStatus a status code
      *               string pseudoFileName a filename
+     * @static
      */
     function getPseudoFileName($entity) {
 	/*
 	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a path component so
 	 * we're cool.  If it's a derivative, then get the pseudo filename of its parent and use
 	 * that instead (but make sure the extension matches derivative, as parent mime type may
-	 * differ).  If it's neither, then return 'unknown' for now
+	 * differ).  If it's neither, then return 'unknown' for now.
 	 */
 	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
 	    $pseudoFileName = $entity->getPathComponent();
@@ -1215,7 +1239,7 @@ class GalleryUtilities {
 			    $pseudoFileName =
 				preg_replace('{\.[^.]+$}', '.' . $extensions[0], $pseudoFileName);
 			} else {
-			    /* Non-item parent, like an album.. add extension for this mime type */
+			    /* Non-item parent, like an album.  Add extension for this mime type. */
 			    $pseudoFileName .= '.' . $extensions[0];
 			}
 		    }
@@ -1233,6 +1257,7 @@ class GalleryUtilities {
      *                empty if we want the current time
      * @return string a date-string conformant to the RFC 2616
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3
+     * @static
      */
     function getHttpDate($time = '') {
 	if ($time == '') {
@@ -1256,11 +1281,12 @@ class GalleryUtilities {
      * Get contents of MANIFEST files
      *
      * @return array (file => array('checksum'=>..,'size'=>..,'viewable'=>..), ..)
+     * @static
      */
     function readManifest() {
 	/*
 	 * Be careful not to reference $gallery here; this method is called from the installer.
-	 * Look in (modules|themes)/.../MANIFEST and top level MANIFEST
+	 * Look in (modules|themes)/.../MANIFEST and top level MANIFEST.
 	 */
 	$base = realpath(dirname(__FILE__) . '/../../..') . '/';
 	$list = array();
@@ -1310,6 +1336,7 @@ class GalleryUtilities {
      *
      * @param string email address
      * @return boolean true if valid format
+     * @static
      */
     function isValidEmailString($email) {
 	return (preg_match('/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+\.[a-zA-Z]{2,4}$/', $email) > 0);
@@ -1321,6 +1348,7 @@ class GalleryUtilities {
      * @param string plaintext password
      * @param string (optional) salt or hash containing salt (randomly generated if omitted)
      * @return string hashed password
+     * @static
      */
     function md5Salt($password, $salt='') {
 	if (empty($salt)) {
@@ -1341,6 +1369,7 @@ class GalleryUtilities {
      * @param string password guess
      * @param string hashed password
      * @return boolean true if correct
+     * @static
      */
     function isCorrectPassword($guess, $hashedPassword) {
 	return (GalleryUtilities::md5Salt($guess, $hashedPassword) === $hashedPassword);
@@ -1354,6 +1383,8 @@ class GalleryUtilities {
      *
      * @param array required (major, minor)
      * @param array provided (major, minor)
+     * @return boolean true if compatible
+     * @static
      */
     function isCompatibleWithApi($required, $provided) {
 	if (!is_array($required) || !is_array($provided)) {
@@ -1381,6 +1412,7 @@ class GalleryUtilities {
      *
      * @param array
      * @return array of keys
+     * @static
      */
     function arrayKeysRecursive($array) {
 	$keys = array();
@@ -1396,8 +1428,8 @@ class GalleryUtilities {
     /**
      * Get a php.ini value and return its boolean value
      *
-     * @param string Name of the php.ini value to be retrieved
-     * @return bool
+     * @param string name of the php.ini value to be retrieved
+     * @return boolean value
      * @static
      */
     function getPhpIniBool($ini_string) {
@@ -1419,6 +1451,7 @@ class GalleryUtilities {
      * Return id of the search engine currently crawling the site by analyzing the current request
      *
      * @return string the crawler id, or null if it's a regular user
+     * @static
      */
     function identifySearchEngine() {
 	if (!isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -1449,6 +1482,7 @@ class GalleryUtilities {
      *
      * @param string the key in the _SERVER superglobal
      * @return string the value
+     * @static
      */
     function getServerVar($key) {
 	if (!isset($_SERVER[$key])) {
@@ -1465,13 +1499,14 @@ class GalleryUtilities {
      *
      * @param string the key in the _COOKIE superglobal
      * @return string the value
+     * @static
      */
     function getCookieVar($key) {
 	if (!isset($_COOKIE[$key])) {
 	    return null;
 	}
 
-	/* Fix php HTTP_COOKIE header bug http://bugs.php.net/bug.php?id=32802 */
+	/* Fix PHP HTTP_COOKIE header bug http://bugs.php.net/bug.php?id=32802 */
 	GalleryUtilities::fixCookieVars();
 
 	$value = $_COOKIE[$key];
@@ -1480,50 +1515,48 @@ class GalleryUtilities {
     }
 
     /**
-     * Check if G2 is in embedded mode.
+     * Check if Gallery is in embedded mode
      *
-     * @return boolean true if G2 is in embedded mode, else false
+     * @return boolean true if Gallery is in embedded mode, false otherwise
+     * @static
      */
     function isEmbedded() {
-	if (!GalleryDataCache::containsKey('G2_EMBED') || !GalleryDataCache::get('G2_EMBED')) {
-	    return false;
-	} else {
-	    return true;
-	}
+	return GalleryDataCache::containsKey('G2_EMBED') && GalleryDataCache::get('G2_EMBED');
     }
 
     /**
      * Fix the superglobal $_COOKIE to conform with RFC 2965
      *
-     * We don't use $_COOKIE[$cookiename], because it doesn't conform to RFC 2965 (the
-     * cookie standard), i.e. in $_COOKIE, we don't get the cookie with the most specific path for
-     * a given cookie name, we get the cookie with the least specific cookie path.
-     * This function does it exactly the other way around, to a) fix our cookie/login problems and
-     * to b) conform with the RFC.
-     * The PHP bug was already fixed in spring 2005, but we will have to deal with broken PHP
-     * versions for a long time. See http://bugs.php.net/bug.php?id=32802.
+     * We don't use $_COOKIE[$cookiename] because it doesn't conform to RFC 2965 (the cookie
+     * standard), ie. in $_COOKIE, we don't get the cookie with the most specific path for a given
+     * cookie name, we get the cookie with the least specific cookie path.  This function does it
+     * exactly the other way around, to a) fix our cookie/login problems and to b) conform with the
+     * RFC.  The PHP bug was already fixed in spring 2005, but we will have to deal with broken PHP
+     * versions for a long time.
+     * @see http://bugs.php.net/bug.php?id=32802
      *
-     * Fixes also another PHP cookie bug. PHP doesn't expect the cookie header to have
+     * Fixes also another PHP cookie bug.  PHP doesn't expect the cookie header to have
      * quoted-strings, but they are perfectly legal according to RFC 2965.
      *
-     * The third bug fixed here is an MS Internet Explorer (IE) bug. When using default cookie
+     * The third bug fixed here is an MS Internet Explorer (IE) bug.  When using default cookie
      * domains (no leading dot, don't set the domain in set-cookie), IE is supposed to return only
-     * cookies that have the exact request-host as their domain.
-     * Example: Cookies stored in the browser with cookie domains: .example.com, .www.example.com,
+     * cookies that have the exact request-host as their domain.  Example:
+     * Cookies stored in the browser with cookie domains: .example.com, .www.example.com,
      *          example.com, www.example.com
      *          The request-host is www.example.com. Thus, IE should return all those cookies but
      *          the example.com cookie, because it's a default domain cookie and it doesn't match
      *          exactly the request-host. But IE returns the example.com cookie too.
-     * As MS decided that it returns the cookie with the best domain-match first (unspecified in
-     * RFC 2965), this wouldn't be a problem if PHP didn't select the last cookie in the
-     * HTTP_COOKIE header. But with fixCookieVars(), this case is also fixed.
+     * As MS decided that it returns the cookie with the best domain-match first (unspecified in RFC
+     * 2965), this wouldn't be a problem if PHP didn't select the last cookie in the HTTP_COOKIE
+     * header.  But with fixCookieVars(), this case is also fixed.
      *
      * This function reevaluates the HTTP Cookie header and populates $_COOKIE with the correct
-     * cookies. We fix only non-array and non '[', ']' containing cookies for simplicity. To fix
+     * cookies.  We fix only non-array and non '[', ']' containing cookies for simplicity.  To fix
      * our login problem, we'd have to fix only the GALLERYSID cookie anyway.
      *
      * @param boolean force the reevaluation of the HTTP header string Cookie
      * @param boolean unset static variable for testability
+     * @static
      */
     function fixCookieVars($force=false, $unset=false) {
 	static $fixed;
@@ -1532,7 +1565,7 @@ class GalleryUtilities {
 	    if (isset($_SERVER['HTTP_COOKIE']) && !empty($_SERVER['HTTP_COOKIE'])) {
 		/*
 		 * Array to keep track of fixed cookies to not make the same mistake as PHP, ie.
-		 * don't assign values to cookies that were already fixed / set before
+		 * don't assign values to cookies that were already fixed/set before
 		 */
 		$fixedCookies = array();
 		/* Check if the Cookie header contains quoted-strings */
@@ -1540,7 +1573,7 @@ class GalleryUtilities {
 		    /*
 		     * Use fast method, no quoted-strings in the header.  Get rid of less specific
 		     * cookies if multiple cookies with the same NAME are present. Do this by going
-		     * from left/first cookie to right/last cookie
+		     * from left/first cookie to right/last cookie.
 		     */
 		    $tok = strtok($_SERVER['HTTP_COOKIE'], ',;');
 		    while ($tok) {
@@ -1551,7 +1584,7 @@ class GalleryUtilities {
 		    /*
 		     * We can't just tokenize the Cookie header string because there are
 		     * quoted-strings and delimiters in quoted-string should be handled as values
-		     * and not as delimiters.  Thus, we have to parse it character by character
+		     * and not as delimiters.  Thus, we have to parse it character by character.
 		     */
 		    $quotedStringOpen = false;
 		    $string = $_SERVER['HTTP_COOKIE'];
@@ -1596,7 +1629,7 @@ class GalleryUtilities {
 	 * To test methods that call fixCookieVars, we have to first unset the static $fixed
 	 * variable to enable testability of these functions.  This way, fixCookieVars will
 	 * repopulate $_COOKIE on the next call, ie. it simulates a case, where fixCookieVars has
-	 * not been called before on the request
+	 * not been called before on the request.
 	 */
 	if ($unset) {
 	    $fixed = null;
@@ -1604,7 +1637,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Register a Cookie Var safely
+     * Register a cookie variable safely
      *
      * Creates an entry in $_COOKIE for $attr, which is a name=value pair.  We try to mimic the PHP
      * source code here: make the entry binary safe, don't register non-NAME attributes (eg. cookie
@@ -1612,10 +1645,12 @@ class GalleryUtilities {
      *
      * The one thing we don't do here is treat array cookies correctly because it would but too
      * involving.  But we gracefully just don't replace these array cookies in $_COOKIE, so if they
-     * are used somewhere, they will be left intact by fixCookieVars()
+     * are used somewhere, they will be left intact by fixCookieVars().
      *
+     * @access private
      * @param string the cookie var attr, NAME [=VALUE]
      * @param array (string already registered cookie name, ...)
+     * @static
      */
     function _registerCookieAttr($attr, &$fixedCookies) {
 	global $gallery;
@@ -1667,19 +1702,24 @@ class GalleryUtilities {
 
     /**
      * ASCII version of PHP's strtolower()
+     *
      * PHP's strtolower doesn't work in all locales as expected, eg. in Turkish, we get non-ASCII
      * characters for an ASCII input string
      *
-     * @return string lower-case version of the string
+     * @param string
+     * @return string lowercase version of the string
+     * @static
      */
     function strToLower($string) {
 	return strtr($string, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz');
     }
 
     /**
-     * ASCII version of PHP's strtolower()
+     * ASCII version of PHP's strtoupper()
      *
-     * @return string upper-case version of the string
+     * @param string
+     * @return string uppercase version of the string
+     * @static
      */
     function strToUpper($string) {
 	return strtr($string, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
