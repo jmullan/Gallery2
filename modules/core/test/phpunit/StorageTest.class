@@ -310,7 +310,7 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array(
-		sprintf('SELECT %2$sentityType, %2$sexternalId, %2$sentityId ' . 
+		sprintf('SELECT %2$sentityType, %2$sexternalId, %2$sentityId ' .
 			'FROM %1$sExternalIdMap WHERE %2$sexternalId=?',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 		array(40))),
@@ -333,13 +333,13 @@ class StorageTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array(array(
 		sprintf(
-		    'SELECT %2$sentityType FROM %1$sExternalIdMap ' . 
+		    'SELECT %2$sentityType FROM %1$sExternalIdMap ' .
 		    'WHERE %2$sexternalId IN (?,?,?)',
 		    $storage->_tablePrefix, $storage->_columnPrefix),
 		array(38, 40, 42))),
 	    $this->_results);
     }
-    
+
     function testGetMapEntriesAll() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
@@ -361,7 +361,7 @@ class StorageTest extends GalleryTestCase {
 		array())),
 	    $this->_results);
     }
-    
+
     function testGetMapEntriesLimited() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
@@ -371,7 +371,7 @@ class StorageTest extends GalleryTestCase {
 	$match = array('externalId' => array(38, 40, 42));
 	$optional = array('limit' => array('count' => 1, 'offset' => 2));
 
-	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match, 
+	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match,
 								 $optional);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -387,7 +387,7 @@ class StorageTest extends GalleryTestCase {
 		array(38, 40, 42))),
 	    $this->_results);
     }
-    
+
     function testGetMapEntriesOrdered() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
@@ -398,8 +398,8 @@ class StorageTest extends GalleryTestCase {
 	$optional = array('orderBy' => array('entityType' => ORDER_DESCENDING,
 					     'externalId' => ORDER_ASCENDING));
 
-	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, 
-	        $select, $match, $optional);
+	list($ret, $searchResults) =
+	    GalleryCoreApi::getMapEntry($mapName, $select, $match, $optional);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -414,7 +414,7 @@ class StorageTest extends GalleryTestCase {
 		array(38, 40, 42))),
 	    $this->_results);
     }
-    
+
     function testUpdateMapEntry() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
@@ -430,7 +430,7 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array(
-		sprintf('UPDATE %1$sExternalIdMap SET %2$sentityType=? ' . 
+		sprintf('UPDATE %1$sExternalIdMap SET %2$sentityType=? ' .
 			'WHERE %2$sexternalId IN (?,?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 			array(54, 38, 40, 42))),
@@ -584,7 +584,7 @@ class StorageTest extends GalleryTestCase {
 				"null for $type");
 	}
     }
-    
+
     function testNormalizeValueToBoolean() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
@@ -659,7 +659,7 @@ class StorageTest extends GalleryTestCase {
 	$this->assertEquals(5, $storage->_normalizeValue('5', $memberData, true),
 			    'from DB 2');
 	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData, true), 'null');
-	$this->assertEquals($storage->convertIntToBits(0), 
+	$this->assertEquals($storage->convertIntToBits(0),
 			    $storage->_normalizeValue('', $memberData), 'empty string');
     }
 
@@ -720,20 +720,20 @@ class StorageTest extends GalleryTestCase {
     }
 
     function testEncodeDecodeBlob() {
-        global $gallery;
+	global $gallery;
 	$storage =& $gallery->getStorage();
 	/* Use a real SQL connection for this test */
 	$storage->_db = null;
-	
+
 	/* We want to store binary (gz-deflated) data in a text field */
 	$blobData = '';
 	for ($i = 0; $i <= 255; $i++) {
 	    $blobData .= chr($i);
 	}
-	
+
 	/* encode it */
 	$escapedString = $storage->encodeBlob($blobData);
-	
+
 	$key = 'test_' . rand();
 	$ret = GalleryCoreApi::addMapEntry(
 	    'GalleryCacheMap',
@@ -743,28 +743,36 @@ class StorageTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	/* No (PHP) error? Good! Next, get the entry from the db and compare */
-	
+
 	$query = '
-            SELECT
-              [GalleryCacheMap::value]
-            FROM
-              [GalleryCacheMap]
-            WHERE
-              [GalleryCacheMap::key] = ?
-            ';
+	SELECT
+	  [GalleryCacheMap::value]
+	FROM
+	  [GalleryCacheMap]
+	WHERE
+	  [GalleryCacheMap::key] = ?
+	';
 	list ($ret, $results) = $storage->search($query, array($key));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	if ($results->resultCount() > 0) {
 	    $result = $results->nextResult();
-	    $this->assertEquals($blobData, $storage->decodeBlob($result[0]),
+	    $result = $storage->decodeBlob($result[0]);
+	    $this->assertEquals($blobData, $result,
 				'blob data was altered in encode -> insert -> select -> decode');
+	    if ($blobData != $result) {
+		$bytes = '';
+		for ($i = 0; $i < strlen($result); $i++) {
+		    $bytes .= ' ' . ord($result{$i});
+		}
+		$this->assert(false, 'Result bytes:' . $bytes);
+	    }
 	} else {
 	    $this->assert(false, 'SELECT failed, got nothing back!');
 	}
-	
+
 	/* Cleanup */
 	$ret = GalleryCoreApi::removeMapEntry('GalleryCacheMap', array('type' => 'test'));
 	if ($ret) {
