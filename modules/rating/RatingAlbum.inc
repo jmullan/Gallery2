@@ -19,15 +19,17 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package KeyAlbum
+ * @package Rating
  * @author Alan Harder <alan.harder@sun.com>
  */
 
 /**
- * @package KeyAlbum
+ * Dynamic album view to show highly rated items.
+ *
+ * @package Rating
  * @subpackage UserInterface
  */
-class KeywordAlbumView extends GalleryView {
+class RatingAlbumView extends GalleryView {
 
     /**
      * @see GalleryView::getViewType
@@ -47,15 +49,15 @@ class KeywordAlbumView extends GalleryView {
 	if (!isset($item)) {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null, null, null);
 	}
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'keyalbum');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rating');
 	if ($ret) {
 	    return array($ret, null, null, null);
 	}
-	list ($keyword, $itemId) = GalleryUtilities::getRequestVariables('keyword', 'itemId');
+	list ($limit, $itemId) = GalleryUtilities::getRequestVariables('limit', 'itemId');
 	$item->create(
-	    $module->translate(array('text' => 'Keyword Album: %s', 'arg1' => $keyword)),
-	    array(array('Keyword Album', 'keyword album'),
-		  array($module->translate('Keyword Album'), $module->translate('keyword album')))
+	    $module->translate(array('text' => 'Rating Album: %s', 'arg1' => $limit)),
+	    array(array('Rating Album', 'rating album'),
+		  array($module->translate('Rating Album'), $module->translate('rating album')))
 	);
 
 	if (!empty($itemId)) {
@@ -70,15 +72,14 @@ class KeywordAlbumView extends GalleryView {
 	    }
 
 	    /* Provide parent, parent URL and get-children function to Theme API */
-	    $item->urlParams = array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $keyword,
+	    $item->urlParams = array('view' => 'rating.RatingAlbum', 'limit' => $limit,
 				     'highlightId' => $itemId);
-	    $item->getChildrenFunction = array('KeywordAlbumView', 'getChildIds');
+	    $item->getChildrenFunction = array('RatingAlbumView', 'getChildIds');
 	    $viewItem->parent = $item;
 	    $item = $viewItem;
 	}
 
-	list ($ret, $moduleParams) =
-	    GalleryCoreApi::fetchAllPluginParameters('module', 'keyalbum');
+	list ($ret, $moduleParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'rating');
 	if ($ret) {
 	    return array($ret, null, null, null);
 	}
@@ -111,13 +112,22 @@ class KeywordAlbumView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$theme =& $template->getVariableByReference('theme');
 
-	list ($keyword, $itemId) = GalleryUtilities::getRequestVariables('keyword', 'itemId');
-	$theme['pageUrl'] = array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $keyword);
+	list ($limit, $itemId) = GalleryUtilities::getRequestVariables('limit', 'itemId');
+	$theme['pageUrl'] = array('view' => 'rating.RatingAlbum', 'limit' => $limit);
+
+	list ($ret, $minLimit) = GalleryCoreApi::getPluginParameter('module', 'rating', 'minLimit');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($limit < $minLimit) {
+	    return array(null, array('redirect' =>
+			 array('view' => 'rating.RatingAlbum', 'limit' => $minLimit)));
+	}
 
 	if (empty($itemId)) {
 	    /* Perform query for this dynamic album */
 	    list ($ret, $theme['allChildIds']) =
-		$this->getChildIds($theme['actingUserId'], $keyword);
+		$this->getChildIds($theme['actingUserId'], $limit);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -142,29 +152,29 @@ class KeywordAlbumView extends GalleryView {
     /**
      * Dynamic query for items
      * @param int user id
-     * @param (optional) keyword for query; get from request if not specified
+     * @param (optional) limit for query; get from request if not specified
      * @return array object GalleryStatus a status code
      *               array of item ids
      * @static
      */
-    function getChildIds($userId, $keyword=null) {
+    function getChildIds($userId, $limit=null) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	if (!isset($keyword)) {
-	    $keyword = GalleryUtilities::getRequestVariables('keyword');
+	if (!isset($limit)) {
+	    $limit = GalleryUtilities::getRequestVariables('limit');
 	}
-	if (empty($keyword)) {
+	if (empty($limit) || $limit <= 0) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
-	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'keyalbum');
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'rating');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	list ($ret, $query, $data) = GalleryCoreApi::buildItemQuery(
-		'GalleryItem', 'id', '[GalleryItem::keywords] LIKE ?',
+		'RatingCacheMap', 'itemId', '[RatingCacheMap::averageRating] >= ?',
 		$params['orderBy'], $params['orderDirection'], null, 'core.view', false, $userId);
 	if ($ret) {
 	    return array($ret, null);
@@ -172,7 +182,7 @@ class KeywordAlbumView extends GalleryView {
 	if (empty($query)) {
 	    return array(null, array());
 	}
-	array_unshift($data, '%' . $keyword . '%');
+	array_unshift($data, (int)(1000 * (float)$limit));
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
@@ -190,11 +200,11 @@ class KeywordAlbumView extends GalleryView {
      * @see GalleryView::getViewDescription()
      */
     function getViewDescription() {
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'keyalbum');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rating');
 	if ($ret) {
 	    return array($ret, null);
 	}
-	return array(null, $module->translate('keyword album'));
+	return array(null, $module->translate('rating album'));
     }
 }
 ?>

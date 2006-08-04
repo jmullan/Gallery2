@@ -38,7 +38,7 @@ class RatingModule extends GalleryModule {
 	$this->setId('rating');
 	$this->setName($gallery->i18n('Rating'));
 	$this->setDescription($gallery->i18n('Item Rating Interface'));
-	$this->setVersion('1.0.5'); /* Update upgrade() too */
+	$this->setVersion('1.0.6'); /* Update upgrade() too */
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries|registerEventListeners');
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setRequiredCoreApi(array(7, 10));
@@ -232,6 +232,7 @@ class RatingModule extends GalleryModule {
 	case '1.0.2':
 	case '1.0.3':
 	case '1.0.4':
+	case '1.0.5':
 
 	case 'end of upgrade path':
 	    break;
@@ -239,6 +240,34 @@ class RatingModule extends GalleryModule {
 	default:
 	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 		    sprintf('Unknown module version %s', $currentVersion));
+	}
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'rating');
+	if ($ret) {
+	    return $ret;
+	}
+	foreach (array('allowAlbumRating' => 0, 'themeId' => '', 'orderBy' => 'RatingSortOrder',
+		       'orderDirection' => ORDER_DESCENDING, 'minLimit' => 2)
+		as $key => $value) {
+	    if (!isset($params[$key])) {
+		$this->setParameter($key, $value);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+	if (!isset($params['themeSettingsId'])) {
+	    list ($ret, $entity) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryEntity');
+	    $entity->create();
+	    $ret = $entity->save(false);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $ret = $this->setParameter('themeSettingsId', $entity->getId());
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	return null;
@@ -251,6 +280,20 @@ class RatingModule extends GalleryModule {
 	return array(null,
 		array(array('name' => $this->translate('Rating'),
 			'view' => 'rating.RatingSiteAdmin')));
+    }
+
+    /**
+     * @see GalleryModule::getRewriteRules
+     */
+    function getRewriteRules() {
+	return array(
+		array('comment' => $this->translate('Rating Album'),
+		      'match' => array('view' => 'rating.RatingAlbum'),
+		      'pattern' => 'rating/%limit%',
+		      'keywords' => array(
+			  'limit' => array('pattern' => '([^?/]+)',
+			      'help' => $this->translate('Rating limit to use for dynamic album')))
+		    ));
     }
 
     /**
