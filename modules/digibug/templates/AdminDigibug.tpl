@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="DAPI (Digibug API) for Photo Printing Settings"} </h2>
+  <h2> {g->text text="Digibug Photo Printing Settings"} </h2>
 </div>
 
 {if isset($status.saved)}
@@ -16,34 +16,48 @@
 
 <div class="gbBlock">
   <p class="giDescription">
-    {g->text text="DAPI (Digibug API) allows you to sell your photos as prints, or printed gift products through the Digibug.com website."}
+    {g->text text="DAPI (Digibug API) allows you to sell your photos as prints or printed gift products through the Digibug.com website."}
   </p>
 
-  {g->text text="Digibug Company ID <a href="http://www.digibug.com/digibugapi/" target="_blank">[What's this?]</a>:"}
-  <input type="text" size="6" name="{g->formVar var="form[digibugCustomerId]"}" value="{$form.digibugCustomerId}"
-    id="formDigibugCustomerId" autocomplete="off"/>
-
-  {g->text text="Event ID <a href="http://www.digibug.com/digibugapi/" target="_blank">[What's this?]</a>:"}
-  <input type="text" size="6" name="{g->formVar var="form[digibugPricelistId]"}" value="{$form.digibugPricelistId}"
-    id="formDigibugEventId" autocomplete="off"/>
-
-  {if isset($form.error.digibugCustomerId.missing)}
-  <div class="giError">
-    {g->text text="You must enter a digibug customer id."}
-  </div>
-  {/if}
-
-  {if isset($form.error.digibugPricelistId.missing)}
-  <div class="giError">
-    {g->text text="Please create an event or use your default event id as your pricelist id."}
-  </div>
-  {/if}
-
+  <table class="gbDataTable">
+    <tr><td>
+      <label for="formDigibugCustomerId">
+	{g->text text="Digibug Company ID %s[What's this?]%s"
+	 arg1="<a href=\"http://www.digibug.com/digibugapi/\" target=\"_blank\">" arg2="</a>"}
+      </label>
+    </td><td>
+      <input type="text" size="6" id="formDigibugCustomerId" autocomplete="off"
+       name="{g->formVar var="form[digibugCustomerId]"}" value="{$form.digibugCustomerId}"/>
+    </td></tr>
+    {if isset($form.error.digibugCustomerId.missing)}
+    <tr><td colspan="2">
+      <div class="giError">
+	{g->text text="You must enter a digibug customer id."}
+      </div>
+    </td></tr>
+    {/if}
+    <tr><td>
+      <label for="formDigibugEventId">
+	{g->text text="Event ID %s[What's this?]%s"
+	 arg1="<a href=\"http://www.digibug.com/digibugapi/\" target=\"_blank\">" arg2="</a>"}
+      </label>
+    </td><td>
+      <input type="text" size="6" id="formDigibugEventId" autocomplete="off"
+       name="{g->formVar var="form[digibugPricelistId]"}" value="{$form.digibugPricelistId}"/>
+    </td></tr>
+    {if isset($form.error.digibugPricelistId.missing)}
+    <tr><td colspan="2">
+      <div class="giError">
+	{g->text text="Please create an event or use your default event id as your pricelist id."}
+      </div>
+    </td></tr>
+    {/if}
+  </table>
 </div>
 
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
   {if $AdminDigibug.isConfigure}
     <input type="submit" class="inputTypeSubmit"
      name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>

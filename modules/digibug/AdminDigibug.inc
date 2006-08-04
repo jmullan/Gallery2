@@ -37,48 +37,42 @@ class AdminDigibugController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest(&$form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['save'])) {
-	    if (empty($form['digibugCustomerId']) || empty($form['digibugPricelistId'])) {
-		if(empty($form['digibugCustomerId'])){
-		    $error[] = 'form[error][digibugCustomerId][missing]';
+	    if (empty($form['digibugCustomerId'])){
+		$error[] = 'form[error][digibugCustomerId][missing]';
+	    }
+	    if (empty($form['digibugPricelistId'])){
+		$error[] = 'form[error][digibugPricelistId][missing]';
+	    }
+	    if (empty($error)) {
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'digibug');
+		if ($ret) {
+		    return array($ret, null);
 		}
-		if(empty($form['digibugPricelistId'])){
-		    $error[] = 'form[error][digibugPricelistId][missing]';
+		list ($ret, $isActive) = $module->isActive();
+		if ($ret) {
+		    return array($ret, null);
 		}
-	    } else {
-		if (empty($error)) {
 
-		    $ret = GalleryCoreApi::setPluginParameter('module','digibug', 'digibugCustomerId', $form['digibugCustomerId']);
+		foreach (array('digibugCustomerId', 'digibugPricelistId') as $key) {
+		    $ret = $module->setParameter($key, $form[$key]);
 		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret, null);
 		    }
+		}
 
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'digibug', 'digibugPricelistId', $form['digibugPricelistId']);
-		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'digibug');
-		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    list ($ret, $isActive) = $module->isActive();
-		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    $redirect['view'] = 'core.SiteAdmin';
-		    $redirect['subView'] = 'core.AdminModules';
+		$redirect = array('view' => 'core.SiteAdmin');
+		if ($isActive) {
+		    $redirect['subView'] = 'digibug.AdminDigibug';
+		    $status['saved'] = 1;
+		} else {
+		    $redirect['subView'] = 'core.AdminPlugins';
 		    $status['configured'] = 'digibug';
 		}
 	    }
@@ -87,17 +81,16 @@ class AdminDigibugController extends GalleryController {
 	    $redirect['subView'] = 'digibug.AdminDigibug';
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminModules';
+	    $redirect['subView'] = 'core.AdminPlugins';
 	}
 
+	$results = array('status' => $status, 'error' => $error);
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core.SiteAdmin';
 	    $results['delegate']['subView'] = 'digibug.AdminDigibug';
 	}
-	$results['status'] = $status;
-	$results['error'] = $error;
 
 	return array(null, $results);
     }
@@ -113,32 +106,31 @@ class AdminDigibugView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-	/* Load our default values if we didn't just come from this form. */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'digibug');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	if ($form['formName'] != 'AdminDigibug') {
-	    foreach (array('digibugCustomerId','digibugPricelistId') as $key) {
-		list ($ret, $form[$key]) = GalleryCoreApi::getPluginParameter('module', 'digibug', $key);
+	    foreach (array('digibugCustomerId', 'digibugPricelistId') as $key) {
+		list ($ret, $form[$key]) = $module->getParameter($key);
 		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret, null);
 		}
 	    }
 	    $form['formName'] = 'AdminDigibug';
 	}
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'digibug');
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	list ($ret, $isActive) = $module->isActive();
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$AdminDigibug = array();
-	$AdminDigibug['isConfigure'] = !$isActive;
-
-	$template->setVariable('AdminDigibug', $AdminDigibug);
+	$template->setVariable('AdminDigibug', array('isConfigure' => !$isActive));
 	$template->setVariable('controller', 'digibug.AdminDigibug');
 	return array(null, array('body' => 'modules/digibug/templates/AdminDigibug.tpl'));
     }

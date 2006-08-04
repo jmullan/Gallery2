@@ -32,33 +32,36 @@
  */
 class DigibugCartPlugin extends CartPluginInterface_1_0 {
     /**
-     * @see CartPluginInterface_1_0::getSupportedItemTypes()
+     * @see CartPluginInterface_1_0::getSupportedItemTypes
      */
     function getSupportedItemTypes() {
 	return array('GalleryPhotoItem');
     }
 
     /**
-     * @see CartPluginInterface_1_0::getActionDisplayName()
+     * @see CartPluginInterface_1_0::getActionDisplayName
      */
     function getActionDisplayName() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'digibug');
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 	return array(null, $module->translate('Print with Digibug'));
     }
 
     /**
-     * @see CartPluginInterface_1_0::fulfillCart()
+     * @see CartPluginInterface_1_0::fulfillCart
      */
     function fulfillCart($cartItemIds) {
 	global $gallery;
 	$session =& $gallery->getSession();
 	$session->put('digibug.cart', $cartItemIds);
 
-	return array(null,
-		     array('view' => 'digibug.PrintPhotos', 'return' => 1));
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$returnUrl = $urlGenerator->generateUrl(
+		array('view' => 'cart.ViewCart'), array('forceFullUrl' => true));
+
+	return array(null, array('view' => 'digibug.PrintPhotos', 'returnUrl' => $returnUrl));
     }
 }
 ?>

@@ -28,8 +28,8 @@
 <body onload="go()">
 <form action="http://www.digibug.com/dapi/order.php" method="POST" id="digibugForm">
   <input type="hidden" name="digibug_api_version" value="100"/>
-  <input type="hidden" name="company_id" value="{$PrintPhotos.digibugCustomerId}"/>
-  <input type="hidden" name="event_id" value="{$PrintPhotos.digibugPricelistId}"/>
+  <input type="hidden" name="company_id" value="{$PrintPhotos.params.digibugCustomerId}"/>
+  <input type="hidden" name="event_id" value="{$PrintPhotos.params.digibugPricelistId}"/>
   <input type="hidden" name="cmd" value="addimg"/>
   <input type="hidden" name="partner_code" value="69"/>
   <input type="hidden" name="return_url" value="{$PrintPhotos.returnUrl}"/>
@@ -44,7 +44,7 @@
       <input type="hidden" name="thumb_height_{$index}" value="{$entry.thumbHeight}"/>
     {/if}
     {if !empty($entry.item.title)}
-      <input type="hidden" name="backtext_{$index}" value="{$entry.item.title}"/>
+      <input type="hidden" name="backtext_{$index}" value="{$entry.item.title|markup:none}"/>
     {/if}
   {/foreach}
 </form>

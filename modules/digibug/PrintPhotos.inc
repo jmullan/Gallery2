@@ -40,13 +40,13 @@ class PrintPhotosView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::renderImmedate()
+     * @see GalleryView::renderImmedate
      */
     function renderImmediate($status, $error) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	list ($itemId, $returnUrl) = GalleryUtilities::getRequestVariables('itemId', 'return');
+	list ($itemId, $returnUrl) = GalleryUtilities::getRequestVariables('itemId', 'returnUrl');
 	if (!empty($itemId)) {
 	    $cartItemIds = array($itemId => 1);
 	} else {
@@ -55,45 +55,45 @@ class PrintPhotosView extends GalleryView {
 	    $session->remove('digibug.cart');
 	}
 	if (empty($cartItemIds) || empty($returnUrl)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
 	/* Load the necessary item data */
 	$itemIds = array_keys($cartItemIds);
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($itemIds);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds($itemIds);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::studyPermissions($itemIds);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* We want to know which are viewable to guests */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::studyPermissions($itemIds, $anonymousUserId);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	/* Assemble all our data */
@@ -103,12 +103,12 @@ class PrintPhotosView extends GalleryView {
 	    $itemId = $item->getId();
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    list ($ret, $publicPermissions) =
 		GalleryCoreApi::getPermissions($itemId, $anonymousUserId);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 
 	    if (!isset($permissions['digibug.print'])) {
@@ -116,48 +116,46 @@ class PrintPhotosView extends GalleryView {
 		continue;
 	    }
 
-
 	    $source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
 	    $needSession = !isset($publicPermissions['core.viewSource']);
 
-	    if ($needSession && !isset($sfSession)) {
+	    if ($needSession && !isset($dgSession)) {
 		/*
 		 * Get G2 session for digibug to access non-public images.
 		 * We can't use this session because hijack protection will prevent access
 		 * plus the current user could logout before digibug retrieves the images.
 		 * Create a new session with the rights of current user for digibug to use.
 		 */
-		$sfSession = new GallerySession();
-		$ret = $sfSession->initEmpty(true, $gallery->getActiveUserId());
+		$dgSession = new GallerySession();
+		$ret = $dgSession->initEmpty(true, $gallery->getActiveUserId());
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 
 		/* Mark this session so that it can be treated specially */
-		$sfSession->put('core.isPrintService', 1);
+		$dgSession->put('core.isPrintService', 1);
 
 		/*
-		 * TODO: Would like to enforce a particular session timeout to ensure this
-		 * session lasts long enough for digibug to retrieve the images.  With
-		 * current file based sessions this would require modifying ctime of files
-		 * which we can't do.  Maybe if sessions move to the database we'll be able
-		 * to guarantee session lifetime.
-		 * When we can do this, maybe also store the sessionid in this session so we
-		 * can reuse it for multiple print requests (and just bump timeout each time).
+		 * TODO: Would like to enforce a particular session timeout to ensure this session
+		 * lasts long enough for digibug to retrieve the images.  Maybe also store the
+		 * sessionid in this session so we can reuse it for multiple print requests (and
+		 * just bump timeout each time).
 		 */
-		$ret = $sfSession->save();
+		$ret = $dgSession->save();
 		if ($ret) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return $ret;
 		}
 	    }
 	    $sessionParam =
-		$needSession ? array($sfSession->getKey() => $sfSession->getId()) : array();
+		$needSession ? array($dgSession->getKey() => $dgSession->getId()) : array();
 
 	    $entry = array('item' => (array)$item);
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
 		array_merge(array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
 			    $sessionParam),
 		array('forceSessionId' => false, 'forceFullUrl' => true));
+	    $entry['imageWidth'] = $source->getWidth();
+	    $entry['imageHeight'] = $source->getHeight();
 
 	    if (!isset($thumbnails[$itemId]) || $thumbnails[$itemId]->getPostFilterOperations()){
 		/* Use the source if the thumbnail has a postfilter (like a watermark) */
@@ -167,15 +165,10 @@ class PrintPhotosView extends GalleryView {
 	    }
 
 	    $entry['thumbUrl'] = $urlGenerator->generateUrl(
-		array_merge(array('view' => 'core.DownloadItem',
-		    'itemId' => $thumbSource->getId()),
-		    $sessionParam),
-		    array('forceSessionId' => false, 'forceFullUrl' => true));
+		array('view' => 'core.DownloadItem', 'itemId' => $thumbSource->getId()),
+		array('forceSessionId' => $needSession, 'forceFullUrl' => true));
 	    $entry['thumbWidth'] = $thumbSource->getWidth();
 	    $entry['thumbHeight'] = $thumbSource->getHeight();
-
-	    $entry['imageWidth'] = $source->getWidth();
-	    $entry['imageHeight'] = $source->getHeight();
 
 	    /*
 	     * Ugh, the Digibug api doesn't have a parameter for quantity.
@@ -197,12 +190,10 @@ class PrintPhotosView extends GalleryView {
 	    header("Content-type: text/html; charset=UTF-8");
 	}
 
-	list ($digibugCustomerId, $digibugPricelistId) =
-	    GalleryUtilities::getRequestVariables('digibugCustomerId', 'digibugPricelistId');
-	list ($ret, $digibugCustomerId) =
-	    GalleryCoreApi::getPluginParameter('module', 'digibug', 'digibugCustomerId');
-	list ($ret, $digibugPricelistId) =
-	    GalleryCoreApi::getPluginParameter('module', 'digibug', 'digibugPricelistId');
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'digibug');
+	if ($ret) {
+	    return $ret;
+	}
 
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	$template = new GalleryTemplate(dirname(dirname(dirname(__FILE__))));
@@ -210,8 +201,7 @@ class PrintPhotosView extends GalleryView {
 	$template->setVariable('PrintPhotos', array('returnUrl' => $returnUrl,
 						    'count' => count($entries),
 						    'entries' => $entries,
-						    'digibugCustomerId' => $digibugCustomerId,
-						    'digibugPricelistId' => $digibugPricelistId));
+						    'params' => $params));
 	$template->display('gallery:modules/digibug/templates/PrintPhotos.tpl');
 
 	return null;

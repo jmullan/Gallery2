@@ -36,27 +36,24 @@ class DigibugModule extends GalleryModule {
 	$this->setId('digibug');
 	$this->setName($gallery->i18n('Digibug'));
 	$this->setDescription($gallery->i18n('Digibug Photo Printing Module'));
-	$this->setVersion('0.3.5'); /* Update upgrade() too */
+	$this->setVersion('0.9.0'); /* Update upgrade() too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
-	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setCallbacks('getSiteAdminViews|getItemLinks');
+	$this->setRequiredCoreApi(array(7, 7));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
 	if (!isset($currentVersion)) {
 	    $currentVersion = '0';
-	} else if (version_compare($currentVersion, '1.0.0', '<')) {
-	    /* Instead of enumerating all previous versions... */
-	    $currentVersion = '1.0.0';
 	}
 	list ($ret, $coreParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	switch ($currentVersion) {
@@ -65,61 +62,75 @@ class DigibugModule extends GalleryModule {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'digibug.print',
 						      $gallery->i18n('[digibug] Print'));
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    /* Give everybody print permission by default */
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'digibug.print', true);
 	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $ret;
 	    }
 	    break;
 
-	case '1.0.0':
-	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'digibug.print',
-						      $gallery->i18n('[digibug] Print'));
-	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $ret = GalleryCoreApi::addGroupPermission(
-		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
-		'digibug.print', true);
-	    if ($ret) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	case '1.0.1':
-	case '1.0.2':
-	case '1.0.3':
+	case '0.3.3':
+	case '0.3.4':
+	case '0.3.5':
 
 	case 'end of upgrade path':
 	    break;
 
 	default:
 	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+					 sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return null;
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'CartPluginInterface_1_0', 'DigibugCartPlugin', 'digibug',
 	    'modules/digibug/classes/DigibugCartPlugin.class', 'digibug', null);
 	if ($ret) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $ret;
 	}
 
 	return null;
     }
 
     /**
-     * @see GalleryModule::getItemLinks()
+     * @see GalleryModule::autoConfigure
+     */
+    function autoConfigure() {
+	list ($ret, $needsConfiguration) = $this->needsConfiguration();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	return array(null, !$needsConfiguration);
+    }
+
+    /**
+     * @see GalleryModule::autoConfigure
+     */
+    function needsConfiguration() {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'digibug');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	foreach (array('digibugCustomerId', 'digibugPricelistId') as $key) {
+	    if (empty($params[$key])) {
+		return array(null, true);
+	    }
+	}
+	return array(null, false);
+    }
+
+    /**
+     * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
@@ -132,7 +143,7 @@ class DigibugModule extends GalleryModule {
 		$links[$itemId][] =
 		    array('text' => $this->translate('Print on Digibug.com'),
 			  'params' => array('view' => 'digibug.PrintPhotos',
-					    'itemId' => $itemId, 'return' => 1));
+					    'itemId' => $itemId, 'returnUrl' => '%CURRENT_URL%'));
 	    }
 	}
 
@@ -140,42 +151,15 @@ class DigibugModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::autoConfigure
-     */
-    function autoConfigure() {
-	global $gallery;
-	list ($ret, $needsConfiguration) = $this->needsConfiguration();
-	if ($ret) {
-	   return array($ret->wrap(__FILE__, __LINE__), false);
-	} else {
-	   return array(null, true);
-	}
-    }
-
-    function needsConfiguration(){
-	/* This module requires all fields to be filled out before it can be activated. */
-	foreach (array('digibugCustomerId', 'digibugPricelistId') as $key) {
-	    list ($ret, $value) = $this->getParameter($key);
-	    if ($ret) {
-	       return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if (empty($value)) {
-		return array(null, true);
-	    }
-	}
-	return array(null, false);
-    }
-
-    /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	return array(null,
-	array(array('name' => $this->translate('digibug'), 'view' => 'digibug.AdminDigibug')));
+	return array(null, array(array('name' => $this->translate('Digibug'),
+				       'view' => 'digibug.AdminDigibug')));
     }
 
     /**
-     * @see GalleryModule::getConfigurationView()
+     * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
 	return 'digibug.AdminDigibug';
