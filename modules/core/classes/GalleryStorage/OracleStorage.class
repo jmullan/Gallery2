@@ -78,8 +78,15 @@ class OracleStorage extends GalleryStorage {
 	    break;
 
 	case 'BIT_OR':
-	    $sql = 'BIT_OR(' . $args[0] . ')';
-            break;
+	    /*
+	     * By default don't use BIT_OR aggregate, but OR together values in PHP.
+	     * Performing BIT_OR in the database may boost performance a bit; to do
+	     * this, see OracleCreateBitOr.sql in this directory and run the statements
+	     * with sqlplus.  Then uncomment the line below:
+	     */
+	    /* return array(null, 'BIT_OR(' . $args[0] . ')'); */
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION), null);
+	    break;
 
 	case 'AS':
 	    $sql = '';
@@ -137,63 +144,6 @@ class OracleStorage extends GalleryStorage {
 
 	return array(null, $sql);
     }
-
-    /**
-     * @see GalleryStorage::cleanStore
-     */
-    function cleanStore() {
-	$ret = parent::cleanStore();
-	if ($ret) {
-	    return $ret;
-	}
-
-	/*
-	 * Create a temporary database connection and remove our custom
-	 * aggregate function.
-	 */
-	list ($ret, $tmpDb) = $this->_getConnection(true);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->_traceStart();
-	$recordSet1 = $tmpDb->Execute('DROP FUNCTION BIT_OR');
-	$recordSet2 = $tmpDb->Execute('DROP TYPE BIT_OR_IMPL');
-	$tmpDb->Close();
-	$this->_traceStop();
-
-	if (empty($recordSet1) || empty($recordSet2)) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
-	}
-
-	return null;
-    }
-
-    /**
-     * @see GalleryStorage::configureStore
-     */
-    function configureStore($moduleId, $upgradeInfo=array()) {
-	if ($moduleId == 'core') {
-	    /* Install our custom aggregate function */
-	    $ret = $this->_executeSqlFile(dirname(__FILE__) . '/OracleCreateBitOr.sql');
-
-	    /*
-	     * Ignore errors here, since we'll get them every time we try to
-	     * install the aggregate, which will happen every time we upgrade core
-	     * or install in a database with another Gallery already present.
-	     *
-	     * XXX: At some point figure out a way to detect if the aggregate is
-	     * already there before trying to install it again.
-	     */
-	}
-
-	$ret = parent::configureStore($moduleId, $upgradeInfo);
-	if ($ret) {
-	    return $ret;
-	}
-
-	return null;
-     }
 
     /**
      * Get database version.

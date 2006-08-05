@@ -1,7 +1,6 @@
 
 -- Create BIT_OR aggregate function (requires Oracle 9i or higher)
--- Extra semicolons below ensure executed statements include a semicolon at the end
--- (one is stripped off when this file is split into multiple blocks)
+-- Optional in a G2 Oracle instllation.. see BIT_OR comments in OracleStorage.class
 
 create or replace type BIT_OR_IMPL as object (
   val NUMBER,
@@ -40,7 +39,8 @@ create or replace type body BIT_OR_IMPL is
     self.val := (self.val + ctx2.val) - BitAND(self.val, ctx2.val);
     return ODCIConst.Success;
   end;
-end;;
+end;
+/
 
 create or replace function BIT_OR(input number) return number
   parallel_enable aggregate using BIT_OR_IMPL;
