@@ -33,10 +33,13 @@
 </script>
 
 <div class="gbBlock">
-  <h3> {g->text text="Watermark"} </h3>
-
   <p class="giDescription">
-    {g->text text="You can choose a watermark to apply to this image.  Watermarks do not affect the original image, so they they can be applied to resizes and thumbnails without damaging the original."}
+  {if $ItemEditWatermark.isAlbum}
+    {g->text text="You can choose a watermark to apply to all images in this album.  Settings here will replace any existing watermarks."}
+  {else}
+    {g->text text="You can choose a watermark to apply to this image."}
+  {/if}
+  {g->text text="Watermarks do not modify the original images, so they can be applied to full size, resizes or thumbnail without affecting the original, and can be removed later."}
   </p>
 </div>
 
@@ -65,11 +68,15 @@
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="Step 2.  Place the watermark on your image."} </h3>
+  <h3> {g->text text="Step 2.  Placement for the watermark"} </h3>
 
-  {g->image id="watermark_original" maxSize=400 style="display: block"
-	    item=$ItemEditWatermark.item forceRawImage=true
-	    image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item}
+  {if isset($ItemEditWatermark.image)}
+    {g->image id="watermark_original" maxSize=400 style="display: block"
+	      item=$ItemEditWatermark.item image=$ItemEditWatermark.image forceRawImage=true}
+  {else}
+    <div id="watermark_original" class="gcBackground1"
+     style="width: 400px; height: 300px; border-width: 1px; margin: 5px 0 10px 5px"></div>
+  {/if}
   <img id="watermark_floater"
    src="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$form.watermarkId`"}"
    width="{$ItemEditWatermark.watermarks[$form.watermarkId].width}"
@@ -78,7 +85,7 @@
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="Step 3.  Choose which versions of the image you'd like to watermark"} </h3>
+  <h3> {g->text text="Step 3.  Choose which images to watermark"} </h3>
 
   {if isset($form.error.versions.missing)}
   <div class="giError">
@@ -87,23 +94,42 @@
   {/if}
 
   <input type="checkbox"{if isset($form.whichDerivative.preferred)} checked="checked"{/if}
-   name="{g->formVar var="form[whichDerivative][preferred]"}"/>
-  {g->text text="Full size (won't damage the original file)"}
+   name="{g->formVar var="form[whichDerivative][preferred]"}" id="cbFullSize"/>
+  <label for="cbFullSize">
+    {g->text text="Full size (won't damage the original file)"}
+  </label>
   <br/>
 
   <input type="checkbox"{if isset($form.whichDerivative.resize)} checked="checked"{/if}
-   name="{g->formVar var="form[whichDerivative][resize]"}"/>
-  {g->text text="Resizes"}
+   name="{g->formVar var="form[whichDerivative][resize]"}" id="cbResizes"/>
+  <label for="cbResizes">
+    {g->text text="Resizes"}
+  </label>
   <br/>
 
   <input type="checkbox"{if isset($form.whichDerivative.thumbnail)} checked="checked"{/if}
-   name="{g->formVar var="form[whichDerivative][thumbnail]"}"/>
-  {g->text text="Thumbnail"}
+   name="{g->formVar var="form[whichDerivative][thumbnail]"}" id="cbThumbnail"/>
+  <label for="cbThumbnail">
+    {g->text text="Thumbnail"}
+  </label>
   <br/>
 </div>
 
+{if $ItemEditWatermark.isAlbum}
+<div class="gbBlock">
+  <h3> {g->text text="Step 4.  Subalbums"} </h3>
+
+  <input type="checkbox"{if isset($form.recursive)} checked="checked"{/if}
+   name="{g->formVar var="form[recursive]"}"/>
+  <label for="cbRecursive">
+    {g->text text="Also apply watermark change to all subalbums"}
+  </label>
+</div>
+{/if}
+
 <div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit" onclick="calculatePercentages('watermark_floater'); return true"
+  <input type="submit" class="inputTypeSubmit"
+   onclick="calculatePercentages('watermark_floater'); return true"
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Apply Watermark"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][remove]"}" value="{g->text text="Remove Watermark"}"/>
