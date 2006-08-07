@@ -148,8 +148,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (isset($form['recreateThumbnails'])) {
 		    $templateAdapter =& $gallery->getTemplateAdapter();
 		    $templateAdapter->registerTrailerCallback(
-			array($this, 'runRecreateThumbnails'),
-			array($form, $item, $preferred, $status));
+			array($this, 'runRecreateThumbnails'), array($form, $item, $preferred));
 		    $requiresProgressBar = true;
 		}
 
@@ -161,8 +160,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (isset($form['recreateResizes'])) {
 		    $templateAdapter =& $gallery->getTemplateAdapter();
 		    $templateAdapter->registerTrailerCallback(
-			array($this, 'runRecreateResizes'),
-			array($form, $item, $preferred, $status));
+			array($this, 'runRecreateResizes'), array($form, $item, $preferred));
 		    $requiresProgressBar = true;
 		}
 
@@ -249,8 +247,6 @@ class ItemEditAlbum extends ItemEditPlugin {
      * @see ItemEditPlugin::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	global $gallery;
-
 	if ($form['formName'] != 'ItemEditAlbum') {
 	    $tmp = explode('|', $item->getOrderBy(), 2);
 	    if (count($tmp) < 2) {
@@ -359,7 +355,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		     'modules/core/templates/ItemEditAlbum.tpl', 'modules_core');
     }
 
-    function runRecreateResizes($form, $item, $preferred, $status) {
+    function runRecreateResizes($form, $item, $preferred) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
@@ -369,7 +365,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	}
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$ret = $templateAdapter->updateProgressBar(
-	    $module->translate('Recreating resized images'), 'Preparing...', 0);
+	    $module->translate('Recreating resized images'), $module->translate('Preparing...'), 0);
 	if ($ret) {
 	    return $ret;
 	}
@@ -541,7 +537,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	return null;
     }
 
-    function runRecreateThumbnails($form, $item, $preferred, $status) {
+    function runRecreateThumbnails($form, $item, $preferred) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
