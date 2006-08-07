@@ -33,61 +33,11 @@ class UserWatermarksController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
+	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 	$status = $error = array();
 	if (isset($form['action']['add']) && !empty($form['tmp_name'][1])) {
-
-	    /* Get the mime type from the upload info. */
-	    $mimeType = $form['type'][1];
-
-	    /*
-	     * If we don't get useful data from that or its a type we don't
-	     * recognize, take a swing at it using the file name.
-	     */
-	    list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
-	    if ($mimeType == 'application/octet-stream' ||
-		$mimeType == 'application/unknown' || empty($mimeExtensions)) {
-		$extension = GalleryUtilities::getFileExtension($form['name'][1]);
-		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-		if ($ret) {
-		    $mimeType = 'application/unknown';
-		}
-	    }
-
-	    list ($ret, $item) =
-		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    if (!isset($item)) {
-		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
-	    }
-
-	    $ret = $item->create($form['tmp_name'][1], $mimeType, $form['name'][1]);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    $ret = $item->save();
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    /* Give appropriate permissions */
-	    list ($ret, $id) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    $ret = GalleryCoreApi::addGroupPermission($item->getId(), $id, 'core.all');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    $ret = GalleryCoreApi::addUserPermission($item->getId(), $gallery->getActiveUserId(),
-						     'core.all');
+	    list ($ret) = WatermarkHelper::createWatermarkImage($form);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -100,8 +50,6 @@ class UserWatermarksController extends GalleryController {
 	    $results['delegate']['view'] = 'core.UserAdmin';
 	    $results['delegate']['subView'] = 'watermark.UserWatermarks';
 	} else if (isset($form['action']['delete']) && isset($form['delete']['watermarkId'])) {
-	    GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
-
 	    list ($ret, $wasDeleted) =
 		WatermarkHelper::deleteWatermarkImageById($form['delete']['watermarkId']);
 	    if ($ret) {

@@ -59,12 +59,6 @@ class WatermarkSiteAdminEditView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$template->javascript('lib/yui/yahoo-min.js');
-	$template->javascript('lib/yui/dom-min.js');
-	$template->javascript('lib/yui/event-min.js');
-	$template->javascript('lib/yui/dragdrop-min.js');
-	$template->javascript('modules/watermark/watermark.js');
-
 	return array(null,
 		     array('body' => 'modules/watermark/templates/WatermarkSiteAdminEdit.tpl'));
     }

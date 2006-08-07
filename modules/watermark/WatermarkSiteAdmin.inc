@@ -33,6 +33,8 @@ class WatermarkSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
+	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
@@ -40,58 +42,9 @@ class WatermarkSiteAdminController extends GalleryController {
 
 	$status = array();
 	if (isset($form['action']['add']) && !empty($form['tmp_name'][1])) {
-
-	    /* Get the mime type from the upload info. */
-	    $mimeType = $form['type'][1];
-
-	    /*
-	     * If we don't get useful data from that or its a type we don't
-	     * recognize, take a swing at it using the file name.
-	     */
-	    list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
+	    list ($ret) = WatermarkHelper::createWatermarkImage($form, true);
 	    if ($ret) {
 		return array($ret, null);
-	    }
-	    if ($mimeType == 'application/octet-stream' ||
-		    $mimeType == 'application/unknown' || empty($mimeExtensions)) {
-		$extension = GalleryUtilities::getFileExtension($form['name'][1]);
-		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-		if ($ret || empty($mimeType)) {
-		    $mimeType = 'application/unknown';
-		}
-	    }
-
-	    list ($ret, $item) =
-		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    if (!isset($item)) {
-		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
-	    }
-
-	    $ret = $item->create($form['tmp_name'][1], $mimeType, $form['name'][1]);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    $ret = $item->save();
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    /* Give appropriate permissions */
-	    foreach (array('id.allUserGroup' => 'core.viewSource',
-			   'id.adminGroup' => 'core.all') as $key => $perm) {
-		list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', $key);
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		$ret = GalleryCoreApi::addGroupPermission($item->getId(), $id, $perm);
-		if ($ret) {
-		    return array($ret, null);
-		}
 	    }
 
 	    $status['add'] = 1;
@@ -101,8 +54,6 @@ class WatermarkSiteAdminController extends GalleryController {
 	} else if (isset($form['action']['add'])) {
 	    $status['add_error'] = 1;
 	} else if (isset($form['action']['delete']) && isset($form['delete']['watermarkId'])) {
-	    GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
-
 	    list ($ret, $wasDeleted) =
 		WatermarkHelper::deleteWatermarkImageById($form['delete']['watermarkId']);
 	    if ($ret) {

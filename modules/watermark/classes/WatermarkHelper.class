@@ -159,7 +159,7 @@ class WatermarkHelper {
 
 	$query = '
 	SELECT DISTINCT
-          [GalleryChildEntity::parentId]
+	  [GalleryChildEntity::parentId]
 	FROM
 	  [GalleryChildEntity], [GalleryDerivative]
 	WHERE
@@ -411,6 +411,82 @@ class WatermarkHelper {
     }
 
     /**
+     * Create new WatermarkImage from given form data.
+     *
+     * @param array form
+     * @param boolean (optional) true to make watermark available to all users
+     * @return array object GalleryStatus a status code
+     *               object WatermarkImage
+     */
+    function createWatermarkImage(&$form, $isPublic=false) {
+	global $gallery;
+
+	/* Get the mime type from the upload info. */
+	$mimeType = $form['type'][1];
+
+	/*
+	 * If we don't get useful data from that or its a type we don't
+	 * recognize, take a swing at it using the file name.
+	 */
+	list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($mimeType == 'application/octet-stream'
+		|| $mimeType == 'application/unknown' || empty($mimeExtensions)) {
+	    $extension = GalleryUtilities::getFileExtension($form['name'][1]);
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	    if ($ret) {
+		$mimeType = 'application/unknown';
+	    }
+	}
+
+	list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (!isset($item)) {
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	}
+
+	$ret = $item->create($form['tmp_name'][1], $mimeType, $form['name'][1]);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$ret = $item->save();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$itemId = $item->getId();
+
+	/* Give appropriate permissions */
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$ret = GalleryCoreApi::addGroupPermission($itemId, $params['id.adminGroup'], 'core.all');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($isPublic) {
+	    $ret = GalleryCoreApi::addGroupPermission($itemId, $params['id.allUserGroup'],
+						      'core.viewSource');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	} else {
+	    $ret = GalleryCoreApi::addUserPermission($itemId, $gallery->getActiveUserId(),
+						     'core.all');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	return array(null, $item);
+    }
+
+    /**
      * handleRequest for WatermarkSiteAdminEdit and UserWatermarkEdit
      *
      * @param array form data
@@ -422,8 +498,7 @@ class WatermarkHelper {
      * @static
      */
     function handleEditRequest($form, $view, $subViewSuccess, $subViewError) {
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	$itemId = GalleryUtilities::getRequestVariables('watermarkId');
 	if (empty($itemId)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
@@ -538,6 +613,12 @@ class WatermarkHelper {
 	    $form['whichDerivative']['thumbnail'] = $watermark->getApplyToThumbnail() ? 1 : null;
 	    $form['whichDerivative']['resizes'] = $watermark->getApplyToResizes() ? 1 : null;
 	}
+
+	$template->javascript('lib/yui/yahoo-min.js');
+	$template->javascript('lib/yui/dom-min.js');
+	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/dragdrop-min.js');
+	$template->javascript('modules/watermark/watermark.js');
 
 	$template->setVariable($formName, array('watermark' => (array)$watermark));
 	$template->setVariable('controller', "watermark.$formName");
