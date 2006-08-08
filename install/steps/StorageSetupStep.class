@@ -300,7 +300,7 @@ class StorageSetupStep extends InstallStep {
 	fclose($fd);
 
 	/* Check if the expected string is present. */
-	return array(true, strpos($fetchedPage, $probeString) != false);
+	return array(true, strpos($fetchedPage, $probeString) !== false);
     }
 }
 ?>
