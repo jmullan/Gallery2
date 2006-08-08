@@ -16,28 +16,28 @@
 
     <h1><?php print _("Storage Setup") ?></h1>
 
-    <?php if (isset($templateData['error']['web_accessible_dir']) || 
-	          isset($templateData['error']['possibly_web_accessible_dir'])): ?>
+    <?php if (isset($templateData['error']['web_accessible_dir']) ||
+		  isset($templateData['error']['possibly_web_accessible_dir'])): ?>
     <?php endif; ?>
 
     <p>
       <?php printf(_("Gallery needs a directory to store your images. The directory we chose for you will work, but its location or current name does not provide maximum security. Either select a new directory outside of the %sdocument root%s directory or add a random string to the end of the directory name (e.g. %s)."),
-                   '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#What_does_web-accessible_mean_.2F_what_is_the_document_root.3F" target="_blank">',
-                   '</a>', $templateData['suggested_obfuscated_g2data_name']); ?>
+		   '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#What_does_web-accessible_mean_.2F_what_is_the_document_root.3F" target="_blank">',
+		   '</a>', $templateData['suggested_obfuscated_g2data_name']); ?>
     </p>
-    
+
     <div class="warning" style="padding-top: 0.8em; padding-bottom: 0.9em">
       <?php printf(_('For maximum security you should pick a directory that is not %sweb accessible%s. If this is not possible, specify a randomized name for this directory.'),
-                   '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#What_does_web-accessible_mean_.2F_what_is_the_document_root.3F" target="_blank">',
-                   '</a>'); ?>
-      <?php if (isset($templateData['error']['web_accessible_dir']) || 
-	            isset($templateData['error']['possibly_web_accessible_dir'])): ?>
+		   '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#What_does_web-accessible_mean_.2F_what_is_the_document_root.3F" target="_blank">',
+		   '</a>'); ?>
+      <?php if (isset($templateData['error']['web_accessible_dir']) ||
+		    isset($templateData['error']['possibly_web_accessible_dir'])): ?>
       <p>
-        <?php print _('If you choose a randomized name or prefer to stick with the specified directory, please confirm your choice.'); ?>
+	<?php print _('If you choose a randomized name or prefer to stick with the specified directory, please confirm your choice.'); ?>
       </p>
       <?php print _('Yes, please omit the security check:'); ?>
       <input type="checkbox" name="i_acknowledge_the_risk"/>
-      <?php endif; ?>      
+      <?php endif; ?>
     </div>
 
     <?php if (isset($templateData['isMultisite']) && $templateData['isMultisite']): ?>
@@ -69,7 +69,7 @@
 	    <?php print _('There was an error creating the directory structure within the storage directory.'); ?>
 	    <?php endif; ?>
 	    <?php if (isset($templateData['error']['web_accessible_dir'])): ?>
-            <?php printf(_('Your storage directory is %sweb accessible%s. '),
+	    <?php printf(_('Your storage directory is %sweb accessible%s. '),
 			 '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#What_does_web-accessible_mean_.2F_what_is_the_document_root.3F" target="_blank">',
 			 '</a>'); ?>
 	    <?php endif; ?>
@@ -77,7 +77,7 @@
 	    <?php printf(_('Unable to verify that the storage directory is not %sweb accessible%s.'),
 			 '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#What_does_web-accessible_mean_.2F_what_is_the_document_root.3F" target="_blank">',
 			 '</a>'); ?>
-            <?php endif; ?>    
+	    <?php endif; ?>
       </div>
 	<?php endif; ?>
 
@@ -87,10 +87,10 @@
 	    <input type="hidden" name="action" value="save" />
 	    <script type="text/javascript">
 	      // <![CDATA[
-              YAHOO.util.Event.addListener(
-                this, 'load',
-                function(e, data) { autoCompleteAttach(data[0], data[1]); },
-                ['dir', '<?php generateUrl(sprintf('%s?step=%s&%s=%s', INDEX_PHP,
+	      YAHOO.util.Event.addListener(
+		this, 'load',
+		function(e, data) { autoCompleteAttach(data[0], data[1]); },
+		['dir', '<?php generateUrl(sprintf('%s?step=%s&%s=%s', INDEX_PHP,
 		  $currentStep->getStepNumber(), session_name(), session_id())) ?>&doAutoComplete=1&path=__VALUE__']);
 	      // ]]>
 	    </script>
