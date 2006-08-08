@@ -28,14 +28,15 @@
     {g->text text="Give this watermark a name so that you can identify it in a list."}
   </p>
 
-  <input type="text" size="40" name="{g->formVar var="form[name]"}" value="{$form.name}"/>
+  <input type="text" size="40"
+   name="{g->formVar var="form[watermarkName]"}" value="{$form.watermarkName}"/>
 
- {if isset($form.error.name.missing)}
+ {if isset($form.error.watermarkName.missing)}
  <div class="giError">
    {g->text text="You must provide a name"}
  </div>
  {/if}
- {if isset($form.error.name.duplicate)}
+ {if isset($form.error.watermarkName.duplicate)}
  <div class="giError">
    {g->text text="Name already used by another watermark"}
  </div>
@@ -85,6 +86,22 @@
    name="{g->formVar var="form[whichDerivative][thumbnail]"}"/>
   {g->text text="Thumbnail"}
   <br/>
+</div>
+
+<div class="gbBlock">
+  <h3> {g->text text="Replace image"} </h3>
+
+  <p class="giDescription">
+    {g->text text="Uploading a new image file will reapply this watermark everywhere it is used in the Gallery.  The new image must match the mime type of the existing file."}
+  </p>
+
+  <input type="file" size="60" name="{g->formVar var="form[1]"}"/>
+
+  {if isset($form.error.mimeType.mismatch)}
+  <p class="giError">
+    {g->text text="Mime type does not match existing file"}
+  </p>
+  {/if}
 </div>
 
 <div class="gbBlock gcBackground1">

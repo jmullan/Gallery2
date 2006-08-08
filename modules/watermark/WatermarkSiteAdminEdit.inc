@@ -54,7 +54,8 @@ class WatermarkSiteAdminEditView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	$ret = WatermarkHelper::loadEditTemplate($template, $form, 'WatermarkSiteAdminEdit');
+	$ret = WatermarkHelper::loadEditTemplate($template, $form,
+						 'WatermarkSiteAdminEdit', 'SiteAdmin');
 	if ($ret) {
 	    return array($ret, null);
 	}

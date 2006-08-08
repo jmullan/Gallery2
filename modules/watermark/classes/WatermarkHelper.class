@@ -411,6 +411,31 @@ class WatermarkHelper {
     }
 
     /**
+     * Determine uploaded mime type
+     * @return string mime type
+     */
+    function determineMimeType(&$form) {
+	/* Get the mime type from the upload info. */
+	$mimeType = $form['type'][1];
+
+	/*
+	 * If we don't get useful data from that or its a type we don't
+	 * recognize, take a swing at it using the file name.
+	 */
+	if ($mimeType != 'application/octet-stream' && $mimeType != 'application/unknown') {
+	    list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
+	}
+	if (empty($mimeExtensions)) {
+	    $extension = GalleryUtilities::getFileExtension($form['name'][1]);
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	    if ($ret) {
+		$mimeType = 'application/unknown';
+	    }
+	}
+	return $mimeType;
+    }
+
+    /**
      * Create new WatermarkImage from given form data.
      *
      * @param array form
@@ -421,26 +446,6 @@ class WatermarkHelper {
     function createWatermarkImage(&$form, $isPublic=false) {
 	global $gallery;
 
-	/* Get the mime type from the upload info. */
-	$mimeType = $form['type'][1];
-
-	/*
-	 * If we don't get useful data from that or its a type we don't
-	 * recognize, take a swing at it using the file name.
-	 */
-	list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
-	if ($ret) {
-	    return array($ret, null);
-	}
-	if ($mimeType == 'application/octet-stream'
-		|| $mimeType == 'application/unknown' || empty($mimeExtensions)) {
-	    $extension = GalleryUtilities::getFileExtension($form['name'][1]);
-	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-	    if ($ret) {
-		$mimeType = 'application/unknown';
-	    }
-	}
-
 	list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
 	if ($ret) {
 	    return array($ret, null);
@@ -449,6 +454,7 @@ class WatermarkHelper {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
+	$mimeType = WatermarkHelper::determineMimeType($form);
 	$ret = $item->create($form['tmp_name'][1], $mimeType, $form['name'][1]);
 	if ($ret) {
 	    return array($ret, null);
@@ -498,6 +504,7 @@ class WatermarkHelper {
      * @static
      */
     function handleEditRequest($form, $view, $subViewSuccess, $subViewError) {
+	global $gallery;
 	$status = $error = array();
 	$itemId = GalleryUtilities::getRequestVariables('watermarkId');
 	if (empty($itemId)) {
@@ -510,11 +517,20 @@ class WatermarkHelper {
 	}
 
 	if (isset($form['action']['save'])) {
-	    if (empty($form['name'])) {
-		$error[] = 'form[error][name][missing]';
+	    if (empty($form['watermarkName'])) {
+		$error[] = 'form[error][watermarkName][missing]';
 	    }
 	    if (empty($form['whichDerivative'])) {
 		$error[] = 'form[error][whichDerivative][missing]';
+	    }
+	    if (!empty($form['tmp_name'][1])) {
+		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if ($item->getMimeType() != WatermarkHelper::determineMimeType($form)) {
+		    $error[] = 'form[error][mimeType][mismatch]';
+		}
 	    }
 
 	    if (empty($error)) {
@@ -523,8 +539,9 @@ class WatermarkHelper {
 		    return array($ret, null);
 		}
 		foreach ($watermarks as $watermark) {
-		    if ($watermark->getName() == $form['name'] && $watermark->getId() != $itemId) {
-			$error[] = 'form[error][name][duplicate]';
+		    if ($watermark->getName() == $form['watermarkName']
+			    && $watermark->getId() != $itemId) {
+			$error[] = 'form[error][watermarkName][duplicate]';
 		    }
 		}
 	    }
@@ -551,9 +568,47 @@ class WatermarkHelper {
 		$item->setApplyToPreferred(isset($form['whichDerivative']['preferred']));
 		$item->setApplyToResizes(isset($form['whichDerivative']['resizes']));
 		$item->setApplyToThumbnail(isset($form['whichDerivative']['thumbnail']));
-		$item->setName($form['name']);
+		$item->setName($form['watermarkName']);
 		$item->setXPercentage(number_format($form['xPercentage'], 3, '.', ''));
 		$item->setYPercentage(number_format($form['yPercentage'], 3, '.', ''));
+
+		if (!empty($form['tmp_name'][1])) {
+		    /* Replace watermark image file */
+		    list ($ret, $path) = $item->fetchPath();
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    $platform =& $gallery->getPlatform();
+		    if (!$platform->copy($form['tmp_name'][1], $path)) {
+			return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null);
+		    }
+		    $ret = $item->rescan();
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    /* Expire derivatives using this watermark */
+		    $query = '
+		    SELECT [GalleryDerivative::id]
+		    FROM [GalleryDerivative]
+		    WHERE [GalleryDerivative::postFilterOperations] LIKE ?
+		    ';
+		    list ($ret, $searchResults) = $gallery->search($query,
+			    array('%composite|plugins_data/modules/watermark/'
+				  . $item->getFileName() . ',%'));
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    while ($result = $searchResults->nextResult()) {
+			list ($ret, $derivative) = GalleryCoreApi::loadEntitiesById($result[0]);
+			if ($ret) {
+			    return array($ret, null);
+			}
+			$ret = $derivative->expireCache();
+			if ($ret) {
+			    return array($ret, null);
+			}
+		    }
+		}
 
 		$ret = $item->save();
 		if ($ret) {
@@ -588,9 +643,10 @@ class WatermarkHelper {
      * @param array template
      * @param array form data
      * @param string form name
+     * @param string page name
      * @static
      */
-    function loadEditTemplate(&$template, &$form, $formName) {
+    function loadEditTemplate(&$template, &$form, $formName, $pageName) {
 	$itemId = GalleryUtilities::getRequestVariables('watermarkId');
 
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
@@ -606,13 +662,16 @@ class WatermarkHelper {
 	if ($form['formName'] != $formName) {
 	    $form['formName'] = $formName;
 
-	    $form['name'] = $watermark->getName();
+	    $form['watermarkName'] = $watermark->getName();
 	    $form['xPercentage'] = $watermark->getXPercentage();
 	    $form['yPercentage'] = $watermark->getYPercentage();
 	    $form['whichDerivative']['preferred'] = $watermark->getApplyToPreferred() ? 1 : null;
 	    $form['whichDerivative']['thumbnail'] = $watermark->getApplyToThumbnail() ? 1 : null;
 	    $form['whichDerivative']['resizes'] = $watermark->getApplyToResizes() ? 1 : null;
 	}
+
+	$page =& $template->getVariableByReference($pageName);
+	$page['enctype'] = 'multipart/form-data';
 
 	$template->javascript('lib/yui/yahoo-min.js');
 	$template->javascript('lib/yui/dom-min.js');

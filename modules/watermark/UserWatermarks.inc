@@ -37,7 +37,7 @@ class UserWatermarksController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['add']) && !empty($form['tmp_name'][1])) {
-	    list ($ret) = WatermarkHelper::createWatermarkImage($form);
+	    list ($ret, $item) = WatermarkHelper::createWatermarkImage($form);
 	    if ($ret) {
 		return array($ret, null);
 	    }

@@ -284,15 +284,35 @@ class WatermarkImage extends GalleryEntity {
 	if (!$platform->copy($inputFileName, $newFileName)) {
 	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 	}
-	$this->setSize($platform->filesize($newFileName));
 
-	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
+	$ret = $this->rescan();
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
+    }
+
+    /**
+     * Determine file size and dimensions
+     * @return object GalleryStatus a status code
+     */
+    function rescan() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$path = $this->getWatermarkDir() . $this->getFileName();
+	$this->setSize($platform->filesize($path));
+
+	list ($ret, $toolkit) =
+	    GalleryCoreApi::getToolkitByProperty($this->getMimeType(), 'dimensions');
 	if ($ret) {
 	    return $ret;
 	}
 
 	if (isset($toolkit)) {
-	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $newFileName);
+	    list ($ret, $dimensions) =
+		$toolkit->getProperty($this->getMimeType(), 'dimensions', $path);
 	    if ($ret) {
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
 		return $ret;
@@ -343,8 +363,7 @@ class WatermarkImage extends GalleryEntity {
      * @return array(object GalleryStatus a status code, string path)
      */
     function fetchPath() {
-	return array(null,
-		     $this->getWatermarkDir() . $this->getFileName());
+	return array(null, $this->getWatermarkDir() . $this->getFileName());
     }
 
     /**

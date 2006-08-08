@@ -54,7 +54,8 @@ class UserWatermarkEditView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	$ret = WatermarkHelper::loadEditTemplate($template, $form, 'UserWatermarkEdit');
+	$ret = WatermarkHelper::loadEditTemplate($template, $form,
+						 'UserWatermarkEdit', 'UserAdmin');
 	if ($ret) {
 	    return array($ret, null);
 	}

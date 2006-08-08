@@ -81,7 +81,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
     function testEditWatermarkEverything() {
 	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[name]', 'foo bar');
+	GalleryUtilities::putRequestVariable('form[watermarkName]', 'foo bar');
 	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
 	GalleryUtilities::putRequestVariable('form[yPercentage]', '50.12');
 	GalleryUtilities::putRequestVariable('form[whichDerivative][preferred]', 'on');
@@ -95,7 +95,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	// Verify the watermark
+	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -112,7 +112,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
     function testEditWatermarkThumbnailOnly() {
 	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[name]', 'foo bar');
+	GalleryUtilities::putRequestVariable('form[watermarkName]', 'foo bar');
 	GalleryUtilities::putRequestVariable('form[xPercentage]', '25.51');
 	GalleryUtilities::putRequestVariable('form[yPercentage]', '50.12');
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
@@ -124,7 +124,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	// Verify the watermark
+	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -147,11 +147,11 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 				      'view' => 'core.SiteAdmin',
 				      'subView' => 'watermark.WatermarkSiteAdminEdit'),
 				  'status' => array(),
-				  'error' => array('form[error][name][missing]',
+				  'error' => array('form[error][watermarkName][missing]',
 						   'form[error][whichDerivative][missing]')),
 			    $results);
 
-	// Verify the watermark
+	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -171,7 +171,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	// Verify the watermark
+	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -183,7 +183,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
     function testBadCoordinates() {
 	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[name]', 'foo bar');
+	GalleryUtilities::putRequestVariable('form[watermarkName]', 'foo bar');
 	GalleryUtilities::putRequestVariable('form[xPercentage]', '101.51');
 	GalleryUtilities::putRequestVariable('form[yPercentage]', '-5.12');
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
@@ -195,7 +195,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	// Verify the watermark
+	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -203,6 +203,86 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals('100', $this->_watermark->getXPercentage());
 	$this->assertEquals('0', $this->_watermark->getYPercentage());
+    }
+
+    function testReplaceImage() {
+	$this->_replaceImageTest('test/file');
+    }
+
+    function testReplaceImageWrongType() {
+	$this->_replaceImageTest('test/blah');
+    }
+
+    function _replaceImageTest($postMimeType) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($item);
+	list ($ret, $derivative) = $this->_createDerivative($item, $item->getId(),
+		DERIVATIVE_TYPE_IMAGE_RESIZE, 'test-operation|400', 'test/file',
+		array('postFilterOperations' => 'composite|plugins_data/modules/watermark/'
+		    . $this->_watermark->getFileName() . ',params'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $derivativeFile) = $derivative->fetchPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	if (!$platform->copy(__FILE__, $derivativeFile)) {
+	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE));
+	}
+	$ret = GalleryCoreApi::addMimeType($ext = 'ut' . rand(100, 999), 'test/file', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[watermarkName]', $this->_watermark->getName());
+	GalleryUtilities::putRequestVariable('form[xPercentage]', '50.00');
+	GalleryUtilities::putRequestVariable('form[yPercentage]', '80.00');
+	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
+	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
+		$sourceFile = dirname(__FILE__) . '/UserWatermarkEditControllerTest.class');
+	GalleryUtilities::putRequestVariable('form[type][1]', $postMimeType);
+	GalleryUtilities::putRequestVariable('form[name][1]', 'file.class');
+
+	$results = $this->handleRequest();
+	$expected = ($postMimeType == 'test/file')
+	    ? array('redirect' => array('view' => 'core.SiteAdmin',
+					'subView' => 'watermark.WatermarkSiteAdmin'),
+		    'status' => array('saved' => 1),
+		    'error' => array())
+	    : array('delegate' => array('view' => 'core.SiteAdmin',
+					'subView' => 'watermark.WatermarkSiteAdminEdit'),
+		    'status' => array(),
+		    'error' => array('form[error][mimeType][mismatch]'));
+	$this->assertEquals($expected, $results);
+
+	$ret = GalleryCoreApi::removeMimeType(array('extension' => $ext));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	/* Verify the watermark */
+	list ($ret, $this->_watermark) = $this->_watermark->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expected = ($postMimeType == 'test/file')
+	    ? array('50', '80', $platform->filesize($sourceFile), false)
+	    : array('100', '100', $platform->filesize(__FILE__), true);
+	$this->assertEquals($expected[0], $this->_watermark->getXPercentage(), 'x');
+	$this->assertEquals($expected[1], $this->_watermark->getYPercentage(), 'y');
+	$this->assertEquals($expected[2], $this->_watermark->getSize(), 'size');
+	$this->assertEquals($expected[3], $platform->file_exists($derivativeFile),
+			    'derivative cache');
     }
 }
 ?>

@@ -42,7 +42,7 @@ class WatermarkSiteAdminController extends GalleryController {
 
 	$status = array();
 	if (isset($form['action']['add']) && !empty($form['tmp_name'][1])) {
-	    list ($ret) = WatermarkHelper::createWatermarkImage($form, true);
+	    list ($ret, $item) = WatermarkHelper::createWatermarkImage($form, true);
 	    if ($ret) {
 		return array($ret, null);
 	    }
