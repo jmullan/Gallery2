@@ -26,6 +26,7 @@
 		   '</a>', $templateData['suggested_obfuscated_g2data_name']); ?>
     </p>
 
+  <form method="post" action="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $stepNumber)) ?>">
     <div class="warning" style="padding-top: 0.8em; padding-bottom: 0.9em">
       <?php printf(_('For maximum security you should pick a directory that is not %sweb accessible%s. If this is not possible, specify a randomized name for this directory.'),
 		   '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#What_does_web-accessible_mean_.2F_what_is_the_document_root.3F" target="_blank">',
@@ -50,8 +51,7 @@
       <?php print _("If you're using a modern browser, we'll try to autocomplete any path you enter here.  So if you're having trouble finding the right path to your g2data directory, try experimenting with paths in the text box below and see what completions it provides for you."); ?>
     </p>
 
-    <form method="post" action="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $stepNumber)) ?>">
-	<?php if (isset($templateData['error'])): ?>
+    <?php if (isset($templateData['error'])): ?>
       <div class="error">
 	    <?php if (isset($templateData['error']['missing_value'])): ?>
 	    <?php print _('You must enter a directory'); ?>
@@ -79,22 +79,22 @@
 			 '</a>'); ?>
 	    <?php endif; ?>
       </div>
-	<?php endif; ?>
+    <?php endif; ?>
 
-	  <span class="label"><?php print _('Directory path:') ?></span>
-	    <input id="dir" name="dir" type="text" size="50"
-	     value="<?php print $templateData['dir'] ?>" autocomplete="off"/>
-	    <input type="hidden" name="action" value="save" />
-	    <script type="text/javascript">
-	      // <![CDATA[
-	      YAHOO.util.Event.addListener(
+    <span class="label"><?php print _('Directory path:') ?></span>
+    <input id="dir" name="dir" type="text" size="50"
+	   value="<?php print $templateData['dir'] ?>" autocomplete="off"/>
+    <input type="hidden" name="action" value="save"/>
+    <script type="text/javascript">
+	// <![CDATA[
+	YAHOO.util.Event.addListener(
 		this, 'load',
 		function(e, data) { autoCompleteAttach(data[0], data[1]); },
 		['dir', '<?php generateUrl(sprintf('%s?step=%s&%s=%s', INDEX_PHP,
 		  $currentStep->getStepNumber(), session_name(), session_id())) ?>&doAutoComplete=1&path=__VALUE__']);
-	      // ]]>
-	    </script>
-    </form>
+	// ]]>
+    </script>
+  </form>
 
     <p>
       <?php print _("Your webserver needs to be able to write to this directory. To get it working, you can follow these examples.") ?>
@@ -107,20 +107,20 @@
     <?php if ($templateData['OS'] == 'unix'): ?>
     <div class="example">
       <h2> <?php print _("Unix (with shell access)"); ?> </h2>
-      <pre> $ <b> <?php printf(_("mkdir %s"), $templateData['dir']) ?> </b> <br/> $ <b> <?php printf(_("chmod 777 %s"), $templateData['dir']) ?> </b> </pre>
+      <pre> $ <b>mkdir <?php print $templateData['dir'] ?></b><br/> $ <b>chmod 777 <?php print $templateData['dir'] ?></b></pre>
     </div>
 
     <div class="example">
       <h2> <?php print _("Unix (with ftp access)"); ?> </h2>
-      <i> <?php print _("Note that ftp servers and clients vary so these instructions may not work for you. Consult the manual for your FTP client or talk to a system administrator for help with this if you have problems") ?> </i> <br/>
-      <pre> ftp> <b> <?php printf(_("cd %s"), dirname($templateData['dir'])) ?></b><br/> ftp> <b> <?php printf(_("mkdir %s"), basename($templateData['dir'])) ?> </b> <br/> ftp> <b> <?php printf(_("chmod 777 %s"), basename($templateData['dir'])) ?> </b> </pre>
+      <i> <?php print _("Note that ftp servers and clients vary so these instructions may not work for you. Consult the manual for your FTP client or talk to a system administrator for help with this if you have problems.") ?> </i> <br/>
+      <pre> ftp&gt; <b>cd <?php print dirname($templateData['dir']) ?></b><br/> ftp&gt; <b>mkdir <?php print basename($templateData['dir']) ?></b><br/> ftp&gt; <b>chmod 777 <?php print basename($templateData['dir']) ?></b></pre>
     </div>
 
     <?php else: ?>
 
     <div class="example">
       <h2> Windows </h2>
-      <pre> C:\> <b> <?php printf(_("mkdir %s"), $templateData['dir']) ?></b></pre>
+      <pre> C:\&gt; <b>mkdir <?php print $templateData['dir'] ?></b></pre>
     </div>
     <?php endif; ?>
 
