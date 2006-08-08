@@ -16,10 +16,6 @@
 
     <h1><?php print _("Storage Setup") ?></h1>
 
-    <?php if (isset($templateData['error']['web_accessible_dir']) ||
-		  isset($templateData['error']['possibly_web_accessible_dir'])): ?>
-    <?php endif; ?>
-
     <p>
       <?php printf(_("Gallery needs a directory to store your images. The directory we chose for you will work, but its location or current name does not provide maximum security. Either select a new directory outside of the %sdocument root%s directory or add a random string to the end of the directory name (e.g. %s)."),
 		   '<a href="http://codex.gallery2.org/index.php/Gallery2:Security#What_does_web-accessible_mean_.2F_what_is_the_document_root.3F" target="_blank">',
