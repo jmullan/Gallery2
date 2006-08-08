@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision: 1.165.2.2 $ $Date: 2006/04/05 22:19:54 $
+ * @version $Revision: 1.165.2.3 $ $Date: 2006/08/08 00:00:00 $
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  */
@@ -1882,6 +1882,21 @@ class CoreModuleExtras {
 	    /* 2.1 Release! */
 	case '1.1.0':
 	    /* 2.1.1 Bugfix Release */
+	case '1.1.0.1':
+	    /*
+	     * 2.1.2 Security Release
+	     * Add a .htaccess file in the storage folder to protect it against direct access
+	     * in case it is accessible from the web.
+	     */
+	    $fh = @fopen($gallery->getConfig('data.gallery.base') . '.htaccess', 'w');
+	    if ($fh) {
+		$htaccessContents = "<IfModule mod_access.c>\n" .
+				    "Order allow,deny\n" .
+				    "Deny from all\n" .
+				    "</IfModule>\n";
+		fwrite($fh, $htaccessContents);
+		fclose($fh);
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2135,6 +2150,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.0.33':
 	case '1.0.34':
 	case '1.1.0':
+	case '1.1.0.1':
 
 	case 'end of upgrade path':
 	    /*

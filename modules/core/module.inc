@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision: 1.263.2.1 $ $Date: 2006/04/05 22:19:54 $
+ * @version $Revision: 1.263.2.2 $ $Date: 2006/08/08 00:00:00 $
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  */
@@ -37,10 +37,10 @@ class CoreModule extends GalleryModule {
 
 	$this->setId('core');
 	$this->setName($gallery->i18n('Core'));
-	$this->setGalleryVersion('2.1.1');
+	$this->setGalleryVersion('2.1.2');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.1.0.1');
+	$this->setVersion('1.1.0.2');
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
