@@ -96,10 +96,6 @@ class MultisiteStep extends InstallStep {
 	/*
 	 * Show full filesystem path and the full URL to config file dir.
 	 */
-	require_once($galleryDir . '/modules/core/classes/GalleryUrlGenerator.class');
-	$urlPath = preg_replace('|^(.*/)install/index.php(?:\?.*)?$|s', '$1',
-				   GalleryUrlGenerator::getCurrentRequestUri());
-
 	$openBasedir = ini_get('open_basedir');
 	if (!empty($openBasedir)) {
 	    $separator = strncasecmp(PHP_OS, 'win', 3) ? ':' : ';';
@@ -111,7 +107,7 @@ class MultisiteStep extends InstallStep {
 	$templateData['isMultisite'] = $this->_isMultisite;
 	$templateData['configPath'] = $this->_configPath;
 	$templateData['galleryDir'] = $galleryDir;
-	$templateData['galleryUrl'] = getBaseUrl() . $urlPath;
+	$templateData['galleryUrl'] = getGalleryDirUrl();
 	$templateData['bodyFile'] = $this->isComplete() ? 'MultisiteSuccess.html'
 							: 'Multisite.html';
     }

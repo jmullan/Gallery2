@@ -2084,6 +2084,20 @@ class CoreModuleExtras {
 	    /* GalleryCoreApi::getMapEntry */
 	case '1.1.13':
 	    /* GalleryDynamicAlbum */
+	case '1.1.14':
+	    /*
+	     * Add a .htaccess file in the storage folder to protect it against direct access
+	     * in case it is accessible from the web.
+	     */
+	    $fh = @fopen($gallery->getConfig('data.gallery.base') . '.htaccess', 'w');
+	    if ($fh) {
+		$htaccessContents = "<IfModule mod_access.c>\n" .
+				    "Order allow,deny\n" .
+				    "Deny from all\n" .
+				    "</IfModule>\n";    
+		fwrite($fh, $htaccessContents);
+		fclose($fh);
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2350,6 +2364,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.11':
 	case '1.1.12':
 	case '1.1.13':
+	case '1.1.14':
 
 	case 'end of upgrade path':
 	    /*

@@ -296,8 +296,32 @@ function populateDataDirectory($dataBase) {
 	    return false;
 	}
     }
+    
+    return secureStorageFolder($dataBase);    
+}
 
-    return true;
+/** 
+ * Secure the storage folder from attempts to access it directly via the web by adding a
+ * .htaccess with a "Deny from all" directive. This won't have any effect on webservers other
+ * than Apache 1.2+ though.
+ * Since we can't reliably tell whether the storage folder is web-accessible or not,
+ * we add this in all cases. It doesn't hurt.
+ * @param string absolute filesystem path to the storage folder.
+ * @return boolean true if the .htaccess file has been created successfully.
+ */
+function secureStorageFolder($dataBase) {
+    $htaccessPath = $dataBase . '.htaccess';
+    $fh = @fopen($htaccessPath, 'w');
+    if ($fh) {
+	$htaccessContents = "<IfModule mod_access.c>\n" .
+			    "Order allow,deny\n" .
+			    "Deny from all\n" .
+			    "</IfModule>\n";    
+	fwrite($fh, $htaccessContents);
+	fclose($fh);
+    }
+    
+    return file_exists($htaccessPath);
 }
 
 /* Returns something like https://example.com */
@@ -309,6 +333,16 @@ function getBaseUrl() {
     $protocol = (GalleryUtilities::getServerVar('HTTPS') == 'on') ? 'https' : 'http';
 
     return sprintf('%s://%s', $protocol, $hostName);
+}
+
+/** Returns the URL to the G2 folder, e.g. http://example.com/gallery2/. */
+function getGalleryDirUrl() {
+    $galleryDir = dirname(dirname(__FILE__));
+    require_once($galleryDir . '/modules/core/classes/GalleryUrlGenerator.class');
+    $urlPath = preg_replace('|^(.*/)install/index.php(?:\?.*)?$|s', '$1',
+                            GalleryUrlGenerator::getCurrentRequestUri());
+				   
+    return $baseUri = getBaseUrl() . $urlPath;
 }
 
 /**
