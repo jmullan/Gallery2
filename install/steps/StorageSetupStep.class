@@ -64,49 +64,44 @@ class StorageSetupStep extends InstallStep {
 			    && is_readable($parentDir) && is_writeable($parentDir)) {
 			$dir = $parentDir . DIRECTORY_SEPARATOR
 			     . basename($dir) . DIRECTORY_SEPARATOR;
-			/* Create the storage folder with restrictive permissions. */
+			/* Create the storage folder with restrictive permissions */
 			if (mkdir($dir)) {
 			    chmod($dir, 0700);
 			}
-		    } else {
-			$templateData['error']['missing_dir'] = 1;
 		    }
 		}
 		/* Check if the (newly created) dir exists, is writeable etc. */
-		if (empty($templateData['error'])) {
-		    if (!is_dir($dir)) {
-			$templateData['error']['missing_dir'] = 1;
-		    } else if (!is_readable($dir)) {
-			$templateData['error']['inaccessible_dir'] = 1;
-		    } else if (!is_writeable($dir)) {
-			$templateData['error']['readonly_dir'] = 1;
+		if (!is_dir($dir)) {
+		    $templateData['error']['missing_dir'] = 1;
+		} else if (!is_readable($dir)) {
+		    $templateData['error']['inaccessible_dir'] = 1;
+		} else if (!is_writeable($dir)) {
+		    $templateData['error']['readonly_dir'] = 1;
+		} else {
+		    /*
+		     * Security check:
+		     * If the user ticks the checkbox and thereby acknowledges that the storage
+		     * folder might be accessible from the web, we proceed with the installation.
+		     */
+		    list ($checkExecuted, $webAccessible) =
+			$this->_isStoragePathWebAccessible($dir);
+		    if (empty($_POST['i_acknowledge_the_risk'])
+			    && (!$checkExecuted || $webAccessible)) {
+			if (!$checkExecuted) {
+			    /* Show a warning suggesting an obfuscated path. */
+			    $templateData['error']['possibly_web_accessible_dir'] = 1;
+			} else if ($webAccessible) {
+			    $templateData['error']['web_accessible_dir'] = 1;
+			}
 		    } else {
 			/*
-			 * Security check:
-			 * If the user ticks the checkbox and thereby acknowledges that the
-			 * storage folder might be accessible from the web, we proceed with
-			 * the installation.
+			 * Populate the dir.
 			 */
-			list ($checkExecuted, $webAccessible) =
-				$this->_isStoragePathWebAccessible($dir);
-			if (empty($_POST['i_acknowledge_the_risk'])
-				&& (!$checkExecuted || $webAccessible)) {
-			    if (!$checkExecuted) {
-				/* Show a warning suggesting an obfuscated path. */
-				$templateData['error']['possibly_web_accessible_dir'] = 1;
-			    } else if ($webAccessible) {
-				$templateData['error']['web_accessible_dir'] = 1;
-			    }
+			if (!populateDataDirectory($dir)) {
+			    $templateData['error']['creation_error'] = 1;
 			} else {
-			    /*
-			     * Populate the dir.
-			     */
-			    if (!populateDataDirectory($dir)) {
-				$templateData['error']['creation_error'] = 1;
-			    } else {
-				$this->_dir = $dir;
-				$this->setComplete(true);
-			    }
+			    $this->_dir = $dir;
+			    $this->setComplete(true);
 			}
 		    }
 		}
