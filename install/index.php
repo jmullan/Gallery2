@@ -296,11 +296,11 @@ function populateDataDirectory($dataBase) {
 	    return false;
 	}
     }
-    
-    return secureStorageFolder($dataBase);    
+
+    return secureStorageFolder($dataBase);
 }
 
-/** 
+/**
  * Secure the storage folder from attempts to access it directly via the web by adding a
  * .htaccess with a "Deny from all" directive. This won't have any effect on webservers other
  * than Apache 1.2+ though.
@@ -316,11 +316,11 @@ function secureStorageFolder($dataBase) {
 	$htaccessContents = "<IfModule mod_access.c>\n" .
 			    "Order allow,deny\n" .
 			    "Deny from all\n" .
-			    "</IfModule>\n";    
+			    "</IfModule>\n";
 	fwrite($fh, $htaccessContents);
 	fclose($fh);
     }
-    
+
     return file_exists($htaccessPath);
 }
 
@@ -340,9 +340,9 @@ function getGalleryDirUrl() {
     $galleryDir = dirname(dirname(__FILE__));
     require_once($galleryDir . '/modules/core/classes/GalleryUrlGenerator.class');
     $urlPath = preg_replace('|^(.*/)install/index.php(?:\?.*)?$|s', '$1',
-                            GalleryUrlGenerator::getCurrentRequestUri());
-				   
-    return $baseUri = getBaseUrl() . $urlPath;
+			    GalleryUrlGenerator::getCurrentRequestUri());
+
+    return getBaseUrl() . $urlPath;
 }
 
 /**
