@@ -23,6 +23,7 @@
  */
 require_once(dirname(__FILE__) . '/../../support/security.inc');
 ini_set('magic_quotes_runtime', false);
+set_time_limit(0);
 
 $type = 'summary';
 if (!empty($_REQUEST['type']) && $_REQUEST['type'] == 'detail') {
