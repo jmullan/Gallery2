@@ -370,11 +370,11 @@
     {g->text text="If you want to use the cloud tag, you can set up its properties here"}
     <br />
     {g->text text="Example: "}
-    &lt;cloud domain="<b>domain</b>"
-              port="<b>port</b>"
-	      path="<b>path</b>"
-	      registerProcedure="<b>registerProcedure</b>"
-	      protocol="<b>protocol</b>" /&gt;
+    &lt;cloud domain="<b>{g->text text="domain"}</b>"
+	      port="<b>{g->text text="port"}</b>"
+	      path="<b>{g->text text="path"}</b>"
+	      registerProcedure="<b>{g->text text="registerProcedure"}</b>"
+	      protocol="<b>{g->text text="protocol"}</b>" /&gt;
   </p>
   <table class="gbDataTable"><tr>
     <td>{g->text text="Cloud tag"}</td>
@@ -394,9 +394,7 @@
     <td>{g->text text="domain"}</td>
     <td>
       <input type="text" name="{g->formVar var="form[cloudDomain]"}"
-        {if isset($EditFeed.cloudDomain)}
-          value="{$EditFeed.cloudDomain}"
-	{/if} />
+	{if isset($EditFeed.cloudDomain)}value="{$EditFeed.cloudDomain}"{/if} />
     </td>
     <td>
       {if isset($form.error.cloudDomain)}
