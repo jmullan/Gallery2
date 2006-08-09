@@ -43,9 +43,9 @@ class CoreModule extends GalleryModule {
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
-	$this->setCallbacks('registerEventListeners|' .
-			    'getItemLinks|getSystemLinks|' .
-			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
+	$this->setCallbacks('registerEventListeners'
+	    . '|getItemLinks|getSystemLinks'
+	    . '|getSiteAdminViews|getUserAdminViews|getItemAdminViews');
 	$this->setRequiredCoreApi(array(7, 10));
 	$this->setRequiredModuleApi(array(3, 1));
     }
@@ -67,6 +67,7 @@ class CoreModule extends GalleryModule {
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions, $userId) {
 	global $gallery;
+
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
 	    return array($ret, null);
@@ -79,9 +80,9 @@ class CoreModule extends GalleryModule {
 	}
 
 	/*
-	 * We're not doing this as the acting user id, but that's ok because we're not displaying
+	 * We're not doing this as the acting user id, but that's OK because we're not displaying
 	 * the result; we're only using it as a gating factor for whether or not we show a link, and
-	 * that'll also be gated by the permissions we receive which *will* be for the acting user
+	 * that'll also be gated by the permissions we receive which *will* be for the acting user.
 	 */
 	list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($itemIds);
 	if ($ret) {
@@ -130,8 +131,8 @@ class CoreModule extends GalleryModule {
 					    'return' => 1));
 	    }
 
-	    if (isset($wantsDetailedLinks[$itemId]) &&
-		    $isAlbum && isset($permissions[$itemId]['core.addAlbumItem'])) {
+	    if (isset($wantsDetailedLinks[$itemId]) && $isAlbum
+		    && isset($permissions[$itemId]['core.addAlbumItem'])) {
 		$links[$itemId][] =
 		    array('text' => $this->_translate('Add Album'),
 			  'params' => array('view' => 'core.ItemAdmin',
@@ -177,11 +178,9 @@ class CoreModule extends GalleryModule {
 					    'return' => 1));
 	    }
 
-	    if (isset($wantsDetailedLinks[$itemId]) &&
-		    $isAlbum &&
-		    isset($permissions[$itemId]['core.edit']) &&
-		    !empty($childCounts[$itemId]) &&
-		    $childCounts[$itemId] > 0) {
+	    if (isset($wantsDetailedLinks[$itemId]) && $isAlbum
+		    && isset($permissions[$itemId]['core.edit']) && !empty($childCounts[$itemId])
+		    && $childCounts[$itemId] > 0) {
 		$link = array('text' => $this->_translate('Edit Captions'),
 			      'params' => array('view' => 'core.ItemAdmin',
 						'subView' => 'core.ItemEditCaptions',
@@ -195,8 +194,7 @@ class CoreModule extends GalleryModule {
 		$links[$itemId][] = $link;
 	    }
 
-	    if (!$isRoot && isset($thumbTable[$itemId]) &&
-		    isset($parentPermissions['core.edit'])) {
+	    if (!$isRoot && isset($thumbTable[$itemId]) && isset($parentPermissions['core.edit'])) {
 		$links[$itemId][] =
 		    array('text' => $this->_translate('Make Highlight'),
 			  'params' => array('view' => 'core.ItemAdmin',
@@ -205,9 +203,8 @@ class CoreModule extends GalleryModule {
 					    'return' => 1));
 	    }
 
-	    if ($isAlbum && isset($permissions[$itemId]['core.edit']) &&
-		    !empty($childCounts[$itemId]) &&
-		    $childCounts[$itemId] > 1) {
+	    if ($isAlbum && isset($permissions[$itemId]['core.edit'])
+		    && !empty($childCounts[$itemId]) && $childCounts[$itemId] > 1) {
 		$links[$itemId][] =
 		    array('text' => $this->_translate('Reorder Items'),
 			  'params' => array('view' => 'core.ItemAdmin',
@@ -225,6 +222,7 @@ class CoreModule extends GalleryModule {
      */
     function getSystemLinks() {
 	global $gallery;
+
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
 	    return array($ret, null);
@@ -275,10 +273,10 @@ class CoreModule extends GalleryModule {
 		      array('name' => $this->translate('Plugins'),
 			    'view' => 'core.AdminPlugins'),
 		      /*
-		       * downloadable plugins isn't ready yet
+		       * Downloadable plugins isn't ready yet
 		      array('name' => $this->translate('Repository'),
 			    'view' => 'core.AdminRepository'),
-		      */
+		       */
 		      array('name' => $this->translate('Users'),
 			    'view' => 'core.AdminUsers'),
 		      array('name' => $this->translate('Groups'),
@@ -299,7 +297,7 @@ class CoreModule extends GalleryModule {
 			    'groupLabel' => $this->translate('Graphics Toolkits'));
 	}
 
-	$themeLabel =  $this->translate('Themes');
+	$themeLabel = $this->translate('Themes');
 	$data[] = array('name' => $this->translate('Defaults'),
 			'view' => 'core.AdminThemes',
 			'mode' => 'defaults',
@@ -363,12 +361,14 @@ class CoreModule extends GalleryModule {
      */
     function getItemAdminViews($item) {
 	global $gallery;
+
 	$views = array();
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret) {
 	    return array($ret, null);
 	}
 
+	$childCount = 0;
 	$isAlbum = $item->getCanContainChildren();
 	if ($isAlbum) {
 	    list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts(array($item->getId()));
@@ -376,8 +376,6 @@ class CoreModule extends GalleryModule {
 		return array($ret, null);
 	    }
 	    $childCount = empty($childCounts[$item->getId()]) ? 0 : $childCounts[$item->getId()];
-	} else {
-	    $childCount = 0;
 	}
 
 	/* Fetch thumbnail ids */
@@ -429,13 +427,13 @@ class CoreModule extends GalleryModule {
 	if (isset($permissions['core.delete'])) {
 	    if ($item->getId() != $rootId) {
 		$views[] = array('name' => $this->_translate(
-				   array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]),
-				   $itemTypeNames[2]),
+				     array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]),
+				     $itemTypeNames[2]),
 				 'view' => 'core.ItemDeleteSingle');
 
 		$views[] = array('name' => $this->_translate(
-				   array('text' => 'Move %s', 'arg1' => $itemTypeNames[0]),
-				   $itemTypeNames[2]),
+				     array('text' => 'Move %s', 'arg1' => $itemTypeNames[0]),
+				     $itemTypeNames[2]),
 				 'view' => 'core.ItemMoveSingle');
 	    }
 	}
@@ -454,10 +452,10 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::install
-     *
      * We pushed all this code into its own file since we need it very rarely so it doesn't make
-     * sense to load it every single time
+     * sense to load it every single time.
+     *
+     * @see GalleryModule::install
      */
     function upgrade($currentVersion, $statusMonitor) {
 	GalleryCoreApi::requireOnce('modules/core/CoreModuleExtras.inc');
@@ -469,14 +467,14 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * Set the current version of Gallery
+     * Set the current version of Gallery.
      */
     function setGalleryVersion($version) {
 	$this->_galleryVersion = $version;
     }
 
     /**
-     * Get the current version of Gallery
+     * Get the current version of Gallery.
      */
     function getGalleryVersion() {
 	return $this->_galleryVersion;
@@ -485,7 +483,7 @@ class CoreModule extends GalleryModule {
     /**
      * Get the version of the core module and of Gallery itself.  We store this on disk to avoid
      * having to load up the database (which can be problematic if we're doing an upgrade and don't
-     * want to count a specific database schema
+     * want to count a specific database schema.
      *
      * @return array 'core' => core module version, 'gallery' => gallery version
      * @static
