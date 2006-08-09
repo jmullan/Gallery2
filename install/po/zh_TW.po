@@ -1035,13 +1035,32 @@ msgstr ""
 msgid "Check Again"
 msgstr "再檢查一次"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
-msgstr "Gallery 需要一個目錄來儲存你的圖像。你選的目錄是可以使用的，但是它可從網頁直接存取。"
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
+msgstr ""
+"Gallery 需要一個目錄來儲存你的圖像。你選的目錄是可以使用的，但是它的位置或名稱無法提供最高的安全性。"
+"請選一個在%s網頁根目錄%s之外的目錄，或在目錄名稱後加上一串隨機的字串（如 %s）。"
 
-msgid "For maximum security you should pick a directory that is not web accessible."
-msgstr "為了安全起見，你最好選一個不能從網頁直接存取的目錄。"
+#, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
+msgstr
+"為了達成最高的安全性，你最好選一個不能從%s網頁直接存取%s的目錄。如果這個方法不可行，請指定一個有"
+"隨機名稱的目錄。"
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+"如果你選用隨機名稱或一定要用選指定的目錄，請確認你的選擇。"
+
+msgid "Yes, please omit the security check:"
+msgstr "是的，請略過安全檢查："
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1061,6 +1080,14 @@ msgstr "你輸入的目錄是唯讀的。"
 
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "在儲存目錄中產生目錄結構時發生錯誤。"
+
+#, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "你的儲存目錄%s可被網頁直接存取%s。"
+
+#, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr "無法驗證儲存目錄是否%s可被網頁直接存取%s。"
 
 msgid "Directory path:"
 msgstr "目錄路徑："
@@ -1107,28 +1134,16 @@ msgstr "注意：這些只是範例！它們可能不適用於你的系統。"
 msgid "Unix (with shell access)"
 msgstr "Unix（指今列）"
 
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
 msgid "Unix (with ftp access)"
 msgstr "Unix（使用 FTP）"
 
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
+"have problems."
 msgstr ""
 "請注意 FTP 伺服器和用戶端程式種類變化很多所以這些指令可能不適用於你的情況。如果發生問題，請參"
-"考你的FTP 用戶端程式手冊或詢問你的系統管理員。"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
+"考你的 FTP 用戶端程式手冊或詢問你的系統管理員。"
 
 #, c-format
 msgid ""
@@ -1202,3 +1217,18 @@ msgstr "開始"
 
 msgid "Begin Installation&raquo;"
 msgstr "開始安裝&raquo;"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Gallery 需要一個目錄來儲存你的圖像。你選的目錄是可以使用的，但是它可從網頁直接存取。"
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
