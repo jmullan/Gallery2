@@ -1,5 +1,16 @@
 # $Id$
 
+/* RatingAlbum.inc */
+gettext("Rating Album") /* also in: module.inc */
+gettext("rating album")
+gettext("Rating Album: %s")
+
+/* RatingCallback.inc */
+ngettext("%d vote", "%d votes") /* also in: test/phpunit/RatingCallbackViewTest.class */
+
+/* RatingSiteAdmin.inc */
+gettext("&laquo; default theme &raquo;")
+
 /* module.inc */
 gettext("Rating") /* also in: classes/RatingSortOrder.class templates/RatingItemEdit.tpl */
 gettext("Item Rating Interface")
@@ -7,6 +18,7 @@ gettext("Extra Data")
 gettext("[rating] Add ratings")
 gettext("[rating] View ratings")
 gettext("[rating] All access")
+gettext("Rating limit to use for dynamic album")
 
 /* templates/RatingInterface.tpl */
 gettext("Click a star to rate this item!")
@@ -20,9 +32,21 @@ gettext("... and for all subalbums")
 /* templates/RatingSiteAdmin.tpl */
 gettext("Rating Settings")
 gettext("Settings saved successfully")
+gettext("There was a problem processing your request.")
 gettext("Allow users to rate entire albums, in addition to individual items.")
+gettext("The settings below apply to the %sRating Album%s view, which shows highly rated albums from across the Gallery.")
+gettext("Query limit")
+gettext("Lowest value allowed for rating album threshold")
+gettext("Invalid number")
+gettext("Sort order")
+gettext("with")
+gettext("Theme")
+gettext("Settings for %s theme in Rating Album")
 gettext("Save")
 gettext("Reset")
 
 /* templates/blocks/blocks.inc */
 gettext("Rating interface")
+
+/* test/phpunit/RatingSiteAdminControllerTest.class */
+gettext("Successfully saved theme settings")
