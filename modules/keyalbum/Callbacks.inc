@@ -98,7 +98,7 @@ class KeyAlbumCallbacks {
 	}
 	while ($result = $searchResults->nextResult()) {
 	    if ($result[0]) {
-		foreach (preg_split('/\s+/', $result[0]) as $keyword) {
+		foreach (preg_split('/[\s,;]+/', $result[0]) as $keyword) {
 		    $keywords[$keyword] = true;
 		}
 	    }

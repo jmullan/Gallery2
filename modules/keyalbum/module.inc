@@ -109,7 +109,7 @@ class KeyAlbumModule extends GalleryModule {
 	    if ($item->getKeywords()) {
 		$itemId = $item->getId();
 		$summaries[$itemId] = $this->translate('Keywords:');
-		foreach (preg_split('/\s+/', $item->getKeywords()) as $keyword) {
+		foreach (preg_split('/[\s,;]+/', $item->getKeywords()) as $keyword) {
 		    $summaries[$itemId] .= ' <a href="' . $urlGenerator->generateUrl(
 			array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $keyword,
 			      'highlightId' => $itemId)) . '">' . $keyword . '</a>';
