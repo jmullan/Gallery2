@@ -127,6 +127,7 @@ class KeyAlbumModule extends GalleryModule {
 		array('comment' => $this->translate('Keyword Album'),
 		      'match' => array('view' => 'keyalbum.KeywordAlbum'),
 		      'pattern' => 'key/%keyword%',
+		      'help' => $this->translate('Short URL for Keyword Albums'),
 		      'keywords' => array(
 			  'keyword' => array('pattern' => '([^?/]+)',
 			      'help' => $this->translate('Keyword to use for dynamic album')))
