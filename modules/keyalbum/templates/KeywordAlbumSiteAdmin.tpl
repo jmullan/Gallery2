@@ -25,12 +25,16 @@
 
 <div class="gbBlock">
   <table class="gbDataTable"><tr>
+    <td colspan="2"> {g->text text="Select where to include links in item summary info, usually shown next to thumbnails.  You can also add the Keyword Albums block in theme settings."} </td>
+  </tr><tr>
     <td> {g->text text="Keyword Links"} </td>
     <td>
       <select name="{g->formVar var="form[summaryLinks]"}">
 	{html_options options=$KeywordAlbumSiteAdmin.summaryList selected=$form.summaryLinks}
       </select>
     </td>
+  </tr><tr>
+    <td colspan="2"> {g->text text="Display of Keyword Albums"} </td>
   </tr><tr>
     <td> {g->text text="Sort order"} </td>
     <td>
