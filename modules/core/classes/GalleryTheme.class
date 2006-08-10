@@ -721,6 +721,9 @@ class GalleryTheme extends GalleryPlugin {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$theme['themeUrl'] =
 	    $urlGenerator->generateUrl(array('href' => 'themes/' . $this->getId()));
+	if (!isset($theme['pageUrl'])) {
+	    $theme['pageUrl'] = array('view' => 'core.ShowItem', 'itemId' => $item->getId());
+	}
 
 	list ($ret, $theme['markupType']) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
@@ -811,9 +814,6 @@ class GalleryTheme extends GalleryPlugin {
 	case VIEW_TYPE_SHOW_ITEM:
 	    $this->_cacheablePage = true;
 	    $session =& $gallery->getSession();
-	    if (!isset($theme['pageUrl'])) {
-		$theme['pageUrl'] = array('view' => 'core.ShowItem', 'itemId' => $item->getId());
-	    }
 
 	    /* Albums page or Photo page */
 	    if ($item->getCanContainChildren()) {
