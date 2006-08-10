@@ -61,20 +61,22 @@ class AdminPerformanceController extends GalleryController {
 		    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 						       "Missing '$class' from the form"), null);
 		}
-		switch($form['acceleration'][$class]['type']) {
+		$acceleration[$class]['type'] = $form['acceleration'][$class]['type'];
+		switch ($form['acceleration'][$class]['type']) {
 		case 'partial':
 		case 'full':
 		    $acceleration[$class]['expiration'] =
 			(int)$form['acceleration'][$class]['expiration'];
-		    /* fall through */
+		    break;
 
 		case 'none':
-		    $acceleration[$class]['type'] = $form['acceleration'][$class]['type'];
+		    if (!isset($acceleration[$class]['expiration'])) {
+			$acceleration[$class]['expiration'] = 0;
+		    }
 		    break;
 
 		default:
-		    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
-				 null);
+		    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 		}
 	    }
 	    $ret = GalleryCoreApi::setPluginParameter(
@@ -133,6 +135,9 @@ class AdminPerformanceView extends GalleryView {
 
 	    list ($ret, $acceleration) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'acceleration');
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	    if ($acceleration) {
 		$form['acceleration'] = unserialize($acceleration);
 	    } else {
