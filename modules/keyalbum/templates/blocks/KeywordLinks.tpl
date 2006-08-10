@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{if $forItem} {* Link for keywords of current item *}
+{if $forItem|default:true} {* Link for keywords of current item *}
 {if empty($item)} {assign var=item value=$theme.item} {/if}
 
 {if !empty($item.keywords)}
