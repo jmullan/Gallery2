@@ -83,7 +83,7 @@ function GalleryMain($embedded=false) {
     global $gallery;
 
     /* Process the request */
-    list($ret, $g2Data) = _GalleryMain($embedded);
+    list ($ret, $g2Data) = _GalleryMain($embedded);
     if (!$ret) {
 	$gallery->performShutdownActions();
 
@@ -133,7 +133,7 @@ function _GalleryMain($embedded=false) {
     $urlGenerator =& $gallery->getUrlGenerator();
 
     /* Figure out the target view/controller */
-    list($controllerName, $viewName) = GalleryUtilities::getRequestVariables('controller', 'view');
+    list ($controllerName, $viewName) = GalleryUtilities::getRequestVariables('controller', 'view');
     $gallery->debug("controller $controllerName, view $viewName");
 
     /* Check if core module needs upgrading */
