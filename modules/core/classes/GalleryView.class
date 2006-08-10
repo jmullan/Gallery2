@@ -220,7 +220,7 @@ class GalleryView {
 
     /**
      * Prepare all the various things that a view requires in order to load up the template properly
-     * (like the theme, the form variables, the status variables, etc then call the view's
+     * (like the theme, the form variables, the status variables, etc. then call the view's
      * loadTemplate() method and pass in the given template.
      *
      * @return array object GalleryStatus a status code
@@ -274,7 +274,7 @@ class GalleryView {
 	$template->setVariable('theme', $themeVars);
 
 	/* -------------------------------------------------- */
-	/* Load up the theme. */
+	/* Load up the theme */
 	list ($ret, $theme, $params, $item) = $this->loadThemeAndParameters();
 	if ($ret) {
 	    return array($ret, null, null);

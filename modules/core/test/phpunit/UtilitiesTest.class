@@ -39,11 +39,12 @@ class UtilitiesTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
+
 	parent::setUp();
 
 	$this->_originalCookie = isset($_COOKIE) ? $_COOKIE : null;
-	$this->_originalServerHttpCookie = isset($_SERVER['HTTP_COOKIE']) ?
-	    $_SERVER['HTTP_COOKIE'] : null;
+	$this->_originalServerHttpCookie =
+	    isset($_SERVER['HTTP_COOKIE']) ? $_SERVER['HTTP_COOKIE'] : null;
 
 	$this->_mkdir = array();
 	$this->_savePlatform =& $gallery->getPlatform();
@@ -273,7 +274,7 @@ class UtilitiesTest extends GalleryTestCase {
     function testConvertPathToUrl() {
 	global $gallery;
 
-	/* Simulate unix to line up with our mock platform */
+	/* Simulate UNIX to line up with our mock platform */
 	$file = str_replace('\\', '/', __FILE__);
 
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
@@ -308,7 +309,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    '/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
 	    GalleryUtilities::convertPathToUrl($file), 'embed');
 
-	/* Simulate apache alias (/g2test -> this g2 dir, not under docroot) */
+	/* Simulate Apache alias (/g2test -> this Gallery dir, not under docroot) */
 	$_SERVER['DOCUMENT_ROOT'] = '/g2testroot';
 	$_SERVER['REQUEST_URI'] = '/g2test/phpunit_test.php?foo=bar';
 	$urlGenerator = new GalleryUrlGenerator();
@@ -498,7 +499,7 @@ class UtilitiesTest extends GalleryTestCase {
     function testIsTrustedProxy() {
 	/*
 	 * Hard to verify this completely because it takes too long to test 2^32 addresses.  Try the
-	 * approach of testing 15^4 (50625) addresses at random instead
+	 * approach of testing 15^4 (50625) addresses at random instead.
 	 */
 	for ($i = 0; $i < 15; $i++) {
 	    $aa[] = rand(0, 255);
@@ -532,7 +533,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    }
 	}
 
-	/* Sanity check some known RFC1918 addrs */
+	/* Sanity check some known RFC1918 addresses */
 	$this->assert(GalleryUtilities::isTrustedProxy('10.1.2.3'), '10/8 failed');
 	$this->assert(GalleryUtilities::isTrustedProxy('172.16.254.253'), '172.16/12 failed 1');
 	$this->assert(GalleryUtilities::isTrustedProxy('172.31.254.253'), '172.16/12 failed 2');
@@ -1205,12 +1206,10 @@ class UtilitiesTest extends GalleryTestCase {
 	/* Foreach test case (tC), run the test */
 	foreach (array(true, false) as $addSlashes) {
 	    if ($addSlashes) {
-		$phpVm = new UtilitiesTestAddSlashesPhpVm();
-		$gallery->_phpVm = $phpVm;
+		$gallery->_phpVm = $phpVm = new UtilitiesTestAddSlashesPhpVm();
 		$addSlashesInfo = 'addslashes, ';
 	    } else {
-		$phpVm = new UtilitiesTestDoNotAddSlashesPhpVm();
-		$gallery->_phpVm = $phpVm;
+		$gallery->_phpVm = $phpVm = new UtilitiesTestDoNotAddSlashesPhpVm();
 		$addSlashesInfo = 'do not addslashes, ';
 	    }
 

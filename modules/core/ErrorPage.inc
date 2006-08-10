@@ -52,21 +52,18 @@ class ErrorPageView extends GalleryView {
 
 	$ErrorPage = array();
 
-	$error = null;
-	if (isset($this->_error)) {
-	    $error = $this->_error;
-	} else {
+	$error = $this->_error;
+	if (empty($error)) {
 	    $session =& $gallery->getSession();
 	    $error = $session->get('core.error');
-	    if ($error) {
+	    if (!empty($error)) {
 		GalleryCoreApi::requireOnce('modules/core/classes/GalleryStatus.class');
 		$error = unserialize($error);
 	    }
 	}
 
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-	$ErrorPage['isAdmin'] = (!$ret && $isAdmin);
-	if ($gallery->getDebug() || $ErrorPage['isAdmin']) {
+	if ($gallery->getDebug() || $isAdmin) {
 	    $ErrorPage['stackTrace'] = $error->getAsHtml($isAdmin);
 	}
 
@@ -88,7 +85,7 @@ class ErrorPageView extends GalleryView {
 	    $ErrorPage['code']['missingObject'] = true;
 	}
 
-	if ($ErrorPage['isAdmin']) {
+	if ($isAdmin) {
 	    $ErrorPage['phpversion'] = phpversion();
 	    $ErrorPage['php_uname'] = php_uname();
 	    $ErrorPage['php_sapi_name'] = php_sapi_name();
@@ -116,12 +113,12 @@ class ErrorPageView extends GalleryView {
 
 	$template->javascript('lib/javascript/BlockToggle.js');
 	$template->setVariable('ErrorPage', $ErrorPage);
-	return array(null,
-		     array('body' => 'modules/core/templates/ErrorPage.tpl'));
+	return array(null, array('body' => 'modules/core/templates/ErrorPage.tpl'));
     }
 
     /**
      * Entry point from main.php
+     *
      * @param object GalleryStatus
      * @param mixed GalleryMain result, if available
      * @param boolean (default true) false if Gallery has not initialized (can't use theme system)
