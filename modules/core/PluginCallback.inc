@@ -69,7 +69,8 @@ class PluginCallbackView extends GalleryView {
 	    if ($result['status'] == 'redirect') {
 		$urlGenerator =& $gallery->getUrlGenerator();
 		$result['redirect'] =
-		    $urlGenerator->generateUrl($result['redirect'], array('htmlEntities' => 0));
+		    $urlGenerator->generateUrl($result['redirect'],
+			array('htmlEntities' => 0, 'forceServerRelativeUrl' => 1));
 	    }
 	}
 
