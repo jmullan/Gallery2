@@ -24,9 +24,6 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 /**
@@ -48,7 +45,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'watermark');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	$rand = rand();
@@ -89,7 +86,7 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'watermark.WatermarkSiteAdmin'),
-				  'status' => array('add_error' => 1),
+				  'status' => array('addError' => 1),
 				  'error' => array()),
 			    $results, 'No file');
     }
@@ -374,25 +371,29 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	return array(null, $results);
     }
 
-    function testSaveMissingId() {
+    function testSave() {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+	GalleryUtilities::putRequestVariable('form[allowUserWatermarks]', 1);
+	GalleryUtilities::putRequestVariable('form[hotlinkWatermarkId]', 123);
+	GalleryUtilities::putRequestVariable('form[defaultWatermarkId]', 456);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'watermark.WatermarkSiteAdmin'),
-				  'status' => array('missingId' => 1),
+				  'status' => array('savedSettings' => 1),
 				  'error' => array()),
 			    $results);
     }
 
-    function testSave() {
+    function testSaveMissingId() {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+	GalleryUtilities::putRequestVariable('form[forceDefaultWatermark]', 1);
 	GalleryUtilities::putRequestVariable('form[hotlinkWatermarkId]', 123);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'watermark.WatermarkSiteAdmin'),
-				  'status' => array('idSaved' => 1),
+				  'status' => array('missingDefault' => 1, 'savedSettings' => 1),
 				  'error' => array()),
 			    $results);
     }

@@ -24,9 +24,6 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkImage.class');
 
@@ -51,16 +48,24 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-
 	$this->_markForCleanup($this->_user);
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'watermark');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark', 'allowUserWatermarks', 1);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
 
 	$this->_saveUser = $gallery->getActiveUser();
 	$gallery->setActiveUser($this->_user);
     }
 
     function tearDown() {
-	global $gallery;
-
 	if (isset($this->_idToDelete)) {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_idToDelete);
 	    if ($ret) {
@@ -109,7 +114,6 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
     }
 
     function testAddWatermarkMissing() {
-	global $gallery;
 	GalleryUtilities::putRequestVariable('form[action][add]', 1);
 
 	$results = $this->handleRequest();
@@ -170,8 +174,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($item);
 	list ($ret, $derivative) = $this->_createDerivative(
 	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, '', 'test/file',
-	    array('postFilterOperations' => 'composite|plugins_data/modules/watermark/' .
-		                            $watermark->getFileName() . ',...'));
+	    array('postFilterOperations' => 'composite|plugins_data/modules/watermark/'
+					    . $watermark->getFileName() . ',...'));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -310,6 +314,25 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($map[$expectedName]), 'Second watermark not added');
+    }
+
+    function testPermission() {
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark', 'allowUserWatermarks', 0);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark', 'allowUserWatermarks', 1);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_becomeGuestUser();
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
 
     function _fetchWatermarkMapByFilename() {

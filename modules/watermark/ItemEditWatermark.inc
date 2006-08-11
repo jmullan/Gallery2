@@ -40,6 +40,16 @@ class ItemEditWatermark extends ItemEditPlugin {
 	$status = null;
 	$error = array();
 
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'watermark');
+	if ($ret) {
+	    return array($ret, null, null, null);
+	}
+	if ($params['forceDefaultWatermark'] && !empty($params['defaultWatermarkId'])) {
+	    $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	    if ($ret) {
+		return array($ret, null, null, null);
+	    }
+	}
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'watermark');
 	if ($ret) {
 	    return array($ret, null, null, null);
@@ -346,6 +356,18 @@ class ItemEditWatermark extends ItemEditPlugin {
      * @TODO: Broaden this interface to allow a GalleryStatus return code
      */
     function isSupported($item, $thumbnail) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'watermark');
+	if ($ret) {
+	    return false;
+	}
+	if ($params['forceDefaultWatermark'] && !empty($params['defaultWatermarkId'])) {
+	    /* Only Site Admins can edit when a single watermark is enforced */
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret || !$isAdmin) {
+		return false;
+	    }
+	}
+
 	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 	    $mimeType = 'image/jpeg'; /* Just check common type to show tab for albums */
 	} else if (GalleryUtilities::isA($item, 'GalleryDataItem')) {

@@ -37,24 +37,31 @@ class WatermarkOption extends ItemAddOption {
      * @see ItemAddOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item) {
-	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
-
-	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'watermark');
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 
-	$currentId = null;
-	foreach (array_keys($watermarks) as $id) {
-	    if (!isset($currentId)) {
-		$currentId = $id;
+	$WatermarkOption = array();
+	if (!$params['forceDefaultWatermark'] || empty($params['defaultWatermarkId'])) {
+	    GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
+	    list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
+	    if ($ret) {
+		return array($ret, null, null);
 	    }
-	    $watermarks[$id] = (array)$watermarks[$id];
+
+	    $currentId = null;
+	    foreach (array_keys($watermarks) as $id) {
+		if (!isset($currentId)) {
+		    $currentId = $id;
+		}
+		$watermarks[$id] = (array)$watermarks[$id];
+	    }
+
+	    $WatermarkOption['watermarks'] = $watermarks;
+	    $WatermarkOption['currentId'] = $currentId;
 	}
 
-	$WatermarkOption = array();
-	$WatermarkOption['watermarks'] = $watermarks;
-	$WatermarkOption['currentId'] = $currentId;
 	$template->setVariable('WatermarkOption', $WatermarkOption);
 	return array(null,
 		     'modules/watermark/templates/WatermarkOption.tpl',
@@ -80,10 +87,17 @@ class WatermarkOption extends ItemAddOption {
      * @see ItemAddOption::handleRequestAfterAdd
      */
     function handleRequestAfterAdd($form, $items) {
-	$errors = array();
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'watermark');
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	if ($params['forceDefaultWatermark'] && !empty($params['defaultWatermarkId'])) {
+	    $form['WatermarkOption']['watermarkId'] = $params['defaultWatermarkId'];
+	}
+
 	foreach ($items as $i => $item) {
-	    if (!empty($form['WatermarkOption']['watermarkId']) &&
-		GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
+	    if (!empty($form['WatermarkOption']['watermarkId'])
+		    && GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		list ($ret, $watermark) =
 		    GalleryCoreApi::loadEntitiesById($form['WatermarkOption']['watermarkId']);
 		if ($ret) {
@@ -97,12 +111,12 @@ class WatermarkOption extends ItemAddOption {
 						      $watermark->getXPercentage(),
 						      $watermark->getYPercentage(),
 						      $watermarkArray);
-	    	if ($ret) {
+		if ($ret) {
 		    return array($ret, null, null);
 		}
 	    }
 	}
-	return array(null, $errors, array());
+	return array(null, array(), array());
     }
 }
 ?>

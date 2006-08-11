@@ -416,6 +416,38 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 			    'album should be supported if we can watermark image/jpeg');
     }
 
+    function testPermission() {
+	global $gallery;
+	$ret = $this->_markPluginParametersForCleanup('module', 'watermark');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark',
+						  'forceDefaultWatermark', 1);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark', 'defaultWatermarkId', 27);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_registerTestToolkit('test/file');
+	$this->assert($this->_plugin->isSupported($this->_item, $this->_thumbnail), 'admin');
+
+	$this->_becomeGuestUser();
+	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(),
+						 $gallery->getActiveUserId(), 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(!$this->_plugin->isSupported($this->_item, $this->_thumbnail), 'non admin');
+
+	GalleryUtilities::putRequestVariable('form[action][remove]', 1);
+	$results = $this->handleRequest($this->_item, $this->_preferred, ERROR_PERMISSION_DENIED);
+    }
+
     function _registerTestToolkit($mimeType) {
 	/* Register a composite operation for test/file */
 	$ret = GalleryCoreApi::registerFactoryImplementation(

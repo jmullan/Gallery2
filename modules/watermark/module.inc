@@ -24,8 +24,6 @@
  */
 
 /**
- * Watermark Module
- *
  * This module provides support for adding watermarks to images
  *
  * @package Watermark
@@ -38,7 +36,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('watermark');
 	$this->setName($gallery->i18n('Watermark'));
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('1.0.6'); /* Update upgrade() too */
+	$this->setVersion('1.0.7'); /* Update upgrade() too */
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
 	$this->setRequiredCoreApi(array(7, 0));
@@ -50,7 +48,6 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function upgrade($currentVersion) {
 	global $gallery;
-
 	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$watermarkDir =
@@ -66,7 +63,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	    list ($success) = GalleryUtilities::guaranteeDirExists($watermarkDir);
 	    if (!$success) {
 		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					    "Unable to create directory: $watermarkDir");
+					     "Unable to create directory: $watermarkDir");
 	    }
 	    break;
 
@@ -171,6 +168,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	case '1.0.3':
 	case '1.0.4':
 	case '1.0.5':
+	case '1.0.6':
 
 	case 'end of upgrade path':
 	    /*
@@ -181,7 +179,21 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 
 	default:
 	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+					 sprintf('Unknown module version %s', $currentVersion));
+	}
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'watermark');
+	if ($ret) {
+	    return $ret;
+	}
+	foreach (array('allowUserWatermarks' => 1, 'forceDefaultWatermark' => 0,
+		       'hotlinkWatermarkId' => '', 'defaultWatermarkId' => '') as $key => $value) {
+	    if (!isset($params[$key])) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
 	}
 
 	return null;
@@ -256,24 +268,25 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getSiteAdminViews()
      */
     function getSiteAdminViews() {
-	return array(null,
-		     array(array('name' => $this->translate('Watermarks'),
-				 'view' => 'watermark.WatermarkSiteAdmin')));
+	return array(null, array(array('name' => $this->translate('Watermarks'),
+				       'view' => 'watermark.WatermarkSiteAdmin')));
     }
 
     /**
      * @see GalleryModule::getUserAdminViews();
      */
     function getUserAdminViews($user) {
-	global $gallery;
-
 	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($user->getId());
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $isOn) = $this->getParameter('allowUserWatermarks');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	$views = array();
-	if (!$isAnonymous) {
+	if ($isOn && !$isAnonymous) {
 	    $views[] = array('name' => $this->translate('Watermarks'),
 			     'view' => 'watermark.UserWatermarks');
 	}

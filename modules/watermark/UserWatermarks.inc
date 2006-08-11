@@ -34,6 +34,18 @@ class UserWatermarksController extends GalleryController {
      */
     function handleRequest($form) {
 	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
+	if ($ret) {
+	    return array($ret, null);
+	}
+	list ($ret, $isOn) =
+	    GalleryCoreApi::getPluginParameter('module', 'watermark', 'allowUserWatermarks');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($isAnonymous || !$isOn) {
+	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+	}
 
 	$status = $error = array();
 	if (isset($form['action']['add']) && !empty($form['tmp_name'][1])) {
@@ -92,7 +104,12 @@ class UserWatermarksView extends GalleryView {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if ($isAnonymous) {
+	list ($ret, $isOn) =
+	    GalleryCoreApi::getPluginParameter('module', 'watermark', 'allowUserWatermarks');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($isAnonymous || !$isOn) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
