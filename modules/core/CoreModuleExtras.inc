@@ -2091,7 +2091,13 @@ class CoreModuleExtras {
 	     */
 	    $fh = @fopen($gallery->getConfig('data.gallery.base') . '.htaccess', 'w');
 	    if ($fh) {
-		$htaccessContents = "<IfModule mod_access.c>\n" .
+		$htaccessContents = "DirectoryIndex .htaccess\n" .
+				    "SetHandler Gallery_Security_Do_Not_Remove\n" .
+				    "Options None\n" .
+				    "<IfModule mod_rewrite.c>\n" .
+				    "RewriteEngine off\n" .
+				    "</IfModule>\n" .
+				    "<IfModule mod_access.c>\n" .
 				    "Order allow,deny\n" .
 				    "Deny from all\n" .
 				    "</IfModule>\n";    
