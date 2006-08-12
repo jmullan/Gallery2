@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-04 17:42+0200\n"
-"PO-Revision-Date: 2006-03-11 21:44+0100\n"
+"PO-Revision-Date: 2006-08-10 11:56+0200\n"
 "Last-Translator: Jan Korbel <jackc@teptin.net>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1094,21 +1094,41 @@ msgid ""
 "Please read the %1$sGallery Security Guide%3$s. For a brief overview, take a look at the %2"
 "$sshort check list%3$s within the security guide."
 msgstr ""
-"Prosím přečtěte si %1$sBezpečnostního průvodce Galerií%3$s. Pro stručný přehled se "
-"podívejte na %2$skrátký seznam%3$s v bezpečnostním průvodci."
+"Prosím přečtěte si %1$sBezpečnostního průvodce Galerií%3$s. Pro stručný přehled se podívejte "
+"na %2$skrátký seznam%3$s v bezpečnostním průvodci."
 
 msgid "Check Again"
 msgstr "Zkontrolovat znovu"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
-"Galerie potřebuje adresář, do kterého bude ukládat Vaše fotografie. Adresář, který jsme "
-"pro Vás vybrali, bude fungovat, ale je všem dostupný pomocí služby www."
+"Galerie potřebuje adresář k uchování Vašich obrázků. Adresář, který jsme pro Vás vybrali, "
+"bude fungovat, ale jeho umístění a současné jméno není příliš bezpečné. Vyberte prosím "
+"jiný adresář mimo %skořenový adresář tohoto webu%s nebo na konec jména adresáře "
+"přidejte náhodný řetězec (např. %s)."
 
-msgid "For maximum security you should pick a directory that is not web accessible."
-msgstr "Pro maximální bezpečnost byste měli vybrat adresář, který není z webu dostupný."
+#, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
+msgstr ""
+"Pro maximální bezpečnost byste měli vybrat adresář, který není %sdostupný z webu%s. "
+"Pokud to není možné, vyberte pro tento adresář náhodné jméno."
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+"Pokud jste vybrali náhodné jméno souboru nebo chcete ponechat původně navrhnovaný "
+"adresář, potvrďte prosím Vaší volbu."
+
+msgid "Yes, please omit the security check:"
+msgstr "Ano, vynechat bezpečnostní kontrolu:"
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1130,6 +1150,14 @@ msgstr "Zadaný adresář není zapisovatelný"
 
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Při vytváření adresářové struktury v zadaném adresáři došlo k chybě."
+
+#, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Adresář úložiště je %sdostupný z webu%s."
+
+#, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr "Nelze ověřit, zda adresář úložiště není %sdostupný z webu%s."
 
 msgid "Directory path:"
 msgstr "Cesta adresáře:"
@@ -1181,37 +1209,24 @@ msgstr ""
 msgid "Unix (with shell access)"
 msgstr "Unix (s shell přístupem)"
 
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
 msgid "Unix (with ftp access)"
 msgstr "Unix (s FTP přístupem)"
 
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
+"have problems."
 msgstr ""
-"FTP servery i klienti se liší, takže tyto instrukce nemusí být přesné. Pro více informací "
-"prohlédněte manuál Vašeho FTP klienta nebo v případě problému kontaktujte Vašeho správce "
-"systému"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
+"Nezapomeňte že se různé FTP servery i klienti liší, proto tyto instrukce nemusí být přesné. "
+"Pro více informací nastudujte manuál Vašeho FTP klienta nebo v případě problémů kontaktujte Vašeho správce systému."
 
 #, c-format
 msgid ""
 "For information on how to secure your Gallery storage directory, please read the %sSecurity "
 "Guide%s."
 msgstr ""
-"Více informací o tom, jak zabezpečit Vaše úložiště Galerie, najdete v %sPrůvodci "
-"zabezpečení%s."
+"Více informací o tom, jak zabezpečit Vaše úložiště Galerie, najdete v %sPrůvodci zabezpečení%"
+"s."
 
 msgid "Storage directory set successfully."
 msgstr "Adresář úložiště úspěšně nastaven."
@@ -1284,6 +1299,22 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "Začátek instalace&raquo;"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Galerie potřebuje adresář, do kterého bude ukládat Vaše fotografie. Adresář, který jsme "
+#~ "pro Vás vybrali, bude fungovat, ale je všem dostupný pomocí služby www."
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "chmod 644 %s"
 #~ msgstr "chmod 644 %s"
