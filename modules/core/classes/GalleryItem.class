@@ -352,7 +352,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	/* Remove all my attributes */
 	$ret = GalleryCoreApi::removeItemAttributes($this->getId());
 	if ($ret) {
-	    return $ret2;
+	    return $ret;
 	}
 
 	if ($this->getParentId()) {
