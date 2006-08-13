@@ -50,17 +50,16 @@ class ErrorPageView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$ErrorPage = array();
-
-	$error = $this->_error;
-	if (empty($error)) {
+	if (empty($this->_error)) {
 	    $session =& $gallery->getSession();
 	    $error = $session->get('core.error');
 	    if (!empty($error)) {
 		GalleryCoreApi::requireOnce('modules/core/classes/GalleryStatus.class');
-		$error = unserialize($error);
+		$this->_error = unserialize($error);
 	    }
 	}
+	$error = $this->_error;
+	$ErrorPage = array();
 
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($gallery->getDebug() || $isAdmin) {
