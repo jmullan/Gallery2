@@ -38,14 +38,14 @@
       <p class="giDescription">
 	{g->text text="An error has occurred while interacting with the database."}
       </p>
-      {if $user.isAdmin && !isset($ErrorPage.debug)}
+      {if $ErrorPage.isAdmin && !isset($ErrorPage.debug)}
 	{g->text text="The exact nature of database errors is not captured unless Gallery debug mode is enabled in config.php.  Before seeking support for this error please enable buffered debug output and retry the operation.  Look near the bottom of the lengthy debug output to find error details."}
       {/if}
     {elseif isset($ErrorPage.code.platformFailure)}
       <p class="giDescription">
 	{g->text text="An error has occurred while interacting with the platform."}
       </p>
-      {if $user.isAdmin && !isset($ErrorPage.debug)}
+      {if $ErrorPage.isAdmin && !isset($ErrorPage.debug)}
 	{g->text text="The exact nature of the platform error is unknown. A common cause are insufficient file system permissions. This can happen if you or your webhost changed something in the file system, e.g. by restoring data from a backup."}
       {/if}
     {elseif isset($ErrorPage.code.missingObject)}
@@ -67,15 +67,16 @@
     <div class="gbBlock">
       <h3>
 	{g->text text="Error Detail"}
-	<span id="trace-toggle" class="giBlockToggle gcBackground1 gcBorder2" style="border-width: 1px" onclick="BlockToggle('giStackTrace', 'trace-toggle')"> {if $user.isAdmin}-{else}+{/if} </span>
+	<span id="trace-toggle" class="giBlockToggle gcBackground1 gcBorder2"
+	 style="border-width: 1px" onclick="BlockToggle('giStackTrace', 'trace-toggle')"> {if $ErrorPage.isAdmin}-{else}+{/if} </span>
       </h3>
-      <div id="giStackTrace" style="margin-left: 0.8em{if !$user.isAdmin}; display: none{/if}">
+      <div id="giStackTrace" style="margin-left: 0.8em{if !$ErrorPage.isAdmin}; display: none{/if}">
 	{$ErrorPage.stackTrace}
       </div>
     </div>
   {/if}
 
-  {if $user.isAdmin}
+  {if $ErrorPage.isAdmin}
     <div class="gbBlock">
       <h3> {g->text text="System Information"} </h3>
       <table class="gbDataTable"><tr>
