@@ -122,11 +122,13 @@ class ClassicTheme extends GalleryTheme {
 	$theme =& $template->getVariableByReference('theme');
 	if ($params['showSubalbums']) {
 	    $theme['tree'] = $theme['treeItems'] = array();
-	    $ret = $this->_buildTree($childIds, $theme['tree'], $theme['treeItems'],
-		    $params['subalbumDepth'] > 0 ? $params['subalbumDepth'] : null,
-		    $params['subalbumSort'], $theme['actingUserId']);
-	    if ($ret) {
-		return array($ret, null);
+	    if (!empty($childIds)) {
+		$ret = $this->_buildTree($childIds, $theme['tree'], $theme['treeItems'],
+			$params['subalbumDepth'] > 0 ? $params['subalbumDepth'] : null,
+			$params['subalbumSort'], $theme['actingUserId']);
+		if ($ret) {
+		    return array($ret, null);
+		}
 	    }
 	}
 
