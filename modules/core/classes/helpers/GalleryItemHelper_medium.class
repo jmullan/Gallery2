@@ -353,6 +353,11 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    $preferred->setDerivativeSourceId($source->getId());
 		    $preferred->setMimeType($outputMimeType);
 
+		    if (GalleryUtilities::isA($source, 'GalleryPhotoItem')) {
+			$preferred->setWidth($source->getWidth());
+			$preferred->setHeight($source->getHeight());
+		    }
+
 		    $ret = GalleryCoreApi::remapSourceIds($source->getId(), $preferred->getId());
 		    if ($ret) {
 			return $ret;

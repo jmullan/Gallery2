@@ -1380,6 +1380,10 @@ class ItemTest extends GalleryTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
+	    if (method_exists($item, 'setwidth')) {
+		$item->setWidth(1234);
+		$item->setHeight(567);
+	    }
 
 	    $ret = GalleryCoreApi::addExistingItemToAlbum($item, $this->_album->getId());
 	    if ($ret) {
@@ -1401,6 +1405,10 @@ class ItemTest extends GalleryTestCase {
 		$this->assertEquals(
 			($i ? '' : 'convert-to-image/x-portable-pixmap;') . 'convert-to-image/jpeg',
 			$preferreds[$itemId]->getDerivativeOperations(), $mimeType . ' operations');
+		if (!$i) {
+		    $this->assertEquals(1234, $preferreds[$itemId]->getWidth(), 'width');
+		    $this->assertEquals(567, $preferreds[$itemId]->getHeight(), 'height');
+		}
 	    } else {
 		$this->assert(false, 'missing preferred for ' . $mimeType);
 	    }
