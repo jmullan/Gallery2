@@ -316,7 +316,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
 	    $operations = $source->getDerivativeOperations();
-	} else if (GalleryUtilities::isA($source, 'GalleryPhotoItem')) {
+	} else if (GalleryUtilities::isA($source, 'GalleryPhotoItem')
+		|| GalleryUtilities::isA($source, 'GalleryUnknownItem')) {
 	    $operations = '';
 	}
 	if (!$isViewable && isset($operations)) {

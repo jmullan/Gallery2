@@ -1355,49 +1355,60 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	/* Register an operation to convert from our test type */
+	/* Register operations to convert from our test types */
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemTestToolkit', array('image/nonviewable'), 'convert-to-image/x-portable-pixmap',
 	    array(), 'itemtest-description', 'image/x-portable-pixmap');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/nonviewable');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemTestToolkit', array('test/document'), 'convert-to-image/jpeg',
+	    array(), 'itemtest-description', 'image/jpeg');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$ret = $photo->create($this->_album->getId(), __FILE__, 'image/nonviewable', 'test image');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
+	/* Test one image type and one document type */
+	foreach (array('image/nonviewable', 'test/document') as $i => $mimeType) {
+	    list ($ret, $item) = GalleryCoreApi::newItemByMimeType($mimeType);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
 
-	$ret = GalleryCoreApi::addExistingItemToAlbum($photo, $this->_album->getId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
+	    $ret = $item->create($this->_album->getId(), __FILE__, $mimeType, 'test item');
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
 
-	$ret = $photo->save();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    $ret = GalleryCoreApi::addExistingItemToAlbum($item, $this->_album->getId());
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $ret = $item->save();
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    /* Make sure that we have a preferred that contains the proper convert operations */
+	    $itemId = $item->getId();
+	    list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds(array($itemId));
+	    if ($ret) {
+		$this->failWithStatus($ret);
+	    }
+	    if (isset($preferreds[$itemId])) {
+		$this->assertEquals(
+			($i ? '' : 'convert-to-image/x-portable-pixmap;') . 'convert-to-image/jpeg',
+			$preferreds[$itemId]->getDerivativeOperations(), $mimeType . ' operations');
+	    } else {
+		$this->assert(false, 'missing preferred for ' . $mimeType);
+	    }
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
-	}
-
-	/* Make sure that we have a preferred that contains the proper convert operations */
-	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds(array($photo->getId()));
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	if (isset($preferreds[$photo->getId()])) {
-	    $this->assertEquals('convert-to-image/x-portable-pixmap;convert-to-image/jpeg',
-				$preferreds[$photo->getId()]->getDerivativeOperations());
-	} else {
-	    $this->assert(false, 'missing preferred');
 	}
     }
 
