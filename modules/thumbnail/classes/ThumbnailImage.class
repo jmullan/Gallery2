@@ -171,6 +171,8 @@ class ThumbnailImage extends GalleryChildEntity {
 	if (empty($targetName)) {
 	    $targetName = basename($inputFileName);
 	}
+	list ($base, $ext) = GalleryUtilities::getFileNameComponents($targetName);
+	$targetName = substr($base, 0, 120) . ($ext ? '.' . $ext : '');
 	list ($ret, $list) = ThumbnailHelper::fetchThumbnails(true);
 	if ($ret) {
 	    return $ret;

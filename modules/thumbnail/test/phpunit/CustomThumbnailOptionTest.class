@@ -24,9 +24,6 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
 GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 
@@ -273,7 +270,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
     }
 
     function testAlbumHighlight() {
-	/* Add custom thumbnail to album (also test browser not sending mime type..) */
+	/* Add custom thumbnail to album (also test browser not sending mime type in form data) */
 	$form = array('name' => array(1 => 'test.jpg'),
 		      'type' => array(1 => 'application/unknown'),
 		      'tmp_name' => array(1 =>
@@ -408,6 +405,26 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$thumbnail = array_shift($thumbnails);
 	$this->assertEquals($thumbnailImage->getId(),
 			    $thumbnail->getDerivativeSourceId(), 'source');
+    }
+
+    function testLongFilename() {
+	/* Verify filename is truncated to fit in db column; don't want db/filesystem mismatch */
+	$filename = '1234567891123456789212345678931234567894123456789512345678961234567897'
+	    . '123456789812345678991234567890123456789112345678921234567893.jpg';
+	$testfile = GalleryCoreApi::getPluginBaseDir('module', 'core')
+	    . 'modules/core/test/data/test1.jpg';
+
+	list ($ret, $thumbnailId) = ThumbnailHelper::addItem(null, $this->_item->getId(),
+		$filename, $testfile, 'image/jpeg');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $thumbnail) = GalleryCoreApi::loadEntitiesById($thumbnailId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(substr($filename, 0, 120) . '.jpg', $thumbnail->getFileName());
     }
 }
 

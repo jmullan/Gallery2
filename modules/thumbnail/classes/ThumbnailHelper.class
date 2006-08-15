@@ -196,8 +196,8 @@ class ThumbnailHelper {
 	 * recognize, take a swing at it using the file name.
 	 */
 	list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($fileMimeType);
-	if ($fileMimeType == 'application/octet-stream' ||
-		$fileMimeType == 'application/unknown' || empty($mimeExtensions)) {
+	if ($fileMimeType == 'application/octet-stream'
+		|| $fileMimeType == 'application/unknown' || empty($mimeExtensions)) {
 	    $extension = GalleryUtilities::getFileExtension($filename);
 	    list ($ret, $fileMimeType) = GalleryCoreApi::convertExtensionToMime($extension);
 	    if ($ret) {
@@ -205,8 +205,7 @@ class ThumbnailHelper {
 	    }
 	}
 	if ($fileMimeType != 'image/jpeg') {
-	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE),
-			 null);
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_FILE_TYPE), null);
 	}
 
 	if (!isset($item)) {
