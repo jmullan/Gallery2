@@ -97,6 +97,7 @@ function generateEntityDbXml() {
 			$keys[] = array('columns' => array($member['name']), 'primary' => 1);
 			$member['primary'] = 1;
 			break;
+
 		    case 'ID':
 		    case 'LINKED':
 			$member[strtolower($child['child'][$i]['name'])] = 1;
@@ -111,6 +112,9 @@ function generateEntityDbXml() {
 			}
 			break;
 
+		    case 'DEFAULT':
+			$member['default'] = $child['child'][$i]['content'];
+			break;
 
 		    default:
 			print 'Unknown member type: ' . $child['child'][$i]['name'] . '\n';
@@ -241,6 +245,10 @@ function generateMapDbXml() {
 			} else {
 			    $member['required']['empty'] = 'disallowed';
 			}
+			break;
+
+		    case 'DEFAULT':
+			$member['default'] = $child['child'][$i]['content'];
 			break;
 
 		    default:
