@@ -286,10 +286,18 @@ class GalleryModule extends GalleryPlugin {
 	if ($ret) {
 	    return $ret;
 	}
+	$i = 0;
+	$storage =& $gallery->getStorage();
 	while ($result = $searchResults->nextResult()) {
 	    $ret = GalleryCoreApi::deleteEntityById($result[0]);
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret;
+	    }
+	    if (!(++$i % 20)) {
+		$ret = $storage->checkPoint();
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 	}
 	return null;

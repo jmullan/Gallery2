@@ -80,12 +80,18 @@ class ItemDeleteController extends GalleryController {
 		}
 
 		/* if we're still here then all are deletable */
+		$storage =& $gallery->getStorage();
 		foreach ($selectedIds as $selectedId) {
 		    $ret = GalleryCoreApi::deleteEntityById($selectedId);
 		    if ($ret) {
 			return array($ret, null);
 		    }
-		    $status['deleted']['count']++;
+		    if (!(++$status['deleted']['count'] % 20)) {
+			$ret = $storage->checkPoint();
+			if ($ret) {
+			    return array($ret, null);
+			}
+		    }
 		}
 
 		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($itemId);
