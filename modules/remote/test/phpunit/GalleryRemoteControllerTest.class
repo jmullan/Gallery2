@@ -38,15 +38,13 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-
 	parent::setUp();
 
 	/* Create a new user */
-	list ($ret, $this->_user) = $this->_createRandomUser();
+	list ($ret, $this->_user) = $this->_createRandomUser(null, 'pass&word');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
 	$this->_markForCleanup($this->_user);
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
@@ -66,7 +64,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('form[cmd]', 'login');
 	GalleryUtilities::putRequestVariable('form[uname]', $this->_user->getUserName());
-	GalleryUtilities::putRequestVariable('form[password]', 'password');
+	GalleryUtilities::putRequestVariable('form[password]', 'pass&word');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array(), $results['error'], 'error');

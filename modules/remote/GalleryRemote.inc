@@ -203,7 +203,8 @@ class GalleryRemoteController extends GalleryController {
 		return $ret;
 	    }
 
-	    $password = isset($form['password']) ? $form['password'] : '';
+	    $password = isset($form['password'])
+		? GalleryUtilities::htmlEntityDecode($form['password']) : '';
 	    if ($user != null && $user->isCorrectPassword($password)) {
 		/* login successful */
 		$gallery->setActiveUser($user);
