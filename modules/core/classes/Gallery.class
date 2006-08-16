@@ -440,6 +440,11 @@ class Gallery {
 	    $this->_lockSystem->releaseAllLocks();
 	    $this->_lockSystem->releaseQueue();
 	}
+
+	/* Roll back any transactions */
+	if (isset($this->_storage)) {
+	    $this->_storage->rollbackTransaction();
+	}
     }
 
     /**
