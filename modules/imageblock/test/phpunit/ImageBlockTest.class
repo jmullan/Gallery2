@@ -79,19 +79,26 @@ class ImageBlockTest extends GalleryTestCase {
 	$resizeImagePath = GalleryCoreApi::getPluginBaseDir('module', 'core')
 	    . 'modules/core/test/data/test4.gif';
 	list ($ret, $this->_photo3, $this->_photo3Thumb) =
-	    $this->_addPhoto($this->_album->getId(), $resizeImagePath);
+	    $this->_addItem($this->_album->getId(), $resizeImagePath);
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	sleep(1);
-	list ($ret, $this->_photo2) = $this->_addPhoto($this->_album->getId(), $imagePath);
+	list ($ret, $this->_movie) =
+	    $this->_addItem($this->_album->getId(), __FILE__, 'GalleryMovieItem', 'video/test');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	sleep(1);
-	list ($ret, $this->_photo, $thumb) = $this->_addPhoto($this->_album->getId(), $imagePath);
+	list ($ret, $this->_photo2) = $this->_addItem($this->_album->getId(), $imagePath);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	sleep(1);
+	list ($ret, $this->_photo, $thumb) = $this->_addItem($this->_album->getId(), $imagePath);
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -140,33 +147,34 @@ class ImageBlockTest extends GalleryTestCase {
 	}
     }
 
-    function _addPhoto($parentId, $imagePath) {
-	list ($ret, $photo) =
-	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
+    function _addItem($parentId, $imagePath, $class='GalleryPhotoItem', $mimeType=null) {
+	list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', $class);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
+	if (!isset($mimeType)) {
+	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	}
+	$ret = $item->create($parentId, $imagePath, $mimeType,
+			     'testitem_' . time() . substr($imagePath, -4));
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	$ret = $photo->create($parentId, $imagePath, $mimeType,
-			      'testitem_' . time() . substr($imagePath, -4));
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-	$photo->setTitle('Test Item');
-	$ret = $photo->save();
+	$item->setTitle('Test Item');
+	$ret = $item->save();
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 	/* add thumbnail */
-	list ($ret, $thumb) = $this->_addDerivative($photo, $photo,
+	list ($ret, $thumb) = $this->_addDerivative($item, $item,
 						    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	return array(null, $photo, $thumb);
+	return array(null, $item, $thumb);
     }
 
     function _addDerivative(&$item, &$src, $derivativeType, $size) {
@@ -264,8 +272,8 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 
-	/* Select more than one recentImage.. should be most-recent and 2nd-most-recent */
-	GalleryUtilities::putRequestVariable('blocks', 'recentImage|recentImage');
+	/* Select more than one recentImage.. should be multiple recent items, not repeats */
+	GalleryUtilities::putRequestVariable('blocks', 'recentImage|recentImage|recentImage');
 
 	$template = new ImageBlockDummyGalleryTemplate();
 	$external->setTemplate($template);
@@ -276,13 +284,17 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
 			    $template->getPath());
 	$data = $template->_data;
-	$this->assertEquals(2, count($data['ImageBlockData']['blocks']), 'Two blocks');
+	$this->assertEquals(3, count($data['ImageBlockData']['blocks']), 'Three blocks');
 	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertBlock($data['ImageBlockData']['blocks'][1]);
+	$this->assertBlock($data['ImageBlockData']['blocks'][2]);
 	$this->assertEquals($this->_photo->getId(),
 			    $data['ImageBlockData']['blocks'][0]['id'], 'Most recent id');
 	$this->assertEquals($this->_photo2->getId(),
 			    $data['ImageBlockData']['blocks'][1]['id'], '2nd most recent id');
+	/* Imageblock now uses all DataItems instead of just PhotoItems; expect movie not photo3 */
+	$this->assertEquals($this->_movie->getId(),
+			    $data['ImageBlockData']['blocks'][2]['id'], '3rd most recent=movie');
 
 	/* Select only from subtree.. */
 	GalleryUtilities::putRequestVariable('blocks', 'recentImage|viewedAlbum');
@@ -596,6 +608,10 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::removeItemPermissions($this->_photo3->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($this->_movie->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

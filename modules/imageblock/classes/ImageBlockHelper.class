@@ -118,7 +118,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 
 	if (!empty($blocks)) {
-            /* Prepare image frames, if available */
+	    /* Prepare image frames, if available */
 	    list ($ret, $imageframe) =
 		GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	    if ($ret) {
@@ -607,39 +607,39 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	$query = sprintf('
+	$query = '
 	INSERT INTO
 	  [ImageBlockCacheMap]
 	SELECT DISTINCT
 	  ?, ?, [GalleryEntity::creationTimestamp], [GalleryEntity::id]
 	FROM
-	  [GalleryEntity], [GalleryAccessSubscriberMap], [GalleryChildEntity], [GalleryDerivative]
+	  [GalleryEntity], [%s], [GalleryAccessSubscriberMap],
+	  [GalleryChildEntity], [GalleryDerivative]
 	WHERE
-	  [GalleryEntity::entityType] = ?
+	  [%s::id] = [GalleryEntity::id]
 	  AND
 	  [GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
 	  AND
-	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	  [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
 	  AND
 	  [GalleryChildEntity::parentId] = [GalleryEntity::id]
 	  AND
 	  [GalleryDerivative::id] = [GalleryChildEntity::id]
 	  AND
 	  [GalleryDerivative::derivativeType] = ?
-	', $aclMarkers);
+	';
 
-	$data = array((int)$userId, 1, 'GalleryPhotoItem');
+	$data = array((int)$userId, 1);
 	$data = array_merge($data, $aclIds);
 	$data[] = DERIVATIVE_TYPE_IMAGE_THUMBNAIL;
 
-	$ret = $storage->execute($query, $data);
+	$ret = $storage->execute(sprintf($query, 'GalleryDataItem', 'GalleryDataItem'), $data);
 	if ($ret) {
 	    return $ret;
 	}
 
 	$data[1] = 2;
-	$data[2] = 'GalleryAlbumItem';
-	$ret = $storage->execute($query, $data);
+	$ret = $storage->execute(sprintf($query, 'GalleryAlbumItem', 'GalleryAlbumItem'), $data);
 	if ($ret) {
 	    return $ret;
 	}
@@ -751,8 +751,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		    }
 		}
 	    } else if (GalleryUtilities::isA($entity, 'GalleryAlbumItem')
-		           && $entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)
-		           && !empty($parentDisabledFlag) && empty($disabledFlag)
+			   && $entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)
+			   && !empty($parentDisabledFlag) && empty($disabledFlag)
 		       ) {
 		/*
 		 * A new album cannot have sub items and setDisabledFlag doesn't work for items
