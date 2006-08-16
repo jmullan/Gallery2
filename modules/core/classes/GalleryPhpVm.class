@@ -17,28 +17,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
+ * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
  * An abstraction layer over PHP.  For now, this serves as a way to allow our test classes to
- * interpose themselves between the code and the PHP VM so that we can simulate different VMs.
- * For example, this lets us return arbitrary values for calls like function_exists().  Every call
- * here is a straight pass-through.  New functions can be added at any time.
+ * interpose themselves between the code and the PHP VM so that we can simulate different VMs.  For
+ * example, this lets us return arbitrary values for calls like function_exists().  Every call here
+ * is a straight pass-through.  New functions can be added at any time.
  *
- * @package GalleryCore
  * @abstract
- * @access public
+ * @package GalleryCore
+ * @subpackage Classes
  */
 class GalleryPhpVm {
+
     /**
      * Return true if the given function has been defined.
      *
      * @param string function name
-     * @return bool
+     * @return boolean
      */
     function function_exists($functionName) {
 	return function_exists($functionName);
@@ -99,8 +102,8 @@ class GalleryPhpVm {
     }
 
     /**
-     * Set locale information.  Passing multiple locales isn't avialable until
-     * PHP 4.3.0 so it's not supported here (yet).
+     * Set locale information.  Passing multiple locales isn't avialable until PHP 4.3.0 so it's not
+     * supported here (yet).
      *
      * @param mixed category
      * @param string locale
@@ -112,8 +115,8 @@ class GalleryPhpVm {
     /**
      * Send a raw HTTP header
      *
-     * PHP 4.1 compatible header() function. The second optional parameter http_response_code
-     * was introduced in PHP 4.3.0 and is therefore not supported in G2
+     * PHP 4.1 compatible header() function.  The second optional parameter http_response_code was
+     * introduced in PHP 4.3.0 and is therefore not supported in Gallery.
      *
      * @param string string
      * @param [optional boolean replace]
@@ -125,8 +128,8 @@ class GalleryPhpVm {
     /**
      * Checks if or where headers have been sent
      *
-     * PHP 4.1 compatible headers_sent() function. The optional parameters
-     * were introduced in PHP 4.3.0 and are therefore not supported in G2
+     * PHP 4.1 compatible headers_sent() function.  The optional parameters were introduced in PHP
+     * 4.3.0 and are therefore not supported in Gallery.
      *
      * @return boolean whether headers are already sent
      */
@@ -217,7 +220,7 @@ class GalleryPhpVm {
      * @param string message
      * @param string addition headers (optional)
      * @param string additional parameters (optional)
-     * @return bool true if the mail was successfully accepted for delivery
+     * @return boolean true if the mail was successfully accepted for delivery
      */
     function mail($to, $subject, $message, $additionalHeaders=null, $additionalParameters=null) {
 	return mail($to, $subject, $message, $additionalHeaders, $additionalParameters);

@@ -17,9 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
+ * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
@@ -27,8 +29,8 @@
 GalleryCoreApi::requireOnce('lib/adodb/adodb.inc.php', true);
 
 /*
- * This will let ADODB know which error handler function we want to use.
- * (if G2 is embedded in a CMS also using adodb it may be defined already)
+ * This will let ADOdb know which error handler function we want to use.
+ * (if Gallery is embedded in a CMS also using ADOdb it may be defined already)
  */
 if (!defined('ADODB_ERROR_HANDLER')) {
     define('ADODB_ERROR_HANDLER', 'GalleryAdodbErrorHandler');
@@ -55,8 +57,8 @@ define('DATABASE_TABLE_PREFIX', 'g2_');
 define('DATABASE_COLUMN_PREFIX', 'g_');
 
 /**
- * Database storage mechanism.
- * This object provides the hooks for saving and restoring objects in the persistent store.
+ * Database storage mechanism.  This object provides the hooks for saving and restoring objects in
+ * the persistent store.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -66,114 +68,114 @@ class GalleryStorage {
     /**
      * Internal pointer to ADOdb database object
      *
-     * @var object ADOdb $_db
      * @access protected
+     * @var object ADOdb $_db
      */
     var $_db;
 
     /**
      * Internal pointer to our DatabaseStorageExtras object
      *
-     * @var object DatabaseStorageExtras $_extras
      * @access protected
+     * @var object DatabaseStorageExtras $_extras
      */
     var $_extras;
 
     /**
      * Internal pointer to a non-transactional ADOdb database object
      *
-     * @var object ADOdb $_nonTransactionalDb
      * @access protected
+     * @var object ADOdb $_nonTransactionalDb
      */
     var $_nonTransactionalDb;
 
     /**
      * Database type (ADOdb driver name)
      *
-     * @var string $_type
      * @access protected
+     * @var string $_type
      */
     var $_type;
 
     /**
      * Name of the database user
      *
-     * @var string $_username
      * @access protected
+     * @var string $_username
      */
     var $_username;
 
     /**
      * Password for the database user
      *
-     * @var string $_password
      * @access protected
+     * @var string $_password
      */
     var $_password;
 
     /**
      * Name of the database to use
      *
-     * @var string $_database
      * @access protected
+     * @var string $_database
      */
     var $_database;
 
     /**
      * Host the database runs on
      *
-     * @var string $_hostname
      * @access protected
+     * @var string $_hostname
      */
     var $_hostname;
 
     /**
      * Are we attempting to be transactional?
      *
-     * @var string $_transactional
      * @access protected
+     * @var string $_transactional
      */
     var $_isTransactional;
 
     /**
      * A string to prepend to table names
      *
-     * @var string $_tablePrefix
      * @access protected
+     * @var string $_tablePrefix
      */
     var $_tablePrefix;
 
     /**
      * A string to prepend to column names
      *
-     * @var string $_columnPrefix
      * @access protected
+     * @var string $_columnPrefix
      */
     var $_columnPrefix;
 
     /**
      * A cache of member info that we've discovered about various classes
      *
-     * @var array $_entityInfoCache
      * @access protected
+     * @var array $_entityInfoCache
      */
     var $_entityInfoCache;
 
     /**
      * Whether or not we should use persistent database connections
      *
-     * @var array $_usePersistentConnections
      * @access protected
+     * @var array $_usePersistentConnections
      */
     var $_usePersistentConnections;
 
     /**
-     * Whether this storage accepts empty (string) values are allowed for NOT NULL columns
-     * Some DBMS implicitely converts empty values to NULL on INSERT/UPDATE and then the value
-     * would violate a NOT NULL condition
+     * Whether this storage accepts empty (string) values for NOT NULL columns.  Some DBMS
+     * implicitly converts empty values to NULL on INSERT/UPDATE and then the value would violate a
+     * NOT NULL condition.
      *
-     * @var array $_isEmptyAllowedForNotNullColumn
      * @access private
+     * @var array $_isEmptyAllowedForNotNullColumn
      */
     var $_isEmptyAllowedForNotNullColumn;
 
@@ -205,9 +207,9 @@ class GalleryStorage {
     /**
      * Connect to the database
      *
+     * @access protected
      * @return array object GalleryStatus a status code
      *               object a database resource
-     * @access protected
      */
     function _getConnection($forceNew=false) {
 	global $gallery;
@@ -262,22 +264,22 @@ class GalleryStorage {
     /**
      * Set runtime settings for the given database connection
      *
-     * Set the connection / client / server encoding and other parameters
+     * Set the connection/client/server encoding and other parameters
      *
+     * @access private
      * @param object adodb database handle
      * @return object GalleryStatus a status code
-     * @access private
      */
     function _setConnectionSettings(&$db) {
     	return null;
     }
 
     /**
-     * Get the reference to our GalleryStorageExtras instance where we put
-     * less frequently used code (most code that's used to modify the database).
+     * Get the reference to our GalleryStorageExtras instance where we put less frequently used code
+     * (most code that's used to modify the database).
      *
-     * @return object GalleryStorageExtras
      * @access protected
+     * @return object GalleryStorageExtras
      */
     function &_getExtras() {
 	if (!isset($this->_extras)) {
@@ -530,7 +532,7 @@ class GalleryStorage {
     }
 
     /**
-     * Remove ALL entries from a map.. use with caution!
+     * Remove ALL entries from a map.  Use with caution!
      *
      * @param string the map we're working on
      * @return object GalleryStatus a status code
@@ -765,8 +767,8 @@ class GalleryStorage {
     }
 
     /**
-     * Mark a storage checkpoint, which will commit pending transactions
-     * and perform any future tied-tasks
+     * Mark a storage checkpoint, which will commit pending transactions and perform any future
+     * tied-tasks
      *
      * @return object GalleryStatus a status code
      */
@@ -784,7 +786,7 @@ class GalleryStorage {
     }
 
     /**
-     * Roll back our transaction, if the storage layer supports them.
+     * Rollback our transaction, if the storage layer supports them.
      *
      * @return object GalleryStatus a status code
      */
@@ -822,8 +824,8 @@ class GalleryStorage {
     /**
      * Begin transaction if not already in one.
      *
-     * @return object GalleryStatus a status code
      * @access protected
+     * @return object GalleryStatus a status code
      */
     function _guaranteeTransaction() {
 	if ($this->_isTransactional && !$this->_db->transCnt) {
@@ -857,10 +859,10 @@ class GalleryStorage {
     }
 
     /**
-     * Return database specific syntax to replace in schema sql
+     * Return database specific syntax to replace in schema SQL
      *
-     * @return array (string => replacement)
      * @access protected
+     * @return array (string => replacement)
      */
     function _getSqlReplacements() {
 	return array();
@@ -868,8 +870,9 @@ class GalleryStorage {
 
     /**
      * Get sql to optimize a table
-     * @return string sql statement with %s token for table name
+     *
      * @access protected
+     * @return string sql statement with %s token for table name
      */
     function _getOptimizeStatement() {
 	return null;
@@ -918,8 +921,8 @@ class GalleryStorage {
     }
 
     /**
-     * Return true if enough of this storage system is installed that
-     * there'll be a conflict if you try to do another install.
+     * Return true if enough of this storage system is installed that there'll be a conflict if you
+     * try to do another install.
      *
      * @return array object GalleryStatus a status code
      *               boolean true if the tables are installed
@@ -942,8 +945,8 @@ class GalleryStorage {
     /**
      * Return the number of rows that were affected by the last UPDATE/DELETE.  Note that MySQL
      * treats this a little differently than other databases; if you do an UPDATE operation and
-     * nothing is actually changed (eg, in the situation where the SET clauses in your UPDATE
-     * match the existing values) then mysql will return 0 affected rows.
+     * nothing is actually changed (eg. in the situation where the SET clauses in your UPDATE match
+     * the existing values) then mysql will return 0 affected rows.
      *
      * return array object GalleryStatus a status code
      *              int the number of affected rows
@@ -956,9 +959,9 @@ class GalleryStorage {
     /**
      * Describe the members, modules and parent of an entity
      *
+     * @access protected
      * @param string a class name
      * @param boolean true if we should scan all modules, not just the active ones
-     * @access protected
      * @return array object GalleryStatus a status code
      *               entity associative array
      */
@@ -968,13 +971,12 @@ class GalleryStorage {
     }
 
     /**
-     * Execute a given SQL file against the database.  Prefix table and column
-     * names as necessary.  Split multiple commands in the file into separate
-     * Execute() calls.
+     * Execute a given SQL file against the database.  Prefix table and column names as necessary.
+     * Split multiple commands in the file into separate Execute() calls.
      *
+     * @access protected
      * @param string absolute path of the sql file
      * @return object GalleryStatus a status code
-     * @access protected
      */
     function _executeSqlFile($fileName) {
 	$extras =& $this->_getExtras();
@@ -982,12 +984,11 @@ class GalleryStorage {
     }
 
     /**
-     * Translate all table and column names from the [Entity::member] notation to
-     * table.column notation.
+     * Translate all table and column names from [Entity::member] notation to table.column notation.
      *
+     * @access protected
      * @param string the raw query
      * @param string the translated query
-     * @access protected
      */
     function _translateQuery($query) {
 	/* Change '[Class::member]' to 'table.column' or 'alias.column' */
@@ -1028,42 +1029,39 @@ class GalleryStorage {
     /**
      * Translate a potentially unsafe column name into a safe one
      *
+     * @access protected
      * @param string the name of a column
      * @return string a safe column name
-     * @access protected
      */
     function _translateColumnName($columnName) {
 	return $this->_columnPrefix . $columnName;
     }
 
     /**
-     * Translate a potentially unsafe table name into a safe one by adding
-     * a prefix or suffix to avoid conflicting with a reserved word.
+     * Translate a potentially unsafe table name into a safe one by adding a prefix or suffix to
+     * avoid conflicting with a reserved word.
      *
      * eg:
      * Comment   => array(g2_Comment, null, Comment)
      * Comment=1 => array(g2_Comment, C0, Comment)
      *
+     * @access protected
      * @param string the name of a table
      * @return array string a safe table name
      *               an alias for this table
      *               the unsafe, but translated, table name
-     * @access protected
      */
     function _translateTableName($tableName) {
 	/*
-	 * Remove the the ubiquitous "Gallery" prefix, since it's not part of
-	 * the schema name.  For now we automatically translate the class name
-	 * into the schema name by doing this.  If this ever becomes a problem,
-	 * we should start hand-writing the schema name instead and then
-	 * pushing that into the interface classes so that we don't have to
-	 * automatically generate the schema name (and get it wrong).
+	 * Remove the the ubiquitous "Gallery" prefix, since it's not part of the schema name.  For
+	 * now we automatically translate the class name into the schema name by doing this.  If
+	 * this ever becomes a problem, we should start hand-writing the schema name instead and
+	 * then pushing that into the interface classes so that we don't have to automatically
+	 * generate the schema name (and get it wrong).
 	 */
 	$tableName = str_replace('Gallery', '', $tableName);
 
-	/*
-	 * Other abbreviations to keep table names under Oracle's 30 character limit.
-	 */
+	/* Other abbreviations to keep table names under Oracle's 30 character limit. */
 	$tableName = str_replace('Preferences', 'Prefs', $tableName);
 	$tableName = str_replace('Toolkit', 'Tk', $tableName);
 	$tableName = str_replace('TkOperation', 'TkOperatn', $tableName);
@@ -1098,7 +1096,6 @@ class GalleryStorage {
      * @param boolean try all modules, not just active ones
      * @return array GalleryStatus a status code,
      *               array member name => member type
-     * @access public
      */
     function describeMap($mapName, $tryAllModules=false) {
 	global $gallery;
@@ -1131,9 +1128,9 @@ class GalleryStorage {
 		}
 
 		/*
-		 * Don't use GalleryPlatform here because it can cause difficult-to-eliminate
-		 * issues in the testing code when we use mock platforms. Once we have an
-		 * abstraction layer around GalleryCoreApi we can change this.
+		 * Don't use GalleryPlatform here because it can cause difficult-to-eliminate issues
+		 * in the testing code when we use mock platforms. Once we have an abstraction layer
+		 * around GalleryCoreApi we can change this.
 		 */
 		$moduleDir = GalleryCoreApi::getPluginBaseDir('module', $moduleId);
 		if ($ret) {
@@ -1170,6 +1167,7 @@ class GalleryStorage {
 
     /**
      * Encode a blob of binary data into a form that's safe for a varchar column
+     *
      * @param binary data
      * @return database safe string
      */
@@ -1179,6 +1177,7 @@ class GalleryStorage {
 
     /**
      * Decode a blob of binary data into a form that's safe for a varchar column
+     *
      * @param binary data
      * @return database safe string
      */
@@ -1187,8 +1186,7 @@ class GalleryStorage {
     }
 
     /**
-     * Start tracing.
-     * If Gallery is in debug, this method will begin storing all output and routing
+     * Start tracing.  If Gallery is in debug, this method will begin storing all output and routing
      * it into Gallery's debug system.
      *
      * @access protected
@@ -1201,8 +1199,7 @@ class GalleryStorage {
     }
 
     /**
-     * Stop tracing.
-     * If Gallery is in debug, this will method will stop tracing.
+     * Stop tracing.  If Gallery is in debug, this will method will stop tracing.
      *
      * @access protected
      */
@@ -1216,15 +1213,15 @@ class GalleryStorage {
     }
 
     /**
-     * Cast the value to the proper member type when interacting with the database
-     * Optionally also perform a UTF8-safe truncation for strings
+     * Cast the value to the proper member type when interacting with the database.  Optionally also
+     * perform a UTF-8-safe truncation for strings.
      *
      * TODO: CAST empty to NULL ? values from DB too?
      *
      * @param mixed the value
      * @param array ('type' => STORAGE_TYPE_XXX constant,
      *               'size' => STORAGE_SIZE_XXX constant)
-     * @param bool (optional) false if value is for SQL, true if value is from the DB
+     * @param boolean (optional) false if value is for SQL, true if value is from the DB
      * @return mixed correctly typed value
      */
     function _normalizeValue($value, $memberData, $fromDb=false) {
@@ -1263,7 +1260,7 @@ class GalleryStorage {
     }
 
     /**
-     * Perform a UT8-safe truncation of the string to a size
+     * Perform a UTF-8-safe truncation of the string to a size
      *
      * @param string the value
      * @param int the size (as a STORAGE_SIZE_XXX constant)
@@ -1298,8 +1295,8 @@ class GallerySearchResults {
     /**
      * Internal record set object
      *
-     * @var object ADORecordSet $_recordSet
      * @access private
+     * @var object ADORecordSet $_recordSet
      */
     var $_recordSet;
 
@@ -1327,9 +1324,8 @@ class GallerySearchResults {
 }
 
 /**
- * Default Error Handler for ADODB.
- * Derived from adodb-errorhandler.inc.php which is
- * (c) 2000, 2001 John Lim (jlim@natsoft.com.my).  All rights reserved.
+ * Default Error Handler for ADOdb.  Derived from adodb-errorhandler.inc.php which is (c) 2000, 2001
+ * John Lim (jlim@natsoft.com.my).  All rights reserved.
  *
  * @param $dbms         the RDBMS you are connecting to
  * @param $fn           the name of the calling function (in uppercase)
