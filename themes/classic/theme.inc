@@ -17,24 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
+ * Theme with columns for thumbnails, item info and subalbum links
  * @package ClassicTheme
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * This implements the standard gallery theme
- *
- * @package ClassicTheme
- * @subpackage Theme
+ * @version $Revision$ $Date$
  */
 class ClassicTheme extends GalleryTheme {
 
-    /**
-     * Constructor
-     */
     function ClassicTheme() {
 	global $gallery;
 
@@ -66,7 +58,7 @@ class ClassicTheme extends GalleryTheme {
     }
 
     /**
-     * @see GalleryTheme::getSettings()
+     * @see GalleryTheme::getSettings
      */
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);

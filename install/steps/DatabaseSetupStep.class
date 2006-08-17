@@ -18,6 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/**
+ * Setup Database
+ * @package Install
+ */
 class DatabaseSetupStep extends InstallStep {
     function stepName() {
 	return _('Database Setup');
@@ -368,8 +372,8 @@ class DatabaseSetupStep extends InstallStep {
      *      - CREATE INDEX, DROP INDEX
      *      - CREATE SEQUENCE, DROP SEQUENCE
      *
-     * @param: string db type platform name (i.e. not mysqlt, but mysql)
-     * @param: array (string tableName)
+     * @param string db type platform name (i.e. not mysqlt, but mysql)
+     * @param array (string tableName)
      * @return array (boolean success, string errors)
      */
     function _testPrivileges($dbType, $metatables) {

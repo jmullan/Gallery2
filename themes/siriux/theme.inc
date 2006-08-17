@@ -17,23 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SiriuxTheme
- * @author Nico Kaiser <nico@siriux.net>
- */
 
 /**
- * This implements the siriux.net gallery theme
- *
+ * Siriux.net Gallery theme
  * @package SiriuxTheme
- * @subpackage Theme
+ * @author Nico Kaiser <nico@siriux.net>
+ * @version $Revision$ $Date$
  */
 class SiriuxTheme extends GalleryTheme {
 
-    /**
-     * Constructor
-     */
     function SiriuxTheme() {
 	global $gallery;
 
@@ -176,7 +168,7 @@ class SiriuxTheme extends GalleryTheme {
     }
 
     /**
-     * @see GalleryTheme::getSettings()
+     * @see GalleryTheme::getSettings
      */
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);

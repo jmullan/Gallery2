@@ -17,25 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SliderTheme
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
- * This implements a gallery theme with a scrollable view of all image thumbnails and
- * slideshow support in a single dynamic page.  Displays inline items ONLY; subalbums
- * or other items types are NOT shown.
- *
+ * Theme with combined image view, scrollable thumbnails and slideshow.
+ * Displays inline items ONLY; subalbums or other items types are NOT shown.
  * @package SliderTheme
- * @subpackage Theme
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class SliderTheme extends GalleryTheme {
 
-    /**
-     * Constructor
-     */
     function SliderTheme() {
 	global $gallery;
 

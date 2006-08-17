@@ -29,6 +29,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+/**
+ * Gallery Installer
+ * @package Install
+ */
 
 /* Show all errors. */
 @ini_set('display_errors', 1);

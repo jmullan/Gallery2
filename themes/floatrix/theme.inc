@@ -17,23 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package FloatrixTheme
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * This implements the standard gallery theme
- *
+ * Variable column theme based on Matrix
  * @package FloatrixTheme
- * @subpackage Theme
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class FloatrixTheme extends GalleryTheme {
 
-    /**
-     * Constructor
-     */
     function FloatrixTheme() {
 	global $gallery;
 
