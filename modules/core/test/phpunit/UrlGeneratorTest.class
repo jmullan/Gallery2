@@ -427,8 +427,12 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$params['return'] = 1;
 	$actual = $this->_urlGenerator->generateUrl($params, array('forceSessionId' => false));
 
+	/*
+	 * The return URL needs to be server relative because we don't know at this point in
+	 * wich context it'll be used later on.
+	 */
 	$params['return'] =
-	    GalleryUrlGenerator::appendParamsToUrl('phpunit_test.php',
+	    GalleryUrlGenerator::appendParamsToUrl('/gallery2/phpunit_test.php',
 						   array('view' => 'foo', 'a' => '123'));
 	/*
 	 * Note: encoded 'return' url should separate request variables with '%26'
@@ -854,7 +858,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_GET['g2_returnName'] = 'name';
 	$_GET['g2_navId'] = 'navId';
 	$_GET['g2_fromNavId'] = 'fromNavId';
-	$expected = 'phpunit_test.php?g2_foo=bar';
+	$expected = '/gallery2/phpunit_test.php?g2_foo=bar';
 
 	/* Normal behaviour (php+apache) */
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
@@ -886,7 +890,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	/* No other params in URL */
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php';
 	$_GET = array();
-	$expected = 'phpunit_test.php?' . $sessionParam;
+	$expected = '/gallery2/phpunit_test.php?' . $sessionParam;
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl(),
 			    'no other params');
 
@@ -894,14 +898,14 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
 	$_GET['g2_foo'] = 'bar';
 	unset($this->_urlGenerator->_currentUrl);
-	$expected = 'phpunit_test.php?g2_foo=bar&amp;' . $sessionParam;
+	$expected = '/gallery2/phpunit_test.php?g2_foo=bar&amp;' . $sessionParam;
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl(),
 			    'with other params');
 
 	/* With session already in URL */
 	$_GET[GalleryUtilities::prefixFormVariable($session->getKey())] = $session->getId();
 	unset($this->_urlGenerator->_currentUrl);
-	$expected = 'phpunit_test.php?g2_foo=bar&amp;' . $sessionParam;
+	$expected = '/gallery2/phpunit_test.php?g2_foo=bar&amp;' . $sessionParam;
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl(),
 			    'with session already in URL');
 
@@ -911,7 +915,7 @@ class UrlGeneratorTest extends GalleryTestCase {
     function testGetNavigationReturnUrlArrayParam() {
 	$_GET['g2_foo'] = array('test' => 'bar');
 	$_GET['g2_form'] = array('one' => array('two' => array('three' => 'four')));
-	$expected = 'phpunit_test.php?g2_foo[test]=bar&amp;'
+	$expected = '/gallery2/phpunit_test.php?g2_foo[test]=bar&amp;'
 		  . 'g2_form[one][two][three]=four';
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
     }

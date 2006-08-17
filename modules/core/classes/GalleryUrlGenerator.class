@@ -881,7 +881,7 @@ class GalleryUrlGenerator {
 	$params = GalleryUtilities::getUrlVariablesFiltered(
 		array('return', 'returnName', 'navId', 'fromNavId'), true);
 
-	return $this->generateUrl($params);
+	return $this->generateUrl($params, array('forceServerRelativeUrl' => 1));
     }
 
     /**
