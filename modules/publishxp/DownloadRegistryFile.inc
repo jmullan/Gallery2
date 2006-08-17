@@ -68,8 +68,8 @@ class DownloadRegistryFileView extends GalleryView {
 	header("Content-Type: application/octet-stream");
 	header("Content-Disposition: filename=install_registry.reg");
 
-        GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
-        $template = new GalleryTemplate(dirname(__FILE__) . '/../..');
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
+	$template = new GalleryTemplate(dirname(__FILE__) . '/../..');
 	$template->setVariable('l10Domain', 'modules_publishxp');
 
 	$DownloadRegistryFile['title'] = $title;

@@ -33,9 +33,7 @@ class SelectAlbumController extends GalleryController {
      * @see GalleryController:handleRequest
      */
     function handleRequest($form) {
-	$results = array();
-	$error = array();
-	$status = array();
+	$results = $error = $status = array();
 
 	/*
 	 * We merely provide a redirection service here.  Permission checks will be

@@ -50,7 +50,7 @@ class NewAlbumController extends GalleryController {
 	    }
 	    if (empty($error)) {
 		list($ret, $newAlbum) = GalleryCoreApi::createAlbum(
-                    $form['parentId'], $form['pathComponent'], $form['title'],
+		    $form['parentId'], $form['pathComponent'], $form['title'],
 		    $form['summary'], $form['description'], null);
 		if ($ret) {
 		    return array($ret, null);
@@ -68,7 +68,7 @@ class NewAlbumController extends GalleryController {
 	    }
 	}
 
-        if (!empty($redirect)) {
+	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'publishxp.NewAlbum';
