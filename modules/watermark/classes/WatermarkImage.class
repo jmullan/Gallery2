@@ -17,15 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Watermark
- * @author Alan Harder <alan.harder@sun.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 
 /**
@@ -41,6 +33,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
  *
  * @package Watermark
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class WatermarkImage extends GalleryEntity {
 
@@ -325,17 +319,14 @@ class WatermarkImage extends GalleryEntity {
     }
 
     /**
-     * @see GalleryEntity::save()
+     * @see GalleryEntity::save
      */
     function save($postEvent=true) {
 	return parent::save($postEvent, 0);
     }
 
     /**
-     * Delete this GalleryEntity
-     *
-     * @access public
-     * @return object GalleryStatus a status code
+     * @see GalleryEntity::delete
      */
     function delete() {
 	global $gallery;
@@ -432,7 +423,7 @@ class WatermarkImage extends GalleryEntity {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'WatermarkImage';

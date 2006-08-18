@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rss
- * @author Jonatan Heyman <http://heyman.info>
- * @author Pierre-Luc Paour
- * @author Daniel Grund <http://www.photogrund.nl>
- */
 
 /**
  * @package Rss
  * @subpackage Classes
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
+ * @version $Revision$ $Date$
  */
 class RssGenerator {
     /**
@@ -156,7 +153,7 @@ class RssGenerator {
 	    $this->cdata(GalleryUtilities::markup($this->_properties['description'])) .
 	    '</description>' . $lf .
 	    (isset($this->_properties['language']) ?
-	    	'<language>' . $this->_properties['language'] .
+		'<language>' . $this->_properties['language'] .
 		'</language>' : '') . $lf .
 	    (!empty($this->_properties['copyright']) ?
 		'<copyright>' . GalleryUtilities::markup($this->_properties['copyright']) .
@@ -256,17 +253,17 @@ class RssGenerator {
 
 		if (isset($item['author'])) {
 		    $data .= ' <author>' . GalleryUtilities::markup($item['author']) .
-		    	     '</author>' . $lf;
+			     '</author>' . $lf;
 		}
 
 		if (isset($item['category'])) {
 		    $data .= ' <category>' . GalleryUtilities::markup($item['category']) .
-		    	     '</category>' . $lf;
+			     '</category>' . $lf;
 		}
 
 		if (isset($item['comments'])) {
 		    $data .= ' <comments>' . GalleryUtilities::markup($item['comments']) .
-		    	     '</comments>' . $lf;
+			     '</comments>' . $lf;
 		}
 
 		if (isset($item['enclosure'])) {

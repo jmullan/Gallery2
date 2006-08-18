@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package NetPbm
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * A helper class for the GalleryNetPbmToolkit class
- *
  * @package NetPbm
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class NetPbmToolkitHelper {
 
@@ -39,7 +36,6 @@ class NetPbmToolkitHelper {
      * @return object GalleryStatus a status code
      *         array('operations' => ...
      *               'properties' => ...)
-     * @static
      */
     function getOperationsAndProperties($saveParameters=false) {
 	global $gallery;
@@ -174,8 +170,6 @@ class NetPbmToolkitHelper {
      *		      'message' => string: the error message
      *		     )
      *         array hash map of mime types
-     *
-     * @static
      */
     function testJhead($jheadPath) {
 	global $gallery;
@@ -220,8 +214,6 @@ class NetPbmToolkitHelper {
      *		      'message' => string: the error message
      *		     )
      *         array of string mime types
-     *
-     * @static
      */
     function testBinaries($netPbmPath) {
 	global $gallery;

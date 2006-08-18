@@ -18,27 +18,21 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package Rewrite
- * @subpackage Classes
- * @author Douglas Cau <douglas@cau.se>
- */
-
 GalleryCoreApi::requireOnce('modules/core/AdminMaintenance.inc');
 
 /**
- * This is a MaintenanceTask that will check the short style URL for a
- * file system conflicts through all Gallery items.
+ * This is a MaintenanceTask that will check the short style URL for file system conflicts
+ * through all Gallery items.
  *
  * @package Rewrite
  * @subpackage Classes
- *
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class RewriteCheckConflictTask extends MaintenanceTask {
 
     /**
-     * @see MaintenanceTask::getInfo()
+     * @see MaintenanceTask::getInfo
      */
     function getInfo() {
 	global $gallery;
@@ -52,7 +46,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
     }
 
     /**
-     * @see MaintenanceTask::run()
+     * @see MaintenanceTask::run
      */
     function run() {
 	global $gallery;
@@ -125,9 +119,8 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	return array(null, true, $status);
     }
 
-
     /**
-     * @see MaintenanceTask::requiresProgressBar()
+     * @see MaintenanceTask::requiresProgressBar
      */
     function requiresProgressBar() {
 	return true;

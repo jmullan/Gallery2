@@ -17,24 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SelfRegistration
- * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 
 /**
- * Representation of a single pending self-registered user
- * (not yet a valid GalleryUser)
+ * Representation of a single pending self-registered user (not yet a valid GalleryUser).
  *
- * This class is the container for information about Gallery
- * users.  Each instance of User contains a unique user id. It
- * must be implemented by a class that has a persistent store for
+ * This class is the container for information about Gallery users.  Each instance of User
+ * contains a unique user id. It must be implemented by a class that has a persistent store for
  * the relevant user data.
  *
  * @g2 <class-name>GalleryPendingUser</class-name>
@@ -45,8 +35,10 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
  * @g2 </schema>
  * @g2 <requires-id/>
  *
- * @package SelfRegistration
+ * @package Registration
  * @subpackage Classes
+ * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
+ * @version $Revision$ $Date$
  */
 class GalleryPendingUser extends GalleryEntity {
 
@@ -211,7 +203,7 @@ class GalleryPendingUser extends GalleryEntity {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryPendingUser';

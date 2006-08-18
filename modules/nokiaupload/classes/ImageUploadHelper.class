@@ -17,11 +17,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+/**
+ * Static helper methods for use by NokiaUpload views and controllers.
+ * @package NokiaUpload
+ * @subpackage Classes
+ * @author Jerome Rannikko <jeromer@hotpop.com>
+ * @version $Revision$ $Date$
+ * @static
+ */
 
 /**
  * Error codes and other constants for NokiaUpload module.
- * These are defined in the Image Upload Server API document
- * available at forum.nokia.com.
+ * These are defined in the Image Upload Server API document available at forum.nokia.com.
  */
 define('NOKIAUPLOAD_ERR_NOERR', '0');
 define('NOKIAUPLOAD_ERR_UNKNOWN', '1');
@@ -34,23 +41,15 @@ define('NOKIAUPLOAD_ERR_AUTH', '2');
 define('NOKIAUPLOAD_ERR_DIRCREATE', '2');
 
 /* Upload (section 5.5) */
-define('NOKIAUPLOAD_ERR_NOSPACE', '2'); /* Not enough space left in server. */
-define('NOKIAUPLOAD_ERR_TOOBIG', '3');  /* Too large image. */
+define('NOKIAUPLOAD_ERR_NOSPACE', '2'); /* Not enough space left in server */
+define('NOKIAUPLOAD_ERR_TOOBIG', '3');  /* Too large image */
 
 /* Directory Listing (section 5.6) */
 define('NOKIAUPLOAD_ERR_DIRLIST', '2');
 
 /**
- * @version $Revision$ $Date$
- * @package NokiaUpload
- * @author Jerome Rannikko <jeromer@hotpop.com>
- */
-
-/**
  * Static helper methods for use by NokiaUpload views and controllers.
- *
- * @package NokiaUpload
- * @subpackage Helpers
+ * @static
  */
 class ImageUploadHelper {
 
@@ -601,9 +600,7 @@ class ImageUploadHelper {
 
     /**
      * Write the contents of _POST and _GET to debug log.
-     *
      * @param string optional message
-     * @static
      */
     function logRequest($message='') {
 	global $gallery;

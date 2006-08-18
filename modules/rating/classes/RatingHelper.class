@@ -17,19 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rating
- * @subpackage Helpers
- * @author  Don Seiler <don@seiler.us>
- */
 
 /**
  * Retrieves information for ratings.
- *
  * @package Rating
- * @subpackage UserInterface
- *
+ * @subpackage Classes
+ * @author  Don Seiler <don@seiler.us>
+ * @version $Revision$ $Date$
+ * @static
  */
 class RatingHelper {
 
@@ -41,14 +36,12 @@ class RatingHelper {
      * @return array object GalleryStatus a status code
      *               array  double  latest average rating
      *                      int     count of total ratings
-     * @access public
-     * @static
      */
     function fetchRatings($itemIds, $userId) {
 	global $gallery;
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('RatingCacheMap',
-	    array('itemId', 'averageRating', 'voteCount'), 
+	    array('itemId', 'averageRating', 'voteCount'),
 	    array('itemId' => $itemIds));
 	if ($ret) {
 	    return array($ret, null);
@@ -107,8 +100,6 @@ class RatingHelper {
      * @return array object GalleryStatus a status code
      *               array  double  new avg rating for itemId
      *                      int     total votes for itemId
-     * @access public
-     * @static
      */
     function rateItem($itemId, $rating, $userId) {
 	global $gallery;

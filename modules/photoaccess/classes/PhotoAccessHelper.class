@@ -19,17 +19,12 @@
  */
 
 /**
- * @package PhotoAccess
- * @version $Revision$ $Date$
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
  * This is a helper class for interacting with PhotoWorks.com
- *
  * @package PhotoAccess
  * @subpackage Classes
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class PhotoAccessHelper {
 
@@ -38,7 +33,6 @@ class PhotoAccessHelper {
      *
      * @return array object GalleryStatus a status code
      *               string the url to the photoworks.com cart
-     * @static
      */
     function printPhotos($cartItemIds, $returnUrl) {
 	global $gallery;
@@ -192,7 +186,7 @@ class PhotoAccessHelper {
 			   'entry-page="/sbo/anonCart.jsp" return-url="%s">', $returnUrl);
 	for ($i = 0; $i < sizeof($entries); $i++) {
 	    $lines[] = sprintf('<image id="%d" url="%s" thumb-url="%s" height="%d" width="%d"/>',
-                $entries[$i]['id'], $entries[$i]['imageUrl'], $entries[$i]['thumbUrl'],
+		$entries[$i]['id'], $entries[$i]['imageUrl'], $entries[$i]['thumbUrl'],
 			       $entries[$i]['imageHeight'], $entries[$i]['imageWidth']);
 	}
 	$lines[] = '</add-cart-request>';
@@ -208,8 +202,8 @@ class PhotoAccessHelper {
 	    $gallery->debug_r($postData, true);
 	}
 	list ($body, $response, $headers) = GalleryCoreApi::postToWebPage(
-            $cartUrl, $postData,
-            array('User-Agent' => GalleryUtilities::getServerVar('HTTP_USER_AGENT')));
+	    $cartUrl, $postData,
+	    array('User-Agent' => GalleryUtilities::getServerVar('HTTP_USER_AGENT')));
 
 	/* Expect a response of the form:
 	 *

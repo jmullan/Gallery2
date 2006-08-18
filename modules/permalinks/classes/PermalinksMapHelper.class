@@ -17,29 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Permalinks
- * @author Pierre-Luc Paour <gallery@paour.com>
- */
 
 /**
- * A helper class for Permalinkss
- *
- * Utility functions useful in managing Permalinkss
- *
+ * Utility functions useful in managing Permalinks.
  * @package Permalinks
- * @subpackage Helpers
+ * @subpackage Classes
+ * @author Pierre-Luc Paour <gallery@paour.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class PermalinksMapHelper {
 
     /**
      * Return the aliases defined for a given item
      *
-     *  @param int item id or null for all aliases
+     * @param int item id or null for all aliases
      * @return array object GalleryStatus a status code
      *         array of aliase names
-     * @static
      */
     function fetchAliasesForItem($itemId=null) {
 	$match = isset($itemId) ? array('destId' => (int)$itemId) : array();
@@ -62,7 +56,6 @@ class PermalinksMapHelper {
      * @param string alias name
      * @return array object GalleryStatus a status code
      *               int item id
-     * @static
      */
     function fetchItemIdForAlias($aliasName) {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('PermalinksMap',
@@ -85,11 +78,8 @@ class PermalinksMapHelper {
      * @param string alias name
      * @param    int item Id
      * @return object GalleryStatus a status code
-     * @static
      */
     function createAlias($aliasName, $itemId) {
-	global $gallery;
-
 	/* first, check for collision */
 	list($ret, $collisionId) = PermalinksMapHelper::fetchItemIdForAlias($aliasName);
 	if ($ret) {
@@ -115,11 +105,8 @@ class PermalinksMapHelper {
      *
      * @param int alias name
      * @return object GalleryStatus a status code
-     * @static
      */
     function deleteAlias($aliasName) {
-	global $gallery;
-
 	/* Remove this alias from our groups table. */
 	$ret = GalleryCoreApi::removeMapEntry('PermalinksMap', array('aliasName' => $aliasName));
 	if ($ret) {

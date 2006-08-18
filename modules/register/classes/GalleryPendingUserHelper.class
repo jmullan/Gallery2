@@ -17,19 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SelfRegistration
- * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
- */
 
 /**
- * A helper class for GalleryPendingUsers
- *
  * Utility functions useful in managing GalleryPendingUsers
- *
- * @package SelfRegistration
+ * @package Registration
  * @subpackage Classes
+ * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryPendingUserHelper {
 
@@ -39,7 +34,6 @@ class GalleryPendingUserHelper {
      * @param string the username
      * @return array object GalleryStatus a status code
      *               object GalleryPendingUser a pending user
-     * @static
      */
     function fetchPendingUserByUserName($userName) {
 	global $gallery;
@@ -73,7 +67,6 @@ class GalleryPendingUserHelper {
      * @param string an optional substring to match against the username
      * @return array object GalleryStatus a status code
      *               int number of pending users
-     * @static
      */
     function fetchUserCount($substring=null) {
 	global $gallery;
@@ -106,7 +99,6 @@ class GalleryPendingUserHelper {
      * @param string [optional] a substring to match
      * @return array object GalleryStatus a status code
      *               array (id => array('userName'=>name, 'fullName'=>name, 'email'=>email), ...)
-     * @static
      */
     function fetchUserData($count=null, $offset=null, $substring=null) {
 	global $gallery;
@@ -148,7 +140,6 @@ class GalleryPendingUserHelper {
      *
      * @param object GalleryPendingUser
      * @return object GalleryStatus a status code
-     * @static
      */
     function sendConfirmationEmail(&$pendingUser) {
 	global $gallery;
@@ -198,7 +189,6 @@ class GalleryPendingUserHelper {
      *
      * @param object GalleryPendingUser
      * @return object GalleryStatus a status code
-     * @static
      */
     function sendAdminEmail(&$pendingUser) {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
@@ -257,7 +247,6 @@ class GalleryPendingUserHelper {
      * @param object GalleryPendingUser
      * @param boolean if true delete the GalleryPendingUser
      * @return object GalleryStatus a status code
-     * @static
      */
     function createGalleryUser(&$pendingUser, $delete=true) {
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');

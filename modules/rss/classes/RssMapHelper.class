@@ -17,19 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rss
- * @author Pierre-Luc Paour <gallery@paour.com>
- */
 
 /**
- * A helper class for Rss
- *
  * Utility functions useful in managing Rss
- *
  * @package Rss
- * @subpackage Helpers
+ * @subpackage Classes
+ * @author Pierre-Luc Paour <gallery@paour.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class RssMapHelper {
 
@@ -42,14 +37,13 @@ class RssMapHelper {
      *                        'itemId' => item associated with the feed
      *                        'ownerId' => owner of the feed
      *                        'params' => feed definition
-     * @static
      */
     function fetchFeedsForItem($itemId=null) {
 	global $gallery;
 
 	if (isset($itemId)) {
 	    list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('RssMap',
-		array('feedName', 'itemId', 'ownerId', 'params'), 
+		array('feedName', 'itemId', 'ownerId', 'params'),
 		array('itemId' => $itemId));
 	    if ($ret) {
 		return array($ret, null);
@@ -93,7 +87,6 @@ class RssMapHelper {
      * @param int optional limit to the number of feeds
      * @return array object GalleryStatus a status code
      *         array of feed names
-     * @static
      */
     function fetchFeedNames($limit=0) {
 	global $gallery;
@@ -128,7 +121,6 @@ class RssMapHelper {
      *
      * @param string feed name
      * @return object GalleryStatus a status code
-     * @static
      */
     function fetchFeed($feedName) {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('RssMap',
@@ -159,7 +151,6 @@ class RssMapHelper {
      * @param string feed name
      * @param  array parameters
      * @return object GalleryStatus a status code
-     * @static
      */
     function createFeed($feedName, $params) {
 	global $gallery;
@@ -191,7 +182,6 @@ class RssMapHelper {
      * @param string feed name
      * @param  array parameters
      * @return object GalleryStatus a status code
-     * @static
      */
     function updateFeed($feedName, $params) {
 	$ret = GalleryCoreApi::updateMapEntry('RssMap',
@@ -211,7 +201,6 @@ class RssMapHelper {
      *
      * @param string feed name
      * @return object GalleryStatus a status code
-     * @static
      */
     function deleteFeed($feedName) {
 	$ret = GalleryCoreApi::removeMapEntry('RssMap', array('feedName' => $feedName));

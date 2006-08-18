@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Watermark
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * A helper class for the Watermark module.
- *
  * @package Watermark
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class WatermarkHelper {
 
@@ -42,7 +39,6 @@ class WatermarkHelper {
      * @param string [optional] a substring to match
      * @return array object GalleryStatus a status code
      *               array of itemId=>watermark
-     * @static
      */
     function fetchWatermarks($count=null, $offset=null, $substring=null) {
 	global $gallery;
@@ -64,15 +60,15 @@ class WatermarkHelper {
 	FROM
 	  [WatermarkImage], [GalleryAccessSubscriberMap]
 	WHERE
-          [GalleryAccessSubscriberMap::itemId] = [WatermarkImage::id]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
-        ', $aclMarkers);
+	  [GalleryAccessSubscriberMap::itemId] = [WatermarkImage::id]
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	', $aclMarkers);
 	$data = $aclIds;
 
 	if (!empty($substring)) {
 	    $query .= '
-          AND
+	  AND
 	  [WatermarkImage::fileName] LIKE ?
 	    ';
 	    $data[] = "%$substring%";
@@ -119,7 +115,6 @@ class WatermarkHelper {
      * @param int the owner id
      * @return array object GalleryStatus a status code
      *               array of itemIds
-     * @static
      */
     function fetchWatermarkIdsByOwnerId($ownerId) {
 	global $gallery;
@@ -152,7 +147,6 @@ class WatermarkHelper {
      * @param object WatermarkImage the watermark
      * @return array object GalleryStatus a status code
      *               array (itemId => array of derivative ids, ..)
-     * @static
      */
     function fetchWatermarkedItemIds($watermark) {
 	global $gallery;
@@ -189,7 +183,6 @@ class WatermarkHelper {
      * @param boolean (optional) if true, delete even if watermark is used (and remove those uses)
      * @return array object GalleryStatus a status object
      *               boolean true if deleted
-     * @static
      */
     function deleteWatermarkImageById($itemId, $forceDelete=false) {
 	global $gallery;
@@ -256,7 +249,6 @@ class WatermarkHelper {
      * @param string the y overlay location (in percentage)
      * @param array an array of DERIVATIVE_TYPE_IMAGE_XXX => true/false
      * @return object GalleryStatus a status code
-     * @static
      */
     function watermarkItem($watermark, $item, $xPercent, $yPercent, $whichDerivatives) {
 	list ($ret, $derivativeTable) =
@@ -316,8 +308,8 @@ class WatermarkHelper {
 
 	    /*
 	     * Add it to the list to get a watermark.
-	     * TODO: just add the watermark here instead of modifying and re-saving the
-	     *       preferred below.
+	     * @TODO: just add the watermark here instead of modifying and re-saving the
+	     *        preferred below.
 	     */
 	    $derivatives[] = $preferred;
 	    $add[] = $preferred->getId();
@@ -501,7 +493,6 @@ class WatermarkHelper {
      * @param string subView delegate on error
      * @return array object GalleryStatus a status code
      *               array controller results
-     * @static
      */
     function handleEditRequest($form, $view, $subViewSuccess, $subViewError) {
 	global $gallery;
@@ -644,7 +635,7 @@ class WatermarkHelper {
      * @param array form data
      * @param string form name
      * @param string page name
-     * @static
+     * @return object GalleryStatus a status code
      */
     function loadEditTemplate(&$template, &$form, $formName, $pageName) {
 	$itemId = GalleryUtilities::getRequestVariables('watermarkId');

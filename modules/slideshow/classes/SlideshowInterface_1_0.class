@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Slideshow
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * This is an interface for the slideshow module.  Modules that wish to display
@@ -29,6 +24,9 @@
  *
  * @package Slideshow
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @abstract
  */
 class SlideshowInterface_1_0 {
 
@@ -40,8 +38,7 @@ class SlideshowInterface_1_0 {
      *               array(parameter=>value) )
      */
     function getLinkData($itemIds) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
-		     null, null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null);
     }
 }
 ?>

@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package NewItems
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * A helper class for the NewItems module.
- *
  * @package NewItems
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class NewItemsHelper {
 
@@ -36,7 +33,6 @@ class NewItemsHelper {
      *
      * @return array GalleryStatus a status code
      *               int count
-     * @static
      */
     function fetchAlbumCount() {
 	global $gallery;
@@ -59,7 +55,6 @@ class NewItemsHelper {
      * Remove NewItems sort from all albums
      *
      * @return GalleryStatus a status code
-     * @static
      */
     function resetNewItemSorts() {
 	global $gallery;

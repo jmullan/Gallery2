@@ -17,35 +17,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Thumbnail
- * @author Alan Harder <alan.harder@sun.com>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
- * A version of GalleryToolkit to supply default thumbnail images for
- * non-image mime types.
- *
+ * A version of GalleryToolkit to supply default thumbnail images for non-image mime types.
  * @package Thumbnail
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ThumbnailToolkit extends GalleryToolkit {
 
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {

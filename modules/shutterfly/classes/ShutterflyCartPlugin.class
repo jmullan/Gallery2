@@ -17,29 +17,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Shutterfly
- * @subpackage Classes
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * This is an implementation of the cart module's CartPluginInterface_1_0
- *
  * @package Shutterfly
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ShutterflyCartPlugin extends CartPluginInterface_1_0 {
     /**
-     * @see CartPluginInterface_1_0::getSupportedItemTypes()
+     * @see CartPluginInterface_1_0::getSupportedItemTypes
      */
     function getSupportedItemTypes() {
 	return array('GalleryPhotoItem');
     }
 
     /**
-     * @see CartPluginInterface_1_0::getActionDisplayName()
+     * @see CartPluginInterface_1_0::getActionDisplayName
      */
     function getActionDisplayName() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'shutterfly');
@@ -50,7 +45,7 @@ class ShutterflyCartPlugin extends CartPluginInterface_1_0 {
     }
 
     /**
-     * @see CartPluginInterface_1_0::fulfillCart()
+     * @see CartPluginInterface_1_0::fulfillCart
      */
     function fulfillCart($cartItemIds) {
 	global $gallery;

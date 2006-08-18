@@ -17,16 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision: 13541 $ $Date: 2006-04-27 09:58:35 -0700 (Thu, 27 Apr 2006) $
- * @package Panorama
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * A helper class for the upgrading Panorama module.
- *
  * @package Panorama
+ * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision: 13541 $ $Date: 2006-04-27 09:58:35 -0700 (Thu, 27 Apr 2006) $
+ * @static
  */
 class PanoramaUpgradeHelper {
 
@@ -44,14 +42,14 @@ class PanoramaUpgradeHelper {
     function revertEntities() {
 	global $gallery;
 
-        $query = '
-          SELECT
-            [GalleryEntity::id], [GalleryEntity::entityType]
-          FROM
-            [GalleryEntity]
-          WHERE
-            [GalleryEntity::entityType] IN (\'PanoramaPhotoItem\', \'PanoramaDerivativeImage\')
-        ';
+	$query = '
+	  SELECT
+	    [GalleryEntity::id], [GalleryEntity::entityType]
+	  FROM
+	    [GalleryEntity]
+	  WHERE
+	    [GalleryEntity::entityType] IN (\'PanoramaPhotoItem\', \'PanoramaDerivativeImage\')
+	';
 	list ($ret, $searchResults) = $gallery->search($query, array());
 	if ($ret) {
 	    return $ret;
@@ -107,9 +105,9 @@ class PanoramaUpgradeHelper {
 	/*
 	 * Flush the entity cache because we've changed types
 	 * Swallow any errors here; they're going to be recoverable.
-	 * TODO: refactor this together with the code from the upgrader
+	 * @TODO: refactor this together with the code from the upgrader
 	 */
-        $cacheBaseDir = $gallery->getConfig('data.gallery.cache');
+	$cacheBaseDir = $gallery->getConfig('data.gallery.cache');
 	$platform =& $gallery->getPlatform();
 	@$platform->recursiveRmDir("$cacheBaseDir/entity");
 

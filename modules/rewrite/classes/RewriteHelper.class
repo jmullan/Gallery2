@@ -18,9 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
+ * A helper class for the URL rewrite module
  * @package Rewrite
- * @version $Revision$ $Date$
+ * @subpackage Classes
  * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
+ * @static
  */
 
 /* General status codes */
@@ -33,9 +36,7 @@ define('REWRITE_STATUS_EMPTY_VALUE', 5);
 
 /**
  * A helper class for the URL rewrite module
- *
- * @package Rewrite
- * @subpackage Classes
+ * @static
  */
 class RewriteHelper {
 
@@ -46,7 +47,6 @@ class RewriteHelper {
      * @param boolean true if we need a new instance
      * @return array object GalleryStatus a status code
      *               object RewritePlugin a loaded parser
-     * @static
      */
     function getRewriteParser($new=false) {
 	global $gallery;
@@ -94,7 +94,7 @@ class RewriteHelper {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-    	/* Get access list information */
+	/* Get access list information */
 	list ($ret, $accessList) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'accessList');
 	if ($ret) {
@@ -140,7 +140,7 @@ class RewriteHelper {
 			null, null, array($moduleId, $ruleId));
 		}
 
-	    	/* Save the pattern for the URL generator to use */
+		/* Save the pattern for the URL generator to use */
 		if (isset($rules[$ruleId]['match'])) {
 		    $shortUrl = array('match' => $rules[$ruleId]['match'],
 			'pattern' => $activeRules[$moduleId][$ruleId]);
@@ -267,7 +267,6 @@ class RewriteHelper {
 
     /**
      * Comparison function used to order rewrite rules.
-     *
      * @access private
      */
     function _sortRules($a, $b) {

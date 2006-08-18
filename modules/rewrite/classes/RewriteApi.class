@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$ $Date$
- * @author Douglas Cau <douglas@cau.se>
- */
 
 /**
  * A helper class for the URL Rewrite module
- *
  * @package Rewrite
  * @subpackage Classes
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class RewriteApi {
 
@@ -81,7 +77,7 @@ class RewriteApi {
      *               boolean true if configuration is needed
      */
     function needsEmbedConfig() {
-   	if (isset($this->_error)) {
+	if (isset($this->_error)) {
 	    return array($this->_error, null);
 	}
 
@@ -161,14 +157,14 @@ class RewriteApi {
      * @return string parser id
      */
     function getParserId() {
-    	return $this->_parser->getParserId();
+	return $this->_parser->getParserId();
     }
 
     /**
      * @return string parser type
      */
     function getParserType() {
-    	return $this->_parser->getParserType();
+	return $this->_parser->getParserType();
     }
 }
 ?>
