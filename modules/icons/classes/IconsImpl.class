@@ -17,27 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Icons
- * @author Jesse Mullan <jmullan@visi.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/icons/classes/IconsInterface_1_0.class');
 
 /**
  * Implementation of the IconsInterface for including iconpack css
- *
  * @package Icons
  * @subpackage Classes
+ * @author Jesse Mullan <jmullan@visi.com>
+ * @version $Revision$ $Date$
  */
 class IconsImpl extends IconsInterface_1_0 {
-
     /**
-     * @see IconsInterface_1_0::getIconPacks()
+     * @see IconsInterface_1_0::getIconPacks
      */
     function getIconPacks() {
 	global $gallery;
@@ -71,7 +63,7 @@ class IconsImpl extends IconsInterface_1_0 {
     }
 
     /**
-     * @see IconsInterface_1_0::init()
+     * @see IconsInterface_1_0::init
      */
     function init(&$template) {
 	list ($ret, $iconpack) = GalleryCoreApi::getPluginParameter('module', 'icons', 'iconpack');

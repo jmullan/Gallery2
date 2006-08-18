@@ -19,42 +19,33 @@
  */
 
 /**
- * @package Mime
- * @version $Revision$ $Date$
- * @author Felix Rabinovich <Felix@Rabinovich.org>
- */
-
-/**
- * A helper class for Mime
- *
  * Utility functions useful in managing MIME types
- *
  * @package Mime
  * @subpackage Classes
+ * @author Felix Rabinovich <Felix@Rabinovich.org>
+ * @version $Revision$ $Date$
+ * @static
  */
 class MimeHelper {
     /**
      * Return mime types and applicable file extensions
      *
      * @return array object GalleryStatus a status code
-     *               array array string mime type,
-     *                           array of string extensions
-     *                     boolean is viewable
-     * @static
+     *               array('ext' => array(string mime type => array of string extensions)
+     *                     'viewable' => array(string mime type => boolean is viewable))
      */
     function getMimeTypeMap() {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryMimeTypeMap',
 	    array('mimeType', 'extension', 'viewable'), array(),
 	    array('orderBy' => array('mimeType' => ORDER_ASCENDING)));
-        if ($ret) {
-            return array($ret, null);
-        }
-        while ($result = $searchResults->nextResult()) {
-            $MimeTypeMap['ext'][$result[0]][] = $result[1];
-            $MimeTypeMap['viewable'][$result[0]] = $result[2];
-        }
-        return array(null, $MimeTypeMap);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	while ($result = $searchResults->nextResult()) {
+	    $MimeTypeMap['ext'][$result[0]][] = $result[1];
+	    $MimeTypeMap['viewable'][$result[0]] = $result[2];
+	}
+	return array(null, $MimeTypeMap);
     }
 }
-
 ?>

@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ImageBlock
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * A helper class for the Image Block module.
- *
  * @package ImageBlock
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class ImageBlockHelper /* extends GalleryEventListener */ {
 
@@ -148,7 +145,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     }
 
     /**
-     * @static
      * @access private
      */
     function _getBlockData($title, $itemType, $order, $count,
@@ -266,18 +262,18 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		    /* Ignore permission error.. just don't add a block */
 		    continue;
 		}
-                list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($id));
-                if ($ret) {
-                    return array($ret, null);
-                }
-                $image = isset($preferred[$id]) ? $preferred[$id] : $item;
-            } else {
-                list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
-                if ($ret) {
-                    return array($ret, null);
-                }
-                if (isset($thumbnail[$id])) {
-                    $image = $thumbnail[$id];
+		list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($id));
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$image = isset($preferred[$id]) ? $preferred[$id] : $item;
+	    } else {
+		list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (isset($thumbnail[$id])) {
+		    $image = $thumbnail[$id];
 
 		    if (($fullSize || $maxSize) &&
 			    GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
@@ -302,23 +298,23 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			$image = $source;
 		    }
 
-                    if ($maxSize && !$fullSize) {
-                        /* Get the preferred item object */
-                        if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-                            list ($ret, $preferred) =
-                                GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
-                            if ($ret) {
-                                return array($ret, null);
-                            }
+		    if ($maxSize && !$fullSize) {
+			/* Get the preferred item object */
+			if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+			    list ($ret, $preferred) =
+				GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
+			    if ($ret) {
+				return array($ret, null);
+			    }
 
-                            /* Fetch resized images for size comparisons */
-                            $image = isset($preferred[$id]) ? $preferred[$id] : $item;
-                        }
+			    /* Fetch resized images for size comparisons */
+			    $image = isset($preferred[$id]) ? $preferred[$id] : $item;
+			}
 
-                        /* Fetch thumbnail for size comparison */
-                        if (isset($thumbnail[$id])) {
-                            $thumb = $thumbnail[$id];
-                        }
+			/* Fetch thumbnail for size comparison */
+			if (isset($thumbnail[$id])) {
+			    $thumb = $thumbnail[$id];
+			}
 
 			if ($thumb->getWidth() >= $maxSize || $thumb->getHeight() >= $maxSize) {
 			    $image = $thumb;
@@ -366,8 +362,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 					 */
 					if ($resizeDifferential < $imageDifferential) {
 					    if (!isset($lastDifferential)
-                                                || ($resizeDifferential <= $lastDifferential
-                                                    && $resizeSize > $lastSize)) {
+						    || ($resizeDifferential <= $lastDifferential
+							&& $resizeSize > $lastSize)) {
 						$image = $imageObject;
 						$lastDifferential = abs($resizeDifferential);
 						$lastSize = $resizeSize;
@@ -395,10 +391,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			}
 		    }
 
-                    /* {g->image} won't work with item!=image and image not a derivative */
-                    if (!GalleryUtilities::isA($image, 'GalleryDerivative')) {
-                        $forceItem = true;
-                    }
+		    /* {g->image} won't work with item!=image and image not a derivative */
+		    if (!GalleryUtilities::isA($image, 'GalleryDerivative')) {
+			$forceItem = true;
+		    }
 		}
 	    }
 
@@ -427,7 +423,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @param int user id for permissions check (optional; defaults to current user)
      * @return array GalleryStatus a status code
      *               array of arrays containing id, viewCount of items (empty array if none found)
-     * @static
      */
     function fetchViewableData($itemType, $order, $count, $parentId=null, $userId=null) {
 	global $gallery;
@@ -437,10 +432,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $userId = $gallery->getActiveUserId();
 	}
 
-        /* Someone probably typoed a blocks parameter */
-        if (empty($typeMap[$itemType])) {
+	/* Someone probably typoed a blocks parameter */
+	if (empty($typeMap[$itemType])) {
 	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
-        }
+	}
 
 	/* Prepare the query */
 	$select[] = '[ImageBlockCacheMap::itemId]';
@@ -524,7 +519,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @param string the order type (random, recent, viewed)
      * @return array GalleryStatus a status code
      *               string containing SQL ORDER BY statement
-     * @static
      */
     function _buildOrderBy($order) {
 	global $gallery;
@@ -551,7 +545,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     }
 
     /**
-     * @static
      * @access private
      */
     function _runQuery($query, $data) {
@@ -572,7 +565,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     }
 
     /**
-     * @static
      * @access private
      */
     function _isCached($userId) {
@@ -589,10 +581,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
     /**
      * Cache viewable data for user
-     *
      * @param int user id
      * @return object GalleryStatus a status code
-     * @static
      */
     function cacheViewableTree($userId) {
 	global $gallery;
@@ -752,8 +742,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		}
 	    } else if (GalleryUtilities::isA($entity, 'GalleryAlbumItem')
 			   && $entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)
-			   && !empty($parentDisabledFlag) && empty($disabledFlag)
-		       ) {
+			   && !empty($parentDisabledFlag) && empty($disabledFlag)) {
 		/*
 		 * A new album cannot have sub items and setDisabledFlag doesn't work for items
 		 * that are not yet in the persistent store (database), thus use addMapEntry()
@@ -773,11 +762,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * Set the disabled flag for an album
      *
      * @param object GalleryAlbumItem AlbumItem which is to be flagged
-     * @param bool whether to set the disabledFlag recursively to all subalbums
+     * @param boolean whether to set the disabledFlag recursively to all subalbums
      * @param whether to set the disabledFlag to true or to false
      * @param (optional) whether to use a progressbar during update (default=false)
      * @return object GalleryStatus a status code
-     * @static
      */
     function setDisabledFlag($parentAlbum, $recursive, $disabled, $useProgressBar=false) {
 	global $gallery;
@@ -871,8 +859,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      *
      * @param integer entityId of a GalleryItem for which the flag is to be retrieved
      * @return array object GalleryStatus a status code
-     *               bool disabledFlag for the GalleryDataItem
-     * @static
+     *               boolean disabledFlag for the GalleryDataItem
      */
     function getDisabledFlag($itemId) {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('ImageBlockDisabledMap',

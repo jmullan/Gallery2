@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package MultiLang
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * A helper class for the MultiLang module.
- *
  * @package MultiLang
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class MultiLangHelper {
 
@@ -37,13 +34,11 @@ class MultiLangHelper {
      * @param int item id
      * @return array object GalleryStatus a status code
      *               array (language => array data, ..)
-     * @static
      */
     function getItemData($itemId) {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('MultiLangItemMap',
-	    array('language', 'title', 'summary', 'description'), 
+	    array('language', 'title', 'summary', 'description'),
 	    array('itemId' => (int)$itemId));
-	
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -65,7 +60,6 @@ class MultiLangHelper {
      * @param string (optional) summary
      * @param string (optional) description
      * @return object GalleryStatus a status code
-     * @static
      */
     function setItemData($item, $language, $title=null, $summary=null, $description=null) {
 	$itemId = $item->getId();
@@ -157,7 +151,6 @@ class MultiLangHelper {
      *
      * @param GalleryItem item
      * @return object GalleryStatus a status code
-     * @static
      */
     function onLoad(&$item) {
 	global $gallery;

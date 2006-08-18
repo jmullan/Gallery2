@@ -17,43 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Ffmpeg
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * A Ffmpeg version of GalleryToolkit
- *
- * This class implements the GalleryToolkit API using Ffmpeg.
- *
  * @package Ffmpeg
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class FfmpegToolkit extends GalleryToolkit {
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
-
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
-
 	switch($propertyName) {
 	case 'dimensions':
 	    list ($ret, $width, $height) = $this->_getMovieDimensions($mimeType, $sourceFilename);
 	    if ($ret) {
-		return array($ret,
-			     null);
+		return array($ret, null);
 	    }
 	    $results = array($width, $height);
 	    break;
@@ -62,22 +45,20 @@ class FfmpegToolkit extends GalleryToolkit {
 	    list ($ret, $width, $height, $duration) =
 		$this->_getMovieDimensions($mimeType, $sourceFilename);
 	    if ($ret) {
-		return array($ret,
-			     null);
+		return array($ret, null);
 	    }
 	    $results = array($width, $height, $duration);
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
-			 null);
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
 	}
 
 	return array(null, $results);
     }
 
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
@@ -108,7 +89,7 @@ class FfmpegToolkit extends GalleryToolkit {
 	    if (!$success) {
 		@$platform->unlink($tmpFilename);
 		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-			    "Failed renaming $tmpFilename -> $destFilename"), null, null);
+			     "Failed renaming $tmpFilename -> $destFilename"), null, null);
 	    }
 	    $platform->chmod($destFilename);
 	    $outputMimeType = 'image/jpeg';
@@ -120,7 +101,7 @@ class FfmpegToolkit extends GalleryToolkit {
 	    if ($sourceFilename != $destFilename) {
 		if (!$platform->copy($sourceFilename, $destFilename)) {
 		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-				"Failed copying $sourceFilename -> $destFilename"), null, null);
+				 "Failed copying $sourceFilename -> $destFilename"), null, null);
 		}
 	    }
 	    $outputMimeType = $mimeType;
@@ -128,12 +109,15 @@ class FfmpegToolkit extends GalleryToolkit {
 
 	default:
 	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      "$operationName $mimeType"), null, null);
+					       "$operationName $mimeType"), null, null);
 	}
 
 	return array(null, $outputMimeType, $context);
     }
 
+    /**
+     * @access private
+     */
     function _getMovieDimensions($mimeType, $sourceFilename) {
 	global $gallery;
 
@@ -176,8 +160,7 @@ class FfmpegToolkit extends GalleryToolkit {
 	if ($successfulRun) {
 	    return array(null, $width, $height, $duration);
 	} else {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE),
-			 null, null, null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null, null, null);
 	}
     }
 
@@ -198,17 +181,13 @@ class FfmpegToolkit extends GalleryToolkit {
 	    return array($ret, null, null);
 	}
 
-	/*
-	 * Get error output back, because ffmpeg 0.4.6 returns some useful info
-	 * only to stderr!  Argh.
-	 */
+	/* Get error output back, because ffmpeg 0.4.6 returns some useful info only to stderr! */
 	list ($success, $results, $error) =
 	    $platform->exec(array(array_merge(array($ffmpegPath, '-i', $sourceFilename), $args)));
 
 	if (!$success) {
 	    /* Return the output even if there's a failure */
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE),
-			 $results, $error);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), $results, $error);
 	}
 
 	return array(null, $results, $error);

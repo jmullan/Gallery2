@@ -17,31 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package LinkItem
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * A GalleryToolkit to provide a thumbnail image for an external URL
- *
  * @package LinkItem
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class LinkItemToolkit extends GalleryToolkit {
-
     /**
-     * @see GalleryToolkit::getProperty()
-     */
-    function getProperty($mimeType, $propertyName, $sourceFilename) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
-    }
-
-    /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {

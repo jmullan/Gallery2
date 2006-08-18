@@ -17,28 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Dcraw
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * A helper class for the DcrawToolkit class
- *
  * @package Dcraw
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class DcrawToolkitHelper {
 
     /**
-     * Figure out what operations and properties are supported by the
-     * DcrawToolkit and return them.
+     * Figure out what operations and properties are supported by the DcrawToolkit and return them.
      *
      * @return array object GalleryStatus a status code
-     *               array('operations' => ...
-     *                     'properties' => ...)
-     * @static
+     *               array('operations' => ..., 'properties' => ...)
      */
     function getOperationsAndProperties() {
 	global $gallery;
@@ -67,8 +61,6 @@ class DcrawToolkitHelper {
      *               array ('name' => string: the name of the binary,
      *                      'success' => boolean: test successful?
      *                      'message' => string: the error message
-     *
-     * @static
      */
     function testBinary($dcrawPath) {
 	global $gallery;
@@ -105,8 +97,7 @@ class DcrawToolkitHelper {
 				 'success' => false,
 				 'message' => array_merge(
 				     array($module->translate('Binary output:')),
-				     $stdout,
-				     $stderr));
+				     $stdout, $stderr));
 	}
 
 	return array(null, $testArray, $version);

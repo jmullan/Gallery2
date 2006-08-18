@@ -17,31 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ImageMagick
- * @author Vallimar <vallimar@sexorcisto.net>
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 GalleryCoreApi::requireOnce('modules/imagemagick/classes/ImageMagickToolkitHelper.class');
 
 /**
  * A ImageMagick version of GalleryToolkit
- *
- * This class implements the GalleryToolkit API using ImageMagick.
- *
  * @package ImageMagick
  * @subpackage Classes
+ * @author Vallimar <vallimar@sexorcisto.net>
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ImageMagickToolkit extends GalleryToolkit {
-
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
 
@@ -71,15 +61,14 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
-			 null);
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
 	}
 
 	return array(null, $results);
     }
 
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
@@ -87,7 +76,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	static $convertOps = array('thumbnail', 'scale', 'resize', 'rotate',
 				   'crop', 'convert-to-image/jpeg', 'select-page');
 
-	/* Check context for any operations that have been queued up.. */
+	/* Check context for any operations that have been queued up */
 	$outputMimeType = $mimeType;
 	if (isset($context['imagemagick.transform'])) {
 	    $transform = $context['imagemagick.transform'];
@@ -102,7 +91,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $height = $context['height'];
 	}
 
-	/* Use context look-ahead to see if we can queue up parameters to use later.. */
+	/* Use context look-ahead to see if we can queue up parameters to use later */
 	$queueIt = in_array($operationName, $convertOps) &&
 	    isset($context['next.toolkit']) && $context['next.toolkit'] == $this &&
 	    in_array($context['next.operation'], $convertOps);
@@ -340,7 +329,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	default:
 	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      "$operationName $outputMimeType"), null, null);
+					       "$operationName $outputMimeType"), null, null);
 	}
 
 	if (isset($width)) {
@@ -355,8 +344,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    if ($sourceFilename != $destFilename) {
 		$platform =& $gallery->getPlatform();
 		if (!$platform->copy($sourceFilename, $destFilename)) {
-		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
-				 null, null);
+		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 		}
 	    }
 	    return array(null, $outputMimeType, $context);
@@ -367,8 +355,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    if ($sourceFilename != $destFilename) {
 		$platform =& $gallery->getPlatform();
 		if (!$platform->copy($sourceFilename, $destFilename)) {
-		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
-				 null, null);
+		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 		}
 	    }
 	} else {
@@ -383,14 +370,14 @@ class ImageMagickToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryGraphics::getImageDimensions()
+     * @see GalleryToolkit::getImageDimensions
      */
     function _getImageDimensions($mimeType, $filename) {
 	global $gallery;
 
 	/*
-	 * Run it through PHP first, it's faster and more portable.  If it runs
-	 * afoul of open_basedir it'll return false and we can try ImageMagick.
+	 * Run it through PHP first, it's faster and more portable.  If it runs afoul of
+	 * open_basedir it'll return false and we can try ImageMagick.
 	 */
 	$platform =& $gallery->getPlatform();
 	$results = $platform->getimagesize($filename);
@@ -424,6 +411,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 
     /**
      * Call 'identify' and count the pages
+     * @access private
      */
     function _getPageCount($filename, $mimeType) {
 	global $gallery;
@@ -472,6 +460,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 
     /**
      * Call 'identify' to determine the image colorspace
+     * @access private
      */
     function _getColorspace($filename) {
 	global $gallery;
@@ -502,6 +491,7 @@ class ImageMagickToolkit extends GalleryToolkit {
      * @param string the path to a source file
      * @param string the path to a destination file
      * @return object GalleryStatus a status code
+     * @access private
      */
     function _transformImage($mimeType, $cmd, $args, $sourceFilename, $destFilename,
 			     $outputMimeType, $jpegQuality=null) {
@@ -613,7 +603,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 		/* Don't know this type! */
 		@$platform->unlink($tmpFilename);
 		return GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__,
-					    "Can't convert to unknown mime type: $outputMimeType");
+					     "Can't convert to unknown mime type: $outputMimeType");
 	    }
 	}
 
@@ -642,13 +632,13 @@ class ImageMagickToolkit extends GalleryToolkit {
 
     /**
      * Return the full path to the ImageMagick command
-     *
-     * @access private
      * @param string an ImageMagick command (eg. "convert")
+     * @return mixed string/error?
+     * @access private
      */
     function _imageMagickCmd($cmd) {
 	list ($ret, $imageMagickPath) =
-		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
+	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	if ($ret) {
 	    return $ret;
 	}

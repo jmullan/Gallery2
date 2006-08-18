@@ -18,32 +18,20 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package Getid3
- * @subpackage Classes
- * @author Don Willingham <donwillingham@users.sf.net>
- */
-
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/getid3/classes/Getid3Interface_1_0.class');
 
 /**
  * Implementation of the Getid3Interface for pulling Getid3 data from a set of target items
- *
  * @package Getid3
  * @subpackage Classes
+ * @author Don Willingham <donwillingham@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class Getid3Extractor extends Getid3Interface_1_0 {
-
     /**
-     * @see Getid3Interface_1_0::getMetaData()
+     * @see Getid3Interface_1_0::getMetaData
      */
     function getMetaData($itemIds, $properties=array()) {
-	global $gallery;
-
 	if (!is_array($itemIds)) {
 	    $itemIds = array($itemIds);
 	}
@@ -55,34 +43,34 @@ class Getid3Extractor extends Getid3Interface_1_0 {
 	foreach ($itemIds as $itemId) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret) {
-	        return array($ret, null);
+		return array($ret, null);
 	    }
 	    /* Only look at GalleryDataItems */
 	    if (!GalleryUtilities::isA($item, 'GalleryDataItem')) {
-	        continue;
+		continue;
 	    }
 	    list($ret, $path) = $item->fetchPath();
 	    if ($ret) {
-	        return array($ret, null);
+		return array($ret, null);
 	    }
 	    $data[$itemId] = array();
 
 	    GalleryCoreApi::requireOnce('modules/getid3/classes/Getid3Helper.class');
 	    Getid3Helper::_fetchRawGetid3Data($path, $rawGetid3Data);
-	    
+
 	    foreach (Getid3Helper::getGetid3Keys() as $property => $keyData) {
-	        if (!empty($properties) && !in_array($property, $properties)) {
-	            continue;
-	        }
-	        for ($i = 1; $i < count($keyData); $i++) {
-	            $value = Getid3Helper::_getValue($rawGetid3Data, explode('.', $keyData[$i]));
-	            if (isset($value)) {
-	                $value = Getid3Helper::postProcessValue($property, $value);
-	                $data[$itemId][$property] =
-	                    array('title' => $keyData[0], 'value' => $value);
-	                break;
-	            }
-	        }
+		if (!empty($properties) && !in_array($property, $properties)) {
+		    continue;
+		}
+		for ($i = 1; $i < count($keyData); $i++) {
+		    $value = Getid3Helper::_getValue($rawGetid3Data, explode('.', $keyData[$i]));
+		    if (isset($value)) {
+			$value = Getid3Helper::postProcessValue($property, $value);
+			$data[$itemId][$property] =
+			    array('title' => $keyData[0], 'value' => $value);
+			break;
+		    }
+		}
 	    }
 	}
 

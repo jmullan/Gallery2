@@ -17,18 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Exif
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
- * This is an interface for the exif module.  Modules that wish to retrieve
- * EXIF data for jpeg images can utilize an implementation of this interface.
+ * This is an interface for the exif module.  Modules that wish to retrieve EXIF data for jpeg
+ * images can utilize an implementation of this interface.
  *
  * @package Exif
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @abstract
  */
 class ExifInterface_1_0 {
 
@@ -42,8 +40,7 @@ class ExifInterface_1_0 {
      *               array( id => array(property=>value,...) ))
      */
     function getMetaData($itemIds, $properties=array()) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
-		     null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 }
 ?>

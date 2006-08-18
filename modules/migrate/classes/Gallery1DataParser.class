@@ -17,16 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Migrate
- * @author Jesse Mullan <jmullan@visi.com>
- */
+
 /**
  * This class provides an API for parsing Gallery 1 data files
- *
  * @package Migrate
- * @subpackage Gallery1DataParser
+ * @subpackage Classes
+ * @author Jesse Mullan <jmullan@visi.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class Gallery1DataParser {
 
@@ -56,8 +54,8 @@ class Gallery1DataParser {
      *               object Unserialized user metadata
      */
     function loadFile($fileName) {
-        global $gallery;
-        $platform =& $gallery->getPlatform();
+	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	if (!$platform->file_exists($fileName) || !$platform->is_readable($fileName)) {
 	    if ($platform->file_exists($fileName . '.bak') &&
@@ -68,7 +66,7 @@ class Gallery1DataParser {
 					      "Missing or not readable file: $fileName"), null);
 	    }
 	}
-        $tmp = $platform->file($fileName);
+	$tmp = $platform->file($fileName);
 
 	if (empty($tmp)) {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
@@ -96,8 +94,8 @@ class Gallery1DataParser {
      *               array of objects
      */
     function getAlbumList($path) {
-        global $gallery;
-        $platform =& $gallery->getPlatform();
+	global $gallery;
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
@@ -119,8 +117,7 @@ class Gallery1DataParser {
     }
 
     /**
-     * Fetch an associative array of parentalbum names from a given path to
-     * gallery1 albums
+     * Fetch an associative array of parentalbum names from a given path to gallery1 albums
      *
      * @param string Path to albums directory
      * @return array object GalleryStatus a status code,
@@ -128,7 +125,7 @@ class Gallery1DataParser {
      */
     function getParentAlbumList($path) {
 	global $gallery;
-        $platform =& $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
@@ -214,7 +211,7 @@ class Gallery1DataParser {
      *               object Unserialized album metadata
      */
     function loadAlbumFields($path) {
-        global $gallery;
+	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
@@ -225,7 +222,7 @@ class Gallery1DataParser {
 	$path = trim($tmp);
 	$albumPath = explode($slash, $path);
 	$albumName = $albumPath[count($albumPath)-2];
-        list ($ret, $album) = Gallery1DataParser::loadFile($path . 'album.dat');
+	list ($ret, $album) = Gallery1DataParser::loadFile($path . 'album.dat');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -261,7 +258,7 @@ class Gallery1DataParser {
      */
     function getPhotos($path) {
 	global $gallery;
-        $platform =& $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	list ($ret, $photos) = Gallery1DataParser::loadFile($path . $slash . 'photos.dat');
@@ -279,7 +276,7 @@ class Gallery1DataParser {
      *               array Associative array of uids and usernames
      */
     function getUserUids($path) {
-        global $gallery;
+	global $gallery;
 	static $uids;
 	if (!isset($uids[$path])) {
 	    if (!isset($uids)) {
@@ -360,7 +357,7 @@ class Gallery1DataParser {
      *               array User metadata
      */
     function getUserFieldsByUid($path, $uid) {
-        global $gallery;
+	global $gallery;
 	static $fields;
 
 	if (!isset($fields[$path][$uid])) {
@@ -395,13 +392,12 @@ class Gallery1DataParser {
      *               array User metadata
      */
     function getUserFieldsByUsername($path, $username) {
-        global $gallery;
-        list($ret, $uids) = Gallery1DataParser::getUserUids($path);
-        if ($ret) {
+	list ($ret, $uids) = Gallery1DataParser::getUserUids($path);
+	if ($ret) {
 	    return array($ret, null);
-        }
+	}
 	$usernames = array_flip($uids);
-        $uid = $usernames[$username];
+	$uid = $usernames[$username];
 	list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($path, $uid);
 	if ($ret) {
 	    return array($ret, null);
@@ -414,52 +410,30 @@ class Gallery1DataParser {
 /* Define these classes so that unserialize can use them */
 /**
  * A stub class into which various G1 objects can be unserialized.
- *
- * @package Migrate
- * @subpackage Gallery1DataParser
  */
 class AlbumDB{ }
 /**
  * A stub class into which various G1 objects can be unserialized.
- *
- * @package Migrate
- * @subpackage Gallery1DataParser
  */
 class Album { }
 /**
  * A stub class into which various G1 objects can be unserialized.
- *
- * @package Migrate
- * @subpackage Gallery1DataParser
  */
 class Gallery_UserDB { }
 /**
  * A stub class into which various G1 objects can be unserialized.
- *
- * @package Migrate
- * @subpackage Gallery1DataParser
  */
 class Gallery_User { }
 /**
  * A stub class into which various G1 objects can be unserialized.
- *
- * @package Migrate
- * @subpackage Gallery1DataParser
  */
 class AlbumItem { }
 /**
  * A stub class into which various G1 objects can be unserialized.
- *
- * @package Migrate
- * @subpackage Gallery1DataParser
  */
 class Image { }
-
 /**
  * A stub class into which various G1 objects can be unserialized.
- *
- * @package Migrate
- * @subpackage Gallery1DataParser
  */
 class Comment { }
 ?>

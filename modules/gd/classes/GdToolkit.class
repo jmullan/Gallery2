@@ -17,25 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Gd
- * @author Ernesto Baschny <ernst@baschny.de>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 GalleryCoreApi::requireOnce('modules/gd/classes/GdToolkitHelper.class');
 
 /**
  * A Gd version of GalleryToolkit
- *
- * This class implements the GalleryToolkit API using Gd.
- *
  * @package Gd
  * @subpackage Classes
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @version $Revision$ $Date$
  */
 class GdToolkit extends GalleryToolkit {
 
@@ -48,18 +39,12 @@ class GdToolkit extends GalleryToolkit {
 
     /**
      * Does our GD library has a working imageCreateTrueColor?
+     * @access private
      */
     var $_hasImageCreateTrueColor;
 
-    /*
-     * ****************************************
-     *		 Methods
-     * ****************************************
-     */
-
     /**
      * Return the current set gdFunctionality.
-     *
      * Default is GdFunctionality.class if no other is set.
      *
      * @return object implementation of GdFunctionality
@@ -75,11 +60,9 @@ class GdToolkit extends GalleryToolkit {
     }
 
     /**
-     * Set a different GdFunctionality object to be used by this Toolkit
-     *
+     * Set a different GdFunctionality object to be used by this Toolkit.
      * This is useful on our phpunit tests, which will make this Toolkit
      * use a pseudo-gd-implementation that simulates different PHP versions.
-     *
      * @return nothing
      */
     function setGdFunctionality(&$obj) {
@@ -108,7 +91,7 @@ class GdToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
 	switch($propertyName) {
@@ -121,15 +104,14 @@ class GdToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
-			 null);
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
 	}
 
 	return array(null, $results);
     }
 
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
@@ -182,8 +164,7 @@ class GdToolkit extends GalleryToolkit {
 	    list ($destWidth, $destHeight) = GalleryUtilities::scaleDimensionsToFit(
 					     $width, $height, $parameters[0], $targetHeight);
 	    list ($ret, $destRes) = $this->_resizeImageResource($sourceRes,
-								$destWidth,
-								$destHeight);
+								$destWidth, $destHeight);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -368,8 +349,7 @@ class GdToolkit extends GalleryToolkit {
 	    $ret = $gd->imageCopy($destRes, $overlayRes,
 				       $compositeAlignX, $compositeAlignY,
 				       0, 0,
-				       $compositeWidth, $compositeHeight
-				      );
+				       $compositeWidth, $compositeHeight);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -410,7 +390,7 @@ class GdToolkit extends GalleryToolkit {
 
 	default:
 	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      "$operationName $mimeType"), null, null);
+					       "$operationName $mimeType"), null, null);
 	}
 
 	if (isset($destRes)) {
@@ -422,8 +402,7 @@ class GdToolkit extends GalleryToolkit {
 	    /* Just copy the source to the destination */
 	    if ($sourceFilename != $destFilename) {
 		if (!$gd->copy($sourceFilename, $destFilename)) {
-		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
-				 null, null);
+		    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 		}
 	    }
 	}
@@ -432,8 +411,7 @@ class GdToolkit extends GalleryToolkit {
     }
 
     /**
-     * Return a GD image resource for the given filename so we can
-     * perform other operations on it.
+     * Return a GD image resource for the given filename so we can perform other operations on it.
      *
      * @param string the mime-type of the image
      * @param string the path to the file to read
@@ -477,9 +455,8 @@ class GdToolkit extends GalleryToolkit {
     /**
      * Create a truecolor GD resource with the specified sizes.
      *
-     * On GD >= 2.0.1 there is a function to do this directly.
-     * On earlier versions, we need to create a temporary JPEG image and
-     * create the image from that.
+     * On GD >= 2.0.1 there is a function to do this directly.  On earlier versions, we need to
+     * create a temporary JPEG image and create the image from that.
      *
      * @return array object GalleryStatus
      *	       resource the GD resource
@@ -606,15 +583,15 @@ class GdToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryGraphics::getImageDimensions()
+     * @see GalleryGraphics::getImageDimensions
      * @access private
      */
     function _getImageDimensions($mimeType, $filename) {
 	$gd =& $this->_getGdFunctionality();
 
 	/*
-	 * Try PHPs getimagesize first. If it runs afoul of open_basedir
-	 * it'll return false and we can try using the GD functions
+	 * Try PHPs getimagesize first. If it runs afoul of open_basedir it'll return false and we
+	 * can try using the GD functions
 	 */
 	$results = $gd->getImageSize($filename);
 	if (($results != false) &&
@@ -656,8 +633,7 @@ class GdToolkit extends GalleryToolkit {
 	if ($x > 0 && $y > 0) {
 	    return array(null, $x, $y);
 	}
-	return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE),
-		     null, null);
+	return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE), null, null);
     }
 
     /**

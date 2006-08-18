@@ -17,19 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Ecard
- * @subpackage UserInterface
- * @author Nico Kaiser <nico@siriux.net>
- * @author Dariush Molavi <dari@nukedgallery.net>
- */
 
 /**
- * Helper class for eCards
- *
+ * Helper functions for eCards
  * @package Ecard
  * @subpackage Classes
+ * @author Nico Kaiser <nico@siriux.net>
+ * @author Dariush Molavi <dari@nukedgallery.net>
+ * @version $Revision$ $Date$
+ * @static
  */
 class EcardHelper {
 
@@ -38,7 +34,6 @@ class EcardHelper {
      * @param int itemId
      * @return array object GalleryStatus a status code
      *               object GalleryItem an item
-     * @static
      */
     function getSmallestSize($itemId) {
 	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
@@ -104,7 +99,6 @@ class EcardHelper {
      * @param string source string
      * @param array the submitted form
      * @return string output string
-     * @static
      */
     function replaceKeywords($str, $array) {
 	$result = $str;
@@ -122,7 +116,6 @@ class EcardHelper {
      *
      * @return array object GalleryStatus a status code
      *               boolean true to use validation plugins
-     * @static
      */
     function useValidationPlugins() {
 	list ($ret, $level) =

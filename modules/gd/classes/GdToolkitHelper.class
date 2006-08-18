@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Gd
- * @author Ernesto Baschny <ernst@baschny.de>
- */
 
 /**
- * A helper class for the GalleryGdToolkit class
- *
+ * A helper class for GdToolkit
  * @package Gd
  * @subpackage Classes
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GdToolkitHelper {
 
@@ -39,7 +36,6 @@ class GdToolkitHelper {
      * @return object GalleryStatus a status code
      *	 array('operations' => ...
      *	       'properties' => ...)
-     * @static
      */
     function getOperationsAndProperties($gd=null) {
 	global $gallery;
@@ -53,8 +49,7 @@ class GdToolkitHelper {
 	    return array($ret, null);
 	}
 	if (! $isSupported) {
-	    return array(null, array('operations' => array(),
-							 'properties' => array()));
+	    return array(null, array('operations' => array(), 'properties' => array()));
 	}
 
 	list ($ret, $mimeTypes) = GdToolkitHelper::discoverMimeTypes($gd);
@@ -62,9 +57,7 @@ class GdToolkitHelper {
 	    return array($ret, null);
 	}
 
-	/*
-	 * -------------------- Operations --------------------
-	 */
+	/* -------------------- Operations -------------------- */
 
 	if (GdToolkitHelper::isOperationSupported('convert-to-image/jpeg', $gd)) {
 	    $convertToJpegMimeTypes = array_intersect(
@@ -168,9 +161,7 @@ class GdToolkitHelper {
 		'mimeTypes' => $qualityMimeTypes);
 	}
 
-	/*
-	 * -------------------- Properties --------------------
-	 */
+	/* -------------------- Properties -------------------- */
 
 	/* Dimensions */
 	$properties['dimensions']['type'] = 'int,int';
@@ -185,9 +176,7 @@ class GdToolkitHelper {
 
     /**
      * Checks if a certain operation is supported by this GD library
-     *
-     * @return true/false
-     * @static
+     * @return boolean
      */
     function isOperationSupported($operation, $gd=null) {
 	if (!isset($gd)) {
@@ -217,9 +206,7 @@ class GdToolkitHelper {
 
     /**
      * The minimal version of GD that this module supports
-     *
      * @return string A version string
-     * @static
      */
     function minGdVersion() {
 	return '2.0';
@@ -237,9 +224,8 @@ class GdToolkitHelper {
      * version and which functionality they test for.
      *
      * @return array object GalleryStatus
-     *	       string the GD version number or '0' if there is no GD support
+     *         string the GD version number or '0' if there is no GD support
      *                Prefixed with '>' if PHP says "or higher"
-     * @static
      */
     function discoverGdVersion($gd=null) {
 	/*
@@ -277,14 +263,11 @@ class GdToolkitHelper {
     }
 
     /**
-     * See if this GD version is supported by this module
-     *
-     * Currently GD >= 2.0 is supported
+     * See if this GD version is supported by this module.  Currently GD >= 2.0 is supported.
      *
      * @param string A gd version string or empty to check the current version
      * @return array object GalleryStatus
      *	       boolean true if supported, false otherwise
-     * @static
      */
     function isGdVersionSupported($gdVersion=null, $gd=null) {
 	if (!isset($gdVersion)) {
@@ -305,9 +288,7 @@ class GdToolkitHelper {
     }
 
     /**
-     * Find out if this GD library is the one bundled with the PHP
-     * source.
-     *
+     * Find out if this GD library is the one bundled with the PHP source.
      * The bundled library provides some functionality that is currently
      * not available on the standard GD library. Those are tested here.
      *
@@ -330,7 +311,6 @@ class GdToolkitHelper {
      *
      * @return array object GalleryStatus
      *	       array supported mime-types
-     * @static
      */
     function discoverMimeTypes($gd=null) {
 	if (!isset($gd)) {
@@ -379,7 +359,6 @@ class GdToolkitHelper {
      * doesn't support the imageCreateTrueColor().
      *
      * @return boolean
-     * @static
      */
     function hasImageCreateTrueColor($gd=null) {
 	if (!isset($gd)) {
@@ -399,9 +378,7 @@ class GdToolkitHelper {
      * Factory to get a new GdFunctionality object.
      *
      * @param string the name of the GdFunctionality class we want to use
-     *
      * @return object GdFunctionality
-     * @static
      */
     function &getGdFunctionality() {
 	static $gdFunctionality;

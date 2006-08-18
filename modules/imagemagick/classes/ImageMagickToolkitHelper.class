@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ImageMagick
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * A helper class for the GalleryImageMagickToolkit class
- *
  * @package ImageMagick
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class ImageMagickToolkitHelper {
 
@@ -36,9 +33,7 @@ class ImageMagickToolkitHelper {
      * ImageMagickToolkit and return them.
      *
      * @return object GalleryStatus a status code
-     *         array('operations' => ...
-     *               'properties' => ...)
-     * @static
+     *         array('operations' => ..., 'properties' => ...)
      */
     function getOperationsAndProperties() {
 	global $gallery;
@@ -48,9 +43,7 @@ class ImageMagickToolkitHelper {
 	    return array($ret, null);
 	}
 
-	/*
-	 * -------------------- Operations --------------------
-	 */
+	/* -------------------- Operations -------------------- */
 
 	/*
 	 * Provide some mime type conversions.  G2 will use convert-to-image/jpeg for
@@ -153,9 +146,7 @@ class ImageMagickToolkitHelper {
 		'mimeTypes' => $qualityMimeTypes);
 	}
 
-	/*
-	 * -------------------- Properties --------------------
-	 */
+	/* -------------------- Properties -------------------- */
 
 	/* Dimensions */
 	$properties['dimensions'] = array(
@@ -228,14 +219,12 @@ class ImageMagickToolkitHelper {
 
     /**
      * Find out which mime types our ImageMagick installation supports.
-     *
      * This is done by trying to run 'identify' on a couple of sample images.
      *
      * @param string [optional] path to the ImageMagick we are testing,
      *	       if not given, use the 'imagemagick.path' module parameter
      * @return array object GalleryStatus
      *	       array supported mime-types
-     * @static
      */
     function discoverMimeTypes($imageMagickPath=null) {
 	global $gallery;
@@ -334,7 +323,6 @@ class ImageMagickToolkitHelper {
 
     /**
      * Test if the given path has a working set of ImageMagick binaries.
-     *
      * This is done by trying to run 'identify' on a sample image.
      *
      * @param string path to the ImageMagick we are testing
@@ -342,9 +330,7 @@ class ImageMagickToolkitHelper {
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successful?
      *		      'message' => string: the error message, in case of
-     *				   IMAGEMAGIC_TEST_ERROR
-     *		     )
-     * @static
+     *				   IMAGEMAGIC_TEST_ERROR)
      */
     function testBinaries($imageMagickPath) {
 	global $gallery;
@@ -353,8 +339,8 @@ class ImageMagickToolkitHelper {
 	$dataPath = dirname(dirname(__FILE__)) . "${slash}data${slash}";
 
 	/*
-	 * If the path is not restricted by open_basedir, then verify that it's
-	 * legal.  Else just hope that it's valid and use it.
+	 * If the path is not restricted by open_basedir, then verify that it's legal.
+	 * Else just hope that it's valid and use it.
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($imageMagickPath) &&
 		!@$platform->is_dir($imageMagickPath)) {
@@ -459,10 +445,7 @@ class ImageMagickToolkitHelper {
 				  array($module->translate('Problem executing binary:')),
 				  $results));
 		} else if (implode('', $results) != '') {
-		    /*
-		     * 'convert' normally doesn't say anything: if it does,
-		     * it was an error message
-		     */
+		    /* 'convert' normally doesn't say anything; if it does it was an error */
 		    $testArray[] = array('name' => 'convert',
 					 'success' => false,
 					 'message' => array_merge(
@@ -507,10 +490,7 @@ class ImageMagickToolkitHelper {
 					     array($module->translate('Problem executing binary:')),
 					     $results));
 		} else if (!empty($results)) {
-		    /*
-		     * 'composite' normaly doesn't say anything: if it does,
-		     * it was an error message
-		     */
+		    /* 'composite' normally doesn't say anything; if it does it was an error */
 		    $testArray[] = array('name' => $compositeCmd,
 					 'success' => false,
 					 'message' => array_merge(

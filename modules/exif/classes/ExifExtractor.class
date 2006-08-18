@@ -18,29 +18,20 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package Exif
- * @subpackage Classes
- * @author Alan Harder <alan.harder@sun.com>
- * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
- */
-
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/exif/classes/ExifInterface_1_0.class');
 
 /**
  * Implementation of the ExifInterface for pulling EXIF data from a set of target items
- *
  * @package Exif
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
+ * @version $Revision$ $Date$
  */
 class ExifExtractor extends ExifInterface_1_0 {
 
     /**
-     * @see ExifInterface_1_0::getMetaData()
+     * @see ExifInterface_1_0::getMetaData
      */
     function getMetaData($itemIds, $properties=array()) {
 	global $gallery;

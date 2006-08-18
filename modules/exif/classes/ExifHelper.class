@@ -18,11 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * A helper class for the EXIF module.
  * @package Exif
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
+ * @version $Revision$ $Date$
  */
 
 /**
@@ -66,9 +67,7 @@ define('EXIF_ITEM_ROTATE_PRESERVE', 16);
  * This class follows the Adapter pattern: 2 foreign packages with totally different APIs are made
  * compatible with the G2 API. Methods starting with '_' (underscore), though not neccessarily
  * declared private, must only be used internally in this class or subclasses.
- *
- * @package Exif
- * @subpackage Classes
+ * @static
  */
 class ExifHelper {
 
@@ -77,7 +76,6 @@ class ExifHelper {
      *
      * @param int the view mode
      * @return object GalleryStatus a status code
-     * @static
      */
     function setDefaultProperties($viewMode) {
 	switch ($viewMode) {
@@ -153,7 +151,6 @@ class ExifHelper {
      *
      * @param int the view mode
      * @return object GalleryStatus a status code
-     * @static
      */
     function addDefaultIptcProperties($viewMode) {
 	list ($ret, $properties) = ExifHelper::getProperties($viewMode);
@@ -216,7 +213,7 @@ class ExifHelper {
      * @param string   the path to a jpeg file
      * @return array   object GalleryStatus a status code
      *                 object  the JPEG object containing the IPTC data
-     * @see getIptcValue()
+     * @see getIptcValue
      * @TODO(xlerb) reduce size of lib/JPEG: 1. remove whitespace/comments; 2. refactor according
      *      to lazy reading. Before refactoring, add timing tests.
      */
@@ -251,7 +248,6 @@ class ExifHelper {
      * @param  int     the view mode
      * @return array   object GalleryStatus a status code
      *                  array title/value pairs
-     * @static
      */
     function getExifData($path, $viewMode) {
 	$rawExifData = array();
@@ -439,7 +435,6 @@ class ExifHelper {
      * @param array the key path
      * @return array object GalleryStatus a status code
      *               string value
-     * @static
      */
     function getExifValue(&$source, $keyPath) {
 	$key = array_shift($keyPath);
@@ -465,7 +460,6 @@ class ExifHelper {
      * @param string   Source encoding of the IPTC value, e.g. 'ISO-8859-1', defaults from current
      *                 locale
      * @return string  An IPTC value or null, if there is no such value or on error
-     * @static
      * @TODO(xlerb) have IPTC input charset default in EXIF/IPTC admin interface.
      * @TODO(xlerb) have IPTC input charset overrides for albums (maybe images too?) for cases,
      *      where users from different countries can upload images with IPTC data. It is such a
@@ -492,11 +486,10 @@ class ExifHelper {
      * @param int the view mode (EXIF_SUMMARY, etc)
      * @return array object GalleryStatus a status code
      *               array logical exif property names
-     * @static
      */
     function getProperties($viewMode) {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('ExifPropertiesMap',
-	    array('property', 'sequence'), array('viewMode' => $viewMode), 
+	    array('property', 'sequence'), array('viewMode' => $viewMode),
 	    array('orderBy' => array('sequence' => ORDER_ASCENDING)));
 	if ($ret) {
 	    return array($ret, null);
@@ -516,7 +509,6 @@ class ExifHelper {
      * @param int the view mode (EXIF_SUMMARY, etc)
      * @param array logical property key/value pairs
      * @return object GalleryStatus a status code
-     * @static
      */
     function setProperties($viewMode, $properties) {
 
@@ -560,7 +552,6 @@ class ExifHelper {
      *   The first existing physical property in the given order will be used and returned.
      *
      * @return array exif keys
-     * @static
      */
     function getExifKeys() {
 	global $gallery;

@@ -17,26 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Gd
- * @author Ernesto Baschny <ernst@baschny.de>
- */
 
 /**
  * All image functions from the GD library are implemented here.
  *
- * Every call to these functions should go through this class. Errors are
- * handled the Gallery-way (GalleryStatus) and it provides an easy way to
- * test the Toolkit (by using an implementation with pseudo-functionality
- * instead of this class).
+ * Every call to these functions should go through this class. Errors are handled the Gallery-way
+ * (GalleryStatus) and it provides an easy way to test the Toolkit (by using an implementation with
+ * pseudo-functionality instead of this class).
  *
  * @package Gd
  * @subpackage Classes
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @version $Revision$ $Date$
  */
 class GdFunctionality {
     /**
-     *
      * @return array object GalleryStatus
      *	       string phpinfo output
      */
@@ -49,9 +44,7 @@ class GdFunctionality {
     }
 
     /**
-     * The tempnam method from the GalleryPlatform we will need to overwrite
-     * in our testcases
-     *
+     * The tempnam method from the GalleryPlatform we will need to overwrite in our testcases
      * @return string
      */
     function tempnam($tmpDir, $prefix) {
@@ -61,9 +54,7 @@ class GdFunctionality {
     }
 
     /**
-     * The copy method from GalleryPlatform, which we also need to be able
-     * to overwrite in our testcases
-     *
+     * The copy method from GalleryPlatform, which we need to be able to overwrite in tests
      * @return string
      */
     function copy($src, $dest) {
@@ -73,9 +64,7 @@ class GdFunctionality {
     }
 
     /**
-     * The unlink method from GalleryPlatform, which we also need to be able
-     * to overwrite in our testcases
-     *
+     * The unlink method from GalleryPlatform, which we need to be able to overwrite in tests
      * @return string
      */
     function unlink($file) {
@@ -85,9 +74,7 @@ class GdFunctionality {
     }
 
     /**
-     * The filesize method from GalleryPlatform, which we also need to be able
-     * to overwrite in our testcases
-     *
+     * The filesize method from GalleryPlatform, which we need to be able to overwrite in tests
      * @return int
      */
     function filesize($file) {
@@ -109,9 +96,7 @@ class GdFunctionality {
 
     /**
      * Just check if a function exists or not.
-     *
-     * This is here so we can substitute the function-checker routine in our
-     * phpunit testcases.
+     * This is here so we can substitute the function-checker routine in our phpunit testcases.
      *
      * @return boolean true if exists
      */
@@ -121,7 +106,6 @@ class GdFunctionality {
 
     /**
      * Return an integer representing the known imageTypes
-     *
      * @return int
      */
     function imageTypes() {
@@ -147,7 +131,6 @@ class GdFunctionality {
 
     /**
      * Return the size (width, height) of an image file.
-     *
      * @return array (x, y)
      */
     function getImageSize($filename) {
@@ -205,7 +188,6 @@ class GdFunctionality {
 
     /**
      * Helper functionality to see if a filename is readable
-     *
      * @return boolean
      */
     function isValidFile($filename) {
@@ -249,8 +231,8 @@ class GdFunctionality {
      */
     function imageCreateFromGif($filename) {
 	if (!function_exists('imageCreateFromGif')) {
-	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
-					      __FILE__, __LINE__), null);
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION),
+			 null);
 	}
 	$res = @imageCreateFromGif($filename);
 	list ($ret, $resource) = $this->checkResource($res, $filename);

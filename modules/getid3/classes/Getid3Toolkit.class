@@ -17,34 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Getid3
- * @author Don Willingham <donwillingham@users.sf.net>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * A getid3 version of GalleryToolkit
- *
- * This class implements the GalleryToolkit API using getid3.
- *
  * @package Getid3
  * @subpackage Classes
+ * @author Don Willingham <donwillingham@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class Getid3Toolkit extends GalleryToolkit {
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
-
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
 	switch($propertyName) {

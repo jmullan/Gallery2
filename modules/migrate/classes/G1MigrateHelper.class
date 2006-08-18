@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Migrate
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
- * A helper class for the Panorama module.
- *
+ * A helper class for the Migrate module.
  * @package Migrate
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class G1MigrateHelper {
 
@@ -36,7 +33,6 @@ class G1MigrateHelper {
      *
      * @return array GalleryStatus a status code
      *               int count
-     * @static
      */
     function fetchMapCount() {
 	global $gallery;
@@ -62,13 +58,12 @@ class G1MigrateHelper {
      * @param string (optional) G1 item name
      * @return array object GalleryStatus a status code
      *               int id of G2 item or null if not found
-     * @static
      */
     function fetchMapping($g1album, $g1item=null) {
 	global $gallery;
 
 	$query = 'SELECT [G1MigrateMap::itemId] FROM [G1MigrateMap]
-	          WHERE [G1MigrateMap::g1album]=? AND [G1MigrateMap::g1item]';
+		  WHERE [G1MigrateMap::g1album]=? AND [G1MigrateMap::g1item]';
 	$data = array($g1album);
 
 	if (isset($g1item)) {

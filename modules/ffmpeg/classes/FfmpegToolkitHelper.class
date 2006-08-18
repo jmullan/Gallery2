@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Ffmpeg
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * A helper class for the FfmpegToolkit class
- *
+ * A helper class for FfmpegToolkit
  * @package Ffmpeg
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class FfmpegToolkitHelper {
 
@@ -36,9 +33,7 @@ class FfmpegToolkitHelper {
      * FfmpegToolkit and return them.
      *
      * @return object GalleryStatus a status code
-     *         array('operations' => ...
-     *               'properties' => ...)
-     * @static
+     *         array('operations' => ..., 'properties' => ...)
      */
     function getOperationsAndProperties() {
 	global $gallery;
@@ -49,8 +44,7 @@ class FfmpegToolkitHelper {
 	}
 
 	if (empty($ffmpegPath)) {
-	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE),
-			 null);
+	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 	}
 
 	list ($ret, $tests, $mimeTypes, $supportsOffset) =
@@ -59,9 +53,7 @@ class FfmpegToolkitHelper {
 	    return array($ret, null);
 	}
 
-	/*
-	 * -------------------- Operations --------------------
-	 */
+	/* -------------------- Operations -------------------- */
 
 	/* extract */
 	$operations['convert-to-image/jpeg']['params'] = array();
@@ -78,9 +70,7 @@ class FfmpegToolkitHelper {
 		'outputMimeType' => null);
 	}
 
-	/*
-	 * -------------------- Properties --------------------
-	 */
+	/* -------------------- Properties -------------------- */
 
 	/* Dimensions */
 	$properties['dimensions']['type'] = 'int,int';
@@ -93,8 +83,7 @@ class FfmpegToolkitHelper {
 	    $gallery->i18n('Get the width, height and duration of the movie');
 	$properties['dimensions-and-duration']['mimeTypes'] = $mimeTypes;
 
-	return array(null, array('operations' => $operations,
-						     'properties' => $properties));
+	return array(null, array('operations' => $operations, 'properties' => $properties));
     }
 
     /**
@@ -106,13 +95,10 @@ class FfmpegToolkitHelper {
      * @param string path to the Ffmpeg we are testing
      * @return array object GalleryStatus general status of tests
      *	       array of array ('name' => string: the name of the binary,
-     *		               'success' => boolean: test successful?
-     *		               'results' => string: the ffmpeg output
-     *	                )
+     *	                       'success' => boolean: test successful?
+     *	                       'results' => string: the ffmpeg output)
      *         array hash map of mime types
      *         boolean true if ffmpeg supports -ss time_offset
-     *
-     * @static
      */
     function testBinary($ffmpegPath) {
 	global $gallery;
@@ -124,8 +110,7 @@ class FfmpegToolkitHelper {
 	 */
 	if (!$platform->isRestrictedByOpenBaseDir($ffmpegPath)) {
 	    if (!$platform->file_exists($ffmpegPath) || !$platform->is_file($ffmpegPath)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PATH),
-			     null, null, null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PATH), null, null, null);
 	    }
 	}
 

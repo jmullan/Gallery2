@@ -17,31 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Dcraw
- * @author Vallimar <vallimar@sexorcisto.net>
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkitHelper.class');
 
 /**
  * A Dcraw version of GalleryToolkit
- *
- * This class implements the GalleryToolkit API using Dcraw.
- *
  * @package Dcraw
  * @subpackage Classes
+ * @author Vallimar <vallimar@sexorcisto.net>
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class DcrawToolkit extends GalleryToolkit {
 
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
 	global $gallery;
@@ -87,15 +78,14 @@ class DcrawToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION),
-			 null);
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION), null);
 	}
 
 	return array(null, $results);
     }
 
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
@@ -155,8 +145,7 @@ class DcrawToolkit extends GalleryToolkit {
 	    return array(null, 'image/x-portable-pixmap', $context);
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION),
-			 null, null);
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION), null, null);
 	}
     }
 }

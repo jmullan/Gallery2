@@ -17,37 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Exif
- * @author Ernesto Baschny <ernst@baschny.de>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
- * A GalleryToolkit that uses exifer
- *
- * This class implements the GalleryToolkit API using the exifer library.
- *
+ * A GalleryToolkit that uses the exifer library.
  * @package Exif
  * @subpackage Classes
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @version $Revision$ $Date$
  */
 class ExifToolkit extends GalleryToolkit {
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
-
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
-
 	switch($propertyName) {
 	case 'originationTimestamp':
 	    GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
@@ -56,8 +40,7 @@ class ExifToolkit extends GalleryToolkit {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
-			 null);
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
 	}
 
 	return array(null, $results);

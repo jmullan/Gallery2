@@ -17,29 +17,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Fotokasten
- * @subpackage Classes
- * @author Ioana Ciocanescu <service@fotokasten.de>
- */
 
 /**
  * This is an implementation of the cart module's CartPluginInterface_1_0
- *
  * @package Fotokasten
  * @subpackage Classes
+ * @author Ioana Ciocanescu <service@fotokasten.de>
+ * @version $Revision$ $Date$
  */
 class FotokastenCartPlugin extends CartPluginInterface_1_0 {
     /**
-     * @see CartPluginInterface_1_0::getSupportedItemTypes()
+     * @see CartPluginInterface_1_0::getSupportedItemTypes
      */
     function getSupportedItemTypes() {
 	return array('GalleryPhotoItem');
     }
 
     /**
-     * @see CartPluginInterface_1_0::getActionDisplayName()
+     * @see CartPluginInterface_1_0::getActionDisplayName
      */
     function getActionDisplayName() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'fotokasten');
@@ -50,15 +45,14 @@ class FotokastenCartPlugin extends CartPluginInterface_1_0 {
     }
 
     /**
-     * @see CartPluginInterface_1_0::fulfillCart()
+     * @see CartPluginInterface_1_0::fulfillCart
      */
     function fulfillCart($cartItemIds) {
 	global $gallery;
 	$session =& $gallery->getSession();
 	$session->put('fotokasten.cart', $cartItemIds);
 
-	return array(null,
-		     array('controller' => 'fotokasten.PrintPhotos', 'return' => 1));
+	return array(null, array('controller' => 'fotokasten.PrintPhotos', 'return' => 1));
     }
 }
 ?>
