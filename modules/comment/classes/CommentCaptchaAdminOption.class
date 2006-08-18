@@ -17,22 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
+ * Captcha configuration for comment module.
  * @package Comment
  * @subpackage Classes
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * Captcha configuration for core module.
- *
- * @package Comment
- * @subpackage Classes
+ * @version $Revision$ $Date$
  */
 class CommentCaptchaAdminOption extends CaptchaAdminOption {
     /**
-     * @see CaptchaAdminOption::getOptionData()
+     * @see CaptchaAdminOption::getOptionData
      */
     function getOptionData() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');

@@ -17,21 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlugin.class', true);
 
 /**
- * Module meta-info container
- *
- * This is a container for information about a given module.
- *
+ * This is a container for information about a module.
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryModule extends GalleryPlugin {
 
@@ -55,7 +49,7 @@ class GalleryModule extends GalleryPlugin {
      *   getItemLinks
      *   getItemSummaries
      *
-     * eg: getItemAdminViews|getSystemLinks|getItemLinks
+     * eg. getItemAdminViews|getSystemLinks|getItemLinks
      *
      * @var string _callbacks
      * @access private
@@ -74,9 +68,9 @@ class GalleryModule extends GalleryPlugin {
      * Return the major and minor version of the GalleryModule API.
      *
      * This follows the same rules as the core API.
-     * @see GalleryCoreApi::getApiVersion()
+     * @see GalleryCoreApi::getApiVersion
      *
-     * TODO: for next major version bump:
+     * @TODO: for next major version bump:
      * - Change GalleryDataItem::render to match GalleryRenderer::render and
      *   consider dropping the format, since it's always HTML.
      * - Drop the redirect url from GalleryPlugin::deactivate() (also requires a
@@ -106,8 +100,7 @@ class GalleryModule extends GalleryPlugin {
      * 4. Set the new module version and api requirements into the database
      *
      * Modules should not need to override this method.  Instead they should
-     * override the upgrade method and put all their module specific logic
-     * there.
+     * override the upgrade method and put all their module specific logic there.
      *
      * @return object GalleryStatus a status code
      */
@@ -126,10 +119,9 @@ class GalleryModule extends GalleryPlugin {
 	if ($bootstrap) {
 	    $gallery->debug('In bootstrap mode (core module)');
 	    /*
-	     * If we're in bootstrap mode, then we may not even have a version
-	     * table.  If we try to query it, we will cause our current
-	     * transaction to abort on some databases.  So, just assume that
-	     * there's no installed version.
+	     * If we're in bootstrap mode, then we may not even have a version table.  If we try
+	     * to query it, we will cause our current transaction to abort on some databases.
+	     * So, just assume that there's no installed version.
 	     */
 	    $installedVersion = null;
 	} else {
@@ -304,7 +296,7 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * @see GalleryPlugin::deactivate()
+     * @see GalleryPlugin::deactivate
      */
     function deactivate($postDeactivationEvent=true) {
 	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
@@ -330,7 +322,7 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * @see GalleryPlugin::activate()
+     * @see GalleryPlugin::activate
      *
      * Note: if you add something here, consider adding the same functionality
      * to installOrUpgrade (see the TODO there).
@@ -386,7 +378,7 @@ class GalleryModule extends GalleryPlugin {
      * should accept all the module's defaults wherever possible.
      *
      * @return array object GalleryStatus a status code
-     *               boolean
+     *               boolean was module able to autoconfigure
      */
     function autoConfigure() {
 	/* By default we dont't need any configuration */
@@ -394,10 +386,9 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Get the name of the GalleryView containing the various site
-     * administration views for this module.  Note that the text value is
-     * localized since they will be displayed directly to the user.
-     * Include group/groupLabel in data to override the values from getGroup().
+     * Get the name of the GalleryView containing the various site administration views for this
+     * module.  Note that the text value is localized since they will be displayed directly to the
+     * user.  Include group/groupLabel in data to override the values from getGroup().
      *
      * @return array object GalleryStatus a status code
      *               array( array('name' => name, 'view' => view,
@@ -408,11 +399,10 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Get the list of GalleryViews containing the various item
-     * administration views for this module.  The module should check
-     * permissions and item type to determine which views are applicable for
-     * the authenticated user.  As with getSiteAdminViews(), the view title
-     * text must be localized.
+     * Get the list of GalleryViews containing the various item administration views for this
+     * module.  The module should check permissions and item type to determine which views are
+     * applicable for the authenticated user.  As with getSiteAdminViews(), the view title text
+     * must be localized.
      *
      * @param object GalleryItem an item
      * @return array object GalleryStatus a status code
@@ -423,10 +413,10 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Get the list of GalleryViews containing the various user administration
-     * views for this module.  The module should check permissions and item
-     * type to determine which views are applicable for the authenticated user.
-     * As with getSiteAdminViews(), the view title text must be localized.
+     * Get the list of GalleryViews containing the various user administration views for this
+     * module.  The module should check permissions and item type to determine which views are
+     * applicable for the authenticated user.  As with getSiteAdminViews(), the view title text
+     * must be localized.
      *
      * @param object GalleryUser a user
      * @return array object GalleryStatus a status code
@@ -437,9 +427,8 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Get the name of the GalleryView containing the administration view
-     * specifically for configuring this module.  It may be one that is also
-     * listed in getSiteAdminViews().
+     * Get the name of the GalleryView containing the administration view specifically for
+     * configuring this module.  It may be one that is also listed in getSiteAdminViews().
      *
      * @return array string view name
      */
@@ -448,11 +437,10 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Return 0 or more system-specific links to an arbitrary module view.  Get
-     * the name of the GalleryView containing the administration view
-     * specifically for configuring this module.  It may be one that is also
-     * listed in getSiteAdminViews().  As with getSiteAdminViews(), the view
-     * title text must be localized.
+     * Return 0 or more system-specific links to an arbitrary module view.  Get the name of the
+     * GalleryView containing the administration view specifically for configuring this module.
+     * It may be one that is also listed in getSiteAdminViews().  As with getSiteAdminViews(),
+     * the view title text must be localized.
      *
      * @return array object GalleryStatus a status code
      *               array(string linkId => array('text' => 'localized text',
@@ -495,9 +483,8 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Register any factory implementations.  This is called at module
-     * activation time.  All implementations are unregistered when the module is
-     * deactivated.
+     * Register any factory implementations.  This is called at module activation time.
+     * All implementations are unregistered when the module is deactivated.
      *
      * @return object GalleryStatus a status code
      */
@@ -574,7 +561,7 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * @see GalleryPlugin::getPluginType()
+     * @see GalleryPlugin::getPluginType
      */
     function getPluginType() {
 	return 'module';
@@ -596,7 +583,7 @@ class GalleryModule extends GalleryPlugin {
      *    with a fallback to translation of "Edit %s" for other %s values.
      *    Currently only input string with single % token is supported.
      * @return translated string
-     * @access private
+     * @access protected
      */
     function _translate($params, $postSprintf=null) {
 	if (isset($postSprintf)) {

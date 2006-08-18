@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * A class that contains information about the state of its members
- *
+ * Base class that contains information about the state of its members
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @abstract
  */
 class GalleryPersistent {
 
@@ -40,27 +37,17 @@ class GalleryPersistent {
      */
     var $_persistentStatus;
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
-    /**
-     * Constructor
-     */
     function GalleryPersistent() {
-	/*
-	 * Initialize our persistent info tracker
-	 */
+	/* Initialize our persistent info tracker */
 	$this->_persistentStatus['flags'] = 0;
 	$this->_persistentStatus['originalValue'] = array();
     }
 
     /**
      * Have we modified any data in this class?
-     *
-     * @return array bool true if modified, false if not.
+     * @param string (optional) check just this field
+     * @return boolean true if modified, false if not.
      */
     function isModified($member=null) {
 	if ($member) {
@@ -88,10 +75,9 @@ class GalleryPersistent {
     }
 
     /**
-     * Reset all original values to the current values in the entity (or
-     * null if so specified).
+     * Reset all original values to the current values in the entity (or null if so specified).
      *
-     * @param bool reset all original values to null if true
+     * @param boolean (optional) reset all original values to null if true
      * @return object GalleryStatus a status code
      */
     function resetOriginalValues($resetToNull=false) {
@@ -118,10 +104,8 @@ class GalleryPersistent {
     }
 
     /**
-     * Set a flag
-     *
-     * The GalleryStorage strategy uses this to flag objects for its own
-     * internal purposes.
+     * Set a flag.
+     * The GalleryStorage strategy uses this to flag objects for its own internal purposes.
      *
      * @param string a bit flag to set
      */
@@ -130,10 +114,8 @@ class GalleryPersistent {
     }
 
     /**
-     * Clear a flag
-     *
-     * The GalleryStorage strategy uses this to flag objects for its own
-     * internal purposes.
+     * Clear a flag.
+     * The GalleryStorage strategy uses this to flag objects for its own internal purposes.
      *
      * @param string a bit flag to clear
      */
@@ -142,10 +124,8 @@ class GalleryPersistent {
     }
 
     /**
-     * Test a flag
-     *
-     * The GalleryStorage strategy uses this to flag objects for its own
-     * internal purposes.
+     * Test a flag.
+     * The GalleryStorage strategy uses this to flag objects for its own internal purposes.
      *
      * @param string a bit flag to test
      * @return bool true if the bit is on, false otherwise

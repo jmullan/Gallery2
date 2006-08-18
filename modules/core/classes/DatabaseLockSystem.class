@@ -17,25 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryLockSystem.class');
 
 /**
- * Database backed locking.  This is less efficient than filesystem based
- * locking, but is more reliable and portable.
+ * Database backed locking.  This is less efficient than filesystem based locking,
+ * but is more reliable and portable.
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class DatabaseLockSystem extends GalleryLockSystem {
 
     /**
-     * @see GalleryLockSystem::_acquireLock()
+     * @see GalleryLockSystem::_acquireLock
      */
     function _acquireLock($ids, $timeout, $lockType) {
 	global $gallery;
@@ -58,7 +55,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::_releaseLocksNow()
+     * @see GalleryLockSystem::_releaseLocksNow
      */
     function _releaseLocksNow($locks) {
 	global $gallery;
@@ -73,7 +70,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem:_removeObjectsFromLock()
+     * @see GalleryLockSystem:_removeObjectsFromLock
      */
     function _removeObjectsFromLock(&$lock, $ids) {
 	global $gallery;
@@ -90,7 +87,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem:_moveObjectsBetweenLocks()
+     * @see GalleryLockSystem:_moveObjectsBetweenLocks
      */
     function _moveObjectsBetweenLocks($relock, $newLockId) {
 	global $gallery;
@@ -109,7 +106,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::_newLockId()
+     * @see GalleryLockSystem::_newLockId
      */
     function _newLockId() {
 	global $gallery;
@@ -123,7 +120,7 @@ class DatabaseLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::refreshLocks()
+     * @see GalleryLockSystem::refreshLocks
      */
     function refreshLocks($freshUntil) {
 	global $gallery;

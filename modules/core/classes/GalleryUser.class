@@ -17,23 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
 
 /**
- * Representation of a single user
- *
- * This class is the container for information about Gallery
- * users.  Each instance of User contains a unique user id. It
- * must be implemented by a class that has a persistent store for
+ * Representation of a single user.
+ * This class is the container for information about Gallery users.  Each instance of User
+ * contains a unique user id. It must be implemented by a class that has a persistent store for
  * the relevant user data.
  *
  * @g2 <class-name>GalleryUser</class-name>
@@ -46,6 +36,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryUser extends GalleryEntity {
 
@@ -196,12 +188,9 @@ class GalleryUser extends GalleryEntity {
     }
 
     /**
-     * Save the changes to this GalleryUser
+     * Save the changes to this GalleryUser.
+     * Do some bookkeeping, like adding the user to the all user and everybody groups.
      *
-     * Do some bookkeeping, like adding the user to the all user and admin
-     * groups.
-     *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function save($postEvent=true) {
@@ -232,13 +221,10 @@ class GalleryUser extends GalleryEntity {
     }
 
     /**
-     * Delete this GalleryUser
+     * Delete this GalleryUser.
+     * Do some bookkeeping, like removing the user from all groups, remapping his items to
+     * a site admin user and removing all of his permissions.
      *
-     * Do some bookkeeping, like removing the user from all groups,
-     * remapping his items to a site admin user and removing all
-     * of his permissions
-     *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function delete() {
@@ -259,14 +245,12 @@ class GalleryUser extends GalleryEntity {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					 'You cannot delete the anonymous user!');
 	}
-	
+
 	/*
 	 * First assign all items of this user to another owner.
-	 * You should call remapOwner() before calling $user->delete()
-	 * but we call it here again, for 100% data integrity.
-	 * If remapOwner() has been called before, as it is the case with
-	 * the AdminDeleteUser controller, this 2nd call to remapOwner()
-	 * does exactly nothing.
+	 * You should call remapOwner() before calling $user->delete() but we call it here again,
+	 * for 100% data integrity.  If remapOwner() has been called before, as it is the case with
+	 * the AdminDeleteUser controller, this 2nd call to remapOwner() does exactly nothing.
 	 */
 	/* Check if activeUser is Site Admin, if not, get any of the Site Admins */
 	list($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
@@ -338,7 +322,7 @@ class GalleryUser extends GalleryEntity {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryUser';

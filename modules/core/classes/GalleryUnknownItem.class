@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
 
 /**
  * A subclass of DataItem for containing unknown objects.
- *
- * These are objects that we know nothing about.  Currently this
- * is exactly the same as a DataItem, although that may change.
+ * These are objects that we know nothing about.  Currently this is exactly the same as
+ * a DataItem, although that may change.
  *
  * @g2 <class-name>GalleryUnknownItem</class-name>
  * @g2 <parent-class-name>GalleryDataItem</parent-class-name>
@@ -41,6 +35,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryUnknownItem extends GalleryDataItem {
 
@@ -70,7 +66,7 @@ class GalleryUnknownItem extends GalleryDataItem {
 
     /**
      * @see GalleryEntity::itemTypeName
-     * @staticvar mimeMap array(mimeTypePattern=>array(CapName,name))
+     * @staticvar mimeMap array(mimeTypePattern => array(CapName,name))
      */
     function itemTypeName($localized = true) {
 	global $gallery;
@@ -107,7 +103,7 @@ class GalleryUnknownItem extends GalleryDataItem {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryUnknownItem';

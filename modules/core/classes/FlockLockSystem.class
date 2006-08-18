@@ -17,21 +17,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryLockSystem.class');
 
 /**
- * Flock() based locking.  This is fairly efficient, but it will not work on NFS
- * and is known to be unreliable on some operating systems including some
- * flavors of the 2.4 Linux kernel.
+ * Flock() based locking.  This is fairly efficient, but it will not work on NFS and is known to
+ * be unreliable on some operating systems including some flavors of the 2.4 Linux kernel.
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class FlockLockSystem extends GalleryLockSystem {
 
@@ -44,7 +41,7 @@ class FlockLockSystem extends GalleryLockSystem {
     var $_references;
 
     /**
-     * @see GalleryLockSystem::_acquireLock()
+     * @see GalleryLockSystem::_acquireLock
      */
     function _acquireLock($ids, $timeout, $lockType) {
 	global $gallery;
@@ -125,7 +122,7 @@ class FlockLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::_releaseLocksNow()
+     * @see GalleryLockSystem::_releaseLocksNow
      */
     function _releaseLocksNow($locks) {
 	global $gallery;
@@ -142,7 +139,7 @@ class FlockLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::refreshLocks()
+     * @see GalleryLockSystem::refreshLocks
      */
     function refreshLocks($freshUntil) {
 	global $gallery;
@@ -197,7 +194,7 @@ class FlockLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::_removeObjectsFromLock()
+     * @see GalleryLockSystem::_removeObjectsFromLock
      */
     function _removeObjectsFromLock(&$lock, $ids) {
 	foreach ($ids as $id) {
@@ -208,7 +205,7 @@ class FlockLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * @see GalleryLockSystem::_newLockId()
+     * @see GalleryLockSystem::_newLockId
      */
     function _newLockId() {
 	return array(null, md5(microtime()));

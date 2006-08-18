@@ -17,21 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
 
 /**
- * A subclass of DataItem for containing Movies
- *
- * A GalleryItem whose source is a movie of some kind (like an MPEG or an AVI)
+ * A subclass of DataItem for containing Movies.
+ * A GalleryItem whose source is a movie of some kind (like an MPEG or an AVI).
  *
  * @g2 <class-name>GalleryMovieItem</class-name>
  * @g2 <parent-class-name>GalleryDataItem</parent-class-name>
@@ -43,6 +34,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryMovieItem extends GalleryDataItem {
 
@@ -89,7 +82,7 @@ class GalleryMovieItem extends GalleryDataItem {
     var $duration;
 
     /**
-     * @see GalleryDataItem::canBeViewedInline()
+     * @see GalleryDataItem::canBeViewedInline
      */
     function canBeViewedInline() {
 	/* The mimeTypes listed here should provide a render() output */
@@ -159,7 +152,7 @@ class GalleryMovieItem extends GalleryDataItem {
     }
 
     /**
-     * @see GalleryDataItem::rescan()
+     * @see GalleryDataItem::rescan
      */
     function rescan() {
 	global $gallery;
@@ -298,7 +291,7 @@ class GalleryMovieItem extends GalleryDataItem {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryMovieItem';

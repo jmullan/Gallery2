@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ArchiveUpload
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * A helper class for the ArchiveUpload module
- *
  * @package ArchiveUpload
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class ArchiveUploadHelper {
 
@@ -41,7 +38,6 @@ class ArchiveUploadHelper {
      * @return array boolean test successful?
      *               string error type or null
      *               string unzip output
-     * @static
      */
     function testBinary($unzipPath) {
 	global $gallery;
@@ -76,7 +72,6 @@ class ArchiveUploadHelper {
 
     /**
      * Try to find a valid unzip binary.
-     *
      * @return string valid path or null
      */
     function findUnzipBinary() {
@@ -86,9 +81,8 @@ class ArchiveUploadHelper {
 	$validPath = null;
 
 	/*
-	 * Try a bunch of likely seeming paths to see if any of them work.
-	 * Start with system paths.  Tack on a trailing slash if necessary,
-	 * then tack on other likely paths, based on our OS.
+	 * Try some likely seeming paths to see if any of them work.  Start with system paths.
+	 * Tack on a trailing slash if necessary, then tack on other likely paths, based on our OS.
 	 */
 	$paths = array();
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {

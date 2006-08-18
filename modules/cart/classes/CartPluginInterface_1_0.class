@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Cart
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * This is an interface for plugins to the Cart module.  Modules that wish to
@@ -30,23 +25,24 @@
  *
  * @package Cart
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  * @abstract
  */
 class CartPluginInterface_1_0 {
 
     /**
-     * Return the item types that this cart plugin can fulfil, eg
+     * Return the item types that this cart plugin can fulfil, eg.
      * array('GalleryPhotoItem', 'GalleryMovieItem')
      *
-     * @param array item types
+     * @return array item types
      */
     function getSupportedItemTypes() {
 	return array();
     }
 
     /**
-     * Get the localized name of the action (eg "Print with PhotoAccess")
-     * to be displayed to the user.
+     * Get the localized name of the action (eg. "Print with Shutterfly") to show to users.
      *
      * @return array object GalleryStatus a status code
      *               string the action display name
@@ -62,7 +58,7 @@ class CartPluginInterface_1_0 {
      *               array url components that can be passed to the UrlGenerator
      */
     function fulfillCart($cartItemIds) {
-	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 }
 ?>

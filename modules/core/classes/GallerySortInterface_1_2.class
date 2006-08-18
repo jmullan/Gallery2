@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * This is an interface for adding custom sort orders for displaying items.
- *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  * @abstract
  */
 class GallerySortInterface_1_2 {
@@ -89,7 +85,7 @@ class GallerySortInterface_1_2 {
 		       'keywords' => $module->translate('Keywords'),
 		  'pathComponent' => $module->translate('Name'),
 		      'viewCount' => $module->translate('View Count'),
-		         'random' => $module->translate('Random'));
+			 'random' => $module->translate('Random'));
 	if (!$includeDefault) {
 	    array_shift($orderByList);
 	}

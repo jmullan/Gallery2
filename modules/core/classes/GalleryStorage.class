@@ -17,12 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
- * @version $Revision$ $Date$
+ * Database storage mechanism.  This object provides the hooks for saving and restoring objects in
+ * the persistent store.
  * @package GalleryCore
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 
 /* Require the ADOdb libraries */
@@ -30,7 +31,7 @@ GalleryCoreApi::requireOnce('lib/adodb/adodb.inc.php', true);
 
 /*
  * This will let ADOdb know which error handler function we want to use.
- * (if Gallery is embedded in a CMS also using ADOdb it may be defined already)
+ * (if embedded in an application also using ADOdb it may be defined already)
  */
 if (!defined('ADODB_ERROR_HANDLER')) {
     define('ADODB_ERROR_HANDLER', 'GalleryAdodbErrorHandler');
@@ -59,9 +60,6 @@ define('DATABASE_COLUMN_PREFIX', 'g_');
 /**
  * Database storage mechanism.  This object provides the hooks for saving and restoring objects in
  * the persistent store.
- *
- * @package GalleryCore
- * @subpackage Classes
  */
 class GalleryStorage {
 
@@ -179,9 +177,8 @@ class GalleryStorage {
      */
     var $_isEmptyAllowedForNotNullColumn;
 
+
     /**
-     * Constructor
-     *
      * @param array database configuration values
      */
     function GalleryStorage($config) {
@@ -207,9 +204,9 @@ class GalleryStorage {
     /**
      * Connect to the database
      *
-     * @access protected
      * @return array object GalleryStatus a status code
      *               object a database resource
+     * @access protected
      */
     function _getConnection($forceNew=false) {
 	global $gallery;
@@ -262,24 +259,23 @@ class GalleryStorage {
     }
 
     /**
-     * Set runtime settings for the given database connection
-     *
+     * Set runtime settings for the given database connection.
      * Set the connection/client/server encoding and other parameters
      *
-     * @access private
      * @param object adodb database handle
      * @return object GalleryStatus a status code
+     * @access protected
      */
     function _setConnectionSettings(&$db) {
-    	return null;
+	return null;
     }
 
     /**
      * Get the reference to our GalleryStorageExtras instance where we put less frequently used code
      * (most code that's used to modify the database).
      *
-     * @access protected
      * @return object GalleryStorageExtras
+     * @access protected
      */
     function &_getExtras() {
 	if (!isset($this->_extras)) {
@@ -399,7 +395,6 @@ class GalleryStorage {
      * @param array the lock ids
      * @param int the new "fresh until" timestamp
      * @return object GalleryStatus a status code
-     * @static
      */
     function refreshLocks($lockIds, $freshUntil) {
 	$extras =& $this->_getExtras();
@@ -588,7 +583,7 @@ class GalleryStorage {
 
 	foreach ($mapInfo as $memberName => $memberData) {
 	    if (array_key_exists($memberName, $match)) {
-		$this->_getWhereSql($memberName, $memberData, $match[$memberName], 
+		$this->_getWhereSql($memberName, $memberData, $match[$memberName],
 			$where, $wheredata);
 	    }
 
@@ -824,8 +819,8 @@ class GalleryStorage {
     /**
      * Begin transaction if not already in one.
      *
-     * @access protected
      * @return object GalleryStatus a status code
+     * @access protected
      */
     function _guaranteeTransaction() {
 	if ($this->_isTransactional && !$this->_db->transCnt) {
@@ -861,8 +856,8 @@ class GalleryStorage {
     /**
      * Return database specific syntax to replace in schema SQL
      *
-     * @access protected
      * @return array (string => replacement)
+     * @access protected
      */
     function _getSqlReplacements() {
 	return array();
@@ -871,8 +866,8 @@ class GalleryStorage {
     /**
      * Get sql to optimize a table
      *
-     * @access protected
      * @return string sql statement with %s token for table name
+     * @access protected
      */
     function _getOptimizeStatement() {
 	return null;
@@ -912,7 +907,6 @@ class GalleryStorage {
 
     /**
      * Return storage profiling information in HTML format
-     *
      * @return string HTML
      */
     function getProfilingHtml() {
@@ -934,7 +928,6 @@ class GalleryStorage {
 
     /**
      * Optimize the database.
-     *
      * @return object GalleryStatus a status code
      */
     function optimize() {
@@ -948,8 +941,8 @@ class GalleryStorage {
      * nothing is actually changed (eg. in the situation where the SET clauses in your UPDATE match
      * the existing values) then mysql will return 0 affected rows.
      *
-     * return array object GalleryStatus a status code
-     *              int the number of affected rows
+     * @return array object GalleryStatus a status code
+     *               int the number of affected rows
      */
     function getAffectedRows() {
 	$extras =& $this->_getExtras();
@@ -959,7 +952,6 @@ class GalleryStorage {
     /**
      * Describe the members, modules and parent of an entity
      *
-     * @access protected
      * @param string a class name
      * @param boolean true if we should scan all modules, not just the active ones
      * @return array object GalleryStatus a status code
@@ -974,9 +966,9 @@ class GalleryStorage {
      * Execute a given SQL file against the database.  Prefix table and column names as necessary.
      * Split multiple commands in the file into separate Execute() calls.
      *
-     * @access protected
      * @param string absolute path of the sql file
      * @return object GalleryStatus a status code
+     * @access protected
      */
     function _executeSqlFile($fileName) {
 	$extras =& $this->_getExtras();
@@ -986,9 +978,9 @@ class GalleryStorage {
     /**
      * Translate all table and column names from [Entity::member] notation to table.column notation.
      *
-     * @access protected
      * @param string the raw query
-     * @param string the translated query
+     * @return string the translated query
+     * @access protected
      */
     function _translateQuery($query) {
 	/* Change '[Class::member]' to 'table.column' or 'alias.column' */
@@ -1029,9 +1021,9 @@ class GalleryStorage {
     /**
      * Translate a potentially unsafe column name into a safe one
      *
-     * @access protected
      * @param string the name of a column
      * @return string a safe column name
+     * @access protected
      */
     function _translateColumnName($columnName) {
 	return $this->_columnPrefix . $columnName;
@@ -1045,11 +1037,11 @@ class GalleryStorage {
      * Comment   => array(g2_Comment, null, Comment)
      * Comment=1 => array(g2_Comment, C0, Comment)
      *
-     * @access protected
      * @param string the name of a table
      * @return array string a safe table name
      *               an alias for this table
      *               the unsafe, but translated, table name
+     * @access protected
      */
     function _translateTableName($tableName) {
 	/*
@@ -1188,7 +1180,6 @@ class GalleryStorage {
     /**
      * Start tracing.  If Gallery is in debug, this method will begin storing all output and routing
      * it into Gallery's debug system.
-     *
      * @access protected
      */
     function _traceStart() {
@@ -1200,7 +1191,6 @@ class GalleryStorage {
 
     /**
      * Stop tracing.  If Gallery is in debug, this will method will stop tracing.
-     *
      * @access protected
      */
     function _traceStop() {
@@ -1216,7 +1206,7 @@ class GalleryStorage {
      * Cast the value to the proper member type when interacting with the database.  Optionally also
      * perform a UTF-8-safe truncation for strings.
      *
-     * TODO: CAST empty to NULL ? values from DB too?
+     * @TODO: CAST empty to NULL ? values from DB too?
      *
      * @param mixed the value
      * @param array ('type' => STORAGE_TYPE_XXX constant,
@@ -1286,7 +1276,6 @@ class GalleryStorage {
 
 /**
  * Container for database result set
- *
  * @package GalleryCore
  * @subpackage Storage
  */
@@ -1324,8 +1313,8 @@ class GallerySearchResults {
 }
 
 /**
- * Default Error Handler for ADOdb.  Derived from adodb-errorhandler.inc.php which is (c) 2000, 2001
- * John Lim (jlim@natsoft.com.my).  All rights reserved.
+ * Default Error Handler for ADOdb.  Derived from adodb-errorhandler.inc.php which is
+ * (c) 2000, 2001 John Lim (jlim@natsoft.com.my).  All rights reserved.
  *
  * @param $dbms         the RDBMS you are connecting to
  * @param $fn           the name of the calling function (in uppercase)
@@ -1334,7 +1323,6 @@ class GallerySearchResults {
  * @param $p1           $fn specific parameter - see below
  * @param $P2           $fn specific parameter - see below
  *
- * @version $Revision$ $Date$
  * @package GalleryCore
  * @subpackage Storage
  */
@@ -1342,22 +1330,21 @@ function GalleryAdodbErrorHandler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=fa
 {
     switch($fn) {
     case 'EXECUTE':
-        $sql = $p1;
-        $inputparams = $p2;
-        $s = "$dbms error: [$errno: $errmsg] in $fn(\"$sql\")\n";
-        break;
+	$sql = $p1;
+	$inputparams = $p2;
+	$s = "$dbms error: [$errno: $errmsg] in $fn(\"$sql\")\n";
+	break;
 
     case 'PCONNECT':
     case 'CONNECT':
-        $host = $p1;
-        $database = $p2;
-
-        $s = "$dbms error: [$errno: $errmsg] in $fn($host, ?, ?, $database)\n";
-        break;
+	$host = $p1;
+	$database = $p2;
+	$s = "$dbms error: [$errno: $errmsg] in $fn($host, ?, ?, $database)\n";
+	break;
 
     default:
-        $s = "$dbms error: [$errno: $errmsg] in $fn($p1, $p2)\n";
-        break;
+	$s = "$dbms error: [$errno: $errmsg] in $fn($p1, $p2)\n";
+	break;
     }
 
     /*
@@ -1375,16 +1362,16 @@ function GalleryAdodbErrorHandler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=fa
      *  3 message is appended to the file destination
      */
     if (defined('ADODB_ERROR_LOG_TYPE')) {
-        $t = date('Y-m-d H:i:s');
-        if (defined('ADODB_ERROR_LOG_DEST'))
-            error_log("($t) $s", ADODB_ERROR_LOG_TYPE, ADODB_ERROR_LOG_DEST);
-        else
-            error_log("($t) $s", ADODB_ERROR_LOG_TYPE);
+	$t = date('Y-m-d H:i:s');
+	if (defined('ADODB_ERROR_LOG_DEST'))
+	    error_log("($t) $s", ADODB_ERROR_LOG_TYPE, ADODB_ERROR_LOG_DEST);
+	else
+	    error_log("($t) $s", ADODB_ERROR_LOG_TYPE);
     }
 
     global $gallery;
     if ($gallery->getDebug()) {
-        $gallery->debug($s);
+	$gallery->debug($s);
     }
 
     //print "<p>$s</p>";

@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * This is an interface for all locking systems.  You must extend it and
@@ -29,6 +24,9 @@
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  * @abstract
  */
 class GalleryLockSystem {
@@ -51,9 +49,7 @@ class GalleryLockSystem {
      */
     var $_releaseQueue;
 
-    /**
-     * Constructor
-     */
+
     function GalleryLockSystem() {
 	$this->_locks = $this->_releaseQueue = array();
     }

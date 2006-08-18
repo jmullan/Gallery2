@@ -19,28 +19,16 @@
  */
 
 /**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage Classes
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Global storage container and utility class for Gallery
- *
+ * Global storage container and utility class for Gallery.
  * This is a container for global information required for Gallery operation, such as configuration,
  * session, user, etc.
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class Gallery {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
 
     /**
      * The active GalleryUser instance
@@ -195,15 +183,7 @@ class Gallery {
      */
     var $_phpVm = null;
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
-    /**
-     * Constructor
-     */
     function Gallery() {
 	$this->_activeUser = null;
 
@@ -212,13 +192,13 @@ class Gallery {
 
 	/* Default config settings (can be overridden via config.php or embedded environment) */
 	$this->_config = array(
-	    'login' => true,             /* Offer UserAdmin links (Login/Logout/Your Account) */
+	    'login' => true,		/* Offer UserAdmin links (Login/Logout/Your Account) */
 
 	    /* UrlGenerator parameters for redirect when ShowItem target is inaccessible */
 	    'loginRedirect' => array('view' => 'core.UserAdmin',
 				     'subView' => 'core.UserLogin', 'return' => true),
 
-	    'link' => true,              /* @deprecated - Allow item linking */
+	    'link' => true,		 /* @deprecated - Allow item linking */
 					 /* (now unused, there is a separate replica module */
 
 	    'showSidebarBlocks' => true, /* Can we allow themes to show the sidebar? */
@@ -266,11 +246,10 @@ class Gallery {
     }
 
     /**
-     * Get the Id of the active user
-     *
+     * Get the Id of the active user.
      * The active user is the user who is logged on in this session.
      *
-     * @return int the id of the current User.
+     * @return int the id of the current user
      */
     function getActiveUserId() {
 	if (isset($this->_activeUser)) {
@@ -282,8 +261,7 @@ class Gallery {
     }
 
     /**
-     * Get the active user
-     *
+     * Get the active user.
      * Cache the results of the first call and return that same value each time.
      *
      * @return array object GalleryStatus a status code
@@ -334,7 +312,6 @@ class Gallery {
 
     /**
      * Initialize an empty session.
-     *
      */
     function initEmptySession() {
 	GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
@@ -343,7 +320,6 @@ class Gallery {
 
     /**
      * Get the Gallery session object.
-     *
      * Return a reference to the unique Gallery session object.  Any changes made to this object
      * will be saved in the session.
      *
@@ -365,8 +341,7 @@ class Gallery {
 
     /**
      * Get the Gallery platform object.
-     *
-     * Return a copy of the unique Gallery platform object.
+     * Return a reference to the unique Gallery platform object.
      *
      * @return object GalleryPlatform the Gallery platform object
      */
@@ -421,7 +396,6 @@ class Gallery {
 
     /**
      * Perform any necessary shutdown tasks.
-     *
      * This should only be invoked as a register_shutdown callback.
      *
      * @access private
@@ -678,7 +652,7 @@ class Gallery {
      * Get the profiling state
      *
      * @string profiling type
-     * @return bool
+     * @return boolean
      */
     function isProfiling($type) {
 	return in_array($type, $this->_profile);
@@ -710,7 +684,6 @@ class Gallery {
 
     /**
      * Set the location of debugging output
-     *
      * @param string a filename
      */
     function setDebugLogFile($debugLogFile) {
@@ -719,7 +692,6 @@ class Gallery {
 
     /**
      * Get the debug state
-     *
      * @return mixed the debug state
      */
     function getDebug() {
@@ -734,7 +706,6 @@ class Gallery {
 
     /**
      * Get any buffered debug output
-     *
      * @return string the debug state
      */
     function getDebugBuffer() {
@@ -749,7 +720,7 @@ class Gallery {
     }
 
     /**
-     * Start recording a debug snippet.
+     * Start recording a debug snippet
      */
     function startRecordingDebugSnippet() {
 	$this->_debugSnippetActive = true;
@@ -758,7 +729,6 @@ class Gallery {
 
     /**
      * Stop recording the debug snippet and return whatever got recorded.
-     *
      * @return string the snippet
      */
     function stopRecordingDebugSnippet() {
@@ -770,7 +740,6 @@ class Gallery {
 
     /**
      * Output a debug message
-     *
      * @param string a message
      */
     function debug($msg) {

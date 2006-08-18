@@ -17,23 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
  * @package Captcha
+ * @subpackage Classes
  * @author Stefan Ioachim <stefanioachim@gmail.com>
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
-
 class CaptchaHelper {
     /**
      * Verify the existence of the GD functions that we require to draw a captcha.
-     *
      * @return array ('fail' => array(func, func, ...), 'success' => array(func, func, ...))
      */
     function testRequiredGdFunctions() {
 	global $gallery;
 	$phpVm = $gallery->getPhpVm();
-	
+
 	$gdFunctions = array();
 	$gdFunctions[] = 'ImageCreateFromJPEG';
 	$gdFunctions[] = 'ImageColorAllocate';

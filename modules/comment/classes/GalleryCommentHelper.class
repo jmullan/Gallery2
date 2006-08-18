@@ -19,26 +19,15 @@
  */
 
 /**
- * @package Comment
- * @version $Revision$ $Date$
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * A helper class for GalleryComments
- *
  * Utility functions useful in managing GalleryComments
  *
  * @package Comment
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryCommentHelper /* implements GalleryEventListener */ {
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
     /**
      * Return the comments associated with the given item
@@ -48,7 +37,6 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      * @param string (optional) ORDER_DESCENDING to list newest first
      * @return array (object GalleryStatus a status code,
      *                array (entityId => GalleryComment, ...)
-     * @static
      */
     function fetchComments($itemId, $count=null, $orderDirection=ORDER_ASCENDING) {
 	global $gallery;
@@ -78,7 +66,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	ORDER BY
 	  [GalleryComment::date] ' . $direction . '
 	';
-	list($ret, $searchResults) = 
+	list ($ret, $searchResults) =
 		$gallery->search($query, array((int)$itemId),
 					       array('limit' => array('count' => (int)$count)));
 
@@ -114,7 +102,6 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      * @return array (object GalleryStatus a status code,
      *                array (entityId => GalleryComment, ...)
      *                int total number of comments available
-     * @static
      */
     function fetchAllComments($itemId, $count=null, $offset=null, $orderDirection=ORDER_ASCENDING) {
 	global $gallery;
@@ -228,7 +215,6 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      * @param array int GalleryItem ids
      * @return array object GalleryStatus a status code
      *               int a count
-     * @static
      */
     function fetchCommentCounts($itemIds) {
 	global $gallery;
@@ -248,7 +234,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	  [GalleryChildEntity::parentId]
 	';
 
-	list($ret, $searchResults) = $gallery->search($query, $itemIds);
+	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -327,7 +313,6 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      *
      * @return array object GalleryStatus a status code
      *               boolean true to use validation plugins
-     * @static
      */
     function useValidationPlugins() {
 	list ($ret, $level) =
@@ -375,7 +360,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	      [GalleryComment::commenterId] = ?
 	    ';
 
-	    list($ret, $searchResults) = $gallery->search($query, array((int)$entity->getId()));
+	    list ($ret, $searchResults) = $gallery->search($query, array((int)$entity->getId()));
 	    if ($ret) {
 		return array($ret, null);
 	    }

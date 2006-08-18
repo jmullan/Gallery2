@@ -17,20 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Jozef Selesi <selesi at gmail dot com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryIndex.class');
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
 
 /**
  * Provides all repository-related functionality.
- *
  * @package GalleryCore
- * @subpackage Helpers
+ * @subpackage Classes
+ * @author Jozef Selesi <selesi at gmail dot com>
+ * @version $Revision$ $Date$
  */
 class GalleryRepository {
 
@@ -379,8 +375,8 @@ class GalleryRepository {
 	    $packageName, $packageVersion, $packageBuild) {
 	/* Check if specified package exists in the database. */
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPluginPackageMap',
-	    array('packageVersion', 'packageBuild'), 
-	    array('pluginType' => $pluginType, 'pluginId' => $pluginId, 
+	    array('packageVersion', 'packageBuild'),
+	    array('pluginType' => $pluginType, 'pluginId' => $pluginId,
 		  'packageName' => $packageName));
 	if ($ret) {
 	    return $ret;
@@ -654,42 +650,42 @@ class GalleryRepository {
     }
 
     /**
-     * @see GalleryRepositoryIndex::existsInCache()
+     * @see GalleryRepositoryIndex::existsInCache
      */
     function localIndexExists() {
 	return $this->_index->existsInCache();
     }
 
     /**
-     * @see GalleryRepositoryIndex::update()
+     * @see GalleryRepositoryIndex::update
      */
     function downloadIndex() {
 	return $this->_index->update();
     }
 
     /**
-     * @see GalleryRepositoryIndex::containsPlugin()
+     * @see GalleryRepositoryIndex::containsPlugin
      */
     function pluginExistsInIndex($pluginType, $pluginId) {
 	return $this->_index->containsPlugin($pluginType, $pluginId);
     }
 
     /**
-     * @see GalleryRepositoryIndex::getMetaData()
+     * @see GalleryRepositoryIndex::getMetaData
      */
     function getIndexMetaData() {
 	return $this->_index->getMetaData();
     }
 
     /**
-     * @see GalleryRepositoryIndex::getPackageVersionAndBuild()
+     * @see GalleryRepositoryIndex::getPackageVersionAndBuild
      */
     function getPackageVersionAndBuild($pluginType, $pluginId, $packageName) {
 	return $this->_index->getPackageVersionAndBuild($pluginType, $pluginId, $packageName);
     }
 
     /**
-     * @see GalleryRepositoryIndex::getPluginName()
+     * @see GalleryRepositoryIndex::getPluginName
      */
     function getPluginName($pluginType, $pluginId) {
 	return $this->_index->getPluginName($pluginType, $pluginId);

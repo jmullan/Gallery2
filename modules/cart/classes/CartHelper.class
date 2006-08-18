@@ -19,18 +19,12 @@
  */
 
 /**
- * @package Cart
- * @version $Revision$ $Date$
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * A helper class for Carts
- *
  * Utility functions useful in managing Carts
- *
  * @package Cart
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class CartHelper {
 
@@ -39,7 +33,6 @@ class CartHelper {
      *
      * @return array object GalleryStatus a status code
      *               array (itemId => count, itemId => count, ..)
-     * @static
      */
     function fetchCartItemCounts() {
 	global $gallery;
@@ -60,7 +53,6 @@ class CartHelper {
      *
      * @param array int item ids
      * @return object GalleryStatus a status code
-     * @static
      */
     function addItemsToCart($ids) {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
@@ -102,7 +94,6 @@ class CartHelper {
      *
      * @param array (itemId => count, itemId => count, ..)
      * @return object GalleryStatus a status code
-     * @static
      */
     function setCartItemCounts($cartItemIds) {
 	global $gallery;
@@ -123,7 +114,6 @@ class CartHelper {
      *
      * @return array object GalleryStatus a status code
      *               array of items
-     * @static
      */
     function loadCartItems() {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
@@ -168,7 +158,7 @@ class CartHelper {
 		return array($ret, null);
 	    }
 	}
-    
+
 	return array(null, $items);
     }
 }

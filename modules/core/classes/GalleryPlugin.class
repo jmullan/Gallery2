@@ -17,27 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * Plugin meta-info container
- *
- * This is a container for information about a given plugin.
+ * Plugin meta-info container.  This is a container for information about a given plugin.
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @abstract
  */
 class GalleryPlugin {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
 
     /**
      * The id of this plugin
@@ -87,11 +77,6 @@ class GalleryPlugin {
      */
     var $_l10Domain;
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
     /**
      * Localize the given content.
@@ -132,7 +117,7 @@ class GalleryPlugin {
      *
      * @param mixed a single string, or an array of parameters
      * @return string the localized value
-     * @see Gallery::i18n()
+     * @see Gallery::i18n
      */
     function translate($params) {
 	global $gallery;
@@ -161,7 +146,7 @@ class GalleryPlugin {
     /**
      * Activate this plugin
      *
-     * @param bool should we post an activation event?  Normally true, but the
+     * @param boolean should we post an activation event?  Normally true, but the
      *             upgrader may choose to suppress this event so that it can
      *             reactivate a module without causing a ripple effect.
      * @return array object GalleryStatus a status code

@@ -17,27 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package GalleryCore
- * @subpackage Classes
- * @version $Revision$ $Date$
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryFileSystemEntity.class');
 
 /**
- * Abstract base class for all objects in the Gallery
- * composite tree
+ * Abstract base class for all objects in the Gallery composite tree.
  *
- * Container for all functionality and data common objects that
- * Gallery can deal with.  Each GalleryItem has the capacity
- * to own other GalleryItems in a parent-child relationship.
- * That capacity can be enabled or disabled by subclasses of
- * GalleryItem.
+ * Container for all functionality and data common objects that Gallery can deal with.
+ * Each GalleryItem has the capacity to own other GalleryItems in a parent-child relationship.
+ * That capacity can be enabled or disabled by subclasses of GalleryItem.
  *
  * @g2 <class-name>GalleryItem</class-name>
  * @g2 <parent-class-name>GalleryFileSystemEntity</parent-class-name>
@@ -48,6 +36,9 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryFileSystemEntity.class'
  * @g2 <requires-id/>
  *
  * @package GalleryCore
+ * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  * @abstract
  */
 class GalleryItem extends GalleryFileSystemEntity {
@@ -183,8 +174,7 @@ class GalleryItem extends GalleryFileSystemEntity {
     var $originationTimestamp;
 
     /**
-     * Create a new instance of this GalleryEntity in the persistent store
-     *
+     * Create a new instance of this GalleryEntity in the persistent store.
      * Let the parent do its work, then add any initialization specific to this class.
      *
      * @param int the id of the GalleryEntity parent of this object
@@ -236,10 +226,8 @@ class GalleryItem extends GalleryFileSystemEntity {
     }
 
     /**
-     * Create a root level instance of this GalleryEntity in the persistent store
-     *
-     * Let the parent do its work, then add any initialization specific to this
-     * class.
+     * Create a root level instance of this GalleryEntity in the persistent store.
+     * Let the parent do its work, then add any initialization specific to this class.
      *
      * @param string the path component of this new object
      * @return object GalleryStatus a status code
@@ -265,7 +253,7 @@ class GalleryItem extends GalleryFileSystemEntity {
     }
 
     /**
-     * @see GalleryEntity::createLink()
+     * @see GalleryEntity::createLink
      */
     function createLink($entity, $parentId) {
 	global $gallery;
@@ -304,11 +292,7 @@ class GalleryItem extends GalleryFileSystemEntity {
     }
 
     /**
-     * Delete this GalleryEntity
-     *
-     * Delete all of its children also, if it has any
-     *
-     * @access public
+     * Delete this GalleryEntity.  Delete all of its children also, if it has any.
      * @return object GalleryStatus a status code
      */
     function delete() {
@@ -374,7 +358,6 @@ class GalleryItem extends GalleryFileSystemEntity {
     /**
      * Move item to a new parent
      *
-     * @access public
      * @param int the id of the new parent GalleryItem
      * @return object GalleryStatus a status code
      */
@@ -465,7 +448,7 @@ class GalleryItem extends GalleryFileSystemEntity {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryItem';

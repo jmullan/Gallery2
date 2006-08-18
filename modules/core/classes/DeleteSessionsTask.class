@@ -18,27 +18,18 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage Classes
- * @author Andy Staudacher <ast@gmx.ch>
- */
-
 GalleryCoreApi::requireOnce('modules/core/AdminMaintenance.inc');
 
 /**
- * This is a MaintenanceTask that will ensure the data files for all derivatives
- * (thumbnails, etc) have been built.
- *
+ * This is a MaintenanceTask that removes all expired sessions from the database.
  * @package GalleryCore
  * @subpackage Classes
- *
+ * @author Andy Staudacher <ast@gmx.ch>
+ * @version $Revision$ $Date$
  */
 class DeleteSessionsTask extends MaintenanceTask {
-
     /**
-     * @see MaintenanceTask::getInfo()
+     * @see MaintenanceTask::getInfo
      */
     function getInfo() {
 	global $gallery;
@@ -51,7 +42,7 @@ class DeleteSessionsTask extends MaintenanceTask {
     }
 
     /**
-     * @see MaintenanceTask::run()
+     * @see MaintenanceTask::run
      */
     function run() {
 	global $gallery;
@@ -135,7 +126,7 @@ class DeleteSessionsTask extends MaintenanceTask {
     }
 
     /**
-     * @see MaintenanceTask::requiresProgressBar()
+     * @see MaintenanceTask::requiresProgressBar
      */
     function requiresProgressBar() {
 	return true;

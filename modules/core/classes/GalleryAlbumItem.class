@@ -17,23 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryItem.class');
 
 /**
- * A subclass of GalleryItem for containing groups of GalleryItems
- *
- * A GalleryItem that has certain extra properties relating to
- * displaying item groups and is allowed to contain other
- * GalleryItems.
+ * A subclass of GalleryItem for containing groups of GalleryItems.
+ * A GalleryItem that has certain extra properties relating to displaying item groups and is
+ * allowed to contain other GalleryItems.
  *
  * @g2 <class-name>GalleryAlbumItem</class-name>
  * @g2 <parent-class-name>GalleryItem</parent-class-name>
@@ -45,6 +35,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryItem.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryAlbumItem extends GalleryItem {
 
@@ -91,9 +83,8 @@ class GalleryAlbumItem extends GalleryItem {
     var $orderDirection;
 
     /**
-     * Create a new instance of this AlbumItem in the persistent store
-     *
-     * Also create the album directory on the filesystem
+     * Create a new instance of this AlbumItem in the persistent store.
+     * Also create the album directory on the filesystem.
      *
      * @param int the id of the parent of this object
      * @return object GalleryStatus a status code
@@ -178,7 +169,6 @@ class GalleryAlbumItem extends GalleryItem {
 
     /**
      * Create a new root level album
-     *
      * @return object GalleryStatus a status code
      */
     function createRoot() {
@@ -227,7 +217,6 @@ class GalleryAlbumItem extends GalleryItem {
 
     /**
      * Internal function to create the album directory
-     *
      * @access private
      */
     function _createDir($albumDir) {
@@ -255,7 +244,6 @@ class GalleryAlbumItem extends GalleryItem {
 
     /**
      * Can this item contain other file system items?
-     *
      * Always returns true -- AlbumItems contain other GalleryItems
      *
      * @return true if this item can contain other file system items
@@ -265,11 +253,9 @@ class GalleryAlbumItem extends GalleryItem {
     }
 
     /**
-     * Delete this AlbumItem
+     * Delete this AlbumItem.
+     * Delete all children and then remove the album directory.
      *
-     * Delete all children and then remove the album directory
-     *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function delete() {
@@ -308,7 +294,6 @@ class GalleryAlbumItem extends GalleryItem {
     /**
      * Rename this album
      *
-     * @access public
      * @param string the path component
      * @return object GalleryStatus a status code
      */
@@ -445,7 +430,7 @@ class GalleryAlbumItem extends GalleryItem {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryAlbumItem';

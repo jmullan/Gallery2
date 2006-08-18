@@ -19,28 +19,17 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * The API for module views.
+ * This class defines the API for view classes used by the various modules to render HTML
+ * and binary data to the browser.
+ *
  * @package GalleryCore
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * The API for module views.
- *
- * This class defines the API for view classes used by the various modules to render HTML and binary
- * data to the browser.
- *
- * @package GalleryCore
- * @subpackage Classes
+ * @version $Revision$ $Date$
+ * @abstract
  */
 class GalleryView {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
 
     /**
      * The localization domain for this view.
@@ -49,11 +38,6 @@ class GalleryView {
      */
     var $_l10Domain;
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
     /**
      * Initialize the view.
@@ -100,8 +84,7 @@ class GalleryView {
 
     /**
      * Does this view allow access to non-admins when site is in maintenance mode?
-     *
-     * @return boolean true if access always allowed
+     * @return boolean
      */
     function isAllowedInMaintenance() {
 	return false;
@@ -109,8 +92,7 @@ class GalleryView {
 
     /**
      * Does this view allow direct access even in embed-only mode?
-     *
-     * @return boolean true if access always allowed
+     * @return boolean
      */
     function isAllowedInEmbedOnly() {
 	return false;
@@ -118,8 +100,7 @@ class GalleryView {
 
     /**
      * Should session be saved and session cookie sent when this view is accessed?
-     *
-     * @return boolean true to enable session
+     * @return boolean
      */
     function shouldSaveSession() {
 	return true;
@@ -127,7 +108,6 @@ class GalleryView {
 
     /**
      * Type of view.
-     *
      * @return view type contant
      */
     function getViewType() {
@@ -335,7 +315,6 @@ class GalleryView {
 
     /**
      * Get the localization domain for this view.
-     *
      * @return string
      */
     function getL10Domain() {

@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Jozef Selesi <selesi at gmail dot com>
- */
 
 /**
- * Provides repository-related utility functions. Some
- * of them are also used by the repository tools.
+ * Provides repository-related utility functions. Some of them are also used by repository tools.
  *
  * @package GalleryCore
- * @subpackage Helpers
+ * @subpackage Classes
+ * @author Jozef Selesi <selesi at gmail dot com>
+ * @version $Revision$ $Date$
  */
 class GalleryRepositoryUtilities {
 
@@ -329,7 +325,7 @@ class GalleryRepositoryUtilities {
 			 null);
 	}
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPluginPackageMap',
-	    array('packageName', 'packageVersion', 'packageBuild'), 
+	    array('packageName', 'packageVersion', 'packageBuild'),
 	    array('pluginType' => $pluginType, 'pluginId' => $pluginId));
 	if ($ret) {
 	    return array($ret, null);
@@ -404,7 +400,7 @@ class GalleryRepositoryUtilities {
      *		     string file contents
      */
     function downloadFile($url) {
-	list ($successful, $contents, $response, $headers, $actualUrl) = 
+	list ($successful, $contents, $response, $headers, $actualUrl) =
 	    GalleryCoreApi::fetchWebPage($url);
 	if (empty($contents) || !$successful) {
 	    return array(false, null);

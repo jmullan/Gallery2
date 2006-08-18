@@ -17,28 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * Global storage container and utility class for Gallery
- *
- * This is a container for global information required for gallery
- * operation, such as configuration, session, user, etc.
- *
+ * Container for error status.
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryStatus {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
 
     /**
      * The stack trace, if possible.
@@ -61,18 +48,11 @@ class GalleryStatus {
      */
     var $_errorMessage;
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
     /**
      * Constructor
      * @param errorCode an error code
-     * @param fileName the path to the file where the error occurred
-     * @param lineNumber the line number in the file where the error occurred
-     * @param errorMessage descriptive message of the error
+     * @param string (optional) descriptive message of the error
      */
     function GalleryStatus($errorCode, $errorMessage=null) {
 	$this->_errorCode = $errorCode;
@@ -81,7 +61,6 @@ class GalleryStatus {
 
     /**
      * Set the stack trace
-     *
      * @param array (array, array)
      */
     function setStackTrace($trace) {
@@ -90,7 +69,6 @@ class GalleryStatus {
 
     /**
      * Return the actual error code
-     *
      * @return int
      */
     function getErrorCode() {
@@ -99,7 +77,6 @@ class GalleryStatus {
 
     /**
      * Return the error message
-     *
      * @return string
      */
     function getErrorMessage() {
@@ -108,7 +85,6 @@ class GalleryStatus {
 
     /**
      * Add a new code to our set of codes
-     *
      * @param int an error code
      */
     function addErrorCode($code) {
@@ -119,14 +95,8 @@ class GalleryStatus {
      * Deprecated.  Remove in the next major API bump.
      *
      * Add a new file name and line number to our stack trace
-     *
-     * Don't add the value, unless it's an error.  As a debug measure, whine if
-     * somebody tries to add a trace to a success code, because the success
-     * code is supposed to be a singleton.
-     *
-     * @param string a file name
-     * @param int a line number
      * @return object GalleryStatus the new status object
+     * @deprecated
      */
     function wrap() {
 	return $this;
@@ -215,9 +185,7 @@ class GalleryStatus {
     }
 
     /**
-     * Internal function turn error code and stack trace into text
-     *
-     * @return string
+     * Internal function collect error code and stack trace info
      * @access private
      */
     function _getAsArray() {

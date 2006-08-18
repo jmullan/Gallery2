@@ -17,20 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package GalleryCore
- * @subpackage Classes
- * @version $Revision$ $Date$
- * @author Alan Harder <alan.harder@sun.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryItem.class');
 
 /**
+ * A container like GalleryAlbumItem but for a dynamic set of child items.
+ * Instances of this class are not stored in the database.
  * @package GalleryCore
+ * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class GalleryDynamicAlbum extends GalleryItem {
 

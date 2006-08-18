@@ -17,20 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * The API for module controllers
- *
+ * The API for module controllers.
  * This class defines the API for controller classes used by the various modules to
- * render HTML and binary data to the browser.
+ * perform requested operations.
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @abstract
  */
 class GalleryController {
 
@@ -106,8 +103,7 @@ class GalleryController {
      *               return-array
      */
     function handleRequest($form) {
-	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
-		     null);
+	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
     }
 
     /**
@@ -129,7 +125,7 @@ class GalleryController {
 	    $class = $regs[2];
 	} else {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      "$controllerName can't be parsed"), null);
+					       "$controllerName can't be parsed"), null);
 	}
 
 	/* If the module is not active, only let site admins use the config controller */
@@ -148,8 +144,7 @@ class GalleryController {
 		    return array($ret, null);
 		}
 	    } else {
-		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
-			     null);
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	    }
 	}
 

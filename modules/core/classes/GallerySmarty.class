@@ -17,15 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Ernesto Baschny <ernst@baschny.de>
- */
 
-/**
+/*
  * We extend the original Smarty class
- * (if G2 is embedded in a CMS also using smarty it may be defined already)
+ * (if embedded in an application also using smarty it may be defined already)
  */
 if (!class_exists('Smarty')) {
     GalleryCoreApi::requireOnce('lib/smarty/Smarty.class.php', true);
@@ -33,17 +28,12 @@ if (!class_exists('Smarty')) {
 
 /**
  * A wrapper around Smarty that uses Gallery's error handling
- *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @version $Revision$ $Date$
  */
 class GallerySmarty extends Smarty {
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
 
     /**
      * A GalleryStatus object from the last called fetch
@@ -61,11 +51,6 @@ class GallerySmarty extends Smarty {
      */
     var $_firstFileLine;
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
     /**
      * Fetch should also return a GalleryStatus object
@@ -107,7 +92,5 @@ class GallerySmarty extends Smarty {
 								      $error_msg, $error_type));
 	}
     }
-
-
 }
 ?>

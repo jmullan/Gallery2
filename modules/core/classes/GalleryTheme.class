@@ -18,21 +18,17 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage Classes
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlugin.class');
 
 /**
- * This interface provides functionality to user-interfaces have a customizable theme.  A theme
+ * This interface provides functionality so user-interfaces have a customizable theme.  A theme
  * should implement this class.
- *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @abstract
  */
 class GalleryTheme extends GalleryPlugin {
 
@@ -57,23 +53,21 @@ class GalleryTheme extends GalleryPlugin {
      */
     var $_cacheablePage = false;
 
+
     /**
      * Constructor to prevent PHP Notices in upgrader and AdminThemes.inc when old themes with a
      * theme.inc are still in the themes folder.  The old themes call $this->GalleryTheme() in their
      * constructor.
-     *
-     * @access public
      */
     function GalleryTheme() {
     }
 
     /**
      * Return the major and minor version of the GalleryTheme API.
-     *
      * This follows the same rules as the core API
-     * @see GalleryCoreApi::getApiVersion()
+     * @see GalleryCoreApi::getApiVersion
      *
-     * TODO On the next major API bump:
+     * @TODO On the next major API bump:
      * - Remove backwards compatible CSS from lib/javascript/AutoComplete.js
      *
      * @return array major number, minor number
@@ -1110,8 +1104,6 @@ class GalleryTheme extends GalleryPlugin {
      * @param array (string data key, ..) data to load into template
      * @param array (optional) ids of child items to display
      * @return object GalleryStatus a status code
-     * @access public
-     * @static
      */
     function loadCommonTemplateData(&$template, $item, $params, $dataToLoad,
 				    $childIds=array(), $useCache=true) {

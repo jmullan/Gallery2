@@ -17,20 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Comment
- * @version $Revision$ $Date$
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
 
 /**
  * A GalleryEntity for comments.
- *
  * GalleryComments are basically just structured text objects.
  *
  * @g2 <class-name>GalleryComment</class-name>
@@ -43,6 +34,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
  *
  * @package Comment
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryComment extends GalleryChildEntity {
 
@@ -120,14 +113,14 @@ class GalleryComment extends GalleryChildEntity {
     var $date;
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryComment';
     }
 
     /**
-     * @see GalleryEntity::create()
+     * @see GalleryEntity::create
      */
     function create($parentId) {
 	$ret = parent::create($parentId);

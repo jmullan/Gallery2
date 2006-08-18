@@ -19,24 +19,13 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * Internationalization and Localization utilities
  * @package GalleryCore
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Internationalization and Localization utilities
- *
- * @package GalleryCore
- * @subpackage Classes
+ * @version $Revision$ $Date$
  */
 class GalleryTranslator {
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
 
     /**
      * Keep track of the gettext domains we've already bound
@@ -62,11 +51,6 @@ class GalleryTranslator {
      */
     var $_isRightToLeft;
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
     function GalleryTranslator() {
 	$this->_boundDomains = array();
@@ -74,7 +58,6 @@ class GalleryTranslator {
 
     /**
      * Can we translate?
-     *
      * @return boolean
      * @static
      */
@@ -84,7 +67,6 @@ class GalleryTranslator {
 
     /**
      * Can we make plural translations?
-     *
      * @return boolean
      * @static
      */
@@ -94,7 +76,6 @@ class GalleryTranslator {
 
     /**
      * Does the active language read right-to-left?
-     *
      * @return boolean
      */
     function isRightToLeft() {
@@ -102,7 +83,8 @@ class GalleryTranslator {
     }
 
     /**
-     * Return our language data
+     * Return our language data.
+     * @TODO: Move this information into a configuration file
      *
      * @return array array['language code']['country code'] = array('description', 'right-to-left'?)
      *         array array('country' => 'default language code',
@@ -115,7 +97,6 @@ class GalleryTranslator {
 	static $defaultCountry = array();
 
 	if (empty($supportedLanguages)) {
-	    /* TODO: Move this information into a configuration file */
 	    /* English */
 	    $supportedLanguages['en']['US']['description'] = 'English (US)';
 	    $supportedLanguages['en']['GB']['description'] = 'English (UK)';
@@ -322,11 +303,11 @@ class GalleryTranslator {
      * Attempt to set the requested locale.  Try fallbacks and character sets if needed to find a
      * valid locale.
      *
-     * @access private
      * @param mixed category
      * @param string locale
      * @return string locale selected or boolean false if none
      * @static
+     * @access private
      */
     function _setlocale($category, $locale) {
 	global $gallery;
@@ -447,8 +428,7 @@ class GalleryTranslator {
     }
 
     /**
-     * Localize the given text
-     *
+     * Localize the given text.
      * Expected inputs are of the form:
      *
      * Example 1:

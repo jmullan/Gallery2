@@ -17,27 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ArchiveUpload
- * @author Alan Harder <alan.harder@sun.com>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * A version of GalleryToolkit to extract files from an archive.
- *
  * @package ArchiveUpload
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ArchiveExtractToolkit extends GalleryToolkit {
-
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
@@ -49,8 +41,7 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 					       "$operationName $mimeType"), null, null);
 	}
 	if (!$platform->is_dir($destFilename)) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
-			 null, null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null, null);
 	}
 
 	list ($ret, $unzip) =
@@ -61,8 +52,7 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 
 	$cwd = $platform->getcwd();
 	if (!$platform->chdir($destFilename)) {
-	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
-			 null, null);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 	}
 	$gallery->guaranteeTimeLimit(60);
 
@@ -71,14 +61,12 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 	    @$platform->chdir($cwd);
 	}
 	if (!$success) {
-	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
-			 null, null);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 	}
 
 	/* Set permissions according to core parameter settings */
 	if (!$platform->recursiveChmod($destFilename)) {
-	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
-			 null, null);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 	}
 
 	return array(null, $mimeType, $context);

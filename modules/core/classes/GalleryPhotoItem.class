@@ -17,21 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
 
 /**
- * A subclass of DataItem for containing Photos
- *
- * A GalleryItem whose source is an image (eg JPEG, PNG, GIF, etc)
+ * A subclass of DataItem for containing Photos.
+ * A GalleryItem whose source is an image (eg. JPEG, PNG, GIF, etc).
  *
  * @g2 <class-name>GalleryPhotoItem</class-name>
  * @g2 <parent-class-name>GalleryDataItem</parent-class-name>
@@ -43,6 +34,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryPhotoItem extends GalleryDataItem {
 
@@ -75,7 +68,7 @@ class GalleryPhotoItem extends GalleryDataItem {
     var $height;
 
     /**
-     * @see GalleryDataItem::canBeViewedInline()
+     * @see GalleryDataItem::canBeViewedInline
      */
     function canBeViewedInline() {
 	static $mimeList = array('image/jpeg', 'image/pjpeg', 'image/png',
@@ -136,7 +129,7 @@ class GalleryPhotoItem extends GalleryDataItem {
     }
 
     /**
-     * @see GalleryDataItem::rescan()
+     * @see GalleryDataItem::rescan
      */
     function rescan() {
 	$ret = parent::rescan();
@@ -260,7 +253,7 @@ class GalleryPhotoItem extends GalleryDataItem {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryPhotoItem';

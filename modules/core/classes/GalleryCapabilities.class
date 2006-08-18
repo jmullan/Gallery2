@@ -17,35 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Switches and configuration for some core functionality.
  * This class is deprecated; use $gallery->setConfig instead.
- * TODO: remove this class on next major bump of core/embed api.
+ * @TODO: remove this class on next major bump of core/embed api.
  *
- * @deprecated
  * @package GalleryCore
  * @subpackage Classes
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @static
+ * @deprecated
  */
 class GalleryCapabilities {
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
     /**
      * Get a configuration value.
      *
      * @param string key name
      * @return string the configuration value or null if not found
-     * @static
      */
     function get($key) {
 	global $gallery;
@@ -57,7 +48,6 @@ class GalleryCapabilities {
      *
      * @param string key name
      * @return boolean the configuration value or null if not found
-     * @static
      */
     function can($key) {
 	global $gallery;
@@ -69,7 +59,6 @@ class GalleryCapabilities {
      *
      * @param string key name
      * @param mixed value (null to remove the value)
-     * @static
      */
     function set($key, $value) {
 	global $gallery;

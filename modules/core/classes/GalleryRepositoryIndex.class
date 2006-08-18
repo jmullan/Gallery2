@@ -17,19 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Jozef Selesi <selesi at gmail dot com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
 
 /**
  * Provides all repository-related functionality.
- *
  * @package GalleryCore
- * @subpackage Helpers
+ * @subpackage Classes
+ * @author Jozef Selesi <selesi at gmail dot com>
+ * @version $Revision$ $Date$
  */
 class GalleryRepositoryIndex {
 
@@ -57,6 +53,7 @@ class GalleryRepositoryIndex {
      */
     var $_utilities;
 
+
     function GalleryRepositoryIndex() {
 	$this->_utilities = new GalleryRepositoryUtilities();
     }
@@ -64,7 +61,6 @@ class GalleryRepositoryIndex {
     /**
      * Downloads the repostory index from the Gallery server and
      * writes it to the local repository cache.
-     *
      * @return object GalleryStatus a status code
      */
     function update() {
@@ -130,7 +126,7 @@ class GalleryRepositoryIndex {
 		    null);
 	}
 
-	/* Get timestamp. */
+	/* Get timestamp */
 	list ($ret, $timestamp) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'repository.updateTime');
 	if ($ret) {
@@ -144,7 +140,6 @@ class GalleryRepositoryIndex {
 
     /**
      * Checks whether an index file exists in the local repository cache.
-     *
      * @return boolean
      */
     function existsInCache() {
@@ -155,7 +150,6 @@ class GalleryRepositoryIndex {
 
     /**
      * Loads and deserializes the index from the local filesystem into memory.
-     *
      * @return object GalleryStatus a status code
      */
     function load() {
@@ -175,8 +169,7 @@ class GalleryRepositoryIndex {
     }
 
     /**
-     * Deserilizes the index into memory.
-     *
+     * Deserillizes the index into memory.
      * @return object GalleryStatus a status code
      */
     function unserializeIndex(&$index) {
@@ -471,7 +464,6 @@ class GalleryRepositoryIndex {
 
     /**
      * Returns the complete index array.
-     *
      * @return array the index
      */
     function &getRawData() {
@@ -480,7 +472,6 @@ class GalleryRepositoryIndex {
 
     /**
      * Returns the path of the local index file.
-     *
      * @return string index path
      */
     function getLocalPath() {

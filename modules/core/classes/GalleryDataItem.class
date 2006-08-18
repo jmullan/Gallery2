@@ -17,20 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryItem.class');
 
 /**
- * A subclass of GalleryItem for items containing actual data
- *
+ * A subclass of GalleryItem for items containing actual data.
  * DataItems are ones that have an actual data source, such as PhotoItem or MovieItem.
  *
  * @g2 <class-name>GalleryDataItem</class-name>
@@ -43,6 +34,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryItem.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryDataItem extends GalleryItem {
 
@@ -112,7 +105,6 @@ class GalleryDataItem extends GalleryItem {
     /**
      * Create a new instance of this type in the persistent store.
      *
-     * @access public
      * @param int the id of the parent GalleryItem
      * @param string the path to a data file to be contained
      * @param string the mime type of the new item
@@ -236,8 +228,6 @@ class GalleryDataItem extends GalleryItem {
 
     /**
      * Delete this GalleryEntity
-     *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function delete() {
@@ -271,7 +261,6 @@ class GalleryDataItem extends GalleryItem {
 
     /**
      * Scan this item's data for changes.
-     *
      * @return object GalleryStatus a status code
      */
     function rescan() {
@@ -291,7 +280,6 @@ class GalleryDataItem extends GalleryItem {
     /**
      * Rename this DataItem
      *
-     * @access public
      * @param string the path component
      * @return object GalleryStatus a status code
      */
@@ -429,7 +417,7 @@ class GalleryDataItem extends GalleryItem {
     }
 
     /**
-     * @see GalleryRenderer::render()
+     * @see GalleryRenderer::render
      *
      * TODO: change this API to match that of GalleryRenderer::render()
      *       on the next major GalleryModule API bump.

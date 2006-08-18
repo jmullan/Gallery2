@@ -17,27 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/search/classes/GallerySearchInterface_1_0.class');
 
 /**
  * This is an implementation of the search module's SearchInterface_1_0
- *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryCoreSearch extends GallerySearchInterface_1_0 {
-
     /**
-     * @see GallerySearchInterface_1_0.getSearchModuleInfo()
+     * @see GallerySearchInterface_1_0.getSearchModuleInfo
      */
     function getSearchModuleInfo() {
 	global $gallery;
@@ -65,7 +57,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
     }
 
     /**
-     * @see GallerySearchInterface_1_0.search()
+     * @see GallerySearchInterface_1_0.search
      */
     function search($options, $criteria, $offset=0, $count=-1) {
 	global $gallery;
@@ -96,7 +88,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	}
 
 	$storage =& $gallery->getStorage();
-	
+
 	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds(
 	    'core.view', $gallery->getActiveUserId());
 	if ($ret) {
@@ -110,40 +102,40 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	$countQuery = sprintf('
-        SELECT
-          COUNT([GalleryItem::id])
-        FROM
-          [GalleryItem], [GalleryAccessSubscriberMap]
-        WHERE
-          (' . join(' OR ', $whereList) . ')
-          AND
-          [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
-        ', $aclMarkers);
+	SELECT
+	  COUNT([GalleryItem::id])
+	FROM
+	  [GalleryItem], [GalleryAccessSubscriberMap]
+	WHERE
+	  (' . implode(' OR ', $whereList) . ')
+	  AND
+	  [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	', $aclMarkers);
 
 	$query = sprintf('
-        SELECT
-          [GalleryItem::id],
-          [GalleryUser::fullName],
-          [GalleryUser::userName],
-          [GalleryEntity::modificationTimestamp], ' .
-	    join(', ', $selectList) . '
-        FROM
-          [GalleryItem], [GalleryAccessSubscriberMap], [GalleryEntity], [GalleryUser]
-        WHERE
-          (' . join(' OR ', $whereList) . ')
-          AND
-          [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
-          AND
-          [GalleryItem::id] = [GalleryEntity::id]
-          AND
-          [GalleryUser::id] = [GalleryItem::ownerId]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
-        ORDER BY
-          [GalleryEntity::modificationTimestamp] DESC, [GalleryItem::id] DESC
-        ', $aclMarkers);
+	SELECT
+	  [GalleryItem::id],
+	  [GalleryUser::fullName],
+	  [GalleryUser::userName],
+	  [GalleryEntity::modificationTimestamp], ' .
+	    implode(', ', $selectList) . '
+	FROM
+	  [GalleryItem], [GalleryAccessSubscriberMap], [GalleryEntity], [GalleryUser]
+	WHERE
+	  (' . implode(' OR ', $whereList) . ')
+	  AND
+	  [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
+	  AND
+	  [GalleryItem::id] = [GalleryEntity::id]
+	  AND
+	  [GalleryUser::id] = [GalleryItem::ownerId]
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	ORDER BY
+	  [GalleryEntity::modificationTimestamp] DESC, [GalleryItem::id] DESC
+	', $aclMarkers);
 
 	$data = $whereData;
 	$data = array_merge($data, $aclIds);

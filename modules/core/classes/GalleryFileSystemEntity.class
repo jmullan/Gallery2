@@ -17,20 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
 
 /**
- * A GalleryChildEntity that also has data stored in the filesystem
- *
+ * A GalleryChildEntity that also has data stored in the filesystem.
  * This class understands how to manage data on the filesystem in parallel to
  * the data in the persistent store.
  *
@@ -44,14 +35,15 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryFileSystemEntity extends GalleryChildEntity {
 
     /**
-     * The path component of this item (eg. "image1").  This
-     * value, when combined with the paths of all the parent
-     * objects (say, "rootAlbum", "album01") will form the
-     * complete path to the item ("rootAlbum/album01/image1").
+     * The path component of this item (eg. "image1").  This value, when combined with the paths
+     * of all the parent objects (say, "rootAlbum", "album01") will form the complete path to the
+     * item ("rootAlbum/album01/image1").
      *
      * @g2 <member>
      * @g2   <member-name>pathComponent</member-name>
@@ -66,10 +58,8 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
     var $pathComponent;
 
     /**
-     * Create a new instance of this FileSystemEntity in the persistent store
-     *
-     * Let the parent do its work, then add any initialization specific to this
-     * class.
+     * Create a new instance of this FileSystemEntity in the persistent store.
+     * Let the parent do its work, then add any initialization specific to this class.
      *
      * @param int the id of the parent GalleryChildEntity
      * @param string the path component of this entity
@@ -81,10 +71,9 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	}
 
 	/*
-	 * The parent must be read locked at this point to make sure that it's
-	 * not going to be moved around while we're adding stuff to it.
-	 * Realistically, the entire parent tree must be locked but it's not
-	 * really practical to check the entire tree so just check the parent.
+	 * The parent must be read locked at this point to make sure that it's not going to be
+	 * moved around while we're adding stuff to it.  Realistically, the entire parent tree must
+	 * be locked but it's not really practical to check the whole tree so just check the parent.
 	 */
 	if (!GalleryCoreApi::isReadLocked($parentId)) {
 	    return GalleryCoreApi::error(ERROR_LOCK_REQUIRED);
@@ -108,10 +97,8 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
     }
 
     /**
-     * Create a new root level instance of this FileSystemEntity in the persistent store
-     *
-     * Let the parent do its work, then add any initialization specific to this
-     * class.
+     * Create a new root level instance of this FileSystemEntity in the persistent store.
+     * Let the parent do its work, then add any initialization specific to this class.
      *
      * @return object GalleryStatus a status code
      */
@@ -155,7 +142,6 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
     /**
      * Rename this item
      *
-     * @access public
      * @param string the path component
      * @return object GalleryStatus a status code
      */
@@ -187,12 +173,10 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
     /**
      * Move item to a new parent
      *
-     * @access public
      * @param int the id of the new parent GalleryItem
      * @return object GalleryStatus a status code
-     * @todo Make sure that 'order' stuff is maintained, so that the moved
-     *       items become the last in order in the new album if that album
-     *       is marked as unordered
+     * @TODO Make sure that 'order' stuff is maintained, so that the moved
+     *       items become the last in order in the new album if that album is marked as unordered
      */
     function move($newParentId) {
 	global $gallery;
@@ -260,8 +244,6 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 
     /**
      * Delete this GalleryFileSystemEntity
-     *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function delete() {
@@ -286,8 +268,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
     /**
      * Return a path for any objects contained within this one (ie, children)
      *
-     * Subclasses should specify their container-ness by overloading
-     * isContainer()
+     * Subclasses should specify their container-ness by overloading isContainer()
      *
      * @return array object GalleryStatus a status code,
      *               string a path where children can store their data files
@@ -320,8 +301,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 
     /**
      * Can this item contain other file system items?
-     *
-     * @return true if this item can contain other file system items
+     * @return boolean
      */
     function isContainer() {
 	return false;
@@ -331,7 +311,6 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * Return the logical path to this item.  Note that this path is only valid as
      * long as the entire tree is at least read locked.
      *
-     * @access public
      * @return array object GalleryStatus a status code,
      *         array path component names
      */
@@ -363,7 +342,6 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * Return the full path of this item.  Note that this path is only valid as
      * long as the entire tree is at least read locked.
      *
-     * @access public
      * @return array a GalleryStatus status, string a path
      */
     function fetchPath() {
@@ -402,7 +380,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryFileSystemEntity';

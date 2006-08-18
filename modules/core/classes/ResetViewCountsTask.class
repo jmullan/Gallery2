@@ -18,27 +18,19 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage Classes
- * @author Alan Harder <alan.harder@sun.com>
- */
-
 GalleryCoreApi::requireOnce('modules/core/classes/FlushDatabaseCacheTask.class');
 
 /**
  * This is a MaintenanceTask that will reset the view counts for all albums/items.
  * Flushes database cache too to ensure all cached counts/dates are cleared.
- *
  * @package GalleryCore
  * @subpackage Classes
- *
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ResetViewCountsTask extends FlushDatabaseCacheTask {
-
     /**
-     * @see MaintenanceTask::getInfo()
+     * @see MaintenanceTask::getInfo
      */
     function getInfo() {
 	global $gallery;
@@ -53,7 +45,7 @@ class ResetViewCountsTask extends FlushDatabaseCacheTask {
     }
 
     /**
-     * @see MaintenanceTask::run()
+     * @see MaintenanceTask::run
      */
     function run() {
 	global $gallery;

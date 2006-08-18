@@ -17,22 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
 
 /**
- * A subclass of DataItem for containing Animations
- *
- * A GalleryItem whose source is an animation of some kind (like a Flash
- * or Shockwave)
+ * A subclass of DataItem for containing Animations.
+ * A GalleryItem whose source is an animation of some kind (like a Flash or Shockwave)
  *
  * @g2 <class-name>GalleryAnimationItem</class-name>
  * @g2 <parent-class-name>GalleryDataItem</parent-class-name>
@@ -44,6 +34,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryAnimationItem extends GalleryDataItem {
 
@@ -76,7 +68,7 @@ class GalleryAnimationItem extends GalleryDataItem {
     var $height;
 
     /**
-     * @see GalleryDataItem::canBeViewedInline()
+     * @see GalleryDataItem::canBeViewedInline
      */
     function canBeViewedInline() {
 	/* The mimeTypes listed here should provide a render() output */
@@ -140,7 +132,7 @@ class GalleryAnimationItem extends GalleryDataItem {
     }
 
     /**
-     * @see GalleryDataItem::rescan()
+     * @see GalleryDataItem::rescan
      */
     function rescan() {
 	global $gallery;
@@ -329,7 +321,7 @@ class GalleryAnimationItem extends GalleryDataItem {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryAnimationItem';

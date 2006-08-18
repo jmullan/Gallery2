@@ -18,14 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage Classes
- * @author Bharat Mediratta <bharat@menalto.com>
- * @author Alan Harder <alan.harder@sun.com>
- */
-
 /* Don't use GalleryCoreApi::requireOnce here; index.php uses this file without GalleryCoreApi */
 require_once(dirname(__FILE__) . '/GalleryUtilities.class');
 
@@ -43,6 +35,9 @@ if (!defined('GALLERY_MAIN_PHP')) {
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class GalleryUrlGenerator {
 
@@ -148,7 +143,6 @@ class GalleryUrlGenerator {
     /*
      * ****************************************
      *              Static Methods
-     * ****************************************
      */
 
     /**
@@ -226,6 +220,7 @@ class GalleryUrlGenerator {
     /**
      * Old multisite system used a galleryId based on the current URL.  Return a value here so sites
      * won't break before they can upgrade.
+     * @TODO: remove on next major bump of core api
      *
      * @static
      * @deprecated
@@ -283,7 +278,7 @@ class GalleryUrlGenerator {
 		$path = $matches[1];
 		$file = $matches[2];
 	    }
- 	}
+	}
 
 	return array($protocol, $host, $path, $file);
     }
@@ -291,7 +286,6 @@ class GalleryUrlGenerator {
     /*
      * ****************************************
      *              Object Methods
-     * ****************************************
      */
 
     /**
@@ -528,6 +522,7 @@ class GalleryUrlGenerator {
      *    'forceServerRelativeUrl' => true; to generate server-relative URLs if possible but no
      *        relative URLs (e.g. /gallery2/main.php instead of
      *        http://example.com/gallery2/main.php but never just main.php (without path))
+     * @return string URL
      */
     function generateUrl($params=array(), $options=array()) {
 	global $gallery;
@@ -716,17 +711,17 @@ class GalleryUrlGenerator {
     function makeRelativeUrl($url, $forceServerRelativeUrl=false) {
 	$requestUri = $this->getCurrentRequestUri();
 	/* When embedded, file can be empty */
-	if ($forceServerRelativeUrl || empty($this->_file[0]) ||
-	        ($pos = strpos($requestUri, $this->_file[0])) === false ||
-	        (($qPos = strpos($requestUri, '?')) !== false && $pos >= $qPos) ||
-	        strpos($url, $this->getCurrentUrlDir()) !== 0) {
+	if ($forceServerRelativeUrl || empty($this->_file[0])
+		|| ($pos = strpos($requestUri, $this->_file[0])) === false
+		|| (($qPos = strpos($requestUri, '?')) !== false && $pos >= $qPos)
+		|| strpos($url, $this->getCurrentUrlDir()) !== 0) {
 	    /* Don't use forceDirect, keep the URL absolute if necessary */
 	    $url = str_replace($this->makeUrl('/'), '/', $url);
 	} else {
 	    $url = str_replace($this->getCurrentUrlDir(), '', $url);
 	}
 
- 	return $url;
+	return $url;
      }
 
     /**
@@ -806,15 +801,13 @@ class GalleryUrlGenerator {
 	     * normalize to URL / *nix style paths to check fewer cases
 	     */
 	    $normReturnUrl = str_replace("\\", '/', $returnUrl);
-	    if (((empty($this->_file[0]) || strpos($returnUrl, $this->_file[0]) !== 0) &&
-		    strpos($normReturnUrl, $validPath) !== 0 &&
-		    strpos($returnUrl, $this->getCurrentUrlDir()) !== 0 &&
-		    !( !preg_match('{^\s*\w*://}i', $normReturnUrl) &&
-		          preg_match('{^\s*[^/\s]}i', $normReturnUrl)
-		       )
-		 ) ||
-		    preg_match('{^\s*\.\./}', $normReturnUrl) ||
-		    strpos($normReturnUrl, '/../') !== false) {
+	    if (((empty($this->_file[0]) || strpos($returnUrl, $this->_file[0]) !== 0)
+			&& strpos($normReturnUrl, $validPath) !== 0
+			&& strpos($returnUrl, $this->getCurrentUrlDir()) !== 0
+			&& !( !preg_match('{^\s*\w*://}i', $normReturnUrl)
+			    && preg_match('{^\s*[^/\s]}i', $normReturnUrl)))
+		    || preg_match('{^\s*\.\./}', $normReturnUrl)
+		    || strpos($normReturnUrl, '/../') !== false) {
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret) {
 		    return $ret;

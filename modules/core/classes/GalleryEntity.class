@@ -17,22 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package GalleryCore
- * @version $Revision$ $Date$
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPersistent.class');
 
 /**
- * A GalleryEntity is a stateful representation of an entity in the persistent
- * store.  You can load, modify, save and delete it.  Any modifications made to
- * this entity will live in memory until you commit the changes to the store
- * (hence, it's stateful).
+ * A GalleryEntity is a stateful representation of an entity in the persistent store.  You can
+ * load, modify, save and delete it.  Any modifications made to this entity will live in memory
+ * until you commit the changes to the store (hence, it's stateful).
  *
  * @g2 <class-name>GalleryEntity</class-name>
  * @g2 <parent-class-name>GalleryPersistent</parent-class-name>
@@ -43,6 +34,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryPersistent.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryEntity extends GalleryPersistent {
 
@@ -546,7 +539,6 @@ class GalleryEntity extends GalleryPersistent {
 
     /**
      * Return the name of this type of item.
-     *
      * Subclasses must override this to provide their own type names.
      *
      * @param boolean if the name is to be translated using the current language
@@ -559,8 +551,7 @@ class GalleryEntity extends GalleryPersistent {
 
     /**
      * Return true if this entity is linked to another
-     *
-     * @return true if yes
+     * @return boolean
      */
     function isLinked() {
 	$linkedEntity = $this->getLinkedEntity();
@@ -604,6 +595,7 @@ class GalleryEntity extends GalleryPersistent {
      * Return the case sensitive name of this entity class.  This is exactly what get_class()
      * would return in PHP5.  PHP4 is case-insensitive though so we must rely on it being set
      * in each entity.  The framework uses this as an index into entity related tables.
+     * @return string
      */
     function getClassName() {
 	return 'GalleryEntity';

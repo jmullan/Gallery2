@@ -17,22 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Utility class for caching data
  *
- * Very useful in the case where retrieving or building data sets is expensive,
- * and the data doesn't change during the lifetime of the request.  This class
- * serves as a hash table where any data class can store and retrieve cached
- * data.
+ * Very useful in the case where retrieving or building data sets is expensive, and the data
+ * doesn't change during the lifetime of the request.  This class serves as a hash table where
+ * any data class can store and retrieve cached data.
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryDataCache {
 
@@ -41,7 +38,6 @@ class GalleryDataCache {
      *
      * @return array the cache
      * @staticvar cache the singleton cache
-     * @static
      * @access private
      */
     function &_getCache() {
@@ -57,7 +53,7 @@ class GalleryDataCache {
 
     /**
      * Is in-memory caching enabled?
-     * @return bool true if it's enabled
+     * @return boolean true if it's enabled
      */
     function &isMemoryCachingEnabled() {
 	static $enabled;
@@ -69,7 +65,7 @@ class GalleryDataCache {
 
     /**
      * Turn in-memory caching on or off
-     * @param bool true or false
+     * @param boolean
      */
     function setMemoryCachingEnabled($bool) {
 	$enabled =& GalleryDataCache::isMemoryCachingEnabled();
@@ -78,13 +74,11 @@ class GalleryDataCache {
 
     /**
      * Store data in the cache
-     *
      * You must provide a unique key.  Existing keys are overwritten.
      *
      * @param string the key
      * @param mixed the data
      * @param boolean should this key survive a reset call?
-     * @static
      */
     function put($key, $data, $protected=false) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -107,7 +101,6 @@ class GalleryDataCache {
      *
      * @param string the key
      * @param mixed the data
-     * @static
      */
     function remove($key) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -125,7 +118,6 @@ class GalleryDataCache {
      *
      * @param string the key
      * @param mixed the data
-     * @static
      */
     function removeByPattern($pattern) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -148,7 +140,6 @@ class GalleryDataCache {
      * @param string the key
      * @param mixed the data
      * @param boolean should this key survive a reset call?
-     * @static
      */
     function putByReference($key, &$data, $protected=false) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -171,7 +162,6 @@ class GalleryDataCache {
      * exceptionally long operations like adding many items in one request.
      *
      * @access private
-     * @static
      */
     function _performMaintenance() {
 	static $count;
@@ -202,7 +192,6 @@ class GalleryDataCache {
      *
      * @param string the key
      * @return mixed the cached data
-     * @static
      */
     function get($key) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -221,7 +210,6 @@ class GalleryDataCache {
      *
      * @param string the function/method name
      * @return boolean true if the cache contains the key given
-     * @static
      */
     function containsKey($key) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -234,9 +222,7 @@ class GalleryDataCache {
 
     /**
      * Return all the keys in the cache
-     *
      * @return array string keys
-     * @static
      */
     function getAllKeys() {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -249,9 +235,7 @@ class GalleryDataCache {
 
     /**
      * Empty the cache of all but protected entries
-     *
      * @param boolean purge protected also?
-     * @static
      */
     function reset($purgeProtected=false) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -275,7 +259,7 @@ class GalleryDataCache {
 
     /**
      * Is caching to disk enabled?
-     * @return bool true if it's enabled
+     * @return boolean
      */
     function &isFileCachingEnabled() {
 	static $enabled;
@@ -287,7 +271,7 @@ class GalleryDataCache {
 
     /**
      * Turn caching to disk on or off
-     * @param bool true or false
+     * @param boolean
      */
     function setFileCachingEnabled($bool) {
 	$enabled =& GalleryDataCache::isFileCachingEnabled();
@@ -366,8 +350,8 @@ class GalleryDataCache {
     }
 
     /**
-     * Put the specified data into a cache file from disk.  PathInfo is of the
-     * form that can be passed to getCachePath.
+     * Put the specified data into a cache file from disk.  PathInfo is of the form that can
+     * be passed to getCachePath.
      *
      * @param array the path info
      * @param mixed the object data
@@ -390,11 +374,10 @@ class GalleryDataCache {
     }
 
     /**
-     * For a given id, return a tuple with the breakdown of the id.  The caching
-     * mechanism uses this to determine where in the cache tree to place the
-     * file.  The breakdown happens according to the digits of the id.  The
-     * first element returned is the hundreds digit, the second element is the
-     * tens digit.
+     * For a given id, return a tuple with the breakdown of the id.  The caching mechanism uses
+     * this to determine where in the cache tree to place the file.  The breakdown happens
+     * according to the digits of the id.  The first element returned is the hundreds digit,
+     * the second element is the tens digit.
      *
      *  0..9     =>  0, 0
      *  10..19   =>  0, 1
@@ -418,7 +401,7 @@ class GalleryDataCache {
     }
 
     /**
-     * Given a path info descriptor, return the path to the appropriate cache file
+     * Given a path info descriptor, return the path to the appropriate cache file.
      *
      * Path info contains the following variables:
      *  type:    entity, derivative, derivative-meta, module, theme
@@ -571,7 +554,7 @@ class GalleryDataCache {
      *
      * @param int the item id
      * @param string the permission
-     * @param bool true or false
+     * @param boolean
      */
     function hasPermission($id, $permission) {
 	global $gallery;
@@ -650,8 +633,8 @@ class GalleryDataCache {
 	    'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
 
 	list ($ret, $results) = GalleryCoreApi::getMapEntry('GalleryCacheMap',
-	    array('value'), 
-	    array('key' => $key, 'type' => $type, 'userId' => $userId, 
+	    array('value'),
+	    array('key' => $key, 'type' => $type, 'userId' => $userId,
 		  'timestamp' => new GallerySqlFragment('>?', $cutoff)));
 	if ($ret) {
 	    return array($ret, null);
@@ -791,7 +774,7 @@ class GalleryDataCache {
     }
 
     /**
-     * Returns session related page cache key, e.g. to make the page cache language sensitive
+     * Returns session related page cache key, eg. to make the page cache language sensitive
      *
      * @return array object GalleryStatus a status code
      *               string extra cache key

@@ -17,23 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load the parent class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
 
 /**
- * A container for a data source that Gallery manages.
- *
- * A container for any data that Gallery can manage.  Known
- * implementations include ImageContainer, MovieContainer or
- * UnknownContainer.
+ * A container for data that is derived from another data source.
+ * Known implementations include GalleryDerivativeImage for thumbnails and resizes of images.
  *
  * @g2 <class-name>GalleryDerivative</class-name>
  * @g2 <parent-class-name>GalleryChildEntity</parent-class-name>
@@ -45,12 +34,13 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
  *
  * @package GalleryCore
  * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryDerivative extends GalleryChildEntity {
 
     /**
-     * What's the source of this derivative?  The source must be
-     * the id of another DataContainer.
+     * What's the source of this derivative?  The source must be the id of another data container.
      *
      * @g2 <member>
      * @g2   <member-name>derivativeSourceId</member-name>
@@ -138,10 +128,9 @@ class GalleryDerivative extends GalleryChildEntity {
     var $mimeType;
 
     /**
-     * More operations that are applied at the very end of the derivative operations,
-     * and are not carried down to derivatives that depend on this one.  Useful for
-     * operations like watermarking that change the derivative in a way that we don't
-     * want to propagate.
+     * More operations that are applied at the very end of the derivative operations, and are
+     * not carried down to derivatives that depend on this one.  Useful for operations like
+     * watermarking that change the derivative in a way that we don't want to propagate.
      *
      * Can be empty, because the derivative can have only a regular derivative operations.
      *
@@ -159,8 +148,7 @@ class GalleryDerivative extends GalleryChildEntity {
     /**
      * Is the derivative broken?
      * We set this to true if a toolkit operation failed, or for similar reasons.
-     *
-     * Can be empty, which is interpreted as false
+     * Can be empty, which is interpreted as false.
      *
      * @g2 <member>
      * @g2   <member-name>isBroken</member-name>
@@ -173,9 +161,8 @@ class GalleryDerivative extends GalleryChildEntity {
     var $isBroken;
 
     /**
-     * Data items that can be viewed inline (photos, movies, etc) should return
-     * true.  Items that can't be viewed inline (word documents, text, etc)
-     * should return false.
+     * Data items that can be viewed inline (photos, movies, etc) should return true.  Items that
+     * can't be viewed inline (word documents, text, etc) should return false.
      *
      * Classes that return true for this query must implement getWidth() and getHeight()
      *
@@ -188,7 +175,6 @@ class GalleryDerivative extends GalleryChildEntity {
     /**
      * Delete this GalleryEntity
      *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function delete() {
@@ -206,13 +192,11 @@ class GalleryDerivative extends GalleryChildEntity {
 	    foreach ($derivatives as $derivative) {
 		$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
 		/*
-		 * Deletes can cascade in interesting ways.  For example,
-		 * deleting a derivative will get rid of any other derivatives
-		 * that are sourced to it, so it's possible that deleting
-		 * children here can lead to a MISSING_OBJECT result unless we
-		 * re-run the parent/child query each time.  Easier to just
-		 * ignore the MISSING_OBJECT error since we only care that it's
-		 * gone.
+		 * Deletes can cascade in interesting ways.  For example, deleting a derivative
+		 * will get rid of any other derivatives that are sourced to it, so it's possible
+		 * that deleting children here can lead to a MISSING_OBJECT result unless we re-run
+		 * the parent/child query each time.  Easier to just ignore the MISSING_OBJECT
+		 * error since we only care that it's gone.
 		 */
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return $ret;
@@ -260,7 +244,7 @@ class GalleryDerivative extends GalleryChildEntity {
     }
 
     /**
-     * @see GalleryEntity::save()
+     * @see GalleryEntity::save
      */
     function save($expire=true, $postEvent=true) {
 	$isNew = $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
@@ -294,10 +278,8 @@ class GalleryDerivative extends GalleryChildEntity {
      * Rebuild the cache.  This should never be called directly; instead you
      * should call GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivativeId)
      *
-     * Rebuilds the cache and marks the derivative as broken if we failed to rebuild the
-     * derivative.
+     * Rebuilds the cache and marks the derivative as broken if we failed.
      *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function rebuildCache() {
@@ -371,8 +353,8 @@ class GalleryDerivative extends GalleryChildEntity {
      * Rebuild the cache.  This should never be called directly; instead you
      * should call GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivativeId)
      *
-     * @access private
      * @return object GalleryStatus a status code
+     * @access private
      */
     function _rebuildCache() {
 	global $gallery;
@@ -624,10 +606,8 @@ class GalleryDerivative extends GalleryChildEntity {
 
     /**
      * Is the cache for this item still current?
-     *
      * If the cache is expired, it can be rebuilt with rebuildCache()
      *
-     * @access public
      * @return array object GalleryStatus a status code,
      *               boolean false if the item is expired (ie, empty cache)
      */
@@ -646,8 +626,6 @@ class GalleryDerivative extends GalleryChildEntity {
 
     /**
      * Expire the cache.
-     *
-     * @access public
      * @return object GalleryStatus a status code
      */
     function expireCache() {
@@ -671,7 +649,6 @@ class GalleryDerivative extends GalleryChildEntity {
     /**
      * Get the full path to the data file.
      *
-     * @access public
      * @return array object GalleryStatus a status code,
      *               string a path where children can store their data files
      */
@@ -685,12 +662,12 @@ class GalleryDerivative extends GalleryChildEntity {
 
     /**
      * Render this item in the given format.  For example,
-     * GalleryDerivativeImage may want to render as an <img> tag in the HTML
-     * format.
+     * GalleryDerivativeImage may want to render as an <img> tag in the HTML format.
      *
-     * @param string the format (eg, "HTML")
+     * @param string the format (eg. HTML)
      * @param object GalleryDataItem the data item
      * @param array format specific key value pairs
+     * @return string output
      */
     function render($format, $item, $params) {
 	return null;
@@ -698,8 +675,7 @@ class GalleryDerivative extends GalleryChildEntity {
 
     /**
      * Return true if we have no derivative or postfilter operations
-     *
-     * @param bool true if there are no operations
+     * @return boolean
      */
     function hasNoOperations() {
 	$derivativeOperations = $this->getDerivativeOperations();
@@ -709,9 +685,9 @@ class GalleryDerivative extends GalleryChildEntity {
 
     /**
      * Return path for broken derivative placeholder which is shown when we fail to generate a
-     * derivative item
-     * Descendent classes can override this method to use their own broken derivative placeholder,
-     * which can be of any mime type, e.g. a wav file for broken audio derivatives, etc.
+     * derivative item.  Descendent classes can override this method to use their own broken
+     * derivative placeholder, which can be of any mime type, eg. a wav file for broken audio
+     * derivatives, etc.
      *
      * @return string the path of the broken derivative medium
      */
@@ -721,7 +697,7 @@ class GalleryDerivative extends GalleryChildEntity {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'GalleryDerivative';

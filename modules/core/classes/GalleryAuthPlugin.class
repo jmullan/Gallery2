@@ -19,22 +19,16 @@
  */
 
 /**
- * @version $Revision: 1.1 $ $Date: 2006/03/30 22:52:15 $
+ * Interface for authentication plugins.
+ * Authentication must be fast since it takes place at the beginning of every request.
+ * Multiple plugins may be registered at the same time.  They are instantiated one by one, as
+ * needed.  The first plugin to successfully return a user object wins.
+ *
  * @package GalleryCore
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Interface for authentication plugins
- *
- * Authentication must be fast since it takes place at the beginning of every request
- *
- * Multiple plugins may be registered at the same time.  They are instantiated one by one, as
- * needed.  The first plugin to successfully return a user object wins
- *
- * @package GalleryCore
- * @subpackage Classes
+ * @version $Revision: 1.1 $ $Date: 2006/03/30 22:52:15 $
+ * @abstract
  */
 class GalleryAuthPlugin {
 

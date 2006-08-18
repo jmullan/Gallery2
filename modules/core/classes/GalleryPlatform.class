@@ -19,20 +19,13 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * A framework for doing platform specific tasks.  This is an abstract class that implements
+ * many basic tasks that are different from platform to platform.
+ *
  * @package GalleryCore
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * A framework for doing platform specific tasks.
- *
- * This is an abstract class that implements many basic tasks that are different from platform to
- * platform.
- *
- * @package GalleryCore
- * @subpackage Classes
+ * @version $Revision$ $Date$
  * @abstract
  */
 class GalleryPlatform {
@@ -92,10 +85,8 @@ class GalleryPlatform {
     }
 
     /**
-     * Move an uploaded file to a new location and return the new location.
-     *
-     * If the second filename is not provided, a new file is created in the Gallery temporary
-     * directory.
+     * Move an uploaded file to a new location and return the new location.  If the second
+     * filename is not provided, a new file is created in the Gallery temporary directory.
      *
      * @return string the new file name, if the move was successful
      */
@@ -475,12 +466,11 @@ class GalleryPlatform {
      *
      * @param string the image file name
      * @return array with 4 elements.  Index 0 contains the width of the image in pixels.  Index 1
-     *         contains the height.  Index 2 is a flag indicating the type of the image: 1 = GIF, 2
-     *         = JPG, 3 = PNG, 4 = SWF, 5 = PSD, 6 = BMP, 7 = TIFF(intel byte order), 8 =
-     *         TIFF(motorola byte order), 9 = JPC, 10 = JP2, 11 = JPX, 12 = JB2, 13 = SWC, 14 = IFF.
-     *         These values correspond to the IMAGETYPE constants that were added in PHP 4.3.  Index
-     *         3 is a text string with the correct height="yyy" width="xxx" string that can be used
-     *         directly in an IMG tag.
+     *   contains the height.  Index 2 is a flag indicating the type of the image: 1 = GIF, 2 = JPG,
+     *   3 = PNG, 4 = SWF, 5 = PSD, 6 = BMP, 7 = TIFF(intel byte order), 8 = TIFF(motorola byte
+     *   order), 9 = JPC, 10 = JP2, 11 = JPX, 12 = JB2, 13 = SWC, 14 = IFF.  These values correspond
+     *   to the IMAGETYPE constants that were added in PHP 4.3.  Index 3 is a text string with the
+     *   correct height="yyy" width="xxx" string that can be used directly in an IMG tag.
      */
     function getimagesize($filename) {
 	global $gallery;
@@ -611,10 +601,7 @@ class GalleryPlatform {
      * @return string a string composed of all legal path characters
      */
     function getLegalPathCharacters() {
-	return "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
-	    "abcdefghijklmnopqrstuvwxyz" .
-	    "0123456789" .
-	    "# _.-";
+	return 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789# _.-';
 
 	/*
 	 * Keep the hyphen at the end of this string, else ereg() functions will complain if you use

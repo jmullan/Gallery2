@@ -18,26 +18,18 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage Classes
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
 GalleryCoreApi::requireOnce('modules/core/AdminMaintenance.inc');
 
 /**
  * This is a MaintenanceTask that will delete all the cached Smarty templates.
- *
  * @package GalleryCore
  * @subpackage Classes
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class FlushTemplatesTask extends MaintenanceTask {
-
     /**
-     * @see MaintenanceTask::getInfo()
+     * @see MaintenanceTask::getInfo
      */
     function getInfo() {
 	global $gallery;
@@ -53,7 +45,7 @@ class FlushTemplatesTask extends MaintenanceTask {
     }
 
     /**
-     * @see MaintenanceTask::run()
+     * @see MaintenanceTask::run
      */
     function run() {
 	global $gallery;
