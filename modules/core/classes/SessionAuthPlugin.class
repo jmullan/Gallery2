@@ -19,20 +19,13 @@
  */
 
 /**
- * @version $Revision: 1.1 $ $Date: 2006/03/30 22:52:14 $
+ * Get the active user from the session's user id
  * @package GalleryCore
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Get the active user from the session's user id
- *
- * @package GalleryCore
- * @subpackage Classes
+ * @version $Revision$ $Date$
  */
 class SessionAuthPlugin /* extends GalleryAuthPlugin */ {
-
     /**
      * @see GalleryAuthPlugin::getUser
      */
@@ -49,9 +42,7 @@ class SessionAuthPlugin /* extends GalleryAuthPlugin */ {
 		return array($ret, null);
 	    }
 
-	    if (isset($user)) {
-		return array(null, $user);
-	    }
+	    return array(null, $user);
 	}
     }
 }
