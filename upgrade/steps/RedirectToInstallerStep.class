@@ -26,7 +26,7 @@ class RedirectToInstallerStep extends UpgradeStep {
 
     function loadTemplateData(&$templateData) {
 	global $gallery, $stepNumber;;
-	
+
 	/* Add @ here in case we haven't yet upgraded config.php to include galleryBaseUrl */
 	$baseUrl = @$gallery->getConfig('galleryBaseUrl');
 	if (empty($baseUrl)) {
@@ -43,7 +43,7 @@ class RedirectToInstallerStep extends UpgradeStep {
 	$this->setComplete(false);
 	/* Fix progress bar / hack */
 	$stepNumber = 1;
-	
+
 	$templateData['installerUrl'] = $url;
 	$templateData['bodyFile'] = 'RedirectToInstaller.html';
     }

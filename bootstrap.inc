@@ -17,8 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+/**
+ * Bootstrap code that we're going to need no matter what we do
+ * @package Gallery
+ */
 
-/* Bootstrap code that we're going to need no matter what we do */
 require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');

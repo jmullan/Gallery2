@@ -18,16 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * @version $Revision$ $Date$
+ * This script will just redirect to main.php
+ * The Location header requires an absolute url to conform with HTTP/1.1
  * @package Gallery
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 
-/*
- * This script will just redirect to main.php. But the Location header requires
- * an absolute url to conform with HTTP/1.1
- * (Include bootstrap.inc in case config.php overrides GALLERY_MAIN_PHP)
- */
+/* Include bootstrap.inc in case config.php overrides GALLERY_MAIN_PHP */
 require_once(dirname(__FILE__) . '/bootstrap.inc');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUrlGenerator.class');
 

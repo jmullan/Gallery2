@@ -17,6 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+/**
+ * Main handler for all Gallery pages/requests
+ * @package Gallery
+ */
+
 include(dirname(__FILE__) . '/bootstrap.inc');
 
 /*
@@ -394,7 +399,7 @@ function _GalleryMain($embedded=false) {
 		    $redirectUrl = $results['redirectUrl'];
 		} else {
 		    $redirectUrl = $urlGenerator->generateUrl($results['redirect'],
-		    					      array('forceFullUrl' => true));
+							      array('forceFullUrl' => true));
 		}
 
 		return array(null, _GalleryMain_doRedirect($redirectUrl, $template));
@@ -499,7 +504,7 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
      */
     if (!$session->isUsingCookies() && $session->isPersistent()
 	    && strpos($redirectUrl, $session->getKey()) === false) {
-        $redirectUrl = GalleryUrlGenerator::appendParamsToUrl($redirectUrl,
+	$redirectUrl = GalleryUrlGenerator::appendParamsToUrl($redirectUrl,
 	    array($session->getKey() => $session->getId()));
     }
 

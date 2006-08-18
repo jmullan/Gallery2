@@ -77,14 +77,14 @@ class AdminUserSetupStep extends InstallStep {
 
 		$adminNameOk = false;
 		if (empty($this->_adminName) || strlen($this->_adminName) < 1
-		        || strlen($this->_adminName) > 32) {
+			|| strlen($this->_adminName) > 32) {
 		    $templateData['error']['invalid_adminName'] = 1;
 		} else {
 		    $adminNameOk = true;
 		}
 		$emailOk = false;
 		if (!empty($this->_email)
-		        && !GalleryUtilities::isValidEmailString($this->_email)) {
+			&& !GalleryUtilities::isValidEmailString($this->_email)) {
 		    $templateData['error']['invalid_email'] = 1;
 		} else {
 		    $emailOk = true;

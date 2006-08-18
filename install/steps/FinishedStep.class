@@ -29,7 +29,7 @@ class FinishedStep extends InstallStep {
 
     function loadTemplateData(&$templateData) {
 	global $galleryStub;
-	
+
 	$templateData['isMultisite'] = $galleryStub->getConfig('isMultisite');
 	$templateData['galleryDir'] = basename($_SESSION['configPath']);
 	$templateData['bodyFile'] = 'Finished.html';

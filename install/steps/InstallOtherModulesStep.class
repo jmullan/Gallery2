@@ -93,7 +93,7 @@ class InstallOtherModulesStep extends InstallStep {
 		    $templateData['stackTrace'] .= $ret->getAsHtml();
 		}
 
-	 	list ($ret, $success) = $module->autoConfigure();
+		list ($ret, $success) = $module->autoConfigure();
 		if ($ret) {
 		    $this->resetL10Domain();
 		    $templateData['errors'][] =
@@ -220,22 +220,22 @@ class InstallOtherModulesStep extends InstallStep {
 	    GalleryDataCache::setFileCachingEnabled(false);
 
 	    if (!defined('GALLERY_CONFIG_DIR')) {
-	        define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
+		define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
 	    }
 	    require_once(dirname(__FILE__) . '/../../bootstrap.inc');
 	    require_once(dirname(__FILE__) . '/../../init.inc');
 	    $ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => true,
 					  'activeLanguage' => $_SESSION['language']));
 	    if ($ret) {
-	        $templateData['errors'][] = _('Unable to initialize our Gallery data');
-	        $templateData['stackTrace'] = $ret->getAsHtml();
+		$templateData['errors'][] = _('Unable to initialize our Gallery data');
+		$templateData['stackTrace'] = $ret->getAsHtml();
 	    }
 	    if (empty($templateData['errors'])) {
-	        $ret = $this->_selectAdminUser();
-	        if ($ret) {
+		$ret = $this->_selectAdminUser();
+		if ($ret) {
 		    $templateData['errors'][] = _('Unable to initialize our Gallery session');
 		    $templateData['stackTrace'] .= $ret->getAsHtml();
-	        }
+		}
 	    }
 	    GalleryDataCache::put($cacheKey, true);
 	}

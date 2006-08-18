@@ -91,9 +91,9 @@ class SystemChecksStep extends UpgradeStep {
 	$suggestedHtaccess = array();
 
 	/* assert compatible version of PHP, we accept 4.3.0+ / 5.0.4+ */
-	if (!function_exists('version_compare') || version_compare(phpversion(), '4.3.0', '<') ||
-	        (version_compare(phpversion(), '5.0.0', '>=') &&
-		       version_compare(phpversion(), '5.0.4', '<'))) {
+	if (!function_exists('version_compare') || version_compare(phpversion(), '4.3.0', '<')
+		|| (version_compare(phpversion(), '5.0.0', '>=')
+		    && version_compare(phpversion(), '5.0.4', '<'))) {
 	    $templateData['check'][] =
 		array('title' => _('PHP version >= 4.3.0 or >= 5.0.4'),
 		      'error' => true,
@@ -193,8 +193,8 @@ class SystemChecksStep extends UpgradeStep {
 	$title = sprintf('%s (%s)', _('Memory limit'),
 			 ($memoryLimit == '' ? _('no limit') : $memoryLimit . 'b'));
 	$minimumMemoryLimit = 16;
-	if ($memoryLimit != '' &&
-	        ($this->_getBytes($memoryLimit) / (1024 * 1024)) < $minimumMemoryLimit) {
+	if ($memoryLimit != ''
+		&& ($this->_getBytes($memoryLimit) / (1024 * 1024)) < $minimumMemoryLimit) {
 	    $templateData['check'][] =
 		array('title' => $title,
 		      'warning' => true,
@@ -307,8 +307,8 @@ class SystemChecksStep extends UpgradeStep {
 				' which can cause PHP to crash.  Click <a href="%s">here</a> to ' .
 				'test your PHP.  If you see "SUCCESS" then your PHP is ok.  If ' .
 				'you get an error then you must turn off ze1_compatibility_mode ' .
-				'before proceeding.'), generateUrl('index.php?step=' .
-						          $this->_stepNumber . '&amp;zendtest=1')),
+				'before proceeding.'),
+			  generateUrl('index.php?step=' . $this->_stepNumber . '&amp;zendtest=1')),
 		);
 	} /* skip showing 'success' for this one */
 

@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-/**
- * @version $Revision$ $Date$
- * @package Gallery
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
 /**
  * Perform all necessary initialization of the Gallery framework
+ * @package Gallery
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
+
 function GalleryInitFirstPass($params=array()) {
     global $gallery;
 
@@ -106,8 +103,8 @@ function GalleryInitFirstPass($params=array()) {
     /* Allow for overrides from GalleryEmbed ($param) or from config.php */
     $configBaseUri = @$gallery->getConfig('baseUri');
     $ret = $urlGenerator->init(
-	isset($params['baseUri']) ? $params['baseUri'] :
-	                            (!empty($configBaseUri) ? $configBaseUri : null),
+	isset($params['baseUri']) ? $params['baseUri']
+				  : (!empty($configBaseUri) ? $configBaseUri : null),
 	isset($params['g2Uri']) ? $params['g2Uri'] : null,
 	isset($params['embedSessionString']) ? $params['embedSessionString'] : null);
     if ($ret) {
