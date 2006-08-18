@@ -18,9 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
+ * Script for running unit tests
  * @package Gallery
  * @subpackage PHPUnit
  */
+
 include('../../support/security.inc');
 include('../../../bootstrap.inc');
 require_once('../../../init.inc');
@@ -347,7 +349,6 @@ include(dirname(__FILE__) . '/index.tpl');
 /* Compact any ACLs that were created during this test run */
 $ret = GalleryCoreApi::compactAccessLists();
 if ($ret) {
-    $ret = $ret;
     print $ret->getAsHtml();
     return;
 }
@@ -355,6 +356,7 @@ if ($ret) {
 $storage =& $gallery->getStorage();
 $ret = $storage->commitTransaction();
 if ($ret) {
-    return $ret;
+    print $ret->getAsHtml();
+    return;
 }
 ?>

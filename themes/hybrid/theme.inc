@@ -20,7 +20,8 @@
 
 /**
  * Theme combining thumb-view, image-view and slideshow into a single dynamic page
- * @package HybridTheme
+ * @package Themes
+ * @subpackage Hybrid
  * @author Alan Harder <alan.harder@sun.com>
  * @version $Revision$ $Date$
  */

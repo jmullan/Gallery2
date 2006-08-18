@@ -21,7 +21,8 @@
 /**
  * Theme with combined image view, scrollable thumbnails and slideshow.
  * Displays inline items ONLY; subalbums or other items types are NOT shown.
- * @package SliderTheme
+ * @package Themes
+ * @subpackage Slider
  * @author Alan Harder <alan.harder@sun.com>
  * @version $Revision$ $Date$
  */

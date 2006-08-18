@@ -17,109 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Gallery
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Event listener that tracks how many entities were created and destroyed
- * during the test.  We can use this to track to see if a test is leaking
- * entities (ie, not doing proper cleanup).
- *
- * @package GalleryCore
- * @subpackage PHPUnit
- */
-class EntityCounterEventListener /* extends GalleryEventListener */ {
-
-    function EntityCounterEventListener() {
-	$this->_count = 0;
-	$this->_ids = array();
-    }
-
-    function handleEvent($event) {
-	switch ($event->getEventName()) {
-	case 'GalleryEntity::delete':
-	    $entity = $event->getEntity();
-	    $this->_count--;
-	    break;
-
-	case 'GalleryEntity::save':
-	    $entity = $event->getEntity();
-	    if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-		$this->_count++;
-		$this->_ids[$entity->getClassName()][] = $entity->getId();
-	    }
-	    break;
-	}
-
-	return array(null, null);
-    }
-
-    function getRecentEntityId($className) {
-	return $this->_ids[$className][sizeof($this->_ids[$className])-1];
-    }
-
-    function setCount($count) {
-	$this->_count = $count;
-    }
-
-    function getCount() {
-	return $this->_count;
-    }
-}
-
-/**
- * Event listener wrapper for unit tests.  Some event listeners are
- * disabled by default for unit tests, but you can use
- * GalleryTestCase::_registerTestEventListener() to register one with
- * this listener, which will do dispatching for you.
- *
- * @package GalleryCore
- * @subpackage PHPUnit
- */
-class TestEventListener /* extends GalleryEventListener */ {
-
-    function TestEventListener() {
-	$this->_eventListeners = array();
-    }
-
-    function reset() {
-	foreach (array_keys($this->_eventListeners) as $eventName) {
-	    $this->_eventListeners[$eventName] = array();
-	}
-    }
-
-    function registerEventListener($eventName, &$listener) {
-	if (!isset($this->_eventListeners[$eventName])) {
-	    GalleryCoreApi::registerEventListener($eventName, $this);
-	    $this->_eventListeners[$eventName] = array();
-	}
-	$this->_eventListeners[$eventName][] =& $listener;
-    }
-
-    function handleEvent($event) {
-	$result = array();
-	$list = $this->_eventListeners[$event->getEventName()];
-	for ($i = 0; $i < count($list); $i++) {
-	    list ($ret, $data) = $list[$i]->handleEvent($event);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    if (isset($data)) {
-		$result[] = $data;
-	    }
-	}
-	return array(null, $result);
-    }
-}
 
 /**
  * Gallery specific version of PHPUnit's TestCase class.
  * @package Gallery
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryTestCase extends TestCase {
 
@@ -889,6 +793,90 @@ class GalleryTestCase extends TestCase {
 	    }
 	}
 	return null;
+    }
+}
+
+/**
+ * Event listener that tracks how many entities were created and destroyed during the test.
+ * We can use this to track to see if a test is leaking entities (ie, not doing proper cleanup).
+ */
+class EntityCounterEventListener /* extends GalleryEventListener */ {
+
+    function EntityCounterEventListener() {
+	$this->_count = 0;
+	$this->_ids = array();
+    }
+
+    function handleEvent($event) {
+	switch ($event->getEventName()) {
+	case 'GalleryEntity::delete':
+	    $entity = $event->getEntity();
+	    $this->_count--;
+	    break;
+
+	case 'GalleryEntity::save':
+	    $entity = $event->getEntity();
+	    if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+		$this->_count++;
+		$this->_ids[$entity->getClassName()][] = $entity->getId();
+	    }
+	    break;
+	}
+
+	return array(null, null);
+    }
+
+    function getRecentEntityId($className) {
+	return $this->_ids[$className][sizeof($this->_ids[$className])-1];
+    }
+
+    function setCount($count) {
+	$this->_count = $count;
+    }
+
+    function getCount() {
+	return $this->_count;
+    }
+}
+
+/**
+ * Event listener wrapper for unit tests.  Some event listeners are disabled by default for
+ * unit tests, but you can use GalleryTestCase::_registerTestEventListener() to register one
+ * with this listener, which will do dispatching for you.
+ */
+class TestEventListener /* extends GalleryEventListener */ {
+
+    function TestEventListener() {
+	$this->_eventListeners = array();
+    }
+
+    function reset() {
+	foreach (array_keys($this->_eventListeners) as $eventName) {
+	    $this->_eventListeners[$eventName] = array();
+	}
+    }
+
+    function registerEventListener($eventName, &$listener) {
+	if (!isset($this->_eventListeners[$eventName])) {
+	    GalleryCoreApi::registerEventListener($eventName, $this);
+	    $this->_eventListeners[$eventName] = array();
+	}
+	$this->_eventListeners[$eventName][] =& $listener;
+    }
+
+    function handleEvent($event) {
+	$result = array();
+	$list = $this->_eventListeners[$event->getEventName()];
+	for ($i = 0; $i < count($list); $i++) {
+	    list ($ret, $data) = $list[$i]->handleEvent($event);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (isset($data)) {
+		$result[] = $data;
+	    }
+	}
+	return array(null, $result);
     }
 }
 ?>

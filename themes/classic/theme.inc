@@ -20,7 +20,8 @@
 
 /**
  * Theme with columns for thumbnails, item info and subalbum links
- * @package ClassicTheme
+ * @package Themes
+ * @subpackage Classic
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Alan Harder <alan.harder@sun.com>
  * @version $Revision$ $Date$

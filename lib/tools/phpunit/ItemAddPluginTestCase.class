@@ -17,16 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Gallery
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Plugins need to have these classes loaded
- */
 require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryView.class');
 require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryController.class');
 require_once(dirname(__FILE__) . '/../../../modules/core/ItemAdd.inc');
@@ -35,6 +26,8 @@ require_once(dirname(__FILE__) . '/../../../modules/core/ItemAdd.inc');
  * An ItemAddPlugin specific version of GalleryTestCase
  * @package Gallery
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemAddPluginTestCase extends GalleryTestCase {
 
@@ -62,14 +55,6 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 	}
     }
 
-    function setUp() {
-	parent::setUp();
-    }
-
-    function tearDown() {
-	parent::tearDown();
-    }
-
     function handleRequest(&$item, $errorCode=null, $options=array()) {
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');
@@ -78,9 +63,10 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 	if (isset($errorCode)) {
 	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
 		$this->assert(false,
-			      sprintf('Expected error code (%s) but received (%s)',
-				      join(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
-				      join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
+			sprintf('Expected error code (%s) but received (%s)',
+			    implode(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
+			    implode(' | ', GalleryStatus::getErrorCodeConstants(
+							  $ret->getErrorCode()))));
 	    }
 	} else if ($ret) {
 	    $this->failWithStatus($ret);
@@ -89,8 +75,8 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 	    $this->assert(isset($error) && is_array($error), 'plugin error results missing');
 
 	    /*
-	     * This doesn't appear to test much, but it will cause us to examine $status so if it's not set
-	     * then we'll trigger a PHP warning which will fail the test
+	     * This doesn't appear to test much, but it will cause us to examine $status so if
+	     * it's not set then we'll trigger a PHP warning which will fail the test
 	     */
 	    $this->assert(isset($status) || $status == null, 'plugin status result missing');
 	}

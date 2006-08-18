@@ -20,7 +20,8 @@
 
 /**
  * Siriux.net Gallery theme
- * @package SiriuxTheme
+ * @package Themes
+ * @subpackage Siriux
  * @author Nico Kaiser <nico@siriux.net>
  * @version $Revision$ $Date$
  */

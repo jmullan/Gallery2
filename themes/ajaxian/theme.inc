@@ -20,7 +20,8 @@
 
 /**
  * DHTML-enabled slideshow theme
- * @package AjaxianTheme
+ * @package Themes
+ * @subpackage Ajaxian
  * @author Ross Shannon <ross.shannon@gmail.com>
  * @version $Revision$ $Date$
  */

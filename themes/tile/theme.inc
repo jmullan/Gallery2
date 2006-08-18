@@ -21,7 +21,8 @@
 /**
  * Theme with a tiled background image and image thumbnails on top of it.
  * Displays inline items ONLY; subalbums or other item types are NOT shown.
- * @package TileTheme
+ * @package Themes
+ * @subpackage Tile
  * @author Alan Harder <alan.harder@sun.com>
  * @version $Revision$ $Date$
  */

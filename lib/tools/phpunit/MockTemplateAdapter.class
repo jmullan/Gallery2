@@ -18,6 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/**
+ * Mock template adapter for tests
+ * @package Gallery
+ * @subpackage PHPUnit
+ */
 class MockTemplateAdapter {
     function registerTrailerCallback($callback, $args) {
 	$this->_callbacks[] = array($callback, $args);

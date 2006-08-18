@@ -20,7 +20,8 @@
 
 /**
  * Variable column theme based on Matrix
- * @package FloatrixTheme
+ * @package Themes
+ * @subpackage Floatrix
  * @author Bharat Mediratta <bharat@menalto.com>
  * @version $Revision$ $Date$
  */
