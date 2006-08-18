@@ -62,11 +62,10 @@ class RewriteApi {
      */
     function isCompatibleWithApi($version) {
 	if (isset($this->_error)) {
-	    return array($ret, null);
+	    return array($this->_error, null);
 	}
 
-	return array(null,
-	    GalleryUtilities::isCompatibleWithApi($this->getApiVersion(), $version));
+	return array(null, GalleryUtilities::isCompatibleWithApi($this->getApiVersion(), $version));
     }
 
     /**
@@ -83,7 +82,7 @@ class RewriteApi {
      */
     function needsEmbedConfig() {
    	if (isset($this->_error)) {
-	    return array($ret, null);
+	    return array($this->_error, null);
 	}
 
 	if (!GalleryUtilities::isEmbedded()) {
@@ -107,7 +106,7 @@ class RewriteApi {
      */
     function fetchEmbedConfig() {
 	if (isset($this->_error)) {
-	    return array($ret, null);
+	    return array($this->_error, null);
 	}
 
 	if (!GalleryUtilities::isEmbedded()) {
@@ -133,7 +132,7 @@ class RewriteApi {
      */
     function saveEmbedConfig($params) {
 	if (isset($this->_error)) {
-	    return array($ret, null, null);
+	    return array($this->_error, null, null);
 	}
 
 	if (!GalleryUtilities::isEmbedded()) {
