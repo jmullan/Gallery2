@@ -133,6 +133,7 @@ class AdminPluginsView extends GalleryView {
 	$template->javascript('lib/yui/event-min.js');
 	$template->javascript('lib/yui/dom-min.js');
 	$template->javascript('lib/yui/connection-min.js');
+	$template->javascript('modules/core/templates/AdminPlugins.js');
 
 	return array(null,
 		     array('body' => 'modules/core/templates/AdminPlugins.tpl'));
