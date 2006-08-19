@@ -29,25 +29,22 @@ class GalleryTranslator {
 
     /**
      * Keep track of the gettext domains we've already bound
-     *
+     * @var array
      * @access private
-     * @var array $_boundDomains
      */
     var $_boundDomains;
 
     /**
      * Currently selected locale
-     *
+     * @var string
      * @access private
-     * @var string $_languageCode
      */
     var $_languageCode;
 
     /**
      * Does the active language read right-to-left?
-     *
+     * @var boolean
      * @access private
-     * @var boolean $_isRightToLeft
      */
     var $_isRightToLeft;
 
@@ -84,7 +81,7 @@ class GalleryTranslator {
 
     /**
      * Return our language data.
-     * @TODO: Move this information into a configuration file
+     * @todo Move this information into a configuration file
      *
      * @return array array['language code']['country code'] = array('description', 'right-to-left'?)
      *         array array('country' => 'default language code',

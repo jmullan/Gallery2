@@ -17,25 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * A collection of useful charset related utilities
- *
  * @package GalleryCore
- * @subpackage Classes
+ * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
-
 class GalleryCharsetHelper_simple {
 
     /**
      * Detect the standard charset for this system
-     *
-     * @return string an encoding (eg "UTF-8" or "Windows-1252")
+     * @return string an encoding (eg. "UTF-8" or "Windows-1252")
      */
     function detectSystemCharset() {
 	static $cacheKey = 'GalleryCharsetHelper_simple::detectSystemCharset';
@@ -70,12 +65,12 @@ class GalleryCharsetHelper_simple {
 	     *    French_France.1252
 	     */
 	    if (count($lcTable) == 1) {
-	    	$lcCandidate = $lcTable[0];
+		$lcCandidate = $lcTable[0];
 	    } else {
 		foreach ($lcTable as $lc) {
 		    if (!strncmp($lc, "LC_CTYPE", 8)) {
-		    	$lcCandidate = $lc;
-		    	break;
+			$lcCandidate = $lc;
+			break;
 		    }
 		}
 	    }
@@ -105,7 +100,7 @@ class GalleryCharsetHelper_simple {
 	     */
 	    $intEncoding = (int)$sourceEncoding;
 	    if ($intEncoding >= 1250 && $intEncoding <= 1259) {
-	        if ($intEncoding == 1252) {
+		if ($intEncoding == 1252) {
 		    $sourceEncoding = 'Windows-1252';
 		} else {
 		    $sourceEncoding = 'CP' . $intEncoding;
@@ -124,11 +119,7 @@ class GalleryCharsetHelper_simple {
     }
 
     /**
-     * Convert the string from the source encoding to UTF8
-     *
-     * @param string the input string
-     * @param string the source encoding (eg, 'ISO-8859-1'), defaults from current locale
-     * @return string the result
+     * @see GalleryCoreApi::convertToUtf8
      */
     function convertToUtf8($string, $sourceEncoding=null) {
 	global $gallery;
@@ -166,17 +157,12 @@ class GalleryCharsetHelper_simple {
     }
 
     /**
-     * Convert the string from the internal encoding (ITF-8) to target encoding
-     * Target encoding defaults to the system charset
+     * @see GalleryCoreApi::convertFromUtf8
      *
      * Warning: If neither iconv, mb_convert_encoding, or recode_string is available
      *          we will use a manual mapping from UTF-8 to the target encoding which is
      *          INCOMPLETE. That is, we only convert the characters that are in our
      *          charset tables from GalleryCharsetHelper_medium.
-     *
-     * @param string the input string
-     * @param string the target encoding (eg, 'ISO-8859-1'), defaults to system charset
-     * @return string the result
      */
     function convertFromUtf8($string, $targetEncoding=null) {
 	global $gallery;

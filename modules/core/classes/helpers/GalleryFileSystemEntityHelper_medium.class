@@ -17,31 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Helper class for GalleryFileSystemEntities
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryFileSystemEntityHelper_medium {
 
     /**
-     * Typically, we create a FileSystemEntity with a specific path.  This
-     * allows us to check for name collisions at this point.
-     *
-     * @param string the path component
-     * @param int the id of the target parent
-     * @param int (optional) ignore path collision with this id
-     * @return array object GalleryStatus a status code
-     *               boolean true if there's a collision
-     * @static
+     * @see GalleryCoreApi::checkPathCollision
      */
     function checkPathCollision($pathComponent, $parentId, $selfId=null) {
 	global $gallery;
@@ -78,15 +66,7 @@ class GalleryFileSystemEntityHelper_medium {
     }
 
     /**
-     * Get a legal path component in the given parent id.  Legal by the platform standards, and
-     * legal in that it doesn't cause a conflict with other path components.
-     *
-     * @param string the starting path component (eg, "IMG_10293.JPG")
-     * @param int the target parent id
-     * @param int (optional) ignore path collision with this id
-     * @return array object GalleryStatus a status code
-     *               string the legal path component
-     * @static
+     * @see GalleryCoreApi::getLegalPathComponent
      */
     function getLegalPathComponent($pathComponent, $parentId, $selfId=null) {
 	global $gallery;

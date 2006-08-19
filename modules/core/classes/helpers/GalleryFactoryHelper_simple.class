@@ -17,25 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * A factory for creating all different kinds of objects
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryFactoryHelper_simple {
 
     /**
      * Reset the static factory registry
-     *
-     * @static
      */
     function deleteCache() {
 	$cacheParams = array('type' => 'module',
@@ -64,10 +58,9 @@ class GalleryFactoryHelper_simple {
     /**
      * Get the static factory registry
      *
+     * @staticvar array $registry The only factory registry we will need
      * @return array factory data
      * @access private
-     * @staticvar array $registry The only factory registry we will need
-     * @static
      */
     function &_getFactoryData() {
 	global $gallery;
@@ -111,13 +104,7 @@ class GalleryFactoryHelper_simple {
     }
 
     /**
-     * Create a new instance of the given type based on the hint(s) provided
-     *
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param array of hints to try (in order) or string, a single hint (eg. 'image/jpeg')
-     * @return array object GalleryStatus a status code,
-     *               object an instance
-     * @static
+     * @see GalleryCoreApi::newFactoryInstanceByHint
      */
     function newInstanceByHint($classType, $hints) {
 	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
@@ -151,13 +138,7 @@ class GalleryFactoryHelper_simple {
     }
 
     /**
-     * Create a new instance of the given type
-     *
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param string the class name (eg. 'NetPbmGraphics')
-     * @return object GalleryStatus a status code
-     *         object the instance
-     * @static
+     * @see GalleryCoreApi::newFactoryInstance
      */
     function newInstance($classType, $className=null) {
 	global $gallery;
@@ -210,13 +191,7 @@ class GalleryFactoryHelper_simple {
     }
 
     /**
-     * Create a new instance of the given type based on the id provided
-     *
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param string the class name (eg. 'NetPBM')
-     * @return array object GalleryStatus a status code,
-     *               object an instance
-     * @static
+     * @see GalleryCoreApi::newFactoryInstanceById
      */
     function newInstanceById($classType, $id) {
 	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();

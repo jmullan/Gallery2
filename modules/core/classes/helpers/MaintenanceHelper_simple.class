@@ -17,25 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * A collection of useful maintenance related methods
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  * @static
  */
 class MaintenanceHelper_simple {
+
     /**
      * Fetch all the available maintenance tasks
      * @return array object GalleryStatus a status code
      *               array(taskId => object MaintenanceTask, ...)
-     * @static
      */
     function fetchTasks() {
 	/* Get all the option plugins */
@@ -67,7 +63,6 @@ class MaintenanceHelper_simple {
      *                     timestamp => int,
      *                     success => bool,
      *                     details => string)
-     * @access private
      */
     function fetchLastRun($taskId) {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryMaintenanceMap',

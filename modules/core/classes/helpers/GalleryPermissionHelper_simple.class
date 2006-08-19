@@ -17,29 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * The central registry for all permissions in the system
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryPermissionHelper_simple {
 
     /**
-     * Fetch all the access list ids that grant the given permission to the
-     * given user (either directly or via a group).
-     *
-     * @param string the permission id (eg, 'core.view')
-     * @param int the user id
-     * @param boolean (optional) false to ignore session based permissions
-     * @return array object GalleryStatus a status code
-     *               array int access list ids
+     * @see GalleryCoreApi::fetchAccessListIds
      */
     function fetchAccessListIds($permission, $userId, $sessionPermissions=true) {
 	global $gallery;
@@ -112,19 +102,13 @@ class GalleryPermissionHelper_simple {
     /**
      * Clear all cached access list ids
      * @access private
-     * @static
      */
     function _clearCachedAccessListIds() {
 	GalleryDataCache::removeByPattern("GalleryPermissionHelper::fetchAccessListIds");
     }
 
     /**
-     * Return the permission bits for a set of permission ids
-     *
-     * @param array of string permission ids or single permission id
-     * @return array object GalleryStatus a status code
-     *               integer bits
-     * @static
+     * @see GalleryCoreApi::convertPermissionIdsToBits
      */
     function convertIdsToBits($permissionIds) {
 	global $gallery;
@@ -160,7 +144,7 @@ class GalleryPermissionHelper_simple {
      *                                            'bits' => ...,
      *                                            'flags' => ...)
      *                      ...)
-     * @static
+     * @access protected
      */
     function _fetchAllPermissions() {
 	global $gallery;
@@ -175,9 +159,8 @@ class GalleryPermissionHelper_simple {
 	    }
 
 	    /*
-	     * Remember that the permission description stored in the database
-	     * is an internationalized value that must be localized before it
-	     * can be returned.
+	     * Remember that the permission description stored in the database is an
+	     * internationalized value that must be localized before it can be returned.
 	     */
 
 	    $translator =& $gallery->getTranslator();
@@ -210,12 +193,7 @@ class GalleryPermissionHelper_simple {
     }
 
     /**
-     * Study the permissions for all items (for the given user)
-     *
-     * @param array GalleryItem ids
-     * @param int an optional user id (default is current user)
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::studyPermissions
      */
     function studyPermissions($itemIds, $userId=null) {
 	list ($ret, $permissionsTable) =
@@ -234,13 +212,7 @@ class GalleryPermissionHelper_simple {
     }
 
     /**
-     * Return a list of permissions for the given items
-     *
-     * @param array int GalleryItem ids
-     * @param int [optional] id of the user whose permissions we search for
-     * @return array object GalleryStatus a status code
-     *               array (id => array(array(permission.id => 1, ...), ...)
-     * @static
+     * @see GalleryCoreApi::fetchPermissionsForItems
      */
     function fetchPermissionsForItems($itemIds, $userId=null) {
 	global $gallery;
@@ -343,13 +315,7 @@ class GalleryPermissionHelper_simple {
     }
 
     /**
-     * Return all the permission ids for a permission bit set
-     *
-     * @param int the bit mask
-     * @param boolean should we compress the permission list?
-     * @return array object GalleryStatus a status code
-     *               array (bits, bits, bits)
-     * @static
+     * @see GalleryCoreApi::convertPermissionBitsToIds
      */
     function convertBitsToIds($permissionBits, $compress=false) {
 	global $gallery;
@@ -434,22 +400,15 @@ class GalleryPermissionHelper_simple {
 	}
 
 	/*
-	 * We might have a left over value in $permissionBits here if it
-	 * contains some bits used by permissions that are no longer in the
-	 * system.  That shouldn't happen if modules clean up after themselves
-	 * properly.
+	 * We might have a left over value in $permissionBits here if it contains some bits
+	 * used by permissions that are no longer in the system.  That shouldn't happen if
+	 * modules clean up after themselves properly.
 	 */
 	return array(null, $results);
     }
 
     /**
-     * Return all the permissions that the given user has for the given item.
-     *
-     * @param int item id
-     * @param int an optional user id (default is current user)
-     * @return array object GalleryStatus a status code
-     *               array (perm1, perm2)
-     * @static
+     * @see GalleryCoreApi::getPermissions
      */
     function getPermissions($itemId, $userId=null) {
 	$cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId)";

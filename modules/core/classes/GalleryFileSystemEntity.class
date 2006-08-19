@@ -44,6 +44,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * The path component of this item (eg. "image1").  This value, when combined with the paths
      * of all the parent objects (say, "rootAlbum", "album01") will form the complete path to the
      * item ("rootAlbum/album01/image1").
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>pathComponent</member-name>
@@ -51,11 +52,9 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2   <indexed/>
      * @g2 </member>
-     *
-     * @var string $pathComponent
-     * @access public
      */
     var $pathComponent;
+
 
     /**
      * Create a new instance of this FileSystemEntity in the persistent store.
@@ -175,7 +174,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      *
      * @param int the id of the new parent GalleryItem
      * @return object GalleryStatus a status code
-     * @TODO Make sure that 'order' stuff is maintained, so that the moved
+     * @todo Make sure that 'order' stuff is maintained, so that the moved
      *       items become the last in order in the new album if that album is marked as unordered
      */
     function move($newParentId) {

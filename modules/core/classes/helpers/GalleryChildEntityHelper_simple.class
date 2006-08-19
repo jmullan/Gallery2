@@ -17,33 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Ernesto Baschny <ernst@baschny.de>
- */
 
 /**
  * Helper class for GalleryChildEntities
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryChildEntityHelper_simple {
 
     /**
-     * Return the ids of all the child items of the given item that have the
-     * matching permission.  Useful for, example, for finding all the children
-     * where we (the active user) has the 'core.changePermissions' permission
-     * bit set.  This allows us to cascade permission updates.
-     *
-     * @param int item id
-     * @param int permission id
-     * @return array object GalleryStatus a status code
-     *               array integer ids
-     * @access public
-     * @static
+     * @see GalleryCoreApi::fetchChildItemIdsWithPermission
      */
     function fetchChildItemIdsWithPermission($itemId, $permissionId) {
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -65,17 +51,7 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Return the ids of all the child items of the given item that have the
-     * matching permission and are linkable entities.  Useful for, example, for
-     * finding all the children where we (the active user) has the 'core.changePermissions'
-     * permission bit set.  This allows us to cascade permission updates.
-     *
-     * @param array item ids
-     * @param int permission id
-     * @return array object GalleryStatus a status code
-     *               array integer ids
-     * @access public
-     * @static
+     * @see GalleryCoreApi::fetchLinkableChildItemIdsWithPermission
      */
     function fetchLinkableChildItemIdsWithPermission($itemId, $permissionId) {
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -97,18 +73,7 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Return the ids of the children of this entity, in the order specified
-     * by the orderBy field and the direction specified by the orderDirection
-     * field, that are visible to the given user.
-     *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param int optional user id.  Defaults to current user id
-     * @return array object GalleryStatus a status code
-     *               array integer ids
-     * @access public
-     * @static
+     * @see GalleryCoreApi::fetchChildItemIds
      */
     function fetchChildItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
@@ -120,18 +85,7 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Return the ids of the dataitem children of this entity, in the order specified
-     * by the orderBy field and the direction specified by the orderDirection
-     * field, that are visible to the given user.
-     *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param int optional user id.  Defaults to current user id
-     * @return array object GalleryStatus a status code
-     *               array integer ids
-     * @access public
-     * @static
+     * @see GalleryCoreApi::fetchChildDataItemIds
      */
     function fetchChildDataItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
@@ -143,18 +97,7 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Return the ids of the subalbums of this entity, in the order specified
-     * by the orderBy field and the direction specified by the orderDirection
-     * field, that are visible to the given user.
-     *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param int optional user id.  Defaults to current user id
-     * @return array object GalleryStatus a status code
-     *               array integer ids
-     * @access public
-     * @static
+     * @see GalleryCoreApi::fetchChildAlbumItemIds
      */
     function fetchChildAlbumItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
@@ -166,17 +109,7 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Return the ids of the children of this entity, in the order specified
-     * by the orderBy field and the direction specified by the orderDirection
-     * field, bypassing user permissions.
-     *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @return array object GalleryStatus a status code
-     *               array integer ids
-     * @access public
-     * @static
+     * @see GalleryCoreApi::fetchChildItemIdsIgnorePermissions
      */
     function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
@@ -240,20 +173,7 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Build query to select items in a given sort order
-     *
-     * @param string base table to query
-     * @param string name of id column in this table
-     * @param string where clause for query
-     * @param string order for results
-     * @param string order direction for results
-     * @param string a class to restrict children to (eg 'GalleryAlbumItem'; can be null)
-     * @param string a required permission (can be null)
-     * @param boolean whether to restrict to linkable items only
-     * @param int the userid we're doing this for
-     * @return array object GalleryStatus a status code
-     *               string query
-     *               array data items for query (not including any ? marks in baseQuery)
+     * @see GalleryCoreApi::buildItemQuery
      */
     function buildItemQuery($baseTable, $baseIdColumn, $baseQuery, $orderBy, $orderDirection,
 			    $class, $requiredPermission, $linkableOnly, $userId) {
@@ -311,13 +231,7 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Load all the ancestors of this item
-     *
-     * @param object GalleryItem an item
-     * @param string (optional) only return ancestors with this permission
-     * @return array object GalleryStatus a status code
-     *               array of GalleryItem, from top level to parent item
-     * @static
+     * @see GalleryCoreApi::fetchParents
      */
     function fetchParents($item, $permission=null) {
 	global $gallery;
@@ -373,7 +287,8 @@ class GalleryChildEntityHelper_simple {
      * @param int a count of how many child items to return (null for unlimited)
      * @param string a class to restrict children to (eg 'GalleryAlbumItem')
      * @param string a required permission (defaults to 'core.view')
-     *
+     * @return array object GalleryStatus a status code
+     *               array of ids
      * @access private
      */
     function _fetchDescendentItemIds($item, $offset, $count, $class, $requiredPermission) {
@@ -418,7 +333,7 @@ class GalleryChildEntityHelper_simple {
 	    WHERE
 	      [GalleryItemAttributesMap::parentSequence] LIKE ?
 	     AND
-              [GalleryItemAttributesMap::itemId] = [' . $class . '::id]
+	      [GalleryItemAttributesMap::itemId] = [' . $class . '::id]
 	     AND
 	     [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]
 	     AND
@@ -433,8 +348,8 @@ class GalleryChildEntityHelper_simple {
 	      [GalleryItemAttributesMap], [' . $class . ']
 	    WHERE
 	      [GalleryItemAttributesMap::parentSequence] LIKE ?
-             AND
-              [GalleryItemAttributesMap::itemId] = [' . $class . '::id]
+	     AND
+	      [GalleryItemAttributesMap::itemId] = [' . $class . '::id]
 	    ';
 	}
 
@@ -455,16 +370,7 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Return the ids of the descendents of this entity that are visible to the given user.
-     *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param string what permission is required for the item
-     * @return array object GalleryStatus a status code
-     *               array integer ids
-     * @access public
-     * @static
+     * @see GalleryCoreApi::fetchDescendentItemIds
      */
     function fetchDescendentItemIds($item, $offset, $count, $requiredPermission) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchDescendentItemIds(
@@ -476,16 +382,7 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
-     * Return the ids of the album descendents of this entity that are visible to the given user.
-     *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param string what permission is required for the item
-     * @return array object GalleryStatus a status code
-     *               array integer ids
-     * @access public
-     * @static
+     * @see GalleryCoreApi::fetchDescendentAlbumItemIds
      */
     function fetchDescendentAlbumItemIds($item, $offset, $count, $requiredPermission) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchDescendentItemIds(
@@ -513,7 +410,6 @@ class GalleryChildEntityHelper_simple {
      *               string a row matching condition,
      *               string optional join clause
      * @access private
-     * @static
      */
     function _getOrderInfo($orderBy, $orderDirection) {
 	global $gallery;

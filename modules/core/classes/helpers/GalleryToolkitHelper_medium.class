@@ -17,43 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * This is a helper class that provides an interface to the GalleryToolkit
- * api.  Modules that implement a GalleryToolkit interface can register their
- * various operations and properties using this class, and then classes that
- * want to use a toolkit operation or property can locate the appropriate
- * toolkit by operation/property and mime type.
+ * This is a helper class that provides an interface to the GalleryToolkit api.  Modules that
+ * implement a GalleryToolkit interface can register their various operations and properties
+ * using this class, and then classes that want to use a toolkit operation or property can locate
+ * the appropriate toolkit by operation/property and mime type.
  *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryToolkitHelper_medium {
 
     /**
-     * Register the operations that a toolkit is able to perform on a
-     * certain mime type
-     *
-     * This should be called by a module that provides a toolkit to
-     * access certain mime types. The module should also call
-     * GalleryCoreApi::registerFactoryImplementation with the same "id" that it
-     * registers here, so the correct class can be found later
-     *
-     * @param string the id of the toolkit
-     * @param array the applicable mime types for this operation
-     * @param string the id of the operation
-     * @param array a list of parameters that this operation requires
-     * @param string a translatable description of this operation
-     * @param string the output mime type after performing this operation
-     * @param integer priority of this implementation vs other toolkits
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::registerToolkitOperation
      */
     function registerOperation($toolkitId, $mimeTypes, $operationName,
 			       $parameterTypesArray, $description,
@@ -148,21 +128,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Register a parameter that a toolkit can extract from a certain
-     * mime type
-     *
-     * This should be called by a module that provides a toolkit to
-     * access certain mime types. The module should also call
-     * GalleryCoreApi::registerFactoryImplementation with the same "id" that it
-     * registers here, so the correct class can be found later
-     *
-     * @param string the id of the toolkit
-     * @param array the applicable mime types for this property
-     * @param string the name of the property
-     * @param string the type of the property
-     * @param string a translatable description of this operation
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::registerToolkitProperty
      */
     function registerProperty($toolkitId, $mimeTypes, $propertyName, $type, $description) {
 	global $gallery;
@@ -216,13 +182,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Unregister a toolkit's operation, for all or selected mime types.
-     *
-     * @param string a toolkit id
-     * @param string an operation id
-     * @param array the applicable mime types to remove; empty for all mime types
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::unregisterToolkitOperation
      */
     function unregisterOperation($toolkitId, $operationName, $mimeTypes=array()) {
 	$entry = array('toolkitId' => $toolkitId, 'operationName' => $operationName);
@@ -241,13 +201,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Unregister a toolkit's operations and properties.  If we have any
-     * remaining operations or properties that are no longer implemented by any
-     * toolkit then remove them from the system also.
-     *
-     * @param string a toolkit id
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::unregisterToolkit
      */
     function unregisterToolkit($toolkitId) {
 	global $gallery;
@@ -336,12 +290,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Unregister all operations and properties provided by toolkits implemented
-     * by the given module.
-     *
-     * @param string the id of the module
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::unregisterToolkitsByModuleId
      */
     function unregisterToolkitsByModuleId($moduleId) {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryFactoryMap',
@@ -366,18 +315,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Get all valid operations on a certain mime type
-     *
-     * @access public
-     * @static
-     * @param string a mime type
-     * @return array object GalleryStatus a status code
-     *               array('name' => ...,
-     *                     'outputMimeType' => ...,
-     *                     'description' => ...,
-     *                     arguments => array('type' => ...,
-     *                                        'description' => ...),
-     *                                  ...)
+     * @see GalleryCoreApi::getToolkitOperations
      * @todo use priorities for choosing the correct toolkit
      */
     function getOperations($mimeType) {
@@ -440,16 +378,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Get all valid properties of a certain mime type
-     *
-     * @access public
-     * @static
-     * @param string a mime type
-     * @return array object GalleryStatus a status code
-     *               array (
-     *                  array('name' => property, 'type' => type, 'description' => description), ..
-     *               )
-     *
+     * @see GalleryCoreApi::getToolkitProperties
      * @todo use priorities for choosing the correct toolkit
      */
     function getProperties($mimeType) {
@@ -492,13 +421,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Get all valid input mime types for a certain operation
-     *
-     * @access public
-     * @static
-     * @param string operation name
-     * @return object GalleryStatus a status code
-     *         array(mime type => array(toolkit ids, sorted by priority))
+     * @see GalleryCoreApi::getToolkitOperationMimeTypes
      */
     function getOperationMimeTypes($operationName) {
 	global $gallery;
@@ -508,11 +431,11 @@ class GalleryToolkitHelper_medium {
 	    $data = array();
 	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    list ($ret, $searchResults) =
-	    	GalleryCoreApi::getMapEntry('GalleryToolkitOperationMimeTypeMap',
+		GalleryCoreApi::getMapEntry('GalleryToolkitOperationMimeTypeMap',
 		array('mimeType', 'toolkitId', 'priority'),
 		array('operationName' => $operationName),
 		array('orderBy' => array('mimeType' => ORDER_ASCENDING,
-		    			 'priority' => ORDER_ASCENDING)));
+					 'priority' => ORDER_ASCENDING)));
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -530,12 +453,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Get list of toolkits/priorities in managed priority range (20-40) for which
-     * another toolkit supports a same operation and mime type.
-     *
-     * @return array object GalleryStatus a status code
-     *               array (toolkitId=>priority, ..)
-     * @static
+     * @see GalleryCoreApi::getRedundantToolkitPriorities
      */
     function getRedundantPriorities() {
 	global $gallery;
@@ -579,16 +497,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Verify that a given mime-type/operation-sequence combination is
-     * supported by our existing toolkits by walking the sequence and making
-     * sure that we have a toolkit that can handle each operation.
-     *
-     * @param string the original mime type
-     * @param string a sequence of operations
-     * @return object GalleryStatus a status code
-     *         boolean true if supported, false if not
-     *         string the output mime type
-     * @static
+     * @see GalleryCoreApi::isSupportedOperationSequence
      */
     function isSupportedOperationSequence($mimeType, $operations) {
 
@@ -617,16 +526,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Make sure operation sequence is supported and produces a browser-viewable
-     * output mime type.  Add convert-to-image/jpeg operation if needed.
-     *
-     * @param string the original mime type
-     * @param string a sequence of operations
-     * @param boolean (optional) true to try prepending convert-to-image/xxx if needed
-     * @return array object GalleryStatus a status code
-     *               string a sequence of operations, null if not supported
-     *               string the output mime type, null if not supported
-     * @static
+     * @see GalleryCoreApi::makeSupportedViewableOperationSequence
      */
     function makeSupportedViewableOperationSequence($mimeType, $operations,
 						    $prependConversion=true) {
@@ -661,9 +561,9 @@ class GalleryToolkitHelper_medium {
 		}
 	    }
 	}
- 	if (!$isSupported) {
- 	    return array(null, null, null);
-  	}
+	if (!$isSupported) {
+	    return array(null, null, null);
+	}
 
 	/* If the output type isn't viewable, then try to turn it into a form that *is* viewable. */
 	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($outputMimeType);
@@ -696,13 +596,7 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
-     * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
-     *
-     * @param object GalleryDerivativeImage the derivative
-     * @param object GalleryDerivativeEntity the source
-     *               (probably a GalleryPhotoItem or GalleryMovieItem)
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::estimateDerivativeDimensions
      */
     function estimateDerivativeDimensions(&$derivative, $source) {
 	if (preg_match('/^(thumbnail|scale|resize)\|/',

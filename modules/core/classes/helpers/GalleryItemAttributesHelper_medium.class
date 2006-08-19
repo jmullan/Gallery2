@@ -17,24 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- *
+ * Helper functions for ItemAttributes map
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryItemAttributesHelper_medium {
+
     /**
-     * Get the order weight for a given item id
-     * @param int the item id
-     * @return array object GalleryStatus a status code
-     *               int the order weight
-     * @static
+     * @see GalleryCoreApi::fetchItemOrderWeight
      */
     function fetchOrderWeight($itemId) {
 	list ($ret, $orderWeights) =
@@ -51,12 +46,7 @@ class GalleryItemAttributesHelper_medium {
     }
 
     /**
-     * Get the order weight for many item ids
-     * @param array the item ids
-     * @return array object GalleryStatus a status code
-     *               array(itemId1 => orderWeight1,
-     *                     itemId2 => orderWeight2, ...)
-     * @static
+     * @see GalleryCoreApi::fetchItemOrderWeights
      */
     function fetchOrderWeights($itemIds) {
 	global $gallery;

@@ -32,144 +32,129 @@ class Gallery {
 
     /**
      * The active GalleryUser instance
-     *
+     * @var object GalleryUser
      * @access private
-     * @var object GalleryUser $_activeUser
      */
     var $_activeUser;
 
     /**
      * Storage for all configuration variables, set in config.php.  The values contained here can't
      * be modified.  Well, they can be modified but they can't be saved so it's not a good idea.
-     *
+     * @var array
      * @access private
-     * @var array $_config
      */
     var $_config;
 
     /**
      * The current debugging mode.  One of 'buffered', 'logged', 'immediate' or false.
-     *
+     * @var string
      * @access private
-     * @var string $_debug
      */
     var $_debug;
 
     /**
      * Where to send debug output (when the debugging mode is set to 'logged')
-     *
+     * @var string
      * @access private
-     * @var boolean $_debugLogFile
      */
     var $_debugLogFile;
 
     /**
      * A place to temporarily store debug output when the debugging mode is set to 'buffered'
-     *
+     * @var string
      * @access private
-     * @var boolean $_debugBuffer
      */
     var $_debugBuffer;
 
     /**
      * A secondary debug buffer used to record debug output even if regular debug mode is disabled.
-     *
+     * @var string
      * @access private
-     * @var string $_debugSnippet
      */
     var $_debugSnippet = null;
 
     /**
      * Are we currently recording a debug snippet?
-     *
+     * @var boolean
      * @access private
-     * @var boolean $_debugSnippetActive
      */
     var $_debugSnippetActive = false;
 
     /**
      * The active GalleryLockSystem implementation
+     * @var object GalleryLockSystem
+     * @access private
      */
     var $_lockSystem;
 
     /**
      * An instance of the GalleryPlatform class
-     *
+     * @var object GalleryPlatform
      * @access private
-     * @var object GalleryPlatform $_platform
      */
     var $_platform;
 
     /**
      * The current profiling mode.
-     *
+     * @var string
      * @access private
-     * @var string $_profile
      */
     var $_profile;
 
     /**
      * Storage for all session variables.
-     *
+     * @var object GallerySession
      * @access private
-     * @var object GallerySession $_session
      */
     var $_session;
 
     /**
      * The backend persistent store for the Gallery class
-     *
+     * @var object GalleryStorage
      * @access private
-     * @var object GalleryStorage $_storage
      */
     var $_storage;
 
     /**
      * The adapter between the template system and any Gallery callbacks that want to use in the
      * template process.
-     *
+     * @var object GalleryTemplateAdapter
      * @access private
-     * @var object GalleryTemplateAdapter $_templateAdapter
      */
     var $_templateAdapter;
 
     /**
      * Instance of the GalleryTranslator class
-     *
+     * @var object GalleryTranslator
      * @access private
-     * @var object $_translator
      */
     var $_translator;
 
     /**
      * Instance of the GalleryUrlGenerator class
-     *
+     * @var object GalleryUrlGenerator
      * @access private
-     * @var object $_urlGenerator
      */
     var $_urlGenerator;
 
     /**
      * The name of the current view
-     *
+     * @var string
      * @access private
-     * @var string $_currentView
      */
     var $_currentView = '';
 
     /**
      * The time at which we should cease whatever operation we're doing
-     *
+     * @var int
      * @access private
-     * @var int $_timeLimit
      */
     var $_timeLimit;
 
     /**
      * Actions to perform at the end of the request
-     *
+     * @var array
      * @access private
-     * @var array $_shutdownActions
      */
     var $_shutdownActions;
 
@@ -177,9 +162,8 @@ class Gallery {
      * A facade in front of the PHP virtual machine.  We use this as an abstraction layer to let us
      * interpose mock objects between our code and the VM for testing purposes.  When we're not in a
      * test environment, this is always an instance of GalleryPhpVm.
-     *
-     * @access private
      * @var object GalleryPhpVm
+     * @access private
      */
     var $_phpVm = null;
 

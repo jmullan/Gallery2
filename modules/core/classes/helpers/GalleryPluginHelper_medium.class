@@ -17,28 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Track all plugins and their state
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryPluginHelper_medium {
 
     /**
-     * Activate the given plugin
-     *
-     * @param string the plugin type
-     * @param string the plugin id
-     * @return object GalleryStatus a status code
-     *               array redirect info for error page (empty for success)
-     * @static
+     * @see GalleryCoreApi::activatePlugin
      */
     function activate($pluginType, $pluginId) {
 	if (empty($pluginId) || empty($pluginType)) {
@@ -61,13 +52,7 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Deactivate the given plugin
-     *
-     * @param string the plugin type
-     * @param string the plugin id
-     * @return array object GalleryStatus a status code
-     *               array redirect info for error page (empty for success)
-     * @static
+     * @see GalleryCoreApi::deactivatePlugin
      */
     function deactivate($pluginType, $pluginId) {
 	if (empty($pluginId) || empty($pluginType)) {
@@ -90,12 +75,7 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Remove the given plugin from the map
-     *
-     * @param string the plugin type
-     * @param string the plugin id
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removePlugin
      */
     function removePlugin($pluginType, $pluginId) {
 	if (empty($pluginId) || empty($pluginType)) {
@@ -125,12 +105,7 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Get the list of all available plugins of a given type
-     *
-     * @param string the plugin type
-     * @return array object GalleryStatus a status code
-     *               string plugin ids
-     * @static
+     * @see GalleryCoreApi::getAllPluginIds
      */
     function getAllPluginIds($pluginType) {
 	global $gallery;
@@ -168,11 +143,7 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Remove all parameters for a given item id
-     *
-     * @param int the id of the GalleryItem
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removePluginParametersForItemId
      */
     function removeParametersForItemId($itemId) {
 	global $gallery;
@@ -199,14 +170,7 @@ class GalleryPluginHelper_medium {
 
 
     /**
-     * Remove a parameter for this plugin
-     *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @param string the name of the parameter
-     * @param integer or array - the id(s) of item(s) (or null for a global setting)
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removePluginParameter
      */
     function removeParameter($pluginType, $pluginId, $parameterName, $itemIds=0) {
 	global $gallery;
@@ -245,14 +209,7 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Remove a parameter for this plugin
-     *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @param string the name of the parameter
-     * @param mixed the value to be matched
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removePluginParameterByValue
      */
     function removeParameterByValue($pluginType, $pluginId, $parameterName, $parameterValue) {
 	global $gallery;
@@ -282,12 +239,7 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Remove all parameters for this plugin
-     *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removeAllPluginParameters
      */
     function removeAllParameters($pluginType, $pluginId) {
 	if (empty($pluginType) || empty($pluginId)) {
@@ -313,14 +265,7 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Set a module parameter
-     *
-     * @param string the plugin type
-     * @param string the plugin id
-     * @param string the parameter name
-     * @param string the value
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::setPluginParameter
      */
     function setParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
 	global $gallery;
@@ -339,9 +284,8 @@ class GalleryPluginHelper_medium {
 	}
 
 	/*
-	 * Figure out if this is an insert or an update.  It's an insert if
-	 * we don't have an existing parameter by that name.  Otherwise, it's
-	 * an update.
+	 * Figure out if this is an insert or an update.  It's an insert if we don't have an
+	 * existing parameter by that name.  Otherwise, it's an update.
 	 */
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
@@ -392,7 +336,6 @@ class GalleryPluginHelper_medium {
      * @param string the value of the parameter
      * @param integer the id of item (or null for a global setting)
      * @return object GalleryStatus a status code
-     * @static
      * @access private
      */
     function _addParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
@@ -431,7 +374,6 @@ class GalleryPluginHelper_medium {
      * @param string the value of the parameter
      * @param integer the id of item (or null for a global setting)
      * @return object GalleryStatus a status code
-     * @static
      * @access private
      */
     function _updateParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
@@ -462,13 +404,13 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Set a given plugin instance in the plugin cache
+     * Set a given plugin instance in the plugin cache.
+     * This should only be used by unit tests that want to force a specific dummy plugin to exist.
      *
-     * This should only be used by unit tests that want to force a specific
-     * dummy plugin to exist, temporarily.
-     *
-     * @param object Plugin a plugin instance
-     * @static
+     * @param string plugin type
+     * @param string plugin id
+     * @param object plugin instance
+     * @access protected
      */
     function setPluginInstance($pluginType, $pluginId, &$instance) {
 	GalleryDataCache::putByReference("GalleryPluginHelper::loadPlugin($pluginType, $pluginId)",

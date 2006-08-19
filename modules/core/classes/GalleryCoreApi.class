@@ -49,7 +49,7 @@ class GalleryCoreApi {
      *
      * @return array major number, minor number
      *
-     * @TODO: for next major version bump:
+     * @todo for next major version bump:
      * - remove GallerySession::getSessionId
      * - remove GalleryPlatform::recursiveFixDirPermissions
      * - remove GalleryUtilities::htmlEntityDecode
@@ -66,11 +66,11 @@ class GalleryCoreApi {
     /**
      * Register a new implementation with the factory
      *
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param string the class name (eg. 'NetPbmGraphics')
+     * @param string the class type (eg. 'GalleryToolkit')
+     * @param string the class name (eg. 'NetPbmToolkit')
      * @param string an implementation id (eg. 'NetPBM')
      * @param string the relative path to the implementation file
-     *               (eg. 'modules/netpbm/classes/NetPbmGraphics.class')
+     *               (eg. 'modules/netpbm/classes/NetPbmToolkit.class')
      * @param string the id of the module containing the implementation (eg. 'netpbm')
      * @param array optional hints that can be used to locate this
      *              implementation (eg. array('image/jpeg', 'image/gif'))
@@ -1128,8 +1128,8 @@ class GalleryCoreApi {
      *
      * @param int the position of this preference
      * @param int the item id
-     * @param int the derivative type (eg, DERIVATIVE_TYPE_IMAGE_THUMBNAIL)
-     * @param string the derivative operations (eg, 'thumbnail|200')
+     * @param int the derivative type (eg. DERIVATIVE_TYPE_IMAGE_THUMBNAIL)
+     * @param string the derivative operations (eg. 'thumbnail|200')
      * @return object GalleryStatus a status code
      */
     function addDerivativePreference($order, $itemId, $derivativeType, $derivativeOperations) {
@@ -1167,8 +1167,8 @@ class GalleryCoreApi {
 
     /**
      * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
-     * @TODO: This method knows too much about a small set of operations.  We should move it into
-     *        the toolkits themselves.
+     * @todo This method knows too much about a small set of operations.  We should move it into
+     *       the toolkits themselves.
      *
      * @param object GalleryDerivativeImage the derivative
      * @param object GalleryDerivativeEntity the source
@@ -2559,7 +2559,7 @@ class GalleryCoreApi {
     }
 
     /**
-     * Convert the string from the internal encoding (ITF-8) to target encoding.
+     * Convert the string from the internal encoding (UTF-8) to target encoding.
      *
      * @param string the input string
      * @param string the target encoding (eg. ISO-8859-1), defaults to system charset

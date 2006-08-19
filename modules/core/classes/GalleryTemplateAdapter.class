@@ -31,13 +31,13 @@ class GalleryTemplateAdapter {
 
     /**
      * The number of times our block callbacks have been executed
-     * @var array _callCount
+     * @var array
+     * @access private
      */
     var $_callCount;
 
     /**
      * The active theme
-     *
      * @var object GalleryTheme
      * @access private
      */
@@ -46,24 +46,21 @@ class GalleryTemplateAdapter {
     /**
      * Aggregation of text that we want to output at the bottom of the page,
      * useful for when we need to put javascript at the bottom.
-     *
-     * @var string $_trailer
+     * @var string
      * @access private
      */
     var $_trailer;
 
     /**
      * Registered callbacks that will get executed during the trailer.
-     *
-     * @var array $_trailerCallbacks
+     * @var array
      * @access private
      */
     var $_trailerCallbacks = array();
 
     /**
      * Current state of the progress bar.
-     *
-     * @var array $_progressBarStats
+     * @var array
      * @access private
      */
     var $_progressBarStats;
@@ -176,7 +173,7 @@ class GalleryTemplateAdapter {
 
     /**
      * Return a valid Gallery date.
-     * @TODO This needs to be refactored.
+     * @todo This needs to be refactored.
      *
      * @param array data in key/value pairs
      * @return string date
@@ -272,7 +269,7 @@ class GalleryTemplateAdapter {
 
     /**
      * Delegate to the appropriate item class to render an image.
-     * @TODO: Figure out a more graceful way to deal with errors here.
+     * @todo Figure out a more graceful way to deal with errors here.
      *
      * @param array containing item, image, maxSize, fallback, and any img attributes
      * @param object Smarty the smarty instance

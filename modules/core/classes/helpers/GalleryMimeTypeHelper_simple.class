@@ -17,27 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * A collection of useful mime type related utilities
- *
  * @package GalleryCore
- * @subpackage Classes
+ * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryMimeTypeHelper_simple {
 
     /**
-     * Convert a file extension to a mime type
-     *
-     * @param string a file extension
-     * @return array object GalleryStatus a status code
-     *               string a mime type (application/unknown if no known mapping)
-     * @static
+     * @see GalleryCoreApi::convertExtensionToMime
      */
     function convertExtensionToMime($extension) {
 	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
@@ -52,12 +44,7 @@ class GalleryMimeTypeHelper_simple {
     }
 
     /**
-     * Convert a mime type to a file extension
-     *
-     * @param string a mime type
-     * @return array object GalleryStatus a status code
-     *               array of file extensions (empty array if no known mapping)
-     * @static
+     * @see GalleryCoreApi::convertMimeToExtensions
      */
     function convertMimeToExtensions($mimeType) {
 	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
@@ -72,14 +59,7 @@ class GalleryMimeTypeHelper_simple {
     }
 
     /**
-     * Figure out the file's mime type
-     *
-     * Eg, "foo.jpg" returns "image/jpeg"
-     *
-     * @param string the filename
-     * @return array object GalleryStatus a status code
-     *               string a mime type (application/unknown if no known extension)
-     * @static
+     * @see GalleryCoreApi::getMimeType
      */
     function getMimeType($filename) {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
@@ -91,11 +71,7 @@ class GalleryMimeTypeHelper_simple {
     }
 
     /**
-     * Return true if the given mime type is viewble in a web browser
-     *
-     * @param string the mime type
-     * @return array object GalleryStatus a status code
-     *               boolean
+     * @see GalleryCoreApi::isViewableMimeType
      */
     function isViewableMimeType($mimeType) {
 	list ($ret, $mimeData) = GalleryMimeTypeHelper_simple::_getMimeData();
@@ -116,7 +92,6 @@ class GalleryMimeTypeHelper_simple {
      *                     'by-mimetype' => array(string mime => array('exts' => array of strings,
      *                                                                 'viewable' => boolean)))
      * @access private
-     * @static
      */
     function &_getMimeData() {
 	$mimeData =& GalleryMimeTypeHelper_simple::_getSingleton();
@@ -169,9 +144,8 @@ class GalleryMimeTypeHelper_simple {
 
     /**
      * Singleton that can be cleared.
-     * @access private
      * @staticvar array $mimeData
-     * @static
+     * @access private
      */
     function &_getSingleton() {
 	static $mimeData = array();
@@ -180,9 +154,7 @@ class GalleryMimeTypeHelper_simple {
 
     /**
      * Clear cached mime type data
-     *
      * @access private
-     * @static
      */
     function _deleteCache() {
 	GalleryDataCache::removeFromDisk(array('type' => 'module', 'id' => '_all',

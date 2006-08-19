@@ -17,30 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Helper class for GalleryItems
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryItemHelper_simple {
 
     /**
-     * Return the correct themeId for this item.  Data items don't have themes, so
-     * we try to get it from the parent album.  Failing that, we get it from the
-     * site wide defaults.
-     *
-     * @param object GalleryItem instance
-     * @return array object GalleryStatus a status code
-     *               string a theme id
-     * @static
+     * @see GalleryCoreApi::fetchThemeId
      */
     function fetchThemeId($item) {
 	global $gallery;
@@ -74,14 +63,7 @@ class GalleryItemHelper_simple {
     }
 
     /**
-     * Return the number of children for the items specified, that are visible to the
-     * user specified.
-     *
-     * @param array item ids
-     * @param int an optional user id (default is the current user)
-     * @return array object GalleryStatus a status code
-     *               int a count
-     * @static
+     * @see GalleryCoreApi::fetchChildCounts
      */
     function fetchChildCounts($itemIds, $userId=null) {
 	global $gallery;
@@ -116,20 +98,20 @@ class GalleryItemHelper_simple {
 	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	    $query = sprintf('
-            SELECT
-              [GalleryChildEntity::parentId],
-              COUNT([GalleryChildEntity::id])
-            FROM
-              [GalleryChildEntity], [GalleryAccessSubscriberMap]
-            WHERE
-              [GalleryChildEntity::parentId] IN (%s)
-              AND
-              [GalleryAccessSubscriberMap::itemId] = [GalleryChildEntity::id]
-              AND
-              [GalleryAccessSubscriberMap::accessListId] IN (%s)
-            GROUP BY
-              [GalleryChildEntity::parentId]
-            ', $parentIdMarkers, $aclMarkers);
+	    SELECT
+	      [GalleryChildEntity::parentId],
+	      COUNT([GalleryChildEntity::id])
+	    FROM
+	      [GalleryChildEntity], [GalleryAccessSubscriberMap]
+	    WHERE
+	      [GalleryChildEntity::parentId] IN (%s)
+	      AND
+	      [GalleryAccessSubscriberMap::itemId] = [GalleryChildEntity::id]
+	      AND
+	      [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	    GROUP BY
+	      [GalleryChildEntity::parentId]
+	    ', $parentIdMarkers, $aclMarkers);
 
 	    $data = array_merge($missing, $aclIds);
 
@@ -149,14 +131,7 @@ class GalleryItemHelper_simple {
     }
 
     /**
-     * Get any descendent counts that we can from the cache, and then failing that
-     * recalculate them using fetchUncachedDescendentCounts and cache the new values
-     *
-     * @param int the item ids
-     * @param int an optional user id (default is the current user)
-     * @return array object GalleryStatus a status code
-     *               array(id => ##, id => ##)
-     * @static
+     * @see GalleryCoreApi::fetchDescendentCounts
      */
     function fetchDescendentCounts($itemIds, $userId=null) {
 	global $gallery;
@@ -168,8 +143,8 @@ class GalleryItemHelper_simple {
 	    $itemIds[$idx] = (int)$id;
 	}
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryDescendentCountsMap',
-	    array('itemId', 'descendentCount'), 
-	    array('userId' => $userId, 'itemId' => $itemIds));	
+	    array('itemId', 'descendentCount'),
+	    array('userId' => $userId, 'itemId' => $itemIds));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -223,7 +198,6 @@ class GalleryItemHelper_simple {
      * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               array(id => ##, id => ##)
-     * @static
      */
     function fetchUncachedDescendentCounts($itemIds, $userId) {
 	global $gallery;
@@ -268,24 +242,24 @@ class GalleryItemHelper_simple {
 	}
 
 	$query = sprintf('
-        SELECT
-          [GalleryItemAttributesMap=1::itemId],
-          COUNT([GalleryItemAttributesMap=2::itemId])
-        FROM
-          [GalleryItemAttributesMap=1],
-          [GalleryItemAttributesMap=2],
-          [GalleryAccessSubscriberMap]
-        WHERE
-          [GalleryItemAttributesMap=1::itemId] IN (%s)
-          AND
-          %s
-          AND
-          [GalleryItemAttributesMap=2::itemId] = [GalleryAccessSubscriberMap::itemId]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
-        GROUP BY
-          [GalleryItemAttributesMap=1::itemId]
-        ', $itemMarkers, $like, $aclMarkers);
+	SELECT
+	  [GalleryItemAttributesMap=1::itemId],
+	  COUNT([GalleryItemAttributesMap=2::itemId])
+	FROM
+	  [GalleryItemAttributesMap=1],
+	  [GalleryItemAttributesMap=2],
+	  [GalleryAccessSubscriberMap]
+	WHERE
+	  [GalleryItemAttributesMap=1::itemId] IN (%s)
+	  AND
+	  %s
+	  AND
+	  [GalleryItemAttributesMap=2::itemId] = [GalleryAccessSubscriberMap::itemId]
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	GROUP BY
+	  [GalleryItemAttributesMap=1::itemId]
+	', $itemMarkers, $like, $aclMarkers);
 
 	$data = array_merge($itemIds, $aclIds);
 	list ($ret, $searchResults) = $gallery->search($query, $data);
@@ -307,14 +281,7 @@ class GalleryItemHelper_simple {
     }
 
     /**
-     * Return the number of of items that match the given type and have the
-     * given permission (defaults to 'core.view')
-     *
-     * @param string an item type (eg, 'GalleryAlbumItem')
-     * @param int an optional user id (default is the current user)
-     * @return array object GalleryStatus a status code
-     *               int a count
-     * @static
+     * @see GalleryCoreApi::fetchItemIdCount
      */
     function fetchItemIdCount($itemType, $permission='core.view', $userId=null) {
 	global $gallery;

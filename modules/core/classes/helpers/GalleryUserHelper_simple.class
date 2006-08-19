@@ -17,30 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * A helper class for GalleryUsers
- *
  * Utility functions useful in managing GalleryUsers
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryUserHelper_simple {
 
     /**
-     * Assert that the given user has one of the specific permissions for the target item
-     *
-     * @param int item id
-     * @param string permission id
-     * @return object GalleryStatus success if the user has permission,
-     *                              ERROR_PERMISSION_DENIED if not.
-     * @static
+     * @see GalleryCoreApi::assertHasItemPermission
      */
     function assertHasItemPermission($itemId, $permission) {
 	global $gallery;
@@ -62,14 +51,7 @@ class GalleryUserHelper_simple {
     }
 
     /**
-     * Return true if the given user has the specific permission for the target item
-     *
-     * @param int item id
-     * @param string permission id
-     * @param int an optional user id (default is the current user)
-     * @return array object GalleryStatus a status code
-     *               boolean true if yes
-     * @static
+     * @see GalleryCoreApi::hasItemPermission
      */
     function hasItemPermission($itemId, $permission, $userId=null) {
 	global $gallery;
@@ -78,8 +60,8 @@ class GalleryUserHelper_simple {
 	}
 
 	/* Only use the permission cache from the session data for the activeUser */
-	if ($userId == $gallery->getActiveUserId() &&
-	        GalleryDataCache::hasPermission($itemId, $permission)) {
+	if ($userId == $gallery->getActiveUserId()
+		&& GalleryDataCache::hasPermission($itemId, $permission)) {
 	    return array(null, true);
 	}
 

@@ -41,6 +41,7 @@ class GalleryDerivative extends GalleryChildEntity {
 
     /**
      * What's the source of this derivative?  The source must be the id of another data container.
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>derivativeSourceId</member-name>
@@ -48,29 +49,25 @@ class GalleryDerivative extends GalleryChildEntity {
      * @g2   <indexed/>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $derivativeSourceId
-     * @access public
      */
     var $derivativeSourceId;
 
     /**
      * A sequence of operations used to derive this data from the original.
      * Can be empty, because the derivative can have only a postfilter.
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>derivativeOperations</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>LARGE</member-size>
      * @g2 </member>
-     *
-     * @var int $derivativeOperations
-     * @access public
      */
     var $derivativeOperations;
 
     /**
      * The order of this derivative relative to others
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>derivativeOrder</member-name>
@@ -78,27 +75,23 @@ class GalleryDerivative extends GalleryChildEntity {
      * @g2   <indexed/>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $derivativeOrder
-     * @access public
      */
     var $derivativeOrder;
 
     /**
      * The size of the derived object
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>derivativeSize</member-name>
      * @g2   <member-type>INTEGER</member-type>
      * @g2 </member>
-     *
-     * @var int $derivativeSize
-     * @access public
      */
     var $derivativeSize;
 
     /**
      * The type of this derivative (eg, DERIVATIVE_TYPE_IMAGE_THUMBNAIL)
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>derivativeType</member-name>
@@ -106,14 +99,12 @@ class GalleryDerivative extends GalleryChildEntity {
      * @g2   <indexed/>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $derivativeType
-     * @access public
      */
     var $derivativeType;
 
     /**
      * The mime type of data file
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>mimeType</member-name>
@@ -121,9 +112,6 @@ class GalleryDerivative extends GalleryChildEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var string $mimeType
-     * @access public
      */
     var $mimeType;
 
@@ -131,17 +119,14 @@ class GalleryDerivative extends GalleryChildEntity {
      * More operations that are applied at the very end of the derivative operations, and are
      * not carried down to derivatives that depend on this one.  Useful for operations like
      * watermarking that change the derivative in a way that we don't want to propagate.
-     *
      * Can be empty, because the derivative can have only a regular derivative operations.
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>postFilterOperations</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>LARGE</member-size>
      * @g2 </member>
-     *
-     * @var int $postFilterOperations
-     * @access public
      */
     var $postFilterOperations;
 
@@ -149,16 +134,15 @@ class GalleryDerivative extends GalleryChildEntity {
      * Is the derivative broken?
      * We set this to true if a toolkit operation failed, or for similar reasons.
      * Can be empty, which is interpreted as false.
+     * @var boolean
      *
      * @g2 <member>
      * @g2   <member-name>isBroken</member-name>
      * @g2   <member-type>BOOLEAN</member-type>
      * @g2 </member>
-     *
-     * @var int $isBroken
-     * @access public
      */
     var $isBroken;
+
 
     /**
      * Data items that can be viewed inline (photos, movies, etc) should return true.  Items that

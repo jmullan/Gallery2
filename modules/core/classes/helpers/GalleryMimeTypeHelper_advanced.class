@@ -17,28 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * A collection of useful mime type related utilities
- *
- * @package GalleryCore
- * @subpackage Classes
- */
 GalleryCoreApi::requireOnce(
     'modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
 
+/**
+ * A collection of useful mime type related utilities
+ * @package GalleryCore
+ * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
+ */
 class GalleryMimeTypeHelper_advanced {
 
     /**
      * Initialize mime types and store them in the database
-     *
      * @return object GalleryStatus a status code
-     * @static
      */
     function initializeMimeTypes() {
 	$mimeTypes = array(
@@ -231,11 +226,7 @@ class GalleryMimeTypeHelper_advanced {
     }
 
     /**
-     * Remove specified mime data from the list.
-     * examples: array('mimeType' => 'test/image') or array('extension' => array('img', 'im2'))
-     *
-     * @param associative array mime match (keys/values to delete)
-     * @return object GalleryStatus a status code
+     * @see GalleryCoreApi::removeMimeType
      */
     function removeMimeType($mimeMatch) {
 	$ret = GalleryCoreApi::removeMapEntry('GalleryMimeTypeMap', $mimeMatch);
@@ -247,14 +238,7 @@ class GalleryMimeTypeHelper_advanced {
     }
 
     /**
-     * Add the given extension to the database and map it to the specified mime type and mark it
-     * viewable as requested.  Return ERROR_COLLISION if there's already a mapping for the given
-     * extension.
-     *
-     * @param string the extension
-     * @param string the mime type
-     * @param bool whether or not it's browser viewable
-     * @return object GalleryStatus a status code
+     * @see GalleryCoreApi::addMimeType
      */
     function addMimeType($extension, $mimeType, $viewable) {
 	global $gallery;

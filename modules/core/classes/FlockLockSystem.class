@@ -35,10 +35,12 @@ class FlockLockSystem extends GalleryLockSystem {
     /**
      * Reference counts for every lock we're holding so that if we've got a file doubly read locked
      * we don't try to delete it until all read locks are released.
-     *
-     * TODO: When we get rid of double read locks, we can delete this.
+     * @todo When we get rid of double read locks, we can delete this.
+     * @var array
+     * @access private
      */
     var $_references;
+
 
     /**
      * @see GalleryLockSystem::_acquireLock

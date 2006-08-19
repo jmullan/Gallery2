@@ -17,32 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Track all plugins and their state
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryPluginHelper_simple {
 
     /**
-     * Load and initialize the given plugin
-     *
-     * @param string the plugin type (eg, module, theme, etc)
-     * @param string the plugin id
-     * @param bool should we ignore version mismatches (default: no)
-     * @param bool should we return an error on version mismatches instead of redirecting
-     *             to the upgrader?  (default: false)
-     * @param int the depth of recursion (don't set this- it's used internally)
-     * @return array object GalleryStatus a status code
-     *               object the plugin
-     * @static
+     * @see GalleryCoreApi::loadPlugin
+     * @param int $depth of recursion (don't set this; it's used internally)
      */
     function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false,
 			$errorOnVersionMismatch=false, $depth=0) {
@@ -199,11 +187,7 @@ class GalleryPluginHelper_simple {
     }
 
     /**
-     * Return true if the plugin is compatible with the current API versions.  False otherwise.
-     *
-     * @param object GalleryPlugin instance
-     * @return bool true if the plugin is compatible
-     * @static
+     * @see GalleryCoreApi::isPluginCompatibleWithApis
      */
     function isPluginCompatibleWithApis($plugin) {
 	$pluginType = $plugin->getPluginType();
@@ -218,16 +202,7 @@ class GalleryPluginHelper_simple {
     }
 
     /**
-     * Convenience method to retrieve a plugin parameter
-     *
-     * @param string the plugin type
-     * @param string the plugin id
-     * @param string the parameter name
-     * @param string optional item id
-     * @param bool ignore the disk cache (optional, default=false)
-     * @return array object GalleryStatus a status code
-     *               string a value
-     * @static
+     * @see GalleryCoreApi::getPluginParameter
      */
     function getParameter($pluginType, $pluginId, $parameterName, $itemId=0,
 			  $ignoreDiskCache=false) {
@@ -257,15 +232,7 @@ class GalleryPluginHelper_simple {
     }
 
     /**
-     * Get all the parameters for this plugin
-     *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @param integer the id of item (or null/zero for a global setting)
-     * @param bool ignore the disk cache (optional, default=false)
-     * @return array object GalleryStatus a status code
-     *               array (parameterName => parameterValue)
-     * @static
+     * @see GalleryCoreApi::fetchAllPluginParameters
      */
     function fetchAllParameters($pluginType, $pluginId, $itemId=0, $ignoreDiskCache=false) {
 	/* Convert null to 0, just in case */
@@ -289,15 +256,14 @@ class GalleryPluginHelper_simple {
      * @param bool ignore the cache (optional, default=false)
      * @return array object GalleryStatus a status code
      *               array (itemId/zero => array(parameterName => parameterValue), ..)
-     * @static
+     * @access protected
      */
     function _fetchAllParameters($pluginType, $pluginId, $itemId, $ignoreDiskCache=false) {
 	global $gallery;
 	if (empty($pluginType) || empty($pluginId)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      sprintf("Missing pluginType [%s] or pluginId [%s]",
-						      $pluginType, $pluginId)),
-			 null);
+					       sprintf("Missing pluginType [%s] or pluginId [%s]",
+						       $pluginType, $pluginId)), null);
 	}
 
 	/* Convert null to 0, just in case */
@@ -371,14 +337,7 @@ class GalleryPluginHelper_simple {
     }
 
     /**
-     * Get the status of all plugins of a given type
-     *
-     * @param string the plugin type (eg 'module', 'theme')
-     * @param bool true if we want to ignore the cache?
-     * @return array object GalleryStatus as status code
-     *                      array (moduleId => array('active' => true/false,
-     *                                               'available' => true/false)
-     * @static
+     * @see GalleryCoreApi::fetchPluginStatus
      */
     function fetchPluginStatus($pluginType, $ignoreCache=false) {
 	global $gallery;
@@ -492,12 +451,7 @@ class GalleryPluginHelper_simple {
     }
 
     /**
-     * Return a plugin list by plugin type
-     *
-     * @param string the plugin type
-     * @return array GalleryStatus a status code
-     *               array of (pluginId => ('active' => boolean))
-     * @static
+     * @see GalleryCoreApi::fetchPluginList
      */
     function fetchPluginList($pluginType) {
 	global $gallery;
@@ -538,11 +492,7 @@ class GalleryPluginHelper_simple {
     }
 
     /**
-     * Returns an array of directories that can contain plugins.
-     *
-     * This function should only be used in special circumstances,
-     * for example when a list of all plugins needs to be made.
-     * Currently it returns gallery2/ and gallery2/plugins/.
+     * @see GalleryCoreApi::getPluginBaseDirs
      */
      function getPluginBaseDirs() {
 	static $data;
@@ -560,17 +510,7 @@ class GalleryPluginHelper_simple {
     }
 
     /**
-     * Returns the base directory of the specified plugin.
-     *
-     * Modules should never assume the filesystem location of any module, not
-     * even the core module. Use this function to get the base directory of a
-     * module. Possible base directories are usually gallery2/ and gallery2/plugins.
-     * The complete list can be read with GalleryCoreApi::getPluginBaseDirs().
-     *
-     * @param string 'module' or 'theme'
-     * @param string the plugin ID
-     * @param bool force index to be reread from the filesystem
-     * @return string plugin base directory
+     * @see GalleryCoreApi::getPluginBaseDir
      */
     function getPluginBaseDir($pluginType, $pluginId, $clearCache=false) {
 	static $baseDirs;
@@ -589,16 +529,7 @@ class GalleryPluginHelper_simple {
     }
 
     /**
-     * Indicates whether the specified plugin is in the default plugin directory.
-     *
-     * Sometimes it's useful to know just whether a plugin is in its default
-     * directory or not, without actually getting any information about its path.
-     * It is used for rewriting URLs in the UrlGenerator.
-     *
-     * @param string 'module' or 'theme'
-     * @param string the plugin ID
-     * @param bool force index to be reread from the filesystem
-     * @return boolean
+     * @see GalleryCoreApi::isPluginInDefaultLocation
      */
     function isPluginInDefaultLocation($pluginType, $pluginId, $clearCache=false) {
 	static $pluginIndex;

@@ -43,139 +43,122 @@ class GallerySession {
 
     /**
      * The time this session was created
-     *
+     * @var int
      * @access private
-     * @var integer $_creationTime
      */
     var $_creationTime;
 
     /**
      * The time this session was last modified
-     *
+     * @var int
      * @access private
-     * @var integer $_modificationTime
      */
     var $_modificationTime;
 
     /**
      * The id of this session
-     *
+     * @var string
      * @access private
-     * @var string $_sessionId
      */
     var $_sessionId;
 
     /**
      * Is it OK to rely on cookies for this session?
-     *
+     * @var boolean
      * @access private
-     * @var boolean $_isUsingCookies
      */
     var $_isUsingCookies = false;
 
     /**
      * The id of the session's user
-     *
+     * @var int
      * @access private
-     * @var integer $_userId
      */
     var $_userId;
 
     /**
-     * The serialized session data as loaded from file
-     *
+     * The serialized session data as loaded from db
+     * @var string
      * @access private
-     * @var string $_loadedSessionData;
      */
     var $_loadedSessionData;
 
     /**
      * The session data
-     *
+     * @var array
      * @access private
-     * @var array $_sessionData
      */
     var $_sessionData;
 
     /**
      * The domain for our cookie
-     *
+     * @var string
      * @access private
-     * @var string $_cookieDomain
      */
     var $_cookieDomain;
 
     /**
      * A set of identifying values that we can use to verify that the session is coming from the
      * same browser as it used to (to prevent session hijacking).
-     *
+     * @var array
      * @access private
-     * @var array $_remoteIdentifier
      */
     var $_remoteIdentifier;
 
     /**
-     * Whether the session has been sabed in the persistent store
-     *
+     * Whether the session has been saved in the persistent store
+     * @var boolean
      * @access private
-     * @var boolean $_isSessionSaved
      */
     var $_isSessionSaved;
 
     /**
      * Whether this is a session for a search engine
-     *
+     * @var boolean
      * @access private
-     * @var boolean $_isSearchEngineSession
      */
     var $_isSearchEngineSession;
 
     /**
      * Whether a persistent session has been created (not updated) in this request
-     *
+     * @var boolean
      * @access private
-     * @var boolean $_isPersistentSessionNew
      */
     var $_isPersistentSessionNew;
 
     /**
      * Whether no pseudo/temporary session id should be returned on getId() if there is no real
      * session id yet
-     *
+     * @var boolean
      * @access private
-     * @var boolean $_doNotUseTempId
      */
     var $_doNotUseTempId;
 
     /**
      * Whether this is a persistent session or just a session for this single request
-     *
+     * @var boolean
      * @access private
-     * @var boolean $_isPersistent
      */
     var $_isPersistent;
 
     /**
      * Whether a persistent session is allowed to be created in this request
-     *
+     * @var boolean
      * @access private
-     * @var boolean $_isPersistentSessionAllowedForRequest
      */
     var $_isPersistentSessionAllowedForRequest;
 
     /**
      * Whether a persistent session should be forced to be created
-     *
+     * @var boolean
      * @access private
-     * @var boolean $_forceSaveSession
      */
     var $_forceSaveSession;
 
     /**
      * How many sessions to delete per expireSessions() call
-     *
+     * @var int
      * @access private
-     * @var integer $_expireLimit
      */
     var $_expirationLimit = 500;
 
@@ -1308,7 +1291,7 @@ class GallerySession {
 
     /**
      * Return the session id
-     * @TODO: will be removed in the next API branch
+     * @todo will be removed in the next API branch
      *
      * @return string the session id
      * @deprecated

@@ -17,31 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * A helper class for GalleryDerivatives
- *
  * Utility functions useful in managing GalleryDerivatives
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryDerivativeHelper_advanced {
 
     /**
-     * Load the derivative images that have the specified source id(s) with
-     * the type(s) specified
-     *
-     * @param array GalleryItem ids
-     * @param array derivative types (eg, 'DERIVATIVE_TYPE_IMAGE_THUMBNAIL')
-     * @return array object GalleryStatus a status code
-     *               array(GalleryItem id => GalleryDerivativeImage, ...)
-     * @static
+     * @see GalleryCoreApi::fetchDerivativesBySourceIds
      */
     function fetchDerivativesBySourceIds($ids, $types=array()) {
 	GalleryCoreApi::requireOnce(
@@ -56,12 +44,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Convenience function to fetch all derivatives for a given item id
-     *
-     * @param array GalleryItem ids
-     * @return array object GalleryStatus a status code
-     *               array(GalleryItem id => GalleryDerivativeImage, ...)
-     * @static
+     * @see GalleryCoreApi::fetchDerivativesByItemIds
      */
     function fetchDerivativesByItemIds($ids) {
 	GalleryCoreApi::requireOnce(
@@ -78,18 +61,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Use the given operation as a transform for each derivative that depends on the target
-     * derivative.  This gives the dependent derivatives a chance to perform any necessary
-     * transformations required to adapt to an upstream derivative operation change.  For example,
-     * if you have a preferred which has a dependent thumbnail which has a crop operation in it,
-     * then you "rotate|90" the preferred you'd call adjustDependentDerivatives on the thumbnail
-     * with the "rotate|90" operation so that we can rotate the crop coordinates appropriately.
-     *
-     * @param array id the target derivative
-     * @param string the operation that was performed on the target derivative
-     * @param boolean true if we should apply the transform in reverse
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::adjustDependentDerivatives
      */
     function adjustDependentDerivatives($id, $operation, $reverse=false) {
 	global $gallery;
@@ -186,16 +158,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Use the given operation as a transform for each derivative that depends on the target
-     *
-     * @param the operation to be executed
-     * @param argument of the operations
-     * @param boolean whether to preserve original
-     * @param object the item to perfrom the operation on
-     * @param optional object the preferred derivative to execute the operation on
-     * @param optional serialNumber
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::applyToolkitOperation
      */
     function applyToolkitOperation($operation, $args, $preserveOriginal,
 				   &$item, $preferred=null, $serialNumber=null) {
@@ -381,12 +344,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Find all derivatives attached to one source and switch them to another one
-     *
-     * @param string the original source id
-     * @param string the new source id
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::remapSourceIds
      */
     function remapSourceIds($originalSourceId, $newSourceId) {
 	global $gallery;
@@ -458,15 +416,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Copy the derivative preferences from one id to another
-     *
-     * Note that this doesn't modify pre-existing preferences already assigned
-     * to the target.
-     *
-     * @param int the source id
-     * @param int the target id
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::copyDerivativePreferences
      */
     function copyPreferences($sourceId, $targetId) {
 	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($sourceId);
@@ -487,14 +437,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Add a derivative preference to a given item
-     *
-     * @param int the position of this preference
-     * @param mixed int item id or array of item ids
-     * @param int the derivative type (eg, DERIVATIVE_TYPE_IMAGE_THUMBNAIL)
-     * @param string the derivative operations (eg, 'thumbnail|200')
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::addDerivativePreference
      */
     function addPreference($order, $itemId, $derivativeType, $derivativeOperations) {
 	if (is_array($itemId)) {
@@ -517,11 +460,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Remove all derivative preferences for a given item
-     *
-     * @param int the item id
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removeDerivativePreferencesForItem
      */
     function removePreferencesForItem($itemId) {
 	$ret = GalleryCoreApi::removeMapEntry(
@@ -534,12 +473,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Remove derivative preference for a given item/type combination
-     *
-     * @param int the item id
-     * @param int derivative type id
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removeDerivativePreferencesForItemType
      */
     function removePreferenceForItemType($itemId, $derivativeType) {
 	$ret = GalleryCoreApi::removeMapEntry(
@@ -553,12 +487,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Get the derivative preferences for the given item
-     *
-     * @param int the target id
-     * @return array object GalleryStatus a status code
-     *               array (derivativeType => ..., derivativeOperations => ...)
-     * @static
+     * @see GalleryCoreApi::fetchDerivativePreferencesForItem
      */
     function fetchPreferencesForItem($targetId) {
 	global $gallery;
@@ -591,22 +520,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Merge together two sets of operations into one in the most sensible way.
-     * For example:
-     *
-     * OPERATION SET 1              OPERATION SET 2        RESULT
-     * crop|1,2,3,4;rotate|90       crop|2,3,4,5           crop|2,3,4,5,rotate|90
-     * scale|250;rotate|90          rotate|-90             scale|250
-     * scale|250;rotate|90          rotate|90              scale|250;rotate|180
-     * scale|250;rotate|90          thumbnail|125          thumbnail|125;rotate|180
-     *
-     * @param string the first set of operations
-     * @param string the second set of operations
-     * @param boolean true if the second set should be added at the beginning of the first set,
-     *                     if it can't be merged.
-     * @return array object GalleryStatus a status code
-     *               the merged operation set
-     * @static
+     * @see GalleryCoreApi::mergeDerivativeOperations
      */
     function mergeOperations($operationSet1, $operationSet2, $highPriority=false) {
 	global $gallery;
@@ -701,10 +615,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Remove the given operation from the operation set.
-     *
-     * @return string the new operation set
-     * @static
+     * @see GalleryCoreApi::removeDerivativeOperation
      */
     function removeOperation($operation, $operationSet) {
 	if (!empty($operationSet)) {
@@ -724,11 +635,7 @@ class GalleryDerivativeHelper_advanced {
 
 
     /**
-     * Expire all derivatives that depend on the source ids specified
-     *
-     * @param array source ids
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::expireDerivativeTreeBySourceIds
      */
     function expireDerivativeTreeBySourceIds($ids) {
 	global $gallery;
@@ -788,12 +695,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Zero out the dimensions for all derivatives that depend on the given source id so that
-     * they will be recalculated before the next view.
-     *
-     * @param array source ids
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds
      */
     function invalidateDerivativeDimensionsBySourceIds($ids) {
 	global $gallery;
@@ -872,12 +774,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Rebuild the cache for the given derivative
-     *
-     * @param the id of the derivative
-     * @return array object GalleryStatus a status code
-     *               object GalleryDerivative the rebuilt derivative
-     * @static
+     * @see GalleryCoreApi::rebuildDerivativeCache
      */
     function rebuildCache($derivativeId) {
 	global $gallery;
@@ -947,16 +844,7 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Return the preferred source for this item by returning the first occurrence of the following:
-     * 1. This item's preferred derivative
-     * 2. This item's linked item's preferred derivative (if applicable)
-     * 3. This item's linked item (if applicable)
-     * 4. This item itself
-     *
-     * @param object GalleryDataItem the target item
-     * @return array object GalleryObject a status code
-     *               object GalleryEntity (either a GalleryDataItem or a GalleryDerivative)
-     *                                    the preferred source
+     * @see GalleryCoreApi::fetchPreferredSource
      */
     function fetchPreferredSource($item) {
 	$sourceIds = array();

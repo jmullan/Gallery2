@@ -17,30 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Helper class for GalleryItems
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
     /**
-     * Return the ids of all items that match the given type and have the
-     * given permission (defaults to 'core.view')
-     *
-     * @access public
-     * @param string an item type (eg, 'GalleryAlbumItem')
-     * @return array object GalleryStatus a status code
-     *               array(id, id, id, ...)
-     * @static
+     * @see GalleryCoreApi::fetchAllItemIds
      */
     function fetchAllItemIds($itemType, $permission='core.view') {
 	global $gallery;
@@ -93,14 +82,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
     }
 
     /**
-     * Return the ids of all items which are owned by the given user id
-     * This function does NOT obey permissions!
-     *
-     * @access public
-     * @param int the user id of the owner of the items
-     * @return array object GalleryStatus a status code
-     *               array(id, id, id, ...)
-     * @static
+     * @see GalleryCoreApi::fetchAllItemIdsByOwnerId
      */
     function fetchAllItemIdsByOwnerId($ownerId) {
 	global $gallery;
@@ -133,15 +115,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
     }
 
     /**
-     * Return the appropriate GalleryItem instance for the mime type provided.
-     *
-     * Use the GalleryFactory to try to find an exact match to the mime type.
-     * Failing that, fall back to the major type, then fall back to '*'.
-     *
-     * @param string the mime type
-     * @return array object GalleryStatus a status code
-     *               object GalleryItem an item
-     * @static
+     * @see GalleryCoreApi::newItemByMimeType
      */
     function newItemByMimeType($mimeType) {
 
@@ -156,20 +130,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
     }
 
     /**
-     * Add a new data item to an album from a data file.
-     *
-     * @param string the path to the file on the local disk
-     * @param string the name of the new item
-     * @param string the title of the new item
-     * @param string the summary of the new item
-     * @param string the description of the new item
-     * @param string the mime type of the new item
-     * @param int the id of the target album
-     * @param boolean (optional) a boolean true if we should symlink instead
-     *        of copy (default is false).
-     * @return array object GalleryStatus a status code
-     *               object GalleryDataItem a new item
-     * @static
+     * @see GalleryCoreApi::addItemToAlbum
      */
     function addItemToAlbum($fileName, $itemName, $title, $summary,
 			    $description, $mimeType, $albumId, $symlink=false) {
@@ -233,12 +194,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
     }
 
     /**
-     * Fetch the originationTimestamp through our known toolkits
-     *
-     * @param object the GalleryItem
-     * @return array object GalleryStatus a status code
-     *               int a timestamp or null if nothing was found
-     * @static
+     * @see GalleryCoreApi::fetchOriginationTimestamp
      */
     function fetchOriginationTimestamp($item) {
 	if (! GalleryUtilities::isA($item, 'GalleryDataItem')) {
@@ -271,13 +227,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
     }
 
     /**
-     * Add an existing data item to an album
-     *
-     * @param object GalleryItem the source item
-     * @param int the id of the target album
-     * @param boolean if true, skip check for existing derivatives
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::addExistingItemToAlbum
      */
     function addExistingItemToAlbum($item, $albumId, $isNew=false) {
 
@@ -583,14 +533,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 
     /**
-     * Set the thumbnail for an album from an item, according to the thumbnail
-     * preferences for the album.
-     *
-     * @param int the album id
-     * @param int the item id
-     * @return array object GalleryStatus a status code
-     *               boolean true if successful
-     * @static
+     * @see GalleryCoreApi::setThumbnailFromItem
      */
     function setThumbnailFromItem($itemId, $fromItemId) {
 	global $gallery;
@@ -937,7 +880,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	     * Sample usage:
 	     *     $event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
 	     *     $event->setData(array('userId' => null, 'groupId' => $groupId,
-	     *		                 'itemIdsAndBits' => array($itemId1 => $removeBits1,
+	     *                           'itemIdsAndBits' => array($itemId1 => $removeBits1,
 	     *                                                     $itemId2 => $removeBits2)));
 	     *     list ($ret) = GalleryCoreApi::postEvent($event);
 	     *
@@ -948,7 +891,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	     * all userIds / groupIds. Use the 'format' => 'newBits' in this case.
 	     *     $event = GalleryCoreApi::newEvent('Gallery::RemovePermission');
 	     *     $event->setData(array('userId' => 0, 'groupId' => 0, 'format' => 'newBits',
-	     *		                 'itemIdsAndBits' => array($itemId1 => $newBits1,
+	     *                           'itemIdsAndBits' => array($itemId1 => $newBits1,
 	     *                                                     $itemId2 => $newBits2)));
 	     */
 

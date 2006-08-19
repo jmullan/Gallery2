@@ -37,16 +37,14 @@ class GallerySmarty extends Smarty {
 
     /**
      * A GalleryStatus object from the last called fetch
-     *
      * @var object GalleryStatus
      * @access private
      */
     var $_firstGalleryStatus;
 
     /**
-     * The FILE and LINE of the last call to
-     *
-     * @var array file number, line number
+     * The FILE and LINE of the last call
+     * @var array
      * @access private
      */
     var $_firstFileLine;
@@ -61,8 +59,6 @@ class GallerySmarty extends Smarty {
      */
     function fetch($_smarty_tpl_file, $_smarty_cache_id = null,
 		   $_smarty_compile_id = null, $_smarty_display = false) {
-	global $gallery;
-
 	$this->_firstGalleryStatus = null;
 
 	$this->_firstFileLine = array(__FILE__, __LINE__);
@@ -81,8 +77,6 @@ class GallerySmarty extends Smarty {
      * @see Smarty::trigger_error
      */
     function trigger_error($error_msg, $error_type = E_USER_WARNING) {
-	global $gallery;
-
 	/* Store this error for later usage */
 	if (!$this->_firstGalleryStatus) {
 	    $this->_firstGalleryStatus = GalleryCoreApi::error(ERROR_BAD_PARAMETER,

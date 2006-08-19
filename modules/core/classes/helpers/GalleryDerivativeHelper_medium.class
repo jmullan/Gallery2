@@ -17,30 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * A helper class for GalleryDerivatives
- *
  * Utility functions useful in managing GalleryDerivatives
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryDerivativeHelper_medium {
 
     /**
-     * Convenience function to fetch the resizes for an item id
-     *
-     * @param array GalleryItem ids
-     * @return array object GalleryStatus a status code
-     *               array(GalleryItem id => array(GalleryDerivativeImage, ...)
-     *                     ...)
-     * @static
+     * @see GalleryCoreApi::fetchResizesByItemIds
      */
     function fetchResizesByItemIds($ids) {
 	if (!is_array($ids)) {
@@ -62,12 +51,7 @@ class GalleryDerivativeHelper_medium {
     }
 
     /**
-     * Convenience function to fetch the preferred for an item id
-     *
-     * @param array GalleryItem ids
-     * @return array object GalleryStatus a status code
-     *               array(GalleryItem id => GalleryDerivativeImage, ...)
-     * @static
+     * @see GalleryCoreApi::fetchPreferredsByItemIds
      */
     function fetchPreferredsByItemIds($ids) {
 	if (!is_array($ids)) {

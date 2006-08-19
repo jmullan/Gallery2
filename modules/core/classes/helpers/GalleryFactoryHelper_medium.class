@@ -17,29 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
+
 GalleryCoreApi::requireOnce(
     'modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
 
 /**
  * A factory for creating all different kinds of objects
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryFactoryHelper_medium {
 
     /**
-     * Return the ids of all the available implementations for a class
-     *
-     * @return array object GalleryStatus a status code
-     *               array (id => className, ...)
-     * @static
+     * @see GalleryCoreApi::getAllFactoryImplementationIds
      */
     function getAllImplementationIds($classType) {
 	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
@@ -56,11 +49,7 @@ class GalleryFactoryHelper_medium {
     }
 
     /**
-     * Return the ids of all the available implementations for a class
-     *
-     * @return array object GalleryStatus a status code
-     *               array (id => className, ...)
-     * @static
+     * @see GalleryCoreApi::getAllFactoryImplementationIdsWithHint
      */
     function getAllImplementationIdsWithHint($classType, $hint) {
 	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
@@ -78,11 +67,7 @@ class GalleryFactoryHelper_medium {
     }
 
     /**
-     * Unregister an implementation from the factory by id
-     *
-     * @param string an id (eg. 'netpbm')
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::unregisterFactoryImplementationsByModuleId
      */
     function unregisterImplementationsByModuleId($moduleId) {
 	$ret = GalleryCoreApi::removeMapEntry(
@@ -97,12 +82,7 @@ class GalleryFactoryHelper_medium {
     }
 
     /**
-     * Unregister an implementation from the factory by id
-     *
-     * @param string a class type (eg. 'GalleryToolkit')
-     * @param string an implementation id (eg. 'NetPBM')
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::unregisterFactoryImplementation
      */
     function unregisterImplementation($classType, $implId) {
 	$ret = GalleryCoreApi::removeMapEntry(
@@ -118,17 +98,7 @@ class GalleryFactoryHelper_medium {
     }
 
     /**
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param string the class name (eg. 'NetPbmGraphics')
-     * @param string an implementation id (eg. 'NetPBM')
-     * @param string the relative path to the implementation file
-     *               (eg. 'modules/netpbm/classes/NetPbmGraphics.class')
-     * @param string the id of the module containing the implementation (eg. 'netpbm')
-     * @param array hints that can be used to locate this
-     *              implementation (eg. array('image/jpeg', 'image/gif'))
-     * @param int the priority of this implementation (lower number == higher priority)
-     * @return object GalleryStatus a status class
-     * @static
+     * @see GalleryCoreApi::registerFactoryImplementation
      */
     function registerImplementation($classType, $className, $implId, $implPath,
 				    $implModuleId, $hints, $orderWeight) {

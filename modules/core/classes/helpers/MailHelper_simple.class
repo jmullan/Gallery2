@@ -17,31 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Jay Rossiter <cryptographite@users.sf.net>
- */
 
 /**
  * A collection of useful mail-related utilities
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Jay Rossiter <cryptographite@users.sf.net>
+ * @version $Revision$ $Date$
  * @static
  */
 class MailHelper_simple {
+
     /**
-     * Send an email using a smarty template for the message body
-     *
-     * @param string template file relative to G2 root
-     * @param array data to pass to smarty template
-     * @param string from address (null/empty acceptable)
-     * @param string to address(es) (comma separated)
-     * @param string email subject
-     * @param string (optional) additional headers (\r\n separated)
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::hasItemPermission
      */
     function sendTemplatedEmail($file, $data, $from, $to, $subject, $headers='') {
 	global $gallery;

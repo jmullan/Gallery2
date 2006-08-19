@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Helper class for GalleryItems
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryItemHelper_advanced {
 
@@ -37,7 +33,6 @@ class GalleryItemHelper_advanced {
      *
      * @param int the id of the GalleryItem
      * @return object GalleryStatus a status code
-     * @static
      */
     function removeProperty($itemId, $key) {
 	global $gallery;
@@ -63,7 +58,6 @@ class GalleryItemHelper_advanced {
      * @param string the name of the property
      * @param string the value of the proprety
      * @return object GalleryStatus a status code
-     * @static
      */
     function setProperty($itemId, $key, $value) {
 	global $gallery;
@@ -94,7 +88,6 @@ class GalleryItemHelper_advanced {
      *
      * @param int the id of the GalleryItem
      * @return object GalleryStatus a status code
-     * @static
      */
     function removeProperties($itemId) {
 	global $gallery;
@@ -118,7 +111,6 @@ class GalleryItemHelper_advanced {
      *
      * @return array object GalleryStatus a status code
      *               array property keys
-     * @static
      */
     function fetchPropertyKeys($itemId) {
 	if (empty($itemId)) {
@@ -145,7 +137,6 @@ class GalleryItemHelper_advanced {
      * @param string the desired key
      * @return array object GalleryStatus a status code
      *               string value
-     * @static
      */
     function fetchProperty($itemId, $key) {
 	if (empty($itemId) || empty($key)) {
@@ -173,7 +164,6 @@ class GalleryItemHelper_advanced {
      * @param int the id of the GalleryItem
      * @return array object GalleryStatus a status code
      *               array key => value pairs
-     * @static
      */
     function fetchAllProperties($itemId) {
 	if (empty($itemId)) {
@@ -194,16 +184,7 @@ class GalleryItemHelper_advanced {
 
 
     /**
-     * Fetch the breakdown of descendents for a given item.  Note: this call is more expensive than
-     * GalleryCoreApi::fetchDescendentCounts(), so use that version where possible.
-     *
-     * @param int the item id
-     * @return array object GalleryStatus a status code
-     *               array(id => array('GalleryAlbumItem' => ##,
-     *                                 'GalleryDataItem' => ##),
-     *                     id => array('GalleryAlbumItem' => ##,
-     *                                 'GalleryDataItem' => ##))
-     * @static
+     * @see GalleryCoreApi::fetchItemizedDescendentCounts
      */
     function fetchItemizedDescendentCounts($itemIds) {
 	global $gallery;
@@ -246,29 +227,29 @@ class GalleryItemHelper_advanced {
 	$accessListMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
 	$query = sprintf('
-        SELECT
-          [GalleryItemAttributesMap=1::itemId],
-          COUNT([GalleryAlbumItem::id]),
-          COUNT([GalleryDataItem::id])
-        FROM
-          [GalleryItemAttributesMap=1],
-          [GalleryItemAttributesMap=2]
-            LEFT JOIN [GalleryAlbumItem]
-              ON [GalleryItemAttributesMap=2::itemId] = [GalleryAlbumItem::id]
-            LEFT JOIN [GalleryDataItem]
-              ON [GalleryItemAttributesMap=2::itemId] = [GalleryDataItem::id],
-          [GalleryAccessSubscriberMap]
-        WHERE
-          [GalleryItemAttributesMap=1::itemId] IN (%s)
-          AND
-          %s
-          AND
-          [GalleryItemAttributesMap=2::itemId] = [GalleryAccessSubscriberMap::itemId]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
-        GROUP BY
-          [GalleryItemAttributesMap=1::itemId]
-        ', $itemIdMarkers, $like, $accessListMarkers);
+	SELECT
+	  [GalleryItemAttributesMap=1::itemId],
+	  COUNT([GalleryAlbumItem::id]),
+	  COUNT([GalleryDataItem::id])
+	FROM
+	  [GalleryItemAttributesMap=1],
+	  [GalleryItemAttributesMap=2]
+	    LEFT JOIN [GalleryAlbumItem]
+	      ON [GalleryItemAttributesMap=2::itemId] = [GalleryAlbumItem::id]
+	    LEFT JOIN [GalleryDataItem]
+	      ON [GalleryItemAttributesMap=2::itemId] = [GalleryDataItem::id],
+	  [GalleryAccessSubscriberMap]
+	WHERE
+	  [GalleryItemAttributesMap=1::itemId] IN (%s)
+	  AND
+	  %s
+	  AND
+	  [GalleryItemAttributesMap=2::itemId] = [GalleryAccessSubscriberMap::itemId]
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	GROUP BY
+	  [GalleryItemAttributesMap=1::itemId]
+	', $itemIdMarkers, $like, $accessListMarkers);
 
 	$data = array_merge($itemIds, $aclIds);
 
@@ -287,13 +268,7 @@ class GalleryItemHelper_advanced {
     }
 
     /**
-     * Make sure that the album has a thumbnail.  If it doesn't, then grab the first handy child and
-     * make it the album's thumbnail.  We're not picky.
-     *
-     * @param int the album id
-     * @return object GalleryStatus a status code
-     *                boolean true if successful
-     * @static
+     * @see GalleryCoreApi::guaranteeAlbumHasThumbnail
      */
     function guaranteeAlbumHasThumbnail($albumId) {
 	global $gallery;
@@ -372,17 +347,7 @@ class GalleryItemHelper_advanced {
     }
 
     /**
-     * Create a new album.
-     *
-     * @param int the id of the parent album
-     * @param string the name of the new album
-     * @param string the title of the new album
-     * @param string the summary of the new album
-     * @param string the description of the new album
-     * @param string the keywords of the new album
-     * @return array object GalleryStatus a status code
-     *               object GalleryAlbumItem a new album
-     * @static
+     * @see GalleryCoreApi::createAlbum
      */
     function createAlbum($parentAlbumId, $name, $title, $summary, $description, $keywords) {
 	global $gallery;
@@ -459,12 +424,7 @@ class GalleryItemHelper_advanced {
     }
 
     /**
-     * Transfer the ownership of all items by oldUser to newUser
-     *
-     * @param int the id of the old owner
-     * @param int the id of the new owner
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::remapOwnerId
      */
     function remapOwnerId($oldUserId, $newUserId) {
 	global $gallery;
@@ -555,7 +515,7 @@ class GalleryItemHelper_advanced {
 		$ret = GalleryCoreApi::addUserPermission($item->getId(),
 					$newOwner->getId(), $newPermissions, false);
 		if ($ret) {
-	   	    GalleryCoreApi::releaseLocks($lockIds);
+		    GalleryCoreApi::releaseLocks($lockIds);
 		    return $ret;
 		}
 	    }
@@ -578,14 +538,7 @@ class GalleryItemHelper_advanced {
     }
 
     /**
-     * Fetch album tree visible to current user,
-     * optionally starting from a given album and to a given depth.
-     *
-     * @param int (optional) id of album for root of tree
-     * @param int (optional) max depth of tree
-     * @param int (optional) items visible to this user id, instead of current user
-     * @return array object GalleryStatus a status code
-     *               array (albumId => array(albumId => array, ..), ..)
+     * @see GalleryCoreApi::fetchAlbumTree
      */
     function fetchAlbumTree($itemId=null, $depth=null, $userId=null) {
 	global $gallery;
@@ -622,7 +575,7 @@ class GalleryItemHelper_advanced {
 	$parentSequence = implode('/', $parentSequence);
 
 	$query = sprintf('
-        SELECT
+	SELECT
 	  [GalleryAlbumItem::id],
 	  [GalleryItemAttributesMap::parentSequence],
 	  [GalleryItemAttributesMap::orderWeight]
@@ -634,8 +587,8 @@ class GalleryItemHelper_advanced {
 	  [GalleryItemAttributesMap::parentSequence] LIKE \'%s/%%\'
 	  AND
 	  [GalleryAlbumItem::id] = [GalleryAccessSubscriberMap::itemId]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	ORDER BY
 	  [GalleryItemAttributesMap::parentSequence],
 	  [GalleryItemAttributesMap::orderWeight]
@@ -668,24 +621,21 @@ class GalleryItemHelper_advanced {
     }
 
     /**
-     * Remove the given sort order from any thing in the framework that uses it
-     * (albums and the default sort order).
-     *
-     * @param string the sort order
+     * @see GalleryCoreApi::deleteSortOrder
      */
     function deleteSortOrder($sortOrder) {
 	global $gallery;
 
 	$query = '
-        SELECT
-          [GalleryAlbumItem::id]
-        FROM
-          [GalleryAlbumItem]
-        WHERE
-          [GalleryAlbumItem::orderBy] LIKE ?
-          OR [GalleryAlbumItem::orderBy] LIKE ?
-          OR [GalleryAlbumItem::orderBy] = ?
-        ';
+	SELECT
+	  [GalleryAlbumItem::id]
+	FROM
+	  [GalleryAlbumItem]
+	WHERE
+	  [GalleryAlbumItem::orderBy] LIKE ?
+	  OR [GalleryAlbumItem::orderBy] LIKE ?
+	  OR [GalleryAlbumItem::orderBy] = ?
+	';
 	list ($ret, $searchResults) = $gallery->search(
 	    $query, array("$sortOrder|%", "%|$sortOrder", $sortOrder));
 	if ($ret) {
@@ -744,22 +694,19 @@ class GalleryItemHelper_advanced {
     }
 
     /**
-     * Remove the given renderer from all items that are using it.
-     *
-     * @param string the renderer class name
-     * @return object GalleryStatus a status code
+     * @see GalleryCoreApi::deleteRenderer
      */
     function deleteRenderer($rendererClassName) {
 	global $gallery;
 
 	$query = '
-        SELECT
-          [GalleryItem::id]
-        FROM
-          [GalleryItem]
-        WHERE
-          [GalleryItem::renderer] = ?
-        ';
+	SELECT
+	  [GalleryItem::id]
+	FROM
+	  [GalleryItem]
+	WHERE
+	  [GalleryItem::renderer] = ?
+	';
 	list ($ret, $searchResults) = $gallery->search($query, array($rendererClassName));
 	if ($ret) {
 	    return $ret;

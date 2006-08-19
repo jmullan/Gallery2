@@ -17,27 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- *
- *
+ * Helper functions for users/groups
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryUserGroupHelper_medium {
 
     /**
-     * Add the specified user to the specified group.
-     *
-     * @param int the id of the GalleryUser
-     * @param int the id of the GalleryGroup
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::addUserToGroup
      */
     function addUserToGroup($userId, $groupId) {
 	global $gallery;
@@ -76,11 +68,7 @@ class GalleryUserGroupHelper_medium {
     }
 
     /**
-     * Remove the specified user from the specified group.
-     *
-     * @param int the id of the GalleryUser
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removeUserFromGroup
      */
     function removeUserFromGroup($userId, $groupId) {
 	global $gallery;
@@ -110,11 +98,7 @@ class GalleryUserGroupHelper_medium {
     }
 
     /**
-     * Remove the user from all groups
-     *
-     * @param int the id of the GalleryUser
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removeUserFromAllGroups
      */
     function removeUserFromAllGroups($userId) {
 	global $gallery;
@@ -141,11 +125,7 @@ class GalleryUserGroupHelper_medium {
     }
 
     /**
-     * Remove any users in the group
-     *
-     * @param int the id of the GalleryGroup
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removeAllUsersFromGroup
      */
     function removeAllUsersFromGroup($groupId) {
 	global $gallery;
@@ -165,8 +145,8 @@ class GalleryUserGroupHelper_medium {
 	if ($ret) {
 	    return $ret;
 	}
-	if ($group->getGroupType() != GROUP_ALL_USERS &&
-	        $group->getGroupType() != GROUP_EVERYBODY) {
+	if ($group->getGroupType() != GROUP_ALL_USERS
+		&& $group->getGroupType() != GROUP_EVERYBODY) {
 	    list ($ret, $userData) = GalleryCoreApi::fetchUsersForGroup($groupId);
 	    if ($ret) {
 		return $ret;
@@ -183,33 +163,22 @@ class GalleryUserGroupHelper_medium {
     }
 
     /**
-     * Return a list of user ids belonging to a group
-     *
-     * You can specify how many userids to list, and where the windows is in
-     * the list of all users.
-     *
-     * @param int the group id
-     * @param int the number of userids desired
-     * @param int the start of the range
-     * @param string substring to match against the username
-     * @return array object GalleryStatus a status code
-     *               array user id => user name
-     * @static
+     * @see GalleryCoreApi::fetchUsersForGroup
      */
     function fetchUsersForGroup($groupId, $count=null, $offset=null, $substring=null) {
 	global $gallery;
 
 	$data = array();
 	$query = '
-        SELECT
-          [GalleryUserGroupMap::userId],
-          [GalleryUser::userName]
-        FROM
-          [GalleryUserGroupMap], [GalleryUser]
-        WHERE
-          [GalleryUserGroupMap::groupId] = ?
-          AND
-          [GalleryUserGroupMap::userId] = [GalleryUser::id]
+	SELECT
+	  [GalleryUserGroupMap::userId],
+	  [GalleryUser::userName]
+	FROM
+	  [GalleryUserGroupMap], [GalleryUser]
+	WHERE
+	  [GalleryUserGroupMap::groupId] = ?
+	  AND
+	  [GalleryUserGroupMap::userId] = [GalleryUser::id]
 	';
 	$data[] = (int) $groupId;
 	if (!empty($substring)) {
@@ -220,9 +189,9 @@ class GalleryUserGroupHelper_medium {
 	    $data[] = "%$substring%";
 	}
 	$query .= '
-        ORDER BY
-          [GalleryUser::userName]
-        ';
+	ORDER BY
+	  [GalleryUser::userName]
+	';
 
 	list ($ret, $searchResults) = $gallery->search(
 	    $query, $data, array('limit' => array('count' => $count, 'offset' => $offset)));

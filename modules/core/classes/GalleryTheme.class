@@ -34,22 +34,22 @@ class GalleryTheme extends GalleryPlugin {
 
     /**
      * The version of the GalleryTheme API required by this theme.
-     *
-     * @var array _requiredThemeApi
+     * @var array
      * @access private
      */
     var $_requiredThemeApi;
 
     /**
      * Which of the standard theme settings this theme supports.
-     *
-     * @var array _standardSettings
+     * @var array
      * @access private
      */
     var $_standardSettings = array();
 
     /**
      * Is the page we're rendering cacheable?
+     * @var boolean
+     * @access private
      */
     var $_cacheablePage = false;
 
@@ -67,7 +67,7 @@ class GalleryTheme extends GalleryPlugin {
      * This follows the same rules as the core API
      * @see GalleryCoreApi::getApiVersion
      *
-     * @TODO On the next major API bump:
+     * @todo On the next major API bump:
      * - Remove backwards compatible CSS from lib/javascript/AutoComplete.js
      *
      * @return array major number, minor number

@@ -17,32 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * A collection of useful web-page post/get related utilities
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  * @static
  */
 class WebHelper_simple {
 
     /**
-     * Fetch the web page at the given url.  Follow redirects to get the data and
-     * upon completion return the http response, headers and the actual URL that we used
-     * to get the data.
-     *
-     * @param string the url
-     * @param string the output file
-     * @param array (optional) extra headers to pass to the server
-     * @param int the redirect depth (pass in 0 or leave this empty to start)
-     * @return array(boolean success, http response, headers, url)
-     *  the url is the final url retrieved after redirects
+     * @see GalleryCoreApi::fetchWebFile
      */
     function fetchWebFile($url, $outputFile, $extraHeaders=array(), $depth=0) {
 	global $gallery;
@@ -82,7 +69,7 @@ class WebHelper_simple {
 	foreach ($extraHeaders as $headerKey => $headerValue) {
 	    $extraHeaderLines[] = "$headerKey: $headerValue";
 	}
-	
+
 	$ok = $platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
 					     "Host: %s\r\n" .
 					     "%s\r\n",
@@ -187,24 +174,16 @@ class WebHelper_simple {
 	}
 	$platform->fclose($fd);
 
-        /* if the HTTP response code did not begin with a 2 this request was not successful */
+	/* if the HTTP response code did not begin with a 2 this request was not successful */
 	if (!preg_match("/^HTTP\/\d+\.\d+\s2\d{2}/", $response)) {
 	    $success = false;
-	}	
-	
+	}
+
 	return array($success, $response, $headers, $url);
     }
 
     /**
-     * Fetch the web page at the given url.  Follow redirects to get the data and
-     * upon completion return the body, http response, headers and the actual URL that
-     * we used to get the data.
-     *
-     * @param string the url
-     * @param array (optional) extra headers to pass to the server
-     * @param int the redirect depth (pass in 0 or leave this empty to start)
-     * @return array(boolean success, string body, http response, headers, url)
-     *  the url is  the final url retrieved after redirects
+     * @see GalleryCoreApi::fetchWebPage
      */
     function fetchWebPage($url, $extraHeaders=array(), $depth=0) {
 	global $gallery;
@@ -336,22 +315,17 @@ class WebHelper_simple {
 	$platform->fclose($fd);
 
 	$success = true;
-	
+
 	/* if the HTTP response code did not begin with a 2 this request was not successful */
 	if (!preg_match("/^HTTP\/\d+\.\d+\s2\d{2}/", $response)) {
 	    $success = false;
 	}
-	
+
 	return array($success, $body, $response, $headers, $url);
     }
 
     /**
-     * Post form data to a remote url and return the http response, headers and body of the reply
-     *
-     * @param string the url
-     * @param array the key/value post data
-     * @param array (optional) extra headers to pass to the server
-     * @return array(body, http response, headers)
+     * @see GalleryCoreApi::postToWebPage
      */
     function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
 	global $gallery;

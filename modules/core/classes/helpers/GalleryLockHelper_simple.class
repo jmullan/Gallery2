@@ -17,23 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Helper class for handling locking.  It delegates to the active GalleryLockSystem
  * implementation that we're using, which is stored in the Gallery instance.
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryLockHelper_simple {
 
     /**
+     * @see GalleryCoreApi::getLockIds
      * @see GalleryLockSystem::getLockIds
      */
     function getLockIds() {
@@ -50,6 +47,7 @@ class GalleryLockHelper_simple {
     }
 
     /**
+     * @see GalleryCoreApi::acquireReadLock
      * @see GalleryLockSystem::acquireReadLock
      */
     function acquireReadLock($ids, $timeout=10) {
@@ -70,16 +68,7 @@ class GalleryLockHelper_simple {
     }
 
     /**
-     * Acquire read locks on all the parents of this id.  This is useful when
-     * we're going to do a filesystem related operation and we want to make
-     * sure that the tree does not change out from underneath us.
-     *
-     * @access public
-     * @param integer an id to lock
-     * @param integer how long to wait for the lock before giving up
-     * @return array object GalleryStatus a status code
-     *               int the lock id
-     * @static
+     * @see GalleryCoreApi::acquireReadLockParents
      */
     function acquireReadLockParents($id, $timeout=10) {
 	global $gallery;
@@ -100,16 +89,16 @@ class GalleryLockHelper_simple {
 
 	/* Get the parent entity id */
 	$query = '
-        SELECT
-          [GalleryItemAttributesMap::itemId],
-          [GalleryItemAttributesMap::parentSequence]
-        FROM
-          [GalleryChildEntity], [GalleryItemAttributesMap]
-        WHERE
-          [GalleryChildEntity::id] = ?
-          AND
-          [GalleryChildEntity::parentId] = [GalleryItemAttributesMap::itemId]
-        ';
+	SELECT
+	  [GalleryItemAttributesMap::itemId],
+	  [GalleryItemAttributesMap::parentSequence]
+	FROM
+	  [GalleryChildEntity], [GalleryItemAttributesMap]
+	WHERE
+	  [GalleryChildEntity::id] = ?
+	  AND
+	  [GalleryChildEntity::parentId] = [GalleryItemAttributesMap::itemId]
+	';
 
 	list ($ret, $searchResults) = $gallery->search($query, array((int)$id));
 	if ($ret) {
@@ -152,6 +141,7 @@ class GalleryLockHelper_simple {
     }
 
     /**
+     * @see GalleryCoreApi::isReadLocked
      * @see GalleryLockSystem::isReadLocked
      */
     function isReadLocked($ids) {
@@ -169,6 +159,7 @@ class GalleryLockHelper_simple {
     }
 
     /**
+     * @see GalleryCoreApi::acquireWriteLock
      * @see GalleryLockSystem::acquireWriteLock
      */
     function acquireWriteLock($ids, $timeout=10) {
@@ -189,6 +180,7 @@ class GalleryLockHelper_simple {
     }
 
     /**
+     * @see GalleryCoreApi::isWriteLocked
      * @see GalleryLockSystem::isWriteLocked
      */
     function isWriteLocked($ids) {
@@ -206,6 +198,7 @@ class GalleryLockHelper_simple {
     }
 
     /**
+     * @see GalleryCoreApi::releaseLocks
      * @see GalleryLockSystem::releaseLocks
      */
     function releaseLocks($lockIds) {
@@ -226,6 +219,7 @@ class GalleryLockHelper_simple {
     }
 
     /**
+     * @see GalleryCoreApi::releaseAllLocks
      * @see GalleryLockSystem::releaseAllLocks
      */
     function releaseAllLocks() {
@@ -246,6 +240,7 @@ class GalleryLockHelper_simple {
     }
 
     /**
+     * @see GalleryCoreApi::refreshLocks
      * @see GalleryLockSystem::refreshLocks
      */
     function refreshLocks($freshUntil) {

@@ -17,28 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Helper class for GalleryItems
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryEventHelper_simple {
 
     /**
      * Get the static event listeners registry
      *
+     * @staticvar array $eventListeners The event listener table
      * @return array
      * @access private
-     * @staticvar array $eventListeners The event listener table
-     * @static
      */
     function &_getEventListeners() {
 	static $eventListeners = array();
@@ -46,8 +41,7 @@ class GalleryEventHelper_simple {
     }
 
     /**
-     * Create a new event with the given name
-     * @static
+     * @see GalleryCoreApi::newEvent
      */
     function newEvent($eventName) {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryEvent.class');
@@ -57,12 +51,7 @@ class GalleryEventHelper_simple {
     }
 
     /**
-     * Register an event listener
-     *
-     * @param string the name of the event (eg "GalleryEntity::save")
-     * @param object GalleryEventListener instance
-     * @param boolean (optional) if true, disable event listener during unit tests
-     * @static
+     * @see GalleryCoreApi::registerEventListener
      */
     function registerEventListener($eventName, &$listener, $disableForUnitTests=false) {
 	if ($disableForUnitTests && class_exists('GalleryTestCase')) {
@@ -78,12 +67,7 @@ class GalleryEventHelper_simple {
     }
 
     /**
-     * Deliver an event to anybody listening
-     *
-     * @param object a GalleryEvent
-     * @return array object GalleryStatus a status code
-     *               array data returned from listeners, if any
-     * @static
+     * @see GalleryCoreApi::postEvent
      */
     function postEvent($event) {
 	static $allListenersRegistered;

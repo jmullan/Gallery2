@@ -45,34 +45,31 @@ class GalleryItem extends GalleryFileSystemEntity {
 
     /**
      * Can this item contain children?
+     * @var boolean
      *
      * @g2 <member>
      * @g2   <member-name>canContainChildren</member-name>
      * @g2   <member-type>BOOLEAN</member-type>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $canContainChildren
-     * @access public
      */
     var $canContainChildren;
 
     /**
      * The (long) description of this item
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>description</member-name>
      * @g2   <member-type>TEXT</member-type>
      * @g2   <member-size>SMALL</member-size>
      * @g2 </member>
-     *
-     * @var int $description
-     * @access public
      */
     var $description;
 
     /**
      * A set of keywords that describe this item
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>keywords</member-name>
@@ -80,14 +77,12 @@ class GalleryItem extends GalleryFileSystemEntity {
      * @g2   <member-size>LARGE</member-size>
      * @g2   <indexed/>
      * @g2 </member>
-     *
-     * @var string $keywords
-     * @access public
      */
     var $keywords;
 
     /**
      * The id of the User who owns this item
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>ownerId</member-name>
@@ -95,28 +90,24 @@ class GalleryItem extends GalleryFileSystemEntity {
      * @g2   <indexed/>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $ownerId
-     * @access public
      */
     var $ownerId;
 
     /**
      * The renderer for drawing this item
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>renderer</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
-     *
-     * @var int $renderer
-     * @access public
      */
     var $renderer;
 
     /**
      * The summary of this item
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>summary</member-name>
@@ -124,14 +115,12 @@ class GalleryItem extends GalleryFileSystemEntity {
      * @g2   <member-size>LARGE</member-size>
      * @g2   <indexed/>
      * @g2 </member>
-     *
-     * @var int $summary
-     * @access public
      */
     var $summary;
 
     /**
      * The (short) title of this item
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>title</member-name>
@@ -139,39 +128,33 @@ class GalleryItem extends GalleryFileSystemEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2   <indexed/>
      * @g2 </member>
-     *
-     * @var int $title
-     * @access public
      */
     var $title;
 
     /**
      * Date and time marking the beginning of the view count
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>viewedSinceTimestamp</member-name>
      * @g2   <member-type>INTEGER</member-type>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $viewedSinceTimestamp
-     * @access public
      */
     var $viewedSinceTimestamp;
 
     /**
      * Date and time when this item was originally captured (i.e. photographed, filmed, etc)
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>originationTimestamp</member-name>
      * @g2   <member-type>INTEGER</member-type>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $originationTimestamp
-     * @access public
      */
     var $originationTimestamp;
+
 
     /**
      * Create a new instance of this GalleryEntity in the persistent store.

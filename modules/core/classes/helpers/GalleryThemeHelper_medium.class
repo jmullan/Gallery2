@@ -17,29 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * A helper class for GalleryTheme
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryThemeHelper_medium {
 
     /**
-     * Load template data for a theme settings form
-     *
-     * @param string themeId; if empty, site default theme is used
-     * @param int itemId
-     * @param object GalleryTemplate template
-     * @param array form
-     * @return object GalleryStatus a status code
+     * @see GalleryCoreApi::loadThemeSettingsForm
      */
     function loadThemeSettingsForm($themeId, $itemId, &$template, &$form) {
 	$data = array();
@@ -121,10 +112,7 @@ class GalleryThemeHelper_medium {
     }
 
     /**
-     * Load the block configuration files from every module
-     *
-     * @return array object GalleryStatus a status code
-     *               array block configurations
+     * @see GalleryCoreApi::loadAvailableBlocks
      */
     function loadAvailableBlocks() {
 	global $gallery;
@@ -159,14 +147,7 @@ class GalleryThemeHelper_medium {
     }
 
     /**
-     * Handle theme settings form submission
-     *
-     * @param string themeId; if empty, site default theme is used
-     * @param int itemId
-     * @param array form values
-     * @return array object GalleryStatus a status code
-     *               array error messages
-     *               string localized status message
+     * @see GalleryCoreApi::handleThemeSettingsRequest
      */
     function handleThemeSettingsRequest($themeId, $itemId, $form) {
 	if (empty($themeId)) {

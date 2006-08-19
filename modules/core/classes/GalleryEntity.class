@@ -41,6 +41,7 @@ class GalleryEntity extends GalleryPersistent {
 
     /**
      * The id of this item
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>id</member-name>
@@ -48,14 +49,12 @@ class GalleryEntity extends GalleryPersistent {
      * @g2   <id/>
      * @g2   <primary/>
      * @g2 </member>
-     *
-     * @var int $id
-     * @access public
      */
     var $id;
 
     /**
      * Date and time this item was created, in seconds since the epoch.
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>creationTimestamp</member-name>
@@ -63,14 +62,12 @@ class GalleryEntity extends GalleryPersistent {
      * @g2   <indexed/>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $creationTimestamp
-     * @access public
      */
     var $creationTimestamp;
 
     /**
      * Does this entity type support linking?
+     * @var boolean
      *
      * @g2 <member>
      * @g2   <member-name>isLinkable</member-name>
@@ -78,36 +75,30 @@ class GalleryEntity extends GalleryPersistent {
      * @g2   <indexed/>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var boolean $isLinkable
-     * @access public
      */
     var $isLinkable;
 
     /**
      * The id of the target entity this entity is linked to
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>linkId</member-name>
      * @g2   <member-type>INTEGER</member-type>
      * @g2   <indexed/>
      * @g2 </member>
-     *
-     * @var int $linkId
-     * @access public
      */
     var $linkId;
 
     /**
      * The target entity this entity is linked to
-     *
-     * @var int $linkedEntity
-     * @access public
+     * @var object GalleryEntity
      */
     var $linkedEntity;
 
     /**
      * Date and time this item was last modified, in seconds since the epoch.
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>modificationTimestamp</member-name>
@@ -115,15 +106,13 @@ class GalleryEntity extends GalleryPersistent {
      * @g2   <indexed/>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $modificationTimestamp
-     * @access public
      */
     var $modificationTimestamp;
 
     /**
      * The serial number of this object in the persistent store.  This value
      * will help us to avoid collisions.
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>serialNumber</member-name>
@@ -131,15 +120,13 @@ class GalleryEntity extends GalleryPersistent {
      * @g2   <indexed/>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var int $serialNumber
-     * @access public
      */
     var $serialNumber;
 
     /**
      * The actual type of this object.  This will allow the storage class to
      * correctly load this object from the database.
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>entityType</member-name>
@@ -147,25 +134,21 @@ class GalleryEntity extends GalleryPersistent {
      * @g2   <member-size>SMALL</member-size>
      * @g2   <required/>
      * @g2 </member>
-     *
-     * @var string $entityType
-     * @access public
      */
     var $entityType;
 
     /**
      * Handlers to run when this entity is loaded.
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>onLoadHandlers</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
-     *
-     * @var string $onLoadHandlers
-     * @access public
      */
     var $onLoadHandlers;
+
 
     /**
      * Create a new instance of this GalleryEntity in the persistent store

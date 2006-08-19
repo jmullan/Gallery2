@@ -17,65 +17,44 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * A helper class for GalleryGroups
- *
  * Utility functions useful in managing GalleryGroups
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryGroupHelper_simple {
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
-
     /**
-     * Return a map of groupNames => groupids
-     *
-     * You can specify how many groupnames to list, and where the windows is in
-     * the list of all groups.
-     *
-     * @param int [optional] the number of groupnames desired
-     * @param int [optional] the start of the range
-     * @param string [optional] a substring to match
-     * @return array object GalleryStatus a status code
-     *               array (groupname, groupname, ...)
-     * @static
+     * @see GalleryCoreApi::fetchGroupNames
      */
     function fetchGroupNames($count=null, $offset=null, $substring=null) {
 	global $gallery;
 
 	$data = array();
 	$query = '
-        SELECT
-          [GalleryGroup::id],
-          [GalleryGroup::groupName]
-        FROM
-          [GalleryGroup]
-        ';
+	SELECT
+	  [GalleryGroup::id],
+	  [GalleryGroup::groupName]
+	FROM
+	  [GalleryGroup]
+	';
 
 	if (!empty($substring)) {
 	    $query .= '
-        WHERE
+	WHERE
 	  [GalleryGroup::groupName] LIKE ?
-            ';
+	    ';
 	    $data[] = "%$substring%";
 	}
 
 	$query .= '
-        ORDER BY
-          [GalleryGroup::groupName] ASC
-        ';
+	ORDER BY
+	  [GalleryGroup::groupName] ASC
+	';
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query,
@@ -95,29 +74,24 @@ class GalleryGroupHelper_simple {
     }
 
     /**
-     * Return a count of groups, optionally matching a search string
-     *
-     * @param string the substring to match
-     * @return array object GalleryStatus a status code
-     *               int group count
-     * @static
+     * @see GalleryCoreApi::fetchGroupCount
      */
     function fetchGroupCount($substring=null) {
 	global $gallery;
 
 	$data = array();
 	$query = '
-        SELECT
-          COUNT([GalleryGroup::id])
-        FROM
-          [GalleryGroup]
-        ';
+	SELECT
+	  COUNT([GalleryGroup::id])
+	FROM
+	  [GalleryGroup]
+	';
 
 	if (!empty($substring)) {
 	    $query .= '
-        WHERE
+	WHERE
 	  [GalleryGroup::groupName] LIKE ?
-            ';
+	    ';
 	    $data[] = "%$substring%";
 	}
 
@@ -132,24 +106,19 @@ class GalleryGroupHelper_simple {
     }
 
     /**
-     * Lookup a group by name
-     *
-     * @param string the groupname
-     * @return array object GalleryStatus a status code
-     *               object GalleryGroup a group
-     * @static
+     * @see GalleryCoreApi::fetchGroupByGroupName
      */
     function fetchGroupByGroupName($groupName=null) {
 	global $gallery;
 
-        $query = '
-        SELECT
-          [GalleryGroup::id]
-        FROM
-          [GalleryGroup]
-        WHERE
-          [GalleryGroup::groupName] = ?
-        ';
+	$query = '
+	SELECT
+	  [GalleryGroup::id]
+	FROM
+	  [GalleryGroup]
+	WHERE
+	  [GalleryGroup::groupName] = ?
+	';
 	list ($ret, $searchResults) = $gallery->search($query, array($groupName));
 	if ($ret) {
 	    return array($ret, null);

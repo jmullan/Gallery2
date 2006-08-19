@@ -17,27 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Helper class for GalleryEntities
- *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryEntityHelper_medium {
 
     /**
-     * Delete the entity with the given id
-     *
-     * @param int the id of a GalleryEntity to delete
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::deleteEntityById
      */
     function deleteEntityById($id) {
 	if (empty($id)) {
@@ -133,12 +125,7 @@ class GalleryEntityHelper_medium {
     }
 
     /**
-     * Fetch the ids of the entities linked to the target entity
-     *
-     * @param int the target entity id
-     * @return array object GalleryStatus a status code
-     *               array entity ids
-     * @static
+     * @see GalleryCoreApi::fetchEntitiesLinkedTo
      */
     function fetchEntitiesLinkedTo($targetId) {
 	global $gallery;
@@ -168,11 +155,7 @@ class GalleryEntityHelper_medium {
     }
 
     /**
-     * Remove onLoadHandlers from all entities
-     *
-     * @param array of factory impl ids
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::removeOnLoadHandlers
      */
     function removeOnLoadHandlers($handlerIds) {
 	global $gallery;
@@ -217,11 +200,7 @@ class GalleryEntityHelper_medium {
     }
 
     /**
-     * Set modification timestamp for the given entity id to the current time.
-     *
-     * @param int the entity id
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::updateModificationTimestamp
      */
     function updateModificationTimestamp($entityId) {
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($entityId);
@@ -245,11 +224,9 @@ class GalleryEntityHelper_medium {
 	}
 	return null;
     }
-    
+
     /**
-     * Delete the fast download file for a specific entity
-     *
-     *  @param int id of a GalleryEntity
+     * @see GalleryCoreApi::deleteFastDownloadFileById
      */
     function deleteFastDownloadFileById($entityId) {
 	global $gallery;
@@ -263,13 +240,7 @@ class GalleryEntityHelper_medium {
     }
 
     /**
-     * Create a small PHP file containing all the information we need to send
-     * a data item or derivative to the browser.
-     *
-     * @param GalleryDataItem or GalleryDerivative object
-     * @param bool force this to run, even inside the unit test framework
-     *
-     * @return object GalleryStatus a status code
+     * @see GalleryCoreApi::createFastDownloadFile
      */
     function createFastDownloadFile($entity, $runEvenInUnitTest=false) {
 	global $gallery;
@@ -295,11 +266,11 @@ class GalleryEntityHelper_medium {
 	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 		$requiredPermission = 'core.view';
 		break;
-		
+
 	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
 		$requiredPermission = 'core.viewResizes';
 		break;
-		
+
 	    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
 		$requiredPermission = 'core.viewSource';
 		break;
@@ -308,7 +279,7 @@ class GalleryEntityHelper_medium {
 	} else if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
 	    $requiredPermission = 'core.viewSource';
 	}
-	
+
 	if ($requiredPermission) {
 	    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission(
 		$itemIdForPermissions, $requiredPermission, $anonymousUserId);
@@ -340,7 +311,7 @@ class GalleryEntityHelper_medium {
 		}
 	    }
 	    $relativePath = str_replace($gallery->getConfig('data.gallery.base'), '', $fullPath);
-	    
+
 	    $stats = $platform->stat($fullPath);
 	    $contentLength = $stats[7];
 	    $lastModified = GalleryUtilities::getHttpDate($stats[9]);

@@ -17,34 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * A helper class for GalleryDerivatives
- *
  * Utility functions useful in managing GalleryDerivatives
- *
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryDerivativeHelper_simple {
 
     /**
-     * Rebuild the cache if its not current
-     *
-     * If the cache is expired, it will be automatically rebuilt
-     *
-     * @access public
-     * @param the id of the derivative
-     * @param [optional boolean whether to try to fix the derivative if is broken]
-     * @return array object GalleryStatus a status code,
-     *               object GalleryDerivative the up-to-date derivative
-     *               boolean true if it had to be rebuilt, false if not
-     * @static
+     * @see GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent
      */
     function rebuildCacheIfNotCurrent($derivativeId, $fixBroken=false) {
 	global $gallery;
@@ -72,12 +57,7 @@ class GalleryDerivativeHelper_simple {
     }
 
     /**
-     * Convenience function to fetch the thumbnail for an item id
-     *
-     * @param array GalleryItem ids
-     * @return array object GalleryStatus a status code
-     *               array(GalleryItem id => GalleryDerivativeImage, ...)
-     * @static
+     * @see GalleryCoreApi::fetchThumbnailsByItemIds
      */
     function fetchThumbnailsByItemIds($ids) {
 	if (!is_array($ids)) {
@@ -111,7 +91,6 @@ class GalleryDerivativeHelper_simple {
      * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @access private
-     * @static
      */
     function _loadDerivatives($itemIds, $sourceIds, $types=array()) {
 	global $gallery;
@@ -131,26 +110,26 @@ class GalleryDerivativeHelper_simple {
 	    $idMarkers = GalleryUtilities::makeMarkers(sizeof($itemIds));
 	    $data = $itemIds;
 	    $query = '
-            SELECT
-              [GalleryDerivative::id], [GalleryChildEntity::parentId]
-            FROM
-              [GalleryDerivative], [GalleryChildEntity]
-            WHERE
-              [GalleryDerivative::id] = [GalleryChildEntity::id]
-              AND
-              [GalleryChildEntity::parentId] IN (' . $idMarkers . ')
-            ';
+	    SELECT
+	      [GalleryDerivative::id], [GalleryChildEntity::parentId]
+	    FROM
+	      [GalleryDerivative], [GalleryChildEntity]
+	    WHERE
+	      [GalleryDerivative::id] = [GalleryChildEntity::id]
+	      AND
+	      [GalleryChildEntity::parentId] IN (' . $idMarkers . ')
+	    ';
 	} else {
 	    $idMarkers = GalleryUtilities::makeMarkers(sizeof($sourceIds));
 	    $data = $sourceIds;
 	    $query = '
-            SELECT
-              [GalleryDerivative::id], [GalleryDerivative::derivativeSourceId]
-            FROM
-              [GalleryDerivative]
-            WHERE
-              [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
-            ';
+	    SELECT
+	      [GalleryDerivative::id], [GalleryDerivative::derivativeSourceId]
+	    FROM
+	      [GalleryDerivative]
+	    WHERE
+	      [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
+	    ';
 	}
 	foreach ($data as $idx => $id) {
 	    $data[$idx] = (int)$id;
@@ -159,9 +138,9 @@ class GalleryDerivativeHelper_simple {
 	if (!empty($types)) {
 	    $typeMarkers = GalleryUtilities::makeMarkers(sizeof($types));
 	    $query .= '
-              AND
-              [GalleryDerivative::derivativeType] IN (' . $typeMarkers . ')
-            ';
+	      AND
+	      [GalleryDerivative::derivativeType] IN (' . $typeMarkers . ')
+	    ';
 	    $data = array_merge($data, $types);
 	}
 
@@ -180,8 +159,7 @@ class GalleryDerivativeHelper_simple {
 	    /*
 	     * Sorting this in the database triggers a fielsort in MySQL which
 	     * is slow.  We expect this to be a fairly small set of derivatives
-	     * so we'll do it in memory in PHP instead and lighten the load on
-	     * the DB.
+	     * so we'll do it in memory in PHP instead and lighten the load on the DB.
 	     *
 	     * TODO: Consider caching this result since it's the kind of thing
 	     * that will be called often on data that won't change frequently.

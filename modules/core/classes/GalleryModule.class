@@ -30,10 +30,9 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlugin.class', true);
 class GalleryModule extends GalleryPlugin {
 
     /**
-     * The module group (optional)
-     * Used to better organize site admin pages
-     *
-     * @var array('group'=>group, 'groupLabel'=>label) _group
+     * The module group (optional).
+     * Used to better organize site admin pages; array('group' => string, 'groupLabel' => string)
+     * @var array
      * @access private
      */
     var $_group;
@@ -51,18 +50,18 @@ class GalleryModule extends GalleryPlugin {
      *
      * eg. getItemAdminViews|getSystemLinks|getItemLinks
      *
-     * @var string _callbacks
+     * @var string
      * @access private
      */
     var $_callbacks = '';
 
     /**
      * The version of the GalleryModule API required by this module
-     *
-     * @var array _requiredModuleApi
+     * @var array
      * @access private
      */
     var $_requiredModuleApi;
+
 
     /**
      * Return the major and minor version of the GalleryModule API.
@@ -70,7 +69,7 @@ class GalleryModule extends GalleryPlugin {
      * This follows the same rules as the core API.
      * @see GalleryCoreApi::getApiVersion
      *
-     * @TODO: for next major version bump:
+     * @todo for next major version bump:
      * - Change GalleryDataItem::render to match GalleryRenderer::render and
      *   consider dropping the format, since it's always HTML.
      * - Drop the redirect url from GalleryPlugin::deactivate() (also requires a

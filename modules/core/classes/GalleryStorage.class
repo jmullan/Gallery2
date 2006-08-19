@@ -65,105 +65,92 @@ class GalleryStorage {
 
     /**
      * Internal pointer to ADOdb database object
-     *
+     * @var object ADOdb
      * @access protected
-     * @var object ADOdb $_db
      */
     var $_db;
 
     /**
-     * Internal pointer to our DatabaseStorageExtras object
-     *
-     * @access protected
-     * @var object DatabaseStorageExtras $_extras
-     */
-    var $_extras;
-
-    /**
      * Internal pointer to a non-transactional ADOdb database object
-     *
+     * @var object ADOdb
      * @access protected
-     * @var object ADOdb $_nonTransactionalDb
      */
     var $_nonTransactionalDb;
 
     /**
-     * Database type (ADOdb driver name)
-     *
+     * Internal pointer to our DatabaseStorageExtras object
+     * @var object DatabaseStorageExtras
      * @access protected
-     * @var string $_type
+     */
+    var $_extras;
+
+    /**
+     * Database type (ADOdb driver name)
+     * @var string
+     * @access protected
      */
     var $_type;
 
     /**
      * Name of the database user
-     *
+     * @var string
      * @access protected
-     * @var string $_username
      */
     var $_username;
 
     /**
      * Password for the database user
-     *
+     * @var string
      * @access protected
-     * @var string $_password
      */
     var $_password;
 
     /**
      * Name of the database to use
-     *
+     * @var string
      * @access protected
-     * @var string $_database
      */
     var $_database;
 
     /**
      * Host the database runs on
-     *
+     * @var string
      * @access protected
-     * @var string $_hostname
      */
     var $_hostname;
 
     /**
      * Are we attempting to be transactional?
-     *
+     * @var boolean
      * @access protected
-     * @var string $_transactional
      */
     var $_isTransactional;
 
     /**
      * A string to prepend to table names
-     *
+     * @var string
      * @access protected
-     * @var string $_tablePrefix
      */
     var $_tablePrefix;
 
     /**
      * A string to prepend to column names
-     *
+     * @var string
      * @access protected
-     * @var string $_columnPrefix
      */
     var $_columnPrefix;
 
     /**
      * A cache of member info that we've discovered about various classes
-     *
+     * @var array
      * @access protected
-     * @var array $_entityInfoCache
      */
     var $_entityInfoCache;
 
     /**
      * Whether or not we should use persistent database connections
-     *
+     * @var boolean
      * @access protected
-     * @var array $_usePersistentConnections
      */
     var $_usePersistentConnections;
 
@@ -171,9 +158,8 @@ class GalleryStorage {
      * Whether this storage accepts empty (string) values for NOT NULL columns.  Some DBMS
      * implicitly converts empty values to NULL on INSERT/UPDATE and then the value would violate a
      * NOT NULL condition.
-     *
-     * @access private
-     * @var array $_isEmptyAllowedForNotNullColumn
+     * @var boolean
+     * @access protected
      */
     var $_isEmptyAllowedForNotNullColumn;
 
@@ -1206,7 +1192,7 @@ class GalleryStorage {
      * Cast the value to the proper member type when interacting with the database.  Optionally also
      * perform a UTF-8-safe truncation for strings.
      *
-     * @TODO: CAST empty to NULL ? values from DB too?
+     * @todo CAST empty to NULL ? values from DB too?
      *
      * @param mixed the value
      * @param array ('type' => STORAGE_TYPE_XXX constant,

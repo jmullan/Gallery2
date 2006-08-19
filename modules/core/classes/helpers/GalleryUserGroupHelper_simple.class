@@ -17,27 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- *
- *
+ * Helper functions for users/groups
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryUserGroupHelper_simple {
 
     /**
-     * Is the active user in the admin group?
-     *
-     * @param int an optional user id (default is the current user)
-     * @return array object GalleryStatus a status code
-     *               bool true if yes
-     * @static
+     * @see GalleryCoreApi::isUserInSiteAdminGroup
      */
     function isUserInSiteAdminGroup($userId=null) {
 	global $gallery;
@@ -60,12 +52,7 @@ class GalleryUserGroupHelper_simple {
     }
 
     /**
-     * Is the given user id in the given group?
-     *
-     * @param int the id of the user
-     * @return array object GalleryStatus a status code
-     *               bool true if yes
-     * @static
+     * @see GalleryCoreApi::isUserInGroup
      */
     function isUserInGroup($userId, $groupId) {
 	$userId = (int) $userId;
@@ -89,17 +76,7 @@ class GalleryUserGroupHelper_simple {
     }
 
     /**
-     * Return a list of groups that a user belongs to
-     *
-     * You can specify how many userids to list, and where the windows is in
-     * the list of all users.
-     *
-     * @param int the user id
-     * @param int the number of group ids desired
-     * @param int the start of the range
-     * @return array object GalleryStatus a status code
-     *               array group id => group name
-     * @static
+     * @see GalleryCoreApi::fetchGroupsForUser
      */
     function fetchGroupsForUser($userId, $count=null, $offset=null) {
 	global $gallery;
@@ -109,18 +86,18 @@ class GalleryUserGroupHelper_simple {
 	    $data = GalleryDataCache::get($cacheKey);
 	} else {
 	    $query = '
-            SELECT
-              [GalleryGroup::id],
-              [GalleryGroup::groupName]
-            FROM
-              [GalleryUserGroupMap], [GalleryGroup]
-            WHERE
-              [GalleryGroup::id] = [GalleryUserGroupMap::groupId]
-              AND
-              [GalleryUserGroupMap::userId] = ?
-            ORDER BY
-              [GalleryGroup::groupName]
-            ';
+	    SELECT
+	      [GalleryGroup::id],
+	      [GalleryGroup::groupName]
+	    FROM
+	      [GalleryUserGroupMap], [GalleryGroup]
+	    WHERE
+	      [GalleryGroup::id] = [GalleryUserGroupMap::groupId]
+	      AND
+	      [GalleryUserGroupMap::userId] = ?
+	    ORDER BY
+	      [GalleryGroup::groupName]
+	    ';
 	    list ($ret, $searchResults) =
 		$gallery->search($query,
 				  array((int) $userId),

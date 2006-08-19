@@ -17,25 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- *
+ * Helper functions for ItemAttributes map
  * @package GalleryCore
  * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryItemAttributesHelper_simple {
 
     /**
-     * Update the view count for this item id
-     * @param int the item id
-     * @param int the amount to increment
-     * @return object GalleryStatus a status code
-     * @static
+     * @see GalleryCoreApi::incrementItemViewCount
      */
     function incrementViewCount($itemId, $step=1) {
 	global $gallery;
@@ -52,11 +46,11 @@ class GalleryItemAttributesHelper_simple {
 		 * of bandwidth.
 		 */
 		$phpVm = $gallery->getPhpVm();
-		if (GalleryUtilities::getServerVar('HTTP_IF_MODIFIED_SINCE') ||
-		        ($phpVm->function_exists('getallheaders') &&
-		         ($headers = $phpVm->getAllHeaders()) &&
-			 (isset($headers['If-Modified-Since']) ||
-			  isset($headers['If-modified-since'])))) {
+		if (GalleryUtilities::getServerVar('HTTP_IF_MODIFIED_SINCE')
+			|| ($phpVm->function_exists('getallheaders')
+			    && ($headers = $phpVm->getAllHeaders())
+			    && (isset($headers['If-Modified-Since'])
+				|| isset($headers['If-modified-since'])))) {
 		    return null;
 		}
 
@@ -98,11 +92,7 @@ class GalleryItemAttributesHelper_simple {
     }
 
     /**
-     * Get the view count for this item id
-     * @param int the item id
-     * @return array object GalleryStatus a status code
-     *               int view count
-     * @static
+     * @see GalleryCoreApi::fetchItemViewCount
      */
     function fetchViewCount($itemId) {
 	list ($ret, $viewCounts) =
@@ -115,11 +105,7 @@ class GalleryItemAttributesHelper_simple {
     }
 
     /**
-     * Get the view counts for many item ids
-     * @param array the item ids
-     * @return array object GalleryStatus a status code
-     *               array (itemId => viewCount, ..)
-     * @static
+     * @see GalleryCoreApi::fetchItemViewCounts
      */
     function fetchViewCounts($itemIds) {
 	foreach ($itemIds as $idx => $id) {
@@ -144,11 +130,7 @@ class GalleryItemAttributesHelper_simple {
     }
 
     /**
-     * Get the parent sequence for this item id
-     * @param int the item id
-     * @return array object GalleryStatus a status code
-     *               array the parent id sequence
-     * @static
+     * @see GalleryCoreApi::fetchParentSequence
      */
     function fetchParentSequence($itemId) {
 	global $gallery;

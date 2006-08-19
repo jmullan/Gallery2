@@ -41,6 +41,7 @@ class GalleryDataItem extends GalleryItem {
 
     /**
      * The mime type of the data file
+     * @var string
      *
      * @g2 <member>
      * @g2   <member-name>mimeType</member-name>
@@ -48,25 +49,21 @@ class GalleryDataItem extends GalleryItem {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2   <linked/>
      * @g2 </member>
-     *
-     * @var string $mimeType
-     * @access public
      */
     var $mimeType;
 
     /**
      * The byte size of the data file
+     * @var int
      *
      * @g2 <member>
      * @g2   <member-name>size</member-name>
      * @g2   <member-type>INTEGER</member-type>
      * @g2   <linked/>
      * @g2 </member>
-     *
-     * @var string $size
-     * @access public
      */
     var $size;
+
 
     /**
      * Data items that can be viewed inline (photos, movies, etc) should return true.

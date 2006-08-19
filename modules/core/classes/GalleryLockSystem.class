@@ -32,19 +32,19 @@
 class GalleryLockSystem {
 
     /**
-     * Information about all the locks we currently hold
-     *
-     * @var array of (lockId => array('lockId' => lock id, 'type' => LOCK_READ or LOCK_WRITE,
-     *                                'ids' => array of locked object id => additional data))
+     * Information about all the locks we currently hold.
+     * array of (lockId => array('lockId' => lock id, 'type' => LOCK_READ or LOCK_WRITE,
+     *                           'ids' => array of locked object id => additional data))
+     * @var array
      * @access protected
      */
     var $_locks;
 
     /**
-     * List of locks that are pending release
-     *
-     * @var array of (lockId => array('lockId' => lock id, 'type' => LOCK_READ or LOCK_WRITE,
-     *                                'ids' => array of locked object id => additional data))
+     * List of locks that are pending release.
+     * array of (lockId => array('lockId' => lock id, 'type' => LOCK_READ or LOCK_WRITE,
+     *                           'ids' => array of locked object id => additional data))
+     * @var array
      * @access protected
      */
     var $_releaseQueue;

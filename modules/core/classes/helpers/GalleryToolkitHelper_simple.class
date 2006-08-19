@@ -17,35 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * This is a helper class that provides an interface to the GalleryToolkit
- * api.  Modules that implement a GalleryToolkit interface can register their
- * various operations and properties using this class, and then classes that
- * want to use a toolkit operation or property can locate the appropriate
- * toolkit by operation/property and mime type.
+ * This is a helper class that provides an interface to the GalleryToolkit api.  Modules that
+ * implement a GalleryToolkit interface can register their various operations and properties
+ * using this class, and then classes that want to use a toolkit operation or property can locate
+ * the appropriate toolkit by operation/property and mime type.
  *
  * @package GalleryCore
  * @subpackage Helpers
- * @abstract
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ * @static
  */
 class GalleryToolkitHelper_simple {
 
     /**
-     * Get a toolkit that can perform the given operation
-     *
-     * @access public
-     * @static
-     * @param string a mime type
-     * @param string the operation name
-     * @return array object GalleryStatus a status code
-     *               object GalleryToolkit a toolkit
-     *               string a result mime type
+     * @see GalleryCoreApi::getToolkitByOperation
      */
     function getToolkitByOperation($mimeType, $operationName) {
 	global $gallery;
@@ -55,24 +43,24 @@ class GalleryToolkitHelper_simple {
 	    $toolkit = $outputMimeType = null;
 	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
-            SELECT
-              [GalleryToolkitOperationMimeTypeMap::toolkitId],
-              [GalleryToolkitOperationMap::outputMimeType]
-            FROM
-              [GalleryToolkitOperationMap],
-              [GalleryToolkitOperationMimeTypeMap]
-            WHERE
-              [GalleryToolkitOperationMap::name] = ' .
-		'[GalleryToolkitOperationMimeTypeMap::operationName]
-              AND
-              [GalleryToolkitOperationMimeTypeMap::mimeType] = ?
-              AND
-              [GalleryToolkitOperationMap::name] = ?
-            ORDER BY
-              [GalleryToolkitOperationMimeTypeMap::priority] ASC
-            ';
+	    SELECT
+	      [GalleryToolkitOperationMimeTypeMap::toolkitId],
+	      [GalleryToolkitOperationMap::outputMimeType]
+	    FROM
+	      [GalleryToolkitOperationMap],
+	      [GalleryToolkitOperationMimeTypeMap]
+	    WHERE
+	      [GalleryToolkitOperationMap::name] =
+		[GalleryToolkitOperationMimeTypeMap::operationName]
+	      AND
+	      [GalleryToolkitOperationMimeTypeMap::mimeType] = ?
+	      AND
+	      [GalleryToolkitOperationMap::name] = ?
+	    ORDER BY
+	      [GalleryToolkitOperationMimeTypeMap::priority] ASC
+	    ';
 
-	    list ($ret, $searchResults) = 
+	    list ($ret, $searchResults) =
 		$gallery->search($query, array((string)$mimeType, (string)$operationName));
 	    if ($ret) {
 		return array($ret, null, null);
@@ -103,20 +91,12 @@ class GalleryToolkitHelper_simple {
     }
 
     /**
-     * Get a toolkit that can retrieve the given property
-     *
-     * @access public
-     * @static
-     * @param string a mime type
-     * @param string the property name
-     * @param int how many toolkits to we want (0 = all available)
-     * @return array object GalleryStatus a status code
-     *               object GalleryToolkit a toolkit
+     * @see GalleryCoreApi::getToolkitByProperty
      */
     function getToolkitByProperty($mimeType, $propertyName) {
 	$cacheKey = "GalleryToolkitHelper::getToolkitByProperty($mimeType, $propertyName)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
-	    list ($ret, $toolkits) = 
+	    list ($ret, $toolkits) =
 		GalleryToolkitHelper_simple::getToolkitsByProperty($mimeType, $propertyName);
 	    if ($ret) {
 		return array($ret, null);
@@ -129,14 +109,7 @@ class GalleryToolkitHelper_simple {
     }
 
     /**
-     * Get the toolkits that can retrieve the given property
-     *
-     * @access public
-     * @static
-     * @param string a mime type
-     * @param string the property name
-     * @return array object GalleryStatus a status code
-     *               array of GalleryToolkit objects
+     * @see GalleryCoreApi::getToolkitsByProperty
      */
     function getToolkitsByProperty($mimeType, $propertyName) {
 	global $gallery;
@@ -146,18 +119,18 @@ class GalleryToolkitHelper_simple {
 	    $toolkits = null;
 	} else if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
-            SELECT
-              [GalleryToolkitPropertyMimeTypeMap::toolkitId]
-            FROM
-              [GalleryToolkitPropertyMap],
-              [GalleryToolkitPropertyMimeTypeMap]
-            WHERE
-              [GalleryToolkitPropertyMap::name] = [GalleryToolkitPropertyMimeTypeMap::propertyName]
-              AND
-              [GalleryToolkitPropertyMimeTypeMap::mimeType] = ?
-              AND
-              [GalleryToolkitPropertyMap::name] = ?
-            ';
+	    SELECT
+	      [GalleryToolkitPropertyMimeTypeMap::toolkitId]
+	    FROM
+	      [GalleryToolkitPropertyMap],
+	      [GalleryToolkitPropertyMimeTypeMap]
+	    WHERE
+	      [GalleryToolkitPropertyMap::name] = [GalleryToolkitPropertyMimeTypeMap::propertyName]
+	      AND
+	      [GalleryToolkitPropertyMimeTypeMap::mimeType] = ?
+	      AND
+	      [GalleryToolkitPropertyMap::name] = ?
+	    ';
 
 	    list ($ret, $searchResults) =
 		$gallery->search($query, array((string)$mimeType, (string)$propertyName));
@@ -183,23 +156,19 @@ class GalleryToolkitHelper_simple {
     }
 
     /**
-     * Get maximum priority value (lowest priority) in managed priority range (20-40)
-     *
-     * @return array object GalleryStatus a status code
-     *               int priority
-     * @static
+     * @see GalleryCoreApi::getMaximumManagedToolkitPriority
      */
     function getMaximumManagedPriority() {
 	global $gallery;
 
-	$query = 
+	$query =
 	    'SELECT
 		MAX([GalleryToolkitOperationMimeTypeMap::priority])
-	     FROM 
+	     FROM
 		[GalleryToolkitOperationMimeTypeMap]
-	     WHERE 
+	     WHERE
 		[GalleryToolkitOperationMimeTypeMap::priority] >= 20
-		AND 
+		AND
 		[GalleryToolkitOperationMimeTypeMap::priority] <= 40';
 
 	list ($ret, $results) = $gallery->search($query);
@@ -218,12 +187,7 @@ class GalleryToolkitHelper_simple {
     }
 
     /**
-     * Get priority for toolkit by toolkit id
-     *
-     * @param string Toolkit Id
-     * @return array object GalleryStatus a status code
-     *               int priority (null if not found in db)
-     * @static
+     * @see GalleryCoreApi::getToolkitPriorityById
      */
     function getToolkitPriorityById($toolkitId) {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
@@ -242,6 +206,5 @@ class GalleryToolkitHelper_simple {
 
 	return array(null, $priority);
     }
-
 }
 ?>
