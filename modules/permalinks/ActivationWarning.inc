@@ -33,6 +33,7 @@ class ActivationWarningView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	$template->setVariable('controller', 'permalinks.PermalinksSiteAdmin');
 	return array(null,
 		     array('body' => 'modules/permalinks/templates/ActivationWarning.tpl'));
      }
