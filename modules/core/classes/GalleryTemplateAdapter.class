@@ -692,7 +692,7 @@ class GalleryTemplateAdapter {
      *   include => file to include inside the theme's templates/ dir
      *   url  => url to a file inside the themes dir
      *
-     * @params array('include' => ..., 'url' => ...)
+     * @param array('include' => ..., 'url' => ...)
      * @param reference to Smarty
      */
     function theme($params, &$smarty) {
@@ -735,7 +735,7 @@ class GalleryTemplateAdapter {
      * required param is 'type' which should be of the form <module>.<blockname>
      * eg: "core.LoginBlock".  Any other parameters get passed on to the block itself.
      *
-     * @params array('type' => <block descriptor>, ...)
+     * @param array('type' => <block descriptor>, ...)
      * @param reference to Smarty
      */
     function block($params, &$smarty) {
@@ -774,7 +774,7 @@ class GalleryTemplateAdapter {
      *
      * This is like block() except it wraps actual content.
      *
-     * @params array('type' => <block descriptor>, ...)
+     * @param array('type' => <block descriptor>, ...)
      * @param reference to Smarty
      */
     function container($params, $content, &$smarty) {
@@ -808,7 +808,7 @@ class GalleryTemplateAdapter {
      * param is 'type' which should be of the form <module>.<blockname> eg: "core.LoginBlock".
      * Any other parameters get passed on to the block itself.
      *
-     * @params array('type' => <block descriptor>, ...)
+     * @param array('type' => <block descriptor>, ...)
      * @param reference to Smarty
      */
     function callback($params, &$smarty) {

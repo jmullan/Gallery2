@@ -17,22 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package NetPbm
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/netpbm/classes/NetPbmToolkitHelper.class');
 
 /**
  * @package NetPbm
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class AdminNetPbmController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
@@ -160,10 +157,6 @@ class AdminNetPbmController extends GalleryController {
     }
 }
 
-/**
- * @package NetPbm
- * @subpackage UserInterface
- */
 class AdminNetPbmView extends GalleryView {
 
     /**
@@ -275,8 +268,7 @@ class AdminNetPbmView extends GalleryView {
 
 	$template->setVariable('AdminNetPbm', $AdminNetPbm);
 	$template->setVariable('controller', 'netpbm.AdminNetPbm');
-	return array(null,
-		     array('body' => 'modules/netpbm/templates/AdminNetPbm.tpl'));
+	return array(null, array('body' => 'modules/netpbm/templates/AdminNetPbm.tpl'));
     }
 }
 ?>

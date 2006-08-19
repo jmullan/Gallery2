@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package NewItems
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Add new/updated image in summary info for new/updated items.
@@ -29,6 +24,8 @@
  * Thanks to Felix Rabinovich (virshu) for the idea.
  *
  * @package NewItems
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class NewItemsModule extends GalleryModule {
 
@@ -46,7 +43,7 @@ class NewItemsModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	if (!isset($currentVersion)) {
@@ -64,7 +61,7 @@ class NewItemsModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -78,7 +75,7 @@ class NewItemsModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,
@@ -87,7 +84,7 @@ class NewItemsModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemSummaries()
+     * @see GalleryModule::getItemSummaries
      */
     function getItemSummaries($items, $permissions) {
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'newitems');
@@ -114,7 +111,6 @@ class NewItemsModule extends GalleryModule {
 	}
 	return array(null, $summaries);
     }
-
 
     /**
      * @see GalleryModule::uninstall
