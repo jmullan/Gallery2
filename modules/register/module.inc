@@ -111,8 +111,7 @@ class RegisterModule extends GalleryModule {
 	    $links['Register'] = array(
 		'text' => $this->translate('Register'),
 		'params' => array('view' => 'core.UserAdmin',
-				  'subView' => 'register.UserSelfRegistration',
-				  'return' => 1));
+				  'subView' => 'register.UserSelfRegistration'));
 	}
 
 	return array(null, $links);

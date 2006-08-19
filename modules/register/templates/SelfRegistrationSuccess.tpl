@@ -26,7 +26,8 @@
   </h2>
   <p class="giDescription">
       {capture name=loginLink}
-      <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin" forceFullUrl=true}">
+      <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin" 
+        arg3="return=1" forceFullUrl=true}">
       {/capture}
       {capture name=loginLinkEnd}
       </a>
