@@ -17,27 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author vicente
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class', true);
 
 /**
  * MSSQL extension of the GalleryStorage class.
- *
  * This object implements the hooks for saving and restoring objects in a MSSQL database.
  *
  * @package GalleryCore
  * @subpackage Storage
+ * @author vicente
+ * @version $Revision$ $Date$
  */
 class MSSqlStorage extends GalleryStorage {
 
-    /**
-     * Constructor
-     */
     function MSSqlStorage($config) {
 	$this->GalleryStorage($config);
 	$this->_isTransactional = true;
@@ -51,7 +44,6 @@ class MSSqlStorage extends GalleryStorage {
 
     /**
      * Return the type of this database
-     *
      * @return string
      */
     function getType() {

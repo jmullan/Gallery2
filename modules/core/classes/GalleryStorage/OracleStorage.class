@@ -17,28 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class', true);
 
 /**
  * Oracle extension of the GalleryStorage class.
- *
- * This object implements the hooks for saving and restoring objects in an
- * Oracle database.
+ * This object implements the hooks for saving and restoring objects in an Oracle database.
  *
  * @package GalleryCore
  * @subpackage Storage
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class OracleStorage extends GalleryStorage {
 
-    /**
-     * Constructor
-     */
     function OracleStorage($config) {
 	$this->GalleryStorage($config);
 	$this->_isTransactional = true;
@@ -47,7 +39,6 @@ class OracleStorage extends GalleryStorage {
 
     /**
      * Return the type of this database
-     *
      * @return string
      */
     function getType() {

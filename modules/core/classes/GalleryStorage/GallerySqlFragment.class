@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Container to store an sql fragment that can be passed to the db abstraction layer.
- *
  * @package GalleryCore
  * @subpackage Storage
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class GallerySqlFragment {
 
@@ -58,8 +54,7 @@ class GallerySqlFragment {
 
     /**
      * The sql fragment
-     *
-     * @return string the sql fragment
+     * @return string
      */
     function getFragment() {
 	return $this->_fragment;
@@ -67,8 +62,7 @@ class GallerySqlFragment {
 
     /**
      * Return the values that map into the sql fragment's ? markers
-     *
-     * @return array the values to go with the sql fragment
+     * @return array
      */
     function getValues() {
 	return $this->_values;

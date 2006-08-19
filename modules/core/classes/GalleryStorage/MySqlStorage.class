@@ -17,28 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class', true);
 
 /**
  * MySQL extension of the GalleryStorage class.
- *
- * This object implements the hooks for saving and restoring objects in a
- * MySQL database.
+ * This object implements the hooks for saving and restoring objects in a MySQL database.
  *
  * @package GalleryCore
  * @subpackage Storage
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class MySqlStorage extends GalleryStorage {
 
-    /**
-     * Constructor
-     */
     function MySqlStorage($config) {
 	$this->GalleryStorage($config);
 	if ($this->_type != 'mysql' /* mysqlt and mysqli are transactional */) {
@@ -48,7 +40,6 @@ class MySqlStorage extends GalleryStorage {
 
     /**
      * Return the type of this database
-     *
      * @return string
      */
     function getType() {

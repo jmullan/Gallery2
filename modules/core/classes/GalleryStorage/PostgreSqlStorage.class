@@ -17,28 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class', true);
 
 /**
  * PostgreSQL extension of the GalleryStorage class.
- *
- * This object implements the hooks for saving and restoring objects in a
- * PostgreSQL database.
+ * This object implements the hooks for saving and restoring objects in a PostgreSQL database.
  *
  * @package GalleryCore
  * @subpackage Storage
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class PostgreSqlStorage extends GalleryStorage {
 
-    /**
-     * Constructor
-     */
     function PostgreSqlStorage($config) {
 	$this->GalleryStorage($config);
 	$this->_isTransactional = true;
@@ -46,7 +38,6 @@ class PostgreSqlStorage extends GalleryStorage {
 
     /**
      * Return the type of this database
-     *
      * @return string
      */
     function getType() {
@@ -62,10 +53,7 @@ class PostgreSqlStorage extends GalleryStorage {
 	    return $ret;
 	}
 
-	/*
-	 * Create a temporary database connection and install our custom
-	 * aggregate function.
-	 */
+	/* Create a temporary database connection and install our custom aggregate function */
 	list ($ret, $tmpDb) = $this->_getConnection(true);
 	if ($ret) {
 	    return $ret;
@@ -96,10 +84,7 @@ class PostgreSqlStorage extends GalleryStorage {
 	      stype = bit
 	    )';
 
-	    /*
-	     * Create a temporary database connection and install our custom
-	     * aggregate function.
-	     */
+	    /* Create a temporary database connection and install our custom aggregate function */
 	    list ($ret, $tmpDb) = $this->_getConnection(true);
 	    if ($ret) {
 		return $ret;
@@ -136,7 +121,7 @@ class PostgreSqlStorage extends GalleryStorage {
     }
 
     /**
-     * @see GalleryStorage::convertIntToBits
+     * @see GalleryStorage::convertBitsToInt
      */
     function convertBitsToInt($bitsVal) {
 	return bindec($bitsVal);
@@ -159,7 +144,7 @@ class PostgreSqlStorage extends GalleryStorage {
 
 	case 'BIT_OR':
 	    $sql = 'BIT_OR(' . $args[0] . ')';
-            break;
+	    break;
 
 	case 'UNIX_TIMESTAMP':
 	    $sql = 'date_part(\'epoch\', ' . $args[0] . ')';

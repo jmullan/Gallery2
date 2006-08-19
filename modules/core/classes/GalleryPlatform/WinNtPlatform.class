@@ -17,28 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Load required class
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform.class', true);
 
 /**
  * An WindowsNT based version of the GalleryPlatform class
- *
  * @package GalleryCore
  * @subpackage Platform
- * @access public
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class WinNtPlatform extends GalleryPlatform {
 
     /**
-     * @see GalleryPlatform::rename()
+     * @see GalleryPlatform::rename
      */
     function rename($oldname, $newname) {
 	/*
@@ -52,7 +44,7 @@ class WinNtPlatform extends GalleryPlatform {
     }
 
     /**
-     * @see GalleryPlatform::exec()
+     * @see GalleryPlatform::exec
      */
     function exec($cmdArray, $returnErrorOutput=false) {
 	global $gallery;
@@ -177,7 +169,6 @@ class WinNtPlatform extends GalleryPlatform {
 	}
 	return $list;
     }
-
 
     /**
      * @see GalleryPlatform::isSymlinkSupported

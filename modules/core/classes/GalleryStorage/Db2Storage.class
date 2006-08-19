@@ -17,28 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author 
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class', true);
 
 /**
  * IBM DB2 UDB (for Linux/UNIX/Windows) extension of the GalleryStorage class.
- *
  * This object implements the hooks for saving and restoring objects in an
  * IBM DB2 Universal Database database.
  *
  * @package GalleryCore
  * @subpackage Storage
+ * @version $Revision$ $Date$
  */
 class Db2Storage extends GalleryStorage {
 
-    /**
-     * Constructor
-     */
     function Db2Storage($config) {
 	$this->GalleryStorage($config);
 	$this->_isTransactional = true;
@@ -46,7 +38,6 @@ class Db2Storage extends GalleryStorage {
 
     /**
      * Return the type of this database
-     *
      * @return string
      */
     function getType() {
@@ -62,10 +53,7 @@ class Db2Storage extends GalleryStorage {
 	    return $ret;
 	}
 
-	/*
-	 * Create a temporary database connection and install our custom
-	 * aggregate function.
-	 */
+	/* Create a temporary database connection and install our custom aggregate function */
 	list ($ret, $tmpDb) = $this->_getConnection(true);
 	if ($ret) {
 	    return $ret;
@@ -77,8 +65,8 @@ class Db2Storage extends GalleryStorage {
 	$statements[] = 'DROP FUNCTION G2_LIKE(VARCHAR(8000), VARCHAR(8000))';
 	$statements[] = 'DROP FUNCTION G2_BIT_OR(INTEGER, VARCHAR(32))';
 	/*
-	 * Unregister the Jar file (use ODBC delimiters, see
-	 * http://gallery.menalto.com/node/37648?from=850#comment-172690)
+	 * Unregister the Jar file; use ODBC delimiters, see
+	 * http://gallery.menalto.com/node/37648?from=850#comment-172690
 	 */
 	$statements[] = "{CALL SQLJ.REMOVE_JAR('g2_db2_jar')}";
 	foreach ($statements as $sql) {
@@ -161,7 +149,7 @@ class Db2Storage extends GalleryStorage {
     }
 
     /**
-     * @see GalleryStorage::convertIntToBits
+     * @see GalleryStorage::convertBitsToInt
      */
     function convertBitsToInt($bitsVal) {
 	return bindec($bitsVal);
@@ -297,7 +285,7 @@ class Db2Storage extends GalleryStorage {
 	    return null;
 	} else {
 	    return "CALL REORGCHK_TB_STATS ('S', '" . $this->_username . "')";
-        }
-     }
+	}
+    }
 }
 ?>

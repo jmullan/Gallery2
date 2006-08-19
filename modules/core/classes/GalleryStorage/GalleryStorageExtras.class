@@ -17,22 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Extended functionality in GalleryStorage that's not generally required for
  * simply viewing albums and photos.
- *
  * @package GalleryCore
  * @subpackage Storage
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
-     * Constructor
      * @param object GalleryStorage the database storage instance
      */
     function GalleryStorageExtras(&$galleryStorage) {
@@ -40,11 +35,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     }
 
     /**
-     * Return a non transactional database connection
-     *
-     * On occasion we'll need a non-transactional connection to do things
-     * like locking and sequence handling, since they have to be consistent
-     * across may concurrent requests.
+     * Return a non transactional database connection.
+     * On occasion we'll need a non-transactional connection to do things like locking and
+     * sequence handling, since they have to be consistent across may concurrent requests.
      * @return array object GalleryStatus a status code
      *               object ADOdb a database connection
      */
@@ -810,7 +803,6 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
     /**
      * Delete all not-so-fresh locks.
-     *
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -1014,6 +1006,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * @param array an associative array of data about the entry
      *              each data element is an array of values
      * @return object GalleryStatus a status code
+     * @access private
      */
     function _addMapEntries($mapInfo, $tableName, $entry) {
 	$columns = array();
@@ -1353,10 +1346,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	/*
-	 * Now take care of the rest of the tables.  If the table doesn't
-	 * exist, apply the current table definition.  If it already exists,
-	 * check to see if there is an upgrade available for the given table
-	 * version that we should apply based on $upgradeInfo.
+	 * Now take care of the rest of the tables.  If the table doesn't exist, apply the current
+	 * table definition.  If it already exists, check to see if there is an upgrade available
+	 * for the given table version that we should apply based on $upgradeInfo.
 	 */
 	foreach ($moduleSql['table'] as $rawTableName => $sql) {
 	    $gallery->guaranteeTimeLimit(20);
@@ -1618,7 +1610,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     }
 
     /**
-     * @see GalleryStorage::_executeSqlFile
+     * @see GalleryStorage::executeSqlFile
      */
     function executeSqlFile($fileName) {
 	global $gallery;
@@ -2041,8 +2033,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     }
 
     /**
-     * Clear out the entity and map caches, which we should do any time that we add or
-     * remove a table.
+     * Clear out the entity and map caches, which we should do any time we add or remove a table.
      */
     function _clearEntityAndMapCache() {
 	/* Note: keep these cache keys in sync with describeMap() */

@@ -214,7 +214,7 @@ class ExifHelper {
      * @return array   object GalleryStatus a status code
      *                 object  the JPEG object containing the IPTC data
      * @see getIptcValue
-     * @TODO(xlerb) reduce size of lib/JPEG: 1. remove whitespace/comments; 2. refactor according
+     * @todo (xlerb) reduce size of lib/JPEG: 1. remove whitespace/comments; 2. refactor according
      *      to lazy reading. Before refactoring, add timing tests.
      */
     function getIptcObject($path) {
@@ -370,7 +370,7 @@ class ExifHelper {
      *
      * @param string the path to the file
      * @return int an unix timestamp
-     * @TODO(xlerb) check for IPTC.DateCreated and IPTC.TimeCreated additionally? Problem: only
+     * @todo (xlerb) check for IPTC.DateCreated and IPTC.TimeCreated additionally? Problem: only
      *      date set by Adobe in IPTC, set time to 0 = midnight or 12 = noon? Also, which priority
      *      has it: it was explicitely set by the editor, thus first priority? Or to be considered
      *      just before IFD0.DateTime == last modification time?
@@ -460,8 +460,8 @@ class ExifHelper {
      * @param string   Source encoding of the IPTC value, e.g. 'ISO-8859-1', defaults from current
      *                 locale
      * @return string  An IPTC value or null, if there is no such value or on error
-     * @TODO(xlerb) have IPTC input charset default in EXIF/IPTC admin interface.
-     * @TODO(xlerb) have IPTC input charset overrides for albums (maybe images too?) for cases,
+     * @todo (xlerb) have IPTC input charset default in EXIF/IPTC admin interface.
+     * @todo (xlerb) have IPTC input charset overrides for albums (maybe images too?) for cases,
      *      where users from different countries can upload images with IPTC data. It is such a
      *      pain, that the charset used isn't recorded in IPTC headers.
      */
