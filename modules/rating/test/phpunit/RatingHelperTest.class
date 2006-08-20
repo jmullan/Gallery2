@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rating
- * @subpackage PHPUnit
- * @author Don Seiler <don@seiler.us>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 GalleryCoreApi::requireOnce('modules/rating/classes/RatingHelper.class');
@@ -32,6 +26,8 @@ GalleryCoreApi::requireOnce('modules/rating/classes/RatingHelper.class');
  *
  * @package Rating
  * @subpackage PHPUnit
+ * @author Don Seiler <don@seiler.us>
+ * @version $Revision$ $Date$
  */
 class RatingHelperTest extends GalleryTestCase {
 
@@ -239,7 +235,7 @@ class RatingHelperTest extends GalleryTestCase {
 	$totalRating = 0;
 	$votes = 0;
 	$testUserIds = array();
-	foreach($this->_users as $user) {
+	foreach ($this->_users as $user) {
 	    $testUserIds[] = $user->getId();
 	}
 	$testUserIds[] = $anonymousUserId;

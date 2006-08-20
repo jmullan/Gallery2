@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Slideshow
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Test Slideshow functionality
  *
  * @package Slideshow
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class SlideshowTest extends GalleryTestCase {
 
@@ -45,8 +41,8 @@ class SlideshowTest extends GalleryTestCase {
 
 	/* Register a dummy toolkit and operation */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'SlideshowToolkit', 'SlideshowToolkit',
-            'modules/slideshow/test/phpunit/SlideshowTest.class', 'slideshow_test', null);
+	    'GalleryToolkit', 'SlideshowToolkit', 'SlideshowToolkit',
+	    'modules/slideshow/test/phpunit/SlideshowTest.class', 'slideshow_test', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -62,8 +58,8 @@ class SlideshowTest extends GalleryTestCase {
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'ExifInterface_1_0', 'SlideshowExif', 'SlideshowExif',
-            'modules/slideshow/test/phpunit/SlideshowTest.class', 'slideshowTest', null);
+	    'ExifInterface_1_0', 'SlideshowExif', 'SlideshowExif',
+	    'modules/slideshow/test/phpunit/SlideshowTest.class', 'slideshowTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);

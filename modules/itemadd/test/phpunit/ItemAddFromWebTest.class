@@ -17,14 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ItemAdd
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
+/*
  * We need these classes around so that when the code actually tries to add
  * a photo to an album and create a derivative, the factory won't try to go off
  * and load these classes (which lightens the load on our dummy toolkit)
@@ -39,6 +33,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryUnknownItem.class');
  * ItemAddFromWeb plugin test
  * @package ItemAdd
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemAddFromWebTest extends ItemAddPluginTestCase {
 

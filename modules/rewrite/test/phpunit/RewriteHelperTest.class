@@ -18,12 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package Rewrite
- * @subpackage PHPUnit
- * @author Douglas Cau <douglas@cau.se>
- */
 
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 
@@ -32,6 +26,8 @@ GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
  *
  * @package Rewrite
  * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class RewriteHelperTest extends GalleryTestCase {
 
@@ -43,11 +39,11 @@ class RewriteHelperTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
-        $ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
-        if ($ret) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret);
-        }
+	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'accessList',
 	    serialize(array('phpunit1', 'phpunit2')));
@@ -56,21 +52,21 @@ class RewriteHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-        /* Set up our mock parser */
-        $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId',
-            'rewritehelpermock');
-        if ($ret) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret);
-        }
+	/* Set up our mock parser */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+						  'parserId', 'rewritehelpermock');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
 
-        /* Make sure we use the mock parser */
-        list ($ret, $this->_parser) = RewriteHelper::getRewriteParser(true);
-        if ($ret) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret);
-        }
-        $this->assertEquals('rewritehelpermock', $this->_parser->getParserId(), 'parserId');
+	/* Make sure we use the mock parser */
+	list ($ret, $this->_parser) = RewriteHelper::getRewriteParser(true);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('rewritehelpermock', $this->_parser->getParserId(), 'parserId');
 
 	/* Set up our mock platform */
 	$this->_platform = new RewriteHelperMockPlatform();
@@ -120,10 +116,10 @@ class RewriteHelperTest extends GalleryTestCase {
 	}
 	$this->assertEquals('rewritehelpermock', $parser->getParserId(), 'parserId');
 
-        $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId', '');
-        if ($ret) {
-            return $this->failWithStatus($ret);
-        }	
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId', '');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}	
 
 	/* Should still use the same parser (static check) */
 	list ($ret, $parser) = RewriteHelper::getRewriteParser();
@@ -132,7 +128,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	}
 	$this->assertEquals('rewritehelpermock', $parser->getParserId(), 'static');
 
-        list ($ret, $parser) = RewriteHelper::getRewriteParser(true);
+	list ($ret, $parser) = RewriteHelper::getRewriteParser(true);
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
 	    return $this->failWithStatus($ret);
 	}
@@ -334,25 +330,20 @@ class RewriteHelperTest extends GalleryTestCase {
     }
 }
 
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');
+
 /**
  * Mock rewrite parser for this test
- *
- * @package Rewrite
- * @subpackage PHPUnit
  */
-GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');
 class RewriteHelperMockParser extends RewriteParser {
     function RewriteHelperMockParser() {
-        $this->_setParserId('rewritehelpermock');
-        $this->_setParserType('mock');
+	$this->_setParserId('rewritehelpermock');
+	$this->_setParserType('mock');
     }
 }
 
 /**
  * Mock module for this test
- *
- * @package Rewrite
- * @subpackage PHPUnit
  */
 class RewriteHelperMockModule extends GalleryModule {
     function RewriteHelperMockModule() {
@@ -418,7 +409,7 @@ class RewriteHelperMockPlatform extends GalleryPlatform {
 	if (strpos($path, '/modules/') !== false) {
 	    $this->_list = array();
 	    if ($dir = parent::opendir($path)) {
-		while(false !== ($file = parent::readdir($dir))) {
+		while (false !== ($file = parent::readdir($dir))) {
 		    array_push($this->_list, $file);
 		}
 	    }

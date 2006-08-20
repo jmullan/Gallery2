@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ImageBlock
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Test Image Block functionality
  *
  * @package ImageBlock
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ImageBlockTest extends GalleryTestCase {
 
@@ -367,8 +363,8 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($resized->getId(),
-                $data['ImageBlockData']['blocks'][0]['deriv']['id'],
-                'Derivative did not match resized image');
+		$data['ImageBlockData']['blocks'][0]['deriv']['id'],
+		'Derivative did not match resized image');
 
 
 	/* Select specific item, with max size 300.. should match full size */
@@ -388,8 +384,8 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($this->_photo3->getId(),
-                $data['ImageBlockData']['blocks'][0]['deriv']['id'],
-                'Derivative did not match full size image');
+		$data['ImageBlockData']['blocks'][0]['deriv']['id'],
+		'Derivative did not match full size image');
 
 	/* Select specific item, with max size 175.. should match thumb */
 	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
@@ -408,8 +404,8 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
 	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
 	$this->assertEquals($this->_photo3Thumb->getId(),
-                $data['ImageBlockData']['blocks'][0]['deriv']['id'],
-                'Derivative did not match thumbnail');
+		$data['ImageBlockData']['blocks'][0]['deriv']['id'],
+		'Derivative did not match thumbnail');
     }
 
     function testExternalImageBlockExactSize() {

@@ -17,22 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ImageBlock
- * @subpackage PHPUnit
- * @author Jay Rossiter <cryptographite@users.sf.net>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
 
 /**
  * ImageBlockOption tests
  * @package ImageBlock
  * @subpackage PHPUnit
+ * @author Jay Rossiter <cryptographite@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class ImageBlockOptionTest extends ItemEditOptionTestCase {
 
@@ -40,9 +33,6 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	$this->ItemEditOptionTestCase($methodName, 'imageblock', 'ImageBlockOption');
     }
 
-    /**
-     * Create an album for testing
-     */
     function setUp() {
 	global $gallery;
 	parent::setUp();
@@ -62,9 +52,6 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	}
     }
 
-    /**
-     * Delete the album that was used for testing
-     */
     function tearDown() {
 	foreach (array_merge($this->_topItems, $this->_subItems) as $item) {
 	    $ret = GalleryCoreApi::removeMapEntry(
@@ -101,7 +88,7 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
-	    list($ret, $items[$i]) = $this->_createRandomDataItem($album->getId());
+	    list ($ret, $items[$i]) = $this->_createRandomDataItem($album->getId());
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -117,13 +104,13 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
 	$this->assertEquals(array(array(), array()), $result);
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert($disabledFlag, 'Album not set disabled');
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_subAlbum->getId());
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_subAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -138,13 +125,13 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
 	$this->assertEquals(array(array(), array()), $result);
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$disabledFlag, 'Album set disabled');
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_subAlbum->getId());
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_subAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -165,13 +152,13 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
 	$this->assertEquals(array(array(), array()), $result);
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert($disabledFlag, 'Album not set disabled');
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_subAlbum->getId());
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_subAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -186,13 +173,13 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
 	$this->assertEquals(array(array(), array()), $result);
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$disabledFlag, 'Album still disabled');
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_subAlbum->getId());
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_subAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

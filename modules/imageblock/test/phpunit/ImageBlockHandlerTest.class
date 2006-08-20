@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
+ * Test Image Block functionality
  * @package ImageBlock
  * @subpackage PHPUnit
  * @author Jay Rossiter <cryptographite@users.sf.net>
- */
-/**
- * Test Image Block functionality
- *
- * @package ImageBlock
- * @subpackage PHPUnit
+ * @version $Revision$ $Date$
  */
 class ImageBlockHandlerTest extends GalleryTestCase {
 
@@ -35,9 +31,6 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     * Create an album for testing
-     */
     function setUp() {
 	global $gallery;
 	parent::setUp();
@@ -58,11 +51,8 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	}
     }
 
-    /**
-     * Delete the album that was used for testing
-     */
     function tearDown() {
-    	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
+	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -79,7 +69,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
-	    list($ret, $items[$i]) = $this->_createRandomDataItem($album->getId());
+	    list ($ret, $items[$i]) = $this->_createRandomDataItem($album->getId());
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -107,7 +97,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 
 	$handlerItemId = $this->_handlerItem->getId();
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($handlerItemId);
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($handlerItemId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -118,7 +108,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($handlerItemId);
+	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($handlerItemId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -409,7 +399,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	$this->_registerTestEventListener('GalleryEntity::save', $listener);
 
 	/* Just make sure the test runs without errors */
-	
+
 	/* Execute the test */
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret) {

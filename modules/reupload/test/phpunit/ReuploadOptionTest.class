@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Reupload
- * @subpackage PHPUnit
- * @author Piotr P. Karwasz <piotr.karwasz@ens.fr>
- */
 
 /**
  * Reupload controller tests
  * @package Reupload
  * @subpackage PHPUnit
+ * @author Piotr P. Karwasz <piotr.karwasz@ens.fr>
+ * @version $Revision$ $Date$
  */
 class ReuploadOptionTest extends ItemEditOptionTestCase {
     function ReuploadOptionTest($methodName) {
@@ -71,8 +67,8 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
 	}
 	$this->_itemSize = $this->_item->getSize();
 
-        /* create custom platform to return dummy filesize, imagesize, etc. */
-        $gallery->setPlatform(new ReuploadOptionTestPlatform($gallery->getPlatform()));
+	/* create custom platform to return dummy filesize, imagesize, etc. */
+	$gallery->setPlatform(new ReuploadOptionTestPlatform($gallery->getPlatform()));
     }
 
     function testReupload() {
@@ -145,9 +141,6 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
 
 /**
  * Test platform
- *
- * @package Reupload
- * @subpackage PHPUnit
  */
 class ReuploadOptionTestPlatform extends GalleryPlatform {
     function ReuploadOptionTestPlatform($originalPlatform) {
@@ -155,11 +148,11 @@ class ReuploadOptionTestPlatform extends GalleryPlatform {
     }
 
     function is_uploaded_file($file) {
-        return true;
+	return true;
     }
 
     function file_exists($file) {
-        return !strstr($file,'albumtest');
+	return !strstr($file,'albumtest');
     }
 
     function copy($input, $output) {
@@ -173,12 +166,10 @@ class ReuploadOptionTestPlatform extends GalleryPlatform {
 
 /**
  * Test toolkit
- * @package Reupload
- * @subpackage PHPUnit
  */
 class ReuploadOptionTestToolkit extends GalleryToolkit {
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $file) {
 	if ($propertyName == 'dimensions') {

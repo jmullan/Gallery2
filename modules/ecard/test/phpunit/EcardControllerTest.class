@@ -17,25 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Ecard
- * @subpackage PHPUnit
- * @author Dariush Molavi <dari@nukedgallery.net>
- */
 
-/**
- * require necessary files
- */
-GalleryCoreApi::requireOnce('modules/ecard/classes/EcardHelper.class');
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryValidationPlugin.class');
 
 /**
  * Test Ecard functionality
- *
  * @package Ecard
  * @subpackage PHPUnit
- *
+ * @author Dariush Molavi <dari@nukedgallery.net>
+ * @version $Revision$ $Date$
  */
 class EcardControllerTest extends GalleryControllerTestCase {
 
@@ -290,7 +280,7 @@ class EcardControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'ecard.Confirmation',
 				      'itemId' => (int)$this->_item->getId()),
-                                  'status' => array('sent' => 1),
+				  'status' => array('sent' => 1),
 				  'error' => array()),
 			    $results, 'Failed to send ecard');
     }

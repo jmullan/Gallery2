@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Dcraw
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkit.class');
 
@@ -30,6 +24,8 @@ GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkit.class');
  * Dcraw toolkit tests
  * @package Dcraw
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class DcrawToolkitTest extends GalleryTestCase {
 
@@ -99,7 +95,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	$this->_platform->setReply(
 	    'tempnam', array($gallery->getConfig('data.gallery.tmp'), 'dcraw_'), 'TEMPFILE');
 	$this->_platform->setReply('exec', array(array(
-            array('/usr/bin/dcraw', '-c', '-a', '-q', '0', 'INPUTFILE', '>', 'TEMPFILE'))),
+	    array('/usr/bin/dcraw', '-c', '-a', '-q', '0', 'INPUTFILE', '>', 'TEMPFILE'))),
 	    array(1, ''));
 	$this->_platform->setReply('rename', array('TEMPFILE', 'OUTPUTFILE'), 1);
 	$this->_platform->setReply('chmod', array('OUTPUTFILE', null), 1);
@@ -118,7 +114,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	$this->_platform->setReply(
 	    'tempnam', array($gallery->getConfig('data.gallery.tmp'), 'dcraw_'), 'TEMPFILE');
 	$this->_platform->setReply('exec', array(array(
-            array('/usr/bin/dcraw', '-c', '-a', '-q', '0', 'INPUTFILE', '>', 'TEMPFILE'))),
+	    array('/usr/bin/dcraw', '-c', '-a', '-q', '0', 'INPUTFILE', '>', 'TEMPFILE'))),
 	    array(0, '', 'INPUTFILE: unsupported file format.'));
 	$this->_platform->setReply('unlink', array('TEMPFILE'), 1);
 
@@ -154,7 +150,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	$this->_platform->setReply(
 	    'tempnam', array($gallery->getConfig('data.gallery.tmp'), 'dcraw_'), 'TEMPFILE');
 	$this->_platform->setReply('exec', array(array(
-            array('/usr/bin/dcraw', '-c', '-a', '-q', '0', 'INPUTFILE', '>', 'TEMPFILE'))),
+	    array('/usr/bin/dcraw', '-c', '-a', '-q', '0', 'INPUTFILE', '>', 'TEMPFILE'))),
 	    array(0, ''));
 	$this->_platform->setReply('unlink', array('TEMPFILE'), 1);
 
@@ -170,7 +166,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	$this->_platform->setReply(
 	    'tempnam', array($gallery->getConfig('data.gallery.tmp'), 'dcraw_'), 'TEMPFILE');
 	$this->_platform->setReply('exec', array(array(
-            array('/usr/bin/dcraw', '-c', '-a', '-q', '0', 'INPUTFILE', '>', 'TEMPFILE'))),
+	    array('/usr/bin/dcraw', '-c', '-a', '-q', '0', 'INPUTFILE', '>', 'TEMPFILE'))),
 	    array(1, ''));
 	$this->_platform->setReply('rename', array('TEMPFILE', 'OUTPUTFILE'), 0);
 	$this->_platform->setReply('unlink', array('TEMPFILE'), 1);

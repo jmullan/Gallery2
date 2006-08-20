@@ -987,20 +987,14 @@ class AlbumTest extends GalleryTestCase {
     }
 }
 
-/**
- * Required by our test toolkit
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Dummy test toolkit
- *
- * @package GalleryCore
- * @subpackage PHPUnit
  */
 class AlbumTestToolkit extends GalleryToolkit {
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,

@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Getid3
- * @subpackage PHPUnit
- * @author Don Willingham <donwillingham@users.sf.net>
- */
 
 /**
  * SwitchDetailMode controller tests
  * @package Getid3
  * @subpackage PHPUnit
+ * @author Don Willingham <donwillingham@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class Getid3DetailModeControllerTest extends GalleryControllerTestCase {
 
@@ -42,10 +38,10 @@ class Getid3DetailModeControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-	                          'redirect' => array('view' => 'core.ShowItem'),
-	                          'status' => array(),
-	                          'error' => array()),
-	                    $results);
+				  'redirect' => array('view' => 'core.ShowItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 
 	/* Verify that we're in the right mode now */
 	$session =& $gallery->getSession();
@@ -62,10 +58,10 @@ class Getid3DetailModeControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-	                          'redirect' => array('view' => 'core.ShowItem'),
-	                          'status' => array(),
-	                          'error' => array()),
-	                    $results);
+				  'redirect' => array('view' => 'core.ShowItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 
 	/* Verify that we're in the right mode now */
 	$session =& $gallery->getSession();
@@ -82,10 +78,10 @@ class Getid3DetailModeControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-	                          'redirect' => array('view' => 'core.ShowItem'),
-	                          'status' => array(),
-	                          'error' => array()),
-	                    $results);
+				  'redirect' => array('view' => 'core.ShowItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 
 	/* Verify that we're in the right mode now */
 	$session =& $gallery->getSession();

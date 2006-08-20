@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rss
- * @subpackage PHPUnit
- * @author Pierre-Luc Paour
- */
 
 GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 
@@ -31,7 +25,8 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
  *
  * @package Rss
  * @subpackage PHPUnit
- *
+ * @author Pierre-Luc Paour
+ * @version $Revision$ $Date$
  */
 class RssTest extends GalleryTestCase {
 
@@ -93,7 +88,7 @@ class RssTest extends GalleryTestCase {
 	}
 
 	/* check that the feed has been deleted */
-	list($ret, $feed) = RssMapHelper::fetchFeed($name);
+	list ($ret, $feed) = RssMapHelper::fetchFeed($name);
 	/* we expect an error */
 	$this->assert($ret);
 	$this->assert($ret->getErrorCode(), ERROR_MISSING_OBJECT);

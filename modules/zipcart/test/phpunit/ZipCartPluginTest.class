@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ZipCart
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Test ZipCart functionality
  *
  * @package ZipCart
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ZipCartPluginTest extends GalleryTestCase {
 
@@ -49,8 +45,8 @@ class ZipCartPluginTest extends GalleryTestCase {
 
 	/* Register dummy toolkit and operation */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'ZipCartToolkit', 'ZipCartToolkit',
-            'modules/zipcart/test/phpunit/ZipCartPluginTest.class', 'zipcartTest', null);
+	    'GalleryToolkit', 'ZipCartToolkit', 'ZipCartToolkit',
+	    'modules/zipcart/test/phpunit/ZipCartPluginTest.class', 'zipcartTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -215,7 +211,7 @@ class ZipCartPluginTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	GalleryCoreApi::requireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
 	GalleryCoreApi::requireOnce('modules/zipcart/classes/ZipCartPlugin.class');
 	$cartPlugin = new ZipCartPlugin();

@@ -17,23 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Members
- * @subpackage PHPUnit
- * @author Robert Balousek <rbalousek@hotmail.com>
- */
 
-/**
- * Helper class
- */
 GalleryCoreApi::requireOnce('modules/members/classes/GalleryMembersHelper.class');
 
 /**
  * Test Members List/Profile functionality
- *
  * @package Members
  * @subpackage PHPUnit
+ * @author Robert Balousek <rbalousek@hotmail.com>
+ * @version $Revision$ $Date$
  */
 class MembersTest extends GalleryTestCase {
 
@@ -41,9 +33,6 @@ class MembersTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     * Prepare for our test
-     */
     function setUp() {
 	parent::setUp();
 
@@ -74,36 +63,36 @@ class MembersTest extends GalleryTestCase {
 
     function testFetchUserItemCount() {
 	/* Initial check, should be zero */
-        list ($ret, $itemCount) = GalleryMembersHelper::fetchUserItemCount($this->_user->getId());
-        if ($ret) {
+	list ($ret, $itemCount) = GalleryMembersHelper::fetchUserItemCount($this->_user->getId());
+	if ($ret) {
 	    return $this->failWithStatus($ret);
-        }
+	}
 
-        $this->assertEquals(0, $itemCount);
+	$this->assertEquals(0, $itemCount);
 
-        /*
-         * Create some random items so that there's something for the API method to work with.
-         * Set the timestamp to bogus (but well known) values and set the owner to our test user.
-         */
+	/*
+	 * Create some random items so that there's something for the API method to work with.
+	 * Set the timestamp to bogus (but well known) values and set the owner to our test user.
+	 */
 	$numItems = 4;
-        for ($i = 0; $i < $numItems; $i++) {
-            list ($ret, $originalItems[$i]) = $this->_createRandomDataItem(
+	for ($i = 0; $i < $numItems; $i++) {
+	    list ($ret, $originalItems[$i]) = $this->_createRandomDataItem(
 		$this->_album->getId(), 'application/unknown',
 		array('creationTimestamp' => $i * 1000, 'ownerId' => $this->_user->getId()));
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-        }
+	}
 
-        /* Ask for the item count */
-        list ($ret, $itemCount) =
-            GalleryMembersHelper::fetchUserItemCount($this->_user->getId());
-        if ($ret) {
+	/* Ask for the item count */
+	list ($ret, $itemCount) =
+	    GalleryMembersHelper::fetchUserItemCount($this->_user->getId());
+	if ($ret) {
 	    return $this->failWithStatus($ret);
-        }
+	}
 
 	/* assert it equals our original number of items we created*/
-        $this->assertEquals($numItems, $itemCount);
+	$this->assertEquals($numItems, $itemCount);
     }
 
 
@@ -123,9 +112,9 @@ class MembersTest extends GalleryTestCase {
 	/* Ask for the middle two items in ascending order */
 	list ($ret, $items) =
 	    GalleryMembersHelper::fetchLastUserItems($this->_user->getId(), 1, 2, ORDER_ASCENDING);
-        if ($ret) {
+	if ($ret) {
 	    return $this->failWithStatus($ret);
-        }
+	}
 
 	$this->assertEquals(array($originalItems[1], $originalItems[2]), $items);
     }
@@ -141,9 +130,9 @@ class MembersTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'members', 'canViewMembersModule', $adminGroupId);
-    	if ($ret) {
+	if ($ret) {
 	    return $this->failWithStatus($ret);
-    	}
+	}
 
 	list ($ret, $result) =
 	    GalleryMembersHelper::canViewMembersModule($this->_user->getId());
@@ -169,12 +158,12 @@ class MembersTest extends GalleryTestCase {
 
 	/* not admin, view emails off */
 	$ret = GalleryCoreApi::setPluginParameter('module',
-    	                                          'members',
-    	                                          'canViewEmailAddress',
-    	                                          0);
-    	if ($ret) {
+						  'members',
+						  'canViewEmailAddress',
+						  0);
+	if ($ret) {
 	    return $this->failWithStatus($ret);
-    	}
+	}
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret) {
@@ -184,12 +173,12 @@ class MembersTest extends GalleryTestCase {
 
 	/* not admin, view emails on*/
 	$ret = GalleryCoreApi::setPluginParameter('module',
-    	                                          'members',
-    	                                          'canViewEmailAddress',
-    	                                          1);
-    	if ($ret) {
+						  'members',
+						  'canViewEmailAddress',
+						  1);
+	if ($ret) {
 	    return $this->failWithStatus($ret);
-    	}
+	}
 
 	list ($ret, $result) = GalleryMembersHelper::canViewProfileEmail($this->_user->getId());
 	if ($ret) {
@@ -199,12 +188,12 @@ class MembersTest extends GalleryTestCase {
 
 	/* admin, view emails off*/
 	$ret = GalleryCoreApi::setPluginParameter('module',
-    	                                          'members',
-    	                                          'canViewEmailAddress',
-    	                                          0);
-    	if ($ret) {
+						  'members',
+						  'canViewEmailAddress',
+						  0);
+	if ($ret) {
 	    return $this->failWithStatus($ret);
-    	}
+	}
 
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
@@ -225,12 +214,12 @@ class MembersTest extends GalleryTestCase {
 
 	/* admin, view emails on*/
 	$ret = GalleryCoreApi::setPluginParameter('module',
-    	                                          'members',
-    	                                          'canViewEmailAddress',
-    	                                          1);
-    	if ($ret) {
+						  'members',
+						  'canViewEmailAddress',
+						  1);
+	if ($ret) {
 	    return $this->failWithStatus($ret);
-    	}
+	}
 
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
 	if ($ret) {

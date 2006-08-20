@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Thumbnail
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
 GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
@@ -32,6 +26,8 @@ GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
  * Also tests ThumbnailHelper::fetchThumbnail
  * @package Thumbnail
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 
@@ -261,7 +257,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	if (!empty($thumbnails)) {
 	    $thumbnail = array_shift($thumbnails);
 	    $this->assertEquals($this->_image->getId(),
-			        $thumbnail->getDerivativeSourceId(), 'got source');
+				$thumbnail->getDerivativeSourceId(), 'got source');
 	    $this->assertEquals(
 		'thumbnail|200;composite|path/test.png,image/png,20,20,top-left,0,0',
 		$thumbnail->getDerivativeOperations(),

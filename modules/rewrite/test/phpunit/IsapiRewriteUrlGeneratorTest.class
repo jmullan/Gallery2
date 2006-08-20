@@ -18,13 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package Rewrite
- * @subpackage PHPUnit
- * @author Douglas Cau <douglas@cau.se>
- */
-
 GalleryCoreApi::requireOnce(
     'modules/rewrite/classes/parsers/isapirewrite/IsapiRewriteUrlGenerator.class');
 GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteUrlGeneratorTestCase.class');
@@ -34,6 +27,8 @@ GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteUrlGeneratorTes
  *
  * @package Rewrite
  * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
@@ -67,7 +62,7 @@ class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	    return $this->failWithStatus($ret);
 	}
     }
-    
+
     /*
      * It should generate a server-relative URL (and not a relative URL) if REQUEST_URI is
      * gallery2/main.php?g2_view=core.ShowItem&g2_itemId=15 which was rewritten from

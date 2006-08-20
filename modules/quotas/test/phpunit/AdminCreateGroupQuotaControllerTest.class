@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Quotas
- * @subpackage PHPUnit
- * @author Robert Balousek <volksport@users.sf.net>
- */
 
 /**
  * AdminCreateGroupQuota controller tests
  * @package Quotas
  * @subpackage PHPUnit
+ * @author Robert Balousek <volksport@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 
@@ -42,8 +38,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-
-        GalleryUtilities::putRequestVariable('groupId', $group->getId());
+	GalleryUtilities::putRequestVariable('groupId', $group->getId());
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
@@ -123,7 +118,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 
     function testCreateGroupQuotaGroupIdMissing() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-    	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
     function testCreateGroupQuotaDuplicateQuota() {

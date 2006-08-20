@@ -314,19 +314,14 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
     }
 }
 
-/**
- * Required by our test toolkit
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkit
- * @package GalleryCore
- * @subpackage PHPUnit
  */
 class ItemEditPhotoPluginTestToolkit extends GalleryToolkit {
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
@@ -346,7 +341,7 @@ class ItemEditPhotoPluginTestToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::mergeOperations()
+     * @see GalleryToolkit::mergeOperations
      * Dummy operation
      */
     function mergeOperations($operation1, $args1, $operation2, $args2) {

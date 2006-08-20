@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Remote
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * GalleryRemote controller tests
  *
  * @package Remote
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
@@ -322,7 +318,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* root
 	    + 0
 	      + 1 (read-only)
-	        + 2
+		+ 2
 		  + 3 (read-only, should not appear)
 	      + 4
 	 */
@@ -406,7 +402,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* root
 	    + 0
 	      + 1 (read-only)
-	        + 2
+		+ 2
 		  + 3 (read-only, should not appear)
 	      + 4
 	 */
@@ -721,11 +717,11 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
 
 	/* Make sure the the view count is 1 */
-	list($ret, $imageViewCount) = GalleryCoreApi::fetchItemViewCount($image->getId());
+	list ($ret, $imageViewCount) = GalleryCoreApi::fetchItemViewCount($image->getId());
 	if ($ret) {
 	    return $ret;
 	}
-	list($ret, $albumViewCount) = GalleryCoreApi::fetchItemViewCount($album->getId());
+	list ($ret, $albumViewCount) = GalleryCoreApi::fetchItemViewCount($album->getId());
 	if ($ret) {
 	    return $ret;
 	}

@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Picasa
- * @subpackage PHPUnit
- * @author Waldemar Schlackow <waldemar@opencodes.org>
- */
 
 GalleryCoreApi::requireOnce('modules/picasa/test/phpunit/MockLockSystem.class');
 
@@ -30,6 +24,8 @@ GalleryCoreApi::requireOnce('modules/picasa/test/phpunit/MockLockSystem.class');
  * ItemAddFromPicasa controller tests
  * @package Picasa
  * @subpackage PHPUnit
+ * @author Waldemar Schlackow <waldemar@opencodes.org>
+ * @version $Revision$ $Date$
  */
 class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 
@@ -92,174 +88,174 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 
 	/* The XML Data that we will test with */
 	$testXmlData = array('<?xml version="1.0" encoding="utf-8" ?>',
-            '<album><albumName>GalleryTest 2</albumName>',
-            '<albumItemCount>2</albumItemCount>',
-            '<albumCaption>This is a test</albumCaption>',
-            '<images>',
-            '<image>',
-            '<itemLargeImage>images/ajipankachile5.jpg0</itemLargeImage>',
-            '<itemWidth>171</itemWidth>',
-            '<itemHeight>426</itemHeight>',
-            '<itemThumbnailImage>thumbnails/ajipankachile5.jpg0</itemThumbnailImage>',
-            '<itemThumbnailWidth>42</itemThumbnailWidth>',
-            '<itemThumbnailHeight>90</itemThumbnailHeight>',
-            '<itemName>ajipankachile5.jpg0</itemName>',
-            '<itemCaption>Testpicture</itemCaption>',
-            '</image>',
-            '<image>',
-            '<itemLargeImage>images/californiadriedchile5.jpg0</itemLargeImage>',
-            '<itemWidth>171</itemWidth>',
-            '<itemHeight>426</itemHeight>',
-            '<itemThumbnailImage>thumbnails/californiadriedchile5.jpg0</itemThumbnailImage>',
-            '<itemThumbnailWidth>42</itemThumbnailWidth>',
-            '<itemThumbnailHeight>90</itemThumbnailHeight>',
-            '<itemName>californiadriedchile5.jpg0</itemName>',
-            '<itemCaption>Testpicture</itemCaption>',
-            '</image>',
-            '<image>',
-            '<itemLargeImage>images/cascabelchiles5.jpg0</itemLargeImage>',
-            '<itemWidth>171</itemWidth>',
-            '<itemHeight>426</itemHeight>',
-            '<itemThumbnailImage>thumbnails/cascabelchiles5.jpg0</itemThumbnailImage>',
-            '<itemThumbnailWidth>42</itemThumbnailWidth>',
-            '<itemThumbnailHeight>90</itemThumbnailHeight>',
-            '<itemName>cascabelchiles5.jpg0</itemName>',
-            '<itemCaption>Testpicture</itemCaption>',
-            '</image>',
-            '</images>',
-            '</album>');
-        /* Use valid inputs */
-        GalleryUtilities::putRequestVariable('form[action][addFromPicasa]', 1);
-        GalleryUtilities::putRequestVariable('form[name][picasaZipPath]', 'C:\picasaimport.zip');
-        GalleryUtilities::putRequestVariable('form[type][picasaZipPath]', 'application/zip');
-        GalleryUtilities::putRequestVariable('form[tmp_name][picasaZipPath]', '/picasaimport.tmp');
-        GalleryUtilities::putRequestVariable('form[size][picasaZipPath]', 10000);
-        GalleryUtilities::putRequestVariable('form[error][picasaZipPath]', 0);
-        GalleryUtilities::putRequestVariable('form[set][title]', 'filename');
-        GalleryUtilities::putRequestVariable('form[set][summary]', 1);
-        GalleryUtilities::putRequestVariable('form[set][description]', 1);
+	    '<album><albumName>GalleryTest 2</albumName>',
+	    '<albumItemCount>2</albumItemCount>',
+	    '<albumCaption>This is a test</albumCaption>',
+	    '<images>',
+	    '<image>',
+	    '<itemLargeImage>images/ajipankachile5.jpg0</itemLargeImage>',
+	    '<itemWidth>171</itemWidth>',
+	    '<itemHeight>426</itemHeight>',
+	    '<itemThumbnailImage>thumbnails/ajipankachile5.jpg0</itemThumbnailImage>',
+	    '<itemThumbnailWidth>42</itemThumbnailWidth>',
+	    '<itemThumbnailHeight>90</itemThumbnailHeight>',
+	    '<itemName>ajipankachile5.jpg0</itemName>',
+	    '<itemCaption>Testpicture</itemCaption>',
+	    '</image>',
+	    '<image>',
+	    '<itemLargeImage>images/californiadriedchile5.jpg0</itemLargeImage>',
+	    '<itemWidth>171</itemWidth>',
+	    '<itemHeight>426</itemHeight>',
+	    '<itemThumbnailImage>thumbnails/californiadriedchile5.jpg0</itemThumbnailImage>',
+	    '<itemThumbnailWidth>42</itemThumbnailWidth>',
+	    '<itemThumbnailHeight>90</itemThumbnailHeight>',
+	    '<itemName>californiadriedchile5.jpg0</itemName>',
+	    '<itemCaption>Testpicture</itemCaption>',
+	    '</image>',
+	    '<image>',
+	    '<itemLargeImage>images/cascabelchiles5.jpg0</itemLargeImage>',
+	    '<itemWidth>171</itemWidth>',
+	    '<itemHeight>426</itemHeight>',
+	    '<itemThumbnailImage>thumbnails/cascabelchiles5.jpg0</itemThumbnailImage>',
+	    '<itemThumbnailWidth>42</itemThumbnailWidth>',
+	    '<itemThumbnailHeight>90</itemThumbnailHeight>',
+	    '<itemName>cascabelchiles5.jpg0</itemName>',
+	    '<itemCaption>Testpicture</itemCaption>',
+	    '</image>',
+	    '</images>',
+	    '</album>');
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromPicasa]', 1);
+	GalleryUtilities::putRequestVariable('form[name][picasaZipPath]', 'C:\picasaimport.zip');
+	GalleryUtilities::putRequestVariable('form[type][picasaZipPath]', 'application/zip');
+	GalleryUtilities::putRequestVariable('form[tmp_name][picasaZipPath]', '/picasaimport.tmp');
+	GalleryUtilities::putRequestVariable('form[size][picasaZipPath]', 10000);
+	GalleryUtilities::putRequestVariable('form[error][picasaZipPath]', 0);
+	GalleryUtilities::putRequestVariable('form[set][title]', 'filename');
+	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+	GalleryUtilities::putRequestVariable('form[set][description]', 1);
 
-        /* Prepare our mock platform for many, many calls */
-        $this->_platform->setReply('tempnam',
-            array('fuzzy1' => '{.*}', 'fuzzy2' => '{.*}'), '/tmp');
-        $this->_platform->setReply('mkdir', array('/tmp.dir', 755), true);
-        $this->_platform->setReply('is_dir', array('/tmp.dir'), true);
-        $this->_platform->setReply('getcwd', array(), '/');
-        $this->_platform->setReply('chdir', array('/tmp.dir'), true);
-        list ($ret, $unzip) =
-            GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
-        if ($ret) {
+	/* Prepare our mock platform for many, many calls */
+	$this->_platform->setReply('tempnam',
+	    array('fuzzy1' => '{.*}', 'fuzzy2' => '{.*}'), '/tmp');
+	$this->_platform->setReply('mkdir', array('/tmp.dir', 755), true);
+	$this->_platform->setReply('is_dir', array('/tmp.dir'), true);
+	$this->_platform->setReply('getcwd', array(), '/');
+	$this->_platform->setReply('chdir', array('/tmp.dir'), true);
+	list ($ret, $unzip) =
+	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
+	if ($ret) {
 	    return $this->failWithStatus($ret);
-        }
-        $this->_platform->setReply('exec',
-            array(array(array('0' => $unzip, '1' => '/picasaimport.tmp'))), array(true));
-        $this->_platform->setReply('chdir', array('/'), true);
-        $this->_platform->setReply('recursiveChmod', array('/tmp.dir', null, null), true);
-        $this->_platform->setReply('getDirectorySeparator', array(), '/');
-        $this->_platform->setReply('file_exists', array('/tmp.dir/index.xml'), true);
-        $this->_platform->setReply('is_readable', array('/tmp.dir/index.xml'), true);
-        $this->_platform->setReply('getDirectorySeparator', array(), '/');
-        $this->_platform->setReply('file_exists', array('/tmp.dir/index.xml'), true);
-        $this->_platform->setReply('is_readable', array('/tmp.dir/index.xml'), true);
-        $this->_platform->setReply('file', array('/tmp.dir/index.xml', ''), $testXmlData);
-        $this->_platform->setReply('legalizePathComponent',  array('GalleryTest 2'),
-            'GalleryTest 2');
-        $this->_platform->setReply('isLegalPathComponent', array('GalleryTest 2'), true);
-        $this->_platform->setReply('legalizePathComponent', array('GalleryTest 2'),
-            'GalleryTest 2');
-        $this->_platform->setReply('getDirectorySeparator', array(), '/');
-        $this->_platform->setReply('file_exists', array('fuzzy' => '{.*GalleryTest 2}'), false);
-        $this->_platform->setReply('mkdir', array('fuzzy' => '{.*GalleryTest 2}', '0755'), true);
+	}
+	$this->_platform->setReply('exec',
+	    array(array(array('0' => $unzip, '1' => '/picasaimport.tmp'))), array(true));
+	$this->_platform->setReply('chdir', array('/'), true);
+	$this->_platform->setReply('recursiveChmod', array('/tmp.dir', null, null), true);
+	$this->_platform->setReply('getDirectorySeparator', array(), '/');
+	$this->_platform->setReply('file_exists', array('/tmp.dir/index.xml'), true);
+	$this->_platform->setReply('is_readable', array('/tmp.dir/index.xml'), true);
+	$this->_platform->setReply('getDirectorySeparator', array(), '/');
+	$this->_platform->setReply('file_exists', array('/tmp.dir/index.xml'), true);
+	$this->_platform->setReply('is_readable', array('/tmp.dir/index.xml'), true);
+	$this->_platform->setReply('file', array('/tmp.dir/index.xml', ''), $testXmlData);
+	$this->_platform->setReply('legalizePathComponent',  array('GalleryTest 2'),
+	    'GalleryTest 2');
+	$this->_platform->setReply('isLegalPathComponent', array('GalleryTest 2'), true);
+	$this->_platform->setReply('legalizePathComponent', array('GalleryTest 2'),
+	    'GalleryTest 2');
+	$this->_platform->setReply('getDirectorySeparator', array(), '/');
+	$this->_platform->setReply('file_exists', array('fuzzy' => '{.*GalleryTest 2}'), false);
+	$this->_platform->setReply('mkdir', array('fuzzy' => '{.*GalleryTest 2}', '0755'), true);
 
-        /* Image creation */
-        $testImages =
-            array('ajipankachile5.jpg0', 'californiadriedchile5.jpg0', 'cascabelchiles5.jpg0');
-        foreach ($testImages as $testImage) {
-            $this->_platform->setReply('is_uploaded_file',
-                array('/tmp.dir/images/' . $testImage . ''),
-                true);
-            $this->_platform->setReply('legalizePathComponent', array($testImage), $testImage);
-            $this->_platform->setReply('getDirectorySeparator', array(), '/');
-            $this->_platform->setReply('copy',
-                array('/tmp.dir/images/' . $testImage . '', 'fuzzy'=>'{.*/' . $testImage . '}'),
-                true);
-            $this->_platform->setReply('filesize',
-                array('fuzzy'=>'{.*/' . $testImage . '}'), 10000);
-        }
-        /* Deletion of the temporary directory */
-        $this->_platform->setReply('recursiveRmdir', array('/tmp.dir'), true);
-        $this->_platform->setReply('unlink', array('/tmp'), true);
+	/* Image creation */
+	$testImages =
+	    array('ajipankachile5.jpg0', 'californiadriedchile5.jpg0', 'cascabelchiles5.jpg0');
+	foreach ($testImages as $testImage) {
+	    $this->_platform->setReply('is_uploaded_file',
+		array('/tmp.dir/images/' . $testImage . ''),
+		true);
+	    $this->_platform->setReply('legalizePathComponent', array($testImage), $testImage);
+	    $this->_platform->setReply('getDirectorySeparator', array(), '/');
+	    $this->_platform->setReply('copy',
+		array('/tmp.dir/images/' . $testImage . '', 'fuzzy'=>'{.*/' . $testImage . '}'),
+		true);
+	    $this->_platform->setReply('filesize',
+		array('fuzzy'=>'{.*/' . $testImage . '}'), 10000);
+	}
+	/* Deletion of the temporary directory */
+	$this->_platform->setReply('recursiveRmdir', array('/tmp.dir'), true);
+	$this->_platform->setReply('unlink', array('/tmp'), true);
 
-        /* Perform the request and verify that we succeeded */
-        list($error, $status) = $this->handleRequest($this->_temporaryAlbum);
-        $i = 0;
+	/* Perform the request and verify that we succeeded */
+	list ($error, $status) = $this->handleRequest($this->_temporaryAlbum);
+	$i = 0;
 
-        /* We don't know the ids, but we can verify everything else */
-        foreach ($testImages as $file) {
-            $this->assertEquals($file, $status['addedFiles'][$i]['fileName']);
-            $this->assert(isset($status['addedFiles'][$i]['id']));
-            $ids[] = $status['addedFiles'][$i]['id'];
-            $this->assertEquals(array(), $status['addedFiles'][$i]['warnings']);
-            $i++;
-        }
+	/* We don't know the ids, but we can verify everything else */
+	foreach ($testImages as $file) {
+	    $this->assertEquals($file, $status['addedFiles'][$i]['fileName']);
+	    $this->assert(isset($status['addedFiles'][$i]['id']));
+	    $ids[] = $status['addedFiles'][$i]['id'];
+	    $this->assertEquals(array(), $status['addedFiles'][$i]['warnings']);
+	    $i++;
+	}
 
-        $this->assertEquals(3, $i, 'count of imported items');
+	$this->assertEquals(3, $i, 'count of imported items');
 
-        $this->assertEquals(array(), $error);
+	$this->assertEquals(array(), $error);
 
-        /* Verify item attributes (like order weight) */
-        list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($this->_temporaryAlbum);
-        if ($ret) {
-            return $this->failWithStatus($ret);
-        }
-        /* There should have been one album imported */
-        $this->assertEquals(1, count($itemIds), 'child count 1');
+	/* Verify item attributes (like order weight) */
+	list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($this->_temporaryAlbum);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/* There should have been one album imported */
+	$this->assertEquals(1, count($itemIds), 'child count 1');
 
-        list ($ret, $importedAlbum) = GalleryCoreApi::loadEntitiesById($itemIds[0]);
+	list ($ret, $importedAlbum) = GalleryCoreApi::loadEntitiesById($itemIds[0]);
 
-        list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($importedAlbum);
-        if ($ret) {
-            return $this->failWithStatus($ret);
-        }
-        /* There should have been one album imported */
-        $this->assertEquals(3, count($itemIds), 'child count');
+	list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($importedAlbum);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/* There should have been one album imported */
+	$this->assertEquals(3, count($itemIds), 'child count');
 
-        $seenWeights = array();
-        foreach ($ids as $id) {
-            list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
-            if ($ret) {
+	$seenWeights = array();
+	foreach ($ids as $id) {
+	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
+	    if ($ret) {
 		return $this->failWithStatus($ret);
-            }
-            $this->assertEquals(0, $viewCount);
+	    }
+	    $this->assertEquals(0, $viewCount);
 
-            list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
-            if ($ret) {
+	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
+	    if ($ret) {
 		return $this->failWithStatus($ret);
-            }
-            $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
-            $seenWeights[$orderWeight] = 1;
-        }
+	    }
+	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
+	    $seenWeights[$orderWeight] = 1;
+	}
 
-        list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
-        if ($ret) {
-            return $this->failWithStatus($ret);
-        }
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
-        $i = 0;
+	$i = 0;
 
-        foreach ($testImages as $testImage) {
-            $this->_platform->setReply('legalizePathComponent',  array($testImage), $testImage);
-        }
+	foreach ($testImages as $testImage) {
+	    $this->_platform->setReply('legalizePathComponent',  array($testImage), $testImage);
+	}
 
-        foreach ($items as $item) {
+	foreach ($items as $item) {
 	    $this->assertEquals($this->_platform->legalizePathComponent($testImages[$i]),
 		    $item->getPathComponent(), 'path component');
-            list ($base, $extension) = GalleryUtilities::getFileNameComponents($testImages[$i]);
-            $this->assertEquals($base, $item->getTitle(), 'title');
-            $this->assertEquals('Testpicture', $item->getSummary(), 'summary');
-            $this->assertEquals('Testpicture', $item->getDescription(), 'description');
-            $i++;
-        }
+	    list ($base, $extension) = GalleryUtilities::getFileNameComponents($testImages[$i]);
+	    $this->assertEquals($base, $item->getTitle(), 'title');
+	    $this->assertEquals('Testpicture', $item->getSummary(), 'summary');
+	    $this->assertEquals('Testpicture', $item->getDescription(), 'description');
+	    $i++;
+	}
     }
 
     /**
@@ -267,23 +263,22 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
      */
     function testImportFromPicasaFailed_unknowntype() {
 
-        /* Use valid inputs */
-        GalleryUtilities::putRequestVariable('form[action][addFromPicasa]', 1);
-        GalleryUtilities::putRequestVariable('form[name][picasaZipPath]', 'C:\picasaimport.foo');
-        GalleryUtilities::putRequestVariable('form[type][picasaZipPath]', 'application/unknown');
-        GalleryUtilities::putRequestVariable('form[tmp_name][picasaZipPath]', '/picasaimport.tmp');
-        GalleryUtilities::putRequestVariable('form[size][picasaZipPath]', 10000);
-        GalleryUtilities::putRequestVariable('form[set][title]', 'filename');
-        GalleryUtilities::putRequestVariable('form[set][summary]', 1);
-        GalleryUtilities::putRequestVariable('form[set][description]', 0);
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromPicasa]', 1);
+	GalleryUtilities::putRequestVariable('form[name][picasaZipPath]', 'C:\picasaimport.foo');
+	GalleryUtilities::putRequestVariable('form[type][picasaZipPath]', 'application/unknown');
+	GalleryUtilities::putRequestVariable('form[tmp_name][picasaZipPath]', '/picasaimport.tmp');
+	GalleryUtilities::putRequestVariable('form[size][picasaZipPath]', 10000);
+	GalleryUtilities::putRequestVariable('form[set][title]', 'filename');
+	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+	GalleryUtilities::putRequestVariable('form[set][description]', 0);
 
+	/* Perform the request and verify that we succeeded */
+	list ($error, $status) = $this->handleRequest($this->_temporaryAlbum);
+	$i = 0;
 
-        /* Perform the request and verify that we succeeded */
-        list($error, $status) = $this->handleRequest($this->_temporaryAlbum);
-        $i = 0;
-
-        $this->assertEquals(array(), $status, 'count of imported items');
-        $this->assertEquals(array('form[error][picasaZipPath][notsupported]'), $error);
+	$this->assertEquals(array(), $status, 'count of imported items');
+	$this->assertEquals(array('form[error][picasaZipPath][notsupported]'), $error);
     }
 
     /**
@@ -291,18 +286,18 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
      */
     function testImportFromPicasaFailed_emptypath() {
 
-        /* Use valid inputs */
-        GalleryUtilities::putRequestVariable('form[action][addFromPicasa]', 1);
-        GalleryUtilities::putRequestVariable('form[set][title]', 'filename');
-        GalleryUtilities::putRequestVariable('form[set][summary]', 1);
-        GalleryUtilities::putRequestVariable('form[set][description]', 0);
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromPicasa]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', 'filename');
+	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+	GalleryUtilities::putRequestVariable('form[set][description]', 0);
 
-        /* Perform the request and verify that we succeeded */
-        list($error, $status) = $this->handleRequest($this->_temporaryAlbum);
-        $i = 0;
+	/* Perform the request and verify that we succeeded */
+	list ($error, $status) = $this->handleRequest($this->_temporaryAlbum);
+	$i = 0;
 
-        $this->assertEquals(array(), $status, 'count of imported items');
-        $this->assertEquals(array('form[error][picasaZipPath][missing]'), $error);
+	$this->assertEquals(array(), $status, 'count of imported items');
+	$this->assertEquals(array('form[error][picasaZipPath][missing]'), $error);
     }
 }
 ?>

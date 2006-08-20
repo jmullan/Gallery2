@@ -17,23 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Getid3
- * @subpackage PHPUnit
- * @author Don Willingham <donwillingham@users.sf.net>
- */
 
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/getid3/classes/Getid3Toolkit.class');
 
 /**
  * Test Getid3Toolkit functionality
- *
  * @package Getid3
  * @subpackage PHPUnit
+ * @author Don Willingham <donwillingham@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class Getid3ToolkitTest extends GalleryTestCase {
 
@@ -41,9 +33,6 @@ class Getid3ToolkitTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     *
-     */
     function setUp() {
 	parent::setUp();
 
@@ -54,17 +43,17 @@ class Getid3ToolkitTest extends GalleryTestCase {
     function testGetProperties() {
 	list ($ret, $results) =
 	    $this->_toolkit->getProperty('video/x-msvideo', 'originationTimestamp',
-	                                 dirname(__FILE__) . '/../data/test_small.avi');
+					 dirname(__FILE__) . '/../data/test_small.avi');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array(mktime(15, 06, 18, 1, 15, 2006)),
-	                    $results,
-	                    "originationTimestamp for test_small.avi");
+			    $results,
+			    "originationTimestamp for test_small.avi");
 
 	list ($ret, $results) =
 	    $this->_toolkit->getProperty('video/quicktime', 'originationTimestamp',
-	                                 dirname(__FILE__) . '/../data/newday.mov');
+					 dirname(__FILE__) . '/../data/newday.mov');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -72,10 +61,10 @@ class Getid3ToolkitTest extends GalleryTestCase {
 	/* mktime(21, 18, 18, 5, 28, 2000) */
 	$date = getdate(863289129);
 	$stamp = gmmktime($date['hours'], $date['minutes'],  $date['seconds'],
-	                $date['mon'],   $date['mday'],     $date['year']);
+			$date['mon'],   $date['mday'],     $date['year']);
 	$this->assertEquals(array($stamp),
-	                    $results,
-	                    "originationTimestamp for newday.mov");
+			    $results,
+			    "originationTimestamp for newday.mov");
 
     }
 }

@@ -913,17 +913,11 @@ function DerivativeTestCmp($a, $b) {
     return $a['derivativeType'] - $b['derivativeType'];
 }
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
 
 /**
  * Test toolkit
- *
- * @package GalleryCore
- * @subpackage PHPUnit
  *
  */
 class DerivativeTestToolkit extends GalleryToolkit {
@@ -942,7 +936,7 @@ class DerivativeTestToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
@@ -960,7 +954,7 @@ class DerivativeTestToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      * Dummy operation
      */
     function mergeOperations($operation1, $args1, $operation2, $args2) {
@@ -987,14 +981,10 @@ class DerivativeTestToolkit extends GalleryToolkit {
 
 /**
  * Test item
- *
- * @package GalleryCore
- * @subpackage PHPUnit
- *
  */
 class DerivativeTestItem extends GalleryDataItem {
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'DerivativeTestItem';

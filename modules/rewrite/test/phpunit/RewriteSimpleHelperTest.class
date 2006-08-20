@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rewrite
- * @subpackage PHPUnit
- * @author Douglas Cau <douglas@cau.se>
- */
 
 /**
  * Rewrite Simple Helper tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteSimpleHelper.class');
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
@@ -71,7 +67,7 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
 	$entity = null;
 	$params = array('view' => 'core.ShowItem', 'itemId' => $testItem->getId());
 	$ret = RewriteSimpleHelper::parsePath($url, $params, $entity);
-	
+
 	$this->assert($ret, 'status');
 	$this->assertEquals('v' . $testItemPath . '.html', $url, 'url');
 	$this->assertEquals(array('view' => 'core.ShowItem'), $params, 'params');
@@ -168,7 +164,7 @@ class RewriteSimpleHelperTest extends GalleryTestCase {
     }
 
     function testLoadItemIdFromPath() {
-        /* Setup.. */
+	/* Setup.. */
 	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);

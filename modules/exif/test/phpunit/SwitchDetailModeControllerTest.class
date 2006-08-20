@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Exif
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GallerySmarty.class');
 GalleryCoreApi::requireOnce('modules/exif/Callbacks.inc');
@@ -31,6 +25,8 @@ GalleryCoreApi::requireOnce('modules/exif/Callbacks.inc');
  * SwitchDetailMode controller tests
  * @package Exif
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 
@@ -102,7 +98,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
     function testLoadExifInfoCallback() {
 	global $gallery;
 	$session =& $gallery->getSession();
-	
+
 	/* Create a test photo with exif data */
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_rootAlbumId);
 	if ($ret) {
@@ -121,7 +117,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	foreach (array('detailed', 'summary') as $mode) {
 	    /* Set the mode */
 	    $session->put('exif.module.LoadExifInfo.mode', $mode);
@@ -155,14 +151,14 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	    }
 
 	    $smarty = new GallerySmarty();
-	    
+
 	    /* Execute the method under test */
 	    $callback = new ExifCallbacks;
 	    $ret = $callback->callback(array('itemId' => $item->getId()), $smarty, 'LoadExifInfo');
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	
+
 	    /* Verify the results */
 	    $data = $smarty->_tpl_vars['block']['exif']['LoadExifInfo'];
 	    $this->assertEquals($expModeSet, isset($data['mode']), "mode not set for mode $mode");

@@ -17,13 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rss
- * @subpackage PHPUnit
- * @author Pierre-Luc Paour
- * @modified Daniel Grund <http://www.photogrund.nl>
- */
 
 GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 
@@ -32,6 +25,8 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
  *
  * @package Rss
  * @subpackage PHPUnit
+ * @author Pierre-Luc Paour
+ * @version $Revision$ $Date$
  */
 class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 
@@ -78,7 +73,7 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 		'mode' => 'settings')),
 	    $results);
     }
-    
+
     function testRssSiteAdminControllerResetSimple() {
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 	GalleryUtilities::putRequestVariable('form[mode]', 'simplefeedsettings');
@@ -113,9 +108,9 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 	foreach ($values as $key => $value) {
 	    GalleryUtilities::putRequestVariable('form['.$key.']', $value);
 	}
-	
+
 	$results = $this->handleRequest();
-	
+
 	$this->assertEquals(array (
 	    'status' => array ('saved' => 1),
 	    'error' => array(),
@@ -145,9 +140,9 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 	foreach ($values as $key => $value) {
 	    GalleryUtilities::putRequestVariable('form['.$key.']', $value);
 	}
-	
+
 	$results = $this->handleRequest();
-	
+
 	$this->assertEquals(array (
 	    'status' => array ('saved' => 1),
 	    'error' => array(),
@@ -174,12 +169,12 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	GalleryUtilities::putRequestVariable('form[action][delete]', $name);
 	GalleryUtilities::putRequestVariable('form[mode]', 'list');
 
 	$results = $this->handleRequest();
-	
+
 	$this->assertEquals(array (
 	    'status' => array (),
 	    'error' => array(),
@@ -189,8 +184,7 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 		'mode' => 'list')),
 	    $results);
 
-	list($ret, $feed) = RssMapHelper::fetchFeed($name);
-	/* we expect an error */
+	list ($ret, $feed) = RssMapHelper::fetchFeed($name);
 	/* we expect an error */
 	if (!$ret) {
 	    return $this->assert(false, 'Expected an error');

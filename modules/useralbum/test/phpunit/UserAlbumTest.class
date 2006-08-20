@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package UserAlbum
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Test UserAlbum functionality
  *
  * @package UserAlbum
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class UserAlbumTest extends GalleryTestCase {
 
@@ -109,7 +105,7 @@ class UserAlbumTest extends GalleryTestCase {
 	$this->_markForCleanup($user);
 
 	/* Retrieve the parent album's logical path */
-	list($ret, $parentPath) = $this->_parentAlbum->fetchLogicalPath();
+	list ($ret, $parentPath) = $this->_parentAlbum->fetchLogicalPath();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -286,7 +282,7 @@ class UserAlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	list($ret, $parentPath) = $this->_parentAlbum->fetchLogicalPath();
+	list ($ret, $parentPath) = $this->_parentAlbum->fetchLogicalPath();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

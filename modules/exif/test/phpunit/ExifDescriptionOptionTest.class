@@ -17,14 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Exif
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
- * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
- */
 
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
 
@@ -32,6 +24,10 @@ GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
  * ExifDescriptionOption tests
  * @package Exif
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
+ * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
+ * @version $Revision$ $Date$
  */
 class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
@@ -375,20 +371,14 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 }
 
-
-/**
- * Required by test toolkit
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkit
- * @package Exif
- * @subpackage PHPUnit
  */
 class ExifDescriptionOptionTestToolkit extends GalleryToolkit {
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,

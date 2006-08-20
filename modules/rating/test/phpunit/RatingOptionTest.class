@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rating
- * @subpackage PHPUnit
- * @author Don Seiler <don@seiler.us>
- */
 
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
 
@@ -30,6 +24,8 @@ GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
  * Tests RatingItemEdit and enabling of rating for albums.
  * @package Rating
  * @subpackage PHPUnit
+ * @author Don Seiler <don@seiler.us>
+ * @version $Revision$ $Date$
  */
 class RatingOptionTest extends ItemEditOptionTestCase {
 
@@ -92,7 +88,7 @@ class RatingOptionTest extends ItemEditOptionTestCase {
 	}
 	$this->assertEquals(0, (int)$enabled, 'Rating enabled.');
     }
-    
+
     function testEnableInDescendents() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rating', 'enabled', 0,
 		$this->_album->getId());
@@ -101,7 +97,7 @@ class RatingOptionTest extends ItemEditOptionTestCase {
 	}
 	$form['rating']['enabled'] = 1;
 	$form['changeInDescendents']['rating'] = 1;
-        
+
 	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -111,24 +107,24 @@ class RatingOptionTest extends ItemEditOptionTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-        
+
 	list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_album);
 	$this->assertEquals(array(), $error);
 	$this->assertEquals(array(), $warning);
-        
+
 	list ($ret, $enabled) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rating', 'enabled', $this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(1, (int)$enabled, 'Parent album');
-        
+
 	list ($ret, $enabled) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rating', 'enabled', $this->_childAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(1, (int)$enabled, 'Child album');        
+	$this->assertEquals(1, (int)$enabled, 'Child album');
     }
 }
 ?>

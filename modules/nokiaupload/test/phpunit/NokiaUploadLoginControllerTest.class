@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package NokiaUpload
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Login controller tests
@@ -30,6 +24,8 @@
  *
  * @package NokiaUpload
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 
@@ -125,7 +121,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(3, count($results['status']['capabilities']), 'capabilities');
 
 	$this->assertEquals($this->_user, $gallery->getActiveUser(), 'active user 3');
-	list($ret, $isMember) =
+	list ($ret, $isMember) =
 	    GalleryCoreApi::isUserInGroup($this->_user->getId(), $this->_group->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);

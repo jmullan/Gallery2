@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rewrite
- * @subpackage PHPUnit
- * @author Douglas Cau <douglas@cau.se>
- */
 
 /**
  * Path Info Parser tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 GalleryCoreApi::requireOnce('modules/rewrite/classes/parsers/pathinfo/PathInfoHelper.class');
 class PathInfoHelperTest extends GalleryTestCase {
@@ -41,11 +37,11 @@ class PathInfoHelperTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
-        $ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
-        if ($ret) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret);
-        }
+	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
 
 	/* Set up our environment */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'pathinfo.forced', '0');

@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package NokiaUpload
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Configure controller tests
  *
  * @package NokiaUpload
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 
@@ -86,7 +82,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
     }
 
     function testGroupCollision() {
-    	list ($ret, $groupId) =
+	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
 	    return $this->failWithStatus($ret);

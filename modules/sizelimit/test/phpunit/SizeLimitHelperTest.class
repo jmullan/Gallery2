@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SizeLimit
- * @subpackage PHPUnit
- * @author Felix Rabinovich <felix@rabinovich.org>
- */
 
 GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
 
@@ -31,6 +25,8 @@ GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
  *
  * @package SizeLimit
  * @subpackage PHPUnit
+ * @author Felix Rabinovich <felix@rabinovich.org>
+ * @version $Revision$ $Date$
  */
 class SizeLimitHelperTest extends GalleryTestCase {
     function SizeLimitHelperTest($methodname) {
@@ -225,17 +221,15 @@ class SizeLimitHelperTestPlatform extends GalleryPlatform {
 
 /**
  * Test toolkit
- * @package SizeLimit
- * @subpackage PHPUnit
  */
 class SizeLimitHelperTestToolkit extends GalleryToolkit {
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 		  $destFilename, $parameters, $context=array()) {
 	/* Here we are pretending that conversion happened by setting the flag */
-	switch($operationName) {
+	switch ($operationName) {
 	case 'test':
 	    GalleryUtilities::putRequestVariable('compressPerformed', true);
 	    GalleryUtilities::putRequestVariable('resizePerformed', true);
@@ -251,13 +245,13 @@ class SizeLimitHelperTestToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $file) {
 	global $gallery;
 
 	/* Our 'mime type' has to support dimensions */
-	switch($propertyName) {
+	switch ($propertyName) {
 	case 'dimensions':
 	    $platform =& $gallery->getPlatform();
 	    $results = $platform->getimagesize($file);

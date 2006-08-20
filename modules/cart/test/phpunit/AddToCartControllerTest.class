@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Cart
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * AddToCart controller tests
  * @package Cart
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class AddToCartControllerTest extends GalleryControllerTestCase {
 
@@ -60,7 +56,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Save the existing cart */
-	list($ret, $this->_saveCartItemCounts) = CartHelper::fetchCartItemCounts();
+	list ($ret, $this->_saveCartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -101,7 +97,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify our cart */
-	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -130,7 +126,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify our cart */
-	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -164,7 +160,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify our cart */
-	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -222,7 +218,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
 
 	/* Verify our cart */
-	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -248,7 +244,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify our cart */
-	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -278,7 +274,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify our cart - one item added, no permission item skipped */
-	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -308,7 +304,7 @@ class AddToCartControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	/* Verify our cart - one item added, no permission item skipped */
-	list($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
+	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

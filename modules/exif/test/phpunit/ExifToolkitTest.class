@@ -17,23 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Exif
- * @subpackage PHPUnit
- * @author Ernesto Baschny <ernst@baschny.de>
- */
 
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/exif/classes/ExifToolkit.class');
 
 /**
  * Test ExifToolkit functionality
- *
  * @package Exif
  * @subpackage PHPUnit
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @version $Revision$ $Date$
  */
 class ExifToolkitTest extends GalleryTestCase {
 
@@ -41,9 +33,6 @@ class ExifToolkitTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     *
-     */
     function setUp() {
 	parent::setUp();
 
@@ -61,5 +50,4 @@ class ExifToolkitTest extends GalleryTestCase {
 	$this->assertEquals(array(mktime(14, 38, 46, 5, 9, 2003)), $results);
     }
 }
-
 ?>

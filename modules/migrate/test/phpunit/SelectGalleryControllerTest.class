@@ -17,32 +17,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Migrate
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * SelectGallery controller tests
  * @package Migrate
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class SelectGalleryControllerTest extends GalleryControllerTestCase {
 
     function SelectGalleryControllerTest($methodName) {
-        $this->GalleryControllerTestCase($methodName, 'migrate.SelectGallery');
+	$this->GalleryControllerTestCase($methodName, 'migrate.SelectGallery');
     }
 
     /**
      * Test what the controller does when you enter a bad albums path
      */
     function testBadAlbumsPath() {
-        GalleryUtilities::putRequestVariable('form[albumsPath]', dirname(__FILE__));
-        GalleryUtilities::putRequestVariable('form[action][select]', 1);
+	GalleryUtilities::putRequestVariable('form[albumsPath]', dirname(__FILE__));
+	GalleryUtilities::putRequestVariable('form[action][select]', 1);
 
-        $results = $this->handleRequest();
+	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'migrate.SelectGallery'),
 				  'status' => array(),
@@ -59,10 +55,10 @@ class SelectGalleryControllerTest extends GalleryControllerTestCase {
 	$slash = $platform->getDirectorySeparator();
 
 	$albumsPath = dirname(__FILE__) . '/../data/albums';
-        GalleryUtilities::putRequestVariable('form[albumsPath]', $albumsPath);
-        GalleryUtilities::putRequestVariable('form[action][select]', 1);
+	GalleryUtilities::putRequestVariable('form[albumsPath]', $albumsPath);
+	GalleryUtilities::putRequestVariable('form[action][select]', 1);
 
-        $results = $this->handleRequest();
+	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'migrate.ChooseObjects',
 						      'albumsPath' => $albumsPath . $slash),
@@ -75,10 +71,10 @@ class SelectGalleryControllerTest extends GalleryControllerTestCase {
      * Test what the controller does when you enter a missing albums path
      */
     function testMissingAlbumsPath() {
-        GalleryUtilities::putRequestVariable('form[albumsPath]', '');
-        GalleryUtilities::putRequestVariable('form[action][select]', 1);
+	GalleryUtilities::putRequestVariable('form[albumsPath]', '');
+	GalleryUtilities::putRequestVariable('form[action][select]', 1);
 
-        $results = $this->handleRequest();
+	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'migrate.SelectGallery'),
 				  'status' => array(),

@@ -255,9 +255,6 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
     }
 }
 
-/**
- * Required by our test toolkit
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryUnknownItem.class');
 
 class ItemEditPhotoThumbnailTestItem extends GalleryUnknownItem {
@@ -281,27 +278,22 @@ class ItemEditPhotoThumbnailTestItem extends GalleryUnknownItem {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'ItemEditPhotoThumbnailTestItem';
     }
 }
 
-/**
- * Required by our test toolkit
- */
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkitk
- * @package GalleryCore
- * @subpackage PHPUnit
  */
 class ItemEditPhotoThumbnailPluginTestToolkit extends GalleryToolkit {
 
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      * Dummy operation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,

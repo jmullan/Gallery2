@@ -17,21 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Exif
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
- */
 
 /**
  * Test Exif Helper functionality
- *
- * @package Exif
- * @subpackage PHPUnit
- *
- * @TODO(xlerb) more tests, to be really sure, that our new underlying lib/JPEG does it's job well.
+ * @todo (xlerb) more tests, to be really sure, that our new underlying lib/JPEG does it's job well.
  *      This will ensure a working G2 even in case, lib/JPEG changes (especially because
  *      the lib/JPEG author has delegated some work on the lib to me). Also, there are plans to
  *      reduce include penalties for lib/JPEG. Let us protect against failures before
@@ -48,6 +37,12 @@
  *      application in turn, e.g. PS->Exifer->IrfanView. Also the current jpeg files are
  *      all produced on little endian machines. Small jpeg files produced on big endian
  *      machines and stored as big endian would provide for another neccessary test.
+ *
+ * @package Exif
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
+ * @version $Revision$ $Date$
  */
 class ExifHelperTest extends GalleryTestCase {
 
@@ -57,9 +52,6 @@ class ExifHelperTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     * @see GalleryTestCase::setUp()
-     */
     function setUp() {
 	parent::setUp();
 
@@ -95,9 +87,6 @@ class ExifHelperTest extends GalleryTestCase {
 	}
     }
 
-    /**
-     * @see GalleryTestCase::tearDown()
-     */
     function tearDown() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
 						  'format.datetime', $this->_saveFormat);

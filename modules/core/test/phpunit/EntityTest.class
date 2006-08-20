@@ -430,7 +430,7 @@ class EntityTestEntity extends GalleryEntity {
     }
 
     /**
-     * @see GalleryEntity::getClassName()
+     * @see GalleryEntity::getClassName
      */
     function getClassName() {
 	return 'EntityTestEntity';
@@ -441,10 +441,6 @@ class EntityTestEntity extends GalleryEntity {
     }
 }
 
-/**
- * @package GalleryCore
- * @subpackage PHPUnit
- */
 class EntityTestOnLoadHandler {
     function onLoad(&$entity, $duringUpgrade) {
 	if (!$duringUpgrade) {
@@ -461,8 +457,6 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryEventListener.class');
 
 /**
  * Dummy event listener
- * @package GalleryCore
- * @subpackage PHPUnit
  */
 class EntityTestEventListener extends GalleryEventListener {
     var $_event = null;

@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package NokiaUpload
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Upload controller tests
  *
  * @package NokiaUpload
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 
@@ -142,7 +138,7 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 
 	/* Bad parent */
 	$_FILES['ImageData'] = array('size' => 1966,
-            'tmp_name' => GalleryCoreApi::getPluginBaseDir('module', 'core')
+	    'tmp_name' => GalleryCoreApi::getPluginBaseDir('module', 'core')
 				. 'modules/core/test/data/test1.jpg');
 	GalleryUtilities::putRequestVariable('DirId', 'badId', false);
 	$results = $this->handleRequest();

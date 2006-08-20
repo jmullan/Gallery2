@@ -17,24 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SelfRegistration
- * @subpackage PHPUnit
- * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
- */
 
-/**
- * require necessary files
- */
 GalleryCoreApi::requireOnce('modules/register/classes/GalleryPendingUserHelper.class');
 
 /**
  * Test PendingUser functionality
- *
- * @package SelfRegistration
+ * @package Registration
  * @subpackage PHPUnit
- *
+ * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
+ * @version $Revision$ $Date$
  */
 class GalleryPendingUserTest extends GalleryTestCase {
 
@@ -125,7 +116,7 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	    return array($ret, null);
 	}
 
-	list($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($username);
+	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($username);
 	if ($ret) {
 	    return array($ret, null);
 	}

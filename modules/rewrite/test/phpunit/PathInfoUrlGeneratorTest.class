@@ -18,13 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package Rewrite
- * @subpackage PHPUnit
- * @author Douglas Cau <douglas@cau.se>
- */
-
 GalleryCoreApi::requireOnce('modules/rewrite/classes/parsers/pathinfo/PathInfoUrlGenerator.class');
 GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteUrlGeneratorTestCase.class');
 
@@ -33,6 +26,8 @@ GalleryCoreApi::requireOnce('modules/rewrite/test/phpunit/RewriteUrlGeneratorTes
  *
  * @package Rewrite
  * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
@@ -154,7 +149,7 @@ class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 					  urlencode($this->_testItem->getPathComponent()));
 	parent::testGenerateUrlEmbeddedThenDirect();
     }
-    
+
     function testGenerateUrl() {
 	$this->_expectedUrl[0] =
 	    '/gallery2/' . GALLERY_MAIN_PHP . '?g2_view=rand164.NonShort&amp;' .
@@ -298,9 +293,9 @@ class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
 	parent::testGenerateUrlNoHtmlEntities();
     }
-    
+
     function testGenerateUrlEmbeddedCookieless() {
-	$sessionString = 'cmssid=12345'; 
+	$sessionString = 'cmssid=12345';
 
 	$this->_expectedUrl[0] = '/cms/index.php?mod=gallery2&amp;g2_view=rand164.NonShort&amp;' .
 	    'g2_foo=bar&amp;' . $sessionString;
@@ -334,7 +329,7 @@ class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
 	parent::testGenerateUrlEmbeddedCookieless();
     }
-    
+
     function testGenerateUrlEmbedded() {
 	$this->_expectedUrl[0] = '/cms/index.php?mod=gallery2&amp;g2_view=rand164.NonShort&amp;' .
 	    'g2_foo=bar';
@@ -425,7 +420,7 @@ class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
 	parent::testGenerateUrlEmbeddedMultisite();
     }
-    
+
     function testGenerateUrlEmbeddedCookiePathNotSet() {
 	global $gallery;
 	$session =& $gallery->getSession();

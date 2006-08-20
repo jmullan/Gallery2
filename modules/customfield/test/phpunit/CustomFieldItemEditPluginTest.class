@@ -17,22 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package CustomField
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
-/**
- * Load required classes
- */
 GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 /**
  * CustomFieldItemEdit controller tests
  * @package CustomField
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 
@@ -67,7 +60,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
 	if ($ret) {
 	    print $ret->getAsHtml();
@@ -153,7 +146,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('Catalog Id' => '123', 'My Data' => '',
-				  'Location' => 'There', 'Category' => 'B'), 
+				  'Location' => 'There', 'Category' => 'B'),
 			    $data[$this->_itemG->getId()], 'All data');
 
 	/* Set field values (album-specific settings) */

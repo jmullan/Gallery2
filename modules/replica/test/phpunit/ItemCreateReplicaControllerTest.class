@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Replica
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * ItemCreateReplica controller tests
  * @package Replica
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
 
@@ -190,7 +186,7 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
 	/* create random items */
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
-	    list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+	    list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
@@ -224,7 +220,7 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
 	/* create random items */
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
-	    list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+	    list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }

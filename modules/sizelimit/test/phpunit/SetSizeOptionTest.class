@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SizeLimit
- * @subpackage PHPUnit
- * @author Felix Rabinovich <felix@rabinovich.org>
- */
 
 GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
 
@@ -30,6 +24,8 @@ GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
  * SizeLimitOption tests
  * @package SizeLimit
  * @subpackage PHPUnit
+ * @author Felix Rabinovich <felix@rabinovich.org>
+ * @version $Revision$ $Date$
  */
 class SetSizeOptionTest extends ItemAddOptionTestCase {
 
@@ -861,12 +857,10 @@ class SetSizeOptionTestPlatform extends GalleryPlatform {
 
 /**
  * Test toolkit
- * @package SizeLimit
- * @subpackage PHPUnit
  */
 class SetSizeOptionTestToolkit extends GalleryToolkit {
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
@@ -900,7 +894,7 @@ class SetSizeOptionTestToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $file) {
 	global $gallery;

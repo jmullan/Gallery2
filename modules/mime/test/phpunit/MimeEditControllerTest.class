@@ -19,10 +19,10 @@
  */
 
 /**
- * @version $Revision$ $Date$
  * @package Mime
  * @subpackage PHPUnit
  * @author Felix Rabinovich <felix@rabinovich.org>
+ * @version $Revision$ $Date$
  */
 class MimeEditControllerTest extends GalleryControllerTestCase {
 
@@ -51,9 +51,9 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 				  'status' => array('mimeSaved' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Add new');
-	list($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
+	list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
 	$this->assertEquals(array('xxx'), $extensions);
-	list($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
+	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -72,9 +72,9 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 				  'status' => array('mimeSaved' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Add new');
-	list($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
+	list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
 	$this->assertEquals(array('xxx'), $extensions);
-	list($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
+	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -91,12 +91,12 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 				  'status' => array('mimeSaved' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Add new');
-	list($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
+	list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('xxx'), $extensions);
-	list($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
+	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

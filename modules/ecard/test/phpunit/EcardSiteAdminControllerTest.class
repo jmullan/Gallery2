@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Ecard
- * @subpackage PHPUnit
- * @author Dariush Molavi <dari@nukedgallery.net>
- */
 
 /**
  * EcardSiteAdmin controller tests
  *
  * @package Ecard
  * @subpackage PHPUnit
+ * @author Dariush Molavi <dari@nukedgallery.net>
+ * @version $Revision$ $Date$
  */
 class EcardSiteAdminControllerTest extends GalleryControllerTestCase {
 
@@ -62,7 +58,7 @@ class EcardSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[subject]', 'An eCard has been sent to you');
 	GalleryUtilities::putRequestVariable('form[bcc]', 'nobody2@nobody.org');
 	GalleryUtilities::putRequestVariable('form[header]', "Hi %toName% (%to%)!\r\n"
-                                             . '%fromName% (%from%) has sent you an eCard.');
+					     . '%fromName% (%from%) has sent you an eCard.');
 	GalleryUtilities::putRequestVariable('form[footer]', 'Sent via G2 Ecard tester');
 	GalleryUtilities::putRequestVariable('form[format]', 'html');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');

@@ -17,73 +17,66 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Picasa
- * @author Waldemar Schlackow <waldemar@opencodes.org>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryLockSystem.class');
 
 /**
  * This is a mock LockSystem to get rid of the pain of Flock platform calls in unit tests
- *
  * @package Picasa
  * @subpackage PHPUnit
+ * @author Waldemar Schlackow <waldemar@opencodes.org>
+ * @version $Revision$ $Date$
  */
 class MockLockSystem extends GalleryLockSystem {
 
-    /**
-     * Constructor
-     */
     function FlockLockSystem() {
-        $this->_locks = array();
+	$this->_locks = array();
     }
 
     /**
-     * @see GalleryLockSystem::acquireReadLock()
+     * @see GalleryLockSystem::acquireReadLock
      */
     function acquireReadLock($ids, $timeout=10) {
 	   return array(null, 1);
     }
 
     /**
-     * @see GalleryLockSystem::isReadLocked()
+     * @see GalleryLockSystem::isReadLocked
      */
     function isReadLocked($id) {
 	return true;
     }
 
     /**
-     * @see GalleryLockSystem::acquireWriteLock()
+     * @see GalleryLockSystem::acquireWriteLock
      */
     function acquireWriteLock($ids, $timeout=10) {
 	return array(null, 1);
     }
 
     /**
-     * @see GalleryLockSystem::isWriteLocked()
+     * @see GalleryLockSystem::isWriteLocked
      */
     function isWriteLocked($id) {
     return true;
     }
 
     /**
-     * @see GalleryLockSystem::releaseLocks()
+     * @see GalleryLockSystem::releaseLocks
      */
     function releaseLocks($lockIds) {
 	return null;
     }
 
     /**
-     * @see GalleryLockSystem::refreshAllLocks()
+     * @see GalleryLockSystem::refreshAllLocks
      */
     function releaseAllLocks() {
 	return null;
     }
 
     /**
-     * @see GalleryLockSystem::refreshLocks()
+     * @see GalleryLockSystem::refreshLocks
      */
     function refreshLocks($freshUntil) {
 	return null;
@@ -95,7 +88,7 @@ class MockLockSystem extends GalleryLockSystem {
      * @return array lock ids
      */
     function getLockIds() {
-        return array();
+	return array();
     }
 
 }

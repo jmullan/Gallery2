@@ -17,22 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Quotas
- * @subpackage PHPUnit
- * @author Robert Balousek <volksport@users.sf.net>
- */
 
-/**
- * Helper class
- */
 GalleryCoreApi::requireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 
 /**
  * AdminEditGroupQuota controller tests
  * @package Quotas
  * @subpackage PHPUnit
+ * @author Robert Balousek <volksport@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 
@@ -180,8 +173,8 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
     }
 
     function testEditGroupQuotaGroupIdMissing() {
-    	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-    	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
     function _createGroupQuota($groupId, $quota) {

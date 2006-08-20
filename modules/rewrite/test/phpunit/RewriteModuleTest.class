@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rewrite
- * @subpackage PHPUnit
- * @author Douglas Cau <douglas@cau.se>
- */
 
 /**
  * Test RewriteUrlGenerator functionality
  *
  * @package Rewrite
  * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class RewriteModuleTest extends GalleryTestCase {
     var $_module;
@@ -321,22 +317,20 @@ class RewriteModuleMockModule extends GalleryModule {
     }
 }
 
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');
+
 /**
  * Mock rewrite parser for this test
- *
- * @package Rewrite
- * @subpackage PHPUnit
  */
-GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');
 class RewriteModuleMockParser extends RewriteParser {
     function RewriteModuleMockParser() {
-        $this->_setParserId('rewritemodulemock');
-        $this->_setParserType('mock');
+	$this->_setParserId('rewritemodulemock');
+	$this->_setParserType('mock');
     }
 
     function saveActiveRules($activeRules=null, $rewriteModule=null) {
 	if (is_null($activeRules)) {
-	    list($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
+	    list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
 		'module', 'rewrite', 'activeRules');
 	    if ($ret) {
 		return array($ret, null, null);
@@ -375,9 +369,6 @@ class RewriteModuleMockParser extends RewriteParser {
 
 /**
  * Test platform for this test
- *
- * @package Rewrite
- * @subpackage PHPUnit
  */
 class RewriteModuleMockPlatform extends GalleryPlatform {
 
@@ -393,7 +384,7 @@ class RewriteModuleMockPlatform extends GalleryPlatform {
 	if (strpos($path, '/modules/') !== false) {
 	    $this->_list = array();
 	    if ($dir = parent::opendir($path)) {
-		while(false !== ($file = parent::readdir($dir))) {
+		while (false !== ($file = parent::readdir($dir))) {
 		    array_push($this->_list, $file);
 		}
 	    }
@@ -432,6 +423,5 @@ class RewriteModuleMockPlatform extends GalleryPlatform {
     function recursiveRmdir($path) {
 	return true;
     }
-    
 }
 ?>

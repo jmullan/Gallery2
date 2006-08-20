@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rss
- * @subpackage PHPUnit
- * @author Pierre-Luc Paour
- */
 
 GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 
@@ -31,7 +25,8 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
  *
  * @package Rss
  * @subpackage PHPUnit
- *
+ * @author Pierre-Luc Paour
+ * @version $Revision$ $Date$
  */
 class RssMapTest extends GalleryTestCase {
 
@@ -68,7 +63,7 @@ class RssMapTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$this->_feedsToDelete[] = $this->_name;
     }
 
@@ -92,7 +87,7 @@ class RssMapTest extends GalleryTestCase {
 	if (!$ret) {
 	    return $this->assert(false, 'Expected an error');
 	}
-	$this->assert($ret->getErrorCode() & ERROR_COLLISION, 
+	$this->assert($ret->getErrorCode() & ERROR_COLLISION,
 	    'No collision reported, but expected one');
     }
 
@@ -101,40 +96,40 @@ class RssMapTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
-	list($ret, $feed) = RssMapHelper::fetchFeed($this->_name);
+
+	list ($ret, $feed) = RssMapHelper::fetchFeed($this->_name);
 	/* we expect an error */
 	if (!$ret) {
 	    return $this->assert(false, 'Expected an error');
 	}
-	$this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 
+	$this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT,
 	    'No missing object reported, but expected it to be missing');
     }
 
     function testFetchFeedsForId() {
 	global $gallery;
-	
-	list($ret, $feeds) = RssMapHelper::fetchFeedsForItem($this->_root->getId());
+
+	list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem($this->_root->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$this->assertEquals($feeds, array(array(
 	    'name' => $this->_name,
 	    'itemId' => $this->_root->getId(),
 	    'ownerId' => $gallery->getActiveUserId(),
 	    'params' => array(
-	    	'itemId' => $this->_root->getId()))));
+		'itemId' => $this->_root->getId()))));
     }
 
     function testFetchFeedNames() {
 	global $gallery;
-	
-	list($ret, $names) = RssMapHelper::fetchFeedNames();
+
+	list ($ret, $names) = RssMapHelper::fetchFeedNames();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$this->assert(in_array($this->_name, $names));
     }
 }

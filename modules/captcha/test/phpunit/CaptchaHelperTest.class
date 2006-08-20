@@ -17,19 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Captcha
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
+
 GalleryCoreApi::requireOnce('modules/captcha/classes/CaptchaHelper.class');
 
 /**
  * Test Captcha Helper
- *
  * @package Captcha
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class CaptchaHelperTest extends GalleryTestCase {
     function CaptchaHelperTest($methodName) {
@@ -38,7 +34,7 @@ class CaptchaHelperTest extends GalleryTestCase {
 
     function testTestRequiredGdFunctionsAllPresent() {
 	global $gallery;
-	
+
 	$phpVm = new CaptchaHelperTestPhpVm();
 	$phpVm->setFunctionExists('ImageCreateFromJPEG', true);
 	$phpVm->setFunctionExists('ImageColorAllocate', true);
@@ -47,7 +43,7 @@ class CaptchaHelperTest extends GalleryTestCase {
 	$phpVm->setFunctionExists('ImageDestroy', true);
 	$phpVm->setFunctionExists('imagesx', true);
 	$gallery->_phpVm =& $phpVm;
-	
+
 	$report = CaptchaHelper::testRequiredGdFunctions();
 	$this->assertEquals(array('success' => array('ImageCreateFromJPEG',
 						     'ImageColorAllocate',
@@ -80,7 +76,7 @@ class CaptchaHelperTest extends GalleryTestCase {
 						  'imagesx')),
 			    $report);
     }
-    
+
     function testTestRequiredGdFunctionsAllMissing() {
 	global $gallery;
 	$phpVm = new CaptchaHelperTestPhpVm();

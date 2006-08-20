@@ -17,20 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package CustomField
- * @subpackage PHPUnit
- * @author Felix Rabinovich <felix@rabinovich.org>
- */
 
 GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 /**
  * CustomFieldHelperTest tests.
- *
  * @package CustomField
  * @subpackage PHPUnit
+ * @author Felix Rabinovich <felix@rabinovich.org>
+ * @version $Revision$ $Date$
  */
 class CustomFieldHelperTest extends GalleryTestCase {
     function CustomFieldHelperTest($methodname) {
@@ -42,7 +37,7 @@ class CustomFieldHelperTest extends GalleryTestCase {
 	$form['action']['add']['common'] = 'Add';
 	$form['common']['newField'] = '';
 	/* This only test empty field name (Bug 1165012) */
-	list($ret, $status) = CustomFieldHelper::handleAdminAction($form);
+	list ($ret, $status) = CustomFieldHelper::handleAdminAction($form);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

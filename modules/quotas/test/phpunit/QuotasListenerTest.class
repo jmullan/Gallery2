@@ -17,23 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Quotas
- * @subpackage PHPUnit
- * @author Robert Balousek <volksport@users.sf.net>
- */
 
-/**
- * Helper class
- */
 GalleryCoreApi::requireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 
 /**
  * Test Quotas Listener functionality
- *
  * @package Quotas
  * @subpackage PHPUnit
+ * @author Robert Balousek <volksport@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class QuotasListenerTest extends GalleryTestCase {
 
@@ -41,9 +33,6 @@ class QuotasListenerTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     * Prepare for our test
-     */
     function setUp() {
 	parent::setUp();
 
@@ -91,23 +80,19 @@ class QuotasListenerTest extends GalleryTestCase {
     }
 
     function tearDown() {
-
-    	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return array($ret);
+	    $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_user->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return array($ret);
+	    $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_group->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return array($ret);
+	    $this->failWithStatus($ret);
 	}
 
 	foreach ($this->_saveQuota as $groupId => $quota) {

@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SizeLimit
- * @subpackage PHPUnit
- * @author Felix Rabinovich <felix@rabinovich.org>
- */
 
 /**
  * SizeLimitOption tests
  * @package SizeLimit
  * @subpackage PHPUnit
+ * @author Felix Rabinovich <felix@rabinovich.org>
+ * @version $Revision$ $Date$
  */
 class SizeLimitOptionTest extends ItemEditOptionTestCase {
 
@@ -205,23 +201,23 @@ class SizeLimitOptionTest extends ItemEditOptionTestCase {
 	$form['SizeLimitOption']['sizeChoice'] = 'explicit';
 	$form['SizeLimitOption']['filesize'] = 2000;
 	$form['changeInDescendents']['sizelimit'] = 1;
-        
+
 	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-        
+
 	list ($error, $warning) = $this->_handleRequestAfterEdit($form, $this->_album);
 	$this->assertEquals(array(), $error);
 	$this->assertEquals(array(), $warning);
-        
+
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
 	    'module', 'sizelimit', $this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array('keepOriginal' => 0, 'size' => 2000), $params);
-        
+
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
 	    'module', 'sizelimit', $this->_childAlbum->getId());
 	if ($ret) {
@@ -306,7 +302,7 @@ class SizeLimitOptionTestPlatform extends GalleryPlatform {
 	$imagesize = GalleryUtilities::getRequestVariables('imagesize_' . basename($file));
 	if ($imagesize) {
 	    /* doing it this way keeps CodeAudit happy */
-  	    return array($imagesize[0], $imagesize[1]);
+	    return array($imagesize[0], $imagesize[1]);
 	}
 	return array(1728, 2304);
     }
@@ -335,12 +331,10 @@ class SizeLimitOptionTestPlatform extends GalleryPlatform {
 
 /**
  * Test toolkit
- * @package SizeLimit
- * @subpackage PHPUnit
  */
 class SizeLimitOptionTestToolkit extends GalleryToolkit {
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
@@ -374,7 +368,7 @@ class SizeLimitOptionTestToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $file) {
 	global $gallery;

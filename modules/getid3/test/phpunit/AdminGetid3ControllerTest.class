@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Getid3
- * @subpackage PHPUnit
- * @author Don Willingham <donwillingham@users.sf.net>
- */
 
 /**
  * AdminGetid3 controller tests
  * @package Getid3
  * @subpackage PHPUnit
+ * @author Don Willingham <donwillingham@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
@@ -88,10 +84,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('added' => array('summary' => 2)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('added' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
 
 	/* Make sure they're there */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
@@ -110,10 +106,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('removed' => array('summary' => 2)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('removed' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
 
 	/* Make sure they're gone */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
@@ -130,10 +126,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array(),
-	                          'error' => array('form[error][summary][missing]')),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array(),
+				  'error' => array('form[error][summary][missing]')),
+			    $results);
     }
 
     function testMoveUpSummary() {
@@ -143,10 +139,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('movedUp' => array('summary' => 2)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('movedUp' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
 
 	/* Verify the new positions */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
@@ -165,10 +161,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array(),
-	                          'error' => array('form[error][summary][missing]')),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array(),
+				  'error' => array('form[error][summary][missing]')),
+			    $results);
     }
 
     function testMoveDownSummary() {
@@ -178,10 +174,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('movedDown' => array('summary' => 2)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('movedDown' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
 
 	/* Verify the new positions */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
@@ -200,10 +196,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array(),
-	                          'error' => array('form[error][summary][missing]')),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array(),
+				  'error' => array('form[error][summary][missing]')),
+			    $results);
     }
 
     function testResetSummary() {
@@ -216,10 +212,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][resetSummary]', 1);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('restored' => array('summary' => 1)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('restored' => array('summary' => 1)),
+				  'error' => array()),
+			    $results);
 
 	/* Make sure they're all back again */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
@@ -240,10 +236,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('added' => array('detailed' => 2)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('added' => array('detailed' => 2)),
+				  'error' => array()),
+			    $results);
 
 	/* Make sure they're there */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
@@ -262,10 +258,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('removed' => array('detailed' => 2)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('removed' => array('detailed' => 2)),
+				  'error' => array()),
+			    $results);
 
 	/* Make sure they're gone */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
@@ -282,10 +278,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array(),
-	                          'error' => array('form[error][detailed][missing]')),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array(),
+				  'error' => array('form[error][detailed][missing]')),
+			    $results);
     }
 
     function testMoveUpDetailed() {
@@ -296,10 +292,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('movedUp' => array('detailed' => 3)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('movedUp' => array('detailed' => 3)),
+				  'error' => array()),
+			    $results);
 
 	/* Verify the new positions */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
@@ -317,10 +313,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array(),
-	                          'error' => array('form[error][detailed][missing]')),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array(),
+				  'error' => array('form[error][detailed][missing]')),
+			    $results);
     }
 
     function testMoveDownDetailed() {
@@ -331,10 +327,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('movedDown' => array('detailed' => 3)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('movedDown' => array('detailed' => 3)),
+				  'error' => array()),
+			    $results);
 
 	/* Verify the new positions */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);
@@ -352,10 +348,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array(),
-	                          'error' => array('form[error][detailed][missing]')),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array(),
+				  'error' => array('form[error][detailed][missing]')),
+			    $results);
     }
 
     function testResetDetailed() {
@@ -368,10 +364,10 @@ class AdminGetid3ControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][resetDetailed]', 1);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-	                                              'subView' => 'getid3.AdminGetid3'),
-	                          'status' => array('restored' => array('detailed' => 1)),
-	                          'error' => array()),
-	                    $results);
+						      'subView' => 'getid3.AdminGetid3'),
+				  'status' => array('restored' => array('detailed' => 1)),
+				  'error' => array()),
+			    $results);
 
 	/* Make sure they're all back again */
 	list ($ret, $properties) = Getid3Helper::getProperties(GETID3_DETAILED);

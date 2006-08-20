@@ -19,17 +19,12 @@
  */
 
 /**
- * @version $Revision$ $Date$
- * @package Rewrite
- * @subpackage PHPUnit
- * @author Douglas Cau <douglas@cau.se>
- */
-
-/**
  * AdminRewrite controller tests
  *
  * @package Rewrite
  * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class AdminRewriteControllerTest extends GalleryControllerTestCase {
     function AdminRewriteControllerTest($methodName) {
@@ -505,7 +500,7 @@ class AdminRewriteMockParser extends RewriteParser {
 
     function saveActiveRules($activeRules=null, $rewriteModule=null) {
 	if (is_null($activeRules)) {
-	    list($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
+	    list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
 		'module', 'rewrite', 'activeRules');
 	    if ($ret) {
 		return array($ret, null, null);
@@ -605,7 +600,7 @@ class AdminRewriteMockPlatform extends GalleryPlatform {
 	if (strpos($path, '/modules/') !== false) {
 	    $this->_list = array();
 	    if ($dir = parent::opendir($path)) {
-		while(false !== ($file = parent::readdir($dir))) {
+		while (false !== ($file = parent::readdir($dir))) {
 		    array_push($this->_list, $file);
 		}
 	    }
