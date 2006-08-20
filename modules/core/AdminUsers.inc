@@ -17,18 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * This controller will send the user to the chosen subView in the AdminUsers View
- *
  * @package GalleryCore
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class AdminUsersController extends GalleryController {
 

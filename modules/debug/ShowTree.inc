@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Debug
- * @subpackage UserInterface
- * @author Ernesto Baschny <ernst@baschny.de>
- */
 
 /**
  * This controller will show a tree of elements starting with the current item
  *
  * @package Debug
  * @subpackage UserInterface
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @version $Revision$ $Date$
  */
 class ShowTreeView extends GalleryView {
 

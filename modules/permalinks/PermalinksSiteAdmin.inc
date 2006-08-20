@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Permalinks
- * @author Pierre-Luc Paour <gallery@paour.com>
- */
 
 GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.class');
 
 /**
  * @package Permalinks
  * @subpackage UserInterface
+ * @author Pierre-Luc Paour <gallery@paour.com>
+ * @version $Revision$ $Date$
  */
 class PermalinksSiteAdminController extends GalleryController {
 

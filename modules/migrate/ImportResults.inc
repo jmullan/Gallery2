@@ -17,16 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Migrate
- * @subpackage UserInterface
- * @author Jesse Mullan <jmullan@visi.com>
- */
 
 /**
  * @package Migrate
  * @subpackage UserInterface
+ * @author Jesse Mullan <jmullan@visi.com>
+ * @version $Revision$ $Date$
  */
 class ImportResultsView extends GalleryView {
 

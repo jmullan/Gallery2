@@ -103,7 +103,7 @@ class GalleryDerivativeImage extends GalleryDerivative {
 	      AND ([GalleryChildEntity::id] = [GalleryDerivative::id])
 	    ';
 
-	    list($ret, $searchResults) =
+	    list ($ret, $searchResults) =
 		$gallery->search($query, array($parentId, $derivativeType));
 	    if ($ret) {
 		return $ret;
@@ -143,7 +143,7 @@ class GalleryDerivativeImage extends GalleryDerivative {
 	global $gallery;
 
 	/* Figure out our target path */
-	list($ret, $destPath) = $this->fetchPath();
+	list ($ret, $destPath) = $this->fetchPath();
 	if ($ret) {
 	    return $ret;
 	}

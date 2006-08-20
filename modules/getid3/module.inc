@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Getid3
- * @author Don Willingham <donwillingham@users.sf.net>
- */
 
 /**
  * getID3() ID3 metadata Module
@@ -29,6 +24,8 @@
  * This module provides the getID3 metadata toolkit for Gallery
  *
  * @package Getid3
+ * @author Don Willingham <donwillingham@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class Getid3Module extends GalleryModule {
 
@@ -46,7 +43,7 @@ class Getid3Module extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
@@ -83,7 +80,7 @@ class Getid3Module extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	/* Register our graphics class with the factory */
@@ -149,7 +146,7 @@ class Getid3Module extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null, array(array('name' => $this->translate('Getid3'),
@@ -157,7 +154,7 @@ class Getid3Module extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getConfigurationView()
+     * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
 	return 'getid3.CantActivate';

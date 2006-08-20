@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Quotas
- * @subpackage UserInterface
- * @author Robert Balousek <volksport@users.sf.net>
- */
 
 /**
  * This controller will handle the deletion of a group quota
- *
  * @package Quotas
  * @subpackage UserInterface
- *
+ * @author Robert Balousek <volksport@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class AdminDeleteGroupQuotaController extends GalleryController {
 
@@ -59,17 +53,17 @@ class AdminDeleteGroupQuotaController extends GalleryController {
 	    GalleryCoreApi::requireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 
 	    list ($ret, $quotaExists, $groupQuota) =
-	        GalleryQuotasHelper::fetchGroupQuota($group->getId());
+		GalleryQuotasHelper::fetchGroupQuota($group->getId());
 	    if ($ret) {
-	        return array($ret, null);
+		return array($ret, null);
 	    }
 
 	    if ($quotaExists) {
 		$ret = GalleryCoreApi::removeMapEntry(
 		    'QuotasMap', array('userOrGroupId' => $group->getId()));
-                if ($ret) {
-                    return array($ret, null);
-                }
+		if ($ret) {
+		    return array($ret, null);
+		}
 
 		/* Request a redirect to the confirmation screen */
 		$redirect['view'] = 'core.SiteAdmin';
@@ -93,9 +87,6 @@ class AdminDeleteGroupQuotaController extends GalleryController {
 
 /**
  * This view will prompt for confirmation to delete a group quota
- *
- * @package Quotas
- * @subpackage UserInterface
  */
 class AdminDeleteGroupQuotaView extends GalleryView {
 
@@ -120,7 +111,7 @@ class AdminDeleteGroupQuotaView extends GalleryView {
 	    return array($ret, null);
 	}
 
-        if ($form['formName'] != 'AdminDeleteGroupQuota') {
+	if ($form['formName'] != 'AdminDeleteGroupQuota') {
 	    /* First time around initialize our form */
 	    $form['groupName'] = $group->getGroupName();
 	    $form['formName'] = 'AdminDeleteGroupQuota';

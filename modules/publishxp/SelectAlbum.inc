@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * Controller to select the album to add photos to.
  *
@@ -24,11 +25,12 @@
  * Also lets the user select a parent album and go to the new album page should the
  * user wish to first create a new album.
  *
- * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
+ * @version $Revision$ $Date$
  */
 class SelectAlbumController extends GalleryController {
+
     /**
      * @see GalleryController:handleRequest
      */

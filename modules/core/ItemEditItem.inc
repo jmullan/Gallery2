@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * Plugin for editing data common to all items
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Plugin for editing data common to all items
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemEditItem extends ItemEditPlugin {
 
@@ -59,7 +52,7 @@ class ItemEditItem extends ItemEditPlugin {
 	    /* Validate the input data. */
 	    $platform =& $gallery->getPlatform();
 
-	    foreach(array('title','summary','keywords','description') as $key) {
+	    foreach (array('title','summary','keywords','description') as $key) {
 		if (!empty($form[$key])) {
 		    $form[$key] = trim($form[$key]);
 		}

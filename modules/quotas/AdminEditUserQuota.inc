@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Quotas
- * @subpackage UserInterface
- * @author Robert Balousek <volksport@users.sf.net>
- */
 
 /**
  * This controller will handle changes made to a user's quotas
- *
  * @package Quotas
  * @subpackage UserInterface
- *
+ * @author Robert Balousek <volksport@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class AdminEditUserQuotaController extends GalleryController {
 
@@ -63,8 +57,7 @@ class AdminEditUserQuotaController extends GalleryController {
 	    $redirect['userId'] = $userId;
 	} else if (isset($form['action']['save'])) {
 
-	    if (array_key_exists('quotaSize', $form) &&
-	        array_key_exists('quotaUnit', $form)) {
+	    if (array_key_exists('quotaSize', $form) && array_key_exists('quotaUnit', $form)) {
 		if (!empty($form['quotaSize']) && is_numeric($form['quotaSize']) &&
 		    $form['quotaSize'] >= 0 && !empty($form['quotaSize'])) {
 		    GalleryCoreApi::requireOnce(
@@ -77,8 +70,7 @@ class AdminEditUserQuotaController extends GalleryController {
 		    } else if ($form['quotaUnit'] == 'GB') {
 			$quotaSize = round($form['quotaSize'] * 1024.00 * 1024.00);
 		    } else {
-			return array(GalleryCoreApi::error(ERROR_MISSING_VALUE),
-			     	     null);
+			return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 		    }
 		    if ($quotaSize <= 2147483647) {
 			if (!isset($user)) {
@@ -92,7 +84,7 @@ class AdminEditUserQuotaController extends GalleryController {
 			}
 			if ($quotaExists) {
 			    $match = array('userOrGroupId' => $userQuota['id'],
-				           'quotaSize' => $userQuota['quota']);
+					   'quotaSize' => $userQuota['quota']);
 			    $ret = GalleryCoreApi::updateMapEntry(
 				'QuotasMap',
 				$match,
@@ -108,14 +100,14 @@ class AdminEditUserQuotaController extends GalleryController {
 			    $status['modifiedUser'] = $user->getUserName();
 			}
 		    } else {
-		    	$error[] = 'form[error][quotaSize][tooLarge]';
-		    	$error[] = 'form[error][quotaSize][' . $quotaSize. ']';
+			$error[] = 'form[error][quotaSize][tooLarge]';
+			$error[] = 'form[error][quotaSize][' . $quotaSize. ']';
 		    }
 		} else {
 		    $error[] = 'form[error][quotaSize][notNumeric]';
 		}
 	    } else {
-	        /* set our error status and fall back to the view */
+		/* set our error status and fall back to the view */
 		if (empty($form['quotaSize'])) {
 		    $error[] = 'form[error][quotaSize][missing]';
 		}

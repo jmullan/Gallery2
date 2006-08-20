@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the addition of an album
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle the addition of an album
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemAddAlbumController extends GalleryController {
 
@@ -70,7 +63,7 @@ class ItemAddAlbumController extends GalleryController {
 	    if (empty($error)) {
 		list ($ret, $instance) =
 		    GalleryCoreApi::createAlbum($itemId, $form['pathComponent'], $form['title'],
-		    				$form['summary'], $form['description'],
+						$form['summary'], $form['description'],
 						$form['keywords']);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
@@ -177,7 +170,7 @@ class ItemAddAlbumView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');

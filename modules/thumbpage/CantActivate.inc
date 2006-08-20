@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * A view to display when there's no toolkit support for this module
  * @package ThumbPage
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * A view to display when there's no toolkit support for this module
- *
- * @package ThumbPage
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class CantActivateView extends GalleryView {
 
@@ -37,8 +31,7 @@ class CantActivateView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	return array(null,
-		     array('body' => 'modules/thumbpage/templates/CantActivate.tpl'));
+	return array(null, array('body' => 'modules/thumbpage/templates/CantActivate.tpl'));
     }
 }
 ?>

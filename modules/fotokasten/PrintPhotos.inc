@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Fotokasten
- * @author Ioana Ciocanescu <service@fotokasten.de>
- */
 
 GalleryCoreApi::requireOnce('modules/fotokasten/lib/nusoap.inc');
 
@@ -29,6 +24,8 @@ GalleryCoreApi::requireOnce('modules/fotokasten/lib/nusoap.inc');
  * This controller sends data to fotokasten.de
  *
  * @package Fotokasten
+ * @author Ioana Ciocanescu <service@fotokasten.de>
+ * @version $Revision$ $Date$
  */
 class PrintPhotosController extends GalleryController {
 
@@ -47,7 +44,7 @@ class PrintPhotosController extends GalleryController {
     var $soapclient = 'nusoapclient';
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;

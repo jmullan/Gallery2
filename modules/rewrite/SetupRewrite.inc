@@ -17,20 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$ $Date$
- * @author Douglas Cau <douglas@cau.se>
- */
 
 /**
  * @package Rewrite
  * @subpackage UserInterface
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class SetupRewriteController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest(&$form) {
 	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
@@ -66,7 +63,7 @@ class SetupRewriteController extends GalleryController {
 	    }
 
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-	        'parserId', $form['parser']);
+						      'parserId', $form['parser']);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -107,10 +104,6 @@ class SetupRewriteController extends GalleryController {
     }
 }
 
-/**
- * @package Rewrite
- * @subpackage UserInterface
- */
 class SetupRewriteView extends GalleryView {
 
     /**
@@ -135,7 +128,7 @@ class SetupRewriteView extends GalleryView {
 		'rewrite module is active'), null);
 	}
 
-    	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
 	    return array($ret, null);

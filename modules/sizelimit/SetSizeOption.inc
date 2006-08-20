@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SizeLimit
- * @subpackage UserInterface
- * @author Felix Rabinovich <felix@rabinovich.org>
- */
 
 /**
  * This ItemAddOption uses the size limit values and resizes
@@ -30,6 +24,8 @@
  *
  * @package SizeLimit
  * @subpackage UserInterface
+ * @author Felix Rabinovich <felix@rabinovich.org>
+ * @version $Revision$ $Date$
  */
 GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
 

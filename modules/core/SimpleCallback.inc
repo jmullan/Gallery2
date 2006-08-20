@@ -19,31 +19,25 @@
  */
 
 /**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This view lets you make very simple callbacks to the framework to
- * get very specific data.  Eventually this will probably get refactored
- * into a much more sophisticated framework.
+ * This view lets you make very simple callbacks to the framework to get very specific data.
+ * Eventually this will probably get refactored into a much more sophisticated framework.
  *
  * @package GalleryCore
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class SimpleCallbackView extends GalleryView {
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
 	list ($command, $prefix) = GalleryUtilities::getRequestVariables('command', 'prefix');

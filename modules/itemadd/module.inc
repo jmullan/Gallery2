@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ItemAdd
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * The implementation of the ItemAdd module.
  * Supports ItemAddFromServer and ItemAddFromWeb
  *
  * @package ItemAdd
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ItemAddModule extends GalleryModule {
 
@@ -44,7 +41,7 @@ class ItemAddModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -65,7 +62,7 @@ class ItemAddModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null, array(array('name' => $this->translate('Web/Server'),
@@ -73,7 +70,7 @@ class ItemAddModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'itemadd');

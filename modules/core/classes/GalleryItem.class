@@ -172,7 +172,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
-	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
+	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	if ($ret) {
 	    return $ret;
 	}
@@ -246,7 +246,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	    return $ret;
 	}
 
-	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
+	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	if ($ret) {
 	    return $ret;
 	}

@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Comment
- * @version $Revision$ $Date$
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Comment Module
@@ -29,6 +24,8 @@
  * This module provides support for adding comments to items
  *
  * @package Comment
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class CommentModule extends GalleryModule {
 
@@ -47,7 +44,7 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
@@ -159,7 +156,7 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');
@@ -168,7 +165,7 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -203,7 +200,7 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemLinks()
+     * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	list ($ret, $showAll) = $this->getParameter('comments.latest');
@@ -234,7 +231,7 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemSummaries()
+     * @see GalleryModule::getItemSummaries
      */
     function getItemSummaries($items, $permissions) {
 	$ids = array();
@@ -265,7 +262,7 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemAdminViews();
+     * @see GalleryModule::getItemAdminViews
      */
     function getItemAdminViews($item) {
 	$views = array();
@@ -288,7 +285,7 @@ class CommentModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,

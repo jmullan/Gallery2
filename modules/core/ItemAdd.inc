@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the addition of an item as a children to another item.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle the addition of an item as a children to
- * another item.
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ItemAddController extends GalleryController {
     /**
@@ -448,7 +442,7 @@ class ItemAddView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
@@ -461,11 +455,8 @@ class ItemAddView extends GalleryView {
 
 
 /**
- * Interface for plugins to the ItemAdd view and controller
+ * Interface for plugins to the ItemAdd view and controller.
  * Plugins provide alternate ways to add items into Gallery.
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class ItemAddPlugin {
 

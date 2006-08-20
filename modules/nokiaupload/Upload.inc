@@ -18,23 +18,18 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package NokiaUpload
- * @author Jerome Rannikko <jeromer@hotpop.com>
- */
-
 GalleryCoreApi::requireOnce('modules/nokiaupload/classes/ImageUploadHelper.class');
 
 /**
  * This controller implements the Nokia Image Uploader API's 'Upload' command.
- *
  * @package NokiaUpload
+ * @author Jerome Rannikko <jeromer@hotpop.com>
+ * @version $Revision$ $Date$
  */
 class UploadController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	ImageUploadHelper::logRequest('UploadController');
@@ -50,23 +45,19 @@ class UploadController extends GalleryController {
 
 /**
  * This view implements the Nokia Image Uploader API's 'Upload' command.
- *
- * @package NokiaUpload
  */
 class UploadView extends GalleryView {
 
     /**
-     * @see GalleryView::renderImmediate()
+     * @see GalleryView::renderImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * API defines the output very specifically so we can't allow any global
-     * templating to be used.
-     *
-     * @see GalleryView::renderImmediate()
+     * API defines the output very specifically so we can't allow any global templating to be used.
+     * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
 	global $gallery;

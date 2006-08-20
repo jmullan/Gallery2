@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view will allow users to view the member list
  * @package Members
  * @subpackage UserInterface
  * @author Robert Balousek <rbalousek@hotmail.com>
- */
-
-/**
- * This view will allow users to view the member list
- *
- * @package Members
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class MembersListView extends GalleryView {
 
@@ -37,7 +31,7 @@ class MembersListView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-    	global $gallery;
+	global $gallery;
 	GalleryCoreApi::requireOnce('modules/members/classes/GalleryMembersHelper.class');
 	list ($ret, $result) =
 	    GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());

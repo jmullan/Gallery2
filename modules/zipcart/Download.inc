@@ -19,27 +19,22 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view sends the zip file and deletes the temp file.
  * @package ZipCart
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * This view sends the zip file and deletes the temp file.
- *
- * @package ZipCart
+ * @version $Revision$ $Date$
  */
 class DownloadView extends GalleryView {
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::renderImmediate()
+     * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
 	global $gallery;

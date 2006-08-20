@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the changes users make to theme settings for an album.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle the changes users make to an album.
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ItemEditTheme extends ItemEditPlugin {
 

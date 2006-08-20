@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ImageBlock
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Generate CSS required if image frames are used with external image block.
- *
  * @package ImageBlock
  * @subpackage UserInterface
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ExternalCSSController extends GalleryController {
 

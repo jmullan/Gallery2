@@ -17,18 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * This controller will handle an user logging in to Gallery
- *
  * @package GalleryCore
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class UserLoginController extends GalleryController {
 
@@ -52,14 +47,14 @@ class UserLoginController extends GalleryController {
     }
 
     /**
-     * @see GalleryController::isAllowedInMaintenance()
+     * @see GalleryController::isAllowedInMaintenance
      */
     function isAllowedInMaintenance() {
 	return true;
     }
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
@@ -191,7 +186,7 @@ class UserLoginView extends GalleryView {
 	if ($form['formName'] != 'UserLogin') {
 	    $form['formName'] = 'UserLogin';
 	    $form['username'] = '';
-	    
+
 	    /*
 	     * When logging in we don't have a session yet, thus no navigation history / a place
 	     * to store the returnUrl. Thus store the returnUrl in the login form

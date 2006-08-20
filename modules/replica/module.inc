@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Replica
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Create item copies sharing the same original data file.
  * Underlying core code still refers to a "replica" as a "linked entity".
  *
  * @package Replica
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ReplicaModule extends GalleryModule {
 

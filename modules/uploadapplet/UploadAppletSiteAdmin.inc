@@ -17,15 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package UploadApplet
- * @author Pierre-Luc Paour <paour@users.sf.net>
- */
 
 /**
  * @package UploadApplet
  * @subpackage UserInterface
+ * @author Pierre-Luc Paour <paour@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class UploadAppletSiteAdminController extends GalleryController {
 
@@ -94,7 +91,7 @@ class UploadAppletSiteAdminController extends GalleryController {
 	return array(null, $results);
     }
 
-    function implode_with_key($assoc, $inglue = '=', $outglue = '&'){
+    function implode_with_key($assoc, $inglue = '=', $outglue = '&') {
 	$return = '';
 	if (!empty($assoc)) {
 	    foreach ($assoc as $tk => $tv) {

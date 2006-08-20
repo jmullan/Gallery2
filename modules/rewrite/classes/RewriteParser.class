@@ -132,7 +132,7 @@ class RewriteParser {
      */
     function getErrorMessage($code, $rewriteModule=null) {
 	if (!isset($rewriteModule)) {
-	    list($ret, $rewriteModule) = GalleryCoreApi::loadPlugin('module', 'rewrite');
+	    list ($ret, $rewriteModule) = GalleryCoreApi::loadPlugin('module', 'rewrite');
 	    if ($ret) {
 		return array($ret, null);
 	    }

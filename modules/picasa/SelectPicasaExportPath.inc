@@ -17,13 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
-* @version $Revision$ $Date$
-* @package Picasa
-* @subpackage UserInterface
-* @author Waldemar Schlackow <gallery@schlackow.de> based on the migrate module by
-* Jesse Mullan <jmullan@visi.com>
-*/
 
 GalleryCoreApi::requireOnce('modules/picasa/classes/Picasa2DataParser.class');
 
@@ -31,19 +24,22 @@ GalleryCoreApi::requireOnce('modules/picasa/classes/Picasa2DataParser.class');
  * @version $Revision$ $Date$
  * @package Picasa
  * @subpackage UserInterface
+ * @author Waldemar Schlackow <gallery@schlackow.de> based on the migrate module by Jesse Mullan
+ * @version $Revision$ $Date$
  */
 class SelectPicasaExportPathController extends GalleryController {
+
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-        global $gallery;
+	global $gallery;
 
-        /* Verify that active user is an admin */
-        $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
-        if ($ret) {
-            return array($ret, null);
-        }
+	/* Verify that active user is an admin */
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret, null);
+	}
 
 	$error = $status = array();
 
@@ -63,97 +59,91 @@ class SelectPicasaExportPathController extends GalleryController {
 		    $error[] = 'form[error][picasaXmlPath][invalid]';
 		}
 	    }
-            if (empty($error)) {
-                $session =& $gallery->getSession();
-                $recentPaths = $session->get('picasa.view.SelectPicasaExportPath.recentPaths');
-                if (empty($recentPaths)) {
-                    $recentPaths = array();
-                }
-                if (isset($recentPaths[$form['picasaXmlPath']])) {
-                    $recentPaths[$form['picasaXmlPath']]++;
-                } else {
-                    $recentPaths[$form['picasaXmlPath']] = 1;
-                }
-                $session->put('picasa.view.SelectPicasaExportPath.recentPaths', $recentPaths);
-                $redirect['view'] = 'core.SiteAdmin';
-                $redirect['subView'] = 'picasa.ConfirmPicasaImport';
-                $redirect['picasaXmlPath'] = $form['picasaXmlPath'];
-                $redirect['destinationAlbumId'] = $form['destinationAlbumId'];
-            }
-        }
-        if (!empty($redirect)) {
-            $results['redirect'] = $redirect;
-        } else {
-            $results['delegate']['view'] = 'core.SiteAdmin';
-            $results['delegate']['subView'] = 'picasa.SelectPicasaExportPath';
-        }
-        $results['status'] = $status;
-        $results['error'] = $error;
+	    if (empty($error)) {
+		$session =& $gallery->getSession();
+		$recentPaths = $session->get('picasa.view.SelectPicasaExportPath.recentPaths');
+		if (empty($recentPaths)) {
+		    $recentPaths = array();
+		}
+		if (isset($recentPaths[$form['picasaXmlPath']])) {
+		    $recentPaths[$form['picasaXmlPath']]++;
+		} else {
+		    $recentPaths[$form['picasaXmlPath']] = 1;
+		}
+		$session->put('picasa.view.SelectPicasaExportPath.recentPaths', $recentPaths);
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'picasa.ConfirmPicasaImport';
+		$redirect['picasaXmlPath'] = $form['picasaXmlPath'];
+		$redirect['destinationAlbumId'] = $form['destinationAlbumId'];
+	    }
+	}
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'picasa.SelectPicasaExportPath';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
 
-        return array(null, $results);
+	return array(null, $results);
     }
 }
 
-/**
- * @version $Revision$ $Date$
- * @package Picasa
- * @subpackage UserInterface
- */
 class SelectPicasaExportPathView extends GalleryView {
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-        global $gallery;
-        if ($form['formName'] != 'SelectPicasaExportPath') {
-            $form['formName'] = 'SelectPicasaExportPath';
-            $form['picasaXmlPath'] = '';
-            $form['destinationAlbumId'] = '';
-        }
+	global $gallery;
+	if ($form['formName'] != 'SelectPicasaExportPath') {
+	    $form['formName'] = 'SelectPicasaExportPath';
+	    $form['picasaXmlPath'] = '';
+	    $form['destinationAlbumId'] = '';
+	}
 
-        /* Load our recent paths from the session */
-        $session =& $gallery->getSession();
-        $recentPaths = $session->get('picasa.view.SelectPicasaExportPath.recentPaths');
+	/* Load our recent paths from the session */
+	$session =& $gallery->getSession();
+	$recentPaths = $session->get('picasa.view.SelectPicasaExportPath.recentPaths');
 
-        if (empty($recentPaths)) {
-            $recentPaths = array();
-        }
+	if (empty($recentPaths)) {
+	    $recentPaths = array();
+	}
 
-        list ($ret, $operations) = GalleryCoreApi::getToolkitOperations('image/jpeg');
-        if ($ret) {
-            return array($ret, null);
-        }
+	list ($ret, $operations) = GalleryCoreApi::getToolkitOperations('image/jpeg');
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        $hasToolkit = false;
-        for ($i = 0; $i < sizeof($operations); $i++) {
-            if ($operations[$i]['name'] == 'thumbnail') {
-                $hasToolkit = true;
-                break;
-            }
-        }
-        /* Get ids of all all albums where we can add new album items */
-        list ($ret, $albumIds) =
-            GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
-        if ($ret) {
-            return array($ret, null);
-        }
+	$hasToolkit = false;
+	for ($i = 0; $i < sizeof($operations); $i++) {
+	    if ($operations[$i]['name'] == 'thumbnail') {
+		$hasToolkit = true;
+		break;
+	    }
+	}
+	/* Get ids of all all albums where we can add new album items */
+	list ($ret, $albumIds) =
+	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        /* Load all the album entities */
-        list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
-        if ($ret) {
-            return array($ret, null);
-        }
-        $albumTree = GalleryUtilities::createAlbumTree($albums);
+	/* Load all the album entities */
+	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$albumTree = GalleryUtilities::createAlbumTree($albums);
 
-        $SelectPicasaExportPath = array();
-        $SelectPicasaExportPath['recentPaths'] = $recentPaths;
-        $SelectPicasaExportPath['hasToolkit'] = $hasToolkit;
-        $SelectPicasaExportPath['g2AlbumTree'] = $albumTree;
+	$SelectPicasaExportPath = array();
+	$SelectPicasaExportPath['recentPaths'] = $recentPaths;
+	$SelectPicasaExportPath['hasToolkit'] = $hasToolkit;
+	$SelectPicasaExportPath['g2AlbumTree'] = $albumTree;
 
-        $template->setVariable('controller', 'picasa.SelectPicasaExportPath');
-        $template->setVariable('SelectPicasaExportPath', $SelectPicasaExportPath);
-        return array(null,
-            array('body' => 'modules/picasa/templates/SelectPicasaExportPath.tpl'));
+	$template->setVariable('controller', 'picasa.SelectPicasaExportPath');
+	$template->setVariable('SelectPicasaExportPath', $SelectPicasaExportPath);
+	return array(null, array('body' => 'modules/picasa/templates/SelectPicasaExportPath.tpl'));
     }
 }
 ?>

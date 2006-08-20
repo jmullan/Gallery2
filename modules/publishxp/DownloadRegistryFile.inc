@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * Generates the Windows registry file for web publishing.
  *
@@ -24,13 +25,13 @@
  * The information in the registry file informs Windows that there is a web service
  * which supports uploading media.
  *
- * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
+ * @version $Revision$ $Date$
  */
 class DownloadRegistryFileView extends GalleryView {
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
@@ -53,11 +54,11 @@ class DownloadRegistryFileView extends GalleryView {
 	$domain = $urlGenerator->getHostName();
 
 	/* Get the name of the gallery */
-	list($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
 	    return $ret;
 	}
-	list($ret, $root) = GalleryCoreApi::loadEntitiesById($rootId);
+	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($rootId);
 	if ($ret) {
 	    return $ret;
 	}

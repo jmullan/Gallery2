@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Getid3
- * @subpackage UserInterface
- * @author Don Willingham <donwillingham@users.sf.net>
- */
 
 /**
  * This controller will switch the ItemDetails mode in the session
@@ -30,6 +24,8 @@
  *
  * @package Getid3
  * @subpackage UserInterface
+ * @author Don Willingham <donwillingham@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class Getid3DetailModeController extends GalleryController {
 

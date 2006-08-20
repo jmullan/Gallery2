@@ -18,21 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package CustomField
- * @subpackage UserInterface
- * @author Alan Harder <alan.harder@sun.com>
- */
-
 GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 /**
  * This controller will handle assigning values to custom fields
- *
  * @package CustomField
  * @subpackage UserInterface
- *
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class CustomFieldItemEdit extends ItemEditPlugin {
 

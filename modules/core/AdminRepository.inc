@@ -17,21 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Jozef Selesi <selesi at gmail dot com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
 
 /**
  * This controller will handle an administration request for a module
- *
  * @package GalleryCore
  * @subpackage UserInterface
- *
+ * @author Jozef Selesi <selesi at gmail dot com>
+ * @version $Revision$ $Date$
  */
 class AdminRepositoryController extends GalleryController {
 

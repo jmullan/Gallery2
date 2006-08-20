@@ -19,19 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle moving one or more items from one album to another.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle moving one or more items from one album to
- * another.
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemMoveSingleController extends GalleryController {
 
@@ -103,7 +95,7 @@ class ItemMoveSingleController extends GalleryController {
 
 	    /* Make sure we don't have recursive moves */
 	    if (empty($error)) {
-		list($ret, $newParentAncestorIds) =
+		list ($ret, $newParentAncestorIds) =
 		    GalleryCoreApi::fetchParentSequence($newParentId);
 		if ($ret) {
 		    return array($ret, null);
@@ -270,7 +262,7 @@ class ItemMoveSingleView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');

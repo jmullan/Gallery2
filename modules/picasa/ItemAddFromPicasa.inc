@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Picasa
- * @author Waldemar Schlackow <waldemar@opencodes.org>
- */
 
 /**
  * This plugin enables the upload of ZIP (or similar) Picasa export
@@ -29,6 +24,8 @@
  *
  * @package Picasa
  * @subpackage UserInterface
+ * @author Waldemar Schlackow <waldemar@opencodes.org>
+ * @version $Revision$ $Date$
  */
 class ItemAddFromPicasa extends ItemAddPlugin {
 
@@ -107,7 +104,7 @@ class ItemAddFromPicasa extends ItemAddPlugin {
 			$error[] = 'form[error][picasaZipPath][invalid]';
 
 		    } else {
-			list($ret, $importStatus) =
+			list ($ret, $importStatus) =
 			    $this->performImport($picasaXmlPath, $item->getId(), $form);
 			if ($ret) {
 			    @$platform->recursiveRmdir($tmpDir);
@@ -139,202 +136,197 @@ class ItemAddFromPicasa extends ItemAddPlugin {
      * @return object GalleryStatus a status code
      */
     function performImport($picasaXmlPath, $destinationAlbumId, $form) {
-        global $gallery;
-        $storage = $gallery->getStorage();
+	global $gallery;
+	$storage = $gallery->getStorage();
 
 	$platform =& $gallery->getPlatform();
-        $slash = $platform->getDirectorySeparator();
+	$slash = $platform->getDirectorySeparator();
 	$finishedAlbums = $albumPosition = array();
 
-        $status = array('albumId' => false,
-            'albumImportFailure' => array(),
-            'albumImportSuccess' => array(),
-            'pictureImportSuccess' => array(),
-            'pictureImportFailure' => array());
+	$status = array('albumId' => false,
+			'albumImportFailure' => array(),
+			'albumImportSuccess' => array(),
+			'pictureImportSuccess' => array(),
+			'pictureImportFailure' => array());
 
-        list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'picasa');
-        if ($ret) {
-            return array($ret, null);
-        }
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'picasa');
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        $sourceEncoding = 'UTF-8';
+	$sourceEncoding = 'UTF-8';
 
-        list ($ret, $markupType) =
-            GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
-        if ($ret) {
-            return array($ret, null);
-        }
+	list ($ret, $markupType) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        $itemsCreated = $picasaAlbum = array();
+	$itemsCreated = $picasaAlbum = array();
 
-        /*
-         * Check to see if the user selected a destination.  If not,
-         * default to the root album of the new gallery install.
-         */
-        if (!isset($destinationAlbumId)) {
-            list ($ret, $rootId) =
-                GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-            if ($ret) {
-                return array($ret, null);
-            }
-            $destinationAlbumId = $rootId;
-        }
+	/*
+	 * Check to see if the user selected a destination.  If not,
+	 * default to the root album of the new gallery install.
+	 */
+	if (!isset($destinationAlbumId)) {
+	    list ($ret, $rootId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $destinationAlbumId = $rootId;
+	}
 
-        /*
-         * Import the Album (as of now Picasa supports only the export of a
-         * single album and there is no concept of subalbums)
-         */
+	/*
+	 * Import the Album (as of now Picasa supports only the export of a
+	 * single album and there is no concept of subalbums)
+	 */
 
-        list($ret, $picasaAlbum) = Picasa2DataParser::getAlbum($picasaXmlPath);
-        if ($ret) {
-            return array($ret, null);
-        }
+	list ($ret, $picasaAlbum) = Picasa2DataParser::getAlbum($picasaXmlPath);
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        $totalItemsToImport = count($picasaAlbum['images']);
+	$totalItemsToImport = count($picasaAlbum['images']);
 
-        if (empty($totalItemsToImport)) {
-            $totalItemsToImport = 1;
-        }
+	if (empty($totalItemsToImport)) {
+	    $totalItemsToImport = 1;
+	}
 	$i = 0;
 
-        $numberOfItemsImported = 0;
-        $gallery->guaranteeTimeLimit(30);
-        $newAlbumInstanceId = false;
+	$numberOfItemsImported = 0;
+	$gallery->guaranteeTimeLimit(30);
+	$newAlbumInstanceId = false;
 
-        $desiredname = $platform->legalizePathComponent($picasaAlbum['albumName']);
-        $k = 0;
-        $invalidName = true;
-        while($invalidName) {
-            list ($ret, $existingAlbumId) =
-                GalleryCoreApi::fetchChildIdByPathComponent($destinationAlbumId, $desiredname);
-            if ($ret) {
-                if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-                    return array($ret, null);
-                } else {
-                    $invalidName = false;
-                }
-            } else {
-                $desiredname = $picasaAlbum['albumName'] . '_' . $k++;
-            }
-        }
+	$desiredname = $platform->legalizePathComponent($picasaAlbum['albumName']);
+	$k = 0;
+	$invalidName = true;
+	while ($invalidName) {
+	    list ($ret, $existingAlbumId) =
+		GalleryCoreApi::fetchChildIdByPathComponent($destinationAlbumId, $desiredname);
+	    if ($ret) {
+		if (!$ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    return array($ret, null);
+		} else {
+		    $invalidName = false;
+		}
+	    } else {
+		$desiredname = $picasaAlbum['albumName'] . '_' . $k++;
+	    }
+	}
 
-        /* Make sure we have permission to edit the target item */
-        $ret = GalleryCoreApi::assertHasItemPermission($destinationAlbumId, 'core.addAlbumItem');
-        if ($ret) {
-            return array($ret, null);
-        }
+	/* Make sure we have permission to edit the target item */
+	$ret = GalleryCoreApi::assertHasItemPermission($destinationAlbumId, 'core.addAlbumItem');
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        /* Try to load targeted parent */
-        list ($ret, $targetAlbumObject) = GalleryCoreApi::loadEntitiesById($destinationAlbumId);
-        if ($ret) {
-            return array($ret, null);
-        }
+	/* Try to load targeted parent */
+	list ($ret, $targetAlbumObject) = GalleryCoreApi::loadEntitiesById($destinationAlbumId);
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        /* Get a lock on said parent */
-        list ($ret, $importLockIds[]) = GalleryCoreApi::acquireReadLock($destinationAlbumId);
-        if ($ret) {
-            return array($ret, null);
-        }
+	/* Get a lock on said parent */
+	list ($ret, $importLockIds[]) = GalleryCoreApi::acquireReadLock($destinationAlbumId);
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        /*
-         * If everything is good so far, we create a new instance to be our new
-         * album
-         */
-        if (!empty($desiredname) && $platform->isLegalPathComponent($desiredname)) {
-            list ($ret, $newAlbumInstance) =
-                GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
-            if ($ret) {
-                return array($ret, null);
-            }
-            if (!isset($newAlbumInstance)) {
-                return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
-            }
+	/* If everything is good so far, we create a new instance to be our new album */
+	if (!empty($desiredname) && $platform->isLegalPathComponent($desiredname)) {
+	    list ($ret, $newAlbumInstance) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (!isset($newAlbumInstance)) {
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
+	    }
 
-            /* this is where the album is actually created */
-            $ret = $newAlbumInstance->create($destinationAlbumId, $desiredname);
-            if ($ret) {
-                return array($ret, null);
-            }
+	    /* this is where the album is actually created */
+	    $ret = $newAlbumInstance->create($destinationAlbumId, $desiredname);
+	    if ($ret) {
+		return array($ret, null);
+	    }
 
-            $newAlbumInstanceId = $newAlbumInstance->getId();
+	    $newAlbumInstanceId = $newAlbumInstance->getId();
 
-            /* load up the album with metadata from the old album */
-            if (isset($picasaAlbum['albumName'])) {
-                $newAlbumInstance->setTitle(
-                    PicasaImportHelper::convertHtml($markupType,
-                        $picasaAlbum['albumName'], $sourceEncoding));
-            }
-            if (isset($picasaAlbum['albumCaption'])) {
-                $newAlbumInstance->setDescription(
-                    PicasaImportHelper::convertHtml($markupType,
-                        $picasaAlbum['albumCaption'], $sourceEncoding));
-                $newAlbumInstance->setSummary(
-                    PicasaImportHelper::convertHtml($markupType,
-                        $picasaAlbum['albumCaption'], $sourceEncoding));
-            }
-            $newAlbumInstance->setKeywords('');
+	    /* load up the album with metadata from the old album */
+	    if (isset($picasaAlbum['albumName'])) {
+		$newAlbumInstance->setTitle(
+			PicasaImportHelper::convertHtml($markupType,
+			    $picasaAlbum['albumName'], $sourceEncoding));
+	    }
+	    if (isset($picasaAlbum['albumCaption'])) {
+		$newAlbumInstance->setDescription(
+			PicasaImportHelper::convertHtml($markupType,
+			    $picasaAlbum['albumCaption'], $sourceEncoding));
+		$newAlbumInstance->setSummary(
+			PicasaImportHelper::convertHtml($markupType,
+			    $picasaAlbum['albumCaption'], $sourceEncoding));
+	    }
+	    $newAlbumInstance->setKeywords('');
 
-            $ret = $newAlbumInstance->save();
-            if ($ret) {
-                return array($ret, null);
-            }
+	    $ret = $newAlbumInstance->save();
+	    if ($ret) {
+		return array($ret, null);
+	    }
 
-            $itemsCreated[] = $newAlbumInstance->getId();
+	    $itemsCreated[] = $newAlbumInstance->getId();
 
-            $finishedAlbums[$picasaAlbum['albumName']] = $newAlbumInstanceId;
-            $status['albumImportSuccess'][$picasaAlbum['albumName']] = $newAlbumInstanceId;
-            $status['albumId'] = $newAlbumInstanceId;
-        }
+	    $finishedAlbums[$picasaAlbum['albumName']] = $newAlbumInstanceId;
+	    $status['albumImportSuccess'][$picasaAlbum['albumName']] = $newAlbumInstanceId;
+	    $status['albumId'] = $newAlbumInstanceId;
+	}
 
-        /*
-         * we can let the parent album (and anything else that we might
-         * have tied up) be edited by others now
-         */
-        $ret = GalleryCoreApi::releaseLocks($importLockIds);
-        if ($ret) {
-            return array($ret, null);
-        } else {
-            $importLockIds = array();
-        }
+	/*
+	 * we can let the parent album (and anything else that we might
+	 * have tied up) be edited by others now
+	 */
+	$ret = GalleryCoreApi::releaseLocks($importLockIds);
+	if ($ret) {
+	    return array($ret, null);
+	} else {
+	    $importLockIds = array();
+	}
 
-        list ($ret, $importLockIds[]) =
-            GalleryCoreApi::acquireReadLock($newAlbumInstanceId);
-        if ($ret) {
-            return array($ret, null);
-        }
+	list ($ret, $importLockIds[]) =
+	    GalleryCoreApi::acquireReadLock($newAlbumInstanceId);
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        $photos = $picasaAlbum['images'];
-        $numberOfItemsImported = 1;
-        foreach($photos as $j => $importAlbumItem) {
-            $gallery->guaranteeTimeLimit(30);
-            $filepath = $picasaXmlPath . str_replace('/', $slash, $importAlbumItem['path']);
-            $filename = $importAlbumItem['name'];
-            list ($base, $extension) =
-                GalleryUtilities::getFileNameComponents($filename);
-            $filecaption = PicasaImportHelper::convertHtml($markupType, $importAlbumItem['caption'],
-                $sourceEncoding);
-            $filetitle = ($form['set']['title'] == 'filename') ? $base
-                : (($form['set']['title'] == 'caption') ? $filecaption : '');
-            $filesummary = empty($form['set']['summary']) ? '' : $filecaption;
-            $filedescription = empty($form['set']['description']) ? '' : $filecaption;
-            list ($ret, $mimeType) =
-                GalleryCoreApi::convertExtensionToMime($extension);
-            if ($ret) {
-                return array($ret, null);
-            }
-            list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
-                $filepath, $filename, $filetitle, $filesummary,
-                $filedescription, $mimeType, $newAlbumInstanceId);
-            if ($ret) {
-                return array($ret, null);
-            }
-            $itemsCreated[] = $newItem->getId();
-            $numberOfItemsImported++;
-            if ($ret) {
-                return array($ret, null);
-            }
-            $status['pictureImportSuccess'][$filename] = $newItem->getId();
-        }
+	$photos = $picasaAlbum['images'];
+	$numberOfItemsImported = 1;
+	foreach ($photos as $j => $importAlbumItem) {
+	    $gallery->guaranteeTimeLimit(30);
+	    $filepath = $picasaXmlPath . str_replace('/', $slash, $importAlbumItem['path']);
+	    $filename = $importAlbumItem['name'];
+	    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+	    $filecaption = PicasaImportHelper::convertHtml($markupType, $importAlbumItem['caption'],
+		    $sourceEncoding);
+	    $filetitle = ($form['set']['title'] == 'filename') ? $base
+		: (($form['set']['title'] == 'caption') ? $filecaption : '');
+	    $filesummary = empty($form['set']['summary']) ? '' : $filecaption;
+	    $filedescription = empty($form['set']['description']) ? '' : $filecaption;
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+		    $filepath, $filename, $filetitle, $filesummary,
+		    $filedescription, $mimeType, $newAlbumInstanceId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $itemsCreated[] = $newItem->getId();
+	    $numberOfItemsImported++;
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $status['pictureImportSuccess'][$filename] = $newItem->getId();
+	}
 
 	$ret = GalleryCoreApi::releaseLocks($importLockIds);
 	if ($ret) {
@@ -347,65 +339,63 @@ class ItemAddFromPicasa extends ItemAddPlugin {
      * @see ItemAdd:loadTemplate
      */
     function loadTemplate(&$template, &$form, $item) {
-        $matches = array();
-        $fileUploadsBool = GalleryUtilities::getPhpIniBool('file_uploads');
-        $totalUploadSize = ini_get('post_max_size');
-        if (preg_match("/(\d+)M/", $totalUploadSize, $matches)) {
-            $totalUploadSize = $matches[1] * 1024 * 1024;
-        }
+	$matches = array();
+	$fileUploadsBool = GalleryUtilities::getPhpIniBool('file_uploads');
+	$totalUploadSize = ini_get('post_max_size');
+	if (preg_match("/(\d+)M/", $totalUploadSize, $matches)) {
+	    $totalUploadSize = $matches[1] * 1024 * 1024;
+	}
 
-        $maxFileSize = ini_get('upload_max_filesize');
-        if (preg_match("/(\d+)M/", $maxFileSize, $matches)) {
-            $maxFileSize = $matches[1] * 1024 * 1024;
-        }
+	$maxFileSize = ini_get('upload_max_filesize');
+	if (preg_match("/(\d+)M/", $maxFileSize, $matches)) {
+	    $maxFileSize = $matches[1] * 1024 * 1024;
+	}
 
-        list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-        if ($ret) {
-            return array($ret, null, null);
-        }
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return array($ret, null, null);
+	}
 
-        foreach (array('totalUploadSize', 'maxFileSize') as $key) {
-            if ($$key >= 1024 * 1024) {
-            $$key = $module->translate(array('one' => '%d megabyte',
-                             'many' => '%d megabytes',
-                             'count' => (int)($$key / (1024 * 1024)),
-                             'arg1' => (int)($$key / (1024 * 1024))));
-            } else if ($$key >= 1024) {
-            $$key = $module->translate(array('one' => '%d kilobytes',
-                             'many' => '%d kilobytes',
-                             'count' => (int)($$key / (1024)),
-                             'arg1' => (int)($$key / (1024))));
-            }
-        }
+	foreach (array('totalUploadSize', 'maxFileSize') as $key) {
+	    if ($$key >= 1024 * 1024) {
+		$$key = $module->translate(array('one' => '%d megabyte',
+			    'many' => '%d megabytes',
+			    'count' => (int)($$key / (1024 * 1024)),
+			    'arg1' => (int)($$key / (1024 * 1024))));
+	    } else if ($$key >= 1024) {
+		$$key = $module->translate(array('one' => '%d kilobytes',
+			    'many' => '%d kilobytes',
+			    'count' => (int)($$key / (1024)),
+			    'arg1' => (int)($$key / (1024))));
+	    }
+	}
 
-        if ($form['formName'] != 'ItemAddFromPicasa') {
-            /* First time around, load the form with item data */
-            $form['set'] = array('title' => 'filename', 'summary' => 1, 'description' => 1);
-            $form['formName'] = 'ItemAddFromPicasa';
-        }
+	if ($form['formName'] != 'ItemAddFromPicasa') {
+	    /* First time around, load the form with item data */
+	    $form['set'] = array('title' => 'filename', 'summary' => 1, 'description' => 1);
+	    $form['formName'] = 'ItemAddFromPicasa';
+	}
 
-        $titleList = array('filename' => $module->translate('Base filename'),
-                   'caption' => $module->translate('Picasa Caption'),
-                   '' => $module->translate('Blank'));
+	$titleList = array('filename' => $module->translate('Base filename'),
+			   'caption' => $module->translate('Picasa Caption'),
+			   '' => $module->translate('Blank'));
 
-        $template->setVariable('ItemAddFromPicasa',
-            array('totalUploadSize' => $totalUploadSize,
-              'maxFileSize' => $maxFileSize,
-              'uploadsPermitted' => $fileUploadsBool,
-              'titleList' => $titleList));
+	$template->setVariable('ItemAddFromPicasa',
+		array('totalUploadSize' => $totalUploadSize,
+		      'maxFileSize' => $maxFileSize,
+		      'uploadsPermitted' => $fileUploadsBool,
+		      'titleList' => $titleList));
 
-        /* Set the ItemAdmin form's encoding type specially since we're uploading binary files */
-        if ($template->hasVariable('ItemAdmin')) {
-            $ItemAdmin =& $template->getVariableByReference('ItemAdmin');
-            $ItemAdmin['enctype'] = 'multipart/form-data';
-        } else {
-            $ItemAdmin['enctype'] = 'multipart/form-data';
-            $template->setVariable('ItemAdmin', $ItemAdmin);
-        }
+	/* Set the ItemAdmin form's encoding type specially since we're uploading binary files */
+	if ($template->hasVariable('ItemAdmin')) {
+	    $ItemAdmin =& $template->getVariableByReference('ItemAdmin');
+	    $ItemAdmin['enctype'] = 'multipart/form-data';
+	} else {
+	    $ItemAdmin['enctype'] = 'multipart/form-data';
+	    $template->setVariable('ItemAdmin', $ItemAdmin);
+	}
 
-        return array(null,
-                 'modules/picasa/templates/ItemAddFromPicasa.tpl',
-                 'modules_picasa');
+	return array(null, 'modules/picasa/templates/ItemAddFromPicasa.tpl', 'modules_picasa');
     }
 
     /**

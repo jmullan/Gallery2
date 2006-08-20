@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Mime
- * @subpackage UserInterface
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * This ItemAddOption rejects uploads for selected mime types.
  *
  * @package Mime
  * @subpackage UserInterface
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class RestrictMimeOption extends ItemAddOption {
 

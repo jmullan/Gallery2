@@ -19,22 +19,16 @@
  */
 
 /**
- * @version $Revision$ $Date$
- * @package Comment
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
  * This controller will handle the deletion of a comment
- *
  * @package Comment
  * @subpackage UserInterface
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class DeleteCommentController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
@@ -92,15 +86,11 @@ class DeleteCommentController extends GalleryController {
 
 /**
  * This view will ask for a confirmation to delete a comment
- *
- * @package Comment
- * @subpackage UserInterface
- *
  */
 class DeleteCommentView extends GalleryView {
 
     /**
-     * @see GalleryView::loadTemplate()
+     * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;

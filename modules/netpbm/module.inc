@@ -121,7 +121,7 @@ class NetPbmModule extends GalleryModule {
 	    $paths[] = "C:\\netpbm\\";
 	    $paths[] = "C:\\jhead\\";
 	    $paths[] = "C:\\cygwin\\bin\\";
-	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')) {
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);
 		if (empty($path)) {

@@ -19,26 +19,21 @@
  */
 
 /**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
  * Extra, rarely used core module code.  Most modules will not need to push their extra code into a
  * separate class, but the core module has a lot of install code that is very rarely used so we tuck
  * it out of the way.
  *
  * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  * @static
  */
 class CoreModuleExtras {
 
     /**
+     * @see GalleryModule::upgrade
      * @param object GalleryModule the core module
      * @param string the current installed version
-     * @see GalleryModule::upgrade
-     * @static
      */
     function upgrade($module, $currentVersion, $statusMonitor) {
 	global $gallery;
@@ -998,7 +993,7 @@ class CoreModuleExtras {
 			 * 4. Filter out derivatives that don't have the same file size as the
 			 *    broken image placeholder
 			 */
-			list($ret, $path) = $derivative->fetchPath();
+			list ($ret, $path) = $derivative->fetchPath();
 			if ($ret) {
 			    return $ret;
 			}
@@ -1178,7 +1173,7 @@ class CoreModuleExtras {
 		foreach ($themes as $themeId => $themeStatus) {
 		    $gallery->guaranteeTimeLimit(30);
 		    if (!empty($themeStatus['active'])) {
-			list($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
+			list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
 			if ($ret &&
 			    !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 			    return $ret;
@@ -1787,7 +1782,7 @@ class CoreModuleExtras {
 			    $storage->_db->SetFetchMode($originalFetchMode);
 			    $changeToBinary = $changeToUtf8 = array();
 			    while ($column = $results->nextResult()) {
-				list($type) = explode('(', $column['Type']);
+				list ($type) = explode('(', $column['Type']);
 				if (!isset($types[$type])) {
 				    continue;
 				}
@@ -2145,11 +2140,10 @@ class CoreModuleExtras {
     /**
      * Determine what changes to config.php are required for this upgrade.
      *
-     * @access private
      * @param string current core version
      * @return array of array('remove' => array of string regexp removals,
      *                        'add' => array of string additions)
-     * @static
+     * @access private
      */
     function _prepareConfigUpgrade($currentVersion) {
 	global $gallery;
@@ -2234,7 +2228,7 @@ $gallery->setConfig(\'galleryBaseUrl\', \'\');
 	    $add = array();
 
 	    /* Generate cookieId */
-	    list($usec, $sec) = explode(" ", microtime());
+	    list ($usec, $sec) = explode(" ", microtime());
 	    /* Note: srand() is required for php versions < 4.2  */
 	    srand(100000 * ((float)$usec + (float)$sec));
 	    $cookieId = substr(md5(rand()), 0, 6);
@@ -2391,7 +2385,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
      *
      * @param string current core version
      * @return boolean true if change is required
-     * @static
      */
     function isConfigUpgradeRequired($currentVersion) {
 	$configChanges = CoreModuleExtras::_prepareConfigUpgrade($currentVersion);
@@ -2403,7 +2396,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
      *
      * @param string current core version
      * @return object GalleryStatus a status code
-     * @static
      */
     function performConfigUpgrade($currentVersion) {
 	global $gallery;
@@ -2448,7 +2440,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
-     * @static
      */
     function _createAllUsersGroup($module) {
 	global $gallery;
@@ -2489,7 +2480,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
-     * @static
      */
     function _createSiteAdminsGroup($module) {
 	global $gallery;
@@ -2530,7 +2520,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
-     * @static
      */
     function _createEverybodyGroup($module) {
 	global $gallery;
@@ -2571,7 +2560,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
-     * @static
      */
     function _createAnonymousUser($module) {
 	global $gallery;
@@ -2625,7 +2613,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
-     * @static
      */
     function _createAdminUser($module) {
 	global $gallery;
@@ -2689,7 +2676,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
-     * @static
      */
     function _createRootAlbumItem($module) {
 	global $gallery;
@@ -2752,7 +2738,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
      *
      * @param object GalleryModule the core module
      * @return object GalleryStatus a status code
-     * @static
      */
     function _createAccessListCompacterLock($module) {
 	global $gallery;

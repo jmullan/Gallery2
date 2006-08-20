@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * Provides downloading of binary items
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Provides downloading of binary items
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class DownloadItemView extends GalleryView {
 

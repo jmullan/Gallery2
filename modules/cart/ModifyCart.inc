@@ -18,29 +18,19 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package Cart
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
 
 /**
  * This controller will handle the changing of item quantities in a cart
- *
  * @package Cart
  * @subpackage UserInterface
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ModifyCartController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();

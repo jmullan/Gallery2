@@ -17,10 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
  * @package Quotas
  * @author  Robert Balousek <volksport@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class QuotasPreloads {
     function preload(&$template, $preload, $paramSet) {

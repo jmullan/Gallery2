@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This edit plugin allows you to customize the photo's thumbnail
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This edit plugin allows you to customize the photo's thumbnail
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemEditPhotoThumbnail extends ItemEditPlugin {
 

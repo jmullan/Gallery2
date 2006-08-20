@@ -17,18 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SelfRegistration
- * @subpackage UserInterface
- * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
- */
 
 /**
  * This controller will handle the registration of a user
- *
- * @package SelfRegistration
+ * @package Registration
  * @subpackage UserInterface
+ * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
+ * @version $Revision$ $Date$
  */
 class UserSelfRegistrationController extends GalleryController {
 
@@ -137,7 +132,7 @@ class UserSelfRegistrationController extends GalleryController {
 		     * send a confirmation email if activated in module settings
 		     * otherwise create the "real" user right now
 		     */
-		    list($ret, $params) =
+		    list ($ret, $params) =
 			GalleryCoreApi::fetchAllPluginParameters('module', 'register');
 		    if ($ret) {
 			return array($ret, null);
@@ -202,9 +197,6 @@ class UserSelfRegistrationController extends GalleryController {
 
 /**
  * This view will prompt for data to create a new user
- *
- * @package SelfRegistration
- * @subpackage UserInterface
  */
 class UserSelfRegistrationView extends GalleryView {
 

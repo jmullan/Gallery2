@@ -112,7 +112,7 @@ class RewriteHelper {
 		/* Avoid PLUGIN_VERSION_MISMATCH during upgrade by passing in module */
 		$module = $rewriteModule;
 	    } else {
-		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			/*

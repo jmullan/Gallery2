@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package CustomField
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Custom fields
@@ -29,6 +24,8 @@
  * This module provides custom fields for Gallery items.
  *
  * @package CustomField
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class CustomFieldModule extends GalleryModule {
 
@@ -46,7 +43,7 @@ class CustomFieldModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
@@ -63,7 +60,7 @@ class CustomFieldModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
@@ -71,7 +68,7 @@ class CustomFieldModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,
@@ -80,7 +77,7 @@ class CustomFieldModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemSummaries()
+     * @see GalleryModule::getItemSummaries
      */
     function getItemSummaries($items, $permissions) {
 	GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
@@ -105,7 +102,7 @@ class CustomFieldModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	/* Register our item edit plugin */

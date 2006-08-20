@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Password
- * @author Alan Harder <alan.harder@sun.com>
- * @author Jess Martin <jmartin@cs.unc.edu>
- */
 
 /**
  * Password protected items
@@ -31,6 +25,9 @@
  * or users without direct permission to view an item or album.
  *
  * @package Password
+ * @author Alan Harder <alan.harder@sun.com>
+ * @author Jess Martin <jmartin@cs.unc.edu>
+ * @version $Revision$ $Date$
  */
 class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -49,7 +46,7 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'password');
@@ -69,14 +66,14 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', new PasswordModule());
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -111,7 +108,7 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getOnLoadHandlerIds()
+     * @see GalleryModule::getOnLoadHandlerIds
      */
     function getOnLoadHandlerIds() {
 	return array('Password');
@@ -119,7 +116,7 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
 
     /**
      * Remove password from all items.
-     * @see GalleryModule::uninstall()
+     * @see GalleryModule::uninstall
      */
     function uninstall() {
 	global $gallery;

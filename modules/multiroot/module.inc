@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Multiroot
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * This module assists in setting up an alternate guest view of a Gallery
  * that is displayed via a different URL.
  *
  * @package Multiroot
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class MultirootModule extends GalleryModule {
 

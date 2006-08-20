@@ -49,7 +49,7 @@ class Getid3Extractor extends Getid3Interface_1_0 {
 	    if (!GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		continue;
 	    }
-	    list($ret, $path) = $item->fetchPath();
+	    list ($ret, $path) = $item->fetchPath();
 	    if ($ret) {
 		return array($ret, null);
 	    }

@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package MP3Audio
- * @author Alan Harder <alan.harder@sun.com>
- * MP3 Audio player: @author Wayne Patterson <suprsidr@gmail.com>
- */
 
 /**
  * The implementation of the MP3Audio module
- *
  * @package MP3Audio
+ * @author Alan Harder <alan.harder@sun.com>
+ * @author MP3 Audio player: Wayne Patterson <suprsidr@gmail.com>
+ * @version $Revision$ $Date$
  */
 class MP3AudioModule extends GalleryModule {
 
@@ -45,7 +41,7 @@ class MP3AudioModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -66,7 +62,7 @@ class MP3AudioModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::activate()
+     * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
 	global $gallery;

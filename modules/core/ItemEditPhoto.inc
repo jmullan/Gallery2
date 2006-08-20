@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the editing of a photo
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle the editing of a photo
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemEditPhoto extends ItemEditPlugin {
 
@@ -210,7 +203,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 	}
 
 	$ItemEditPhoto = array();
-	
+
 	/* Check to see if we have a preferred source */
 	list ($ret, $results) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));

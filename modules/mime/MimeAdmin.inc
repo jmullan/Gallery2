@@ -17,15 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Mime
- * @author Felix Rabinovich <Felix@Rabinovich.org>
- */
 
 /**
  * @package Mime
  * @subpackage Administration
+ * @author Felix Rabinovich <Felix@Rabinovich.org>
+ * @version $Revision$ $Date$
  */
 class MimeAdminController extends GalleryController {
 
@@ -105,7 +102,7 @@ class MimeAdminView extends GalleryView {
 	}
 
 	$MimeAdmin = array();
-	foreach(array_keys($typeMap['ext']) as $mimeType) {
+	foreach (array_keys($typeMap['ext']) as $mimeType) {
 	    $ext = implode(', ', $typeMap['ext'][$mimeType]);
 	    $MimeAdmin[$mimeType]['ext'] = $ext;
 	    $MimeAdmin[$mimeType]['viewable'] = $typeMap['viewable'][$mimeType];

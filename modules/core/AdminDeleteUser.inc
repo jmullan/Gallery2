@@ -17,14 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
+ * This controller will handle the deletion of an user
+ *
  * User Story:
  * "Joe clicks on 'Users' in the Site Admin view. He wants to delete a user
  * and clicks on 'delete' next to user x. The next view shows a form. If user x
@@ -42,14 +38,11 @@
  * b) the controller deletes all GalleryItems which are not AlbumItems, then it checks
  *    all albums of user x. It deletes all empty albums and assigns a new owner to
  *    all non empty albums.
- */
-
-/**
- * This controller will handle the deletion of an user
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class AdminDeleteUserController extends GalleryController {
 

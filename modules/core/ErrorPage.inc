@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view prepares all the information the theme requires to render an error page.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This view prepares all the information the theme requires to render an error page.
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ErrorPageView extends GalleryView {
 

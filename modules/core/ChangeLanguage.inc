@@ -19,22 +19,16 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller handles changing the language in the current session
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * This controller handles changing the language in the current session
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ChangeLanguageController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;

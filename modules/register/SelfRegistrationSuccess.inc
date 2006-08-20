@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
- * @package SelfRegistration
+ * This view will show a registration confirmation for the user
+ * @package Registration
  * @subpackage UserInterface
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
- */
-
-/**
- * This view will show a registration confirmation for the user
- *
- * @package SelfRegistration
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class SelfRegistrationSuccessView extends GalleryView {
 

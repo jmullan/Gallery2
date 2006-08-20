@@ -17,22 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * Module to allow publishing from XP directly to Gallery.
  *
- * This module allows the user to register Gallery with Windows XP as a web service
- * allowing photos to be directly uploaded from XP.  To use the service, the user
- * has to download a registry file and install it.  Once installed, the user can use
- * the Publish option.
+ * This module allows the user to register Gallery with Windows XP as a web service allowing
+ * photos to be directly uploaded from XP.  To use the service, the user has to download a
+ * registry file and install it.  Once installed, the user can use the Publish option.
  *
- * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
+ * @version $Revision$ $Date$
  */
 class PublishXpModule extends GalleryModule {
-    /**
-     * Constructs the PublishXpModule that is registered with Gallery.
-     */
+
     function PublishXpModule() {
 	global $gallery;
 	$this->setId('publishxp');

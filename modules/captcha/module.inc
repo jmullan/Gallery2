@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Captcha
- * @author Stefan Ioachim <stefanioachim@gmail.com>
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * The implementation of the Captcha module
  *
  * @package Captcha
+ * @author Stefan Ioachim <stefanioachim@gmail.com>
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class CaptchaModule extends GalleryModule {
 
@@ -45,7 +42,7 @@ class CaptchaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -65,7 +62,7 @@ class CaptchaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 
@@ -111,7 +108,7 @@ class CaptchaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::autoConfigure()
+     * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
 	/* We need to perform a test before activating */
@@ -123,7 +120,7 @@ class CaptchaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::needsConfiguration()
+     * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
 	GalleryCoreApi::requireOnce('modules/captcha/classes/CaptchaHelper.class');
@@ -133,7 +130,7 @@ class CaptchaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,
@@ -142,7 +139,7 @@ class CaptchaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getConfigurationView()
+     * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
 	return 'captcha.CaptchaConfigAdmin';

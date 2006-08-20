@@ -102,12 +102,12 @@ class GalleryAlbumItem extends GalleryItem {
 	/* Albums can contain children */
 	$this->setCanContainChildren(true);
 
-	list($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
+	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
 	if ($ret) {
 	    return $ret;
 	}
 
-	list($ret, $parentPath) = $parent->fetchPath();
+	list ($ret, $parentPath) = $parent->fetchPath();
 	if ($ret) {
 	    return $ret;
 	}
@@ -218,7 +218,7 @@ class GalleryAlbumItem extends GalleryItem {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	list($ret, $perm) = GalleryCoreApi::getPluginParameter(
+	list ($ret, $perm) = GalleryCoreApi::getPluginParameter(
 	    'module', 'core', 'permissions.directory');
 	if ($ret) {
 	    return $ret;
@@ -269,7 +269,7 @@ class GalleryAlbumItem extends GalleryItem {
 	}
 
 	/* Get my path */
-	list($ret, $path) = $this->fetchPath();
+	list ($ret, $path) = $this->fetchPath();
 	if ($ret) {
 	    return $ret;
 	}
@@ -317,7 +317,7 @@ class GalleryAlbumItem extends GalleryItem {
 	/*
 	 * Get the current path
 	 */
-	list($ret, $currentPath) = $this->fetchPath();
+	list ($ret, $currentPath) = $this->fetchPath();
 	if ($ret) {
 	    return $ret;
 	}

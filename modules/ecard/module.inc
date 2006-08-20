@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Ecard
- * @author Nico Kaiser <nico@siriux.net>
- * @author Dariush Molavi <dari@nukedgallery.net>
- */
 
 /**
  * eCard module
  *
  * @package Ecard
+ * @author Nico Kaiser <nico@siriux.net>
+ * @author Dariush Molavi <dari@nukedgallery.net>
+ * @version $Revision$ $Date$
  */
 class EcardModule extends GalleryModule {
 
@@ -120,7 +117,7 @@ class EcardModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemLinks()
+     * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
@@ -149,7 +146,7 @@ class EcardModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(

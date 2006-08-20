@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SquareThumb
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Square thumbnails
@@ -30,6 +25,8 @@
  * being active to perform the actual image manipulation (dimensions, crop, thumbnail)
  *
  * @package SquareThumb
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -47,7 +44,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'squarethumb');
@@ -68,7 +65,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -82,7 +79,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners();
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin',
@@ -90,7 +87,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	/* Omit site admin view if no ppm support; only use crop-to-square in that case */
@@ -105,7 +102,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::activate()
+     * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
 	global $gallery;
@@ -230,7 +227,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getConfigurationView()
+     * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
 	return 'squarethumb.CantActivate';

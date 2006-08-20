@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Digibug
- * @subpackage UserInterface
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * This view creates a form to send data to digibug.com
  *
  * @package Digibug
  * @subpackage UserInterface
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class PrintPhotosView extends GalleryView {
 
@@ -157,7 +153,7 @@ class PrintPhotosView extends GalleryView {
 	    $entry['imageWidth'] = $source->getWidth();
 	    $entry['imageHeight'] = $source->getHeight();
 
-	    if (!isset($thumbnails[$itemId]) || $thumbnails[$itemId]->getPostFilterOperations()){
+	    if (!isset($thumbnails[$itemId]) || $thumbnails[$itemId]->getPostFilterOperations()) {
 		/* Use the source if the thumbnail has a postfilter (like a watermark) */
 		$thumbSource = $source;
 	    } else {

@@ -17,22 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
+ * This ItemAddOption uses the EXIF description value for the gallery item summary/description
+ * and the IPTC keywords for the gallery item keywords when the image is uploaded.
+ *
  * @package Exif
  * @subpackage UserInterface
  * @author Elliot Shepherd <elliot@jarofworms.com>
  * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
- */
-
-/**
- * This ItemAddOption uses the EXIF description value for the
- * gallery item summary/description and the IPTC keywords for the
- * gallery item keywords when the image is uploaded.
- *
- * @package Exif
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ExifDescriptionOption extends ItemAddOption {
 
@@ -88,7 +83,7 @@ class ExifDescriptionOption extends ItemAddOption {
 		$currentItems = array_splice($itemsInBatches, 0, $batchSize);
 		for ($i = 0; $i < count($currentItems); $i++) {
 		    $itemId = $currentItems[$i]->getId();
-		    
+
 		    list ($ret, $exifData) = ExifExtractor::getMetaData(array($itemId), $needed);
 		    if ($ret) {
 			return array($ret, null, null);
@@ -96,7 +91,7 @@ class ExifDescriptionOption extends ItemAddOption {
 
 		    $mustSave = false;
 
-		    /* TODO(xlerb) reconsider, if ExifHelper should be changed to do the 
+		    /* TODO(xlerb) reconsider, if ExifHelper should be changed to do the
 										preferences. */
 		    $itemDescription = '';
 		    if (!empty($exifData[$itemId]['IPTC/Caption']['value'])) {
@@ -113,14 +108,14 @@ class ExifDescriptionOption extends ItemAddOption {
 			if ($addOption & EXIF_ITEM_SUMMARY) {
 			    $currentItems[$i]->setSummary($itemDescription);
 			    $mustSave = true;
-		        }
+			}
 			if ($addOption & EXIF_ITEM_DESCRIPTION) {
 			    $currentItems[$i]->setDescription($itemDescription);
 			    $mustSave = true;
 			}
 		    }
 
-		    if (!empty($exifData[$itemId]['IPTC/Keywords']['value']) && $addOption 
+		    if (!empty($exifData[$itemId]['IPTC/Keywords']['value']) && $addOption
 									& IPTC_ITEM_KEYWORDS) {
 			$iptcKeywords = $exifData[$itemId]['IPTC/Keywords']['value'];
 			    $currentItems[$i]->setKeywords($iptcKeywords);
@@ -128,25 +123,25 @@ class ExifDescriptionOption extends ItemAddOption {
 		    }
 
 		    /* rotate item based on exifdata */
-		    if (!empty($exifData[$itemId]['Orientation']['value']) && $addOption 
+		    if (!empty($exifData[$itemId]['Orientation']['value']) && $addOption
 									& EXIF_ITEM_ROTATE) {
 
 			$orientation = $exifData[$itemId]['Orientation']['value'];
 			$args = array();
-			
+
 			/*
-			 *  Note: Not handling the Mirrored cases this time. 
+			 *  Note: Not handling the Mirrored cases this time.
 			 *  Additional operation needed.
 			 */
-			
-			 /*  
+
+			 /*
 			  //elseif ($orientation == 'Normal (O deg)') { leave $args empty }
 			  else if ($orientation == 'Mirrored') {}
 			  else if ($orientation == 'Upsidedown Mirrored') {}
 			  else if ($orientation == '90 deg CW Mirrored') {}
 			  else if ($orientation == '90 deg CCW Mirrored') {}
 			 */
-			
+
 			if ($orientation == 'Upsidedown') {
 			    $args = array(180);
 			}
@@ -158,18 +153,18 @@ class ExifDescriptionOption extends ItemAddOption {
 			}
 
 			$operation = 'rotate';
-			
+
 			$preserveOriginal = ($addOption & EXIF_ITEM_ROTATE_PRESERVE) ? 1 : 0;
-		
+
 			if (!empty($args)) {
-			    $ret = GalleryCoreApi::applyToolkitOperation($operation, $args, 
+			    $ret = GalleryCoreApi::applyToolkitOperation($operation, $args,
 						$preserveOriginal, $currentItems[$i]);
 			    if ($ret) {
-			        return array($ret, null, null);
+				return array($ret, null, null);
 			    }
 			}
 		    }
-		
+
 		    if ($mustSave && empty($args)) {
 			list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
 			if ($ret) {

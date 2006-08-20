@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view is for letting the user know that there was an error with photo fulfilment
  * @package PhotoAccess
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This view is for letting the user know that there was an error with photo fulfilment
- *
- * @package PhotoAccess
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class FulfillmentErrorView extends GalleryView {
 
@@ -43,8 +37,7 @@ class FulfillmentErrorView extends GalleryView {
 	}
 
 	$template->title($module->translate('PhotoAccess Fulfillment Error'));
-	return array(null,
-		     array('body' => 'modules/photoaccess/templates/FulfillmentError.tpl'));
+	return array(null, array('body' => 'modules/photoaccess/templates/FulfillmentError.tpl'));
     }
 }
 ?>

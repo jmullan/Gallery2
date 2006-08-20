@@ -19,19 +19,12 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the recovery of passwords that have
+ * been lost or forgotten by the user.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Jay Rossiter <cryptographite@users.sf.net>
- */
-
-/**
- * This controller will handle the recovery of passwords that have
- * been lost or forgotten by the user.
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 
 class UserRecoverPasswordAdminController extends GalleryController {

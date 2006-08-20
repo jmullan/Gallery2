@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Slideshow
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * The implementation of the Slideshow module
  *
  * @package Slideshow
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class SlideshowModule extends GalleryModule {
 
@@ -43,7 +40,7 @@ class SlideshowModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -57,7 +54,7 @@ class SlideshowModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemLinks()
+     * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
@@ -79,17 +76,17 @@ class SlideshowModule extends GalleryModule {
      */
     function getRewriteRules() {
 	$rules = array();
-	
+
 	$rule = array();
 	$rule['comment'] = $this->translate('View Slideshow');
 	$rule['match'] = array('view' => 'slideshow.Slideshow');
 	$rule['onLoad'] = array('rewrite', 'RewriteSimpleHelper', 'loadItemIdFromPath');
 	$rule['pattern'] = 'v/%path%/slideshow.html';
-        $rule['keywords'] = array(
-            'path' => array(
-                'pattern' => '([^?]+)',
+	$rule['keywords'] = array(
+	    'path' => array(
+		'pattern' => '([^?]+)',
 		'function' => array('rewrite', 'RewriteSimpleHelper', 'parsePath'),
-                'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
+		'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
 	$rules[] = $rule;
 
 	return $rules;

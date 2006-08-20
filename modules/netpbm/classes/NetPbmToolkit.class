@@ -28,14 +28,9 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
  * @version $Revision$ $Date$
  */
 class NetPbmToolkit extends GalleryToolkit {
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
     /**
-     * @see GalleryToolkit::getProperty()
+     * @see GalleryToolkit::getProperty
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
 
@@ -57,7 +52,7 @@ class NetPbmToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::performOperation()
+     * @see GalleryToolkit::performOperation
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
@@ -465,7 +460,7 @@ class NetPbmToolkit extends GalleryToolkit {
     }
 
     /**
-     * @see GalleryToolkit::getImageDimensions()
+     * @see GalleryToolkit::getImageDimensions
      */
     function _getImageDimensions($mimeType, $filename) {
 	global $gallery;

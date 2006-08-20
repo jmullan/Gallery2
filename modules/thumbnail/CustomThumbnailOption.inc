@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * ItemEditOption for uploading a custom thumbnail for an item
  * @package Thumbnail
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * ItemEditOption for uploading a custom thumbnail for an item
- *
- * @package Thumbnail
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class CustomThumbnailOption extends ItemEditOption {
 

@@ -86,7 +86,7 @@ class GalleryGroup extends GalleryEntity {
 	WHERE
 	  [GalleryGroup::groupName] = ?
 	';
-	list($ret, $results) =
+	list ($ret, $results) =
 	    $gallery->search($query, array($groupName),
 			     array('limit' => array('count' => 1)));
 	if ($ret) {

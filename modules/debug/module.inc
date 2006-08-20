@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Debug
- * @author Ernesto Baschny <ernst@baschny.de>
- */
 
 /**
  * Debug Module
@@ -29,6 +24,8 @@
  * This module provides some debug information on Gallery
  *
  * @package Debug
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @version $Revision$ $Date$
  */
 class DebugModule extends GalleryModule {
 

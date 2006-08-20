@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SizeLimit
- * @author Felix Rabinovich <felix@rabinovich.org>
- */
 
 /**
  * This module sets size limit for the picture
  *
  * @package SizeLimit
+ * @author Felix Rabinovich <felix@rabinovich.org>
+ * @version $Revision$ $Date$
  */
 class SizeLimitModule extends GalleryModule {
 
@@ -44,7 +41,7 @@ class SizeLimitModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::save',
@@ -52,7 +49,7 @@ class SizeLimitModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(

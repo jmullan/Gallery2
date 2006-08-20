@@ -17,45 +17,40 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Watermark
- * @subpackage UserInterface
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Applies watermark on the fly and sends binary item
  *
  * @package Watermark
  * @subpackage UserInterface
- *
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class DownloadItemView extends GalleryView {
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::isAllowedInEmbedOnly()
+     * @see GalleryView::isAllowedInEmbedOnly
      */
     function isAllowedInEmbedOnly() {
 	return true;
     }
 
     /**
-     * @see GalleryView::shouldSaveSession()
+     * @see GalleryView::shouldSaveSession
      */
     function shouldSaveSession() {
 	return false;
     }
 
     /**
-     * @see GalleryView::renderImmediate()
+     * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -191,10 +186,9 @@ class DownloadItemView extends GalleryView {
 	header('Expires: ' . GalleryUtilities::getHttpDate(time() + 31536000));
 
 	/*
-	 * Don't use readfile() because it buffers the entire file in memory
-	 * Profiling shows that this approach is as efficient as fpassthru()
-	 * but we get to call guaranteeTimeLimit which prevents it from failing on
-	 * very large files.
+	 * Don't use readfile() because it buffers the entire file in memory.  Profiling shows
+	 * that this approach is as efficient as fpassthru() but we get to call guaranteeTimeLimit
+	 * which prevents it from failing on very large files.
 	 */
 	if ($fd = $platform->fopen($data['derivativePath'], 'rb')) {
 	    while (true) {

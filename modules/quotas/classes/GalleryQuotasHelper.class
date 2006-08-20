@@ -183,7 +183,7 @@ class GalleryQuotasHelper {
 	$base = 1024;
 	$useSuffix = 0;
 	$kilobytes = (float)$kilobytes;
-	while($kilobytes >= $base && $useSuffix < count($suffixes)-1) {
+	while ($kilobytes >= $base && $useSuffix < count($suffixes)-1) {
 	    $kilobytes /= (float)$base;
 	    $useSuffix++;
 	}
@@ -226,7 +226,7 @@ class GalleryQuotasHelper {
 
 	/* Get our groups' id, quota size, and name */
 	$groupQuotasList = array();
-	while($result = $searchResults->nextResult()) {
+	while ($result = $searchResults->nextResult()) {
 	    $groupQuotasList[(int)$result[0]] = array('quota' => (int)$result[1],
 						      'name' => $result[2]);
 	}

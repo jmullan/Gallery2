@@ -18,12 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 class ShowItemController extends GalleryController {
 
@@ -53,6 +47,8 @@ class ShowItemController extends GalleryController {
  *
  * @package GalleryCore
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ShowItemView extends GalleryView {
 

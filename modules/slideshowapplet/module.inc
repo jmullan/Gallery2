@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
  * @package SlideshowApplet
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
+ * @version $Revision$ $Date$
  */
-
 class SlideshowAppletModule extends GalleryModule {
 
     function SlideshowAppletModule() {
@@ -38,7 +38,7 @@ class SlideshowAppletModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryPlugin::upgrade()
+     * @see GalleryPlugin::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
@@ -87,7 +87,7 @@ class SlideshowAppletModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemLinks()
+     * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
@@ -126,7 +126,7 @@ class SlideshowAppletModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,

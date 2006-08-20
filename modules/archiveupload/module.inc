@@ -17,19 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package ArchiveUpload
- * @version $Revision$ $Date$
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
- * ArchiveUpload module
- *
- * This module provides toolkit support to extract items from
- * archive files such as a zip file
+ * ArchiveUpload module.
+ * This module provides toolkit support to extract items from archive files such as a zip file.
  *
  * @package ArchiveUpload
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ArchiveUploadModule extends GalleryModule {
 
@@ -47,7 +42,7 @@ class ArchiveUploadModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'archiveupload');
@@ -67,7 +62,7 @@ class ArchiveUploadModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -108,7 +103,7 @@ class ArchiveUploadModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::needsConfiguration()
+     * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
 	foreach (array('unzipPath') as $key) {
@@ -126,7 +121,7 @@ class ArchiveUploadModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::activate()
+     * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
 	$ret = GalleryCoreApi::registerToolkitOperation('ArchiveUpload',
@@ -147,7 +142,7 @@ class ArchiveUploadModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,
@@ -156,7 +151,7 @@ class ArchiveUploadModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getConfigurationView()
+     * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
 	return 'archiveupload.ArchiveUploadSiteAdmin';

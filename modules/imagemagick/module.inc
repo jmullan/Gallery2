@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ImageMagick
- * @author Bharat Mediratta <bharat@menalto.com>
- * @author Vallimar <vallimar@sexorcisto.com>
- */
 
 /**
  * ImageMagick Graphics Module
@@ -30,6 +24,9 @@
  * This module provides the ImageMagick graphics toolkit for Gallery
  *
  * @package ImageMagick
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Vallimar <vallimar@sexorcisto.com>
+ * @version $Revision$ $Date$
  */
 class ImageMagickModule extends GalleryModule {
 
@@ -90,7 +87,7 @@ class ImageMagickModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	/* Register our graphics class with the factory */
@@ -255,7 +252,7 @@ class ImageMagickModule extends GalleryModule {
 	    $paths[] = "C:\\ImageMagick\\";
 	    $paths[] = "C:\\ImageMagick\\VisualMagick\\bin\\";
 	    $paths[] = "C:\\cygwin\\bin\\";
-	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')) {
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);
 		if (empty($path)) {

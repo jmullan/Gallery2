@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will switch the detail mode in the session and return to the previous page
  * @package Exif
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will switch the detail mode in the session
- * and return to the previous page
- *
- * @package Exif
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class SwitchDetailModeController extends GalleryController {
 

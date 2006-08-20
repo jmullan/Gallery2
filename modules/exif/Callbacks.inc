@@ -17,14 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
  * @package Exif
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ExifCallbacks {
-    /**
-     */
+
     function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
 
@@ -45,7 +45,7 @@ class ExifCallbacks {
 	    }
 
 	    /* Feed the file to exifer */
-	    list($ret, $path) = $item->fetchPath();
+	    list ($ret, $path) = $item->fetchPath();
 	    if ($ret) {
 		return $ret;
 	    }

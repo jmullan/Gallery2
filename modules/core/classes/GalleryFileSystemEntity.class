@@ -316,12 +316,12 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
     function fetchLogicalPath() {
 	$parentId = $this->getParentId();
 	if (!empty($parentId)) {
-	    list($ret, $parent) = $this->fetchParent();
+	    list ($ret, $parent) = $this->fetchParent();
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
-	    list($ret, $parentPath) = $parent->fetchLogicalPath();
+	    list ($ret, $parentPath) = $parent->fetchLogicalPath();
 	    if ($ret) {
 		return array($ret, null);
 	    }

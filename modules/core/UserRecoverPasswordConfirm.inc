@@ -18,22 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/core/classes/helpers/UserRecoverPasswordHelper_simple.class');
+
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the recovery of passwords that have been lost or forgotten
+ * by the user.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Jay Rossiter <cryptographite@users.sf.net>
- */
-
-GalleryCoreApi::requireOnce(
-    'modules/core/classes/helpers/UserRecoverPasswordHelper_simple.class');
-
-/**
- * This controller will handle the recovery of passwords that have
- * been lost or forgotten by the user.
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class UserRecoverPasswordConfirmController extends GalleryController {
 

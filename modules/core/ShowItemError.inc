@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the rendering of an album or item.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle the rendering of an album or item.
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ShowItemErrorView extends GalleryView {
 
@@ -98,7 +92,7 @@ class ShowItemErrorView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewType()
+     * @see GalleryView::getViewType
      */
     function getViewType() {
 	return VIEW_TYPE_ADMIN;

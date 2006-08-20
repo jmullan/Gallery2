@@ -104,7 +104,7 @@ class Gallery1DataParser {
 	}
 
 	/* TODO: check that there is an $albumOrder */
-	foreach ($albumOrder as $albumName){
+	foreach ($albumOrder as $albumName) {
 	    list ($ret, $albumFields) =
 		Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret) {
@@ -133,7 +133,7 @@ class Gallery1DataParser {
 	    return array($ret, null);
 	}
 
-	foreach($albumOrder as $albumName){
+	foreach ($albumOrder as $albumName) {
 	    list ($ret, $albumFields) =
 		Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret) {
@@ -157,7 +157,7 @@ class Gallery1DataParser {
 	    return array($ret, null);
 	}
 
-	foreach($parentAlbumList as $myName => $parentName) {
+	foreach ($parentAlbumList as $myName => $parentName) {
 	    if (!isset($tempAlbums[$myName])) {
 		$tempAlbums[$myName] = array();
 	    }
@@ -190,7 +190,7 @@ class Gallery1DataParser {
 	    return array($ret, null);
 	}
 
-	foreach($albumOrder as $albumName){
+	foreach ($albumOrder as $albumName) {
 	    list ($ret, $albumFields) =
 		Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret) {
@@ -227,7 +227,7 @@ class Gallery1DataParser {
 	    return array($ret, null);
 	}
 	$album->fields['name'] = $albumName;
-	if (!$album->fields['parentAlbumName']){
+	if (!$album->fields['parentAlbumName']) {
 	    $album->fields['parentAlbumName'] = '.root';
 	}
 	return array(null, $album->fields);
@@ -375,7 +375,7 @@ class Gallery1DataParser {
 		if ($ret) {
 		    return array($ret, null);
 		}
-		foreach ($user as $key => $value){
+		foreach ($user as $key => $value) {
 		    $fields[$path][$uid][$key] = $value;
 		}
 	    }

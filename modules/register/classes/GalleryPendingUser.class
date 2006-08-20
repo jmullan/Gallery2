@@ -147,7 +147,7 @@ class GalleryPendingUser extends GalleryEntity {
 	';
 
 	/* Check to see if we have a collision */
-	list($ret, $results) =
+	list ($ret, $results) =
 	    $gallery->search($query, array($userName),
 			     array('limit' => array('count' => 1)));
 	if ($ret) {
@@ -170,7 +170,7 @@ class GalleryPendingUser extends GalleryEntity {
 	';
 
 	/* Check to see if we have a collision */
-	list($ret, $results) =
+	list ($ret, $results) =
 	    $gallery->search($query, array($userName),
 			     array('limit' => array('count' => 1)));
 	if ($ret) {

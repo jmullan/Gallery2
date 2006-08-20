@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle storing multilanguage captions for GalleryItems
  * @package MultiLang
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * This controller will handle storing multilanguage captions for GalleryItems
- *
- * @package MultiLang
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class MultiLangItemEdit extends ItemEditPlugin {
 

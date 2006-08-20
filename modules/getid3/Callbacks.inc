@@ -29,56 +29,56 @@ class Getid3Callbacks {
 
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['itemId']);
 	    if ($ret) {
-	        return $ret;
+		return $ret;
 	    }
 
 	    /* Ensure Item is a data item */
 	    if (!GalleryUtilities::isA($item, 'GalleryDataItem')) {
-	        return null;
+		return null;
 	    }
 
 	    /* Feed the file to getid3 */
-	    list($ret, $path) = $item->fetchPath();
+	    list ($ret, $path) = $item->fetchPath();
 	    if ($ret) {
-	        return $ret;
+		return $ret;
 	    }
 
 	    /* Figure out which version we're looking at */
 	    $session =& $gallery->getSession();
 	    if (empty($mode)) {
-	        $mode = $session->get('getid3.module.LoadGetid3Info.mode');
-	        if (empty($mode)) {
-	            $mode = 'summary';
-	        }
+		$mode = $session->get('getid3.module.LoadGetid3Info.mode');
+		if (empty($mode)) {
+		    $mode = 'summary';
+		}
 	    }
 
 	    if ($mode == 'detailed') {
-	        $filter = GETID3_DETAILED;
+		$filter = GETID3_DETAILED;
 	    } else {
-	        $filter = GETID3_SUMMARY;
+		$filter = GETID3_SUMMARY;
 	    }
 
 	    list ($ret, $getid3Data) = Getid3Helper::getId3Data($path, $filter);
 	    if ($ret) {
-	        return $ret;
+		return $ret;
 	    }
 	    if (empty($getid3Data)) {
-	        if ($filter == GETID3_SUMMARY) {
-	            list ($ret, $getid3Data) = Getid3Helper::getId3Data($path, GETID3_DETAILED);
-	        } else {
-	            list ($ret, $getid3Data) = Getid3Helper::getId3Data($path, GETID3_SUMMARY);
-	        }
-	        if ($ret) {
-	            return $ret;
-	        }
-	        $mode = null;
+		if ($filter == GETID3_SUMMARY) {
+		    list ($ret, $getid3Data) = Getid3Helper::getId3Data($path, GETID3_DETAILED);
+		} else {
+		    list ($ret, $getid3Data) = Getid3Helper::getId3Data($path, GETID3_SUMMARY);
+		}
+		if ($ret) {
+		    return $ret;
+		}
+		$mode = null;
 	    }
 	    list ($ret, $getid3ArchiveData) = Getid3Helper::getId3ArchiveData($path, $filter);
 	    if ($ret) {
-	        return $ret;
+		return $ret;
 	    }
 	    if (empty($getid3Data) && empty($getid3ArchiveData)) {
-	        return null;
+		return null;
 	    }
 
 	    $block =& $smarty->_tpl_vars['block'];

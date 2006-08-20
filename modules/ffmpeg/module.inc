@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Ffmpeg
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Ffmpeg Graphics Module
@@ -29,6 +24,8 @@
  * This module provides the Ffmpeg graphics toolkit for Gallery
  *
  * @package Ffmpeg
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class FfmpegModule extends GalleryModule {
 
@@ -46,7 +43,7 @@ class FfmpegModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
@@ -85,7 +82,7 @@ class FfmpegModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	/* Register our graphics class with the factory */
@@ -144,7 +141,7 @@ class FfmpegModule extends GalleryModule {
 
 	    $paths[] = 'C:\apps\ffmpeg\ffmpeg.exe';
 	    $paths[] = 'C:\ffmpeg\ffmpeg.exe';
-	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')) {
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);
 		if (empty($path)) {
@@ -198,7 +195,7 @@ class FfmpegModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::activate()
+     * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
 	/* Load any classes we require */
@@ -256,7 +253,7 @@ class FfmpegModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::needsConfiguration()
+     * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
 	/* This module requires all fields to be filled out before it can be activated. */
@@ -275,7 +272,7 @@ class FfmpegModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,
@@ -284,7 +281,7 @@ class FfmpegModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getConfigurationView()
+     * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
 	return 'ffmpeg.AdminFfmpeg';

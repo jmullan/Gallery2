@@ -19,25 +19,16 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle changing the order of items in an album.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle moving one or more items from one album to
- * another.
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemReorderController extends GalleryController {
 
     /**
-     * Move the selected items into the destination album, if all the
-     * permissions are set correctly.
+     * Reorder the selected items, if all the permissions are set correctly.
      */
     function handleRequest($form) {
 	global $gallery;
@@ -252,7 +243,7 @@ class ItemReorderView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');

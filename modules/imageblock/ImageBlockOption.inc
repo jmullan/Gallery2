@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ImageBlock
- * @author Jay Rossiter <cryptographite@users.sf.net>
- */
 
 GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 
 /**
  * @package ImageBlock
  * @subpackage UserInterface
+ * @author Jay Rossiter <cryptographite@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class ImageBlockOption extends ItemEditOption {
 
@@ -60,7 +57,7 @@ class ImageBlockOption extends ItemEditOption {
      * @see ItemEditOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	list($ret, $form['ImageBlockOption']['setDisabled']) =
+	list ($ret, $form['ImageBlockOption']['setDisabled']) =
 	    ImageBlockHelper::getDisabledFlag($item->getId());
 	if ($ret) {
 	    return array($ret, null, null);
@@ -79,7 +76,7 @@ class ImageBlockOption extends ItemEditOption {
     }
 
     /**
-     * @see ItemEditOption::requiresProgressBar()
+     * @see ItemEditOption::requiresProgressBar
      */
     function requiresProgressBar($form) {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');

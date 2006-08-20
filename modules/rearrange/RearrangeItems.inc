@@ -19,24 +19,16 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle rearranging the order of all album items at once.
  * @package Rearrange
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * This controller will handle rearranging the order of all album items at once.
- *
- * @package Rearrange
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class RearrangeItemsController extends GalleryController {
 
     /**
-     * Move the selected items into the destination album, if all the
-     * permissions are set correctly.
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
@@ -208,7 +200,7 @@ class RearrangeItemsView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rearrange');

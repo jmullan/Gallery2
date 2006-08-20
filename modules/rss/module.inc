@@ -17,18 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rss
- * @author Jonatan Heyman <http://heyman.info>
- * @author Pierre-Luc Paour
- * @author Daniel Grund <http://www.photogrund.nl>
- */
 
 /**
  * Implementation of the RSS module
  *
  * @package Rss
+ * @author Jonatan Heyman <http://heyman.info>
+ * @author Pierre-Luc Paour
+ * @author Daniel Grund <http://www.photogrund.nl>
+ * @version $Revision$ $Date$
  */
 class RssModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -54,7 +51,7 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getItemLinks()
+     * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions, $userId) {
 	GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
@@ -134,7 +131,7 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners();
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new RssModule());
@@ -170,7 +167,7 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	switch($currentVersion) {

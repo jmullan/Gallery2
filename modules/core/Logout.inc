@@ -19,30 +19,23 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle an user logging out of Gallery
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle an user logging out of Gallery
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class LogoutController extends GalleryController {
 
     /**
-     * @see GalleryController::isAllowedInMaintenance()
+     * @see GalleryController::isAllowedInMaintenance
      */
     function isAllowedInMaintenance() {
 	return true;
     }
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest() {
 	global $gallery;
@@ -71,7 +64,8 @@ class LogoutController extends GalleryController {
 
 	$gallery->setActiveUser($guestUser);
 
-	/* Force return to core.ShowItem, as we don't know if the guest user
+	/*
+	 * Force return to core.ShowItem, as we don't know if the guest user
 	 * has necessary permissions for the return page
 	 */
 	$results['redirect']['view'] = 'core.ShowItem';

@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * A view to display when there's no toolkit support for this module.
  * @package SquareThumb
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * A view to display whenever there's some kind of attempted security breach.
- *
- * @package SquareThumb
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class CantActivateView extends GalleryView {
 
@@ -37,8 +31,7 @@ class CantActivateView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	return array(null,
-		     array('body' => 'modules/squarethumb/templates/CantActivate.tpl'));
+	return array(null, array('body' => 'modules/squarethumb/templates/CantActivate.tpl'));
     }
 }
 ?>

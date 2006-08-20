@@ -91,14 +91,14 @@ class ImageUploadHelper {
 	$gallery->setActiveUser($user);
 
 	/* Add user to the mobile users' group if s/he isn't yet a member of it. */
-	list($ret, $groupId) =
+	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'nokiaupload', 'id.mobileGroup');
 	if ($ret) {
 	    $gallery->debug("ERROR: Couldn't get Mobile Group id.\n" . $ret->getAsText());
 	    return $status;
 	}
 
-	list($ret, $isMember) = GalleryCoreApi::isUserInGroup($user->getId(), $groupId);
+	list ($ret, $isMember) = GalleryCoreApi::isUserInGroup($user->getId(), $groupId);
 	if ($ret) {
 	    $gallery->debug("ERROR: GalleryCoreApi::isUserInGroup failed.\n" . $ret->getAsText());
 	    return $status;
@@ -195,7 +195,7 @@ class ImageUploadHelper {
 	/* If the client didn't give the parent id we need to use our own upload album. */
 	if (empty($parentId)) {
 	    $gallery->debug("Parent album id not given by client. Trying our own upload album.");
-	    list($ret, $parentId) =
+	    list ($ret, $parentId) =
 		GalleryCoreApi::getPluginParameter('module', 'nokiaupload', 'id.uploadAlbum');
 	    if ($ret) {
 		$gallery->debug("ERROR: Couldn't get id.uploadAlbum parameter.\n" .
@@ -274,7 +274,7 @@ class ImageUploadHelper {
 
 	/* We don't allow other (mobile) users to add anything to our personal album.
 	 * If we get an error here it doesn't really matter so we don't check for errors. */
-	list($ret, $groupId) =
+	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'nokiaupload', 'id.mobileGroup');
 	if (!$ret) {
 	    $ret = GalleryCoreApi::removeGroupPermission($instance->getId(), $groupId,
@@ -397,7 +397,7 @@ class ImageUploadHelper {
 	$status['success'] = NOKIAUPLOAD_ERR_DIRLIST;
 
 	/* Get all album ids where we have addDataItem permission. */
-	list($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem',
+	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem',
 								'core.addDataItem');
 	if ($ret || count($albumIds) < 1) {
 	    $gallery->debug("ERROR: No albums with addDataItem permission.\n" . $ret->getAsText());
@@ -405,7 +405,7 @@ class ImageUploadHelper {
 	}
 
 	/* Load albums and get their names. */
-	list($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
+	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
 	if ($ret) {
 	    $gallery->debug(
 		"ERROR: GalleryCoreApi::loadEntitiesById failed.\n" . $ret->getAsText());

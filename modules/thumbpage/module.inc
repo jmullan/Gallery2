@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ThumbPage
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Pick which page of a multi-page file to use for the thumbnail.
  *
  * @package ThumbPage
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -45,7 +42,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -66,14 +63,14 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners();
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', new ThumbPageModule());
     }
 
     /**
-     * @see GalleryModule::activate()
+     * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
 	list ($ret, $page) = $this->_getSupportedMultiPageTypes();
@@ -109,7 +106,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getConfigurationView()
+     * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
 	return 'thumbpage.CantActivate';

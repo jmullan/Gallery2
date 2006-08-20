@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package NokiaUpload
- * @author Jerome Rannikko <jeromer@hotpop.com>
- */
 
 /**
  * This module implements the Nokia Image Upload Server API v1.1.
@@ -30,6 +25,8 @@
  * See README file in this directory for more information and instructions.
  *
  * @package NokiaUpload
+ * @author Jerome Rannikko <jeromer@hotpop.com>
+ * @version $Revision$ $Date$
  */
 class NokiaUploadModule extends GalleryModule {
 

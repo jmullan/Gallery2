@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Dcraw
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Dcraw Graphics Module
@@ -29,6 +24,8 @@
  * This module provides the Dcraw graphics toolkit for Gallery
  *
  * @package Dcraw
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class DcrawModule extends GalleryModule {
 
@@ -47,7 +44,7 @@ class DcrawModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	/* Register our graphics class with the factory */
@@ -67,12 +64,12 @@ class DcrawModule extends GalleryModule {
     function activate($postActivationEvent=true) {
 	global $gallery;
 
-        list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Dcraw');
-        if ($ret) {
-            return array($ret, null);
-        }
+	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Dcraw');
+	if ($ret) {
+	    return array($ret, null);
+	}
 
-        if (!$priority) {
+	if (!$priority) {
 	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
 	    if ($ret) {
 		return array($ret, null);
@@ -192,7 +189,7 @@ class DcrawModule extends GalleryModule {
 	    $paths[] = "C:\\Program Files\\Dcraw\\dcraw.exe";
 	    $paths[] = "C:\\apps\Dcraw\\dcraw.exe";
 	    $paths[] = "C:\\Dcraw\\dcraw.exe";
-	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')) {
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);
 		if (empty($path)) {

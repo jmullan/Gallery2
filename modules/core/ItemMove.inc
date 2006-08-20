@@ -17,20 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
+ * This controller will handle moving one or more items from one album to another.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Ernesto Baschny <ernst@baschny.de>
- */
-
-/**
- * This controller will handle moving one or more items from one album to
- * another.
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemMoveController extends GalleryController {
 
@@ -402,7 +395,7 @@ class ItemMoveView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');

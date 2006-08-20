@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Getid3
- * @subpackage UserInterface
- * @author Don Willingham <donwillingham@users.sf.net>
- */
 
 /**
  * This ItemAddOption an mp3's id3 title value for the
@@ -30,6 +24,8 @@
  *
  * @package Getid3
  * @subpackage UserInterface
+ * @author Don Willingham <donwillingham@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class Getid3DescriptionOption extends ItemAddOption {
 
@@ -71,49 +67,46 @@ class Getid3DescriptionOption extends ItemAddOption {
 	    $currentItems = array_splice($itemsInBatches, 0, $batchSize);
 	    $itemIds = array();
 	    foreach ($currentItems as $item) {
-	        $itemIds[] = $item->getId();
+		$itemIds[] = $item->getId();
 	    }
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemIds);
 	    if ($ret) {
-	        return array($ret, null, null);
+		return array($ret, null, null);
 	    }
 
 	    for ($i = 0; $i < count($currentItems); $i++) {
-	        if ($currentItems[$i]->getMimeType() == 'audio/mpeg') {
-	            $itemId = $currentItems[$i]->getId();
+		if ($currentItems[$i]->getMimeType() == 'audio/mpeg') {
+		    $itemId = $currentItems[$i]->getId();
 
-	            list ($ret, $getid3Data) =
-	                Getid3Extractor::getMetaData(
-	                    array($itemId),
-	                    array('Title')
-	                );
-	            if ($ret) {
-	                GalleryCoreApi::releaseLocks($lockId);
-	                return array($ret, null, null);
-	            }
+		    list ($ret, $getid3Data) =
+			Getid3Extractor::getMetaData(array($itemId), array('Title'));
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return array($ret, null, null);
+		    }
 
-	            $mustSave = false;
+		    $mustSave = false;
 
-	            if (!empty($getid3Data[$itemId]['Title']['value'])) {
-	                if ($addOption & GETID3_MP3_TITLE) {
-	                    $currentItems[$i]->setTitle($getid3Data[$itemId]['Title']['value']);
-	                    $mustSave = true;
-	                }
-	            }
+		    if (!empty($getid3Data[$itemId]['Title']['value'])) {
+			if ($addOption & GETID3_MP3_TITLE) {
+			    $currentItems[$i]->setTitle($getid3Data[$itemId]['Title']['value']);
+			    $mustSave = true;
+			}
+		    }
 
-	            if ($mustSave) {
-	                $ret = $currentItems[$i]->save();
-	                if ($ret) {
-	                    GalleryCoreApi::releaseLocks($lockId);
-	                    return array($ret, null, null);
-	                }
-	            }
-	        }
+		    if ($mustSave) {
+			$ret = $currentItems[$i]->save();
+			if ($ret) {
+			    GalleryCoreApi::releaseLocks($lockId);
+			    return array($ret, null, null);
+			}
+		    }
+		}
 	    }
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
-	        return array($ret, null, null);
+		return array($ret, null, null);
 	    }
 	} while (!empty($itemsInBatches));
 

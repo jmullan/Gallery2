@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the changes users make to an album.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle the changes users make to an album.
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemEditAlbum extends ItemEditPlugin {
 
@@ -204,7 +197,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    if ($ret) {
 			return array($ret, null, null, null);
 		    }
-		    foreach($subAlbums as $album) {
+		    foreach ($subAlbums as $album) {
 			if (isset($form['changeInDescendents']['sort'])) {
 			    if (!empty($form['presort'])) {
 				$album->setOrderBy($form['presort'] . '|' . $form['orderBy']);

@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view will present the available options to administrate an item/album
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This view will present the available options to administrate an item/album
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ItemAdminView extends GalleryView {
 
@@ -73,7 +67,7 @@ class ItemAdminView extends GalleryView {
 
 	    /* Get the selected module's admin view */
 	    if (in_array('getItemAdminViews', explode('|', $status['callbacks']))) {
-		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			continue;
@@ -165,7 +159,7 @@ class ItemAdminView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -174,7 +168,7 @@ class ItemAdminView extends GalleryView {
 	$ItemAdmin['viewBodyFile'] = $results['body'];
 	$ItemAdmin['item'] = (array)$item;
 	$ItemAdmin['parents'] = $parents;
-	$ItemAdmin['parent'] = 	empty($parents) ? null : $parents[sizeof($parents) - 1];
+	$ItemAdmin['parent'] = empty($parents) ? null : $parents[sizeof($parents) - 1];
 	$ItemAdmin['itemType'] = $itemType;
 	$ItemAdmin['thumbnail'] = $thumbnailData;
 	$ItemAdmin['subViewChoices'] = $subViewChoices;

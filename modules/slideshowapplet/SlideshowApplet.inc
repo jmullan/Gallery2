@@ -17,16 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SlideshowApplet
- * @author Pierre-Luc Paour <gallery@paour.com>
- */
 
+/**
+ * @package SlideshowApplet
+ * @subpackage UserInterface
+ * @author Pierre-Luc Paour <gallery@paour.com>
+ * @version $Revision$ $Date$
+ */
 class SlideshowAppletView extends GalleryView {
 
     /**
-     * @see GalleryView::loadTemplate()
+     * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
@@ -110,7 +111,7 @@ class SlideshowAppletView extends GalleryView {
 		if (!empty($params['slideshow' . $type . 'Variables'])) {
 		    $variablesArray = explode('|', $params['slideshow' . $type . 'Variables']);
 		    foreach ($variablesArray as $variable) {
-			list($name, $value) = explode('=', $variable);
+			list ($name, $value) = explode('=', $variable);
 			$SlideshowApplet[$type][$name] = $value;
 		    }
 		}
@@ -125,7 +126,7 @@ class SlideshowAppletView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'slideshowapplet');

@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Quotas
- * @subpackage UserInterface
- * @author Robert Balousek <volksport@users.sf.net>
- */
 
 /**
  * This controller will send the user to the chosen subView in the AdminQuotas
- *
  * @package Quotas
  * @subpackage UserInterface
- *
+ * @author Robert Balousek <volksport@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class AdminQuotasController extends GalleryController {
 
@@ -55,7 +49,7 @@ class AdminQuotasController extends GalleryController {
 	if (!empty($form['text']['userName'])) {
 	    list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($form['text']['userName']);
 	    if ($ret) {
-	        if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret, null);
 		}
 	    }
@@ -235,7 +229,7 @@ class AdminQuotasView extends GalleryView {
 	/* Load some standard form parameters */
 	if ($form['formName'] != 'AdminQuotas') {
 	    $form['text']['groupName'] = '';
- 	    $form['text']['userName'] = '';
+	    $form['text']['userName'] = '';
 	    $form['formName'] = 'AdminQuotas';
 	}
 
@@ -261,14 +255,14 @@ class AdminQuotasView extends GalleryView {
 
 	/* Figure out our max pages, make sure our current page fits in it */
 	$form['list']['group']['maxPages'] =
-        ceil($form['list']['group']['count'] / $form['list']['group']['pageSize']);
+	    ceil($form['list']['group']['count'] / $form['list']['group']['pageSize']);
 	if ($form['list']['group']['page'] > $form['list']['group']['maxPages']) {
 	    $form['list']['group']['page'] = $form['list']['group']['maxPages'];
 	}
 
 	/* Calculate the next/back pages */
 	$form['list']['group']['nextPage'] =
-        min($form['list']['group']['page']+1, $form['list']['group']['maxPages']);
+	    min($form['list']['group']['page']+1, $form['list']['group']['maxPages']);
 	$form['list']['group']['backPage'] = max(1, $form['list']['group']['page']-1);
 
 	list ($ret, $groupNames) =
@@ -283,9 +277,9 @@ class AdminQuotasView extends GalleryView {
 	foreach ($groupNames as $groupId => $values) {
 	    $form['list']['groupNames'][$groupId]['groupName'] = $values['name'];
 	    list ($ret,
-	          $form['list']['groupNames'][$groupId]['quotaSize'],
-	    	  $form['list']['groupNames'][$groupId]['quotaUnit']) =
-	        GalleryQuotasHelper::humanReadableFromKilobytes($values['quota']);
+		  $form['list']['groupNames'][$groupId]['quotaSize'],
+		  $form['list']['groupNames'][$groupId]['quotaUnit']) =
+		GalleryQuotasHelper::humanReadableFromKilobytes($values['quota']);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -296,14 +290,14 @@ class AdminQuotasView extends GalleryView {
 
 	/* Figure out our max pages, make sure our current page fits in it */
 	$form['list']['user']['maxPages'] =
-        ceil($form['list']['user']['count'] / $form['list']['user']['pageSize']);
+	    ceil($form['list']['user']['count'] / $form['list']['user']['pageSize']);
 	if ($form['list']['user']['page'] > $form['list']['user']['maxPages']) {
 	    $form['list']['user']['page'] = $form['list']['user']['maxPages'];
 	}
 
 	/* Calculate the next/back pages */
 	$form['list']['user']['nextPage'] =
-        min($form['list']['user']['page']+1, $form['list']['user']['maxPages']);
+	    min($form['list']['user']['page']+1, $form['list']['user']['maxPages']);
 	$form['list']['user']['backPage'] = max(1, $form['list']['user']['page']-1);
 
 	list ($ret, $userNames) =
@@ -318,9 +312,9 @@ class AdminQuotasView extends GalleryView {
 	foreach ($userNames as $userId => $values) {
 	    $form['list']['userNames'][$userId]['userName'] = $values['name'];
 	    list ($ret,
-	          $form['list']['userNames'][$userId]['quotaSize'],
-	    	  $form['list']['userNames'][$userId]['quotaUnit']) =
-	        GalleryQuotasHelper::humanReadableFromKilobytes($values['quota']);
+		  $form['list']['userNames'][$userId]['quotaSize'],
+		  $form['list']['userNames'][$userId]['quotaUnit']) =
+		GalleryQuotasHelper::humanReadableFromKilobytes($values['quota']);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -333,8 +327,7 @@ class AdminQuotasView extends GalleryView {
 	$template->setVariable('AdminQuotas', $AdminQuotas);
 	$template->setVariable('controller', 'quotas.AdminQuotas');
 
-	return array(null,
-		     array('body' => 'modules/quotas/templates/AdminQuotas.tpl'));
+	return array(null, array('body' => 'modules/quotas/templates/AdminQuotas.tpl'));
     }
 }
 ?>

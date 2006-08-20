@@ -563,7 +563,7 @@ class GalleryEmbed {
 	    return $ret;
 	}
 	/* First check if the user is not already a member of the group */
-	list($ret, $membership) = GalleryCoreApi::fetchGroupsForUser($user->getId());
+	list ($ret, $membership) = GalleryCoreApi::fetchGroupsForUser($user->getId());
 	if ($ret) {
 	    return $ret;
 	}

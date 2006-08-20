@@ -486,7 +486,7 @@ class ThumbnailHelper {
 	    $typeMap[$result[0]][] = $result[1];
 	}
 
-	foreach(array_keys($typeMap) as $mimeType) {
+	foreach (array_keys($typeMap) as $mimeType) {
 	    $typeMap[$mimeType] = implode(' ', $typeMap[$mimeType]);
 	}
 	return array(null, $typeMap);

@@ -122,7 +122,7 @@ class GalleryUser extends GalleryEntity {
 	';
 
 	/* Check to see if we have a collision */
-	list($ret, $results) =
+	list ($ret, $results) =
 	    $gallery->search($query, array($userName),
 			     array('limit' => array('count' => 1)));
 
@@ -195,7 +195,7 @@ class GalleryUser extends GalleryEntity {
 	if ($isNew) {
 	    /* Add her to the various groups */
 	    foreach (array('id.allUserGroup', 'id.everybodyGroup') as $groupKey) {
-		list($ret, $groupId) =
+		list ($ret, $groupId) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', $groupKey);
 		if ($ret) {
 		    return $ret;
@@ -244,7 +244,7 @@ class GalleryUser extends GalleryEntity {
 	 * the AdminDeleteUser controller, this 2nd call to remapOwner() does exactly nothing.
 	 */
 	/* Check if activeUser is Site Admin, if not, get any of the Site Admins */
-	list($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret) {
 	    return $ret;
 	}

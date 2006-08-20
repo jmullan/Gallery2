@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * ItemEditOption for editing the target of a LinkItem
  * @package LinkItem
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * ItemEditOption for editing the target of a LinkItem
- *
- * @package LinkItem
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class LinkItemOption extends ItemEditOption {
 

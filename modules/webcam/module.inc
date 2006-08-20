@@ -19,9 +19,9 @@
  */
 
 /**
- * @version $Revision$ $Date$
  * @package WebCam
  * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class WebCamModule extends GalleryModule {
 
@@ -38,7 +38,7 @@ class WebCamModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
@@ -117,7 +117,7 @@ class WebCamModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -138,14 +138,14 @@ class WebCamModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getOnLoadHandlerIds()
+     * @see GalleryModule::getOnLoadHandlerIds
      */
     function getOnLoadHandlerIds() {
 	return array('WebCam');
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,

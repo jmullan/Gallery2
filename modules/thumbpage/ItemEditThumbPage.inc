@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This plugin handles selecting the page to use for thumbnails
  * @package ThumbPage
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * This plugin handles selecting the page to use for thumbnails
- *
- * @package ThumbPage
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemEditThumbPage extends ItemEditPlugin {
 

@@ -17,14 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Exif
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
- * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
- */
 
 GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
 
@@ -33,6 +25,10 @@ GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
  *
  * @package Exif
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
+ * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
+ * @version $Revision$ $Date$
  */
 class AdminExifController extends GalleryController {
 

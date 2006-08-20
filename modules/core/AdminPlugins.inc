@@ -17,18 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * This view will show administration possibilities for available modules
- *
  * @package GalleryCore
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class AdminPluginsView extends GalleryView {
 
@@ -66,7 +61,7 @@ class AdminPluginsView extends GalleryView {
 	     */
 	    foreach ($pluginStatus[$type] as $pluginId => $status) {
 		if (!empty($status['active'])) {
-		    list($ret, $module) = GalleryCoreApi::loadPlugin($type, $pluginId);
+		    list ($ret, $module) = GalleryCoreApi::loadPlugin($type, $pluginId);
 		    if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 			return array($ret, null);
 		    }
@@ -81,7 +76,7 @@ class AdminPluginsView extends GalleryView {
 
 	    GalleryCoreApi::requireOnce('modules/core/PluginCallback.inc');
 	    foreach ($pluginStatus[$type] as $pluginId => $status) {
-		list($ret, $plugin) = GalleryCoreApi::loadPlugin($type, $pluginId, true);
+		list ($ret, $plugin) = GalleryCoreApi::loadPlugin($type, $pluginId, true);
 		if ($ret) {
 		    return array($ret, null);
 		}

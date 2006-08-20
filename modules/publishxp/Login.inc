@@ -17,17 +17,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * Controller to initialize the process of publishing photos.
- *
  * Allows the user to log in to Gallery to begin the process of uploading
  * photos through Windows XP's publishing mechanism.
  *
- * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
+ * @version $Revision$ $Date$
  */
 class LoginController extends GalleryController {
+
     /**
      * @see GalleryController::handleRequest
      */
@@ -44,7 +45,7 @@ class LoginController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
-		list($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
+		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret, null);
 		}

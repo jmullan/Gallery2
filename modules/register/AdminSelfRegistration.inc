@@ -17,15 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SelfRegistration
- * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
- */
 
 /**
- * @package SelfRegistration
+ * @package Registration
  * @subpackage UserInterface
+ * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
+ * @version $Revision$ $Date$
  */
 class AdminSelfRegistrationController extends GalleryController {
 
@@ -78,7 +75,7 @@ class AdminSelfRegistrationController extends GalleryController {
 		}
 	    } else {
 		$userName = $pendingUser->getUserName();
-		list($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($pendingUser->getId()));
+		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($pendingUser->getId()));
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -108,10 +105,6 @@ class AdminSelfRegistrationController extends GalleryController {
     }
 }
 
-/**
- * @package SelfRegistration
- * @subpackage UserInterface
- */
 class AdminSelfRegistrationView extends GalleryView {
 
     /**
@@ -125,7 +118,7 @@ class AdminSelfRegistrationView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
 	if ($ret)
 	    return array($ret, null);
 

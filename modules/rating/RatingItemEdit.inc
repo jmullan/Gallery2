@@ -19,16 +19,10 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle storing rating options for Gallery albums
  * @package Rating
  * @author Don Seiler <don@seiler.us>
- */
-
-/**
- * This controller will handle storing rating options for Gallery albums
- *
- * @package Rating
- *
+ * @version $Revision$ $Date$
  */
 class RatingItemEdit extends ItemEditOption {
 
@@ -39,22 +33,18 @@ class RatingItemEdit extends ItemEditOption {
 	global $gallery;
 
 	if (isset($form['changeInDescendents']['rating'])) {
-            list ($ret, $subAlbumIds) =
-                GalleryCoreApi::fetchDescendentAlbumItemIds($item);
-            if ($ret) {
-                return array($ret, null, null);
-            }
-            array_unshift($subAlbumIds, $item->getId());
-        } else {
-            $subAlbumIds = array($item->getId());
-        }
-        
-        foreach ($subAlbumIds as $id) {
-	    $ret = GalleryCoreApi::setPluginParameter('module',
-		    'rating',
-		    'enabled',
-		    (empty($form['rating']['enabled']) ? 0 : 1),
-		    $id);
+	    list ($ret, $subAlbumIds) = GalleryCoreApi::fetchDescendentAlbumItemIds($item);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    array_unshift($subAlbumIds, $item->getId());
+	} else {
+	    $subAlbumIds = array($item->getId());
+	}
+
+	foreach ($subAlbumIds as $id) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rating',
+		    'enabled', (empty($form['rating']['enabled']) ? 0 : 1), $id);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

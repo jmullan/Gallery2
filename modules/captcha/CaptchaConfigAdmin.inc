@@ -17,20 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Captcha
- * @author Stefan Ioachim <stefanioachim@gmail.com>
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * @package Captcha
  * @subpackage UserInterface
+ * @author Stefan Ioachim <stefanioachim@gmail.com>
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class CaptchaConfigAdminController extends GalleryController {
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();

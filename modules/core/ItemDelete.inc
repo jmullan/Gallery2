@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the deletion of an item
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This controller will handle the deletion of an item
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ItemDeleteController extends GalleryController {
 
@@ -122,7 +116,7 @@ class ItemDeleteController extends GalleryController {
 	    }
 	} else if (isset($form['action']['next'])) {
 	    $page = GalleryUtilities::getRequestVariables('page');
-	    list($ret, $peerIds) =
+	    list ($ret, $peerIds) =
 		GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
 	    if ($ret) {
 		return array($ret, null);
@@ -285,7 +279,7 @@ class ItemDeleteView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');

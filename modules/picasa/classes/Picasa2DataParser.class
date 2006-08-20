@@ -127,7 +127,7 @@ class Picasa2DataParser {
 	    if ($xType == 'close' && $xLevel != 1) {
 		$multiKey[$xTag][$xLevel]++;
 	    }
-	    while($startLevel < $xLevel) {
+	    while ($startLevel < $xLevel) {
 		$phpStmt .= '[$level[' . $startLevel . ']]';
 		if ((isset($multiKey[$level[$startLevel]][$startLevel])) &&
 			($multiKey[$level[$startLevel]][$startLevel])) {
@@ -224,17 +224,17 @@ class Picasa2DataParser {
      * @return array a status code and an album/image array
      */
     function getAlbum($picasaXmlPath) {
-	list($ret, $rawXml) = Picasa2DataParser::getRawXmlFromPicasaPath($picasaXmlPath);
+	list ($ret, $rawXml) = Picasa2DataParser::getRawXmlFromPicasaPath($picasaXmlPath);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	list($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($rawXml);
+	list ($ret, $picasaXmlArray) = Picasa2DataParser::getXmlArray($rawXml);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	list($ret, $albumArray) = Picasa2DataParser::getAlbumFromArray($picasaXmlArray);
+	list ($ret, $albumArray) = Picasa2DataParser::getAlbumFromArray($picasaXmlArray);
 	if ($ret) {
 	    return array($ret, null);
 	}

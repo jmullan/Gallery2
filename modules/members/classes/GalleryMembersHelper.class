@@ -81,7 +81,7 @@ class GalleryMembersHelper {
      * @return array (object GalleryStatus a status code,
      *                array (GalleryItem, GalleryItem, ...))
      */
-    function fetchLastUserItems($userId, $offset, $count, $orderDirection=ORDER_DESCENDING){
+    function fetchLastUserItems($userId, $offset, $count, $orderDirection=ORDER_DESCENDING) {
 	global $gallery;
 
 	switch($orderDirection) {
@@ -223,7 +223,7 @@ class GalleryMembersHelper {
      * @return array (object GalleryStatus a status code,
      *                int daysSinceCreation number in days)
      */
-    function daysSinceCreation($userId){
+    function daysSinceCreation($userId) {
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 
 	/*

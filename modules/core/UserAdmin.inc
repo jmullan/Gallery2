@@ -19,23 +19,16 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view will present the available options to administer a user
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This view will present the available options to administer a user
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class UserAdminView extends GalleryView {
 
     /**
-     * @see GalleryView::loadTemplate()
+     * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
@@ -56,7 +49,7 @@ class UserAdminView extends GalleryView {
 
 	    /* Get the selected module's admin view */
 	    if (in_array('getUserAdminViews', explode('|', $status['callbacks']))) {
-		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			continue;
@@ -102,7 +95,7 @@ class UserAdminView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -139,14 +132,14 @@ class UserAdminView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::isAllowedInMaintenance()
+     * @see GalleryView::isAllowedInMaintenance
      */
     function isAllowedInMaintenance() {
 	return (GalleryUtilities::getRequestVariables('subView') == 'core.UserLogin');
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	global $gallery;
@@ -170,7 +163,7 @@ class UserAdminView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewType()
+     * @see GalleryView::getViewType
      */
     function getViewType() {
 	return VIEW_TYPE_ADMIN;

@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package FlashVideo
- * @author Alan Harder <alan.harder@sun.com>
- * Flash Video player: @author Wayne Patterson <suprsidr@gmail.com>
- */
 
 /**
  * The implementation of the FlashVideo module
- *
  * @package FlashVideo
+ * @author Alan Harder <alan.harder@sun.com>
+ * @author Flash Video player: Wayne Patterson <suprsidr@gmail.com>
+ * @version $Revision$ $Date$
  */
 class FlashVideoModule extends GalleryModule {
 
@@ -44,7 +40,7 @@ class FlashVideoModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -65,7 +61,7 @@ class FlashVideoModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::activate()
+     * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
 	global $gallery;

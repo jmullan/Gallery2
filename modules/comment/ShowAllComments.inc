@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view will show all comments stored in the Gallery
  * @package Comment
  * @subpackage UserInterface
  * @author Johannes Schmittat <Johannes@Schmittat.com>
- */
-
-/**
- * This view will show all comments stored in the Gallery
- *
- * @package Comment
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ShowAllCommentsView extends GalleryView {
 
@@ -153,7 +146,7 @@ class ShowAllCommentsView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');

@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package RandomHighlight
- * @subpackage UserInterface
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * This ItemEditOption allows the user to activate random highlight for an album.
  *
  * @package RandomHighlight
  * @subpackage UserInterface
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class RandomHighlightOption extends ItemEditOption {
 
@@ -62,8 +58,8 @@ class RandomHighlightOption extends ItemEditOption {
 	$isRandomHighlight = isset($form['RandomHighlightOption']['isRandomHighlight'])
 			     && $form['RandomHighlightOption']['isRandomHighlight'];
 
-	if (isset($thumbnail) &&
-	        $isRandomHighlight != $thumbnail->hasOnLoadHandler('RandomHighlight')) {
+	if (isset($thumbnail)
+		&& $isRandomHighlight != $thumbnail->hasOnLoadHandler('RandomHighlight')) {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 	    if ($ret) {
 		return array($ret, null, null);

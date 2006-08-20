@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view will show the availiable site-admin options
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This view will show the availiable site-admin options
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class SiteAdminView extends GalleryView {
 
@@ -72,10 +65,10 @@ class SiteAdminView extends GalleryView {
 	    if (in_array('getSiteAdminViews', explode('|', $status['callbacks'])) ||
 		$showAllSiteAdminViews) {
 		if ($showAllSiteAdminViews) {
-		    list($ret, $module) =
+		    list ($ret, $module) =
 			GalleryCoreApi::loadPlugin('module', $moduleId, true, false);
 		} else {
-		    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		    if ($ret) {
 			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			    continue;
@@ -213,7 +206,7 @@ class SiteAdminView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -232,7 +225,7 @@ class SiteAdminView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	/* Get the description from the current subView */
@@ -259,7 +252,7 @@ class SiteAdminView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewType()
+     * @see GalleryView::getViewType
      */
     function getViewType() {
 	return VIEW_TYPE_ADMIN;

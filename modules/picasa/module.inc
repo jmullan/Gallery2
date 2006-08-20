@@ -19,9 +19,10 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * Import for Picasa 2 XML-Exports
  * @package Picasa
  * @author Waldemar Schlackow <gallery@schlackow.de>
+ * @version $Revision$ $Date$
  */
 class PicasaModule extends GalleryModule {
 
@@ -38,16 +39,16 @@ class PicasaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-    	    'ItemAddPlugin', 'ItemAddFromPicasa', 'ItemAddFromPicasa',
-    	    'modules/picasa/ItemAddFromPicasa.inc', 'picasa', null);
-    	if ($ret) {
-    	    return $ret;
-    	}
-    	return null;
+	    'ItemAddPlugin', 'ItemAddFromPicasa', 'ItemAddFromPicasa',
+	    'modules/picasa/ItemAddFromPicasa.inc', 'picasa', null);
+	if ($ret) {
+	    return $ret;
+	}
+	return null;
     }
 
 

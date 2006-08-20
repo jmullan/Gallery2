@@ -182,7 +182,7 @@ class GalleryTemplate {
 	}
 	$this->_smarty->compile_dir = $this->_compiledTemplateDir;
 
-	list($ret, $html) = $this->_smarty->fetch($templateName);
+	list ($ret, $html) = $this->_smarty->fetch($templateName);
 	if ($ret) {
 	    return array($ret, null);
 	}

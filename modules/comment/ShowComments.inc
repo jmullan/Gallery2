@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view will show the comments stored for an item
  * @package Comment
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This view will show the comments stored for an item
- *
- * @package Comment
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ShowCommentsView extends GalleryView {
 
@@ -97,7 +90,7 @@ class ShowCommentsView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');

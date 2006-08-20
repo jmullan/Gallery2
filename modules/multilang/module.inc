@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package MultiLang
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Support item captions in multiple languages
  *
  * @package MultiLang
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -44,14 +41,14 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new MultiLangModule());
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	if (!isset($currentVersion)) {
@@ -65,7 +62,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -93,14 +90,14 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getOnLoadHandlerIds()
+     * @see GalleryModule::getOnLoadHandlerIds
      */
     function getOnLoadHandlerIds() {
 	return array('MultiLang');
     }
 
     /**
-     * @see GalleryModule::autoConfigure()
+     * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
 	/* This module requires gettext to be installed */
@@ -129,7 +126,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,

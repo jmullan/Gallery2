@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Watermark
- * @version $Revision$ $Date$
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * This module provides support for adding watermarks to images
  *
  * @package Watermark
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -200,7 +197,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::uninstall()
+     * @see GalleryModule::uninstall
      */
     function uninstall() {
 	global $gallery;
@@ -230,7 +227,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -258,14 +255,14 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners();
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new WatermarkModule());
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null, array(array('name' => $this->translate('Watermarks'),
@@ -273,7 +270,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getUserAdminViews();
+     * @see GalleryModule::getUserAdminViews
      */
     function getUserAdminViews($user) {
 	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($user->getId());

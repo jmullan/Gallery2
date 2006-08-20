@@ -17,32 +17,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
- * This view lets you make very simple callbacks to the framework to
- * get very specific data.  Eventually this will probably get refactored
- * into a much more sophisticated framework.
+ * This view lets you make very simple callbacks to the framework to get very specific data.
+ * Eventually this will probably get refactored into a much more sophisticated framework.
  *
  * @package GalleryCore
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class PluginCallbackView extends GalleryView {
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
 	global $gallery;
@@ -95,7 +90,6 @@ class PluginCallbackView extends GalleryView {
      * @param array before states (moduleId => state, ...)
      * @param array after states (moduleId => state, ...)
      * @return array changed states (moduleId => state, ...)
-     *
      * @static
      */
     function calculateStateChanges($beforeStates, $afterStates) {
@@ -112,8 +106,7 @@ class PluginCallbackView extends GalleryView {
     }
 
     /**
-     * Handle the specific callback, and store its result in the
-     * given output array.
+     * Handle the specific callback, and store its result in the given output array.
      *
      * @param string the command (eg, "installModule")
      * @param array the location for result data to be sent back to the browser
@@ -130,7 +123,7 @@ class PluginCallbackView extends GalleryView {
 	list ($pluginType, $pluginId) =
 	    GalleryUtilities::getRequestVariables('pluginType', 'pluginId');
 
-	list($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
+	list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
 	if ($ret) {
 	    return $ret;
 	}
@@ -180,7 +173,7 @@ class PluginCallbackView extends GalleryView {
 	    }
 
 	    if ($pluginType == 'theme') {
-		list($ret, $defaultThemeId) = GalleryCoreApi::getPluginParameter(
+		list ($ret, $defaultThemeId) = GalleryCoreApi::getPluginParameter(
 		    'module', 'core', 'default.theme');
 		if ($ret) {
 		    return $ret;
@@ -215,7 +208,7 @@ class PluginCallbackView extends GalleryView {
 	    }
 
 	    if ($pluginType == 'module') {
-		list($ret, $autoConfigured) = $plugin->autoConfigure();
+		list ($ret, $autoConfigured) = $plugin->autoConfigure();
 		if ($ret) {
 		    return $ret;
 		}
@@ -297,7 +290,7 @@ class PluginCallbackView extends GalleryView {
 		return array($ret, null);
 	    }
 	    foreach ($pluginStatus as $pluginId => $status) {
-		list($ret, $plugin) = GalleryCoreApi::loadPlugin($type, $pluginId, true);
+		list ($ret, $plugin) = GalleryCoreApi::loadPlugin($type, $pluginId, true);
 		if ($ret) {
 		    return array($ret, null);
 		}

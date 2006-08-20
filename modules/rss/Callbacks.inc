@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
  * @package Rss
  * @author Pierre-Luc Paour
+ * @version $Revision$ $Date$
  */
-
 class RssCallbacks {
 
     function callback($params, &$smarty, $callback, $userId=null) {
@@ -52,7 +52,7 @@ class RssCallbacks {
 
 	    /* since we get called twice (once for the block, once for the head), cache the feeds */
 	    if (!isset($feeds)) {
-		list($ret, $feeds) = RssMapHelper::fetchFeedNames((int) $params['number']);
+		list ($ret, $feeds) = RssMapHelper::fetchFeedNames((int) $params['number']);
 		if ($ret) {
 		    return $ret;
 		}

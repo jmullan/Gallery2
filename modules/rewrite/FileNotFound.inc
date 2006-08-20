@@ -17,15 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$ $Date$
- * @author Douglas Cau <douglas@cau.se>
- */
 
 /**
  * @package Rewrite
  * @subpackage UserInterface
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class FileNotFoundView extends GalleryView {
 
@@ -40,7 +37,7 @@ class FileNotFoundView extends GalleryView {
 
 	return array(null, $module->translate('404 File Not Found'));
     }
-    
+
     /**
      * @see GalleryView::loadTemplate
      */
@@ -52,12 +49,11 @@ class FileNotFoundView extends GalleryView {
 	/* Don't use getCurrentUrl, it migh be staged by the url generator */
 	$path = GalleryUtilities::getServerVar('REQUEST_URI');
 	$path = $urlGenerator->makeUrl($path);
-	
+
 	$phpVm->header('HTTP/1.0 404 Not Found');
 	$template->setVariable('FileNotFound', $path);
 
-    	return array(null,
-		array('body' => 'modules/rewrite/templates/FileNotFound.tpl'));
+	return array(null, array('body' => 'modules/rewrite/templates/FileNotFound.tpl'));
     }
 }
 ?>

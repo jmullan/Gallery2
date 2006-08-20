@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * Controller to set options on how photos are uploaded.
  *
@@ -24,11 +25,12 @@
  * within Gallery.  The two options supported are for whether the file extension
  * should be used in the title and if the captions should be set automatically.
  *
- * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
+ * @version $Revision$ $Date$
  */
 class OptionsController extends GalleryController {
+
     /**
      * @see GalleryController::handleRequest
      */

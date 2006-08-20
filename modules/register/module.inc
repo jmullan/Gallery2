@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SelfRegistration
- * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
- */
 
 /**
  * The self-registration module
  *
- * @package SelfRegistration
+ * @package Registration
+ * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
+ * @version $Revision$ $Date$
  */
 class RegisterModule extends GalleryModule {
 
@@ -44,7 +41,7 @@ class RegisterModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'register');
@@ -70,7 +67,7 @@ class RegisterModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -118,7 +115,7 @@ class RegisterModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getUserAdminViews();
+     * @see GalleryModule::getUserAdminViews
      */
     function getUserAdminViews($user) {
 	$views = array();

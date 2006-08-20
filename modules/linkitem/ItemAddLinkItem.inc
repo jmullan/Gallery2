@@ -19,10 +19,10 @@
  */
 
 /**
- * @version $Revision$ $Date$
  * @package LinkItem
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ItemAddLinkItem extends ItemAddPlugin {
 

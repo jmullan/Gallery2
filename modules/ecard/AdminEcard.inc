@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Ecard
- * @author Nico Kaiser <nico@siriux.net>
- * @author Dariush Molavi <dari@nukedgallery.net>
- */
 
  /**
  * This controller will handle the setting of Ecard module options
@@ -76,6 +70,9 @@ class AdminEcardController extends GalleryController {
  *
  * @package Ecard
  * @subpackage UserInterface
+ * @author Nico Kaiser <nico@siriux.net>
+ * @author Dariush Molavi <dari@nukedgallery.net>
+ * @version $Revision$ $Date$
  */
 class AdminEcardView extends GalleryView {
 

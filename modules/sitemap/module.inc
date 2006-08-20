@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * Module that creates a Google Sitemap for your Gallery2 install.
- *
- * @version $Revision$ $Date$
  * @package Sitemap
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class SitemapModule extends GalleryModule {
 
@@ -39,7 +39,7 @@ class SitemapModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews();
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	$data = array(array('name' => $this->translate('Google Sitemap'),

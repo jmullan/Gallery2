@@ -17,16 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Cart
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
 
 /**
@@ -34,6 +25,8 @@ GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
  *
  * @package Cart
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ViewCartView extends GalleryView {
 
@@ -149,7 +142,7 @@ class ViewCartView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::getViewDescription()
+     * @see GalleryView::getViewDescription
      */
     function getViewDescription() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'cart');

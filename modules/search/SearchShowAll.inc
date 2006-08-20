@@ -18,20 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package Search
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/search/classes/SearchUtilities.class');
 
 /**
  * @package Search
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class SearchShowAllController extends GalleryController {
 

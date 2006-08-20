@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * Create an appropriate Google Sitemap for this site.
  * @package Sitemap
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Create an appropriate Google Sitemap for this site.
- *
- * @package Sitemap
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class SitemapView extends GalleryView {
 
@@ -45,16 +39,16 @@ class SitemapView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 
- 	list ($ret, $rootId) =
+	list ($ret, $rootId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
- 	    return $ret;
- 	}
+	    return $ret;
+	}
 
 	$ret = $this->renderSitemap($rootId);
- 	if ($ret) {
- 	    return $ret;
- 	}
+	if ($ret) {
+	    return $ret;
+	}
     }
 
     /**
@@ -86,7 +80,7 @@ class SitemapView extends GalleryView {
 	print 'http://www.google.com/schemas/sitemap/0.84/sitemap.xsd">';
 	print "\n";
 
- 	$queue = array($rootId);
+	$queue = array($rootId);
 	while (!empty($queue)) {
 	    $gallery->guaranteeTimeLimit(30);
 
@@ -105,9 +99,9 @@ class SitemapView extends GalleryView {
 	    }
 
 	    printf("<url><loc>%s</loc><lastmod>%s</lastmod></url>\n",
- 		   $urlGenerator->generateUrl(
- 		       array('view' => 'core.ShowItem', 'itemId' => $currentId),
- 		       array('forceSessionId' => false, 'forceFullUrl' => true)),
+		   $urlGenerator->generateUrl(
+		       array('view' => 'core.ShowItem', 'itemId' => $currentId),
+		       array('forceSessionId' => false, 'forceFullUrl' => true)),
 		   gmstrftime("%Y-%m-%dT%H:%M:%S+00:00", $entity->getModificationTimestamp()));
 	}
 	print '</urlset>';

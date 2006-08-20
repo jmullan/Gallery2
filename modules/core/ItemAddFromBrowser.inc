@@ -17,18 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * This ItemAdd plugin adds items uploaded from the web browser.
- *
  * @package GalleryCore
  * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemAddFromBrowser extends ItemAddPlugin {
 
@@ -130,19 +125,19 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 			    'text' => 'Input file %s exceeds maximum permitted file size',
 			    'arg1' => $form['name'][$i]));
 			break;
-			
+
 		    case UPLOAD_ERR_FORM_SIZE:
 			$warning = $module->translate(array(
 			    'text' => 'Input file %s exceeds file size specified in the form',
 			    'arg1' => $form['name'][$i]));
 			break;
-			
+
 		    case UPLOAD_ERR_PARTIAL:
 			$warning = $module->translate(array(
 			    'text' => 'Input file %s was only partially uploaded',
 			    'arg1' => $form['name'][$i]));
 			break;
-			
+
 		    default:
 			$warning = $module->translate(array(
 			    'text' => 'Input file %s was not uploaded. Error %d',
@@ -155,13 +150,13 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		}
 	    }
 	    if ($uploaded || empty($status)) {
-		/* 
+		/*
 		 * Some files were uploaded successfully (or not even attempted)
 		 * Go to confirmation page, even if there were errors in uploads
 		 */
 		$error = array();
 	    } else {
-		GalleryUtilities::putRequestVariable('ItemAddFromBrowserStatus', 
+		GalleryUtilities::putRequestVariable('ItemAddFromBrowserStatus',
 						     $status['addedFiles']);
 	    }
 	}
@@ -182,7 +177,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	$maxFileSize = ini_get('upload_max_filesize');
 	if (preg_match("/(\d+)M/", $maxFileSize, $matches)) {
 	    $maxFileSize = $matches[1] * 1024 * 1024;
-	}	
+	}
 	$status = GalleryUtilities::getRequestVariables('ItemAddFromBrowserStatus');
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');

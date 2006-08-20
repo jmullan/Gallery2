@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * Plugin for editing Movies
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Plugin for editing Movies
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ItemEditMovie extends ItemEditPlugin {
 

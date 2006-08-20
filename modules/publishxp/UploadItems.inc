@@ -26,15 +26,13 @@
  * the photos.  Subsequent requests from Windows include the photo data and text.
  * This page processes the data and applies the options to be used while uploading.
  *
- * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
+ * @version $Revision$ $Date$
  */
 class UploadItemsController extends GalleryController {
     /**
-     * ItemAddOption instances to use when handling this request.  Only used by
-     * test code.
-     *
+     * ItemAddOption instances to use when handling this request.  Only used by test code.
      * @var array (optionId => object ItemAddOption) $_optionInstances
      * @access private
      */
@@ -69,7 +67,7 @@ class UploadItemsController extends GalleryController {
 
 	    /* Get the file passed in this submission */
 	    $file = GalleryUtilities::getFile('userFile', false);
-	    list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($form['albumId']);
+	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($form['albumId']);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -98,7 +96,7 @@ class UploadItemsController extends GalleryController {
 		    $mimeType == 'application/unknown' ||
 		    empty($exts)) {
 		$extension = GalleryUtilities::getFileExtension($file['name']);
-		list($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret, null);
@@ -113,7 +111,7 @@ class UploadItemsController extends GalleryController {
 	    if (!empty($form['setCaptions'])) {
 		$caption = $title;
 	    }
-	    list($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+	    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
 		$file['tmp_name'], basename($file['name']), $title, $caption, $description,
 		$mimeType, $form['albumId']);
 	    if ($ret) {

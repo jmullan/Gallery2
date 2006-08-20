@@ -20,18 +20,15 @@
  * Additional copyrights:
  *   Metamorphose applet Copyright (C) 2000 Rüdiger Appel
  */
-/**
- * @version $Revision$ $Date$
- * @package Panorama
- * @author Alan Harder <alan.harder@sun.com>
- * Java applet: @author Rüdiger Appel
- *              http://www.3quarks.com/Applets/Metamorphose/
- */
 
 /**
- * The implementation of the Panorama module
+ * The implementation of the Panorama module.
+ * @see http://www.3quarks.com/Applets/Metamorphose/
  *
  * @package Panorama
+ * @author Alan Harder <alan.harder@sun.com>
+ * @author Java applet: Rüdiger Appel
+ * @version $Revision$ $Date$
  */
 class PanoramaModule extends GalleryModule {
 
@@ -48,7 +45,7 @@ class PanoramaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	if (!isset($currentVersion)) {
@@ -75,7 +72,7 @@ class PanoramaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -96,7 +93,7 @@ class PanoramaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,
@@ -105,7 +102,7 @@ class PanoramaModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getItemLinks()
+     * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();

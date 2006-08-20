@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Thumbnail
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Thumbnail defaults
@@ -29,6 +24,8 @@
  * This module provides default thumbnails for non-image mime types.
  *
  * @package Thumbnail
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class ThumbnailModule extends GalleryModule {
 
@@ -46,7 +43,7 @@ class ThumbnailModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
@@ -198,7 +195,7 @@ class ThumbnailModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -226,21 +223,21 @@ class ThumbnailModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getModuleEntityTypes()
+     * @see GalleryModule::getModuleEntityTypes
      */
     function getModuleEntityTypes() {
 	return array('ThumbnailImage');
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new ThumbnailModule());
     }
 
     /**
-     * @see GalleryModule::activate()
+     * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
 	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
@@ -302,7 +299,7 @@ class ThumbnailModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::uninstall()
+     * @see GalleryModule::uninstall
      */
     function uninstall() {
 	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
@@ -343,7 +340,7 @@ class ThumbnailModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,

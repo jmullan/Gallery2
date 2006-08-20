@@ -17,23 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package CustomField
- * @subpackage UserInterface
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 /**
- * This controller handles moving between admin modes in the Item Edit plugin,
- * by setting or clearning a session variable.  It also handles activation of
- * album-specific settings (copy in global settings) or reverting to global
- * settings for an album (clear album settings, remove field values).
+ * This controller handles moving between admin modes in the Item Edit plugin, by setting or
+ * clearing a session variable.  It also handles activation of album-specific settings (copy in
+ * global settings) or reverting to global settings for an album (clear album settings, remove
+ * field values).
  *
  * @package CustomField
  * @subpackage UserInterface
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class CustomFieldItemAdminController extends GalleryController {
 

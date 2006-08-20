@@ -391,7 +391,7 @@ class GalleryPlugin {
     function isActive() {
 	global $gallery;
 
-	list($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($this->getPluginType());
+	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($this->getPluginType());
 	if ($ret) {
 	    return array($ret, null);
 	}

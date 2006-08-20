@@ -19,29 +19,23 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller handles rewriting URLs from Gallery1 to the new style Gallery2 locations
  * @package Migrate
  * @subpackage Redirect
  * @author Joseph Elwell <jelwell@yahoo.com>
- */
-
-/**
- * This controller handles rewriting URLs from Gallery1 to the new style Gallery2 locations
- *
- * @package Migrate
- * @subpackage Redirect
+ * @version $Revision$ $Date$
  */
 class RedirectController extends GalleryController {
 
     /**
-     * @see GalleryController::shouldSaveSession()
+     * @see GalleryController::shouldSaveSession
      */
     function shouldSaveSession() {
 	return false;
     }
 
     /**
-    * @see GalleryController::handleRequest()
+    * @see GalleryController::handleRequest
     */
     function handleRequest($form) {
 	global $gallery;

@@ -19,15 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
- * @package Reupload
- * @author Piotr P. Karwasz <piotr.karwasz@ens.fr>
- */
-
-/**
  * This controller will handle the reupload of a photo
- *
  * @package Reupload
+ * @subpackage UserInterface
+ * @author Piotr P. Karwasz <piotr.karwasz@ens.fr>
+ * @version $Revision$ $Date$
  */
 class ReuploadPhotoOption extends ItemEditOption {
 

@@ -820,7 +820,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		$childIds[] = (int)$result[0];
 	    }
 	} else {
-	    list($ret, $childIds) = GalleryCoreApi::fetchChildDataItemIds($parentAlbum);
+	    list ($ret, $childIds) = GalleryCoreApi::fetchChildDataItemIds($parentAlbum);
 	    $childIds[] = (int)$parentAlbum->getId();
 	    if ($ret) {
 		return $ret;

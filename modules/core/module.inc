@@ -19,15 +19,10 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * The implementation of the core-module
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * The implementation of the core-module
- *
- * @package GalleryCore
+ * @version $Revision$ $Date$
  */
 class CoreModule extends GalleryModule {
 

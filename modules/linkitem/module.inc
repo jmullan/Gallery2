@@ -19,9 +19,9 @@
  */
 
 /**
- * @version $Revision$ $Date$
  * @package LinkItem
  * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -38,7 +38,7 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
@@ -86,7 +86,7 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -121,21 +121,21 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new LinkItemModule());
     }
 
     /**
-     * @see GalleryModule::getModuleEntityTypes()
+     * @see GalleryModule::getModuleEntityTypes
      */
     function getModuleEntityTypes() {
 	return array('GalleryLinkItem');
     }
 
     /**
-     * @see GalleryModule::activate()
+     * @see GalleryModule::activate
      */
     function activate($postActivationEvent=true) {
 	global $gallery;
@@ -156,7 +156,7 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,

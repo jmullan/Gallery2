@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will redirect back to AdminPlugins
  * @package MultiLang
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * This controller will handle the setting of MultiLang module options
- *
- * @package MultiLang
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class CantActivateController extends GalleryController {
 
@@ -49,9 +43,6 @@ class CantActivateController extends GalleryController {
 
 /**
  * This view will complain about missing gettext
- *
- * @package MultiLang
- * @subpackage UserInterface
  */
 class CantActivateView extends GalleryView {
 
@@ -59,16 +50,12 @@ class CantActivateView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-	$translator =& $gallery->getTranslator();
-
 	if ($form['formName'] != 'CantActivate') {
 	    $form['formName'] = 'CantActivate';
 	}
 
 	$template->setVariable('controller', 'multilang.CantActivate');
-	return array(null,
-		     array('body' => 'modules/multilang/templates/CantActivate.tpl'));
+	return array(null, array('body' => 'modules/multilang/templates/CantActivate.tpl'));
     }
 }
 ?>

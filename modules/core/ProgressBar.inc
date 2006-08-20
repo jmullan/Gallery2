@@ -19,22 +19,15 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This is a null view that we use to indicate to the theme that it should render a progress bar.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * This is a null view that we use to indicate to the theme that it should
- * render a progress bar.
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class ProgressBarView extends GalleryView {
     /**
-     * @see GalleryView::getViewType()
+     * @see GalleryView::getViewType
      */
     function getViewType() {
 	return VIEW_TYPE_PROGRESS_BAR;

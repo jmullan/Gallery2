@@ -148,7 +148,7 @@ class GalleryPendingUserHelper {
 	if ($ret) {
 	    return $ret;
 	}
-	list($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'register');
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'register');
 	if ($ret) {
 	    return $ret;
 	}
@@ -283,7 +283,7 @@ class GalleryPendingUserHelper {
 	}
 
 	if ($delete) {
-	    list($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($pendingUser->getId()));
+	    list ($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($pendingUser->getId()));
 	    if ($ret) {
 		return $ret;
 	    }

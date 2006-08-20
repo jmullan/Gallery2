@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Permalinks
- * @version $Revision$ $Date$
- * @author Pierre-Luc Paour <gallery@paour.com>
- */
 
 /**
  * Permalinks Module
@@ -30,6 +25,8 @@
  * in a flat namespace
  *
  * @package Permalinks
+ * @author Pierre-Luc Paour <gallery@paour.com>
+ * @version $Revision$ $Date$
  */
 class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -48,7 +45,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'permalinks');
@@ -81,7 +78,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -95,7 +92,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners();
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new PermalinksModule());
@@ -104,7 +101,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	return array(null,

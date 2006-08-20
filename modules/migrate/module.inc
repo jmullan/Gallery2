@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Migrate
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Migrate Module
@@ -29,6 +24,8 @@
  * This module provides support for Migrating the Gallery
  *
  * @package Migrate
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
     function MigrateModule() {
@@ -79,7 +76,7 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new MigrateModule(), true);

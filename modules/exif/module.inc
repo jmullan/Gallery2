@@ -17,13 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Exif
- * @version $Revision$ $Date$
- * @author Bharat Mediratta <bharat@menalto.com>
- * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
- * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
- */
 
 /**
  * Exif Module
@@ -31,6 +24,10 @@
  * This module provides support for adding exifs to items
  *
  * @package Exif
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
+ * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
+ * @version $Revision$ $Date$
  */
 class ExifModule extends GalleryModule {
 
@@ -48,7 +45,7 @@ class ExifModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
 	global $gallery;
@@ -105,7 +102,7 @@ class ExifModule extends GalleryModule {
 		    return $ret;
 		}
 
-		list($ret, $addOption) = $this->getParameter('addOption');
+		list ($ret, $addOption) = $this->getParameter('addOption');
 		if ($ret) {
 		    return $ret;
 		}
@@ -150,7 +147,7 @@ class ExifModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -202,7 +199,7 @@ class ExifModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getSiteAdminViews()
+     * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
 	global $gallery;

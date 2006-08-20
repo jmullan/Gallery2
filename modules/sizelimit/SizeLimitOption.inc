@@ -17,17 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package SizeLimit
- * @author Felix Rabinovich <felix@rabinovich.org>
- */
 
 /**
  * This ItemEditOption allows the user to set size limits for an album.
  *
  * @package SizeLimit
  * @subpackage UserInterface
+ * @author Felix Rabinovich <felix@rabinovich.org>
+ * @version $Revision$ $Date$
  */
 GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
 
@@ -92,115 +89,114 @@ class SizeLimitOption extends ItemEditOption {
 	$error = $warning = array();
 	$setOriginal = false;
 	if (empty($error) && isset($form['changeInDescendents']['sizelimit'])) {
-            /* TODO: We only need subalbums Items that we can administer */
-            list ($ret, $subAlbumIds) =
-                GalleryCoreApi::fetchDescendentAlbumItemIds($item);
-            if ($ret) {
-                return array($ret, null, null);
-            }
-            array_unshift($subAlbumIds, $item->getId());
-        } else {
-            $subAlbumIds = array($item->getId());
-        }
-        
-        foreach ($subAlbumIds as $id) {
-	switch ($form['SizeLimitOption']['dimensionChoice']) {
-	case 'unlimited':
-	    /* delete parameter from plugin table */
-	    $ret = GalleryCoreApi::removePluginParameter(
-                'module', 'sizelimit', 'height', $id);
+	    /* TODO: We only need subalbums Items that we can administer */
+	    list ($ret, $subAlbumIds) = GalleryCoreApi::fetchDescendentAlbumItemIds($item);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
-	    $ret = GalleryCoreApi::removePluginParameter(
-                'module', 'sizelimit', 'width', $id);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $ret = GalleryCoreApi::removePluginParameter(
-                    'module', 'sizelimit', 'keepOriginal', $id);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    break;
+	    array_unshift($subAlbumIds, $item->getId());
+	} else {
+	    $subAlbumIds = array($item->getId());
+	}
 
-	case 'explicit':
-	    /* figure out x and y and set them... */
-	    $width = $form['SizeLimitOption']['dimensions']['width'];
-	    $height = $form['SizeLimitOption']['dimensions']['height'];
-	    /* Validate the input data. */
-	    if (!is_numeric($height) && !is_numeric($width)) {
-		$error[] = 'form[error][SizeLimitOption][dimensions][missing]';
+	foreach ($subAlbumIds as $id) {
+	    switch ($form['SizeLimitOption']['dimensionChoice']) {
+	    case 'unlimited':
+		/* delete parameter from plugin table */
+		$ret = GalleryCoreApi::removePluginParameter(
+			'module', 'sizelimit', 'height', $id);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+		$ret = GalleryCoreApi::removePluginParameter(
+			'module', 'sizelimit', 'width', $id);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+		$ret = GalleryCoreApi::removePluginParameter(
+			'module', 'sizelimit', 'keepOriginal', $id);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+		break;
+
+	    case 'explicit':
+		/* figure out x and y and set them... */
+		$width = $form['SizeLimitOption']['dimensions']['width'];
+		$height = $form['SizeLimitOption']['dimensions']['height'];
+		/* Validate the input data. */
+		if (!is_numeric($height) && !is_numeric($width)) {
+		    $error[] = 'form[error][SizeLimitOption][dimensions][missing]';
+		    break;
+		}
+		if (!is_numeric($height)) {
+		    $height = $form['SizeLimitOption']['dimensions']['height'] = $width;
+		}
+		if (!is_numeric($width)) {
+		    $width = $form['SizeLimitOption']['dimensions']['width'] = $height;;
+		}
+		$ret = GalleryCoreApi::setPluginParameter(
+			'module', 'sizelimit', 'height', $height, $id);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+		$ret = GalleryCoreApi::setPluginParameter(
+			'module', 'sizelimit', 'width', $width, $id);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+		$setOriginal = true;
 		break;
 	    }
-	    if (!is_numeric($height)) {
-		$height = $form['SizeLimitOption']['dimensions']['height'] = $width;
-	    }
-	    if (!is_numeric($width)) {
-		$width = $form['SizeLimitOption']['dimensions']['width'] = $height;;
-	    }
-	    $ret = GalleryCoreApi::setPluginParameter(
-                    'module', 'sizelimit', 'height', $height, $id);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $ret = GalleryCoreApi::setPluginParameter(
-                    'module', 'sizelimit', 'width', $width, $id);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $setOriginal = true;
-	    break;
-	}
 
-	switch ($form['SizeLimitOption']['sizeChoice']) {
-	case 'unlimited':
-	    /* delete parameter from plugin table */
-	    $ret = GalleryCoreApi::removePluginParameter('module', 'sizelimit',
-                    'size', $id);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $ret = GalleryCoreApi::removePluginParameter('module', 'sizelimit',
-                    'keepOriginal', $id);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    break;
+	    switch ($form['SizeLimitOption']['sizeChoice']) {
+	    case 'unlimited':
+		/* delete parameter from plugin table */
+		$ret = GalleryCoreApi::removePluginParameter('module', 'sizelimit',
+			'size', $id);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+		$ret = GalleryCoreApi::removePluginParameter('module', 'sizelimit',
+			'keepOriginal', $id);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+		break;
 
-	case 'explicit':
-	    /* Validate the input data. */
-	    if (!is_numeric($form['SizeLimitOption']['filesize']) ||
-		    $form['SizeLimitOption']['filesize'] < 1) {
-		$error[] = 'form[error][SizeLimitOption][filesize][invalid]';
+	    case 'explicit':
+		/* Validate the input data. */
+		if (!is_numeric($form['SizeLimitOption']['filesize']) ||
+			$form['SizeLimitOption']['filesize'] < 1) {
+		    $error[] = 'form[error][SizeLimitOption][filesize][invalid]';
+		    break;
+		}
+		/* figure out x and y and set them... */
+		$filesize = $form['SizeLimitOption']['filesize'];
+		$ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 'size',
+			$filesize, $id);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
+		$setOriginal = true;
 		break;
 	    }
-	    /* figure out x and y and set them... */
-	    $filesize = $form['SizeLimitOption']['filesize'];
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 'size',
-                                                          $filesize, $id);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $setOriginal = true;
-	    break;
-	}
 
-	if ($setOriginal) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 'keepOriginal',
-                    isset($form['SizeLimitOption']['keepOriginal']) ? 1 : 0, $id);
-	    if ($ret) {
-		return array($ret, null, null);
+	    if ($setOriginal) {
+		$ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 'keepOriginal',
+			isset($form['SizeLimitOption']['keepOriginal']) ? 1 : 0, $id);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
 	    }
 	}
-        }
 	if (empty($error) && isset($form['SizeLimitOption']['applyToDescendents'])) {
 	    list ($ret, $error, $warning) = $this->_applyToDescendents($form, $item);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
 
-	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -236,7 +232,7 @@ class SizeLimitOption extends ItemEditOption {
 	    $filesize = array($form['SizeLimitOption']['filesize']);
 	}
 
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
 	if ($ret) {
 	    return array($ret, null, null);
 	}
@@ -329,7 +325,7 @@ class SizeLimitOption extends ItemEditOption {
     }
 
     /**
-     * @see ItemEditOption::requiresProgressBar()
+     * @see ItemEditOption::requiresProgressBar
      */
     function requiresProgressBar($form) {
 	return isset($form['SizeLimitOption']['applyToDescendents']);

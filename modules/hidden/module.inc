@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Hidden
- * @author Alan Harder <alan.harder@sun.com>
- * @author Jess Martin <jmartin@cs.unc.edu>
- */
 
 /**
  * Hidden Items
@@ -31,6 +25,9 @@
  * by directly accessing the correct URL.
  *
  * @package Hidden
+ * @author Alan Harder <alan.harder@sun.com>
+ * @author Jess Martin <jmartin@cs.unc.edu>
+ * @version $Revision$ $Date$
  */
 class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 
@@ -49,14 +46,14 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::registerEventListeners()
+     * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', new HiddenModule());
     }
 
     /**
-     * @see GalleryModule::performFactoryRegistrations()
+     * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -84,7 +81,7 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * @see GalleryModule::getOnLoadHandlerIds()
+     * @see GalleryModule::getOnLoadHandlerIds
      */
     function getOnLoadHandlerIds() {
 	return array('Hidden');
@@ -92,7 +89,7 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 
     /**
      * Unhide all hidden items.
-     * @see GalleryModule::uninstall()
+     * @see GalleryModule::uninstall
      */
     function uninstall() {
 	global $gallery;

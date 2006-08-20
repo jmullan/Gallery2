@@ -17,35 +17,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package ImageFrame
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Display CSS needed to render image frames.
- *
  * @package ImageFrame
  * @subpackage UserInterface
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class CSSView extends GalleryView {
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::isAllowedInEmbedOnly()
+     * @see GalleryView::isAllowedInEmbedOnly
      */
     function isAllowedInEmbedOnly() {
 	return true;
     }
 
     /**
-     * @see GalleryView::shouldSaveSession()
+     * @see GalleryView::shouldSaveSession
      */
     function shouldSaveSession() {
 	return false;

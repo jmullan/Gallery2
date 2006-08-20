@@ -17,16 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Remote
- * @subpackage UserInterface
- * @author Pierre-Luc Paour <paour@users.sourceforge.net>
- */
 
-/**
- * Required classes
- */
 GalleryCoreApi::requireOnce('modules/remote/classes/GalleryRemoteProperties.class');
 GalleryCoreApi::requireOnce('modules/remote/classes/GalleryRemoteConstants.class');
 
@@ -36,6 +27,8 @@ GalleryCoreApi::requireOnce('modules/remote/classes/GalleryRemoteConstants.class
  *
  * @package Remote
  * @subpackage UserInterface
+ * @author Pierre-Luc Paour <paour@users.sourceforge.net>
+ * @version $Revision$ $Date$
  */
 class GalleryRemoteController extends GalleryController {
     /**
@@ -59,14 +52,14 @@ class GalleryRemoteController extends GalleryController {
     }
 
     /**
-     * @see GalleryController::isAllowedInEmbedOnly()
+     * @see GalleryController::isAllowedInEmbedOnly
      */
     function isAllowedInEmbedOnly() {
 	return true;
     }
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
@@ -1074,21 +1067,21 @@ class GalleryRemoteController extends GalleryController {
 class GalleryRemoteView extends GalleryView {
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::isAllowedInEmbedOnly()
+     * @see GalleryView::isAllowedInEmbedOnly
      */
     function isAllowedInEmbedOnly() {
 	return true;
     }
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
 	if (!headers_sent()) {

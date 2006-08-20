@@ -19,23 +19,18 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This controller will handle the recovery of passwords that have been lost or forgotten
+ * by the user.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Jay Rossiter <cryptographite@users.sf.net>
+ * @version $Revision$ $Date$
  */
-
-/**
- * This controller will handle the recovery of passwords that have
- * been lost or forgotten by the user.
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
- */
- 
 class UserRecoverPasswordDownloadView extends GalleryView {
 
+    /**
+     * @see GalleryView::isImmediate
+     */
     function isImmediate() {
 	return true;
     }
@@ -45,14 +40,13 @@ class UserRecoverPasswordDownloadView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 	global $gallery;
-
 	$session =& $gallery->getSession();
 
-        $authString = $session->get('core.UserRecoverPasswordAdminAuthKey');
+	$authString = $session->get('core.UserRecoverPasswordAdminAuthKey');
 
 	if (empty($authString)) {
 	    return GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__, 
-					'Authorization String Not Set');
+					 'Authorization String Not Set');
 	}
 
 	header('Content-Type: text/plain');

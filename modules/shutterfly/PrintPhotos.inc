@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view creates a form to send data to shutterfly.com
  * @package Shutterfly
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * This view creates a form to send data to shutterfly.com
- *
- * @package Shutterfly
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class PrintPhotosView extends GalleryView {
 
@@ -41,7 +35,7 @@ class PrintPhotosView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::renderImmedate()
+     * @see GalleryView::renderImmedate
      */
     function renderImmediate($status, $error) {
 	global $gallery;

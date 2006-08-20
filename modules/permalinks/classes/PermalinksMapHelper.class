@@ -81,7 +81,7 @@ class PermalinksMapHelper {
      */
     function createAlias($aliasName, $itemId) {
 	/* first, check for collision */
-	list($ret, $collisionId) = PermalinksMapHelper::fetchItemIdForAlias($aliasName);
+	list ($ret, $collisionId) = PermalinksMapHelper::fetchItemIdForAlias($aliasName);
 	if ($ret) {
 	    return $ret;
 	}

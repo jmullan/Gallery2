@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This plugin handles selecting the time offset to use for movie thumbnails
  * @package ThumbPage
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- */
-
-/**
- * This plugin handles selecting the time offset to use for movie thumbnails
- *
- * @package ThumbPage
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class ItemEditThumbOffset extends ItemEditPlugin {
 

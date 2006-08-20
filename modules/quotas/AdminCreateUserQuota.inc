@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Quotas
- * @subpackage UserInterface
- * @author Robert Balousek <volksport@users.sf.net>
- */
 
 /**
  * This controller will handle the creation of a user quota
- *
  * @package Quotas
  * @subpackage UserInterface
- *
+ * @author Robert Balousek <volksport@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class AdminCreateUserQuotaController extends GalleryController {
 
@@ -55,26 +49,21 @@ class AdminCreateUserQuotaController extends GalleryController {
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'quotas.AdminQuotas';
 	} else if (isset($form['action']['create'])) {
-	    /*
-	     * If all the right fields are in place then go ahead and
-	     * create the user quota.
-	     */
-	    if (array_key_exists('quotaSize', $form) &&
-	        array_key_exists('quotaUnit', $form)) {
+	    /* If all the right fields are in place then go ahead and create the user quota */
+	    if (array_key_exists('quotaSize', $form) && array_key_exists('quotaUnit', $form)) {
 		if (!empty($form['quotaSize']) && is_numeric($form['quotaSize']) &&
 		    $form['quotaSize'] >= 0 && !empty($form['quotaSize'])) {
 		    GalleryCoreApi::requireOnce(
 			'modules/quotas/classes/GalleryQuotasHelper.class');
 		    $form['quotaSize'] = round((float)$form['quotaSize'], 2);
 		    if ($form['quotaUnit'] == 'KB') {
-		        $quotaSize = round($form['quotaSize']);
+			$quotaSize = round($form['quotaSize']);
 		    } else if ($form['quotaUnit'] == 'MB') {
 			$quotaSize = round($form['quotaSize'] * 1024.00);
 		    } else if ($form['quotaUnit'] == 'GB') {
 			$quotaSize = round($form['quotaSize'] * 1024.00 * 1024.00);
 		    } else {
-			return array(GalleryCoreApi::error(ERROR_MISSING_VALUE),
-			     	     null);
+			return array(GalleryCoreApi::error(ERROR_MISSING_VALUE), null);
 		    }
 		    if ($quotaSize <= 2147483647) {
 			if (!isset($user)) {
@@ -100,14 +89,14 @@ class AdminCreateUserQuotaController extends GalleryController {
 			    $status['createdUser'] = $user->getUserName();
 			}
 		    } else {
-		    	$error[] = 'form[error][quotaSize][tooLarge]';
-		    	$error[] = 'form[error][quotaSize][' . $quotaSize. ']';
+			$error[] = 'form[error][quotaSize][tooLarge]';
+			$error[] = 'form[error][quotaSize][' . $quotaSize. ']';
 		    }
 		} else {
 		    $error[] = 'form[error][quotaSize][notNumeric]';
 		}
 	    } else {
-	        /* set our error status and fall back to the view */
+		/* set our error status and fall back to the view */
 		if (empty($form['quotaSize'])) {
 		    $error[] = 'form[error][quotaSize][missing]';
 		}

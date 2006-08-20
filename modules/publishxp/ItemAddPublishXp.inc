@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * Provide the user the option of downloading the Windows registry file.
  *
@@ -25,9 +26,9 @@
  * register Gallery as a publisher in XP, it doesn't actually do any of the
  * processing of images.
  *
- * @version $Revision$ $Date$
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
+ * @version $Revision$ $Date$
  */
 class ItemAddPublishXp extends ItemAddPlugin {
     /**
@@ -42,7 +43,7 @@ class ItemAddPublishXp extends ItemAddPlugin {
      * @see ItemAddPlugin::getTitle
      */
     function getTitle() {
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'publishxp');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'publishxp');
 	if ($ret) {
 	    return array($ret, null);
 	}

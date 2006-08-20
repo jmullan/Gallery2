@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * This view will allow users to view a members profile
  * @package Members
  * @subpackage UserInterface
  * @author Robert Balousek <rbalousek@hotmail.com>
- */
-
-/**
- * This view will allow users to view a members profile
- *
- * @package Members
- * @subpackage UserInterface
+ * @version $Revision$ $Date$
  */
 class MembersProfileView extends GalleryView {
 

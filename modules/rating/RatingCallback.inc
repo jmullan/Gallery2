@@ -17,29 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Rating
- * @author  Don Seiler <don@seiler.us>
- */
 
 /**
  * This view handles calls from the javascript (AJAX) side and returns
  * data to the javascript by printing results.
  *
  * @package Rating
+ * @author  Don Seiler <don@seiler.us>
+ * @version $Revision$ $Date$
  */
 class RatingCallbackView extends GalleryView {
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::isImmediate
      */
     function isImmediate() {
 	return true;
     }
 
     /**
-     * @see GalleryView::isImmediate()
+     * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
 	global $gallery;

@@ -17,10 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class CoreCallbacks {
     function callback($params, &$smarty, $callback, $userId=null) {
@@ -145,7 +146,7 @@ class CoreCallbacks {
 		}
 		$block['core']['LoadPeers'] = array('peers' => $peers,
 		    'peerCount' => count($peerIds), 'thisPeerIndex' => $peerItemIndex + 1,
-                    'parent' => (array)$parent);
+		    'parent' => (array)$parent);
 	    } else {
 		$block['core']['LoadPeers'] =
 		    array('peers' => array(), 'peerCount' => 0);

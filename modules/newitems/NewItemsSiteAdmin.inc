@@ -87,10 +87,6 @@ class NewItemsSiteAdminController extends GalleryController {
     }
 }
 
-/**
- * @package NewItems
- * @subpackage UserInterface
- */
 class NewItemsSiteAdminView extends GalleryView {
 
     /**

@@ -18,21 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- */
-
 GalleryCoreApi::requireOnce('modules/core/classes/helpers/MaintenanceHelper_simple.class');
 
 /**
  * This controller will send the user to the chosen subView in the AdminMaintenance
- *
  * @package GalleryCore
  * @subpackage UserInterface
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class AdminMaintenanceController extends GalleryController {
 

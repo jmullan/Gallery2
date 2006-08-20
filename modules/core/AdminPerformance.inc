@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * Update performance values
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Update performance values
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class AdminPerformanceController extends GalleryController {
 

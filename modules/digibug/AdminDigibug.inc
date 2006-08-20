@@ -17,24 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
  * Digibug4CPG - a plugin for gallery to create photo prints, and print product gift items
  * derived from code written by Bharat Mediratta
  * Copyright (C) 2006 Digibug Express, Inc.
  *
  * @package Digibug
+ * @subpackage UserInterface
  * @author James Andrews <jandrews@digibug.com>
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * @package Digibug
- * @subpackage UserInterface
  */
 class AdminDigibugController extends GalleryController {
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryController::handleRequest
      */
     function handleRequest(&$form) {
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
@@ -44,10 +41,10 @@ class AdminDigibugController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
-	    if (empty($form['digibugCustomerId'])){
+	    if (empty($form['digibugCustomerId'])) {
 		$error[] = 'form[error][digibugCustomerId][missing]';
 	    }
-	    if (empty($form['digibugPricelistId'])){
+	    if (empty($form['digibugPricelistId'])) {
 		$error[] = 'form[error][digibugPricelistId][missing]';
 	    }
 	    if (empty($error)) {

@@ -19,18 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * Confirm a change to a comment
  * @package Comment
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Confirm a change to a comment
- *
- * @package Comment
- * @subpackage UserInterface
- *
+ * @version $Revision$ $Date$
  */
 class CommentChangeConfirmationView extends GalleryView {
 

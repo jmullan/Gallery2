@@ -17,11 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$ $Date$
- * @author Douglas Cau <douglas@cau.se>
- */
 
 /**
  * URL Rewrite Module
@@ -29,6 +24,8 @@
  * This module provides URL rewriting support
  *
  * @package Rewrite
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class RewriteModule extends GalleryModule {
 
@@ -130,7 +127,7 @@ class RewriteModule extends GalleryModule {
 	    return array($ret, null);
 	}
 
-	list($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
+	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'activeRules');
 	if ($ret) {
 	    return array($ret, null);

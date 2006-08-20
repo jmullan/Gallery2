@@ -35,7 +35,7 @@ class RewriteSimpleHelper {
      * @return object GalleryStatus a status code
      */
     function loadItemIdFromPath() {
-	list($path, $itemId) = GalleryUtilities::getRequestVariables('path', 'itemId');
+	list ($path, $itemId) = GalleryUtilities::getRequestVariables('path', 'itemId');
 
 	if (!empty($path) && empty($itemId)) {
 	    if (substr($path, -5) == '.html') {

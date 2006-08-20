@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Quotas
- * @subpackage UserInterface
- * @author Robert Balousek <volksport@users.sf.net>
- */
 
 /**
  * This controller will handle the deletion of a user quota
- *
  * @package Quotas
  * @subpackage UserInterface
- *
+ * @author Robert Balousek <volksport@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class AdminDeleteUserQuotaController extends GalleryController {
 
@@ -59,17 +53,17 @@ class AdminDeleteUserQuotaController extends GalleryController {
 	    GalleryCoreApi::requireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 
 	    list ($ret, $quotaExists, $userQuota) =
-	        GalleryQuotasHelper::fetchUserQuota($user->getId());
+		GalleryQuotasHelper::fetchUserQuota($user->getId());
 	    if ($ret) {
-	        return array($ret, null);
+		return array($ret, null);
 	    }
 
 	    if ($quotaExists) {
 		$ret = GalleryCoreApi::removeMapEntry(
 		    'QuotasMap', array('userOrGroupId' => $user->getId()));
-                if ($ret) {
-                    return array($ret, null);
-                }
+		if ($ret) {
+		    return array($ret, null);
+		}
 
 		/* Request a redirect to the confirmation screen */
 		$redirect['view'] = 'core.SiteAdmin';
@@ -93,9 +87,6 @@ class AdminDeleteUserQuotaController extends GalleryController {
 
 /**
  * This view will prompt for confirmation to delete a user quota
- *
- * @package Quotas
- * @subpackage UserInterface
  */
 class AdminDeleteUserQuotaView extends GalleryView {
 
@@ -120,7 +111,7 @@ class AdminDeleteUserQuotaView extends GalleryView {
 	    return array($ret, null);
 	}
 
-        if ($form['formName'] != 'AdminDeleteUserQuota') {
+	if ($form['formName'] != 'AdminDeleteUserQuota') {
 	    /* First time around initialize our form */
 	    $form['userName'] = $user->getUserName();
 	    $form['formName'] = 'AdminDeleteUserQuota';

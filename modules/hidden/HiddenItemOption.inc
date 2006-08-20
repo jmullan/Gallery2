@@ -17,19 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package Hidden
- * @subpackage UserInterface
- * @author Alan Harder <alan.harder@sun.com>
- * @author Jess Martin <jmartin@cs.unc.edu>
- */
 
 /**
  * ItemEditOption for hiding an item
  *
  * @package Hidden
  * @subpackage UserInterface
+ * @author Alan Harder <alan.harder@sun.com>
+ * @author Jess Martin <jmartin@cs.unc.edu>
+ * @version $Revision$ $Date$
  */
 class HiddenItemOption extends ItemEditOption {
 
