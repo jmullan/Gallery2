@@ -17,21 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Andy Staudacher <ast@gmx.ch>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
 
 /**
  * Test index.php functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
- *
+ * @author Andy Staudacher <ast@gmx.ch>
+ * @version $Revision$ $Date$
  */
 class IndexDotPhpTest extends GalleryTestCase {
 
@@ -50,11 +44,11 @@ class IndexDotPhpTest extends GalleryTestCase {
 	$baseUrl = preg_replace('|^(.*/)lib/tools/.*$|', '$1', $url);
 	/* Request http://domain.com/path/  and for http://domain.com/path/index.php */
 	$i = 0;
-	foreach(array($baseUrl,
-		      $baseUrl . 'index.php',
-		      $baseUrl . 'index.php?some=value&something=else',
-		      $baseUrl . '?somepath',
-		      $baseUrl . '//') as $url) {
+	foreach (array($baseUrl,
+		       $baseUrl . 'index.php',
+		       $baseUrl . 'index.php?some=value&something=else',
+		       $baseUrl . '?somepath',
+		       $baseUrl . '//') as $url) {
 	    /* Trigger a set-cookie header by offering a session for pickup */
 	    $session = new GallerySession();
 	    $ret = $session->initEmpty(true);

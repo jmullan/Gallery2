@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Lint check our localizations
- *
  * @package GalleryCore
  * @subpackage PHPUnit
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class LocalizationAuditTest extends CodeAuditTestCase {
 
@@ -41,7 +35,7 @@ class LocalizationAuditTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::shouldCheckFile()
+     * @see CodeAuditTestCase::shouldCheckFile
      */
     function shouldCheckFile($fileName) {
 	if (substr($fileName, -3) == '.po') {
@@ -52,7 +46,7 @@ class LocalizationAuditTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::checkFile()
+     * @see CodeAuditTestCase::checkFile
      *
      * 1. Check for a sane Project-Id-Version field
      * 2. Check for #,fuzzy before the first msgid
@@ -89,7 +83,7 @@ class LocalizationAuditTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::finishScan()
+     * @see CodeAuditTestCase::finishScan
      *
      * Collate our Project-Id-Version info and make sure that they're consistent in every
      * localization.

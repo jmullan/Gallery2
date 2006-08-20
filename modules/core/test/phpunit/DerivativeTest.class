@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Test Derivative functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class DerivativeTest extends GalleryTestCase {
 
@@ -861,7 +855,7 @@ class DerivativeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	list($ret, $prefs) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId[0]);
+	list ($ret, $prefs) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId[0]);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -877,7 +871,7 @@ class DerivativeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	list($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId[0]);
+	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId[0]);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -885,12 +879,12 @@ class DerivativeTest extends GalleryTestCase {
 	$this->assertEquals(array(array('order' => 0,
 					'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 					'derivativeOperations' => 'thumbnail|123'),
-			    	  array('order' => 0,
+				  array('order' => 0,
 					'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
 					'derivativeOperations' => 'scale|654')),
 			    $preferences, 'Multiple prefs - 0');
 
-	list($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId[1]);
+	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId[1]);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -903,7 +897,7 @@ class DerivativeTest extends GalleryTestCase {
 	$result = GalleryCoreApi::removeDerivativePreferenceForItemType($albumId[0],
 	    DERIVATIVE_TYPE_IMAGE_RESIZE);
 	/* and check that it's gone, but the other type remains */
-	list($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId[0]);
+	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId[0]);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

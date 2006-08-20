@@ -17,21 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryEmbed.class');
 
 /**
  * Test Embed functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Andy Staudacher <ast@gmx.ch>
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class EmbedTest extends GalleryTestCase {
 
@@ -64,10 +59,10 @@ class EmbedTest extends GalleryTestCase {
 	$gallery =& $GLOBALS['gallery'];
 	$gallery->_session = $this->_savedSession;
 	GalleryDataCache::reset();
-	
+
 	parent::tearDown();
     }
-    
+
     function EmbedTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
@@ -94,13 +89,13 @@ class EmbedTest extends GalleryTestCase {
 	$refJs = array('<script type="text/javascript" '.
 		       'src="themes/Xaraya_Classic/scripts/switch_styles.js"></script>',
 		       '<script type="text/javascript">
-                
+
     //<![CDATA[
     var agent = navigator.userAgent.toLowerCase();
     var appver = parseInt(navigator.appVersion);
     '."var bCanBlend = (agent.indexOf('msie') != -1) && (agent.indexOf('opera') == -1) &&
-                    (appver >= 4) && (agent.indexOf('msie 4') == -1) &&
-                    (agent.indexOf('msie 5.0') == -1);
+		    (appver >= 4) && (agent.indexOf('msie 4') == -1) &&
+		    (agent.indexOf('msie 5.0') == -1);
     var filterNames = new Array(16), filters = new Array(16);
     filterNames[0] = 'Blend';
     filters[0] = 'progid:DXImageTransform.Microsoft.Fade(duration=1)';
@@ -111,24 +106,24 @@ class EmbedTest extends GalleryTestCase {
 </script>",
 		       '<script type="text/javascript" '.
 		       'src="http://127.0.0.1/gallery2/lib/javascript/BlockToggle.js"></script>');
-	$headHtml =  '   <head>   
+	$headHtml =  '   <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<!-- the title -->
 	<title>'.$refTitle.'</title>
-<!-- Some css links -->	    
+<!-- Some css links -->
 '.$refCss[0].'
-<!-- A css import style -->	 
+<!-- A css import style -->
    '.$refCss[1].'
 	    '.$refCss[2].$refCss[3].'
-						  
+
   '.$refJs[0].'
 
-<!-- Some javascript code -->						  
+<!-- Some javascript code -->
 '.$refJs[1].'
  <!-- A javascript src link -->
-      '.$refJs[2].'</head>';	    
+      '.$refJs[2].'</head>';
 
-        list ($title, $css, $javascript) = GalleryEmbed::parseHead($headHtml);
+	list ($title, $css, $javascript) = GalleryEmbed::parseHead($headHtml);
 	$this->assertEquals($title, $refTitle, 'the title does not match the reference title');
 	$this->assert(is_array($css), '$css should be an array!');
 	if (is_array($css)) {
@@ -258,10 +253,8 @@ class EmbedTest extends GalleryTestCase {
      */
     function testCheckActiveUser() {
 	global $gallery;
-	
-	/*
-	 * First, create test users an mappings
-	 */
+
+	/* First, create test users an mappings */
 	$user = $activeUserId = array();
 	for ($i = 0; $i < 2; $i++) {
 	    $activeUserId[$i] = '_test_' . $i . '_' . rand();
@@ -282,7 +275,7 @@ class EmbedTest extends GalleryTestCase {
 	}
 	$session =& $gallery->getSession();
 	$session->_sessionId = md5(rand());
-	
+
 	/*
 	 * Check that the session doesn't change if the activeUserId is the same as the
 	 * session's external id
@@ -312,7 +305,7 @@ class EmbedTest extends GalleryTestCase {
 			    'core.language has changed');
 	$this->assertEquals($sessionId, $session->getId(),
 			    'session id should not have changed');
-	
+
 	/* Check that the session changes correctly if the activeUserId is different */
 	$sessionId = $session->getId();
 	$ret = GalleryEmbed::checkActiveUser($activeUserId[1]);
@@ -327,7 +320,7 @@ class EmbedTest extends GalleryTestCase {
 			    'core.language should not have changed');
 	$this->assertEquals($sessionId, $session->getId(),
 			    'session id should not have changed (2)');
-	
+
 	/* Check that the session changes to an anonymous session if the activeUserId is '' */
 	$sessionId = $session->getId();
 	$ret = GalleryEmbed::checkActiveUser('');
@@ -341,7 +334,7 @@ class EmbedTest extends GalleryTestCase {
 	$this->assertEquals($activeLanguageCode[0], $session->get('core.language'),
 			    'core.language should not have changed (guest)');
 	$this->assert($session->getId() != $sessionId, 'session id should have changed');
-	
+
 	/* Also check the special case of guest user id '' */
 	$sessionId = $session->getId();
 	$ret = GalleryEmbed::checkActiveUser('');

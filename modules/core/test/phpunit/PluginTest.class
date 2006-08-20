@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
+ * Test Plugin functionality
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Test Module functionality
- *
- * @package GalleryCore
- * @subpackage PHPUnit
- *
+ * @version $Revision$ $Date$
  */
 class PluginTest extends GalleryTestCase {
 
@@ -101,7 +95,7 @@ class PluginTest extends GalleryTestCase {
     }
 
     function testLoadPlugin() {
- 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', 'PluginTestCompatible');
+	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', 'PluginTestCompatible');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

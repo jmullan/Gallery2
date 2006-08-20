@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Test some Storage functionality
  *
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class StorageTest extends GalleryTestCase {
 
@@ -303,7 +299,7 @@ class StorageTest extends GalleryTestCase {
 	$select = array('entityType', 'externalId', 'entityId');
 	$match = array('externalId' => 40);
 
-	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -325,7 +321,7 @@ class StorageTest extends GalleryTestCase {
 	$select = array('entityType');
 	$match = array('externalId' => array(38, 40, 42));
 
-	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -348,7 +344,7 @@ class StorageTest extends GalleryTestCase {
 	$select = array('entityType');
 	$match = array();
 
-	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -371,8 +367,8 @@ class StorageTest extends GalleryTestCase {
 	$match = array('externalId' => array(38, 40, 42));
 	$optional = array('limit' => array('count' => 1, 'offset' => 2));
 
-	list($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match,
-								 $optional);
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match,
+								  $optional);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -398,7 +394,7 @@ class StorageTest extends GalleryTestCase {
 	$optional = array('orderBy' => array('entityType' => ORDER_DESCENDING,
 					     'externalId' => ORDER_ASCENDING));
 
-	list($ret, $searchResults) =
+	list ($ret, $searchResults) =
 	    GalleryCoreApi::getMapEntry($mapName, $select, $match, $optional);
 	if ($ret) {
 	    return $this->failWithStatus($ret);

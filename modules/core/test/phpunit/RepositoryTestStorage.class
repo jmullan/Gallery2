@@ -17,16 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Jozef Selesi <selesi at gmail dot com>
- */
 
 /**
  * Test storage class used for testing functions that interact with the database.
  * Only the features required for testing the repository code are implemented.
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Jozef Selesi <selesi at gmail dot com>
+ * @version $Revision$ $Date$
  */
 class RepositoryTestStorage {
 
@@ -83,7 +81,7 @@ class RepositoryTestStorage {
 	return array(null,
 		     new RepositoryTestSearchResults($singleton->_searchResults));
     }
-    
+
     function getAddedMapData() {
 	$singleton =& $this->getSingleton();
 	return $singleton->_addedMapData;

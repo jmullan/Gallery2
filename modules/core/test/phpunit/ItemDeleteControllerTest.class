@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * ItemDelete controller tests
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemDeleteControllerTest extends GalleryControllerTestCase {
 
@@ -54,7 +50,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 
-        /* Create a random album */
+	/* Create a random album */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -87,9 +83,9 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    if (($i % 2) == 0) {
-		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
+		list ($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
 	    } else {
-		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+		list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    }
 	    if ($ret) {
 		return $this->failWithStatus($ret);
@@ -125,9 +121,9 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    if (($i % 2) == 0) {
-		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
+		list ($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
 	    } else {
-		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+		list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    }
 	    if ($ret) {
 		return $this->failWithStatus($ret);
@@ -165,9 +161,9 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    if (($i % 2) == 0) {
-		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
+		list ($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
 	    } else {
-		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+		list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    }
 	    if ($ret) {
 		return $this->failWithStatus($ret);
@@ -211,9 +207,9 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	$items = array();
 	for ($i = 0; $i < 10; $i++) {
 	    if (($i % 2) == 0) {
-		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
+		list ($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
 	    } else {
-		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+		list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    }
 	    if ($ret) {
 		return $this->failWithStatus($ret);

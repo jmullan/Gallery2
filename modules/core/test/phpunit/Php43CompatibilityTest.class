@@ -17,19 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
+ * Scan through all of our source code and verify that we're not using anything that is not
+ * PHP 4.3 compatible
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Scan through all of our source code and verify that we're not
- * using anything that is not PHP 4.3 compatible
- *
- * @package GalleryCore
- * @subpackage PHPUnit
+ * @version $Revision$ $Date$
  */
 class Php43CompatibilityTest extends CodeAuditTestCase {
 
@@ -48,7 +43,7 @@ class Php43CompatibilityTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::shouldCheckFile()
+     * @see CodeAuditTestCase::shouldCheckFile
      */
     function shouldCheckFile($fileName) {
 	/* Skip files we don't care about */
@@ -63,7 +58,7 @@ class Php43CompatibilityTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::checkFile()
+     * @see CodeAuditTestCase::checkFile
      */
     function checkFile($fileName, $buffer) {
 	/* Quick check */

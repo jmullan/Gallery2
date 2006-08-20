@@ -18,12 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
 
@@ -32,6 +26,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
  *
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ThemeTest extends GalleryTestCase {
 
@@ -322,8 +318,7 @@ class ThemeTest extends GalleryTestCase {
 }
 
 /**
- * @package GalleryCore
- * @subpackage PHPUnit
+ * Test theme
  */
 class ThemeTestTheme extends GalleryTheme {
     function ThemeTestTheme() {
@@ -340,16 +335,13 @@ class ThemeTestTheme extends GalleryTheme {
 
 /**
  * Test platform for this test
- *
- * @package GalleryCore
- * @subpackage PHPUnit
  */
 class ThemeTestPlatform extends GalleryPlatform {
     function opendir($path) {
 	if (strpos($path, '/themes/') !== false) {
 	    $this->_list = array();
 	    if ($dir = parent::opendir($path)) {
-		while(false !== ($file = parent::readdir($dir))) {
+		while (false !== ($file = parent::readdir($dir))) {
 		    array_push($this->_list, $file);
 		}
 	    }

@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * ItemMove controller tests
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemMoveControllerTest extends GalleryControllerTestCase {
 
@@ -319,9 +315,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    if (($i % 2) == 0) {
-		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album[1]->getId());
+		list ($ret, $items[$i]) = $this->_createRandomAlbum($this->_album[1]->getId());
 	    } else {
-		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album[1]->getId());
+		list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album[1]->getId());
 	    }
 	    if ($ret) {
 		return $this->failWithStatus($ret);
@@ -357,9 +353,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    if (($i % 2) == 0) {
-		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album[1]->getId());
+		list ($ret, $items[$i]) = $this->_createRandomAlbum($this->_album[1]->getId());
 	    } else {
-		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album[1]->getId());
+		list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album[1]->getId());
 	    }
 	    if ($ret) {
 		return $this->failWithStatus($ret);

@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Test Item functionality
  *
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemTest extends GalleryTestCase {
 
@@ -490,7 +486,7 @@ class ItemTest extends GalleryTestCase {
 	/* Verification */
 	$this->assert(in_array($album->getId(), $ids), 'parent album not returned');
 	$itemCount = 1;
-	foreach($items as $item) {
+	foreach ($items as $item) {
 	    $this->assert(in_array($item->getId(), $ids), 'child '.$item->getId() .' not returned');
 	    $itemCount++;
 	}

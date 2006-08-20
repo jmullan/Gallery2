@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 /**
- * @version $Revision$ $Date$
+ * Lint check our phpdoc
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Lint check our localizations
- *
- * @package GalleryCore
- * @subpackage PHPUnit
- *
+ * @version $Revision$ $Date$
  */
 class PhpDocAuditTest extends CodeAuditTestCase {
 
@@ -41,7 +35,7 @@ class PhpDocAuditTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::shouldCheckFile()
+     * @see CodeAuditTestCase::shouldCheckFile
      */
     function shouldCheckFile($fileName) {
 	if (substr($fileName, -4) == '.inc' || (substr($fileName, -6) == '.class'
@@ -53,7 +47,7 @@ class PhpDocAuditTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::checkFile()
+     * @see CodeAuditTestCase::checkFile
      *
      * 1. Check that @package lines agree inside a module
      */
@@ -69,10 +63,7 @@ class PhpDocAuditTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::finishScan()
-     *
-     * Collate our Project-Id-Version info and make sure that they're consistent in every
-     * localization.
+     * @see CodeAuditTestCase::finishScan
      */
     function finishScan($halted) {
 	if (!$halted) {

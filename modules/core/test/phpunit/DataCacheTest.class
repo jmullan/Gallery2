@@ -17,18 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Test DataCache functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class DataCacheTest extends GalleryTestCase {
 
@@ -53,7 +48,7 @@ class DataCacheTest extends GalleryTestCase {
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
+
 	$session =& $gallery->getSession();
 	$session->remove('theme.guestPreviewMode');
 
@@ -331,7 +326,7 @@ class DataCacheTest extends GalleryTestCase {
     function testCachePermission() {
 	global $gallery;
 	GalleryDataCache::remove('GalleryDataCache::cachePermissions::newEntries');
-	
+
 	GalleryDataCache::cachePermissions(array('1', '2'), 'test.TestPermission');
 	$this->assert(GalleryDataCache::hasPermission('1', 'test.TestPermission'),
 			'1 should have permission test.TestPermission');
@@ -452,7 +447,7 @@ class DataCacheTest extends GalleryTestCase {
 
     function testShouldCacheReadUserOk() {
 	global $gallery;
-	
+
 	$acceleration['user']['type'] = 'full';
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
@@ -534,32 +529,32 @@ class DataCacheTest extends GalleryTestCase {
 
 	$this->assertEquals(false, $shouldCache);
     }
-    
+
     function testGetExtraPageCacheKey() {
-    	global $gallery;
-    	$session =& $gallery->getSession();
-    	
-    	/* Backup values */
-    	$isUsingCookies = $session->isUsingCookies();
-    	list ($ret, $activeLanguageCode) = $gallery->getActiveLanguageCode();
-    	if ($ret) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	/* Backup values */
+	$isUsingCookies = $session->isUsingCookies();
+	list ($ret, $activeLanguageCode) = $gallery->getActiveLanguageCode();
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
+
 	/* Set test environment */
 	$ret = $gallery->setActiveLanguageCode('en');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 	$session->_isUsingCookies = false;
-	
-    	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
-    	if ($ret) {
+
+	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
+	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
+
 	$this->assertEquals('0-en', $extraKey);
-	
+
 	/* Clean up */
 	$ret = $gallery->setActiveLanguageCode($activeLanguageCode);
 	if ($ret) {
@@ -567,14 +562,14 @@ class DataCacheTest extends GalleryTestCase {
 	}
 	$session->_isUsingCookies = $isUsingCookies;
     }
-    
+
     /* Same test as userOk, but in guest preview mode */
     function testShouldNotCacheGuestPreviewPages() {
-    	global $gallery;
-    	$session =& $gallery->getSession();
-    	
-    	$session->put('theme.guestPreviewMode', 1);
-    	
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$session->put('theme.guestPreviewMode', 1);
+
 	$acceleration['user']['type'] = 'full';
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
@@ -588,8 +583,8 @@ class DataCacheTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(false, $shouldCache);
-    	
-    	$session->remove('theme.guestPreviewMode');
+
+	$session->remove('theme.guestPreviewMode');
     }
 }
 

@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Test Module functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ModuleTest extends GalleryTestCase {
 
@@ -528,7 +522,7 @@ class ModuleTestPlatform extends GalleryPlatform {
 	if (strpos($path, '/modules/') !== false) {
 	    $this->_list = array();
 	    if ($dir = parent::opendir($path)) {
-		while(false !== ($file = parent::readdir($dir))) {
+		while (false !== ($file = parent::readdir($dir))) {
 		    array_push($this->_list, $file);
 		}
 	    }

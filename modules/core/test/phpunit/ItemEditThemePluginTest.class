@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * ItemEditTheme controller tests
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 
@@ -46,24 +42,24 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-        /* Create child album here, since test theme is too rudimentary */
+	/* Create child album here, since test theme is too rudimentary */
 	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-        
-        /* 
-         * Also check the grandchild album - to make sure that descendents don't 
-         * just return children
-         */
+
+	/*
+	 * Also check the grandchild album - to make sure that descendents don't
+	 * just return children
+	 */
 	list ($ret, $this->_grandchildAlbum) = $this->_createRandomAlbum(
-            $this->_childAlbum->getId());
+		$this->_childAlbum->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-        
+
 	$this->_markForCleanup($this->_album);
 
 	/* Assign our test theme */
@@ -149,7 +145,7 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 				  sprintf('removeParameter(columns, %d)', $this->_album->getId())),
 			    ItemEditThemeControllerTestTheme::getMap());
     }
-    
+
     /**
      * Test applying options from 'Theme' tab to sub-albums
      */
@@ -158,21 +154,21 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[changeInDescendents][theme]', 1);
-        
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_album, $this->_preferred);
 	$this->assertEquals(array(array(), $this->_translate('Successfully saved theme settings')),
 			    $results);
 	/* Verify - 3 albums should be set */
 	$this->assertEquals(array('setParameter(rows, 3)',
-                                  'setParameter(rows, 3)',
-                                  'setParameter(rows, 3)',
+				  'setParameter(rows, 3)',
+				  'setParameter(rows, 3)',
 				  'setParameter(columns, 4)',
 				  'setParameter(columns, 4)',
 				  'setParameter(columns, 4)'),
 			    ItemEditThemeControllerTestTheme::getMap());
     }
-    
+
     /**
      * Test applying options from 'Theme' tab to sub-albums with no subalbum
      */
@@ -181,7 +177,7 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[changeInDescendents][theme]', 1);
-        
+
 	/* Assign our test theme */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_grandchildAlbum->getId());
 	if ($ret) {
@@ -306,16 +302,13 @@ class ItemEditThemeControllerTestTheme {
 
 /**
  * Test platform
- *
- * @package GalleryCore
- * @subpackage PHPUnit
  */
 class ItemEditThemeTestPlatform {
 
     function ItemEditThemeTestPlatform($originalPlatform) {
-        $this->_savedPlatform = $originalPlatform;
+	$this->_savedPlatform = $originalPlatform;
     }
-    
+
     function opendir($path) {
 	if ($path == dirname(__FILE__) . '/../../../../themes/') {
 	    return 'TEST_VALID_RESOURCE';
@@ -392,10 +385,10 @@ class ItemEditThemeTestPlatform {
 	    return 0;
 	}
     }
-    
+
     function flock($fd, $lockType, $flag) {
-        return $this->_savedPlatform->flock($fd, $lockType, $flag);
-    }    
+	return $this->_savedPlatform->flock($fd, $lockType, $flag);
+    }
 }
 
 ?>

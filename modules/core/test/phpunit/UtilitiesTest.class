@@ -19,17 +19,11 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * Test utilities functionality
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
- */
-
-/**
- * Test utilities functionality
- *
- * @package GalleryCore
- * @subpackage PHPUnit
+ * @version $Revision$ $Date$
  */
 class UtilitiesTest extends GalleryTestCase {
 
@@ -1071,7 +1065,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$key6 = 'foo5';
 	$val6 = '"iui7 asa9a,. \\" a; \\asas, bla"';
 	/* Use one time commas as delimiters, the other time semicolons */
-	foreach(array(',', ';') as $sep) {
+	foreach (array(',', ';') as $sep) {
 	    /*
 	     * Check for quoted-string cookies (don't urlencode cookie values, eg. by using header()
 	     * instead of setCookie()).  And check for ordinary cookies (Netscape standard) where

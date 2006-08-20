@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Test main.php
- *
  * @package GalleryCore
  * @subpackage PHPUnit
- *
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class MainTest extends GalleryTestCase {
 
@@ -132,7 +126,7 @@ class MainTest extends GalleryTestCase {
 	if (isset($headers['Location'])) {
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $expectedUrl = $urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode'),
-						      array('htmlEntities' => false, 
+						      array('htmlEntities' => false,
 							    'forceFullUrl' => true));
 	    $this->assertEquals($expectedUrl, trim($headers['Location']), 'wrong redirect url');
 	} else {
@@ -243,32 +237,32 @@ class MainTest extends GalleryTestCase {
 	global $gallery;
 
 	$backup = $gallery->_session;
-    	/* Make sure the redirect has no sessionId in it */
-    	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+	/* Make sure the redirect has no sessionId in it */
+	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	unset($_SERVER['HTTP_COOKIE']);
-    	$session = new GallerySession();
-    	$ret = $session->init();
-    	if ($ret) {
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp session id');
-	
+
 	/* Use the PHP VM to record the headers */
 	$phpVm = new MainTestPhpVm();
 	$gallery->_phpVm = $phpVm;
 
 	/* Execute the function under test */
-	$this->assertEquals(array('isDone' => true), 
+	$this->assertEquals(array('isDone' => true),
 			    _GalleryMain_doRedirect('http://example.com/main.php?&amp; '),
 			    'unexpected return value');
 
 	/* Verify the result */
 	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
 	if (isset($headers['Location'])) {
-	    $this->assertEquals(' http://example.com/main.php', 
-	    			$headers['Location'], 'wrong header');
+	    $this->assertEquals(' http://example.com/main.php',
+				$headers['Location'], 'wrong header');
 	} else {
 	    $this->assert(false, 'no headers set');
 	}

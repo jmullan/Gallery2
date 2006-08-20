@@ -17,20 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/OptimizeDatabaseTask.class');
 
 /**
  * Test the OptimizeDatabase maintenance task functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class OptimizeDatabaseTaskTest extends GalleryTestCase {
 
@@ -47,7 +42,7 @@ class OptimizeDatabaseTaskTest extends GalleryTestCase {
 
     function testRun() {
 	global $gallery;
-	
+
 	$mockStorage = new OptimizeDatabaseTaskTestStorage();
 	$gallery->_storage =& $mockStorage;
 
@@ -71,7 +66,7 @@ class OptimizeDatabaseTaskTestStorage {
     function OptimizeDatabaseTaskTestStorage() {
 	$this->_optimizeWasCalled = false;
     }
-    
+
     function optimize() {
 	$this->_optimizeWasCalled = true;
 	return null;

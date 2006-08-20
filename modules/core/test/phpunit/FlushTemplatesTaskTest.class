@@ -17,20 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/FlushTemplatesTask.class');
 
 /**
  * Test the FlushTemplates maintenance task functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class FlushTemplatesTaskTest extends GalleryTestCase {
 
@@ -90,7 +85,7 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
 
 	$expected = $module->translate(array('text' => 'Unable to delete directory: %s',
 					     'arg1' => '/templates_c'));
-	
+
 	$this->assert(!$success, 'should have failed');
 	$this->assertEquals(array($expected), $details);
 	$this->assertEquals(array('file_exists(/templates_c)',

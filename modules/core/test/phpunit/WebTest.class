@@ -17,18 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Test Web functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class WebTest extends GalleryTestCase {
 
@@ -71,7 +66,7 @@ class WebTest extends GalleryTestCase {
     function testFetchWebPageError404() {
 	list ($success, $body, $response, $headers, $actualUrl) =
 	    GalleryCoreApi::fetchWebPage('http://www.test.server/testFetchWebPageNotExists');
-	
+
 	$expectedHeaders['Connection'] = 'close';
 	$expectedHeaders['Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
 	$expectedHeaders['Accept-Ranges'] = 'bytes';
@@ -117,7 +112,7 @@ class WebTest extends GalleryTestCase {
 	$this->assertEquals(join("\n", $expectedBody) . "\n", $body);
 	$this->assertEquals('http://www.test.server/testFetchWebPageBadConfiguration', $actualUrl);
     }
-    
+
     function testFetchWebPageWithSpaces() {
 	list ($success, $body, $response, $headers, $actualUrl) =
 	    GalleryCoreApi::fetchWebPage('http://www.test.server/testFetchWebPage With Spaces');
@@ -372,7 +367,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
-	
+
 	$this->assertEquals(true, $return);
 	$this->assertEquals($response, 'HTTP/1.1 200 OK');
 	$this->assertEquals("test\n",
@@ -382,9 +377,6 @@ class WebTest extends GalleryTestCase {
 
 /**
  * Mock platform
- *
- * @package GalleryCore
- * @subpackage PHPUnit
  */
 class WebTestPlatform {
 

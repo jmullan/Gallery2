@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Alan Harder <alan.harder@sun.com>
- */
 
 /**
  * Scan through all of our source code and verify that we're not doing anything "bad".
@@ -30,6 +24,8 @@
  *
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ * @version $Revision$ $Date$
  */
 class CodeAuditTest extends CodeAuditTestCase {
 
@@ -137,7 +133,7 @@ class CodeAuditTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::shouldCheckFile()
+     * @see CodeAuditTestCase::shouldCheckFile
      */
     function shouldCheckFile($fileName) {
 	$base1 = basename($fileName);
@@ -173,7 +169,7 @@ class CodeAuditTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::checkFile()
+     * @see CodeAuditTestCase::checkFile
      */
     function checkFile($fileName, $buffer) {
 	$fileName = substr($fileName, strlen($this->_baseDir) + 1);
@@ -421,7 +417,7 @@ class CodeAuditTest extends CodeAuditTestCase {
     }
 
     /**
-     * @see CodeAuditTestCase::testCodeAudit()
+     * @see CodeAuditTestCase::testCodeAudit
      */
     function testCodeAudit() {
 	parent::testCodeAudit();

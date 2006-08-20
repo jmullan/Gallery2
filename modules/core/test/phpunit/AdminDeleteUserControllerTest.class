@@ -17,12 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataCache.class');
 
@@ -30,6 +24,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataCache.class');
  * AdminDeleteUser controller tests
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 
@@ -212,8 +208,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verify the user still exists */
 	list ($ret, $user) = $user->refresh();
 	if ($ret) {
-	    if($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-	    	$this->assert(false, 'The user was deleted');
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		$this->assert(false, 'The user was deleted');
 	    } else {
 		return $this->failWithStatus($ret);
 	    }
@@ -253,8 +249,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verify the user still exists */
 	list ($ret, $user) = $user->refresh();
 	if ($ret) {
-	    if($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-	    	$this->assert(false, 'The user was deleted');
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		$this->assert(false, 'The user was deleted');
 	    } else {
 		return $this->failWithStatus($ret);
 	    }
@@ -305,8 +301,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verify the user still exists */
 	list ($ret, $user) = $user->refresh();
 	if ($ret) {
-	    if($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-	    	$this->assert(false, 'The user was deleted');
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		$this->assert(false, 'The user was deleted');
 	    } else {
 		return $this->failWithStatus($ret);
 	    }
@@ -337,7 +333,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	}
 
 	$gallery->setActiveUser($user);
-	list($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -401,7 +397,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	}
 
 	$gallery->setActiveUser($user);
-	list($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -432,12 +428,12 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	list ($ret, $item) = $item->refresh();
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-	    	$this->assert(false, 'The item was deleted');
+		$this->assert(false, 'The item was deleted');
 	    }
 	    return $this->failWithStatus($ret);
 	}
 	/* Verify the new owner of the item */
-	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($item->getOwnerId());
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($item->getOwnerId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -480,7 +476,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	}
 
 	$gallery->setActiveUser($user);
-	list($ret, $item) = $this->_createRandomAlbum($this->_album->getId());
+	list ($ret, $item) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -512,7 +508,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	list ($ret, $item) = $item->refresh();
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-	    	$this->assert(false, 'The item was deleted');
+		$this->assert(false, 'The item was deleted');
 	    }
 	    return $this->failWithStatus($ret);
 	}
@@ -520,7 +516,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	$this->assert($item->getOwnerId() == $newOwner->getId(),
 		      'The new owner of the item is wrong.');
 	/* Verify the permissions were transfered correctly */
-	list($ret, $userPermissions) =
+	list ($ret, $userPermissions) =
 			GalleryCoreApi::fetchPermissionsForItems(array($item->getId()),
 								 $newOwner->getId());
 	if ($ret) {
@@ -540,7 +536,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Verify the group mappings are for this user are gone */
-	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret) {
 	    return $ret;
 	}
@@ -555,7 +551,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	WHERE
 	  [GalleryAccessMap::userOrGroupId] = ?
 	';
-	list($ret, $searchResults) = $gallery->search($query, array($userId));
+	list ($ret, $searchResults) = $gallery->search($query, array($userId));
 	if ($ret) {
 	    return $ret;
 	}

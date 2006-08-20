@@ -17,21 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Jay Rossiter <cryptographite@users.sf.net>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhpVm.class');
 
 /**
  * Test the GalleryPhpVm.  These are passthrough functions so all we do is perform a smoke test to
  * make sure that the basic arguments are getting passed through correctly.
- *
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Jay Rossiter <cryptographite@users.sf.net>
+ * @version $Revision$ $Date$
  */
 class PhpVmTest extends GalleryTestCase {
 
@@ -85,7 +80,7 @@ class PhpVmTest extends GalleryTestCase {
      */
     function testHeader() {
 	global $gallery;
-	
+
 	/*
 	 * This test also depends on the G2 Session code as we do an actual HTTP request and
 	 * verify that we received a cookie header. GallerySession uses the $phpVm->header()
@@ -105,7 +100,7 @@ class PhpVmTest extends GalleryTestCase {
 	$this->assert(!empty($session->_sessionId), 'persistent session preparation failed');
 	$url = GalleryUrlGenerator::appendParamsToUrl(
 	    $url, array($session->getKey() => $session->getId()));
-	
+
 	list ($success, $body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
 	$this->assert($success, 'Could not retrieve G2 page');
 	$this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');

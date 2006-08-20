@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Test ItemAttribute functionality
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemAttributesTest extends GalleryTestCase {
 
@@ -120,7 +116,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	$gallery->_session =& $session;
 	$gallery->_phpVm = new ItemAttributesTestMockPhpVm();
 	unset($_REQUEST['phpVmHeaders']);
-	
+
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -237,7 +233,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	$gallery->_phpVm = new ItemAttributesTestMockPhpVm(false, array(), 0, time());
 	unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
 	$_REQUEST['phpVmHeaders'] = array();
-	
+
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -267,7 +263,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	$gallery->_phpVm = new ItemAttributesTestMockPhpVm(false, array(), 1, $now);
 	unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
 	$_REQUEST['phpVmHeaders'] = array();
-	
+
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -283,7 +279,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(1, $viewCount, 'first attempt, rand = 1 -> increment');	
+	$this->assertEquals(1, $viewCount, 'first attempt, rand = 1 -> increment');
 	$this->assertEquals(array('Last-Modified' => ' ' . GalleryUtilities::getHttpDate($now)),
 			    $_REQUEST['phpVmHeaders']);
     }
@@ -301,7 +297,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -328,7 +324,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -357,7 +353,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals($asdminUserId, $gallery->getActiveUserId(), 'admin user id');
-	
+
 	$ret = GalleryCoreApi::incrementItemViewCount($this->_childItems[0]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -475,7 +471,7 @@ class ItemAttributesTest extends GalleryTestCase {
     function testFetchParentSequence() {
 	global $gallery;
 
-	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
+	list ($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -511,13 +507,13 @@ class ItemAttributesTest extends GalleryTestCase {
     }
 
     function testFetchItemizedDescendentCounts() {
-	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
+	list ($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
 	for ($i = 0; $i < 3; $i++) {
-	    list($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
+	    list ($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
@@ -549,13 +545,13 @@ class ItemAttributesTest extends GalleryTestCase {
     }
 
     function testFetchDescendentCounts() {
-	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
+	list ($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
 	for ($i = 0; $i < 3; $i++) {
-	    list($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
+	    list ($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
@@ -619,7 +615,7 @@ class ItemAttributesTest extends GalleryTestCase {
     function testFetchDescendentCountsDifferentUser() {
 	global $gallery;
 
-	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
+	list ($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -632,7 +628,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	$this->_markForCleanup($user);
 
 	for ($i = 0; $i < 3; $i++) {
-	    list($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
+	    list ($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
@@ -678,7 +674,7 @@ class ItemAttributesTestMockSession {
 
     var $_userId;
     var $_creationTime;
-    
+
     function ItemAttributesTestMockSession($isPersistent=true) {
 	$this->_creationTime = time();
 	$this->_isPersistent = $isPersistent;
@@ -725,7 +721,7 @@ class ItemAttributesTestMockPhpVm extends GalleryPhpVm {
 	$this->_randValue = $randValue;
 	$this->_time = $time;
     }
-    
+
     function getAllHeaders() {
 	return $this->_headers;
     }
@@ -737,7 +733,7 @@ class ItemAttributesTestMockPhpVm extends GalleryPhpVm {
 	    parent::function_exists($functionName);
 	}
     }
-    
+
     function header($string, $replace=null) {
 	if ($pos = strpos($string, ':')) {
 	    $_REQUEST['phpVmHeaders'][substr($string, 0, $pos)] = substr($string, $pos+1);

@@ -17,19 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Test User and Group functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class UserAndGroupTest extends GalleryTestCase {
 
@@ -131,7 +125,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	/* Verify the user has the permission  */
-	list($ret, $hasPermission) =
+	list ($ret, $hasPermission) =
 	    GalleryCoreApi::hasItemPermission($this->_getRootId(), 'core.addDataItem');
 	if ($ret) {
 	    GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
@@ -186,7 +180,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    }
 	}
 	/* Verify the new owner of the item */
-	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($item->getOwnerId());
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($item->getOwnerId());
 	if ($ret) {
 	    GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 	    GalleryCoreApi::removeMapEntry('GalleryAccessMap', array('userOrGroupId' => $userId));
@@ -196,7 +190,7 @@ class UserAndGroupTest extends GalleryTestCase {
 		      'The new ownerId of the item is wrong.');
 
 	/* Verify there are no mappings left */
-	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret) {
 	    GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
 	    GalleryCoreApi::removeMapEntry('GalleryAccessMap', array('userOrGroupId' => $userId));
@@ -246,7 +240,7 @@ class UserAndGroupTest extends GalleryTestCase {
     function testDeleteAnonymousUser() {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	
+
 	$ret = GalleryCoreApi::deleteEntityById($anonymousUserId);
 	$this->assertEquals(ERROR_BAD_PARAMETER | GALLERY_ERROR, $ret->getErrorCode());
     }
@@ -371,15 +365,15 @@ class UserAndGroupTest extends GalleryTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	    
+
 	    $ret = GalleryCoreApi::deleteEntityById($groupId);
 	    if ($ret && !($ret->getErrorCode() & ERROR_BAD_PARAMETER)) {
 		return $this->failWithStatus($ret);
 	    }
-	    
+
 	    $this->assert($ret && ($ret->getErrorCode() & ERROR_BAD_PARAMETER),
 			  "$paramName: expect an error");
-	    
+
 	    /* Make sure the entity still exists */
 	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($groupId);
 	    if ($ret) {

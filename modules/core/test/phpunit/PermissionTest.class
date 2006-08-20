@@ -17,24 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * Test Permission functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
- *
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class PermissionTest extends GalleryTestCase {
     /**
      * Our internal albums
-     *
      * @var array
      * @access private
      */
@@ -45,8 +38,7 @@ class PermissionTest extends GalleryTestCase {
     }
 
     /**
-     * Create some nested albums that only have core.canChangePermissions that
-     * we can use for testing.
+     * Create nested albums that only have core.canChangePermissions that we can use for testing.
      */
     function setUp() {
 	global $gallery;
@@ -72,10 +64,7 @@ class PermissionTest extends GalleryTestCase {
 		return $this->failWithStatus($ret);
 	    }
 
-	    /*
-	     * Add core.changePermissions to all the items so that we can
-	     * propagate changes.
-	     */
+	    /* Add core.changePermissions to all the items so that we can propagate changes */
 	    $ret = GalleryCoreApi::addUserPermission(
 		$this->_albums[$i]->getId(), $gallery->getActiveUserId(),
 		'core.changePermissions', false);

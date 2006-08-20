@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
- */
 
 /**
  * ItemMoveSingle controller tests
  * @package GalleryCore
  * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 
@@ -41,8 +37,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/ItemMoveSingleControllerTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'ItemMoveSingleTestToolkit', 'ItemMoveSingleTestToolkit', $path,
-            'coreTest', null);
+	    'GalleryToolkit', 'ItemMoveSingleTestToolkit', 'ItemMoveSingleTestToolkit', $path,
+	    'coreTest', null);
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
