@@ -522,9 +522,8 @@ class GalleryTranslator {
 	}
 
 	/* If we have arguments, then feed the localized string and the arguments into sprintf */
-	if (sizeof($args) > 0) {
-	    array_unshift($args, $localized);
-	    $localized = call_user_func_array('sprintf', $args);
+	if (count($args) > 0) {
+	    $localized = vsprintf($localized, $args);
 	}
 
 	/*
