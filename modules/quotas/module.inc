@@ -36,7 +36,7 @@ class QuotasModule extends GalleryModule {
 	$this->setVersion('1.0.6');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 4));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 

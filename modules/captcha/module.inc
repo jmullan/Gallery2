@@ -37,7 +37,7 @@ class CaptchaModule extends GalleryModule {
 	$this->setVersion('1.1.2'); /* Update upgrade() function below too */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 1));
+	$this->setRequiredCoreApi(array(7, 4));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 

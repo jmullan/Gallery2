@@ -33,7 +33,7 @@ class UploadAppletModule extends GalleryModule {
 	$this->setVersion('1.0.4');
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 4));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 

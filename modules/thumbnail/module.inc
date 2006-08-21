@@ -38,7 +38,7 @@ class ThumbnailModule extends GalleryModule {
 	$this->setVersion('1.0.6'); /* Update upgrade() function below too */
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 4));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 

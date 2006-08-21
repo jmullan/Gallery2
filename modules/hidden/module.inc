@@ -41,7 +41,7 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setVersion('1.0.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 4));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 

@@ -37,7 +37,7 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setVersion('1.0.5');
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 0));
+	$this->setRequiredCoreApi(array(7, 4));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 
