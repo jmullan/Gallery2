@@ -106,7 +106,7 @@ class KeywordAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	foreach ($params as $key => $value) {
-	    if ($key[0] == '_') {
+	    if (in_array($key[0], array('_', 'a'))) {
 		unset($params[$key]);
 	    }
 	}
