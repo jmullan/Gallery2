@@ -18,7 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
+/**
+ * Handle the rendering of an album or item.
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
+ */
 class ShowItemController extends GalleryController {
 
     /**
@@ -43,12 +50,7 @@ class ShowItemController extends GalleryController {
 }
 
 /**
- * This controller will handle the rendering of an album or item.
- *
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * Handle the rendering of an album or item.
  */
 class ShowItemView extends GalleryView {
 
@@ -57,9 +59,19 @@ class ShowItemView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	list ($ret, $item) = $this->_getItem();
+	list ($ret, $item, $wasSpecified) = $this->_getItem(true);
 	if ($ret) {
 	    return array($ret, null);
+	}
+
+	if (isset($_GET[GalleryUtilities::prefixFormVariable('path')]) && !$wasSpecified) {
+	    /*
+	     * Bug #1468797
+	     * Detect use of rewritten URL but rewrite module inactive; walk up to find main.php
+	     */
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $redirect = dirname($urlGenerator->getCurrentUrlDir()) . '/' . GALLERY_MAIN_PHP;
+	    return array(null, array('redirectUrl' => $redirect));
 	}
 
 	/* Make sure we have permission to view this item */
@@ -101,16 +113,21 @@ class ShowItemView extends GalleryView {
     /**
      * @see GalleryView::_getItem
      */
-    function _getItem() {
+    function _getItem($getOriginalSpecified=false) {
+	static $originalSpecified;
 	list ($ret, $item, $wasSpecified) = parent::_getItem();
 	if ($ret) {
 	    return array($ret, null, null);
 	}
+	if (!isset($originalSpecified)) {
+	    /* Save value for first call; $wasSpecified always true later as itemId is set below */
+	    $originalSpecified = $wasSpecified;
+	}
 	if (!$wasSpecified) {
 	    GalleryUtilities::putRequestVariable('itemId', $item->getId());
 	}
-	/* Always return wasSpecified==true so w/o itemId we still use root album theme/params */
-	return array(null, $item, true);
+	/* Default wasSpecified=true so without itemId we still use root album theme/params */
+	return array(null, $item, $getOriginalSpecified ? $originalSpecified : true);
     }
 
     /**
