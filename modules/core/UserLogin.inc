@@ -192,9 +192,7 @@ class UserLoginView extends GalleryView {
 	     * to store the returnUrl. Thus store the returnUrl in the login form
 	     */
 	    $returnUrl = GalleryUtilities::getRequestVariables('return');
-	    if (!empty($returnUrl)) {
-		$form['returnUrl'] = $returnUrl;
-	    }
+	    $form['returnUrl'] = !empty($returnUrl) ? $returnUrl : '';
 	}
 
 	$template->setVariable('controller', 'core.UserLogin');
