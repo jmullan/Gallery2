@@ -136,9 +136,12 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 	} else {
 	    GalleryUtilities::putRequestVariable('returnUrl', 'http://test.com/testUrl');
 	    ob_start();
-	    $view->renderImmediate(array(), array());
+	    $ret = $view->renderImmediate(array(), array());
 	    $form = ob_get_contents();
 	    ob_end_clean();
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
 	    $this->assert(strpos($form, '"returl" value="http://test.com/testUrl"'), 'return url');
 	    $this->assert(strpos($form, '"imnum" value="4"'),
 		'form should include 4 photos: qty 1 of item 0, none of item 1 ' .
