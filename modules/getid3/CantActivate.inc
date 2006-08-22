@@ -20,7 +20,6 @@
 
 /**
  * Show this view if the module can't be activated.
- *
  * @package Getid3
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -32,8 +31,7 @@ class CantActivateView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	return array(null,
-		     array('body' => 'modules/getid3/templates/CantActivate.tpl'));
+	return array(null, array('body' => 'modules/getid3/templates/CantActivate.tpl'));
     }
 }
 ?>
