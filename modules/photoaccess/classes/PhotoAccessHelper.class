@@ -125,9 +125,9 @@ class PhotoAccessHelper {
 		/* Mark this session so that it can be treated specially */
 		$paSession->put('core.isPrintService', 1);
 
-		/*
-		 * TODO: Would like to enforce a particular session timeout to ensure this session
-		 * lasts long enough for shutterfly to retrieve the images.  Maybe also store the
+		/**
+		 * @todo Would like to enforce a particular session timeout to ensure this session
+		 * lasts long enough for photoworks to retrieve the images.  Maybe also store the
 		 * sessionid in this session so we can reuse it for multiple print requests (and
 		 * just bump timeout each time).
 		 */
