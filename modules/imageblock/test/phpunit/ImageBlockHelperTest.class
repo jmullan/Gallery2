@@ -31,10 +31,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    function setUp() {
-	global $gallery;
-	parent::setUp();
-
+    function _createHierarchy() {
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId());
 	if ($ret) {
@@ -68,6 +65,11 @@ class ImageBlockHelperTest extends GalleryTestCase {
     }
 
     function testImageBlockHelperGetDisabledFlag() {
+	$ret = $this->_createHierarchy();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	$ret = GalleryCoreApi::addMapEntry(
 	    'ImageBlockDisabledMap', array('itemId' => $this->_topAlbum->getId()));
 	if ($ret) {
@@ -88,6 +90,11 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
     function testImageBlockHelperSetDisabledFlag() {
 	global $gallery;
+
+	$ret = $this->_createHierarchy();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, false, true);
 	if ($ret) {
@@ -139,6 +146,12 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
     function testImageBlockHelperSetDisabledFlagRecursive() {
 	global $gallery;
+
+	$ret = $this->_createHierarchy();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	$mockAdapter = new MockTemplateAdapter();
 	$gallery->_templateAdapter =& $mockAdapter;
 
