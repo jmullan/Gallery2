@@ -20,13 +20,12 @@
 
 /**
  * This view creates a form to send data to digibug.com
- *
  * @package Digibug
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
  * @version $Revision$ $Date$
  */
-class PrintPhotosView extends GalleryView {
+class DigibugPrintPhotosView extends GalleryView {
 
     /**
      * @see GalleryView::isImmediate
@@ -194,11 +193,11 @@ class PrintPhotosView extends GalleryView {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	$template = new GalleryTemplate(dirname(dirname(dirname(__FILE__))));
 	$template->setVariable('l10Domain', 'modules_digibug');
-	$template->setVariable('PrintPhotos', array('returnUrl' => $returnUrl,
-						    'count' => count($entries),
-						    'entries' => $entries,
-						    'params' => $params));
-	$template->display('gallery:modules/digibug/templates/PrintPhotos.tpl');
+	$template->setVariable('DigibugPrintPhotos', array('returnUrl' => $returnUrl,
+							   'count' => count($entries),
+							   'entries' => $entries,
+							   'params' => $params));
+	$template->display('gallery:modules/digibug/templates/DigibugPrintPhotos.tpl');
 
 	return null;
     }

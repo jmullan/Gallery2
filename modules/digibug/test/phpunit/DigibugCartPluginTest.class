@@ -118,15 +118,15 @@ class DigibugCartPluginTest extends GalleryTestCase {
 	$returnUrl = $urlGenerator->generateUrl(array('view' => 'cart.ViewCart'),
 						array('forceFullUrl' => true));
 	$this->assertEquals(
-		array('view' => 'digibug.PrintPhotos', 'returnUrl' => $returnUrl),
+		array('view' => 'digibug.DigibugPrintPhotos', 'returnUrl' => $returnUrl),
 		$urlParams);
 
 	$session =& $gallery->getSession();
 	$printCart = $session->get('digibug.cart');
 	$this->assertEquals($cartItemIds, $printCart, 'cart');
 
-	/* Render PrintPhotos view to test processing of cart items */
-	list ($ret, $view) = GalleryView::loadView('digibug.PrintPhotos');
+	/* Render DigibugPrintPhotos view to test processing of cart items */
+	list ($ret, $view) = GalleryView::loadView('digibug.DigibugPrintPhotos');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	} else {

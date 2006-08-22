@@ -139,7 +139,7 @@ class DigibugModule extends GalleryModule {
 		    GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		$links[$itemId][] =
 		    array('text' => $this->translate('Print on Digibug.com'),
-			  'params' => array('view' => 'digibug.PrintPhotos',
+			  'params' => array('view' => 'digibug.DigibugPrintPhotos',
 					    'itemId' => $itemId, 'returnUrl' => '%CURRENT_URL%'));
 	    }
 	}

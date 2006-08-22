@@ -28,13 +28,13 @@
 <body onload="go()">
 <form action="http://www.digibug.com/dapi/order.php" method="POST" id="digibugForm">
   <input type="hidden" name="digibug_api_version" value="100"/>
-  <input type="hidden" name="company_id" value="{$PrintPhotos.params.digibugCustomerId}"/>
-  <input type="hidden" name="event_id" value="{$PrintPhotos.params.digibugPricelistId}"/>
+  <input type="hidden" name="company_id" value="{$DigibugPrintPhotos.params.digibugCustomerId}"/>
+  <input type="hidden" name="event_id" value="{$DigibugPrintPhotos.params.digibugPricelistId}"/>
   <input type="hidden" name="cmd" value="addimg"/>
   <input type="hidden" name="partner_code" value="69"/>
-  <input type="hidden" name="return_url" value="{$PrintPhotos.returnUrl}"/>
-  <input type="hidden" name="num_images" value="{$PrintPhotos.count}"/>
-  {foreach from=$PrintPhotos.entries key=index item=entry}
+  <input type="hidden" name="return_url" value="{$DigibugPrintPhotos.returnUrl}"/>
+  <input type="hidden" name="num_images" value="{$DigibugPrintPhotos.count}"/>
+  {foreach from=$DigibugPrintPhotos.entries key=index item=entry}
     <input type="hidden" name="image_{$index}" value="{$entry.imageUrl}"/>
     <input type="hidden" name="image_width_{$index}" value="{$entry.imageWidth}"/>
     <input type="hidden" name="image_height_{$index}" value="{$entry.imageHeight}"/>
