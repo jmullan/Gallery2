@@ -802,8 +802,8 @@ class GalleryEmbed {
 	    }
 
 	    if ($template->hasVariable('ImageBlockData')) {
-                $ImageBlockData =& $template->getVariableByReference('ImageBlockData');
-                $ImageBlockData['forceFullUrl'] = 1;
+		$ImageBlockData =& $template->getVariableByReference('ImageBlockData');
+		$ImageBlockData['forceFullUrl'] = 1;
 		$tpl = 'modules/imageblock/templates/ImageBlock.tpl';
 		/* Render and get the imageblock html */
 		list ($ret, $blockHtml) = $template->fetch("gallery:$tpl");
@@ -821,8 +821,7 @@ class GalleryEmbed {
 		}
 	    }
 	} else {
-	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED),
-			 null, null);
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null, null);
 	}
 	return array(null, $blockHtml, $headHtml);
     }
