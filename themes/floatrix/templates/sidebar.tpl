@@ -9,7 +9,7 @@
       onclick="MM_changeProp('gsSidebarCol','','style.display','none','DIV');
             MM_changeProp('showSidebarTab','','style.display','block','DIV');
             return false;">
-      <img src="{$theme.themeUrl}/images/tab_close_sidebar.gif" alt="Hide album options"/></a>
+      <div style="width:20px; height:30px;"/></div></a>
   {* Show the sidebar blocks chosen for this theme *}
   {foreach from=$theme.params.sidebarBlocks item=block}
     {g->block type=$block.0 params=$block.1 class="gbBlock"}

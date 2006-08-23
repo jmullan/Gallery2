@@ -141,6 +141,9 @@ body.gallery {
     float: right;
     clear: none;
 }
+#gallery.rtl #hideSidebarTab {
+    float: left;
+}
 
 #gsSidebar {
     z-index: 100; /* to avoid overlap of images on sidebar in Safari */
@@ -177,6 +180,19 @@ td#gsSidebarCol #gsSideBar {
     filter: alpha(opacity: 0);
     width: 195px;
     height: 350px;
+}
+
+a#showSidebarTab div {
+    background: url('images/tab_open_sidebar.gif') no-repeat;
+}
+a#hideSidebarTab div {
+    background: url('images/tab_close_sidebar.gif') no-repeat;
+}
+#gallery.rtl a#showSidebarTab div {
+    background: url('images/tab_open_sidebar_rtl.gif') no-repeat;
+}
+#gallery.rtl a#hideSidebarTab div {
+    background: url('images/tab_close_sidebar_rtl.gif') no-repeat;
 }
 
 /* Drop shadows for sidebar, or any other element
@@ -244,6 +260,10 @@ html>body .dropshadow .inner {
 
 #gallery.IE #gbTitleBar {
     display: inline-block;
+}
+
+#gallery.rtl #gbTitleBar h2 {
+    margin-right: 2em;
 }
 
 div.giAlbumCell, div.giItemCell {
@@ -374,7 +394,11 @@ body.gallery {
 
 #gbSearch {
     float: right;
-    margin: 0 8px 0 1.0em;
+    margin: 0 8px 0 1em;
+}
+#gallery.rtl #gbSearch {
+    float: left;
+    margin: 0 1em 0 8px;
 }
 
 .giSubtitle {
