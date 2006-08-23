@@ -179,7 +179,8 @@ class GalleryThemeHelper_medium {
 
 	if (isset($form['action']['save']) && empty($error)) {
 	    /* Validate the settings */
-	    $validationErrors = $theme->validateSettings($form['key']);
+	    $themeForm = isset($form['key']) ? $form['key'] : array();
+	    $validationErrors = $theme->validateSettings($themeForm);
 	    if (empty($validationErrors)) {
 		/* Get the item settings */
 		list ($ret, $settings) = $theme->getSettings($itemId);
@@ -217,9 +218,9 @@ class GalleryThemeHelper_medium {
 			}
 		    } else {
 			if ($setting['type'] == 'checkbox') {
-			    $value = isset($form['key'][$key]) ? 1 : 0;
+			    $value = isset($themeForm[$key]) ? 1 : 0;
 			} else {
-			    $value = $form['key'][$key];
+			    $value = $themeForm[$key];
 			}
 
 			if (!empty($setting['typeParams']['packType'])) {
