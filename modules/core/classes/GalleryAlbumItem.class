@@ -283,6 +283,12 @@ class GalleryAlbumItem extends GalleryItem {
 	    }
 	}
 
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $ret;
+	}
+
 	return null;
     }
 

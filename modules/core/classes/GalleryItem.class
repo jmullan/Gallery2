@@ -280,6 +280,7 @@ class GalleryItem extends GalleryFileSystemEntity {
      */
     function delete() {
 	global $gallery;
+	$storage =& $gallery->getStorage();
 
 	/* Delete any children */
 	$query = '
@@ -290,12 +291,12 @@ class GalleryItem extends GalleryFileSystemEntity {
 	WHERE
 	  [GalleryChildEntity::parentId] = ?
 	';
-	list ($ret, $searchResults) =
-	    $gallery->search($query, array($this->getId()));
+	list ($ret, $searchResults) = $gallery->search($query, array($this->getId()));
 	if ($ret) {
 	    return $ret;
 	}
 
+	$i = 0;
 	while ($result = $searchResults->nextResult()) {
 	    $ret = GalleryCoreApi::deleteEntityById($result[0]);
 	    /*
@@ -307,6 +308,12 @@ class GalleryItem extends GalleryFileSystemEntity {
 	     */
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret;
+	    }
+	    if (!(++$i % 30)) {
+		$ret = $storage->checkPoint();
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 	}
 
