@@ -121,7 +121,7 @@ class RegisterModule extends GalleryModule {
     function getUserAdminViews($user) {
 	$views = array();
 
-	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser($user->getId());
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -137,9 +137,8 @@ class RegisterModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	return array(null,
-		     array(array('name' => $this->translate('Registration'),
-				 'view' => 'register.AdminSelfRegistration')));
+	return array(null, array(array('name' => $this->translate('Registration'),
+				       'view' => 'register.AdminSelfRegistration')));
     }
 }
 ?>
