@@ -162,7 +162,6 @@ class GalleryPermissionHelper_simple {
 	     * Remember that the permission description stored in the database is an
 	     * internationalized value that must be localized before it can be returned.
 	     */
-
 	    $translator =& $gallery->getTranslator();
 	    $storage =& $gallery->getStorage();
 	    while ($result = $searchResults->nextResult()) {
@@ -173,8 +172,7 @@ class GalleryPermissionHelper_simple {
 		}
 
 		list ($ret, $description) =
-		    $translator->translateDomain('modules_' . $result[0],
-						 array('text' => $result[2]));
+		    $translator->translateDomain('modules_' . $result[0], $result[2]);
 		if ($ret) {
 		    return array($ret, null);
 		}

@@ -429,26 +429,29 @@ class GalleryTranslator {
      * Expected inputs are of the form:
      *
      * Example 1:
-     *  $data['text'] = 'Some text to localize with %d arguments'
-     *  $data['arg1'] = 5;
+     *  $data['text'] = 'Some %s text to localize with %d arguments'
+     *  $data['arg1'] = 'fun';
+     *  $data['arg2'] = 2;  or  $data['args'] = array('fun', 2);
      *
      *  localized:  'Some text to localize with 5 arguments'
      *
      * Example 2:
      *  $data['one'] = 'You have %d orange'
      *  $data['many'] = 'You have %d oranges'
-     *  $data['count'] = 3 (or 1);
+     *  $data['count'] = $data['arg1'] = 3;  (or 1)
      *
      * localized:  'You have 3 oranges' (or 'You have 1 orange')
      *
-     * @param string the domain (eg. a module id)
-     * @param string a directory
+     * @param string the domain (eg. pluginType . 's_' . pluginId)
      * @param mixed a single string, or an array of parameters
      * @return array object GalleryStatus a status code
      *               string the localized value
      */
     function translateDomain($domain, $data) {
 	global $gallery;
+	if (!is_array($data)) {
+	    $data = array('text' => $data);
+	}
 
 	/* Validate our parameters */
 	if (!(isset($data['text'])
@@ -510,7 +513,7 @@ class GalleryTranslator {
 	}
 
 	$i = 1;
-	$args = array();
+	$args = isset($data['args']) ? $data['args'] : array();
 	while (isset($data['arg' . $i])) {
 	    $args[] = $data['arg' . $i];
 	    $i++;

@@ -384,5 +384,27 @@ class TranslatorTest extends GalleryTestCase {
 	}
 	$this->assertEquals('test', $text);
     }
+
+    function testApiChange() {
+	/* Core API 7.10 now allows simple string param, and 'args' array insead of 'arg1', etc */
+	$translator = new GalleryTranslator();
+	list ($ret, $languageCode) = $translator->init('en_US');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $text) = $translator->translateDomain('modules_core', 'Test');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('Test', $text);
+
+	list ($ret, $text) = $translator->translateDomain('modules_core',
+		array('text' => 'Test %s Test %s', 'args' => array('foo', 'bar')));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('Test foo Test bar', $text);
+    }
 }
 ?>

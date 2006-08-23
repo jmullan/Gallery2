@@ -77,8 +77,7 @@ class ColorPackImpl extends ColorPackInterface_1_0 {
     function translate($string) {
 	global $gallery;
 	$translator =& $gallery->getTranslator();
-	list ($ret, $content) =
-	    $translator->translateDomain('modules_colorpack', array('text' => $string));
+	list ($ret, $content) = $translator->translateDomain('modules_colorpack', $string);
 	if ($ret) {
 	    return $string;
 	}
