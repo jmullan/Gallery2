@@ -168,6 +168,9 @@ class AlbumSelectCallbacks {
 					       array($treeList, $titles, $titlesForJs, $links));
 	    }
 
+	    $translator =& $gallery->getTranslator();
+	    $params['rtl'] = $translator->isRightToLeft() ? '_rtl' : '';
+
 	    $block =& $smarty->_tpl_vars['block'];
 	    $type = isset($callbackParams['albumTree']) ? 'albumTree' : 'albumSelect';
 	    $block['albumselect']['LoadAlbumData'][$type] = array(
