@@ -80,11 +80,9 @@ class AdminGroupsController extends GalleryController {
 	    } else if ($group == null) {
 		$error[] = 'form[error][text][noSuchGroup]';
 	    } else {
-
 		/*
-		 * In theory we should never get to this point unless we're
-		 * operating on a valid group, so don't bother sending errors back
-		 * in case we can't delete.
+		 * In theory we should never get to this point unless we're operating on a valid
+		 * group, so don't bother sending errors back in case we can't delete.
 		 */
 		if ($group->getGroupType() != GROUP_NORMAL) {
 		    $error[] = 'form[error][text][cantDeleteGroup]';
@@ -106,9 +104,8 @@ class AdminGroupsController extends GalleryController {
 		$error[] = 'form[error][text][noSuchGroup]';
 	    } else {
 		/*
-		 * In theory we should never get to this point unless we're
-		 * operating on a valid group, so don't bother sending errors back
-		 * in case we can't delete.
+		 * In theory we should never get to this point unless we're operating on a valid
+		 * group, so don't bother sending errors back in case we can't delete.
 		 */
 		if ($group->getGroupType() == GROUP_ALL_USERS ||
 		    $group->getGroupType() == GROUP_EVERYBODY) {
@@ -141,9 +138,6 @@ class AdminGroupsController extends GalleryController {
 
 /**
  * This view will show available options to administer the groups of Gallery
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminGroupsView extends GalleryView {
 
@@ -248,8 +242,7 @@ class AdminGroupsView extends GalleryView {
 
 	$template->setVariable('AdminGroups', $AdminGroups);
 	$template->setVariable('controller', 'core.AdminGroups');
-	return array(null,
-		     array('body' => 'modules/core/templates/AdminGroups.tpl'));
+	return array(null, array('body' => 'modules/core/templates/AdminGroups.tpl'));
     }
 }
 ?>

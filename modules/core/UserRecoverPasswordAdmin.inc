@@ -26,7 +26,6 @@
  * @author Jay Rossiter <cryptographite@users.sf.net>
  * @version $Revision$ $Date$
  */
-
 class UserRecoverPasswordAdminController extends GalleryController {
 
     /**
@@ -132,11 +131,7 @@ class UserRecoverPasswordAdminController extends GalleryController {
 }
 
 /**
- * This view prompts for login information
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * This view shows information about password recovery
  */
 class UserRecoverPasswordAdminView extends GalleryView {
 
@@ -183,8 +178,7 @@ class UserRecoverPasswordAdminView extends GalleryView {
 	$UserRecoverPasswordAdmin['status'] = $status;
 	$template->setVariable('UserRecoverPasswordAdmin', $UserRecoverPasswordAdmin);
 	$template->setVariable('controller', 'core.UserRecoverPasswordAdmin');
-	return array(null,
-		     array('body' => 'modules/core/templates/UserRecoverPasswordAdmin.tpl'));
+	return array(null, array('body' => 'modules/core/templates/UserRecoverPasswordAdmin.tpl'));
     }
 
     /**

@@ -19,7 +19,7 @@
  */
 
 /**
- * Update performance values
+ * Update performance settings
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -107,9 +107,6 @@ class AdminPerformanceController extends GalleryController {
 
 /**
  * Update performance settings
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminPerformanceView extends GalleryView {
 

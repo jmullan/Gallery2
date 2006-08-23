@@ -38,17 +38,12 @@ class AdminUsersController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	$status = array();
-	$error = array();
-	$results = array();
+	$status = $error = $results = array();
 	$user = null;
 	if (!empty($form['text']['userName'])) {
-	    list ($ret, $user) =
-		GalleryCoreApi::fetchUserByUserName($form['text']['userName']);
-	    if ($ret) {
-		if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return array($ret, null);
-		}
+	    list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($form['text']['userName']);
+	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		return array($ret, null);
 	    }
 	}
 
@@ -126,9 +121,6 @@ class AdminUsersController extends GalleryController {
 
 /**
  * This view will show available options to administer the users of Gallery
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminUsersView extends GalleryView {
 
@@ -211,13 +203,9 @@ class AdminUsersView extends GalleryView {
 	    }
 	}
 
-	$AdminUsers = array();
-	$AdminUsers['totalUserCount'] = $totalUserCount;
-
-	$template->setVariable('AdminUsers', $AdminUsers);
+	$template->setVariable('AdminUsers', array('totalUserCount' => $totalUserCount));
 	$template->setVariable('controller', 'core.AdminUsers');
-	return array(null,
-		     array('body' => 'modules/core/templates/AdminUsers.tpl'));
+	return array(null, array('body' => 'modules/core/templates/AdminUsers.tpl'));
     }
 }
 ?>

@@ -19,6 +19,7 @@
  */
 
 /**
+ * Show the slideshow applet
  * @package SlideshowApplet
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <gallery@paour.com>

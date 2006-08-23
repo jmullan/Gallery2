@@ -35,8 +35,7 @@ class ItemDeleteSingleController extends GalleryController {
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['delete'])) {
 	    /* Get the root album id, so we don't try to delete it */
 	    list ($ret, $rootId) =
@@ -97,9 +96,6 @@ class ItemDeleteSingleController extends GalleryController {
 
 /**
  * This view will prompt for confirmation on the deletion of an item
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class ItemDeleteSingleView extends GalleryView {
 
@@ -132,11 +128,9 @@ class ItemDeleteSingleView extends GalleryView {
 	$ItemDeleteSingle['itemTypeNames'] = $item->itemTypeName();
 	$ItemDeleteSingle['childCount'] = $childCount;
 
-	$template->setVariable('controller', 'core.ItemDeleteSingle');
 	$template->setVariable('ItemDeleteSingle', $ItemDeleteSingle);
-
-	return array(null,
-		     array('body' => 'modules/core/templates/ItemDeleteSingle.tpl'));
+	$template->setVariable('controller', 'core.ItemDeleteSingle');
+	return array(null, array('body' => 'modules/core/templates/ItemDeleteSingle.tpl'));
 
     }
 

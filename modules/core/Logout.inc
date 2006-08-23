@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle an user logging out of Gallery
+ * This controller will handle a user logging out of Gallery
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

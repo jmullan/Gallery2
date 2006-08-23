@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 /**
+ * Settings for custom fields
  * @package CustomField
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -54,8 +55,7 @@ class CustomFieldSiteAdminController extends GalleryController {
 }
 
 /**
- * @package CustomField
- * @subpackage UserInterface
+ * Settings for custom fields
  */
 class CustomFieldSiteAdminView extends GalleryView {
 

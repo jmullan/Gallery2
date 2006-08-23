@@ -68,9 +68,6 @@ class AdminToolkitPriorityController extends GalleryController {
 
 /**
  * This view will show toolkits and their relative priorities
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminToolkitPriorityView extends GalleryView {
 
@@ -102,8 +99,7 @@ class AdminToolkitPriorityView extends GalleryView {
 	$template->setVariable('AdminToolkitPriority', $AdminToolkitPriority);
 	$template->setVariable('controller', 'core.AdminToolkitPriority');
 
-	return array(null,
-		     array('body' => 'modules/core/templates/AdminToolkitPriority.tpl'));
+	return array(null, array('body' => 'modules/core/templates/AdminToolkitPriority.tpl'));
     }
 }
 ?>

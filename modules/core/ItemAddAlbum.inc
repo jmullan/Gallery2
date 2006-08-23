@@ -46,12 +46,9 @@ class ItemAddAlbumController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['create'])) {
-	    /*
-	     * Validate the input data.
-	     */
+	    /* Validate the input data */
 	    $platform =& $gallery->getPlatform();
 
 	    if (empty($form['pathComponent'])) {
@@ -125,9 +122,6 @@ class ItemAddAlbumController extends GalleryController {
 
 /**
  * This view will prompt for the data for a new album to be created
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class ItemAddAlbumView extends GalleryView {
 
@@ -159,14 +153,9 @@ class ItemAddAlbumView extends GalleryView {
 	    $form['formName'] = 'ItemAddAlbum';
 	}
 
-	$ItemAddAlbum = array();
-
-	/* Render the HTML body */
-	$template->setVariable('ItemAddAlbum', $ItemAddAlbum);
+	$template->setVariable('ItemAddAlbum', array());
 	$template->setVariable('controller', 'core.ItemAddAlbum');
-
-	return array(null,
-		     array('body' => 'modules/core/templates/ItemAddAlbum.tpl'));
+	return array(null, array('body' => 'modules/core/templates/ItemAddAlbum.tpl'));
     }
 
     /**

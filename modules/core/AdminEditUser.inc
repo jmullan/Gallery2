@@ -44,9 +44,7 @@ class AdminEditUserController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	/*
-	 * We treat anonymous users differently, so see if we're editing the anonymous user.
-	 */
+	/* We treat anonymous users differently, so see if we're editing the anonymous user */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
@@ -164,10 +162,6 @@ class AdminEditUserController extends GalleryController {
 
 /**
  * This view will show a form to change user options
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
  */
 class AdminEditUserView extends GalleryView {
 
@@ -234,8 +228,7 @@ class AdminEditUserView extends GalleryView {
 
 	$template->setVariable('AdminEditUser', $AdminEditUser);
 	$template->setVariable('controller', 'core.AdminEditUser');
-	return array(null,
-		     array('body' => 'modules/core/templates/AdminEditUser.tpl'));
+	return array(null, array('body' => 'modules/core/templates/AdminEditUser.tpl'));
     }
 }
 ?>

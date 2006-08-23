@@ -220,8 +220,7 @@ class SiteAdminView extends GalleryView {
 
 	$template->setVariable('SiteAdmin', $SiteAdmin);
 	$template->title($module->translate('Gallery Site Administration'));
-	return array(null,
-		     array('body' => 'modules/core/templates/SiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/core/templates/SiteAdmin.tpl'));
     }
 
     /**

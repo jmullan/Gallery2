@@ -19,6 +19,7 @@
  */
 
 /**
+ * ItemAdd plugin to show the upload applet
  * @package UploadApplet
  * @author Pierre-Luc Paour <gallery@paour.com>
  * @version $Revision$ $Date$

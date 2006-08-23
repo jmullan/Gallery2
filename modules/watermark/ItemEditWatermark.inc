@@ -20,7 +20,6 @@
 
 /**
  * This edit plugin allows you to customize the watermark for an image or album
- *
  * @package Watermark
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

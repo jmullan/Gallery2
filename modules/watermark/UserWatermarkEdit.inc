@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 /**
+ * Edit default placement and settings for a watermark image
  * @package Watermark
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -42,8 +43,7 @@ class UserWatermarkEditController extends GalleryController {
 }
 
 /**
- * @package Watermark
- * @subpackage UserInterface
+ * Edit default placement and settings for a watermark image
  */
 class UserWatermarkEditView extends GalleryView {
 
@@ -57,8 +57,7 @@ class UserWatermarkEditView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	return array(null,
-		     array('body' => 'modules/watermark/templates/UserWatermarkEdit.tpl'));
+	return array(null, array('body' => 'modules/watermark/templates/UserWatermarkEdit.tpl'));
     }
 }
 ?>

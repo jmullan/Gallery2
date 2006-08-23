@@ -19,6 +19,7 @@
  */
 
 /**
+ * Manage watermarks available for all users
  * @package Watermark
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -100,8 +101,7 @@ class WatermarkSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Watermark
- * @subpackage UserInterface
+ * Manage watermarks available for all users
  */
 class WatermarkSiteAdminView extends GalleryView {
 

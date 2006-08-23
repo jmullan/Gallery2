@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle the editing of a photo
+ * This plugin will handle applying operations to a photo
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

@@ -31,10 +31,7 @@ class ItemDeleteConfirmationView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
-	return array(null,
-		     array('body' => 'modules/core/templates/ItemDeleteConfirmation.tpl'));
+	return array(null, array('body' => 'modules/core/templates/ItemDeleteConfirmation.tpl'));
     }
 
     /**

@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle an user logging in to Gallery
+ * This controller will handle a user logging in to Gallery
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -170,10 +170,6 @@ class UserLoginController extends GalleryController {
 
 /**
  * This view prompts for login information
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
  */
 class UserLoginView extends GalleryView {
 

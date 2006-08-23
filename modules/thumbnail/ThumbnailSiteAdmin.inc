@@ -19,6 +19,7 @@
  */
 
 /**
+ * Thumbnail manager
  * @package Thumbnail
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -110,8 +111,7 @@ class ThumbnailSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Thumbnail
- * @subpackage UserInterface
+ * Thumbnail manager
  */
 class ThumbnailSiteAdminView extends GalleryView {
 
@@ -169,8 +169,7 @@ class ThumbnailSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'thumbnail.ThumbnailSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/thumbnail/templates/ThumbnailSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/thumbnail/templates/ThumbnailSiteAdmin.tpl'));
     }
 }
 ?>

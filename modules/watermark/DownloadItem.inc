@@ -20,7 +20,6 @@
 
 /**
  * Applies watermark on the fly and sends binary item
- *
  * @package Watermark
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

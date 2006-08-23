@@ -19,8 +19,7 @@
  */
 
 /**
- * This controller will handle the recovery of passwords that have been lost or forgotten
- * by the user.
+ * This view sends the administrator login key for password recovery
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Jay Rossiter <cryptographite@users.sf.net>

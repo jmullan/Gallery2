@@ -118,9 +118,6 @@ class AdminEditGroupController extends GalleryController {
 
 /**
  * This view will show options available to groups
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminEditGroupView extends GalleryView {
 
@@ -150,8 +147,7 @@ class AdminEditGroupView extends GalleryView {
 	$template->setVariable('AdminEditGroup', $AdminEditGroup);
 	$template->setVariable('controller', 'core.AdminEditGroup');
 
-	return array(null,
-		     array('body' => 'modules/core/templates/AdminEditGroup.tpl'));
+	return array(null, array('body' => 'modules/core/templates/AdminEditGroup.tpl'));
     }
 }
 ?>

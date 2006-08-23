@@ -20,7 +20,6 @@
 
 /**
  * Handle the rendering of an album or item.
- *
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

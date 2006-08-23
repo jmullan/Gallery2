@@ -36,9 +36,7 @@ class UserRecoverPasswordConfirmController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$status = array();
-	$results = array();
-	$error = array();
+	$status = $results = $error = array();
 
 	if (isset($form['action']['submit'])) {
 	    if (empty($form['userName'])) {
@@ -63,9 +61,8 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 		}
 		/*
 		 * Check the database to see if a previous request.
-		 * If a request exists, check the timestamp to see if a new
-		 * request can be generated, or if they will be denied
-		 * because the window is too small.
+		 * If a request exists, check the timestamp to see if a new request can be
+		 * generated, or if they will be denied because the window is too small.
 		 */
 		list ($ret, $requestExpires) = UserRecoverPasswordHelper_simple::getRequestExpires(
 		    $form['userName'], $form['authString']);
@@ -137,11 +134,7 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 }
 
 /**
- * This view prompts for login information
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * This view shows information about password recovery
  */
 class UserRecoverPasswordConfirmView extends GalleryView {
 

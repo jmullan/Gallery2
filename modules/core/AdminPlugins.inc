@@ -19,7 +19,7 @@
  */
 
 /**
- * This view will show administration possibilities for available modules
+ * This view will show administration options for available plugins
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -53,11 +53,10 @@ class AdminPluginsView extends GalleryView {
 	    }
 
 	    /*
-	     * It's possible that we have some out-of-date plugins which haven't
-	     * been deactivated yet, since the deactivation only occurs when we try
-	     * to load the module.  Load all the active plugins now to force the
-	     * version check, then reload the plugin status when we're done to pick
-	     * up any changes we trigger.
+	     * It's possible that we have some out-of-date plugins which haven't been deactivated
+	     * yet, since the deactivation only occurs when we try to load the module.  Load all
+	     * the active plugins now to force the version check, then reload the plugin status
+	     * when we're done to pick up any changes we trigger.
 	     */
 	    foreach ($pluginStatus[$type] as $pluginId => $status) {
 		if (!empty($status['active'])) {
@@ -130,8 +129,7 @@ class AdminPluginsView extends GalleryView {
 	$template->javascript('lib/yui/connection-min.js');
 	$template->javascript('modules/core/templates/AdminPlugins.js');
 
-	return array(null,
-		     array('body' => 'modules/core/templates/AdminPlugins.tpl'));
+	return array(null, array('body' => 'modules/core/templates/AdminPlugins.tpl'));
     }
 
     function pluginSort($a, $b) {

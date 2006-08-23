@@ -224,9 +224,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	    $template->setVariable('ItemAdmin', $ItemAdmin);
 	}
 
-	return array(null,
-		     'modules/core/templates/ItemAddFromBrowser.tpl',
-		     'modules_core');
+	return array(null, 'modules/core/templates/ItemAddFromBrowser.tpl', 'modules_core');
     }
 
     /**

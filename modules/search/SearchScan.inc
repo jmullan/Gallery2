@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/search/classes/SearchUtilities.class');
 
 /**
+ * Perform a search
  * @package Search
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -97,8 +98,7 @@ class SearchScanController extends GalleryController {
 }
 
 /**
- * @package Search
- * @subpackage UserInterface
+ * Perform a search
  */
 class SearchScanView extends GalleryView {
 
@@ -235,8 +235,7 @@ class SearchScanView extends GalleryView {
 
 	$template->javascript('modules/search/HighlightResults.js');
 	$template->title($module->translate('Gallery Search'));
-	return array(null,
-		     array('body' => 'modules/search/templates/SearchScan.tpl'));
+	return array(null, array('body' => 'modules/search/templates/SearchScan.tpl'));
     }
 }
 ?>

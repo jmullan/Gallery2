@@ -83,9 +83,6 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 
 /**
  * This view will prompt for confirmation when uninstalling a module
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminModulesVerifyUninstallView extends GalleryView {
 

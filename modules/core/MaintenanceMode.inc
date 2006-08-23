@@ -37,9 +37,8 @@ class MaintenanceModeView extends GalleryView {
 	}
 
 	$template->title($module->translate('Maintenance'));
-	return array(null,
-		     array('body' => 'modules/core/templates/MaintenanceMode.tpl',
-			   'useFullScreen' => true));
+	return array(null, array('body' => 'modules/core/templates/MaintenanceMode.tpl',
+				 'useFullScreen' => true));
     }
 
     /**

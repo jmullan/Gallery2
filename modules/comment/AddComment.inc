@@ -19,8 +19,7 @@
  */
 
 /**
- * Add a comment to an item.
- *
+ * Add a comment to an item
  * @package Comment
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -175,10 +174,6 @@ class AddCommentController extends GalleryController {
 
 /**
  * This view will show a form to add a new comment to an item
- *
- * @package Comment
- * @subpackage UserInterface
- *
  */
 class AddCommentView extends GalleryView {
 

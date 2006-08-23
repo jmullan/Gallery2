@@ -165,10 +165,7 @@ class AdminThemesController extends GalleryController {
 }
 
 /**
- * This view will show administration possibilities for available themes
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * This view will show administration options for available themes
  */
 class AdminThemesView extends GalleryView {
 
@@ -198,11 +195,10 @@ class AdminThemesView extends GalleryView {
 	}
 
 	/*
-	 * It's possible that we have some out-of-date themes which haven't
-	 * been deactivated yet, since the deactivation only occurs when we try
-	 * to load the theme.  Load all the active themes now to force the
-	 * version check, then reload the theme status when we're done to pick
-	 * up any changes we trigger.
+	 * It's possible that we have some out-of-date themes which haven't been deactivated yet,
+	 * since the deactivation only occurs when we try to load the theme.  Load all the active
+	 * themes now to force the version check, then reload the theme status when we're done to
+	 * pick up any changes we trigger.
 	 */
 	foreach ($themes as $id => $status) {
 	    if (!empty($status['active'])) {
@@ -446,8 +442,7 @@ class AdminThemesView extends GalleryView {
 
 	$template->setVariable('AdminThemes', $AdminThemes);
 	$template->setVariable('controller', 'core.AdminThemes');
-	return array(null,
-		     array('body' => 'modules/core/templates/AdminThemes.tpl'));
+	return array(null, array('body' => 'modules/core/templates/AdminThemes.tpl'));
     }
 }
 ?>

@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Webcam images
  * @package WebCam
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -64,8 +65,7 @@ class WebCamSiteAdminController extends GalleryController {
 }
 
 /**
- * @package WebCam
- * @subpackage UserInterface
+ * Settings for Webcam images
  */
 class WebCamSiteAdminView extends GalleryView {
 
@@ -90,8 +90,7 @@ class WebCamSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'webcam.WebCamSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/webcam/templates/WebCamSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/webcam/templates/WebCamSiteAdmin.tpl'));
     }
 }
 ?>

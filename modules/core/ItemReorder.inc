@@ -28,7 +28,7 @@
 class ItemReorderController extends GalleryController {
 
     /**
-     * Reorder the selected items, if all the permissions are set correctly.
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
@@ -72,8 +72,7 @@ class ItemReorderController extends GalleryController {
 
 		if ($entities[0]->getParentId() != $itemId ||
 		    $entities[1]->getParentId() != $itemId) {
-		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED),
-				 null);
+		    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 		}
 	    }
 
@@ -115,8 +114,7 @@ class ItemReorderController extends GalleryController {
 			/*
 			 * If we have to rebalance more than once then something went wrong!
 			 */
-			return array(GalleryCoreApi::error(ERROR_UNKNOWN),
-				     null);
+			return array(GalleryCoreApi::error(ERROR_UNKNOWN), null);
 		    }
 
 		    /* A delta of 0 means that we don't have room, so rebalance */
@@ -163,11 +161,7 @@ class ItemReorderController extends GalleryController {
 }
 
 /**
- * This view will prompt for which files to move/copy and which is the
- * destination.
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * This view will prompt for how to change the order of items in the album
  */
 class ItemReorderView extends GalleryView {
 
@@ -238,8 +232,7 @@ class ItemReorderView extends GalleryView {
 
 	$template->setVariable('ItemReorder', $ItemReorder);
 	$template->setVariable('controller', 'core.ItemReorder');
-	return array(null,
-		     array('body' => 'modules/core/templates/ItemReorder.tpl'));
+	return array(null, array('body' => 'modules/core/templates/ItemReorder.tpl'));
     }
 
     /**

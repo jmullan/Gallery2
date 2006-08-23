@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle the changes users make to theme settings for an album.
+ * This plugin will handle the changes users make to theme settings for an album.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

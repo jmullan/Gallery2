@@ -19,6 +19,7 @@
  */
 
 /**
+ * Display the slideshow
  * @package Slideshow
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -78,9 +79,8 @@ class SlideshowView extends GalleryView {
 	    $template->title($module->translate('Slideshow'));
 	}
 
-	return array(null,
-		     array('body' => 'modules/slideshow/templates/Slideshow.tpl',
-			   'useFullScreen' => true));
+	return array(null, array('body' => 'modules/slideshow/templates/Slideshow.tpl',
+				 'useFullScreen' => true));
     }
 
     /**
@@ -238,8 +238,7 @@ class SlideshowView extends GalleryView {
 		}
 	    }
 	}
-	return array(null,
-		     $itemList, isset($start) ? $start : 0);
+	return array(null, $itemList, isset($start) ? $start : 0);
     }
 }
 ?>

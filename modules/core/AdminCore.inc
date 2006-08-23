@@ -203,9 +203,6 @@ class AdminCoreController extends GalleryController {
 
 /**
  * This view will prompt for general Gallery settings
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminCoreView extends GalleryView {
 

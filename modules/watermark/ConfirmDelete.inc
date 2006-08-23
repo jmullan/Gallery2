@@ -19,6 +19,7 @@
  */
 
 /**
+ * Delete a watermark
  * @package Watermark
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -59,8 +60,7 @@ class ConfirmDeleteController extends GalleryController {
 }
 
 /**
- * @package Watermark
- * @subpackage UserInterface
+ * Confirm delete of a watermark
  */
 class ConfirmDeleteView extends GalleryView {
 
@@ -90,8 +90,7 @@ class ConfirmDeleteView extends GalleryView {
 				     'count' => count($itemIds)));
 	$template->setVariable('controller', 'watermark.ConfirmDelete');
 
-	return array(null,
-		     array('body' => 'modules/watermark/templates/ConfirmDelete.tpl'));
+	return array(null, array('body' => 'modules/watermark/templates/ConfirmDelete.tpl'));
     }
 }
 ?>

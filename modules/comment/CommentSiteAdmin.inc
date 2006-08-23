@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for comments
  * @package Comment
  * @subpackage UserInterface
  * @author Johannes Schmittat <Johannes@Schmittat.com>
@@ -69,8 +70,7 @@ class CommentSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Comment
- * @subpackage UserInterface
+ * Settings for comments
  */
 class CommentSiteAdminView extends GalleryView {
 

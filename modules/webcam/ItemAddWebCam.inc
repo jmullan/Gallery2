@@ -19,6 +19,7 @@
  */
 
 /**
+ * ItemAdd plugin to add a new webcam image
  * @package WebCam
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -138,8 +139,7 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    }
 	}
 
-	return array(null,
-		     'modules/webcam/templates/ItemAddWebCam.tpl', 'modules_webcam');
+	return array(null, 'modules/webcam/templates/ItemAddWebCam.tpl', 'modules_webcam');
     }
 
     /**

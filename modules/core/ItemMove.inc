@@ -28,8 +28,7 @@
 class ItemMoveController extends GalleryController {
 
     /**
-     * Move the selected items into the destination album, if all the
-     * permissions are set correctly.
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
@@ -226,10 +225,7 @@ class ItemMoveController extends GalleryController {
 }
 
 /**
- * This view will prompt for which files to move and which is the destination.
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * This view will prompt for which items to move and where is the destination.
  */
 class ItemMoveView extends GalleryView {
 
@@ -389,9 +385,7 @@ class ItemMoveView extends GalleryView {
 
 	$template->setVariable('ItemMove', $ItemMove);
 	$template->setVariable('controller', 'core.ItemMove');
-
-	return array(null,
-		     array('body' => 'modules/core/templates/ItemMove.tpl'));
+	return array(null, array('body' => 'modules/core/templates/ItemMove.tpl'));
     }
 
     /**

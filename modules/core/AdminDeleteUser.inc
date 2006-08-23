@@ -22,22 +22,19 @@
  * This controller will handle the deletion of an user
  *
  * User Story:
- * "Joe clicks on 'Users' in the Site Admin view. He wants to delete a user
- * and clicks on 'delete' next to user x. The next view shows a form. If user x
- * was the owner of at least 1 item, Joe is presented with a choice between
- * two radio buttons, between 'Delete user x and...'
+ * "Joe clicks on 'Users' in the Site Admin view. He wants to delete a user and clicks on 'delete'
+ * next to user x. The next view shows a form. If user x was the owner of at least 1 item, Joe is
+ * presented with a choice between two radio buttons, between 'Delete user x and...'
  * a) 'assign a new owner for all his items' and
  * b) 'delete all his items and assign a new owner for all non empty albums'
- * Next there's a textfield 'New owner' in the form. Leaving blank this form
- * means to assign the items to the default new owner, 'admin'.
- * If user x didn't own any items, Joe can just decide between 'cancel' and 'delete'.
- * When clicking 'cancel', Joe is redirected to the AdminUsers view.
- * When hitting 'delete' and in case
- * a) the controller checks for the new owner field and assigns the new owner to
- *    all items of user x. Then it deletes user x and redirects to the AdminUser view.
- * b) the controller deletes all GalleryItems which are not AlbumItems, then it checks
- *    all albums of user x. It deletes all empty albums and assigns a new owner to
- *    all non empty albums.
+ * Next there's a textfield 'New owner' in the form. Leaving blank this form means to assign the
+ * items to the default new owner, 'admin'.  If user x didn't own any items, Joe can just decide
+ * between 'cancel' and 'delete'.  When clicking 'cancel', Joe is redirected to the AdminUsers
+ * view.  When hitting 'delete' and in case
+ * a) the controller checks for the new owner field and assigns the new owner to all items of
+ *    user x. Then it deletes user x and redirects to the AdminUser view.
+ * b) the controller deletes all GalleryItems which are not AlbumItems, then it checks all albums
+ *    of user x. It deletes all empty albums and assigns a new owner to all non empty albums.
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -176,9 +173,6 @@ class AdminDeleteUserController extends GalleryController {
 
 /**
  * This view will prompt for confirmation to delete a user
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminDeleteUserView extends GalleryView {
 

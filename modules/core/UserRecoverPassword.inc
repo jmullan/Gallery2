@@ -231,11 +231,7 @@ class UserRecoverPasswordController extends GalleryController {
 }
 
 /**
- * This view prompts for login information
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * This view shows information about password recovery
  */
 class UserRecoverPasswordView extends GalleryView {
 
@@ -284,8 +280,7 @@ class UserRecoverPasswordView extends GalleryView {
 
 	$template->setVariable('UserRecoverPassword', $UserRecoverPassword);
 	$template->setVariable('controller', 'core.UserRecoverPassword');
-	return array(null,
-		     array('body' => 'modules/core/templates/UserRecoverPassword.tpl'));
+	return array(null, array('body' => 'modules/core/templates/UserRecoverPassword.tpl'));
     }
 }
 ?>

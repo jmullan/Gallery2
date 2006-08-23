@@ -26,6 +26,7 @@
  * @version $Revision$ $Date$
  */
 class CaptchaConfigAdminController extends GalleryController {
+
     /**
      * @see GalleryController::handleRequest
      */

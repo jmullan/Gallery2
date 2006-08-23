@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 
 /**
+ * Edit default placement and settings for a watermark image
  * @package Watermark
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -42,8 +43,7 @@ class WatermarkSiteAdminEditController extends GalleryController {
 }
 
 /**
- * @package Watermark
- * @subpackage UserInterface
+ * Edit default placement and settings for a watermark image
  */
 class WatermarkSiteAdminEditView extends GalleryView {
 

@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle the deletion of an item
+ * This controller will handle the deletion of items
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -146,10 +146,7 @@ class ItemDeleteController extends GalleryController {
 }
 
 /**
- * This view will prompt for confirmation on the deletion of an item
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * This view will prompt for selecting items to delete
  */
 class ItemDeleteView extends GalleryView {
 
@@ -271,11 +268,9 @@ class ItemDeleteView extends GalleryView {
 	$ItemDelete['selectedIds'] = array_keys($selectedIds);
 	$ItemDelete['selectedIdCount'] = count($selectedIds);
 
-	$template->setVariable('controller', 'core.ItemDelete');
 	$template->setVariable('ItemDelete', $ItemDelete);
-
-	return array(null,
-		     array('body' => 'modules/core/templates/ItemDelete.tpl'));
+	$template->setVariable('controller', 'core.ItemDelete');
+	return array(null, array('body' => 'modules/core/templates/ItemDelete.tpl'));
     }
 
     /**

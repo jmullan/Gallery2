@@ -21,8 +21,7 @@
 GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
 
 /**
- * This view will allow users to view their individual carts
- *
+ * View cart contents and available cart actions
  * @package Cart
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

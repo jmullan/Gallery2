@@ -19,7 +19,7 @@
  */
 
 /**
- * This view will show the confirmation that an user has been edited successfully
+ * This view will show confirmation of newly added items
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -69,8 +69,7 @@ class ItemAddConfirmationView extends GalleryView {
 
 	$template->setVariable('ItemAddConfirmation', $ItemAddConfirmation);
 	$template->setVariable('controller', '');
-	return array(null,
-		     array('body' => 'modules/core/templates/ItemAddConfirmation.tpl'));
+	return array(null, array('body' => 'modules/core/templates/ItemAddConfirmation.tpl'));
     }
 
     /**

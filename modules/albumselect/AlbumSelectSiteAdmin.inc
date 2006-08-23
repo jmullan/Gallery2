@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Album Select
  * @package AlbumSelect
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -63,8 +64,7 @@ class AlbumSelectSiteAdminController extends GalleryController {
 }
 
 /**
- * @package AlbumSelect
- * @subpackage UserInterface
+ * Settings for Album Select
  */
 class AlbumSelectSiteAdminView extends GalleryView {
 

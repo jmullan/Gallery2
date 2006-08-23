@@ -18,16 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
+
 /**
  * This ItemEditOption allows the user to set size limits for an album.
- *
  * @package SizeLimit
  * @subpackage UserInterface
  * @author Felix Rabinovich <felix@rabinovich.org>
  * @version $Revision$ $Date$
  */
-GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
-
 class SizeLimitOption extends ItemEditOption {
 
     /**

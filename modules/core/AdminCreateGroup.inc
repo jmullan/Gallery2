@@ -100,9 +100,6 @@ class AdminCreateGroupController extends GalleryController {
 
 /**
  * This view will prompt for data to create a new group
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminCreateGroupView extends GalleryView {
 

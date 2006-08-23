@@ -200,10 +200,6 @@ class EditCommentController extends GalleryController {
 
 /**
  * This view shows a form to edit a comment
- *
- * @package Comment
- * @subpackage UserInterface
- *
  */
 class EditCommentView extends GalleryView {
 

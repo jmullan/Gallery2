@@ -78,10 +78,7 @@ class AdminDeleteGroupController extends GalleryController {
 }
 
 /**
- * This view will prompt for confirmation ot delete a group
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * This view will prompt for confirmation to delete a group
  */
 class AdminDeleteGroupView extends GalleryView {
 

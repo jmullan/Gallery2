@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Captcha
  * @package Captcha
  * @subpackage UserInterface
  * @author Stefan Ioachim <stefanioachim@gmail.com>
@@ -102,10 +103,10 @@ class CaptchaSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Captcha
- * @subpackage UserInterface
+ * Settings for Captcha
  */
 class CaptchaSiteAdminView extends GalleryView {
+
     /**
      * @see GalleryView::loadTemplate
      */

@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/search/classes/SearchUtilities.class');
 
 /**
+ * Perform a search; show all results from a particular search provider
  * @package Search
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -47,8 +48,7 @@ class SearchShowAllController extends GalleryController {
 }
 
 /**
- * @package Search
- * @subpackage UserInterface
+ * Perform a search; show all results from a particular search provider
  */
 class SearchShowAllView extends GalleryView {
 
@@ -190,8 +190,7 @@ class SearchShowAllView extends GalleryView {
 
 	$template->javascript('modules/search/HighlightResults.js');
 	$template->title($module->translate('Gallery Search'));
-	return array(null,
-		     array('body' => 'modules/search/templates/SearchShowAll.tpl'));
+	return array(null, array('body' => 'modules/search/templates/SearchShowAll.tpl'));
     }
 }
 ?>

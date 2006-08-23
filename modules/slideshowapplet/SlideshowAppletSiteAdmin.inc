@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Slideshow Applet
  * @package SlideshowApplet
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <paour@users.sf.net>
@@ -131,8 +132,7 @@ class SlideshowAppletSiteAdminController extends GalleryController {
 }
 
 /**
- * @package SlideshowApplet
- * @subpackage UserInterface
+ * Settings for Slideshow Applet
  */
 class SlideshowAppletSiteAdminView extends GalleryView {
 

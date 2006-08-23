@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Zip Cart
  * @package ZipCart
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -116,8 +117,7 @@ class ZipCartAdminController extends GalleryController {
 }
 
 /**
- * @package ZipCart
- * @subpackage UserInterface
+ * Settings for Zip Cart
  */
 class ZipCartAdminView extends GalleryView {
 
@@ -160,8 +160,7 @@ class ZipCartAdminView extends GalleryView {
 
 	$template->setVariable('ZipCartAdmin', $ZipCartAdmin);
 	$template->setVariable('controller', 'zipcart.ZipCartAdmin');
-	return array(null,
-		     array('body' => 'modules/zipcart/templates/ZipCartAdmin.tpl'));
+	return array(null, array('body' => 'modules/zipcart/templates/ZipCartAdmin.tpl'));
     }
 }
 ?>

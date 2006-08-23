@@ -21,7 +21,7 @@
 GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class');
 
 /**
- * This controller will handle assigning values to custom fields
+ * This plugin will handle assigning values to custom fields
  * @package CustomField
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

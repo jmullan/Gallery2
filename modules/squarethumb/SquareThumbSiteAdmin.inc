@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for square thumbnails
  * @package SquareThumb
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -64,8 +65,7 @@ class SquareThumbSiteAdminController extends GalleryController {
 }
 
 /**
- * @package SquareThumb
- * @subpackage UserInterface
+ * Settings for square thumbnails
  */
 class SquareThumbSiteAdminView extends GalleryView {
 

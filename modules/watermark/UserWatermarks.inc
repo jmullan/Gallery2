@@ -19,6 +19,7 @@
  */
 
 /**
+ * Manage user watermarks
  * @package Watermark
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -85,8 +86,7 @@ class UserWatermarksController extends GalleryController {
 }
 
 /**
- * @package Watermark
- * @subpackage UserInterface
+ * Manage user watermarks
  */
 class UserWatermarksView extends GalleryView {
 
@@ -141,13 +141,9 @@ class UserWatermarksView extends GalleryView {
 	    $template->setVariable('UserAdmin', $UserAdmin);
 	}
 
-	$UserWatermarks = array();
-	$UserWatermarks['watermarks'] = $watermarks;
-
-	$template->setVariable('UserWatermarks', $UserWatermarks);
+	$template->setVariable('UserWatermarks', array('watermarks' => $watermarks));
 	$template->setVariable('controller', 'watermark.UserWatermarks');
-	return array(null,
-		     array('body' => 'modules/watermark/templates/UserWatermarks.tpl'));
+	return array(null, array('body' => 'modules/watermark/templates/UserWatermarks.tpl'));
     }
 
     /**

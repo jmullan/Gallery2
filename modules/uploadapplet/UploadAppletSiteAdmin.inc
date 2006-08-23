@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Upload Applet
  * @package UploadApplet
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <paour@users.sf.net>
@@ -132,8 +133,7 @@ class UploadAppletSiteAdminController extends GalleryController {
 }
 
 /**
- * @package UploadApplet
- * @subpackage UserInterface
+ * Settings for Upload Applet
  */
 class UploadAppletSiteAdminView extends GalleryView {
 

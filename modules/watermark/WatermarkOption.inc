@@ -19,9 +19,7 @@
  */
 
 /**
- * This ItemAddOption allows the user to pick a watermark to apply
- * to the image upon upload.
- *
+ * This ItemAddOption allows the user to pick a watermark to apply to the image upon upload.
  * @package Watermark
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

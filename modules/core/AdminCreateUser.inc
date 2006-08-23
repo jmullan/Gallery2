@@ -116,9 +116,6 @@ class AdminCreateUserController extends GalleryController {
 
 /**
  * This view will prompt for data to create a new user
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminCreateUserView extends GalleryView {
 

@@ -20,7 +20,6 @@
 
 /**
  * Display the current captcha image for this session
- *
  * @package Captcha
  * @subpackage UserInterface
  * @author Stefan Ioachim <stefanioachim@gmail.com>

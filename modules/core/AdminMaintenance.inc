@@ -21,7 +21,7 @@
 GalleryCoreApi::requireOnce('modules/core/classes/helpers/MaintenanceHelper_simple.class');
 
 /**
- * This controller will send the user to the chosen subView in the AdminMaintenance
+ * This controller will perform the chosen task in AdminMaintenance
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -120,10 +120,7 @@ class AdminMaintenanceController extends GalleryController {
 }
 
 /**
- * This view will show available options to administer the groups of Gallery
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * This view will show available maintenance tasks
  */
 class AdminMaintenanceView extends GalleryView {
 
@@ -176,6 +173,10 @@ class AdminMaintenanceView extends GalleryView {
     }
 }
 
+/**
+ * Base class for all maintenance tasks
+ * @abstract
+ */
 class MaintenanceTask {
 
     /**
@@ -198,7 +199,6 @@ class MaintenanceTask {
 
     /**
      * Will this task run so long that it requires a progress bar?
-     *
      * @return true or false
      */
     function requiresProgressBar() {

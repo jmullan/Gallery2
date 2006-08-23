@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for User Albums
  * @package UserAlbum
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -64,8 +65,7 @@ class UserAlbumSiteAdminController extends GalleryController {
 }
 
 /**
- * @package UserAlbum
- * @subpackage UserInterface
+ * Settings for User Albums
  */
 class UserAlbumSiteAdminView extends GalleryView {
 
@@ -120,8 +120,7 @@ class UserAlbumSiteAdminView extends GalleryView {
 
 	$template->setVariable('UserAlbumSiteAdmin', $UserAlbumSiteAdmin);
 	$template->setVariable('controller', 'useralbum.UserAlbumSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/useralbum/templates/UserAlbumSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/useralbum/templates/UserAlbumSiteAdmin.tpl'));
     }
 }
 ?>

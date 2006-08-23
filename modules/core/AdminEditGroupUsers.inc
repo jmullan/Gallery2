@@ -154,10 +154,6 @@ class AdminEditGroupUsersController extends GalleryController {
 
 /**
  * This view will show the possibilities of user-group mappings for a specified group.
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
  */
 class AdminEditGroupUsersView extends GalleryView {
 
@@ -249,8 +245,7 @@ class AdminEditGroupUsersView extends GalleryView {
 
 	$template->setVariable('AdminEditGroupUsers', $AdminEditGroupUsers);
 	$template->setVariable('controller', 'core.AdminEditGroupUsers');
-	return array(null,
-		     array('body' => 'modules/core/templates/AdminEditGroupUsers.tpl'));
+	return array(null, array('body' => 'modules/core/templates/AdminEditGroupUsers.tpl'));
     }
 }
 ?>

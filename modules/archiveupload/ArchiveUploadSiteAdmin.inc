@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Archive Upload
  * @package ArchiveUpload
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -110,6 +111,9 @@ class ArchiveUploadSiteAdminController extends GalleryController {
     }
 }
 
+/**
+ * Settings for Archive Upload
+ */
 class ArchiveUploadSiteAdminView extends GalleryView {
 
     /**

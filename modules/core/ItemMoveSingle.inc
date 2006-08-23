@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle moving one or more items from one album to another.
+ * This controller will handle moving an item from one album to another.
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -28,8 +28,7 @@
 class ItemMoveSingleController extends GalleryController {
 
     /**
-     * Move the selected items into the destination album, if all the
-     * permissions are set correctly.
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
@@ -40,8 +39,7 @@ class ItemMoveSingleController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 
 	if (isset($form['action']['move'])) {
 	    if (empty($form['destination'])) {
@@ -201,11 +199,7 @@ class ItemMoveSingleController extends GalleryController {
 }
 
 /**
- * This view will prompt for which files to move/copy and which is the
- * destination.
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * This view will prompt for the destination of moving this item
  */
 class ItemMoveSingleView extends GalleryView {
 
@@ -256,9 +250,7 @@ class ItemMoveSingleView extends GalleryView {
 
 	$template->setVariable('ItemMoveSingle', $ItemMoveSingle);
 	$template->setVariable('controller', 'core.ItemMoveSingle');
-
-	return array(null,
-		     array('body' => 'modules/core/templates/ItemMoveSingle.tpl'));
+	return array(null, array('body' => 'modules/core/templates/ItemMoveSingle.tpl'));
     }
 
     /**

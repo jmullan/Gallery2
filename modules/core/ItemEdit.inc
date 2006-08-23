@@ -171,9 +171,6 @@ class ItemEditController extends GalleryController {
 
 /**
  * This view will show options to edit an item
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class ItemEditView extends GalleryView {
 
@@ -232,9 +229,8 @@ class ItemEditView extends GalleryView {
 	}
 
 	/*
-	 * If the plugin is empty get it from the session.  If it's empty there,
-	 * default to the first plugin we find.  Either way, save the user's
-	 * preference in the session.
+	 * If the plugin is empty get it from the session.  If it's empty there, default to the
+	 * first plugin we find.  Either way, save the user's preference in the session.
 	 */
 	$session =& $gallery->getSession();
 	$editPluginSessionKey = 'core.view.ItemEdit.editPlugin.' . get_class($item);
@@ -302,8 +298,7 @@ class ItemEditView extends GalleryView {
 
 	$template->setVariable('ItemEdit', $ItemEdit);
 	$template->setVariable('controller', 'core.ItemEdit');
-	return array(null,
-		     array('body' => 'modules/core/templates/ItemEdit.tpl'));
+	return array(null, array('body' => 'modules/core/templates/ItemEdit.tpl'));
     }
 
     /**
@@ -331,9 +326,7 @@ class ItemEditView extends GalleryView {
 
 /**
  * Interface for plugins to the ItemEdit view and controller
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * @abstract
  */
 class ItemEditPlugin {
     /**
@@ -397,6 +390,7 @@ class ItemEditPlugin {
      * @param array mime types
      * @return array object GalleryStatus a status code
      *               bool true if any of the mime types are supported
+     * @access protected
      */
     function _checkForOperation($operation, $mimeTypes) {
 	foreach (array_unique($mimeTypes) as $mimeType) {
@@ -416,12 +410,9 @@ class ItemEditPlugin {
 
 /**
  * Interface for options to the ItemEdit view and controller.
- * Options allow us to provide extra UI in the views and extra
- * processing in the controller so that we can add new functionality
- * to various ItemEditPlugins
- *
- * @package GalleryCore
- * @subpackage UserInterface
+ * Options allow us to provide extra UI in the views and extra processing in the controller so
+ * that we can add new functionality to various ItemEditPlugins
+ * @abstract
  */
 class ItemEditOption {
 

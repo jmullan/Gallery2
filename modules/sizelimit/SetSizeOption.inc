@@ -18,17 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
+
 /**
- * This ItemAddOption uses the size limit values and resizes
- * gallery item when the image is uploaded.
- *
+ * ItemAdd option using the size limit values to resize gallery images when uploaded.
  * @package SizeLimit
  * @subpackage UserInterface
  * @author Felix Rabinovich <felix@rabinovich.org>
  * @version $Revision$ $Date$
  */
-GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
-
 class SetSizeOption extends ItemAddOption {
 
     /**

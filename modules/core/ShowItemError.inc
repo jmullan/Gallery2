@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle the rendering of an album or item.
+ * This view will show an error message when an item cannot be displayed
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

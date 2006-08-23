@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle changes made to an user
+ * This controller will handle changing a user password
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -127,11 +127,7 @@ class UserChangePasswordController extends GalleryController {
 }
 
 /**
- * This view will show a form to change user options
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
+ * This view will show a form to change a password
  */
 class UserChangePasswordView extends GalleryView {
 
@@ -144,10 +140,8 @@ class UserChangePasswordView extends GalleryView {
 	    $form['formName'] = 'UserChangePassword';
 	}
 
-	/* Render the HTML body */
 	$template->setVariable('controller', 'core.UserChangePassword');
-	return array(null,
-		     array('body' => 'modules/core/templates/UserChangePassword.tpl'));
+	return array(null, array('body' => 'modules/core/templates/UserChangePassword.tpl'));
     }
 
     /**

@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle changes made to an user
+ * This controller will handle changes made to a user
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -75,7 +75,6 @@ class UserPreferencesController extends GalleryController {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-
 
 	    /* email is required for non-anonymous but optional for administrators */
 	    if (empty($form['email']) && !$isAdmin) {
@@ -141,17 +140,12 @@ class UserPreferencesController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 
-
 	return array(null, $results);
     }
 }
 
 /**
  * This view will show a form to change user options
- *
- * @package GalleryCore
- * @subpackage UserInterface
- *
  */
 class UserPreferencesView extends GalleryView {
 
@@ -199,11 +193,9 @@ class UserPreferencesView extends GalleryView {
 	$UserPreferences['translationsSupported'] = $translator->canTranslate();
 	$UserPreferences['languageList'] = $languageList;
 
-	/* Render the HTML body */
 	$template->setVariable('UserPreferences', $UserPreferences);
 	$template->setVariable('controller', 'core.UserPreferences');
-	return array(null,
-		     array('body' => 'modules/core/templates/UserPreferences.tpl'));
+	return array(null, array('body' => 'modules/core/templates/UserPreferences.tpl'));
     }
 
     /**
