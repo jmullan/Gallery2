@@ -22,7 +22,6 @@ GalleryCoreApi::requireOnce('modules/ecard/classes/EcardHelper.class');
 
 /**
  * Send photo as eCard
- *
  * @package Ecard
  * @subpackage UserInterface
  * @author Nico Kaiser <nico@siriux.net>
@@ -252,11 +251,9 @@ class SendEcardController extends GalleryController {
 
 /**
  * This view will show an eCard form
- *
- * @package Ecard
- * @subpackage UserInterface
  */
 class SendEcardView extends GalleryView {
+
     /**
      * @see GalleryView::loadTemplate
      */
@@ -359,7 +356,6 @@ class SendEcardView extends GalleryView {
 	}
 
 	$template->title($module->translate('Send eCard'));
-
 	return array(null, array('body' => 'modules/ecard/templates/SendEcard.tpl'));
     }
 

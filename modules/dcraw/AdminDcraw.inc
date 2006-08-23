@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkitHelper.class');
 
 /**
+ * Settings for dcraw
  * @package Dcraw
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -116,8 +117,7 @@ class AdminDcrawController extends GalleryController {
 }
 
 /**
- * @package Dcraw
- * @subpackage UserInterface
+ * Settings for dcraw
  */
 class AdminDcrawView extends GalleryView {
 
@@ -200,9 +200,7 @@ class AdminDcrawView extends GalleryView {
 
 	$template->setVariable('AdminDcraw', $AdminDcraw);
 	$template->setVariable('controller', 'dcraw.AdminDcraw');
-
-	return array(null,
-		     array('body' => 'modules/dcraw/templates/AdminDcraw.tpl'));
+	return array(null, array('body' => 'modules/dcraw/templates/AdminDcraw.tpl'));
     }
 }
 ?>

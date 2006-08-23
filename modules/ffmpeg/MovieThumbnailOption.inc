@@ -20,7 +20,6 @@
 
 /**
  * This ItemAddOption adds a watermark on movie thumbnails.
- *
  * @package Ffmpeg
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

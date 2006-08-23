@@ -94,8 +94,7 @@ class AdminDigibugController extends GalleryController {
 }
 
 /**
- * @package Digibug
- * @subpackage UserInterface
+ * Settings for Digibug
  */
 class AdminDigibugView extends GalleryView {
 

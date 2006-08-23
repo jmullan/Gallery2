@@ -19,8 +19,7 @@
  */
 
 /**
- * This controller will show a tree of elements starting with the current item
- *
+ * This view will show a tree of elements starting with the current item
  * @package Debug
  * @subpackage UserInterface
  * @author Ernesto Baschny <ernst@baschny.de>
@@ -94,7 +93,6 @@ class ShowTreeView extends GalleryView {
 	    $entityTable[$entity->getId()] = (array)$entity;
 	}
 
-	/* Render the HTML body */
 	$ShowTree = array();
 	$ShowTree['parentIds'] = $parentIds;
 	$ShowTree['childIds'] = $childIds;
@@ -109,8 +107,7 @@ class ShowTreeView extends GalleryView {
 	}
 
 	$template->title($module->translate('Gallery Debug'));
-	return array(null,
-		     array('body' => 'modules/debug/templates/ShowTree.tpl'));
+	return array(null, array('body' => 'modules/debug/templates/ShowTree.tpl'));
     }
 }
 ?>

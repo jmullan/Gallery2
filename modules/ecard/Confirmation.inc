@@ -20,7 +20,6 @@
 
 /**
  * Confirmation page
- *
  * @package Ecard
  * @subpackage userInterface
  * @author Nico Kaiser <nico@siriux.net>
@@ -38,9 +37,7 @@ class ConfirmationView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$Confirmation = array('itemId' => $item->getId());
-	$template->setVariable('Confirmation', $Confirmation);
-
+	$template->setVariable('Confirmation', array('itemId' => $item->getId()));
 	return array(null, array('body' => 'modules/ecard/templates/Confirmation.tpl'));
     }
 }

@@ -22,7 +22,6 @@ GalleryCoreApi::requireOnce('modules/fotokasten/lib/nusoap.inc');
 
 /**
  * This controller sends data to fotokasten.de
- *
  * @package Fotokasten
  * @author Ioana Ciocanescu <service@fotokasten.de>
  * @version $Revision$ $Date$

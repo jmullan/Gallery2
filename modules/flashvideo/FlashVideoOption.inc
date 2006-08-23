@@ -20,7 +20,6 @@
 
 /**
  * This ItemAddOption adds the FlashVideoRenderer for any video/x-flv item.
- *
  * @package FlashVideo
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

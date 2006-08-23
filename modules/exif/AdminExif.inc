@@ -21,8 +21,7 @@
 GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
 
 /**
- * This controller will handle the setting of Exif module options
- *
+ * Settings for Exif
  * @package Exif
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -339,10 +338,7 @@ class AdminExifController extends GalleryController {
 }
 
 /**
- * This view will prompt for general Gallery settings
- *
- * @package Exif
- * @subpackage UserInterface
+ * Settings for Exif
  */
 class AdminExifView extends GalleryView {
 
@@ -417,11 +413,9 @@ class AdminExifView extends GalleryView {
 	$AdminExif['summaryList'] = $summaryList;
 	$AdminExif['detailedList'] = $detailedList;
 
-	$template->setVariable('controller', 'exif.AdminExif');
 	$template->setVariable('AdminExif', $AdminExif);
-
-	return array(null,
-		     array('body' => 'modules/exif/templates/AdminExif.tpl'));
+	$template->setVariable('controller', 'exif.AdminExif');
+	return array(null, array('body' => 'modules/exif/templates/AdminExif.tpl'));
     }
 }
 ?>

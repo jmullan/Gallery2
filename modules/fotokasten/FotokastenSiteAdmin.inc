@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Fotokasten
  * @package Fotokasten
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -66,8 +67,7 @@ class FotokastenSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Fotokasten
- * @subpackage UserInterface
+ * Settings for Fotokasten
  */
 class FotokastenSiteAdminView extends GalleryView {
 
@@ -92,8 +92,7 @@ class FotokastenSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'fotokasten.FotokastenSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/fotokasten/templates/FotokastenSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/fotokasten/templates/FotokastenSiteAdmin.tpl'));
     }
 }
 ?>
