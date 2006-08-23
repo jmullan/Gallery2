@@ -39,8 +39,7 @@ class MembersListView extends GalleryView {
 	    return array($ret, null);
 	}
 	if (!$result) {
-	    return array(null,
-			 array('redirect' => array('view' => 'core.ShowItem')));
+	    return array(null, array('redirect' => array('view' => 'core.ShowItem')));
 	}
 
 	if ($form['formName'] != 'MembersList') {
@@ -100,7 +99,6 @@ class MembersListView extends GalleryView {
 
 	$form['list']['totalUserCount'] = $totalUserCount;
 
-	/* Render the HTML body */
 	$template->setVariable('MembersList', $MembersList);
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'members');
@@ -109,8 +107,7 @@ class MembersListView extends GalleryView {
 	}
 
 	$template->title($module->translate('Members List'));
-	return array(null,
-		     array('body' => 'modules/members/templates/MembersList.tpl'));
+	return array(null, array('body' => 'modules/members/templates/MembersList.tpl'));
     }
 }
 ?>

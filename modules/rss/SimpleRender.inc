@@ -25,7 +25,6 @@ GalleryCoreApi::requireOnce('modules/rss/Render.inc');
 
 /**
  * Render the Simple Feed
- *
  * @package Rss
  * @subpackage UserInterface
  * @author Jonatan Heyman <http://heyman.info>
@@ -34,6 +33,7 @@ GalleryCoreApi::requireOnce('modules/rss/Render.inc');
  * @version $Revision$ $Date$
  */
 class SimpleRenderView extends RenderView {
+
     /**
      * @see GalleryView::renderImmediate
      */

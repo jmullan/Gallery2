@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Registration
  * @package Registration
  * @subpackage UserInterface
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
@@ -105,6 +106,9 @@ class AdminSelfRegistrationController extends GalleryController {
     }
 }
 
+/**
+ * Settings for Registration
+ */
 class AdminSelfRegistrationView extends GalleryView {
 
     /**
@@ -119,8 +123,9 @@ class AdminSelfRegistrationView extends GalleryView {
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
-	if ($ret)
+	if ($ret) {
 	    return array($ret, null);
+	}
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminSelfRegistration') {
@@ -167,11 +172,10 @@ class AdminSelfRegistrationView extends GalleryView {
 	    'auto' => $module->translate('Accept without confirmation') );
 	$selfregistration['reallySendList'] = array(
 	    'true' => $module->translate('Yes'), 'false' => $module->translate('No') );
+
 	$template->setVariable('SelfRegistration', $selfregistration);
 	$template->setVariable('controller', 'register.AdminSelfRegistration');
-
-	return array(null,
-		     array('body' => 'modules/register/templates/AdminSelfRegistration.tpl'));
+	return array(null, array('body' => 'modules/register/templates/AdminSelfRegistration.tpl'));
     }
 }
 ?>

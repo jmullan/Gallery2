@@ -20,7 +20,6 @@
 
 /**
  * Callbacks for the quotas block
- *
  * @package Quotas
  * @author  Robert Balousek <volksport@users.sf.net>
  * @version $Revision$ $Date$

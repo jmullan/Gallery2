@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Keyword Albums
  * @package KeyAlbum
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -77,8 +78,7 @@ class KeywordAlbumSiteAdminController extends GalleryController {
 }
 
 /**
- * @package KeyAlbum
- * @subpackage UserInterface
+ * Settings for Keyword Albums
  */
 class KeywordAlbumSiteAdminView extends GalleryView {
 
@@ -171,8 +171,7 @@ class KeywordAlbumSiteAdminView extends GalleryView {
 
 	$template->setVariable('KeywordAlbumSiteAdmin', $KeywordAlbumSiteAdmin);
 	$template->setVariable('controller', 'keyalbum.KeywordAlbumSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/keyalbum/templates/KeywordAlbumSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/keyalbum/templates/KeywordAlbumSiteAdmin.tpl'));
     }
 }
 ?>

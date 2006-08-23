@@ -127,8 +127,7 @@ class AdminDeleteGroupQuotaView extends GalleryView {
 
 	$template->setVariable('AdminDeleteGroupQuota', $AdminDeleteGroupQuota);
 	$template->setVariable('controller', 'quotas.AdminDeleteGroupQuota');
-	return array(null,
-		     array('body' => 'modules/quotas/templates/AdminDeleteGroupQuota.tpl'));
+	return array(null, array('body' => 'modules/quotas/templates/AdminDeleteGroupQuota.tpl'));
     }
 }
 ?>

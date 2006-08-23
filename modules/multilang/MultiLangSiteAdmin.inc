@@ -19,8 +19,7 @@
  */
 
 /**
- * This controller will handle the setting of MultiLang module options
- *
+ * Settings for MultiLang
  * @package MultiLang
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -60,10 +59,7 @@ class MultiLangSiteAdminController extends GalleryController {
 }
 
 /**
- * This view will prompt for MultiLang settings
- *
- * @package MultiLang
- * @subpackage UserInterface
+ * Settings for MultiLang
  */
 class MultiLangSiteAdminView extends GalleryView {
 
@@ -106,12 +102,10 @@ class MultiLangSiteAdminView extends GalleryView {
 	    }
 	}
 
-	$template->setVariable('controller', 'multilang.MultiLangSiteAdmin');
 	$template->setVariable('MultiLangSiteAdmin', array('availableList' => $languageList,
 							   'selectedList' => $selectedList));
-
-	return array(null,
-		     array('body' => 'modules/multilang/templates/MultiLangSiteAdmin.tpl'));
+	$template->setVariable('controller', 'multilang.MultiLangSiteAdmin');
+	return array(null, array('body' => 'modules/multilang/templates/MultiLangSiteAdmin.tpl'));
     }
 }
 ?>

@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Image Block
  * @package ImageBlock
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -71,8 +72,7 @@ class ImageBlockSiteAdminController extends GalleryController {
 }
 
 /**
- * @package ImageBlock
- * @subpackage UserInterface
+ * Settings for Image Block
  */
 class ImageBlockSiteAdminView extends GalleryView {
 
@@ -121,8 +121,7 @@ class ImageBlockSiteAdminView extends GalleryView {
 
 	$template->setVariable('ImageBlockSiteAdmin', $ImageBlockSiteAdmin);
 	$template->setVariable('controller', 'imageblock.ImageBlockSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/imageblock/templates/ImageBlockSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/imageblock/templates/ImageBlockSiteAdmin.tpl'));
     }
 }
 ?>

@@ -20,13 +20,12 @@
 
 /**
  * Controller to create a new album for the photos.
- *
- * Allows the user to create a new album underneath the parent they selected.
- * The user can specify the name, title, and summary for the album.  The user
- * is redirected back to the select album page after creating the album with
- * the newly created album automatically selected.
+ * Allows the user to create a new album underneath the parent they selected.  The user can
+ * specify the name, title, and summary for the album.  The user is redirected back to the select
+ * album page after creating the album with the newly created album automatically selected.
  *
  * @package PublishXp
+ * @subpackage UserInterface
  * @author Timothy Webb <tiwebb@cisco.com>
  * @version $Revision$ $Date$
  */
@@ -83,14 +82,9 @@ class NewAlbumController extends GalleryController {
 
 /**
  * View to create a new album for the photos.
- *
- * Allows the user to create a new album underneath the parent they selected.
- * The user can specify the name, title, and summary for the album.  The user
- * is redirected back to the select album page after creating the album with
- * the newly created album automatically selected.
- *
- * @package PublishXp
- * @subpackage UserInterface
+ * Allows the user to create a new album underneath the parent they selected.  The user can
+ * specify the name, title, and summary for the album.  The user is redirected back to the select
+ * album page after creating the album with the newly created album automatically selected.
  */
 class NewAlbumView extends GalleryView {
     /**
@@ -140,9 +134,8 @@ class NewAlbumView extends GalleryView {
 	$template->setVariable('controller', 'publishxp.NewAlbum');
 	$template->head('modules/publishxp/templates/Head.tpl');
 
-	return array(null,
-		     array('body' => 'modules/publishxp/templates/NewAlbum.tpl',
-			   'useFullScreen' => true));
+	return array(null, array('body' => 'modules/publishxp/templates/NewAlbum.tpl',
+				 'useFullScreen' => true));
     }
 }
 ?>

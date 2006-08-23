@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/picasa/classes/Picasa2DataParser.class');
 
 /**
+ * Perform import
  * @package Picasa
  * @subpackage UserInterface
  * @author Waldemar Schlackow <waldemar@opencodes.org> based on the migrate module by Jesse Mullan
@@ -310,9 +311,8 @@ class ConfirmPicasaImportController extends GalleryController {
 }
 
 /**
-* @package Picasa
-* @subpackage UserInterface
-*/
+ * Confirm selections before performing import
+ */
 class ConfirmPicasaImportView extends GalleryView {
 
     /**
@@ -364,8 +364,9 @@ class ConfirmPicasaImportView extends GalleryView {
 	$ConfirmPicasaImport['illegalAlbumNames'] = $illegalAlbumNames;
 	$ConfirmPicasaImport['destinationAlbumId'] = $destinationAlbumId;
 	$ConfirmPicasaImport['targetAlbum'] = (array)$targetAlbum;
-	$template->setVariable('controller', 'picasa.ConfirmPicasaImport');
+
 	$template->setVariable('ConfirmPicasaImport', $ConfirmPicasaImport);
+	$template->setVariable('controller', 'picasa.ConfirmPicasaImport');
 	return array(null, array('body' => 'modules/picasa/templates/ConfirmPicasaImport.tpl'));
     }
 }

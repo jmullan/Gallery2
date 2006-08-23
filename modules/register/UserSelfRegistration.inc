@@ -31,9 +31,7 @@ class UserSelfRegistrationController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	GalleryCoreApi::requireOnce(
-	    'modules/register/classes/GalleryPendingUserHelper.class');
-	global $gallery;
+	GalleryCoreApi::requireOnce('modules/register/classes/GalleryPendingUserHelper.class');
 
 	$results = $status = $error = array();
 	if (isset($form['action']['cancel'])) {
@@ -204,8 +202,6 @@ class UserSelfRegistrationView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	if ($form['formName'] != 'UserSelfRegistration') {
 	    /* First time around, set our defaults here. */
 	    $form['userName'] = '';
@@ -244,9 +240,7 @@ class UserSelfRegistrationView extends GalleryView {
 
 	$template->setVariable('UserSelfRegistration', $UserSelfRegistration);
 	$template->setVariable('controller', 'register.UserSelfRegistration');
-
-	return array(null,
-		     array('body' => 'modules/register/templates/UserSelfRegistration.tpl'));
+	return array(null, array('body' => 'modules/register/templates/UserSelfRegistration.tpl'));
     }
 }
 ?>

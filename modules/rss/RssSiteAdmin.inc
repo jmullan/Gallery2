@@ -22,6 +22,7 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 GalleryCoreApi::requireOnce('modules/rss/classes/RssHelper.class');
 
 /**
+ * Settings for RSS
  * @package Rss
  * @subpackage UserInterface
  * @author Jonatan Heyman <http://heyman.info>
@@ -30,6 +31,7 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssHelper.class');
  * @version $Revision$ $Date$
  */
 class RssSiteAdminController extends GalleryController {
+
     /**
      * @see GalleryController::handleRequest
      */
@@ -137,8 +139,7 @@ class RssSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Rss
- * @subpackage UserInterface
+ * Settings for RSS
  */
 class RssSiteAdminView extends GalleryView {
 
@@ -201,8 +202,8 @@ class RssSiteAdminView extends GalleryView {
 	    $RssSiteAdmin['feeds'] = $feeds;
 	}
 
-	$template->setVariable('controller', 'rss.RssSiteAdmin');
 	$template->setVariable('RssSiteAdmin', $RssSiteAdmin);
+	$template->setVariable('controller', 'rss.RssSiteAdmin');
 	return array(null, array('body' => 'modules/rss/templates/RssSiteAdmin.tpl'));
     }
 }

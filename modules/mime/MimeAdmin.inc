@@ -19,8 +19,9 @@
  */
 
 /**
+ * Settings for Mime types
  * @package Mime
- * @subpackage Administration
+ * @subpackage UserInterface
  * @author Felix Rabinovich <Felix@Rabinovich.org>
  * @version $Revision$ $Date$
  */
@@ -68,8 +69,7 @@ class MimeAdminController extends GalleryController {
 }
 
 /**
- * @package Mime
- * @subpackage Administration
+ * Settings for Mime types
  */
 class MimeAdminView extends GalleryView {
 
@@ -108,8 +108,8 @@ class MimeAdminView extends GalleryView {
 	    $MimeAdmin[$mimeType]['viewable'] = $typeMap['viewable'][$mimeType];
 	}
 
-	$template->setVariable('controller', 'mime.MimeAdmin');
 	$template->setVariable('MimeAdmin', $MimeAdmin);
+	$template->setVariable('controller', 'mime.MimeAdmin');
 	return array(null, array('body' => 'modules/mime/templates/MimeAdmin.tpl'));
     }
 }

@@ -132,9 +132,6 @@ class AdminEditUserQuotaController extends GalleryController {
 
 /**
  * This view will show options available to user quotas
- *
- * @package Quotas
- * @subpackage UserInterface
  */
 class AdminEditUserQuotaView extends GalleryView {
 
@@ -182,11 +179,10 @@ class AdminEditUserQuotaView extends GalleryView {
 	$AdminEditUserQuota['quotaUnitChoices'] = array('KB' => $module->translate('KB'),
 							'MB' => $module->translate('MB'),
 							'GB' => $module->translate('GB'));
+
 	$template->setVariable('AdminEditUserQuota', $AdminEditUserQuota);
 	$template->setVariable('controller', 'quotas.AdminEditUserQuota');
-
-	return array(null,
-		     array('body' => 'modules/quotas/templates/AdminEditUserQuota.tpl'));
+	return array(null, array('body' => 'modules/quotas/templates/AdminEditUserQuota.tpl'));
     }
 }
 ?>

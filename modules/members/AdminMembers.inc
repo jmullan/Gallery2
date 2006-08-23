@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Members
  * @package Members
  * @subpackage UserInterface
  * @author Robert Balousek <rbalousek@hotmail.com>
@@ -65,8 +66,7 @@ class AdminMembersController extends GalleryController {
 }
 
 /**
- * @package Members
- * @subpackage UserInterface
+ * Settings for Members
  */
 class AdminMembersView extends GalleryView {
 
@@ -111,11 +111,10 @@ class AdminMembersView extends GalleryView {
 					$groupIds[0] => $module->translate('Site Admins'));
 	$members['emailViews'] = array(true => $module->translate('Show Email Addresses'),
 				       false => $module->translate("Don't Show Email Addresses"));
+
 	$template->setVariable('Members', $members);
 	$template->setVariable('controller', 'members.AdminMembers');
-
-	return array(null,
-		     array('body' => 'modules/members/templates/AdminMembers.tpl'));
+	return array(null, array('body' => 'modules/members/templates/AdminMembers.tpl'));
     }
 }
 ?>

@@ -20,7 +20,6 @@
 
 /**
  * This controller handles printing a single photo
- *
  * @package PhotoAccess
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

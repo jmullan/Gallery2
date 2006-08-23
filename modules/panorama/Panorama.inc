@@ -19,6 +19,7 @@
  */
 
 /**
+ * Show image in panorama viewer
  * @package Panorama
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -30,7 +31,6 @@ class PanoramaView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
 	GalleryCoreApi::requireOnce('modules/panorama/classes/PanoramaHelper.class');
 
 	list ($ret, $item) = $this->_getItem();

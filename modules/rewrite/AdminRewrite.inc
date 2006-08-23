@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for URL Rewrite
  * @package Rewrite
  * @subpackage UserInterface
  * @author Douglas Cau <douglas@cau.se>
@@ -158,8 +159,7 @@ class AdminRewriteController extends GalleryController {
 }
 
 /**
- * @package Rewrite
- * @subpackage UserInterface
+ * Settings for URL Rewrite
  */
 class AdminRewriteView extends GalleryView {
 
@@ -333,11 +333,8 @@ class AdminRewriteView extends GalleryView {
 
 	$template->setVariable('AdminRewrite', $AdminRewrite);
 	$template->setVariable('controller', 'rewrite.AdminRewrite');
-
 	$template->javascript('lib/javascript/BlockToggle.js');
-
-	return array(null,
-	    array('body' => 'modules/rewrite/templates/AdminRewrite.tpl'));
+	return array(null, array('body' => 'modules/rewrite/templates/AdminRewrite.tpl'));
     }
 }
 ?>

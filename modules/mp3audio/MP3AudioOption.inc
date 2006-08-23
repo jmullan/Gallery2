@@ -20,7 +20,6 @@
 
 /**
  * This ItemAddOption adds the MP3AudioRenderer for any audio/mpeg item.
- *
  * @package MP3Audio
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

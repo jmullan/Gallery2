@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/picasa/classes/Picasa2DataParser.class');
 
 /**
+ * First step of import process
  * @version $Revision$ $Date$
  * @package Picasa
  * @subpackage UserInterface
@@ -90,7 +91,11 @@ class SelectPicasaExportPathController extends GalleryController {
     }
 }
 
+/**
+ * First step of import process
+ */
 class SelectPicasaExportPathView extends GalleryView {
+
     /**
      * @see GalleryView::loadTemplate
      */

@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle the reupload of a photo
+ * This ItemEditOption will handle the reupload of a photo
  * @package Reupload
  * @subpackage UserInterface
  * @author Piotr P. Karwasz <piotr.karwasz@ens.fr>
@@ -34,8 +34,7 @@ class ReuploadPhotoOption extends ItemEditOption {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 
 	if (!empty($form['tmp_name']['reupload']) && !empty($form['size']['reupload'])) {
 	    $inputFileName = $form['tmp_name']['reupload'];
@@ -47,8 +46,7 @@ class ReuploadPhotoOption extends ItemEditOption {
 
 	    if (!$platform->is_uploaded_file($inputFileName)
 		    || !$platform->file_exists($inputFileName)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
-			     null, null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null, null);
 	    }
 
 	    list ($ret, $path) = $item->fetchPath();
@@ -73,20 +71,17 @@ class ReuploadPhotoOption extends ItemEditOption {
 	    $tmpfname = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'tmp_');
 	    if (!$tmpfname) {
 		GalleryCoreApi::releaseLocks($lockIds);
-		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
-			     null, null);
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 	    }
 	    if (!$platform->copy($path, $tmpfname)) {
 		$platform->unlink($tmpfname);
 		GalleryCoreApi::releaseLocks($lockIds);
-		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
-			     null, null);
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 	    }
 	    if (!$platform->copy($inputFileName, $path)) {
 		$platform->unlink($tmpfname);
 		GalleryCoreApi::releaseLocks($lockIds);
-		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE),
-			     null, null);
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 	    }
 
 	    $ret = $item->rescan();
@@ -177,17 +172,15 @@ class ReuploadPhotoOption extends ItemEditOption {
 		      'uploadsPermitted' => $fileUploadsBool));
 
 
-	return array(null,
-		     'modules/reupload/templates/ReuploadPhotoOption.tpl',
-		     'modules_reupload');
+	return array(null, 'modules/reupload/templates/ReuploadPhotoOption.tpl',
+			   'modules_reupload');
     }
 
     /**
      * @see ItemEditOption::isAppropriate
      */
     function isAppropriate($item, $thumbnail) {
-	return array(null,
-		     GalleryUtilities::isA($item, 'GalleryPhotoItem'));
+	return array(null, GalleryUtilities::isA($item, 'GalleryPhotoItem'));
     }
 }
 ?>

@@ -19,12 +19,14 @@
  */
 
 /**
+ * Perform G1 migration
  * @package Migrate
  * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
  * @version $Revision$ $Date$
  */
 class ConfirmImportController extends GalleryController {
+
     /**
      * @see GalleryController::handleRequest
      */
@@ -1501,8 +1503,7 @@ class ConfirmImportController extends GalleryController {
 
 
 /**
- * @package Migrate
- * @subpackage UserInterface
+ * Confirm selections before performing G1 migration
  */
 class ConfirmImportView extends GalleryView {
 
@@ -1627,10 +1628,10 @@ class ConfirmImportView extends GalleryView {
 	$ConfirmImport['targetAlbum'] = (array)$targetAlbum;
 	$ConfirmImport['titles'] = $titles;
 	$ConfirmImport['canHide'] = isset($hiddenInterface);
-	$template->setVariable('controller', 'migrate.ConfirmImport');
+
 	$template->setVariable('ConfirmImport', $ConfirmImport);
-	return array(null,
-		     array('body' => 'modules/migrate/templates/ConfirmImport.tpl'));
+	$template->setVariable('controller', 'migrate.ConfirmImport');
+	return array(null, array('body' => 'modules/migrate/templates/ConfirmImport.tpl'));
     }
 }
 ?>

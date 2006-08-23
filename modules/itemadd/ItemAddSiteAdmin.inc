@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Item Add
  * @package ItemAdd
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -123,8 +124,7 @@ class ItemAddSiteAdminController extends GalleryController {
 }
 
 /**
- * @package ItemAdd
- * @subpackage UserInterface
+ * Settings for Item Add
  */
 class ItemAddSiteAdminView extends GalleryView {
 

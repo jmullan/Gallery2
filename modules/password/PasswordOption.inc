@@ -20,7 +20,6 @@
 
 /**
  * ItemEditOption for adding password protection to an item or album
- *
  * @package Password
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

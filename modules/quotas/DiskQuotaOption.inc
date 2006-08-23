@@ -25,7 +25,6 @@
  * @author Robert Balousek <volksport@users.sf.net>
  * @version $Revision$ $Date$
  */
-
 class DiskQuotaOption extends ItemAddOption {
 
     /**
@@ -39,11 +38,10 @@ class DiskQuotaOption extends ItemAddOption {
      * @see ItemAddOption::handleRequestAfterAdd
      */
     function handleRequestAfterAdd($form, $items) {
+	global $gallery;
 	GalleryCoreApi::requireOnce('modules/quotas/classes/GalleryQuotasHelper.class');
 
-	global $gallery;
-	$warnings = array();
-	$errors = array();
+	$warnings = $errors = array();
 
 	/* user's disk quota in KB */
 	list ($ret, $quotaExists, $userDiskQuota) =

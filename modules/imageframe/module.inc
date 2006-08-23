@@ -36,7 +36,7 @@ class ImageFrameModule extends GalleryModule {
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(7, 4));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredModuleApi(array(3, 2));
     }
 
     /**

@@ -121,9 +121,6 @@ class AdminCreateUserQuotaController extends GalleryController {
 
 /**
  * This view will prompt for data to create a new user
- *
- * @package Quotas
- * @subpackage UserInterface
  */
 class AdminCreateUserQuotaView extends GalleryView {
 
@@ -161,11 +158,10 @@ class AdminCreateUserQuotaView extends GalleryView {
 	$AdminCreateUserQuota['quotaUnitChoices'] = array('KB' => $module->translate('KB'),
 							  'MB' => $module->translate('MB'),
 							  'GB' => $module->translate('GB'));
+
 	$template->setVariable('AdminCreateUserQuota', $AdminCreateUserQuota);
 	$template->setVariable('controller', 'quotas.AdminCreateUserQuota');
-
-	return array(null,
-		     array('body' => 'modules/quotas/templates/AdminCreateUserQuota.tpl'));
+	return array(null, array('body' => 'modules/quotas/templates/AdminCreateUserQuota.tpl'));
     }
 }
 ?>

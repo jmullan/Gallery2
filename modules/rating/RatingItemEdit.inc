@@ -19,8 +19,9 @@
  */
 
 /**
- * This controller will handle storing rating options for Gallery albums
+ * This ItemEdit option will handle storing rating options for Gallery albums
  * @package Rating
+ * @subpackage UserInterface
  * @author Don Seiler <don@seiler.us>
  * @version $Revision$ $Date$
  */
@@ -58,20 +59,14 @@ class RatingItemEdit extends ItemEditOption {
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	if (empty($form['error'])) {
-
-	    list ($ret, $form['rating']['enabled']) = GalleryCoreApi::getPluginParameter('module',
-		    'rating',
-		    'enabled',
-		    $item->getId());
+	    list ($ret, $form['rating']['enabled']) =
+		GalleryCoreApi::getPluginParameter('module', 'rating', 'enabled', $item->getId());
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
 	}
 
-
-	return array(null,
-		'modules/rating/templates/RatingItemEdit.tpl',
-		'modules_rating');
+	return array(null, 'modules/rating/templates/RatingItemEdit.tpl', 'modules_rating');
     }
 
     /**
@@ -80,6 +75,5 @@ class RatingItemEdit extends ItemEditOption {
     function isAppropriate($item, $thumbnail) {
 	return array(null, true);
     }
-
 }
 ?>

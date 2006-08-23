@@ -22,6 +22,7 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 GalleryCoreApi::requireOnce('modules/rss/classes/RssHelper.class');
 
 /**
+ * Edit RSS feed settings
  * @package Rss
  * @subpackage UserInterface
  * @author Jonatan Heyman <http://heyman.info>,
@@ -190,9 +191,6 @@ class EditFeedController extends GalleryController {
 
 /**
  * This view will show a form to generate an URL to an RSS feed.
- *
- * @package Rss
- * @subpackage UserInterface
  */
 class EditFeedView extends GalleryView {
     /**
@@ -339,8 +337,7 @@ class EditFeedView extends GalleryView {
 	$template->setVariable('EditFeed', $EditFeed);
 	$template->setVariable('param', $param);
 	$template->setVariable('controller', 'rss.EditFeed');
-	return array(null,
-	    array('body' => 'modules/rss/templates/EditFeed.tpl'));
+	return array(null, array('body' => 'modules/rss/templates/EditFeed.tpl'));
     }
 }
 ?>

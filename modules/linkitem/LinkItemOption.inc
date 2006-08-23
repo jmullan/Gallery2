@@ -43,9 +43,7 @@ class LinkItemOption extends ItemEditOption {
 	    $form['LinkItemOption']['link'] = $item->getLink();
 	}
 
-	return array(null,
-		    'modules/linkitem/templates/LinkItemOption.tpl',
-		    'modules_linkitem');
+	return array(null, 'modules/linkitem/templates/LinkItemOption.tpl', 'modules_linkitem');
     }
 
     /**

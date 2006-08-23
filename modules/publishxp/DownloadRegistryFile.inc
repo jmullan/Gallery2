@@ -20,16 +20,15 @@
 
 /**
  * Generates the Windows registry file for web publishing.
- *
- * This is an immediate view which generates the registry file for Windows.
- * The information in the registry file informs Windows that there is a web service
- * which supports uploading media.
+ * This is an immediate view which generates the registry file for Windows.  The information in
+ * the registry file informs Windows that there is a web service which supports uploading media.
  *
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
  * @version $Revision$ $Date$
  */
 class DownloadRegistryFileView extends GalleryView {
+
     /**
      * @see GalleryView::isImmediate
      */
@@ -39,10 +38,8 @@ class DownloadRegistryFileView extends GalleryView {
 
     /**
      * Renders the Windows registry file.
-     *
-     * Generates the registry file to be downloaded and installed on Windows
-     * systems.  The gallery name and hostname are used as part of the web service
-     * for publishing.
+     * Generates the registry file to be downloaded and installed on Windows systems.
+     * The gallery name and hostname are used as part of the web service for publishing.
      *
      * @see GalleryView::renderImmediate
      */

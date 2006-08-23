@@ -22,7 +22,6 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
 
 /**
  * This view will show a list of feeds.
- *
  * @package Rss
  * @subpackage UserInterface
  * @author Jonatan Heyman <http://heyman.info>
@@ -31,23 +30,19 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
  * @version $Revision$ $Date$
  */
 class FeedListView extends GalleryView {
+
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	$FeedList['feeds'] = $feeds;
-
-	$template->setVariable('FeedList', $FeedList);
+	$template->setVariable('FeedList', array('feeds' => $feeds));
 	$template->setVariable('view', 'rss.FeedList');
-	return array(null,
-	    array('body' => 'modules/rss/templates/FeedList.tpl'));
+	return array(null, array('body' => 'modules/rss/templates/FeedList.tpl'));
     }
 }
 ?>

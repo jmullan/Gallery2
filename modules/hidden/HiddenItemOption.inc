@@ -20,7 +20,6 @@
 
 /**
  * ItemEditOption for hiding an item
- *
  * @package Hidden
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

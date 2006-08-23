@@ -19,9 +19,7 @@
  */
 
 /**
- * This controller will switch the ItemDetails mode in the session
- * and return to the previous page
- *
+ * This controller will switch the ItemDetails mode in the session and return to the previous page
  * @package Getid3
  * @subpackage UserInterface
  * @author Don Willingham <donwillingham@users.sf.net>
@@ -51,6 +49,5 @@ class Getid3DetailModeController extends GalleryController {
 
 	return array(null, $results);
     }
-
 }
 ?>

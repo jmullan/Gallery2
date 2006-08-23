@@ -62,8 +62,7 @@ class ExternalCSSController extends GalleryController {
 }
 
 /**
- * @package ImageBlock
- * @subpackage UserInterface
+ * Generate CSS when no frames are selected
  */
 class ExternalCSSView extends GalleryView {
 

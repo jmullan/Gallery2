@@ -20,7 +20,6 @@
 
 /**
  * This controller will handle the creation of a group quota
- *
  * @package Quotas
  * @subpackage UserInterface
  * @author Robert Balousek <volksport@users.sf.net>
@@ -158,11 +157,10 @@ class AdminCreateGroupQuotaView extends GalleryView {
 	$AdminCreateGroupQuota['quotaUnitChoices'] = array('KB' => $module->translate('KB'),
 							   'MB' => $module->translate('MB'),
 							   'GB' => $module->translate('GB'));
+
 	$template->setVariable('AdminCreateGroupQuota', $AdminCreateGroupQuota);
 	$template->setVariable('controller', 'quotas.AdminCreateGroupQuota');
-
-	return array(null,
-		     array('body' => 'modules/quotas/templates/AdminCreateGroupQuota.tpl'));
+	return array(null, array('body' => 'modules/quotas/templates/AdminCreateGroupQuota.tpl'));
     }
 }
 ?>

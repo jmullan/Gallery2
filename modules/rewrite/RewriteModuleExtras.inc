@@ -19,9 +19,11 @@
  */
 
 /**
+ * Additional upgrade/event handling code
  * @package Rewrite
  * @author Douglas Cau <douglas@cau.se>
  * @version $Revision$ $Date$
+ * @static
  */
 class RewriteModuleExtras {
 

@@ -19,6 +19,7 @@
  */
 
 /**
+ * This plugin handles adding new link items
  * @package LinkItem
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

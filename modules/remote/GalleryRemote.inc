@@ -22,19 +22,15 @@ GalleryCoreApi::requireOnce('modules/remote/classes/GalleryRemoteProperties.clas
 GalleryCoreApi::requireOnce('modules/remote/classes/GalleryRemoteConstants.class');
 
 /**
- * This controller fields requests from Gallery Remote and perform any required changes
+ * This controller fields requests from Gallery Remote and performs any required changes
  * to the data model.
- *
  * @package Remote
- * @subpackage UserInterface
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
  * @version $Revision$ $Date$
  */
 class GalleryRemoteController extends GalleryController {
     /**
-     * ItemAddOption instances to use when handling this request.  Only used by
-     * test code.
-     *
+     * ItemAddOption instances to use when handling this request.  Only used by test code.
      * @var array (optionId => object ItemAddOption) $_optionInstances
      * @access private
      */
@@ -1060,9 +1056,6 @@ class GalleryRemoteController extends GalleryController {
 
 /**
  * This is an immediate view that emits well formed Gallery Remote protocol 2 output
- *
- * @package Remote
- * @subpackage UserInterface
  */
 class GalleryRemoteView extends GalleryView {
 

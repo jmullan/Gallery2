@@ -20,13 +20,13 @@
 
 /**
  * Empty view used when the photo is successfully uploaded.
- *
  * Each photo is uploaded via a seperate HTTP request.  The initial response from
  * this page is to return JavaScript code that instructs Windows how to upload
  * the photos.  Subsequent requests from Windows include the photo data and text.
  * This page processes the data and applies the options to be used while uploading.
  *
  * @package PublishXp
+ * @subpackage UserInterface
  * @author Timothy Webb <tiwebb@cisco.com>
  * @version $Revision$ $Date$
  */

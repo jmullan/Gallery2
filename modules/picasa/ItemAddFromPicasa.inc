@@ -19,9 +19,7 @@
  */
 
 /**
- * This plugin enables the upload of ZIP (or similar) Picasa export
- * archives to import them into G2
- *
+ * This plugin enables the upload of ZIP (or similar) Picasa export archives to import them into G2
  * @package Picasa
  * @subpackage UserInterface
  * @author Waldemar Schlackow <waldemar@opencodes.org>

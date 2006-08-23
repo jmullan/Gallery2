@@ -19,8 +19,7 @@
  */
 
 /**
- * This ItemAdd plugin adds items uploaded from the web browser.
- *
+ * This ItemAdd plugin shows information about Gallery Remote
  * @package Remote
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -36,12 +35,8 @@ class ItemAddGalleryRemote extends ItemAddPlugin {
 	    $form['formName'] = 'ItemAddGalleryRemote';
 	}
 
-	$ItemAddGalleryRemote = array();
-	$template->setVariable('ItemAddGalleryRemote', $ItemAddGalleryRemote);
-
-	return array(null,
-		     'modules/remote/templates/ItemAddGalleryRemote.tpl',
-		     'modules_remote');
+	$template->setVariable('ItemAddGalleryRemote', array());
+	return array(null, 'modules/remote/templates/ItemAddGalleryRemote.tpl', 'modules_remote');
     }
 
     /**

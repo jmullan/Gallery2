@@ -19,9 +19,7 @@
  */
 
 /**
- * This ItemAddOption an mp3's id3 title value for the
- * gallery item title when an mp3 is uploaded
- *
+ * This ItemAddOption uses an mp3's id3 title value for the item title when an mp3 is uploaded
  * @package Getid3
  * @subpackage UserInterface
  * @author Don Willingham <donwillingham@users.sf.net>
@@ -45,8 +43,7 @@ class Getid3DescriptionOption extends ItemAddOption {
      * @see ItemAddOption::handleRequestAfterAdd
      */
     function handleRequestAfterAdd($form, $items) {
-	$errors = array();
-	$warnings = array();
+	$errors = $warnings = array();
 	GalleryCoreApi::requireOnce('modules/getid3/classes/Getid3Extractor.class');
 	GalleryCoreApi::requireOnce('modules/getid3/classes/Getid3Helper.class');
 

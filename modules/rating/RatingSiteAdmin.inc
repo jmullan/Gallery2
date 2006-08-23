@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Ratings
  * @package Rating
  * @subpackage UserInterface
  * @author  Don Seiler <don@seiler.us>
@@ -83,8 +84,7 @@ class RatingSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Rating
- * @subpackage UserInterface
+ * Settings for Ratings
  */
 class RatingSiteAdminView extends GalleryView {
 

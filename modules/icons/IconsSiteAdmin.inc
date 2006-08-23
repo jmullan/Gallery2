@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Icons
  * @package Icons
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -61,8 +62,7 @@ class IconsSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Icons
- * @subpackage UserInterface
+ * Settings for Icons
  */
 class IconsSiteAdminView extends GalleryView {
 
@@ -97,8 +97,7 @@ class IconsSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'icons.IconsSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/icons/templates/IconsSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/icons/templates/IconsSiteAdmin.tpl'));
     }
 }
 ?>

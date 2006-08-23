@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Random Highlight
  * @package RandomHighlight
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -65,8 +66,7 @@ class RandomHighlightSiteAdminController extends GalleryController {
 }
 
 /**
- * @package RandomHighlight
- * @subpackage UserInterface
+ * Settings for Random Highlight
  */
 class RandomHighlightSiteAdminView extends GalleryView {
 

@@ -19,6 +19,7 @@
  */
 
 /**
+ * Post-activation message about URL rewrite
  * @package Permalinks
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <gallery@paour.com>
@@ -31,8 +32,7 @@ class ActivationWarningView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	$template->setVariable('controller', 'permalinks.PermalinksSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/permalinks/templates/ActivationWarning.tpl'));
+	return array(null, array('body' => 'modules/permalinks/templates/ActivationWarning.tpl'));
      }
 }
 ?>

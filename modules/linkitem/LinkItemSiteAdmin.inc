@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Link Items
  * @package LinkItem
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -64,8 +65,7 @@ class LinkItemSiteAdminController extends GalleryController {
 }
 
 /**
- * @package LinkItem
- * @subpackage UserInterface
+ * Settings for Link Items
  */
 class LinkItemSiteAdminView extends GalleryView {
 

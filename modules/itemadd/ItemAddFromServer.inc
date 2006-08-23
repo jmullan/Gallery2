@@ -19,9 +19,7 @@
  */
 
 /**
- * This controller will handle the addition of an item as a children to
- * another item.
- *
+ * This plugin will handle the addition of an items from the server filesystem.
  * @package ItemAdd
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -55,8 +53,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	$this->_platform =& $gallery->getPlatform();
 	$this->_dirSep = $this->_platform->getDirectorySeparator();
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 
 	if (isset($form['action']['addFromLocalServer'])
 		&& (!empty($form['localServerFiles']) || !empty($form['localServerDirectories']))) {

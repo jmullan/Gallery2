@@ -20,13 +20,13 @@
 
 /**
  * Controller to process the uploading of photos from Windows XP.
- *
  * Each photo is uploaded via a seperate HTTP request.  The initial response from
  * this page is to return JavaScript code that instructs Windows how to upload
  * the photos.  Subsequent requests from Windows include the photo data and text.
  * This page processes the data and applies the options to be used while uploading.
  *
  * @package PublishXp
+ * @subpackage UserInterface
  * @author Timothy Webb <tiwebb@cisco.com>
  * @version $Revision$ $Date$
  */
@@ -55,9 +55,7 @@ class UploadItemsController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$results = array();
-	$error = array();
-	$status = array();
+	$results = $error = $status = array();
 	if (isset($form['action']['uploadItem'])) {
 	    /* Check the user has permissions in this album */
 	    $ret = GalleryCoreApi::assertHasItemPermission($form['albumId'], 'core.addDataItem');
@@ -78,9 +76,8 @@ class UploadItemsController extends GalleryController {
 	    }
 
 	    /*
-	     * Get the mime type from the upload info.
-	     * If we don't get useful data from that or its a type we don't
-	     * recognize, take a swing at it using the file name.
+	     * Get the mime type from the upload info.  If we don't get useful data from that
+	     * or its a type we don't recognize, take a swing at it using the file name.
 	     */
 	    $mimeType = $file['type'];
 	    if (!empty($mimeType)) {
@@ -171,27 +168,17 @@ class UploadItemsController extends GalleryController {
 
 /**
  * View to process the uploading of photos from Windows XP.
- *
  * Each photo is uploaded via a seperate HTTP request.  The initial response from
  * this page is to return JavaScript code that instructs Windows how to upload
  * the photos.  Subsequent requests from Windows include the photo data and text.
  * This page processes the data and applies the options to be used while uploading.
- *
- * @package PublishXp
- * @subpackage UserInterface
  */
 class UploadItemsView extends GalleryView {
+
     /**
-     * Prepares any additional data before rendering the template.
-     *
-     * @author Timothy Webb <tiwebb@cisco.com>
-     * @param template the template data for rendering.
-     * @param form the form data for rendering.
-     * @return array the status and the results containing the view.
-     * @see GalleryControler:loadTemplate
+     * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
 	if ($form['formName'] != 'UploadItems') {
 	    $form['formName'] = 'UploadItems';
 	}
@@ -212,9 +199,8 @@ class UploadItemsView extends GalleryView {
 	$template->setVariable('UploadItems', $UploadItems);
 	$template->head('modules/publishxp/templates/Head.tpl');
 
-	return array(null,
-		     array('body' => 'modules/publishxp/templates/UploadItems.tpl',
-			   'useFullScreen' => true));
+	return array(null, array('body' => 'modules/publishxp/templates/UploadItems.tpl',
+				 'useFullScreen' => true));
     }
 }
 ?>

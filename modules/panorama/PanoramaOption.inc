@@ -19,7 +19,7 @@
  */
 
 /**
- * This ItemEditOption will handle switching between Photo and Panorama types
+ * This ItemEditOption will handle adding/removing the Panorama renderer
  * @package Panorama
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -61,9 +61,7 @@ class PanoramaOption extends ItemEditOption {
 	    return array($ret, null, null);
 	}
 	$form['PanoramaOption']['isPanorama'] = $item->getRenderer() == 'PanoramaRenderer';
-	return array(null,
-		     'modules/panorama/templates/PanoramaOption.tpl',
-		     'modules_panorama');
+	return array(null, 'modules/panorama/templates/PanoramaOption.tpl', 'modules_panorama');
     }
 
     /**

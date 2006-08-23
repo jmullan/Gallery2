@@ -24,6 +24,7 @@
  * photos through Windows XP's publishing mechanism.
  *
  * @package PublishXp
+ * @subpackage UserInterface
  * @author Timothy Webb <tiwebb@cisco.com>
  * @version $Revision$ $Date$
  */
@@ -80,12 +81,8 @@ class LoginController extends GalleryController {
 
 /**
  * View to initialize the process of publishing photos.
- *
  * Allows the user to log in to Gallery to begin the process of uploading
  * photos through Windows XP's publishing mechanism.
- *
- * @package PublishXp
- * @subpackage UserInterface
  */
 class LoginView extends GalleryView {
     /**
@@ -111,9 +108,8 @@ class LoginView extends GalleryView {
 	$template->setVariable('controller', 'publishxp.Login');
 	$template->head('modules/publishxp/templates/Head.tpl');
 
-	return array(null,
-		     array('body' => 'modules/publishxp/templates/Login.tpl',
-			   'useFullScreen' => true));
+	return array(null, array('body' => 'modules/publishxp/templates/Login.tpl',
+				 'useFullScreen' => true));
     }
 }
 ?>

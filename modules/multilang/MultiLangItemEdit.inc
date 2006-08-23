@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will handle storing multilanguage captions for GalleryItems
+ * This plugin will handle storing multilanguage captions for GalleryItems
  * @package MultiLang
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

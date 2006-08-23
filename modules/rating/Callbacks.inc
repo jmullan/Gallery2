@@ -35,9 +35,8 @@ class RatingCallbacks {
 		return $ret;
 	    }
 
-	    list ($ret, $allowAlbumRating) = GalleryCoreApi::getPluginParameter('module',
-		    'rating',
-		    'allowAlbumRating');
+	    list ($ret, $allowAlbumRating) =
+		GalleryCoreApi::getPluginParameter('module', 'rating', 'allowAlbumRating');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -46,17 +45,14 @@ class RatingCallbacks {
 		return null;
 	    }
 
-	    list ($ret, $permission) = GalleryCoreApi::hasItemPermission($itemId,
-		    'rating.view',
-		    $userId);
+	    list ($ret, $permission) =
+		GalleryCoreApi::hasItemPermission($itemId, 'rating.view', $userId);
 	    if ($ret) {
 		return $ret;
 	    }
-
 	    if (!$permission) {
 		return null;
 	    }
-
 
 	    GalleryCoreApi::requireOnce('modules/rating/classes/RatingHelper.class');
 	    list ($ret, $RatingData) = RatingHelper::fetchRatings(array($itemId), $userId);
@@ -94,7 +90,6 @@ class RatingCallbacks {
 	    $block =& $smarty->_tpl_vars['block'];
 	    $block['rating']['RatingData'] = $RatingData[$itemId];
 	    $block['rating']['RatingSummary'] = $RatingSummary;
-
 
 	    return null;
 	}

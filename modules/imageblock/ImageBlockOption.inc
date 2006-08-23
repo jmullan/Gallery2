@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 
 /**
+ * This option selects whether an album may be included in image blocks
  * @package ImageBlock
  * @subpackage UserInterface
  * @author Jay Rossiter <cryptographite@users.sf.net>

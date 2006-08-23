@@ -20,7 +20,6 @@
 
 /**
  * Send a binary item as HTML instead.
- *
  * This allows viewing via direct URL (browser will see it is HTML), but not using images directly
  * in a <img> tag on another site.
  *

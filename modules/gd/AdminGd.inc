@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/gd/classes/GdToolkitHelper.class');
 
 /**
+ * Settings for GD
  * @package Gd
  * @subpackage UserInterface
  * @author Ernesto Baschny <ernst@baschny.de>
@@ -83,8 +84,7 @@ class AdminGdController extends GalleryController {
 }
 
 /**
- * @package Gd
- * @subpackage UserInterface
+ * Settings for GD
  */
 class AdminGdView extends GalleryView {
 
@@ -156,8 +156,7 @@ class AdminGdView extends GalleryView {
 
 	$template->setVariable('AdminGd', $AdminGd);
 	$template->setVariable('controller', 'gd.AdminGd');
-	return array(null,
-		     array('body' => 'modules/gd/templates/AdminGd.tpl'));
+	return array(null, array('body' => 'modules/gd/templates/AdminGd.tpl'));
     }
 }
 ?>

@@ -20,23 +20,21 @@
 
 /**
  * Provide the user the option of downloading the Windows registry file.
- *
- * This ItemAdd plugin enables Windows XP users to directly upload photos.
- * This class is only responsible for building the UI to allow the user to
- * register Gallery as a publisher in XP, it doesn't actually do any of the
- * processing of images.
+ * This plugin is only responsible for building the config file to allow the user to register
+ * Gallery as a publisher in XP, it doesn't actually do any of the processing of images.
  *
  * @package PublishXp
+ * @subpackage UserInterface
  * @author Timothy Webb <tiwebb@cisco.com>
  * @version $Revision$ $Date$
  */
 class ItemAddPublishXp extends ItemAddPlugin {
+
     /**
      * @see ItemAddPlugin::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item) {
-	return array(null,
-		     'modules/publishxp/templates/ItemAddPublishXp.tpl', 'modules_publishxp');
+	return array(null, 'modules/publishxp/templates/ItemAddPublishXp.tpl', 'modules_publishxp');
     }
 
     /**

@@ -20,7 +20,6 @@
 
 /**
  * Render image block for use in external pages.
- *
  * @package ImageBlock
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

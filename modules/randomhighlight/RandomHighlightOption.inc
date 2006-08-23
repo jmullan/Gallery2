@@ -20,7 +20,6 @@
 
 /**
  * This ItemEditOption allows the user to activate random highlight for an album.
- *
  * @package RandomHighlight
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -41,9 +40,8 @@ class RandomHighlightOption extends ItemEditOption {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	$form['RandomHighlightOption']['isRandomHighlight'] =
 	    $thumbnail->hasOnLoadHandler('RandomHighlight');
-	return array(null,
-		     'modules/randomhighlight/templates/RandomHighlightOption.tpl',
-		     'modules_randomhighlight');
+	return array(null, 'modules/randomhighlight/templates/RandomHighlightOption.tpl',
+			   'modules_randomhighlight');
     }
 
     /**

@@ -19,6 +19,7 @@
  */
 
 /**
+ * Multiroot setup assistant
  * @package Multiroot
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -55,8 +56,7 @@ class ConfigureMultirootController extends GalleryController {
 }
 
 /**
- * @package Multiroot
- * @subpackage UserInterface
+ * Multiroot setup assistant
  */
 class ConfigureMultirootView extends GalleryView {
 

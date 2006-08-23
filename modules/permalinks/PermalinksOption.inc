@@ -22,7 +22,6 @@ GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.clas
 
 /**
  * This edit option allows you to create Permalinks for your item
- *
  * @package Permalinks
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <gallery@paour.com>

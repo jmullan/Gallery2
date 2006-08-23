@@ -85,8 +85,7 @@ class ConfirmRegistrationView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	$template->setVariable('controller', 'register.ConfirmRegistration');
-	return array(null,
-		     array('body' => 'modules/register/templates/ConfirmRegistration.tpl'));
+	return array(null, array('body' => 'modules/register/templates/ConfirmRegistration.tpl'));
     }
 }
 ?>

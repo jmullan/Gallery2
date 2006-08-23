@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for New Items
  * @package NewItems
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -87,6 +88,9 @@ class NewItemsSiteAdminController extends GalleryController {
     }
 }
 
+/**
+ * Settings for New Items
+ */
 class NewItemsSiteAdminView extends GalleryView {
 
     /**

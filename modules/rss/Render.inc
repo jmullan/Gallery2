@@ -32,6 +32,7 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
  * @version $Revision$ $Date$
  */
 class RenderView extends GalleryView {
+
     /**
      * @see GalleryView::isImmediate
      */

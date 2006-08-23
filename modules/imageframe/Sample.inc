@@ -19,6 +19,7 @@
  */
 
 /**
+ * Show sample of all image frames
  * @package ImageFrame
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -76,9 +77,8 @@ class SampleView extends GalleryView {
 
 	$template->setVariable('ImageFrameSample', $ImageFrameSample);
 	$template->title($module->translate('Image Frame Samples'));
-	return array(null,
-		     array('body' => 'modules/imageframe/templates/SampleBody.tpl',
-			   'useFullScreen' => true));
+	return array(null, array('body' => 'modules/imageframe/templates/SampleBody.tpl',
+				 'useFullScreen' => true));
     }
 
     /**

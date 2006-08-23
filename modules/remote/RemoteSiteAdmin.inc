@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Remote
  * @package Remote
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -57,8 +58,7 @@ class RemoteSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Remote
- * @subpackage UserInterface
+ * Settings for Remote
  */
 class RemoteSiteAdminView extends GalleryView {
 
@@ -86,8 +86,7 @@ class RemoteSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'remote.RemoteSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/remote/templates/RemoteSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/remote/templates/RemoteSiteAdmin.tpl'));
     }
 }
 ?>

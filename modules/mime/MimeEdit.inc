@@ -19,6 +19,7 @@
  */
 
 /**
+ * Edit settings for a mime type
  * @package Mime
  * @subpackage Administration
  * @author Felix Rabinovich <Felix@Rabinovich.org>
@@ -103,8 +104,7 @@ class MimeEditController extends GalleryController {
 }
 
 /**
- * @package Mime
- * @subpackage Administration
+ * Edit settings for a mime type
  */
 class MimeEditView extends GalleryView {
 

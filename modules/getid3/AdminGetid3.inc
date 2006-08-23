@@ -21,7 +21,7 @@
 GalleryCoreApi::requireOnce('modules/getid3/classes/Getid3Helper.class');
 
 /**
- * This controller will handle the setting of Getid3 module options
+ * Settings for getid3
  * @package Getid3
  * @subpackage UserInterface
  * @author Don Willingham <donwillingham@users.sf.net>
@@ -33,15 +33,12 @@ class AdminGetid3Controller extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	$error = array();
-	$status = array();
+	$error = $status = array();
 	if (isset($form['action']['availableToSummary'])) {
 	    list ($ret, $properties) = Getid3Helper::getProperties(GETID3_SUMMARY);
 	    if ($ret) {
@@ -335,8 +332,7 @@ class AdminGetid3Controller extends GalleryController {
 }
 
 /**
- * @package Getid3
- * @subpackage UserInterface
+ * Settings for getid3
  */
 class AdminGetid3View extends GalleryView {
 
@@ -344,10 +340,6 @@ class AdminGetid3View extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-//	global $gallery;
-
-//	$mode = GalleryUtilities::getRequestVariables('mode');
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
@@ -417,9 +409,8 @@ class AdminGetid3View extends GalleryView {
 	$AdminGetid3['summaryList'] = $summaryList;
 	$AdminGetid3['detailedList'] = $detailedList;
 
-	$template->setVariable('controller', 'getid3:AdminGetid3');
 	$template->setVariable('AdminGetid3', $AdminGetid3);
-
+	$template->setVariable('controller', 'getid3:AdminGetid3');
 	return array(null, array('body' => 'modules/getid3/templates/AdminGetid3.tpl'));
     }
 }

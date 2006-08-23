@@ -19,6 +19,7 @@
  */
 
 /**
+ * Initial setup for NokiaUpload
  * @package NokiaUpload
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -92,8 +93,7 @@ class ConfigureController extends GalleryController {
 }
 
 /**
- * @package NokiaUpload
- * @subpackage UserInterface
+ * Initial setup for NokiaUpload
  */
 class ConfigureView extends GalleryView {
 
@@ -127,12 +127,9 @@ class ConfigureView extends GalleryView {
 	}
 	$albumTree = GalleryUtilities::createAlbumTree($albums);
 
-	$Configure = array('albumTree' => $albumTree);
-	$template->setVariable('NokiaUploadConfigure', $Configure);
+	$template->setVariable('NokiaUploadConfigure', array('albumTree' => $albumTree));
 	$template->setVariable('controller', 'nokiaupload.Configure');
-
-	return array(null,
-		     array('body' => 'modules/nokiaupload/templates/Configure.tpl'));
+	return array(null, array('body' => 'modules/nokiaupload/templates/Configure.tpl'));
     }
 }
 ?>

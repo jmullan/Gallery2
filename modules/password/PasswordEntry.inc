@@ -19,8 +19,7 @@
  */
 
 /**
- * Controller to allow user to enter a password.
- *
+ * Verify password entry
  * @package Password
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -30,7 +29,6 @@
 class PasswordEntryController extends GalleryController {
     /**
      * ValidationPlugin instances to use when handling this request.  Only used by test code.
-     *
      * @var array $_plugins (array of GalleryValidationPlugin)
      * @access private
      */
@@ -147,9 +145,6 @@ class PasswordEntryController extends GalleryController {
 
 /**
  * View that shows user a password entry box, allowing them to the enter the password for an item.
- *
- * @package Password
- * @subpackage UserInterface
  */
 class PasswordEntryView extends GalleryView {
     /**

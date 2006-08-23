@@ -19,6 +19,7 @@
  */
 
 /**
+ * Settings for Panorama
  * @package Panorama
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
@@ -69,8 +70,7 @@ class PanoramaSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Panorama
- * @subpackage UserInterface
+ * Settings for Panorama
  */
 class PanoramaSiteAdminView extends GalleryView {
 
@@ -102,8 +102,7 @@ class PanoramaSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('controller', 'panorama.PanoramaSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/panorama/templates/PanoramaSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/panorama/templates/PanoramaSiteAdmin.tpl'));
     }
 }
 ?>

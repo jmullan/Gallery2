@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.class');
 
 /**
+ * Settings for Permalinks
  * @package Permalinks
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <gallery@paour.com>
@@ -84,8 +85,7 @@ class PermalinksSiteAdminController extends GalleryController {
 }
 
 /**
- * @package Permalinks
- * @subpackage UserInterface
+ * Settings for Permalinks
  */
 class PermalinksSiteAdminView extends GalleryView {
 
@@ -112,8 +112,7 @@ class PermalinksSiteAdminView extends GalleryView {
 
 	$template->setVariable('PermalinksSiteAdmin', $PermalinksSiteAdmin);
 	$template->setVariable('controller', 'permalinks.PermalinksSiteAdmin');
-	return array(null,
-		     array('body' => 'modules/permalinks/templates/PermalinksSiteAdmin.tpl'));
+	return array(null, array('body' => 'modules/permalinks/templates/PermalinksSiteAdmin.tpl'));
      }
 }
 ?>

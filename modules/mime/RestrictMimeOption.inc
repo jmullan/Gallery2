@@ -20,7 +20,6 @@
 
 /**
  * This ItemAddOption rejects uploads for selected mime types.
- *
  * @package Mime
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>

@@ -19,7 +19,7 @@
  */
 
 /**
- * This controller will send the user to the chosen subView in the AdminQuotas
+ * Options to add/remove/edit User/Group Quotas
  * @package Quotas
  * @subpackage UserInterface
  * @author Robert Balousek <volksport@users.sf.net>
@@ -209,9 +209,6 @@ class AdminQuotasController extends GalleryController {
 
 /**
  * This view will show available options to add/remove/edit User/Group Quotas
- *
- * @package Quotas
- * @subpackage UserInterface
  */
 class AdminQuotasView extends GalleryView {
 
@@ -326,7 +323,6 @@ class AdminQuotasView extends GalleryView {
 
 	$template->setVariable('AdminQuotas', $AdminQuotas);
 	$template->setVariable('controller', 'quotas.AdminQuotas');
-
 	return array(null, array('body' => 'modules/quotas/templates/AdminQuotas.tpl'));
     }
 }

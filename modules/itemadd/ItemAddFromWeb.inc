@@ -19,8 +19,7 @@
  */
 
 /**
- * This controller will handle the addition of an item as a children to another item.
- *
+ * This plugin will handle the addition of items from other web pages.
  * @package ItemAdd
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>

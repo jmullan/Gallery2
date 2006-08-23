@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/imagemagick/classes/ImageMagickToolkitHelper.class');
 
 /**
+ * Settings for ImageMagick
  * @package ImageMagick
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -176,8 +177,7 @@ class AdminImageMagickController extends GalleryController {
 }
 
 /**
- * @package ImageMagick
- * @subpackage UserInterface
+ * Settings for ImageMagick
  */
 class AdminImageMagickView extends GalleryView {
 
@@ -296,9 +296,7 @@ class AdminImageMagickView extends GalleryView {
 
 	$template->setVariable('AdminImageMagick', $AdminImageMagick);
 	$template->setVariable('controller', 'imagemagick.AdminImageMagick');
-
-	return array(null,
-		     array('body' => 'modules/imagemagick/templates/AdminImageMagick.tpl'));
+	return array(null, array('body' => 'modules/imagemagick/templates/AdminImageMagick.tpl'));
     }
 }
 ?>

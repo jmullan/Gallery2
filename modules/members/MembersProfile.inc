@@ -40,8 +40,7 @@ class MembersProfileView extends GalleryView {
 	    return array($ret, null);
 	}
 	if (!$result) {
-	    return array(null,
-			 array('redirect' => array('view' => 'core.ShowItem')));
+	    return array(null, array('redirect' => array('view' => 'core.ShowItem')));
 	}
 
 	$userId = GalleryUtilities::getRequestVariables('userId');
@@ -94,8 +93,7 @@ class MembersProfileView extends GalleryView {
 	}
 
 	$template->title($module->translate('Members Profile'));
-	return array(null,
-		     array('body' => 'modules/members/templates/MembersProfile.tpl'));
+	return array(null, array('body' => 'modules/members/templates/MembersProfile.tpl'));
     }
 }
 ?>

@@ -19,6 +19,7 @@
  */
 
 /**
+ * Initial setup for URL Rewrite
  * @package Rewrite
  * @subpackage UserInterface
  * @author Douglas Cau <douglas@cau.se>
@@ -104,6 +105,9 @@ class SetupRewriteController extends GalleryController {
     }
 }
 
+/**
+ * Initial setup for URL Rewrite
+ */
 class SetupRewriteView extends GalleryView {
 
     /**
@@ -179,8 +183,7 @@ class SetupRewriteView extends GalleryView {
 
 	$template->setVariable('SetupRewrite', $SetupRewrite);
 	$template->setVariable('controller', 'rewrite.SetupRewrite');
-	return array(null,
-		array('body' => 'modules/rewrite/templates/SetupRewrite.tpl'));
+	return array(null, array('body' => 'modules/rewrite/templates/SetupRewrite.tpl'));
     }
 }
 ?>

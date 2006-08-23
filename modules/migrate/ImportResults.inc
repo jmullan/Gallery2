@@ -19,6 +19,7 @@
  */
 
 /**
+ * Migration results
  * @package Migrate
  * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
@@ -52,10 +53,10 @@ class ImportResultsView extends GalleryView {
 	$ImportResults = array();
 	$ImportResults['counts'] = $counts;
 	$ImportResults['status'] = $status;
+
 	$template->setVariable('ImportResults', $ImportResults);
 	$template->setVariable('controller', 'migrate.ImportResults');
-	return array(null,
-		     array('body' => 'modules/migrate/templates/ImportResults.tpl'));
+	return array(null, array('body' => 'modules/migrate/templates/ImportResults.tpl'));
     }
 }
 ?>

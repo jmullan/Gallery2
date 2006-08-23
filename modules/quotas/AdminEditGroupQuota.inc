@@ -179,11 +179,10 @@ class AdminEditGroupQuotaView extends GalleryView {
 	$AdminEditGroupQuota['quotaUnitChoices'] = array('KB' => $module->translate('KB'),
 							 'MB' => $module->translate('MB'),
 							 'GB' => $module->translate('GB'));
+
 	$template->setVariable('AdminEditGroupQuota', $AdminEditGroupQuota);
 	$template->setVariable('controller', 'quotas.AdminEditGroupQuota');
-
-	return array(null,
-		     array('body' => 'modules/quotas/templates/AdminEditGroupQuota.tpl'));
+	return array(null, array('body' => 'modules/quotas/templates/AdminEditGroupQuota.tpl'));
     }
 }
 ?>

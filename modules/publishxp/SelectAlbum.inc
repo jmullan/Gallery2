@@ -20,12 +20,12 @@
 
 /**
  * Controller to select the album to add photos to.
- *
- * Allows the user to select the album that should have the photos added in to it.
- * Also lets the user select a parent album and go to the new album page should the
- * user wish to first create a new album.
+ * Allows the user to select the album that should have the photos added in to it.  Also lets the
+ * user select a parent album and go to the new album page should the user wish to first create a
+ * new album.
  *
  * @package PublishXp
+ * @subpackage UserInterface
  * @author Timothy Webb <tiwebb@cisco.com>
  * @version $Revision$ $Date$
  */
@@ -72,13 +72,9 @@ class SelectAlbumController extends GalleryController {
 
 /**
  * View to select the album to add photos to.
- *
- * Allows the user to select the album that should have the photos added in to it.
- * Also lets the user select a parent album and go to the new album page should the
- * user wish to first create a new album.
- *
- * @package PublishXp
- * @subpackage UserInterface
+ * Allows the user to select the album that should have the photos added in to it.  Also lets the
+ * user select a parent album and go to the new album page should the user wish to first create a
+ * new album.
  */
 class SelectAlbumView extends GalleryView {
     /**
@@ -93,8 +89,7 @@ class SelectAlbumView extends GalleryView {
 	} else {
 	    /*
 	     * In case they didn't select an album in the prior page (they're going
-	     * to get an error message, but we require form[albumId] to be set in
-	     * the template).
+	     * to get an error message, but we require form[albumId] to be set in the template).
 	     */
 	    if (!isset($form['albumId'])) {
 		$form['albumId'] = null;
@@ -132,9 +127,8 @@ class SelectAlbumView extends GalleryView {
 	$template->setVariable('controller', 'publishxp.SelectAlbum');
 	$template->head('modules/publishxp/templates/Head.tpl');
 
-	return array(null,
-		     array('body' => 'modules/publishxp/templates/SelectAlbum.tpl',
-			   'useFullScreen' => true));
+	return array(null, array('body' => 'modules/publishxp/templates/SelectAlbum.tpl',
+				 'useFullScreen' => true));
     }
 }
 ?>

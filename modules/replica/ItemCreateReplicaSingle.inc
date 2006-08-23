@@ -20,7 +20,6 @@
 
 /**
  * This controller will handle replicating one item from one album to another.
- *
  * @package Replica
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -29,16 +28,14 @@
 class ItemCreateReplicaSingleController extends GalleryController {
 
     /**
-     * Replicate the selected item into the destination album, if all the
-     * permissions are set correctly.
+     * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['link'])) {
 	    if (empty($form['destination'])) {
 		$error[] = 'form[error][destination][empty]';
@@ -157,10 +154,6 @@ class ItemCreateReplicaSingleController extends GalleryController {
 
 /**
  * This view lets you choose where you want to put the new replica
- *
- * @package Replica
- * @subpackage UserInterface
- *
  */
 class ItemCreateReplicaSingleView extends GalleryView {
 

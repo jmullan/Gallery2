@@ -21,8 +21,7 @@
 GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.class');
 
 /**
- * Perform the redirection
- *
+ * Lookup a permalink and delegate to display of that item
  * @package Permalinks
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <gallery@paour.com>

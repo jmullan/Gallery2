@@ -19,6 +19,7 @@
  */
 
 /**
+ * Import results
  * @package Picasa
  * @subpackage UserInterface
  * @author Waldemar Schlackow <gallery@schlackow.de> based on code by

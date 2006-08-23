@@ -19,6 +19,7 @@
  */
 
 /**
+ * View for 404 Not Found
  * @package Rewrite
  * @subpackage UserInterface
  * @author Douglas Cau <douglas@cau.se>
