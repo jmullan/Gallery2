@@ -750,6 +750,10 @@ class GalleryTestCase extends TestCase {
 		 . ") !== $obj2 type (" . gettype($obj2) . ')';
 	}
 
+	if (is_object($obj1)) {
+	    $obj1 = (array)$obj1;
+	    $obj2 = (array)$obj2;
+	}
 	if (is_array($obj1)) {
 	    $keys1 = array_keys($obj1);
 	    $keys2 = array_keys($obj2);
