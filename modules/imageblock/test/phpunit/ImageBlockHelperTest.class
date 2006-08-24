@@ -31,6 +31,16 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
+    function _createTopAlbum() {
+	/* Create a new album and image, set thumbnail and highlight */
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$this->_markForCleanup($album);
+	return array(null, $album);
+    }
+
     function _createHierarchy() {
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId());
@@ -207,6 +217,55 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	    $dbItemIds[] = (int)$rec[0];
 	}
 	$this->assertEquals(array(), $dbItemIds, 'Items not removed from the DisabledMap');
+    }
+
+    /**
+     * Verify the fix for bug 1536395
+     * http://sourceforge.net/tracker/index.php?func=detail&aid=1536395&group_id=7130&atid=107130
+     */
+    function testMaxSizeWithoutViewSourcePermission() {
+	global $gallery;
+
+	list ($ret, $top) = $this->_createTopAlbum();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $album) = $this->_createRandomAlbum($top->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $photo) = $this->_createRandomDataItem($album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $thumbnail) = $this->_createDerivative(
+	    $album, $photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::removeItemPermissions($photo->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $photo->getId(), $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $results) = ImageBlockHelper::_getBlockData(
+	    'title', 'Album', 'recent', 1,
+	    $top->getId(), false, null, 200 /* maxSize */);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($thumbnail->getId(), $results[0]['thumb']['id']);
     }
 }
 ?>

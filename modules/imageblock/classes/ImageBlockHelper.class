@@ -287,15 +287,29 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 				return array($ret, null);
 			    }
 			}
-			$ret = GalleryCoreApi::assertHasItemPermission(
-			    GalleryUtilities::isA($source, 'GalleryDerivative') ?
-				$source->getParentId() : $source->getId(),
+
+			list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission(
+			    (GalleryUtilities::isA($source, 'GalleryDerivative') ?
+			     $source->getParentId() : $source->getId()),
 			    'core.viewSource');
 			if ($ret) {
-			    /* Ignore permission error.. just don't add a block */
-			    continue;
+			    return array($ret, null);
 			}
-			$image = $source;
+
+			if ($hasPermission) {
+			    $image = $source;
+			} else {
+			    if ($fullSize) {
+				/* Ignore permission error.. just don't add a block */
+				continue;
+			    }
+
+			    /*
+			     * We can't use this preferred because we don't have permissions
+			     * for it.  But we may still be able to use the thumbnail.
+			     */
+			    $image = $thumbnail[$id];
+			}
 		    }
 
 		    if ($maxSize && !$fullSize) {
@@ -328,8 +342,17 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			     *
 			     * If $biggerOnly is set, then we don't want any negative differentials.
 			     */
-			    $imageDifferential = abs(($image->getHeight() - $maxSize) +
-						     ($image->getWidth() - $maxSize));
+			    if (method_exists($image, 'getWidth')) {
+				$imageDifferential = abs(($image->getHeight() - $maxSize) +
+							 ($image->getWidth() - $maxSize));
+			    } else {
+				/*
+				 * We don't have a height/width for the raw image (maybe it's not
+				 * viewable?)  Use an arbitrarily large differential to avoid it
+				 * getting picked.
+				 */
+				$imageDifferential = 1000000;
+			    }
 			    $thumbDifferential = abs(($thumb->getHeight() - $maxSize) +
 						     ($thumb->getWidth() - $maxSize));
 
