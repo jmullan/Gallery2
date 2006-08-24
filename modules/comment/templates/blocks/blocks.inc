@@ -20,5 +20,10 @@ $blocks = array(
 		    '100' => $gallery->i18n('100'),
 		    '999' => $gallery->i18n('999'))))),
     'AddComment' => array(
-	'description' => $gallery->i18n('Add Comment')));
+	'description' => $gallery->i18n('Add Comment'),
+	'vars' => array(
+	    'expand' => array(
+		'description' => $gallery->i18n('Show a text box that expands into the full form'),
+		'type' => 'boolean',
+		'default' => 'true'))));
 ?>
