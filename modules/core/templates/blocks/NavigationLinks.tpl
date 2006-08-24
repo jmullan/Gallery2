@@ -6,7 +6,7 @@
  *}
 {if !empty($navigationLinks)}
 <div class="{$class}">
-  <h2> {g->text text="Navigation"} </h2>
+  <h3> {g->text text="Navigation"} </h3>
   <ul>
     {foreach from=$navigationLinks item=link}
       <li>

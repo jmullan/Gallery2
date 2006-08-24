@@ -16,13 +16,14 @@
 
 <div id="AddComment_trigger" class="{$class}" onclick="AddComment_showBlock()">
   <div class="gbBlock gcBackground1">
-    <h2> {g->text text="Add Comment"} </h2>
+    <h3> {g->text text="Add Comment"} </h3>
   </div>
   <textarea cols=80 rows=5></textarea>
 </div>
 
 {literal}
-<script>
+<script type="text/javascript">
+  // <![CDATA[
   function AddComment_hideTrigger() {
     var anim1 = new YAHOO.util.Anim(
       'AddComment_trigger',
@@ -41,6 +42,7 @@
     document.getElementById('AddComment_block').style.display='block';
     document.getElementById('AddComment_trigger').style.display='none';
   }
+  // ]]>
 </script>
 {/literal}
 {/if}
