@@ -87,7 +87,7 @@ class EditCommentController extends GalleryController {
 	    }
 
 	    if (empty($form['subject'])) {
-		$error[] = 'form[error][subject][missing]';
+		$form['subject'] = '';
 	    }
 
 	    if (empty($form['comment'])) {
@@ -169,7 +169,7 @@ class EditCommentController extends GalleryController {
 	    }
 
 	    if (empty($form['subject'])) {
-		$error[] = 'form[error][subject][missing]';
+		$form['subject'] = '';
 	    }
 
 	    if (empty($form['comment'])) {
