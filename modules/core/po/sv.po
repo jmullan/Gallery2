@@ -31,7 +31,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.1.10\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
-"PO-Revision-Date: 2006-07-04 11:25+0200\n"
+"PO-Revision-Date: 2006-08-12 18:10+0200\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -300,12 +300,6 @@ msgstr "Källfilen %s laddades inte upp. Fel %d"
 msgid "Gallery Item Administration"
 msgstr "Galleriets Objektadministration"
 
-msgid "create link"
-msgstr "skapa länk"
-
-msgid "link an item"
-msgstr "länka ett objekt"
-
 msgid "delete an item"
 msgstr "ta bort ett objekt"
 
@@ -328,6 +322,10 @@ msgstr "&laquo; förvalt tema &raquo;"
 
 msgid "Recreating resized images"
 msgstr "Återskapa storleksändrade bilder"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Bearbetar..."
 
 msgid "Rebuilding resized images..."
 msgstr "Återskapar storleksändrade bilder..."
@@ -414,9 +412,6 @@ msgstr "Skalade fotot framgångsrikt"
 msgid "Modify Photo"
 msgstr "Bearbeta Foto"
 
-msgid "Successfully saved theme settings"
-msgstr "Sparade temainställningar framgångsrikt"
-
 msgid "Theme"
 msgstr "Tema"
 
@@ -475,9 +470,6 @@ msgstr "Redigera Foto"
 
 msgid "Edit Movie"
 msgstr "Redigera Film"
-
-msgid "Create Link"
-msgstr "Skapa Länk"
 
 msgid "Add Album"
 msgstr "Lägg till Album"
@@ -557,15 +549,6 @@ msgstr "Kontoinställningar"
 msgid "Change Password"
 msgstr "Ändra lösenord"
 
-msgid "Link Album"
-msgstr "Länka Album"
-
-msgid "Link Photo"
-msgstr "Länka Foto"
-
-msgid "Link Movie"
-msgstr "Länka Film"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Redigera %s"
@@ -577,10 +560,6 @@ msgstr "Ta Bort %s"
 #, c-format
 msgid "Move %s"
 msgstr "Flytta %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "Länka %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Skapa samtliga miniatyrbilder/storleksändringar"
@@ -696,6 +675,14 @@ msgstr "Titel"
 
 msgid "Owner"
 msgstr "Ägare"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Redigera Album"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Redigera Album"
 
 msgid "Group"
 msgstr "Grupp"
@@ -999,9 +986,8 @@ msgstr "Förvalt tema"
 msgid "gettext"
 msgstr "gettext"
 
-#, fuzzy
 msgid "enabled"
-msgstr "avaktiverad"
+msgstr "aktiverad"
 
 msgid "disabled"
 msgstr "avaktiverad"
@@ -1011,6 +997,9 @@ msgstr "Locale"
 
 msgid "Browser"
 msgstr "Webbläsare"
+
+msgid "Successfully saved theme settings"
+msgstr "Sparade temainställningar framgångsrikt"
 
 msgid "General Settings"
 msgstr "Generella Inställningar"
@@ -1116,19 +1105,19 @@ msgid "Inactivity Timeout"
 msgstr "Inaktivitetsavbrott"
 
 msgid "Embedded Markup"
-msgstr "Inbäddad markering"
+msgstr "Inbäddade taggar"
 
 msgid ""
 "What kind of markup should we allow in user-entered fields?  For security reasons we do not "
 "recommend that you allow raw HTML.  BBCode is a special kind of markup that is secure and "
 "allows for simple text formatting like bold, italics, lists, images and urls."
 msgstr ""
-"Vilken typ av markering skall vi tillåta i fält för användarinskrivningar? Av säkerhetsskäl "
-"så rekommenderar vi inte att du tillåter rå HTML. BBKod är en speciell markering som är "
+"Vilken typ av taggar skall vi tillåta i fält för användarinskrivningar? Av säkerhetsskäl så "
+"rekommenderar vi inte att du tillåter rå HTML. BBKod är en speciell tagg markering som är "
 "säker och tillåter enkel textformatering som fet, kursiv, listor, bilder och webbadresser."
 
 msgid "Markup"
-msgstr "Markera"
+msgstr "taggar"
 
 msgid "Email"
 msgstr "E-post"
@@ -1845,7 +1834,7 @@ msgid ""
 "upgrading:"
 msgstr ""
 "En ny version av Gallery är tillgänglig, men det går ej att uppdatera Gallery via detta "
-"gränssnitt. En uppdatering kan göra så att vissa av dinna installerade plugins slutar att "
+"gränssnitt. En uppdatering kan göra så att vissa av dina installerade plugins slutar att "
 "fungera, men andra som är beroende av funktioner i den nya versionen kan bli tillgängliga. "
 "Här är dom rekomenderade stegen för en uppdatering:"
 
@@ -1877,7 +1866,7 @@ msgid ""
 "Gallery can automatically upgrade your themes and modules to the latest available versions. "
 "No new plugins will be downloaded."
 msgstr ""
-"Gallery kan automatiskt uppgradera dinna theman och moduler till de senaste tillgängliga "
+"Gallery kan automatiskt uppgradera dina theman och moduler till de senaste tillgängliga "
 "versionerna. Inga nya plugins kommer att laddas ner."
 
 msgid "Upgrade All"
@@ -2220,6 +2209,9 @@ msgstr ""
 "otillräckliga rättigheter. Det kan hända om din webbadministratör har ändrat på något i "
 "filsystemet t.ex. genom att ha hämtat tillbaka något från säkerhetskopieringen."
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Ett fel har uppstått"
 
@@ -2348,64 +2340,6 @@ msgstr "Ingen miniatyrbild"
 msgid "Options"
 msgstr "Alternativ"
 
-msgid "Link an Item"
-msgstr "Länka ett Objekt"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "Länkade framgångsrikt %d objekt"
-msgstr[1] "Länkade framgångsrikt %d objekt"
-
-msgid "This album contains no items to link."
-msgstr "Detta album innehåller inga objekt att länka."
-
-msgid "Source"
-msgstr "Källa"
-
-msgid "Choose the items you want to link"
-msgstr "Välj de objekt du vill länka"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(sidan %d av %d)"
-
-msgid "No sources chosen"
-msgstr "Ingen källa vald"
-
-msgid "Check All"
-msgstr "Markera alla"
-
-msgid "Check None"
-msgstr "Markera Ingen"
-
-msgid "Invert"
-msgstr "Spegelvänd"
-
-msgid "Previous Page"
-msgstr "Föregående Sida"
-
-msgid "Next Page"
-msgstr "Nästa Sida"
-
-msgid "Destination"
-msgstr "Destination"
-
-msgid "Choose a new album for the link"
-msgstr "Välj ett nytt album för länken"
-
-msgid "No destination chosen"
-msgstr "Ingen destination vald"
-
-msgid "Link"
-msgstr "Länka"
-
-msgid "Successfully linked"
-msgstr "Länkade framgångsrikt"
-
-msgid "Choose a destination album"
-msgstr "Välj ett destinationsalbum"
-
 msgid "Delete Items"
 msgstr "Ta bort Objekt"
 
@@ -2423,6 +2357,10 @@ msgstr "Detta album innehåller inga objekt att ta bort"
 
 msgid "Choose the items you want to delete"
 msgstr "Välj objekt du vill ta bort"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(sidan %d av %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "Objekt valda här kommer att vara fortsätta att vara valda vid flytt mellan sidor."
@@ -2444,6 +2382,21 @@ msgstr[1] "(album innehåller %d objekt)"
 
 msgid "(empty album)"
 msgstr "(tomt album)"
+
+msgid "Check All"
+msgstr "Markera alla"
+
+msgid "Check None"
+msgstr "Markera Ingen"
+
+msgid "Invert"
+msgstr "Spegelvänd"
+
+msgid "Previous Page"
+msgstr "Föregående Sida"
+
+msgid "Next Page"
+msgstr "Nästa Sida"
 
 msgid "Deletion Complete"
 msgstr "Borttagning Komplett"
@@ -2704,9 +2657,8 @@ msgstr "Lägesförhållande:"
 msgid "Crop"
 msgstr "Beskär"
 
-#, fuzzy
 msgid "Undo Changes"
-msgstr "Ändra"
+msgstr "Ångra Ändringarna"
 
 msgid "Reset to default"
 msgstr "återställ till förvalt värde"
@@ -2788,6 +2740,8 @@ msgid ""
 "There is no toolkit support to modify the original so operations may only be applied to the "
 "copies"
 msgstr ""
+"Det finns ingen grafisk verktygslåda som kan modifiera orginalet så operationen utförs "
+"endast på kopiorna"
 
 msgid "Preserve Original Photo"
 msgstr "Bevara Originalfoto"
@@ -2814,12 +2768,6 @@ msgid ""
 msgstr ""
 "Detta album är konfigurerat för att använda temat <b>%s</b>. Dessa inställningar verkställs "
 "endast på temat för detta album."
-
-msgid "Setting"
-msgstr "Inställning"
-
-msgid "Use Global"
-msgstr "Använd Global"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2855,6 +2803,9 @@ msgstr[1] "Flyttade framgångsrikt %d objekt"
 msgid "This album contains no items to move."
 msgstr "Detta album innehåller inga objekt att flytta."
 
+msgid "Source"
+msgstr "Källa"
+
 msgid "Choose the items you want to move"
 msgstr "Välj objekt du vill flytta"
 
@@ -2882,17 +2833,26 @@ msgstr "Du är inte tillåten att flytta ett objekt till vald plats."
 msgid "You cannot move an album into its own subtree."
 msgstr "Du kan inte flytta ett album till sitt eget underliggande träd."
 
+msgid "Destination"
+msgstr "Destination"
+
 msgid "Choose a new album for them"
 msgstr "Välj ett nytt album för dem"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "Du har inte rättigheter att lägga till objekt i detta album"
 
+msgid "No destination chosen"
+msgstr "Ingen destination vald"
+
 msgid "Move"
 msgstr "Flytta"
 
 msgid "Successfully moved"
 msgstr "Flyttade framgångsrikt"
+
+msgid "Choose a destination album"
+msgstr "Välj ett destinationsalbum"
 
 msgid "Permissions"
 msgstr "Rättigheter"
@@ -3458,6 +3418,12 @@ msgstr "Okänd"
 msgid "Full size: "
 msgstr "Full storlek: "
 
+msgid "Setting"
+msgstr "Inställning"
+
+msgid "Use Global"
+msgstr "Använd Global"
+
 msgid "Language selector"
 msgstr "Språkväljare"
 
@@ -3484,3 +3450,50 @@ msgstr "[test] En andra rättighet"
 
 msgid "Unit test theme"
 msgstr "Tema för unittest"
+
+#~ msgid "create link"
+#~ msgstr "skapa länk"
+
+#~ msgid "link an item"
+#~ msgstr "länka ett objekt"
+
+#~ msgid "Create Link"
+#~ msgstr "Skapa Länk"
+
+#~ msgid "Link Album"
+#~ msgstr "Länka Album"
+
+#~ msgid "Link Photo"
+#~ msgstr "Länka Foto"
+
+#~ msgid "Link Movie"
+#~ msgstr "Länka Film"
+
+#~ msgid "Link %s"
+#~ msgstr "Länka %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "Länka ett Objekt"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "Länkade framgångsrikt %d objekt"
+#~ msgstr[1] "Länkade framgångsrikt %d objekt"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Detta album innehåller inga objekt att länka."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Välj de objekt du vill länka"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Ingen källa vald"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Välj ett nytt album för länken"
+
+#~ msgid "Link"
+#~ msgstr "Länka"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Länkade framgångsrikt"

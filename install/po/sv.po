@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-15 16:15+0100\n"
-"PO-Revision-Date: 2006-07-04 10:54+0200\n"
+"PO-Revision-Date: 2006-08-12 19:20+0200\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -215,9 +215,8 @@ msgstr "Oracle (9i och nyare)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 och nyare)"
 
-#, fuzzy
 msgid "MSSQL (2005 and newer)"
-msgstr "MySQL (v3.23.34a och nyare)"
+msgstr "MSSQL (2005 och nyare)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Okänd DB typ eller okänd tabellinformation."
@@ -686,17 +685,21 @@ msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
 "php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
+"Innan vi kan fortsätta så måste du skapa en fil i din <b>%s</b> katalog med namnet <i>config."
+"php</i>. Du måste se till att webbservern har möjlighet att skriva till filen."
 
 msgid "Unix (with shell access)"
 msgstr "Unix (med shell access)"
 
 msgid "On Windows, you shouldn't have to do anything special."
-msgstr ""
+msgstr "På Windows, så skall du inte behöva göra något speciellt."
 
 msgid ""
 "When you've created this file and set the permissions properly, you can proceed.  If there's "
 "a problem, we'll tell you what to fix."
 msgstr ""
+"När du har skapat den här filen och satt rättigheterna rätt, så kan du fortsätta. Om det är "
+"något problem, så kommer vi att tala om för dig hur du skall åtgärda det."
 
 msgid "Create config file"
 msgstr "Skapar konfigurations fil"
@@ -711,7 +714,7 @@ msgid ""
 "properly!"
 msgstr ""
 "Vi har skrivit ut all information du har gett till en fil kallad <b>config.php</b> i din "
-"gallery2 katalog. Du kan läsa filen och göra ändringar i den om du vill. Var nogrann -- om "
+"gallery2 katalog. Du kan läsa filen och göra ändringar i den om du vill. Var noggrann -- om "
 "du gör misstag i filen så kommer inte Gallery att fungera!"
 
 msgid ""
@@ -1034,12 +1037,19 @@ msgid ""
 "directories.  You must choose a directory under one of these, or you must modify the "
 "<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
 msgstr ""
+"Katalogen du angav exsisterar inte, alternativt är den inte åtkommlig pga din webbservers "
+"konfiguration. Din webbserver är konfigurerad till att tillåta åtkomst till följande "
+"kataloger. Du måste välja en katalog under någon av dessa, annars måste du ändra på "
+"<b>open_basedir</b> inställningen i din PHP konfiguration för att tillåta en ny katalog."
 
 msgid ""
 "If your multisite install is in a different virtual host, you should contact your system "
 "administrator and request that they configure your <b>open_basedir</b> setting so that your "
 "virtual hosts can access each other."
 msgstr ""
+"Om din multisite installation är en annan virtuell host, så måste du kontakta din "
+"systemadministratör och begära att dom konfigurerar din <b>open_basedir</b> inställning så "
+"att dina virtuella hostar kan få åtkomst till varandra."
 
 msgid "The directory you entered does not exist"
 msgstr "Katalogen du angav existerar inte"
@@ -1129,16 +1139,28 @@ msgstr ""
 msgid "Check Again"
 msgstr "Kontrollera Igen"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
-"Gallery behöver en katalog där dina bilder sparas. Den katalog som vi har valt åt dig kommer "
-"att fungera men den är direkt åtkommlig via webben."
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, fuzzy, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
 msgstr ""
 "För maximal säkerhet så bör du välja en katalog som inte är åtkommlig direkt via webben."
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
+msgstr ""
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1162,6 +1184,15 @@ msgstr "Katalogen du angav tillåter bara läsning"
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Det uppstod ett fel när vi försökte skapa katalogstrukturen i lagerkatalogen."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Lyckades skapa lagerkatalogen"
+
+#, fuzzy, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+"För maximal säkerhet så bör du välja en katalog som inte är åtkommlig direkt via webben."
+
 msgid "Directory path:"
 msgstr "Sökväg till katalogen:"
 
@@ -1176,29 +1207,18 @@ msgid ""
 "Note: these are only examples!  You may find that they don't work quite right on your system."
 msgstr "OBS: detta är bara ett exempel! Det kan hända att dom inte fungerar."
 
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
 msgid "Unix (with ftp access)"
 msgstr "Unix (med ftp access)"
 
+#, fuzzy
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
+"have problems."
 msgstr ""
 "OBS ftpservrar och klienter kan variera så dessa instruktioner fungerar inte alltid. Se i "
 "manualen för din FTP klient eller tala med systemadministratören för att få hjälp om du har "
 "problem"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1316,24 +1336,18 @@ msgstr "Utför"
 msgid "Begin Installation&raquo;"
 msgstr "Börja Installationen&raquo;"
 
-#~ msgid "MSSQL (Experimental!)"
-#~ msgstr "MSSQL (Experimentell!)"
-
 #~ msgid ""
-#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
-#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
-#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
-#~ "to do anything special.  When you've created this file and set the permissions properly, "
-#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
 #~ msgstr ""
-#~ "Innan vi kan fortsätta, så bör du skapa en fil i din <b>%s</b> katalog kallad <i>config."
-#~ "php</i>. Du måste säkerställa att webbservern kan skriva till filen. Om du befinner dig "
-#~ "på en unix maskin, pröva kommandot <i>chmod 666 config.php</i>. På Windows, behöver du "
-#~ "inte göra något speciellt. När du har skapat filen och satt acesserna rätt, så kan du "
-#~ "fortsätta. Om det är något problem, så talar vi om vad du behöver göra."
+#~ "Gallery behöver en katalog där dina bilder sparas. Den katalog som vi har valt åt dig "
+#~ "kommer att fungera men den är direkt åtkommlig via webben."
 
-#~ msgid "Install More Modules"
-#~ msgstr "Installera Fler Moduler"
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
 
-#~ msgid "Install Other Modules"
-#~ msgstr "Installera Andra Moduler"
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"

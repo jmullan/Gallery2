@@ -26,15 +26,13 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.1.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-10-15 09:02+0200\n"
-"PO-Revision-Date: 2006-03-10 12:21+0100\n"
+"PO-Revision-Date: 2006-04-03 11:30+0200\n"
 "Last-Translator: Bjorn Graabek <bjorn@graabek.com>\n"
 "Language-Team: Danish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Language: Danish\n"
-"X-Poedit-Country: DENMARK\n"
 
 msgid "Gallery Email Test"
 msgstr "Gallery Email Test"
@@ -222,7 +220,7 @@ msgstr "Dette er hovedsiden af din billedsamling"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr ""
+msgstr "Opgraderer tilladelser (%d opjekter er færdige, der mangler %d)"
 
 msgid "Detecting broken derivatives, loading "
 msgstr "Finder afledte filer med fejl, henter "
@@ -295,12 +293,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Gallery elementadministration"
 
-msgid "create link"
-msgstr "opret henvisning"
-
-msgid "link an item"
-msgstr "henvis til element"
-
 msgid "delete an item"
 msgstr "slet et element"
 
@@ -323,6 +315,10 @@ msgstr "&laquo; standard tema &raquo;"
 
 msgid "Recreating resized images"
 msgstr "Genskaber størrelsesændrede billeder"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Behandler..."
 
 msgid "Rebuilding resized images..."
 msgstr "Genskaber billeder i ny størrelse"
@@ -409,9 +405,6 @@ msgstr "Fotoet blev skaleret"
 msgid "Modify Photo"
 msgstr "Rediger billede"
 
-msgid "Successfully saved theme settings"
-msgstr "Layoutopsætningen blev gemt"
-
 msgid "Theme"
 msgstr "Tema"
 
@@ -470,9 +463,6 @@ msgstr "Rediger billede"
 
 msgid "Edit Movie"
 msgstr "Rediger film"
-
-msgid "Create Link"
-msgstr "Opret henvisning"
 
 msgid "Add Album"
 msgstr "Tilføj album"
@@ -552,15 +542,6 @@ msgstr "Kontoopsætning"
 msgid "Change Password"
 msgstr "Skift adgangskode"
 
-msgid "Link Album"
-msgstr "Henvis til album"
-
-msgid "Link Photo"
-msgstr "Henvis til billede"
-
-msgid "Link Movie"
-msgstr "Henvis til film"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Rediger %s"
@@ -572,10 +553,6 @@ msgstr "Slet %s"
 #, c-format
 msgid "Move %s"
 msgstr "Flyt %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "Henvisning %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Opret alle miniaturer og størrelsesændringer"
@@ -690,6 +667,14 @@ msgstr "Titel"
 
 msgid "Owner"
 msgstr "Ejer"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Rediger album"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Rediger album"
 
 msgid "Group"
 msgstr "Gruppe"
@@ -990,12 +975,26 @@ msgstr "Operativsystem"
 msgid "Default theme"
 msgstr "Standard tema"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "Installeret"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d elementer fejlede"
+
 msgid "Locale"
 msgstr "Sted"
 
 # ?
 msgid "Browser"
 msgstr "Gennemse Gallery"
+
+msgid "Successfully saved theme settings"
+msgstr "Layoutopsætningen blev gemt"
 
 msgid "General Settings"
 msgstr "Generel opsætning"
@@ -1037,9 +1036,6 @@ msgstr "Standard sprog"
 
 msgid "Check Browser Preference"
 msgstr "Kontroller Browser Præference"
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1732,10 +1728,6 @@ msgid "up to date"
 msgstr "Opdater"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d elementer fejlede"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(påkrævet)"
 
@@ -1834,6 +1826,10 @@ msgid ""
 "the features of the new version may become available. Here are the recommended steps for "
 "upgrading:"
 msgstr ""
+"Der er en ny version af Gallery, men der kan ikke opgraderes til denne via denne "
+"brugerflade. Hvis der opgraderes vil nogle af de nuværende 'plugins' muligvis ophøre med at "
+"virke, mens andre der er afhængige af funktionerne i den nye version bliver tilgængelige. "
+"Her er den foreslåede metode til at opgradere:"
 
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
 msgstr ""
@@ -1853,6 +1849,8 @@ msgid ""
 "Gallery cannot be upgraded through this interface. When a new version becomes available, "
 "upgrade instructions will be presented here."
 msgstr ""
+"Gallery kan ikke opgraderes via denne brugerflade. Når en ny version bliver tilgængelig vil "
+"du her blive præsenteret for opgraderings-instruktioner."
 
 msgid "Upgrade All Plugins"
 msgstr "Opgrader alle plugins"
@@ -1861,6 +1859,8 @@ msgid ""
 "Gallery can automatically upgrade your themes and modules to the latest available versions. "
 "No new plugins will be downloaded."
 msgstr ""
+"Gallery kan automatisk opgradere dine temaer og moduler til de sidste nye versioner. Ingen "
+"nye 'plugins' vil blive downloadet."
 
 msgid "Upgrade All"
 msgstr "Opgrader alle"
@@ -2189,6 +2189,9 @@ msgstr ""
 "rettigheder i filsystemet. Det kan ske hvis du eller din webhost har ændret noget i "
 "filsystemet, f.eks. ved at foretage en 'restore' af data fra en 'backup'."
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Der er opstået en fejl."
 
@@ -2317,64 +2320,6 @@ msgstr "Ingen miniature"
 msgid "Options"
 msgstr "Indstillinger"
 
-msgid "Link an Item"
-msgstr "Henvis til element"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "%d element fik henvisning"
-msgstr[1] "%d elementer fik henvisning"
-
-msgid "This album contains no items to link."
-msgstr "Dette album indeholder ingen elementer."
-
-msgid "Source"
-msgstr "Kilde"
-
-msgid "Choose the items you want to link"
-msgstr "Vælg elementerne du vil henvise til"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(side %d af %d)"
-
-msgid "No sources chosen"
-msgstr "Ingen kilder valgt"
-
-msgid "Check All"
-msgstr "Tjek alle"
-
-msgid "Check None"
-msgstr "Tjek ingen"
-
-msgid "Invert"
-msgstr "Spejlvend"
-
-msgid "Previous Page"
-msgstr "Forrige side"
-
-msgid "Next Page"
-msgstr "Næste side"
-
-msgid "Destination"
-msgstr "Destination"
-
-msgid "Choose a new album for the link"
-msgstr "Vælg et nyt album til henvisningen"
-
-msgid "No destination chosen"
-msgstr "Ingen destination valgt"
-
-msgid "Link"
-msgstr "Henvisning"
-
-msgid "Successfully linked"
-msgstr "Henvisning gennemført"
-
-msgid "Choose a destination album"
-msgstr "Vælg et destinationsalbum"
-
 msgid "Delete Items"
 msgstr "Slet elementer"
 
@@ -2392,6 +2337,10 @@ msgstr "Dette album indeholder ingen elementer"
 
 msgid "Choose the items you want to delete"
 msgstr "Vælg elementerne du vil slette"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(side %d af %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "Emner der er valgt her vil forblive valgt når der flyttes mellem siderne."
@@ -2413,6 +2362,21 @@ msgstr[1] "(albummet indeholder %d elementer)"
 
 msgid "(empty album)"
 msgstr "(tomt album)"
+
+msgid "Check All"
+msgstr "Tjek alle"
+
+msgid "Check None"
+msgstr "Tjek ingen"
+
+msgid "Invert"
+msgstr "Spejlvend"
+
+msgid "Previous Page"
+msgstr "Forrige side"
+
+msgid "Next Page"
+msgstr "Næste side"
 
 msgid "Deletion Complete"
 msgstr "Sletning fuldført"
@@ -2675,6 +2639,10 @@ msgstr "Dimensionsforhold: "
 msgid "Crop"
 msgstr "Beskær"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Ændrer"
+
 msgid "Reset to default"
 msgstr "Vend tilbage til standardindstillinger"
 
@@ -2749,6 +2717,11 @@ msgstr "Dette er en henvisning til et andet foto og du kan derfor ikke ændre or
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "Der er henvisninger til dette foto og originalen kan derfor ikke ændres"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "Bevar originalfoto"
 
@@ -2773,12 +2746,6 @@ msgid ""
 msgstr ""
 "Dette album er konfigureret til at bruge temaet <b>%s</b>. Ændringerne gælder kun for temaet "
 "på dette album."
-
-msgid "Setting"
-msgstr "Indstilling"
-
-msgid "Use Global"
-msgstr "Brug globalt"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2814,6 +2781,9 @@ msgstr[1] "%d elementer blev flyttet"
 msgid "This album contains no items to move."
 msgstr "Dette album indeholder ingen elementer."
 
+msgid "Source"
+msgstr "Kilde"
+
 msgid "Choose the items you want to move"
 msgstr "Vælg elementerne du vil flytte"
 
@@ -2837,17 +2807,26 @@ msgstr "Du har ikke tilladelse til at flytte et element til den valgte destinati
 msgid "You cannot move an album into its own subtree."
 msgstr "Du kan ikke flytte et album til dets eget undertræ."
 
+msgid "Destination"
+msgstr "Destination"
+
 msgid "Choose a new album for them"
 msgstr "Vælg et nyt album til dem"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "Du har ikke tilladelse til at tilføje elementer i dette album"
 
+msgid "No destination chosen"
+msgstr "Ingen destination valgt"
+
 msgid "Move"
 msgstr "Flyt"
 
 msgid "Successfully moved"
 msgstr "Flytning gennemført"
+
+msgid "Choose a destination album"
+msgstr "Vælg et destinationsalbum"
 
 msgid "Permissions"
 msgstr "Tilladelser"
@@ -3414,6 +3393,12 @@ msgstr "Ukendt"
 msgid "Full size: "
 msgstr "Fuld størrelse: "
 
+msgid "Setting"
+msgstr "Indstilling"
+
+msgid "Use Global"
+msgstr "Brug globalt"
+
 msgid "Language selector"
 msgstr "Sprogvælger"
 
@@ -3441,6 +3426,74 @@ msgstr "[test] En anden tilladelse"
 
 msgid "Unit test theme"
 msgstr "Enhedstest tema"
+
+#~ msgid "From Local Server"
+#~ msgstr "Fra lokal server"
+
+#~ msgid "From Web Page"
+#~ msgstr "Fra webside"
+
+#~ msgid "create link"
+#~ msgstr "opret henvisning"
+
+#~ msgid "link an item"
+#~ msgstr "henvis til element"
+
+#~ msgid "Create Link"
+#~ msgstr "Opret henvisning"
+
+#~ msgid "Display"
+#~ msgstr "Vis"
+
+#~ msgid "Link Album"
+#~ msgstr "Henvis til album"
+
+#~ msgid "Link Photo"
+#~ msgstr "Henvis til billede"
+
+#~ msgid "Link Movie"
+#~ msgstr "Henvis til film"
+
+#~ msgid "Link %s"
+#~ msgstr "Henvisning %s"
+
+#~ msgid "Local Server Upload Paths"
+#~ msgstr "Stier til overførsel fra lokal server"
+
+#~ msgid ""
+#~ "Specify the legal directories on the local server where a user can store files and then "
+#~ "upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths "
+#~ "you enter here and all the files and directories under those paths will be available to "
+#~ "any Gallery user who has upload privileges, so you should limit this to directories that "
+#~ "won't contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
+#~ msgstr ""
+#~ "Angiv de tilladte mapper på den lokale server, hvor brugere kan gemme filer og overføre "
+#~ "dem til Gallery, ved hjælp af <i>Overfør til lokal server</i> funktionen. Stierne du "
+#~ "indtaster her og alle filer og mapper under disse, vil være tilgængelige for enhver "
+#~ "Gallery bruger som har tilladelse til at overføre. Du skal derfor afgrænse det til mapper "
+#~ "som ikke vil indeholde følsomme oplysninger (f.eks. /tmp eller /usr/ftp/incoming)"
+
+#~ msgid "remove"
+#~ msgstr "fjern"
+
+#~ msgid "You must enter a directory to add."
+#~ msgstr "Du skal indtaste en mappe som skal tilføjes."
+
+#~ msgid "open_basedir documentation"
+#~ msgstr "open_basedir dokumentation"
+
+#~ msgid ""
+#~ "Your webserver is configured to prevent you from accessing that directory.  Please refer "
+#~ "to the %s and consult your webserver administrator."
+#~ msgstr ""
+#~ "Din webserver er konfigureret til at nægte dig adgang til mappen. Se venligst %s og "
+#~ "kontakt til webserver administrator."
+
+#~ msgid "The webserver does not have permissions to read that directory."
+#~ msgstr "Webserveren har ikke tilladelse til at læse mappen."
+
+#~ msgid "The path you specified is not a valid directory."
+#~ msgstr "Den angivne sti er ikke en gyldig mappe."
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Installerede og autokonfigurerede %s modulet"
@@ -3483,3 +3536,169 @@ msgstr "Enhedstest tema"
 
 #~ msgid "(default)"
 #~ msgstr "(standard)"
+
+#~ msgid ""
+#~ "Transfer files that are already on your server into your Gallery.  The files must already "
+#~ "have been uploaded to your server some other way (like FTP) and must be placed in a "
+#~ "directory where they are accessibly by any element on the server.  If you're on Unix this "
+#~ "means that the files and the directory the files are in should have modes of at least 755."
+#~ msgstr ""
+#~ "Overfør filer som allerede findes på din server til Gallery. Filerne skal allerede være "
+#~ "overført til din server (FTP eksempelvis) og skal være placeret hvor alle elementer på "
+#~ "serveren har adgang. Bruger du Unix bør filerne, og det bibliotek filerne er i, have en "
+#~ "filtilstand på mindst 755."
+
+#~ msgid ""
+#~ "For security purposes, you can't use this feature until the Gallery Site Administrator "
+#~ "configures a set of legal upload directories."
+#~ msgstr ""
+#~ "Du kan ikke bruge denne funktion, før administratoren konfigurerer lovlige "
+#~ "overførselsmapper."
+
+#~ msgid "Server Path"
+#~ msgstr "Serversti"
+
+#~ msgid "You must enter a directory."
+#~ msgstr "Du skal indtaste en mappe."
+
+#~ msgid ""
+#~ "The directory you entered is invalid.  Make sure that the directory is readable by all "
+#~ "users."
+#~ msgstr "Den indtastede mappe er ugyldig. Undersøg om mappen er læsbar af alle brugere."
+
+#~ msgid ""
+#~ "The directory you entered is illegal.  It must be a sub directory of one of the "
+#~ "directories listed below."
+#~ msgstr ""
+#~ "Den indtastede mappe er ulovlig. Det skal være en undermappe af en mappe angivet nedenfor."
+
+#~ msgid "An item with the same name already exists."
+#~ msgstr "Der eksisterer allerede et element med det navn."
+
+#~ msgid "Legal Directories"
+#~ msgstr "Gyldige mapper"
+
+#~ msgid "modify"
+#~ msgstr "ændre"
+
+#~ msgid "Recent Directories"
+#~ msgstr "Seneste mapper"
+
+#~ msgid "Find Files"
+#~ msgstr "Find filer"
+
+#~ msgid "Directory: %s"
+#~ msgstr "Mappe: %s"
+
+#~ msgid "File name"
+#~ msgstr "Filnavn"
+
+#~ msgid "Type"
+#~ msgstr "Type"
+
+#~ msgid "Size"
+#~ msgstr "Størrelse"
+
+#~ msgid "Use Symlink"
+#~ msgstr "Brug symbolsk lænke"
+
+#~ msgid "%d byte"
+#~ msgid_plural "%d bytes"
+#~ msgstr[0] "%d byte"
+#~ msgstr[1] "%d bytes"
+
+#~ msgid "Parent Directory"
+#~ msgstr "Ejermappe"
+
+#~ msgid "Directory"
+#~ msgstr "Mappe"
+
+#~ msgid "(Un)check all known types"
+#~ msgstr "Afkryds/fjern alle kendte typer"
+
+#~ msgid "(Un)check symlinks"
+#~ msgstr "Sæt/fjern symbolske lænker"
+
+#~ msgid "for selected items"
+#~ msgstr "for de valgte elementer"
+
+#~ msgid "Copy base filenames to:"
+#~ msgstr "Kopier basisfilnavne til:"
+
+#~ msgid "Add Files"
+#~ msgstr "Tilføj filer"
+
+#~ msgid "Start Over"
+#~ msgstr "Start forfra"
+
+#~ msgid ""
+#~ "Import files into Gallery from another website.  Enter a URL below to a web page anywhere "
+#~ "on the net and Gallery will allow you to upload any media files that it finds on that "
+#~ "page.  Note that if you're entering a URL to a directory, you should end the URL with a "
+#~ "trailing slash (eg, http://example.com/directory/). "
+#~ msgstr ""
+#~ "Importer filer til Gallery fra et andet websted. Indtast en URL til en webside på nettet "
+#~ "og Gallery vil muliggøre at overføre enhver multimediefil som findes på siden. Hvis du "
+#~ "indtaster en URL til en mappe, skal du afslutte URL'en med en skråstreg (eks. http://"
+#~ "eksempel.dk/mappe/)."
+
+#~ msgid "URL"
+#~ msgstr "URL"
+
+#~ msgid "You must enter a URL to a web page"
+#~ msgstr "Du skal indtaste en URL til en webside"
+
+#~ msgid "The URL entered must begin with http://"
+#~ msgstr "Den indtastede URL skal begynde med http://"
+
+#~ msgid "The web page you specified is unavailable"
+#~ msgstr "Den angivne website er utilgængelig."
+
+#~ msgid "Nothing to add found from this URL"
+#~ msgstr "Kunne ikke finde noget at tilføje fra denne URL"
+
+#~ msgid "Nothing added since no items were selected"
+#~ msgstr "Ingenting blev tilføjet da ingen nye ting var valgt"
+
+#~ msgid "Recent URLs"
+#~ msgstr "Seneste URLs"
+
+#~ msgid "URL: %s"
+#~ msgstr "URL: %s"
+
+#~ msgid "%d url found"
+#~ msgid_plural "%d urls found"
+#~ msgstr[0] "%d url fundet"
+#~ msgstr[1] "%d urls fundet"
+
+#~ msgid "(Un)check all"
+#~ msgstr "Afkryds/fjern alle"
+
+#~ msgid "Add URLs"
+#~ msgstr "Tilføj URLs"
+
+#~ msgid "Link an Item"
+#~ msgstr "Henvis til element"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "%d element fik henvisning"
+#~ msgstr[1] "%d elementer fik henvisning"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Dette album indeholder ingen elementer."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Vælg elementerne du vil henvise til"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Ingen kilder valgt"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Vælg et nyt album til henvisningen"
+
+#~ msgid "Link"
+#~ msgstr "Henvisning"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Henvisning gennemført"
