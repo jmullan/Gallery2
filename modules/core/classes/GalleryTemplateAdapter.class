@@ -556,6 +556,18 @@ class GalleryTemplateAdapter {
     }
 
     /**
+     * Return lang attribute for the active language.
+     */
+    function language($params, &$smarty) {
+	global $gallery;
+	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
+	if (!$ret && !empty($languageCode)) {
+	    return 'lang="' . strtr($languageCode, '_', '-') . '"';
+	}
+	return '';
+    }
+
+    /**
      * Render logo button image.
      * @param array('type' => logo type)
      * @return HTML content
