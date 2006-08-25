@@ -556,15 +556,15 @@ class GalleryTemplateAdapter {
     }
 
     /**
-     * Return lang attribute for the active language.
+     * Return active language code in format used with HTML lang attribute.
      */
     function language($params, &$smarty) {
 	global $gallery;
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
-	if (!$ret && !empty($languageCode)) {
-	    return 'lang="' . strtr($languageCode, '_', '-') . '"';
+	if ($ret || empty($languageCode)) {
+	    return '';
 	}
-	return '';
+	return strtr($languageCode, '_', '-');
     }
 
     /**
