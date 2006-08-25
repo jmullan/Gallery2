@@ -35,7 +35,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	/* Create a new album and image, set thumbnail and highlight */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return array($ret, null, null);
+	    return array($ret, null);
 	}
 	$this->_markForCleanup($album);
 	return array(null, $album);
