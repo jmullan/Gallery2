@@ -23,7 +23,7 @@
 # Gidie <gidie at users.sourceforge REMOVE THIS dot net>, 2005
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-03-17 19:49+0100\n"
 "Last-Translator: Buut <buut at users.sourceforge Remove - This dot net>\n"
@@ -292,12 +292,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Gallery item administratie"
 
-msgid "create link"
-msgstr "maak link aan"
-
-msgid "link an item"
-msgstr "link een item"
-
 msgid "delete an item"
 msgstr "verwijder een item"
 
@@ -320,6 +314,10 @@ msgstr "&laquo; standaard thema &raquo;"
 
 msgid "Recreating resized images"
 msgstr "Geschaalde afbeeldingen opnieuw aanmaken"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Verwerken..."
 
 msgid "Rebuilding resized images..."
 msgstr "Geschaalde afbeeldingen opnieuw aanmaken"
@@ -406,9 +404,6 @@ msgstr "Foto succesvol geschaald"
 msgid "Modify Photo"
 msgstr "Bewerk Foto"
 
-msgid "Successfully saved theme settings"
-msgstr "Succesvol thema instellingen opgeslagen"
-
 msgid "Theme"
 msgstr "Thema"
 
@@ -467,9 +462,6 @@ msgstr "Bewerk Foto"
 
 msgid "Edit Movie"
 msgstr "Bewerk Film"
-
-msgid "Create Link"
-msgstr "Maak Link Aan"
 
 msgid "Add Album"
 msgstr "Album Toevoegen"
@@ -549,15 +541,6 @@ msgstr "Account Instellingen"
 msgid "Change Password"
 msgstr "Wijzig Wachtwoord"
 
-msgid "Link Album"
-msgstr "Link Album"
-
-msgid "Link Photo"
-msgstr "Link Foto"
-
-msgid "Link Movie"
-msgstr "Link Film"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Bewerk %s"
@@ -569,10 +552,6 @@ msgstr "Verwijder %s"
 #, c-format
 msgid "Move %s"
 msgstr "Verplaats %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "Link %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Alle miniaturen/schalen opbouwen"
@@ -687,6 +666,14 @@ msgstr "Titel"
 
 msgid "Owner"
 msgstr "Eigenaar"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Bewerk Album"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Bewerk Album"
 
 msgid "Group"
 msgstr "Groep"
@@ -988,11 +975,25 @@ msgstr "Besturingssysteem"
 msgid "Default theme"
 msgstr "Standaard thema"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d items mislukt"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d items mislukt"
+
 msgid "Locale"
 msgstr "Talen"
 
 msgid "Browser"
 msgstr "Browser"
+
+msgid "Successfully saved theme settings"
+msgstr "Succesvol thema instellingen opgeslagen"
 
 msgid "General Settings"
 msgstr "Algemene instellingen"
@@ -1035,9 +1036,6 @@ msgstr "Standaard taal"
 
 msgid "Check Browser Preference"
 msgstr "Controleer Browser Voorkeur"
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1740,10 +1738,6 @@ msgid "up to date"
 msgstr "Bijwerken"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d items mislukt"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(verplicht)"
 
@@ -2234,6 +2228,9 @@ msgstr ""
 "rechten op het bestandsysteem. Dat kan gebeuren als u of uw webhost iets veranderd heeft in "
 "het bestandsysteem, bijv. terugzetten van data van een backup."
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Er is een fout opgetreden."
 
@@ -2363,64 +2360,6 @@ msgstr "Geen Miniatuur"
 msgid "Options"
 msgstr "Opties"
 
-msgid "Link an Item"
-msgstr "Link een Item"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "Succesvol %d item gelinked"
-msgstr[1] "Succesvol %d items gelinked"
-
-msgid "This album contains no items to link."
-msgstr "Dit album bevat geen item om te linken."
-
-msgid "Source"
-msgstr "Bron"
-
-msgid "Choose the items you want to link"
-msgstr "Kies de items die u wilt linken"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(pagina %d van %d)"
-
-msgid "No sources chosen"
-msgstr "Geen bronnen gekozen"
-
-msgid "Check All"
-msgstr "Selecteer Alles"
-
-msgid "Check None"
-msgstr "Selecteer Niets"
-
-msgid "Invert"
-msgstr "Selectie omkeren"
-
-msgid "Previous Page"
-msgstr "Vorige Pagina"
-
-msgid "Next Page"
-msgstr "Volgende Pagina"
-
-msgid "Destination"
-msgstr "Doel"
-
-msgid "Choose a new album for the link"
-msgstr "Kies een nieuw album voor de link"
-
-msgid "No destination chosen"
-msgstr "Geen doel gekozen"
-
-msgid "Link"
-msgstr "Link"
-
-msgid "Successfully linked"
-msgstr "Succesvol gelinked"
-
-msgid "Choose a destination album"
-msgstr "Kies een doel album"
-
 msgid "Delete Items"
 msgstr "Verwijder Items"
 
@@ -2438,6 +2377,10 @@ msgstr "Dit album bevat geen items om te verwijderen."
 
 msgid "Choose the items you want to delete"
 msgstr "Kies de items die u wilt verwijderen"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(pagina %d van %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "Items hier geselecteerd zullen geselecteerd blijven tijdens het wisselen van pagina's."
@@ -2459,6 +2402,21 @@ msgstr[1] "(album bevat %d items)"
 
 msgid "(empty album)"
 msgstr "(leeg album)"
+
+msgid "Check All"
+msgstr "Selecteer Alles"
+
+msgid "Check None"
+msgstr "Selecteer Niets"
+
+msgid "Invert"
+msgstr "Selectie omkeren"
+
+msgid "Previous Page"
+msgstr "Vorige Pagina"
+
+msgid "Next Page"
+msgstr "Volgende Pagina"
 
 msgid "Deletion Complete"
 msgstr "Verwijdering Is Afgerond"
@@ -2725,6 +2683,10 @@ msgstr "Verhouding: "
 msgid "Crop"
 msgstr "Bijsnijden"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Wijzigen"
+
 msgid "Reset to default"
 msgstr "Terugzetten naar standaard"
 
@@ -2800,6 +2762,11 @@ msgstr "Er is een link naar een andere foto, dus u kunt het originieel niet bewe
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "Omdat er linken naar deze foto gelegd zijn kunt u het origineel niet wijzigen"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "Behoud Originele Foto"
 
@@ -2825,12 +2792,6 @@ msgid ""
 msgstr ""
 "Dit album is ingesteld om gebruik te maken van het <b>%s</b> thema. Deze instellingen zijn "
 "alleen van toepassing op het thema van dit album."
-
-msgid "Setting"
-msgstr "Instelling"
-
-msgid "Use Global"
-msgstr "Gebruik algemene instelling"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2868,6 +2829,9 @@ msgstr[1] "Succesvol %d items verplaatst"
 msgid "This album contains no items to move."
 msgstr "Dit album bevat geen item om te verplaatsen."
 
+msgid "Source"
+msgstr "Bron"
+
 msgid "Choose the items you want to move"
 msgstr "Kies de items die u wilt verplaatsen"
 
@@ -2893,17 +2857,26 @@ msgstr "U bent niet bevoegd om een item te verplaatsen naar de gekozen bestemmin
 msgid "You cannot move an album into its own subtree."
 msgstr "U kan een album niet naar zijn eigen boomstructuur verplaatsen."
 
+msgid "Destination"
+msgstr "Doel"
+
 msgid "Choose a new album for them"
 msgstr "Kies een nieuw album voor deze item(s)"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "U heeft geen rechten om item aan dit album toe te voegen"
 
+msgid "No destination chosen"
+msgstr "Geen doel gekozen"
+
 msgid "Move"
 msgstr "Verplaatsen"
 
 msgid "Successfully moved"
 msgstr "Succesvol verplaatst"
+
+msgid "Choose a destination album"
+msgstr "Kies een doel album"
 
 msgid "Permissions"
 msgstr "Rechten"
@@ -3479,6 +3452,12 @@ msgstr "Onbekend"
 msgid "Full size: "
 msgstr "Volledige grootte: "
 
+msgid "Setting"
+msgstr "Instelling"
+
+msgid "Use Global"
+msgstr "Gebruik algemene instelling"
+
 msgid "Language selector"
 msgstr "Taalkiezer"
 
@@ -3505,6 +3484,53 @@ msgstr "[test] Een tweede recht"
 
 msgid "Unit test theme"
 msgstr "Eenheids test thema"
+
+#~ msgid "create link"
+#~ msgstr "maak link aan"
+
+#~ msgid "link an item"
+#~ msgstr "link een item"
+
+#~ msgid "Create Link"
+#~ msgstr "Maak Link Aan"
+
+#~ msgid "Link Album"
+#~ msgstr "Link Album"
+
+#~ msgid "Link Photo"
+#~ msgstr "Link Foto"
+
+#~ msgid "Link Movie"
+#~ msgstr "Link Film"
+
+#~ msgid "Link %s"
+#~ msgstr "Link %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "Link een Item"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "Succesvol %d item gelinked"
+#~ msgstr[1] "Succesvol %d items gelinked"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Dit album bevat geen item om te linken."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Kies de items die u wilt linken"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Geen bronnen gekozen"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Kies een nieuw album voor de link"
+
+#~ msgid "Link"
+#~ msgstr "Link"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Succesvol gelinked"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Succesvol geïnstalleerd en automatische configuratie module %s"

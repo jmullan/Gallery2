@@ -293,11 +293,9 @@ msgstr "Manifest kayıp ya da ulaşılamaz"
 msgid "Upgrade Core"
 msgstr "Çekirdeği Güncelle"
 
-msgid "Unable to verify plugins"
-msgstr ""
-
-msgid "Upgrade Modules"
-msgstr "Modülleri Güncelle"
+#, fuzzy
+msgid "Upgrade Plugins"
+msgstr "Güncelleme Durumu"
 
 msgid "Unable to initialize Gallery session"
 msgstr ""
@@ -334,11 +332,27 @@ msgstr "Modül listesi alınamıyor"
 msgid "Unable to get the theme list"
 msgstr "Tema listesi alınamıyor"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s module"
+msgstr "Modül %s güncellenemiyor"
+
 msgid "Other"
 msgstr "Diğer"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s theme"
+msgstr "%s Teması güncellenemiyor"
+
 msgid "Themes"
 msgstr "Temalar"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s theme"
+msgstr "%s Teması yüklenemiyor"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s module"
+msgstr "Modül %s yüklenemiyor"
 
 msgid "Welcome"
 msgstr "Hoşgeldin"
@@ -591,24 +605,6 @@ msgstr ""
 "versiyon alçaltması yapamazsınız. Lütfen Galeri 2 dosyalarınızı şu anda kurulu olan ile ve "
 "ya da daha yenisi ile değiştirin."
 
-#, fuzzy
-msgid "the Gallery website"
-msgstr "Galeri 2 Kurulumuna Git"
-
-#, c-format
-msgid ""
-"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-"missing.  You must either locate more recent versions of these modules or themes, or revert "
-"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
-"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
-"distribution of Gallery than what you originally installed.  You can download a larger "
-"distribution from %s."
-msgstr ""
-
-#, c-format
-msgid "Download replacement modules from %s"
-msgstr ""
-
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -661,9 +657,6 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Galeri Çekirdek Modülünüz Günce!"
 
-msgid "Upgrade Other Modules"
-msgstr "Diğer Modülleri Güncelle"
-
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
@@ -675,17 +668,14 @@ msgstr ""
 "sayfasını kullanarak güncelleyin ya da aktif durumunu kapalı konuma getirin, ya da daha "
 "sonra bu sayfaya tekrar geri dönün burada akmış olduğunuz kararlar kalıcı olmayacak."
 
-msgid "Missing Code"
-msgstr "Kayıp Kod"
+msgid "Deactivated Plugins"
+msgstr ""
 
 msgid ""
-"The code for some plugins that were previously active can no longer be found. You must "
-"restore code for these plugins before this upgrade can continue. Code for the plugins must "
-"be the same version or newer than what was installed before."
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
-"Bazı eklentiler için önceden aktif olan kodlar bulunamıyor. Güncellemeye devam etmeden önce "
-"kodları geri yüklemelisiniz. Eklentiler için kullanılan kod aynı versiyon ya da önceden "
-"yüklenenden yeni olmak zorundadır."
 
 msgid "Module"
 msgstr "Modül"
@@ -704,6 +694,9 @@ msgstr "Yeni"
 
 msgid "Description"
 msgstr "Açıklama"
+
+msgid "Incompatible with this version of Gallery"
+msgstr ""
 
 msgid "(un)check all"
 msgstr "tüm çekleri kaldır"
@@ -748,8 +741,27 @@ msgstr "Dil Seç:"
 msgid "Go"
 msgstr "Git"
 
+#~ msgid "Upgrade Modules"
+#~ msgstr "Modülleri Güncelle"
+
+#, fuzzy
+#~ msgid "the Gallery website"
+#~ msgstr "Galeri 2 Kurulumuna Git"
+
+#~ msgid "Upgrade Other Modules"
+#~ msgstr "Diğer Modülleri Güncelle"
+
+#~ msgid "Missing Code"
+#~ msgstr "Kayıp Kod"
+
+#~ msgid ""
+#~ "The code for some plugins that were previously active can no longer be found. You must "
+#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
+#~ "must be the same version or newer than what was installed before."
+#~ msgstr ""
+#~ "Bazı eklentiler için önceden aktif olan kodlar bulunamıyor. Güncellemeye devam etmeden "
+#~ "önce kodları geri yüklemelisiniz. Eklentiler için kullanılan kod aynı versiyon ya da "
+#~ "önceden yüklenenden yeni olmak zorundadır."
+
 #~ msgid "Finished"
 #~ msgstr "Bitti"
-
-#~ msgid "Upgrade Status"
-#~ msgstr "Güncelleme Durumu"

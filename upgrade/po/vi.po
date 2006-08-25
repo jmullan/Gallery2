@@ -280,11 +280,9 @@ msgstr "Thiếu tập tin Manifest hoặc không truy cập được."
 msgid "Upgrade Core"
 msgstr "Nâng cấp Lõi"
 
-msgid "Unable to verify plugins"
-msgstr ""
-
-msgid "Upgrade Modules"
-msgstr "Nâng cấp các module"
+#, fuzzy
+msgid "Upgrade Plugins"
+msgstr "Tình trạng nâng cấp"
 
 msgid "Unable to initialize Gallery session"
 msgstr ""
@@ -321,11 +319,27 @@ msgstr "Không thể nạp danh sách các module"
 msgid "Unable to get the theme list"
 msgstr "Không thể nạp danh sách các kiểu trình bày"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s module"
+msgstr "Không thể nâng cấp module %s"
+
 msgid "Other"
 msgstr "Khác"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s theme"
+msgstr "Không thể nâng cấp kiểu trình bày %s"
+
 msgid "Themes"
 msgstr "Kiểu trình bày"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s theme"
+msgstr "Không thể nạp kiểu trình bày %s"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s module"
+msgstr "Không thể nạp module %s"
 
 msgid "Welcome"
 msgstr "Chào mừng"
@@ -577,24 +591,6 @@ msgstr ""
 "hãy thay thế các tập tin của gallery2 bằng các tập tin của phiên bản đang được cài hoặc mới "
 "hơn."
 
-#, fuzzy
-msgid "the Gallery website"
-msgstr "Đi đến Chương trình cài đặt Gallery 2"
-
-#, c-format
-msgid ""
-"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-"missing.  You must either locate more recent versions of these modules or themes, or revert "
-"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
-"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
-"distribution of Gallery than what you originally installed.  You can download a larger "
-"distribution from %s."
-msgstr ""
-
-#, c-format
-msgid "Download replacement modules from %s"
-msgstr ""
-
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -648,9 +644,6 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Module Lõi của Gallery hiện đang dùng phiên bản mới nhất!"
 
-msgid "Upgrade Other Modules"
-msgstr "Nâng cấp các module khác"
-
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
@@ -661,17 +654,14 @@ msgstr ""
 "Gallery của bạn có thể sẽ có trục trặc khi hoạt động. Bạn lúc nào cũng có thể nâng cấp hoặc "
 "bỏ kích hoạt chúng trong trang Quản trị, hoặc quay lại trang này sau để nâng cấp chúng."
 
-msgid "Missing Code"
-msgstr "Mã bị thiếu"
+msgid "Deactivated Plugins"
+msgstr ""
 
 msgid ""
-"The code for some plugins that were previously active can no longer be found. You must "
-"restore code for these plugins before this upgrade can continue. Code for the plugins must "
-"be the same version or newer than what was installed before."
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
-"Mã chương trình của một số plugin đang hoạt động trước đây không tìm thấy. Bạn cần phải khôi "
-"phục lại mã của các plugin này trước khi tiếp tục nâng cấp. Mã chương trình cho các plugin "
-"này phải cùng phiên bản hoặc mới hơn phiên bản đã được cài trước đây."
 
 msgid "Module"
 msgstr "Module"
@@ -690,6 +680,9 @@ msgstr "Mới"
 
 msgid "Description"
 msgstr "Mô tả"
+
+msgid "Incompatible with this version of Gallery"
+msgstr ""
 
 msgid "(un)check all"
 msgstr "(bỏ) đánh dấu tất cả"
@@ -734,8 +727,27 @@ msgstr "Chọn ngôn ngữ:"
 msgid "Go"
 msgstr "Đi tiếp"
 
+#~ msgid "Upgrade Modules"
+#~ msgstr "Nâng cấp các module"
+
+#, fuzzy
+#~ msgid "the Gallery website"
+#~ msgstr "Đi đến Chương trình cài đặt Gallery 2"
+
+#~ msgid "Upgrade Other Modules"
+#~ msgstr "Nâng cấp các module khác"
+
+#~ msgid "Missing Code"
+#~ msgstr "Mã bị thiếu"
+
+#~ msgid ""
+#~ "The code for some plugins that were previously active can no longer be found. You must "
+#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
+#~ "must be the same version or newer than what was installed before."
+#~ msgstr ""
+#~ "Mã chương trình của một số plugin đang hoạt động trước đây không tìm thấy. Bạn cần phải "
+#~ "khôi phục lại mã của các plugin này trước khi tiếp tục nâng cấp. Mã chương trình cho các "
+#~ "plugin này phải cùng phiên bản hoặc mới hơn phiên bản đã được cài trước đây."
+
 #~ msgid "Finished"
 #~ msgstr "Hoàn tất"
-
-#~ msgid "Upgrade Status"
-#~ msgstr "Tình trạng nâng cấp"

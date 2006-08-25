@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "POT-Creation-Date: 2005-07-27 23:11-0400\n"
 "PO-Revision-Date: 2005-08-24 14:00-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -282,12 +282,6 @@ msgstr "輸入檔案 %s 並沒有上載。錯誤 %d"
 msgid "Gallery Item Administration"
 msgstr "Gallery 項目管理"
 
-msgid "create link"
-msgstr "新建鏈接"
-
-msgid "link an item"
-msgstr "鏈接項目"
-
 msgid "delete an item"
 msgstr "刪除項目"
 
@@ -310,6 +304,10 @@ msgstr "&laquo; 預設佈景主題 &raquo;"
 
 msgid "Recreating resized images"
 msgstr "重新產生縮放大小圖片中"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "處理中..."
 
 msgid "Rebuilding resized images..."
 msgstr "重建縮放大小圖片中..."
@@ -396,9 +394,6 @@ msgstr "照片縮放成功"
 msgid "Modify Photo"
 msgstr "修改照片"
 
-msgid "Successfully saved theme settings"
-msgstr "佈景主題設定儲存成功"
-
 msgid "Theme"
 msgstr "佈景主題"
 
@@ -457,9 +452,6 @@ msgstr "編輯照片"
 
 msgid "Edit Movie"
 msgstr "編輯影片"
-
-msgid "Create Link"
-msgstr "產生鏈接"
 
 msgid "Add Album"
 msgstr "增加子相簿"
@@ -539,15 +531,6 @@ msgstr "帳戶設定"
 msgid "Change Password"
 msgstr "變更密碼"
 
-msgid "Link Album"
-msgstr "鏈接相簿"
-
-msgid "Link Photo"
-msgstr "鏈接照片"
-
-msgid "Link Movie"
-msgstr "鏈接影片"
-
 #, c-format
 msgid "Edit %s"
 msgstr "編輯%s"
@@ -559,10 +542,6 @@ msgstr "刪除%s"
 #, c-format
 msgid "Move %s"
 msgstr "移動%s"
-
-#, c-format
-msgid "Link %s"
-msgstr "鏈接%s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "建立所有縮略圖和縮放大小圖"
@@ -672,6 +651,14 @@ msgstr "主題"
 
 msgid "Owner"
 msgstr "所有者"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "編輯相簿"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "編輯相簿"
 
 msgid "Group"
 msgstr "成員組"
@@ -977,6 +964,9 @@ msgstr "地區"
 
 msgid "Browser"
 msgstr "瀏覽程式"
+
+msgid "Successfully saved theme settings"
+msgstr "佈景主題設定儲存成功"
 
 msgid "General Settings"
 msgstr "一般設定"
@@ -2118,6 +2108,9 @@ msgstr ""
 "平台錯誤的確切原因不明。最常見的原因是檔案系統的存取權限問題。這在你的網站主機改變了檔案系"
 "統，如從備份復原某些檔案時發生。"
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "發生一個錯誤。"
 
@@ -2239,63 +2232,6 @@ msgstr "無縮略圖"
 msgid "Options"
 msgstr "選項"
 
-msgid "Link an Item"
-msgstr "鏈接項目"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "成功鏈接 %d 個項目"
-
-msgid "This album contains no items to link."
-msgstr "這個相簿沒有可鏈接的項目"
-
-msgid "Source"
-msgstr "來源"
-
-msgid "Choose the items you want to link"
-msgstr "選擇你要鏈接的項目"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "（第 %2$d 之 %1$d 頁）"
-
-msgid "No sources chosen"
-msgstr "未選擇來源位置"
-
-msgid "Check All"
-msgstr "選擇全部"
-
-msgid "Check None"
-msgstr "全部不選"
-
-msgid "Invert"
-msgstr "反向選擇"
-
-msgid "Previous Page"
-msgstr "上一頁"
-
-msgid "Next Page"
-msgstr "下一頁"
-
-msgid "Destination"
-msgstr "目標位置"
-
-msgid "Choose a new album for the link"
-msgstr "為鏈接選擇一個新相簿"
-
-msgid "No destination chosen"
-msgstr "未選擇目標位置"
-
-msgid "Link"
-msgstr "鏈接"
-
-msgid "Successfully linked"
-msgstr "已鏈接成功"
-
-msgid "Choose a destination album"
-msgstr "選擇一個移動目標相簿"
-
 msgid "Delete Items"
 msgstr "刪除項目"
 
@@ -2312,6 +2248,10 @@ msgstr "這個相簿沒有可刪除的項目"
 
 msgid "Choose the items you want to delete"
 msgstr "選擇你要刪除的項目"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "（第 %2$d 之 %1$d 頁）"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "在這裡選擇的項目在不同頁面間移動時仍然會保持選取的狀態。"
@@ -2331,6 +2271,21 @@ msgstr[0] "（相簿包含 %d 個項目）"
 
 msgid "(empty album)"
 msgstr "（空相簿）"
+
+msgid "Check All"
+msgstr "選擇全部"
+
+msgid "Check None"
+msgstr "全部不選"
+
+msgid "Invert"
+msgstr "反向選擇"
+
+msgid "Previous Page"
+msgstr "上一頁"
+
+msgid "Next Page"
+msgstr "下一頁"
 
 msgid "Deletion Complete"
 msgstr "刪除完成"
@@ -2672,12 +2627,6 @@ msgid ""
 "for this album."
 msgstr "這個相簿已設定使用 <b>%s</b> 佈景主題。這些設定僅適用在這個相簿的佈景主題中。"
 
-msgid "Setting"
-msgstr "設定"
-
-msgid "Use Global"
-msgstr "使用全局設定"
-
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
 msgstr "在所有使用%s佈景主題的子相簿上使用這些設定"
@@ -2709,6 +2658,9 @@ msgstr[0] "成功移動 %d 個項目"
 msgid "This album contains no items to move."
 msgstr "這個相簿沒有可移動的項目。"
 
+msgid "Source"
+msgstr "來源"
+
 msgid "Choose the items you want to move"
 msgstr "選擇你要移動的項目"
 
@@ -2732,17 +2684,26 @@ msgstr "你不能把項目移動到選定的目標位置。"
 msgid "You cannot move an album into its own subtree."
 msgstr "你不能將相簿移動到其自身的子目錄中。"
 
+msgid "Destination"
+msgstr "目標位置"
+
 msgid "Choose a new album for them"
 msgstr "為它們選擇一個新相簿"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "你沒有在這個相簿中增加項目的權限"
 
+msgid "No destination chosen"
+msgstr "未選擇目標位置"
+
 msgid "Move"
 msgstr "移動"
 
 msgid "Successfully moved"
 msgstr "已移動成功"
+
+msgid "Choose a destination album"
+msgstr "選擇一個移動目標相簿"
 
 msgid "Permissions"
 msgstr "權限"
@@ -3274,6 +3235,12 @@ msgstr "未知"
 msgid "Full size: "
 msgstr "全尺寸："
 
+msgid "Setting"
+msgstr "設定"
+
+msgid "Use Global"
+msgstr "使用全局設定"
+
 msgid "Language selector"
 msgstr "語言選單"
 
@@ -3300,3 +3267,49 @@ msgstr "[測試] 第二個權限"
 
 msgid "Unit test theme"
 msgstr "單元測試佈景主題"
+
+#~ msgid "create link"
+#~ msgstr "新建鏈接"
+
+#~ msgid "link an item"
+#~ msgstr "鏈接項目"
+
+#~ msgid "Create Link"
+#~ msgstr "產生鏈接"
+
+#~ msgid "Link Album"
+#~ msgstr "鏈接相簿"
+
+#~ msgid "Link Photo"
+#~ msgstr "鏈接照片"
+
+#~ msgid "Link Movie"
+#~ msgstr "鏈接影片"
+
+#~ msgid "Link %s"
+#~ msgstr "鏈接%s"
+
+#~ msgid "Link an Item"
+#~ msgstr "鏈接項目"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "成功鏈接 %d 個項目"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "這個相簿沒有可鏈接的項目"
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "選擇你要鏈接的項目"
+
+#~ msgid "No sources chosen"
+#~ msgstr "未選擇來源位置"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "為鏈接選擇一個新相簿"
+
+#~ msgid "Link"
+#~ msgstr "鏈接"
+
+#~ msgid "Successfully linked"
+#~ msgstr "已鏈接成功"

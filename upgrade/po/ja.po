@@ -289,11 +289,9 @@ msgstr "Manifest がないかアクセスできません"
 msgid "Upgrade Core"
 msgstr "コアをアップグレード"
 
-msgid "Unable to verify plugins"
-msgstr "このプラグインが正常なことを確認できません"
-
-msgid "Upgrade Modules"
-msgstr "モジュールをアップグレード"
+#, fuzzy
+msgid "Upgrade Plugins"
+msgstr "アップグレードの状況"
 
 msgid "Unable to initialize Gallery session"
 msgstr "Gallery のセッションを初期化できません"
@@ -330,11 +328,27 @@ msgstr "モジュールリストを取得できません"
 msgid "Unable to get the theme list"
 msgstr "テーマリストを取得できません"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s module"
+msgstr "%s モジュールをアップグレードできません"
+
 msgid "Other"
 msgstr "その他"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s theme"
+msgstr "テーマ %s をアップグレードできません"
+
 msgid "Themes"
 msgstr "テーマ"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s theme"
+msgstr "テーマ %s を読み込むことができません"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s module"
+msgstr "%s モジュールを読み込むことができません"
 
 msgid "Welcome"
 msgstr "ようこそ"
@@ -585,29 +599,6 @@ msgstr ""
 "す。G2 をダウングレードすることはできません。gallery2 のファイルを現在インストールされている"
 "バージョンかより新しいバージョンのファイルに置き換えてください"
 
-msgid "the Gallery website"
-msgstr "Gallery のウェブサイト"
-
-#, c-format
-msgid ""
-"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-"missing.  You must either locate more recent versions of these modules or themes, or revert "
-"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
-"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
-"distribution of Gallery than what you originally installed.  You can download a larger "
-"distribution from %s."
-msgstr ""
-"いくつかのアクティブなモジュール／テーマが矛盾しているか、見つからないため、アップグレードを"
-"始めることができません。これらのモジュールもしくはテーマのより新しいバージョンに置き換える"
-"か、もともとのGalleryのバージョンに戻してください。いっさい変更はされていないので、戻すのは安"
-"全です。もし以下に矛盾を持つモジュール多くリストされている場合は、もともとインストールされて"
-"いるGalleryよりも小さいタイプのディストリビューションをダウンロードすることもできます。より大"
-"きいディストリビューションは %s からダウンロードできます。"
-
-#, c-format
-msgid "Download replacement modules from %s"
-msgstr "置き換えのモジュールを %s からダウンロードする"
-
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -660,9 +651,6 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Gallery のコアモジュールは最新の状態です"
 
-msgid "Upgrade Other Modules"
-msgstr "他のモジュールをアップグレード"
-
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
@@ -673,17 +661,14 @@ msgstr ""
 "もしれません。ただし、いつでも、サイト管理のページでアップグレードおよび無効化できます。ここ"
 "での決定は、恒久的なものではなく、いつでもこのページに戻ってくることができます"
 
-msgid "Missing Code"
-msgstr "見つからないコード"
+msgid "Deactivated Plugins"
+msgstr ""
 
 msgid ""
-"The code for some plugins that were previously active can no longer be found. You must "
-"restore code for these plugins before this upgrade can continue. Code for the plugins must "
-"be the same version or newer than what was installed before."
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
-"以前は有効だったいくつかのプラグインのコードは、もはや見つかりません。アップグレードを続ける"
-"前に、これらのコードを回復させてください。コードは現在インストールされているものと同じバー"
-"ジョンかより新しいものでなければいけません"
 
 msgid "Module"
 msgstr "モジュール"
@@ -702,6 +687,9 @@ msgstr "新しい"
 
 msgid "Description"
 msgstr "説明"
+
+msgid "Incompatible with this version of Gallery"
+msgstr ""
 
 msgid "(un)check all"
 msgstr "すべてをチェック（しない）"
@@ -749,8 +737,47 @@ msgstr "言語選択:"
 msgid "Go"
 msgstr "進む"
 
+#~ msgid "Unable to verify plugins"
+#~ msgstr "このプラグインが正常なことを確認できません"
+
+#~ msgid "Upgrade Modules"
+#~ msgstr "モジュールをアップグレード"
+
+#~ msgid "the Gallery website"
+#~ msgstr "Gallery のウェブサイト"
+
+#~ msgid ""
+#~ "Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+#~ "missing.  You must either locate more recent versions of these modules or themes, or "
+#~ "revert to your original version of Gallery.  No changes have been made so it's safe to "
+#~ "revert.  If you have many incompatible modules listed below, it's possible that you "
+#~ "downloaded a smaller distribution of Gallery than what you originally installed.  You can "
+#~ "download a larger distribution from %s."
+#~ msgstr ""
+#~ "いくつかのアクティブなモジュール／テーマが矛盾しているか、見つからないため、アップグレード"
+#~ "を始めることができません。これらのモジュールもしくはテーマのより新しいバージョンに置き換え"
+#~ "るか、もともとのGalleryのバージョンに戻してください。いっさい変更はされていないので、戻す"
+#~ "のは安全です。もし以下に矛盾を持つモジュール多くリストされている場合は、もともとインストー"
+#~ "ルされているGalleryよりも小さいタイプのディストリビューションをダウンロードすることもでき"
+#~ "ます。より大きいディストリビューションは %s からダウンロードできます。"
+
+#~ msgid "Download replacement modules from %s"
+#~ msgstr "置き換えのモジュールを %s からダウンロードする"
+
+#~ msgid "Upgrade Other Modules"
+#~ msgstr "他のモジュールをアップグレード"
+
+#~ msgid "Missing Code"
+#~ msgstr "見つからないコード"
+
+#~ msgid ""
+#~ "The code for some plugins that were previously active can no longer be found. You must "
+#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
+#~ "must be the same version or newer than what was installed before."
+#~ msgstr ""
+#~ "以前は有効だったいくつかのプラグインのコードは、もはや見つかりません。アップグレードを続け"
+#~ "る前に、これらのコードを回復させてください。コードは現在インストールされているものと同じ"
+#~ "バージョンかより新しいものでなければいけません"
+
 #~ msgid "Finished"
 #~ msgstr "完了"
-
-#~ msgid "Upgrade Status"
-#~ msgstr "アップグレードの状況"

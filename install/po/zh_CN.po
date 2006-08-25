@@ -212,8 +212,9 @@ msgstr "Oracle（9i 和更新版）"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "（实验性质！）IBM DB2（v8.2.2 和更新版）"
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL with Transactions（v3.23.34a 和更新版）"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "不明数据库类型或没有表资讯。"
@@ -278,8 +279,9 @@ msgstr "无法确认数据库事务"
 msgid "Core module is only partially installed."
 msgstr "核心模块安装不完全。"
 
-msgid "Install More Modules"
-msgstr "安装其他模块"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "安装步骤"
 
 #, fuzzy
 msgid "Unable to initialize our Gallery session"
@@ -663,15 +665,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"在我们继续之前，你必需先在你的 <b>%s</b> 目录中产生一个叫「config.php」的文件。你必需确定网页"
-"服务器可以写到这个文件。如果你在使用 Unix，试着使用「chmod 666 config.php」。在 Windows 上，"
-"你应该不必特别做什麽。在你产生了这个文件并设置好存取权限之後，就可以继续。如果发生了问题，我"
-"们会告诉你该修改什麽。"
+
+msgid "Unix (with shell access)"
+msgstr "Unix（指今列）"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "产生设置档"
@@ -832,9 +838,6 @@ msgstr ""
 "我们已经成功地安装了 图库的核心。虽然现在所有功能都会正常动作，你还是应该继续安装程式并加入其"
 "他选用的模块。这样你才能得到你想要的 图库功能。"
 
-msgid "Install Other Modules"
-msgstr "安装其他模块"
-
 #, fuzzy
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
@@ -990,9 +993,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "你必需输入一个目录"
 
-msgid "The directory you entered does not exist"
-msgstr "你输入的目录不存在"
-
 #, fuzzy
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
@@ -1001,6 +1001,22 @@ msgid ""
 msgstr ""
 "你所输入的目录是程式所在的目录。如果你要把一个 图库安装到程式目录中，请选择标准安装类型。如果"
 "你要安装多站台，请选一个不同的目录。"
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "你输入的目录不存在"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1075,12 +1091,26 @@ msgstr ""
 msgid "Check Again"
 msgstr "再检查一次"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
+msgstr ""
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
 msgstr ""
 
 msgid ""
@@ -1102,8 +1132,37 @@ msgstr "你输入的目录是唯读的。"
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "在储存目录中产生目录结构时发生错误。"
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "储存目录设置成功。"
+
+#, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+
 msgid "Directory path:"
 msgstr "目录路径："
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr "注意：这些只是范例！它们可能不适用於你的系统。"
+
+msgid "Unix (with ftp access)"
+msgstr "Unix（使用 FTP）"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"请注意 FTP 服务器和用户端程式种类变化很多所以这些指令可能不适用於你的情况。如果发生问题，请参"
+"考你的FTP 用户端程式手册或询问你的系统管理员。"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1134,41 +1193,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>注意</b>：不要忘了在完成後删除 dir.php 文件！"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr "注意：这些只是范例！它们可能不适用於你的系统。"
-
-msgid "Unix (with shell access)"
-msgstr "Unix（指今列）"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix（使用 FTP）"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"请注意 FTP 服务器和用户端程式种类变化很多所以这些指令可能不适用於你的情况。如果发生问题，请参"
-"考你的FTP 用户端程式手册或询问你的系统管理员。"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1243,6 +1267,33 @@ msgstr "开始"
 
 msgid "Begin Installation&raquo;"
 msgstr "开始安装&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "安装其他模块"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "在我们继续之前，你必需先在你的 <b>%s</b> 目录中产生一个叫「config.php」的文件。你必需确定"
+#~ "网页服务器可以写到这个文件。如果你在使用 Unix，试着使用「chmod 666 config.php」。在 "
+#~ "Windows 上，你应该不必特别做什麽。在你产生了这个文件并设置好存取权限之後，就可以继续。如果"
+#~ "发生了问题，我们会告诉你该修改什麽。"
+
+#~ msgid "Install Other Modules"
+#~ msgstr "安装其他模块"
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x（并未充分测试）"

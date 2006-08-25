@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-03-17 18:20+0300\n"
 "Last-Translator: Konstantin Ivanov <Continental@vollen.ru>\n"
@@ -300,12 +300,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Администрирование Элементов Галереи"
 
-msgid "create link"
-msgstr "установить связь"
-
-msgid "link an item"
-msgstr "связать элемент"
-
 msgid "delete an item"
 msgstr "удалить элемент"
 
@@ -328,6 +322,10 @@ msgstr "&laquo; тема по умолчанию &laquo;"
 
 msgid "Recreating resized images"
 msgstr "Переделать изображения промежуточных размеров"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Обработка..."
 
 msgid "Rebuilding resized images..."
 msgstr "Изменение изображений промежуточных размеров..."
@@ -414,9 +412,6 @@ msgstr "Масштаб фотографии успешно изменен"
 msgid "Modify Photo"
 msgstr "Изменить Фото"
 
-msgid "Successfully saved theme settings"
-msgstr "Настройки темы успешно сохранены"
-
 msgid "Theme"
 msgstr "Тема"
 
@@ -475,9 +470,6 @@ msgstr "Настройки Фото"
 
 msgid "Edit Movie"
 msgstr "Настройки Видеоролика"
-
-msgid "Create Link"
-msgstr "Установить связь"
 
 msgid "Add Album"
 msgstr "Добавить Альбом"
@@ -557,15 +549,6 @@ msgstr "Настройки Учетной Записи"
 msgid "Change Password"
 msgstr "Изменить Пароль"
 
-msgid "Link Album"
-msgstr "Связать Альбом"
-
-msgid "Link Photo"
-msgstr "Связать Фото"
-
-msgid "Link Movie"
-msgstr "Связать Видеоролик"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Редактировать %s"
@@ -577,10 +560,6 @@ msgstr "Удалить %s"
 #, c-format
 msgid "Move %s"
 msgstr "Переместить %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "Связать %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Создание всех макетов/промежуточных размеров"
@@ -697,6 +676,14 @@ msgstr "Заголовок"
 
 msgid "Owner"
 msgstr "Владелец"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Настройки Альбома"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "добавьте альбом"
 
 msgid "Group"
 msgstr "Группа"
@@ -1003,11 +990,25 @@ msgstr "Operating system"
 msgid "Default theme"
 msgstr "Тема по умолчанию"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d элементов подвреждено"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d элементов подвреждено"
+
 msgid "Locale"
 msgstr "Локализация"
 
 msgid "Browser"
 msgstr "Browser"
+
+msgid "Successfully saved theme settings"
+msgstr "Настройки темы успешно сохранены"
 
 msgid "General Settings"
 msgstr "Общие настройки"
@@ -1049,9 +1050,6 @@ msgstr "Язык по умолчанию"
 
 msgid "Check Browser Preference"
 msgstr "Проверять язык, выдаваемый браузером"
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1764,10 +1762,6 @@ msgid "up to date"
 msgstr "Обновить"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d элементов подвреждено"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(обязательно)"
 
@@ -2263,6 +2257,9 @@ msgstr ""
 "изменили некоторые файловые разрешения, например, после восстановления данных из резервной "
 "копии."
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Произошла ошибка"
 
@@ -2396,65 +2393,6 @@ msgstr "Макет отсутствует"
 msgid "Options"
 msgstr "Дополнительно"
 
-msgid "Link an Item"
-msgstr "Связать Элемент"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "Успешно связан %d элемент."
-msgstr[1] "Успешно связаны %d элемента."
-msgstr[2] "Успешно связаны %d элементов"
-
-msgid "This album contains no items to link."
-msgstr "Этот альбом не содержит элементов для связывания."
-
-msgid "Source"
-msgstr "Источник"
-
-msgid "Choose the items you want to link"
-msgstr "Выберите элементы, которые Вы хотите связать"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(страница %d из %d)"
-
-msgid "No sources chosen"
-msgstr "Источник не выбран"
-
-msgid "Check All"
-msgstr "Выделить Все"
-
-msgid "Check None"
-msgstr "Снять Выделение со Всех"
-
-msgid "Invert"
-msgstr "Инвертировать"
-
-msgid "Previous Page"
-msgstr "Предыдущая Страница"
-
-msgid "Next Page"
-msgstr "Следующая Страница"
-
-msgid "Destination"
-msgstr "Назначение"
-
-msgid "Choose a new album for the link"
-msgstr "Выберите новый альбом для связи"
-
-msgid "No destination chosen"
-msgstr "Не выбрано назначение"
-
-msgid "Link"
-msgstr "Связать"
-
-msgid "Successfully linked"
-msgstr "Успешно связан"
-
-msgid "Choose a destination album"
-msgstr "Укажите альбом назначения"
-
 msgid "Delete Items"
 msgstr "Удалить Элементы"
 
@@ -2473,6 +2411,10 @@ msgstr "Этот альбом не содержит элементов для у
 
 msgid "Choose the items you want to delete"
 msgstr "Выберите элементы, которые Вы хотите удалить"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(страница %d из %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "Выбранные здесь элементы будут сохраняться отмеченными при смене страниц."
@@ -2496,6 +2438,21 @@ msgstr[2] "(альбом содержит %d элементов)"
 
 msgid "(empty album)"
 msgstr "(пустой альбом)"
+
+msgid "Check All"
+msgstr "Выделить Все"
+
+msgid "Check None"
+msgstr "Снять Выделение со Всех"
+
+msgid "Invert"
+msgstr "Инвертировать"
+
+msgid "Previous Page"
+msgstr "Предыдущая Страница"
+
+msgid "Next Page"
+msgstr "Следующая Страница"
 
 msgid "Deletion Complete"
 msgstr "Удаление завершено"
@@ -2770,6 +2727,10 @@ msgstr "Соотношение размеров:"
 msgid "Crop"
 msgstr "Обрезать"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Изменить"
+
 msgid "Reset to default"
 msgstr "Значения по умолчанию"
 
@@ -2847,6 +2808,11 @@ msgid "There are links to this photo, so you cannot change the original"
 msgstr ""
 "Существуют связанные с этой фотографий изображения, поэтому Вы не можете изменить оригинал."
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "Хранить оригинальную фотографию "
 
@@ -2872,12 +2838,6 @@ msgid ""
 msgstr ""
 "Этот альбом сконфигурирован, чтобы испольвать тему <b>%s</b>. Эти настройки повлияют только "
 "на тему данного альбома."
-
-msgid "Setting"
-msgstr "Параметр"
-
-msgid "Use Global"
-msgstr "Использовать глобальные настройки"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2916,6 +2876,9 @@ msgstr[2] "%d элементов успешно перемещены"
 msgid "This album contains no items to move."
 msgstr "Этот альбом не содержит элементов для перемещения. "
 
+msgid "Source"
+msgstr "Источник"
+
 msgid "Choose the items you want to move"
 msgstr "Выберете элементы, которые Вы хотите переместить"
 
@@ -2943,17 +2906,26 @@ msgstr "Вам не допускается перемещать этот эле�
 msgid "You cannot move an album into its own subtree."
 msgstr "Вы не можете перемещать альбом в его вложенный альбом."
 
+msgid "Destination"
+msgstr "Назначение"
+
 msgid "Choose a new album for them"
 msgstr "Выберете новый альбом для них"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "У Вас нет прав доступа на добавление элементов в данным альбом"
 
+msgid "No destination chosen"
+msgstr "Не выбрано назначение"
+
 msgid "Move"
 msgstr "Переместить"
 
 msgid "Successfully moved"
 msgstr "Успешно перемещено"
+
+msgid "Choose a destination album"
+msgstr "Укажите альбом назначения"
 
 msgid "Permissions"
 msgstr "Разрешения (права доступа)"
@@ -3538,6 +3510,12 @@ msgstr "Неизвестный"
 msgid "Full size: "
 msgstr "Полный размер:"
 
+msgid "Setting"
+msgstr "Параметр"
+
+msgid "Use Global"
+msgstr "Использовать глобальные настройки"
+
 msgid "Language selector"
 msgstr "Выбор языка"
 
@@ -3564,6 +3542,54 @@ msgstr "[test] A second permission"
 
 msgid "Unit test theme"
 msgstr "Unit test theme"
+
+#~ msgid "create link"
+#~ msgstr "установить связь"
+
+#~ msgid "link an item"
+#~ msgstr "связать элемент"
+
+#~ msgid "Create Link"
+#~ msgstr "Установить связь"
+
+#~ msgid "Link Album"
+#~ msgstr "Связать Альбом"
+
+#~ msgid "Link Photo"
+#~ msgstr "Связать Фото"
+
+#~ msgid "Link Movie"
+#~ msgstr "Связать Видеоролик"
+
+#~ msgid "Link %s"
+#~ msgstr "Связать %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "Связать Элемент"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "Успешно связан %d элемент."
+#~ msgstr[1] "Успешно связаны %d элемента."
+#~ msgstr[2] "Успешно связаны %d элементов"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Этот альбом не содержит элементов для связывания."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Выберите элементы, которые Вы хотите связать"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Источник не выбран"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Выберите новый альбом для связи"
+
+#~ msgid "Link"
+#~ msgstr "Связать"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Успешно связан"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Модуль %s успешно установлен и сконфигурирован автоматически."
@@ -3615,9 +3641,6 @@ msgstr "Unit test theme"
 
 #~ msgid "HDTV 16x9"
 #~ msgstr "HDTV 16x9"
-
-#~ msgid "add album"
-#~ msgstr "добавьте альбом"
 
 #~ msgid "edit permissions"
 #~ msgstr "разрешения редактирования"

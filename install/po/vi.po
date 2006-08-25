@@ -220,8 +220,9 @@ msgstr "Oracle (9i và mới hơn)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 và mới hơn)"
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL với Transactions (v3.23.34a và mới hơn)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Không xác định được kiểu cơ sở dữ liệu hoặc thông tin về bảng."
@@ -290,8 +291,9 @@ msgstr "Không thể thực hiện thao tác cơ sở dữ liệu"
 msgid "Core module is only partially installed."
 msgstr "Module Lõi chỉ mới được cài đặt một phần."
 
-msgid "Install More Modules"
-msgstr "Cài thêm module"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Các bước cài đặt"
 
 #, fuzzy
 msgid "Unable to initialize our Gallery session"
@@ -685,16 +687,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Trước khi tiếp tục, bạn nên tạo một tập tin tên <i>config.php</i> (để lưu cấu hình)trong thư "
-"mục <b>%s</b> của bạn. Bạn phải bảo đảm là máy chủ web có quyền ghi vào tập tin này. Nếu bạn "
-"dùng Unix, hãy thử dùng lệnh <i>chmod 666 config.php</i>. Trên Windows thì bạn không cần "
-"phải làm gì cả. Bạn có thể tiếp tục sau khi bạn đã tạo tập tin này và đặt quyền cho nó. Nếu "
-"có vấn đề gì thì chúng tôi sẽ chỉ dẫn bạn tiếp."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (truy cập qua shell)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Tạo tập tin cấu hình"
@@ -860,9 +865,6 @@ msgstr ""
 "tiếp tục chương trình cài đặt để cài thêm một số module tùy chọn để bạn có được các tính "
 "năng bạn muốn có trong Gallery của bạn."
 
-msgid "Install Other Modules"
-msgstr "Cài các module khác"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -1025,9 +1027,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "Bạn cần phải nhập một thư mục"
 
-msgid "The directory you entered does not exist"
-msgstr "Thư mục bạn nhập vào không tồn tại"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1036,6 +1035,22 @@ msgstr ""
 "Thư mục bạn nhập vào là thư mục của codebase. Nếu bạn muốn cài một chương trình Gallery vào "
 "thư mục codebase, hãy chọn kiểu cài đặt chuẩn. Nếu bạn muốn cài cho nhiều trang web, hãy "
 "chọn một thư mục khác."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "Thư mục bạn nhập vào không tồn tại"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1122,12 +1137,26 @@ msgstr ""
 msgid "Check Again"
 msgstr "Kiểm tra lại"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
+msgstr ""
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
 msgstr ""
 
 msgid ""
@@ -1150,8 +1179,39 @@ msgstr "Thư mục bạn nhập vào chỉ cho đọc"
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Có lỗi khi tạo cấu trúc thư mục trong thư mục lưu trữ."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Thư mục lưu trữ đã được đặt"
+
+#, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+
 msgid "Directory path:"
 msgstr "Đường dẫn thư mục:"
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr ""
+"Lưu ý: Đây chỉ là các ví dụ! Chúng có thể sẽ không hoạt động được trên hệ thống của bạn."
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (truy cập bằng FTP)"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"Lưu ý là các chương trình FTP và máy chủ FTP có khả năng khác nhau nên các chỉ dẫn này có "
+"thể không chạy được. Hãy tham khảo tài liệu hướng dẫn của chương trình FTP của bạn hoặc một "
+"nhà quản trị hệ thống nếu bạn gặp khó khăn."
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1187,43 +1247,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Lưu ý</b>: Hãy nhớ xóa tập tin dir.php khi dùng xong!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr ""
-"Lưu ý: Đây chỉ là các ví dụ! Chúng có thể sẽ không hoạt động được trên hệ thống của bạn."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (truy cập qua shell)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (truy cập bằng FTP)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"Lưu ý là các chương trình FTP và máy chủ FTP có khả năng khác nhau nên các chỉ dẫn này có "
-"thể không chạy được. Hãy tham khảo tài liệu hướng dẫn của chương trình FTP của bạn hoặc một "
-"nhà quản trị hệ thống nếu bạn gặp khó khăn."
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1303,6 +1326,34 @@ msgstr "Đi tiếp"
 
 msgid "Begin Installation&raquo;"
 msgstr "Bắt đầu cài đặt&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "Cài thêm module"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Trước khi tiếp tục, bạn nên tạo một tập tin tên <i>config.php</i> (để lưu cấu hình)trong "
+#~ "thư mục <b>%s</b> của bạn. Bạn phải bảo đảm là máy chủ web có quyền ghi vào tập tin này. "
+#~ "Nếu bạn dùng Unix, hãy thử dùng lệnh <i>chmod 666 config.php</i>. Trên Windows thì bạn "
+#~ "không cần phải làm gì cả. Bạn có thể tiếp tục sau khi bạn đã tạo tập tin này và đặt quyền "
+#~ "cho nó. Nếu có vấn đề gì thì chúng tôi sẽ chỉ dẫn bạn tiếp."
+
+#~ msgid "Install Other Modules"
+#~ msgstr "Cài các module khác"
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (chưa được kiểm tra kỹ)"

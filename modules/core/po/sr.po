@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-14 16:52+0200\n"
 "PO-Revision-Date: 2005-09-06 17:10+0200\n"
@@ -295,12 +295,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Administracija objekta Galerije"
 
-msgid "create link"
-msgstr "napravi vezu"
-
-msgid "link an item"
-msgstr "poveži objekat"
-
 msgid "delete an item"
 msgstr "brisanje objekta"
 
@@ -324,6 +318,10 @@ msgstr "&laquo; podrazumevan izgled &raquo;"
 #, fuzzy
 msgid "Recreating resized images"
 msgstr "Ponovo napravi promenjene veličine"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Obrada..."
 
 #, fuzzy
 msgid "Rebuilding resized images..."
@@ -412,9 +410,6 @@ msgstr "Fotografija uspešno skalirana"
 msgid "Modify Photo"
 msgstr "Izmeni fotografiju"
 
-msgid "Successfully saved theme settings"
-msgstr "Uspešno sačuvana podešavanja izgleda"
-
 msgid "Theme"
 msgstr "Izgled"
 
@@ -473,9 +468,6 @@ msgstr "Izmena fotografije"
 
 msgid "Edit Movie"
 msgstr "Izmena filma"
-
-msgid "Create Link"
-msgstr "Pravljenje veze"
 
 msgid "Add Album"
 msgstr "Dodavanje albuma"
@@ -555,15 +547,6 @@ msgstr "Parametri naloga"
 msgid "Change Password"
 msgstr "Promena lozinke"
 
-msgid "Link Album"
-msgstr "Vezivanje albuma"
-
-msgid "Link Photo"
-msgstr "Vezivanje fotografije"
-
-msgid "Link Movie"
-msgstr "Vezivanje filma"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Izmena %s"
@@ -575,10 +558,6 @@ msgstr "Brisanje %s"
 #, c-format
 msgid "Move %s"
 msgstr "Premeštanje %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "Veži %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Napravi sve umanjene prikaze i promenjene veličine"
@@ -695,6 +674,14 @@ msgstr "Naslov"
 
 msgid "Owner"
 msgstr "Vlasnik"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Izmena albuma"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Izmena albuma"
 
 msgid "Group"
 msgstr "Grupa"
@@ -993,12 +980,26 @@ msgstr "Operativni sistem"
 msgid "Default theme"
 msgstr "Podrazumevan izgled"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d objekata sa greškom"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d objekata sa greškom"
+
 #, fuzzy
 msgid "Locale"
 msgstr "Skaliranje"
 
 msgid "Browser"
 msgstr "Čitač"
+
+msgid "Successfully saved theme settings"
+msgstr "Uspešno sačuvana podešavanja izgleda"
 
 msgid "General Settings"
 msgstr "Opšti parametri"
@@ -1039,9 +1040,6 @@ msgstr "Podrazumevan jezik"
 
 msgid "Check Browser Preference"
 msgstr ""
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1722,10 +1720,6 @@ msgid "up to date"
 msgstr "Datum"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d objekata sa greškom"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(obavezno)"
 
@@ -2178,6 +2172,9 @@ msgid ""
 "system, e.g. by restoring data from a backup."
 msgstr ""
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Desila se greška."
 
@@ -2307,64 +2304,6 @@ msgstr "Nema umanjenih prikaza"
 msgid "Options"
 msgstr "Parametri"
 
-msgid "Link an Item"
-msgstr "Vezivanje objekta"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "Uspešno povezan %d objekat"
-msgstr[1] "Uspešno povezano %d objekata"
-
-msgid "This album contains no items to link."
-msgstr "Ovaj album ne sadrži objekte koji se mogu povezati."
-
-msgid "Source"
-msgstr "Izvor"
-
-msgid "Choose the items you want to link"
-msgstr "Izaberite objekte koje želite da vežete"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(%d. strana od %d) "
-
-msgid "No sources chosen"
-msgstr "Nije izabran izvor"
-
-msgid "Check All"
-msgstr "Obeleži sve"
-
-msgid "Check None"
-msgstr "Obriši sve"
-
-msgid "Invert"
-msgstr "Obrni"
-
-msgid "Previous Page"
-msgstr "Prethodna strana"
-
-msgid "Next Page"
-msgstr "Sledeća strana"
-
-msgid "Destination"
-msgstr "Odredište"
-
-msgid "Choose a new album for the link"
-msgstr "Izaberite novi album za vezu"
-
-msgid "No destination chosen"
-msgstr "Odredište nije izabrano"
-
-msgid "Link"
-msgstr "Veži"
-
-msgid "Successfully linked"
-msgstr "Uspešno vezano"
-
-msgid "Choose a destination album"
-msgstr "Izaberite odredišni album"
-
 msgid "Delete Items"
 msgstr "Brisanje objekata"
 
@@ -2382,6 +2321,10 @@ msgstr "Ovaj album ne sadrži ni jedan objekat koji se može brisati"
 
 msgid "Choose the items you want to delete"
 msgstr "Izaberite objekte koje želite da izbrišete"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(%d. strana od %d) "
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "Ovde izabrani objekti će ostati obeleženi prilikom promene strane"
@@ -2403,6 +2346,21 @@ msgstr[1] "(album koji sadrži %d objekata)"
 
 msgid "(empty album)"
 msgstr "(prazan album)"
+
+msgid "Check All"
+msgstr "Obeleži sve"
+
+msgid "Check None"
+msgstr "Obriši sve"
+
+msgid "Invert"
+msgstr "Obrni"
+
+msgid "Previous Page"
+msgstr "Prethodna strana"
+
+msgid "Next Page"
+msgstr "Sledeća strana"
 
 msgid "Deletion Complete"
 msgstr "Brisanje završeno"
@@ -2668,6 +2626,10 @@ msgstr "Razmera:"
 msgid "Crop"
 msgstr "Sečenje"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Promeni"
+
 msgid "Reset to default"
 msgstr "Vraćanje na početnu vrednost"
 
@@ -2742,6 +2704,11 @@ msgstr "Ovo je veza prema drugoj fotografiji, tako da ne možete da promenite or
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "Postoje veze prema ovoj fotografiji, tako da ne možete da promenite original"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "Očuvaj originalnu fotografiju"
 
@@ -2767,12 +2734,6 @@ msgid ""
 msgstr ""
 "Ovaj album je podešen da koristi <b>%s</b> izgled. Ovi parametri se odnose samo na izgled "
 "ovog albuma."
-
-msgid "Setting"
-msgstr "Parametar"
-
-msgid "Use Global"
-msgstr "Koristi globalni"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2806,6 +2767,9 @@ msgstr[1] "Uspešno premešteno %d objekata"
 msgid "This album contains no items to move."
 msgstr "Ovaj album ne sadrži objekte koji se mogu premestiti"
 
+msgid "Source"
+msgstr "Izvor"
+
 msgid "Choose the items you want to move"
 msgstr "Izaberite objekte koje želite da premestite"
 
@@ -2832,17 +2796,26 @@ msgstr "Nemate dozvolu da objekat premestite na izabrano odredište."
 msgid "You cannot move an album into its own subtree."
 msgstr "Ne možete premestiti album u svoje podstablo."
 
+msgid "Destination"
+msgstr "Odredište"
+
 msgid "Choose a new album for them"
 msgstr "Izaberite im novi album"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "Nemate dozvolu da dodajete objekte u ovaj album"
 
+msgid "No destination chosen"
+msgstr "Odredište nije izabrano"
+
 msgid "Move"
 msgstr "Premesti"
 
 msgid "Successfully moved"
 msgstr "Premeštanje uspešno"
+
+msgid "Choose a destination album"
+msgstr "Izaberite odredišni album"
 
 msgid "Permissions"
 msgstr "Prava"
@@ -3406,6 +3379,12 @@ msgstr "Nepoznato"
 msgid "Full size: "
 msgstr "Puna veličina:"
 
+msgid "Setting"
+msgstr "Parametar"
+
+msgid "Use Global"
+msgstr "Koristi globalni"
+
 msgid "Language selector"
 msgstr "Birač jezika"
 
@@ -3432,6 +3411,53 @@ msgstr "[test] Drugo pravo"
 
 msgid "Unit test theme"
 msgstr "Testni izgled"
+
+#~ msgid "create link"
+#~ msgstr "napravi vezu"
+
+#~ msgid "link an item"
+#~ msgstr "poveži objekat"
+
+#~ msgid "Create Link"
+#~ msgstr "Pravljenje veze"
+
+#~ msgid "Link Album"
+#~ msgstr "Vezivanje albuma"
+
+#~ msgid "Link Photo"
+#~ msgstr "Vezivanje fotografije"
+
+#~ msgid "Link Movie"
+#~ msgstr "Vezivanje filma"
+
+#~ msgid "Link %s"
+#~ msgstr "Veži %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "Vezivanje objekta"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "Uspešno povezan %d objekat"
+#~ msgstr[1] "Uspešno povezano %d objekata"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Ovaj album ne sadrži objekte koji se mogu povezati."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Izaberite objekte koje želite da vežete"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Nije izabran izvor"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Izaberite novi album za vezu"
+
+#~ msgid "Link"
+#~ msgstr "Veži"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Uspešno vezano"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Modul %s uspešno instaliran i automatski konfigurisan"

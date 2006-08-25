@@ -228,8 +228,9 @@ msgstr "Oracle (9i 以上)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 for Unix/Windows, v8.2 以上"
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL トランザクションあり (v3.23.34a 以上)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "未知のタイプのデータベースかテーブル情報です"
@@ -298,8 +299,9 @@ msgstr "データベーストランザクションをコミットできません
 msgid "Core module is only partially installed."
 msgstr "コアモジュールは部分的にしかインストールされていません。"
 
-msgid "Install More Modules"
-msgstr "モジュールをもっとインストールする"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "インストールステップ"
 
 #, fuzzy
 msgid "Unable to initialize our Gallery session"
@@ -706,15 +708,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"先に進む前に、<b>%s</b> ディレクトリに<b>config.php</b>というファイルを作成します。ウェブサー"
-"バーに書き込み権限を与えるようにしてください。もしUNIX系のOSを利用してるならば<i>chmod 666 "
-"config.php</i>を実行してください。Windowsでは特に必要な作業はありません。このファイルを作成し"
-"て、適切なパーミッションを設定したら、次に進みます。もし問題があれば、修正点を伝えます"
+
+msgid "Unix (with shell access)"
+msgstr "Unix (シェル経由)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "設定ファイルの作成"
@@ -879,9 +885,6 @@ msgstr ""
 "トールを続行して、Gallery のオプションのモジュールを追加してください。これによってGallery の"
 "機能の正しいセットがそろいます"
 
-msgid "Install Other Modules"
-msgstr "他のモジュールをインストール"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -1043,9 +1046,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "ディレクトリを入力しなければなりません"
 
-msgid "The directory you entered does not exist"
-msgstr "入力されたディレクトリは存在しません"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1054,6 +1054,22 @@ msgstr ""
 "あなたが入力したディレクトリは中央コード保管場所(codebase)です。もしこのディレクトリに"
 "Gallery をインストールしたい場合は、標準のインストール方式を選択してください。マルチサイトに"
 "する場合は、別のディレクトリを選んでくさい"
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "入力されたディレクトリは存在しません"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1142,17 +1158,29 @@ msgstr ""
 msgid "Check Again"
 msgstr "もう一度チェック"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
-"Gallery を利用するには、画像を保存するディレクトリが必要です。我々が選択するディレクトリでも"
-"動作しすますが、ウェブ上でダイレクトにアクセスできてしまいます。"
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, fuzzy, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
 msgstr ""
 "セキュリティを最大に高めるためには、ウェブからアクセスできないディレクトリを選択してくださ"
 "い。"
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
+msgstr ""
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1178,8 +1206,41 @@ msgstr "入力したディレクトリは読み込み専用です"
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "記憶領域内のディレクトリ構造を作成するときにエラーが発生しました"
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "ストレージディレクトリの設定に成功しました"
+
+#, fuzzy, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+"セキュリティを最大に高めるためには、ウェブからアクセスできないディレクトリを選択してくださ"
+"い。"
+
 msgid "Directory path:"
 msgstr "ディレクトリパス:"
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+"あなたの(Apacheなどの)ウェブサーバーは、このディレクトリへの書き込み権限を与えてください。そ"
+"れをするためには、これらの例を参考にしてください。"
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr "注意: これはあくまで例です。　あなたのシステムではうまく動かない場合もあります"
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (ftp 経由)"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"FTPサーバーやクライアントの動作は様々なので、これらの指示がうまく行かない場合もあります。問題"
+"があれば、FTPクライアントのマニュアルを参照するか、システム管理者に問い合わせてください"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1212,43 +1273,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>注意</b>: 作業が終わったら必ず dir.php を削除してください"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-"あなたの(Apacheなどの)ウェブサーバーは、このディレクトリへの書き込み権限を与えてください。そ"
-"れをするためには、これらの例を参考にしてください。"
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr "注意: これはあくまで例です。　あなたのシステムではうまく動かない場合もあります"
-
-msgid "Unix (with shell access)"
-msgstr "Unix (シェル経由)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (ftp 経由)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"FTPサーバーやクライアントの動作は様々なので、これらの指示がうまく行かない場合もあります。問題"
-"があれば、FTPクライアントのマニュアルを参照するか、システム管理者に問い合わせてください"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1330,6 +1354,41 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "インストールを始める&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "モジュールをもっとインストールする"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "先に進む前に、<b>%s</b> ディレクトリに<b>config.php</b>というファイルを作成します。ウェブ"
+#~ "サーバーに書き込み権限を与えるようにしてください。もしUNIX系のOSを利用してるならば"
+#~ "<i>chmod 666 config.php</i>を実行してください。Windowsでは特に必要な作業はありません。この"
+#~ "ファイルを作成して、適切なパーミッションを設定したら、次に進みます。もし問題があれば、修正"
+#~ "点を伝えます"
+
+#~ msgid "Install Other Modules"
+#~ msgstr "他のモジュールをインストール"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Gallery を利用するには、画像を保存するディレクトリが必要です。我々が選択するディレクトリで"
+#~ "も動作しすますが、ウェブ上でダイレクトにアクセスできてしまいます。"
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (十分にテストされていません)"

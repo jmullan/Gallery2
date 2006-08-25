@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "POT-Creation-Date: 2005-03-28 14:00+0800\n"
 "PO-Revision-Date: 2006-03-10 11:37+0800\n"
 "Last-Translator: Lyric <lyric@lyricli.com>\n"
@@ -288,12 +288,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "图库项目管理"
 
-msgid "create link"
-msgstr "新建链接"
-
-msgid "link an item"
-msgstr "链接项目"
-
 msgid "delete an item"
 msgstr "删除项目"
 
@@ -316,6 +310,10 @@ msgstr "&laquo; 默认风格主题 &raquo;"
 
 msgid "Recreating resized images"
 msgstr "重建变更尺寸的图片"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "处理中..."
 
 msgid "Rebuilding resized images..."
 msgstr "正在重建变更尺寸的图像...."
@@ -402,9 +400,6 @@ msgstr "照片缩放成功"
 msgid "Modify Photo"
 msgstr "修改照片"
 
-msgid "Successfully saved theme settings"
-msgstr "主题设置保存成功"
-
 msgid "Theme"
 msgstr "主题"
 
@@ -463,9 +458,6 @@ msgstr "编辑照片"
 
 msgid "Edit Movie"
 msgstr "编辑电影"
-
-msgid "Create Link"
-msgstr "创建链接"
 
 msgid "Add Album"
 msgstr "添加相册"
@@ -545,15 +537,6 @@ msgstr "帐户设置"
 msgid "Change Password"
 msgstr "变更密码"
 
-msgid "Link Album"
-msgstr "链接相册"
-
-msgid "Link Photo"
-msgstr "链接照片"
-
-msgid "Link Movie"
-msgstr "链接电影"
-
 #, c-format
 msgid "Edit %s"
 msgstr "编辑 %s"
@@ -565,10 +548,6 @@ msgstr "删除 %s"
 #, c-format
 msgid "Move %s"
 msgstr "移动 %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "链接 %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "创建所有缩略图和变更尺寸的图片"
@@ -678,6 +657,14 @@ msgstr "标题"
 
 msgid "Owner"
 msgstr "所有者"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "编辑相册"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "添加子相册"
 
 msgid "Group"
 msgstr "成员组"
@@ -969,12 +956,26 @@ msgstr "操作系统"
 msgid "Default theme"
 msgstr "默认风格主题"
 
+msgid "gettext"
+msgstr "取得文本"
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d 个项目错误"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d 个项目错误"
+
 #, fuzzy
 msgid "Locale"
 msgstr "缩放"
 
 msgid "Browser"
 msgstr "浏览"
+
+msgid "Successfully saved theme settings"
+msgstr "主题设置保存成功"
 
 msgid "General Settings"
 msgstr "通用设置"
@@ -1014,9 +1015,6 @@ msgstr "默认语言"
 
 msgid "Check Browser Preference"
 msgstr "检查浏览器偏好选项"
-
-msgid "gettext"
-msgstr "取得文本"
 
 #, c-format
 msgid ""
@@ -1674,10 +1672,6 @@ msgid "up to date"
 msgstr "更新"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d 个项目错误"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(必填项)"
 
@@ -2123,6 +2117,9 @@ msgstr ""
 "不能准确的解释平台错误的原因，一般来说是文件系统权限不足导致此类错误。当主机更改了文件系统可"
 "能会发生这类错误，比如从某个备份恢复了数据。"
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "发生一个错误。"
 
@@ -2245,64 +2242,6 @@ msgstr "无缩略图"
 msgid "Options"
 msgstr "选项"
 
-msgid "Link an Item"
-msgstr "链接项目"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "成功链接 %d 个项目"
-msgstr[1] "成功链接 %d 个项目"
-
-msgid "This album contains no items to link."
-msgstr "此相册没有可链接的项目"
-
-msgid "Source"
-msgstr "来源"
-
-msgid "Choose the items you want to link"
-msgstr "选择您要链接的项目"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(第 %d 页，共 %d 页)"
-
-msgid "No sources chosen"
-msgstr "未选择源"
-
-msgid "Check All"
-msgstr "选择全部"
-
-msgid "Check None"
-msgstr "全部不选"
-
-msgid "Invert"
-msgstr "反向选择"
-
-msgid "Previous Page"
-msgstr "上一页"
-
-msgid "Next Page"
-msgstr "下一页"
-
-msgid "Destination"
-msgstr "目标位置"
-
-msgid "Choose a new album for the link"
-msgstr "为链接选择一个新相册"
-
-msgid "No destination chosen"
-msgstr "未选择目标位置"
-
-msgid "Link"
-msgstr "链接"
-
-msgid "Successfully linked"
-msgstr "已链接成功"
-
-msgid "Choose a destination album"
-msgstr "选择一个移动目标相册"
-
 msgid "Delete Items"
 msgstr "删除项目"
 
@@ -2320,6 +2259,10 @@ msgstr "此相册没有可删除的项目"
 
 msgid "Choose the items you want to delete"
 msgstr "选择您要删除的项目"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(第 %d 页，共 %d 页)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "此处选择上的项目会在页面切换之间保留。"
@@ -2341,6 +2284,21 @@ msgstr[1] "(相册包含 %d 个项目)"
 
 msgid "(empty album)"
 msgstr "(空相册)"
+
+msgid "Check All"
+msgstr "选择全部"
+
+msgid "Check None"
+msgstr "全部不选"
+
+msgid "Invert"
+msgstr "反向选择"
+
+msgid "Previous Page"
+msgstr "上一页"
+
+msgid "Next Page"
+msgstr "下一页"
 
 msgid "Deletion Complete"
 msgstr "删除完成"
@@ -2584,6 +2542,10 @@ msgstr "宽高比例: "
 msgid "Crop"
 msgstr "裁切"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "变更"
+
 msgid "Reset to default"
 msgstr "重置为默认值"
 
@@ -2649,6 +2611,11 @@ msgstr "这是一个其他照片的链接，因此您不能改变原始照片。
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "这仅是此照片的链接，因此您不能更改原始照片"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "保留原始照片"
 
@@ -2671,12 +2638,6 @@ msgid ""
 "This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
 "for this album."
 msgstr "此相册已设定使用 <b>%s</b> 主题。这些设置仅应用在此相册的主题中。"
-
-msgid "Setting"
-msgstr "设置"
-
-msgid "Use Global"
-msgstr "使用全局设置"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2710,6 +2671,9 @@ msgstr[1] "成功移动 %d 个项目"
 msgid "This album contains no items to move."
 msgstr "此相册没有可移动的项目"
 
+msgid "Source"
+msgstr "来源"
+
 msgid "Choose the items you want to move"
 msgstr "选择您要移动的项目"
 
@@ -2733,17 +2697,26 @@ msgstr "您不能移动项目到选定的目标位置。"
 msgid "You cannot move an album into its own subtree."
 msgstr "您不能将相册移动到其自身的子目录中。"
 
+msgid "Destination"
+msgstr "目标位置"
+
 msgid "Choose a new album for them"
 msgstr "为它们选择一个新相册"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "您没有在此相册中添加项目的权限"
 
+msgid "No destination chosen"
+msgstr "未选择目标位置"
+
 msgid "Move"
 msgstr "移动"
 
 msgid "Successfully moved"
 msgstr "已移动成功"
+
+msgid "Choose a destination album"
+msgstr "选择一个移动目标相册"
 
 msgid "Permissions"
 msgstr "权限"
@@ -3269,6 +3242,12 @@ msgstr "未知"
 msgid "Full size: "
 msgstr "全尺寸："
 
+msgid "Setting"
+msgstr "设置"
+
+msgid "Use Global"
+msgstr "使用全局设置"
+
 msgid "Language selector"
 msgstr "语言选择"
 
@@ -3295,6 +3274,53 @@ msgstr "[测试]权限"
 
 msgid "Unit test theme"
 msgstr "公测主题"
+
+#~ msgid "create link"
+#~ msgstr "新建链接"
+
+#~ msgid "link an item"
+#~ msgstr "链接项目"
+
+#~ msgid "Create Link"
+#~ msgstr "创建链接"
+
+#~ msgid "Link Album"
+#~ msgstr "链接相册"
+
+#~ msgid "Link Photo"
+#~ msgstr "链接照片"
+
+#~ msgid "Link Movie"
+#~ msgstr "链接电影"
+
+#~ msgid "Link %s"
+#~ msgstr "链接 %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "链接项目"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "成功链接 %d 个项目"
+#~ msgstr[1] "成功链接 %d 个项目"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "此相册没有可链接的项目"
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "选择您要链接的项目"
+
+#~ msgid "No sources chosen"
+#~ msgstr "未选择源"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "为链接选择一个新相册"
+
+#~ msgid "Link"
+#~ msgstr "链接"
+
+#~ msgid "Successfully linked"
+#~ msgstr "已链接成功"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "模块 %s 安装并自动设置成功"
@@ -3340,10 +3366,6 @@ msgstr "公测主题"
 
 #~ msgid "&laquo; None &raquo;"
 #~ msgstr "&laquo; 无 &raquo;"
-
-#, fuzzy
-#~ msgid "add album"
-#~ msgstr "添加子相册"
 
 #~ msgid "edit permissions"
 #~ msgstr "编辑权限"

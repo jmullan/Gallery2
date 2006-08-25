@@ -305,10 +305,8 @@ msgstr "Manifest fehlt oder ist nicht abrufbar."
 msgid "Upgrade Core"
 msgstr "Aktualisiere Kern"
 
-msgid "Unable to verify plugins"
-msgstr "Kann Plugins nicht verifizieren"
-
-msgid "Upgrade Modules"
+#, fuzzy
+msgid "Upgrade Plugins"
 msgstr "Aktualisiere Module"
 
 msgid "Unable to initialize Gallery session"
@@ -346,11 +344,27 @@ msgstr "Die Modulliste ist nicht abrufbar"
 msgid "Unable to get the theme list"
 msgstr "Die Motivliste ist nicht abrufbar"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s module"
+msgstr "Das Modul '%s' kann nicht aktualisiert werden"
+
 msgid "Other"
 msgstr "Weitere"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s theme"
+msgstr "Das Motiv '%s' kann nicht aktualisiert werden"
+
 msgid "Themes"
 msgstr "Motive"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s theme"
+msgstr "Das Motiv '%s' kann nicht geladen werden"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s module"
+msgstr "Das Modul '%s' kann nicht geladen werden"
 
 msgid "Welcome"
 msgstr "Willkommen"
@@ -611,30 +625,6 @@ msgstr ""
 "versuchen. Sie können G2 nicht zurückstufen. Bitte ersetzen Sie die gallery2-Dateien mit "
 "Dateien aus der momentan installierten oder einer aktuelleren Version."
 
-msgid "the Gallery website"
-msgstr "Gallery-Website"
-
-#, c-format
-msgid ""
-"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-"missing.  You must either locate more recent versions of these modules or themes, or revert "
-"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
-"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
-"distribution of Gallery than what you originally installed.  You can download a larger "
-"distribution from %s."
-msgstr ""
-"Die Aktualisierung kann nicht starten weil einige Ihrer aktiven Module/Motive inkompatibel "
-"sind oder fehlen. Sie müssen entweder aktuellere Versionen dieser Module oder Motive finden, "
-"oder ihre ursprüngliche Gallery-Version wiederherstellen. Es wurden keine Änderungen "
-"vorgenommen, die Wiederherstellung ist also sicher. Wenn unten viele inkompatible Module "
-"aufgelistet werden, könnte es sein, dass die von Ihnen heruntergeladene Gallery-Distribution "
-"kleiner ist als diejenige, welche Sie ursprünglich installiert hatten. Sie können eine "
-"größere Distribution von der %s herunterladen."
-
-#, c-format
-msgid "Download replacement modules from %s"
-msgstr "Ersatz-Module von der %s herunterladen"
-
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -688,9 +678,6 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Ihr Gallery-Kernmodul ist auf dem neusten Stand!"
 
-msgid "Upgrade Other Modules"
-msgstr "Weitere Module aktualisieren"
-
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
@@ -703,18 +690,14 @@ msgstr ""
 "deaktivieren, oder Sie können später zu dieser Seite zurückkehren. Die hier getroffenen "
 "Entscheidungen sind also nicht dauerhaft bindend."
 
-msgid "Missing Code"
-msgstr "Fehlender Quelltext"
+msgid "Deactivated Plugins"
+msgstr ""
 
 msgid ""
-"The code for some plugins that were previously active can no longer be found. You must "
-"restore code for these plugins before this upgrade can continue. Code for the plugins must "
-"be the same version or newer than what was installed before."
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
-"Der Quelltext einiger zuvor aktiver Pluginskann nicht mehr gefunden werden. Sie müssen den "
-"Quelltext dieser Plugins wiederherstellen, bevor diese Aktualisierung fortgesetzt werden "
-"kann. Die Version des Plugin-Quelltextes muss entweder der zuvor installierten entsprechen "
-"oder neuer sein."
 
 msgid "Module"
 msgstr "Modul"
@@ -733,6 +716,9 @@ msgstr "verfügbar"
 
 msgid "Description"
 msgstr "Beschreibung"
+
+msgid "Incompatible with this version of Gallery"
+msgstr ""
 
 msgid "(un)check all"
 msgstr "alle aus-/abwählen"
@@ -781,3 +767,44 @@ msgstr "Sprache auswählen:"
 # Badly chosen mgsid: means: switch to selected language
 msgid "Go"
 msgstr "Sprache einstellen"
+
+#~ msgid "Unable to verify plugins"
+#~ msgstr "Kann Plugins nicht verifizieren"
+
+#~ msgid "the Gallery website"
+#~ msgstr "Gallery-Website"
+
+#~ msgid ""
+#~ "Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+#~ "missing.  You must either locate more recent versions of these modules or themes, or "
+#~ "revert to your original version of Gallery.  No changes have been made so it's safe to "
+#~ "revert.  If you have many incompatible modules listed below, it's possible that you "
+#~ "downloaded a smaller distribution of Gallery than what you originally installed.  You can "
+#~ "download a larger distribution from %s."
+#~ msgstr ""
+#~ "Die Aktualisierung kann nicht starten weil einige Ihrer aktiven Module/Motive "
+#~ "inkompatibel sind oder fehlen. Sie müssen entweder aktuellere Versionen dieser Module "
+#~ "oder Motive finden, oder ihre ursprüngliche Gallery-Version wiederherstellen. Es wurden "
+#~ "keine Änderungen vorgenommen, die Wiederherstellung ist also sicher. Wenn unten viele "
+#~ "inkompatible Module aufgelistet werden, könnte es sein, dass die von Ihnen "
+#~ "heruntergeladene Gallery-Distribution kleiner ist als diejenige, welche Sie ursprünglich "
+#~ "installiert hatten. Sie können eine größere Distribution von der %s herunterladen."
+
+#~ msgid "Download replacement modules from %s"
+#~ msgstr "Ersatz-Module von der %s herunterladen"
+
+#~ msgid "Upgrade Other Modules"
+#~ msgstr "Weitere Module aktualisieren"
+
+#~ msgid "Missing Code"
+#~ msgstr "Fehlender Quelltext"
+
+#~ msgid ""
+#~ "The code for some plugins that were previously active can no longer be found. You must "
+#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
+#~ "must be the same version or newer than what was installed before."
+#~ msgstr ""
+#~ "Der Quelltext einiger zuvor aktiver Pluginskann nicht mehr gefunden werden. Sie müssen "
+#~ "den Quelltext dieser Plugins wiederherstellen, bevor diese Aktualisierung fortgesetzt "
+#~ "werden kann. Die Version des Plugin-Quelltextes muss entweder der zuvor installierten "
+#~ "entsprechen oder neuer sein."

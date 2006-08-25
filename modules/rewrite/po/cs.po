@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: URL Rewrite 1.1.5\n"
+"Project-Id-Version: Gallery: URL Rewrite 1.1.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-11 18:26+0200\n"
 "PO-Revision-Date: 2006-02-12 17:15+0100\n"
@@ -37,7 +37,8 @@ msgstr "404 Soubor nenalezen"
 msgid "URL Rewrite"
 msgstr "Přepis URL"
 
-msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo."
+#, fuzzy
+msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo"
 msgstr "Aktivuje krátká URL pomocí Apache mod_rewrite, USAPI Rewrite nebo PathInfo."
 
 msgid "Gallery"
@@ -48,6 +49,9 @@ msgstr "Zobrazit položku"
 
 msgid "Path to an item (eg, /album/image.jpg.html)"
 msgstr "Cesta k položce (např. /album/image.jpg.html)"
+
+msgid "Page number in an album"
+msgstr ""
 
 msgid "Current language (eg, en or de)"
 msgstr "Současný jazyk (např. en nebo de)"
@@ -80,6 +84,16 @@ msgid "Block hotlinked items"
 msgstr ""
 "Blokovat přímý přístup k položkám (položky je možné zobrazit pouze v html kódu Galerie)"
 
+#, fuzzy
+msgid "Send HTML for hotlinked items"
+msgstr ""
+"Blokovat přímý přístup k položkám (položky je možné zobrazit pouze v html kódu Galerie)"
+
+msgid ""
+"Blocks use of images in other sites (HTML creates broken image), but allows linking to "
+"images."
+msgstr ""
+
 msgid "Check short style URLs for filesystem conflicts"
 msgstr "Kontrola krátkých URL z důvodů konfliktů v souborovém systému"
 
@@ -107,7 +121,8 @@ msgstr "Zkontrolováno %d položek a nalezeno %d konfliktů"
 msgid "Bad keyword."
 msgstr "Špatné klíčové slovo."
 
-msgid "Duplicate short url rule."
+#, fuzzy
+msgid "Duplicate short URL rule."
 msgstr "Duplikovat pravidlo krátkých URL."
 
 msgid "Ivalid pattern."
@@ -177,8 +192,7 @@ msgstr ""
 msgid ""
 "It is recomended that you don't activate the 'Download Item' URL since it will slow down "
 "Gallery."
-msgstr ""
-"Doporučujeme neaktivovat URL pro stahování položek, protože to zpomalí chod Galerie."
+msgstr "Doporučujeme neaktivovat URL pro stahování položek, protože to zpomalí chod Galerie."
 
 msgid "A pattern may not begin with a keyword."
 msgstr "Vzor nesmí začínat klíčovým slovem."
@@ -297,14 +311,13 @@ msgid "How to setup ISAP Rewrite"
 msgstr "Jak nastavit ISAP Rewrite"
 
 msgid "In order to make the test pass you need to add the test rewrite rule in your httpd.ini:"
-msgstr "Pro správné otestování je třeba přidat toto zkušební pravidlo přepisu do Vašeho "
-"httpd.ini:"
+msgstr ""
+"Pro správné otestování je třeba přidat toto zkušební pravidlo přepisu do Vašeho httpd.ini:"
 
 msgid ""
 "If you add this at the bottom, please make sure that there's atleast one empty line below "
 "the section"
-msgstr ""
-"Pokud pravidlo přidáte dolu, prosím ověřte, že pod sekcí je alespoň jedna volná řádka."
+msgstr "Pokud pravidlo přidáte dolu, prosím ověřte, že pod sekcí je alespoň jedna volná řádka."
 
 msgid "Test ISAPI Rewrite Manually"
 msgstr "Vyzkoušet ISAPI Rewrite ručně"
@@ -336,15 +349,20 @@ msgstr "Prosím ujistěte se, zda Galerie může číst soubor httpd.ini"
 msgid "Please make sure Gallery can write to the httpd.ini file"
 msgstr "Prosím ujistěte se, zda Galerie může zapisovat do souboru httpd.ini"
 
+#, fuzzy
 msgid ""
-"For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file "
-"to hold the mod_rewrite rules."
+"For URL Rewrite to work in an embedded environment you need to set up an extra .htaccess "
+"file to hold the mod_rewrite rules."
 msgstr ""
 "Pro fungující přepis URL v embedded prostředí je potřeba zvláštní htaccess soubor pro "
 "mod_rewrite pravidla."
 
-msgid "Htaccess path:"
-msgstr "Cesta k htaccess:"
+#, fuzzy
+msgid "Absolute path to the folder of your embedded .htaccess:"
+msgstr "Nelze zapsat soubor .htaccess pro embedding"
+
+msgid "Please enter the Url to your environment. E.g. http://www.mySite.com/myNiceCMS/"
+msgstr ""
 
 msgid "Apache mod_rewrite"
 msgstr "Apache mod_rewrite"
@@ -453,8 +471,8 @@ msgid ""
 "unsure of what method you should choose then select this. Gallery will try to detect if your "
 "server supports mod_rewrite."
 msgstr ""
-"U většiny Apache serverů je současně nainstalován mod_rewrite. Pokud si nejste jisti, "
-"jakou metodu byste měli použít, zkuste toto. Galerie se pokusí zjistit, jestli Váš server "
+"U většiny Apache serverů je současně nainstalován mod_rewrite. Pokud si nejste jisti, jakou "
+"metodu byste měli použít, zkuste toto. Galerie se pokusí zjistit, jestli Váš server "
 "podporuje mod_rewrite."
 
 msgid "IIS ISAPI_Rewrite"
@@ -489,6 +507,9 @@ msgstr "Hotovo"
 
 msgid "Unit test module"
 msgstr "Modul jednotky testování"
+
+#~ msgid "Htaccess path:"
+#~ msgstr "Cesta k htaccess:"
 
 #~ msgid "Item file name (eg, image.jpg)"
 #~ msgstr "Jméno souboru položky (např. image.jpg)"

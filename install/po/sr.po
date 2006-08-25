@@ -225,8 +225,9 @@ msgstr "Oracle (9i i novije)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 i novije)"
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL sa transakcijama (v3.23.34a ili novija)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Nepoznat tip baze ili nema informacija o postojećim tabelama."
@@ -297,8 +298,9 @@ msgstr "Nije moguće potvrditi transakciju u bazi podataka"
 msgid "Core module is only partially installed."
 msgstr "Modul sa jezgrom je samo delimično instaliran."
 
-msgid "Install More Modules"
-msgstr "Instalacija dodatnih modula"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Instalacioni koraci"
 
 #, fuzzy
 msgid "Unable to initialize our Gallery session"
@@ -698,16 +700,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Pre nego što nastavimo, treba da napravite jednu datoteku u vašem <b>%s</b> direktorijumu sa "
-"nazivom <i>config.php</i>. Morate osigurati da će vaš web server biti u mogućnosti da piše u "
-"njega. Ako koristite Unix, pokušajte da izvršite <i>chmod 666 config.php</i>. Na Windows-u, "
-"ne biste morali da radite ništa posebno. Kada ste napravili ovu datoteku i na odgovarajući "
-"način podesili prava, možete nastaviti. Ako postoji problem, reći ćemo vam kako da ga rešite."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (sa shell pristupom)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Pravljenje konfiguracione datoteke"
@@ -874,9 +879,6 @@ msgstr ""
 "nastavite sa instalacijom i dodate neke od dodatnih modula da biste imali skup mogućnosti "
 "koji želite u vašoj instalaciji Galerije."
 
-msgid "Install Other Modules"
-msgstr "Instaliraj druge module"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -1037,9 +1039,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "Morate uneti direktorijum"
 
-msgid "The directory you entered does not exist"
-msgstr "Direktorijum koji ste uneli ne postoji"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1048,6 +1047,22 @@ msgstr ""
 "Direktorijum koje ste uneli je direktorijum skladišta izvornog koda. Ako želite da "
 "instalirate Galeriju u taj direktorijum, izaberite standardnu vrstu instalacije. Ako želite "
 "višesajtnu instalaciju, izaberite neki drugi direktorijum."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "Direktorijum koji ste uneli ne postoji"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1134,12 +1149,26 @@ msgstr ""
 msgid "Check Again"
 msgstr "Proveri ponovo"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
+msgstr ""
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
 msgstr ""
 
 msgid ""
@@ -1167,8 +1196,38 @@ msgstr ""
 "Desila se greška u toku pravljenja strukture direktorijuma unutar direktorijuma za "
 "skladištenje."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Direktorijum za skladištenje je uspešno podešen."
+
+#, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+
 msgid "Directory path:"
 msgstr "Putanja direktorijuma:"
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr "Napomena: Ovo su samo primeri! Moguće je da neće raditi baš najbolje na vašem sistemu."
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (sa FTP pristupom)"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"Obratite pažnju na to da FTP serveri i klijenti variraju, tako da ova uputstva možda neće "
+"odgovarati vašem slučaju. Pročitajte uputstvo vašeg FTP klijenta ili razgovarajte sa "
+"administratorom sistema ako imate problema,"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1202,42 +1261,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Napomena</b>: Nemojte zaboraviti da izbrišete dir.php kada završite!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr "Napomena: Ovo su samo primeri! Moguće je da neće raditi baš najbolje na vašem sistemu."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (sa shell pristupom)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (sa FTP pristupom)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"Obratite pažnju na to da FTP serveri i klijenti variraju, tako da ova uputstva možda neće "
-"odgovarati vašem slučaju. Pročitajte uputstvo vašeg FTP klijenta ili razgovarajte sa "
-"administratorom sistema ako imate problema,"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1318,6 +1341,35 @@ msgstr "Kreni"
 
 msgid "Begin Installation&raquo;"
 msgstr "Počni instalaciju&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "Instalacija dodatnih modula"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Pre nego što nastavimo, treba da napravite jednu datoteku u vašem <b>%s</b> direktorijumu "
+#~ "sa nazivom <i>config.php</i>. Morate osigurati da će vaš web server biti u mogućnosti da "
+#~ "piše u njega. Ako koristite Unix, pokušajte da izvršite <i>chmod 666 config.php</i>. Na "
+#~ "Windows-u, ne biste morali da radite ništa posebno. Kada ste napravili ovu datoteku i na "
+#~ "odgovarajući način podesili prava, možete nastaviti. Ako postoji problem, reći ćemo vam "
+#~ "kako da ga rešite."
+
+#~ msgid "Install Other Modules"
+#~ msgstr "Instaliraj druge module"
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (nije detaljno testiran)"

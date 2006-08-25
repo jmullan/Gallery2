@@ -21,7 +21,7 @@
 # Gidie <gidie at users.sourceforge REMOVE THIS dot net>, 2005
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Image Block 1.0.8\n"
+"Project-Id-Version: Gallery: Image Block 1.0.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-12 14:46+0100\n"
 "PO-Revision-Date: 2005-02-12 15:00+0100\n"
@@ -168,12 +168,20 @@ msgstr ""
 "Beperk de item selectie tot de onderliggende items van het opgegeven gallery album id; of "
 "het id van het weer te geven item by gebruik met het 'specificItem' blok type"
 
+#, c-format
 msgid ""
-"Scale images to this maximum size. If maxSize exceeds the thumbnail dimensions, you must "
-"also specify g2_show=fullSize"
+"Scale images to this maximum size. If used alone Gallery will locate the most-closely-sized "
+"image to the specified value - larger images will be scaled down as necessary in your "
+"browser. If specified along with %sshow=fullSize the full size image will always be used and "
+"scaled down as necessary."
 msgstr ""
-"Afbeeldingen schalen naar de maximale grootte. Als maxSize groter is dan de miniatuur "
-"afmetingen dient u ook g2_show=fullSize op te geven"
+
+#, c-format
+msgid ""
+"Just like %smaxSize except that it will not substitute an image smaller than the size you "
+"request, so you'll get the closest match in size possible.  Note that this may use a lot "
+"more bandwidth if a much larger image has to be scaled down in your browser."
+msgstr ""
 
 msgid ""
 "Href for link on image; value of none for no link; default is link to item in the Gallery"
@@ -267,3 +275,10 @@ msgstr "Weergave teller weergeven"
 
 msgid "Show owner"
 msgstr "Eigenaar weergeven"
+
+#~ msgid ""
+#~ "Scale images to this maximum size. If maxSize exceeds the thumbnail dimensions, you must "
+#~ "also specify g2_show=fullSize"
+#~ msgstr ""
+#~ "Afbeeldingen schalen naar de maximale grootte. Als maxSize groter is dan de miniatuur "
+#~ "afmetingen dient u ook g2_show=fullSize op te geven"

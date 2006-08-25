@@ -21,7 +21,7 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
 "PO-Revision-Date: 2006-05-03 23:51+0900\n"
@@ -285,12 +285,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Gallery アイテム管理"
 
-msgid "create link"
-msgstr "リンク作成"
-
-msgid "link an item"
-msgstr "アイテムにリンクする"
-
 msgid "delete an item"
 msgstr "アイテム削除"
 
@@ -313,6 +307,10 @@ msgstr "&laquo; デフォルトテーマ &raquo;"
 
 msgid "Recreating resized images"
 msgstr "リサイズ済画像を再生成"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "処理中..."
 
 msgid "Rebuilding resized images..."
 msgstr "リサイズ済画像を再構築"
@@ -399,9 +397,6 @@ msgstr "パスワードの変更に成功しました"
 msgid "Modify Photo"
 msgstr "画像を変更する"
 
-msgid "Successfully saved theme settings"
-msgstr "テーマの保存に成功しました。"
-
 msgid "Theme"
 msgstr "テーマ"
 
@@ -460,9 +455,6 @@ msgstr "画像の編集"
 
 msgid "Edit Movie"
 msgstr "動画の編集"
-
-msgid "Create Link"
-msgstr "リンク作成"
 
 msgid "Add Album"
 msgstr "アルバム追加"
@@ -543,15 +535,6 @@ msgstr "アカウント設定"
 msgid "Change Password"
 msgstr "パスワード変更"
 
-msgid "Link Album"
-msgstr "アルバムリンク"
-
-msgid "Link Photo"
-msgstr "画像リンク"
-
-msgid "Link Movie"
-msgstr "動画リンク"
-
 #, c-format
 msgid "Edit %s"
 msgstr "%s の編集"
@@ -563,10 +546,6 @@ msgstr "%s の削除"
 #, c-format
 msgid "Move %s"
 msgstr "%s の移動"
-
-#, c-format
-msgid "Link %s"
-msgstr "リンク %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "サムネイル/リサイズ画像を生成"
@@ -683,6 +662,14 @@ msgstr "タイトル"
 
 msgid "Owner"
 msgstr "所有者"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "アルバム編集"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "アルバム編集"
 
 msgid "Group"
 msgstr "グループ"
@@ -984,11 +971,25 @@ msgstr "OS"
 msgid "Default theme"
 msgstr "デフォルトテーマ"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d アイテムが失敗しました"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d アイテムが失敗しました"
+
 msgid "Locale"
 msgstr "ロケール"
 
 msgid "Browser"
 msgstr "ブラウザ"
+
+msgid "Successfully saved theme settings"
+msgstr "テーマの保存に成功しました。"
 
 msgid "General Settings"
 msgstr "全般の設定"
@@ -1028,9 +1029,6 @@ msgstr "デフォルト言語"
 
 msgid "Check Browser Preference"
 msgstr "ブラウザーのプリファレンスを確認"
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1703,10 +1701,6 @@ msgid "up to date"
 msgstr "アップデート"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d アイテムが失敗しました"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "必須"
 
@@ -2184,6 +2178,9 @@ msgstr ""
 "が十分でないことです。これは例えばバックアップからデータを復旧させるなど、ファイルシステムに"
 "何らかの変更を加えた時に起きます。"
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "エラーが発生しました。"
 
@@ -2312,63 +2309,6 @@ msgstr "サムネイルなし"
 msgid "Options"
 msgstr "オプション"
 
-msgid "Link an Item"
-msgstr "アイテムをリンク"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "%d個のファイルのリンクに成功しました。"
-
-msgid "This album contains no items to link."
-msgstr "このアルバムにはリンクするアイテムがありません"
-
-msgid "Source"
-msgstr "ソース"
-
-msgid "Choose the items you want to link"
-msgstr "リンクしたいアイテムを選択してください"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(ページ %d / %d)"
-
-msgid "No sources chosen"
-msgstr "選択された元がありません"
-
-msgid "Check All"
-msgstr "全てをチェック"
-
-msgid "Check None"
-msgstr "どれもチェックしない"
-
-msgid "Invert"
-msgstr "挿入"
-
-msgid "Previous Page"
-msgstr "前のページ"
-
-msgid "Next Page"
-msgstr "次のページ"
-
-msgid "Destination"
-msgstr "宛先"
-
-msgid "Choose a new album for the link"
-msgstr "リンクに対する新しいアルバムを選んでください"
-
-msgid "No destination chosen"
-msgstr "選択された宛先がありません"
-
-msgid "Link"
-msgstr "リンク"
-
-msgid "Successfully linked"
-msgstr "リンクに成功しました"
-
-msgid "Choose a destination album"
-msgstr "対象となるアルバムを選択してください。"
-
 msgid "Delete Items"
 msgstr "アイテム削除"
 
@@ -2385,6 +2325,10 @@ msgstr "このアルバムには削除するアイテムはありません"
 
 msgid "Choose the items you want to delete"
 msgstr "削除したいアイテムを選択してください"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(ページ %d / %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "ここで選択されたアイテムは、ページを移動しても、選択された状態を保持します"
@@ -2405,6 +2349,21 @@ msgstr[1] ""
 
 msgid "(empty album)"
 msgstr "(空のアルバム)"
+
+msgid "Check All"
+msgstr "全てをチェック"
+
+msgid "Check None"
+msgstr "どれもチェックしない"
+
+msgid "Invert"
+msgstr "挿入"
+
+msgid "Previous Page"
+msgstr "前のページ"
+
+msgid "Next Page"
+msgstr "次のページ"
 
 msgid "Deletion Complete"
 msgstr "削除完了"
@@ -2659,6 +2618,10 @@ msgstr "アスペクト比: "
 msgid "Crop"
 msgstr "トリミング"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "変更"
+
 msgid "Reset to default"
 msgstr "デフォルトに戻す"
 
@@ -2734,6 +2697,11 @@ msgstr "これは他の画像へのリンクですので、オリジナルを変
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "この画像へのリンクがあるので、オリジナルに対する変更はできません。"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "オリジナル画像を保護"
 
@@ -2758,12 +2726,6 @@ msgid ""
 msgstr ""
 "このアルバムはテーマ <b>%s</b>を使うように設定されています。この設定は、このアルバムのための"
 "テーマにだけ適用されます"
-
-msgid "Setting"
-msgstr "設定"
-
-msgid "Use Global"
-msgstr "グローバルを使う"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2799,6 +2761,9 @@ msgstr[1] ""
 msgid "This album contains no items to move."
 msgstr "このアルバムには、移動させるアイテムがありません"
 
+msgid "Source"
+msgstr "ソース"
+
 msgid "Choose the items you want to move"
 msgstr "移動したいアイテムを選択してください"
 
@@ -2825,17 +2790,26 @@ msgstr "アイテムを選択された宛先へ移動する権限がありませ
 msgid "You cannot move an album into its own subtree."
 msgstr "アルバムをそれ自身のサブツリーへ移動することはできません。"
 
+msgid "Destination"
+msgstr "宛先"
+
 msgid "Choose a new album for them"
 msgstr "それらに対する新しいアルバムを選んでください"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "このアルバムにアイテムを追加する権限がありません。"
 
+msgid "No destination chosen"
+msgstr "選択された宛先がありません"
+
 msgid "Move"
 msgstr "移動"
 
 msgid "Successfully moved"
 msgstr "移動に成功しました"
+
+msgid "Choose a destination album"
+msgstr "対象となるアルバムを選択してください。"
 
 msgid "Permissions"
 msgstr "パーミッション"
@@ -3399,6 +3373,12 @@ msgstr "未知"
 msgid "Full size: "
 msgstr "完全: "
 
+msgid "Setting"
+msgstr "設定"
+
+msgid "Use Global"
+msgstr "グローバルを使う"
+
 msgid "Language selector"
 msgstr "言語選択"
 
@@ -3425,6 +3405,52 @@ msgstr "[test] 二番目のパーミッション"
 
 msgid "Unit test theme"
 msgstr ""
+
+#~ msgid "create link"
+#~ msgstr "リンク作成"
+
+#~ msgid "link an item"
+#~ msgstr "アイテムにリンクする"
+
+#~ msgid "Create Link"
+#~ msgstr "リンク作成"
+
+#~ msgid "Link Album"
+#~ msgstr "アルバムリンク"
+
+#~ msgid "Link Photo"
+#~ msgstr "画像リンク"
+
+#~ msgid "Link Movie"
+#~ msgstr "動画リンク"
+
+#~ msgid "Link %s"
+#~ msgstr "リンク %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "アイテムをリンク"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "%d個のファイルのリンクに成功しました。"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "このアルバムにはリンクするアイテムがありません"
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "リンクしたいアイテムを選択してください"
+
+#~ msgid "No sources chosen"
+#~ msgstr "選択された元がありません"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "リンクに対する新しいアルバムを選んでください"
+
+#~ msgid "Link"
+#~ msgstr "リンク"
+
+#~ msgid "Successfully linked"
+#~ msgstr "リンクに成功しました"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "モジュール %s のインストールと自動設定に成功しました"

@@ -298,11 +298,9 @@ msgstr "Manifest отсутствует или недоступен."
 msgid "Upgrade Core"
 msgstr "Обновление основного модуля"
 
-msgid "Unable to verify plugins"
-msgstr "Невозможно проверить плагины."
-
-msgid "Upgrade Modules"
-msgstr "Обновление других модулей"
+#, fuzzy
+msgid "Upgrade Plugins"
+msgstr "Статус Обновления"
 
 msgid "Unable to initialize Gallery session"
 msgstr "Невозможно инициализировать сессию Галереи"
@@ -339,11 +337,27 @@ msgstr "Невозможно получить список модулей"
 msgid "Unable to get the theme list"
 msgstr "Невозможно получить список тем"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s module"
+msgstr "Невозможно обновить модуль %s"
+
 msgid "Other"
 msgstr "Другие"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s theme"
+msgstr "Невозможно обновить тему %s"
+
 msgid "Themes"
 msgstr "Темы"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s theme"
+msgstr "Невозможно загрузить тему %s"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s module"
+msgstr "Невозможно загрузить модуль %s"
 
 msgid "Welcome"
 msgstr "Добро пожаловать"
@@ -604,30 +618,6 @@ msgstr ""
 "обновление. Вы не можете понизить версию G2. Пожалуйста, заметите файлы gallery2 из текущей "
 "инсталляции или более поздними."
 
-msgid "the Gallery website"
-msgstr "веб сайт Gallery"
-
-#, c-format
-msgid ""
-"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-"missing.  You must either locate more recent versions of these modules or themes, or revert "
-"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
-"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
-"distribution of Gallery than what you originally installed.  You can download a larger "
-"distribution from %s."
-msgstr ""
-"Процесс обновления не может быть начат поскольку некторые из активизированных модулей или "
-"тем являются несовместимыми или отсутствуют. Вам необходимо либо разместить более поздние "
-"версии данных модулей или тем, либо вернуть их в прежнее состояние оригинальной версии "
-"Галереи. Если изменения не производились, то проще будет вернуться к оригинальной версии. "
-"Если список ниже содержит множество несовместимых модулей, возможно, что Вы загрузили "
-"неполный пакет (тип установки) Галереи, отличный от ранее инсталированной. Вы можете скачать "
-"более полный тип установки отсюда %s."
-
-#, c-format
-msgid "Download replacement modules from %s"
-msgstr "Загрузите обновленные модули отсюда %s"
-
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -681,9 +671,6 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Версия Основного Модуля (ядра) является самой последней"
 
-msgid "Upgrade Other Modules"
-msgstr "Обновление других модулей"
-
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
@@ -695,18 +682,14 @@ msgstr ""
 "обновить, либо деактивизировать их на странице Администрирования, или вернуться к данной "
 "странице позже, так что любое принятое Вами решение не будет являться окончательным."
 
-msgid "Missing Code"
-msgstr "Отсутствует Код"
+msgid "Deactivated Plugins"
+msgstr ""
 
 msgid ""
-"The code for some plugins that were previously active can no longer be found. You must "
-"restore code for these plugins before this upgrade can continue. Code for the plugins must "
-"be the same version or newer than what was installed before."
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
-"Код для некоторых плагинов, которые ранее были активны, не может быть найден. Вы должны "
-"восстановить код для этих плагинов перед тем, как обновление будет продолжено. Коды для этих "
-"плагинов должны быть такой же или более новой версии, чем те, которые были инсталлированы "
-"ранее."
 
 msgid "Module"
 msgstr "Модуль"
@@ -725,6 +708,9 @@ msgstr "Новая"
 
 msgid "Description"
 msgstr "Описание"
+
+msgid "Incompatible with this version of Gallery"
+msgstr ""
 
 msgid "(un)check all"
 msgstr "отметить все/снять отметку со всех"
@@ -775,8 +761,49 @@ msgstr "Выберете язык:"
 msgid "Go"
 msgstr "Вперед"
 
+#~ msgid "Unable to verify plugins"
+#~ msgstr "Невозможно проверить плагины."
+
+#~ msgid "Upgrade Modules"
+#~ msgstr "Обновление других модулей"
+
+#~ msgid "the Gallery website"
+#~ msgstr "веб сайт Gallery"
+
+#~ msgid ""
+#~ "Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+#~ "missing.  You must either locate more recent versions of these modules or themes, or "
+#~ "revert to your original version of Gallery.  No changes have been made so it's safe to "
+#~ "revert.  If you have many incompatible modules listed below, it's possible that you "
+#~ "downloaded a smaller distribution of Gallery than what you originally installed.  You can "
+#~ "download a larger distribution from %s."
+#~ msgstr ""
+#~ "Процесс обновления не может быть начат поскольку некторые из активизированных модулей или "
+#~ "тем являются несовместимыми или отсутствуют. Вам необходимо либо разместить более поздние "
+#~ "версии данных модулей или тем, либо вернуть их в прежнее состояние оригинальной версии "
+#~ "Галереи. Если изменения не производились, то проще будет вернуться к оригинальной версии. "
+#~ "Если список ниже содержит множество несовместимых модулей, возможно, что Вы загрузили "
+#~ "неполный пакет (тип установки) Галереи, отличный от ранее инсталированной. Вы можете "
+#~ "скачать более полный тип установки отсюда %s."
+
+#~ msgid "Download replacement modules from %s"
+#~ msgstr "Загрузите обновленные модули отсюда %s"
+
+#~ msgid "Upgrade Other Modules"
+#~ msgstr "Обновление других модулей"
+
+#~ msgid "Missing Code"
+#~ msgstr "Отсутствует Код"
+
+#~ msgid ""
+#~ "The code for some plugins that were previously active can no longer be found. You must "
+#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
+#~ "must be the same version or newer than what was installed before."
+#~ msgstr ""
+#~ "Код для некоторых плагинов, которые ранее были активны, не может быть найден. Вы должны "
+#~ "восстановить код для этих плагинов перед тем, как обновление будет продолжено. Коды для "
+#~ "этих плагинов должны быть такой же или более новой версии, чем те, которые были "
+#~ "инсталлированы ранее."
+
 #~ msgid "Finished"
 #~ msgstr "Завершение"
-
-#~ msgid "Upgrade Status"
-#~ msgstr "Статус Обновления"

@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: URL Rewrite 1.1.5\n"
+"Project-Id-Version: Gallery: URL Rewrite 1.1.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-15 19:27+0900\n"
 "PO-Revision-Date: 2005-11-20 22:05+0900\n"
@@ -36,7 +36,7 @@ msgid "URL Rewrite"
 msgstr "URL書き換え"
 
 #, fuzzy
-msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo."
+msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo"
 msgstr "mod_rewrite を使って短いURLを使えるようにする"
 
 msgid "Gallery"
@@ -47,6 +47,9 @@ msgstr "アイテムの表示"
 
 msgid "Path to an item (eg, /album/image.jpg.html)"
 msgstr "アイテムへのパス (例 /album/image.jpg.html)"
+
+msgid "Page number in an album"
+msgstr ""
 
 msgid "Current language (eg, en or de)"
 msgstr ""
@@ -80,6 +83,14 @@ msgstr "404 File Not Found"
 msgid "Block hotlinked items"
 msgstr ""
 
+msgid "Send HTML for hotlinked items"
+msgstr ""
+
+msgid ""
+"Blocks use of images in other sites (HTML creates broken image), but allows linking to "
+"images."
+msgstr ""
+
 msgid "Check short style URLs for filesystem conflicts"
 msgstr "短いスタイルのURLとファイルシステムとの衝突をチェック"
 
@@ -105,8 +116,9 @@ msgstr "%d アイテムをチェックし、%d 個の衝突が見つかりまし
 msgid "Bad keyword."
 msgstr "悪いキーワード"
 
-msgid "Duplicate short url rule."
-msgstr ""
+#, fuzzy
+msgid "Duplicate short URL rule."
+msgstr "URLパターンが重複しています"
 
 #, fuzzy
 msgid "Ivalid pattern."
@@ -344,12 +356,16 @@ msgid "Please make sure Gallery can write to the httpd.ini file"
 msgstr "Galleryが既に存在する.htaccessファイルに書き込めることを確認してください。"
 
 msgid ""
-"For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file "
-"to hold the mod_rewrite rules."
+"For URL Rewrite to work in an embedded environment you need to set up an extra .htaccess "
+"file to hold the mod_rewrite rules."
 msgstr ""
 
-msgid "Htaccess path:"
-msgstr "htaccessのパス:"
+#, fuzzy
+msgid "Absolute path to the folder of your embedded .htaccess:"
+msgstr "組み込まれた.htaccessファイルに書き込めません"
+
+msgid "Please enter the Url to your environment. E.g. http://www.mySite.com/myNiceCMS/"
+msgstr ""
 
 msgid "Apache mod_rewrite"
 msgstr "Apache mod_rewrite"
@@ -484,6 +500,9 @@ msgstr "完了"
 
 msgid "Unit test module"
 msgstr ""
+
+#~ msgid "Htaccess path:"
+#~ msgstr "htaccessのパス:"
 
 #~ msgid "Item file name (eg, image.jpg)"
 #~ msgstr "アイテムのファイル名 (例 image.jpg)"

@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: URL Rewrite 1.1.5\n"
+"Project-Id-Version: Gallery: URL Rewrite 1.1.6\n"
 "POT-Creation-Date: 2005-07-22 13:32-0400\n"
 "PO-Revision-Date: 2005-07-22 13:32-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -35,7 +35,8 @@ msgstr "404 找不到档案"
 msgid "URL Rewrite"
 msgstr "网址改写"
 
-msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo."
+#, fuzzy
+msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo"
 msgstr "启动利用 Apache mod_rewrite、ISAPI Rewrite、或 PathInfo 的短式网址。"
 
 msgid "Gallery"
@@ -46,6 +47,9 @@ msgstr "显示项目"
 
 msgid "Path to an item (eg, /album/image.jpg.html)"
 msgstr "到项目的路径（如 /album/image.jpg.html）"
+
+msgid "Page number in an album"
+msgstr ""
 
 msgid "Current language (eg, en or de)"
 msgstr "目前语言（如 en 或 de）"
@@ -77,6 +81,15 @@ msgstr "404 找不到档案"
 msgid "Block hotlinked items"
 msgstr "限制热链接项目"
 
+#, fuzzy
+msgid "Send HTML for hotlinked items"
+msgstr "限制热链接项目"
+
+msgid ""
+"Blocks use of images in other sites (HTML creates broken image), but allows linking to "
+"images."
+msgstr ""
+
 msgid "Check short style URLs for filesystem conflicts"
 msgstr "检查短式网址是否与档案系统冲突。"
 
@@ -104,7 +117,8 @@ msgstr "检查了 %d 个项目，发现 %d 个冲突"
 msgid "Bad keyword."
 msgstr "错误的关键字。"
 
-msgid "Duplicate short url rule."
+#, fuzzy
+msgid "Duplicate short URL rule."
 msgstr "重覆的短式网址规则。"
 
 msgid "Ivalid pattern."
@@ -174,8 +188,7 @@ msgstr ""
 msgid ""
 "It is recomended that you don't activate the 'Download Item' URL since it will slow down "
 "Gallery."
-msgstr ""
-"建议你不要启用「下载项目」网址，因为会使 Gallery 变慢。"
+msgstr "建议你不要启用「下载项目」网址，因为会使 Gallery 变慢。"
 
 msgid "A pattern may not begin with a keyword."
 msgstr "样式不能用关键字开头。"
@@ -228,8 +241,7 @@ msgstr ""
 
 msgid ""
 "Warning: If you don't allow empty referer users won't be able to download nor play movies."
-msgstr ""
-"警告：如果不允许空的查询源，使用者将无法下载或播放影片档案。"
+msgstr "警告：如果不允许空的查询源，使用者将无法下载或播放影片档案。"
 
 msgid "Allow empty referer?"
 msgstr "允许空的查询源？"
@@ -297,8 +309,7 @@ msgstr "要通过这个测试，你必需在你的 httpd.ini 中加上这个重�
 msgid ""
 "If you add this at the bottom, please make sure that there's atleast one empty line below "
 "the section"
-msgstr ""
-"如果你加在档案的最後，请确定它後面至少接有一个空行。"
+msgstr "如果你加在档案的最後，请确定它後面至少接有一个空行。"
 
 msgid "Test ISAPI Rewrite Manually"
 msgstr "手动测试 ISAPI Rewrite"
@@ -330,14 +341,19 @@ msgstr "请确定 Gallery 可以读取 httpd.ini 档案"
 msgid "Please make sure Gallery can write to the httpd.ini file"
 msgstr "请确定 Gallery 可以写入 httpd.ini 档案"
 
+#, fuzzy
 msgid ""
-"For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file "
-"to hold the mod_rewrite rules."
+"For URL Rewrite to work in an embedded environment you need to set up an extra .htaccess "
+"file to hold the mod_rewrite rules."
 msgstr ""
 "要在内嵌式的环境下使用网址改写，你需要设定额外的 htaccess 档案来容纳 mod_rewrite 的规则。"
 
-msgid "Htaccess path:"
-msgstr "Htaccess 的路径："
+#, fuzzy
+msgid "Absolute path to the folder of your embedded .htaccess:"
+msgstr "无法写入内嵌的 .htaccess 档案"
+
+msgid "Please enter the Url to your environment. E.g. http://www.mySite.com/myNiceCMS/"
+msgstr ""
 
 msgid "Apache mod_rewrite"
 msgstr "Apache mod_rewrite"
@@ -441,8 +457,8 @@ msgid ""
 "unsure of what method you should choose then select this. Gallery will try to detect if your "
 "server supports mod_rewrite."
 msgstr ""
-"大多数的 Apache 伺服器都有预设安装 Apache mod_rewrite 模组。如果你不确定你该用那一种方法，就选这个。"
-"Gallery 会试着侦测你的伺服器是否支援 mod_rewrite。"
+"大多数的 Apache 伺服器都有预设安装 Apache mod_rewrite 模组。如果你不确定你该用那一种方法，就"
+"选这个。Gallery 会试着侦测你的伺服器是否支援 mod_rewrite。"
 
 msgid "IIS ISAPI_Rewrite"
 msgstr "IIS ISAPI_Rewrite"
@@ -451,8 +467,8 @@ msgid ""
 "This method allows for short URLs on IIS servers with ISAPI Rewrite installed. Gallery will "
 "try to detect if your server supports this method before activating the module."
 msgstr ""
-"这个方法让装有 ISAPI Rewrite 的 IIS 伺服器可以使用短式网址。Gallery 会在启用这个模组之前试着侦测你的"
-"伺服器是否支援这个方法。"
+"这个方法让装有 ISAPI Rewrite 的 IIS 伺服器可以使用短式网址。Gallery 会在启用这个模组之前试着"
+"侦测你的伺服器是否支援这个方法。"
 
 msgid "PHP Path Info"
 msgstr "PHP Path Info"
@@ -460,8 +476,7 @@ msgstr "PHP Path Info"
 msgid ""
 "Using Path Info is supported by most systems. With this method Gallery parses the URL itself "
 "during the request."
-msgstr ""
-"大多数的系统都支援 Path Info。使用这个方法时，Gallery 在回应要求时自己分析网址。"
+msgstr "大多数的系统都支援 Path Info。使用这个方法时，Gallery 在回应要求时自己分析网址。"
 
 msgid "Block hotlinking is not supported."
 msgstr "不支援限制热链接项目。"
@@ -474,3 +489,6 @@ msgstr "结束"
 
 msgid "Unit test module"
 msgstr "单元测试模组"
+
+#~ msgid "Htaccess path:"
+#~ msgstr "Htaccess 的路径："

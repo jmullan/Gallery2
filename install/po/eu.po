@@ -220,8 +220,9 @@ msgstr "Oracle (9i eta berriagoak)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (8.2 eta berriagoak)"
 
-msgid "MSSQL (Experimental!)"
-msgstr "MSSQL (Esperimentala!)"
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL (3.23.34a bertsio eta berriagoak)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "DB mota ezezaguna edo ez dira taula argibideak ezagutzen."
@@ -1139,16 +1140,28 @@ msgstr ""
 msgid "Check Again"
 msgstr "Egiaztatu berriz"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
-"Gallery-k direktorioa bat behar du zure irudiak biltegiratzeko. Instalatzaileak hautatutako "
-"direktorioak funtzionatuko du baina web bidez eskuragarria da."
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, fuzzy, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
 msgstr ""
 "Segurtasuna handitzeko web bidez eskuragarri ez den direktorioa bat hautatu Beharko zenuke."
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
+msgstr ""
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1172,6 +1185,15 @@ msgstr "Ezarritako direktorioa irakurketarako bakarrik da"
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Errore bat gertatu da biltegiratze direktorio barneko egitura sortzerakoan."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Biltegiratze direktorioa behar bezala ezarri da."
+
+#, fuzzy, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+"Segurtasuna handitzeko web bidez eskuragarri ez den direktorioa bat hautatu Beharko zenuke."
+
 msgid "Directory path:"
 msgstr "Direktorio bidea:"
 
@@ -1188,29 +1210,18 @@ msgstr ""
 "Oharra: Hauek adibideak besterik ez dira! Zure sisteman behar bezala ez funtzionatzea gerta "
 "liteke."
 
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
 msgid "Unix (with ftp access)"
 msgstr "Unix (ftp sarrerarekin)"
 
+#, fuzzy
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
+"have problems."
 msgstr ""
 "Kontutan izan ftp zerbitzari eta bezero aginduak aldatu egin daitezkeela kasu batetatik "
 "bestera eta agian agindu hauek ez dira zure kasuan baliagarriak. Zure fTP bezeroaren manuala "
 "begira ezazu edo sistema kudeatzaileari galde iezaiozu arazorik izan ezkero"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1326,6 +1337,25 @@ msgstr "Joan"
 
 msgid "Begin Installation&raquo;"
 msgstr "Instalazio hasi&raquo;"
+
+#~ msgid "MSSQL (Experimental!)"
+#~ msgstr "MSSQL (Esperimentala!)"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Gallery-k direktorioa bat behar du zure irudiak biltegiratzeko. Instalatzaileak "
+#~ "hautatutako direktorioak funtzionatuko du baina web bidez eskuragarria da."
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "Install More Modules"
 #~ msgstr "Modulu gehiago instalatu"

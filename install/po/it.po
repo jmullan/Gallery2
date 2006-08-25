@@ -217,8 +217,9 @@ msgstr "Oracle (9i e pi&ugrave; recente)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 e pi&ugrave; recente)"
 
-msgid "MSSQL (Experimental!)"
-msgstr "MSSQL (Sperimentale!)"
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL (v3.23.34a e pi&ugrave; recente)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Tipo di DB sconosciuto oppure nessuna informazione conosciuta nelle tabelle."
@@ -1159,17 +1160,29 @@ msgstr ""
 msgid "Check Again"
 msgstr "Controlla Ancora"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
-"Gallery necessita di una cartella in cui memorizzare le immagini. La cartella che abbiamo "
-"scelto per te funziona, ma &egrave; accessibile dal web."
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, fuzzy, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
 msgstr ""
 "Per una maggiore sicurezza faresti meglio a selezionare una cartella che non sia accessibile "
 "dal web."
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
+msgstr ""
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1196,6 +1209,16 @@ msgstr ""
 "C'&egrave; stato un errore durante la creazione della struttura delle directory nella "
 "directory di storage."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Directory di storage configurata con successo."
+
+#, fuzzy, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+"Per una maggiore sicurezza faresti meglio a selezionare una cartella che non sia accessibile "
+"dal web."
+
 msgid "Directory path:"
 msgstr "Path directory:"
 
@@ -1210,29 +1233,18 @@ msgid ""
 "Note: these are only examples!  You may find that they don't work quite right on your system."
 msgstr "Nota: questi sono solo esempi! Potrebbe darsi che non funzionino bene sul tuo sistema."
 
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
 msgid "Unix (with ftp access)"
 msgstr "Unix (con accesso ftp)"
 
+#, fuzzy
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
+"have problems."
 msgstr ""
 "Nota che i server e i client FTP variano quindi queste istruzioni potrebbero non funzionare "
 "da te. Consulta il manuale del tuo client FTP o parla con un amministratore di sistema per "
 "cercare aiuto se hai problemi"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1350,6 +1362,25 @@ msgstr "Vai"
 
 msgid "Begin Installation&raquo;"
 msgstr "Inizia Installazione&raquo;"
+
+#~ msgid "MSSQL (Experimental!)"
+#~ msgstr "MSSQL (Sperimentale!)"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Gallery necessita di una cartella in cui memorizzare le immagini. La cartella che abbiamo "
+#~ "scelto per te funziona, ma &egrave; accessibile dal web."
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "Install More Modules"
 #~ msgstr "Installa Moduli Aggiuntivi"

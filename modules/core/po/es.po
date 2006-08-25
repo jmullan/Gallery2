@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: <gallery-devel@lists.sourceforge.net>\n"
 "POT-Creation-Date: 2005-10-25 17:54+0200\n"
 "PO-Revision-Date: 2005-12-02 13:55+0100\n"
@@ -297,12 +297,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Administración de Elementos de Gallery"
 
-msgid "create link"
-msgstr "crear enlace"
-
-msgid "link an item"
-msgstr "enlace a un elemento"
-
 msgid "delete an item"
 msgstr "borrar un elemento"
 
@@ -326,6 +320,10 @@ msgstr "&laquo; tema por defecto &raquo;"
 #, fuzzy
 msgid "Recreating resized images"
 msgstr "Rehacer imágenes redimensionadas"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Procesando..."
 
 #, fuzzy
 msgid "Rebuilding resized images..."
@@ -414,9 +412,6 @@ msgstr "Foto escalada con éxito"
 msgid "Modify Photo"
 msgstr "Modicar foto"
 
-msgid "Successfully saved theme settings"
-msgstr "La configuración del tema se ha guardado con éxito"
-
 msgid "Theme"
 msgstr "Tema"
 
@@ -475,9 +470,6 @@ msgstr "Editar Foto"
 
 msgid "Edit Movie"
 msgstr "Editar Película"
-
-msgid "Create Link"
-msgstr "Crear Enlace"
 
 msgid "Add Album"
 msgstr "Agregar Álbum"
@@ -557,15 +549,6 @@ msgstr "Propiedades de la Cuenta"
 msgid "Change Password"
 msgstr "Cambiar Contraseña"
 
-msgid "Link Album"
-msgstr "Enlazar Álbum"
-
-msgid "Link Photo"
-msgstr "Enlazar Foto"
-
-msgid "Link Movie"
-msgstr "Enlazar Película"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Editar %s"
@@ -577,10 +560,6 @@ msgstr "Borrar %s"
 #, c-format
 msgid "Move %s"
 msgstr "Mover %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "Enlazar %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Crear todas las miniaturas/Imágenes redimensionadas"
@@ -697,6 +676,14 @@ msgstr "Título"
 
 msgid "Owner"
 msgstr "Propietario"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Editar Álbum"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Editar Álbum"
 
 msgid "Group"
 msgstr "Grupo"
@@ -998,12 +985,26 @@ msgstr "Sistema Operativo"
 msgid "Default theme"
 msgstr "Tema por defecto"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d elementos fallidos"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d elementos fallidos"
+
 #, fuzzy
 msgid "Locale"
 msgstr "Escalar"
 
 msgid "Browser"
 msgstr "Buscador"
+
+msgid "Successfully saved theme settings"
+msgstr "La configuración del tema se ha guardado con éxito"
 
 msgid "General Settings"
 msgstr "Configuración General"
@@ -1044,9 +1045,6 @@ msgstr "Idioma por defecto"
 
 msgid "Check Browser Preference"
 msgstr ""
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1735,10 +1733,6 @@ msgid "up to date"
 msgstr "Fecha"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d elementos fallidos"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(requerido)"
 
@@ -2194,6 +2188,9 @@ msgid ""
 "system, e.g. by restoring data from a backup."
 msgstr ""
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Ha ocurrido un error."
 
@@ -2325,64 +2322,6 @@ msgstr "Sin Miniatura"
 msgid "Options"
 msgstr "Opciones"
 
-msgid "Link an Item"
-msgstr "Enlazar un Elemento"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "%d elemento enlazado con éxito"
-msgstr[1] "%d elementos enlazados con éxito"
-
-msgid "This album contains no items to link."
-msgstr "Este ábum no contiene elementos para enlazar."
-
-msgid "Source"
-msgstr "Fuente"
-
-msgid "Choose the items you want to link"
-msgstr "Elige los elementos que quieres enlazar"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(página %d de %d)"
-
-msgid "No sources chosen"
-msgstr "No se escogieron fuentes"
-
-msgid "Check All"
-msgstr "Seleccionar todos"
-
-msgid "Check None"
-msgstr "Deseleccionar todos"
-
-msgid "Invert"
-msgstr "Invertir"
-
-msgid "Previous Page"
-msgstr "Página Anterior"
-
-msgid "Next Page"
-msgstr "Página Siguiente"
-
-msgid "Destination"
-msgstr "Destino"
-
-msgid "Choose a new album for the link"
-msgstr "Elige un nuevo álbum para el enlace"
-
-msgid "No destination chosen"
-msgstr "No se escogió un destino"
-
-msgid "Link"
-msgstr "Enlace"
-
-msgid "Successfully linked"
-msgstr "Enlazado con éxito"
-
-msgid "Choose a destination album"
-msgstr "Elige un álbum de destino"
-
 msgid "Delete Items"
 msgstr "Borrar Elementos"
 
@@ -2400,6 +2339,10 @@ msgstr "Este ábum no contiene elementos para eliminar"
 
 msgid "Choose the items you want to delete"
 msgstr "Elige los elementos que quieres eliminar"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(página %d de %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr ""
@@ -2423,6 +2366,21 @@ msgstr[1] "(el álbum contiene %d elementos)"
 
 msgid "(empty album)"
 msgstr "(álbum vacío)"
+
+msgid "Check All"
+msgstr "Seleccionar todos"
+
+msgid "Check None"
+msgstr "Deseleccionar todos"
+
+msgid "Invert"
+msgstr "Invertir"
+
+msgid "Previous Page"
+msgstr "Página Anterior"
+
+msgid "Next Page"
+msgstr "Página Siguiente"
 
 msgid "Deletion Complete"
 msgstr "Borrado Completo"
@@ -2692,6 +2650,10 @@ msgstr "Relación de Aspecto: "
 msgid "Crop"
 msgstr "Recortar"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Cambiar"
+
 msgid "Reset to default"
 msgstr "Reiniciar a valores por defecto"
 
@@ -2766,6 +2728,11 @@ msgstr "Este es un enlace a otra foto, de modo que no puedes cambiar el original
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "Hay enlaces a esta foto, de modo que no puedes cambiar el original"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "Mantener la Foto Original"
 
@@ -2791,12 +2758,6 @@ msgid ""
 msgstr ""
 "Este álbum esta configurado para usar el tema <b>%s</b>. Estos ajustes solo se aplican al "
 "tema de este álbum."
-
-msgid "Setting"
-msgstr "Ajuste"
-
-msgid "Use Global"
-msgstr "Usar Globales"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2830,6 +2791,9 @@ msgstr[1] "%d elementos movidos con éxito"
 msgid "This album contains no items to move."
 msgstr "Este álbum no contiene elementos para mover."
 
+msgid "Source"
+msgstr "Fuente"
+
 msgid "Choose the items you want to move"
 msgstr "Escoge los elementos que quieres mover"
 
@@ -2857,17 +2821,26 @@ msgstr "No estas autorizado a mover un elemento al destino escogido."
 msgid "You cannot move an album into its own subtree."
 msgstr "No puedes mover un álbum dentro de su propio subárbol."
 
+msgid "Destination"
+msgstr "Destino"
+
 msgid "Choose a new album for them"
 msgstr "Escoje un nuevo álbum para ellos"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "No tienes permiso para agregar elementos en este álbum"
 
+msgid "No destination chosen"
+msgstr "No se escogió un destino"
+
 msgid "Move"
 msgstr "Mover"
 
 msgid "Successfully moved"
 msgstr "Movido con éxito"
+
+msgid "Choose a destination album"
+msgstr "Elige un álbum de destino"
 
 msgid "Permissions"
 msgstr "Permisos"
@@ -3449,6 +3422,12 @@ msgstr "Desconocido"
 msgid "Full size: "
 msgstr "Tamaño total: "
 
+msgid "Setting"
+msgstr "Ajuste"
+
+msgid "Use Global"
+msgstr "Usar Globales"
+
 msgid "Language selector"
 msgstr "Selección de idioma"
 
@@ -3475,6 +3454,53 @@ msgstr "[test] Un permiso secundario"
 
 msgid "Unit test theme"
 msgstr "Tema de prueba de unidad"
+
+#~ msgid "create link"
+#~ msgstr "crear enlace"
+
+#~ msgid "link an item"
+#~ msgstr "enlace a un elemento"
+
+#~ msgid "Create Link"
+#~ msgstr "Crear Enlace"
+
+#~ msgid "Link Album"
+#~ msgstr "Enlazar Álbum"
+
+#~ msgid "Link Photo"
+#~ msgstr "Enlazar Foto"
+
+#~ msgid "Link Movie"
+#~ msgstr "Enlazar Película"
+
+#~ msgid "Link %s"
+#~ msgstr "Enlazar %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "Enlazar un Elemento"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "%d elemento enlazado con éxito"
+#~ msgstr[1] "%d elementos enlazados con éxito"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Este ábum no contiene elementos para enlazar."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Elige los elementos que quieres enlazar"
+
+#~ msgid "No sources chosen"
+#~ msgstr "No se escogieron fuentes"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Elige un nuevo álbum para el enlace"
+
+#~ msgid "Link"
+#~ msgstr "Enlace"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Enlazado con éxito"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Módulo %s instalado y auto configurado con éxito"

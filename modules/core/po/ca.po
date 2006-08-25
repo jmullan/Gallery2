@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: <gallery-devel@lists.sourceforge.net>\n"
 "POT-Creation-Date: 2005-10-25 17:54+0200\n"
 "PO-Revision-Date: 2006-06-16 15:39+0100\n"
@@ -292,12 +292,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Administració d'Elements de Gallery"
 
-msgid "create link"
-msgstr "crear enllaç"
-
-msgid "link an item"
-msgstr "enllaç a un element"
-
 msgid "delete an item"
 msgstr "borrar un element"
 
@@ -320,6 +314,10 @@ msgstr "&laquo; tema per defecte &raquo;"
 
 msgid "Recreating resized images"
 msgstr "Refer imatges redimensionades"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Processant..."
 
 msgid "Rebuilding resized images..."
 msgstr "Refer imatges redimensionades"
@@ -406,9 +404,6 @@ msgstr "Foto escalada amb èxit"
 msgid "Modify Photo"
 msgstr "Modificar foto"
 
-msgid "Successfully saved theme settings"
-msgstr "La configuració del tema s'ha guardat amb èxit"
-
 msgid "Theme"
 msgstr "Tema"
 
@@ -467,9 +462,6 @@ msgstr "Editar Foto"
 
 msgid "Edit Movie"
 msgstr "Editar Pel·lícula"
-
-msgid "Create Link"
-msgstr "Crear Enllaç"
 
 msgid "Add Album"
 msgstr "Agregar Àlbum"
@@ -549,15 +541,6 @@ msgstr "Propietats del Compte"
 msgid "Change Password"
 msgstr "Canviar Contrasenya"
 
-msgid "Link Album"
-msgstr "Enllaçar Àlbum"
-
-msgid "Link Photo"
-msgstr "Enllaçar Foto"
-
-msgid "Link Movie"
-msgstr "Enllaçar Pel·lícula"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Editar %s"
@@ -569,10 +552,6 @@ msgstr "Borrar %s"
 #, c-format
 msgid "Move %s"
 msgstr "Moure %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "Enllaçar %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Crear totes les vistes en miniatura/Imatges redimensionades"
@@ -687,6 +666,14 @@ msgstr "Títol"
 
 msgid "Owner"
 msgstr "Propietari"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Editar Àlbum"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Editar Àlbum"
 
 msgid "Group"
 msgstr "Grup"
@@ -1001,6 +988,9 @@ msgstr "Escalar"
 
 msgid "Browser"
 msgstr "Buscador"
+
+msgid "Successfully saved theme settings"
+msgstr "La configuració del tema s'ha guardat amb èxit"
 
 msgid "General Settings"
 msgstr "Configuració General"
@@ -2160,6 +2150,9 @@ msgid ""
 "system, e.g. by restoring data from a backup."
 msgstr ""
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Ha ocorregut un error."
 
@@ -2291,64 +2284,6 @@ msgstr "Sense Miniatura"
 msgid "Options"
 msgstr "Opcions"
 
-msgid "Link an Item"
-msgstr "Enllaçar un Element"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "%d element enllaçat amb éxit"
-msgstr[1] "%d elements enllaçats amb éxit"
-
-msgid "This album contains no items to link."
-msgstr "Aquest àlbum no conté elements per enllaçar."
-
-msgid "Source"
-msgstr "Font"
-
-msgid "Choose the items you want to link"
-msgstr "Elegeix els elements que vols enllaçar"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(pàgina %d de %d)"
-
-msgid "No sources chosen"
-msgstr "No s'han escollit fonts"
-
-msgid "Check All"
-msgstr "Seleccionar tots"
-
-msgid "Check None"
-msgstr "Deseleccionar tots"
-
-msgid "Invert"
-msgstr "Invertir"
-
-msgid "Previous Page"
-msgstr "Pàgina Anterior"
-
-msgid "Next Page"
-msgstr "Pàgina Siguiente"
-
-msgid "Destination"
-msgstr "Destí"
-
-msgid "Choose a new album for the link"
-msgstr "Elegeix un nou àlbum per a l'enllaç"
-
-msgid "No destination chosen"
-msgstr "No s'ha escollit un destí"
-
-msgid "Link"
-msgstr "Enllaç"
-
-msgid "Successfully linked"
-msgstr "Enllaç amb èxit"
-
-msgid "Choose a destination album"
-msgstr "Elegeix un àlbum de destí"
-
 msgid "Delete Items"
 msgstr "Borrar Elements"
 
@@ -2366,6 +2301,10 @@ msgstr "Aquest àlbum no conté elements per eliminar"
 
 msgid "Choose the items you want to delete"
 msgstr "Elegeix els elements que vols eliminar"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(pàgina %d de %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr ""
@@ -2389,6 +2328,21 @@ msgstr[1] "(l'àlbum conté %d elements)"
 
 msgid "(empty album)"
 msgstr "(àlbum buit)"
+
+msgid "Check All"
+msgstr "Seleccionar tots"
+
+msgid "Check None"
+msgstr "Deseleccionar tots"
+
+msgid "Invert"
+msgstr "Invertir"
+
+msgid "Previous Page"
+msgstr "Pàgina Anterior"
+
+msgid "Next Page"
+msgstr "Pàgina Siguiente"
 
 msgid "Deletion Complete"
 msgstr "Borrat Complet"
@@ -2764,12 +2718,6 @@ msgstr ""
 "Aquest álbum està configurat per usar el tema <b>%s</b>. Aquestes configuracions només "
 "s'apliquen al tema d'aquest àlbum."
 
-msgid "Setting"
-msgstr "Configuració"
-
-msgid "Use Global"
-msgstr "Usar Globals"
-
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
 msgstr ""
@@ -2802,6 +2750,9 @@ msgstr[1] "%d elements moguts amb èxit"
 msgid "This album contains no items to move."
 msgstr "Aquest àlbum no conté elements per moure."
 
+msgid "Source"
+msgstr "Font"
+
 msgid "Choose the items you want to move"
 msgstr "Escull els elements que vols moure"
 
@@ -2829,17 +2780,26 @@ msgstr "No estàs autoritzat a moure aquest element al destí escollit."
 msgid "You cannot move an album into its own subtree."
 msgstr "No pots moure un àlbum dins del seu propi subarbre."
 
+msgid "Destination"
+msgstr "Destí"
+
 msgid "Choose a new album for them"
 msgstr "Escull un nou àlbum per a ells"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "No tens permís per a afegir elements en aquest àlbum"
 
+msgid "No destination chosen"
+msgstr "No s'ha escollit un destí"
+
 msgid "Move"
 msgstr "Moure"
 
 msgid "Successfully moved"
 msgstr "Mogut amb èxit"
+
+msgid "Choose a destination album"
+msgstr "Elegeix un àlbum de destí"
 
 msgid "Permissions"
 msgstr "Permisos"
@@ -3414,6 +3374,12 @@ msgstr "Desconegut"
 msgid "Full size: "
 msgstr "Mida total: "
 
+msgid "Setting"
+msgstr "Configuració"
+
+msgid "Use Global"
+msgstr "Usar Globals"
+
 msgid "Language selector"
 msgstr "Selecció d'idioma"
 
@@ -3440,6 +3406,53 @@ msgstr "[test] Un permís secundari"
 
 msgid "Unit test theme"
 msgstr "Tema de prova d'unitat"
+
+#~ msgid "create link"
+#~ msgstr "crear enllaç"
+
+#~ msgid "link an item"
+#~ msgstr "enllaç a un element"
+
+#~ msgid "Create Link"
+#~ msgstr "Crear Enllaç"
+
+#~ msgid "Link Album"
+#~ msgstr "Enllaçar Àlbum"
+
+#~ msgid "Link Photo"
+#~ msgstr "Enllaçar Foto"
+
+#~ msgid "Link Movie"
+#~ msgstr "Enllaçar Pel·lícula"
+
+#~ msgid "Link %s"
+#~ msgstr "Enllaçar %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "Enllaçar un Element"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "%d element enllaçat amb éxit"
+#~ msgstr[1] "%d elements enllaçats amb éxit"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Aquest àlbum no conté elements per enllaçar."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Elegeix els elements que vols enllaçar"
+
+#~ msgid "No sources chosen"
+#~ msgstr "No s'han escollit fonts"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Elegeix un nou àlbum per a l'enllaç"
+
+#~ msgid "Link"
+#~ msgstr "Enllaç"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Enllaç amb èxit"
 
 #~ msgid "From Local Server"
 #~ msgstr "Desde el Servidor Local"

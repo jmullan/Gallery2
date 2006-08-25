@@ -216,8 +216,9 @@ msgstr "Oracle (9i a novější)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 a novější)"
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL s transakcemi (v3.23.34a a novější)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Neznámý typ databáze nebo neznámé tabulky."
@@ -284,8 +285,9 @@ msgstr "Nelze commitnout transakce databáze"
 msgid "Core module is only partially installed."
 msgstr "Modul jádra je pouze částečně nainstalovaný."
 
-msgid "Install More Modules"
-msgstr "Instalovat více modulů"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Instalační kroky"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Nelze zinicializovat sezení (session) Galerie"
@@ -679,16 +681,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Předtím než budeme moci pokračovat, měli byste v adresáři <b>%s</b> vytvořit soubor "
-"<i>config.php</i>. Zkontrolujte prosím, jestli do něj bude webový server moci zapisovat. "
-"Pokud je o systém typu Unix, může pomoci něco jako <i>chmod 666 config.php</i>. Na Windows "
-"většínou není nic dalšího potřeba. Pokud jste vytvořili soubor a nastavili oprávnění, můžete "
-"pokračovat. Pokud narazíme na nějaký problém, pokusíme se Vám říci jak ho odstranit."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (s shell přístupem)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Vytvořit konfigurační soubor"
@@ -851,9 +856,6 @@ msgstr ""
 "měli byste pokračovat v instalaci a přidat pár dalších modulů, abyste mohli používat "
 "vlastnosti, které opravdu chcete."
 
-msgid "Install Other Modules"
-msgstr "Instalace dalších modulů"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -1014,9 +1016,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "Musíte zadat adresář"
 
-msgid "The directory you entered does not exist"
-msgstr "Zadaný adresář neexistuje"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1025,6 +1024,22 @@ msgstr ""
 "Adresář, který jste zadali, je adresář základních kódů (codebase). Pokud chcete nainstalovat "
 "Galerii pouze do tohoto adresáře, zvolte sdandardní typ instalace. Pokud chcete nainstalovat "
 "multisite, vyberte jiný adresář."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "Zadaný adresář neexistuje"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1113,15 +1128,27 @@ msgstr ""
 msgid "Check Again"
 msgstr "Zkontrolovat znovu"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
-"Galerie potřebuje adresář, do kterého bude ukládat Vaše fotografie. Adresář, který jsme pro "
-"Vás vybrali, bude fungovat, ale je všem dostupný pomocí služby www."
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, fuzzy, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
 msgstr "Pro maximální bezpečnost byste měli vybrat adresář, který není z webu dostupný."
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
+msgstr ""
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1144,8 +1171,42 @@ msgstr "Zadaný adresář není zapisovatelný"
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Při vytváření adresářové struktury v zadaném adresáři došlo k chybě."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Adresář úložiště úspěšně nastaven."
+
+#, fuzzy, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr "Pro maximální bezpečnost byste měli vybrat adresář, který není z webu dostupný."
+
 msgid "Directory path:"
 msgstr "Cesta adresáře:"
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+"Váš webový server potřebuje do tohoto adresáře zapisovat. Pro konfiguraci se můžete "
+"inspirovat těmito příklady."
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr ""
+"Poznámka: toto jsou pouze příklady! Možná narazíte na to, že nebudou fungovat tak jak by "
+"měly."
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (s FTP přístupem)"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"FTP servery i klienti se liší, takže tyto instrukce nemusí být přesné. Pro více informací "
+"prohlédněte manuál Vašeho FTP klienta nebo v případě problému kontaktujte Vašeho správce "
+"systému"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1177,46 +1238,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Poznámka</b>: Po skončení nezapomeňte smazat soubor dir.php!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-"Váš webový server potřebuje do tohoto adresáře zapisovat. Pro konfiguraci se můžete "
-"inspirovat těmito příklady."
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr ""
-"Poznámka: toto jsou pouze příklady! Možná narazíte na to, že nebudou fungovat tak jak by "
-"měly."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (s shell přístupem)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (s FTP přístupem)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"FTP servery i klienti se liší, takže tyto instrukce nemusí být přesné. Pro více informací "
-"prohlédněte manuál Vašeho FTP klienta nebo v případě problému kontaktujte Vašeho správce "
-"systému"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1297,6 +1318,42 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "Začátek instalace&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "Instalovat více modulů"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Předtím než budeme moci pokračovat, měli byste v adresáři <b>%s</b> vytvořit soubor "
+#~ "<i>config.php</i>. Zkontrolujte prosím, jestli do něj bude webový server moci zapisovat. "
+#~ "Pokud je o systém typu Unix, může pomoci něco jako <i>chmod 666 config.php</i>. Na "
+#~ "Windows většínou není nic dalšího potřeba. Pokud jste vytvořili soubor a nastavili "
+#~ "oprávnění, můžete pokračovat. Pokud narazíme na nějaký problém, pokusíme se Vám říci jak "
+#~ "ho odstranit."
+
+#~ msgid "Install Other Modules"
+#~ msgstr "Instalace dalších modulů"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Galerie potřebuje adresář, do kterého bude ukládat Vaše fotografie. Adresář, který jsme "
+#~ "pro Vás vybrali, bude fungovat, ale je všem dostupný pomocí služby www."
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (nedostatečně otestováno)"

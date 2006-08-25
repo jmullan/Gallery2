@@ -226,8 +226,9 @@ msgstr "Oracle (9i of nuwer)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr ""
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL met Transaksies (v3.23.34a of nuwer)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Onbekende DB tipe of geen bekende tabelinligting."
@@ -295,8 +296,9 @@ msgstr "Kan die databasistransaksie nie uitvoer nie"
 msgid "Core module is only partially installed."
 msgstr "Core module is slegs gedeeltelik geïnstalleer."
 
-msgid "Install More Modules"
-msgstr "Installeer Meer Modules"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Installasiestappe"
 
 #, fuzzy
 msgid "Unable to initialize our Gallery session"
@@ -694,17 +696,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Voordat ons verder kan gaan moet u 'n l&ecirc;er in u <b>%s</b> directory genaamd <i>config."
-"php</i> skep. U moet seker maak dat die werfbediener daarna sal kan skryf.  As u Unix "
-"gebruik kan u dit doen deur <i>chmod 666 config.php</i> uit te voer.  Onder Windows behoort "
-"u nie enigiets spesiaals te hoef te doen nie.  Wanneer u die l&ecirc;er geskep het en die "
-"regte korrek opgestel het, kan u voortgaan.  As daar 'n probleem is, sal ons u vertel wat om "
-"reg te stel."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (met shell toegang)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Skep config l&ecirc;er"
@@ -873,9 +877,6 @@ msgstr ""
 "werk, moet u voortgaan met die installeerder en 'n paar opsionele modules installeer sodat u "
 "die regte funksies wat u begeer kan kry."
 
-msgid "Install Other Modules"
-msgstr "Installeer Ander Modules"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -1040,9 +1041,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "U moet 'n directory verskaf"
 
-msgid "The directory you entered does not exist"
-msgstr "Die verskafde directory bestaan nie"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1051,6 +1049,22 @@ msgstr ""
 "Die verskafde directory is die programkode directory. As u Gallery in die programkode "
 "directory wil installeer, kies die standaard installasie tipe. As u 'n multiwerf wil "
 "installeer kies 'n ander directory."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "Die verskafde directory bestaan nie"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1139,12 +1153,26 @@ msgstr ""
 msgid "Check Again"
 msgstr "Kontroleer Weer"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
+msgstr ""
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
 msgstr ""
 
 msgid ""
@@ -1169,8 +1197,39 @@ msgid "There was an error creating the directory structure within the storage di
 msgstr ""
 "Daar was 'n fout met die skep van die directory struktuur binne-in die stoor directory."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Stoor directory is suksesvol opgestel."
+
+#, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+
 msgid "Directory path:"
 msgstr "Directory pad:"
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr ""
+"Let op: hierdie is slegs voorbeelde!  U mag vind dat dit nie heeltemal reg op u stelsel werk "
+"nie."
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (met ftp toegang)"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"Let op dat ftp-bedieners en -kliënte verskil, daarom mag die aanwysings nie vir u werk nie.  "
+"Raadpleeg die handleiding van u FTP-kliënt of u stelseladmin as u probleme hiermee ondervind."
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1204,43 +1263,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Let op</b>: Moenie vergeet om dir.php te verwyder as u klaar is nie!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr ""
-"Let op: hierdie is slegs voorbeelde!  U mag vind dat dit nie heeltemal reg op u stelsel werk "
-"nie."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (met shell toegang)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (met ftp toegang)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"Let op dat ftp-bedieners en -kliënte verskil, daarom mag die aanwysings nie vir u werk nie.  "
-"Raadpleeg die handleiding van u FTP-kliënt of u stelseladmin as u probleme hiermee ondervind."
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1323,6 +1345,35 @@ msgstr "Gaan"
 
 msgid "Begin Installation&raquo;"
 msgstr "Begin Installasie&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "Installeer Meer Modules"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Voordat ons verder kan gaan moet u 'n l&ecirc;er in u <b>%s</b> directory genaamd "
+#~ "<i>config.php</i> skep. U moet seker maak dat die werfbediener daarna sal kan skryf.  As "
+#~ "u Unix gebruik kan u dit doen deur <i>chmod 666 config.php</i> uit te voer.  Onder "
+#~ "Windows behoort u nie enigiets spesiaals te hoef te doen nie.  Wanneer u die l&ecirc;er "
+#~ "geskep het en die regte korrek opgestel het, kan u voortgaan.  As daar 'n probleem is, "
+#~ "sal ons u vertel wat om reg te stel."
+
+#~ msgid "Install Other Modules"
+#~ msgstr "Installeer Ander Modules"
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (nie goed getoets nie)"

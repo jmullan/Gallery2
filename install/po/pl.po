@@ -186,7 +186,7 @@ msgstr ""
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr ""
 
-msgid "MSSQL (Experimental!)"
+msgid "MSSQL (2005 and newer)"
 msgstr ""
 
 msgid "Unknown DB type or no known tables information."
@@ -248,7 +248,7 @@ msgstr ""
 msgid "Core module is only partially installed."
 msgstr ""
 
-msgid "Install More Modules"
+msgid "Install Plugins"
 msgstr ""
 
 msgid "Unable to initialize our Gallery session"
@@ -581,10 +581,18 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
+msgstr ""
+
+msgid "Unix (with shell access)"
+msgstr ""
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
 msgstr ""
 
 msgid "Create config file"
@@ -718,9 +726,6 @@ msgid ""
 "We've successfully installed the core of Gallery.  Although everything will work at this "
 "point, you should continue with the installer and add in some of the optional modules so "
 "that you can get the right set of features that you want for your Gallery installation."
-msgstr ""
-
-msgid "Install Other Modules"
 msgstr ""
 
 msgid ""
@@ -857,13 +862,26 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr ""
 
-msgid "The directory you entered does not exist"
-msgstr ""
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
 "multisite, choose another directory."
+msgstr ""
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
 msgstr ""
 
 msgid ""
@@ -932,12 +950,26 @@ msgstr ""
 msgid "Check Again"
 msgstr ""
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
+msgstr ""
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
 msgstr ""
 
 msgid ""
@@ -957,7 +989,33 @@ msgstr ""
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr ""
 
+#, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr ""
+
+#, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+
 msgid "Directory path:"
+msgstr ""
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr ""
+
+msgid "Unix (with ftp access)"
+msgstr ""
+
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
 msgstr ""
 
 msgid ""
@@ -981,39 +1039,6 @@ msgid ""
 msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
-msgstr ""
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr ""
-
-msgid "Unix (with shell access)"
-msgstr ""
-
-#, c-format
-msgid "mkdir %s"
-msgstr ""
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr ""
-
-msgid "Unix (with ftp access)"
-msgstr ""
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-
-#, c-format
-msgid "cd %s"
 msgstr ""
 
 #, c-format

@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "POT-Creation-Date: 2003-06-25 11:44+0100\n"
 "PO-Revision-Date: 2006-04-29 12:50+0100\n"
 "Last-Translator: Janez Troha <janez@tegleda.com>\n"
@@ -299,12 +299,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Administracija galerije"
 
-msgid "create link"
-msgstr "naredi povezavo"
-
-msgid "link an item"
-msgstr "poveži predmet"
-
 msgid "delete an item"
 msgstr "zbriši predmet"
 
@@ -326,6 +320,9 @@ msgid "&laquo; default theme &raquo;"
 msgstr "&laquo;privzeta preobleka &raquo;"
 
 msgid "Recreating resized images"
+msgstr ""
+
+msgid "Preparing..."
 msgstr ""
 
 msgid "Rebuilding resized images..."
@@ -413,9 +410,6 @@ msgstr ""
 msgid "Modify Photo"
 msgstr ""
 
-msgid "Successfully saved theme settings"
-msgstr ""
-
 msgid "Theme"
 msgstr "Preobleka"
 
@@ -474,9 +468,6 @@ msgstr "Uredi Sliko"
 
 msgid "Edit Movie"
 msgstr "Uredi Skeč"
-
-msgid "Create Link"
-msgstr "Naredi Povezavo"
 
 msgid "Add Album"
 msgstr "Dodaj Album"
@@ -556,15 +547,6 @@ msgstr "Nastavitve računa"
 msgid "Change Password"
 msgstr "Spremeni geslo"
 
-msgid "Link Album"
-msgstr "Poveži album"
-
-msgid "Link Photo"
-msgstr "Poveži Sliko"
-
-msgid "Link Movie"
-msgstr "Poveži Skeč"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Uredi %s"
@@ -576,10 +558,6 @@ msgstr "Zbriši %s"
 #, c-format
 msgid "Move %s"
 msgstr "Premakni %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "POveži %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr ""
@@ -685,6 +663,14 @@ msgstr ""
 
 msgid "Owner"
 msgstr ""
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Uredi Album"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Uredi Album"
 
 msgid "Group"
 msgstr ""
@@ -974,10 +960,22 @@ msgstr ""
 msgid "Default theme"
 msgstr ""
 
+msgid "gettext"
+msgstr ""
+
+msgid "enabled"
+msgstr ""
+
+msgid "disabled"
+msgstr ""
+
 msgid "Locale"
 msgstr ""
 
 msgid "Browser"
+msgstr ""
+
+msgid "Successfully saved theme settings"
 msgstr ""
 
 msgid "General Settings"
@@ -1015,9 +1013,6 @@ msgid "Default language"
 msgstr ""
 
 msgid "Check Browser Preference"
-msgstr ""
-
-msgid "gettext"
 msgstr ""
 
 #, c-format
@@ -1634,9 +1629,6 @@ msgstr ""
 msgid "up to date"
 msgstr ""
 
-msgid "disabled"
-msgstr ""
-
 #, fuzzy
 msgid "upgrade required"
 msgstr "(obvezno)"
@@ -2063,6 +2055,9 @@ msgid ""
 "system, e.g. by restoring data from a backup."
 msgstr ""
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr ""
 
@@ -2179,64 +2174,6 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-msgid "Link an Item"
-msgstr ""
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "This album contains no items to link."
-msgstr ""
-
-msgid "Source"
-msgstr ""
-
-msgid "Choose the items you want to link"
-msgstr ""
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr ""
-
-msgid "No sources chosen"
-msgstr ""
-
-msgid "Check All"
-msgstr ""
-
-msgid "Check None"
-msgstr ""
-
-msgid "Invert"
-msgstr ""
-
-msgid "Previous Page"
-msgstr ""
-
-msgid "Next Page"
-msgstr ""
-
-msgid "Destination"
-msgstr ""
-
-msgid "Choose a new album for the link"
-msgstr ""
-
-msgid "No destination chosen"
-msgstr ""
-
-msgid "Link"
-msgstr ""
-
-msgid "Successfully linked"
-msgstr ""
-
-msgid "Choose a destination album"
-msgstr ""
-
 msgid "Delete Items"
 msgstr ""
 
@@ -2253,6 +2190,10 @@ msgid "This album contains no items to delete"
 msgstr ""
 
 msgid "Choose the items you want to delete"
+msgstr ""
+
+#, c-format
+msgid "(page %d of %d)"
 msgstr ""
 
 msgid "Items selected here will remain selected when moving between pages."
@@ -2274,6 +2215,21 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "(empty album)"
+msgstr ""
+
+msgid "Check All"
+msgstr ""
+
+msgid "Check None"
+msgstr ""
+
+msgid "Invert"
+msgstr ""
+
+msgid "Previous Page"
+msgstr ""
+
+msgid "Next Page"
 msgstr ""
 
 msgid "Deletion Complete"
@@ -2507,6 +2463,10 @@ msgstr ""
 msgid "Crop"
 msgstr ""
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Uveljavi"
+
 msgid "Reset to default"
 msgstr ""
 
@@ -2568,6 +2528,11 @@ msgstr ""
 msgid "There are links to this photo, so you cannot change the original"
 msgstr ""
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr ""
 
@@ -2587,12 +2552,6 @@ msgstr ""
 msgid ""
 "This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
 "for this album."
-msgstr ""
-
-msgid "Setting"
-msgstr ""
-
-msgid "Use Global"
 msgstr ""
 
 #, c-format
@@ -2627,6 +2586,9 @@ msgstr[1] ""
 msgid "This album contains no items to move."
 msgstr ""
 
+msgid "Source"
+msgstr ""
+
 msgid "Choose the items you want to move"
 msgstr ""
 
@@ -2650,16 +2612,25 @@ msgstr ""
 msgid "You cannot move an album into its own subtree."
 msgstr ""
 
+msgid "Destination"
+msgstr ""
+
 msgid "Choose a new album for them"
 msgstr ""
 
 msgid "You don't have the permission to add items in this album"
 msgstr ""
 
+msgid "No destination chosen"
+msgstr ""
+
 msgid "Move"
 msgstr ""
 
 msgid "Successfully moved"
+msgstr ""
+
+msgid "Choose a destination album"
 msgstr ""
 
 msgid "Permissions"
@@ -3166,6 +3137,12 @@ msgstr ""
 msgid "Full size: "
 msgstr "Polna velikost:"
 
+msgid "Setting"
+msgstr ""
+
+msgid "Use Global"
+msgstr ""
+
 msgid "Language selector"
 msgstr ""
 
@@ -3192,3 +3169,24 @@ msgstr ""
 
 msgid "Unit test theme"
 msgstr ""
+
+#~ msgid "create link"
+#~ msgstr "naredi povezavo"
+
+#~ msgid "link an item"
+#~ msgstr "poveži predmet"
+
+#~ msgid "Create Link"
+#~ msgstr "Naredi Povezavo"
+
+#~ msgid "Link Album"
+#~ msgstr "Poveži album"
+
+#~ msgid "Link Photo"
+#~ msgstr "Poveži Sliko"
+
+#~ msgid "Link Movie"
+#~ msgstr "Poveži Skeč"
+
+#~ msgid "Link %s"
+#~ msgstr "POveži %s"

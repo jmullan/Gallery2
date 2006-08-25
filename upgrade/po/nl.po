@@ -293,10 +293,8 @@ msgstr "Manifest is afwezig of ontoegankelijk."
 msgid "Upgrade Core"
 msgstr "Core Opwaarderen"
 
-msgid "Unable to verify plugins"
-msgstr "niet in staat om de plugins te controleren"
-
-msgid "Upgrade Modules"
+#, fuzzy
+msgid "Upgrade Plugins"
 msgstr "Modules Opwaarderen"
 
 msgid "Unable to initialize Gallery session"
@@ -334,11 +332,27 @@ msgstr "Kan de module lijst niet verkrijgen"
 msgid "Unable to get the theme list"
 msgstr "Kan de thema lijst niet verkrijgen"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s module"
+msgstr "Kan de %s module niet opwaarderen"
+
 msgid "Other"
 msgstr "Andere"
 
+#, fuzzy, c-format
+msgid "Unable to query the %s theme"
+msgstr "Kan het %s thema niet opwaarderen"
+
 msgid "Themes"
 msgstr "Thema's"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s theme"
+msgstr "Kan het %s thema niet laden"
+
+#, fuzzy, c-format
+msgid "Unable to deactivate the %s module"
+msgstr "Kan de %s module niet laden"
 
 msgid "Welcome"
 msgstr "Welkom"
@@ -593,29 +607,6 @@ msgstr ""
 "kunt G2 niet afwaarderen. Vervang de Gallery 2 bestanden met bestanden van de huidige "
 "geïnstalleerde versie of nieuwer."
 
-msgid "the Gallery website"
-msgstr "Ga naar Gallery website"
-
-#, c-format
-msgid ""
-"Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-"missing.  You must either locate more recent versions of these modules or themes, or revert "
-"to your original version of Gallery.  No changes have been made so it's safe to revert.  If "
-"you have many incompatible modules listed below, it's possible that you downloaded a smaller "
-"distribution of Gallery than what you originally installed.  You can download a larger "
-"distribution from %s."
-msgstr ""
-"De upgrade kan niet starten doordat niet alle geactiveerde module aanwezig zijn of "
-"incompatible zijn. U moet de compatible versies van deze modules/thema verkrijgen of de "
-"originele gebruiken. Er zijn geen veranderingen doorgevoerd, U kunt nu nog veilig de huidige "
-"situatie gebruiken. Indien er veel modules als incompatible gemarkeerd zijn, dan is het "
-"mogelijk dat U een beperkte distributie van Gallery gedownload heeft, dan de distributie "
-"welke geinstalleerd is. De distributies zijn te downloaden van %s"
-
-#, c-format
-msgid "Download replacement modules from %s"
-msgstr "Download de nieuwe modules vanaf %s"
-
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -668,9 +659,6 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "De Gallery Core Module is bijgewerkt!"
 
-msgid "Upgrade Other Modules"
-msgstr "Andere Modules Opwaarderen"
-
 msgid ""
 "The following modules can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
@@ -682,17 +670,14 @@ msgstr ""
 "deactiveren in de Site Beheer pagina, of later naar deze pagina teruggaan. Dus elke "
 "beslissing die u hier maakt is niet definitief."
 
-msgid "Missing Code"
-msgstr "Missende bestanden (%d)"
+msgid "Deactivated Plugins"
+msgstr ""
 
 msgid ""
-"The code for some plugins that were previously active can no longer be found. You must "
-"restore code for these plugins before this upgrade can continue. Code for the plugins must "
-"be the same version or newer than what was installed before."
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
-"De code voor sommige plugins die eerder actief waren kan niet langer gevonden worden. U "
-"dient de code voor deze plugins te herstellen, voordat deze upgrade door kan gaan. De code "
-"van de plugins dient dezelfde versie of nieuwer te zijn dan welke hiervoor geïnstalleerd was."
 
 msgid "Module"
 msgstr "Module"
@@ -711,6 +696,9 @@ msgstr "Nieuw"
 
 msgid "Description"
 msgstr "Omschrijving"
+
+msgid "Incompatible with this version of Gallery"
+msgstr ""
 
 msgid "(un)check all"
 msgstr "(de)selecteer alles"
@@ -758,3 +746,43 @@ msgstr "Kies Taal:"
 
 msgid "Go"
 msgstr "Start"
+
+#~ msgid "Unable to verify plugins"
+#~ msgstr "niet in staat om de plugins te controleren"
+
+#~ msgid "the Gallery website"
+#~ msgstr "Ga naar Gallery website"
+
+#~ msgid ""
+#~ "Your upgrade cannot begin because some of your active modules/themes are incompatible or "
+#~ "missing.  You must either locate more recent versions of these modules or themes, or "
+#~ "revert to your original version of Gallery.  No changes have been made so it's safe to "
+#~ "revert.  If you have many incompatible modules listed below, it's possible that you "
+#~ "downloaded a smaller distribution of Gallery than what you originally installed.  You can "
+#~ "download a larger distribution from %s."
+#~ msgstr ""
+#~ "De upgrade kan niet starten doordat niet alle geactiveerde module aanwezig zijn of "
+#~ "incompatible zijn. U moet de compatible versies van deze modules/thema verkrijgen of de "
+#~ "originele gebruiken. Er zijn geen veranderingen doorgevoerd, U kunt nu nog veilig de "
+#~ "huidige situatie gebruiken. Indien er veel modules als incompatible gemarkeerd zijn, dan "
+#~ "is het mogelijk dat U een beperkte distributie van Gallery gedownload heeft, dan de "
+#~ "distributie welke geinstalleerd is. De distributies zijn te downloaden van %s"
+
+#~ msgid "Download replacement modules from %s"
+#~ msgstr "Download de nieuwe modules vanaf %s"
+
+#~ msgid "Upgrade Other Modules"
+#~ msgstr "Andere Modules Opwaarderen"
+
+#~ msgid "Missing Code"
+#~ msgstr "Missende bestanden (%d)"
+
+#~ msgid ""
+#~ "The code for some plugins that were previously active can no longer be found. You must "
+#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
+#~ "must be the same version or newer than what was installed before."
+#~ msgstr ""
+#~ "De code voor sommige plugins die eerder actief waren kan niet langer gevonden worden. U "
+#~ "dient de code voor deze plugins te herstellen, voordat deze upgrade door kan gaan. De "
+#~ "code van de plugins dient dezelfde versie of nieuwer te zijn dan welke hiervoor "
+#~ "geïnstalleerd was."

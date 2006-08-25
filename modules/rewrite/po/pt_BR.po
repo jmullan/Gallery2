@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: URL Rewrite 1.1.5\n"
+"Project-Id-Version: Gallery: URL Rewrite 1.1.6\n"
 "POT-Creation-Date: 2006-02-01 15:09+0100\n"
 "PO-Revision-Date: 2006-02-01 15:09+0100\n"
 "Last-Translator: Fábio Paradiso Martins <fabioparadiso@gmail.com>\n"
@@ -36,7 +36,7 @@ msgid "URL Rewrite"
 msgstr "Reescrever URL"
 
 #, fuzzy
-msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo."
+msgid "Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo"
 msgstr "Permite URL curto usando mod_rewrite"
 
 msgid "Gallery"
@@ -47,6 +47,9 @@ msgstr "Exibir Item"
 
 msgid "Path to an item (eg, /album/image.jpg.html)"
 msgstr "Destino para um item (exemplo, /album/image.jpg.html)"
+
+msgid "Page number in an album"
+msgstr ""
 
 msgid "Current language (eg, en or de)"
 msgstr ""
@@ -79,6 +82,15 @@ msgstr "404 Arquivo não encontrado"
 msgid "Block hotlinked items"
 msgstr "Bloquear itens mais acessados"
 
+#, fuzzy
+msgid "Send HTML for hotlinked items"
+msgstr "Bloquear itens mais acessados"
+
+msgid ""
+"Blocks use of images in other sites (HTML creates broken image), but allows linking to "
+"images."
+msgstr ""
+
 msgid "Check short style URLs for filesystem conflicts"
 msgstr "Verifique o estilo da URL por conflitos no sistema de arquivos"
 
@@ -106,8 +118,9 @@ msgstr "%d itens verificados e encontrados %d conflitos"
 msgid "Bad keyword."
 msgstr "palavrão."
 
-msgid "Duplicate short url rule."
-msgstr ""
+#, fuzzy
+msgid "Duplicate short URL rule."
+msgstr "URL Duplicada"
 
 #, fuzzy
 msgid "Ivalid pattern."
@@ -345,15 +358,20 @@ msgstr "Por favor, assegure-se que o arquivo .htaccess possui permissão de leit
 msgid "Please make sure Gallery can write to the httpd.ini file"
 msgstr "Por favor, assegure-se que o arquivo .htaccess possui permissão de escrita"
 
+#, fuzzy
 msgid ""
-"For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file "
-"to hold the mod_rewrite rules."
+"For URL Rewrite to work in an embedded environment you need to set up an extra .htaccess "
+"file to hold the mod_rewrite rules."
 msgstr ""
 "Para Reescrever a URL para trabalhar integrado ao ambiente você precisa configurar umarquivo "
 "htaccess extra para assegurar as regras do mod_rewrite."
 
-msgid "Htaccess path:"
-msgstr "Path do Htaccess:"
+#, fuzzy
+msgid "Absolute path to the folder of your embedded .htaccess:"
+msgstr "Impossível escrever no arquivo .htaccess"
+
+msgid "Please enter the Url to your environment. E.g. http://www.mySite.com/myNiceCMS/"
+msgstr ""
 
 msgid "Apache mod_rewrite"
 msgstr "Apache mod_rewrite"
@@ -499,6 +517,9 @@ msgstr "Ok"
 
 msgid "Unit test module"
 msgstr "Module de testes de unidade"
+
+#~ msgid "Htaccess path:"
+#~ msgstr "Path do Htaccess:"
 
 #~ msgid "Item file name (eg, image.jpg)"
 #~ msgstr "Nome do arquivo (exemplo image.jpg)"

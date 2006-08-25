@@ -19,7 +19,7 @@
 # Guy Sheffer <guysoft@ort.org.il>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "POT-Creation-Date: 2004-12-18 15:28+0200\n"
 "PO-Revision-Date: 2006-04-05 16:36+0300\n"
 "Last-Translator: Guy Sheffer <guysoft@ort.org.il>\n"
@@ -289,12 +289,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Gallery Item Administration"
 
-msgid "create link"
-msgstr "צור קישור"
-
-msgid "link an item"
-msgstr "קשר פריט"
-
 msgid "delete an item"
 msgstr "מחק פריט"
 
@@ -317,6 +311,9 @@ msgstr "&laquo; עיצוב ברירת המחדל &raquo;"
 
 msgid "Recreating resized images"
 msgstr "מייצר מחדש גדלים שונים של התמונות"
+
+msgid "Preparing..."
+msgstr ""
 
 msgid "Rebuilding resized images..."
 msgstr "מייצר מחדש גדלים שונים של התמונות"
@@ -403,9 +400,6 @@ msgstr "התאמת הגודל בוצעה בהצלחה"
 msgid "Modify Photo"
 msgstr "שנה תמונה"
 
-msgid "Successfully saved theme settings"
-msgstr "הגדרות התבנית נשמרו בהצלחה"
-
 msgid "Theme"
 msgstr "עיצוב"
 
@@ -464,9 +458,6 @@ msgstr "ערוך תמונה"
 
 msgid "Edit Movie"
 msgstr "ערוך סרט"
-
-msgid "Create Link"
-msgstr "צור קישור"
 
 msgid "Add Album"
 msgstr "הוסף אלבום"
@@ -546,15 +537,6 @@ msgstr "הגדרות חשבון משתמש"
 msgid "Change Password"
 msgstr "שנה סיסמה"
 
-msgid "Link Album"
-msgstr "קשר אלבום"
-
-msgid "Link Photo"
-msgstr "קשר תמונה"
-
-msgid "Link Movie"
-msgstr "קשר סרט"
-
 #, c-format
 msgid "Edit %s"
 msgstr "ערוך %s"
@@ -566,10 +548,6 @@ msgstr "מחק %s"
 #, c-format
 msgid "Move %s"
 msgstr "העבר %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "קישור ל-%s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "צור מחדש תמונות מוקטנות ותמונות בגודל שונה"
@@ -679,6 +657,14 @@ msgstr "כותרת"
 
 msgid "Owner"
 msgstr "בעלים"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "ערוך אלבום"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "ערוך אלבום"
 
 msgid "Group"
 msgstr "קבוצה"
@@ -983,6 +969,17 @@ msgstr ""
 msgid "Default theme"
 msgstr "עיצוב ברירת המחדל"
 
+msgid "gettext"
+msgstr ""
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d פריטים נכשלו"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d פריטים נכשלו"
+
 #, fuzzy
 msgid "Locale"
 msgstr "התאם גודל"
@@ -990,6 +987,9 @@ msgstr "התאם גודל"
 #, fuzzy
 msgid "Browser"
 msgstr "מהדפדפן"
+
+msgid "Successfully saved theme settings"
+msgstr "הגדרות התבנית נשמרו בהצלחה"
 
 msgid "General Settings"
 msgstr "הגדרות כלליות"
@@ -1029,9 +1029,6 @@ msgid "Default language"
 msgstr "שפת ברירת המחדל"
 
 msgid "Check Browser Preference"
-msgstr ""
-
-msgid "gettext"
 msgstr ""
 
 #, fuzzy, c-format
@@ -1683,10 +1680,6 @@ msgid "up to date"
 msgstr "תאריך:"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d פריטים נכשלו"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(דרוש)"
 
@@ -2138,6 +2131,9 @@ msgid ""
 "system, e.g. by restoring data from a backup."
 msgstr ""
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr ""
 
@@ -2265,65 +2261,6 @@ msgstr "תמונה מוקטנת לא קיימת"
 msgid "Options"
 msgstr "אפשרויות"
 
-msgid "Link an Item"
-msgstr "קישור לפריט"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "קישר בהצלחה פריט %d"
-msgstr[1] "קישר בהצלחה %d פריטים"
-
-msgid "This album contains no items to link."
-msgstr "האלבום אינו כולל פריטים לקישור."
-
-msgid "Source"
-msgstr "מקור"
-
-msgid "Choose the items you want to link"
-msgstr "בחר את הפריטים שברצונך לקשר"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(עמוד %d מתוך %d)"
-
-#, fuzzy
-msgid "No sources chosen"
-msgstr "לא נבחר יעד"
-
-msgid "Check All"
-msgstr "בחר הכל"
-
-msgid "Check None"
-msgstr "בטל הכל"
-
-msgid "Invert"
-msgstr "הפוך בחירה"
-
-msgid "Previous Page"
-msgstr "עמוד קודם"
-
-msgid "Next Page"
-msgstr "עמוד הבא"
-
-msgid "Destination"
-msgstr "יעד"
-
-msgid "Choose a new album for the link"
-msgstr "בחר אלבום חדש לקישור זה"
-
-msgid "No destination chosen"
-msgstr "לא נבחר יעד"
-
-msgid "Link"
-msgstr "קשר"
-
-msgid "Successfully linked"
-msgstr "קישור נוצר בהצלחה"
-
-msgid "Choose a destination album"
-msgstr "בחר אלבום יעד"
-
 #, fuzzy
 msgid "Delete Items"
 msgstr "מחק פריט"
@@ -2342,6 +2279,10 @@ msgstr "האלבום אינו כולל פריטים למחיקה"
 
 msgid "Choose the items you want to delete"
 msgstr "בחר את הפריטים שברצונך למחוק"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(עמוד %d מתוך %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr ""
@@ -2363,6 +2304,21 @@ msgstr[1] "(אלבום מכיל %d פריטים)"
 
 msgid "(empty album)"
 msgstr "(אלבום ריק)"
+
+msgid "Check All"
+msgstr "בחר הכל"
+
+msgid "Check None"
+msgstr "בטל הכל"
+
+msgid "Invert"
+msgstr "הפוך בחירה"
+
+msgid "Previous Page"
+msgstr "עמוד קודם"
+
+msgid "Next Page"
+msgstr "עמוד הבא"
 
 msgid "Deletion Complete"
 msgstr "מחיקה הסתיימה"
@@ -2624,6 +2580,10 @@ msgstr "יחס רוחב-גובה: "
 msgid "Crop"
 msgstr "גזור"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "שנה"
+
 msgid "Reset to default"
 msgstr ""
 
@@ -2692,6 +2652,11 @@ msgstr "זהו קישור לתמונה אחרת, אז אין באפשרותך ל
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "יש קישורים לתמונה זו, אז אינך יכול לשנות את המקורית"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "שמור תמונה מקורית"
 
@@ -2716,12 +2681,6 @@ msgid ""
 msgstr ""
 "אלבום זה מוגדר לשימוש בערכת הצבעים <b>%s</b>. הגדרות אלו ישפיעו על ערכת הצבעים של אלבום זה "
 "בלבד."
-
-msgid "Setting"
-msgstr "הגדרה"
-
-msgid "Use Global"
-msgstr "השתמש בגלובלי"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2759,6 +2718,9 @@ msgstr[1] "העביר בהצלחה %d פריטים"
 msgid "This album contains no items to move."
 msgstr "האלבום אינו כולל פריטים להעברה."
 
+msgid "Source"
+msgstr "מקור"
+
 msgid "Choose the items you want to move"
 msgstr "בחר את הפריטים שברצונך להעביר"
 
@@ -2782,17 +2744,26 @@ msgstr "אינך ראשי להעביר את פריט זה ליעד הנבחר."
 msgid "You cannot move an album into its own subtree."
 msgstr "אינך יכול להעביר אלבום לתוך עצמו."
 
+msgid "Destination"
+msgstr "יעד"
+
 msgid "Choose a new album for them"
 msgstr "בחר אלבום חדש עבורם"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "אין לך הרשאות להוספת פריטים באלבום זה"
 
+msgid "No destination chosen"
+msgstr "לא נבחר יעד"
+
 msgid "Move"
 msgstr "העבר"
 
 msgid "Successfully moved"
 msgstr "העברה בוצעה בהצלחה"
+
+msgid "Choose a destination album"
+msgstr "בחר אלבום יעד"
 
 msgid "Permissions"
 msgstr "הרשאות"
@@ -3329,6 +3300,12 @@ msgstr "לא ידוע"
 msgid "Full size: "
 msgstr "גודל מלא: "
 
+msgid "Setting"
+msgstr "הגדרה"
+
+msgid "Use Global"
+msgstr "השתמש בגלובלי"
+
 #, fuzzy
 msgid "Language selector"
 msgstr "בחירת שפה במסגרת הצדדית"
@@ -3362,6 +3339,54 @@ msgstr "עריכת הרשאות עבור %s"
 #, fuzzy
 msgid "Unit test theme"
 msgstr "מודול בדיקת יחידה"
+
+#~ msgid "create link"
+#~ msgstr "צור קישור"
+
+#~ msgid "link an item"
+#~ msgstr "קשר פריט"
+
+#~ msgid "Create Link"
+#~ msgstr "צור קישור"
+
+#~ msgid "Link Album"
+#~ msgstr "קשר אלבום"
+
+#~ msgid "Link Photo"
+#~ msgstr "קשר תמונה"
+
+#~ msgid "Link Movie"
+#~ msgstr "קשר סרט"
+
+#~ msgid "Link %s"
+#~ msgstr "קישור ל-%s"
+
+#~ msgid "Link an Item"
+#~ msgstr "קישור לפריט"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "קישר בהצלחה פריט %d"
+#~ msgstr[1] "קישר בהצלחה %d פריטים"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "האלבום אינו כולל פריטים לקישור."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "בחר את הפריטים שברצונך לקשר"
+
+#, fuzzy
+#~ msgid "No sources chosen"
+#~ msgstr "לא נבחר יעד"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "בחר אלבום חדש לקישור זה"
+
+#~ msgid "Link"
+#~ msgstr "קשר"
+
+#~ msgid "Successfully linked"
+#~ msgstr "קישור נוצר בהצלחה"
 
 #~ msgid "Incompatible module!"
 #~ msgstr "מודול לא מתאים"

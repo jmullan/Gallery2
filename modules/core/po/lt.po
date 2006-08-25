@@ -19,7 +19,7 @@
 # Darius Žitkevičius <skystis@splius.lt>, 2005, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-12 22:28+0200\n"
 "PO-Revision-Date: 2006-03-12 23:02+0200\n"
@@ -297,12 +297,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Galerijos elemento administravimas"
 
-msgid "create link"
-msgstr "sukurti nuorodą"
-
-msgid "link an item"
-msgstr "sukurti elemento nuorodą"
-
 msgid "delete an item"
 msgstr "pašalinti elementą"
 
@@ -325,6 +319,10 @@ msgstr "&laquo; numatyta tema &raquo;"
 
 msgid "Recreating resized images"
 msgstr "Sumažinti vaizdai pergeneruojami"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Vykdoma..."
 
 msgid "Rebuilding resized images..."
 msgstr "Pergeneruojami sumažinti paveikslai..."
@@ -411,9 +409,6 @@ msgstr "Fotografija ištempta sėkmingai"
 msgid "Modify Photo"
 msgstr "Taisyti foto"
 
-msgid "Successfully saved theme settings"
-msgstr "Temos nustatymai išsaugoti sėkmingai"
-
 msgid "Theme"
 msgstr "Tema"
 
@@ -472,9 +467,6 @@ msgstr "Keisti foto"
 
 msgid "Edit Movie"
 msgstr "Keisti video"
-
-msgid "Create Link"
-msgstr "Sukurti nuorodą"
 
 msgid "Add Album"
 msgstr "Naujas albumas"
@@ -554,15 +546,6 @@ msgstr "Paskyros nustatymai"
 msgid "Change Password"
 msgstr "Keisti slaptažodį"
 
-msgid "Link Album"
-msgstr "Nuoroda albumui"
-
-msgid "Link Photo"
-msgstr "Nuoroda fotografijai"
-
-msgid "Link Movie"
-msgstr "Nuoroda video klipui"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Keisti %s"
@@ -574,10 +557,6 @@ msgstr "Ištrinti %s"
 #, c-format
 msgid "Move %s"
 msgstr "Perkelti %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "Kurti %s nuorodą"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Generuoti visas miniatiūras/keisti matmenis"
@@ -692,6 +671,14 @@ msgstr "Antraštė"
 
 msgid "Owner"
 msgstr "Sąvinikas"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Keisti albumą"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Keisti albumą"
 
 msgid "Group"
 msgstr "Grupė"
@@ -991,11 +978,25 @@ msgstr "Operacijų sistema"
 msgid "Default theme"
 msgstr "Numatyta tema"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d elementų nepavyko sutvarkyti"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d elementų nepavyko sutvarkyti"
+
 msgid "Locale"
 msgstr "Localė"
 
 msgid "Browser"
 msgstr "Naršyklė"
+
+msgid "Successfully saved theme settings"
+msgstr "Temos nustatymai išsaugoti sėkmingai"
 
 msgid "General Settings"
 msgstr "Pagrindiniai nustatymai"
@@ -1036,9 +1037,6 @@ msgstr "Numatyta kalba"
 
 msgid "Check Browser Preference"
 msgstr "Tikrinti naršyklės nustatymus"
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1723,10 +1721,6 @@ msgid "up to date"
 msgstr "Atnaujinti"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d elementų nepavyko sutvarkyti"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(būtina)"
 
@@ -2212,6 +2206,9 @@ msgstr ""
 "Taip galėjo atsitikti jei jūsų paslaugų tiekėjas ką nors keitė failų sistemoje, pvz. "
 "atstatinėjo duomenis iš atsarginės kopijos."
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Įvyko klaida"
 
@@ -2345,65 +2342,6 @@ msgstr "Be miniatiūros"
 msgid "Options"
 msgstr "Parinktys"
 
-msgid "Link an Item"
-msgstr "Sukurti elemento nuorodą"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "Sukurta nuoroda %d elementui"
-msgstr[1] "Sukurtos nuorodos %d elementams"
-msgstr[2] "Sukurtos nuorodos %d elementų"
-
-msgid "This album contains no items to link."
-msgstr "Šiame albume nėra nieko nuorodoms."
-
-msgid "Source"
-msgstr "Šaltinis"
-
-msgid "Choose the items you want to link"
-msgstr "Nurodykite elementus į kuriuos norite sukurti nuorodas"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(puslapis %d iš %d)"
-
-msgid "No sources chosen"
-msgstr "Neparinkti šaltiniai"
-
-msgid "Check All"
-msgstr "Žymėti viską"
-
-msgid "Check None"
-msgstr "Nežymėti visko"
-
-msgid "Invert"
-msgstr "Iversija"
-
-msgid "Previous Page"
-msgstr "Ankstesnis puslapis"
-
-msgid "Next Page"
-msgstr "Sekantis puslapis"
-
-msgid "Destination"
-msgstr "Paskirtis"
-
-msgid "Choose a new album for the link"
-msgstr "Nuorodai parinkti naują albumą"
-
-msgid "No destination chosen"
-msgstr "Nenurodyta paskirtis"
-
-msgid "Link"
-msgstr "Nuoroda"
-
-msgid "Successfully linked"
-msgstr "Nuoroda sukurta"
-
-msgid "Choose a destination album"
-msgstr "Nurodykite paskirties albumą"
-
 msgid "Delete Items"
 msgstr "Trinti elementus"
 
@@ -2422,6 +2360,10 @@ msgstr "Šiame albume nėra nieko trynimui"
 
 msgid "Choose the items you want to delete"
 msgstr "Nurodykite elementus, kuriuos norite ištrinti"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(puslapis %d iš %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "Elementai, kuriuos čia pažymėjote, keičiant puslapius liks pažymėti."
@@ -2445,6 +2387,21 @@ msgstr[2] "(albumas, kuriame yra %d elementų)"
 
 msgid "(empty album)"
 msgstr "(tuščias albumas)"
+
+msgid "Check All"
+msgstr "Žymėti viską"
+
+msgid "Check None"
+msgstr "Nežymėti visko"
+
+msgid "Invert"
+msgstr "Iversija"
+
+msgid "Previous Page"
+msgstr "Ankstesnis puslapis"
+
+msgid "Next Page"
+msgstr "Sekantis puslapis"
 
 msgid "Deletion Complete"
 msgstr "Trynimas atliktas"
@@ -2710,6 +2667,10 @@ msgstr "Santykiniai matmenys: "
 msgid "Crop"
 msgstr "Kirpti"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Keisti"
+
 msgid "Reset to default"
 msgstr "Atkurti numatytą"
 
@@ -2784,6 +2745,11 @@ msgstr "Tai tik nuoroda į kitą foto, todėl jums neleidžiama jos keisti"
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "Yra sukurtų nuorodų, kurios rodo į šią foto, todėl jūs negalite keisti originalo"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "Išsaugoti originalią foto"
 
@@ -2809,12 +2775,6 @@ msgid ""
 msgstr ""
 "Šis albumas yra sukonfigūruotas naudoti <b>%s</b> temą. Šis nustatymas naudojamas tik šio "
 "albumo apipavidalinimui."
-
-msgid "Setting"
-msgstr "Nustaymai"
-
-msgid "Use Global"
-msgstr "Naudoti globalią"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2851,6 +2811,9 @@ msgstr[2] "Sėkmingai perkelta %d elementų"
 msgid "This album contains no items to move."
 msgstr "Šiame albume nėra elementų, kuriuos būtu galima perkelti."
 
+msgid "Source"
+msgstr "Šaltinis"
+
 msgid "Choose the items you want to move"
 msgstr "Pasirinkite kuriuos elementus norite perkelti"
 
@@ -2875,17 +2838,26 @@ msgstr "Jūs neturite teisės elementą perkelti į nurodytą vietą."
 msgid "You cannot move an album into its own subtree."
 msgstr "Negalima perkelti albumą į jį patį."
 
+msgid "Destination"
+msgstr "Paskirtis"
+
 msgid "Choose a new album for them"
 msgstr "Jiems parinkite kitą albumą"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "Jūs neturite teisės į šį albumą pridėti naujus elementus"
 
+msgid "No destination chosen"
+msgstr "Nenurodyta paskirtis"
+
 msgid "Move"
 msgstr "Perkelti"
 
 msgid "Successfully moved"
 msgstr "Perkelta sėkmingai"
+
+msgid "Choose a destination album"
+msgstr "Nurodykite paskirties albumą"
 
 msgid "Permissions"
 msgstr "Prieigos teisės"
@@ -3455,6 +3427,12 @@ msgstr "Nežinomas"
 msgid "Full size: "
 msgstr "Pilnas dydis: "
 
+msgid "Setting"
+msgstr "Nustaymai"
+
+msgid "Use Global"
+msgstr "Naudoti globalią"
+
 msgid "Language selector"
 msgstr "Kalbos parinkimas"
 
@@ -3481,6 +3459,54 @@ msgstr "[test] antra teisė"
 
 msgid "Unit test theme"
 msgstr "Elemento testavimo tema"
+
+#~ msgid "create link"
+#~ msgstr "sukurti nuorodą"
+
+#~ msgid "link an item"
+#~ msgstr "sukurti elemento nuorodą"
+
+#~ msgid "Create Link"
+#~ msgstr "Sukurti nuorodą"
+
+#~ msgid "Link Album"
+#~ msgstr "Nuoroda albumui"
+
+#~ msgid "Link Photo"
+#~ msgstr "Nuoroda fotografijai"
+
+#~ msgid "Link Movie"
+#~ msgstr "Nuoroda video klipui"
+
+#~ msgid "Link %s"
+#~ msgstr "Kurti %s nuorodą"
+
+#~ msgid "Link an Item"
+#~ msgstr "Sukurti elemento nuorodą"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "Sukurta nuoroda %d elementui"
+#~ msgstr[1] "Sukurtos nuorodos %d elementams"
+#~ msgstr[2] "Sukurtos nuorodos %d elementų"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Šiame albume nėra nieko nuorodoms."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Nurodykite elementus į kuriuos norite sukurti nuorodas"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Neparinkti šaltiniai"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Nuorodai parinkti naują albumą"
+
+#~ msgid "Link"
+#~ msgstr "Nuoroda"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Nuoroda sukurta"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Modulis %s sėkmingai įdiegtas ir automatiškai sukonfigūruotas"

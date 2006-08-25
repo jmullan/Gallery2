@@ -224,8 +224,9 @@ msgstr "Oracle (9i of nieuwer)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 en nieuwer)"
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL met Transacties (v3.23.34a of nieuwer)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Onbekende DB type of geen bekende tabellen informatie."
@@ -292,8 +293,9 @@ msgstr "Kan de databasetransactie niet uitvoeren"
 msgid "Core module is only partially installed."
 msgstr "Core module is slechts gedeeltelijk geïnstalleerd."
 
-msgid "Install More Modules"
-msgstr "Meer Modules Installeren"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Installatie Stappen"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Kan onze Gallery sessie niet initialiseren"
@@ -699,17 +701,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Voordat we verder kunnen gaan, dient u een bestand in uw <b>%s</b> directory aan te maken "
-"genaamd <i>config.php</i>. U dient ervoor te zorgen dat de webserver in staat is hiernaar te "
-"schrijven. Als u Unix gebruikt kunt u dit doen door <i>chmod 666 config.php</i> uit te "
-"voeren. Onder Windows hoeft u niets speciaals te doen. Als u dit bestand heeft aangemaakt "
-"met de juiste rechten kunt u doorgaan. Als er een probleem is, zullen we u aangeven hoe u "
-"dit kunt oplossen."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (met shell toegang)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Configuratiebestand aanmaken"
@@ -877,9 +881,6 @@ msgstr ""
 "zou u door moeten gaan met de installatie en een aantal van de optionele modules toevoegen. "
 "Hiermee kunt u de juiste functionaliteit verkrijgen die u voor uw Gallery installatie wilt."
 
-msgid "Install Other Modules"
-msgstr "Installeer Andere Modules"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -1042,9 +1043,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "U dient een directory op te geven"
 
-msgid "The directory you entered does not exist"
-msgstr "De opgegeven directory bestaat niet"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1053,6 +1051,22 @@ msgstr ""
 "De opgegeven directory is de programmacode directory. Als u Gallery wilt installeren in de "
 "programmacode directory, kies het standaard installatie type. Als u een multisite wilt "
 "installeren, kies een andere directory."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "De opgegeven directory bestaat niet"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1142,15 +1156,27 @@ msgstr ""
 msgid "Check Again"
 msgstr "Controleer Opnieuw"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
-"Gallery heeft een directory nodig waarin deze de afbeeldingen kan opslaan. De huidige "
-"directory is toegangkelijk vanaf het internet, echter deze kan wel gebruikt worden."
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, fuzzy, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
 msgstr "Voor de beste beveiliging mag deze directory niet benaderbaar zijn vanaf het internet."
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
+msgstr ""
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1176,8 +1202,42 @@ msgid "There was an error creating the directory structure within the storage di
 msgstr ""
 "Er een fout opgetreden bij het aanmaken van de directory structuur binnen de opslagdirectory."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Opslagdirectory succesvol ingesteld."
+
+#, fuzzy, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr "Voor de beste beveiliging mag deze directory niet benaderbaar zijn vanaf het internet."
+
 msgid "Directory path:"
 msgstr "Directory pad:"
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+"De gebruikte webserver moet schrijftoegang hebben in deze directory. Zie onderstaande "
+"voorbeelden om te realiseren."
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr ""
+"Let op: dit zijn slechts voorbeelden! Het kan zijn dat deze niet helemaal juist werken op uw "
+"systeem."
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (met ftp toegang)"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"Let op dat ftpservers en -clients variëren, daarom kan het zijn dat deze instructies voor u "
+"niet werken. Raadpleeg de handleiding van uw FTP client of raadpleeg uw systeembeheerder als "
+"u hier problemen mee heeft"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1211,46 +1271,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Let op</b>: Vergeet niet om dir.php te verwijderen als u klaar bent!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-"De gebruikte webserver moet schrijftoegang hebben in deze directory. Zie onderstaande "
-"voorbeelden om te realiseren."
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr ""
-"Let op: dit zijn slechts voorbeelden! Het kan zijn dat deze niet helemaal juist werken op uw "
-"systeem."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (met shell toegang)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (met ftp toegang)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"Let op dat ftpservers en -clients variëren, daarom kan het zijn dat deze instructies voor u "
-"niet werken. Raadpleeg de handleiding van uw FTP client of raadpleeg uw systeembeheerder als "
-"u hier problemen mee heeft"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1332,6 +1352,42 @@ msgstr "Gaan"
 
 msgid "Begin Installation&raquo;"
 msgstr "Begin Installatie&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "Meer Modules Installeren"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Voordat we verder kunnen gaan, dient u een bestand in uw <b>%s</b> directory aan te maken "
+#~ "genaamd <i>config.php</i>. U dient ervoor te zorgen dat de webserver in staat is hiernaar "
+#~ "te schrijven. Als u Unix gebruikt kunt u dit doen door <i>chmod 666 config.php</i> uit te "
+#~ "voeren. Onder Windows hoeft u niets speciaals te doen. Als u dit bestand heeft aangemaakt "
+#~ "met de juiste rechten kunt u doorgaan. Als er een probleem is, zullen we u aangeven hoe u "
+#~ "dit kunt oplossen."
+
+#~ msgid "Install Other Modules"
+#~ msgstr "Installeer Andere Modules"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Gallery heeft een directory nodig waarin deze de afbeeldingen kan opslaan. De huidige "
+#~ "directory is toegangkelijk vanaf het internet, echter deze kan wel gebruikt worden."
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (niet goed getest)"

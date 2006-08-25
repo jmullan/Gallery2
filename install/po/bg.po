@@ -223,8 +223,9 @@ msgstr "Oracle (9i или по-нов)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr ""
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL с Транзакции (v3.23.34a и по-нов)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr ""
@@ -287,8 +288,9 @@ msgstr "Не можа да бъде извършена транзакция с Базата Данни"
 msgid "Core module is only partially installed."
 msgstr "Модула на ядрото на Галерията е само частично инсталиран."
 
-msgid "Install More Modules"
-msgstr "Инсталиране на Допълнителни Модули"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Фази на Инсталация"
 
 #, fuzzy
 msgid "Unable to initialize our Gallery session"
@@ -664,17 +666,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Преди да можем да продължим, трябва да създадете файла <i>config.php</i> във вашата "
-"директория <b>%s</b>. Също така трябва да сте сигурни че web-сървъра ще може да пише в този "
-"файл. Ако сте под Unix използвайте <i>chmod 666 config.php</i>. Под Windows не би трябвало "
-"да се налага да правите каквото и да било. Можете да продължите напред, след като създадете "
-"файла и определите правата за достъп до него. Ако има проблем, ние ще ви посочим какво да "
-"коригирате."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (с 'shell' достъп)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Създайте конфигурационен файл"
@@ -821,9 +825,6 @@ msgstr ""
 "Инсталирахме успешно ядрото на Галерията. Независимо че в момента всичко ще работи е може би "
 "по-добре да продължите с инсталацията и да добавите някои от допълнителните модули така че "
 "да постигнете желаната от вас функционалност на Галерията."
-
-msgid "Install Other Modules"
-msgstr "Инсталиране на Допълнителни Модули"
 
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
@@ -977,14 +978,27 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "Трябва да въведете директория"
 
-msgid "The directory you entered does not exist"
-msgstr "Директорията която въведохте не съществува"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
 "multisite, choose another directory."
 msgstr ""
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "Директорията която въведохте не съществува"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1064,12 +1078,26 @@ msgstr ""
 msgid "Check Again"
 msgstr "Проверете отново"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
+msgstr ""
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
 msgstr ""
 
 msgid ""
@@ -1093,8 +1121,38 @@ msgstr "Директорията която въведохте е разрешена само за четене"
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Имаше грешка при създаването на структурата в директорията за данни."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Местоположението е успешно определено."
+
+#, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+
 msgid "Directory path:"
 msgstr "Път към директорията: "
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr "Забележка: това са само примери! Възможно е да не работят на вашата система."
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (с 'ftp' достъп)"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"Отбележете, че има различни FTP сървъри и клиенти и че тези инструкции може да не работят "
+"във вашия случай. Ако имате проблеми, за помощ се консултирайте се с упътването на FTP "
+"програмата си или с вашия системен администратор. "
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1122,42 +1180,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Забележка</b>: Не забравяйте да изтриете 'dir.php' когато приключите!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr "Забележка: това са само примери! Възможно е да не работят на вашата система."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (с 'shell' достъп)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (с 'ftp' достъп)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"Отбележете, че има различни FTP сървъри и клиенти и че тези инструкции може да не работят "
-"във вашия случай. Ако имате проблеми, за помощ се консултирайте се с упътването на FTP "
-"програмата си или с вашия системен администратор. "
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1238,6 +1260,35 @@ msgstr ""
 
 msgid "Begin Installation&raquo;"
 msgstr "Започнете Инсталацията&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "Инсталиране на Допълнителни Модули"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Преди да можем да продължим, трябва да създадете файла <i>config.php</i> във вашата "
+#~ "директория <b>%s</b>. Също така трябва да сте сигурни че web-сървъра ще може да пише в "
+#~ "този файл. Ако сте под Unix използвайте <i>chmod 666 config.php</i>. Под Windows не би "
+#~ "трябвало да се налага да правите каквото и да било. Можете да продължите напред, след "
+#~ "като създадете файла и определите правата за достъп до него. Ако има проблем, ние ще ви "
+#~ "посочим какво да коригирате."
+
+#~ msgid "Install Other Modules"
+#~ msgstr "Инсталиране на Допълнителни Модули"
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (не изцяло тестван)"

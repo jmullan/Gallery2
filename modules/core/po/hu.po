@@ -25,7 +25,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-04 20:08+0100\n"
 "PO-Revision-Date: 2006-01-06 17:02+0100\n"
@@ -299,12 +299,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Galéria elem adminisztáció"
 
-msgid "create link"
-msgstr "link létrehozása"
-
-msgid "link an item"
-msgstr "egy elem linkelése"
-
 msgid "delete an item"
 msgstr "egy elem törlése"
 
@@ -328,6 +322,10 @@ msgstr "&laquo; alapértelmezett felület &raquo;"
 #, fuzzy
 msgid "Recreating resized images"
 msgstr "Átméretezett képek újragyártása"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Feldolgozás..."
 
 #, fuzzy
 msgid "Rebuilding resized images..."
@@ -416,9 +414,6 @@ msgstr "Nagyítás sikeres"
 msgid "Modify Photo"
 msgstr "Fénykép módosítása"
 
-msgid "Successfully saved theme settings"
-msgstr "Témabeállítások sikeresen elmentve"
-
 msgid "Theme"
 msgstr "Felület"
 
@@ -477,9 +472,6 @@ msgstr "Fénykép szerkeztése"
 
 msgid "Edit Movie"
 msgstr "Videó szerkeztése"
-
-msgid "Create Link"
-msgstr "Link Létrehozása"
 
 msgid "Add Album"
 msgstr "Album Hozzáadása"
@@ -560,15 +552,6 @@ msgstr "Felhasználói beállítások"
 msgid "Change Password"
 msgstr "Jelszóváltoztatás"
 
-msgid "Link Album"
-msgstr "Album Csatolása"
-
-msgid "Link Photo"
-msgstr "Fénykép Csatolása"
-
-msgid "Link Movie"
-msgstr "Videó Csatolása"
-
 #, c-format
 msgid "Edit %s"
 msgstr "%s szerkeztése"
@@ -580,10 +563,6 @@ msgstr "%s törlése"
 #, c-format
 msgid "Move %s"
 msgstr "%s mozgatása"
-
-#, c-format
-msgid "Link %s"
-msgstr "Link %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Minden előnézeti/átméretezett kép legyártása"
@@ -691,6 +670,14 @@ msgstr "Cím"
 
 msgid "Owner"
 msgstr "Tulaj"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Album szerkeztése"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Album szerkeztése"
 
 msgid "Group"
 msgstr "Csoport"
@@ -986,12 +973,26 @@ msgstr "Operációs rendszer"
 msgid "Default theme"
 msgstr "Alapértelmezett felület"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d elem sikertelen"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d elem sikertelen"
+
 #, fuzzy
 msgid "Locale"
 msgstr "Nagyítás"
 
 msgid "Browser"
 msgstr "Böngésző"
+
+msgid "Successfully saved theme settings"
+msgstr "Témabeállítások sikeresen elmentve"
 
 msgid "General Settings"
 msgstr "Általános beállítások"
@@ -1033,9 +1034,6 @@ msgstr "Alapértelmezett nyelv"
 
 msgid "Check Browser Preference"
 msgstr ""
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1680,10 +1678,6 @@ msgid "up to date"
 msgstr "Dátum"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d elem sikertelen"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(szükséges)"
 
@@ -2128,6 +2122,9 @@ msgid ""
 "system, e.g. by restoring data from a backup."
 msgstr ""
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Hiba történt."
 
@@ -2257,64 +2254,6 @@ msgstr "Nincs előnézet"
 msgid "Options"
 msgstr "Opciók"
 
-msgid "Link an Item"
-msgstr "Elem linkelése"
-
-# c-format
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "%d elem sikeresen linkelve"
-
-msgid "This album contains no items to link."
-msgstr "Az az album nem tartalmaz linkelhető elemeket."
-
-msgid "Source"
-msgstr "Forrás"
-
-msgid "Choose the items you want to link"
-msgstr "Válaszd ki a linkelni kívánt elemeket"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(oldal %d/%d)"
-
-msgid "No sources chosen"
-msgstr "Nincs forrás kiválasztva"
-
-msgid "Check All"
-msgstr "Mindet kijelöl"
-
-msgid "Check None"
-msgstr "Kijelölés megszüntetése"
-
-msgid "Invert"
-msgstr "Megfordítás"
-
-msgid "Previous Page"
-msgstr "Előző oldal"
-
-msgid "Next Page"
-msgstr "Következő oldal"
-
-msgid "Destination"
-msgstr "Cél"
-
-msgid "Choose a new album for the link"
-msgstr "Új album választás a linkhez"
-
-msgid "No destination chosen"
-msgstr "Nincs cél kiválasztva"
-
-msgid "Link"
-msgstr "Link"
-
-msgid "Successfully linked"
-msgstr "Linkelés sikeres"
-
-msgid "Choose a destination album"
-msgstr "Válassz célalbumot"
-
 msgid "Delete Items"
 msgstr "Elemek Törlése"
 
@@ -2332,6 +2271,10 @@ msgstr "Ez az album nem tartalmaz törölhető elemeket"
 
 msgid "Choose the items you want to delete"
 msgstr "Válaszd ki a törölni kívánt elemeket"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(oldal %d/%d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr ""
@@ -2353,6 +2296,21 @@ msgstr[0] "(%d elemet tartalmazó album)"
 
 msgid "(empty album)"
 msgstr "(üres album)"
+
+msgid "Check All"
+msgstr "Mindet kijelöl"
+
+msgid "Check None"
+msgstr "Kijelölés megszüntetése"
+
+msgid "Invert"
+msgstr "Megfordítás"
+
+msgid "Previous Page"
+msgstr "Előző oldal"
+
+msgid "Next Page"
+msgstr "Következő oldal"
 
 msgid "Deletion Complete"
 msgstr "Törlés sikeres"
@@ -2617,6 +2575,10 @@ msgstr "Méretarány"
 msgid "Crop"
 msgstr "Kivágás"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Változtat"
+
 msgid "Reset to default"
 msgstr "Visszaállítás alapértelmezettre"
 
@@ -2691,6 +2653,11 @@ msgstr "Ez egy másik fényképre mutató link, így az eredeti nem módosíthat
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "Mutatnak linkek erre a fényképre, így az eredeti nem változtatható"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "Eredeti fénykép megtartása"
 
@@ -2713,12 +2680,6 @@ msgid ""
 msgstr ""
 "Ez az album a(z) <b>%s</b> felületet használatára van beállítva. Ezek a beállítások csak az "
 "ehhez az albumhoz tartozó felületpéldányra vonatkoznak."
-
-msgid "Setting"
-msgstr "Beállítás"
-
-msgid "Use Global"
-msgstr "Globális használata"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2752,6 +2713,9 @@ msgstr[0] "%d elem sikeresen mozgatva"
 msgid "This album contains no items to move."
 msgstr "Ez az album nem tartalmaz mozgatható elemeket."
 
+msgid "Source"
+msgstr "Forrás"
+
 msgid "Choose the items you want to move"
 msgstr "Válaszd ki a mozgatni kívánt elemeket"
 
@@ -2779,17 +2743,26 @@ msgstr "Nem mozgathatsz elemet a kiválasztott helyre."
 msgid "You cannot move an album into its own subtree."
 msgstr "Az albumot nem mozgatod át saját maga alá."
 
+msgid "Destination"
+msgstr "Cél"
+
 msgid "Choose a new album for them"
 msgstr "Új album választás nekik"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "Nincs jogosultságod elemek hozzáadására az albumba"
 
+msgid "No destination chosen"
+msgstr "Nincs cél kiválasztva"
+
 msgid "Move"
 msgstr "Mozgatás"
 
 msgid "Successfully moved"
 msgstr "Mozgatás sikeres"
+
+msgid "Choose a destination album"
+msgstr "Válassz célalbumot"
 
 msgid "Permissions"
 msgstr "Jogok"
@@ -3352,6 +3325,12 @@ msgstr "Ismeretlen"
 msgid "Full size: "
 msgstr "Teljes méret:"
 
+msgid "Setting"
+msgstr "Beállítás"
+
+msgid "Use Global"
+msgstr "Globális használata"
+
 msgid "Language selector"
 msgstr "Nyelvválasztó"
 
@@ -3378,6 +3357,53 @@ msgstr "[test] Egy második jogosultság"
 
 msgid "Unit test theme"
 msgstr "Egységtesztelő felület"
+
+#~ msgid "create link"
+#~ msgstr "link létrehozása"
+
+#~ msgid "link an item"
+#~ msgstr "egy elem linkelése"
+
+#~ msgid "Create Link"
+#~ msgstr "Link Létrehozása"
+
+#~ msgid "Link Album"
+#~ msgstr "Album Csatolása"
+
+#~ msgid "Link Photo"
+#~ msgstr "Fénykép Csatolása"
+
+#~ msgid "Link Movie"
+#~ msgstr "Videó Csatolása"
+
+#~ msgid "Link %s"
+#~ msgstr "Link %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "Elem linkelése"
+
+# c-format
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "%d elem sikeresen linkelve"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Az az album nem tartalmaz linkelhető elemeket."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Válaszd ki a linkelni kívánt elemeket"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Nincs forrás kiválasztva"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Új album választás a linkhez"
+
+#~ msgid "Link"
+#~ msgstr "Link"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Linkelés sikeres"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "%s modul sikeresen telepítve és beállítva"

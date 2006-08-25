@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-31 14:44+0100\n"
 "PO-Revision-Date: 2006-05-19 13:03+0200\n"
@@ -291,12 +291,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Galeria elementu kudeaketa"
 
-msgid "create link"
-msgstr "lotura sortu"
-
-msgid "link an item"
-msgstr "elementua lotu"
-
 msgid "delete an item"
 msgstr "elementua ezabatu"
 
@@ -319,6 +313,10 @@ msgstr "&laquo; lehenetsitako gaia &raquo;"
 
 msgid "Recreating resized images"
 msgstr "Taimanaz aldaturiko irudiak berriz sortzen"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Prozesatzen..."
 
 msgid "Rebuilding resized images..."
 msgstr "Taimanaz aldaturiko irudiak berriz sortzen..."
@@ -405,9 +403,6 @@ msgstr "Argazkia behar bezala eskalatu da"
 msgid "Modify Photo"
 msgstr "Argazkia Eraldatu"
 
-msgid "Successfully saved theme settings"
-msgstr "Gai ezarpenak behar bezala gor dira"
-
 msgid "Theme"
 msgstr "Gaia"
 
@@ -466,9 +461,6 @@ msgstr "Argazkia Editatu"
 
 msgid "Edit Movie"
 msgstr "Pelikula Editatu"
-
-msgid "Create Link"
-msgstr "Lotura Sortu"
 
 msgid "Add Album"
 msgstr "Albuma Gehitu"
@@ -548,15 +540,6 @@ msgstr "Kontu ezarpenak"
 msgid "Change Password"
 msgstr "Aldatu pasahitza"
 
-msgid "Link Album"
-msgstr "Albuma lotura egin"
-
-msgid "Link Photo"
-msgstr "Argazkia lotura egin"
-
-msgid "Link Movie"
-msgstr "Pelikularen lotura egin"
-
 #, c-format
 msgid "Edit %s"
 msgstr "%s editatu"
@@ -568,10 +551,6 @@ msgstr "%s ezabatu"
 #, c-format
 msgid "Move %s"
 msgstr "%s lekuz aldatu"
-
-#, c-format
-msgid "Link %s"
-msgstr "%s lotura egin"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Argazkitxo/tamaina ezberdin guztiak sortu"
@@ -686,6 +665,14 @@ msgstr "Titulua"
 
 msgid "Owner"
 msgstr "Jabea"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Albuma Editatu"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Albuma Editatu"
 
 msgid "Group"
 msgstr "Taldea"
@@ -1002,6 +989,9 @@ msgstr "Lokalea"
 
 msgid "Browser"
 msgstr "Nabigatzailea"
+
+msgid "Successfully saved theme settings"
+msgstr "Gai ezarpenak behar bezala gor dira"
 
 msgid "General Settings"
 msgstr "Ezarpen orokorrak"
@@ -2211,6 +2201,9 @@ msgstr ""
 "baimenak dira. Zuk edo web ostalariak fitxategi sisteman zerbait aldatu ezkero, adibidez "
 "babes-kopia berrezartze batetan, hau gerta daiteke."
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Errore bat gertatu da."
 
@@ -2341,64 +2334,6 @@ msgstr "Argazkitxorik Ez"
 msgid "Options"
 msgstr "Aukerak"
 
-msgid "Link an Item"
-msgstr "Elementua lotu"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "Ondo egin da e elementu"
-msgstr[1] "Ondo egin da e elementu"
-
-msgid "This album contains no items to link."
-msgstr "Album honek ez du lotzeko elementurik."
-
-msgid "Source"
-msgstr "Jaotorria"
-
-msgid "Choose the items you want to link"
-msgstr "Hautatu lotu nahi dituzun elementuak"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(%d %d orrialdetatik)"
-
-msgid "No sources chosen"
-msgstr "Ez da jatorririk hautatu"
-
-msgid "Check All"
-msgstr "Markatu Denak"
-
-msgid "Check None"
-msgstr "Ez Markatu bat ere ez"
-
-msgid "Invert"
-msgstr "Alderantzikatu"
-
-msgid "Previous Page"
-msgstr "Aurreko Orrialdea"
-
-msgid "Next Page"
-msgstr "Hurrengo Orrialdea"
-
-msgid "Destination"
-msgstr "Helburua"
-
-msgid "Choose a new album for the link"
-msgstr "Hautatu loturarentzat album berri bat"
-
-msgid "No destination chosen"
-msgstr "Ez da helbururik hautatu"
-
-msgid "Link"
-msgstr "Lotura"
-
-msgid "Successfully linked"
-msgstr "Lotura behar bezala sortu da"
-
-msgid "Choose a destination album"
-msgstr "Aukeratu helburu album bat"
-
 msgid "Delete Items"
 msgstr "Elementuak Ezabatu"
 
@@ -2416,6 +2351,10 @@ msgstr "Album ho9nek ez du elementurik ezabatzeko"
 
 msgid "Choose the items you want to delete"
 msgstr "Aukeratu ezabatu nahi dituzun elementuak"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(%d %d orrialdetatik)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "Hemen hautaturiko elementuak hautaturik jarraituko dute orrietan zehar mugitzerakoan."
@@ -2437,6 +2376,21 @@ msgstr[1] "(albumak %d elementu ditu)"
 
 msgid "(empty album)"
 msgstr "(album hutsa)"
+
+msgid "Check All"
+msgstr "Markatu Denak"
+
+msgid "Check None"
+msgstr "Ez Markatu bat ere ez"
+
+msgid "Invert"
+msgstr "Alderantzikatu"
+
+msgid "Previous Page"
+msgstr "Aurreko Orrialdea"
+
+msgid "Next Page"
+msgstr "Hurrengo Orrialdea"
 
 msgid "Deletion Complete"
 msgstr "Ezabaketa Buruturik"
@@ -2808,12 +2762,6 @@ msgstr ""
 "Album hau <b>%s</b> gaia erabiltzeko konfiguraturik dago. Ezarpen hauek album honetako "
 "gaiera bakarrik ezarriko dira."
 
-msgid "Setting"
-msgstr "Ezarpenak"
-
-msgid "Use Global"
-msgstr "Erabili orokorra"
-
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
 msgstr "Ezarpen hauek %s gaia erabiltzen duten azpi-album guztietan erabili"
@@ -2848,6 +2796,9 @@ msgstr[1] "%d elementu behar bezala mugitu dira"
 msgid "This album contains no items to move."
 msgstr "Album honek ez du mugitzeko elementurik."
 
+msgid "Source"
+msgstr "Jaotorria"
+
 msgid "Choose the items you want to move"
 msgstr "Aukeratu mugitu nahi dituzun elementuak"
 
@@ -2875,17 +2826,26 @@ msgstr "Ez duzu elementu hau aukeratutako kokalekura mugitzeko baimenik."
 msgid "You cannot move an album into its own subtree."
 msgstr "Ezin duzu album bat bere azpi-zuhaitz barnean ipini."
 
+msgid "Destination"
+msgstr "Helburua"
+
 msgid "Choose a new album for them"
 msgstr "Aukeratu album berri bat beroientzat"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "Ez duzu album honetara elementurik gehitzeko baimenik"
 
+msgid "No destination chosen"
+msgstr "Ez da helbururik hautatu"
+
 msgid "Move"
 msgstr "Lekuz aldatu"
 
 msgid "Successfully moved"
 msgstr "Egoki mugitu da"
+
+msgid "Choose a destination album"
+msgstr "Aukeratu helburu album bat"
 
 msgid "Permissions"
 msgstr "Baimenak"
@@ -3450,6 +3410,12 @@ msgstr "Ezezaguna"
 msgid "Full size: "
 msgstr "Tamaina osoa: "
 
+msgid "Setting"
+msgstr "Ezarpenak"
+
+msgid "Use Global"
+msgstr "Erabili orokorra"
+
 msgid "Language selector"
 msgstr "Hizkuntza hautatzailea"
 
@@ -3476,6 +3442,53 @@ msgstr "[proba] A bigarren baimena"
 
 msgid "Unit test theme"
 msgstr "Unitate proba gaia"
+
+#~ msgid "create link"
+#~ msgstr "lotura sortu"
+
+#~ msgid "link an item"
+#~ msgstr "elementua lotu"
+
+#~ msgid "Create Link"
+#~ msgstr "Lotura Sortu"
+
+#~ msgid "Link Album"
+#~ msgstr "Albuma lotura egin"
+
+#~ msgid "Link Photo"
+#~ msgstr "Argazkia lotura egin"
+
+#~ msgid "Link Movie"
+#~ msgstr "Pelikularen lotura egin"
+
+#~ msgid "Link %s"
+#~ msgstr "%s lotura egin"
+
+#~ msgid "Link an Item"
+#~ msgstr "Elementua lotu"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "Ondo egin da e elementu"
+#~ msgstr[1] "Ondo egin da e elementu"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Album honek ez du lotzeko elementurik."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Hautatu lotu nahi dituzun elementuak"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Ez da jatorririk hautatu"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Hautatu loturarentzat album berri bat"
+
+#~ msgid "Link"
+#~ msgstr "Lotura"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Lotura behar bezala sortu da"
 
 #~ msgid "From Local Server"
 #~ msgstr "Zerbitzari Lokaletik"

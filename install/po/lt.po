@@ -221,8 +221,9 @@ msgstr "Oracle (9i ir naujesnė)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 ir naujesnė)"
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL su tranzakcijomis (v3.23.34a ar naujesnė)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Nežinomas duombazės tipas arba nėra žinomos lentelių informacijos."
@@ -289,8 +290,9 @@ msgstr "Neįmanoma užbaigti duombazės tranzakcijos"
 msgid "Core module is only partially installed."
 msgstr "Pagrindinis modulis įdiegtas tik dalinai."
 
-msgid "Install More Modules"
-msgstr "Įdiegti daugiau modulių"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Įdiegimo žingsniai"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Nepavyko inicijuoti Galerijos sesijos"
@@ -687,16 +689,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Prieš tęsiant, jūs turėtumėte aplanke <b>%s</b> sukurti failą <i>config.php</i>.  Reikia "
-"įsitikinti kad web serveris gali į šį failą rašyti. Jei jūs naudojate Unix, pamėginkite "
-"įvykdyti komandą <i>chmod 666 config.php</i>. Windows OS, jūs neturėtumėte daryti nieko "
-"ypatingo. Kai sukursite failą ir pakeisite jo prieigos teises, galėsite tęsti. Jei kils "
-"problemų, tuomet bandysime išspręsti problemą."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (su komandine aplinka)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Sukurti konfigūracijos bylą"
@@ -861,9 +866,6 @@ msgstr ""
 "tęsti darbą su diegikliu ir pridėti keletą papildomų modulių, kad galerija turėtu jums "
 "reikalingas savybes."
 
-msgid "Install Other Modules"
-msgstr "Įdiegti kitus modulius"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -1026,9 +1028,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "Reikia įvesti aplanką"
 
-msgid "The directory you entered does not exist"
-msgstr "Įvestas aplankas neegzistuoja"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1037,6 +1036,22 @@ msgstr ""
 "Aplankas, kurį įvedėte yra kodo bazės aplankas. Jei norite įdiegti galeriją ten pat kur ir "
 "kodo bazė, tuomet pasirinkite standartinį įdiegimo tipą. Jei norite įdiegti keletą saitų, "
 "nurodykite kitą aplanką."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "Įvestas aplankas neegzistuoja"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1124,15 +1139,27 @@ msgstr ""
 msgid "Check Again"
 msgstr "Patikrinti vėl"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
-"Galerijai reikalingas aplankas, kuriame būtu laikomi jūsų paveiklai. Jūsų parinktas aplankas "
-"tiktu, tačiau jis pasiekiamas internetu."
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, fuzzy, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
 msgstr "Maksimaliam saugumui pasirinkite aplanką, kuris nėra pasiekiamas internetu."
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
+msgstr ""
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1156,8 +1183,40 @@ msgstr "Įvestas aplankas prieinamas tik skaitymui"
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Duomeų aplanke, kuriant aplankų medį, įvyko klaida."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Duomenų aplankas suderintas sėkmingai."
+
+#, fuzzy, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr "Maksimaliam saugumui pasirinkite aplanką, kuris nėra pasiekiamas internetu."
+
 msgid "Directory path:"
 msgstr "Kelias iki aplanko:"
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+"Web serveris turi galėti rašyti į šį aplanką. Kad tai padaryti peržiūrėkite šiuos pavyzdžius."
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr ""
+"Pastaba: tai tik pavyzdžiai!  Gal atsitikti taip, kad jie jūsų sistemoje tinkamai neveiks."
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (su ftp prieiga)"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"Atkreipkite dėmesį į tai, kad ftp klientai ir serveriai labai skiriasi, todėl šie pavyzdžiai "
+"jums gali nesuveikti. Jei jums kyla problemos, peržiūrėkite FTP kliento instrukcijas arba "
+"pasikonsultuokite su sistemos administratoriumi"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1191,44 +1250,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Pastaba</b>: Kai viską atliksite nepamirškite ištrinti failo dir.php!"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-"Web serveris turi galėti rašyti į šį aplanką. Kad tai padaryti peržiūrėkite šiuos pavyzdžius."
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr ""
-"Pastaba: tai tik pavyzdžiai!  Gal atsitikti taip, kad jie jūsų sistemoje tinkamai neveiks."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (su komandine aplinka)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (su ftp prieiga)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"Atkreipkite dėmesį į tai, kad ftp klientai ir serveriai labai skiriasi, todėl šie pavyzdžiai "
-"jums gali nesuveikti. Jei jums kyla problemos, peržiūrėkite FTP kliento instrukcijas arba "
-"pasikonsultuokite su sistemos administratoriumi"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1310,6 +1331,41 @@ msgstr "Pirmyn"
 
 msgid "Begin Installation&raquo;"
 msgstr "Pradėti diegimą&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "Įdiegti daugiau modulių"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Prieš tęsiant, jūs turėtumėte aplanke <b>%s</b> sukurti failą <i>config.php</i>.  Reikia "
+#~ "įsitikinti kad web serveris gali į šį failą rašyti. Jei jūs naudojate Unix, pamėginkite "
+#~ "įvykdyti komandą <i>chmod 666 config.php</i>. Windows OS, jūs neturėtumėte daryti nieko "
+#~ "ypatingo. Kai sukursite failą ir pakeisite jo prieigos teises, galėsite tęsti. Jei kils "
+#~ "problemų, tuomet bandysime išspręsti problemą."
+
+#~ msgid "Install Other Modules"
+#~ msgstr "Įdiegti kitus modulius"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Galerijai reikalingas aplankas, kuriame būtu laikomi jūsų paveiklai. Jūsų parinktas "
+#~ "aplankas tiktu, tačiau jis pasiekiamas internetu."
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (mažai testuota)"

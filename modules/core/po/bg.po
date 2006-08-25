@@ -23,7 +23,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2005-08-13 11:42-0500\n"
@@ -298,12 +298,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr ""
 
-msgid "create link"
-msgstr ""
-
-msgid "link an item"
-msgstr ""
-
 msgid "delete an item"
 msgstr ""
 
@@ -325,6 +319,9 @@ msgid "&laquo; default theme &raquo;"
 msgstr ""
 
 msgid "Recreating resized images"
+msgstr ""
+
+msgid "Preparing..."
 msgstr ""
 
 msgid "Rebuilding resized images..."
@@ -412,9 +409,6 @@ msgstr ""
 msgid "Modify Photo"
 msgstr ""
 
-msgid "Successfully saved theme settings"
-msgstr "Настройките за стила са успешно записани"
-
 msgid "Theme"
 msgstr "Стил"
 
@@ -473,9 +467,6 @@ msgstr "Редактирайте Снимката"
 
 msgid "Edit Movie"
 msgstr "Редактирайте Филма"
-
-msgid "Create Link"
-msgstr "Създайте линк"
 
 msgid "Add Album"
 msgstr "Добавете Албум"
@@ -555,15 +546,6 @@ msgstr "Потребителски Настройки"
 msgid "Change Password"
 msgstr "Смяна на Парола"
 
-msgid "Link Album"
-msgstr "Свържете Албума"
-
-msgid "Link Photo"
-msgstr ""
-
-msgid "Link Movie"
-msgstr "Свържете Филма"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Редактирайте %sа"
@@ -575,10 +557,6 @@ msgstr "Изтриите %sа"
 #, c-format
 msgid "Move %s"
 msgstr "Преместете %sа"
-
-#, c-format
-msgid "Link %s"
-msgstr ""
 
 msgid "Build all thumbnails/resizes"
 msgstr ""
@@ -685,6 +663,14 @@ msgstr "Заглавие"
 
 msgid "Owner"
 msgstr "Собственик"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Редактирайте Албума"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "добавете албум"
 
 msgid "Group"
 msgstr "Група"
@@ -978,11 +964,25 @@ msgstr "Операционна система"
 msgid "Default theme"
 msgstr "Презададен стил"
 
+msgid "gettext"
+msgstr ""
+
+#, fuzzy
+msgid "enabled"
+msgstr "Неуспешно изградени: %d"
+
+#, fuzzy
+msgid "disabled"
+msgstr "Неуспешно изградени: %d"
+
 msgid "Locale"
 msgstr ""
 
 msgid "Browser"
 msgstr "Броузер"
+
+msgid "Successfully saved theme settings"
+msgstr "Настройките за стила са успешно записани"
 
 msgid "General Settings"
 msgstr "Общи Настройки"
@@ -1022,9 +1022,6 @@ msgid "Default language"
 msgstr "Презададен език"
 
 msgid "Check Browser Preference"
-msgstr ""
-
-msgid "gettext"
 msgstr ""
 
 #, c-format
@@ -1660,10 +1657,6 @@ msgid "up to date"
 msgstr "Дата:"
 
 #, fuzzy
-msgid "disabled"
-msgstr "Неуспешно изградени: %d"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(необходимо)"
 
@@ -2101,6 +2094,9 @@ msgid ""
 "system, e.g. by restoring data from a backup."
 msgstr ""
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr ""
 
@@ -2219,64 +2215,6 @@ msgstr ""
 msgid "Options"
 msgstr "Настройки"
 
-msgid "Link an Item"
-msgstr ""
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "This album contains no items to link."
-msgstr ""
-
-msgid "Source"
-msgstr ""
-
-msgid "Choose the items you want to link"
-msgstr ""
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(страница %d от общо %d)"
-
-msgid "No sources chosen"
-msgstr ""
-
-msgid "Check All"
-msgstr ""
-
-msgid "Check None"
-msgstr ""
-
-msgid "Invert"
-msgstr ""
-
-msgid "Previous Page"
-msgstr "Предишна Страница"
-
-msgid "Next Page"
-msgstr "Следваща Страница"
-
-msgid "Destination"
-msgstr "Място на преместване"
-
-msgid "Choose a new album for the link"
-msgstr ""
-
-msgid "No destination chosen"
-msgstr "Не сте избрали място на преместване"
-
-msgid "Link"
-msgstr ""
-
-msgid "Successfully linked"
-msgstr ""
-
-msgid "Choose a destination album"
-msgstr "Посочете каде искате да преместите албума"
-
 msgid "Delete Items"
 msgstr ""
 
@@ -2294,6 +2232,10 @@ msgstr "Този албум няма елементи за изтриване"
 
 msgid "Choose the items you want to delete"
 msgstr ""
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(страница %d от общо %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr ""
@@ -2315,6 +2257,21 @@ msgstr[1] "(албум съдържащ %d елемента)"
 
 msgid "(empty album)"
 msgstr "(празен албум)"
+
+msgid "Check All"
+msgstr ""
+
+msgid "Check None"
+msgstr ""
+
+msgid "Invert"
+msgstr ""
+
+msgid "Previous Page"
+msgstr "Предишна Страница"
+
+msgid "Next Page"
+msgstr "Следваща Страница"
 
 msgid "Deletion Complete"
 msgstr ""
@@ -2554,6 +2511,10 @@ msgstr ""
 msgid "Crop"
 msgstr ""
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Променете"
+
 msgid "Reset to default"
 msgstr ""
 
@@ -2615,6 +2576,11 @@ msgstr ""
 msgid "There are links to this photo, so you cannot change the original"
 msgstr ""
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr ""
 
@@ -2634,12 +2600,6 @@ msgstr ""
 msgid ""
 "This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
 "for this album."
-msgstr ""
-
-msgid "Setting"
-msgstr ""
-
-msgid "Use Global"
 msgstr ""
 
 #, c-format
@@ -2674,6 +2634,9 @@ msgstr[1] ""
 msgid "This album contains no items to move."
 msgstr ""
 
+msgid "Source"
+msgstr ""
+
 msgid "Choose the items you want to move"
 msgstr ""
 
@@ -2697,17 +2660,26 @@ msgstr ""
 msgid "You cannot move an album into its own subtree."
 msgstr ""
 
+msgid "Destination"
+msgstr "Място на преместване"
+
 msgid "Choose a new album for them"
 msgstr ""
 
 msgid "You don't have the permission to add items in this album"
 msgstr "Нямате права за добавяне на елементи в този албум"
 
+msgid "No destination chosen"
+msgstr "Не сте избрали място на преместване"
+
 msgid "Move"
 msgstr "Преместете"
 
 msgid "Successfully moved"
 msgstr "Успешно преместено"
+
+msgid "Choose a destination album"
+msgstr "Посочете каде искате да преместите албума"
 
 msgid "Permissions"
 msgstr "Права за достъп"
@@ -3233,6 +3205,12 @@ msgstr ""
 msgid "Full size: "
 msgstr ""
 
+msgid "Setting"
+msgstr ""
+
+msgid "Use Global"
+msgstr ""
+
 msgid "Language selector"
 msgstr ""
 
@@ -3260,6 +3238,15 @@ msgstr ""
 msgid "Unit test theme"
 msgstr ""
 
+#~ msgid "Create Link"
+#~ msgstr "Създайте линк"
+
+#~ msgid "Link Album"
+#~ msgstr "Свържете Албума"
+
+#~ msgid "Link Movie"
+#~ msgstr "Свържете Филма"
+
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Модула %s е успешно инсталиран и автоматично конфигуриран"
 
@@ -3286,9 +3273,6 @@ msgstr ""
 
 #~ msgid "HDTV 16x9"
 #~ msgstr "HDTV Екран 16x9"
-
-#~ msgid "add album"
-#~ msgstr "добавете албум"
 
 #~ msgid "edit permissions"
 #~ msgstr "променете правата за достъп"

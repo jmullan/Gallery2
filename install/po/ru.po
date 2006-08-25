@@ -225,8 +225,9 @@ msgstr "Oracle (9i и выше)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 и выше)"
 
-msgid "MSSQL (Experimental!)"
-msgstr ""
+#, fuzzy
+msgid "MSSQL (2005 and newer)"
+msgstr "MySQL with Transactions (v3.23.34a или новее)"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Неизвестный тип базы данных или неизвестная информация о таблицах."
@@ -295,8 +296,9 @@ msgstr "Невозможно выполнить транзакцию базы д
 msgid "Core module is only partially installed."
 msgstr "Основной модуль (ядро) установлен только частично."
 
-msgid "Install More Modules"
-msgstr "Инсталляция других модулей"
+#, fuzzy
+msgid "Install Plugins"
+msgstr "Шаги инсталляции"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Невозможно инициализировать сессию Галереи"
@@ -705,17 +707,19 @@ msgstr ""
 #, c-format
 msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
-"php</i>.  You must make sure that the webserver will be able to write to it.  If you're on "
-"unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have to do anything "
-"special.  When you've created this file and set the permissions properly, you can proceed.  "
-"If there's a problem, we'll tell you what to fix."
+"php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
-"Перед тем как продолжить, Вы должны создать файл в Вашей <b>%s</b> папке под названием "
-"<i>config.php</i>. Вы должны удостовериться, что веб-сервер будет иметь возможность "
-"записывать в него. Если Вы используйете unix, попробуйте команду <i>chmod 666 config.php</"
-"i>. Если Windows, Вы не должны делать что-то специального. Как только Вы создадите данный "
-"файл и установите правильные разрешения, Вы можете продолжить. Если возникнут проблемы, мы "
-"сообщим Вам, что необходимо будет исправить."
+
+msgid "Unix (with shell access)"
+msgstr "Unix (shell доступ)"
+
+msgid "On Windows, you shouldn't have to do anything special."
+msgstr ""
+
+msgid ""
+"When you've created this file and set the permissions properly, you can proceed.  If there's "
+"a problem, we'll tell you what to fix."
+msgstr ""
 
 msgid "Create config file"
 msgstr "Создать конфигурационный файл"
@@ -889,9 +893,6 @@ msgstr ""
 "таким образом, получив необходимый набор функций, которые Вы хотели бы инсталлировать в "
 "Галерею."
 
-msgid "Install Other Modules"
-msgstr "Инсталляция других модулей"
-
 msgid ""
 "The following modules can be automatically installed and activated for you.  You should "
 "install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of "
@@ -1060,9 +1061,6 @@ msgstr ""
 msgid "You must enter a directory"
 msgstr "Вы должны ввести директорию"
 
-msgid "The directory you entered does not exist"
-msgstr "Введенная Вами директория не существует"
-
 msgid ""
 "The directory you entered is the codebase directory. If you want to install a Gallery in the "
 "codebase directory, select the standard installation type. If you want to install a "
@@ -1071,6 +1069,22 @@ msgstr ""
 "Введенная Вами директория является директории базы основного кода. Если Вы хотите "
 "инсталлировать Галерею в директорию базы основного кода, выберете стандартный тип "
 "инсталляции. Если Вы хотите инсталлировать мультисайт, выберете другую директорию."
+
+msgid ""
+"The directory you entered either does not exist, or is prohibited by your webserver "
+"configuration.  Your webserver is configured to only allow access to the following "
+"directories.  You must choose a directory under one of these, or you must modify the "
+"<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
+msgstr ""
+
+msgid ""
+"If your multisite install is in a different virtual host, you should contact your system "
+"administrator and request that they configure your <b>open_basedir</b> setting so that your "
+"virtual hosts can access each other."
+msgstr ""
+
+msgid "The directory you entered does not exist"
+msgstr "Введенная Вами директория не существует"
 
 msgid ""
 "The directory you entered is not accessible.  Change the permissions so that the webserver "
@@ -1163,16 +1177,28 @@ msgstr ""
 msgid "Check Again"
 msgstr "Проверить заново"
 
+#, c-format
 msgid ""
 "Gallery needs a directory to store your images. The directory we chose for you will work, "
-"but is web accessible."
+"but its location or current name does not provide maximum security. Either select a new "
+"directory outside of the %sdocument root%s directory or add a random string to the end of "
+"the directory name (e.g. %s)."
 msgstr ""
-"Галерея требуется дирекорию, где будут храниться Ваши изображения. Директория, которая будет "
-"Вам предложена, будет работать, но в тоже время будет доступна через веб."
 
-msgid "For maximum security you should pick a directory that is not web accessible."
+#, fuzzy, c-format
+msgid ""
+"For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
+"not possible, specify a randomized name for this directory."
 msgstr ""
 "Для максимальной защиты Вы должны выбрать директорию, которая не будет доступна через веб."
+
+msgid ""
+"If you choose a randomized name or prefer to stick with the specified directory, please "
+"confirm your choice."
+msgstr ""
+
+msgid "Yes, please omit the security check:"
+msgstr ""
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1197,8 +1223,44 @@ msgstr "Введенная Вами директория доступна тол
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Возникла ошибка во время создании структуры папок в Вашей директории хранилища."
 
+#, fuzzy, c-format
+msgid "Your storage directory is %sweb accessible%s. "
+msgstr "Директория хранилища успешно установлена"
+
+#, fuzzy, c-format
+msgid "Unable to verify that the storage directory is not %sweb accessible%s."
+msgstr ""
+"Для максимальной защиты Вы должны выбрать директорию, которая не будет доступна через веб."
+
 msgid "Directory path:"
 msgstr "Путь к директории:"
+
+msgid ""
+"Your webserver needs to be able to write to this directory. To get it working, you can "
+"follow these examples."
+msgstr ""
+"Ваш веб-сервер должен иметь право доступа на запись в данную директорию. Чтобы выполнить это "
+"требование, Вы можете следовать следующим примерам:"
+
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite right on your system."
+msgstr ""
+"Внимание: это только примеры! Вы можете обнаружить, что они будут работать не совсем верно "
+"на Вашей системе."
+
+msgid "Unix (with ftp access)"
+msgstr "Unix (ftp доступ)"
+
+#, fuzzy
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
+"the manual for your FTP client or talk to a system administrator for help with this if you "
+"have problems."
+msgstr ""
+"Обратите внимание, что ftp серверы и клиенты могут отличаться, поэтому данные инструкции "
+"возможно не будут работать у Вас. Обратитеть к документации Вашего ftp-клиента или "
+"поговорите с системным администратором, чтобы Вам оказали поддержку в случае возникновения "
+"сложностей"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1233,47 +1295,6 @@ msgstr ""
 
 msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr "<b>Замечание</b>:"
-
-msgid ""
-"Your webserver needs to be able to write to this directory. To get it working, you can "
-"follow these examples."
-msgstr ""
-"Ваш веб-сервер должен иметь право доступа на запись в данную директорию. Чтобы выполнить это "
-"требование, Вы можете следовать следующим примерам:"
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite right on your system."
-msgstr ""
-"Внимание: это только примеры! Вы можете обнаружить, что они будут работать не совсем верно "
-"на Вашей системе."
-
-msgid "Unix (with shell access)"
-msgstr "Unix (shell доступ)"
-
-#, c-format
-msgid "mkdir %s"
-msgstr "mkdir %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (ftp доступ)"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work for you. Consult "
-"the manual for your FTP client or talk to a system administrator for help with this if you "
-"have problems"
-msgstr ""
-"Обратите внимание, что ftp серверы и клиенты могут отличаться, поэтому данные инструкции "
-"возможно не будут работать у Вас. Обратитеть к документации Вашего ftp-клиента или "
-"поговорите с системным администратором, чтобы Вам оказали поддержку в случае возникновения "
-"сложностей"
-
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
 
 #, c-format
 msgid ""
@@ -1356,6 +1377,42 @@ msgstr "Вперед"
 
 msgid "Begin Installation&raquo;"
 msgstr "Начать инсталляцию&raquo;"
+
+#~ msgid "Install More Modules"
+#~ msgstr "Инсталляция других модулей"
+
+#~ msgid ""
+#~ "Before we can proceed, you should create a file in your <b>%s</b> directory called "
+#~ "<i>config.php</i>.  You must make sure that the webserver will be able to write to it.  "
+#~ "If you're on unix, try doing <i>chmod 666 config.php</i>.  On Windows, you shouldn't have "
+#~ "to do anything special.  When you've created this file and set the permissions properly, "
+#~ "you can proceed.  If there's a problem, we'll tell you what to fix."
+#~ msgstr ""
+#~ "Перед тем как продолжить, Вы должны создать файл в Вашей <b>%s</b> папке под названием "
+#~ "<i>config.php</i>. Вы должны удостовериться, что веб-сервер будет иметь возможность "
+#~ "записывать в него. Если Вы используйете unix, попробуйте команду <i>chmod 666 config.php</"
+#~ "i>. Если Windows, Вы не должны делать что-то специального. Как только Вы создадите данный "
+#~ "файл и установите правильные разрешения, Вы можете продолжить. Если возникнут проблемы, "
+#~ "мы сообщим Вам, что необходимо будет исправить."
+
+#~ msgid "Install Other Modules"
+#~ msgstr "Инсталляция других модулей"
+
+#~ msgid ""
+#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
+#~ "but is web accessible."
+#~ msgstr ""
+#~ "Галерея требуется дирекорию, где будут храниться Ваши изображения. Директория, которая "
+#~ "будет Вам предложена, будет работать, но в тоже время будет доступна через веб."
+
+#~ msgid "mkdir %s"
+#~ msgstr "mkdir %s"
+
+#~ msgid "chmod 777 %s"
+#~ msgstr "chmod 777 %s"
+
+#~ msgid "cd %s"
+#~ msgstr "cd %s"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (недостаточно хорошо протестировано)"

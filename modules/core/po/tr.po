@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "POT-Creation-Date: 2005-05-23 02:14+0200\n"
 "PO-Revision-Date: 2006-02-27 00:00+0200\n"
 "Last-Translator: Goker ISIK <admin@ansolon.com>\n"
@@ -292,12 +292,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Galeri Öge Yönetimi"
 
-msgid "create link"
-msgstr "bağlantı yarat"
-
-msgid "link an item"
-msgstr "ögeye link ver"
-
 msgid "delete an item"
 msgstr "öge sil"
 
@@ -321,6 +315,10 @@ msgstr "&laquo; varsayılan tema &raquo;"
 #, fuzzy
 msgid "Recreating resized images"
 msgstr "Recreate thumbnails and resizes"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "işleniyor..."
 
 #, fuzzy
 msgid "Rebuilding resized images..."
@@ -411,9 +409,6 @@ msgstr "User '%s' has been modified successfully."
 msgid "Modify Photo"
 msgstr "Fotoyu Modifiye Et"
 
-msgid "Successfully saved theme settings"
-msgstr "Tema ayarları başarıyla kaydedildi"
-
 msgid "Theme"
 msgstr "Tema"
 
@@ -472,9 +467,6 @@ msgstr "Fotoyu Düzenle"
 
 msgid "Edit Movie"
 msgstr "Filmi Düzenle"
-
-msgid "Create Link"
-msgstr "Link Yarat"
 
 msgid "Add Album"
 msgstr "Albüm Ekle"
@@ -554,15 +546,6 @@ msgstr "Hesap Ayarları"
 msgid "Change Password"
 msgstr "Şifre Değiştir"
 
-msgid "Link Album"
-msgstr "Albüme Link"
-
-msgid "Link Photo"
-msgstr "Fotoya Link"
-
-msgid "Link Movie"
-msgstr "Filme Link"
-
 #, c-format
 msgid "Edit %s"
 msgstr "%s Düzenle"
@@ -574,10 +557,6 @@ msgstr "%s Sil"
 #, c-format
 msgid "Move %s"
 msgstr "%s Taşı"
-
-#, c-format
-msgid "Link %s"
-msgstr "Bağlantı %s"
 
 #, fuzzy
 msgid "Build all thumbnails/resizes"
@@ -685,6 +664,14 @@ msgstr "Başlık"
 
 msgid "Owner"
 msgstr "Sahip"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Albümü Düzenle"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Albümü Düzenle"
 
 msgid "Group"
 msgstr "Grup"
@@ -979,11 +966,24 @@ msgstr "İşletim Sistemi"
 msgid "Default theme"
 msgstr "Default theme"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "Kuruldu"
+
+msgid "disabled"
+msgstr ""
+
 msgid "Locale"
 msgstr ""
 
 msgid "Browser"
 msgstr "Tarayıcı"
+
+msgid "Successfully saved theme settings"
+msgstr "Tema ayarları başarıyla kaydedildi"
 
 msgid "General Settings"
 msgstr "Genel Ayarlar"
@@ -1026,9 +1026,6 @@ msgstr "Varsayılan Dil"
 
 msgid "Check Browser Preference"
 msgstr ""
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1650,9 +1647,6 @@ msgstr ""
 msgid "up to date"
 msgstr "Güncelle"
 
-msgid "disabled"
-msgstr ""
-
 #, fuzzy
 msgid "upgrade required"
 msgstr "[gerekli]"
@@ -2089,6 +2083,9 @@ msgid ""
 "system, e.g. by restoring data from a backup."
 msgstr ""
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "Hatayla karşılaşıldı."
 
@@ -2211,65 +2208,6 @@ msgstr "Thumbnail Yok"
 msgid "Options"
 msgstr "Seçenekler"
 
-msgid "Link an Item"
-msgstr "Ögeye Link Ver"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "%d öge başarıyla linklendi"
-msgstr[1] "%d öge başarıyla linklendi"
-
-msgid "This album contains no items to link."
-msgstr "Bu albüm link verebilmek için hiç bir öge içermiyor."
-
-msgid "Source"
-msgstr "Kaynak"
-
-msgid "Choose the items you want to link"
-msgstr "Link vermek istediğiniz ögeleri seçiniz"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(sayfa %d / %d)"
-
-msgid "No sources chosen"
-msgstr "Hiçbir kaynak seçilmedi"
-
-msgid "Check All"
-msgstr "Hepsini işaretle"
-
-msgid "Check None"
-msgstr "Hiçbirini işaretleme"
-
-msgid "Invert"
-msgstr "Ters Çevir"
-
-msgid "Previous Page"
-msgstr "Önceki Sayfa"
-
-msgid "Next Page"
-msgstr "Sonraki Sayfa"
-
-msgid "Destination"
-msgstr "Hedef"
-
-msgid "Choose a new album for the link"
-msgstr "Bağlantı için yeni bir albüm seçin"
-
-msgid "No destination chosen"
-msgstr "Hedef seçilmedi"
-
-msgid "Link"
-msgstr "Bağlantı"
-
-msgid "Successfully linked"
-msgstr "Başarıyla link verildi"
-
-#, fuzzy
-msgid "Choose a destination album"
-msgstr "Choose the destination of the selected items"
-
 msgid "Delete Items"
 msgstr "Ögeleri Sil"
 
@@ -2287,6 +2225,10 @@ msgstr "Bu albüm silmek için hiçbir öge içermiyor"
 
 msgid "Choose the items you want to delete"
 msgstr "Silmek istediğiniz ögeleri seçiniz"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(sayfa %d / %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr ""
@@ -2308,6 +2250,21 @@ msgstr[1] "(albüm %d öge içeriyor)"
 
 msgid "(empty album)"
 msgstr "(boş albüm)"
+
+msgid "Check All"
+msgstr "Hepsini işaretle"
+
+msgid "Check None"
+msgstr "Hiçbirini işaretleme"
+
+msgid "Invert"
+msgstr "Ters Çevir"
+
+msgid "Previous Page"
+msgstr "Önceki Sayfa"
+
+msgid "Next Page"
+msgstr "Sonraki Sayfa"
 
 msgid "Deletion Complete"
 msgstr "Silme İşlemi Tamamlandı"
@@ -2545,6 +2502,10 @@ msgstr ""
 msgid "Crop"
 msgstr "Tıraşla"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Değiştir"
+
 msgid "Reset to default"
 msgstr "Varsayılanlara sıfırla"
 
@@ -2612,6 +2573,11 @@ msgstr ""
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "Bu resme bağlantılar var, bu nedenle orjinali değiştiremezsiniz"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "Orjinal Fotoyu Koru"
 
@@ -2636,12 +2602,6 @@ msgid ""
 "This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
 "for this album."
 msgstr ""
-
-msgid "Setting"
-msgstr "Ayarlar"
-
-msgid "Use Global"
-msgstr "Global Kullan"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2676,6 +2636,9 @@ msgstr[1] ""
 msgid "This album contains no items to move."
 msgstr ""
 
+msgid "Source"
+msgstr "Kaynak"
+
 msgid "Choose the items you want to move"
 msgstr "Taşımak istediğiniz ögeleri seçiniz"
 
@@ -2699,17 +2662,27 @@ msgstr ""
 msgid "You cannot move an album into its own subtree."
 msgstr ""
 
+msgid "Destination"
+msgstr "Hedef"
+
 msgid "Choose a new album for them"
 msgstr ""
 
 msgid "You don't have the permission to add items in this album"
 msgstr ""
 
+msgid "No destination chosen"
+msgstr "Hedef seçilmedi"
+
 msgid "Move"
 msgstr "Taşı"
 
 msgid "Successfully moved"
 msgstr "Başarıyla taşındı"
+
+#, fuzzy
+msgid "Choose a destination album"
+msgstr "Choose the destination of the selected items"
 
 msgid "Permissions"
 msgstr "İzinler"
@@ -3223,6 +3196,12 @@ msgstr "Bilinmeyen"
 msgid "Full size: "
 msgstr "Tam boyut:"
 
+msgid "Setting"
+msgstr "Ayarlar"
+
+msgid "Use Global"
+msgstr "Global Kullan"
+
 msgid "Language selector"
 msgstr "Dil seçici"
 
@@ -3249,6 +3228,53 @@ msgstr "[test] İkinci izin"
 
 msgid "Unit test theme"
 msgstr ""
+
+#~ msgid "create link"
+#~ msgstr "bağlantı yarat"
+
+#~ msgid "link an item"
+#~ msgstr "ögeye link ver"
+
+#~ msgid "Create Link"
+#~ msgstr "Link Yarat"
+
+#~ msgid "Link Album"
+#~ msgstr "Albüme Link"
+
+#~ msgid "Link Photo"
+#~ msgstr "Fotoya Link"
+
+#~ msgid "Link Movie"
+#~ msgstr "Filme Link"
+
+#~ msgid "Link %s"
+#~ msgstr "Bağlantı %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "Ögeye Link Ver"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "%d öge başarıyla linklendi"
+#~ msgstr[1] "%d öge başarıyla linklendi"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Bu albüm link verebilmek için hiç bir öge içermiyor."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Link vermek istediğiniz ögeleri seçiniz"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Hiçbir kaynak seçilmedi"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Bağlantı için yeni bir albüm seçin"
+
+#~ msgid "Link"
+#~ msgstr "Bağlantı"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Başarıyla link verildi"
 
 #~ msgid "Successfully installed and auto-configured module %s"
 #~ msgstr "Modül %s başarıyla otomatik konfigüre edildi ve kuruldu"

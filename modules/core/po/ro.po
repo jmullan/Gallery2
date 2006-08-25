@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.10\n"
+"Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-08-25 16:49+0200\n"
 "PO-Revision-Date: 2006-03-16 16:27+0100\n"
@@ -293,12 +293,6 @@ msgstr ""
 msgid "Gallery Item Administration"
 msgstr "Administrarea articolelor din galerie"
 
-msgid "create link"
-msgstr "creaza link"
-
-msgid "link an item"
-msgstr "link la un articol"
-
 msgid "delete an item"
 msgstr "sterge un articol"
 
@@ -321,6 +315,10 @@ msgstr "&laquo; tema predefinita &raquo;"
 
 msgid "Recreating resized images"
 msgstr "Recreaza imaginile redimensionate"
+
+#, fuzzy
+msgid "Preparing..."
+msgstr "Proceseaza..."
 
 msgid "Rebuilding resized images..."
 msgstr "Reconstruirea imaginilor redimensionate..."
@@ -407,9 +405,6 @@ msgstr "Fotografie scalata cu success"
 msgid "Modify Photo"
 msgstr "Modifica Foto"
 
-msgid "Successfully saved theme settings"
-msgstr "Modificarile de tema au fost salvate cu success"
-
 msgid "Theme"
 msgstr "Tema"
 
@@ -468,9 +463,6 @@ msgstr "Modifica Foto"
 
 msgid "Edit Movie"
 msgstr "Modifica Film"
-
-msgid "Create Link"
-msgstr "Creaza Link"
 
 msgid "Add Album"
 msgstr "Adauga Album"
@@ -550,15 +542,6 @@ msgstr "Configurari Profil"
 msgid "Change Password"
 msgstr "Modifica Parola"
 
-msgid "Link Album"
-msgstr "Conecteaza Album"
-
-msgid "Link Photo"
-msgstr "Conecteaza Foto"
-
-msgid "Link Movie"
-msgstr "Conecteaza Film"
-
 #, c-format
 msgid "Edit %s"
 msgstr "Modifica %s"
@@ -570,10 +553,6 @@ msgstr "Sterge %s"
 #, c-format
 msgid "Move %s"
 msgstr "Muta %s"
-
-#, c-format
-msgid "Link %s"
-msgstr "Conecteaza %s"
 
 msgid "Build all thumbnails/resizes"
 msgstr "Construieste toate thumbnail-urile/redimensionarile"
@@ -687,6 +666,14 @@ msgstr "Titlu"
 
 msgid "Owner"
 msgstr "Proprietar"
+
+#, fuzzy
+msgid "Dynamic Album"
+msgstr "Modifica Album"
+
+#, fuzzy
+msgid "dynamic album"
+msgstr "Modifica Album"
 
 msgid "Group"
 msgstr "Grup"
@@ -988,11 +975,25 @@ msgstr "Sistem de operare"
 msgid "Default theme"
 msgstr "Tema predefinita"
 
+msgid "gettext"
+msgstr "gettext"
+
+#, fuzzy
+msgid "enabled"
+msgstr "%d articole eronate"
+
+#, fuzzy
+msgid "disabled"
+msgstr "%d articole eronate"
+
 msgid "Locale"
 msgstr "Locale"
 
 msgid "Browser"
 msgstr "Browser"
+
+msgid "Successfully saved theme settings"
+msgstr "Modificarile de tema au fost salvate cu success"
 
 msgid "General Settings"
 msgstr "Configurare Generala"
@@ -1033,9 +1034,6 @@ msgstr "Limba predefinita"
 
 msgid "Check Browser Preference"
 msgstr "Verifica setarile din browser"
-
-msgid "gettext"
-msgstr "gettext"
 
 #, c-format
 msgid ""
@@ -1729,10 +1727,6 @@ msgid "up to date"
 msgstr "Actualizeaza"
 
 #, fuzzy
-msgid "disabled"
-msgstr "%d articole eronate"
-
-#, fuzzy
 msgid "upgrade required"
 msgstr "(obligatoriu)"
 
@@ -2218,6 +2212,9 @@ msgstr ""
 "system permissions. This can happen if you or your webhost changed something in the file "
 "system, e.g. by restoring data from a backup."
 
+msgid "Item not found."
+msgstr ""
+
 msgid "An error has occurred."
 msgstr "A aparut o eroare."
 
@@ -2347,64 +2344,6 @@ msgstr "Fara thumbnail-uri"
 msgid "Options"
 msgstr "Optiuni"
 
-msgid "Link an Item"
-msgstr "Creeaza un link catre un obiect"
-
-#, c-format
-msgid "Successfully linked %d item"
-msgid_plural "Successfully linked %d items"
-msgstr[0] "Link facut pentru %d obiect"
-msgstr[1] "Link-uri facute pentru %d obiecte"
-
-msgid "This album contains no items to link."
-msgstr "Acest album nu contine obiecte pentru link."
-
-msgid "Source"
-msgstr "Sursa"
-
-msgid "Choose the items you want to link"
-msgstr "Alege obiectele pe care vrei sa link"
-
-#, c-format
-msgid "(page %d of %d)"
-msgstr "(pagina %d din %d)"
-
-msgid "No sources chosen"
-msgstr "Nu ai ales nici o sursa"
-
-msgid "Check All"
-msgstr "Selecteaza tot"
-
-msgid "Check None"
-msgstr "Deselecteaza tot"
-
-msgid "Invert"
-msgstr "Inverseaza"
-
-msgid "Previous Page"
-msgstr "Pagina Precedenta"
-
-msgid "Next Page"
-msgstr "Pagina Urmatoare"
-
-msgid "Destination"
-msgstr "Destinatie"
-
-msgid "Choose a new album for the link"
-msgstr "Alege un nou album pentru acest link"
-
-msgid "No destination chosen"
-msgstr "Nici o destinatie aleasa"
-
-msgid "Link"
-msgstr "Link"
-
-msgid "Successfully linked"
-msgstr "Link creat"
-
-msgid "Choose a destination album"
-msgstr "Alege un album destinatie"
-
 msgid "Delete Items"
 msgstr "Sterge obiecte"
 
@@ -2422,6 +2361,10 @@ msgstr "Acest album nu contine obiecte de sters"
 
 msgid "Choose the items you want to delete"
 msgstr "Alege obiectul pe care vrei sa il stergi"
+
+#, c-format
+msgid "(page %d of %d)"
+msgstr "(pagina %d din %d)"
 
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "Obiectele selectate aici vor ramane selectate la schimbarea paginilor."
@@ -2443,6 +2386,21 @@ msgstr[1] "(album contine %d obiecte)"
 
 msgid "(empty album)"
 msgstr "(album gol)"
+
+msgid "Check All"
+msgstr "Selecteaza tot"
+
+msgid "Check None"
+msgstr "Deselecteaza tot"
+
+msgid "Invert"
+msgstr "Inverseaza"
+
+msgid "Previous Page"
+msgstr "Pagina Precedenta"
+
+msgid "Next Page"
+msgstr "Pagina Urmatoare"
 
 msgid "Deletion Complete"
 msgstr "Stergere completa"
@@ -2708,6 +2666,10 @@ msgstr "Aspect Ratio: "
 msgid "Crop"
 msgstr "Crop"
 
+#, fuzzy
+msgid "Undo Changes"
+msgstr "Modifica"
+
 msgid "Reset to default"
 msgstr "Reseteaza valorile predefinite"
 
@@ -2781,6 +2743,11 @@ msgstr "Acesta este un link catre alta fotografie, deci nu poti modifica origina
 msgid "There are links to this photo, so you cannot change the original"
 msgstr "Exista link-uri catre aceasta fotografie, deci nu poti sa modifici originalul"
 
+msgid ""
+"There is no toolkit support to modify the original so operations may only be applied to the "
+"copies"
+msgstr ""
+
 msgid "Preserve Original Photo"
 msgstr "Mentine fotografia originala"
 
@@ -2806,12 +2773,6 @@ msgid ""
 msgstr ""
 "Acest album este configurat sa foloseasca tema <b>%s</b>. Aceste configuratii se aplica "
 "numai la tema acestui album"
-
-msgid "Setting"
-msgstr "Configurari"
-
-msgid "Use Global"
-msgstr "Foloseste configuratiile globale"
 
 #, c-format
 msgid "Use these settings in all subalbums that use %s theme"
@@ -2847,6 +2808,9 @@ msgstr[1] "%d obiecte au fost mutate"
 msgid "This album contains no items to move."
 msgstr "Acest album nu contine obiecte ce se pot muta."
 
+msgid "Source"
+msgstr "Sursa"
+
 msgid "Choose the items you want to move"
 msgstr "Alege obiectele pe care vrei sa le muti"
 
@@ -2870,17 +2834,26 @@ msgstr "Nu esti autorizat sa muti un obiect la destinatia aleasa."
 msgid "You cannot move an album into its own subtree."
 msgstr "Nu poti muta un album in ierarhia proprie."
 
+msgid "Destination"
+msgstr "Destinatie"
+
 msgid "Choose a new album for them"
 msgstr "Alege un nou album pentru acestea"
 
 msgid "You don't have the permission to add items in this album"
 msgstr "Nu esti autorizat sa adaugi obiecte in acest album"
 
+msgid "No destination chosen"
+msgstr "Nici o destinatie aleasa"
+
 msgid "Move"
 msgstr "Muta"
 
 msgid "Successfully moved"
 msgstr "Mutate!"
+
+msgid "Choose a destination album"
+msgstr "Alege un album destinatie"
 
 msgid "Permissions"
 msgstr "Permisiuni"
@@ -3447,6 +3420,12 @@ msgstr "Necunoscut"
 msgid "Full size: "
 msgstr "Dimensione originala:"
 
+msgid "Setting"
+msgstr "Configurari"
+
+msgid "Use Global"
+msgstr "Foloseste configuratiile globale"
+
 msgid "Language selector"
 msgstr "Selecteaza localizarea"
 
@@ -3473,6 +3452,53 @@ msgstr "[test] Una seconda autorizzazione"
 
 msgid "Unit test theme"
 msgstr "Unit&agrave; di test tema"
+
+#~ msgid "create link"
+#~ msgstr "creaza link"
+
+#~ msgid "link an item"
+#~ msgstr "link la un articol"
+
+#~ msgid "Create Link"
+#~ msgstr "Creaza Link"
+
+#~ msgid "Link Album"
+#~ msgstr "Conecteaza Album"
+
+#~ msgid "Link Photo"
+#~ msgstr "Conecteaza Foto"
+
+#~ msgid "Link Movie"
+#~ msgstr "Conecteaza Film"
+
+#~ msgid "Link %s"
+#~ msgstr "Conecteaza %s"
+
+#~ msgid "Link an Item"
+#~ msgstr "Creeaza un link catre un obiect"
+
+#~ msgid "Successfully linked %d item"
+#~ msgid_plural "Successfully linked %d items"
+#~ msgstr[0] "Link facut pentru %d obiect"
+#~ msgstr[1] "Link-uri facute pentru %d obiecte"
+
+#~ msgid "This album contains no items to link."
+#~ msgstr "Acest album nu contine obiecte pentru link."
+
+#~ msgid "Choose the items you want to link"
+#~ msgstr "Alege obiectele pe care vrei sa link"
+
+#~ msgid "No sources chosen"
+#~ msgstr "Nu ai ales nici o sursa"
+
+#~ msgid "Choose a new album for the link"
+#~ msgstr "Alege un nou album pentru acest link"
+
+#~ msgid "Link"
+#~ msgstr "Link"
+
+#~ msgid "Successfully linked"
+#~ msgstr "Link creat"
 
 #~ msgid "From Local Server"
 #~ msgstr "Din serverul local"

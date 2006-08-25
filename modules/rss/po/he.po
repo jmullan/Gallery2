@@ -19,7 +19,7 @@
 # Guy Sheffer <guysoft@ort.org.il>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: RSS 1.0.7\n"
+"Project-Id-Version: Gallery: RSS 1.0.9\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-04-05 16:08+0300\n"
 "PO-Revision-Date: 2006-04-06 16:58+0300\n"
@@ -100,6 +100,10 @@ msgstr "תגובות לאלבום"
 msgid "Comments for an item"
 msgstr "תגובות לפריט"
 
+#, fuzzy
+msgid "Comments for an album and its subalbums"
+msgstr "פריטים של האלבום והתת-אלבומים שלו"
+
 #, c-format
 msgid "In album <a href=\"%s\">%s</a>"
 msgstr "בתוך אלבום <a href=\"%s\">%s</a>"
@@ -132,9 +136,10 @@ msgid "You can't change the name of the feed"
 msgstr "אינך יכול/ה לשנות את שם העדכון"
 
 msgid ""
-"Pick name for your feed (this name will be referenced in the URL to your "
-"feed so try to use only letters)"
-msgstr "בחר שם לעדכון שלך (השם הזה יהיה מוזכר בלינק, לכן מומלץ בחום להשתמש באותיות באנגלית בלבלד)"
+"Pick name for your feed (this name will be referenced in the URL to your feed so try to use "
+"only letters)"
+msgstr ""
+"בחר שם לעדכון שלך (השם הזה יהיה מוזכר בלינק, לכן מומלץ בחום להשתמש באותיות באנגלית בלבלד)"
 
 msgid "You must enter a name"
 msgstr "עליך להקליד שם"
@@ -158,9 +163,10 @@ msgid "Items in this album"
 msgstr "פריטים באלבום הזה"
 
 msgid ""
-"Feeds of this type are disallowed by the administrator. Users won't be able "
-"to view them."
-msgstr "פריטים מהסוג הזה לא מורשים להיות מוצגים לפי בחירת מנהל המערכת. משתמשים לא יוכלו לצפות בפריט זה."
+"Feeds of this type are disallowed by the administrator. Users won't be able to view them."
+msgstr ""
+"פריטים מהסוג הזה לא מורשים להיות מוצגים לפי בחירת מנהל המערכת. משתמשים לא יוכלו לצפות בפריט "
+"זה."
 
 msgid "Sub-albums of this album"
 msgstr "תת-אלבומים של אלבום זה"
@@ -179,6 +185,10 @@ msgstr "(כדי לבטל את ההגבלה יש להקליד 0)"
 
 msgid "Comments for this album"
 msgstr "תגובות לאלבום זה (בלבד)"
+
+#, fuzzy
+msgid "Comments for this album and its subalbums"
+msgstr "הפריטים באלבום הזה וכל התת-אלבומים שלו"
 
 msgid "Comments for this item"
 msgstr "תגובות לפריט זה"
@@ -229,9 +239,11 @@ msgid "Invalid time to live, this must be a number of minutes (0 to disable ttl)
 msgstr "זמן חיים לא חוקי, הזמן הזה חייב להיות מספר דקות (0 כדי לבטל ttl)"
 
 msgid ""
-"Time to live: this must be a number of minutes (0 to disable ttl) "
-"aggregators should wait between checks of whether the feed has been updated"
-msgstr "זמן חיים: הערך הזה חייב להיות מספר דקות (0 כדי לבטל את ה-ttl) תוכונת ה-RSS צריכים לחכות בין בדיקות אם העידכון עודכן."
+"Time to live: this must be a number of minutes (0 to disable ttl) aggregators should wait "
+"between checks of whether the feed has been updated"
+msgstr ""
+"זמן חיים: הערך הזה חייב להיות מספר דקות (0 כדי לבטל את ה-ttl) תוכונת ה-RSS צריכים לחכות בין "
+"בדיקות אם העידכון עודכן."
 
 msgid "Copyright"
 msgstr "זכויות יוצרים"
@@ -245,9 +257,7 @@ msgstr "השתמש בתג תמונה"
 msgid "Include image tag"
 msgstr "כלול תג תמונה"
 
-msgid ""
-"This adds a main image to the feed, corresponding to the thumbnail for this "
-"item"
+msgid "This adds a main image to the feed, corresponding to the thumbnail for this item"
 msgstr "מוסיף את התמונה הראשית לעידכון, בהתאמה לתמונה המוקטנת של הפריט"
 
 msgid "Invalid value"
@@ -260,8 +270,7 @@ msgid "Include enclosure tags"
 msgstr "בשתמש בתגי הכללה"
 
 msgid ""
-"This adds an enclosure to each image in the feed, that contains the full "
-"resolution image"
+"This adds an enclosure to each image in the feed, that contains the full resolution image"
 msgstr "אפשרות זו כוללת כל תמונה בעידכון ברזולוציה מלאה"
 
 msgid "Cloud tag (RSS 2.0)"
@@ -273,23 +282,11 @@ msgstr "הם ברצונך לכלול את תג הענן, ניתן להגדיר �
 msgid "Example: "
 msgstr "דוגמא:"
 
-msgid "Cloud tag"
-msgstr "תג ענן"
-
-msgid "Include the cloud tag"
-msgstr "כלול את תג הענן"
-
 msgid "domain"
 msgstr "כתובת (domain)"
 
-msgid "Invalid string"
-msgstr "מחרוזת לא חוקית"
-
 msgid "port"
 msgstr "פורט (port)"
-
-msgid "Invalid port number"
-msgstr "מספר פורט לא חוקי"
 
 msgid "path"
 msgstr "נתיב (path)"
@@ -299,6 +296,18 @@ msgstr "תהליך הרשמה"
 
 msgid "protocol"
 msgstr "פרוטוקול"
+
+msgid "Cloud tag"
+msgstr "תג ענן"
+
+msgid "Include the cloud tag"
+msgstr "כלול את תג הענן"
+
+msgid "Invalid string"
+msgstr "מחרוזת לא חוקית"
+
+msgid "Invalid port number"
+msgstr "מספר פורט לא חוקי"
 
 msgid "Update Feed"
 msgstr "עדכן RSS"
@@ -345,9 +354,7 @@ msgstr "הגדרות עידכון RSS פשוט"
 msgid "General settings"
 msgstr "הגדרות כלליות"
 
-msgid ""
-"These are the default and maximum values that are used by all feeds on your "
-"Gallery"
+msgid "These are the default and maximum values that are used by all feeds on your Gallery"
 msgstr "ישנם ערכים מקסימאלים וערכים בברית-מחדל שבשימוש ע\"י כל העידכנים בגרליה זו."
 
 msgid "Default number of items in feeds"
@@ -378,26 +385,28 @@ msgid "Allow Simple RSS Feed to be used"
 msgstr "אפשר שימוש בעידכוני RSS פשוטים"
 
 msgid ""
-"If you enable this, users will be able to subscribe to a feed for any album "
-"or photo they can view."
+"If you enable this, users will be able to subscribe to a feed for any album or photo they "
+"can view."
 msgstr "אם נבחרה אפשרות זו, המשתמשים יוכלו להרשם לעדכון בכל אלבום או צילום שהם מסוגלים לראות"
 
 msgid ""
-"To edit the settings for Simple Feeds, use the corresponding tab at the top "
-"of the screen."
-msgstr "כדי לערוך את ההגדרות של עידכוני ה-RSS הפשוטים, יש להשתמש בלשונית הממוקמת בחלקו העליון של המסך"
+"To edit the settings for Simple Feeds, use the corresponding tab at the top of the screen."
+msgstr ""
+"כדי לערוך את ההגדרות של עידכוני ה-RSS הפשוטים, יש להשתמש בלשונית הממוקמת בחלקו העליון של המסך"
 
 msgid "Allow configurable RSS feeds to be used"
 msgstr "אפשר שימוש בעידכוני RSS הניתנים להגדרה"
 
 msgid ""
-"Only album owners will be able to define such feeds. They can set parameters "
-"for the type of feed they want."
-msgstr "רק הבעלים של האלבום יוכלו להגדיר עידכוני RSS מסוג זה. הבעלים יוכלו להגדיר את הפרמטרים בשביל סוג העידכון."
+"Only album owners will be able to define such feeds. They can set parameters for the type of "
+"feed they want."
+msgstr ""
+"רק הבעלים של האלבום יוכלו להגדיר עידכוני RSS מסוג זה. הבעלים יוכלו להגדיר את הפרמטרים בשביל "
+"סוג העידכון."
 
 msgid ""
-"Once a feed is defined, users will be able to subscribe to those feeds if "
-"they can view the associated item."
+"Once a feed is defined, users will be able to subscribe to those feeds if they can view the "
+"associated item."
 msgstr "לאחר שהוגדר עידכון ה-RSS, המשתמשים יוכלו להרשם אליו אם הם יכולים לצפות הפריט המקושר."
 
 msgid "Allow RSS feeds of photos inside an album"
@@ -424,6 +433,10 @@ msgstr "אפשר עידכוני RSS לתגובות על תמונות"
 msgid "Allow RSS feeds comments of an album"
 msgstr "אפשר עידכוני RSS לתגובות על אלבומים"
 
+#, fuzzy
+msgid "Allow RSS feeds comments for an album and its subalbums"
+msgstr "אפשר עידכוני RSS של תמונת בתוך אלבום והתת-אלבומים שלו"
+
 msgid "Save Settings"
 msgstr "שמור הגדרות"
 
@@ -434,16 +447,19 @@ msgid "Helping users discover RSS feeds"
 msgstr "עוזרים למשתמשים למצוא עידכוני RSS"
 
 msgid ""
-"If you want to help users discover feeds in your Gallery, you can add the "
-"RSS block to the themes used in your Gallery."
-msgstr "אם ברצונך לעזור למשתמשים למצוא עידכוני RSS בגלריה שלך, ניתן להוסיף בלוק RSS לערכות הנושא שבשימוש בגלריה."
+"If you want to help users discover feeds in your Gallery, you can add the RSS block to the "
+"themes used in your Gallery."
+msgstr ""
+"אם ברצונך לעזור למשתמשים למצוא עידכוני RSS בגלריה שלך, ניתן להוסיף בלוק RSS לערכות הנושא "
+"שבשימוש בגלריה."
 
 msgid ""
-"This will have two effects: the block itself, which users can see and pick "
-"feeds from (and get a list of all feeds); and hidden page headers that "
-"modern web browsers will use to make it easier for the user to subscribe to "
-"the feeds."
-msgstr "לפעולה זו יש שתי השפעות: הבלוק עצמו, שמשתמשים יכולים לראות ולבחור ממנו (ולקבל רשימת עידכוני RSS); וכותרת עליונה נסתרת שדפדפנים מתקדמים מסוגלים לאתר ומאפשרים הרשמה קלה לעידכונים."
+"This will have two effects: the block itself, which users can see and pick feeds from (and "
+"get a list of all feeds); and hidden page headers that modern web browsers will use to make "
+"it easier for the user to subscribe to the feeds."
+msgstr ""
+"לפעולה זו יש שתי השפעות: הבלוק עצמו, שמשתמשים יכולים לראות ולבחור ממנו (ולקבל רשימת עידכוני "
+"RSS); וכותרת עליונה נסתרת שדפדפנים מתקדמים מסוגלים לאתר ומאפשרים הרשמה קלה לעידכונים."
 
 msgid "Global list of RSS feeds"
 msgstr "רשימה גלובלית של עידכוני RSS"
@@ -495,4 +511,3 @@ msgstr "10"
 
 msgid "all"
 msgstr "כולם"
-

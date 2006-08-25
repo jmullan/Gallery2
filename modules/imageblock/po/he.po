@@ -19,7 +19,7 @@
 # Guy Sheffer <guysoft@ort.org.il>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Image Block 1.0.8\n"
+"Project-Id-Version: Gallery: Image Block 1.0.10\n"
 "POT-Creation-Date: 2006-04-05 18:02+0300\n"
 "PO-Revision-Date: 2006-04-07 15:27+0300\n"
 "Last-Translator: Guy Sheffer <guysoft@ort.org.il>\n"
@@ -164,12 +164,20 @@ msgstr ""
 "הגבל את הפריטים לתת-העך של הגלריה תחת אלבום עם id נתון; או id של הפריט להצגה כאשר עם סוג "
 "הבלוק specificItem."
 
+#, c-format
 msgid ""
-"Scale images to this maximum size. If maxSize exceeds the thumbnail dimensions, you must "
-"also specify g2_show=fullSize"
+"Scale images to this maximum size. If used alone Gallery will locate the most-closely-sized "
+"image to the specified value - larger images will be scaled down as necessary in your "
+"browser. If specified along with %sshow=fullSize the full size image will always be used and "
+"scaled down as necessary."
 msgstr ""
-"הגדל תמונת לגודל המקסימלה, אם maxSize גדול יותר מהתמונה המוקטנת, עלך להגדיר "
-"\"g2_show=fullSize\""
+
+#, c-format
+msgid ""
+"Just like %smaxSize except that it will not substitute an image smaller than the size you "
+"request, so you'll get the closest match in size possible.  Note that this may use a lot "
+"more bandwidth if a much larger image has to be scaled down in your browser."
+msgstr ""
 
 msgid ""
 "Href for link on image; value of none for no link; default is link to item in the Gallery"
@@ -261,3 +269,10 @@ msgstr "הצג מספר צפיות"
 
 msgid "Show owner"
 msgstr "הצג בעלים"
+
+#~ msgid ""
+#~ "Scale images to this maximum size. If maxSize exceeds the thumbnail dimensions, you must "
+#~ "also specify g2_show=fullSize"
+#~ msgstr ""
+#~ "הגדל תמונת לגודל המקסימלה, אם maxSize גדול יותר מהתמונה המוקטנת, עלך להגדיר "
+#~ "\"g2_show=fullSize\""
