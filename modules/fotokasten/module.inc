@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+define('FOTOKASTEN_GALLERY_AFFILIATE_ID', '1927');
+define('FOTOKASTEN_GALLERY_AFFILIATE_PASSWORD', 'f12a65d90445f95b90e5fd30c75ee74e');
+
 /**
  * Print photos on fotokasten.de
  *
@@ -51,8 +54,8 @@ class FotokastenModule extends GalleryModule {
 	if ($ret) {
 	    return $ret;
 	}
-	foreach (array('affiliateId' => '1927',
-		       'affiliateIdPass' => 'f12a65d90445f95b90e5fd30c75ee74e')
+	foreach (array('affiliateId' => FOTOKASTEN_GALLERY_AFFILIATE_ID,
+		       'affiliateIdPass' => FOTOKASTEN_GALLERY_AFFILIATE_PASSWORD)
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);

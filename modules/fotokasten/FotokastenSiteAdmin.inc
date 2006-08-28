@@ -54,7 +54,19 @@ class FotokastenSiteAdminController extends GalleryController {
 		}
 		$status['saved'] = 1;
 	    }
+	} else if (isset($form['action']['useGalleryId'])) {
+	    foreach (array('affiliateId' => FOTOKASTEN_GALLERY_AFFILIATE_ID,
+			   'affiliateIdPass' => FOTOKASTEN_GALLERY_AFFILIATE_PASSWORD)
+		     as $key => $value) {
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'fotokasten', $key, $value);
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    }
+	    $status['usingGalleryId'] = 1;
 	}
+
 
 	$method = empty($error) ? 'redirect' : 'delegate';
 	$results[$method]['view'] = 'core.SiteAdmin';
@@ -91,6 +103,11 @@ class FotokastenSiteAdminView extends GalleryView {
 	    }
 	}
 
+	$FotokastenSiteAdmin = array();
+	$FotokastenSiteAdmin['usingDefaultGalleryAffiliateId'] =
+	    ($form['affiliateId'] == FOTOKASTEN_GALLERY_AFFILIATE_ID);
+
+	$template->setVariable('FotokastenSiteAdmin', $FotokastenSiteAdmin);
 	$template->setVariable('controller', 'fotokasten.FotokastenSiteAdmin');
 	return array(null, array('body' => 'modules/fotokasten/templates/FotokastenSiteAdmin.tpl'));
     }

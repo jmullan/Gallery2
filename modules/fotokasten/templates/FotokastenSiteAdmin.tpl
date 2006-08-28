@@ -8,9 +8,13 @@
   <h2> {g->text text="Fotokasten Settings"} </h2>
 </div>
 
-{if isset($status.saved)}
+{if isset($status.saved) || isset($status.usingGalleryId)}
 <div class="gbBlock"><h2 class="giSuccess">
-  {g->text text="Settings saved successfully"}
+  {if isset($status.saved)}
+    {g->text text="Settings saved successfully"}
+  {elseif isset($status.usingGalleryId)}
+    {g->text text="Using Gallery Affiliate Id"}
+  {/if}
 </h2></div>
 {/if}
 
@@ -45,11 +49,22 @@
   </table>
 </div>
 
+<div class="gbBlock">
+  {if $FotokastenSiteAdmin.usingDefaultGalleryAffiliateId}
+  {g->text text="You're currently using the default Gallery affiliate id.  This means that the Gallery project will receive a small commission for each print made from your website."}
+  {else}
+  {g->text text="You have specified your own affiliate id."}
+  {/if}
+  {g->text text="For more information on Fotokasten affiliates, please contact Fotokasten directly via their website at %s." arg1="<a href=\"http://www.fotokasten.de\">http://www.fotokasten.de</a>"}
+</div>
+
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
-  <input type="button" class="inputTypeButton" value="{g->text text="Use Defaults"}"
-   onclick="document.getElementById('affiliateId').value='1927';document.getElementById('affiliateIdPass').value='f12a65d90445f95b90e5fd30c75ee74e'"/>
+  {if !$FotokastenSiteAdmin.usingDefaultGalleryAffiliateId}
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][useGalleryId]"}" value="{g->text text="Use Gallery Affiliate Id"}"
+  {/if}
 </div>

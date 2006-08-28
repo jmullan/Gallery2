@@ -74,6 +74,29 @@ class FotokastenSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('abcde12345', $params['affiliateIdPass'], 'affiliateIdPass');
     }
 
+    function testFotokastenSiteAdminControllerUseGalleryId() {
+	GalleryUtilities::putRequestVariable('form[affiliateId]', 'anything');
+	GalleryUtilities::putRequestVariable('form[affiliateIdPass]', 'anything');
+	GalleryUtilities::putRequestVariable('form[action][useGalleryId]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						'subView' => 'fotokasten.FotokastenSiteAdmin'),
+				  'status' => array('usingGalleryId' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $params) =
+	    GalleryCoreApi::fetchAllPluginParameters('module', 'fotokasten');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(
+	    FOTOKASTEN_GALLERY_AFFILIATE_ID, $params['affiliateId'], 'affiliateId');
+	$this->assertEquals(
+	    FOTOKASTEN_GALLERY_AFFILIATE_PASSWORD, $params['affiliateIdPass'], 'affiliateIdPass');
+    }
+
     function testFotokastenSiteAdminControllerSaveBadId() {
 	GalleryUtilities::putRequestVariable('form[affiliateId]', '123x');
 	GalleryUtilities::putRequestVariable('form[affiliateIdPass]', 'abcde12345');
