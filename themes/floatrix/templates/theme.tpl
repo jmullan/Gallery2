@@ -30,7 +30,7 @@
 	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
       {else}
       <div id="gsHeader">
-	<img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/>
+	<a href="{g->url}"><img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/></a>
       </div>
 
       <div id="gsNavBar" class="gcBorder1">
@@ -56,7 +56,7 @@
         {g->theme include="sidebar.tpl"}
       </div>
       {/if}
-    
+
       {* Include the appropriate content type for the page we want to draw. *}
       {if $theme.pageType == 'album'}
 	{g->theme include="album.tpl"}

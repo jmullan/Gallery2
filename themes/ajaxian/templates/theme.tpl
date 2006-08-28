@@ -49,7 +49,7 @@
 	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
       {else}
       <div id="header">
-	<h1><a href="{g->url href=""}"><img src="{g->url href="images/galleryLogo_sm.gif"}"
+	<h1><a href="{g->url}"><img src="{g->url href="images/galleryLogo_sm.gif"}"
 	  width="107" height="48" alt="Gallery" id="main-logo" /></a></h1>
 	{g->block type="search.SearchBlock" showAdvancedLink=false}
 
