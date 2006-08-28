@@ -60,6 +60,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 
 	$templateData['installed'] = $versions;
 	$templateData['coreVersion'] = $core->getVersion();
+	$templateData['galleryVersion'] = $core->getGalleryVersion();
 	$templateData['storeConfig'] = $gallery->getConfig('storage.config');
 
 	$templateData['isConfigUpgradeRequired'] =

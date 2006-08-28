@@ -11,7 +11,7 @@
 	</td>
 	<td>
 	  <b>
-	    <?php print $templateData['installed']['core'] ?>
+	    <?php printf(_("Core Module version: %s (Gallery %s)"), $templateData['installed']['core'], $templateData['installed']['gallery']); ?>
 	  </b>
 	</td>
       </tr>
@@ -21,7 +21,7 @@
 	</td>
 	<td>
 	  <b>
-	    <?php print $templateData['coreVersion'] ?>
+	    <?php printf(_("Core Module version: %s (Gallery %s)"), $templateData['coreVersion'], $templateData['galleryVersion']); ?>
 	  </b>
 	</td>
       </tr>
