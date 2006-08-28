@@ -1,0 +1,211 @@
+/* ================================================================ */
+/*                      container.css (YUI 0.11.0)                  */
+/*                                                                  */
+/* Modified from the original container.css to use as many div#id   */
+/* style tags as possible to tightly scope this CSS so that it      */
+/* doesn't leak out and affect our themes.                          */
+/* ================================================================ */
+
+div#gDialog {
+  position:absolute;
+  display:block;
+}
+
+div#gDialog_c .tt {
+  visibility:hidden;
+  position:absolute;
+  color:#333;
+  background-color:#FDFFB4;
+  font-family:arial,helvetica,verdana,sans-serif;
+  padding:2px;
+  border:1px solid #FCC90D;
+  font:100% sans-serif;
+  width:auto;
+}
+
+* html body.masked select {
+  visibility:hidden;
+}
+
+* html div.panel-container select {
+  visibility:inherit;
+}
+
+* html div.drag select {
+  visibility:hidden;
+}
+
+* html div.hide-select select {
+  visibility:hidden;
+}
+
+div#gDialog_mask {
+  z-index:0;
+  display:none;
+  position:absolute;
+  top:0;
+  left:0;
+  moz-opacity: 0.5;
+  opacity:.50;
+  filter: alpha(opacity=50);
+  background-color:#CCC;
+}
+
+div#gDialog_c .hide-scrollbars * {
+  overflow:hidden;
+}
+
+div#gDialog_c .hide-scrollbars textarea, .hide-scrollbars select {
+  overflow:hidden;
+  display:none;
+}
+
+div#gDialog_c .show-scrollbars textarea, .show-scrollbars select {
+  overflow:visible;
+}
+
+div#gDialog_c {
+  position:absolute;
+  background-color:transparent;
+  z-index:6;
+  visibility:hidden;
+  overflow:visible;
+  width:auto;
+}
+
+div#gDialog_c .panel-container.matte {
+  padding:3px;
+  background-color:#FFF;
+}
+
+div#gDialog_c .panel-container.matte .underlay {
+  display:none;
+}
+
+div#gDialog_c .panel-container.shadow {
+  padding:0px;
+  background-color:transparent;
+}
+
+div#gDialog_c .panel-container.shadow .underlay {
+  visibility:inherit;
+  position:absolute;
+  background-color:#CCC;
+  top:3px;left:3px;
+  z-index:0;
+  width:100%;
+  height:100%;
+  moz-opacity: 0.7;
+  opacity:.70;
+  filter:alpha(opacity=70);
+}
+
+div#gDialog {
+  visibility:hidden;
+  border-collapse:separate;
+  position:relative;
+  left:0px;top:0px;
+  font:1em Arial;
+  background-color:#FFF;
+  border:1px solid #000;
+  z-index:1;
+  overflow:auto;
+}
+
+div#gDialog .hd {
+  background-color:#3d77cb;
+  color:#FFF;
+  font-size:100%;
+  line-height:100%;
+  border:1px solid #FFF;
+  border-bottom:1px solid #000;
+  font-weight:bold;
+  overflow:hidden;
+  padding:4px;
+}
+
+div#gDialog .bd {
+  overflow:hidden;
+  padding:4px;
+}
+
+div#gDialog .bd p {
+  margin:0 0 1em;
+}
+
+div#gDialog .close {
+  position:absolute;
+  top:5px;
+  right:4px;
+  z-index:6;
+  height:12px;
+  width:12px;
+  margin:0px;
+  padding:0px;
+  background-repeat:no-repeat;
+  cursor:pointer;
+  visibility:inherit;
+}
+
+div#gDialog .close.nonsecure {
+  background-image:url(http://us.i1.yimg.com/us.yimg.com/i/nt/ic/ut/alt3/close12_1.gif);
+}
+
+div#gDialog .close.secure {
+  background-image:url(https://a248.e.akamai.net/sec.yimg.com/i/nt/ic/ut/alt3/close12_1.gif);
+}
+
+div#gDialog .ft {
+  padding:4px;
+  overflow:hidden;
+}
+
+div#gDialog_c .simple-dialog .bd .icon {
+  background-repeat:no-repeat;
+  width:16px;
+  height:16px;
+  margin-right:10px;
+  float:left;
+}
+
+div#gDialog_c .dialog .ft, .simple-dialog .ft {
+  padding-bottom:5px;
+  padding-right:5px;
+  text-align:right;
+}
+
+div#gDialog_c .dialog form, .simple-dialog form {
+  margin:0;
+}
+
+div#gDialog_c .button-group button {
+  font:100 76% verdana;
+  text-decoration:none;
+  background-color: #E4E4E4;
+  color: #333;
+  cursor: hand;
+  vertical-align: middle;
+  border: 2px solid #797979;
+  border-top-color:#FFF;
+  border-left-color:#FFF;
+  margin:2px;
+  padding:2px;
+}
+
+div#gDialog_c .button-group button.default {
+  font-weight:bold;
+}
+
+div#gDialog_c .button-group button:hover, .button-group button.hover {
+  border:2px solid #90A029;
+  background-color:#EBF09E;
+  border-top-color:#FFF;
+  border-left-color:#FFF;
+}
+
+div#gDialog_c .button-group button:active {
+  border:2px solid #E4E4E4;
+  background-color:#BBB;
+  border-top-color:#333;
+  border-left-color:#333;
+}

@@ -52,6 +52,14 @@
     {rdelim}
   {rdelim};
   var errorPageUrl = '{g->url arg1="view=core.ErrorPage" htmlEntities=0}';
+  var uninstallPrompt = {ldelim}
+    "header" : '{g->text text="Warning!"}',
+    "body"   : '{g->text text="Do you really want to uninstall __PLUGIN__?"}' +
+	       '<br/>' +
+               '{g->text text="This will also remove any permissions and clean up any data created by this module."}',
+    "yes"    : '{g->text text="Yes"}',
+    "no"     : '{g->text text="No"}'
+  {rdelim};
 
   {literal}
   var contexts = {"module": {}, "theme": {}};
@@ -190,7 +198,7 @@
               </a> |
             </span>
             <span id="action-uninstall-{$plugin.type}-{$plugin.id}" style="display: none">
-              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=uninstall"}')">
+              <a style="cursor: pointer" onclick="verifyUninstall('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=uninstall"}')">
                 {g->text text="uninstall"}
               </a>
             </span>

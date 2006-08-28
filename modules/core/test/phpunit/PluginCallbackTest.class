@@ -284,19 +284,28 @@ class PluginCallbackTest extends GalleryTestCase {
 	$this->assert(!$this->_testPlugin->wasCalled('deactivate'), 'deactivate was called');
     }
 
-    /* Uninstall a module that is inactive (should send us to the confirm page) */
-    function testUninstallModule() {
+    function testUninstallActiveModule() {
+	GalleryUtilities::putRequestVariable('pluginType', 'module');
+	GalleryUtilities::putRequestVariable('pluginId', 'PluginCallbackControllerTest');
+	$this->_testPlugin->setResult('isActive', array(null, true));
+	$this->_testPlugin->setResult('deactivate', null);
+	$this->_testPlugin->setResult('uninstall', null);
+	$result = $this->_handleCallback('uninstall');
+
+	$this->assertEquals(array('status' => 'success'), $result);
+	$this->assert($this->_testPlugin->wasCalled('deactivate'), 'deactivate was called');
+	$this->assert($this->_testPlugin->wasCalled('uninstall'), 'uninstall was called');
+    }
+
+    function testUninstallInactiveModule() {
 	GalleryUtilities::putRequestVariable('pluginType', 'module');
 	GalleryUtilities::putRequestVariable('pluginId', 'PluginCallbackControllerTest');
 	$this->_testPlugin->setResult('isActive', array(null, false));
+	$this->_testPlugin->setResult('uninstall', null);
 	$result = $this->_handleCallback('uninstall');
 
-	$this->assertEquals(array('status' => 'redirect',
-				  'redirect' => array(
-				      'view' => 'core.SiteAdmin',
-				      'subView' => 'core.AdminModulesVerifyUninstall',
-				      'moduleId' => 'PluginCallbackControllerTest')),
-			    $result);
+	$this->assertEquals(array('status' => 'success'), $result);
+	$this->assert($this->_testPlugin->wasCalled('uninstall'), 'uninstall was called');
     }
 
     /* Uninstall a theme that is inactive */

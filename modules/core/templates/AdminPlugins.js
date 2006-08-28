@@ -136,3 +136,30 @@ function updateStatusPosition() {
     var containerEl = document.getElementById(STATUS_BOX_ID);
     containerEl.style.top = document.getElementsByTagName("html")[0].scrollTop + "px";
 }
+
+function verifyUninstall(pluginType, pluginId, uninstallUrl) {
+    var dialog = new YAHOO.widget.SimpleDialog(
+	"gDialog", { width: "20em",
+		 effect: { effect:YAHOO.widget.ContainerEffect.FADE, duration:0.25 },
+		 fixedcenter: true,
+		 modal: true,
+		 draggable: false });
+    dialog.setHeader(uninstallPrompt['header']);
+    dialog.setBody(uninstallPrompt['body'].replace('__PLUGIN__', pluginNames[pluginType][pluginId]));
+    dialog.cfg.setProperty("icon", YAHOO.widget.SimpleDialog.ICON_WARN);
+
+    var handleYes = function() {
+	this.hide();
+	performPluginAction(pluginType, pluginId, uninstallUrl);
+    }
+
+    var handleNo = function() {
+	this.hide();
+    }
+
+    var myButtons = [ { text: uninstallPrompt['yes'], handler:handleYes },
+                      { text: uninstallPrompt['no'], handler:handleNo, isDefault:true } ];
+    dialog.cfg.queueProperty("buttons", myButtons);
+    dialog.render(document.body);
+}
+

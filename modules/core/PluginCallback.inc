@@ -236,31 +236,24 @@ class PluginCallbackView extends GalleryView {
 	    break;
 
 	case 'uninstall':
-	    if ($pluginType == 'theme') {
-		if ($isActive) {
-		    list ($ret, $redirect) = $plugin->deactivate();
-		    if ($ret) {
-			return $ret;
-		    }
-		} else {
-		    $redirect = false;
-		}
-
-		if ($redirect) {
-		    $result['status'] = 'redirect';
-		    $results['redirect'] = $redirect;
-		} else {
-		    $ret = $plugin->uninstall();
-		    if ($ret) {
-			return $ret;
-		    }
-		    $result['status'] = 'success';
+	    if ($isActive) {
+		list ($ret, $redirect) = $plugin->deactivate();
+		if ($ret) {
+		    return $ret;
 		}
 	    } else {
+		$redirect = false;
+	    }
+
+	    if ($redirect) {
 		$result['status'] = 'redirect';
-		$result['redirect'] = array('view' => 'core.SiteAdmin',
-					    'subView' => 'core.AdminModulesVerifyUninstall',
-					    'moduleId' => $pluginId);
+		$results['redirect'] = $redirect;
+	    } else {
+		$ret = $plugin->uninstall();
+		if ($ret) {
+		    return $ret;
+		}
+		$result['status'] = 'success';
 	    }
 	    break;
 

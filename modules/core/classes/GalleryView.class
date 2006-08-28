@@ -283,6 +283,10 @@ class GalleryView {
 	$templateAdapter->setTheme($theme);
 
 	/* -------------------------------------------------- */
+	/* Specify our base css style before the view's, so that the view can override it */
+	$template->style('modules/core/data/gallery.css');
+
+	/* -------------------------------------------------- */
 	/* Let the view and theme load up template data */
 	list ($ret, $results) = $this->loadTemplate($template, $form);
 	if ($ret) {
