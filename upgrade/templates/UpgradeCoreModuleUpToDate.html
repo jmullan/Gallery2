@@ -4,14 +4,14 @@
       <?php print _("Your Gallery Core Module is up to date!"); ?>
     </p>
 
-    <table width="200">
+    <table>
       <tr>
-	<td>
+	<td width="175">
 	  <?php print _("Currently installed"); ?>
 	</td>
 	<td>
 	  <b>
-	    <?php print $templateData['installed']['core']; ?>
+	    <?php printf(_("Core Module version: %s (Gallery %s)"), $templateData['installed']['core'], $templateData['installed']['gallery']); ?>
 	  </b>
 	</td>
       </tr>
