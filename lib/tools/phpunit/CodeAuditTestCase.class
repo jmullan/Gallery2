@@ -84,7 +84,6 @@ class CodeAuditTestCase extends GalleryTestCase {
 		case 'file':
 		    $file = $dirPath . '/' . $xmlValues[$entry]['attributes']['NAME'];
 		    if (empty($xmlValues[$entry]['attributes']['DELETED'])
-			    && preg_match('/\.(?:class|inc|php|tpl|po)$/', $file)
 			    && $this->shouldCheckFile($file)) {
 			$gallery->guaranteeTimeLimit(30);
 			$buf = $platform->file_get_contents($file);
@@ -142,9 +141,12 @@ class CodeAuditTestCase extends GalleryTestCase {
      */
     function shouldCheckFile($fileName) {
 	/*
-	 * By default we accept everything, with the exception that we only take
-	 * lib/tools/repository from the lib directory.
+	 * By default we accept php|inc|class|tpl|po extensions, with the exception that we only
+	 * take lib/tools/repository from the lib directory.
 	 */
+	if (!preg_match('{\.(?:php|inc|class|tpl|po)$}', $fileName)) {
+	    return false;
+	}
 	if (strpos($fileName, $this->_baseDir . '/lib/') === 0) {
 	    return strpos($fileName, $this->_baseDir . '/lib/tools/repository/') === 0;
 	}
