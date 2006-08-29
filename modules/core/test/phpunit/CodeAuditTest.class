@@ -31,10 +31,9 @@ class CodeAuditTest extends CodeAuditTestCase {
 
     function CodeAuditTest($methodName) {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	$this->CodeAuditTestCase($methodName);
-
-	$platform =& $gallery->getPlatform();
 
 	$this->_exception['endphp'] = array();
 
@@ -119,7 +118,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	/* Windows CVS appends a CRLF after ?>, so allow for it */
 	$this->_phpEndFile = '/\?>(' . $this->_lineEnding . ')?$/';
 
-	/* Use the first 21 lines of this file itself as our canonical preamble */
+	/* Use top comment of this file itself as our canonical preamble */
 	$this->_preamble = $this->getPreamble(file(__FILE__));
 
 	/* Turn the preamble into a pattern that we can use to match */
@@ -129,8 +128,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$pattern = str_replace('(', '\(', $pattern);
 	$pattern = str_replace(')', '\)', $pattern);
 	$pattern = str_replace('/', '\/', $pattern);
-	$pattern = str_replace('NEWLINE PLACEHOLDER', '(:?\r\n|\n|\r)', $pattern);
-	$this->_preamblePattern = str_replace('RCSFILE PLACEHOLDER', '.*RCSfile.*', $pattern);
+	$this->_preamblePattern = str_replace('NEWLINE PLACEHOLDER', '(:?\r\n|\n|\r)', $pattern);
     }
 
     /**
@@ -377,12 +375,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    $this->_errorCount++;
 	    $errorReported = false;
 	    for ($i = 0; $i < count($this->_preamble); $i++) {
-		if ($i == 2) {
-		    /* Break up the RCSfile keyword so that CVS doesn't expand it */
-		    $expected = ' * $' . 'RCSfile: ' . basename($fileName) . ',v $';
-		} else {
-		    $expected = $this->_preamble[$i];
-		}
+		$expected = $this->_preamble[$i];
 
 		if (strcmp($expected, $lines[$i])) {
 		    $this->assert(false,
@@ -401,17 +394,11 @@ class CodeAuditTest extends CodeAuditTestCase {
     function getPreamble($lines) {
 	$copy = array();
 	for ($i = 0; $i < count($lines); $i++) {
-	    if (preg_match('/.*RCSfile.*/', $lines[$i])) {
-		$new = " * RCSFILE PLACEHOLDER";
-	    } else {
-		$new = rtrim($lines[$i]);
-	    }
+	    $copy[] = rtrim($lines[$i]);
 
 	    if (!strncmp($lines[$i], ' */', 3)) {
 		return $copy;
 	    }
-
-	    $copy[] = $new;
 	}
 
 	return $copy;

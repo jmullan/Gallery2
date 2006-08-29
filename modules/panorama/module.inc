@@ -16,13 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * Additional copyrights:
- *   Metamorphose applet Copyright (C) 2000 Rüdiger Appel
  */
 
 /**
- * The implementation of the Panorama module.
+ * View wide images in a java applet viewer.
+ * Metamorphose applet Copyright (C) 2000 Rüdiger Appel
  * @see http://www.3quarks.com/Applets/Metamorphose/
  *
  * @package Panorama
