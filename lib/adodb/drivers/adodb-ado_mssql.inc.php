@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.80 8 Mar 2006  (c) 2000-2006 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -11,8 +11,8 @@ Set tabs to 4 for best viewing.
   Microsoft SQL Server ADO data driver. Requires ADO and MSSQL client. 
   Works only on MS Windows.
   
-  It is normally better to use the mssql driver directly because it is much faster. 
-  This file is only a technology demonstration and for test purposes.
+  Warning: Some versions of PHP (esp PHP4) leak memory when ADO/COM is used. 
+  Please check http://bugs.php.net/ for more info.
 */
 
 // security - hide paths
@@ -53,6 +53,17 @@ class  ADODB_ado_mssql extends ADODB_ado {
 	        return $this->GetOne('select @@rowcount');
 	}
 	
+	function SetTransactionMode( $transaction_mode ) 
+	{
+		$this->_transmode  = $transaction_mode;
+		if (empty($transaction_mode)) {
+			$this->Execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+			return;
+		}
+		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
+		$this->Execute("SET TRANSACTION ".$transaction_mode);
+	}
+	
 	function MetaColumns($table)
 	{
         $table = strtoupper($table);
@@ -83,9 +94,6 @@ class  ADODB_ado_mssql extends ADODB_ado {
         $false = false;
 		return empty($arr) ? $false : $arr;
 	}
-
-	/* @G2 - begin code copied from adodb-mssql.inc.php */
-	var $_dropSeqSQL = "drop table %s";
 	
 	function CreateSequence($seq='adodbseq',$start=1)
 	{
@@ -124,7 +132,6 @@ class  ADODB_ado_mssql extends ADODB_ado {
 		// in old implementation, pre 1.90, we returned GUID...
 		//return $this->GetOne("SELECT CONVERT(varchar(255), NEWID()) AS 'Char'");
 	}
-	/* @G2 - end of code copied from adodb-mssql.inc.php */
 	
 	} // end class 
 	

@@ -1,6 +1,6 @@
 <?php
 /*
- V4.80 8 Mar 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -28,8 +28,13 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		if (ADODB_ASSOC_CASE !== 2) {
 			$this->rsPrefix .= 'assoc_';
 		}
-		//G2: Disable pg_query_params support due to http://bugs.php.net/36969
-		$this->_bindInputArray = false; // PHP_VERSION >= 5.1;
+		$this->_bindInputArray = PHP_VERSION >= 5.1;
+		
+		$info = $this->ServerInfo();
+		$this->pgVersion = (float) substr($info['version'],0,3);
+		if ($this->pgVersion >= 7.1) { // good till version 999
+			$this->_nestedSQL = true;
+		}
 	}
 
 	
@@ -57,6 +62,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	}
  	*/
 
+
 	// from  Edward Jaramilla, improved version - works on pg 7.4
 	function MetaForeignKeys($table, $owner=false, $upper=false)
 	{
@@ -74,21 +80,21 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		
 		$rs =& $this->Execute($sql);
 		
-		if ($rs && !$rs->EOF) {
-			$arr =& $rs->GetArray();
-			$a = array();
-			foreach($arr as $v)
-			{
-				$data = explode(chr(0), $v['args']);
-				if ($upper) {
-					$a[strtoupper($data[2])][] = strtoupper($data[4].'='.$data[5]);
-				} else {
-				$a[$data[2]][] = $data[4].'='.$data[5];
-				}
+		if (!$rs || $rs->EOF) return false;
+		
+		$arr =& $rs->GetArray();
+		$a = array();
+		foreach($arr as $v) {
+			$data = explode(chr(0), $v['args']);
+			$size = count($data)-1; //-1 because the last node is empty
+			for($i = 4; $i < $size; $i++) {
+				if ($upper) 
+					$a[strtoupper($data[2])][] = strtoupper($data[$i].'='.$data[++$i]);
+				else 
+					$a[$data[2]][] = $data[$i].'='.$data[++$i];
 			}
-			return $a;
 		}
-		return false;
+		return $a;
 	}
 
 	function _query($sql,$inputarr)
@@ -97,6 +103,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 			// We don't have native support for parameterized queries, so let's emulate it at the parent
 			return ADODB_postgres64::_query($sql, $inputarr);
 		}
+		$this->_errorMsg = false;
 		// -- added Cristiano da Cunha Duarte
 		if ($inputarr) {
 			$sqlarr = explode('?',trim($sql));
