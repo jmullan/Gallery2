@@ -94,7 +94,10 @@ class  ADODB_ado_mssql extends ADODB_ado {
         $false = false;
 		return empty($arr) ? $false : $arr;
 	}
-	
+
+	// @G2 - copied from adodb-mssql.inc.php:
+	var $_dropSeqSQL = "drop table %s";
+
 	function CreateSequence($seq='adodbseq',$start=1)
 	{
 		
