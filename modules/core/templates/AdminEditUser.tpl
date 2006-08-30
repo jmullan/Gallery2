@@ -93,6 +93,12 @@
       {g->text text="The passwords you entered did not match"}
     </div>
     {/if}
+
+    {if $AdminEditUser.show.locked}
+      <h4> {g->text text="Lock Account"} </h4>
+      <input type="checkbox" name="{g->formVar var="form[locked]"}" {if $form.locked}checked="checked"{/if}>
+      <div class="giInfo">{g->text text="Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"}</div>
+    {/if}
   {/if}
 </div>
 

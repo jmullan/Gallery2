@@ -38,7 +38,7 @@ class UserChangePasswordController extends GalleryController {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if ($isAnonymous) {
+	if ($isAnonymous || $user->isLocked()) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
@@ -135,10 +135,18 @@ class UserChangePasswordView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+        global $gallery;
+
 	/* Load the form with user data the first time around. */
 	if ($form['formName'] != 'UserChangePassword') {
 	    $form['formName'] = 'UserChangePassword';
 	}
+
+	$user = $gallery->getActiveUser();
+
+        if ($user->isLocked()) {
+            return array(null, array('body' => 'modules/core/templates/UserLocked.tpl'));
+        }
 
 	$template->setVariable('controller', 'core.UserChangePassword');
 	return array(null, array('body' => 'modules/core/templates/UserChangePassword.tpl'));

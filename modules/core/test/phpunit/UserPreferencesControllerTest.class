@@ -41,7 +41,8 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	    $this->_createUser(array('hashedPassword' => GalleryUtilities::md5Salt('TestPassword'),
 				     'email' => 'test@email.com',
 				     'fullName' => 'Test User',
-				     'language' => 'te'));
+                                     'language' => 'te', 
+                                     'locked' => 0));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -311,7 +312,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[language]', 'language');
 
 	$results = $this->handleRequest();
-	 $this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
+        $this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
 							  'subView' => 'core.UserPreferences'),
 				      'status' => array(),
 				      'error' => array('form[error][currentPassword][missing]')),
@@ -331,6 +332,31 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
     function testGuestPreferences() {
 	global $gallery;
 	$gallery->setConfig('anonymousUserId', $this->_user->getId());
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'email@test.me');
+	GalleryUtilities::putRequestVariable('form[currentPassword]', 'TestPassword');
+
+	$this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
+    function testLockedUserPreferences() {
+	global $gallery;
+
+	list ($ret, $this->_user2) =
+	    $this->_createUser(array('hashedPassword' => GalleryUtilities::md5Salt('TestPassword'),
+				     'email' => 'test2@email.com',
+				     'fullName' => 'Test User 2',
+                                     'language' => 'te', 
+                                     'locked' => 1));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_markForCleanup($this->_user2);
+
+	$gallery->setActiveUser($this->_user2);
 
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');

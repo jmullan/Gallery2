@@ -30,7 +30,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryEntity.class');
  * @g2 <parent-class-name>GalleryEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>1</schema-minor>
+ * @g2   <schema-minor>2</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
@@ -103,6 +103,17 @@ class GalleryUser extends GalleryEntity {
      */
     var $language;
 
+    /**
+     * Locked flag - determines whether the user is allowed to edit their own settings
+     * @var bool
+     *
+     * @g2 <member>
+     * @g2   <member-name>locked</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2   <default>0</default>
+     * @g2 </member>
+     */
+    var $locked;
 
     /**
      * Create a new instance of this user in the persistent store
@@ -357,6 +368,14 @@ class GalleryUser extends GalleryEntity {
 
     function setLanguage($language) {
 	$this->language = $language;
+    }
+
+    function isLocked() {
+        return (bool)$this->locked;
+    }
+
+    function setLocked($lock) {
+        $this->locked = (bool)$lock;
     }
 }
 ?>

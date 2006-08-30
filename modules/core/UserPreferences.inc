@@ -76,6 +76,12 @@ class UserPreferencesController extends GalleryController {
 		return array($ret, null);
 	    }
 
+            /* Locked users are not allowed to edit themselves */
+            if ($user->isLocked()) {
+                GalleryCoreApi::releaseLocks($lockId);
+                return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+            }
+
 	    /* email is required for non-anonymous but optional for administrators */
 	    if (empty($form['email']) && !$isAdmin) {
 		$error[] = 'form[error][email][missing]';
@@ -164,6 +170,11 @@ class UserPreferencesView extends GalleryView {
 	}
 
 	$user = $gallery->getActiveUser();
+
+        /* Locked users aren't allowed to edit themselves - display message */
+        if ($user->isLocked()) {
+            return array(null, array('body' => 'modules/core/templates/UserLocked.tpl'));
+        }
 
 	/* Load the form with user data the first time around. */
 	if ($form['formName'] != 'UserPreferences') {

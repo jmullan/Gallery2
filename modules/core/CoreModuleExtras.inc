@@ -2099,6 +2099,12 @@ class CoreModuleExtras {
 		fwrite($fh, $htaccessContents);
 		fclose($fh);
 	    }
+        case '1.1.15':
+            /* Locked Users */
+	    $ret = $storage->configureStore($module->getId(), array('GalleryUser:1.1'));
+	    if ($ret) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2365,6 +2371,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.12':
 	case '1.1.13':
 	case '1.1.14':
+	case '1.1.15':
 
 	case 'end of upgrade path':
 	    /*

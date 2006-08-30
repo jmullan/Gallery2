@@ -127,7 +127,8 @@ $entityInfo['GalleryUser'] = array(
 	'fullName' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM),
 	'hashedPassword' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM),
 	'email' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_LARGE),
-	'language' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM)
+	'language' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM),
+	'locked' => array('type' => STORAGE_TYPE_BOOLEAN)
 ),
     'parent' => 'GalleryEntity',
     'module' => 'core',
