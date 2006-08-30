@@ -127,6 +127,10 @@ class GalleryBbcodeMarkupParser {
 	$this->_bbcode->addCode('url', 'usecontent?', array($this, 'url'), array ('default'),
 			 'link', array ('listitem', 'block', 'inline'), array ('link'));
 
+	/* [color=...]Text[/color] */
+	$this->_bbcode->addCode('color', 'callback_replace', array($this, 'color'), array ('default'),
+			 'inline', array ('listitem', 'block', 'inline', 'link'), array ());
+
 	/* [img]http://...[/img] */
 	$this->_bbcode->addCode('img', 'usecontent', array($this, 'image'), array (),
 			 'image', array ('listitem', 'block', 'inline', 'link'), array ());
@@ -186,6 +190,16 @@ class GalleryBbcodeMarkupParser {
 	}
     }
 
+    function color($tagName, $attrs, $elementContents, $funcParam, $openClose) {
+	if ($openClose == 'open') {
+	    $color = empty($attrs) ? 'bummer' : $attrs['default'];
+	    $ret = sprintf('<font color="%s">', $color);
+	} else if ($openClose == 'close') {
+	    $ret = '</font>';
+	}
+        return $ret;
+    }
+    
     function convertLineBreaks($text) {
 	return preg_replace("/\015\012|\015|\012/", "\n", $text);
     }

@@ -181,6 +181,16 @@ class MarkupTest extends GalleryTestCase {
 	$this->assertEquals('[url]javascript:alert()[/url]', $results);
     }
 
+    function testColor1() {
+        $results = $this->_bbcode->parse('[color=#123456]content[/color]');
+        $this->assertEquals('<font color="#123456">content</font>', $results);
+    }
+
+    function testColor2() {
+        $results = $this->_bbcode->parse('[color=green]content[/color]');
+        $this->assertEquals('<font color="green">content</font>', $results);
+    }
+
     function testJavascript() {
 	$results = $this->_bbcode->parse('[url=javascript:alert(\'hi\')]content[/url]');
 	$this->assertEquals('[url=javascript:alert(\'hi\')]content[/url]', $results);

@@ -209,3 +209,88 @@ div#gDialog_c .button-group button:active {
   border-top-color:#333;
   border-left-color:#333;
 }
+
+/* ================================================= */
+/*                 slider.css (YUI 0.11.0)           */
+/* based on YUI slider / color picker implementation */
+/* ================================================= */
+
+/* 
+ * the box itself
+ * the position needs to be dynamic in order to pop up in the right place
+ */
+div#Markup_colorChooser { 
+	position: absolute;
+	background-color: #eeeeee;
+	width: 360px;
+	height: 240px;
+	display: none;
+}
+
+/* upper border */
+div#Markup_colorHandle { 
+	background-color: #bbbbbb;
+	height: 10px;
+	cursor: move;
+}
+
+div#Markup_hueThumb { 
+	cursor:default;
+	width:18px; 
+	height:18px; 
+	z-index: 9;
+	position:absolute; 
+}
+
+/* slider background */
+div#Markup_hueBg {
+	position:absolute; 
+	left:216px; 
+	height:198px; 
+	width:18px; 
+	background:url(../data/hue.png) no-repeat;
+	top:18px;
+}
+
+/* big square */
+div#Markup_pickerDiv {
+	position:absolute; 
+	left:10px; 
+	height:187px; 
+	width:188px; 
+	top:20px;
+}
+
+div#Markup_pickerbg { 
+	position:absolute; 
+	z-index: 1;
+	top:0px;
+	left:0px;
+}
+
+div#Markup_selector { 
+	cursor:default;
+	width:11px; 
+	height:11px; 
+	z-index: 9;
+	position:absolute; 
+	top:0px;
+	left:0px;
+}
+
+div#Markup_valdiv { text-align:right; position:absolute; top: 86px; left:246px; }
+div#Markup_valdiv input { font-size: .85em }
+div#Markup_hint { text-align:right; position:absolute; top: 220px; left:120px; } 
+
+div#Markup_rBG {top:180px}
+div#Markup_gBG {top:210px}             
+div#Markup_bBG {top:240px}
+
+div#Markup_swatch {
+	position:absolute; 
+	left:260px; 
+	top:30px;
+	height:60px; 
+	width:60px; 
+	border:2px solid #aaaaaa;
+}
