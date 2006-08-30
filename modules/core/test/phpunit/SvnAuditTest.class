@@ -41,7 +41,7 @@ class SvnAuditTest extends CodeAuditTestCase {
     function shouldCheckFile($fileName) {
 	$base = basename($fileName);
 	return in_array($base, array('MANIFEST', 'GNUmakefile', 'strings.raw'))
-	    || preg_match('{\.(php|inc|class|tpl|html|css|js|txt|po|mo|png|gif|jpg)$}', $base);
+	    || preg_match('{\.(php|inc|class|tpl|html|css|js|txt|xml|po|mo|png|gif|jpg)$}', $base);
     }
 
     /**
@@ -56,7 +56,7 @@ class SvnAuditTest extends CodeAuditTestCase {
 		|| preg_match('{.lib.yui.*\.js$}', $fileName)) {
 	    $expected = array('svn:eol-style' => 'native');
 	} else if (in_array($base, array('MANIFEST', 'GNUmakefile', 'strings.raw'))
-		|| preg_match('{\.(php|inc|class|tpl|html|css|js|po)$}', $base)) {
+		|| preg_match('{\.(php|inc|class|tpl|html|css|js|xml|po)$}', $base)) {
 	    $expected = array('svn:eol-style' => 'native',
 			      'svn:keywords' => 'Author Date Id Revision');
 	} else {
