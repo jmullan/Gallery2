@@ -485,9 +485,31 @@ class GalleryRemoteController extends GalleryController {
 	$summary = isset($form['extrafield.Summary'])?$form['extrafield.Summary']:NULL;
 	$description = isset($form['extrafield.Description'])?$form['extrafield.Description']:NULL;
 
+	/*
+	 * Don't use uploaded files, because the framework cannot safely copy them.
+	 * Move it to our temporary directory first.
+	 */
+	$platform =& $gallery->getPlatform();
+	if ($platform->is_uploaded_file($file['tmp_name'])) {
+	    $tmpFile = $platform->move_uploaded_file($file['tmp_name']);
+	    if (!$tmpFile) {
+		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
+	    }
+	    $needToDeleteTmpFile = true;
+	} else {
+	    $tmpFile = $file['tmp_name'];
+	    $needToDeleteTmpFile = false;
+	}
+
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
-	    $file['tmp_name'], basename($itemName), $title,
+	    $tmpFile, basename($itemName), $title,
 	    $summary, $description, $mimeType, $parentId);
+
+	/* Get rid of the tmp file if necessary */
+	if ($needToDeleteTmpFile) {
+	    @$platform->unlink($tmpFile);
+	}
+
 	if ($ret) {
 	    return $ret;
 	}
