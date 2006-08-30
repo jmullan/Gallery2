@@ -316,3 +316,28 @@ div#Markup_swatch {
   width: 60px;
   border: 2px solid #aaaaaa;
 }
+
+
+/*** Icons for username, groupname and password form fields ***/
+
+#giFormUsername, .giFormUsername {
+    background: url('userinfo.png') no-repeat 0 1px;
+    padding-left: 17px;
+}
+
+#giFormGroupname {
+    background: url('groupinfo.png') no-repeat 0 1px;
+    padding-left: 17px;
+}
+
+#giFormPassword {
+    background: url('key7-16-bw.gif') no-repeat 0 1px;
+    padding-left: 17px;
+}
+
+/* Opera ignores padding in form inputs; put icons on right side instead */
+#gallery.opera #giFormUsername, #gallery.opera .giFormUsername,
+#gallery.opera #giFormGroupname, #gallery.opera #giFormPassword {
+    background-position: right center;
+}
+
