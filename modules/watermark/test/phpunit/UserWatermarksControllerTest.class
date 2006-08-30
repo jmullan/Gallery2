@@ -313,6 +313,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
     }
 
     function testPermission() {
+        global $gallery;
+
 	GalleryUtilities::putRequestVariable('form[action][add]', 1);
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark', 'allowUserWatermarks', 0);
@@ -327,6 +329,16 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->_becomeGuestUser();
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+
+        list ($ret, $this->_user2) = $this->_createUser(array('locked' => 1));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_markForCleanup($this->_user2);
+        $gallery->setActiveUser($this->_user2);
 
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }

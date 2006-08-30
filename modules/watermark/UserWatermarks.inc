@@ -31,6 +31,8 @@ class UserWatermarksController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
+        global $gallery;
+
 	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
 	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
@@ -41,7 +43,10 @@ class UserWatermarksController extends GalleryController {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if ($isAnonymous || !$isOn) {
+
+        $user = $gallery->getActiveUser();
+
+	if ($isAnonymous || $user->isLocked() || !$isOn) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
@@ -106,7 +111,10 @@ class UserWatermarksView extends GalleryView {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if ($isAnonymous || !$isOn) {
+
+        $user = $gallery->getActiveUser();
+
+	if ($isAnonymous || $user->isLocked() || !$isOn) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
