@@ -57,7 +57,8 @@ class KeywordAlbumSiteAdminController extends GalleryController {
 			   'orderBy' => (empty($form['presort']) ? '' : $form['presort'] . '|')
 					. $form['orderBy'],
 			    'orderDirection' => $form['orderDirection'],
-			    'summaryLinks' => $form['summaryLinks'])
+			    'summaryLinks' => $form['summaryLinks'],
+			    'description' => $form['description'])
 		    as $key => $value) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', $key, $value);
 		if ($ret) {
@@ -92,7 +93,8 @@ class KeywordAlbumSiteAdminView extends GalleryView {
 	}
 
 	if ($form['formName'] != 'KeywordAlbumSiteAdmin') {
-	    foreach (array('themeId', 'orderBy', 'orderDirection', 'summaryLinks') as $key) {
+	    foreach (array('themeId', 'orderBy', 'orderDirection', 'summaryLinks', 'description')
+		    as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'keyalbum', $key);
 		if ($ret) {

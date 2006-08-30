@@ -82,6 +82,7 @@ class KeywordAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[orderBy]', 'originationTimestamp');
 	GalleryUtilities::putRequestVariable('form[orderDirection]', ORDER_DESCENDING);
 	GalleryUtilities::putRequestVariable('form[presort]', 'albumsFirst');
+	GalleryUtilities::putRequestVariable('form[description]', 'test desc');
 	GalleryUtilities::putRequestVariable('form[themeId]', $this->_defaultThemeId);
 	GalleryUtilities::putRequestVariable('form[currentThemeId]', 'keyalbumTest');
 	GalleryUtilities::putRequestVariable('form[key][perPage]', '5');
@@ -111,7 +112,8 @@ class KeywordAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	    }
 	}
 	ksort($params);
-	$this->assertEquals(array('orderBy' => 'albumsFirst|originationTimestamp',
+	$this->assertEquals(array('description' => 'test desc',
+				  'orderBy' => 'albumsFirst|originationTimestamp',
 				  'orderDirection' => ORDER_DESCENDING,
 				  'summaryLinks' => 'album',
 				  'themeId' => $this->_defaultThemeId,

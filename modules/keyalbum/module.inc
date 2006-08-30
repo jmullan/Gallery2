@@ -48,7 +48,7 @@ class KeyAlbumModule extends GalleryModule {
 	    return $ret;
 	}
 	foreach (array('themeId' => '', 'orderBy' => '', 'orderDirection' => '',
-		       'summaryLinks' => 'all')
+		       'summaryLinks' => 'all', 'description' => '')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$this->setParameter($key, $value);

@@ -65,6 +65,15 @@
       </script>
     </td>
   </tr><tr>
+    <td style="vertical-align: top; padding-top: 6px"> {g->text text="Description"} </td>
+    <td>
+      <textarea rows="4" cols="60"
+       name="{g->formVar var="form[description]"}">{$form.description}</textarea>
+      <p class="giDescription">
+	{g->text text="Text for theme to display with all Keyword Albums."}
+      </p>
+    </td>
+  </tr><tr>
     <td> {g->text text="Theme"} </td>
     <td>
       <select name="{g->formVar var="form[themeId]"}">

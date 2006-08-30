@@ -67,6 +67,15 @@ class KeywordAlbumTest extends GalleryTestCase {
     }
 
     function testLoadThemeAndSettingsForAlbum() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'keyalbum');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'description', 'desc');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	GalleryUtilities::putRequestVariable('keyword', 'testkey');
 
 	list ($ret, $theme, $params, $item) = $this->_view->loadThemeAndParameters();
@@ -78,6 +87,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 	$this->assert(is_array($params), 'theme settings');
 	$this->assert(GalleryUtilities::isA($item, 'GalleryDynamicAlbum'), 'item');
 	$this->assert(!isset($item->parent), 'item parent');
+	$this->assertEquals('desc', $item->getDescription(), 'description');
     }
 
     function testLoadThemeAndSettingsForItem() {

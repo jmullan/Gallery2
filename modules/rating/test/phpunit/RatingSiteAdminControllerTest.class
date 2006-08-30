@@ -62,6 +62,7 @@ class RatingSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 'Save');
 	GalleryUtilities::putRequestVariable('form[allowAlbumRating]', 'on');
 	GalleryUtilities::putRequestVariable('form[minLimit]', '1.5');
+	GalleryUtilities::putRequestVariable('form[description]', 'desc');
 	GalleryUtilities::putRequestVariable('form[orderBy]', 'title');
 	GalleryUtilities::putRequestVariable('form[orderDirection]', ORDER_ASCENDING);
 	GalleryUtilities::putRequestVariable('form[presort]', '');
@@ -93,6 +94,7 @@ class RatingSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 	ksort($params);
 	$this->assertEquals(array('allowAlbumRating' => 1,
+				  'description' => 'desc',
 				  'orderBy' => 'title',
 				  'orderDirection' => ORDER_ASCENDING,
 				  'minLimit' => '1.5',
@@ -104,6 +106,7 @@ class RatingSiteAdminControllerTest extends GalleryControllerTestCase {
     function testDisableAlbumRatings() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 'Save');
 	GalleryUtilities::putRequestVariable('form[minLimit]', '3,75');
+	GalleryUtilities::putRequestVariable('form[description]', '');
 	GalleryUtilities::putRequestVariable('form[orderBy]', 'RatingSortOrder');
 	GalleryUtilities::putRequestVariable('form[orderDirection]', ORDER_DESCENDING);
 	GalleryUtilities::putRequestVariable('form[presort]', 'albumsFirst');
@@ -135,6 +138,7 @@ class RatingSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 	ksort($params);
 	$this->assertEquals(array('allowAlbumRating' => 0,
+				  'description' => '',
 				  'orderBy' => 'albumsFirst|RatingSortOrder',
 				  'orderDirection' => ORDER_DESCENDING,
 				  'minLimit' => '3.75',

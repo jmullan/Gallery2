@@ -83,6 +83,11 @@ class RatingAlbumTest extends GalleryTestCase {
     }
 
     function testLoadThemeAndSettingsForAlbum() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rating', 'description', 'test desc');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	GalleryUtilities::putRequestVariable('limit', '4');
 
 	list ($ret, $theme, $params, $item) = $this->_view->loadThemeAndParameters();
@@ -94,6 +99,7 @@ class RatingAlbumTest extends GalleryTestCase {
 	$this->assert(is_array($params), 'theme settings');
 	$this->assert(GalleryUtilities::isA($item, 'GalleryDynamicAlbum'), 'item');
 	$this->assert(!isset($item->parent), 'item parent');
+	$this->assertEquals('test desc', $item->getDescription(), 'description');
     }
 
     function testLoadThemeAndSettingsForItem() {

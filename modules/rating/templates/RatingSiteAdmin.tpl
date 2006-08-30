@@ -38,7 +38,7 @@
     <td colspan="2">
       {capture assign=link}<a href="{g->url arg1="view=rating.RatingAlbum"
 					    arg2="limit=3.5"}">{/capture}
-      {g->text text="The settings below apply to the %sRating Album%s view, which shows highly rated albums from across the Gallery." arg1=$link arg2="</a>"}
+      {g->text text="The settings below apply to the %sRating Album%s view, which shows highly rated items from across the Gallery." arg1=$link arg2="</a>"}
     </td>
   </tr><tr>
     <td> {g->text text="Query limit"} </td>
@@ -51,6 +51,12 @@
 	{g->text text="Invalid number"}
       </div>
       {/if}
+    </td>
+  </tr><tr>
+    <td> {g->text text="Description"} </td>
+    <td>
+      <textarea rows="4" cols="60"
+       name="{g->formVar var="form[description]"}">{$form.description}</textarea>
     </td>
   </tr><tr>
     <td> {g->text text="Sort order"} </td>

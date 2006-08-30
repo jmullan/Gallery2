@@ -241,7 +241,7 @@ class RatingModule extends GalleryModule {
 	    return $ret;
 	}
 	foreach (array('allowAlbumRating' => 0, 'themeId' => '', 'orderBy' => 'RatingSortOrder',
-		       'orderDirection' => ORDER_DESCENDING, 'minLimit' => 2)
+		       'orderDirection' => ORDER_DESCENDING, 'minLimit' => 2, 'description' => '')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$this->setParameter($key, $value);
@@ -271,9 +271,8 @@ class RatingModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	return array(null,
-		array(array('name' => $this->translate('Rating'),
-			'view' => 'rating.RatingSiteAdmin')));
+	return array(null, array(array('name' => $this->translate('Rating'),
+				       'view' => 'rating.RatingSiteAdmin')));
     }
 
     /**
