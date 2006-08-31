@@ -958,6 +958,23 @@ class Db2Generator extends BaseGenerator {
 		'TIMESTAMP-' => 'datestamp'));
     }
 
+    function columnDefinition($child, $includeNotNull=true, $includeDefault=true) {
+	$output = parent::columnDefinition($child, $includeNotNull, false);
+
+	/* DB2 -> Make sure DEFAULT expression doesn't have quotes for numeric */
+	if ($includeDefault) {
+	    $defaultValue = $this->getDefaultElement($child);
+	    if (isset($defaultValue)) {
+		if ($child[1]['content'] != 'INTEGER' && $child[1]['content'] != 'BOOLEAN') {
+		    $defaultValue = "'$defaultValue'";
+		}
+		$output .= " DEFAULT $defaultValue";
+	    }
+	}
+
+	return $output;
+    }
+
     function createSql($node, $index, $lastPeerIndex, $parent) {
 	$output = '';
 
