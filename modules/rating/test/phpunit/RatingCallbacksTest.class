@@ -68,20 +68,27 @@ class RatingCallbacksTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rating', 'enabled', 1,
+						  $this->_album->getId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_smarty = new GallerySmarty();
+	$this->_callbacks = new RatingCallbacks();
     }
 
-
     function testRatingBlocks() {
-	$smarty = new GallerySmarty();
-	$callbacks = new RatingCallbacks();
-	$ret = $callbacks->callback(array('itemId' => $this->_item->getId()),
-		$smarty, 'LoadRating', $this->_userId);
+	$ret = $this->_callbacks->callback(array('itemId' => $this->_item->getId()),
+		$this->_smarty, 'LoadRating', $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$data = $smarty->_tpl_vars['block']['rating']['RatingData'];
-	$summary = $smarty->_tpl_vars['block']['rating']['RatingSummary'];
+	$data = $this->_smarty->_tpl_vars['block']['rating']['RatingData'];
+	$summary = $this->_smarty->_tpl_vars['block']['rating']['RatingSummary'];
 	$this->assertEquals(array('ratingValues' => array(1,2,3,4,5), 'firstCall' => true),
 			    $summary, 'Rating summary array does not match.');
 	$this->assert(isset($data['rating']), 'Missing rating');
@@ -100,16 +107,14 @@ class RatingCallbacksTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$smarty = new GallerySmarty();
-	$callbacks = new RatingCallbacks();
-	$ret = $callbacks->callback(array('itemId' => $this->_album->getId()),
-		$smarty, 'LoadRating', $this->_userId);
+	$ret = $this->_callbacks->callback(array('itemId' => $this->_album->getId()),
+		$this->_smarty, 'LoadRating', $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$data = $smarty->_tpl_vars['block']['rating']['RatingData'];
-	$summary = $smarty->_tpl_vars['block']['rating']['RatingSummary'];
+	$data = $this->_smarty->_tpl_vars['block']['rating']['RatingData'];
+	$summary = $this->_smarty->_tpl_vars['block']['rating']['RatingSummary'];
 	$this->assertEquals(array('ratingValues' => array(1,2,3,4,5), 'firstCall' => true),
 			    $summary, 'Rating summary array does not match.');
 	$this->assert(isset($data['rating']), 'Missing rating');
@@ -126,15 +131,13 @@ class RatingCallbacksTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$smarty = new GallerySmarty();
-	$callbacks = new RatingCallbacks();
-	$ret = $callbacks->callback(array('itemId' => $this->_album->getId()),
-		$smarty, 'LoadRating', $this->_userId);
+	$ret = $this->_callbacks->callback(array('itemId' => $this->_album->getId()),
+		$this->_smarty, 'LoadRating', $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assert(!isset($smarty->_tpl_vars['block']), 'Received rating block.');
+	$this->assert(!isset($this->_smarty->_tpl_vars['block']), 'Received rating block.');
     }
 
     function testRatingPermissionNone() {
@@ -142,15 +145,14 @@ class RatingCallbacksTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$smarty = new GallerySmarty();
-	$callbacks = new RatingCallbacks();
-	$ret = $callbacks->callback(array('itemId' => $this->_item->getId()),
-		$smarty, 'LoadRating', $this->_userId);
+
+	$ret = $this->_callbacks->callback(array('itemId' => $this->_item->getId()),
+		$this->_smarty, 'LoadRating', $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assert(!isset($smarty->_tpl_vars['block']), 'Received rating block.');
+	$this->assert(!isset($this->_smarty->_tpl_vars['block']), 'Received rating block.');
     }
 
     function testRatingPermissionViewOnly() {
@@ -163,16 +165,15 @@ class RatingCallbacksTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$smarty = new GallerySmarty();
-	$callbacks = new RatingCallbacks();
-	$ret = $callbacks->callback(array('itemId' => $this->_item->getId()),
-		$smarty, 'LoadRating', $this->_userId);
+
+	$ret = $this->_callbacks->callback(array('itemId' => $this->_item->getId()),
+		$this->_smarty, 'LoadRating', $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$data = $smarty->_tpl_vars['block']['rating']['RatingData'];
-	$summary = $smarty->_tpl_vars['block']['rating']['RatingSummary'];
+	$data = $this->_smarty->_tpl_vars['block']['rating']['RatingData'];
+	$summary = $this->_smarty->_tpl_vars['block']['rating']['RatingSummary'];
 	$this->assertEquals(array('ratingValues' => array(1,2,3,4,5), 'firstCall' => true),
 			    $summary, 'Rating summary array does not match.');
 	$this->assert(isset($data['rating']), 'Missing rating');
@@ -199,16 +200,15 @@ class RatingCallbacksTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$smarty = new GallerySmarty();
-	$callbacks = new RatingCallbacks();
-	$ret = $callbacks->callback(array('itemId' => $this->_item->getId()),
-		$smarty, 'LoadRating', $this->_userId);
+
+	$ret = $this->_callbacks->callback(array('itemId' => $this->_item->getId()),
+		$this->_smarty, 'LoadRating', $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$data = $smarty->_tpl_vars['block']['rating']['RatingData'];
-	$summary = $smarty->_tpl_vars['block']['rating']['RatingSummary'];
+	$data = $this->_smarty->_tpl_vars['block']['rating']['RatingData'];
+	$summary = $this->_smarty->_tpl_vars['block']['rating']['RatingSummary'];
 	$this->assertEquals(array('ratingValues' => array(1,2,3,4,5), 'firstCall' => true),
 			    $summary, 'Rating summary array does not match.');
 	$this->assert(isset($data['rating']), 'Missing rating');
@@ -218,6 +218,36 @@ class RatingCallbacksTest extends GalleryTestCase {
 	$this->assert(isset($data['votes']), 'Missing votes');
 	$this->assert(isset($data['averagePercent']), 'Missing average percent');
 	$this->assertEquals(true, $data['canRate'], 'canRate is false.');
+    }
+
+    function testRatingForItemInDisabledAlbum() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rating', 'enabled', 0,
+						  $this->_album->getId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_callbacks->callback(array('itemId' => $this->_item->getId()),
+		$this->_smarty, 'LoadRating', $this->_userId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!isset($this->_smarty->_tpl_vars['block']), 'Received rating block.');
+    }
+
+    function testRatingForDisabledAlbum() {
+	list ($ret, $subalbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_callbacks->callback(array('itemId' => $subalbum->getId()),
+		$this->_smarty, 'LoadRating', $this->_userId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!isset($this->_smarty->_tpl_vars['block']), 'Received rating block.');
     }
 }
 ?>

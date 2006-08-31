@@ -35,13 +35,26 @@ class RatingCallbacks {
 		return $ret;
 	    }
 
-	    list ($ret, $allowAlbumRating) =
-		GalleryCoreApi::getPluginParameter('module', 'rating', 'allowAlbumRating');
+	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+		$albumId = $itemId;
+		list ($ret, $allowAlbumRating) =
+		    GalleryCoreApi::getPluginParameter('module', 'rating', 'allowAlbumRating');
+		if ($ret) {
+		    return $ret;
+		}
+		if (!$allowAlbumRating) {
+		    return null;
+		}
+	    } else {
+		$albumId = $item->getParentId();
+	    }
+
+	    list ($ret, $enabled) =
+		GalleryCoreApi::getPluginParameter('module', 'rating', 'enabled', $albumId);
 	    if ($ret) {
 		return $ret;
 	    }
-
-	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem') && !$allowAlbumRating) {
+	    if (!$enabled) {
 		return null;
 	    }
 
