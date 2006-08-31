@@ -138,7 +138,11 @@
   </p>
   {if !empty($form.error.version.vulnerable)}
   <p class="giWarning">
-    {g->text text="Warning: This version of %s has a %sknown vulnerability%s that can be exploited to cause infinite loops. You may wish to upgrade. This determination may be inaccurate for %sDebian%s and %sMandrake%s." arg1=$AdminImageMagick.version.0 arg2="<a href=\"http://nvd.nist.gov/nvd.cfm?cvename=CVE-2005-1739\">" arg3="</a>" arg4="<a href=\"http://packages.debian.org/stable/graphics/imagemagick\">" arg5="</a>" arg6="<a href=\"http://wwwnew.mandriva.com/security/advisories?name=MDKSA-2005:107\">" arg7="</a>"}
+    {g->text text="Warning: This version of %s has known vulnerabilities that could be exploited to execute arbitrary commands or cause a denial of service (references: %s1%s, %s2%s, %s3%s, %s4%s). You may wish to upgrade. This determination may be inaccurate for ImageMagick packages in Linux distributions." arg1=$AdminImageMagick.version.0
+     arg2="<a href=\"http://nvd.nist.gov/nvd.cfm?cvename=CVE-2006-3744\">" arg3="</a>"
+     arg4="<a href=\"http://nvd.nist.gov/nvd.cfm?cvename=CVE-2006-3743\">" arg5="</a>"
+     arg6="<a href=\"http://nvd.nist.gov/nvd.cfm?cvename=CVE-2006-4144\">" arg7="</a>"
+     arg8="<a href=\"http://nvd.nist.gov/nvd.cfm?cvename=CVE-2005-1739\">" arg9="</a>"}
   </p>
   <input type="checkbox" id="cbForceSave" name="{g->formVar var="form[forceSave]"}"/>
   <label for="cbForceSave">

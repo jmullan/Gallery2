@@ -568,7 +568,7 @@ class ImageMagickToolkitHelper {
 	    if (preg_match('/(ImageMagick|GraphicsMagick)\s+([\d\.r-]+)/', $resultLine, $matches)) {
 		$version = array($matches[1], $matches[2]);
 		$vulnerable = ($version[0] == 'ImageMagick' &&
-			       version_compare($version[1], '6.2.2.3', '<')) ||
+			       version_compare($version[1], '6.2.9-1', '<')) ||
 			      ($version[0] == 'GraphicsMagick' &&
 			       version_compare($version[1], '1.1.6-r1', '<'));
 		return array(null, $version, $vulnerable);
