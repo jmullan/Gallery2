@@ -80,7 +80,7 @@ class KeywordAlbumView extends GalleryView {
 	if ($ret) {
 	    return array($ret, null, null, null);
 	}
-	$item->setDescription($moduleParams['description']);
+	$item->setDescription($module->getDescription());
 
 	if (empty($moduleParams['themeId'])) {
 	    list ($ret, $theme) = $this->loadThemeForItem();
