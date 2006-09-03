@@ -86,15 +86,14 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    if ($ret) {
 		$debug .= "Error: building $result[0]: " . $ret->getAsHtml();
 	    }
-	    if ($wasBuilt) {
-		$built++;
-	    }
 	    if ($ret || $derivative->getIsBroken()) {
 		if (!$broken++) {
 		    print '<br/><h3>' . $module->translate('Debug output for failed items:') .
 			  '</h3>';
 		}
 		print '<pre class="gcBackground1 gcBorder2">' . $debug . '</pre>';
+	    } else if ($wasBuilt) {
+		$built++;
 	    }
 
 	    if (++$i % 5 == 0 || $i == $total) {
