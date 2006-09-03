@@ -28,7 +28,7 @@
   }
 
   var isInit = false;
-  
+
   function appendColorElement(elementId, button) {
     var colorChooser = document.getElementById('Markup_colorChooser');
     if (!button.g2ToggleMode) {
@@ -62,7 +62,7 @@
     }
     button.g2ToggleMode = !button.g2ToggleMode;
   }
-  
+
   {/literal}
   function appendUrlElement(elementId, bbCodeElement) {ldelim}
     var element = document.getElementById(elementId);
@@ -81,14 +81,14 @@
   {rdelim}
   // ]]>
 </script>
-<script type="text/javascript" src="{g->url href="lib/yui/yahoo-min.js"}" ></script>
-<script type="text/javascript" src="{g->url href="lib/yui/event-min.js"}" ></script>
-<script type="text/javascript" src="{g->url href="lib/yui/dom-min.js"}" ></script>
-<script type="text/javascript" src="{g->url href="lib/yui/animation-min.js"}" ></script>
-<script type="text/javascript" src="{g->url href="lib/yui/dragdrop-min.js"}" ></script>
-<script type="text/javascript" src="{g->url href="lib/yui/color.js"}" ></script>
-<script type="text/javascript" src="{g->url href="lib/yui/slider-min.js"}" ></script>
-<script type="text/javascript" src="{g->url href="lib/javascript/ColorChooser.js"}" ></script>
+<script type="text/javascript" src="{g->url href="lib/yui/yahoo-min.js"}"></script>
+<script type="text/javascript" src="{g->url href="lib/yui/event-min.js"}"></script>
+<script type="text/javascript" src="{g->url href="lib/yui/dom-min.js"}"></script>
+<script type="text/javascript" src="{g->url href="lib/yui/animation-min.js"}"></script>
+<script type="text/javascript" src="{g->url href="lib/yui/dragdrop-min.js"}"></script>
+<script type="text/javascript" src="{g->url href="lib/yui/color.js"}"></script>
+<script type="text/javascript" src="{g->url href="lib/yui/slider-min.js"}"></script>
+<script type="text/javascript" src="{g->url href="lib/javascript/ColorChooser.js"}"></script>
 {/if}
 
 <div class="gbMarkupBar">
@@ -116,37 +116,38 @@
 	 value="{g->text text="color"}" id="{$element}_color"
 	 onclick="appendColorElement('{$element}', this)"/>
 </div>
+
 {if !empty($firstMarkupBar)}
 <div id="Markup_colorChooser">
-	<div id="Markup_colorHandle">&nbsp;</div>
-	<div id="Markup_pickerDiv">
-	  <img id="Markup_pickerbg" src="{g->url href="modules/core/data/pickerbg.png"}" alt="" />
-	  <div id="Markup_selector"><img src="{g->url href="modules/core/data/select.gif"}" /></div> 
-	</div>
+  <div id="Markup_colorHandle">&nbsp;</div>
+  <div id="Markup_pickerDiv">
+    <img id="Markup_pickerBg" src="{g->url href="modules/core/data/pickerbg.png"}" alt=""/>
+    <div id="Markup_selector"><img src="{g->url href="modules/core/data/select.gif"}"/></div>
+  </div>
 
-	 <div id="Markup_hueBg">
-	  <div id="Markup_hueThumb"><img src="{g->url href="modules/core/data/hline.png"}" /></div> 
-	</div> 
+  <div id="Markup_hueBg">
+    <div id="Markup_hueThumb"><img src="{g->url href="modules/core/data/hline.png"}"/></div>
+  </div>
 
-	<div id="Markup_valdiv">
-		<br />
-		R <input name="rval" id="Markup_rval" type="text" value="0" size="3" maxlength="3" />
-		H <input name="hval" id="Markup_hval" type="text" value="0" size="3" maxlength="3" />
-		<br />
-		G <input name="gval" id="Markup_gval" type="text" value="0" size="3" maxlength="3" />
-		S <input name="gsal" id="Markup_sval" type="text" value="0" size="3" maxlength="3" />
-		<br />
-		B <input name="bval" id="Markup_bval" type="text" value="0" size="3" maxlength="3" />
-		V <input name="vval" id="Markup_vval" type="text" value="0" size="3" maxlength="3" />
-		<br />
-		<br />
-		# <input name="hexval" id="Markup_hexval" type="text" value="0" size="6" maxlength="6" />
-		<br />
-		<input value="Done" class="yui-log-button" style="font-size: 11px;" type="button"
-		  onclick="userUpdate()">
-	</div>
-	<div id="Markup_swatch">&nbsp;</div>	
-    <div id="Markup_hint">You can also specify [color=red]</div>
+  <div id="Markup_valdiv">
+    <br/>
+    R <input name="rval" id="Markup_rval" type="text" value="0" size="3" maxlength="3"/>
+    H <input name="hval" id="Markup_hval" type="text" value="0" size="3" maxlength="3"/>
+    <br/>
+    G <input name="gval" id="Markup_gval" type="text" value="0" size="3" maxlength="3"/>
+    S <input name="gsal" id="Markup_sval" type="text" value="0" size="3" maxlength="3"/>
+    <br/>
+    B <input name="bval" id="Markup_bval" type="text" value="0" size="3" maxlength="3"/>
+    V <input name="vval" id="Markup_vval" type="text" value="0" size="3" maxlength="3"/>
+    <br/>
+    <br/>
+    # <input name="hexval" id="Markup_hexval" type="text" value="0" size="6" maxlength="6"/>
+    <br/>
+    <input value="Done" class="yui-log-button" style="font-size: 11px;" type="button"
+      onclick="userUpdate()">
+  </div>
+  <div id="Markup_swatch">&nbsp;</div>
+  <div id="Markup_hint">{g->text text="You can also specify [color=%s]" arg1="red"}</div>
 </div>
 {/if}
 {/if}
