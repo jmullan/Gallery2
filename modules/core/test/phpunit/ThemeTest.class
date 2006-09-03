@@ -301,7 +301,7 @@ class ThemeTest extends GalleryTestCase {
 	$this->assertEquals(array('href' => 'upgrade/'), $redirect);
     }
 
-    function testVariableReferenceAccrossLoadCommonTemplateData() {
+    function testVariableReferenceAcrossLoadCommonTemplateData() {
 	$template = new GalleryTemplate('/path/to/fake/templatedir');
 	$theme =& $template->getVariableByReference('theme');
 
@@ -315,6 +315,30 @@ class ThemeTest extends GalleryTestCase {
 	$theme =& $template->getVariableByReference('theme');
 	$this->assertEquals('bar', $theme['foo']);
     }
+
+    function testBlockPreloads() {
+	/* Used to hardcode just sidebar/album/photoBlocks, now all *Blocks parameters */
+	$template = new GalleryTemplate('/path/to/fake/templatedir');
+	$view = new ThemeTestView();
+	for ($i = 1; $i <= 4; $i++) {
+	    list ($success, $block[$i]) =
+		$this->_theme->packSetting('block-list', '[["core.ThemeTestBlock' . $i . '"]]');
+	    if (!$success) {
+		return $this->assert(false, 'block-list error');
+	    }
+	}
+	list ($ret, $results) = $this->_theme->loadTemplate($view, $template, $this->_item,
+		array('sidebarBlocks' => $block[1], 'albumBlocks' => $block[2],
+		    'photoBlocks' => $block[3], 'moreBlocks' => $block[4]),
+		array('body' => 'test.tpl'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(
+		array('core.ThemeTestBlock1', 'core.ThemeTestBlock2', 'core.ThemeTestBlock3',
+		      'core.ThemeTestBlock4'),
+		array_keys($this->_theme->_preloadedBlocks));
+    }
 }
 
 /**
@@ -323,14 +347,25 @@ class ThemeTest extends GalleryTestCase {
 class ThemeTestTheme extends GalleryTheme {
     function ThemeTestTheme() {
 	global $gallery;
-
 	$this->setId('themetest');
 	$this->setName('ThemeTest Theme');
 	$this->setDescription($gallery->i18n('Unit test theme'));
 	$this->setVersion('0.9.0');
 	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
 	$this->setRequiredThemeApi(GalleryTheme::getApiVersion());
+	$this->_preloadedBlocks = array();
     }
+
+    function preloadBlock(&$template, $blockId, $blockParams=array()) {
+	$this->_preloadedBlocks[$blockId] = true;
+	return null;
+    }
+}
+
+/**
+ * Test view
+ */
+class ThemeTestView extends GalleryView {
 }
 
 /**

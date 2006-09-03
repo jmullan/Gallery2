@@ -729,25 +729,23 @@ class GalleryTheme extends GalleryPlugin {
 	$theme['useFullScreen'] = !empty($viewResults['useFullScreen']);
 
 	/* Unserialize our blocks and preload them if necessary */
-	foreach (array('sidebarBlocks', 'albumBlocks', 'photoBlocks') as $blockKey) {
-	    if (!isset($theme['params'][$blockKey])) {
+	$seen = array();
+	foreach ($theme['params'] as $key => $value) {
+	    if (substr($key, -6) != 'Blocks') {
 		continue;
 	    }
+	    $theme['params'][$key] = unserialize($value);
 
-	    $theme['params'][$blockKey] = unserialize($theme['params'][$blockKey]);
-
-	    $seen = array();
-	    if ($theme['params'][$blockKey]) {
-		foreach ($theme['params'][$blockKey] as $block) {
+	    if ($theme['params'][$key]) {
+		foreach ($theme['params'][$key] as $block) {
 		    $seen[$block[0]][] = $block[1];
 		}
 	    }
-
-	    foreach ($seen as $blockId => $blockParams) {
-		$ret = $this->preloadBlock($template, $blockId, $blockParams);
-		if ($ret) {
-		    return array($ret, null);
-		}
+	}
+	foreach ($seen as $blockId => $paramSet) {
+	    $ret = $this->preloadBlock($template, $blockId, $paramSet);
+	    if ($ret) {
+		return array($ret, null);
 	    }
 	}
 
