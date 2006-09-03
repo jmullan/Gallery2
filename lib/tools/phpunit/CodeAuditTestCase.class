@@ -77,7 +77,13 @@ class CodeAuditTestCase extends GalleryTestCase {
 		switch ($xmlValues[$entry]['attributes'][$KIND]) {
 		case 'dir':
 		    if (!empty($xmlValues[$entry]['attributes']['NAME'])) {
+			if (empty($xmlValues[$entry]['attributes']['DELETED']) ||
+			    $xmlValues[$entry]['attributes']['DELETED'] != 'true') {
 			$dirs[] = $xmlValues[$entry]['attributes']['NAME'];
+			} else {
+			    print "Skipping deleted dir: " .
+				"$dirPath/{$xmlValues[$entry]['attributes']['NAME']}<br/>";
+			}
 		    }
 		    break;
 
