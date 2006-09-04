@@ -53,7 +53,7 @@
 	  <span class="block-core-SystemLink">
 	    <a href="{$theme.params.extraLinkUrl}">{$theme.params.extraLink}</a>
 	  </span>
-	  {g->text text="&laquo;"}
+	  &laquo;
 	  {/if}
 	  {g->block type="core.SystemLinks"
 		    order="core.SiteAdmin core.YourAccount core.Login core.Logout"
