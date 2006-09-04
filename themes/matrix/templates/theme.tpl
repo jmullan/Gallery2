@@ -21,15 +21,15 @@
   <body class="gallery">
     <div {g->mainDivAttributes}>
       {*
-       * Some module views (eg slideshow) want the full screen.  So for those, we
-       * don't draw a header, footer, navbar, etc.  Those views are responsible for
-       * drawing everything.
+       * Some module views (eg slideshow) want the full screen.  So for those, we don't draw
+       * a header, footer, navbar, etc.  Those views are responsible for drawing everything.
        *}
       {if $theme.useFullScreen}
 	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
       {else}
       <div id="gsHeader">
-	<a href="{g->url}"><img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/></a>
+	<a href="{g->url}"><img src="{g->url href="images/galleryLogo_sm.gif"}"
+	 width="107" height="48" alt=""/></a>
       </div>
 
       <div id="gsNavBar" class="gcBorder1">
@@ -67,9 +67,8 @@
     </div>
 
     {*
-     * Give Gallery a chance to output any cleanup code, like javascript that
-     * needs to be run at the end of the <body> tag.  If you take this out, some
-     * code won't work properly.
+     * Give Gallery a chance to output any cleanup code, like javascript that needs to be run
+     * at the end of the <body> tag.  If you take this out, some code won't work properly.
      *}
     {g->trailer}
 

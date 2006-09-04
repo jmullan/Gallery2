@@ -41,9 +41,8 @@
     <div {g->mainDivAttributes}>
     <div id="white-rap">
       {*
-       * Some module views (eg slideshow) want the full screen.  So for those, we
-       * don't draw a header, footer, navbar, etc.  Those views are responsible for
-       * drawing everything.
+       * Some module views (eg slideshow) want the full screen.  So for those, we don't draw
+       * a header, footer, navbar, etc.  Those views are responsible for drawing everything.
        *}
       {if $theme.useFullScreen}
 	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
@@ -95,9 +94,8 @@
     </div>
 
     {*
-     * Give Gallery a chance to output any cleanup code, like javascript that
-     * needs to be run at the end of the <body> tag.  If you take this out, some
-     * code won't work properly.
+     * Give Gallery a chance to output any cleanup code, like javascript that needs to be run
+     * at the end of the <body> tag.  If you take this out, some code won't work properly.
      *}
     {g->trailer}
 
