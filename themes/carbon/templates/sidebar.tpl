@@ -4,14 +4,16 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div id="sidebar" class="gcPopupBackground" style="position:absolute; left:-190px; top:{$theme.params.sidebarTop}px; padding:1px;">
+<div id="sidebar" class="gcPopupBackground"
+ style="position:absolute; left:-190px; top:{$theme.params.sidebarTop}px; padding:1px;">
   <table cellspacing="0" cellpadding="0">
     <tr>
       <td align="left" style="padding-left:5px;">
-	<h2>Actions</h2>
+	<h2>{g->text text="Actions"}</h2>
       </td>
       <td align="right" style="padding-right:2px;">
-	<div class="buttonHideSidebar"><a href="javascript: slideOut('sidebar')" title="Close"></a></div>
+	<div class="buttonHideSidebar"><a href="javascript: slideOut('sidebar')"
+	 title="{g->text text="Close"}"></a></div>
       </td>
     </tr>
     <tr>

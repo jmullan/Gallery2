@@ -15,7 +15,8 @@
 	  <table>
 	    <tr>
 	      <td class="gsActionIcon">
-		<div class="buttonShowSidebar"><a href="javascript: slideIn('sidebar')" title="Show Sidebar"></a></div>
+		<div class="buttonShowSidebar"><a href="javascript: slideIn('sidebar')"
+		 title="{g->text text="Show Sidebar"}"></a></div>
 	      </td>
 	      {if (isset($links) || isset($theme.itemLinks))}
 		{if !isset($links)}{assign var="links" value=$theme.itemLinks}{/if}
@@ -23,21 +24,25 @@
 		{foreach from=$links item=link}
 		  {if $link.moduleId == "cart"}
 		  <td class="gsActionIcon">
-		    <div class="buttonCart"><a href="{g->url params=$link.params}" title="{$link.text}"></a></div>
+		    <div class="buttonCart"><a href="{g->url params=$link.params}"
+		     title="{$link.text}"></a></div>
 		  </td>
 		  {elseif $link.moduleId == "comment"}
 		    {if $link.params.view == "comment.AddComment" }
 		    <td class="gsActionIcon">
-		      <div class="buttonAddComment"><a href="{g->url params=$link.params}" title="{$link.text}"></a></div>
+		      <div class="buttonAddComment"><a href="{g->url params=$link.params}"
+		       title="{$link.text}"></a></div>
 		    </td>
 		    {elseif $link.params.view == "comment.ShowAllComments"}
 		    <td class="gsActionIcon">
-		      <div class="buttonViewComments"><a href="{g->url params=$link.params}" title="{$link.text}"></a></div>
+		      <div class="buttonViewComments"><a href="{g->url params=$link.params}"
+		       title="{$link.text}"></a></div>
 		    </td>
 		    {/if}
 		  {elseif $link.moduleId == "slideshow"}
 		  <td class="gsActionIcon">
-		    <div class="buttonViewSlideshow"><a href="{g->url params=$link.params}" title="{$link.text}"></a></div>
+		    <div class="buttonViewSlideshow"><a href="{g->url params=$link.params}"
+		     title="{$link.text}"></a></div>
 		  </td>
 		  {/if}
 		{/foreach}
@@ -45,9 +50,6 @@
 	    </tr>
 	  </table>
 	</div>
-
-	{if empty($theme.parents)}
-	{/if}
 
 	{if !empty($theme.navigator)}
 	<div class="gbNavigator">
@@ -80,7 +82,7 @@
 		</div>
 		<div class="gbBlock">
 		  {* Show the album blocks chosen for this theme *}
-		  {foreach from=$theme.params.albumBlocks2 item=block}
+		  {foreach from=$theme.params.albumUpperBlocks item=block}
 		    {g->block type=$block.0 params=$block.1}
 		  {/foreach}
 		</div>
@@ -93,7 +95,8 @@
 		  {g->text text="This album is empty."}
 		  {if isset($theme.permissions.core_addDataItem)}
 		  <br/>
-		  <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd" arg3="itemId=`$theme.item.id`"}">
+		  <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd"
+				   arg3="itemId=`$theme.item.id`"}">
 		    {g->text text="Add a photo!"}
 		  </a>
 		  {/if}
@@ -118,23 +121,27 @@
 			style="width: {$theme.columnWidthPct}%">
 		      {if ($child.canContainChildren || $child.entityType == 'GalleryLinkItem')}
 		      {assign var=frameType value="albumFrame"}
+		      {capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
+						      arg2="itemId=`$child.id`"}{/capture}
 		      {else}
 		      {assign var=frameType value="itemFrame"}
+		      {capture assign=linkUrl}{g->url params=$theme.pageUrl
+						      arg1="itemId=`$child.id`"}{/capture}
 		      {/if}
 		      <div>
 			{if isset($theme.params.$frameType) && isset($child.thumbnail)}
 			{g->container type="imageframe.ImageFrame" frame=$theme.params.$frameType
 				      width=$child.thumbnail.width height=$child.thumbnail.height}
-			  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
+			  <a href="{$linkUrl}">
 			    {g->image id="%ID%" item=$child image=$child.thumbnail class="%CLASS% giThumbnail"}
 			  </a>
 			{/g->container}
 			{elseif isset($child.thumbnail)}
-			  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
+			  <a href="{$linkUrl}">
 			    {g->image item=$child image=$child.thumbnail class="giThumbnail"}
 			  </a>
 			{else}
-			  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}" class="giMissingThumbnail">
+			  <a href="{$linkUrl}" class="giMissingThumbnail">
 			    {g->text text="no thumbnail"}
 			  </a>
 			{/if}
@@ -147,7 +154,7 @@
 			<table cellpadding="0" cellspacing="0">
 			  <tr>
 			    <td class="giTitleIcon">
-			      <img src="{g->url href='themes/carbon/images/'}album.gif" alt=""/>
+			      <img src="{g->url href="themes/carbon/images/album.gif"}" alt=""/>
 			    </td>
 			    <td>
 			      <p class="giTitle">{g->text text="%s" arg1=$child.title|markup}</p>
@@ -201,12 +208,9 @@
 	</div>
 	{/if}
 
-	{* g->block type="core.GuestPreview" class="gbBlock" *}
-
-	{* Our emergency edit link, if the user all blocks containing edit links *}
+	{* Our emergency edit link, if the user removes all blocks containing edit links *}
 	{g->block type="core.EmergencyEditItemLink" class="gbBlock"
-		  checkSidebarBlocks=true
-		  checkAlbumBlocks=true}
+		  checkSidebarBlocks=true checkAlbumBlocks=true}
 
 	{* Show any other album blocks (comments, etc) *}
 	{foreach from=$theme.params.albumBlocks item=block}

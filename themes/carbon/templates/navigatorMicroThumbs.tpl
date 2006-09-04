@@ -30,7 +30,14 @@
 	</td>
       {else}
 	<td align="center" width="44" height="40">
-	  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$peer.id`"}">
+	  {if ($peer.canContainChildren || $peer.entityType == 'GalleryLinkItem')}
+	    {capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
+					    arg2="itemId=`$peer.id`"}{/capture}
+	  {else}
+	    {capture assign=linkUrl}{g->url params=$theme.pageUrl
+					    arg1="itemId=`$peer.id`"}{/capture}
+	  {/if}
+	  <a href="{$linkUrl}">
 	    {g->image item=$peer image=$peer.thumbnail maxSize=40 title="$title"}
 	  </a>
 	</td>

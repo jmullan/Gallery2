@@ -33,9 +33,9 @@ class CarbonTheme extends GalleryTheme {
 	$this->setId('carbon');
 	$this->setName($gallery->i18n('Carbon'));
 	$this->setDescription($gallery->i18n('Gallery2 theme by mincel.com'));
-	$this->setVersion('1.1.1');
-	$this->setRequiredCoreApi(array(7, 0));
-	$this->setRequiredThemeApi(array(2, 1));
+	$this->setVersion('1.1.2');
+	$this->setRequiredCoreApi(array(7, 4));
+	$this->setRequiredThemeApi(array(2, 4));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
@@ -54,8 +54,8 @@ class CarbonTheme extends GalleryTheme {
 			array('comment.ViewComments', array()))),
 		  'navigatorPhotoTop' => 1, 'navigatorPhotoBottom' => 1,
 		  'photoProperties' => 1, 'fullSize' => 1,
-		  'albumBlocks2' => serialize(array()),
-		  'photoBlocks2' => serialize(array()),
+		  'albumUpperBlocks' => serialize(array()),
+		  'photoUpperBlocks' => serialize(array()),
 		  'sidebarTop' => 106, 'maxMicroThumbs' => 12,
 		  'extraLink' => '', 'extraLinkUrl' => '', 'copyright' => '',
 	));
@@ -67,7 +67,7 @@ class CarbonTheme extends GalleryTheme {
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Add in our custom settings */
@@ -87,23 +87,26 @@ class CarbonTheme extends GalleryTheme {
 			    'name' => $this->translate('Show \'Full Size\' icon'),
 			    'type' => 'checkbox',
 			    'value' => $params['fullSize']);
-	$settings[] = array('key' => 'albumBlocks2',
-			    'name' => $this->translate('Blocks to show on album pages (below description)'),
+	$settings[] = array('key' => 'albumUpperBlocks',
+			    'name' => $this->translate(
+				'Blocks to show on album pages (below description)'),
 			    'type' => 'block-list',
 			    'typeParams' => array('packType' => 'block-list'),
-			    'value' => $params['albumBlocks2']);
-	$settings[] = array('key' => 'photoBlocks2',
-			    'name' => $this->translate('Blocks to show on photo pages (below description)'),
+			    'value' => $params['albumUpperBlocks']);
+	$settings[] = array('key' => 'photoUpperBlocks',
+			    'name' => $this->translate(
+				'Blocks to show on photo pages (below description)'),
 			    'type' => 'block-list',
 			    'typeParams' => array('packType' => 'block-list'),
-			    'value' => $params['photoBlocks2']);
+			    'value' => $params['photoUpperBlocks']);
 	$settings[] = array('key' => 'sidebarTop',
 			    'name' => $this->translate('Sidebar top position'),
 			    'type' => 'text-field',
-			    'typeParams' => array('size' => 2),
+			    'typeParams' => array('size' => 4),
 			    'value' => $params['sidebarTop']);
 	$settings[] = array('key' => 'maxMicroThumbs',
-			    'name' => $this->translate('Maximum number of micro navigation thumbnails'),
+			    'name' => $this->translate(
+				'Maximum number of micro navigation thumbnails'),
 			    'type' => 'text-field',
 			    'typeParams' => array('size' => 2),
 			    'value' => $params['maxMicroThumbs']);
@@ -137,7 +140,7 @@ class CarbonTheme extends GalleryTheme {
 	if (empty($settings['maxMicroThumbs']) || !is_numeric($settings['maxMicroThumbs'])) {
 	    $error['maxMicroThumbs'] = $this->translate('You must enter a number greater than 0');
 	}
-	foreach (array('albumBlocks2') as $blockKey) {
+	foreach (array('albumUpperBlocks') as $blockKey) {
 	    if (isset($standard[$blockKey])) {
 		if (!empty($settings[$blockKey])) {
 		    list ($success, $newValue) =
@@ -149,7 +152,7 @@ class CarbonTheme extends GalleryTheme {
 		}
 	    }
 	}
-	foreach (array('photoBlocks2') as $blockKey) {
+	foreach (array('photoUpperBlocks') as $blockKey) {
 	    if (isset($standard[$blockKey])) {
 		if (!empty($settings[$blockKey])) {
 		    list ($success, $newValue) =
@@ -165,296 +168,6 @@ class CarbonTheme extends GalleryTheme {
     }
 
     /**
-     * @see GalleryTheme::loadTemplate
-     */
-    function loadTemplate($view, &$template, $item, $params, $viewResults) {
-	global $gallery;
-	$theme =& $template->getVariableByReference('theme');
-
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$theme['themeUrl'] =
-	    $urlGenerator->generateUrl(array('href' => 'themes/' . $this->getId()));
-
-	/* By default we're not in preview mode, and are the active user */
-	$theme['guestPreviewMode'] = 0;
-	$theme['actingUserId'] = $gallery->getActiveUserId();
-
-	list ($ret, $theme['markupType']) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
-	if ($ret) {
-	    $theme['markupType'] = 'none';
-	}
-
-	$theme['params'] = $params;
-	$theme['useFullScreen'] = !empty($viewResults['useFullScreen']);
-
-	/* Unserialize our blocks and preload them if necessary */
-	foreach (array('sidebarBlocks', 'albumBlocks', 'photoBlocks', 'albumBlocks2', 'photoBlocks2') as $blockKey) {
-	    if (!isset($theme['params'][$blockKey])) {
-		continue;
-	    }
-
-	    $theme['params'][$blockKey] = unserialize($theme['params'][$blockKey]);
-
-	    $seen = array();
-	    foreach ($theme['params'][$blockKey] as $block) {
-		$seen[$block[0]][] = $block[1];
-	    }
-
-	    foreach ($seen as $blockId => $blockParams) {
-		$ret = $this->preloadBlock($template, $blockId, $blockParams);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-	}
-
-	if ($this->getId() == 'fallbackTheme') {
-	    /* If theme failed to load then we're done */
-	    $theme['isFallback'] = true;
-	    return array(null, $viewResults);
-	}
-
-	if (!GalleryCapabilities::can('showSidebarBlocks') && !empty($params['sidebarBlocks'])) {
-	    $extractedSidebarBlocks = $theme['params']['sidebarBlocks'];
-	    $theme['params']['sidebarBlocks'] = array();
-	}
-
-	/* Load icon pack if available */
-	list ($ret, $iconpack) = GalleryCoreApi::newFactoryInstance('IconsInterface_1_0');
-	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if (isset($iconpack)) {
-	    $ret = $iconpack->init($template);
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	/* Load color pack if the theme supports them (and they're available) */
-	if (!empty($params['colorpack'])) {
-	    list ($ret, $colorpack) = GalleryCoreApi::newFactoryInstance('ColorPackInterface_1_0');
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if (isset($colorpack)) {
-		$ret = $colorpack->selectColorPack($template, $params['colorpack']);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-	}
-
-	/*
-	 * Figure out what type of view we've got.  This is lame and not very OO.  We should
-	 * create a view hierarchy that lets them implement their own showPage() method.
-	 */
-	switch ($view->getViewType()) {
-	case VIEW_TYPE_ADMIN:
-	    $theme['pageType'] = 'admin';
-	    $theme['adminTemplate'] = $viewResults['body'];
-	    $theme['adminL10Domain'] = $view->getL10Domain();
-	    list ($ret, $result) = $this->showAdminPage(
-		$template, $item, $params, $viewResults['body']);
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    break;
-
-	case VIEW_TYPE_SHOW_ITEM:
-	    $this->_cacheablePage = true;
-	    $session =& $gallery->getSession();
-
-	    if ($session->get('theme.guestPreviewMode')) {
-		$theme['guestPreviewMode'] = 1;
-		list ($ret, $theme['actingUserId']) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-
-	    /* Albums have their own settings.  Photos use their parent album's settings */
-	    if ($item->getCanContainChildren()) {
-		$theme['pageType'] = 'album';
-
-		/* If we care about pagination, then figure out the current page and total pages */
-		$perPage = $this->getPageSize($params);
-
-		$page = GalleryUtilities::getRequestVariables('page');
-		if ($perPage == 0) {
-		    $page = 1;
-		} else if (empty($page)) {
-		    /*
-		     * We don't have a page number.  If we have a highlight id, then figure out what
-		     * page that id is on and redirect to that page.
-		     */
-		    $highlightId = GalleryUtilities::getRequestVariables('highlightId');
-		    if (!empty($highlightId)) {
-			list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-
-			$page = 1;
-			for ($i = 0; $i < sizeof($childIds); $i++) {
-			    if ($childIds[$i] == $highlightId) {
-				/* Found it */
-				$page = ceil(($i+1) / $perPage);
-				break;
-			    }
-			}
-
-			/* Redirect to the new page */
-			$redirect = array('view' => 'core.ShowItem', 'itemId' => $item->getId());
-			if ($page != 1) {
-			    $redirect['page'] = $page;
-			}
-			return array(null, array('redirect' => $redirect));
-		    } else {
-			$page = 1;
-		    }
-		}
-
-		if (!empty($perPage)) {
-		    if (empty($page)) {
-			$page = 1;
-		    }
-
-		    /* Use the pagination to calculate the child item ids to load */
-		    $start = $perPage * ($page - 1);
-		    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds(
-			$item, $start, $perPage, $theme['actingUserId']);
-		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    /*
-		     * Load up our child count so that we can figure out the max pages.  We do this
-		     * after we get the child ids because the 'childCount' common template data also
-		     * gets the child counts for the child albums.
-		     */
-		    $ret = $this->loadCommonTemplateData(
-			$template, $item, $params, array('childCount'), $childIds, false);
-		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    /* Store the total pages in the theme */
-		    $theme['totalPages'] = ceil($theme['childCount'] / $perPage);
-		    $theme['currentPage'] = $page;
-
-		    /* If our page is over the max, redirect the user to the max page */
-		    if ($page > $theme['totalPages'] && $theme['childCount'] > 0) {
-			$redirect = array('view' => 'core.ShowItem', 'itemId' => $item->getId());
-			if ($theme['totalPages'] != 1) {
-			    $redirect['page'] = $theme['totalPages'];
-			}
-			return array(null, array('redirect' => $redirect));
-		    }
-		} else {
-		    /*
-		     * No pagination; load all children (this isn't going to scale, but the theme is
-		     * the boss... for now).
-		     */
-		    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds(
-			$item, null, null, $theme['actingUserId']);
-		    if ($ret) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		}
-
-		list ($ret, $result) =
-		    $this->showAlbumPage($template, $item, $params, $childIds);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    } else {
-		$theme['pageType'] = 'photo';
-		list ($ret, $result) = $this->showPhotoPage($template, $item, $params);
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-
-	    /* Load image frames if the theme supports them (and they're available) */
-	    if (!empty($params['albumFrame']) ||
-		!empty($params['itemFrame']) ||
-		!empty($params['photoFrame'])) {
-		list ($ret, $imageframe) =
-		    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if (isset($imageframe)) {
-		    $frameIds = array();
-		    if ($item->getCanContainChildren()) {
-			foreach (array('albumFrame', 'itemFrame') as $key) {
-			    if (!empty($params[$key])) {
-				$frameIds[] = $theme['params'][$key] = $params[$key];
-			    }
-			}
-		    } else {
-			if (!empty($params['photoFrame'])) {
-			    $frameIds[] = $theme['photoFrame'] = $params['photoFrame'];
-			}
-		    }
-		    if (!empty($frameIds)) {
-			$ret = $imageframe->init($template, $frameIds);
-			if ($ret) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-		    }
-		}
-	    }
-	    break;
-
-	case VIEW_TYPE_PROGRESS_BAR:
-	    /* We only use this for progressbar views (for now) */
-	    $theme['pageType'] = 'progressbar';
-	    list ($ret, $result) = $this->showProgressBarPage($template, $item, $params);
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    break;
-
-	default: /* VIEW_TYPE_MODULE */
-	    $theme['pageType'] = 'module';
-	    $theme['moduleTemplate'] = $viewResults['body'];
-	    $theme['moduleL10Domain'] = $view->getL10Domain();
-	    list ($ret, $result) = $this->showModulePage(
-		$template, $item, $params, $viewResults['body']);
-	    if ($ret) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    break;
-	}
-
-	if (!is_array($result)) {
-	    $result = array('body' => sprintf('themes/%s/templates/%s', $this->getId(), $result),
-			    'cacheable' => $this->_cacheablePage ? $item->getId() : false);
-	}
-
-	if (isset($extractedSidebarBlocks)) {
-	    $templateAdapter =& $gallery->getTemplateAdapter();
-
-	    /* Render the sidebar blocks and save them */
-	    foreach ($extractedSidebarBlocks as $block) {
-		$template->setVariable(
-		    'SidebarBlock', array('type' => $block[0], 'params' => $block[1]));
-		list ($ret, $result['sidebarBlocksHtml'][]) =
-		    $template->fetch('gallery:modules/core/templates/SidebarBlock.tpl');
-		if ($ret) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-	}
-
-	return array(null, $result);
-    }
-
-    /**
      * @see GalleryTheme::showAlbumPage
      */
     function showAlbumPage(&$template, $item, $params, $childIds) {
@@ -465,7 +178,7 @@ class CarbonTheme extends GalleryTheme {
 		  'thumbnails', 'pageNavigator', 'jumpRange'),
 	     $childIds);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	/* Add in our extra stuff */
@@ -487,7 +200,7 @@ class CarbonTheme extends GalleryTheme {
 	}
 	$ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -500,7 +213,7 @@ class CarbonTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -513,7 +226,7 @@ class CarbonTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
@@ -533,10 +246,35 @@ class CarbonTheme extends GalleryTheme {
 	$ret = $this->loadCommonTemplateData(
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret, null);
 	}
 
 	return array(null, 'theme.tpl');
+    }
+
+    /**
+     * @see GalleryPlugin::upgrade
+     */
+    function upgrade($currentVersion) {
+	if (isset($currentVersion) && version_compare($currentVersion, '1.1.2', '<')) {
+	    /* Rename albumBlocks2 and photoBlocks2 */
+	    foreach (array('albumBlocks2' => 'albumUpperBlocks',
+			   'photoBlocks2' => 'photoUpperBlocks') as $oldKey => $newKey) {
+		list ($ret, $value) = $this->getParameter($oldKey);
+		if ($ret) {
+		    return $ret;
+		}
+		$ret = $this->setParameter($newKey, $value);
+		if ($ret) {
+		    return $ret;
+		}
+		$ret = $this->removeParameter($oldKey);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+	return null;
     }
 }
 ?>

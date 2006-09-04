@@ -17,14 +17,16 @@
 	<table cellpadding="0" cellspacing="0"><tr>
 	  {if isset($theme.navigator.first)}
 	  <td>
-	    <div class="buttonFirst"><a href="{g->url params=$theme.navigator.first.urlParams}" title="First"></a></div>
+	    <div class="buttonFirst"><a href="{g->url params=$theme.navigator.first.urlParams}"
+	     title="{g->text text="First"}"></a></div>
 	  </td>
 	  {else}
 	  <td>{g->text text="&nbsp;"}</td>
 	  {/if}
 	  {if isset($theme.navigator.back) && (!isset($theme.navigator.first) || $theme.navigator.back.urlParams != $theme.navigator.first.urlParams)}
 	  <td>
-	    <div class="buttonPrev"><a href="{g->url params=$theme.navigator.back.urlParams}" title="Previous"></a></div>
+	    <div class="buttonPrev"><a href="{g->url params=$theme.navigator.back.urlParams}"
+	     title="{g->text text="Previous"}"></a></div>
 	  </td>
 	  {/if}
 	</tr></table>
@@ -48,12 +50,14 @@
 	    {foreach from=$links item=link}
 	      {if $link.moduleId == "cart"}
 	      <td class="gsActionIcon">
-		<div class="buttonCart"><a href="{g->url params=$link.params}" title="{$link.text}"></a></div>
+		<div class="buttonCart"><a href="{g->url params=$link.params}"
+		 title="{$link.text}"></a></div>
 	      </td>
 	      {elseif $link.moduleId == "comment"}
 		{if $link.params.view == "comment.AddComment" }
 		<td class="gsActionIcon">
-		  <div class="buttonAddComment"><a href="{g->url params=$link.params}" title="{$link.text}"></a></div>
+		  <div class="buttonAddComment"><a href="{g->url params=$link.params}"
+		   title="{$link.text}"></a></div>
 		</td>
 		{/if}
 	      {/if}
@@ -69,16 +73,21 @@
 
 	      {if !empty($block.exif.LoadExifInfo.exifData)}
 	      <td class="gsActionIcon">
-		<div class="buttonExif"><a href="javascript:void(0);" onclick="toggleExif('photo','exif'); return false;" title="Photo Properties"></a></div>
+		<div class="buttonExif"><a href="javascript:void(0);"
+		 onclick="toggleExif('photo','exif'); return false;"
+		 title="{g->text text="Photo Properties"}"></a></div>
 	      </td>
 	      {/if}
 	    {/if}
 	  {/foreach}
 	  {/if}
 	  {if $theme.params.fullSize && !empty($theme.sourceImage) && count($theme.imageViews) > 1}
-	    {capture name="url"}{g->url arg1="view=core.DownloadItem" arg2="itemId=`$theme.sourceImage.id`"}{/capture}
+	    {capture name="url"}{g->url arg1="view=core.DownloadItem"
+				 arg2="itemId=`$theme.sourceImage.id`"}{/capture}
 	    <td class="gsActionIcon">
-	      <div class="buttonPopup"><a href="{$smarty.capture.url}" target="_blank" onclick="popImage(this.href, '{$theme.item.title|escape:"quotes"}'); return false;" title="Full Size"></a></div>
+	      <div class="buttonPopup"><a href="{$smarty.capture.url}" target="_blank"
+	       onclick="popImage(this.href, '{$theme.item.title|escape:"quotes"}'); return false;"
+	       title="{g->text text="Full Size"}"></a></div>
 	    </td>
 	  {/if}
 	  </tr>
@@ -90,12 +99,14 @@
 	<table cellpadding="0" cellspacing="0"><tr>
 	  {if isset($theme.navigator.next) && (!isset($theme.navigator.last) || $theme.navigator.next.urlParams != $theme.navigator.last.urlParams)}
 	  <td>
-	    <div class="buttonNext"><a href="{g->url params=$theme.navigator.next.urlParams}" title="Next"></a></div>
+	    <div class="buttonNext"><a href="{g->url params=$theme.navigator.next.urlParams}"
+	     title="{g->text text="Next"}"></a></div>
 	  </td>
 	  {/if}
 	  {if isset($theme.navigator.last)}
 	  <td>
-	    <div class="buttonLast"><a href="{g->url params=$theme.navigator.last.urlParams}" title="Last"></a></div>
+	    <div class="buttonLast"><a href="{g->url params=$theme.navigator.last.urlParams}"
+	     title="{g->text text="Last"}"></a></div>
 	  </td>
 	  {else}
 	  <td>{g->text text="&nbsp;"}</td>

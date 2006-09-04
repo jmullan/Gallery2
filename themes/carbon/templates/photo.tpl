@@ -18,7 +18,8 @@
 	  <table>
 	    <tr>
 	      <td class="gsActionIcon">
-		<div class="buttonShowSidebar"><a href="javascript: slideIn('sidebar')" title="Show Sidebar"></a></div>
+		<div class="buttonShowSidebar"><a href="javascript: slideIn('sidebar')"
+		 title="{g->text text="Show Sidebar"}"></a></div>
 	      </td>
 	      {if (isset($links) || isset($theme.itemLinks))}
 		{if !isset($links)}{assign var="links" value=$theme.itemLinks}{/if}
@@ -26,12 +27,14 @@
 		{foreach from=$links item=link}
 		  {if $link.moduleId == "slideshow"}
 		  <td class="gsActionIcon">
-		    <div class="buttonViewSlideshow"><a href="{g->url params=$link.params}" title="{$link.text}"></a></div>
+		    <div class="buttonViewSlideshow"><a href="{g->url params=$link.params}"
+		     title="{$link.text}"></a></div>
 		  </td>
 		  {elseif $link.moduleId == "comment"}
 		    {if $link.params.view == "comment.ShowAllComments"}
 		    <td class="gsActionIcon">
-		      <div class="buttonViewComments"><a href="{g->url params=$link.params}" title="{$link.text}"></a></div>
+		      <div class="buttonViewComments"><a href="{g->url params=$link.params}"
+		       title="{$link.text}"></a></div>
 		    </td>
 		    {/if}
 		  {/if}
@@ -116,7 +119,7 @@
 		  </div>
 		  <div class="gbBlock">
 		    {* Show the photo blocks chosen for this theme *}
-		    {foreach from=$theme.params.photoBlocks2 item=block}
+		    {foreach from=$theme.params.photoUpperBlocks item=block}
 		      {g->block type=$block.0 params=$block.1}
 		    {/foreach}
 		  </div>
@@ -151,14 +154,17 @@
 	{* Show any other photo blocks (comments, exif etc) *}
 	{foreach from=$theme.params.photoBlocks item=block}
 	  {if $block.0 == 'exif.ExifInfo'}
-	    <div id="exif" class="gcPopupBackground" style="position:absolute; left:0px; top:0px; padding:1px; visibility:hidden;">
+	    <div id="exif" class="gcPopupBackground"
+	     style="position:absolute; left:0px; top:0px; padding:1px; visibility:hidden;">
 	      <table cellspacing="0" cellpadding="0">
 		<tr>
 		  <td style="padding-left:5px;">
-		    <h2>Exif</h2>
+		    <h2>{g->text text="Exif"}</h2>
 		  </td>
 		  <td align="right">
-		    <div class="buttonClose"><a href="javascript:void(0);" onclick="toggleExif('photo','exif'); return false;" title="Close"></a></div>
+		    <div class="buttonClose"><a href="javascript:void(0);"
+		     onclick="toggleExif('photo','exif'); return false;"
+		     title="{g->text text="Close"}"></a></div>
 		  </td>
 		</tr>
 		<tr>
@@ -173,12 +179,9 @@
 	  {/if}
 	{/foreach}
 
-	{* g->block type="core.GuestPreview" class="gbBlock" *}
-
-	{* Our emergency edit link, if the user all blocks containing edit links *}
+	{* Our emergency edit link, if the user removes all blocks containing edit links *}
 	{g->block type="core.EmergencyEditItemLink" class="gbBlock"
-		  checkSidebarBlocks=true
-		  checkPhotoBlocks=true}
+		  checkSidebarBlocks=true checkPhotoBlocks=true}
       </div>
     </td>
   </tr>
