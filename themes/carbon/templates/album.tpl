@@ -210,7 +210,7 @@
 
 	{* Our emergency edit link, if the user removes all blocks containing edit links *}
 	{g->block type="core.EmergencyEditItemLink" class="gbBlock"
-		  checkSidebarBlocks=true checkAlbumBlocks=true}
+		  checkBlocks="sidebar,album,albumUpper"}
 
 	{* Show any other album blocks (comments, etc) *}
 	{foreach from=$theme.params.albumBlocks item=block}

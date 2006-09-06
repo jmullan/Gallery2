@@ -93,6 +93,5 @@
   {/foreach}
 
   {* Our emergency edit link, if the user removes all blocks containing edit links *}
-  {g->block type="core.EmergencyEditItemLink" class="gbBlock"
-	    checkSidebarBlocks=true checkAlbumBlocks=true}
+  {g->block type="core.EmergencyEditItemLink" class="gbBlock" checkBlocks="sidebar,album"}
 </div>

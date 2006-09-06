@@ -50,19 +50,26 @@ class CoreCallbacks {
 	    return null;
 
 	case 'ShouldShowEmergencyEditItemLink':
+	    $check = isset($params['checkBlocks']) ? $params['checkBlocks'] : '';
+	    /**
+	     * @todo Remove support for check[Sidebar|Album|Photo]Blocks on next major api bump
+	     */
+	    foreach (array('checkSidebarBlocks' => 'sidebar',
+			   'checkAlbumBlocks' => 'album',
+			   'checkPhotoBlocks' => 'photo') as $oldParam => $key) {
+		if (!empty($params[$oldParam])) {
+		    $check .= empty($check) ? $key : ",$key";
+		}
+	    }
+
 	    $block['core']['ShouldShowEmergencyEditItemLink'] = false;
 	    if (isset($params['permissions']['core_edit'])) {
 		$block['core']['ShouldShowEmergencyEditItemLink'] = true;
-		foreach (array('checkSidebarBlocks' => 'sidebarBlocks',
-			       'checkAlbumBlocks' => 'albumBlocks',
-			       'checkPhotoBlocks' => 'photoBlocks')
-			as $key => $value) {
-		    if (!empty($params[$key])) {
-			foreach ($theme['params'][$value] as $entry) {
-			    if ($entry[0] == 'core.ItemLinks') {
-				$block['core']['ShouldShowEmergencyEditItemLink'] = false;
-				break 2;
-			    }
+		foreach (explode(',', $check) as $key) {
+		    foreach ($theme['params'][$key . 'Blocks'] as $entry) {
+			if ($entry[0] == 'core.ItemLinks') {
+			    $block['core']['ShouldShowEmergencyEditItemLink'] = false;
+			    break 2;
 			}
 		    }
 		}

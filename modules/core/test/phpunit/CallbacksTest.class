@@ -67,7 +67,7 @@ class CallbacksTest extends GalleryTestCase {
 	    'sidebarBlocks' => array(),
 	    'albumBlocks' => array(),
 	    'photoBlocks' => array());
-	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true,
+	$ret = $this->_callback->callback(array('checkBlocks' => 'sidebar',
 						'permissions' => array('core_edit' => 1)),
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
@@ -75,8 +75,7 @@ class CallbacksTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(
-	    true,
+	$this->assertEquals(true,
 	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
 	    'we should be showing the link');
     }
@@ -86,7 +85,7 @@ class CallbacksTest extends GalleryTestCase {
 	    'sidebarBlocks' => array(array('core.ItemLinks', array())),
 	    'albumBlocks' => array(),
 	    'photoBlocks' => array());
-	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true,
+	$ret = $this->_callback->callback(array('checkBlocks' => 'sidebar',
 						'permissions' => array('core_edit' => 1)),
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
@@ -94,8 +93,7 @@ class CallbacksTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(
-	    false,
+	$this->assertEquals(false,
 	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
 	    'we should not be showing the link');
     }
@@ -105,17 +103,15 @@ class CallbacksTest extends GalleryTestCase {
 	    'sidebarBlocks' => array(),
 	    'albumBlocks' => array(array('core.ItemLinks', array())),
 	    'photoBlocks' => array(array('core.ItemLinks', array())));
-	$ret = $this->_callback->callback(
-	    array('checkSidebarBlocks' => true, 'checkAlbumBlocks' => true,
-		  'permissions' => array('core_edit' => 1)),
-	    $this->_smarty,
-	    'ShouldShowEmergencyEditItemLink');
+	$ret = $this->_callback->callback(array('checkBlocks' => 'sidebar,album',
+						'permissions' => array('core_edit' => 1)),
+					  $this->_smarty,
+					  'ShouldShowEmergencyEditItemLink');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(
-	    false,
+	$this->assertEquals(false,
 	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
 	    'we should not be showing the link');
     }
@@ -125,7 +121,7 @@ class CallbacksTest extends GalleryTestCase {
 	    'sidebarBlocks' => array(),
 	    'albumBlocks' => array(array('core.ItemLinks', array())),
 	    'photoBlocks' => array(array('core.ItemLinks', array())));
-	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true,
+	$ret = $this->_callback->callback(array('checkBlocks' => 'sidebar',
 						'permissions' => array('core_edit' => 1)),
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
@@ -133,18 +129,16 @@ class CallbacksTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(
-	    true,
+	$this->assertEquals(true,
 	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
 	    'we should be showing the link');
     }
 
     function testShouldShowEmergencyEditItemLinkNoPermissions() {
 	$this->_smarty->_tpl_vars['theme']['params'] = array(
-	    'sidebarBlocks' => array(),
-	    'albumBlocks' => array(),
+	    'myBlocks' => array(),
 	    'photoBlocks' => array());
-	$ret = $this->_callback->callback(array('checkSidebarBlocks' => true,
+	$ret = $this->_callback->callback(array('checkBlocks' => 'my',
 						'permissions' => array()),
 					  $this->_smarty,
 					  'ShouldShowEmergencyEditItemLink');
@@ -152,8 +146,7 @@ class CallbacksTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(
-	    false,
+	$this->assertEquals(false,
 	    $this->_smarty->_tpl_vars['block']['core']['ShouldShowEmergencyEditItemLink'],
 	    'we should not be showing the link');
     }

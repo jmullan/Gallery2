@@ -58,6 +58,9 @@ class GalleryCoreApi {
      * - change GalleryCoreApi::error to only take error code and error message
      * - remove GalleryCapabilities (major bump of embed api too?)
      * - remove 'link' entry in Gallery.class constructor
+     * - remove support for check[Sidebar|Album|Photo]Blocks deprecated params
+     *   for ShouldShowEmergencyEditItemLink in Callbacks.inc
+     *   and comment in blocks/EmergencyEditItemLink.tpl
      */
     function getApiVersion() {
 	return array(7, 10);
