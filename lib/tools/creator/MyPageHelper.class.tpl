@@ -37,7 +37,7 @@ class {$viewName}Helper {ldelim}
     /**
      * Load a text value out of the database for a given item id.
      *
-     * @param int the item id
+     * @param int $itemId the item id
      * @return array object GalleryStatus a status code
      *               string the value
      */

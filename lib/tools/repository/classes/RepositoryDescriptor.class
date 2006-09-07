@@ -20,13 +20,10 @@
 
 /**
  * This class contains method for creating plugin descriptors.
- *
- * @author Jozef Selesi <selesi at gmail dot com>
- *
- * @version $Revision$ $Date$
  * @package RepositoryTools
  * @subpackage Classes
- * @module RepositoryDescriptor
+ * @author Jozef Selesi <selesi at gmail dot com>
+ * @version $Revision$ $Date$
  */
 class RepositoryDescriptor extends RepositoryObject {
 
@@ -66,8 +63,7 @@ class RepositoryDescriptor extends RepositoryObject {
      * Initializes the descriptor object and gets all plugin
      * meta data required for a complete descriptor definition.
      *
-     * @param object GalleryPlugin plugin to create descriptor for
-     * @param string directory to write the descriptor to
+     * @param string $outputDir directory to write the descriptor to
      * @return object GalleryStatus a status code
      */
     function init($outputDir) {
@@ -188,8 +184,9 @@ class RepositoryDescriptor extends RepositoryObject {
     /**
      * Gets all file-related plugin meta data from the filesystem.
      *
-     * @param string path to process
-     * @param array array to write meta data to
+     * @param string $path path to process
+     * @param array $data array to write meta data to
+     * @param string $pluginDir
      * @return object GalleryStatus a status code
      */
     function getFileMetaData($path, &$data, &$pluginDir) {
@@ -251,7 +248,7 @@ class RepositoryDescriptor extends RepositoryObject {
     /**
      * Determines which package(s) the specified file or directory should be in.
      *
-     * @param string path relative to the plugin directory
+     * @param string $path path relative to the plugin directory
      * @return array packages that apply to the specified file or directory.
      */
     function getPackageNames($path) {
@@ -276,7 +273,7 @@ class RepositoryDescriptor extends RepositoryObject {
     /**
      * Gets a list of directories that are in the specified package.
      *
-     * @param string package name
+     * @param string $package package name
      * @return array directory list
      */
     function getDirectoriesInPackage($package) {
@@ -293,7 +290,7 @@ class RepositoryDescriptor extends RepositoryObject {
     /**
      * Gets a list of files that are in the specified package.
      *
-     * @param string package name
+     * @param string $package package name
      * @return array file list
      */
     function getFilesInPackage($package) {
@@ -331,7 +328,7 @@ class RepositoryDescriptor extends RepositoryObject {
      * Runs the following CVS command in the plugin directory:
      * cvs log -N -r . | grep "^date: " | sort | tail -1 | cut -f2,3 -d' '
      *
-     * @param string directory path
+     * @param string $pluginDir directory path
      * @return array object GalleryStatus a status code
      *		     string timestamp in 'yyyymmddhhmmss' format
      */

@@ -27,12 +27,11 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
  * Provides a template, methods for setting the output path and writing the
  * contents of the object to that path from the template.
  *
- * @author Jozef Selesi <selesi at gmail dot com>
- *
- * @version $Revision$ $Date$
  * @package RepositoryTools
  * @subpackage Classes
- * @module RepositoryObject
+ * @author Jozef Selesi <selesi at gmail dot com>
+ * @version $Revision$ $Date$
+ * @abstract
  */
 class RepositoryObject {
 
@@ -97,10 +96,9 @@ class RepositoryObject {
     /**
      * Sets the output directory for this object.
      *
-     * Checks to make sure the specified directory exists are
-     * made before setting the directory.
+     * Checks to make sure the specified directory exists are made before setting the directory.
      *
-     * @param string object output directory
+     * @param string $outputDir object output directory
      * @return object GalleryStatus a status code
      */
     function setOutputDir($outputDir) {
@@ -120,15 +118,13 @@ class RepositoryObject {
      * Writes the contents of the object from the template to the specified path.
      *
      * If a 'contents' template variable is set, it will be directly written to the output
-     * path, otherwise Smarty will process the specified template and its output will be
-     * written.
+     * path, otherwise Smarty will process the specified template and its output will be written.
      *
-     * @param boolean overwrite file if it exists
-     * @param object RepositoryDescriptor an initialized RepositoryDescriptor
+     * @param boolean $overwriteFile overwrite file if it exists
      * @return array object GalleryStatus a status code
      *		     boolean whether the file was written to disk
      */
-    function writeToDisk($overwriteFile = false) {
+    function writeToDisk($overwriteFile=false) {
 	global $gallery;
 
 	$outputFilePath = $this->_outputDir . $this->_fileName;

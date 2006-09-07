@@ -275,17 +275,17 @@ class GalleryTestCase extends TestCase {
 	return (int)$this->_rootAlbumId;
     }
 
-    /** @param object GalleryEntity to delete in tearDown */
+    /** @param object GalleryEntity $entity to delete in tearDown */
     function _markForCleanup($entity) {
 	$this->_cleanup['entity'][] = $entity;
     }
 
-    /** @param string module id to unregister from factory in tearDown */
+    /** @param string $moduleId to unregister from factory in tearDown */
     function _markFactoryModuleForCleanup($moduleId) {
 	$this->_cleanup['factoryModuleId'][] = $moduleId;
     }
 
-    /** @param string id of toolkit to unregister in tearDown */
+    /** @param string $toolkitId to unregister in tearDown */
     function _markToolkitForCleanup($toolkitId) {
 	$this->_cleanup['toolkitId'][] = $toolkitId;
     }
@@ -293,9 +293,9 @@ class GalleryTestCase extends TestCase {
     /**
      * Store plugin parameters to be restored in tearDown
      *
-     * @param string pluginType
-     * @param string pluginId
-     * @return GalleryStatus
+     * @param string $pluginType
+     * @param string $pluginId
+     * @return object GalleryStatus
      */
     function _markPluginParametersForCleanup($pluginType, $pluginId) {
 	list($ret, $pluginParams) =
@@ -328,11 +328,11 @@ class GalleryTestCase extends TestCase {
     /**
      * Create a random album
      *
-     * @param int the id of the parent album
-     * @param array (optional) fields to set in the new instance (field => value, ..)
+     * @param int $parentId the id of the parent album
+     * @param array $fields (optional) fields to set in the new instance (field => value, ..)
      * @return array object GalleryStatus a status code
      *               object GalleryAlbumItem
-     * @access private
+     * @access protected
      */
     function _createRandomAlbum($parentId, $fields=array()) {
 	global $gallery;
@@ -388,14 +388,14 @@ class GalleryTestCase extends TestCase {
     /**
      * Create a random data item
      *
-     * @param int the id of the parent album
-     * @param string (optional) mime type (default application/unknown)
-     * @param array (optional) fields
-     * @param string (optional) data file (default __FILE__)
-     * @param string (optional) class to instantiate (default from factory)
+     * @param int $parentId the id of the parent album
+     * @param string $mimeType (optional) mime type (default application/unknown)
+     * @param array $fields (optional) fields to set in the new instance (field => value, ..)
+     * @param string $inputFile (optional) data file (default __FILE__)
+     * @param string $itemClass (optional) class to instantiate (default from factory)
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem
-     * @access private
+     * @access protected
      */
     function _createRandomDataItem($parentId, $mimeType='application/unknown',
 				   $fields=array(), $inputFile=__FILE__,
@@ -467,11 +467,11 @@ class GalleryTestCase extends TestCase {
     /**
      * Create a random link item
      *
-     * @param int the id of the parent album
-     * @param object GalleryItem target item
+     * @param int $parentId the id of the parent album
+     * @param object GalleryItem $targetItem target item
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem
-     * @access private
+     * @access protected
      */
     function _createLinkedItem($parentId, $targetItem) {
 	global $gallery;
@@ -513,10 +513,11 @@ class GalleryTestCase extends TestCase {
     /**
      * Create a random user
      *
-     * @param string (optional) suffix to add on username
+     * @param string $userTag (optional) suffix to add on username
+     * @param string $password (optional)
      * @return array object GalleryStatus a status code
      *               object GalleryUser
-     * @access private
+     * @access protected
      */
     function _createRandomUser($userTag=null, $password='password') {
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
@@ -552,10 +553,10 @@ class GalleryTestCase extends TestCase {
     /**
      * Create a random group
      *
-     * @param string (optional) suffix to add on group name
+     * @param string $groupTag (optional) suffix to add on group name
      * @return array object GalleryStatus a status code
      *               object GalleryGroup
-     * @access private
+     * @access protected
      */
     function _createRandomGroup($groupTag=null) {
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');

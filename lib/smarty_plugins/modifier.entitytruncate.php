@@ -31,10 +31,10 @@
  *           optionally splitting in the middle of a word, and
  *           appending the $etc string.  Won't split an HTML entity.
  *
- * @param string the input string
- * @param integer what to truncate it to (max length upon return)
- * @param string what to use to indicate that there was more (default: "...")
- * @param boolean break words or not?
+ * @param string $string the input string
+ * @param int $length what to truncate it to (max length upon return)
+ * @param string $etc what to use to indicate that there was more (default: "...")
+ * @param boolean $breakWords break words or not?
  * @return string
  */
 function smarty_modifier_entitytruncate($string, $length, $etc='...', $breakWords=false) {

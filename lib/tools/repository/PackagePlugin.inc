@@ -167,7 +167,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
     /**
      * Creates a list of all existing plugins with optional action links.
      *
-     * @param array 'action' => array(UrlGeneratorParameters)
+     * @param array $links 'action' => array(UrlGeneratorParameters)
      * @return array object GalleryStatus a status code
      *		     array plugin list
      */

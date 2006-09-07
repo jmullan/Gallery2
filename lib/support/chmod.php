@@ -184,14 +184,13 @@ printFooter();
  ************************************************************/
 
 /**
- * Changes the filesystem permissions of a file or a folder recursively
- * Also prints out folder names online on success / error and prints out 
- * filenames on error as well.
+ * Changes the filesystem permissions of a file or a folder recursively.  Also prints out folder
+ * names online on success / error and prints out filenames on error as well.
  * 
- * @param string absolute path to folder/file that should be chmod'ed
- * @param int (octal) new permissions for folders
- * @param int (octal) new permissions for files
- * @param int unix timestamp of last webserver/php timeout counter-measure  
+ * @param string $filename absolute path to folder/file that should be chmod'ed
+ * @param int $folderPermissions (octal) new permissions for folders
+ * @param int $filePermissions (octal) new permissions for files
+ * @param int $start unix timestamp of last webserver/php timeout counter-measure  
  * @return null on success, int <> 0 on error
  */
 function chmodRecursively($filename, $folderPermissions, $filePermissions, $start) {
@@ -279,8 +278,7 @@ function getGalleryStoragePath() {
 }
 
 /**
- * Class to represent a set of filesystem permission bits, e.g. 0755 with a few convenience methods.
- * We need to 
+ * Class to represent a set of filesystem permission bits, eg. 0755 with a few convenience methods.
  */
 class PermissionBits {
     /**
@@ -290,8 +288,7 @@ class PermissionBits {
     
     /**
      * Constructor
-     * @param integer permission bits in decimal integer representation
-     *        e.g. octdec(0755)
+     * @param int $bits permission bits in decimal integer representation, eg. octdec(0755)
      */
     function PermissionBits($bits) {
     	$this->_bits = decoct($bits);
@@ -299,7 +296,7 @@ class PermissionBits {
     
     /**
      * Returns a new PermissionBits object
-     * @param string permission set in string representation, e.g. "755"
+     * @param string $bitsAsString permission set in string representation, e.g. "755"
      * @return PermissionBits object
      * @static
      */
@@ -377,7 +374,7 @@ function isModulesOrThemesDirWriteable() {
 
 /**
  * Make the themes/ and modules/ dir writeable or read-only
- * @param boolean true to make the dirs writeable, false to make them read-only
+ * @param boolean $makeItWriteable true to make the dirs writeable, false to make them read-only
  * @return null on success, non 0 integer on error 
  */
 function chmodModulesAndThemesDir($makeItWriteable) {
@@ -400,7 +397,7 @@ function isGalleryDirWriteable() {
 
 /**
  * Chmod the whole gallery dir recursively either read-only or writeable
- * @param boolean true to make the dirs writeable, false to make them read-only
+ * @param boolean $makeItWriteable true to make the dirs writeable, false to make them read-only
  * @return null on success, non 0 integer on error 
  */
 function chmodGalleryDirRecursively($makeItWriteable) {

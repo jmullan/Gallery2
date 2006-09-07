@@ -287,8 +287,8 @@ function parsePoFiles($poFiles) {
  * regardless of percentage. When two entries are otherwise equal and both have a 'name' entry,
  * then the sort is by 'name' ASC.
  *
- * @param array  first entry to sort
- * @param array  second entry to sort
+ * @param array $a first entry to sort
+ * @param array $b second entry to sort
  * @return int   -1, 0, +1, depending on the comparision
  */
 function sortByPercentDone($a, $b) {

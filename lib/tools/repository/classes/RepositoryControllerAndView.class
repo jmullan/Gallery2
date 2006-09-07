@@ -19,15 +19,12 @@
  */
 
 /**
- * This is a very simple abstract controller used by the repository tools. It
- * also loads views and sets their variables.
- *
- * @author Jozef Selesi <selesi at gmail dot com>
- *
- * @version $Revision$ $Date$
+ * This is a very simple abstract controller used by the repository tools.
+ * It also loads views and sets their variables.
  * @package RepositoryTools
  * @subpackage Classes
- * @module RepositoryController
+ * @author Jozef Selesi <selesi at gmail dot com>
+ * @version $Revision$ $Date$
  */
  class RepositoryControllerAndView {
 
@@ -54,8 +51,8 @@
      * Checks if the specified template exists in repository/templates/ and includes it.
      * Include any data used by the template as an array in the second parameter.
      *
-     * @param string name of the template file to load, without the extension
-     * @param array template data
+     * @param string $view name of the template file to load, without the extension
+     * @param array $data template data
      * @return object GalleryStatus a status code
      */
     function showView($view, $data) {

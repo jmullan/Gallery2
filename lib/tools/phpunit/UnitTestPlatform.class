@@ -51,10 +51,10 @@ class UnitTestPlatform {
     /**
      * Specify inputs and outputs for a function
      *
-     * @param string the function name
-     * @param mixed input values; any key starting with 'fuzzy' will use value as regexp
-     * @param mixed output values
-     * @param boolean true if this platform call is optional
+     * @param string $function the function name
+     * @param array $inputs input values; any key starting with 'fuzzy' will use value as regexp
+     * @param mixed $outputs output values
+     * @param boolean $optional true if this platform call is optional
      */
     function setReply($function, $inputs, $outputs, $optional=false) {
 	$_GET['UnitTestPlatform']['replies'][] = array($function, $inputs, $outputs, $optional);
