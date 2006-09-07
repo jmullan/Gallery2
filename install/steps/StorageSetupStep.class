@@ -236,8 +236,8 @@ class StorageSetupStep extends InstallStep {
      * Try to fetch a a probe file from the storage folder and check if the returned page contains
      * the probe string. If so, the storage folder is web-accessible (read: not secure).
      *
-     * @param string the URL that should be fetched.
-     * @param string expected string from the fetched file.
+     * @param string $url the URL that should be fetched
+     * @param string $probeString expected string from the fetched file
      * @return array(boolean false if check procedure failed due to platform issues,
      *               boolean true if the folder is accessible from the web (=insecure))
      */

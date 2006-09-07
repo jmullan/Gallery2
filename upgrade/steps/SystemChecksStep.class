@@ -458,10 +458,10 @@ class SystemChecksStep extends UpgradeStep {
     /**
      * Check up to $max files / dirs in a directory tree if they are still read/writeable
      *
-     * @param string directory
-     * @param integer number of already tested files / dirs
-     * @param integer max files/dirs to check
-     * @return  boolean success
+     * @param string $dirname directory
+     * @param int $tested number of already tested files / dirs
+     * @param int $max max files/dirs to check
+     * @return boolean success
      */
     function _checkStorageSubDirectory($dirname, &$tested, $max) {
 	global $gallery;

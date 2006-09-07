@@ -40,10 +40,9 @@ class StatusTemplate {
 
     /**
      * Render a single status message
-     *
-     * @param string the status title
-     * @param string the status description
-     * @param float the percent complete (ranging from 0 to 1)
+     * @param string $title the status title
+     * @param string $description the status description
+     * @param float $percentComplete ranging from 0 to 1
      * @return object GalleryStatus a status code
      */
     function renderStatusMessage($title, $description, $percentComplete) {
@@ -61,8 +60,7 @@ class StatusTemplate {
 
     /**
      * Render the body and footer (everything below the status message)
-     *
-     * @param array the template data
+     * @param array $templateData
      */
     function renderBodyAndFooter($templateData) {
 	global $steps;
@@ -78,9 +76,7 @@ class StatusTemplate {
     }
 
     /**
-     * Hide the status block.
-     *
-     * @param array the template data
+     * Hide the status block
      */
     function hideStatusBlock() {
 	$templateData = array();
@@ -91,8 +87,7 @@ class StatusTemplate {
     /**
      * Render the whole page, except for the status block and messages.  This is the way
      * that we render most pages that don't have interactive status messages.
-     *
-     * @param array the template data
+     * @param array $templateData
      */
     function renderHeaderBodyAndFooter($templateData) {
 	/*

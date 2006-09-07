@@ -372,8 +372,8 @@ class DatabaseSetupStep extends InstallStep {
      *      - CREATE INDEX, DROP INDEX
      *      - CREATE SEQUENCE, DROP SEQUENCE
      *
-     * @param string db type platform name (i.e. not mysqlt, but mysql)
-     * @param array (string tableName)
+     * @param string $dbType platform name (i.e. not mysqlt, but mysql)
+     * @param array $metatables (string tableName)
      * @return array (boolean success, string errors)
      */
     function _testPrivileges($dbType, $metatables) {
@@ -446,8 +446,8 @@ class DatabaseSetupStep extends InstallStep {
     /**
      * Execute a series of SQL statements
      *
-     * @param the path to the file
-     * @param the table prefix to use
+     * @param string $buffer the SQL statements
+     * @param string $tablePrefix prefix for table names
      * @return array(boolean success, string error message)
      */
     function _executeSql($buffer, $tablePrefix) {
@@ -517,7 +517,7 @@ class DatabaseSetupStep extends InstallStep {
     /**
      * Get the state and the version of the Gallery database
      *
-     * @param array the meta tables info array from the database
+     * @param array $metaTables the meta tables info array from the database
      * @return string the db version
      */
     function _getDbVersion($metaTables) {
@@ -556,7 +556,7 @@ class DatabaseSetupStep extends InstallStep {
      *
      * Used to check the version in the db and to clean the db / storage dir
      *
-     * @param [optional integer which level to load]
+     * @param int $level (optional) which level to load
      * @return boolean success
      */
     function _loadG2Api($level=1) {
@@ -707,8 +707,8 @@ class DatabaseSetupStep extends InstallStep {
      * Probably, only MySQL on linux returns a case-sensitive list of tablenames. Generalize to
      * compare tablenames case-insensitively.
      *
-     * @param var the search argument
-     * @param array of vars to search in
+     * @param string $strItem the search argument
+     * @param array $strItem vars to search in
      * @return bool success status
      */
     function in_array_cin($strItem, $arItems) {

@@ -263,7 +263,7 @@ function processAutoCompleteRequest() {
 /**
  * (Re-) Create the gallery filesystem data structure
  *
- * @param string absolute filesystem path of the storage directory
+ * @param string $dataBase absolute filesystem path of the storage directory
  * @return boolean success whether the structure was created successfully
  */
 function populateDataDirectory($dataBase) {
@@ -310,8 +310,8 @@ function populateDataDirectory($dataBase) {
  * than Apache 1.2+ though.
  * Since we can't reliably tell whether the storage folder is web-accessible or not,
  * we add this in all cases. It doesn't hurt.
- * @param string absolute filesystem path to the storage folder.
- * @return boolean true if the .htaccess file has been created successfully.
+ * @param string $dataBase absolute filesystem path to the storage folder
+ * @return boolean true if the .htaccess file has been created successfully
  */
 function secureStorageFolder($dataBase) {
     $htaccessPath = $dataBase . '.htaccess';
