@@ -57,7 +57,7 @@ class DataCacheTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	$ret = GalleryCoreApi::removeMapEntry('GalleryCacheMap', array('itemId' => 0));
+	$ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -585,6 +585,104 @@ class DataCacheTest extends GalleryTestCase {
 	$this->assertEquals(false, $shouldCache);
 
 	$session->remove('theme.guestPreviewMode');
+    }
+    
+    function testCleanPageDataCache(){
+	global $gallery;
+	
+	$phpVm = new DataCacheTestMockVm();
+	$gallery->_phpVm =& $phpVm;
+	$activeUser = $gallery->getActiveUser();
+	
+	$acceleration['user']['type'] = 'full';
+	$acceleration['user']['expiration'] = 30;
+	$acceleration['guest']['type'] = 'full';
+	$acceleration['guest']['expiration'] = 30;
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'acceleration', serialize($acceleration));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	
+	list($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	
+	/* Clear the cache. */
+	$ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	
+	/* Setup some cache entries. */
+	$phpVm->setTime(0);
+	$ret = GalleryDataCache::putPageData('first', 0, array('key'), 'test');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	$this->assertEquals('test', $result);
+
+	$phpVm->setTime(25);
+	$ret = GalleryDataCache::putPageData('second', 2, array('key'), 'test');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	
+	$gallery->setActiveUser($anonymousUser);
+	
+	$ret = GalleryDataCache::putPageData('second', 2, array('key'), 'test');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	
+	$gallery->setActiveUser($activeUser);
+
+	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	$this->assertEquals('test', $result);
+
+	$phpVm->setTime(time());
+	$ret = GalleryDataCache::putPageData('third', 3, array('key'), 'test');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	/* Verify the number of rows that we should have in the DB. */
+	$query = 'SELECT * FROM [GalleryCacheMap]';
+	list ($ret, $results) = $gallery->search($query);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(4, (int)$results->resultCount(), 'Total cache entries.');
+
+	/* Verify the number of rows that should be valid. */
+	$query = '
+	SELECT
+	  * 
+	FROM 
+	  [GalleryCacheMap] 
+	WHERE 
+	  [GalleryCacheMap::value] IS NOT NULL
+	';
+	list ($ret, $results) = $gallery->search($query);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(2, (int)$results->resultCount(), 'remaining valid cache entries');
     }
 }
 

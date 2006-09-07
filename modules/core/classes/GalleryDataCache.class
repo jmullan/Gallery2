@@ -709,6 +709,12 @@ class GalleryDataCache {
 	    }
 	}
 
+	/* Clear expired data. */
+	$ret = GalleryDataCache::_cleanPageDataCache();
+	if ($ret) {
+	    return $ret;
+	}
+	
 	return null;
     }
 
@@ -791,6 +797,54 @@ class GalleryDataCache {
 	$extraKey = (int)($session->isUsingCookies()) . '-' . $languageCode;
 
 	return array(null, $extraKey);
+    }
+    
+    /**
+     * Delete value of obsolete cache data.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _cleanPageDataCache() {
+	global $gallery;
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $acceleration) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'acceleration');
+	if ($ret) {
+	    return $ret;
+	}
+	$acceleration = unserialize($acceleration);
+
+	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$expiration = $acceleration[$isAnonymous ? 'guest' : 'user']['expiration'];
+	$phpVm = $gallery->getPhpVm();
+	$cutoff = $phpVm->time() - $expiration;
+
+	/* Use UPDATE instead of DELETE since UPDATE is faster and we reuse the rows. */
+	$storage =& $gallery->getStorage();
+	$query = 'UPDATE [GalleryCacheMap] SET [GalleryCacheMap::value] = NULL ';
+
+	if($isAnonymous){
+	    $query .= 'WHERE [GalleryCacheMap::userId] = ? AND [GalleryCacheMap::timestamp] < ?';
+	} else {
+	    $query .= 'WHERE [GalleryCacheMap::userId] <> ? AND [GalleryCacheMap::timestamp] < ?';
+	}
+	
+	list ($ret, $results) = $storage->execute($query, array((int)$anonymousUserId, (int)$cutoff));
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
     }
 }
 ?>
