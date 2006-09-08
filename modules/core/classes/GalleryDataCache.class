@@ -839,7 +839,7 @@ class GalleryDataCache {
 	    $query .= 'WHERE [GalleryCacheMap::userId] <> ? AND [GalleryCacheMap::timestamp] < ?';
 	}
 	
-	list ($ret, $results) = $storage->execute($query, array((int)$anonymousUserId, (int)$cutoff));
+	$ret = $storage->execute($query, array((int)$anonymousUserId, (int)$cutoff));
 	if ($ret) {
 	    return $ret;
 	}
