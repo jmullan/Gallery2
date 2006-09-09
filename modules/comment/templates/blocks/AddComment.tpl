@@ -13,7 +13,7 @@
 {if !empty($block.comment.AddComment)}
 <div id="AddComment_block" {if $expand}style="display: none"{/if} class="{$class}">
   {include file="gallery:modules/comment/templates/AddComment.tpl"
-           AddComment=$block.comment.AddComment}
+           AddComment=$block.comment.AddComment inBlock=1}
 </div>
 
 {if $expand}
