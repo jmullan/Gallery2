@@ -90,10 +90,6 @@
 	      {g->logoButton type="gallery2"}
 	      {g->logoButton type="gallery2-version"}
 	      {g->logoButton type="donate"}
-	      <a href="http://www.mincel.com/carbon"><img src="{g->theme url="images/carbon.gif"}"
-	       alt="{g->text text="Carbon"} {$theme.params._version}"
-	       title="{g->text text="Carbon"} {$theme.params._version}"
-	       style="border-style: none" width="80" height="15"/></a>
 	    </td>
 	    <td align="right">
 	      {strip}
