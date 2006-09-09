@@ -54,7 +54,7 @@ class SitemapView extends GalleryView {
     /**
      * Output a site map rooted at the given id
      *
-     * @param the root id
+     * @param int $rootId
      * @return object GalleryStatus a status code
      */
     function renderSitemap($rootId) {

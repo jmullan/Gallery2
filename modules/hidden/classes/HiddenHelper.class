@@ -40,9 +40,9 @@ class HiddenHelper extends HiddenInterface_1_0 {
      * Thus all contents of the album are hidden and become visible when the album is accessed.
      *
      * @param object GalleryItem $item the item to be hidden
-     * @param $hideId used in recursive calls
-     * @param $hiddenAncestor used in recursive calls
-     * @param $passwordAncestor used in recursive calls
+     * @param int $hideId used in recursive calls
+     * @param int $hiddenAncestor used in recursive calls
+     * @param int $passwordAncestor used in recursive calls
      * @return object GalleryStatus a status code
      */
     function hideItem(&$item, $hideId=null, $hiddenAncestor=null, $passwordAncestor=null) {
@@ -179,9 +179,9 @@ class HiddenHelper extends HiddenInterface_1_0 {
      * If an album, cascade the effects to all child items that are not hidden themselves.
      *
      * @param object GalleryItem $item the item to unhide
-     * @param $hideId used in recursive calls
-     * @param $hiddenAncestor used in recursive calls
-     * @param $passwordAncestor used in recursive calls
+     * @param int $hideId used in recursive calls
+     * @param int $hiddenAncestor used in recursive calls
+     * @param int $passwordAncestor used in recursive calls
      * @return object GalleryStatus a status code
      */
     function unHideItem(&$item, $hideId=null, $hiddenAncestor=null, $passwordAncestor=null) {

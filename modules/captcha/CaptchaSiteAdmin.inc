@@ -199,7 +199,7 @@ class CaptchaAdminOption {
     /**
      * Set options to use with unit tests.
      *
-     * @param (optional) array of string optionId => CaptchaAdminOption instance
+     * @param array $options (optional) array of string optionId => CaptchaAdminOption instance
      * @return null or array of string optionId => CaptchaAdminOption test instance
      * @static
      */

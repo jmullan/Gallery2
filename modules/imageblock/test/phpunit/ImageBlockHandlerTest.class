@@ -425,9 +425,9 @@ class ImageBlockHandlerTest extends GalleryTestCase {
     /*
      * Move an item into a new album
      *
-     * @param GalleryItem object, item to move
-     * @param GalleryAlbumItem object, the old / current parent album
-     * @param GalleryAlbumItem object, the new parent album
+     * @param object GalleryItem $item item to move
+     * @param object GalleryAlbumItem $oldParent the old / current parent album
+     * @param object GalleryAlbumItem $newParent the new parent album
      */
     function _moveItem(&$item, &$oldParent, &$newParent) {
 	$lockIds = array();
