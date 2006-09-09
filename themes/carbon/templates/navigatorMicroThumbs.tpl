@@ -26,7 +26,11 @@
 
       {if ($peer.peerIndex == $data.thisPeerIndex)}
 	<td align="center" width="44" height="40">
-	  {g->image item=$peer image=$peer.thumbnail maxSize=40 title="$title"}
+          {if isset($peer.thumbnail)}
+	    {g->image item=$peer image=$peer.thumbnail maxSize=40 title="$title"}
+	  {else}
+            {g->text text="no thumbnail"}
+	  {/if}
 	</td>
       {else}
 	<td align="center" width="44" height="40">
@@ -38,7 +42,11 @@
 					    arg1="itemId=`$peer.id`"}{/capture}
 	  {/if}
 	  <a href="{$linkUrl}">
-	    {g->image item=$peer image=$peer.thumbnail maxSize=40 title="$title"}
+            {if isset($peer.thumbnail)}
+	      {g->image item=$peer image=$peer.thumbnail maxSize=40 title="$title"}
+	    {else}
+              {g->text text="no thumbnail"}
+	    {/if}
 	  </a>
 	</td>
       {/if}
