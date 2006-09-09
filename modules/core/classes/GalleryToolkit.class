@@ -37,10 +37,9 @@ class GalleryToolkit {
     /**
      * Get a certain property of a file
      *
-     * @access public
-     * @param string a mime type
-     * @param string a property name
-     * @param string a file name
+     * @param string $mimeType
+     * @param string $propertyName
+     * @param string $sourceFilename
      * @return array object GalleryStatus a status code,
      *	       mixed the value of the property
      */
@@ -58,13 +57,12 @@ class GalleryToolkit {
      *   changes the w/h then it must update the context with the new values.
      *   (This is optional if the context previously had no w/h values)
      *
-     * @access public
-     * @param string a mime type
-     * @param string the operation name
-     * @param string the source file name
-     * @param string the destination file name (it will be overwritten if it exists)
-     * @param array mixed parameters
-     * @param array (optional) context data
+     * @param string $mimeType
+     * @param string $operationName
+     * @param string $sourceFilename the source file name
+     * @param string $destFilename the destination file name (it will be overwritten if it exists)
+     * @param array $parameters
+     * @param array $context (optional) context data
      * @return array object GalleryStatus a status code
      *               string the output mime type
      *               array context data
@@ -81,9 +79,9 @@ class GalleryToolkit {
      * include a crop operation and upstream we rotate|90 it, then you'd want to rotate the
      * crop's parameters accordingly.
      *
-     * @param string transformOperation the upstream transform
-     * @param string targetOperations the current set of operations
-     * @param boolean true if we should apply the transform in reverse
+     * @param string $transformOperation the upstream transform
+     * @param string $targetOperations the current set of operations
+     * @param boolean $reverse true if we should apply the transform in reverse
      * @return array boolean success or failure
      *               string the new set of operations
      */
@@ -174,10 +172,10 @@ class GalleryToolkit {
      * (or 'rotate|-90').  The toolkit should only merge the operations if it
      * can do so cleanly.
      *
-     * @param string the first operation
-     * @param array mixed the first operation's arguments
-     * @param string the second operation
-     * @param array mixed the second operation's arguments
+     * @param string $operation1 the first operation
+     * @param array $args1 the first operation's arguments
+     * @param string $operation2 the second operation
+     * @param array $args2 the second operation's arguments
      * @return array (true if the operation was success,
      *                $mergedOperation,
      *                $mergedArgs)
@@ -224,8 +222,8 @@ class GalleryToolkit {
     /**
      * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
      *
-     * @param object GalleryDerivativeImage the derivative
-     * @param object GalleryEntity the source (probably a GalleryPhotoItem or GalleryMovieItem)
+     * @param object GalleryDerivativeImage $derivative
+     * @param object GalleryEntity $source (probably a GalleryPhotoItem or GalleryMovieItem)
      * @static
      */
     function estimateDimensions(&$derivative, $source) {

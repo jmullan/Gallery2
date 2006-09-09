@@ -48,7 +48,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * Return first short URL to match URL params
      *
-     * @param URL params
+     * @param array $params URL params
      * @return array first short URL to match URL params
      */
     function _getShortUrl($params) {
@@ -152,9 +152,9 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * Substitute all keywords with values from URL params or custom functions
      *
-     * @param string URL to be parsed
-     * @param array of URL parameters
-     * @param array of custom functions
+     * @param string $url URL to be parsed
+     * @param array $params of URL parameters
+     * @param array $functions of custom functions
      * @return boolean true on success
      * @access private
      */
@@ -194,7 +194,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     }
 
     /**
-     * @param int itemId of the entity to load
+     * @param int $itemId itemId of the entity to load
      * @return object GalleryEntity or null on failure
      */
     function loadEntity(&$itemId) {
@@ -216,7 +216,8 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * Return the base URL for all generated short URLs
      *
-     * @param boolean (optional) if true, return Gallery base URL (different when embedded)
+     * @param boolean $forceDirect (optional) if true, return Gallery base URL
+     *        (different when embedded)
      * @return string the base URL
      * @access private
      */
@@ -227,7 +228,8 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * Return the base URL parameters for all generated short URLs, eg. '?module=gallery'
      *
-     * @param boolean (optional) if true, return Gallery base URL (different when embedded)
+     * @param boolean $forceDirect (optional) if true, return Gallery base URL
+     *        (different when embedded)
      * @return string the base URL parameters
      * @access private
      */

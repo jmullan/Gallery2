@@ -205,8 +205,7 @@ class GalleryEntity extends GalleryPersistent {
     /**
      * Create a new linked version of this item into a new album
      *
-     * @param object GalleryEntity the entity we're linking to
-     * @param int the id of the new parent
+     * @param object GalleryEntity $entity the entity we're linking to
      * @return array object GalleryStatus a status code
      *               object GalleryItem the linked item
      */
@@ -246,8 +245,8 @@ class GalleryEntity extends GalleryPersistent {
     /**
      * Save the changes to this GalleryEntity.
      *
-     * @param bool post a save event; only disable this during core upgrades
-     * @param integer (optional) ACL id to assign for new entity (used by subclasses)
+     * @param bool $postEvent post a save event; only disable this during core upgrades
+     * @param int $setAclId (optional) ACL id to assign for new entity (used by subclasses)
      * @return object GalleryStatus a status code
      */
     function save($postEvent=true, $setAclId=null) {
@@ -457,7 +456,7 @@ class GalleryEntity extends GalleryPersistent {
 		     * data integrity and / or you are sure that your onLoad method does not
 		     * require an activeSession, you can ignore $duringUpgrade.
 		     *
-		     * @param reference to an entity
+		     * @param object GalleryEntity reference to an entity
 		     * @param boolean whether the onLoad handler is being called during an upgrade
 		     * @return object GalleryStatus a status code
 		     */
@@ -475,7 +474,7 @@ class GalleryEntity extends GalleryPersistent {
     /**
      * Check for an onLoad handler.
      *
-     * @param string handler id
+     * @param string $handlerId
      * @return boolean
      */
     function hasOnLoadHandler($handlerId) {
@@ -485,7 +484,7 @@ class GalleryEntity extends GalleryPersistent {
     /**
      * Add onLoad handler.
      *
-     * @param string handler id
+     * @param string $handlerId
      */
     function addOnLoadHandler($handlerId) {
 	$onLoadHandlers = $this->getOnLoadHandlers();
@@ -498,7 +497,7 @@ class GalleryEntity extends GalleryPersistent {
     /**
      * Remove onLoad handler.
      *
-     * @param string handler id
+     * @param string $handlerId
      */
     function removeOnLoadHandler($handlerId) {
 	$onLoadHandlers = preg_replace('{\|' . preg_quote($handlerId) . '\|}', '|',
@@ -524,11 +523,11 @@ class GalleryEntity extends GalleryPersistent {
      * Return the name of this type of item.
      * Subclasses must override this to provide their own type names.
      *
-     * @param boolean if the name is to be translated using the current language
+     * @param boolean $localized if the name is to be translated using the current language
      * @return array string to be used by itself ("Photo")
      *               string to be used in context ("photo")
      */
-    function itemTypeName($localized = true) {
+    function itemTypeName($localized=true) {
 	assert(false);
     }
 

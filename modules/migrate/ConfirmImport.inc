@@ -73,8 +73,8 @@ class ConfirmImportController extends GalleryController {
     /**
      * Actually perform the import
      *
-     * @param array the form variables
-     * @param string the albums path
+     * @param array $form the form variables
+     * @param string $albumsPath the albums path
      * @return object GalleryStatus a status code
      */
     function performImport($form, $albumsPath) {
@@ -1390,8 +1390,8 @@ class ConfirmImportController extends GalleryController {
 
     /**
      * Convert html according to given markup type
-     * @param string markup type (none, bbcode, html)
-     * @param string input string
+     * @param string $markupType markup type (none, bbcode, html)
+     * @param string $item input string
      * @return string
      */
     function convertHtml($markupType, $item, $sourceEncoding='UTF-8') {
@@ -1443,9 +1443,9 @@ class ConfirmImportController extends GalleryController {
     /**
      * Create the G1->G2 map entries so that Gallery1 links
      * can be redirected to Gallery2 links.
-     * @param int item id
-     * @param string G1 album name
-     * @param string (optional) G1 item name
+     * @param int $itemId
+     * @param string $g1AlbumName G1 album name
+     * @param string $g1ItemName (optional) G1 item name
      * @return object GalleryStatus a status code
      * @author Joseph Elwell <jelwell@yahoo.com>
      */

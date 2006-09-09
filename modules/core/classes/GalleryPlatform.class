@@ -33,8 +33,8 @@ class GalleryPlatform {
     /**
      * Copy a file
      *
-     * @param string the source file
-     * @param string the destination file
+     * @param string $source the source file
+     * @param string $dest the destination file
      * @return boolean true if the copy succeeded, false otherwise
      */
     function copy($source, $dest) {
@@ -64,8 +64,8 @@ class GalleryPlatform {
     /**
      * Symlink a file
      *
-     * @param string the source file
-     * @param string the destination file
+     * @param string $source the source file
+     * @param string $dest the destination file
      * @return boolean true if the copy succeeded, false otherwise
      */
     function symlink($source, $dest) {
@@ -117,8 +117,8 @@ class GalleryPlatform {
     /**
      * Create a file with a unique file name
      *
-     * @param string target dir
-     * @param string file prefix
+     * @param string $dir target dir
+     * @param string $prefix file prefix
      */
     function tempnam($dir, $prefix) {
 	global $gallery;
@@ -132,7 +132,7 @@ class GalleryPlatform {
     /**
      * Does the given file exist?
      *
-     * @param string full filesystem path to a file
+     * @param string $filename full filesystem path to a file
      * @return boolean true if the file exists, false otherwise
      */
     function file_exists($filename) {
@@ -147,7 +147,7 @@ class GalleryPlatform {
     /**
      * Is the given path a symbolic link?
      *
-     * @param string a filesystem path
+     * @param string $filename a filesystem path
      * @return boolean true if the file is a link, false otherwise
      */
     function is_link($filename) {
@@ -162,7 +162,7 @@ class GalleryPlatform {
     /**
      * Is the given path a directory?
      *
-     * @param string a filesystem path
+     * @param string $filename a filesystem path
      * @return boolean true if the path is a directory, false otherwise
      */
     function is_dir($filename) {
@@ -177,7 +177,7 @@ class GalleryPlatform {
     /**
      * Is the given path a normal file?
      *
-     * @param string a filesystem path
+     * @param string $filename a filesystem path
      * @return boolean true if the path is a file, false otherwise
      */
     function is_file($filename) {
@@ -192,7 +192,7 @@ class GalleryPlatform {
     /**
      * Is the given path a writeable file
      *
-     * @param string a filesystem path
+     * @param string $filename a filesystem path
      * @return boolean true if the path is writeable, false otherwise
      */
     function is_writeable($filename) {
@@ -207,7 +207,7 @@ class GalleryPlatform {
     /**
      * Is the given path a readable file
      *
-     * @param string a filesystem path
+     * @param string $filename a filesystem path
      * @return boolean true if the path is readable, false otherwise
      */
     function is_readable($filename) {
@@ -222,7 +222,7 @@ class GalleryPlatform {
     /**
      * Is the given path an uploaded file
      *
-     * @param string a filesystem path
+     * @param string $filename a filesystem path
      * @return boolean true if the path is an uploaded file, false otherwise
      */
     function is_uploaded_file($filename) {
@@ -237,7 +237,7 @@ class GalleryPlatform {
     /**
      * Is the given path an executable file?
      *
-     * @param string a filesystem path
+     * @param string $filename a filesystem path
      * @return boolean true if the path is an executable file, false otherwise
      */
     function is_executable($filename) {
@@ -252,7 +252,7 @@ class GalleryPlatform {
     /**
      * How large is the given file?
      *
-     * @param string full filesystem path to a file
+     * @param string $filename full filesystem path to a file
      * @return int the size in bytes
      */
     function filesize($filename) {
@@ -279,8 +279,8 @@ class GalleryPlatform {
     /**
      * Return a file as an array
      *
-     * @param string a file path or URL
-     * @param int if this is set to 1, search the include path also
+     * @param string $filename a file path or URL
+     * @param int $use_include_path if this is set to 1, search the include path also
      * @return array of lines
      */
     function file($filename, $use_include_path=false) {
@@ -295,8 +295,8 @@ class GalleryPlatform {
     /**
      * Output a file
      *
-     * @param string a file path or URL
-     * @param int if this is set to 1, search the include path also
+     * @param string $filename a file path or URL
+     * @param int $use_include_path if this is set to 1, search the include path also
      * @return int the number of bytes read from the file
      */
     function readfile($filename, $use_include_path=false) {
@@ -310,7 +310,7 @@ class GalleryPlatform {
     /**
      * Reads the entire contents of the specified file into a string.
      *
-     * @param string file path
+     * @param string $path file path
      * @return string file contents or boolean false on failure
      */
     function file_get_contents($path) {
@@ -320,9 +320,9 @@ class GalleryPlatform {
     /**
      * Open a file or URL
      *
-     * @param string a file path or URL
-     * @param string a file mode
-     * @param int if this is set to 1, search the include path also
+     * @param string $filename a file path or URL
+     * @param string $mode a file mode
+     * @param int $use_include_path if this is set to 1, search the include path also
      * @return resource a file descriptor
      */
     function fopen($filename, $mode, $use_include_path=0) {
@@ -337,9 +337,9 @@ class GalleryPlatform {
     /**
      * flock -- Portable advisory file locking
      *
-     * @param resource a file handle
-     * @param operation (LOCK_SH, LOCK_EX, LOCK_UN) [ | LOCK_NB]
-     * @param boolean set to true if the operation would have blocked
+     * @param resource $handle a file handle
+     * @param int $operation (LOCK_SH, LOCK_EX, LOCK_UN) [ | LOCK_NB]
+     * @param boolean $wouldblock set to true if the operation would have blocked
      * @return true or false
      */
     function flock($handle, $operation, &$wouldblock) {
@@ -356,9 +356,8 @@ class GalleryPlatform {
      * (but it does not prevent another process from immediately replacing the file with its own
      * version).
      *
-     * @param filename
-     * @param string data to be written
-     * @param boolean binary mode?
+     * @param string $filename
+     * @param string $data data to be written
      * @return boolean success or failure
      */
     function atomicWrite($filename, $data) {
@@ -388,7 +387,7 @@ class GalleryPlatform {
     /**
      * Open a file or URL
      *
-     * @param string a file path
+     * @param string $path a file path
      * @return resource a directory descriptor
      */
     function opendir($path) {
@@ -403,7 +402,7 @@ class GalleryPlatform {
     /**
      * Return the next file resource from a directory
      *
-     * @param string a directory resource
+     * @param resource $resource a directory resource
      */
     function readdir($resource) {
 	global $gallery;
@@ -417,7 +416,7 @@ class GalleryPlatform {
     /**
      * Close a directory resource
      *
-     * @param string a directory resource
+     * @param resource $resource a directory resource
      */
     function closedir($resource) {
 	global $gallery;
@@ -433,8 +432,8 @@ class GalleryPlatform {
      *
      * As a side bonus, create a backup of the original file.
      *
-     * @param string original file/dir name
-     * @param string new file/dir name
+     * @param string $oldname original file/dir name
+     * @param string $newname new file/dir name
      * @return boolean true on success, false on failure
      */
     function rename($oldname, $newname) {
@@ -449,7 +448,7 @@ class GalleryPlatform {
     /**
      * Get information about a file
      *
-     * @param string file/dir name
+     * @param string $filename file/dir name
      * @return array the statistics of the file
      */
     function stat($filename) {
@@ -464,7 +463,7 @@ class GalleryPlatform {
     /**
      * Get size information about an image
      *
-     * @param string the image file name
+     * @param string $filename the image file name
      * @return array with 4 elements.  Index 0 contains the width of the image in pixels.  Index 1
      *   contains the height.  Index 2 is a flag indicating the type of the image: 1 = GIF, 2 = JPG,
      *   3 = PNG, 4 = SWF, 5 = PSD, 6 = BMP, 7 = TIFF(intel byte order), 8 = TIFF(motorola byte
@@ -488,7 +487,7 @@ class GalleryPlatform {
     /**
      * Delete a file
      *
-     * @param string file name
+     * @param string $filename
      * @return boolean true on success, false on failure
      */
     function unlink($filename) {
@@ -503,7 +502,7 @@ class GalleryPlatform {
     /**
      * Delete a directory
      *
-     * @param string directory name
+     * @param string $filename directory name
      * @return boolean true on success, false on failure
      */
     function rmdir($filename) {
@@ -518,7 +517,7 @@ class GalleryPlatform {
     /**
      * Delete a directory, and all its contents
      *
-     * @param string directory name
+     * @param string $dirname directory name
      * @return boolean true on success, false on failure
      */
     function recursiveRmdir($dirname) {
@@ -559,8 +558,8 @@ class GalleryPlatform {
     /**
      * Create a new directory
      *
-     * @param string a filesystem path
-     * @param string permissions of the newly created directory
+     * @param string $path a filesystem path
+     * @param string $stringPerms permissions of the newly created directory
      * @return boolean true on success, false on failure
      */
     function mkdir($path, $stringPerms='755') {
@@ -581,7 +580,7 @@ class GalleryPlatform {
     /**
      * Return true if the path component specified is composed of legal characters.
      *
-     * @param string the path component (must not contain path separators)
+     * @param string $component the path component (must not contain path separators)
      * @return true if yes
      */
     function isLegalPathComponent($component) {
@@ -658,8 +657,7 @@ class GalleryPlatform {
     /**
      * Execute a command and record the results and status.
      *
-     * @param array(array('cmd', 'arg'), ...)
-     * @param whether or not we should return error output
+     * @param array $cmdArray array(array('cmd', 'arg'), ...)
      * @return array(boolean true if the command succeeded, false otherwise,
      *               array standard output from the command
      *               array error output from the command)
@@ -746,11 +744,11 @@ class GalleryPlatform {
     /**
      * Initiates a socket connection to the resource specified by target.
      *
-     * @param string the hostname
-     * @param int the port
-     * @param int the error number (out)
-     * @param string the error string (out)
-     * @param int the timeout
+     * @param string $target the hostname
+     * @param int $port the port
+     * @param int $errno the error number (out)
+     * @param string $errstr the error string (out)
+     * @param int $timeout the timeout
      * @return resource a file descriptor
      * @see http://php.net/fsockopen
      */
@@ -766,9 +764,9 @@ class GalleryPlatform {
     /**
      * Write the contents of string to the file stream pointed to by handle.
      *
-     * @param resource the handle
-     * @param string the buffer
-     * @param int how many bytes to write (optional)
+     * @param resource $handle the handle
+     * @param string $string the buffer
+     * @param int $length how many bytes to write (optional)
      * @return int the number of bytes written
      */
     function fwrite($handle, $string, $length=null) {
@@ -787,8 +785,8 @@ class GalleryPlatform {
     /**
      * Writes specified data to file.  Uses PHP's file_put_contents() function if it is available.
      *
-     * @param string output file path
-     * @param string data to write
+     * @param string $path output file path
+     * @param string $data data to write
      * @return boolean true on success, false on failure
      */
     function file_put_contents($path, $data) {
@@ -806,7 +804,7 @@ class GalleryPlatform {
     /**
      * Closes an open file pointer
      *
-     * @param resource the handle
+     * @param resource $handle
      * @return boolean true on success, false on failure
      */
     function fclose($handle) {
@@ -821,7 +819,7 @@ class GalleryPlatform {
     /**
      * Flush an open file pointer
      *
-     * @param resource the handle
+     * @param resource $handle
      * @return boolean true on success, false on failure
      */
     function fflush($handle) {
@@ -836,7 +834,7 @@ class GalleryPlatform {
     /**
      * Tests for end-of-file on a file pointer
      *
-     * @param resource the handle
+     * @param resource $handle
      * @return boolean true if the file pointer is at EOF
      */
     function feof($handle) {
@@ -851,8 +849,8 @@ class GalleryPlatform {
     /**
      * Reads data from an open file handle
      *
-     * @param resource the handle
-     * @param int the length
+     * @param resource $handle
+     * @param int $length
      * @return string the bytes read
      */
     function fread($handle, $length) {
@@ -867,9 +865,9 @@ class GalleryPlatform {
     /**
      * Seeks on a file pointer
      *
-     * @param resource the handle
-     * @param int offset
-     * @param int whence
+     * @param resource $handle
+     * @param int $offset
+     * @param int $whence
      * @return int 0 upon success, otherwise -1
      */
     function fseek($handle, $offset, $whence = SEEK_SET) {
@@ -884,8 +882,8 @@ class GalleryPlatform {
     /**
      * Truncates a file to a given length
      *
-     * @param resource the handle
-     * @param int the size
+     * @param resource $handle
+     * @param int $size
      * @return boolean success?
      */
     function ftruncate($handle, $size) {
@@ -908,8 +906,8 @@ class GalleryPlatform {
     /**
      * Gets line from file pointer
      *
-     * @param resource the file handle
-     * @param int the optional max line length
+     * @param resource $handle
+     * @param int $length the optional max line length
      * @return the string or false on eof
      */
     function fgets($handle, $length=0) {
@@ -946,9 +944,9 @@ class GalleryPlatform {
      * access time of the given filename is set to the value of atime. Note that the access time is
      * always modified, regardless of the number of parameters.
      *
-     * @param string the file path
-     * @param int (optional) the modification time
-     * @param int (optional) the access time
+     * @param string $file the file path
+     * @param int $time (optional) the modification time
+     * @param int $atime (optional) the access time
      */
     function touch($file, $time=null, $atime=null) {
 	global $gallery;
@@ -969,10 +967,10 @@ class GalleryPlatform {
      * mail -- Send an email.  Lines in the headers and body should be terminated with \r\n in
      * accordance with RFC2821.
      *
-     * @param string to address(es) (comma separated)
-     * @param string subject
-     * @param string body
-     * @param string (optional) additional headers (\r\n separated)
+     * @param string $to to address(es) (comma separated)
+     * @param string $subject
+     * @param string $body
+     * @param string $headers (optional) additional headers (\r\n separated)
      * @return boolean true on success
      */
     function mail($to, $subject, $body, $headers=null) {
@@ -1021,7 +1019,7 @@ class GalleryPlatform {
      * Examples: /tmp -> array('/', 'tmp')     rela/tive/path -> array('rela', 'tive', 'path')
      *           C:\Test\File.txt -> array('C:\', 'Test', 'File.txt')
      *
-     * @param string path
+     * @param string $path
      * @return array (path elements) first item is "root" if path is absolute
      */
     function splitPath($path) {
@@ -1055,7 +1053,7 @@ class GalleryPlatform {
     /**
      * chdir -- change working directory
      *
-     * @param string directory
+     * @param string $path directory
      * @return boolean true on success
      */
     function chdir($path) {
@@ -1103,8 +1101,8 @@ class GalleryPlatform {
     /**
      * Set filesystem permissions; mode defaults to system preference for file/dir permissions.
      *
-     * @param string path to file or directory
-     * @param int (optional) mode; defaults to system preference
+     * @param string $path path to file or directory
+     * @param int $mode (optional) mode; defaults to system preference
      * @return boolean true on success
      */
     function chmod($path, $mode=null) {
@@ -1126,9 +1124,9 @@ class GalleryPlatform {
      * Recursively set filesystem permissions.  Modes default to system preferences for file/dir
      * permissions.
      *
-     * @param string path to directory
-     * @param int (optional) mode for dirs or -1 to skip chmod of dirs
-     * @param int (optional) mode for files or -1 to skip chmod of files
+     * @param string $path path to directory
+     * @param int $dirMode (optional) mode for dirs or -1 to skip chmod of dirs
+     * @param int $fileMode (optional) mode for files or -1 to skip chmod of files
      * @return boolean true on success
      */
     function recursiveChmod($path, $dirMode=null, $fileMode=null) {
@@ -1185,7 +1183,7 @@ class GalleryPlatform {
      * Fixes the directory permissions (as eg. unzip creates them with file permissions because of
      * the umask)
      *
-     * @param string $path the directory which should be fixed
+     * @param string $path $path the directory which should be fixed
      * @return boolean true if all went well, false if there was an error.
      * @deprecated -- TODO: remove at the next major version bump of core API
      */
@@ -1219,8 +1217,8 @@ class GalleryPlatform {
      * Format a local time/date according to locale settings.  Converts any text output from
      * strftime tokens to UTF-8.
      *
-     * @param string format
-     * @param (optional) int timestamp
+     * @param string $format
+     * @param int $timestamp (optional)
      * @return string
      */
     function strftime($format, $timestamp=null) {

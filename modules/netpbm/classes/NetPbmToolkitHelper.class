@@ -32,10 +32,9 @@ class NetPbmToolkitHelper {
      * Figure out what operations and properties are supported by the
      * NetPbmToolkit and return them.
      *
-     * @param boolean (optional) true to save module parameters
+     * @param boolean $saveParameters (optional) true to save module parameters
      * @return object GalleryStatus a status code
-     *         array('operations' => ...
-     *               'properties' => ...)
+     *         array('operations' => ..., 'properties' => ...)
      */
     function getOperationsAndProperties($saveParameters=false) {
 	global $gallery;
@@ -163,7 +162,7 @@ class NetPbmToolkitHelper {
      *
      * This is done by calling jhead with the -V flag
      *
-     * @param string path to the jhead binary
+     * @param string $jheadPath path to the jhead binary
      * @return array object GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successful?
@@ -207,7 +206,7 @@ class NetPbmToolkitHelper {
      * This is done by calling all the binaries with the --version flag and
      * making sure they run properly.
      *
-     * @param string path to the NetPbm we are testing
+     * @param string $netPbmPath path to the NetPbm we are testing
      * @return array object GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successful?
@@ -294,7 +293,7 @@ class NetPbmToolkitHelper {
     /**
      * Save module parameters based on test results.
      *
-     * @param array testBinaries test results
+     * @param array $tests testBinaries test results
      * @return object GalleryStatus a status code
      */
     function saveParameters($tests) {

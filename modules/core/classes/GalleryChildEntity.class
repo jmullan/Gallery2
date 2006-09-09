@@ -56,7 +56,7 @@ class GalleryChildEntity extends GalleryEntity {
     /**
      * Create this item in our persistent store
      *
-     * @param int the id of the GalleryItem parent
+     * @param int $parentId the id of the GalleryItem parent
      * @return object GalleryStatus a status code
      */
     function create($parentId) {
@@ -97,7 +97,7 @@ class GalleryChildEntity extends GalleryEntity {
     /**
      * Move this item to a new parent
      *
-     * @param int the id of the GalleryItem parent
+     * @param int $newParentId the id of the GalleryItem parent
      * @return object GalleryStatus a status code
      */
     function move($newParentId) {

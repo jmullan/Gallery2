@@ -101,7 +101,7 @@ class GalleryTheme extends GalleryPlugin {
      *                   values: localized displayable text string
      *   value:       the current value for this setting
      *
-     * @param int optional itemId
+     * @param int $itemId (optional)
      * @return array object GalleryStatus a status code
      *               settings array
      *               params array (useful for a theme overriding this function)
@@ -283,7 +283,7 @@ class GalleryTheme extends GalleryPlugin {
      * localized error messages to display for each invalid setting.  Used for theme with simple
      * settings (@see isAdvancedSettings)
      *
-     * @param settings array('key' => array(value, ...), ...)
+     * @param array $settings array('key' => array(value, ...), ...)
      * @return array errors in the form of array('key' => 'translated text', ...)
      */
     function validateSettings($settings) {
@@ -339,8 +339,8 @@ class GalleryTheme extends GalleryPlugin {
      *
      * The specific packing depends on the packType variable.
      *
-     * @param string the pack type
-     * @param string the input value
+     * @param string $packType
+     * @param string $value the input value
      * @return mixed the packed form
      */
     function packSetting($packType, $value) {
@@ -397,8 +397,8 @@ class GalleryTheme extends GalleryPlugin {
      * Unpack a packed setting.
      * @see GalleryTheme::packSetting
      *
-     * @param string the pack type
-     * @param mixed the packed value
+     * @param string $packType
+     * @param mixed $value the packed value
      * @return string the unpacked value
      */
     function unpackSetting($packType, $value) {
@@ -452,9 +452,9 @@ class GalleryTheme extends GalleryPlugin {
      *
      * @see isAdvancedSettings
      *
-     * @param array object GalleryTemplate the template instance
-     * @param array array the form values
-     * @param the item id or null for site wide settings
+     * @param $template object GalleryTemplate $template
+     * @param array $form array the form values
+     * @param int $itemId the item id or null for site wide settings
      * @return array object GalleryStatus a status code
      *               string path to the body template
      */
@@ -468,8 +468,8 @@ class GalleryTheme extends GalleryPlugin {
      * @see isAdvancedSettings
      * @see GalleryController::handleRequest
      *
-     * @param array the form values
-     * @param the item id or null for site wide settings
+     * @param array $form the form values
+     * @param int $itemId the item id or null for site wide settings
      * @return array object GalleryStatus a status code
      *               array error messages
      *               string status message (itemId!=null) or status key (itemId==null)
@@ -700,11 +700,11 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load the template with data from this view.
      *
-     * @param object GalleryView the view
-     * @param object GalleryTemplate the template instance
-     * @param object GalleryItem the item to display
-     * @param array theme parameters
-     * @param array results from the view
+     * @param object GalleryView $view
+     * @param object GalleryTemplate $template
+     * @param object GalleryItem $item the item to display
+     * @param array $params theme parameters
+     * @param array $viewResults results from the view
      * @return array object GalleryStatus a status code
      *               array ('body' => string template or 'redirect' => array)
      */
@@ -1017,9 +1017,9 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Call preload for given block if the module is active and a preload exists.
      *
-     * @param object GalleryTemplate the template instance
-     * @param string block id (module.blockName)
-     * @param array (optional) block parameters
+     * @param object GalleryTemplate $template
+     * @param string $blockId (module.blockName)
+     * @param array $blockParams (optional) block parameters
      * @return object GalleryStatus a status code
      */
     function preloadBlock(&$template, $blockId, $blockParams=array()) {
@@ -1097,10 +1097,12 @@ class GalleryTheme extends GalleryPlugin {
      *               a permission in smarty you'd do:
      *                   {if isset($theme.permissions.core_addDataItem)}
      *
-     * @param object GalleryItem the item to display
-     * @param array theme parameters
-     * @param array (string data key, ..) data to load into template
-     * @param array (optional) ids of child items to display
+     * @param object GalleryTemplate $template
+     * @param object GalleryItem $item the item to display
+     * @param array $params theme parameters
+     * @param array $dataToLoad (string data key, ..) data to load into template
+     * @param array $childIds (optional) ids of child items to display
+     * @param boolean $useCache (optional)
      * @return object GalleryStatus a status code
      */
     function loadCommonTemplateData(&$template, $item, $params, $dataToLoad,
@@ -1793,7 +1795,7 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Return the number of items per page, or 0 if there is no pagination in this theme.
      *
-     * @param array the theme parameters
+     * @param array $params the theme parameters
      * @return int
      */
     function getPageSize($params) {
@@ -1811,10 +1813,10 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render a page for an album.
      *
-     * @param array object GalleryTemplate the template instance
-     * @param object GalleryAlbumItem the album item to render.
-     * @param array the theme parameters
-     * @param int the child item ids
+     * @param object GalleryTemplate $template
+     * @param object GalleryAlbumItem $item the album item to render
+     * @param array $params the theme parameters
+     * @param int $childIds the child item ids
      * @return array object GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
@@ -1826,9 +1828,9 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render a page for a single item.
      *
-     * @param array object GalleryTemplate the template instance
-     * @param object GalleryItem the item to render.  Can be any subclass of GalleryItem
-     * @param array the theme parameters
+     * @param object GalleryTemplate $template
+     * @param object GalleryItem $item the item to render, can be any subclass of GalleryItem
+     * @param array $params the theme parameters
      * @return array object GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
@@ -1840,10 +1842,10 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render a page for an administrative (or other) view.
      *
-     * @param array object GalleryTemplate the template instance
-     * @param object GalleryItem the item to render.
-     * @param array the theme parameters
-     * @param string the body template file from the view
+     * @param object GalleryTemplate $template
+     * @param object GalleryItem $item the item to render
+     * @param array $params the theme parameters
+     * @param string $templateFile the body template file from the view
      * @return array object GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
@@ -1856,10 +1858,10 @@ class GalleryTheme extends GalleryPlugin {
      * Load all the necessary template data to render a page for a module view (any views that
      * aren't user, site, or item admin eg slideshow or members list).
      *
-     * @param array object GalleryTemplate the template instance
-     * @param object GalleryItem the item to render
-     * @param array the theme parameters
-     * @param string the body template file from the view
+     * @param object GalleryTemplate $template
+     * @param object GalleryItem $item the item to render
+     * @param array $params the theme parameters
+     * @param string $templateFile the body template file from the view
      * @return array object GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
@@ -1871,7 +1873,7 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render an error page.
      *
-     * @param array object GalleryTemplate the template instance
+     * @param object GalleryTemplate $template
      * @return array object GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
@@ -1883,9 +1885,9 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render a progress bar page.
      *
-     * @param array object GalleryTemplate the template instance
-     * @param object GalleryItem the item to render
-     * @param array the theme parameters
+     * @param object GalleryTemplate $template
+     * @param object GalleryItem $item the item to render
+     * @param array $params the theme parameters
      * @return array object GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
@@ -1897,8 +1899,8 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Split the HTML content into its various component pieces.
      *
-     * @param string the main html (<head>, <body>, etc)
-     * @param array any extra html that we've generated, like sidebar HTML
+     * @param string $mainHtml the main html (<head>, <body>, etc)
+     * @param array $extraHtml any extra html that we've generated, like sidebar HTML
      * @return array('headHtml' => ..., 'bodyHtml' => ...)
      */
     function splitHtml($mainHtml, $extraHtml) {

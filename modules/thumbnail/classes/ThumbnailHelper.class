@@ -34,10 +34,10 @@ class ThumbnailHelper {
      * You can specify how many items to list, and where the windows is in
      * the list of all items.
      *
-     * @param boolean [optional] true to list all; by default only gets items with mimeTypeList
-     * @param int [optional] the number of items desired
-     * @param int [optional] the start of the range
-     * @param string [optional] a substring to match
+     * @param boolean $listAll (optional) true to list all; by default only items with mimeTypeList
+     * @param int $count (optional) the number of items desired
+     * @param int $offset (optional) the start of the range
+     * @param string $substring (optional) a substring to match
      * @return array object GalleryStatus a status code
      *               array of itemId=>fileName
      */
@@ -79,7 +79,7 @@ class ThumbnailHelper {
     /**
      * Fetch ThumbnailImage for given item
      *
-     * @param int item id
+     * @param int $itemId
      * @return array object GalleryStatus a status code
      *               object ThumbnailImage or null
      */
@@ -131,7 +131,7 @@ class ThumbnailHelper {
     /**
      * Get information about thumbnail support from other toolkits
      *
-     * @param boolean true for data by-mimeType, false for data by-toolkit
+     * @param boolean $byMimeType (optional) true for data by-mimeType, false for data by-toolkit
      * @return array :object GalleryStatus a status code
      *               :by-mimeType: array of mimeType=>array(toolkit ids)
      *                or by-toolkit: array of toolkitId=>array(mimeTypes)
@@ -169,14 +169,14 @@ class ThumbnailHelper {
     /**
      * Add new ThumbnailImage
      *
-     * @param string mime type to be supported, or null
-     * @param int parent item id, or null
-     * @param string name for image
-     * @param string path to image file
-     * @param string mime type of image file
-     * @param array known width and height of image (used if toolkit is unable to get size)
-     * @param object ThumbnailImage (optional -- if you don't provide it we'll
-     *                               get one from the Factory)
+     * @param string $mimeType mime type to be supported, or null
+     * @param int $parentId parent item id, or null
+     * @param string $filename name for image
+     * @param string $tmpfile path to image file
+     * @param string $fileMimeType mime type of image file
+     * @param array $knownSize known width and height of image (used if toolkit unable to get size)
+     * @param object ThumbnailImage $item (optional -- if you don't provide it we'll
+     *                                     get one from the Factory)
      * @return array object GalleryStatus a status code
      *               id of newly created object
      */
@@ -256,9 +256,9 @@ class ThumbnailHelper {
     /**
      * Add or delete a mime type from an existing ThumbnailImage
      *
-     * @param id of the ThumbnailImage
-     * @param string mime type
-     * @param boolean true to add mime type, false to delete
+     * @param int $itemId id of the ThumbnailImage
+     * @param string $mimeType mime type
+     * @param boolean $isAdd (optional) true to add mime type, false to delete
      * @return object GalleryStatus a status code
      */
     function updateItem($itemId, $mimeType, $isAdd=true) {
@@ -313,8 +313,8 @@ class ThumbnailHelper {
     /**
      * Create or update thumbnail derivative to be sourced from a ThumbnailImage
      *
-     * @param object GalleryItem the item
-     * @param int id of ThumbnailImage
+     * @param object GalleryItem $item
+     * @param int $thumbnailId id of ThumbnailImage
      * @return object GalleryStatus a status code
      */
     function applyThumbnail(&$item, $thumbnailId) {
@@ -397,7 +397,7 @@ class ThumbnailHelper {
      * Remove custom thumbnail; delete thumbnail derivative or restore source id to original item
      * (if there is toolkit support for that source mimeType).
      *
-     * @param object GalleryItem the item
+     * @param object GalleryItem $item
      * @return object GalleryStatus a status code
      */
     function restoreThumbnail(&$item) {

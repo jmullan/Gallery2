@@ -330,11 +330,11 @@ class GalleryPluginHelper_medium {
     /**
      * Add a new parameter for this plugin
      *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @param string the name of the parameter
-     * @param string the value of the parameter
-     * @param integer the id of item (or null for a global setting)
+     * @param string $pluginType the type of the plugin
+     * @param string $pluginId the id of the plugin
+     * @param string $parameterName the name of the parameter
+     * @param string $parameterValue the value of the parameter
+     * @param int $itemId the id of item (or null for a global setting)
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -368,11 +368,11 @@ class GalleryPluginHelper_medium {
     /**
      * Update an existing parameter for this plugin
      *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @param string the name of the parameter
-     * @param string the value of the parameter
-     * @param integer the id of item (or null for a global setting)
+     * @param string $pluginType the type of the plugin
+     * @param string $pluginId the id of the plugin
+     * @param string $parameterName the name of the parameter
+     * @param string $parameterValue the value of the parameter
+     * @param int $itemId the id of item (or null for a global setting)
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -407,9 +407,9 @@ class GalleryPluginHelper_medium {
      * Set a given plugin instance in the plugin cache.
      * This should only be used by unit tests that want to force a specific dummy plugin to exist.
      *
-     * @param string plugin type
-     * @param string plugin id
-     * @param object plugin instance
+     * @param string $pluginType plugin type
+     * @param string $pluginId plugin id
+     * @param object GalleryPlugin $instance
      * @access protected
      */
     function setPluginInstance($pluginType, $pluginId, &$instance) {

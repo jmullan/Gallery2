@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$ $Date$
- * @author Douglas Cau <douglas@cau.se>
- */
 
- /**
+/**
  * This is a helper for the PHP Path Info parser.
- *
  * @package Rewrite
  * @subpackage Parsers
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class PathInfoHelper {
 
@@ -82,7 +78,7 @@ class PathInfoHelper {
     /**
      * This saves the rules in a way that the parser can grab quickly and compare agains.
      *
-     * @param array regular expression rules used by the parser
+     * @param array $regexRules regular expression rules used by the parser
      * @return object GalleryStatus a status code
      */
     function saveParser($regexRules) {
@@ -147,14 +143,14 @@ class PathInfoHelper {
      * @see RewriteParser::loadTestResultsTemplate
      */
     function loadTestResultsTemplate(&$template, &$form) {
-    	global $gallery;
-    	$urlGenerator =& $gallery->getUrlGenerator();
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
 
-    	list ($ret, $TestResults['pathInfo'], $TestResults['truePathInfo']) =
-    	    PathInfoHelper::checkPathInfo();
-    	if ($ret) {
-    	    return $ret;
-    	}
+	list ($ret, $TestResults['pathInfo'], $TestResults['truePathInfo']) =
+	    PathInfoHelper::checkPathInfo();
+	if ($ret) {
+	    return $ret;
+	}
 
 	if ($TestResults['pathInfo'] != REWRITE_STATUS_OK) {
 	    $TestResults['hrefTest'] = $urlGenerator->generateUrl(array(
@@ -163,7 +159,7 @@ class PathInfoHelper {
 	    $TestResults['refresh'] = 1;
 	}
 
-    	$TestResults['template'] = 'modules/rewrite/templates/PathInfoTestResults.tpl';
+	$TestResults['template'] = 'modules/rewrite/templates/PathInfoTestResults.tpl';
 	$template->setVariable('TestResults', $TestResults);
 
 	return null;

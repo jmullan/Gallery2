@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$ $Date$
- * @author Douglas Cau <douglas@cau.se>
- */
 
- /**
+/**
  * This is a helper for the ISAPI_Rewrite parser.
- *
  * @package Rewrite
  * @subpackage Parsers
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class IsapiRewriteHelper {
 
@@ -182,8 +178,8 @@ class IsapiRewriteHelper {
     /**
      * Returns the httpd.ini content given a set of rewrite rules
      *
-     * @param array regular expression rules with settings
-     * @param boolean (optional) true if embedded httpd.ini content is wanted
+     * @param array $regexRules regular expression rules with settings
+     * @param boolean $embedded (optional) true if embedded httpd.ini content is wanted
      * @return array object GalleryStatus a status code
      *               string the gallery .htaccess section
      */
@@ -325,8 +321,7 @@ class IsapiRewriteHelper {
     /**
      * Writes Gallery2 data to the httpd.ini file.
      *
-     * @param array regular expression rules with settings
-     * @param boolean (optional) if true then the embedded .htaccess is writed
+     * @param array $regexRules regular expression rules with settings
      * @return array object GalleryStatus a status code
      *               int rewrite status code
      */
@@ -408,8 +403,8 @@ class IsapiRewriteHelper {
 
 	list ($ret, $TestResults['httpdini']) = IsapiRewriteHelper::checkFile();
 	if ($ret) {
-    	    return $ret;
-    	}
+	    return $ret;
+	}
 
 	if ($TestResults['isapiInfo'] != REWRITE_STATUS_OK) {
 	    $TestResults['hrefTest'] = $urlGenerator->generateUrl(array(
@@ -417,8 +412,8 @@ class IsapiRewriteHelper {
 
 	    list ($ret, $TestResults['contents']) = IsapiRewriteHelper::getHttpdiniContent(array());
 	    if ($ret) {
-    		return $ret;
-    	    }
+		return $ret;
+	    }
 
 	    $TestResults['action'] = 1;
 	}
@@ -470,9 +465,9 @@ class IsapiRewriteHelper {
     }
 
     /**
-     * @param array config values
-     * @param object IsapiRewriteParser
-     * @param boolean true if we want to write the httpd.ini
+     * @param array $param config values
+     * @param object IsapiRewriteParser $parser
+     * @param boolean $saveActiveRules true if we want to write the httpd.ini
      */
     function saveEmbedConfig($param, $parser, $saveActiveRules) {
 	$code = REWRITE_STATUS_OK;
@@ -486,7 +481,7 @@ class IsapiRewriteHelper {
 	    if ($embeddedLocation{strlen($embeddedLocation)-1} != '/') {
 		$embeddedLocation .= '/';
 	    }
-			    
+
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
 		'isapirewrite.embeddedLocation', $embeddedLocation);
 	    if ($ret) {
@@ -504,5 +499,4 @@ class IsapiRewriteHelper {
 	return array(null, $code);
     }
 }
-
 ?>

@@ -51,7 +51,7 @@ class CartHelper {
      * (Note that view permission should be checked in advance; this function only checks
      *  cart.add permission)
      *
-     * @param array int item ids
+     * @param array $ids int item ids
      * @return object GalleryStatus a status code
      */
     function addItemsToCart($ids) {
@@ -92,7 +92,7 @@ class CartHelper {
     /**
      * Store cart contents
      *
-     * @param array (itemId => count, itemId => count, ..)
+     * @param array $cartItemIds (itemId => count, itemId => count, ..)
      * @return object GalleryStatus a status code
      */
     function setCartItemCounts($cartItemIds) {

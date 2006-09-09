@@ -112,9 +112,9 @@ class ErrorPageView extends GalleryView {
     /**
      * Entry point from main.php
      *
-     * @param object GalleryStatus
-     * @param mixed GalleryMain result, if available
-     * @param boolean (default true) false if Gallery has not initialized (can't use theme system)
+     * @param object GalleryStatus $error
+     * @param mixed $g2Data GalleryMain result, if available
+     * @param boolean $initOk false if Gallery has not initialized (can't use theme system)
      * @static
      */
     function errorHandler($error, $g2Data=null, $initOk=true) {

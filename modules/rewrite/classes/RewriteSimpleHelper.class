@@ -55,9 +55,9 @@ class RewriteSimpleHelper {
     /**
      * Replace the keyword with expected value.
      *
-     * @param string url passed by reference
-     * @param array of url params passed by reference
-     * @param object GalleryEntity loaded gallery entity with item id = $params['itemId'], or null
+     * @param string $url url passed by reference
+     * @param array $params of url params passed by reference
+     * @param object GalleryEntity $entity loaded entity with item id = $params['itemId'], or null
      * @return boolean true on success
      */
     function parsePath(&$url, &$params, &$entity) {

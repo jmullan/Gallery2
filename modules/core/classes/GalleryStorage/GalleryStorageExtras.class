@@ -28,7 +28,7 @@
  */
 class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
-     * @param object GalleryStorage the database storage instance
+     * @param object GalleryStorage $galleryStorage the database storage instance
      */
     function GalleryStorageExtras(&$galleryStorage) {
 	$this->_gs =& $galleryStorage;
@@ -1001,9 +1001,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * and inserts them into the map similar to the following:
      * INSERT INTO ... (PARM1, PARM2) VALUES (p1val1, p2val1), (p1val2, p2val2) ...
      *
-     * @param object the map we're working on
-     * @param string the translated table name
-     * @param array an associative array of data about the entry
+     * @param array $mapInfo map we're working on
+     * @param string $tableName the translated table name
+     * @param array $entry an associative array of data about the entry
      *              each data element is an array of values
      * @return object GalleryStatus a status code
      * @access private
@@ -1234,8 +1234,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * results in an array.  The best way to see how this is supposed to work is to look in the
      * unit test.
      *
-     * @param array the raw template data
-     * @param string the database type
+     * @param array $sqlData the raw template data
+     * @param string $dbType the database type
      * @return array the parsed results
      * @static
      */
@@ -1784,7 +1784,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      *
      * Request clearance to acquire locks and then wait until it's our turn.
      *
-     * @param int the time to stop trying to get clearance
+     * @param int $cutoffTime the time to stop trying to get clearance
      * @return object GalleryStatus a status code
      */
     function _getLockClearance($cutoffTime) {
@@ -1859,7 +1859,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
      * Identify the type of entity associated with the id provided
      *
-     * @param int a object id
+     * @param mixed $ids array of ids or single int id
      * @return array a GalleryStatus and a string class name
      */
     function _identifyEntities($ids) {
@@ -1938,8 +1938,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
      * Describe the members, modules and parent of an entity
      *
-     * @param string a class name
-     * @param boolean true if we should scan all modules, not just the active ones
+     * @param string $entityName a class name
+     * @param boolean $tryAllModules true if we should scan all modules, not just the active ones
      * @access protected
      * @return array object GalleryStatus a status code
      *               entity associative array

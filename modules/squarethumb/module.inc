@@ -153,7 +153,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
      * Find out what mime-types currently have toolkit support for:
      *    thumbnail, dimensions and crop [or composite]
      *
-     * @param boolean true to include types with composite support
+     * @param boolean $useComposite true to include types with composite support
      * @return array object GalleryStatus a status code
      *               array mime types
      * @access private

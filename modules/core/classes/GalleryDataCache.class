@@ -65,7 +65,7 @@ class GalleryDataCache {
 
     /**
      * Turn in-memory caching on or off
-     * @param boolean
+     * @param boolean $bool
      */
     function setMemoryCachingEnabled($bool) {
 	$enabled =& GalleryDataCache::isMemoryCachingEnabled();
@@ -76,9 +76,9 @@ class GalleryDataCache {
      * Store data in the cache
      * You must provide a unique key.  Existing keys are overwritten.
      *
-     * @param string the key
-     * @param mixed the data
-     * @param boolean should this key survive a reset call?
+     * @param string $key
+     * @param mixed $data
+     * @param boolean $protected should this key survive a reset call?
      */
     function put($key, $data, $protected=false) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -98,9 +98,7 @@ class GalleryDataCache {
 
     /**
      * Remove data from the cache
-     *
-     * @param string the key
-     * @param mixed the data
+     * @param string $key
      */
     function remove($key) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -115,9 +113,7 @@ class GalleryDataCache {
 
     /**
      * Remove data from the cache
-     *
-     * @param string the key
-     * @param mixed the data
+     * @param string $pattern regexp
      */
     function removeByPattern($pattern) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -137,9 +133,9 @@ class GalleryDataCache {
      *
      * You must provide a unique key.  Existing keys are overwritten.
      *
-     * @param string the key
-     * @param mixed the data
-     * @param boolean should this key survive a reset call?
+     * @param string $key
+     * @param mixed $data
+     * @param boolean $protected (optional) should this key survive a reset call?
      */
     function putByReference($key, &$data, $protected=false) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -189,8 +185,7 @@ class GalleryDataCache {
 
     /**
      * Retrieve data from the cache
-     *
-     * @param string the key
+     * @param string $key
      * @return mixed the cached data
      */
     function get($key) {
@@ -207,8 +202,7 @@ class GalleryDataCache {
 
     /**
      * Does the cache contain the key specified?
-     *
-     * @param string the function/method name
+     * @param string $key
      * @return boolean true if the cache contains the key given
      */
     function containsKey($key) {
@@ -235,7 +229,7 @@ class GalleryDataCache {
 
     /**
      * Empty the cache of all but protected entries
-     * @param boolean purge protected also?
+     * @param boolean $purgeProtected (optional) purge protected also?
      */
     function reset($purgeProtected=false) {
 	if (!GalleryDataCache::isMemoryCachingEnabled()) {
@@ -271,7 +265,8 @@ class GalleryDataCache {
 
     /**
      * Turn caching to disk on or off
-     * @param boolean
+     * @param boolean $bool
+
      */
     function setFileCachingEnabled($bool) {
 	$enabled =& GalleryDataCache::isFileCachingEnabled();
@@ -281,7 +276,7 @@ class GalleryDataCache {
     /**
      * Get the file from disk.  PathInfo is of the form that can be passed to getCachePath
      * @see GalleryDataCache::getCachePath
-     * @param array the path info
+     * @param array $pathInfo the path info
      * @return mixed object data
      */
     function &getFromDisk($pathInfo) {
@@ -312,7 +307,7 @@ class GalleryDataCache {
     /**
      * Remove the cache file from disk.  PathInfo is of the form that can be passed to getCachePath
      * @see GalleryDataCache::getCachePath
-     * @param array the path info
+     * @param array $pathInfo the path info
      */
     function removeFromDisk($pathInfo) {
 	if (!GalleryDataCache::isFileCachingEnabled()) {
@@ -353,9 +348,9 @@ class GalleryDataCache {
      * Put the specified data into a cache file from disk.  PathInfo is of the form that can
      * be passed to getCachePath.
      *
-     * @param array the path info
-     * @param mixed the object data
-     * @param array a list of classes that must be loaded in order to retrieve this data
+     * @param array $pathInfo the path info
+     * @param mixed $data the object data
+     * @param array $requiredClasses classes that must be loaded in order to retrieve this data
      * @see GalleryDataCache::getCachePath
      */
     function putToDisk($pathInfo, &$data, $requiredClasses=array()) {
@@ -386,7 +381,7 @@ class GalleryDataCache {
      *  100..109 =>  1, 0
      *  110..119 =>  1, 1
      *
-     * @param int the id
+     * @param int $id
      * @return array the tuple
      */
     function getCacheTuple($id) {
@@ -489,8 +484,8 @@ class GalleryDataCache {
 
     /**
      * Store the given permission => ids mapping in the session cache
-     * @param mixed item ids (can be an array of ids or a single id)
-     * @param string the permission
+     * @param mixed $ids item ids (can be an array of ids or a single id)
+     * @param string $permission
      */
     function cachePermissions($ids, $permission) {
 	global $gallery;
@@ -552,9 +547,9 @@ class GalleryDataCache {
      * that the user doesn't have the permission -- just that it's not in the
      * cache.
      *
-     * @param int the item id
-     * @param string the permission
-     * @param boolean
+     * @param int $id the item id
+     * @param string $permission
+     * @return boolean 
      */
     function hasPermission($id, $permission) {
 	global $gallery;
@@ -591,8 +586,8 @@ class GalleryDataCache {
     /**
      * Get page data from the cache.
      *
-     * @param string the page type
-     * @param mixed data to use to generate the unique key for this cache entry
+     * @param string $type the page type
+     * @param mixed $keyData data to use to generate the unique key for this cache entry
      * @return array object GalleryStatus a status code
      *               string the page data
      */
@@ -658,10 +653,10 @@ class GalleryDataCache {
     /**
      * Store page data from the cache.
      *
-     * @param string the page type
-     * @param int the itemId of the item this page is rendering
-     * @param mixed data to use to generate the unique key for this cache entry
-     * @param string the page data
+     * @param string $type the page type
+     * @param int $itemId the itemId of the item this page is rendering
+     * @param mixed $keyData data to use to generate the unique key for this cache entry
+     * @param string $value the page data
      * @return object GalleryStatus a status code
      */
     function putPageData($type, $itemId, $keyData, $value) {
@@ -721,7 +716,7 @@ class GalleryDataCache {
     /**
      * Remove all cached page data for the given item ids
      *
-     * @param mixed one item id, or an array of item ids
+     * @param mixed $itemIds one item id, or an array of item ids
      * @return object GalleryStatus a status code
      */
     function removePageData($itemIds) {
@@ -734,10 +729,11 @@ class GalleryDataCache {
 
     /**
      * Should we use the cache for this page or not?  Right now we cache a page if it's a GET
-     * request, the browser hasn't specified that it wants' uncached data, and the caching policy
+     * request, the browser hasn't specified that it wants uncached data, and the caching policy
      * for the given user class is appropriate.
      *
-     * @param mixed one item id, or an array of item ids
+     * @param string $action
+     * @param string $type the page type
      * @return object GalleryStatus a status code
      */
     function shouldCache($action, $type) {

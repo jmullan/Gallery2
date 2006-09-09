@@ -49,7 +49,7 @@ class GalleryUtilities {
      * eg. "foo.jpg" yields 'foo', 'jpg'
      *     "foo.bar.jpeg" yields 'foo.bar', 'jpeg'
      *
-     * @param string the filename
+     * @param string $filename
      * @return array the file base name, the file extension
      */
     function getFileNameComponents($filename) {
@@ -75,7 +75,7 @@ class GalleryUtilities {
      * Return the file's extension.
      * eg. "foo.jpg" yields "jpg"
      *
-     * @param string the filename
+     * @param string $filename
      * @return array the file extension
      */
     function getFileExtension($filename) {
@@ -87,7 +87,7 @@ class GalleryUtilities {
      * Return the file's base name.
      * eg. "foo.jpg" yields "foo"
      *
-     * @param string the filename
+     * @param string $filename
      * @return array the file base
      */
     function getFileBase($filename) {
@@ -98,8 +98,8 @@ class GalleryUtilities {
     /**
      * Return data about file attached to request
      *
-     * @param string a key
-     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
+     * @param string $key
+     * @param boolean $prefix (optional) false to omit Gallery variable prefix (not recommended)
      * @return array file data
      */
     function getFile($key, $prefix=true) {
@@ -128,8 +128,8 @@ class GalleryUtilities {
     /**
      * Return all request variables that match the prefix
      *
-     * @param string a key
-     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
+     * @param string $key
+     * @param boolean $prefix (optional) false to omit Gallery variable prefix (not recommended)
      * @return array key value pairs
      */
     function getFormVariables($key, $prefix=true) {
@@ -169,8 +169,8 @@ class GalleryUtilities {
     /**
      * Return all request variables from the URL except the listed keys
      *
-     * @param array (optional) keys to skip
-     * @param boolean (optional) if true, remove form variable prefix from keys in result
+     * @param array $skip (optional) keys to skip
+     * @param boolean $prefix (optional) if true, remove form variable prefix from keys in result
      * @return array unsanitized key value pairs
      */
     function getUrlVariablesFiltered($skip=array(), $prefix=false) {
@@ -228,8 +228,8 @@ class GalleryUtilities {
     /**
      * Remove all request variables that match the prefix
      *
-     * @param string a prefix
-     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
+     * @param string $key
+     * @param boolean $prefix (optional) false to omit Gallery variable prefix (not recommended)
      */
     function removeFormVariables($key, $prefix=true) {
 	/* Remove all matching GET and POST variables */
@@ -245,8 +245,8 @@ class GalleryUtilities {
      * Return the specified request variables.
      * Accept any number of keys and return that number of values, in order.
      *
-     * @param mixed a single key or many keys
-     * @return mixed a single value or many values
+     * @param one or more string parameters
+     * @return mixed a single string value or many values
      */
     function getRequestVariables() {
 	$values = array();
@@ -295,8 +295,8 @@ class GalleryUtilities {
      * when interacting with an external API where prefix can't be used.
      * Accept any number of keys and return that number of values, in order.
      *
-     * @param mixed a single key or many keys
-     * @return mixed a single value or many values
+     * @param one or more string parameters
+     * @return mixed a single string value or many values
      */
     function getRequestVariablesNoPrefix() {
 	$values = array();
@@ -316,9 +316,9 @@ class GalleryUtilities {
     /**
      * Push the given key => value pair back into the request
      *
-     * @param string the key
-     * @param string the value
-     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
+     * @param string $key
+     * @param string $value
+     * @param boolean $prefix (optional) false to omit Gallery variable prefix (not recommended)
      */
     function putRequestVariable($key, $value, $prefix=true) {
 	if ($prefix) {
@@ -339,9 +339,9 @@ class GalleryUtilities {
      *   $destination['foo']['bar']['baz'] = $value;
      *
      * @access private
-     * @param array the key path
-     * @param mixed the value
-     * @param array the destination
+     * @param array $keyPath the key path
+     * @param mixed $value
+     * @param array $array the destination
      */
     function _internalPutRequestVariable($keyPath, $value, &$array) {
 	$key = array_shift($keyPath);
@@ -356,9 +356,8 @@ class GalleryUtilities {
     /**
      * Check to see if the given key is in the request
      *
-     * @param string the key
-     * @param string the value
-     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
+     * @param string $key
+     * @param boolean $prefix (optional) false to omit Gallery variable prefix (not recommended)
      */
     function hasRequestVariable($key, $prefix=true) {
 	if ($prefix) {
@@ -371,8 +370,8 @@ class GalleryUtilities {
     /**
      * Remove a request variable
      *
-     * @param string the key
-     * @param boolean (optional) false to omit Gallery variable prefix (not recommended)
+     * @param string $key
+     * @param boolean $prefix (optional) false to omit Gallery variable prefix (not recommended)
      */
     function removeRequestVariable($key, $prefix=true) {
 	if ($prefix) {
@@ -389,8 +388,8 @@ class GalleryUtilities {
      *
      *   unset($source['foo']['bar']['baz']);
      *
-     * @param array the key path
-     * @param array the source
+     * @param array $keyPath the key path
+     * @param array $array the source
      * @access private
      */
     function _internalRemoveRequestVariable($keyPath, &$array) {
@@ -410,7 +409,7 @@ class GalleryUtilities {
     /**
      * Return prefixed form variable name
      *
-     * @param string form variable name
+     * @param string $key form variable name
      * @return string prefixed form variable name
      */
     function prefixFormVariable($key) {
@@ -420,7 +419,7 @@ class GalleryUtilities {
     /**
      * Return a string of ? markers
      *
-     * @param int the number of markers to return
+     * @param int $count the number of markers to return
      * @return string
      */
     function makeMarkers($count, $markerFragment='?') {
@@ -445,8 +444,8 @@ class GalleryUtilities {
      * ie. /path/to/gallery/themes/classic/styles/style.css =>
      *     http://example.com/gallery/themes/classic/styles/style.css
      *
-     * @param string path to a file in the Gallery directory tree
-     * @param array (optional) options to pass to UrlGenerator
+     * @param string $path path to a file in the Gallery directory tree
+     * @param array $options (optional) options to pass to UrlGenerator
      * @return string a URL
      */
     function convertPathToUrl($path, $options=array()) {
@@ -474,10 +473,10 @@ class GalleryUtilities {
      * Scale the given width/height to a new target size, maintaining aspect ratio, but only if the
      * dimensions are already larger than the target (in other words, don't increase the dimensions)
      *
-     * @param int width
-     * @param int height
-     * @param int target width
-     * @param int (optional) target height, defaults to same as width
+     * @param int $width
+     * @param int $height
+     * @param int $targetWidth target width
+     * @param int $targetHeight (optional) target height, defaults to same as width
      * @return array(width, height)
      */
     function shrinkDimensionsToFit($width, $height, $targetWidth, $targetHeight=null) {
@@ -494,10 +493,10 @@ class GalleryUtilities {
     /**
      * Scale the given width/height to a new target size, maintaining aspect ratio
      *
-     * @param int width
-     * @param int height
-     * @param int target width
-     * @param int (optional) target height, defaults to same as width
+     * @param int $width
+     * @param int $height
+     * @param int $targetWidth target width
+     * @param int $targetHeight (optional) target height, defaults to same as width
      * @return array(width, height)
      */
     function scaleDimensionsToFit($width, $height, $targetWidth, $targetHeight=null) {
@@ -519,8 +518,8 @@ class GalleryUtilities {
      * Round a float and convert to a string.  Replace , with . in case current locale uses comma as
      * fraction separator.
      *
-     * @param float value to round
-     * @param int precision, defaults to zero
+     * @param float $floatValue value to round
+     * @param int $precision defaults to zero
      * @return string rounded value
      */
     function roundToString($floatValue, $precision=0) {
@@ -545,8 +544,8 @@ class GalleryUtilities {
      * Figure out if the object specified is an instance of or an instance of a sub class of the
      * class specified
      *
-     * @param object any kind of object
-     * @param string a class name
+     * @param object $instance any kind of object
+     * @param string $className
      * @return boolean
      */
     function isA($instance, $className) {
@@ -557,8 +556,8 @@ class GalleryUtilities {
      * Figure out if the object specified is an instance of the class specified, excluding
      * subclasses
      *
-     * @param object any kind of object
-     * @param string a class name
+     * @param object $instance any kind of object
+     * @param string $className
      * @return boolean
      */
     function isExactlyA($instance, $className) {
@@ -569,13 +568,12 @@ class GalleryUtilities {
     /**
      * An entity-safe equivalent to substr (http://php.net/substr)
      *
-     * @param string the input string
-     * @param integer the 0 based start index (negative values mean subtract
-     *                from the end)
-     * @param integer the desired length.  If negative negative then that many characters will
+     * @param string $string the input string
+     * @param int $start the 0 based start index (negative values mean subtract from the end)
+     * @param int $length the desired length.  If negative negative then that many characters will
      *                be omitted from the end of string (after the start position has been
      *                calculated when a start is negative)
-     * @param boolean true if the final length be a count of entities, instead
+     * @param boolean $countEntitiesAsOne true if the final length be a count of entities, instead
      *                of characters. (default: true)
      * @return array int the number of entities in the string
      *               string the output string
@@ -641,8 +639,8 @@ class GalleryUtilities {
      *   http://www.php.net/manual/en/function.utf8-decode.php
      * by "ronen at greyzone dot com".
      *
-     * @param $source string encoded using UTF-8 [STRING]
-     * @return string of unicode entities [STRING]
+     * @param string $source encoded using UTF-8
+     * @return string of unicode entities
      */
     function utf8ToUnicodeEntities($source) {
 	/*
@@ -723,8 +721,9 @@ class GalleryUtilities {
      * 1.  Convert UTF-8 values to Unicode entities
      * 2.  Sanitize any input values to remove dangerous values
      *
-     * @param mixed one value or many values
-     * @param boolean (optional) false to skip undoing the damage caused by magic_quotes
+     * @param mixed $value one value or many values
+     * @param boolean $adaptForMagicQuotes (optional) false to skip undoing the damage caused
+     *                by magic_quotes
      */
     function sanitizeInputValues(&$value, $adaptForMagicQuotes=true) {
 	if (is_array($value)) {
@@ -762,8 +761,9 @@ class GalleryUtilities {
      * Undo the preprocessing done in sanitizeInputValues (useful when we put values back into the
      * request)
      *
-     * @param mixed one value or many values
-     * @param boolean (optional) false to skip redoing the damage caused by magic_quotes
+     * @param mixed $value one value or many values
+     * @param boolean $adaptForMagicQuotes (optional) false to skip redoing the damage caused
+     *                by magic_quotes
      */
     function unsanitizeInputValues(&$value, $adaptForMagicQuotes=true) {
 	if (is_array($value)) {
@@ -787,7 +787,7 @@ class GalleryUtilities {
     /**
      * Unescape embedded UTF-8 entities in the given string
      *
-     * @param string the input string with UTF-8 entities
+     * @param string $string the input string with UTF-8 entities
      * @return string the UTF-8 string
      */
     function unicodeEntitiesToUtf8($string) {
@@ -799,7 +799,9 @@ class GalleryUtilities {
     /**
      * A multibyte safe version of substr() for UTF-8
      *
-     * @param string the input string containing raw UTF-8
+     * @param string $string the input string containing raw UTF-8
+     * @param int $start
+     * @param int $length
      * @return string a multibyte safe substring of input value
      */
     function utf8Substring($string, $start, $length) {
@@ -827,7 +829,9 @@ class GalleryUtilities {
      * Note: this function treats all HTML entities like &amp; as single characters, but mb_substr
      * would treat this as 5 characters.
      *
-     * @param string the input string containing raw UTF-8
+     * @param string $string the input string containing raw UTF-8
+     * @param int $start
+     * @param int $length
      * @return string a multibyte safe substring of input value
      * @access private
      */
@@ -842,7 +846,7 @@ class GalleryUtilities {
      * Convert a numerical unicode value to a multibyte UTF-8 string.  Adapted from code found here:
      * http://us2.php.net/utf8_encode
      *
-     * @param num the unicode value
+     * @param int $num the unicode value
      * @return string the UTF-8 string
      */
     function unicodeValueToUtf8Value($num) {
@@ -880,7 +884,7 @@ class GalleryUtilities {
      * Equivalent to html_entity_decode() for PHP <4.3.0 which doesn't have it
      * @todo Remove at the next major version bump of core API
      *
-     * @param string with html entities
+     * @param string $string with html entities
      * @return same string without them
      * @deprecated
      */
@@ -891,7 +895,8 @@ class GalleryUtilities {
     /**
      * Apply markup to given text
      *
-     * @param string (optional) markup type, defaults from core markup parameter
+     * @param string $text
+     * @param string $markupType (optional) markup type, defaults from core markup parameter
      * @return string resulting text
      */
     function markup($text, $markupType=null) {
@@ -902,8 +907,8 @@ class GalleryUtilities {
     /**
      * Strip out all potentially dangerous content within HTML
      *
-     * @param string HTML
-     * @param boolean (optional) true to decode entities, process, then recode
+     * @param string $html HTML
+     * @param boolean $decode (optional) true to decode entities, process, then recode
      * @return string safe HTML
      */
     function htmlSafe($html, $decode=false) {
@@ -925,7 +930,7 @@ class GalleryUtilities {
     /**
      * Return a specified request variable from the GET or POST vars
      *
-     * @param string a single key
+     * @param string $key a single key
      * @return string a single value
      * @access private
      */
@@ -944,8 +949,8 @@ class GalleryUtilities {
      *
      *   return $source['foo']['bar']['baz'];
      *
-     * @param array the key path
-     * @param array the source
+     * @param array $keyPath the key path
+     * @param array $array the source
      * @return the value or null if it does not exist
      * @access private
      */
@@ -968,9 +973,9 @@ class GalleryUtilities {
      *
      * Make sure to pass paths in the system charset to this method
      *
-     * @param string the path
-     * @param string the list of legal paths
-     * @return true or false
+     * @param string $path
+     * @param string $list the list of legal paths
+     * @return boolean
      */
     function isPathInList($path, $list) {
 	global $gallery;
@@ -1003,8 +1008,8 @@ class GalleryUtilities {
      *
      * Right now we consider any RFC1918 host trustworthy
      *
-     * @param string an address in dotted quad form
-     * @return boolean true or false
+     * @param string $addr an address in dotted quad form
+     * @return boolean
      */
     function isTrustedProxy($addr) {
 	return (boolean)preg_match('/^((10\.\d{1,3}\.\d{1,3}\.\d{1,3})|'
@@ -1037,7 +1042,7 @@ class GalleryUtilities {
     /**
      * Make sure that the given directory exists (creating it and parent directories if necessary)
      *
-     * @param string the dir
+     * @param string $dir
      * @return array boolean true if dir exists or was created successfully
      *               array of directories that were created
      */
@@ -1077,7 +1082,7 @@ class GalleryUtilities {
     /**
      * Turn a set of albums into a depth tree suitable for display in a hierarchical format
      *
-     * @param array the GalleryAlbumItem instances
+     * @param array $albums the GalleryAlbumItem instances
      * @return array an associative array of tree data.  Each node has a 'depth' element, and a
      *               'data' element that contains all the members of the current album item.
      */
@@ -1127,9 +1132,9 @@ class GalleryUtilities {
     /**
      * Recursively walk a parent/child map and build the depth tree
      *
-     * @param array parent/child map
-     * @param int child id
-     * @param int (optional) current depth
+     * @param array $map parent/child map
+     * @param int $id child id
+     * @param int $depth (optional) current depth
      * @access private
      */
     function _createDepthTree(&$map, $id, $depth=0) {
@@ -1148,7 +1153,7 @@ class GalleryUtilities {
     /**
      * Return approximate filename of given GalleryEntity, or 'unknown' if we can't figure it out
      *
-     * @param object entity a GalleryEntity
+     * @param object GalleryEntity $entity
      * @return array object GalleryStatus a status code
      *               string pseudoFileName a filename
      */
@@ -1197,11 +1202,11 @@ class GalleryUtilities {
      * Return a date and time string that is conformant to RFC 2616
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3
      *
-     * @param integer the unix timestamp of the date we want to return,
+     * @param int $time the unix timestamp of the date we want to return,
      *                empty if we want the current time
      * @return string a date-string conformant to the RFC 2616
      */
-    function getHttpDate($time = '') {
+    function getHttpDate($time='') {
 	if ($time == '') {
 	    $time = time();
 	}
@@ -1275,7 +1280,7 @@ class GalleryUtilities {
     /**
      * Validate string is valid format for an email address
      *
-     * @param string email address
+     * @param string $email email address
      * @return boolean
      */
     function isValidEmailString($email) {
@@ -1285,8 +1290,8 @@ class GalleryUtilities {
     /**
      * Create a hashed password using md5 plus salt
      *
-     * @param string plaintext password
-     * @param string (optional) salt or hash containing salt (randomly generated if omitted)
+     * @param string $password plaintext password
+     * @param string $salt (optional) salt or hash containing salt (randomly generated if omitted)
      * @return string hashed password
      */
     function md5Salt($password, $salt='') {
@@ -1305,8 +1310,8 @@ class GalleryUtilities {
     /**
      * Verify given password is correct
      *
-     * @param string password guess
-     * @param string hashed password
+     * @param string $guess password guess
+     * @param string $hashedPassword hashed password
      * @return boolean true if correct
      */
     function isCorrectPassword($guess, $hashedPassword) {
@@ -1319,8 +1324,8 @@ class GalleryUtilities {
      * We're only compatible if the major numbers are the same, and the required minor number is
      * less than or equal to the provided minor number
      *
-     * @param array required (major, minor)
-     * @param array provided (major, minor)
+     * @param array $required (major, minor)
+     * @param array $provided (major, minor)
      * @return boolean true if compatible
      */
     function isCompatibleWithApi($required, $provided) {
@@ -1347,7 +1352,7 @@ class GalleryUtilities {
     /**
      * Get all array keys, looking even in arrays contained within the array
      *
-     * @param array
+     * @param array $array
      * @return array of keys
      */
     function arrayKeysRecursive($array) {
@@ -1364,7 +1369,7 @@ class GalleryUtilities {
     /**
      * Get a php.ini value and return its boolean value
      *
-     * @param string name of the php.ini value to be retrieved
+     * @param string $ini_string name of the php.ini value to be retrieved
      * @return boolean value
      */
     function getPhpIniBool($ini_string) {
@@ -1414,7 +1419,7 @@ class GalleryUtilities {
     /**
      * Return a sanitized version of the given variable from the _SERVER superglobal
      *
-     * @param string the key in the _SERVER superglobal
+     * @param string $key the key in the _SERVER superglobal
      * @return string the value
      */
     function getServerVar($key) {
@@ -1430,7 +1435,7 @@ class GalleryUtilities {
     /**
      * Return a sanitized version of the given variable from the _COOKIE superglobal
      *
-     * @param string the key in the _COOKIE superglobal
+     * @param string $key the key in the _COOKIE superglobal
      * @return string the value
      */
     function getCookieVar($key) {
@@ -1485,8 +1490,8 @@ class GalleryUtilities {
      * cookies.  We fix only non-array and non '[', ']' containing cookies for simplicity.  To fix
      * our login problem, we'd have to fix only the GALLERYSID cookie anyway.
      *
-     * @param boolean force the reevaluation of the HTTP header string Cookie
-     * @param boolean unset static variable for testability
+     * @param boolean $force force the reevaluation of the HTTP header string Cookie
+     * @param boolean $unset unset static variable for testability
      */
     function fixCookieVars($force=false, $unset=false) {
 	static $fixed;
@@ -1577,8 +1582,8 @@ class GalleryUtilities {
      * involving.  But we gracefully just don't replace these array cookies in $_COOKIE, so if they
      * are used somewhere, they will be left intact by fixCookieVars().
      *
-     * @param string the cookie var attr, NAME [=VALUE]
-     * @param array (string already registered cookie name, ...)
+     * @param string $attr the cookie var attr, NAME [=VALUE]
+     * @param array $fixedCookies (string already registered cookie name, ...)
      * @access private
      */
     function _registerCookieAttr($attr, &$fixedCookies) {
@@ -1635,7 +1640,7 @@ class GalleryUtilities {
      * PHP's strtolower doesn't work in all locales as expected, eg. in Turkish, we get non-ASCII
      * characters for an ASCII input string
      *
-     * @param string
+     * @param string $string
      * @return string lowercase version of the string
      */
     function strToLower($string) {
@@ -1645,7 +1650,7 @@ class GalleryUtilities {
     /**
      * ASCII version of PHP's strtoupper()
      *
-     * @param string
+     * @param string $string
      * @return string uppercase version of the string
      */
     function strToUpper($string) {

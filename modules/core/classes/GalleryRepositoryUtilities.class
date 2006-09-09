@@ -35,7 +35,7 @@ class GalleryRepositoryUtilities {
      *  yyyy/mm/dd hh:mm:ss
      *  yyyy-mm-dd hh:mm[-|+]hhmm
      *
-     * @param string to exract timestamp from
+     * @param string $string to exract timestamp from
      * @return array object GalleryStatus a status code
      *               string timestamp
      */
@@ -73,7 +73,7 @@ class GalleryRepositoryUtilities {
      * The patterned searched for is:
      *  ,v [revision] [number]
      *
-     * @param string to exract revision from
+     * @param string $string to exract revision from
      * @return array object GalleryStatus a status code
      *               string revision
      */
@@ -92,10 +92,10 @@ class GalleryRepositoryUtilities {
      * Compares two specified versions and, optionally, build numbers (timestamps). Returns the
      * relation between the first and second specified versions.
      *
-     * @param string first version (x[.y][.z][...])
-     * @param string second version
-     * @param int first build (yyyymmddhhmmss)
-     * @param int second build
+     * @param string $version1 first version (x[.y][.z][...])
+     * @param string $version2 second version
+     * @param int $build1 first build (yyyymmddhhmmss)
+     * @param int $build2 second build
      * @return array object GalleryStatus a status code
      *		      string 'older', 'equal', 'newer'
      */
@@ -175,8 +175,8 @@ class GalleryRepositoryUtilities {
     /**
      * Reads specified number of bytes from the file's beginning.
      *
-     * @param string file path
-     * @param int bytes to read
+     * @param string $path file path
+     * @param int $bytes bytes to read
      * @return array object GalleryStatus a status code
      *               string first line from file
      */
@@ -198,8 +198,8 @@ class GalleryRepositoryUtilities {
     /**
      * Reads the strings.raw revision of the specified plugin.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *		     string strings.raw timestamp
      */
@@ -234,8 +234,8 @@ class GalleryRepositoryUtilities {
     /**
      * Determines whether the specified plugin is available in the local Gallery.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *		     boolean availability
      */
@@ -257,14 +257,15 @@ class GalleryRepositoryUtilities {
      * provided APIs. If provided APIs are omitted, currently installed API versions will be
      * used.
      *
-     * @param string 'module' or 'theme'
-     * @param array required core API version
-     * @param array required theme/module API version
-     * @param array provided core API versions ('core', 'module', 'theme' => array(Major, Minor))
+     * @param string $pluginType
+     * @param array $requiredCoreApi required core API version
+     * @param array $requiredPluginApi required theme/module API version
+     * @param array $providedApis provided core API versions
+     *              ('core', 'module', 'theme' => array(Major, Minor))
      * @return boolean compatibility
      */
     function isPluginCompatible($pluginType, $requiredCoreApi, $requiredPluginApi,
-	    $providedApis = null) {
+	    $providedApis=null) {
 
 	/*
 	 * We must explicitly convert version numbers to integers because
@@ -288,12 +289,13 @@ class GalleryRepositoryUtilities {
      *
      * If no provided APIs are specified, currently installed API versions will be used.
      *
-     * @param string 'plugin' or 'theme'
-     * @param array provided core API versions ('core', 'module', 'theme' => array(Major, Minor))
+     * @param string $pluginType
+     * @param array $providedApis provided core API versions
+     *              ('core', 'module', 'theme' => array(Major, Minor))
      * @return array array provided core API version
      *		     array provided plugin (based on its type) API version
      */
-    function getProvidedApis($pluginType, $providedApis = null) {
+    function getProvidedApis($pluginType, $providedApis=null) {
 	if (empty($providedApis)) {
 	    $providedCoreApi = GalleryCoreApi::getApiVersion();
 	    $providedPluginApi = $pluginType == 'module' ? GalleryModule::getApiVersion()
@@ -313,8 +315,8 @@ class GalleryRepositoryUtilities {
     /**
      * Gets version and build information about the installed packages of the specified plugin.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *		     array[$packageName] => array('version' => $version, 'build' => $build)
      */
@@ -341,10 +343,9 @@ class GalleryRepositoryUtilities {
 
     /**
      * Returns the language description of the specified language-country code.
+     * eg. en_US => English (US)
      *
-     * e.g. en_US => English (US)
-     *
-     * @param string language code
+     * @param string $languageCode
      * @return array object GalleryStatus a status code
      *		     string language description
      */
@@ -374,8 +375,8 @@ class GalleryRepositoryUtilities {
     /**
      * Returns the version of the specified plugin.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *		     string version
      */
@@ -395,7 +396,7 @@ class GalleryRepositoryUtilities {
      * eventually write a simpler downloader that can report its progress to get more
      * responsive progress indication.
      *
-     * @param string url to download from
+     * @param string $url url to download from
      * @return array boolean file was successfully downloaded
      *		     string file contents
      */

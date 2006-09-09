@@ -285,9 +285,9 @@ class AdminRepositoryControllerTestRepository {
     /**
      * Specify inputs and outputs for a function
      *
-     * @param string the function name
-     * @param mixed input values
-     * @param mixed output values
+     * @param string $function the function name
+     * @param mixed $inputs input values
+     * @param mixed $outputs output values
      */
     function setReply($function, $inputs, $outputs) {
 	$_GET['TestRepository']['replies'][] = array($function, $inputs, $outputs);

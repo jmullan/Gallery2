@@ -81,7 +81,7 @@ class GalleryAlbumItem extends GalleryItem {
      * Create a new instance of this AlbumItem in the persistent store.
      * Also create the album directory on the filesystem.
      *
-     * @param int the id of the parent of this object
+     * @param int $parentId the id of the parent of this object
      * @return object GalleryStatus a status code
      */
     function create($parentId, $albumName) {
@@ -295,7 +295,7 @@ class GalleryAlbumItem extends GalleryItem {
     /**
      * Rename this album
      *
-     * @param string the path component
+     * @param string $newName the path component
      * @return object GalleryStatus a status code
      */
     function rename($newName) {
@@ -372,7 +372,7 @@ class GalleryAlbumItem extends GalleryItem {
     /**
      * Move this item to a new parent
      *
-     * @param int the id of the GalleryItem parent
+     * @param int $newParentId the id of the GalleryItem parent
      * @return object GalleryStatus a status code
      */
     function move($newParentId) {

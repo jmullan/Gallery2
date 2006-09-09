@@ -181,8 +181,8 @@ class GalleryRepositoryIndex {
     /**
      * Returns the specified plugin's build.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *		     string plugin build
      */
@@ -208,8 +208,8 @@ class GalleryRepositoryIndex {
      * Only the languages for the currently installed strings.raw revision are returned, along
      * with the latest revision number of each language.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *		     array languageCode => revision
      */
@@ -252,8 +252,8 @@ class GalleryRepositoryIndex {
     /**
      * Determines if the specified plugin exists in the index.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return boolean
      */
     function containsPlugin($pluginType, $pluginId) {
@@ -264,8 +264,8 @@ class GalleryRepositoryIndex {
      * Returns the specified plugin's name in the active language.
      * If it's not available in the active language, fall back to 'en_US'.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *		     string descriptor URL
      */
@@ -303,8 +303,8 @@ class GalleryRepositoryIndex {
     /**
      * Returns the specified plugin's descriptor URL relative to the repository root URL.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *		     string descriptor URL
      */
@@ -327,9 +327,9 @@ class GalleryRepositoryIndex {
     /**
      * Returns the specified plugin package's URL relative to the repository root URL.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
-     * @param string package name
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param string $package package name
      * @return array object GalleryStatus a status code
      *		     string package URL
      */
@@ -356,9 +356,9 @@ class GalleryRepositoryIndex {
      *
      * If a language package is specified, the strings.raw and po revision are returned.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
-     * @param string package name
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param string $package package name
      * @return array object GalleryStatus a status code
      *		     string version/revision
      *		     string build/revision
@@ -414,9 +414,9 @@ class GalleryRepositoryIndex {
      * (core and theme/module) if the second parameter is set. If no APIs are specified for the
      * compatibility check, the currently installed API versions are used.
      *
-     * @param string 'module' or 'theme'
-     * @param boolean return all plugins, even incompatible ones
-     * @param array core APIs to base compatibility check on
+     * @param string $pluginType 'module' or 'theme'
+     * @param boolean $showAllPlugins return all plugins, even incompatible ones
+     * @param array $coreApis core APIs to base compatibility check on
      *		    'core'/'module'/'theme' => array(versionMajor, versionMinor)
      * @return array plugin list
      */

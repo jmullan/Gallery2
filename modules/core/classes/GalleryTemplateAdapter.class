@@ -75,8 +75,7 @@ class GalleryTemplateAdapter {
 
     /**
      * Set the theme
-     *
-     * @param object GalleryTheme
+     * @param object GalleryTheme $theme
      */
     function setTheme($theme) {
 	$this->_theme = $theme;
@@ -90,7 +89,8 @@ class GalleryTemplateAdapter {
      * Return a valid Gallery URL, standalone or embedded.
      * @see GalleryUrlGenerator::generateUrl
      *
-     * @param array data in key/value pairs
+     * @param array $params data in key/value pairs
+     * @param object Smarty $smarty the smarty instance
      * @return string a URL
      */
     function url($params, &$smarty) {
@@ -119,7 +119,8 @@ class GalleryTemplateAdapter {
      * current session and request context.  We use this to pass the special "return" variable
      * forward, for example.
      *
-     * @param array data in key/value pairs
+     * @param array $params data in key/value pairs
+     * @param object Smarty $smarty the smarty instance
      * @return a series of XHTML 1.0 compliant <input> elements
      */
     function hiddenFormVars($params, &$smarty) {
@@ -175,7 +176,8 @@ class GalleryTemplateAdapter {
      * Return a valid Gallery date.
      * @todo This needs to be refactored.
      *
-     * @param array data in key/value pairs
+     * @param array $params data in key/value pairs
+     * @param object Smarty $smarty the smarty instance
      * @return string date
      */
     function date($params, &$smarty) {
@@ -233,7 +235,8 @@ class GalleryTemplateAdapter {
      * Return a checkbox asking whether to chenge the value in descendents.
      * Useful when we are trying to change a value recursively.
      *
-     * @param array key => value attributes
+     * @param array $params key => value attributes
+     * @param object Smarty $smarty the smarty instance
      * @return HTML content
      */
     function changeInDescendents($params, &$smarty) {
@@ -259,7 +262,7 @@ class GalleryTemplateAdapter {
     /**
      * Return a transformed element name.
      *
-     * @param array key => value attributes
+     * @param array $params key => value attributes
      * @return HTML content
      */
     function formVar($params) {
@@ -270,8 +273,8 @@ class GalleryTemplateAdapter {
      * Delegate to the appropriate item class to render an image.
      * @todo Figure out a more graceful way to deal with errors here.
      *
-     * @param array containing item, image, maxSize, fallback, and any img attributes
-     * @param object Smarty the smarty instance
+     * @param array $params containing item, image, maxSize, fallback, and any img attributes
+     * @param object Smarty $smarty the smarty instance
      * @return string HTML content
      */
     function image($params, &$smarty) {
@@ -353,8 +356,8 @@ class GalleryTemplateAdapter {
     /**
      * Render head content
      *
-     * @param array
-     * @param object Smarty the smarty instance
+     * @param array $params
+     * @param object Smarty $smarty the smarty instance
      * @return string HTML content
      */
     function head($params, &$smarty) {
@@ -402,9 +405,9 @@ class GalleryTemplateAdapter {
     /**
      * Include our AutoCompletion template.
      *
-     * @param array params
-     * @param string content
-     * @param object Smarty the smarty instance
+     * @param array $params params
+     * @param string $content content
+     * @param object Smarty $smarty the smarty instance
      */
     function autoComplete($params, $content, &$smarty) {
 	if (!isset($content)) {
@@ -429,8 +432,8 @@ class GalleryTemplateAdapter {
     /**
      * Include form inputs for dimensions.
      *
-     * @param array params
-     * @param object Smarty the smarty instance
+     * @param array $params params
+     * @param object Smarty $smarty the smarty instance
      */
     function dimensions($params, &$smarty) {
 	if (!isset($this->_callCount['dimensions'])) {
@@ -455,8 +458,8 @@ class GalleryTemplateAdapter {
      * that is used if enter is pressed in a text input.
      * Include this before any submit buttons are added to the form.
      *
-     * @param array params
-     * @param object Smarty the smarty instance
+     * @param array $params params
+     * @param object Smarty $smarty the smarty instance
      */
     function defaultButton($params, &$smarty) {
 	if (!isset($this->_callCount['defaultButton'])) {
@@ -477,7 +480,7 @@ class GalleryTemplateAdapter {
      * This takes an array and looks for view, subview, and controller to make
      * a linkid (being used as a css classname)
      *
-     * @param array the items to make a css class out of
+     * @param array $params the items to make a css class out of
      * @return string the id of the css class
      */
     function linkId($params) {
@@ -516,7 +519,7 @@ class GalleryTemplateAdapter {
      * Purpose:  Removes characters from a string so that it can be used for an
      * html class name or id and be addressed via css
      *
-     * @param string the input string
+     * @param string $string the input string
      * @return string
      * @access private
      */
@@ -569,7 +572,8 @@ class GalleryTemplateAdapter {
 
     /**
      * Render logo button image.
-     * @param array('type' => logo type)
+     * @param array $params ('type' => logo type)
+     * @param object Smarty $smarty the smarty instance
      * @return HTML content
      */
     function logoButton($params, &$smarty) {
@@ -703,8 +707,8 @@ class GalleryTemplateAdapter {
      *   include => file to include inside the theme's templates/ dir
      *   url  => url to a file inside the themes dir
      *
-     * @param array('include' => ..., 'url' => ...)
-     * @param reference to Smarty
+     * @param array $params ('include' => ..., 'url' => ...)
+     * @param object Smarty $smarty the smarty instance
      */
     function theme($params, &$smarty) {
 	global $gallery;
@@ -746,8 +750,8 @@ class GalleryTemplateAdapter {
      * required param is 'type' which should be of the form <module>.<blockname>
      * eg: "core.LoginBlock".  Any other parameters get passed on to the block itself.
      *
-     * @param array('type' => <block descriptor>, ...)
-     * @param reference to Smarty
+     * @param array $params ('type' => <block descriptor>, ...)
+     * @param object Smarty $smarty the smarty instance
      */
     function block($params, &$smarty) {
 	list ($module, $file) = explode('.', $params['type']);
@@ -785,8 +789,9 @@ class GalleryTemplateAdapter {
      *
      * This is like block() except it wraps actual content.
      *
-     * @param array('type' => <block descriptor>, ...)
-     * @param reference to Smarty
+     * @param array $params ('type' => <block descriptor>, ...)
+     * @param string $content
+     * @param object Smarty $smarty the smarty instance
      */
     function container($params, $content, &$smarty) {
 	if (!isset($content)) {
@@ -819,8 +824,8 @@ class GalleryTemplateAdapter {
      * param is 'type' which should be of the form <module>.<blockname> eg: "core.LoginBlock".
      * Any other parameters get passed on to the block itself.
      *
-     * @param array('type' => <block descriptor>, ...)
-     * @param reference to Smarty
+     * @param array $params ('type' => <block descriptor>, ...)
+     * @param object Smarty $smarty the smarty instance
      */
     function callback($params, &$smarty) {
 	global $gallery;
@@ -854,10 +859,9 @@ class GalleryTemplateAdapter {
     /**
      * Add the content to our trailer block
      *
-     * @param array
-     * @param string content
-     * @param object Smarty the smarty instance
-     * @return string HTML content
+     * @param array $params
+     * @param string $content
+     * @param object Smarty $smarty the smarty instance
      */
     function addToTrailer($params, $content, &$smarty) {
 	if (!isset($content)) {
@@ -869,7 +873,8 @@ class GalleryTemplateAdapter {
     /**
      * Register a callback function to be executed when we run the trailer.
      *
-     * @param array of arguments suitable to be used as an input for call_user_func()
+     * @param callback $callback suitable to be used as an input for call_user_func()
+     * @param array $args for callback
      */
     function registerTrailerCallback($callback, $args) {
 	$this->_trailerCallbacks[] = array('function' => $callback, 'args' => $args);
@@ -892,7 +897,8 @@ class GalleryTemplateAdapter {
     /**
      * Use GalleryUtilities::shrinkDimensionsToFit to scale template vars to new target size.
      *
-     * @param array args; should contain widthVar, heightVar, maxSize keys
+     * @param array $params args; should contain widthVar, heightVar, maxSize keys
+     * @param object Smarty $smarty the smarty instance
      */
     function shrinkDimensions($params, &$smarty) {
 	if (!isset($params['widthVar']) || !isset($params['heightVar']) ||

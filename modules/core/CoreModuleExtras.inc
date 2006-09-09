@@ -32,8 +32,8 @@ class CoreModuleExtras {
 
     /**
      * @see GalleryModule::upgrade
-     * @param object GalleryModule the core module
-     * @param string the current installed version
+     * @param object GalleryModule $module the core module
+     * @param string $currentVersion the current installed version
      */
     function upgrade($module, $currentVersion, $statusMonitor) {
 	global $gallery;
@@ -2146,7 +2146,7 @@ class CoreModuleExtras {
     /**
      * Determine what changes to config.php are required for this upgrade.
      *
-     * @param string current core version
+     * @param string $currentVersion current core version
      * @return array of array('remove' => array of string regexp removals,
      *                        'add' => array of string additions)
      * @access private
@@ -2390,7 +2390,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
     /**
      * Check if any changes to config.php are required for this upgrade.
      *
-     * @param string current core version
+     * @param string $currentVersion current core version
      * @return boolean true if change is required
      */
     function isConfigUpgradeRequired($currentVersion) {
@@ -2401,7 +2401,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
     /**
      * Perform upgrade of config.php file.
      *
-     * @param string current core version
+     * @param string $currentVersion current core version
      * @return object GalleryStatus a status code
      */
     function performConfigUpgrade($currentVersion) {
@@ -2445,7 +2445,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
     /**
      * Create the initial all users group.
      *
-     * @param object GalleryModule the core module
+     * @param object GalleryModule $module the core module
      * @return object GalleryStatus a status code
      */
     function _createAllUsersGroup($module) {
@@ -2485,7 +2485,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
     /**
      * Create the site admins group.
      *
-     * @param object GalleryModule the core module
+     * @param object GalleryModule $module the core module
      * @return object GalleryStatus a status code
      */
     function _createSiteAdminsGroup($module) {
@@ -2525,7 +2525,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
     /**
      * Create the everybody group.
      *
-     * @param object GalleryModule the core module
+     * @param object GalleryModule $module the core module
      * @return object GalleryStatus a status code
      */
     function _createEverybodyGroup($module) {
@@ -2565,7 +2565,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
     /**
      * Create the initial anonymous user.
      *
-     * @param object GalleryModule the core module
+     * @param object GalleryModule $module the core module
      * @return object GalleryStatus a status code
      */
     function _createAnonymousUser($module) {
@@ -2618,7 +2618,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
     /**
      * Create the initial admin user.
      *
-     * @param object GalleryModule the core module
+     * @param object GalleryModule $module the core module
      * @return object GalleryStatus a status code
      */
     function _createAdminUser($module) {
@@ -2681,7 +2681,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
     /**
      * Create the root album item.
      *
-     * @param object GalleryModule the core module
+     * @param object GalleryModule $module the core module
      * @return object GalleryStatus a status code
      */
     function _createRootAlbumItem($module) {
@@ -2743,7 +2743,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
     /**
      * Create the access list compactor lock entity.
      *
-     * @param object GalleryModule the core module
+     * @param object GalleryModule $module the core module
      * @return object GalleryStatus a status code
      */
     function _createAccessListCompacterLock($module) {

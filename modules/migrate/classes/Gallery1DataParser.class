@@ -31,7 +31,7 @@ class Gallery1DataParser {
     /**
      * Verify that the given path holds an albumdb and that the albumdb is readable
      *
-     * @param string Path to albums
+     * @param string $path Path to albums
      * @return boolean True if the path is valid, otherwise false
      */
     function isValidAlbumsPath($path) {
@@ -49,7 +49,7 @@ class Gallery1DataParser {
     /**
      * Load and return user metadata from given file
      *
-     * @param string Path to user file to unserialize
+     * @param string $fileName Path to user file to unserialize
      * @return array object GalleryStatus a status code,
      *               object Unserialized user metadata
      */
@@ -89,7 +89,7 @@ class Gallery1DataParser {
     /**
      * Fetch an array of albums from a given path
      *
-     * @param string Path to albums directory
+     * @param string $path Path to albums directory
      * @return array object GalleryStatus a status code,
      *               array of objects
      */
@@ -119,7 +119,7 @@ class Gallery1DataParser {
     /**
      * Fetch an associative array of parentalbum names from a given path to gallery1 albums
      *
-     * @param string Path to albums directory
+     * @param string $path Path to albums directory
      * @return array object GalleryStatus a status code,
      *               array of albums and their parents
      */
@@ -147,7 +147,7 @@ class Gallery1DataParser {
     /**
      * Build a data tree of albums
      *
-     * @param string Path to albums directory
+     * @param string $path Path to albums directory
      * @return array object GalleryStatus a status code,
      *               array of albumnames and their children, and their children...
      */
@@ -176,7 +176,7 @@ class Gallery1DataParser {
     /**
      * Fetch an array of albums with no parents
      *
-     * @param string Path to albums directory
+     * @param string $path Path to albums directory
      * @return array object GalleryStatus a status code,
      *               array of albumnames
      */
@@ -206,7 +206,7 @@ class Gallery1DataParser {
     /**
      * Load and return album metadata from given directory
      *
-     * @param string Path to album directory
+     * @param string $path Path to album directory
      * @return array object GalleryStatus a status code,
      *               object Unserialized album metadata
      */
@@ -236,7 +236,7 @@ class Gallery1DataParser {
     /**
      * Count the number of photos in an album dir
      *
-     * @param string Path to album directory
+     * @param string $path Path to album directory
      * @return array object GalleryStatus a status code,
      *               integer Count of photos
      */
@@ -252,7 +252,7 @@ class Gallery1DataParser {
     /**
      * Count the photo data from an album dir
      *
-     * @param string Path to album directory
+     * @param string $path Path to album directory
      * @return array object GalleryStatus a status code,
      *               array object Galleryphotos
      */
@@ -271,7 +271,7 @@ class Gallery1DataParser {
     /**
      * Load user uids from path
      *
-     * @param string Path to album directory
+     * @param string $path Path to album directory
      * @return array object GalleryStatus a status code,
      *               array Associative array of uids and usernames
      */
@@ -305,8 +305,8 @@ class Gallery1DataParser {
     /**
      * Validate user id string from gallery v1.x.x
      *
-     * @param string Uid to be tested
-     * @return boolean True or False
+     * @param string $uid Uid to be tested
+     * @return boolean
      */
     function isValidUidString($uid) {
 	if (ereg('^[0-9]{9,}_[0-9]+$', $uid)) {
@@ -319,8 +319,9 @@ class Gallery1DataParser {
     /**
      * Validate user id from gallery v1.x.x
      *
-     * @param string Uid to be tested
-     * @return boolean True or False
+     * @param string $path
+     * @param string $uid Uid to be tested
+     * @return boolean
      */
     function isValidUid($path, $uid) {
 	global $gallery;
@@ -351,8 +352,8 @@ class Gallery1DataParser {
     /**
      * Load user metadata given a path and uid
      *
-     * @param string Path to album directory
-     * @param string Username to import
+     * @param string $path Path to album directory
+     * @param string $uid Uid to import
      * @return array object GalleryStatus a status code,
      *               array User metadata
      */
@@ -386,8 +387,8 @@ class Gallery1DataParser {
     /**
      * Load user metadata given a path and username
      *
-     * @param string Path to album directory
-     * @param string Username to import
+     * @param string $path Path to album directory
+     * @param string $username Username to import
      * @return array object GalleryStatus a status code,
      *               array User metadata
      */

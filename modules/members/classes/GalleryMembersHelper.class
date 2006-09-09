@@ -31,7 +31,7 @@ class GalleryMembersHelper {
     /**
      * Return the total number of items a user owns
      *
-     * @param int User id
+     * @param int $userId
      * @return array (object GalleryStatus a status code,
      *                int ItemCount a users total item count)
      */
@@ -77,7 +77,10 @@ class GalleryMembersHelper {
     /**
      * Return the last N items a user created
      *
-     * @param int User id, int Offset, int Count, string Order Direction
+     * @param int $userId
+     * @param int $offset
+     * @param int $count
+     * @param string $orderDirection (optional)
      * @return array (object GalleryStatus a status code,
      *                array (GalleryItem, GalleryItem, ...))
      */
@@ -94,8 +97,7 @@ class GalleryMembersHelper {
 	    break;
 
 	default:
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
-			 null);
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	list ($ret, $aclIds) =
@@ -159,7 +161,7 @@ class GalleryMembersHelper {
     /**
      * Return true if the user has permission to view the Members Module
      *
-     * @param int User id
+     * @param int $userId
      * @return array (object GalleryStatus a status code,
      *                boolean canViewMembersModule permission)
      */
@@ -180,7 +182,7 @@ class GalleryMembersHelper {
     /**
      * Return true if the user has permission to view members email addresses
      *
-     * @param int User id
+     * @param int $userId
      * @return array (object GalleryStatus a status code,
      *                boolean canViewProfileEmail permission)
      */
@@ -219,12 +221,15 @@ class GalleryMembersHelper {
     /**
      * Return the calendar days since the user's creationTimestamp.
      *
-     * @param int User id
+     * @param int $userId
      * @return array (object GalleryStatus a status code,
      *                int daysSinceCreation number in days)
      */
     function daysSinceCreation($userId) {
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+	if ($ret) {
+	    return array($ret, null);
+	}
 
 	/*
 	 * The difference in the day of creationTimestamp and todays date,

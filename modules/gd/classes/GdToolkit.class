@@ -413,8 +413,8 @@ class GdToolkit extends GalleryToolkit {
     /**
      * Return a GD image resource for the given filename so we can perform other operations on it.
      *
-     * @param string the mime-type of the image
-     * @param string the path to the file to read
+     * @param string $mimeType the mime-type of the image
+     * @param string $filename the path to the file to read
      * @return array object GalleryStatus a status code
      *	       resource the GD resource
      * @access private
@@ -503,8 +503,10 @@ class GdToolkit extends GalleryToolkit {
     /**
      * Save a GD resource to a file with a certain mime-type
      *
-     * @param string the mime-type of the image
-     * @param string the path to the file to read
+     * @param resource $res
+     * @param string $filename the path to the file to read
+     * @param string $mimeType the mime-type of the image
+     * @param string $jpegQuality (optional)
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -547,9 +549,9 @@ class GdToolkit extends GalleryToolkit {
     /**
      * Resizes an open GD-resource to the specified size.
      *
-     * @param resource the source GD-resource
-     * @param int the destination width
-     * @param int the destination height
+     * @param resource $sourceRes the source GD-resource
+     * @param int $destWidth the destination width
+     * @param int $destHeight the destination height
      * @return array object GalleryStatus
      *	       resource the destination GD-resource
      * @access private

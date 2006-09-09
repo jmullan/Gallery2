@@ -98,7 +98,7 @@ class GalleryController {
      * UserLogin controller, and when its done, it uses the "return" flag to indicate that we
      * should return to the URL where the login link was clicked.
      *
-     * @param array the form values
+     * @param array $form the form values
      * @return array object GalleryStatus a status code
      *               return-array
      */
@@ -111,7 +111,7 @@ class GalleryController {
      *
      * Be very security conscious about checking the inputs for possible misuse
      *
-     * @param string a controller name (eg 'core.Logout')
+     * @param string $controllerName a controller name (eg. 'core.Logout')
      * @return array object GalleryStatus a status code
      *               object GalleryController a controller
      * @static

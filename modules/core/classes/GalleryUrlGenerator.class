@@ -168,9 +168,9 @@ class GalleryUrlGenerator {
     /**
      * Append parameters to a URL using the Gallery prefix and urlencoding the keys and values.
      *
-     * @param string the original URL
-     * @param array key/value pairs to be appended; may contain nested arrays
-     * @param boolean (optional) false to not add prefix on parameter names
+     * @param string $url the original URL
+     * @param array $params key/value pairs to be appended; may contain nested arrays
+     * @param boolean $addPrefix (optional) false to not add prefix on parameter names
      * @return string the new URL (&amp; separates added params)
      * @static
      */
@@ -197,9 +197,9 @@ class GalleryUrlGenerator {
     /**
      * Append array of (possibly nested) query parameters to flat array of keys/values.
      *
-     * @param array output array
-     * @param array input key/value pairs; may contain nested arrays
-     * @param string prefix; used in recursive calls
+     * @param array $args output array
+     * @param array $params input key/value pairs; may contain nested arrays
+     * @param string $prefix used in recursive calls
      * @static
      * @access private
      */
@@ -232,7 +232,7 @@ class GalleryUrlGenerator {
      * Used to allow overriding auto-detected protocol, host, path and default base file.  Also used
      * to accept various embedUri formats
      *
-     * @param string URI
+     * @param string $uri URI
      * @return array $protocol, $host, $path, $file (incl. query string)
      * @access private
      * @static
@@ -288,15 +288,15 @@ class GalleryUrlGenerator {
     /**
      * Configure the GalleryUrlGenerator with all the data it needs.
      *
-     * @param string the base URL (optional), e.g. index.php?mod=gallery will override main.php,
-     *        /index.php or /gallery/index.php will override the path the file, /gallery/ overrides
-     *        the path only, example.com/, overrides the host and the path and
+     * @param string $baseUri the base URL (optional), eg. index.php?mod=gallery will override
+     *        main.php, /index.php or /gallery/index.php will override the path and file,
+     *        /gallery/ overrides the path only, example.com/, overrides the host and the path and
      *        http://example.com/gallery/index.php?page=gallery overrides all parts
      *        All non-specified parts fall back to auto-detected values
-     * @param string (optional) when embedded, base URL to Gallery standalone.  Same format as
-     *                          baseUri
-     * @param string (optional) when embedded in CMS app that supports cookieless browsing,
-     *                          key=value string for CMS session key and id
+     * @param string $g2Uri (optional) when embedded, base URL to Gallery standalone.  Same format
+     *        as baseUri
+     * @param string $embedSessionString (optional) when embedded in CMS app that supports
+     *        cookieless browsing, key=value string for CMS session key and id
      */
     function init($baseUri=null, $g2Uri=null, $embedSessionString=null) {
 	$this->_embedSessionString = $embedSessionString;
@@ -379,7 +379,7 @@ class GalleryUrlGenerator {
     /**
      * Return the host name for the current request.
      *
-     * @param boolean (optional) if true, ensure Gallery base protocol/host is used
+     * @param boolean $forceDirect (optional) if true, ensure Gallery base protocol/host is used
      * @return string the host name
      */
     function getHostName($forceDirect=false) {
@@ -389,8 +389,8 @@ class GalleryUrlGenerator {
     /**
      * Add given path to current protocol/server/port to create full URL.
      *
-     * @param string the URL path; leading slash will be added if missing
-     * @param boolean (optional) if true, ensure Gallery base protocol/host is used
+     * @param string $path the URL path; leading slash will be added if missing
+     * @param boolean $forceDirect (optional) if true, ensure Gallery base protocol/host is used
      * @return string the URL
      */
     function makeUrl($path, $forceDirect=false) {
@@ -409,7 +409,7 @@ class GalleryUrlGenerator {
      * The returned URL may differ from the actual request URL since we allow for overriding the
      * discovered protocol/host/host/path/file
      *
-     * @param boolean (optional) if true, ensure Gallery base protocol/host is used
+     * @param boolean $forceDirect (optional) if true, ensure Gallery base protocol/host is used
      * @return string the current URL
      */
     function getCurrentUrl($forceDirect=false) {
@@ -462,9 +462,9 @@ class GalleryUrlGenerator {
      * Usually, it's the same as the URL directory of the current request URL, unless we're using
      * short URLs. Also, the base URL can be overridden
      *
-     * @param boolean (optional) if true, ensure Gallery base URL is returned (different when
-     *                           embedded)
-     * @return string thebase URL directory
+     * @param boolean $forceDirect (optional) if true, ensure Gallery base URL is returned
+     *        (different when embedded)
+     * @return string the base URL directory
      */
     function getCurrentUrlDir($forceDirect=false) {
 	if (!isset($this->_currentUrlBaseDir[$forceDirect])) {
@@ -506,10 +506,10 @@ class GalleryUrlGenerator {
     /**
      * Return a valid Gallery URL.
      *
-     * @param array (optional) key/value pairs to be included in the URL
+     * @param array $params (optional) key/value pairs to be included in the URL
      *    special 'href' key specifies path to append to Gallery base URL instead of a query param
      *    %CURRENT_URL% token in a parameter value will be replaced with current URL
-     * @param array (optional) additional URL generation options:
+     * @param array $options (optional) additional URL generation options:
      *    'baseUrl' => string; to override the default baseUrl
      *    'forceDirect' => true; to generate from Gallery site URL even if embedded/multisite
      *    'forceFullUrl' => true; to generate absolute URL instead of relative path URL
@@ -702,7 +702,7 @@ class GalleryUrlGenerator {
      *
      * Note: don't be fooled if $this->_file shows up in the query string!
      *
-     * @param string absolute URL
+     * @param string $url absolute URL
      * @return string relative URL (or unchanged absolute URL)
      */
     function makeRelativeUrl($url, $forceServerRelativeUrl=false) {
@@ -740,7 +740,7 @@ class GalleryUrlGenerator {
      *
      * In the last example we assumed that Gallery is installed at that location.
      *
-     * @param boolean (optional) if true, ensure Gallery path of base URL is returned
+     * @param boolean $forceDirect (optional) if true, ensure Gallery path of base URL is returned
      *                (different when embedded)
      * @return array (object Gallery status, string path)
      */
@@ -892,12 +892,12 @@ class GalleryUrlGenerator {
     /**
      * Get a list of navigation links to go back to where we came from.
      *
-     * @param integer set this to get links back to a certain depth
+     * @param int $depth set this to get links back to a certain depth
      * @return array ( object GalleryStatus a status code,
      *                 array of navigational links: array('url' => ...,
      *                                            'name' => 'Back to ...'))
      */
-    function getNavigationLinks($depth = null) {
+    function getNavigationLinks($depth=null) {
 	global $gallery;
 	if (empty($this->_navId)) {
 	    return array(null, array());
@@ -940,7 +940,7 @@ class GalleryUrlGenerator {
      * Force the session id in the URL for embedded DownloadItem URLs if the cookie.path plugin
      * parameter is not set. See GallerySession::init for details
      *
-     * @param array params (string param)
+     * @param array $params (string param)
      * @return boolean forceSessionId
      * @access protected
      */

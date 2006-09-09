@@ -45,7 +45,7 @@ class GalleryPersistent {
 
     /**
      * Have we modified any data in this class?
-     * @param string (optional) check just this field
+     * @param string $member (optional) check just this field
      * @return boolean true if modified, false if not.
      */
     function isModified($member=null) {
@@ -76,7 +76,7 @@ class GalleryPersistent {
     /**
      * Reset all original values to the current values in the entity (or null if so specified).
      *
-     * @param boolean (optional) reset all original values to null if true
+     * @param boolean $resetToNull (optional) reset all original values to null if true
      * @return object GalleryStatus a status code
      */
     function resetOriginalValues($resetToNull=false) {
@@ -106,7 +106,7 @@ class GalleryPersistent {
      * Set a flag.
      * The GalleryStorage strategy uses this to flag objects for its own internal purposes.
      *
-     * @param string a bit flag to set
+     * @param int $flag a bit flag to set
      */
     function setPersistentFlag($flag) {
 	$this->_persistentStatus['flags'] |= $flag;
@@ -116,7 +116,7 @@ class GalleryPersistent {
      * Clear a flag.
      * The GalleryStorage strategy uses this to flag objects for its own internal purposes.
      *
-     * @param string a bit flag to clear
+     * @param int $flag a bit flag to clear
      */
     function clearPersistentFlag($flag) {
 	$this->_persistentStatus['flags'] &= ~$flag;
@@ -126,7 +126,7 @@ class GalleryPersistent {
      * Test a flag.
      * The GalleryStorage strategy uses this to flag objects for its own internal purposes.
      *
-     * @param string a bit flag to test
+     * @param int $flag a bit flag to test
      * @return bool true if the bit is on, false otherwise
      */
     function testPersistentFlag($flag) {

@@ -57,7 +57,7 @@ class MaintenanceHelper_simple {
     /**
      * Return information about the last run of this task.
      *
-     * @param string the task id
+     * @param string $taskId
      * @return array object GalleryStatus a status code
      *               array(runId => int,
      *                     timestamp => int,
@@ -87,10 +87,10 @@ class MaintenanceHelper_simple {
     /**
      * Add a new task run to the maintenance map.
      *
-     * @param int the task id
-     * @param int when the run happened
-     * @param bool task success/failure
-     * @param array string task details
+     * @param string $taskId
+     * @param int $timestamp when the run happened
+     * @param bool $success task success/failure
+     * @param array $details string task details
      * @return object GalleryStatus a status code
      */
     function addRun($taskId, $timestamp, $success, $details) {

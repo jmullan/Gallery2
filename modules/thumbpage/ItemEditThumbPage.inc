@@ -131,9 +131,8 @@ class ItemEditThumbPage extends ItemEditPlugin {
     }
 
     /**
-     * Get the page-count property..
-     *
-     * @param object GalleryDataItem
+     * Get the page-count property
+     * @param object GalleryDataItem $item
      * @return array object GalleryStatus a status code
      *               int page count
      * @access private

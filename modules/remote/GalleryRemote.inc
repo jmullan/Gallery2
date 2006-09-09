@@ -41,7 +41,7 @@ class GalleryRemoteController extends GalleryController {
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
      *
-     * @param array (optionId => ItemAddOption, ...)
+     * @param array $optionInstances (optionId => ItemAddOption, ...)
      */
     function setOptionInstances($optionInstances) {
 	$this->_optionInstances = $optionInstances;
@@ -175,8 +175,8 @@ class GalleryRemoteController extends GalleryController {
     /**
      * Log into Gallery
      *
-     * @param form array key value pairs from Gallery Remote
-     * @param object GalleryRemoteProperties a reference to our response object
+     * @param array $form key/value pairs from Gallery Remote
+     * @param object GalleryRemoteProperties $response a reference to our response object
      * @return object GalleryStatus a status code
      */
     function login($form, &$response) {
@@ -252,9 +252,9 @@ class GalleryRemoteController extends GalleryController {
     /**
      * Load the album list into our response object
      *
-     * @param boolean prune albums where user can't upload to or create sub-albums
-     * @param form array key value pairs from Gallery Remote
-     * @param object GalleryRemoteProperties a reference to our response object
+     * @param boolean $prune prune albums where user can't upload to or create sub-albums
+     * @param array $form key/value pairs from Gallery Remote
+     * @param object GalleryRemoteProperties $response a reference to our response object
      * @return object GalleryStatus a status code
      */
     function fetchAlbums($prune, $form, &$response) {
@@ -408,8 +408,8 @@ class GalleryRemoteController extends GalleryController {
     /**
      * Add a data item to Gallery
      *
-     * @param form array key value pairs from Gallery Remote
-     * @param object GalleryRemoteProperties a reference to our response object
+     * @param array $form key/value pairs from Gallery Remote
+     * @param object GalleryRemoteProperties $response a reference to our response object
      * @return object GalleryStatus a status code
      */
     function addDataItem($form, &$response) {
@@ -555,8 +555,8 @@ class GalleryRemoteController extends GalleryController {
     /**
      * Create a new album
      *
-     * @param form array key value pairs from Gallery Remote
-     * @param object GalleryRemoteProperties a reference to our response object
+     * @param array $form key/value pairs from Gallery Remote
+     * @param object GalleryRemoteProperties $response a reference to our response object
      * @return object GalleryStatus a status code
      */
     function newAlbum($form, &$response) {
@@ -605,8 +605,8 @@ class GalleryRemoteController extends GalleryController {
     /**
      * Fetch album images
      *
-     * @param form array key value pairs from Gallery Remote
-     * @param object GalleryRemoteProperties a reference to our response object
+     * @param array $form key/value pairs from Gallery Remote
+     * @param object GalleryRemoteProperties $response a reference to our response object
      * @return object GalleryStatus a status code
      */
     function fetchAlbumImages($form, &$response) {
@@ -848,8 +848,8 @@ class GalleryRemoteController extends GalleryController {
     /**
      * Album properties
      *
-     * @param form array key value pairs from Gallery Remote
-     * @param object GalleryRemoteProperties a reference to our response object
+     * @param array $form key/value pairs from Gallery Remote
+     * @param object GalleryRemoteProperties $response a reference to our response object
      * @return object GalleryStatus a status code
      */
     function albumProperties($form, &$response) {
@@ -932,8 +932,8 @@ class GalleryRemoteController extends GalleryController {
     /**
      * Increment view count
      *
-     * @param form array key value pairs from Gallery Remote
-     * @param object GalleryRemoteProperties a reference to our response object
+     * @param array $form key/value pairs from Gallery Remote
+     * @param object GalleryRemoteProperties $response a reference to our response object
      * @return object GalleryStatus a status code
      */
     function incrementViewCount($form, &$response) {
@@ -963,8 +963,8 @@ class GalleryRemoteController extends GalleryController {
     /**
      * Image properties
      *
-     * @param form array key value pairs from Gallery Remote
-     * @param object GalleryRemoteProperties a reference to our response object
+     * @param array $form key/value pairs from Gallery Remote
+     * @param object GalleryRemoteProperties $response a reference to our response object
      * @return object GalleryStatus a status code
      */
     function imageProperties($form, &$response) {

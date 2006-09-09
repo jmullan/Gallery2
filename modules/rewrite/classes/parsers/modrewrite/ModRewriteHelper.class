@@ -17,18 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$ $Date$
- * @author Douglas Cau <douglas@cau.se>
- */
 
- /**
-  * This is a helper for the Apache mod_rewrite parser.
-  *
-  * @package Rewrite
-  * @subpackage Parsers
-  */
+/**
+ * This is a helper for the Apache mod_rewrite parser.
+ * @package Rewrite
+ * @subpackage Parsers
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
+ */
 class ModRewriteHelper {
 
     /**
@@ -211,8 +207,8 @@ class ModRewriteHelper {
     /**
      * Returns the .htaccess content given a set or rewrite rules.
      *
-     * @param array regular expression rules with settings
-     * @param boolean (optional) true if the embedded .htaccess is wanted
+     * @param array $regexRules regular expression rules with settings
+     * @param boolean $embedded (optional) true if the embedded .htaccess is wanted
      * @return array object GalleryStatus a status code
      *               string the Gallery .htaccess section
      */
@@ -285,14 +281,14 @@ class ModRewriteHelper {
     /**
      * Return the absolute file name of .htaccess
      *
-     * @param boolean (optional) true if embedded .htaccess is wanted
+     * @param boolean $embedded (optional) true if embedded .htaccess is wanted
      * @return array object GalleryStatus a status code
      *               string .htaccess file name
      */
     function getHtaccessPath($embedded=false) {
 	if ($embedded) {
 	    list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
-	        'modrewrite.embeddedHtaccess');
+		    'modrewrite.embeddedHtaccess');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -306,7 +302,7 @@ class ModRewriteHelper {
     /**
      * Checks if the .htaccess file is writeable.
      *
-     * @param boolean (optional) if true then the embedded .htaccess is checked
+     * @param boolean $embedded (optional) if true then the embedded .htaccess is checked
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      */
@@ -348,8 +344,8 @@ class ModRewriteHelper {
     /**
      * Writes Gallery data to the .htaccess file.
      *
-     * @param array regular expression rules with settings
-     * @param boolean (optional) if true then the embedded .htaccess is written
+     * @param array $regexRules regular expression rules with settings
+     * @param boolean $embedded (optional) if true then the embedded .htaccess is written
      * @return array object GalleryStatus a status code
      *               int rewrite status code
      */
@@ -409,7 +405,7 @@ class ModRewriteHelper {
      *   REWRITE_STATUS_OK                              everything is fine
      *   REWRITE_STATUS_APACHE_NO_MOD_REWRITE           no mod rewrite support
      *   REWRITE_STATUS_APACHE_UNABLE_TO_TEST           unable to properly test mod_rewrite
-     *   REWRITE_STATUS_MULTISITE       		can't test mod_rewrite in multisite
+     *   REWRITE_STATUS_MULTISITE                       can't test mod_rewrite in multisite
      *
      * @return array object GalleryStatus a status code
      *               int rewrite status code
@@ -503,50 +499,50 @@ class ModRewriteHelper {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$baseUrlComponents = parse_url($urlGenerator->getCurrentUrlDir(true));
-    	$TestResults = array();
+	$TestResults = array();
 
 	/* Check Gallery .htaccess */
-    	list ($ret, $TestResults['gallery']['htaccess']) = ModRewriteHelper::checkFile();
-    	if ($ret) {
-    	    return $ret;
-    	}
+	list ($ret, $TestResults['gallery']['htaccess']) = ModRewriteHelper::checkFile();
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Check mod_rewrite */
-    	list ($ret, $TestResults['gallery']['modRewrite'],
-    	    $TestResults['gallery']['trueModRewrite']) = ModRewriteHelper::checkModRewrite();
-    	if ($ret) {
-    	    return $ret;
-    	}
+	list ($ret, $TestResults['gallery']['modRewrite'],
+	    $TestResults['gallery']['trueModRewrite']) = ModRewriteHelper::checkModRewrite();
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Check embedded .htaccess */
 	if (GalleryUtilities::isEmbedded()) {
 	    $TestResults['embedded'] = array();
 	    list ($ret, $TestResults['embedded']['htaccess']) = ModRewriteHelper::checkFile(true);
 	    if ($ret) {
-    		return $ret;
-    	    }
+		return $ret;
+	    }
 	}
 
 	/* Get extra information if the .htaccess test fails */
-    	if ($TestResults['gallery']['htaccess'] != REWRITE_STATUS_OK) {
+	if ($TestResults['gallery']['htaccess'] != REWRITE_STATUS_OK) {
 	    list ($ret, $TestResults['gallery']['htaccessPath']) =
 		ModRewriteHelper::getHtaccessPath();
 	    if ($ret) {
-    		return $ret;
-    	    }
+		return $ret;
+	    }
 	}
-    	if (isset($TestResults['embedded']['htaccess']) &&
-    		$TestResults['embedded']['htaccess'] != REWRITE_STATUS_OK) {
+	if (isset($TestResults['embedded']['htaccess'])
+		&& $TestResults['embedded']['htaccess'] != REWRITE_STATUS_OK) {
 	    list ($ret, $TestResults['embedded']['htaccessPath']) =
 		ModRewriteHelper::getHtaccessPath(true);
 	    if ($ret) {
-    		return $ret;
-    	    }
+		return $ret;
+	    }
 	}
 
 	/* Create test URLs for manually testing mod_rewrite */
-    	if ($TestResults['gallery']['modRewrite'] != REWRITE_STATUS_OK &&
-    		$TestResults['gallery']['modRewrite'] != REWRITE_STATUS_MULTISITE) {
+	if ($TestResults['gallery']['modRewrite'] != REWRITE_STATUS_OK
+		&& $TestResults['gallery']['modRewrite'] != REWRITE_STATUS_MULTISITE) {
 	    if ($baseUrlComponents['path'] == '/gallery2') {
 		$target = 'gallery2';
 	    } else if ($baseUrlComponents['path'] == '/gallery') {
@@ -583,7 +579,7 @@ class ModRewriteHelper {
 	    $TestResults['refresh'] = 1;
 	}
 
-    	$TestResults['template'] = 'modules/rewrite/templates/ModRewriteTestResults.tpl';
+	$TestResults['template'] = 'modules/rewrite/templates/ModRewriteTestResults.tpl';
 	$template->setVariable('TestResults', $TestResults);
 	return null;
     }
@@ -623,10 +619,10 @@ class ModRewriteHelper {
     }
 
     /**
-     * @param array config values
-     * @param object ModRewriteParser
-     * @param boolean true if we want to write the .htaccess
      * @see RewriteParser::fetchEmbedConfig
+     * @param array $param config values
+     * @param object ModRewriteParser $parser
+     * @param boolean $saveActiveRules true if we want to write the .htaccess
      */
     function saveEmbedConfig($param, $parser, $saveActiveRules) {
 	global $gallery;

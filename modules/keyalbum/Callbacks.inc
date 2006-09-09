@@ -59,7 +59,7 @@ class KeyAlbumCallbacks {
 
     /**
      * Get all unique keywords and store in a module parameter.
-     * @param boolean true to only get keywords from public items
+     * @param boolean $onlyPublic true to only get keywords from public items
      * @return object GalleryStatus a status code
      * @static
      */

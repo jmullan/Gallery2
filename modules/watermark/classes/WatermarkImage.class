@@ -210,9 +210,9 @@ class WatermarkImage extends GalleryEntity {
      * Create a new instance of this type in the persistent store.
      *
      * @access public
-     * @param string the path to a data file to be contained
-     * @param string the mime type of the new item
-     * @param string the desired name of the new item
+     * @param string $inputFileName the path to a data file to be contained
+     * @param string $mimeType the mime type of the new item
+     * @param string $targetName the desired name of the new item
      * @return object GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null) {

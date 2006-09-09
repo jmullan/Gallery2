@@ -165,7 +165,7 @@ class GalleryStorage {
 
 
     /**
-     * @param array database configuration values
+     * @param array $config database configuration values
      */
     function GalleryStorage($config) {
 	$this->_type = $config['type'];
@@ -248,7 +248,7 @@ class GalleryStorage {
      * Set runtime settings for the given database connection.
      * Set the connection/client/server encoding and other parameters
      *
-     * @param object adodb database handle
+     * @param object adodb $db database handle
      * @return object GalleryStatus a status code
      * @access protected
      */
@@ -284,7 +284,7 @@ class GalleryStorage {
     /**
      * Load the GalleryEntities with the ids specified
      *
-     * @param mixed the ids of the GalleryEntities to load
+     * @param mixed $ids array of ids of the GalleryEntities to load or a single int id
      * @return array object GalleryStatus a status code,
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
@@ -296,7 +296,7 @@ class GalleryStorage {
     /**
      * Save the changes to the GalleryEntity
      *
-     * @param object GalleryEntity the GalleryEntity to save
+     * @param object GalleryEntity $entity the GalleryEntity to save
      * @return object GalleryStatus a status code
      */
     function saveEntity(&$entity) {
@@ -307,7 +307,7 @@ class GalleryStorage {
     /**
      * Delete the GalleryEntity
      *
-     * @param object GalleryEntity the GalleryEntity to delete
+     * @param object GalleryEntity $entity the GalleryEntity to delete
      * @return object GalleryStatus a status code
      */
     function deleteEntity(&$entity) {
@@ -318,7 +318,7 @@ class GalleryStorage {
     /**
      * Create a new GalleryEntity
      *
-     * @param object GalleryEntity the GalleryEntity to put the data in
+     * @param object GalleryEntity $entity the GalleryEntity to put the data in
      * @return object GalleryStatus a status code
      */
     function newEntity(&$entity) {
@@ -340,7 +340,7 @@ class GalleryStorage {
     /**
      * Refresh a GalleryEntity from the database if it has changed
      *
-     * @param object GalleryEntity the object to refresh
+     * @param object GalleryEntity $entity the object to refresh
      * @return array object GalleryStatus a status code,
      *               object GalleryEntity the fresh entity
      */
@@ -352,8 +352,8 @@ class GalleryStorage {
     /**
      * Acquire read locks on the given items
      *
-     * @param array entityIds list of entityIds
-     * @param int timeout before giving up on the lock
+     * @param mixed $entityIds array of ids or single int id
+     * @param int $timeout timeout before giving up on the lock
      * @return array object GalleryStatus a status code
      *               array lock data
      */
@@ -365,8 +365,8 @@ class GalleryStorage {
     /**
      * Acquire write locks on the given items
      *
-     * @param array or integer a set of ids
-     * @param int timeout before giving up on the lock
+     * @param mixed $entityIds array of ids or single int id
+     * @param int $timeout timeout before giving up on the lock
      * @return array object GalleryStatus a status code
      *               array lock data
      */
@@ -378,8 +378,8 @@ class GalleryStorage {
     /**
      * Refresh all the locks that we hold so that they aren't accidentally considered expired
      *
-     * @param array the lock ids
-     * @param int the new "fresh until" timestamp
+     * @param array $lockIds the lock ids
+     * @param int $freshUntil the new "fresh until" timestamp
      * @return object GalleryStatus a status code
      */
     function refreshLocks($lockIds, $freshUntil) {
@@ -390,7 +390,7 @@ class GalleryStorage {
     /**
      * Release the given locks.
      *
-     * @param array int the lock ids
+     * @param mixed $lockIds array of lock ids or single id
      * @return object GalleryStatus a status code
      */
     function releaseLocks($lockIds) {
@@ -401,8 +401,8 @@ class GalleryStorage {
     /**
      * Remove ids from a lock.
      *
-     * @param array lock data
-     * @param array ids to remove
+     * @param array $lock lock data
+     * @param array $ids ids to remove
      * @return object GalleryStatus a status code
      */
     function removeIdsFromLock($lock, $ids) {
@@ -413,9 +413,9 @@ class GalleryStorage {
     /**
      * Move ids between locks.
      *
-     * @param array of lockId => object ids
-     * @param int the new lockId
-     * @param lock type
+     * @param array $relock of lockId => object ids
+     * @param int $newLockId the new lockId
+     * @param int $lockType LOCK_READ or LOCK_WRITE
      * @return object GalleryStatus a status code
      */
     function moveIdsBetweenLocks($relock, $newLockId, $lockType) {
@@ -437,9 +437,9 @@ class GalleryStorage {
     /**
      * Search the persistent store for the target values matching the given criteria
      *
-     * @param array the search query
-     * @param array any explicit data values required by the query
-     * @param array optional arguments (eg, limits)
+     * @param string $query the search query
+     * @param array $data any explicit data values required by the query
+     * @param array $optional optional arguments (eg. limits)
      * @return array object GalleryStatus a status code,
      *               object GallerySearchResults the result values
      */
@@ -479,8 +479,8 @@ class GalleryStorage {
     /**
      * Execute a database statement
      *
-     * @param array the SQL statement
-     * @param array any explicit data values required by the query
+     * @param string $statement the SQL statement
+     * @param array $data any explicit data values required by the query
      * @return object GalleryStatus a status code,
      */
     function execute($statement, $data=array()) {
@@ -491,8 +491,8 @@ class GalleryStorage {
     /**
      * Add a new entry to a map
      *
-     * @param string the map we're working on
-     * @param array an associative array of data about the entry
+     * @param string $mapName the map we're working on
+     * @param array $entry an associative array of data about the entry
      * @return object GalleryStatus a status code
      */
     function addMapEntry($mapName, $entry) {
@@ -503,8 +503,8 @@ class GalleryStorage {
     /**
      * Remove entries from a map
      *
-     * @param string the map we're working on
-     * @param array an associative array of data about the entries to match
+     * @param string $mapName the map we're working on
+     * @param array $entry an associative array of data about the entries to match
      * @return object GalleryStatus a status code
      */
     function removeMapEntry($mapName, $entry) {
@@ -515,7 +515,7 @@ class GalleryStorage {
     /**
      * Remove ALL entries from a map.  Use with caution!
      *
-     * @param string the map we're working on
+     * @param string $mapName the map we're working on
      * @return object GalleryStatus a status code
      */
     function removeAllMapEntries($mapName) {
@@ -526,10 +526,10 @@ class GalleryStorage {
     /**
      * Get entries in a map that match a criteria and return selected fields
      *
-     * @param string the map we're working on
-     * @param array the columns to return
-     * @param array the entries to match
-     * @param array optional arguments (eg, limit, orderBy)
+     * @param string $mapName the map we're working on
+     * @param array $select the columns to return
+     * @param array $match the entries to match
+     * @param array $optional optional arguments (eg. limit, orderBy)
      *              array('limit' => array('count' => #, 'offset' => #),
      *                    'orderBy' => array(columnName => ORDER_ASCENDING|ORDER_DESCENDING, ...))
      * @return object GalleryStatus a status code
@@ -542,9 +542,9 @@ class GalleryStorage {
     /**
      * Update entries in a map
      *
-     * @param string the map we're working on
-     * @param array the entries to match
-     * @param array the values to change
+     * @param string $mapName the map we're working on
+     * @param array $match the entries to match
+     * @param array $change the values to change
      * @return object GalleryStatus a status code
      */
     function updateMapEntry($mapName, $match, $change) {
@@ -610,11 +610,11 @@ class GalleryStorage {
     /**
      * Accepts a $mapInfo pair and $match value to add match information to supplied array.
      *
-     * @param string Name of map field
-     * @param array Data about map field
-     * @param mixed Values that the map should match on
-     * @param array All match keys
-     * @param array All match values
+     * @param string $memberName Name of map field
+     * @param array $memberData Data about map field
+     * @param mixed $matchValue Values that the map should match on
+     * @param array $where All match keys
+     * @param array $wheredata All match values
      */
     function _getWhereSql($memberName, $memberData, $matchValue, &$where, &$wheredata) {
 	if (GalleryUtilities::isA($matchValue, 'GallerySqlFragment')) {
@@ -645,8 +645,8 @@ class GalleryStorage {
     /**
      * Configure the persistent store for this strategy, for the given module.
      *
-     * @param string module id
-     * @param array (optional) of (classname => old schema version)
+     * @param string $moduleId
+     * @param array $upgradeInfo (optional) of (classname => old schema version)
      * @return object GalleryStatus a status code
      */
     function configureStore($moduleId, $upgradeInfo=array()) {
@@ -657,7 +657,7 @@ class GalleryStorage {
     /**
      * Perform any cleanup necessary after installing or upgrading the given module.
      *
-     * @param string module id
+     * @param string $moduleId
      * @return object GalleryStatus a status code
      */
     function configureStoreCleanup($moduleId) {
@@ -822,8 +822,8 @@ class GalleryStorage {
     /**
      * Convert an integer into something that the database will accept into a bit column
      *
-     * @param integer integer value
-     * @param mixed bit value
+     * @param int $intVal integer value
+     * @return mixed  bit value
      */
     function convertIntToBits($intVal) {
 	return $intVal;
@@ -832,8 +832,8 @@ class GalleryStorage {
     /**
      * Convert value from a database bit column into an integer
      *
-     * @param mixed bit value
-     * @param integer integer value
+     * @param mixed $bitsVal bit value
+     * @return int  integer value
      */
     function convertBitsToInt($bitsVal) {
 	return $bitsVal;
@@ -862,8 +862,8 @@ class GalleryStorage {
     /**
      * Return a customized function for this database platform
      *
-     * @param string the function name
-     * @param array mixed the function arguments
+     * @param string $functionName
+     * @param array $args mixed the function arguments
      * @return array GalleryStatus a status code
      *               string the function SQL
      */
@@ -878,7 +878,7 @@ class GalleryStorage {
      * '[GalleryItem::id] = ? AND [GalleryPhotoItem::id] = ?'
      * Results would be: array('[GalleryItem]', '[GalleryPhotoItem]')
      *
-     * @param string query
+     * @param string $query
      * @return array GalleryStatus a status code
      *               array strings table names
      */
@@ -938,8 +938,8 @@ class GalleryStorage {
     /**
      * Describe the members, modules and parent of an entity
      *
-     * @param string a class name
-     * @param boolean true if we should scan all modules, not just the active ones
+     * @param string $entityName a class name
+     * @param boolean $tryAllModules true if we should scan all modules, not just the active ones
      * @return array object GalleryStatus a status code
      *               entity associative array
      */
@@ -952,7 +952,7 @@ class GalleryStorage {
      * Execute a given SQL file against the database.  Prefix table and column names as necessary.
      * Split multiple commands in the file into separate Execute() calls.
      *
-     * @param string absolute path of the sql file
+     * @param string $fileName absolute path of the sql file
      * @return object GalleryStatus a status code
      * @access protected
      */
@@ -964,7 +964,7 @@ class GalleryStorage {
     /**
      * Translate all table and column names from [Entity::member] notation to table.column notation.
      *
-     * @param string the raw query
+     * @param string $query the raw query
      * @return string the translated query
      * @access protected
      */
@@ -1007,7 +1007,7 @@ class GalleryStorage {
     /**
      * Translate a potentially unsafe column name into a safe one
      *
-     * @param string the name of a column
+     * @param string $columnName the name of a column
      * @return string a safe column name
      * @access protected
      */
@@ -1023,7 +1023,7 @@ class GalleryStorage {
      * Comment   => array(g2_Comment, null, Comment)
      * Comment=1 => array(g2_Comment, C0, Comment)
      *
-     * @param string the name of a table
+     * @param string $tableName the name of a table
      * @return array string a safe table name
      *               an alias for this table
      *               the unsafe, but translated, table name
@@ -1070,8 +1070,8 @@ class GalleryStorage {
     /**
      * Describe all the members of a map
      *
-     * @param string a class name
-     * @param boolean try all modules, not just active ones
+     * @param string $mapName a map name
+     * @param boolean $tryAllModules try all modules, not just active ones
      * @return array GalleryStatus a status code,
      *               array member name => member type
      */
@@ -1146,7 +1146,7 @@ class GalleryStorage {
     /**
      * Encode a blob of binary data into a form that's safe for a varchar column
      *
-     * @param binary data
+     * @param string $blob binary data
      * @return database safe string
      */
     function encodeBlob($blob) {
@@ -1156,8 +1156,8 @@ class GalleryStorage {
     /**
      * Decode a blob of binary data into a form that's safe for a varchar column
      *
-     * @param binary data
-     * @return database safe string
+     * @param string $blob database safe string
+     * @return binary data
      */
     function decodeBlob($blob) {
 	return $blob;
@@ -1194,10 +1194,10 @@ class GalleryStorage {
      *
      * @todo CAST empty to NULL ? values from DB too?
      *
-     * @param mixed the value
-     * @param array ('type' => STORAGE_TYPE_XXX constant,
+     * @param mixed $value the value
+     * @param array $memberData ('type' => STORAGE_TYPE_XXX constant,
      *               'size' => STORAGE_SIZE_XXX constant)
-     * @param boolean (optional) false if value is for SQL, true if value is from the DB
+     * @param boolean $fromDb (optional) false if value is for SQL, true if value is from the DB
      * @return mixed correctly typed value
      */
     function _normalizeValue($value, $memberData, $fromDb=false) {
@@ -1238,8 +1238,8 @@ class GalleryStorage {
     /**
      * Perform a UTF-8-safe truncation of the string to a size
      *
-     * @param string the value
-     * @param int the size (as a STORAGE_SIZE_XXX constant)
+     * @param string $value the value
+     * @param int $size (as a STORAGE_SIZE_XXX constant)
      * @return the truncated string
      */
     function _truncateString($value, $size) {
@@ -1302,12 +1302,12 @@ class GallerySearchResults {
  * Default Error Handler for ADOdb.  Derived from adodb-errorhandler.inc.php which is
  * (c) 2000, 2001 John Lim (jlim@natsoft.com.my).  All rights reserved.
  *
- * @param $dbms         the RDBMS you are connecting to
- * @param $fn           the name of the calling function (in uppercase)
- * @param $errno                the native error number from the database
- * @param $errmsg       the native error msg from the database
- * @param $p1           $fn specific parameter - see below
- * @param $P2           $fn specific parameter - see below
+ * @param string $dbms         the RDBMS you are connecting to
+ * @param string $fn           the name of the calling function (in uppercase)
+ * @param    int $errno        the native error number from the database
+ * @param string $errmsg       the native error msg from the database
+ * @param  mixed $p1           $fn specific parameter - see below
+ * @param  mixed $p2           $fn specific parameter - see below
  */
 function GalleryAdodbErrorHandler($dbms, $fn, $errno, $errmsg, $p1=false, $p2=false)
 {

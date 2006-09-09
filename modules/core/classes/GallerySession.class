@@ -392,7 +392,9 @@ class GallerySession {
     /**
      * Set a new/unused sessionid.
      *
-     * @param boolean (optional) if true don't initialize remoteIdentifier
+     * @param boolean $emptyRemoteId (optional) if true don't initialize remoteIdentifier
+     * @param int $userId (optional) user for session, defaults to anonymous
+     * @return object GalleryStatus a status code
      */
     function initEmpty($emptyRemoteId=false, $userId=null) {
 	$this->_emptySessionData();
@@ -415,6 +417,8 @@ class GallerySession {
 	if ($ret) {
 	    return $ret;
 	}
+
+	return null;
     }
 
     /**
@@ -513,7 +517,7 @@ class GallerySession {
     /**
      * Send back a cookie to the browser
      *
-     * @param boolean (optional) whether to delete the cookie
+     * @param boolean $delete (optional) whether to delete the cookie
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -932,7 +936,7 @@ class GallerySession {
      * HTML.  If a session was created (saved in the persistent store) during the request, replace
      * the SESSION_TEMP_ID with the new/real session id.
      *
-     * @param string HTML
+     * @param string $html HTML
      * @return string same HTML with replaced or removed sessionId
      */
     function replaceTempSessionIdIfNecessary($html) {
@@ -1109,7 +1113,7 @@ class GallerySession {
 
     /**
      * Set the active user id for this session
-     * @param int the user id
+     * @param int $userId
      */
     function setUserId($userId) {
 	return $this->_userId = $userId;
@@ -1150,7 +1154,7 @@ class GallerySession {
     /**
      * Get a value from the session data
      *
-     * @param string the key
+     * @param string $key
      * @return string the value or null if it doesn't exist
      */
     function &get($key) {
@@ -1165,8 +1169,8 @@ class GallerySession {
     /**
      * Store a value in the session
      *
-     * @param string the key
-     * @param string the value
+     * @param string $key
+     * @param string $value
      */
     function put($key, $value) {
 	$this->_sessionData[$key] = $value;
@@ -1174,7 +1178,7 @@ class GallerySession {
 
     /**
      * Remove a value from the session
-     * @param string the key
+     * @param string $key
      */
     function remove($key) {
 	unset($this->_sessionData[$key]);
@@ -1182,7 +1186,7 @@ class GallerySession {
 
     /**
      * Check to see if a value exists in the session
-     * @param string the key
+     * @param string $key
      */
     function exists($key) {
 	return isset($this->_sessionData[$key]);
@@ -1240,7 +1244,7 @@ class GallerySession {
     /**
      * Store a status message
      *
-     * @param array status data
+     * @param array $statusData
      * @return string the status id
      */
     function putStatus($statusData) {
@@ -1272,7 +1276,8 @@ class GallerySession {
     /**
      * Get a status message
      *
-     * @param string the status id
+     * @param string $statusId
+     * @param boolean $remove (optional)
      * @return array the status message
      */
     function getStatus($statusId, $remove=true) {
@@ -1303,7 +1308,7 @@ class GallerySession {
     /**
      * Start new navigation
      *
-     * @param array data for this new navigation:
+     * @param array $navigationData data for this new navigation:
      *              array('returnName' => ...
      *                    'returnUrl' => ...
      *                    ['returnNavId' => ...])
@@ -1341,7 +1346,7 @@ class GallerySession {
     /**
      * Get data for a specific navigation id
      *
-     * @param string the navigation id
+     * @param string $navId the navigation id
      * @return array the navigation data
      */
     function getNavigation($navId) {
@@ -1363,8 +1368,8 @@ class GallerySession {
     /**
      * Jump back from one navigation point to one of its predecessors
      *
-     * @param string the source navigation id
-     * @param string the destination navigation id. If empty, go back to root.
+     * @param string $fromNavId the source navigation id
+     * @param string $destNavId the destination navigation id. If empty, go back to root.
      */
     function jumpNavigation($fromNavId, $destNavId = '') {
 	global $gallery;

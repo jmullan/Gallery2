@@ -42,7 +42,7 @@ class GalleryView {
     /**
      * Initialize the view.
      *
-     * @param string the name of the module
+     * @param string $moduleId the name of the module
      */
     function init($moduleId) {
 	global $gallery;
@@ -62,8 +62,8 @@ class GalleryView {
      * Print out the immediate output for this view.  This will bypass any global templating.  This
      * style of view should be reserved for binary data.
      *
-     * @param array any status information from a delegating controller
-     * @param array any error information from a delegating controller
+     * @param array $status any status information from a delegating controller
+     * @param array $error any error information from a delegating controller
      * @return object GalleryStatus a status code
      */
     function renderImmediate($status, $error) {
@@ -73,8 +73,8 @@ class GalleryView {
     /**
      * Load the template with data from this view.
      *
-     * @param object GalleryTemplate the template instance
-     * @param array the form values
+     * @param object GalleryTemplate $template
+     * @param array $form the form values
      * @return array object GalleryStatus a status code
      *               array ('body' => string template or 'redirect' => array)
      */
@@ -123,7 +123,7 @@ class GalleryView {
      * - <classname> is the name of the .inc-file to be loaded. The class
      *   that is loaded is the <classname>View, that must extend GalleryView class
      *
-     * @param string a view name in the format <module>.<classname> (eg 'core.ShowItem')
+     * @param string $viewName a view name in the format <module>.<classname> (eg 'core.ShowItem')
      * @return array object GalleryStatus a status code
      *               object GalleryView a view
      * @static
@@ -396,7 +396,7 @@ class GalleryView {
     /**
      * Get the theme for this item by finding the theme id for the nearest album.
      *
-     * @param GalleryItem (optional) item (omit or pass null to load default theme)
+     * @param object GalleryItem $item (optional) omit or pass null to load default theme
      * @return array object GalleryStatus a status code
      *               object GalleryTheme a theme instance
      */
@@ -436,7 +436,7 @@ class GalleryView {
     /**
      * Load the given theme if it's active.
      *
-     * @param string theme id
+     * @param string $themeId
      * @return array object GalleryStatus a status code
      *               object GalleryTheme theme or null
      * @access private

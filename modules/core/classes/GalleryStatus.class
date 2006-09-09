@@ -51,8 +51,8 @@ class GalleryStatus {
 
     /**
      * Constructor
-     * @param errorCode an error code
-     * @param string (optional) descriptive message of the error
+     * @param int $errorCode an error code
+     * @param string $errorMessage (optional) descriptive message of the error
      */
     function GalleryStatus($errorCode, $errorMessage=null) {
 	$this->_errorCode = $errorCode;
@@ -61,7 +61,7 @@ class GalleryStatus {
 
     /**
      * Set the stack trace
-     * @param array (array, array)
+     * @param array $trace (array, array)
      */
     function setStackTrace($trace) {
 	$this->_stackTrace = $trace;
@@ -85,7 +85,7 @@ class GalleryStatus {
 
     /**
      * Add a new code to our set of codes
-     * @param int an error code
+     * @param int $code an error code
      */
     function addErrorCode($code) {
 	$this->_errorCode |= $code;
@@ -105,7 +105,7 @@ class GalleryStatus {
     /**
      * Return the error as an HTML string
      *
-     * @param boolean (optional) false to omit errorMessage
+     * @param boolean $showMessage (optional) false to omit errorMessage
      * @return string
      */
     function getAsHtml($showMessage=true) {
@@ -135,7 +135,7 @@ class GalleryStatus {
     /**
      * Return the error as a plain text string delimited by newlines
      *
-     * @param boolean (optional) false to omit errorMessage
+     * @param boolean $showMessage (optional) false to omit errorMessage
      * @return string
      */
     function getAsText($showMessage=true) {

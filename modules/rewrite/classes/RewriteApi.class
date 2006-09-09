@@ -52,7 +52,7 @@ class RewriteApi {
     /**
      * When using this API you should first make sure that your code is compatible with it.
      *
-     * @param array major, minor version
+     * @param array $version major, minor version
      * @return array object GalleryStatus a status code
      *              boolean true if compatible with given version
      */
@@ -121,7 +121,7 @@ class RewriteApi {
     /**
      * Saves the configuration.
      *
-     * @param array settings to save (key => value)
+     * @param array $params settings to save (key => value)
      * @return array object GalleryStatus a status code
      *               int Rewrite Status code
      *               string translated error message

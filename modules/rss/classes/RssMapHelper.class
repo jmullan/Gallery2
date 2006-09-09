@@ -31,7 +31,7 @@ class RssMapHelper {
     /**
      * Return the feeds defined for a given item
      *
-     * @param int item id or null for all feeds
+     * @param int $itemId (optional) item id or null for all feeds
      * @return array object GalleryStatus a status code
      *         array of array 'name' => feed name
      *                        'itemId' => item associated with the feed
@@ -84,7 +84,7 @@ class RssMapHelper {
     /**
      * Return all the feed names
      *
-     * @param int optional limit to the number of feeds
+     * @param int $limit optional limit to the number of feeds
      * @return array object GalleryStatus a status code
      *         array of feed names
      */
@@ -119,7 +119,7 @@ class RssMapHelper {
     /**
      * Fetch a feed
      *
-     * @param string feed name
+     * @param string $feedName
      * @return object GalleryStatus a status code
      */
     function fetchFeed($feedName) {
@@ -148,8 +148,8 @@ class RssMapHelper {
     /**
      * Create a feed
      *
-     * @param string feed name
-     * @param  array parameters
+     * @param string $feedName
+     * @param array $params parameters
      * @return object GalleryStatus a status code
      */
     function createFeed($feedName, $params) {
@@ -179,8 +179,8 @@ class RssMapHelper {
     /**
      * Update a feed
      *
-     * @param string feed name
-     * @param  array parameters
+     * @param string $feedName
+     * @param array $params parameters
      * @return object GalleryStatus a status code
      */
     function updateFeed($feedName, $params) {
@@ -199,7 +199,7 @@ class RssMapHelper {
     /**
      * Delete a feed
      *
-     * @param string feed name
+     * @param string $feedName
      * @return object GalleryStatus a status code
      */
     function deleteFeed($feedName) {
@@ -214,10 +214,10 @@ class RssMapHelper {
     /**
      * Check whether configuring feeds is allowed.
      *
-     * @param object GalleryItem item
-     * @param array module parameters
-     * @param int user id
-     * @param boolean (optional) if true, throw error if not allowed
+     * @param object GalleryItem $item
+     * @param array $params module parameters
+     * @param int $userId
+     * @param boolean $assert (optional) if true, throw error if not allowed
      * @return array object GalleryStatus a status code
      *               boolean true if allowed
      */

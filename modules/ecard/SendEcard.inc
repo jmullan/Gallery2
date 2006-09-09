@@ -242,7 +242,7 @@ class SendEcardController extends GalleryController {
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
      *
-     * @param array of GalleryValidationPlugin
+     * @param array $pluginInstances of GalleryValidationPlugin
      */
     function setPluginInstances($pluginInstances) {
 	$this->_pluginInstances = $pluginInstances;

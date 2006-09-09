@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-GalleryCoreApi::requireOnce(
-    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
+GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
 
 /**
  * The central registry for all permissions in the system
@@ -72,8 +71,8 @@ class GalleryPermissionHelper_advanced {
     /**
      * Post Gallery::ViewableTreeChange event for change of group permissions.
      *
-     * @param int group id
-     * @param mixed item id or array of ids
+     * @param int $groupId
+     * @param mixed $itemId item id or array of ids
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -171,12 +170,12 @@ class GalleryPermissionHelper_advanced {
     /**
      * Make the appropriate permission change.
      *
-     * @param string the type of change ('add' or 'remove')
-     * @param int the id of the GalleryItem
-     * @param int the id of the GalleryEntity (usually GalleryUser or GalleryGroup)
-     * @param int the permission id
-     * @param whether or not this call applies to child items
-     * @param array (optional) base event data for Gallery::RemovePermission event
+     * @param string $changeType the type of change ('add' or 'remove')
+     * @param int $itemId the id of the GalleryItem
+     * @param int $entityId the id of the GalleryEntity (usually GalleryUser or GalleryGroup)
+     * @param int $permission the permission id
+     * @param bool $applyToChildren whether or not this call applies to child items
+     * @param array $removeEventIds (optional) base event data for Gallery::RemovePermission event
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -511,8 +510,8 @@ class GalleryPermissionHelper_advanced {
     /**
      * Return a permissions for the given item
      *
-     * @param int GalleryItem id
-     * @param int user id or group id
+     * @param int $itemId GalleryItem id
+     * @param int $userOrGroupId user id or group id
      * @return array object GalleryStatus a status code
      *               int permissions or null if not found
      * @access private
@@ -574,7 +573,7 @@ class GalleryPermissionHelper_advanced {
     /**
      * Create a duplicate access list.
      *
-     * @param int the id of the source access list
+     * @param int $oldAccessListId the id of the source access list
      * @return array object GalleryStatus a status code,
      *               int AccessListId the new access list's id
      * @access private
@@ -901,7 +900,7 @@ class GalleryPermissionHelper_advanced {
     /**
      * Add a permission to the database and to our permission cache.
      *
-     * @param array the specific permission data
+     * @param array $data the specific permission data
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -929,7 +928,7 @@ class GalleryPermissionHelper_advanced {
      * Remove the given permissions from all items.  Useful when we remove a
      * permission from the system.
      *
-     * @param array permission ids
+     * @param array $permissionIds permission ids
      * @return object GalleryStatus a status code
      */
     function _removePermissionsFromAllItems($permissionIds) {
@@ -990,7 +989,7 @@ class GalleryPermissionHelper_advanced {
      * lock, we're in the process of compacting so nobody else should be touching the
      * access map.
      *
-     * @param string 'read' or 'write'
+     * @param string $type 'read' or 'write'
      * @return array object GalleryStatus a status code
      *         int lock id
      * @access private

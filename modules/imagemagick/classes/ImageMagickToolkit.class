@@ -487,9 +487,13 @@ class ImageMagickToolkit extends GalleryToolkit {
     /**
      * Do the given transform on the source image
      *
-     * @param string the command to execute
-     * @param string the path to a source file
-     * @param string the path to a destination file
+     * @param string $mimeType source mime type
+     * @param string $cmd the command to execute
+     * @param array $args
+     * @param string $sourceFilename the path to a source file
+     * @param string $destFilename the path to a destination file
+     * @param string $outputMimeType
+     * @param string $jpegQuality (optional)
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -632,7 +636,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 
     /**
      * Return the full path to the ImageMagick command
-     * @param string an ImageMagick command (eg. "convert")
+     * @param string $cmd an ImageMagick command (eg. "convert")
      * @return mixed string/error?
      * @access private
      */
@@ -651,9 +655,10 @@ class ImageMagickToolkit extends GalleryToolkit {
      * -size produces faster results when only resizing; incorrect results when
      * combined with other operations like -crop
      *
+     * @param array $transform parameters
+     * @param int $w target size
+     * @param int $h target height (optional)
      * @access private
-     * @param array parameters
-     * @param int target size
      */
     function _addResizeParam(&$transform, $w, $h=null) {
 	$size = isset($h) ? ($w . 'x' . $h) : ($w . 'x' . $w);

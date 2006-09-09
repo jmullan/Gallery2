@@ -294,9 +294,9 @@ class ItemAddFromWeb extends ItemAddPlugin {
      *     a filename and map this extension to a mime type.
      *  3. Check for Content-Type http header and use that mime type.
      *
-     * @param string url
-     * @param array (optional) http response headers
-     * @param boolean (optional) true to also figure out filename
+     * @param string $url url
+     * @param array $headers (optional) http response headers
+     * @param boolean $getFileName (optional) true to also figure out filename
      * @return array object GalleryStatus a status object
      *               string mime type
      *               string filename or null if not requested
@@ -362,9 +362,9 @@ class ItemAddFromWeb extends ItemAddPlugin {
     /**
      * Analyze url and available data to find item type.
      *
-     * @param string url
-     * @param string (optional) html attribute this url was parsed from
-     * @param array (optional) http response headers
+     * @param string $url url
+     * @param string $htmlAttribute (optional) html attribute this url was parsed from
+     * @param array $headers (optional) http response headers
      * @return array object GalleryStatus a status object
      *               string type name
      * @access private

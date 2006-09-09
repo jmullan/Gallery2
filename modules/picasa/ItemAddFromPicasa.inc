@@ -129,7 +129,7 @@ class ItemAddFromPicasa extends ItemAddPlugin {
      * ConfirmPicasaImport::performImport, and will unify these at a later time, as this is
      * not too easy (mainly because of the progressBar in ConfirmPicasaImport.)
      *
-     * @param string the export path, integer the ID of the destination album,
+     * @param string $picasaXmlPath the export path, integer the ID of the destination album,
      *        array the form variables
      * @return object GalleryStatus a status code
      */

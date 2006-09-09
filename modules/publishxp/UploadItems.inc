@@ -43,7 +43,7 @@ class UploadItemsController extends GalleryController {
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
      *
-     * @param array (optionId => ItemAddOption, ...)
+     * @param array $optionInstances (optionId => ItemAddOption, ...)
      */
     function setOptionInstances($optionInstances) {
 	$this->_optionInstances = $optionInstances;

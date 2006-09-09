@@ -42,9 +42,9 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     /**
      * Load and decode module parameters
      *
-     * @param int id of container; check for album-specific settings
-     * @param boolean fallback to site-defaults if no album-specific settings found
-     * @param array sets to load; all by default
+     * @param int $containerId id of container; check for album-specific settings
+     * @param boolean $fallback fallback to site-defaults if no album-specific settings found
+     * @param array $sets sets to load; all by default
      * @return array GalleryStatus a status code
      *               mixed containing custom field data
      *               boolean true if album-specific settings are returned
@@ -79,8 +79,8 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     /**
      * Encode and save module parameters
      *
-     * @param array data to save
-     * @param int id of container; to save album-specific settings
+     * @param array $param data to save
+     * @param int $containerId id of container; to save album-specific settings
      * @return GalleryStatus a status code
      */
     function saveParameters($param, $containerId=0) {
@@ -106,9 +106,9 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     /**
      * Add new custom field in given set/container.
      *
-     * @param string field name
-     * @param string set (common, album, photo)
-     * @param int id of container; to save album-specific settings
+     * @param string $newField field name
+     * @param string $set (common, album, photo)
+     * @param int $containerId id of container; to save album-specific settings
      * @return array object GalleryStatus a status code
      *               boolean true on success, false on duplicate field name
      */
@@ -135,8 +135,8 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     /**
      * Find a field in a parameter list
      *
-     * @param array parameter list
-     * @param string field to find
+     * @param array $list parameter list
+     * @param string $field field to find
      * @return int index or -1 if not found
      */
     function findParameter(&$list, $field) {
@@ -151,9 +151,9 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     /**
      * Delete custom field values for given field
      *
-     * @param string field to delete
-     * @param int id of container, to delete only for specific album
-     * @param string 'album' or 'photo' -- don't delete values for items of this type
+     * @param string $field field to delete
+     * @param int $containerId id of container, to delete only for specific album
+     * @param string $exceptType 'album' or 'photo' -- don't delete values for items of this type
      * @return GalleryStatus a status code
      */
     function deleteField($field, $containerId=0, $exceptType='') {
@@ -187,10 +187,10 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     /**
      * Load custom field values for specified items
      *
-     * @param array  object GalleryEntity item, ...
-     * @param string if specified then only include fields for that view (summary or detail)
-     * @param string if specified then include in results all valid fields for
-     *               this type, even if item has no value
+     * @param array $items object GalleryEntity item, ...
+     * @param string $viewType if given then only include fields for that view (summary or detail)
+     * @param string $fillSet if given then include in results all valid fields for this type,
+     *               even if item has no value
      * @return array GalleryStatus a status code
      *               array(itemId => array(field => value))
      *               array(itemId => array) loadParameters results
@@ -251,8 +251,8 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     /**
      * Save custom field values for specified item, overwriting any existing values
      *
-     * @param object GalleryEntity item
-     * @param array (field => value)
+     * @param object GalleryEntity $item
+     * @param array $fields (field => value)
      * @return GalleryStatus a status code
      */
     function saveFieldValues(&$item, $fields) {
@@ -304,8 +304,8 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     /**
      * Handler for Custom Field Admin actions
      *
-     * @param mixed form data
-     * @param int id of container, for album-specific settings
+     * @param array $form form data
+     * @param int $containerId id of container, for album-specific settings
      * @return array GalleryStatus a status code
      *               mixed status to return from controller
      */
@@ -446,8 +446,8 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
     /**
      * Load form data for Admin template
      *
-     * @param mixed form
-     * @param int id of container, for album-specific settings
+     * @param array $form form
+     * @param int $containerId id of container, for album-specific settings
      * @return object GalleryStatus a status code
      */
     function loadAdminForm(&$form, $containerId=0) {

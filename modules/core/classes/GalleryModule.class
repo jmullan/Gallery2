@@ -403,7 +403,7 @@ class GalleryModule extends GalleryPlugin {
      * applicable for the authenticated user.  As with getSiteAdminViews(), the view title text
      * must be localized.
      *
-     * @param object GalleryItem an item
+     * @param object GalleryItem $item
      * @return array object GalleryStatus a status code
      *               array( array('name' => name, 'view' => view), ...)
      */
@@ -417,7 +417,7 @@ class GalleryModule extends GalleryPlugin {
      * applicable for the authenticated user.  As with getSiteAdminViews(), the view title text
      * must be localized.
      *
-     * @param object GalleryUser a user
+     * @param object GalleryUser $user
      * @return array object GalleryStatus a status code
      *               array( array('name' => name, 'view' => view), ...)
      */
@@ -455,10 +455,10 @@ class GalleryModule extends GalleryPlugin {
      * These are links to item specific module views.  For example, the
      * comments module uses this to link to the "add comments" view.
      *
-     * @param array object GalleryItem
-     * @param array (id => 1, id => 1) we want detailed links for these ids
-     * @param array id => array(permission => 1, ...) of item permissions
-     * @param int id of user viewing links
+     * @param array $items array of object GalleryItem
+     * @param array $wantsDetailedLinks (id => 1, id => 1) we want detailed links for these ids
+     * @param array $permissions id => array(permission => 1, ...) of item permissions
+     * @param int $userId id of user viewing links
      * @return array object GalleryStatus a status code
      *               array(itemId => array(array('text' => 'localized text',
      *                                           'params' => array(key => value, key => value))
@@ -471,9 +471,9 @@ class GalleryModule extends GalleryPlugin {
     /**
      * Return module-specific summary content about the item
      *
-     * @param array object GalleryItem
-     * @param array id => array(permission => 1, ...) of item permissions
-     * @param object GalleryTemplate the master template instance
+     * @param array $items array of object GalleryItem
+     * @param array $permissions id => array(permission => 1, ...) of item permissions
+     * @param object GalleryTemplate $template the master template instance
      * @return array object GalleryStatus a status code
      *               array (id => string HTML content, ..)
      */
@@ -576,9 +576,9 @@ class GalleryModule extends GalleryPlugin {
 
     /**
      * Translate string.  Results are cached.
-     * @param mixed string or array for translation
-     * @param string (optional) attempt to translate post-sprintf string using this value
-     *    This allows specific translation of strings like "Edit Album" or "Edit Photo"
+     * @param mixed $params string or array for translation
+     * @param string $postSprintf (optional) attempt to translate post-sprintf string using this
+     *    value. This allows specific translation of strings like "Edit Album" or "Edit Photo"
      *    with a fallback to translation of "Edit %s" for other %s values.
      *    Currently only input string with single % token is supported.
      * @return translated string

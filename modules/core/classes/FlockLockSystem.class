@@ -166,7 +166,7 @@ class FlockLockSystem extends GalleryLockSystem {
     /**
      * Return the lock file for a given object id
      *
-     * @param int the input id
+     * @param int $id the input id
      * @return string the complete path to the lock file
      * @access private
      */
@@ -178,7 +178,7 @@ class FlockLockSystem extends GalleryLockSystem {
     /**
      * Close file for this lock and remove file if there are no more references.
      *
-     * @param array lockInfo
+     * @param array $lockInfo lockInfo
      * @access private
      */
     function _closeLockFile($lockInfo) {

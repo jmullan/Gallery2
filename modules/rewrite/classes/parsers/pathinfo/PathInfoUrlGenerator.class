@@ -17,22 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$ $Date$
- * @author Douglas Cau <douglas@cau.se>
- **/
 
-/**
- * Required class
- */
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
 
 /**
  * URL generator for PHP Path Info parser.
- *
  * @package Rewrite
  * @subpackage Parsers
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$ $Date$
  */
 class PathInfoUrlGenerator extends RewriteUrlGenerator {
 
@@ -95,7 +88,7 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 
 	/* Parse the PATH_INFO string */
 	if (($pathInfo = GalleryUtilities::getServerVar('PATH_INFO'))
-	        != GalleryUtilities::getServerVar('SCRIPT_NAME') && !empty($pathInfo)) {
+		!= GalleryUtilities::getServerVar('SCRIPT_NAME') && !empty($pathInfo)) {
 	    /* Remove the path of the existing base file if necessary */
 	    $base = substr($this->getCurrentUrlDir() . $this->_piFile[0],
 			   strlen($this->makeUrl('/')) - 1);
@@ -188,7 +181,8 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
      *
      * Note that the URL parts can all be overidden
      *
-     * @param boolean (optional) ensure Gallery base URL is returned (different when embedded)
+     * @param boolean $forceDirect (optional) ensure Gallery base URL is returned
+     *        (different when embedded)
      * @return string the base URL directory
      */
     function getCurrentUrlDir($forceDirect=false) {

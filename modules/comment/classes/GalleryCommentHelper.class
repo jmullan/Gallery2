@@ -32,9 +32,9 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
     /**
      * Return the comments associated with the given item
      *
-     * @param int GalleryItem id
-     * @param int (optional) max number to retrieve
-     * @param string (optional) ORDER_DESCENDING to list newest first
+     * @param int $itemId GalleryItem id
+     * @param int $count (optional) max number to retrieve
+     * @param string $orderDirection (optional) ORDER_DESCENDING to list newest first
      * @return array (object GalleryStatus a status code,
      *                array (entityId => GalleryComment, ...)
      */
@@ -95,10 +95,10 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
     /**
      * Return all comments in subtree under given item, with comment.view permission
      *
-     * @param array int GalleryItem id
-     * @param int (optional) max number to retrieve
-     * @param int (optional) start of the range
-     * @param string (optional) ORDER_DESCENDING to list newest first
+     * @param array $itemId int GalleryItem id
+     * @param int $count (optional) max number to retrieve
+     * @param int $offset (optional) start of the range
+     * @param string $orderDirection (optional) ORDER_DESCENDING to list newest first
      * @return array (object GalleryStatus a status code,
      *                array (entityId => GalleryComment, ...)
      *                int total number of comments available
@@ -212,7 +212,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
     /**
      * Return the number of comments associated with the given item ids
      *
-     * @param array int GalleryItem ids
+     * @param array $itemIds int GalleryItem ids
      * @return array object GalleryStatus a status code
      *               int a count
      */
@@ -250,8 +250,8 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
     /**
      * Get information needed for the AddComment page
      *
-     * @param object item to work from
-     * @param array form being modified
+     * @param object GalleryItem $item to work from
+     * @param array $form form being modified
      * @return array object GalleryStatus a status code
      *               array values used for the AddComment page (itemId, host, validation plugins)
      */

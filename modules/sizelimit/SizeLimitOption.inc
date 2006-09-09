@@ -213,8 +213,8 @@ class SizeLimitOption extends ItemEditOption {
     /**
      * Apply current settings to all qualified subitems
      *
-     * @param array of form variables
-     * @param object album to apply settings
+     * @param array $form of form variables
+     * @param object GalleryAlbumItem $album to apply settings
      * @return array object GalleryStatus a status code
      *               array errors, array warnings
      * @access private

@@ -31,13 +31,11 @@ class SizeLimitHelper {
     /**
      * Reduce the item file size without preserving the original
      *
-     * @param item GalleryPhotoItem
-     * @param operation ('scale' to reduce dimensions
-     *                   'compress' to reduce filesize)
-     * @param args operation arguments to pass through to the toolkit
+     * @param object GalleryPhotoItem $item
+     * @param string $operation ('scale' to reduce dimensions, 'compress' to reduce filesize)
+     * @param array $args operation arguments to pass through to the toolkit
      * @return array (object GalleryStatus a status code,
-     *                array (errors),
-     *                array (warnings)
+     *                array (errors), array (warnings))
      */
     function applyLimits(&$item, $operation, $args) {
 
@@ -105,13 +103,11 @@ class SizeLimitHelper {
     /**
      * Set up a preferred derivative that conforms to size limits
      *
-     * @param item GalleryPhotoItem
-     * @param operation ('scale' to reduce dimensions
-     *                   'compress' to reduce filesize)
-     * @param args  passthru to the toolkit
+     * @param object GalleryPhotoItem $item
+     * @param string $operation ('scale' to reduce dimensions, 'compress' to reduce filesize)
+     * @param array $args passthru to the toolkit
      * @return array (object GalleryStatus a status code,
-     *                array (errors),
-     *                array (warnings)
+     *                array (errors), array (warnings))
      */
     function buildDerivativeWithLimits($item, $operation, $args) {
 	/* Check to see if we have a preferred source */
@@ -199,9 +195,9 @@ class SizeLimitHelper {
     /**
      * After shrinking the fullsize, we might need to delete resizes
      *
-     * @param int item id
-     * @param int new fullsize width
-     * @param int new fullsize height
+     * @param int $itemId
+     * @param int $imageWidth new fullsize width
+     * @param int $imageHeight new fullsize height
      * @return object GalleryStatus a status code
      */
     function _updateResizes($itemId, $imageWidth, $imageHeight) {

@@ -210,7 +210,7 @@ class Gallery {
     /**
      * Set the id of the active user.  The active user is the user who is logged on in this session.
      *
-     * @param object GalleryUser the current user
+     * @param object GalleryUser $user the current user
      */
     function setActiveUser($user) {
 	$this->_activeUser = $user;
@@ -258,8 +258,8 @@ class Gallery {
     /**
      * Store a value in the Gallery config table
      *
-     * @param string the key name
-     * @param mixed the value
+     * @param string $key
+     * @param mixed $value
      */
     function setConfig($key, $value) {
 	assert('!empty($key)');
@@ -316,7 +316,7 @@ class Gallery {
     /**
      * Set the Gallery platform object.
      *
-     * @param object GalleryPlatform the Gallery platform object
+     * @param object GalleryPlatform $platform the Gallery platform object
      */
     function setPlatform(&$platform) {
 	unset($this->_platform);
@@ -336,7 +336,7 @@ class Gallery {
     /**
      * Return the active lock system.
      *
-     * @param boolean (optional) if false and lockSystem isn't yet initialized, return null
+     * @param boolean $canInit (optional) if false and lockSystem isn't yet initialized, return null
      * @return array object GalleryStatus a status code
      *               object GalleryLockSystem the lock implementation (reference)
      */
@@ -474,7 +474,7 @@ class Gallery {
     /**
      * Set the URL generator
      *
-     * @param object GalleryUrlGenerator
+     * @param object GalleryUrlGenerator $urlGenerator
      */
     function setUrlGenerator(&$urlGenerator) {
 	unset($this->_urlGenerator);
@@ -493,7 +493,7 @@ class Gallery {
     /**
      * Set the current view
      *
-     * @param string the view name
+     * @param string $view the view name
      */
     function setCurrentView($view) {
 	$this->_currentView = $view;
@@ -511,7 +511,7 @@ class Gallery {
     /**
      * Return a reference to our GalleryTranslator instance
      *
-     * @return array object GalleryTranslator
+     * @return object GalleryTranslator
      */
     function &getTranslator() {
 	return $this->_translator;
@@ -520,7 +520,7 @@ class Gallery {
     /**
      * Initialize our GalleryTranslator
      *
-     * @param boolean [optional] true if we should not use the database
+     * @param boolean $dontUseDatabase (optional) true if we should not use the database
      * @return object GalleryStatus a status code
      */
     function initTranslator($dontUseDatabase=false) {
@@ -570,7 +570,7 @@ class Gallery {
     /**
      * Set the active language code for this session.
      *
-     * @param string language code
+     * @param string $language language code
      * @return object GalleryStatus a status code
      */
     function setActiveLanguageCode($language) {
@@ -588,7 +588,7 @@ class Gallery {
      *
      * After this function completes, we will be guaranteed of at least this much more time to work.
      *
-     * @param int a time interval in seconds, must be greater than 0
+     * @param int $limit a time interval in seconds, must be greater than 0
      */
     function guaranteeTimeLimit($limit) {
 	if ($limit <= 0) {
@@ -622,7 +622,7 @@ class Gallery {
      *   array()           <-- no profiling
      *   array('sql')      <-- SQL profiling
      *
-     * @param array the profiling modes
+     * @param mixed $profile array of profiling modes or boolean false
      */
     function setProfile($profile=array()) {
 	if ($profile === false) {
@@ -635,7 +635,7 @@ class Gallery {
     /**
      * Get the profiling state
      *
-     * @param string profiling type
+     * @param string $type profiling type
      * @return boolean
      */
     function isProfiling($type) {
@@ -645,7 +645,7 @@ class Gallery {
     /**
      * Change the debugging state
      *
-     * @param mixed one of 'buffered', 'logged', 'immediate' or false
+     * @param mixed $debug one of 'buffered', 'logged', 'immediate' or false
      */
     function setDebug($debug=false) {
 
@@ -668,7 +668,7 @@ class Gallery {
 
     /**
      * Set the location of debugging output
-     * @param string a filename
+     * @param string $debugLogFile a filename
      */
     function setDebugLogFile($debugLogFile) {
 	$this->_debugLogFile = $debugLogFile;
@@ -724,7 +724,7 @@ class Gallery {
 
     /**
      * Output a debug message
-     * @param string a message
+     * @param string $msg a message
      */
     function debug($msg) {
 	if (empty($msg)) {
@@ -760,8 +760,8 @@ class Gallery {
     /**
      * Output a print_r style debug message
      *
-     * @param mixed any object or value
-     * @param boolean true if the output should be run through htmlentities()
+     * @param mixed $object any object or value
+     * @param boolean $escapeHtmlEntities true if the output should be run through htmlentities()
      */
     function debug_r($object, $escapeHtmlEntities=false) {
 	if (!empty($this->_debug)) {
@@ -822,7 +822,7 @@ class Gallery {
      *   $message_to_be_localized = $gallery->i18n('TEST to be displayed in different languages');
      *   print $this->translate($message_to_be_localized);
      *
-     * @param string the value
+     * @param string $value
      * @return string the same value
      */
     function i18n($value) {
@@ -832,12 +832,12 @@ class Gallery {
     /**
      * Send a data file out to the browser as quickly as possible.
      *
-     * @param string the relative path to the file from the g2data/ directory
-     * @param string the logical name of the file (used for the Content-Disposition header)
-     * @param string the last modified date string (used for the Last-Modified header)
-     * @param string the mime type (used for the Content-type header)
-     * @param int the size of the file (used for the Content-length header)
-     * @return true if we transferred the file successfully
+     * @param string $relativePath the relative path to the file from the g2data/ directory
+     * @param string $filename logical name of the file (used for the Content-Disposition header)
+     * @param string $lastModified the last modified date string (used for the Last-Modified header)
+     * @param string $mimeType the mime type (used for the Content-type header)
+     * @param int $contentLength the size of the file (used for the Content-length header)
+     * @return boolean true if we transferred the file successfully
      */
     function fastDownload($relativePath, $filename, $lastModified, $mimeType, $contentLength) {
 	/* Pass malicious URLs down to core.DownloadItem */
@@ -872,8 +872,8 @@ class Gallery {
     /**
      * Add an action to be performed at the end of the request.
      *
-     * @param callback function
-     * @param array parameters
+     * @param callback $callback
+     * @param array $parameters
      */
     function addShutdownAction($callback, $parameters) {
 	if (!isset($this->_shutdownActions)) {

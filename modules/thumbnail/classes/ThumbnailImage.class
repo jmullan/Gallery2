@@ -133,7 +133,7 @@ class ThumbnailImage extends GalleryChildEntity {
     /**
      * Set array of item mime types.
      *
-     * @param array(string mime type)
+     * @param array $mimeTypeList array(string mime type, ..)
      */
     function setItemMimeTypesList($mimeTypeList) {
 	$this->setitemMimeTypes(implode('|', $mimeTypeList));
@@ -142,9 +142,9 @@ class ThumbnailImage extends GalleryChildEntity {
     /**
      * Create a new instance of this type in the persistent store.
      *
-     * @param string the path to a data file to be contained
-     * @param string the mime type of the new item
-     * @param string the desired name of the new item
+     * @param string $inputFileName the path to a data file to be contained
+     * @param string $mimeType the mime type of the new item
+     * @param string $targetName (optional) the desired name of the new item
      * @return object GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null) {

@@ -69,15 +69,15 @@ class GalleryCoreApi {
     /**
      * Register a new implementation with the factory
      *
-     * @param string the class type (eg. 'GalleryToolkit')
-     * @param string the class name (eg. 'NetPbmToolkit')
-     * @param string an implementation id (eg. 'NetPBM')
-     * @param string the relative path to the implementation file
+     * @param string $classType the class type (eg. 'GalleryToolkit')
+     * @param string $className the class name (eg. 'NetPbmToolkit')
+     * @param string $implId an implementation id (eg. 'NetPBM')
+     * @param string $implPath the relative path to the implementation file
      *               (eg. 'modules/netpbm/classes/NetPbmToolkit.class')
-     * @param string the id of the module containing the implementation (eg. 'netpbm')
-     * @param array optional hints that can be used to locate this
+     * @param string $implModuleId the id of the module containing the implementation (eg. 'netpbm')
+     * @param array $hints optional hints that can be used to locate this
      *              implementation (eg. array('image/jpeg', 'image/gif'))
-     * @param int the priority of this implementation (lower number == higher priority)
+     * @param int $orderWeight the priority of this implementation (lower number == higher priority)
      */
     function registerFactoryImplementation($classType, $className, $implId, $implPath,
 					   $implModuleId, $hints, $orderWeight=5) {
@@ -90,8 +90,8 @@ class GalleryCoreApi {
     /**
      * Create a new instance of the given type based on the hint(s) provided
      *
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param array of hints to try (in order) or string, a single hint (eg. 'image/jpeg')
+     * @param string $classType the class type (eg. 'GalleryToolkit')
+     * @param mixed $hints array of hints to try (in order) or single string hint (eg. 'image/jpeg')
      * @return array object GalleryStatus a status code,
      *               object an instance
      */
@@ -104,8 +104,8 @@ class GalleryCoreApi {
     /**
      * Create a new instance of the given type
      *
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param string the class name (eg. 'NetPbmGraphics')
+     * @param string $classType the class type (eg. 'GalleryToolkit')
+     * @param string $className the class name (eg. 'NetPbmToolkit')
      * @return object GalleryStatus a status code
      *         object the instance
      */
@@ -118,8 +118,8 @@ class GalleryCoreApi {
     /**
      * Create a new instance of the given type based on the id provided
      *
-     * @param string the class type (eg. 'GalleryGraphics')
-     * @param string the class name (eg. 'NetPBM')
+     * @param string $classType the class type (eg. 'GalleryToolkit')
+     * @param string $id the class name (eg. 'NetPBM')
      * @return array object GalleryStatus a status code,
      *               object an instance
      */
@@ -132,6 +132,7 @@ class GalleryCoreApi {
     /**
      * Return the ids of all the available implementations for a class
      *
+     * @param string $classType the class type (eg. 'GalleryToolkit')
      * @return array object GalleryStatus a status code
      *               array (id => className, ...)
      */
@@ -156,7 +157,7 @@ class GalleryCoreApi {
     /**
      * Unregister all factory implementations for a module
      *
-     * @param string an id (eg. 'netpbm')
+     * @param string $moduleId an id (eg. 'netpbm')
      * @return object GalleryStatus a status code
      */
     function unregisterFactoryImplementationsByModuleId($moduleId) {
@@ -168,8 +169,8 @@ class GalleryCoreApi {
     /**
      * Unregister a factory implementation by id
      *
-     * @param string a class type (eg. 'GalleryToolkit')
-     * @param string an implementation id (eg. 'NetPBM')
+     * @param string $classType a class type (eg. 'GalleryToolkit')
+     * @param string $implId an implementation id (eg. 'NetPBM')
      * @return object GalleryStatus a status code
      */
     function unregisterFactoryImplementation($classType, $implId) {
@@ -181,11 +182,11 @@ class GalleryCoreApi {
     /**
      * Load and initialize the given plugin
      *
-     * @param string the plugin type (eg, module, theme, etc)
-     * @param string the plugin id
-     * @param bool should we ignore version mismatches (default: no)
-     * @param bool should we return an error on version mismatches instead of redirecting
-     *             to the upgrader?  (default: false)
+     * @param string $pluginType the plugin type (eg. module, theme)
+     * @param string $pluginId the plugin id
+     * @param bool $ignoreVersionMismatch should we ignore version mismatches (default: no)
+     * @param bool $errorOnVersionMismatch should we return an error on version mismatches instead
+     *             of redirecting to the upgrader?  (default: false)
      * @return array object GalleryStatus a status code
      *               object the plugin
      */
@@ -200,7 +201,7 @@ class GalleryCoreApi {
     /**
      * Return true if the plugin is compatible with the current API versions.  False otherwise.
      *
-     * @param object GalleryPlugin instance
+     * @param object GalleryPlugin $plugin
      * @return boolean true if the plugin is compatible
      */
     function isPluginCompatibleWithApis($plugin) {
@@ -212,10 +213,10 @@ class GalleryCoreApi {
     /**
      * Convenience method to retrieve a plugin parameter
      *
-     * @param string the plugin type
-     * @param string the plugin id
-     * @param string the parameter name
-     * @param string optional item id
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param string $parameterName
+     * @param string $itemId (optional)
      * @return array object GalleryStatus a status code
      *               string a value
      */
@@ -229,9 +230,9 @@ class GalleryCoreApi {
     /**
      * Get all the parameters for this plugin
      *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @param integer the id of item (or null for a global setting)
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param int $itemId the id of item (or null for global settings)
      * @return array object GalleryStatus a status code
      *               array (parameterName => parameterValue)
      */
@@ -244,7 +245,7 @@ class GalleryCoreApi {
     /**
      * Remove all plugin parameters for a given item id
      *
-     * @param int the id of the GalleryItem
+     * @param int $itemId the id of the GalleryItem
      * @return object GalleryStatus a status code
      */
     function removePluginParametersForItemId($itemId) {
@@ -256,10 +257,10 @@ class GalleryCoreApi {
     /**
      * Remove all plugin entries for a given parameter and value pair
      *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @param string the name of the parameter
-     * @param mixed the value to be matched
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param string $parameterName
+     * @param mixed $parameterValue the value to be matched
      * @return object GalleryStatus a status code
      */
     function removePluginParameterByValue($pluginType, $pluginId, $parameterName, $parameterValue) {
@@ -273,8 +274,8 @@ class GalleryCoreApi {
     /**
      * Get the status of all plugins of a given type
      *
-     * @param string the plugin type (eg 'module', 'theme')
-     * @param bool true if we want to ignore the cache?
+     * @param string $pluginType
+     * @param bool $ignoreCache (optional) true if we want to ignore the cache
      * @return array object GalleryStatus as status code
      *                      array (moduleId => array('active' => true/false,
      *                                               'available' => true/false)
@@ -288,7 +289,7 @@ class GalleryCoreApi {
     /**
      * Return a plugin list by plugin type
      *
-     * @param string the plugin type
+     * @param string $pluginType
      * @return array GalleryStatus a status code
      *               array of (pluginId => ('active' => boolean))
      */
@@ -301,8 +302,8 @@ class GalleryCoreApi {
     /**
      * Activate the given plugin
      *
-     * @param string the plugin type
-     * @param string the plugin id
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
@@ -315,8 +316,8 @@ class GalleryCoreApi {
     /**
      * Deactivate the given plugin
      *
-     * @param string the plugin type
-     * @param string the plugin id
+     * @param string $pluginType
+     * @param string $pluginId
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
@@ -329,8 +330,8 @@ class GalleryCoreApi {
     /**
      * Remove the given plugin from the map
      *
-     * @param string the plugin type
-     * @param string the plugin id
+     * @param string $pluginType
+     * @param string $pluginId
      * @return object GalleryStatus a status code
      */
     function removePlugin($pluginType, $pluginId) {
@@ -342,7 +343,7 @@ class GalleryCoreApi {
     /**
      * Get the list of all available plugins of a given type
      *
-     * @param string the plugin type
+     * @param string $pluginType
      * @return array object GalleryStatus a status code
      *               string plugin ids
      */
@@ -355,10 +356,10 @@ class GalleryCoreApi {
     /**
      * Remove a parameter for this plugin
      *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
-     * @param string the name of the parameter
-     * @param integer the id of item (or null for a global setting)
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param string $parameterName
+     * @param int $itemId the id of item (or null for a global setting)
      * @return object GalleryStatus a status code
      */
     function removePluginParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
@@ -371,8 +372,8 @@ class GalleryCoreApi {
     /**
      * Remove all parameters for this plugin
      *
-     * @param string the type of the plugin
-     * @param string the id of the plugin
+     * @param string $pluginType
+     * @param string $pluginId
      * @return object GalleryStatus a status code
      */
     function removeAllPluginParameters($pluginType, $pluginId) {
@@ -384,11 +385,11 @@ class GalleryCoreApi {
     /**
      * Set a plugin parameter
      *
-     * @param string the plugin type
-     * @param string the plugin id
-     * @param string the parameter name
-     * @param string the value
-     * @param string optional item id
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param string $parameterName
+     * @param string $parameterValue
+     * @param string $itemId (optional)
      * @return object GalleryStatus a status code
      */
     function setPluginParameter($pluginType, $pluginId, $parameterName,
@@ -414,9 +415,9 @@ class GalleryCoreApi {
      * Fetch all the access list ids that grant the given permission to the given user
      * (either directly or via a group).
      *
-     * @param string the permission id (eg, 'core.view')
-     * @param int the user id
-     * @param boolean (optional) false to ignore session based permissions
+     * @param string $permission the permission id (eg. 'core.view')
+     * @param int $userId
+     * @param boolean $sessionPermissions (optional) false to ignore session based permissions
      * @return array object GalleryStatus a status code
      *               array int access list ids
      */
@@ -453,7 +454,7 @@ class GalleryCoreApi {
     /**
      * Look up an item's access list.
      *
-     * @param int the id of the source item
+     * @param int $itemId the id of the source item
      * @return array object GalleryStatus a status code,
      *               int accessListId the associated item's list
      */
@@ -466,8 +467,8 @@ class GalleryCoreApi {
     /**
      * Assert that the current user has the specific permission for the target item
      *
-     * @param int item id
-     * @param string permission id
+     * @param int $itemId
+     * @param string $permission
      * @return object GalleryStatus success if the user has permission,
      *                              ERROR_PERMISSION_DENIED if not.
      */
@@ -479,9 +480,9 @@ class GalleryCoreApi {
     /**
      * Return true if the current user has the specific permission for the target item
      *
-     * @param int item id
-     * @param string permission id
-     * @param int an optional user id (default is the current user)
+     * @param int $itemId
+     * @param string $permission
+     * @param int $userId an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      */
@@ -495,9 +496,9 @@ class GalleryCoreApi {
      *
      * You can specify how many users to list, and where the windows is in the list of all users.
      *
-     * @param int [optional] the number of usernames desired
-     * @param int [optional] the start of the range
-     * @param string [optional] a substring to match
+     * @param int $count (optional) the number of usernames desired
+     * @param int $offset (optional) the start of the range
+     * @param string $substring (optional) a substring to match
      * @return array object GalleryStatus a status code
      *               array (username, username, ...)
      */
@@ -509,7 +510,7 @@ class GalleryCoreApi {
     /**
      * Return the total number of users
      *
-     * @param string an optional substring to match against the username
+     * @param string $substring an optional substring to match against the username
      * @return array object GalleryStatus a status code
      *               int number of users
      */
@@ -521,7 +522,7 @@ class GalleryCoreApi {
     /**
      * Lookup a user by username
      *
-     * @param string the username
+     * @param string $userName
      * @return array object GalleryStatus a status code
      *               object GalleryUser a user
      */
@@ -545,7 +546,7 @@ class GalleryCoreApi {
      * Delete all non-album items of a user. Then delete all remaining albums that are empty.
      * This function can only be called with activeUser = Site Admin
      *
-     * @param int the id of the user
+     * @param int $userId
      * @return array object GalleryStatus a status code
      */
     function deleteUserItems($userId) {
@@ -558,9 +559,9 @@ class GalleryCoreApi {
      *
      * You can specify how many groups to list, and where the windows is in the list of all groups.
      *
-     * @param int [optional] the number of groupnames desired
-     * @param int [optional] the start of the range
-     * @param string [optional] a substring to match
+     * @param int $count (optional) the number of groupnames desired
+     * @param int $offset (optional) the start of the range
+     * @param string $substring (optional) a substring to match
      * @return array object GalleryStatus a status code
      *               array (groupname, groupname, ...)
      */
@@ -572,7 +573,7 @@ class GalleryCoreApi {
     /**
      * Return a count of groups, optionally matching a search string
      *
-     * @param string the substring to match
+     * @param string $substring the substring to match
      * @return array object GalleryStatus a status code
      *               int group count
      */
@@ -584,7 +585,7 @@ class GalleryCoreApi {
     /**
      * Lookup a group by name
      *
-     * @param string the groupname
+     * @param string $groupName
      * @return array object GalleryStatus a status code
      *               object GalleryGroup a group
      */
@@ -597,7 +598,7 @@ class GalleryCoreApi {
     /**
      * Return the permission bits for a set of permission ids
      *
-     * @param array of string permission ids or single permission id
+     * @param mixed $permissionIds array of string permission ids or single permission id
      * @return array object GalleryStatus a status code
      *               integer bits
      */
@@ -610,8 +611,8 @@ class GalleryCoreApi {
     /**
      * Return all the permission ids for a permission bit set
      *
-     * @param int the bit mask
-     * @param boolean should we compress the permission list?
+     * @param int $permissionBits the bit mask
+     * @param boolean $compress should we compress the permission list?
      * @return array object GalleryStatus a status code
      *               array (bits, bits, bits)
      */
@@ -624,8 +625,8 @@ class GalleryCoreApi {
     /**
      * Return a list of permissions for the given items
      *
-     * @param array int GalleryItem ids
-     * @param int [optional] id of the user whose permissions we search for
+     * @param array $itemIds int GalleryItem ids
+     * @param int $userId (optional) id of the user whose permissions we search for
      * @return array object GalleryStatus a status code
      *               array (id => array(array(permission.id => 1, ...), ...)
      */
@@ -638,8 +639,8 @@ class GalleryCoreApi {
     /**
      * Return all the permissions that the given user has for the given item.
      *
-     * @param int item id
-     * @param int an optional user id (default is current user)
+     * @param int $itemId
+     * @param int $userId an optional user id (default is current user)
      * @return array object GalleryStatus a status code
      *               array (perm1, perm2)
      */
@@ -652,8 +653,8 @@ class GalleryCoreApi {
     /**
      * Study the permissions for all items (for the given user)
      *
-     * @param array GalleryItem ids
-     * @param int an optional user id (default is current user)
+     * @param array $itemIds GalleryItem ids
+     * @param int $userId an optional user id (default is current user)
      * @return object GalleryStatus a status code
      */
     function studyPermissions($itemIds, $userId=null) {
@@ -665,10 +666,10 @@ class GalleryCoreApi {
     /**
      * Add the given itemid, userid, permission mapping
      *
-     * @param int the id of the GalleryItem
-     * @param int the id of the GalleryUser
-     * @param string the permission id
-     * @param boolean (optional) whether or not this call applies to child items
+     * @param int $itemId the id of the GalleryItem
+     * @param int $userId the id of the GalleryUser
+     * @param string $permission the permission id
+     * @param boolean $applyToChildren (optional) whether or not this call applies to child items
      * @return object GalleryStatus a status code
      */
     function addUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
@@ -681,10 +682,10 @@ class GalleryCoreApi {
     /**
      * Add the given itemid, groupid, permission mapping
      *
-     * @param int the id of the GalleryItem
-     * @param int the id of the GalleryGroup
-     * @param string the permission id
-     * @param boolean (optional) whether or not this call applies to child items
+     * @param int $itemId the id of the GalleryItem
+     * @param int $groupId the id of the GalleryGroup
+     * @param string $permission the permission id
+     * @param boolean $applyToChildren (optional) whether or not this call applies to child items
      * @return object GalleryStatus a status code
      */
     function addGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
@@ -699,10 +700,10 @@ class GalleryCoreApi {
      * (Session based permissions; permission is granted when this entityId is added to
      *  GALLERY_PERMISSION_SESSION_KEY array in the session)
      *
-     * @param int the id of the GalleryItem
-     * @param int the id of the GalleryEntity
-     * @param string the permission id
-     * @param boolean (optional) whether or not this call applies to child items
+     * @param int $itemId the id of the GalleryItem
+     * @param int $entityId the id of the GalleryEntity
+     * @param string $permission the permission id
+     * @param boolean $applyToChildren (optional) whether or not this call applies to child items
      * @return object GalleryStatus a status code
      */
     function addEntityPermission($itemId, $entityId, $permission, $applyToChildren=false) {
@@ -715,10 +716,10 @@ class GalleryCoreApi {
     /**
      * Remove the given itemid, userid, permission mapping
      *
-     * @param int the id of the GalleryItem
-     * @param int the id of the GalleryUser
-     * @param string the permission id
-     * @param boolean (optional) whether or not this call applies to child items
+     * @param int $itemId the id of the GalleryItem
+     * @param int $userId the id of the GalleryUser
+     * @param string $permission the permission id
+     * @param boolean $applyToChildren (optional) whether or not this call applies to child items
      * @return object GalleryStatus a status code
      */
     function removeUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
@@ -731,10 +732,10 @@ class GalleryCoreApi {
     /**
      * Remove the given itemid, groupid, permission mapping
      *
-     * @param int the id of the GalleryItem
-     * @param int the id of the GalleryGroup
-     * @param string the permission id
-     * @param boolean (optional) whether or not this call applies to child items
+     * @param int $itemId the id of the GalleryItem
+     * @param int $groupId the id of the GalleryGroup
+     * @param string $permission the permission id
+     * @param boolean $applyToChildren (optional) whether or not this call applies to child items
      * @return object GalleryStatus a status code
      */
     function removeGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
@@ -747,10 +748,10 @@ class GalleryCoreApi {
     /**
      * Remove the given itemid, entityid, permission mapping
      *
-     * @param int the id of the GalleryItem
-     * @param int the id of the GalleryEntity
-     * @param string the permission id
-     * @param boolean (optional) whether or not this call applies to child items
+     * @param int $itemId the id of the GalleryItem
+     * @param int $entityId the id of the GalleryEntity
+     * @param string $permission the permission id
+     * @param boolean $applyToChildren (optional) whether or not this call applies to child items
      * @return object GalleryStatus a status code
      */
     function removeEntityPermission($itemId, $entityId, $permission, $applyToChildren=false) {
@@ -763,7 +764,7 @@ class GalleryCoreApi {
     /**
      * Remove all permissions for the given itemid
      *
-     * @param int the id of the GalleryGroup
+     * @param int $itemId
      * @return object GalleryStatus a status code
      */
     function removeItemPermissions($itemId) {
@@ -775,8 +776,8 @@ class GalleryCoreApi {
     /**
      * Return a list of permissions for the given item id
      *
-     * @param int the id of the item
-     * @param boolean should we compress the permission list?
+     * @param int $itemId
+     * @param boolean $compress should we compress the permission list?
      * @return array object GalleryStatus a status code
      *               array array('userId' or 'groupId' or 'entityId' => ...,
      *                           'permission' => ...)
@@ -790,8 +791,8 @@ class GalleryCoreApi {
     /**
      * Copy a set of permissions from one id to another
      *
-     * @param int the id of the target item
-     * @param int the id of the source item
+     * @param int $itemId the id of the target item
+     * @param int $fromId the id of the source item
      * @return object GalleryStatus a status code
      */
     function copyPermissions($itemId, $fromId) {
@@ -804,9 +805,9 @@ class GalleryCoreApi {
      * Are any or the given user/group ids directly granted all given permissions
      * for the target item?
      *
-     * @param int the id of the target item
-     * @param array of int entity ids (usually user or group ids) or a single id
-     * @param array of string permission ids or single permission id
+     * @param int $itemId
+     * @param mixed $entityIds array of int entity ids (usually user or group ids) or a single id
+     * @param mixed $permissions array of string permission ids or single permission id
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      */
@@ -819,11 +820,11 @@ class GalleryCoreApi {
     /**
      * Register a new permission
      *
-     * @param string the id of the module
-     * @param string the id of the permission
-     * @param string the non-localized description of the permission
-     * @param int flags (of the GALLERY_PERMISSION_XYZ variety)
-     * @param array ids of other permissions that compose this one
+     * @param string $module the id of the module
+     * @param string $permissionId the id of the permission
+     * @param string $description the non-localized description of the permission
+     * @param int $flags (optional) flags (of the GALLERY_PERMISSION_XYZ variety)
+     * @param array $composites (optional) ids of other permissions that compose this one
      * @return object GalleryStatus a status code
      */
     function registerPermission($module, $permissionId, $description,
@@ -838,7 +839,7 @@ class GalleryCoreApi {
      * Get all the permission ids that match the specified flags.
      * This will return any permissions that contain *all* the bits from flags.
      *
-     * @param int flags
+     * @param int $flags
      * @return array object GalleryStatus a status code
      *               array (id => description, id => description, ...)
      */
@@ -877,8 +878,8 @@ class GalleryCoreApi {
      * Rebuild the cached derivative file if it is not current.
      * If the cache is expired, it will be automatically rebuilt
      *
-     * @param the id of the derivative
-     * @param [optional boolean whether to try to fix the derivative if is broken]
+     * @param int $derivativeId
+     * @param boolean $fixBroken (optional) whether to try to fix the derivative if is broken
      * @return array object GalleryStatus a status code,
      *               object GalleryDerivative the up-to-date derivative
      *               boolean true if it had to be rebuilt, false if not
@@ -892,7 +893,7 @@ class GalleryCoreApi {
     /**
      * Rebuild the cache for the given derivative
      *
-     * @param the id of the derivative
+     * @param int $derivativeId
      * @return array object GalleryStatus a status code
      *               object GalleryDerivative the rebuilt derivative
      */
@@ -905,7 +906,7 @@ class GalleryCoreApi {
     /**
      * Expire all derivatives that depend on the source ids specified
      *
-     * @param array source ids
+     * @param array $ids source ids
      * @return object GalleryStatus a status code
      */
     function expireDerivativeTreeBySourceIds($ids) {
@@ -918,7 +919,7 @@ class GalleryCoreApi {
      * Zero out the dimensions for all derivatives that depend on the given source id so that
      * they will be recalculated before the next view.
      *
-     * @param array source ids
+     * @param array $ids source ids
      * @return object GalleryStatus a status code
      */
     function invalidateDerivativeDimensionsBySourceIds($ids) {
@@ -934,7 +935,7 @@ class GalleryCoreApi {
      * 3. This item's linked item (if applicable)
      * 4. This item itself
      *
-     * @param object GalleryDataItem the target item
+     * @param object GalleryDataItem $item
      * @return array object GalleryObject a status code
      *               object GalleryEntity (either a GalleryDataItem or a GalleryDerivative) the
      *               preferred source
@@ -948,7 +949,7 @@ class GalleryCoreApi {
     /**
      * Convenience function to fetch the thumbnail for an item id
      *
-     * @param array GalleryItem ids
+     * @param array $ids GalleryItem ids
      * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      */
@@ -961,7 +962,7 @@ class GalleryCoreApi {
     /**
      * Convenience function to fetch the preferred for an item id
      *
-     * @param array GalleryItem ids
+     * @param array $ids GalleryItem ids
      * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      */
@@ -974,7 +975,7 @@ class GalleryCoreApi {
     /**
      * Convenience function to fetch the resizes for an item id
      *
-     * @param array GalleryItem ids
+     * @param array $ids GalleryItem ids
      * @return array object GalleryStatus a status code
      *               array(GalleryItem id => array(GalleryDerivativeImage, ...)
      *                     ...)
@@ -995,10 +996,10 @@ class GalleryCoreApi {
      * scale|250;rotate|90          rotate|90              scale|250;rotate|180
      * scale|250;rotate|90          thumbnail|125          thumbnail|125;rotate|180
      *
-     * @param string the first set of operations
-     * @param string the second set of operations
-     * @param boolean true if the second set should be added at the beginning of the first set,
-     *                     if it can't be merged.
+     * @param string $operationSet1 the first set of operations
+     * @param string $operationSet2 the second set of operations
+     * @param boolean $highPriority true if the second set should be added at the beginning of
+     *                     the first set, if it can't be merged.
      * @return array object GalleryStatus a status code
      *               the merged operation set
      */
@@ -1023,8 +1024,8 @@ class GalleryCoreApi {
     /**
      * Load the derivative images that have the specified source id(s) with the type(s) specified
      *
-     * @param array GalleryItem ids
-     * @param array derivative types (eg, 'DERIVATIVE_TYPE_IMAGE_THUMBNAIL')
+     * @param array $ids GalleryItem ids
+     * @param array $types derivative types (eg. DERIVATIVE_TYPE_IMAGE_THUMBNAIL)
      * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      */
@@ -1037,7 +1038,7 @@ class GalleryCoreApi {
     /**
      * Convenience function to fetch all derivatives for a given item id
      *
-     * @param array GalleryItem ids
+     * @param array $ids GalleryItem ids
      * @return array object GalleryStatus a status code
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      */
@@ -1055,9 +1056,9 @@ class GalleryCoreApi {
      * then you "rotate|90" the preferred you'd call adjustDependentDerivatives on the thumbnail
      * with the "rotate|90" operation so that we can rotate the crop coordinates appropriately.
      *
-     * @param array id the target derivative
-     * @param string the operation that was performed on the target derivative
-     * @param boolean true if we should apply the transform in reverse
+     * @param array $id id the target derivative
+     * @param string $operation the operation that was performed on the target derivative
+     * @param boolean $reverse (optional) true if we should apply the transform in reverse
      * @return object GalleryStatus a status code
      */
     function adjustDependentDerivatives($id, $operation, $reverse=false) {
@@ -1070,12 +1071,12 @@ class GalleryCoreApi {
     /**
      * Use the given operation as a transform for each derivative that depends on the target
      *
-     * @param the operation to be executed
-     * @param argument of the operations
-     * @param boolean whether to preserve original
-     * @param object the item to perfrom the operation on
-     * @param optional object the preferred derivative to execute the operation on
-     * @param optional serialNumber
+     * @param string $operation the operation to be executed
+     * @param array $args arguments of the operation
+     * @param boolean $preserveOriginal whether to preserve original
+     * @param object GalleryItem $args item to perform the operation on
+     * @param object GalleryDerivative (optional) preferred derivative to execute the operation on
+     * @param int $serialNumber (optional) avoid concurrent edits
      * @return object GalleryStatus a status code
      */
     function applyToolkitOperation($operation, $args, $preserveOriginal,
@@ -1089,8 +1090,8 @@ class GalleryCoreApi {
     /**
      * Find all derivatives attached to one source and switch them to another one
      *
-     * @param string the original source id
-     * @param string the new source id
+     * @param string $originalSourceId the original source id
+     * @param string $newSourceId the new source id
      * @return object GalleryStatus a status code
      */
     function remapSourceIds($originalSourceId, $newSourceId) {
@@ -1103,8 +1104,8 @@ class GalleryCoreApi {
      * Copy the derivative preferences from one id to another.
      * Note that this doesn't modify pre-existing preferences already assigned to the target.
      *
-     * @param int the source id
-     * @param int the target id
+     * @param int $sourceId the source id
+     * @param int $targetId the target id
      * @return object GalleryStatus a status code
      */
     function copyDerivativePreferences($sourceId, $targetId) {
@@ -1116,7 +1117,7 @@ class GalleryCoreApi {
     /**
      * Get the derivative preferences for the given item
      *
-     * @param int the target id
+     * @param int $targetId the target id
      * @return array object GalleryStatus a status code
      *               array (derivativeType => ..., derivativeOperations => ...)
      */
@@ -1129,10 +1130,10 @@ class GalleryCoreApi {
     /**
      * Add a derivative preference to a given item
      *
-     * @param int the position of this preference
-     * @param int the item id
-     * @param int the derivative type (eg. DERIVATIVE_TYPE_IMAGE_THUMBNAIL)
-     * @param string the derivative operations (eg. 'thumbnail|200')
+     * @param int $order the position of this preference
+     * @param int $itemId
+     * @param int $derivativeType (eg. DERIVATIVE_TYPE_IMAGE_THUMBNAIL)
+     * @param string $derivativeOperations (eg. 'thumbnail|200')
      * @return object GalleryStatus a status code
      */
     function addDerivativePreference($order, $itemId, $derivativeType, $derivativeOperations) {
@@ -1145,8 +1146,8 @@ class GalleryCoreApi {
     /**
      * Remove derivative preference for a given item/type combination
      *
-     * @param int the item id
-     * @param int derivative type id
+     * @param int $itemId
+     * @param int $derivativeType
      * @return object GalleryStatus a status code
      */
     function removeDerivativePreferenceForItemType($itemId, $derivativeType) {
@@ -1159,7 +1160,7 @@ class GalleryCoreApi {
     /**
      * Remove all derivative preferences for a given item
      *
-     * @param int the item id
+     * @param int $itemId
      * @return object GalleryStatus a status code
      */
     function removeDerivativePreferencesForItem($itemId) {
@@ -1173,8 +1174,8 @@ class GalleryCoreApi {
      * @todo This method knows too much about a small set of operations.  We should move it into
      *       the toolkits themselves.
      *
-     * @param object GalleryDerivativeImage the derivative
-     * @param object GalleryDerivativeEntity the source
+     * @param object GalleryDerivativeImage $derivative
+     * @param object GalleryDerivativeEntity $source
      *               (probably a GalleryPhotoItem or GalleryMovieItem)
      * @return object GalleryStatus a status code
      */
@@ -1187,7 +1188,7 @@ class GalleryCoreApi {
     /**
      * Set modification timestamp for the given entity id to the current time.
      *
-     * @param int the entity id
+     * @param int $entityId
      * @return object GalleryStatus a status code
      */
     function updateModificationTimestamp($entityId) {
@@ -1198,8 +1199,8 @@ class GalleryCoreApi {
 
     /**
      * Update the view count for this item id
-     * @param int the item id
-     * @param int the amount to increment
+     * @param int $itemId
+     * @param int $step the amount to increment
      * @return object GalleryStatus a status code
      */
     function incrementItemViewCount($itemId, $step=1) {
@@ -1210,8 +1211,8 @@ class GalleryCoreApi {
 
     /**
      * Create a new set of attributes for an item
-     * @param int the item id
-     * @param array the sequence of parent ids
+     * @param int $itemId
+     * @param array $parentSequence the sequence of parent ids
      * @return object GalleryStatus a status code
      */
     function createItemAttributes($itemId, $parentSequence) {
@@ -1222,7 +1223,7 @@ class GalleryCoreApi {
 
     /**
      * Remove the attributes for the given item
-     * @param int the item id
+     * @param int $itemId
      * @return object GalleryStatus a status code
      */
     function removeItemAttributes($itemId) {
@@ -1233,8 +1234,8 @@ class GalleryCoreApi {
 
     /**
      * Update the view count for this item id
-     * @param int the item id
-     * @param int the new count
+     * @param int $itemId
+     * @param int $count the new count
      * @return object GalleryStatus a status code
      */
     function setItemViewCount($itemId, $count) {
@@ -1245,7 +1246,7 @@ class GalleryCoreApi {
 
     /**
      * Get the view counts for many item ids
-     * @param int the item id
+     * @param int $itemId
      * @return array object GalleryStatus a status code
      *               int view count
      */
@@ -1257,7 +1258,7 @@ class GalleryCoreApi {
 
     /**
      * Get the view counts for many item ids
-     * @param array the item ids
+     * @param array $itemIds
      * @return array object GalleryStatus a status code
      *               array (itemId => viewCount, ..)
      */
@@ -1269,8 +1270,8 @@ class GalleryCoreApi {
 
     /**
      * Set the order weight for an item id
-     * @param int the item id
-     * @param int the new order weight
+     * @param int $itemId
+     * @param int $orderWeight the new order weight
      * @return object GalleryStatus a status code
      */
     function setItemOrderWeight($itemId, $orderWeight) {
@@ -1281,7 +1282,7 @@ class GalleryCoreApi {
 
     /**
      * Get the order weight for a given item id
-     * @param int the item id
+     * @param int $itemId
      * @return array object GalleryStatus a status code
      *               int the order weight
      */
@@ -1293,7 +1294,7 @@ class GalleryCoreApi {
 
     /**
      * Get the order weight for many item ids
-     * @param array the item ids
+     * @param array $itemIds
      * @return array object GalleryStatus a status code
      *               array(itemId1 => orderWeight1,
      *                     itemId2 => orderWeight2, ...)
@@ -1309,8 +1310,8 @@ class GalleryCoreApi {
      * complete, the child item ids should still have the same order as they have now, but their
      * order weights should be spaced out to exactly the spacing value specified in the arguments.
      *
-     * @param int the parent id
-     * @param int the order spacing
+     * @param int $parentItemId
+     * @param int $spacing the order spacing
      * @return object GalleryStatus a status code
      */
     function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
@@ -1322,8 +1323,8 @@ class GalleryCoreApi {
 
     /**
      * Fetch the highest or lowest weight of all children
-     * @param int the parent item id
-     * @param int the direction (HIGHER_WEIGHT, LOWER_WEIGHT)
+     * @param int $itemId the parent item id
+     * @param int $direction the direction (HIGHER_WEIGHT, LOWER_WEIGHT)
      * @return int a weight
      */
     function fetchExtremeChildWeight($itemId, $direction) {
@@ -1335,8 +1336,8 @@ class GalleryCoreApi {
     /**
      * Fetch the weight of the next peer in line (higher or lower, as specified)
      *
-     * @param int the item id
-     * @param int the direction (HIGHER_WEIGHT, LOWER_WEIGHT)
+     * @param int $itemId
+     * @param int $direction the direction (HIGHER_WEIGHT, LOWER_WEIGHT)
      * @return int a weight
      */
     function fetchNextItemWeight($itemId, $direction) {
@@ -1348,8 +1349,8 @@ class GalleryCoreApi {
     /**
      * Set the parent id sequence for an item id
      *
-     * @param int id the item id
-     * @param array the parent sequence (ids)
+     * @param int $itemId
+     * @param array $parentSequence the parent sequence (ids)
      * @return object GalleryStatus a status code
      */
     function setParentSequence($itemId, $parentSequence) {
@@ -1361,8 +1362,8 @@ class GalleryCoreApi {
     /**
      * Update all items containing the source parent sequence to the new parent sequence
      *
-     * @param int id the item id
-     * @param array the parent sequence (ids)
+     * @param array $oldParentSequence
+     * @param array $newParentSequence the parent sequence (ids)
      * @return object GalleryStatus a status code
      */
     function updateParentSequence($oldParentSequence, $newParentSequence) {
@@ -1374,7 +1375,7 @@ class GalleryCoreApi {
 
     /**
      * Get the parent sequence for this item id
-     * @param int the item id
+     * @param int $itemId
      * @return array object GalleryStatus a status code
      *               array the parent id sequence
      */
@@ -1388,7 +1389,7 @@ class GalleryCoreApi {
      * Return the correct theme for this item.  If the appropriate theme cannot be loaded,
      * we fall back on the default.  And if that can't be loaded, then we return null.
      *
-     * @param object GalleryItem
+     * @param object GalleryItem $item
      * @return array object GalleryStatus a status code
      *               string a theme plugi
      */
@@ -1400,8 +1401,8 @@ class GalleryCoreApi {
     /**
      * Return the number of children for the items specified, that are visible to the given user.
      *
-     * @param array item ids
-     * @param int an optional user id (default is the current user)
+     * @param array $itemIds
+     * @param int $userId an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               int a count
      */
@@ -1413,8 +1414,8 @@ class GalleryCoreApi {
     /**
      * Fetch the breakdown of descendents for a given item
      *
-     * @param int the item id
-     * @param int an optional user id (default is the current user)
+     * @param array $itemIds
+     * @param int $userId an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               array(id => ##, id => ##)
      */
@@ -1427,7 +1428,7 @@ class GalleryCoreApi {
      * Fetch the breakdown of descendents for a given item.  Note: this call is more expensive than
      * GalleryCoreApi::fetchDescendentCounts(), so use that version where possible.
      *
-     * @param int the item id
+     * @param array $itemIds
      * @return array object GalleryStatus a status code
      *               array(id => array('GalleryAlbumItem' => ##,
      *                                 'GalleryDataItem' => ##),
@@ -1443,9 +1444,9 @@ class GalleryCoreApi {
     /**
      * Return the number of of items that match the given type and have the given permission.
      *
-     * @param string an item type (eg. GalleryAlbumItem)
-     * @param string permission (default is core.view)
-     * @param int an optional user id (default is the current user)
+     * @param string $itemType an item type (eg. GalleryAlbumItem)
+     * @param string $permission (default is core.view)
+     * @param int $userId an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               int a count
      */
@@ -1459,8 +1460,8 @@ class GalleryCoreApi {
      * Useful for, example, for finding all the children where we (the active user) has the
      * 'core.changePermissions' permission bit set.  This allows us to cascade permission updates.
      *
-     * @param int item id
-     * @param string permission id
+     * @param int $itemId
+     * @param string $permissionId
      * @return array object GalleryStatus a status code
      *               array a list of ids
      */
@@ -1477,8 +1478,8 @@ class GalleryCoreApi {
      * (the active user) has the 'core.changePermissions' permission bit set.  This allows us to
      * cascade permission updates.
      *
-     * @param array item ids
-     * @param string permission id
+     * @param array $itemId
+     * @param string $permissionId
      * @return array object GalleryStatus a status code
      *               array a list of ids
      */
@@ -1492,8 +1493,8 @@ class GalleryCoreApi {
     /**
      * Return the ids of all items that match the given type and have the given permission.
      *
-     * @param string an item type (eg. GalleryAlbumItem)
-     * @param string permission (default is core.view)
+     * @param string $itemType an item type (eg. GalleryAlbumItem)
+     * @param string $permission (default is core.view)
      * @return array object GalleryStatus a status code
      *               array(id, id, id, ...)
      */
@@ -1506,7 +1507,7 @@ class GalleryCoreApi {
      * Return the ids of all items which are owned by the given userid.
      * This function does NOT obey permissions!
      *
-     * @param int the id of the owner of the items
+     * @param int $ownerId the id of the owner of the items
      * @return array object GalleryStatus a status code
      *               array(id, id, id, ...)
      */
@@ -1520,7 +1521,7 @@ class GalleryCoreApi {
      * Use the GalleryFactory to try to find an exact match to the mime type.
      * Failing that, fall back to the major type, then fall back to '*'.
      *
-     * @param string the mime type
+     * @param string $mimeType
      * @return array object GalleryStatus a status code
      *               object GalleryItem an item
      */
@@ -1532,12 +1533,12 @@ class GalleryCoreApi {
     /**
      * Create a new album.
      *
-     * @param int the id of the parent album
-     * @param string the name of the new album
-     * @param string the title of the new album
-     * @param string the summary of the new album
-     * @param string the description of the new album
-     * @param string the keywords of the new album
+     * @param int $parentAlbumId the id of the parent album
+     * @param string $name the name of the new album
+     * @param string $title the title of the new album
+     * @param string $summary the summary of the new album
+     * @param string $description the description of the new album
+     * @param string $keywords the keywords of the new album
      * @return array object GalleryStatus a status code
      *               object GalleryAlbumItem a new album
      */
@@ -1551,14 +1552,14 @@ class GalleryCoreApi {
     /**
      * Add a new data item to an album from a data file.
      *
-     * @param string the path to the file on the local disk
-     * @param string the name of the new item
-     * @param string the title of the new item
-     * @param string the summary of the new item
-     * @param string the description of the new item
-     * @param string the mime type of the new item
-     * @param int the id of the target album
-     * @param boolean (optional) a boolean true if we should symlink instead
+     * @param string $fileName the path to the file on the local disk
+     * @param string $itemName the name of the new item
+     * @param string $title the title of the new item
+     * @param string $summary the summary of the new item
+     * @param string $description the description of the new item
+     * @param string $mimeType the mime type of the new item
+     * @param int $albumId the id of the target album
+     * @param boolean $symlink (optional) a boolean true if we should symlink instead
      *        of copy (default is false).
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem a new item
@@ -1573,9 +1574,9 @@ class GalleryCoreApi {
     /**
      * Add an existing data item to an album
      *
-     * @param object GalleryItem the source item
-     * @param int the id of the target album
-     * @param boolean if true, skip check for existing derivatives
+     * @param object GalleryItem $item the source item
+     * @param int $albumId the id of the target album
+     * @param boolean $isNew (optional) if true, skip check for existing derivatives
      * @return object GalleryStatus a status code
      */
     function addExistingItemToAlbum($item, $albumId, $isNew=false) {
@@ -1586,7 +1587,7 @@ class GalleryCoreApi {
     /**
      * Fetch the originationTimestamp through our known toolkits
      *
-     * @param object the GalleryItem
+     * @param object GalleryItem $item
      * @return array object GalleryStatus a status code
      *               int a timestamp or null if nothing was found
      */
@@ -1599,8 +1600,8 @@ class GalleryCoreApi {
      * Set the thumbnail for an album from an item, according to the thumbnail
      * preferences for the album.
      *
-     * @param int the album id
-     * @param int the item id
+     * @param int $itemId the album id
+     * @param int $fromItemId the item id
      * @return object GalleryStatus a status code
      *                boolean true if successful
      */
@@ -1613,7 +1614,7 @@ class GalleryCoreApi {
      * Make sure that the album has a thumbnail.  If it doesn't, then grab the first handy child and
      * make it the album's thumbnail.  We're not picky.
      *
-     * @param int the album id
+     * @param int $itemId the album id
      * @return object GalleryStatus a status code
      *                boolean true if successful
      */
@@ -1627,9 +1628,9 @@ class GalleryCoreApi {
      * Fetch album tree visible to current user,
      * optionally starting from a given album and to a given depth.
      *
-     * @param int (optional) id of album for root of tree
-     * @param int (optional) max depth of tree
-     * @param int (optional) items visible to this user id, instead of current user
+     * @param int $itemId (optional) id of album for root of tree
+     * @param int $depth (optional) max depth of tree
+     * @param int $userId (optional) items visible to this user id, instead of current user
      * @return array object GalleryStatus a status code
      *               array (albumId => array(albumId => array, ..), ..)
      */
@@ -1642,8 +1643,8 @@ class GalleryCoreApi {
     /**
      * Transfer the ownership of all items by oldUser to newUser
      *
-     * @param int the user id of the old owner
-     * @param int the user id of the new owner
+     * @param int $oldUserId the user id of the old owner
+     * @param int $newUserId the user id of the new owner
      * @return object GalleryStatus a status code
      */
     function remapOwnerId($oldUserId, $newUserId) {
@@ -1655,7 +1656,7 @@ class GalleryCoreApi {
     /**
      * Is the active user in the admin group?
      *
-     * @param int an optional user id (default is the current user)
+     * @param int $userId an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      */
@@ -1668,7 +1669,8 @@ class GalleryCoreApi {
     /**
      * Is the given user id in the given group?
      *
-     * @param int the id of the user
+     * @param int $userId
+     * @param int $groupId
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      */
@@ -1681,8 +1683,8 @@ class GalleryCoreApi {
     /**
      * Add the specified user to the specified group.
      *
-     * @param int the id of the GalleryUser
-     * @param int the id of the GalleryGroup
+     * @param int $userId
+     * @param int $groupId
      * @return object GalleryStatus a status code
      */
     function addUserToGroup($userId, $groupId) {
@@ -1694,7 +1696,8 @@ class GalleryCoreApi {
     /**
      * Remove the specified user to the specified group.
      *
-     * @param int the id of the GalleryUser
+     * @param int $userId
+     * @param int $groupId
      * @return object GalleryStatus a status code
      */
     function removeUserFromGroup($userId, $groupId) {
@@ -1706,7 +1709,7 @@ class GalleryCoreApi {
     /**
      * Remove the user from all groups
      *
-     * @param int the id of the GalleryUser
+     * @param int $userId
      * @return object GalleryStatus a status code
      */
     function removeUserFromAllGroups($userId) {
@@ -1718,7 +1721,7 @@ class GalleryCoreApi {
     /**
      * Remove any users in the group
      *
-     * @param int the id of the GalleryGroup
+     * @param int $groupId
      * @return object GalleryStatus a status code
      */
     function removeAllUsersFromGroup($groupId) {
@@ -1733,10 +1736,10 @@ class GalleryCoreApi {
      * You can specify how many userids to list, and where the windows is in
      * the list of all users.
      *
-     * @param int the group id
-     * @param int the number of userids desired
-     * @param int the start of the range
-     * @param string substring to match against the username
+     * @param int $groupId
+     * @param int $count the number of user ids desired
+     * @param int $offset the start of the range
+     * @param string $substring substring to match against the username
      * @return array object GalleryStatus a status code
      *               array user id => user name
      */
@@ -1751,9 +1754,9 @@ class GalleryCoreApi {
      * Return a list of groups that a user belongs to.
      * You can specify how many userids to list, and where the windows is in the list of all users.
      *
-     * @param int the user id
-     * @param int the number of group ids desired
-     * @param int the start of the range
+     * @param int $userId
+     * @param int $count the number of group ids desired
+     * @param int $offset the start of the range
      * @return array object GalleryStatus a status code
      *               array group id => group name
      */
@@ -1766,7 +1769,7 @@ class GalleryCoreApi {
     /**
      * Given a complete logical path, return the item id that it refers to.
      *
-     * @param string the path
+     * @param string $path
      * @return array object GalleryStatus a status code
      *               int the item id
      */
@@ -1779,9 +1782,9 @@ class GalleryCoreApi {
     /**
      * Check for a collision of FileSystemEntiry paths.
      *
-     * @param string the path component
-     * @param int the id of the target parent
-     * @param int (optional) ignore path collision with this id
+     * @param string $pathComponent
+     * @param int $parentId the id of the target parent
+     * @param int $selfId (optional) ignore path collision with this id
      * @return array object GalleryStatus a status code
      *               boolean true if there's a collision
      */
@@ -1796,9 +1799,9 @@ class GalleryCoreApi {
      * Get a legal path component in the given parent id.  Legal by the platform standards, and
      * legal in that it doesn't cause a conflict with other path components.
      *
-     * @param string the starting path component (eg, "IMG_10293.JPG")
-     * @param int the target parent id
-     * @param int (optional) ignore path collision with this id
+     * @param string $pathComponent the starting path component (eg. "IMG_10293.JPG")
+     * @param int $parentId the target parent id
+     * @param int $selfId (optional) ignore path collision with this id
      * @return array object GalleryStatus a status code
      *               string the legal path component
      */
@@ -1813,8 +1816,8 @@ class GalleryCoreApi {
      * Returns the id of the child filesystem entity that matches the given path component.
      * Note: this call ignores permissions so it must be used very carefully!
      *
-     * @param id of the parent
-     * @param path component of the target item
+     * @param int $parentId
+     * @param string $pathComponent of the target item
      * @return array object GalleryStatus a status code
      *               int an id
      */
@@ -1832,13 +1835,13 @@ class GalleryCoreApi {
      * The module should also call GalleryCoreApi::registerFactoryImplementation with the same
      * "id" that it registers here, so the correct class can be found later.
      *
-     * @param string the id of the toolkit
-     * @param array the applicable mime types for this operation
-     * @param string the id of the operation
-     * @param array a list of parameters that this operation requires
-     * @param string a translatable description of this operation
-     * @param string the output mime type after performing this operation
-     * @param integer priority of this implementation vs other toolkits
+     * @param string $toolkitId the id of the toolkit
+     * @param array $mimeTypes the applicable mime types for this operation
+     * @param string $operationName the id of the operation
+     * @param array $parameterTypesArray a list of parameters that this operation requires
+     * @param string $description a translatable description of this operation
+     * @param string $outputMimeType the output mime type after performing this operation
+     * @param int $priority priority of this implementation vs other toolkits
      * @return object GalleryStatus a status code
      */
     function registerToolkitOperation($toolkitId, $mimeTypes, $operationName,
@@ -1854,9 +1857,9 @@ class GalleryCoreApi {
     /**
      * Unregister an operation that a toolkit is able to perform on certain mime types
      *
-     * @param string the id of the toolkit
-     * @param string the id of the operation
-     * @param array the applicable mime types to remove; empty for all mime types
+     * @param string $toolkitId the id of the toolkit
+     * @param string $operationName the id of the operation
+     * @param array $mimeTypes the applicable mime types to remove; empty for all mime types
      * @return object GalleryStatus a status code
      */
     function unregisterToolkitOperation($toolkitId, $operationName, $mimeTypes=array()) {
@@ -1869,7 +1872,7 @@ class GalleryCoreApi {
     /**
      * Unregister all operations and properties for toolkits implemented by the given module.
      *
-     * @param string the id of the module
+     * @param string $moduleId
      * @return object GalleryStatus a status code
      */
     function unregisterToolkitsByModuleId($moduleId) {
@@ -1885,11 +1888,11 @@ class GalleryCoreApi {
      * The module should also call GalleryCoreApi::registerFactoryImplementation with the same
      * "id" that it registers here, so the correct class can be found later.
      *
-     * @param string the id of the toolkit
-     * @param array the applicable mime types for this property
-     * @param string the name of the property
-     * @param string the type of the property
-     * @param string a translatable description of this operation
+     * @param string $toolkitId the id of the toolkit
+     * @param array $mimeTypes the applicable mime types for this property
+     * @param string $propertyName the name of the property
+     * @param string $type the type of the property
+     * @param string $description a translatable description of this property
      * @return object GalleryStatus a status code
      */
     function registerToolkitProperty($toolkitId, $mimeTypes, $propertyName, $type, $description) {
@@ -1903,7 +1906,7 @@ class GalleryCoreApi {
      * Unregister a toolkit's operations and properties.  If we have any remaining that are no
      * longer implemented by any toolkit then remove them from the system also.
      *
-     * @param string a toolkit id
+     * @param string $toolkitId
      * @return object GalleryStatus a status code
      */
     function unregisterToolkit($toolkitId) {
@@ -1915,7 +1918,7 @@ class GalleryCoreApi {
     /**
      * Get all valid operations on a certain mime type
      *
-     * @param string a mime type
+     * @param string $mimeType
      * @return array object GalleryStatus a status code
      *               array('name' => ...,
      *                     'outputMimeType' => ...,
@@ -1933,7 +1936,7 @@ class GalleryCoreApi {
     /**
      * Get all valid input mime types for a certain operation
      *
-     * @param string operation name
+     * @param string $operationName
      * @return array object GalleryStatus a status code
      *               array(mime type => array(toolkit ids, sorted by priority))
      */
@@ -1946,7 +1949,7 @@ class GalleryCoreApi {
     /**
      * Get all valid properties of a certain mime type
      *
-     * @param string a mime type
+     * @param string $mimeType
      * @return array object GalleryStatus a status code
      *               array (
      *                  array('name' => property, 'type' => type, 'description' => description), ..
@@ -1962,8 +1965,8 @@ class GalleryCoreApi {
     /**
      * Get a toolkit that can perform the given operation
      *
-     * @param string a mime type
-     * @param string the operation name
+     * @param string $mimeType
+     * @param string $operationName
      * @return array object GalleryStatus a status code
      *               object GalleryToolkit a toolkit
      *               string a result mime type
@@ -1979,8 +1982,8 @@ class GalleryCoreApi {
      * toolkits by walking the sequence and making sure that we have a toolkit that can handle
      * each operation.
      *
-     * @param string the original mime type
-     * @param string a sequence of operations
+     * @param string $mimeType the original mime type
+     * @param string $operations a sequence of operations
      * @return object GalleryStatus a status code
      *         boolean true if supported, false if not
      *         string the output mime type
@@ -1995,9 +1998,9 @@ class GalleryCoreApi {
      * Make sure operation sequence is supported and produces a browser-viewable output mime type.
      * Add convert-to-image/jpeg operation if needed.
      *
-     * @param string the original mime type
-     * @param string a sequence of operations
-     * @param boolean (optional) true to try prepending convert-to-image/xxx if needed
+     * @param string $mimeType the original mime type
+     * @param string $operations a sequence of operations
+     * @param boolean $prependConversion (optional) true to also try prepending convert-to-image/xxx
      * @return array object GalleryStatus a status code
      *               string a sequence of operations, null if not supported
      *               string the output mime type, null if not supported
@@ -2013,8 +2016,8 @@ class GalleryCoreApi {
     /**
      * Get a toolkit that can retrieve the given property
      *
-     * @param string a mime type
-     * @param string the property name
+     * @param string $mimeType
+     * @param string $propertyName
      * @return array object GalleryStatus a status code
      *               object GalleryToolkit a toolkit
      */
@@ -2027,8 +2030,8 @@ class GalleryCoreApi {
     /**
      * Get the toolkits that can retrieve the given property
      *
-     * @param string a mime type
-     * @param string the property name
+     * @param string $mimeType
+     * @param string $propertyName
      * @return array object GalleryStatus a status code
      *               array of toolkitIds
      */
@@ -2053,7 +2056,7 @@ class GalleryCoreApi {
     /**
      * Get maximum priority value (lowest priority) in managed priority range (20-40)
      *
-     * @param string Toolkit Id
+     * @param string $toolkitId
      * @return array object GalleryStatus a status code
      *               int priority
      */
@@ -2079,7 +2082,7 @@ class GalleryCoreApi {
 
     /**
      * Create a new event with the given name
-     * @param string the event name
+     * @param string $eventName
      * @return object GalleryEvent an event with the given name
      */
     function newEvent($eventName) {
@@ -2090,9 +2093,9 @@ class GalleryCoreApi {
     /**
      * Register an event listener
      *
-     * @param string the name of the event (eg "GalleryEntity::save")
-     * @param object a GalleryEventListener instance
-     * @param boolean (optional) if true, disable event listener during unit tests
+     * @param string $eventName the name of the event (eg. "GalleryEntity::save")
+     * @param object GalleryEventListener $listener
+     * @param boolean $disableForUnitTests (optional) if true, disable event listener during tests
      */
     function registerEventListener($eventName, &$listener, $disableForUnitTests=false) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEventHelper_simple.class');
@@ -2103,7 +2106,7 @@ class GalleryCoreApi {
     /**
      * Deliver an event to anybody listening
      *
-     * @param object a GalleryEvent
+     * @param object GalleryEvent $event
      * @return array object GalleryStatus a status code
      *               array data returned from listeners, if any
      */
@@ -2116,8 +2119,8 @@ class GalleryCoreApi {
     /**
      * Read Lock one or more objects
      *
-     * @param array ids to lock, or int single id
-     * @param integer how long to wait for the lock before giving up
+     * @param mixed $ids array of ids to lock, or single int id
+     * @param int $timeout (optional) how long to wait for the lock before giving up
      * @return array object GalleryStatus a status code
      *               int the lock id
      */
@@ -2127,12 +2130,12 @@ class GalleryCoreApi {
     }
 
     /**
-     * Acquire read locks on all the parents of this id.  This is useful when we're going to do
+     * Acquire read locks on all the ancestors of this id.  This is useful when we're going to do
      * a filesystem related operation and we want to make sure that the tree does not change out
      * from underneath us.
      *
-     * @param integer an id to lock
-     * @param integer how long to wait for the lock before giving up
+     * @param int $id
+     * @param int $timeout (optional) how long to wait for the lock before giving up
      * @return array object GalleryStatus a status code
      *               int the lock id
      */
@@ -2144,7 +2147,7 @@ class GalleryCoreApi {
     /**
      * Return true if the given id is read locked or write locked.
      *
-     * @param int an entity id
+     * @param int $id an entity id
      * @return boolean true if the entity is read locked
      */
     function isReadLocked($id) {
@@ -2155,8 +2158,8 @@ class GalleryCoreApi {
     /**
      * Write lock one or more objects
      *
-     * @param array ids to lock, or int single id
-     * @param integer how long to wait for the lock before giving up
+     * @param mixed $ids array of ids to lock, or single int id
+     * @param int $timeout (optional) how long to wait for the lock before giving up
      * @return array object GalleryStatus a status code
      *               int the lock id
      */
@@ -2168,7 +2171,7 @@ class GalleryCoreApi {
     /**
      * Return true if the given id is write locked
      *
-     * @param int an entity id
+     * @param int $id an entity id
      * @return boolean true if the entity is write locked
      */
     function isWriteLocked($id) {
@@ -2179,7 +2182,7 @@ class GalleryCoreApi {
     /**
      * Release the given lock(s)
      *
-     * @param array a list of lock ids, or a single lock id
+     * @param mixed $lockIds array of lock ids, or a single lock id
      * @return object GalleryStatus a status code
      */
     function releaseLocks($lockIds) {
@@ -2200,7 +2203,7 @@ class GalleryCoreApi {
     /**
      * Refresh all the locks that we hold so that they aren't accidentally considered expired
      *
-     * @param int the new "fresh until" timestamp
+     * @param int $freshUntil the new "fresh until" timestamp
      * @return object GalleryStatus a status code
      */
     function refreshLocks($freshUntil) {
@@ -2221,7 +2224,7 @@ class GalleryCoreApi {
     /**
      * Load the GalleryEntities with the ids specified
      *
-     * @param mixed the ids (or id) of the GalleryEntities to load
+     * @param mixed $ids the ids (or id) of the GalleryEntities to load
      * @return array object GalleryStatus a status code,
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
@@ -2234,7 +2237,7 @@ class GalleryCoreApi {
     /**
      * Delete the entity with the given id
      *
-     * @param int the id of a GalleryEntity to delete
+     * @param int $id the id of a GalleryEntity to delete
      * @return object GalleryStatus a status code
      */
     function deleteEntityById($id) {
@@ -2246,7 +2249,7 @@ class GalleryCoreApi {
     /**
      * Fetch the ids of the entities linked to the target entity
      *
-     * @param int the target entity id
+     * @param int $targetId the target entity id
      * @return array object GalleryStatus a status code
      *               array entity ids
      */
@@ -2259,8 +2262,8 @@ class GalleryCoreApi {
     /**
      * Map external id to G2 id and then load the entity
      *
-     * @param string external id
-     * @param string entity type
+     * @param string $externalId
+     * @param string $entityType
      * @return array object GalleryStatus a status code
      *               object GalleryEntity
      */
@@ -2273,7 +2276,7 @@ class GalleryCoreApi {
     /**
      * Remove onLoadHandlers from all entities
      *
-     * @param array of factory impl ids
+     * @param array $handlerIds of factory impl ids
      * @return object GalleryStatus a status code
      */
     function removeOnLoadHandlers($handlerIds) {
@@ -2285,10 +2288,10 @@ class GalleryCoreApi {
     /**
      * Return the ids of the descendents of this entity that are visible to the given user.
      *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param string what permission is required for the item
+     * @param object GalleryItem $item
+     * @param int $offset where to start
+     * @param int $count how many to return
+     * @param string $permission (optional) what permission is required for the item
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
@@ -2303,10 +2306,10 @@ class GalleryCoreApi {
      * Return the ids of the children of this entity, in the order specified by the orderBy field
      * and the direction specified by the orderDirection field, that are visible to the given user.
      *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param int optional user id.  Defaults to current user id
+     * @param object GalleryItem $item
+     * @param int $offset where to start
+     * @param int $count how many to return
+     * @param int $userId optional user id.  Defaults to current user id
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
@@ -2319,10 +2322,10 @@ class GalleryCoreApi {
     /**
      * Same as fetchDescendentItemIds except we only want sub-albums
      *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param string what permission is required for the item
+     * @param object GalleryItem $item
+     * @param int $offset where to start
+     * @param int $count how many to return
+     * @param string $permission (optional) what permission is required for the item
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
@@ -2337,10 +2340,10 @@ class GalleryCoreApi {
     /**
      * Same as fetchChildItemIds except we only want sub-albums
      *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param int optional user id.  Defaults to current user id
+     * @param object GalleryItem $item
+     * @param int $offset where to start
+     * @param int $count how many to return
+     * @param int $userId optional user id.  Defaults to current user id
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
@@ -2354,10 +2357,10 @@ class GalleryCoreApi {
     /**
      * Same as fetchChildItemIds except we only want data items
      *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
-     * @param int optional user id.  Defaults to current user id
+     * @param object GalleryItem $item
+     * @param int $offset where to start
+     * @param int $count how many to return
+     * @param int $userId optional user id.  Defaults to current user id
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
@@ -2371,9 +2374,9 @@ class GalleryCoreApi {
     /**
      * Same as fetchChildItemIds, except that we ignore permissions
      *
-     * @param object GalleryItem an item
-     * @param int where to start
-     * @param int how many to return
+     * @param object GalleryItem $item
+     * @param int $offset where to start
+     * @param int $count how many to return
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
@@ -2387,8 +2390,8 @@ class GalleryCoreApi {
     /**
      * Load all the ancestors of this item
      *
-     * @param object GalleryItem an item
-     * @param string (optional) only return ancestors with this permission
+     * @param object GalleryItem $item
+     * @param string $permission (optional) only return ancestors with this permission
      * @return array object GalleryStatus a status code
      *               array of GalleryItem, from top level to parent item
      */
@@ -2401,15 +2404,15 @@ class GalleryCoreApi {
     /**
      * Build query to select items in a given sort order
      *
-     * @param string base table to query
-     * @param string name of id column in this table
-     * @param string where clause for query
-     * @param string order for results
-     * @param string order direction for results
-     * @param string a class to restrict children to (eg 'GalleryAlbumItem'; can be null)
-     * @param string a required permission (can be null)
-     * @param boolean whether to restrict to linkable items only
-     * @param int the userid we're doing this for
+     * @param string $baseTable base table to query
+     * @param string $baseIdColumn name of id column in this table
+     * @param string $baseQuery where clause for query
+     * @param string $orderBy order for results
+     * @param string $orderDirection order direction for results
+     * @param string $class a class to restrict children to (eg. 'GalleryAlbumItem'; can be null)
+     * @param string $requiredPermission a required permission (can be null)
+     * @param boolean $linkableOnly whether to restrict to linkable items only
+     * @param int $userId the user we're doing this for
      * @return array object GalleryStatus a status code
      *               string query
      *               array data items for query (not including any ? marks in baseQuery)
@@ -2426,7 +2429,7 @@ class GalleryCoreApi {
     /**
      * Convert a file extension to a mime type
      *
-     * @param string a file extension
+     * @param string $extension a file extension
      * @return array object GalleryStatus a status code
      *               string a mime type (application/unknown if no known mapping)
      */
@@ -2439,7 +2442,7 @@ class GalleryCoreApi {
     /**
      * Convert a mime type to a file extension
      *
-     * @param string a mime type
+     * @param string $mimeType
      * @return array object GalleryStatus a status code
      *               array of file extensions (empty array if no known mapping)
      */
@@ -2453,7 +2456,7 @@ class GalleryCoreApi {
      * Figure out the file's mime type.
      * eg. "foo.jpg" returns "image/jpeg"
      *
-     * @param string the filename
+     * @param string $filename
      * @return array object GalleryStatus a status code
      *               string a mime type (application/unknown if no known extension)
      */
@@ -2466,7 +2469,7 @@ class GalleryCoreApi {
     /**
      * Return true if the given mime type is viewble in a web browser
      *
-     * @param string the mime type
+     * @param string $mimeType
      * @return array object GalleryStatus a status code
      *               boolean
      */
@@ -2480,7 +2483,7 @@ class GalleryCoreApi {
      * Remove specified mime data from the list.
      * examples: array('mimeType' => 'test/image') or array('extension' => array('img', 'im2'))
      *
-     * @param associative array mime match (keys/values to delete)
+     * @param array $mimeMatch (keys/values to delete)
      * @return object GalleryStatus a status code
      */
     function removeMimeType($mimeMatch) {
@@ -2495,9 +2498,9 @@ class GalleryCoreApi {
      * viewable as requested.  Return ERROR_COLLISION if there's already a mapping for the given
      * extension.
      *
-     * @param string the extension
-     * @param string the mime type
-     * @param bool whether or not it's browser viewable
+     * @param string $extension
+     * @param string $mimeType
+     * @param bool $viewable whether or not it's browser viewable
      * @return object GalleryStatus a status code
      */
     function addMimeType($extension, $mimeType, $viewable) {
@@ -2510,9 +2513,9 @@ class GalleryCoreApi {
      * Fetch the web page at the given url.  Follow redirects to get the data and upon completion
      * return the http response, headers and the actual URL that we used to get the data.
      *
-     * @param string the url
-     * @param string the output file
-     * @param array (optional) extra headers to pass to the server
+     * @param string $url
+     * @param string $outputFile
+     * @param array $extraHeaders (optional) extra headers to pass to the server
      * @return array(boolean success, http response, headers, url)
      *  the url is the final url retrieved after redirects
      */
@@ -2525,8 +2528,8 @@ class GalleryCoreApi {
      * Fetch the web page at the given url.  Follow redirects to get the data and upon completion
      * return the body, http response, headers and the actual URL that we used to get the data.
      *
-     * @param string the url
-     * @param array (optional) extra headers to pass to the server
+     * @param string $url
+     * @param array $extraHeaders (optional) extra headers to pass to the server
      * @return array(boolean success, string body, http response, headers, url)
      *	the url is the final url retrieved after redirects
      */
@@ -2538,9 +2541,9 @@ class GalleryCoreApi {
     /**
      * Post form data to a remote url and return the http response, headers and body of the reply
      *
-     * @param string the url
-     * @param array the key/value post data
-     * @param array (optional) extra headers to pass to the server
+     * @param string $url
+     * @param array $postDataArray the key/value post data
+     * @param array $extraHeaders (optional) extra headers to pass to the server
      * @return array(body, http response, headers)
      */
     function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
@@ -2551,8 +2554,8 @@ class GalleryCoreApi {
     /**
      * Convert the string from the source encoding to UTF8
      *
-     * @param string the input string
-     * @param string the source encoding (eg, 'ISO-8859-1'), defaults from current locale
+     * @param string $inputString
+     * @param string $sourceEncoding source encoding (eg. 'ISO-8859-1'), defaults to system charset
      * @return string the result
      */
     function convertToUtf8($inputString, $sourceEncoding=null) {
@@ -2564,8 +2567,8 @@ class GalleryCoreApi {
     /**
      * Convert the string from the internal encoding (UTF-8) to target encoding.
      *
-     * @param string the input string
-     * @param string the target encoding (eg. ISO-8859-1), defaults to system charset
+     * @param string $inputString
+     * @param string $targetEncoding target encoding (eg. 'ISO-8859-1'), defaults to system charset
      * @return string the result
      */
     function convertFromUtf8($inputString, $targetEncoding=null) {
@@ -2594,9 +2597,9 @@ class GalleryCoreApi {
      * usually gallery2/ and gallery2/plugins.
      * The complete list can be read with GalleryCoreApi::getPluginBaseDirs().
      *
-     * @param string 'module' or 'theme'
-     * @param string the plugin ID
-     * @param bool force index to be reread from the filesystem
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param bool $clearCache (optional) force index to be reread from the filesystem
      * @return string plugin base directory
      */
     function getPluginBaseDir($pluginType, $pluginId, $clearCache=false) {
@@ -2616,9 +2619,9 @@ class GalleryCoreApi {
      * significant problems with making it work here. One of the problems is that it breaks dozens
      * of tests that rely on UnitTestPlatform.
      *
-     * @param string 'modules' or 'themes'
-     * @param string the plugin ID
-     * @param bool force index to be reread from the filesystem
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param bool $clearCache (optional) force index to be reread from the filesystem
      * @return boolean
      */
     function isPluginInDefaultLocation($pluginType, $pluginId, $clearCache=false) {
@@ -2640,8 +2643,8 @@ class GalleryCoreApi {
      * the second argument to true skips this check and assumes that the file is relative to
      * the gallery2 directory.
      *
-     * @param string the file name
-     * @param boolean assume file is relative to the gallery2 directory
+     * @param string $file
+     * @param boolean $skipBaseDirectoryDetection assume file is relative to the gallery2 directory
      */
     function requireOnce($file, $skipBaseDirectoryDetection=false) {
 	static $loaded;
@@ -2675,12 +2678,12 @@ class GalleryCoreApi {
     /**
      * Send an email using a smarty template for the message body
      *
-     * @param string template file
-     * @param array data to pass to smarty template
-     * @param string from address (null allowed)
-     * @param string to address(es) (comma separated)
-     * @param string email subject
-     * @param string (optional) additional headers (\r\n separated)
+     * @param string $file template file
+     * @param array $data data to pass to smarty template
+     * @param string $from from address (null allowed)
+     * @param string $to to address(es) (comma separated)
+     * @param string $subject email subject
+     * @param string $headers (optional) additional headers (\r\n separated)
      * @return object GalleryStatus a status code
      */
     function sendTemplatedEmail($file, $data, $from, $to, $subject, $headers='') {
@@ -2695,6 +2698,10 @@ class GalleryCoreApi {
      * provide them if you want to provide an error message.  Next major API bump we'll remove the
      * fileName and lineNumber arguments.
      *
+     * @param int $errorCode
+     * @param string $fileName deprecated
+     * @param string $lineNumber deprecated
+     * @param string $errorMessage
      * @return object GalleryStatus an error status
      */
     function error($errorCode, $fileName='ignored', $lineNumber='ignored', $errorMessage=null) {
@@ -2707,9 +2714,9 @@ class GalleryCoreApi {
     /**
      * Update entries in a map
      *
-     * @param string the map we're working on
-     * @param array the entries to match
-     * @param array the values to change
+     * @param string $mapName the map we're working on
+     * @param array $match the entries to match
+     * @param array $change the values to change
      * @return object GalleryStatus a status code
      */
     function updateMapEntry($mapName, $match, $change) {
@@ -2730,10 +2737,10 @@ class GalleryCoreApi {
     /**
      * Get entries in a map that match a criteria and return selected fields
      *
-     * @param string the map we're working on
-     * @param array the columns to return
-     * @param array the entries to match
-     * @param array optional arguments (eg, limit, orderBy)
+     * @param string $mapName the map we're working on
+     * @param array $select the columns to return
+     * @param array $match the entries to match
+     * @param array $optional optional arguments (eg. limit, orderBy)
      *              array('limit' => array('count' => #, 'offset' => #),
      *                    'orderBy' => array(columnName => ORDER_ASCENDING|ORDER_DESCENDING, ...))
      * @return object GalleryStatus a status code
@@ -2757,8 +2764,8 @@ class GalleryCoreApi {
     /**
      * Remove entries from a map
      *
-     * @param string the map we're working on
-     * @param array an associative array of data about the entries to match
+     * @param string $mapName the map we're working on
+     * @param array $data an associative array of data about the entries to match
      * @return object GalleryStatus a status code
      */
     function removeMapEntry($mapName, $data) {
@@ -2779,8 +2786,8 @@ class GalleryCoreApi {
     /**
      * Add a new entry to a map
      *
-     * @param string the map we're working on
-     * @param array an associative array of the entry data
+     * @param string $mapName the map we're working on
+     * @param array $data an associative array of the entry data
      * @return object GalleryStatus a status code
      */
     function addMapEntry($mapName, $data) {
@@ -2797,7 +2804,7 @@ class GalleryCoreApi {
     /**
      * Remove ALL entries from this map.. use with caution!
      *
-     * @param string map name
+     * @param string $mapName
      * @return object GalleryStatus a status code
      */
     function removeAllMapEntries($mapName) {
@@ -2814,8 +2821,8 @@ class GalleryCoreApi {
     /**
      * Describe all the members of a map
      *
-     * @param string map name
-     * @param boolean true if we should scan all modules, not just the active ones
+     * @param string $mapName
+     * @param boolean $tryAllModules true if we should scan all modules, not just the active ones
      * @return array GalleryStatus a status code,
      *               array member name => member type
      */
@@ -2834,8 +2841,8 @@ class GalleryCoreApi {
     /**
      * Describe the members, modules and parent of an entity
      *
-     * @param string a class name
-     * @param boolean true if we should scan all modules, not just the active ones
+     * @param string $entityName a class name
+     * @param boolean $tryAllModules true if we should scan all modules, not just the active ones
      * @return array object GalleryStatus a status code
      *               entity associative array
      */
@@ -2853,7 +2860,7 @@ class GalleryCoreApi {
     /**
      * Delete the fast download file for a specific entity
      *
-     * @param int id of a GalleryEntity
+     * @param int $entityId
      */
     function deleteFastDownloadFileById($entityId) {
 	GalleryCoreApi::requireOnce(
@@ -2866,8 +2873,8 @@ class GalleryCoreApi {
      * derivative to the browser.
      * Note that fast-downloads are only created for items with public permissions
      *
-     * @param GalleryDataItem or GalleryDerivative object
-     * @param bool (optional) force this to run, even inside the unit test framework
+     * @param object $entity GalleryDataItem or GalleryDerivative object
+     * @param bool $runEvenInUnitTest (optional) force this to run, even in the unit test framework
      * @return object GalleryStatus a status code
      */
     function createFastDownloadFile($entity, $runEvenInUnitTest=false) {
@@ -2917,7 +2924,7 @@ class GalleryCoreApi {
     /**
      * Is the user a guest?
      *
-     * @param int id of user (default is current user)
+     * @param int $userId id of user (default is current user)
      * @return array object GalleryStatus a status code
      *               boolean true if anonymous
      */
@@ -2937,7 +2944,7 @@ class GalleryCoreApi {
      * Remove the given sort order from any thing in the framework that uses it
      * (albums and the default sort order).
      *
-     * @param string the sort order
+     * @param string $sortOrder
      * @return object GalleryStatus a status code
      */
     function deleteSortOrder($sortOrder) {
@@ -2949,7 +2956,7 @@ class GalleryCoreApi {
     /**
      * Remove the given renderer from all items that are using it.
      *
-     * @param string the renderer class name
+     * @param string $rendererClassName
      * @return object GalleryStatus a status code
      */
     function deleteRenderer($rendererClassName) {
@@ -2961,10 +2968,10 @@ class GalleryCoreApi {
     /**
      * Load template data for a theme settings form
      *
-     * @param string themeId; if empty, site default theme is used
-     * @param int itemId
-     * @param object GalleryTemplate template
-     * @param array form
+     * @param string $themeId if empty, site default theme is used
+     * @param int $itemId
+     * @param object GalleryTemplate $template
+     * @param array $form
      * @return object GalleryStatus a status code
      */
     function loadThemeSettingsForm($themeId, $itemId, &$template, &$form) {
@@ -2987,9 +2994,9 @@ class GalleryCoreApi {
     /**
      * Handle theme settings form submission
      *
-     * @param string themeId; if empty, site default theme is used
-     * @param int itemId
-     * @param array form values
+     * @param string $themeId if empty, site default theme is used
+     * @param int $itemId
+     * @param array $form form values
      * @return array object GalleryStatus a status code
      *               array error messages
      *               string localized status message

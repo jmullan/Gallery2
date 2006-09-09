@@ -34,7 +34,7 @@ class GalleryPhpVm {
     /**
      * Return true if the given function has been defined.
      *
-     * @param string function name
+     * @param string $functionName
      * @return boolean
      */
     function function_exists($functionName) {
@@ -44,9 +44,9 @@ class GalleryPhpVm {
     /**
      * iconv -- Convert string to requested character encoding
      *
-     * @param string source character set
-     * @param string target character set
-     * @param string data
+     * @param string $inCharset source character set
+     * @param string $outCharset target character set
+     * @param string $string data
      * @return string result
      */
     function iconv($inCharset, $outCharset, $string) {
@@ -56,9 +56,9 @@ class GalleryPhpVm {
     /**
      * mb_convert_encoding -- Convert character encoding
      *
-     * @param string data
-     * @param string target character set
-     * @param string source character set
+     * @param string $string data
+     * @param string $outCharset target character set
+     * @param string $inCharset source character set
      * @return string result
      */
     function mb_convert_encoding($string, $outCharset, $inCharset) {
@@ -68,8 +68,8 @@ class GalleryPhpVm {
     /**
      * recode_string -- Recode a string according to a recode request
      *
-     * @param string source..target character set
-     * @param string data
+     * @param string $request source..target character set
+     * @param string $string data
      * @return string result
      */
     function recode_string($request, $string) {
@@ -79,7 +79,7 @@ class GalleryPhpVm {
     /**
      * Return the 32-byte md5 hash of the given string
      *
-     * @param string string to be hashed
+     * @param string $string string to be hashed
      * @return string hashed string value
      */
     function md5($string) {
@@ -89,7 +89,7 @@ class GalleryPhpVm {
     /**
      * Query language and locale information
      *
-     * @param int item
+     * @param int $item
      */
     function nl_langinfo($item) {
 	return nl_langinfo($item);
@@ -99,8 +99,8 @@ class GalleryPhpVm {
      * Set locale information.  Passing multiple locales isn't avialable until PHP 4.3.0 so it's not
      * supported here (yet).
      *
-     * @param mixed category
-     * @param string locale
+     * @param mixed $category
+     * @param string $locale
      */
     function setlocale($category, $locale) {
 	return setlocale($category, $locale);
@@ -112,8 +112,8 @@ class GalleryPhpVm {
      * PHP 4.1 compatible header() function.  The second optional parameter http_response_code was
      * introduced in PHP 4.3.0 and is therefore not supported in Gallery.
      *
-     * @param string string
-     * @param [optional boolean replace]
+     * @param string $string
+     * @param boolean $replace (optional)
      */
     function header($string, $replace=null) {
 	return header($string, $replace);
@@ -143,7 +143,7 @@ class GalleryPhpVm {
     /**
      * Get configuration parameter
      *
-     * @param string varname
+     * @param string $varname
      * @return string
      */
     function ini_get($varname) {
@@ -153,8 +153,8 @@ class GalleryPhpVm {
     /**
      * Set configuration parameter
      *
-     * @param string varname
-     * @param string newvalue
+     * @param string $varname
+     * @param string $newvalue
      * @return string
      */
     function ini_set($varname, $newvalue) {
@@ -173,7 +173,7 @@ class GalleryPhpVm {
     /**
      * Output a message and terminate the current script
      *
-     * @param mixed (optional) status
+     * @param mixed $status (optional)
      */
     function exit_($status=null) {
 	if (isset($status)) {
@@ -186,8 +186,8 @@ class GalleryPhpVm {
     /**
      * Generate random integer
      *
-     * @param integer (optional) min
-     * @param integer (optional) max
+     * @param int $min (optional)
+     * @param int $max (optional)
      */
     function rand($min=null, $max=null) {
 	if (isset($min) && isset($max)) {
@@ -209,11 +209,11 @@ class GalleryPhpVm {
     /**
      * Send mail
      *
-     * @param string to
-     * @param string subject
-     * @param string message
-     * @param string addition headers (optional)
-     * @param string additional parameters (optional)
+     * @param string $to
+     * @param string $subject
+     * @param string $message
+     * @param string $additionalHeaders addition headers (optional)
+     * @param string $additionalParameters additional parameters (optional)
      * @return boolean true if the mail was successfully accepted for delivery
      */
     function mail($to, $subject, $message, $additionalHeaders=null, $additionalParameters=null) {

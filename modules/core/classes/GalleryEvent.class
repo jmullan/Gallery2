@@ -57,8 +57,7 @@ class GalleryEvent {
 
     /**
      * Set this event's name
-     *
-     * @param object GalleryEntity the entity
+     * @param string $eventName
      */
     function setEventName($eventName) {
 	$this->_eventName = $eventName;
@@ -66,7 +65,6 @@ class GalleryEvent {
 
     /**
      * Return the event name
-     *
      * @return string the event name
      */
     function getEventName() {
@@ -75,8 +73,7 @@ class GalleryEvent {
 
     /**
      * Set this event's entity
-     *
-     * @param object GalleryEntity the entity
+     * @param object GalleryEntity $entity
      */
     function setEntity($entity) {
 	$this->_entity = $entity;
@@ -84,7 +81,6 @@ class GalleryEvent {
 
     /**
      * Return the event's entity
-     *
      * @return object GalleryEntity
      */
     function getEntity() {
@@ -93,8 +89,7 @@ class GalleryEvent {
 
     /**
      * Set this event's data
-     *
-     * @param object GalleryData the data
+     * @param mixed $data
      */
     function setData($data) {
 	$this->_data = $data;
@@ -102,8 +97,7 @@ class GalleryEvent {
 
     /**
      * Return the event's data
-     *
-     * @return object GalleryData
+     * @return mixed
      */
     function getData() {
 	return $this->_data;

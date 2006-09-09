@@ -97,11 +97,11 @@ class GalleryMovieItem extends GalleryDataItem {
     /**
      * Create a new GalleryMovieItem from a video file
      *
-     * @param int the id of the parent GalleryItem
-     * @param string the path to the source video
-     * @param string the mime type
-     * @param string the desired name of the new item
-     * @param boolean (optional) a boolean true if we should symlink instead
+     * @param int $parentId the id of the parent GalleryItem
+     * @param string $videoFileName the path to the source video
+     * @param string $mimeType
+     * @param string $targetName the desired name of the new item
+     * @param boolean $symlink (optional) a boolean true if we should symlink instead
      *        of copy (default is false).
      * @return object GalleryStatus a status code
      */

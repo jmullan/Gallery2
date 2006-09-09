@@ -163,7 +163,7 @@ class GalleryUser extends GalleryEntity {
     /**
      * Is the password provided correct?
      *
-     * @param string a plaintext password
+     * @param string $password a plaintext password
      * @return boolean true if the password is correct
      */
     function isCorrectPassword($password) {
@@ -183,7 +183,7 @@ class GalleryUser extends GalleryEntity {
     /**
      * Change the user's password to the new value provided.
      *
-     * @param string a plaintext password
+     * @param string $newPassword a plaintext password
      */
     function changePassword($newPassword) {
 	$this->setHashedPassword(GalleryUtilities::md5Salt($newPassword));

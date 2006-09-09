@@ -32,7 +32,7 @@ class GdToolkitHelper {
      * Figure out what operations and properties are supported by the
      * image* functions in the PHP installation and return them.
      *
-     * @param object a GdFunctionality-object to work with
+     * @param object a $gd GdFunctionality-object to work with
      * @return object GalleryStatus a status code
      *	 array('operations' => ...
      *	       'properties' => ...)
@@ -265,7 +265,7 @@ class GdToolkitHelper {
     /**
      * See if this GD version is supported by this module.  Currently GD >= 2.0 is supported.
      *
-     * @param string A gd version string or empty to check the current version
+     * @param string $gdVersion A gd version string or empty to check the current version
      * @return array object GalleryStatus
      *	       boolean true if supported, false otherwise
      */
@@ -376,8 +376,6 @@ class GdToolkitHelper {
 
     /**
      * Factory to get a new GdFunctionality object.
-     *
-     * @param string the name of the GdFunctionality class we want to use
      * @return object GdFunctionality
      */
     function &getGdFunctionality() {

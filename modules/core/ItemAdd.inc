@@ -39,7 +39,7 @@ class ItemAddController extends GalleryController {
      * This avoids situations where some of the option instances will do unpredictable
      * things and derail the tests.
      *
-     * @param array (optionId => ItemAddOption, ...)
+     * @param array $optionInstances (optionId => ItemAddOption, ...)
      */
     function setOptionInstances($optionInstances) {
 	$this->_optionInstances = $optionInstances;
@@ -177,8 +177,8 @@ class ItemAddController extends GalleryController {
 
     /**
      * Extract files from an archive item and add new items to the same album.
-     * @param object GalleryDataItem archive
-     * @param object GalleryToolkit toolkit that supports extract operation
+     * @param object GalleryDataItem $archiveItem archive
+     * @param object GalleryToolkit $toolkit toolkit that supports extract operation
      * @return array object GalleryStatus a status code
      *               array of array('fileName' => '..', 'id' => ##, 'warnings' => array of string)
      * @access private
@@ -461,9 +461,9 @@ class ItemAddPlugin {
      * Load the template with data from this plugin
      * @see GalleryView::loadTemplate
      *
-     * @param object GalleryTemplate the template instance
-     * @param array the form values
-     * @param the item
+     * @param object GalleryTemplate $template
+     * @param array $form the form values
+     * @param object GalleryItem $item
      * @return array object GalleryStatus a status code
      *               string the path to a template file to include
      *               string localization domain for the template file
@@ -476,8 +476,8 @@ class ItemAddPlugin {
      * Let the plugin handle the incoming request
      * @see GalleryController::handleRequest
      *
-     * @param array the form values
-     * @param the item
+     * @param array $form the form values
+     * @param object GalleryItem $item
      * @return array object GalleryStatus a status code
      *               array error messages
      *               array status data, 'addedFiles' entry should contain:
@@ -557,9 +557,9 @@ class ItemAddOption {
      * Load the template with data from this plugin
      * @see GalleryView::loadTemplate
      *
-     * @param object GalleryTemplate the template instance
-     * @param array the form values
-     * @param the item
+     * @param object GalleryTemplate $template
+     * @param array $form the form values
+     * @param object GalleryItem $item
      * @return array object GalleryStatus a status code
      *               string the path to a template file to include
      *               string localization domain for the template file
@@ -572,8 +572,8 @@ class ItemAddOption {
      * Let the plugin handle the incoming request.  We expect the $items to be locked.
      * @see GalleryController::handleRequest
      *
-     * @param array the form values
-     * @param array GalleryDataItem
+     * @param array $form the form values
+     * @param array $items GalleryDataItems
      * @return array object GalleryStatus a status code
      *               array localized error messages
      *               array localized warning messages

@@ -802,8 +802,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
      * all of its parents for all users.  If you provide both, it will only
      * invalidate for the intersection of the user and the item ids.
      *
-     * @param mixed user id or array of ids or null
-     * @param mixed item id or array of ids or null
+     * @param mixed $userId user id or array of ids or null
+     * @param mixed $itemId item id or array of ids or null
      * @return object GalleryStatus a status code
      */
     function invalidateDescendentCountCaches($userId, $itemId) {
@@ -864,7 +864,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	$param = $event->getData();
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
 	    $ret = GalleryItemHelper_medium::invalidateDescendentCountCaches(
-		$param['userId'], $param['itemId']);
+		    $param['userId'], $param['itemId']);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -987,7 +987,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		}
 	    }
 	} else if ($event->getEventName() == 'GalleryEntity::save' ||
-		   $event->getEventName() == 'GalleryEntity::delete') {
+		$event->getEventName() == 'GalleryEntity::delete') {
 	    $entity = $event->getEntity();
 
 	    $expireItemIds = array($entity->getId());

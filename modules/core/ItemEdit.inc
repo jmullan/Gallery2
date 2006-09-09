@@ -332,8 +332,8 @@ class ItemEditPlugin {
     /**
      * Does this plugin support the given item type?
      *
-     * @param the item
-     * @param the item's thumbnail
+     * @param object GalleryItem $item
+     * @param object GalleryDerivative $thumbnail item's thumbnail
      * @return boolean true if it's supported
      */
     function isSupported($item, $thumbnail) {
@@ -344,10 +344,10 @@ class ItemEditPlugin {
      * Load the template with data from this plugin
      * @see GalleryView::loadTemplate
      *
-     * @param object GalleryTemplate the template instance
-     * @param array the form values
-     * @param the item
-     * @param the item's thumbnail
+     * @param object GalleryTemplate $template
+     * @param array $form the form values
+     * @param object GalleryItem $item
+     * @param object GalleryDerivative $thumbnail item's thumbnail
      * @return array object GalleryStatus a status code
      *               string the path to a template file to include
      *               string localization domain for the template file
@@ -360,9 +360,9 @@ class ItemEditPlugin {
      * Let the plugin handle the incoming request
      * @see GalleryController::handleRequest
      *
-     * @param array the form values
-     * @param the item
-     * @param the item's preferred derivative, if there is one
+     * @param array $form the form values
+     * @param object GalleryItem $item
+     * @param object GalleryDerivative $preferred item's preferred derivative, if there is one
      * @return array object GalleryStatus a status code
      *               array error messages
      *               string localized status message
@@ -386,8 +386,8 @@ class ItemEditPlugin {
     /**
      * Check to see if a given operation is available for any of a set of mime types
      *
-     * @param string the operation (eg, 'rotate', or 'scale')
-     * @param array mime types
+     * @param string $operation the operation (eg. 'rotate' or 'scale')
+     * @param array $mimeTypes
      * @return array object GalleryStatus a status code
      *               bool true if any of the mime types are supported
      * @access protected
@@ -419,9 +419,9 @@ class ItemEditOption {
     /**
      * Return all the available option plugins
      *
-     * @param string name of ItemEditPlugin
-     * @param object GalleryItem item
-     * @param object GalleryDerivative thumbnail
+     * @param string $editPlugin name of ItemEditPlugin
+     * @param object GalleryItem $item
+     * @param object GalleryDerivative $thumbnail
      * @return array object GalleryStatus a status code
      *               array object ItemEditOption instances
      * @static
@@ -458,9 +458,9 @@ class ItemEditOption {
      * Load the template with data from this plugin
      * @see GalleryView::loadTemplate
      *
-     * @param object GalleryTemplate the template instance
-     * @param array the form values
-     * @param the item
+     * @param object GalleryTemplate $template
+     * @param array $form the form values
+     * @param object GalleryItem $item
      * @return array object GalleryStatus a status code
      *               string the path to a template file to include
      *               string localization domain for the template file
@@ -473,9 +473,9 @@ class ItemEditOption {
      * Let the plugin handle the incoming request.  We expect the $item to be locked.
      * @see GalleryController::handleRequest
      *
-     * @param array the form values
-     * @param reference to the item
-     * @param reference to preferred derivative
+     * @param array $form the form values
+     * @param object GalleryItem $item reference to the item
+     * @param object GalleryDerivative $preferred reference to preferred derivative
      * @return array object GalleryStatus a status code
      *               array error messages
      *               array localized warning messages
@@ -487,8 +487,8 @@ class ItemEditOption {
     /**
      * Is this option appropriate at this time?
      *
-     * @param object GalleryItem item
-     * @param object GalleryDerivative thumbnail
+     * @param object GalleryItem $item
+     * @param object GalleryDerivative $thumbnail
      * @return array object GalleryStatus a status code
      *               boolean true or false
      */
@@ -499,8 +499,8 @@ class ItemEditOption {
     /**
      * Will this task run so long that it requires a progress bar?
      *
-     * @param the state of the current form
-     * @return true or false
+     * @param array $form the state of the current form
+     * @return boolean
      */
     function requiresProgressBar($form) {
 	return false;

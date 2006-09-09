@@ -87,8 +87,8 @@ class PluginCallbackView extends GalleryView {
     /**
      * Given two sets of states, figure out what's changed from before to after.
      *
-     * @param array before states (moduleId => state, ...)
-     * @param array after states (moduleId => state, ...)
+     * @param array $beforeStates (moduleId => state, ...)
+     * @param array $afterStates (moduleId => state, ...)
      * @return array changed states (moduleId => state, ...)
      * @static
      */
@@ -108,8 +108,8 @@ class PluginCallbackView extends GalleryView {
     /**
      * Handle the specific callback, and store its result in the given output array.
      *
-     * @param string the command (eg, "installModule")
-     * @param array the location for result data to be sent back to the browser
+     * @param string $command (eg. "installModule")
+     * @param array $result the location for result data to be sent back to the browser
      * @return object GalleryStatus a status code
      * @static
      */
@@ -302,9 +302,9 @@ class PluginCallbackView extends GalleryView {
     /**
      * Get the state ('active', 'inactive', 'uninstalled', etc) of a given module
      *
-     * @param string the type ('module' or 'theme')
-     * @param object GalleryPlugin the plugin
-     * @param array the status of the plugin (from GalleryCoreApi::fetchPluginStatus)
+     * @param string $type ('module' or 'theme')
+     * @param object GalleryPlugin $plugin
+     * @param array $status status of the plugin (from GalleryCoreApi::fetchPluginStatus)
      * @return array object GalleryStatus a status code
      *               string a state
      * @static

@@ -217,8 +217,8 @@ class SquareThumbToolkit extends GalleryToolkit {
     /**
      * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
      *
-     * @param object GalleryDerivativeImage the derivative
-     * @param object GalleryDerivativeEntity the source
+     * @param object GalleryDerivativeImage $derivative the derivative
+     * @param object GalleryDerivativeEntity $source the source
      *                                (probably a GalleryPhotoItem or GalleryMovieItem)
      */
     function estimateDimensions(&$derivative, $source) {
@@ -255,7 +255,7 @@ class SquareThumbToolkit extends GalleryToolkit {
 
     /**
      * Get toolkit for thumbnail operation.
-     * @param string mime type
+     * @param string $mimeType
      * @return array object GalleryStatus a status code
      *               object GalleryToolkit
      * @access private

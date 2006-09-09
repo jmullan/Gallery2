@@ -34,9 +34,9 @@ class WatermarkHelper {
      * You can specify how many items to list, and where the windows is in
      * the list of all items.
      *
-     * @param int [optional] the number of items desired
-     * @param int [optional] the start of the range
-     * @param string [optional] a substring to match
+     * @param int $count (optional) the number of items desired
+     * @param int $offset (optional) the start of the range
+     * @param string $substring (optional) a substring to match
      * @return array object GalleryStatus a status code
      *               array of itemId=>watermark
      */
@@ -112,7 +112,7 @@ class WatermarkHelper {
     /**
      * Return all watermark ids owned by a given user id
      *
-     * @param int the owner id
+     * @param int $ownerId
      * @return array object GalleryStatus a status code
      *               array of itemIds
      */
@@ -144,7 +144,7 @@ class WatermarkHelper {
     /**
      * Find items watermarked with the given watermark image.
      *
-     * @param object WatermarkImage the watermark
+     * @param object WatermarkImage $watermark
      * @return array object GalleryStatus a status code
      *               array (itemId => array of derivative ids, ..)
      */
@@ -179,8 +179,9 @@ class WatermarkHelper {
     /**
      * Delete a watermark image.
      *
-     * @param int id of watermark image
-     * @param boolean (optional) if true, delete even if watermark is used (and remove those uses)
+     * @param int $itemId id of watermark image
+     * @param boolean $forceDelete (optional) if true, delete even if watermark is used
+     *        (and remove those uses)
      * @return array object GalleryStatus a status object
      *               boolean true if deleted
      */
@@ -243,11 +244,11 @@ class WatermarkHelper {
     /**
      * Apply the given watermark to the given item.  Expect the item to be locked already.
      *
-     * @param object WatermarkImage the watermark
-     * @param object GalleryDataItem an image
-     * @param string the x overlay location (in percentage)
-     * @param string the y overlay location (in percentage)
-     * @param array an array of DERIVATIVE_TYPE_IMAGE_XXX => true/false
+     * @param object WatermarkImage $watermark the watermark
+     * @param object GalleryDataItem $item an image
+     * @param string $xPercent the x overlay location (in percentage)
+     * @param string $yPercent the y overlay location (in percentage)
+     * @param array $whichDerivatives an array of DERIVATIVE_TYPE_IMAGE_XXX => true/false
      * @return object GalleryStatus a status code
      */
     function watermarkItem($watermark, $item, $xPercent, $yPercent, $whichDerivatives) {
@@ -430,8 +431,8 @@ class WatermarkHelper {
     /**
      * Create new WatermarkImage from given form data.
      *
-     * @param array form
-     * @param boolean (optional) true to make watermark available to all users
+     * @param array $form
+     * @param boolean $isPublic (optional) true to make watermark available to all users
      * @return array object GalleryStatus a status code
      *               object WatermarkImage
      */
@@ -487,10 +488,10 @@ class WatermarkHelper {
     /**
      * handleRequest for WatermarkSiteAdminEdit and UserWatermarkEdit
      *
-     * @param array form data
-     * @param string parent view
-     * @param string subView redirect on success
-     * @param string subView delegate on error
+     * @param array $form form data
+     * @param string $view parent view
+     * @param string $subViewSuccess subView redirect on success
+     * @param string $subViewError subView delegate on error
      * @return array object GalleryStatus a status code
      *               array controller results
      */
@@ -632,10 +633,10 @@ class WatermarkHelper {
     /**
      * loadTemplate for WatermarkSiteAdminEdit and UserWatermarkEdit
      *
-     * @param array template
-     * @param array form data
-     * @param string form name
-     * @param string page name
+     * @param array $template
+     * @param array $form form data
+     * @param string $formName form name
+     * @param string $pageName page name
      * @return object GalleryStatus a status code
      */
     function loadEditTemplate(&$template, &$form, $formName, $pageName) {

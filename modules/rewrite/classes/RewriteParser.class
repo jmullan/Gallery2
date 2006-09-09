@@ -60,8 +60,8 @@ class RewriteParser {
      * serialized array of the given activeRules and shortUrls is returned by
      * RewriteHelper::parseActiveRules().  It returns REWRITE_STATUS_OK on success.
      *
-     * @param array active rules (if null, or not set, it defaults to the current rules)
-     * @param object RewriteModule (optional)
+     * @param array $activeRules (if null, or not set, it defaults to the current rules)
+     * @param object RewriteModule $rewriteModule (optional)
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      *               array string module (on error)
@@ -76,8 +76,8 @@ class RewriteParser {
      * This needs to be implemented by the specific plugin.  It needs to save a serialized array of
      * the hosts and the value of allowEmptyReferer to the params accessList and allowEmptyReferer.
      *
-     * @param array access list of referrer hosts
-     * @param boolean true if Gallery should allow empty referrer
+     * @param array $accessList access list of referer hosts
+     * @param boolean $allowEmptyReferer true if Gallery should allow empty referrer
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      */
@@ -101,8 +101,8 @@ class RewriteParser {
      * parent).  It also verifies that locked rules are saved with the original pattern.  We perform
      * a sanity check to minimize possible conflicts and bad regular expressions.
      *
-     * @param array rewrite rule
-     * @param string (optional) set to the custom pattern when called from saveActiveRules
+     * @param array $rule rewrite rule
+     * @param string $pattern (optional) set to the custom pattern when called from saveActiveRules
      * @return boolean true if the rule is valid
      */
     function isValidRule($rule, $pattern=null) {
@@ -125,8 +125,8 @@ class RewriteParser {
      * Returns translated error message, called from AdminRewrite when an unsucsessful save has been
      * made.  A valid $code is anything that $this->saveActiveRules would return if an error occurs.
      *
-     * @param int rewrite status code
-     * @param object RewriteModule (optional)
+     * @param int $code rewrite status code
+     * @param object RewriteModule $rewriteModule (optional)
      * @return array object GalleryStatus a status code
      *               string translated error message
      */
@@ -160,8 +160,8 @@ class RewriteParser {
      * Displays the test results if the template variable $TestResults.body is set.  It should be a
      * Gallery base dir relative path.
      *
-     * @param object GalleryTemplate the template instance
-     * @param array the form values
+     * @param object GalleryTemplate $template
+     * @param array $form the form values
      * @return object GalleryStatus a status code
      */
     function loadTestResultsTemplate(&$template, &$form) {
@@ -171,7 +171,7 @@ class RewriteParser {
     /**
      * Handles the submitted form and should save any settings (ie. forced tests).
      *
-     * @param array the form values
+     * @param array $form the form values
      * @return array object GalleryStatus a status code
      *               array error codes
      *               array status codes
@@ -184,8 +184,8 @@ class RewriteParser {
      * Displays the parser configuration if the template variable $AdminParser.body is set.  It
      * should be a Gallery base dir relative path.
      *
-     * @param object GalleryTemplate the template instance
-     * @param array the form values
+     * @param object GalleryTemplate $template
+     * @param array $form the form values
      * @return object GalleryStatus a status code
      */
     function loadAdminParserTemplate(&$template, &$form) {
@@ -195,7 +195,7 @@ class RewriteParser {
     /**
      * Handles the submitted form and should save the settings.
      *
-     * @param array the form values
+     * @param array $form the form values
      * @return array object GalleryStatus a status code
      *               array error codes
      *               array status codes

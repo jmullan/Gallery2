@@ -182,8 +182,8 @@ class ImageMagickToolkitHelper {
     /**
      * Return an array of cmds needed to execute ImageMagick/GraphicsMagick commands
      *
-     * @param string an ImageMagick command (eg. "convert")
-     * @param string an optional other ImageMagick path. Default comes from modules configuration
+     * @param string $cmd an ImageMagick command (eg. "convert")
+     * @param string $imageMagickPath (optional) ImageMagick path (default=module configuration)
      * @return array object GalleryStatus
      *               array commands
      */
@@ -221,7 +221,7 @@ class ImageMagickToolkitHelper {
      * Find out which mime types our ImageMagick installation supports.
      * This is done by trying to run 'identify' on a couple of sample images.
      *
-     * @param string [optional] path to the ImageMagick we are testing,
+     * @param string $imageMagickPath (optional) path to the ImageMagick we are testing;
      *	       if not given, use the 'imagemagick.path' module parameter
      * @return array object GalleryStatus
      *	       array supported mime-types
@@ -325,7 +325,7 @@ class ImageMagickToolkitHelper {
      * Test if the given path has a working set of ImageMagick binaries.
      * This is done by trying to run 'identify' on a sample image.
      *
-     * @param string path to the ImageMagick we are testing
+     * @param string $imageMagickPath path to the ImageMagick we are testing
      * @return array object GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successful?

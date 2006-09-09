@@ -50,13 +50,13 @@ class Getid3Helper {
     /**
      * Reset the given view mode back to its default settings
      *
-     * @param int the view mode
+     * @param int $viewMode
      * @return object GalleryStatus a status code
      */
     function setDefaultProperties($viewMode) {
 	switch($viewMode) {
 	case GETID3_SUMMARY:
-	    /* This is an initial install. Make sure that we have some reasonable defaults. */
+	    /* This is an initial install; make sure that we have some reasonable defaults */
 	    $properties[] = 'Artist';
 	    $properties[] = 'Album';
 	    $properties[] = 'Track';
@@ -97,8 +97,8 @@ class Getid3Helper {
     /**
      * Return the raw data as returned by Getid3
      *
-     * @param string the path to the file
-     * @param reference to an array where to store the results
+     * @param string $path the path to the file
+     * @param array $rawGetid3Data reference to an array where to store the results
      *        as returned by getid3()
      * @access private
      */
@@ -177,8 +177,8 @@ class Getid3Helper {
     /**
      * Return the Getid3 data for a specific view and file
      *
-     * @param string the path to the file
-     * @param int the view mode
+     * @param string $path the path to the file
+     * @param int $viewMode
      * @return array object GalleryStatus a status code
      *               array title/value pairs
      */
@@ -217,7 +217,7 @@ class Getid3Helper {
      * Return the timestamp of a time string in Day of week, Month, Day, Hour, Minute, Second,
      * Year format.
      *
-     * @param string time string
+     * @param string $value time string
      * @return int an unix timestamp, null if not parsed
      */
     function getTimeDowMDHMSY($value) {
@@ -249,7 +249,7 @@ class Getid3Helper {
     /**
      * Return the timestamp of a time string in Year, Month, Day, Hour, Minute, Second format.
      *
-     * @param string time string
+     * @param string $value time string
      * @return int an unix timestamp, null if not parsed
      */
     function getTimeYMDHMS($value) {
@@ -268,7 +268,7 @@ class Getid3Helper {
     /**
      * Return the timestamp of a time string already a time stamp.
      *
-     * @param string time string
+     * @param string $value time string
      * @return int an unix timestamp, null if not parsed
      */
     function getTimeInt($value) {
@@ -287,9 +287,9 @@ class Getid3Helper {
      * Sometimes the values that are returned aren't quite as we'd like to
      * present them, so do a little post processing on the text
      *
-     * @param string the property name (eg "ShutterSpeedValue")
-     * @param string the value (eg "25/10000 sec")
-     * @return string the result (eg "1/400 sec")
+     * @param string $property the property name (eg. "ShutterSpeedValue")
+     * @param string $value the value (eg. "25/10000 sec")
+     * @return string the result (eg. "1/400 sec")
      * @todo (donw) Implement postProcessValue
      */
     function postProcessValue($property, $value) {
@@ -330,7 +330,7 @@ class Getid3Helper {
     /**
      * Return the timestamp when the item was taken, as recorded in exif, id3, or other meta tag
      *
-     * @param string the path to the file
+     * @param string $path the path to the file
      * @return int an unix timestamp
      */
     function getOriginationTimestamp($path) {
@@ -376,8 +376,8 @@ class Getid3Helper {
      *
      * the resulting value would be "4"
      *
-     * @param array the data source
-     * @param array the key path
+     * @param array $source the data source
+     * @param array $keyPath
      * @return array object GalleryStatus a status code
      *               string value
      * @access private
@@ -398,7 +398,7 @@ class Getid3Helper {
     /**
      * Return the target properties for the given view mode
      *
-     * @param int the view mode (GETID3_SUMMARY, etc)
+     * @param int $viewMode the view mode (GETID3_SUMMARY, etc)
      * @return array object GalleryStatus a status code
      *               array logical exif property names
      */
@@ -421,8 +421,8 @@ class Getid3Helper {
     /**
      * Set the target properties for the given view mode
      *
-     * @param int the view mode (GETID3_SUMMARY, etc)
-     * @param array logical property key/value pairs
+     * @param int $viewMode the view mode (GETID3_SUMMARY, etc)
+     * @param array $properties logical property key/value pairs
      * @return object GalleryStatus a status code
      */
     function setProperties($viewMode, $properties) {

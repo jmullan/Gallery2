@@ -32,7 +32,7 @@ class Picasa2DataParser {
      * Check whether the given directory contains an index.xml file
      * (to be extended later)
      *
-     * @param string the picasa export path
+     * @param string $path the picasa export path
      * @return boolean true if the picasa path is valid, false otherwise
      */
     function isValidPicasaXmlPath($path) {
@@ -48,7 +48,7 @@ class Picasa2DataParser {
     /**
      * Get the raw XML data from a given Picasa export Path.
      *
-     * @param string the picasa export path
+     * @param string $picasaXmlPath the picasa export path
      * @return array a status code and an album/image array
      */
     function getRawXmlFromPicasaPath($picasaXmlPath) {
@@ -75,7 +75,7 @@ class Picasa2DataParser {
      *  nice nested array. based on dudus at onet dot pl's:
      *  http://www.php.net/manual/en/function.xml-parse-into-struct.php#49154
      *
-     *  @param $xmlFileName - xml file which will be fed into xml_parse_into_struct()
+     *  @param string $rawXml - xml which will be fed into xml_parse_into_struct()
      *  @return array object GalleryStatus a status code
      *                array a nested php array containing xml data.
      */
@@ -178,7 +178,7 @@ class Picasa2DataParser {
     /**
      * Get the nested album and picture array from the Picasa export path.
      *
-     * @param string the picasa export path
+     * @param string $picasaXmlArray the picasa export path
      * @return array a status code and an album/image array
      */
     function getAlbumFromArray($picasaXmlArray) {
@@ -220,7 +220,7 @@ class Picasa2DataParser {
     /**
      * Get the nested album and picture array from the Picasa export path.
      *
-     * @param string the picasa export path
+     * @param string $picasaXmlPath the picasa export path
      * @return array a status code and an album/image array
      */
     function getAlbum($picasaXmlPath) {

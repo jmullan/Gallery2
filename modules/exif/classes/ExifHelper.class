@@ -74,16 +74,13 @@ class ExifHelper {
     /**
      * Reset the given view mode back to its default settings
      *
-     * @param int the view mode
+     * @param int $viewMode
      * @return object GalleryStatus a status code
      */
     function setDefaultProperties($viewMode) {
 	switch ($viewMode) {
 	case EXIF_SUMMARY:
-	    /*
-	     * This is an initial install. Make sure that we have some
-	     * reasonable defaults.
-	     */
+	    /* This is an initial install; make sure that we have some reasonable defaults */
 	    $properties[] = 'Make';
 	    $properties[] = 'Model';
 	    $properties[] = 'ApertureValue';
@@ -149,7 +146,7 @@ class ExifHelper {
      * Add default IPTC properties for the given view mode to the end of current properties.
      * This is used on upgrade of the module from before IPTC times.
      *
-     * @param int the view mode
+     * @param int $viewMode
      * @return object GalleryStatus a status code
      */
     function addDefaultIptcProperties($viewMode) {
@@ -185,8 +182,8 @@ class ExifHelper {
     /**
      * Retrieve the raw EXIF data as returned by lib/Exifer.
      *
-     * @param string the path to the file
-     * @param reference to an array where to store the results
+     * @param string $path the path to the file
+     * @param array $rawExifData reference to an array where to store the results
      *        as returned by read_exif_data_raw() from exifer
      */
     function _fetchRawExifData($path, &$rawExifData) {
@@ -210,7 +207,7 @@ class ExifHelper {
      * to read in the lib/JPEG library (currently ~100KB) but nearly no penalties for the image:
      * it isn't read here, that happens lazily when actually accessing IPTC values.
      *
-     * @param string   the path to a jpeg file
+     * @param string $path the path to a jpeg file
      * @return array   object GalleryStatus a status code
      *                 object  the JPEG object containing the IPTC data
      * @see getIptcValue
@@ -244,10 +241,10 @@ class ExifHelper {
      * This method doesn't return all available EXIF/IPTC data; instead it returns only the data
      * existing and configured to be viewed in the given mode.
      *
-     * @param  string  the path to the file
-     * @param  int     the view mode
-     * @return array   object GalleryStatus a status code
-     *                  array title/value pairs
+     * @param string $path the path to the file
+     * @param int $viewMode
+     * @return array object GalleryStatus a status code
+     *               array title/value pairs
      */
     function getExifData($path, $viewMode) {
 	$rawExifData = array();
@@ -288,9 +285,9 @@ class ExifHelper {
      * Sometimes the values that are returned aren't quite as we'd like to
      * present them, so do a little post processing on the text
      *
-     * @param string the property name (eg "ShutterSpeedValue")
-     * @param string the value (eg "25/10000 sec")
-     * @return string the result (eg "1/400 sec")
+     * @param string $property the property name (eg. "ShutterSpeedValue")
+     * @param string $value the value (eg. "25/10000 sec")
+     * @return string the result (eg. "1/400 sec")
      */
     function postProcessValue($property, $value) {
 	global $gallery;
@@ -368,7 +365,7 @@ class ExifHelper {
     /**
      * Return the timestamp when the picture was taken, as recorded in exif
      *
-     * @param string the path to the file
+     * @param string $path the path to the file
      * @return int an unix timestamp
      * @todo (xlerb) check for IPTC.DateCreated and IPTC.TimeCreated additionally? Problem: only
      *      date set by Adobe in IPTC, set time to 0 = midnight or 12 = noon? Also, which priority
@@ -431,8 +428,8 @@ class ExifHelper {
      *
      * the resulting value would be "4"
      *
-     * @param array the data source
-     * @param array the key path
+     * @param array $source the data source
+     * @param array $keyPath the key path
      * @return array object GalleryStatus a status code
      *               string value
      */
@@ -455,10 +452,10 @@ class ExifHelper {
      * IPTC name, more parts are silently ignored. When the path does not start with 'IPTC', this
      * method returns null.
      *
-     * @param object   A JPEG object containing the IPTC values
-     * @param array    The key path
-     * @param string   Source encoding of the IPTC value, e.g. 'ISO-8859-1', defaults from current
-     *                 locale
+     * @param object $object A JPEG object containing the IPTC values
+     * @param array $keyPath
+     * @param string $sourceEncoding encoding of the IPTC value, e.g. 'ISO-8859-1', defaults from
+     *               current locale
      * @return string  An IPTC value or null, if there is no such value or on error
      * @todo (xlerb) have IPTC input charset default in EXIF/IPTC admin interface.
      * @todo (xlerb) have IPTC input charset overrides for albums (maybe images too?) for cases,
@@ -483,7 +480,7 @@ class ExifHelper {
     /**
      * Return the target properties for the given view mode
      *
-     * @param int the view mode (EXIF_SUMMARY, etc)
+     * @param int $viewMode the view mode (EXIF_SUMMARY, etc)
      * @return array object GalleryStatus a status code
      *               array logical exif property names
      */
@@ -506,8 +503,8 @@ class ExifHelper {
     /**
      * Set the target properties for the given view mode
      *
-     * @param int the view mode (EXIF_SUMMARY, etc)
-     * @param array logical property key/value pairs
+     * @param int $viewMode the view mode (EXIF_SUMMARY, etc)
+     * @param array $properties logical property key/value pairs
      * @return object GalleryStatus a status code
      */
     function setProperties($viewMode, $properties) {

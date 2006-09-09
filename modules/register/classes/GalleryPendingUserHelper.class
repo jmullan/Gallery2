@@ -31,7 +31,7 @@ class GalleryPendingUserHelper {
     /**
      * Return the GalleryPendingUser specified by the username
      *
-     * @param string the username
+     * @param string $userName
      * @return array object GalleryStatus a status code
      *               object GalleryPendingUser a pending user
      */
@@ -64,7 +64,7 @@ class GalleryPendingUserHelper {
     /**
      * Return the total number of pending users
      *
-     * @param string an optional substring to match against the username
+     * @param string $substring an optional substring to match against the username
      * @return array object GalleryStatus a status code
      *               int number of pending users
      */
@@ -94,9 +94,9 @@ class GalleryPendingUserHelper {
      * You can specify how many usernames to list, and where the windows is in
      * the list of all users.
      *
-     * @param int [optional] the number of usernames desired
-     * @param int [optional] the start of the range
-     * @param string [optional] a substring to match
+     * @param int $count [optional] the number of usernames desired
+     * @param int $offset [optional] the start of the range
+     * @param string $substring [optional] a substring to match
      * @return array object GalleryStatus a status code
      *               array (id => array('userName'=>name, 'fullName'=>name, 'email'=>email), ...)
      */
@@ -138,7 +138,7 @@ class GalleryPendingUserHelper {
     /**
      * Send an email with a confirmation link
      *
-     * @param object GalleryPendingUser
+     * @param object GalleryPendingUser $pendingUser
      * @return object GalleryStatus a status code
      */
     function sendConfirmationEmail(&$pendingUser) {
@@ -187,7 +187,7 @@ class GalleryPendingUserHelper {
     /**
      * Send notification email to site administrators
      *
-     * @param object GalleryPendingUser
+     * @param object GalleryPendingUser $pendingUser
      * @return object GalleryStatus a status code
      */
     function sendAdminEmail(&$pendingUser) {
@@ -244,8 +244,8 @@ class GalleryPendingUserHelper {
     /**
      * Create GalleryUser from GalleryPendingUser
      *
-     * @param object GalleryPendingUser
-     * @param boolean if true delete the GalleryPendingUser
+     * @param object GalleryPendingUser $pendingUser
+     * @param boolean $delete if true delete the GalleryPendingUser
      * @return object GalleryStatus a status code
      */
     function createGalleryUser(&$pendingUser, $delete=true) {

@@ -80,7 +80,7 @@ class GalleryDataItem extends GalleryItem {
     /**
      * Helper function to check renderer and list of mime types for canBeViewedInline.
      *
-     * @param array (optional) list of mime types that render() will support
+     * @param array $mimeList (optional) list of mime types that render() will support
      * @return boolean true if this data item can be viewed inline
      * @access protected
      */
@@ -102,11 +102,11 @@ class GalleryDataItem extends GalleryItem {
     /**
      * Create a new instance of this type in the persistent store.
      *
-     * @param int the id of the parent GalleryItem
-     * @param string the path to a data file to be contained
-     * @param string the mime type of the new item
-     * @param string (optional) the desired name of the new item
-     * @param boolean (optional) a boolean true if we should symlink instead
+     * @param int $parentId the id of the parent GalleryItem
+     * @param string $inputFileName the path to a data file to be contained
+     * @param string $mimeType the mime type of the new item
+     * @param string $targetName (optional) the desired name of the new item
+     * @param boolean $symlink (optional) a boolean true if we should symlink instead
      *        of copy (default is false).
      * @return object GalleryStatus a status code
      */
@@ -277,7 +277,7 @@ class GalleryDataItem extends GalleryItem {
     /**
      * Rename this DataItem
      *
-     * @param string the path component
+     * @param string $newName the path component
      * @return object GalleryStatus a status code
      */
     function rename($newName) {
@@ -354,7 +354,7 @@ class GalleryDataItem extends GalleryItem {
     /**
      * Move this item to a new parent
      *
-     * @param int the id of the GalleryItem parent
+     * @param int $newParentId the id of the GalleryItem parent
      * @return object GalleryStatus a status code
      */
     function move($newParentId) {

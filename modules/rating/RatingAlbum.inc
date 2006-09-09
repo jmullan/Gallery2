@@ -148,8 +148,8 @@ class RatingAlbumView extends GalleryView {
 
     /**
      * Dynamic query for items
-     * @param int user id
-     * @param (optional) limit for query; get from request if not specified
+     * @param int $userId
+     * @param float $limit (optional) limit for query; get from request if not specified
      * @return array object GalleryStatus a status code
      *               array of item ids
      * @static

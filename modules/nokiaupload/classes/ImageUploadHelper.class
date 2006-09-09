@@ -436,7 +436,7 @@ class ImageUploadHelper {
      * All users who try to use the Nokia Image Uploader module
      * will be added to this group in LoginController.
      *
-     * @param string name for group
+     * @param string $name name for group
      * @return object GalleryStatus a status code
      *         int id of the Mobile user group
      */
@@ -471,8 +471,8 @@ class ImageUploadHelper {
     /*
      * Create new album for uploading images.
      *
-     * @param string title for album
-     * @param int id of parent album
+     * @param string $title title for album
+     * @param int $parentId id of parent album
      * @return object GalleryStatus a status code
      *         int id of the upload album
      */
@@ -550,8 +550,8 @@ class ImageUploadHelper {
      * First we remove all possible inherited permissions and then add
      * only the permissions we want.
      *
-     * @param int id of album
-     * @param int id of mobile users group
+     * @param int $albumId
+     * @param int $groupId id of mobile users group
      * @return object GalleryStatus a status code
      */
    function setAlbumPermissions($albumId, $groupId) {
@@ -600,7 +600,7 @@ class ImageUploadHelper {
 
     /**
      * Write the contents of _POST and _GET to debug log.
-     * @param string optional message
+     * @param string $message optional message
      */
     function logRequest($message='') {
 	global $gallery;

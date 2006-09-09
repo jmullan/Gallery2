@@ -31,8 +31,8 @@ class RatingHelper {
     /**
      * Return the average rating of the given itemId
      *
-     * @param int GalleryItem id
-     * @param int User id to fetch rating of
+     * @param int $itemIds GalleryItem id
+     * @param int $userId User id to fetch rating of
      * @return array object GalleryStatus a status code
      *               array  double  latest average rating
      *                      int     count of total ratings
@@ -94,9 +94,9 @@ class RatingHelper {
     /**
      * Sets rating in database, returns new ratings.
      *
-     * @param int GalleryItem id
-     * @param int Rating score
-     * @param int User id
+     * @param int $itemId GalleryItem id
+     * @param int $rating Rating score
+     * @param int $userId
      * @return array object GalleryStatus a status code
      *               array  double  new avg rating for itemId
      *                      int     total votes for itemId

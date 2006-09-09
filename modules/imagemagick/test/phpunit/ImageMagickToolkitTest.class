@@ -86,7 +86,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
     /**
      * Prepare to emulate a different version of IM/GM
      *
-     * @param array the array item of the environment
+     * @param array $environment the array item of the environment
      * @access private
      */
     function _setEnvironment($environment) {
@@ -118,15 +118,15 @@ class ImageMagickToolkitTest extends GalleryTestCase {
     /**
      * Helper to test a certain operation
      *
-     * @param string
-     * @param string
-     * @param string filename
-     * @param string filename
-     * @param array indexed array
-     * @param array assoc-array with paramName=>paramValue
-     *
-     * @access private
+     * @param string $mimeType
+     * @param string $operation
+     * @param string $src filename
+     * @param string $dst filename
+     * @param array $params indexed array
+     * @param array $namedParams assoc-array with paramName=>paramValue
+     * @param string $quality (optional)
      * @return object GalleryStatus
+     * @access private
      */
     function _testOperation($mimeType, $operation, $src, $dst, $params, $namedParams,
 			    $quality=null) {

@@ -46,8 +46,8 @@ class RssGenerator {
     /**
      * Add an item to the RSS feed that will be generated
      *
-     * @param array item properties array
-     * @param string optional key for the item array
+     * @param array $properties item properties array
+     * @param string $key optional key for the item array
      */
     function addItem($properties, $key='') {
 	/* add the new item to our items array */
@@ -60,8 +60,7 @@ class RssGenerator {
 
     /**
      * Function to set the items array that will be used when generated the feed
-     *
-     * @param array items array
+     * @param array $items
      */
     function setItems($items) {
 	$this->_items = $items;
@@ -70,8 +69,8 @@ class RssGenerator {
     /**
      * Add a channel property to the feed that will be generated
      *
-     * @param string property name
-     * @param string property value
+     * @param string $name property name
+     * @param string $value property value
      */
     function addProperty($name, $value) {
 	$this->_properties[$name] = $value;
@@ -80,7 +79,7 @@ class RssGenerator {
     /**
      * Set the channel properties of the feed that will be generated
      *
-     * @param array properties
+     * @param array $properties properties
      */
     function setProperties($properties) {
 	$this->_properties = $properties;
@@ -90,7 +89,7 @@ class RssGenerator {
      * Change the order of the items in the $_items array
      * (useful if $key variable is used when items are added)
      *
-     * @param order Can either be ASC ort DESC
+     * @param string $order Can either be ASC or DESC
      */
     function sortItems($order) {
 	if ($order == 'ASC') {
@@ -103,7 +102,7 @@ class RssGenerator {
     /**
      * Removes all items except the first $count items
      *
-     * @param int count
+     * @param int $count
      */
     function sliceItems($count) {
 	$this->_items = array_slice($this->_items, 0, $count);
@@ -112,7 +111,7 @@ class RssGenerator {
     /**
      * Generate the RSS data string of the items added by addItem()
      *
-     * @param string the rss version number
+     * @param string $version the rss version number
      * @return string rss stream
      */
     function generate($version) {
@@ -294,8 +293,8 @@ class RssGenerator {
 
     /**
      * Wrap a text element in <![CDATA .. ]]>
-     * @param text
-     * @return wrapped text
+     * @param string $text
+     * @return string wrapped text
      */
     function cdata($text) {
 	return '<![CDATA[' . $text . ']]>';

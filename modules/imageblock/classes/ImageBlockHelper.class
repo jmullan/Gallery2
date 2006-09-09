@@ -31,8 +31,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Load image block data into template.
      *
-     * @param object GalleryTemplate template
-     * @param array (optional) image block parameters (to override module settings)
+     * @param object GalleryTemplate $template
+     * @param array $params (optional) image block parameters (to override module settings)
      * @return GalleryStatus a status code
      */
     function loadImageBlocks(&$template, $params) {
@@ -439,11 +439,11 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Fetch item data for use in image block
      *
-     * @param string the item type
-     * @param string the order type (random, recent, viewed, daily, weekly, monthly)
-     * @param int how many items to select
-     * @param int limit item selection to descendents of this item (optional)
-     * @param int user id for permissions check (optional; defaults to current user)
+     * @param string $itemType
+     * @param string $order the order type (random, recent, viewed, daily, weekly, monthly)
+     * @param int $count how many items to select
+     * @param int $parentId limit item selection to descendents of this item (optional)
+     * @param int $userId user id for permissions check (optional; defaults to current user)
      * @return array GalleryStatus a status code
      *               array of arrays containing id, viewCount of items (empty array if none found)
      */
@@ -539,7 +539,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Build the 'ORDER BY' section of the fetchViewableData query
      *
-     * @param string the order type (random, recent, viewed)
+     * @param string $order the order type (random, recent, viewed)
      * @return array GalleryStatus a status code
      *               string containing SQL ORDER BY statement
      */
@@ -604,7 +604,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
     /**
      * Cache viewable data for user
-     * @param int user id
+     * @param int $userId
      * @return object GalleryStatus a status code
      */
     function cacheViewableTree($userId) {
@@ -784,10 +784,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Set the disabled flag for an album
      *
-     * @param object GalleryAlbumItem AlbumItem which is to be flagged
-     * @param boolean whether to set the disabledFlag recursively to all subalbums
-     * @param whether to set the disabledFlag to true or to false
-     * @param (optional) whether to use a progressbar during update (default=false)
+     * @param object GalleryAlbumItem $parentAlbum AlbumItem which is to be flagged
+     * @param boolean $recursive whether to set the disabledFlag recursively to all subalbums
+     * @param boolean $disabled whether to set the disabledFlag to true or to false
+     * @param boolean $useProgressBar (optional) use a progressbar during update? (default=false)
      * @return object GalleryStatus a status code
      */
     function setDisabledFlag($parentAlbum, $recursive, $disabled, $useProgressBar=false) {
@@ -880,7 +880,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Get the disabled flag for an item
      *
-     * @param integer entityId of a GalleryItem for which the flag is to be retrieved
+     * @param int $itemId entityId of a GalleryItem for which the flag is to be retrieved
      * @return array object GalleryStatus a status code
      *               boolean disabledFlag for the GalleryDataItem
      */

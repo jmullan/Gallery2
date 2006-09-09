@@ -123,13 +123,13 @@ class GalleryChildEntityHelper_simple {
     /**
      * Helper function for getting child ids
      *
-     * @param object GalleryItem an item
-     * @param int an offset into the child item list (null for no offset)
-     * @param int a count of how many child items to return (null for unlimited)
-     * @param string a class to restrict children to (eg 'GalleryAlbumItem')
-     * @param string a required permission (can be null)
-     * @param boolean whether to restrict to linkable items only
-     * @param int the userid we're doing this for (defaults to active user id)
+     * @param object GalleryItem $item
+     * @param int $offset an offset into the child item list (null for no offset)
+     * @param int $count a count of how many child items to return (null for unlimited)
+     * @param string $class a class to restrict children to (eg. 'GalleryAlbumItem')
+     * @param string $requiredPermission a required permission (can be null)
+     * @param boolean $linkableOnly whether to restrict to linkable items only
+     * @param int $userId the userid we're doing this for (defaults to active user id)
      * @return array object GalleryStatus a status code
      *               array of item ids
      * @access private
@@ -282,11 +282,11 @@ class GalleryChildEntityHelper_simple {
     /**
      * Helper function for getting descendent ids.
      *
-     * @param object GalleryItem an item
-     * @param int an offset into the child item list (null for no offset)
-     * @param int a count of how many child items to return (null for unlimited)
-     * @param string a class to restrict children to (eg 'GalleryAlbumItem')
-     * @param string a required permission (defaults to 'core.view')
+     * @param object GalleryItem $item
+     * @param int $offset an offset into the child item list (null for no offset)
+     * @param int $count a count of how many child items to return (null for unlimited)
+     * @param string $class a class to restrict children to (eg. 'GalleryAlbumItem')
+     * @param string $requiredPermission a required permission (defaults to 'core.view')
      * @return array object GalleryStatus a status code
      *               array of ids
      * @access private
@@ -403,8 +403,8 @@ class GalleryChildEntityHelper_simple {
      * be included too, the calling function has to decide that (using
      * GalleryStorage::extractClasses())
      *
-     * @param string orderBy (null/empty to use site default for both parameters)
-     * @param string orderDirection
+     * @param string $orderBy orderBy (null/empty to use site default for both parameters)
+     * @param string $orderDirection orderDirection
      * @return array object GalleryStatus a status code
      *               string order by clause, string select clause,
      *               string a row matching condition,

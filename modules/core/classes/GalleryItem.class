@@ -160,9 +160,8 @@ class GalleryItem extends GalleryFileSystemEntity {
      * Create a new instance of this GalleryEntity in the persistent store.
      * Let the parent do its work, then add any initialization specific to this class.
      *
-     * @param int the id of the GalleryEntity parent of this object
-     * @param string the path component of this new object
-     * @param int the id of the parent object
+     * @param int $parentId the id of the GalleryEntity parent of this object
+     * @param string $path the path component of this new object
      * @return object GalleryStatus a status code
      */
     function create($parentId, $path) {
@@ -212,7 +211,6 @@ class GalleryItem extends GalleryFileSystemEntity {
      * Create a root level instance of this GalleryEntity in the persistent store.
      * Let the parent do its work, then add any initialization specific to this class.
      *
-     * @param string the path component of this new object
      * @return object GalleryStatus a status code
      */
     function createRoot() {
@@ -348,7 +346,7 @@ class GalleryItem extends GalleryFileSystemEntity {
     /**
      * Move item to a new parent
      *
-     * @param int the id of the new parent GalleryItem
+     * @param int $newParentId the id of the new parent GalleryItem
      * @return object GalleryStatus a status code
      */
     function move($newParentId) {

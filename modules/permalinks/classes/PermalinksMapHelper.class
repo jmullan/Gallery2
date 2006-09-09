@@ -31,7 +31,7 @@ class PermalinksMapHelper {
     /**
      * Return the aliases defined for a given item
      *
-     * @param int item id or null for all aliases
+     * @param int $itemId (optional) item id or null for all aliases
      * @return array object GalleryStatus a status code
      *         array of aliase names
      */
@@ -53,7 +53,7 @@ class PermalinksMapHelper {
     /**
      * Return the item id the alias name refers to, if any
      *
-     * @param string alias name
+     * @param string $aliasName
      * @return array object GalleryStatus a status code
      *               int item id
      */
@@ -75,8 +75,8 @@ class PermalinksMapHelper {
     /**
      * Create an alias
      *
-     * @param string alias name
-     * @param    int item Id
+     * @param string $aliasName
+     * @param    int $itemId
      * @return object GalleryStatus a status code
      */
     function createAlias($aliasName, $itemId) {
@@ -103,7 +103,7 @@ class PermalinksMapHelper {
     /**
      * Delete an alias
      *
-     * @param int alias name
+     * @param int $aliasName
      * @return object GalleryStatus a status code
      */
     function deleteAlias($aliasName) {

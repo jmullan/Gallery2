@@ -270,13 +270,13 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
     /*
      * Drive the test environment into a specific test case
      *
-     * @param array ('baseUri' => string, 'g2Uri' => string, 'embedSessionString' => string,
+     * @param array $env ('baseUri' => string, 'g2Uri' => string, 'embedSessionString' => string,
      *               'cookiePath' => string (affects embedded session), 'error' => 1 (default 0)
      *               'galleryBaseUrl' => string (multisite Gallery codebase), 'G2_EMBED' => boolean,
      *               [various $_SERVER vars] => string, 'isNotUsingCookies' => 1 (default = false)
-     * @param array (string exptectedUrl, string exptectedUrl2, ..)
-     * @param array (array (generateUrl() params), array(generateUrl() params for URL2, ..) )
-     * @param array (generateUrl options)
+     * @param array $expectedUrl (string exptectedUrl, string exptectedUrl2, ..)
+     * @param array $params (array(generateUrl params), array(generateUrl params for URL2, ..) )
+     * @param array $options (generateUrl options)
      * @return object GalleryStatus
      */
     function _runGenerateUrlTest($env, $expectedUrl, $params=null, $options=null) {

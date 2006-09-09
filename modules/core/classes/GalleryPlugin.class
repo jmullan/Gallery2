@@ -109,7 +109,7 @@ class GalleryPlugin {
      * The i18n() method does nothing, but feeding translators with that new string.
      * This method does the runtime job, thanks to GNU gettext.
      *
-     * @param mixed a single string, or an array of parameters
+     * @param mixed $params a single string, or an array of parameters
      * @return string the localized value
      * @see Gallery::i18n
      */
@@ -135,8 +135,8 @@ class GalleryPlugin {
     /**
      * Activate this plugin
      *
-     * @param boolean should we post an activation event?  Normally true, but the
-     *             upgrader may choose to suppress this event so that it can
+     * @param boolean $postActivationEvent should we post an activation event?  Normally true,
+     *             but the upgrader may choose to suppress this event so that it can
      *             reactivate a module without causing a ripple effect.
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
@@ -210,8 +210,8 @@ class GalleryPlugin {
      * Modules and themes can be forcibly deactivated during the upgrade process and it's
      * important that this doesn't leave the app in a broken state.
      *
-     * @param bool should we post a deactivation event?  Normally true, but the
-     *             upgrader may choose to suppress this event so that it can
+     * @param bool $postDeactivationEvent should we post a deactivation event?  Normally true,
+     *             but the upgrader may choose to suppress this event so that it can
      *             reactivate a module without causing a ripple effect.
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
@@ -404,8 +404,8 @@ class GalleryPlugin {
     /**
      * Convenience method to get a plugin parameter
      *
-     * @param string the parameter name
-     * @param int the (optional) item id
+     * @param string $parameterName
+     * @param int $itemId (optional)
      * @return array object GalleryStatus a status code
      *               mixed value
      */
@@ -422,9 +422,9 @@ class GalleryPlugin {
     /**
      * Convenience method to set a plugin parameter
      *
-     * @param string the parameter name
-     * @param string the value
-     * @param int the (optional) item id
+     * @param string $parameterName
+     * @param string $parameterValue
+     * @param int $itemId (optional)
      * @return object GalleryStatus a status code
      */
     function setParameter($parameterName, $parameterValue, $itemId=0) {
@@ -440,8 +440,8 @@ class GalleryPlugin {
     /**
      * Convenience method to remove a plugin parameter
      *
-     * @param string the parameter name
-     * @param int the (optional) item id
+     * @param string $parameterName
+     * @param int $itemId (optional)
      * @return object GalleryStatus a status code
      */
     function removeParameter($parameterName, $itemId=0) {
@@ -459,7 +459,7 @@ class GalleryPlugin {
      * a mixture of global parameters and item specific parameters, where the
      * item specific ones ones override the global ones.
      *
-     * @param int optional itemId
+     * @param int $itemId (optional)
      * @return array object GalleryStatus a status code
      *               array parameters in key => value form
      */
@@ -493,7 +493,7 @@ class GalleryPlugin {
      * 2. Move or massage data as required by the upgrade
      *
      * This method will be called with a null version on an initial install.
-     * @param string the current version (null if this is an initial install)
+     * @param string $currentVersion the current version (null if this is an initial install)
      * @return object GalleryStatus a status code
      * @access protected
      */

@@ -73,7 +73,7 @@ class SizeLimitModule extends GalleryModule {
      * Event handler for GalleryEntity::save event
      * Copy dimension / filesize limits when the album is created
      *
-     * @param object GalleryEvent the event
+     * @param object GalleryEvent $event
      * @return object GalleryStatus a status code
      */
     function handleEvent($event) {

@@ -31,7 +31,7 @@ class MultiLangHelper {
     /**
      * Get language data for an item
      *
-     * @param int item id
+     * @param int $itemId
      * @return array object GalleryStatus a status code
      *               array (language => array data, ..)
      */
@@ -54,11 +54,11 @@ class MultiLangHelper {
     /**
      * Set language data for an item, or remove data if all text parameters are empty
      *
-     * @param object GalleryItem item
-     * @param string language
-     * @param string (optional) title
-     * @param string (optional) summary
-     * @param string (optional) description
+     * @param object GalleryItem $item
+     * @param string $language
+     * @param string $title (optional)
+     * @param string $summary (optional)
+     * @param string $description (optional)
      * @return object GalleryStatus a status code
      */
     function setItemData($item, $language, $title=null, $summary=null, $description=null) {
@@ -149,7 +149,7 @@ class MultiLangHelper {
     /**
      * Update item with data for the current language, if available
      *
-     * @param GalleryItem item
+     * @param object GalleryItem $item
      * @return object GalleryStatus a status code
      */
     function onLoad(&$item) {

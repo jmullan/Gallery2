@@ -140,8 +140,8 @@ class KeywordAlbumView extends GalleryView {
 
     /**
      * Dynamic query for items
-     * @param int user id
-     * @param (optional) keyword for query; get from request if not specified
+     * @param int $userId
+     * @param string $keyword (optional) keyword for query; get from request if not specified
      * @return array object GalleryStatus a status code
      *               array of item ids
      * @static

@@ -53,7 +53,7 @@ class GalleryEmbed {
     /**
      * Return whether the supplied Embedding API version is compatible or not
      *
-     * @param array int major, int minor
+     * @param array $apiVersion int major, int minor
      * @return boolean
      */
     function isCompatibleWithEmbedApi($apiVersion) {
@@ -64,7 +64,7 @@ class GalleryEmbed {
      * Initialize Gallery; must be called before most GalleryEmbed methods can be used.
      * This method should only be called once during the lifetime of the request.
      *
-     * @param array (optional--required before calling handleRequest) (
+     * @param array $initParams (optional--required before calling handleRequest) (
      *   'embedUri' => URI to access G2 via CMS application
      *                 (example: /portal/index.php?module=gallery2)
      *   'g2Uri'    =  URL path to G2
@@ -185,7 +185,8 @@ class GalleryEmbed {
      * Ensure G2 session has same active user as CMS session.
      * No need to call directly if activeUserId is passed to init().
      *
-     * @param string external user id of active user (null or empty for anonymous/guest user)
+     * @param string $activeUserId external user id of active user
+     *               (null or empty for anonymous/guest user)
      * @return object GalleryStatus a status object
      * @access private
      */
@@ -232,7 +233,7 @@ class GalleryEmbed {
      * This method is not usually needed (passing activeUserId to init() or calling
      * checkActiveUser will login the user as needed); this method included for completeness.
      *
-     * @param string external user id
+     * @param string $extUserId external user id
      * @return object GalleryStatus a status object
      */
     function login($extUserId) {
@@ -257,7 +258,7 @@ class GalleryEmbed {
      *
      * Specify embedUri (the same embedUri as the one from ::init())
      *
-     * @param array ('embedUri' => string the embedUri (e.g. /cms/index.php))
+     * @param array $params ('embedUri' => string the embedUri (e.g. /cms/index.php))
      * @return object GalleryStatus a status object
      */
     function logout($params=array()) {
@@ -320,8 +321,8 @@ class GalleryEmbed {
     /**
      * Create a G2 user.
      *
-     * @param string external user id
-     * @param array user data (username required; others optional)
+     * @param string $extUserId external user id
+     * @param array $args user data (username required; others optional)
      *              ['username' => string, 'email' => string, 'fullname' => string,
      *               'language' => string, 'password' => string,
      *               'hashedpassword' => string, 'hashmethod' => string,
@@ -362,8 +363,8 @@ class GalleryEmbed {
     /**
      * Update a G2 user.
      *
-     * @param string external user id
-     * @param array user data
+     * @param string $extUserId external user id
+     * @param array $args user data
      *              ['username' => string, 'email' => string, 'fullname' => string,
      *               'language' => string, 'password' => string,
      *               'hashedpassword' => string, 'hashmethod' => string,
@@ -396,8 +397,8 @@ class GalleryEmbed {
     /**
      * Set values in user object based on given args.
      *
-     * @param object GalleryUser user
-     * @param array additional user data
+     * @param object GalleryUser $user
+     * @param array $args additional user data
      * @access private
      */
     function _setUserData(&$user, $args, $create = false) {
@@ -432,7 +433,7 @@ class GalleryEmbed {
     /**
      * Delete a G2 user.
      *
-     * @param string external user id
+     * @param string $extUserId external user id
      * @return object GalleryStatus a status object
      */
     function deleteUser($extUserId) {
@@ -456,8 +457,8 @@ class GalleryEmbed {
     /**
      * Create a G2 group.
      *
-     * @param string external group id
-     * @param string group name
+     * @param string $extGroupId external group id
+     * @param string $groupName group name
      * @return object GalleryStatus a status object
      */
     function createGroup($extGroupId, $groupName) {
@@ -493,7 +494,7 @@ class GalleryEmbed {
     /**
      * Delete a G2 group.
      *
-     * @param string external group id
+     * @param string $extGroupId external group id
      * @return object GalleryStatus a status object
      */
     function deleteGroup($extGroupId) {
@@ -516,8 +517,8 @@ class GalleryEmbed {
     /**
      * Update a G2 Group.
      *
-     * @param string external group id
-     * @param array group data
+     * @param string $extGroupId external group id
+     * @param array $args group data
      *              ['groupname' => string]
      * @return object GalleryStatus a status object
      */
@@ -549,8 +550,8 @@ class GalleryEmbed {
     /**
      * Add a user to a G2 group.
      *
-     * @param string external user id
-     * @param string external group id
+     * @param string $extUserId external user id
+     * @param string $extGroupId external group id
      * @return object GalleryStatus a status object
      */
     function addUserToGroup($extUserId, $extGroupId) {
@@ -580,8 +581,8 @@ class GalleryEmbed {
     /**
      * Remove a user from a G2 group.
      *
-     * @param string external user id
-     * @param string external group id
+     * @param string $extUserId external user id
+     * @param string $extGroupId external group id
      * @return object GalleryStatus a status object
      */
     function removeUserFromGroup($extUserId, $extGroupId) {
@@ -603,8 +604,9 @@ class GalleryEmbed {
     /**
      * Perform a search across all available searchable modules.
      *
-     * @param string search criteria
-     * @param int (optional) max number of results to return from each module, defaults to 3
+     * @param string $searchString search criteria
+     * @param int $resultsPerModule (optional) max number of results to return from each module,
+     *            defaults to 3
      * @return array object GalleryStatus a status object
      *               array of {module_id} => results array plus 'name' key with module name
      * @see GallerySearchInterface_1_0::search for contents of results arrays
@@ -660,10 +662,10 @@ class GalleryEmbed {
     /**
      * Search specific module.
      *
-     * @param string search criteria
-     * @param string id of module to search
-     * @param int start index
-     * @param int number of results to retrieve
+     * @param string $searchString search criteria
+     * @param string $moduleId id of module to search
+     * @param int $offset start index
+     * @param int $count number of results to retrieve
      * @return array object GalleryStatus a status object
      *               results array plus 'name' key with module name
      * @see GallerySearchInterface_1_0::search for contents of results array
@@ -711,7 +713,7 @@ class GalleryEmbed {
     /**
      * Parse html (headHtml) for css links, javascript and page title
      *
-     * @param string headHtml
+     * @param string $headhtml
      * @return array(string title, array (string css1, string css2, ...),
      *               array (string javascript1, string javascript2, ...))
      */
@@ -748,7 +750,7 @@ class GalleryEmbed {
     /**
      * Get HTML for an image block
      *
-     * @param array ('blocks' => string, 'show' => string, (optional)'heading' => int,
+     * @param array $params ('blocks' => string, 'show' => string, (optional)'heading' => int,
      *                (optional)'itemId' => int, (optional)'maxSize' => int,
      *                (optional)'itemFrame' => frameId, (optional)'albumFrame' => frameId)
      * 'blocks' is a pipe (|) separated list, of one or more possible blocks which are:
@@ -830,9 +832,9 @@ class GalleryEmbed {
      * Add an externalId<->entityId map entry for existing G2/emApp users/groups
      * example: GalleryEmbed::addExternalIdMapEntry($uid, $g2user->getId(), 'GalleryUser');
      *
-     * @param integer/string the user/group id in the embedded application
-     * @param integer the entityId of the user/group in G2
-     * @param string either 'GalleryUser' for a user mapping, 'GalleryGroup' for a group mapping
+     * @param string $externalId the user/group id in the embedded application
+     * @param int $entityId the entityId of the user/group in G2
+     * @param string $entityType 'GalleryUser' for user mapping, 'GalleryGroup' for group mapping
      * @return object GalleryStatus
      */
     function addExternalIdMapEntry($externalId, $entityId, $entityType) {
@@ -851,7 +853,7 @@ class GalleryEmbed {
      * Get the complete externalId<->entityId map (for users and groups),
      * the return array is organized by externalId or by entityId
      *
-     * @param string 'externalId' or 'entityId', array is organized by this key
+     * @param string $key 'externalId' or 'entityId', array is organized by this key
      * @return array object GalleryStatus
      *               array(externalId|entityId => array(externalId => int/string,
      *                                                  entityId => int, entityType => string))
@@ -886,8 +888,8 @@ class GalleryEmbed {
      * ERROR_MISSING_OBJECT -> externalId is not mapped to a G2 entity.
      * other error codes -> unexpected behavior / bug.
      *
-     * @param integer/string the user/group id in the embedded application
-     * @param string either 'GalleryUser' for a user mapping, 'GalleryGroup' for a group mapping
+     * @param string $externalId the user/group id in the embedded application
+     * @param string $entityType 'GalleryUser' for user mapping, 'GalleryGroup' for group mapping
      * @return object GalleryStatus
      */
     function isExternalIdMapped($externalId, $entityType) {

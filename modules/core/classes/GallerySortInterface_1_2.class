@@ -47,7 +47,7 @@ class GallerySortInterface_1_2 {
      * Replace "Class" and "Column" with appropriate values, but BASE::ID is literal.
      * This references the base table and id column in the query.
      *
-     * @param string either '' for ascending or ' DESC' for descending
+     * @param string $direction either '' for ascending or ' DESC' for descending
      * @return array object GalleryStatus a status code
      *               string order by clause
      *               string select clause,
@@ -61,7 +61,7 @@ class GallerySortInterface_1_2 {
     /**
      * Get information about available sort orders
      *
-     * @param boolean (optional) false to omit "default sort order" selection
+     * @param boolean $includeDefault (optional) false to omit "default sort order" selection
      * @return array object GalleryStatus a status code
      *               array of orderBy => localized name for sort orders
      *               array of orderBy => localized name for presorts

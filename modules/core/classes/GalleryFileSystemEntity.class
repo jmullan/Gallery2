@@ -60,8 +60,8 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * Create a new instance of this FileSystemEntity in the persistent store.
      * Let the parent do its work, then add any initialization specific to this class.
      *
-     * @param int the id of the parent GalleryChildEntity
-     * @param string the path component of this entity
+     * @param int $parentId the id of the parent GalleryChildEntity
+     * @param string $pathComponent the path component of this entity
      * @return object GalleryStatus a status code
      */
     function create($parentId, $pathComponent) {
@@ -115,10 +115,6 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 
     /**
      * @see GalleryEntity::createLink
-     *
-     * @param int the id of the parent GalleryChildEntity
-     * @param string the path component of this entity
-     * @return object GalleryStatus a status code
      */
     function createLink($entity, $parentId) {
 	$ret = parent::createLink($entity, $parentId);
@@ -141,7 +137,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
     /**
      * Rename this item
      *
-     * @param string the path component
+     * @param string $newPathComponent the path component
      * @return object GalleryStatus a status code
      */
     function rename($newPathComponent) {
@@ -172,7 +168,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
     /**
      * Move item to a new parent
      *
-     * @param int the id of the new parent GalleryItem
+     * @param int $newParentId the id of the new parent GalleryItem
      * @return object GalleryStatus a status code
      * @todo Make sure that 'order' stuff is maintained, so that the moved
      *       items become the last in order in the new album if that album is marked as unordered

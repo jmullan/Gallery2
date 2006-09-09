@@ -34,8 +34,8 @@ class GalleryValidationPlugin {
     /**
      * Perform validation for this request.
      *
-     * @param array the form values
-     * @param array (optional) validation options
+     * @param array $form the form values
+     * @param array $options (optional) validation options
      *        'level' => HIGH or MEDIUM or LOW (defaults to HIGH)
      *        'key' => (string) unique identifier for this validation request (for MEDIUM)
      *        'pass' => (boolean) false to increment failure count (for MEDIUM/LOW)
@@ -50,8 +50,8 @@ class GalleryValidationPlugin {
     /**
      * Prepare template for validation.
      *
-     * @param array the form values
-     * @param array (optional) validation options
+     * @param array $form the form values
+     * @param array $options (optional) validation options
      *        'level' => HIGH or MEDIUM or LOW (defaults to HIGH)
      *        'key' => (string) unique identifier for this validation request (for MEDIUM)
      * @return array object GalleryStatus a status code

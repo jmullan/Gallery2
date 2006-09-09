@@ -198,9 +198,9 @@ class GalleryRepository {
      * APIs, but API versions can be specified, so it is possible to, for example, get a
      * compatibility list based on future API versions.
      *
-     * @param string 'theme' or 'module'
-     * @param boolean show incompatible plugins
-     * @param array core APIs to base compatibility check on
+     * @param string $pluginType
+     * @param boolean $showAllPlugins show incompatible plugins
+     * @param array $coreApis core APIs to base compatibility check on
      *		    'core'/'module'/'theme' => array(versionMajor, versionMinor)
      * @return array object GalleryStatus a status code
      *		     array plugin list
@@ -292,8 +292,8 @@ class GalleryRepository {
      * A plugin list entry is an element of the array returned by getRepositoryPluginList. This
      * is a callback for sorting the plugin list by (group label, plugin name).
      *
-     * @param array first plugin list entry
-     * @param array second plugin list entry
+     * @param array $plugin1 first plugin list entry
+     * @param array $plugin2 second plugin list entry
      * @return boolean see strcmp()
      */
     function comparePluginListEntries($plugin1, $plugin2) {
@@ -363,11 +363,11 @@ class GalleryRepository {
     /**
      * Saves the specified package meta data into the database.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
-     * @param string package name
-     * @param string package version
-     * @param string package build
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param string $packageName
+     * @param string $packageVersion
+     * @param string $packageBuild
      * @return object GalleryStatus a status code
      */
     function updatePackageMetaData($pluginType, $pluginId,
@@ -468,7 +468,7 @@ class GalleryRepository {
     /**
      * Creates a list of URLs that
      *
-     * @param array array(pluginType => array(pluginId => array(packages)))
+     * @param array $pluginData array(pluginType => array(pluginId => array(packages)))
      * @return array object GalleryStatus a status code
      *		     array list of packages with corresponding URLs
      */
@@ -511,8 +511,8 @@ class GalleryRepository {
      * The plugin index files contain IDs of plugins that are in the gallery2/plugins directory.
      * Their paths are gallery2/plugins/index.module and gallery2/plugins/index.theme.
      *
-     * @param string 'module' or 'theme'
-     * @param string plugin ID
+     * @param string $pluginType
+     * @param string $pluginId
      * @return object GalleryStatus a status code
      */
     function updatePluginIndexFile($pluginType, $pluginId) {
@@ -548,7 +548,10 @@ class GalleryRepository {
      * directory. If it is a descriptor, it will be deserialized and returned to the calling
      * function.
      *
-     * @param string URL of the package to download relative to the repository URL
+     * @param string $pluginType
+     * @param string $pluginId
+     * @param string $packageName
+     * @param string $relativePackageUrl URL of the package to download relative to repository URL
      * @return array object GalleryStatus a status code
      *		     array descriptor
      */
@@ -602,8 +605,8 @@ class GalleryRepository {
     /**
      * Verifies the integrity of the specified packages' unpacked files.
      *
-     * @param string name of the package to check
-     * @param array descriptor of the plugin the package belongs to
+     * @param string $packageName name of the package to check
+     * @param array $descriptor descriptor of the plugin the package belongs to
      * @return object GalleryStatus a status code
      */
     function verifyPackageIntegrity($packageName, $descriptor) {

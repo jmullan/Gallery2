@@ -267,8 +267,8 @@ class GalleryTranslator {
     /**
      * Initialize the translator with the specified language code hint
      *
-     * @param string the language code hint (eg. 'en_US' or 'zh_CN')
-     * @param boolean [optional] true if we should not use the database
+     * @param string $languageCode the language code hint (eg. 'en_US' or 'zh_CN')
+     * @param boolean $dontUseDatabase (optional) true if we should not use the database
      * @return array object GalleryStatus a status code
      *               string language code
      */
@@ -300,8 +300,8 @@ class GalleryTranslator {
      * Attempt to set the requested locale.  Try fallbacks and character sets if needed to find a
      * valid locale.
      *
-     * @param mixed category
-     * @param string locale
+     * @param mixed $category
+     * @param string $locale
      * @return string locale selected or boolean false if none
      * @static
      * @access private
@@ -371,8 +371,9 @@ class GalleryTranslator {
     /**
      * Find a supported locale from given string.
      *
-     * @param string the language code hint
-     * @param boolean (optional) if false, return array(null,null) for no match instead of en_US
+     * @param string $languageCode the language code hint
+     * @param boolean $fallback (optional) if false, return array(null,null) for no match
+     *        instead of en_US
      * @return array (string a language code in <language>_<COUNTRY> format,
      *                array data about this language code (description,right-to-left?))
      * @static
@@ -442,8 +443,8 @@ class GalleryTranslator {
      *
      * localized:  'You have 3 oranges' (or 'You have 1 orange')
      *
-     * @param string the domain (eg. pluginType . 's_' . pluginId)
-     * @param mixed a single string, or an array of parameters
+     * @param string $domain the domain (eg. pluginType . 's_' . pluginId)
+     * @param mixed $data a single string, or an array of parameters
      * @return array object GalleryStatus a status code
      *               string the localized value
      */

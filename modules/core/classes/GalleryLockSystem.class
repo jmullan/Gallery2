@@ -57,8 +57,8 @@ class GalleryLockSystem {
     /**
      * Read lock one or more objects
      *
-     * @param array ids to lock, or int single id
-     * @param integer (optional) how many seconds to wait for the lock before giving up
+     * @param mixed $ids array of ids to lock, or single int id
+     * @param int $timeout (optional) how many seconds to wait for the lock before giving up
      * @return array object GalleryStatus a status code
      *               mixed the lock id
      */
@@ -103,8 +103,8 @@ class GalleryLockSystem {
     /**
      * Write lock one or more objects
      *
-     * @param array ids to lock, or int single id
-     * @param integer (optional) how many seconds to wait for the lock before giving up
+     * @param mixed $ids array of ids to lock, or single int id
+     * @param int $timeout (optional) how many seconds to wait for the lock before giving up
      * @return array object GalleryStatus a status code
      *               mixed the lock id
      */
@@ -168,9 +168,9 @@ class GalleryLockSystem {
     /**
      * Extending class must implement this function to actually acquire a lock.
      *
-     * @param array of object ids
-     * @param integer how many seconds to wait for the lock before giving up
-     * @param lockType LOCK_READ or LOCK_WRITE
+     * @param array $ids of object ids
+     * @param int $timeout how many seconds to wait for the lock before giving up
+     * @param int $lockType LOCK_READ or LOCK_WRITE
      * @return array object GalleryStatus a status code
      *               int the lock id
      * @access protected
@@ -183,7 +183,7 @@ class GalleryLockSystem {
     /**
      * Return true if the given id is read locked or write locked
      *
-     * @param int an object id
+     * @param int $id an object id
      * @return boolean true if the object is read locked
      */
     function isReadLocked($id) {
@@ -199,7 +199,7 @@ class GalleryLockSystem {
     /**
      * Return true if the given id is write locked
      *
-     * @param int an object id
+     * @param int $id an object id
      * @return boolean true if the object is write locked
      */
     function isWriteLocked($id) {
@@ -217,7 +217,7 @@ class GalleryLockSystem {
      * (queue the specified locks for later release on transactional databases or release them
      *  immediately if transactions are not supported)
      *
-     * @param array a list of lock ids, or a single lock id
+     * @param mixed $lockIds array of lock ids, or a single lock id
      * @return object GalleryStatus a status code
      */
     function releaseLocks($lockIds) {
@@ -269,7 +269,7 @@ class GalleryLockSystem {
     /**
      * Release the given locks now
      *
-     * @param array of lockId => lock
+     * @param array $locks of lockId => lock
      * @return object GalleryStatus a status code
      * @access protected
      * @abstract
@@ -281,8 +281,8 @@ class GalleryLockSystem {
     /**
      * Remove some object ids from the given lock.
      *
-     * @param array lock
-     * @param array ids to remove
+     * @param array $lock
+     * @param array $ids ids to remove
      * @return object GalleryStatus a status code
      * @access protected
      * @abstract
@@ -295,8 +295,8 @@ class GalleryLockSystem {
      * Move ids from givens locks into a new lock.
      * Remove any locks that now have no objects remaining.
      *
-     * @param array of (lockId => array of ids)
-     * @param lockId move ids into this lock
+     * @param array $relock of (lockId => array of ids)
+     * @param int $newLockId move ids into this lock
      * @return object GalleryStatus a status code
      * @access protected
      */
@@ -343,7 +343,7 @@ class GalleryLockSystem {
     /**
      * Refresh all the locks that we hold so that they aren't accidentally considered expired
      *
-     * @param int the new "fresh until" timestamp
+     * @param int $freshUntil the new "fresh until" timestamp
      * @return object GalleryStatus a status code
      * @abstract
      */

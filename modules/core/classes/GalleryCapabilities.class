@@ -35,7 +35,7 @@ class GalleryCapabilities {
     /**
      * Get a configuration value.
      *
-     * @param string key name
+     * @param string $key
      * @return string the configuration value or null if not found
      */
     function get($key) {
@@ -46,7 +46,7 @@ class GalleryCapabilities {
     /**
      * Get a boolean configuration flag.
      *
-     * @param string key name
+     * @param string $key
      * @return boolean the configuration value or null if not found
      */
     function can($key) {
@@ -57,8 +57,8 @@ class GalleryCapabilities {
     /**
      * Set a configuration value.
      *
-     * @param string key name
-     * @param mixed value (null to remove the value)
+     * @param string $key
+     * @param mixed $value (null to remove the value)
      */
     function set($key, $value) {
 	global $gallery;
