@@ -187,6 +187,11 @@
     </tr>
     {/foreach}
   </table>
+  <input type="hidden" name="{g->formVar var="page"}" value="{$ItemMove.page}"/>
+  <input type="hidden" name="{g->formVar var="form[numPerPage]"}" value="{$ItemMove.numPerPage}"/>
+  {foreach from=$ItemMove.selectedIds item=selectedId}
+    <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>
+  {/foreach}
 
   <input type="button" class="inputTypeButton" onclick="setCheck(1)"
    name="{g->formVar var="form[action][checkall]"}" value="{g->text text="Check All"}"/>
@@ -236,12 +241,6 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="hidden" name="{g->formVar var="page"}" value="{$ItemMove.page}"/>
-  <input type="hidden" name="{g->formVar var="form[numPerPage]"}" value="{$ItemMove.numPerPage}"/>
-  {foreach from=$ItemMove.selectedIds item=selectedId}
-    <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>
-  {/foreach}
-
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][move]"}" value="{g->text text="Move"}"/>
   {if $ItemMove.canCancel}
