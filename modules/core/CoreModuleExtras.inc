@@ -2235,8 +2235,6 @@ $gallery->setConfig(\'galleryBaseUrl\', \'\');
 
 	    /* Generate cookieId */
 	    list ($usec, $sec) = explode(" ", microtime());
-	    /* Note: srand() is required for php versions < 4.2  */
-	    srand(100000 * ((float)$usec + (float)$sec));
 	    $cookieId = substr(md5(rand()), 0, 6);
 
 	    $add[] =
