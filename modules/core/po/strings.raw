@@ -230,7 +230,7 @@ gettext("Performance")
 gettext("Toolkit Priority") /* also in: templates/AdminToolkitPriority.tpl */
 gettext("Graphics Toolkits")
 gettext("Defaults") /* also in: templates/AdminThemes.tpl */
-gettext("Account Settings") /* also in: templates/UserPreferences.tpl */
+gettext("Account Settings") /* also in: templates/UserLocked.tpl templates/UserPreferences.tpl */
 gettext("Change Password") /* also in: templates/UserChangePassword.tpl templates/UserRecoverPasswordConfirm.tpl */
 gettext("Edit %s") /* also in: templates/ItemEdit.tpl test/phpunit/CoreModuleTest.class */
 gettext("Delete %s") /* also in: templates/ItemDeleteSingle.tpl test/phpunit/CoreModuleTest.class */
@@ -479,7 +479,7 @@ gettext("(required)") /* also in: templates/AdminCreateUser.tpl templates/AdminE
 gettext("You must enter a group name") /* also in: templates/AdminEditGroup.tpl templates/AdminGroups.tpl templates/ItemPermissions.tpl */
 gettext("Group '%s' already exists") /* also in: templates/AdminEditGroup.tpl */
 gettext("Create Group") /* also in: templates/AdminGroups.tpl */
-gettext("Cancel") /* also in: templates/AdminCreateUser.tpl templates/AdminDeleteGroup.tpl templates/AdminDeleteUser.tpl templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminModulesVerifyUninstall.tpl templates/AdminRepositoryDownload.tpl templates/ItemDelete.tpl templates/ItemEditCaptions.tpl templates/ItemMakeHighlight.tpl templates/ItemMove.tpl templates/ItemMoveSingle.tpl templates/ItemReorder.tpl templates/UserChangePassword.tpl templates/UserLogin.tpl templates/UserPreferences.tpl templates/UserRecoverPassword.tpl templates/UserRecoverPasswordAdmin.tpl templates/UserRecoverPasswordConfirm.tpl */
+gettext("Cancel") /* also in: templates/AdminCreateUser.tpl templates/AdminDeleteGroup.tpl templates/AdminDeleteUser.tpl templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminRepositoryDownload.tpl templates/ItemDelete.tpl templates/ItemEditCaptions.tpl templates/ItemMakeHighlight.tpl templates/ItemMove.tpl templates/ItemMoveSingle.tpl templates/ItemReorder.tpl templates/UserChangePassword.tpl templates/UserLogin.tpl templates/UserPreferences.tpl templates/UserRecoverPassword.tpl templates/UserRecoverPasswordAdmin.tpl templates/UserRecoverPasswordConfirm.tpl */
 
 /* templates/AdminCreateUser.tpl */
 gettext("Create A New User")
@@ -546,6 +546,8 @@ gettext("That username is already in use")
 gettext("You must enter a new username")
 gettext("E-mail Address") /* also in: templates/UserPreferences.tpl */
 gettext("(suggested)")
+gettext("Lock Account")
+gettext("Locked users are unable to edit their own account information. (Password, Name, Email, etc.)")
 
 /* templates/AdminGroups.tpl */
 gettext("Group Management")
@@ -579,12 +581,6 @@ gettext("Failed")
 gettext("run now")
 gettext("Last Run Details:")
 
-/* templates/AdminModulesVerifyUninstall.tpl */
-gettext("Confirm module uninstall")
-gettext("Do you really want to uninstall the %s module?")
-gettext("This will also remove any permissions and clean up any data created by this module.")
-gettext("Uninstall")
-
 /* templates/AdminPerformance.tpl */
 gettext("Performance Tuning")
 gettext("Updated performance settings successfully")
@@ -615,6 +611,11 @@ gettext("Status: Upgrade Required (Inactive)")
 gettext("Status: Incompatible Plugin (Inactive)")
 gettext("Status: Inactive (Configuration Required)")
 gettext("__PLUGIN__ needs configuration")
+gettext("Warning!")
+gettext("Do you really want to uninstall __PLUGIN__?")
+gettext("This will also remove any permissions and clean up any data created by this module.")
+gettext("Yes")
+gettext("No")
 gettext("Gallery Plugins")
 gettext("Gallery features come as separate plugins.  You can download and install plugins to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it.")
 gettext("up to date")
@@ -1014,6 +1015,8 @@ gettext("list")
 gettext("bullet")
 gettext("url")
 gettext("image")
+gettext("color")
+gettext("You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s")
 
 /* templates/ShowItemError.tpl */
 gettext("Configuration Error: Missing Theme")
@@ -1042,6 +1045,10 @@ gettext("New Password") /* also in: templates/UserRecoverPasswordAdmin.tpl templ
 gettext("You must enter a new password") /* also in: templates/UserRecoverPasswordAdmin.tpl templates/UserRecoverPasswordConfirm.tpl */
 gettext("Verify New Password") /* also in: templates/UserRecoverPasswordAdmin.tpl templates/UserRecoverPasswordConfirm.tpl */
 gettext("You must enter your new password again!")
+
+/* templates/UserLocked.tpl */
+gettext("This account is not allowed to modify account settings.  Please contact your Gallery administrator")
+gettext("Your administrator has locked this account, preventing changes from being made to the account information.")
 
 /* templates/UserLogin.tpl */
 gettext("Login to your account")

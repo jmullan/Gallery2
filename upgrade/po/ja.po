@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-17 02:34+0900\n"
-"PO-Revision-Date: 2006-04-22 23:45+0900\n"
+"PO-Revision-Date: 2006-08-27 22:49+0900\n"
 "Last-Translator: Yosuke Suzuki\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -47,13 +47,13 @@ msgid "Empty Cache"
 msgstr "キャッシュを空に"
 
 msgid "Unable to clear the page cache"
-msgstr "ページのキャッシュをクリアできません"
+msgstr "ページキャッシュをクリアできません"
 
 msgid "Unable to commit database transaction"
 msgstr "データベーストランザクションをコミットできません"
 
 msgid "Finish Upgrade"
-msgstr "アップグレード完了"
+msgstr "アップグレードを完了"
 
 msgid "System Checks"
 msgstr "システムチェック"
@@ -102,15 +102,15 @@ msgid "Safe Mode"
 msgstr "セーフモード"
 
 msgid "Regular expressions"
-msgstr "標準的な表現"
+msgstr ""
 
 #, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
-"エラー:あなたの使用しているPHPは、%sPerl Compatible Regular Expressions%s をサポートしない設"
-"定になっています。Galleryを使う前にこれらを有効にしてください"
+"エラー:あなたの使用しているPHPは、%sPerl互換の正規表現%sが組み込まれていません。Galleryが実行"
+"する前にこれらの機能を有効にしてください"
 
 msgid "exec() allowed"
 msgstr "exec() 許可"
@@ -194,7 +194,7 @@ msgstr ""
 "げてください"
 
 msgid "Translation support"
-msgstr "翻訳サポート"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -202,25 +202,18 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
-"あなたのウェブサーバーはローカライゼーションをサポートしていません。追加的な言語のサポートを"
-"可能にするには、%sgettext%s オプションを有効にしてPHPを再設定するようにシステム管理者に連絡し"
-"てください。"
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
-"あなたの利用しているPHPには %sbind_textdomain_codeset%s がありません。これはつまり、Galleryが"
-"拡張的な文字を誤表示する可能性があります。"
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
-"あなたの利用しているPHPには %sdngettext%s の機能がありません。Galleryは複数形の形式を扱うこと"
-"ができません。"
 
 msgid "Zend compatibility mode"
 msgstr "Zend 互換モード"
@@ -245,12 +238,12 @@ msgid ""
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
-"警告:  putenv() 機能はphp.iniファイルの<b>disabled_functions</b> パラメータによって無効にされ"
-"ています。Galleryはこの設定でも機能しますが、まれにシステム言語か英語以外の言語では動作しない"
-"場合があるかもしれません。"
+"警告: putenv() 機能はphp.iniファイルの<b>disabled_functions</b> パラメータによって無効にされ"
+"ています。Galleryはこの設定でも機能しますが、一部まれに英語以外の言語で動作しない場合がありま"
+"す。"
 
 msgid "Output buffering disabled"
-msgstr "出力バッファーが無効です"
+msgstr "出力バッファーが無効"
 
 #, c-format
 msgid ""
@@ -260,10 +253,10 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
-"警告：出力バッファーは、php.iniの <b>%s</b>パラメータによって有効になっています。Galleryはこ"
-"の設定でも機能します。ダウンロードは速くなるでしょう。しかし、大きなファイルを受け取ることが"
-"できず、メモリーの限界に達する可能性があるかもしれません。そしてプロセスバーのようないくつか"
-"の特長も、うまく動かないかもしれません。"
+"警告:　出力バッファーはphp.iniファイルの<b>%s</b>パラメーターで有効にできます。Galleryはこの"
+"設定でも動作しますが（ファイルのダウンロードはより高速）、メモリーの限界で大きなサイズのファ"
+"イル（動画など）を扱えないかもしれません。進行状況を示すプログレスバーのような機能も正しく動"
+"作しないかもしれません。"
 
 msgid "Storage Directory Permissions"
 msgstr "ストレージディレクトリのパーミッション"
@@ -294,7 +287,7 @@ msgid "Upgrade Plugins"
 msgstr "アップグレードの状況"
 
 msgid "Unable to initialize Gallery session"
-msgstr "Gallery のセッションを初期化できません"
+msgstr ""
 
 #, c-format
 msgid "Unable to load the %s module"
@@ -372,7 +365,7 @@ msgid "Authentication successful!"
 msgstr "認証に成功しました"
 
 msgid "Successfully cleaned caches."
-msgstr "キャッシュの削除が完了しました"
+msgstr "キャッシュ削除が完了しました"
 
 msgid "Delete Caches"
 msgstr "キャッシュを削除する"
@@ -482,15 +475,15 @@ msgstr ""
 msgid "Old files (%d)"
 msgstr "古いファイル (%d)"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
 "a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
 "you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 "これらのファイルはもはや Gallery の一部ではありません。特に何の問題も引き起こさないと思います"
-"が、インストールをクリーンな状態に保つには削除した方が良いです。Galleryはそのファイルを削除す"
-"ることができませんが、 %s をダウンロードしてgallery2 のディレクトリで実行すると削除できます。"
+"が、インストールをクリーンな状態に保つには削除した方が良いです。Galleryにはこれらのファイルを"
+"削除する機能はありませんが、%s をダウンロードして実行すれば削除してくれます。"
 
 msgid "this script"
 msgstr "このスクリプト"
@@ -573,6 +566,10 @@ msgstr ""
 msgid "Currently installed"
 msgstr "現在インストールされているもの"
 
+#, c-format
+msgid "Core Module version: %s (Gallery %s)"
+msgstr ""
+
 msgid "New version"
 msgstr "新しいバージョン"
 
@@ -630,7 +627,7 @@ msgstr ""
 "レードプロセスがうまく行かない可能性があります"
 
 msgid "Begin Upgrade"
-msgstr "アップグレード開始"
+msgstr "アップグレードを開始する"
 
 msgid "Recheck config.php"
 msgstr "config.php を再チェック"
@@ -712,7 +709,7 @@ msgstr "%s テーマのアップグレードに成功"
 msgid "Upgrade More Modules"
 msgstr "さらに別のモジュールをアップグレード"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these steps "
 "and provide assistance along the way if additional steps are required. Please read the %"
@@ -727,18 +724,15 @@ msgid ""
 "visitors a message that the site is temporarily offline, rather than showing everybody this "
 "upgrade page. Edit your config.php file to activate maintenance mode."
 msgstr ""
-"もしあなたのサイトが頻繁に利用されるのであれば、Galleryをメンテナンスモードにしましょう。この"
-"状態では、サイトが一時的にオフラインになっているメッセージを見せます。アップグレードのページ"
-"を見せません。メンテナンスモードを有効にするには config.php を編集してください。"
+"あなたのサイトが、頻繁に利用されるサイトならば、Galleryをメンテナンスモードにしてください。こ"
+"れは利用者に、このアップグレードのページを見せるのではなく、一時的にサイトがオフラインになっ"
+"ていることを伝えるものです。メンテナンスモードを有効にするにはconfig.phpを編集してください"
 
 msgid "Select Language:"
 msgstr "言語選択:"
 
 msgid "Go"
 msgstr "進む"
-
-#~ msgid "Unable to verify plugins"
-#~ msgstr "このプラグインが正常なことを確認できません"
 
 #~ msgid "Upgrade Modules"
 #~ msgstr "モジュールをアップグレード"
@@ -754,15 +748,14 @@ msgstr "進む"
 #~ "downloaded a smaller distribution of Gallery than what you originally installed.  You can "
 #~ "download a larger distribution from %s."
 #~ msgstr ""
-#~ "いくつかのアクティブなモジュール／テーマが矛盾しているか、見つからないため、アップグレード"
-#~ "を始めることができません。これらのモジュールもしくはテーマのより新しいバージョンに置き換え"
-#~ "るか、もともとのGalleryのバージョンに戻してください。いっさい変更はされていないので、戻す"
-#~ "のは安全です。もし以下に矛盾を持つモジュール多くリストされている場合は、もともとインストー"
-#~ "ルされているGalleryよりも小さいタイプのディストリビューションをダウンロードすることもでき"
-#~ "ます。より大きいディストリビューションは %s からダウンロードできます。"
+#~ "アップグレードは、いくつかの有効になっているモジュールやテーマが整合性がとれないか、ないた"
+#~ "め始めることができませんこれらのモジュールやテーマの最新版を配置するか、元のバージョンに戻"
+#~ "す必要がありますまだ何の変更もされてないため、元のバージョンに戻すのは安全です。もし多くの"
+#~ "モジュールが整合性がとれない場合、元のバージョンより小さなパッケージのGalleryをダウンロー"
+#~ "ドした可能性があります%s からより大きいパッケージをダウンロードできます。"
 
 #~ msgid "Download replacement modules from %s"
-#~ msgstr "置き換えのモジュールを %s からダウンロードする"
+#~ msgstr "%s から置き換えるモジュールをダウンロードする"
 
 #~ msgid "Upgrade Other Modules"
 #~ msgstr "他のモジュールをアップグレード"

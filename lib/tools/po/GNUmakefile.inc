@@ -31,7 +31,7 @@ MSGFMTSOL = msgfmt $(MSGFMT_FLAGS) -o
 
 PO ?= *
 LANGPO = $(shell echo $@ | perl -ne 'chomp; print if (s/^(..)_..\.po/$$1.po/ and -s)')
-COMPENDIUM = $(shell echo $@ | perl -ne 'chomp; print if (s/^(..)_..\.po/-C $$1.po/ and -s)')
+COMPENDIUM = -N -C ../../core/po/$@
 
 all: update install
 

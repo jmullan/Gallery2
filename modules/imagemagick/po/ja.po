@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: ImageMagick 1.1.0\n"
 "POT-Creation-Date: 2003-09-20 19:38+0900\n"
-"PO-Revision-Date: 2005-10-31 10:36+0900\n"
+"PO-Revision-Date: 2006-08-27 20:06+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -45,17 +45,17 @@ msgid "target width (# pixels or #% of full size)"
 msgstr ""
 
 msgid "(optional) target height, defaults to same as width"
-msgstr "（オプション）高さの設定、デフォルトは幅と同じ"
+msgstr "（オプション）目標の画像縦サイズ、デフォルトは幅と同じです"
 
 msgid "Scale the image to the target size, maintain aspect ratio"
-msgstr "縦横比率を維持して、画像を設定のサイズに変更する"
+msgstr "画像を設定した目標サイズに変更する、アスペクト比は維持"
 
 #, c-format
 msgid "target height (# pixels or #% of full size)"
 msgstr ""
 
 msgid "Resize the image to the target dimensions"
-msgstr "画像を設定の大きさに変更する"
+msgstr "画像を目標の寸法にリサイズする"
 
 msgid "rotation degrees"
 msgstr "回転角"
@@ -67,7 +67,7 @@ msgid "left edge %"
 msgstr "左の縁 %"
 
 msgid "top edge %"
-msgstr "上辺の縁 %"
+msgstr "上の縁 %"
 
 msgid "width %"
 msgstr "幅 %"
@@ -79,51 +79,49 @@ msgid "Crop the image"
 msgstr "画像を切り取る"
 
 msgid "overlay path"
-msgstr ""
+msgstr "上に重ねるパス"
 
 msgid "overlay mime type"
-msgstr ""
+msgstr "上に重ねるmime type"
 
 msgid "overlay width"
-msgstr ""
+msgstr "上に重ねる幅"
 
 msgid "overlay height"
-msgstr ""
+msgstr "上に重ねる高さ"
 
 msgid "alignment type"
-msgstr ""
+msgstr "直線のタイプ"
 
 msgid "alignment x %"
-msgstr ""
+msgstr "直線 x %"
 
 msgid "alignment y %"
-msgstr ""
+msgstr "直線 y %"
 
 msgid "Overlay source image with a second one"
-msgstr ""
+msgstr "２番目の画像を元の画像に重ねる"
 
 msgid "page number"
 msgstr "ページ番号"
 
 msgid "Select a single page from a multi-page file"
-msgstr ""
+msgstr "複数のページファイルから一つのページを選択してください"
 
-#, fuzzy
 msgid "target size in kb"
-msgstr "目標のサイズ"
+msgstr "目標のサイズ(kb)"
 
 msgid "Reduce image quality to reach target file size"
-msgstr ""
+msgstr "目標のファイルサイズに合わせるために、画像の品質を落とす"
 
 msgid "Get the width and height of the image"
 msgstr "画像の縦横の大きさを取得する"
 
 msgid "Get the number of pages"
-msgstr ""
+msgstr "ページの数を取得する"
 
-#, fuzzy
 msgid "Get the colorspace of the image"
-msgstr "画像の縦横の大きさを取得する"
+msgstr "画像の色空間を取得する"
 
 msgid "File does not exist"
 msgstr "ファイルが存在しません"
@@ -157,9 +155,8 @@ msgstr "ImageMagick/GraphicsMagick バイナリのディレクトリ:"
 msgid "You must enter a path to your ImageMagick binaries"
 msgstr "ImageMagicバイナリのパスを入力しなくてはなりません"
 
-#, fuzzy
 msgid "The path you entered is not a valid directory or is not accessible."
-msgstr "入力したパス名は無効です。"
+msgstr "入力したパス名は無効か、アクセスできません。"
 
 msgid ""
 "The path you entered doesn't contain valid ImageMagick binaries. Use the 'test' button to "
@@ -179,12 +176,12 @@ msgid ""
 "of such images. Only activate this option if you actually add CMYK based JPEG or TIFF images "
 "since the color space detection slows down the add item process a little bit."
 msgstr ""
-"ImageMagickはウェブ上で見えない色空間、CMYKのような、を検知してウェブ上で見られる色空間に変換"
-"したコピーを作成できます。この機能は画像を追加するプロセスを少し遅くするので、もし本当にCMYK"
-"ベースのJPEGやTIFFの画像を追加する場合にだけ有効にしてください"
+"ImageMagickはウェブで見られない色空間、CMYKのような、を探知してウェブで見られるようにした複製"
+"を作成できます。もし本当に、CMYKのJPEGやTIFFを追加する必要がある時だけ、このオプションを有効"
+"にしてください。このオプションは、処理速度を下げます。"
 
 msgid "CMYK Support:"
-msgstr "CMYKのサポート"
+msgstr "CMYKサポート"
 
 msgid "Save Settings"
 msgstr "設定を保存"
@@ -219,31 +216,37 @@ msgstr "エラーメッセージ:"
 msgid "Version"
 msgstr "バージョン"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Warning: This version of %s has a %sknown vulnerability%s that can be exploited to cause "
-"infinite loops. You may wish to upgrade. This determination may be inaccurate for %sDebian%s "
-"and %sMandrake%s."
+"Warning: This version of %s has known vulnerabilities that could be exploited to execute "
+"arbitrary commands or cause a denial of service (references: %s1%s, %s2%s, %s3%s, %s4%s). "
+"You may wish to upgrade. This determination may be inaccurate for ImageMagick packages in "
+"Linux distributions."
 msgstr ""
+"警告：%s のこのバーションは %s 既知の脆弱性 %s があり、無限ループを起こされる可能性がありま"
+"す。アップグレードした方がよいでしょう。この警告は、%sDebian%s の場合は正しくないかもしれませ"
+"ん。"
 
 msgid "Use this version anyway"
-msgstr ""
+msgstr "このバージョンをとにかく使う"
 
 msgid "Supported MIME Types"
 msgstr "対応済 MIME type"
 
 msgid "The ImageMagick module can support files with the following MIME types:"
-msgstr ""
+msgstr "ImageMagickモジュールは以下のMIMEタイプのファイルをサポートします。"
 
 #, c-format
 msgid "Debug output (%d failed test)"
 msgid_plural "Debug output (%d failed tests)"
-msgstr[0] ""
+msgstr[0] "デバッグ出力（%d 失敗テスト）"
 
 msgid ""
 "We gathered this debug output while testing your ImageMagick binaries.  If you read through "
 "this carefully you may discover the reason why your ImageMagick binaries failed the tests."
 msgstr ""
+"このデバッグ出力はあなたのImageMagickバイナリーをテスト中に収集されました。これを注意深く読む"
+"ことで、テストに失敗した原因がわかるかもしれません。"
 
 #~ msgid "target width"
 #~ msgstr "目標の幅"
