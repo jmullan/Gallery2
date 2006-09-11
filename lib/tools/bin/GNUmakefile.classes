@@ -4,11 +4,11 @@ PHP ?= php
 CLASSES = $(shell ls *.class 2>/dev/null)
 
 all: Entities.inc
-	if [ -f Maps.xml ]; then $(MAKE) -$(MAKEFLAGS) Maps.inc; fi
-	if [ -f GalleryStorage/GNUmakefile ]; then cd GalleryStorage && $(MAKE) -$(MAKEFLAGS); fi
+	if [ -f Maps.xml ]; then $(MAKE) Maps.inc; fi
+	if [ -f GalleryStorage/GNUmakefile ]; then cd GalleryStorage && $(MAKE); fi
 
 %:
-	if [ -f GalleryStorage/GNUmakefile ]; then cd GalleryStorage && $(MAKE) -$(MAKEFLAGS) $@; fi
+	if [ -f GalleryStorage/GNUmakefile ]; then cd GalleryStorage && $(MAKE) $@; fi
 
 Maps.inc: Maps.xml ../../../lib/tools/bin/maps.tpl
 	@if [ -x "$(XMLLINT)" ]; then \
