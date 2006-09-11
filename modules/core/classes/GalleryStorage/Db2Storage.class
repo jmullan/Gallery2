@@ -205,7 +205,8 @@ class Db2Storage extends GalleryStorage {
 	    break;
 
 	case 'RAND':
-	    $sql = sprintf('RAND(%s)', empty($args) ? '' : $args[0]);
+	    /* Add random parameter to seed DB2 random number generator */
+	    $sql = sprintf('RAND(%s)', empty($args) ? mt_rand(0, 2147483647) : $args[0]);
 	    break;
 
 	case 'LIMIT':
