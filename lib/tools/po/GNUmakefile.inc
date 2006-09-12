@@ -122,6 +122,14 @@ compendium: messages.po
 	    fi; \
 	done;
 
+create-from-core:
+	@for POFILE in `ls ../../../modules/core/po/*.po | grep -v messages.po`; do \
+	    PO=`basename $${POFILE}`; \
+	    if [ ! -f $${PO} ]; then \
+		perl -p -e '$$x++ if /^msgid/; exit if $$x eq 2' $${POFILE} > $${PO}; \
+	    fi; \
+	done;
+
 remove-obsolete:
 	@for LOCALE in `ls $(PO).po | grep -v messages.po | sed 's/\.[^.]*$$//g'`; do \
 		msgattrib --no-obsolete --output-file=$${LOCALE}.po $${LOCALE}; \
