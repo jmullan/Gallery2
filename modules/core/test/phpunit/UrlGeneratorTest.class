@@ -569,6 +569,24 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri(),
 			    'iis path_info');
     }
+    
+    /*
+     * Apache is not very clear about whether REQUEST_URI is specified to be an URI without the
+     * schema and host part or not. There's at least 1 Apache 2 setup where REQUEST_URI was a
+     * complete URL.
+     * Since the requestUri in Gallery is expected to be an URI w/o the host part, we must
+     * normalize whatever Apache returns.
+     */
+    function testGetCurrentRequestUriForAbsoluteUrl() {
+	$expected = '/gallery2/phpunit_test.php?foo=bar';
+	$_SERVER['REQUEST_URI'] = 'http://example.com' . $expected;
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri());
+
+	/* And a case with a fragment part. */
+	$expected = '/gallery2/phpunit_test.php?foo=bar#anchor';
+	$_SERVER['REQUEST_URI'] = 'http://example.com' . $expected;
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri());
+    }
 
     function testGetCurrentUrl() {
 	$expected = 'http://example.com/gallery2/phpunit_test.php?foo=bar';

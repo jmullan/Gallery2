@@ -151,8 +151,15 @@ class GalleryUrlGenerator {
      * @static
      */
     function getCurrentRequestUri() {
-	if (!($path = GalleryUtilities::getServerVar('REQUEST_URI')) &&
-		($path = GalleryUtilities::getServerVar('SCRIPT_NAME'))) {
+	if ($path = GalleryUtilities::getServerVar('REQUEST_URI')) {
+	    /* Sometimes, REQUEST_URI has a host part. Remove it. */
+	    if ($path{0} != '/') {
+		$components = parse_url($path);
+		$path = $components['path'];
+		$path .= empty($components['query']) ? '' : '?' . $components['query'];
+		$path .= empty($components['fragment']) ? '' : '#' . $components['fragment'];  
+	    }
+	} else if ($path = GalleryUtilities::getServerVar('SCRIPT_NAME')) {
 	    if (($tmp = GalleryUtilities::getServerVar('PATH_INFO')) && $tmp != $path) {
 		$path .= $tmp;
 	    }
