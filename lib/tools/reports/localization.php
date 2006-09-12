@@ -33,7 +33,7 @@ if (!empty($_REQUEST['type']) && $_REQUEST['type'] == 'detail') {
 }
 
 $poFiles = findPoFiles('../../..');
-list ($reportData, $mostRecentPoDate) = parsePoFiles($poFiles);
+list ($reportData, $mostRecentPoDate, $totalTranslated) = parsePoFiles($poFiles);
 
 $precision = isset($_GET['precision']) ? (int)$_GET['precision'] : 1;
 require(dirname(__FILE__) . '/localization/main_' . $type . '.inc');
@@ -69,7 +69,7 @@ function parsePoFiles($poFiles) {
      * single data structure.
      */
     $poData = $seenPlugins = $maxMessageCount = array();
-    $mostRecentPoDate = 0;
+    $mostRecentPoDate = $totalTranslated = 0;
     foreach ($poFiles as $poFile) {
 	if (!preg_match("|((?:\w+/)+)po/(\w{2}(?:_\w{2})?)\.po|", $poFile, $matches)) {
 	    continue;
@@ -225,6 +225,7 @@ function parsePoFiles($poFiles) {
 						     'obsolete' => $obsolete,
 						     'percentDone' => $percentDone,
 						     'name' => $plugin);
+	$totalTranslated += $translated - $fuzzy;
 
 	foreach (array('translated', 'untranslated', 'fuzzy', 'obsolete') as $key) {
 	    if (!isset($summary[$locale][$key])) {
@@ -276,7 +277,7 @@ function parsePoFiles($poFiles) {
     /* Sort locales by overall total */
     uasort($poData, 'sortByPercentDone');
 
-    return array($poData, $mostRecentPoDate);
+    return array($poData, $mostRecentPoDate, $totalTranslated);
 }
 
 /**
@@ -343,5 +344,4 @@ function modifier($string) {
 	return $string . '_dark';
     }
 }
-
 ?>

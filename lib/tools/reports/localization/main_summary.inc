@@ -7,7 +7,8 @@
     <body>
       <h1> Localization Status Report for Gallery 2 </h1>
       <h3> Generated: <?php print strftime("%x %X") ?> <br/>
-	   Most Recent PO: <?php print strftime("%x %X", $mostRecentPoDate) ?> </h3>
+	   Most Recent PO: <?php print strftime("%x %X", $mostRecentPoDate) ?> <br/>
+	   Total Translated Strings: <?php print $totalTranslated ?> </h3>
 
       <center>
 	View: <b> summary </b> | <a href="?type=detail"> detail </a>
