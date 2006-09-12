@@ -69,20 +69,17 @@ clean:
 update: $(PO).po
 
 install:
-	@if test "${OSTYPE}" = "solaris"; then \
+	@if test "$(OSTYPE)" = "solaris"; then \
 		echo "You'll probably get some warnings on Solaris. This is normal."; \
 	fi; \
 	FAIL=0; \
-	echo "Updating ${PO}"; \
-	for LOCALE in `ls ${PO}.po | sed 's/\.[^.]*$$//g'`; do \
-		if test $${LOCALE}.po = "messages.po"; then \
-			continue; \
-		fi; \
+	echo "Updating $(PO)"; \
+	for LOCALE in `ls $(PO).po | grep -v messages.po | sed 's/\.[^.]*$$//g'`; do \
 		if test -z "$${QUIET}"; then echo $${LOCALE}; fi; \
 		if $(TOOLDIR)/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
 			php -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
-			if test "${OSTYPE}" = "solaris"; then \
-				if {MSGFMTSOL} ../locale/$${LOCALE}/LC_MESSAGES/${APPLICATION}.mo \
+			if test "$(OSTYPE)" = "solaris"; then \
+				if {MSGFMTSOL} ../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo \
 						tmp.po; then \
 					if test -n "$${QUIET}"; then \
 						echo -n '.'; \
@@ -92,7 +89,7 @@ install:
 					FAIL=1; \
 				fi \
 			else \
-				if ${MSGFMT} ../locale/$${LOCALE}/LC_MESSAGES/${APPLICATION}.mo \
+				if $(MSGFMT) ../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo \
 						tmp.po; then \
 					if test -n "$${QUIET}"; then \
 						echo -n '.'; \
@@ -112,7 +109,18 @@ install:
 	if test $${FAIL} -gt 0; then exit 1; fi;
 	@echo '';
 
+compendium: messages.po
+	@for POFILE in `ls $(PO).po | grep -v messages.po`; do \
+	    CORE=`perl -e '$$_="../../../modules/core/po/'$${POFILE}'"; print "-C $$_" if -s'`; \
+	    MATRIX=`perl -e '$$_="../../../themes/matrix/po/'$${POFILE}'"; print "-C $$_" if -s'`; \
+	    if [ -n "$${CORE}" -o -n "$${MATRIX}" ]; then \
+		msgmerge --width=95 -N $${CORE} $${MATRIX} --update $${POFILE} messages.po; \
+	    else \
+		echo "No compendium for $${POFILE}"; \
+	    fi; \
+	done;
+
 remove-obsolete:
-	@for LOCALE in `ls *.po | egrep -v messages.po | sed 's/\.[^.]*$$//g'`; do \
+	@for LOCALE in `ls $(PO).po | grep -v messages.po | sed 's/\.[^.]*$$//g'`; do \
 		msgattrib --no-obsolete --output-file=$${LOCALE}.po $${LOCALE}; \
 	done;
