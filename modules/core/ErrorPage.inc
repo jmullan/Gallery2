@@ -124,17 +124,19 @@ class ErrorPageView extends GalleryView {
 	    $failsafe = true;
 	}
 
-	/* Return HTTP 404 status for ERROR_MISSING_OBJECT */
-	if ($error->getErrorCode() & ERROR_MISSING_OBJECT) {
-	    header('HTTP/1.0 404 Not Found');
-	}
-
 	/* Post Gallery::Error event */
 	$event = GalleryCoreApi::newEvent('Gallery::Error');
 	$event->setData(array('error' => $error));
 	list ($ret, $data) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    $failsafe = true;
+	}
+
+	/* Return HTTP 404 status for ERROR_MISSING_OBJECT */
+	if ($error->getErrorCode() & ERROR_MISSING_OBJECT) {
+	    GalleryUtilities::setResponseHeader('HTTP/1.0 404 Not Found', false);
+	} else {
+	    GalleryUtilities::setResponseHeader('HTTP/1.0 500 Internal Server Error', false);
 	}
 
 	if (!$failsafe) {

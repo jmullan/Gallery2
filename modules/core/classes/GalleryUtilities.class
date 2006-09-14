@@ -969,6 +969,30 @@ class GalleryUtilities {
     }
 
     /**
+     * Set HTTP response header
+     *
+     * @param string $header HTTP response header
+     * @param boolean $replace (optional) avoid replacing HTTP response header if already set
+     */
+    function setResponseHeader($header, $replace=true) {
+	/* Use our PHP VM for testability */
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
+
+	static $save = array();
+
+	$key = 'status';
+	if (strncasecmp($header, 'HTTP/', 5)) {
+	    $key = strtolower(substr($header, 0, strpos($header, ':')));
+	}
+
+	if ($replace || empty($save[$key])) {
+	    $phpVm->header($header);
+	    $save[$key] = $header;
+	}
+    }
+
+    /**
      * Return true if the path exists and is in the given path list
      *
      * Make sure to pass paths in the system charset to this method
