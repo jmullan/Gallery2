@@ -1054,49 +1054,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals('favicon.ico' . $qs, $actual);
     }
 
-    function testDownloadedPluginRelativeUrls() {
-	/*
-	 * href=themes/blah/blah.js should be rewritten to plugins/themes/blah/blah.js
-	 * if theme blah lives in the downloaded plugins dir and not the base G2 dir.
-	 */
-	global $gallery;
-	$savePlatform =& $gallery->getPlatform();
-	$dirname = $gallery->getConfig('plugins.dirname');
-
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array('fuzzy' => '{config.php$}'), true);
-	$platform->setReply('file_exists', array('fuzzy' => '{index.themes$}'), true);
-	$platform->setReply('file', array('fuzzy' => '{index.themes$}', false), array('phpunit'));
-	$gallery->setPlatform($platform);
-
-	/* Reset cached info about theme locations */
-	GalleryCoreApi::isPluginInDefaultLocation('theme', 'phpunit', true);
-	$this->assert($platform->isComplete(), $platform->getRemaining(), 'init');
-
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists',
-	    array('fuzzy' => '{' . $dirname . '.themes.phpunit.local.test.js$}'), false);
-	$gallery->setPlatform($platform);
-
-	$this->assertEquals($dirname . '/themes/phpunit/test.js',
-	    $this->_urlGenerator->generateUrl(array('href' => 'themes/phpunit/test.js')));
-	$this->assert($platform->isComplete(), $platform->getRemaining(), 'one');
-
-	/* Local override */
-	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists',
-	    array('fuzzy' => '{' . $dirname . '.themes.phpunit.local.test.css$}'), true);
-	$gallery->setPlatform($platform);
-
-	$this->assertEquals($dirname . '/themes/phpunit/local/test.css',
-	    $this->_urlGenerator->generateUrl(array('href' => 'themes/phpunit/test.css')));
-	$this->assert($platform->isComplete(), $platform->getRemaining(), 'two');
-
-	/* Reset cache to real values */
-	$gallery->setPlatform($savePlatform);
-	GalleryCoreApi::isPluginInDefaultLocation('theme', 'phpunit', true);
-    }
-
     function testCurrentUrlToken() {
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?a=b';
 

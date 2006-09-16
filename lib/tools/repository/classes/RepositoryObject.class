@@ -121,10 +121,11 @@ class RepositoryObject {
      * path, otherwise Smarty will process the specified template and its output will be written.
      *
      * @param boolean $overwriteFile overwrite file if it exists
+     * @param boolean $compressToo optionally write a compressed version of the file
      * @return array object GalleryStatus a status code
      *		     boolean whether the file was written to disk
      */
-    function writeToDisk($overwriteFile=false) {
+    function writeToDisk($overwriteFile=false, $compressToo=false) {
 	global $gallery;
 
 	$outputFilePath = $this->_outputDir . $this->_fileName;
@@ -149,6 +150,15 @@ class RepositoryObject {
 		return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					    "Error writing to $outputFilePath");
 	    }
+
+	    if ($compressToo) {
+		if (false === $platform->file_put_contents(
+			"$outputFilePath.gz", gzdeflate($contents, 9))) {
+		    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						 "Error writing to $outputFilePath.gz");
+		}
+	    }
+
 	    $fileWritten = true;
 	}
 	$this->_wasFileWritten = isset($fileWritten);

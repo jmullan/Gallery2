@@ -114,7 +114,7 @@ class GalleryRepository {
      */
     function getPluginUpgradeInfo($pluginType, $pluginId) {
 	global $gallery;
-	$upgradeInfo = array();
+	$upgradeInfo = array('upgradeable' => false);
 
 	/* Get installed packages meta data. */
 	list ($ret, $installedPackages) =
@@ -123,39 +123,35 @@ class GalleryRepository {
 	    return array($ret, null);
 	}
 
+	/* Get version info from repository index for base files. */
+	list ($ret, $header) = $this->_index->getPluginHeader($pluginType, $pluginId);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$repositoryDataVersion = $header['version'];
+	$repositoryDataBuild = $header['buildTimestamp'];
+	$upgradeInfo['base']['newVersion'] = $repositoryDataVersion;
+
 	/* Check if this plugin's base files are installed. */
 	if (isset($installedPackages['base'])) {
 	    $dataVersion = $installedPackages['base']['version'];
 	    $dataBuild = $installedPackages['base']['build'];
-
-	    /* Get version info from repository index for base files. */
-	    list ($ret, $header) = $this->_index->getPluginHeader($pluginType, $pluginId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $repositoryDataVersion = $header['version'];
-	    $repositoryDataBuild = $header['buildTimestamp'];
-
-	    /* Compare local base version with the one in the repository. */
-	    list ($ret, $relation) = $this->_utilities->compareVersions(
-		$dataVersion, $repositoryDataVersion, $dataBuild, $repositoryDataBuild);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    if ($relation == 'older') {
-		$upgradeInfo['isBaseUpgradeable'] = 1;
-	    }
 	} else {
-	    $upgradeInfo['isBaseDownloadable'] = 1;
+	    $dataVersion = null;
+	    $dataBuild = null;
 	}
 
-	/* Create upgrade info for test package. */
-	if ($pluginType == 'module' && isset($installedPackages['test']) && $relation == 'older') {
-	    $upgradeInfo['upgradeablePackages']['test'] = 1;
+	/* Compare local base version with the one in the repository. */
+	list ($ret, $upgradeInfo['base']['relation']) = $this->_utilities->compareVersions(
+	    $dataVersion, $repositoryDataVersion, $dataBuild, $repositoryDataBuild);
+	if ($ret) {
+	    return array($ret, null);
 	}
-	if ($pluginType == 'module' && !isset($installedPackages['test'])) {
-	    $upgradeInfo['downloadablePackages']['test'] = 1;
+
+	if ($upgradeInfo['base']['relation'] == 'older') {
+	    $upgradeInfo['upgradeable'] = 1;
 	}
+	$upgradeInfo['base']['currentVersion'] = $dataVersion;
 
 	/* Check if any languages have been updated. */
 	list ($ret, $languages) =
@@ -164,27 +160,36 @@ class GalleryRepository {
 	    return array($ret, null);
 	}
 
+	$upgradeInfo['complete'] = isset($upgradeInfo['base']['currentVersion']);
 	foreach ($languages as $language => $revision) {
 	    list ($ret, $languageDescription) =
 		$this->_utilities->getLanguageDescription($language);
 	    if ($ret) {
+		if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+		    /* Unsupported language .. ignore it. */
+		    continue;
+		}
 		return array($ret, null);
 	    }
 
-	    if (!isset($installedPackages['lang-' . $language])) {
-		/* This language hasn't been downloaded yet. */
-		$upgradeInfo['downloadableLanguages']['codes'][] = $language;
-		$upgradeInfo['downloadableLanguages']['names'][] = $languageDescription;
+	    if (isset($installedPackages['lang-' . $language])) {
+		$currentVersion = $installedPackages['lang-' . $language]['build'];
 	    } else {
-		/* We check if there is an update to this language. */
-		$localVersion = $installedPackages['lang-' . $language];
-
-		$relation = $this->_utilities->compareRevisions($localVersion['build'], $revision);
-		if ($relation == 'older') {
-		    $upgradeInfo['upgradeableLanguages']['codes'][] = $language;
-		    $upgradeInfo['upgradeableLanguages']['names'][] = $languageDescription;
-		}
+		$currentVersion = null;
 	    }
+
+	    $relation = $this->_utilities->compareRevisions($currentVersion, $revision);
+	    $upgradeInfo['languages'][$language] = array(
+		'name' => $languageDescription,
+		'currentVersion' => $currentVersion,
+		'newVersion' => $revision,
+		'relation' => $relation);
+
+	    if ($relation == 'older' && $currentVersion) {
+		$upgradeInfo['upgradeable'] = true;
+	    }
+
+	    $upgradeInfo['complete'] &= !empty($currentVersion);
 	}
 
 	return array(null, $upgradeInfo);
@@ -205,7 +210,7 @@ class GalleryRepository {
      * @return array object GalleryStatus a status code
      *		     array plugin list
      */
-    function getRepositoryPluginList($pluginType, $showAllPlugins = false, $coreApis = null) {
+    function getRepositoryPluginList($pluginType, $showAllPlugins=false, $coreApis=null) {
 	global $gallery;
 
 	list ($ret, $repositoryPluginList) =
@@ -213,6 +218,7 @@ class GalleryRepository {
 	if ($ret) {
 	    return array($ret, null);
 	}
+
 	foreach ($repositoryPluginList[$pluginType] as $pluginId => $plugin) {
 	    $action = '';
 	    $localVersion = '';
@@ -235,13 +241,15 @@ class GalleryRepository {
 		 * an 'upgrade' action. Maybe we can show some additional info, such as
 		 * '3 languages updated' or 'base data upgrade available'.
 		 */
-		list ($ret, $upgradeInfo) =
-		$this->getPluginUpgradeInfo($pluginType, $pluginId);
+		list ($ret, $upgradeInfo) = $this->getPluginUpgradeInfo($pluginType, $pluginId);
 		if ($ret) {
 		    return array($ret, null);
 		}
-		if (!empty($upgradeInfo)) {
+
+		if ($upgradeInfo['upgradeable']) {
 		    $action = $gallery->i18n('upgrade');
+		} else if (!$upgradeInfo['complete']) {
+		    $action = $gallery->i18n('get more');
 		}
 
 		$localVersion = $plugin['localVersion'];
@@ -339,19 +347,16 @@ class GalleryRepository {
 		    return array($ret, null);
 		}
 
-		if (isset($upgradeInfo['isBaseUpgradeable'])) {
+		if ($upgradeInfo['base']['relation'] == 'older'
+		    && $upgradeInfo['base']['currentVersion']) {
 		    $packages[$pluginType][$pluginId]['base'] = 1;
 		}
 
-		if (isset($upgradeInfo['upgradeableLanguages'])) {
-		    foreach ($upgradeInfo['upgradeableLanguages']['codes'] as $language) {
-			$packages[$pluginType][$pluginId]['lang-' . $language] = 1;
-		    }
-		}
-
-		if (isset($upgradeInfo['upgradeablePackages'])) {
-		    foreach ($upgradeInfo['upgradeablePackages'] as $package => $value) {
-			$packages[$pluginType][$pluginId][$package] = 1;
+		if (isset($upgradeInfo['languages'])) {
+		    foreach ($upgradeInfo['languages'] as $code => $pack) {
+			if ($pack['relation'] == 'older' && $pack['currentVersion']) {
+			    $packages[$pluginType][$pluginId]['lang-' . $code] = 1;
+			}
 		    }
 		}
 	    }
@@ -418,26 +423,10 @@ class GalleryRepository {
     function createPluginsDirectory() {
 	global $gallery;
 
-	/* Check if plugins directory exists. */
-	$platform =& $gallery->getPlatform();
-	$pluginsDirectory = $platform->realpath(
-	    dirname(__FILE__) . '/../../../' . $gallery->getConfig('plugins.dirname'));
-	if (!@$platform->is_dir($pluginsDirectory)) {
-	    return array(false, $gallery->i18n('Plugins directory does not exist.'));
-	}
-
-	/* Create modules and themes directories if they don't exist. */
-	foreach (array('modules', 'themes') as $pluginType) {
-	    $pluginDirectory = sprintf('%s/%s', $pluginsDirectory, $pluginType);
-
-	    if (!@$platform->is_dir($pluginDirectory) && !@$platform->mkdir($pluginDirectory)) {
-		return array(false, $gallery->i18n('Couldn\'t create plugins subdirectory. '
-			     . 'Make sure the webserver has write permissions in it.'));
-	    }
-	}
-
 	/* Create repository cache directory if it doesn't exist. */
 	$repositoryCachePath = $gallery->getConfig('repository.cache');
+	$platform =& $gallery->getPlatform();
+
 	if (!@$platform->file_exists($repositoryCachePath)) {
 	    while (!$platform->is_dir($repositoryCachePath)) {
 		$parentDir = dirname($repositoryCachePath);
@@ -445,7 +434,7 @@ class GalleryRepository {
 		$repositoryCachePath = $parentDir;
 	    }
 	    for ($i = count($dirStack); $i != 0; $i--) {
-		$platform->mkdir($repositoryCachePath . $dirStack[$i-1]);
+		@$platform->mkdir($repositoryCachePath . $dirStack[$i-1]);
 		$repositoryCachePath .= $dirStack[$i-1];
 	    }
 	    if (!@$platform->file_exists($gallery->getConfig('repository.cache'))) {
@@ -506,42 +495,6 @@ class GalleryRepository {
     }
 
     /**
-     * Makes sure that the specified plugin ID is present in the plugin index file.
-     *
-     * The plugin index files contain IDs of plugins that are in the gallery2/plugins directory.
-     * Their paths are gallery2/plugins/index.module and gallery2/plugins/index.theme.
-     *
-     * @param string $pluginType
-     * @param string $pluginId
-     * @return object GalleryStatus a status code
-     */
-    function updatePluginIndexFile($pluginType, $pluginId) {
-	global $gallery;
-
-	$pluginIndexPath = sprintf(
-	    '%sindex.%ss', $gallery->getConfig('data.gallery.plugins'), $pluginType);
-
-	$platform =& $gallery->getPlatform();
-	if ($platform->file_exists($pluginIndexPath)) {
-	    if (false === ($indexContents = $platform->file_get_contents($pluginIndexPath))) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
-					   'Error reading plugin index [%s]', $pluginIndexPath));
-	    }
-	} else {
-	    $indexContents = '';
-	}
-	if (false === strpos($indexContents, "$pluginId\n")) {
-	    $indexContents .= "$pluginId\n";
-	    if (false === $platform->file_put_contents($pluginIndexPath, $indexContents)) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
-					    'Write error [%s]', $pluginIndexPath));
-	    }
-	}
-
-	return null;
-    }
-
-    /**
      * Downloads a file from the repository.
      *
      * If the file is a package, it will be put in the local cache and unpacked in the plugins/
@@ -570,8 +523,8 @@ class GalleryRepository {
 	}
 
 	/* Make sure output directory exists. */
-	$pluginOutputDir = sprintf('%s%ss/%s/',
-	    $gallery->getConfig('data.gallery.plugins'), $pluginType, $pluginId);
+	$pluginOutputDir = sprintf(
+	    '%s/%ss/%s/', dirname(dirname(dirname(dirname(__FILE__)))), $pluginType, $pluginId);
 	if (!$platform->file_exists($pluginOutputDir)
 		&& !$platform->mkdir($pluginOutputDir)) {
 	    $ret = GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
@@ -615,8 +568,8 @@ class GalleryRepository {
 
 	$pluginType = $descriptor['pluginType'];
 	$pluginId = $descriptor['pluginId'];
-	$pluginOutputDir = sprintf('%s%ss/%s/',
-	    $gallery->getConfig('data.gallery.plugins'), $pluginType, $pluginId);
+	$pluginOutputDir = sprintf(
+	    '%s/%ss/%s/', dirname(dirname(dirname(dirname(__FILE__)))), $pluginType, $pluginId);
 
 	$platform =& $gallery->getPlatform();
 	foreach ($descriptor['contents']['files'] as $filePath => $metaData) {
@@ -644,6 +597,119 @@ class GalleryRepository {
 			return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 						    $errorMessage);
 		    }
+		}
+	    }
+	}
+
+	return null;
+    }
+
+    /**
+     * Scan all installed plugins and update GalleryPluginPackageMap with a complete
+     * listing of everything that's installed.
+     *
+     * @todo Show a summary page (or at least a link to it) which contains details about
+     * the exact tasks that were performed and any errors that were encountered.
+     */
+    function scanPlugins() {
+	global $gallery;
+
+	foreach (array('module', 'theme') as $pluginType) {
+	    list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pluginType, true);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    foreach ($pluginStatus as $pluginId => $status) {
+		$gallery->guaranteeTimeLimit(30);
+
+		$ret = $this->scanPlugin($pluginType, $pluginId);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+    }
+
+    /**
+     * Scan one plugin and update its entries in the GalleryPluginPackageMap.
+     *
+     * @param $pluginType the plugin type ('module' or 'theme')
+     * @param $pluginId the plugin id (eg 'albumselect' or 'cart')
+     * @return object GalleryStatus a status code
+     */
+    function scanPlugin($pluginType, $pluginId) {
+	global $gallery;
+
+	/* Erase all data for this plugin */
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryPluginPackageMap', array('pluginType' => $pluginType, 'pluginId' => $pluginId));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$platform =& $gallery->getPlatform();
+	$g2base = dirname(dirname(dirname(dirname(__FILE__))));
+
+	list($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$pluginDir = sprintf('%s/%ss/%s', $g2base, $pluginType, $pluginId);
+	list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile("$pluginDir/MANIFEST", 128);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $revision) = $this->_utilities->extractRevision($tag);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryPluginPackageMap',
+	    array('pluginType' => $pluginType,
+		  'pluginId' => $pluginId,
+		  'packageName' => 'base',
+		  'packageVersion' => $plugin->getVersion(),
+		  'packageBuild' => $revision));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $tag) =
+	    $this->_utilities->getFirstBytesFromFile("$pluginDir/po/strings.raw", 128);
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $stringsRevision) = $this->_utilities->extractRevision($tag);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$poFiles = $platform->glob("$pluginDir/po/*.po");
+	if ($poFiles) {
+	    foreach ($poFiles as $file) {
+		list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile($file, 128);
+		if ($ret) {
+		    return $ret;
+		}
+
+		list ($ret, $revision) = $this->_utilities->extractRevision($tag);
+		if ($ret) {
+		    return $ret;
+		}
+		$ret = GalleryCoreApi::addMapEntry(
+		    'GalleryPluginPackageMap',
+		    array('pluginType' => $pluginType,
+			  'pluginId' => $pluginId,
+			  'packageName' => (
+			      'lang-' . GalleryUtilities::getFileBase(basename($file))),
+			  'packageVersion' => $stringsRevision,
+			  'packageBuild' => $revision));
+		if ($ret) {
+		    return $ret;
 		}
 	    }
 	}

@@ -108,35 +108,41 @@ class GalleryPluginHelper_medium {
      * @see GalleryCoreApi::getAllPluginIds
      */
     function getAllPluginIds($pluginType) {
-	global $gallery;
+	$cacheKey = "GalleryPluginHelper::getAllPluginIds($pluginType)";
+	if (GalleryDataCache::containsKey($cacheKey)) {
+	    $pluginIds = GalleryDataCache::get($cacheKey);
+	} else {
+	    global $gallery;
 
-	switch($pluginType) {
-	case 'module':
-	    $pluginsDir = 'modules/';
-	    $pluginFile = 'module.inc';
-	    break;
+	    switch($pluginType) {
+	    case 'module':
+		$pluginsDir = 'modules/';
+		$pluginFile = 'module.inc';
+		break;
 
-	case 'theme':
-	    $pluginsDir = 'themes/';
-	    $pluginFile = 'theme.inc';
-	    break;
-	}
-
-	$platform =& $gallery->getPlatform();
-	foreach(GalleryCoreApi::getPluginBaseDirs() as $pluginsBaseDir) {
-	    if ($dir = $platform->opendir($pluginsBaseDir . $pluginsDir)) {
-		while (($file = $platform->readdir($dir)) != false) {
-		    $path = $pluginsBaseDir . $pluginsDir . $file;
-		    if (preg_match('/^(\.|CVS)/', $file)) {
-			continue;
-		    }
-
-		    if ($platform->is_file($path . '/' . $pluginFile)) {
-			$pluginIds[] = $file;
-		    }
-		}
-		$platform->closedir($dir);
+	    case 'theme':
+		$pluginsDir = 'themes/';
+		$pluginFile = 'theme.inc';
+		break;
 	    }
+
+	    $platform =& $gallery->getPlatform();
+	    foreach(GalleryCoreApi::getPluginBaseDirs() as $pluginsBaseDir) {
+		if ($dir = $platform->opendir($pluginsBaseDir . $pluginsDir)) {
+		    while (($file = $platform->readdir($dir)) != false) {
+			$path = $pluginsBaseDir . $pluginsDir . $file;
+			if (preg_match('/^(\.|CVS)/', $file)) {
+			    continue;
+			}
+
+			if ($platform->is_file($path . '/' . $pluginFile)) {
+			    $pluginIds[] = $file;
+			}
+		    }
+		    $platform->closedir($dir);
+		}
+	    }
+	    GalleryDataCache::put($cacheKey, $pluginIds);
 	}
 
 	return array(null, $pluginIds);

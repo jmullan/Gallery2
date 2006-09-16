@@ -35,9 +35,14 @@ class PluginCallbackTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
+	global $gallery;
+
+	$this->_platform = new UnitTestPlatform();
+	$gallery->setPlatform($this->_platform);
 
 	$this->_testPlugin = new PluginCallbackControllerTestPlugin();
 	$this->_callback = new PluginCallbackView();
+	$this->_callback->_repository = new PluginCallbackTestRepository();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
@@ -47,6 +52,12 @@ class PluginCallbackTest extends GalleryTestCase {
 
     function tearDown() {
 	$this->_testPlugin->reset();
+	$this->assert($this->_platform->isComplete(), $this->_platform->getRemaining());
+
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'GalleryPluginPackageMap',
+	    array('pluginId' => 'PluginCallbackControllerTest'));
+	$this->assert(!$ret);
 
 	parent::tearDown();
     }
@@ -77,6 +88,9 @@ class PluginCallbackTest extends GalleryTestCase {
 		      'autoConfigure not called');
 	$this->assert($this->_testPlugin->wasCalled('activate'),
 		      'activate not called');
+	$this->assert($this->_callback->_repository->wasCalled(
+			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
+		      'GalleryRepository::scanPlugin was not called correctly');
     }
 
     function testInstallTheme() {
@@ -112,6 +126,9 @@ class PluginCallbackTest extends GalleryTestCase {
 		      'autoConfigure not called');
 	$this->assert($this->_testPlugin->wasCalled('activate'),
 		      'activate not called');
+	$this->assert($this->_callback->_repository->wasCalled(
+			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
+		      'GalleryRepository::scanPlugin was not called correctly');
     }
 
     function testUpgradeTheme() {
@@ -321,6 +338,64 @@ class PluginCallbackTest extends GalleryTestCase {
 	$this->assert($this->_testPlugin->wasCalled('uninstall'), 'uninstall was not called');
     }
 
+    function testDeleteActiveModule() {
+	GalleryUtilities::putRequestVariable('pluginType', 'module');
+	GalleryUtilities::putRequestVariable('pluginId', 'PluginCallbackControllerTest');
+
+	$ret = GalleryCoreApi::addMapEntry(
+	    'GalleryPluginPackageMap',
+	    array('pluginType' => 'module',
+		  'pluginId' => 'PluginCallbackControllerTest',
+		  'packageName' => 'base',
+		  'packageVersion' => '0.1',
+		  'packageBuild' => '123'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_platform->setReply(
+	    'recursiveRmdir',
+	    array(dirname(dirname(dirname(dirname(dirname(__FILE__))))) .
+		  '/modules/PluginCallbackControllerTest'),
+	    true);
+
+	$this->_testPlugin->setResult('isActive', array(null, true));
+	$this->_testPlugin->setResult('deactivate', array(null, array()));
+	$this->_testPlugin->setResult('uninstall', null);
+	$result = $this->_handleCallback('delete');
+
+	list ($ret, $entries) = GalleryCoreApi::getMapEntry(
+	    'GalleryPluginPackageMap',
+	    array('pluginType'),
+	    array('pluginId' => 'PluginCallbackControllerTest'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(0, $entries->resultCount());
+
+	$this->assertEquals(array('status' => 'success'), $result);
+	$this->assert($this->_testPlugin->wasCalled('deactivate'), 'deactivate was not called');
+	$this->assert($this->_testPlugin->wasCalled('uninstall'), 'uninstall was not called');
+    }
+
+    function testDeleteModuleFailsToRmdir() {
+	GalleryUtilities::putRequestVariable('pluginType', 'module');
+	GalleryUtilities::putRequestVariable('pluginId', 'PluginCallbackControllerTest');
+
+	$this->_platform->setReply(
+	    'recursiveRmdir',
+	    array(dirname(dirname(dirname(dirname(dirname(__FILE__))))) .
+		  '/modules/PluginCallbackControllerTest'),
+	    false);
+
+	$this->_testPlugin->setResult('isActive', array(null, false));
+	$this->_testPlugin->setResult('uninstall', null);
+	$result = $this->_handleCallback('delete');
+
+	$this->assertEquals(array('status' => 'fail'), $result);
+	$this->assert($this->_testPlugin->wasCalled('uninstall'), 'uninstall was not called');
+    }
+
     function _getPluginState($type, $status) {
 	list ($ret, $state) =
 	    $this->_callback->getPluginState($type, $this->_testPlugin, $status);
@@ -401,14 +476,14 @@ class PluginCallbackTest extends GalleryTestCase {
 
     function testCalculateStateChangesNoChange() {
 	$this->assertEquals(
-	    array(),
+	    array('states' => array(), 'deleted' => array()),
 	    PluginCallbackView::calculateStateChanges(
 		array('theme' => array('a' => '1'), 'module' => array('b' => '1')),
 		array('theme' => array('a' => '1'), 'module' => array('b' => '1'))));
     }
 
     function testCalculateStateChangesIdsDontConflict() {
-	$this->assertEquals(array(),
+	$this->assertEquals(array('states' => array(), 'deleted' => array()),
 			    PluginCallbackView::calculateStateChanges(
 				array('theme' => array('a' => '1', 'b' => '1'),
 				      'module' => array('a' => '2')),
@@ -417,13 +492,22 @@ class PluginCallbackTest extends GalleryTestCase {
     }
 
     function testCalculateStateChangesIds() {
-	$this->assertEquals(array('theme' => array('b' => '2'),
-				  'module' => array('a' => '3')),
+	$this->assertEquals(array('states' => array('theme' => array('b' => '2'),
+						    'module' => array('a' => '3')),
+				  'deleted' => array()),
 			    PluginCallbackView::calculateStateChanges(
 				array('theme' => array('a' => '1', 'b' => '1'),
 				      'module' => array('a' => '2')),
 				array('theme' => array('a' => '1', 'b' => '2'),
 				      'module' => array('a' => '3'))));
+    }
+
+    function testCalculateStateChangesPluginDeleted() {
+	$this->assertEquals(
+	    array('states' => array(), 'deleted' => array('theme' => array('c' => 1))),
+	    PluginCallbackView::calculateStateChanges(
+		array('theme' => array('a' => '1', 'c' => 2), 'module' => array('b' => '1')),
+		array('theme' => array('a' => '1'), 'module' => array('b' => '1'))));
     }
 }
 
@@ -511,6 +595,24 @@ class PluginCallbackControllerTestPlugin {
 	return $string;
     }
 }
+
+class PluginCallbackTestRepository {
+    var $_wasCalled;
+
+    function scanPlugin($pluginType, $pluginId) {
+	$this->_wasCalled['scanPlugin'][] = array($pluginType, $pluginId);
+    }
+
+    function wasCalled($function, $args) {
+	if (!isset($this->_wasCalled[$function])) {
+	    return false;
+	}
+
+	$call = array_pop($this->_wasCalled[$function]);
+	return ($call == $args);
+    }
+}
+
 class PluginCallbackControllerTestModule extends PluginCallbackControllerTestPlugin { }
 class PluginCallbackControllerTestTheme extends PluginCallbackControllerTestPlugin { }
 

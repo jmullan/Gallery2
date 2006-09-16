@@ -47,52 +47,18 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
 
-    function testInterfaceNavigation() {
-	/* Browse modules. */
-	GalleryUtilities::putRequestVariable('mode', 'browseModules');
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminRepository',
-						      'mode' => 'browseModules'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
-
-	/* Browse themes. */
-	GalleryUtilities::putRequestVariable('mode', 'browseThemes');
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminRepository',
-						      'mode' => 'browseThemes'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
-
-	/* By default, common tasks should be shown. */
-	GalleryUtilities::removeRequestVariable('mode');
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminRepository',
-						      'mode' => 'commonTasks'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
-    }
-
     function testUpdateIndex() {
-	GalleryUtilities::removeRequestVariable('mode');
 	GalleryUtilities::putRequestVariable('form[action][update]', 1);
 
 	$repository = new AdminRepositoryControllerTestRepository();
 	$repository->setReply('init', array(), null);
 	$repository->setReply('downloadIndex', array(), null);
+	$repository->setReply('scanPlugins', array(), null);
 	$this->_controller->_repository = $repository;
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminRepository',
-						      'mode' => 'commonTasks'),
+						      'subView' => 'core.AdminRepository'),
 				  'status' => array('indexUpdated' => 1),
 				  'error' => array()),
 			    $results);
@@ -100,31 +66,33 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	$this->assert($repository->isComplete(), $repository->getRemaining());
     }
 
-    function testUpgradeAll() {
-	GalleryUtilities::removeRequestVariable('mode');
+    function testUpgradeAllNoUpgradeAvailable() {
 	GalleryUtilities::putRequestVariable('form[action][upgradeAll]', 1);
-
-	$packages = array('module' => array('testModule' => array('package1' => 1,
-								  'lang-en_US' => 1)));
 
 	$repository = new AdminRepositoryControllerTestRepository();
 	$repository->setReply('init', array(), null);
-	$repository->setReply('getAllUpgradeablePackages', array(),
-	    array(null, array()));
-
-	$repository->setReply('init', array(), null);
-	$repository->setReply('getAllUpgradeablePackages', array(),
-	    array(null, $packages));
+	$repository->setReply('getAllUpgradeablePackages', array(), array(null, array()));
 	$this->_controller->_repository = $repository;
 
 	/* Test case when no upgradeable packages exist. */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminRepository',
-						      'mode' => 'commonTasks'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminRepository'),
 				  'status' => array('noUpgradeAvailable' => 1),
 				  'error' => array()),
 			    $results);
+    }
+
+    function testUpgradeAll() {
+	GalleryUtilities::putRequestVariable('form[action][upgradeAll]', 1);
+
+	$packages = array(
+	    'module' => array('testModule' => array('package1' => 1, 'lang-en_US' => 1)));
+
+	$repository = new AdminRepositoryControllerTestRepository();
+	$repository->setReply('init', array(), null);
+	$repository->setReply('getAllUpgradeablePackages', array(), array(null, $packages));
+	$this->_controller->_repository = $repository;
 
 	/* Test case when some packages are upgradeable. */
 	$results = $this->handleRequest();
@@ -137,133 +105,6 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	 * We don't test the download process itself here, because it shares
 	 * the general download code path that is tested in testDownload.
 	 */
-    }
-
-    function testDownload() {
-	global $gallery;
-
-	GalleryUtilities::putRequestVariable('mode', 'download');
-	GalleryUtilities::putRequestVariable('form[pluginType]', 'module');
-	GalleryUtilities::putRequestVariable('form[pluginId]', 'testModule');
-
-	/* Test canceled download. */
-	GalleryUtilities::putRequestVariable('form[action][cancel]', '1');
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminRepository',
-						      'mode' => 'browseModules'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
-
-	/* Test case when no packages have been selected. */
-	GalleryUtilities::removeRequestVariable('form[action][cancel]');
-	GalleryUtilities::putRequestVariable('form[action][download]', '1');
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminRepository',
-						      'mode' => 'download'),
-				  'status' => array(),
-				  'error' => array('form[packages][empty]')),
-			    $results);
-
-	/* Test regular download. */
-	$mockAdapter = new MockTemplateAdapter();
-	$gallery->_templateAdapter =& $mockAdapter;
-
-	$mockUrlGenerator = new AdminRepositoryControllerTestUrlGenerator();
-	$gallery->_urlGenerator =& $mockUrlGenerator;
-
-	$expectedPluginData = array('module' => array('testModule' => array(
-	    'base' => 'upgrade', 'lang-en_US' => 1, 'lang-hu_HU' => 1, 'test' => 1)));
-
-	$pluginDownloadFileList = array('module' =>  array('testModule' => array(
-	    'name' => 'Test Module',
-	    'files' => array('descriptor' => 'testModule-descriptor',
-			     'lang-en_US' => 'en_US-package',
-			     'lang-hu_HU' => 'hu_HU-package',
-			     'test' => 'test-package'))));
-
-	$repository = new AdminRepositoryControllerTestRepository();
-	$repository->setReply('init', array(), null);
-	$repository->setReply('init', array(), null);
-	$repository->setReply('getDownloadFileList',
-			      array($expectedPluginData),
-			      array(null, $pluginDownloadFileList));
-	$repository->setReply('updatePluginIndexFile',
-			      array('module', 'testModule'),
-			      null);
-	/* Descriptor. */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', 'testModule', 'descriptor', 'testModule-descriptor'),
-			      array(null, 'descriptorContents'));
-	/* lang-en_US */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', 'testModule', 'lang-en_US', 'en_US-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('lang-en_US', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', 'testModule', 'lang-en_US'),
-			      array(null, 'en_US-version', 'en_US-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', 'testModule', 'lang-en_US',
-				    'en_US-version', 'en_US-build'),
-			      null);
-	/* lang-hu_HU */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', 'testModule', 'lang-hu_HU', 'hu_HU-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('lang-hu_HU', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', 'testModule', 'lang-hu_HU'),
-			      array(null, 'hu_HU-version', 'hu_HU-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', 'testModule', 'lang-hu_HU',
-				    'hu_HU-version', 'hu_HU-build'),
-			      null);
-	/* test */
-	$repository->setReply('downloadAndUnpack',
-			      array('module', 'testModule', 'test', 'test-package'),
-			      array(null, array()));
-	$repository->setReply('verifyPackageIntegrity',
-			      array('test', 'descriptorContents'),
-			      null);
-	$repository->setReply('getPackageVersionAndBuild',
-			      array('module', 'testModule', 'test'),
-			      array(null, 'test-version', 'test-build'));
-	$repository->setReply('updatePackageMetaData',
-			      array('module', 'testModule', 'test',
-				    'test-version', 'test-build'),
-			      null);
-	$this->_controller->_repository = $repository;
-
-	GalleryUtilities::putRequestVariable('form[upgradeBaseFiles]', 1);
-	GalleryUtilities::putRequestVariable('form[downloadLanguages]', array('en_US'));
-	GalleryUtilities::putRequestVariable('form[upgradeLanguages]', array('hu_HU'));
-	GalleryUtilities::putRequestVariable('form[downloadTest]', 1);
-
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core.ProgressBar'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results, 'Expected only core.ProgressBar delegation.');
-
-	$ret = $mockAdapter->runCallbacks();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->assertEquals(array('0.25', '0.5', '0.75', '1', '1',
-	    'complete:view=core.SiteAdmin,subView=core.AdminRepository,mode=browseModules'),
-	    $mockAdapter->getProgressBarDump());
-
-	$this->assert($this->_controller->_repository->isComplete(),
-	    $this->_controller->_repository->getRemaining());
-
     }
 }
 
@@ -343,45 +184,12 @@ class AdminRepositoryControllerTestRepository {
 	return $this->_makeReply('downloadIndex', array());
     }
 
+    function scanPlugins() {
+	return $this->_makeReply('scanPlugins', array());
+    }
+
     function getAllUpgradeablePackages() {
 	return $this->_makeReply('getAllUpgradeablePackages', array());
-    }
-
-    function getDownloadFileList($pluginData) {
-	return $this->_makeReply('getDownloadFileList', array($pluginData));
-    }
-
-    function updatePluginIndexFile($pluginType, $pluginId) {
-	return $this->_makeReply('updatePluginIndexFile', array($pluginType, $pluginId));
-    }
-
-    function downloadAndUnpack($pluginType, $pluginId, $packageName, $relativePackageUrl) {
-	return $this->_makeReply(
-	    'downloadAndUnpack', array($pluginType, $pluginId, $packageName, $relativePackageUrl));
-    }
-
-    function verifyPackageIntegrity($packageName, $descriptor) {
-	return $this->_makeReply('verifyPackageIntegrity', array($packageName, $descriptor));
-    }
-
-    function getPackageVersionAndBuild($pluginType, $pluginId, $packageName) {
-	return $this->_makeReply(
-	    'getPackageVersionAndBuild', array($pluginType, $pluginId, $packageName));
-    }
-
-    function updatePackageMetaData($pluginType, $pluginId, $packageName, $version, $build) {
-	return $this->_makeReply(
-	    'updatePackageMetaData', array($pluginType, $pluginId, $packageName, $version, $build));
-    }
-}
-
-class AdminRepositoryControllerTestUrlGenerator {
-    function generateUrl($params=array(), $options=array()) {
-	$buf = array();
-	foreach ($params as $key => $value) {
-	    $buf[] = "$key=$value";
-	}
-	return implode(',', $buf);
     }
 }
 ?>

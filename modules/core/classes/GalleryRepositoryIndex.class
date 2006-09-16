@@ -62,15 +62,13 @@ class GalleryRepositoryIndex {
      */
     function update() {
 	global $gallery;
+
 	$indexUrl = $gallery->getConfig('repository.url') . 'index';
 	$indexHashUrl = $indexUrl . '.hash';
 
-	/* Download index from the Gallery server and verify its integrity. */
-	list ($wasDownloaded, $indexContents) = $this->_utilities->downloadFile($indexUrl);
-	if (!$wasDownloaded) {
-	    $errorMessage = $gallery->i18n('Error downloading index from \'%s\'.');
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-					sprintf($errorMessage, $indexUrl));
+	list ($ret, $indexContents) = $this->_getPossiblyCompressedIndexContents($indexUrl);
+	if ($ret) {
+	    return $ret;
 	}
 
 	list ($wasDownloaded, $indexHash) = $this->_utilities->downloadFile($indexHashUrl);
@@ -105,6 +103,39 @@ class GalleryRepositoryIndex {
 	    return $ret;
 	}
 	return null;
+    }
+
+    /**
+     * Get the contents of the index, given a url.  Attempt to download the .gz version of the
+     * file if this version of PHP supports gzinflate.  Otherwise, get the uncompresed version.
+     *
+     * @param string the index url
+     * @return array object GalleryStatus a status code
+     *               the contents of the index file
+     * @access private
+     */
+    function _getPossiblyCompressedIndexContents($indexUrl) {
+	global $gallery;
+
+	$phpVm =& $gallery->getPhpVm();
+	$needsInflation = false;
+	if ($phpVm->function_exists('gzinflate')) {
+	    $indexUrl .= '.gz';
+	    $needsInflation = true;
+	}
+
+	/* Download index from the Gallery server and verify its integrity. */
+	list ($wasDownloaded, $indexContents) = $this->_utilities->downloadFile($indexUrl);
+	if (!$wasDownloaded) {
+	    $errorMessage = $gallery->i18n('Error downloading index from \'%s\'.');
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+					sprintf($errorMessage, $indexUrl));
+	}
+
+	if ($needsInflation) {
+	    $indexContents = $phpVm->gzinflate($indexContents);
+	}
+	return array(null, $indexContents);
     }
 
     /**
@@ -239,13 +270,12 @@ class GalleryRepositoryIndex {
 	    $revision = $this->_index[$pluginType . 's'][$pluginId]['header']['stringsRevision'];
 	}
 
-	if (!isset($this->_index[$pluginType . 's'][$pluginId]['languages'][$revision])) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, sprintf(
-					      'Revision not found in index [%s] [%s] [%s]',
-					      $pluginType, $pluginId, $revision)),
-			 null);
+	if (isset($this->_index[$pluginType . 's'][$pluginId]['languages'][$revision])) {
+	    $languages = $this->_index[$pluginType . 's'][$pluginId]['languages'][$revision];
+	} else {
+	    $languages = array();
 	}
-	$languages = $this->_index[$pluginType . 's'][$pluginId]['languages'][$revision];
+
 	return array(null, $languages);
     }
 
@@ -340,7 +370,7 @@ class GalleryRepositoryIndex {
 	    return array($ret, null);
 	}
 
-	if (preg_match('/^lang-(.._..)$/', $package)) {
+	if (preg_match('/^lang-(.*)$/', $package)) {
 	    $packageUrl = sprintf(
 		'%ss/%s-%s-%s-%s.package', $pluginType, $pluginId, $package, $version, $build);
 	} else {
@@ -375,7 +405,7 @@ class GalleryRepositoryIndex {
 	    return array($ret, null, null);
 	}
 
-	if (preg_match('/^lang-(.._..)$/', $package, $languageCode)) {
+	if (preg_match('/^lang-(.*)$/', $package, $languageCode)) {
 	    list ($ret, $isAvailable) =
 		$this->_utilities->isPluginAvailable($pluginType, $pluginId);
 	    if ($ret) {

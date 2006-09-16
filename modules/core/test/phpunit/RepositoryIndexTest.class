@@ -50,6 +50,8 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->_index = new GalleryRepositoryIndex();
 	$this->_index->_index = $this->_sampleIndex;
 	$this->_index->_isLoaded = true;
+
+	$gallery->setConfig('repository.url', 'http://example.com/repository/');
     }
 
     function tearDown() {
@@ -65,11 +67,11 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$testcases = array(array(
 	    'pluginType' => 'module',
 	    'pluginId' => 'testModule',
-	    'expectedUrl' => 'modules/testModule-1.0.0-19700412131300.descriptor'), array(
+	    'expectedUrl' => 'modules/testModule-1.0.0-44444.descriptor'), array(
 
 	    'pluginType' => 'theme',
 	    'pluginId' => 'testTheme',
-	    'expectedUrl' => 'themes/testTheme-1.0.0-19700411131300.descriptor'));
+	    'expectedUrl' => 'themes/testTheme-1.0.0-11111.descriptor'));
 
 	foreach ($testcases as $case) {
 	    list ($ret, $url) =
@@ -87,32 +89,32 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    'pluginType' => 'module',
 	    'pluginId' => 'testModule',
 	    'package' => 'base',
-	    'expectedUrl' => 'modules/testModule-1.0.0-19700412131300-base.package'), array(
+	    'expectedUrl' => 'modules/testModule-1.0.0-44444-base.package'), array(
 
 	    'pluginType' => 'module',
 	    'pluginId' => 'testModule',
 	    'package' => 'test',
-	    'expectedUrl' => 'modules/testModule-1.0.0-19700412131300-test.package'), array(
+	    'expectedUrl' => 'modules/testModule-1.0.0-44444-test.package'), array(
 
 	    'pluginType' => 'module',
 	    'pluginId' => 'testModule',
 	    'package' => 'lang-en_US',
-	    'expectedUrl' => 'modules/testModule-lang-en_US-2.2-2.3.package'), array(
+	    'expectedUrl' => 'modules/testModule-lang-en_US-22222-33333.package'), array(
 
 	    'pluginType' => 'module',
 	    'pluginId' => 'testModule',
 	    'package' => 'lang-pt_BR',
-	    'expectedUrl' => 'modules/testModule-lang-pt_BR-2.2-2.3.package'), array(
+	    'expectedUrl' => 'modules/testModule-lang-pt_BR-22222-33333.package'), array(
 
 	    'pluginType' => 'theme',
 	    'pluginId' => 'testTheme',
 	    'package' => 'base',
-	    'expectedUrl' => 'themes/testTheme-1.0.0-19700411131300-base.package'), array(
+	    'expectedUrl' => 'themes/testTheme-1.0.0-11111-base.package'), array(
 
 	    'pluginType' => 'theme',
 	    'pluginId' => 'testTheme',
 	    'package' => 'lang-pt_BR',
-	    'expectedUrl' => 'themes/testTheme-lang-pt_BR-2.2-2.2.package'));
+	    'expectedUrl' => 'themes/testTheme-lang-pt_BR-22222-33333.package'));
 
 	$this->_index->utilities = new RepositoryIndexTestUtilities();
 
@@ -189,8 +191,11 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	/* Prepare mock objects. */
 	$serializedSampleIndex = serialize($this->_sampleIndex);
-	$this->_index->_utilities = new RepositoryIndexTestUtilities(array(
-	    $serializedSampleIndex, md5($serializedSampleIndex)));
+	$this->_index->_utilities = new RepositoryIndexTestUtilities(
+	    array('http://example.com/repository/index' => $serializedSampleIndex,
+		  'http://example.com/repository/index.hash' => md5($serializedSampleIndex)));
+
+	$gallery->_phpVm = new RepositoryIndexMockPhpVm(false);
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_put_contents',
@@ -211,9 +216,9 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    $timestampWritten = true;
 
 	    $updateTimestamp = $this->_testStorage->_updatedMapData
-		['GalleryPluginParameterMap']['change']['parameterValue'];
+		['GalleryPluginParameterMap'][0]['change']['parameterValue'];
 	} else if (isset($this->_testStorage->_addedMapData['GalleryPluginParameterMap'])) {
-	    $addedData = $this->_testStorage->_addedMapData['GalleryPluginParameterMap'];
+	    $addedData = $this->_testStorage->_addedMapData['GalleryPluginParameterMap'][0];
 
 	    if (isset($addedData['parameterName'])
 		    && $addedData['parameterName'] == 'repository.updateTime') {
@@ -226,6 +231,22 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->assert($updateTimestamp > time() - 60, 'Timestamp too old.');
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testGetCompressedIndexContents() {
+	global $gallery;
+	$gallery->_phpVm = new RepositoryIndexMockPhpVm(true);
+
+	$this->_index->_utilities = new RepositoryIndexTestUtilities(
+	    array('http://example.com/repository/index.gz' => 'compressed index',
+		  'http://example.com/repository/index.hash' => md5('compressed index')));
+
+	list ($ret, $indexContents) = $this->_index->_getPossiblyCompressedIndexContents(
+	    'http://example.com/repository/index');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('uncompressed index', $indexContents);
     }
 
     function testGetMetaData() {
@@ -309,13 +330,14 @@ class RepositoryIndexTest extends GalleryTestCase {
 
     function testGetAvailableLanguagesInPlugin() {
 	$testCases = array(
-	     array('pluginType' => 'module',
-		   'pluginId' => 'testModule',
-		   'languages' => $this->_sampleIndex['modules']['testModule']['languages']['2.2']),
-
-	     array('pluginType' => 'theme',
-		   'pluginId' => 'testTheme',
-		   'languages' => $this->_sampleIndex['themes']['testTheme']['languages']['2.2']));
+	     array(
+		 'pluginType' => 'module',
+		 'pluginId' => 'testModule',
+		 'languages' => $this->_sampleIndex['modules']['testModule']['languages']['22222']),
+	     array(
+		 'pluginType' => 'theme',
+		 'pluginId' => 'testTheme',
+		 'languages' => $this->_sampleIndex['themes']['testTheme']['languages']['22222']));
 
 	foreach ($testCases as $case) {
 	    list ($ret, $languages) =
@@ -431,7 +453,6 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 class RepositoryIndexTestUtilities {
 
-    var $_fileContents;
     var $_fileContentsIndex;
     var $_isPluginAvailable;
     var $_isPluginCompatible;
@@ -439,7 +460,6 @@ class RepositoryIndexTestUtilities {
     function RepositoryIndexTestUtilities($contents = array(),
 	    $isPluginAvailable = true, $isPluginCompatible = true) {
 	$this->_fileContents = $contents;
-	$this->_fileContentsIndex = 0;
 	$this->_isPluginAvailable = $isPluginAvailable;
 	$this->_isPluginCompatible = $isPluginCompatible;
     }
@@ -460,11 +480,28 @@ class RepositoryIndexTestUtilities {
 	return $this->_isPluginCompatible;
     }
 
-    function downloadFile() {
-	$contents = $this->_fileContents[$this->_fileContentsIndex];
-	$this->_fileContentsIndex++;
+    function downloadFile($url) {
+	return array(true, $this->_fileContents[$url]);
+    }
+}
 
-	return array(true, $contents);
+class RepositoryIndexMockPhpVm extends GalleryPhpVm {
+    function RepositoryIndexMockPhpVm($gzinflateExists) {
+	$this->_gzinflateExists = $gzinflateExists;
+    }
+
+    function function_exists($func) {
+	if ($func == 'gzinflate') {
+	    return $this->_gzinflateExists;
+	}
+	return function_exists($func);
+    }
+
+    function gzinflate($data) {
+	if ($data == 'compressed index') {
+	    return 'uncompressed index';
+	}
+	return $data;
     }
 }
 ?>

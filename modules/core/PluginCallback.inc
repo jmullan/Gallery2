@@ -28,6 +28,11 @@
  * @version $Revision$ $Date$
  */
 class PluginCallbackView extends GalleryView {
+    /**
+     * @var object GalleryRepository
+     * @access private
+     */
+    var $_repository;
 
     /**
      * @see GalleryView::isImmediate
@@ -75,7 +80,8 @@ class PluginCallbackView extends GalleryView {
 		$result['status'] = 'error';
 		$session->put('core.error', serialize($ret));
 	    }
-	    $result['states'] = $this->calculateStateChanges($beforeStates, $afterStates);
+	    $result = array_merge(
+		$result, $this->calculateStateChanges($beforeStates, $afterStates));
 	}
 
 	GalleryCoreApi::requireOnce('lib/JSON/JSON.php');
@@ -93,16 +99,18 @@ class PluginCallbackView extends GalleryView {
      * @static
      */
     function calculateStateChanges($beforeStates, $afterStates) {
-	$changes = array();
+	$states = array();
+	$deleted = array();
 	foreach (array('module', 'theme') as $type) {
-	    foreach ($afterStates[$type] as $moduleId => $state) {
-		if (!isset($beforeStates[$type][$moduleId]) ||
-		    $beforeStates[$type][$moduleId] != $state) {
-		    $changes[$type][$moduleId] = $state;
+	    foreach ($beforeStates[$type] as $moduleId => $state) {
+		if (!isset($afterStates[$type][$moduleId])) {
+		    $deleted[$type][$moduleId] = 1;
+		} else if ($afterStates[$type][$moduleId] != $state) {
+		    $states[$type][$moduleId] = $afterStates[$type][$moduleId];
 		}
 	    }
 	}
-	return $changes;
+	return array('states' => $states, 'deleted' => $deleted);
     }
 
     /**
@@ -114,6 +122,9 @@ class PluginCallbackView extends GalleryView {
      * @static
      */
     function handleCallback($command, &$result) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return $ret;
@@ -233,6 +244,18 @@ class PluginCallbackView extends GalleryView {
 	    } else {
 		$result['status'] = 'success';
 	    }
+
+	    if (empty($this->_repository)) {
+		GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
+		$this->_repository = new GalleryRepository();
+		$this->_repository->init();
+	    }
+
+	    $ret = $this->_repository->scanPlugin($pluginType, $pluginId);
+	    if ($ret) {
+		return $ret;
+	    }
+
 	    break;
 
 	case 'uninstall':
@@ -254,6 +277,43 @@ class PluginCallbackView extends GalleryView {
 		    return $ret;
 		}
 		$result['status'] = 'success';
+	    }
+	    break;
+
+	case 'delete':
+	    if ($isActive) {
+		list ($ret, $redirect) = $plugin->deactivate();
+		if ($ret) {
+		    return $ret;
+		}
+	    } else {
+		$redirect = false;
+	    }
+
+	    if ($redirect) {
+		$result['status'] = 'redirect';
+		$results['redirect'] = $redirect;
+	    } else {
+		$ret = $plugin->uninstall();
+		if ($ret) {
+		    return $ret;
+		}
+
+		$path = sprintf(
+		    "%s/%ss/%s", dirname(dirname(dirname(__FILE__))), $pluginType, $pluginId);
+		$success = @$platform->recursiveRmdir($path);
+		if (!$success) {
+		    $result['status'] = 'fail';
+		} else {
+		    $ret = GalleryCoreApi::removeMapEntry(
+			'GalleryPluginPackageMap',
+			array('pluginType' => $pluginType, 'pluginId' => $pluginId));
+		    if ($ret) {
+			return $ret;
+		    }
+
+		    $result['status'] = 'success';
+		}
 	    }
 	    break;
 

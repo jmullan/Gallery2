@@ -47,8 +47,10 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Set up utilities. */
-	$this->_utilities = new RepositoryDescriptorTestUtilities('/.*[strings\.raw|\.po]$/',
-	    '# $file.po,v 2.2 1970/04/11 13:13:00 $', '2.2', '19700411131300');
+	$this->_utilities = new RepositoryDescriptorTestUtilities(
+	    array('/strings.raw/' => '# $' . 'Id: strings.raw 22222 2006-07-08 23:55:12Z bharat $',
+		  '/MANIFEST/' => '# $' . 'Revision: 11111 $',
+		  '/.po$/' => '# $' . 'Id: en_GB.po 33333 2006-07-08 23:55:12Z bharat $'));
 
 	/* Set up plugin files and directories. */
 	$pluginDir = 'pluginpath';
@@ -172,11 +174,6 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	    'locale/en_US/',
 	    'locale/en_US/LC_MESSAGES/',
 	    ), $descriptor->getDirectoriesInPackage('lang-en_US'));
-
-	$this->assertEquals(array(
-	    'test/',
-	    'test/phpunit/',
-	    ), $descriptor->getDirectoriesInPackage('test'));
     }
 
     function testGetPackages() {
@@ -196,7 +193,6 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	    'lang-en_GB',
 	    'lang-pt_BR',
 	    'lang-pt_PT',
-	    'test',
 	    ), $descriptor->getPackages());
     }
 }
@@ -257,32 +253,25 @@ class RepositoryDescriptorTestTranslator {
 
 class RepositoryDescriptorTestUtilities {
 
-    var $_extractedTimestamp;
-    var $_extractedRevision;
-    var $_dateString;
     var $_expectedFile;
 
-    function RepositoryDescriptorTestUtilities($expectedFile, $dateString, $revision, $timestamp) {
-	$this->_dateString = $dateString;
-	$this->_extractedTimestamp = $timestamp;
-	$this->_extractedRevision = $revision;
-	$this->_expectedFile = $expectedFile;
+    function RepositoryDescriptorTestUtilities($matches) {
+	$this->_matches = $matches;
     }
 
     function getFirstBytesFromFile($file, $bytes) {
-	return preg_match($this->_expectedFile, $file)
-	       ? array(null, $this->_dateString)
-	       : array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					    "Expected strings.raw in [$file]"),
-		       '');
+	foreach ($this->_matches as $regex => $result) {
+	    if (preg_match($regex, $file)) {
+		return array(null, $result);
+	    }
+	}
+	return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					   "Error reading file [$file]"), null);
     }
 
     function extractRevision($string) {
-	return array(null, $this->_extractedRevision);
-    }
-
-    function extractTimestamp($string) {
-	return array(null, $this->_extractedTimestamp);
+	preg_match('/([\d]{5})/', $string, $matches);
+	return array(null, $matches[0]);
     }
 }
 
@@ -415,7 +404,7 @@ class RepositoryDescriptorTestPlatform {
 	    if (count($this->pluginFilesystem[$readPath]) > $fileIndex) {
 		return $this->pluginFilesystem[$readPath][$fileIndex];
 	    } else {
-		/* Now only three special 'files' remain unread: CVS, . and .. */
+		/* Now only three special 'files' remain unread: .svn, . and .. */
 		$fileIndex = $this->dirPosition[$readPath]
 		    - count($this->pluginFilesystem[$readPath]) - count($subDirectories);
 
@@ -427,7 +416,7 @@ class RepositoryDescriptorTestPlatform {
 		    return '..';
 
 		case 2:
-		    return 'CVS';
+		    return '.svn';
 
 		case 3:
 		    /* All files and subdirectories of the current path have been returned. */

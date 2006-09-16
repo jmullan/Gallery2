@@ -88,6 +88,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
      * @return object GalleryStatus a status code
      */
     function packagePlugins() {
+	global $gallery;
 	$pluginsPackaged = 0;
 
 	/* Set default filter if none is provided. */
@@ -102,6 +103,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	}
 
 	foreach ($plugins as $pluginId => $plugin) {
+	    $gallery->guaranteeTimeLimit(30);
 	    if (preg_match($filter, $pluginId)) {
 		list ($ret, $pluginInfo) = $this->doPackagePlugin($plugin['type'], $pluginId);
 		if ($ret) {

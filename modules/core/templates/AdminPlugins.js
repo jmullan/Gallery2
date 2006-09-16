@@ -1,9 +1,12 @@
 function updatePluginState(pluginType, pluginId, state, visualChanges) {
     var pluginKey = pluginType + "-" + pluginId;
-    icon = document.getElementById("plugin-icon-" + pluginKey);
+    var icon = document.getElementById("plugin-icon-" + pluginKey);
     icon.src = stateData[state]['img.src'];
     icon.alt = stateData[state]['img.alt'];
     for (var i in allActions) {
+	if (allActions[i] == "delete" && !pluginData[pluginType][pluginId]["deletable"]) {
+	    continue;
+	}
 	var node = document.getElementById("action-" + allActions[i] + "-" + pluginKey);
 	if (node) {
 	    node.style.display = stateData[state]['actions'][allActions[i]] ? 'inline' : 'none';
@@ -26,6 +29,24 @@ function updatePluginState(pluginType, pluginId, state, visualChanges) {
 	    eval(callback);
 	}
     }
+}
+
+function deletePlugin(pluginType, pluginId) {
+    var re = new RegExp().compile('gbLink-' + pluginId + '_');
+    var links = document.getElementsByTagName("li");
+    for (i in links) {
+	if (re.test(links[i].className)) {
+	    links[i].style.display = 'none';
+	}
+    }
+
+    var row = document.getElementById("plugin-row-" + pluginType + "-" + pluginId);
+    if (row) {
+	row.style.display = 'none';
+    }
+
+    addMessage(pluginType, pluginId, stateData['deleted']['message']['text'],
+	       stateData['deleted']['message']['type']);
 }
 
 function copyVersionToInstalledVersion(pluginType, pluginId) {
@@ -65,10 +86,19 @@ function performPluginAction(pluginType, pluginId, url) {
 				      result['states'][stateChangePluginType][stateChangePluginId], true);
 		}
 	    }
+
+	    for (var deletedPluginType in result['deleted']) {
+		for (var deletedPluginId in result['deleted'][deletedPluginType]) {
+		    deletePlugin(deletedPluginType, deletedPluginId,
+				 result['deleted'][deletedPluginType][deletedPluginId]);
+		}
+	    }
 	} else if (result['status'] == 'redirect') {
 	    document.location.href = result['redirect'];
 	} else if (result['status'] == 'error') {
 	    document.location.href = errorPageUrl;
+	} else if (result['status'] == 'fail') {
+	    addMessage(pluginType, pluginId, failedToDeleteMessage, 'giWarning');
 	}
 
 	setPluginBusyStatus(pluginType, pluginId, false);
@@ -103,7 +133,7 @@ function addMessage(pluginType, pluginId, messageText, messageType) {
     pluginStatus.className = messageType;
     pluginStatus.id = detailsId;
     pluginStatus.style.whiteSpace = "nowrap";
-    var text = messageText.replace('__PLUGIN__', pluginNames[pluginType][pluginId]);
+    var text = messageText.replace('__PLUGIN__', pluginData[pluginType][pluginId]["name"]);
 
     pluginStatus.appendChild(document.createTextNode(text));
 
@@ -137,15 +167,15 @@ function updateStatusPosition() {
     containerEl.style.top = document.getElementsByTagName("html")[0].scrollTop + "px";
 }
 
-function verifyUninstall(pluginType, pluginId, uninstallUrl) {
+function verify(prompt, pluginType, pluginId, uninstallUrl) {
     var dialog = new YAHOO.widget.SimpleDialog(
 	"gDialog", { width: "20em",
 		 effect: { effect:YAHOO.widget.ContainerEffect.FADE, duration:0.25 },
 		 fixedcenter: true,
 		 modal: true,
 		 draggable: false });
-    dialog.setHeader(uninstallPrompt['header']);
-    dialog.setBody(uninstallPrompt['body'].replace('__PLUGIN__', pluginNames[pluginType][pluginId]));
+    dialog.setHeader(prompt['header']);
+    dialog.setBody(prompt['body'].replace('__PLUGIN__', pluginData[pluginType][pluginId]["name"]));
     dialog.cfg.setProperty("icon", YAHOO.widget.SimpleDialog.ICON_WARN);
 
     var handleYes = function() {
@@ -157,8 +187,8 @@ function verifyUninstall(pluginType, pluginId, uninstallUrl) {
 	this.hide();
     }
 
-    var myButtons = [ { text: uninstallPrompt['yes'], handler:handleYes },
-                      { text: uninstallPrompt['no'], handler:handleNo, isDefault:true } ];
+    var myButtons = [ { text: prompt['yes'], handler:handleYes },
+                      { text: prompt['no'], handler:handleNo, isDefault:true } ];
     dialog.cfg.queueProperty("buttons", myButtons);
     dialog.render(document.body);
 }

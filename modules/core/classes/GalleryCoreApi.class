@@ -58,6 +58,10 @@ class GalleryCoreApi {
      * - change GalleryCoreApi::error to only take error code and error message
      * - remove GalleryCapabilities (major bump of embed api too?)
      * - remove 'link' entry in Gallery.class constructor
+     * - remove GalleryCoreApi::getPluginBaseDirs();
+     * - remove GalleryCoreApi::getPluginBaseDir();
+     * - remove GalleryCoreApi::isPluginInDefaultLocation();
+     * - remove $skipBaseDirectoryDetection from GalleryCoreApi::requireOnce();
      * - remove support for check[Sidebar|Album|Photo]Blocks deprecated params
      *   for ShouldShowEmergencyEditItemLink in Callbacks.inc
      *   and comment in blocks/EmergencyEditItemLink.tpl
@@ -2580,17 +2584,19 @@ class GalleryCoreApi {
     /**
      * Returns an array of directories that can contain plugins.
      *
+     * OBSOLETE.  Remove on next major API bump.
+     *
      * This function should only be used in special circumstances, for example when a list of all
      * plugins needs to be made.  Currently it returns gallery2/ and gallery2/plugins/.
      */
      function getPluginBaseDirs() {
-	 GalleryCoreApi::requireOnce(
-	     'modules/core/classes/helpers/GalleryPluginHelper_simple.class');
-	return GalleryPluginHelper_simple::getPluginBaseDirs();
-    }
+	 return array('base' => dirname(dirname(dirname(dirname(__FILE__)))) . '/');
+     }
 
     /**
      * Returns the base directory of the specified plugin.
+     *
+     * OBSOLETE.  Remove on next major API bump.
      *
      * Modules should never assume the filesystem location of any module, not even the core module.
      * Use this function to get the base directory of a module. Possible base directories are
@@ -2603,13 +2609,13 @@ class GalleryCoreApi {
      * @return string plugin base directory
      */
     function getPluginBaseDir($pluginType, $pluginId, $clearCache=false) {
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class', true);
-	return GalleryPluginHelper_simple::getPluginBaseDir($pluginType, $pluginId, $clearCache);
+	return dirname(dirname(dirname(dirname(__FILE__)))) . '/';
     }
 
     /**
      * Indicates whether the specified plugin is in the default plugin directory.
+     *
+     * OBSOLETE.  Remove on next major API bump.
      *
      * Sometimes it's useful to know just whether a plugin is in its default directory or not,
      * without actually getting any information about its path.  It is used for rewriting URL
@@ -2625,10 +2631,7 @@ class GalleryCoreApi {
      * @return boolean
      */
     function isPluginInDefaultLocation($pluginType, $pluginId, $clearCache=false) {
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryPluginHelper_simple.class', true);
-	return GalleryPluginHelper_simple::isPluginInDefaultLocation(
-	    $pluginType, $pluginId, $clearCache);
+	return true;
     }
 
     /**
@@ -2652,25 +2655,7 @@ class GalleryCoreApi {
 	    return;
 	}
 	if (!isset($loaded[$file])) {
-	    if ($skipBaseDirectoryDetection) {
-		$pluginBaseDir = dirname(__FILE__) . '/../../../';
-	    } else {
-		if (!preg_match('/^(modules|themes|lib)\/(.+)(\/.+)/iU', $file, $pluginData)) {
-		    print('Invalid path: ' . $file);
-		    return;
-		}
-		$pluginId = $pluginData[2];
-		$pluginType = $pluginData[1];
-
-		if ($pluginType == 'modules') {
-		    $pluginType = 'module';
-		} else if ($pluginType == 'themes') {
-		    $pluginType = 'theme';
-		}
-		$pluginBaseDir = GalleryCoreApi::getPluginBaseDir($pluginType, $pluginId);
-	    }
-
-	    require_once($pluginBaseDir . $file);
+	    require_once(dirname(__FILE__) . '/../../../' . $file);
 	    $loaded[$file] = 1;
 	}
     }
@@ -2743,7 +2728,8 @@ class GalleryCoreApi {
      * @param array $optional optional arguments (eg. limit, orderBy)
      *              array('limit' => array('count' => #, 'offset' => #),
      *                    'orderBy' => array(columnName => ORDER_ASCENDING|ORDER_DESCENDING, ...))
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array the results
      */
     function getMapEntry($mapName, $select, $match=array(), $optional=array()) {
 	global $gallery;

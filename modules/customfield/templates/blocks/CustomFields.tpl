@@ -5,6 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 {g->callback type="customfield.LoadCustomFields" itemId=$item.id|default:$theme.item.id}
+{$block.customfield.LoadCustomFields|print_r}
 
 {if !empty($block.customfield.LoadCustomFields.fields)}
 <div class="{$class}">

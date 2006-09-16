@@ -24,6 +24,7 @@
 include('../../support/security.inc');
 include('../../../bootstrap.inc');
 require_once('../../../init.inc');
+define('GALLERY_MAIN_PHP', 'index.php');
 
 function RepositoryToolsMain() {
     $ret = GalleryInitFirstPass();
@@ -61,7 +62,7 @@ function RepositoryToolsMain() {
 
     /* Configure our url Generator for repository mode. */
     $urlGenerator = new GalleryUrlGenerator();
-    $ret = $urlGenerator->init('lib/tools/repository');
+    $ret = $urlGenerator->init();
     if ($ret) {
 	return $ret;
     }

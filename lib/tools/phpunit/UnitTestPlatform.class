@@ -341,5 +341,9 @@ class UnitTestPlatform {
     function recursiveFixDirPermissions($path) {
 	return $this->_makeReply('recursiveFixDirPermissions', array($path));
     }
+
+    function glob($pattern, $flags=null) {
+	return $this->_makeReply('glob', array($pattern, $flags));
+    }
 }
 ?>

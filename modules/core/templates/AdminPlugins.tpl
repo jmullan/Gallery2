@@ -6,30 +6,30 @@
  *}
 <script type="text/javascript">
   //<![CDATA[
-  var pluginNames = {ldelim} "module" : {ldelim} {rdelim}, "theme" : {ldelim} {rdelim} {rdelim}
+  var pluginData = {ldelim} "module" : {ldelim} {rdelim}, "theme" : {ldelim} {rdelim} {rdelim}
   {foreach name=names from=$AdminPlugins.plugins item=plugin}
-  pluginNames["{$plugin.type}"]["{$plugin.id}"] = "{$plugin.name}";
+  pluginData["{$plugin.type}"]["{$plugin.id}"] = {ldelim} "name" : "{$plugin.name}", "deletable" : {$plugin.deletable} {rdelim};
   {/foreach}
 
   var stateData = {ldelim}
     "inactive" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
       "img.alt" : "{g->text text="Status: Inactive"}",
-      "actions" : {ldelim} "activate": 1, "uninstall" : 1 {rdelim},
+      "actions" : {ldelim} "activate": 1, "uninstall" : 1, "delete" : 1 {rdelim},
       "callback": "copyVersionToInstalledVersion",
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deactivated"}" {rdelim}
     {rdelim},
     "active" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-active.gif"}",
       "img.alt" : "{g->text text="Status: Active"}",
-      "actions" : {ldelim} "deactivate": 1, "uninstall" : 1  {rdelim},
+      "actions" : {ldelim} "deactivate": 1, "uninstall" : 1, "delete" : 1  {rdelim},
       "callback": "copyVersionToInstalledVersion",
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ activated"}" {rdelim}
     {rdelim},
     "uninstalled" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-install.gif"}",
       "img.alt" : "{g->text text="Status: Not Installed"}",
-      "actions" : {ldelim} "install": 1 {rdelim},
+      "actions" : {ldelim} "install": 1, "delete" : 1 {rdelim},
       "callback": "eraseInstalledVersion",
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ uninstalled"}" {rdelim}
     {rdelim},
@@ -46,9 +46,12 @@
     "unconfigured" : {ldelim}
       "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
       "img.alt" : "{g->text text="Status: Inactive (Configuration Required)"}",
-      "actions" : {ldelim} "configure" : 1, "uninstall" : 1 {rdelim},
+      "actions" : {ldelim} "configure" : 1, "uninstall" : 1, "delete" : 1 {rdelim},
       "callback": "copyVersionToInstalledVersion",
       "message" : {ldelim} "type" : "giWarning", "text" : "{g->text text="__PLUGIN__ needs configuration"}" {rdelim}
+    {rdelim},
+    "deleted" : {ldelim}
+      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deleted"}" {rdelim},
     {rdelim}
   {rdelim};
   var errorPageUrl = '{g->url arg1="view=core.ErrorPage" htmlEntities=0}';
@@ -56,14 +59,25 @@
     "header" : '{g->text text="Warning!"}',
     "body"   : '{g->text text="Do you really want to uninstall __PLUGIN__?"}' +
 	       '<br/>' +
-               '{g->text text="This will also remove any permissions and clean up any data created by this module."}',
+               '{g->text text="This plugin will be uninstalled, but its files will be kept so that you can reinstall it."}',
     "yes"    : '{g->text text="Yes"}',
     "no"     : '{g->text text="No"}'
   {rdelim};
 
+  var deletePrompt = {ldelim}
+    "header" : '{g->text text="Warning!"}',
+    "body"   : '{g->text text="Do you really want to delete __PLUGIN__?"}' +
+	       '<br/>' +
+               '{g->text text="This plugin will be uninstalled and its files will be deleted."}',
+    "yes"    : '{g->text text="Yes"}',
+    "no"     : '{g->text text="No"}'
+  {rdelim};
+
+  var failedToDeleteMessage = '{g->text text="Failed to completely delete __PLUGIN__"}';
+
   {literal}
   var contexts = {"module": {}, "theme": {}};
-  var allActions = ["install", "configure", "upgrade", "activate", "deactivate", "uninstall"];
+  var allActions = ["install", "configure", "upgrade", "activate", "deactivate", "uninstall", "delete"];
 
   YAHOO.util.Event.addListener(window, "scroll", updateStatusPosition, false);
   {/literal}
@@ -74,6 +88,18 @@
 
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="Gallery Plugins"} </h2>
+</div>
+
+<div class="gbTabBar">
+  <span class="giSelected o"><span>
+    {g->text text="Plugins"}
+  </span></span>
+
+  <span class="o"><span>
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminRepository"}">
+      {g->text text="Get More Plugins"}
+    </a>
+  </span></span>
 </div>
 
 <div class="gbBlock">
@@ -198,8 +224,13 @@
               </a> |
             </span>
             <span id="action-uninstall-{$plugin.type}-{$plugin.id}" style="display: none">
-              <a style="cursor: pointer" onclick="verifyUninstall('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=uninstall"}')">
+              <a style="cursor: pointer" onclick="verify(uninstallPrompt, '{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=uninstall"}')">
                 {g->text text="uninstall"}
+              </a>
+            </span>
+            <span id="action-delete-{$plugin.type}-{$plugin.id}" style="display: none">
+              | <a style="cursor: pointer" onclick="verify(deletePrompt, '{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=delete"}')">
+                {g->text text="delete"}
               </a>
             </span>
 	  {/if}

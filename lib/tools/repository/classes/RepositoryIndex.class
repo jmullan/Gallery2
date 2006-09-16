@@ -144,11 +144,13 @@ class RepositoryIndex extends RepositoryObject {
 		     * simply checks to see if there is a newer language for its strings.raw and
 		     * downloads it.
 		     */
-		    $stringsRevision = $descriptor['header']['stringsRevision'];
-		    if (!isset($index[$pluginType][$currentPluginId]['languages'][$stringsRevision])
-			    || $relation == 'newer') {
-			$index[$pluginType][$currentPluginId]['languages'][$stringsRevision] =
-			    $descriptor['languages'][$stringsRevision];
+		    if (!empty($descriptor['languages'])) {
+			$stringsRevision = $descriptor['header']['stringsRevision'];
+			if (!isset($index[$pluginType][$currentPluginId]['languages']) ||
+			        $relation == 'newer') {
+			    $index[$pluginType][$currentPluginId]['languages'][$stringsRevision] =
+				$descriptor['languages'][$stringsRevision];
+			}
 		    }
 
 		    /* Add provided API versions to the core module's header. */
@@ -174,7 +176,7 @@ class RepositoryIndex extends RepositoryObject {
 
 	/* Write index to disk. */
 	$this->_template->setVariable('contents', $serializedIndex);
-	$ret = $this->writeToDisk(true);
+	$ret = $this->writeToDisk(true, true);
 	if ($ret) {
 	    return array($ret, null);
 	}

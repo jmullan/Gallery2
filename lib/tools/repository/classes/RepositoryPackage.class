@@ -86,7 +86,7 @@ class RepositoryPackage extends RepositoryObject {
 	}
 
 	return array(null, array('packagesWritten' => $packagesWritten,
-						     'packagesSkipped' => $packagesSkipped));
+				 'packagesSkipped' => $packagesSkipped));
     }
 
     /**
@@ -110,6 +110,7 @@ class RepositoryPackage extends RepositoryObject {
 
 	/* File creation code. */
 	$platform =& $gallery->getPlatform();
+	$packageFiles = array();
 	foreach ($this->_descriptor->getFilesInPackage($packageType) as $file) {
 	    $pluginFilePath = $this->_descriptor->getPluginDir() . $file;
 	    if (false === ($fileContents = $platform->file_get_contents($pluginFilePath))) {
@@ -148,7 +149,7 @@ class RepositoryPackage extends RepositoryObject {
      * @return string package file name
      */
     function getPackageFileName($package) {
-	if (preg_match('/^lang-(.._..)$/', $package, $languageCode)) {
+	if (preg_match('/^lang-(.*)$/', $package, $languageCode)) {
 	    $stringsRevision = $this->_descriptor->getStringsRevision();
 	    $languageCode = $languageCode[1];
 

@@ -32,6 +32,7 @@ class RepositoryTestStorage {
     var $_updatedMapData;
     var $_searchResults;
     var $_searches;
+    var $_removedMapData;
 
     function &getSingleton() {
 	static $singleton;
@@ -48,6 +49,7 @@ class RepositoryTestStorage {
 	$singleton->_searchResults = array();
 	$singleton->_addedMapData = array();
 	$singleton->_updatedMapData = array();
+	$singleton->_removedMapData = array();
     }
 
     function search($query, $args) {
@@ -70,7 +72,7 @@ class RepositoryTestStorage {
 
     function addMapEntry($map, $data) {
 	$singleton =& $this->getSingleton();
-	$singleton->_addedMapData[$map] = $data;
+	$singleton->_addedMapData[$map][] = $data;
 	return null;
     }
 
@@ -89,13 +91,24 @@ class RepositoryTestStorage {
 
     function updateMapEntry($map, $match, $change) {
 	$singleton =& $this->getSingleton();
-	$singleton->_updatedMapData[$map] = array('match' => $match, 'change' => $change);
+	$singleton->_updatedMapData[$map][] = array('match' => $match, 'change' => $change);
+	return null;
+    }
+
+    function removeMapEntry($map, $match) {
+	$singleton =& $this->getSingleton();
+	$singleton->_removedMapData[$map][] = array('match' => $match);
 	return null;
     }
 
     function getUpdatedMapData() {
 	$singleton =& $this->getSingleton();
 	return $singleton->_updatedMapData;
+    }
+
+    function getRemovedMapData() {
+	$singleton =& $this->getSingleton();
+	return $singleton->_removedMapData;
     }
 
     function rollbackTransaction() {

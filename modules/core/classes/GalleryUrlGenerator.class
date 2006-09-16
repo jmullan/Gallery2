@@ -564,25 +564,12 @@ class GalleryUrlGenerator {
 		/* Absolute URL path (use $options['baseUrl'] if you need non forceDirect URLs) */
 		$url = $this->makeUrl($href, true);
 	    } else if ($pos > 0) {
-		/* Rewrite URL if theme is in plugins directory */
-		$pluginData = explode('/', $href, 3);
-		$pluginType = substr($pluginData[0], 0, -1);
-		$pluginId = $pluginData[1];
-		if (($pluginType == 'module' || $pluginType == 'theme')
-			&& !GalleryCoreApi::isPluginInDefaultLocation($pluginType, $pluginId)) {
-		    $href = $gallery->getConfig('plugins.dirname') . '/' . $href;
-		}
 		/* Check for local override */
 		$override = sprintf('%s/local/%s', dirname($href), basename($href));
 		$platform =& $gallery->getPlatform();
 		if ($platform->file_exists(dirname(__FILE__) . '/../../../' . $override)) {
 		    $href = $override;
 		}
-		/*
-		 * FIXME: $url could be $gallery->getConfig('galleryBaseUrl') (multisite codebase)
-		 *        which is wrong if it's a URL that points to plugins.dirname
-		 *        instead, use $url = $this->getCurrentUrlDir(true) . $href
-		 */
 		$url .= $href;
 	    } else {
 		$url .= $href;

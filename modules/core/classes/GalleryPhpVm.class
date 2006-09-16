@@ -219,5 +219,20 @@ class GalleryPhpVm {
     function mail($to, $subject, $message, $additionalHeaders=null, $additionalParameters=null) {
 	return mail($to, $subject, $message, $additionalHeaders, $additionalParameters);
     }
+
+    /**
+     * Inflate a deflated string
+     *
+     * @param string data compresed by gzdeflate
+     * @param int (optional) maximum length to decode
+     * @return string uncompressed data
+     */
+    function gzinflate($data, $length=null) {
+	if (isset($length)) {
+	    return gzinflate($data, $length);
+	} else {
+	    return gzinflate($data);
+	}
+    }
 }
 ?>

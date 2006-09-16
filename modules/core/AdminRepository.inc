@@ -63,114 +63,50 @@ class AdminRepositoryController extends GalleryController {
 
 	$status = $error = array();
 
-	$mode = GalleryUtilities::getRequestVariables('mode');
-	switch($mode) {
-	case 'browseModules':
-	case 'browseThemes':
-	    $redirect['view'] = 'core.SiteAdmin';
+	if (isset($form['action']['update'])) {
+	    /* Try to update the index. */
+	    $ret = $repository->downloadIndex();
+	    if ($ret) {
+		$status['error'] = $ret->getErrorMessage();
+	    } else {
+		$status['indexUpdated'] = 1;
+	    }
+
+	    /* Scan all plugins. */
+	    $ret = $repository->scanPlugins();
+	    if ($ret) {
+		$status['error'] = $ret->getErrorMessage();
+	    }
+
+            $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'core.AdminRepository';
-	    $redirect['mode'] = $mode;
-	    break;
-
-	case 'download':
-	    if (!isset($form['pluginType']) || !isset($form['pluginId'])) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					     "Plugin type or ID not set [$pluginType] [$pluginId]"),
-			     null);
-	    }
-	    $pluginType = $form['pluginType'];
-	    $pluginId = $form['pluginId'];
-
-	    if (!preg_match('/theme|module/', $pluginType)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  "Invalid plugin type [$pluginType]"),
-			     null);
-	    }
-	    $returnTab = sprintf('browse%ss', ucfirst($form['pluginType']));
-
-	    /* Handle cancel action. */
-	    if (isset($form['action']['cancel'])) {
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminRepository';
-		$redirect['mode'] = $returnTab;
-		break;
+	} else if (isset($form['action']['upgradeAll'])) {
+	    /* Get list of upgradeable packages. */
+	    list ($ret, $packages) = $repository->getAllUpgradeablePackages();
+	    if ($ret) {
+		return array($ret, null);
 	    }
 
-	    /* Create package list. */
-	    $packages = array();
-	    if (isset($form['upgradeBaseFiles'])) {
-		$packages['base'] = 'upgrade';
-	    } else if (isset($form['downloadBaseFiles'])) {
-		$packages['base'] = 'download';
-	    }
-
-	    if (isset($form['downloadLanguages'])) {
-		foreach ($form['downloadLanguages'] as $language) {
-		    $packages['lang-' . $language] = 1;
-		}
-	    }
-
-	    if (isset($form['upgradeLanguages'])) {
-		foreach ($form['upgradeLanguages'] as $language) {
-		    $packages['lang-' . $language] = 1;
-		}
-	    }
-
-	    if (isset($form['downloadTest'])) {
-		$packages['test'] = 1;
-	    }
-
-	    /* Show error message if no packages have been selected for download. */
 	    if (empty($packages)) {
-		$delegate['view'] = 'core.SiteAdmin';
-		$delegate['subView'] = 'core.AdminRepository';
-		$delegate['mode'] = 'download';
-		$error[] = 'form[packages][empty]';
-		GalleryUtilities::putRequestVariable('pluginId', $pluginId);
-		GalleryUtilities::putRequestVariable('pluginType', $pluginType);
-		break;
+		$status['noUpgradeAvailable'] = 1;
+	    } else {
+		/*
+		 * Start upgrade process and show progress bar.
+		 *
+		 * performDownloadAndInstallation used to live in this controller, so we'd just
+		 * call it directly.  But it got refactored into AdminRepositoryDownloadController
+		 * so for now, just call it there.
+		 *
+		 * @todo: refactor it into a common base class
+		 */
+		GalleryCoreApi::requireOnce('modules/core/AdminRepositoryDownload.inc');
+		$controller = new AdminRepositoryDownloadController();
+		$templateAdapter =& $gallery->getTemplateAdapter();
+		$templateAdapter->registerTrailerCallback(
+		    array($controller, 'performDownloadAndInstallation'),
+		    array($packages, 'commonTasks'));
+		$delegate['view'] = 'core.ProgressBar';
 	    }
-
-	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $templateAdapter->registerTrailerCallback(
-		array($this, 'performDownloadAndInstallation'), array(array(
-		$pluginType => array($pluginId => $packages)), $returnTab));
-	    $delegate['view'] = 'core.ProgressBar';
-	    break;
-
-	default:
-	    if (isset($form['action']['update'])) {
-		/* Try to update the index. */
-		$ret = $repository->downloadIndex();
-		if ($ret) {
-		    $status['error'] = $ret->getErrorMessage();
-		} else {
-		    $status['indexUpdated'] = 1;
-		}
-	    } else if (isset($form['action']['upgradeAll'])) {
-		/* Get list of upgradeable packages. */
-		list ($ret, $packages) = $repository->getAllUpgradeablePackages();
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		if (empty($packages)) {
-		    $status['noUpgradeAvailable'] = 1;
-		} else {
-		    /* Start upgrade process and show progress bar. */
-		    $templateAdapter =& $gallery->getTemplateAdapter();
-		    $templateAdapter->registerTrailerCallback(
-			array($this, 'performDownloadAndInstallation'),
-			array($packages, 'commonTasks'));
-		    $delegate['view'] = 'core.ProgressBar';
-		    break;
-		}
-	    }
-	    /* Show common tasks tab. */
-	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminRepository';
-	    $redirect['mode'] = 'commonTasks';
-	    break;
 	}
 
 	if (!empty($redirect)) {
@@ -187,130 +123,6 @@ class AdminRepositoryController extends GalleryController {
 	$results['error'] = $error;
 
 	return array(null, $results);
-    }
-
-    /**
-     * Download specified packages to the local repository cache and perform installation.
-     *
-     * @todo Show a summary page (or at least a link to it) which contains details about
-     * the exact tasks that were performed and any errors that were encountered.
-     *
-     * @param array $pluginData packages
-     * @param string $returnTab 'commonTasks', 'browseThemes' or 'browseModules'
-     */
-    function performDownloadAndInstallation($pluginData, $returnTab) {
-	global $gallery;
-	$templateAdapter =& $gallery->getTemplateAdapter();
-
-	$repository = $this->_getRepository();
-	$ret = $repository->init();
-	if ($ret) {
-	    return $ret;
-	}
-
-	/* Create download file list. */
-	list ($ret, $files) = $repository->getDownloadFileList($pluginData);
-	if ($ret) {
-	    $templateAdapter->errorProgressBar($ret);
-	    return $ret;
-	}
-
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret) {
-	    return $ret;
-	}
-
-	/* Download files. */
-	$titleText = $module->translate('Performing Maintenance Tasks');
-	foreach ($files as $pluginType => $plugins) {
-	    foreach ($plugins as $pluginId => $pluginDownloadData) {
-		$packageUrls = $pluginDownloadData['files'];
-		$pluginName = $pluginDownloadData['name'];
-
-		/* Update plugin index file if this is when the base files have been downloaded. */
-		$ret = $repository->updatePluginIndexFile($pluginType, $pluginId);
-		if ($ret) {
-		    $templateAdapter->errorProgressBar($ret);
-		    return $ret;
-		}
-
-		/* Set up progress bar variables. */
-		$currentUrlIndex = 1;
-		$totalUrls = count($packageUrls);
-
-		foreach ($packageUrls as $packageName => $relativePackageUrl) {
-		    /* Update progress bar. */
-		    $ret = $templateAdapter->updateProgressBar($titleText,
-			sprintf($module->translate('Downloading %s'), $pluginName),
-			$currentUrlIndex / $totalUrls);
-		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
-			return $ret;
-		    }
-		    $currentUrlIndex++;
-
-		    /* Download and unpack package. */
-		    list ($ret, $pluginDescriptor) = $repository->downloadAndUnpack(
-			$pluginType, $pluginId, $packageName, $relativePackageUrl);
-		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
-			return $ret;
-		    }
-
-		    if (!empty($pluginDescriptor)) {
-			/* Save current package's descriptor. */
-			$descriptor = $pluginDescriptor;
-		    } else {
-			/* Sanity check. */
-			if (empty($descriptor)) {
-			    $ret = GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-							'Descriptor must not be empty.');
-			    $templateAdapter->errorProgressBar($ret);
-			    return $ret;
-			}
-
-			/* Check the unpacked files' integrity. */
-			$ret = $repository->verifyPackageIntegrity(
-			    $packageName, $descriptor);
-			if ($ret) {
-			    $templateAdapter->errorProgressBar($ret);
-			    return $ret;
-			}
-
-			/* Update plugin package map. */
-			list ($ret, $version, $build) =
-			    $repository->getPackageVersionAndBuild($pluginType, $pluginId,
-								   $packageName);
-			if ($ret) {
-			    $templateAdapter->errorProgressBar($ret);
-			    return $ret;
-			}
-			$ret = $repository->updatePackageMetaData(
-			    $pluginType, $pluginId, $packageName, $version, $build);
-			if ($ret) {
-			    $templateAdapter->errorProgressBar($ret);
-			    return $ret;
-			}
-		    }
-		}
-	    }
-	}
-
-	/* Update progress bar. */
-	$ret = $templateAdapter->updateProgressBar($titleText, $module->translate('Done.'), 1);
-	if ($ret) {
-	    $templateAdapter->errorProgressBar($ret);
-	    return $ret;
-	}
-
-	/* Show link to return to the previously selected tab. */
-	$redirect['view'] = 'core.SiteAdmin';
-	$redirect['subView'] = 'core.AdminRepository';
-	$redirect['mode'] = $returnTab;
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
-
-	return null;
     }
 }
 
@@ -338,6 +150,7 @@ class AdminRepositoryView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
@@ -351,110 +164,62 @@ class AdminRepositoryView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$mode = GalleryUtilities::getRequestVariables('mode');
-
+	$AdminRepository = array();
 	$localIndexExists = $repository->localIndexExists();
 	if (!$localIndexExists) {
 	    /* Make sure the plugins directory is properly set up. */
 	    list ($isSetUp, $errorMessage) = GalleryRepository::createPluginsDirectory();
 	    if (!$isSetUp) {
-		$platform =& $gallery->getPlatform();
-
 		$redirect['view'] = 'core.SiteAdmin';
 		$redirect['subView'] = 'core.AdminRepositorySetup';
-		$template->setVariable('pluginsDirectoryName',
-		    $gallery->getConfig('plugins.dirname'));
-		$template->setVariable('galleryBaseDirectory',
-		    $platform->realpath(dirname(__FILE__) . '/../..'));
-		$template->setVariable('errorMessage', $errorMessage);
+		$AdminRepository['galleryBaseDirectory'] =
+		    $platform->realpath(dirname(__FILE__) . '/../..');
+		$AdminRepository['errorMessage'] = $errorMessage;
 
 		return array(null,
 			     array('body' => 'modules/core/templates/AdminRepositorySetup.tpl'));
 	    }
 	}
 
-	if ($mode == 'browseThemes' || $mode == 'browseModules') {
-	    /* Repository browse mode. */
-	    $AdminRepository['mode'] = $mode;
-	    $pluginType = $mode == 'browseThemes' ? 'theme' : 'module';
-
-	    /* Check if incompatible plugins should be shown. */
-	    $coreApis = array();
-	    $showIncompatible = GalleryUtilities::getRequestVariables('showIncompatible');
-	    if ($showIncompatible == 'true') {
-		list ($coreApiVersion, $themeApiVersion, $moduleApiVersion) =
-		    GalleryUtilities::getRequestVariables('coreApi', 'themeApi', 'moduleApi');
-		if (empty($coreApiVersion) || empty($themeApiVersion) || empty($moduleApiVersion)) {
-		    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					"[$coreApiVersion] [$themeApiVersion] [$moduleApiVersion]"),
-				 null);
-		}
-		$coreApis['core'] = explode('.', $coreApiVersion);
-		$coreApis['module'] = explode('.', $moduleApiVersion);
-		$coreApis['theme'] = explode('.', $themeApiVersion);
-		$template->setVariable('showIncompatible', 1);
-	    }
-
-	    if ($localIndexExists) {
-		/* Get list of plugins to show in the repository browser. */
-		list ($ret, $browseData) =
-		    $repository->getRepositoryPluginList($pluginType, $showIncompatible, $coreApis);
-		if ($ret) {
-		    return array($ret, null);
-		}
-		$template->setVariable('browseData', $browseData);
-	    }
-	} else if ($mode == 'download') {
-	    list ($pluginType, $pluginId) =
-		GalleryUtilities::getRequestVariables('pluginType', 'pluginId');
-
-	    /* Plugin download options. */
-	    if (!$repository->pluginExistsInIndex($pluginType, $pluginId)) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					     "Plugin not found in index [$pluginId] [$pluginType]"),
+	/* Check if incompatible plugins should be shown. */
+	$coreApis = array();
+	$showIncompatible = GalleryUtilities::getRequestVariables('showIncompatible');
+	if ($showIncompatible == 'true') {
+	    list ($coreApiVersion, $themeApiVersion, $moduleApiVersion) =
+		GalleryUtilities::getRequestVariables('coreApi', 'themeApi', 'moduleApi');
+	    if (empty($coreApiVersion) || empty($themeApiVersion) || empty($moduleApiVersion)) {
+		return array(GalleryCoreApi::error(
+				 ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+				 "[$coreApiVersion] [$themeApiVersion] [$moduleApiVersion]"),
 			     null);
 	    }
-
-	    /*
-	     * Downloading and upgrading plugins are functionally equivalent,
-	     * we just adapt the UI a little.
-	     */
-	    list ($ret, $upgradeData) =
-		$repository->getPluginUpgradeInfo($pluginType, $pluginId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $actionText = isset($upgradeData['upgradeablePackages']) ? $gallery->i18n('Upgrade')
-								     : $gallery->i18n('Download');
-
-	    list ($ret, $pluginName) = $repository->getPluginName($pluginType, $pluginId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $template->setVariable('pluginName', $pluginName);
-	    $template->setVariable('upgradeData', $upgradeData);
-	    $template->setVariable('actionText', $actionText);
-	    $template->setVariable('pluginId', $pluginId);
-	    $template->setVariable('pluginType', $pluginType);
-	    $template->setVariable('controller', 'core.AdminRepository');
-
-	    return array(null,
-			 array('body' => 'modules/core/templates/AdminRepositoryDownload.tpl'));
-	} else {
-	    /* Common tasks mode. */
-	    $AdminRepository['mode'] = 'commonTasks';
-
-	    if ($localIndexExists) {
-		/* Get local index meta data. */
-		list ($ret, $indexMetaData) = $repository->getIndexMetaData();
-		if ($ret) {
-		    return array($ret, null);
-		}
-		$template->setVariable('indexMetaData', $indexMetaData);
-	    }
+	    $coreApis['core'] = explode('.', $coreApiVersion);
+	    $coreApis['module'] = explode('.', $moduleApiVersion);
+	    $coreApis['theme'] = explode('.', $themeApiVersion);
+	    $AdminRepository['showIncompatible'] = 1;
 	}
 
 	if ($localIndexExists) {
+	    foreach (array('module', 'theme') as $pluginType) {
+		/* Get list of plugins to show in the repository browser. */
+		list ($ret, $browseData[$pluginType]) = $repository->getRepositoryPluginList(
+		    $pluginType, $showIncompatible, $coreApis);
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    }
+
+	    /* TODO: merge these group-wise instead of just appending themes to groups */
+	    $browseData = array_merge($browseData['module'], $browseData['theme']);
+	    $AdminRepository['browseData'] = $browseData;
+
+	    /* Get local index meta data. */
+	    list ($ret, $indexMetaData) = $repository->getIndexMetaData();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $AdminRepository['indexMetaData'] = $indexMetaData;
+
 	    /* Get core upgrade info. */
 	    list ($ret, $isCoreUpgradeAvailable, $apiVersions) =
 		$repository->isCoreUpgradeAvailable();
@@ -462,12 +227,17 @@ class AdminRepositoryView extends GalleryView {
 		return array($ret, null);
 	    }
 	    if ($isCoreUpgradeAvailable) {
-		$template->setVariable('latestCoreApiVersion', $apiVersions['core']);
-		$template->setVariable('latestThemeApiVersion', $apiVersions['theme']);
-		$template->setVariable('latestModuleApiVersion', $apiVersions['module']);
+		$AdminRepository['latestCoreApiVersion'] = $apiVersions['core'];
+		$AdminRepository['latestThemeApiVersion'] = $apiVersions['theme'];
+		$AdminRepository['latestModuleApiVersion'] = $apiVersions['module'];
 	    }
-	    $template->setVariable('coreUpgradeAvailable', $isCoreUpgradeAvailable);
+	    $AdminRepository['coreUpgradeAvailable'] = $isCoreUpgradeAvailable;
 	}
+
+	$baseName = dirname(dirname(dirname(__FILE__)));
+	$AdminRepository['writeable'] = array(
+	    'modules' => $platform->is_writeable("$baseName/modules"),
+	    'themes' => $platform->is_writeable("$baseName/themes"));
 
 	/* Render the HTML body */
 	$template->setVariable('AdminRepository', $AdminRepository);

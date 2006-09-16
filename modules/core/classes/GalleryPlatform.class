@@ -1247,6 +1247,28 @@ class GalleryPlatform {
     }
 
     /**
+     * The glob() function searches for all the pathnames matching pattern according to the rules
+     * used by the libc glob() function, which is similar to the rules used by common shells. No
+     * tilde expansion or parameter substitution is done.
+     *
+     * @param string pattern
+     * @param int flags (optional)
+     * @return array containing the matched files/directories or FALSE on error.
+     */
+    function glob($pattern, $flags=null) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("glob($pattern, $flags)");
+	}
+
+	if (isset($flags)) {
+	    return glob($pattern, $flags);
+	} else {
+	    return glob($pattern);
+	}
+    }
+
+    /**
      * Clear any cached saved state in this platform.
      */
     function resetPlatform() {
