@@ -56,6 +56,12 @@ class RatingAlbumView extends GalleryView {
 		  array($module->translate('Rating Album'), $module->translate('rating album')))
 	);
 
+	list ($ret, $moduleParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'rating');
+	if ($ret) {
+	    return array($ret, null, null, null);
+	}
+	$item->setDescription($moduleParams['description']);
+
 	if (!empty($itemId)) {
 	    /* Viewing an item in this dynamic album */
 	    list ($ret, $viewItem) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -74,12 +80,6 @@ class RatingAlbumView extends GalleryView {
 	    $viewItem->parent = $item;
 	    $item = $viewItem;
 	}
-
-	list ($ret, $moduleParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'rating');
-	if ($ret) {
-	    return array($ret, null, null, null);
-	}
-	$item->setDescription($moduleParams['description']);
 
 	if (empty($moduleParams['themeId'])) {
 	    list ($ret, $theme) = $this->loadThemeForItem();

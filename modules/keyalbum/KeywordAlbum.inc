@@ -56,6 +56,13 @@ class KeywordAlbumView extends GalleryView {
 		  array($module->translate('Keyword Album'), $module->translate('keyword album')))
 	);
 
+	list ($ret, $moduleParams) =
+	    GalleryCoreApi::fetchAllPluginParameters('module', 'keyalbum');
+	if ($ret) {
+	    return array($ret, null, null, null);
+	}
+	$item->setDescription($moduleParams['description']);
+
 	if (!empty($itemId)) {
 	    /* Viewing an item in this dynamic album */
 	    list ($ret, $viewItem) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -74,13 +81,6 @@ class KeywordAlbumView extends GalleryView {
 	    $viewItem->parent = $item;
 	    $item = $viewItem;
 	}
-
-	list ($ret, $moduleParams) =
-	    GalleryCoreApi::fetchAllPluginParameters('module', 'keyalbum');
-	if ($ret) {
-	    return array($ret, null, null, null);
-	}
-	$item->setDescription($moduleParams['description']);
 
 	if (empty($moduleParams['themeId'])) {
 	    list ($ret, $theme) = $this->loadThemeForItem();
