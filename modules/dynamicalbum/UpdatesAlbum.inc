@@ -197,7 +197,7 @@ class UpdatesAlbumView extends GalleryView {
 	if (!empty($albumId)) {
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($albumId);
 	    if ($ret) {
-		return array($ret, null, null);
+		return array($ret, null);
 	    }
 	    if (!empty($sequence)) {
 		$sequence = implode('/', $sequence) . '/' . (int)$albumId . '/%';
