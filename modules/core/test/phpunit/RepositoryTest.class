@@ -682,6 +682,10 @@ class RepositoryTest extends GalleryTestCase {
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply(
+	    'file_exists',
+	    array(dirname(dirname(dirname(dirname(__FILE__)))) . '/RepositoryTest/MANIFEST'),
+	    true);
+	$platform->setReply(
 	    'glob',
 	    array(dirname(dirname(dirname(dirname(__FILE__)))) . "/RepositoryTest/po/*.po", null),
 	    array('po/aa.po', 'po/bb_BB.po'));
@@ -716,6 +720,39 @@ class RepositoryTest extends GalleryTestCase {
 			    'packageName' => 'lang-bb_BB',
 			    'packageVersion' => '22222',
 			    'packageBuild' => '44444'))),
+	    $this->_testStorage->getAddedMapData());
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+
+    function testScanPluginWithNoManifest() {
+	global $gallery;
+
+	$repository = new GalleryRepository();
+	$repository->_utilities = null;  /* this should fail without needing utilities */
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply(
+	    'file_exists',
+	    array(dirname(dirname(dirname(dirname(__FILE__)))) . '/RepositoryTest/MANIFEST'),
+	    false);
+	$gallery->setPlatform($platform);
+
+	$ret = $repository->scanPlugin('module', 'RepositoryTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array('GalleryPluginPackageMap' => array(
+		      array('match' => array(
+				'pluginType' => 'module',
+				'pluginId' => 'RepositoryTest')))),
+	    $this->_testStorage->getRemovedMapData());
+
+	$this->assertEquals(
+	    array(),
 	    $this->_testStorage->getAddedMapData());
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());

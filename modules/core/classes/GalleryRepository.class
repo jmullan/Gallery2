@@ -650,14 +650,25 @@ class GalleryRepository {
 
 	$platform =& $gallery->getPlatform();
 	$g2base = dirname(dirname(dirname(dirname(__FILE__))));
+	$pluginDir = sprintf('%s/%ss/%s', $g2base, $pluginType, $pluginId);
+	$manifestPath = "$pluginDir/MANIFEST";
+
+	if (!$platform->file_exists($manifestPath)) {
+	    /*
+	     * We won't know the revision of this module, so ignore it.  TODO: perhaps we should
+	     * fall back on the revision of the module.inc file?  But if this is a user-written or
+	     * a contrib module, then it is probably not in svn which means that isn't valid
+	     * anyway.  Ignoring it is probably safest.
+	     */
+	    return null;
+	}
 
 	list($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
 	if ($ret) {
 	    return $ret;
 	}
 
-	$pluginDir = sprintf('%s/%ss/%s', $g2base, $pluginType, $pluginId);
-	list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile("$pluginDir/MANIFEST", 128);
+	list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile($manifestPath, 128);
 	if ($ret) {
 	    return $ret;
 	}
