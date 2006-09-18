@@ -192,7 +192,7 @@ class RssHelper {
 		break;
 	    case 'commentsRecursive':
 		list ($ret, $items) = GalleryCommentHelper::fetchAllComments($id,
-		    $param['count'], ORDER_DESCENDING);
+		    $param['count'], null, ORDER_DESCENDING);
 		if ($ret) {
 		    return $ret;
 		}
