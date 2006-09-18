@@ -20,6 +20,7 @@
 
 /**
  * Test ItemAttribute functionality
+ *
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -33,6 +34,7 @@ class ItemAttributesTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
+
 	parent::setUp();
 
 	list ($ret, $this->_parentItem) = $this->_createRandomAlbum(
@@ -44,8 +46,8 @@ class ItemAttributesTest extends GalleryTestCase {
 	$this->_markForCleanup($this->_parentItem);
 
 	/*
-	 * The parentItem inherits the permissions from the root album. Thus, normalize the
-	 * permissions for the tests here. Set it to core.view permission for everybody
+	 * The parentItem inherits the permissions from the root album.  Thus, normalize the
+	 * permissions for the tests here.  Set it to core.view permission for everybody.
 	 */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_parentItem->getId());
 	if ($ret) {
@@ -79,6 +81,7 @@ class ItemAttributesTest extends GalleryTestCase {
 		return $this->failWithStatus($ret);
 	    }
 	}
+
 	$this->_saveSession = $gallery->_session;
     }
 
@@ -112,10 +115,11 @@ class ItemAttributesTest extends GalleryTestCase {
      */
     function testIncrementItemViewCount() {
 	global $gallery;
-	$session = new ItemAttributesTestMockSession();
-	$gallery->_session =& $session;
-	$gallery->_phpVm = new ItemAttributesTestMockPhpVm();
-	unset($_REQUEST['phpVmHeaders']);
+	$gallery->_session = new ItemAttributesTestSession();
+
+	/* Use the PHP VM to record the headers */
+	$_REQUEST['phpVmHeaders'] = array();
+	$gallery->_phpVm = new ItemAttributesTestPhpVm();
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
 	if ($ret) {
@@ -135,7 +139,7 @@ class ItemAttributesTest extends GalleryTestCase {
 
 	$this->assertEquals(3, $viewCount);
 	$this->assert(empty($_REQUEST['phpVmHeaders']),
-		      'no headers should be sent for logged in users');
+		      'No headers should be sent for logged in users');
     }
 
     /**
@@ -144,9 +148,8 @@ class ItemAttributesTest extends GalleryTestCase {
      */
     function testDontIncrementItemViewCountTooOften() {
 	global $gallery;
-	$session = new ItemAttributesTestMockSession();
-	$gallery->_session =& $session;
-	$gallery->_phpVm = new ItemAttributesTestMockPhpVm();
+	$gallery->_session = new ItemAttributesTestSession();
+	$gallery->_phpVm = new ItemAttributesTestPhpVm();
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
 	if ($ret) {
@@ -174,9 +177,10 @@ class ItemAttributesTest extends GalleryTestCase {
      */
     function testIncrementItemViewCountThreshold() {
 	global $gallery;
-	$session = new ItemAttributesTestMockSession();
-	$gallery->_session =& $session;
-	$gallery->_phpVm = new ItemAttributesTestMockPhpVm();
+	$gallery->_session = new ItemAttributesTestSession();
+	$gallery->_phpVm = new ItemAttributesTestPhpVm();
+
+	$session =& $gallery->_session;
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
 	if ($ret) {
@@ -188,7 +192,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	/* Backdate our last viewed time by *almost* one day. */
+	/* Backdate our last viewed time by *almost* one day */
 	$lastViewed =& $session->get('core.lastViewed');
 	$lastViewed[$this->_childItems[0]->getId()] -= 86398;
 
@@ -227,12 +231,14 @@ class ItemAttributesTest extends GalleryTestCase {
 
     function testIncrementItemViewCountGuestNoSessionIfModifiedNotSetRand() {
 	global $gallery;
-	$session = new ItemAttributesTestMockSession(false);
-	$gallery->_session = $session;
-	$this->_becomeGuestUser();
-	$gallery->_phpVm = new ItemAttributesTestMockPhpVm(false, array(), 0, time());
-	unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
+	$gallery->_session = new ItemAttributesTestSession(false);
+
+	/* Use the PHP VM to record the headers */
 	$_REQUEST['phpVmHeaders'] = array();
+	$gallery->_phpVm = new ItemAttributesTestPhpVm(false, array(), 0, time());
+
+	$this->_becomeGuestUser();
+	unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
 	if ($ret) {
@@ -251,18 +257,20 @@ class ItemAttributesTest extends GalleryTestCase {
 	}
 	$this->assertEquals(0, $viewCount, 'first attempt, rand = 0 -> do not increment');
 	/* It only sets the header if it actually increments */
-	$this->assertEquals(array(), $_REQUEST['phpVmHeaders']);
+	$this->assert(empty($_REQUEST['phpVmHeaders']));
     }
 
     function testIncrementItemViewCountGuestNoSessionIfModifiedNotSetRand2() {
 	global $gallery;
-	$session = new ItemAttributesTestMockSession(false);
-	$gallery->_session = $session;
-	$this->_becomeGuestUser();
-	$now = time();
-	$gallery->_phpVm = new ItemAttributesTestMockPhpVm(false, array(), 1, $now);
-	unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
+	$gallery->_session = new ItemAttributesTestSession(false);
+
+	/* Use the PHP VM to record the headers */
 	$_REQUEST['phpVmHeaders'] = array();
+	$now = time();
+	$gallery->_phpVm = new ItemAttributesTestPhpVm(false, array(), 1, $now);
+
+	$this->_becomeGuestUser();
+	unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
 	if ($ret) {
@@ -279,18 +287,18 @@ class ItemAttributesTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(1, $viewCount, 'first attempt, rand = 1 -> increment');
-	$this->assertEquals(array('Last-Modified' => ' ' . GalleryUtilities::getHttpDate($now)),
-			    $_REQUEST['phpVmHeaders']);
+	$this->assertEquals(1, $viewCount, 'First attempt, rand = 1 -> increment');
+	$this->assertEquals(
+	    array('last-modified' => 'Last-Modified: ' . GalleryUtilities::getHttpDate($now)),
+	    $_REQUEST['phpVmHeaders']);
     }
 
     function testIncrementItemViewCountGuestIfModifiedIsSet() {
 	global $gallery;
-	$session = new ItemAttributesTestMockSession(false);
-	$gallery->_session =& $session;
+	$gallery->_session = new ItemAttributesTestSession(false);
+	$gallery->_phpVm = new ItemAttributesTestPhpVm();
+
 	$this->_becomeGuestUser();
-	$gallery->_phpVm =
-	    new ItemAttributesTestMockPhpVm();
 	$_SERVER['HTTP_IF_MODIFIED_SINCE'] = 'something';
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
@@ -313,11 +321,11 @@ class ItemAttributesTest extends GalleryTestCase {
 
     function testIncrementItemViewCountGuestIfModifiedIsSet2() {
 	global $gallery;
-	$session = new ItemAttributesTestMockSession(false);
+	$gallery->_session = new ItemAttributesTestSession(false);
+	$gallery->_phpVm = new ItemAttributesTestPhpVm(true,
+	    array('If-Modified-Since' => 'something'));
+
 	$this->_becomeGuestUser();
-	$gallery->_session =& $session;
-	$gallery->_phpVm =
-	    new ItemAttributesTestMockPhpVm(true, array('If-modified-since' => 'something'));
 	unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
@@ -340,11 +348,11 @@ class ItemAttributesTest extends GalleryTestCase {
 
     function testIncrementItemViewCountGuestIfModifiedIsSetNotGuest() {
 	global $gallery;
+	$gallery->_session = new ItemAttributesTestSession();
+	$gallery->_phpVm = new ItemAttributesTestPhpVm(true,
+	    array('If-Modified-Since' => 'something'));
+
 	$asdminUserId = $gallery->getActiveUserId();
-	$session = new ItemAttributesTestMockSession();
-	$gallery->_session =& $session;
-	$gallery->_phpVm =
-	    new ItemAttributesTestMockPhpVm(true, array('If-modified-since' => 'something'));
 	$_SERVER['HTTP_IF_MODIFIED_SINCE'] = 'foobar';
 
 	$ret = GalleryCoreApi::setItemViewCount($this->_childItems[0]->getId(), 0);
@@ -364,7 +372,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(1, $viewCount, 'view count');
+	$this->assertEquals(1, $viewCount, 'View count');
     }
 
     /**
@@ -670,12 +678,13 @@ class ItemAttributesTest extends GalleryTestCase {
     }
 }
 
-class ItemAttributesTestMockSession {
+class ItemAttributesTestSession {
 
     var $_userId;
+
     var $_creationTime;
 
-    function ItemAttributesTestMockSession($isPersistent=true) {
+    function ItemAttributesTestSession($isPersistent=true) {
 	$this->_creationTime = time();
 	$this->_isPersistent = $isPersistent;
     }
@@ -691,9 +700,9 @@ class ItemAttributesTestMockSession {
     function exists($key) {
 	if (!$this->_isPersistent) {
 	    return false;
-	} else {
-	    return isset($this->_data[$key]);
 	}
+
+	return isset($this->_data[$key]);
     }
 
     function &get($key) {
@@ -713,11 +722,12 @@ class ItemAttributesTestMockSession {
     }
 }
 
-class ItemAttributesTestMockPhpVm extends GalleryPhpVm {
-    function ItemAttributesTestMockPhpVm($getAllHeadersExists=false, $headers=array(),
-					 $randValue=null, $time=null) {
-	$this->_headers = $headers;
+class ItemAttributesTestPhpVm extends GalleryPhpVm {
+
+    function ItemAttributesTestPhpVm($getAllHeadersExists=false, $headers=array(), $randValue=null,
+	    $time=null) {
 	$this->_getAllHeadersExists = $getAllHeadersExists;
+	$this->_headers = $headers;
 	$this->_randValue = $randValue;
 	$this->_time = $time;
     }
@@ -729,15 +739,18 @@ class ItemAttributesTestMockPhpVm extends GalleryPhpVm {
     function function_exists($functionName) {
 	if ($functionName == 'getallheaders') {
 	    return $this->_getAllHeadersExists;
-	} else {
-	    parent::function_exists($functionName);
 	}
+
+	return parent::function_exists($functionName);
     }
 
-    function header($string, $replace=null) {
-	if ($pos = strpos($string, ':')) {
-	    $_REQUEST['phpVmHeaders'][substr($string, 0, $pos)] = substr($string, $pos+1);
+    function header($header, $replace=null) {
+	$key = 'status';
+	if (strncasecmp($header, 'HTTP/', 5)) {
+	    $key = strtolower(substr($header, 0, strpos($header, ':')));
 	}
+
+	$_REQUEST['phpVmHeaders'][$key] = $header;
     }
 
     function headers_sent() {
@@ -747,17 +760,17 @@ class ItemAttributesTestMockPhpVm extends GalleryPhpVm {
     function rand($min=null, $max=null) {
 	if (isset($this->_randValue)) {
 	    return $this->_randValue;
-	} else {
-	    parent::rand($min, $max);
 	}
+
+	return parent::rand($min, $max);
     }
 
     function time() {
 	if (isset($this->_time)) {
 	    return $this->_time;
-	} else {
-	    return time();
 	}
+
+	return time();
     }
 }
 ?>

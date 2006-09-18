@@ -20,6 +20,7 @@
 
 /**
  * Test utilities functionality
+ *
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -47,6 +48,8 @@ class UtilitiesTest extends GalleryTestCase {
 	foreach (array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR') as $key) {
 	    unset($_SERVER[$key]);
 	}
+
+	$_REQUEST['phpVmHeaders'] = array();
     }
 
     function tearDown() {
@@ -205,6 +208,26 @@ class UtilitiesTest extends GalleryTestCase {
 	    }
 	}
 	$this->assertEquals($expectedValues, GalleryUtilities::getAllRequestVariables());
+    }
+
+    function testSetResponseHeader() {
+	global $gallery;
+
+	/* Use the PHP VM to record the headers */
+	$gallery->_phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+
+	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Foo');
+	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Bar', false);
+
+	/* Verify the result */
+	$this->assertEquals('HTTP/1.0 123 Foo', $_REQUEST['phpVmHeaders']['status'],
+	    'Wrong response header');
+
+	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Bar');
+
+	/* Verify the result */
+	$this->assertEquals('HTTP/1.0 123 Bar', $_REQUEST['phpVmHeaders']['status'],
+	    'Wrong response header');
     }
 
     function testSanitizeInputValue1() {
@@ -1136,6 +1159,7 @@ class UtilitiesTest extends GalleryTestCase {
     /* Check some edge cases of _registerCookieAttr */
     function testRegisterCookieAttr() {
 	global $gallery;
+
 	/* Test cases */
 	$tests = array();
 	/* 1. add one, successfully */
@@ -1200,10 +1224,10 @@ class UtilitiesTest extends GalleryTestCase {
 	/* Foreach test case (tC), run the test */
 	foreach (array(true, false) as $addSlashes) {
 	    if ($addSlashes) {
-		$gallery->_phpVm = $phpVm = new UtilitiesTestAddSlashesPhpVm();
+		$gallery->_phpVm = new UtilitiesTestAddSlashesPhpVm();
 		$addSlashesInfo = 'addslashes, ';
 	    } else {
-		$gallery->_phpVm = $phpVm = new UtilitiesTestDoNotAddSlashesPhpVm();
+		$gallery->_phpVm = new UtilitiesTestDoNotAddSlashesPhpVm();
 		$addSlashesInfo = 'do not addslashes, ';
 	    }
 
@@ -1247,13 +1271,14 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testGuaranteeDirExistsLoop() {
+	global $gallery;
+
 	/*
 	 * Ensure no infinite loop if getPluginParameter call from guaranteeDirExists results in
 	 * another guaranteeDirExists call (from GalleryDataCache)
 	 */
 	GalleryDataCache::setFileCachingEnabled(true);
 	GalleryDataCache::reset();
-	global $gallery;
 	$gallery->setConfig('data.gallery.cache', '/testcache/');
 
 	list ($success, $created) = GalleryUtilities::guaranteeDirExists('/test/one/two');
@@ -1268,13 +1293,14 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testGuaranteeDirExistsLoop2() {
+	global $gallery;
+
 	/*
 	 * Ensure mkdir of same dir isn't performed twice if guaranteeDirExists is called and the
 	 * nested call from getPluginParameter actually creates the original dir that was requested
 	 */
 	GalleryDataCache::setFileCachingEnabled(true);
 	GalleryDataCache::reset();
-	global $gallery;
 	$gallery->setConfig('data.gallery.cache', '/testcache/');
 
 	list ($success, $created) =
@@ -1605,6 +1631,17 @@ class UtilitiesTestAddSlashesPhpVm extends GalleryPhpVm {
 class UtilitiesTestDoNotAddSlashesPhpVm extends GalleryPhpVm {
     function get_magic_quotes_gpc() {
 	return false;
+    }
+}
+
+class UtilitiesTestSetResponseHeaderPhpVm extends GalleryPhpVm {
+    function header($header, $replace=null) {
+	$key = 'status';
+	if (strncasecmp($header, 'HTTP/', 5)) {
+	    $key = strtolower(substr($header, 0, strpos($header, ':')));
+	}
+
+	$_REQUEST['phpVmHeaders'][$key] = $header;
     }
 }
 ?>

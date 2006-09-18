@@ -20,6 +20,7 @@
 
 /**
  * Test main.php
+ *
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Alan Harder <alan.harder@sun.com>
@@ -32,20 +33,23 @@ class MainTest extends GalleryTestCase {
     }
 
     function setUp() {
+	global $gallery;
+
 	parent::setUp();
 
-	$this->_saveGallery = $GLOBALS['gallery'];
-	/*
-	 * Copies of the Gallery object still have all the same reference to the one and only
-	 * session object. Thus we need to backup the session too
-	 */
-	$this->_saveSession = $GLOBALS['gallery']->_session;
+	$this->_saveGallery = $gallery;
 
 	/*
-	 * Previously we defined G2_EMBED here to prevent main.php from displaying any content
-	 * when it was included.  This caused problems with some tests that varied their behavior
-	 * based on G2_EMBED.  Now we capture the output and send it to /dev/null via output
-	 * buffering.  G2_EMBED is not required for testEmbedOnly().
+	 * Copies of the Gallery object still have all the same reference to the one and only
+	 * session object.  Thus we need to backup the session too.
+	 */
+	$this->_saveSession = $gallery->_session;
+
+	/*
+	 * Previously we defined G2_EMBED here to prevent main.php from displaying any content when
+	 * it was included.  This caused problems with some tests that varied their behavior based
+	 * on G2_EMBED.  Now we capture the output and send it to /dev/null via output buffering.
+	 * G2_EMBED is not required for testEmbedOnly().
 	 */
 	ob_start();
 	require_once(dirname(__FILE__) . '/../../../../main.php');
@@ -61,16 +65,19 @@ class MainTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$GLOBALS['gallery']->setUrlGenerator($this->_urlGenerator);
-	$GLOBALS['gallery']->_session = new GallerySession();
-	unset($_REQUEST['phpVmHeaders']);
+
+	$gallery->setUrlGenerator($this->_urlGenerator);
+	$gallery->_session = new GallerySession();
+
+	$_REQUEST['phpVmHeaders'] = array();
     }
 
     function tearDown() {
-	$GLOBALS['gallery'] = $this->_saveGallery;
-	$GLOBALS['gallery']->_session = $this->_saveSession;
-
 	global $gallery;
+
+	$gallery = $this->_saveGallery;
+	$gallery->_session = $this->_saveSession;
+
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -93,27 +100,31 @@ class MainTest extends GalleryTestCase {
     }
 
     function testEmbedOnlyUrl() {
-	/* Test embed-only mode with configured redirect url */
+	/* Test embed-only mode with configured redirect URL */
 	global $gallery;
-	$gallery->_phpVm = $phpVm = new MainTestPhpVm();
+
+	/* Use the PHP VM to record the headers */
+	$gallery->_phpVm = new MainTestPhpVm();
+
 	$gallery->setConfig('mode.embed.only', $expectedUrl = '/embedApp/index.php');
 
 	list ($ret, $g2Data) = _GalleryMain(false);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
-	if (isset($headers['Location'])) {
-	    $this->assertEquals($expectedUrl, trim($headers['Location']), 'wrong redirect url');
-	} else {
-	    $this->assert(false, 'should have redirected');
-	}
+
+	/* Verify the result */
+	$this->assertEquals("Location: $expectedUrl", $_REQUEST['phpVmHeaders']['location'],
+	    'Wrong redirect URL');
     }
 
     function testMaintenanceMode() {
-	/* Test maintenance mode controller redirect with standard redirect url */
+	/* Test maintenance mode controller redirect with standard redirect URL */
 	global $gallery;
-	$gallery->_phpVm = $phpVm = new MainTestPhpVm();
+
+	/* Use the PHP VM to record the headers */
+	$gallery->_phpVm = new MainTestPhpVm();
+
 	$gallery->_session->_sessionId = 'fakeSID';
 	$gallery->setConfig('mode.maintenance', true);
 	GalleryUtilities::putRequestVariable('controller', 'core.FooController');
@@ -122,34 +133,32 @@ class MainTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
-	if (isset($headers['Location'])) {
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $expectedUrl = $urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode'),
-						      array('htmlEntities' => false,
-							    'forceFullUrl' => true));
-	    $this->assertEquals($expectedUrl, trim($headers['Location']), 'wrong redirect url');
-	} else {
-	    $this->assert(false, 'should have redirected');
-	}
+
+	/* Verify the result */
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$expectedUrl = $urlGenerator->generateUrl(array('view' => 'core.MaintenanceMode'),
+	    array('htmlEntities' => false, 'forceFullUrl' => true));
+	$this->assertEquals("Location: $expectedUrl", $_REQUEST['phpVmHeaders']['location'],
+	    'Wrong redirect URL');
     }
 
     function testMaintenanceModeUrl() {
-	/* Test maintenance mode view redirect with configured redirect url */
+	/* Test maintenance mode view redirect with configured redirect URL */
 	global $gallery;
-	$gallery->_phpVm = $phpVm = new MainTestPhpVm();
+
+	/* Use the PHP VM to record the headers */
+	$gallery->_phpVm = new MainTestPhpVm();
+
 	$gallery->setConfig('mode.maintenance', $expectedUrl = '/maintenance.html');
 
 	list ($ret, $g2Data) = _GalleryMain(false);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
-	if (isset($headers['Location'])) {
-	    $this->assertEquals($expectedUrl, trim($headers['Location']), 'wrong redirect url');
-	} else {
-	    $this->assert(false, 'should have redirected');
-	}
+
+	/* Verify the result */
+	$this->assertEquals("Location: $expectedUrl", $_REQUEST['phpVmHeaders']['location'],
+	    'Wrong redirect URL');
     }
 
     /* Test that we only append the GALLERYSID to Location URLs if really needed */
@@ -183,14 +192,14 @@ class MainTest extends GalleryTestCase {
 	$sessionId = $session->getId();
 	$sessionKey = $session->getKey();
 	$this->assert(!empty($sessionId) && !empty($sessionKey),
-		      'initial session assertion failed');
+		      'Initial session assertion failed');
 	$sessionParamString =
 	    GalleryUtilities::prefixFormVariable(urlencode($session->getKey())) . '=' .
 	    urlencode($session->getId());
-	/* Urls that shouldn't be changed (because they already have the session param) */
+	/* URLs that shouldn't be changed (because they already have the session param) */
 	$okUrls = array("main.php?$sessionParamString", 'main.php?g2_view=core.ShowItem&amp;' .
 			$sessionParamString . '&amp;g2_navId=x7865x', "?$sessionParamString");
-	/* Url that should be changed if the fix is applied */
+	/* URL that should be changed if the fix is applied */
 	$needFixUrls = array('main.php', 'main.php?g2_view=core.ShowItem&amp;g2_navId=x7865x',
 			     '?g2_controller=core.ItemEdit&amp;g2_itemId=13&amp;g2_returnUrl=' .
 			     urlencode("$base?$sessionParamString"));
@@ -201,33 +210,28 @@ class MainTest extends GalleryTestCase {
 	    foreach (array_merge($okControllers, $needFixControllers) as $controller) {
 		foreach (array_merge($okUrls, $needFixUrls) as $url) {
 		    /* Use the PHP VM to record the headers */
-		    $phpVm = new MainTestPhpVm();
-		    $gallery->_phpVm = $phpVm;
+		    $gallery->_phpVm = new MainTestPhpVm();
 
 		    /* Execute the function under test */
 		    $this->assertEquals(array('isDone' => true),
 					_GalleryMain_doRedirect($base . $url, null, $controller),
-					"unexpected return value for $server, $url, $controller");
+					"Unexpected return value for $server, $url, $controller");
 
 		    /* Assemble expected result */
 		    $expectedUrl = str_replace('&amp;', '&', $base . $url);
 
 		    /* Check if this case needs the bugfix */
-		    if (in_array($server, $buggyWebServers) &&
-			    in_array($controller, $needFixControllers) &&
-			    in_array($url, $needFixUrls)) {
+		    if (in_array($server, $buggyWebServers)
+			    && in_array($controller, $needFixControllers)
+			    && in_array($url, $needFixUrls)) {
 			$expectedUrl .= strpos($expectedUrl, '?') ? '&' : '?';
 			$expectedUrl .= $sessionParamString;
 		    }
 
 		    /* Verify the result */
-		    $headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
-		    if (isset($headers['Location'])) {
-			$this->assertEquals($expectedUrl, trim($headers['Location']),
-					    "wrong header: $server, $url, $controller");
-		    } else {
-			$this->assert(false, "no headers set for case $server, $url, $controller");
-		    }
+		    $this->assertEquals("Location: $expectedUrl",
+			$_REQUEST['phpVmHeaders']['location'],
+			"Wrong header: $server, $url, $controller");
 		}
 	    }
 	}
@@ -247,43 +251,38 @@ class MainTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
-	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp session id');
+	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'SESSION_TEMP_ID');
 
 	/* Use the PHP VM to record the headers */
-	$phpVm = new MainTestPhpVm();
-	$gallery->_phpVm = $phpVm;
+	$gallery->_phpVm = new MainTestPhpVm();
 
 	/* Execute the function under test */
 	$this->assertEquals(array('isDone' => true),
 			    _GalleryMain_doRedirect('http://example.com/main.php?&amp; '),
-			    'unexpected return value');
+			    'Unexpected return value');
 
 	/* Verify the result */
-	$headers = $phpVm->headers_sent() ? $_REQUEST['phpVmHeaders'] : array();
-	if (isset($headers['Location'])) {
-	    $this->assertEquals(' http://example.com/main.php',
-				$headers['Location'], 'wrong header');
-	} else {
-	    $this->assert(false, 'no headers set');
-	}
+	$this->assertEquals('Location: http://example.com/main.php',
+	    $_REQUEST['phpVmHeaders']['location'], 'Wrong header');
     }
 }
 
 class MainTestPhpVm extends GalleryPhpVm {
-    function header($string, $replace=null) {
-	if ($pos = strpos($string, ':')) {
-	    $_REQUEST['phpVmHeaders'][substr($string, 0, $pos)] = substr($string, $pos+1);
+    function header($header, $replace=null) {
+	$key = 'status';
+	if (strncasecmp($header, 'HTTP/', 5)) {
+	    $key = strtolower(substr($header, 0, strpos($header, ':')));
 	}
-    }
 
-    function headers_sent() {
-	return (isset($_REQUEST['phpVmHeaders']) && !empty($_REQUEST['phpVmHeaders']));
+	$_REQUEST['phpVmHeaders'][$key] = $header;
     }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
-class FooViewView extends GalleryView { }
+class FooViewView extends GalleryView {
+}
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
-class FooControllerController extends GalleryController { }
+class FooControllerController extends GalleryController {
+}
 ?>
