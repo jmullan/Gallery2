@@ -22,7 +22,6 @@ GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
 
 /**
  * Test session functionality
- *
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -2222,8 +2221,8 @@ class SessionTest extends GalleryTestCase {
 	    var_dump($_REQUEST['phpVmHeaders']);
 	    $debugHeaders = ob_get_contents();
 	    ob_end_clean();
-	    $this->assert(isset($_REQUEST['phpVmHeaders']['set-cookie']),
-		$expireBy . ': Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
+	    $this->assert(isset($_REQUEST['phpVmHeaders']['set-cookie']), $expireBy
+		    . ': Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
 	    if (isset($_REQUEST['phpVmHeaders']['set-cookie'])) {
 		$cookie = $_REQUEST['phpVmHeaders']['set-cookie'];
 		/* A delete cookie has KEY= and *not* KEY=VALUE */
@@ -2440,17 +2439,18 @@ class SessionTest extends GalleryTestCase {
 		$debugHeaders = ob_get_contents();
 		ob_end_clean();
 		$this->assertEquals($testCase['er'], isset($_REQUEST['phpVmHeaders']['set-cookie']),
-		    $case . ': Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
+			$case . ': Set-Cookie header not sent.  These are the headers: '
+			. $debugHeaders);
 		if ($testCase['er'] && isset($_REQUEST['phpVmHeaders']['set-cookie'])) {
 		    /* There can be multiple Set-Cookie headers, find the correct one */
 		    $cookie = $_REQUEST['phpVmHeaders']['set-cookie'];
-		    if (is_array($_REQUEST['phpVmHeaders']['set-cookie'])) {
-			foreach ($_REQUEST['phpVmHeaders']['set-cookie'] as $cookie) {
-			    if (strpos($cookie, SESSION_ID_PARAMETER) !== false) {
+		    if (is_array($cookie)) {
+			unset($cookie);
+			foreach ($_REQUEST['phpVmHeaders']['set-cookie'] as $setCookie) {
+			    if (strpos($setCookie, SESSION_ID_PARAMETER) !== false) {
+				$cookie = $setCookie;
 				break;
 			    }
-
-			    unset($cookie);
 			}
 		    }
 		    if (isset($cookie)) {
