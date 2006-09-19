@@ -41,15 +41,15 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $targetAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_targetAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$this->_markForCleanup($targetAlbum);
+	$this->_markForCleanup($this->_targetAlbum);
 
 	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'useralbum', 'targetLocation', $targetAlbum->getId());
+	    'module', 'useralbum', 'targetLocation', $this->_targetAlbum->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -295,6 +295,241 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assertEquals($this->_userWithoutAlbum->getUserName(),
 			    $album->getTitle(), 'username');
+    }
+    
+    function testPermissionsEverybody() {
+	global $gallery;
+	$gallery->setActiveUser($this->_userWithoutAlbum);
+	list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_setParameters(array('create' => 'access', 'view' => 'everybody',
+				    	   'fullSize' => true));				    
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addGroupPermission($this->_targetAlbum->getId(), 
+	    $core['id.everybodyGroup'], 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission($this->_targetAlbum->getId(), 
+	    $this->_userWithAlbum->getId(), 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$results = $this->handleRequest();
+
+	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
+	    'module', 'useralbum', 'albumId', $this->_userWithoutAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(isset($albumId), 'Album was not created');
+	$secArray = array('core.view' => 1, 'core.viewAll' => 1, 
+            'core.viewResizes' => 1, 'core.viewSource' => 1);
+	
+        /* make sure applicable core.view* permissions left for Everybody group */
+	/* undocumented feature allows you to pass groupId as well as userId */
+        list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $core['id.everybodyGroup']);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($secArray, array_intersect_assoc($secArray,  
+            $permissions[$albumId]), 'Everybody Permissions');
+	
+        /* registered users' permissions are superceded by Everybody */
+	/* undocumented feature allows you to pass groupId as well as userId */
+        list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $core['id.allUserGroup']);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(empty($permissions), 'Registered Permissions');
+	
+        /* make sure applicable core.view* permissions are there for specific users */
+	/* undocumented feature allows you to pass groupId as well as userId */
+        list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $this->_userWithoutAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($secArray, array_intersect_assoc($secArray, $permissions[$albumId]), 
+	    'Specific user');
+	
+	/* check the permissions of the parent album owner */
+        list ($ret,$permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $this->_userWithAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($secArray, array_intersect_assoc($secArray,
+            $permissions[$albumId]), 'Parent user');
+    }
+    
+    function testPermissionsRegistered() {
+	global $gallery;
+	$gallery->setActiveUser($this->_userWithoutAlbum);
+	list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_setParameters(array('create' => 'access', 'view' => 'allusers',
+				    	   'fullSize' => false));				    
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+	$ret = GalleryCoreApi::addGroupPermission($this->_targetAlbum->getId(), 
+	    $core['id.everybodyGroup'], 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission($this->_targetAlbum->getId(), 
+	    $this->_userWithAlbum->getId(), 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$results = $this->handleRequest();
+
+	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
+	    'module', 'useralbum', 'albumId', $this->_userWithoutAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(isset($albumId), 'Album was not created');
+	$secArray = array('core.view' => 1, 'core.viewAll' => 1, 
+            'core.viewResizes' => 1, 'core.viewSource' => 1);
+        /* make sure that no core.view* permissions left for Everybody group */
+	/* undocumented feature allows you to pass groupId as well as userId */
+        list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $core['id.everybodyGroup']);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), array_intersect_assoc($secArray,  
+            $permissions[$albumId]), 'Everybody Permissions');
+	
+        /* make sure applicable core.view* permissions are there for registered users */
+	/* undocumented feature allows you to pass groupId as well as userId */
+        list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $core['id.allUserGroup']);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/* full size is disabled for this test */
+	$this->assertEquals(array('core.view' => 1, 'core.viewResizes' => 1),
+	    array_intersect_assoc($secArray, $permissions[$albumId]), 'Registered Permissions');
+	
+        /* make sure applicable core.view* permissions are there for specific users */
+	/* undocumented feature allows you to pass groupId as well as userId */
+        list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $this->_userWithoutAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($secArray, array_intersect_assoc($secArray, $permissions[$albumId]), 
+	    'Specific user');
+	
+	/* check the permissions of the parent album owner */
+        list ($ret,$permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $this->_userWithAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array('core.view' => 1, 'core.viewResizes' => 1), 
+	    array_intersect_assoc($secArray, $permissions[$albumId]), 'Parent user');
+    }
+    
+    function testPermissionsUser() {
+	global $gallery;
+	$gallery->setActiveUser($this->_userWithoutAlbum);
+	list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+        /* Albums viewable by User only */
+	$ret = $this->_setParameters(array('create' => 'access', 'view' => 'user'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+        /* give all permissions to everybody group, to registered users and to a specific user */
+	$ret = GalleryCoreApi::addGroupPermission($this->_targetAlbum->getId(), 
+	    $core['id.everybodyGroup'], 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addGroupPermission($this->_targetAlbum->getId(), 
+	    $core['id.allUserGroup'], 'core.delete');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission($this->_targetAlbum->getId(), 
+	    $this->_userWithAlbum->getId(), 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$results = $this->handleRequest();
+
+	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
+	    'module', 'useralbum', 'albumId', $this->_userWithoutAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(isset($albumId), 'Album was not created');
+	$secArray = array('core.view' => 1, 'core.viewAll' => 1, 
+            'core.viewResizes' => 1, 'core.viewSource' => 1);
+	
+        /* make sure that no core.view* permissions left for Everybody group */
+	/* undocumented feature allows you to pass groupId as well as userId */
+        list ($ret,$permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $core['id.everybodyGroup']);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), array_intersect_assoc($secArray,
+            $permissions[$albumId]), 'Everybody Permissions');
+        
+        /* make sure that no core.view* permissions are there for registered users */
+	/* undocumented feature allows you to pass groupId as well as userId */
+        list ($ret,$permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $core['id.allUserGroup']);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), array_intersect_assoc($secArray,
+            $permissions[$albumId]), 'Registered Permissions');
+	
+        list ($ret,$permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($albumId), $this->_userWithAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), array_intersect_assoc($secArray,
+            $permissions[$albumId]), 'Specific user Permissions');
+    }
+    
+    function _setParameters($params) {
+	foreach ($params as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $value);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+	return null;
     }
 }
 ?>
