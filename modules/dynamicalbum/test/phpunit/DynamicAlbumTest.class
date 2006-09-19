@@ -145,7 +145,7 @@ class DynamicAlbumTest extends GalleryTestCase {
 			  $key . ': parent type');
 	    $this->assertEquals('hi', $item->parent->getDescription(),
 				$key . ': parent description');
-	    $this->assertEquals(array($this->_class[$key] . 'View', 'getChildIds'),
+	    $this->assertEquals(array(get_class($view), 'getChildIds'),
 		    $item->parent->getChildrenFunction, $key . ': get children function');
 	}
     }
