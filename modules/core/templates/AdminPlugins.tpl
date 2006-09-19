@@ -51,7 +51,7 @@
       "message" : {ldelim} "type" : "giWarning", "text" : "{g->text text="__PLUGIN__ needs configuration"}" {rdelim}
     {rdelim},
     "deleted" : {ldelim}
-      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deleted"}" {rdelim},
+      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deleted"}" {rdelim}
     {rdelim}
   {rdelim};
   var errorPageUrl = '{g->url arg1="view=core.ErrorPage" htmlEntities=0}';
