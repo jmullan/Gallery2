@@ -13,10 +13,9 @@ function updatePluginState(pluginType, pluginId, state, visualChanges) {
 	}
     }
 
-    var re = new RegExp().compile('gbLink-' + pluginId + '_');
     var links = document.getElementsByTagName("li");
-    for (i in links) {
-	if (re.test(links[i].className)) {
+    for (i = 0; i < links.length; i++) {
+	if (links[i].className && links[i].className.indexOf('gbLink-' + pluginId + '_') != -1) {
 	    links[i].style.display = (state == 'active') ? 'block' : 'none';
 	}
     }
