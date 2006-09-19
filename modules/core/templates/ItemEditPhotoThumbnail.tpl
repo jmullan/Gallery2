@@ -13,8 +13,8 @@
 
   {if $ItemEditPhotoThumbnail.editThumbnail.can.crop}
   <div id="crop-canvas" style="width: 630px; height: 480px">
-    <img id="crop-image"/>
-    <div id="crop-frame">
+    <img id="crop-image" style="z-index: 1"/>
+    <div id="crop-frame" style="z-index: 10">
       <div id="crop-marquee-top" class="horizontal-marquee"></div>
       <div id="crop-marquee-right" class="vertical-marquee"></div>
       <div id="crop-marquee-bottom" class="horizontal-marquee"></div>
