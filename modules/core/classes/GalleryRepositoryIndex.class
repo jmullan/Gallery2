@@ -117,7 +117,7 @@ class GalleryRepositoryIndex {
     function _getPossiblyCompressedIndexContents($indexUrl) {
 	global $gallery;
 
-	$phpVm =& $gallery->getPhpVm();
+	$phpVm = $gallery->getPhpVm();
 	$needsInflation = false;
 	if ($phpVm->function_exists('gzinflate')) {
 	    $indexUrl .= '.gz';

@@ -98,9 +98,8 @@ class RepositoryPackage extends RepositoryObject {
      */
     function writeSinglePackageToDisk($packageType, $overwritePackage=false) {
 	global $gallery;
-	$RANDOM_STRING_LENGTH = 5;
 
-	$randomString = $this->getRandomString($RANDOM_STRING_LENGTH);
+	$randomString = $this->getPackageHash($this->_descriptor, 5);
 	$this->_template->setVariable('random', $randomString);
 
 	/* Directory structure creation code. */
@@ -165,20 +164,21 @@ class RepositoryPackage extends RepositoryObject {
     }
 
     /**
-     * Creates a random string of lower-case characters of a specified length.
+     * Return a hash code for the given descriptor.  Not guaranteed to be unique,
+     * but at 5 characters the collision rate is 1 in 60 million.
      *
      * @param int $length desired length
      * @return string random string
      */
-    function getRandomString($length) {
-	static $ASCII_LETTER_A = 97;
-	static $ASCII_LETTER_Z = 122;
-	$randomString = '';
+    function getPackageHash($descriptor, $length) {
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
 
-	for ($i = 0; $i < $length; $i++) {
-	    $randomString .= chr(rand($ASCII_LETTER_A, $ASCII_LETTER_Z));
-	}
-	return $randomString;
+	$key = sprintf("%s-%s-%s",
+		       $descriptor->getPluginId(),
+		       $descriptor->getPluginVersion(),
+		       $descriptor->getBuildTimestamp());
+	return substr($phpVm->md5($key), 0, $length);
     }
 }
 ?>

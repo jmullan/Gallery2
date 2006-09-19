@@ -161,13 +161,13 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array(
+	    'MANIFEST',
+	    'callbacks.inc',
 	    'images/image1.gif',
 	    'images/image2.gif',
-	    'po/strings.raw',
-	    'po/GNUmakefile',
-	    'MANIFEST',
 	    'module.inc',
-	    'callbacks.inc',
+	    'po/GNUmakefile',
+	    'po/strings.raw',
 	    ), $descriptor->getFilesInPackage('base'));
 
 	$this->assertEquals(array(
