@@ -99,7 +99,7 @@ class RepositoryPackage extends RepositoryObject {
     function writeSinglePackageToDisk($packageType, $overwritePackage=false) {
 	global $gallery;
 
-	$randomString = $this->getPackageHash($this->_descriptor, 5);
+	$randomString = $this->getPackageHash($packageType, 5);
 	$this->_template->setVariable('random', $randomString);
 
 	/* Directory structure creation code. */
@@ -167,17 +167,14 @@ class RepositoryPackage extends RepositoryObject {
      * Return a hash code for the given descriptor.  Not guaranteed to be unique,
      * but at 5 characters the collision rate is 1 in 60 million.
      *
+     * @param string $package package name
      * @param int $length desired length
      * @return string random string
      */
-    function getPackageHash($descriptor, $length) {
+    function getPackageHash($packageType, $length) {
 	global $gallery;
 	$phpVm = $gallery->getPhpVm();
-
-	$key = sprintf("%s-%s-%s",
-		       $descriptor->getPluginId(),
-		       $descriptor->getPluginVersion(),
-		       $descriptor->getBuildTimestamp());
+	$key = $this->getPackageFileName($packageType);
 	return substr($phpVm->md5($key), 0, $length);
     }
 }

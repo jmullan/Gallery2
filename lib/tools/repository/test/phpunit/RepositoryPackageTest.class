@@ -177,15 +177,29 @@ class RepositoryPackageTest extends GalleryTestCase {
 	global $gallery;
 
 	$gallery->_phpVm = new RepositoryPackageTestPhpVm();
-	$testDescriptor = new RepositoryPackageTestDescriptor();
-	$this->assertEquals('testplugin-1.0.0-19700411131300',
-			    RepositoryPackage::getPackageHash($testDescriptor, 100));
+	$testPackage = new RepositoryPackageTestPackage();
+
+	$this->assertEquals(
+	    'mock-filename',
+	    $testPackage->getPackageHash('package-type', 20));
+
+	$this->assertEquals(
+	    'moc',
+	    $testPackage->getPackageHash('package-type', 3));
     }
 }
 
 class RepositoryPackageTestPhpVm {
     function md5($input) {
 	return $input;
+    }
+}
+
+class RepositoryPackageTestPackage extends RepositoryPackage {
+    function getPackageFilename($packageType) {
+	if ($packageType == 'package-type') {
+	    return 'mock-filename';
+	}
     }
 }
 
