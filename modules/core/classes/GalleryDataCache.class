@@ -549,7 +549,7 @@ class GalleryDataCache {
      *
      * @param int $id the item id
      * @param string $permission
-     * @return boolean 
+     * @return boolean
      */
     function hasPermission($id, $permission) {
 	global $gallery;
@@ -709,7 +709,7 @@ class GalleryDataCache {
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	return null;
     }
 
@@ -794,7 +794,7 @@ class GalleryDataCache {
 
 	return array(null, $extraKey);
     }
-    
+
     /**
      * Delete value of obsolete cache data.
      *
@@ -829,12 +829,12 @@ class GalleryDataCache {
 	$storage =& $gallery->getStorage();
 	$query = 'UPDATE [GalleryCacheMap] SET [GalleryCacheMap::value] = NULL ';
 
-	if($isAnonymous){
+	if ($isAnonymous){
 	    $query .= 'WHERE [GalleryCacheMap::userId] = ? AND [GalleryCacheMap::timestamp] < ?';
 	} else {
 	    $query .= 'WHERE [GalleryCacheMap::userId] <> ? AND [GalleryCacheMap::timestamp] < ?';
 	}
-	
+
 	$ret = $storage->execute($query, array((int)$anonymousUserId, (int)$cutoff));
 	if ($ret) {
 	    return $ret;

@@ -394,7 +394,7 @@ class DataCacheTest extends GalleryTestCase {
 	$phpVm = new DataCacheTestMockVm();
 	$gallery->_phpVm =& $phpVm;
 
-	$phpVm->setTime(0);
+	$phpVm->setTime(100);
 	$ret = GalleryDataCache::putPageData('test', 0, array('key'), 'test');
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -586,43 +586,43 @@ class DataCacheTest extends GalleryTestCase {
 
 	$session->remove('theme.guestPreviewMode');
     }
-    
+
     function testCleanPageDataCache(){
 	global $gallery;
-	
+
 	$phpVm = new DataCacheTestMockVm();
 	$gallery->_phpVm =& $phpVm;
 	$activeUser = $gallery->getActiveUser();
-	
-	$acceleration['user']['type'] = 'full';
-	$acceleration['user']['expiration'] = 30;
-	$acceleration['guest']['type'] = 'full';
-	$acceleration['guest']['expiration'] = 30;
+
+	$acceleration = array('user' => array('type' => 'full', 'expiration' => 30),
+			      'guest' => array('type' => 'full', 'expiration' => 30));
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
 	}
-	
+
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
 	}
-	
-	list($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
 	}
-	
+	/* Initialize to language of active user, so we don't get a different cache key later */
+	$gallery->setActiveUser($anonymousUser);
+	$gallery->setActiveUser($activeUser);
+
 	/* Clear the cache. */
 	$ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
 	}
-	
+
 	/* Setup some cache entries. */
-	$phpVm->setTime(0);
+	$phpVm->setTime(100);
 	$ret = GalleryDataCache::putPageData('first', 0, array('key'), 'test');
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -632,28 +632,28 @@ class DataCacheTest extends GalleryTestCase {
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals('test', $result);
+	$this->assertEquals('test', $result, 'first');
 
-	$phpVm->setTime(25);
+	$phpVm->setTime(125);
 	$ret = GalleryDataCache::putPageData('second', 2, array('key'), 'test');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
+
 	$gallery->setActiveUser($anonymousUser);
-	
+
 	$ret = GalleryDataCache::putPageData('second', 2, array('key'), 'test');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
+
 	$gallery->setActiveUser($activeUser);
 
 	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals('test', $result);
+	$this->assertEquals('test', $result, 'first 2');
 
 	$phpVm->setTime(time());
 	$ret = GalleryDataCache::putPageData('third', 3, array('key'), 'test');
@@ -672,10 +672,10 @@ class DataCacheTest extends GalleryTestCase {
 	/* Verify the number of rows that should be valid. */
 	$query = '
 	SELECT
-	  * 
-	FROM 
-	  [GalleryCacheMap] 
-	WHERE 
+	  *
+	FROM
+	  [GalleryCacheMap]
+	WHERE
 	  [GalleryCacheMap::value] IS NOT NULL
 	';
 	list ($ret, $results) = $gallery->search($query);
