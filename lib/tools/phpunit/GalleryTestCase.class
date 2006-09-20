@@ -112,6 +112,7 @@ class GalleryTestCase extends TestCase {
 	    $_GET[GALLERY_FORM_VARIABLE_PREFIX . $session->getKey()] = $session->getId();
 	}
 	$this->_saveSID = $session->getId();
+	$this->_saveVars[] = $session->get('core.language');
 
 	/*
 	 * Try to ensure enough time for this test to complete.  If a test
@@ -241,8 +242,15 @@ class GalleryTestCase extends TestCase {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->commitTransaction();
 	if ($ret) {
-	    $ret = $ret;
 	    $this->fail($ret->getAsText());
+	}
+
+	$session =& $gallery->getSession();
+	$language = array_shift($this->_saveVars);
+	if (isset($language)) {
+	    $session->put('core.language', $language);
+	} else {
+	    $session->remove('core.language');
 	}
 
 	parent::tearDown();
@@ -256,7 +264,6 @@ class GalleryTestCase extends TestCase {
 		    '(did you put parent::tearDown() at the <i>end</i> of your tearDown() method?',
 		    $counter->getCount()));
 
-	$session =& $gallery->getSession();
 	if (is_object($session)) {
 	    $this->assertEquals($this->_saveSID, $session->getId(), 'Session ID changed by test');
 	} else {
