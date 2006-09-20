@@ -303,6 +303,9 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+	if (!GalleryUtilities::guaranteeDirExists(dirname($derivativeFile))) {
+	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE));
+	}
 	if (!$platform->copy(__FILE__, $derivativeFile)) {
 	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE));
 	}
