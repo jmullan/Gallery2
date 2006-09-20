@@ -30,12 +30,14 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		}
 		//G2: Disable pg_query_params support due to http://bugs.php.net/36969
 		$this->_bindInputArray = false; // PHP_VERSION >= 5.1;
-		
-		$info = $this->ServerInfo();
-		$this->pgVersion = (float) substr($info['version'],0,3);
-		if ($this->pgVersion >= 7.1) { // good till version 999
-			$this->_nestedSQL = true;
-		}
+
+		//G2: This code doesn't work because it tries to make a query before connected.
+		//    We don't need nestedSQL so just leave unset/false.
+		//$info = $this->ServerInfo();
+		//$this->pgVersion = (float) substr($info['version'],0,3);
+		//if ($this->pgVersion >= 7.1) { // good till version 999
+		//	$this->_nestedSQL = true;
+		//}
 	}
 
 	
