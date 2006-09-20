@@ -2642,12 +2642,8 @@ class GalleryCoreApi {
      * faster than just calling require_once directly, even when using this extra API method
      * to wrap it.
      *
-     * It will detect the base directory of the specified file and load it from there. Setting
-     * the second argument to true skips this check and assumes that the file is relative to
-     * the gallery2 directory.
-     *
      * @param string $file
-     * @param boolean $skipBaseDirectoryDetection assume file is relative to the gallery2 directory
+     * @param boolean $skipBaseDirectoryDetection deprecated
      */
     function requireOnce($file, $skipBaseDirectoryDetection=false) {
 	static $loaded;

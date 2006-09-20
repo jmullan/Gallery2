@@ -923,7 +923,7 @@ class Gallery {
      */
     function getPhpVm() {
 	if (!isset($this->_phpVm)) {
-	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhpVm.class', true);
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhpVm.class');
 	    $this->_phpVm = new GalleryPhpVm();
 	}
 	return $this->_phpVm;
