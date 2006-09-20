@@ -739,15 +739,8 @@ class StorageTest extends GalleryTestCase {
 	}
 	/* No (PHP) error? Good! Next, get the entry from the db and compare */
 
-	$query = '
-	SELECT
-	  [GalleryCacheMap::value]
-	FROM
-	  [GalleryCacheMap]
-	WHERE
-	  [GalleryCacheMap::key] = ?
-	';
-	list ($ret, $results) = $storage->search($query, array($key));
+	list ($ret, $results) = GalleryCoreApi::getMapEntry('GalleryCacheMap',
+		array('value'), array('key' => $key));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
