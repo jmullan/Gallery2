@@ -827,19 +827,23 @@ class GalleryDataCache {
 
 	/* Use UPDATE instead of DELETE since UPDATE is faster and we reuse the rows. */
 	$storage =& $gallery->getStorage();
-	$query = 'UPDATE [GalleryCacheMap] SET [GalleryCacheMap::value] = NULL ';
+	GalleryCoreApi::requireOnce(
+		'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
 
-	if ($isAnonymous){
-	    $query .= 'WHERE [GalleryCacheMap::userId] = ? AND [GalleryCacheMap::timestamp] < ?';
+	if ($isAnonymous) {
+	    $userIdForSql = (int)$anonymousUserId;
 	} else {
-	    $query .= 'WHERE [GalleryCacheMap::userId] <> ? AND [GalleryCacheMap::timestamp] < ?';
+	    $userIdForSql = new GallerySqlFragment('<> ?', (int)$anonymousUserId);
 	}
 
-	$ret = $storage->execute($query, array((int)$anonymousUserId, (int)$cutoff));
+	list ($ret, $results) = GalleryCoreApi::updateMapEntry('GalleryCacheMap',
+		array('userId' => $userIdForSql,
+		      'timestamp' => new GallerySqlFragment('< ?', (int)$cutoff)),
+		array('value' => null));
 	if ($ret) {
 	    return $ret;
 	}
-
+	
 	return null;
     }
 }
