@@ -672,7 +672,7 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	/* Use a real SQL connection for this test */
-	$storage->_db = null;
+	$storage->_db = $this->_db;
 
 	/* \0 -> \\000 special escape, see http://pgsqld.active-venture.com/datatype-binary.html */
 	$testString = "The NULL character should be escaped \0 !";
@@ -718,7 +718,7 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	/* Use a real SQL connection for this test */
-	$storage->_db = null;
+	$storage->_db = $this->_db;
 
 	/* We want to store binary (gz-deflated) data in a text field */
 	$blobData = '';
