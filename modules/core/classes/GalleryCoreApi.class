@@ -1381,7 +1381,7 @@ class GalleryCoreApi {
      * Get the parent sequence for this item id
      * @param int $itemId
      * @return array object GalleryStatus a status code
-     *               array the parent id sequence
+     *               array the parent id sequence from root album down; given itemId not included
      */
     function fetchParentSequence($itemId) {
 	GalleryCoreApi::requireOnce(
