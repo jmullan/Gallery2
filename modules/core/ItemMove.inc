@@ -78,7 +78,6 @@ class ItemMoveController extends GalleryController {
 		    return array($ret, null);
 		}
 
-		$oldParentIds = array();
 		foreach ($selectedItems as $selectedItem) {
 		    $selectedId = $selectedItem->getId();
 
@@ -88,7 +87,6 @@ class ItemMoveController extends GalleryController {
 			continue;
 		    }
 
-		    $oldParentIds[] = $selectedItem->getParentId();
 		    list ($ret, $permissions) = GalleryCoreApi::getPermissions($selectedId);
 		    if ($ret) {
 			return array($ret, null);
@@ -108,16 +106,25 @@ class ItemMoveController extends GalleryController {
 				   '][permission][addDataItem]';
 		    }
 		}
-		$oldParentIds = array_values(array_unique($oldParentIds));
 	    }
 
 	    if (empty($error) && !empty($selectedIds) && !empty($newParentId)) {
 		$storage =& $gallery->getStorage();
 
-		/* Read lock myself, my parent id and the new parent id */
+		/* Read lock old and new parent album, and all ancestor albums */
 		$lockIds = array();
-		list ($ret, $lockIds[]) =
-		    GalleryCoreApi::acquireReadLock(array($newParentId, $itemId));
+		list ($ret, $oldParents) = GalleryCoreApi::fetchParentSequence($itemId);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		list ($ret, $newParents) = GalleryCoreApi::fetchParentSequence($newParentId);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$oldParents[] = $itemId;
+		$newParents[] = $newParentId;
+		list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock(
+			array_unique(array_merge($oldParents, $newParents)));
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -132,7 +139,7 @@ class ItemMoveController extends GalleryController {
 			$currentIds[] = $item->getId();
 		    }
 		    /* Write lock all the items we're moving */
-		    list ($ret, $currentLockIds) = GalleryCoreApi::acquireWriteLock($currentIds);
+		    list ($ret, $currentLockId) = GalleryCoreApi::acquireWriteLock($currentIds);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
 			return array($ret, null);
@@ -142,14 +149,16 @@ class ItemMoveController extends GalleryController {
 		    foreach ($currentItems as $selectedItem) {
 			$ret = $selectedItem->move($newParentId);
 			if ($ret) {
-			    GalleryCoreApi::releaseLocks(array_merge($lockIds, $currentLockIds));
+			    $lockIds[] = $currentLockId;
+			    GalleryCoreApi::releaseLocks($lockIds);
 			    return array($ret, null);
 			}
 			$status['moved']['count']++;
 
 			$ret = $selectedItem->save();
 			if ($ret) {
-			    GalleryCoreApi::releaseLocks(array_merge($lockIds, $currentLockIds));
+			    $lockIds[] = $currentLockId;
+			    GalleryCoreApi::releaseLocks($lockIds);
 			    return array($ret, null);
 			}
 
@@ -158,13 +167,13 @@ class ItemMoveController extends GalleryController {
 			    $ret =
 				GalleryCoreApi::addExistingItemToAlbum($selectedItem, $newParentId);
 			    if ($ret) {
-				GalleryCoreApi::releaseLocks(
-				    array_merge($lockIds, $currentLockIds));
+				$lockIds[] = $currentLockId;
+				GalleryCoreApi::releaseLocks($lockIds);
 				return array($ret, null);
 			    }
 			}
 		    }
-		    $ret = GalleryCoreApi::releaseLocks($currentLockIds);
+		    $ret = GalleryCoreApi::releaseLocks($currentLockId);
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockIds);
 			return array($ret, null);
