@@ -45,6 +45,9 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	if (!isset($params['blocks'])) {
 	    $params['blocks'] = 'randomImage';
 	}
+	if (isset($params['repeatBlock']) && ($i = intval($params['repeatBlock'])) > 1) {
+	    $params['blocks'] .= str_repeat('|' . $params['blocks'], $i - 1);
+	}
 	$params = array_merge($moduleParams, $params);
 	$parentId = isset($params['itemId']) ? $params['itemId'] : null;
 	$show = array();
@@ -58,21 +61,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	if ($ret) {
 	    return $ret;
 	}
-	$headings = array('randomImage' => $gallery->i18n('Random Image'),
-			  'recentImage' => $gallery->i18n('Newest Image'),
-			  'viewedImage' => $gallery->i18n('Most Viewed Image'),
-			  'randomAlbum' => $gallery->i18n('Random Album'),
-			  'recentAlbum' => $gallery->i18n('Newest Album'),
-			  'viewedAlbum' => $gallery->i18n('Most Viewed Album'),
-			  'dailyImage' => $gallery->i18n('Picture of the Day'),
-			  'weeklyImage' => $gallery->i18n('Picture of the Week'),
-			  'monthlyImage' => $gallery->i18n('Picture of the Month'),
-			  'dailyAlbum' => $gallery->i18n('Album of the Day'),
-			  'weeklyAlbum' => $gallery->i18n('Album of the Week'),
-			  'monthlyAlbum' => $gallery->i18n('Album of the Month'));
 
-	$blocks = array();
-	$blockCount = array();
+	$blocks = $blockCount = array();
 	$blockList = explode('|', $params['blocks']);
 	foreach ($blockList as $block) {
 	    if (!isset($blockCount[$block])) {
@@ -90,7 +80,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    list ($tmp, $order, $itemType) = $matches;
 
 	    list ($ret, $blockData[$block]) = ImageBlockHelper::_getBlockData(
-		($heading && isset($headings[$block])) ? $module->translate($headings[$block]) : '',
 		$itemType, $order, $count, $parentId, $fullSize,
 		isset($params['userId']) ? $params['userId'] : null,
 		$maxSize, isset($params['exactSize']));
@@ -99,9 +88,71 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 	}
 
+	$lastType = '';
 	foreach ($blockList as $block) {
 	    if (!empty($blockData[$block])) {
-		$blocks[] = array_shift($blockData[$block]);
+		$nextBlock = array_shift($blockData[$block]);
+		if ($heading) {
+		    /* On 2nd of same type, update first to be plural; 3rd or more, no heading */
+		    $plural = ($block == $lastType)
+			? (empty($blocks[count($blocks) - 1]['title']) ? 0 : 2)
+			: 1;
+		}
+		if ($heading && $plural) {
+		    switch ($block) {
+		    case 'randomImage':
+			$title = $module->translate(array('one' => 'Random Image',
+				    'many' => 'Random Images', 'count' => $plural));
+			break;
+		    case 'recentImage':
+			$title = $module->translate(array('one' => 'Newest Image',
+				    'many' => 'Newest Images', 'count' => $plural));
+			break;
+		    case 'viewedImage':
+			$title = $module->translate(array('one' => 'Most Viewed Image',
+				    'many' => 'Most Viewed Images', 'count' => $plural));
+			break;
+		    case 'randomAlbum':
+			$title = $module->translate(array('one' => 'Random Album',
+				    'many' => 'Random Albums', 'count' => $plural));
+			break;
+		    case 'recentAlbum':
+			$title = $module->translate(array('one' => 'Newest Album',
+				    'many' => 'Newest Albums', 'count' => $plural));
+			break;
+		    case 'viewedAlbum':
+			$title = $module->translate(array('one' => 'Most Viewed Album',
+				    'many' => 'Most Viewed Albums', 'count' => $plural));
+			break;
+		    case 'dailyImage':
+			$title = $module->translate('Picture of the Day');
+			break;
+		    case 'weeklyImage':
+			$title = $module->translate('Picture of the Week');
+			break;
+		    case 'monthlyImage':
+			$title = $module->translate('Picture of the Month');
+			break;
+		    case 'dailyAlbum':
+			$title = $module->translate('Album of the Day');
+			break;
+		    case 'weeklyAlbum':
+			$title = $module->translate('Album of the Week');
+			break;
+		    case 'monthlyAlbum':
+			$title = $module->translate('Album of the Month');
+			break;
+		    default:
+			$title = '';
+		    }
+		    if ($plural > 1) {
+			$blocks[count($blocks) - 1]['title'] = $title;
+		    } else {
+			$nextBlock['title'] = $title;
+		    }
+		}
+		$blocks[] = $nextBlock;
+		$lastType = $block;
 	    }
 	}
 
@@ -147,9 +198,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * @access private
      */
-    function _getBlockData($title, $itemType, $order, $count,
-			   $parentId=null, $fullSize=false, $userId=null, $maxSize=null,
-			   $biggerOnly=false) {
+    function _getBlockData($itemType, $order, $count, $parentId=null,
+			   $fullSize=false, $userId=null, $maxSize=null, $biggerOnly=false) {
 	$blocks = $data = array();
 	switch ($order) {
 	case 'specific':
@@ -422,7 +472,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    }
 
 	    if (isset($image)) {
-		$itemData['title'] = $title;
 		$itemData['item'] = (array)$item;
 		$itemData['deriv'] = (array)$image;
 		$itemData['owner'] = (array)$owner;

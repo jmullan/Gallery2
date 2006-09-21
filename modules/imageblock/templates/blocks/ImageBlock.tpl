@@ -5,7 +5,8 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 {g->callback type="imageblock.LoadImageBlock"
-	     blocks=$blocks|default:null maxSize=$maxSize|default:null itemId=$itemId|default:null
+	     blocks=$blocks|default:null repeatBlock=$repeatBlock|default:null
+	     maxSize=$maxSize|default:null itemId=$itemId|default:null
 	     link=$link|default:null linkTarget=$linkTarget|default:null
 	     useDefaults=$useDefaults|default:true showHeading=$showHeading|default:true
 	     showTitle=$showTitle|default:true showDate=$showDate|default:true
