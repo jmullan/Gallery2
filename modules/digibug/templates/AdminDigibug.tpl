@@ -16,14 +16,15 @@
 
 <div class="gbBlock">
   <p class="giDescription">
-    {g->text text="DAPI (Digibug API) allows you to sell your photos as prints or printed gift products through the Digibug.com website."}
+    {g->text text="Sell your photos as prints or printed gift products!  Visit the %sDigibug configuration page%s for information on registering for a Digibug Pro Photographer account, and to learn how to obtain your Digibug Company ID and Event ID.  For general information, please refer to the %sDigibug.com website.%s"
+     arg1="<a href=\"http://corp.digibug.com/content/view/21/38/\">" arg2="</a>"
+     arg3="<a href=\"http://www.digibug.com/\">" arg4="</a>"}
   </p>
 
   <table class="gbDataTable">
     <tr><td>
       <label for="formDigibugCustomerId">
-	{g->text text="Digibug Company ID %s[What's this?]%s"
-	 arg1="<a href=\"http://www.digibug.com/digibugapi/\" target=\"_blank\">" arg2="</a>"}
+	{g->text text="Digibug Company ID"}
       </label>
     </td><td>
       <input type="text" size="6" id="formDigibugCustomerId" autocomplete="off"
@@ -38,8 +39,7 @@
     {/if}
     <tr><td>
       <label for="formDigibugEventId">
-	{g->text text="Event ID %s[What's this?]%s"
-	 arg1="<a href=\"http://www.digibug.com/digibugapi/\" target=\"_blank\">" arg2="</a>"}
+	{g->text text="Event ID"}
       </label>
     </td><td>
       <input type="text" size="6" id="formDigibugEventId" autocomplete="off"
