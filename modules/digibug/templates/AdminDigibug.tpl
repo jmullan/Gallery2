@@ -17,7 +17,7 @@
 <div class="gbBlock">
   <p class="giDescription">
     {g->text text="Sell your photos as prints or printed gift products!  Visit the %sDigibug configuration page%s for information on registering for a Digibug Pro Photographer account, and to learn how to obtain your Digibug Company ID and Event ID.  For general information, please refer to the %sDigibug.com website.%s"
-     arg1="<a href=\"http://corp.digibug.com/content/view/21/38/\">" arg2="</a>"
+     arg1="<a href=\"http://www.digibug.com/redirects/digibugapi_how_to.php\">" arg2="</a>"
      arg3="<a href=\"http://www.digibug.com/\">" arg4="</a>"}
   </p>
 
