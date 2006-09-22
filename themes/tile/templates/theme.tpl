@@ -22,6 +22,11 @@
     <div {g->mainDivAttributes}>
       {if $theme.useFullScreen}
 	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
+      {elseif $theme.pageType == 'progressbar'}
+	<div id="gsHeader">
+	  <img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/>
+	</div>
+	{g->theme include="progressbar.tpl"}
       {else}
 	<div id="gsHeader">
 	  <a href="{g->url}"><img src="{g->url href="images/galleryLogo_sm.gif"}"
@@ -43,8 +48,6 @@
 	  {g->theme include="tile.tpl"}
 	{elseif $theme.pageType == 'admin'}
 	  {include file="gallery:`$theme.adminTemplate`" l10Domain=$theme.adminL10Domain}
-	{elseif $theme.pageType == 'progressbar'}
-	  {g->theme include="progressbar.tpl"}
 	{elseif $theme.pageType == 'module'}
 	<table width="100%" cellspacing="0" cellpadding="0">
 	  <tr valign="top">

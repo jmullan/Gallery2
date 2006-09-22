@@ -32,6 +32,11 @@
        *}
       {if $theme.useFullScreen}
 	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
+      {elseif $theme.pageType == 'progressbar'}
+	<div id="gsHeader">
+	  <img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/>
+	</div>
+	{g->theme include="progressbar.tpl"}
       {else}
       <div id="gsHeader">
 	<table width="100%" cellspacing="0" cellpadding="0">
@@ -78,8 +83,6 @@
 	{g->theme include="admin.tpl"}
       {elseif $theme.pageType == 'module'}
 	{g->theme include="module.tpl"}
-      {elseif $theme.pageType == 'progressbar'}
-	{g->theme include="progressbar.tpl"}
       {/if}
 
       <div id="gsFooter" class="gcBorder1">

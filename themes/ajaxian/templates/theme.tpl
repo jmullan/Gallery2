@@ -46,6 +46,14 @@
        *}
       {if $theme.useFullScreen}
 	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
+      {elseif $theme.pageType == 'progressbar'}
+	<div id="header">
+	  <h1><img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""
+	   id="main-logo" /></h1>
+	</div>
+	<div id="main"><div id="frame">
+	  {g->theme include="progressbar.tpl"}
+	</div></div>
       {else}
       <div id="header">
 	<h1><a href="{g->url}"><img src="{g->url href="images/galleryLogo_sm.gif"}"
@@ -72,8 +80,6 @@
 	    {g->theme include="admin.tpl"}
 	  {elseif $theme.pageType == 'module'}
 	    {g->theme include="module.tpl"}
-	  {elseif $theme.pageType == 'progressbar'}
-	    {g->theme include="progressbar.tpl"}
 	  {/if}
 	</div>
       </div>

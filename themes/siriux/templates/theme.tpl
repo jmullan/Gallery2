@@ -35,6 +35,11 @@
        *}
       {if $theme.useFullScreen}
 	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
+      {elseif $theme.pageType == 'progressbar'}
+	<div class="header"></div>
+	<div class="content">
+	  {g->theme include="progressbar.tpl"}
+	</div>
       {else}
       <div class="header"></div>
       <div class="content">
@@ -51,8 +56,6 @@
 	  {g->theme include="admin.tpl"}
 	{elseif $theme.pageType == 'module'}
 	  {g->theme include="module.tpl"}
-	{elseif $theme.pageType == 'progressbar'}
-	  {g->theme include="progressbar.tpl"}
 	{/if}
 
 	<div class="footer">

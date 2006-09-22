@@ -27,6 +27,11 @@
        *}
       {if $theme.useFullScreen}
 	{include file="gallery:`$theme.moduleTemplate`" l10Domain=$theme.moduleL10Domain}
+      {elseif $theme.pageType == 'progressbar'}
+	<div id="gsHeader">
+	  <img src="{g->url href="images/galleryLogo_sm.gif"}" width="107" height="48" alt=""/>
+	</div>
+	{g->theme include="progressbar.tpl"}
       {else}
       <div id="gsHeader">
 	<a href="{g->url}"><img src="{g->url href="images/galleryLogo_sm.gif"}"
@@ -46,7 +51,7 @@
       </div>
 
       {* Add the sidebar menu to pages but not admin pages. *}
-      {if !empty($theme.params.sidebarBlocks) && $theme.pageType != 'admin' && $theme.pageType != 'progressbar'}
+      {if !empty($theme.params.sidebarBlocks) && $theme.pageType != 'admin'}
       <a href="javascript:return true;" id="showSidebarTab"
           onclick="MM_changeProp('gsSidebarCol','','style.display','block','DIV');
 	      MM_changeProp('showSidebarTab','','style.display','none','DIV');
@@ -66,8 +71,6 @@
 	{g->theme include="admin.tpl"}
       {elseif $theme.pageType == 'module'}
 	{g->theme include="module.tpl"}
-      {elseif $theme.pageType == 'progressbar'}
-	{g->theme include="progressbar.tpl"}
       {/if}
 
       <div id="gsFooter">
