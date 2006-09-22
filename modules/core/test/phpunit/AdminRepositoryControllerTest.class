@@ -48,20 +48,66 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
     }
 
     function testUpdateIndex() {
+	global $gallery;
 	GalleryUtilities::putRequestVariable('form[action][update]', 1);
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
 
 	$repository = new AdminRepositoryControllerTestRepository();
 	$repository->setReply('init', array(), null);
-	$repository->setReply('downloadIndex', array(), null);
-	$repository->setReply('scanPlugins', array(), null);
 	$this->_controller->_repository = $repository;
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
-						      'subView' => 'core.AdminRepository'),
-				  'status' => array('indexUpdated' => 1),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ProgressBar'),
+				  'status' => array(),
 				  'error' => array()),
 			    $results);
+
+	/* Assert that we have 1 callback in the queue */
+	$this->assertEquals(1, $mockAdapter->getCallbackCount());
+
+	$callback = $mockAdapter->getCallback(0);
+	$this->assertEquals(array($this->_controller, 'updatePluginStatus'),
+			    $callback[0]);
+
+	$this->assert($repository->isComplete(), $repository->getRemaining());
+    }
+
+    function testUpdatePluginStatus() {
+	global $gallery;
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$repository = new AdminRepositoryControllerTestRepository();
+	$repository->setReply('downloadIndex', array(), null);
+	$repository->setReply('scanPlugin', array('module', 'module1'), null);
+	$repository->setReply('scanPlugin', array('module', 'module2'), null);
+	$repository->setReply('scanPlugin', array('theme', 'theme1'), null);
+	$repository->setReply('scanPlugin', array('theme', 'theme2'), null);
+	$this->_controller->_repository = $repository;
+
+	$mockUrlGenerator = new AdminRepositoryControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$ret = $this->_controller->updatePluginStatus(
+	    $repository,
+	    array('module' => array(
+		      'module1' => array('active' => true, 'available' => true),
+		      'module2' => array('active' => true, 'available' => true)),
+		  'theme' => array(
+		      'theme1' => array('active' => true, 'available' => true),
+		      'theme2' => array('active' => true, 'available' => true))));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Assert that we saw what we expected */
+	$this->assertEquals(
+	    array(0, 0.1 /* downloadIndex */, 0.33, 0.55, 0.78, 1.0 /* 4 steps for the plugins */,
+		  'complete:view=core.SiteAdmin,subView=core.AdminRepository,statusId=STATUSID'),
+	    $mockAdapter->getProgressBarDump());
 
 	$this->assert($repository->isComplete(), $repository->getRemaining());
     }
@@ -107,6 +153,20 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	 */
     }
 }
+
+class AdminRepositoryControllerTestUrlGenerator {
+    function generateUrl($params=array(), $options=array()) {
+	$buf = array();
+	foreach ($params as $key => $value) {
+	    if ($key == 'statusId') {
+		$value = 'STATUSID';
+	    }
+	    $buf[] = "$key=$value";
+	}
+	return implode(',', $buf);
+    }
+}
+
 
 /**
  * Test repository.
@@ -184,8 +244,8 @@ class AdminRepositoryControllerTestRepository {
 	return $this->_makeReply('downloadIndex', array());
     }
 
-    function scanPlugins() {
-	return $this->_makeReply('scanPlugins', array());
+    function scanPlugin($pluginType, $pluginId) {
+	return $this->_makeReply('scanPlugin', array($pluginType, $pluginId));
     }
 
     function getAllUpgradeablePackages() {

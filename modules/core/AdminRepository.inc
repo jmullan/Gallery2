@@ -64,22 +64,18 @@ class AdminRepositoryController extends GalleryController {
 	$status = $error = array();
 
 	if (isset($form['action']['update'])) {
-	    /* Try to update the index. */
-	    $ret = $repository->downloadIndex();
-	    if ($ret) {
-		$status['error'] = $ret->getErrorMessage();
-	    } else {
-		$status['indexUpdated'] = 1;
+	    foreach (array('module', 'theme') as $pluginType) {
+		list ($ret, $pluginStatus[$pluginType]) =
+		    GalleryCoreApi::fetchPluginStatus($pluginType, true);
+		if ($ret) {
+		    return array($ret, null);
+		}
 	    }
 
-	    /* Scan all plugins. */
-	    $ret = $repository->scanPlugins();
-	    if ($ret) {
-		$status['error'] = $ret->getErrorMessage();
-	    }
-
-            $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminRepository';
+	    $templateAdapter =& $gallery->getTemplateAdapter();
+	    $templateAdapter->registerTrailerCallback(
+		array($this, 'updatePluginStatus'), array($repository, $pluginStatus));
+	    $delegate['view'] = 'core.ProgressBar';
 	} else if (isset($form['action']['upgradeAll'])) {
 	    /* Get list of upgradeable packages. */
 	    list ($ret, $packages) = $repository->getAllUpgradeablePackages();
@@ -123,6 +119,70 @@ class AdminRepositoryController extends GalleryController {
 	$results['error'] = $error;
 
 	return array(null, $results);
+    }
+
+    /**
+     * Update the repository index, and scan all installed plugins and update
+     * GalleryPluginPackageMap with a complete listing of everything that's installed.
+     *
+     * @todo Show a summary page (or at least a link to it) which contains details about
+     * the exact tasks that were performed and any errors that were encountered.
+     */
+    function updatePluginStatus($repository, $pluginStatus) {
+	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
+
+	$status = array();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Update the index. */
+	$templateAdapter->updateProgressBar(
+	    $module->translate('Updating repository index'),
+	    '', 0);
+	$ret = $repository->downloadIndex();
+	if ($ret) {
+	    $status['error'] = $ret->getErrorMessage();
+	} else {
+	    $status['indexUpdated'] = 1;
+	}
+	$currentProgress = 10 / 100;
+
+	$total = count($pluginStatus['module']) + count($pluginStatus['theme']);
+	$increment = (1 - $currentProgress) / $total;
+	$message = $module->translate('Scanning plugins');
+	foreach (array('module', 'theme') as $pluginType) {
+	    foreach (array_keys($pluginStatus[$pluginType]) as $pluginId) {
+		$gallery->guaranteeTimeLimit(30);
+
+		$templateAdapter->updateProgressBar($message, $pluginId, $currentProgress);
+		$ret = $repository->scanPlugin($pluginType, $pluginId);
+		if ($ret) {
+		    return $ret;
+		}
+		$currentProgress += $increment;
+	    }
+	}
+
+	$ret = $templateAdapter->updateProgressBar(
+	    'Update Plugin List', $module->translate('Done.'), 1);
+	if ($ret) {
+	    $templateAdapter->errorProgressBar($ret);
+	    return $ret;
+	}
+
+	$redirect['view'] = 'core.SiteAdmin';
+	$redirect['subView'] = 'core.AdminRepository';
+
+	$session =& $gallery->getSession();
+	$redirect['statusId'] = $session->putStatus($status);
+
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
+
+	return null;
     }
 }
 

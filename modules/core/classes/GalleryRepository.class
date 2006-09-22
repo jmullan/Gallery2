@@ -605,33 +605,6 @@ class GalleryRepository {
     }
 
     /**
-     * Scan all installed plugins and update GalleryPluginPackageMap with a complete
-     * listing of everything that's installed.
-     *
-     * @todo Show a summary page (or at least a link to it) which contains details about
-     * the exact tasks that were performed and any errors that were encountered.
-     */
-    function scanPlugins() {
-	global $gallery;
-
-	foreach (array('module', 'theme') as $pluginType) {
-	    list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pluginType, true);
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    foreach ($pluginStatus as $pluginId => $status) {
-		$gallery->guaranteeTimeLimit(30);
-
-		$ret = $this->scanPlugin($pluginType, $pluginId);
-		if ($ret) {
-		    return $ret;
-		}
-	    }
-	}
-    }
-
-    /**
      * Scan one plugin and update its entries in the GalleryPluginPackageMap.
      *
      * @param $pluginType the plugin type ('module' or 'theme')
