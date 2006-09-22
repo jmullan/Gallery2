@@ -106,7 +106,10 @@ class GallerySession {
     var $_remoteIdentifier;
 
     /**
-     * Whether the session has been saved in the persistent store
+     * Whether the session has been saved in the persistent store during the current
+     * request handling. 
+     * Used to determine whether we need to "touch" the session to prevent it from expiring
+     * in case the session data hasn't changed anyway.
      * @var boolean
      * @access private
      */
