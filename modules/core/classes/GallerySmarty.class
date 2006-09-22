@@ -42,13 +42,6 @@ class GallerySmarty extends Smarty {
      */
     var $_firstGalleryStatus;
 
-    /**
-     * The FILE and LINE of the last call
-     * @var array
-     * @access private
-     */
-    var $_firstFileLine;
-
 
     /**
      * Fetch should also return a GalleryStatus object
@@ -61,7 +54,6 @@ class GallerySmarty extends Smarty {
 		   $_smarty_compile_id = null, $_smarty_display = false) {
 	$this->_firstGalleryStatus = null;
 
-	$this->_firstFileLine = array(__FILE__, __LINE__);
 	/* This could change the value of _firstError: */
 	$result = parent::fetch($_smarty_tpl_file,
 				$_smarty_cache_id,
@@ -79,11 +71,9 @@ class GallerySmarty extends Smarty {
     function trigger_error($error_msg, $error_type = E_USER_WARNING) {
 	/* Store this error for later usage */
 	if (!$this->_firstGalleryStatus) {
-	    $this->_firstGalleryStatus = GalleryCoreApi::error(ERROR_BAD_PARAMETER,
-							      $this->_firstFileLine[0],
-							      $this->_firstFileLine[1],
-							      sprintf('Smarty error: %s',
-								      $error_msg, $error_type));
+	    $this->_firstGalleryStatus =
+		GalleryCoreApi::error(ERROR_BAD_PARAMETER, null, null,
+				      sprintf('Smarty error: %s', $error_msg, $error_type));
 	}
     }
 }
