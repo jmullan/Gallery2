@@ -160,6 +160,20 @@ class GalleryStatus {
     }
 
     /**
+     * Store error in session for reporting after a redirect
+     */
+    function putInSession() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	$isAdmin = !$ret && $isAdmin;
+
+	$session->put('core.error.code', $this->getErrorCode());
+	$session->put('core.error.trace', $this->getAsHtml($isAdmin));
+    }
+
+    /**
      * Break down an error code into a list of constants
      * @return array of strings
      */

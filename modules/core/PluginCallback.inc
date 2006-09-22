@@ -56,14 +56,14 @@ class PluginCallbackView extends GalleryView {
 	list ($ret, $beforeStates) = $this->getPluginStates();
 	if ($ret) {
 	    $result['status'] = 'error';
-	    $session->put('core.error', serialize($ret));
+	    $ret->putInSession();
 	}
 
 	if (!$ret) {
 	    $ret = $this->handleCallback($command, $result);
 	    if ($ret) {
 		$result['status'] = 'error';
-		$session->put('core.error', serialize($ret));
+		$ret->putInSession();
 	    }
 
 	    if ($result['status'] == 'redirect') {
@@ -78,7 +78,7 @@ class PluginCallbackView extends GalleryView {
 	    list ($ret, $afterStates) = $this->getPluginStates();
 	    if ($ret) {
 		$result['status'] = 'error';
-		$session->put('core.error', serialize($ret));
+		$ret->putInSession();
 	    }
 	    $result = array_merge(
 		$result, $this->calculateStateChanges($beforeStates, $afterStates));

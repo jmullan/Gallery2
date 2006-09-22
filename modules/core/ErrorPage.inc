@@ -44,24 +44,23 @@ class ErrorPageView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	if (empty($this->_error)) {
-	    $session =& $gallery->getSession();
-	    $this->_error = $session->get('core.error');
-	    if (!empty($this->_error)) {
-		GalleryCoreApi::requireOnce('modules/core/classes/GalleryStatus.class');
-		$this->_error = unserialize($error);
-	    }
-	}
-	$error = $this->_error;
-
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	$ErrorPage = array('isAdmin' => !$ret && $isAdmin);
+
+	if (empty($this->_error)) {
+	    $session =& $gallery->getSession();
+	    $errorCode = $session->get('core.error.code');
+	    $errorTrace = $session->get('core.error.trace');
+	} else {
+	    $errorCode = $this->_error->getErrorCode();
+	    $errorTrace = $this->_error->getAsHtml($ErrorPage['isAdmin']);
+	}
+
 	if ($gallery->getDebug() || $ErrorPage['isAdmin']) {
-	    $ErrorPage['stackTrace'] = $error->getAsHtml($isAdmin);
+	    $ErrorPage['stackTrace'] = $errorTrace;
 	}
 
 	/* Landing page for errors */
-	$errorCode = $ErrorPage['errorCode'] = $error->getErrorCode();
 	if ($errorCode & ERROR_OBSOLETE_DATA) {
 	    $ErrorPage['code']['obsoleteData'] = true;
 	}
