@@ -186,6 +186,16 @@
     </label>
   </p>
   <p class="giDescription">
+    {g->text text="When photos are added to Gallery check for IPTC Object Name and apply to:"}
+  </p>
+  <p class="giDescription">
+    <input type="checkbox" id="cbItemObjectName"{if $form.item.objectName} checked="checked"{/if}
+     name="{g->formVar var="form[item][objectName]"}"/>
+    <label for="cbItemObjectName">
+      {g->text text="Item Title"}
+    </label>
+  </p>
+  <p class="giDescription">
     {g->text text="When photos are added should we rotate them based on EXIF orientation data?"}
   </p>
   <p class="giDescription">

@@ -31,8 +31,6 @@ GalleryCoreApi::requireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
  */
 class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
-    var $_album;
-
     function ExifDescriptionOptionTest($methodName) {
 	$this->ItemAddOptionTestCase($methodName, 'exif', 'ExifDescriptionOption');
     }
@@ -56,14 +54,24 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	}
 
 	$this->_items = array();
-	list ($ret, $this->_items[0]) =
-	    $this->_createRandomDataItem(
+	list ($ret, $this->_items[0]) = $this->_createRandomDataItem(
 		$this->_album->getId(),
 		'image/jpeg',
 		array('summary' => 'original summary 0',
-		      'description' => 'original description 0',
-		      'keywords' => 'original keyword 0; original keyword 1'),
+		      'description' => 'original description 0'),
 		dirname(__FILE__) . '/../data/descr.jpg');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $this->_items[1]) = $this->_createRandomDataItem(
+		$this->_album->getId(),
+		'image/jpeg',
+		array('title' => 'original title',
+		      'summary' => 'original summary',
+		      'description' => 'original description',
+		      'keywords' => 'original keyword 0; original keyword 1'),
+		dirname(__FILE__) . '/../data/exif-iptc-xmp-ps.jpg');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -134,13 +142,14 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
 	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
 
-	list ($ret, $item) = $this->_items[0]->refresh();
+	list ($ret, $item) = $this->_items[1]->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('original description 0', $item->getDescription(), 'description 0');
-	$this->assertEquals('original summary 0', $item->getSummary(), 'summary 0');
+	$this->assertEquals('original title', $item->getTitle(), 'title');
+	$this->assertEquals('original description', $item->getDescription(), 'description');
+	$this->assertEquals('original summary', $item->getSummary(), 'summary');
 	$this->assertEquals('original keyword 0; original keyword 1', $item->getKeywords(),
 	    'keywords mismatch');
     }
@@ -178,9 +187,9 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	}
     }
 
-    function testReturnKeywords() {
+    function testTitleKeywords() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
-						  IPTC_ITEM_KEYWORDS);
+						  IPTC_ITEM_KEYWORDS | IPTC_ITEM_TITLE);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -188,12 +197,13 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
 	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
 
-	list ($ret, $item) = $this->_items[0]->refresh();
+	list ($ret, $item) = $this->_items[1]->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('original keyword 0; original keyword 1', $item->getKeywords(),
+	$this->assertEquals('ObjectName, Dokumenttitel', $item->getTitle(), 'title mismatch');
+	$this->assertEquals('keyword0; keyword1; keyword2', $item->getKeywords(),
 	    'keywords mismatch');
     }
 

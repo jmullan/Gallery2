@@ -308,12 +308,12 @@ class AdminExifController extends GalleryController {
 		$error[] = 'form[error][detailed][missing]';
 	    }
 	} else if (isset($form['action']['save'])) {
-	    $addOption =
-		(isset($form['item']['summary']) ? EXIF_ITEM_SUMMARY : 0) |
-		(isset($form['item']['description']) ? EXIF_ITEM_DESCRIPTION : 0) |
-		(isset($form['item']['keywords']) ? IPTC_ITEM_KEYWORDS : 0) |
-		(isset($form['item']['exifrotate']) ? EXIF_ITEM_ROTATE : 0) |
-		(isset($form['item']['exifrotatepreserve']) ? EXIF_ITEM_ROTATE_PRESERVE : 0);
+	    $addOption = (isset($form['item']['summary']) ? EXIF_ITEM_SUMMARY : 0)
+		| (isset($form['item']['description']) ? EXIF_ITEM_DESCRIPTION : 0)
+		| (isset($form['item']['keywords']) ? IPTC_ITEM_KEYWORDS : 0)
+		| (isset($form['item']['objectName']) ? IPTC_ITEM_TITLE : 0)
+		| (isset($form['item']['exifrotate']) ? EXIF_ITEM_ROTATE : 0)
+		| (isset($form['item']['exifrotatepreserve']) ? EXIF_ITEM_ROTATE_PRESERVE : 0);
 
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', $addOption);
 	    if ($ret) {
@@ -369,6 +369,7 @@ class AdminExifView extends GalleryView {
 	    $form['item'] = array('summary' => $addOption & EXIF_ITEM_SUMMARY,
 				  'description' => $addOption & EXIF_ITEM_DESCRIPTION,
 				  'keywords' => $addOption & IPTC_ITEM_KEYWORDS,
+				  'objectName' => $addOption & IPTC_ITEM_TITLE,
 				  'exifrotate' => $addOption & EXIF_ITEM_ROTATE,
 				  'exifrotatepreserve' => $addOption & EXIF_ITEM_ROTATE_PRESERVE);
 	}
