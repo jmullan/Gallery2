@@ -36,8 +36,10 @@ class KeyAlbumCallbacks {
 	    if ($ret) {
 		return $ret;
 	    }
+	    /* Cache keyword list for one day */
 	    if (time() - $lastUpdated > 3600 * 24) {
-		$ret = KeyAlbumCallbacks::_findAllKeywords($onlyPublic);
+		$ret = KeyAlbumCallbacks::_findAllKeywords($onlyPublic,
+							   $params['maxCloudFontEnlargement']);
 		if ($ret) {
 		    return $ret;
 		}
@@ -60,10 +62,11 @@ class KeyAlbumCallbacks {
     /**
      * Get all unique keywords and store in a module parameter.
      * @param boolean $onlyPublic true to only get keywords from public items
+     * @param int $maxWeight max value for font enlargement in keyword cloud
      * @return object GalleryStatus a status code
      * @static
      */
-    function _findAllKeywords($onlyPublic) {
+    function _findAllKeywords($onlyPublic, $maxWeight) {
 	global $gallery;
 
 	$query = '
@@ -72,7 +75,7 @@ class KeyAlbumCallbacks {
 	FROM
 	  [GalleryItem]
 	';
-	$aclIds = array();
+	$keywords = $aclIds = array();
 	if ($onlyPublic) {
 	    list ($ret, $guestId) = GalleryCoreApi::getAnonymousUserId();
 	    if ($ret) {
@@ -97,15 +100,26 @@ class KeyAlbumCallbacks {
 	if ($ret) {
 	    return $ret;
 	}
+	$maxCount = 1;
 	while ($result = $searchResults->nextResult()) {
 	    if ($result[0]) {
 		foreach (preg_split('/[\s,;]+/', $result[0]) as $keyword) {
-		    $keywords[$keyword] = true;
+		    if (!isset($keywords[$keyword])) {
+			$keywords[$keyword] = array('name' => $keyword, 'count' => 1);
+		    } else if (++$keywords[$keyword]['count'] > $maxCount) {
+			$maxCount = $keywords[$keyword]['count'];
+		    }
 		}
 	    }
 	}
-	$keywords = array_keys($keywords);
-	sort($keywords);
+	ksort($keywords);
+	$keywords = array_values($keywords);
+
+	/* Compute weights, used for font enlargement in keyword cloud */
+	foreach ($keywords as $i => $keyword) {
+	    $keywords[$i]['weight'] = round($keyword['count'] / $maxCount * $maxWeight);
+	    unset($keywords[$i]['count']);
+	}
 
 	$param = 'allKeywords' . ($onlyPublic ? '.public' : '');
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum',
