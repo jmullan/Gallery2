@@ -35,9 +35,9 @@ RewriteCond Host: {$Httpdini.host}
 {/if}
 RewriteCond Host: {$Httpdini.host}
 {if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
-  RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}?(.*) {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}&${$rule.queryStringId}   [{$rule.settings.flags}]
+  RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}\?(.*) {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}&${$rule.queryStringId}   [{$rule.settings.flags}]
 {else}
-  RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}?(.*) {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}&${$rule.queryStringId}   [{$rule.settings.flags}]
+  RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}\?(.*) {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}&${$rule.queryStringId}   [{$rule.settings.flags}]
 {/if}
 {/if}
 
