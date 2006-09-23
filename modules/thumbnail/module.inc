@@ -35,7 +35,7 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('1.0.6'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.7'); /* Update upgrade() function below too */
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -178,6 +178,7 @@ class ThumbnailModule extends GalleryModule {
 	case '1.0.3':
 	case '1.0.4':
 	case '1.0.5':
+	case '1.0.6':
 
 	case 'end of upgrade path':
 	    /*
@@ -241,7 +242,6 @@ class ThumbnailModule extends GalleryModule {
      */
     function activate($postActivationEvent=true) {
 	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
-	global $gallery;
 
 	/* Register toolkit operation for any mime type settings already in the database */
 	list ($ret, $mimeTypeMap) = ThumbnailHelper::fetchMimeTypeMap();
@@ -249,9 +249,7 @@ class ThumbnailModule extends GalleryModule {
 	    return array($ret, null);
 	}
 	if (!empty($mimeTypeMap)) {
-	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
-				   array_keys($mimeTypeMap), 'convert-to-image/jpeg', array(),
-				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 50);
+	    $ret = ThumbnailHelper::registerToolkitOperation(array_keys($mimeTypeMap));
 	    if ($ret) {
 		return array($ret, null);
 	    }

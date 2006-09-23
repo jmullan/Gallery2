@@ -40,7 +40,7 @@
 {if !empty($form.badMime)}
 <div class="gbBlock">
   <p class="giError">
-    {g->text text="Warning: Other modules provide thumbnail support for some types.  Settings below for these mime types will not be used:"}
+    {g->text text="Warning: Other modules provide thumbnail support for some types.  Remove settings below for these mime types to ensure other modules are used:"}
     {foreach from=$form.badMime item=mime}{$mime} {/foreach}
   </p>
 </div>

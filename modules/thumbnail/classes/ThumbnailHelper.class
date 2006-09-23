@@ -60,10 +60,8 @@ class ThumbnailHelper {
 
 	$query .= ' ORDER BY [ThumbnailImage::fileName] ASC';
 
-	list ($ret, $searchResults) =
-	    $gallery->search($query, $data,
-			     array('limit' => array('count' => (int)$count,
-						    'offset' => (int)$offset)));
+	list ($ret, $searchResults) = $gallery->search($query, $data,
+		array('limit' => array('count' => (int)$count, 'offset' => (int)$offset)));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -167,6 +165,33 @@ class ThumbnailHelper {
     }
 
     /**
+     * Register toolkit operation for given mime type(s).
+     * @param mixed $mimeTypes array or single string
+     * @return object GalleryStatus a status code
+     */
+    function registerToolkitOperation($mimeTypes) {
+	global $gallery;
+	if (!is_array($mimeTypes)) {
+	    $mimeTypes = array($mimeTypes);
+	}
+
+	/* Returns image/jpeg, but register as null mimeType to avoid operation CRC mismatch */
+	$ret = GalleryCoreApi::registerToolkitOperation(
+		'Thumbnail', $mimeTypes, 'thumbnail',
+		array(array('type' => 'int', 'description' =>
+			$gallery->i18n('target width (# pixels or #% of full size)')),
+		    array('type' => 'int', 'description' =>
+			$gallery->i18n('(optional) target height, defaults to same as width'))),
+		$gallery->i18n('Scale the image to the target size, maintain aspect ratio'),
+		null, 50);
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
+    }
+
+    /**
      * Add new ThumbnailImage
      *
      * @param string $mimeType mime type to be supported, or null
@@ -182,7 +207,6 @@ class ThumbnailHelper {
      */
     function addItem($mimeType, $parentId,
 		     $filename, $tmpfile, $fileMimeType, $knownSize=array(), $item=null) {
-	global $gallery;
 	/*
 	 * If we don't get useful data from the form or its a type we don't
 	 * recognize, take a swing at it using the file name.
@@ -242,9 +266,7 @@ class ThumbnailHelper {
 	}
 
 	if (isset($mimeType)) {
-	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
-				   array($mimeType), 'convert-to-image/jpeg', array(),
-				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 50);
+	    $ret = ThumbnailHelper::registerToolkitOperation($mimeType);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -293,16 +315,13 @@ class ThumbnailHelper {
 	    return $ret;
 	}
 	if ($isAdd) {
-	    global $gallery;
-	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
-				   array($mimeType), 'convert-to-image/jpeg', array(),
-				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 50);
+	    $ret = ThumbnailHelper::registerToolkitOperation($mimeType);
 	    if ($ret) {
 		return $ret;
 	    }
 	} else {
-	    $ret = GalleryCoreApi::unregisterToolkitOperation('Thumbnail',
-				   'convert-to-image/jpeg', array($mimeType));
+	    $ret = GalleryCoreApi::unregisterToolkitOperation(
+		    'Thumbnail', 'thumbnail', array($mimeType));
 	    if ($ret) {
 		return $ret;
 	    }

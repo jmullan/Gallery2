@@ -123,12 +123,11 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Add new');
 
 	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryCoreApi::getToolkitByOperation('test/fakemime', 'convert-to-image/jpeg');
+	    GalleryCoreApi::getToolkitByOperation('test/fakemime', 'thumbnail');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(GalleryUtilities::isA($toolkit, 'ThumbnailToolkit'), 'Toolkit');
-	$this->assertEquals('image/jpeg', $outputMimeType, 'Output mime type');
 
 	list ($ret, $mimeMap) = ThumbnailHelper::fetchMimeTypeMap();
 	if ($ret) {
@@ -151,12 +150,11 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Add mime type to existing image');
 
 	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryCoreApi::getToolkitByOperation('test/fakemime2', 'convert-to-image/jpeg');
+	    GalleryCoreApi::getToolkitByOperation('test/fakemime2', 'thumbnail');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(GalleryUtilities::isA($toolkit, 'ThumbnailToolkit'), 'Toolkit');
-	$this->assertEquals('image/jpeg', $outputMimeType, 'Output mime type');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -186,7 +184,7 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($itemId, $mimeMap['test/fakemime2'], 'Wrong map id');
 
 	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryCoreApi::getToolkitByOperation('test/fakemime', 'convert-to-image/jpeg');
+	    GalleryCoreApi::getToolkitByOperation('test/fakemime', 'thumbnail');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -211,7 +209,7 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->assert(!isset($mimeMap['test/fakemime2']), 'Map entry still found after delete');
 
 	list ($ret, $toolkit, $outputMimeType) =
-	    GalleryCoreApi::getToolkitByOperation('test/fakemime2', 'convert-to-image/jpeg');
+	    GalleryCoreApi::getToolkitByOperation('test/fakemime2', 'thumbnail');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}

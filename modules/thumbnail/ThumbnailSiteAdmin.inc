@@ -89,8 +89,8 @@ class ThumbnailSiteAdminController extends GalleryController {
 		if ($ret) {
 		    return array($ret, null);
 		}
-		$ret = GalleryCoreApi::unregisterToolkitOperation('Thumbnail',
-				       'convert-to-image/jpeg', $itemMimeTypesList);
+		$ret = GalleryCoreApi::unregisterToolkitOperation(
+			'Thumbnail', 'thumbnail', $itemMimeTypesList);
 		if ($ret) {
 		    return array($ret, null);
 		}

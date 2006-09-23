@@ -40,39 +40,55 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	if ($ret || !isset($module)) {
 	    $this->failWithStatus($ret);
 	}
-	list ($ret, $toolkit) =
+	list ($ret, $this->_toolkit) =
 	    GalleryCoreApi::newFactoryInstance('GalleryToolkit', 'ThumbnailToolkit');
-	if ($ret || !isset($toolkit)) {
+	if ($ret || !isset($this->_toolkit)) {
 	    $this->failWithStatus($ret);
 	}
 
-	list ($ret, $id) = ThumbnailHelper::addItem('test/fakemime', null, 'unittest.jpg',
-	    dirname(__FILE__) . '/../../images/G2video.jpg', 'image/jpeg');
-	if ($ret || !isset($id)) {
-	    $this->failWithStatus($ret);
+	/* Register high priority thumbnail operation for image/jpeg */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ThumbnailTestToolkit', 'ThumbnailTestToolkit',
+	    'modules/thumbnail/test/phpunit/ThumbnailToolkitTest.class', 'thumbnailTest', null);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markToolkitForCleanup('ThumbnailTestToolkit');
+
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ThumbnailTestToolkit', array('image/jpeg'), 'thumbnail',
+	    array(array('type' => 'int', 'description' => 'foo'),
+		  array('type' => 'int', 'description' => 'foo')),
+	    'bar', null, 1);
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
 	}
 
-	$this->_toolkit = $toolkit;
-	$this->_itemId = $id;
+	list ($ret, $this->_itemId) = ThumbnailHelper::addItem('test/fakemime', null,
+		'unittest.jpg', dirname(__FILE__) . '/../../images/G2video.jpg', 'image/jpeg');
+	if ($ret || !isset($this->_itemId)) {
+	    $this->failWithStatus($ret);
+	}
     }
 
     function tearDown() {
 	global $gallery;
 	$ret = GalleryCoreApi::deleteEntityById($this->_itemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    $this->failWithStatus($ret);
 	}
 	$platform =& $gallery->getPlatform();
-	$ret = $platform->unlink(
-	    $gallery->getConfig('data.gallery.base') . '/unittest.jpg');
-	if (!$ret) {
-	    return $this->failWithStatus('Unlink failed');
+	if (!$platform->unlink($gallery->getConfig('data.gallery.base') . '/unittest.jpg')) {
+	    $this->assert(false, 'Unlink failed');
 	}
-	$ret = GalleryCoreApi::unregisterToolkitOperation('Thumbnail',
-	    'convert-to-image/jpeg', array('test/fakemime'));
+	$ret = GalleryCoreApi::unregisterToolkitOperation(
+		'Thumbnail', 'thumbnail', array('test/fakemime'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    $this->failWithStatus($ret);
 	}
+
 	parent::tearDown();
     }
 
@@ -80,48 +96,72 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	global $gallery;
 
 	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
-	    'test/badmime', 'convert-to-image/jpeg',
-	    dirname(__FILE__) . '/x', dirname(__FILE__) . '/y', null);
-	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
-			    'Error expected for bad mime');
+	    'test/badmime', 'thumbnail',
+	    dirname(__FILE__) . '/x', dirname(__FILE__) . '/y', array(150));
+	if ($ret) {
+	    $this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
+				'Error expected for bad mime');
+	} else {
+	    $this->assert(false, 'Error expected for bad mime');
+	}
 
 	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
-	    'image/gif', 'thumbnail|150',
-	    dirname(__FILE__) . '/x', dirname(__FILE__) . '/y', null);
-	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
-			    'Error expected for bad operation');
+	    'test/fakemime', 'bad-operation',
+	    dirname(__FILE__) . '/x', dirname(__FILE__) . '/y', array(150));
+	if ($ret) {
+	    $this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
+				'Error expected for bad operation');
+	} else {
+	    $this->assert(false, 'Error expected for bad operation');
+	}
 
 	$platform =& $gallery->getPlatform();
 	$gallery->setPlatform(new ThumbnailToolkitTestDummyPlatform());
 
 	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
-	    'test/fakemime', 'convert-to-image/jpeg',
+	    'test/fakemime', 'thumbnail',
 	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg',
-	    null);
-	$this->assertEquals(GALLERY_ERROR | ERROR_PLATFORM_FAILURE, $ret->getErrorCode(),
-			    'Error expected for bad destination file');
+	    array(150));
+	if ($ret) {
+	    $this->assertEquals(GALLERY_ERROR | ERROR_PLATFORM_FAILURE, $ret->getErrorCode(),
+				'Error expected for copy failure');
+	} else {
+	    $this->assert(false, 'Error expected for copy failure');
+	}
 
 	$gallery->setPlatform($platform);
 
 	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
-	    'test/fakemime', 'convert-to-image/jpeg',
+	    'test/fakemime', 'thumbnail',
 	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg',
-	    null);
-	$this->assert(!isset($ret), 'Copy should succeed');
+	    array(150));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
     }
 }
 
 /**
- * @package Thumbnail
- * @subpackage PHPUnit
+ * Test platform
  */
 class ThumbnailToolkitTestDummyPlatform {
     function copy($source, $dest) {
-	/* Simulate copy failure.. */
+	/* Simulate copy failure */
 	return false;
     }
     function getDirectorySeparator() {
 	return DIRECTORY_SEPARATOR;
+    }
+}
+
+/**
+ * Test toolkit
+ */
+class ThumbnailTestToolkit {
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
+	/* Do nothing */
+	return array(null, $mimeType, $context);
     }
 }
 ?>
