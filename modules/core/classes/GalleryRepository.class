@@ -344,6 +344,9 @@ class GalleryRepository {
 
 		list ($ret, $upgradeInfo) = $this->getPluginUpgradeInfo($pluginType, $pluginId);
 		if ($ret) {
+		    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+			continue;
+		    }
 		    return array($ret, null);
 		}
 
