@@ -121,6 +121,9 @@ class DeleteSessionsTask extends MaintenanceTask {
 	if ($ret) {
 	    return array($ret, null, null);
 	}
+	
+	$result = array($module->translate(array('text' => 'Deleted %d sessions.',
+						 'arg1' => (int)$total)));
 
 	return array(null, true, $result);
     }
