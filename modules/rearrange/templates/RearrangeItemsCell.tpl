@@ -10,12 +10,11 @@
 {else}
   {assign var="riClass" value=riItem}
 {/if}
-{capture name="riTitle"}{$child.title|default:$child.pathComponent|markup} ({g->date
-					      timestamp=$child.originationTimestamp}){/capture}
+{capture assign="riTitle"}{$child.title|markup:strip|default:$child.pathComponent} ({g->date
+			   timestamp=$child.originationTimestamp}){/capture}
 {if isset($child.thumbnail)}
-  {g->image item=$child image=$child.thumbnail maxSize=100
-	    class=$riClass title=$smarty.capture.riTitle}
+  {g->image item=$child image=$child.thumbnail maxSize=100 class=$riClass title=$riTitle}
 {else}
-  <div class="{$riClass}">{$smarty.capture.riTitle}</div>
+  <div class="{$riClass}">{$riTitle}</div>
 {/if}
 {/strip}
