@@ -33,7 +33,7 @@ class CarbonTheme extends GalleryTheme {
 	$this->setId('carbon');
 	$this->setName($gallery->i18n('Carbon'));
 	$this->setDescription($gallery->i18n('Gallery2 theme by mincel.com'));
-	$this->setVersion('1.1.2');
+	$this->setVersion('1.1.3');
 	$this->setRequiredCoreApi(array(7, 10));
 	$this->setRequiredThemeApi(array(2, 4));
 	$this->setStandardSettings(
@@ -54,9 +54,11 @@ class CarbonTheme extends GalleryTheme {
 			array('comment.ViewComments', array()))),
 		  'navigatorPhotoTop' => 1, 'navigatorPhotoBottom' => 1,
 		  'photoProperties' => 1, 'fullSize' => 1,
+		  'itemDetails' => 1,
 		  'albumUpperBlocks' => serialize(array()),
 		  'photoUpperBlocks' => serialize(array()),
 		  'sidebarTop' => 106, 'maxMicroThumbs' => 12,
+		  'logoImageLocation' => '',
 		  'extraLink' => '', 'extraLinkUrl' => '', 'copyright' => '',
 	));
     }
@@ -87,6 +89,10 @@ class CarbonTheme extends GalleryTheme {
 			    'name' => $this->translate('Show \'Full Size\' icon'),
 			    'type' => 'checkbox',
 			    'value' => $params['fullSize']);
+	$settings[] = array('key' => 'itemDetails',
+			    'name' => $this->translate('Show item details on album pages'),
+			    'type' => 'checkbox',
+			    'value' => $params['itemDetails']);
 	$settings[] = array('key' => 'albumUpperBlocks',
 			    'name' => $this->translate(
 				'Blocks to show on album pages (below description)'),
@@ -110,6 +116,11 @@ class CarbonTheme extends GalleryTheme {
 			    'type' => 'text-field',
 			    'typeParams' => array('size' => 2),
 			    'value' => $params['maxMicroThumbs']);
+	$settings[] = array('key' => 'logoImageLocation',
+			    'name' => $this->translate('URL or path to alternate logo image'),
+			    'type' => 'text-field',
+			    'typeParams' => array('size' => 30),
+			    'value' => $params['logoImageLocation']);
 	$settings[] = array('key' => 'extraLink',
 			    'name' => $this->translate('Extra link for top navigation bar'),
 			    'type' => 'text-field',

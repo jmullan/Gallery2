@@ -172,20 +172,27 @@
 		      </p>
 		      {/if}
 
-		      {if ($child.canContainChildren && $theme.params.showAlbumOwner) ||
-			  (!$child.canContainChildren && $theme.params.showImageOwner)}
-		      {assign var="showOwner" value=true}
+		      {if !$theme.params.itemDetails}
+			{g->block type="core.ItemInfo"
+				  item=$child
+				  showSummaries=true
+				  class="giInfo"}
 		      {else}
-		      {assign var="showOwner" value=false}
+			{if ($child.canContainChildren && $theme.params.showAlbumOwner) ||
+			    (!$child.canContainChildren && $theme.params.showImageOwner)}
+			{assign var="showOwner" value=true}
+			{else}
+			{assign var="showOwner" value=false}
+			{/if}
+			{g->block type="core.ItemInfo"
+				  item=$child
+				  showDate=true
+				  showOwner=$showOwner
+				  showSize=true
+				  showViewCount=true
+				  showSummaries=true
+				  class="giInfo"}
 		      {/if}
-		      {g->block type="core.ItemInfo"
-				item=$child
-				showDate=true
-				showOwner=$showOwner
-				showSize=true
-				showViewCount=true
-				showSummaries=true
-				class="giInfo"}
 		    </td>
 		    {/foreach}
 
