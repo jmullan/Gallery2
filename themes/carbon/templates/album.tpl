@@ -157,7 +157,7 @@
 			      <img src="{g->url href="themes/carbon/images/album.gif"}" alt=""/>
 			    </td>
 			    <td>
-			      <p class="giTitle">{g->text text="%s" arg1=$child.title|markup}</p>
+			      <p class="giTitle">{$child.title|markup}</p>
 			    </td>
 			  </tr>
 			</table>
