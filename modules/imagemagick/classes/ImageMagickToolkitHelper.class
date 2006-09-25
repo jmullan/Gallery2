@@ -65,7 +65,7 @@ class ImageMagickToolkitHelper {
 	/* Scale */
 	$operations['scale'] = array(
 	    'params' => array(array('type' => 'int', 'description' =>
-		    $gallery->i18n('target width (# pixels or #% of full size)')),
+		    $gallery->i18n('target width (# pixels or #% of full size)', false)),
 			      array('type' => 'int', 'description' =>
 		    $gallery->i18n('(optional) target height, defaults to same as width'))),
 	    'description' =>
@@ -78,9 +78,9 @@ class ImageMagickToolkitHelper {
 	/* Resize */
 	$operations['resize'] = array(
 	    'params' => array(array('type' => 'int', 'description' =>
-		    $gallery->i18n('target width (# pixels or #% of full size)')),
+		    $gallery->i18n('target width (# pixels or #% of full size)', false)),
 			      array('type' => 'int', 'description' =>
-		    $gallery->i18n('target height (# pixels or #% of full size)'))),
+		    $gallery->i18n('target height (# pixels or #% of full size)', false))),
 	    'description' => $gallery->i18n('Resize the image to the target dimensions'),
 	    'mimeTypes' => $mimeTypes);
 

@@ -109,7 +109,7 @@ function extractStrings($filename) {
      * grab phrases for translate( or i18n( or _( calls; capture string parameter enclosed
      * in single or double quotes including concatenated strings like 'one' . "two"
      */
-    if (preg_match_all("/(translate|i18n|_)\(\s*(((\s*\.\s*)?('((\\')?[^']*?)*[^\\\]'|\"((\")?[^\"]*?)*[^\\\]\"))+)\s*\)/s",
+    if (preg_match_all("/(translate|i18n|_)\(\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\]\"))+)\s*(?:,\s*(true|false)\s*)?\)/s",
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
 	    $text = $match[2];
@@ -119,7 +119,12 @@ function extractStrings($filename) {
 	    if (isset($skip[$text])) {
 		continue;
 	    }
-	    $string = sprintf('gettext("%s")', $text);
+	    if (!empty($match[3])) {
+		$hint = '/* xgettext:' . ($match[3] == 'false' ? 'no-' : '') . "c-format */\n";
+	    } else {
+		$hint = '';
+	    }
+	    $string = $hint . sprintf('gettext("%s")', $text);
 	    if (!isset($strings[$string])) {
 		$strings[$string] = array();
 	    } else if (!isset($localStrings[$string])) {

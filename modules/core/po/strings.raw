@@ -24,14 +24,17 @@ gettext("Partial acceleration")
 gettext("Full acceleration")
 
 /* AdminPlugins.inc */
-gettext("Themes") /* also in: module.inc templates/AdminRepository.tpl */
+gettext("Themes") /* also in: module.inc */
 
 /* AdminRepository.inc */
-gettext("Performing Maintenance Tasks")
+gettext("Updating repository index")
+gettext("Scanning plugins")
+gettext("Done.") /* also in: AdminRepositoryDownload.inc */
+
+/* AdminRepositoryDownload.inc */
+gettext("Downloading Files")
 gettext("Downloading %s")
-gettext("Done.")
-gettext("Upgrade")
-gettext("Download")
+gettext("Activating %s")
 
 /* AdminThemes.inc */
 gettext("install") /* also in: templates/AdminPlugins.tpl */
@@ -222,8 +225,7 @@ gettext("Site Admin") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Login") /* also in: classes/CoreCaptchaAdminOption.class templates/UserLogin.tpl templates/blocks/LoginBlock.tpl */
 gettext("Your Account") /* also in: test/phpunit/CoreModuleTest.class */
 gettext("Logout") /* also in: test/phpunit/CoreModuleTest.class */
-gettext("Plugins")
-gettext("Repository") /* also in: templates/AdminRepository.tpl */
+gettext("Plugins") /* also in: templates/AdminPlugins.tpl templates/AdminRepository.tpl */
 gettext("Users")
 gettext("Groups")
 gettext("Performance")
@@ -248,6 +250,7 @@ gettext("%d items failed")
 /* classes/DeleteSessionsTask.class */
 gettext("Delete user sessions")
 gettext("Delete all persistent user sessions according to your current session expiration settings.")
+gettext("Deleted %d sessions.")
 
 /* classes/FlushDatabaseCacheTask.class */
 gettext("Delete database cache")
@@ -299,16 +302,15 @@ gettext("movie")
 gettext("photo")
 
 /* classes/GalleryRepository.class */
+gettext("get more")
 gettext("download")
-gettext("Plugins directory does not exist.")
-gettext("Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it.")
 gettext("Couldn't create repository cache path.")
 gettext("Couldn't create cache subdirectory. Make sure the web server has write permissions in it.")
 
 /* classes/GalleryRepositoryIndex.class */
-gettext("Error downloading index from '%s'.")
 gettext("Error downloading index hash from '%s'.")
 gettext("Index integrity check failed.")
+gettext("Error downloading index from '%s'.")
 
 /* classes/GallerySortInterface_1_2.class */
 gettext("&laquo; default sort order &raquo;")
@@ -564,7 +566,7 @@ gettext("You cannot edit that group's users")
 gettext("Edit Group (by list)")
 gettext("Action") /* also in: templates/AdminMaintenance.tpl templates/AdminUsers.tpl templates/ItemPermissions.tpl */
 gettext("edit") /* also in: templates/AdminUsers.tpl */
-gettext("delete") /* also in: templates/AdminUsers.tpl */
+gettext("delete") /* also in: templates/AdminPlugins.tpl templates/AdminUsers.tpl */
 gettext("members")
 ngettext("%d group matches your filter", "%d groups match your filter")
 
@@ -611,12 +613,17 @@ gettext("Status: Upgrade Required (Inactive)")
 gettext("Status: Incompatible Plugin (Inactive)")
 gettext("Status: Inactive (Configuration Required)")
 gettext("__PLUGIN__ needs configuration")
+gettext("__PLUGIN__ deleted")
 gettext("Warning!")
 gettext("Do you really want to uninstall __PLUGIN__?")
-gettext("This will also remove any permissions and clean up any data created by this module.")
+gettext("This plugin will be uninstalled, but its files will be kept so that you can reinstall it.")
 gettext("Yes")
 gettext("No")
+gettext("Do you really want to delete __PLUGIN__?")
+gettext("This plugin will be uninstalled and its files will be deleted.")
+gettext("Failed to completely delete __PLUGIN__")
 gettext("Gallery Plugins")
+gettext("Get More Plugins") /* also in: templates/AdminRepository.tpl */
 gettext("Gallery features come as separate plugins.  You can download and install plugins to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it.")
 gettext("up to date")
 gettext("upgrade required")
@@ -632,53 +639,48 @@ gettext("Plugin API Required: %s (available: %s)") /* also in: templates/AdminRe
 gettext("configure")
 
 /* templates/AdminRepository.tpl */
+gettext("Repository")
 gettext("Please make sure that your internet connection is set up properly or try again later.")
 gettext("The repository index has been successfully updated.")
 gettext("All plugins are already up-to-date.")
-gettext("Common Tasks")
-gettext("Modules")
-gettext("Warning: Experimental feature!")
-gettext("The repository features are currently experimental, and no actual repository has been set up yet, so none of these features will work at this time.")
-gettext("Update Index")
-gettext("The Gallery repository contains the latest modules and themes extensively tested by the Gallery team. The repository index contains information about available plugins, such as the latest versions, available languages and compatibility. The index must be synchronized periodically with the Gallery server so you are informed about any available updates. No personal information is sent to the Gallery server during updating. On slower connections the process might take a minute or two.")
-gettext("As of the last update on %s, the repository contains %s modules and %s themes. Its contents can be viewed on the Modules and Themes tabs.")
-gettext("The index has never been updated. Click on the Update button to see what updates are available.")
-gettext("Update")
+gettext("No personal information about you or your Gallery installation is sent to the Gallery server at any time.")
+gettext("The Gallery Plugin Repository contains the latest modules and themes provided by the Gallery team.  You can download and install new plugins to try them out, then delete them if you don't like them.  You must periodically download a new plugin list from the Gallery server to find out about any available updates. %s On slower connections the process might take a minute or two.")
+gettext("Configure your Gallery")
+gettext("Before you can proceed, you have to change some permissions so that Gallery can install plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:")
+gettext("If you have trouble changing permissions, ask your system administrator for assistance.  When you've fixed the permissions, click the Continue button to proceed.")
+gettext("Continue")
+gettext("Update Plugin List")
+gettext("Download Plugin List")
+gettext("(last updated: %s)")
 gettext("Upgrade Gallery")
 gettext("A new version of Gallery is available, but it cannot be upgraded through this interface. Upgrading it might make some of your current plugins stop working, but others that rely on the features of the new version may become available. Here are the recommended steps for upgrading:")
 gettext("Review plugin compatibility (on the Themes and Modules tabs)")
 gettext("%sDownload%s Gallery core")
 gettext("Read the %supgrade instructions%s and perform the upgrade")
-gettext("Gallery Up-To-Date")
-gettext("Gallery cannot be upgraded through this interface. When a new version becomes available, upgrade instructions will be presented here.")
-gettext("Upgrade All Plugins")
-gettext("Gallery can automatically upgrade your themes and modules to the latest available versions. No new plugins will be downloaded.")
-gettext("Upgrade All")
-gettext("Once the repository index has been downloaded, a list of available plugins will be presented. It can be downloaded by clicking on the Update button on the Common Tasks tab.")
-gettext("The following plugins are available. Click on the action beside the plugin you're interested in to see what's available in the repository.")
 gettext("Incompatible plugins are marked with an exclamation icon.")
 gettext("A new core module version is available. There may be plugins that are incompatible with the installed core module, which are not shown here. You can view a %scomplete list%s of plugins, including incompatible ones, which are marked with a red icon.")
 gettext("Theme Name")
 gettext("Module Name")
 gettext("Latest")
 gettext("Incompatible Plugin")
+gettext("Upgrade All Plugins")
+gettext("Gallery can automatically upgrade your themes and modules to the latest available versions. No new plugins will be downloaded.")
+gettext("Upgrade All")
 
 /* templates/AdminRepositoryDownload.tpl */
+gettext("Download %s")
 gettext("No packages have been selected.")
-gettext("Base Files")
-gettext("The base files required for the theme to work and the English (US) translation will be downloaded.")
-gettext("Upgrade Base Files")
-gettext("You can upgrade the base module files.")
-gettext("Upgrade base files")
-gettext("Base Files Up-To-Date")
-gettext("This plugin's base files are up-to-date.")
-gettext("Updated Translations")
-gettext("Below is a list of translations that have been updated since they were last downloaded. Select the ones you want to download.")
-gettext("Additional Languages")
-gettext("Below is a list of languages this plugin has been translated to. Select the ones you want included in addition to the ones already downloaded.")
-gettext("Unit Tests")
-gettext("This plugin has unit tests available for download, which are useful for Gallery developers. All of the module's features are available without the tests.")
-gettext("Download unit tests")
+gettext("Download the latest base package in order to use this plugin.  Language packages are optional.  You only need to download the ones that you want to use on your site.")
+gettext("Base package")
+gettext("%s (version %s)")
+gettext("%s (version: %s, currently installed: %s)")
+gettext("%s (currently installed version %s is up to date)")
+gettext("Language packages")
+gettext("(select: %sall%s %snone%s | up to date packages: %shide%s %sshow%s)")
+gettext("%s (version: %s)")
+gettext("%s (version %s is up to date)")
+gettext("There are no language packs available for download.")
+gettext("Download")
 
 /* templates/AdminRepositorySetup.tpl */
 gettext("Gallery Repository Setup")

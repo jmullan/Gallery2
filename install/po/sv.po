@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-15 16:15+0100\n"
-"PO-Revision-Date: 2006-08-12 19:20+0200\n"
+"PO-Revision-Date: 2006-09-20 18:50+0200\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -1146,21 +1146,28 @@ msgid ""
 "directory outside of the %sdocument root%s directory or add a random string to the end of "
 "the directory name (e.g. %s)."
 msgstr ""
+"Gallery behöver en katalog för att lagra dinna bilder. Katalogen som vi har valt åt dig "
+"kommer att fungera, men dess placering eller dess nuvarande namn medför en säkerhetsrisk. "
+"Välj antingen en katalog utanför webbserverns %sdokument root%s eller addera en slumpmässig "
+"sträng till slutet av katalognamnet (t.ex. %s)."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
 "not possible, specify a randomized name for this directory."
 msgstr ""
-"För maximal säkerhet så bör du välja en katalog som inte är åtkommlig direkt via webben."
+"För maximal säkerhet så bör du välja en katalog som inte är åtkommlig %sdirekt via webben%s. "
+"Om detta inte är möjligt, ge katatalogen ett slumpmässigt namn."
 
 msgid ""
 "If you choose a randomized name or prefer to stick with the specified directory, please "
 "confirm your choice."
 msgstr ""
+"Om du väljer ett slumpmässingt namn eller föredrar det specifierade katalog namnet, var god "
+"och bekräfta ditt val."
 
 msgid "Yes, please omit the security check:"
-msgstr ""
+msgstr "Ja, strunta i säkerhetskontrollerna:"
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1184,14 +1191,14 @@ msgstr "Katalogen du angav tillåter bara läsning"
 msgid "There was an error creating the directory structure within the storage directory."
 msgstr "Det uppstod ett fel när vi försökte skapa katalogstrukturen i lagerkatalogen."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Your storage directory is %sweb accessible%s. "
-msgstr "Lyckades skapa lagerkatalogen"
+msgstr "Din lagerkatalog är %sdirekt åtkommlig via webben%s. "
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to verify that the storage directory is not %sweb accessible%s."
 msgstr ""
-"För maximal säkerhet så bör du välja en katalog som inte är åtkommlig direkt via webben."
+"Kan inte verifiera att lagerkatalog inte är %såtkommlig direkt via webben%s."
 
 msgid "Directory path:"
 msgstr "Sökväg till katalogen:"
@@ -1210,7 +1217,6 @@ msgstr "OBS: detta är bara ett exempel! Det kan hända att dom inte fungerar."
 msgid "Unix (with ftp access)"
 msgstr "Unix (med ftp access)"
 
-#, fuzzy
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
@@ -1335,19 +1341,3 @@ msgstr "Utför"
 
 msgid "Begin Installation&raquo;"
 msgstr "Börja Installationen&raquo;"
-
-#~ msgid ""
-#~ "Gallery needs a directory to store your images. The directory we chose for you will work, "
-#~ "but is web accessible."
-#~ msgstr ""
-#~ "Gallery behöver en katalog där dina bilder sparas. Den katalog som vi har valt åt dig "
-#~ "kommer att fungera men den är direkt åtkommlig via webben."
-
-#~ msgid "mkdir %s"
-#~ msgstr "mkdir %s"
-
-#~ msgid "chmod 777 %s"
-#~ msgstr "chmod 777 %s"
-
-#~ msgid "cd %s"
-#~ msgstr "cd %s"

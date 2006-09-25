@@ -96,23 +96,27 @@ msgstr ""
 msgid "Themes"
 msgstr "Temalar"
 
-#, fuzzy
-msgid "Performing Maintenance Tasks"
-msgstr "Sistem Bakımı"
+msgid "Updating repository index"
+msgstr ""
 
-#, c-format
-msgid "Downloading %s"
+msgid "Scanning plugins"
 msgstr ""
 
 #, fuzzy
 msgid "Done."
 msgstr "Tamalandı"
 
-msgid "Upgrade"
-msgstr "Güncelle"
-
-msgid "Download"
+#, fuzzy
+msgid "Downloading Files"
 msgstr "Yükle"
+
+#, c-format
+msgid "Downloading %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Activating %s"
+msgstr "Hareketler"
 
 msgid "install"
 msgstr "kur"
@@ -519,9 +523,6 @@ msgstr "Çıkış"
 msgid "Plugins"
 msgstr ""
 
-msgid "Repository"
-msgstr ""
-
 msgid "Users"
 msgstr "Kullanıcılar"
 
@@ -592,6 +593,10 @@ msgstr "Kullanıcı oturumlarını sil"
 msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Deleted %d sessions."
+msgstr "Kullanıcı oturumlarını sil"
 
 msgid "Delete database cache"
 msgstr "Veritabanı önbelleğini sil"
@@ -691,16 +696,11 @@ msgstr "film"
 msgid "photo"
 msgstr "foto"
 
+msgid "get more"
+msgstr ""
+
 msgid "download"
 msgstr "yükle"
-
-#, fuzzy
-msgid "Plugins directory does not exist."
-msgstr "'%s' adlı bir kullanıcı yok."
-
-msgid ""
-"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-msgstr ""
 
 msgid "Couldn't create repository cache path."
 msgstr ""
@@ -710,14 +710,14 @@ msgid ""
 msgstr ""
 
 #, c-format
-msgid "Error downloading index from '%s'."
-msgstr ""
-
-#, c-format
 msgid "Error downloading index hash from '%s'."
 msgstr ""
 
 msgid "Index integrity check failed."
+msgstr ""
+
+#, c-format
+msgid "Error downloading index from '%s'."
 msgstr ""
 
 msgid "&laquo; default sort order &raquo;"
@@ -1627,6 +1627,9 @@ msgstr ""
 msgid "__PLUGIN__ needs configuration"
 msgstr ""
 
+msgid "__PLUGIN__ deleted"
+msgstr ""
+
 msgid "Warning!"
 msgstr ""
 
@@ -1634,7 +1637,8 @@ msgstr ""
 msgid "Do you really want to uninstall __PLUGIN__?"
 msgstr "%s modülünü gerçekten kaldırmak istiyor musunuz?"
 
-msgid "This will also remove any permissions and clean up any data created by this module."
+msgid ""
+"This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
 msgstr ""
 
 msgid "Yes"
@@ -1644,7 +1648,21 @@ msgid "No"
 msgstr ""
 
 #, fuzzy
+msgid "Do you really want to delete __PLUGIN__?"
+msgstr "%s modülünü gerçekten kaldırmak istiyor musunuz?"
+
+msgid "This plugin will be uninstalled and its files will be deleted."
+msgstr ""
+
+msgid "Failed to completely delete __PLUGIN__"
+msgstr ""
+
+#, fuzzy
 msgid "Gallery Plugins"
+msgstr "Galeri Modülleri"
+
+#, fuzzy
+msgid "Get More Plugins"
 msgstr "Galeri Modülleri"
 
 msgid ""
@@ -1697,6 +1715,9 @@ msgstr ""
 msgid "configure"
 msgstr "konfigüre et"
 
+msgid "Repository"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1706,45 +1727,47 @@ msgstr ""
 msgid "All plugins are already up-to-date."
 msgstr ""
 
-msgid "Common Tasks"
-msgstr ""
-
-msgid "Modules"
-msgstr "Modüller"
-
-msgid "Warning: Experimental feature!"
-msgstr ""
-
 msgid ""
-"The repository features are currently experimental, and no actual repository has been set up "
-"yet, so none of these features will work at this time."
-msgstr ""
-
-msgid "Update Index"
-msgstr ""
-
-msgid ""
-"The Gallery repository contains the latest modules and themes extensively tested by the "
-"Gallery team. The repository index contains information about available plugins, such as the "
-"latest versions, available languages and compatibility. The index must be synchronized "
-"periodically with the Gallery server so you are informed about any available updates. No "
-"personal information is sent to the Gallery server during updating. On slower connections "
-"the process might take a minute or two."
+"No personal information about you or your Gallery installation is sent to the Gallery server "
+"at any time."
 msgstr ""
 
 #, c-format
 msgid ""
-"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
-"can be viewed on the Modules and Themes tabs."
+"The Gallery Plugin Repository contains the latest modules and themes provided by the Gallery "
+"team.  You can download and install new plugins to try them out, then delete them if you "
+"don't like them.  You must periodically download a new plugin list from the Gallery server "
+"to find out about any available updates. %s On slower connections the process might take a "
+"minute or two."
+msgstr ""
+
+msgid "Configure your Gallery"
 msgstr ""
 
 msgid ""
-"The index has never been updated. Click on the Update button to see what updates are "
-"available."
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
 msgstr ""
 
-msgid "Update"
-msgstr "Güncelle"
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Continue button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Continue"
+msgstr "Devam..."
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Galeri Modülleri"
+
+msgid "Download Plugin List"
+msgstr ""
+
+#, c-format
+msgid "(last updated: %s)"
+msgstr ""
 
 msgid "Upgrade Gallery"
 msgstr "Galeriyi Güncelle"
@@ -1765,36 +1788,6 @@ msgstr ""
 
 #, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
-msgstr ""
-
-#, fuzzy
-msgid "Gallery Up-To-Date"
-msgstr "Galeri Çekirdeği"
-
-msgid ""
-"Gallery cannot be upgraded through this interface. When a new version becomes available, "
-"upgrade instructions will be presented here."
-msgstr ""
-
-msgid "Upgrade All Plugins"
-msgstr ""
-
-msgid ""
-"Gallery can automatically upgrade your themes and modules to the latest available versions. "
-"No new plugins will be downloaded."
-msgstr ""
-
-msgid "Upgrade All"
-msgstr "Hepsini Güncelle"
-
-msgid ""
-"Once the repository index has been downloaded, a list of available plugins will be "
-"presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
-msgstr ""
-
-msgid ""
-"The following plugins are available. Click on the action beside the plugin you're interested "
-"in to see what's available in the repository."
 msgstr ""
 
 msgid "Incompatible plugins are marked with an exclamation icon."
@@ -1819,58 +1812,65 @@ msgstr "Son"
 msgid "Incompatible Plugin"
 msgstr "Uyumsuz Eklenti"
 
+msgid "Upgrade All Plugins"
+msgstr ""
+
+msgid ""
+"Gallery can automatically upgrade your themes and modules to the latest available versions. "
+"No new plugins will be downloaded."
+msgstr ""
+
+msgid "Upgrade All"
+msgstr "Hepsini Güncelle"
+
+#, fuzzy, c-format
+msgid "Download %s"
+msgstr "Yükle"
+
 msgid "No packages have been selected."
 msgstr ""
 
-msgid "Base Files"
-msgstr "Temel Dosyalar"
-
 msgid ""
-"The base files required for the theme to work and the English (US) translation will be "
-"downloaded."
+"Download the latest base package in order to use this plugin.  Language packages are "
+"optional.  You only need to download the ones that you want to use on your site."
 msgstr ""
 
-msgid "Upgrade Base Files"
+msgid "Base package"
 msgstr ""
 
-msgid "You can upgrade the base module files."
+#, fuzzy, c-format
+msgid "%s (version %s)"
+msgstr "PHP Versiyon"
+
+#, c-format
+msgid "%s (version: %s, currently installed: %s)"
 msgstr ""
 
-msgid "Upgrade base files"
+#, c-format
+msgid "%s (currently installed version %s is up to date)"
 msgstr ""
 
-msgid "Base Files Up-To-Date"
+#, fuzzy
+msgid "Language packages"
+msgstr "Dil Ayarları"
+
+#, c-format
+msgid "(select: %sall%s %snone%s | up to date packages: %shide%s %sshow%s)"
 msgstr ""
 
-msgid "This plugin's base files are up-to-date."
+#, c-format
+msgid "%s (version: %s)"
 msgstr ""
 
-msgid "Updated Translations"
+#, c-format
+msgid "%s (version %s is up to date)"
 msgstr ""
 
-msgid ""
-"Below is a list of translations that have been updated since they were last downloaded. "
-"Select the ones you want to download."
+msgid "There are no language packs available for download."
 msgstr ""
 
-msgid "Additional Languages"
-msgstr ""
-
-msgid ""
-"Below is a list of languages this plugin has been translated to. Select the ones you want "
-"included in addition to the ones already downloaded."
-msgstr ""
-
-msgid "Unit Tests"
-msgstr ""
-
-msgid ""
-"This plugin has unit tests available for download, which are useful for Gallery developers. "
-"All of the module's features are available without the tests."
-msgstr ""
-
-msgid "Download unit tests"
-msgstr ""
+msgid "Download"
+msgstr "Yükle"
 
 #, fuzzy
 msgid "Gallery Repository Setup"
@@ -3257,6 +3257,30 @@ msgstr "[test] İkinci izin"
 
 msgid "Unit test theme"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Performing Maintenance Tasks"
+#~ msgstr "Sistem Bakımı"
+
+#~ msgid "Upgrade"
+#~ msgstr "Güncelle"
+
+#, fuzzy
+#~ msgid "Plugins directory does not exist."
+#~ msgstr "'%s' adlı bir kullanıcı yok."
+
+#~ msgid "Modules"
+#~ msgstr "Modüller"
+
+#~ msgid "Update"
+#~ msgstr "Güncelle"
+
+#, fuzzy
+#~ msgid "Gallery Up-To-Date"
+#~ msgstr "Galeri Çekirdeği"
+
+#~ msgid "Base Files"
+#~ msgstr "Temel Dosyalar"
 
 #~ msgid "Uninstall"
 #~ msgstr "Kaldır"

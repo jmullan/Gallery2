@@ -823,9 +823,10 @@ class Gallery {
      *   print $this->translate($message_to_be_localized);
      *
      * @param string $value
+     * @param boolean $cFormat (optional) hint for gettext whether to use c-format
      * @return string the same value
      */
-    function i18n($value) {
+    function i18n($value, $cFormat=null) {
 	return $value;  /* Just pass the value through */
     }
 

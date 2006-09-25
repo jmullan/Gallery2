@@ -110,10 +110,11 @@ class GalleryPlugin {
      * This method does the runtime job, thanks to GNU gettext.
      *
      * @param mixed $params a single string, or an array of parameters
+     * @param boolean $cFormat (optional) hint for gettext whether to use c-format
      * @return string the localized value
      * @see Gallery::i18n
      */
-    function translate($params) {
+    function translate($params, $cFormat=null) {
 	global $gallery;
 	$translator =& $gallery->getTranslator();
 	if (!isset($translator)) {

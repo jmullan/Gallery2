@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Image Block 1.0.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-01 23:52+0100\n"
-"PO-Revision-Date: 2006-05-11 16:43+0100\n"
+"PO-Revision-Date: 2006-09-19 21:54+0100\n"
 "Last-Translator: Sverre M. Vikan <sverre AT urven DOT net>\n"
 "Language-Team: Norwegian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -40,24 +40,6 @@ msgstr "Tilfeldig, nyeste eller mest viste bilde eller album"
 
 msgid "Blocks"
 msgstr "Blokker"
-
-msgid "Random Image"
-msgstr "Tilfeldig bilde"
-
-msgid "Newest Image"
-msgstr "Nyeste bilde"
-
-msgid "Most Viewed Image"
-msgstr "Mest viste bilde"
-
-msgid "Random Album"
-msgstr "Tilfeldig album"
-
-msgid "Newest Album"
-msgstr "Nyeste album"
-
-msgid "Most Viewed Album"
-msgstr "Mest viste album"
 
 msgid "Picture of the Day"
 msgstr "Dagens bilde"
@@ -76,6 +58,42 @@ msgstr "Ukens album"
 
 msgid "Album of the Month"
 msgstr "Månedens album"
+
+#, fuzzy
+msgid "Random Image"
+msgid_plural "Random Images"
+msgstr[0] "Tilfeldig bilde"
+msgstr[1] "Tilfeldig bilde"
+
+#, fuzzy
+msgid "Newest Image"
+msgid_plural "Newest Images"
+msgstr[0] "Nyeste bilde"
+msgstr[1] "Nyeste bilde"
+
+#, fuzzy
+msgid "Most Viewed Image"
+msgid_plural "Most Viewed Images"
+msgstr[0] "Mest viste bilde"
+msgstr[1] "Mest viste bilde"
+
+#, fuzzy
+msgid "Random Album"
+msgid_plural "Random Albums"
+msgstr[0] "Tilfeldig album"
+msgstr[1] "Tilfeldig album"
+
+#, fuzzy
+msgid "Newest Album"
+msgid_plural "Newest Albums"
+msgstr[0] "Nyeste album"
+msgstr[1] "Nyeste album"
+
+#, fuzzy
+msgid "Most Viewed Album"
+msgid_plural "Most Viewed Albums"
+msgstr[0] "Mest viste album"
+msgstr[1] "Mest viste album"
 
 msgid "Date:"
 msgstr "Dato:"
@@ -176,6 +194,10 @@ msgid ""
 "browser. If specified along with %sshow=fullSize the full size image will always be used and "
 "scaled down as necessary."
 msgstr ""
+"Skalér bilder til denne maksimumsstørrelsen. Om brukt alene vil Gallery finne det det bildet "
+"som er nærmest i størrelse til den oppgitte verdien - større bilder vil bli skalert ned "
+"etter behov i din nettleser. Om oppgitt sammen med %sshow=fullSize vil bildet med full "
+"størrelse alltid bli brukt og skalert ned ved behov."
 
 #, c-format
 msgid ""
@@ -183,6 +205,9 @@ msgid ""
 "request, so you'll get the closest match in size possible.  Note that this may use a lot "
 "more bandwidth if a much larger image has to be scaled down in your browser."
 msgstr ""
+"Akkurat som %smaxSize, bortsett fra at den ikke vil erstatte et bilde mindre enn den "
+"størrelsen du ønsker, så du vil få den nærmeste samsvarende størrelse som mulig. Merk at "
+"dette kan bruke mer båndbredde om et mye større bilde må skaleres ned i nettleseren din."
 
 msgid ""
 "Href for link on image; value of none for no link; default is link to item in the Gallery"
@@ -261,6 +286,9 @@ msgstr "Ukentlig album"
 msgid "Monthly album"
 msgstr "Månedlig album"
 
+msgid "Number of items"
+msgstr ""
+
 msgid "Use default settings"
 msgstr "Bruk standardinnstillinger"
 
@@ -278,10 +306,3 @@ msgstr "Vis antall visninger"
 
 msgid "Show owner"
 msgstr "Vis eier"
-
-#~ msgid ""
-#~ "Scale images to this maximum size. If maxSize exceeds the thumbnail dimensions, you must "
-#~ "also specify g2_show=fullSize"
-#~ msgstr ""
-#~ "Skaler bilder til denne maksimumsstørrelsen. Du må også oppgi g2_show=fullSize om maxSize "
-#~ "overgår miniatyrbildedimensjonene"

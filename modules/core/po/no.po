@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.1.15\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-01 23:38+0100\n"
-"PO-Revision-Date: 2006-08-09 09:20+0100\n"
+"PO-Revision-Date: 2006-09-19 20:08+0100\n"
 "Last-Translator: Sverre M. Vikan <sverre AT urven DOT net>\n"
 "Language-Team: Norwegian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -98,21 +98,27 @@ msgstr "Full akselerasjon"
 msgid "Themes"
 msgstr "Tema"
 
-msgid "Performing Maintenance Tasks"
-msgstr "Utfører vedlikeholdsoppgaver"
+#, fuzzy
+msgid "Updating repository index"
+msgstr "Oppdaterer panoramaobjekter"
+
+msgid "Scanning plugins"
+msgstr ""
+
+msgid "Done."
+msgstr "Utført."
+
+#, fuzzy
+msgid "Downloading Files"
+msgstr "Laster ned %s"
 
 #, c-format
 msgid "Downloading %s"
 msgstr "Laster ned %s"
 
-msgid "Done."
-msgstr "Utført."
-
-msgid "Upgrade"
-msgstr "Oppgrader"
-
-msgid "Download"
-msgstr "Last ned"
+#, fuzzy, c-format
+msgid "Activating %s"
+msgstr "Handlinger"
 
 msgid "install"
 msgstr "installer"
@@ -314,9 +320,8 @@ msgstr "&laquo; standardtema &raquo;"
 msgid "Recreating resized images"
 msgstr "Gjenskaper skalerte bilder"
 
-#, fuzzy
 msgid "Preparing..."
-msgstr "Behandler ..."
+msgstr "Forbereder ..."
 
 msgid "Rebuilding resized images..."
 msgstr "Gjenskaper skalerte bilder ..."
@@ -513,9 +518,6 @@ msgstr "Logg ut"
 msgid "Plugins"
 msgstr "Programtillegg"
 
-msgid "Repository"
-msgstr "Kodelager"
-
 msgid "Users"
 msgstr "Brukere"
 
@@ -587,6 +589,10 @@ msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
 "Slett alle vedvarende brukerøkter i henhold til gjeldende utløpsinnstillinger for økter"
+
+#, fuzzy, c-format
+msgid "Deleted %d sessions."
+msgstr "Slett brukerøkter"
 
 msgid "Delete database cache"
 msgstr "Slett hurtigminne for database"
@@ -690,17 +696,11 @@ msgstr "film"
 msgid "photo"
 msgstr "foto"
 
+msgid "get more"
+msgstr ""
+
 msgid "download"
 msgstr "last ned"
-
-msgid "Plugins directory does not exist."
-msgstr "Katalog for programtillegg finnes ikke."
-
-msgid ""
-"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-msgstr ""
-"Kunne ikke opprette underkatalog for programtillegg. Sørg for at nettjeneren har "
-"skrivetilganger i den."
 
 msgid "Couldn't create repository cache path."
 msgstr "Kunne ikke opprette sti til hurtiglager for kodelager."
@@ -712,15 +712,15 @@ msgstr ""
 "skrivetilganger i den."
 
 #, c-format
-msgid "Error downloading index from '%s'."
-msgstr "Feil med nedlasting av indeks fra «%s»."
-
-#, c-format
 msgid "Error downloading index hash from '%s'."
 msgstr "Feil med nedlasting av indeksnøkkel fra «%s»."
 
 msgid "Index integrity check failed."
 msgstr "Integritetskontroll av indeks mislyktes."
+
+#, c-format
+msgid "Error downloading index from '%s'."
+msgstr "Feil med nedlasting av indeks fra «%s»."
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; standard sorteringsrekkefølge &raquo;"
@@ -1482,6 +1482,14 @@ msgstr "E-postadresse"
 msgid "(suggested)"
 msgstr "(foreslått)"
 
+#, fuzzy
+msgid "Lock Account"
+msgstr "Din konto"
+
+msgid ""
+"Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
+msgstr ""
+
 msgid "Group Management"
 msgstr "Gruppebehandling"
 
@@ -1577,21 +1585,6 @@ msgstr "kjør nå"
 
 msgid "Last Run Details:"
 msgstr "Detaljer fra siste gjennomkjøring:"
-
-msgid "Confirm module uninstall"
-msgstr "Bekreft avinstallasjon av modul"
-
-#, c-format
-msgid "Do you really want to uninstall the %s module?"
-msgstr "Vil du virkelig avinstallere modulen %s?"
-
-msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr ""
-"Dette vil også fjerne alle tilganger og rense opp midlertidige data som er opprettet av "
-"denne modulen."
-
-msgid "Uninstall"
-msgstr "Avinstaller"
 
 msgid "Performance Tuning"
 msgstr "Ytelsesjustering"
@@ -1700,7 +1693,43 @@ msgstr "Status: deaktivert (oppsett påkrevd)"
 msgid "__PLUGIN__ needs configuration"
 msgstr "__PLUGIN__ må settes opp"
 
+#, fuzzy
+msgid "__PLUGIN__ deleted"
+msgstr "__PLUGIN__ deaktivert"
+
+#, fuzzy
+msgid "Warning!"
+msgstr "Advarsel:"
+
+#, fuzzy
+msgid "Do you really want to uninstall __PLUGIN__?"
+msgstr "Vil du virkelig avinstallere modulen %s?"
+
+msgid ""
+"This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Do you really want to delete __PLUGIN__?"
+msgstr "Vil du virkelig avinstallere modulen %s?"
+
+msgid "This plugin will be uninstalled and its files will be deleted."
+msgstr ""
+
+msgid "Failed to completely delete __PLUGIN__"
+msgstr ""
+
 msgid "Gallery Plugins"
+msgstr "Programtillegg for Gallery"
+
+#, fuzzy
+msgid "Get More Plugins"
 msgstr "Programtillegg for Gallery"
 
 msgid ""
@@ -1752,6 +1781,9 @@ msgstr "Programtillegg-API påkrevd: %s (tilgjengelig: %s) "
 msgid "configure"
 msgstr "oppsett"
 
+msgid "Repository"
+msgstr "Kodelager"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Vennligst påse at din Internettforbindelse er satt opp riktig eller forsøk igjen senere."
@@ -1762,32 +1794,18 @@ msgstr "Vellykket oppdatering av kodelagerindeksen"
 msgid "All plugins are already up-to-date."
 msgstr "Alle programtillegg er allerede oppdaterte."
 
-msgid "Common Tasks"
-msgstr "Vanlige oppgaver"
-
-msgid "Modules"
-msgstr "Moduler"
-
-msgid "Warning: Experimental feature!"
-msgstr "Advarsel: eksperimentell funksjon!"
-
 msgid ""
-"The repository features are currently experimental, and no actual repository has been set up "
-"yet, so none of these features will work at this time."
+"No personal information about you or your Gallery installation is sent to the Gallery server "
+"at any time."
 msgstr ""
-"Kodelagerfunksjonene er forløpig eksperimentelle, og et faktisk kodelager er ikke satt opp "
-"enda, så ingen av disse funksjonene vil virke på nåværende tidspunkt."
 
-msgid "Update Index"
-msgstr "Oppdater indeks"
-
+#, fuzzy, c-format
 msgid ""
-"The Gallery repository contains the latest modules and themes extensively tested by the "
-"Gallery team. The repository index contains information about available plugins, such as the "
-"latest versions, available languages and compatibility. The index must be synchronized "
-"periodically with the Gallery server so you are informed about any available updates. No "
-"personal information is sent to the Gallery server during updating. On slower connections "
-"the process might take a minute or two."
+"The Gallery Plugin Repository contains the latest modules and themes provided by the Gallery "
+"team.  You can download and install new plugins to try them out, then delete them if you "
+"don't like them.  You must periodically download a new plugin list from the Gallery server "
+"to find out about any available updates. %s On slower connections the process might take a "
+"minute or two."
 msgstr ""
 "Kodelageret for Gallery inneholder de nyeste modulene og temaene som er testet i stor "
 "utstrekning av Gallery-laget. Kodelagerindekset inneholder informasjon om tilgjengelige "
@@ -1796,23 +1814,34 @@ msgstr ""
 "tilgjengelige oppdateringer. Ingen personlig informasjon blir sendt til Gallery-tjeneren "
 "under oppdatering. På tregere forbindelser kan prosessen ta et minutt eller to."
 
+msgid "Configure your Gallery"
+msgstr ""
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Continue button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Continue"
+msgstr "Fortsett ..."
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Oppgrader alle programtillegg"
+
+#, fuzzy
+msgid "Download Plugin List"
+msgstr "Last ned enhetstester"
+
 #, c-format
-msgid ""
-"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
-"can be viewed on the Modules and Themes tabs."
+msgid "(last updated: %s)"
 msgstr ""
-"Fra siste oppdatering den %s inneholder kodelageret %s moduler og %s temaer. Innholdet kan "
-"sees under arkfanene Moduler og Temaer."
-
-msgid ""
-"The index has never been updated. Click on the Update button to see what updates are "
-"available."
-msgstr ""
-"Indekset har aldri vært oppdatert. Trykk på knappen Oppdater for å se hvilke oppdateringer "
-"som er tilgjengelige."
-
-msgid "Update"
-msgstr "Oppdater"
 
 msgid "Upgrade Gallery"
 msgstr "Oppgrader Gallery"
@@ -1839,44 +1868,6 @@ msgstr "%sLast ned%s Gallery-kjerne"
 msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr "Les %soppgraderingsinstruksjonene%s og utfør oppgraderingen"
 
-msgid "Gallery Up-To-Date"
-msgstr "Gallery er oppdatert"
-
-msgid ""
-"Gallery cannot be upgraded through this interface. When a new version becomes available, "
-"upgrade instructions will be presented here."
-msgstr ""
-"Gallery kan ikke oppgraderes gjennom dette grensesnittet. Når en ny versjon blir "
-"tilgjengelig vil oppgraderingsinstruksjoner bli presentert her."
-
-msgid "Upgrade All Plugins"
-msgstr "Oppgrader alle programtillegg"
-
-msgid ""
-"Gallery can automatically upgrade your themes and modules to the latest available versions. "
-"No new plugins will be downloaded."
-msgstr ""
-"Gallery kan oppgradere dine temaer og moduler til siste tilgjengelige versjoner automatisk. "
-"Ingen nye programtillegg vil bli lastet ned."
-
-msgid "Upgrade All"
-msgstr "Oppgrader alle"
-
-msgid ""
-"Once the repository index has been downloaded, a list of available plugins will be "
-"presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
-msgstr ""
-"En liste over tilgjengelige programtillegg vil bli presentert så snart kodelagerindekset er "
-"lastet ned. Det kan lastes ned ved å trykke på knappen Oppdater under arkfanen Vanlige "
-"oppgaver."
-
-msgid ""
-"The following plugins are available. Click on the action beside the plugin you're interested "
-"in to see what's available in the repository."
-msgstr ""
-"Følgende programtillegg er tilgjengelige. Trykk på handlingen ved siden av programtillegget "
-"om du er interessert i å se hva som er tilgjengelig i kodelageret."
-
 msgid "Incompatible plugins are marked with an exclamation icon."
 msgstr "Ikke-kompatible programtillegg er markert med et utropstegn."
 
@@ -1902,66 +1893,67 @@ msgstr "Siste"
 msgid "Incompatible Plugin"
 msgstr "Ikke-kompatibelt programtillegg"
 
+msgid "Upgrade All Plugins"
+msgstr "Oppgrader alle programtillegg"
+
+msgid ""
+"Gallery can automatically upgrade your themes and modules to the latest available versions. "
+"No new plugins will be downloaded."
+msgstr ""
+"Gallery kan oppgradere dine temaer og moduler til siste tilgjengelige versjoner automatisk. "
+"Ingen nye programtillegg vil bli lastet ned."
+
+msgid "Upgrade All"
+msgstr "Oppgrader alle"
+
+#, fuzzy, c-format
+msgid "Download %s"
+msgstr "Laster ned %s"
+
 msgid "No packages have been selected."
 msgstr "Ingen pakker er valgt."
 
-msgid "Base Files"
-msgstr "Basisfiler"
-
 msgid ""
-"The base files required for the theme to work and the English (US) translation will be "
-"downloaded."
+"Download the latest base package in order to use this plugin.  Language packages are "
+"optional.  You only need to download the ones that you want to use on your site."
 msgstr ""
-"Basisfilene som påkreves av temaet for å virke og den Engelske (US) oversettelsen vil bli "
-"lastet ned."
 
-msgid "Upgrade Base Files"
-msgstr "Oppgrader basisfiler"
-
-msgid "You can upgrade the base module files."
-msgstr "Du kan oppgradere basismodulfilene."
-
-msgid "Upgrade base files"
-msgstr "Oppgrader basisfiler"
-
-msgid "Base Files Up-To-Date"
-msgstr "Basisfiler er oppdaterte"
-
-msgid "This plugin's base files are up-to-date."
-msgstr "Dette programtilleggets basisfiler er oppdaterte."
-
-msgid "Updated Translations"
-msgstr "Oppdaterte oversetteleser"
-
-msgid ""
-"Below is a list of translations that have been updated since they were last downloaded. "
-"Select the ones you want to download."
+msgid "Base package"
 msgstr ""
-"Nedenfor er en liste over oversettelser som er oppdaterte siden de sist ble lastet ned. Velg "
-"de du ønsker å laste ned."
 
-msgid "Additional Languages"
-msgstr "Tilleggsspråk"
+#, fuzzy, c-format
+msgid "%s (version %s)"
+msgstr "PHP-versjon"
 
-msgid ""
-"Below is a list of languages this plugin has been translated to. Select the ones you want "
-"included in addition to the ones already downloaded."
+#, c-format
+msgid "%s (version: %s, currently installed: %s)"
 msgstr ""
-"Nedenfor er en liste over språk dette programtillegget er oversatt til. Velg de du ønsker "
-"inkludert i tillegg til til de som allerede er lastet ned."
 
-msgid "Unit Tests"
-msgstr "Enhetstester"
-
-msgid ""
-"This plugin has unit tests available for download, which are useful for Gallery developers. "
-"All of the module's features are available without the tests."
+#, c-format
+msgid "%s (currently installed version %s is up to date)"
 msgstr ""
-"Dette programtillegget har enhetstester tilgjengelig for nedlasting, noe som er nyttig for "
-"utviklere av Gallery. Alle modulens funksjoner er tilgjengelige uten testene."
 
-msgid "Download unit tests"
-msgstr "Last ned enhetstester"
+#, fuzzy
+msgid "Language packages"
+msgstr "Språkinnstillinger"
+
+#, c-format
+msgid "(select: %sall%s %snone%s | up to date packages: %shide%s %sshow%s)"
+msgstr ""
+
+#, c-format
+msgid "%s (version: %s)"
+msgstr ""
+
+#, c-format
+msgid "%s (version %s is up to date)"
+msgstr ""
+
+msgid "There are no language packs available for download."
+msgstr ""
+
+msgid "Download"
+msgstr "Last ned"
 
 msgid "Gallery Repository Setup"
 msgstr "Oppsett for Gallerys kodelager"
@@ -3015,6 +3007,14 @@ msgstr "nettadresse"
 msgid "image"
 msgstr "bilde"
 
+#, fuzzy
+msgid "color"
+msgstr "kjerne"
+
+#, c-format
+msgid "You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s"
+msgstr ""
+
 msgid "Configuration Error: Missing Theme"
 msgstr "Innstillingsfeil: tema mangler"
 
@@ -3115,6 +3115,16 @@ msgstr "Bekreft nytt passord"
 
 msgid "You must enter your new password again!"
 msgstr "Du må skrive inn ditt nye passord igjen!"
+
+msgid ""
+"This account is not allowed to modify account settings.  Please contact your Gallery "
+"administrator"
+msgstr ""
+
+msgid ""
+"Your administrator has locked this account, preventing changes from being made to the "
+"account information."
+msgstr ""
 
 msgid "Login to your account"
 msgstr "Logg inn på din konto"
@@ -3434,3 +3444,145 @@ msgstr "[test] En andre tilgang"
 
 msgid "Unit test theme"
 msgstr "Enhetstesttema"
+
+#~ msgid "Performing Maintenance Tasks"
+#~ msgstr "Utfører vedlikeholdsoppgaver"
+
+#~ msgid "Upgrade"
+#~ msgstr "Oppgrader"
+
+#~ msgid "Plugins directory does not exist."
+#~ msgstr "Katalog for programtillegg finnes ikke."
+
+#~ msgid ""
+#~ "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
+#~ msgstr ""
+#~ "Kunne ikke opprette underkatalog for programtillegg. Sørg for at nettjeneren har "
+#~ "skrivetilganger i den."
+
+#~ msgid "Confirm module uninstall"
+#~ msgstr "Bekreft avinstallasjon av modul"
+
+#~ msgid "This will also remove any permissions and clean up any data created by this module."
+#~ msgstr ""
+#~ "Dette vil også fjerne alle tilganger og rense opp midlertidige data som er opprettet av "
+#~ "denne modulen."
+
+#~ msgid "Uninstall"
+#~ msgstr "Avinstaller"
+
+#~ msgid "Common Tasks"
+#~ msgstr "Vanlige oppgaver"
+
+#~ msgid "Modules"
+#~ msgstr "Moduler"
+
+#~ msgid "Warning: Experimental feature!"
+#~ msgstr "Advarsel: eksperimentell funksjon!"
+
+#~ msgid ""
+#~ "The repository features are currently experimental, and no actual repository has been set "
+#~ "up yet, so none of these features will work at this time."
+#~ msgstr ""
+#~ "Kodelagerfunksjonene er forløpig eksperimentelle, og et faktisk kodelager er ikke satt "
+#~ "opp enda, så ingen av disse funksjonene vil virke på nåværende tidspunkt."
+
+#~ msgid "Update Index"
+#~ msgstr "Oppdater indeks"
+
+#~ msgid ""
+#~ "As of the last update on %s, the repository contains %s modules and %s themes. Its "
+#~ "contents can be viewed on the Modules and Themes tabs."
+#~ msgstr ""
+#~ "Fra siste oppdatering den %s inneholder kodelageret %s moduler og %s temaer. Innholdet "
+#~ "kan sees under arkfanene Moduler og Temaer."
+
+#~ msgid ""
+#~ "The index has never been updated. Click on the Update button to see what updates are "
+#~ "available."
+#~ msgstr ""
+#~ "Indekset har aldri vært oppdatert. Trykk på knappen Oppdater for å se hvilke "
+#~ "oppdateringer som er tilgjengelige."
+
+#~ msgid "Update"
+#~ msgstr "Oppdater"
+
+#~ msgid "Gallery Up-To-Date"
+#~ msgstr "Gallery er oppdatert"
+
+#~ msgid ""
+#~ "Gallery cannot be upgraded through this interface. When a new version becomes available, "
+#~ "upgrade instructions will be presented here."
+#~ msgstr ""
+#~ "Gallery kan ikke oppgraderes gjennom dette grensesnittet. Når en ny versjon blir "
+#~ "tilgjengelig vil oppgraderingsinstruksjoner bli presentert her."
+
+#~ msgid ""
+#~ "Once the repository index has been downloaded, a list of available plugins will be "
+#~ "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
+#~ msgstr ""
+#~ "En liste over tilgjengelige programtillegg vil bli presentert så snart kodelagerindekset "
+#~ "er lastet ned. Det kan lastes ned ved å trykke på knappen Oppdater under arkfanen Vanlige "
+#~ "oppgaver."
+
+#~ msgid ""
+#~ "The following plugins are available. Click on the action beside the plugin you're "
+#~ "interested in to see what's available in the repository."
+#~ msgstr ""
+#~ "Følgende programtillegg er tilgjengelige. Trykk på handlingen ved siden av "
+#~ "programtillegget om du er interessert i å se hva som er tilgjengelig i kodelageret."
+
+#~ msgid "Base Files"
+#~ msgstr "Basisfiler"
+
+#~ msgid ""
+#~ "The base files required for the theme to work and the English (US) translation will be "
+#~ "downloaded."
+#~ msgstr ""
+#~ "Basisfilene som påkreves av temaet for å virke og den Engelske (US) oversettelsen vil bli "
+#~ "lastet ned."
+
+#~ msgid "Upgrade Base Files"
+#~ msgstr "Oppgrader basisfiler"
+
+#~ msgid "You can upgrade the base module files."
+#~ msgstr "Du kan oppgradere basismodulfilene."
+
+#~ msgid "Upgrade base files"
+#~ msgstr "Oppgrader basisfiler"
+
+#~ msgid "Base Files Up-To-Date"
+#~ msgstr "Basisfiler er oppdaterte"
+
+#~ msgid "This plugin's base files are up-to-date."
+#~ msgstr "Dette programtilleggets basisfiler er oppdaterte."
+
+#~ msgid "Updated Translations"
+#~ msgstr "Oppdaterte oversetteleser"
+
+#~ msgid ""
+#~ "Below is a list of translations that have been updated since they were last downloaded. "
+#~ "Select the ones you want to download."
+#~ msgstr ""
+#~ "Nedenfor er en liste over oversettelser som er oppdaterte siden de sist ble lastet ned. "
+#~ "Velg de du ønsker å laste ned."
+
+#~ msgid "Additional Languages"
+#~ msgstr "Tilleggsspråk"
+
+#~ msgid ""
+#~ "Below is a list of languages this plugin has been translated to. Select the ones you want "
+#~ "included in addition to the ones already downloaded."
+#~ msgstr ""
+#~ "Nedenfor er en liste over språk dette programtillegget er oversatt til. Velg de du ønsker "
+#~ "inkludert i tillegg til til de som allerede er lastet ned."
+
+#~ msgid "Unit Tests"
+#~ msgstr "Enhetstester"
+
+#~ msgid ""
+#~ "This plugin has unit tests available for download, which are useful for Gallery "
+#~ "developers. All of the module's features are available without the tests."
+#~ msgstr ""
+#~ "Dette programtillegget har enhetstester tilgjengelig for nedlasting, noe som er nyttig "
+#~ "for utviklere av Gallery. Alle modulens funksjoner er tilgjengelige uten testene."
