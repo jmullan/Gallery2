@@ -61,6 +61,8 @@ class GalleryItemAttributesHelper_simple {
 		if (!$phpVm->headers_sent()) {
 		    $phpVm->header('Last-Modified: ' .
 				   GalleryUtilities::getHttpDate($phpVm->time()));
+		    $phpVm->header('Expires: ' . GalleryUtilities::getHttpDate(
+				time() - 3600 * 24 * 7));
 		}
 	    }
 
