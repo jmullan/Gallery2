@@ -259,8 +259,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	}
 
 	list ($ret, $results) = ImageBlockHelper::_getBlockData(
-	    'title', 'Album', 'recent', 1,
-	    $top->getId(), false, null, 200 /* maxSize */);
+	    'Album', 'recent', 1, $top->getId(), false, null, 200 /* maxSize */);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
