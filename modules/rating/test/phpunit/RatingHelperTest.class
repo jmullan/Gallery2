@@ -216,6 +216,13 @@ class RatingHelperTest extends GalleryTestCase {
 	}
 	$this->assertEquals($average, (double)$RatingData[$this->_item->getId()]['rating'],
 		'Average rating test failed.');
+
+	/* Test substitution of commas as decimal separator */
+	$this->assert(!strpos($RatingData[$this->_item->getId()]['rating'], ','),
+		'Comma found in rating: ' . $RatingData[$this->_item->getId()]['rating']);
+	$this->assert(!strpos($RatingData[$this->_item->getId()]['averagePercent'], ','),
+		'Comma found in averagePercent: ' .
+		$RatingData[$this->_item->getId()]['averagePercent']);
     }
 
     function testFetchRatingsForGuestWithoutPersistentSession() {

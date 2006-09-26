@@ -145,25 +145,6 @@ class RatingModule extends GalleryModule {
 		continue;
 	    }
 
-	    if (!isset($RatingData[$itemId])) {
-		$RatingData[$itemId] = array('itemId' => $itemId, 'rating' => 0, 'votes' => 0);
-	    }
-
-	    /* Set star information */
-	    $RatingData[$itemId]['stars'] = round($RatingData[$itemId]['rating'] * 2);
-
-	    if ($RatingData[$itemId]['rating'] == 0) {
-		$RatingData[$itemId]['stars'] = 1;
-	    }
-
-	    if (!isset($RatingData[$itemId]['userRating'])) {
-		$RatingData[$itemId]['userRating'] = 'N/A';
-		$RatingData[$itemId]['userStars'] = 0;
-	    } else {
-		$RatingData[$itemId]['userStars'] = round($RatingData[$itemId]['userRating'] * 2);
-	    }
-
-	    $RatingData[$itemId]['averagePercent'] = $RatingData[$itemId]['rating'] * 100 / 5;
 	    $RatingData[$itemId]['canRate'] = isset($permissions[$itemId]['rating.add']);
 	    $template->setVariable('RatingData', $RatingData[$itemId]);
 	    $template->setVariable('RatingSummary', $RatingSummary);

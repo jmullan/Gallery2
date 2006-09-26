@@ -49,8 +49,25 @@ class RatingHelper {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
+	    $rating = $result[1] / 1000;
 	    $data[(int)$result[0]] = array('itemId' => (int)$result[0],
-		    'rating' => $result[1] / 1000, 'votes' => (int)$result[2]);
+		    'rating' => GalleryUtilities::roundToString($rating, 3),
+		    'votes' => (int)$result[2],
+		    'averagePercent' => GalleryUtilities::roundToString(($rating * 100 / 5), 3),
+		    'stars' => round($rating * 2)
+		    );
+
+	    if ($rating == 0) {
+		$data[(int)$result[0]]['stars'] = 1;
+	    }
+	}
+
+	/* Set defaults if a requested ID isn't found. */
+	foreach ($itemIds as $itemId) {
+	    if (!isset($data[$itemId])) {
+		$data[$itemId] = array('itemId' => $itemId, 'rating' => 0, 'votes' => 0,
+			'userRating' => 'N/A', 'userStars' => 0, 'stars' => 0, 'averagePercent' => 0);
+	    }
 	}
 
 	/* Check for existing votes from this user! */
@@ -84,6 +101,10 @@ class RatingHelper {
 	    while ($result = $searchResults->nextResult()) {
 		if (isset($data[$result[0]])) {
 		    $data[(int)$result[0]]['userRating'] = (int)$result[1];
+		    $data[(int)$result[0]]['userStars'] = round((int)$result[1] * 2);
+		} else {
+		    $data[(int)$result[0]]['userRating'] = 'N/A';
+		    $data[(int)$result[0]]['userStars'] = 0;
 		}
 	    }
 	}

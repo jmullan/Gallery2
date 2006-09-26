@@ -103,6 +103,11 @@ class RatingAlbumTest extends GalleryTestCase {
     }
 
     function testLoadThemeAndSettingsForItem() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rating', 'description', 'test desc');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	GalleryUtilities::putRequestVariable('limit', '3.6');
 	GalleryUtilities::putRequestVariable('itemId', $this->_items[1]->getId());
 
