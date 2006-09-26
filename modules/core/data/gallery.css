@@ -196,14 +196,14 @@ div#gDialog_c .button-group button.default {
   font-weight: bold;
 }
 
-div#gDialog_c .button-group button: hover, .button-group button.hover {
+div#gDialog_c .button-group button:hover, .button-group button.hover {
   border: 2px solid #90A029;
   background-color: #EBF09E;
   border-top-color: #FFF;
   border-left-color: #FFF;
 }
 
-div#gDialog_c .button-group button: active {
+div#gDialog_c .button-group button:active {
   border: 2px solid #E4E4E4;
   background-color: #BBB;
   border-top-color: #333;
@@ -368,5 +368,34 @@ div#Markup_swatch {
   padding: 15px;
   width: 350px;
   text-align: center;
+}
+
+
+/*** Autocomplete ***/
+
+.autoCompleteShadow {
+  position: absolute;
+  margin: 0.3em;
+  z-index: 5;
+}
+
+.autoCompleteContainer {
+  position: relative;
+  bottom: 4px;
+  right: 4px;
+  overflow: hidden;
+}
+
+.autoCompleteContainer .yui-ac-content ul {
+  position: relative;
+  padding: 3px 0;
+  list-style: none;
+}
+
+.autoCompleteContainer .yui-ac-content li {
+  padding: 2px 4px;
+  cursor: default;
+  white-space: nowrap;
+  display: list-item;
 }
 
