@@ -325,13 +325,14 @@ class ItemAddSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$gallery->_phpVm = new ItemAddSiteAdminControllerTestPhpVm('');
 	$platform = new UnitTestPlatform();
-	$platform->setReply('splitPath', array('/phpäunit'), array('/', 'phpäunit'));
-	$platform->setReply('isRestrictedByOpenBaseDir', array('/phpäunit'), false);
-	$platform->setReply('is_readable', array('/phpäunit'), true);
-	$platform->setReply('is_dir', array('/phpäunit'), true);
+	$iso88591String = '/php' . chr(228) . 'unit';
+	$platform->setReply('splitPath', array($iso88591String), array($iso88591String));
+	$platform->setReply('isRestrictedByOpenBaseDir', array($iso88591String), false);
+	$platform->setReply('is_readable', array($iso88591String), true);
+	$platform->setReply('is_dir', array($iso88591String), true);
 	$gallery->setPlatform($platform);
 
-	/* German umlaut 'ä' in ISO-8859-1 */
+	/* German umlaut 'ï¿½' in ISO-8859-1 */
 	$umlautUtf8 = GalleryCoreApi::convertToUtf8(chr(228), 'ISO-8859-1');
 	$dir = '/php' . $umlautUtf8 . 'unit';
 	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
@@ -463,6 +464,14 @@ class ItemAddSiteAdminControllerTestPhpVm extends GalleryPhpVm {
 
     function setlocale($category, $locale) {
 	return '';
+    }
+
+    /*
+     * Other test cases might define CODESET on Windows. In this case we need to declare
+     * the method as well.
+     */
+    function nl_langinfo($item) {
+	return 'ISO-8859-1';
     }
 }
 ?>
