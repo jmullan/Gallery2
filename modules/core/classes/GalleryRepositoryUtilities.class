@@ -44,6 +44,12 @@ class GalleryRepositoryUtilities {
 	    $revision = $revision[1];
 	} else if (preg_match('/Revision: (\d+) /U', $string, $revision)) {
 	    $revision = $revision[1];
+	} else if (preg_match('/Id: \S+,v (.*?) .*/U', $string, $revision)) {
+	    /* support 2.1.2 pre-svn strings.raw */
+	    $revision = 10212;
+	} else if (preg_match('/crc32 crc32/', $string)) {
+	    /* support 2.1.2 pre-svn MANIFEST files*/
+	    $revision = 10212;
 	} else {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "No revision found in [$string]"),
