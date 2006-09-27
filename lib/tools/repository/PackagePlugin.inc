@@ -125,7 +125,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	global $gallery;
 	$outputDir = $gallery->getConfig('repository.path');
 
-	list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId);
+	list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
 	if ($ret) {
 	    return array($ret, null);
 	}
