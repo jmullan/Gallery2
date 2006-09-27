@@ -186,7 +186,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$filesize = (string)round($this->_platform->filesize(__FILE__) / 1024, 2);
+	$filesize = (int)($this->_platform->filesize(__FILE__) / 1024);
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'errors');
 	$this->assertEquals(array(array(sprintf($this->_usingMessage, $filesize, $this->_KB,
@@ -237,7 +237,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$filesize = (string)round($this->_platform->filesize(__FILE__) / 1024, 2);
+	$filesize = (int)($this->_platform->filesize(__FILE__) / 1024);
 	list ($ret, $item2) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -276,11 +276,46 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$filesize = (string)round($this->_platform->filesize(__FILE__) / 1024, 2);
+	$filesize = (int)($this->_platform->filesize(__FILE__) / 1024);
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'errors');
 	$this->assertEquals(array(array(sprintf($this->_usingMessage, $filesize, $this->_KB,
 						1.91, $this->_GB))), $warnings, 'warnings');
+    }
+
+    function testGroupTBQuota() {
+	$ret = GalleryCoreApi::addMapEntry(
+	    'QuotasMap',
+	    array('userOrGroupId' => $this->_group->getId(), 
+		  'quotaSize' => '2047483648'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	for ($y = 0; $y < 3; $y++) {
+	    list ($ret, $items[$y]) = 
+	    $this->_createRandomDataItem($this->_album->getId(), 
+					 'test/file',
+					 array('ownerId' => $this->_user->getId(),
+					 'size' => 1073741824), __FILE__);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	
+	    $filesizes[$y] = $items[$y]->getSize()/1024/1024/1024;
+	}
+
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $items);
+	$this->assertEquals(array(), $errors, 'errors');
+	$this->assertEquals(array(
+	    array(sprintf($this->_usingMessage, $filesizes[0], 
+			  $this->_GB, 1952.63, $this->_GB)), 
+	    array(sprintf($this->_usingMessage, $filesizes[0] + $filesizes[1],
+			  $this->_GB, 1952.63, $this->_GB)), 
+	    array(sprintf($this->_usingMessage, 
+			  $filesizes[0] + $filesizes[1] + $filesizes[2],
+			  $this->_GB, 1952.63, $this->_GB))), 
+	    $warnings, 'warnings');
     }
 
     function testGroupQuotas() {
@@ -304,7 +339,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$filesize = (string)round($this->_platform->filesize(__FILE__) / 1024, 2);
+	$filesize = (int)($this->_platform->filesize(__FILE__) / 1024);
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'errors');
 	$this->assertEquals(array(array(sprintf($this->_usingMessage, $filesize, $this->_KB,

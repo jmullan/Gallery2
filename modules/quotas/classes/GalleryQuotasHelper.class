@@ -42,7 +42,7 @@ class GalleryQuotasHelper {
 
 	$query = '
 	SELECT
-	  SUM([GalleryDataItem::size])
+	  SUM([GalleryDataItem::size]/1024)
 	FROM
 	  [GalleryItem], [GalleryDataItem]
 	WHERE

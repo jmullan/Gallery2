@@ -69,15 +69,12 @@ class DiskQuotaOption extends ItemAddOption {
 		/* calculate the item ids of the newly added items */
 		array_shift($excludedIds);
 
-		/* user's disk usage in Bytes */
+		/* user's disk usage in KiloBytes */
 		list ($ret, $userDiskUsage) = GalleryQuotasHelper::getUserDiskUsage(
 		    $gallery->getActiveUserId(), $excludedIds);
 		if ($ret) {
 		    return array($ret, null, null);
 		}
-
-		/* make disk usage into KB */
-		$userDiskUsage /= 1024.00;
 
 		if ($userDiskUsage > $userDiskQuota) {
 		    list ($ret, $userDiskQuotaHumanReadable, $userDiskQuotaHumanReadableUnit) =

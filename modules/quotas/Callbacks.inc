@@ -67,14 +67,14 @@ class QuotasCallbacks {
 
 	    if ($block['quotaExists']) {
 		$block['currentUsagePercent'] =
-		    (int) round((($block['currentUsage'] / 1024) / $userQuotaValueKB) * 100);
+		    (int) round(($block['currentUsage'] / $userQuotaValueKB) * 100);
 		if ($block['currentUsagePercent'] > 100) {
 		    $block['currentUsagePercent'] = 100;
 		}
 		$block['currentUnusedPercent'] = 100 - $block['currentUsagePercent'];
 	    }
 	    list ($ret, $block['currentUsage'], $block['currentUsageUnit']) =
-		GalleryQuotasHelper::humanReadableFromKilobytes($block['currentUsage'] / 1024);
+		GalleryQuotasHelper::humanReadableFromKilobytes($block['currentUsage']);
 	    if ($ret) {
 		return $ret;
 	    }
