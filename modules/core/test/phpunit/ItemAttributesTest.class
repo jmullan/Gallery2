@@ -289,7 +289,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	$this->assertEquals(1, $viewCount, 'First attempt, rand = 1 -> increment');
 	$this->assertEquals(
 	    array('last-modified' => 'Last-Modified: ' . GalleryUtilities::getHttpDate($now),
-	    	  'expires' => 'Expires: ' . GalleryUtilities::getHttpDate($now - 3600 * 24 * 7)),
+		  'expires' => 'Expires: ' . GalleryUtilities::getHttpDate($now - 3600 * 24 * 7)),
 	    $_REQUEST['phpVmHeaders']);
     }
 
