@@ -430,21 +430,11 @@ class GalleryRepository {
 	$repositoryCachePath = $gallery->getConfig('repository.cache');
 	$platform =& $gallery->getPlatform();
 
-	if (!@$platform->file_exists($repositoryCachePath)) {
-	    while (!$platform->is_dir($repositoryCachePath)) {
-		$parentDir = dirname($repositoryCachePath);
-		$dirStack[] = substr($repositoryCachePath, strlen($parentDir));
-		$repositoryCachePath = $parentDir;
-	    }
-	    for ($i = count($dirStack); $i != 0; $i--) {
-		@$platform->mkdir($repositoryCachePath . $dirStack[$i-1]);
-		$repositoryCachePath .= $dirStack[$i-1];
-	    }
-	    if (!@$platform->file_exists($gallery->getConfig('repository.cache'))) {
-		return array(false, $gallery->i18n('Couldn\'t create repository cache path.'));
-	    }
+	list ($success, $created) = GalleryUtilities::guaranteeDirExists($repositoryCachePath);
+	if (!$success) {
+	    return array(false, $gallery->i18n('Couldn\'t create repository cache path.'));
 	}
-
+	
 	/* Create repository cache subdirectories. */
 	foreach (array('modules', 'themes') as $cacheDir) {
 	    $cacheDirectory = $repositoryCachePath . $cacheDir;

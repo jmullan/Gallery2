@@ -530,6 +530,8 @@ class RepositoryTest extends GalleryTestCase {
 	global $gallery;
 
 	$repository = new GalleryRepository();
+	$originalPlatform =& $gallery->getPlatform();
+	$slash = $originalPlatform->getDirectorySeparator();
 
 	$repositoryCachePath = '/cache/';
 	$gallery->setConfig('repository.cache', $repositoryCachePath);
@@ -537,18 +539,25 @@ class RepositoryTest extends GalleryTestCase {
 	/* Test when all of the directories are set up properly. */
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array('/cache/'), true);
+	$platform->setReply('is_dir', array('/cache/'), true);
 	$platform->setReply('is_dir', array('/cache/modules'), true);
 	$platform->setReply('is_dir', array('/cache/themes'), true);
 	$gallery->setPlatform($platform);
 	list ($isSetUp, $message) = $repository->createPluginsDirectory();
 	$this->assert($isSetUp, $message);
 
+	/* guaranteeDirExists($dir) depends on the cache. */
+	GalleryDataCache::setMemoryCachingEnabled(true);
+	GalleryDataCache::remove('GalleryUtilities::guaranteeDirExists');
+	GalleryDataCache::setFileCachingEnabled(false);
+	
 	/* Test recursive repository cache directory creation. */
 	$platform->setReply('file_exists', array('/cache/'), false);
-	$platform->setReply('is_dir', array('/cache/'), false);
-	$platform->setReply('is_dir', array('/'), true);
+	$platform->setReply('file_exists', array('/cache/'), false);
+	/* dirname('/cache/') returns \ on Windows. */
+	$platform->setReply('file_exists', array($slash), true);
+	$platform->setReply('is_dir', array($slash), true);
 	$platform->setReply('mkdir', array('/cache/', 755), true);
-	$platform->setReply('file_exists', array('/cache/'), true);
 	$platform->setReply('is_dir', array('/cache/modules'), false);
 	$platform->setReply('mkdir', array('/cache/modules', 755), true);
 	$platform->setReply('is_dir', array('/cache/themes'), false);
@@ -599,7 +608,7 @@ class RepositoryTest extends GalleryTestCase {
 	$platform = new UnitTestPlatform();
 
 	/* Package download. */
-	$modules = dirname(dirname(dirname(dirname(__FILE__))));
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
 	$platform->setReply('file_exists', array("$modules/testModule/"), true);
 	$platform->setReply('file_put_contents',
 	    array($testPackagePath, serialize(array($testPackageUrl))), true);
@@ -637,7 +646,7 @@ class RepositoryTest extends GalleryTestCase {
     function testVerifyPackageIntegrity() {
 	global $gallery;
 
-	$modules = dirname(dirname(dirname(dirname(__FILE__))));
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
 	$gallery->setConfig('data.gallery.plugins', 'plugins/');
 	$testDescriptor = array(
 	    'pluginType' => 'module',
@@ -678,15 +687,16 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repository = new GalleryRepository();
 	$repository->_utilities = new RepositoryTestUtilitiesForScanPlugin();
-
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	
 	$platform = new UnitTestPlatform();
 	$platform->setReply(
 	    'file_exists',
-	    array(dirname(dirname(dirname(dirname(__FILE__)))) . '/RepositoryTest/MANIFEST'),
+	    array($modules . '/RepositoryTest/MANIFEST'),
 	    true);
 	$platform->setReply(
 	    'glob',
-	    array(dirname(dirname(dirname(dirname(__FILE__)))) . "/RepositoryTest/po/*.po", null),
+	    array($modules . "/RepositoryTest/po/*.po", null),
 	    array('po/aa.po', 'po/bb_BB.po'));
 	$gallery->setPlatform($platform);
 
@@ -730,11 +740,12 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repository = new GalleryRepository();
 	$repository->_utilities = null;  /* this should fail without needing utilities */
-
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	
 	$platform = new UnitTestPlatform();
 	$platform->setReply(
 	    'file_exists',
-	    array(dirname(dirname(dirname(dirname(__FILE__)))) . '/RepositoryTest/MANIFEST'),
+	    array($modules . '/RepositoryTest/MANIFEST'),
 	    false);
 	$gallery->setPlatform($platform);
 
