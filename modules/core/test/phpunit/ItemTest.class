@@ -65,7 +65,7 @@ class ItemTest extends GalleryTestCase {
 
 	/* Register jpeg thumbnail/gif scale in case there are no other toolkits active */
 	$ret = GalleryCoreApi::registerToolkitOperation(
-	    'ItemTestToolkit', array('test/image', 'image/jpeg'), 'thumbnail',
+	    'ItemTestToolkit', array('test/image', 'image/jpeg', 'image/gif'), 'thumbnail',
 	    array(array('type' => 'int', 'description' => 'foo'),
 		  array('type' => 'int', 'description' => 'foo')),
 	    'itemtest-description', '', 7);
@@ -83,7 +83,8 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$ret = GalleryCoreApi::registerToolkitProperty(
-	    'ItemTestToolkit', array('image/gif'), 'dimensions', 'int,int', 'Get the dimensions');
+		'ItemTestToolkit', array('image/gif', 'image/jpeg'),
+		'dimensions', 'int,int', 'Get the dimensions');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -1321,8 +1322,8 @@ class ItemTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(2, count($thumbTable),
-			    'album missing highlight or photo missing thumbnail');
+	$this->assert(isset($thumbTable[$this->_album->getId()]), 'Missing highlight for album');
+	$this->assert(isset($thumbTable[$photo->getId()]), 'Missing thumbnail for photo');
 	if (count($thumbTable) == 2) {
 	    $this->assertEquals(
 		$thumbTable[$photo->getId()]->getId(),
@@ -1625,8 +1626,8 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
-	    __FILE__, 'itemName', 'title', 'caption', 'description',
-	    'image/jpeg', $this->_album->getId());
+	    dirname(__FILE__) . '/../data/test1.jpg', 'itemName',
+	    'title', 'caption', 'description', 'image/jpeg', $this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -1691,7 +1692,8 @@ class ItemTestToolkit extends GalleryToolkit {
 		$results = array(12345);
 	    }
 	    return array(null, $results);
-	} else if ($propertyName == 'dimensions' && $mimeType == 'image/gif') {
+	} else if ($propertyName == 'dimensions'
+		&& in_array($mimeType, array('image/gif', 'image/jpeg'))) {
 	    return array(null, array(62, 75));
 	}
 	/* We'll reach this point in testSymlinkTwice, but we want to return an error */
