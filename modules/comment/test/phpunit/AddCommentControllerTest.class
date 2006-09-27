@@ -101,6 +101,58 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	}
     }
 
+    function testAddCommentGuest() {
+	global $gallery;
+
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addGroupPermission(
+	    $this->_item->getId(), $everybodyGroupId, 'comment.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_becomeGuestUser();
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
+	GalleryUtilities::putRequestVariable('form[author]', 'this is an author');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array(
+		      'view' => 'comment.CommentChangeConfirmation',
+		      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results);
+
+	/* Grab the comment and take a look at it */
+	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(1, count($comments));
+	if (count($comments) == 1) {
+	    $this->assert(GalleryUtilities::isA($comments[0], 'GalleryComment'));
+	    $this->assertEquals('this is a comment', $comments[0]->getComment());
+	    $this->assertEquals('this is a subject', $comments[0]->getSubject());
+	    $this->assertEquals('this is an author', $comments[0]->getAuthor());
+	    $this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId());
+	    $this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost());
+	    $this->assert($comments[0]->getDate() >= $this->_startTime &&
+			  $comments[0]->getDate() <= time(), 'date');
+	}
+    }
+
     function testPreviewComment() {
 	global $gallery;
 
@@ -109,6 +161,38 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][preview]', 1);
 	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
 	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('delegate' => array('view' => 'comment.AddComment'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
+    }
+
+    function testPreviewCommentGuest() {
+	global $gallery;
+
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addGroupPermission(
+	    $this->_item->getId(), $everybodyGroupId, 'comment.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_becomeGuestUser();
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][preview]', 1);
+	GalleryUtilities::putRequestVariable('form[comment]', 'this is a comment');
+	GalleryUtilities::putRequestVariable('form[subject]', 'this is a subject');
+	GalleryUtilities::putRequestVariable('form[author]', 'this is an author');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -183,6 +267,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    'this is a subject with <script>evilness</script> in it.');
 	GalleryUtilities::putRequestVariable('form[comment]',
 	    'this is a comment with <div onmouseover="alert(1)">evilness</div> in it.');
+	GalleryUtilities::putRequestVariable('form[author]',
+	    'this is an author with <script>evilness</script> in it.');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -224,6 +310,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('this is a comment with '
 		. '&lt;div onmouseover=&quot;alert(1)&quot;&gt;evilness&lt;/div&gt; in it.',
 	    $comments[0]->getComment(), 'comment');
+	$this->assertEquals('', $comments[0]->getAuthor(), 'author');
 	$this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId(), 'user 1');
 	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost(), 'host 1');
 	$this->assert($comments[0]->getDate() >= $this->_startTime &&
@@ -235,10 +322,77 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(
 	    'this is a comment with &lt;div&gt;evilness&lt;/div&gt; in it.',
 	    $comments[1]->getComment(), 'html comment');
+	$this->assertEquals('', $comments[1]->getAuthor(), 'html author');
 	$this->assertEquals($gallery->getActiveUserId(), $comments[1]->getCommenterId(), 'user 2');
 	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[1]->getHost(), 'host 2');
 	$this->assert($comments[1]->getDate() >= $this->_startTime &&
 		      $comments[1]->getDate() <= time(), 'time 2');
+    }
+
+    function testAddMaliciousCommentGuest() {
+    	global $gallery;
+    	
+    	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addGroupPermission(
+	    $this->_item->getId(), $everybodyGroupId, 'comment.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_becomeGuestUser();
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'bbcode');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[subject]',
+	    'this is a subject with <script>evilness</script> in it.');
+	GalleryUtilities::putRequestVariable('form[comment]',
+	    'this is a comment with <div onmouseover="alert(1)">evilness</div> in it.');
+	GalleryUtilities::putRequestVariable('form[author]',
+	    'this is an author with <script>evilness</script> in it.');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'comment.CommentChangeConfirmation',
+				      'itemId' => $this->_item->getId()),
+		  'status' => array('added' => 1),
+		  'error' => array()),
+	    $results);
+
+	/* Grab the comment and take a look at it */
+	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(1, count($comments));
+	if (!GalleryUtilities::isA($comments[0], 'GalleryComment')) {
+	    return $this->fail('result is not a GalleryComment!');
+	}
+
+	$this->assertEquals(
+	    'this is a subject with &lt;script&gt;evilness&lt;/script&gt; in it.',
+	    $comments[0]->getSubject(), 'subject');
+	$this->assertEquals('this is a comment with '
+		. '&lt;div onmouseover=&quot;alert(1)&quot;&gt;evilness&lt;/div&gt; in it.',
+	    $comments[0]->getComment(), 'comment');
+	$this->assertEquals(
+	    'this is an author with &lt;script&gt;evilness&lt;/script&gt; in it.',
+	    $comments[0]->getAuthor(), 'author');
+	$this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId(), 'user 1');
+	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost(), 'host 1');
+	$this->assert($comments[0]->getDate() >= $this->_startTime &&
+		      $comments[0]->getDate() <= time(), 'time 1');
     }
 
     function testCancelComment() {

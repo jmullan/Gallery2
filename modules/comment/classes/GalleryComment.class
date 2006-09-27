@@ -28,7 +28,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
  * @g2 <parent-class-name>GalleryChildEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>1</schema-minor>
+ * @g2   <schema-minor>2</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
@@ -111,6 +111,20 @@ class GalleryComment extends GalleryChildEntity {
      * @access public
      */
     var $date;
+    
+    /**
+     * Author of the comment. Only used for guest comments.
+     *
+     * @g2 <member>
+     * @g2   <member-name>author</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
+     *
+     * @var string $author
+     * @access public
+     */
+    var $author;
 
     /**
      * @see GalleryEntity::getClassName
@@ -133,6 +147,7 @@ class GalleryComment extends GalleryChildEntity {
 	$this->setSubject(null);
 	$this->setComment(null);
 	$this->setDate(null);
+	$this->setAuthor(null);
     }
 
     function getCommenterId() {
@@ -173,6 +188,14 @@ class GalleryComment extends GalleryChildEntity {
 
     function setDate($date) {
 	$this->date = $date;
+    }
+
+    function setAuthor($author) {
+	$this->author = $author;
+    }
+
+    function getAuthor() {
+	return $this->author;
     }
 }
 ?>

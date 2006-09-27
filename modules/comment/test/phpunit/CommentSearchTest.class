@@ -78,6 +78,9 @@ class CommentSearchTest extends GalleryTestCase {
 		$this->_comment[$j][$i]->setHost('127.0.0.1');
 		$this->_comment[$j][$i]->setSubject($this->_randomKey . ": test subject($j,$i)");
 		$this->_comment[$j][$i]->setComment($this->_randomKey . ": test comment($j,$i)");
+		if($j == 3 && $i == 1){
+		    $this->_comment[$j][$i]->setAuthor($this->_randomKey . ": test author($j,$i)");
+		}
 		$this->_comment[$j][$i]->setDate(time());
 		$ret = $this->_comment[$j][$i]->save();
 		if ($ret) {
@@ -191,6 +194,8 @@ class CommentSearchTest extends GalleryTestCase {
 	$subject = $this->_module->translate('Subject');
 	$comment = $this->_module->translate('Comment');
 	$commenter = $this->_module->translate('Commenter');
+	$text['guest'] = $this->_module->translate('guest');
+	$authorCheckValue = $this->_comment[3][1]->getAuthor() . '(' . $text['guest'] . ')';
 
 	$userName = $this->_user->getFullName();
 	if (empty($userName)) {
@@ -209,7 +214,7 @@ class CommentSearchTest extends GalleryTestCase {
 				    array('key' => $comment,
 					  'value' => $this->_comment[3][1]->getComment()),
 				    array('key' => $commenter,
-					  'value' => $userName))),
+					  'value' => $authorCheckValue))),
 			array('itemId' => $this->_item[3]->getId(),
 			      'fields' =>
 			      array(array('key' => $subject,

@@ -264,9 +264,9 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 
 	if ($form['formName'] != 'AddComment') {
 	    $form['formName'] = 'AddComment';
-	    $form['subject'] = $form['comment'] = '';
+	    $form['subject'] = $form['comment'] = $form['author'] = '';
 	} else {
-	    foreach (array('subject', 'comment') as $key) {
+	    foreach (array('subject', 'comment', 'author') as $key) {
 		if (empty($form[$key])) {
 		    $form[$key] = '';
 		}

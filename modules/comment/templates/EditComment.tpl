@@ -36,6 +36,13 @@
     <input type="hidden" name="{g->formVar var="commentId"}" value="{$EditComment.comment.id}"/>
     <input type="text" name="{g->formVar var="form[commenterName]"}" value="{$form.commenterName}"/>
 
+    {if $EditComment.isGuestComment}
+    <h4>
+      {g->text text="Name"}
+    </h4>
+    <input type="text" name="{g->formVar var="form[author]"}" value="{$form.author}"/>
+    {/if}
+
     {if isset($form.error.commenterName.missing)}
     <div class="giError">
       {g->text text="You must enter a username."}
@@ -49,24 +56,6 @@
 
     <h4> {g->text text="Host"} </h4>
     <input type="text" name="{g->formVar var="form[host]"}" value="{$form.host}"/>
-
-    <h4>
-      {g->text text="Date"}
-      <span class="giSubtitle"> {g->text text="(required)"} </span>
-    </h4>
-
-    <input type="text" name="{g->formVar var="form[date]"}" value="{$form.date}"/>
-
-    {if isset($form.error.date.invalid)}
-    <div class="giError">
-      {g->text text="The date you entered is invalid."}
-    </div>
-    {/if}
-    {if isset($form.error.date.missing)}
-    <div class="giError">
-      {g->text text="You must enter a date"}
-    </div>
-    {/if}
 
     <h4> {g->text text="Subject"} </h4>
 

@@ -59,12 +59,23 @@
 
 <p class="info">
   {capture name="date"}{g->date timestamp=$comment.date style="datetime"}{/capture}
-  {if $can.edit}
-    {g->text text="Posted by %s on %s (%s)"
-	     arg1=$user.fullName|default:$user.userName
-	     arg2=$smarty.capture.date arg3=$comment.host}
+  {if empty($comment.author)}
+    {if $can.edit}
+      {g->text text="Posted by %s on %s (%s)"
+	       arg1=$fullName|default:$user.userName
+	       arg2=$smarty.capture.date arg3=$comment.host}
+    {else}
+      {g->text text="Posted by %s on %s"
+	       arg1=$fullName|default:$user.userName arg2=$smarty.capture.date}
+    {/if}
   {else}
-    {g->text text="Posted by %s on %s"
-	     arg1=$user.fullName|default:$user.userName arg2=$smarty.capture.date}
+    {if $can.edit}
+      {g->text text="Posted by %s (guest) on %s (%s)"
+	       arg1=$comment.author|default:$user.userName
+	       arg2=$smarty.capture.date arg3=$comment.host}
+    {else}
+      {g->text text="Posted by %s (guest) on %s"
+	       arg1=$fullName|default:$user.userName arg2=$smarty.capture.date}
+    {/if}
   {/if}
 </p>

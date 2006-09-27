@@ -48,6 +48,11 @@ class AddCommentController extends GalleryController {
 	    return array($ret, null);
 	}
 
+	list($ret, $isAnonymousUser) = GalleryCoreApi::isAnonymousUser($gallery->getActiveUserId());
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	$redirect = $status = $error = array();
 	if (isset($form['action']['add'])) {
 	    GalleryCoreApi::requireOnce(
@@ -56,6 +61,11 @@ class AddCommentController extends GalleryController {
 	    if (empty($form['subject'])) {
 		$form['subject'] = '';
 	    }
+
+	    if (empty($form['author']) || !$isAnonymousUser) {
+		$form['author'] = '';
+	    }
+
 	    if (empty($form['comment'])) {
 		$error[] = 'form[error][comment][missing]';
 	    }
@@ -123,6 +133,7 @@ class AddCommentController extends GalleryController {
 		}
 		if ($markup == 'html') {
 		    /* Strip malicious content if html markup allowed */
+		    $form['author'] = GalleryUtilities::htmlSafe($form['author'], true);
 		    $form['subject'] = GalleryUtilities::htmlSafe($form['subject'], true);
 		    $form['comment'] = GalleryUtilities::htmlSafe($form['comment'], true);
 		}
@@ -131,6 +142,7 @@ class AddCommentController extends GalleryController {
 		$comment->setHost(GalleryUtilities::getRemoteHostAddress());
 		$comment->setSubject($form['subject']);
 		$comment->setComment($form['comment']);
+		$comment->setAuthor($form['author']);
 		$comment->setDate(time());
 
 		$ret = $comment->save();
@@ -146,6 +158,10 @@ class AddCommentController extends GalleryController {
 	} else if (isset($form['action']['preview'])) {
 	    if (empty($form['subject'])) {
 		$form['subject'] = '';
+	    }
+
+	    if (empty($form['author'])|| !$isAnonymousUser) {
+		$form['author'] = '';
 	    }
 
 	    if (empty($form['comment'])) {

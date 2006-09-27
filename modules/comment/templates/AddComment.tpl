@@ -31,8 +31,15 @@
   </div>
 
   <div class="gbBlock">
+    {if $user.isGuest}
+    <h4> {g->text text="Name"} </h4>
+    <input type="text" id="author" size="60" class="gcBackground1"
+	   name="{g->formVar var="form[author]"}" value="{$form.author}"
+	   onfocus="this.className=''" onblur="this.className='gcBackground1'"/>
+    {else}
     <h4> {g->text text="Posted by"} </h4>
     {g->text text="%s (%s)" arg1=$user.fullName arg2=$AddComment.host}
+    {/if}
 
     <h4> {g->text text="Subject"} </h4>
 

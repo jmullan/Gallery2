@@ -6,7 +6,8 @@ $entityInfo['GalleryComment'] = array(
 	'host' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM, 'notNull' => 1),
 	'subject' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM),
 	'comment' => array('type' => STORAGE_TYPE_TEXT, 'size' => STORAGE_SIZE_SMALL),
-	'date' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1)
+	'date' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1),
+	'author' => array('type' => STORAGE_TYPE_STRING, 'size' => STORAGE_SIZE_MEDIUM)
 ),
     'parent' => 'GalleryChildEntity',
     'module' => 'comment',
