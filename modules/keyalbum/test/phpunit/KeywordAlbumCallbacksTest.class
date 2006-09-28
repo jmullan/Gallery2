@@ -117,7 +117,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	foreach ($data as $keyword) {
 	    $found[$keyword['name']] = true;
 	    $this->assert(
-		    isset($keyword['weight']) && $keyword['weight'] >=0 && $keyword['weight'] <= 3,
+		    isset($keyword['weight']) && $keyword['weight'] >= 0 && $keyword['weight'] <= 3,
 		    'bad/missing weight: ' . print_r($keyword, true));
 	}
 	$this->assert(isset($found['testkeyword12345']), 'album keyword');
@@ -143,6 +143,11 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
     }
 
     function testKeywordCache() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum',
+						  'allKeywords', serialize(array()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'allKeywords.time', time());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -156,13 +161,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	}
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
-	foreach ($data as $keyword) {
-	    $found[$keyword['name']] = true;
-	}
-	/* Assuming these aren't already present in the gallery */
-	$this->assert(!isset($found['testkeyword12345']), 'album keyword');
-	$this->assert(!isset($found['testkeyword54321']), 'item keyword 1');
-	$this->assert(!isset($found['testkeyword99999']), 'item keyword 2');
+	$this->assertEquals(array(), $data, 'cached data');
     }
 }
 ?>
