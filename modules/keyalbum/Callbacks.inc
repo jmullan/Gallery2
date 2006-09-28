@@ -51,7 +51,7 @@ class KeyAlbumCallbacks {
 	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
-	    $block['keyalbum']['keywords'] = unserialize($keywords);
+	    $block['keyalbum']['keywords'] = !empty($keywords) ? unserialize($keywords) : array();
 
 	    return null;
 	}
