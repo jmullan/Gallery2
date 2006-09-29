@@ -174,7 +174,7 @@ class SiriuxTheme extends GalleryTheme {
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);
 	if ($ret) {
-	    return array($ret, null);
+	    return array($ret, null, null);
 	}
 
 	/* Add in our custom settings */
@@ -194,7 +194,7 @@ class SiriuxTheme extends GalleryTheme {
 			    'type' => 'checkbox',
 			    'value' => $params['enableImageMap']);
 
-	return array(null, $settings);
+	return array(null, $settings, $params);
     }
 
     /**

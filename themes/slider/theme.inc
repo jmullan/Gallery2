@@ -52,7 +52,7 @@ class SliderTheme extends GalleryTheme {
     function getSettings($itemId=null) {
 	list ($ret, $settings, $params) = parent::getSettings($itemId);
 	if ($ret) {
-	    return array($ret, null);
+	    return array($ret, null, null);
 	}
 
 	$settings[] = array('key' => 'enableImageMap',
@@ -61,7 +61,7 @@ class SliderTheme extends GalleryTheme {
 			    'type' => 'checkbox',
 			    'value' => $params['enableImageMap']);
 
-	return array(null, $settings);
+	return array(null, $settings, $params);
     }
 
     /**
