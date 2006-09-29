@@ -25,6 +25,7 @@
  */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
 
 /**
  * This controller will handle an administration request for a module
@@ -34,21 +35,6 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
  *
  */
 class AdminRepositoryDownloadController extends GalleryController {
-
-    /**
-     * Repository.
-     *
-     * @var object GalleryRepository
-     * @access private
-     */
-    var $_repository;
-
-    function _getRepository() {
-	if (!isset($this->_repository)) {
-	    $this->_repository = new GalleryRepository();
-	}
-	return $this->_repository;
-    }
 
     /**
      * @see GalleryController::handleRequest
@@ -85,32 +71,53 @@ class AdminRepositoryDownloadController extends GalleryController {
 	} else if (isset($form['action']['download'])) {
 	    /* Create package list. */
 	    $packages = array();
-	    if (isset($form['upgradeBaseFiles'])) {
-		$packages['base'] = 'upgrade';
-	    } else if (isset($form['downloadBaseFiles'])) {
-		$packages['base'] = 'download';
+
+	    $utils = new GalleryRepositoryUtilities();
+	    list ($ret, $installedPackages) = $utils->getPluginPackages($pluginType, $pluginId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $baseSource = '';
+	    if (!empty($form['base'])) {
+		list($baseSource, $baseNewBuild) = explode(':', $form['base']);
+		if (empty($installedPackages['base']['build']) ||
+		    $installedPackages['base']['build'] != $baseNewBuild) {
+		    $packages[$baseSource][$pluginType][$pluginId]['base'] = 1;
+		}
 	    }
 
 	    if (isset($form['languages'])) {
 		foreach ($form['languages'] as $language) {
-		    $packages['lang-' . $language] = 1;
+		    list ($langSource, $langCode, $langNewVersion) = explode(':', $language);
+		    $langCode = 'lang-' . $langCode;
+		    if ($baseSource == $langSource &&
+			(empty($installedPackages[$langCode]['build']) ||
+			 $installedPackages[$langCode]['build'] != $langNewVersion)) {
+			$packages[$langSource][$pluginType][$pluginId][$langCode] = 1;
+		    }
 		}
 	    }
 
 	    /* Show error message if no packages have been selected for download. */
 	    if (empty($packages)) {
 		$delegate['view'] = 'core.SiteAdmin';
-		$delegate['subView'] = 'core.AdminRepository';
-		$error[] = 'form[packages][empty]';
+		$delegate['subView'] = 'core.AdminRepositoryDownload';
+		$error[] = 'form[error][nothingSelected]';
 
 		/* TODO: Do we need to put these vars back into the request? */
 		GalleryUtilities::putRequestVariable('pluginId', $pluginId);
 		GalleryUtilities::putRequestVariable('pluginType', $pluginType);
 	    } else {
+		list ($ret, $repositories) = GalleryRepository::getRepositories();
+		if ($ret) {
+		    return array(null, $ret);
+		}
+
 		$templateAdapter =& $gallery->getTemplateAdapter();
 		$templateAdapter->registerTrailerCallback(
 		    array($this, 'performDownloadAndInstallation'),
-		    array(array($pluginType => array($pluginId => $packages))));
+		    array($packages, $repositories));
 		$delegate['view'] = 'core.ProgressBar';
 	    }
 	}
@@ -138,23 +145,28 @@ class AdminRepositoryDownloadController extends GalleryController {
      * the exact tasks that were performed and any errors that were encountered.
      *
      * @param array $pluginData packages
+     * @param array an array of object GalleryRepository
      * @return object GalleryStatus a status code
      */
-    function performDownloadAndInstallation($pluginData) {
+    function performDownloadAndInstallation($pluginData, $repositories) {
 	global $gallery;
 	$templateAdapter =& $gallery->getTemplateAdapter();
 
-	$repository = $this->_getRepository();
-	$ret = $repository->init();
-	if ($ret) {
-	    return $ret;
-	}
-
 	/* Create download file list. */
-	list ($ret, $files) = $repository->getDownloadFileList($pluginData);
-	if ($ret) {
-	    $templateAdapter->errorProgressBar($ret);
-	    return $ret;
+	$sourcedFiles = array();
+	foreach ($pluginData as $source => $packages) {
+	    if (!isset($repositories[$source])) {
+		continue;
+	    }
+
+	    list ($ret, $tmp) = $repositories[$source]->getDownloadFileList($packages);
+	    if ($ret) {
+		$templateAdapter->errorProgressBar($ret);
+		return $ret;
+	    }
+	    $sourcedFiles[$source] = empty($sourcedFiles[$source])
+		? $tmp
+		: array_merge($sourcedFiles[$source], $tmp);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
@@ -164,121 +176,127 @@ class AdminRepositoryDownloadController extends GalleryController {
 
 	/* Download files. */
 	$titleText = $module->translate('Downloading Files');
-	foreach ($files as $pluginType => $plugins) {
-	    foreach ($plugins as $pluginId => $pluginDownloadData) {
-		$packageUrls = $pluginDownloadData['files'];
-		$pluginName = $pluginDownloadData['name'];
+	foreach ($sourcedFiles as $source => $files) {
+	    $repository = $repositories[$source];
 
-		/* Set up progress bar variables. */
-		$currentUrlIndex = 1;
-		$totalUrls = count($packageUrls);
+	    foreach ($files as $pluginType => $plugins) {
+		foreach ($plugins as $pluginId => $pluginDownloadData) {
+		    $packageUrls = $pluginDownloadData['files'];
+		    $pluginName = $pluginDownloadData['name'];
 
-		foreach ($packageUrls as $packageName => $relativePackageUrl) {
-		    $ret = $templateAdapter->updateProgressBar($titleText,
-			sprintf($module->translate('Downloading %s'), $pluginName),
+		    /* Set up progress bar variables. */
+		    $currentUrlIndex = 1;
+		    $totalUrls = count($packageUrls);
+
+		    foreach ($packageUrls as $packageName => $relativePackageUrl) {
+			$ret = $templateAdapter->updateProgressBar(
+			    $titleText,
+			    sprintf($module->translate('Downloading %s'), $pluginName),
+			    $currentUrlIndex / $totalUrls);
+			if ($ret) {
+			    $templateAdapter->errorProgressBar($ret);
+			    return $ret;
+			}
+			$currentUrlIndex++;
+
+			/* Download and unpack package. */
+			list ($ret, $pluginDescriptor) = $repository->downloadAndUnpack(
+			    $pluginType, $pluginId, $packageName, $relativePackageUrl);
+			if ($ret) {
+			    $templateAdapter->errorProgressBar($ret);
+			    return $ret;
+			}
+
+			if (!empty($pluginDescriptor)) {
+			    /* Save current package's descriptor. */
+			    $descriptor = $pluginDescriptor;
+			} else {
+			    /* Sanity check. */
+			    if (empty($descriptor)) {
+				$ret = GalleryCoreApi::error(
+				    ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+				    'Descriptor must not be empty.');
+				$templateAdapter->errorProgressBar($ret);
+				return $ret;
+			    }
+
+			    /* Check the unpacked files' integrity. */
+			    $ret = $repository->verifyPackageIntegrity($packageName, $descriptor);
+			    if ($ret) {
+				$templateAdapter->errorProgressBar($ret);
+				return $ret;
+			    }
+
+			    /* Update plugin package map. */
+			    list ($ret, $version, $build) = $repository->getPackageVersionAndBuild(
+				$pluginType, $pluginId, $packageName);
+			    if ($ret) {
+				$templateAdapter->errorProgressBar($ret);
+				return $ret;
+			    }
+			    $ret = $repository->updatePackageMetaData(
+				$pluginType, $pluginId, $packageName, $version, $build);
+			    if ($ret) {
+				$templateAdapter->errorProgressBar($ret);
+				return $ret;
+			    }
+			}
+		    }
+
+		    /*
+		     * Our plugin status caches are no longer valid because we've just installed
+		     * some new code.  Load the status and ignore the cache which forces a cache
+		     * update.  @todo: add a real cache flushing method in the api instead
+		     */
+		    list ($ret, $status) = GalleryCoreApi::fetchPluginStatus($pluginType, true);
+		    if ($ret) {
+			$templateAdapter->errorProgressBar($ret);
+			return $ret;
+		    }
+
+		    /*********************************************************
+		     * This next block is duplicated in PluginCallback.
+		     * @todo: Refactor this code duplication away
+		     */
+
+		    $ret = $templateAdapter->updateProgressBar(
+			$titleText, sprintf($module->translate('Activating %s'), $pluginName),
 			$currentUrlIndex / $totalUrls);
-		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
-			return $ret;
-		    }
-		    $currentUrlIndex++;
 
-		    /* Download and unpack package. */
-		    list ($ret, $pluginDescriptor) = $repository->downloadAndUnpack(
-			$pluginType, $pluginId, $packageName, $relativePackageUrl);
+		    list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
 		    if ($ret) {
 			$templateAdapter->errorProgressBar($ret);
 			return $ret;
 		    }
 
-		    if (!empty($pluginDescriptor)) {
-			/* Save current package's descriptor. */
-			$descriptor = $pluginDescriptor;
+		    $ret = $plugin->installOrUpgrade();
+		    if ($ret) {
+			$templateAdapter->errorProgressBar($ret);
+			return $ret;
+		    }
+
+		    if ($pluginType == 'module') {
+			list ($ret, $autoConfigured) = $plugin->autoConfigure();
+			if ($ret) {
+			    $templateAdapter->errorProgressBar($ret);
+			    return $ret;
+			}
 		    } else {
-			/* Sanity check. */
-			if (empty($descriptor)) {
-			    $ret = GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-							'Descriptor must not be empty.');
-			    $templateAdapter->errorProgressBar($ret);
-			    return $ret;
-			}
+			/* Themes don't need this step */
+			$autoConfigured = true;
+		    }
 
-			/* Check the unpacked files' integrity. */
-			$ret = $repository->verifyPackageIntegrity($packageName, $descriptor);
+		    if ($autoConfigured) {
+			list ($ret, $redirect) = $plugin->activate();
 			if ($ret) {
 			    $templateAdapter->errorProgressBar($ret);
 			    return $ret;
 			}
-
-			/* Update plugin package map. */
-			list ($ret, $version, $build) = $repository->getPackageVersionAndBuild(
-			    $pluginType, $pluginId, $packageName);
-			if ($ret) {
-			    $templateAdapter->errorProgressBar($ret);
-			    return $ret;
-			}
-			$ret = $repository->updatePackageMetaData(
-			    $pluginType, $pluginId, $packageName, $version, $build);
-			if ($ret) {
-			    $templateAdapter->errorProgressBar($ret);
-			    return $ret;
-			}
+			/* Ignore the redirect */
 		    }
+
+		    /*********************************************************/
 		}
-
-		/*
-		 * Our plugin status caches are no longer valid because we've just installed some
-		 * new code.  Load the status and ignore the cache which forces a cache update.
-		 * @todo: add a real cache flushing method in the api instead
-		 */
-		list ($ret, $status) = GalleryCoreApi::fetchPluginStatus($pluginType, true);
-		if ($ret) {
-		    $templateAdapter->errorProgressBar($ret);
-		    return $ret;
-		}
-
-		/*
-		 * This next block is duplicated in PluginCallback.
-		 * @todo: Refactor this code duplication away
-		 */
-
-		$ret = $templateAdapter->updateProgressBar(
-		    $titleText, sprintf($module->translate('Activating %s'), $pluginName),
-		    $currentUrlIndex / $totalUrls);
-
-		list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
-		if ($ret) {
-		    $templateAdapter->errorProgressBar($ret);
-		    return $ret;
-		}
-
-		$ret = $plugin->installOrUpgrade();
-		if ($ret) {
-		    $templateAdapter->errorProgressBar($ret);
-		    return $ret;
-		}
-
-		if ($pluginType == 'module') {
-		    list ($ret, $autoConfigured) = $plugin->autoConfigure();
-		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
-			return $ret;
-		    }
-		} else {
-		    /* Themes don't need this step */
-		    $autoConfigured = true;
-		}
-
-		if ($autoConfigured) {
-		    list ($ret, $redirect) = $plugin->activate();
-		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
-			return $ret;
-		    }
-		    /* Ignore the redirect */
-		}
-
-		/*********************************************************/
 	    }
 	}
 
@@ -308,21 +326,6 @@ class AdminRepositoryDownloadController extends GalleryController {
 class AdminRepositoryDownloadView extends GalleryView {
 
     /**
-     * Repository.
-     *
-     * @var object GalleryRepository
-     * @access private
-     */
-    var $_repository;
-
-    function _getRepository() {
-	if (!isset($this->_repository)) {
-	    $this->_repository = new GalleryRepository();
-	}
-	return $this->_repository;
-    }
-
-    /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
@@ -333,66 +336,103 @@ class AdminRepositoryDownloadView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	/* Init repository. */
-	$repository = $this->_getRepository();
-	$ret = $repository->init();
-	if ($ret) {
-	    return array($ret, null);
+	if ($form['formName'] != 'AdminRepositoryDownload') {
+	    $form['formName'] = 'AdminRepositoryDownload';
 	}
 
-	$localIndexExists = $repository->localIndexExists();
-	if (!$localIndexExists) {
-	    /* Make sure the plugins directory is properly set up. */
-	    list ($isSetUp, $errorMessage) = GalleryRepository::createPluginsDirectory();
-	    if (!$isSetUp) {
-		$platform =& $gallery->getPlatform();
-
-		$redirect['view'] = 'core.SiteAdmin';
-		$redirect['subView'] = 'core.AdminRepositorySetup';
-		$template->setVariable('galleryBaseDirectory',
-		    $platform->realpath(dirname(__FILE__) . '/../..'));
-		$template->setVariable('errorMessage', $errorMessage);
-
-		return array(null,
-			     array('body' => 'modules/core/templates/AdminRepositorySetup.tpl'));
-	    }
+	/* Init repository. */
+	list ($ret, $repositories) = GalleryRepository::getRepositories();
+	if ($ret) {
+	    return array($ret, null);
 	}
 
 	list ($pluginType, $pluginId) =
 	    GalleryUtilities::getRequestVariables('pluginType', 'pluginId');
 
-	/* Plugin download options. */
-	if (!$repository->pluginExistsInIndex($pluginType, $pluginId)) {
-	    return array(
-		GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-				      "Plugin not found in index [$pluginId] [$pluginType]"),
-			 null);
-	}
-
-	/*
-	 * Downloading and upgrading plugins are functionally equivalent,
-	 * we just adapt the UI a little.
-	 */
-	list ($ret, $upgradeData) = $repository->getPluginUpgradeInfo($pluginType, $pluginId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	list ($ret, $pluginName) = $repository->getPluginName($pluginType, $pluginId);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	$AdminRepositoryDownload = array(
-	    'pluginName' => $pluginName,
-	    'upgradeData' => $upgradeData,
 	    'pluginId' => $pluginId,
 	    'pluginType' => $pluginType);
 
+	$utils = new GalleryRepositoryUtilities();
+	list ($ret, $pluginPackages) = $utils->getPluginPackages($pluginType, $pluginId);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	foreach (array_keys($pluginPackages) as $code) {
+	    if (strpos($code, 'lang-') !== false) {
+		$AdminRepositoryDownload['installedLanguages'][substr($code, 5)] = 1;
+	    }
+	}
+
+	foreach ($repositories as $source => $repository) {
+	    if (!$repository->pluginExistsInIndex($pluginType, $pluginId)) {
+		continue;
+	    }
+
+	    /* Downloading and upgrading plugins are only different in the UI */
+	    list ($ret, $upgradeData) = $repository->getPluginUpgradeInfo($pluginType, $pluginId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    list ($ret, $upgradeData['pluginName']) =
+		$repository->getPluginName($pluginType, $pluginId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $upgradeData['languageCount'] = count($upgradeData['languages']);
+	    $upgradeData['repository'] = $source;
+	    list ($ret, $upgradeData['repositoryName']) =
+		GalleryRepository::translateRepositoryName($source);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $AdminRepositoryDownload['upgradeData'][] = $upgradeData;
+
+	    if (empty($AdminRepositoryDownload['pluginName'])) {
+		$AdminRepositoryDownload['pluginName'] = $upgradeData['pluginName'];
+	    }
+	}
+	usort($AdminRepositoryDownload['upgradeData'], array($this, 'versionComparator'));
+
+	if (!empty($AdminRepositoryDownload['upgradeData'][0]['base']['currentVersion'])) {
+	    for ($i = 0; $i < count($AdminRepositoryDownload['upgradeData']); $i++) {
+		if ($AdminRepositoryDownload['upgradeData'][$i]['base']['relation'] == 'equal') {
+		    break;
+		}
+		if ($AdminRepositoryDownload['upgradeData'][$i]['base']['relation'] == 'older') {
+		    $newEntry['pluginName'] = $AdminRepositoryDownload['pluginName'];
+		    $newEntry['base'] = array(
+			'newVersion' => $pluginPackages['base']['version'],
+			'newBuild' => $pluginPackages['base']['build'],
+			'currentVersion' => $pluginPackages['base']['version'],
+			'currentBuild' => $pluginPackages['base']['build'],
+			'relation' => 'equal');
+		    $newEntry['repository'] = 'installed';
+		    $newEntry['languages'] = array();
+		    $newEntry['languageCount'] = 0;
+		    array_splice($AdminRepositoryDownload['upgradeData'], $i, 0, array($newEntry));
+		    break;
+		}
+	    }
+	}
+
 	$template->setVariable('AdminRepositoryDownload', $AdminRepositoryDownload);
 	$template->setVariable('controller', 'core.AdminRepositoryDownload');
+	$template->javascript('modules/core/templates/AdminRepositoryDownload.js');
 
 	return array(null, array('body' => 'modules/core/templates/AdminRepositoryDownload.tpl'));
+    }
+
+    function versionComparator($a, $b) {
+	$result = version_compare($a['base']['newVersion'], $b['base']['newVersion']);
+	if (!$result) {
+	    $result = version_compare($a['base']['newBuild'], $b['base']['newBuild']);
+	}
+	return $result;
     }
 }
 ?>

@@ -54,10 +54,6 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	$mockAdapter = new MockTemplateAdapter();
 	$gallery->_templateAdapter =& $mockAdapter;
 
-	$repository = new AdminRepositoryControllerTestRepository();
-	$repository->setReply('init', array(), null);
-	$this->_controller->_repository = $repository;
-
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.ProgressBar'),
 				  'status' => array(),
@@ -68,10 +64,43 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(1, $mockAdapter->getCallbackCount());
 
 	$callback = $mockAdapter->getCallback(0);
-	$this->assertEquals(array($this->_controller, 'updatePluginStatus'),
-			    $callback[0]);
+	$this->assertEquals(array($this->_controller, 'updatePluginStatus'), $callback[0]);
+    }
 
-	$this->assert($repository->isComplete(), $repository->getRemaining());
+    function testSaveRepositories() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('form[repositories][released]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[repositories][experimental]', '<script>something malicious</script>');
+	GalleryUtilities::putRequestVariable('form[repositories][experimental]', 'experimental');
+	GalleryUtilities::putRequestVariable('form[repositories][community]', 'checked');
+	GalleryUtilities::putRequestVariable('form[repositories][something_else]', 1);
+	GalleryUtilities::putRequestVariable('form[action][update]', 1);
+
+	$this->_markPluginParametersForCleanup('module', 'core');
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'core.repositories', serialize(array()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.ProgressBar'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $data) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'core.repositories');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('released' => 1, 'community' => 1, 'experimental' => 1),
+			    unserialize($data));
     }
 
     function testUpdatePluginStatus() {
@@ -86,26 +115,26 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	$repository->setReply('scanPlugin', array('module', 'module2'), null);
 	$repository->setReply('scanPlugin', array('theme', 'theme1'), null);
 	$repository->setReply('scanPlugin', array('theme', 'theme2'), null);
-	$this->_controller->_repository = $repository;
 
 	$mockUrlGenerator = new AdminRepositoryControllerTestUrlGenerator();
 	$gallery->_urlGenerator =& $mockUrlGenerator;
 
 	$ret = $this->_controller->updatePluginStatus(
-	    $repository,
 	    array('module' => array(
 		      'module1' => array('active' => true, 'available' => true),
 		      'module2' => array('active' => true, 'available' => true)),
 		  'theme' => array(
 		      'theme1' => array('active' => true, 'available' => true),
-		      'theme2' => array('active' => true, 'available' => true))));
+		      'theme2' => array('active' => true, 'available' => true))),
+	    array('test' => $repository));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
 	/* Assert that we saw what we expected */
 	$this->assertEquals(
-	    array(0, 0.1 /* downloadIndex */, 0.33, 0.55, 0.78, 1.0 /* 4 steps for the plugins */,
+	    array('0', '0.56' /* index downloads have a higher weight */,
+		  '0.67', '0.78', '0.89', '1.0' /* 4 steps for the plugins */,
 		  'complete:view=core.SiteAdmin,subView=core.AdminRepository,statusId=STATUSID'),
 	    $mockAdapter->getProgressBarDump());
 
@@ -116,9 +145,8 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][upgradeAll]', 1);
 
 	$repository = new AdminRepositoryControllerTestRepository();
-	$repository->setReply('init', array(), null);
 	$repository->setReply('getAllUpgradeablePackages', array(), array(null, array()));
-	$this->_controller->_repository = $repository;
+	$this->_controller->_repositories['test'] = $repository;
 
 	/* Test case when no upgradeable packages exist. */
 	$results = $this->handleRequest();
@@ -136,9 +164,8 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	    'module' => array('testModule' => array('package1' => 1, 'lang-en_US' => 1)));
 
 	$repository = new AdminRepositoryControllerTestRepository();
-	$repository->setReply('init', array(), null);
 	$repository->setReply('getAllUpgradeablePackages', array(), array(null, $packages));
-	$this->_controller->_repository = $repository;
+	$this->_controller->_repositories['test'] = $repository;
 
 	/* Test case when some packages are upgradeable. */
 	$results = $this->handleRequest();

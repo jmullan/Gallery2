@@ -332,7 +332,7 @@ class GalleryRepositoryUtilities {
      *		     string version
      */
     function getPluginVersion($pluginType, $pluginId) {
-	list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId);
+	list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
 	if ($ret) {
 	    return array($ret, null);
 	}

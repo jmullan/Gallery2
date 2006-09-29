@@ -46,7 +46,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	include(dirname(__FILE__) . '/../../../../lib/tools/repository/test/data/SampleIndex.inc');
 	$this->_sampleIndex = $sampleIndex;
 
-	$this->_index = new GalleryRepositoryIndex();
+	$this->_index = new GalleryRepositoryIndex('test');
 	$this->_index->_index = $this->_sampleIndex;
 	$this->_index->_isLoaded = true;
 
@@ -191,14 +191,27 @@ class RepositoryIndexTest extends GalleryTestCase {
 	/* Prepare mock objects. */
 	$serializedSampleIndex = serialize($this->_sampleIndex);
 	$this->_index->_utilities = new RepositoryIndexTestUtilities(
-	    array('http://example.com/repository/index' => $serializedSampleIndex,
-		  'http://example.com/repository/index.hash' => md5($serializedSampleIndex)));
+	    array('http://example.com/repository/test/index' => $serializedSampleIndex,
+		  'http://example.com/repository/test/index.hash' => md5($serializedSampleIndex)));
 
 	$gallery->_phpVm = new RepositoryIndexMockPhpVm(false);
 
 	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists',
+			    array($this->_index->getRepositoryCacheDir() . 'modules'),
+			    true);
+	$platform->setReply('is_dir',
+			    array($this->_index->getRepositoryCacheDir() . 'modules'),
+			    true);
+	$platform->setReply('file_exists',
+			    array($this->_index->getRepositoryCacheDir() . 'themes'),
+			    true);
+	$platform->setReply('is_dir',
+			    array($this->_index->getRepositoryCacheDir() . 'themes'),
+			    true);
 	$platform->setReply('file_put_contents',
-			    array($this->_index->getLocalPath(), $serializedSampleIndex), true);
+			    array($this->_index->getRepositoryCacheDir() . 'index.repository',
+				  $serializedSampleIndex), true);
 	$gallery->setPlatform($platform);
 
 	/* Perform update and verify that the sample index has been loaded. */
@@ -272,7 +285,10 @@ class RepositoryIndexTest extends GalleryTestCase {
 	global $gallery;
 
 	$platform = new UnitTestPlatform();
-	$platform->setReply('file_exists', array($this->_index->getLocalPath()), false);
+	$platform->setReply(
+	    'file_exists',
+	    array($this->_index->getRepositoryCacheDir() . 'index.repository'),
+	    false);
 	$gallery->setPlatform($platform);
 
 	$this->assert(false === $this->_index->existsInCache());
@@ -285,7 +301,9 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->_index->_isLoaded = false;
 
 	$platform = new UnitTestPlatform();
-	$platform->setReply('file_get_contents', array($this->_index->getLocalPath()),
+	$platform->setReply(
+	    'file_get_contents',
+	    array($this->_index->getRepositoryCacheDir() . 'index.repository'),
 	    serialize($this->_sampleIndex));
 	$gallery->setPlatform($platform);
 

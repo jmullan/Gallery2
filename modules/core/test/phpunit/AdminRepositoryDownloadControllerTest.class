@@ -68,9 +68,9 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('form[pluginType]', 'module');
 	GalleryUtilities::putRequestVariable('form[pluginId]', 'testModule');
-	GalleryUtilities::putRequestVariable('form[upgradeBaseFiles]', 1);
-	GalleryUtilities::putRequestVariable('form[languages]', array('en_US', 'hu_HU'));
-	GalleryUtilities::putRequestVariable('form[downloadTest]', 1);
+	GalleryUtilities::putRequestVariable('form[base]', 'test:1000');
+	GalleryUtilities::putRequestVariable(
+	    'form[languages]', array('test:en_US:1000', 'test:hu_HU:1000'));
 	GalleryUtilities::putRequestVariable('form[action][download]', '1');
 
 	$mockAdapter = new MockTemplateAdapter();
@@ -84,15 +84,19 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(1, $mockAdapter->getCallbackCount());
 	$callback = $mockAdapter->getCallback(0);
+
 	$this->assertEquals(
-	    array(
-		array($this->_controller, 'performDownloadAndInstallation'),
-		array(array('module' => array(
-				'testModule' => array(
-				    'base' => 'upgrade',
-				    'lang-en_US' => 1,
-				    'lang-hu_HU' => 1))))),
-	    $callback);
+	    array($this->_controller, 'performDownloadAndInstallation'),
+	    $callback[0]);
+
+	$this->assertEquals(
+	    array('test' => array(
+		      'module' => array(
+			  'testModule' => array(
+			      'base' => 1,
+			      'lang-en_US' => 1,
+			      'lang-hu_HU' => 1)))),
+	    $callback[1][0]);
     }
 
     function testPerformDownloadAndInstallation() {
@@ -111,16 +115,15 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$gallery->_urlGenerator =& $mockUrlGenerator;
 
 	$expectedPluginData = array('module' => array($testModule => array(
-	    'base' => 'upgrade', 'lang-en_US' => 1, 'lang-hu_HU' => 1)));
+            'base' => 1, 'lang-en_US' => 1, 'lang-hu_HU' => 1)));
 
-	$pluginDownloadFileList = array('module' =>  array($testModule => array(
+	$pluginDownloadFileList = array('module' => array($testModule => array(
 	    'name' => 'Test Module',
 	    'files' => array('descriptor' => 'testModule-descriptor',
 			     'lang-en_US' => 'en_US-package',
 			     'lang-hu_HU' => 'hu_HU-package'))));
 
 	$repository = new AdminRepositoryDownloadControllerTestRepository();
-	$repository->setReply('init', array(), null);
 	$repository->setReply('getDownloadFileList',
 			      array($expectedPluginData),
 			      array(null, $pluginDownloadFileList));
@@ -156,21 +159,20 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 			      array('module', $testModule, 'lang-hu_HU',
 				    'hu_HU-version', 'hu_HU-build'),
 			      null);
-	$this->_controller->_repository = $repository;
 
 	$ret = $this->_controller->performDownloadAndInstallation(
-	    array('module' => array(
-		      $testModule => array(
-			  'base' => 'upgrade',
-			  'lang-en_US' => 1,
-			  'lang-hu_HU' => 1))));
+	    array('test' =>
+		  array('module' => array(
+			    $testModule => array(
+				'base' => 1,
+				'lang-en_US' => 1,
+				'lang-hu_HU' => 1)))),
+	    array('test' => $repository));
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$this->assert($this->_controller->_repository->isComplete(),
-		      $this->_controller->_repository->getRemaining());
-
+	$this->assert($repository->isComplete(), $repository->getRemaining());
 	$this->assertEquals(array('installOrUpgrade' => 1,
 				  'autoConfigure' => 1,
 				  'activate' => 1),
@@ -210,8 +212,10 @@ class AdminRepositoryDownloadControllerTestRepository {
     }
 
     function getRemaining() {
-	return 'Error count: ' . $_GET['TestRepository']['errorCount'] . "\nRemaining requests: "
-	     . print_r($_GET['TestRepository']['replies'], true);
+	return 'Error count: ' . $_GET['TestRepository']['errorCount']
+	    . "\nRemaining requests: <pre>"
+	    . print_r($_GET['TestRepository']['replies'], true)
+	    . "</pre>";
     }
 
     function _makeReply($function, $request) {

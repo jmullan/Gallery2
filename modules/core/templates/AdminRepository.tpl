@@ -10,7 +10,9 @@
 
 {if !empty($status.error)}
 <div class="gbBlock"><h2 class="giError">
-  {$status.error}
+  {foreach from=$status.error item=error}
+  {$error}<br/>
+  {/foreach}
   {g->text text="Please make sure that your internet connection is set up properly or try again later."}
 </h2></div>
 {/if}
@@ -38,11 +40,68 @@
 </div>
 
 <div class="gbBlock">
-  <h3>{g->text text="Get More Plugins"}</h3>
   <p class="giDescription">
     {capture name="noPersonalInfoTransmitted"}<b>{g->text text="No personal information about you or your Gallery installation is sent to the Gallery server at any time."}</b>{/capture}
-    {g->text text="The Gallery Plugin Repository contains the latest modules and themes provided by the Gallery team.  You can download and install new plugins to try them out, then delete them if you don't like them.  You must periodically download a new plugin list from the Gallery server to find out about any available updates. %s On slower connections the process might take a minute or two." arg1=$smarty.capture.noPersonalInfoTransmitted}
+    {g->text text="Download and install new plugins quickly and easily.  If you decide you don't like a plugin, you can delete it from your Gallery.  There are multiple different plugin repositories, you can choose which ones you want to use (it's ok to use all of them at once).  Once you've chosen, you must periodically download the latest plugin list to find out about available updates. %s On slower connections the process might take a minute or two." arg1=$smarty.capture.noPersonalInfoTransmitted}
   </p>
+
+  <div id="AdminRepository_Configure" style="height: 0px; opacity: 0; overflow: hidden;">
+    <input id="repositories_released" type="checkbox" name="{g->formVar var="form[repositories][released]"}" {if !empty($form.repositories.released)}checked="checked"{/if}  value="released">
+    <label for="repositories_released">
+    {g->text text="Officially Released Gallery Project plugins (%srecommended%s)" arg1="<b>" arg2="</b>"}
+    {if !empty($AdminRepository.indexMetaData.released.timestamp)}
+    {capture assign="updateDate"}{g->date style="datetime" timestamp=$AdminRepository.indexMetaData.released.timestamp}{/capture}
+    <i>{g->text text="last updated on %s" arg1=$updateDate}</i>
+    {/if}
+    </label>
+    </input>
+    <br/>
+
+    <input id="repositories_experimental" type="checkbox" name="{g->formVar var="form[repositories][experimental]"}" {if !empty($form.repositories.experimental)}checked="checked"{/if}  value="experimental">
+    <label for="repositories_experimental">
+    {g->text text="Experimental Gallery Project plugins (%scool new features, might be buggy%s)" arg1="<b>" arg2="</b>"}
+    {if !empty($AdminRepository.indexMetaData.experimental.timestamp)}
+    {capture assign="updateDate"}{g->date style="datetime" timestamp=$AdminRepository.indexMetaData.experimental.timestamp}{/capture}
+    <i>{g->text text="last updated on %s" arg1=$updateDate}</i>
+    {/if}
+    </label>
+    </input>
+    <br/>
+
+    <input id="repositories_community" type="checkbox" name="{g->formVar var="form[repositories][community]"}" {if !empty($form.repositories.community)}checked="checked"{/if}  value="community">
+    <label for="repositories_community">
+    {g->text text="Community plugins (%suse at your own risk!%s)" arg1="<b>" arg2="</b>"}
+    {if !empty($AdminRepository.indexMetaData.community.timestamp)}
+    {capture assign="updateDate"}{g->date style="datetime" timestamp=$AdminRepository.indexMetaData.community.timestamp}{/capture}
+    <i>{g->text text="last updated on %s" arg1=$updateDate}</i>
+    {/if}
+    </label>
+    </input>
+    <br/>
+
+  </div>
+  {literal}
+  <script type="text/javascript">
+    function hideRepositoryList() {
+      document.getElementById('AdminRepository_showRepositoryList').style.display = 'inline';
+      document.getElementById('AdminRepository_hideRepositoryList').style.display = 'none';
+      var myAnim = new YAHOO.util.Anim(
+	  'AdminRepository_Configure', { opacity: { to: 0.0 }, height: { to: 0 } }, 1,
+	  YAHOO.util.Easing.easeOut);
+      myAnim.animate();
+    }
+
+    function showRepositoryList() {
+      document.getElementById('AdminRepository_showRepositoryList').style.display = 'none';
+      document.getElementById('AdminRepository_hideRepositoryList').style.display = 'inline';
+      document.getElementById('AdminRepository_Configure').style.height = 'auto';
+      var myAnim = new YAHOO.util.Anim(
+	  'AdminRepository_Configure', { opacity: { to: 1.0 } }, 1,
+	  YAHOO.util.Easing.easeOut);
+      myAnim.animate();
+    }
+  </script>
+  {/literal}
 </div>
 
 {if !$AdminRepository.writeable.modules || !$AdminRepository.writeable.themes}
@@ -62,16 +121,16 @@
     {g->text text="If you have trouble changing permissions, ask your system administrator for assistance.  When you've fixed the permissions, click the Continue button to proceed."}
   </p>
 </div>
+
 <div class="gbBlock gcBackground1">
   <input class="inputTypeSubmit" type="button" onclick="document.location='{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminRepository"}'" value="{g->text text="Continue"}" />
 </div>
 {else}
+
 <div class="gbBlock gcBackground1">
+  <input id="AdminRepository_showRepositoryList" type="button" class="inputTypeSubmit" onclick="showRepositoryList()" value="{g->text text="Show Repository List"}"/>
+  <input id="AdminRepository_hideRepositoryList" type="button" style="display: none"; class="inputTypeSubmit" onclick="hideRepositoryList()" value="{g->text text="Hide Repository List"}"/>
   <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][update]"}" value="{if isset($AdminRepository.indexMetaData)}{g->text text="Update Plugin List"}{else}{g->text text="Download Plugin List"}{/if}"/>
-  {if isset($AdminRepository.indexMetaData)}
-  {capture assign="updateDate"}{g->date style="datetime" timestamp=$AdminRepository.indexMetaData.timestamp}{/capture}
-  {g->text text="(last updated: %s)" arg1=$updateDate}
-  {/if}
 </div>
 
 {if isset($AdminRepository.indexMetaData)}

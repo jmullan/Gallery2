@@ -44,6 +44,13 @@ class GalleryRepositoryIndex {
     var $_index;
 
     /**
+     * The source of this index (released, experimental, community)
+     * @var string
+     * @access private
+     */
+    var $_source;
+
+    /**
      * Repository utilities.
      * @var object GalleryRepositoryUtilities
      * @access private
@@ -51,8 +58,9 @@ class GalleryRepositoryIndex {
     var $_utilities;
 
 
-    function GalleryRepositoryIndex() {
+    function GalleryRepositoryIndex($source) {
 	$this->_utilities = new GalleryRepositoryUtilities();
+	$this->_source = $source;
     }
 
     /**
@@ -62,9 +70,18 @@ class GalleryRepositoryIndex {
      */
     function update() {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
-	$indexUrl = $gallery->getConfig('repository.url') . 'index';
+	$indexUrl = $gallery->getConfig('repository.url') . $this->_source . '/index';
 	$indexHashUrl = $indexUrl . '.hash';
+
+	$path = $this->getRepositoryCacheDir();
+	list ($success1, $ignored) = GalleryUtilities::guaranteeDirExists($path . 'modules');
+	list ($success2, $ignored) = GalleryUtilities::guaranteeDirExists($path . 'themes');
+	if (!$success1 || !$success2) {
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, null, null,
+					 'Unable to create repository cached paths');
+	}
 
 	list ($ret, $indexContents) = $this->_getPossiblyCompressedIndexContents($indexUrl);
 	if ($ret) {
@@ -84,8 +101,7 @@ class GalleryRepositoryIndex {
 	}
 
 	/* Write index to the filesystem. */
-	$indexPath = $this->getLocalPath();
-	$platform =& $gallery->getPlatform();
+	$indexPath = $this->getRepositoryCacheDir() . 'index.repository';
 	if (false === $platform->file_put_contents($indexPath, $indexContents)) {
 	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					'Error writing index to the filesystem.');
@@ -173,7 +189,7 @@ class GalleryRepositoryIndex {
     function existsInCache() {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
-	return $platform->file_exists($this->getLocalPath());
+	return $platform->file_exists($this->getRepositoryCacheDir() . 'index.repository');
     }
 
     /**
@@ -184,9 +200,10 @@ class GalleryRepositoryIndex {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	if (false === ($index = $platform->file_get_contents($this->getLocalPath()))) {
+	$indexPath = $this->getRepositoryCacheDir() . 'index.repository';
+	if (false === ($index = $platform->file_get_contents($indexPath))) {
 	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
-					'Error reading index [%s]', $this->getLocalPath()));
+					     'Error reading index [%s]', $indexPath));
 	}
 
 	$ret = $this->unserializeIndex($index);
@@ -236,9 +253,6 @@ class GalleryRepositoryIndex {
     /**
      * Returns available languages for the specified plugin.
      *
-     * Only the languages for the currently installed strings.raw revision are returned, along
-     * with the latest revision number of each language.
-     *
      * @param string $pluginType
      * @param string $pluginId
      * @return array object GalleryStatus a status code
@@ -257,26 +271,13 @@ class GalleryRepositoryIndex {
 	}
 
 	/*
-	 * If the plugin is locally available get the strings.raw revision from the filesystem or
-	 * database, if it's not, get the latest revision from the repository.
+	 * Return the latest set of translations from the repository. However, since we know the
+	 * revision of the strings.raw file we could in the future check to make sure that the
+	 * language packs are going to be compatible.  We used to do this, but it was deemed too
+	 * complex so it got axed.
 	 */
-	if ($isAvailable) {
-	    list ($ret, $revision) =
-		$this->_utilities->getLanguageBaseRevision($pluginType, $pluginId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	} else {
-	    $revision = $this->_index[$pluginType . 's'][$pluginId]['header']['stringsRevision'];
-	}
-
-	if (isset($this->_index[$pluginType . 's'][$pluginId]['languages'][$revision])) {
-	    $languages = $this->_index[$pluginType . 's'][$pluginId]['languages'][$revision];
-	} else {
-	    $languages = array();
-	}
-
-	return array(null, $languages);
+	$revision = $this->_index[$pluginType . 's'][$pluginId]['header']['stringsRevision'];
+	return array(null, $this->_index[$pluginType . 's'][$pluginId]['languages'][$revision]);
     }
 
     /**
@@ -406,29 +407,14 @@ class GalleryRepositoryIndex {
 	}
 
 	if (preg_match('/^lang-(.*)$/', $package, $languageCode)) {
-	    list ($ret, $isAvailable) =
-		$this->_utilities->isPluginAvailable($pluginType, $pluginId);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $languageCode = $languageCode[1];
+	    /*
+	     * At some future date we may have more than one set of revisions in an index, at
+	     * which point we could return the set of languages that match what we have installed,
+	     * instead of just returning the latest version from the repository.
+	     */
 	    $languages = $this->_index[$pluginType . 's'][$pluginId]['languages'];
-
-	    if ($isAvailable) {
-		/* Get local strings revision. */
-		list ($ret, $baseRevision) =
-		    $this->_utilities->getLanguageBaseRevision($pluginType, $pluginId);
-		if ($ret) {
-		    return array($ret, null, null);
-		}
-	    } else {
-		/* Get strings revision from index, since this plugin isn't locally available. */
-		$baseRevision = $header['stringsRevision'];
-	    }
-	    $languageRevision = $languages[$baseRevision][$languageCode];
-
-	    $version = $baseRevision;
-	    $build = $languageRevision;
+	    $version = $header['stringsRevision'];
+	    $build = $languages[$header['stringsRevision']][$languageCode[1]];
 	} else {
 	    $version = $header['version'];
 	    $build = $header['buildTimestamp'];
@@ -498,12 +484,12 @@ class GalleryRepositoryIndex {
     }
 
     /**
-     * Returns the path of the local index file.
+     * Returns the path of the local repository cache
      * @return string index path
      */
-    function getLocalPath() {
+    function getRepositoryCacheDir() {
 	global $gallery;
-	return $gallery->getConfig('repository.cache') . 'index.repository';
+	return $gallery->getConfig('repository.cache') . $this->_source . '/';
     }
 }
 ?>

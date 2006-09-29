@@ -44,14 +44,46 @@ class GalleryRepository {
      */
     var $_index;
 
+    /**
+     * The source of this index (released, experimental, community)
+     * @var string
+     * @access private
+     */
+    var $_source;
+
+    /**
+     * Return a set of all the repositories that are currently active.
+     *
+     * @return array (repository name => object GalleryRepository the repository, ...)
+     * @static
+     */
+    function getRepositories() {
+	list ($ret, $sources) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'core.repositories');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$repositories = array();
+	foreach (array_keys(unserialize($sources)) as $source) {
+	    $repositories[$source] = new GalleryRepository();
+	    $ret = $repositories[$source]->init($source);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	return array(null, $repositories);
+    }
 
     /**
      * Initializes the repository index and utilities.
      *
      * @return GalleryStatus a status code
      */
-    function init() {
-	$this->_index = new GalleryRepositoryIndex();
+    function init($source) {
+	$this->_source = $source;
+	$this->_index = new GalleryRepositoryIndex($source);
 	$this->_utilities = new GalleryRepositoryUtilities();
 
 	if ($this->_index->existsInCache()) {
@@ -131,6 +163,7 @@ class GalleryRepository {
 	$repositoryDataVersion = $header['version'];
 	$repositoryDataBuild = $header['buildTimestamp'];
 	$upgradeInfo['base']['newVersion'] = $repositoryDataVersion;
+	$upgradeInfo['base']['newBuild'] = $repositoryDataBuild;
 
 	/* Check if this plugin's base files are installed. */
 	if (isset($installedPackages['base'])) {
@@ -152,6 +185,7 @@ class GalleryRepository {
 	    $upgradeInfo['upgradeable'] = 1;
 	}
 	$upgradeInfo['base']['currentVersion'] = $dataVersion;
+	$upgradeInfo['base']['currentBuild'] = $dataBuild;
 
 	/* Check if any languages have been updated. */
 	list ($ret, $languages) =
@@ -160,6 +194,7 @@ class GalleryRepository {
 	    return array($ret, null);
 	}
 
+	$upgradeInfo['languages'] = array();
 	$upgradeInfo['complete'] = isset($upgradeInfo['base']['currentVersion']);
 	foreach ($languages as $language => $revision) {
 	    list ($ret, $languageDescription) =
@@ -173,23 +208,23 @@ class GalleryRepository {
 	    }
 
 	    if (isset($installedPackages['lang-' . $language])) {
-		$currentVersion = $installedPackages['lang-' . $language]['build'];
+		$currentBuild = $installedPackages['lang-' . $language]['build'];
 	    } else {
-		$currentVersion = null;
+		$currentBuild = null;
 	    }
 
-	    $relation = $this->_utilities->compareRevisions($currentVersion, $revision);
+	    $relation = $this->_utilities->compareRevisions($currentBuild, $revision);
 	    $upgradeInfo['languages'][$language] = array(
 		'name' => $languageDescription,
-		'currentVersion' => $currentVersion,
-		'newVersion' => $revision,
+		'currentBuild' => $currentBuild,
+		'newBuild' => $revision,
 		'relation' => $relation);
 
-	    if ($relation == 'older' && $currentVersion) {
+	    if ($relation == 'older' && $currentBuild) {
 		$upgradeInfo['upgradeable'] = true;
 	    }
 
-	    $upgradeInfo['complete'] &= !empty($currentVersion);
+	    $upgradeInfo['complete'] &= !empty($currentBuild);
 	}
 
 	return array(null, $upgradeInfo);
@@ -350,14 +385,14 @@ class GalleryRepository {
 		    return array($ret, null);
 		}
 
-		if ($upgradeInfo['base']['relation'] == 'older'
-		    && $upgradeInfo['base']['currentVersion']) {
+		if ($upgradeInfo['base']['relation'] == 'older' &&
+		    $upgradeInfo['base']['currentVersion']) {
 		    $packages[$pluginType][$pluginId]['base'] = 1;
 		}
 
 		if (isset($upgradeInfo['languages'])) {
 		    foreach ($upgradeInfo['languages'] as $code => $pack) {
-			if ($pack['relation'] == 'older' && $pack['currentVersion']) {
+			if ($pack['relation'] == 'older' && $pack['currentBuild']) {
 			    $packages[$pluginType][$pluginId]['lang-' . $code] = 1;
 			}
 		    }
@@ -434,7 +469,7 @@ class GalleryRepository {
 	if (!$success) {
 	    return array(false, $gallery->i18n('Couldn\'t create repository cache path.'));
 	}
-	
+
 	/* Create repository cache subdirectories. */
 	foreach (array('modules', 'themes') as $cacheDir) {
 	    $cacheDirectory = $repositoryCachePath . $cacheDir;
@@ -506,7 +541,9 @@ class GalleryRepository {
 	$platform =& $gallery->getPlatform();
 
 	/* Download package from the Gallery server. */
-	$packageUrl = $gallery->getConfig('repository.url') . $relativePackageUrl;
+	$packageUrl =
+	    $gallery->getConfig('repository.url') . $this->_source . '/' . $relativePackageUrl;
+
 	list ($wasDownloaded, $packageContents) =
 	    $this->_utilities->downloadFile($packageUrl);
 	if (!$wasDownloaded) {
@@ -527,7 +564,8 @@ class GalleryRepository {
 	}
 
 	/* Write package to the local repository cache directory. */
-	$absolutePackagePath = $gallery->getConfig('repository.cache') . $relativePackageUrl;
+	$absolutePackagePath =
+	    $gallery->getConfig('repository.cache') . $this->_source . '/' . $relativePackageUrl;
 	if (false === $platform->file_put_contents($absolutePackagePath, $packageContents)) {
 	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					       "Error writing package [$absolutePackagePath]"),
@@ -692,6 +730,36 @@ class GalleryRepository {
 	}
 
 	return null;
+    }
+
+    /**
+     * Translate the repository tag to its localized name
+     *
+     * @param $source string the name (released, experimental, community)
+     * @return array object GalleryStatus a status code
+     *               string the localized name
+     * @static
+     * @public
+     */
+    function translateRepositoryName($source) {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	switch($source) {
+	case 'released':
+	    return array(null, $module->translate('Officially Release Repository'));
+
+	case 'experimental':
+	    return array(null, $module->translate('Experimental Repository'));
+
+	case 'community':
+	    return array(null, $module->translate('Community Repository'));
+
+	default:
+	    return array(null, '');
+	}
     }
 
     /**

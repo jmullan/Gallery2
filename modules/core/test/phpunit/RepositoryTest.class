@@ -48,7 +48,7 @@ class RepositoryTest extends GalleryTestCase {
 	/* Prepare test index. */
 	include(dirname(__FILE__) . '/../../../../lib/tools/repository/test/data/SampleIndex.inc');
 	$this->_sampleIndex = $sampleIndex;
-	$this->_index = new GalleryRepositoryIndex();
+	$this->_index = new GalleryRepositoryIndex('test');
 	$this->_index->_index = $this->_sampleIndex;
 	$this->_index->_isLoaded = true;
     }
@@ -70,21 +70,23 @@ class RepositoryTest extends GalleryTestCase {
 	    'installedPackages' => array(
 		'base' => array('version' => '1.0.0', 'build' => '19710411131300')),
 	    'expectedUpgradeInfo' => array(
+		'upgradeable' => false,
 		'base' => array(
 		    'newVersion' => '1.0.0',
+		    'newBuild' => '44444',
+		    'relation' => 'newer',
 		    'currentVersion' => '1.0.0',
-		    'relation' => 'newer'),
-		'upgradeable' => false,
+		    'currentBuild' => '19710411131300'),
 		'complete' => false,
 		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'en_GB' => array('name' => 'en_GB', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'))),
+		    'en_US' => array('name' => 'en_US', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'))),
 	    'expectedPackages' => array()), array( /* case 2 */
 
 	    'installedPackages' => array(
@@ -92,39 +94,43 @@ class RepositoryTest extends GalleryTestCase {
 	    'expectedUpgradeInfo' => array(
 		'base' => array(
 		    'newVersion' => '1.0.0',
+		    'newBuild' => '44444',
 		    'currentVersion' => '2.0.0',
+		    'currentBuild' => '19710411131300',
 		    'relation' => 'newer'),
 		'upgradeable' => false,
 		'complete' => false,
 		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'en_GB' => array('name' => 'en_GB', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'))),
+		    'en_US' => array('name' => 'en_US', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'))),
 	    'expectedPackages' => array()), array( /* case 3 */
 
 	    'installedPackages' => array(
 		'base' => array('version' => '1.0.0', 'build' => '00001')),
 	    'expectedUpgradeInfo' => array(
+		'upgradeable' => 1,
 		'base' => array(
 		    'newVersion' => '1.0.0',
+		    'newBuild' => '44444',
 		    'currentVersion' => '1.0.0',
+		    'currentBuild' => '00001',
 		    'relation' => 'older'),
-		'upgradeable' => true,
 		'complete' => false,
 		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'en_GB' => array('name' => 'en_GB', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'))),
+		    'en_US' => array('name' => 'en_US', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'))),
 	    'expectedPackages' => array('module' => array('testModule' => array(
 		'base' => 1)),	'theme' => array('testTheme' => array(
 		'base' => 1)))), array( /* case 4 */
@@ -136,40 +142,44 @@ class RepositoryTest extends GalleryTestCase {
 		'lang-pt_BR' => array('version' => '22222', 'build' => '33333'),
 		'lang-pt_PT' => array('version' => '22222', 'build' => '33333')),
 	    'expectedUpgradeInfo' => array(
+		'upgradeable' => false,
 		'base' => array(
 		    'newVersion' => '1.0.0',
+		    'newBuild' => '44444',
 		    'currentVersion' => '1.0.0',
+		    'currentBuild' => '44444',
 		    'relation' => 'equal'),
-		'upgradeable' => false,
 		'complete' => true,
 		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentVersion' => '33333',
-				     'newVersion' => '33333', 'relation' => 'equal'),
-		    'en_GB' => array('name' => 'en_GB', 'currentVersion' => '33333',
-				     'newVersion' => '33333', 'relation' => 'equal'),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentVersion' => '33333',
-				     'newVersion' => '33333', 'relation' => 'equal'),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentVersion' => '33333',
-				     'newVersion' => '33333', 'relation' => 'equal'))),
+		    'en_US' => array('name' => 'en_US', 'currentBuild' => '33333',
+				     'newBuild' => '33333', 'relation' => 'equal'),
+		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => '33333',
+				     'newBuild' => '33333', 'relation' => 'equal'),
+		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
+				     'newBuild' => '33333', 'relation' => 'equal'),
+		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => '33333',
+				     'newBuild' => '33333', 'relation' => 'equal'))),
 	    'expectedPackages' => array()), array( /* case 5 */
 
 	    'installedPackages' => array(),
 	    'expectedUpgradeInfo' => array(
 		'base' => array(
 		    'newVersion' => '1.0.0',
+		    'newBuild' => '44444',
 		    'currentVersion' => NULL,
+		    'currentBuild' => NULL,
 		    'relation' => 'older'),
 		'upgradeable' => true,
 		'complete' => false,
 		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'en_GB' => array('name' => 'en_GB', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'))),
+		    'en_US' => array('name' => 'en_US', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'))),
 	    'expectedPackages' => array()), array( /* case 6 */
 
 	    'installedPackages' => array(
@@ -180,19 +190,21 @@ class RepositoryTest extends GalleryTestCase {
 	    'expectedUpgradeInfo' => array(
 		'base' => array(
 		    'newVersion' => '1.0.0',
+		    'newBuild' => '44444',
 		    'currentVersion' => '1.0.0',
+		    'currentBuild' => '44444',
 		    'relation' => 'equal'),
 		'upgradeable' => true,
 		'complete' => false,
 		'languages' => array(
-		    'en_US' => array('name' => 'en_US', 'currentVersion' => '00001',
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'en_GB' => array('name' => 'en_GB', 'currentVersion' => '22222',
-				     'newVersion' => '33333', 'relation' => 'older'),
-		    'pt_PT' => array('name' => 'pt_PT', 'currentVersion' => '33333',
-				     'newVersion' => '33333', 'relation' => 'equal'),
-		    'pt_BR' => array('name' => 'pt_BR', 'currentVersion' => NULL,
-				     'newVersion' => '33333', 'relation' => 'older'))),
+		    'en_US' => array('name' => 'en_US', 'currentBuild' => '00001',
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => '22222',
+				     'newBuild' => '33333', 'relation' => 'older'),
+		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
+				     'newBuild' => '33333', 'relation' => 'equal'),
+		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older'))),
 	    'expectedPackages' => array('module' => array(
 					    'testModule' => array(
 						'lang-en_US' => 1, 'lang-en_GB' => 1)),
@@ -550,7 +562,7 @@ class RepositoryTest extends GalleryTestCase {
 	GalleryDataCache::setMemoryCachingEnabled(true);
 	GalleryDataCache::remove('GalleryUtilities::guaranteeDirExists');
 	GalleryDataCache::setFileCachingEnabled(false);
-	
+
 	/* Test recursive repository cache directory creation. */
 	$platform->setReply('file_exists', array('/cache/'), false);
 	$platform->setReply('file_exists', array('/cache/'), false);
@@ -597,10 +609,10 @@ class RepositoryTest extends GalleryTestCase {
 	global $gallery;
 
 	$testCachePath = dirname(__FILE__) . '/../data/';
-	$testPackagePath = dirname(__FILE__) . '/../data/RepositoryTest.package';
-	$testPackageUrl = 'repositoryUrl/RepositoryTest.package';
-	$testDescriptorPath = dirname(__FILE__) . '/../data/RepositoryTest.descriptor';
-	$testDescriptorUrl = 'repositoryUrl/RepositoryTest.descriptor';
+	$testPackagePath = dirname(__FILE__) . '/../data/test/RepositoryTest.package';
+	$testPackageUrl = 'repositoryUrl/test/RepositoryTest.package';
+	$testDescriptorPath = dirname(__FILE__) . '/../data/test/RepositoryTest.descriptor';
+	$testDescriptorUrl = 'repositoryUrl/test/RepositoryTest.descriptor';
 	$gallery->setConfig('repository.cache', $testCachePath);
 	$gallery->setConfig('repository.url', 'repositoryUrl/');
 	$gallery->setConfig('data.gallery.plugins', 'plugins/');
@@ -620,6 +632,7 @@ class RepositoryTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$repository = new GalleryRepository();
+	$repository->_source = 'test';  /* this is cheating, but it saves us some setup */
 	$repository->_utilities = new RepositoryTestUtilities();
 
 	/* Test downloading a package. */
@@ -636,9 +649,10 @@ class RepositoryTest extends GalleryTestCase {
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array('pluginId' => 'testModule', 'pluginType' => 'module',
-				  'contents' => array ('repositoryUrl/RepositoryTest.descriptor')),
-			    $descriptor, 'Invalid descriptor returned.');
+	$this->assertEquals(
+	    array('pluginId' => 'testModule', 'pluginType' => 'module',
+		  'contents' => array('repositoryUrl/test/RepositoryTest.descriptor')),
+	    $descriptor, 'Invalid descriptor returned.');
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
@@ -688,7 +702,7 @@ class RepositoryTest extends GalleryTestCase {
 	$repository = new GalleryRepository();
 	$repository->_utilities = new RepositoryTestUtilitiesForScanPlugin();
 	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
-	
+
 	$platform = new UnitTestPlatform();
 	$platform->setReply(
 	    'file_exists',
@@ -741,7 +755,7 @@ class RepositoryTest extends GalleryTestCase {
 	$repository = new GalleryRepository();
 	$repository->_utilities = null;  /* this should fail without needing utilities */
 	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
-	
+
 	$platform = new UnitTestPlatform();
 	$platform->setReply(
 	    'file_exists',
@@ -850,7 +864,7 @@ class RepositoryTestIndex {
     var $_index;
 
     function RepositoryTestIndex($sampleIndex, $pluginData) {
-	$this->_index = new GalleryRepositoryIndex();
+	$this->_index = new GalleryRepositoryIndex('test');
 	$this->_index->_index = $sampleIndex;
 	$this->_index->_isLoaded = true;
 
