@@ -107,7 +107,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 
     function testLoadKeywords() {
 	$ret = $this->_callbacks->callback(
-		array('onlyPublic' => false, 'maxCloudFontEnlargement' => 3),
+		array('onlyPublic' => false, 'sizeLimit' => 0, 'maxCloudFontEnlargement' => 3),
 		$this->_smarty, 'LoadKeywords', $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -127,7 +127,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 
     function testLoadKeywordsPublic() {
 	$ret = $this->_callbacks->callback(
-		array('onlyPublic' => true, 'maxCloudFontEnlargement' => 5),
+		array('onlyPublic' => true, 'sizeLimit' => 0, 'maxCloudFontEnlargement' => 5),
 		$this->_smarty, 'LoadKeywords', $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -142,6 +142,30 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	$this->assert(!isset($found['testkeyword99999']), 'item not public!');
     }
 
+    function testLoadKeywordsSizeLimit() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'allKeywords.3.time', '0');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_callbacks->callback(
+		array('onlyPublic' => false, 'sizeLimit' => 3, 'maxCloudFontEnlargement' => 7),
+		$this->_smarty, 'LoadKeywords', $this->_userId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
+	$this->assertEquals(3, count($data), '3 keywords');
+
+	list ($ret, $param) =
+	    GalleryCoreApi::getPluginParameter('module', 'keyalbum', 'allKeywords.3');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(serialize($data), $param, 'param');
+    }
+
     function testKeywordCache() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum',
 						  'allKeywords', serialize(array()));
@@ -154,7 +178,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	}
 
 	$ret = $this->_callbacks->callback(
-		array('onlyPublic' => false, 'maxCloudFontEnlargement' => 5),
+		array('onlyPublic' => false, 'sizeLimit' => 0, 'maxCloudFontEnlargement' => 5),
 		$this->_smarty, 'LoadKeywords', $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);

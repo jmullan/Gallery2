@@ -29,8 +29,10 @@ class KeyAlbumCallbacks {
 
 	switch ($callback) {
 	case 'LoadKeywords':
-	    $onlyPublic = $params['onlyPublic'];
-	    $param = 'allKeywords' . ($onlyPublic ? '.public' : '');
+	    $onlyPublic = (bool)$params['onlyPublic'];
+	    $sizeLimit = (int)$params['sizeLimit'];
+	    $param = 'allKeywords' . ($onlyPublic ? '.public' : '')
+		. ($sizeLimit ? '.' . $sizeLimit : '');
 	    list ($ret, $lastUpdated) =
 		GalleryCoreApi::getPluginParameter('module', 'keyalbum', $param . '.time');
 	    if ($ret) {
@@ -38,7 +40,7 @@ class KeyAlbumCallbacks {
 	    }
 	    /* Cache keyword list for one day */
 	    if (time() - $lastUpdated > 3600 * 24) {
-		$ret = KeyAlbumCallbacks::_findAllKeywords($onlyPublic,
+		$ret = KeyAlbumCallbacks::_findAllKeywords($param, $onlyPublic, $sizeLimit,
 							   $params['maxCloudFontEnlargement']);
 		if ($ret) {
 		    return $ret;
@@ -61,12 +63,14 @@ class KeyAlbumCallbacks {
 
     /**
      * Get all unique keywords and store in a module parameter.
+     * @param string $param save result to this plugin paramter
      * @param boolean $onlyPublic true to only get keywords from public items
+     * @param int $sizeLimit max number of keywords (least common are dropped; 0 = no limit)
      * @param int $maxWeight max value for font enlargement in keyword cloud
      * @return object GalleryStatus a status code
      * @static
      */
-    function _findAllKeywords($onlyPublic, $maxWeight) {
+    function _findAllKeywords($param, $onlyPublic, $sizeLimit, $maxWeight) {
 	global $gallery;
 
 	$query = '
@@ -112,6 +116,13 @@ class KeyAlbumCallbacks {
 		}
 	    }
 	}
+	if ($sizeLimit > 0 && count($keywords) > $sizeLimit) {
+	    /* Sort by frequency and drop least common */
+	    uasort($keywords, create_function('$a,$b', '$c = $a[\'count\']; $d = $b[\'count\']; '
+						    . 'return $c > $d ? -1 : ($c == $d ? 0 : 1);'));
+
+	    array_splice($keywords, $sizeLimit);
+	}
 	ksort($keywords);
 	$keywords = array_values($keywords);
 
@@ -121,7 +132,6 @@ class KeyAlbumCallbacks {
 	    unset($keywords[$i]['count']);
 	}
 
-	$param = 'allKeywords' . ($onlyPublic ? '.public' : '');
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum',
 						  $param, serialize($keywords));
 	if ($ret) {

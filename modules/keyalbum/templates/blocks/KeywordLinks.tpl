@@ -18,7 +18,8 @@
 {/if}
 
 {else} {* Select box or cloud for all available keywords *}
-{g->callback type="keyalbum.LoadKeywords" onlyPublic=$onlyPublic|default:true
+{g->callback type="keyalbum.LoadKeywords"
+	     onlyPublic=$onlyPublic|default:true sizeLimit=$sizeLimit|default:0
 	     maxCloudFontEnlargement=$maxCloudFontEnlargement|default:5}
 
 {if !empty($block.keyalbum.keywords)}
