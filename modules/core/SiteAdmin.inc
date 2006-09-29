@@ -67,6 +67,17 @@ class SiteAdminView extends GalleryView {
 		if ($showAllSiteAdminViews) {
 		    list ($ret, $module) =
 			GalleryCoreApi::loadPlugin('module', $moduleId, true, false);
+		    if ($ret) {
+			if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+			    /* Module is missing or malformed, so ignore it */
+			    continue;
+			}
+			return array($ret, null);
+		    }
+
+		    if ($ret) {
+			return array($ret, null);
+		    }
 		} else {
 		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		    if ($ret) {
