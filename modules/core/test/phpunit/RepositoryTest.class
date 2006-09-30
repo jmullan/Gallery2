@@ -390,8 +390,8 @@ class RepositoryTest extends GalleryTestCase {
 		    'isCompatible' => true,
 		    'api' => array('required' => array('core' => '1.2', 'plugin' => '3.4'),
 				   'provided' => array('core' => '1.2', 'plugin' => '3.4')),
-		    'action' => 'upgrade',
-		    'locked' => 0))), array(
+		    'locked' => 0,
+		    'isUpgradeable' => true))), array(
 
 	    /* Compatible, locally available, upgradeable but also locked */
 	    'pluginData' => array(
@@ -413,8 +413,8 @@ class RepositoryTest extends GalleryTestCase {
 		    'isCompatible' => true,
 		    'api' => array('required' => array('core' => '1.2', 'plugin' => '3.4'),
 				   'provided' => array('core' => '1.2', 'plugin' => '3.4')),
-		    'action' => 'upgrade',
-		    'locked' => 1))), array(
+		    'locked' => 1,
+		    'isUpgradeable' => true))), array(
 
 	    /* Incompatible, locally unavailable, no action. */
 	    'pluginData' => array(
@@ -435,8 +435,8 @@ class RepositoryTest extends GalleryTestCase {
 		    'isCompatible' => false,
 		    'api' => array('required' => array('core' => '1.2', 'plugin' => '3.4'),
 				   'provided' => array('core' => '1.2', 'plugin' => '3.4')),
-		    'action' => '',
-		    'locked' => 0))), array(
+		    'locked' => 0,
+		    'isUpgradeable' => false))), array(
 
 	    /* Compatible, locally available, no action (all packages up-to-date). */
 	    'pluginData' => array(
@@ -462,8 +462,8 @@ class RepositoryTest extends GalleryTestCase {
 		    'isCompatible' => true,
 		    'api' => array('required' => array('core' => '1.2', 'plugin' => '3.4'),
 				   'provided' => array('core' => '1.2', 'plugin' => '3.4')),
-		    'action' => '',
-		    'locked' => 0))));
+		    'locked' => 0,
+		    'isUpgradeable' => false))));
 
 	$i = 0;
 	foreach ($testCases as $case) {
@@ -524,7 +524,7 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repository = new GalleryRepository();
 	$ret = $repository->updatePackageMetaData(
-	    'module', 'testModule', 'package', 'version', 'build');
+	    'module', 'testModule', 'package', 'version', 'build', 'locked');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -533,7 +533,8 @@ class RepositoryTest extends GalleryTestCase {
 					    'pluginId' => 'testModule',
 					    'packageName' => 'package',
 					    'packageVersion' => 'version',
-					    'packageBuild' => 'build'))),
+					    'packageBuild' => 'build',
+					    'locked' => 'locked'))),
 			    $this->_testStorage->getAddedMapData(),
 			    'Invalid data added.');
 
@@ -549,7 +550,7 @@ class RepositoryTest extends GalleryTestCase {
 
 	$repository = new GalleryRepository();
 	$ret = $repository->updatePackageMetaData(
-	    'module', 'testModule', 'package', 'version', 'build');
+	    'module', 'testModule', 'package', 'version', 'build', 'locked');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -558,7 +559,8 @@ class RepositoryTest extends GalleryTestCase {
 							     'pluginId' => 'testModule',
 							     'packageName' => 'package'),
 					    'change' => array('packageVersion' => 'version',
-							      'packageBuild' => 'build')))),
+							      'packageBuild' => 'build',
+							      'locked' => 'locked')))),
 			    $this->_testStorage->getUpdatedMapData(),
 			    'Wrong data updated.');
 

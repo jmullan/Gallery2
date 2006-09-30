@@ -175,6 +175,11 @@
 
   {capture name=legend}
   <div style="width: 100%; text-align: right">
+    <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="" />
+    <span style="margin-right: 10px; vertical-align: top">
+      {g->text text="upgrade available"}
+    </span>
+
     <img src="{g->url href="modules/core/data/module-locked.gif"}" width="13" height="13" alt="" />
     <span style="margin-right: 10px; vertical-align: top">
       {g->text text="locked"}
@@ -220,6 +225,9 @@
 	  {elseif !$plugin.isCompatible}
 	  <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13"
 	       height="13" alt="{g->text text="Incompatible Plugin"}" />
+          {elseif $plugin.isUpgradeable}
+	  <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13"
+	       height="13" alt="{g->text text="Upgrade Available"}" />
 	  {/if}
 	</td>
 
@@ -256,15 +264,19 @@
 	</td>
 
 	<td>
-	  {if !empty($plugin.action) && $plugin.isCompatible}
-	    {strip}
-	      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminRepositoryDownload" arg3="pluginType=`$plugin.type`" arg4="pluginId=`$pluginId`"}">
-		{$plugin.action}
-	      </a>
-	    {/strip}
-	  {else}
-	    &nbsp;
-	  {/if}
+          {if $plugin.locked || !$plugin.isCompatible}
+            &nbsp;
+          {else}{strip}
+          <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminRepositoryDownload" arg3="pluginType=`$plugin.type`" arg4="pluginId=`$pluginId`"}">
+	  {if $plugin.isUpgradeable}
+	    {g->text text="upgrade"}
+          {elseif !$plugin.localVersion}
+	    {g->text text="download"}
+          {else}
+	    {g->text text="modify"}
+          {/if}
+	  </a>{/strip}
+          {/if}
 	</td>
       </tr>
     {/foreach}

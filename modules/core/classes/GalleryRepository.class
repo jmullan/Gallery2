@@ -262,7 +262,6 @@ class GalleryRepository {
 	}
 
 	foreach ($repositoryPluginList[$pluginType] as $pluginId => $plugin) {
-	    $action = '';
 	    $localVersion = '';
 
 	    /* Get active language. */
@@ -289,24 +288,16 @@ class GalleryRepository {
 		    return array($ret, null);
 		}
 
-		if ($upgradeInfo['upgradeable']) {
-		    $action = $gallery->i18n('upgrade');
-		} else if (!$upgradeInfo['complete']) {
-		    $action = $gallery->i18n('get more');
-		}
-
 		$localVersion = $plugin['localVersion'];
 		$locked = $upgradeInfo['base']['locked'];
+		$isUpgradeable = $upgradeInfo['upgradeable'];
 	    } else {
-		/* Other plugins get a 'download' action if they're compatible. */
-		if ($plugin['isCompatible']) {
-		    $action = $gallery->i18n('download');
-		}
+		$isUpgradeable = false;
 	    }
 
 	    $groupLabel = isset($plugin['descriptions'][$language]['groupLabel'])
-			? $plugin['descriptions'][$language]['groupLabel']
-			: 'General';
+		? $plugin['descriptions'][$language]['groupLabel']
+		: $gallery->i18n('General');
 
 	    list ($providedCoreApiVersion, $providedPluginApiVersion) =
 		$this->_utilities->getProvidedApis($pluginType, $coreApis);
@@ -325,8 +316,8 @@ class GalleryRepository {
 		    'provided' => array(
 			'core' => implode('.', $providedCoreApiVersion),
 			'plugin' => implode('.', $providedPluginApiVersion))),
-		'action' => $action,
-		'locked' => $locked);
+		'locked' => $locked,
+		'isUpgradeable' => $isUpgradeable);
 	}
 
 	/* Sort plugins by name. */
@@ -447,8 +438,9 @@ class GalleryRepository {
 	    $ret = GalleryCoreApi::updateMapEntry(
 		'GalleryPluginPackageMap',
 		array('pluginType' => $pluginType, 'pluginId' => $pluginId,
-		      'packageName' => $packageName, 'locked' => $locked),
-		array('packageVersion' => $packageVersion, 'packageBuild' => $packageBuild));
+		      'packageName' => $packageName),
+		array('packageVersion' => $packageVersion, 'packageBuild' => $packageBuild,
+		      'locked' => $locked));
 	} else {
 	    $ret = GalleryCoreApi::addMapEntry(
 		'GalleryPluginPackageMap',
