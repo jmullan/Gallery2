@@ -119,7 +119,7 @@ class SystemInfoTask extends MaintenanceTask {
 
 	foreach ($counts as $table => $count) {
 	    $info[] = $core->translate(
-		array('text' => 'Rows in %s table: %d', 'arg1' => $table, 'arg2' => $count));
+		array('text' => 'Rows in %s table = %d', 'arg1' => $table, 'arg2' => $count));
 	}
 
 	return array(null, true, $info);
