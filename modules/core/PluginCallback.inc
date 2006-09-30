@@ -248,7 +248,7 @@ class PluginCallbackView extends GalleryView {
 	    if (empty($this->_repository)) {
 		GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
 		$this->_repository = new GalleryRepository();
-		$this->_repository->init();
+		$this->_repository->init('');  /* bogus repository, but that should be ok */
 	    }
 
 	    $ret = $this->_repository->scanPlugin($pluginType, $pluginId);
