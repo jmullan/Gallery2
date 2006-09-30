@@ -89,6 +89,14 @@
           {/if}
         </div>
 
+	{if $theme.pageUrl.view != 'core.ShowItem' && $theme.params.dynamicLinks == 'jumplink'}
+	<div class="gbBlock">
+	  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$theme.item.id`"}">
+	    {g->text text="View in original album"}
+	  </a>
+	</div>
+	{/if}
+
         {* Download link for item in original format *}
         {if !empty($theme.sourceImage) && $theme.sourceImage.mimeType != $theme.item.mimeType}
         <div class="gbBlock">

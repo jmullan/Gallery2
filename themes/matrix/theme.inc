@@ -33,15 +33,14 @@ class MatrixTheme extends GalleryTheme {
 	$this->setId('matrix');
 	$this->setName($gallery->i18n('Matrix'));
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('1.1.1');
+	$this->setVersion('1.1.2');
 	$this->setRequiredCoreApi(array(7, 10));
 	$this->setRequiredThemeApi(array(2, 4));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
-		  'colorpack' => '',
-		  'showMicroThumbs' => 0,
+		  'colorpack' => '', 'showMicroThumbs' => 0, 'dynamicLinks' => 'browse',
 		  'sidebarBlocks' => serialize(array(
 			array('search.SearchBlock', array('showAdvancedLink' => true)),
 			array('core.ItemLinks', array('useDropdown' => false)),

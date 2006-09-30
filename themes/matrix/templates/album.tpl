@@ -73,13 +73,18 @@
 	      <td class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}"
 		  style="width: {$theme.columnWidthPct}%">
 		{if ($child.canContainChildren || $child.entityType == 'GalleryLinkItem')}
-		{assign var=frameType value="albumFrame"}
-		{capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
-						arg2="itemId=`$child.id`"}{/capture}
+		  {assign var=frameType value="albumFrame"}
+		  {capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
+						  arg2="itemId=`$child.id`"}{/capture}
 		{else}
-		{assign var=frameType value="itemFrame"}
-		{capture assign=linkUrl}{g->url params=$theme.pageUrl
-						arg1="itemId=`$child.id`"}{/capture}
+		  {assign var=frameType value="itemFrame"}
+		  {capture assign=linkUrl}{strip}
+		    {if $theme.params.dynamicLinks == 'jump'}
+		      {g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}
+		    {else}
+		      {g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}
+		    {/if}
+		  {/strip}{/capture}
 		{/if}
 		<div>
 		  {if isset($theme.params.$frameType) && isset($child.thumbnail)}

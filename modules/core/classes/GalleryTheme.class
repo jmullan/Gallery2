@@ -211,6 +211,18 @@ class GalleryTheme extends GalleryPlugin {
 				'value' => $params['photoBlocks']);
 	}
 
+	if (isset($params['dynamicLinks']) && isset($standard['dynamicLinks'])) {
+	    $settings[] = array('key' => 'dynamicLinks',
+				'name' => $core->translate('Thumbnail links in dynamic albums'),
+				'type' => 'single-select',
+				'choices' => array(
+				    'browse' => $core->translate('Browse dynamic album'),
+				    'jump' => $core->translate('Jump to original album'),
+				    'jumplink' => $core->translate(
+					'Separate link to original album')),
+				'value' => $params['dynamicLinks']);
+	}
+
 	/* ImageFrame settings, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret) {
