@@ -86,6 +86,18 @@ class SystemInfoTask extends MaintenanceTask {
 	    $locale = $core->translate('unknown');
 	}
 
+	$counts = array();
+	foreach (array('GalleryAccessMap', 'GalleryAccessSubscriberMap',
+		       'GalleryUser', 'GalleryItem', 'GalleryAlbumItem',
+		       'GalleryCacheMap') as $table) {
+	    list ($ret, $results) = $gallery->search('SELECT COUNT(*) FROM [' . $table . ']');
+	    if ($ret) {
+		$counts[$table] = 'error';
+	    }
+	    $result = $results->nextResult();
+	    $counts[$table] = $result[0];
+	}
+
 	$info = array(
 	    $core->translate('Gallery version') . ' = ' . $version,
 	    $core->translate('PHP version') . ' = ' . phpversion() . ' ' . php_sapi_name(),
@@ -104,6 +116,11 @@ class SystemInfoTask extends MaintenanceTask {
 	    $core->translate('Locale') . ' = ' . $locale,
 	    $core->translate('Browser') . ' = ' . GalleryUtilities::getServerVar('HTTP_USER_AGENT')
 	);
+
+	foreach ($counts as $table => $count) {
+	    $info[] = $core->translate(
+		array('text' => 'Rows in %s table: %d', 'arg1' => $table, 'arg2' => $count));
+	}
 
 	return array(null, true, $info);
     }
