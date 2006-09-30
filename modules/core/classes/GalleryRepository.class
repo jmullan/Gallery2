@@ -423,8 +423,9 @@ class GalleryRepository {
      * @param string $packageBuild
      * @return object GalleryStatus a status code
      */
-    function updatePackageMetaData($pluginType, $pluginId,
-	    $packageName, $packageVersion, $packageBuild) {
+    function updatePackageMetaData(
+	$pluginType, $pluginId, $packageName, $packageVersion, $packageBuild, $locked) {
+
 	/* Check if specified package exists in the database. */
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPluginPackageMap',
 	    array('packageVersion', 'packageBuild'),
@@ -445,15 +446,15 @@ class GalleryRepository {
 	if ($existsInDatabase) {
 	    $ret = GalleryCoreApi::updateMapEntry(
 		'GalleryPluginPackageMap',
-		array('pluginType' => $pluginType,
-		      'pluginId' => $pluginId, 'packageName' => $packageName),
+		array('pluginType' => $pluginType, 'pluginId' => $pluginId,
+		      'packageName' => $packageName, 'locked' => $locked),
 		array('packageVersion' => $packageVersion, 'packageBuild' => $packageBuild));
 	} else {
 	    $ret = GalleryCoreApi::addMapEntry(
 		'GalleryPluginPackageMap',
-		array('pluginType' => $pluginType,
-		      'pluginId' => $pluginId, 'packageName' => $packageName,
-		      'packageVersion' => $packageVersion, 'packageBuild' => $packageBuild));
+		array('pluginType' => $pluginType, 'pluginId' => $pluginId,
+		      'packageName' => $packageName, 'packageVersion' => $packageVersion,
+		      'packageBuild' => $packageBuild, 'locked' => $locked));
 	}
 	if ($ret) {
 	    return $ret;

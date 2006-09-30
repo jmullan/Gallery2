@@ -23,6 +23,12 @@
     {g->text text="The repository index has been successfully updated."}
   {elseif isset($status.noUpgradeAvailable)}
     {g->text text="All plugins are already up-to-date."}
+  {elseif ($status.updated)}
+    {foreach from=$status.updated item=item}
+    <p>
+      {g->text text="Updated the %s plugin" arg1=$item}
+    </p>
+    {/foreach}
   {/if}
 </h2></div>
 {/if}

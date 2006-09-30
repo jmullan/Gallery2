@@ -150,6 +150,7 @@ class AdminRepositoryDownloadController extends GalleryController {
      */
     function performDownloadAndInstallation($pluginData, $repositories) {
 	global $gallery;
+	$session =& $gallery->getSession();
 	$templateAdapter =& $gallery->getTemplateAdapter();
 
 	/* Create download file list. */
@@ -235,7 +236,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 				return $ret;
 			    }
 			    $ret = $repository->updatePackageMetaData(
-				$pluginType, $pluginId, $packageName, $version, $build);
+				$pluginType, $pluginId, $packageName, $version, $build, 0);
 			    if ($ret) {
 				$templateAdapter->errorProgressBar($ret);
 				return $ret;
@@ -248,7 +249,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 		     * some new code.  Load the status and ignore the cache which forces a cache
 		     * update.  @todo: add a real cache flushing method in the api instead
 		     */
-		    list ($ret, $status) = GalleryCoreApi::fetchPluginStatus($pluginType, true);
+		    list ($ret, $ignored) = GalleryCoreApi::fetchPluginStatus($pluginType, true);
 		    if ($ret) {
 			$templateAdapter->errorProgressBar($ret);
 			return $ret;
@@ -295,6 +296,8 @@ class AdminRepositoryDownloadController extends GalleryController {
 			/* Ignore the redirect */
 		    }
 
+		    $status['updated'][] = $pluginName;
+
 		    /*********************************************************/
 		}
 	    }
@@ -310,9 +313,10 @@ class AdminRepositoryDownloadController extends GalleryController {
 	/* Show link to return to the previously selected tab. */
 	$redirect['view'] = 'core.SiteAdmin';
 	$redirect['subView'] = 'core.AdminRepository';
+	$redirect['statusId'] = $session->putStatus($status);
+
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
-
 	return null;
     }
 }
