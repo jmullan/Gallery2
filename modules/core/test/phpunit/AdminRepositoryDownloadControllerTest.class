@@ -71,6 +71,9 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[base]', 'test:1000');
 	GalleryUtilities::putRequestVariable(
 	    'form[languages]', array('test:en_US:1000', 'test:hu_HU:1000'));
+	GalleryUtilities::putRequestVariable(
+	    'form[languagesAvailable]',
+	    array('test:en_US', 'test:hu_HU', 'test:es', 'test:af'));
 	GalleryUtilities::putRequestVariable('form[action][download]', '1');
 
 	$mockAdapter = new MockTemplateAdapter();
@@ -96,16 +99,18 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 			      'base' => 1,
 			      'lang-en_US' => 1,
 			      'lang-hu_HU' => 1)))),
-	    $callback[1][0]);
+	    $callback[1][0],
+	    'installPackages mismatch');
+
+	$this->assertEquals(
+	    array('module' => array('testModule' => array('es', 'af'))),
+	    $callback[1][1],
+	    'deleteLanguages mismatch');
     }
 
     function testPerformDownloadAndInstallation() {
 	global $gallery;
 	$testModule = 'AdminRepositoryDownloadControllerTest';
-
-	GalleryUtilities::putRequestVariable('form[pluginType]', 'module');
-	GalleryUtilities::putRequestVariable('form[pluginId]', $testModule);
-	GalleryUtilities::putRequestVariable('form[action][download]', '1');
 
 	/* Test regular download. */
 	$mockAdapter = new MockTemplateAdapter();
@@ -167,6 +172,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 				'base' => 1,
 				'lang-en_US' => 1,
 				'lang-hu_HU' => 1)))),
+	    array(),
 	    array('test' => $repository));
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -177,6 +183,54 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 				  'autoConfigure' => 1,
 				  'activate' => 1),
 			    $_REQUEST['called']);
+    }
+
+    function testDeleteLanguages() {
+	global $gallery;
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$g2base = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+	$platform = new UnitTestPlatform();
+	$platform->setReply(
+	    'is_dir',
+	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/locale/aa"),
+	    true);
+	$platform->setReply(
+	    'is_writeable',
+	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/locale/aa"),
+	    true);
+	$platform->setReply(
+	    'recursiveRmdir',
+	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/locale/aa"),
+	    true);
+	$platform->setReply(
+	    'is_file',
+	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/po/aa.po"),
+	    true);
+	$platform->setReply(
+	    'is_writeable',
+	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/po/aa.po"),
+	    true);
+	$platform->setReply(
+	    'unlink',
+	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/po/aa.po"),
+	    true);
+	$gallery->_platform =& $platform;
+
+	$repository = new AdminRepositoryDownloadControllerTestRepository();
+
+	$ret = $this->_controller->performDownloadAndInstallation(
+	    array(),
+	    array('module' => array('AdminRepositoryDownloadControllerTest' => array('aa'))),
+	    array('test' => $repository));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($repository->isComplete(), $repository->getRemaining());
     }
 }
 

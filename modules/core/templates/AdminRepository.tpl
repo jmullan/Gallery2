@@ -23,12 +23,18 @@
     {g->text text="The repository index has been successfully updated."}
   {elseif isset($status.noUpgradeAvailable)}
     {g->text text="All plugins are already up-to-date."}
-  {elseif ($status.updated)}
+  {elseif !empty($status.updated)}
     {foreach from=$status.updated item=item}
     <p>
-      {g->text text="Updated the %s plugin" arg1=$item}
+      {g->text text="%s plugin updated." arg1=$item}
     </p>
     {/foreach}
+  {/if}
+  {if !empty($status.languagePacksDeleted)}
+    <p>
+      {g->text one="%d language pack deleted." many="%d language packs deleted."
+               count=$status.languagePacksDeleted arg1=$status.languagePacksDeleted}
+    </p>
   {/if}
 </h2></div>
 {/if}

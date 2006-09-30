@@ -83,6 +83,7 @@
 	{/if}
 	</label>
 	{/capture}
+	  <input type="hidden" name="{g->formVar var="form[languagesAvailable][]"}" value="{$item.repository}:{$code}"/>
 	  <input id="lang_{$langId}" type="checkbox" name="{g->formVar var="form[languages][]"}"
 	    value="{$item.repository}:{$code}:{$pack.newBuild}" {if !empty($checked)}checked="{$checked}"{/if}/>
 	{$label}
@@ -102,7 +103,7 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input class="inputTypeSubmit" type="submit" name="{g->formVar var="form[action][download]"}" value="{g->text text="Download"}"/>
+  <input class="inputTypeSubmit" type="submit" name="{g->formVar var="form[action][download]"}" value="{g->text text="Update"}"/>
   <input class="inputTypeSubmit" type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
   <input type="hidden" name="{g->formVar var="form[pluginType]"}" value="{$AdminRepositoryDownload.pluginType}" />
   <input type="hidden" name="{g->formVar var="form[pluginId]"}" value="{$AdminRepositoryDownload.pluginId}" />

@@ -70,10 +70,10 @@ class AdminRepositoryDownloadController extends GalleryController {
 	    $redirect['subView'] = 'core.AdminRepository';
 	} else if (isset($form['action']['download'])) {
 	    /* Create package list. */
-	    $packages = array();
+	    $installPackages = $deleteLanguages = array();
 
 	    $utils = new GalleryRepositoryUtilities();
-	    list ($ret, $installedPackages) = $utils->getPluginPackages($pluginType, $pluginId);
+	    list ($ret, $pluginPackages) = $utils->getPluginPackages($pluginType, $pluginId);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -81,26 +81,36 @@ class AdminRepositoryDownloadController extends GalleryController {
 	    $baseSource = '';
 	    if (!empty($form['base'])) {
 		list($baseSource, $baseNewBuild) = explode(':', $form['base']);
-		if (empty($installedPackages['base']['build']) ||
-		    $installedPackages['base']['build'] != $baseNewBuild) {
-		    $packages[$baseSource][$pluginType][$pluginId]['base'] = 1;
+		if (empty($pluginPackages['base']['build']) ||
+		    $pluginPackages['base']['build'] != $baseNewBuild) {
+		    $installPackages[$baseSource][$pluginType][$pluginId]['base'] = 1;
 		}
 	    }
 
+	    $selected = array();
 	    if (isset($form['languages'])) {
 		foreach ($form['languages'] as $language) {
 		    list ($langSource, $langCode, $langNewVersion) = explode(':', $language);
 		    $langCode = 'lang-' . $langCode;
-		    if ($baseSource == $langSource &&
-			(empty($installedPackages[$langCode]['build']) ||
-			 $installedPackages[$langCode]['build'] != $langNewVersion)) {
-			$packages[$langSource][$pluginType][$pluginId][$langCode] = 1;
+		    if ($langSource == $baseSource &&
+			(empty($pluginPackages[$langCode]['build']) ||
+			 $pluginPackages[$langCode]['build'] != $langNewVersion)) {
+			$installPackages[$langSource][$pluginType][$pluginId][$langCode] = 1;
 		    }
+		    $selected[$pluginType][$pluginId][$langCode] = 1;
+		}
+	    }
+
+	    foreach ($form['languagesAvailable'] as $language) {
+		list ($langSource, $langCode) = explode(':', $language);
+		if ($langSource == $baseSource &&
+		        empty($selected[$pluginType][$pluginId]['lang-' . $langCode])) {
+		    $deleteLanguages[$pluginType][$pluginId][] = $langCode;
 		}
 	    }
 
 	    /* Show error message if no packages have been selected for download. */
-	    if (empty($packages)) {
+	    if (empty($installPackages) && empty($deleteLanguages)) {
 		$delegate['view'] = 'core.SiteAdmin';
 		$delegate['subView'] = 'core.AdminRepositoryDownload';
 		$error[] = 'form[error][nothingSelected]';
@@ -117,7 +127,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 		$templateAdapter =& $gallery->getTemplateAdapter();
 		$templateAdapter->registerTrailerCallback(
 		    array($this, 'performDownloadAndInstallation'),
-		    array($packages, $repositories));
+		    array($installPackages, $deleteLanguages, $repositories));
 		$delegate['view'] = 'core.ProgressBar';
 	    }
 	}
@@ -144,18 +154,20 @@ class AdminRepositoryDownloadController extends GalleryController {
      * TODO: Show a summary page (or at least a link to it) which contains details about
      * the exact tasks that were performed and any errors that were encountered.
      *
-     * @param array $pluginData packages
+     * @param array $installPackages packages to install
+     * @param array $deleteLanguages language packages to delete
      * @param array an array of object GalleryRepository
      * @return object GalleryStatus a status code
      */
-    function performDownloadAndInstallation($pluginData, $repositories) {
+    function performDownloadAndInstallation($installPackages, $deleteLanguages, $repositories) {
 	global $gallery;
 	$session =& $gallery->getSession();
+	$platform =& $gallery->getPlatform();
 	$templateAdapter =& $gallery->getTemplateAdapter();
 
 	/* Create download file list. */
 	$sourcedFiles = array();
-	foreach ($pluginData as $source => $packages) {
+	foreach ($installPackages as $source => $packages) {
 	    if (!isset($repositories[$source])) {
 		continue;
 	    }
@@ -175,8 +187,25 @@ class AdminRepositoryDownloadController extends GalleryController {
 	    return $ret;
 	}
 
+	$totalActions = 0;
+	foreach ($sourcedFiles as $source => $files) {
+	    foreach ($files as $pluginType => $plugins) {
+		foreach ($plugins as $pluginId => $pluginDownloadData) {
+		    $totalActions += count($pluginDownloadData['files']);
+		}
+	    }
+	}
+	foreach ($deleteLanguages as $pluginType => $plugins) {
+	    foreach ($plugins as $pluginId => $languages) {
+		$totalActions += count($languages);
+	    }
+	}
+
+	$status = array();
+
 	/* Download files. */
-	$titleText = $module->translate('Downloading Files');
+	$currentAction = 0;
+	$titleText = $module->translate('Updating Packages');
 	foreach ($sourcedFiles as $source => $files) {
 	    $repository = $repositories[$source];
 
@@ -186,19 +215,17 @@ class AdminRepositoryDownloadController extends GalleryController {
 		    $pluginName = $pluginDownloadData['name'];
 
 		    /* Set up progress bar variables. */
-		    $currentUrlIndex = 1;
-		    $totalUrls = count($packageUrls);
+		    $currentAction++;
 
 		    foreach ($packageUrls as $packageName => $relativePackageUrl) {
 			$ret = $templateAdapter->updateProgressBar(
 			    $titleText,
 			    sprintf($module->translate('Downloading %s'), $pluginName),
-			    $currentUrlIndex / $totalUrls);
+			    $currentAction / $totalActions);
 			if ($ret) {
 			    $templateAdapter->errorProgressBar($ret);
 			    return $ret;
 			}
-			$currentUrlIndex++;
 
 			/* Download and unpack package. */
 			list ($ret, $pluginDescriptor) = $repository->downloadAndUnpack(
@@ -262,7 +289,11 @@ class AdminRepositoryDownloadController extends GalleryController {
 
 		    $ret = $templateAdapter->updateProgressBar(
 			$titleText, sprintf($module->translate('Activating %s'), $pluginName),
-			$currentUrlIndex / $totalUrls);
+			$currentAction / $totalActions);
+		    if ($ret) {
+			$templateAdapter->errorProgressBar($ret);
+			return $ret;
+		    }
 
 		    list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
 		    if ($ret) {
@@ -303,8 +334,53 @@ class AdminRepositoryDownloadController extends GalleryController {
 	    }
 	}
 
+	/* Delete old language packs */
+	$deleteText = $module->translate('Deleting Language Packs');
+	$g2base = dirname(dirname(dirname(__FILE__)));
+	$status['languagePacksDeleted'] = 0;
+	foreach ($deleteLanguages as $pluginType => $plugins) {
+	    foreach ($plugins as $pluginId => $languages) {
+		foreach ($languages as $language) {
+		    $currentAction++;
+		    $ret = $templateAdapter->updateProgressBar(
+			$titleText, $deleteText, $currentAction / $totalActions);
+		    if ($ret) {
+			$templateAdapter->errorProgressBar($ret);
+			return $ret;
+		    }
+
+		    $actual = 0;
+		    $dir = "$g2base/${pluginType}s/$pluginId/locale/$language";
+		    if ($platform->is_dir($dir) && $platform->is_writeable($dir)) {
+			$platform->recursiveRmdir($dir);
+			$actual++;
+		    }
+		    $file = "$g2base/${pluginType}s/$pluginId/po/$language.po";
+		    if ($platform->is_file($file) && $platform->is_writeable($file)) {
+			$platform->unlink($file);
+			$actual++;
+		    }
+
+		    $ret = GalleryCoreApi::removeMapEntry(
+			'GalleryPluginPackageMap',
+			array('pluginType' => $pluginType,
+			      'pluginId' => $pluginId,
+			      'packageName' => 'lang-' . $language));
+		    if ($ret) {
+			$templateAdapter->errorProgressBar($ret);
+			return $ret;
+		    }
+
+		    if ($actual) {
+			$status['languagePacksDeleted']++;
+		    }
+		}
+	    }
+	}
+
 	/* Update progress bar. */
-	$ret = $templateAdapter->updateProgressBar($titleText, $module->translate('Done.'), 1);
+	$ret = $templateAdapter->updateProgressBar(
+	    $titleText, $module->translate('Update complete.'), 1);
 	if ($ret) {
 	    $templateAdapter->errorProgressBar($ret);
 	    return $ret;
