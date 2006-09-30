@@ -371,43 +371,41 @@ input, select {
   border: 1px solid #999;
 }
 
+/*** Autocomplete ***/
 .autoCompleteShadow {
-    position: absolute;
-    margin: .3em;
-    z-index: 5;
-    background: #a0a0a0;
+  position: absolute;
+  margin: 0.3em;
+  z-index: 5;
 }
 
 .autoCompleteContainer {
-    position: relative;
-    bottom: 4px;
-    right: 4px;
-    border: 1px solid #404040;
-    background: #fff;
-    overflow: hidden;
-    display: none;
+  position: relative;
+  right: 4px;
+  overflow: hidden;
+  border: 1px solid #404040;
 }
 
-.autoCompleteContainer ul {
-    position: relative;
-    padding: 5px 0;
-    list-style: none;
+.autoCompleteContainer .yui-ac-content ul {
+  position: relative;
+  padding: 0;
+  margin: 0px;
+  list-style: none;
 }
 
-.autoCompleteContainer li {
-    padding: 0 5px;
-    cursor: default;
-    white-space: nowrap;
-    display: list-item;
+.autoCompleteContainer .yui-ac-content li {
+  padding: 2px 4px;
+  cursor: default;
+  white-space: nowrap;
+  display: list-item;
+}
+
+.autoCompleteContainer li.yui-ac-highlight {
+  background-color: #eee;
 }
 
 /* undo the text-indent set for .multisite */
 .multisite .autoCompleteContainer li {
     text-indent: 0.0em;
-}
-
-.autoCompleteContainer li.highlight {
-    background: #eee;
 }
 
 label.radio {
