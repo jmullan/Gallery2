@@ -2095,13 +2095,26 @@ class CoreModuleExtras {
 				    "<IfModule mod_access.c>\n" .
 				    "Order allow,deny\n" .
 				    "Deny from all\n" .
-				    "</IfModule>\n";    
+				    "</IfModule>\n";
 		fwrite($fh, $htaccessContents);
 		fclose($fh);
 	    }
         case '1.1.15':
             /* Locked Users */
 	    $ret = $storage->configureStore($module->getId(), array('GalleryUser:1.1'));
+	    if ($ret) {
+		return $ret;
+	    }
+
+        case '1.1.16':
+	    /* Initialize multiple repositories */
+	    $ret = $module->setParameter('core.repositories', serialize(array('released' => 1)));
+	    if ($ret) {
+		return $ret;
+	    }
+
+            /* Locked plugins */
+	    $ret = $storage->configureStore($module->getId(), array('GalleryPluginPackageMap:1.0'));
 	    if ($ret) {
 		return $ret;
 	    }
@@ -2370,6 +2383,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.13':
 	case '1.1.14':
 	case '1.1.15':
+	case '1.1.16':
 
 	case 'end of upgrade path':
 	    /*

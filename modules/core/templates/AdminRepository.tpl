@@ -166,6 +166,22 @@
       {/if}
     {/if}
   </p>
+
+  {capture name=legend}
+  <div style="width: 100%; text-align: right">
+    <img src="{g->url href="modules/core/data/module-locked.gif"}" width="13" height="13" alt="" />
+    <span style="margin-right: 10px; vertical-align: top">
+      {g->text text="locked"}
+    </span>
+
+    <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13" height="13" alt="" />
+    <span style="margin-right: 10px; vertical-align: top">
+      {g->text text="incompatible"}
+    </span>
+  </div>
+  {/capture}
+  {$smarty.capture.legend}
+
   <table class="gbDataTable">
     {assign var="group" value=""}
     {foreach from=$AdminRepository.browseData key=pluginId item=plugin}
@@ -192,7 +208,10 @@
 
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>
-	  {if !$plugin.isCompatible}
+	  {if $plugin.locked}
+	  <img src="{g->url href="modules/core/data/module-locked.gif"}" width="13"
+	       height="13" alt="{g->text text="Locked Plugin"}" />
+	  {elseif !$plugin.isCompatible}
 	  <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13"
 	       height="13" alt="{g->text text="Incompatible Plugin"}" />
 	  {/if}
@@ -244,7 +263,9 @@
       </tr>
     {/foreach}
   </table>
+  {$smarty.capture.legend}
   {/if}
+
 </div>
 
 {if isset($AdminRepository.indexMetaData)}

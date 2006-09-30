@@ -312,25 +312,27 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
     function testGetPluginPackages() {
 	$this->_testStorage->reset();
-	$this->_testStorage->setSearchResults(array(
-	    array('package1', '1.23', '19700411131300'),
-	    array('package2', '3.45', '19710411131300')));
+	$this->_testStorage->setSearchResults(
+	    array(array(0, '1.23', '19700411131300', 'pkg1'),
+		  array(1, '3.45', '19710411131300', 'pkg2')));
 
 	$utilities = new GalleryRepositoryUtilities();
 	list ($ret, $packages) = $utilities->getPluginPackages('module', 'testModule');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array('package1' => array('version' => '1.23',
-						      'build' => '19700411131300'),
-				  'package2' => array('version' => '3.45',
-						      'build' => '19710411131300')),
-			    $packages);
+	$this->assertEquals(
+	    array('pkg1' => array('locked' => 0, 'version' => '1.23', 'build' => '19700411131300'),
+		  'pkg2' => array('locked' => 1, 'version' => '3.45', 'build' => '19710411131300')),
+	    $packages);
 
-	/* The following assertion isn't really necessary. */
+	/*
+	 * Make sure we executed the right query.  In a perfect world, this would be
+	 * part of the setSearchResults() call above.
+	 */
 	$expectedQuery = array(
 		'map' => 'GalleryPluginPackageMap',
-		'select' => array('packageName', 'packageVersion', 'packageBuild'),
+		'select' => array('locked', 'packageVersion', 'packageBuild', 'packageName'),
 		'where' => array('pluginType' => 'module', 'pluginId' => 'testModule'));
 	$searches = $this->_testStorage->getSearches();
 	$this->assertEquals($expectedQuery, $searches[0]);

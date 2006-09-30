@@ -169,9 +169,11 @@ class GalleryRepository {
 	if (isset($installedPackages['base'])) {
 	    $dataVersion = $installedPackages['base']['version'];
 	    $dataBuild = $installedPackages['base']['build'];
+	    $locked = $installedPackages['base']['locked'];
 	} else {
 	    $dataVersion = null;
 	    $dataBuild = null;
+	    $locked = 0;
 	}
 
 	/* Compare local base version with the one in the repository. */
@@ -186,6 +188,7 @@ class GalleryRepository {
 	}
 	$upgradeInfo['base']['currentVersion'] = $dataVersion;
 	$upgradeInfo['base']['currentBuild'] = $dataBuild;
+	$upgradeInfo['base']['locked'] = $locked;
 
 	/* Check if any languages have been updated. */
 	list ($ret, $languages) =
@@ -209,16 +212,20 @@ class GalleryRepository {
 
 	    if (isset($installedPackages['lang-' . $language])) {
 		$currentBuild = $installedPackages['lang-' . $language]['build'];
+		$locked = $installedPackages['lang-' . $language]['locked'];
 	    } else {
 		$currentBuild = null;
+		$locked = 0;
 	    }
+
 
 	    $relation = $this->_utilities->compareRevisions($currentBuild, $revision);
 	    $upgradeInfo['languages'][$language] = array(
 		'name' => $languageDescription,
 		'currentBuild' => $currentBuild,
 		'newBuild' => $revision,
-		'relation' => $relation);
+		'relation' => $relation,
+		'locked' => $locked);
 
 	    if ($relation == 'older' && $currentBuild) {
 		$upgradeInfo['upgradeable'] = true;
@@ -270,6 +277,7 @@ class GalleryRepository {
 	    }
 
 	    $isAvailable = isset($plugin['localVersion']);
+	    $locked = 0;
 	    if ($isAvailable) {
 		/*
 		 * For locally available plugins we check if they can be upgraded and present
@@ -288,6 +296,7 @@ class GalleryRepository {
 		}
 
 		$localVersion = $plugin['localVersion'];
+		$locked = $upgradeInfo['base']['locked'];
 	    } else {
 		/* Other plugins get a 'download' action if they're compatible. */
 		if ($plugin['isCompatible']) {
@@ -316,7 +325,8 @@ class GalleryRepository {
 		    'provided' => array(
 			'core' => implode('.', $providedCoreApiVersion),
 			'plugin' => implode('.', $providedPluginApiVersion))),
-		'action' => $action);
+		'action' => $action,
+		'locked' => $locked);
 	}
 
 	/* Sort plugins by name. */
@@ -682,13 +692,15 @@ class GalleryRepository {
 	    return $ret;
 	}
 
+	$locked = $platform->is_writeable($manifestPath) ? 0 : 1;
 	$ret = GalleryCoreApi::addMapEntry(
 	    'GalleryPluginPackageMap',
 	    array('pluginType' => $pluginType,
 		  'pluginId' => $pluginId,
 		  'packageName' => 'base',
 		  'packageVersion' => $plugin->getVersion(),
-		  'packageBuild' => $revision));
+		  'packageBuild' => $revision,
+		  'locked' => $locked));
 	if ($ret) {
 	    return $ret;
 	}
@@ -722,7 +734,8 @@ class GalleryRepository {
 			  'packageName' => (
 			      'lang-' . GalleryUtilities::getFileBase(basename($file))),
 			  'packageVersion' => $stringsRevision,
-			  'packageBuild' => $revision));
+			  'packageBuild' => $revision,
+			  'locked' => $platform->is_writeable($file) ? 0 : 1));
 		if ($ret) {
 		    return $ret;
 		}

@@ -280,7 +280,7 @@ class GalleryRepositoryUtilities {
 			 null);
 	}
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPluginPackageMap',
-	    array('packageName', 'packageVersion', 'packageBuild'),
+            array('locked', 'packageVersion', 'packageBuild', 'packageName'),
 	    array('pluginType' => $pluginType, 'pluginId' => $pluginId));
 	if ($ret) {
 	    return array($ret, null);
@@ -288,7 +288,8 @@ class GalleryRepositoryUtilities {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]] = array('version' => $result[1], 'build' => $result[2]);
+	    $data[$result[3]] =
+		array('locked' => $result[0], 'version' => $result[1], 'build' => $result[2]);
 	}
 
 	return array(null, $data);
