@@ -126,7 +126,7 @@ class AdminRepositoryController extends GalleryController {
 		$templateAdapter =& $gallery->getTemplateAdapter();
 		$templateAdapter->registerTrailerCallback(
 		    array($controller, 'performDownloadAndInstallation'),
-		    array($packages, $repositories));
+		    array($packages, array(), $repositories));
 		$delegate['view'] = 'core.ProgressBar';
 	    }
 	}
