@@ -62,11 +62,11 @@
   {if empty($comment.author)}
     {if $can.edit}
       {g->text text="Posted by %s on %s (%s)"
-	       arg1=$fullName|default:$user.userName
+	       arg1=$user.fullName|default:$user.userName
 	       arg2=$smarty.capture.date arg3=$comment.host}
     {else}
       {g->text text="Posted by %s on %s"
-	       arg1=$fullName|default:$user.userName arg2=$smarty.capture.date}
+	       arg1=$user.fullName|default:$user.userName arg2=$smarty.capture.date}
     {/if}
   {else}
     {if $can.edit}
@@ -75,7 +75,7 @@
 	       arg2=$smarty.capture.date arg3=$comment.host}
     {else}
       {g->text text="Posted by %s (guest) on %s"
-	       arg1=$fullName|default:$user.userName arg2=$smarty.capture.date}
+	       arg1=$comment.author|default:$user.userName arg2=$smarty.capture.date}
     {/if}
   {/if}
 </p>
