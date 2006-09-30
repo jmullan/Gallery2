@@ -171,17 +171,17 @@
     {foreach from=$AdminRepository.browseData key=pluginId item=plugin}
       {if $group != $plugin.groupLabel}
 	{if !empty($group)}
-	  <tr><td> &nbsp; </td></tr>
+	<tr><td> &nbsp; </td></tr>
 	{/if}
 	<tr>
 	  <th colspan="6"><h2>{$plugin.groupLabel}</h2></th>
 	</tr><tr>
 	  <th> &nbsp; </th>
-    {if $plugin.type == 'themes'}
+          {if $plugin.type == 'themes'}
 	  <th> {g->text text="Theme Name"} </th>
-    {else}
+          {else}
 	  <th> {g->text text="Module Name"} </th>
-    {/if}
+          {/if}
 	  <th> {g->text text="Latest"} </th>
 	  <th> {g->text text="Installed"} </th>
 	  <th> {g->text text="Description"} </th>
