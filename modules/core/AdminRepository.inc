@@ -162,7 +162,7 @@ class AdminRepositoryController extends GalleryController {
 	global $gallery;
 	$templateAdapter =& $gallery->getTemplateAdapter();
 
-        /* Erase all plugin data, so that a full scan drops old entries*/
+	/* Erase all plugin data, so that a full scan drops old entries*/
 	$ret = GalleryCoreApi::removeAllMapEntries('GalleryPluginPackageMap');
 	if ($ret) {
 	    return $ret;
@@ -325,7 +325,7 @@ class AdminRepositoryView extends GalleryView {
 
 	    list ($ret, $message) = GalleryRepository::translateRepositoryName($source);
 	    if ($ret) {
-		return $ret;
+		return array($ret, null);
 	    }
 
 	    $AdminRepository['indexMetaData'][$source] =
