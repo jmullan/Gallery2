@@ -348,7 +348,7 @@ class AdminRepositoryView extends GalleryView {
 	}
 
 	GalleryCoreApi::requireOnce('modules/core/AdminPlugins.inc');
-	usort($AdminRepository['browseData'], array($this, 'pluginSort'));
+	uasort($AdminRepository['browseData'], array($this, 'pluginSort'));
 
 	$baseName = dirname(dirname(dirname(__FILE__)));
 	$AdminRepository['writeable'] = array(
