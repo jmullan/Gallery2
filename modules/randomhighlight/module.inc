@@ -170,8 +170,10 @@ class RandomHighlightModule extends GalleryModule {
 	$picknew = false;
 	$id = $thumbnail->getId();
 	$loop = GalleryDataCache::containsKey("randomhighlight:load-$id");
-	/* We don't want to refresh the highlight during an upgrade */
-	if ($duringUpgrade) {
+	$count = GalleryDataCache::containsKey('randomhighlight:count')
+	    ? GalleryDataCache::get('randomhighlight:count') : 0;
+	/* Don't refresh the highlight during an upgrade; also limit # of reselects in 1 request */
+	if ($duringUpgrade || $loop || $count >= 3) {
 	    return null;
 	}
 	/* Acquire information whether we need to choose a new highlight */
@@ -181,7 +183,7 @@ class RandomHighlightModule extends GalleryModule {
 	}
 	$isOld = (time() - $thumbnail->getModificationTimestamp() > $duration);
 	$canSee = true;
-	if (!$loop && !$isOld && $thumbnail->hasOnLoadHandler('RandomHighlightPrivate')) {
+	if (!$isOld && $thumbnail->hasOnLoadHandler('RandomHighlightPrivate')) {
 	    /* Highlight is currently a non-public item.. can current user view that item? */
 	    list ($ret, $highlight) =
 		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
@@ -199,13 +201,13 @@ class RandomHighlightModule extends GalleryModule {
 	 * Check if we need to pick a new highlight. Don't pick a new one on DownloadItem
 	 * requests, unless we don't have the permission to see the current highlight
 	 */
-	if (!$loop && (($isOld && $viewName != 'core.DownloadItem') || !$canSee)) {
+	if (($isOld && $viewName != 'core.DownloadItem') || !$canSee) {
 	    /* Lock and refresh to ensure another request didn't just update highlight */
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
 	    if ($ret) {
 		return $ret;
 	    }
-	    /* ->refresh() will load the onLoad handler again, thus use the GDC $loop variable */
+	    /* ->refresh() will call the onLoad handler again, thus use the GDC $loop variable */
 	    GalleryDataCache::put("randomhighlight:load-$id", true);
 	    list ($ret, $refresh) = $thumbnail->refresh();
 	    if ($ret) {
@@ -218,6 +220,7 @@ class RandomHighlightModule extends GalleryModule {
 	}
 
 	if ($picknew) {
+	    GalleryDataCache::put('randomhighlight:count', $count + 1);
 	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($thumbnail->getParentId());
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);

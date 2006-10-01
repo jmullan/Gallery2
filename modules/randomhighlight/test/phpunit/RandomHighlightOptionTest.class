@@ -301,7 +301,7 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	$this->assertEquals(200, $highlight->getHeight(), 'highlight height');
     }
 
-    function testRandomHighlighDownloadItem() {
+    function testRandomHighlightDownloadItem() {
 	/* Verify no reselect on DownloadItem requests (bug 1346044) */
 
 	/* Make the album use randomhighlight */
@@ -336,13 +336,57 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	$this->assertEquals(200, $highlight->getWidth(), 'highlight width');
 	$this->assertEquals(150, $highlight->getHeight(), 'highlight height');
     }
+
+    function testRandomHighlightThrottle() {
+	/* Verify number of highlight reselects in a single request is limited (bug 1471906) */
+
+	/* Make the album use randomhighlight */
+	$form['RandomHighlightOption']['isRandomHighlight'] = 1;
+	$result = $this->_handleRequestAfterEdit($form, $this->_album);
+	$this->assertEquals(array(array(), array()), $result, 'turn on');
+
+	list ($ret, $highlight) = $this->_highlight->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('|RandomHighlight|', $highlight->getOnLoadHandlers(), 'verify');
+
+	/* Add a second photo item with another thumbnail dimension */
+	list ($ret, $newThumb) = $this->_createPhotoItem();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryDataCache::reset();
+	GalleryDataCache::put('randomhighlight:count', 5);
+
+	/* Execute the test */
+	list ($ret, $highlight) = $this->_highlight->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('|RandomHighlight|', $highlight->getOnLoadHandlers(), 'type');
+	$this->assertEquals($this->_thumb->getId(), $highlight->getDerivativeSourceId(),
+			    'sourceId');
+	$this->assertEquals(200, $highlight->getWidth(), 'highlight width');
+	$this->assertEquals(150, $highlight->getHeight(), 'highlight height');
+
+	GalleryDataCache::reset();
+	GalleryDataCache::put('randomhighlight:count', 2);
+	list ($ret, $highlight) = $this->_highlight->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('|RandomHighlight|', $highlight->getOnLoadHandlers(), 'type');
+	$this->assertEquals($newThumb->getId(), $highlight->getDerivativeSourceId(), 'sourceId');
+	$this->assertEquals(150, $highlight->getWidth(), 'highlight width');
+	$this->assertEquals(200, $highlight->getHeight(), 'highlight height');
+	$this->assertEquals(3, GalleryDataCache::get('randomhighlight:count'), 'reselect counter');
+    }
 }
 
 /**
  * Test toolkit
- *
- * @package RandomHighlight
- * @subpackage PHPUnit
  */
 class RandomHighlightTestToolkit extends GalleryToolkit {
 }
