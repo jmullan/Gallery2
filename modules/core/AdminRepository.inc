@@ -317,9 +317,6 @@ class AdminRepositoryView extends GalleryView {
 		}
 	    }
 
-	    $browseData = array_merge($browseData['module'], $browseData['theme']);
-	    $AdminRepository['browseData'] = $browseData;
-
 	    /* Get local index meta data. */
 	    list ($ret, $indexMetaData) = $repository->getIndexMetaData();
 	    if ($ret) {
@@ -350,6 +347,9 @@ class AdminRepositoryView extends GalleryView {
 	    }
 	}
 
+	GalleryCoreApi::requireOnce('modules/core/AdminPlugins.inc');
+	usort($AdminRepository['browseData'], array($this, 'pluginSort'));
+
 	$baseName = dirname(dirname(dirname(__FILE__)));
 	$AdminRepository['writeable'] = array(
 	    'modules' => $platform->is_writeable("$baseName/modules"),
@@ -365,6 +365,16 @@ class AdminRepositoryView extends GalleryView {
 	$template->javascript('lib/yui/connection-min.js');
 	$template->javascript('lib/yui/animation-min.js');
 	return array(null, array('body' => 'modules/core/templates/AdminRepository.tpl'));
+    }
+
+    /**
+     * TODO: combine this with AdminPluginsView::pluginSort
+     */
+    function pluginSort($a, $b) {
+	if (($cmp = strcmp($a['groupLabel'], $b['groupLabel'])) == 0) {
+	    $cmp = strcmp($a['name'], $b['name']);
+	}
+	return $cmp;
     }
 }
 ?>
