@@ -275,18 +275,8 @@ class Db2Storage extends GalleryStorage {
      * @see GalleryStorage::_getOptimizeStatement
      */
     function _getOptimizeStatement() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-	/*
-	 * This requires SYSCTL (therefore, groups), so won't work on single-user
-	 * Windows (9*, ME, XP). getmygid() returns "0" on my XP system. We presume it will not
-	 * return "0" on OSes that support groups.  Need to confirm that.
-	 */
-	if (GalleryUtilities::isA($platform, 'WinNtPlatform') && getmygid() == 0) {
-	    return null;
-	} else {
-	    return "CALL REORGCHK_TB_STATS ('S', '" . $this->_username . "')";
-	}
+	    $optimizeCommand = 'CALL ADMIN_CMD (\'RUNSTATS ON TABLE ' . $this->_username . '.%s WITH DISTRIBUTION ON ALL COLUMNS AND INDEXES ALL\')';
+            return $optimizeCommand;
     }
 }
 ?>
