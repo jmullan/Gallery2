@@ -200,11 +200,8 @@ class RepositoryDescriptor extends RepositoryObject {
 
 	$platform =& $gallery->getPlatform();
 	if ($platform->is_dir($path) && $dir = $platform->opendir($path)) {
-	    /* Ignore plugin base directory */
-	    if (strlen($relativePath)) {
-		$data['directories'][$relativePath]['packages'] =
-		    $this->getPackageNames($relativePath);
-	    }
+	    $data['directories'][$relativePath]['packages'] =
+		$this->getPackageNames($relativePath);
 
 	    /* Get directory meta data and recurse into subdirectories. */
 	    while (false !== ($file = $platform->readdir($dir))) {
@@ -317,10 +314,12 @@ class RepositoryDescriptor extends RepositoryObject {
     function getPackages() {
 	$packageTypes = array();
 
-	foreach ($this->_data['directories'] as $dir => $directoryMetaData) {
-	    foreach ($this->_data['directories'][$dir]['packages'] as $package) {
-		if (!in_array($package, $packageTypes)) {
-		    $packageTypes[] = $package;
+	if (!empty($this->_data['directories'])) {
+	    foreach ($this->_data['directories'] as $dir => $directoryMetaData) {
+		foreach ($this->_data['directories'][$dir]['packages'] as $package) {
+		    if (!in_array($package, $packageTypes)) {
+			$packageTypes[] = $package;
+		    }
 		}
 	    }
 	}
