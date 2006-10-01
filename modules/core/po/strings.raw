@@ -27,18 +27,20 @@ gettext("Full acceleration")
 gettext("Themes") /* also in: module.inc */
 
 /* AdminRepository.inc */
-gettext("Updating repository index")
+gettext("Updating Repository Index")
 gettext("Scanning plugins")
-gettext("Done.") /* also in: AdminRepositoryDownload.inc */
+gettext("Done.")
 
 /* AdminRepositoryDownload.inc */
-gettext("Downloading Files")
+gettext("Updating Packages")
 gettext("Downloading %s")
 gettext("Activating %s")
+gettext("Deleting Language Packs")
+gettext("Update complete.")
 
 /* AdminThemes.inc */
 gettext("install") /* also in: templates/AdminPlugins.tpl */
-gettext("upgrade") /* also in: classes/GalleryRepository.class templates/AdminPlugins.tpl */
+gettext("upgrade") /* also in: templates/AdminPlugins.tpl templates/AdminRepository.tpl */
 gettext("activate") /* also in: templates/AdminPlugins.tpl */
 gettext("uninstall") /* also in: templates/AdminPlugins.tpl */
 gettext("deactivate") /* also in: templates/AdminPlugins.tpl */
@@ -135,7 +137,7 @@ gettext("Animation Size")
 gettext("edit captions")
 
 /* ItemEditItem.inc */
-gettext("General") /* also in: module.inc */
+gettext("General") /* also in: module.inc classes/GalleryRepository.class */
 
 /* ItemEditMovie.inc */
 gettext("Movie Size")
@@ -302,10 +304,11 @@ gettext("movie")
 gettext("photo")
 
 /* classes/GalleryRepository.class */
-gettext("get more")
-gettext("download")
 gettext("Couldn't create repository cache path.")
 gettext("Couldn't create cache subdirectory. Make sure the web server has write permissions in it.")
+gettext("Officially Release Repository")
+gettext("Experimental Repository")
+gettext("Community Repository")
 
 /* classes/GalleryRepositoryIndex.class */
 gettext("Error downloading index hash from '%s'.")
@@ -347,6 +350,10 @@ gettext("Show micro navigation thumbnails")
 gettext("Blocks to show in the sidebar")
 gettext("Blocks to show on album pages")
 gettext("Blocks to show on photo pages")
+gettext("Thumbnail links in dynamic albums")
+gettext("Browse dynamic album")
+gettext("Jump to original album")
+gettext("Separate link to original album")
 gettext("View Samples")
 gettext("Album Frame")
 gettext("Item Frame")
@@ -411,6 +418,7 @@ gettext("enabled")
 gettext("disabled") /* also in: templates/AdminPlugins.tpl */
 gettext("Locale")
 gettext("Browser") /* also in: templates/ErrorPage.tpl */
+gettext("Rows in %s table = %d")
 
 /* classes/helpers/GalleryThemeHelper_medium.class */
 gettext("Successfully saved theme settings") /* also in: templates/AdminThemes.tpl test/phpunit/ItemEditThemePluginTest.class */
@@ -628,7 +636,7 @@ gettext("Gallery features come as separate plugins.  You can download and instal
 gettext("up to date")
 gettext("upgrade required")
 gettext("not installed")
-gettext("incompatible")
+gettext("incompatible") /* also in: templates/AdminRepository.tpl */
 gettext("Plugin Name")
 gettext("Version")
 gettext("Installed") /* also in: templates/AdminRepository.tpl */
@@ -643,15 +651,22 @@ gettext("Repository")
 gettext("Please make sure that your internet connection is set up properly or try again later.")
 gettext("The repository index has been successfully updated.")
 gettext("All plugins are already up-to-date.")
+gettext("%s plugin updated.")
+ngettext("%d language pack deleted.", "%d language packs deleted.")
 gettext("No personal information about you or your Gallery installation is sent to the Gallery server at any time.")
-gettext("The Gallery Plugin Repository contains the latest modules and themes provided by the Gallery team.  You can download and install new plugins to try them out, then delete them if you don't like them.  You must periodically download a new plugin list from the Gallery server to find out about any available updates. %s On slower connections the process might take a minute or two.")
+gettext("Download and install new plugins quickly and easily.  If you decide you don't like a plugin, you can delete it from your Gallery.  There are multiple different plugin repositories, you can choose which ones you want to use (it's ok to use all of them at once).  Once you've chosen, you must periodically download the latest plugin list to find out about available updates. %s On slower connections the process might take a minute or two.")
+gettext("Officially Released Gallery Project plugins (%srecommended%s)")
+gettext("last updated on %s")
+gettext("Experimental Gallery Project plugins (%scool new features, might be buggy%s)")
+gettext("Community plugins (%suse at your own risk!%s)")
 gettext("Configure your Gallery")
 gettext("Before you can proceed, you have to change some permissions so that Gallery can install plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:")
 gettext("If you have trouble changing permissions, ask your system administrator for assistance.  When you've fixed the permissions, click the Continue button to proceed.")
 gettext("Continue")
+gettext("Show Repository List")
+gettext("Hide Repository List")
 gettext("Update Plugin List")
 gettext("Download Plugin List")
-gettext("(last updated: %s)")
 gettext("Upgrade Gallery")
 gettext("A new version of Gallery is available, but it cannot be upgraded through this interface. Upgrading it might make some of your current plugins stop working, but others that rely on the features of the new version may become available. Here are the recommended steps for upgrading:")
 gettext("Review plugin compatibility (on the Themes and Modules tabs)")
@@ -659,10 +674,16 @@ gettext("%sDownload%s Gallery core")
 gettext("Read the %supgrade instructions%s and perform the upgrade")
 gettext("Incompatible plugins are marked with an exclamation icon.")
 gettext("A new core module version is available. There may be plugins that are incompatible with the installed core module, which are not shown here. You can view a %scomplete list%s of plugins, including incompatible ones, which are marked with a red icon.")
+gettext("upgrade available")
+gettext("locked")
 gettext("Theme Name")
 gettext("Module Name")
 gettext("Latest")
+gettext("Locked Plugin")
 gettext("Incompatible Plugin")
+gettext("Upgrade Available")
+gettext("download")
+gettext("modify")
 gettext("Upgrade All Plugins")
 gettext("Gallery can automatically upgrade your themes and modules to the latest available versions. No new plugins will be downloaded.")
 gettext("Upgrade All")
@@ -670,24 +691,20 @@ gettext("Upgrade All")
 /* templates/AdminRepositoryDownload.tpl */
 gettext("Download %s")
 gettext("No packages have been selected.")
-gettext("Download the latest base package in order to use this plugin.  Language packages are optional.  You only need to download the ones that you want to use on your site.")
-gettext("Base package")
-gettext("%s (version %s)")
-gettext("%s (version: %s, currently installed: %s)")
-gettext("%s (currently installed version %s is up to date)")
-gettext("Language packages")
-gettext("(select: %sall%s %snone%s | up to date packages: %shide%s %sshow%s)")
-gettext("%s (version: %s)")
-gettext("%s (version %s is up to date)")
-gettext("There are no language packs available for download.")
-gettext("Download")
-
-/* templates/AdminRepositorySetup.tpl */
-gettext("Gallery Repository Setup")
-gettext("Warning:")
-gettext("In order to download plugins from the Gallery repository, a special directory needs to be created where Gallery will store the data. Under your Gallery base directory, create a directory called '%s' and allow the web server to write into it by appropriately setting the permissions.")
-gettext("Instructions for Unix-type platforms:")
-gettext("Refreshing this page will take you to the Repository if the directory has been successfully created.")
+gettext("Download a package in order to use this plugin.  You can upgrade by choosing a newer version of the package to download.  Language packages are optional, You only need to download the ones that you want to use on your site.")
+gettext("Base Packages")
+gettext("%s: version %s (build %s)")
+gettext("%s: version %s (build %s) %sdowngrading is not supported!%s")
+gettext("%sCurrently Installed%s: version %s (build %s)")
+gettext("Language Packages")
+gettext("(%sselect all%s%sselect none%s)")
+gettext("%s version %s (upgrading from %s)")
+gettext("%s version %s")
+gettext("%s version %s (%snewer version %s is installed%s)")
+gettext("%s version %s (currently installed)")
+gettext("No compatible language packages available")
+gettext("You must select a base package before choosing language packs.")
+gettext("Update")
 
 /* templates/AdminThemes.tpl */
 gettext("Gallery Themes")
