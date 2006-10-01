@@ -91,7 +91,7 @@ class AdminPluginsView extends GalleryView {
 		$entry['installedVersion'] = isset($status['version']) ? $status['version'] : null;
 		$entry['deletable'] =
 		    ($platform->is_writeable("$g2Dir/{$type}s/$pluginId") &&
-		     $platform->is_writeable("$g2Dir/{$type}s/$pluginId/module.inc")) ? 1 : 0;
+		     $platform->is_writeable("$g2Dir/{$type}s/$pluginId/$type.inc")) ? 1 : 0;
 
 		list ($ret, $entry['state']) =
 		    PluginCallbackView::getPluginState($type, $plugin, $status);
