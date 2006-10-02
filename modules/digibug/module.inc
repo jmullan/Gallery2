@@ -36,7 +36,7 @@ class DigibugModule extends GalleryModule {
 	$this->setVersion('0.9.0'); /* Update upgrade() too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
-	$this->setRequiredCoreApi(array(7, 7));
+	$this->setRequiredCoreApi(array(7, 2));
 	$this->setRequiredModuleApi(array(3, 0));
     }
 
