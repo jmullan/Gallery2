@@ -276,8 +276,12 @@ class GalleryRepositoryIndex {
 	 * language packs are going to be compatible.  We used to do this, but it was deemed too
 	 * complex so it got axed.
 	 */
-	$revision = $this->_index[$pluginType . 's'][$pluginId]['header']['stringsRevision'];
-	return array(null, $this->_index[$pluginType . 's'][$pluginId]['languages'][$revision]);
+	$data = $this->_index[$pluginType . 's'][$pluginId];
+	if (!empty($data['header']['stringsRevision'])) {
+	    return array(null, $data['languages'][$data['header']['stringsRevision']]);
+	} else {
+	    return array(null, array());
+	}
     }
 
     /**
