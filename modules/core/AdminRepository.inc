@@ -347,8 +347,10 @@ class AdminRepositoryView extends GalleryView {
 	    }
 	}
 
-	GalleryCoreApi::requireOnce('modules/core/AdminPlugins.inc');
-	uasort($AdminRepository['browseData'], array($this, 'pluginSort'));
+	if (!empty($AdminRepository['browseData'])) {
+	    GalleryCoreApi::requireOnce('modules/core/AdminPlugins.inc');
+	    uasort($AdminRepository['browseData'], array($this, 'pluginSort'));
+	}
 
 	$baseName = dirname(dirname(dirname(__FILE__)));
 	$AdminRepository['writeable'] = array(
