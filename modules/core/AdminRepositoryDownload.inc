@@ -101,11 +101,13 @@ class AdminRepositoryDownloadController extends GalleryController {
 		}
 	    }
 
-	    foreach ($form['languagesAvailable'] as $language) {
-		list ($langSource, $langCode) = explode(':', $language);
-		if ($langSource == $baseSource &&
+	    if (isset($form['languagesAvailable'])) {
+		foreach ($form['languagesAvailable'] as $language) {
+		    list ($langSource, $langCode) = explode(':', $language);
+		    if ($langSource == $baseSource &&
 		        empty($selected[$pluginType][$pluginId]['lang-' . $langCode])) {
-		    $deleteLanguages[$pluginType][$pluginId][] = $langCode;
+			$deleteLanguages[$pluginType][$pluginId][] = $langCode;
+		    }
 		}
 	    }
 
