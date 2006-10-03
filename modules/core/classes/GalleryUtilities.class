@@ -1266,6 +1266,9 @@ class GalleryUtilities {
 	foreach (array('modules', 'themes') as $dir) {
 	    $dh = opendir($base . $dir);
 	    while (($file = readdir($dh)) !== false) {
+		if ($file == '..' || $file == '.') {
+		    continue;
+		}
 		if (file_exists($base . $dir . '/' . $file . '/MANIFEST')) {
 		    $list[] = $dir . '/' . $file . '/MANIFEST';
 		}
@@ -1274,27 +1277,38 @@ class GalleryUtilities {
 	}
 	$manifest = array();
 	foreach ($list as $file) {
-	    $lines = file($base . $file);
-	    if (!empty($lines)) {
-		foreach ($lines as $line) {
-		    $line = trim(preg_replace('/#.*/', '', $line));
-		    if (empty($line)) {
-			continue;
-		    }
+	    GalleryUtilities::readIndividualManifest($base . $file, $manifest);
+	}
+	return $manifest;
+    }
 
-		    $line = explode("\t", $line);
-		    if (count($line) == 2 && $line[0] == 'R') {
-			$file = trim($line[1]);
-			$manifest[$file] = array('removed' => 1);
-		    } else {
-			list ($file, $cksum, $cksum_crlf, $size, $size_crlf) = $line;
-			$file = trim($file);
-			$manifest[$file] =
-			    array('checksum' => $cksum,
-				  'checksum_crlf' => $cksum_crlf,
-				  'size' => $size,
-				  'size_crlf' => $size_crlf);
-		    }
+    /**
+     * Read one manifest file
+     *
+     * @param string $filePath the path to the MANIFEST file
+     * @return array(file => array('checksum'=>..,'size'=>..,'viewable'=>..), ...)
+     */
+    function readIndividualManifest($filePath, &$manifest) {
+	$lines = file($filePath);
+	if (!empty($lines)) {
+	    foreach ($lines as $line) {
+		$line = trim(preg_replace('/#.*/', '', $line));
+		if (empty($line)) {
+		    continue;
+		}
+
+		$line = explode("\t", $line);
+		if (count($line) == 2 && $line[0] == 'R') {
+		    $file = trim($line[1]);
+		    $manifest[$file] = array('removed' => 1);
+		} else {
+		    list ($file, $cksum, $cksum_crlf, $size, $size_crlf) = $line;
+		    $file = trim($file);
+		    $manifest[$file] = array(
+			'checksum' => $cksum,
+			'checksum_crlf' => $cksum_crlf,
+			'size' => $size,
+			'size_crlf' => $size_crlf);
 		}
 	    }
 	}

@@ -36,199 +36,230 @@ GalleryCoreApi::requireOnce(
  * @subpackage PHPUnit
  */
 class RepositoryDescriptorTest extends GalleryTestCase {
-
     var $_testModule;
-    var $_descriptorDir;
-    var $_expectedDescriptor;
-    var $_galleryTranslator;
 
     function setUp() {
 	parent::setUp();
 	global $gallery;
 
-	/* Set up utilities. */
-	$this->_utilities = new RepositoryDescriptorTestUtilities(
-	    array('/strings.raw/' => '# $' . 'Id: strings.raw 22222 2006-07-08 23:55:12Z bharat $',
-		  '/MANIFEST/' => '# $' . 'Revision: 11111 $',
-		  '/.po$/' => '# $' . 'Id: en_GB.po 33333 2006-07-08 23:55:12Z bharat $'));
+	/* This maps to ../data/MANIFEST */
+	$this->_canonicalFileMetaData = array(
+	    'files' => array(
+		'MANIFEST' => array(
+		    'bytes' => '12121', 'hash' => md5('manifest_data'),
+		    'packages' => array('base')),
+		'file.1' => array(
+		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
+		'file.2' => array(
+		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
+		'po/strings.raw' => array(
+		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
+		'po/aa.po' => array(
+		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
+		'locale/aa/LC_MESSAGES/test.mo' => array(
+		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
+		'test/phpunit/file.test' => array(
+		    'bytes' => '11111', 'hash' => '12345', 'packages' => array())),
+	    'directories' => array(
+		'po' => array('packages' => array('base')),
+		'locale/aa/LC_MESSAGES' => array('packages' => array('lang-aa')),
+		'locale/aa' => array('packages' => array('lang-aa')),
+		'locale' => array('packages' => array('base')),
+		'test/phpunit' => array('packages' => array()),
+		'test' => array('packages' => array())),
+	    'header' => array(
+		'stringsRevision' => '22222'));
 
-	/* Set up plugin files and directories. */
-	$pluginDir = 'pluginpath';
-	$this->_descriptorDir = 'descriptorDir/';
-	$pluginFilesystem = array (
-	    $pluginDir . '/' => array('MANIFEST', 'module.inc', 'callbacks.inc'),
-	    $pluginDir . '/locale/' => array(),
-	    $pluginDir . '/locale/en_US/' => array(),
-	    $pluginDir . '/locale/en_GB/' => array(),
-	    $pluginDir . '/locale/pt_BR/' => array(),
-	    $pluginDir . '/locale/pt_PT/' => array(),
-	    $pluginDir . '/locale/en_US/LC_MESSAGES/' => array('modules_mockmodule.mo'),
-	    $pluginDir . '/locale/en_GB/LC_MESSAGES/' => array('modules_mockmodule.mo'),
-	    $pluginDir . '/locale/pt_BR/LC_MESSAGES/' => array('modules_mockmodule.mo'),
-	    $pluginDir . '/locale/pt_PT/LC_MESSAGES/' => array('modules_mockmodule.mo'),
-	    $pluginDir . '/images/' => array('image1.gif', 'image2.gif'),
-	    $pluginDir . '/test/' => array(),
-	    $pluginDir . '/test/phpunit/' => array('testMockModule.class'),
-	    $pluginDir . '/po/' => array(
-		'strings.raw', 'GNUmakefile', 'en_US.po', 'en_GB.po', 'pt_PT.po', 'pt_BR.po'));
-
-	/* Put our mock objects in place. */
-	$gallery->setConfig('repository.templates', dirname(__FILE__) . '/../data/');
-	$this->_galleryTranslator = $gallery->_translator;
 	$gallery->_translator = new RepositoryDescriptorTestTranslator();
-	$gallery->setPlatform(new RepositoryDescriptorTestPlatform(
-	    $pluginFilesystem, $pluginDir, $this->_descriptorDir));
-
-	/* Set up plugin. */
-	$this->_testModule = new RepositoryDescriptorTestPlugin();
-	$this->_testModule->setPluginType('module');
-	$this->_testModule->setId('testModule');
-	$this->_testModule->setName('Test Module');
-	$this->_testModule->setDescription('This is a test module.');
-	$this->_testModule->setVersion('1.0.0');
-	$this->_testModule->setGroup('testGroup', 'Test Group');
-	$this->_testModule->setRequiredCoreApi(array(1, 2));
-	$this->_testModule->setRequiredModuleApi(array(3, 4));
-
-	include(dirname(__FILE__) . '/../data/SampleDescriptors.inc');
-	$this->_expectedDescriptor = $sampleModuleDescriptor;
     }
 
-    function tearDown() {
-	parent::tearDown();
-
-	global $gallery;
-	$gallery->_translator = $this->_galleryTranslator;
+    function _getDescriptorWithFakeFileMetadata() {
+	$data = array();
+	$utils = new RepositoryDescriptorTestUtilities();
+	$g2Base = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+	$utils->setGetFirstBytesFromFile(
+	    array($g2Base . '/modules/testModule/MANIFEST', 128),
+	    '# $' . 'Revision: 14604 $');
+	$utils->setGetFirstBytesFromFile(
+	    array($g2Base . '/modules/testModule/po/aa.po', 128),
+	    '# $' . 'Id: de.po 14444 2006-09-03 08:03:07Z bharat $');
+	$descriptor = new RepositoryDescriptor_FakeFileMetaDataTest($this->_canonicalFileMetaData);
+	$descriptor->setUtilities($utils);
+	$descriptor->setTemplate(new RepositoryTestTemplate());
+	return $descriptor;
     }
 
     /**
      * Test that a valid descriptor is being generated.
      */
     function testDescriptorGeneration() {
-	global $gallery;
-
-	$descriptor = new RepositoryDescriptor();
-	$descriptor->setTemplate(new RepositoryTestTemplate());
-	$descriptor->setUtilities($this->_utilities);
-	$descriptor->_outputDir = $this->_descriptorDir;
-
-	$ret = $descriptor->generate($this->_testModule);
+	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
+	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals($this->_expectedDescriptor, $descriptor->_data,
+	$this->assertEquals(
+	    array('header' => array(
+		      'stringsRevision' => '22222',
+		      'buildTimestamp' => '14604'),
+		  'descriptions' => array(
+		      'en_US' => array(
+			  'name' => 'Test Module',
+			  'description' => 'This is a test module.',
+			  'groupLabel' => 'Test Group'),
+		      'pt_BR' => array(
+			  'name' => 'pt_BR-modules_testModule-Test Module',
+			  'description' => 'pt_BR-modules_testModule-This is a test module.',
+			  'groupLabel' => 'pt_BR-modules_testModule-Test Group'),
+		      'pt_PT' => array(
+			  'name' => 'pt_PT-modules_testModule-Test Module',
+			  'description' => 'pt_PT-modules_testModule-This is a test module.',
+			  'groupLabel' => 'pt_PT-modules_testModule-Test Group')),
+		  'files' => array(
+		      'MANIFEST' => array(
+			  'bytes' => '12121', 'hash' => 'e2c1ea30bc02c55da1a105acc1f3af4d',
+			  'packages' => array('base')),
+		      'file.1' => array(
+			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
+		      'file.2' => array(
+			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
+		      'po/strings.raw' => array(
+			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
+		      'po/aa.po' => array(
+			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
+		      'locale/aa/LC_MESSAGES/test.mo' => array(
+			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
+		      'test/phpunit/file.test' => array(
+			  'bytes' => '11111', 'hash' => '12345', 'packages' => array())),
+		  'directories' => array(
+		      'locale/aa/LC_MESSAGES' => array('packages' => array('lang-aa')),
+		      'locale/aa' => array('packages' => array('lang-aa')),
+		      'po' => array('packages' => array('base')),
+		      'locale' => array('packages' => array('base')),
+		      'test' => array('packages' => array()),
+		      'test/phpunit' => array('packages' => array())),
+		  'languages' => array('22222' => array('aa' => '14444'))),
+	    $descriptor->_data,
 	    'Descriptor does not match expected data.');
     }
 
-    function testGetDirectoriesInPackage() {
-	$descriptor = new RepositoryDescriptor();
-	$descriptor->setTemplate(new RepositoryTestTemplate());
-	$descriptor->setUtilities($this->_utilities);
-	$descriptor->_outputDir = $this->_descriptorDir;
+    function testGetFileMetaData() {
+	global $gallery;
 
-	$ret = $descriptor->generate($this->_testModule);
+	$testDataDir = dirname(dirname(__FILE__)) . '/data/';
+	$data = array();
+	$descriptor = new RepositoryDescriptor();
+	$utils = new RepositoryDescriptorTestUtilities();
+	$utils->setGetFirstBytesFromFile(
+	    array($testDataDir . 'po/strings.raw', 128),
+	    '# $' . 'Id: strings.raw 22222 2006-07-08 23:55:12Z bharat $');
+	$descriptor->setUtilities($utils);
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('filesize', array($testDataDir . 'MANIFEST'), 12121);
+	$platform->setReply('file_get_contents', array($testDataDir . 'MANIFEST'), 'manifest_data');
+	$gallery->setPlatform($platform);
+
+	$descriptor->getFileMetaData(dirname(dirname(__FILE__)) . '/data/', $data);
+
+	// debug
+	$this->assertEquals($this->_canonicalFileMetaData['directories'], $data['directories']);
+
+	$this->assertEquals($this->_canonicalFileMetaData, $data);
+    }
+
+    function testGetDirectoriesInPackage() {
+	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
+	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(array(
-	    'locale/',
-	    'images/',
-	    'po/',
-	    ), $descriptor->getDirectoriesInPackage('base'));
+	$this->assertEquals(
+	    array('locale', 'po'),
+	    $descriptor->getDirectoriesInPackage('base'));
 
-	$this->assertEquals(array(
-	    'locale/en_US/',
-	    'locale/en_US/LC_MESSAGES/',
-	    ), $descriptor->getDirectoriesInPackage('lang-en_US'));
-
-	$this->assertEquals(array(
-	    'locale/pt_BR/',
-	    'locale/pt_BR/LC_MESSAGES/',
-	    ), $descriptor->getDirectoriesInPackage('lang-pt_BR'));
+	/*
+	 * It's important that parent dirs show up before child dirs because we'll be calling
+	 * mkdir on them in this order.
+	 */
+	$this->assertEquals(
+	    array('locale/aa', 'locale/aa/LC_MESSAGES'),
+	    $descriptor->getDirectoriesInPackage('lang-aa'));
     }
 
     function testGetFilesInPackage() {
-	$descriptor = new RepositoryDescriptor();
-	$descriptor->setTemplate(new RepositoryTestTemplate());
-	$descriptor->setUtilities($this->_utilities);
-	$descriptor->_outputDir = $this->_descriptorDir;
-
-	$ret = $descriptor->generate($this->_testModule);
+	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
+	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(array(
-	    'MANIFEST',
-	    'callbacks.inc',
-	    'images/image1.gif',
-	    'images/image2.gif',
-	    'module.inc',
-	    'po/GNUmakefile',
-	    'po/strings.raw',
-	    ), $descriptor->getFilesInPackage('base'));
+	$this->assertEquals(
+	    array('MANIFEST', 'file.1', 'file.2', 'po/strings.raw'),
+	    $descriptor->getFilesInPackage('base'));
 
-	$this->assertEquals(array(
-	    'locale/en_US/',
-	    'locale/en_US/LC_MESSAGES/',
-	    ), $descriptor->getDirectoriesInPackage('lang-en_US'));
+	$this->assertEquals(
+	    array('locale/aa/LC_MESSAGES/test.mo', 'po/aa.po'),
+	    $descriptor->getFilesInPackage('lang-aa'));
     }
 
     function testGetPackages() {
-	$descriptor = new RepositoryDescriptor();
-	$descriptor->setTemplate(new RepositoryTestTemplate());
-	$descriptor->setUtilities($this->_utilities);
-	$descriptor->_outputDir = $this->_descriptorDir;
-
-	$ret = $descriptor->generate($this->_testModule);
+	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
+	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(array(
-	    'base',
-	    'lang-en_US',
-	    'lang-en_GB',
-	    'lang-pt_BR',
-	    'lang-pt_PT',
-	    ), $descriptor->getPackages());
+	$this->assertEquals(
+	    array('base', 'lang-aa'),
+	    $descriptor->getPackages());
     }
 }
 
-class RepositoryDescriptorTestPlugin extends GalleryPlugin {
-    function setPluginType($type) {
-	$this->_type = $type;
+class RepositoryDescriptor_FakeFileMetaDataTest extends RepositoryDescriptor{
+    function RepositoryDescriptor_FakeFileMetaDataTest($metaData) {
+	$this->_metaData = $metaData;
+    }
+
+    function getFileMetaData($pluginDir, &$data) {
+	$data = array_merge($data, $this->_metaData);
+	return null;
+    }
+}
+
+class RepositoryDescriptorTestPlugin {
+    function getId() {
+	return 'testModule';
+    }
+
+    function getName() {
+	return 'Test Module';
+    }
+
+    function getDescription() {
+	return 'This is a test module.';
+    }
+
+    function getVersion() {
+	return '1.0.0';
     }
 
     function getPluginType() {
-	return $this->_type;
-    }
-
-    function setRequiredModuleApi($requirement) {
-	$this->_requiredModuleApi = $requirement;
+	return 'module';
     }
 
     function getRequiredModuleApi() {
-	return $this->_requiredModuleApi;
+	return array(3, 4);
     }
 
-    function setRequiredThemeApi($requirement) {
-	$this->_requiredThemeApi = $requirement;
-    }
-
-    function getRequiredThemeApi() {
-	return $this->_requiredThemeApi;
-    }
-
-    function setGroup($group, $groupLabel) {
-	$this->_group = array('group' => $group, 'groupLabel' => $groupLabel);
+    function getRequiredCoreApi() {
+	return array(1, 2);
     }
 
     function getGroup() {
-	return array('group' => $this->_group['group'],
-		     'groupLabel' => $this->_group['groupLabel']);
+	return array('group' => 'testGroup', 'groupLabel' => 'Test Group');
     }
 }
 
@@ -240,9 +271,7 @@ class RepositoryDescriptorTestTranslator {
     }
 
     function getLanguageData() {
-	return array(array('en' => array('US' => 'Desc1', 'GB' => 'Desc2'),
-			   'pt' => array('BR' => 'Desc3', 'PT' => 'Desc4')),
-		     array());
+	return array(array('pt' => array('BR' => 'Desc3', 'PT' => 'Desc4')), array());
     }
 
     function translateDomain($domain, $string) {
@@ -252,182 +281,17 @@ class RepositoryDescriptorTestTranslator {
 }
 
 class RepositoryDescriptorTestUtilities {
-
-    var $_expectedFile;
-
-    function RepositoryDescriptorTestUtilities($matches) {
-	$this->_matches = $matches;
+    function setGetFirstBytesFromFile($expected, $reply) {
+	$this->_matches[serialize($expected)] = $reply;
     }
 
     function getFirstBytesFromFile($file, $bytes) {
-	foreach ($this->_matches as $regex => $result) {
-	    if (preg_match($regex, $file)) {
-		return array(null, $result);
-	    }
-	}
-	return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					   "Error reading file [$file]"), null);
+	return array(null, $this->_matches[serialize(array($file, $bytes))]);
     }
 
     function extractRevision($string) {
 	preg_match('/([\d]{5})/', $string, $matches);
 	return array(null, $matches[0]);
-    }
-}
-
-/**
- * Platform for testing repository tools.
- *
- * A relatively complex platform is required for testing the descriptor generation
- * because it heavily relies on interacting with the filesystem. All functions used
- * by RepositoryDescriptor have been reimplemented to interact with an array which
- * simulates the plugin's files and directories.
- */
-class RepositoryDescriptorTestPlatform {
-    var $pluginFilesystem;
-    var $pluginFileList;
-    var $pluginDir;
-    var $descriptorDir;
-    var $dirPosition;
-
-    function RepositoryDescriptorTestPlatform($pluginFilesystem, $pluginDir, $descriptorDir) {
-	$this->pluginDir = $pluginDir;
-	$this->_descriptorDir = $descriptorDir;
-	$this->pluginFilesystem = $pluginFilesystem;
-
-	/*
-	 * Create an array of all possible files with their full paths,
-	 * so is_file can easily determine what it should return.
-	 */
-	foreach ($this->pluginFilesystem as $directory => $files) {
-	    foreach ($files as $file) {
-		$this->pluginFileList[$directory . $file] = 1;
-	    }
-	}
-
-	/* Reset directory position pointer. */
-	$this->dirPosition = array();
-    }
-
-    function fopen($file, $mode) {
-	return true;
-    }
-
-    function fread($file, $bytes) {
-	return '';
-    }
-
-    function fclose($file) {
-	return true;
-    }
-
-    /**
-     * realpath is used to make sure there are no trailing slashes in
-     * paths, so we implement that here. We also have to check if the
-     * specified file is one of the files in our mock plugin, because
-     * realpath is also used on the plugin base directory. Since the
-     * GalleryCoreApi can't get the base base directory of our mock plugin
-     * we return 'pluginpath' to be the base.
-     */
-    function realpath($path) {
-	return isset($this->pluginFilesystem[$path])
-	       ? substr($path, 0, strlen($path)-1) : $this->pluginDir;
-    }
-
-    function is_dir($path) {
-	if (isset($this->pluginFilesystem[$path]) || $path == $this->_descriptorDir) {
-	    return true;
-	} else {
-	    return false;
-	}
-    }
-
-    function is_file($path) {
-	return isset($this->pluginFileList[$path]);
-    }
-
-    function opendir($path) {
-	if ($this->is_dir($path)) {
-	    return $path;
-	} else {
-	    return false;
-	}
-    }
-
-    function readdir($path) {
-	if ($this->is_dir($path)) {
-	    return $this->getNextFile($path);
-	} else {
-	    return "Tried to read invalid path [$path]";
-	}
-    }
-
-    function filesize($path) {
-	return 10;
-    }
-
-    function chdir($path) {
-	return true;
-    }
-
-    function file_get_contents($file) {
-	return $file;
-    }
-
-    /**
-     * This function implements the functionality of PHP's readdir($path),
-     * but using our test filesystem defined in $this->pluginFilesystem.
-     */
-    function getNextFile($readPath) {
-	/* We use a member array to track our position in various directories. */
-	if (!isset($this->dirPosition[$readPath])) {
-	    $this->dirPosition[$readPath] = 0;
-	} else {
-	    $this->dirPosition[$readPath]++;
-	}
-
-	/* Compile a list of all subdirectories of specified path. */
-	$subDirectories = array();
-	foreach ($this->pluginFilesystem as $directory => $files) {
-	    if (preg_match(sprintf('/^%s([a-z_]*\/)$/iU', str_replace('/', '\/', $readPath)),
-		    $directory, $subDirectory)) {
-		$subDirectories[] = $subDirectory[1];
-	    }
-	}
-
-	/* Check if there are any more subdirectories in current path. */
-	if (array_key_exists($this->dirPosition[$readPath], $subDirectories)) {
-	    return $subDirectories[$this->dirPosition[$readPath]];
-	} else {
-	    /* No more subdirectories, return files, if there are any. */
-	    $fileIndex = $this->dirPosition[$readPath] - count($subDirectories);
-	    if (count($this->pluginFilesystem[$readPath]) > $fileIndex) {
-		return $this->pluginFilesystem[$readPath][$fileIndex];
-	    } else {
-		/* Now only three special 'files' remain unread: .svn, . and .. */
-		$fileIndex = $this->dirPosition[$readPath]
-		    - count($this->pluginFilesystem[$readPath]) - count($subDirectories);
-
-		switch ($fileIndex) {
-		case 0:
-		    return '.';
-
-		case 1:
-		    return '..';
-
-		case 2:
-		    return '.svn';
-
-		case 3:
-		    /* All files and subdirectories of the current path have been returned. */
-		    return false;
-
-		default:
-		    /* We should never get here. If we do, is_dir will fail the test. */
-		    return "Error: file index out of range [$fileIndex]";
-		}
-	    }
-	}
     }
 }
 ?>

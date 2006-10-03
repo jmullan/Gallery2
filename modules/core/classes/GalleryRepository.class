@@ -623,7 +623,10 @@ class GalleryRepository {
 			$errorMessage = "Couldn't read '$filePath'.";
 		    }
 
-		    if (md5($contents) != $metaData['hash']) {
+		    $checksum = strlen($metaData['hash']) == 32
+			? md5($contents)
+			: sprintf("%u", crc32($contents));
+		    if ($checksum != $metaData['hash']) {
 			$errorMessage = "Integrity check failed for '$filePath'.";
 		    }
 

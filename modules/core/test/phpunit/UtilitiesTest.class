@@ -1503,6 +1503,30 @@ class UtilitiesTest extends GalleryTestCase {
 	    'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=)(/&%',
 	    GalleryUtilities::strToUpper('abcdefghijklmnopqrstuvwxyz0123456789=)(/&%'));
     }
+
+    /**
+     * The readManifest() code doesn't use GalleryPlatform and is hard to test.  So this test is
+     * useful for when we're refactoring this code.  Delete /tmp/manifest.txt and run the test
+     * once and it'll capture the current manifest.  Subsequent runs will compare it against that
+     * golden version, so you can refactor the manifest code till you're happy.  But don't leave
+     * this test uncommented as otherwise it will break on the next manifest update.
+     */
+    /*
+    function testReadManifest() {
+	$actual = GalleryUtilities::readManifest();
+	$cmpFile = '/tmp/manifest.txt';
+	if (!file_exists($cmpFile)) {
+	    $fd = fopen($cmpFile, 'wb');
+	    fwrite($fd, $actual);
+	    fclose($fd);
+	    $expected = $actual;
+	} else {
+	    $expected = unserialize(file_get_contents($cmpFile));
+	}
+
+	$this->assertEquals(serialize($expected), serialize($actual));
+    }
+    */
 }
 
 /**
