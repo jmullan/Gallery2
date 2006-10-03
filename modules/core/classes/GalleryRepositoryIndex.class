@@ -123,7 +123,7 @@ class GalleryRepositoryIndex {
 
     /**
      * Get the contents of the index, given a url.  Attempt to download the .gz version of the
-     * file if this version of PHP supports gzinflate.  Otherwise, get the uncompresed version.
+     * file if this version of PHP supports gzinflate.  Otherwise, get the uncompressed version.
      *
      * @param string the index url
      * @return array object GalleryStatus a status code
@@ -144,8 +144,9 @@ class GalleryRepositoryIndex {
 	list ($wasDownloaded, $indexContents) = $this->_utilities->downloadFile($indexUrl);
 	if (!$wasDownloaded) {
 	    $errorMessage = $gallery->i18n('Error downloading index from \'%s\'.');
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-					sprintf($errorMessage, $indexUrl));
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+					       sprintf($errorMessage, $indexUrl)),
+			 null);
 	}
 
 	if ($needsInflation) {
