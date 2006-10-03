@@ -197,7 +197,6 @@ class RepositoryDescriptor extends RepositoryObject {
     function getFileMetaData($pluginDir, &$data) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
-	$phpVm = $gallery->getPhpVm();
 
 	$manifest = array();
 	$manifestFile = $pluginDir . 'MANIFEST';
@@ -208,7 +207,7 @@ class RepositoryDescriptor extends RepositoryObject {
 
 	$data['files']['MANIFEST'] = array(
 	    'bytes' => (string)$platform->filesize($manifestFile),
-	    'hash' => $phpVm->md5($platform->file_get_contents($manifestFile)),
+	    'hash' => sprintf('%u', crc32($platform->file_get_contents($manifestFile))),
 	    'packages' => array('base'));
 
 	foreach ($manifest as $file => $fileInfo) {
