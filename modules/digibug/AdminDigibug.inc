@@ -39,6 +39,13 @@ class AdminDigibugController extends GalleryController {
 	    return array($ret, null);
 	}
 
+	/* Provide compatibility with 2.1 and 2.2 */
+	if ($apiVersion[1] >= 6) {
+	    $adminPlugins = 'core.AdminPlugins';
+	} else {
+	    $adminPlugins = 'core.AdminModules';
+	}
+
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
 	    if (empty($form['digibugCustomerId'])) {
@@ -69,7 +76,7 @@ class AdminDigibugController extends GalleryController {
 		    $redirect['subView'] = 'digibug.AdminDigibug';
 		    $status['saved'] = 1;
 		} else {
-		    $redirect['subView'] = 'core.AdminPlugins';
+		    $redirect['subView'] = $adminPlugins;
 		    $status['configured'] = 'digibug';
 		}
 	    }
@@ -78,7 +85,7 @@ class AdminDigibugController extends GalleryController {
 	    $redirect['subView'] = 'digibug.AdminDigibug';
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
-	    $redirect['subView'] = 'core.AdminPlugins';
+	    $redirect['subView'] = $adminPlugins;
 	}
 
 	$results = array('status' => $status, 'error' => $error);
