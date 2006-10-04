@@ -205,10 +205,7 @@ class EditFeedView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	/*
-	 * Fetch module parameters and save them in an array passed
-	 * to the template engine
-	 */
+	/* Fetch module parameters and save them in an array passed to the template engine */
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'rss');
 	if ($ret) {
 	    return array($ret, null);
@@ -250,7 +247,7 @@ class EditFeedView extends GalleryView {
 		if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 		    $EditFeed['type'] = 'album';
 		    $EditFeed['feedType'] = 'photos';
-		} else if(GalleryUtilities::isA($item, 'GalleryDataItem')) {
+		} else if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		    $EditFeed['type'] = 'photo';
 		    $EditFeed['feedType'] = 'commentsPhoto';
 		}
@@ -302,7 +299,7 @@ class EditFeedView extends GalleryView {
 
 		if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 		    $EditFeed['type'] = 'album';
-		} else if(GalleryUtilities::isA($item, 'GalleryDataItem')) {
+		} else if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		    $EditFeed['type'] = 'photo';
 		}
 
