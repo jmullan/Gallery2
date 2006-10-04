@@ -134,8 +134,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
     /*
      * call _testAddChildrenFromLocalServer with the '$useSymlink'
-     * parameter set to false, thus specifying that the files should be
-     * copied.
+     * parameter set to false, thus specifying that the files should be copied.
      */
     function testAddChildrenFromLocalServer() {
 	return $this->_testAddChildrenFromLocalServer(false);
@@ -155,8 +154,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
     /*
      * call _testAddChildrenFromLocalServer specifying that we want to use
      * a symlink. Also specify that the symlink should >not< be supported
-     * (and thus the mock platform object that does not support symlinks
-     * will be used.
+     * (and thus the mock platform object that does not support symlinks will be used.
      */
     function testAddChildrenFromLocalServerUsingSymlinkWithSymlinkNotSupported() {
 	return $this->_testAddChildrenFromLocalServer(true, false);
@@ -190,32 +188,8 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	return $this->_testAddChildrenFromLocalServer(true, false, false, true);
     }
 
-    /* TODO: add subsubfolder with umlaut in foldername and subsubsubfile with umlaut */
     function testAddChildrenFromLocalServerRecursiveSetSummaryDescription() {
 	return $this->_testAddChildrenFromLocalServer(false, true, false, true, false, true, true);
-    }
-    /*
-     * TODO: virtualize the whole test and add test where the dir to add  has an umlaut in the name
-     * function testAddChildrenFromLocalServerRecursiveOnlySubSubAlbum() {
-     *     // Goal: test the case when the localServerDirectories has umlauts
-     *     return $this->_testAddChildrenFromLocalServer(false, true, false, false, false, true,
-     *                                                   true, true);
-     * }
-     *
-     * TODO: virtualize the whole test and add test where localServerPath has an umlaut in the name
-     * function testAddChildrenFromLocalServerRecursiveOnlySubSubAlbumChildren() {
-     *     // Goal: test the case when the localServerPath has umlauts
-     *	   return $this->_testAddChildrenFromLocalServer(false, true, false, false, false,
-     *                                                   true, true, true, true);
-     * }
-    */
-
-    function testInvalidLocalServerPath() {
-	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
-	GalleryUtilities::putRequestVariable('form[localServerPath]', '/');
-	GalleryUtilities::putRequestVariable(
-	    'form[localServerFiles][ItemAddFromServerTest.foo][selected]', 1);
-	$this->handleRequest($this->_rootAlbum, ERROR_BAD_PARAMETER);
     }
 
     /**
@@ -268,11 +242,13 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$fileKeys = array();
 
 	if ($addFiles) {
+	    /* Some simple filenames and some with special characters */
 	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test[3].gif',
-			   'apo\'strophe.jpg');
+			   'apo\'strophe.jpg', "t\xebst.png");
 	    rsort($files);
 
-	    $escapedBasenames = array('test1', 'test1', 'test2', 'test[3]', 'apo\'strophe');
+	    $escapedBasenames =
+		array('test1', 'test1', 'test2', 'test[3]', 'apo\'strophe', "t\xebst");
 	    rsort($escapedBasenames);
 
 	    foreach ($files as $fileName) {
@@ -293,17 +269,18 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    $escapedBasenames = array('test1', 'test1',  'test2', 'test[3]', 'test4');
 	    rsort($escapedBasenames);
 
-	    $dirName = urlencode('localUploadDir');
-	    GalleryUtilities::putRequestVariable(
-		'form[localServerDirectories][' . $dirName . '][selected]', 1);
-	    GalleryUtilities::putRequestVariable(
-		'form[localServerDirectories][..][selected]', 1);
-	    if ($useSymlink) {
+	    $dirs = array('localUploadDir', "subD\xeer", '..');
+	    foreach ($dirs as $dirName) {
+		$dirName = urlencode($dirName);
 		GalleryUtilities::putRequestVariable(
-		    'form[localServerDirectories][' . $dirName . '][useSymlink]', 1);
-		GalleryUtilities::putRequestVariable(
-		    'form[localServerDirectories][..][useSymlink]', 1);
+			'form[localServerDirectories][' . $dirName . '][selected]', 1);
+		if ($useSymlink) {
+		    GalleryUtilities::putRequestVariable(
+			    'form[localServerDirectories][' . $dirName . '][useSymlink]', 1);
+		}
 	    }
+	    /* .. is invalid and will be ignored, don't expect it in results */
+	    unset($dirs[2]);
 	}
 
 	GalleryUtilities::putRequestVariable('form[localServerPath]',
@@ -314,10 +291,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    $results = $this->handleRequest($this->_rootAlbum);
 	} else {
 	    $results = $this->handleRequest($this->_rootAlbum, ERROR_UNSUPPORTED_OPERATION);
-	    /*
-	     * we're setting the mock platform back to the one that
-	     * supports symlink for consistency.
-	     */
+	    /* Set the mock platform back to the one that supports symlink for consistency */
 	    $gallery->setPlatform($this->_symlinkAllowedPlatform);
 	    return;
 	}
@@ -340,16 +314,20 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	if ($addDirectories) {
-	    $this->assertEquals(1, count($ids), 'top child count');
-	    list ($ret, $subalbum) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	    $this->assertEquals(count($dirs), count($ids), 'top child count');
+	    list ($ret, $subalbums) = GalleryCoreApi::loadEntitiesById($ids);
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	    $this->assertEquals('galleryalbumitem', strtolower(get_class($subalbum)), 'subalbum');
-	    $this->assertEquals('localUploadDir', $subalbum->getPathComponent(), 'subalbum path');
-	    list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($subalbum);
+	    list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($subalbums[0]);
 	    if ($ret) {
 		return $this->failWithStatus($ret);
+	    }
+	    foreach ($dirs as $dirName) {
+		$subalbum = array_shift($subalbums);
+		$this->assert(GalleryUtilities::isA($subalbum, 'GalleryAlbumItem'), 'subalbum');
+		$dirName = $platform->legalizePathComponent($dirName);
+		$this->assertEquals($dirName, $subalbum->getPathComponent(), 'subalbum path');
 	    }
 	}
 	$addDirectoriesString = $addDirectories ? ' addDirectories' : ' !addDirectories';
@@ -382,6 +360,9 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    $this->assertEquals($setDescription ? $expectedName : '', $item->getDescription(),
 				'description');
 
+	    $this->assertEquals($platform->legalizePathComponent($files[$i]),
+				$item->getPathComponent(), 'path component ' . $i);
+
 	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($item->getId());
 	    if ($ret) {
 		return $this->failWithStatus($ret);
@@ -393,13 +374,21 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 		return $this->failWithStatus($ret);
 	    }
 	    $this->assert(!isset($seenWeights[$item->getParentId()][$orderWeight]),
-			  'Seen this weight before');
+			  'Seen this weight before: ' . $orderWeight);
 	    $seenWeights[$item->getParentId()][$orderWeight] = 1;
 	    $i++;
 	}
     }
 
-    /*
+    function testInvalidLocalServerPath() {
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', '/');
+	GalleryUtilities::putRequestVariable(
+	    'form[localServerFiles][ItemAddFromServerTest.foo][selected]', 1);
+	$this->handleRequest($this->_rootAlbum, ERROR_BAD_PARAMETER);
+    }
+
+    /**
      * Checks if the urlencoded filename gets correctly converted to a nice filename
      * in pathComponent, title and summary
      */
@@ -495,9 +484,6 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 /**
  * Test platform
- *
- * @package ItemAdd
- * @subpackage PHPUnit
  */
 class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function ItemAddFromServerTestPlatform($delegate, $symlinkSupported) {
@@ -521,6 +507,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	switch ($path) {
 	case $this->_baseDir . 'December - <#952>.jpg':
 	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
+	case $this->_baseDir . "t\xebst.png":
 	case $this->_baseDir . 'apo\'strophe.jpg':
 	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */
@@ -536,6 +523,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	switch ($source) {
 	case $this->_baseDir . 'December - <#952>.jpg':
 	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
+	case $this->_baseDir . "t\xebst.png":
 	case $this->_baseDir . 'apo\'strophe.jpg':
 	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */
@@ -550,6 +538,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function symlink($source, $dest) {
 	switch ($source) {
 	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . "t\xebst.png":
 	case $this->_baseDir . 'apo\'strophe.jpg':
 	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */
@@ -559,7 +548,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	    break;
 	}
 
-	if ( $this->_delegate->isSymlinkSupported() == true ) {
+	if ($this->_delegate->isSymlinkSupported()) {
 	    return $this->_delegate->symlink($source, $dest);
 	} else {
 	    return $this->copy($source, $dest);
@@ -568,6 +557,27 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function isSymlinkSupported() {
 	return $this->_symlinkSupported;
+    }
+
+    function opendir($path) {
+	if ($path == $this->_baseDir . "subD\xeer") {
+	    return 'testHandle';
+	}
+	return $this->_delegate->opendir($path);
+    }
+
+    function readdir($resource) {
+	if ($resource === 'testHandle') {
+	    return false;
+	}
+	return $this->_delegate->readdir($resource);
+    }
+
+    function closedir($resource) {
+	if ($resource === 'testHandle') {
+	    return true;
+	}
+	return $this->_delegate->closedir($resource);
     }
 
     function exec($cmd) {
