@@ -147,5 +147,9 @@ class PhpVmTest extends GalleryTestCase {
 	    $this->assert($rand >= 1000 && $rand <= 1010, 'with minimum and maximum');
 	}
     }
+
+    function testCrc32() {
+	$this->assertEquals(crc32('test'), $this->_phpVm->crc32('test'));
+    }
 }
 ?>

@@ -87,6 +87,16 @@ class GalleryPhpVm {
     }
 
     /**
+     * Calculates the crc32 polynomial of a string
+     *
+     * @param string $string the value to be checksummed
+     * @return a signed integer checksum
+     */
+    function crc32($string) {
+	return crc32($string);
+    }
+
+    /**
      * Query language and locale information
      *
      * @param int $item
