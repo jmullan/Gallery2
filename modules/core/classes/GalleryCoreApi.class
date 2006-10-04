@@ -67,7 +67,7 @@ class GalleryCoreApi {
      *   and comment in blocks/EmergencyEditItemLink.tpl
      */
     function getApiVersion() {
-	return array(7, 10);
+	return array(7, 11);
     }
 
     /**
@@ -1586,6 +1586,19 @@ class GalleryCoreApi {
     function addExistingItemToAlbum($item, $albumId, $isNew=false) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::addExistingItemToAlbum($item, $albumId, $isNew);
+    }
+
+    /**
+     * (Re)create derivatives for a data item according to preferences for given album
+     *
+     * @param object GalleryItem $item the source item
+     * @param int $albumId the id of the target album
+     * @param boolean $isNew (optional) if true, skip check for existing derivatives
+     * @return object GalleryStatus a status code
+     */
+    function applyDerivativePreferences($item, $albumId, $isNew=false) {
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
+	return GalleryItemHelper_medium::applyDerivativePreferences($item, $albumId, $isNew);
     }
 
     /**

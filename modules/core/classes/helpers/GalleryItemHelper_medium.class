@@ -185,7 +185,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    return array($ret, null);
 	}
 
-	$ret = GalleryCoreApi::addExistingItemToAlbum($newItem, $albumId, true);
+	$ret = GalleryItemHelper_medium::addExistingItemToAlbum($newItem, $albumId, true);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -242,10 +242,17 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    return $ret;
 	}
 
-	/*
-	 * Now create thumbnails and resizes according to the
-	 * wishes of the parent album.
-	 */
+	/* Now create thumbnails and resizes according to the wishes of the parent album */
+	$ret = GalleryItemHelper_medium::applyDerivativePreferences($item, $albumId, $isNew);
+	if ($ret) {
+	    return $ret;
+	}
+    }
+
+    /**
+     * @see GalleryCoreApi::applyDerivativePreferences
+     */
+    function applyDerivativePreferences($item, $albumId, $isNew=false) {
 	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
 	if ($ret) {
 	    return $ret;
@@ -258,7 +265,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	$mimeType = $source->getMimeType();
 
-	/* Make the file type viewable, if we need to. */
+	/* Make the file type viewable, if we need to */
 	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($mimeType);
 	if ($ret) {
 	    return $ret;
@@ -347,7 +354,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    }
 		}
 
-		/* Mime type must have changed so that it can be viewable. */
+		/* Mime type must have changed so that it can be viewable */
 		$mimeType = $outputMimeType;
 	    }
 	}
@@ -530,7 +537,6 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	return null;
     }
-
 
     /**
      * @see GalleryCoreApi::setThumbnailFromItem
