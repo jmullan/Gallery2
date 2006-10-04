@@ -330,6 +330,53 @@ class RepositoryDescriptor extends RepositoryObject {
 	return $packageTypes;
     }
 
+    /**
+     * Check all the files in this descriptor against the MANIFEST to make sure that
+     * they're up to date.  Return an empty array if there are no errors.
+     * @return array (error, error, error)
+     */
+    function checkIntegrity() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$phpVm = $gallery->getPhpVm();
+
+	$errors = array();
+	$manifestPath = $this->_pluginDir . 'MANIFEST';
+	if (!$platform->is_readable($manifestPath)) {
+	    $errors[] = 'Missing MANIFEST';
+	}
+
+	if (empty($errors)) {
+	    $stat = $platform->stat($manifestPath);
+	    $manifestMtime = $stat[9];
+
+	    foreach ($this->_data['files'] as $file => $metaData) {
+		if ($file == 'MANIFEST') {
+		    continue;
+		}
+
+		$path = $this->_pluginDir . $file;
+		$contents = $platform->file_get_contents($path);
+		$crc = sprintf('%u', $phpVm->crc32($contents));
+		if ($crc != $metaData['hash']) {
+		    $errors[] = sprintf('%s: bad crc (%s != %s)', $file, $metaData['hash'], $crc);
+		} else {
+		    $stat = $platform->stat($path);
+		    if ($stat[9 /* mtime */] > $manifestMtime) {
+			$errors[] = sprintf('%s: newer than MANIFEST', $file);
+		    }
+
+		    if ($stat[7 /* size */] != $metaData['bytes']) {
+			$errors[] = sprintf('%s: file size mismatch (%s != %s)',
+					    $file, $metaData['bytes'], $stat[7]);
+		    }
+		}
+	    }
+	}
+
+	return $errors;
+   }
+
     function getPluginVersion() {
 	return $this->_pluginVersion;
     }

@@ -143,25 +143,34 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	    return array($ret, null);
 	}
 
-	$ret = $descriptor->writeToDisk();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	$package = new RepositoryPackage();
-	$ret = $package->init($descriptor, $descriptor->getOutputDir());
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	list ($ret, $packagesWritten) = $package->writeAllPackagesToDisk();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
+	$integrityErrors = $descriptor->checkIntegrity();
 	$pluginInfo = array('pluginId' => $descriptor->getPluginId(),
-			    'outputDir' => $descriptor->getOutputDir(),
-			    'packageInfo' => $packagesWritten);
+			    'outputDir' => $descriptor->getOutputDir());
+
+	if (empty($integrityErrors)) {
+	    $ret = $descriptor->writeToDisk();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $package = new RepositoryPackage();
+	    $ret = $package->init($descriptor, $descriptor->getOutputDir());
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    list ($ret, $packagesWritten) = $package->writeAllPackagesToDisk();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $pluginInfo['packageInfo'] = $packagesWritten;
+	    $pluginInfo['errors'] = array();
+	} else {
+	    $pluginInfo['packageInfo'] = array('packagesWritten' => array(),
+					       'packagesSkipped' => array());
+	    $pluginInfo['errors'] = $integrityErrors;
+	}
 
 	return array(null, $pluginInfo);
     }

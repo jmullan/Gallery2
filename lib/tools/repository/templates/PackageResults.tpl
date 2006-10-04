@@ -22,6 +22,7 @@
           <th> {g->text text="Plugin ID"} </th>
           <th> {g->text text="Written"} </th>
           <th> {g->text text="Skipped"} </th>
+          <th> {g->text text="Error"} </th>
         </tr>
         {foreach from=$results item=plugin}
         <tr>
@@ -38,6 +39,17 @@
               {$package}<br>
             {/foreach}
           </td>
+	  <td>
+	    {if !empty($plugin.errors)}
+	    <p class="Error">
+	      {foreach from=$plugin.errors item=error}
+	      {$error}<br/>
+	      {/foreach}
+	    </p>
+	    {else}
+	    &nbsp;
+	    {/if}
+	  </td>
         </tr>
         {/foreach}
       </table>

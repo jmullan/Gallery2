@@ -163,9 +163,6 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 
 	$descriptor->getFileMetaData(dirname(dirname(__FILE__)) . '/data/', $data);
 
-	// debug
-	$this->assertEquals($this->_canonicalFileMetaData['directories'], $data['directories']);
-
 	$this->assertEquals($this->_canonicalFileMetaData, $data);
     }
 
@@ -215,6 +212,93 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array('base', 'lang-aa'),
 	    $descriptor->getPackages());
+    }
+
+    function testCheckIntegrityMissingManifest() {
+	global $gallery;
+	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
+	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('is_readable', array($descriptor->getPluginDir() . 'MANIFEST'), false);
+	$gallery->setPlatform($platform);
+
+ 	$this->assertEquals(
+ 	    array('Missing MANIFEST'),
+ 	    $descriptor->checkIntegrity());
+
+  	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    /**
+     * I'd rather test each of these errors individually, but RepositoryDescriptor is structured
+     * in such a way that it's hard to get data into it easily, so it's easiest to just test our
+     * whole test MANIFEST at once.
+     */
+    function testCheckIntegrity() {
+	global $gallery;
+	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
+	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$phpVm = new RepositoryDescriptorTestPhpVm();
+	$phpVm->setCrc32('file.1',      1);     /* wrong checksum */
+	$phpVm->setCrc32('file.2',      12345); /* correct checksum */
+	$phpVm->setCrc32('strings.raw', 12345); /* correct checksum */
+	$phpVm->setCrc32('aa.po',       12345); /* correct checksum */
+	$phpVm->setCrc32('test.mo',     12345); /* correct checksum */
+	$phpVm->setCrc32('file.test',   12345); /* correct checksum */
+	$gallery->_phpVm = $phpVm;
+
+	$platform = new UnitTestPlatform();
+	$base = $descriptor->getPluginDir();
+	$platform->setReply('is_readable', array($base . 'MANIFEST'), true);
+	$platform->setReply('stat', array($base . 'MANIFEST'), array(9 => 1000000));
+
+	/* file.1 has a bad crc */
+	$platform->setReply('file_get_contents', array($base . 'file.1'), 'file.1');
+
+	/* file.2 is newer than the MANIFEST, and has the wrong size */
+	$platform->setReply('file_get_contents', array($base . 'file.2'), 'file.2');
+	$platform->setReply('stat', array($base . 'file.2'), array(7 => 1, 9 => 2000000));
+
+	/* the rest of the files are older than the MANIFEST and have the right file size */
+	$platform->setReply('file_get_contents', array($base . 'po/strings.raw'), 'strings.raw');
+	$platform->setReply('stat', array($base . 'po/strings.raw'), array(7 => 11111, 9 => 1));
+	$platform->setReply('file_get_contents', array($base . 'po/aa.po'), 'aa.po');
+	$platform->setReply('stat', array($base . 'po/aa.po'), array(7 => 11111, 9 => 1));
+	$platform->setReply('file_get_contents',
+			    array($base . 'locale/aa/LC_MESSAGES/test.mo'), 'test.mo');
+ 	$platform->setReply('stat', array($base . 'locale/aa/LC_MESSAGES/test.mo'),
+ 			    array(7 => 11111, 9 => 1));
+ 	$platform->setReply('file_get_contents',
+ 			    array($base . 'test/phpunit/file.test'), 'file.test');
+ 	$platform->setReply('stat', array($base . 'test/phpunit/file.test'),
+ 			    array(7 => 11111, 9 => 1));
+
+	$gallery->setPlatform($platform);
+
+	$this->assertEquals(
+	    array('file.1: bad crc (12345 != 1)',
+		  'file.2: newer than MANIFEST',
+		  'file.2: file size mismatch (11111 != 1)'),
+	    $descriptor->checkIntegrity());
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+}
+
+class RepositoryDescriptorTestPhpVm extends GalleryPhpVm {
+    function setCrc32($contents, $crc32) {
+	$this->_crc32[$contents] = $crc32;
+    }
+
+    function crc32($contents) {
+	return $this->_crc32[$contents];
     }
 }
 
