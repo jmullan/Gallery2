@@ -156,9 +156,10 @@ class UnixPlatform extends GalleryPlatform {
 
     /**
      * @see GalleryPlatform::isSymlinkSupported
+     * symlink may have been disabled so make sure it still exists
      */
     function isSymlinkSupported() {
-	return true;
+	return function_exists('symlink');
     }
 
     /**
