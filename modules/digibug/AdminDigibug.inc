@@ -41,11 +41,8 @@ class AdminDigibugController extends GalleryController {
 
 	/* Provide compatibility with 2.1 and 2.2 */
 	$apiVersion = GalleryCoreApi::getApiVersion();
-	if ($apiVersion[1] >= 6) {
-	    $adminPlugins = 'core.AdminPlugins';
-	} else {
-	    $adminPlugins = 'core.AdminModules';
-	}
+	$adminPlugins = 'core.Admin'
+	    . ($apiVersion[0] > 7 || $apiVersion[1] >= 7 ? 'Plugins' : 'Modules');
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
