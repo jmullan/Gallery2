@@ -151,19 +151,7 @@ class CarbonTheme extends GalleryTheme {
 	if (empty($settings['maxMicroThumbs']) || !is_numeric($settings['maxMicroThumbs'])) {
 	    $error['maxMicroThumbs'] = $this->translate('You must enter a number greater than 0');
 	}
-	foreach (array('albumUpperBlocks') as $blockKey) {
-	    if (isset($standard[$blockKey])) {
-		if (!empty($settings[$blockKey])) {
-		    list ($success, $newValue) =
-			$this->packSetting('block-list', $settings[$blockKey]);
-		    if (!$success) {
-			$error[$blockKey] =
-			    $this->translate('Format: [module.BlockName param=value] ...');
-		    }
-		}
-	    }
-	}
-	foreach (array('photoUpperBlocks') as $blockKey) {
+	foreach (array('albumUpperBlocks', 'photoUpperBlocks') as $blockKey) {
 	    if (isset($standard[$blockKey])) {
 		if (!empty($settings[$blockKey])) {
 		    list ($success, $newValue) =
