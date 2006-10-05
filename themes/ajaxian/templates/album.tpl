@@ -63,7 +63,7 @@
 	    </tr><tr valign="top">
 	    {assign var="childrenInColumnCount" value=0}
 	  {/if}
-	  {if !$child.canContainChildren}
+	  {if !$child.canContainChildren && $child.entityType != 'GalleryLinkItem'}
 	    {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
 	    <td class="giItemCell">
 	      {if isset($theme.params.itemFrame) && isset($child.thumbnail)}
@@ -111,7 +111,7 @@
 	  </tr><tr>
 	  {assign var="childrenInColumnCount" value=0}
 	{/if}
-	{if $child.canContainChildren}
+	{if $child.canContainChildren || $child.entityType == 'GalleryLinkItem'}
 	  {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
 	  <td class="giAlbumCell gcBackground1">
 	    {if isset($child.thumbnail)}
