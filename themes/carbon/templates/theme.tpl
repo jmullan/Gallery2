@@ -73,9 +73,11 @@
 		    order="core.SiteAdmin core.YourAccount core.Login core.Logout"
 		    separator="&laquo;"
 		    othersAt=4}
+	  {if $theme.pageType != 'admin'}
 	  <span class="block-core-SystemLink">
 	    <a href="javascript: toggleSidebar('sidebar')">{g->text text="Sidebar"}</a>
 	  </span>
+	  {/if}
 	</div>
 
 	<div class="gbBreadCrumb">
