@@ -740,6 +740,8 @@ class RepositoryTest extends GalleryTestCase {
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array($modules . '/RepositoryTest/MANIFEST'), true);
 	$platform->setReply('is_writeable', array($modules . '/RepositoryTest/MANIFEST'), true);
+	$platform->setReply(
+	    'file_exists', array($modules . '/RepositoryTest/po/strings.raw'), true);
 	$platform->setReply('glob', array($modules . '/RepositoryTest/po/*.po', null),
 			    array('po/aa.po', 'po/bb_BB.po'));
 	$platform->setReply('is_writeable', array('po/aa.po'), true);
@@ -783,6 +785,45 @@ class RepositoryTest extends GalleryTestCase {
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
+    function testScanPluginWithNoPoDir() {
+	global $gallery;
+
+	$repository = new GalleryRepository();
+	$repository->_utilities = new RepositoryTestUtilitiesForScanPlugin();
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array($modules . '/RepositoryTest/MANIFEST'), true);
+	$platform->setReply('is_writeable', array($modules . '/RepositoryTest/MANIFEST'), true);
+	$platform->setReply(
+	    'file_exists', array($modules . '/RepositoryTest/po/strings.raw'), false);
+	$gallery->setPlatform($platform);
+
+	$ret = $repository->scanPlugin('module', 'RepositoryTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array('GalleryPluginPackageMap' => array(
+		      array('match' => array(
+				'pluginType' => 'module',
+				'pluginId' => 'RepositoryTest')))),
+	    $this->_testStorage->getRemovedMapData());
+
+	$this->assertEquals(
+	    array('GalleryPluginPackageMap' => array(
+		      array('pluginType' => 'module',
+			    'pluginId' => 'RepositoryTest',
+			    'packageName' => 'base',
+			    'packageVersion' => '1.0',
+			    'packageBuild' => '11111',
+			    'locked' => 0))),
+	    $this->_testStorage->getAddedMapData());
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
     function testScanLockedPlugin() {
 	global $gallery;
 
@@ -793,6 +834,8 @@ class RepositoryTest extends GalleryTestCase {
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists', array($modules . '/RepositoryTest/MANIFEST'), true);
 	$platform->setReply('is_writeable', array($modules . '/RepositoryTest/MANIFEST'), false);
+	$platform->setReply(
+	    'file_exists', array($modules . '/RepositoryTest/po/strings.raw'), true);
 	$platform->setReply('glob', array($modules . "/RepositoryTest/po/*.po", null),
 			    array('po/aa.po', 'po/bb_BB.po'));
 	$platform->setReply('is_writeable', array('po/aa.po'), false);

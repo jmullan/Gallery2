@@ -708,39 +708,41 @@ class GalleryRepository {
 	    return $ret;
 	}
 
-	list ($ret, $tag) =
-	    $this->_utilities->getFirstBytesFromFile("$pluginDir/po/strings.raw", 128);
-	if ($ret) {
-	    return $ret;
-	}
-	list ($ret, $stringsRevision) = $this->_utilities->extractRevision($tag);
-	if ($ret) {
-	    return $ret;
-	}
+	$stringsRawFile = "$pluginDir/po/strings.raw";
+	if ($platform->file_exists($stringsRawFile)) {
+	    list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile($stringsRawFile, 128);
+	    if ($ret) {
+		return $ret;
+	    }
+	    list ($ret, $stringsRevision) = $this->_utilities->extractRevision($tag);
+	    if ($ret) {
+		return $ret;
+	    }
 
-	$poFiles = $platform->glob("$pluginDir/po/*.po");
-	if ($poFiles) {
-	    foreach ($poFiles as $file) {
-		list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile($file, 128);
-		if ($ret) {
-		    return $ret;
-		}
+	    $poFiles = $platform->glob("$pluginDir/po/*.po");
+	    if ($poFiles) {
+		foreach ($poFiles as $file) {
+		    list ($ret, $tag) = $this->_utilities->getFirstBytesFromFile($file, 128);
+		    if ($ret) {
+			return $ret;
+		    }
 
-		list ($ret, $revision) = $this->_utilities->extractRevision($tag);
-		if ($ret) {
-		    return $ret;
-		}
-		$ret = GalleryCoreApi::addMapEntry(
-		    'GalleryPluginPackageMap',
-		    array('pluginType' => $pluginType,
-			  'pluginId' => $pluginId,
-			  'packageName' => (
-			      'lang-' . GalleryUtilities::getFileBase(basename($file))),
-			  'packageVersion' => $stringsRevision,
-			  'packageBuild' => $revision,
-			  'locked' => $platform->is_writeable($file) ? 0 : 1));
-		if ($ret) {
-		    return $ret;
+		    list ($ret, $revision) = $this->_utilities->extractRevision($tag);
+		    if ($ret) {
+			return $ret;
+		    }
+		    $ret = GalleryCoreApi::addMapEntry(
+			'GalleryPluginPackageMap',
+			array('pluginType' => $pluginType,
+			      'pluginId' => $pluginId,
+			      'packageName' => (
+				  'lang-' . GalleryUtilities::getFileBase(basename($file))),
+			      'packageVersion' => $stringsRevision,
+			      'packageBuild' => $revision,
+			      'locked' => $platform->is_writeable($file) ? 0 : 1));
+		    if ($ret) {
+			return $ret;
+		    }
 		}
 	    }
 	}
