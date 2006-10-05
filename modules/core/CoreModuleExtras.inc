@@ -134,6 +134,7 @@ class CoreModuleExtras {
 			   'acceleration' => serialize(array('guest' => array('type' => 'none'),
 							     'user' => array('type' => 'none'))),
 			   'validation.level' => 'MEDIUM',
+			   'core.repositories' => serialize(array('released' => 1)),
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, (string)$value);
