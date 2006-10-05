@@ -110,6 +110,13 @@ class GalleryRepository {
 
 	list ($ret, $header) = $this->_index->getPluginHeader('module', 'core');
 	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+		/*
+		 * No header for the core module.  Maybe the core package isn't available in any
+		 * this repository.
+		 */
+		return array(null, false, array());
+	    }
 	    return array($ret, null, null);
 	}
 	$repositoryVersion = $header['version'];
@@ -542,17 +549,17 @@ class GalleryRepository {
     function downloadAndUnpack($pluginType, $pluginId, $packageName, $relativePackageUrl) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
+	$phpVm = $gallery->getPhpVm();
 
 	/* Download package from the Gallery server. */
 	$packageUrl =
 	    $gallery->getConfig('repository.url') . $this->_source . '/' . $relativePackageUrl;
 
-	list ($wasDownloaded, $packageContents) =
-	    $this->_utilities->downloadFile($packageUrl);
+	list ($wasDownloaded, $packageContents) = $this->_utilities->downloadFile($packageUrl);
 	if (!$wasDownloaded) {
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-					       "Error downloading package from '$packageUrl'."),
-			 null);
+	    return array(GalleryCoreApi::error(
+			     ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+			     "Error downloading package from '$packageUrl'."), null);
 	}
 
 	/* Make sure output directory exists. */

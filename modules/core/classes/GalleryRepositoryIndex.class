@@ -83,12 +83,15 @@ class GalleryRepositoryIndex {
 					 'Unable to create repository cached paths');
 	}
 
-	list ($ret, $indexContents) = $this->_getPossiblyCompressedIndexContents($indexUrl);
-	if ($ret) {
-	    return $ret;
+	/* Download index from the Gallery server and verify its integrity. */
+	list ($wasDownloaded, $indexContents) = $this->_utilities->downloadFile($indexUrl);
+	if (!$wasDownloaded) {
+	    $errorMessage = $gallery->i18n('Error downloading index from \'%s\'.');
+	    return GalleryCoreApi::error(
+		ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf($errorMessage, $indexUrl));
 	}
 
-	list ($wasDownloaded, $indexHash) = $this->_utilities->downloadFile($indexHashUrl);
+	list ($wasDownloaded, $indexHash) = $this->_utilities->downloadFile($indexHashUrl, true);
 	if (!$wasDownloaded) {
 	    $errorMessage = $gallery->i18n('Error downloading index hash from \'%s\'.');
 	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
@@ -119,40 +122,6 @@ class GalleryRepositoryIndex {
 	    return $ret;
 	}
 	return null;
-    }
-
-    /**
-     * Get the contents of the index, given a url.  Attempt to download the .gz version of the
-     * file if this version of PHP supports gzinflate.  Otherwise, get the uncompressed version.
-     *
-     * @param string the index url
-     * @return array object GalleryStatus a status code
-     *               the contents of the index file
-     * @access private
-     */
-    function _getPossiblyCompressedIndexContents($indexUrl) {
-	global $gallery;
-
-	$phpVm = $gallery->getPhpVm();
-	$needsInflation = false;
-	if ($phpVm->function_exists('gzinflate')) {
-	    $indexUrl .= '.gz';
-	    $needsInflation = true;
-	}
-
-	/* Download index from the Gallery server and verify its integrity. */
-	list ($wasDownloaded, $indexContents) = $this->_utilities->downloadFile($indexUrl);
-	if (!$wasDownloaded) {
-	    $errorMessage = $gallery->i18n('Error downloading index from \'%s\'.');
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-					       sprintf($errorMessage, $indexUrl)),
-			 null);
-	}
-
-	if ($needsInflation) {
-	    $indexContents = $phpVm->gzinflate($indexContents);
-	}
-	return array(null, $indexContents);
     }
 
     /**

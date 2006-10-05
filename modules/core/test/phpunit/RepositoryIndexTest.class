@@ -194,8 +194,6 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    array('http://example.com/repository/test/index' => $serializedSampleIndex,
 		  'http://example.com/repository/test/index.hash' => md5($serializedSampleIndex)));
 
-	$gallery->_phpVm = new RepositoryIndexMockPhpVm(false);
-
 	$platform = new UnitTestPlatform();
 	$platform->setReply('file_exists',
 			    array($this->_index->getRepositoryCacheDir() . 'modules'),
@@ -243,22 +241,6 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->assert($updateTimestamp > time() - 60, 'Timestamp too old.');
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
-    }
-
-    function testGetCompressedIndexContents() {
-	global $gallery;
-	$gallery->_phpVm = new RepositoryIndexMockPhpVm(true);
-
-	$this->_index->_utilities = new RepositoryIndexTestUtilities(
-	    array('http://example.com/repository/index.gz' => 'compressed index',
-		  'http://example.com/repository/index.hash' => md5('compressed index')));
-
-	list ($ret, $indexContents) = $this->_index->_getPossiblyCompressedIndexContents(
-	    'http://example.com/repository/index');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$this->assertEquals('uncompressed index', $indexContents);
     }
 
     function testGetMetaData() {
@@ -499,26 +481,6 @@ class RepositoryIndexTestUtilities {
 
     function downloadFile($url) {
 	return array(true, $this->_fileContents[$url]);
-    }
-}
-
-class RepositoryIndexMockPhpVm extends GalleryPhpVm {
-    function RepositoryIndexMockPhpVm($gzinflateExists) {
-	$this->_gzinflateExists = $gzinflateExists;
-    }
-
-    function function_exists($func) {
-	if ($func == 'gzinflate') {
-	    return $this->_gzinflateExists;
-	}
-	return function_exists($func);
-    }
-
-    function gzinflate($data) {
-	if ($data == 'compressed index') {
-	    return 'uncompressed index';
-	}
-	return $data;
     }
 }
 ?>

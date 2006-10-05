@@ -344,19 +344,33 @@ class GalleryRepositoryUtilities {
     /**
      * Downloads a file from the specified URL.
      *
-     * It currently calls GalleryCoreApi::fetchWebPage to do all the work, but we'll
-     * eventually write a simpler downloader that can report its progress to get more
-     * responsive progress indication.
+     * It currently calls GalleryCoreApi::fetchWebPage to do all the work.  If the gzinflate()
+     * function is available, then download the gzipped version of the file and unpack it locally
+     * to save bandwidth.
      *
      * @param string $url url to download from
+     * @param string $ignoreCompression don't try to get the compressed version of the file
      * @return array boolean file was successfully downloaded
      *		     string file contents
      */
-    function downloadFile($url) {
+    function downloadFile($url, $ignoreCompression=false) {
+	global $gallery;
+
+	$phpVm = $gallery->getPhpVm();
+	$needsInflation = false;
+	if (!$ignoreCompression && $phpVm->function_exists('gzinflate')) {
+	    $url .= '.gz';
+	    $needsInflation = true;
+	}
+
 	list ($successful, $contents, $response, $headers, $actualUrl) =
 	    GalleryCoreApi::fetchWebPage($url);
 	if (empty($contents) || !$successful) {
 	    return array(false, null);
+	}
+
+	if ($needsInflation) {
+	    $contents = $phpVm->gzinflate($contents);
 	}
 	return array(true, $contents);
     }

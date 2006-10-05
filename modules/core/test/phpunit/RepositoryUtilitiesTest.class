@@ -352,6 +352,116 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	}
 	$this->assertEquals('someVersion', $version);
     }
+
+    function testDownloadFileWithoutGzinflate() {
+	global $gallery;
+	$gallery->_phpVm = new RepositoryUtilitiesTestPhpVm(false);
+	$utilities = new GalleryRepositoryUtilities();
+
+	/*
+	 * Sigh.  It would be really nice if we could mock up GalleryCoreApi::fetchWebPage()
+	 * instead of mocking the platform.
+	 */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('fsockopen', array('example.com', 80, null, null, 1), 'fd');
+	$platform->setReply(
+	    'fwrite',
+	    array('fd', "GET /repository/index HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
+	    true);
+	$platform->setReply('fflush', array('fd'), null);
+	$platform->setReply('fgets', array('fd', 4096), "HTTP/1.1 200 OK\r\n");
+	$platform->setReply('feof', array('fd'), false);
+	$platform->setReply('fgets', array('fd', 4096), "\r\n");
+	$platform->setReply('feof', array('fd'), false);
+	$platform->setReply('fread', array('fd', 4096), 'data');
+	$platform->setReply('feof', array('fd'), true);
+	$platform->setReply('fclose', array('fd'), null);
+	$gallery->setPlatform($platform);
+
+	$this->assertEquals(
+	    array(true, 'data'),
+	    $utilities->downloadFile('http://example.com/repository/index'));
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testDownloadFileWithGzinflate() {
+	global $gallery;
+	$gallery->_phpVm = new RepositoryUtilitiesTestPhpVm(true);
+	$utilities = new GalleryRepositoryUtilities();
+
+	/*
+	 * Sigh.  It would be really nice if we could mock up GalleryCoreApi::fetchWebPage()
+	 * instead of mocking the platform.
+	 */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('fsockopen', array('example.com', 80, null, null, 1), 'fd');
+	$platform->setReply(
+	    'fwrite',
+	    array('fd', "GET /repository/index.gz HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
+	    true);
+	$platform->setReply('fflush', array('fd'), null);
+	$platform->setReply('fgets', array('fd', 4096), "HTTP/1.1 200 OK\r\n");
+	$platform->setReply('feof', array('fd'), false);
+	$platform->setReply('fgets', array('fd', 4096), "\r\n");
+	$platform->setReply('feof', array('fd'), false);
+	$platform->setReply('fread', array('fd', 4096), 'data');
+	$platform->setReply('feof', array('fd'), true);
+	$platform->setReply('fclose', array('fd'), null);
+	$gallery->setPlatform($platform);
+
+	$this->assertEquals(
+	    array(true, 'uncompressed-data'),
+	    $utilities->downloadFile('http://example.com/repository/index'));
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testDownloadFileWithGzinflateButIgnoringCompression() {
+	global $gallery;
+	$gallery->_phpVm = new RepositoryUtilitiesTestPhpVm(true);
+	$utilities = new GalleryRepositoryUtilities();
+
+	/*
+	 * Sigh.  It would be really nice if we could mock up GalleryCoreApi::fetchWebPage()
+	 * instead of mocking the platform.
+	 */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('fsockopen', array('example.com', 80, null, null, 1), 'fd');
+	$platform->setReply(
+	    'fwrite',
+	    array('fd', "GET /repository/index HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
+	    true);
+	$platform->setReply('fflush', array('fd'), null);
+	$platform->setReply('fgets', array('fd', 4096), "HTTP/1.1 200 OK\r\n");
+	$platform->setReply('feof', array('fd'), false);
+	$platform->setReply('fgets', array('fd', 4096), "\r\n");
+	$platform->setReply('feof', array('fd'), false);
+	$platform->setReply('fread', array('fd', 4096), 'data');
+	$platform->setReply('feof', array('fd'), true);
+	$platform->setReply('fclose', array('fd'), null);
+	$gallery->setPlatform($platform);
+
+	$this->assertEquals(
+	    array(true, 'data'),
+	    $utilities->downloadFile('http://example.com/repository/index', true));
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+}
+
+class RepositoryUtilitiesTestPhpVm extends GalleryPhpVm {
+    function RepositoryUtilitiesTestPhpVm($gzinflateExists) {
+	$this->_gzinflateExists = $gzinflateExists;
+    }
+
+    function function_exists($func) {
+	if ($func == 'gzinflate') {
+	    return $this->_gzinflateExists;
+	}
+	return function_exists($func);
+    }
+
+    function gzinflate($data) {
+	return "uncompressed-$data";
+    }
 }
 
 class RepositoryUtilitiesTestPlugin {
