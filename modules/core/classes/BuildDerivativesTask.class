@@ -123,12 +123,23 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
+	    $error = '';
 	    $gallery->startRecordingDebugSnippet();
+	    if (method_exists($item, 'getWidth') && !$item->getWidth()) {
+		$ret = $this->_rescan($item);
+		if ($ret) {
+		    $error .= "\nError: rescan $result[0]: " . $ret->getAsHtml();
+		} else {
+		    $built++;
+		}
+	    }
 	    $ret = GalleryCoreApi::applyDerivativePreferences($item, $item->getParentId(), true);
 	    $debug = $gallery->stopRecordingDebugSnippet();
 	    if ($ret) {
-		$debug .= "\nError: building $result[0]: " . $ret->getAsHtml();
-		$this->_printFailure($debug, ++$broken, $module);
+		$error .= "\nError: building $result[0]: " . $ret->getAsHtml();
+	    }
+	    if ($error) {
+		$this->_printFailure($debug . $error, ++$broken, $module);
 	    }
 
 	    if (++$i % 5 == 0 || $i == $total) {
@@ -147,6 +158,32 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    $result[] = $module->translate(array('text' => '%d items failed', 'arg1' => $broken));
 	}
 	return array(null, true, $result);
+    }
+
+    function _rescan(&$item) {
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $item) = $item->refresh();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret;
+	}
+	$ret = $item->rescan();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret;
+	}
+	$ret = $item->save();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $ret;
+	}
     }
 
     function _updateProgress(&$module, $i, $total) {
