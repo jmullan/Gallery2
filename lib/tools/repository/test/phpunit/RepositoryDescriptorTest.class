@@ -76,16 +76,13 @@ class RepositoryDescriptorTest extends GalleryTestCase {
     function _getDescriptorWithFakeFileMetadata() {
 	$data = array();
 	$utils = new RepositoryDescriptorTestUtilities();
-	$g2Base = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+	$utils->setGetFirstBytesFromFile(array('/MANIFEST', 128), '# $' . 'Revision: 14604 $');
 	$utils->setGetFirstBytesFromFile(
-	    array($g2Base . '/modules/testModule/MANIFEST', 128),
-	    '# $' . 'Revision: 14604 $');
-	$utils->setGetFirstBytesFromFile(
-	    array($g2Base . '/modules/testModule/po/aa.po', 128),
-	    '# $' . 'Id: de.po 14444 2006-09-03 08:03:07Z bharat $');
+	    array('/po/aa.po', 128), '# $' . 'Id: de.po 14444 2006-09-03 08:03:07Z bharat $');
 	$descriptor = new RepositoryDescriptor_FakeFileMetaDataTest($this->_canonicalFileMetaData);
 	$descriptor->setUtilities($utils);
 	$descriptor->setTemplate(new RepositoryTestTemplate());
+	$descriptor->_pluginDir = '/';
 	return $descriptor;
     }
 

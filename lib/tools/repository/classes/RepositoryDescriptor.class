@@ -136,8 +136,12 @@ class RepositoryDescriptor extends RepositoryObject {
 	/* Get file meta data. */
 	$platform =& $gallery->getPlatform();
 	$pluginBaseDir = GalleryCoreApi::getPluginBaseDir($pluginType, $this->_pluginId);
-	$this->_pluginDir = $platform->realpath(
-	    sprintf('%s%ss/%s', $pluginBaseDir, $pluginType, $this->_pluginId)) . '/';
+
+	/* Don't force the _pluginDir, so that tests can override it */
+	if (!isset($this->_pluginDir)) {
+	    $this->_pluginDir = $platform->realpath(
+		sprintf('%s%ss/%s', $pluginBaseDir, $pluginType, $this->_pluginId)) . '/';
+	}
 
 	$ret = $this->getFileMetaData($this->_pluginDir, $this->_data);
 	if ($ret) {
