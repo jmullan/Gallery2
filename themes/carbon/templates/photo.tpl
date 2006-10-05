@@ -24,17 +24,17 @@
 	      {if (isset($links) || isset($theme.itemLinks))}
 		{if !isset($links)}{assign var="links" value=$theme.itemLinks}{/if}
 
-		{foreach from=$links item=link}
-		  {if $link.moduleId == "slideshow"}
+		{foreach from=$links item=itemLink}
+		  {if $itemLink.moduleId == "slideshow"}
 		  <td class="gsActionIcon">
-		    <div class="buttonViewSlideshow"><a href="{g->url params=$link.params}"
-		     title="{$link.text}"></a></div>
+		    <div class="buttonViewSlideshow"><a href="{g->url params=$itemLink.params}"
+		     title="{$itemLink.text}"></a></div>
 		  </td>
-		  {elseif $link.moduleId == "comment"}
-		    {if $link.params.view == "comment.ShowAllComments"}
+		  {elseif $itemLink.moduleId == "comment"}
+		    {if $itemLink.params.view == "comment.ShowAllComments"}
 		    <td class="gsActionIcon">
-		      <div class="buttonViewComments"><a href="{g->url params=$link.params}"
-		       title="{$link.text}"></a></div>
+		      <div class="buttonViewComments"><a href="{g->url params=$itemLink.params}"
+		       title="{$itemLink.text}"></a></div>
 		    </td>
 		    {/if}
 		  {/if}

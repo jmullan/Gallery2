@@ -38,8 +38,9 @@
       <option label="{g->text text="&laquo; actions &raquo;"}" value="">
 	{g->text text="&laquo; actions &raquo;"}
       </option>
-      {foreach from=$theme.itemLinks item=link}
-	<option label="{$link.text}" value="{g->url params=$link.params}">{$link.text}</option>
+      {foreach from=$theme.itemLinks item=itemLink}
+	<option label="{$itemLink.text}"
+		value="{g->url params=$itemLink.params}">{$itemLink.text}</option>
       {/foreach}
     </select>
   </div>

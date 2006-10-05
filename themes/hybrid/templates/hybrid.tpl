@@ -141,19 +141,19 @@
 	  {/if}
 	  <a id="info_{$it.imageIndex}" href="{g->url params=$theme.pageUrl
 	   arg1="itemId=`$it.id`" arg2="detail=1"}"></a>
-	  {capture assign=link}
+	  {capture assign=href}
 	    <a href="" onclick="image_show({$it.imageIndex});return false">
 	  {/capture}
 	  {if isset($it.thumbnail) && isset($theme.params.itemFrame)}
 	    {g->container type="imageframe.ImageFrame" frame=$theme.params.itemFrame
 			  width=$it.thumbnail.width height=$it.thumbnail.height}
-	      {$link}
+	      {$href}
 	      {g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS% giThumbnail"
 			title=$smarty.capture.thumbTitle}
 	      </a>
 	    {/g->container}
 	  {else}
-	    {$link}
+	    {$href}
 	    {if isset($it.thumbnail)}
 	      {g->image item=$it image=$it.thumbnail class="giThumbnail"
 			title=$smarty.capture.thumbTitle}
@@ -163,19 +163,19 @@
 	    </a>
 	  {/if}
 	{elseif ($it.canContainChildren || $it.entityType == 'GalleryLinkItem')}
-	  {capture assign=link}
+	  {capture assign=href}
 	    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$it.id`"}">
 	  {/capture}
 	  {if isset($it.thumbnail) && isset($theme.params.albumFrame)}
 	    {g->container type="imageframe.ImageFrame" frame=$theme.params.albumFrame
 			  width=$it.thumbnail.width height=$it.thumbnail.height}
-	      {$link}
+	      {$href}
 	      {g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS% giThumbnail"
 			title=$smarty.capture.thumbTitle}
 	      </a>
 	    {/g->container}
 	  {else}
-	    {$link}
+	    {$href}
 	    {if isset($it.thumbnail)}
 	      {g->image item=$it image=$it.thumbnail class="giThumbnail"
 			title=$smarty.capture.thumbTitle}
@@ -236,8 +236,8 @@
       {/if}
 	{if isset($it.itemLinks)}
 	  <span id="links_{$i}" style="display: none">
-	  {foreach from=$it.itemLinks item=link}
-	    <a href="{g->url params=$link.params}">{$link.text}</a><br/>
+	  {foreach from=$it.itemLinks item=itemLink}
+	    <a href="{g->url params=$itemLink.params}">{$itemLink.text}</a><br/>
 	  {/foreach}
 	  </span>
 	{/if}
