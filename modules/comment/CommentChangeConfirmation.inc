@@ -31,23 +31,6 @@ class CommentChangeConfirmationView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
-	/* Load our item */
-	list ($ret, $item) = $this->_getItem();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	if ($form['formName'] != 'CommentChangeConfirmation') {
-	    $form['formName'] = 'CommentChangeConfirmation';
-	}
-
-	$CommentChangeConfirmation = array();
-
-	$template->setVariable('CommentChangeConfirmation', $CommentChangeConfirmation);
-	$template->setVariable('controller', 'comment.CommentChangeConfirmation');
-
 	return array(null,
 		     array('body' => 'modules/comment/templates/CommentChangeConfirmation.tpl'));
     }

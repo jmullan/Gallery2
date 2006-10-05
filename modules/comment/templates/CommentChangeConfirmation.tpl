@@ -16,7 +16,7 @@
   {if isset($status.deleted)}
     {g->text text="Comment deleted successfully"}
   {/if}
-  {if isset($status.saved)}
+  {if isset($status.changed)}
     {g->text text="Comment modified successfully"}
   {/if}
 </h2></div>
