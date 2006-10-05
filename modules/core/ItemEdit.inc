@@ -34,10 +34,17 @@ class ItemEditController extends GalleryController {
 	global $gallery;
 
 	$editPlugin = GalleryUtilities::getRequestVariables('editPlugin');
+	$itemId = (int)GalleryUtilities::getRequestVariables('itemId');
 	
-	list ($ret, $item, $wasSpecified) = GalleryView::getItem();
+	/* Load the item */
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
 	    return array($ret, null);
+	}
+
+	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
+	    /* Invalid itemId given, return MISSING_OBJECT to get standard error page */
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
 	/* Make sure we have permission to edit this item */
@@ -182,7 +189,7 @@ class ItemEditView extends GalleryView {
 
 	$editPlugin = GalleryUtilities::getRequestVariables('editPlugin');
 	
-	list ($ret, $item, $wasSpecified) = GalleryView::getItem();
+	list ($ret, $item, $wasSpecified) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -314,7 +321,7 @@ class ItemEditView extends GalleryView {
     function getViewDescription() {
 	global $gallery;
 
-	list ($ret, $item) = GalleryView::getItem();
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}

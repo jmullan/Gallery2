@@ -41,7 +41,7 @@ class SlideshowView extends GalleryView {
 	    $item = explode('|', $itemListString);
 	} else {
 	    /* Build slideshow for an album */
-	    list ($ret, $item) = GalleryView::getItem();
+	    list ($ret, $item) = $this->getItem();
 	    if ($ret) {
 		return array($ret, null);
 	    }

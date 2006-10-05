@@ -251,5 +251,65 @@ class ShowItemTest extends GalleryTestCase {
 	$this->assertEquals(substr($result['body'], 0, strlen($match)), $match,
 			    'template should be inside a theme');
     }
+    
+    function testUseAlbumThemeForDefaultAlbum() {
+	global $gallery;
+	
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($album);
+	
+	$gallery->setConfig('defaultAlbumId', $album->getId());
+	GalleryUtilities::removeRequestVariable('itemId');
+	
+	/* Assign our test theme */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use a dummy theme. */
+	$album->setTheme('showItemTest');
+	$ret = $album->save();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+	/* Execute the test. */
+	list ($ret, $view) = GalleryView::loadView('core.ShowItem');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $theme, $params, $item) = $view->loadThemeAndParameters();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify */
+	$this->assertEquals($album->getId(), $item->getId(), 'itemId');
+	$this->assertEquals('showItemTest', $theme->getId(), 'theme');
+    }
+}
+
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
+
+/**
+ * Test theme
+ */
+class ShowItemTestTheme extends GalleryTheme {
+    function ShowItemTestTheme() {
+	$this->setId('showItemTest');
+    }
+    
+    function isActive() {
+	return array(null, true);
+    }
 }
 ?>

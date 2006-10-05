@@ -102,7 +102,7 @@ class DeleteCommentView extends GalleryView {
 	global $gallery;
 
 	/* Load our item */
-	list ($ret, $item) = GalleryView::getItem();
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}

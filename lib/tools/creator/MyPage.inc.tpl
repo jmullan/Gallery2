@@ -85,7 +85,7 @@ class {$viewName}View extends GalleryView {ldelim}
      */
     function loadTemplate(&$template, &$form) {ldelim}
 	/* Load our item */
-	list ($ret, $item) = GalleryView::getItem();
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {ldelim}
 	    return array($ret, null);
 	{rdelim}

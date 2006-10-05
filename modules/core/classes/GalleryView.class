@@ -331,7 +331,6 @@ class GalleryView {
      * @return array object GalleryStatus a status code
      *               object GalleryItem an item
      *               boolean true if item was specified, false if default was used
-     * @static
      */
     function getItem() {
 	global $gallery;
@@ -367,10 +366,10 @@ class GalleryView {
      * @return array object GalleryStatus a status code
      *               object GalleryItem an item
      *               boolean true if item was specified, false if default was used
-     * @deprecated Please use GalleryView::getItem() instead.
+     * @deprecated Please use getItem() instead.
      */
     function _getItem() {
-	return GalleryView::getItem();
+	return $this->getItem();
     }
 
     /**
@@ -382,7 +381,7 @@ class GalleryView {
      *               object GalleryEntity item context
      */
     function loadThemeAndParameters() {
-	list ($ret, $item, $wasSpecified) = GalleryView::getItem();
+	list ($ret, $item, $wasSpecified) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null, null, null);
 	}

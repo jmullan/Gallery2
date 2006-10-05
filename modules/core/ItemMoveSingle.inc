@@ -262,7 +262,7 @@ class ItemMoveSingleView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	list ($ret, $item) = GalleryView::getItem();
+	list ($ret, $item) = $this->getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}

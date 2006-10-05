@@ -40,7 +40,7 @@ class ShowTreeView extends GalleryView {
 	/* Get the entity */
 	$entityId = GalleryUtilities::getRequestVariables('entityId');
 	if (empty($entityId)) {
-	    list ($ret, $entity) = GalleryView::getItem();
+	    list ($ret, $entity) = $this->getItem();
 	    if ($ret) {
 		return array($ret, null);
 	    }
