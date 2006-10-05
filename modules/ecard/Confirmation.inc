@@ -21,7 +21,7 @@
 /**
  * Confirmation page
  * @package Ecard
- * @subpackage userInterface
+ * @subpackage UserInterface
  * @author Nico Kaiser <nico@siriux.net>
  * @author Dariush Molavi <dari@nukedgallery.net>
  * @version $Revision$ $Date$
