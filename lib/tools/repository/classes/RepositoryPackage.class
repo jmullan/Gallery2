@@ -66,15 +66,16 @@ class RepositoryPackage extends RepositoryObject {
      * Writes all possible packages for this plugin to the repository.
      *
      * @param boolean $overwritePackages specifies whether to overwrite existing packages
+     * @param boolean $compressToo write a compressed version also?
      * @return array object GalleryStatus a status code
      *		     array packages created for this plugin
      */
-    function writeAllPackagesToDisk($overwritePackages=false) {
+    function writeAllPackagesToDisk($overwritePackages=false, $compressToo=false) {
 	$packagesWritten = array();
 	$packagesSkipped = array();
 
 	foreach ($this->_descriptor->getPackages() as $packageType) {
-	    $ret = $this->writeSinglePackageToDisk($packageType, $overwritePackages);
+	    $ret = $this->writeSinglePackageToDisk($packageType, $overwritePackages, $compressToo);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -94,9 +95,10 @@ class RepositoryPackage extends RepositoryObject {
      *
      * @param string $packageType
      * @param boolean $overwritePackage overwrite package on disk if it already exists
+     * @param boolean $compressToo write a compressed version also?
      * @return object GalleryStatus a status code
      */
-    function writeSinglePackageToDisk($packageType, $overwritePackage=false) {
+    function writeSinglePackageToDisk($packageType, $overwritePackage=false, $compressToo=false) {
 	global $gallery;
 
 	$randomString = $this->getPackageHash($packageType, 5);
@@ -126,7 +128,7 @@ class RepositoryPackage extends RepositoryObject {
 	/* Set file name and write it to disk. */
 	$this->setOutputFile($this->getPackageFileName($packageType));
 
-	$ret = $this->writeToDisk($overwritePackage);
+	$ret = $this->writeToDisk($overwritePackage, $compressToo);
 	if ($ret) {
 	    return $ret;
 	}

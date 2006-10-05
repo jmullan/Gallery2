@@ -148,7 +148,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 			    'outputDir' => $descriptor->getOutputDir());
 
 	if (empty($integrityErrors)) {
-	    $ret = $descriptor->writeToDisk();
+	    $ret = $descriptor->writeToDisk(false, true);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -159,7 +159,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 		return array($ret, null);
 	    }
 
-	    list ($ret, $packagesWritten) = $package->writeAllPackagesToDisk();
+	    list ($ret, $packagesWritten) = $package->writeAllPackagesToDisk(false, true);
 	    if ($ret) {
 		return array($ret, null);
 	    }
