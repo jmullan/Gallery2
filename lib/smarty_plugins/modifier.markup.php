@@ -93,13 +93,16 @@ class GalleryBbcodeMarkupParser {
     var $_bbcode;
 
     function GalleryBbcodeMarkupParser() {
-	GalleryCoreApi::requireOnce('lib/bbcode/bbcode.class');
+	if (!class_exists('StringParser_BBCode')) {
+	    GalleryCoreApi::requireOnce('lib/bbcode/stringparser_bbcode.class.php');
+	}
 
-	$this->_bbcode = new GalleryBbcode();
+	$this->_bbcode = new StringParser_BBCode();
+	$this->_bbcode->setGlobalCaseSensitive(false);
 
 	/* Convert line breaks everywhere */
-	$this->_bbcode->addParser(array($this, 'convertLineBreaks'),
-				  array('block', 'inline', 'link', 'listitem', 'list'));
+	$this->_bbcode->addParser(array('block', 'inline', 'link', 'listitem', 'list'),
+				  array($this, 'convertLineBreaks'));
 
 	/*
 	 * Escape all characters everywhere
@@ -109,95 +112,92 @@ class GalleryBbcodeMarkupParser {
 	 */
 
 	/* Convert line endings */
-	$this->_bbcode->addParser('nl2br', array('block', 'inline', 'link', 'listitem'));
+	$this->_bbcode->addParser(array('block', 'inline', 'link', 'listitem'), 'nl2br');
 
 	/* Strip last line break in list items */
-	$this->_bbcode->addParser(array($this, 'stripLastLineBreak'), array ('listitem'));
+	$this->_bbcode->addParser(array('listitem'), array($this, 'stripLastLineBreak'));
 
 	/* Strip contents in list elements */
-	$this->_bbcode->addParser(array($this, 'stripContents'), array('list'));
+	$this->_bbcode->addParser(array('list'), array($this, 'stripContents'));
 
 	/* [b], [i] */
-	$this->_bbcode->addCode('b', 'simple_replace', null, array ('<b>', '</b>'),
-			 'inline', array ('listitem', 'block', 'inline', 'link'), array ());
-	$this->_bbcode->addCode('i', 'simple_replace', null, array ('<i>', '</i>'),
-			 'inline', array ('listitem', 'block', 'inline', 'link'), array ());
+	$this->_bbcode->addCode('b', 'simple_replace', null,
+				array('start_tag' => '<b>', 'end_tag' => '</b>'),
+				'inline', array('listitem', 'block', 'inline', 'link'), array());
+
+	$this->_bbcode->addCode('i', 'simple_replace', null,
+				array('start_tag' => '<i>', 'end_tag' => '</i>'),
+				'inline', array('listitem', 'block', 'inline', 'link'), array());
 
 	/* [url]http://...[/url], [url=http://...]Text[/url] */
-	$this->_bbcode->addCode('url', 'usecontent?', array($this, 'url'), array ('default'),
-			 'link', array ('listitem', 'block', 'inline'), array ('link'));
+	$this->_bbcode->addCode('url', 'usecontent?', array($this, 'url'),
+			 array('usecontent_param' => 'default'),
+			 'link', array('listitem', 'block', 'inline'), array('link'));
 
 	/* [color=...]Text[/color] */
-	$this->_bbcode->addCode('color', 'callback_replace', array($this, 'color'), array ('default'),
-			 'inline', array ('listitem', 'block', 'inline', 'link'), array ());
+	$this->_bbcode->addCode('color', 'callback_replace', array($this, 'color'),
+			 array('usecontent_param' => 'default'),
+			 'inline', array('listitem', 'block', 'inline', 'link'), array());
 
 	/* [img]http://...[/img] */
-	$this->_bbcode->addCode('img', 'usecontent', array($this, 'image'), array (),
-			 'image', array ('listitem', 'block', 'inline', 'link'), array ());
+	$this->_bbcode->addCode('img', 'usecontent', array($this, 'image'), array(),
+			 'image', array('listitem', 'block', 'inline', 'link'), array());
 
 	/* [list] [*]Element [/list] */
-	$this->_bbcode->addCode('list', 'simple_replace', null, array ('<ul>', '</ul>'),
-			 'list', array ('block', 'listitem'), array ());
-	$this->_bbcode->addCode('*', 'simple_replace', null, array ('<li>', "</li>\n"),
-			 'listitem', array ('list'), array ());
-	$this->_bbcode->setCodeFlag('*', 'no_close_tag', true);
+	$this->_bbcode->addCode('list', 'simple_replace', null,
+				array('start_tag' => '<ul>', 'end_tag' => '</ul>'),
+				'list', array('block', 'listitem'), array());
+	$this->_bbcode->addCode('*', 'simple_replace', null,
+				array('start_tag' => '<li>', 'end_tag' => "</li>\n"),
+				'listitem', array('list'), array());
+	$this->_bbcode->setCodeFlag('*', 'closetag', BBCODE_CLOSETAG_OPTIONAL);
     }
 
     function parse($text) {
 	return $this->_bbcode->parse($text);
     }
 
-    function url($tagName, $attrs, $elementContents, $funcParam, $openClose) {
-	static $lastOpenSuccess;
-
-	if ($openClose == 'all') {
-	    if (preg_match('#^(https?|ftp|mailto):|^/#', $elementContents)) {
-		return sprintf('<a href="%s">%s</a>', $elementContents, $elementContents);
+    function url($action, $attributes, $content, $params, &$node_object) {
+	if ($action == 'validate') {
+	    /* The code is like [url]http://.../[/url] */
+	    if (!isset ($attributes['default'])) {
+		return preg_match('#^(https?|ftp|mailto):|^/#', $content);
 	    } else {
-		return sprintf('[url]%s[/url]', $elementContents);
-	    }
-	} else if ($openClose == 'open') {
-	    if (preg_match('#^(https?|ftp|mailto):|^/#', $attrs['default'])) {
-		$lastOpenSuccess = true;
-		return sprintf('<a href="%s">', $attrs['default']);
-	    } else {
-		$lastOpenSuccess = false;
-		return sprintf('[url=%s]', $attrs['default']);
-	    }
-	} else if ($openClose == 'close') {
-	    if (isset($lastOpenSuccess) && $lastOpenSuccess) {
-		return '</a>';
-	    } else {
-		return '[/url]';
+		/* The code is like [url=http://.../]Text[/url] */
+		return preg_match('#^(https?|ftp|mailto):|^/#', $attributes['default']);
 	    }
 	} else {
-	    return false;
+	    /* Output of HTML. */
+	    /* The code is like [url]http://.../[/url] */
+	    if (!isset ($attributes['default'])) {
+		return '<a href="' . $content . '">' . $content . '</a>';
+	    } else {
+		/* The code is like [url=http://.../]Text[/url] */
+		return '<a href="' . $attributes['default'] . '">' . $content . '</a>';
+	    }
 	}
     }
 
-    function image($tagName, $attrs, $elementContents, $funcParam, $openClose) {
-	if (!preg_match('#^(https?|ftp|mailto):|^/#', $elementContents)) {
-	    return sprintf('[img]%s[/img]', $elementContents);
-	}
-
-	if ($openClose == 'all') {
+    function image($action, $attrs, $content, $params, &$node_object) {
+	if ($action == 'validate') {
+	    return preg_match('#^(https?|ftp|mailto):|^/#', $content);
+	} else {
+	    /* Output of HTML. */
 	    $size = (isset($attrs['width']) ? ' width="' . (int)$attrs['width'] . '"' : '')
 		. (isset($attrs['height']) ? ' height="' . (int)$attrs['height'] . '"' : '');
 	    /* Input should have entities already, so no htmlspecialchars here */
-	    return sprintf('<img src="%s" alt=""%s/>', $elementContents, $size);
-	} else {
-	    return false;
-	}
+	    return sprintf('<img src="%s" alt=""%s/>', $content, $size);
+	}       
     }
 
-    function color($tagName, $attrs, $elementContents, $funcParam, $openClose) {
-	if ($openClose == 'open') {
+    function color($action, $attrs, $content, $params, &$node_object) {
+	if ($action == 'validate') {
+	    return !empty($attrs['default']);
+	} else {
+	    /* Output of HTML. */
 	    $color = empty($attrs) ? 'bummer' : $attrs['default'];
-	    $ret = sprintf('<font color="%s">', $color);
-	} else if ($openClose == 'close') {
-	    $ret = '</font>';
+	    return sprintf('<font color="%s">%s</font>', $color, $content);
 	}
-        return $ret;
     }
     
     function convertLineBreaks($text) {

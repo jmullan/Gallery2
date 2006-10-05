@@ -190,6 +190,17 @@ class MarkupTest extends GalleryTestCase {
         $results = $this->_bbcode->parse('[color=green]content[/color]');
         $this->assertEquals('<font color="green">content</font>', $results);
     }
+    
+    /*
+     * Regression test. This sequence led to an "uninitialized string offset error"
+     * in earlier bbcode implementations. 
+     */
+    function testHeavyNesting() {
+	$results = $this->_bbcode->parse('[url=http://a.cc/blah.jpg\[url]\]\[[\]' .
+					 '[/url][/url][url=[[[[]\]\][\[][[[[]\]\][\[[/url]');
+	$this->assertEquals('<a href="http://a.cc/blah.jpg\[url">\]\[[\]</a>' .
+			    '[/url][url=[[[[]\]\][\[][[[[]\]\][\[[/url]', $results);
+    }
 
     function testJavascript() {
 	$results = $this->_bbcode->parse('[url=javascript:alert(\'hi\')]content[/url]');
@@ -198,9 +209,9 @@ class MarkupTest extends GalleryTestCase {
 
     function testUnicodeCharacters() {
 	$results = $this->_bbcode->parse('[url=https://example.com/secure.html]' .
-					 'Elemente hinzufügen[/url] Seitenverhältnis');
-	$this->assertEquals('<a href="https://example.com/secure.html">Elemente hinzufügen</a>' .
-			    ' Seitenverhältnis', $results);
+					 "Elemente hinzuf\xfcgen[/url] Seitenverh\xe4ltnis");
+	$this->assertEquals("<a href=\"https://example.com/secure.html\">Elemente " .
+			    "hinzuf\xfcgen</a> Seitenverh\xe4ltnis", $results);
     }
 
     function testNonBbcodeMarkers() {
