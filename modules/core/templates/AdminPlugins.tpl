@@ -8,7 +8,7 @@
   //<![CDATA[
   var pluginData = {ldelim} "module" : {ldelim} {rdelim}, "theme" : {ldelim} {rdelim} {rdelim}
   {foreach name=names from=$AdminPlugins.plugins item=plugin}
-  pluginData["{$plugin.type}"]["{$plugin.id}"] = {ldelim} "name" : "{$plugin.name}", "deletable" : {$plugin.deletable} {rdelim};
+  pluginData["{$plugin.type}"]["{$plugin.id}"] = {ldelim} "name" : "{$plugin.name}", "deletable" : {$plugin.deletable}, "state" : "{$plugin.state}" {rdelim};
   {/foreach}
 
   var stateData = {ldelim}
@@ -73,6 +73,14 @@
     "no"     : '{g->text text="No"}'
   {rdelim};
 
+  var legendStrings = {ldelim}
+    "inactive"     : '{g->text text="disabled(__COUNT__)"}',
+    "active"       : '{g->text text="up to date(__COUNT__)"}',
+    "uninstalled"  : '{g->text text="not installed(__COUNT__)"}',
+    "unupgraded"   : '{g->text text="upgrade required(__COUNT__)"}',
+    "incompatible" : '{g->text text="incompatible(__COUNT__)"}',
+  {rdelim}
+
   var failedToDeleteMessage = '{g->text text="Failed to completely delete __PLUGIN__"}';
 
   {literal}
@@ -107,36 +115,7 @@
     {g->text text="Gallery features come as separate plugins.  You can download and install plugins to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it."}
   </p>
 
-  {capture name=legend}
-  <div style="width: 100%; text-align: right">
-    <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13" alt="" />
-    <span style="margin-right: 10px; vertical-align: top">
-      {g->text text="up to date"}
-    </span>
-
-    <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13" alt="" />
-    <span style="margin-right: 10px; vertical-align: top">
-      {g->text text="disabled"}
-    </span>
-
-    <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="" />
-    <span style="margin-right: 10px; vertical-align: top">
-      {g->text text="upgrade required"}
-    </span>
-
-    <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13" alt="" />
-    <span style="margin-right: 10px; vertical-align: top">
-      {g->text text="not installed"}
-    </span>
-
-    <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13" height="13" alt="" />
-    <span style="margin-right: 10px; vertical-align: top">
-      {g->text text="incompatible"}
-    </span>
-  </div>
-  {/capture}
-  {$smarty.capture.legend}
-
+  {include file="gallery:modules/core/templates/AdminPluginsLegend.tpl" legendId="top"}
   <table class="gbDataTable">
     {assign var="group" value=""}
     {foreach from=$AdminPlugins.plugins item=plugin}
@@ -239,5 +218,6 @@
       </tr>
     {/foreach}
   </table>
-  {$smarty.capture.legend}
+  {include file="gallery:modules/core/templates/AdminPluginsLegend.tpl" legendId="bottom"}
+  <script type="text/javascript"> updateStateCounts(); </script>
 </div>
