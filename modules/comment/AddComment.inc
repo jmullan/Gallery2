@@ -200,7 +200,7 @@ class AddCommentView extends GalleryView {
 	GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');
 
 	/* Load our item */
-	list ($ret, $item) = $this->_getItem();
+	list ($ret, $item) = GakkeryView::getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}

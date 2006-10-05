@@ -31,7 +31,7 @@ class ShowCommentsView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	list ($ret, $item) = $this->_getItem();
+	list ($ret, $item) = GalleryView::getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}

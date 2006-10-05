@@ -143,7 +143,7 @@ class ItemDeleteSingleView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	list ($ret, $item) = $this->_getItem();
+	list ($ret, $item) = GalleryView::getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -51,7 +51,7 @@ class SimpleRenderView extends RenderView {
 	    return null;
 	}
 
-	list ($ret, $item) = $this->_getItem();
+	list ($ret, $item) = GalleryView::getItem();
 	if ($ret) {
 	    return $ret;
 	}

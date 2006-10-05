@@ -33,7 +33,7 @@ class ShowItemErrorView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list ($ret, $item, $wasSpecified) = $this->_getItem();
+	list ($ret, $item, $wasSpecified) = GalleryView::getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -35,7 +35,7 @@ class ItemEditController extends GalleryController {
 
 	$editPlugin = GalleryUtilities::getRequestVariables('editPlugin');
 	
-	list ($ret, $item, $wasSpecified) = GalleryView::_getItem();
+	list ($ret, $item, $wasSpecified) = GalleryView::getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -182,7 +182,7 @@ class ItemEditView extends GalleryView {
 
 	$editPlugin = GalleryUtilities::getRequestVariables('editPlugin');
 	
-	list ($ret, $item, $wasSpecified) = GalleryView::_getItem();
+	list ($ret, $item, $wasSpecified) = GalleryView::getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -314,7 +314,7 @@ class ItemEditView extends GalleryView {
     function getViewDescription() {
 	global $gallery;
 
-	list ($ret, $item) = $this->_getItem();
+	list ($ret, $item) = GalleryView::getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}

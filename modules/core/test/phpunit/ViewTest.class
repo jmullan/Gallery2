@@ -81,7 +81,7 @@ class ViewTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('itemId', $album->getId());
 
-	list ($ret, $item, $wasSpecified) = $view->_getItem();
+	list ($ret, $item, $wasSpecified) = GalleryView::getItem();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -90,6 +90,10 @@ class ViewTest extends GalleryTestCase {
 
 	GalleryUtilities::removeRequestVariable('itemId');
 
+	/*
+	 * TODO: Switch $view->_getItem() to GalleryView::getItem().
+	 * Keeping it as a test for the deprecated method.
+	 */
 	list ($ret, $item, $wasSpecified) = $view->_getItem();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -126,7 +130,7 @@ class ViewTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('itemId', $gallery->getActiveUserId());
 
-	list ($ret, $item, $wasSpecified) = GalleryView::_getItem();
+	list ($ret, $item, $wasSpecified) = GalleryView::getItem();
 	$this->assert($ret, 'getItem() should return an error if the itemId is the id of a user.');
 	$this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 'ERROR_MISSING_OBJECT');
     }
