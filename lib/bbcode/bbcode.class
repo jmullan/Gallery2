@@ -162,7 +162,7 @@ class GalleryBbcode {
 			// get tag contents
 			$tag_contents = substr ($text, $npos+1, $npos2-$npos-1);
 			// if this is a closing tag
-			if ($tag_contents{0} == '/') {
+			if (!empty($tag_contents) && $tag_contents{0} == '/') {
 				$tag_contents = substr ($tag_contents, 1);
 				// if the tag is not a closing tag
 				if (!in_array ($tag_contents, $this->code_names)) {

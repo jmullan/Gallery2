@@ -58,6 +58,7 @@ class UserRecoverPasswordController extends GalleryController {
 
 	$phpVm = $gallery->getPhpVm();
 	if (isset($form['action']['recover'])) {
+	    $form['userName'] = is_string($form['userName']) ? $form['userName'] : null;
 	    if (empty($form['userName'])) {
 		$error[] = 'form[error][userName][missing]';
 	    }

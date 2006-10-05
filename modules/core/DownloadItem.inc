@@ -53,7 +53,7 @@ class DownloadItemView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 	/* Figure out which item we're talking about */
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	$itemId = (int) GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
@@ -77,6 +77,9 @@ class DownloadItemView extends GalleryView {
 	}
 
 	/* Get the path to the file */
+	if (!method_exists($item, 'fetchPath')) {
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
+	}
 	list ($ret, $path) = $item->fetchPath();
 	if ($ret) {
 	    return $ret;

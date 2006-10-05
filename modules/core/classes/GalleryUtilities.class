@@ -137,11 +137,11 @@ class GalleryUtilities {
 	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
 	}
 	$form = array();
-	if (isset($_POST[$key])) {
+	if (isset($_POST[$key]) && is_array($_POST[$key])) {
 	    $form = $_POST[$key];
 	}
 
-	if (isset($_FILES[$key])) {
+	if (isset($_FILES[$key]) && is_array($_FILES[$key])) {
 	    /*
 	     * Later during our sanitization process we call stripslashes on our file name.  But it
 	     * may legitimately have backslashes in it (eg. c:\apache\tmp\php195.jpg), so make sure
@@ -156,7 +156,7 @@ class GalleryUtilities {
 	    $form = GalleryUtilities::array_merge_replace($form, $postForm);
 	}
 
-	if (isset($_GET[$key])) {
+	if (isset($_GET[$key]) && is_array($_GET[$key])) {
 	    $form = GalleryUtilities::array_merge_replace($form, $_GET[$key]);
 	}
 
@@ -201,6 +201,7 @@ class GalleryUtilities {
      * @param array $array first array with 'replaceable' values
      * @param array $newValues array which will be merged into first one
      * @return array resulting array
+     * @todo Verify that both arguments are arrays.
      */
     function array_merge_replace($array, $newValues) {
 	foreach ($newValues as $key => $value) {

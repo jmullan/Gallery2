@@ -34,7 +34,8 @@ class EditCommentController extends GalleryController {
 	global $gallery;
 
 	list ($itemId, $commentId) = GalleryUtilities::getRequestVariables('itemId', 'commentId');
-	
+	$itemId = (int) $itemId;
+	$commentId = (int) $commentId;
 
 	/* Make sure we have permission to edit a comment */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'comment.edit');
@@ -198,7 +199,7 @@ class EditCommentView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$commentId = GalleryUtilities::getRequestVariables('commentId');
+	$commentId = (int) GalleryUtilities::getRequestVariables('commentId');
 
 	/* Load the specific comment */
 	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);

@@ -120,6 +120,16 @@ class ViewTest extends GalleryTestCase {
 	}
 	$this->assertEquals($album->getId(), $item->getId(), 'Alternate default album');
     }
+    
+    function testGetItemOnlyReturnsItems() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('itemId', $gallery->getActiveUserId());
+
+	list ($ret, $item, $wasSpecified) = GalleryView::_getItem();
+	$this->assert($ret, 'getItem() should return an error if the itemId is the id of a user.');
+	$this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT, 'ERROR_MISSING_OBJECT');
+    }
 }
 
 class ViewTestModule {

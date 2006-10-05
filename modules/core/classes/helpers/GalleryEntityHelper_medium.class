@@ -304,11 +304,13 @@ class GalleryEntityHelper_medium {
 	    if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
 		$fullPath = GalleryDataCache::getCachePath(
 		    array('type' => 'derivative', 'itemId' => $entity->getId()));
-	    } else {
+	    } else if (method_exists($entity, 'fetchPath')) {
 		list ($ret, $fullPath) = $entity->fetchPath();
 		if ($ret) {
 		    return $ret;
 		}
+	    } else {
+		return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	    }
 	    $relativePath = str_replace($gallery->getConfig('data.gallery.base'), '', $fullPath);
 

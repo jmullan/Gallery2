@@ -34,6 +34,8 @@ class DeleteCommentController extends GalleryController {
 	global $gallery;
 
 	list ($itemId, $commentId) = GalleryUtilities::getRequestVariables('itemId', 'commentId');
+	$itemId = (int) $itemId;
+	$commentId = (int) $commentId;
 
 	/* Make sure we have permission to delete a comment */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'comment.delete');
@@ -48,6 +50,10 @@ class DeleteCommentController extends GalleryController {
 	    list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
 	    if ($ret) {
 		return array($ret, null);
+	    }
+	    
+	    if (!GalleryUtilities::isA($comment, 'GalleryComment')) {
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 
 	    /* Make sure that the comment<->parent relationship is right */
@@ -101,7 +107,7 @@ class DeleteCommentView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$commentId = GalleryUtilities::getRequestVariables('commentId');
+	$commentId = (int) GalleryUtilities::getRequestVariables('commentId');
 
 	/* Make sure we have permission to delete a comment */
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.delete');
@@ -117,6 +123,9 @@ class DeleteCommentView extends GalleryView {
 	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
 	if ($ret) {
 	    return array($ret, null);
+	}
+	if (!GalleryUtilities::isA($comment, 'GalleryComment')) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	/* Associate the commenter's info */

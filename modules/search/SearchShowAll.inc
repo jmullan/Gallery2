@@ -68,8 +68,10 @@ class SearchShowAllView extends GalleryView {
 	if ($form['formName'] == 'SearchShowAll' ||
 	    $form['formName'] == 'SearchScan') {
 
-	    if (isset($form['searchCriteria'])) {
+	    if (isset($form['searchCriteria']) && is_string($form['searchCriteria'])) {
 		$form['searchCriteria'] = trim($form['searchCriteria']);
+	    } else {
+		 $form['searchCriteria'] = '';
 	    }
 
 	    if (empty($form['searchCriteria'])) {

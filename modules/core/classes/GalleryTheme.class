@@ -1122,6 +1122,7 @@ class GalleryTheme extends GalleryPlugin {
 	global $gallery;
 
 	$imageViewsIndex = GalleryUtilities::getRequestVariables('imageViewsIndex');
+	$imageViewsIndex = is_numeric($imageViewsIndex) ? abs((int)$imageViewsIndex) : null;
 	if ($useCache && $this->_cacheablePage) {
 	    list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'partial');
 	    if ($ret) {
@@ -1754,6 +1755,7 @@ class GalleryTheme extends GalleryPlugin {
 
 	    /* Don't let the index overflow the images array */
 	    $imageViewsIndex = min($imageViewsIndex, count($imageViews) - 1);
+	    $imageViewsIndex = max(0, $imageViewsIndex);
 	    if (isset($sourceImageViewIndex)) {
 		$theme['sourceImageViewIndex'] = $sourceImageViewIndex;
 	    }

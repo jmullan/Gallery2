@@ -210,10 +210,8 @@ class GallerySession {
 	    }
 	}
 
-	/*
-	 * Sanitize the session id (which may have come from user input) to avoid possibly writing
-	 * outside the session storage dir.
-	 */
+	/* Sanitize the session id. */
+	$this->_sessionId = is_string($this->_sessionId) ? $this->_sessionId : '';
 	$this->_sessionId = preg_replace('/[^a-fA-F0-9]/', '', $this->_sessionId);
 	/* Prevent from querying the DB for sessionIds that are incorrect anyway */
 	if (strlen($this->_sessionId) != 32) {

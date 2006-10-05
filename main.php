@@ -61,7 +61,7 @@ if (GalleryUtilities::isEmbedded()) {
 	    'data.gallery.cache', $gallery->getConfig('data.gallery.base') . 'cache/');
 
 	$path = GalleryDataCache::getCachePath(
-	    array('type' => 'fast-download', 'itemId' => $itemId));
+	    array('type' => 'fast-download', 'itemId' => (int) $itemId));
 	/* We don't have a platform yet so we have to use the raw file_exists */
 	/* Disable fast-download in maintenance mode, admins still get via core.DownloadItem */
 	if (file_exists($path) && !$gallery->getConfig('mode.maintenance')) {
@@ -139,6 +139,8 @@ function _GalleryMain($embedded=false) {
 
     /* Figure out the target view/controller */
     list ($controllerName, $viewName) = GalleryUtilities::getRequestVariables('controller', 'view');
+    $controllerName = is_string($controllerName) ? $controllerName : null;
+    $viewName = is_string($viewName) ? $viewName : null;
     $gallery->debug("controller $controllerName, view $viewName");
 
     /* Check if core module needs upgrading */

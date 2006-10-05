@@ -38,8 +38,10 @@ class SearchScanController extends GalleryController {
 	$results = array();
 	if (isset($form['action']['slideshow'])) {
 
-	    if (isset($form['searchCriteria'])) {
+	    if (isset($form['searchCriteria']) && is_string($form['searchCriteria'])) {
 		$form['searchCriteria'] = trim($form['searchCriteria']);
+	    } else {
+		$form['searchCriteria'] = '';
 	    }
 
 	    list ($ret, $slideshow) =
@@ -144,8 +146,10 @@ class SearchScanView extends GalleryView {
 	    $form['formName'] == 'SearchShowAll' ||
 	    $form['formName'] == 'search_SearchBlock') {
 
-	    if (isset($form['searchCriteria'])) {
+	    if (isset($form['searchCriteria']) && is_string($form['searchCriteria'])) {
 		$form['searchCriteria'] = trim($form['searchCriteria']);
+	    } else {
+		 $form['searchCriteria'] = '';
 	    }
 
 	    if (empty($form['searchCriteria'])) {

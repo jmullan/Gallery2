@@ -777,8 +777,13 @@ class GalleryUrlGenerator {
     function initNavigation() {
 	global $gallery;
 
-	list ($returnUrl, $returnName, $navId, $fromNavId) =
+	$variables =
 	    GalleryUtilities::getRequestVariables('return', 'returnName', 'navId', 'fromNavId');
+	foreach ($variables as $key  => $value) {
+	    $variables[$key] = is_string($value) ? $value : null;
+	}
+	list ($returnUrl, $returnName, $navId, $fromNavId) = $variables;
+	
 	if (!empty($returnUrl)) {
 	    /*
 	     * Check for phishing attacks, don't allow return URLs to other sites or to other paths.

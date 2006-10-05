@@ -33,29 +33,29 @@ class ItemEditController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	list ($itemId, $editPlugin) = GalleryUtilities::getRequestVariables('itemId', 'editPlugin');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
+	$editPlugin = GalleryUtilities::getRequestVariables('editPlugin');
+	
+	list ($ret, $item, $wasSpecified) = GalleryView::_getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	/* Make sure we have permission to edit this item */
+	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.edit');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	/* Check to see if we have a preferred source */
 	list ($ret, $preferredTable) =
-	    GalleryCoreApi::fetchPreferredsByItemIds(array($itemId));
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret) {
 	    return array($ret, null);
 	}
 	$preferred = empty($preferredTable) ? null : array_shift($preferredTable);
 
 	/* Load the thumbnail */
-	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -124,7 +124,7 @@ class ItemEditController extends GalleryController {
 		$results['redirect'] = array('view' => 'core.ItemAdmin',
 					     'subView' => 'core.ItemEdit',
 					     'editPlugin' => $editPlugin,
-					     'itemId' => $itemId);
+					     'itemId' => $item->getId());
 	    } else {
 		$results['delegate']['view'] = 'core.ItemAdmin';
 		$results['delegate']['subView'] = 'core.ItemEdit';
@@ -158,7 +158,7 @@ class ItemEditController extends GalleryController {
 	$redirect = array();
 	$redirect['view'] = 'core.ItemAdmin';
 	$redirect['subView'] = 'core.ItemEdit';
-	$redirect['itemId'] = $itemId;
+	$redirect['itemId'] = $item->getId();
 	$redirect['editPlugin'] = $editPlugin;
 	$redirect['statusId'] = $session->putStatus($status);
 
@@ -180,27 +180,27 @@ class ItemEditView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list ($itemId, $editPlugin) = GalleryUtilities::getRequestVariables('itemId', 'editPlugin');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
+	$editPlugin = GalleryUtilities::getRequestVariables('editPlugin');
+	
+	list ($ret, $item, $wasSpecified) = GalleryView::_getItem();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	/* Make sure we have permission to edit this item */
+	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.edit');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	/* Load the thumbnail */
-	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret) {
 	    return array($ret, null);
 	}
 	if (!empty($thumbnails)) {
 	    list ($ret, $thumbnail) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
-						      $thumbnails[$itemId]->getId());
+						      $thumbnails[$item->getId()]->getId());
 	    if ($ret) {
 		/* Ignore thumbnail errors so we can edit items with broken thumbnail */
 	    }
@@ -227,6 +227,10 @@ class ItemEditView extends GalleryView {
 		$pluginInstances[$pluginId] = $plugin;
 	    }
 	}
+	
+	/* Define the first edit plugin as the default in case we need to fall back. */
+	$editPluginIds = array_keys($pluginInstances);
+	$defaultEditPlugin = $editPluginIds[0];
 
 	/*
 	 * If the plugin is empty get it from the session.  If it's empty there, default to the
@@ -237,9 +241,12 @@ class ItemEditView extends GalleryView {
 	if (empty($editPlugin)) {
 	    $editPlugin = $session->get($editPluginSessionKey);
 	    if (empty($editPlugin) || !in_array($editPlugin, array_keys($pluginInstances))) {
-		$ids = array_keys($pluginInstances);
-		$editPlugin = $ids[0];
+		$editPlugin = $defaultEditPlugin;
 	    }
+	}
+	/* Input validation of the given editPlugin id. */
+	if (!isset($pluginInstances[$editPlugin])) {
+	    $editPlugin = $defaultEditPlugin;
 	}
 	$session->put($editPluginSessionKey, $editPlugin);
 
