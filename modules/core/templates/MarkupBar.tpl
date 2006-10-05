@@ -66,16 +66,19 @@
   {/literal}
   function appendUrlElement(elementId, bbCodeElement) {ldelim}
     var element = document.getElementById(elementId);
-    var url = prompt('{g->text text="Enter a URL" forJavascript=true}'), text = null;
+    var url = prompt('{g->text text="Enter a URL" forJavascript=true}', ''), text = null;
     if (url != null) text = prompt('{g->text text="Enter some text describing the URL"
-					     forJavascript=true}');
-    if (text != null) element.value = element.value + '[url=' + url + ']' + text + '[/url]';
+					     forJavascript=true}', '');
+    if (text != null) {ldelim}
+      if (text.length) element.value = element.value + '[url=' + url + ']' + text + '[/url]';
+      else element.value = element.value + '[url]' + url + '[/url]';
+    {rdelim}      
     element.focus();
   {rdelim}
 
   function appendImageElement(elementId, bbCodeElement) {ldelim}
     var element = document.getElementById(elementId);
-    var url = prompt('{g->text text="Enter an image URL" forJavascript=true}');
+    var url = prompt('{g->text text="Enter an image URL" forJavascript=true}', '');
     if (url != null) element.value = element.value + '[img]' + url + '[/img]';
     element.focus();
   {rdelim}
