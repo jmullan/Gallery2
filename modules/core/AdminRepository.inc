@@ -53,12 +53,6 @@ class AdminRepositoryController extends GalleryController {
 	}
 
 	$status = $error = array();
-
-	list ($ret, $repositories) = $this->_getRepositories();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	if (isset($form['action']['update'])) {
 	    foreach (array('module', 'theme') as $pluginType) {
 		list ($ret, $pluginStatus[$pluginType]) =
@@ -85,12 +79,22 @@ class AdminRepositoryController extends GalleryController {
 		return array($ret, null);
 	    }
 
+	    list ($ret, $repositories) = $this->_getRepositories();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
 	    $templateAdapter =& $gallery->getTemplateAdapter();
 	    $templateAdapter->registerTrailerCallback(
 		array($this, 'updatePluginStatus'),
 		array($pluginStatus, $repositories));
 	    $delegate['view'] = 'core.ProgressBar';
 	} else if (isset($form['action']['upgradeAll'])) {
+	    list ($ret, $repositories) = $this->_getRepositories();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
 	    /* Get list of upgradeable packages in re */
 	    foreach ($repositories as $source => $repository) {
 		list ($ret, $tmp) = $repository->getAllUpgradeablePackages();
@@ -115,11 +119,6 @@ class AdminRepositoryController extends GalleryController {
 		 *
 		 * @todo: refactor it into a common base class
 		 */
-
-		list ($ret, $repositories) = $this->_getRepositories();
-		if ($ret) {
-		    return array($ret, null);
-		}
 
 		GalleryCoreApi::requireOnce('modules/core/AdminRepositoryDownload.inc');
 		$controller = new AdminRepositoryDownloadController();
