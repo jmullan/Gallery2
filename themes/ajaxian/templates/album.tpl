@@ -58,12 +58,12 @@
 	<tr valign="top">
 	{foreach from=$theme.children item=child}
 
-	  {if ($childrenInColumnCount == $theme.params.columns)}
-	    {* Move to a new row *}
-	    </tr><tr valign="top">
-	    {assign var="childrenInColumnCount" value=0}
-	  {/if}
 	  {if !$child.canContainChildren && $child.entityType != 'GalleryLinkItem'}
+	    {if ($childrenInColumnCount == $theme.params.columns)}
+	      {* Move to a new row *}
+	      </tr><tr valign="top">
+	      {assign var="childrenInColumnCount" value=0}
+	    {/if}
 	    {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
 	    <td class="giItemCell">
 	      {if isset($theme.params.itemFrame) && isset($child.thumbnail)}
@@ -106,12 +106,12 @@
       <tr valign="top">
       {foreach from=$theme.children item=child}
 
-	{if ($childrenInColumnCount == 2)}
-	  {* Move to a new row *}
-	  </tr><tr>
-	  {assign var="childrenInColumnCount" value=0}
-	{/if}
 	{if $child.canContainChildren || $child.entityType == 'GalleryLinkItem'}
+	  {if ($childrenInColumnCount == 2)}
+	    {* Move to a new row *}
+	    </tr><tr>
+	    {assign var="childrenInColumnCount" value=0}
+	  {/if}
 	  {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
 	  <td class="giAlbumCell gcBackground1">
 	    {if isset($child.thumbnail)}
@@ -161,7 +161,7 @@
   {else}{$theme.imageWidths});{/if}
   var slideshowImages = new Array();
   {foreach from=$theme.children key=i item=it}
-    {if !$it.canContainChildren}
+    {if !$it.canContainChildren && $it.entityType != 'GalleryLinkItem'}
     slideshowImages.push('{if isset($it.image)}{g->url arg1="view=core.DownloadItem"
       arg2="itemId=`$it.image.id`" arg3="serialNumber=`$it.image.serialNumber`"
       htmlEntities=false}{else}{g->url params=$theme.pageUrl arg1="itemId=`$it.id`"

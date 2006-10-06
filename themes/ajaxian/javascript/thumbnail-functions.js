@@ -331,8 +331,9 @@ function insertimagedatablock() {
 
     var fullsizeLink = document.createElement('a');
     fullsizeLink.id = 'fullsizelink';
-    fullsizeLink.href = thumbnails[currentImageIndex].parentNode.href +
-	'&thumbIndex=' + currentImageIndex;
+    fullsizeLink.href = thumbnails[currentImageIndex].parentNode.href
+	+ (thumbnails[currentImageIndex].parentNode.href.indexOf('?') >= 0 ? '&' : '?')
+	+ 'thumbIndex=' + currentImageIndex;
     /* Allow a user to rejoin the slideshow at this point */
     addEvent(fullsizeLink, 'click', saveCurrentImageIndex, false);
 
