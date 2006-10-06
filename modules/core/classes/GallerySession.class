@@ -107,7 +107,7 @@ class GallerySession {
 
     /**
      * Whether the session has been saved in the persistent store during the current
-     * request handling. 
+     * request handling.
      * Used to determine whether we need to "touch" the session to prevent it from expiring
      * in case the session data hasn't changed anyway.
      * @var boolean
@@ -1431,6 +1431,33 @@ class GallerySession {
      */
     function isPersistent() {
 	return $this->_isPersistent;
+    }
+}
+
+/**
+ * Get the active user from the session's user id
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class SessionAuthPlugin /* extends GalleryAuthPlugin */ {
+    /**
+     * @see GalleryAuthPlugin::getUser
+     */
+    function getUser() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$userId = $session->getUserId();
+	if (!empty($userId)) {
+	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+
+	    /* ERROR_MISSING_OBJECT check to suppress error if user id doesn't exist */
+	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		return array($ret, null);
+	    }
+
+	    return array(null, $user);
+	}
     }
 }
 ?>

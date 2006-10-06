@@ -1534,8 +1534,6 @@ class SessionTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Prepare by removing all but the current admin session from the map */
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'GallerySessionMap',
 	    array('id' => new GallerySqlFragment(' <> ?', $gallery->_session->getId())));

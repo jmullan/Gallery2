@@ -2120,6 +2120,9 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 
+	case '1.1.17':
+	    /* Rolled SessionAuthPlugin into GallerySession.class, so force a factory update */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we always
@@ -2828,7 +2831,6 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	$regs[] = array('MaintenanceTask', 'SetOriginationTimestampTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'DeleteSessionsTask', 'class', null);
 	$regs[] = array('CaptchaAdminOption', 'CoreCaptchaAdminOption', 'class', null);
-	$regs[] = array('GalleryAuthPlugin', 'SessionAuthPlugin', 'class', null);
 
 	/*
 	 * Unlike other modules, the core module doesn't get deactivated so its factory
@@ -2851,6 +2853,15 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	    if ($ret) {
 		return $ret;
 	    }
+	}
+
+	/* Special cases */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryAuthPlugin', 'SessionAuthPlugin', 'SessionAuthPlugin',
+	    'modules/core/classes/GallerySession.class',
+	    'core', null, 4);
+	if ($ret) {
+	    return $ret;
 	}
 
 	return null;

@@ -219,8 +219,6 @@ class GalleryItemAttributesHelper_advanced {
      * @see GalleryCoreApi::updateParentSequence
      */
     function updateParentSequence($oldParentSequence, $newParentSequence) {
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
 	global $gallery;
 
 	$oldParentSequence = join('/', $oldParentSequence) . '/';

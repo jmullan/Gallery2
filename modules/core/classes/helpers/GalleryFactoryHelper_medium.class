@@ -32,23 +32,6 @@ GalleryCoreApi::requireOnce(
 class GalleryFactoryHelper_medium {
 
     /**
-     * @see GalleryCoreApi::getAllFactoryImplementationIds
-     */
-    function getAllImplementationIds($classType) {
-	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	if (isset($registry['ids'][$classType])) {
-	    $result = $registry['ids'][$classType];
-	} else {
-	    $result = array();
-	}
-	return array(null, $result);
-    }
-
-    /**
      * @see GalleryCoreApi::getAllFactoryImplementationIdsWithHint
      */
     function getAllImplementationIdsWithHint($classType, $hint) {

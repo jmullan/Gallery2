@@ -18,54 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * Container to store an sql fragment that can be passed to the db abstraction layer.
- * @package GalleryCore
- * @subpackage Storage
- * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+/*
+ * This file is obsolete.  Its contents were rolled into GalleryStorage.class.
+ * Delete this file when we go to core api 8.0
  */
-class GallerySqlFragment {
-
-    /**
-     * Internal sql fragment
-     * @var string
-     * @access private
-     */
-    var $_fragment;
-
-    /**
-     * Internal sql values
-     * @var array
-     * @access private
-     */
-    var $_values;
-
-
-    /**
-     * @param string $fragment sql fragment
-     * @param array $values values.. variable number of parameters must match
-     *                        number of ? markers in sql fragment
-     */
-    function GallerySqlFragment($fragment, $values) {
-	$this->_values = func_get_args();
-	$this->_fragment = array_shift($this->_values);
-    }
-
-    /**
-     * The sql fragment
-     * @return string
-     */
-    function getFragment() {
-	return $this->_fragment;
-    }
-
-    /**
-     * Return the values that map into the sql fragment's ? markers
-     * @return array
-     */
-    function getValues() {
-	return $this->_values;
-    }
-}
 ?>

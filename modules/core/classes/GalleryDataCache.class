@@ -624,9 +624,6 @@ class GalleryDataCache {
 	$key = md5(serialize($keyData) . '|' . $extraKey . '|' . implode(",", $aclIds));
 	$userId = $gallery->getActiveUserId();
 
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
-
 	list ($ret, $results) = GalleryCoreApi::getMapEntry('GalleryCacheMap',
 	    array('value'),
 	    array('key' => $key, 'type' => $type, 'userId' => $userId,
@@ -827,8 +824,6 @@ class GalleryDataCache {
 
 	/* Use UPDATE instead of DELETE since UPDATE is faster and we reuse the rows. */
 	$storage =& $gallery->getStorage();
-	GalleryCoreApi::requireOnce(
-		'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
 
 	if ($isAnonymous) {
 	    $userIdForSql = (int)$anonymousUserId;
@@ -843,7 +838,7 @@ class GalleryDataCache {
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	return null;
     }
 }

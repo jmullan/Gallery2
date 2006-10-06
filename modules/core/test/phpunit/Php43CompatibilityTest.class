@@ -36,8 +36,8 @@ class Php43CompatibilityTest extends CodeAuditTestCase {
 
 	$this->_exceptions['file_put_contents']['GalleryPlatform.class'] = 1;
 	$this->_exceptions['memory_get_usage']['GalleryTemplateAdapter.class'] = 1;
-	$this->_exceptions['mysqli_get_server_info']['MySqlStorage.class'] = 1;
-	$this->_exceptions['mysqli_get_client_info']['MySqlStorage.class'] = 1;
+	$this->_exceptions['mysqli_get_server_info']['GalleryStorage.class'] = 1;
+	$this->_exceptions['mysqli_get_client_info']['GalleryStorage.class'] = 1;
 	$this->_exceptions['pg_version']['PostgreSqlStorage.class'] = 1;
 	$this->_exceptions['oci_server_version']['OracleStorage.class'] = 1;
     }

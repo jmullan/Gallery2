@@ -417,21 +417,19 @@ class Gallery {
 	    case 'mysql':
 	    case 'mysqlt':
 	    case 'mysqli':
-		GalleryCoreApi::requireOnce(
-			'modules/core/classes/GalleryStorage/MySqlStorage.class', true);
+		GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class');
 		$this->_storage = new MySqlStorage($config);
 		break;
 
 	    case 'postgres':
 	    case 'postgres7':
 		GalleryCoreApi::requireOnce(
-			'modules/core/classes/GalleryStorage/PostgreSqlStorage.class', true);
+			'modules/core/classes/GalleryStorage/PostgreSqlStorage.class');
 		$this->_storage = new PostgreSqlStorage($config);
 		break;
 
 	    case 'db2':
-		GalleryCoreApi::requireOnce(
-			'modules/core/classes/GalleryStorage/Db2Storage.class', true);
+		GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage/Db2Storage.class');
 		$this->_storage = new Db2Storage($config);
 		break;
 
@@ -440,21 +438,20 @@ class Gallery {
 	    case 'oci8po':
 	    case 'oracle':
 		GalleryCoreApi::requireOnce(
-			'modules/core/classes/GalleryStorage/OracleStorage.class', true);
+			'modules/core/classes/GalleryStorage/OracleStorage.class');
 		$this->_storage = new OracleStorage($config);
 		break;
 
 	    case 'ado_mssql':
 		GalleryCoreApi::requireOnce(
-			'modules/core/classes/GalleryStorage/MSSqlStorage.class', true);
+			'modules/core/classes/GalleryStorage/MSSqlStorage.class');
 		$this->_storage = new MSSqlStorage($config);
 		break;
 
 	    default:
 		$this->debug('Unknown storage type');
 		$this->debug_r($config);
-		GalleryCoreApi::requireOnce(
-			'modules/core/classes/GalleryStorage.class', true);
+		GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class', true);
 		$this->_storage = new GalleryStorage($config);
 	    }
 	}
