@@ -149,6 +149,9 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 		if (!in_array($itemId, $sessionPerms)) {
 		    $sessionPerms[] = (int)$itemId;
 		}
+
+		/* Use a blunt instrument to clear the permission cache. */
+		GalleryDataCache::reset();
 	    }
 	}
 	return null;
