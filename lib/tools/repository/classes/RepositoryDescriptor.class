@@ -360,6 +360,11 @@ class RepositoryDescriptor extends RepositoryObject {
 		}
 
 		$path = $this->_pluginDir . $file;
+		if (!$platform->file_exists($path)) {
+		    $errors[] = sprintf('%s: file missing', $file);
+		    continue;
+		}
+
 		$contents = $platform->file_get_contents($path);
 		$crc = sprintf('%u', $phpVm->crc32($contents));
 		if ($crc != $metaData['hash']) {
