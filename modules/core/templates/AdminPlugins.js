@@ -1,8 +1,8 @@
 function updatePluginState(pluginType, pluginId, state, visualChanges) {
     var pluginKey = pluginType + "-" + pluginId;
     var icon = document.getElementById("plugin-icon-" + pluginKey);
-    icon.src = stateData[state]['img.src'];
-    icon.alt = stateData[state]['img.alt'];
+    icon.className = stateData[state]['class'];
+    icon.title = stateData[state]['text'];
     for (var i in allActions) {
 	if (allActions[i] == "delete" && !pluginData[pluginType][pluginId]["deletable"]) {
 	    continue;
@@ -56,15 +56,11 @@ function updateStateCounts() {
     for (i in states) {
 	var state = states[i];
 	var msgTopEl = document.getElementById('AdminPlugins_legend_' + state + '_msg_top');
-	var imgTopEl = document.getElementById('AdminPlugins_legend_' + state + '_img_top');
 	var msgBottomEl = document.getElementById('AdminPlugins_legend_' + state + '_msg_bottom');
-	var imgBottomEl = document.getElementById('AdminPlugins_legend_' + state + '_img_bottom');
 	if (!counts[state]) {
 	    msgTopEl.style.display = msgBottomEl.style.display = 'none';
-	    imgTopEl.style.display = imgBottomEl.style.display = 'none';
 	} else {
 	    msgTopEl.style.display = msgBottomEl.style.display = 'inline';
-	    imgTopEl.style.display = imgBottomEl.style.display = 'inline';
 	    msgTopEl.innerHTML = msgBottomEl.innerHTML =
 		legendStrings[state].replace('__COUNT__', counts[state]);
 	}

@@ -13,39 +13,39 @@
 
   var stateData = {ldelim}
     "inactive" : {ldelim}
-      "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
-      "img.alt" : "{g->text text="Status: Inactive"}",
+      "class" : "icon-plugin-inactive",
+      "text" : "{g->text text="Status: Inactive"}",
       "actions" : {ldelim} "activate": 1, "uninstall" : 1, "delete" : 1 {rdelim},
       "callback": "copyVersionToInstalledVersion",
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deactivated"}" {rdelim}
     {rdelim},
     "active" : {ldelim}
-      "img.src" : "{g->url href="modules/core/data/module-active.gif"}",
-      "img.alt" : "{g->text text="Status: Active"}",
+      "class" : "icon-plugin-active",
+      "text" : "{g->text text="Status: Active"}",
       "actions" : {ldelim} "deactivate": 1, "uninstall" : 1, "delete" : 1  {rdelim},
       "callback": "copyVersionToInstalledVersion",
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ activated"}" {rdelim}
     {rdelim},
     "uninstalled" : {ldelim}
-      "img.src" : "{g->url href="modules/core/data/module-install.gif"}",
-      "img.alt" : "{g->text text="Status: Not Installed"}",
+      "class" : "icon-plugin-uninstall",
+      "text" : "{g->text text="Status: Not Installed"}",
       "actions" : {ldelim} "install": 1, "delete" : 1 {rdelim},
       "callback": "eraseInstalledVersion",
       "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ uninstalled"}" {rdelim}
     {rdelim},
     "unupgraded" : {ldelim}
-      "img.src" : "{g->url href="modules/core/data/module-upgrade.gif"}",
-      "img.alt" : "{g->text text="Status: Upgrade Required (Inactive)"}",
+      "class" : "icon-plugin-upgrade",
+      "text" : "{g->text text="Status: Upgrade Required (Inactive)"}",
       "actions" : {ldelim} "upgrade": 1 {rdelim}
     {rdelim},
     "incompatible" : {ldelim}
-      "img.src" : "{g->url href="modules/core/data/module-incompatible.gif"}",
-      "img.alt" : "{g->text text="Status: Incompatible Plugin (Inactive)"}",
+      "class" : "icon-plugin-incompatible",
+      "text" : "{g->text text="Status: Incompatible Plugin (Inactive)"}",
       "actions" : {ldelim} {rdelim}
     {rdelim},
     "unconfigured" : {ldelim}
-      "img.src" : "{g->url href="modules/core/data/module-inactive.gif"}",
-      "img.alt" : "{g->text text="Status: Inactive (Configuration Required)"}",
+      "class" : "icon-plugin-inactive",
+      "text" : "{g->text text="Status: Inactive (Configuration Required)"}",
       "actions" : {ldelim} "configure" : 1, "uninstall" : 1, "delete" : 1 {rdelim},
       "callback": "copyVersionToInstalledVersion",
       "message" : {ldelim} "type" : "giWarning", "text" : "{g->text text="__PLUGIN__ needs configuration"}" {rdelim}
@@ -138,7 +138,7 @@
 
       <tr id="plugin-row-{$plugin.type}-{$plugin.id}" class="{cycle values="gbEven,gbOdd"}">
 	<td style="position: relative;">
-	  <img id="plugin-icon-{$plugin.type}-{$plugin.id}" src="" width="13" height="13" alt="" />
+	  <div id="plugin-icon-{$plugin.type}-{$plugin.id}" style="height: 16px"></div>
 	</td>
 
 	<td>

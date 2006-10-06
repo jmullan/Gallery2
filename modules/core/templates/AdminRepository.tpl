@@ -180,19 +180,16 @@
   </p>
 
   {capture name=legend}
-  <div style="width: 100%; text-align: right">
-    <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="" />
-    <span style="margin-right: 10px; vertical-align: top">
+  <div class="AdminPlugins_legend">
+    <span class="icon-plugin-upgrade" style="margin-right: 10px; vertical-align: top">
       {g->text text="upgrade available"}
     </span>
 
-    <img src="{g->url href="modules/core/data/module-locked.gif"}" width="13" height="13" alt="" />
-    <span style="margin-right: 10px; vertical-align: top">
+    <span class="icon-plugin-locked" style="margin-right: 10px; vertical-align: top">
       {g->text text="locked"}
     </span>
 
-    <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13" height="13" alt="" />
-    <span style="margin-right: 10px; vertical-align: top">
+    <span class="icon-plugin-incompatible" style="margin-right: 10px; vertical-align: top">
       {g->text text="incompatible"}
     </span>
   </div>
@@ -225,16 +222,11 @@
 
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>
-	  {if $plugin.locked}
-	  <img src="{g->url href="modules/core/data/module-locked.gif"}" width="13"
-	       height="13" alt="{g->text text="Locked Plugin"}" />
-	  {elseif !$plugin.isCompatible}
-	  <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13"
-	       height="13" alt="{g->text text="Incompatible Plugin"}" />
-          {elseif $plugin.isUpgradeable}
-	  <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13"
-	       height="13" alt="{g->text text="Upgrade Available"}" />
-	  {/if}
+	  <div style="height: 16px" class="icon-plugin-{if
+	   $plugin.locked}locked" title="{g->text text="Locked Plugin"}"
+	  {elseif !$plugin.isCompatible}incompatible" title="{g->text text="Incompatible Plugin"}"
+	  {elseif $plugin.isUpgradeable}upgrade title="{g->text text="Upgrade Available"}"
+	  {else}download"{/if}/>
 	</td>
 
 	<td>
