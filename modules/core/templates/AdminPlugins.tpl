@@ -137,7 +137,7 @@
       {assign var="group" value=$plugin.group}
 
       <tr id="plugin-row-{$plugin.type}-{$plugin.id}" class="{cycle values="gbEven,gbOdd"}">
-	<td style="display: relative;">
+	<td style="position: relative;">
 	  <img id="plugin-icon-{$plugin.type}-{$plugin.id}" src="" width="13" height="13" alt="" />
 	</td>
 
