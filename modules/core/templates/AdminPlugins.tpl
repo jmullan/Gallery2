@@ -6,7 +6,7 @@
  *}
 <script type="text/javascript">
   //<![CDATA[
-  var pluginData = {ldelim} "module" : {ldelim} {rdelim}, "theme" : {ldelim} {rdelim} {rdelim}
+  var pluginData = {ldelim} "module" : {ldelim} {rdelim}, "theme" : {ldelim} {rdelim} {rdelim};
   {foreach name=names from=$AdminPlugins.plugins item=plugin}
   pluginData["{$plugin.type}"]["{$plugin.id}"] = {ldelim} "name" : "{$plugin.name}", "deletable" : {$plugin.deletable}, "state" : "{$plugin.state}" {rdelim};
   {/foreach}
@@ -78,8 +78,8 @@
     "active"       : '{g->text text="up to date(__COUNT__)"}',
     "uninstalled"  : '{g->text text="not installed(__COUNT__)"}',
     "unupgraded"   : '{g->text text="upgrade required(__COUNT__)"}',
-    "incompatible" : '{g->text text="incompatible(__COUNT__)"}',
-  {rdelim}
+    "incompatible" : '{g->text text="incompatible(__COUNT__)"}'
+  {rdelim};
 
   var failedToDeleteMessage = '{g->text text="Failed to completely delete __PLUGIN__"}';
 
