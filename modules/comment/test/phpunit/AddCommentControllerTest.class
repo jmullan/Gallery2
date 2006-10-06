@@ -50,6 +50,16 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'validation.level', 'OFF');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
 
 	$this->_startTime = time();
     }
@@ -380,19 +390,22 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    return $this->fail('result is not a GalleryComment!');
 	}
 
-	$this->assertEquals(
-	    'this is a subject with &lt;script&gt;evilness&lt;/script&gt; in it.',
-	    $comments[0]->getSubject(), 'subject');
-	$this->assertEquals('this is a comment with '
-		. '&lt;div onmouseover=&quot;alert(1)&quot;&gt;evilness&lt;/div&gt; in it.',
-	    $comments[0]->getComment(), 'comment');
-	$this->assertEquals(
-	    'this is an author with &lt;script&gt;evilness&lt;/script&gt; in it.',
-	    $comments[0]->getAuthor(), 'author');
-	$this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId(), 'user 1');
-	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost(), 'host 1');
-	$this->assert($comments[0]->getDate() >= $this->_startTime &&
-		      $comments[0]->getDate() <= time(), 'time 1');
+	if (!empty($comments)) {
+	    $this->assertEquals(
+		    'this is a subject with &lt;script&gt;evilness&lt;/script&gt; in it.',
+		    $comments[0]->getSubject(), 'subject');
+	    $this->assertEquals('this is a comment with '
+		    . '&lt;div onmouseover=&quot;alert(1)&quot;&gt;evilness&lt;/div&gt; in it.',
+		    $comments[0]->getComment(), 'comment');
+	    $this->assertEquals(
+		    'this is an author with &lt;script&gt;evilness&lt;/script&gt; in it.',
+		    $comments[0]->getAuthor(), 'author');
+	    $this->assertEquals($gallery->getActiveUserId(),
+		    $comments[0]->getCommenterId(), 'user 1');
+	    $this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost(), 'host 1');
+	    $this->assert($comments[0]->getDate() >= $this->_startTime
+			  && $comments[0]->getDate() <= time(), 'time 1');
+	}
     }
 
     function testCancelComment() {
@@ -411,10 +424,6 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
     }
 
     function testValidationPlugin() {
-	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'validation.level', 'HIGH');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -444,10 +453,6 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
     }
 
     function testValidationAlternateGuest() {
-	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'validation.level', 'HIGH');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -472,15 +477,6 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
     }
 
     function testValidationPluginOff() {
-	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'comment', 'validation.level', 'OFF');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
 	$this->_controller->_pluginInstances = array(new AddCommentTestValidation());
 
 	global $gallery;
