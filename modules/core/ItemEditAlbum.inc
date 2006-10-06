@@ -375,7 +375,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	 */
 	$total = count($childIds) * 2;
 	$runningTotal = 0;
-	$step = min(200, intval($total/20));
+	$step = min(200, intval($total / 20) + 1);
 	$batchSize = 100;
 	$resizes = array();
 	while (!empty($childIds)) {
@@ -556,7 +556,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$childItems = array();
 	$total = sizeof($childIds);
 	$ind = 0;
-	$step = min(500, intval($total/20));
+	$step = min(500, intval($total / 20) + 1);
 	$thumbnailSizes = array();
 	while (!empty($childIds)) {
 	    $currentChildIds = array_splice($childIds, 0, $batchSize);
