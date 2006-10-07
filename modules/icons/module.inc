@@ -62,7 +62,7 @@ class IconsModule extends GalleryModule {
 
 	switch ($currentVersion) {
 	case '0':
-	    $ret = $this->setParameter('iconpack', 'paularmstrongdesigns');
+	    $ret = $this->setParameter('iconpack', 'silk');
 	    if ($ret) {
 		    return $ret;
 	    }
