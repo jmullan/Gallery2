@@ -184,6 +184,8 @@ function addMessage(pluginType, pluginId, messageText, messageType) {
 
     var statusDimensions = YAHOO.util.Dom.getRegion(containerEl);
     var bodyDimensions = YAHOO.util.Dom.getRegion(document.body);
+    //For IE6:
+    if (!bodyDimensions.right) bodyDimensions = YAHOO.util.Dom.getRegion(document.body.firstChild);
     containerEl.style.left = (((bodyDimensions.right - bodyDimensions.left) -
 	                       (statusDimensions.right - statusDimensions.left)) / 2) + "px";
 
