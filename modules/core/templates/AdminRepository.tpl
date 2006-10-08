@@ -91,29 +91,25 @@
     </input>
     <br/>
 
+    <p>
+      <input id="AdminRepository_saveRepositoryList" type="button" class="inputTypeSubmit" onclick="if (validateRepositoryList()) {ldelim} saveRepositoryList();  closeRepositoryList() {rdelim}" value="{g->text text="Save"}"/>
+      <input id="AdminRepository_closeRepositoryList" type="reset" class="inputTypeSubmit" onclick="closeRepositoryList()" value="{g->text text="Cancel"}"/>
+    </p>
   </div>
-  {literal}
   <script type="text/javascript">
-    function hideRepositoryList() {
-      document.getElementById('AdminRepository_showRepositoryList').style.display = 'inline';
-      document.getElementById('AdminRepository_hideRepositoryList').style.display = 'none';
-      var myAnim = new YAHOO.util.Anim(
-	  'AdminRepository_Configure', { opacity: { to: 0.0 }, height: { to: 0 } }, 1,
-	  YAHOO.util.Easing.easeOut);
-      myAnim.animate();
-    }
+    var postUrl = '{g->url}';
+    var commandArg = '{g->formVar var="command"}';
+    var viewArg = '{g->formVar var="view"}';
+    var repositoryArgs = [
+      '{g->formVar var="form[repositories][released]"}',
+      '{g->formVar var="form[repositories][experimental]"}',
+      '{g->formVar var="form[repositories][community]"}' ];
 
-    function showRepositoryList() {
-      document.getElementById('AdminRepository_showRepositoryList').style.display = 'none';
-      document.getElementById('AdminRepository_hideRepositoryList').style.display = 'inline';
-      document.getElementById('AdminRepository_Configure').style.height = 'auto';
-      var myAnim = new YAHOO.util.Anim(
-	  'AdminRepository_Configure', { opacity: { to: 1.0 } }, 1,
-	  YAHOO.util.Easing.easeOut);
-      myAnim.animate();
-    }
+    var repositoryMessageTitle = '{g->text text="Repository Error"}';
+    var repositoryMessageBody = '{g->text text="You must select at least one repository."}';
+    var repositoryMessageOkButton = '{g->text text="Ok"}';
+    var formElements = document.getElementById("siteAdminForm").elements;
   </script>
-  {/literal}
 </div>
 
 {if !$AdminRepository.writeable.modules || !$AdminRepository.writeable.themes}
@@ -140,9 +136,8 @@
 {else}
 
 <div class="gbBlock gcBackground1">
-  <input id="AdminRepository_showRepositoryList" type="button" class="inputTypeSubmit" onclick="showRepositoryList()" value="{g->text text="Show Repository List"}"/>
-  <input id="AdminRepository_hideRepositoryList" type="button" style="display: none"; class="inputTypeSubmit" onclick="hideRepositoryList()" value="{g->text text="Hide Repository List"}"/>
   <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][update]"}" value="{if isset($AdminRepository.indexMetaData)}{g->text text="Update Plugin List"}{else}{g->text text="Download Plugin List"}{/if}"/>
+  <input id="AdminRepository_showRepositoryList" type="button" class="inputTypeSubmit" onclick="showRepositoryList()" value="{g->text text="Show Repository List"}"/>
 </div>
 
 {if isset($AdminRepository.indexMetaData)}

@@ -365,6 +365,8 @@ class AdminRepositoryView extends GalleryView {
 	$template->javascript('lib/yui/event-min.js');
 	$template->javascript('lib/yui/connection-min.js');
 	$template->javascript('lib/yui/animation-min.js');
+	$template->javascript('lib/yui/container-min.js');
+	$template->javascript('modules/core/templates/AdminRepository.js');
 	return array(null, array('body' => 'modules/core/templates/AdminRepository.tpl'));
     }
 
