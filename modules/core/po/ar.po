@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.15\n"
+"Project-Id-Version: Gallery: Core 1.1.18\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-03-31 20:26+0200\n"
 "PO-Revision-Date: 2005-08-14 13:34+0300\n"
@@ -96,24 +96,34 @@ msgstr ""
 msgid "Themes"
 msgstr "الثيمات"
 
-#, fuzzy
-msgid "Performing Maintenance Tasks"
-msgstr "صيانة النظام"
+msgid "Updating Repository Index"
+msgstr ""
 
-#, c-format
-msgid "Downloading %s"
+msgid "Scanning plugins"
 msgstr ""
 
 #, fuzzy
 msgid "Done."
 msgstr "تم"
 
-#, fuzzy
-msgid "Upgrade"
-msgstr "ترقية"
-
-msgid "Download"
+msgid "Updating Packages"
 msgstr ""
+
+#, c-format
+msgid "Downloading %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Activating %s"
+msgstr "عمليات"
+
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "اللغة الأساسية"
+
+#, fuzzy
+msgid "Update complete."
+msgstr "تم إكمال رفع الملفات"
 
 msgid "install"
 msgstr "تحميل"
@@ -519,9 +529,6 @@ msgstr "خروج"
 msgid "Plugins"
 msgstr ""
 
-msgid "Repository"
-msgstr ""
-
 msgid "Users"
 msgstr "مستخدون"
 
@@ -591,6 +598,10 @@ msgstr "صلاحيات ملفات النظام"
 msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Deleted %d sessions."
+msgstr "صلاحيات ملفات النظام"
 
 msgid "Delete database cache"
 msgstr "حذف الكاش لقاعدة البينات"
@@ -697,23 +708,20 @@ msgstr "مقطع فيديو"
 msgid "photo"
 msgstr "صورة"
 
-#, fuzzy
-msgid "download"
-msgstr "أسفل"
-
-#, fuzzy
-msgid "Plugins directory does not exist."
-msgstr "المستخدم '%s' غير موجود."
-
-msgid ""
-"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-msgstr ""
-
 msgid "Couldn't create repository cache path."
 msgstr ""
 
 msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
+msgstr ""
+
+msgid "Officially Release Repository"
+msgstr ""
+
+msgid "Experimental Repository"
+msgstr ""
+
+msgid "Community Repository"
 msgstr ""
 
 #, c-format
@@ -818,6 +826,19 @@ msgid "Blocks to show on album pages"
 msgstr ""
 
 msgid "Blocks to show on photo pages"
+msgstr ""
+
+msgid "Thumbnail links in dynamic albums"
+msgstr ""
+
+#, fuzzy
+msgid "Browse dynamic album"
+msgstr "تعديل ألبوم"
+
+msgid "Jump to original album"
+msgstr ""
+
+msgid "Separate link to original album"
 msgstr ""
 
 msgid "View Samples"
@@ -994,6 +1015,10 @@ msgstr "تحديد المقاس"
 
 msgid "Browser"
 msgstr "المتصفح"
+
+#, c-format
+msgid "Rows in %s table = %d"
+msgstr ""
 
 msgid "Successfully saved theme settings"
 msgstr "تم حفظ إعدادات الواجهة بنجاح"
@@ -1458,6 +1483,14 @@ msgstr "عنوان البريد الإلكتروني"
 msgid "(suggested)"
 msgstr "(مفضل)"
 
+#, fuzzy
+msgid "Lock Account"
+msgstr "حسابك الشخصي"
+
+msgid ""
+"Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
+msgstr ""
+
 msgid "Group Management"
 msgstr "إدارة الموجوعة"
 
@@ -1553,20 +1586,6 @@ msgstr "تشغيل الآن"
 
 msgid "Last Run Details:"
 msgstr "تفاصيل آخر تشغيل:"
-
-msgid "Confirm module uninstall"
-msgstr "تأكيد حذف الموديول"
-
-#, c-format
-msgid "Do you really want to uninstall the %s module?"
-msgstr "هل أنت متأكد من حذف حذف الموديول %s  ؟"
-
-#, fuzzy
-msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr "سوف يقوم كذلك بحذف جميع الصلاحيات و مسح أي معلومات مؤقتة قام هذا الموديول بإنشائها."
-
-msgid "Uninstall"
-msgstr "حذف"
 
 msgid "Performance Tuning"
 msgstr ""
@@ -1667,7 +1686,61 @@ msgid "__PLUGIN__ needs configuration"
 msgstr ""
 
 #, fuzzy
+msgid "__PLUGIN__ deleted"
+msgstr "إغلاق(غير منشط)"
+
+msgid "Warning!"
+msgstr ""
+
+#, fuzzy
+msgid "Do you really want to uninstall __PLUGIN__?"
+msgstr "هل أنت متأكد من حذف حذف الموديول %s  ؟"
+
+msgid ""
+"This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Do you really want to delete __PLUGIN__?"
+msgstr "هل أنت متأكد من حذف حذف الموديول %s  ؟"
+
+msgid "This plugin will be uninstalled and its files will be deleted."
+msgstr ""
+
+msgid "disabled(__COUNT__)"
+msgstr ""
+
+#, fuzzy
+msgid "up to date(__COUNT__)"
+msgstr "التاريخ :"
+
+#, fuzzy
+msgid "not installed(__COUNT__)"
+msgstr "حذف"
+
+#, fuzzy
+msgid "upgrade required(__COUNT__)"
+msgstr "(مطلوب)"
+
+#, fuzzy
+msgid "incompatible(__COUNT__)"
+msgstr "الموديول غير متوافق !"
+
+msgid "Failed to completely delete __PLUGIN__"
+msgstr ""
+
+#, fuzzy
 msgid "Gallery Plugins"
+msgstr "موديولات الجاليري"
+
+#, fuzzy
+msgid "Get More Plugins"
 msgstr "موديولات الجاليري"
 
 #, fuzzy
@@ -1680,22 +1753,6 @@ msgstr ""
 "خصائص الجاليري تأتي كموديولات منفصلة. بإمكانك تحميل و تخزين الموديولات لإضافة خصائص أكثر "
 "للجاليري , أو يمكنك إغلاق الخصائص إذا لم تكن تريد أن تستخدمها. لإستخدام خاصية ، يجب أن تقوم "
 "بتخزين إعداد (إذا طلب ذلك) و تفعيلها. إذا لم تكن تريد إستخدام الخاصية بإمكانك إغلاقها."
-
-#, fuzzy
-msgid "up to date"
-msgstr "التاريخ :"
-
-#, fuzzy
-msgid "upgrade required"
-msgstr "(مطلوب)"
-
-#, fuzzy
-msgid "not installed"
-msgstr "حذف"
-
-#, fuzzy
-msgid "incompatible"
-msgstr "الموديول غير متوافق !"
 
 #, fuzzy
 msgid "Plugin Name"
@@ -1725,6 +1782,25 @@ msgstr ""
 msgid "configure"
 msgstr "إعداد"
 
+#, fuzzy
+msgid "up to date"
+msgstr "التاريخ :"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(مطلوب)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "حذف"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "الموديول غير متوافق !"
+
+msgid "Repository"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1734,46 +1810,82 @@ msgstr ""
 msgid "All plugins are already up-to-date."
 msgstr ""
 
-msgid "Common Tasks"
+#, c-format
+msgid "%s plugin updated."
 msgstr ""
 
-msgid "Modules"
-msgstr "الموديولات"
-
-msgid "Warning: Experimental feature!"
-msgstr ""
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid ""
-"The repository features are currently experimental, and no actual repository has been set up "
-"yet, so none of these features will work at this time."
-msgstr ""
-
-msgid "Update Index"
-msgstr ""
-
-msgid ""
-"The Gallery repository contains the latest modules and themes extensively tested by the "
-"Gallery team. The repository index contains information about available plugins, such as the "
-"latest versions, available languages and compatibility. The index must be synchronized "
-"periodically with the Gallery server so you are informed about any available updates. No "
-"personal information is sent to the Gallery server during updating. On slower connections "
-"the process might take a minute or two."
+"No personal information about you or your Gallery installation is sent to the Gallery server "
+"at any time."
 msgstr ""
 
 #, c-format
 msgid ""
-"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
-"can be viewed on the Modules and Themes tabs."
+"Download and install new plugins quickly and easily.  If you decide you don't like a plugin, "
+"you can delete it from your Gallery.  There are multiple different plugin repositories, you "
+"can choose which ones you want to use (it's ok to use all of them at once).  Once you've "
+"chosen, you must periodically download the latest plugin list to find out about available "
+"updates. %s On slower connections the process might take a minute or two."
 msgstr ""
 
-msgid ""
-"The index has never been updated. Click on the Update button to see what updates are "
-"available."
+#, c-format
+msgid "Officially Released Gallery Project plugins (%srecommended%s)"
+msgstr ""
+
+#, c-format
+msgid "last updated on %s"
+msgstr ""
+
+#, c-format
+msgid "Experimental Gallery Project plugins (%scool new features, might be buggy%s)"
+msgstr ""
+
+#, c-format
+msgid "Community plugins (%suse at your own risk!%s)"
+msgstr ""
+
+msgid "Repository Error"
 msgstr ""
 
 #, fuzzy
-msgid "Update"
-msgstr "التاريخ :"
+msgid "You must select at least one repository."
+msgstr "يجب تحديد مستخدم لحذفه."
+
+msgid "Ok"
+msgstr ""
+
+msgid "Configure your Gallery"
+msgstr ""
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Continue button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Continue"
+msgstr "المتابعة ..."
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "موديولات الجاليري"
+
+msgid "Download Plugin List"
+msgstr ""
+
+msgid "Show Repository List"
+msgstr ""
 
 #, fuzzy
 msgid "Upgrade Gallery"
@@ -1797,13 +1909,49 @@ msgstr ""
 msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr ""
 
-#, fuzzy
-msgid "Gallery Up-To-Date"
-msgstr "البنية الرئيسية للجاليري"
+msgid "Incompatible plugins are marked with an exclamation icon."
+msgstr ""
 
+#, c-format
 msgid ""
-"Gallery cannot be upgraded through this interface. When a new version becomes available, "
-"upgrade instructions will be presented here."
+"A new core module version is available. There may be plugins that are incompatible with the "
+"installed core module, which are not shown here. You can view a %scomplete list%s of "
+"plugins, including incompatible ones, which are marked with a red icon."
+msgstr ""
+
+#, fuzzy
+msgid "upgrade available"
+msgstr "الجاليري"
+
+msgid "locked"
+msgstr ""
+
+msgid "Theme Name"
+msgstr "إسم الثيم"
+
+msgid "Module Name"
+msgstr "إسم الموديول"
+
+#, fuzzy
+msgid "Latest"
+msgstr "الأخير"
+
+msgid "Locked Plugin"
+msgstr ""
+
+#, fuzzy
+msgid "Incompatible Plugin"
+msgstr "الموديول غير متوافق !"
+
+#, fuzzy
+msgid "Upgrade Available"
+msgstr "ترقية"
+
+#, fuzzy
+msgid "download"
+msgstr "أسفل"
+
+msgid "modify"
 msgstr ""
 
 msgid "Upgrade All Plugins"
@@ -1818,116 +1966,68 @@ msgstr ""
 msgid "Upgrade All"
 msgstr "ترقية"
 
-msgid ""
-"Once the repository index has been downloaded, a list of available plugins will be "
-"presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
-msgstr ""
-
-msgid ""
-"The following plugins are available. Click on the action beside the plugin you're interested "
-"in to see what's available in the repository."
-msgstr ""
-
-msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr ""
-
-#, c-format
-msgid ""
-"A new core module version is available. There may be plugins that are incompatible with the "
-"installed core module, which are not shown here. You can view a %scomplete list%s of "
-"plugins, including incompatible ones, which are marked with a red icon."
-msgstr ""
-
-msgid "Theme Name"
-msgstr "إسم الثيم"
-
-msgid "Module Name"
-msgstr "إسم الموديول"
-
-#, fuzzy
-msgid "Latest"
-msgstr "الأخير"
-
-#, fuzzy
-msgid "Incompatible Plugin"
-msgstr "الموديول غير متوافق !"
+#, fuzzy, c-format
+msgid "Download %s"
+msgstr "أسفل"
 
 msgid "No packages have been selected."
 msgstr ""
 
+msgid ""
+"Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
+"of the package to download.  Language packages are optional, You only need to download the "
+"ones that you want to use on your site."
+msgstr ""
+
 #, fuzzy
-msgid "Base Files"
+msgid "Base Packages"
 msgstr "قاعدة أسم الملف"
 
-msgid ""
-"The base files required for the theme to work and the English (US) translation will be "
-"downloaded."
-msgstr ""
-
-msgid "Upgrade Base Files"
-msgstr ""
-
-msgid "You can upgrade the base module files."
-msgstr ""
-
-msgid "Upgrade base files"
-msgstr ""
-
-msgid "Base Files Up-To-Date"
-msgstr ""
-
-msgid "This plugin's base files are up-to-date."
-msgstr ""
-
-msgid "Updated Translations"
-msgstr ""
-
-msgid ""
-"Below is a list of translations that have been updated since they were last downloaded. "
-"Select the ones you want to download."
-msgstr ""
-
-msgid "Additional Languages"
-msgstr ""
-
-msgid ""
-"Below is a list of languages this plugin has been translated to. Select the ones you want "
-"included in addition to the ones already downloaded."
-msgstr ""
-
-msgid "Unit Tests"
-msgstr ""
-
-msgid ""
-"This plugin has unit tests available for download, which are useful for Gallery developers. "
-"All of the module's features are available without the tests."
-msgstr ""
-
-msgid "Download unit tests"
-msgstr ""
-
-#, fuzzy
-msgid "Gallery Repository Setup"
-msgstr "نسخة الجاليري"
-
-msgid "Warning:"
+#, c-format
+msgid "%s: version %s (build %s)"
 msgstr ""
 
 #, c-format
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data. Under your Gallery base directory, create a "
-"directory called '%s' and allow the web server to write into it by appropriately setting the "
-"permissions."
+msgid "%s: version %s (build %s) %sdowngrading is not supported!%s"
 msgstr ""
 
-msgid "Instructions for Unix-type platforms:"
+#, c-format
+msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr ""
 
-msgid ""
-"Refreshing this page will take you to the Repository if the directory has been successfully "
-"created."
+#, fuzzy
+msgid "Language Packages"
+msgstr "إعدادات اللغة"
+
+#, c-format
+msgid "(%sselect all%s%sselect none%s)"
 msgstr ""
+
+#, c-format
+msgid "%s version %s (upgrading from %s)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s version %s"
+msgstr "نسخة PHP"
+
+#, c-format
+msgid "%s version %s (%snewer version %s is installed%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (currently installed)"
+msgstr ""
+
+msgid "No compatible language packages available"
+msgstr ""
+
+msgid "You must select a base package before choosing language packs."
+msgstr ""
+
+#, fuzzy
+msgid "Update"
+msgstr "التاريخ :"
 
 msgid "Gallery Themes"
 msgstr "ثيمات الجاليري"
@@ -2945,6 +3045,14 @@ msgstr "عنوان إلكتروني"
 msgid "image"
 msgstr "صورة"
 
+#, fuzzy
+msgid "color"
+msgstr "البنية الرئيسية"
+
+#, c-format
+msgid "You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s"
+msgstr ""
+
 msgid "Configuration Error: Missing Theme"
 msgstr "خطأ في الإعدادات : ثيم مفقود"
 
@@ -3033,6 +3141,16 @@ msgstr "تأكيد كلمة المرور الجديدة"
 
 msgid "You must enter your new password again!"
 msgstr "يجب كتابة كلمة المرور الجديدة مرة أخرى!"
+
+msgid ""
+"This account is not allowed to modify account settings.  Please contact your Gallery "
+"administrator"
+msgstr ""
+
+msgid ""
+"Your administrator has locked this account, preventing changes from being made to the "
+"account information."
+msgstr ""
 
 msgid "Login to your account"
 msgstr "الدخول لحسابك الشخصي"
@@ -3341,6 +3459,39 @@ msgstr ""
 
 msgid "Unit test theme"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Performing Maintenance Tasks"
+#~ msgstr "صيانة النظام"
+
+#, fuzzy
+#~ msgid "Upgrade"
+#~ msgstr "ترقية"
+
+#, fuzzy
+#~ msgid "Plugins directory does not exist."
+#~ msgstr "المستخدم '%s' غير موجود."
+
+#~ msgid "Confirm module uninstall"
+#~ msgstr "تأكيد حذف الموديول"
+
+#, fuzzy
+#~ msgid "This will also remove any permissions and clean up any data created by this module."
+#~ msgstr "سوف يقوم كذلك بحذف جميع الصلاحيات و مسح أي معلومات مؤقتة قام هذا الموديول بإنشائها."
+
+#~ msgid "Uninstall"
+#~ msgstr "حذف"
+
+#~ msgid "Modules"
+#~ msgstr "الموديولات"
+
+#, fuzzy
+#~ msgid "Gallery Up-To-Date"
+#~ msgstr "البنية الرئيسية للجاليري"
+
+#, fuzzy
+#~ msgid "Gallery Repository Setup"
+#~ msgstr "نسخة الجاليري"
 
 #~ msgid "create link"
 #~ msgstr "إنشاء رابط"

@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.15\n"
+"Project-Id-Version: Gallery: Core 1.1.18\n"
 "POT-Creation-Date: 2006-02-23 10:15+0100\n"
 "PO-Revision-Date: 2006-03-22 17:04+0100\n"
 "Last-Translator: Kappana\n"
@@ -101,21 +101,34 @@ msgstr "Pełne przyspieszenie"
 msgid "Themes"
 msgstr "Tematy"
 
-msgid "Performing Maintenance Tasks"
-msgstr "Konserwacja systemu"
+#, fuzzy
+msgid "Updating Repository Index"
+msgstr "Aktualizuj listę"
+
+msgid "Scanning plugins"
+msgstr ""
+
+msgid "Done."
+msgstr "Gotowe"
+
+msgid "Updating Packages"
+msgstr ""
 
 #, c-format
 msgid "Downloading %s"
 msgstr "Pobieranie %s"
 
-msgid "Done."
-msgstr "Gotowe"
+#, fuzzy, c-format
+msgid "Activating %s"
+msgstr "Akcje"
 
-msgid "Upgrade"
-msgstr "Aktualizuj"
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "Język standardowy"
 
-msgid "Download"
-msgstr "Pobierz"
+#, fuzzy
+msgid "Update complete."
+msgstr "Wysyłanie zakończone"
 
 msgid "install"
 msgstr "instaluj"
@@ -518,9 +531,6 @@ msgstr "Wyloguj się"
 msgid "Plugins"
 msgstr ""
 
-msgid "Repository"
-msgstr "Repozytorium"
-
 msgid "Users"
 msgstr "Użytkownicy"
 
@@ -592,6 +602,10 @@ msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
 "Skasuj wszystkie przetrzymywane sesje użytkowników, zgodnie z aktualnymi ustawieniami sesji."
+
+#, fuzzy, c-format
+msgid "Deleted %d sessions."
+msgstr "Skasuj sesje użytkowników"
 
 msgid "Delete database cache"
 msgstr "Usuń pamięć podręczną bazy danych"
@@ -699,17 +713,6 @@ msgstr "film"
 msgid "photo"
 msgstr "zdjęcie"
 
-msgid "download"
-msgstr "pobierz"
-
-msgid "Plugins directory does not exist."
-msgstr "Katalog modułów nie istnieje."
-
-msgid ""
-"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-msgstr ""
-"Nie można stworzyć podkatalogu modułów. Upewnij się, że serwer WWW ma ustawione prawa zapisu."
-
 msgid "Couldn't create repository cache path."
 msgstr "Nie można stworzyć ścieżki repozytorium pamięci podręcznej"
 
@@ -718,6 +721,17 @@ msgid ""
 msgstr ""
 "Nie można stworzyć podkatalogu pamięci podręcznej. Upewnij się, że serwer WWW ma ustawione "
 "prawa zapisu."
+
+msgid "Officially Release Repository"
+msgstr ""
+
+#, fuzzy
+msgid "Experimental Repository"
+msgstr "Repozytorium"
+
+#, fuzzy
+msgid "Community Repository"
+msgstr "Repozytorium"
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -823,6 +837,20 @@ msgstr "Bloki pokazane na stronie z albumami"
 
 msgid "Blocks to show on photo pages"
 msgstr "Bloki pokazane na stronie ze zdjęciami"
+
+#, fuzzy
+msgid "Thumbnail links in dynamic albums"
+msgstr "Użyj tego rozmiaru miniaturek we wszystkich podalbumach"
+
+#, fuzzy
+msgid "Browse dynamic album"
+msgstr "Edytuj album"
+
+msgid "Jump to original album"
+msgstr ""
+
+msgid "Separate link to original album"
+msgstr ""
 
 msgid "View Samples"
 msgstr "Zobacz przykłady"
@@ -999,6 +1027,10 @@ msgstr "Lokalizacja"
 
 msgid "Browser"
 msgstr "Przeglądarka"
+
+#, c-format
+msgid "Rows in %s table = %d"
+msgstr ""
 
 msgid "Successfully saved theme settings"
 msgstr "Ustawienia tematu zapisano poprawnie"
@@ -1484,6 +1516,14 @@ msgstr "Adres E-mail"
 msgid "(suggested)"
 msgstr "(sugerowane)"
 
+#, fuzzy
+msgid "Lock Account"
+msgstr "Twoje konto"
+
+msgid ""
+"Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
+msgstr ""
+
 msgid "Group Management"
 msgstr "Zarządzanie grupą"
 
@@ -1581,21 +1621,6 @@ msgstr "Uruchom teraz"
 
 msgid "Last Run Details:"
 msgstr "Szczegóły ostatniego uruchomienia"
-
-msgid "Confirm module uninstall"
-msgstr "Potwierdź odinstalowanie modułu"
-
-#, c-format
-msgid "Do you really want to uninstall the %s module?"
-msgstr "Czy napewno chcesz odinstalować moduł %s?"
-
-msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr ""
-"Odinstalowanie modułu spowoduje usunięcie wszystkich uprawnień do modułu, jak również "
-"wyczyści wszystkie dane stworzone przez ten moduł."
-
-msgid "Uninstall"
-msgstr "Odinstaluj"
 
 msgid "Performance Tuning"
 msgstr "Poprawianie wydajności"
@@ -1708,7 +1733,62 @@ msgid "__PLUGIN__ needs configuration"
 msgstr ""
 
 #, fuzzy
+msgid "__PLUGIN__ deleted"
+msgstr "deaktywuj"
+
+#, fuzzy
+msgid "Warning!"
+msgstr "Uwaga:"
+
+#, fuzzy
+msgid "Do you really want to uninstall __PLUGIN__?"
+msgstr "Czy napewno chcesz odinstalować moduł %s?"
+
+msgid ""
+"This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Do you really want to delete __PLUGIN__?"
+msgstr "Czy napewno chcesz odinstalować moduł %s?"
+
+msgid "This plugin will be uninstalled and its files will be deleted."
+msgstr ""
+
+msgid "disabled(__COUNT__)"
+msgstr ""
+
+#, fuzzy
+msgid "up to date(__COUNT__)"
+msgstr "Aktualizuj"
+
+#, fuzzy
+msgid "not installed(__COUNT__)"
+msgstr "odinstaluj"
+
+#, fuzzy
+msgid "upgrade required(__COUNT__)"
+msgstr "(wymagane)"
+
+#, fuzzy
+msgid "incompatible(__COUNT__)"
+msgstr "Niekompatybilny moduł!"
+
+msgid "Failed to completely delete __PLUGIN__"
+msgstr ""
+
+#, fuzzy
 msgid "Gallery Plugins"
+msgstr "Moduły Galerii"
+
+#, fuzzy
+msgid "Get More Plugins"
 msgstr "Moduły Galerii"
 
 #, fuzzy
@@ -1722,22 +1802,6 @@ msgstr ""
 "zainstalować aby dodać więcej własności do twojej Galerii lub możesz usunąć pewne własności, "
 "jeśli nie chcesz ich używać. Aby użyć własności musisz ja zainstalować, skonfigurować (jeśli "
 "to konieczne) i zaktywować . Jeśli nie chcesz używać własności zdeaktywuj ją."
-
-#, fuzzy
-msgid "up to date"
-msgstr "Aktualizuj"
-
-#, fuzzy
-msgid "upgrade required"
-msgstr "(wymagane)"
-
-#, fuzzy
-msgid "not installed"
-msgstr "odinstaluj"
-
-#, fuzzy
-msgid "incompatible"
-msgstr "Niekompatybilny moduł!"
 
 #, fuzzy
 msgid "Plugin Name"
@@ -1766,6 +1830,25 @@ msgstr "Wymagana wersja modułu: %s (zainstalowana: %s)"
 msgid "configure"
 msgstr "konfiguruj"
 
+#, fuzzy
+msgid "up to date"
+msgstr "Aktualizuj"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(wymagane)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "odinstaluj"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Niekompatybilny moduł!"
+
+msgid "Repository"
+msgstr "Repozytorium"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Proszę upewnij się, że połączenie z internetem jest ustawione poprawnie lub spróbuj później."
@@ -1776,57 +1859,86 @@ msgstr "Lista repozytorium została zaktualizowana"
 msgid "All plugins are already up-to-date."
 msgstr "Wszystkie moduły zostały zaktualizowane."
 
-msgid "Common Tasks"
-msgstr "Podstawowe zadania"
+#, c-format
+msgid "%s plugin updated."
+msgstr ""
 
-msgid "Modules"
-msgstr "Moduły"
-
-msgid "Warning: Experimental feature!"
-msgstr "Uwaga: Funkcjonalność testowa!"
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 msgid ""
-"The repository features are currently experimental, and no actual repository has been set up "
-"yet, so none of these features will work at this time."
+"No personal information about you or your Gallery installation is sent to the Gallery server "
+"at any time."
 msgstr ""
-"Funkcjonalność w fazie testowej. Brak dostępnych repozytoriów Galerii. Żadna z poniższych "
-"funkcji w tej chwili nie działa."
-
-msgid "Update Index"
-msgstr "Aktualizuj listę"
-
-msgid ""
-"The Gallery repository contains the latest modules and themes extensively tested by the "
-"Gallery team. The repository index contains information about available plugins, such as the "
-"latest versions, available languages and compatibility. The index must be synchronized "
-"periodically with the Gallery server so you are informed about any available updates. No "
-"personal information is sent to the Gallery server during updating. On slower connections "
-"the process might take a minute or two."
-msgstr ""
-"Repozytorium Galerii zawiera najnowsze moduły i tematy rozwijane i testowane przez zespół "
-"Galerii. Spis repozytorium zawiera informację na temat dostępnych dodatków, takich jak "
-"ostatnie wersje, dostępne tłumaczenia i kompatybilność. Spis musi być synchronizowany z "
-"Galerią co jakiś czas, tak aby zawierał aktualne dane co do dostępych aktualizacji. Żadne "
-"dane osobowe nie są przekazywane do Galerii podczas aktualizacji. Przy wolniejszych "
-"połączeniach proces może potrwać minutę albo dwie."
 
 #, c-format
 msgid ""
-"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
-"can be viewed on the Modules and Themes tabs."
+"Download and install new plugins quickly and easily.  If you decide you don't like a plugin, "
+"you can delete it from your Gallery.  There are multiple different plugin repositories, you "
+"can choose which ones you want to use (it's ok to use all of them at once).  Once you've "
+"chosen, you must periodically download the latest plugin list to find out about available "
+"updates. %s On slower connections the process might take a minute or two."
 msgstr ""
-"Z ostatniej aktualizacji w %s, repozytorium zawiera %s modułów i %s tematów. Ich zawartość "
-"może być przeglądana na zakładkach 'Moduły' i 'Tematy'."
+
+#, c-format
+msgid "Officially Released Gallery Project plugins (%srecommended%s)"
+msgstr ""
+
+#, c-format
+msgid "last updated on %s"
+msgstr ""
+
+#, c-format
+msgid "Experimental Gallery Project plugins (%scool new features, might be buggy%s)"
+msgstr ""
+
+#, c-format
+msgid "Community plugins (%suse at your own risk!%s)"
+msgstr ""
+
+#, fuzzy
+msgid "Repository Error"
+msgstr "Repozytorium"
+
+#, fuzzy
+msgid "You must select at least one repository."
+msgstr "Musisz wybrać użytkownia do usunięcia."
+
+msgid "Ok"
+msgstr ""
+
+msgid "Configure your Gallery"
+msgstr ""
 
 msgid ""
-"The index has never been updated. Click on the Update button to see what updates are "
-"available."
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
 msgstr ""
-"Lista nie była nigdy aktualizowana. Kliknij przycisk 'Aktualizuj', aby zobaczyć jakie "
-"aktualizacje są dostępne."
 
-msgid "Update"
-msgstr "Aktualizuj"
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Continue button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Continue"
+msgstr "Dalej..."
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Aktualizuj wszystkie moduły"
+
+#, fuzzy
+msgid "Download Plugin List"
+msgstr "Pobierz testy poprawności programu"
+
+#, fuzzy
+msgid "Show Repository List"
+msgstr "Repozytorium"
 
 msgid "Upgrade Gallery"
 msgstr "Aktualizuj Galerię"
@@ -1853,15 +1965,50 @@ msgstr "%sPobierz%s Moduł Główny Galerii"
 msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr "Przeczytaj %sinstrukcję%s i rozpocznij aktualizację"
 
-msgid "Gallery Up-To-Date"
-msgstr "Galeria aktualna"
+msgid "Incompatible plugins are marked with an exclamation icon."
+msgstr "Niekompatybilne moduły są zaznaczone wykrzyknikiem."
 
+#, c-format
 msgid ""
-"Gallery cannot be upgraded through this interface. When a new version becomes available, "
-"upgrade instructions will be presented here."
+"A new core module version is available. There may be plugins that are incompatible with the "
+"installed core module, which are not shown here. You can view a %scomplete list%s of "
+"plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
-"Galeria nie może być zaktualizowana za pomocą tego interfejsu. Kiedy nowa wersja będzie "
-"dostępna, instrukcja aktualizacji zostanie tutaj przedstawiona."
+"Nowa wersja modułu głównego Galerii jest dostępna. Moduły niekompatybilne z zainstalowanym "
+"modułem głównym, nie są tutaj pokazywane. Możesz zobaczyć %skompletną listę%s dodatków, "
+"włącznie z dodatkami niekomtatybilnymi oznaczonymi czerwoną ikonką."
+
+#, fuzzy
+msgid "upgrade available"
+msgstr "Aktualizuj Galerię"
+
+msgid "locked"
+msgstr ""
+
+msgid "Theme Name"
+msgstr "Nazwa tematu"
+
+msgid "Module Name"
+msgstr "Nazwa modułu"
+
+msgid "Latest"
+msgstr "Ostatnia strona"
+
+msgid "Locked Plugin"
+msgstr ""
+
+msgid "Incompatible Plugin"
+msgstr "Niekompatybilny moduł!"
+
+#, fuzzy
+msgid "Upgrade Available"
+msgstr "Aktualizuj wszystko"
+
+msgid "download"
+msgstr "pobierz"
+
+msgid "modify"
+msgstr ""
 
 msgid "Upgrade All Plugins"
 msgstr "Aktualizuj wszystkie moduły"
@@ -1876,133 +2023,67 @@ msgstr ""
 msgid "Upgrade All"
 msgstr "Aktualizuj wszystko"
 
-msgid ""
-"Once the repository index has been downloaded, a list of available plugins will be "
-"presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
-msgstr ""
-"Kiedy spis repozytorium zostanie pobrany, poniżej zostanie przedstawiona lista dostępnych "
-"dodatków. Spis może być pobrany poprzez kliknięcie przycisku 'Aktualizuj' na zakładce "
-"'Podstawowe zadania'."
-
-msgid ""
-"The following plugins are available. Click on the action beside the plugin you're interested "
-"in to see what's available in the repository."
-msgstr ""
-"Następujące dodatki są dostępne. Kliknij na akcji widocznej przy dodatku, aby zobaczyć co "
-"jest dostępne w repozytorium."
-
-msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr "Niekompatybilne moduły są zaznaczone wykrzyknikiem."
-
-#, c-format
-msgid ""
-"A new core module version is available. There may be plugins that are incompatible with the "
-"installed core module, which are not shown here. You can view a %scomplete list%s of "
-"plugins, including incompatible ones, which are marked with a red icon."
-msgstr ""
-"Nowa wersja modułu głównego Galerii jest dostępna. Moduły niekompatybilne z zainstalowanym "
-"modułem głównym, nie są tutaj pokazywane. Możesz zobaczyć %skompletną listę%s dodatków, "
-"włącznie z dodatkami niekomtatybilnymi oznaczonymi czerwoną ikonką."
-
-msgid "Theme Name"
-msgstr "Nazwa tematu"
-
-msgid "Module Name"
-msgstr "Nazwa modułu"
-
-msgid "Latest"
-msgstr "Ostatnia strona"
-
-msgid "Incompatible Plugin"
-msgstr "Niekompatybilny moduł!"
+#, fuzzy, c-format
+msgid "Download %s"
+msgstr "Pobieranie %s"
 
 msgid "No packages have been selected."
 msgstr "Żaden pakiet nie został wybrany."
 
-msgid "Base Files"
+msgid ""
+"Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
+"of the package to download.  Language packages are optional, You only need to download the "
+"ones that you want to use on your site."
+msgstr ""
+
+#, fuzzy
+msgid "Base Packages"
 msgstr "Pliki podstawowe"
 
-msgid ""
-"The base files required for the theme to work and the English (US) translation will be "
-"downloaded."
+#, c-format
+msgid "%s: version %s (build %s)"
 msgstr ""
-"Podstawowe pliki niezbędne do działania tego tematu i tłumaczenie angielskie (US) zostaną "
-"pobrane."
-
-msgid "Upgrade Base Files"
-msgstr "Aktualizuj pliki podstawowe"
-
-msgid "You can upgrade the base module files."
-msgstr "Możesz zaktualizować podstawowe pliki modułu."
-
-msgid "Upgrade base files"
-msgstr "Aktualizuj pliki podstawowe"
-
-msgid "Base Files Up-To-Date"
-msgstr "Pliki podstawowe są aktualne."
-
-msgid "This plugin's base files are up-to-date."
-msgstr "Podstawowe pliki tego modułu są aktualne"
-
-msgid "Updated Translations"
-msgstr "Zaktualizowane tłumaczenia"
-
-msgid ""
-"Below is a list of translations that have been updated since they were last downloaded. "
-"Select the ones you want to download."
-msgstr ""
-"Poniżej dostępna jest lista tłumaczeń zaktualizowanych od ostatniego pobrania. Wybierz te, "
-"które chcesz pobrać."
-
-msgid "Additional Languages"
-msgstr "Dodatkowe języki"
-
-msgid ""
-"Below is a list of languages this plugin has been translated to. Select the ones you want "
-"included in addition to the ones already downloaded."
-msgstr ""
-"Poniżej widoczna jest lista języków na które został prztłumaczony ten dodatek. Wybierz ten "
-"który chcesz pobrać."
-
-msgid "Unit Tests"
-msgstr "Testy poprawności programu"
-
-msgid ""
-"This plugin has unit tests available for download, which are useful for Gallery developers. "
-"All of the module's features are available without the tests."
-msgstr ""
-"Ten moduł posiada dostępne testy poprawności programu, które mogą być pomocne dla "
-"deweloperów Galerii. Wszystkie właściwości modułów są dostępne bez tych testów."
-
-msgid "Download unit tests"
-msgstr "Pobierz testy poprawności programu"
-
-msgid "Gallery Repository Setup"
-msgstr "Konfiguracja Repozytorium Galerii"
-
-msgid "Warning:"
-msgstr "Uwaga:"
 
 #, c-format
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data. Under your Gallery base directory, create a "
-"directory called '%s' and allow the web server to write into it by appropriately setting the "
-"permissions."
+msgid "%s: version %s (build %s) %sdowngrading is not supported!%s"
 msgstr ""
-"Aby umożliwić pobieranie dodatków z repozytorium Galerii, konieczne jest stworzenie "
-"katalogu, w którym Galeria będzie przechowywać swoje dane. W tym celu bezpośrednio w "
-"katalogu Galerii stwórz katalog '%s' ustawionymi prawami zapisu dla serwera WWW."
 
-msgid "Instructions for Unix-type platforms:"
-msgstr "Instrukcje dla platform typu Unix:"
-
-msgid ""
-"Refreshing this page will take you to the Repository if the directory has been successfully "
-"created."
+#, c-format
+msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr ""
-"Po odświeżeniu strony zostaniesz przeniesiony do katalogu Repozytorium, o ile został on "
-"stworzony poprawnie."
+
+#, fuzzy
+msgid "Language Packages"
+msgstr "Ustawienia języka"
+
+#, c-format
+msgid "(%sselect all%s%sselect none%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (upgrading from %s)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s version %s"
+msgstr "Wersja PHP"
+
+#, c-format
+msgid "%s version %s (%snewer version %s is installed%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (currently installed)"
+msgstr ""
+
+msgid "No compatible language packages available"
+msgstr ""
+
+msgid "You must select a base package before choosing language packs."
+msgstr ""
+
+msgid "Update"
+msgstr "Aktualizuj"
 
 msgid "Gallery Themes"
 msgstr "Tematy"
@@ -3041,6 +3122,14 @@ msgstr "Adres URL"
 msgid "image"
 msgstr "obrazek"
 
+#, fuzzy
+msgid "color"
+msgstr "moduł główny"
+
+#, c-format
+msgid "You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s"
+msgstr ""
+
 msgid "Configuration Error: Missing Theme"
 msgstr "Błąd konfiguracji: brak tematu"
 
@@ -3139,6 +3228,16 @@ msgstr "Powtórz nowe hasło"
 
 msgid "You must enter your new password again!"
 msgstr "Musisz ponownie wprowadzić nowe hasło!"
+
+msgid ""
+"This account is not allowed to modify account settings.  Please contact your Gallery "
+"administrator"
+msgstr ""
+
+msgid ""
+"Your administrator has locked this account, preventing changes from being made to the "
+"account information."
+msgstr ""
 
 msgid "Login to your account"
 msgstr "Zaloguj się na swoje konto"
@@ -3458,6 +3557,180 @@ msgstr "[test] Drugie uprawnienie"
 
 msgid "Unit test theme"
 msgstr "Temat testów poprawności programu"
+
+#~ msgid "Performing Maintenance Tasks"
+#~ msgstr "Konserwacja systemu"
+
+#~ msgid "Upgrade"
+#~ msgstr "Aktualizuj"
+
+#~ msgid "Download"
+#~ msgstr "Pobierz"
+
+#~ msgid "Plugins directory does not exist."
+#~ msgstr "Katalog modułów nie istnieje."
+
+#~ msgid ""
+#~ "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
+#~ msgstr ""
+#~ "Nie można stworzyć podkatalogu modułów. Upewnij się, że serwer WWW ma ustawione prawa "
+#~ "zapisu."
+
+#~ msgid "Confirm module uninstall"
+#~ msgstr "Potwierdź odinstalowanie modułu"
+
+#~ msgid "This will also remove any permissions and clean up any data created by this module."
+#~ msgstr ""
+#~ "Odinstalowanie modułu spowoduje usunięcie wszystkich uprawnień do modułu, jak również "
+#~ "wyczyści wszystkie dane stworzone przez ten moduł."
+
+#~ msgid "Uninstall"
+#~ msgstr "Odinstaluj"
+
+#~ msgid "Common Tasks"
+#~ msgstr "Podstawowe zadania"
+
+#~ msgid "Modules"
+#~ msgstr "Moduły"
+
+#~ msgid "Warning: Experimental feature!"
+#~ msgstr "Uwaga: Funkcjonalność testowa!"
+
+#~ msgid ""
+#~ "The repository features are currently experimental, and no actual repository has been set "
+#~ "up yet, so none of these features will work at this time."
+#~ msgstr ""
+#~ "Funkcjonalność w fazie testowej. Brak dostępnych repozytoriów Galerii. Żadna z poniższych "
+#~ "funkcji w tej chwili nie działa."
+
+#~ msgid ""
+#~ "The Gallery repository contains the latest modules and themes extensively tested by the "
+#~ "Gallery team. The repository index contains information about available plugins, such as "
+#~ "the latest versions, available languages and compatibility. The index must be "
+#~ "synchronized periodically with the Gallery server so you are informed about any available "
+#~ "updates. No personal information is sent to the Gallery server during updating. On slower "
+#~ "connections the process might take a minute or two."
+#~ msgstr ""
+#~ "Repozytorium Galerii zawiera najnowsze moduły i tematy rozwijane i testowane przez zespół "
+#~ "Galerii. Spis repozytorium zawiera informację na temat dostępnych dodatków, takich jak "
+#~ "ostatnie wersje, dostępne tłumaczenia i kompatybilność. Spis musi być synchronizowany z "
+#~ "Galerią co jakiś czas, tak aby zawierał aktualne dane co do dostępych aktualizacji. Żadne "
+#~ "dane osobowe nie są przekazywane do Galerii podczas aktualizacji. Przy wolniejszych "
+#~ "połączeniach proces może potrwać minutę albo dwie."
+
+#~ msgid ""
+#~ "As of the last update on %s, the repository contains %s modules and %s themes. Its "
+#~ "contents can be viewed on the Modules and Themes tabs."
+#~ msgstr ""
+#~ "Z ostatniej aktualizacji w %s, repozytorium zawiera %s modułów i %s tematów. Ich "
+#~ "zawartość może być przeglądana na zakładkach 'Moduły' i 'Tematy'."
+
+#~ msgid ""
+#~ "The index has never been updated. Click on the Update button to see what updates are "
+#~ "available."
+#~ msgstr ""
+#~ "Lista nie była nigdy aktualizowana. Kliknij przycisk 'Aktualizuj', aby zobaczyć jakie "
+#~ "aktualizacje są dostępne."
+
+#~ msgid "Gallery Up-To-Date"
+#~ msgstr "Galeria aktualna"
+
+#~ msgid ""
+#~ "Gallery cannot be upgraded through this interface. When a new version becomes available, "
+#~ "upgrade instructions will be presented here."
+#~ msgstr ""
+#~ "Galeria nie może być zaktualizowana za pomocą tego interfejsu. Kiedy nowa wersja będzie "
+#~ "dostępna, instrukcja aktualizacji zostanie tutaj przedstawiona."
+
+#~ msgid ""
+#~ "Once the repository index has been downloaded, a list of available plugins will be "
+#~ "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
+#~ msgstr ""
+#~ "Kiedy spis repozytorium zostanie pobrany, poniżej zostanie przedstawiona lista dostępnych "
+#~ "dodatków. Spis może być pobrany poprzez kliknięcie przycisku 'Aktualizuj' na zakładce "
+#~ "'Podstawowe zadania'."
+
+#~ msgid ""
+#~ "The following plugins are available. Click on the action beside the plugin you're "
+#~ "interested in to see what's available in the repository."
+#~ msgstr ""
+#~ "Następujące dodatki są dostępne. Kliknij na akcji widocznej przy dodatku, aby zobaczyć co "
+#~ "jest dostępne w repozytorium."
+
+#~ msgid ""
+#~ "The base files required for the theme to work and the English (US) translation will be "
+#~ "downloaded."
+#~ msgstr ""
+#~ "Podstawowe pliki niezbędne do działania tego tematu i tłumaczenie angielskie (US) zostaną "
+#~ "pobrane."
+
+#~ msgid "Upgrade Base Files"
+#~ msgstr "Aktualizuj pliki podstawowe"
+
+#~ msgid "You can upgrade the base module files."
+#~ msgstr "Możesz zaktualizować podstawowe pliki modułu."
+
+#~ msgid "Upgrade base files"
+#~ msgstr "Aktualizuj pliki podstawowe"
+
+#~ msgid "Base Files Up-To-Date"
+#~ msgstr "Pliki podstawowe są aktualne."
+
+#~ msgid "This plugin's base files are up-to-date."
+#~ msgstr "Podstawowe pliki tego modułu są aktualne"
+
+#~ msgid "Updated Translations"
+#~ msgstr "Zaktualizowane tłumaczenia"
+
+#~ msgid ""
+#~ "Below is a list of translations that have been updated since they were last downloaded. "
+#~ "Select the ones you want to download."
+#~ msgstr ""
+#~ "Poniżej dostępna jest lista tłumaczeń zaktualizowanych od ostatniego pobrania. Wybierz "
+#~ "te, które chcesz pobrać."
+
+#~ msgid "Additional Languages"
+#~ msgstr "Dodatkowe języki"
+
+#~ msgid ""
+#~ "Below is a list of languages this plugin has been translated to. Select the ones you want "
+#~ "included in addition to the ones already downloaded."
+#~ msgstr ""
+#~ "Poniżej widoczna jest lista języków na które został prztłumaczony ten dodatek. Wybierz "
+#~ "ten który chcesz pobrać."
+
+#~ msgid "Unit Tests"
+#~ msgstr "Testy poprawności programu"
+
+#~ msgid ""
+#~ "This plugin has unit tests available for download, which are useful for Gallery "
+#~ "developers. All of the module's features are available without the tests."
+#~ msgstr ""
+#~ "Ten moduł posiada dostępne testy poprawności programu, które mogą być pomocne dla "
+#~ "deweloperów Galerii. Wszystkie właściwości modułów są dostępne bez tych testów."
+
+#~ msgid "Gallery Repository Setup"
+#~ msgstr "Konfiguracja Repozytorium Galerii"
+
+#~ msgid ""
+#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
+#~ "created where Gallery will store the data. Under your Gallery base directory, create a "
+#~ "directory called '%s' and allow the web server to write into it by appropriately setting "
+#~ "the permissions."
+#~ msgstr ""
+#~ "Aby umożliwić pobieranie dodatków z repozytorium Galerii, konieczne jest stworzenie "
+#~ "katalogu, w którym Galeria będzie przechowywać swoje dane. W tym celu bezpośrednio w "
+#~ "katalogu Galerii stwórz katalog '%s' ustawionymi prawami zapisu dla serwera WWW."
+
+#~ msgid "Instructions for Unix-type platforms:"
+#~ msgstr "Instrukcje dla platform typu Unix:"
+
+#~ msgid ""
+#~ "Refreshing this page will take you to the Repository if the directory has been "
+#~ "successfully created."
+#~ msgstr ""
+#~ "Po odświeżeniu strony zostaniesz przeniesiony do katalogu Repozytorium, o ile został on "
+#~ "stworzony poprawnie."
 
 #~ msgid "create link"
 #~ msgstr "utwórz połączenie"

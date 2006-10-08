@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.15\n"
+"Project-Id-Version: Gallery: Core 1.1.18\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-08-25 16:49+0200\n"
 "PO-Revision-Date: 2006-03-16 16:27+0100\n"
@@ -100,21 +100,34 @@ msgstr "Accelerare totala"
 msgid "Themes"
 msgstr "Teme"
 
-msgid "Performing Maintenance Tasks"
-msgstr "Executarea taskurilor de mentenanta"
+#, fuzzy
+msgid "Updating Repository Index"
+msgstr "Actualizeaza Index"
+
+msgid "Scanning plugins"
+msgstr ""
+
+msgid "Done."
+msgstr "Gata."
+
+msgid "Updating Packages"
+msgstr ""
 
 #, c-format
 msgid "Downloading %s"
 msgstr "Descarca %s"
 
-msgid "Done."
-msgstr "Gata."
+#, fuzzy, c-format
+msgid "Activating %s"
+msgstr "Actiuni"
 
-msgid "Upgrade"
-msgstr "Actualizare"
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "Limba predefinita"
 
-msgid "Download"
-msgstr "Descarca"
+#, fuzzy
+msgid "Update complete."
+msgstr "Incarcare completa"
 
 msgid "install"
 msgstr "instaleaza"
@@ -515,9 +528,6 @@ msgstr "Iesire"
 msgid "Plugins"
 msgstr ""
 
-msgid "Repository"
-msgstr "Repository"
-
 msgid "Users"
 msgstr "Utilizatori"
 
@@ -588,6 +598,10 @@ msgstr "Sterge sesiunile utilizatorilor"
 msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr "Sterge toate sesiunile utilizatorilor, conform setarilor de expirare a sesiunilor"
+
+#, fuzzy, c-format
+msgid "Deleted %d sessions."
+msgstr "Sterge sesiunile utilizatorilor"
 
 msgid "Delete database cache"
 msgstr "Sterge cache-ul bazei de date"
@@ -693,17 +707,6 @@ msgstr "film"
 msgid "photo"
 msgstr "foto"
 
-msgid "download"
-msgstr "descarca"
-
-msgid "Plugins directory does not exist."
-msgstr "Folderul de plug-in nu exista."
-
-msgid ""
-"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-msgstr ""
-"Nu pot crea folderul de plug-in. Verifica daca serverul web are drepturi de scriere acolo"
-
 msgid "Couldn't create repository cache path."
 msgstr "Couldn't create repository cache path."
 
@@ -712,6 +715,17 @@ msgid ""
 msgstr ""
 "Nu pot crea sub-folderul pentru cache. Verifica daca serverul web are drepturi de scriere "
 "acolo"
+
+msgid "Officially Release Repository"
+msgstr ""
+
+#, fuzzy
+msgid "Experimental Repository"
+msgstr "Repository"
+
+#, fuzzy
+msgid "Community Repository"
+msgstr "Repository"
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -815,6 +829,20 @@ msgstr "Blocuri afisate pe paginile cu albume"
 
 msgid "Blocks to show on photo pages"
 msgstr "Blocuri afisate pe paginile cu fotografii"
+
+#, fuzzy
+msgid "Thumbnail links in dynamic albums"
+msgstr "Foloseste aceasta dimensiune de thumbnail in toate sub-albumele"
+
+#, fuzzy
+msgid "Browse dynamic album"
+msgstr "Modifica Album"
+
+msgid "Jump to original album"
+msgstr ""
+
+msgid "Separate link to original album"
+msgstr ""
 
 msgid "View Samples"
 msgstr "Afiseaza mostre"
@@ -991,6 +1019,10 @@ msgstr "Locale"
 
 msgid "Browser"
 msgstr "Browser"
+
+#, c-format
+msgid "Rows in %s table = %d"
+msgstr ""
 
 msgid "Successfully saved theme settings"
 msgstr "Modificarile de tema au fost salvate cu success"
@@ -1701,6 +1733,10 @@ msgid "__PLUGIN__ needs configuration"
 msgstr ""
 
 #, fuzzy
+msgid "__PLUGIN__ deleted"
+msgstr "dezactiveaza"
+
+#, fuzzy
 msgid "Warning!"
 msgstr "Warning:"
 
@@ -1708,8 +1744,9 @@ msgstr "Warning:"
 msgid "Do you really want to uninstall __PLUGIN__?"
 msgstr "Esti sigur ca vrei sa dezinstalezi modulul %s ?"
 
-msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr "Aceasta actiune va sterge orice permisiuni si date create de acest modul."
+msgid ""
+"This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
+msgstr ""
 
 msgid "Yes"
 msgstr ""
@@ -1718,7 +1755,40 @@ msgid "No"
 msgstr ""
 
 #, fuzzy
+msgid "Do you really want to delete __PLUGIN__?"
+msgstr "Esti sigur ca vrei sa dezinstalezi modulul %s ?"
+
+msgid "This plugin will be uninstalled and its files will be deleted."
+msgstr ""
+
+msgid "disabled(__COUNT__)"
+msgstr ""
+
+#, fuzzy
+msgid "up to date(__COUNT__)"
+msgstr "Actualizeaza"
+
+#, fuzzy
+msgid "not installed(__COUNT__)"
+msgstr "dezinstaleaza"
+
+#, fuzzy
+msgid "upgrade required(__COUNT__)"
+msgstr "(obligatoriu)"
+
+#, fuzzy
+msgid "incompatible(__COUNT__)"
+msgstr "Modul incompatibil"
+
+msgid "Failed to completely delete __PLUGIN__"
+msgstr ""
+
+#, fuzzy
 msgid "Gallery Plugins"
+msgstr "Module ale Gallery"
+
+#, fuzzy
+msgid "Get More Plugins"
 msgstr "Module ale Gallery"
 
 #, fuzzy
@@ -1733,22 +1803,6 @@ msgstr ""
 "daca nu vrei sa le folosesti. Pentru a utiliza o facilitate, trebuie sa o instalezi, "
 "configurezi si sa o activezi. Daca nu vrei sa folosesti o functionalitate, poti sa o "
 "dezactivezi."
-
-#, fuzzy
-msgid "up to date"
-msgstr "Actualizeaza"
-
-#, fuzzy
-msgid "upgrade required"
-msgstr "(obligatoriu)"
-
-#, fuzzy
-msgid "not installed"
-msgstr "dezinstaleaza"
-
-#, fuzzy
-msgid "incompatible"
-msgstr "Modul incompatibil"
 
 #, fuzzy
 msgid "Plugin Name"
@@ -1777,6 +1831,25 @@ msgstr "API modul necesar: %s (disponibil: %s)"
 msgid "configure"
 msgstr "configureaza"
 
+#, fuzzy
+msgid "up to date"
+msgstr "Actualizeaza"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(obligatoriu)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "dezinstaleaza"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Modul incompatibil"
+
+msgid "Repository"
+msgstr "Repository"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "Verifica daca conexiunea la Internet este in regula si mai incearca o data"
 
@@ -1786,57 +1859,85 @@ msgstr "Index-ul repository a fost actualizat."
 msgid "All plugins are already up-to-date."
 msgstr "Toate modulele sunt actualizate la zi."
 
-msgid "Common Tasks"
-msgstr "Operatiuni Comune"
+#, c-format
+msgid "%s plugin updated."
+msgstr ""
 
-msgid "Modules"
-msgstr "Module"
-
-msgid "Warning: Experimental feature!"
-msgstr "Atentie: Functiuni experimentale!"
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid ""
-"The repository features are currently experimental, and no actual repository has been set up "
-"yet, so none of these features will work at this time."
+"No personal information about you or your Gallery installation is sent to the Gallery server "
+"at any time."
 msgstr ""
-"Functiunile repository sunt in acest moment experimentale, si un repository nu a fost "
-"instalat, deci nici una din aceste functionalitati nu functioneaza in acest moment."
-
-msgid "Update Index"
-msgstr "Actualizeaza Index"
-
-msgid ""
-"The Gallery repository contains the latest modules and themes extensively tested by the "
-"Gallery team. The repository index contains information about available plugins, such as the "
-"latest versions, available languages and compatibility. The index must be synchronized "
-"periodically with the Gallery server so you are informed about any available updates. No "
-"personal information is sent to the Gallery server during updating. On slower connections "
-"the process might take a minute or two."
-msgstr ""
-"Repository-ul Gallery contine ultimele module si teme testate extensiv de membrii echipei "
-"Gallery. Indexul contine informatii despre modulele disponibile, cum ar fi ultimele "
-"versiuni, localizare si compatibilitate. Index-ul trebuie sa fie sincronizat periodic cu "
-"server-ul Gallery astfel incit sa fii informat despre orice actualizari. Nici o informatie "
-"confidentiala nu este transmisa catre server-ul Gallery in timpul actualizarii. Daca aveti o "
-"legatura la Internet de viteza scazuta, acest proces poate dura 1-2 minute."
 
 #, c-format
 msgid ""
-"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
-"can be viewed on the Modules and Themes tabs."
+"Download and install new plugins quickly and easily.  If you decide you don't like a plugin, "
+"you can delete it from your Gallery.  There are multiple different plugin repositories, you "
+"can choose which ones you want to use (it's ok to use all of them at once).  Once you've "
+"chosen, you must periodically download the latest plugin list to find out about available "
+"updates. %s On slower connections the process might take a minute or two."
 msgstr ""
-"Ca urmare a ultimei axctualizari a %s, repository-ul contine %s module si %s teme. "
-"Continutul poate fi vizualizat in sectiunile Module si Teme."
+
+#, c-format
+msgid "Officially Released Gallery Project plugins (%srecommended%s)"
+msgstr ""
+
+#, c-format
+msgid "last updated on %s"
+msgstr ""
+
+#, c-format
+msgid "Experimental Gallery Project plugins (%scool new features, might be buggy%s)"
+msgstr ""
+
+#, c-format
+msgid "Community plugins (%suse at your own risk!%s)"
+msgstr ""
+
+#, fuzzy
+msgid "Repository Error"
+msgstr "Repository"
+
+#, fuzzy
+msgid "You must select at least one repository."
+msgstr "Trebuie sa selectezi un utilizator pentru stergere"
+
+msgid "Ok"
+msgstr ""
+
+msgid "Configure your Gallery"
+msgstr ""
 
 msgid ""
-"The index has never been updated. Click on the Update button to see what updates are "
-"available."
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
 msgstr ""
-"Index-ul nu a fost actualizat nici o data. Apasa pe Actualizare pentru a vedea ce versiuni "
-"sunt disponibile."
 
-msgid "Update"
-msgstr "Actualizeaza"
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Continue button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Continue"
+msgstr "Continua..."
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Actualizeaza toate modulele"
+
+#, fuzzy
+msgid "Download Plugin List"
+msgstr "Download unit tests"
+
+#, fuzzy
+msgid "Show Repository List"
+msgstr "Repository"
 
 msgid "Upgrade Gallery"
 msgstr "Actualizeaza Gallery"
@@ -1863,15 +1964,50 @@ msgstr "%sDescarca%s nucleu Gallery"
 msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr "Citeste %sinstructiunile pentru actualizare%s si implementeza actualizarea"
 
-msgid "Gallery Up-To-Date"
-msgstr "Gallery este la zi"
+msgid "Incompatible plugins are marked with an exclamation icon."
+msgstr "Modulele incompatibile sunt marcate cu semnul exclamarii (!)."
 
+#, c-format
 msgid ""
-"Gallery cannot be upgraded through this interface. When a new version becomes available, "
-"upgrade instructions will be presented here."
+"A new core module version is available. There may be plugins that are incompatible with the "
+"installed core module, which are not shown here. You can view a %scomplete list%s of "
+"plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
-"Gallery nu poate fi actualizata prin aceasta interfata. Cind o noua versiune va fi "
-"disponibila, instructiunile pentru actualizare vor fi prezentate aici."
+"O noua versiune a modulului nucleu este disponibila. Este posibil ca anumite module sa fie "
+"incompatibile cu modulul nucleu instalat, ceea ce nu este afisat. Poti vedea o %slista "
+"completa%s a modulelor, incluzand pe cele incompatibile, ce sunt marcate cu o iconita rosie."
+
+#, fuzzy
+msgid "upgrade available"
+msgstr "Actualizeaza Gallery"
+
+msgid "locked"
+msgstr ""
+
+msgid "Theme Name"
+msgstr "Numele Temei"
+
+msgid "Module Name"
+msgstr "Numele modulului"
+
+msgid "Latest"
+msgstr "Ultimul"
+
+msgid "Locked Plugin"
+msgstr ""
+
+msgid "Incompatible Plugin"
+msgstr "Modul incompatibil"
+
+#, fuzzy
+msgid "Upgrade Available"
+msgstr "Actualizeaza tot"
+
+msgid "download"
+msgstr "descarca"
+
+msgid "modify"
+msgstr "modifica"
 
 msgid "Upgrade All Plugins"
 msgstr "Actualizeaza toate modulele"
@@ -1886,132 +2022,67 @@ msgstr ""
 msgid "Upgrade All"
 msgstr "Actualizeaza tot"
 
-msgid ""
-"Once the repository index has been downloaded, a list of available plugins will be "
-"presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
-msgstr ""
-"Odata de index-ul repository-ului a fost descarcat, o lista a modulelor disponibile va fi "
-"prezentata. Aceasta poate fi descarcata apasand pe butonul Actualizeaza din sectiunea "
-"Operatiuni Comune"
-
-msgid ""
-"The following plugins are available. Click on the action beside the plugin you're interested "
-"in to see what's available in the repository."
-msgstr ""
-"Urmatoarele module sunt disponibile. Apasa pe actiunea din laterala modulului de interes "
-"pentru a vedea ce este disponibil in repository"
-
-msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr "Modulele incompatibile sunt marcate cu semnul exclamarii (!)."
-
-#, c-format
-msgid ""
-"A new core module version is available. There may be plugins that are incompatible with the "
-"installed core module, which are not shown here. You can view a %scomplete list%s of "
-"plugins, including incompatible ones, which are marked with a red icon."
-msgstr ""
-"O noua versiune a modulului nucleu este disponibila. Este posibil ca anumite module sa fie "
-"incompatibile cu modulul nucleu instalat, ceea ce nu este afisat. Poti vedea o %slista "
-"completa%s a modulelor, incluzand pe cele incompatibile, ce sunt marcate cu o iconita rosie."
-
-msgid "Theme Name"
-msgstr "Numele Temei"
-
-msgid "Module Name"
-msgstr "Numele modulului"
-
-msgid "Latest"
-msgstr "Ultimul"
-
-msgid "Incompatible Plugin"
-msgstr "Modul incompatibil"
+#, fuzzy, c-format
+msgid "Download %s"
+msgstr "Descarca %s"
 
 msgid "No packages have been selected."
 msgstr "Nici un pachet nu a fost selectat."
 
-msgid "Base Files"
+msgid ""
+"Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
+"of the package to download.  Language packages are optional, You only need to download the "
+"ones that you want to use on your site."
+msgstr ""
+
+#, fuzzy
+msgid "Base Packages"
 msgstr "Fisiere baza"
 
-msgid ""
-"The base files required for the theme to work and the English (US) translation will be "
-"downloaded."
-msgstr "Fisierele baza necesare acestei teme si traducerea in Engleza vor fi descarcate."
-
-msgid "Upgrade Base Files"
-msgstr "Actualizeaza fisierele baza"
-
-msgid "You can upgrade the base module files."
-msgstr "Poti sa actualizezi fisierele modulului de baza."
-
-msgid "Upgrade base files"
-msgstr "Actualizeaza fisierele de baza"
-
-msgid "Base Files Up-To-Date"
-msgstr "Fisierele de baza actualizate"
-
-msgid "This plugin's base files are up-to-date."
-msgstr "Fisierele de baza ale modulului sunt actualizate."
-
-msgid "Updated Translations"
-msgstr "Traduceri actualizate"
-
-msgid ""
-"Below is a list of translations that have been updated since they were last downloaded. "
-"Select the ones you want to download."
+#, c-format
+msgid "%s: version %s (build %s)"
 msgstr ""
-"Mai jos este o lista a traducerilor ce au fost actualizate fata de momentul in care au fost "
-"descarcate. Selecteaza una pe care vrei sa o descarci."
-
-msgid "Additional Languages"
-msgstr "Localizari aditionale"
-
-msgid ""
-"Below is a list of languages this plugin has been translated to. Select the ones you want "
-"included in addition to the ones already downloaded."
-msgstr ""
-"Mai jos este o lista a localizarilor in care acest modul a fost tradus. Selecteaza pe cea pe "
-"care vrei sa o incluzi pe linga cele deja descarcate."
-
-msgid "Unit Tests"
-msgstr "Unit tests"
-
-msgid ""
-"This plugin has unit tests available for download, which are useful for Gallery developers. "
-"All of the module's features are available without the tests."
-msgstr ""
-"This plugin has unit tests available for download, which are useful for Gallery developers. "
-"All of the module's features are available without the tests."
-
-msgid "Download unit tests"
-msgstr "Download unit tests"
-
-msgid "Gallery Repository Setup"
-msgstr "Gallery Repository Setup"
-
-msgid "Warning:"
-msgstr "Warning:"
 
 #, c-format
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data. Under your Gallery base directory, create a "
-"directory called '%s' and allow the web server to write into it by appropriately setting the "
-"permissions."
+msgid "%s: version %s (build %s) %sdowngrading is not supported!%s"
 msgstr ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data. Under your Gallery base directory, create a "
-"directory called '%s' and allow the web server to write into it by appropriately setting the "
-"permissions."
 
-msgid "Instructions for Unix-type platforms:"
-msgstr "Instructions for Unix-type platforms:"
-
-msgid ""
-"Refreshing this page will take you to the Repository if the directory has been successfully "
-"created."
+#, c-format
+msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr ""
-"Refreshing this page will take you to the Repository if the directory has been successfully "
-"created."
+
+#, fuzzy
+msgid "Language Packages"
+msgstr "Configurari de limba"
+
+#, c-format
+msgid "(%sselect all%s%sselect none%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (upgrading from %s)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s version %s"
+msgstr "Versiune PHP"
+
+#, c-format
+msgid "%s version %s (%snewer version %s is installed%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (currently installed)"
+msgstr ""
+
+msgid "No compatible language packages available"
+msgstr ""
+
+msgid "You must select a base package before choosing language packs."
+msgstr ""
+
+msgid "Update"
+msgstr "Actualizeaza"
 
 msgid "Gallery Themes"
 msgstr "Gallery Themes"
@@ -3483,6 +3554,174 @@ msgstr "[test] Una seconda autorizzazione"
 msgid "Unit test theme"
 msgstr "Unit&agrave; di test tema"
 
+#~ msgid "Performing Maintenance Tasks"
+#~ msgstr "Executarea taskurilor de mentenanta"
+
+#~ msgid "Upgrade"
+#~ msgstr "Actualizare"
+
+#~ msgid "Download"
+#~ msgstr "Descarca"
+
+#~ msgid "Plugins directory does not exist."
+#~ msgstr "Folderul de plug-in nu exista."
+
+#~ msgid ""
+#~ "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
+#~ msgstr ""
+#~ "Nu pot crea folderul de plug-in. Verifica daca serverul web are drepturi de scriere acolo"
+
+#~ msgid "This will also remove any permissions and clean up any data created by this module."
+#~ msgstr "Aceasta actiune va sterge orice permisiuni si date create de acest modul."
+
+#~ msgid "Common Tasks"
+#~ msgstr "Operatiuni Comune"
+
+#~ msgid "Modules"
+#~ msgstr "Module"
+
+#~ msgid "Warning: Experimental feature!"
+#~ msgstr "Atentie: Functiuni experimentale!"
+
+#~ msgid ""
+#~ "The repository features are currently experimental, and no actual repository has been set "
+#~ "up yet, so none of these features will work at this time."
+#~ msgstr ""
+#~ "Functiunile repository sunt in acest moment experimentale, si un repository nu a fost "
+#~ "instalat, deci nici una din aceste functionalitati nu functioneaza in acest moment."
+
+#~ msgid ""
+#~ "The Gallery repository contains the latest modules and themes extensively tested by the "
+#~ "Gallery team. The repository index contains information about available plugins, such as "
+#~ "the latest versions, available languages and compatibility. The index must be "
+#~ "synchronized periodically with the Gallery server so you are informed about any available "
+#~ "updates. No personal information is sent to the Gallery server during updating. On slower "
+#~ "connections the process might take a minute or two."
+#~ msgstr ""
+#~ "Repository-ul Gallery contine ultimele module si teme testate extensiv de membrii echipei "
+#~ "Gallery. Indexul contine informatii despre modulele disponibile, cum ar fi ultimele "
+#~ "versiuni, localizare si compatibilitate. Index-ul trebuie sa fie sincronizat periodic cu "
+#~ "server-ul Gallery astfel incit sa fii informat despre orice actualizari. Nici o "
+#~ "informatie confidentiala nu este transmisa catre server-ul Gallery in timpul "
+#~ "actualizarii. Daca aveti o legatura la Internet de viteza scazuta, acest proces poate "
+#~ "dura 1-2 minute."
+
+#~ msgid ""
+#~ "As of the last update on %s, the repository contains %s modules and %s themes. Its "
+#~ "contents can be viewed on the Modules and Themes tabs."
+#~ msgstr ""
+#~ "Ca urmare a ultimei axctualizari a %s, repository-ul contine %s module si %s teme. "
+#~ "Continutul poate fi vizualizat in sectiunile Module si Teme."
+
+#~ msgid ""
+#~ "The index has never been updated. Click on the Update button to see what updates are "
+#~ "available."
+#~ msgstr ""
+#~ "Index-ul nu a fost actualizat nici o data. Apasa pe Actualizare pentru a vedea ce "
+#~ "versiuni sunt disponibile."
+
+#~ msgid "Gallery Up-To-Date"
+#~ msgstr "Gallery este la zi"
+
+#~ msgid ""
+#~ "Gallery cannot be upgraded through this interface. When a new version becomes available, "
+#~ "upgrade instructions will be presented here."
+#~ msgstr ""
+#~ "Gallery nu poate fi actualizata prin aceasta interfata. Cind o noua versiune va fi "
+#~ "disponibila, instructiunile pentru actualizare vor fi prezentate aici."
+
+#~ msgid ""
+#~ "Once the repository index has been downloaded, a list of available plugins will be "
+#~ "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
+#~ msgstr ""
+#~ "Odata de index-ul repository-ului a fost descarcat, o lista a modulelor disponibile va fi "
+#~ "prezentata. Aceasta poate fi descarcata apasand pe butonul Actualizeaza din sectiunea "
+#~ "Operatiuni Comune"
+
+#~ msgid ""
+#~ "The following plugins are available. Click on the action beside the plugin you're "
+#~ "interested in to see what's available in the repository."
+#~ msgstr ""
+#~ "Urmatoarele module sunt disponibile. Apasa pe actiunea din laterala modulului de interes "
+#~ "pentru a vedea ce este disponibil in repository"
+
+#~ msgid ""
+#~ "The base files required for the theme to work and the English (US) translation will be "
+#~ "downloaded."
+#~ msgstr "Fisierele baza necesare acestei teme si traducerea in Engleza vor fi descarcate."
+
+#~ msgid "Upgrade Base Files"
+#~ msgstr "Actualizeaza fisierele baza"
+
+#~ msgid "You can upgrade the base module files."
+#~ msgstr "Poti sa actualizezi fisierele modulului de baza."
+
+#~ msgid "Upgrade base files"
+#~ msgstr "Actualizeaza fisierele de baza"
+
+#~ msgid "Base Files Up-To-Date"
+#~ msgstr "Fisierele de baza actualizate"
+
+#~ msgid "This plugin's base files are up-to-date."
+#~ msgstr "Fisierele de baza ale modulului sunt actualizate."
+
+#~ msgid "Updated Translations"
+#~ msgstr "Traduceri actualizate"
+
+#~ msgid ""
+#~ "Below is a list of translations that have been updated since they were last downloaded. "
+#~ "Select the ones you want to download."
+#~ msgstr ""
+#~ "Mai jos este o lista a traducerilor ce au fost actualizate fata de momentul in care au "
+#~ "fost descarcate. Selecteaza una pe care vrei sa o descarci."
+
+#~ msgid "Additional Languages"
+#~ msgstr "Localizari aditionale"
+
+#~ msgid ""
+#~ "Below is a list of languages this plugin has been translated to. Select the ones you want "
+#~ "included in addition to the ones already downloaded."
+#~ msgstr ""
+#~ "Mai jos este o lista a localizarilor in care acest modul a fost tradus. Selecteaza pe cea "
+#~ "pe care vrei sa o incluzi pe linga cele deja descarcate."
+
+#~ msgid "Unit Tests"
+#~ msgstr "Unit tests"
+
+#~ msgid ""
+#~ "This plugin has unit tests available for download, which are useful for Gallery "
+#~ "developers. All of the module's features are available without the tests."
+#~ msgstr ""
+#~ "This plugin has unit tests available for download, which are useful for Gallery "
+#~ "developers. All of the module's features are available without the tests."
+
+#~ msgid "Gallery Repository Setup"
+#~ msgstr "Gallery Repository Setup"
+
+#~ msgid "Warning:"
+#~ msgstr "Warning:"
+
+#~ msgid ""
+#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
+#~ "created where Gallery will store the data. Under your Gallery base directory, create a "
+#~ "directory called '%s' and allow the web server to write into it by appropriately setting "
+#~ "the permissions."
+#~ msgstr ""
+#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
+#~ "created where Gallery will store the data. Under your Gallery base directory, create a "
+#~ "directory called '%s' and allow the web server to write into it by appropriately setting "
+#~ "the permissions."
+
+#~ msgid "Instructions for Unix-type platforms:"
+#~ msgstr "Instructions for Unix-type platforms:"
+
+#~ msgid ""
+#~ "Refreshing this page will take you to the Repository if the directory has been "
+#~ "successfully created."
+#~ msgstr ""
+#~ "Refreshing this page will take you to the Repository if the directory has been "
+#~ "successfully created."
+
 #~ msgid "From Local Server"
 #~ msgstr "Din serverul local"
 
@@ -3642,9 +3881,6 @@ msgstr "Unit&agrave; di test tema"
 
 #~ msgid "Legal Directories"
 #~ msgstr "Foldere permise"
-
-#~ msgid "modify"
-#~ msgstr "modifica"
 
 #~ msgid "Recent Directories"
 #~ msgstr "Foldere recente"

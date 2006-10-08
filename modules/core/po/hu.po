@@ -25,7 +25,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.15\n"
+"Project-Id-Version: Gallery: Core 1.1.18\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-04 20:08+0100\n"
 "PO-Revision-Date: 2006-01-06 17:02+0100\n"
@@ -102,23 +102,34 @@ msgstr ""
 msgid "Themes"
 msgstr "Témák"
 
-#, fuzzy
-msgid "Performing Maintenance Tasks"
-msgstr "Rendszerkarbantartás"
+msgid "Updating Repository Index"
+msgstr ""
 
-#, c-format
-msgid "Downloading %s"
+msgid "Scanning plugins"
 msgstr ""
 
 #, fuzzy
 msgid "Done."
 msgstr "Kész"
 
-msgid "Upgrade"
-msgstr "Frissítés"
+msgid "Updating Packages"
+msgstr ""
 
-msgid "Download"
-msgstr "Letöltés"
+#, c-format
+msgid "Downloading %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Activating %s"
+msgstr "Műveletek"
+
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "Alapértelmezett nyelv"
+
+#, fuzzy
+msgid "Update complete."
+msgstr "Feltöltés sikeres"
 
 msgid "install"
 msgstr "telepítés"
@@ -525,9 +536,6 @@ msgstr "Kilépés"
 msgid "Plugins"
 msgstr "belépés"
 
-msgid "Repository"
-msgstr ""
-
 msgid "Users"
 msgstr "Felhasználók"
 
@@ -597,6 +605,10 @@ msgstr "Fájlrendszer jogosultságok"
 msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Deleted %d sessions."
+msgstr "Fájlrendszer jogosultságok"
 
 msgid "Delete database cache"
 msgstr "Adatbázis gyorsítótár törlése"
@@ -697,22 +709,20 @@ msgstr "film"
 msgid "photo"
 msgstr "fénykép"
 
-msgid "download"
-msgstr "letöltés"
-
-#, fuzzy
-msgid "Plugins directory does not exist."
-msgstr "'%s' felhasználó nem létezik."
-
-msgid ""
-"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-msgstr ""
-
 msgid "Couldn't create repository cache path."
 msgstr ""
 
 msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
+msgstr ""
+
+msgid "Officially Release Repository"
+msgstr ""
+
+msgid "Experimental Repository"
+msgstr ""
+
+msgid "Community Repository"
 msgstr ""
 
 #, c-format
@@ -818,6 +828,19 @@ msgstr "Az albumoldalakon megjelenítendő blokkok"
 
 msgid "Blocks to show on photo pages"
 msgstr "A képek oldalain megjelenítendő blokkok"
+
+msgid "Thumbnail links in dynamic albums"
+msgstr ""
+
+#, fuzzy
+msgid "Browse dynamic album"
+msgstr "Album szerkeztése"
+
+msgid "Jump to original album"
+msgstr ""
+
+msgid "Separate link to original album"
+msgstr ""
 
 msgid "View Samples"
 msgstr "Minták megtekintése"
@@ -990,6 +1013,10 @@ msgstr "Nagyítás"
 
 msgid "Browser"
 msgstr "Böngésző"
+
+#, c-format
+msgid "Rows in %s table = %d"
+msgstr ""
 
 msgid "Successfully saved theme settings"
 msgstr "Témabeállítások sikeresen elmentve"
@@ -1449,6 +1476,14 @@ msgstr "E-mail cím"
 msgid "(suggested)"
 msgstr "(ajánlott)"
 
+#, fuzzy
+msgid "Lock Account"
+msgstr "A Te fiókod"
+
+msgid ""
+"Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
+msgstr ""
+
 msgid "Group Management"
 msgstr "Csoport beállítások"
 
@@ -1544,20 +1579,6 @@ msgstr "futtatás most"
 
 msgid "Last Run Details:"
 msgstr "Utolsó Futás Részletei:"
-
-msgid "Confirm module uninstall"
-msgstr "Modul leszedésének megerősítése"
-
-#, c-format
-msgid "Do you really want to uninstall the %s module?"
-msgstr "Biztosan leszedi a %s modult?"
-
-#, fuzzy
-msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr "Ezzel eltávolít minden jogosultságot, és átmeneti fájlt, amit ez a modul hozott létre"
-
-msgid "Uninstall"
-msgstr "Eltávolítás"
 
 msgid "Performance Tuning"
 msgstr ""
@@ -1658,7 +1679,61 @@ msgid "__PLUGIN__ needs configuration"
 msgstr ""
 
 #, fuzzy
+msgid "__PLUGIN__ deleted"
+msgstr "deaktiválás"
+
+msgid "Warning!"
+msgstr ""
+
+#, fuzzy
+msgid "Do you really want to uninstall __PLUGIN__?"
+msgstr "Biztosan leszedi a %s modult?"
+
+msgid ""
+"This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Do you really want to delete __PLUGIN__?"
+msgstr "Biztosan leszedi a %s modult?"
+
+msgid "This plugin will be uninstalled and its files will be deleted."
+msgstr ""
+
+msgid "disabled(__COUNT__)"
+msgstr ""
+
+#, fuzzy
+msgid "up to date(__COUNT__)"
+msgstr "Dátum"
+
+#, fuzzy
+msgid "not installed(__COUNT__)"
+msgstr "eltávolít"
+
+#, fuzzy
+msgid "upgrade required(__COUNT__)"
+msgstr "(szükséges)"
+
+#, fuzzy
+msgid "incompatible(__COUNT__)"
+msgstr "Inkompatibilis modul!"
+
+msgid "Failed to completely delete __PLUGIN__"
+msgstr ""
+
+#, fuzzy
 msgid "Gallery Plugins"
+msgstr "Galéria modulok"
+
+#, fuzzy
+msgid "Get More Plugins"
 msgstr "Galéria modulok"
 
 #, fuzzy
@@ -1672,22 +1747,6 @@ msgstr ""
 "letölthetőekés telepíthetőek, ha új lehetőségeket szeretnénk hozzáadni, vagy törölhetőek ha "
 "valamitmár nem használunk. Az ilyen lehetőségek használatához telepíteni kell a modult majd "
 "aktíválni (esetleg beállítani)."
-
-#, fuzzy
-msgid "up to date"
-msgstr "Dátum"
-
-#, fuzzy
-msgid "upgrade required"
-msgstr "(szükséges)"
-
-#, fuzzy
-msgid "not installed"
-msgstr "eltávolít"
-
-#, fuzzy
-msgid "incompatible"
-msgstr "Inkompatibilis modul!"
 
 #, fuzzy
 msgid "Plugin Name"
@@ -1717,6 +1776,25 @@ msgstr "Szükséges modul API: %s (jelenleg %s)"
 msgid "configure"
 msgstr "beállítás"
 
+#, fuzzy
+msgid "up to date"
+msgstr "Dátum"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(szükséges)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "eltávolít"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Inkompatibilis modul!"
+
+msgid "Repository"
+msgstr ""
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 
@@ -1726,46 +1804,81 @@ msgstr ""
 msgid "All plugins are already up-to-date."
 msgstr ""
 
-msgid "Common Tasks"
+#, c-format
+msgid "%s plugin updated."
 msgstr ""
 
-msgid "Modules"
-msgstr "Modulok"
-
-msgid "Warning: Experimental feature!"
-msgstr ""
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
 
 msgid ""
-"The repository features are currently experimental, and no actual repository has been set up "
-"yet, so none of these features will work at this time."
-msgstr ""
-
-msgid "Update Index"
-msgstr ""
-
-msgid ""
-"The Gallery repository contains the latest modules and themes extensively tested by the "
-"Gallery team. The repository index contains information about available plugins, such as the "
-"latest versions, available languages and compatibility. The index must be synchronized "
-"periodically with the Gallery server so you are informed about any available updates. No "
-"personal information is sent to the Gallery server during updating. On slower connections "
-"the process might take a minute or two."
+"No personal information about you or your Gallery installation is sent to the Gallery server "
+"at any time."
 msgstr ""
 
 #, c-format
 msgid ""
-"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
-"can be viewed on the Modules and Themes tabs."
+"Download and install new plugins quickly and easily.  If you decide you don't like a plugin, "
+"you can delete it from your Gallery.  There are multiple different plugin repositories, you "
+"can choose which ones you want to use (it's ok to use all of them at once).  Once you've "
+"chosen, you must periodically download the latest plugin list to find out about available "
+"updates. %s On slower connections the process might take a minute or two."
 msgstr ""
 
-msgid ""
-"The index has never been updated. Click on the Update button to see what updates are "
-"available."
+#, c-format
+msgid "Officially Released Gallery Project plugins (%srecommended%s)"
+msgstr ""
+
+#, c-format
+msgid "last updated on %s"
+msgstr ""
+
+#, c-format
+msgid "Experimental Gallery Project plugins (%scool new features, might be buggy%s)"
+msgstr ""
+
+#, c-format
+msgid "Community plugins (%suse at your own risk!%s)"
+msgstr ""
+
+msgid "Repository Error"
 msgstr ""
 
 #, fuzzy
-msgid "Update"
-msgstr "Dátum"
+msgid "You must select at least one repository."
+msgstr "Válaszd ki a törlendő felhasználót."
+
+msgid "Ok"
+msgstr ""
+
+msgid "Configure your Gallery"
+msgstr ""
+
+msgid ""
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
+
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Continue button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Continue"
+msgstr "Folytat..."
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Galéria modulok"
+
+msgid "Download Plugin List"
+msgstr ""
+
+msgid "Show Repository List"
+msgstr ""
 
 #, fuzzy
 msgid "Upgrade Gallery"
@@ -1789,13 +1902,49 @@ msgstr ""
 msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr ""
 
-#, fuzzy
-msgid "Gallery Up-To-Date"
-msgstr "Gallery Core"
+msgid "Incompatible plugins are marked with an exclamation icon."
+msgstr ""
 
+#, c-format
 msgid ""
-"Gallery cannot be upgraded through this interface. When a new version becomes available, "
-"upgrade instructions will be presented here."
+"A new core module version is available. There may be plugins that are incompatible with the "
+"installed core module, which are not shown here. You can view a %scomplete list%s of "
+"plugins, including incompatible ones, which are marked with a red icon."
+msgstr ""
+
+#, fuzzy
+msgid "upgrade available"
+msgstr "Galéria"
+
+msgid "locked"
+msgstr ""
+
+msgid "Theme Name"
+msgstr "Felület Neve"
+
+msgid "Module Name"
+msgstr "Modulnév"
+
+#, fuzzy
+msgid "Latest"
+msgstr "utolsó"
+
+#, fuzzy
+msgid "Locked Plugin"
+msgstr "belépés"
+
+#, fuzzy
+msgid "Incompatible Plugin"
+msgstr "Inkompatibilis modul!"
+
+#, fuzzy
+msgid "Upgrade Available"
+msgstr "frissítés"
+
+msgid "download"
+msgstr "letöltés"
+
+msgid "modify"
 msgstr ""
 
 msgid "Upgrade All Plugins"
@@ -1810,117 +1959,68 @@ msgstr ""
 msgid "Upgrade All"
 msgstr "frissítés"
 
-msgid ""
-"Once the repository index has been downloaded, a list of available plugins will be "
-"presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
-msgstr ""
-
-msgid ""
-"The following plugins are available. Click on the action beside the plugin you're interested "
-"in to see what's available in the repository."
-msgstr ""
-
-msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr ""
-
-#, c-format
-msgid ""
-"A new core module version is available. There may be plugins that are incompatible with the "
-"installed core module, which are not shown here. You can view a %scomplete list%s of "
-"plugins, including incompatible ones, which are marked with a red icon."
-msgstr ""
-
-msgid "Theme Name"
-msgstr "Felület Neve"
-
-msgid "Module Name"
-msgstr "Modulnév"
-
-#, fuzzy
-msgid "Latest"
-msgstr "utolsó"
-
-#, fuzzy
-msgid "Incompatible Plugin"
-msgstr "Inkompatibilis modul!"
+#, fuzzy, c-format
+msgid "Download %s"
+msgstr "Letöltés"
 
 msgid "No packages have been selected."
 msgstr ""
 
+msgid ""
+"Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
+"of the package to download.  Language packages are optional, You only need to download the "
+"ones that you want to use on your site."
+msgstr ""
+
 #, fuzzy
-msgid "Base Files"
+msgid "Base Packages"
 msgstr "Alap fájlnév"
 
-msgid ""
-"The base files required for the theme to work and the English (US) translation will be "
-"downloaded."
-msgstr ""
-
-msgid "Upgrade Base Files"
-msgstr ""
-
-msgid "You can upgrade the base module files."
-msgstr ""
-
-msgid "Upgrade base files"
-msgstr ""
-
-msgid "Base Files Up-To-Date"
-msgstr ""
-
-msgid "This plugin's base files are up-to-date."
-msgstr ""
-
-msgid "Updated Translations"
-msgstr ""
-
-msgid ""
-"Below is a list of translations that have been updated since they were last downloaded. "
-"Select the ones you want to download."
-msgstr ""
-
-msgid "Additional Languages"
-msgstr ""
-
-msgid ""
-"Below is a list of languages this plugin has been translated to. Select the ones you want "
-"included in addition to the ones already downloaded."
-msgstr ""
-
-#, fuzzy
-msgid "Unit Tests"
-msgstr "Egységtesztelő felület"
-
-msgid ""
-"This plugin has unit tests available for download, which are useful for Gallery developers. "
-"All of the module's features are available without the tests."
-msgstr ""
-
-msgid "Download unit tests"
-msgstr ""
-
-#, fuzzy
-msgid "Gallery Repository Setup"
-msgstr "Galéria verzió"
-
-msgid "Warning:"
+#, c-format
+msgid "%s: version %s (build %s)"
 msgstr ""
 
 #, c-format
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data. Under your Gallery base directory, create a "
-"directory called '%s' and allow the web server to write into it by appropriately setting the "
-"permissions."
+msgid "%s: version %s (build %s) %sdowngrading is not supported!%s"
 msgstr ""
 
-msgid "Instructions for Unix-type platforms:"
+#, c-format
+msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr ""
 
-msgid ""
-"Refreshing this page will take you to the Repository if the directory has been successfully "
-"created."
+#, fuzzy
+msgid "Language Packages"
+msgstr "Nyelvi beállítások"
+
+#, c-format
+msgid "(%sselect all%s%sselect none%s)"
 msgstr ""
+
+#, c-format
+msgid "%s version %s (upgrading from %s)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s version %s"
+msgstr "PHP verzió"
+
+#, c-format
+msgid "%s version %s (%snewer version %s is installed%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (currently installed)"
+msgstr ""
+
+msgid "No compatible language packages available"
+msgstr ""
+
+msgid "You must select a base package before choosing language packs."
+msgstr ""
+
+#, fuzzy
+msgid "Update"
+msgstr "Dátum"
 
 msgid "Gallery Themes"
 msgstr "Galéria Felületek"
@@ -2944,6 +3044,14 @@ msgstr "url"
 msgid "image"
 msgstr "kép"
 
+#, fuzzy
+msgid "color"
+msgstr "mag"
+
+#, c-format
+msgid "You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s"
+msgstr ""
+
 msgid "Configuration Error: Missing Theme"
 msgstr "Beállítási Hiba: Hiányzó Felület"
 
@@ -3040,6 +3148,16 @@ msgstr "Új jelszó ellenőrzése"
 
 msgid "You must enter your new password again!"
 msgstr "Add meg az új jelszavad mégegyszer!"
+
+msgid ""
+"This account is not allowed to modify account settings.  Please contact your Gallery "
+"administrator"
+msgstr ""
+
+msgid ""
+"Your administrator has locked this account, preventing changes from being made to the "
+"account information."
+msgstr ""
 
 msgid "Login to your account"
 msgstr "Lépj be a fiókodba"
@@ -3357,6 +3475,43 @@ msgstr "[test] Egy második jogosultság"
 
 msgid "Unit test theme"
 msgstr "Egységtesztelő felület"
+
+#, fuzzy
+#~ msgid "Performing Maintenance Tasks"
+#~ msgstr "Rendszerkarbantartás"
+
+#~ msgid "Upgrade"
+#~ msgstr "Frissítés"
+
+#, fuzzy
+#~ msgid "Plugins directory does not exist."
+#~ msgstr "'%s' felhasználó nem létezik."
+
+#~ msgid "Confirm module uninstall"
+#~ msgstr "Modul leszedésének megerősítése"
+
+#, fuzzy
+#~ msgid "This will also remove any permissions and clean up any data created by this module."
+#~ msgstr ""
+#~ "Ezzel eltávolít minden jogosultságot, és átmeneti fájlt, amit ez a modul hozott létre"
+
+#~ msgid "Uninstall"
+#~ msgstr "Eltávolítás"
+
+#~ msgid "Modules"
+#~ msgstr "Modulok"
+
+#, fuzzy
+#~ msgid "Gallery Up-To-Date"
+#~ msgstr "Gallery Core"
+
+#, fuzzy
+#~ msgid "Unit Tests"
+#~ msgstr "Egységtesztelő felület"
+
+#, fuzzy
+#~ msgid "Gallery Repository Setup"
+#~ msgstr "Galéria verzió"
 
 #~ msgid "create link"
 #~ msgstr "link létrehozása"

@@ -28,7 +28,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.15\n"
+"Project-Id-Version: Gallery: Core 1.1.18\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-10-02 18:40+0200\n"
@@ -728,15 +728,15 @@ msgid "Community Repository"
 msgstr "Användargrupp förvaringsplats"
 
 #, c-format
+msgid "Error downloading index from '%s'."
+msgstr "Fel vid nedladdning av index från '%s'."
+
+#, c-format
 msgid "Error downloading index hash from '%s'."
 msgstr "Fel vid nedladdning av index hash från '%s'."
 
 msgid "Index integrity check failed."
 msgstr "Intigritets kontrol av index misslyckades"
-
-#, c-format
-msgid "Error downloading index from '%s'."
-msgstr "Fel vid nedladdning av index från '%s'."
 
 msgid "&laquo; default sort order &raquo;"
 msgstr "&laquo; förvald sorteringsordning &laquo;"
@@ -1752,6 +1752,25 @@ msgstr "Vill du verkligen avinstallera __PLUGIN__?"
 msgid "This plugin will be uninstalled and its files will be deleted."
 msgstr "Den här pluginen kommer att avistalleras och dess filer kommer att raderas."
 
+msgid "disabled(__COUNT__)"
+msgstr ""
+
+#, fuzzy
+msgid "up to date(__COUNT__)"
+msgstr "Aktuell version"
+
+#, fuzzy
+msgid "not installed(__COUNT__)"
+msgstr "ej installerad"
+
+#, fuzzy
+msgid "upgrade required(__COUNT__)"
+msgstr "uppgradering krävs"
+
+#, fuzzy
+msgid "incompatible(__COUNT__)"
+msgstr "inkompatibel"
+
 msgid "Failed to completely delete __PLUGIN__"
 msgstr "Lyckades inte fullständigt ta bort __PLUGIN__"
 
@@ -1772,18 +1791,6 @@ msgstr ""
 "vill använda dem.  För att kunna använda en egenskap så måste du installera, konfigurera (om "
 "nödvändigt) och aktivera den.  Om du inte önskar att använda en egenskap så kan du "
 "avaktivera den."
-
-msgid "up to date"
-msgstr "Aktuell version"
-
-msgid "upgrade required"
-msgstr "uppgradering krävs"
-
-msgid "not installed"
-msgstr "ej installerad"
-
-msgid "incompatible"
-msgstr "inkompatibel"
 
 msgid "Plugin Name"
 msgstr "Pluginens Namn"
@@ -1810,6 +1817,18 @@ msgstr "Plugin API obligatorisk: %s (tillgänglig: %s)"
 
 msgid "configure"
 msgstr "konfigurera"
+
+msgid "up to date"
+msgstr "Aktuell version"
+
+msgid "upgrade required"
+msgstr "uppgradering krävs"
+
+msgid "not installed"
+msgstr "ej installerad"
+
+msgid "incompatible"
+msgstr "inkompatibel"
 
 msgid "Repository"
 msgstr "Förvaringsplats"
@@ -1846,11 +1865,11 @@ msgid ""
 "chosen, you must periodically download the latest plugin list to find out about available "
 "updates. %s On slower connections the process might take a minute or two."
 msgstr ""
-"Ladda ner och installera nya pluginer snabbt och enkelt. Om du inte tycker om en plugin, "
-"så kan du radera den från ditt galleri. Det finns flera olika pluginlager, du kan välja "
-"vilka du vill använda dig av (det går att använda allihopa på samma gång). När du har "
-"valt, så måste du periodvis ladda ner de senaste pluginerna för att se om det finns någon "
-"uppdatering tillgänglig. %s Vid långsamma förbindelser så kan det ta en minute eller två."
+"Ladda ner och installera nya pluginer snabbt och enkelt. Om du inte tycker om en plugin, så "
+"kan du radera den från ditt galleri. Det finns flera olika pluginlager, du kan välja vilka "
+"du vill använda dig av (det går att använda allihopa på samma gång). När du har valt, så "
+"måste du periodvis ladda ner de senaste pluginerna för att se om det finns någon uppdatering "
+"tillgänglig. %s Vid långsamma förbindelser så kan det ta en minute eller två."
 
 #, c-format
 msgid "Officially Released Gallery Project plugins (%srecommended%s)"
@@ -1867,6 +1886,17 @@ msgstr "Experimentel Gallery projekt plugin (%scoola nya funktioner, kan vara bu
 #, c-format
 msgid "Community plugins (%suse at your own risk!%s)"
 msgstr "Användargrupp plugin (%sanvänd på egen risk!%s)"
+
+#, fuzzy
+msgid "Repository Error"
+msgstr "Förvaringsplats"
+
+#, fuzzy
+msgid "You must select at least one repository."
+msgstr "Du måste markera en användare att ta bort."
+
+msgid "Ok"
+msgstr ""
 
 msgid "Configure your Gallery"
 msgstr "Konfigurera ditt Gallery"
@@ -1889,17 +1919,14 @@ msgstr ""
 msgid "Continue"
 msgstr "Fortsätt"
 
-msgid "Show Repository List"
-msgstr "Visa förvaringsplatslista"
-
-msgid "Hide Repository List"
-msgstr "Dölj förvaringsplatslista"
-
 msgid "Update Plugin List"
 msgstr "Uppdatera Pluginlistan"
 
 msgid "Download Plugin List"
 msgstr "Ladda ned Pluginlistan"
+
+msgid "Show Repository List"
+msgstr "Visa förvaringsplatslista"
 
 msgid "Upgrade Gallery"
 msgstr "Uppgradera Gallery"
@@ -1995,8 +2022,8 @@ msgid ""
 "ones that you want to use on your site."
 msgstr ""
 "Ladda ner ett packet för att kunna använda denna plugin. Du kan uppgradera genom att välja "
-"en nyare version av paketet. Språkpaket är frivilliga. Du behöver bara ladda ner de språkpaket "
-"som du vill använda på din webbsite."
+"en nyare version av paketet. Språkpaket är frivilliga. Du behöver bara ladda ner de "
+"språkpaket som du vill använda på din webbsite."
 
 msgid "Base Packages"
 msgstr "Baspaket"
@@ -3515,3 +3542,6 @@ msgstr "[test] En andra rättighet"
 
 msgid "Unit test theme"
 msgstr "Tema för unittest"
+
+#~ msgid "Hide Repository List"
+#~ msgstr "Dölj förvaringsplatslista"

@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.15\n"
+"Project-Id-Version: Gallery: Core 1.1.18\n"
 "POT-Creation-Date: 2005-03-28 14:00+0800\n"
 "PO-Revision-Date: 2006-03-10 11:37+0800\n"
 "Last-Translator: Lyric <lyric@lyricli.com>\n"
@@ -95,21 +95,34 @@ msgstr "全加速"
 msgid "Themes"
 msgstr "主题"
 
-msgid "Performing Maintenance Tasks"
-msgstr "执行维护任务"
+#, fuzzy
+msgid "Updating Repository Index"
+msgstr "更新索引"
+
+msgid "Scanning plugins"
+msgstr ""
+
+msgid "Done."
+msgstr "完成"
+
+msgid "Updating Packages"
+msgstr ""
 
 #, c-format
 msgid "Downloading %s"
 msgstr "正在下载 %s"
 
-msgid "Done."
-msgstr "完成"
+#, fuzzy, c-format
+msgid "Activating %s"
+msgstr "操作"
 
-msgid "Upgrade"
-msgstr "升级"
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "默认语言"
 
-msgid "Download"
-msgstr "下载"
+#, fuzzy
+msgid "Update complete."
+msgstr "上传完成"
 
 msgid "install"
 msgstr "安装"
@@ -510,9 +523,6 @@ msgstr "退出"
 msgid "Plugins"
 msgstr ""
 
-msgid "Repository"
-msgstr "仓库"
-
 msgid "Users"
 msgstr "用户"
 
@@ -581,6 +591,10 @@ msgstr "删除用户会话"
 msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr "根据您现有的会话失效设定删除所有持久用户会话。"
+
+#, fuzzy, c-format
+msgid "Deleted %d sessions."
+msgstr "删除用户会话"
 
 msgid "Delete database cache"
 msgstr "删除数据库缓存"
@@ -684,22 +698,23 @@ msgstr "电影"
 msgid "photo"
 msgstr "照片"
 
-msgid "download"
-msgstr "下载"
-
-msgid "Plugins directory does not exist."
-msgstr "插件目录不存在"
-
-msgid ""
-"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-msgstr "不能创建插件子目录。确保服务器有该权限。"
-
 msgid "Couldn't create repository cache path."
 msgstr "不能创建仓库缓存路径"
 
 msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr "不能创建缓存子目录，确保Web服务器有写权限。"
+
+msgid "Officially Release Repository"
+msgstr ""
+
+#, fuzzy
+msgid "Experimental Repository"
+msgstr "仓库"
+
+#, fuzzy
+msgid "Community Repository"
+msgstr "仓库"
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -803,6 +818,20 @@ msgstr "显示在像册页的功能块"
 
 msgid "Blocks to show on photo pages"
 msgstr "在照片页上显示的功能块"
+
+#, fuzzy
+msgid "Thumbnail links in dynamic albums"
+msgstr "所有子相册的缩略图都使用同样尺寸"
+
+#, fuzzy
+msgid "Browse dynamic album"
+msgstr "添加子相册"
+
+msgid "Jump to original album"
+msgstr ""
+
+msgid "Separate link to original album"
+msgstr ""
 
 msgid "View Samples"
 msgstr "查看样例"
@@ -973,6 +1002,10 @@ msgstr "缩放"
 
 msgid "Browser"
 msgstr "浏览"
+
+#, c-format
+msgid "Rows in %s table = %d"
+msgstr ""
 
 msgid "Successfully saved theme settings"
 msgstr "主题设置保存成功"
@@ -1443,6 +1476,14 @@ msgstr "Email 地址"
 msgid "(suggested)"
 msgstr "(推荐值)"
 
+#, fuzzy
+msgid "Lock Account"
+msgstr "您的帐户"
+
+msgid ""
+"Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
+msgstr ""
+
 msgid "Group Management"
 msgstr "成员组管理"
 
@@ -1538,19 +1579,6 @@ msgstr "立刻运行"
 
 msgid "Last Run Details:"
 msgstr "最后运行结果："
-
-msgid "Confirm module uninstall"
-msgstr "确认模块卸载"
-
-#, c-format
-msgid "Do you really want to uninstall the %s module?"
-msgstr "您确定要卸载 %s 模块吗？"
-
-msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr "这也将删除所有权限并清除由此模块建立的所有数据。"
-
-msgid "Uninstall"
-msgstr "卸载"
 
 msgid "Performance Tuning"
 msgstr "性能调整"
@@ -1653,7 +1681,62 @@ msgid "__PLUGIN__ needs configuration"
 msgstr ""
 
 #, fuzzy
+msgid "__PLUGIN__ deleted"
+msgstr "关闭"
+
+#, fuzzy
+msgid "Warning!"
+msgstr "警告："
+
+#, fuzzy
+msgid "Do you really want to uninstall __PLUGIN__?"
+msgstr "您确定要卸载 %s 模块吗？"
+
+msgid ""
+"This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Do you really want to delete __PLUGIN__?"
+msgstr "您确定要卸载 %s 模块吗？"
+
+msgid "This plugin will be uninstalled and its files will be deleted."
+msgstr ""
+
+msgid "disabled(__COUNT__)"
+msgstr ""
+
+#, fuzzy
+msgid "up to date(__COUNT__)"
+msgstr "更新"
+
+#, fuzzy
+msgid "not installed(__COUNT__)"
+msgstr "卸载"
+
+#, fuzzy
+msgid "upgrade required(__COUNT__)"
+msgstr "(必填项)"
+
+#, fuzzy
+msgid "incompatible(__COUNT__)"
+msgstr "模块不兼容"
+
+msgid "Failed to completely delete __PLUGIN__"
+msgstr ""
+
+#, fuzzy
 msgid "Gallery Plugins"
+msgstr "图库模块"
+
+#, fuzzy
+msgid "Get More Plugins"
 msgstr "图库模块"
 
 #, fuzzy
@@ -1666,22 +1749,6 @@ msgstr ""
 "图库相关功能均来自独立的模块。您可以通过下载并安装模块来增加图库功能，或通过关闭模块来禁用不"
 "使用的功能。要使用一个功能，您必须安装，设置（如需要）并启动它。如果您不想使用一个功能，可以"
 "关闭它。"
-
-#, fuzzy
-msgid "up to date"
-msgstr "更新"
-
-#, fuzzy
-msgid "upgrade required"
-msgstr "(必填项)"
-
-#, fuzzy
-msgid "not installed"
-msgstr "卸载"
-
-#, fuzzy
-msgid "incompatible"
-msgstr "模块不兼容"
 
 #, fuzzy
 msgid "Plugin Name"
@@ -1710,6 +1777,25 @@ msgstr "模块API需要: %s (%s 可用)"
 msgid "configure"
 msgstr "设置"
 
+#, fuzzy
+msgid "up to date"
+msgstr "更新"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(必填项)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "卸载"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "模块不兼容"
+
+msgid "Repository"
+msgstr "仓库"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr "确保互联网连接正确然后再试验一次。"
 
@@ -1719,48 +1805,85 @@ msgstr "仓库索引已经成功更新。"
 msgid "All plugins are already up-to-date."
 msgstr "所有插件都是最新的。"
 
-msgid "Common Tasks"
-msgstr "一般任务"
-
-msgid "Modules"
-msgstr "模块"
-
-msgid "Warning: Experimental feature!"
-msgstr "警告：实验性功能！"
-
-msgid ""
-"The repository features are currently experimental, and no actual repository has been set up "
-"yet, so none of these features will work at this time."
-msgstr "仓库功能目前为试验性阶段，您还没有设置确切的仓库，现在仓库功能未开始工作。"
-
-msgid "Update Index"
-msgstr "更新索引"
-
-msgid ""
-"The Gallery repository contains the latest modules and themes extensively tested by the "
-"Gallery team. The repository index contains information about available plugins, such as the "
-"latest versions, available languages and compatibility. The index must be synchronized "
-"periodically with the Gallery server so you are informed about any available updates. No "
-"personal information is sent to the Gallery server during updating. On slower connections "
-"the process might take a minute or two."
+#, c-format
+msgid "%s plugin updated."
 msgstr ""
-"Gallery 中的仓库包含了 Gallery 工作组最新的模块和主题扩展。仓库索引包含了目前插件的信息，如版"
-"本，可用语言和兼容性。所以必须周期性的和图库的主服务器同步更新，以提醒您相关更新。不会有个人"
-"信息在更新过程中发送到图库的服务器。较慢的互联网连接可能会使更新过程变长。"
+
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid ""
+"No personal information about you or your Gallery installation is sent to the Gallery server "
+"at any time."
+msgstr ""
 
 #, c-format
 msgid ""
-"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
-"can be viewed on the Modules and Themes tabs."
-msgstr "根据最新更新 %s，仓库包含 %s 模块和%s主题。其内容可以在模块面板和主题面板中看到。"
+"Download and install new plugins quickly and easily.  If you decide you don't like a plugin, "
+"you can delete it from your Gallery.  There are multiple different plugin repositories, you "
+"can choose which ones you want to use (it's ok to use all of them at once).  Once you've "
+"chosen, you must periodically download the latest plugin list to find out about available "
+"updates. %s On slower connections the process might take a minute or two."
+msgstr ""
+
+#, c-format
+msgid "Officially Released Gallery Project plugins (%srecommended%s)"
+msgstr ""
+
+#, c-format
+msgid "last updated on %s"
+msgstr ""
+
+#, c-format
+msgid "Experimental Gallery Project plugins (%scool new features, might be buggy%s)"
+msgstr ""
+
+#, c-format
+msgid "Community plugins (%suse at your own risk!%s)"
+msgstr ""
+
+#, fuzzy
+msgid "Repository Error"
+msgstr "仓库"
+
+#, fuzzy
+msgid "You must select at least one repository."
+msgstr "您必须选择一个用户来删除。"
+
+msgid "Ok"
+msgstr ""
+
+msgid "Configure your Gallery"
+msgstr ""
 
 msgid ""
-"The index has never been updated. Click on the Update button to see what updates are "
-"available."
-msgstr "索引已经更新。点击更新按钮查看更新和升级。"
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
+msgstr ""
 
-msgid "Update"
-msgstr "更新"
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Continue button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Continue"
+msgstr "继续……"
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "升级所有插件"
+
+#, fuzzy
+msgid "Download Plugin List"
+msgstr "下载公测组件。"
+
+#, fuzzy
+msgid "Show Repository List"
+msgstr "仓库"
 
 msgid "Upgrade Gallery"
 msgstr "升级 Gallery"
@@ -1785,36 +1908,6 @@ msgstr "%s下载%s Gallery 核心"
 msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr "阅读%s升级指南%s然后执行升级"
 
-msgid "Gallery Up-To-Date"
-msgstr "Gallery 已经更新"
-
-msgid ""
-"Gallery cannot be upgraded through this interface. When a new version becomes available, "
-"upgrade instructions will be presented here."
-msgstr "Gallery 不能通过该界面升级，当新版本出现时，这里会显示升级指南。"
-
-msgid "Upgrade All Plugins"
-msgstr "升级所有插件"
-
-msgid ""
-"Gallery can automatically upgrade your themes and modules to the latest available versions. "
-"No new plugins will be downloaded."
-msgstr "Gallery 可以自动将主题和模块升级到最新版本。不会下载新插件。"
-
-msgid "Upgrade All"
-msgstr "升级所有"
-
-msgid ""
-"Once the repository index has been downloaded, a list of available plugins will be "
-"presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
-msgstr ""
-"一旦仓库索引被下载，现有的插件会显示出来。可以通过点击一般任务面板中的升级按钮下载这些插件。"
-
-msgid ""
-"The following plugins are available. Click on the action beside the plugin you're interested "
-"in to see what's available in the repository."
-msgstr "以下插件可以使用，点击你感兴趣的插件边上的动作。"
-
 msgid "Incompatible plugins are marked with an exclamation icon."
 msgstr "不兼容的插件会被感叹号标示出。"
 
@@ -1827,6 +1920,13 @@ msgstr ""
 "新版本核心模块存在。注意有些插件可能不兼容将安装的核心模块，安装前不会显示这些不兼容的插件。"
 "在安装中可以看到插件%s完成列表%s，也包括不兼容的插件，它们会以红色的图标显示出来。"
 
+#, fuzzy
+msgid "upgrade available"
+msgstr "升级 Gallery"
+
+msgid "locked"
+msgstr ""
+
 msgid "Theme Name"
 msgstr "主题名"
 
@@ -1836,86 +1936,94 @@ msgstr "模块名称"
 msgid "Latest"
 msgstr "最新"
 
+msgid "Locked Plugin"
+msgstr ""
+
 msgid "Incompatible Plugin"
 msgstr "模块不兼容"
+
+#, fuzzy
+msgid "Upgrade Available"
+msgstr "升级所有"
+
+msgid "download"
+msgstr "下载"
+
+msgid "modify"
+msgstr ""
+
+msgid "Upgrade All Plugins"
+msgstr "升级所有插件"
+
+msgid ""
+"Gallery can automatically upgrade your themes and modules to the latest available versions. "
+"No new plugins will be downloaded."
+msgstr "Gallery 可以自动将主题和模块升级到最新版本。不会下载新插件。"
+
+msgid "Upgrade All"
+msgstr "升级所有"
+
+#, fuzzy, c-format
+msgid "Download %s"
+msgstr "正在下载 %s"
 
 msgid "No packages have been selected."
 msgstr "没有包被选择。"
 
-msgid "Base Files"
-msgstr "基本文件"
-
 msgid ""
-"The base files required for the theme to work and the English (US) translation will be "
-"downloaded."
-msgstr "主题所需的基本文件和其英文翻译档会被下载。"
-
-msgid "Upgrade Base Files"
-msgstr "升级基础文件"
-
-msgid "You can upgrade the base module files."
-msgstr "可以升级基础模块文件"
-
-msgid "Upgrade base files"
-msgstr "升级基础文件"
-
-msgid "Base Files Up-To-Date"
-msgstr "基础文件已经更新"
-
-msgid "This plugin's base files are up-to-date."
-msgstr "插件的基础文件已经更新。"
-
-msgid "Updated Translations"
-msgstr "翻译已经更新"
-
-msgid ""
-"Below is a list of translations that have been updated since they were last downloaded. "
-"Select the ones you want to download."
-msgstr "下面是翻译文档列表 ，你可以选择其中的下载。"
-
-msgid "Additional Languages"
-msgstr "附加语言"
+"Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
+"of the package to download.  Language packages are optional, You only need to download the "
+"ones that you want to use on your site."
+msgstr ""
 
 #, fuzzy
-msgid ""
-"Below is a list of languages this plugin has been translated to. Select the ones you want "
-"included in addition to the ones already downloaded."
-msgstr "下列为插件的翻译列表，请选择其中您想包含的语言。"
-
-msgid "Unit Tests"
-msgstr "公测组件"
-
-msgid ""
-"This plugin has unit tests available for download, which are useful for Gallery developers. "
-"All of the module's features are available without the tests."
-msgstr "该插件正处于公测，可帮助图库开发人员。所有模块的功能都未经测试。"
-
-msgid "Download unit tests"
-msgstr "下载公测组件。"
-
-msgid "Gallery Repository Setup"
-msgstr "Gallery 仓库设置"
-
-msgid "Warning:"
-msgstr "警告："
+msgid "Base Packages"
+msgstr "基本文件"
 
 #, c-format
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data. Under your Gallery base directory, create a "
-"directory called '%s' and allow the web server to write into it by appropriately setting the "
-"permissions."
+msgid "%s: version %s (build %s)"
 msgstr ""
-"要从 Gallery 仓库中下载插件，需要指定一个可使用的路径。请在图库的目录下，创建‘%s’目录，然后给"
-"WEB服务器设置正确的写权限。"
 
-msgid "Instructions for Unix-type platforms:"
-msgstr "针对UNIX平台的指南："
+#, c-format
+msgid "%s: version %s (build %s) %sdowngrading is not supported!%s"
+msgstr ""
 
-msgid ""
-"Refreshing this page will take you to the Repository if the directory has been successfully "
-"created."
-msgstr "如果目录创建成功，刷新页面会把你带到仓库。"
+#, c-format
+msgid "%sCurrently Installed%s: version %s (build %s)"
+msgstr ""
+
+#, fuzzy
+msgid "Language Packages"
+msgstr "语言设置"
+
+#, c-format
+msgid "(%sselect all%s%sselect none%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (upgrading from %s)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s version %s"
+msgstr "PHP版本"
+
+#, c-format
+msgid "%s version %s (%snewer version %s is installed%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (currently installed)"
+msgstr ""
+
+msgid "No compatible language packages available"
+msgstr ""
+
+msgid "You must select a base package before choosing language packs."
+msgstr ""
+
+msgid "Update"
+msgstr "更新"
 
 msgid "Gallery Themes"
 msgstr "Gallery 主题"
@@ -2892,6 +3000,14 @@ msgstr "网址"
 msgid "image"
 msgstr "图片"
 
+#, fuzzy
+msgid "color"
+msgstr "核心"
+
+#, c-format
+msgid "You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s"
+msgstr ""
+
 msgid "Configuration Error: Missing Theme"
 msgstr "设置错误：主题缺失"
 
@@ -2977,6 +3093,16 @@ msgstr "确认新密码"
 
 msgid "You must enter your new password again!"
 msgstr "您必须再次输入您的新密码！"
+
+msgid ""
+"This account is not allowed to modify account settings.  Please contact your Gallery "
+"administrator"
+msgstr ""
+
+msgid ""
+"Your administrator has locked this account, preventing changes from being made to the "
+"account information."
+msgstr ""
 
 msgid "Login to your account"
 msgstr "登录到您的帐户"
@@ -3274,6 +3400,152 @@ msgstr "[测试]权限"
 
 msgid "Unit test theme"
 msgstr "公测主题"
+
+#~ msgid "Performing Maintenance Tasks"
+#~ msgstr "执行维护任务"
+
+#~ msgid "Upgrade"
+#~ msgstr "升级"
+
+#~ msgid "Download"
+#~ msgstr "下载"
+
+#~ msgid "Plugins directory does not exist."
+#~ msgstr "插件目录不存在"
+
+#~ msgid ""
+#~ "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
+#~ msgstr "不能创建插件子目录。确保服务器有该权限。"
+
+#~ msgid "Confirm module uninstall"
+#~ msgstr "确认模块卸载"
+
+#~ msgid "This will also remove any permissions and clean up any data created by this module."
+#~ msgstr "这也将删除所有权限并清除由此模块建立的所有数据。"
+
+#~ msgid "Uninstall"
+#~ msgstr "卸载"
+
+#~ msgid "Common Tasks"
+#~ msgstr "一般任务"
+
+#~ msgid "Modules"
+#~ msgstr "模块"
+
+#~ msgid "Warning: Experimental feature!"
+#~ msgstr "警告：实验性功能！"
+
+#~ msgid ""
+#~ "The repository features are currently experimental, and no actual repository has been set "
+#~ "up yet, so none of these features will work at this time."
+#~ msgstr "仓库功能目前为试验性阶段，您还没有设置确切的仓库，现在仓库功能未开始工作。"
+
+#~ msgid ""
+#~ "The Gallery repository contains the latest modules and themes extensively tested by the "
+#~ "Gallery team. The repository index contains information about available plugins, such as "
+#~ "the latest versions, available languages and compatibility. The index must be "
+#~ "synchronized periodically with the Gallery server so you are informed about any available "
+#~ "updates. No personal information is sent to the Gallery server during updating. On slower "
+#~ "connections the process might take a minute or two."
+#~ msgstr ""
+#~ "Gallery 中的仓库包含了 Gallery 工作组最新的模块和主题扩展。仓库索引包含了目前插件的信息，"
+#~ "如版本，可用语言和兼容性。所以必须周期性的和图库的主服务器同步更新，以提醒您相关更新。不会"
+#~ "有个人信息在更新过程中发送到图库的服务器。较慢的互联网连接可能会使更新过程变长。"
+
+#~ msgid ""
+#~ "As of the last update on %s, the repository contains %s modules and %s themes. Its "
+#~ "contents can be viewed on the Modules and Themes tabs."
+#~ msgstr "根据最新更新 %s，仓库包含 %s 模块和%s主题。其内容可以在模块面板和主题面板中看到。"
+
+#~ msgid ""
+#~ "The index has never been updated. Click on the Update button to see what updates are "
+#~ "available."
+#~ msgstr "索引已经更新。点击更新按钮查看更新和升级。"
+
+#~ msgid "Gallery Up-To-Date"
+#~ msgstr "Gallery 已经更新"
+
+#~ msgid ""
+#~ "Gallery cannot be upgraded through this interface. When a new version becomes available, "
+#~ "upgrade instructions will be presented here."
+#~ msgstr "Gallery 不能通过该界面升级，当新版本出现时，这里会显示升级指南。"
+
+#~ msgid ""
+#~ "Once the repository index has been downloaded, a list of available plugins will be "
+#~ "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
+#~ msgstr ""
+#~ "一旦仓库索引被下载，现有的插件会显示出来。可以通过点击一般任务面板中的升级按钮下载这些插"
+#~ "件。"
+
+#~ msgid ""
+#~ "The following plugins are available. Click on the action beside the plugin you're "
+#~ "interested in to see what's available in the repository."
+#~ msgstr "以下插件可以使用，点击你感兴趣的插件边上的动作。"
+
+#~ msgid ""
+#~ "The base files required for the theme to work and the English (US) translation will be "
+#~ "downloaded."
+#~ msgstr "主题所需的基本文件和其英文翻译档会被下载。"
+
+#~ msgid "Upgrade Base Files"
+#~ msgstr "升级基础文件"
+
+#~ msgid "You can upgrade the base module files."
+#~ msgstr "可以升级基础模块文件"
+
+#~ msgid "Upgrade base files"
+#~ msgstr "升级基础文件"
+
+#~ msgid "Base Files Up-To-Date"
+#~ msgstr "基础文件已经更新"
+
+#~ msgid "This plugin's base files are up-to-date."
+#~ msgstr "插件的基础文件已经更新。"
+
+#~ msgid "Updated Translations"
+#~ msgstr "翻译已经更新"
+
+#~ msgid ""
+#~ "Below is a list of translations that have been updated since they were last downloaded. "
+#~ "Select the ones you want to download."
+#~ msgstr "下面是翻译文档列表 ，你可以选择其中的下载。"
+
+#~ msgid "Additional Languages"
+#~ msgstr "附加语言"
+
+#, fuzzy
+#~ msgid ""
+#~ "Below is a list of languages this plugin has been translated to. Select the ones you want "
+#~ "included in addition to the ones already downloaded."
+#~ msgstr "下列为插件的翻译列表，请选择其中您想包含的语言。"
+
+#~ msgid "Unit Tests"
+#~ msgstr "公测组件"
+
+#~ msgid ""
+#~ "This plugin has unit tests available for download, which are useful for Gallery "
+#~ "developers. All of the module's features are available without the tests."
+#~ msgstr "该插件正处于公测，可帮助图库开发人员。所有模块的功能都未经测试。"
+
+#~ msgid "Gallery Repository Setup"
+#~ msgstr "Gallery 仓库设置"
+
+#~ msgid ""
+#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
+#~ "created where Gallery will store the data. Under your Gallery base directory, create a "
+#~ "directory called '%s' and allow the web server to write into it by appropriately setting "
+#~ "the permissions."
+#~ msgstr ""
+#~ "要从 Gallery 仓库中下载插件，需要指定一个可使用的路径。请在图库的目录下，创建‘%s’目录，然"
+#~ "后给WEB服务器设置正确的写权限。"
+
+#~ msgid "Instructions for Unix-type platforms:"
+#~ msgstr "针对UNIX平台的指南："
+
+#~ msgid ""
+#~ "Refreshing this page will take you to the Repository if the directory has been "
+#~ "successfully created."
+#~ msgstr "如果目录创建成功，刷新页面会把你带到仓库。"
 
 #~ msgid "create link"
 #~ msgstr "新建链接"

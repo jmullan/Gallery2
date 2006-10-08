@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.15\n"
+"Project-Id-Version: Gallery: Core 1.1.18\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-03-17 18:20+0300\n"
 "Last-Translator: Konstantin Ivanov <Continental@vollen.ru>\n"
@@ -105,21 +105,34 @@ msgstr "Полная акселерация"
 msgid "Themes"
 msgstr "Темы"
 
-msgid "Performing Maintenance Tasks"
-msgstr "Выполнение задач по обслуживанию"
+#, fuzzy
+msgid "Updating Repository Index"
+msgstr "Обновить Индекс"
+
+msgid "Scanning plugins"
+msgstr ""
+
+msgid "Done."
+msgstr "Завершено."
+
+msgid "Updating Packages"
+msgstr ""
 
 #, c-format
 msgid "Downloading %s"
 msgstr "Загрузка %s"
 
-msgid "Done."
-msgstr "Завершено."
+#, fuzzy, c-format
+msgid "Activating %s"
+msgstr "Действия"
 
-msgid "Upgrade"
-msgstr "Обновить"
+#, fuzzy
+msgid "Deleting Language Packs"
+msgstr "Язык по умолчанию"
 
-msgid "Download"
-msgstr "Загрузить"
+#, fuzzy
+msgid "Update complete."
+msgstr "Загрузка завершена."
 
 msgid "install"
 msgstr "установить"
@@ -522,9 +535,6 @@ msgstr "Выход"
 msgid "Plugins"
 msgstr ""
 
-msgid "Repository"
-msgstr "Репозитарий"
-
 msgid "Users"
 msgstr "Пользователи"
 
@@ -597,6 +607,10 @@ msgid ""
 msgstr ""
 "Стереть все существующие пользовательские сессии согласно текущим настройкам длительности "
 "сессии."
+
+#, fuzzy, c-format
+msgid "Deleted %d sessions."
+msgstr "Удаление пользовательских сессий"
 
 msgid "Delete database cache"
 msgstr "Очистка кэша базы данных"
@@ -703,18 +717,6 @@ msgstr "видеоролик"
 msgid "photo"
 msgstr "фото"
 
-msgid "download"
-msgstr "загрузить"
-
-msgid "Plugins directory does not exist."
-msgstr "Директория plugins не существует."
-
-msgid ""
-"Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-msgstr ""
-"Невозможно создать вложеные каталоги в директории plugins. Убедитесь, что Ваш веб-сервер "
-"имеет право записи в эту директорию."
-
 msgid "Couldn't create repository cache path."
 msgstr "Невозможно создать папку кэширования репозитария."
 
@@ -723,6 +725,17 @@ msgid ""
 msgstr ""
 "Невозможно создать подпапку кэширования. Убедитесь, что Ваш веб-сервер имеет право записи в "
 "эту директорию."
+
+msgid "Officially Release Repository"
+msgstr ""
+
+#, fuzzy
+msgid "Experimental Repository"
+msgstr "Репозитарий"
+
+#, fuzzy
+msgid "Community Repository"
+msgstr "Репозитарий"
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -828,6 +841,20 @@ msgstr "Отображение блоков на страницах альбом
 
 msgid "Blocks to show on photo pages"
 msgstr "Отображение блоков на страницах фотографии"
+
+#, fuzzy
+msgid "Thumbnail links in dynamic albums"
+msgstr "Использовать данный размер макета во всех вложенных альбомах"
+
+#, fuzzy
+msgid "Browse dynamic album"
+msgstr "добавьте альбом"
+
+msgid "Jump to original album"
+msgstr ""
+
+msgid "Separate link to original album"
+msgstr ""
 
 msgid "View Samples"
 msgstr "Посмореть Образцы"
@@ -1006,6 +1033,10 @@ msgstr "Локализация"
 
 msgid "Browser"
 msgstr "Browser"
+
+#, c-format
+msgid "Rows in %s table = %d"
+msgstr ""
 
 msgid "Successfully saved theme settings"
 msgstr "Настройки темы успешно сохранены"
@@ -1517,6 +1548,14 @@ msgstr "E-mail Адрес"
 msgid "(suggested)"
 msgstr "(например)"
 
+#, fuzzy
+msgid "Lock Account"
+msgstr "Ваши Настройки"
+
+msgid ""
+"Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
+msgstr ""
+
 msgid "Group Management"
 msgstr "Управление Группами"
 
@@ -1614,19 +1653,6 @@ msgstr "Запустить сейчас"
 
 msgid "Last Run Details:"
 msgstr "Данные последнего запуска:"
-
-msgid "Confirm module uninstall"
-msgstr "Подтвердите деинсталляцию модуля"
-
-#, c-format
-msgid "Do you really want to uninstall the %s module?"
-msgstr "Вы действительно хотите деинсталлировать %s модуль?"
-
-msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr "Эта операция также удалит все права доступа и любые данные, созданные этим модулем."
-
-msgid "Uninstall"
-msgstr "Деинсталляция"
 
 msgid "Performance Tuning"
 msgstr "Оптимизация производительности"
@@ -1741,7 +1767,62 @@ msgid "__PLUGIN__ needs configuration"
 msgstr ""
 
 #, fuzzy
+msgid "__PLUGIN__ deleted"
+msgstr "дезактивировать"
+
+#, fuzzy
+msgid "Warning!"
+msgstr "Внимание:"
+
+#, fuzzy
+msgid "Do you really want to uninstall __PLUGIN__?"
+msgstr "Вы действительно хотите деинсталлировать %s модуль?"
+
+msgid ""
+"This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+#, fuzzy
+msgid "Do you really want to delete __PLUGIN__?"
+msgstr "Вы действительно хотите деинсталлировать %s модуль?"
+
+msgid "This plugin will be uninstalled and its files will be deleted."
+msgstr ""
+
+msgid "disabled(__COUNT__)"
+msgstr ""
+
+#, fuzzy
+msgid "up to date(__COUNT__)"
+msgstr "Обновить"
+
+#, fuzzy
+msgid "not installed(__COUNT__)"
+msgstr "деинсталлировать"
+
+#, fuzzy
+msgid "upgrade required(__COUNT__)"
+msgstr "(обязательно)"
+
+#, fuzzy
+msgid "incompatible(__COUNT__)"
+msgstr "Несовместимый Плагин"
+
+msgid "Failed to completely delete __PLUGIN__"
+msgstr ""
+
+#, fuzzy
 msgid "Gallery Plugins"
+msgstr "Модули Галереи"
+
+#, fuzzy
+msgid "Get More Plugins"
 msgstr "Модули Галереи"
 
 #, fuzzy
@@ -1756,22 +1837,6 @@ msgstr ""
 "использование. Для использованния данной возможности Вам необходимо установить, если "
 "необходимо, то сконфигурировать и активизировать модуль. Если Вы не хотите использовать "
 "какую-либо функцию, просто сделайте ее неактивной."
-
-#, fuzzy
-msgid "up to date"
-msgstr "Обновить"
-
-#, fuzzy
-msgid "upgrade required"
-msgstr "(обязательно)"
-
-#, fuzzy
-msgid "not installed"
-msgstr "деинсталлировать"
-
-#, fuzzy
-msgid "incompatible"
-msgstr "Несовместимый Плагин"
 
 #, fuzzy
 msgid "Plugin Name"
@@ -1800,6 +1865,25 @@ msgstr "Требуется API для плагина: %s (доступен: %s)"
 msgid "configure"
 msgstr "настроить"
 
+#, fuzzy
+msgid "up to date"
+msgstr "Обновить"
+
+#, fuzzy
+msgid "upgrade required"
+msgstr "(обязательно)"
+
+#, fuzzy
+msgid "not installed"
+msgstr "деинсталлировать"
+
+#, fuzzy
+msgid "incompatible"
+msgstr "Несовместимый Плагин"
+
+msgid "Repository"
+msgstr "Репозитарий"
+
 msgid "Please make sure that your internet connection is set up properly or try again later."
 msgstr ""
 "Пожалуйста, удостовертесь, что соединение с интернет установлено должны образом, и "
@@ -1811,57 +1895,86 @@ msgstr "Индекс репозитария был успешно обновле
 msgid "All plugins are already up-to-date."
 msgstr "Все плагины имеют последнии версии."
 
-msgid "Common Tasks"
-msgstr "Общие Задачи"
+#, c-format
+msgid "%s plugin updated."
+msgstr ""
 
-msgid "Modules"
-msgstr "Модули"
-
-msgid "Warning: Experimental feature!"
-msgstr "Внимание: Эксперитентальная функция!"
+#, c-format
+msgid "%d language pack deleted."
+msgid_plural "%d language packs deleted."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 msgid ""
-"The repository features are currently experimental, and no actual repository has been set up "
-"yet, so none of these features will work at this time."
+"No personal information about you or your Gallery installation is sent to the Gallery server "
+"at any time."
 msgstr ""
-"Функции репозитария в настоящее время являются экспериментальными, и штатный репозитарий не "
-"установлен, поэтому никакие из данных функций не будут работать в настоящее время."
-
-msgid "Update Index"
-msgstr "Обновить Индекс"
-
-msgid ""
-"The Gallery repository contains the latest modules and themes extensively tested by the "
-"Gallery team. The repository index contains information about available plugins, such as the "
-"latest versions, available languages and compatibility. The index must be synchronized "
-"periodically with the Gallery server so you are informed about any available updates. No "
-"personal information is sent to the Gallery server during updating. On slower connections "
-"the process might take a minute or two."
-msgstr ""
-"Репозитарий Галереи содержит последние модули и темы, широко протестированные командой "
-"разработчиков Галереи. Индекс репозитария содержит информацию о доступных плагинах, их "
-"последних версиях, доступных переводов и совместимости. Индекс необходимо переодически "
-"синхронизировать с сервером Галереи,  таким образов, Вы будете в курсе доступных обновлений. "
-"Никакая личная информация не отправляется на сервер Галереи в процессе обновления. При "
-"использовании медленных соединений процесс может занять минуту или две."
 
 #, c-format
 msgid ""
-"As of the last update on %s, the repository contains %s modules and %s themes. Its contents "
-"can be viewed on the Modules and Themes tabs."
+"Download and install new plugins quickly and easily.  If you decide you don't like a plugin, "
+"you can delete it from your Gallery.  There are multiple different plugin repositories, you "
+"can choose which ones you want to use (it's ok to use all of them at once).  Once you've "
+"chosen, you must periodically download the latest plugin list to find out about available "
+"updates. %s On slower connections the process might take a minute or two."
 msgstr ""
-"Согласно последнию обновлению %s, репозитарий содержит %s модулей и %s тем. Их содержимое "
-"может быть просмотрено через закладки Модули и Темы."
+
+#, c-format
+msgid "Officially Released Gallery Project plugins (%srecommended%s)"
+msgstr ""
+
+#, c-format
+msgid "last updated on %s"
+msgstr ""
+
+#, c-format
+msgid "Experimental Gallery Project plugins (%scool new features, might be buggy%s)"
+msgstr ""
+
+#, c-format
+msgid "Community plugins (%suse at your own risk!%s)"
+msgstr ""
+
+#, fuzzy
+msgid "Repository Error"
+msgstr "Репозитарий"
+
+#, fuzzy
+msgid "You must select at least one repository."
+msgstr "Вы должны отметить пользователя для исключения."
+
+msgid "Ok"
+msgstr ""
+
+msgid "Configure your Gallery"
+msgstr ""
 
 msgid ""
-"The index has never been updated. Click on the Update button to see what updates are "
-"available."
+"Before you can proceed, you have to change some permissions so that Gallery can install "
+"plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
 msgstr ""
-"Индекс никогда не обновлялся. Нажмите кнопку Обновить, чтобы узнать, какие доступны "
-"обновления."
 
-msgid "Update"
-msgstr "Обновить"
+msgid ""
+"If you have trouble changing permissions, ask your system administrator for assistance.  "
+"When you've fixed the permissions, click the Continue button to proceed."
+msgstr ""
+
+#, fuzzy
+msgid "Continue"
+msgstr "Продолжить..."
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Обновить Все Плагины"
+
+#, fuzzy
+msgid "Download Plugin List"
+msgstr "Скачать тесты ( unit tests)"
+
+#, fuzzy
+msgid "Show Repository List"
+msgstr "Репозитарий"
 
 msgid "Upgrade Gallery"
 msgstr "Обновить Галерею"
@@ -1888,15 +2001,50 @@ msgstr "%sСкачайте%s ядро Галереи"
 msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr "Прочитайте %sинструкции по обновлению%s и выполните обновление"
 
-msgid "Gallery Up-To-Date"
-msgstr "Галерея имеет последнюю версию"
+msgid "Incompatible plugins are marked with an exclamation icon."
+msgstr "Несовместимые плагины отмечены иконкой с восклицательным знаком."
 
+#, c-format
 msgid ""
-"Gallery cannot be upgraded through this interface. When a new version becomes available, "
-"upgrade instructions will be presented here."
+"A new core module version is available. There may be plugins that are incompatible with the "
+"installed core module, which are not shown here. You can view a %scomplete list%s of "
+"plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
-"Галерея не может быть обновлена через данный интерфейс. Когда станет доступна новая версия, "
-"здесь будут представлены инструкции по обновлению."
+"Доступен модуль новой версии ядра. Здесь могут находиться плагины, которые не совместимы с "
+"инсталлированные версий модуля ядра, что здесь не указано. Вы можете посмотреть %sполный "
+"список%s плагинов, вклюая несовместимые, которые отмечены красной иконкой."
+
+#, fuzzy
+msgid "upgrade available"
+msgstr "Обновить Галерею"
+
+msgid "locked"
+msgstr ""
+
+msgid "Theme Name"
+msgstr "Название Темы"
+
+msgid "Module Name"
+msgstr "Название Модуля"
+
+msgid "Latest"
+msgstr "Последняя"
+
+msgid "Locked Plugin"
+msgstr ""
+
+msgid "Incompatible Plugin"
+msgstr "Несовместимый Плагин"
+
+#, fuzzy
+msgid "Upgrade Available"
+msgstr "Обновить Все"
+
+msgid "download"
+msgstr "загрузить"
+
+msgid "modify"
+msgstr ""
 
 msgid "Upgrade All Plugins"
 msgstr "Обновить Все Плагины"
@@ -1911,134 +2059,67 @@ msgstr ""
 msgid "Upgrade All"
 msgstr "Обновить Все"
 
-msgid ""
-"Once the repository index has been downloaded, a list of available plugins will be "
-"presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
-msgstr ""
-"Как только один раз будет скачан индекс репозитария, здесь будет представлен список "
-"доступных плагинов. Он может быть скачан, если Вы нажмете кнопку Обновить на вкладки Общие "
-"Задачи."
-
-msgid ""
-"The following plugins are available. Click on the action beside the plugin you're interested "
-"in to see what's available in the repository."
-msgstr ""
-"Следующие плагины доступны. Выберете операцию за названием плагина, которым Вы "
-"интересуетесь, чтобы узнать, что доступно в репозитарии."
-
-msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr "Несовместимые плагины отмечены иконкой с восклицательным знаком."
-
-#, c-format
-msgid ""
-"A new core module version is available. There may be plugins that are incompatible with the "
-"installed core module, which are not shown here. You can view a %scomplete list%s of "
-"plugins, including incompatible ones, which are marked with a red icon."
-msgstr ""
-"Доступен модуль новой версии ядра. Здесь могут находиться плагины, которые не совместимы с "
-"инсталлированные версий модуля ядра, что здесь не указано. Вы можете посмотреть %sполный "
-"список%s плагинов, вклюая несовместимые, которые отмечены красной иконкой."
-
-msgid "Theme Name"
-msgstr "Название Темы"
-
-msgid "Module Name"
-msgstr "Название Модуля"
-
-msgid "Latest"
-msgstr "Последняя"
-
-msgid "Incompatible Plugin"
-msgstr "Несовместимый Плагин"
+#, fuzzy, c-format
+msgid "Download %s"
+msgstr "Загрузка %s"
 
 msgid "No packages have been selected."
 msgstr "Не было выбрано никаких пакетов."
 
-msgid "Base Files"
+msgid ""
+"Download a package in order to use this plugin.  You can upgrade by choosing a newer version "
+"of the package to download.  Language packages are optional, You only need to download the "
+"ones that you want to use on your site."
+msgstr ""
+
+#, fuzzy
+msgid "Base Packages"
 msgstr "Осноные Файлы"
 
-msgid ""
-"The base files required for the theme to work and the English (US) translation will be "
-"downloaded."
+#, c-format
+msgid "%s: version %s (build %s)"
 msgstr ""
-"Будут загружны основные файлы, которые требуются для работы темы с поддержкой английского "
-"языка."
-
-msgid "Upgrade Base Files"
-msgstr "Обновление Основных Файлов"
-
-msgid "You can upgrade the base module files."
-msgstr "Вы можете обновить основные файлы модуля."
-
-msgid "Upgrade base files"
-msgstr "Обновить основные файлы"
-
-msgid "Base Files Up-To-Date"
-msgstr "Основные Файлы имеют последнюю версию"
-
-msgid "This plugin's base files are up-to-date."
-msgstr "Основные файлы этого модуля имеют последнюю версию"
-
-msgid "Updated Translations"
-msgstr "Обновление переводов"
-
-msgid ""
-"Below is a list of translations that have been updated since they were last downloaded. "
-"Select the ones you want to download."
-msgstr ""
-"Ниже представлен список переводов, которые были обновлены с момента последний загрузки. "
-"Выберете, которые Вы хотите загрузить."
-
-msgid "Additional Languages"
-msgstr "Дополнительные Языки"
-
-msgid ""
-"Below is a list of languages this plugin has been translated to. Select the ones you want "
-"included in addition to the ones already downloaded."
-msgstr ""
-"Ниже представлен список языков, на которые были переведены плагины. Выберете, которые Вы "
-"хотите загрузить."
-
-msgid "Unit Tests"
-msgstr "Тесты (Unit Tests)"
-
-msgid ""
-"This plugin has unit tests available for download, which are useful for Gallery developers. "
-"All of the module's features are available without the tests."
-msgstr ""
-"Для данного плагина доступен для скачивания тест (unit test), которые может быть полезен "
-"разработчикам Галереи. Все функции модуля доступны без данного теста."
-
-msgid "Download unit tests"
-msgstr "Скачать тесты ( unit tests)"
-
-msgid "Gallery Repository Setup"
-msgstr "Настройка Репозитария Галереи"
-
-msgid "Warning:"
-msgstr "Внимание:"
 
 #, c-format
-msgid ""
-"In order to download plugins from the Gallery repository, a special directory needs to be "
-"created where Gallery will store the data. Under your Gallery base directory, create a "
-"directory called '%s' and allow the web server to write into it by appropriately setting the "
-"permissions."
+msgid "%s: version %s (build %s) %sdowngrading is not supported!%s"
 msgstr ""
-"Для того, чтобы загрузить плагины в репозитарий Галереи, необходимо создать специальную "
-"директорию, где Галерея будет хранить данные. Ниже вашей основной директории с Галереей, "
-"создайте папку под названием '%s' и разрешите веб-серверу записывать в нее путем установки "
-"соответствующих разрешений."
 
-msgid "Instructions for Unix-type platforms:"
-msgstr "Инструкция для платформ на базе Unix:"
-
-msgid ""
-"Refreshing this page will take you to the Repository if the directory has been successfully "
-"created."
+#, c-format
+msgid "%sCurrently Installed%s: version %s (build %s)"
 msgstr ""
-"Перезагрузите данную страницу и Вы попадете в репозитарий, если Ваша папка была спешно "
-"создана."
+
+#, fuzzy
+msgid "Language Packages"
+msgstr "Языковые настройки"
+
+#, c-format
+msgid "(%sselect all%s%sselect none%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (upgrading from %s)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s version %s"
+msgstr "PHP version"
+
+#, c-format
+msgid "%s version %s (%snewer version %s is installed%s)"
+msgstr ""
+
+#, c-format
+msgid "%s version %s (currently installed)"
+msgstr ""
+
+msgid "No compatible language packages available"
+msgstr ""
+
+msgid "You must select a base package before choosing language packs."
+msgstr ""
+
+msgid "Update"
+msgstr "Обновить"
 
 msgid "Gallery Themes"
 msgstr "Темы Галереи"
@@ -3109,6 +3190,14 @@ msgstr "url"
 msgid "image"
 msgstr "image"
 
+#, fuzzy
+msgid "color"
+msgstr "core"
+
+#, c-format
+msgid "You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s"
+msgstr ""
+
 msgid "Configuration Error: Missing Theme"
 msgstr "Ошибка Конфигурации: Тема не доступна"
 
@@ -3208,6 +3297,16 @@ msgstr "Проверить Новый Пароль"
 
 msgid "You must enter your new password again!"
 msgstr "Вы должны ввести Ваш новый пароль еще раз."
+
+msgid ""
+"This account is not allowed to modify account settings.  Please contact your Gallery "
+"administrator"
+msgstr ""
+
+msgid ""
+"Your administrator has locked this account, preventing changes from being made to the "
+"account information."
+msgstr ""
 
 msgid "Login to your account"
 msgstr "Вход в систему"
@@ -3542,6 +3641,179 @@ msgstr "[test] A second permission"
 
 msgid "Unit test theme"
 msgstr "Unit test theme"
+
+#~ msgid "Performing Maintenance Tasks"
+#~ msgstr "Выполнение задач по обслуживанию"
+
+#~ msgid "Upgrade"
+#~ msgstr "Обновить"
+
+#~ msgid "Download"
+#~ msgstr "Загрузить"
+
+#~ msgid "Plugins directory does not exist."
+#~ msgstr "Директория plugins не существует."
+
+#~ msgid ""
+#~ "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
+#~ msgstr ""
+#~ "Невозможно создать вложеные каталоги в директории plugins. Убедитесь, что Ваш веб-сервер "
+#~ "имеет право записи в эту директорию."
+
+#~ msgid "Confirm module uninstall"
+#~ msgstr "Подтвердите деинсталляцию модуля"
+
+#~ msgid "This will also remove any permissions and clean up any data created by this module."
+#~ msgstr "Эта операция также удалит все права доступа и любые данные, созданные этим модулем."
+
+#~ msgid "Uninstall"
+#~ msgstr "Деинсталляция"
+
+#~ msgid "Common Tasks"
+#~ msgstr "Общие Задачи"
+
+#~ msgid "Modules"
+#~ msgstr "Модули"
+
+#~ msgid "Warning: Experimental feature!"
+#~ msgstr "Внимание: Эксперитентальная функция!"
+
+#~ msgid ""
+#~ "The repository features are currently experimental, and no actual repository has been set "
+#~ "up yet, so none of these features will work at this time."
+#~ msgstr ""
+#~ "Функции репозитария в настоящее время являются экспериментальными, и штатный репозитарий "
+#~ "не установлен, поэтому никакие из данных функций не будут работать в настоящее время."
+
+#~ msgid ""
+#~ "The Gallery repository contains the latest modules and themes extensively tested by the "
+#~ "Gallery team. The repository index contains information about available plugins, such as "
+#~ "the latest versions, available languages and compatibility. The index must be "
+#~ "synchronized periodically with the Gallery server so you are informed about any available "
+#~ "updates. No personal information is sent to the Gallery server during updating. On slower "
+#~ "connections the process might take a minute or two."
+#~ msgstr ""
+#~ "Репозитарий Галереи содержит последние модули и темы, широко протестированные командой "
+#~ "разработчиков Галереи. Индекс репозитария содержит информацию о доступных плагинах, их "
+#~ "последних версиях, доступных переводов и совместимости. Индекс необходимо переодически "
+#~ "синхронизировать с сервером Галереи,  таким образов, Вы будете в курсе доступных "
+#~ "обновлений. Никакая личная информация не отправляется на сервер Галереи в процессе "
+#~ "обновления. При использовании медленных соединений процесс может занять минуту или две."
+
+#~ msgid ""
+#~ "As of the last update on %s, the repository contains %s modules and %s themes. Its "
+#~ "contents can be viewed on the Modules and Themes tabs."
+#~ msgstr ""
+#~ "Согласно последнию обновлению %s, репозитарий содержит %s модулей и %s тем. Их содержимое "
+#~ "может быть просмотрено через закладки Модули и Темы."
+
+#~ msgid ""
+#~ "The index has never been updated. Click on the Update button to see what updates are "
+#~ "available."
+#~ msgstr ""
+#~ "Индекс никогда не обновлялся. Нажмите кнопку Обновить, чтобы узнать, какие доступны "
+#~ "обновления."
+
+#~ msgid "Gallery Up-To-Date"
+#~ msgstr "Галерея имеет последнюю версию"
+
+#~ msgid ""
+#~ "Gallery cannot be upgraded through this interface. When a new version becomes available, "
+#~ "upgrade instructions will be presented here."
+#~ msgstr ""
+#~ "Галерея не может быть обновлена через данный интерфейс. Когда станет доступна новая "
+#~ "версия, здесь будут представлены инструкции по обновлению."
+
+#~ msgid ""
+#~ "Once the repository index has been downloaded, a list of available plugins will be "
+#~ "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
+#~ msgstr ""
+#~ "Как только один раз будет скачан индекс репозитария, здесь будет представлен список "
+#~ "доступных плагинов. Он может быть скачан, если Вы нажмете кнопку Обновить на вкладки "
+#~ "Общие Задачи."
+
+#~ msgid ""
+#~ "The following plugins are available. Click on the action beside the plugin you're "
+#~ "interested in to see what's available in the repository."
+#~ msgstr ""
+#~ "Следующие плагины доступны. Выберете операцию за названием плагина, которым Вы "
+#~ "интересуетесь, чтобы узнать, что доступно в репозитарии."
+
+#~ msgid ""
+#~ "The base files required for the theme to work and the English (US) translation will be "
+#~ "downloaded."
+#~ msgstr ""
+#~ "Будут загружны основные файлы, которые требуются для работы темы с поддержкой английского "
+#~ "языка."
+
+#~ msgid "Upgrade Base Files"
+#~ msgstr "Обновление Основных Файлов"
+
+#~ msgid "You can upgrade the base module files."
+#~ msgstr "Вы можете обновить основные файлы модуля."
+
+#~ msgid "Upgrade base files"
+#~ msgstr "Обновить основные файлы"
+
+#~ msgid "Base Files Up-To-Date"
+#~ msgstr "Основные Файлы имеют последнюю версию"
+
+#~ msgid "This plugin's base files are up-to-date."
+#~ msgstr "Основные файлы этого модуля имеют последнюю версию"
+
+#~ msgid "Updated Translations"
+#~ msgstr "Обновление переводов"
+
+#~ msgid ""
+#~ "Below is a list of translations that have been updated since they were last downloaded. "
+#~ "Select the ones you want to download."
+#~ msgstr ""
+#~ "Ниже представлен список переводов, которые были обновлены с момента последний загрузки. "
+#~ "Выберете, которые Вы хотите загрузить."
+
+#~ msgid "Additional Languages"
+#~ msgstr "Дополнительные Языки"
+
+#~ msgid ""
+#~ "Below is a list of languages this plugin has been translated to. Select the ones you want "
+#~ "included in addition to the ones already downloaded."
+#~ msgstr ""
+#~ "Ниже представлен список языков, на которые были переведены плагины. Выберете, которые Вы "
+#~ "хотите загрузить."
+
+#~ msgid "Unit Tests"
+#~ msgstr "Тесты (Unit Tests)"
+
+#~ msgid ""
+#~ "This plugin has unit tests available for download, which are useful for Gallery "
+#~ "developers. All of the module's features are available without the tests."
+#~ msgstr ""
+#~ "Для данного плагина доступен для скачивания тест (unit test), которые может быть полезен "
+#~ "разработчикам Галереи. Все функции модуля доступны без данного теста."
+
+#~ msgid "Gallery Repository Setup"
+#~ msgstr "Настройка Репозитария Галереи"
+
+#~ msgid ""
+#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
+#~ "created where Gallery will store the data. Under your Gallery base directory, create a "
+#~ "directory called '%s' and allow the web server to write into it by appropriately setting "
+#~ "the permissions."
+#~ msgstr ""
+#~ "Для того, чтобы загрузить плагины в репозитарий Галереи, необходимо создать специальную "
+#~ "директорию, где Галерея будет хранить данные. Ниже вашей основной директории с Галереей, "
+#~ "создайте папку под названием '%s' и разрешите веб-серверу записывать в нее путем "
+#~ "установки соответствующих разрешений."
+
+#~ msgid "Instructions for Unix-type platforms:"
+#~ msgstr "Инструкция для платформ на базе Unix:"
+
+#~ msgid ""
+#~ "Refreshing this page will take you to the Repository if the directory has been "
+#~ "successfully created."
+#~ msgstr ""
+#~ "Перезагрузите данную страницу и Вы попадете в репозитарий, если Ваша папка была спешно "
+#~ "создана."
 
 #~ msgid "create link"
 #~ msgstr "установить связь"
