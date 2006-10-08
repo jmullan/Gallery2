@@ -661,6 +661,9 @@ class Gallery {
 	    ini_set('short_open_tag', false);
 	    ini_set('allow_call_time_pass_reference', false);
 	}
+	if (isset($this->_storage)) {
+	    $this->_storage->setDebug((bool)$debug);
+	}
     }
 
     /**
@@ -706,6 +709,9 @@ class Gallery {
     function startRecordingDebugSnippet() {
 	$this->_debugSnippetActive = true;
 	$this->_debugSnippet = '';
+	if (isset($this->_storage) && !$this->_debug) {
+	    $this->_storage->setDebug(true);
+	}
     }
 
     /**
@@ -716,6 +722,9 @@ class Gallery {
 	$this->_debugSnippetActive = false;
 	$tmp = $this->_debugSnippet;
 	$this->_debugSnippet = '';
+	if (isset($this->_storage) && !$this->_debug) {
+	    $this->_storage->setDebug(false);
+	}
 	return $tmp;
     }
 

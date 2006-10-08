@@ -1270,6 +1270,19 @@ class GalleryStorage {
     }
 
     /**
+     * Set Adodb debug mode.
+     * @param bool $debug
+     */
+    function setDebug($debug) {
+	if (isset($this->_db)) {
+	    $this->_db->debug = $debug;
+	}
+	if (isset($this->_nonTransactionalDb)) {
+	    $this->_nonTransactionalDb->debug = $debug;
+	}
+    }
+
+    /**
      * Cast the value to the proper member type when interacting with the database.  Optionally also
      * perform a UTF-8-safe truncation for strings.
      *
