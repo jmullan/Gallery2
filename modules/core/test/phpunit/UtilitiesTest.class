@@ -1316,6 +1316,7 @@ class UtilitiesTest extends GalleryTestCase {
      * /a/b if we don't have read+execute permission on /a/b.
      * In case we don't have r+w for the root directory /, we are in an infinite loop unless we
      * check the result of dirname($dir).
+     * Another common case: open_basedir.
      * Also note that dirname(__FILE__) returns the filename without path if any parent folder
      * is missing the read permission.
      */
