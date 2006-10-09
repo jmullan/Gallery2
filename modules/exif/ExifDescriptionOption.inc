@@ -164,8 +164,14 @@ class ExifDescriptionOption extends ItemAddOption {
 			$preserveOriginal = ($addOption & EXIF_ITEM_ROTATE_PRESERVE) ? 1 : 0;
 
 			if (!empty($args)) {
-			    $ret = GalleryCoreApi::applyToolkitOperation($operation, $args,
-						$preserveOriginal, $currentItems[$i]);
+			    list ($ret, $preferred) =
+				GalleryCoreApi::fetchPreferredsByItemIds(array($itemId));
+			    if ($ret) {
+				return array($ret, null, null);
+			    }
+			    $ret = GalleryCoreApi::applyToolkitOperation(
+				    $operation, $args, $preserveOriginal, $currentItems[$i],
+				    empty($preferred) ? null : $preferred[$itemId]);
 			    if ($ret) {
 				return array($ret, null, null);
 			    }
