@@ -138,14 +138,6 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		return array($ret, null, null, null);
 	    }
 
-	    if ($operation == 'rotate' && $args != array(180)) {
-		$ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(
-		    array($item->getId()));
-		if ($ret) {
-		    return array($ret, null, null, null);
-		}
-	    }
-
 	    /* Set our status message */
 	    switch ($operation) {
 	    case 'rotate':

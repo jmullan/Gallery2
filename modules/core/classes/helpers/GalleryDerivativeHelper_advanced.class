@@ -128,8 +128,7 @@ class GalleryDerivativeHelper_advanced {
 	    }
 
 	    /* Apply the transform as necessary */
-	    $changed = array();
-	    $changedIds = array();
+	    $changed = $changedIds = array();
 	    foreach ($derivatives as $derivative) {
 		foreach ($toolkits as $toolkitId => $toolkit) {
 		    $currentOperations = $derivative->getDerivativeOperations();
@@ -182,12 +181,10 @@ class GalleryDerivativeHelper_advanced {
 	$lockIds = array();
 	if (empty($preferred) && !$preserveOriginal) {
 	    /*
-	     * We have no preferred photo, and we're not preserving the
-	     * original.  So, we're changing the original photo here.  Make
-	     * the appropriate change, then expire the derivative tree.
-	     *
-	     * Note that we are explicitly not allowing linked items to execute
-	     * this code!
+	     * We have no preferred photo, and we're not preserving the original.  So, we're
+	     * changing the original photo here.  Make the appropriate change, then expire the
+	     * derivative tree.
+	     * Note that we are explicitly not allowing linked items to execute this code!
 	     */
 
 	    /* Get the path of the source */
@@ -222,7 +219,7 @@ class GalleryDerivativeHelper_advanced {
 
 	    /* Let our change ripple down the derivative tree, if necessary */
 	    $ret = GalleryCoreApi::adjustDependentDerivatives(
-	    $item->getId(), sprintf('%s|%s', $operation, join(',', $args)));
+		    $item->getId(), sprintf('%s|%s', $operation, implode(',', $args)));
 	    if ($ret) {
 		return $ret;
 	    }
@@ -248,11 +245,6 @@ class GalleryDerivativeHelper_advanced {
 		if ($ret) {
 		    return $ret;
 		}
-	    }
-
-	    $ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($item->getId()));
-	    if ($ret) {
-		return $ret;
 	    }
 	} else {
 	    /* If we have no preferred, then create one */
@@ -337,6 +329,18 @@ class GalleryDerivativeHelper_advanced {
 		if ($ret) {
 		    return $ret;
 		}
+	    }
+	}
+
+	if ($operation == 'rotate' && $args != array(180)) {
+	    $ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(array($item->getId()));
+	    if ($ret) {
+		return $ret;
+	    }
+	} else if (empty($preferred) && !$preserveOriginal) {
+	    $ret = GalleryCoreApi::expireDerivativeTreeBySourceIds(array($item->getId()));
+	    if ($ret) {
+		return $ret;
 	    }
 	}
 
