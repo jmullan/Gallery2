@@ -36,6 +36,7 @@
     {g->text text="Continue..."}
   </a>
 </div>
+&nbsp;{* Makes text updates appear in IE6 *}
 
 {*
  * After the template is sent to the browser, Gallery will send a
