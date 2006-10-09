@@ -39,21 +39,21 @@ function initWatermarkFloater(floater_id, background_id, watermark_width,
     floater_dd = new YAHOO.util.DD(floater_id);
 
     var scale = 1.0;
-    if (watermark_width > (0.9 * background_width)) {
-	scale = (0.9 * background_width) / watermark_width;
+    if (watermark_width > (0.85 * background_width)) {
+	scale = (0.85 * background_width) / watermark_width;
     }
-    if (watermark_height > (0.9 * background_height)) {
-	scale = Math.min(scale, (0.9 * background_height) / watermark_height);
+    if (watermark_height > (0.85 * background_height)) {
+	scale = Math.min(scale, (0.85 * background_height) / watermark_height);
     }
 
-    floater_el.width = watermark_width * scale;
-    floater_el.style.width = floater_el.width + "px";
+    floater_width = Math.round(watermark_width * scale);
+    floater_height = Math.round(watermark_height * scale);
 
-    floater_el.height = watermark_height * scale;
-    floater_el.style.height = floater_el.height + "px";
+    floater_el.width = floater_width;
+    floater_el.style.width = floater_width + "px";
 
-    floater_width = pxToNumber(floater_el.style.width);
-    floater_height = pxToNumber(floater_el.style.height);
+    floater_el.height = floater_height;
+    floater_el.style.height = floater_height + "px";
 
     var floater_x = YAHOO.util.Dom.getX(floater_id);
     var floater_y = YAHOO.util.Dom.getY(floater_id);
