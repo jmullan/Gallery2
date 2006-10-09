@@ -1311,6 +1311,24 @@ class UtilitiesTest extends GalleryTestCase {
 			    'mkdir for cache, but without specific perms');
     }
 
+    /* 
+     * For a given path /a/b/c/d, file_exists() returns false for /a/b/c/d and /a/b/c and true for
+     * /a/b if we don't have read+execute permission on /a/b.
+     * In case we don't have r+w for the root directory /, we are in an infinite loop unless we
+     * check the result of dirname($dir).
+     * Also note that dirname(__FILE__) returns the filename without path if any parent folder
+     * is missing the read permission.
+     */
+    function testGuaranteeDirExistsLoop3() {
+	global $gallery;
+
+	/* Assume we don't have r+w permission for the root directory '/'. */
+	list ($success, $created) = GalleryUtilities::guaranteeDirExists('/noread/permission');
+	/* Basically we verify that the function finishes / that there is no infinite loop. */
+	$this->assert(!$success, 'guaranteeDirExists');
+	$this->assertEquals(array(), $created);
+    }
+
     function testRoundToString() {
 	$this->assertEquals('12', GalleryUtilities::roundToString(12.34), 'no decimal');
 	$this->assertEquals('12.34', GalleryUtilities::roundToString(12.3432, 2), 'decimal');
@@ -1582,6 +1600,9 @@ class UtilitiesTestPlatform {
 
 	case '/test/one':
 	case '/test/one/two':
+	case '/noread/permission':
+	case '/noread':
+	case '/':
 	    return false;
 	}
 

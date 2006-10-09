@@ -1093,7 +1093,11 @@ class GalleryUtilities {
 	    }
 	}
 
-	list ($success, $created) = GalleryUtilities::guaranteeDirExists(dirname($dir));
+	$parentDir = dirname($dir);
+	if ($parentDir == $dir) {
+	    return array(false, array());
+	}
+	list ($success, $created) = GalleryUtilities::guaranteeDirExists($parentDir);
 	if ($success) {
 	    $success = !empty($dirPerms) ? $platform->mkdir($dir, $dirPerms)
 					 : $platform->mkdir($dir);
