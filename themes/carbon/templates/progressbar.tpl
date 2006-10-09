@@ -71,7 +71,7 @@
   function completeProgressBar(url) {
     var link = document.getElementById('progressContinueLink');
     link.href = url;
-    link.style.display = 'block';
+    link.style.display = 'inline';
   }
 
   function errorProgressBar(html) {
