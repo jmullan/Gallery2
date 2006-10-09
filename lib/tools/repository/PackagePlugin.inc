@@ -103,7 +103,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	}
 
 	foreach ($plugins as $pluginId => $plugin) {
-	    $gallery->guaranteeTimeLimit(30);
+	    $gallery->guaranteeTimeLimit(60);
 	    if (preg_match($filter, $pluginId)) {
 		list ($ret, $pluginInfo) = $this->doPackagePlugin($plugin['type'], $pluginId);
 		if ($ret) {
