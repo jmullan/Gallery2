@@ -115,7 +115,6 @@ class AdminPluginsView extends GalleryView {
 		}
 	    }
 	}
-
 	usort($plugins, array($this, 'pluginSort'));
 
 	$AdminPlugins = array();
@@ -140,7 +139,13 @@ class AdminPluginsView extends GalleryView {
     }
 
     function pluginSort($a, $b) {
-	static $groupOrder;
+	static $groupOrder, $stateOrder;
+	if (!isset($stateOrder)) {
+	    /* unupgraded first, unconfigured second, incompatible third, inactive forth, 
+	       active fifth, uninstalled last */
+	    $stateOrder = array('unupgraded' => 1, 'unconfigured' => 2, 'incompatible' => 3, 
+				'inactive' => 4, 'active' => 5, 'uninstalled' => 6);
+	}
 	if (!isset($groupOrder)) {
 	    /* gallery first, toolkits second, other last */
 	    $groupOrder = array('gallery' => 1, 'toolkits' => 2, '' => 3, 'other' => 4);
@@ -157,12 +162,20 @@ class AdminPluginsView extends GalleryView {
 	    $bg = isset($b['groupLabel']) ? $b['groupLabel'] : $bg;
 	    return ($ag > $bg) ? 1 : -1;
 	} else {
-	    $an = $a['name'];
-	    $bn = $b['name'];
-	    if ($an == $bn) {
-		return 0;
+	    $as = $a['state'];
+	    $bs = $b['state'];
+	    $aso = $stateOrder[$as];
+	    $bso = $stateOrder[$bs];
+	    if($aso == $bso) {
+	        $an = strtolower($a['name']);
+	        $bn = strtolower($b['name']);
+	        if ($an == $bn) {
+	    	    return 0;
+		} else {
+		    return ($an > $bn) ? 1 : -1;
+		}
 	    } else {
-		return ($an > $bn) ? 1 : -1;
+		return ($aso > $bso) ? 1 : -1;
 	    }
 	}
     }
