@@ -269,14 +269,15 @@ class ExifHelper {
 	foreach ($properties as $property) {
 	    $title = $exifKeys[$property][0];
 	    for ($i = 1; $i < sizeof($exifKeys[$property]); $i++) {
-		$value =
-		    ExifHelper::getExifValue($rawExifData, explode('.', $exifKeys[$property][$i]));
+		$keyPath = explode('.', $exifKeys[$property][$i]);
+		$value = ExifHelper::getExifValue($rawExifData, $keyPath);
 		if (!isset($value)) {
-		    $value =
-			ExifHelper::getIptcValue($iptcObj, explode('.', $exifKeys[$property][$i]));
+		    $value = ExifHelper::getIptcValue($iptcObj, $keyPath);
 		}
 		if (isset($value)) {
 		    $value = ExifHelper::postProcessValue($property, $value);
+		}
+		if (isset($value)) {
 		    $results[] = array('title' => $title, 'value' => $value);
 		    break;
 		}
@@ -319,34 +320,16 @@ class ExifHelper {
 	    break;
 
 	case 'DateTime':
-	    /* Convert to localized string. */
-	    if (preg_match('#(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)#', $value, $m)) {
-		$time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
-			       (int)$m[2], (int)$m[3], (int)$m[1]);
-	    }
-	    /* This ISO 8601 pattern seems to be used by newer Adobe products */
-	    else if (preg_match('#(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)(([-+])(\d+)(:(\d+))?)?#',
-		     $value, $m)) {
-		$time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
-			       (int)$m[2], (int)$m[3], (int)$m[1]);
-	    }
-	    if (!empty($time)) {
-		if (isset($m[8])) {
-		    $offset = ((int)$m[9] * 60 + (isset($m[11]) ? (int)$m[11] : 0)) * 60;
-		    if ($m[8] == '+') {
-			$time += $offset;
-		    }
-		    else {
-			$time -= $offset;
-		    }
-		}
+	    $value = ExifHelper::_parseDate($value);
+	    if (isset($value)) {
+		/* Convert to localized string */
 		list ($ret, $format) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'format.datetime');
 		if ($ret || empty($format)) {
 		    $format = '$x $X';
 		}
 		$platform =& $gallery->getPlatform();
-		$value = $platform->strftime($format, $time);
+		$value = $platform->strftime($format, $value);
 	    }
 	    break;
 
@@ -385,38 +368,51 @@ class ExifHelper {
 	 * As of specs and practice with raw camera images and Adobe manipulated ones it seems,
 	 * that SubIFD.DateTimeOriginal and SubIFD.DateTimeDigitized indicate creation time:
 	 * both are set to shot time by cameras, scanners set only SubIFD.DateTimeDigitized.
-	 * Adobe sets IFD0.DateTime to the last modification date/time. So we prefer creation
-	 * dates.
+	 * Adobe sets IFD0.DateTime to the last modification date/time. So we prefer creation date.
 	 */
 	foreach (array('SubIFD.DateTimeOriginal', 'SubIFD.DateTimeDigitized', 'IFD0.DateTime')
 		 as $tag) {
 	    $value = ExifHelper::getExifValue($rawExifData, explode('.', $tag));
 	    if (isset($value)) {
-		if (preg_match('#(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)#', $value, $m)) {
-		    $time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
-				   (int)$m[2], (int)$m[3], (int)$m[1]);
-		}
-		/* This ISO 8601 pattern seems to be used by newer Adobe products */
-		else if (preg_match('#(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)(([-+])(\d+)(:(\d+))?)?#',
-			  $value, $m)) {
-		    $time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
-				   (int)$m[2], (int)$m[3], (int)$m[1]);
-		}
-		if (!empty($time)) {
-		    if (isset($m[8])) {
-			$offset = ((int)$m[9] * 60 + (isset($m[11]) ? (int)$m[11] : 0)) * 60;
-			if ($m[8] == '+') {
-			    $time += $offset;
-			}
-			else {
-			    $time -= $offset;
-			}
-		    }
-		    return $time;
+		$value = ExifHelper::_parseDate($value);
+		if (isset($value)) {
+		    return $value;
 		}
 	    }
 	}
 	return null;
+    }
+
+    /**
+     * Parse date string into unix timestamp.
+     * @access private
+     */
+    function _parseDate($value) {
+	/* Ignore "blank" value */
+	if ($value == '0000:00:00 00:00:00') {
+	    return null;
+	}
+	/* Standard EXIF format */
+	if (preg_match('#(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)#', $value, $m)) {
+	    $time = mktime((int)$m[4], (int)$m[5], (int)$m[6], (int)$m[2], (int)$m[3], (int)$m[1]);
+	}
+	/* This ISO 8601 pattern seems to be used by newer Adobe products */
+	else if (preg_match('#(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)(([-+])(\d+)(:(\d+))?)?#',
+		    $value, $m)) {
+	    $time = mktime((int)$m[4], (int)$m[5], (int)$m[6], (int)$m[2], (int)$m[3], (int)$m[1]);
+	}
+	if (empty($time)) {
+	    return null;
+	}
+	if (isset($m[8])) {
+	    $offset = ((int)$m[9] * 60 + (isset($m[11]) ? (int)$m[11] : 0)) * 60;
+	    if ($m[8] == '+') {
+		$time += $offset;
+	    } else {
+		$time -= $offset;
+	    }
+	}
+	return $time;
     }
 
     /**
