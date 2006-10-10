@@ -126,7 +126,7 @@ class ErrorPageView extends GalleryView {
 	/* Post Gallery::Error event */
 	$event = GalleryCoreApi::newEvent('Gallery::Error');
 	$event->setData(array('error' => $error));
-	list ($ret, $data) = GalleryCoreApi::postEvent($event);
+	list ($ret, $eventResults) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    $failsafe = true;
 	}
@@ -136,6 +136,13 @@ class ErrorPageView extends GalleryView {
 	    GalleryUtilities::setResponseHeader('HTTP/1.0 404 Not Found', false);
 	} else {
 	    GalleryUtilities::setResponseHeader('HTTP/1.0 500 Internal Server Error', false);
+	}
+
+	foreach ($eventResults as $eventResult) {
+	    if (!empty($eventResult['suppressBody'])) {
+		/* One of our error handlers has dealt with the output */
+		return;
+	    }
 	}
 
 	if (!$failsafe) {
