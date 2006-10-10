@@ -19,14 +19,10 @@
 
   {literal}
   function chooseWatermark(id) {
-    newImage = watermarkUrlMap[id];
-    var floater = document.getElementById("watermark_floater");
-    floater.src = newImage.url;
-    floater.style.width = newImage.width + "px";
-    floater.style.height = newImage.height + "px";
-    initWatermarkFloater("watermark_floater", "watermark_original",
-	newImage.width, newImage.height,
-	newImage.xPercent, newImage.yPercent);
+    var newImage = watermarkUrlMap[id];
+    document.getElementById('watermark_floater').src = newImage.url;
+    initWatermarkFloater('watermark_floater', 'watermark_original',
+	newImage.width, newImage.height, newImage.xPercent, newImage.yPercent);
   }
   {/literal}
   // ]]>
