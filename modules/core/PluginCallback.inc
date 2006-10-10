@@ -232,7 +232,14 @@ class PluginCallbackView extends GalleryView {
 	    if ($autoConfigured) {
 		list ($ret, $redirect) = $plugin->activate();
 		if ($ret) {
-		    return $ret;
+		    if ($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED) {
+			/* 
+			 * Some modules don't override autoConfigure which defaults to success.
+			 * Show the "Modules needs configuration" message.
+			 */
+		    } else {
+			return $ret;
+		    }
 		}
 
 		if ($redirect) {

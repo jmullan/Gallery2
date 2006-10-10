@@ -109,6 +109,52 @@ class PluginCallbackTest extends GalleryTestCase {
 		      'activate not called');
     }
 
+    function testInstallModuleNeedsConfiguration() {
+	GalleryUtilities::putRequestVariable('pluginType', 'module');
+	GalleryUtilities::putRequestVariable('pluginId', 'PluginCallbackControllerTest');
+
+	$this->_testPlugin->setResult('isActive', array(null, false));
+	$this->_testPlugin->setResult('installOrUpgrade', null);
+	$this->_testPlugin->setResult('autoConfigure', array(null, false));
+	$result = $this->_handleCallback('install');
+
+	$this->assertEquals(array('status' => 'success'), $result);
+	$this->assert($this->_testPlugin->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
+	$this->assert($this->_testPlugin->wasCalled('autoConfigure'),
+		      'autoConfigure not called');
+	$this->assert($this->_callback->_repository->wasCalled(
+			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
+		      'GalleryRepository::scanPlugin was not called correctly');
+    }
+
+    function testInstallModuleThatReportsWrongAutoConfigureResult() {
+	GalleryUtilities::putRequestVariable('pluginType', 'module');
+	GalleryUtilities::putRequestVariable('pluginId', 'PluginCallbackControllerTest');
+
+	$this->_testPlugin->setResult('isActive', array(null, false));
+	$this->_testPlugin->setResult('installOrUpgrade', null);
+	$this->_testPlugin->setResult('autoConfigure', array(null, true));
+	/*
+	 * Module author forgot to override autoConfigure. Be robust and still show the configure
+	 * link instead of an error page. 
+	 */
+	$this->_testPlugin->setResult('activate',
+			array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), array()));
+	$result = $this->_handleCallback('install');
+
+	$this->assertEquals(array('status' => 'success'), $result);
+	$this->assert($this->_testPlugin->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
+	$this->assert($this->_testPlugin->wasCalled('autoConfigure'),
+		      'autoConfigure not called');
+	$this->assert($this->_testPlugin->wasCalled('activate'),
+		      'activate not called');
+	$this->assert($this->_callback->_repository->wasCalled(
+			  'scanPlugin', array('module', 'PluginCallbackControllerTest')),
+		      'GalleryRepository::scanPlugin was not called correctly');
+    }
+
     function testUpgradeModule() {
 	GalleryUtilities::putRequestVariable('pluginType', 'module');
 	GalleryUtilities::putRequestVariable('pluginId', 'PluginCallbackControllerTest');
