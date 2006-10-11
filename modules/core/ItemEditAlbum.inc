@@ -43,22 +43,23 @@ class ItemEditAlbum extends ItemEditPlugin {
 	     * which will reset the form
 	     */
 	} else if (isset($form['action']['save'])) {
-	    /* Validate the input data. */
+	    /* Validate the input data */
 	    if (!is_numeric($form['thumbnail']['size']) || $form['thumbnail']['size'] < 1) {
 		$error[] = 'form[error][thumbnail][size][invalid]';
 	    }
 
-	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
-		if (!empty($form['resizes'][$i]['active'])) {
-		    if (empty($form['resizes'][$i]['width'])
-			    || empty($form['resizes'][$i]['height'])) {
-			$error[] = 'form[error][resizes][' . $i . '][size][missing]';
-		    } else if (!($tmp = rtrim($form['resizes'][$i]['width'], '%'))
-			    || !is_numeric($tmp) || $tmp < 1
-			    || !($tmp = rtrim($form['resizes'][$i]['height'], '%'))
-			    || !is_numeric($tmp) || $tmp < 1) {
-			$error[] = 'form[error][resizes][' . $i . '][size][invalid]';
-		    }
+	    $count = count($form['resizes']);
+	    for ($i = 0; $i < $count; $i++) {
+		if (empty($form['resizes'][$i]['active'])) {
+		    unset($form['resizes'][$i]);
+		} else if (empty($form['resizes'][$i]['width'])
+			|| empty($form['resizes'][$i]['height'])) {
+		    $error[] = 'form[error][resizes][' . $i . '][size][missing]';
+		} else if (!($tmp = rtrim($form['resizes'][$i]['width'], '%'))
+			|| !is_numeric($tmp) || $tmp < 1
+			|| !($tmp = rtrim($form['resizes'][$i]['height'], '%'))
+			|| !is_numeric($tmp) || $tmp < 1) {
+		    $error[] = 'form[error][resizes][' . $i . '][size][invalid]';
 		}
 	    }
 
@@ -89,14 +90,11 @@ class ItemEditAlbum extends ItemEditPlugin {
 		}
 
 		/* Add the resize-sizes back in */
-		for ($i = 0; $i < sizeof($form['resizes']); $i++) {
-		    if (empty($form['resizes'][$i]['active'])) {
-			continue;
-		    }
-
-		    $ret = GalleryCoreApi::addDerivativePreference($i, $item->getId(),
-			DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|' .
-			$form['resizes'][$i]['width'] . ',' . $form['resizes'][$i]['height']);
+		$i = 0;
+		foreach ($form['resizes'] as $resize) {
+		    $ret = GalleryCoreApi::addDerivativePreference(
+			    $i++, $item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE,
+			    'scale|' . $resize['width'] . ',' . $resize['height']);
 		    if ($ret) {
 			return array($ret, null, null, null);
 		    }
@@ -121,15 +119,11 @@ class ItemEditAlbum extends ItemEditPlugin {
 			}
 		    }
 		    if (isset($form['changeInDescendents']['resizes'])) {
-			for ($i = 0; $i < sizeof($form['resizes']); $i++) {
-			    if (empty($form['resizes'][$i]['active'])) {
-				continue;
-			    }
-
-			    $ret = GalleryCoreApi::addDerivativePreference($i, $subAlbumIds,
-				    DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|' .
-				    $form['resizes'][$i]['width'] . ',' .
-				    $form['resizes'][$i]['height']);
+			$i = 0;
+			foreach ($form['resizes'] as $resize) {
+			    $ret = GalleryCoreApi::addDerivativePreference(
+				    $i++, $subAlbumIds, DERIVATIVE_TYPE_IMAGE_RESIZE,
+				    'scale|' . $resize['width'] . ',' . $resize['height']);
 			    if ($ret) {
 				return array($ret, null, null, null);
 			    }
@@ -145,11 +139,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    $requiresProgressBar = true;
 		}
 
-		/*
-		 * Recreate the resizes, if requested to do so.
-		 * TODO: We should not delete resizes that we will be
-		 *       adding again moments later again
-		 */
+		/* Recreate the resizes, if requested to do so */
 		if (isset($form['recreateResizes'])) {
 		    $templateAdapter =& $gallery->getTemplateAdapter();
 		    $templateAdapter->registerTrailerCallback(
@@ -287,7 +277,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    if (empty($form['resizes'])) {
 		$extraBlanks = 3;
 	    } else {
-		$extraBlanks = max(2 - sizeof($form['resizes']), 0) + 1;
+		$extraBlanks = max(2 - count($form['resizes']), 0) + 1;
 	    }
 
 	    while ($extraBlanks-- > 0) {
@@ -302,7 +292,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	/* Checkboxes are annoying in that they are empty if false */
 	$form['recreateThumbnails'] = !empty($form['recreateThumbnails']);
 	$form['recreateResizes'] = !empty($form['recreateThumbnails']);
-	for ($i = 0; $i < sizeof($form['resizes']); $i++) {
+	for ($i = 0; $i < count($form['resizes']); $i++) {
 	    $form['resizes'][$i]['active'] = !empty($form['resizes'][$i]['active']);
 	}
 
@@ -554,7 +544,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 	$batchSize = 100;
 	$childItems = array();
-	$total = sizeof($childIds);
+	$total = count($childIds);
 	$ind = 0;
 	$step = min(500, intval($total / 20) + 1);
 	$thumbnailSizes = array();
@@ -614,10 +604,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    /* Load the source of the thumbnail */
 		    list ($ret, $source) = GalleryCoreApi::loadEntitiesById($sourceId);
 		    if ($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			/*
-			 * Someone deleted the source image, we can do
-			 * nothing but delete the thumbnail
-			 */
+			/* Someone deleted the source image, we can only delete the thumbnail */
 			list ($ret, $lockIds[]) =
 			    GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 			if ($ret) {
@@ -637,12 +624,11 @@ class ItemEditAlbum extends ItemEditPlugin {
 					      $thumbnail->getDerivativeOperations());
 		} else {
 		    /*
-		     * There is no thumbnail yet (maybe the file was uploaded
-		     * when there was no graphic toolkit). Build new thumbnail
-		     * from source if its a GalleryDataItem (with mimeType)
+		     * There is no thumbnail yet (maybe the file was uploaded when there was no
+		     * graphic toolkit). Build new thumbnail from source if it's a GalleryDataItem.
 		     */
 		    if (!GalleryUtilities::isA($child, 'GalleryDataItem')) {
-			/* Its an album or something else, we can't make a thumbnail */
+			/* It's an album or something else, we can't make a thumbnail */
 			continue;
 		    }
 
