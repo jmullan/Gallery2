@@ -73,13 +73,14 @@ if (phpversion() >= '4') {
 	    $traceSource = debug_backtrace();
 	    array_shift($traceSource);
 	    foreach ($traceSource as $traceEntry) {
-		$buf = ' <B>in</B> ' . $traceEntry['file'];
+		/* Trace with call_user_func may miss file/line in an entry */
+		$buf = ' <B>in</B> ' . (isset($traceEntry['file']) ? $traceEntry['file'] : '??');
 		if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
 		    $buf .= " ($traceEntry[class]::$traceEntry[function]) ";
-		} else if (isset($traceEntry['class'])) {
+		} else if (isset($traceEntry['function'])) {
 		    $buf .= " ($traceEntry[function]) ";
 		}
-		$buf .= " <B>at line</B> $traceEntry[line]";
+		$buf .= ' <B>at line</B> ' . (isset($traceEntry['line']) ? $traceEntry['line'] : '??');
 		$trace[] = $buf;
 	    }
 	    $message .= join('<BR>', $trace);
