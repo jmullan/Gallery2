@@ -44,13 +44,12 @@
 
   <script type="text/javascript">
     //<![CDATA[
-    // Validation code.  This Javascript snippet validates the source and destination
-    // information to make sure that you don't attempt to do something that you shouldn't,
-    // ie, it will help you to avoid the situation where you try to move an item into
-    // an album where you don't have the right permissions.	 This is only a hint to the
-    // UI -- we perform the same permission checks on the server side (so circumventing
-    // or disabling this javascript won't allow you to do something that you don't have
-    // permission to do anyway).
+    // Validation code.  This Javascript snippet validates the source and destination information
+    // to make sure that you don't attempt to do something that you shouldn't, ie, it will help
+    // you to avoid the situation where you try to move an item into an album where you don't have
+    // the right permissions.  This is only a hint to the UI -- we perform the same permission
+    // checks on the server side (so circumventing or disabling this javascript won't allow you to
+    // do something that you don't have permission to do anyway).
 
     // The user can add data items to these albums
     permission = new Array();
