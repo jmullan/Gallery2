@@ -17,22 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @version $Revision$ $Date$
- * @package GalleryCore
- * @subpackage UserInterface
- * @author Jozef Selesi <selesi at gmail dot com>
- */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
 
 /**
  * This controller will handle an administration request for a module
- *
  * @package GalleryCore
  * @subpackage UserInterface
- *
+ * @author Jozef Selesi <selesi at gmail dot com>
+ * @version $Revision$ $Date$
  */
 class AdminRepositoryDownloadController extends GalleryController {
 
@@ -167,6 +161,13 @@ class AdminRepositoryDownloadController extends GalleryController {
 	$platform =& $gallery->getPlatform();
 	$templateAdapter =& $gallery->getTemplateAdapter();
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+	$titleText = $module->translate('Updating Packages');
+	$templateAdapter->updateProgressBar($titleText, '', 0);
+
 	/* Create download file list. */
 	$sourcedFiles = array();
 	foreach ($installPackages as $source => $packages) {
@@ -176,17 +177,11 @@ class AdminRepositoryDownloadController extends GalleryController {
 
 	    list ($ret, $tmp) = $repositories[$source]->getDownloadFileList($packages);
 	    if ($ret) {
-		$templateAdapter->errorProgressBar($ret);
 		return $ret;
 	    }
 	    $sourcedFiles[$source] = empty($sourcedFiles[$source])
 		? $tmp
 		: array_merge($sourcedFiles[$source], $tmp);
-	}
-
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret) {
-	    return $ret;
 	}
 
 	$totalActions = 0;
@@ -207,7 +202,6 @@ class AdminRepositoryDownloadController extends GalleryController {
 
 	/* Download files. */
 	$currentAction = 0;
-	$titleText = $module->translate('Updating Packages');
 	foreach ($sourcedFiles as $source => $files) {
 	    $repository = $repositories[$source];
 
@@ -220,20 +214,15 @@ class AdminRepositoryDownloadController extends GalleryController {
 		    $currentAction++;
 
 		    foreach ($packageUrls as $packageName => $relativePackageUrl) {
-			$ret = $templateAdapter->updateProgressBar(
+			$templateAdapter->updateProgressBar(
 			    $titleText,
 			    sprintf($module->translate('Downloading %s'), $pluginName),
 			    $currentAction / $totalActions);
-			if ($ret) {
-			    $templateAdapter->errorProgressBar($ret);
-			    return $ret;
-			}
 
 			/* Download and unpack package. */
 			list ($ret, $pluginDescriptor) = $repository->downloadAndUnpack(
 			    $pluginType, $pluginId, $packageName, $relativePackageUrl);
 			if ($ret) {
-			    $templateAdapter->errorProgressBar($ret);
 			    return $ret;
 			}
 
@@ -243,17 +232,13 @@ class AdminRepositoryDownloadController extends GalleryController {
 			} else {
 			    /* Sanity check. */
 			    if (empty($descriptor)) {
-				$ret = GalleryCoreApi::error(
-				    ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-				    'Descriptor must not be empty.');
-				$templateAdapter->errorProgressBar($ret);
-				return $ret;
+				return GalleryCoreApi::error(ERROR_STORAGE_FAILURE,
+					__FILE__, __LINE__, 'Descriptor must not be empty.');
 			    }
 
 			    /* Check the unpacked files' integrity. */
 			    $ret = $repository->verifyPackageIntegrity($packageName, $descriptor);
 			    if ($ret) {
-				$templateAdapter->errorProgressBar($ret);
 				return $ret;
 			    }
 
@@ -261,13 +246,11 @@ class AdminRepositoryDownloadController extends GalleryController {
 			    list ($ret, $version, $build) = $repository->getPackageVersionAndBuild(
 				$pluginType, $pluginId, $packageName);
 			    if ($ret) {
-				$templateAdapter->errorProgressBar($ret);
 				return $ret;
 			    }
 			    $ret = $repository->updatePackageMetaData(
 				$pluginType, $pluginId, $packageName, $version, $build, 0);
 			    if ($ret) {
-				$templateAdapter->errorProgressBar($ret);
 				return $ret;
 			    }
 			}
@@ -280,7 +263,6 @@ class AdminRepositoryDownloadController extends GalleryController {
 		     */
 		    list ($ret, $ignored) = GalleryCoreApi::fetchPluginStatus($pluginType, true);
 		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
 			return $ret;
 		    }
 
@@ -289,30 +271,23 @@ class AdminRepositoryDownloadController extends GalleryController {
 		     * @todo: Refactor this code duplication away
 		     */
 
-		    $ret = $templateAdapter->updateProgressBar(
+		    $templateAdapter->updateProgressBar(
 			$titleText, sprintf($module->translate('Activating %s'), $pluginName),
 			$currentAction / $totalActions);
-		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
-			return $ret;
-		    }
 
 		    list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
 		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
 			return $ret;
 		    }
 
 		    $ret = $plugin->installOrUpgrade();
 		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
 			return $ret;
 		    }
 
 		    if ($pluginType == 'module') {
 			list ($ret, $autoConfigured) = $plugin->autoConfigure();
 			if ($ret) {
-			    $templateAdapter->errorProgressBar($ret);
 			    return $ret;
 			}
 		    } else {
@@ -323,7 +298,6 @@ class AdminRepositoryDownloadController extends GalleryController {
 		    if ($autoConfigured) {
 			list ($ret, $redirect) = $plugin->activate();
 			if ($ret) {
-			    $templateAdapter->errorProgressBar($ret);
 			    return $ret;
 			}
 			/* Ignore the redirect */
@@ -344,12 +318,8 @@ class AdminRepositoryDownloadController extends GalleryController {
 	    foreach ($plugins as $pluginId => $languages) {
 		foreach ($languages as $language) {
 		    $currentAction++;
-		    $ret = $templateAdapter->updateProgressBar(
+		    $templateAdapter->updateProgressBar(
 			$titleText, $deleteText, $currentAction / $totalActions);
-		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
-			return $ret;
-		    }
 
 		    $actual = 0;
 		    $dir = "$g2base/${pluginType}s/$pluginId/locale/$language";
@@ -369,7 +339,6 @@ class AdminRepositoryDownloadController extends GalleryController {
 			      'pluginId' => $pluginId,
 			      'packageName' => 'lang-' . $language));
 		    if ($ret) {
-			$templateAdapter->errorProgressBar($ret);
 			return $ret;
 		    }
 
@@ -381,12 +350,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 	}
 
 	/* Update progress bar. */
-	$ret = $templateAdapter->updateProgressBar(
-	    $titleText, $module->translate('Update complete.'), 1);
-	if ($ret) {
-	    $templateAdapter->errorProgressBar($ret);
-	    return $ret;
-	}
+	$templateAdapter->updateProgressBar($titleText, $module->translate('Update complete.'), 1);
 
 	/* Show link to return to the previously selected tab. */
 	$redirect['view'] = 'core.SiteAdmin';
@@ -401,9 +365,6 @@ class AdminRepositoryDownloadController extends GalleryController {
 
 /**
  * This view will show all repository-related features.
- *
- * @package GalleryCore
- * @subpackage UserInterface
  */
 class AdminRepositoryDownloadView extends GalleryView {
 

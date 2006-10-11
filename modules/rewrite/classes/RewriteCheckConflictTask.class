@@ -61,11 +61,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	    return array($ret, null, null);
 	}
 	$message = $module->translate('Processing...');
-
-	$ret = $templateAdapter->updateProgressBar('', $message, '');
-	if ($ret) {
-	    return array($ret, null, null);
-	}
+	$templateAdapter->updateProgressBar('', $message, '');
 
 	list ($ret, $results) =
 	    $gallery->search('SELECT [Item::id] FROM [Item] ' .
@@ -107,10 +103,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	    if (++$i % 5 == 0 || $i == $total) {
 		$message = $module->translate(
 		    array('text' => 'Checking item %d of %d', 'arg1' => $i, 'arg2' => $total));
-		$ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
-		if ($ret) {
-		    return array($ret, null, null);
-		}
+		$templateAdapter->updateProgressBar($message, '', $i / $total);
 	    }
 	}
 

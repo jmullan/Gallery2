@@ -891,6 +891,13 @@ class GalleryTemplateAdapter {
 	    if (is_array($ret)) {
 		$ret = $ret[0];
 	    }
+	    if ($ret) {
+		/* If progress bar is in use, report error via its interface */
+		global $gallery;
+		if ($gallery->getCurrentView() == 'core.ProgressBar') {
+		    $this->errorProgressBar($ret);
+		}
+	    }
 	}
     }
 
@@ -917,13 +924,25 @@ class GalleryTemplateAdapter {
 
     /**
      * Update progress bar
+     * @param string $title top heading
+     * @param string $description subheading
+     * @param float $percentComplete from 0 to 1
      */
     function updateProgressBar($title, $description, $percentComplete) {
 	static $coreModule;
 	if (!isset($coreModule)) {
 	    list ($ret, $coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
 	    if ($ret) {
-		return $ret;
+		/*
+		 * Unlikely this will ever be used.. but do update it if exact form of
+		 * translate() calls (with text+arg1+arg2) in this function ever change.
+		 */
+		eval('class GalleryTemplateAdapterFallbackCoreModule {
+		    function translate($x) {
+			return sprintf($x[\'text\'], $x[\'arg1\'], $x[\'arg2\']);
+		    }
+		}');
+		$coreModule = new GalleryTemplateAdapterFallbackCoreModule();
 	    }
 	}
 
@@ -957,9 +976,8 @@ class GalleryTemplateAdapter {
 	$memoryTotal = (0 < ini_get('memory_limit')) ? ini_get('memory_limit') : 0;
 
 	/*
-	 * Ensure that percentComplete is in a dotted-decimal format.  Since
-	 * the immediateView is dealing in percentages, anything beyond two decimal
-	 * places is unnecessary.
+	 * Ensure that percentComplete is in a dotted-decimal format.  Since the immediateView
+	 * is dealing in percentages, anything beyond two decimal places is unnecessary.
 	 */
 	$percentComplete = GalleryUtilities::roundToString($percentComplete, 2);
 
@@ -967,11 +985,10 @@ class GalleryTemplateAdapter {
 	    array('text' => 'Memory used: %s, total: %s',
 		  'arg1' => $memoryUsed,
 		  'arg2' => $memoryTotal));
-	printf('<script type="text/javascript">' .
-	       'updateProgressBar("%s", "%s", "%s", "%s", "%s");</script>',
+	printf('<script type="text/javascript">'
+		. 'updateProgressBar("%s", "%s", "%s", "%s", "%s");</script>',
 	       $title, $description, $percentComplete, $timeRemaining, $memoryInfo);
 	flush();
-	return null;
     }
 
     /**

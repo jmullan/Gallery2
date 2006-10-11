@@ -299,24 +299,15 @@ class AdminMaintenanceControllerTestTaskProgressBar extends MaintenanceTask {
 
 	$success = !GalleryUtilities::getRequestVariables('forceTaskToFail');
 
-	$ret = $templateAdapter->updateProgressBar('ignored', 'ignored', 0);
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-	$ret = $templateAdapter->updateProgressBar('ignored', 'ignored', 50);
-	if ($ret) {
-	    return array($ret, null, null);
-	}
+	$templateAdapter->updateProgressBar('ignored', 'ignored', 0);
+	$templateAdapter->updateProgressBar('ignored', 'ignored', 50);
 
 	if (GalleryUtilities::getRequestVariables('forceTaskToError')) {
 	    return array(GalleryCoreApi::error(ERROR_UNKNOWN),
 			 null, null);
 	}
 
-	$ret = $templateAdapter->updateProgressBar('ignored', 'ignored', 100);
-	if ($ret) {
-	    return array($ret,  null, null);
-	}
+	$templateAdapter->updateProgressBar('ignored', 'ignored', 100);
 
 	return array(null, $success,
 		     array(($success ? 'success' : 'fail') . ' details'));

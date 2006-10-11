@@ -144,15 +144,10 @@ class ConfirmPicasaImportController extends GalleryController {
 	$gallery->guaranteeTimeLimit(30);
 	$newAlbumInstanceId = false;
 
-	/*
-	 * We definitely need notices before each album.
-	 */
-	$ret = $templateAdapter->updateProgressBar(
+	/* We definitely need notices before each album */
+	$templateAdapter->updateProgressBar(
 	    $module->translate('Importing albums'),
 	    $picasaAlbum['albumName'], $numberOfItemsImported / $totalItemsToImport);
-	if ($ret) {
-	    return $ret;
-	}
 
 	$desiredname = $platform->legalizePathComponent($picasaAlbum['albumName']);
 	$k = 0;
@@ -264,13 +259,10 @@ class ConfirmPicasaImportController extends GalleryController {
 	    $filename = $importAlbumItem['name'];
 	    $filecaption = PicasaImportHelper::convertHtml($markupType, $importAlbumItem['caption'],
 		$sourceEncoding);
-	    $ret = $templateAdapter->updateProgressBar(
+	    $templateAdapter->updateProgressBar(
 		$module->translate('Importing photos'),
 		$picasaAlbum['albumName'] . ' ' . $filename,
 		$numberOfItemsImported / $totalItemsToImport);
-	    if ($ret) {
-		return $ret;
-	    }
 	    list ($base, $extension) =
 		GalleryUtilities::getFileNameComponents($filename);
 	    list ($ret, $mimeType) =

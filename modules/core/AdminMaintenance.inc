@@ -86,7 +86,6 @@ class AdminMaintenanceController extends GalleryController {
     function runTask($taskId, $task, $useProgressBar) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$templateAdapter =& $gallery->getTemplateAdapter();
 
 	list ($ret1, $success, $details) = $task->run();
 	if ($ret1) {
@@ -96,10 +95,6 @@ class AdminMaintenanceController extends GalleryController {
 
 	if ($ret1 || $ret2) {
 	    $ret = $ret1 ? $ret1 : $ret2;
-
-	    if ($useProgressBar) {
-		$templateAdapter->errorProgressBar($ret);
-	    }
 	    return array($ret, null);
 	}
 
@@ -112,6 +107,7 @@ class AdminMaintenanceController extends GalleryController {
 	$redirect['statusId'] = $session->putStatus($status);
 
 	if ($useProgressBar) {
+	    $templateAdapter =& $gallery->getTemplateAdapter();
 	    $templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
 	}
 

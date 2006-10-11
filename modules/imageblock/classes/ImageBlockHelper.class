@@ -853,10 +853,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 	    $message = $module->translate('Image Block');
 	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $ret = $templateAdapter->updateProgressBar($message, '', 0);
-	    if ($ret) {
-		return $ret;
-	    }
+	    $templateAdapter->updateProgressBar($message, '', 0);
 	}
 
 	if ($recursive) {
@@ -917,10 +914,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		}
 	    }
 	    if ($useProgressBar && (!(++$i % 30) || $i == $total)) {
-		$ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
-		if ($ret) {
-		    return $ret;
-		}
+		$templateAdapter->updateProgressBar($message, '', $i / $total);
 	    }
 	}
 	return null;

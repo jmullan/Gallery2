@@ -229,11 +229,8 @@ class ConfirmImportController extends GalleryController {
 	    if (empty($totalUsersToImport)) {
 		$totalUsersToImport = 1;
 	    }
-	    $ret = $templateAdapter->updateProgressBar(
+	    $templateAdapter->updateProgressBar(
 		$importUsersMessage, $userName, $numberOfUsersImported / $totalUsersToImport);
-	    if ($ret) {
-		return $ret;
-	    }
 
 	    /* Go ahead and create the user instance */
 	    list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
@@ -296,10 +293,7 @@ class ConfirmImportController extends GalleryController {
 	    $numberOfUsersImported++;
 	}
 
-	$ret = $templateAdapter->updateProgressBar($importUsersMessage, '', 1);
-	if ($ret) {
-	    return $ret;
-	}
+	$templateAdapter->updateProgressBar($importUsersMessage, '', 1);
 
 	/* Checkpoint to ensure users are saved to the DB in case of a later failure */
 	$ret = $storage->checkPoint();
@@ -408,11 +402,9 @@ class ConfirmImportController extends GalleryController {
 	    }
 
 	    /* We definitely need notices before each album */
-	    $ret = $templateAdapter->updateProgressBar($importPhotosMessage,
+	    $templateAdapter->updateProgressBar($importPhotosMessage,
 		    $album['name'], $numberOfItemsImported / $totalItemsToImport);
-	    if ($ret) {
-		return $ret;
-	    }
+
 	    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($targetAlbumID);
 	    if ($ret) {
 		return $ret;
@@ -869,13 +861,9 @@ class ConfirmImportController extends GalleryController {
 		    $filename = $importAlbumItem->image->name . '.' . $importAlbumItem->image->type;
 		    $filepath = $dir . $filename;
 
-		    $ret = $templateAdapter->updateProgressBar(
+		    $templateAdapter->updateProgressBar(
 			    $importPhotosMessage, $album['name'] . ' ' . $filename,
 			    $numberOfItemsImported / $totalItemsToImport);
-		    if ($ret) {
-			GalleryCoreApi::releaseLocks($importLockIds);
-			return $ret;
-		    }
 
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 		    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
@@ -1137,7 +1125,7 @@ class ConfirmImportController extends GalleryController {
 				$validCommentUid = Gallery1DataParser::isValidUid(
 					$albumsPath, $importComment->UID);
 				$g1CommenterId = $importComment->UID;
-				if (!$validCommentUid) {	
+				if (!$validCommentUid) {
 				    /* Fallback to the album owner. */
 				    $validCommentUid = Gallery1DataParser::isValidUid(
 					    $albumsPath, $album['owner']);
@@ -1189,9 +1177,9 @@ class ConfirmImportController extends GalleryController {
 			    $comment->setHost(empty($importComment->IPNumber) ?
 				    'unknown' : $importComment->IPNumber);
 			    if ($commenterId == $guestUserId) {
-				/* 
-				 * We do not have a name field for comments in G2 yet. 
-				 * We just copy the commenter name from G1 into the comment 
+				/*
+				 * We do not have a name field for comments in G2 yet.
+				 * We just copy the commenter name from G1 into the comment
 				 * subject field of G2.
 				 */
 				$comment->setSubject(
@@ -1290,18 +1278,15 @@ class ConfirmImportController extends GalleryController {
 		    return $ret;
 		}
 	    }
-	    $ret = $templateAdapter->updateProgressBar($importPhotosMessage,
+	    $templateAdapter->updateProgressBar($importPhotosMessage,
 		    $album['name'], $numberOfItemsImported / $totalItemsToImport);
-	    if ($ret) {
-		return $ret;
-	    }
-	    
+
 	    /* Checkpoint (keep open files down, save album). */
 	    $ret = $storage->checkPoint();
 	    if ($ret) {
 		return $ret;
 	    }
-	    
+
 	    $album = null;
 	    /* $i keeps track of how many passes we make over the data */
 	    $i++;
@@ -1392,23 +1377,20 @@ class ConfirmImportController extends GalleryController {
 		    }
 
 		    $thumbsCreated++;
-		    $ret = $templateAdapter->updateProgressBar(
+		    $templateAdapter->updateProgressBar(
 			$createThumbsMessage,
 			$module->translate(array('text' => 'Thumbnail %d of %d',
 						 'arg1' => $thumbsCreated,
 						 'arg2' => $itemsCreatedCount)),
 			$thumbsCreated / $itemsCreatedCount);
-		    if ($ret) {
-			return $ret;
-		    }
 		}
-		
+
 		/* Checkpoint (keep nr of open files down, save thumbnails). */
 		$ret = $storage->checkPoint();
 		if ($ret) {
 		    return $ret;
 		}
-		
+
 		GalleryDataCache::reset();
 	    }
 	}

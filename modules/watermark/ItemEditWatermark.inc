@@ -120,10 +120,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 
 	$message = $module->translate($message);
 	$templateAdapter =& $gallery->getTemplateAdapter();
-	$ret = $templateAdapter->updateProgressBar($message, $module->translate('Preparing...'), 0);
-	if ($ret) {
-	    return $ret;
-	}
+	$templateAdapter->updateProgressBar($message, $module->translate('Preparing...'), 0);
 
 	if ($recursive) {
 	    list ($ret, $itemIds) =
@@ -149,10 +146,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	    }
 	    foreach ($items as $item) {
 		if (!($i++ % 5) || $i == $total) {
-		    $ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
-		    if ($ret) {
-			return $ret;
-		    }
+		    $templateAdapter->updateProgressBar($message, '', $i / $total);
 		}
 		if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		    if ($operation == 'remove') {

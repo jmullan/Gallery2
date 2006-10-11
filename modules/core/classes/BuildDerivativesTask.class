@@ -54,11 +54,8 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    return array($ret, null, null);
 	}
 
-	$ret = $templateAdapter->updateProgressBar(
+	$templateAdapter->updateProgressBar(
 	    $module->translate('Build All Thumbnails/Resizes'), '', 0);
-	if ($ret) {
-	    return array($ret, null, null);
-	}
 
 	/* Check all existing derivatives */
 	$query = '
@@ -194,10 +191,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 
 	$message = $module->translate(
 		array('text' => 'Processing image %d of %d', 'arg1' => $i, 'arg2' => $total));
-	$ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
-	if ($ret) {
-	    return $ret;
-	}
+	$templateAdapter->updateProgressBar($message, '', $i / $total);
 	/* Release locks (avoid too many open files for flock based locking) */
 	$ret = $storage->checkPoint();
 	if ($ret) {

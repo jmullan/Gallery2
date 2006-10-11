@@ -348,10 +348,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	}
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$heading = $module->translate('Recreating resized images');
-	$ret = $templateAdapter->updateProgressBar($heading, $module->translate('Preparing...'), 0);
-	if ($ret) {
-	    return $ret;
-	}
+	$templateAdapter->updateProgressBar($heading, $module->translate('Preparing...'), 0);
 
 	/* Get the child id => child types */
 	list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($item);
@@ -389,10 +386,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (!(++$ind % $step)) {
 		    $message = $module->translate(array('text' => 'Processing image %d of %d',
 							'arg1' => $ind, 'arg2' => $total));
-		    $ret = $templateAdapter->updateProgressBar($heading, $message, $ind / $total);
-		    if ($ret) {
-			return $ret;
-		    }
+		    $templateAdapter->updateProgressBar($heading, $message, $ind / $total);
 		}
 		if (!GalleryUtilities::isA($child, 'GalleryDataItem')) {
 		    continue;
@@ -526,10 +520,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		return $ret;
 	    }
 	}
-	$ret = $templateAdapter->updateProgressBar($heading, '', 1);
-	if ($ret) {
-	    return $ret;
-	}
+	$templateAdapter->updateProgressBar($heading, '', 1);
 	$redirect = array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemEdit',
 			  'itemId' => $item->getId());
 
@@ -548,11 +539,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    return $ret;
 	}
 	$templateAdapter =& $gallery->getTemplateAdapter();
-	$ret = $templateAdapter->updateProgressBar(
-	    $module->translate('Rebuilding thumbnails...'), '', 0);
-	if ($ret) {
-	    return $ret;
-	}
+	$templateAdapter->updateProgressBar($module->translate('Rebuilding thumbnails...'), '', 0);
 
 	/* Get the child id => child types */
 	list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($item);
@@ -583,11 +570,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (!(++$ind % $step) || $ind == $total) {
 		    $message = $module->translate(array('text' => 'Processing image %d of %d',
 							'arg1' => $ind, 'arg2' => $total));
-		    $ret = $templateAdapter->updateProgressBar(
+		    $templateAdapter->updateProgressBar(
 			$message, $module->translate('Rebuilding thumbnails...'), $ind / $total);
-		    if ($ret) {
-			return $ret;
-		    }
 		}
 
 		$childId = $child->getId();

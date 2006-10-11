@@ -57,11 +57,8 @@ class SetOriginationTimestampTask extends MaintenanceTask {
 	}
 	$message = $module->translate('Processing...');
 
-	$ret = $templateAdapter->updateProgressBar(
+	$templateAdapter->updateProgressBar(
 	    $module->translate('Refresh Capture Dates'), $message, '');
-	if ($ret) {
-	    return array($ret, null, null);
-	}
 
 	list ($ret, $results) =
 	    $gallery->search('SELECT [GalleryDataItem::id] FROM [GalleryDataItem] ' .
@@ -136,10 +133,7 @@ class SetOriginationTimestampTask extends MaintenanceTask {
 
 	    $message = $module->translate(
 		array('text' => 'Processing item %d of %d', 'arg1' => $i, 'arg2' => $total));
-	    $ret = $templateAdapter->updateProgressBar($message, '', $i / $total);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
+	    $templateAdapter->updateProgressBar($message, '', $i / $total);
 	}
 
 	return array(null, true,

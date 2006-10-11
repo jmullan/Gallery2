@@ -72,11 +72,7 @@ class DeleteSessionsTask extends MaintenanceTask {
 	    return array($ret, null, null);
 	}
 
-	$ret =
-	    $templateAdapter->updateProgressBar($module->translate('Delete user sessions'), '', 0);
-	if ($ret) {
-	    return array($ret, null, null);
-	}
+	$templateAdapter->updateProgressBar($module->translate('Delete user sessions'), '', 0);
 
 	$data = array(time() - $inactivityTimeout, time() - $lifetime,
 		      $anonymousUserId, time() - (7 * 86400));
@@ -108,20 +104,13 @@ class DeleteSessionsTask extends MaintenanceTask {
 		    return array($ret, null, null);
 		}
 
-		$ret = $templateAdapter->updateProgressBar(
+		$templateAdapter->updateProgressBar(
 		    $module->translate('Delete user sessions'), '', $i / $iterations);
-		if ($ret) {
-		    return array($ret, null, null);
-		}
 	    }
 	}
 
-	$ret =
-	    $templateAdapter->updateProgressBar($module->translate('Delete user sessions'), '', 1);
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-	
+	$templateAdapter->updateProgressBar($module->translate('Delete user sessions'), '', 1);
+
 	$result = array($module->translate(array('text' => 'Deleted %d sessions.',
 						 'arg1' => (int)$total)));
 

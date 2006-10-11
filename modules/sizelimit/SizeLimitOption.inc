@@ -201,11 +201,7 @@ class SizeLimitOption extends ItemEditOption {
 	    }
 
 	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $ret =
-		$templateAdapter->updateProgressBar($module->translate('Resize complete'), '', 1);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
+	    $templateAdapter->updateProgressBar($module->translate('Resize complete'), '', 1);
 	}
 	return array(null, $error, $warning);
     }
@@ -249,11 +245,7 @@ class SizeLimitOption extends ItemEditOption {
 	    return array($ret, null, null);
 	}
 
-	$ret = $templateAdapter->updateProgressBar($module->translate('Resize Status'), '', 0);
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-
+	$templateAdapter->updateProgressBar($module->translate('Resize Status'), '', 0);
 	$totalItems = count($descendentIds);
 
 	/*
@@ -272,12 +264,9 @@ class SizeLimitOption extends ItemEditOption {
 	    }
 	    foreach ($descendents as $item) {
 		$numberOfItemsResized++;
-		$ret = $templateAdapter->updateProgressBar(
+		$templateAdapter->updateProgressBar(
 		    $module->translate('Resizing photo'), $item->getTitle(),
 		    $numberOfItemsResized / $totalItems);
-		if ($ret) {
-		    return array($ret, null, null);
-		}
 		if (!GalleryUtilities::isExactlyA($item, 'GalleryPhotoItem')) {
 		    continue;
 		}
