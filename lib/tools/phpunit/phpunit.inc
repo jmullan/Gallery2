@@ -71,7 +71,9 @@ if (phpversion() >= '4') {
 	$message = "<B>PHP ERROR:</B> ".$errstr;
 	if (function_exists('debug_backtrace')) {
 	    $traceSource = debug_backtrace();
-	    array_shift($traceSource);
+	    if (phpversion() < '5') {
+		array_shift($traceSource);
+	    }
 	    foreach ($traceSource as $traceEntry) {
 		/* Trace with call_user_func may miss file/line in an entry */
 		$buf = ' <B>in</B> ' . (isset($traceEntry['file']) ? $traceEntry['file'] : '??');
