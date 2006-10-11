@@ -68,7 +68,7 @@
     <tr>
       <td align="center">
 	{if isset($peer.thumbnail)}
-	  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$peer.id`"}">
+	  <a id="thumb_{$peer.id}" href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$peer.id`"}">
 	    {g->image item=$peer image=$peer.thumbnail maxSize=50 class="giThumbnail"}
 	  </a>
 	{else}
@@ -98,6 +98,17 @@
       </td>
     </tr>
     {/foreach}
+    <script type="text/javascript">
+      //<![CDATA[
+      {foreach from=$ItemDelete.peers item=peer}
+      {if isset($peer.thumbnail)}
+      new YAHOO.widget.Tooltip("gTooltip", {ldelim}
+          context: "thumb_{$peer.id}", text: '{g->image item=$peer image=$peer.thumbnail class="giThumbnail"}',
+          showDelay: 250 {rdelim});
+      {/if}
+      {/foreach}
+      //]]>
+  </script>
   </table>
 
   {foreach from=$ItemDelete.selectedIds item=selectedId}

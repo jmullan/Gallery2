@@ -455,3 +455,33 @@ label {
 #ProgressBar #progressContinueLink {
   font-size: 1.5em;
 }
+
+/*** Tooltip ***/
+
+#gTooltip.tt {
+	visibility:hidden;
+	position:absolute;
+	color:#333;
+	background-color:#FDFFB4;
+	font-family:arial,helvetica,verdana,sans-serif;
+	padding:2px;
+	border:1px solid #FCC90D;
+	font:100% sans-serif;
+	width:auto;
+}
+
+#gTooltip.mask {
+    z-index:0;
+    display:none;
+    position:absolute;
+    top:0;
+    left:0;
+    background-color:#CCC;
+    -moz-opacity: 0.5;
+    opacity:.50;
+    filter: alpha(opacity=50);
+    }
+
+#gTooltip.mask[id]{ /* IE6 and below Can't See This */
+    position:fixed;
+}

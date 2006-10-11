@@ -394,6 +394,10 @@ class ItemMoveView extends GalleryView {
 
 	$template->setVariable('ItemMove', $ItemMove);
 	$template->setVariable('controller', 'core.ItemMove');
+	$template->javascript('lib/yui/yahoo-min.js');
+	$template->javascript('lib/yui/dom-min.js');
+	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/container-min.js');
 	return array(null, array('body' => 'modules/core/templates/ItemMove.tpl'));
     }
 
