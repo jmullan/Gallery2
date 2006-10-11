@@ -1000,10 +1000,21 @@ class GalleryTemplateAdapter {
 
     /**
      * Display error progress bar.
+     * @param object GalleryStatus $status
      */
     function errorProgressBar($status) {
-	printf('<script type="text/javascript">errorProgressBar("%s");</script>',
-	       $status->getAsHtml());
+	global $gallery;
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret) {
+	    $isAdmin = false;
+	}
+	if ($gallery->getDebug() || $isAdmin) {
+	    $status = $status->getAsHtml($isAdmin);
+	} else {
+	    $status = 'Error ('
+		    . implode(', ', $status->getErrorCodeConstants($status->getErrorCode())) . ')';
+	}
+	printf('<script type="text/javascript">errorProgressBar("%s");</script>', $status);
     }
 
     /**
