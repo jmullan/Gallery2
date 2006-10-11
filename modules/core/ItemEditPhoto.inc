@@ -39,7 +39,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 	if (isset($form['action']['save'])) {
 
 	    /* Validate the input data */
-	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
+	    for ($i = 0; $i < count($form['resizes']); $i++) {
 		if (empty($form['resizes'][$i]['active'])) {
 		    continue;
 		}
@@ -56,20 +56,17 @@ class ItemEditPhoto extends ItemEditPlugin {
 	    }
 
 	    if (empty($error)) {
-		/* Get and delete all current resizes */
-		list ($ret, $resizesTable) =
-		    GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
+		/* Load existing resizes */
+		$itemId = $item->getId();
+		list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($itemId));
 		if ($ret) {
 		    return array($ret, null, null, null);
 		}
-		foreach ($resizesTable as $resizes) {
-		    foreach ($resizes as $resize) {
-			$postFilter = $resize->getPostFilterOperations();
-			$ret = GalleryCoreApi::deleteEntityById($resize->getId());
-			if ($ret) {
-			    return array($ret, null, null, null);
-			}
-		    }
+		$resizes = isset($resizes[$itemId]) ? $resizes[$itemId] : array();
+		$resizesTable = array();
+		foreach ($resizes as $resize) {
+		    $postFilter = $resize->getPostFilterOperations();
+		    $resizesTable[$resize->getDerivativeOperations()] = $resize;
 		}
 
 		list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
@@ -77,9 +74,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    return array($ret, null, null, null);
 		}
 
-		/*
-		 * Make sure that we have a toolkit before adding back the resizes
-		 */
+		/* Make sure that we have a toolkit before adding back the resizes */
 		list ($ret, $toolkit, $outputMimeType) =
 		    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'scale');
 		if ($ret) {
@@ -87,47 +82,66 @@ class ItemEditPhoto extends ItemEditPlugin {
 		}
 
 		if (isset($toolkit)) {
-		    /* Add the new resizes */
-		    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
+		    /* Determine operations and check against existing resizes */
+		    $count = count($form['resizes']);
+		    for ($i = 0; $i < $count; $i++) {
 			if (empty($form['resizes'][$i]['active'])) {
+			    unset($form['resizes'][$i]);
 			    continue;
 			}
 
-			list ($ret, $derivative) =
-			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative',
-								     $source->getEntityType());
-			if ($ret) {
-			    return array($ret, null, null, null);
-			}
-
-			if (!isset($derivative)) {
-			    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
-					 null, null, null);
-			}
-
-			$ret = $derivative->create($item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
-			if ($ret) {
-			    return array($ret, null, null, null);
-			}
-
-			$operations = 'scale|' . $form['resizes'][$i]['width'] . ',' .
-			    $form['resizes'][$i]['height'];
+			$operations = 'scale|' . $form['resizes'][$i]['width'] . ','
+			    . $form['resizes'][$i]['height'];
 
 			list ($ret, $newOperations, $newOutputMimeType) =
 			    GalleryCoreApi::makeSupportedViewableOperationSequence(
-				$outputMimeType, $operations);
+				    $outputMimeType, $operations);
 			if ($ret) {
 			    return array($ret, null, null, null);
 			}
-
-			if ($newOperations && $newOutputMimeType) {
-			    $derivative->setMimeType($newOutputMimeType);
-			    $derivative->setDerivativeOperations($newOperations);
-			} else {
-			    $derivative->setMimeType($outputMimeType);
-			    $derivative->setDerivativeOperations($operations);
+			if (!$newOperations || !$newOutputMimeType) {
+			    $newOperations = $operations;
+			    $newOutputMimeType = $outputMimeType;
 			}
 
+			if (isset($resizesTable[$newOperations])) {
+			    /* Keep existing resize */
+			    unset($resizesTable[$newOperations]);
+			    unset($form['resizes'][$i]);
+			} else {
+			    /* Create resize with these settings on next pass */
+			    $form['resizes'][$i]['operations'] = $newOperations;
+			    $form['resizes'][$i]['mimeType'] = $newOutputMimeType;
+			}
+		    }
+		    /* Add new resizes, using existing derivative entities until we run out */
+		    foreach ($form['resizes'] as $resizeData) {
+			if (!empty($resizesTable)) {
+			    $derivative = array_shift($resizesTable);
+			    list ($ret, $lockId) =
+				GalleryCoreApi::acquireWriteLock($derivative->getId());
+			    if ($ret) {
+				return array($ret, null, null, null);
+			    }
+			} else {
+			    list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
+				    'GalleryDerivative', $source->getEntityType());
+			    if ($ret) {
+				return array($ret, null, null, null);
+			    }
+			    if (!isset($derivative)) {
+				return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
+					     null, null, null);
+			    }
+
+			    $ret = $derivative->create($itemId, DERIVATIVE_TYPE_IMAGE_RESIZE);
+			    if ($ret) {
+				return array($ret, null, null, null);
+			    }
+			}
+
+			$derivative->setMimeType($resizeData['mimeType']);
+			$derivative->setDerivativeOperations($resizeData['operations']);
 			$derivative->setDerivativeSourceId($source->getId());
 			if (isset($postFilter)) {
 			    $derivative->setPostFilterOperations($postFilter);
@@ -137,10 +151,23 @@ class ItemEditPhoto extends ItemEditPlugin {
 			if ($ret) {
 			    return array($ret, null, null, null);
 			}
+			if (isset($lockId)) {
+			    $ret = GalleryCoreApi::releaseLocks($lockId);
+			    if ($ret) {
+				return array($ret, null, null, null);
+			    }
+			    $lockId = null;
+			}
+		    }
+		    /* Remove any leftover resizes */
+		    foreach ($resizesTable as $resize) {
+			$ret = GalleryCoreApi::deleteEntityById($resize->getId());
+			if ($ret) {
+			    return array($ret, null, null, null);
+			}
 		    }
 		}
 
-		/* Figure out where to redirect upon success */
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret) {
 		    return array($ret, null, null, null);
@@ -233,8 +260,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 
 	$template->setVariable('ItemEditPhoto', $ItemEditPhoto);
 	$template->setVariable('controller', 'core.ItemEditPhoto');
-	return array(null,
-		     'modules/core/templates/ItemEditPhoto.tpl', 'modules_core');
+	return array(null, 'modules/core/templates/ItemEditPhoto.tpl', 'modules_core');
     }
 
     /**
