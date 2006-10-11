@@ -347,8 +347,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    return $ret;
 	}
 	$templateAdapter =& $gallery->getTemplateAdapter();
-	$ret = $templateAdapter->updateProgressBar(
-	    $module->translate('Recreating resized images'), $module->translate('Preparing...'), 0);
+	$heading = $module->translate('Recreating resized images');
+	$ret = $templateAdapter->updateProgressBar($heading, $module->translate('Preparing...'), 0);
 	if ($ret) {
 	    return $ret;
 	}
@@ -359,17 +359,12 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    return $ret;
 	}
 
-	/*
-	 * for the progress bar feedback we will assume that the number of deleted
-	 * items is the same as the number of created.
-	 */
-	$total = count($childIds) * 2;
-	$runningTotal = 0;
-	$step = min(200, intval($total / 20) + 1);
 	$batchSize = 100;
-	$resizes = array();
+	$total = count($childIds);
+	$ind = 0;
+	$step = min(200, intval($total / 20) + 1);
+	$resizePrefs = array();
 	while (!empty($childIds)) {
-	    $ind = $runningTotal;	/* little true-up */
 	    $currentChildIds = array_splice($childIds, 0, $batchSize);
 	    /* Load the children */
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($currentChildIds);
@@ -377,37 +372,24 @@ class ItemEditAlbum extends ItemEditPlugin {
 		return $ret;
 	    }
 
-	    /* Get and delete all current resizes */
-	    list ($ret, $resizesTable) = GalleryCoreApi::fetchResizesByItemIds($currentChildIds);
+	    /* Load existing resizes */
+	    list ($ret, $resizesSet) = GalleryCoreApi::fetchResizesByItemIds($currentChildIds);
 	    if ($ret) {
 		return $ret;
 	    }
-
-	    foreach ($resizesTable as $resizes) {
-		if (!(++$ind % $step)) {
-		    $message = $module->translate(array('text' => 'Processing image %d of %d',
-							'arg1' => $ind, 'arg2' => $total));
-		    $ret = $templateAdapter->updateProgressBar($message,
-			    $module->translate('Rebuilding resized images...'), $ind / $total);
-		    if ($ret) {
-			return $ret;
-		    }
-		}
+	    $resizesTable = array();
+	    foreach ($resizesSet as $childId => $resizes) {
 		foreach ($resizes as $resize) {
-		    $ret = GalleryCoreApi::deleteEntityById($resize->getId());
-		    if ($ret) {
-			return $ret;
-		    }
+		    $resizesTable[$childId][$resize->getDerivativeOperations()] = $resize;
 		}
 	    }
 
-	    /* Add the new resizes */
+	    /* Update the resizes */
 	    foreach ($childItems as $child) {
 		if (!(++$ind % $step)) {
 		    $message = $module->translate(array('text' => 'Processing image %d of %d',
 							'arg1' => $ind, 'arg2' => $total));
-		    $ret = $templateAdapter->updateProgressBar($message,
-			    $module->translate('Rebuilding resized images...'), $ind / $total);
+		    $ret = $templateAdapter->updateProgressBar($heading, $message, $ind / $total);
 		    if ($ret) {
 			return $ret;
 		    }
@@ -416,8 +398,9 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    continue;
 		}
 
+		$childId = $child->getId();
 		$albumId = $child->getParentId();
-		if (empty($resizes[$albumId])) {
+		if (empty($resizePrefs[$albumId])) {
 		    /* Keep resizes for albums in memory */
 		    list ($ret, $preferences) =
 			GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
@@ -425,18 +408,19 @@ class ItemEditAlbum extends ItemEditPlugin {
 			return $ret;
 		    }
 
+		    $resizePrefs[$albumId] = array();
 		    foreach ($preferences as $preference) {
 			if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_RESIZE
 				&& preg_match('/(?:resize|scale)\|(\d+)(?:,(\d+))?/',
 					      $preference['derivativeOperations'], $matches)) {
 			    $width = $matches[1];
 			    $height = empty($matches[2]) ? $width : $matches[2];
-			    $resizes[$albumId][] =
+			    $resizePrefs[$albumId][] =
 				array('operations' => $preference['derivativeOperations'],
 				      'width' => $width, 'height' => $height);
 			}
 		    }
-		    if (empty($resizes[$albumId])) {
+		    if (empty($resizePrefs[$albumId])) {
 			return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 		    }
 		}
@@ -447,17 +431,19 @@ class ItemEditAlbum extends ItemEditPlugin {
 		}
 		$mimeType = $source->getMimeType();
 
-		for ($i = 0; $i < count($resizes[$albumId]); $i++) {
-		    if (!isset($resizes[$albumId][$i][$mimeType])) {
-			list ($ret, $resizes[$albumId][$i][$mimeType]['operations'],
-				    $resizes[$albumId][$i][$mimeType]['outputMimeType']) =
+		/* Determine operations and check against existing resizes */
+		$newResizes = array();
+		for ($i = 0; $i < count($resizePrefs[$albumId]); $i++) {
+		    if (!isset($resizePrefs[$albumId][$i][$mimeType])) {
+			list ($ret, $resizePrefs[$albumId][$i][$mimeType]['operations'],
+				    $resizePrefs[$albumId][$i][$mimeType]['outputMimeType']) =
 			    GalleryCoreApi::makeSupportedViewableOperationSequence(
-				    $mimeType, $resizes[$albumId][$i]['operations'], false);
+				    $mimeType, $resizePrefs[$albumId][$i]['operations'], false);
 			if ($ret) {
 			    return $ret;
 			}
 		    }
-		    $resize = $resizes[$albumId][$i];
+		    $resize = $resizePrefs[$albumId][$i];
 
 		    /* Validate toolkit support before adding back the resizes */
 		    if (empty($resize[$mimeType]['operations'])) {
@@ -471,18 +457,37 @@ class ItemEditAlbum extends ItemEditPlugin {
 			continue;
 		    }
 
-		    list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
-					       'GalleryDerivative', $source->getEntityType());
-		    if ($ret) {
-			return $ret;
+		    if (isset($resizesTable[$childId][$resize[$mimeType]['operations']])) {
+			/* Keep existing resize */
+			unset($resizesTable[$childId][$resize[$mimeType]['operations']]);
+		    } else {
+			/* Create resize with these settings on next pass */
+			$newResizes[] = $resize;
 		    }
-		    if (!isset($derivative)) {
-			return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
-		    }
+		}
+		/* Add new resizes, using existing derivative entities until we run out */
+		foreach ($newResizes as $resize) {
+		    if (!empty($resizesTable[$childId])) {
+			$derivative = array_shift($resizesTable[$childId]);
+			list ($ret, $lockId) =
+			    GalleryCoreApi::acquireWriteLock($derivative->getId());
+			if ($ret) {
+			    return $ret;
+			}
+		    } else {
+			list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
+				'GalleryDerivative', $source->getEntityType());
+			if ($ret) {
+			    return $ret;
+			}
+			if (!isset($derivative)) {
+			    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
+			}
 
-		    $ret = $derivative->create($child->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
-		    if ($ret) {
-			return $ret;
+			$ret = $derivative->create($childId, DERIVATIVE_TYPE_IMAGE_RESIZE);
+			if ($ret) {
+			    return $ret;
+			}
 		    }
 
 		    $derivative->setDerivativeSourceId($source->getId());
@@ -498,22 +503,35 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    if ($ret) {
 			return $ret;
 		    }
+		    if (isset($lockId)) {
+			$ret = GalleryCoreApi::releaseLocks($lockId);
+			if ($ret) {
+			    return $ret;
+			}
+			$lockId = null;
+		    }
+		}
+		/* Remove any leftover resizes */
+		if  (isset($resizesTable[$childId])) {
+		    foreach ($resizesTable[$childId] as $resize) {
+			$ret = GalleryCoreApi::deleteEntityById($resize->getId());
+			if ($ret) {
+			    return $ret;
+			}
+		    }
 		}
 	    }
-	    $runningTotal += (count($currentChildIds) * 2);
 	    $ret = $storage->checkPoint();
 	    if ($ret) {
 		return $ret;
 	    }
 	}
-	$ret = $templateAdapter->updateProgressBar(
-	    $module->translate('Recreating resized images'), 'Complete', 1);
+	$ret = $templateAdapter->updateProgressBar($heading, '', 1);
 	if ($ret) {
 	    return $ret;
 	}
-	$redirect['view'] = 'core.ItemAdmin';
-	$redirect['subView'] = 'core.ItemEdit';
-	$redirect['itemId'] = $item->getId();
+	$redirect = array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemEdit',
+			  'itemId' => $item->getId());
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
@@ -543,7 +561,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 	}
 
 	$batchSize = 100;
-	$childItems = array();
 	$total = count($childIds);
 	$ind = 0;
 	$step = min(500, intval($total / 20) + 1);
@@ -697,9 +714,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 		return $ret;
 	    }
 	}
-	$redirect['view'] = 'core.ItemAdmin';
-	$redirect['subView'] = 'core.ItemEdit';
-	$redirect['itemId'] = $item->getId();
+	$redirect = array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemEdit',
+			  'itemId' => $item->getId());
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));

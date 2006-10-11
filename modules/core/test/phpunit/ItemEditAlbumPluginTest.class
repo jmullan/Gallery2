@@ -252,16 +252,14 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $ignore) = $this->_createDerivative($child[0], $child[0]->getId(),
 							DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-							'thumbnail|100',
-							'test/file');
+							'thumbnail|100', 'test/file');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $ignore) = $this->_createDerivative($child[0], $child[0]->getId(),
-							DERIVATIVE_TYPE_IMAGE_RESIZE,
-							'scale|100,100',
-							'test/file');
+	list ($ret, $resize[0]) = $this->_createDerivative($child[0], $child[0]->getId(),
+							   DERIVATIVE_TYPE_IMAGE_RESIZE,
+							   'scale|100,100', 'test/file');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -274,10 +272,16 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	list ($ret, $resize[1]) = $this->_createDerivative($child[1], $child[1]->getId(),
+							   DERIVATIVE_TYPE_IMAGE_RESIZE,
+							   'scale|345,345', 'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	list ($ret, $ignore) = $this->_createDerivative($child[1], $child[1]->getId(),
 							DERIVATIVE_TYPE_IMAGE_PREFERRED,
-							'rotate|90',
-							'test/file');
+							'rotate|90', 'test/file');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -292,8 +296,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $ignore) = $this->_createDerivative($child[2], $child[2]->getId(),
 							DERIVATIVE_TYPE_IMAGE_PREFERRED,
-							'rotate|180',
-							'test/file');
+							'rotate|180', 'test/file');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -349,7 +352,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 				  $this->_translate('Settings saved successfully.')),
 			    $results);
 
-	/* Assert that we have 2 callbacks in the queue (recreate thumbnails and resies) */
+	/* Assert that we have 2 callbacks in the queue (recreate thumbnails and resizes) */
 	$this->assertEquals(2, $mockAdapter->getCallbackCount());
 
 	/* Run the tasks */
@@ -392,19 +395,29 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		continue;
 	    }
 	    if (count($resizes[$childId]) < 3) {
-		$this->assert(false,
-			      "Only " . count($resizes[$childId]) . " resizes for child $i");
+		$this->assert(false, "Only " . count($resizes[$childId]) . " resizes for child $i");
 		continue;
 	    }
 	    $this->assertEquals('scale|234,234',
-		$resizes[$child[$i]->getId()][0]->getDerivativeOperations(), "$i 0");
+		$resizes[$childId][0]->getDerivativeOperations(), "$i 0");
 	    $this->assertEquals('scale|345,543',
-		$resizes[$child[$i]->getId()][1]->getDerivativeOperations(), "$i 1");
+		$resizes[$childId][1]->getDerivativeOperations(), "$i 1");
 	    $this->assertEquals('scale|456,456',
-		$resizes[$child[$i]->getId()][2]->getDerivativeOperations(), "$i 2");
+		$resizes[$childId][2]->getDerivativeOperations(), "$i 2");
 	}
-	$this->assertEquals('scale|987',
-	    $resizes[$child[2]->getId()][0]->getDerivativeOperations(), "child album");
+	if (empty($resizes[$child[2]->getId()])) {
+	    $this->assert(false, 'Missing resizes for child 2');
+	} else {
+	    $this->assertEquals('scale|987',
+		    $resizes[$child[2]->getId()][0]->getDerivativeOperations(), 'child album');
+	}
+
+	/* Keep existing resize when possible */
+	$this->assertEquals($resize[1]->getId(), $resizes[$child[1]->getId()][0]->getId(),
+			    'keep resize');
+	/* Or set new size for existing entity */
+	$this->assertEquals($resize[0]->getId(), $resizes[$child[0]->getId()][0]->getId(),
+			    'recycle entity');
     }
 
     /**
