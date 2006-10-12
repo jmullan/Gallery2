@@ -31,13 +31,21 @@
 {foreach from=$ShowAllComments.comments item=comment}
 <tr><td style="text-align: center; padding: 0 4px">
   {assign var="item" value=$ShowAllComments.itemData[$comment.parentId]}
-  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
+  <a id="CommentThumb" href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
     {if isset($item.thumb)}
       {g->image item=$item image=$item.thumb maxSize=120}
     {else}
       {$item.title|default:$item.pathComponent|markup}
     {/if}
   </a>
+  <script type="text/javascript">
+    //<![CDATA[
+    {if isset($item.thumb)}
+    new YAHOO.widget.Tooltip("gTooltip", {ldelim}
+        context: "CommentThumb", text: '{g->image item=$item image=$item.thumb}', showDelay: 250 {rdelim});
+    {/if}
+    //]]>
+  </script>
 </td><td>
   <div class="one-comment gcBorder2">
   {include file="gallery:modules/comment/templates/Comment.tpl"
