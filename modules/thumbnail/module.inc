@@ -35,7 +35,7 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('1.0.7'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.8'); /* Update upgrade() function below too */
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -64,6 +64,11 @@ class ThumbnailModule extends GalleryModule {
 	    if (!$success) {
 		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					    "Unable to create directory: $thumbnailDir");
+	    }
+
+	    $ret = $this->_createThumbnailContainer();
+	    if ($ret) {
+		return $ret;
 	    }
 	    break;
 
@@ -116,56 +121,9 @@ class ThumbnailModule extends GalleryModule {
 	case '0.9.2':
 	case '0.9.3':
 	    /* Now allow thumbnail for root album; remove parent for mime type thumbnails */
-	    list ($ret, $rootId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	    if ($ret) {
-		return $ret;
-	    }
-	    $query = '
-	    SELECT
-	      [ThumbnailImage::id]
-	    FROM
-	      [ThumbnailImage], [GalleryChildEntity]
-	    WHERE
-	      [ThumbnailImage::id] = [GalleryChildEntity::id]
-	      AND
-	      [GalleryChildEntity::parentId] = ?
-	    ';
-	    list ($ret, $results) = $gallery->search($query, array((int)$rootId));
-	    if ($ret) {
-		return $ret;
-	    }
-	    $ids = array();
-	    while ($result = $results->nextResult()) {
-		$ids[] = (int)$result[0];
-	    }
-
-	    GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailImage.class');
-	    if (!empty($ids)) {
-		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
-		if ($ret) {
-		    return $ret;
-		}
-
-		list ($ret, $thumbs) = GalleryCoreApi::loadEntitiesById($ids);
-		if ($ret) {
-		    return $ret;
-		}
-
-		foreach ($thumbs as $thumb) {
-		    $thumb->setParentId(0);
-		    $ret = $thumb->save();
-		    if ($ret) {
-			GalleryCoreApi::releaseLocks($lockId);
-			return $ret;
-		    }
-		}
-
-		$ret = GalleryCoreApi::releaseLocks($lockId);
-		if ($ret) {
-		    return $ret;
-		}
-	    }
+	    /* NOTE:
+	     * Upgrade code merged into case '1.0.7' since it changes a superset of this case.
+	     */
 
 	case '0.9.4':
 	case '0.9.5':
@@ -179,6 +137,183 @@ class ThumbnailModule extends GalleryModule {
 	case '1.0.4':
 	case '1.0.5':
 	case '1.0.6':
+	case '1.0.7':
+	    /* Use a new childEntity as the container for all custom thumbnails. */
+	    $gallery->guaranteeTimeLimit(60);
+	    $storage =& $gallery->getStorage();
+	    GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailImage.class');
+
+	    $ret = $this->_createThumbnailContainer();
+	    if ($ret) {
+		return $ret;
+	    }
+	    list ($ret, $containerId) = $this->getParameter('id.container');
+	    if ($ret) {
+		return $ret;
+	    }
+	    $containerId = (int)$containerId;
+
+	    list ($ret, $rootId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    /* Before 0.9.3, mime-type thumbnails had a parentId of rootId. After 0.9.3 it was 0. */
+	    $query = '
+	    SELECT
+	      [ThumbnailImage::id], [ThumbnailImage::fileName]
+	    FROM
+	      [ThumbnailImage], [GalleryChildEntity]
+	    WHERE
+	      [ThumbnailImage::id] = [GalleryChildEntity::id]
+	      AND
+	      [GalleryChildEntity::parentId] IN (?,?) 
+	    ';
+	    list ($ret, $results) =
+	    	$gallery->search($query, array((int)$rootId, 0));
+	    if ($ret) {
+		return $ret;
+	    }
+	    $ids = $fileNames = array();
+	    while ($result = $results->nextResult()) {
+		$ids[] = (int)$result[0];
+		$fileNames[(int)$result[0]] = $result[1];
+	    }
+
+	    $fileSystemEntityQuery = '
+		INSERT INTO [GalleryFileSystemEntity] ([::id], [::pathComponent])
+		VALUES (?, ?)
+	    ';
+
+	    if (!empty($ids)) {
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
+		if ($ret) {
+		    return $ret;
+		}
+
+		/*
+		 * Since the class hierarchy for ThumbnailImage changed in this upgrade,
+		 * we can't use loadEntitiesById().
+		 */
+		$parentIdQuery = '
+		UPDATE [GalleryChildEntity]
+		SET [::parentId] = ?
+		WHERE [GalleryChildEntity::id] = ?
+		';
+
+		foreach ($ids as $id) {
+		    $gallery->guaranteeTimeLimit(30);
+		    /* Change the parent. */
+		    $ret = $storage->execute($parentIdQuery, array($containerId, $id));
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret;
+		    }
+
+		    /* Add the necessary rows for a FileSystemEntity. */
+		    $ret = $storage->execute($fileSystemEntityQuery, array($id, $fileNames[$id]));
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret;
+		    }
+		}
+
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+
+	    /* Custom thumbnails are now stored hierarchically, not flat anymore. */
+	    $query = '
+	    SELECT
+	      [ThumbnailImage::id], [ThumbnailImage::fileName]
+	    FROM
+	      [ThumbnailImage], [GalleryChildEntity]
+	    WHERE
+	      [ThumbnailImage::id] = [GalleryChildEntity::id]
+	      AND
+	      [GalleryChildEntity::parentId] <> ? 
+	    ';
+	    list ($ret, $results) =
+	    	$gallery->search($query, array($containerId));
+	    if ($ret) {
+		return $ret;
+	    }
+	    $ids = $fileNames = array();
+	    while ($result = $results->nextResult()) {
+		$ids[] = (int)$result[0];
+		$fileNames[(int)$result[0]] = $result[1];
+	    }
+
+	    if (!empty($ids)) {
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
+		if ($ret) {
+		    return $ret;
+		}
+
+		foreach ($ids as $id) {
+		    $gallery->guaranteeTimeLimit(30);
+		    /* Add the necessary rows for a FileSystemEntity. */
+		    $ret = $storage->execute($fileSystemEntityQuery, array($id, $fileNames[$id]));
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret;
+		    }
+
+		    /* Move the custom thumbnail to its new home. */
+		    list ($ret, $thumb) = GalleryCoreApi::loadEntitiesById($id);
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret;
+		    }
+		    /* The entity might be obsolete from the cache. */
+		    list ($ret, $thumb) = $thumb->refresh();
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret;
+		    }
+		    list ($ret, $path) = $thumb->fetchPath();
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret;
+		    }
+		    $dir = dirname($path);
+		    list ($success) = GalleryUtilities::guaranteeDirExists($dir);
+		    if (!$success) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+						     sprintf("Could not create folder '%s'", $dir));
+		    }
+		    $oldPath = $thumb->getThumbnailDir() . $fileNames[$id];
+		    $success = $platform->rename($oldPath, $path);
+		    if (!$success) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					sprintf("Failed to rename(%s, %s)", $oldPath, $path));
+		    }
+		    $ret = $thumb->save();
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret;
+		    }
+		}
+
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+
+	    /*
+	     * We no longer need the fileName in the ThumbnailImage class since it inherits
+	     * the pathComponent from FileSystemEntity.
+	     */
+	    $ret = $storage->configureStore($this->getId(), array('ThumbnailImage:1.1'));
+	    if ($ret) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -303,37 +438,24 @@ class ThumbnailModule extends GalleryModule {
 	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 	global $gallery;
 
-	/* Remove custom thumbnails from items */
-	$query = '
-	SELECT [GalleryChildEntity::parentId]
-	  FROM [GalleryChildEntity], [ThumbnailImage]
-	 WHERE [GalleryChildEntity::id] = [ThumbnailImage::id]
-	   AND [GalleryChildEntity::parentId] > 0
-	';
-	list ($ret, $searchResults) = $gallery->search($query);
+	list ($ret, $containerId) = $this->getParameter('id.container');
 	if ($ret) {
 	    return $ret;
 	}
-	while ($result = $searchResults->nextResult()) {
-	    $itemIds[] = (int)$result[0];
-	}
-	while (!empty($itemIds)) {
-	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_splice($itemIds, 0, 100));
-	    if ($ret) {
-		return $ret;
-	    }
-	    foreach ($items as $item) {
-		$ret = ThumbnailHelper::restoreThumbnail($item);
-		if ($ret) {
-		    return $ret;
-		}
-	    }
-	}
+	$containerId = (int)$containerId;
 
+	/* Also deletes ThumbnailImage entities and restores thumbnails for the affected items. */
 	$ret = parent::uninstall();
 	if ($ret) {
 	    return $ret;
 	}
+
+	/* Remove the thumbnail container. */
+	$ret = GalleryCoreApi::deleteEntityById($containerId);
+	if ($ret) {
+	    return $ret;
+	}
+	
 	return null;
     }
 
@@ -367,13 +489,44 @@ class ThumbnailModule extends GalleryModule {
 		return array($ret, null);
 	    }
 	    if (GalleryUtilities::isA($source, 'ThumbnailImage')) {
+		/* Prevent that we try to restore the thumbnail during the deletion. */
+		$key = 'ThumbnailImage::delete';
+		GalleryDataCache::put($key, $entity->getId());
 		$ret = GalleryCoreApi::deleteEntityById($source->getId());
+		GalleryDataCache::remove($key);
 		if ($ret) {
 		    return array($ret, null);
 		}
 	    }
 	}
 	return array(null, null);
+    }
+
+    /**
+     * Create the container entity for all the custom thumbnails.
+     * @return object GalleryStatus a status code
+     */
+    function _createThumbnailContainer() {
+	list ($ret, $container) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryChildEntity');
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = $container->createRoot();
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = $container->save();
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$ret = $this->setParameter('id.container', $container->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	
+	return null;
     }
 }
 ?>

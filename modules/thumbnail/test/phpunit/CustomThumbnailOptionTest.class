@@ -97,6 +97,8 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
+	GalleryDataCache::setMemoryCachingEnabled(true);
     }
 
     function testAddBadMime() {
@@ -154,7 +156,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array(), $thumbnails, 'removed derivative');
+	$this->assert(empty($thumbnails[$this->_item->getId()]), 'removed thumbnail');
     }
 
     function testAddDeleteThumbnail() {
@@ -203,6 +205,13 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 		return $this->failWithStatus($ret);
 	    }
 	}
+
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(empty($thumbnails), 'item still has a thumbnail');
     }
 
     function testChangeRestoreThumbnail() {
@@ -419,7 +428,42 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(substr($filename, 0, 120) . '.jpg', $thumbnail->getFileName());
+	$this->assertEquals(substr($filename, 0, 124) . '.jpg', $thumbnail->getPathComponent());
+    }
+
+    /* Regression test: Verify that the collision between test.jpg and TEST.jpg is detected. */
+    function testFilenameCollision() {
+	/* Add custom thumbnail to item with no thumbnail. */
+	$form = array('name' => array(1 => 'test.jpg'),
+		      'type' => array(1 => 'image/jpeg'),
+		      'tmp_name' => array(1 =>
+			    GalleryCoreApi::getPluginBaseDir('module', 'core')
+				. 'modules/core/test/data/test1.jpg'));
+
+	$result = $this->_handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array(array(), array()), $result);
+
+	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(isset($thumbnailImage), 'thumbnailImage');
+
+	/* Now add a custom thumbnail with the same name but in capital letters. */
+	$form = array('name' => array(1 => 'TEST.jpg'),
+		      'type' => array(1 => 'image/jpeg'),
+		      'tmp_name' => array(1 =>
+			    GalleryCoreApi::getPluginBaseDir('module', 'core')
+				. 'modules/core/test/data/test1.jpg'));
+
+	$result = $this->_handleRequestAfterEdit($form, $this->_image);
+	$this->assertEquals(array(array(), array()), $result);
+
+	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(isset($thumbnailImage), 'thumbnailImage');
     }
 }
 

@@ -120,10 +120,6 @@ class CustomThumbnailOption extends ItemEditOption {
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
-	    $ret = ThumbnailHelper::restoreThumbnail($item);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
 	}
 
 	return array(null, $error, $warning);

@@ -18,16 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryFileSystemEntity.class');
 
 /**
  * Representation of an image used for thumbnails of non-image items.
  *
  * @g2 <class-name>ThumbnailImage</class-name>
- * @g2 <parent-class-name>GalleryChildEntity</parent-class-name>
+ * @g2 <parent-class-name>GalleryFileSystemEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>1</schema-minor>
+ * @g2   <schema-minor>2</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
@@ -36,23 +36,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
  * @author Alan Harder <alan.harder@sun.com>
  * @version $Revision$ $Date$
  */
-class ThumbnailImage extends GalleryChildEntity {
-
-    /**
-     * The thumbnail image filename.
-     *
-     * @g2 <member>
-     * @g2   <member-name>fileName</member-name>
-     * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>MEDIUM</member-size>
-     * @g2   <unique/>
-     * @g2   <required/>
-     * @g2 </member>
-     *
-     * @var string $fileName
-     * @access public
-     */
-    var $fileName;
+class ThumbnailImage extends GalleryFileSystemEntity {
 
     /**
      * The mime type of the image.
@@ -144,10 +128,10 @@ class ThumbnailImage extends GalleryChildEntity {
      *
      * @param string $inputFileName the path to a data file to be contained
      * @param string $mimeType the mime type of the new item
-     * @param string $targetName (optional) the desired name of the new item
+     * @param string $targetName (optional) the desired name of the new item.
      * @return object GalleryStatus a status code
      */
-    function create($inputFileName, $mimeType, $targetName=null) {
+    function create($inputFileName, $mimeType, $targetName=null, $parentId=null) {
 	GalleryCoreApi::requireOnce('modules/thumbnail/classes/ThumbnailHelper.class');
 	global $gallery;
 	$platform =& $gallery->getPlatform();
@@ -157,42 +141,69 @@ class ThumbnailImage extends GalleryChildEntity {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	if (!$platform->file_exists($inputFileName)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PATH);
+	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__, $inputFileName);
 	}
 
-	/* Uniquify name */
-	if (empty($targetName)) {
-	    $targetName = basename($inputFileName);
-	}
-	list ($base, $ext) = GalleryUtilities::getFileNameComponents($targetName);
-	$targetName = substr($base, 0, 120) . ($ext ? '.' . $ext : '');
-	list ($ret, $list) = ThumbnailHelper::fetchThumbnails(true);
-	if ($ret) {
-	    return $ret;
-	}
-	while (in_array($targetName, $list)) {
-	    $targetName = "_$targetName";
-	}
+	$baseName = !empty($targetName) ? $targetName : basename($inputFileName);
 
-	/* No parent by default; create a root ChildEntity */
-	$ret = parent::createRoot();
+	list ($ret, $thumbnailContainerId) =
+		GalleryCoreApi::getPluginParameter('module', 'thumbnail', 'id.container');
 	if ($ret) {
 	    return $ret;
 	}
 
-	$this->setFileName($targetName);
+	/*
+	 * Use the common thumbnail container for mime-type thumbs mainly for name / path
+	 * collision checking.
+	 */
+	if (empty($parentId)) {
+	    $parentId = (int)$thumbnailContainerId;
+	}
+
+	$parentLockId = null;
+	if (!GalleryCoreApi::isReadLocked($parentId)) {
+	    if ($parentId == $thumbnailContainerId) {
+		/* For mime-type thumbs, we need a write-lock to prevent collisions. */
+		list ($ret, $parentLockId) = GalleryCoreApi::acquireWriteLock($parentId);
+	    } else {
+		list ($ret, $parentLockId) = GalleryCoreApi::acquireReadLock($parentId);
+	    }
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	$ret = parent::create($parentId, $baseName);
+	if ($ret) {
+	    if ($parentLockId) {
+		GalleryCoreApi::releaseLocks($parentLockId);
+	    }
+	    return $ret;
+	}
+
+	if ($parentLockId) {
+	    $ret = GalleryCoreApi::releaseLocks($parentLockId);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
 	$this->setMimeType($mimeType);
 	$this->setWidth(0);
 	$this->setHeight(0);
 
 	$platform =& $gallery->getPlatform();
-	$dir = $this->getThumbnailDir();
+	list ($ret, $path) = $this->fetchPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$dir = dirname($path);
 	list ($success) = GalleryUtilities::guaranteeDirExists($dir);
 	if (!$success) {
 	    return GalleryCoreApi::error(ERROR_BAD_PATH);
 	}
 
-	$newFileName = $this->getThumbnailDir() . $targetName;
+	$newFileName = $path;
 	if (!$platform->copy($inputFileName, $newFileName)) {
 	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 	}
@@ -224,27 +235,160 @@ class ThumbnailImage extends GalleryChildEntity {
     }
 
     /**
+     * Deletes this ThumbnailImage.
+     * 
      * @see GalleryEntity::delete
      */
     function delete() {
 	global $gallery;
 
-	/* Delete myself */
-	$ret = parent::delete();
+	list ($ret, $path) = $this->fetchPath();
 	if ($ret) {
 	    return $ret;
 	}
 
+	/* Lock our parent to ensure that we can fetch our path. */
+	$parentLockId = null;
+	if (!GalleryCoreApi::isReadLocked($this->getParentId())) {
+	    list ($ret, $parentLockId) = GalleryCoreApi::acquireReadLock($this->getParentId());
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	/* Delete myself */
+	$ret = parent::delete();
+	if ($ret) {
+	    if ($parentLockId) {
+		GalleryCoreApi::releaseLocks($parentLockId);
+	    }
+	    return $ret;
+	}
+
 	/* Delete our source file */
-	$path = $this->getThumbnailDir() . $this->getFileName();
 	$platform =& $gallery->getPlatform();
 	if (!$platform->unlink($path)) {
+	    if ($parentLockId) {
+		GalleryCoreApi::releaseLocks($parentLockId);
+	    }
 	    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					 "Could not delete $path");
 	}
 
+	if ($parentLockId) {
+	    $ret = GalleryCoreApi::releaseLocks($parentLockId);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	/* Restore thumbnails of affected items. */
+	list ($ret, $thumbnailContainerId) =
+		GalleryCoreApi::getPluginParameter('module', 'thumbnail', 'id.container');
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = $this->_restoreItemThumbnails();
+	if ($ret) {
+	    return $ret;
+	}
+
 	return null;
     }
+
+    /**
+     * Ensure that items / derivatives affected by the deletion of a ThumbnailItem still have
+     * a thumbnail after the removal. Restore the sourceId to the original item (if there is
+     * toolkit support for that source mimeType). And pick a new highlight for AlbumItems.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _restoreItemThumbnails() {
+	list ($ret, $derivativesTable) =
+		GalleryCoreApi::fetchDerivativesBySourceIds(array($this->getId()),
+							array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL));
+	if ($ret) {
+	    return $ret;
+	}
+
+	/*
+	 * In theory, custom thumbnails can only be the source for a single item.
+	 * And mime-type thumbnails are never a source for other thumbnails.
+	 * But we make this code a little more robust.
+	 */
+	foreach ($derivativesTable as $itemId => $derivatives) {
+	    if (empty($derivatives)) {
+		continue;
+	    }
+	    $derivative = array_shift($derivatives);
+
+	    /* Don't loop in thumbnail delete event. */
+	    $key = 'ThumbnailImage::delete';
+	    if (GalleryDataCache::containsKey($key)
+		    && GalleryDataCache::get($key) == $derivative->getId()) {
+		continue;
+	    }
+
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getId());
+		if ($ret) {
+		    return $ret;
+		}
+		continue;
+	    }
+
+	    /* Make sure operations contains only thumbnail and composite */
+	    $operations = rtrim(preg_replace('/(^|;)((?!thumbnail\||composite\|).*?(;|$))+/', '$1',
+					 $derivative->getDerivativeOperations()), ';');
+
+	    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    list ($ret, $operations, $outputMimeType) =
+		GalleryCoreApi::makeSupportedViewableOperationSequence(
+					 $source->getMimeType(), $operations, true);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    if (empty($operations)) {
+		/* Operations not supported.. remove the thumbnail */
+		$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
+		if ($ret) {
+		    return $ret;
+		}
+	    } else {
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId());
+		if ($ret) {
+		    return $ret;
+		}
+
+		$derivative->setMimeType($outputMimeType);
+		$derivative->setDerivativeOperations($operations);
+		$derivative->setDerivativeSourceId($source->getId());
+
+		$ret = $derivative->save();
+		if ($ret) {
+		    return $ret;
+		}
+
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
+	return null;
+    }
+
 
     /**
      * Full path to image file
@@ -252,8 +396,41 @@ class ThumbnailImage extends GalleryChildEntity {
      * @return array(object GalleryStatus a status code, string path)
      */
     function fetchPath() {
-	return array(null,
-		     $this->getThumbnailDir() . $this->getFileName());
+	global $gallery;
+
+	list ($ret, $logicalPath) = $this->fetchLogicalPath();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/*
+	 * Logical path is slash (/) delimited.  Convert that to the platform's actual
+	 * directory separator.
+	 */
+	$platform =& $gallery->getPlatform();
+	if ($platform->getDirectorySeparator() != '/') {
+	    $logicalPath = str_replace('/', $platform->getDirectorySeparator(), $logicalPath);
+	}
+	
+     	return array(null, $this->getThumbnailDir() . $logicalPath);
+    }
+
+    function fetchLogicalPath() {
+	list ($ret, $thumbnailContainerId) =
+		GalleryCoreApi::getPluginParameter('module', 'thumbnail', 'id.container');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($this->getParentId() != $thumbnailContainerId) {
+	    /* Custom thumbnails are stored in a decimal tree, e.g. 7/75.jpg. */
+	    $id = (string)$this->getId();
+	    $path = $id{0} . '/' . $id . '.jpg';
+	} else {
+	    /* Mime-type thumbnails are right under the plugin_data/modules/thumbnail/ folder. */
+	    $path = $this->getPathComponent();
+	}
+
+	return array(null, $path);
     }
 
     /**
@@ -265,8 +442,14 @@ class ThumbnailImage extends GalleryChildEntity {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
+	
 	return $gallery->getConfig('data.gallery.plugins_data') .
 	    'modules' . $slash . 'thumbnail' . $slash;
+    }
+
+    /** @see GalleryFileSystemEntity::move */
+    function move($newParentId) {
+	return GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION);
     }
 
     /**
@@ -297,7 +480,7 @@ class ThumbnailImage extends GalleryChildEntity {
 	    $sizeStr = ($width > 0 && $height > 0)
 		? sprintf(' width="%s" height="%s"', $width, $height) : '';
 	    if (!isset($params['alt'])) {
-		$params['alt'] = $this->getFileName();
+		$params['alt'] = $this->getPathComponent();
 	    }
 
 	    $html = sprintf('<img src="%s"%s', $src, $sizeStr);
@@ -327,14 +510,6 @@ class ThumbnailImage extends GalleryChildEntity {
      */
     function getClassName() {
 	return 'ThumbnailImage';
-    }
-
-    function getFileName() {
-	return $this->fileName;
-    }
-
-    function setFileName($fileName) {
-	$this->fileName = $fileName;
     }
 
     function getMimeType() {
@@ -370,7 +545,7 @@ class ThumbnailImage extends GalleryChildEntity {
     }
 
     function getItemMimeTypes() {
-	return $this->itemMimeTypes;;
+	return $this->itemMimeTypes;
     }
 
     function setItemMimeTypes($itemMimeTypes) {

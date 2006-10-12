@@ -45,20 +45,24 @@ class ThumbnailHelper {
 	global $gallery;
 
 	$where = $data = array();
-	$query = 'SELECT [ThumbnailImage::id], [ThumbnailImage::fileName] FROM [ThumbnailImage]';
+	$query = '
+	SELECT [ThumbnailImage::id], [GalleryFileSystemEntity::pathComponent]
+	FROM [ThumbnailImage], [GalleryFileSystemEntity]
+	';
+	$where[] = '[GalleryFileSystemEntity::id] = [ThumbnailImage::id]';
 
 	if (!$listAll) {
 	    $where[] = '[ThumbnailImage::itemMimeTypes] IS NOT NULL';
 	}
 	if (!empty($substring)) {
-	    $where[] = '[ThumbnailImage::fileName] LIKE ?';
+	    $where[] = '[GalleryFileSystemEntity::pathComponent] LIKE ?';
 	    $data[] = "%$substring%";
 	}
 	if (!empty($where)) {
-	    $query .= ' WHERE ' . implode(' ', $where);
+	    $query .= ' WHERE ' . implode(' AND ', $where);
 	}
 
-	$query .= ' ORDER BY [ThumbnailImage::fileName] ASC';
+	$query .= ' ORDER BY [GalleryFileSystemEntity::pathComponent] ASC';
 
 	list ($ret, $searchResults) = $gallery->search($query, $data,
 		array('limit' => array('count' => (int)$count, 'offset' => (int)$offset)));
@@ -235,7 +239,7 @@ class ThumbnailHelper {
 	    }
 	}
 
-	$ret = $item->create($tmpfile, $fileMimeType, $filename);
+	$ret = $item->create($tmpfile, $fileMimeType, $filename, $parentId);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -403,77 +407,6 @@ class ThumbnailHelper {
 	    return $ret;
 	}
 	if (isset($lockId)) {
-	    $ret = GalleryCoreApi::releaseLocks($lockId);
-	    if ($ret) {
-		return $ret;
-	    }
-	}
-
-	return null;
-    }
-
-    /**
-     * Remove custom thumbnail; delete thumbnail derivative or restore source id to original item
-     * (if there is toolkit support for that source mimeType).
-     *
-     * @param object GalleryItem $item
-     * @return object GalleryStatus a status code
-     */
-    function restoreThumbnail(&$item) {
-	list ($ret, $derivative) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
-	if ($ret) {
-	    return $ret;
-	}
-	if (empty($derivative)) {
-	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
-	}
-	$derivative = array_shift($derivative);
-
-	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getId());
-	    if ($ret) {
-		return $ret;
-	    }
-	    return null;
-	}
-
-	/* Make sure operations contains only thumbnail and composite */
-	$operations = rtrim(preg_replace('/(^|;)((?!thumbnail\||composite\|).*?(;|$))+/', '$1',
-					 $derivative->getDerivativeOperations()), ';');
-
-	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret, $operations, $outputMimeType) =
-	    GalleryCoreApi::makeSupportedViewableOperationSequence(
-					 $source->getMimeType(), $operations, true);
-	if ($ret) {
-	    return $ret;
-	}
-
-	if (empty($operations)) {
-	    /* Operations not supported.. remove the thumbnail */
-	    $ret = GalleryCoreApi::deleteEntityById($derivative->getId());
-	    if ($ret) {
-		return $ret;
-	    }
-	} else {
-	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId());
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    $derivative->setMimeType($outputMimeType);
-	    $derivative->setDerivativeOperations($operations);
-	    $derivative->setDerivativeSourceId($source->getId());
-
-	    $ret = $derivative->save();
-	    if ($ret) {
-		return $ret;
-	    }
-
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret) {
 		return $ret;
