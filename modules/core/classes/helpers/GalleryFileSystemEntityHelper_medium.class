@@ -30,9 +30,13 @@ class GalleryFileSystemEntityHelper_medium {
 
     /**
      * @see GalleryCoreApi::checkPathCollision
+     * @todo Make the check case-insensitive since it should be DBMS / FS independent.
      */
     function checkPathCollision($pathComponent, $parentId, $selfId=null) {
 	global $gallery;
+
+	$pathComponent =
+		GalleryFileSystemEntityHelper_medium::_truncatePathComponent($pathComponent);
 
 	$query = '
 	  SELECT
@@ -104,10 +108,9 @@ class GalleryFileSystemEntityHelper_medium {
 	 */
 	$retry = 0;
 	while (true) {
-	    $newPathComponent = sprintf('%s%s%s',
-				$fileBase,
-				$retry > 0 ? sprintf('_%03d', $retry) : '',
-				$extension);
+	    
+	    $newPathComponent = GalleryFileSystemEntityHelper_medium::_truncatePathComponent(
+			$fileBase, $retry > 0 ? sprintf('_%03d', $retry) : '', $extension);
 
 	    /* Make sure that we don't have a collision in the db. */
 	    list ($ret, $isCollision) = GalleryFileSystemEntityHelper_medium::checkPathCollision(
@@ -127,5 +130,24 @@ class GalleryFileSystemEntityHelper_medium {
 
 	return array(null, $newPathComponent);
     }
+
+    /**
+     * Truncate the given path component to the maximum allowed length.
+     * If an extension is given, it truncates the base and then appends the extension.
+     * 
+     * @param string basename of path component
+     * @param string variable part (optional), e.g. '_001'
+     * @param string extension (optional), e.g. '.jpg'
+     * @return string truncated path component 
+     * @acccess private
+     */
+    function _truncatePathComponent($baseName, $variablePart='', $extension='') {
+
+	$length = 128 - strlen($variablePart) - strlen($extension);
+	$baseName = GalleryUtilities::utf8Substring($baseName, 0, $length);
+
+	return $baseName . $variablePart . $extension;
+    }
+    
 }
 ?>
