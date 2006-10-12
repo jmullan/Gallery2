@@ -2388,6 +2388,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.14':
 	case '1.1.15':
 	case '1.1.16':
+	case '1.1.17':
 
 	case 'end of upgrade path':
 	    /*

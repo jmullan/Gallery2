@@ -24,6 +24,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
  * A GalleryChildEntity that also has data stored in the filesystem.
  * This class understands how to manage data on the filesystem in parallel to
  * the data in the persistent store.
+ * 
+ * Treat this class as abstract class, it is not registered in the factory.
  *
  * @g2 <class-name>GalleryFileSystemEntity</class-name>
  * @g2 <parent-class-name>GalleryChildEntity</parent-class-name>
@@ -37,6 +39,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryChildEntity.class');
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
  * @version $Revision$ $Date$
+ * @abstract
  */
 class GalleryFileSystemEntity extends GalleryChildEntity {
 
