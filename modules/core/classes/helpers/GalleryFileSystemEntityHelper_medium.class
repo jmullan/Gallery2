@@ -30,7 +30,6 @@ class GalleryFileSystemEntityHelper_medium {
 
     /**
      * @see GalleryCoreApi::checkPathCollision
-     * @todo Make the check case-insensitive since it should be DBMS / FS independent.
      */
     function checkPathCollision($pathComponent, $parentId, $selfId=null) {
 	global $gallery;
@@ -46,11 +45,12 @@ class GalleryFileSystemEntityHelper_medium {
 	  WHERE
 	    [GalleryChildEntity::parentId] = ?
 	  AND
-	    [GalleryFileSystemEntity::pathComponent] = ?
+	    UPPER([GalleryFileSystemEntity::pathComponent]) = ?
 	  AND
 	    [GalleryChildEntity::id] = [GalleryFileSystemEntity::id]
 	';
-	$data = array((int)$parentId, $pathComponent);
+	/* The check is case-insensitive since it should be DBMS / FS independent. */
+	$data = array((int)$parentId, GalleryUtilities::strToUpper($pathComponent));
 	if (isset($selfId)) {
 	    $query .= '
 	      AND [GalleryChildEntity::id] <> ?

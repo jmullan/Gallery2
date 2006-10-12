@@ -427,7 +427,6 @@ class FileSystemTest extends GalleryTestCase {
 	$this->assertEquals(true, $isCollision);
     }
 
-    /* TODO: Expected to fail when DBMS is case-insensitive but filesystem is not. */
     function testCheckPathCollisionCaseSensitivity() {
 	$pathComponentA = 'test';
 	$pathComponentB = 'TEST';
