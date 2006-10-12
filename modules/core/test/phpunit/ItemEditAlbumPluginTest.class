@@ -518,6 +518,65 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		'The resize operation should be resize|50,50');
 	}
     }
+
+    function testRemoveResizes() {
+	/* Recreate resizes for album with no resizes selected used to get error */
+	global $gallery;
+	$ret = GalleryCoreApi::removeDerivativePreferenceForItemType(
+		$this->_album->getId(), array(DERIVATIVE_TYPE_IMAGE_RESIZE));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $child) = $this->_createRandomDataItem(
+		$this->_album->getId(), 'test/file', array(),
+		__FILE__, 'ItemEditAlbumPluginTestDataItem');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $resize) = $this->_createDerivative($child, $child->getId(),
+							DERIVATIVE_TYPE_IMAGE_RESIZE,
+							'scale|200,200', 'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
+	GalleryUtilities::putRequestVariable('form[orderBy]', '');
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 0);
+	GalleryUtilities::putRequestVariable('form[recreateResizes]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_album->getSerialNumber());
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Settings saved successfully.')),
+			    $results);
+
+	/* Run the recreate-resizes task */
+	$this->assertEquals(1, $mockAdapter->getCallbackCount());
+	$ret = $mockAdapter->runCallbacks();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify resize was deleted */
+	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($child->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), $resizes, 'no resizes');
+
+	$ret = $this->_verifyMissing($resize->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
     /**
      * Test applying options from 'Album' tab to sub-albums
      */
@@ -545,10 +604,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	/*
-	 * Also check the grandchild album - to make sure that descendents don't
-	 * just return children
-	 */
+	/* Check the grandchild album - make sure that descendents don't just return children */
 	list ($ret, $this->_grandchildAlbum) = $this->_createRandomAlbum(
 	    $this->_childAlbum->getId());
 	if ($ret) {

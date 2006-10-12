@@ -394,7 +394,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 		$childId = $child->getId();
 		$albumId = $child->getParentId();
-		if (empty($resizePrefs[$albumId])) {
+		if (!isset($resizePrefs[$albumId])) {
 		    /* Keep resizes for albums in memory */
 		    list ($ret, $preferences) =
 			GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
@@ -413,9 +413,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 				array('operations' => $preference['derivativeOperations'],
 				      'width' => $width, 'height' => $height);
 			}
-		    }
-		    if (empty($resizePrefs[$albumId])) {
-			return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 		    }
 		}
 
