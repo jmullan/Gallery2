@@ -144,30 +144,35 @@ class DownloadItemView extends GalleryView {
 	    }
 	}
 
+	$requestMethod = strtolower(GalleryUtilities::getServerVar('REQUEST_METHOD'));
+
 	header('Content-type: ' . $data['mimeType']);
 	header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');
 	$stats = $platform->stat($data['derivativePath']);
-	if ($stats[7] > 0) {
-	    header('Content-length: ' . $stats[7]);
-	}
 	header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
 	header('Expires: ' . GalleryUtilities::getHttpDate(time() + 31536000));
 
-	/*
-	 * Don't use readfile() because it buffers the entire file in memory.  Profiling shows that
-	 * this approach is as efficient as fpassthru() but we get to call guaranteeTimeLimit which
-	 * prevents it from failing on very large files
-	 */
-	if ($fd = $platform->fopen($data['derivativePath'], 'rb')) {
-	    while (true) {
-		$bits = $platform->fread($fd, 65535);
-		if (strlen($bits) == 0) {
-		    break;
+	/* If the request method is HEAD, don't send back the body */
+	if ($requestMethod == 'head') {
+	    header('Content-length: 0');
+	} else {
+	    header('Content-length: ' . $stats[7]);
+	    /*
+	     * Don't use readfile() because it buffers the entire file in memory.  Profiling shows
+	     * that this approach is as efficient as fpassthru() but we get to call
+	     * guaranteeTimeLimit which prevents it from failing on very large files
+	     */
+	    if ($fd = $platform->fopen($data['derivativePath'], 'rb')) {
+		while (true) {
+		    $bits = $platform->fread($fd, 65535);
+		    if (strlen($bits) == 0) {
+			break;
+		    }
+		    print $bits;
+		    $gallery->guaranteeTimeLimit(30);
 		}
-		print $bits;
-		$gallery->guaranteeTimeLimit(30);
+		$platform->fclose($fd);
 	    }
-	    $platform->fclose($fd);
 	}
 
 	return null;
