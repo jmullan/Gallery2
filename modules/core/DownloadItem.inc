@@ -156,7 +156,9 @@ class DownloadItemView extends GalleryView {
 	if ($requestMethod == 'head') {
 	    header('Content-length: 0');
 	} else {
-	    header('Content-length: ' . $stats[7]);
+	    if ($stats[7] > 0) {
+		header('Content-length: ' . $stats[7]);
+	    }
 	    /*
 	     * Don't use readfile() because it buffers the entire file in memory.  Profiling shows
 	     * that this approach is as efficient as fpassthru() but we get to call
