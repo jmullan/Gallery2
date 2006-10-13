@@ -1644,8 +1644,8 @@ class GalleryCoreApi {
      */
     function fetchAlbumTree($itemId=null, $depth=null, $userId=null) {
 	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/helpers/GalleryItemHelper_advanced.class');
-	return GalleryItemHelper_advanced::fetchAlbumTree($itemId, $depth, $userId);
+	    'modules/core/classes/helpers/GalleryItemHelper_simple.class');
+	return GalleryItemHelper_simple::fetchAlbumTree($itemId, $depth, $userId);
     }
 
     /**

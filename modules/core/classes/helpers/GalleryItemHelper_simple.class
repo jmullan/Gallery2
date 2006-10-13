@@ -341,5 +341,88 @@ class GalleryItemHelper_simple {
 
 	return array(null, $count);
     }
+
+    /**
+     * @see GalleryCoreApi::fetchAlbumTree
+     */
+    function fetchAlbumTree($itemId=null, $depth=null, $userId=null) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
+
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', $userId);
+	if (empty($aclIds)) {
+	    return array(null, array());
+	}
+	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+
+	$parentSequence = array();
+	if (isset($itemId)) {
+	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	} else {
+	    list ($ret, $itemId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$parentSequence[] = $itemId;
+	$parentSequence = implode('/', $parentSequence);
+
+	$query = sprintf('
+	SELECT
+	  [GalleryAlbumItem::id],
+	  [GalleryItemAttributesMap::parentSequence],
+	  [GalleryItemAttributesMap::orderWeight]
+	FROM
+	  [GalleryAlbumItem], [GalleryItemAttributesMap], [GalleryAccessSubscriberMap]
+	WHERE
+	  [GalleryAlbumItem::id] = [GalleryItemAttributesMap::itemId]
+	  AND
+	  [GalleryItemAttributesMap::parentSequence] LIKE \'%s/%%\'
+	  AND
+	  [GalleryAlbumItem::id] = [GalleryAccessSubscriberMap::itemId]
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	ORDER BY
+	  [GalleryItemAttributesMap::parentSequence],
+	  [GalleryItemAttributesMap::orderWeight]
+	', $parentSequence, $aclMarkers);
+
+	$data = $aclIds;
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$tree = array();
+	$pathlen = strlen($parentSequence) + 1;
+	while ($result = $searchResults->nextResult()) {
+	    $path = explode('/', substr($result[1], $pathlen) . $result[0]);
+	    if (isset($depth) && count($path) > $depth) {
+		continue;
+	    }
+	    $branch =& $tree;
+	    foreach ($path as $id) {
+		if (isset($branch[$id])) {
+		    $branch =& $branch[$id];
+		}
+	    }
+	    $branch[$result[0]] = array();
+	}
+
+	return array(null, $tree);
+    }
 }
 ?>
