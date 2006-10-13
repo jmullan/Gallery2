@@ -107,23 +107,40 @@
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="Recreate thumbnails and resizes"} </h3>
+  <h3> {g->text text="Apply settings to existing items"} </h3>
   <p class="giDescription">
-    {g->text text="The thumbnail and resized image settings are for all new items. To apply these settings to all the items in your album, check the appropriate box."}
+    {g->text text="The thumbnail and resized image settings are for all new items. To apply these settings to all the items in your album, check the appropriate box. Including subalbums will apply each album's own settings to its thumbnails/resizes, which may not match the settings above. Building images now makes this operation take longer, but saves the time to build and cache each file when it is first viewed."}
   </p>
 
-  <input type="checkbox" id="cbRecreateThumbs"{if $form.recreateThumbnails} checked="checked"{/if}
-   name="{g->formVar var="form[recreateThumbnails]"}"/>
-  <label for="cbRecreateThumbs">
-    {g->text text="Recreate thumbnails"}
-  </label>
-  <br/>
-
-  <input type="checkbox" id="cbRecreateResizes"{if $form.recreateResizes} checked="checked"{/if}
-   name="{g->formVar var="form[recreateResizes]"}"/>
-  <label for="cbRecreateResizes">
-    {g->text text="Recreate resized images"}
-  </label>
+  <table><tr><td>
+    <input type="checkbox" id="cbRecreateThumbs"{if $form.recreateThumbnails} checked="checked"{/if}
+     name="{g->formVar var="form[recreateThumbnails]"}"/>
+    <label for="cbRecreateThumbs">
+      {g->text text="Apply album setting to thumbnails"}
+    </label>
+  </td><td>
+    {g->changeInDescendents module="recreateThumbnails" text="... and for all subalbums"}
+  </td><td>
+    <input type="checkbox" id="cbBuildThumbs"{if $form.buildThumbnails} checked="checked"{/if}
+     name="{g->formVar var="form[buildThumbnails]"}"/>
+    <label for="cbBuildThumbs">
+      {g->text text="Build thumbnails too"}
+    </label>
+  </td></tr><tr><td>
+    <input type="checkbox" id="cbRecreateResizes"{if $form.recreateResizes} checked="checked"{/if}
+     name="{g->formVar var="form[recreateResizes]"}"/>
+    <label for="cbRecreateResizes">
+      {g->text text="Apply album setting to resized images"}
+    </label>
+  </td><td>
+    {g->changeInDescendents module="recreateResizes" text="... and for all subalbums"}
+  </td><td>
+    <input type="checkbox" id="cbBuildResizes"{if $form.buildResizes} checked="checked"{/if}
+     name="{g->formVar var="form[buildResizes]"}"/>
+    <label for="cbBuildResizes">
+      {g->text text="Build resizes too"}
+    </label>
+  </td></tr></table>
 </div>
 
 {* Include our extra ItemEditOptions *}

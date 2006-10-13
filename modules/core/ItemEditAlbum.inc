@@ -37,7 +37,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$error = array();
 	$requiresProgressBar = false;
 	if (isset($form['action']['undo'])) {
-
 	    /*
 	     * Take no action and we'll be redirected back to the same page
 	     * which will reset the form
@@ -341,19 +340,28 @@ class ItemEditAlbum extends ItemEditPlugin {
     function runRecreateResizes($form, $item, $preferred) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
+	$templateAdapter =& $gallery->getTemplateAdapter();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return $ret;
 	}
-	$templateAdapter =& $gallery->getTemplateAdapter();
-	$heading = $module->translate('Recreating resized images');
+	$heading = $module->translate('Apply resized image settings');
 	$templateAdapter->updateProgressBar($heading, $module->translate('Preparing...'), 0);
 
-	/* Get the child id => child types */
-	list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($item);
-	if ($ret) {
-	    return $ret;
+	/* Get the items to process */
+	if (empty($form['changeInDescendents']['recreateResizes'])) {
+	    list ($ret, $childIds) =
+		GalleryCoreApi::fetchChildItemIdsWithPermission($item->getId(), 'core.edit');
+	    if ($ret) {
+		return $ret;
+	    }
+	} else {
+	    list ($ret, $childIds) =
+		GalleryCoreApi::fetchDescendentItemIds($item, null, null, 'core.edit');
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	$batchSize = 100;
@@ -440,6 +448,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    if (empty($resize[$mimeType]['operations'])) {
 			continue;
 		    }
+		    $operations = $resize[$mimeType]['operations'];
 
 		    /* Special case to make sure that we don't upsample photos */
 		    if (GalleryUtilities::isA($child, 'GalleryPhotoItem')
@@ -448,9 +457,16 @@ class ItemEditAlbum extends ItemEditPlugin {
 			continue;
 		    }
 
-		    if (isset($resizesTable[$childId][$resize[$mimeType]['operations']])) {
-			/* Keep existing resize */
-			unset($resizesTable[$childId][$resize[$mimeType]['operations']]);
+		    if (isset($resizesTable[$childId][$operations])) {
+			/* Keep existing resize, build it if requested */
+			if (!empty($form['buildResizes'])) {
+			    list ($ret) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
+				    $resizesTable[$childId][$operations]->getId());
+			    if ($ret) {
+				return $ret;
+			    }
+			}
+			unset($resizesTable[$childId][$operations]);
 		    } else {
 			/* Create resize with these settings on next pass */
 			$newResizes[] = $resize;
@@ -501,6 +517,14 @@ class ItemEditAlbum extends ItemEditPlugin {
 			}
 			$lockId = null;
 		    }
+		    /* Build if requested */
+		    if (!empty($form['buildResizes'])) {
+			list ($ret) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
+				$derivative->getId());
+			if ($ret) {
+			    return $ret;
+			}
+		    }
 		}
 		/* Remove any leftover resizes */
 		if  (isset($resizesTable[$childId])) {
@@ -530,25 +554,35 @@ class ItemEditAlbum extends ItemEditPlugin {
     function runRecreateThumbnails($form, $item, $preferred) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
+	$templateAdapter =& $gallery->getTemplateAdapter();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return $ret;
 	}
-	$templateAdapter =& $gallery->getTemplateAdapter();
-	$templateAdapter->updateProgressBar($module->translate('Rebuilding thumbnails...'), '', 0);
+	$heading = $module->translate('Apply thumbnail settings');
+	$templateAdapter->updateProgressBar($heading, $module->translate('Preparing...'), 0);
 
-	/* Get the child id => child types */
-	list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($item);
-	if ($ret) {
-	    return $ret;
+	/* Get the items to process */
+	if (empty($form['changeInDescendents']['recreateThumbnails'])) {
+	    list ($ret, $childIds) =
+		GalleryCoreApi::fetchChildItemIdsWithPermission($item->getId(), 'core.edit');
+	    if ($ret) {
+		return $ret;
+	    }
+	} else {
+	    list ($ret, $childIds) =
+		GalleryCoreApi::fetchDescendentItemIds($item, null, null, 'core.edit');
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	$batchSize = 100;
 	$total = count($childIds);
 	$ind = 0;
 	$step = min(500, intval($total / 20) + 1);
-	$thumbnailSizes = array();
+	$thumbnailSizes = $thumbnailBuild = array();
 	while (!empty($childIds)) {
 	    $currentChildIds = array_splice($childIds, 0, $batchSize);
 	    /* Load the children */
@@ -567,8 +601,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 		if (!(++$ind % $step) || $ind == $total) {
 		    $message = $module->translate(array('text' => 'Processing image %d of %d',
 							'arg1' => $ind, 'arg2' => $total));
-		    $templateAdapter->updateProgressBar(
-			$message, $module->translate('Rebuilding thumbnails...'), $ind / $total);
+		    $templateAdapter->updateProgressBar($heading, $message, $ind / $total);
 		}
 
 		$childId = $child->getId();
@@ -684,6 +717,10 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    return $ret;
 			}
 		    }
+
+		    if (!empty($form['buildThumbnails'])) {
+			$thumbnailBuild[] = $thumbnail->getId();
+		    }
 		}
 	    }
 	    $ret = GalleryCoreApi::releaseLocks($lockIds);
@@ -695,6 +732,31 @@ class ItemEditAlbum extends ItemEditPlugin {
 		return $ret;
 	    }
 	}
+
+	/* Build thumbnails if requested */
+	if (!empty($thumbnailBuild)) {
+	    $message = $module->translate('Rebuilding thumbnails...');
+	    $templateAdapter->updateProgressBar($heading, $message, 0);
+	    $total = count($thumbnailBuild);
+	    $ind = 0;
+	    $step = min(500, intval($total / 20) + 1);
+	}
+	foreach ($thumbnailBuild as $thumbnailId) {
+	    list ($ret) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnailId);
+	    if ($ret) {
+		return $ret;
+	    }
+	    if (!(++$ind % $step) || $ind == $total) {
+		$templateAdapter->updateProgressBar($heading, $message, $ind / $total);
+	    }
+	    if (!($ind % $batchSize)) {
+		$ret = $storage->checkPoint();
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
 	$redirect = array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemEdit',
 			  'itemId' => $item->getId());
 
