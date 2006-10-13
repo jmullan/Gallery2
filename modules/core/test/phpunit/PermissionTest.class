@@ -872,6 +872,66 @@ class PermissionTest extends GalleryTestCase {
 		      'Cache was not set for activeUserId');
     }
 
+    function testFetchPermissionsForItemsCache() {
+	global $gallery;
+	GalleryDataCache::reset();
+
+	/* Get the anonymous user id */
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/* Get the everybody group id */
+	list ($ret, $everybodyGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Make it cache the permissions for a given item / user pairs. */
+	list ($ret, $permissionsTable) = GalleryCoreApi::fetchPermissionsForItems(
+		array($this->_getRootId(), $this->_albums[2]->getId()), $anonymousUserId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(isset($permissionsTable[$this->_getRootId()]['core.view']),
+		      'root id should have item permissions');
+	$this->assert(!isset($permissionsTable[$this->_albums[2]->getId()]),
+		      'sub sub sub album should have no item permissions');
+
+	/* Add a group permission */
+	$ret = GalleryCoreApi::addGroupPermission($this->_albums[0]->getId(), $everybodyGroupId,
+						     'core.view', true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $permissionsTable) = GalleryCoreApi::fetchPermissionsForItems(
+		array($this->_getRootId(), $this->_albums[2]->getId()), $anonymousUserId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(isset($permissionsTable[$this->_albums[2]->getId()]['core.view']),
+		      'sub sub sub album should now have item permissions');
+
+	/* Remove a group permission and check if the item / user pair cache is gone. */
+	$ret = GalleryCoreApi::removeGroupPermission($this->_albums[1]->getId(), $everybodyGroupId,
+						     'core.view', true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $permissionsTable) = GalleryCoreApi::fetchPermissionsForItems(
+		array($this->_albums[1]->getId(), $this->_albums[2]->getId()), $anonymousUserId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!isset($permissionsTable[$this->_albums[2]->getId()]),
+		      'sub sub sub album permissions should be gone again');
+	$this->assert(!isset($permissionsTable[$this->_albums[1]->getId()]),
+		      'sub sub album permissions should be gone');
+    }
+
     function testCompactAccessLists() {
 	global $gallery;
 
@@ -977,6 +1037,42 @@ class PermissionTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(!$hasItemPermission, 'new user should not have core.changePermissions');
+    }
+
+    function testHasItemPermissionChecksPermissionCache() {
+	global $gallery;
+
+	$userId = 99;
+	$userId2 = $gallery->getActiveUserId();
+	$itemId = $this->_albums[0]->getId();
+	GalleryDataCache::reset();
+	GalleryDataCache::clearPermissionCache();
+	$cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId)";
+	GalleryDataCache::put($cacheKey, array('core.foo' => 1));
+	$cacheKey = "GalleryPermissionHelper::getPermissions(55,$userId2)";
+	GalleryDataCache::put($cacheKey, array('core.bar' => 1));
+
+	list ($ret, $hasItemPermission) =
+	    GalleryCoreApi::hasItemPermission($itemId, 'core.changePermissions', $userId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!$hasItemPermission, 'core.changePermissions not in cached result');
+
+	list ($ret, $hasItemPermission) =
+	    GalleryCoreApi::hasItemPermission($itemId, 'core.foo', $userId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert($hasItemPermission, 'core.foo in cached result');
+
+	/* And test a cache miss */
+	list ($ret, $hasItemPermission) = GalleryCoreApi::hasItemPermission(
+	    $this->_albums[0]->getId(), 'core.changePermissions', $userId2);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert($hasItemPermission, 'active user should have core.changePermissions');
     }
 
     function testGetPermissions() {

@@ -67,6 +67,7 @@ class GalleryCoreApi {
      *   and comment in blocks/EmergencyEditItemLink.tpl
      * - remove GalleryView::_getItem() (the private version of getItem());
      * - delete GallerySqlFragment.class
+     * - remove studyPermissions, fetchPermissionsForItems does the same and more.
      */
     function getApiVersion() {
 	return array(7, 11);
@@ -646,10 +647,13 @@ class GalleryCoreApi {
     }
 
     /**
-     * Study the permissions for all items (for the given user)
+     * Study the permissions for all items (for the given user).
+     * Caches the results in memory for the duration of the HTTP request handling
+     * such that subsequent permission checks go to memory rather than to the DB.
      *
      * @param array $itemIds GalleryItem ids
      * @param int $userId an optional user id (default is current user)
+     * @deprecated Use fetchPermissionsForItems instead.
      * @return object GalleryStatus a status code
      */
     function studyPermissions($itemIds, $userId=null) {

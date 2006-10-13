@@ -256,6 +256,7 @@ class GalleryTestCase extends TestCase {
 	parent::tearDown();
 
 	GalleryDataCache::setFileCachingEnabled(true);
+	GalleryDataCache::setMemoryCachingEnabled(true);
 
 	$counter =& GalleryTestCase::getEntityCounter();
 	$this->assert(

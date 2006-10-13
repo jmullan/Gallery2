@@ -200,12 +200,6 @@ class GalleryPermissionHelper_simple {
 	    return $ret;
 	}
 
-	/* Cache the permissions */
-	foreach ($permissionsTable as $itemId => $permissions) {
-	    $cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId)";
-	    GalleryDataCache::put($cacheKey, $permissions);
-	}
-
 	return null;
     }
 
@@ -224,6 +218,22 @@ class GalleryPermissionHelper_simple {
 
 	if (is_null($userId)) {
 	    $userId = $gallery->getActiveUserId(); /* default user id */
+	}
+
+	/* Check the cache */
+	$permTable = array();
+	foreach ($itemIds as $idx => $itemId) {
+	    $cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId)";
+	    if (GalleryDataCache::containsKey($cacheKey)) {
+		$permTable[$itemId] = GalleryDataCache::get($cacheKey);
+		unset($itemIds[$idx]);
+	    }
+	    /* Don't check the session based cache, it might be out of date. */
+	}
+
+	/* Did we get all permissions from the memory cache? */
+	if (empty($itemIds)) {
+	    return array(null, $permTable);
 	}
 
 	$itemIdMarkers = GalleryUtilities::makeMarkers(count($itemIds));
@@ -281,7 +291,7 @@ class GalleryPermissionHelper_simple {
 	    return array($ret, null);
 	}
 
-	$permTable = $bitsTable = array();
+	$bitsTable = array();
 	$gallery->guaranteeTimeLimit(30);
 	while ($result = $searchResults->nextResult()) {
 	    if (!isset($bitsTable[$result[0]])) {
@@ -302,11 +312,15 @@ class GalleryPermissionHelper_simple {
 	    foreach ($permissions as $permission) {
 		/* $permission['id'] = the permission name for that bit */
 		$permTable[$itemId][$permission['id']] = 1;
-		/* Only cache permissions in the session for the activeUser */
+		/* Only cache permissions in the session for the activeUser. */
 		if ($userId == $gallery->getActiveUserId()) {
 		    GalleryDataCache::cachePermissions($itemId, $permission['id']);
 		}
 	    }
+
+	    /* Cache the permissions in memory. */
+	    $cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId)";
+	    GalleryDataCache::put($cacheKey, $permTable[$itemId]);
 	}
 
 	return array(null, $permTable);
@@ -423,8 +437,10 @@ class GalleryPermissionHelper_simple {
 		$permissions = $permissionsTable[$itemId];
 	    } else {
 		$permissions = array();
+
+		/* fetchPermissionsForItems already caches all hits, cache misses here too. */
+		GalleryDataCache::put($cacheKey, array());
 	    }
-	    GalleryDataCache::put($cacheKey, $permissions);
 	}
 
 	return array(null, $permissions);
