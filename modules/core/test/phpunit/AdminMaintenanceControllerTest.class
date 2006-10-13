@@ -303,8 +303,7 @@ class AdminMaintenanceControllerTestTaskProgressBar extends MaintenanceTask {
 	$templateAdapter->updateProgressBar('ignored', 'ignored', 50);
 
 	if (GalleryUtilities::getRequestVariables('forceTaskToError')) {
-	    return array(GalleryCoreApi::error(ERROR_UNKNOWN),
-			 null, null);
+	    return array(GalleryCoreApi::error(ERROR_UNKNOWN), null, null);
 	}
 
 	$templateAdapter->updateProgressBar('ignored', 'ignored', 100);

@@ -24,6 +24,10 @@
  * @subpackage PHPUnit
  */
 class MockTemplateAdapter {
+    function MockTemplateAdapter($useProgressBar=true) {
+	$this->_useProgressBar = $useProgressBar;
+    }
+
     function registerTrailerCallback($callback, $args) {
 	$this->_callbacks[] = array($callback, $args);
     }
@@ -35,6 +39,10 @@ class MockTemplateAdapter {
 		$ret = $ret[0];
 	    }
 	    if ($ret) {
+		/* If progress bar is in use, report error via its interface */
+		if ($this->_useProgressBar) {
+		    $this->errorProgressBar($ret);
+		}
 		return $ret;
 	    }
 	}
