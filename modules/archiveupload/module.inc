@@ -34,7 +34,7 @@ class ArchiveUploadModule extends GalleryModule {
 	$this->setId('archiveupload');
 	$this->setName($gallery->i18n('Archive Upload'));
 	$this->setDescription($gallery->i18n('Extract items from uploaded zip files'));
-	$this->setVersion('1.0.4');
+	$this->setVersion('1.0.5');
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -49,7 +49,7 @@ class ArchiveUploadModule extends GalleryModule {
 	if ($ret) {
 	    return $ret;
 	}
-	foreach (array('unzipPath' => '') as $key => $value) {
+	foreach (array('unzipPath' => '', 'removeMeta' => 1) as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {

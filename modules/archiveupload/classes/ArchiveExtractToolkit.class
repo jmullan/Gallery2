@@ -44,8 +44,7 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null, null);
 	}
 
-	list ($ret, $unzip) =
-	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'archiveupload');
 	if ($ret) {
 	    return array($ret, null, null);
 	}
@@ -56,7 +55,7 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 	}
 	$gallery->guaranteeTimeLimit(60);
 
-	list ($success) = $platform->exec(array(array($unzip, $sourceFilename)));
+	list ($success) = $platform->exec(array(array($params['unzipPath'], $sourceFilename)));
 	if (!empty($cwd)) {
 	    @$platform->chdir($cwd);
 	}
@@ -69,7 +68,52 @@ class ArchiveExtractToolkit extends GalleryToolkit {
 	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 	}
 
+	if ($params['removeMeta'] && !$this->_pruneDirectory($destFilename,
+		    /* Thumbs.db is Windows, the rest are MacOSX */
+		    array('file' => array('Thumbs.db', '.DS_Store', '.Trashes'),
+			  'dir' => array('__MACOSX')),
+		    $platform)) {
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
+	}
+
 	return array(null, $mimeType, $context);
+    }
+
+    /**
+     * Remove specified patterns in a directory tree.
+     * @param string $dir path
+     * @param array $prune ('file' => array of filenames, 'dir' => array of dirnames)
+     * @param object GalleryPlatform
+     * @return bool true for success
+     * @access private
+     */
+    function _pruneDirectory($dir, $prune, &$platform) {
+	if (!($dh = $platform->opendir($dir))) {
+	    return false;
+	}
+	$list = array();
+	while ($file = $platform->readdir($dh)) {
+	    if ($file != '.' && $file != '..') {
+		$list[] = $file;
+	    }
+	}
+	$platform->closedir($dh);
+	$dir .= $platform->getDirectorySeparator();
+	foreach ($list as $file) {
+	    $path = $dir . $file;
+	    if ($platform->is_dir($path)) {
+		if (in_array($file, $prune['dir'])) {
+		    if (!$platform->recursiveRmdir($path)) {
+			return false;
+		    }
+		} else if (!$this->_pruneDirectory($path, $prune, $platform)) {
+		    return false;
+		}
+	    } else if (in_array($file, $prune['file']) && !$platform->unlink($path)) {
+		return false;
+	    }
+	}
+	return true;
     }
 }
 ?>

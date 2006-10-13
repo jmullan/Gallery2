@@ -48,6 +48,13 @@
     {g->text text="The unzip binary is not executable.  To fix it, run <b>chmod 755 %s</b>" arg1=$form.unzipPath}
   </div>
   {/if}
+  <br/>
+  <input type="checkbox" id="cbRemoveMeta"
+   name="{g->formVar var="form[removeMeta]"}"{if $form.removeMeta} checked="checked"{/if}/>
+  <label for="cbRemoveMeta">
+    {g->text text="Discard archive contents recognized as folder metadata"}
+    (Thumbs.db, .DS_Store, .Trashes, __MACOSX)
+  </label>
 </div>
 
 <div class="gbBlock gcBackground1">

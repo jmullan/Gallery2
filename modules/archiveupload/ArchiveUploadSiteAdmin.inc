@@ -40,8 +40,7 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save']) || isset($form['action']['test'])) {
-	    GalleryCoreApi::requireOnce(
-		'modules/archiveupload/classes/ArchiveUploadHelper.class');
+	    GalleryCoreApi::requireOnce('modules/archiveupload/classes/ArchiveUploadHelper.class');
 
 	    if (empty($form['unzipPath'])) {
 		$error[] = 'form[error][unzipPath][missing]';
@@ -69,7 +68,12 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 	    }
 	    if (empty($error) && isset($form['action']['save'])) {
 		$ret = GalleryCoreApi::setPluginParameter(
-				       'module', 'archiveupload', 'unzipPath', $form['unzipPath']);
+			'module', 'archiveupload', 'unzipPath', $form['unzipPath']);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$ret = GalleryCoreApi::setPluginParameter('module', 'archiveupload',
+			'removeMeta', empty($form['removeMeta']) ? 0 : 1);
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -127,7 +131,7 @@ class ArchiveUploadSiteAdminView extends GalleryView {
 
 	if ($form['formName'] != 'ArchiveUploadSiteAdmin') {
 	    $form['formName'] = 'ArchiveUploadSiteAdmin';
-	    foreach (array('unzipPath') as $key) {
+	    foreach (array('unzipPath', 'removeMeta') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'archiveupload', $key);
 		if ($ret) {
