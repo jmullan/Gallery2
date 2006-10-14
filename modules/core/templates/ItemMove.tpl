@@ -196,7 +196,7 @@
       {/if}
       {/foreach}
       //]]>
-  </script>
+    </script>
   </table>
   <input type="hidden" name="{g->formVar var="page"}" value="{$ItemMove.page}"/>
   <input type="hidden" name="{g->formVar var="form[numPerPage]"}" value="{$ItemMove.numPerPage}"/>

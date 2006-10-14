@@ -37,35 +37,6 @@
 </h2></div>
 {/if}
 
-<div class="gbTabBar">
-  {if ($AdminThemes.mode == 'defaults')}
-    <span class="giSelected o"><span>
-      {g->text text="Defaults"}
-    </span></span>
-  {else}
-    <span class="o"><span>
-      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-		       arg3="mode=defaults"}">{g->text text="Defaults"}</a>
-    </span></span>
-  {/if}
-
-  {foreach from=$AdminThemes.themes key=themeId item=theme}
-  {if $theme.active}
-    {if ($AdminThemes.mode == 'editTheme') && ($AdminThemes.themeId == $themeId)}
-      <span class="giSelected o"><span>
-	{g->text text=$theme.name l10Domain=$theme.l10Domain}
-      </span></span>
-    {else}
-      <span class="o"><span>
-	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
-			 arg3="mode=editTheme" arg4="themeId=$themeId"}">{g->text text=$theme.name l10Domain=$theme.l10Domain}</a>
-      </span></span>
-    {/if}
-  {/if}
-  {/foreach}
-</div>
-
-{if ($AdminThemes.mode == 'defaults')}
 <div class="gbBlock">
   <h3> {g->text text="Defaults"} </h3>
 
@@ -126,13 +97,27 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="hidden" name="{g->formVar var="mode"}" value="defaults"/>
   <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][saveDefaults]"}" value="{g->text text="Save"}"/>
+   name="{g->formVar var="form[action][saveDefaults]"}" value="{g->text text="Save Defaults"}"/>
 </div>
-{/if}
 
-{if ($AdminThemes.mode == "editTheme")}
+<div class="gbTabBar">
+  {foreach from=$AdminThemes.themes key=themeId item=theme}
+  {if $theme.active}
+    {if $AdminThemes.themeId == $themeId}
+      <span class="giSelected o"><span>
+	{g->text text=$theme.name l10Domain=$theme.l10Domain}
+      </span></span>
+    {else}
+      <span class="o"><span>
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminThemes"
+			 arg3="themeId=$themeId"}">{g->text text=$theme.name l10Domain=$theme.l10Domain}</a>
+      </span></span>
+    {/if}
+  {/if}
+  {/foreach}
+</div>
+
 <div class="gbBlock">
   <h3>
     {g->text text="%s Theme Settings" arg1=$AdminThemes.themes[$AdminThemes.themeId].name}
@@ -287,11 +272,10 @@
 {if isset($AdminThemes.customTemplate) || !empty($AdminThemes.settings)}
 <div class="gbBlock gcBackground1">
   <input type="hidden" name="{g->formVar var="themeId"}" value="{$AdminThemes.themeId}"/>
-  <input type="hidden" name="{g->formVar var="mode"}" value="editTheme"/>
   <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][saveTheme]"}" value="{g->text text="Save"}"/>
+   name="{g->formVar var="form[action][saveTheme]"}" value="{g->text text="Save Theme Settings"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][undoTheme]"}" value="{g->text text="Reset"}"/>
 </div>
 {/if}
-{/if}
+

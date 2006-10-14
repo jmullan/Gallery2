@@ -147,7 +147,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 		}
 
 		/* Save basic settings */
-		$item->setTheme($form['theme']);
 		if (!empty($form['presort'])) {
 		    $item->setOrderBy($form['presort'] . '|' . $form['orderBy']);
 		} else {
@@ -174,9 +173,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 		    return array($ret, null, null, null);
 		}
 
-		/* for sort order and theme we need to load subalbums */
-		if (!empty($subAlbumIds) && (isset($form['changeInDescendents']['sort'])
-			    || isset($form['changeInDescendents']['theme']))) {
+		/* for sort order we need to load subalbums */
+		if (!empty($subAlbumIds) && isset($form['changeInDescendents']['sort'])) {
 		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($subAlbumIds);
 		    if ($ret) {
 			return array($ret, null, null, null);
@@ -196,9 +194,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    if (isset($form['orderDirection'])) {
 				$album->setOrderDirection($form['orderDirection']);
 			    }
-			}
-			if (isset($form['changeInDescendents']['theme'])) {
-			    $album->setTheme($form['theme']);
 			}
 			$ret = $album->save();
 			if ($ret) {
@@ -239,7 +234,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 		$form['presort'] = $tmp[0];
 	    }
 	    $form['orderDirection'] = $item->getOrderDirection();
-	    $form['theme'] = $item->getTheme();
 	    $form['formName'] = 'ItemEditAlbum';
 
 	    /* Load up the data for the resizes table */
@@ -308,25 +302,6 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    return array($ret, null, null);
 	}
 
-	/* Set up our theme selection list */
-	list ($ret, $themeStatusList) = GalleryCoreApi::fetchPluginStatus('theme');
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-	$themeList = array('' => $module->translate('&laquo; default theme &raquo;'));
-	foreach ($themeStatusList as $themeId => $themeStatus) {
-	    if (empty($themeStatus['active'])) {
-		continue;
-	    }
-
-	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
-	    if ($ret) {
-		return array($ret, null, null);
-	    }
-	    $themeList[$themeId] = $theme->translate($theme->getName());
-	}
-
-	$ItemEditAlbum['themeList'] = $themeList;
 	$ItemEditAlbum['orderByList'] = $orderByList;
 	$ItemEditAlbum['presortList'] = $presortList;
 	$ItemEditAlbum['orderDirectionList'] = $orderDirectionList;

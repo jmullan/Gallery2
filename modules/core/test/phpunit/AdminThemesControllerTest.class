@@ -57,7 +57,6 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'core.SiteAdmin',
 				      'subView' => 'core.AdminThemes',
-				      'mode' => 'editTheme',
 				      'themeId' => 'testThemeId2'),
 		  'status' => array('savedTheme' => 'Test Theme 2'),
 		  'error' => array()),
@@ -79,7 +78,6 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'core.SiteAdmin',
 				      'subView' => 'core.AdminThemes',
-				      'mode' => 'editTheme',
 				      'themeId' => 'testThemeId2'),
 		  'status' => array('restoredTheme' => 'Test Theme 2'),
 		  'error' => array()),
@@ -111,12 +109,13 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
 	GalleryUtilities::putRequestVariable('form[default][newAlbumsUseDefaults]', 'true');
 	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
+	GalleryUtilities::putRequestVariable('themeId', 'anything');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'core.AdminThemes',
-						      'mode' => 'defaults'),
+						      'themeId' => 'anything'),
 				  'status' => array('savedDefaults' => 1),
 				  'error' => array()),
 			    $results);

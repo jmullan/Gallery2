@@ -274,9 +274,12 @@ class CoreModule extends GalleryModule {
 			    'view' => 'core.AdminGroups'),
 		      array('name' => $this->translate('Maintenance'),
 			    'view' => 'core.AdminMaintenance'),
+		      array('name' => $this->translate('Themes'),
+			    'view' => 'core.AdminThemes'),
 		      array('name' => $this->translate('Performance'),
 			    'view' => 'core.AdminPerformance'),
 		      );
+
 	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
 	if ($ret) {
 	    return array($ret, null);
@@ -286,35 +289,6 @@ class CoreModule extends GalleryModule {
 			    'view' => 'core.AdminToolkitPriority',
 			    'group' => 'toolkits',
 			    'groupLabel' => $this->translate('Graphics Toolkits'));
-	}
-
-	$themeLabel = $this->translate('Themes');
-	$data[] = array('name' => $this->translate('Defaults'),
-			'view' => 'core.AdminThemes',
-			'mode' => 'defaults',
-			'group' => 'themes',
-			'groupLabel' => $themeLabel);
-
-	list ($ret, $themes) = GalleryCoreApi::fetchPluginStatus('theme', true);
-	if ($ret) {
-	    return array($ret, null);
-	}
-	foreach ($themes as $themeId => $status) {
-	    if (empty($status['active'])) {
-		continue;
-	    }
-
-	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, true);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    $data[] = array('name' => $theme->translate($theme->getName()),
-			    'view' => 'core.AdminThemes',
-			    'themeId' => $themeId,
-			    'mode' => 'editTheme',
-			    'group' => 'themes',
-			    'groupLabel' => $themeLabel);
 	}
 
 	return array(null, $data);

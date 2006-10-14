@@ -39,18 +39,6 @@
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="Theme"} </h3>
-  <p class="giDescription">
-    {g->text text="Choose a theme for this album. (The way the album is arranged on the page)"}
-  </p>
-
-  <select name="{g->formVar var="form[theme]"}">
-    {html_options options=$ItemEditAlbum.themeList selected=$form.theme}
-  </select><br/>
-  {g->changeInDescendents module="theme" text="Use this theme in all subalbums"}
-</div>
-
-<div class="gbBlock">
   <h3> {g->text text="Thumbnails"} </h3>
   <p class="giDescription">
     {g->text text=" Every item requires a thumbnail. Set the default size in pixels here."}

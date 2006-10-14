@@ -37,7 +37,8 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 	parent::setUp();
 
 	/* Create a random album */
-	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_album) = $this->_createRandomAlbum(
+	    $this->_getRootId(), array('theme' => 'ItemEditThemeControllerTest'));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -62,14 +63,22 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 
 	$this->_markForCleanup($this->_album);
 
-	/* Assign our test theme */
-	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
+	$gallery->setPlatform(new ItemEditThemeTestPlatform($gallery->getPlatform()));
+
+	$this->_preferred = null;
+
+	/* Reset test theme */
+	ItemEditThemeControllerTestTheme::reset();
+    }
+
+    function _setTheme(&$item, $themeId) {
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_album->setTheme('ItemEditThemeControllerTest');
-	$ret = $this->_album->save();
+	$item->setTheme($themeId);
+	$ret = $item->save();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -78,13 +87,6 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	$gallery->setPlatform(new ItemEditThemeTestPlatform($gallery->getPlatform()));
-
-	$this->_preferred = null;
-
-	/* Reset test theme */
-	ItemEditThemeControllerTestTheme::reset();
     }
 
     function testUndo() {
@@ -178,22 +180,7 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[changeInDescendents][theme]', 1);
 
-	/* Assign our test theme */
-	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_grandchildAlbum->getId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->_grandchildAlbum->setTheme('ItemEditThemeControllerTest');
-	$ret = $this->_grandchildAlbum->save();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
+	$this->_setTheme($this->_grandchildAlbum, 'ItemEditThemeControllerTest');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_grandchildAlbum, $this->_preferred);
@@ -203,12 +190,85 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 				  'setParameter(columns, 4)'),
 			    ItemEditThemeControllerTestTheme::getMap());
     }
+
+    function testChooseTheme() {
+	$this->_setTheme($this->_album, null);
+
+	GalleryUtilities::putRequestVariable('form[theme]', 'ItemEditThemeControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][chooseTheme]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[serialNumber]', $this->_album->getSerialNumber());
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Successfully changed theme')),
+			    $results);
+
+	list ($ret, $this->_album) = $this->_album->refresh();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	$this->assertEquals('ItemEditThemeControllerTest', $this->_album->getTheme());
+    }
+
+    function testChooseBogusTheme() {
+	GalleryUtilities::putRequestVariable('form[theme]', 'BogusBogus!');
+	GalleryUtilities::putRequestVariable('form[action][chooseTheme]', 1);
+
+	$results = $this->handleRequest($this->_album, $this->_preferred, ERROR_BAD_PARAMETER);
+    }
+
+    function testChooseThemeInvalidSerialNumber() {
+	GalleryUtilities::putRequestVariable('form[theme]', 'ItemEditThemeControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][chooseTheme]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
+
+	$results = $this->handleRequest($this->_album, $this->_preferred, ERROR_OBSOLETE_DATA);
+    }
+
+    function testChooseThemeInDescendents() {
+	$this->_setTheme($this->_album, null);
+	$this->_setTheme($this->_childAlbum, null);
+	$this->_setTheme($this->_grandchildAlbum, null);
+
+	GalleryUtilities::putRequestVariable('form[theme]', 'ItemEditThemeControllerTest');
+	GalleryUtilities::putRequestVariable('form[changeInDescendents][theme]', 1);
+	GalleryUtilities::putRequestVariable('form[action][chooseTheme]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[serialNumber]', $this->_album->getSerialNumber());
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Successfully changed theme')),
+			    $results);
+
+	list ($ret, $album) = $this->_album->refresh();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	list ($ret, $childAlbum) = $this->_childAlbum->refresh();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	list ($ret, $grandchildAlbum) = $this->_grandchildAlbum->refresh();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('ItemEditThemeControllerTest', $album->getTheme(), 'album');
+	$this->assertEquals('ItemEditThemeControllerTest', $childAlbum->getTheme(), 'child');
+	$this->assertEquals('ItemEditThemeControllerTest',
+			    $grandchildAlbum->getTheme(), 'grandchild');
+    }
 }
 
 /**
  * Test theme
  */
 class ItemEditThemeControllerTestTheme {
+    function getId() {
+	return 'ItemEditThemeControllerTest';
+    }
 
     /**
      * @see GalleryTheme::getSettings
@@ -317,9 +377,7 @@ class ItemEditThemeTestPlatform {
     function readdir($path) {
 	static $paths;
 	if (!isset($paths)) {
-	    $paths = array('.',
-			   '..',
-			   'ItemEditThemeControllerTest');
+	    $paths = array('.', '..', 'ItemEditThemeControllerTest');
 	}
 
 	if ($path == 'TEST_VALID_RESOURCE') {
@@ -364,7 +422,7 @@ class ItemEditThemeTestPlatform {
     function file_exists($path) {
 	$base = dirname(__FILE__) . '/../../../../themes/';
 	switch($path) {
-	case $base . 'ItemEditThemeController/theme.inc':
+	case $base . 'ItemEditThemeControllerTest/theme.inc':
 	    return 1;
 
 	default:
