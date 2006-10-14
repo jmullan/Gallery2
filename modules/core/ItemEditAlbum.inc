@@ -280,11 +280,15 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    /* Always force these to be false */
 	    $form['recreateThumbnails'] = false;
 	    $form['recreateResizes'] = false;
+	    $form['buildThumbnails'] = false;
+	    $form['buildResizes'] = false;
 	}
 
 	/* Checkboxes are annoying in that they are empty if false */
 	$form['recreateThumbnails'] = !empty($form['recreateThumbnails']);
 	$form['recreateResizes'] = !empty($form['recreateThumbnails']);
+	$form['buildThumbnails'] = !empty($form['buildThumbnails']);
+	$form['buildResizes'] = !empty($form['buildResizes']);
 	for ($i = 0; $i < count($form['resizes']); $i++) {
 	    $form['resizes'][$i]['active'] = !empty($form['resizes'][$i]['active']);
 	}
