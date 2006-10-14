@@ -151,6 +151,9 @@ class ItemAddController extends GalleryController {
 		$error = array_merge($error, $optionErrors);
 		/* for each item, put the items warnings into our status array */
 		foreach ($optionWarnings as $j => $messages) {
+		    if (!isset($status['addedFiles'][$j]['warnings'])) {
+			$status['addedFiles'][$j]['warnings'] = array();
+		    }
 		    $status['addedFiles'][$j]['warnings'] =
 			array_merge($status['addedFiles'][$j]['warnings'], $messages);
 		}
