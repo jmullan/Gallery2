@@ -176,7 +176,6 @@ function GalleryInitSecondPass() {
     }
 
     if (!isset($user)) {
-
 	/* Missing user, be anonymous */
 	list ($ret, $userId) = GalleryCoreApi::getAnonymousUserId();
 	if ($ret) {
