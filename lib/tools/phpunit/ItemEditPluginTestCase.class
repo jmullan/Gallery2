@@ -58,14 +58,15 @@ class ItemEditPluginTestCase extends GalleryTestCase {
 
 	list ($ret, $error, $status, $needsProgressBar) =
 	    $this->_plugin->handleRequest($form, $item, $preferred);
-	if ($ret) {
-	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
-		$this->assert(false,
-			sprintf('Expected error code (%s) but received (%s)',
-			    implode(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
-			    implode(' | ', GalleryStatus::getErrorCodeConstants(
-							  $ret->getErrorCode()))));
+	if (isset($errorCode)) {
+	    $expectedErrorCode = implode(' | ', GalleryStatus::getErrorCodeConstants($errorCode));
+	    if ($ret) {
+		$actualErrorCode =
+		    implode(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()));
+	    } else {
+		$actualErrorCode = 'SUCCESS';
 	    }
+	    $this->assertEquals($expectedErrorCode, $actualErrorCode, 'Unexpected error code!');
 	} else if ($ret) {
 	    $this->failWithStatus($ret);
 	} else {
