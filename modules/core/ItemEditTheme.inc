@@ -143,6 +143,7 @@ class ItemEditTheme extends ItemEditPlugin {
 
 	if ($form['formName'] != 'ItemEditTheme') {
 	    $form['formName'] = 'ItemEditTheme';
+	    $form['theme'] = $themeId;
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
