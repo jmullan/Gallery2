@@ -133,7 +133,7 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 
 	/* Assert that we saw what we expected */
 	$this->assertEquals(
-	    array('0', '0.56' /* index downloads have a higher weight */,
+	    array('0', '0', '0.56' /* index downloads have a higher weight */,
 		  '0.67', '0.78', '0.89', '1.0' /* 4 steps for the plugins */,
 		  'complete:view=core.SiteAdmin,subView=core.AdminRepository,statusId=STATUSID'),
 	    $mockAdapter->getProgressBarDump());
