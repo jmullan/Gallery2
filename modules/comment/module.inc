@@ -239,7 +239,7 @@ class CommentModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemSummaries
      */
-    function getItemSummaries($items, $permissions) {
+    function getItemSummaries($items, $permissions, &$template) {
 	$ids = array();
 	foreach ($items as $item) {
 	    $ids[] = $item->getId();

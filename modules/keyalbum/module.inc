@@ -94,7 +94,7 @@ class KeyAlbumModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemSummaries
      */
-    function getItemSummaries($items, $permissions) {
+    function getItemSummaries($items, $permissions, &$template) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 

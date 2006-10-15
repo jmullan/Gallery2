@@ -86,7 +86,7 @@ class NewItemsModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemSummaries
      */
-    function getItemSummaries($items, $permissions) {
+    function getItemSummaries($items, $permissions, &$template) {
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'newitems');
 	if ($ret) {
 	    return array($ret, null);
