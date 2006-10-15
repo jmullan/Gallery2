@@ -99,14 +99,14 @@ class GalleryRepositoryIndex {
 	}
 
 	if (md5($indexContents) != $indexHash) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					$gallery->i18n('Index integrity check failed.'));
 	}
 
 	/* Write index to the filesystem. */
 	$indexPath = $this->getRepositoryCacheDir() . 'index.repository';
 	if (false === $platform->file_put_contents($indexPath, $indexContents)) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					'Error writing index to the filesystem.');
 	}
 
@@ -172,7 +172,7 @@ class GalleryRepositoryIndex {
 
 	$indexPath = $this->getRepositoryCacheDir() . 'index.repository';
 	if (false === ($index = $platform->file_get_contents($indexPath))) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__, sprintf(
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__, sprintf(
 					     'Error reading index [%s]', $indexPath));
 	}
 
@@ -189,8 +189,8 @@ class GalleryRepositoryIndex {
      */
     function unserializeIndex(&$index) {
 	if (false === ($this->_index = unserialize($index))) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-						  "Error unserializing index [$index]");
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					 "Error unserializing index [$index]");
 	}
 	$this->_isLoaded = true;
 	return null;
@@ -296,7 +296,7 @@ class GalleryRepositoryIndex {
 
 	if (!isset($this->_index[$pluginType . 's'][$pluginId]
 		['descriptions'][$language]['name'])) {
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Name attribute missing from meta data [$language]"),
 		    null);
 	}

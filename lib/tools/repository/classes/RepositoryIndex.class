@@ -89,17 +89,17 @@ class RepositoryIndex extends RepositoryObject {
 		    $descriptorPath = sprintf('%s%s/%s', $this->_outputDir, $pluginType, $file);
 		    if (false === ($descriptorContents =
 			    $platform->file_get_contents($descriptorPath))) {
-			return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__,
+			return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__,
 					__LINE__, "Error reading descriptor [$descriptorPath]"),
 				     null);
 		    }
 
 		    /* Unserialize it. */
 		    if (false === ($descriptor = unserialize($descriptorContents))) {
-			return
-			    array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-					"Error unserializing descriptor [$descriptorContents]"),
-				  null);
+			return array(GalleryCoreApi::error(
+					 ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					 "Error unserializing descriptor [$descriptorContents]"),
+				     null);
 		    }
 		    $currentPluginId = $descriptor['header']['id'];
 		    $indexPluginData = isset($index[$pluginType][$currentPluginId])
@@ -164,7 +164,7 @@ class RepositoryIndex extends RepositoryObject {
 		    }
 		}
 	    } else {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					"Couldn't open directory [$this->_outputDir$pluginType]"),
 			     null);
 	    }
@@ -208,7 +208,7 @@ class RepositoryIndex extends RepositoryObject {
 	    $platform =& $gallery->getPlatform();
 	    $indexPath = $this->_outputDir . $this->_fileName;
 	    if (false === ($index = $platform->file_get_contents($indexPath))) {
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+		return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					     sprintf('Error reading index [%s]', $indexPath)),
 			     null);
 	    }

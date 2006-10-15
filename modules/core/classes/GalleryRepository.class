@@ -329,7 +329,7 @@ class GalleryRepository {
 
 	/* Sort plugins by name. */
 	if (!uasort($pluginList, array('GalleryRepository', 'comparePluginListEntries'))) {
-	    return array(GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      'Error sorting plugin list.'),
 			 null);
 	}
@@ -567,7 +567,7 @@ class GalleryRepository {
 	    '%s/%ss/%s/', dirname(dirname(dirname(dirname(__FILE__)))), $pluginType, $pluginId);
 	if (!$platform->file_exists($pluginOutputDir)
 		&& !$platform->mkdir($pluginOutputDir)) {
-	    $ret = GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+	    $ret = GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					 "Couldn't create directory [$pluginOutputDir]");
 	    return array($ret, null);
 	}
@@ -576,7 +576,7 @@ class GalleryRepository {
 	$absolutePackagePath =
 	    $gallery->getConfig('repository.cache') . $this->_source . '/' . $relativePackageUrl;
 	if (false === $platform->file_put_contents($absolutePackagePath, $packageContents)) {
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					       "Error writing package [$absolutePackagePath]"),
 			 null);
 	}
@@ -637,7 +637,7 @@ class GalleryRepository {
 		    }
 
 		    if (!empty($errorMessage)) {
-			return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+			return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 						    $errorMessage);
 		    }
 		}
