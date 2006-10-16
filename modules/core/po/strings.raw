@@ -29,6 +29,7 @@ gettext("Themes") /* also in: module.inc */
 /* AdminRepository.inc */
 gettext("Updating Repository Index")
 gettext("Scanning plugins")
+gettext("Update Plugin List") /* also in: templates/AdminRepository.tpl */
 gettext("Done.")
 
 /* AdminRepositoryDownload.inc */
@@ -121,9 +122,9 @@ gettext("edit %s")
 
 /* ItemEditAlbum.inc */
 gettext("Settings saved successfully.") /* also in: test/phpunit/ItemEditAlbumPluginTest.class */
-gettext("&laquo; default theme &raquo;")
-gettext("Recreating resized images")
+gettext("Apply resized image settings")
 gettext("Preparing...")
+gettext("Apply thumbnail settings")
 gettext("Rebuilding thumbnails...")
 gettext("Album") /* also in: classes/GalleryAlbumItem.class test/phpunit/CoreModuleTest.class */
 gettext("Processing image %d of %d") /* also in: classes/BuildDerivativesTask.class */
@@ -167,7 +168,9 @@ gettext("Scaled photo successfully") /* also in: test/phpunit/ItemEditRotateAndS
 gettext("Modify Photo")
 
 /* ItemEditTheme.inc */
-gettext("Theme") /* also in: templates/ItemEditAlbum.tpl */
+gettext("Successfully changed theme") /* also in: test/phpunit/ItemEditThemePluginTest.class */
+gettext("&laquo; default theme &raquo;")
+gettext("Theme") /* also in: templates/ItemEditTheme.tpl */
 
 /* ItemMakeHighlight.inc */
 gettext("make highlight")
@@ -232,7 +235,6 @@ gettext("Groups")
 gettext("Performance")
 gettext("Toolkit Priority") /* also in: templates/AdminToolkitPriority.tpl */
 gettext("Graphics Toolkits")
-gettext("Defaults") /* also in: templates/AdminThemes.tpl */
 gettext("Account Settings") /* also in: templates/UserLocked.tpl templates/UserPreferences.tpl */
 gettext("Change Password") /* also in: templates/UserChangePassword.tpl templates/UserRecoverPasswordConfirm.tpl */
 gettext("Edit %s") /* also in: templates/ItemEdit.tpl test/phpunit/CoreModuleTest.class */
@@ -478,7 +480,7 @@ gettext("Lock system")
 gettext("Helper Processes")
 gettext("Some Gallery modules will use programs on your server to do image processing, archiving and other operations.  These programs can be very computationally intensive and can impact the overall performance of a shared web server.  You can make these programs run at a lower priority so that they play nice.  If you're in a shared hosting environment and your web host is complaining, try setting your priority low.")
 gettext("Priority")
-gettext("Save") /* also in: templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminPerformance.tpl templates/AdminRepository.tpl templates/AdminThemes.tpl templates/AdminToolkitPriority.tpl templates/ItemEditAlbum.tpl templates/ItemEditAnimation.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl templates/ItemEditMovie.tpl templates/ItemEditPhoto.tpl templates/ItemEditTheme.tpl templates/UserPreferences.tpl */
+gettext("Save") /* also in: templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminPerformance.tpl templates/AdminRepository.tpl templates/AdminToolkitPriority.tpl templates/ItemEditAlbum.tpl templates/ItemEditAnimation.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl templates/ItemEditMovie.tpl templates/ItemEditPhoto.tpl templates/UserPreferences.tpl */
 gettext("Reset") /* also in: templates/AdminEditGroup.tpl templates/AdminEditUser.tpl templates/AdminThemes.tpl templates/AdminToolkitPriority.tpl templates/ItemEditAlbum.tpl templates/ItemEditItem.tpl templates/ItemEditPhoto.tpl templates/ItemEditTheme.tpl templates/UserPreferences.tpl */
 
 /* templates/AdminCreateGroup.tpl */
@@ -672,7 +674,6 @@ gettext("Configure your Gallery")
 gettext("Before you can proceed, you have to change some permissions so that Gallery can install plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:")
 gettext("If you have trouble changing permissions, ask your system administrator for assistance.  When you've fixed the permissions, click the Continue button to proceed.")
 gettext("Continue")
-gettext("Update Plugin List")
 gettext("Download Plugin List")
 gettext("Show Repository List")
 gettext("Upgrade Gallery")
@@ -723,10 +724,12 @@ gettext("Successfully uninstalled theme %s")
 gettext("Successfully upgraded theme %s")
 gettext("Successfully saved default album settings")
 gettext("Restored theme settings")
+gettext("Defaults")
 gettext("These are default display settings for albums in your gallery.  They can be overridden in each album.")
 gettext("Default sort order")
 gettext("with") /* also in: templates/ItemEditAlbum.tpl */
 gettext("New albums")
+gettext("Save Defaults")
 gettext("%s Theme Settings")
 gettext("These are the global settings for the theme.  They can be overridden at the album level.")
 gettext("Available") /* also in: templates/blocks/ThemeSettingsForm.tpl */
@@ -738,6 +741,7 @@ gettext("Move Down") /* also in: templates/blocks/ThemeSettingsForm.tpl */
 gettext("Parameter") /* also in: templates/blocks/ThemeSettingsForm.tpl */
 gettext("Value") /* also in: templates/blocks/ThemeSettingsForm.tpl */
 gettext("There are no settings for this theme") /* also in: templates/blocks/ThemeSettingsForm.tpl */
+gettext("Save Theme Settings") /* also in: templates/ItemEditTheme.tpl */
 
 /* templates/AdminToolkitPriority.tpl */
 gettext("The toolkits shown below have some overlap in supported operations and mime types.  Rank the toolkits here to determine which will perform these operations.")
@@ -857,8 +861,6 @@ gettext("There was a problem processing your request.") /* also in: templates/It
 gettext("Sort order")
 gettext("This sets the sort order for the album.  This applies to all current items, and any newly added items.")
 gettext("Apply to all subalbums")
-gettext("Choose a theme for this album. (The way the album is arranged on the page)")
-gettext("Use this theme in all subalbums")
 gettext(" Every item requires a thumbnail. Set the default size in pixels here.")
 gettext("You must enter a number (greater than zero)") /* also in: templates/ItemEditItem.tpl templates/ItemEditPhoto.tpl templates/ItemEditRotateAndScalePhoto.tpl */
 gettext("Use this thumbnail size in all subalbums")
@@ -868,10 +870,13 @@ gettext("Active")
 gettext("Target Size (pixels)")
 gettext("You must enter a valid size") /* also in: templates/ItemEditPhoto.tpl */
 gettext("Use these target sizes in all subalbums")
-gettext("Recreate thumbnails and resizes")
-gettext("The thumbnail and resized image settings are for all new items. To apply these settings to all the items in your album, check the appropriate box.")
-gettext("Recreate thumbnails")
-gettext("Recreate resized images")
+gettext("Apply settings to existing items")
+gettext("The thumbnail and resized image settings are for all new items. To apply these settings to all the items in your album, check the appropriate box. Including subalbums will apply each album's own settings to its thumbnails/resizes, which may not match the settings above. Building images now makes this operation take longer, but saves the time to build and cache each file when it is first viewed.")
+gettext("Apply album setting to thumbnails")
+gettext("... and for all subalbums")
+gettext("Build thumbnails too")
+gettext("Apply album setting to resized images")
+gettext("Build resizes too")
 
 /* templates/ItemEditAnimation.tpl */
 gettext("In order for Gallery to properly display this animation, it has to know the animation's width and height.  If you have installed a graphics toolkit that can handle animation types, then these values may already be set.  If not, they may be set to 0.  If you do not enter the correct values here, the animation may appear distorted when viewed in your web browser.  Note that changing these values does <b>not</b> change the animation itself so experimenting won't cause harm.")
@@ -951,9 +956,13 @@ gettext("You are using a copy of the original photo that has been scaled or rota
 gettext("Restore original")
 
 /* templates/ItemEditTheme.tpl */
-gettext("This album is configured to use the <b>%s</b> theme. These settings only apply to the theme for this album.")
-gettext("Use these settings in all subalbums that use %s theme")
-gettext("Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab")
+gettext("Choose a theme")
+gettext("Themes control the look and feel of the album.  You can choose a different theme for each album.  If you don't choose a theme, we'll use the %s theme by default.")
+gettext("Use this theme in all subalbums")
+gettext("Choose Theme")
+gettext("Configure the %s theme")
+gettext("These settings only apply to the theme for this album.")
+gettext("Use these settings in all subalbums that use the %s theme")
 
 /* templates/ItemMakeHighlight.tpl */
 gettext("Album Highlight")
@@ -1024,9 +1033,6 @@ gettext("Move this item")
 gettext("before")
 gettext("after")
 gettext("Reorder")
-
-/* templates/LateRedirect.tpl */
-gettext("Continue...")
 
 /* templates/MaintenanceMode.tpl */
 gettext("Site is temporarily down for maintenance.")
