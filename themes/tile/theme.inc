@@ -87,8 +87,8 @@ class TileTheme extends GalleryTheme {
 		$value = explode(',', $key);
 		if (count($value) == 3) {
 		    $map[$value[0]][$value[1]] = $value[2];
-		    $params['row_'.$value[2]] = $value[0]+1;
-		    $params['col_'.$value[2]] = $value[1]+1;
+		    $params['row_' . $value[2]] = $value[0] + 1;
+		    $params['col_' . $value[2]] = $value[1] + 1;
 		}
 	    }
 	}
@@ -234,8 +234,9 @@ class TileTheme extends GalleryTheme {
 		return array($ret, null, null);
 	    }
 	}
-	$i = 0;
+	$i = -1;
 	foreach ($childItems as $child) {
+	    $i++;
 	    $childId = $child->getId();
 	    if (isset($thumbnails[$childId])) {
 		if (!($thumbnails[$childId]->getWidth() && $thumbnails[$childId]->getHeight())) {
@@ -300,7 +301,6 @@ class TileTheme extends GalleryTheme {
 		    $imageWidths[] = $imageHeights[] = -1;
 		}
 	    }
-	    $i++;
 	}
 	return array(null, $imageWidths, $imageHeights);
     }
