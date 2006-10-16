@@ -44,7 +44,8 @@ class GalleryDataCache {
 	static $cache;
 	if (!isset($cache)) {
 	    $cache['maxKeys'] = 300;
-	    $cache['timestamps'] = array();
+	    $cache['positions'] = array();
+	    $cache['latestPosition'] = 0;
 	    $cache['keys'] = array();
 	    $cache['protected'] = array();
 	    $cache['memoryCacheEnabled'] = 1;
@@ -89,10 +90,12 @@ class GalleryDataCache {
 	if ($protected) {
 	    $cache['protected'][$key] = 1;
 	} else {
-	    $cache['timestamps'][$key] = time() + microtime();
+	    $cache['positions'][$key] = $cache['latestPosition']++;
 	}
 
-	GalleryDataCache::_performMaintenance();
+	if ($cache['latestPosition'] % 150 == 0) {
+	    GalleryDataCache::_performMaintenance();
+	}
     }
 
     /**
@@ -105,7 +108,7 @@ class GalleryDataCache {
 	    return;
 	}
 
-	unset($cache['timestamps'][$key]);
+	unset($cache['positions'][$key]);
 	unset($cache['keys'][$key]);
 	unset($cache['protected'][$key]);
     }
@@ -121,7 +124,7 @@ class GalleryDataCache {
 	}
 
 	foreach (preg_grep("/$pattern/", array_keys($cache['keys'])) as $key) {
-	    unset($cache['timestamps'][$key]);
+	    unset($cache['positions'][$key]);
 	    unset($cache['keys'][$key]);
 	    unset($cache['protected'][$key]);
 	}
@@ -146,10 +149,12 @@ class GalleryDataCache {
 	if ($protected) {
 	    $cache['protected'][$key] = 1;
 	} else {
-	    $cache['timestamps'][$key] = time() + microtime();
+	    $cache['positions'][$key] = $cache['latestPosition']++;
 	}
 
-	GalleryDataCache::_performMaintenance();
+	if ($cache['latestPosition'] % 150 == 0) {
+	    GalleryDataCache::_performMaintenance();
+	}
     }
 
     /**
@@ -159,24 +164,15 @@ class GalleryDataCache {
      * @access private
      */
     function _performMaintenance() {
-	static $count;
-
-	if (!isset($count)) {
-	    $count = 0;
-	}
-
-	if ($count++ % 150 == 0) {
-	    $cache =& GalleryDataCache::_getCache();
-	    if (sizeof($cache['timestamps']) > $cache['maxKeys']) {
-		$timestamps = $cache['timestamps'];
-		asort($timestamps);
-		$numToExpire = sizeof($timestamps) - $cache['maxKeys'];
-		foreach ($timestamps as $key => $timestamp) {
-		    unset($cache['keys'][$key]);
-		    unset($cache['timestamps'][$key]);
-		    if ($numToExpire-- == 0) {
-			break;
-		    }
+	$cache =& GalleryDataCache::_getCache();
+	$numToExpire = sizeof($cache['positions']) - $cache['maxKeys'];
+	if ($numToExpire > 0) {
+	    asort($cache['positions']);
+	    foreach ($cache['positions'] as $key => $position) {
+		unset($cache['keys'][$key]);
+		unset($cache['positions'][$key]);
+		if ($numToExpire-- == 0) {
+		    break;
 		}
 	    }
 	}
@@ -194,7 +190,7 @@ class GalleryDataCache {
 	}
 
 	if (!isset($cache['protected'][$key])) {
-	    $cache['timestamps'][$key] = time() + microtime();
+	    $cache['positions'][$key] = $cache['latestPosition']++;
 	}
 	return $cache['keys'][$key];
     }
@@ -236,12 +232,12 @@ class GalleryDataCache {
 	}
 
 	if ($purgeProtected) {
-	    $cache['timestamps'] = array();
+	    $cache['positions'] = array();
 	    $cache['keys'] = array();
 	} else {
 	    foreach (array_keys($cache['keys']) as $key) {
 		if (!isset($cache['protected'][$key])) {
-		    unset($cache['timestamps'][$key]);
+		    unset($cache['positions'][$key]);
 		    unset($cache['keys'][$key]);
 		}
 	    }
