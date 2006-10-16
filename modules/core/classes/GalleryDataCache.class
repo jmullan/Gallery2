@@ -47,6 +47,8 @@ class GalleryDataCache {
 	    $cache['timestamps'] = array();
 	    $cache['keys'] = array();
 	    $cache['protected'] = array();
+	    $cache['memoryCacheEnabled'] = 1;
+	    $cache['fileCacheEnabled'] = 1;
 	}
 	return $cache;
     }
@@ -55,12 +57,9 @@ class GalleryDataCache {
      * Is in-memory caching enabled?
      * @return boolean true if it's enabled
      */
-    function &isMemoryCachingEnabled() {
-	static $enabled;
-	if (!isset($enabled)) {
-	    $enabled = true;
-	}
-	return $enabled;
+    function isMemoryCachingEnabled() {
+	$cache =& GalleryDataCache::_getCache();
+	return $cache['memoryCacheEnabled'];
     }
 
     /**
@@ -68,8 +67,8 @@ class GalleryDataCache {
      * @param boolean $bool
      */
     function setMemoryCachingEnabled($bool) {
-	$enabled =& GalleryDataCache::isMemoryCachingEnabled();
-	$enabled = $bool;
+	$cache =& GalleryDataCache::_getCache();
+	$cache['memoryCacheEnabled'] = $bool;
     }
 
     /**
@@ -81,11 +80,11 @@ class GalleryDataCache {
      * @param boolean $protected should this key survive a reset call?
      */
     function put($key, $data, $protected=false) {
-	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['memoryCacheEnabled']) {
 	    return;
 	}
 
-	$cache =& GalleryDataCache::_getCache();
 	$cache['keys'][$key] = $data;
 	if ($protected) {
 	    $cache['protected'][$key] = 1;
@@ -101,11 +100,11 @@ class GalleryDataCache {
      * @param string $key
      */
     function remove($key) {
-	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['memoryCacheEnabled']) {
 	    return;
 	}
 
-	$cache =& GalleryDataCache::_getCache();
 	unset($cache['timestamps'][$key]);
 	unset($cache['keys'][$key]);
 	unset($cache['protected'][$key]);
@@ -116,11 +115,11 @@ class GalleryDataCache {
      * @param string $pattern regexp
      */
     function removeByPattern($pattern) {
-	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['memoryCacheEnabled']) {
 	    return;
 	}
 
-	$cache =& GalleryDataCache::_getCache();
 	foreach (preg_grep("/$pattern/", array_keys($cache['keys'])) as $key) {
 	    unset($cache['timestamps'][$key]);
 	    unset($cache['keys'][$key]);
@@ -138,11 +137,11 @@ class GalleryDataCache {
      * @param boolean $protected (optional) should this key survive a reset call?
      */
     function putByReference($key, &$data, $protected=false) {
-	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['memoryCacheEnabled']) {
 	    return;
 	}
 
-	$cache =& GalleryDataCache::_getCache();
 	$cache['keys'][$key] =& $data;
 	if ($protected) {
 	    $cache['protected'][$key] = 1;
@@ -189,11 +188,11 @@ class GalleryDataCache {
      * @return mixed the cached data
      */
     function get($key) {
-	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['memoryCacheEnabled']) {
 	    return null;
 	}
 
-	$cache =& GalleryDataCache::_getCache();
 	if (!isset($cache['protected'][$key])) {
 	    $cache['timestamps'][$key] = time() + microtime();
 	}
@@ -206,11 +205,10 @@ class GalleryDataCache {
      * @return boolean true if the cache contains the key given
      */
     function containsKey($key) {
-	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['memoryCacheEnabled']) {
 	    return false;
 	}
-
-	$cache =& GalleryDataCache::_getCache();
 	return isset($cache['keys'][$key]);
     }
 
@@ -219,11 +217,11 @@ class GalleryDataCache {
      * @return array string keys
      */
     function getAllKeys() {
-	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['memoryCacheEnabled']) {
 	    return array();
 	}
 
-	$cache =& GalleryDataCache::_getCache();
 	return array_keys($cache['keys']);
     }
 
@@ -232,11 +230,10 @@ class GalleryDataCache {
      * @param boolean $purgeProtected (optional) purge protected also?
      */
     function reset($purgeProtected=false) {
-	if (!GalleryDataCache::isMemoryCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['memoryCacheEnabled']) {
 	    return;
 	}
-
-	$cache =& GalleryDataCache::_getCache();
 
 	if ($purgeProtected) {
 	    $cache['timestamps'] = array();
@@ -256,11 +253,8 @@ class GalleryDataCache {
      * @return boolean
      */
     function &isFileCachingEnabled() {
-	static $enabled;
-	if (!isset($enabled)) {
-	    $enabled = true;
-	}
-	return $enabled;
+	$cache =& GalleryDataCache::_getCache();
+	return $cache['fileCacheEnabled'];
     }
 
     /**
@@ -269,8 +263,8 @@ class GalleryDataCache {
 
      */
     function setFileCachingEnabled($bool) {
-	$enabled =& GalleryDataCache::isFileCachingEnabled();
-	$enabled = $bool;
+	$cache =& GalleryDataCache::_getCache();
+	$cache['fileCacheEnabled'] = $bool;
     }
 
     /**
@@ -281,7 +275,8 @@ class GalleryDataCache {
      */
     function &getFromDisk($pathInfo) {
 	$null = null;
-	if (!GalleryDataCache::isFileCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['fileCacheEnabled']) {
 	    return $null;
 	}
 
@@ -310,7 +305,8 @@ class GalleryDataCache {
      * @param array $pathInfo the path info
      */
     function removeFromDisk($pathInfo) {
-	if (!GalleryDataCache::isFileCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['fileCacheEnabled']) {
 	    return null;
 	}
 
@@ -354,7 +350,8 @@ class GalleryDataCache {
      * @see GalleryDataCache::getCachePath
      */
     function putToDisk($pathInfo, &$data, $requiredClasses=array()) {
-	if (!GalleryDataCache::isFileCachingEnabled()) {
+	$cache =& GalleryDataCache::_getCache();
+	if (!$cache['fileCacheEnabled']) {
 	    return;
 	}
 
