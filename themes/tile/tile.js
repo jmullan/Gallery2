@@ -23,14 +23,16 @@ var image_cache = new Image, // For precaching an image
     image_iscached = new Array(image_width.length); // Track precached images
 function image_show(i) {
   if (image_width[i] < 0) {
-    ui_sethtml('image_view', '<iframe style="width:100%;height:100%" frameborder="0" src="'
-     + document.getElementById('img_'+i).href + '"></iframe>');
+    ui_vis('image', 1);
+    var div = document.getElementById('image');
+    ui_sethtml('image_view', '<iframe style="width:100%;height:' + (div.offsetHeight - 60)
+     + 'px" frameborder="0" src="' + document.getElementById('img_'+i).href + '"></iframe>');
   } else {
     ui_sethtml('image_view', '<img src="' + document.getElementById('img_'+i).href + '" width="'
      + image_width[i] + '" height="' + image_height[i] + '" onload="image_loaded()" alt=""/>');
+    ui_vis('image', 1);
   }
   ui_sethtml('title', document.getElementById('title_'+i).innerHTML);
-  ui_vis('image', 1);
 }
 function image_loaded() {
   for (var i = 0; i < image_iscached.length; i++)
