@@ -847,14 +847,16 @@ class Gallery {
      * @return boolean true if we transferred the file successfully
      */
     function fastDownload($relativePath, $filename, $lastModified, $mimeType, $contentLength) {
-	/* Pass malicious URLs down to core.DownloadItem */
-	$requestFileName = GalleryUtilities::getRequestVariables('fileName');
+	/*
+	 * Note: don't use GalleryPlatform or GalleryUtilities here because this code is
+	 * a shortcut that is used before we load those classes.
+	 */
+	$fileNameParam = GALLERY_FORM_VARIABLE_PREFIX . 'fileName';
+	$requestFileName = isset($_GET[$fileNameParam]) ? $_GET[$fileNameParam] : null;
 	if (!empty($requestFileName) && $requestFileName != $filename) {
 	    return false;
 	}
 
-	/* Don't use GalleryPlatform here - we're aiming for max speed */
-	/* TODO: benchmark what it would cost us to use GalleryPlatform */
 	$base = $this->getConfig('data.gallery.base');
 	$path = $base . $relativePath;
 	if (file_exists($path) && $fd = fopen($path, 'rb')) {
@@ -862,7 +864,7 @@ class Gallery {
 	    header('Last-Modified: ' . $lastModified);
 	    header('Content-type: ' . $mimeType);
 	    header('Content-length: ' . $contentLength);
-	    header('Expires: ' . GalleryUtilities::getHttpDate(time() + 31536000));
+	    header('Expires: ' . $this->getHttpDate(time() + 31536000));
 	    set_magic_quotes_runtime(0);
 	    set_time_limit(0);
 	    while (!feof($fd)) {
@@ -874,6 +876,41 @@ class Gallery {
 	}
 
 	return false;
+    }
+
+    /**
+     * Return a date and time string that is conformant to RFC 2616
+     * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3
+     *
+     * @param int $time the unix timestamp of the date we want to return,
+     *                empty if we want the current time
+     * @return string a date-string conformant to the RFC 2616
+     */
+    function getHttpDate($time='') {
+	if ($time == '') {
+	    $time = time();
+	}
+	/* Use fixed list of weekdays and months, so we don't have to fiddle with locale stuff */
+	$months = array('01' => 'Jan', '02' => 'Feb', '03' => 'Mar',
+			'04' => 'Apr', '05' => 'May', '06' => 'Jun',
+			'07' => 'Jul', '08' => 'Aug', '09' => 'Sep',
+			'10' => 'Oct', '11' => 'Nov', '12' => 'Dec');
+	$weekdays = array('1' => 'Mon', '2' => 'Tue', '3' => 'Wed',
+			  '4' => 'Thu', '5' => 'Fri', '6' => 'Sat',
+			  '0' => 'Sun');
+	$dow = $weekdays[gmstrftime('%w', $time)];
+	$month = $months[gmstrftime('%m', $time)];
+	$out = gmstrftime('%%s, %d %%s %Y %H:%M:%S GMT', $time);
+	return sprintf($out, $dow, $month);
+    }
+
+    /**
+     * Check if Gallery is in embedded mode
+     *
+     * @return boolean true if Gallery is in embedded mode, false otherwise
+     */
+    function isEmbedded() {
+	return GalleryDataCache::containsKey('G2_EMBED') && GalleryDataCache::get('G2_EMBED');
     }
 
     /**

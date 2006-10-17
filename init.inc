@@ -38,7 +38,6 @@ function GalleryInitFirstPass($params=array()) {
     $galleryBase = dirname(__FILE__) . '/';
     require_once($galleryBase . 'modules/core/classes/GalleryCoreApi.class');
     GalleryCoreApi::requireOnce('modules/core/classes/GalleryConstants.class');
-    GalleryCoreApi::requireOnce('modules/core/classes/GalleryUtilities.class');
     GalleryCoreApi::requireOnce('modules/core/classes/GalleryCapabilities.class');
     GalleryCoreApi::requireOnce('modules/core/classes/GalleryView.class');
     GalleryCoreApi::requireOnce('modules/core/classes/GalleryModule.class');

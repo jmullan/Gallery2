@@ -22,9 +22,14 @@
  * @package Gallery
  */
 
+/**
+ * The prefix for all HTTP GET/POST arguments.  Define this as early as possible
+ * so that we can use it in the FastDownload code in main.php.
+ */
+define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
+
 require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');
-require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');
 
 /*
  * Set up our Gallery global.  It's important to use a reference here because

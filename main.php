@@ -34,17 +34,20 @@ if (!@$gallery->getConfig('setup.password')) {
     return;
 }
 
-if (GalleryUtilities::isEmbedded()) {
+if ($gallery->isEmbedded()) {
     require_once(dirname(__FILE__) . '/init.inc');
 } else {
     /* If this is a request for a public data file, give it to the user immediately */
-    list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
-    if ($view == 'core.DownloadItem' && !empty($itemId)) {
+    $unsanitizedView = isset($_GET[GALLERY_FORM_VARIABLE_PREFIX . 'view']) ?
+	$_GET[GALLERY_FORM_VARIABLE_PREFIX . 'view'] : null;
+    $itemId = (int)(isset($_GET[GALLERY_FORM_VARIABLE_PREFIX . 'itemId']) ?
+		    $_GEt[GALLERY_FORM_VARIABLE_PREFIX . 'itemId'] : null);
+    if ($unsanitizedView == 'core.DownloadItem' && !empty($itemId)) {
 	/*
 	 * Our URLs are immutable because they have the serial numbers embedded.  If the browser
 	 * presents us with an If-Modified-Since then it has the latest version of the file already.
 	 */
-	if (GalleryUtilities::getServerVar('HTTP_IF_MODIFIED_SINCE')
+	if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
 		|| (function_exists('getallheaders')
 		    && ($headers = GetAllHeaders())
 		    && (isset($headers['If-Modified-Since'])
@@ -61,7 +64,7 @@ if (GalleryUtilities::isEmbedded()) {
 	    'data.gallery.cache', $gallery->getConfig('data.gallery.base') . 'cache/');
 
 	$path = GalleryDataCache::getCachePath(
-	    array('type' => 'fast-download', 'itemId' => (int) $itemId));
+	    array('type' => 'fast-download', 'itemId' => $itemId));
 	/* We don't have a platform yet so we have to use the raw file_exists */
 	/* Disable fast-download in maintenance mode, admins still get via core.DownloadItem */
 	if (file_exists($path) && !$gallery->getConfig('mode.maintenance')) {
@@ -83,6 +86,9 @@ if (GalleryUtilities::isEmbedded()) {
     /* Process the request */
     GalleryMain();
 }
+
+/* Only load this after we know we're not going to use the FastDownload code */
+require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');
 
 function GalleryMain($embedded=false) {
     global $gallery;
