@@ -38,7 +38,11 @@ class AdminPluginsView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$themeGroup = array('group' => 'theme', 'groupLabel' => $gallery->i18n('Themes'));
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$themeGroup = array('group' => 'theme', 'groupLabel' => $core->translate('Themes'));
 
 	if ($form['formName'] != 'AdminPlugins') {
 	    /* We have no form variables */
@@ -141,9 +145,11 @@ class AdminPluginsView extends GalleryView {
     function pluginSort($a, $b) {
 	static $groupOrder, $stateOrder;
 	if (!isset($stateOrder)) {
-	    /* unupgraded first, unconfigured second, incompatible third, inactive forth, 
-	       active fifth, uninstalled last */
-	    $stateOrder = array('unupgraded' => 1, 'unconfigured' => 2, 'incompatible' => 3, 
+	    /*
+	     * unupgraded first, unconfigured second, incompatible third, inactive forth,
+	     * active fifth, uninstalled last
+	     */
+	    $stateOrder = array('unupgraded' => 1, 'unconfigured' => 2, 'incompatible' => 3,
 				'inactive' => 4, 'active' => 5, 'uninstalled' => 6);
 	}
 	if (!isset($groupOrder)) {
