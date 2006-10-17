@@ -24,6 +24,8 @@
  * @version $Revision$ $Date$
  */
 
+require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');
+
 function GalleryInitFirstPass($params=array()) {
     global $gallery;
 

@@ -87,9 +87,6 @@ if ($gallery->isEmbedded()) {
     GalleryMain();
 }
 
-/* Only load this after we know we're not going to use the FastDownload code */
-require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');
-
 function GalleryMain($embedded=false) {
     global $gallery;
 
