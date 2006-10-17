@@ -52,9 +52,13 @@
    {section name=col loop=$theme.map[row]}
     <td>
     {assign var="id" value=$theme.map[row][col]}
-    {if $id>0}
+    {if $id > 0}
       {assign var="it" value=$theme.itemMap[$id]}
-      <a href="#" onclick="image_show({$it.imageIndex});return false">
+      {if isset($it.imageIndex)}
+	<a href="" onclick="image_show({$it.imageIndex});return false">
+      {else}
+	<a href="{g->url params=$theme.pageUrl arg1="itemId=`$it.id`"}">
+      {/if}
 	{g->image item=$it image=$it.thumbnail class=thumb}
       </a>
     {else}

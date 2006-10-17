@@ -45,7 +45,7 @@
   <th> {g->text text="Column"} </th>
 </tr>
 {foreach from=$theme.children key=i item=it}
-{if isset($it.image)}
+{if isset($it.image) || isset($it.thumbnail)}
   <tr><td>
     {if isset($it.thumbnail)}
       {g->image item=$it image=$it.thumbnail maxSize=100 class="giThumbnail"}
@@ -53,8 +53,10 @@
       {g->text text="no thumbnail"}
     {/if}
   </td><td>
+  {if isset($it.image)}
     <input type="radio"{if $theme.param.backgroundId==$it.image.id} checked="checked"{/if}
      name="{g->formVar var="form[backgroundId]"}" value="{$it.image.id}"/>
+  {/if}
   </td><td>
     <span class="giTitle">{$it.title|markup}</span>
   </td><td>

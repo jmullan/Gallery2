@@ -20,7 +20,6 @@
 
 /**
  * Theme with a tiled background image and image thumbnails on top of it.
- * Displays inline items ONLY; subalbums or other item types are NOT shown.
  * @package Themes
  * @subpackage Tile
  * @author Alan Harder <alan.harder@sun.com>
@@ -33,9 +32,8 @@ class TileTheme extends GalleryTheme {
 
 	$this->setId('tile');
 	$this->setName($gallery->i18n('Tile'));
-	$this->setDescription($gallery->i18n('Tile view of background image and image ' .
-					     'thumbnails; subalbums/other items not shown'));
-	$this->setVersion('1.0.4');
+	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails'));
+	$this->setVersion('1.0.5');
 	$this->setRequiredCoreApi(array(7, 4));
 	$this->setRequiredThemeApi(array(2, 4));
 	$this->setStandardSettings(array('colorpack' => '',
@@ -218,18 +216,15 @@ class TileTheme extends GalleryTheme {
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
-	    list ($ret, $preferredFullImages) =
-		GalleryCoreApi::fetchPreferredsByItemIds($childIds);
+	    list ($ret, $preferredFullImages) = GalleryCoreApi::fetchPreferredsByItemIds($childIds);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
-	    list ($ret, $resizedImages) =
-		GalleryCoreApi::fetchResizesByItemIds($childIds);
+	    list ($ret, $resizedImages) = GalleryCoreApi::fetchResizesByItemIds($childIds);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
-	    list ($ret, $thumbnails) =
-		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
+	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -343,6 +338,7 @@ class TileTheme extends GalleryTheme {
 	    return array($ret, null);
 	}
 	if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    /* Can't configure for dynamic album */
 	    return array(null, null);
 	}
 	list ($ret, $params) = $this->fetchParameters($itemId);
@@ -399,7 +395,7 @@ class TileTheme extends GalleryTheme {
 		    $id = substr($key, 4);
 		    $k2 = 'col_' . $id;
 		    if (isset($form[$k2]) && $value > 0 && $form[$k2] > 0) {
-			$map[] = ($value-1) . ',' . ($form[$k2]-1) . ',' . $id;
+			$map[] = ($value - 1) . ',' . ($form[$k2] - 1) . ',' . $id;
 		    }
 		}
 	    }
