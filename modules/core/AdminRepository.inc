@@ -160,6 +160,7 @@ class AdminRepositoryController extends GalleryController {
     function updatePluginStatus($pluginStatus, $repositories) {
 	global $gallery;
 	$templateAdapter =& $gallery->getTemplateAdapter();
+	$platform =& $gallery->getPlatform();
 
 	$status = array();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
@@ -197,11 +198,13 @@ class AdminRepositoryController extends GalleryController {
 	}
 
 	$heading = $module->translate('Scanning plugins');
+	$sSlash = 's' . $platform->getDirectorySeparator();
 	foreach (array('module', 'theme') as $pluginType) {
 	    foreach (array_keys($pluginStatus[$pluginType]) as $pluginId) {
 		$gallery->guaranteeTimeLimit(30);
 
-		$templateAdapter->updateProgressBar($heading, $pluginId, $currentProgress);
+		$templateAdapter->updateProgressBar(
+			$heading, $pluginType . $sSlash . $pluginId, $currentProgress);
 		$ret = $repository->scanPlugin($pluginType, $pluginId);
 		if ($ret) {
 		    return $ret;
