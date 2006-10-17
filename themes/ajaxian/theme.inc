@@ -42,10 +42,11 @@ class AjaxianTheme extends GalleryTheme {
 		  'itemFrame' => '', 'photoFrame' => '',
 		  'colorpack' => '',
 		  'showMicroThumbs' => 0,
-		  'sidebarBlocks' => '',
+		  'sidebarBlocks' => serialize(array()),
 		  'albumBlocks' => serialize(array(
 		     array('core.ItemLinks', array('useDropdown' => true)))),
-		  'photoBlocks' => ''));
+		  'photoBlocks' => serialize(array(
+		     array('exif.ExifInfo')))));
     }
 
     /**

@@ -40,7 +40,7 @@
     {if $smarty.foreach.parent.last}
       <div class="goback">
       <a href="{g->url params=$parent.urlParams}" class="backtoalbum"
-	 title="{g->text text="Back to %s" arg1=$theme.parents[parent].title|markup:strip|default:$theme.parents[parent].pathComponent}">
+	 title="{g->text text="Back to %s" arg1=$parent.title|markup:strip|default:$parent.pathComponent}">
 	{g->text text="Go back to album"}
       </a></div>
     {/if}
