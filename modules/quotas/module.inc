@@ -33,7 +33,7 @@ class QuotasModule extends GalleryModule {
 	$this->setId('quotas');
 	$this->setName($gallery->i18n('Quotas'));
 	$this->setDescription($gallery->i18n('User/Group Disk Quotas'));
-	$this->setVersion('1.0.6');
+	$this->setVersion('1.0.7');
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -49,6 +49,13 @@ class QuotasModule extends GalleryModule {
 	if (!empty($currentVersion) && version_compare($currentVersion, '1.0.1', '<')) {
 	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore($this->getId(), array('QuotasMap:1.0'));
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.0.7', '<')) {
+	    /* Cleanup any factory data from way back in v0.9.3 that had wrong module id */
+	    $ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId('diskquota');
 	    if ($ret) {
 		return $ret;
 	    }
