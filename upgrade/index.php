@@ -45,7 +45,8 @@
 
 require_once(dirname(__FILE__) . '/UpgradeStep.class');
 require_once(dirname(__FILE__) . '/StatusTemplate.class');
-require_once(dirname(__FILE__) . '/../bootstrap.inc');
+require_once(dirname(dirname(__FILE__)) . '/bootstrap.inc');
+require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryUtilities.class');
 
 /*
  * If gettext isn't enabled, subvert the _() text translation function
