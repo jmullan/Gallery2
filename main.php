@@ -41,7 +41,7 @@ if ($gallery->isEmbedded()) {
     $unsanitizedView = isset($_GET[GALLERY_FORM_VARIABLE_PREFIX . 'view']) ?
 	$_GET[GALLERY_FORM_VARIABLE_PREFIX . 'view'] : null;
     $itemId = (int)(isset($_GET[GALLERY_FORM_VARIABLE_PREFIX . 'itemId']) ?
-		    $_GEt[GALLERY_FORM_VARIABLE_PREFIX . 'itemId'] : null);
+		    $_GET[GALLERY_FORM_VARIABLE_PREFIX . 'itemId'] : null);
     if ($unsanitizedView == 'core.DownloadItem' && !empty($itemId)) {
 	/*
 	 * Our URLs are immutable because they have the serial numbers embedded.  If the browser
