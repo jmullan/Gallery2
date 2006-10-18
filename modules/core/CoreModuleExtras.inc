@@ -154,12 +154,38 @@ class CoreModuleExtras {
 	    }
 	    $gallery->guaranteeTimeLimit(180);
 
-	    /* Activate the Matrix theme */
-	    $gallery->debug('Load Matrix theme');
-	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', 'matrix');
+	    /* Activate the default theme */
+	    $gallery->debug('Load default theme');
+	    list ($ret, $themeList) = GalleryCoreApi::fetchPluginStatus('theme');
 	    if ($ret) {
-		$gallery->debug(sprintf('Error: Failed to load matrix theme, this is the error ' .
-				'stack trace; %s', $ret->getAsText()));
+		return $ret;
+	    }
+	    $defaultThemeId = 'matrix';
+	    if (empty($themeList[$defaultThemeId]['available'])) {
+		$gallery->debug(sprintf('Warning: %s theme is not available. Trying to fall ' .
+			'back to another theme.', $defaultThemeId));
+		$defaultThemeId = null;
+		foreach ($themeList as $themeId => $themeInfo) {
+		    if (!empty($themeInfo['available'])) {
+			$defaultThemeId = $themeId;
+			break;
+		    }
+		}
+		if (empty($defaultThemeId)) {
+		    return GalleryCoreApi::error(ERROR_UNKNOWN, __FILE__, __LINE__,
+				'There is no theme available!');
+		}
+		$ret = $module->setParameter('default.theme', $defaultThemeId);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	    $gallery->debug(sprintf('Using %s as default theme', $defaultThemeId));
+
+	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $defaultThemeId);
+	    if ($ret) {
+		$gallery->debug(sprintf('Error: Failed to load %s theme, this is the error ' .
+				'stack trace; %s', $defaultThemeId, $ret->getAsText()));
 		return $ret;
 	    }
 
@@ -170,11 +196,11 @@ class CoreModuleExtras {
 	    }
 	    $gallery->guaranteeTimeLimit(180);
 
-	    $gallery->debug('InstallOrUpgrade Matrix theme');
+	    $gallery->debug('InstallOrUpgrade default theme');
 	    $ret = $theme->installOrUpgrade();
 	    if ($ret) {
-		$gallery->debug(sprintf('Error: Failed to installOrUpgrade matrix theme, this is ' .
-				'the error stack trace; %s', $ret->getAsText()));
+		$gallery->debug(sprintf('Error: Failed to installOrUpgrade %s theme, this is ' .
+				'the error stack trace; %s', $defaultThemeId, $ret->getAsText()));
 		return $ret;
 	    }
 
@@ -185,11 +211,11 @@ class CoreModuleExtras {
 	    }
 	    $gallery->guaranteeTimeLimit(180);
 
-	    $gallery->debug('Activate Matrix theme');
+	    $gallery->debug('Activate default theme');
 	    list ($ret, $ignored) = $theme->activate(false);
 	    if ($ret) {
-		$gallery->debug(sprintf('Error: Failed to activate matrix theme, this is ' .
-				'the error stack trace; %s', $ret->getAsText()));
+		$gallery->debug(sprintf('Error: Failed to activate %s theme, this is ' .
+				'the error stack trace; %s', $defaultThemeId, $ret->getAsText()));
 		return $ret;
 	    }
 

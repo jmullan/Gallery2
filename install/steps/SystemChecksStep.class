@@ -350,6 +350,20 @@ class SystemChecksStep extends InstallStep {
 		      'warning' => true,
 		      'notice' => _('Test skipped due to other errors.'));
 	} else {
+	    /* Error if no themes are available */
+	    if (!SystemChecksStep::AssertThemeIsAvailable()) {
+		$templateData['check'][] =
+		    array('title' => _('Theme available'),
+			  'error' => true,
+			  'notice' => sprintf(
+				_('Error: There must be at least one theme in the %s folder!'),
+				dirname(dirname(dirname(__FILE__)))
+					. DIRECTORY_SEPARATOR . 'themes')
+			);
+		$failCount++;
+	    } /* skip showing 'success' for this one */
+	    
+	    /* Now check the MANIFEST files */
 	    $isSvnInstall = file_exists(dirname(__FILE__) . '/.svn');
 	    $manifest = SystemChecksStep::CheckManifest($template, $setTimeLimitAvailable);
 	    if (!isset($manifest)) {
@@ -406,6 +420,30 @@ class SystemChecksStep extends InstallStep {
 	    return false;
 	}
     }
+
+    /** Verify that there is at least one themes/.../theme.inc file. */
+    function AssertThemeIsAvailable() {
+	$themesFolder = dirname(dirname(dirname(__FILE__))) . '/themes/' ;
+	if (!file_exists($themesFolder)) {
+	    return false;
+	}
+	$dh = opendir($themesFolder);
+	if (!$dh) {
+	    return false;
+	}
+	while (false !== ($folder = readdir($dh))) {
+	    if ($folder == '..' || $folder == '.') {
+		continue;
+	    }
+	    if (file_exists($themesFolder . $folder . '/theme.inc')) {
+		closedir($dh);
+		return true;
+	    }
+	}
+	closedir($dh);
+	return false;
+    }
+    
 
     function CheckManifest(&$statusMonitor, $useSetTimeLimit) {
 	$base = realpath(dirname(__FILE__) . '/../..') . '/';
