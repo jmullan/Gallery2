@@ -279,7 +279,7 @@ class AdminCoreView extends GalleryView {
 	}
 
 	/* Set up our session time lists */
-	$sessionTimeLists = array();
+	$sessionTimeList = array();
 	foreach (array(15, 30, 45) as $minutes) {
 	    $sessionTimeList[$minutes * 60] =
 		$module->translate(array('one' => '%d minute',
