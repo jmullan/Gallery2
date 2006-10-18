@@ -355,9 +355,6 @@ function formatData($type,$tag,$intel,$data) {
 
 		if(($tag=="011a" || $tag=="011b") && $bottom==1) { //XResolution YResolution
 			$data=$top." dots per ResolutionUnit";
-		} else if($tag=="829a") { //Exposure Time
-			if($top/10 == 1) $data="1/".round($bottom/10, 0)." sec";
-			else $data=$top."/".$bottom." sec";
 		} else if($tag=="829d") { //FNumber
 			$data="f ".$data;
 		} else if($tag=="9204") { //ExposureBiasValue
@@ -370,22 +367,29 @@ function formatData($type,$tag,$intel,$data) {
 			$data="f ".$data;
 		} else if($tag=="920a") { //FocalLength
 			$data=$data." mm";
-		} else if($tag=="9201") { //ShutterSpeedValue
+		} else if($tag=="829a" || $tag=="9201") { //ExposureTime or ShutterSpeedValue
 			// The ShutterSpeedValue is given in the APEX mode. Many thanks to Matthieu Froment for this code
 			// The formula is : Shutter = - log2(exposureTime) (Appendix C of EXIF spec.)
 			// Where shutter is in APEX, log2(exposure) = ln(exposure)/ln(2)
 			// So final formula is : exposure = exp(-ln(2).shutter)
 			// The formula can be developed : exposure = 1/(exp(ln(2).shutter))
-			$data = exp($data * log(2));
-			if ($data > 1) $data = floor($data);  //Drop the decimal.
-			if ($data > 0) {
-				$data = 1/$data; //Final calculation. We now have a floating number. Transform it in a pretty number
-				$n=0;$d=0;
-				ConvertToFraction($data, $n, $d);
-				if ($n>=1 && $d==1) $data = $n." sec"; //To avoid exposure times style 3/1 sec.
-				else $data = $n."/".$d." sec";
-			} else {
-				$data = "Bulb";
+			if($tag=='9201') {
+				$data = exp($data * log(2));
+				if ($data >= 1.99) {
+					$prec = $data >= 38 ? -1 : 0;
+					$data = '1/' . round($data, $prec) . ' sec';
+				} else if ($data > 0) $data = 1/$data;
+			}
+			else if($tag=='829a' && $top > 0 && $bottom % $top == 0) {
+				$data = '1/' . intval($bottom/$top) . ' sec';
+			}
+			if (is_float($data)) {
+				if ($data > 0) {
+					$prec = $data < 1 ? 2 : ($data < 10 ? 1 : 0);
+					$data = round($data, $prec) . ' sec';
+				} else {
+					$data = "Bulb";
+				}
 			}
 		}
 
