@@ -614,6 +614,9 @@ class DatabaseSetupStep extends InstallStep {
 	    $gallery->setProfile(false);
 	    /* Init paths etc., used for the clean DB function */
 	    require_once(dirname(__FILE__) . '/../../init.inc');
+	    if (!defined('GALLERY_FORM_VARIABLE_PREFIX')) {
+		define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
+	    }
 	    $ret = GalleryInitFirstPass(array('noDatabase' => true));
 	    $success = !$ret;
 
