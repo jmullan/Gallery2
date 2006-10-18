@@ -152,7 +152,7 @@ class ExifExtractorTest extends GalleryTestCase {
     function testOneItemAllDataExif() {
 	list ($ret, $data) = $this->_exif->getMetaData($this->_photoIds[0]);
 	$this->assert(!$ret && isset($data[$this->_photoIds[0]]));
-	$this->assertEquals('1/59 sec',
+	$this->assertEquals('1/60 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
     }
 
@@ -168,7 +168,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	    array($this->_photoIds[0], $this->_photoIds[2], $this->_photoIds[3]));
 	$this->assert(!$ret && isset($data));
 	$this->assertEquals(3, count($data), 'Data size');
-	$this->assertEquals('1/59 sec',
+	$this->assertEquals('1/60 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
 	$this->assertEquals(sprintf('%.2f mm', 21.31),
 	    $data[$this->_photoIds[2]]['FocalLength']['value']);
@@ -180,7 +180,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	list ($ret, $data) = $this->_exif->getMetaData($this->_photoIds);
 	$this->assert(!$ret && isset($data));
 	$this->assertEquals(4, count($data), 'Data size');
-	$this->assertEquals('1/59 sec',
+	$this->assertEquals('1/60 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
 	$this->assertEquals(sprintf('%.2f mm', 21.31),
 	    $data[$this->_photoIds[2]]['FocalLength']['value']);
@@ -193,7 +193,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	    $this->_photoIds, array('DateTime', 'ShutterSpeedValue', 'IPTC/Byline'));
 	$this->assert(!$ret && isset($data));
 	$this->assertEquals(4, count($data), 'Data size');
-	$this->assertEquals('1/59 sec',
+	$this->assertEquals('1/60 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
 	$this->assert(!isset($data[$this->_photoIds[2]]['FocalLength']));
 	$this->assert(!isset($data[$this->_photoIds[2]]['IPTC/Byline']));
