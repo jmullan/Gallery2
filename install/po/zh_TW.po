@@ -199,9 +199,8 @@ msgstr "Oracle（9i 和更新版"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2（v8.2 和更新版）"
 
-#, fuzzy
 msgid "MSSQL (2005 and newer)"
-msgstr "MySQL（v3.23.34a 和更新版）"
+msgstr "MySQL（2005 和更新版）"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "不明資料庫類型或沒有表格資訊。"
@@ -265,9 +264,8 @@ msgstr "無法送出資料庫異動"
 msgid "Core module is only partially installed."
 msgstr "核心模組安裝不完全。"
 
-#, fuzzy
 msgid "Install Plugins"
-msgstr "安裝步驟"
+msgstr "安裝外掛組件"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "無法初始化我們的 Gallery 連線資料"
@@ -318,7 +316,7 @@ msgid ""
 "sPHP website%s."
 msgstr ""
 "錯誤：Gallery 2 需要 PHP 版本 4.3.0 以上或 5.0.4 以上。你安裝的 PHP 版本是 %s。請要求你的網頁"
-"伺服器管理員昇級。新的版本在 %sPHP 的網站上%s。"
+"伺服器管理員升級。新的版本在 %sPHP 的網站上%s。"
 
 msgid "PHP Version"
 msgstr "PHP 版本"
@@ -509,6 +507,13 @@ msgstr "Gallery 完整性"
 msgid "Test skipped due to other errors."
 msgstr "因其他錯誤略過測試。"
 
+msgid "Theme available"
+msgstr ""
+
+#, c-format
+msgid "Error: There must be at least one theme in the %s folder!"
+msgstr ""
+
 msgid "Manifest missing or inaccessible."
 msgstr "找不到或無法存取檔案清單"
 
@@ -648,17 +653,20 @@ msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
 "php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
+"在我們繼續之前，你必需先在你的 <b>%s</b> 目錄中產生一個叫「config.php」的檔案。你必需確定網頁"
+"伺服器可以寫到這個檔案。"
 
 msgid "Unix (with shell access)"
 msgstr "Unix（指今列）"
 
 msgid "On Windows, you shouldn't have to do anything special."
-msgstr ""
+msgstr "在 Windows 上，你不需要做任何特別的動作。"
 
 msgid ""
 "When you've created this file and set the permissions properly, you can proceed.  If there's "
 "a problem, we'll tell you what to fix."
 msgstr ""
+"在你產生了這個檔案並設定好存取權限之後，就可以繼續。如果發生了問題，我們會告訴你該修改什麼。"
 
 msgid "Create config file"
 msgstr "產生設定檔"
@@ -766,7 +774,7 @@ msgid "Error installing Gallery Core"
 msgstr "安裝 Gallery 核心時發生錯誤"
 
 msgid "Something went wrong when we tried to install the core module.  What to do next?"
-msgstr "當我們試著昇級核心模組時發生了問題。要如何處理？"
+msgstr "當我們試著升級核心模組時發生了問題。要如何處理？"
 
 msgid ""
 "Go to the System Checks step of the installer and make sure all checks shows 'Success'. A "
@@ -974,12 +982,17 @@ msgid ""
 "directories.  You must choose a directory under one of these, or you must modify the "
 "<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
 msgstr ""
+"你輸入的目錄不存在，或你的網頁伺服器組態不允許使用。你的網頁伺服器設定只允許使用下列的目錄。"
+"你必需選用一個在這些目錄下的目錄，或者更改你的 PHP 設定中的 <b>open_basedir</b> 以允許使用新"
+"的目錄。"
 
 msgid ""
 "If your multisite install is in a different virtual host, you should contact your system "
 "administrator and request that they configure your <b>open_basedir</b> setting so that your "
 "virtual hosts can access each other."
 msgstr ""
+"如果你的多站台安裝是在一個不同的虛擬主機上，你必需連絡你的系統管理員並要求他們設定你的 "
+"<b>open_basedir</b> 來讓你的虛擬主機可以互相存取彼此的檔案。"
 
 msgid "The directory you entered does not exist"
 msgstr "你輸入的目錄不存在"
@@ -1064,18 +1077,21 @@ msgid ""
 "directory outside of the %sdocument root%s directory or add a random string to the end of "
 "the directory name (e.g. %s)."
 msgstr ""
+"Gallery 需要一個目錄來儲存你的圖像。我們為選的目錄是可以使用的，但是它的位置或名稱不符合最高"
+"的安全要求。請選擇一個在%s網頁文件根目錄%s之外的目錄，或在目錄名稱加上一個隨機字串（如 %s）。"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
 "not possible, specify a randomized name for this directory."
-msgstr "為了安全起見，你最好選一個不能從網頁直接存取的目錄。"
+msgstr ""
+"為了安全起見，你應該選一個不能%s從網頁直接存取%s的目錄。如果這個方法不可行，請為這個目錄選一"
+"個選機名稱。"
 
 msgid ""
 "If you choose a randomized name or prefer to stick with the specified directory, please "
 "confirm your choice."
-msgstr ""
-"如果你選用隨機名稱或一定要用選指定的目錄，請確認你的選擇。"
+msgstr "如果你選用隨機名稱或一定要用選指定的目錄，請確認你的選擇。"
 
 msgid "Yes, please omit the security check:"
 msgstr "是的，請略過安全檢查："
@@ -1122,14 +1138,13 @@ msgstr "注意：這些只是範例！它們可能不適用於你的系統。"
 msgid "Unix (with ftp access)"
 msgstr "Unix（使用 FTP）"
 
-#, fuzzy
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
 "have problems."
 msgstr ""
 "請注意 FTP 伺服器和用戶端程式種類變化很多所以這些指令可能不適用於你的情況。如果發生問題，請參"
-"考你的FTP 用戶端程式手冊或詢問你的系統管理員。"
+"考你的 FTP 用戶端程式手冊或詢問你的系統管理員。"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1191,12 +1206,12 @@ msgid "This is not a fresh install and the installed version does not match the 
 msgstr "這不是一個全新安裝而且已安裝的版本和新的版本不符合。"
 
 msgid "The installed version cannot be upgraded to the new version!"
-msgstr "已安裝的版本不能昇級到新的版本！"
+msgstr "已安裝的版本不能升級到新的版本！"
 
 msgid ""
 "The installed version is older than the new version. You should run the upgrader and not the "
 "installer!"
-msgstr "已安裝的版本比新的版本舊。你應該要執行昇級程式而不是安裝程式！"
+msgstr "已安裝的版本比新的版本舊。你應該要執行升級程式而不是安裝程式！"
 
 msgid "Currently installed"
 msgstr "目前安裝"
@@ -1205,14 +1220,14 @@ msgid "New version"
 msgstr "新版本"
 
 msgid "Go to the Upgrader!"
-msgstr "前往 Gallery 昇級程式！"
+msgstr "前往 Gallery 升級程式！"
 
 #, c-format
 msgid ""
 "You should go now to the upgrader.  Enter the URL in your browser for %s/upgrade/index.php%s "
 "in your %s directory."
 msgstr ""
-"你現在應該前往昇級程式。在你的瀏覽程式中輸入在你的%s目錄中的 %s/upgrade/index.php%s 的網址。"
+"你現在應該前往升級程式。在你的瀏覽程式中輸入在你的%s目錄中的 %s/upgrade/index.php%s 的網址。"
 
 #, c-format
 msgid ""

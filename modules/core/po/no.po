@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.1.18\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-01 23:38+0100\n"
-"PO-Revision-Date: 2006-10-02 22:08+0100\n"
+"PO-Revision-Date: 2006-10-17 11:03+0100\n"
 "Last-Translator: Sverre M. Vikan <sverre AT urven DOT net>\n"
 "Language-Team: Norwegian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -103,6 +103,9 @@ msgstr "Oppdaterer kodelagerindeksen"
 
 msgid "Scanning plugins"
 msgstr "Gjennomsøker programtillegg"
+
+msgid "Update Plugin List"
+msgstr "Oppdater liste over programtillegg"
 
 msgid "Done."
 msgstr "Utført."
@@ -318,17 +321,15 @@ msgstr "rediger %s"
 msgid "Settings saved successfully."
 msgstr "Vellykket lagring av innstillinger."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; standardtema &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Gjenskaper skalerte bilder"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Gjenopprettet temainnstillinger"
 
 msgid "Preparing..."
 msgstr "Forbereder ..."
 
-msgid "Rebuilding resized images..."
-msgstr "Gjenskaper skalerte bilder ..."
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Gjenskaper miniatyrbilder ..."
@@ -411,6 +412,13 @@ msgstr "Vellykket skalering av foto"
 
 msgid "Modify Photo"
 msgstr "Endre foto"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Vellykket aktiviering av temaet %s"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; standardtema &raquo;"
 
 msgid "Theme"
 msgstr "Tema"
@@ -536,9 +544,6 @@ msgstr "Verktøyprioritet"
 
 msgid "Graphics Toolkits"
 msgstr "Grafikkverktøy"
-
-msgid "Defaults"
-msgstr "Standarder"
 
 msgid "Account Settings"
 msgstr "Kontoinnstillinger"
@@ -1744,23 +1749,19 @@ msgid "This plugin will be uninstalled and its files will be deleted."
 msgstr "Dette programtillegget vil avinstalleres og dets filer vil bli slettet."
 
 msgid "disabled(__COUNT__)"
-msgstr ""
+msgstr "deaktivert(__COUNT__)"
 
-#, fuzzy
 msgid "up to date(__COUNT__)"
-msgstr "Oppdatert"
+msgstr "Oppdatert(__COUNT__)"
 
-#, fuzzy
 msgid "not installed(__COUNT__)"
-msgstr "ikke installert"
+msgstr "ikke installert(__COUNT__)"
 
-#, fuzzy
 msgid "upgrade required(__COUNT__)"
-msgstr "oppgradering er påkrevd"
+msgstr "oppgradering er påkrevd(__COUNT__)"
 
-#, fuzzy
 msgid "incompatible(__COUNT__)"
-msgstr "Ikke-kompatibelt"
+msgstr "passer ikke til(__COUNT__)"
 
 msgid "Failed to completely delete __PLUGIN__"
 msgstr "Kunne ikke slette __PLUGIN__ fullstendig"
@@ -1882,16 +1883,14 @@ msgstr ""
 msgid "Community plugins (%suse at your own risk!%s)"
 msgstr "Programtillegg fra fellesskapet (%sbruk på eget ansvar!%s)"
 
-#, fuzzy
 msgid "Repository Error"
-msgstr "Kodelager"
+msgstr "Kodelagerfeil"
 
-#, fuzzy
 msgid "You must select at least one repository."
-msgstr "Du må velge en bruker å slette."
+msgstr "Du må velge minst ett kodelager."
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "Configure your Gallery"
 msgstr "Innstillinger for Gallery"
@@ -1912,9 +1911,6 @@ msgstr ""
 
 msgid "Continue"
 msgstr "Fortsett"
-
-msgid "Update Plugin List"
-msgstr "Oppdater liste over programtillegg"
 
 msgid "Download Plugin List"
 msgstr "Last ned liste over programtillegg"
@@ -2095,6 +2091,9 @@ msgstr "Vellykket lagring av standard albuminnstillinger"
 msgid "Restored theme settings"
 msgstr "Gjenopprettet temainnstillinger"
 
+msgid "Defaults"
+msgstr "Standarder"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2109,6 +2108,10 @@ msgstr "med"
 
 msgid "New albums"
 msgstr "Nye album"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Standarder"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2144,6 +2147,10 @@ msgstr "Verdi"
 
 msgid "There are no settings for this theme"
 msgstr "Det er ingen innstillinger for dette temaet"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Temainstillinger for %s"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2499,12 +2506,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Bruk på alle underalbum"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Velg et tema for dette albumet. (Hvordan albumet er ordnet på siden)"
-
-msgid "Use this theme in all subalbums"
-msgstr "Bruk dette temaet i alle underalbum"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " Ethvert objekt krever et miniatyrbilde. Angi standardstørrelse i piksler her."
 
@@ -2532,21 +2533,35 @@ msgstr "Du må skrive inn en gyldig størrelse"
 msgid "Use these target sizes in all subalbums"
 msgstr "Bruk disse målstørrelsene i alle underalbum"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Gjenskap miniatyrbilder og skaleringer"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Utfør på underobjekter"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"Innstillingene for miniatyrbilder og skalerte bilder er for alle nye objekter. Marker den "
-"riktige boksen for å gi alle objektene i ditt album disse innstillingene."
 
-msgid "Recreate thumbnails"
-msgstr "Gjenskap miniatyrbilder"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "Gjenskap skalerte bilder"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Bruk på alle underalbum"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Gjenskaper miniatyrbilder ..."
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Gjenskaper skalerte bilder"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2821,23 +2836,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "Gjenopprett orginal"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Velg en blokk"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "Bruk dette temaet i alle underalbum"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Enhetstesttema"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Dette albumet er satt opp til  bruke temaet <b>%s</b>. Disse instillingene gjelder bare "
 "temaet for dette albumet."
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Bruk disse innstillingene i alle underalbum som bruker temaet %s"
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"Merknad: marker den rette boksen i arkfanen <b>Album</b> for å velge det samme temaet for "
-"alle underalbum."
 
 msgid "Album Highlight"
 msgstr "Forgrunnsbilde for album"
@@ -3054,9 +3081,6 @@ msgstr "etter"
 
 msgid "Reorder"
 msgstr "Ordne"
-
-msgid "Continue..."
-msgstr "Fortsett ..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Nettstedet er midlertidig nede for vedlikehold."
@@ -3531,5 +3555,34 @@ msgstr "[test] En andre tilgang"
 msgid "Unit test theme"
 msgstr "Enhetstesttema"
 
-#~ msgid "Hide Repository List"
-#~ msgstr "Skjul kodelagerliste"
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Gjenskaper skalerte bilder ..."
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Velg et tema for dette albumet. (Hvordan albumet er ordnet på siden)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Gjenskap miniatyrbilder og skaleringer"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "Innstillingene for miniatyrbilder og skalerte bilder er for alle nye objekter. Marker den "
+#~ "riktige boksen for å gi alle objektene i ditt album disse innstillingene."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Gjenskap miniatyrbilder"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Gjenskap skalerte bilder"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "Merknad: marker den rette boksen i arkfanen <b>Album</b> for å velge det samme temaet for "
+#~ "alle underalbum."
+
+#~ msgid "Continue..."
+#~ msgstr "Fortsett ..."

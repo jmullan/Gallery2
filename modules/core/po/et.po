@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.1.18\n"
 "POT-Creation-Date: 2003-06-25 11:44+0100\n"
-"PO-Revision-Date: 2006-08-11 14:09+0200\n"
+"PO-Revision-Date: 2006-08-18 02:46+0200\n"
 "Last-Translator: poromaan <poromaan@gmail.com>\n"
 "Language-Team: Eesti <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -100,6 +100,10 @@ msgstr ""
 msgid "Scanning plugins"
 msgstr ""
 
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Galerii Moodulid"
+
 msgid "Done."
 msgstr "Valmis."
 
@@ -162,7 +166,7 @@ msgid "[core] View original version"
 msgstr "[tuum] Vaata originaalverisooni"
 
 msgid "[core] View all versions"
-msgstr "[tuum] Vaata kõiki versioone"
+msgstr "[tuum] Vaata kõiki pildisuurusi"
 
 msgid "[core] Add sub-album"
 msgstr "[tuum] Lisa alam-album"
@@ -316,18 +320,15 @@ msgstr "muuda %s"
 msgid "Settings saved successfully."
 msgstr "Seaded edukalt salvestatud."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; tavateema &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Muudetud suurusega piltide uuestiloomine"
+msgid "Apply resized image settings"
+msgstr ""
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Tegelen..."
 
-msgid "Rebuilding resized images..."
-msgstr "Muudetud suurusega piltide uuestiehitamine"
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Ikoonide uuestiehitamine"
@@ -410,6 +411,13 @@ msgstr "Foto mõõtkava edukalt muudetud"
 
 msgid "Modify Photo"
 msgstr "Muuda fotot"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Teema seaded edukalt muudetud"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; tavateema &raquo;"
 
 msgid "Theme"
 msgstr "Teema"
@@ -536,9 +544,6 @@ msgstr "Tõõrista Prioriteet"
 msgid "Graphics Toolkits"
 msgstr "Graafikatööriistad"
 
-msgid "Defaults"
-msgstr ""
-
 msgid "Account Settings"
 msgstr "Konto Seaded"
 
@@ -594,7 +599,7 @@ msgstr "Kustuta kõik kasutajasessioonid vastavalt su praegustele sessiooniaegum
 
 #, fuzzy, c-format
 msgid "Deleted %d sessions."
-msgstr "Kustuta kasutajasessioonid"
+msgstr "Kustuta %d kasutajasessioonid"
 
 msgid "Delete database cache"
 msgstr "Kustuta andmebaasi vahemälu"
@@ -999,9 +1004,8 @@ msgstr "gettext"
 msgid "enabled"
 msgstr "Installitud"
 
-#, fuzzy
 msgid "disabled"
-msgstr "%d eset ebaõnnestus"
+msgstr ""
 
 msgid "Locale"
 msgstr "Locale"
@@ -1873,10 +1877,6 @@ msgid "Continue"
 msgstr ""
 
 #, fuzzy
-msgid "Update Plugin List"
-msgstr "Galerii Moodulid"
-
-#, fuzzy
 msgid "Download Plugin List"
 msgstr "Tõmba alla %s"
 
@@ -1946,16 +1946,18 @@ msgstr "tõmba alla"
 msgid "modify"
 msgstr ""
 
+#, fuzzy
 msgid "Upgrade All Plugins"
-msgstr ""
+msgstr "Galerii Moodulid"
 
 msgid ""
 "Gallery can automatically upgrade your themes and modules to the latest available versions. "
 "No new plugins will be downloaded."
 msgstr ""
 
+#, fuzzy
 msgid "Upgrade All"
-msgstr ""
+msgstr "Uuenda"
 
 #, fuzzy, c-format
 msgid "Download %s"
@@ -2047,6 +2049,9 @@ msgstr ""
 msgid "Restored theme settings"
 msgstr ""
 
+msgid "Defaults"
+msgstr ""
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2059,6 +2064,9 @@ msgid "with"
 msgstr ""
 
 msgid "New albums"
+msgstr ""
+
+msgid "Save Defaults"
 msgstr ""
 
 #, c-format
@@ -2095,6 +2103,10 @@ msgstr ""
 
 msgid "There are no settings for this theme"
 msgstr ""
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Kasuta neid seadeid"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2432,12 +2444,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr ""
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr ""
-
-msgid "Use this theme in all subalbums"
-msgstr ""
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 
@@ -2465,18 +2471,33 @@ msgstr ""
 msgid "Use these target sizes in all subalbums"
 msgstr ""
 
-msgid "Recreate thumbnails and resizes"
-msgstr ""
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Rakenda alam-albumitele"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
 
-msgid "Recreate thumbnails"
+msgid "Apply album setting to thumbnails"
 msgstr ""
 
-msgid "Recreate resized images"
+msgid "... and for all subalbums"
+msgstr ""
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Ikoonide uuestiehitamine"
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Muudetud suurusega piltide uuestiloomine"
+
+msgid "Build resizes too"
 msgstr ""
 
 msgid ""
@@ -2714,31 +2735,43 @@ msgstr ""
 msgid "Restore original"
 msgstr ""
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+msgid "Choose a theme"
 msgstr ""
 
 #, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+msgid ""
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
 
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+msgid "Use this theme in all subalbums"
+msgstr ""
+
+msgid "Choose Theme"
+msgstr ""
+
+#, c-format
+msgid "Configure the %s theme"
+msgstr ""
+
+msgid "These settings only apply to the theme for this album."
+msgstr ""
+
+#, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr ""
 
 msgid "Album Highlight"
-msgstr ""
+msgstr "Albumi Ikoon"
 
 msgid "You can make this item the thumbnail for its parent or any ancestor album."
-msgstr ""
+msgstr "Võite seada selle pildi selle albumi või ülemise albumi ikooniks."
 
 msgid "Highlight for:"
-msgstr ""
+msgstr "Sea ikooniks:"
 
 msgid "Highlight"
-msgstr ""
+msgstr "Sea ikooniks"
 
 msgid "Move an Item"
 msgstr ""
@@ -2936,9 +2969,6 @@ msgstr ""
 
 msgid "Reorder"
 msgstr "Muuda Järjestust"
-
-msgid "Continue..."
-msgstr ""
 
 msgid "Site is temporarily down for maintenance."
 msgstr ""
@@ -3363,14 +3393,8 @@ msgstr ""
 msgid "Unit test theme"
 msgstr ""
 
-#~ msgid "Performing Maintenance Tasks"
-#~ msgstr "Hooldustööd"
-
-#~ msgid "Upgrade"
-#~ msgstr "Uuenda"
-
-#~ msgid "Download"
-#~ msgstr "Tõmba alla"
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Muudetud suurusega piltide uuestiehitamine"
 
 #~ msgid "Plugins directory does not exist."
 #~ msgstr "Pluginite kataloog puudub."
@@ -3381,14 +3405,17 @@ msgstr ""
 #~ "Ei saanud pluginite alamkataloogi luua. Kontrolli kas veebiserveril on õigus sinna "
 #~ "kirjutada."
 
+#~ msgid "Gallery Up-To-Date"
+#~ msgstr "Galerii on Uusim"
+
+#~ msgid "Performing Maintenance Tasks"
+#~ msgstr "Hooldustööd"
+
 #~ msgid "Confirm module uninstall"
 #~ msgstr "Kinnita mooduli mahainstallimine"
 
 #~ msgid "Modules"
 #~ msgstr "Moodulid"
-
-#~ msgid "Gallery Up-To-Date"
-#~ msgstr "Galerii on Uusim"
 
 #~ msgid "From Local Server"
 #~ msgstr "Kohalikust serverist"
