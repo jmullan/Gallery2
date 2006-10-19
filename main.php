@@ -17,16 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * Main handler for all Gallery pages/requests
- * @package Gallery
- */
 
 include(dirname(__FILE__) . '/bootstrap.inc');
 
 /*
  * If they don't have a setup password, we assume that the config.php is empty and this is an
- * initial install.
+ * initial install
  */
 if (!@$gallery->getConfig('setup.password')) {
     /* May be invalid if a multisite install lost its config.php; galleryBaseUrl unknown */
@@ -49,7 +45,7 @@ if ($gallery->isEmbedded()) {
 	 */
 	if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
 		|| (function_exists('getallheaders')
-		    && ($headers = GetAllHeaders())
+		    && ($headers = getallheaders())
 		    && (isset($headers['If-Modified-Since'])
 			|| isset($headers['If-modified-since'])))) {
 	    header('HTTP/1.0 304 Not Modified');
@@ -87,6 +83,10 @@ if ($gallery->isEmbedded()) {
     GalleryMain();
 }
 
+/**
+ * Main handler for all Gallery pages/requests.
+ * @package Gallery
+ */
 function GalleryMain($embedded=false) {
     global $gallery;
 
@@ -131,8 +131,7 @@ function GalleryMain($embedded=false) {
 }
 
 /**
- * Process our request
- *
+ * Process our request.
  * @return array object GalleryStatus a status code
  *               array
  */
@@ -549,10 +548,7 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
 	    }
 	}
 
-	/* Use our PHP VM for testability */
-	$phpVm = $gallery->getPhpVm();
-	$phpVm->header("Location: $redirectUrl");
-
+	GalleryUtilities::setResponseHeader("Location: $redirectUrl");
 	return array('isDone' => true);
     }
 
