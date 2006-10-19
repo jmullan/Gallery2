@@ -21,9 +21,8 @@
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryLockSystem.class');
 
 /**
- * Flock() based locking.  This is fairly efficient, but it will not work on NFS and is known to
- * be unreliable on some operating systems including some flavors of the 2.4 Linux kernel.
- *
+ * Flock() based locking.  This is fairly efficient, but it will not work on NFS and is known to be
+ * unreliable on some operating systems including some flavors of the 2.4 Linux kernel.
  * @package GalleryCore
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -40,7 +39,6 @@ class FlockLockSystem extends GalleryLockSystem {
      * @access private
      */
     var $_references;
-
 
     /**
      * @see GalleryLockSystem::_acquireLock
@@ -118,7 +116,7 @@ class FlockLockSystem extends GalleryLockSystem {
 	    }
 	}
 
-	$lockId = md5(microtime());
+	$lockId = crc32(microtime());
 	$this->_locks[$lockId] = array('lockId' => $lockId, 'type' => $lockType, 'ids' => $locked);
 	return array(null, $lockId);
     }
@@ -164,8 +162,7 @@ class FlockLockSystem extends GalleryLockSystem {
     }
 
     /**
-     * Return the lock file for a given object id
-     *
+     * Return the lock file for a given object id.
      * @param int $id the input id
      * @return string the complete path to the lock file
      * @access private
@@ -177,7 +174,6 @@ class FlockLockSystem extends GalleryLockSystem {
 
     /**
      * Close file for this lock and remove file if there are no more references.
-     *
      * @param array $lockInfo lockInfo
      * @access private
      */

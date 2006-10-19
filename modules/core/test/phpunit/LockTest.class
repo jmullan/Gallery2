@@ -22,7 +22,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/DatabaseLockSystem.class');
 GalleryCoreApi::requireOnce('modules/core/classes/FlockLockSystem.class');
 
 /**
- * Test Lock functionality
+ * Test Lock functionality.
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -38,23 +38,20 @@ class LockTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
-	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$this->_markForCleanup($this->_parentAlbum);
+	$this->_markForCleanup($this->_album);
 
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_parentAlbum->getId());
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	$storage =& $gallery->getStorage();
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
     }
@@ -123,7 +120,7 @@ class LockTest extends GalleryTestCase {
     }
 
     function _testOneReadLock($lockSystem) {
-	$targetId = $this->_parentAlbum->getId();
+	$targetId = $this->_album->getId();
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($targetId);
 	if ($ret) {
@@ -170,25 +167,25 @@ class LockTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Create a hierarchy */
-	$parentId = $this->_parentAlbum->getId();
+	$parentId = $this->_album->getId();
 	for ($i = 0; $i < 3; $i++) {
-	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($parentId);
+	    list ($ret, $this->_subAlbums[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	    $parentId = $this->_album[$i]->getId();
+	    $parentId = $this->_subAlbums[$i]->getId();
 	}
 
-	list ($ret, $lockId) = GalleryCoreApi::acquireReadLockParents($this->_album[2]->getId());
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLockParents($this->_subAlbums[2]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify that they're all locked except the item itself */
-	$this->assert(!GalleryCoreApi::isReadLocked($this->_album[2]->getId()), "$lockSystem: a2");
-	$this->assert(GalleryCoreApi::isReadLocked($this->_album[1]->getId()), "$lockSystem: a1");
-	$this->assert(GalleryCoreApi::isReadLocked($this->_album[0]->getId()), "$lockSystem: a0");
-	$this->assert(GalleryCoreApi::isReadLocked($this->_parentAlbum->getId()), "$lockSystem: p");
+	$this->assert(!GalleryCoreApi::isReadLocked($this->_subAlbums[2]->getId()), "$lockSystem: a2");
+	$this->assert(GalleryCoreApi::isReadLocked($this->_subAlbums[1]->getId()), "$lockSystem: a1");
+	$this->assert(GalleryCoreApi::isReadLocked($this->_subAlbums[0]->getId()), "$lockSystem: a0");
+	$this->assert(GalleryCoreApi::isReadLocked($this->_album->getId()), "$lockSystem: p");
 	$this->assert(GalleryCoreApi::isReadLocked($this->_getRootId()), "$lockSystem: r");
 
 	/* Release locks */
@@ -222,12 +219,11 @@ class LockTest extends GalleryTestCase {
     }
 
     /**
-     * Test acquiring a write lock on an entity that has already been read locked.
-     * We don't currently require this ability, but it could be useful if adding or
-     * deleting an item from an album triggered an update to that album.
-     * Uncomment this test if this type of locking is ever used..
-     * (note that windows has problems doing this with flock based locks, so we may
-     *  avoid any functionality that needs this..)
+     * Test acquiring a write lock on an entity that has already been read locked.  We don't
+     * currently require this ability, but it could be useful if adding or deleting an item from an
+     * album triggered an update to that album.  Uncomment this test if this type of locking is ever
+     * used.  (Note that Windows has problems doing this with flock based locks, so we may avoid
+     * any functionality that needs this.)
      */
     /*
     function testReadLockToWriteLock() {
@@ -242,16 +238,16 @@ class LockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	foreach (array($this->_getRootId(), $this->_parentAlbum->getId()) as $id) {
+	foreach (array($this->_getRootId(), $this->_album->getId()) as $id) {
 	    $this->assert(GalleryCoreApi::isReadLocked($id), "$lockSystem: read lock: $id");
 	}
 
-	list ($ret, $writeLockId) = GalleryCoreApi::acquireWriteLock($this->_parentAlbum->getId());
+	list ($ret, $writeLockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assert(GalleryCoreApi::isWriteLocked($this->_parentAlbum->getId()),
+	$this->assert(GalleryCoreApi::isWriteLocked($this->_album->getId()),
 		      "$lockSystem: write lock");
 	$this->assert(GalleryCoreApi::isReadLocked($this->_getRootId()), "$lockSystem: read lock");
 
@@ -263,9 +259,9 @@ class LockTest extends GalleryTestCase {
     }
 
     /*
-     * Verify that releaseLocks accepts sloppy input (null entries or empty list)
-     * so that error handling code can pass in whatever array it has and not worry
-     * about cleaning it up to have only valid locks.
+     * Verify that releaseLocks accepts sloppy input (null entries or empty list) so that error
+     * handling code can pass in whatever array it has and not worry about cleaning it up to have
+     * only valid locks.
      */
     function testReleaseNull() {
 	return $this->_tryAllLockSystems('testReleaseNull');
@@ -292,7 +288,7 @@ class LockTest extends GalleryTestCase {
 	$this->assert(!GalleryCoreApi::isWriteLocked($targetId), $lockSystem . ' unlock');
     }
 
-    /* see comment above */
+    /* See comment above */
     function testReleaseEmpty() {
 	return $this->_tryAllLockSystems('testReleaseEmpty');
     }
@@ -430,7 +426,7 @@ class LockTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_parentAlbum->getId(),
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_album->getId(),
 								      $this->_item->getId()));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -439,20 +435,18 @@ class LockTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert(
-		(count($gallery->_lockSystem->_releaseQueue) == 1
-		 && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 2)
-		|| !$storage->isTransactional(), 'release write lock');
+	$this->assert((count($gallery->_lockSystem->_releaseQueue) == 1
+		&& count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 2)
+	    || !$storage->isTransactional(), 'release write lock');
 
 	list ($ret, $newLockId) = GalleryCoreApi::acquireReadLock($this->_item->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	/* Removed single entity from pending write lock in order to get new read lock */
-	$this->assert(
-		(count($gallery->_lockSystem->_releaseQueue) == 1
-		 && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
-		|| !$storage->isTransactional(), 'pending write lock should have one entity');
+	$this->assert((count($gallery->_lockSystem->_releaseQueue) == 1
+		&& count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
+	    || !$storage->isTransactional(), 'pending write lock should have one entity');
 
 	$ret = GalleryCoreApi::releaseLocks($newLockId);
 	if ($ret) {
@@ -493,7 +487,7 @@ class LockTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_parentAlbum->getId(),
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_album->getId(),
 								      $this->_item->getId()));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -502,9 +496,8 @@ class LockTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert(
-	    (count($gallery->_lockSystem->_releaseQueue) == 1
-	     && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 2)
+	$this->assert((count($gallery->_lockSystem->_releaseQueue) == 1
+		&& count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 2)
 	    || !$storage->isTransactional(), 'release first lock');
 
 	list ($ret, $newLockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
@@ -512,9 +505,8 @@ class LockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	/* One id moved to new lockId */
-	$this->assert(
-	    (count($gallery->_lockSystem->_releaseQueue) == 1
-	     && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
+	$this->assert((count($gallery->_lockSystem->_releaseQueue) == 1
+		&& count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
 	    || !$storage->isTransactional(), 'acquire new lock');
 
 	$ret = GalleryCoreApi::releaseLocks($newLockId);
@@ -522,6 +514,7 @@ class LockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
     }
+
     function testRelockWriteMore() {
 	/* Write lock, release, then acquire new write lock with more ids than previous lock */
 	global $gallery;
@@ -535,12 +528,11 @@ class LockTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert(
-	    (count($gallery->_lockSystem->_releaseQueue) == 1
-	     && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
+	$this->assert((count($gallery->_lockSystem->_releaseQueue) == 1
+		&& count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
 	    || !$storage->isTransactional(), 'release first lock');
 
-	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_parentAlbum->getId(),
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_album->getId(),
 								      $this->_item->getId()));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -589,7 +581,7 @@ class LockTest extends GalleryTestCase {
 	$storage =& $gallery->getStorage();
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock(array($this->_item->getId(),
-								     $this->_parentAlbum->getId()));
+								     $this->_album->getId()));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -597,22 +589,40 @@ class LockTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert(
-		(count($gallery->_lockSystem->_releaseQueue) == 1
-		 && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 2)
-		|| !$storage->isTransactional(), 'release read lock');
+	$this->assert((count($gallery->_lockSystem->_releaseQueue) == 1
+		&& count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 2)
+	    || !$storage->isTransactional(), 'release read lock');
 
 	list ($ret, $newLockId) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	/* Removed single entity from pending read lock in order to get new write lock */
-	$this->assert(
-		(count($gallery->_lockSystem->_releaseQueue) == 1
-		 && count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
-		|| !$storage->isTransactional(), 'pending read lock should have one entity');
+	$this->assert((count($gallery->_lockSystem->_releaseQueue) == 1
+		&& count($gallery->_lockSystem->_releaseQueue[$lockId]['ids']) == 1)
+	    || !$storage->isTransactional(), 'pending read lock should have one entity');
 
 	$ret = GalleryCoreApi::releaseLocks($newLockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testIntegerLockId() {
+	return $this->_tryAllLockSystems('testIntegerLockId');
+    }
+
+    function _testIntegerLockId($lockSystem) {
+	$targetId = $this->_item->getId();
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($targetId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(is_int($lockId));
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
