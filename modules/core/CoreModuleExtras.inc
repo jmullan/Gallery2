@@ -2148,6 +2148,8 @@ class CoreModuleExtras {
 
 	case '1.1.17':
 	    /* Rolled SessionAuthPlugin into GallerySession.class, so force a factory update */
+	case '1.1.18':
+	    /* Added PHP display_errors ini setting to config.php */
 
 	case 'end of upgrade path':
 	    /*
@@ -2349,7 +2351,7 @@ $gallery->setConfig(\'mode.maintenance\', false);
 	case '1.0.12':
 	case '1.0.13':
 	    /* Add config parameter: 'baseUri' */
-	    $add[] =
+	    $configChanges[] = array('remove' => array(), 'edit' => array(), 'add' => array(
 '
 /*
  * This setting can be used to override Gallery\'s auto-detection of the domain-name,
@@ -2362,9 +2364,7 @@ $gallery->setConfig(\'mode.maintenance\', false);
  *   override the protocol + host + path + file:
  *           $gallery->setConfig(\'baseUri\', \'https://example.com:8080/gallery2/index.php\');
  */
-$gallery->setConfig(\'baseUri\', \'\');';
-
-	    $configChanges[] = array('remove' => array(), 'add' => $add, 'edit' => array());
+$gallery->setConfig(\'baseUri\', \'\');'));
 
 	case '1.0.14':
 	case '1.0.15':
@@ -2372,6 +2372,7 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	     * Normalize the config path 'data.gallery.base' (add a trailing slash if necessary).
 	     * Escape the backslashes and quotes two times since we feed preg_replace with it.
 	     */
+	    $edit = array();
 	    $tmp = strtr($gallery->getConfig('data.gallery.base'),
 			 array('\\' => '\\\\\\\\', "'" => "\\\\'"));
 	    $edit['regexp'] = '{\$gallery->setConfig\(\'data\.gallery\.base\',.*?;}s';
@@ -2415,6 +2416,18 @@ $gallery->setConfig(\'baseUri\', \'\');';
 	case '1.1.15':
 	case '1.1.16':
 	case '1.1.17':
+	case '1.1.18':
+	    /* Add PHP display_errors setting */
+	    $configChanges[] = array('remove' => array(), 'edit' => array(), 'add' => array(
+'
+/*
+ * When display_errors is enabled, PHP errors are printed to the output.
+ * For production web sites, you\'re strongly encouraged to turn this feature off,
+ * and use error logging instead.
+ * During development, you should set the value to 1 to ensure that you notice PHP
+ * warnings and notices that are not covered in unit tests (e.g. template issues).
+ */
+@ini_set(\'display_errors\', 0);'));
 
 	case 'end of upgrade path':
 	    /*

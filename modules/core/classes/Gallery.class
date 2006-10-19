@@ -656,8 +656,10 @@ class Gallery {
 	    $this->clearDebugBuffer();
 	}
 	if (!empty($this->_debug)) {
-	    /* Hardcode the value to avoid E_STRICT without using the >=5.0.0 constant */
-	    error_reporting(2047);
+	    /* PHP 6 includes E_STRICT in E_ALL. Hardcode since PHP 4 does not know that constant */
+	    error_reporting(E_ALL &~ 2048);
+	    ini_set('display_errors', 1);
+	    ini_set('log_errors', 1);
 	    ini_set('short_open_tag', false);
 	    ini_set('allow_call_time_pass_reference', false);
 	}
