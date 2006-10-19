@@ -19,7 +19,7 @@
  */
 
 /**
- * Helper functions for ItemAttributes map
+ * Helper functions for ItemAttributes map.
  * @package GalleryCore
  * @subpackage Helpers
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -39,16 +39,16 @@ class GalleryItemAttributesHelper_simple {
 	if (!$session->exists('core.lastViewed')) {
 	    if (!$session->isPersistent()) {
 		/*
-		 * For guests, we don't create a session. So the lastViewed data is not available
-		 * for guests. Thus, rely on HTTP if-modified-since for guests which is admittedly
-		 * quite unreliable. Alternatively we could store this data on the client with a
+		 * For guests, we don't create a session.  So the lastViewed data is not available
+		 * for guests.  Thus, rely on HTTP If-Modified-Since for guests which is admittedly
+		 * quite unreliable.  Alternatively we could store this data on the client with a
 		 * non-session cookie but sending lastViewed data on each request could take a lot
 		 * of bandwidth.
 		 */
 		$phpVm = $gallery->getPhpVm();
 		if (GalleryUtilities::getServerVar('HTTP_IF_MODIFIED_SINCE')
 			|| ($phpVm->function_exists('getallheaders')
-			    && ($headers = $phpVm->getAllHeaders())
+			    && ($headers = $phpVm->getallheaders())
 			    && (isset($headers['If-Modified-Since'])
 				|| isset($headers['If-modified-since'])))) {
 		    return null;
@@ -58,11 +58,12 @@ class GalleryItemAttributesHelper_simple {
 		if ($phpVm->rand(0, 1) == 0) {
 		    return null;
 		}
+
 		if (!$phpVm->headers_sent()) {
-		    $phpVm->header('Last-Modified: ' .
-				   GalleryUtilities::getHttpDate($phpVm->time()));
-		    $phpVm->header('Expires: ' . GalleryUtilities::getHttpDate(
-				time() - 3600 * 24 * 7));
+		    GalleryUtilities::setResponseHeader('Last-Modified: '
+			. GalleryUtilities::getHttpDate($phpVm->time()));
+		    GalleryUtilities::setResponseHeader('Expires: '
+			. GalleryUtilities::getHttpDate(time() - 3600 * 24 * 7));
 		}
 	    }
 
