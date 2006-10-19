@@ -965,8 +965,7 @@ class GalleryUtilities {
     }
 
     /**
-     * Set HTTP response header
-     *
+     * Set HTTP response header.
      * @param string $header HTTP response header
      * @param boolean $replace (optional) avoid replacing HTTP response header if already set
      */
@@ -975,24 +974,32 @@ class GalleryUtilities {
 	global $gallery;
 	$phpVm = $gallery->getPhpVm();
 
-	static $save = array();
+	$headers =& GalleryUtilities::_getResponseHeaders();
 
 	$key = 'status';
 	if (strncasecmp($header, 'HTTP/', 5)) {
 	    $key = strtolower(substr($header, 0, strpos($header, ':')));
 	}
 
-	if ($replace || empty($save[$key])) {
+	if ($replace || empty($headers[$key])) {
 	    $phpVm->header($header);
-	    $save[$key] = $header;
+	    $headers[$key] = $header;
 	}
     }
 
     /**
-     * Return true if the path exists and is in the given path list
-     *
-     * Make sure to pass paths in the system charset to this method
-     *
+     * Get HTTP response headers.
+     * @return array key => value pairs of headers.
+     * @access private
+     */
+    function &_getResponseHeaders() {
+	static $headers = array();
+	return $headers;
+    }
+
+    /**
+     * Return true if the path exists and is in the given path list.  Make sure to pass paths in the
+     * system charset to this method.
      * @param string $path
      * @param string $list the list of legal paths
      * @return boolean

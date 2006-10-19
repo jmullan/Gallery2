@@ -33,11 +33,10 @@ class UtilitiesTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-
 	parent::setUp();
 
-	$this->_originalCookie = isset($_COOKIE) ? $_COOKIE : null;
-	$this->_originalServerHttpCookie =
+	$this->_saveCookie = isset($_COOKIE) ? $_COOKIE : null;
+	$this->_saveServerHttpCookie =
 	    isset($_SERVER['HTTP_COOKIE']) ? $_SERVER['HTTP_COOKIE'] : null;
 
 	$this->_mkdir = array();
@@ -47,13 +46,11 @@ class UtilitiesTest extends GalleryTestCase {
 	foreach (array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR') as $key) {
 	    unset($_SERVER[$key]);
 	}
-
-	$_REQUEST['phpVmHeaders'] = array();
     }
 
     function tearDown() {
-	$_COOKIE = $this->_originalCookie;
-	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	$_COOKIE = $this->_saveCookie;
+	$_SERVER['HTTP_COOKIE'] = $this->_saveServerHttpCookie;
 
 	parent::tearDown();
     }
@@ -214,18 +211,28 @@ class UtilitiesTest extends GalleryTestCase {
 
 	/* Use the PHP VM to record the headers */
 	$gallery->_phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$_GET['phpVmHeaders'] = array();
+
+	$headers =& GalleryUtilities::_getResponseHeaders();
+	$headers = array();
 
 	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Foo');
 	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Bar', false);
 
 	/* Verify the result */
-	$this->assertEquals('HTTP/1.0 123 Foo', $_REQUEST['phpVmHeaders']['status'],
+	$this->assertEquals(array('status' => 'HTTP/1.0 123 Foo'), $_GET['phpVmHeaders'],
+	    'Wrong response header');
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 123 Foo'), $headers,
 	    'Wrong response header');
 
 	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Bar');
 
 	/* Verify the result */
-	$this->assertEquals('HTTP/1.0 123 Bar', $_REQUEST['phpVmHeaders']['status'],
+	$this->assertEquals(array('status' => 'HTTP/1.0 123 Bar'), $_GET['phpVmHeaders'],
+	    'Wrong response header');
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 123 Bar'), $headers,
 	    'Wrong response header');
     }
 
@@ -1666,27 +1673,32 @@ class UtilitiesTestWinPlatform extends WinNtPlatform {
     }
 }
 
-/* Used for testRegisterCookieAttr */
+/**
+ * Used by UtilitiesTest::testRegisterCookieAttr
+ */
 class UtilitiesTestAddSlashesPhpVm extends GalleryPhpVm {
+
     function get_magic_quotes_gpc() {
 	return true;
     }
 }
 
 class UtilitiesTestDoNotAddSlashesPhpVm extends GalleryPhpVm {
+
     function get_magic_quotes_gpc() {
 	return false;
     }
 }
 
 class UtilitiesTestSetResponseHeaderPhpVm extends GalleryPhpVm {
+
     function header($header, $replace=null) {
 	$key = 'status';
 	if (strncasecmp($header, 'HTTP/', 5)) {
 	    $key = strtolower(substr($header, 0, strpos($header, ':')));
 	}
 
-	$_REQUEST['phpVmHeaders'][$key] = $header;
+	$_GET['phpVmHeaders'][$key] = $header;
     }
 }
 ?>
