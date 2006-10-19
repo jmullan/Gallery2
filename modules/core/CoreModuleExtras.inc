@@ -65,6 +65,22 @@ class CoreModuleExtras {
 	/* Enable upgrade from any patch release version */
 	$currentVersion = preg_replace('/^(1\.[01]\.0)\.\d+$/', '$1.x', $currentVersion);
 
+	/*
+	 * We converted the character set for MySQL to UTF8 in version 1.0.27, but this only
+	 * applies if you are running MySQL 4.  If you install MySQL 4 after upgrading past 1.0.27
+	 * then you'd get stuck with the non-UTF8 character set and you'd get scrambled output.
+	 * To remedy this, we check here to see if you're using a version more recent than 1.0.26
+	 * and if so, we perform the conversion now.  Otherwise, we perform the conversion in-line
+	 * in the 1.0.26 upgrade block below.
+	 */
+	if (version_compare($currentVersion, '1.0.26', '>')) {
+	    list ($ret, $converted) =
+		CoreModuleExtras::convertCharacterSetToUtf8($module, $statusMonitor);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
 	/**
 	 * README: How to update the block below
 	 *
@@ -1750,109 +1766,19 @@ class CoreModuleExtras {
 
 	case '1.0.25':
 	case '1.0.26':
-	    /* 2.1 Release Candidate 1! */
-
-	    /* Change character set encoding to utf 8 for MySQL if necessary */
-	    if ($storage->getType() == 'mysql') {
-		$version = mysql_get_server_info();
-		/* MySQL < 4.1.0 does not support UTF8 */
-		if ($version && version_compare($version, '4.1.0', '>=')) {
-		    /* Check if the database uses UTF8 already */
-		    list ($ret, $results) =
-			$storage->search('SHOW CREATE DATABASE `' . $storage->_database . '`');
-		    if ($ret) {
-			return $ret;
-		    }
-		    $row = $results->nextResult();
-		    $result = $row[1];
-		    if (!$result || !preg_match('/utf8/i', $result)) {
-			/* Convert all existing tables to UTF-8 */
-			$ret = $statusMonitor->renderStatusMessage(
-				$module->translate('Converting MySQL data to UTF8'), null, 0);
-			if ($ret) {
-			    return $ret;
-			}
-			$gallery->guaranteeTimeLimit(120);
-			$storageExtras =& $storage->_getExtras();
-			list ($ret, $tableVersions) = $storageExtras->_loadTableVersions();
-			if ($ret) {
-			    return $ret;
-			}
-			$types = array('varchar'  => 'varbinary',
-				       'text'     => 'blob',
-				       'longtext' => 'longblob');
-			$i = 0;
-			foreach ($tableVersions as $tableName => $unused) {
-			    $i++;
-			    $tableName = $storage->_tablePrefix . $tableName;
-			    /* First the table itself */
-			    $query = "ALTER TABLE `$tableName` DEFAULT CHARACTER SET utf8";
-			    $ret = $storage->execute($query);
-			    if ($ret) {
-				return $ret;
-			    }
-			    /*
-			     * Then all character/string columns
-			     * See: http://dev.mysql.com/doc/refman/4.1/en/charset-conversion.html
-			     *      and http://drupal.org/node/40515
-			     * 1. Detect current column attributes
-			     * 2. Convert text column to binary column
-			     * 3. Convert them to character/text columns with UTF8 charset
-			     */
-			    /* 1. Detect current column attributes */
-			    $query = "SHOW FULL COLUMNS FROM `$tableName`";
-			    $originalFetchMode = $storage->_db->SetFetchMode(ADODB_FETCH_ASSOC);
-			    list ($ret, $results) = $storage->search($query);
-			    if ($ret) {
-				return $ret;
-			    }
-			    $storage->_db->SetFetchMode($originalFetchMode);
-			    $changeToBinary = $changeToUtf8 = array();
-			    while ($column = $results->nextResult()) {
-				list ($type) = explode('(', $column['Type']);
-				if (!isset($types[$type])) {
-				    continue;
-				}
-				$change =
-				    'CHANGE `' . $column['Field'] . '` `' . $column['Field'] . '` ';
-				$binaryType = preg_replace('/'. $type .'/i', $types[$type],
-							   $column['Type']);
-				$attributes = ' ';
-				if ($column['Default'] == 'NULL') {
-				    $attributes .= 'DEFAULT NULL ';
-				} else if (!empty($column['Default'])) {
-				    $attributes .= 'DEFAULT ' . $column['Default'] . ' ';
-				}
-				$attributes .= $column['Null'] == 'YES' ? 'NULL' : 'NOT NULL';
-				$changeToBinary[] = $change . $binaryType . $attributes;
-				$changeToUtf8[] =
-				    $change . $column['Type'] . ' CHARACTER SET utf8' . $attributes;
-			    }
-			    if (count($changeToBinary)) {
-				$query =
-				    "ALTER TABLE `$tableName` " . implode(', ', $changeToBinary);
-				$ret = $storage->Execute($query);
-				if ($ret) {
-				    return $ret;
-				}
-				$query = "ALTER TABLE `$tableName` " . implode(', ', $changeToUtf8);
-				$ret = $storage->Execute($query);
-				if ($ret) {
-				    return $ret;
-				}
-			    }
-
-			    $ret = $statusMonitor->renderStatusMessage(
-				$module->translate('Converting MySQL data to UTF8'),
-				null, $i / count($tableVersions));
-			    if ($ret) {
-				return $ret;
-			    }
-			    $gallery->guaranteeTimeLimit(120);
-			} /* End for each table */
-		    } /* End if database character set not UTF-8 */
-		} /* End if MySql version > 4.1.0 */
-	    } /* End if MySQL */
+	    /*
+	     * 2.1 Release Candidate 1!
+	     *
+	     * We used to change the character set for MySQL databases to utf8 here, but now we do
+	     * it on every upgrade (at the beginning) to allow for the fact that the user can
+	     * upgrade their MySQL from 3.x to 4.x at any time.  We still call it here for
+	     * historical accuracy for users upgrading from before 1.0.26.
+	     */
+	    list ($ret, $converted) =
+		CoreModuleExtras::convertCharacterSetToUtf8($module, $statusMonitor);
+	    if ($ret) {
+		return $ret;
+	    }
 
 	    /* Clear the cache data since we changed the blob encoding */
 	    $gallery->guaranteeTimeLimit(60);
@@ -2150,6 +2076,8 @@ class CoreModuleExtras {
 	    /* Rolled SessionAuthPlugin into GallerySession.class, so force a factory update */
 	case '1.1.18':
 	    /* Added PHP display_errors ini setting to config.php */
+	case '1.1.19':
+	    /* Added ConvertDatabaseToUtf8Task */
 
 	case 'end of upgrade path':
 	    /*
@@ -2428,6 +2356,8 @@ $gallery->setConfig(\'baseUri\', \'\');'));
  * warnings and notices that are not covered in unit tests (e.g. template issues).
  */
 @ini_set(\'display_errors\', 0);'));
+
+	case '1.1.19':
 
 	case 'end of upgrade path':
 	    /*
@@ -2870,6 +2800,7 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 	$regs[] = array('MaintenanceTask', 'SystemInfoTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'SetOriginationTimestampTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'DeleteSessionsTask', 'class', null);
+	$regs[] = array('MaintenanceTask', 'ConvertDatabaseToUtf8Task', 'class', null);
 	$regs[] = array('CaptchaAdminOption', 'CoreCaptchaAdminOption', 'class', null);
 
 	/*
@@ -2905,6 +2836,158 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 	}
 
 	return null;
+    }
+
+    /**
+     * Change character set encoding to utf 8 for MySQL if necessary.  This is public because it
+     * is also used by ConvertDatabaseToUtf8Task.
+     *
+     * @return array object GalleryStatus a status code
+     *               bool true if any conversions took place
+     * @access public
+     */
+    function convertCharacterSetToUtf8($module, $statusMonitor) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$converted = false;
+
+	if ($storage->getType() == 'mysql') {
+	    $version = mysql_get_server_info();
+	    /* MySQL < 4.1.0 does not support UTF8 */
+	    if ($version && version_compare($version, '4.1.0', '>=')) {
+		/*
+		 * Check if the database uses UTF8 already, by looking at the Schema table, which
+		 * we convert last.
+		 */
+		list ($ret, $results) =
+		    $storage->search('SHOW CREATE TABLE `' . $storage->_tablePrefix . 'Schema`');
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$row = $results->nextResult();
+		$result = $row[1];
+		if (!$result || !preg_match('/utf8/i', $result)) {
+		    /* Convert all existing tables to UTF-8 */
+		    $ret = $statusMonitor->renderStatusMessage(
+			$module->translate('Converting MySQL data to UTF8'), null, 0);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    $gallery->guaranteeTimeLimit(120);
+		    $storageExtras =& $storage->_getExtras();
+		    list ($ret, $tableVersions) = $storageExtras->_loadTableVersions();
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    $types = array('varchar'  => 'varbinary',
+				   'text'     => 'blob',
+				   'longtext' => 'longblob');
+		    $i = 0;
+
+		    foreach ($tableVersions as $tableName => $unused) {
+			$i++;
+			$tableName = $storage->_tablePrefix . $tableName;
+			/* First the table itself */
+			$query = "ALTER TABLE `$tableName` DEFAULT CHARACTER SET utf8";
+			$ret = $storage->execute($query);
+			if ($ret) {
+			    return array($ret, null);
+			}
+			/*
+			 * Then all character/string columns
+			 * See: http://dev.mysql.com/doc/refman/4.1/en/charset-conversion.html
+			 *
+			 * The following code is based significantly on code from Drupal,
+			 * For details, refer to:
+			 *   - http://api.drupal.org/api/4.7/file/update.php/source
+			 *   - http://api.drupal.org/api/4.7/file/LICENSE.txt
+			 *   - http://drupal.org/node/40515
+			 *
+			 * Drupal is licensed under the GPL:
+			 *
+			 * 1. Detect current column attributes
+			 * 2. Convert text column to binary column
+			 * 3. Convert them to character/text columns with UTF8 charset
+			 */
+			$query = "SHOW FULL COLUMNS FROM `$tableName`";
+			$originalFetchMode = $storage->_db->SetFetchMode(ADODB_FETCH_ASSOC);
+			list ($ret, $results) = $storage->search($query);
+			if ($ret) {
+			    return array($ret, null);
+			}
+			$storage->_db->SetFetchMode($originalFetchMode);
+			$changeToBinary = $changeToUtf8 = array();
+			while ($column = $results->nextResult()) {
+			    list ($type) = explode('(', $column['Type']);
+			    if (!isset($types[$type])) {
+				continue;
+			    }
+			    $change =
+				'CHANGE `' . $column['Field'] . '` `' . $column['Field'] . '` ';
+			    $binaryType = preg_replace('/'. $type .'/i', $types[$type],
+						       $column['Type']);
+			    $attributes = ' ';
+			    if ($column['Default'] == 'NULL') {
+				$attributes .= 'DEFAULT NULL ';
+			    } else if (!empty($column['Default'])) {
+				$attributes .= 'DEFAULT ' . $column['Default'] . ' ';
+			    }
+			    $attributes .= $column['Null'] == 'YES' ? 'NULL' : 'NOT NULL';
+			    $changeToBinary[] = $change . $binaryType . $attributes;
+			    $changeToUtf8[] =
+				$change . $column['Type'] . ' CHARACTER SET utf8' . $attributes;
+			}
+			if (count($changeToBinary)) {
+			    $query =
+				"ALTER TABLE `$tableName` " . implode(', ', $changeToBinary);
+			    $ret = $storage->Execute($query);
+			    if ($ret) {
+				return array($ret, null);
+			    }
+			    $query = "ALTER TABLE `$tableName` " . implode(', ', $changeToUtf8);
+			    $ret = $storage->Execute($query);
+			    if ($ret) {
+				return array($ret, null);
+			    }
+			    $converted = true;
+			}
+
+			$ret = $statusMonitor->renderStatusMessage(
+			    $module->translate('Converting MySQL data to UTF8'),
+			    null, $i / count($tableVersions));
+			if ($ret) {
+			    return array($ret, null);
+			}
+			$gallery->guaranteeTimeLimit(120);
+		    } /* End for each table */
+
+		    if ($converted) {
+			/* Clear any cache data since it may be in the wrong character set*/
+			$gallery->guaranteeTimeLimit(60);
+			$ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
+			if ($ret) {
+			    return array($ret, null);
+			}
+		    }
+		} /* End if database character set not UTF-8 */
+	    } /* End if MySql version > 4.1.0 */
+	} /* End if MySQL */
+
+	return array(null, $converted);
+    }
+
+    /**
+     * Sort an associative array where the key is the name of the table.  Force
+     * the schema table to be last in line.
+     */
+    function _sortSchemaTableLast($a, $b) {
+	if ($a == 'Schema') {
+	    return -1;
+	} else if ($b == 'Schema') {
+	    return 1;
+	} else {
+	    return strcmp($a, $b);
+	}
     }
 }
 ?>
