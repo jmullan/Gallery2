@@ -19,7 +19,7 @@
  */
 
 /**
- * Test utilities functionality
+ * Test utilities functionality.
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -1536,8 +1536,6 @@ class UtilitiesTest extends GalleryTestCase {
      * once and it'll capture the current manifest.  Subsequent runs will compare it against that
      * golden version, so you can refactor the manifest code till you're happy.  But don't leave
      * this test uncommented as otherwise it will break on the next manifest update.
-     */
-    /*
     function testReadManifest() {
 	$actual = GalleryUtilities::readManifest();
 	$cmpFile = '/tmp/manifest.txt';
@@ -1555,12 +1553,6 @@ class UtilitiesTest extends GalleryTestCase {
     */
 }
 
-/**
- * Mock platform
- *
- * @package GalleryCore
- * @subpackage PHPUnit
- */
 class UtilitiesTestPlatform {
 
     function UtilitiesTestPlatform(&$testCase) {
@@ -1656,7 +1648,9 @@ class UtilitiesTestPlatform {
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
+
 class UtilitiesTestWinPlatform extends WinNtPlatform {
+
     function realpath($file) {
 	/* These are used in testIsPathInList */
 	switch ($file) {
