@@ -17,16 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * Container for session related data
- * @package GalleryCore
- * @subpackage Classes
- * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
- */
 
 /**
- * Define gallery session key for this install
+ * Define gallery session key for this install.
  */
 define('SESSION_ID_PARAMETER', 'GALLERYSID');
 
@@ -37,26 +30,30 @@ define('SESSION_ID_PARAMETER', 'GALLERYSID');
 define('SESSION_TEMP_ID', 'TMP_SESSION_ID_DI_NOISSES_PMT');
 
 /**
- * Container for session related data
+ * Container for session related data.
+ * @package GalleryCore
+ * @subpackage Classes
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$ $Date$
  */
 class GallerySession {
 
     /**
-     * The time this session was created
+     * The time this session was created.
      * @var int
      * @access private
      */
     var $_creationTime;
 
     /**
-     * The time this session was last modified
+     * The time this session was last modified.
      * @var int
      * @access private
      */
     var $_modificationTime;
 
     /**
-     * The id of this session
+     * The id of this session.
      * @var string
      * @access private
      */
@@ -70,28 +67,28 @@ class GallerySession {
     var $_isUsingCookies = false;
 
     /**
-     * The id of the session's user
+     * The id of the session's user.
      * @var int
      * @access private
      */
     var $_userId;
 
     /**
-     * The serialized session data as loaded from db
+     * The serialized session data as loaded from database.
      * @var string
      * @access private
      */
     var $_loadedSessionData;
 
     /**
-     * The session data
+     * The session data.
      * @var array
      * @access private
      */
     var $_sessionData;
 
     /**
-     * The domain for our cookie
+     * The domain for our cookie.
      * @var string
      * @access private
      */
@@ -106,24 +103,23 @@ class GallerySession {
     var $_remoteIdentifier;
 
     /**
-     * Whether the session has been saved in the persistent store during the current
-     * request handling.
-     * Used to determine whether we need to "touch" the session to prevent it from expiring
-     * in case the session data hasn't changed anyway.
+     * Whether the session has been saved in the persistent store during the current request
+     * handling.  Used to determine whether we need to "touch" the session to prevent it from
+     * expiring in case the session data hasn't changed anyway.
      * @var boolean
      * @access private
      */
     var $_isSessionSaved;
 
     /**
-     * Whether this is a session for a search engine
+     * Whether this is a session for a search engine.
      * @var boolean
      * @access private
      */
     var $_isSearchEngineSession;
 
     /**
-     * Whether a persistent session has been created (not updated) in this request
+     * Whether a persistent session has been created (not updated) in this request.
      * @var boolean
      * @access private
      */
@@ -131,35 +127,35 @@ class GallerySession {
 
     /**
      * Whether no pseudo/temporary session id should be returned on getId() if there is no real
-     * session id yet
+     * session id yet.
      * @var boolean
      * @access private
      */
     var $_doNotUseTempId;
 
     /**
-     * Whether this is a persistent session or just a session for this single request
+     * Whether this is a persistent session or just a session for this single request.
      * @var boolean
      * @access private
      */
     var $_isPersistent;
 
     /**
-     * Whether a persistent session is allowed to be created in this request
+     * Whether a persistent session is allowed to be created in this request.
      * @var boolean
      * @access private
      */
     var $_isPersistentSessionAllowedForRequest;
 
     /**
-     * Whether a persistent session should be forced to be created
+     * Whether a persistent session should be forced to be created.
      * @var boolean
      * @access private
      */
     var $_forceSaveSession;
 
     /**
-     * How many sessions to delete per expireSessions() call
+     * How many sessions to delete per expireSessions() call.
      * @var int
      * @access private
      */
@@ -168,7 +164,6 @@ class GallerySession {
 
     /**
      * Either create a new session, or attach to an existing one.
-     *
      * @return object GalleryStatus a status code
      */
     function init() {
@@ -210,7 +205,7 @@ class GallerySession {
 	    }
 	}
 
-	/* Sanitize the session id. */
+	/* Sanitize the session id */
 	$this->_sessionId = is_string($this->_sessionId) ? $this->_sessionId : '';
 	$this->_sessionId = preg_replace('/[^a-fA-F0-9]/', '', $this->_sessionId);
 	/* Prevent from querying the DB for sessionIds that are incorrect anyway */
@@ -254,7 +249,7 @@ class GallerySession {
 
 		    /*
 		     * The session was not created from this browser address, so reset our data to
-		     * prevent hijacking.
+		     * prevent hijacking
 		     */
 		    $this->_sessionId = '';
 		    $ret = $this->_emptySessionData();
@@ -269,8 +264,7 @@ class GallerySession {
     }
 
     /**
-     * Start session by ensuring we've got a valid, unqiue sessionId and send cookie if necessary
-     *
+     * Start session by ensuring we've got a valid, unqiue sessionId and send cookie if necessary.
      * @return object GalleryStatus a status code
      */
     function start() {
@@ -307,9 +301,10 @@ class GallerySession {
 	 * HTML because the DownloadItem requests might come in before we reach $session->save() )
 	 */
 
-	/* Don't save session / send cookie for DownloadItem, CSS, migrate.Redirect requests .. */
-	if ( !isset($_COOKIE[SESSION_ID_PARAMETER]) || $this->_forceSaveSession ||
-		$_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ) {
+	/* Don't save session / send cookie for DownloadItem, CSS, migrate.Redirect requests */
+	if (!isset($_COOKIE[SESSION_ID_PARAMETER])
+		|| $this->_forceSaveSession
+		|| $_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId) {
 	    $ret = $this->_setCookie();
 	    if ($ret) {
 		return $ret;
@@ -320,11 +315,8 @@ class GallerySession {
     }
 
     /**
-     * Save any session changes to the store
-     *
-     * Does not save sessions that don't have a sessionId yet
-     * Triggers the expiration of existing persistent sessions in 2% of all calls
-     *
+     * Save any session changes to the store.  Does not save sessions that don't have a sessionId
+     * yet.  Triggers the expiration of existing persistent sessions in 2% of all calls.
      * @return object GalleryStatus a status code
      */
     function save() {
@@ -392,7 +384,6 @@ class GallerySession {
 
     /**
      * Set a new/unused sessionid.
-     *
      * @param boolean $emptyRemoteId (optional) if true don't initialize remoteIdentifier
      * @param int $userId (optional) user for session, defaults to anonymous
      * @return object GalleryStatus a status code
@@ -423,8 +414,7 @@ class GallerySession {
     }
 
     /**
-     * Clean/remove and reinitialize a session
-     *
+     * Clean/remove and reinitialize a session.
      * @return object GalleryStatus a status code
      */
     function reset() {
@@ -462,8 +452,7 @@ class GallerySession {
     }
 
     /**
-     * Regenerate the session id to prevent a session fixation attack by a hostile website
-     *
+     * Regenerate the session id to prevent a session fixation attack by a hostile website.
      * @return object GalleryStatus a status code
      */
     function regenerate() {
@@ -516,8 +505,7 @@ class GallerySession {
     }
 
     /**
-     * Send back a cookie to the browser
-     *
+     * Send back a cookie to the browser.
      * @param boolean $delete (optional) whether to delete the cookie
      * @return object GalleryStatus a status code
      * @access private
@@ -526,7 +514,7 @@ class GallerySession {
 	global $gallery;
 
 	/*
-	 * Send back a cookie.
+	 * Send back a cookie
 	 *
 	 * TODO: Need to be able to decide for certain that the browser isn't accepting cookies so
 	 * that we can stop sending them.  We can do this by recording how many times we've sent a
@@ -643,15 +631,14 @@ class GallerySession {
 	 */
 	$phpVm = $gallery->getPhpVm();
 	if (!$phpVm->headers_sent()) {
-	    $phpVm->header($cookie);
+	    GalleryUtilities::setResponseHeader($cookie);
 	}
 
 	return null;
     }
 
     /**
-     * Acquire a new persistent session and guarantee we've got a valid, unqiue sessionId
-     *
+     * Acquire a new persistent session and guarantee we've got a valid, unqiue sessionId.
      * @return object GalleryStatus a status code
      */
     function _acquireNewPersistentSession() {
@@ -714,7 +701,7 @@ class GallerySession {
     }
 
     /**
-     * Check whether this session should be persistent or not
+     * Check whether this session should be persistent or not.
      *
      * For guest users, we don't create sessions, unless their session has non-default data.  Also,
      * the session based permission cache and the navigation isn't regarded important enough to
@@ -772,7 +759,7 @@ class GallerySession {
     }
 
     /**
-     * Whether this controller/view request generally allows creating a session
+     * Whether this controller/view request generally allows creating a session.
      *
      * Don't save session in core.DownloadItem, migrate.Redirect, ... requests
      * Reason: In these requests we don't need to save the session or create a new one because
@@ -817,7 +804,6 @@ class GallerySession {
     /**
      * Load the session data or generate a new session with new data.  Also sets
      * $this->_isPersistent to true if loaded from persistent store.
-     *
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -913,7 +899,7 @@ class GallerySession {
     }
 
     /**
-     * Get rid of all session data
+     * Get rid of all session data.
      * @access private
      */
     function _emptySessionData() {
@@ -936,7 +922,6 @@ class GallerySession {
      * g2_GALLERYSID=SESSION_TEMP_SID from all generated URLs and remove SESSION_TEMP_ID from the
      * HTML.  If a session was created (saved in the persistent store) during the request, replace
      * the SESSION_TEMP_ID with the new/real session id.
-     *
      * @param string $html HTML
      * @return string same HTML with replaced or removed sessionId
      */
@@ -983,7 +968,6 @@ class GallerySession {
     /**
      * Get rid of any sessions that have not been accessed within our inactivity timeout or have
      * exceeded the max lifetime.
-     *
      * @return object GalleryStatus a status code
      * @access private
      */
@@ -1075,7 +1059,7 @@ class GallerySession {
     }
 
     /**
-     * The session key parameter used in URLs and the cookie
+     * The session key parameter used in URLs and the cookie.
      * @return string
      */
     function getKey() {
@@ -1083,7 +1067,7 @@ class GallerySession {
     }
 
     /**
-     * The session id
+     * The session id.
      * @return string an id (like "A124DFE7A90")
      */
     function getId() {
@@ -1105,7 +1089,7 @@ class GallerySession {
     }
 
     /**
-     * Return the user id of the active user of this sesison
+     * Return the user id of the active user of this sesison.
      * @return int the user id
      */
     function getUserId() {
@@ -1113,7 +1097,7 @@ class GallerySession {
     }
 
     /**
-     * Set the active user id for this session
+     * Set the active user id for this session.
      * @param int $userId
      */
     function setUserId($userId) {
@@ -1121,7 +1105,7 @@ class GallerySession {
     }
 
     /*
-     * Returns the cookie domain
+     * Returns the cookie domain.
      *
      * By default, don't set the cookie domain.  Only set it, if Gallery is configured to set it
      * (eg. because it is a) embedded AND b) different subdomains are involved)
@@ -1153,8 +1137,7 @@ class GallerySession {
     }
 
     /**
-     * Get a value from the session data
-     *
+     * Get a value from the session data.
      * @param string $key
      * @return string the value or null if it doesn't exist
      */
@@ -1168,8 +1151,7 @@ class GallerySession {
     }
 
     /**
-     * Store a value in the session
-     *
+     * Store a value in the session.
      * @param string $key
      * @param string $value
      */
@@ -1178,7 +1160,7 @@ class GallerySession {
     }
 
     /**
-     * Remove a value from the session
+     * Remove a value from the session.
      * @param string $key
      */
     function remove($key) {
@@ -1186,7 +1168,7 @@ class GallerySession {
     }
 
     /**
-     * Check to see if a value exists in the session
+     * Check to see if a value exists in the session.
      * @param string $key
      */
     function exists($key) {
@@ -1197,7 +1179,6 @@ class GallerySession {
      * Return a value that we can use to identify the client.  We can't tie it to the IP address
      * because that changes too frequently (dialup users, users behind proxies) so we have to be
      * creative.  Changing this algorithm will cause all existing sessions to be discarded.
-     *
      * @return array
      */
     function getRemoteIdentifier() {
@@ -1207,8 +1188,7 @@ class GallerySession {
     }
 
     /**
-     * Get the serialized session for comparing purposes
-     *
+     * Get the serialized session for comparing purposes.
      * @return string serialized session
      * @access private
      */
@@ -1243,8 +1223,7 @@ class GallerySession {
     }
 
     /**
-     * Store a status message
-     *
+     * Store a status message.
      * @param array $statusData
      * @return string the status id
      */
@@ -1275,8 +1254,7 @@ class GallerySession {
     }
 
     /**
-     * Get a status message
-     *
+     * Get a status message.
      * @param string $statusId
      * @param boolean $remove (optional)
      * @return array the status message
@@ -1296,19 +1274,17 @@ class GallerySession {
     }
 
     /**
-     * Return the session id
-     * @todo will be removed in the next API branch
-     *
+     * Return the session id.
      * @return string the session id
      * @deprecated
+     * @todo will be removed in the next API branch
      */
     function getSessionId() {
 	return $this->getId();
     }
 
     /**
-     * Start new navigation
-     *
+     * Start new navigation.
      * @param array $navigationData data for this new navigation:
      *              array('returnName' => ...
      *                    'returnUrl' => ...
@@ -1345,8 +1321,7 @@ class GallerySession {
     }
 
     /**
-     * Get data for a specific navigation id
-     *
+     * Get data for a specific navigation id.
      * @param string $navId the navigation id
      * @return array the navigation data
      */
@@ -1367,10 +1342,9 @@ class GallerySession {
     }
 
     /**
-     * Jump back from one navigation point to one of its predecessors
-     *
+     * Jump back from one navigation point to one of its predecessors.
      * @param string $fromNavId the source navigation id
-     * @param string $destNavId the destination navigation id. If empty, go back to root.
+     * @param string $destNavId the destination navigation id.  If empty, go back to root.
      */
     function jumpNavigation($fromNavId, $destNavId = '') {
 	global $gallery;
@@ -1406,7 +1380,6 @@ class GallerySession {
 
     /**
      * Return the Unix timestamp from when this session was created.
-     *
      * @return int the creation time
      */
     function getCreationTime() {
@@ -1415,7 +1388,6 @@ class GallerySession {
 
     /**
      * Return the Unix timestamp from when this session was last modified.
-     *
      * @return int the modification time
      */
     function getModificationTime() {
@@ -1426,7 +1398,6 @@ class GallerySession {
      * Whether this session is a persistent session (= stored on the server) or just a session for
      * this single request.  Note that a non-persistent session can become persistent at the end of
      * the request when we evaluate the conditions whether to create a persistent session or not.
-     *
      * @return boolean true if the session is persistent, else false
      */
     function isPersistent() {
@@ -1435,11 +1406,10 @@ class GallerySession {
 }
 
 /**
- * Get the active user from the session's user id
- * @package GalleryCore
- * @subpackage Classes
+ * Get the active user from the session's user id.
  */
 class SessionAuthPlugin /* extends GalleryAuthPlugin */ {
+
     /**
      * @see GalleryAuthPlugin::getUser
      */

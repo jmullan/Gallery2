@@ -21,7 +21,7 @@
 GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
 
 /**
- * Test session functionality
+ * Test session functionality.
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -35,7 +35,6 @@ class SessionTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-
 	parent::setUp();
 
 	$this->_saveSession = $gallery->_session;
@@ -58,10 +57,10 @@ class SessionTest extends GalleryTestCase {
 	 * Backup things that we will overwrite during the test (original values also needed in the
 	 * tests)
 	 */
-	$this->_originalServerVars = array();
+	$this->_saveServerVars = array();
 	foreach (array('HTTP_X_FORWARDED_SERVER', 'HTTP_HOST', 'HTTP_X_FORWARDED_FOR',
 		       'HTTP_COOKIE', 'HTTP_CLIENT_IP', 'HTTP_USER_AGENT', 'REMOTE_ADDR') as $key) {
-	    $this->_originalServerVars[$key] = GalleryUtilities::getServerVar($key);
+	    $this->_saveServerVars[$key] = GalleryUtilities::getServerVar($key);
 	}
 
 	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
@@ -82,6 +81,10 @@ class SessionTest extends GalleryTestCase {
 	}
 
 	$this->_sessionIds = array();
+
+	/* Clear response headers */
+	$headers =& GalleryUtilities::_getResponseHeaders();
+	$headers = array();
     }
 
     function tearDown() {
@@ -89,7 +92,7 @@ class SessionTest extends GalleryTestCase {
 	$gallery->_session = $this->_saveSession;
 	$gallery->_storage = $this->_saveStorage;
 
-	foreach ($this->_originalServerVars as $key => $value) {
+	foreach ($this->_saveServerVars as $key => $value) {
 	    $_SERVER[$key] = $value;
 	}
 
@@ -301,7 +304,7 @@ class SessionTest extends GalleryTestCase {
 	$sessionId = $persistent->getId();
 	$wrongSessionId = md5(rand());
 	$_COOKIE[SESSION_ID_PARAMETER] = $wrongSessionId;
-	$_SERVER['HTTP_COOKIE'] = $this->_originalServerVars['HTTP_COOKIE'];
+	$_SERVER['HTTP_COOKIE'] = $this->_saveServerVars['HTTP_COOKIE'];
 	$delimiter = !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
 	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sessionId . ' ; ' .
 	    SESSION_ID_PARAMETER . '=' . $wrongSessionId . $delimiter . $_SERVER['HTTP_COOKIE'];
@@ -750,6 +753,7 @@ class SessionTest extends GalleryTestCase {
 
     function testStart() {
 	global $gallery;
+	$gallery->_phpVm = new SessionTestPhpVm();
 
 	GalleryUtilities::removeRequestVariable('controller');
 
@@ -764,46 +768,45 @@ class SessionTest extends GalleryTestCase {
 	$tests[] = array('view' => 'core.DownloadItem', 'force' => false,
 			 'data' => true, 'userId' => 99, 'er' => false);
 
+	$headers =& GalleryUtilities::_getResponseHeaders();
 	for ($i = 0; $i < count($tests); $i++) {
-	    $tc = $tests[$i];
-	    GalleryUtilities::putRequestVariable('view', $tc['view']);
-
-	    /* Use the PHP VM to record the headers */
-	    $_REQUEST['phpVmHeaders'] = array();
-	    $gallery->_phpVm = new SessionTestPhpVm();
+	    $headers = array();
+	    $testCase = $tests[$i];
+	    GalleryUtilities::putRequestVariable('view', $testCase['view']);
 
 	    $session = new GallerySession();
 	    $ret = $session->init();
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	    $session->setUserId($tc['userId']);
-	    $session->_forceSaveSession = $tc['force'];
-	    if ($tc['data']) {
+	    $session->setUserId($testCase['userId']);
+	    $session->_forceSaveSession = $testCase['force'];
+	    if ($testCase['data']) {
 		$session->put('foo', 1);
 	    }
 	    $ret = $session->start();
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	    $this->assertEquals($tc['er'], !empty($session->_sessionId), "$i sid");
-	    $this->assertEquals($tc['er'], $session->isPersistent(), "$i is persistent");
-	    $this->assertEquals($tc['userId'], $session->getUserId(), "$i user id");
-	    $this->assertEquals($tc['er'], $session->_isPersistentSessionNew,
+	    $this->assertEquals($testCase['er'], !empty($session->_sessionId), "$i sid");
+	    $this->assertEquals($testCase['er'], $session->isPersistent(), "$i is persistent");
+	    $this->assertEquals($testCase['userId'], $session->getUserId(), "$i user id");
+	    $this->assertEquals($testCase['er'], $session->_isPersistentSessionNew,
 				"$i is persistent session new");
-	    $this->assertEquals($tc['er'], $session->_isSessionSaved, "$i is session saved");
+	    $this->assertEquals($testCase['er'], $session->_isSessionSaved, "$i is session saved");
 
-	    if ($tc['er']) {
+	    if ($testCase['er']) {
 		$this->_markSessionForCleanup($session);
 	    }
 
 	    /* No cookie should have been sent */
 	    ob_start();
-	    var_dump($_REQUEST['phpVmHeaders']);
+	    var_dump($headers);
 	    $debugHeaders = ob_get_contents();
 	    ob_end_clean();
-	    $this->assertEquals($tc['er'], isset($_REQUEST['phpVmHeaders']['set-cookie']),
-		"$i: Set-Cookie header (not) sent.  These are the headers: " . $debugHeaders);
+	    $this->assertEquals($testCase['er'], isset($headers['set-cookie']),
+				"$i: Set-Cookie header (not) sent.  These are the headers: "
+				. $debugHeaders);
 	}
     }
 
@@ -821,6 +824,7 @@ class SessionTest extends GalleryTestCase {
 
     function testReset() {
 	global $gallery;
+	$gallery->_phpVm = new SessionTestPhpVm();
 	$session = new GallerySession();
 
 	$ret = $session->initEmpty();
@@ -836,10 +840,6 @@ class SessionTest extends GalleryTestCase {
 	$_GET[$key] = $_POST[$key] = $session->getId();
 
 	$session->put('foo', 'bar');
-
-	/* Use the PHP VM to record the headers */
-	$_REQUEST['phpVmHeaders'] = array();
-	$gallery->_phpVm = new SessionTestPhpVm();
 
 	$ret = $session->reset();
 	if ($ret) {
@@ -857,17 +857,18 @@ class SessionTest extends GalleryTestCase {
 	$this->assertEquals(false, $session->_isPersistent, 'is persistent');
 	$this->assertEquals(false, $session->_isSessionSaved, 'is saved');
 
+	$headers = GalleryUtilities::_getResponseHeaders();
 	ob_start();
-	var_dump($_REQUEST['phpVmHeaders']);
+	var_dump($headers);
 	$debugHeaders = ob_get_contents();
 	ob_end_clean();
-	$this->assert(isset($_REQUEST['phpVmHeaders']['set-cookie']),
-	    'Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
-	if (isset($_REQUEST['phpVmHeaders']['set-cookie'])) {
-	    $cookie = $_REQUEST['phpVmHeaders']['set-cookie'];
-	    $this->assertEquals(
-		1, preg_match('{' . $session->getKey() . '=;}', $cookie),
-		'Wrong cookie value in: "' . $cookie . '"');
+	$this->assert(isset($headers['set-cookie']),
+		      'Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
+	if (isset($headers['set-cookie'])) {
+	    $cookie = $headers['set-cookie'];
+	    $this->assertEquals(1,
+	    			preg_match('{' . $session->getKey() . '=;}', $cookie),
+				'Wrong cookie value in: "' . $cookie . '"');
 	}
 
 	/* Verfiy the persistent cookie has been deleted */
@@ -1087,7 +1088,7 @@ class SessionTest extends GalleryTestCase {
     }
 
     /**
-     * Test if save() actually doesn't save if the current request is in the exclude list
+     * Test if save() actually doesn't save if the current request is in the exclude list.
      */
     function testSaveSessionShouldNotSave() {
 	global $gallery;
@@ -1740,7 +1741,7 @@ class SessionTest extends GalleryTestCase {
 
     /**
      * Our replaceTempSessionIdIfNecessary() code and the page caching assume that the session key
-     * and the temp session string have no characters that change when HTML or URL encoded
+     * and the temp session string have no characters that change when HTML or URL encoded.
      */
     function testSessionKeyAndTempSessionHaveNoSpecialCharacters() {
 	global $gallery;
@@ -1873,7 +1874,8 @@ class SessionTest extends GalleryTestCase {
 
     function testSetCookie() {
 	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
+	$gallery->_phpVm = new SessionTestPhpVm();
+
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	$session = new GallerySession();
 	$ret = $session->init();
@@ -1881,14 +1883,12 @@ class SessionTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$urlGenerator =& $gallery->getUrlGenerator();
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'session.lifetime', '3600');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	/* Use the PHP VM to record the headers */
-	$_REQUEST['phpVmHeaders'] = array();
-	$gallery->_phpVm = new SessionTestPhpVm();
 
 	$session->_sessionId = $sid = '12345abc';
 	$before = time();
@@ -1898,17 +1898,18 @@ class SessionTest extends GalleryTestCase {
 	}
 	$after = time();
 
+	$headers = GalleryUtilities::_getResponseHeaders();
 	ob_start();
-	var_dump($_REQUEST['phpVmHeaders']);
+	var_dump($headers);
 	$debugHeaders = ob_get_contents();
 	ob_end_clean();
-	$this->assert(isset($_REQUEST['phpVmHeaders']['set-cookie']),
-	    'Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
-	if (isset($_REQUEST['phpVmHeaders']['set-cookie'])) {
-	    $cookie = $_REQUEST['phpVmHeaders']['set-cookie'];
-	    $this->assertEquals(
-		1, preg_match('{' . $session->getKey() . '=' . $sid . ';}', $cookie),
-		'Wrong cookie value in: "' . $cookie . '"');
+	$this->assert(isset($headers['set-cookie']),
+		      'Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
+	if (isset($headers['set-cookie'])) {
+	    $cookie = $headers['set-cookie'];
+	    $this->assertEquals(1,
+	    			preg_match('{' . $session->getKey() . '=' . $sid . ';}', $cookie),
+				'Wrong cookie value in: "' . $cookie . '"');
 	    /* Expiration date should be set */
 	    $this->assertEquals(
 		1, preg_match('{expires=([^;]+);}', $cookie, $match),
@@ -1942,7 +1943,8 @@ class SessionTest extends GalleryTestCase {
 
     function testSetCookieNoExpirationDate() {
 	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
+	$gallery->_phpVm = new SessionTestPhpVm();
+
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	$session = new GallerySession();
 	$ret = $session->init();
@@ -1950,14 +1952,12 @@ class SessionTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$urlGenerator =& $gallery->getUrlGenerator();
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'session.lifetime', '0');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	/* Use the PHP VM to record the headers */
-	$_REQUEST['phpVmHeaders'] = array();
-	$gallery->_phpVm = new SessionTestPhpVm();
 
 	$session->_sessionId = $sid = '12345abc';
 
@@ -1966,14 +1966,15 @@ class SessionTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$headers = GalleryUtilities::_getResponseHeaders();
 	ob_start();
-	var_dump($_REQUEST['phpVmHeaders']);
+	var_dump($headers);
 	$debugHeaders = ob_get_contents();
 	ob_end_clean();
-	$this->assert(isset($_REQUEST['phpVmHeaders']['set-cookie']),
-	    'Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
-	if (isset($_REQUEST['phpVmHeaders']['set-cookie'])) {
-	    $cookie = $_REQUEST['phpVmHeaders']['set-cookie'];
+	$this->assert(isset($headers['set-cookie']),
+			    'Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
+	if (isset($headers['set-cookie'])) {
+	    $cookie = $headers['set-cookie'];
 	    $this->assertEquals(
 		1, preg_match('{' . $session->getKey() . '=' . $sid . ';}', $cookie),
 		'Wrong cookie value in: "' . $cookie . '"');
@@ -1996,7 +1997,8 @@ class SessionTest extends GalleryTestCase {
     /* Send a Delete cookie (expiration date in the past, value = empty) */
     function testSetCookieDeleteCookie() {
 	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
+	$gallery->_phpVm = new SessionTestPhpVm();
+
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
 	$session = new GallerySession();
 	$ret = $session->init();
@@ -2004,14 +2006,12 @@ class SessionTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$urlGenerator =& $gallery->getUrlGenerator();
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'session.lifetime', '3600');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	/* Use the PHP VM to record the headers */
-	$_REQUEST['phpVmHeaders'] = array();
-	$gallery->_phpVm = new SessionTestPhpVm();
 
 	$session->_sessionId = $sid = '12345abc';
 	$before = time();
@@ -2021,21 +2021,20 @@ class SessionTest extends GalleryTestCase {
 	}
 	$after = time();
 
+	$headers = GalleryUtilities::_getResponseHeaders();
 	ob_start();
-	var_dump($_REQUEST['phpVmHeaders']);
+	var_dump($headers);
 	$debugHeaders = ob_get_contents();
 	ob_end_clean();
-	$this->assert(isset($_REQUEST['phpVmHeaders']['set-cookie']),
-	    'Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
-	if (isset($_REQUEST['phpVmHeaders']['set-cookie'])) {
-	    $cookie = $_REQUEST['phpVmHeaders']['set-cookie'];
-	    $this->assertEquals(
-		1, preg_match('{' . $session->getKey() . '=;}', $cookie),
-		'Wrong cookie value in: "' . $cookie . '"');
+	$this->assert(isset($headers['set-cookie']),
+		      'Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
+	if (isset($headers['set-cookie'])) {
+	    $cookie = $headers['set-cookie'];
+	    $this->assertEquals(1, preg_match('{' . $session->getKey() . '=;}', $cookie),
+				'Wrong cookie value in: "' . $cookie . '"');
 	    /* Expiration date should be set */
-	    $this->assertEquals(
-		1, preg_match('{expires=([^;]+);}', $cookie, $match),
-		'Wrong cookie expire= key=value in: "' . $cookie . '"');
+	    $this->assertEquals(1, preg_match('{expires=([^;]+);}', $cookie, $match),
+				'Wrong cookie expire= key=value in: "' . $cookie . '"');
 	    $unixTimestamp = strtotime($match[1]);
 	    $year = 365 * 24 * 3600;
 	    $this->assert($unixTimestamp >= ($before  - $year)
@@ -2066,6 +2065,7 @@ class SessionTest extends GalleryTestCase {
 
     function testLoadSessionData() {
 	global $gallery;
+	$gallery->_phpVm = new SessionTestPhpVm();
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'session.lifetime', '3600');
 	if ($ret) {
@@ -2103,9 +2103,6 @@ class SessionTest extends GalleryTestCase {
 	}
 	$this->assert(!$session->isPersistent(), 'not persistent before loading');
 
-	/* Use the PHP VM to record the headers */
-	$_REQUEST['phpVmHeaders'] = array();
-	$gallery->_phpVm = new SessionTestPhpVm();
 	$_COOKIE[SESSION_ID_PARAMETER] = $sid;
 
 	/* Load the data */
@@ -2115,6 +2112,7 @@ class SessionTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
 	/* Session data */
 	$this->assert($session->isPersistent(), 'persistent after loading');
 	$this->assertEquals($userId, $session->getUserId(), 'user id');
@@ -2128,12 +2126,13 @@ class SessionTest extends GalleryTestCase {
 	$this->assert(!empty($_COOKIE[SESSION_ID_PARAMETER]), 'cookie still set');
 
 	/* No cookie should have been sent */
+	$headers = GalleryUtilities::_getResponseHeaders();
 	ob_start();
-	var_dump($_REQUEST['phpVmHeaders']);
+	var_dump($headers);
 	$debugHeaders = ob_get_contents();
 	ob_end_clean();
-	$this->assert(!isset($_REQUEST['phpVmHeaders']['set-cookie']),
-	    'Set-Cookie header is sent.  These are the headers: ' . $debugHeaders);
+	$this->assert(!isset($headers['set-cookie']),
+		      'Set-Cookie header is sent.  These are the headers: ' . $debugHeaders);
     }
 
     /**
@@ -2143,6 +2142,8 @@ class SessionTest extends GalleryTestCase {
      */
     function testLoadSessionDataExpiredSession() {
 	global $gallery;
+	$now = time();
+	$gallery->_phpVm = new SessionTestPhpVm(array(), $now);
 	$urlGenerator =& $gallery->getUrlGenerator();
 
 	/* Expire first by activity timeout, then by lifetime */
@@ -2182,11 +2183,6 @@ class SessionTest extends GalleryTestCase {
 	    $this->_markSessionForCleanup($session);
 	    $session->_isUsingCookies =  true;
 
-	    /* Use the PHP VM to record the headers */
-	    $_REQUEST['phpVmHeaders'] = array();
-	    $now = time();
-	    $gallery->_phpVm = new SessionTestPhpVm(array(), $now);
-
 	    $_COOKIE[SESSION_ID_PARAMETER] = $sid;
 
 	    $ret = $session->_loadSessionData();
@@ -2215,14 +2211,16 @@ class SessionTest extends GalleryTestCase {
 	    $this->assert(!$results->resultCount(), 'db table row was not removed' . $expireBy);
 
 	    /* Make sure a delete cookie was sent */
+	    $headers = GalleryUtilities::_getResponseHeaders();
 	    ob_start();
-	    var_dump($_REQUEST['phpVmHeaders']);
+	    var_dump($headers);
 	    $debugHeaders = ob_get_contents();
 	    ob_end_clean();
-	    $this->assert(isset($_REQUEST['phpVmHeaders']['set-cookie']), $expireBy
-		    . ': Set-Cookie header not sent.  These are the headers: ' . $debugHeaders);
-	    if (isset($_REQUEST['phpVmHeaders']['set-cookie'])) {
-		$cookie = $_REQUEST['phpVmHeaders']['set-cookie'];
+	    $this->assert(isset($headers['set-cookie']),
+	    		  $expireBy . ': Set-Cookie header not sent.  These are the headers: '
+			  . $debugHeaders);
+	    if (isset($headers['set-cookie'])) {
+		$cookie = $headers['set-cookie'];
 		/* A delete cookie has KEY= and *not* KEY=VALUE */
 		$this->assertEquals(
 		    1, preg_match('{' . $session->getKey() . '=;}', $cookie),
@@ -2254,6 +2252,7 @@ class SessionTest extends GalleryTestCase {
 
     function testLoadSessionDataLoadMiss() {
 	global $gallery;
+	$gallery->_phpVm = new SessionTestPhpVm();
 
 	$sid = md5(uniqid(microtime() . rand(1, 32767)));
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
@@ -2266,10 +2265,6 @@ class SessionTest extends GalleryTestCase {
 
 	/* Try to load the data */
 	$session->_sessionId = $sid;
-
-	/* Use the PHP VM to record the headers */
-	$_REQUEST['phpVmHeaders'] = array();
-	$gallery->_phpVm = new SessionTestPhpVm();
 
 	$before = time();
 	$ret = $session->_loadSessionData();
@@ -2291,12 +2286,13 @@ class SessionTest extends GalleryTestCase {
 	$this->assert(empty($session->_sessionId), 'session id');
 
 	/* No cookie should have been sent */
+	$headers = GalleryUtilities::_getResponseHeaders();
 	ob_start();
-	var_dump($_REQUEST['phpVmHeaders']);
+	var_dump($headers);
 	$debugHeaders = ob_get_contents();
 	ob_end_clean();
-	$this->assert(!isset($_REQUEST['phpVmHeaders']['set-cookie']),
-	    'Set-Cookie header is sent.  These are the headers: ' . $debugHeaders);
+	$this->assert(!isset($headers['set-cookie']),
+		      'Set-Cookie header is sent.  These are the headers: ' . $debugHeaders);
     }
 
     function testEmptySessionData() {
@@ -2370,6 +2366,7 @@ class SessionTest extends GalleryTestCase {
     /* Test if Gallery creates cookies with the correct domain/path and name */
     function testSessionCookieHeaderAndPersistence() {
 	global $gallery;
+	$gallery->_phpVm = new SessionTestPhpVm();
 	$urlGenerator =& $gallery->getUrlGenerator();
 
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
@@ -2394,10 +2391,10 @@ class SessionTest extends GalleryTestCase {
 	    if (empty($moduleStatus[$moduleId]['active'])) {
 		continue;
 	    }
+
+	    $headers =& GalleryUtilities::_getResponseHeaders();
 	    foreach (array(true, false) as $addData) {
-		/* Use the PHP VM to record the headers */
-		$_REQUEST['phpVmHeaders'] = array();
-		$gallery->_phpVm = new SessionTestPhpVm();
+		$headers = array();
 
 		/* Now set the request variables */
 		GalleryUtilities::removeRequestVariable('view');
@@ -2433,22 +2430,24 @@ class SessionTest extends GalleryTestCase {
 		}
 
 		ob_start();
-		var_dump($_REQUEST['phpVmHeaders']);
+		var_dump($headers);
 		$debugHeaders = ob_get_contents();
 		ob_end_clean();
-		$this->assertEquals($testCase['er'], isset($_REQUEST['phpVmHeaders']['set-cookie']),
-			$case . ': Set-Cookie header not sent.  These are the headers: '
-			. $debugHeaders);
-		if ($testCase['er'] && isset($_REQUEST['phpVmHeaders']['set-cookie'])) {
+		$this->assertEquals($testCase['er'], isset($headers['set-cookie']),
+				    $case . ': Set-Cookie header not sent.  These are the headers: '
+				    . $debugHeaders);
+		if ($testCase['er'] && isset($headers['set-cookie'])) {
 		    /* There can be multiple Set-Cookie headers, find the correct one */
-		    $cookie = $_REQUEST['phpVmHeaders']['set-cookie'];
+		    $cookie = $headers['set-cookie'];
 		    if (is_array($cookie)) {
 			unset($cookie);
-			foreach ($_REQUEST['phpVmHeaders']['set-cookie'] as $setCookie) {
+			foreach ($headers['set-cookie'] as $setCookie) {
 			    if (strpos($setCookie, SESSION_ID_PARAMETER) !== false) {
 				$cookie = $setCookie;
 				break;
 			    }
+
+			    unset($cookie);
 			}
 		    }
 		    if (isset($cookie)) {
@@ -2560,7 +2559,7 @@ class SessionTest extends GalleryTestCase {
     }
 
     /**
-     * Check that we don't save sessions for core.DownloadItem, migrate.Redirect and CSS requests
+     * Check that we don't save sessions for core.DownloadItem, migrate.Redirect and CSS requests.
      */
     function testIsPersistentSessionAllowedForRequest() {
 	global $gallery;
@@ -2671,9 +2670,6 @@ class SessionTest extends GalleryTestCase {
 
     function testInitEmptyVerifyNoCookieIsSet() {
 	global $gallery;
-
-	/* Use the PHP VM to record the headers */
-	$_REQUEST['phpVmHeaders'] = array();
 	$gallery->_phpVm = new SessionTestPhpVm();
 
 	$session = new GallerySession();
@@ -2683,7 +2679,8 @@ class SessionTest extends GalleryTestCase {
 	}
 
 	/* Verify */
-	$this->assert(empty($_REQUEST['phpVmHeaders']), 'No headers should be sent');
+	$this->assertEquals(array(), GalleryUtilities::_getResponseHeaders(),
+			    'No headers should be sent');
 
 	/* Other checks */
 	$this->assert(!empty($session->_sessionId), 'sid should be set');
@@ -2810,6 +2807,7 @@ class SessionTest extends GalleryTestCase {
 }
 
 class SessionTestPhpVm extends GalleryPhpVm {
+
     function SessionTestPhpVm($md5Override=array(), $timeValue=null, $randValue=null) {
 	$this->_md5Overrive = $md5Override;
 	$this->_randValue = $randValue;
@@ -2817,16 +2815,11 @@ class SessionTestPhpVm extends GalleryPhpVm {
     }
 
     function header($header, $replace=null) {
-	$key = 'status';
-	if (strncasecmp($header, 'HTTP/', 5)) {
-	    $key = strtolower(substr($header, 0, strpos($header, ':')));
-	}
-
-	$_REQUEST['phpVmHeaders'][$key] = $header;
+	/* Avoid modifying actual header information */
     }
 
     function headers_sent() {
-	return !empty($_REQUEST['phpVmHeaders']);
+	return GalleryUtilities::_getResponseHeaders() != array();
     }
 
     function md5($string) {
@@ -2855,6 +2848,7 @@ class SessionTestPhpVm extends GalleryPhpVm {
 }
 
 class SessionTestStorage {
+
     function SessionTestStorage($collisions=0, $results=array(), $type='foo') {
 	$this->_query = array();
 	$this->_data = array();
@@ -2903,6 +2897,7 @@ class SessionTestStorage {
 }
 
 class SessionTestRecordSet {
+
     function SessionTestRecordSet($results=array()) {
 	$this->_results = $results;
 	$this->_i = 0;
