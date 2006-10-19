@@ -325,7 +325,7 @@ if ($ret) {
 
 /* Check that our dev environment is correct */
 $incorrectDevEnv = array();
-foreach (array('error_reporting' => array(2047),
+foreach (array('error_reporting' => array(E_ALL &~ 2048),
 	       'short_open_tag' => array('off', 0),
 	       'magic_quotes_gpc' => array('on', 1),
 	       'allow_call_time_pass_reference' => array('off', 0),
