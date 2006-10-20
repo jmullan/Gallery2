@@ -154,6 +154,9 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
     }
 
     function testValidateMedium() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
 	/* First call doesn't check given code, just increments fail count */
 	$this->_form['CaptchaValidationPlugin']['word'] = '4321';
 	$result = $this->_plugin->performValidation($this->_form,
@@ -183,6 +186,7 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	$this->assertEquals(1, (int)$count, 'failure count 2');
 
 	/* Successful validation but invalid entry */
+	$session->put('captcha.key', '1234');
 	$this->_form['CaptchaValidationPlugin']['word'] = '1234';
 	$result = $this->_plugin->performValidation($this->_form,
 		array('level' => 'MEDIUM', 'key' => 'captcha.UnitTest', 'pass' => false));
@@ -226,6 +230,27 @@ class CaptchaValidationPluginTest extends GalleryTestCase {
 	$this->assertEquals(array(null, array('form[error][CaptchaValidationPlugin][invalid]'),
 					false),
 			    $result);
+    }
+
+    function testSecurity() {
+	/* Make sure to clear/repick key value on validation failure to thwart automated attacks */
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$this->_form['CaptchaValidationPlugin']['word'] = '4321';
+	$result = $this->_plugin->performValidation($this->_form, array('level' => 'HIGH'));
+	$this->assertEquals(array(null, array('form[error][CaptchaValidationPlugin][invalid]'),
+					false),
+			    $result, 'fail');
+
+	$this->assertEquals(null, $session->get('captcha.key'), 'key should be cleared');
+
+	/* Retry now fails, even with previously correct key */
+	$this->_form['CaptchaValidationPlugin']['word'] = '1234';
+	$result = $this->_plugin->performValidation($this->_form, array('level' => 'HIGH'));
+	$this->assertEquals(array(null, array('form[error][CaptchaValidationPlugin][invalid]'),
+					false),
+			    $result, 'fail 2');
     }
 }
 ?>

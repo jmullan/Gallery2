@@ -57,9 +57,12 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 	    if (empty($form['CaptchaValidationPlugin']['word'])) {
 		$error[] = 'form[error][CaptchaValidationPlugin][missing]';
 		$success = false;
-	    } else if ($form['CaptchaValidationPlugin']['word'] != $code) {
+	    } else if (empty($code) || $form['CaptchaValidationPlugin']['word'] != $code) {
 		$error[] = 'form[error][CaptchaValidationPlugin][invalid]';
 		$success = false;
+
+		/* Clear key in session on validation failure to thwart automated attacks */
+		$session->remove('captcha.key');
 	    }
 	}
 
