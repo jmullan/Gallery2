@@ -424,6 +424,7 @@ class GalleryTestCase extends TestCase {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	}
 
+	$lockIds = array();
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
 	if ($ret) {
 	    return array($ret, null);

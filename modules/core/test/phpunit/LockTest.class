@@ -608,6 +608,54 @@ class LockTest extends GalleryTestCase {
 	}
     }
 
+    function testReadReadAgainThenWrite() {
+	return $this->_tryAllLockSystems('testReadReadAgainThenWrite');
+    }
+
+    /* Acquire a write lock when item is in multiple locks in the release queue */
+    function _testReadReadAgainThenWrite($lockSystem) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$itemId = $this->_item->getId();
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($itemId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($itemId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(count($gallery->_lockSystem->_releaseQueue) == 2
+		      || !$storage->isTransactional(), "$lockSystem: release read lock");
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Had to release that read locks in order to get new write lock */
+	$this->assert(empty($gallery->_lockSystem->_releaseQueue),
+		      "$lockSystem: release queue should be empty");
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
     function testIntegerLockId() {
 	return $this->_tryAllLockSystems('testIntegerLockId');
     }
