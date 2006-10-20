@@ -870,7 +870,7 @@ class SessionTest extends GalleryTestCase {
 	if (isset($headers['set-cookie'])) {
 	    $cookie = $headers['set-cookie'];
 	    $this->assertEquals(1,
-	    			preg_match('{' . $session->getKey() . '=;}', $cookie),
+				preg_match('{' . $session->getKey() . '=;}', $cookie),
 				'Wrong cookie value in: "' . $cookie . '"');
 	}
 
@@ -1911,7 +1911,7 @@ class SessionTest extends GalleryTestCase {
 	if (isset($headers['set-cookie'])) {
 	    $cookie = $headers['set-cookie'];
 	    $this->assertEquals(1,
-	    			preg_match('{' . $session->getKey() . '=' . $sid . ';}', $cookie),
+				preg_match('{' . $session->getKey() . '=' . $sid . ';}', $cookie),
 				'Wrong cookie value in: "' . $cookie . '"');
 	    /* Expiration date should be set */
 	    $this->assertEquals(
@@ -2220,7 +2220,7 @@ class SessionTest extends GalleryTestCase {
 	    $debugHeaders = ob_get_contents();
 	    ob_end_clean();
 	    $this->assert(isset($headers['set-cookie']),
-	    		  $expireBy . ': Set-Cookie header not sent.  These are the headers: '
+			  $expireBy . ': Set-Cookie header not sent.  These are the headers: '
 			  . $debugHeaders);
 	    if (isset($headers['set-cookie'])) {
 		$cookie = $headers['set-cookie'];

@@ -176,15 +176,19 @@ class LockTest extends GalleryTestCase {
 	    $parentId = $this->_subAlbums[$i]->getId();
 	}
 
-	list ($ret, $lockId) = GalleryCoreApi::acquireReadLockParents($this->_subAlbums[2]->getId());
+	list ($ret, $lockId) =
+	    GalleryCoreApi::acquireReadLockParents($this->_subAlbums[2]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
 	/* Verify that they're all locked except the item itself */
-	$this->assert(!GalleryCoreApi::isReadLocked($this->_subAlbums[2]->getId()), "$lockSystem: a2");
-	$this->assert(GalleryCoreApi::isReadLocked($this->_subAlbums[1]->getId()), "$lockSystem: a1");
-	$this->assert(GalleryCoreApi::isReadLocked($this->_subAlbums[0]->getId()), "$lockSystem: a0");
+	$this->assert(!GalleryCoreApi::isReadLocked($this->_subAlbums[2]->getId()),
+		      "$lockSystem: a2");
+	$this->assert(GalleryCoreApi::isReadLocked($this->_subAlbums[1]->getId()),
+		      "$lockSystem: a1");
+	$this->assert(GalleryCoreApi::isReadLocked($this->_subAlbums[0]->getId()),
+		      "$lockSystem: a0");
 	$this->assert(GalleryCoreApi::isReadLocked($this->_album->getId()), "$lockSystem: p");
 	$this->assert(GalleryCoreApi::isReadLocked($this->_getRootId()), "$lockSystem: r");
 
