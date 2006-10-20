@@ -207,8 +207,8 @@
           {else}
 	  <th> {g->text text="Module Name"} </th>
           {/if}
-	  <th> {g->text text="Latest"} </th>
 	  <th> {g->text text="Installed"} </th>
+	  <th> {g->text text="Latest"} </th>
 	  <th> {g->text text="Description"} </th>
 	  <th> {g->text text="Actions"} </th>
 	</tr>
@@ -229,11 +229,11 @@
 	</td>
 
 	<td align="center">
-	  {$plugin.repositoryVersion}
+	  {$plugin.localVersion}
 	</td>
 
 	<td align="center">
-	  {$plugin.localVersion}
+	  {$plugin.repositoryVersion}
 	</td>
 
 	<td>

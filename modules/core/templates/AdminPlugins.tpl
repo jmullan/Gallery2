@@ -128,8 +128,8 @@
 	</tr><tr>
 	  <th> &nbsp; </th>
 	  <th> {g->text text="Plugin Name"} </th>
-	  <th> {g->text text="Version"} </th>
 	  <th> {g->text text="Installed"} </th>
+	  <th> {g->text text="Version"} </th>
 	  <th> {g->text text="Description"} </th>
 	  <th> {g->text text="Actions"} </th>
 	</tr>
@@ -141,16 +141,16 @@
 	  <div id="plugin-icon-{$plugin.type}-{$plugin.id}" style="height: 16px"></div>
 	</td>
 
-	<td>
+	<td id="plugin-{$plugin.type}-{$plugin.id}-version">
 	  {$plugin.name}
-	</td>
-
-	<td id="plugin-{$plugin.type}-{$plugin.id}-version" align="center">
-	  {$plugin.version}
 	</td>
 
 	<td id="plugin-{$plugin.type}-{$plugin.id}-installedVersion" align="center">
 	  {$plugin.installedVersion}
+	</td>
+
+	<td id="plugin-{$plugin.type}-{$plugin.id}-version" align="center">
+	  {$plugin.version}
 	</td>
 
 	<td>
