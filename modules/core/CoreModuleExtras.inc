@@ -2852,7 +2852,7 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 	$converted = false;
 
 	if ($storage->getType() == 'mysql') {
-	    $version = mysql_get_server_info();
+	    $version = $storage->getVersion();
 	    /* MySQL < 4.1.0 does not support UTF8 */
 	    if ($version && version_compare($version, '4.1.0', '>=')) {
 		/*
