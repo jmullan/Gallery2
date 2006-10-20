@@ -101,7 +101,11 @@
     <script type="text/javascript">
       //<![CDATA[
       {foreach from=$ItemDelete.peers item=peer}
-      {if isset($peer.thumbnail)}
+      {if isset($peer.resize)}
+      new YAHOO.widget.Tooltip("gTooltip", {ldelim}
+          context: "thumb_{$peer.id}", text: '{g->image item=$peer image=$peer.resize class="giThumbnail" maxSize=640}',
+          showDelay: 250 {rdelim});
+      {elseif isset($peer.thumbnail)}
       new YAHOO.widget.Tooltip("gTooltip", {ldelim}
           context: "thumb_{$peer.id}", text: '{g->image item=$peer image=$peer.thumbnail class="giThumbnail"}',
           showDelay: 250 {rdelim});

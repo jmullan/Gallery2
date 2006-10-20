@@ -216,8 +216,8 @@ class ItemDeleteView extends GalleryView {
 		return array($ret, null);
 	    }
 
-	    /* get peer thumbnails */
-	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($peerIds);
+	    /* get peer thumbnails and resizes */
+	    list ($ret, $derivatives) = GalleryCoreApi::fetchDerivativesByItemIds($peerIds);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -233,15 +233,16 @@ class ItemDeleteView extends GalleryView {
 		$peers[$peerItem->getId()]['selected'] =
 		    isset($form['selectedIds'][$peerItem->getId()]);
 
-		/* While we're at it, attach the thumbnails */
-		if (isset($thumbnails[$peerItem->getId()])) {
-		    $thumbnail = $thumbnails[$peerItem->getId()];
-		    list ($ret, $thumbnail) =
-			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
-		    if ($ret) {
-			/* Ignore thumbnail errors so we can delete items with broken thumbnail */
-		    } else {
-			$peers[$peerItem->getId()]['thumbnail'] = (array)$thumbnail;
+		/* While we're at it, attach thumbnails and resizes */
+		if (isset($derivatives[$peerItem->getId()])) {
+		    foreach ($derivatives[$peerItem->getId()] as $derivative) {
+			$type = $derivative->getDerivativeType();
+			if (empty($peers[$peerItem->getId()]['resize']) &&
+			        $type == DERIVATIVE_TYPE_IMAGE_RESIZE) {
+			    $peers[$peerItem->getId()]['resize'] = (array)$derivative;
+			} else if ($type == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+			    $peers[$peerItem->getId()]['thumbnail'] = (array)$derivative;
+			}
 		    }
 		}
 	    }
