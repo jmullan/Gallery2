@@ -137,7 +137,7 @@ class PluginCallbackTest extends GalleryTestCase {
 	$this->_testPlugin->setResult('autoConfigure', array(null, true));
 	/*
 	 * Module author forgot to override autoConfigure. Be robust and still show the configure
-	 * link instead of an error page. 
+	 * link instead of an error page.
 	 */
 	$this->_testPlugin->setResult('activate',
 			array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), array()));
@@ -555,6 +555,125 @@ class PluginCallbackTest extends GalleryTestCase {
 	    PluginCallbackView::calculateStateChanges(
 		array('theme' => array('a' => '1', 'c' => 2), 'module' => array('b' => '1')),
 		array('theme' => array('a' => '1'), 'module' => array('b' => '1'))));
+    }
+
+    function testFailureInPluginStatesBeforeHandlingRequestTriggersRollback() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('command', 'test');
+	$mockStorage =& new PluginCallbackMockStorage();
+	$saveStorage = $gallery->_storage;
+	$gallery->_storage =& $mockStorage;
+	$callback = new PluginCallbackWithFakeHandler();
+	$callback->setReply('getPluginStates', array(new MockGalleryStatus(), null));
+
+	ob_start();
+	$ret = $callback->renderImmediate(array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$results = ob_get_contents();
+	ob_end_clean();
+
+	$this->assertEquals('{"status":"error"}', $results);
+	$this->assert(!empty($mockStorage->rolledBack), 'Rollback did not occur');
+	$this->assert(MockGalleryStatus::wasPutInSession(), 'Error not put into the session');
+	$gallery->_storage = $saveStorage;
+    }
+
+    function testFailureInCallbackTriggersRollback() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('command', 'test');
+	$mockStorage =& new PluginCallbackMockStorage();
+	$saveStorage = $gallery->_storage;
+	$gallery->_storage =& $mockStorage;
+	$callback = new PluginCallbackWithFakeHandler();
+	$callback->setReply('getPluginStates', array(null, null));
+	$callback->setReply('handleCallback', new MockGalleryStatus());
+
+	ob_start();
+	$ret = $callback->renderImmediate(array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$results = ob_get_contents();
+	ob_end_clean();
+
+	$this->assertEquals('{"status":"error"}', $results);
+	$this->assert(!empty($mockStorage->rolledBack), 'Rollback did not occur');
+	$this->assert(MockGalleryStatus::wasPutInSession(), 'Error not put into the session');
+	$gallery->_storage = $saveStorage;
+    }
+
+    function testFailureInPluginStatesAfterHandlingRequestTriggersRollback() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('command', 'test');
+	$mockStorage =& new PluginCallbackMockStorage();
+	$saveStorage = $gallery->_storage;
+	$gallery->_storage =& $mockStorage;
+	$callback = new PluginCallbackWithFakeHandler();
+	$callback->setReply('getPluginStates', array(null, array()));
+	$callback->setReply('handleCallback', null);
+	$callback->setReply('getPluginStates', array(new MockGalleryStatus(), null));
+
+	ob_start();
+	$ret = $callback->renderImmediate(array(), array());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$results = ob_get_contents();
+	ob_end_clean();
+
+	$this->assertEquals('{"status":"error"}', $results);
+	$this->assert(!empty($mockStorage->checkPointed), 'Checkpoint did not occur');
+	$this->assert(!empty($mockStorage->rolledBack), 'Rollback did not occur');
+	$this->assert(MockGalleryStatus::wasPutInSession(), 'Error not put into the session');
+	$gallery->_storage = $saveStorage;
+    }
+}
+
+class MockGalleryStatus {
+    function MockGalleryStatus() {
+	/* Put something in here so that empty($this) won't return true */
+	$this->something = 1;
+    }
+
+    function putInSession() {
+	$_GET['putInSession'] = 1;
+    }
+
+    function wasPutInSession() {
+	return !empty($_GET['putInSession']);
+    }
+}
+
+class PluginCallbackMockStorage {
+    function rollbackTransaction() {
+	$this->rolledBack = 1;
+	return null;
+    }
+
+    function checkPoint() {
+	$this->checkPointed = 1;
+	return null;
+    }
+}
+
+class PluginCallbackWithFakeHandler extends PluginCallbackView {
+    function setReply($call, $reply) {
+	$this->_replies[$call][] = $reply;
+    }
+
+    function getPluginStates() {
+	return array_shift($this->_replies['getPluginStates']);
+    }
+
+    function handleCallback($command, &$result) {
+	$result['status'] = 'success';
+	return array_shift($this->_replies['handleCallback']);
+    }
+
+    function calculateStateChanges($beforeStates, $afterStates) {
+	return array_shift($this->_replies['calculateStateChanges']);
     }
 }
 

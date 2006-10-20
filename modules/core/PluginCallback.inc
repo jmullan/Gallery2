@@ -47,15 +47,18 @@ class PluginCallbackView extends GalleryView {
     function renderImmediate($status, $error) {
 	global $gallery;
 	$session =& $gallery->getSession();
+	$storage =& $gallery->getStorage();
 
 	$command = GalleryUtilities::getRequestVariables('command');
 	if (!headers_sent()) {
 	    header("Content-type: text/plain; charset=UTF-8");
 	}
 
+	$result = array();
 	list ($ret, $beforeStates) = $this->getPluginStates();
 	if ($ret) {
 	    $result['status'] = 'error';
+	    $storage->rollbackTransaction();  /* ignore errors here */
 	    $ret->putInSession();
 	}
 
@@ -63,7 +66,15 @@ class PluginCallbackView extends GalleryView {
 	    $ret = $this->handleCallback($command, $result);
 	    if ($ret) {
 		$result['status'] = 'error';
+		$storage->rollbackTransaction();  /* ignore errors here */
 		$ret->putInSession();
+	    } else {
+		/* Make sure this change is isolated from any potential failures we get below. */
+		$ret = $storage->checkPoint();
+		if ($ret) {
+		    $result['status'] = 'error';
+		    $ret->putInSession();
+		}
 	    }
 
 	    if ($result['status'] == 'redirect') {
@@ -78,10 +89,12 @@ class PluginCallbackView extends GalleryView {
 	    list ($ret, $afterStates) = $this->getPluginStates();
 	    if ($ret) {
 		$result['status'] = 'error';
+		$storage->rollbackTransaction();  /* ignore errors here */
 		$ret->putInSession();
+	    } else {
+		$result = array_merge(
+		    $result, $this->calculateStateChanges($beforeStates, $afterStates));
 	    }
-	    $result = array_merge(
-		$result, $this->calculateStateChanges($beforeStates, $afterStates));
 	}
 
 	GalleryCoreApi::requireOnce('lib/JSON/JSON.php');
@@ -233,7 +246,7 @@ class PluginCallbackView extends GalleryView {
 		list ($ret, $redirect) = $plugin->activate();
 		if ($ret) {
 		    if ($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED) {
-			/* 
+			/*
 			 * Some modules don't override autoConfigure which defaults to success.
 			 * Show the "Modules needs configuration" message.
 			 */
