@@ -625,7 +625,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $lockInfo[$entityId] = true;
 	}
 
-	/* Drop the lock request, now that we've got the write locks */
+	/* Drop the lock request, now that we've got the read locks */
 	$requestCol = $this->_gs->_translateColumnName('request');
 	$query = 'DELETE FROM ' . $lockTable
 	       . ' WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
