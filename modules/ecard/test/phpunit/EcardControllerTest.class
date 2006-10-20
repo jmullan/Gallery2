@@ -65,6 +65,13 @@ class EcardControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	/* Make sure translate calls during test won't generate any platform calls */
+	list ($ret) = GalleryCoreApi::getPermissionIds();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
 	$this->_platform = new UnitTestPlatform();
 	$this->_controller->setPluginInstances(array());
     }
@@ -170,7 +177,7 @@ class EcardControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[to]', 'example2@example.com');
 	GalleryUtilities::putRequestVariable('form[from]', 'example@example.com');
 	GalleryUtilities::putRequestVariable('form[fromName]', 'Unit Tester');
-	GalleryUtilities::putRequestVariable('form[text]', 'Test &lt; email');
+	GalleryUtilities::putRequestVariable('form[text]', 'Test < email');
 	GalleryUtilities::putRequestVariable('form[action][send]', 1);
 	GalleryUtilities::putRequestVariable('itemId', $itemId);
 
@@ -282,6 +289,54 @@ class EcardControllerTest extends GalleryControllerTestCase {
 				      'itemId' => (int)$this->_item->getId()),
 				  'status' => array('sent' => 1),
 				  'error' => array()),
+			    $results, 'Failed to send ecard');
+    }
+
+    function testMaliciousContent() {
+	/*
+	 * Verify even in html markup mode, we don't send any user entered html.
+	 * (if this changes then we'll need to use htmlSafe on content)
+	 */
+	global $gallery;
+	$itemId = $this->_item->getId();
+
+	$ret = $this->_setMarkupType('html', true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'ecard', 'format', 'html');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'ecard', 'from', 'Bad eCard');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_platform->setReply('getDirectorySeparator', array(), '/');
+	$this->_platform->setReply('file_get_contents', array('fuzzy' => '/Message.txt/'),
+				   'The plaintext message: %text%');
+	$this->_platform->setReply('file_get_contents', array('fuzzy' => '/Message.html/'),
+				   'The html message: %text%');
+	$this->_platform->setReply('mail', array(
+		    'sucker@example.com',
+		    'You got eCard',
+		    'fuzzy1' => '/plaintext.*Hi <script>alert.*html mess.*Hi &lt;script&gt;alert/s',
+		    'fuzzy2' => '/From: Bad eCard/'),
+		true);
+	$gallery->setPlatform($this->_platform);
+
+	GalleryUtilities::putRequestVariable('form[to]', 'sucker@example.com');
+	GalleryUtilities::putRequestVariable('form[from]', 'hacker@example.com');
+	GalleryUtilities::putRequestVariable('form[text]', 'Hi <script>alert(1);</script> friend');
+	GalleryUtilities::putRequestVariable('form[action][send]', 1);
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'ecard.Confirmation', 'itemId' => (int)$itemId),
+				      'status' => array('sent' => 1),
+				      'error' => array()),
 			    $results, 'Failed to send ecard');
     }
 }
