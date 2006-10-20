@@ -78,7 +78,7 @@ class AdminPluginsView extends GalleryView {
 	    }
 
 	    $platform =& $gallery->getPlatform();
-	    $g2Dir = dirname(dirname(dirname(__FILE__)));
+	    $g2Dir = dirname(dirname(dirname(__FILE__))) . '/';
 	    GalleryCoreApi::requireOnce('modules/core/PluginCallback.inc');
 	    foreach ($pluginStatus[$type] as $pluginId => $status) {
 		list ($ret, $plugin) = GalleryCoreApi::loadPlugin($type, $pluginId, true);
@@ -94,13 +94,18 @@ class AdminPluginsView extends GalleryView {
 		$entry['version'] = $plugin->getVersion();
 		$entry['installedVersion'] = isset($status['version']) ? $status['version'] : null;
 		$entry['deletable'] =
-		    ($platform->is_writeable("$g2Dir/{$type}s/$pluginId") &&
-		     $platform->is_writeable("$g2Dir/{$type}s/$pluginId/$type.inc")) ? 1 : 0;
+		    ($platform->is_writeable("$g2Dir{$type}s/$pluginId") &&
+		     $platform->is_writeable("$g2Dir{$type}s/$pluginId/$type.inc")) ? 1 : 0;
 
 		list ($ret, $entry['state']) =
 		    PluginCallbackView::getPluginState($type, $plugin, $status);
 		if ($ret) {
 		    return array($ret, null);
+		}
+
+		$screenshot = "{$type}s/$pluginId/images/screenshot.png";
+		if ($platform->file_exists($g2Dir . $screenshot)) {
+		    $entry['screenshot'] = $screenshot;
 		}
 
 		if ($entry['state'] == 'incompatible') {

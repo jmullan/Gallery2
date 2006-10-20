@@ -141,8 +141,18 @@
 	  <div id="plugin-icon-{$plugin.type}-{$plugin.id}" style="height: 16px"></div>
 	</td>
 
-	<td id="plugin-{$plugin.type}-{$plugin.id}-version">
+	<td id="plugin-{$plugin.type}-{$plugin.id}-name">
+	  {if empty($plugin.screenshot)}
 	  {$plugin.name}
+	  {else}
+	  <span class="gTooltipTarget">{$plugin.name}</span>
+	  <script type="text/javascript">
+	    new YAHOO.widget.Tooltip("gTooltip", {ldelim}
+		context: "plugin-{$plugin.type}-{$plugin.id}-name",
+		text: '<img src="{g->url href="`$plugin.screenshot`"}">',
+		showDelay: 250 {rdelim});
+          </script>
+	  {/if}
 	</td>
 
 	<td id="plugin-{$plugin.type}-{$plugin.id}-installedVersion" align="center">
