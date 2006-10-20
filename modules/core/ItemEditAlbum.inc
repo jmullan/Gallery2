@@ -736,11 +736,14 @@ class ItemEditAlbum extends ItemEditPlugin {
 	    }
 	}
 
-	$redirect = array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemEdit',
-			  'itemId' => $item->getId());
+	if (!isset($form['recreateResizes'])) {
+	    /* Don't show "Complete" yet if there is another task */
+	    $redirect = array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemEdit',
+			      'itemId' => $item->getId());
 
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
+	}
 	return null;
     }
 

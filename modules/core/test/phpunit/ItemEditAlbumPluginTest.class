@@ -370,6 +370,15 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	/* Verify progressbar "complete" only done once */
+	$complete = 0;
+	foreach ($mockAdapter->getProgressBarDump() as $progress) {
+	    if (!strncmp($progress, 'complete:', 9)) {
+		$complete++;
+	    }
+	}
+	$this->assertEquals(1, $complete, 'complete progress bar only once');
+
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
