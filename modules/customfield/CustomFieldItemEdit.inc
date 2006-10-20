@@ -71,6 +71,18 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 		}
 	    }
 	} else if (isset($form['action']['save'])) {
+	    list ($ret, $markup) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	    if ($ret) {
+		return array($ret, null, null, null);
+	    }
+	    if ($markup == 'html') {
+		/* Strip malicious content if html markup allowed */
+		foreach ($form['fields'] as $key => $value) {
+		    $form['fields'][$key] = GalleryUtilities::htmlSafe($value, true);
+		}
+	    }
+
 	    $ret = CustomFieldHelper::saveFieldValues($item, $form['fields']);
 	    if ($ret) {
 		return array($ret, null, null, null);

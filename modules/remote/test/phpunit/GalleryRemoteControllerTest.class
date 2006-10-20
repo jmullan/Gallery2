@@ -485,6 +485,47 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($platform->filesize(__FILE__), $newItem->getSize());
     }
 
+    function testMaliciousMarkup() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$ret = $this->_setMarkupType('html', true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('form[cmd]', 'add-item');
+	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[caption]', 'caption <script>alert(1);</script>');
+	$this->_controller->setOptionInstances(array());
+
+	$_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
+	    array('name' => 'testfile.txt',
+		  'type' => 'text/plain',
+		  'tmp_name' => __FILE__,
+		  'error' => 0,
+		  'size' => $platform->filesize(__FILE__));
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error'], 'error');
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view'], 'delegate');
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(1, count($childIds));
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0]);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('testfile.txt', $newItem->getPathComponent());
+	$this->assertEquals('caption ', $newItem->getTitle());
+    }
+
     function testAddItemWithOption() {
 	global $gallery;
 	$platform =& $gallery->getPlatform();

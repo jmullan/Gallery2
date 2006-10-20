@@ -225,6 +225,19 @@ class ItemEditItem extends ItemEditPlugin {
 		if ($ret && $ret->getErrorCode() & ERROR_COLLISION) {
 		    $error[] = 'form[error][pathComponent][collision]';
 		} else {
+		    list ($ret, $markup) =
+			GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+		    if ($ret) {
+			return array($ret, null, null, null);
+		    }
+		    if ($markup == 'html') {
+			/* Strip malicious content if html markup allowed */
+			$form['title'] = GalleryUtilities::htmlSafe($form['title'], true);
+			$form['summary'] = GalleryUtilities::htmlSafe($form['summary'], true);
+			$form['description'] =
+			    GalleryUtilities::htmlSafe($form['description'], true);
+		    }
+
 		    $item->setTitle($form['title']);
 		    $item->setSummary($form['summary']);
 		    $item->setKeywords($form['keywords']);

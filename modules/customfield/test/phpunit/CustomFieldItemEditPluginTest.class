@@ -109,7 +109,6 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
     }
 
     function testCustomFieldPlugin() {
-
 	/* Reset */
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 	$results = $this->handleRequest($this->itemG, $this->_itemG);
@@ -359,6 +358,32 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	}
 	$this->assertEquals(array('Category' => 'C'),
 			    $data[$this->_albumS->getId()], 'Field values');
+    }
+
+    function testMaliciousMarkup() {
+	$ret = $this->_setMarkupType('html', true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('form[fields][Catalog Id]', '1');
+	GalleryUtilities::putRequestVariable('form[fields][My Data]',
+					     'fun <script>alert(1);</script>');
+	GalleryUtilities::putRequestVariable('form[fields][Location]',
+					     '<p onclick="alert(2)">Click</p>');
+	GalleryUtilities::putRequestVariable('form[fields][Category]', 'A');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	$results = $this->handleRequest($this->_itemG, $this->_itemG);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	list ($ret, $data) = CustomFieldHelper::fetchFieldValues(array($this->_itemG), 'summary');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array('My Data' => 'fun ', 'Location' => '&lt;p&gt;Click&lt;/p&gt;'),
+			    $data[$this->_itemG->getId()], 'Summary data');
     }
 }
 ?>

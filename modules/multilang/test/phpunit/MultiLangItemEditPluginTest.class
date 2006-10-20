@@ -153,5 +153,32 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
     }
+
+    function testMaliciousMarkup() {
+	global $gallery;
+	$ret = $this->_setMarkupType('html', true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('form[language]', 'de_DE');
+	GalleryUtilities::putRequestVariable('form[title]', '<script>bad</script> title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'summary <blink>fun</blink>');
+	GalleryUtilities::putRequestVariable('form[description]', '<applet class="bad"/>desc');
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	$results = $this->handleRequest($this->_album, $this->_album);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	$gallery->setActiveLanguageCode('de_DE');
+	list ($ret, $album) = $this->_album->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(' title', $album->getTitle());
+	$this->assertEquals('summary fun', $album->getSummary());
+	$this->assertEquals('desc', $album->getDescription());
+    }
 }
 ?>

@@ -41,6 +41,11 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 	if (isset($form['action']['addFromBrowser'])) {
+	    list ($ret, $markup) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
 
 	    /* Upload any new files */
 	    for ($i = 1; $i <= count($form['name']); $i++) {
@@ -53,6 +58,11 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 				  'tmp_name' => $form['tmp_name'][$i],
 				  'size' => $form['size'][$i],
 				  'caption' => $form['caption'][$i]);
+
+		    if ($markup == 'html') {
+			/* Strip malicious content if html markup allowed */
+			$file['caption'] = GalleryUtilities::htmlSafe($file['caption'], true);
+		    }
 
 		    /* Get the mime type from the upload info. */
 		    $mimeType = $file['type'];

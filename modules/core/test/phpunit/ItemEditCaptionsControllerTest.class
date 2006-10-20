@@ -280,5 +280,56 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	    }
 	}
     }
+
+    function testMaliciousMarkup() {
+	$ret = $this->_setMarkupType('html', true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('page', 1);
+	foreach ($this->_items as $item) {
+	    $id = $item->getId();
+	    GalleryUtilities::putRequestVariable("form[items][$id][title]",
+						 'title <applet>here</applet>');
+	    GalleryUtilities::putRequestVariable("form[items][$id][summary]",
+						 'summary <p onmouseout="alert()">yy</p>');
+	    GalleryUtilities::putRequestVariable("form[items][$id][keywords]", '');
+	    GalleryUtilities::putRequestVariable("form[items][$id][description]",
+						 'description <script>foo</script>');
+	    GalleryUtilities::putRequestVariable("form[items][$id][serialNumber]",
+						 $item->getSerialNumber());
+	}
+	GalleryUtilities::putRequestVariable('form[action][save][done]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('return' => 1,
+		  'redirect' => array('view' => 'core.ItemAdmin',
+				      'subView' => 'core.ItemEditCaptions',
+				      'itemId' => $this->_album->getId(),
+				      'page' => 1),
+		  'status' => array('successCount' => 3,
+				    'errorCount' => 0,
+				    $this->_items[0]->getId() => array('saved' => 1),
+				    $this->_items[1]->getId() => array('saved' => 1),
+				    $this->_items[2]->getId() => array('saved' => 1)),
+		  'error' => array()),
+	    $results);
+
+	foreach ($this->_items as $item) {
+	    $id = $item->getId();
+	    list ($ret, $item) = $item->refresh();
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $this->assertEquals('title here', $item->getTitle());
+	    $this->assertEquals('summary &lt;p&gt;yy&lt;/p&gt;', $item->getSummary());
+	    $this->assertEquals('', $item->getKeywords(), 'keywords');
+	    $this->assertEquals('description ', $item->getDescription());
+	}
+    }
 }
 ?>

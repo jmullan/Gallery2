@@ -58,6 +58,18 @@ class ItemAddAlbumController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
+		list ($ret, $markup) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if ($markup == 'html') {
+		    /* Strip malicious content if html markup allowed */
+		    $form['title'] = GalleryUtilities::htmlSafe($form['title'], true);
+		    $form['summary'] = GalleryUtilities::htmlSafe($form['summary'], true);
+		    $form['description'] = GalleryUtilities::htmlSafe($form['description'], true);
+		}
+
 		list ($ret, $instance) =
 		    GalleryCoreApi::createAlbum($itemId, $form['pathComponent'], $form['title'],
 						$form['summary'], $form['description'],
@@ -69,16 +81,12 @@ class ItemAddAlbumController extends GalleryController {
 
 		if (!isset($instance)) {
 		    GalleryCoreApi::releaseLocks($lockIds);
-		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
-				 null);
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 		}
-	    }
 
-	    if (empty($error)) {
 		$ret = GalleryCoreApi::addUserPermission($instance->getId(),
 							 $instance->getOwnerId(),
-							 'core.all',
-							 false);
+							 'core.all', false);
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockIds);
 		    return array($ret, null);

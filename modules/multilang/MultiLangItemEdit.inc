@@ -47,8 +47,20 @@ class MultiLangItemEdit extends ItemEditPlugin {
 	    if (($item->getId() == $rootAlbumId) && empty($form['title'])) {
 		$error[] = 'form[error][title][missingRootTitle]';
 	    } else {
+		list ($ret, $markup) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+		if ($ret) {
+		    return array($ret, null, null, null);
+		}
+		if ($markup == 'html') {
+		    /* Strip malicious content if html markup allowed */
+		    $form['title'] = GalleryUtilities::htmlSafe($form['title'], true);
+		    $form['summary'] = GalleryUtilities::htmlSafe($form['summary'], true);
+		    $form['description'] = GalleryUtilities::htmlSafe($form['description'], true);
+		}
+
 		$ret = MultiLangHelper::setItemData($item, $form['language'],
-		$form['title'], $form['summary'], $form['description']);
+			$form['title'], $form['summary'], $form['description']);
 		if ($ret) {
 		    return array($ret, null, null, null);
 		}

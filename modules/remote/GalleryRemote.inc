@@ -481,6 +481,26 @@ class GalleryRemoteController extends GalleryController {
 	    $itemName = $file['name'];
 	}
 
+	list ($ret, $markup) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	if ($ret) {
+	    return $ret;
+	}
+	if ($markup == 'html') {
+	    /* Strip malicious content if html markup allowed */
+	    if (isset($form['caption'])) {
+		$form['caption'] = GalleryUtilities::htmlSafe($form['caption'], true);
+	    }
+	    if (isset($form['extrafield.Summary'])) {
+		$form['extrafield.Summary'] =
+		    GalleryUtilities::htmlSafe($form['extrafield.Summary'], true);
+	    }
+	    if (isset($form['extrafield.Description'])) {
+		$form['extrafield.Description'] =
+		    GalleryUtilities::htmlSafe($form['extrafield.Description'], true);
+	    }
+	}
+
 	$title = isset($form['caption'])?$form['caption']:NULL;
 	$summary = isset($form['extrafield.Summary'])?$form['extrafield.Summary']:NULL;
 	$description = isset($form['extrafield.Description'])?$form['extrafield.Description']:NULL;

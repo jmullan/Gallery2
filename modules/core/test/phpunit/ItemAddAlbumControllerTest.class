@@ -44,7 +44,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
     function testAddAlbum() {
 	/* Use valid inputs */
-	$name = 'testalbum-'.rand();
+	$name = 'testalbum-' . rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $name);
@@ -78,7 +78,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Use valid inputs */
-	$name = 'testalbum-'.rand();
+	$name = 'testalbum-' . rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
 	GalleryUtilities::putRequestVariable('form[title]', 'title');
@@ -198,7 +198,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
     function _getChildId() {
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
-	$this->assertEquals(1, sizeof($ids));
+	$this->assertEquals(1, count($ids));
 	return $ids[0];
     }
 
@@ -208,6 +208,46 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* We want the larger id, since it's the newer one */
 	return max($ids[0], $ids[1]);
+    }
+
+    function testMaliciousMarkup() {
+	$ret = $this->_setMarkupType('html', true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$name = 'testalbum-' . rand();
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $name);
+	GalleryUtilities::putRequestVariable('form[title]', '<script>bad</script> title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'summary <div onclick="die">.</div>');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'description <object>.</object>');
+
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemEdit',
+						      'editPlugin' => 'ItemEditAlbum',
+						      'itemId' => ($id = $this->_getChildId())),
+				  'status' => array('editMessage' =>
+						$core->translate('Album created successfully.')),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(' title', $newAlbum->getTitle(), 'title');
+	$this->assertEquals('summary &lt;div&gt;.&lt;/div&gt;', $newAlbum->getSummary(), 'summary');
+	$this->assertEquals('description .', $newAlbum->getDescription(), 'description');
     }
 }
 ?>

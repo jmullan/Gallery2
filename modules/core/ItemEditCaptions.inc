@@ -54,6 +54,12 @@ class ItemEditCaptionsController extends GalleryController {
 		return array($ret, null);
 	    }
 
+	    list ($ret, $markup) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
 	    $status['successCount'] = 0;
 	    $status['errorCount'] = 0;
 	    foreach ($items as $item) {
@@ -66,6 +72,16 @@ class ItemEditCaptionsController extends GalleryController {
 		$id = $item->getId();
 		if (isset($permissions['core.edit'])) {
 		    if ($item->getSerialNumber() == $form['items'][$id]['serialNumber']) {
+			if ($markup == 'html') {
+			    /* Strip malicious content if html markup allowed */
+			    $form['items'][$id]['title'] =
+				GalleryUtilities::htmlSafe($form['items'][$id]['title'], true);
+			    $form['items'][$id]['summary'] =
+				GalleryUtilities::htmlSafe($form['items'][$id]['summary'], true);
+			    $form['items'][$id]['description'] =
+			      GalleryUtilities::htmlSafe($form['items'][$id]['description'], true);
+			}
+
 			$item->setTitle($form['items'][$id]['title']);
 			$item->setSummary($form['items'][$id]['summary']);
 			$item->setKeywords($form['items'][$id]['keywords']);

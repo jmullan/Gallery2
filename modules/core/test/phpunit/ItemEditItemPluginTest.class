@@ -145,31 +145,47 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
     
     function testMaliciousMarkup() {
-	/* Use valid inputs */
-	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
+	$item = $this->_item[0];
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[pathComponent]', $newPathComponent);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $item->getPathComponent());
 	GalleryUtilities::putRequestVariable('form[title]', 
 	    'new[color="><script>alert(\'hi\')</script><"green]foo[/color] title');
-	GalleryUtilities::putRequestVariable('form[summary]', ' new summary ');
-	GalleryUtilities::putRequestVariable('form[keywords]', ' new keywords ');
-	GalleryUtilities::putRequestVariable('form[description]', ' new description ');
-	GalleryUtilities::putRequestVariable('form[serialNumber]',
-					     $this->_item[0]->getSerialNumber());
+	GalleryUtilities::putRequestVariable('form[summary]',
+					     ' summary <a href="" onclick="alert(1)">hi</a>foo');
+	GalleryUtilities::putRequestVariable('form[keywords]', '');
+	GalleryUtilities::putRequestVariable('form[description]', 'description<object>.</object>');
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', '400');
 
-	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest($this->_item[0], $this->_preferred);
-	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
-				  $results);
+	foreach (array('html', 'bbcode') as $i => $markup) {
+	    $ret = $this->_setMarkupType($markup, $i == 0);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
 
-	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    GalleryUtilities::putRequestVariable('form[serialNumber]', $item->getSerialNumber());
+
+	    $results = $this->handleRequest($item, $this->_preferred);
+	    $this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			        $results, $markup);
+
+	    list ($ret, $item) = $item->refresh();
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $value = $markup == 'html'
+		? 'new[color=&quot;&gt;&amp;lt;&quot;green]foo[/color] title'
+		: 'new[color=&quot;&gt;&lt;script&gt;alert(\'hi\')&lt;/script&gt;'
+		  . '&lt;&quot;green]foo[/color] title';
+	    $this->assertEquals($value, $item->getTitle(), "title $markup");
+	    $value = $markup == 'html'
+		? 'summary &lt;a href=&quot;&quot;&gt;hi&lt;/a&gt;foo'
+		: 'summary &lt;a href=&quot;&quot; onclick=&quot;alert(1)&quot;&gt;hi&lt;/a&gt;foo';
+	    $this->assertEquals($value, $item->getSummary(), "summary $markup");
+	    $value = $markup == 'html'
+		? 'description.' : 'description&lt;object&gt;.&lt;/object&gt;';
+	    $this->assertEquals($value, $item->getDescription(), "description $markup");
 	}
-
-	$this->assertEquals('new[color=&quot;&gt;&lt;script&gt;alert(\'hi\')&lt;/script&gt;&lt;' .
-	    '&quot;green]foo[/color] title', $this->_item[0]->getTitle());
     }
 
     function testInvalidPathComponent() {
