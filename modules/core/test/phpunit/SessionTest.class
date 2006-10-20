@@ -687,7 +687,7 @@ class SessionTest extends GalleryTestCase {
 	$session = $gallery->_session;
 	$isUsingCookies = $session->isUsingCookies();
 
-	foreach (array('1234', '()/&*(*KJKHJGGWJJ*)/çBDKH*(ç071B', '../oops.txt') as $sid) {
+	foreach (array('1234', '()/&*(*KJKHJGGWJJ*)/ï¿½BDKH*(ï¿½071B', '../oops.txt') as $sid) {
 	    /* Test an illegal sessionId */
 	    $_COOKIE[SESSION_ID_PARAMETER] = $sid;
 	    $_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sid;
@@ -816,8 +816,11 @@ class SessionTest extends GalleryTestCase {
 	$session->_sessionId = '1234';
 	$this->assertEquals('1234', $session->getId(), 'session id set');
 	$session->_sessionId = '';
+	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp id 2');
+
+	$session = new GallerySession();
 	$session->doNotUseTempId();
-	$this->assertEquals('', $session->getId(), 'do not use temp id');
+	$this->assertEquals(null, $session->getId(), 'do not use temp id');
 	$session->_sessionId = '1234';
 	$this->assertEquals('1234', $session->getId(), 'session id set 2');
     }
