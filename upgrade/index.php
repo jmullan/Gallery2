@@ -242,9 +242,11 @@ if ($currentStep->processRequest()) {
 
 /**
  * Find admin user and set as active user
+ * @param bool $fallback (optional) whether we should try to fall back if the
+ *             API to load the admin user object fails
  * @return object GalleryStatus a status code
  */
-function selectAdminUser() {
+function selectAdminUser($fallback=false) {
     global $gallery;
 
     list ($ret, $siteAdminGroupId) =
@@ -259,10 +261,20 @@ function selectAdminUser() {
     if (empty($adminUserInfo)) {
 	return GalleryCoreApi::error(ERROR_MISSING_VALUE);
     }
-    $adminUserInfo = array_keys($adminUserInfo);
-    list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($adminUserInfo[0]);
+    /* Fetch the first admin from list */
+    list ($userId, $userName) = each($adminUserInfo);
+    list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($userId);
     if ($ret) {
-	return $ret;
+	if ($fallback) {
+	    /* Initialize a GalleryUser with the id of a real admin */
+	    $gallery->debug('Unable to load admin user. Using in-memory user object as fallback');
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryUser.class');
+	    $adminUser = new GalleryUser();
+	    $adminUser->setId((int)$userId);
+	    $adminUser->setUserName($userName);
+	} else {
+	    return $ret;
+	}
     }
 
     $gallery->setActiveUser($adminUser);

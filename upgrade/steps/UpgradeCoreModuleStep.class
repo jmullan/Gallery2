@@ -74,27 +74,28 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 
 	if (isset($_POST['confirm'])) {
 	    $template->renderHeader(true);
-	    $ret = selectAdminUser();
-	    if ($ret) {
-		/* Core APIs required for selectAdminUser may not work until core is upgraded */
-		$gallery->debug('Unable to selectAdminUser for core upgrade: ' . $ret->getAsText());
-	    }
-	    /*
-	     * Do the upgrade in bootstrap mode so that we avoid going to the
-	     * database for anything that's not vital.
-	     */
-	    $ret = $core->installOrUpgrade(true, $template);
+	    $ret = selectAdminUser(true);
 	    if (!$ret) {
-		list ($ret,  $ignored) = $core->activate();
+		/*
+		 * Do the upgrade in bootstrap mode so that we avoid going to the
+		 * database for anything that's not vital.
+		 */
+		$ret = $core->installOrUpgrade(true, $template);
 		if (!$ret) {
-		    $storage =& $gallery->getStorage();
-		    $ret = $storage->commitTransaction();
+		    list ($ret,  $ignored) = $core->activate();
+		    if (!$ret) {
+			$storage =& $gallery->getStorage();
+			$ret = $storage->commitTransaction();
 
-		    if (!$ret && $templateData['isConfigUpgradeRequired']) {
-			$ret = CoreModuleExtras::performConfigUpgrade($versions['core']);
+			if (!$ret && $templateData['isConfigUpgradeRequired']) {
+			    $ret = CoreModuleExtras::performConfigUpgrade($versions['core']);
+			}
 		    }
 		}
+	    } else {
+		$gallery->debug('Unable to selectAdminUser for core upgrade: ' . $ret->getAsText());
 	    }
+
 	    $this->resetL10Domain();
 	    if ($ret) {
 		$templateData['stackTrace'] = $ret->getAsHtml();
