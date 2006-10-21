@@ -10,7 +10,7 @@ use Cwd;
 use String::CRC32;
 my $quiet = 0;
 foreach my $i (0 .. $#ARGV) {
-    if ('-q' == $ARGV[$i]) {
+    if ('-q' eq $ARGV[$i]) {
 	$quiet = 1;
     }
 }
