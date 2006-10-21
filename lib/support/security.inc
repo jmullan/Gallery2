@@ -94,7 +94,8 @@ if (passwordProvided()) {
 }
 
 function saltedMd5($cleartext) {
-    return md5(__FILE__ . php_uname() . $cleartext);
+    $key = __FILE__ . @php_uname() . @phpversion() . $cleartext;
+    return md5($key);
 }
 
 function passwordProvided() {
