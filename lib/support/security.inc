@@ -56,6 +56,16 @@ if (file_exists(GALLERY_CONFIG_DIR . '/config.php')) {
 }
 if ($baseUrl = $gallery->getConfig('galleryBaseUrl')) {
     $baseUrl .= 'lib/support/';
+} else {
+    /*
+     * This file can get included from a variety of places under lib, so
+     * find our way to lib/support/
+     */
+    $baseUrl = $_SERVER['SCRIPT_NAME'];
+    while (basename($baseUrl) != 'lib') {
+	$baseUrl = dirname($baseUrl);
+    }
+    $baseUrl .= '/support/';
 }
 
 $setupPassword = $gallery->getConfig('setup.password');
