@@ -185,7 +185,9 @@ function addMessage(pluginType, pluginId, messageText, messageType) {
     var statusDimensions = YAHOO.util.Dom.getRegion(containerEl);
     var bodyDimensions = YAHOO.util.Dom.getRegion(document.body);
     // For IE6:
-    if (!bodyDimensions.right) bodyDimensions = YAHOO.util.Dom.getRegion(document.getElementById("gallery"));
+    if (!bodyDimensions.right) {
+	bodyDimensions = YAHOO.util.Dom.getRegion(document.getElementById("gallery"));
+    }
     containerEl.style.left = (((bodyDimensions.right - bodyDimensions.left) -
 	                       (statusDimensions.right - statusDimensions.left)) / 2) + "px";
 
@@ -213,10 +215,10 @@ function updateStatusPosition() {
 function verify(prompt, pluginType, pluginId, uninstallUrl) {
     var dialog = new YAHOO.widget.SimpleDialog(
 	"gDialog", { width: "20em",
-		 effect: { effect:YAHOO.widget.ContainerEffect.FADE, duration:0.25 },
-		 fixedcenter: true,
-		 modal: true,
-		 draggable: false });
+		effect: { effect:YAHOO.widget.ContainerEffect.FADE, duration:0.25 },
+		fixedcenter: true,
+		modal: true,
+		draggable: false });
     dialog.setHeader(prompt['header']);
     dialog.setBody(prompt['body'].replace('__PLUGIN__', pluginData[pluginType][pluginId]["name"]));
     dialog.cfg.setProperty("icon", YAHOO.widget.SimpleDialog.ICON_WARN);
@@ -231,7 +233,7 @@ function verify(prompt, pluginType, pluginId, uninstallUrl) {
     }
 
     var myButtons = [ { text: prompt['yes'], handler:handleYes },
-                      { text: prompt['no'], handler:handleNo, isDefault:true } ];
+    { text: prompt['no'], handler:handleNo, isDefault:true } ];
     dialog.cfg.queueProperty("buttons", myButtons);
     dialog.render(document.body);
 }
