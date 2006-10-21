@@ -317,6 +317,26 @@ class GalleryTestCase extends TestCase {
 	return null;
     }
 
+    /**
+     * Set core parameter for markup type.
+     * @param string $markup markup type
+     * @param bool $saveParams (optional) true to first mark core parameters for cleanup
+     * @return object GalleryStatus
+     */
+    function _setMarkupType($markup, $saveParams=false) {
+	if ($saveParams) {
+	    $ret = $this->_markPluginParametersForCleanup('module', 'core');
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', $markup);
+	if ($ret) {
+	    return $ret;
+	}
+	return null;
+    }
+
     function assert($boolean, $message=null) {
 	global $gallery;
 	$message = $gallery->getDebugBuffer() . $message;
