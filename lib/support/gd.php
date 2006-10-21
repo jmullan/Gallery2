@@ -200,44 +200,20 @@ $gdInfo = getGdLibraryInfo();
 ?>
 <html>
   <head>
-    <title>GD Library information gathering</title>
-    <style>
-      body {
-	font:normal 68% verdana,arial,helvetica;
-	color:#000000;
-      }
-      p {
-	line-height:1.5em;
-	margin-top:0.5em; margin-bottom:1.0em;
-      }
-      h1 {
-	margin: 0 0 5px; font: 165% verdana,arial,helvetica
-      }
-      h2 {
-	margin-top: 1em; margin-bottom: 0.5em; font: bold 125% verdana,arial,helvetica
-      }
-      h3 {
-	margin-bottom: 0.5em; font: bold 115% verdana,arial,helvetica
-      }
-      h4 {
-	margin-bottom: 0.5em; font: bold 100% verdana,arial,helvetica
-      }
-      h5 {
-	margin-bottom: 0.5em; font: bold 100% verdana,arial,helvetica
-      }
-      h6 {
-	margin-bottom: 0.5em; font: bold 100% verdana,arial,helvetica
-      }
-    </style>
+    <title>Gallery Support | GD Library Info</title>
+    <link rel="stylesheet" type="text/css" href="<?php print $baseUrl ?>support.css"/>
   </head>
   <body>
-   <h1>GD library information gathering</h1>
-   <a href="index.php"> Back to Support Page </a>
-<?php if ($gdInfo == '') { ?>
-   <p>No GD library found</p>
-<?php } else { ?>
-   <p>This information might be useful for the GD module developers:</p>
-   <pre><?php echo $gdInfo; ?></pre>
-<?php } ?>
+    <div id="content">
+      <div id="title">
+        <a href="../../">Gallery</a> &raquo; <a href="index.php">Support</a> &raquo; GD Library Info
+      </div>
+      <?php if ($gdInfo == ''): ?>
+      <h2>No GD library found.</h2>
+      <?php else: ?>
+      <h2>This information might be useful for the GD module developers:</h2>
+      <pre style="padding-left: 20px"><?php echo $gdInfo; ?></pre>
+      <?php endif; ?>
+    </div>
   </body>
 </html>

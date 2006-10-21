@@ -1,6 +1,5 @@
+<?php if (!defined('G2_SUPPORT')) { return; } ?>
 <?php
-if (!defined('G2_SUPPORT')) return;
-
 function getCaches() {
     $dirs = array(
 	'cached pages' => array(true, 'clearPageCache', array(), 'Cached HTML pages'),
@@ -39,7 +38,7 @@ function recursiveRmdir($dirname, &$status) {
 		if (!@is_writeable($path)) {
 		    $status[] = array("error", "Permission denied removing file $path");
 		} else {
-		    $status[] = array("error", "Unable to remove file $path");
+		    $status[] = array("error", "Error removing $path");
 		}
 	    } else {
 		$count++;
@@ -83,7 +82,7 @@ function clearG2DataDir($dir) {
      * $status[] = array('info', "Removed $count files and directories");
      */
 
-    if (mkdir($path)) {
+    if (@mkdir($path)) {
 	$status[] = array('info', "Recreating dir: $path");
     } else {
 	$status[] = array('error', "Unable to recreate dir: $path");
@@ -111,47 +110,40 @@ if (isset($_REQUEST['clear'])) {
 ?>
 <html>
   <head>
-    <title>Cache Maintenance</title>
+    <title>Gallery Support | Cache Maintenance</title>
     <link rel="stylesheet" type="text/css" href="<?php print $baseUrl ?>support.css"/>
   </head>
-
   <body>
-      <H1> Cache Maintenance </H1>
-      <a href="index.php"> Back to Support Page </a>
+    <div id="content">
+      <div id="title">
+        <a href="../../">Gallery</a> &raquo; <a href="index.php">Support</a> &raquo; Cache Maintenance
+      </div>
       <h2>
 	Gallery caches data on disk to increase performance.
-	Sometimes these caches get out of date and need to be deleted.
-	Anything in the cache can be deleted safely, because Gallery
-	will recreate anything that it needs.  However, some things
-	are more expensive to recreate than others so you might not
-	want to delete everything.  If you're in doubt, accept the
-	defaults below.
+	Occasionally these caches get out of date and need to be deleted.
+	Anything in the cache can be deleted safely!  Gallery will
+	rebuild anything it needs.
       </h2>
 
       <?php if (!empty($status)): ?>
-      <div class="status">
+      <div class="success">
 	<?php foreach ($status as $line): ?>
-	<span class="line_<?php print $line[0]?>">
-	  <?php print $line[1] ?>
-	</span>
+	<pre class="<?php print $line[0] ?>"><?php print $line[1] ?></pre>
 	<?php endforeach; ?>
       </div>
       <?php endif; ?>
 
       <form method="POST">
-	<?php $caches = getCaches(); ?>
-	<div class="box">
+        <p>
+	  <?php $caches = getCaches(); ?>
 	  <?php foreach ($caches as $key => $info): ?>
-	  <div>
-	    <input type="checkbox" name="target[<?php print $key ?>]"
-		   <?php if ($info[0]): ?> checked="checked" <?php endif; ?> />
-	    <?php print $info[3] ?>
-	  </div>
+	  <input type="checkbox" name="target[<?php print $key ?>]"
+            <?php if ($info[0]): ?> checked="checked" <?php endif; ?> />
+	  <?php print $info[3] ?> <br/>
 	  <?php endforeach; ?>
-	  <div>
-	    <input type="submit" name="clear" value="Clear Cache"/>
-	  </div>
-        </div>
+	  <input type="submit" name="clear" value="Clear Cache"/>
+	</p>
       </form>
+    </div>
   </body>
 </html>
