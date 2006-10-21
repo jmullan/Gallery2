@@ -23,7 +23,7 @@
 
   <p><input type="checkbox" name="{g->formVar var="form[PermalinksSiteAdmin][autoPermalink]"}"
     id="Permalinks_autoPermalink" {if $PermalinksSiteAdmin.autoPermalink } checked=true {/if}/>
-    <label for="Permalinks_autoPermalink"> {g->text text="Enable auto-permalink"} </alias></p>
+    <label for="Permalinks_autoPermalink"> {g->text text="Enable auto-permalink"} </label></p>
 </div>
 
 <div class="gbBlock">
@@ -48,6 +48,6 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit" 
+  <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][submit]"}" value="{g->text text="Save"}" />
 </div>
