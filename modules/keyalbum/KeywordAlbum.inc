@@ -162,8 +162,14 @@ class KeywordAlbumView extends GalleryView {
 	    return array($ret, null);
 	}
 
+	$keywords = $where = array();
+	foreach (preg_split('/[' . $params['split'] . ']+/', $keyword) as $k) {
+	    $keywords[] = '%' . trim($k) . '%';
+	    $where[] = '[GalleryItem::keywords] LIKE ?';
+	}
+
 	list ($ret, $query, $data) = GalleryCoreApi::buildItemQuery(
-		'GalleryItem', 'id', '[GalleryItem::keywords] LIKE ?',
+		'GalleryItem', 'id', implode(' AND ', $where),
 		$params['orderBy'], $params['orderDirection'], null, 'core.view', false, $userId);
 	if ($ret) {
 	    return array($ret, null);
@@ -171,9 +177,8 @@ class KeywordAlbumView extends GalleryView {
 	if (empty($query)) {
 	    return array(null, array());
 	}
-	array_unshift($data, '%' . $keyword . '%');
 
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $searchResults) = $gallery->search($query, array_merge($keywords, $data));
 	if ($ret) {
 	    return array($ret, null);
 	}

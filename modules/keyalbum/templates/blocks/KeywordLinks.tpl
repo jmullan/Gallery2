@@ -8,9 +8,10 @@
 {if empty($item)} {assign var=item value=$theme.item} {/if}
 
 {if !empty($item.keywords)}
+{g->callback type="keyalbum.SplitKeywords" keywords=$item.keywords}
 <div class="{$class}">
   {g->text text="Keywords:"}
-  {foreach from=$item.keywords|split:'/\s+/':true item=keyword}
+  {foreach from=$block.keyalbum.keywords item=keyword}
     <a href="{g->url arg1="view=keyalbum.KeywordAlbum" arg2="keyword=$keyword"
 		     arg3="highlightId=`$item.id`"}">{$keyword}</a>
   {/foreach}

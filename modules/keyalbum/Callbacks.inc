@@ -56,6 +56,22 @@ class KeyAlbumCallbacks {
 	    $block['keyalbum']['keywords'] = !empty($keywords) ? unserialize($keywords) : array();
 
 	    return null;
+
+	case 'SplitKeywords':
+	    list ($ret, $split) = GalleryCoreApi::getPluginParameter('module', 'keyalbum', 'split');
+	    if ($ret) {
+		return $ret;
+	    }
+	    $split = '/[' . $split . ']+/';
+	    $keywords = array();
+	    foreach (preg_split($split, $params['keywords']) as $keyword) {
+		$keywords[] = trim($keyword);
+	    }
+
+	    $block =& $smarty->_tpl_vars['block'];
+	    $block['keyalbum']['keywords'] = $keywords;
+
+	    return null;
 	}
 
 	return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
@@ -104,10 +120,16 @@ class KeyAlbumCallbacks {
 	if ($ret) {
 	    return $ret;
 	}
+	list ($ret, $split) = GalleryCoreApi::getPluginParameter('module', 'keyalbum', 'split');
+	if ($ret) {
+	    return $ret;
+	}
+	$split = '/[' . $split . ']+/';
 	$maxCount = 1;
 	while ($result = $searchResults->nextResult()) {
 	    if ($result[0]) {
-		foreach (preg_split('/[\s,;]+/', $result[0]) as $keyword) {
+		foreach (preg_split($split, $result[0]) as $keyword) {
+		    $keyword = trim($keyword);
 		    if (!isset($keywords[$keyword])) {
 			$keywords[$keyword] = array('name' => $keyword, 'count' => 1);
 		    } else if (++$keywords[$keyword]['count'] > $maxCount) {

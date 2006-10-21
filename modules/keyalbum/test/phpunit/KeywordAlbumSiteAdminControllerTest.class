@@ -79,6 +79,8 @@ class KeywordAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
     function testKeywordAlbumSiteAdminControllerSave() {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	GalleryUtilities::putRequestVariable('form[summaryLinks]', 'album');
+	GalleryUtilities::putRequestVariable('form[split][comma]', '1');
+	GalleryUtilities::putRequestVariable('form[split][space]', '1');
 	GalleryUtilities::putRequestVariable('form[orderBy]', 'originationTimestamp');
 	GalleryUtilities::putRequestVariable('form[orderDirection]', ORDER_DESCENDING);
 	GalleryUtilities::putRequestVariable('form[presort]', 'albumsFirst');
@@ -115,6 +117,7 @@ class KeywordAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('description' => 'test desc',
 				  'orderBy' => 'albumsFirst|originationTimestamp',
 				  'orderDirection' => ORDER_DESCENDING,
+				  'split' => ',\s',
 				  'summaryLinks' => 'album',
 				  'themeId' => $this->_defaultThemeId,
 				  'themeSettingsId' => $this->_entity->getId()),
@@ -126,6 +129,25 @@ class KeywordAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals('5', $themeParam, 'Theme param');
+    }
+
+    function testKeywordAlbumSiteAdminControllerNoSplit() {
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+	GalleryUtilities::putRequestVariable('form[summaryLinks]', 'none');
+	GalleryUtilities::putRequestVariable('form[orderBy]', 'title');
+	GalleryUtilities::putRequestVariable('form[orderDirection]', ORDER_ASCENDING);
+	GalleryUtilities::putRequestVariable('form[presort]', '');
+	GalleryUtilities::putRequestVariable('form[description]', 'test desc');
+	GalleryUtilities::putRequestVariable('form[themeId]', 'keyalbumTest');
+	GalleryUtilities::putRequestVariable('form[currentThemeId]', 'keyalbumTest');
+	GalleryUtilities::putRequestVariable('form[key][perPage]', '5');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' =>
+		array('view' => 'core.SiteAdmin', 'subView' => 'keyalbum.KeywordAlbumSiteAdmin'),
+				  'status' => array(),
+				  'error' => array('form[error][split]')),
+			    $results);
     }
 }
 

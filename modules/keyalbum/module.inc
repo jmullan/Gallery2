@@ -32,7 +32,7 @@ class KeyAlbumModule extends GalleryModule {
 	$this->setId('keyalbum');
 	$this->setName($gallery->i18n('Keyword Albums'));
 	$this->setDescription($gallery->i18n('Dynamic albums based on keyword search'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
 	$this->setRequiredCoreApi(array(7, 10));
@@ -48,7 +48,7 @@ class KeyAlbumModule extends GalleryModule {
 	    return $ret;
 	}
 	foreach (array('themeId' => '', 'orderBy' => '', 'orderDirection' => '',
-		       'summaryLinks' => 'all', 'description' => '')
+		       'summaryLinks' => 'all', 'description' => '', 'split' => ';,')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$this->setParameter($key, $value);
@@ -98,10 +98,11 @@ class KeyAlbumModule extends GalleryModule {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	list ($ret, $mode) = $this->getParameter('summaryLinks');
+	list ($ret, $params) = $this->fetchParameters();
 	if ($ret) {
 	    return array($ret, null);
 	}
+	$mode = $params['summaryLinks'];
 	if ($mode != 'all') {
 	    $view = GalleryUtilities::getRequestVariables('view');
 	    if ($mode == 'none' || ($mode == 'key' && $view != 'keyalbum.KeywordAlbum')
@@ -111,11 +112,14 @@ class KeyAlbumModule extends GalleryModule {
 	}
 
 	$summaries = array();
+	$split = '/[' . $params['split'] . ']+/';
+	$label = $this->translate('Keywords:');
 	foreach ($items as $item) {
 	    if ($item->getKeywords()) {
 		$itemId = $item->getId();
-		$summaries[$itemId] = $this->translate('Keywords:');
-		foreach (preg_split('/[\s,;]+/', $item->getKeywords()) as $keyword) {
+		$summaries[$itemId] = $label;
+		foreach (preg_split($split, $item->getKeywords()) as $keyword) {
+		    $keyword = trim($keyword);
 		    $summaries[$itemId] .= ' <a href="' . $urlGenerator->generateUrl(
 			array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $keyword,
 			      'highlightId' => $itemId)) . '">' . $keyword . '</a>';

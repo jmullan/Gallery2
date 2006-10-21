@@ -100,6 +100,11 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'split', ';,\s');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
 
 	$this->_smarty = new GallerySmarty();
 	$this->_callbacks = new KeyAlbumCallbacks();
@@ -186,6 +191,33 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
 	$this->assertEquals(array(), $data, 'cached data');
+    }
+
+    function testSplitKeywords() {
+	$ret = $this->_callbacks->callback(
+		array('keywords' => 'abc;def ghi,jkl'),
+		$this->_smarty, 'SplitKeywords', $this->_userId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
+	$this->assertEquals(array('abc', 'def', 'ghi', 'jkl'), $data);
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'split', ';');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_callbacks->callback(
+		array('keywords' => 'abc;def ghi,jkl'),
+		$this->_smarty, 'SplitKeywords', $this->_userId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
+	$this->assertEquals(array('abc', 'def ghi,jkl'), $data);
     }
 }
 ?>

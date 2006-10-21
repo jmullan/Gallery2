@@ -38,6 +38,11 @@ class KeywordAlbumSiteAdminController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
+	    if (empty($form['split'])) {
+		$error[] = 'form[error][split]';
+	    }
+	}
+	if (isset($form['action']['save']) && empty($error)) {
 	    list ($ret, $themeSettingsId) =
 		GalleryCoreApi::getPluginParameter('module', 'keyalbum', 'themeSettingsId');
 	    if ($ret) {
@@ -53,12 +58,20 @@ class KeywordAlbumSiteAdminController extends GalleryController {
 	}
 
 	if (isset($form['action']['save']) && empty($error)) {
+	    $split = '';
+	    $map = array('semicolon' => ';', 'comma' => ',', 'space' => '\\s');
+	    foreach ($form['split'] as $key => $unused) {
+		if (isset($map[$key])) {
+		    $split .= $map[$key];
+		}
+	    }
 	    foreach (array('themeId' => $form['themeId'],
 			   'orderBy' => (empty($form['presort']) ? '' : $form['presort'] . '|')
 					. $form['orderBy'],
 			    'orderDirection' => $form['orderDirection'],
 			    'summaryLinks' => $form['summaryLinks'],
-			    'description' => $form['description'])
+			    'description' => $form['description'],
+			    'split' => $split)
 		    as $key => $value) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', $key, $value);
 		if ($ret) {
@@ -93,8 +106,8 @@ class KeywordAlbumSiteAdminView extends GalleryView {
 	}
 
 	if ($form['formName'] != 'KeywordAlbumSiteAdmin') {
-	    foreach (array('themeId', 'orderBy', 'orderDirection', 'summaryLinks', 'description')
-		    as $key) {
+	    foreach (array('themeId', 'orderBy', 'orderDirection', 'summaryLinks', 'description',
+			   'split') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'keyalbum', $key);
 		if ($ret) {
@@ -107,6 +120,14 @@ class KeywordAlbumSiteAdminView extends GalleryView {
 	    } else {
 		$form['orderBy'] = $tmp[1];
 		$form['presort'] = $tmp[0];
+	    }
+	    $map = array(';' => 'semicolon', ',' => 'comma', 's' => 'space');
+	    $split = $form['split'];
+	    $form['split'] = array();
+	    for ($i = 0; $i < strlen($split); $i++) {
+		if (isset($map[$split{$i}])) {
+		    $form['split'][$map[$split{$i}]] = 1;
+		}
 	    }
 	} else {
 	    /* Reset theme selection on validation error for theme settings */
