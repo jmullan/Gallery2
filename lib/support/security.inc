@@ -86,11 +86,15 @@ if (passwordProvided()) {
 } else if (!isset($_COOKIE['g2Setup'])) {
     askForPassword();
     exit;
-} else if ($_COOKIE['g2Setup'] == md5($setupPassword)) {
+} else if ($_COOKIE['g2Setup'] == saltedMd5($setupPassword)) {
     return;
 } else {
     askForPassword();
     exit;
+}
+
+function saltedMd5($cleartext) {
+    return md5(substr(md5($cleartext), 0, 2) . $cleartext);
 }
 
 function passwordProvided() {
@@ -106,7 +110,7 @@ function savePasswordCookie() {
     global $gallery;
 
     header(sprintf('Set-Cookie: g2Setup=%s',
-		   md5($gallery->getConfig('setup.password'))));
+		   saltedMd5($gallery->getConfig('setup.password'))));
 }
 
 function askForPassword() {
