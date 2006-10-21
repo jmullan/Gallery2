@@ -68,7 +68,6 @@ gettext("All Users")
 gettext("Detecting broken derivatives")
 gettext("Clearing fast-download cache")
 gettext("Deleting old fast-download cache")
-gettext("Converting MySQL data to UTF8")
 gettext("Updating panorama items")
 gettext("Optimizing AccessSubscriberMap table")
 gettext("Site Admins")
@@ -76,6 +75,7 @@ gettext("Everybody")
 gettext("Guest")
 gettext("Gallery") /* also in: module.inc test/phpunit/ModuleTest.class */
 gettext("This is the main page of your Gallery")
+gettext("Converting MySQL data to UTF8")
 gettext("Upgrading permissions (%d items complete, %d remaining)")
 gettext("Detecting broken derivatives, loading ")
 gettext("Detecting broken derivatives ")
@@ -249,6 +249,12 @@ gettext("Debug output for failed items:")
 gettext("Checked %d items")
 gettext("%d items built")
 gettext("%d items failed")
+
+/* classes/ConvertDatabaseToUtf8Task.class */
+gettext("Convert MySQL database to UTF8")
+gettext("If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will experience scrambled characters until you convert your database to use UTF8.  This operation is harmless if your database is already converted, so it's safe to try it if you're unsure.  After using this, you should run the 'Delete database cache' task to get rid of any corruption in your cache.")
+gettext("Database successfully converted to UTF8")
+gettext("No conversion required")
 
 /* classes/DeleteSessionsTask.class */
 gettext("Delete user sessions")
@@ -640,8 +646,8 @@ gettext("Gallery Plugins")
 gettext("Get More Plugins") /* also in: templates/AdminRepository.tpl */
 gettext("Gallery features come as separate plugins.  You can download and install plugins to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it.")
 gettext("Plugin Name")
-gettext("Version")
 gettext("Installed") /* also in: templates/AdminRepository.tpl */
+gettext("Version")
 gettext("Actions") /* also in: templates/AdminRepository.tpl */
 gettext("Incompatible plugin!") /* also in: templates/AdminRepository.tpl */
 gettext("Core API Required: %s (available: %s)") /* also in: templates/AdminRepository.tpl */

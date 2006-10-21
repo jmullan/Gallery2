@@ -21,10 +21,10 @@
 # - Sverre M. Vikan <sverre AT urven DOT net>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-01 23:38+0100\n"
-"PO-Revision-Date: 2006-10-17 11:03+0100\n"
+"PO-Revision-Date: 2006-10-20 12:27+0100\n"
 "Last-Translator: Sverre M. Vikan <sverre AT urven DOT net>\n"
 "Language-Team: Norwegian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -205,9 +205,6 @@ msgstr "Renser hurtigminne for rask nedlasting"
 msgid "Deleting old fast-download cache"
 msgstr "Sletter gammelt hurtigminne for rask nedlasting"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "Omdanner MySQL-data til UTF8"
-
 msgid "Updating panorama items"
 msgstr "Oppdaterer panoramaobjekter"
 
@@ -228,6 +225,9 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "Dette er ditt galleris hovedside"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "Omdanner MySQL-data til UTF8"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -321,15 +321,14 @@ msgstr "rediger %s"
 msgid "Settings saved successfully."
 msgstr "Vellykket lagring av innstillinger."
 
-#, fuzzy
 msgid "Apply resized image settings"
-msgstr "Gjenopprettet temainnstillinger"
+msgstr "Bruk innstillinger for bilder med endrede størrelser"
 
 msgid "Preparing..."
 msgstr "Forbereder ..."
 
 msgid "Apply thumbnail settings"
-msgstr ""
+msgstr "Bruk miniatyrinnstillinger"
 
 msgid "Rebuilding thumbnails..."
 msgstr "Gjenskaper miniatyrbilder ..."
@@ -413,9 +412,8 @@ msgstr "Vellykket skalering av foto"
 msgid "Modify Photo"
 msgstr "Endre foto"
 
-#, fuzzy
 msgid "Successfully changed theme"
-msgstr "Vellykket aktiviering av temaet %s"
+msgstr "Vellykket endring av tema"
 
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; standardtema &raquo;"
@@ -590,6 +588,25 @@ msgstr "%d objekter opprettet"
 #, c-format
 msgid "%d items failed"
 msgstr "%d objekter mislyktes"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "Omdanner MySQL-data til UTF8"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Vellykket sletting av objekt"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Slett brukerøkter"
@@ -1786,11 +1803,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Programtilleggsnavn"
 
-msgid "Version"
-msgstr "Versjon"
-
 msgid "Installed"
 msgstr "Installert"
+
+msgid "Version"
+msgstr "Versjon"
 
 msgid "Actions"
 msgstr "Handlinger"
@@ -2109,9 +2126,8 @@ msgstr "med"
 msgid "New albums"
 msgstr "Nye album"
 
-#, fuzzy
 msgid "Save Defaults"
-msgstr "Standarder"
+msgstr "Lagre standarder"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2148,9 +2164,8 @@ msgstr "Verdi"
 msgid "There are no settings for this theme"
 msgstr "Det er ingen innstillinger for dette temaet"
 
-#, fuzzy
 msgid "Save Theme Settings"
-msgstr "Temainstillinger for %s"
+msgstr "Lagre temainstillinger"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2533,9 +2548,8 @@ msgstr "Du må skrive inn en gyldig størrelse"
 msgid "Use these target sizes in all subalbums"
 msgstr "Bruk disse målstørrelsene i alle underalbum"
 
-#, fuzzy
 msgid "Apply settings to existing items"
-msgstr "Utfør på underobjekter"
+msgstr "Bruk innstillinger på eksiterende objekter"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
@@ -2544,24 +2558,27 @@ msgid ""
 "Building images now makes this operation take longer, but saves the time to build and cache "
 "each file when it is first viewed."
 msgstr ""
+"Innstillingene for miniatyrer og bilder med endrede størrelser gjelder alle nye objekter. "
+"For å bruke disse innstillingene på alle objektene i ditt album, merk av i relevant boks. Å "
+"inkludere underalbum vil bruke hvert albums egne innstillinger på sine miniatyrer/bilder med "
+"endret størrelse, noe som ikke nødvendigvis stemmer med innstillingene over. Å bygge bilder "
+"nå gjør at denne operasjonen tar lenger tid, men det sparer byggetid og mellomlagringstid "
+"for hvert bilde når de vises for første gang."
 
 msgid "Apply album setting to thumbnails"
-msgstr ""
+msgstr "Bruk albuminnstillinger på miniatyrer"
 
-#, fuzzy
 msgid "... and for all subalbums"
-msgstr "Bruk på alle underalbum"
+msgstr "&hellip; og på alle underalbum"
 
-#, fuzzy
 msgid "Build thumbnails too"
-msgstr "Gjenskaper miniatyrbilder ..."
+msgstr "Bygg miniatyrbilder også"
 
-#, fuzzy
 msgid "Apply album setting to resized images"
-msgstr "Gjenskaper skalerte bilder"
+msgstr "Bruk albuminnstillinger på bilder med endret størrelse"
 
 msgid "Build resizes too"
-msgstr ""
+msgstr "Bygg endrede størrelser også"
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2836,33 +2853,31 @@ msgstr ""
 msgid "Restore original"
 msgstr "Gjenopprett orginal"
 
-#, fuzzy
 msgid "Choose a theme"
-msgstr "Velg en blokk"
+msgstr "Velg tema"
 
 #, c-format
 msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
+"Temaer styrer albumets utseende. Du kan velge forskjellig tema for hvert album. Om du ikke "
+"velger et tema, vil vi bruke temaet %s som standard."
 
 msgid "Use this theme in all subalbums"
 msgstr "Bruk dette temaet i alle underalbum"
 
 msgid "Choose Theme"
-msgstr ""
+msgstr "Velg tema"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Configure the %s theme"
-msgstr "Enhetstesttema"
+msgstr "Sett opp temaet %s"
 
-#, fuzzy
 msgid "These settings only apply to the theme for this album."
-msgstr ""
-"Dette albumet er satt opp til  bruke temaet <b>%s</b>. Disse instillingene gjelder bare "
-"temaet for dette albumet."
+msgstr "Disse innstillingen gjelder kun for dette albumets tema."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Bruk disse innstillingene i alle underalbum som bruker temaet %s"
 
