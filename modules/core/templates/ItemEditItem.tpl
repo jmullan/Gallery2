@@ -140,7 +140,7 @@
   </p>
 
   {if !empty($ItemEditItem.originationTimestamp)}
-  <script type="text/javascript" language="javascript">
+  <script type="text/javascript">
   // <![CDATA[
   function setOriginationTimestamp() {ldelim}
     var frm = document.getElementById('itemAdminForm');
