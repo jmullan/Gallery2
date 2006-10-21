@@ -2,9 +2,7 @@
 <html>
   <head>
     <title>{g->text text="Gallery Repository Tools"}</title>
-    <STYLE TYPE="text/css">
-      {include file="gallery:lib/tools/repository/templates/stylesheet.css"}
-    </STYLE>
+    <link rel="stylesheet" type="text/css" href="templates/stylesheet.css"/>
   </head>
   <body>
     <h1>{g->text text="Gallery Repository Tools"}</h1>

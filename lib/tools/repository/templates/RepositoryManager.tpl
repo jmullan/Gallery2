@@ -2,16 +2,14 @@
 <html>
   <head>
     <title>{g->text text="Repository Manager"}</title>
-    <STYLE TYPE="text/css">
-      {include file="gallery:lib/tools/repository/templates/stylesheet.css"}
-    </STYLE>
+    <link rel="stylesheet" type="text/css" href="templates/stylesheet.css"/>
   </head>
   <body>
     <h1>{g->text text="Repository Manager"}</h1>
     <div class="section">
       {g->text text="Plugins that have newer unpackaged versions are marked."}
     </div>
-    
+
     <h2>{g->text text="Actions"}</h2>
     <div class="section">
     {if isset($upgradeRepositoryLink) }
