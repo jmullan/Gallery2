@@ -125,11 +125,11 @@
   <div id="Markup_colorHandle">&nbsp;</div>
   <div id="Markup_pickerDiv">
     <img id="Markup_pickerBg" src="{g->url href="modules/core/data/pickerbg.png"}" alt=""/>
-    <div id="Markup_selector"><img src="{g->url href="modules/core/data/select.gif"}"/></div>
+    <div id="Markup_selector"><img src="{g->url href="modules/core/data/select.gif"}" alt=""/></div>
   </div>
 
   <div id="Markup_hueBg">
-    <div id="Markup_hueThumb"><img src="{g->url href="modules/core/data/hline.png"}"/></div>
+    <div id="Markup_hueThumb"><img src="{g->url href="modules/core/data/hline.png"}" alt=""/></div>
   </div>
 
   <div id="Markup_valdiv">
@@ -147,7 +147,7 @@
     # <input name="hexval" id="Markup_hexval" type="text" value="0" size="6" maxlength="6"/>
     <br/>
     <input value="Done" class="yui-log-button" style="font-size: 11px;" type="button"
-      onclick="userUpdate()">
+      onclick="userUpdate()"/>
   </div>
   <div id="Markup_swatch">&nbsp;</div>
   <div id="Markup_hint">{g->text text="You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s" arg1="http://www.w3.org/TR/2002/WD-css3-color-20020418/#html4" arg2="[color=red]Your Text[/color]"}</div>

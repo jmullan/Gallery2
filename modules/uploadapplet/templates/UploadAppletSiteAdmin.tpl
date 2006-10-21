@@ -48,14 +48,14 @@
   {/if}
 
   {g->text text="New variable"}<br/>
-  <input type="text" name="{g->formVar var="form[default][name]"}" /> = 
+  <input type="text" name="{g->formVar var="form[default][name]"}" /> =
   <input type="text" name="{g->formVar var="form[default][value]"}" />
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit" 
+  <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][add]"}" value="{g->text text="Add variable"}"
-   onClick="javascript:this.form['{g->formVar var="form[variable][type]"}'].value='default';this.form.submit();" />
+   onclick="javascript:this.form['{g->formVar var="form[variable][type]"}'].value='default';this.form.submit();" />
 </div>
 
 <div class="gbBlock">
@@ -94,14 +94,14 @@
   {/if}
 
   {g->text text="New variable"}<br/>
-  <input type="text" name="{g->formVar var="form[override][name]"}" /> = 
+  <input type="text" name="{g->formVar var="form[override][name]"}" /> =
   <input type="text" name="{g->formVar var="form[override][value]"}" />
 </div>
 
 <div class="gbBlock gcBackground1">
-  <input type="submit" class="inputTypeSubmit" 
+  <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][add]"}" value="{g->text text="Add variable"}"
-   onClick="javascript:this.form['{g->formVar var="form[variable][type]"}'].value='override';this.form.submit();" />
+   onclick="javascript:this.form['{g->formVar var="form[variable][type]"}'].value='override';this.form.submit();" />
 </div>
 
 

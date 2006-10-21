@@ -55,7 +55,7 @@
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][add]"}" value="{g->text text="Add variable"}"
-   onClick="javascript:this.form['{g->formVar var="form[variable][type]"}'].value='default';this.form.submit();" />
+   onclick="javascript:this.form['{g->formVar var="form[variable][type]"}'].value='default';this.form.submit();" />
 </div>
 
 <div class="gbBlock">
@@ -101,7 +101,7 @@
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][add]"}" value="{g->text text="Add variable"}"
-   onClick="javascript:this.form['{g->formVar var="form[variable][type]"}'].value='override';this.form.submit();" />
+   onclick="javascript:this.form['{g->formVar var="form[variable][type]"}'].value='override';this.form.submit();" />
 </div>
 
 

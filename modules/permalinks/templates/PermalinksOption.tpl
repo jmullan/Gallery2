@@ -23,7 +23,7 @@
     </tr>
     {foreach from=$PermalinksOption.aliases item=name}
 	  <tr class="{cycle values="gbEven,gbOdd"}">
-	    <td><input type="checkbox" 
+	    <td><input type="checkbox"
 	      name="{g->formVar var="form[PermalinksOption][delete][`$name`]"}"></td>
 	    <td>{$name}</td>
 	  </tr>
@@ -33,18 +33,18 @@
 
   {if isset($form.error.PermalinksOption.exists)}
   <div class="giError">
-    {g->text text="Permalink '%s' already exists, possibly on another item" 
+    {g->text text="Permalink '%s' already exists, possibly on another item"
       arg1=$form.PermalinksOption.aliasName}
   </div>
   {/if}
 
-  <p><label for="Permalinks_aliasname"> {g->text text="Add a new permalink:"} </alias>
-    <input type="text" name="{g->formVar var="form[PermalinksOption][aliasName]"}" 
+  <p><label for="Permalinks_aliasname"> {g->text text="Add a new permalink:"} </label>
+    <input type="text" name="{g->formVar var="form[PermalinksOption][aliasName]"}"
       id="Permalinks_aliasname" />
-    <a href="javascript:return false;" 
-      onClick="javascript:document.forms['itemAdminForm'].Permalinks_aliasname.value='{$ItemAdmin.item.pathComponent}';">
+    <a href="javascript:return false;"
+      onclick="javascript:document.forms['itemAdminForm'].Permalinks_aliasname.value='{$ItemAdmin.item.pathComponent}';">
       {g->text text="Set to '%s'" arg1="`$ItemAdmin.item.pathComponent`"}</a>
   </p>
-  
+
 </div>
 
