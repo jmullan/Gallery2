@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2004-10-08 18:00+0100\n"
 "Last-Translator: José Ricardo\n"
@@ -100,6 +100,10 @@ msgstr ""
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Módulos da Galeria"
 
 #, fuzzy
 msgid "Done."
@@ -204,9 +208,6 @@ msgstr "Limpando cache de download-r�pido"
 msgid "Deleting old fast-download cache"
 msgstr "Limpando cache de download-r�pido"
 
-msgid "Converting MySQL data to UTF8"
-msgstr ""
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -227,6 +228,9 @@ msgstr "Galleria"
 
 msgid "This is the main page of your Gallery"
 msgstr "P&aacute;gina principal da Galeria"
+
+msgid "Converting MySQL data to UTF8"
+msgstr ""
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -320,20 +324,16 @@ msgstr "editar %s"
 msgid "Settings saved successfully."
 msgstr "Configuração salva com sucesso"
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; tema padrão &raquo;"
-
 #, fuzzy
-msgid "Recreating resized images"
-msgstr "Recriar imagens redimensionadas"
+msgid "Apply resized image settings"
+msgstr "Parâmetros da Conta"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Processando..."
 
-#, fuzzy
-msgid "Rebuilding resized images..."
-msgstr "Recriar imagens redimensionadas"
+msgid "Apply thumbnail settings"
+msgstr ""
 
 #, fuzzy
 msgid "Rebuilding thumbnails..."
@@ -417,6 +417,13 @@ msgstr "Foto redimensionada com sucesso."
 
 msgid "Modify Photo"
 msgstr "Modificar foto"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Foi adicionado %d ficheiro com sucesso."
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; tema padrão &raquo;"
 
 msgid "Theme"
 msgstr "Tema"
@@ -544,9 +551,6 @@ msgstr "Prioridade da caixa de ferramentas"
 msgid "Graphics Toolkits"
 msgstr "Caixa de ferramentas gráficas"
 
-msgid "Defaults"
-msgstr "Padrões"
-
 msgid "Account Settings"
 msgstr "Parâmetros de sua conta"
 
@@ -592,6 +596,24 @@ msgstr "%d itens criados"
 #, c-format
 msgid "%d items failed"
 msgstr "%d itens falharam"
+
+msgid "Convert MySQL database to UTF8"
+msgstr ""
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Item apagado com sucesso"
+
+msgid "No conversion required"
+msgstr ""
 
 #, fuzzy
 msgid "Delete user sessions"
@@ -1784,11 +1806,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Nome completo"
 
-msgid "Version"
-msgstr "Versão"
-
 msgid "Installed"
 msgstr "instalado"
+
+msgid "Version"
+msgstr "Versão"
 
 msgid "Actions"
 msgstr "Ações"
@@ -1902,10 +1924,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Continuar..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Módulos da Galeria"
 
 msgid "Download Plugin List"
 msgstr ""
@@ -2085,6 +2103,9 @@ msgstr "Configurações padrão do álbum salvas com sucesso"
 msgid "Restored theme settings"
 msgstr "Parâmetros de tema restaurados"
 
+msgid "Defaults"
+msgstr "Padrões"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2098,6 +2119,10 @@ msgstr "com"
 
 msgid "New albums"
 msgstr "Novos álbuns"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Parâmetros de defeito"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2134,6 +2159,10 @@ msgstr "Valor"
 
 msgid "There are no settings for this theme"
 msgstr "Não há configurações para este tema"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Configurações de tema %s"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2491,12 +2520,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Aplicar a sub-itens."
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Escolha um layout para este álbum. (A forma como o álbum é disposto na página.)"
-
-msgid "Use this theme in all subalbums"
-msgstr ""
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " Todo ítem requer uma miniatura. Especifique aqui o tamanho padrão em píxels."
 
@@ -2524,22 +2547,35 @@ msgstr "Você precisa entrar um tamanho válido"
 msgid "Use these target sizes in all subalbums"
 msgstr ""
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Recriar miniaturas e imagens redimensionadas"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Aplicar aos sub-items"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"As configurações de miniaturas e imagens redimensionado são válidas para todos os novos "
-"itens. Para aplicar estas configurações para todos os itens do álbum, marque a caixa "
-"apropriada."
 
-msgid "Recreate thumbnails"
-msgstr "Recriar miniaturas"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "Recriar imagens redimensionadas"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Aplicar aos sub-items"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Recriar thumbnails"
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Recriar imagens cujo tamanho foi alterado"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2820,20 +2856,34 @@ msgstr ""
 msgid "Restore original"
 msgstr "Restaurar o original"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Escolha um bloco"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr ""
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Tema de teste de unidade"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Este álbum é configurada para usar o tema <b>%s</b>. Estas configurações aplicam-se apenas "
 "para o tema deste álbum."
 
 #, c-format
-msgid "Use these settings in all subalbums that use %s theme"
-msgstr ""
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr ""
 
 msgid "Album Highlight"
@@ -3055,9 +3105,6 @@ msgstr "depois"
 
 msgid "Reorder"
 msgstr "Reorganizar"
-
-msgid "Continue..."
-msgstr "Continuar..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr ""
@@ -3528,6 +3575,37 @@ msgstr "[teste] Uma segunda permissão"
 
 msgid "Unit test theme"
 msgstr "Tema de teste de unidade"
+
+#, fuzzy
+#~ msgid "Recreating resized images"
+#~ msgstr "Recriar imagens redimensionadas"
+
+#, fuzzy
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Recriar imagens redimensionadas"
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Escolha um layout para este álbum. (A forma como o álbum é disposto na página.)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Recriar miniaturas e imagens redimensionadas"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "As configurações de miniaturas e imagens redimensionado são válidas para todos os novos "
+#~ "itens. Para aplicar estas configurações para todos os itens do álbum, marque a caixa "
+#~ "apropriada."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Recriar miniaturas"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Recriar imagens redimensionadas"
+
+#~ msgid "Continue..."
+#~ msgstr "Continuar..."
 
 #, fuzzy
 #~ msgid "Performing Maintenance Tasks"

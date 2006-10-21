@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-31 14:44+0100\n"
 "PO-Revision-Date: 2006-05-19 13:03+0200\n"
@@ -104,6 +104,10 @@ msgstr "Indizea eguneratu"
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Plugin Guztiak Eguneratu"
 
 msgid "Done."
 msgstr "Eginda."
@@ -205,9 +209,6 @@ msgstr "Deskarga-azkar katxea garbitzen"
 msgid "Deleting old fast-download cache"
 msgstr "Deskarga-azkar katxea garbitzen"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "MySQL datuak UTF-8 bihurtzen"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -228,6 +229,9 @@ msgstr "Galeria"
 
 msgid "This is the main page of your Gallery"
 msgstr "Hau zure galeriaren orrialde nagusia da"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "MySQL datuak UTF-8 bihurtzen"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -321,18 +325,16 @@ msgstr "%s editatu"
 msgid "Settings saved successfully."
 msgstr "Ezarpenak behar bezala gorde dira."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; lehenetsitako gaia &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Taimanaz aldaturiko irudiak berriz sortzen"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Gai ezarpenak berreskuraturik"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Prozesatzen..."
 
-msgid "Rebuilding resized images..."
-msgstr "Taimanaz aldaturiko irudiak berriz sortzen..."
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Argazkitxoak birsortzen..."
@@ -415,6 +417,13 @@ msgstr "Argazkia behar bezala eskalatu da"
 
 msgid "Modify Photo"
 msgstr "Argazkia Eraldatu"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "%s gaia behar bezala gaitu da"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; lehenetsitako gaia &raquo;"
 
 msgid "Theme"
 msgstr "Gaia"
@@ -541,9 +550,6 @@ msgstr "Tresna-joko lehentasuna"
 msgid "Graphics Toolkits"
 msgstr "Tresna-joko Grafikoak"
 
-msgid "Defaults"
-msgstr "Lehenetsiak"
-
 msgid "Account Settings"
 msgstr "Kontu ezarpenak"
 
@@ -589,6 +595,25 @@ msgstr "%d elementu eginak"
 #, c-format
 msgid "%d items failed"
 msgstr "%d elementuk huts egin dute"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "MySQL datuak UTF-8 bihurtzen"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Elementua behar bezala ezabatu da"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Erabiltzaile saioak ezabatu"
@@ -1802,11 +1827,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Plugin Izena"
 
-msgid "Version"
-msgstr "Bertsioa"
-
 msgid "Installed"
 msgstr "Instalaturik"
+
+msgid "Version"
+msgstr "Bertsioa"
 
 msgid "Actions"
 msgstr "Ekintzak"
@@ -1917,10 +1942,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Jarraitu..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Plugin Guztiak Eguneratu"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2105,6 +2126,9 @@ msgstr "Lehenetsiriko album ezarpenak behar bezala gorde dira"
 msgid "Restored theme settings"
 msgstr "Gai ezarpenak berreskuraturik"
 
+msgid "Defaults"
+msgstr "Lehenetsiak"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2120,6 +2144,10 @@ msgstr "honekin"
 
 msgid "New albums"
 msgstr "Album berriak"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Lehenetsiak"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2155,6 +2183,10 @@ msgstr "Balioa"
 
 msgid "There are no settings for this theme"
 msgstr "Ez dago ezarpenik gai honentzat"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "%s Gai Ezarpenak"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2512,12 +2544,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Azpi-album guztiei ezarri"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Aukeratu gai bat album honentzat. (orrialdean album-a bistaraziko den modua)"
-
-msgid "Use this theme in all subalbums"
-msgstr "Gai hau erabili azpi-albumetan"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " Elementu bakoitzak argazkitxo bat behar du. Ezarri lehenetsiriko tamaina pixel-etan."
 
@@ -2547,21 +2573,35 @@ msgstr "Baliozko tamaina bat idatzi behar duzu"
 msgid "Use these target sizes in all subalbums"
 msgstr "Helburu tamaina hau erabili azpi-album guztietan"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Argazkitxo eta tamaina aldatuak berriz sortu"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Ezarri azpi-elementuei"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"Argazkitxo eta tamaina aldatutako irudi ezarpenak elementu berrientzat dira. Ezarpen hauek "
-"album-eko elemetu guztiei ezarri nahi ezkero, hautatu dagokion aukera."
 
-msgid "Recreate thumbnails"
-msgstr "Argazkitxoa berriz sortu"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "Taimanaz aldaturiko irudiak berriz sortu"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Azpi-album guztiei ezarri"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Argazkitxoak birsortzen..."
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Taimanaz aldaturiko irudiak berriz sortzen"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2839,23 +2879,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "Jatorrizkoa berreskuratu"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Bloke bat hautatu"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "Gai hau erabili azpi-albumetan"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Unitate proba gaia"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Album hau <b>%s</b> gaia erabiltzeko konfiguraturik dago. Ezarpen hauek album honetako "
 "gaiera bakarrik ezarriko dira."
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Ezarpen hauek %s gaia erabiltzen duten azpi-album guztietan erabili"
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"Oharra: azpi-albumentzat gai berdina ezartzeko <b>Album</b> fitxaeko koadro egokia aukera "
-"ezazu"
 
 msgid "Album Highlight"
 msgstr "Albuma Nabarmendu"
@@ -3073,9 +3125,6 @@ msgstr "geroago"
 
 msgid "Reorder"
 msgstr "Ordenatu"
-
-msgid "Continue..."
-msgstr "Jarraitu..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Gunea mantenu lanagatik ez dago martxan une honetan."
@@ -3545,6 +3594,38 @@ msgstr "[proba] A bigarren baimena"
 
 msgid "Unit test theme"
 msgstr "Unitate proba gaia"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Taimanaz aldaturiko irudiak berriz sortzen..."
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Aukeratu gai bat album honentzat. (orrialdean album-a bistaraziko den modua)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Argazkitxo eta tamaina aldatuak berriz sortu"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "Argazkitxo eta tamaina aldatutako irudi ezarpenak elementu berrientzat dira. Ezarpen "
+#~ "hauek album-eko elemetu guztiei ezarri nahi ezkero, hautatu dagokion aukera."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Argazkitxoa berriz sortu"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Taimanaz aldaturiko irudiak berriz sortu"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "Oharra: azpi-albumentzat gai berdina ezartzeko <b>Album</b> fitxaeko koadro egokia aukera "
+#~ "ezazu"
+
+#~ msgid "Continue..."
+#~ msgstr "Jarraitu..."
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "Sistema Mantenua Egiten"

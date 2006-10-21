@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2005-03-28 14:00+0800\n"
 "PO-Revision-Date: 2006-03-10 11:37+0800\n"
 "Last-Translator: Lyric <lyric@lyricli.com>\n"
@@ -101,6 +101,10 @@ msgstr "更新索引"
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "升级所有插件"
 
 msgid "Done."
 msgstr "完成"
@@ -202,9 +206,6 @@ msgstr "清除快速下载缓存"
 msgid "Deleting old fast-download cache"
 msgstr "正在删除旧的快速下载缓存"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "将 MySQL 数据转换到 UTF8"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -225,6 +226,9 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "这是Gallery的首页"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "将 MySQL 数据转换到 UTF8"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -318,18 +322,16 @@ msgstr "编辑 %s"
 msgid "Settings saved successfully."
 msgstr "设置保存成功。"
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; 默认风格主题 &raquo;"
-
-msgid "Recreating resized images"
-msgstr "重建变更尺寸的图片"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "恢复主题设置"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "处理中..."
 
-msgid "Rebuilding resized images..."
-msgstr "正在重建变更尺寸的图像...."
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "正在重建缩略图......"
@@ -412,6 +414,13 @@ msgstr "照片缩放成功"
 
 msgid "Modify Photo"
 msgstr "修改照片"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "主题 %s 开启成功"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; 默认风格主题 &raquo;"
 
 msgid "Theme"
 msgstr "主题"
@@ -538,9 +547,6 @@ msgstr "工具优先级"
 msgid "Graphics Toolkits"
 msgstr "图形工具"
 
-msgid "Defaults"
-msgstr "默认值"
-
 msgid "Account Settings"
 msgstr "帐户设置"
 
@@ -584,6 +590,25 @@ msgstr "%d个项目创建"
 #, c-format
 msgid "%d items failed"
 msgstr "%d 个项目错误"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "将 MySQL 数据转换到 UTF8"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "项目已删除成功"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "删除用户会话"
@@ -1754,11 +1779,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "全名"
 
-msgid "Version"
-msgstr "版本"
-
 msgid "Installed"
 msgstr "已安装"
+
+msgid "Version"
+msgstr "版本"
 
 msgid "Actions"
 msgstr "操作"
@@ -1872,10 +1897,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "继续……"
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "升级所有插件"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2054,6 +2075,9 @@ msgstr "默认相册设置保存成功"
 msgid "Restored theme settings"
 msgstr "恢复主题设置"
 
+msgid "Defaults"
+msgstr "默认值"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2067,6 +2091,10 @@ msgstr "和"
 
 msgid "New albums"
 msgstr "新相册"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "默认值"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2102,6 +2130,10 @@ msgstr "值"
 
 msgid "There are no settings for this theme"
 msgstr "没有此主题的设置"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "%s 主题设置"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2441,12 +2473,6 @@ msgstr "设定相册排序方式。将应用到所有当前项目和新添项目
 msgid "Apply to all subalbums"
 msgstr "应用到所有子相册"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "为此相册选择一个主题。（相册在页面显示的排列方式）"
-
-msgid "Use this theme in all subalbums"
-msgstr "所有子相册都使用该主题"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "每个项目都需要一个缩略图，请在此设定默认象素尺寸。"
 
@@ -2474,21 +2500,35 @@ msgstr "您必须输入一个有效的尺寸"
 msgid "Use these target sizes in all subalbums"
 msgstr "使用尺寸限制到所有子相册中"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "重建缩略图和变更尺寸的图片"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "应用变更到子项目"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"缩略图和变更尺寸的图片设置是针对所有新项目的。选择适当的选择框将这些设置应用到您相册的所有项"
-"目上。"
 
-msgid "Recreate thumbnails"
-msgstr "重建缩略图"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "应用到所有子相册"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "正在重建缩略图......"
+
+#, fuzzy
+msgid "Apply album setting to resized images"
 msgstr "重建变更尺寸的图片"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2741,19 +2781,33 @@ msgstr ""
 msgid "Restore original"
 msgstr "重新载入原始图片"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "选择功能块"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "所有子相册都使用该主题"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "公测主题"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr "此相册已设定使用 <b>%s</b> 主题。这些设置仅应用在此相册的主题中。"
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "所有使用%s主题的子相册都使用同样的设置"
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr "注意：要将所有的子相册设置为同一个主题，检查<b>相册</b>中适合的选项。"
 
 msgid "Album Highlight"
 msgstr "精华相册"
@@ -2963,9 +3017,6 @@ msgstr "之后"
 
 msgid "Reorder"
 msgstr "重新排序"
-
-msgid "Continue..."
-msgstr "继续……"
 
 msgid "Site is temporarily down for maintenance."
 msgstr "站点维护性关闭"
@@ -3400,6 +3451,36 @@ msgstr "[测试]权限"
 
 msgid "Unit test theme"
 msgstr "公测主题"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "正在重建变更尺寸的图像...."
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "为此相册选择一个主题。（相册在页面显示的排列方式）"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "重建缩略图和变更尺寸的图片"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "缩略图和变更尺寸的图片设置是针对所有新项目的。选择适当的选择框将这些设置应用到您相册的所有"
+#~ "项目上。"
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "重建缩略图"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "重建变更尺寸的图片"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr "注意：要将所有的子相册设置为同一个主题，检查<b>相册</b>中适合的选项。"
+
+#~ msgid "Continue..."
+#~ msgstr "继续……"
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "执行维护任务"

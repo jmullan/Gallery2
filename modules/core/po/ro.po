@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-08-25 16:49+0200\n"
 "PO-Revision-Date: 2006-03-16 16:27+0100\n"
@@ -106,6 +106,10 @@ msgstr "Actualizeaza Index"
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Actualizeaza toate modulele"
 
 msgid "Done."
 msgstr "Gata."
@@ -207,9 +211,6 @@ msgstr "Sterg cache download rapid"
 msgid "Deleting old fast-download cache"
 msgstr "Sterg vechiul cache download rapid"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "Convertesc datele MySQL la UTF8"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -230,6 +231,9 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "Aceasta este pagina principala a Gallery"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "Convertesc datele MySQL la UTF8"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -323,18 +327,16 @@ msgstr "modifica %s"
 msgid "Settings saved successfully."
 msgstr "Setarile salvate corect."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; tema predefinita &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Recreaza imaginile redimensionate"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Restored theme settings"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Proceseaza..."
 
-msgid "Rebuilding resized images..."
-msgstr "Reconstruirea imaginilor redimensionate..."
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Reconstruire thumbnail-uri..."
@@ -417,6 +419,13 @@ msgstr "Fotografie scalata cu success"
 
 msgid "Modify Photo"
 msgstr "Modifica Foto"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Successfully activated theme %s"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; tema predefinita &raquo;"
 
 msgid "Theme"
 msgstr "Tema"
@@ -543,9 +552,6 @@ msgstr "Prioritate instrumente"
 msgid "Graphics Toolkits"
 msgstr "Instrumente Grafice"
 
-msgid "Defaults"
-msgstr "Defaults"
-
 msgid "Account Settings"
 msgstr "Configurari Profil"
 
@@ -591,6 +597,25 @@ msgstr "%d articole construite"
 #, c-format
 msgid "%d items failed"
 msgstr "%d articole eronate"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "Convertesc datele MySQL la UTF8"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Obiect sters"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Sterge sesiunile utilizatorilor"
@@ -1808,11 +1833,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Nume Complet"
 
-msgid "Version"
-msgstr "Versiune"
-
 msgid "Installed"
 msgstr "Instalat"
+
+msgid "Version"
+msgstr "Versiune"
 
 msgid "Actions"
 msgstr "Actiuni"
@@ -1926,10 +1951,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Continua..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Actualizeaza toate modulele"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2113,6 +2134,9 @@ msgstr "Successfully saved default album settings"
 msgid "Restored theme settings"
 msgstr "Restored theme settings"
 
+msgid "Defaults"
+msgstr "Defaults"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2128,6 +2152,10 @@ msgstr "cu"
 
 msgid "New albums"
 msgstr "Albume noi"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Defaults"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2164,6 +2192,10 @@ msgstr "Valoare"
 
 msgid "There are no settings for this theme"
 msgstr "Nu exista setari pentru aceasta tema"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Configuratia temei %s"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2520,12 +2552,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Aplica tutror sub-albumelor"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Alege o tema pentru acest album. (Modul in care albumul este dispus in pagina)"
-
-msgid "Use this theme in all subalbums"
-msgstr "Foloseste aceasta tema in toate sub-albumele"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 "Fiecare obiect necesita un thumbnail. Defineste dimensiunea predefinita in pixeli aici."
@@ -2556,21 +2582,35 @@ msgstr "Trebuie sa introduci o dimensiune valida"
 msgid "Use these target sizes in all subalbums"
 msgstr "Foloseste aceste dimensiuni in toate subalbumele"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Re-creaza thumbnailurile si redimensionarile"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Aplica la sub-articole"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"Setarile pentru thumbnail-uri si redimensionari se aplica pentru obiectele noi. Pentru a "
-"aplica aceste setari la toate obiectele din album, selecteaza optiunea corespunzatoare."
 
-msgid "Recreate thumbnails"
-msgstr "Re-genereaza thumbnail-uri"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "Re-genereaza imaginile redimensionate"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Aplica tutror sub-albumelor"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Reconstruire thumbnail-uri..."
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Recreaza imaginile redimensionate"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2849,23 +2889,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "Restaureaza originalul"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Selecteaza un bloc"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "Foloseste aceasta tema in toate sub-albumele"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Unit&agrave; di test tema"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Acest album este configurat sa foloseasca tema <b>%s</b>. Aceste configuratii se aplica "
 "numai la tema acestui album"
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Foloseste aceste configurari in toate subalbumele care folosesc tema %s"
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"Nota: pentru a folosi aceasta tema pentru toate sub-albumele, selecteaza optiunea "
-"corespunzatoare in sectiunea <b>Album</b>"
 
 msgid "Album Highlight"
 msgstr "Evidentiaza album"
@@ -3080,9 +3132,6 @@ msgstr "dupa"
 
 msgid "Reorder"
 msgstr "Reordoneaza"
-
-msgid "Continue..."
-msgstr "Continua..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Site-ul web este oprit pentru mentenanta."
@@ -3553,6 +3602,38 @@ msgstr "[test] Una seconda autorizzazione"
 
 msgid "Unit test theme"
 msgstr "Unit&agrave; di test tema"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Reconstruirea imaginilor redimensionate..."
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Alege o tema pentru acest album. (Modul in care albumul este dispus in pagina)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Re-creaza thumbnailurile si redimensionarile"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "Setarile pentru thumbnail-uri si redimensionari se aplica pentru obiectele noi. Pentru a "
+#~ "aplica aceste setari la toate obiectele din album, selecteaza optiunea corespunzatoare."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Re-genereaza thumbnail-uri"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Re-genereaza imaginile redimensionate"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "Nota: pentru a folosi aceasta tema pentru toate sub-albumele, selecteaza optiunea "
+#~ "corespunzatoare in sectiunea <b>Album</b>"
+
+#~ msgid "Continue..."
+#~ msgstr "Continua..."
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "Executarea taskurilor de mentenanta"

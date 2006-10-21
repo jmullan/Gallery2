@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2003-06-25 11:44+0100\n"
 "PO-Revision-Date: 2006-08-18 02:46+0200\n"
 "Last-Translator: poromaan <poromaan@gmail.com>\n"
@@ -204,9 +204,6 @@ msgstr "Kiire-allatõmbamise vahemälu tühjendamine"
 msgid "Deleting old fast-download cache"
 msgstr "Vana kiire-allatõmbamise vahemälu tühjendamine"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "MySQL andmete UTF8 andmeteks muutmine"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -227,6 +224,9 @@ msgstr "Galerii"
 
 msgid "This is the main page of your Gallery"
 msgstr "See on Galerii avaleht"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "MySQL andmete UTF8 andmeteks muutmine"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -589,6 +589,25 @@ msgstr "%d eset valmistatud"
 #, c-format
 msgid "%d items failed"
 msgstr "%d eset ebaõnnestus"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "MySQL andmete UTF8 andmeteks muutmine"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Andmebaas edukalt optimiseeritud"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Kustuta kasutajasessioonid"
@@ -1759,11 +1778,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Täielik nimi (Peaalbumi nimi)"
 
-msgid "Version"
-msgstr "Versioon"
-
 msgid "Installed"
 msgstr "Installitud"
+
+msgid "Version"
+msgstr "Versioon"
 
 msgid "Actions"
 msgstr "Tegevused"

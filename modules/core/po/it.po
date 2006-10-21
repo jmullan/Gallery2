@@ -20,7 +20,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-08-25 16:49+0200\n"
 "PO-Revision-Date: 2006-10-07 16:01+0100\n"
@@ -211,9 +211,6 @@ msgstr "Pulizia cache per il download veloce"
 msgid "Deleting old fast-download cache"
 msgstr "Eliminazione vecchia cache per il download veloce"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "Conversione dati MySQL in UTF8 in corso"
-
 msgid "Updating panorama items"
 msgstr "Aggiornamenti in corso degli oggetti panoramici"
 
@@ -234,6 +231,9 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "Questa &egrave; la pagina principale della tua Gallery"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "Conversione dati MySQL in UTF8 in corso"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -596,6 +596,25 @@ msgstr "%d oggetti generati"
 #, c-format
 msgid "%d items failed"
 msgstr "%d oggetti falliti"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "Conversione dati MySQL in UTF8 in corso"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Oggetto eliminato con successo"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Elimina sessioni utente"
@@ -1822,11 +1841,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Nome Plugin"
 
-msgid "Version"
-msgstr "Versione"
-
 msgid "Installed"
 msgstr "Installato"
+
+msgid "Version"
+msgstr "Versione"
 
 msgid "Actions"
 msgstr "Azioni"

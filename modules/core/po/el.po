@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2003-03-06 16:30+0200\n"
 "PO-Revision-Date: 2003-03-06 16:30+0200\n"
 "Last-Translator: Nikos Batsis <nickthegreek@yahoo.com>\n"
@@ -103,6 +103,10 @@ msgstr ""
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Γκαλλερύ"
 
 #, fuzzy
 msgid "Done."
@@ -211,9 +215,6 @@ msgstr ""
 msgid "Deleting old fast-download cache"
 msgstr "Δικαιώματα Αντικειμένου"
 
-msgid "Converting MySQL data to UTF8"
-msgstr ""
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -234,6 +235,9 @@ msgid "Gallery"
 msgstr "Γκαλλερύ"
 
 msgid "This is the main page of your Gallery"
+msgstr ""
+
+msgid "Converting MySQL data to UTF8"
 msgstr ""
 
 #, c-format
@@ -339,16 +343,13 @@ msgid "Settings saved successfully."
 msgstr "Η Ομάδα '%s' Δημιουργήθηκε με επιτυχία"
 
 #, fuzzy
-msgid "&laquo; default theme &raquo;"
-msgstr "* Χωρίς Ταξινόμιση *"
-
-msgid "Recreating resized images"
-msgstr ""
+msgid "Apply resized image settings"
+msgstr "Ρυθμίσεις Λευκόματος"
 
 msgid "Preparing..."
 msgstr ""
 
-msgid "Rebuilding resized images..."
+msgid "Apply thumbnail settings"
 msgstr ""
 
 msgid "Rebuilding thumbnails..."
@@ -444,6 +445,14 @@ msgstr "Η Ομάδα '%s' Δημιουργήθηκε με επιτυχία"
 #, fuzzy
 msgid "Modify Photo"
 msgstr "Επεξεργασία Εικόνας"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Η Ομάδα '%s' Διαγράφηκε με επιτυχία"
+
+#, fuzzy
+msgid "&laquo; default theme &raquo;"
+msgstr "* Χωρίς Ταξινόμιση *"
 
 msgid "Theme"
 msgstr ""
@@ -590,9 +599,6 @@ msgstr ""
 msgid "Graphics Toolkits"
 msgstr "Εργαλειοθήκη Γραφικών"
 
-msgid "Defaults"
-msgstr "Προεπιλογές"
-
 #, fuzzy
 msgid "Account Settings"
 msgstr "Ρυθμίσεις Λευκόματος"
@@ -636,6 +642,24 @@ msgstr "Προσθέστε Φωτογραφίες"
 
 #, c-format
 msgid "%d items failed"
+msgstr ""
+
+msgid "Convert MySQL database to UTF8"
+msgstr ""
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Η Ομάδα '%s' Διαγράφηκε με επιτυχία"
+
+msgid "No conversion required"
 msgstr ""
 
 #, fuzzy
@@ -1839,10 +1863,10 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Πλήρες Όνομα"
 
-msgid "Version"
+msgid "Installed"
 msgstr ""
 
-msgid "Installed"
+msgid "Version"
 msgstr ""
 
 msgid "Actions"
@@ -1952,10 +1976,6 @@ msgstr ""
 
 msgid "Continue"
 msgstr ""
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Γκαλλερύ"
 
 msgid "Download Plugin List"
 msgstr ""
@@ -2134,6 +2154,9 @@ msgstr ""
 msgid "Restored theme settings"
 msgstr "Ρυθμίσεις Λευκόματος"
 
+msgid "Defaults"
+msgstr "Προεπιλογές"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2149,6 +2172,10 @@ msgstr ""
 #, fuzzy
 msgid "New albums"
 msgstr "Διαγραφή Χρήστη"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Προεπιλογές"
 
 #, fuzzy, c-format
 msgid "%s Theme Settings"
@@ -2188,6 +2215,10 @@ msgstr ""
 
 msgid "There are no settings for this theme"
 msgstr ""
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Ρυθμίσεις Λευκόματος"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2533,12 +2564,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Εφαρμογή σε όλα"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr ""
-
-msgid "Use this theme in all subalbums"
-msgstr ""
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 
@@ -2568,18 +2593,32 @@ msgstr "Διαγραφή Χρήστη"
 msgid "Use these target sizes in all subalbums"
 msgstr ""
 
-msgid "Recreate thumbnails and resizes"
-msgstr ""
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Εφαρμογή σε όλα"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
 
-msgid "Recreate thumbnails"
+msgid "Apply album setting to thumbnails"
 msgstr ""
 
-msgid "Recreate resized images"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Εφαρμογή σε όλα"
+
+msgid "Build thumbnails too"
+msgstr ""
+
+msgid "Apply album setting to resized images"
+msgstr ""
+
+msgid "Build resizes too"
 msgstr ""
 
 msgid ""
@@ -2833,18 +2872,31 @@ msgstr ""
 msgid "Restore original"
 msgstr ""
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Επεξεργασία Αντικειμένου"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr ""
+
+msgid "Choose Theme"
 msgstr ""
 
 #, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+msgid "Configure the %s theme"
 msgstr ""
 
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+msgid "These settings only apply to the theme for this album."
+msgstr ""
+
+#, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr ""
 
 msgid "Album Highlight"
@@ -3077,9 +3129,6 @@ msgstr ""
 #, fuzzy
 msgid "Reorder"
 msgstr "Προσθήκη Λευκόματος"
-
-msgid "Continue..."
-msgstr ""
 
 msgid "Site is temporarily down for maintenance."
 msgstr ""

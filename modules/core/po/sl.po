@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2003-06-25 11:44+0100\n"
 "PO-Revision-Date: 2006-04-29 12:50+0100\n"
 "Last-Translator: Janez Troha <janez@tegleda.com>\n"
@@ -111,6 +111,10 @@ msgstr ""
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Galerija"
 
 msgid "Done."
 msgstr "Narejeno."
@@ -210,9 +214,6 @@ msgstr ""
 msgid "Deleting old fast-download cache"
 msgstr ""
 
-msgid "Converting MySQL data to UTF8"
-msgstr ""
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -233,6 +234,9 @@ msgstr "Galerija"
 
 msgid "This is the main page of your Gallery"
 msgstr "To je prva stran vaše galerije!"
+
+msgid "Converting MySQL data to UTF8"
+msgstr ""
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -326,16 +330,13 @@ msgstr "uredi %s"
 msgid "Settings saved successfully."
 msgstr "Nastavitve so shranejene."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo;privzeta preobleka &raquo;"
-
-msgid "Recreating resized images"
+msgid "Apply resized image settings"
 msgstr ""
 
 msgid "Preparing..."
 msgstr ""
 
-msgid "Rebuilding resized images..."
+msgid "Apply thumbnail settings"
 msgstr ""
 
 msgid "Rebuilding thumbnails..."
@@ -419,6 +420,12 @@ msgstr ""
 
 msgid "Modify Photo"
 msgstr ""
+
+msgid "Successfully changed theme"
+msgstr ""
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo;privzeta preobleka &raquo;"
 
 msgid "Theme"
 msgstr "Preobleka"
@@ -545,9 +552,6 @@ msgstr ""
 msgid "Graphics Toolkits"
 msgstr ""
 
-msgid "Defaults"
-msgstr ""
-
 msgid "Account Settings"
 msgstr "Nastavitve računa"
 
@@ -590,6 +594,23 @@ msgstr ""
 
 #, c-format
 msgid "%d items failed"
+msgstr ""
+
+msgid "Convert MySQL database to UTF8"
+msgstr ""
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+msgid "Database successfully converted to UTF8"
+msgstr ""
+
+msgid "No conversion required"
 msgstr ""
 
 msgid "Delete user sessions"
@@ -1702,10 +1723,10 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Pravo Ime"
 
-msgid "Version"
+msgid "Installed"
 msgstr ""
 
-msgid "Installed"
+msgid "Version"
 msgstr ""
 
 msgid "Actions"
@@ -1817,10 +1838,6 @@ msgstr ""
 
 msgid "Continue"
 msgstr ""
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Galerija"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -1992,6 +2009,9 @@ msgstr ""
 msgid "Restored theme settings"
 msgstr ""
 
+msgid "Defaults"
+msgstr ""
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2004,6 +2024,9 @@ msgid "with"
 msgstr ""
 
 msgid "New albums"
+msgstr ""
+
+msgid "Save Defaults"
 msgstr ""
 
 #, c-format
@@ -2040,6 +2063,10 @@ msgstr ""
 
 msgid "There are no settings for this theme"
 msgstr ""
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Uporabi te nastavitve"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2365,12 +2392,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr ""
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr ""
-
-msgid "Use this theme in all subalbums"
-msgstr ""
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 
@@ -2398,18 +2419,30 @@ msgstr ""
 msgid "Use these target sizes in all subalbums"
 msgstr ""
 
-msgid "Recreate thumbnails and resizes"
+msgid "Apply settings to existing items"
 msgstr ""
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
 
-msgid "Recreate thumbnails"
+msgid "Apply album setting to thumbnails"
 msgstr ""
 
-msgid "Recreate resized images"
+msgid "... and for all subalbums"
+msgstr ""
+
+msgid "Build thumbnails too"
+msgstr ""
+
+msgid "Apply album setting to resized images"
+msgstr ""
+
+msgid "Build resizes too"
 msgstr ""
 
 msgid ""
@@ -2648,18 +2681,30 @@ msgstr ""
 msgid "Restore original"
 msgstr ""
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+msgid "Choose a theme"
 msgstr ""
 
 #, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+msgid ""
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
 
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+msgid "Use this theme in all subalbums"
+msgstr ""
+
+msgid "Choose Theme"
+msgstr ""
+
+#, c-format
+msgid "Configure the %s theme"
+msgstr ""
+
+msgid "These settings only apply to the theme for this album."
+msgstr ""
+
+#, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr ""
 
 msgid "Album Highlight"
@@ -2860,9 +2905,6 @@ msgid "after"
 msgstr ""
 
 msgid "Reorder"
-msgstr ""
-
-msgid "Continue..."
 msgstr ""
 
 msgid "Site is temporarily down for maintenance."

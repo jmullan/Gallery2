@@ -28,7 +28,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-10-02 18:40+0200\n"
@@ -112,6 +112,9 @@ msgstr "Uppdaterar lagerkatalogsindexet"
 
 msgid "Scanning plugins"
 msgstr "Genomsöker pluginerna"
+
+msgid "Update Plugin List"
+msgstr "Uppdatera Pluginlistan"
 
 msgid "Done."
 msgstr "Klar"
@@ -211,9 +214,6 @@ msgstr "Tömmer cache för snabb-nerladdning"
 msgid "Deleting old fast-download cache"
 msgstr "Tömmer snabb-nerladdnings cachen"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "Konverterar MySQL databasen till UTF8"
-
 msgid "Updating panorama items"
 msgstr "Uppdaterar panorama objekt"
 
@@ -234,6 +234,9 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "Detta är huvudsidan på ditt galleri"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "Konverterar MySQL databasen till UTF8"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -327,17 +330,15 @@ msgstr "redigera %s"
 msgid "Settings saved successfully."
 msgstr "Inställningar sparades framgångsrikt."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; förvalt tema &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Återskapa storleksändrade bilder"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Återskapade temainställningar"
 
 msgid "Preparing..."
 msgstr "Förbereder..."
 
-msgid "Rebuilding resized images..."
-msgstr "Återskapar storleksändrade bilder..."
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Återskapa miniatyrbilder"
@@ -420,6 +421,13 @@ msgstr "Skalade fotot framgångsrikt"
 
 msgid "Modify Photo"
 msgstr "Bearbeta Foto"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Aktiverade framgångsrikt tema %s"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; förvalt tema &raquo;"
 
 msgid "Theme"
 msgstr "Tema"
@@ -546,9 +554,6 @@ msgstr "Verktygsprioritet"
 msgid "Graphics Toolkits"
 msgstr "Grafiska Verktyg"
 
-msgid "Defaults"
-msgstr "Förvalda värden"
-
 msgid "Account Settings"
 msgstr "Kontoinställningar"
 
@@ -594,6 +599,25 @@ msgstr "%d objekt skapade"
 #, c-format
 msgid "%d items failed"
 msgstr "%d objekt misslyckade"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "Konverterar MySQL databasen till UTF8"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Objekt framgångsrikt borttaget"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Ta bort användarsessioner"
@@ -1795,11 +1819,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Pluginens Namn"
 
-msgid "Version"
-msgstr "Version"
-
 msgid "Installed"
 msgstr "Installerad"
+
+msgid "Version"
+msgstr "Version"
 
 msgid "Actions"
 msgstr "Händelser"
@@ -1918,9 +1942,6 @@ msgstr ""
 
 msgid "Continue"
 msgstr "Fortsätt"
-
-msgid "Update Plugin List"
-msgstr "Uppdatera Pluginlistan"
 
 msgid "Download Plugin List"
 msgstr "Ladda ned Pluginlistan"
@@ -2101,6 +2122,9 @@ msgstr "Sparade framgångsrikt förvalda albuminställningar"
 msgid "Restored theme settings"
 msgstr "Återskapade temainställningar"
 
+msgid "Defaults"
+msgstr "Förvalda värden"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2115,6 +2139,10 @@ msgstr "med"
 
 msgid "New albums"
 msgstr "Nya album"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Förvalda värden"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2150,6 +2178,10 @@ msgstr "Värde"
 
 msgid "There are no settings for this theme"
 msgstr "Det finns inga inställningar för detta tema"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "%s Temainställningar"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2504,12 +2536,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Applicera på alla underliggande album"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Välj ett tema för detta album. (Sättet som albumet är ordnat på sidan.)"
-
-msgid "Use this theme in all subalbums"
-msgstr "Använd detta tema i alla underalbum"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "Varje objekt kräver en miniatyrbild. Ställ in förvalt värde i pixelar här."
 
@@ -2537,21 +2563,35 @@ msgstr "Du måste skriva in en giltig storlek"
 msgid "Use these target sizes in all subalbums"
 msgstr "Använd den här storleksinställningen i alla underalbum"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Återskapa miniatyrbilder och storleksändringar"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Applicera på underliggande album"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"Miniatyrbilden och storleksändrade bildinställningar är för alla nya objekt. För att "
-"verkställa dessa inställningar på alla objekt i ditt album markera passande ruta."
 
-msgid "Recreate thumbnails"
+msgid "Apply album setting to thumbnails"
+msgstr ""
+
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Applicera på alla underliggande album"
+
+#, fuzzy
+msgid "Build thumbnails too"
 msgstr "Återskapa miniatyrbilder"
 
-msgid "Recreate resized images"
+#, fuzzy
+msgid "Apply album setting to resized images"
 msgstr "Återskapa storleksändrade bilder"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2832,23 +2872,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "återställ original"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Välj ett block"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "Använd detta tema i alla underalbum"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Tema för unittest"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Detta album är konfigurerat för att använda temat <b>%s</b>. Dessa inställningar verkställs "
 "endast på temat för detta album."
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Använd dessa inställningar i alla underalbum som använder temat %s"
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"OBS: för att ställa in samma tema för alla underalbum, bocka för aktuell ruta i <b>Album</b> "
-"fliken"
 
 msgid "Album Highlight"
 msgstr "Förgrundsbild för Album"
@@ -3067,9 +3119,6 @@ msgstr "efter"
 
 msgid "Reorder"
 msgstr "Omsortera"
-
-msgid "Continue..."
-msgstr "Fortsätt..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Webbplatsen är temporärt ur drift för underhåll"
@@ -3542,6 +3591,38 @@ msgstr "[test] En andra rättighet"
 
 msgid "Unit test theme"
 msgstr "Tema för unittest"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Återskapar storleksändrade bilder..."
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Välj ett tema för detta album. (Sättet som albumet är ordnat på sidan.)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Återskapa miniatyrbilder och storleksändringar"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "Miniatyrbilden och storleksändrade bildinställningar är för alla nya objekt. För att "
+#~ "verkställa dessa inställningar på alla objekt i ditt album markera passande ruta."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Återskapa miniatyrbilder"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Återskapa storleksändrade bilder"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "OBS: för att ställa in samma tema för alla underalbum, bocka för aktuell ruta i <b>Album</"
+#~ "b> fliken"
+
+#~ msgid "Continue..."
+#~ msgstr "Fortsätt..."
 
 #~ msgid "Hide Repository List"
 #~ msgstr "Dölj förvaringsplatslista"

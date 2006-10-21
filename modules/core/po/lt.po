@@ -19,7 +19,7 @@
 # Darius Žitkevičius <skystis@splius.lt>, 2005, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-12 22:28+0200\n"
 "PO-Revision-Date: 2006-03-12 23:02+0200\n"
@@ -108,6 +108,10 @@ msgstr "Atnaujinti indeksą"
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Atnaujinti visus priedus"
 
 msgid "Done."
 msgstr "Atlikta."
@@ -209,9 +213,6 @@ msgstr "Valoma greito gavimo talpyklė"
 msgid "Deleting old fast-download cache"
 msgstr "Trinama sena greito gavimo talpyklė"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "Keičiami MySQL duomenys į UTF8"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -232,6 +233,9 @@ msgstr "Galerija"
 
 msgid "This is the main page of your Gallery"
 msgstr "Tai pagrindinis Jūsų galerijos puslapis"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "Keičiami MySQL duomenys į UTF8"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -327,18 +331,16 @@ msgstr "keisti %s"
 msgid "Settings saved successfully."
 msgstr "Nustatymai išsaugoti sėkmingai."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; numatyta tema &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Sumažinti vaizdai pergeneruojami"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Temos nustatymai atstatyti"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Vykdoma..."
 
-msgid "Rebuilding resized images..."
-msgstr "Pergeneruojami sumažinti paveikslai..."
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Pergeneruojamos miniatiūros..."
@@ -421,6 +423,13 @@ msgstr "Fotografija ištempta sėkmingai"
 
 msgid "Modify Photo"
 msgstr "Taisyti foto"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Tema %s sėkmingai aktyvuota"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; numatyta tema &raquo;"
 
 msgid "Theme"
 msgstr "Tema"
@@ -547,9 +556,6 @@ msgstr "Įrankių prioritetai"
 msgid "Graphics Toolkits"
 msgstr "Grafikos įrankiai"
 
-msgid "Defaults"
-msgstr "Numatyti nustatymai"
-
 msgid "Account Settings"
 msgstr "Paskyros nustatymai"
 
@@ -595,6 +601,25 @@ msgstr "%d elementų sugeneruota"
 #, c-format
 msgid "%d items failed"
 msgstr "%d elementų nepavyko sutvarkyti"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "Keičiami MySQL duomenys į UTF8"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Elementas sėkmingai ištrintas"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Ištrinti vartotojo sesijas"
@@ -1801,11 +1826,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Pilnas vardas"
 
-msgid "Version"
-msgstr "Versija"
-
 msgid "Installed"
 msgstr "Įdiegtas"
+
+msgid "Version"
+msgstr "Versija"
 
 msgid "Actions"
 msgstr "Veiksmai"
@@ -1920,10 +1945,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Tęsti..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Atnaujinti visus priedus"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2106,6 +2127,9 @@ msgstr "Numatyti albumo nustatymai išsaugoti sėkmingai"
 msgid "Restored theme settings"
 msgstr "Temos nustatymai atstatyti"
 
+msgid "Defaults"
+msgstr "Numatyti nustatymai"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2121,6 +2145,10 @@ msgstr "plotis"
 
 msgid "New albums"
 msgstr "Naujas albumas"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Numatyti nustatymai"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2157,6 +2185,10 @@ msgstr "Reikšmė"
 
 msgid "There are no settings for this theme"
 msgstr "Šiai temai nustatymų nėra"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Temos %s nustatymai"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2524,12 +2556,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Taikyti visiems subalbumams"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Pasirinkite šio albumo temą. (Kokiu būdu albumas bus pateiktas puslapyje)"
-
-msgid "Use this theme in all subalbums"
-msgstr "Šią temą naudoti visuose subalbumuose"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " Kiekvienam elementui reikalinga miniatiūra. Čia nurodykite numatytą dydį taškeliais."
 
@@ -2558,21 +2584,35 @@ msgstr "Reikia nurodyti tinkamą dydį"
 msgid "Use these target sizes in all subalbums"
 msgstr "Visiems subalbumams naudoti šiuos nustatytus matmenis"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Pergeneruoti miniatiūras ir sumažintus variantus"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Taikyti vidiniams elementams"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"Miniatiūros ir sumažinto paveiklėlio nustatymai visiems naujiems elementams. Kad pritaikyti "
-"šį nustatymą visiems albumo elementams, uždėkite atitinkamą varnelę."
 
-msgid "Recreate thumbnails"
-msgstr "Pergeneruoti miniatiūras"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "Pergeneruoti sumažintus variantus"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Taikyti visiems subalbumams"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Pergeneruojamos miniatiūros..."
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Sumažinti vaizdai pergeneruojami"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2853,23 +2893,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "Atkuri originalą"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Pasirinkite bloką"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "Šią temą naudoti visuose subalbumuose"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Elemento testavimo tema"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Šis albumas yra sukonfigūruotas naudoti <b>%s</b> temą. Šis nustatymas naudojamas tik šio "
 "albumo apipavidalinimui."
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Šiuos nustatymus naudoti visuose subalbumuose, kurie naudoja temą %s"
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"Pastaba: Kad nustatyti tą pačią temą visiems vidiniams albumams uždėkite atitinkamą varnelę "
-"skiltyje <b>Albumas</b>."
 
 msgid "Album Highlight"
 msgstr "Albumo titulinė"
@@ -3087,9 +3139,6 @@ msgstr "po"
 
 msgid "Reorder"
 msgstr "Perrūšiuoti"
-
-msgid "Continue..."
-msgstr "Tęsti..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Svetainė laikinai išjungta remontui."
@@ -3562,6 +3611,38 @@ msgstr "[test] antra teisė"
 
 msgid "Unit test theme"
 msgstr "Elemento testavimo tema"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Pergeneruojami sumažinti paveikslai..."
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Pasirinkite šio albumo temą. (Kokiu būdu albumas bus pateiktas puslapyje)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Pergeneruoti miniatiūras ir sumažintus variantus"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "Miniatiūros ir sumažinto paveiklėlio nustatymai visiems naujiems elementams. Kad "
+#~ "pritaikyti šį nustatymą visiems albumo elementams, uždėkite atitinkamą varnelę."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Pergeneruoti miniatiūras"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Pergeneruoti sumažintus variantus"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "Pastaba: Kad nustatyti tą pačią temą visiems vidiniams albumams uždėkite atitinkamą "
+#~ "varnelę skiltyje <b>Albumas</b>."
+
+#~ msgid "Continue..."
+#~ msgstr "Tęsti..."
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "Vykdomi tvarkymo darbai"

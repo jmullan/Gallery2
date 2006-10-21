@@ -23,7 +23,7 @@
 # Gidie <gidie at users.sourceforge REMOVE THIS dot net>, 2005
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-03-17 19:49+0100\n"
 "Last-Translator: Buut <buut at users.sourceforge Remove - This dot net>\n"
@@ -105,6 +105,10 @@ msgstr "Index Bijwerken"
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Alle Plugins Bijwerken"
 
 msgid "Done."
 msgstr "Klaar."
@@ -206,9 +210,6 @@ msgstr "Fast-download cache leegmaken"
 msgid "Deleting old fast-download cache"
 msgstr "Oude fast-download cache verwijderen"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "Converteer MySQL data naar UTF8"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -229,6 +230,9 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "Dit is de startpagina van uw Gallery"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "Converteer MySQL data naar UTF8"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -322,18 +326,16 @@ msgstr "bewerk %s"
 msgid "Settings saved successfully."
 msgstr "Instellingen succesvol opgeslagen."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; standaard thema &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Geschaalde afbeeldingen opnieuw aanmaken"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Thema instelling hersteld"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Verwerken..."
 
-msgid "Rebuilding resized images..."
-msgstr "Geschaalde afbeeldingen opnieuw aanmaken"
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Creëer miniaturen opnieuw..."
@@ -416,6 +418,13 @@ msgstr "Foto succesvol geschaald"
 
 msgid "Modify Photo"
 msgstr "Bewerk Foto"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Succesvol thema %s geactiveerd"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; standaard thema &raquo;"
 
 msgid "Theme"
 msgstr "Thema"
@@ -542,9 +551,6 @@ msgstr "Toolkit Prioriteit"
 msgid "Graphics Toolkits"
 msgstr "Grafische Toolkits"
 
-msgid "Defaults"
-msgstr "Standaard instellingen"
-
 msgid "Account Settings"
 msgstr "Account Instellingen"
 
@@ -590,6 +596,25 @@ msgstr "%d items gebouwd"
 #, c-format
 msgid "%d items failed"
 msgstr "%d items mislukt"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "Converteer MySQL data naar UTF8"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Item succesvol verwijderd"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Verwijder gebruikers sessies"
@@ -1817,11 +1842,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Volledige naam"
 
-msgid "Version"
-msgstr "Versie"
-
 msgid "Installed"
 msgstr "Geïnstalleerd"
+
+msgid "Version"
+msgstr "Versie"
 
 msgid "Actions"
 msgstr "Acties"
@@ -1935,10 +1960,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Doorgaan..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Alle Plugins Bijwerken"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2123,6 +2144,9 @@ msgstr "Succesvol standaard album instellingen opgeslagen"
 msgid "Restored theme settings"
 msgstr "Thema instelling hersteld"
 
+msgid "Defaults"
+msgstr "Standaard instellingen"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2138,6 +2162,10 @@ msgstr "met"
 
 msgid "New albums"
 msgstr "Nieuwe albums"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Standaard instellingen"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2174,6 +2202,10 @@ msgstr "Waarde"
 
 msgid "There are no settings for this theme"
 msgstr "Er zijn geen instellingen voor dit thema"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "%s Thema Instellingen"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2532,12 +2564,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Toepassen op subalbums"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Kies een thema voor dit album. (De manier waarop dit album is opgesteld op de pagina)"
-
-msgid "Use this theme in all subalbums"
-msgstr "Gebruik dit thema in alle subalbums"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " Iedere item moet een miniatuur hebben. Geef hier de standaard pixelgrootte in."
 
@@ -2565,21 +2591,35 @@ msgstr "U moet een gebruikersnaam opgeven"
 msgid "Use these target sizes in all subalbums"
 msgstr "Gebruik deze grootte in alle subalbums"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Miniaturen en schalen opnieuw aanmaken"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Sub-items ook aanpassen"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"De miniatuur and geschaalde afbeeling instellingen voor alle nieuwe items. Vink de juiste "
-"optie aan om deze instellingen op alle items toe te passen"
 
-msgid "Recreate thumbnails"
-msgstr "Creëer miniaturen opnieuw"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Toepassen op subalbums"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Creëer miniaturen opnieuw..."
+
+#, fuzzy
+msgid "Apply album setting to resized images"
 msgstr "Geschaalde afbeeldingen opnieuw aanmaken"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2864,23 +2904,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "Originieel herstellen"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Kies een blok"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "Gebruik dit thema in alle subalbums"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Eenheids test thema"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Dit album is ingesteld om gebruik te maken van het <b>%s</b> thema. Deze instellingen zijn "
 "alleen van toepassing op het thema van dit album."
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Gebruik deze instellingen in alle subalbums welke het %s thema gebruiken."
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"Let op: om hetzelfde thema op alle sub-albums toe te passen, zet de juist parameter aan in "
-"het <b>Album</b> tabblad"
 
 msgid "Album Highlight"
 msgstr "Albumafbeelding"
@@ -3101,9 +3153,6 @@ msgstr "na"
 
 msgid "Reorder"
 msgstr "Verplaatsen"
-
-msgid "Continue..."
-msgstr "Doorgaan..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Site is tijdelijk niet beschikbaar vanwege onderhoud."
@@ -3581,6 +3630,39 @@ msgstr "[test] Een tweede recht"
 
 msgid "Unit test theme"
 msgstr "Eenheids test thema"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Geschaalde afbeeldingen opnieuw aanmaken"
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr ""
+#~ "Kies een thema voor dit album. (De manier waarop dit album is opgesteld op de pagina)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Miniaturen en schalen opnieuw aanmaken"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "De miniatuur and geschaalde afbeeling instellingen voor alle nieuwe items. Vink de juiste "
+#~ "optie aan om deze instellingen op alle items toe te passen"
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Creëer miniaturen opnieuw"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Geschaalde afbeeldingen opnieuw aanmaken"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "Let op: om hetzelfde thema op alle sub-albums toe te passen, zet de juist parameter aan "
+#~ "in het <b>Album</b> tabblad"
+
+#~ msgid "Continue..."
+#~ msgstr "Doorgaan..."
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "Onderhoudstaken Uitvoeren"

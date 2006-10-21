@@ -23,7 +23,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-10-15 09:02+0200\n"
 "PO-Revision-Date: 2006-04-03 11:30+0200\n"
@@ -106,6 +106,10 @@ msgstr "Opdater indeks"
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Opgrader alle plugins"
 
 msgid "Done."
 msgstr "Udført."
@@ -207,9 +211,6 @@ msgstr "Sletter hurtighentningscachen"
 msgid "Deleting old fast-download cache"
 msgstr "Sletter gammel cache til hurtig download"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "Konverterer MySQL data til UTF8 format"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -230,6 +231,9 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "Dette er hovedsiden af din billedsamling"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "Konverterer MySQL data til UTF8 format"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -323,18 +327,16 @@ msgstr "rediger %s"
 msgid "Settings saved successfully."
 msgstr "Opsætningen blev gemt."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; standard tema &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Genskaber størrelsesændrede billeder"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Temaopsætning blev genskabt"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Behandler..."
 
-msgid "Rebuilding resized images..."
-msgstr "Genskaber billeder i ny størrelse"
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Genskaber miniaturer"
@@ -417,6 +419,13 @@ msgstr "Fotoet blev skaleret"
 
 msgid "Modify Photo"
 msgstr "Rediger billede"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Temaet %s blev aktiveret"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; standard tema &raquo;"
 
 msgid "Theme"
 msgstr "Tema"
@@ -543,9 +552,6 @@ msgstr "Værktøjsprioritet"
 msgid "Graphics Toolkits"
 msgstr "Grafikværktøjer"
 
-msgid "Defaults"
-msgstr "Standarder"
-
 msgid "Account Settings"
 msgstr "Kontoopsætning"
 
@@ -591,6 +597,25 @@ msgstr "%d filer bygget."
 #, c-format
 msgid "%d items failed"
 msgstr "%d elementer fejlede"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "Konverterer MySQL data til UTF8 format"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Elementet blev slettet"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Slet bruger 'sessions'"
@@ -1807,11 +1832,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Fulde navn"
 
-msgid "Version"
-msgstr "Version"
-
 msgid "Installed"
 msgstr "Installeret"
+
+msgid "Version"
+msgstr "Version"
 
 msgid "Actions"
 msgstr "Handlinger"
@@ -1925,10 +1950,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Fortsæt..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Opgrader alle plugins"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2108,6 +2129,9 @@ msgstr "Standard albumopsætning blev gemt"
 msgid "Restored theme settings"
 msgstr "Temaopsætning blev genskabt"
 
+msgid "Defaults"
+msgstr "Standarder"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2123,6 +2147,10 @@ msgstr "med"
 
 msgid "New albums"
 msgstr "Nye albummer"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Standarder"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2158,6 +2186,10 @@ msgstr "Værdi"
 
 msgid "There are no settings for this theme"
 msgstr "Der er ingen opsætning for dette tema"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "%s Tema Indstillinger"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2514,12 +2546,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Anvend på alle underalbummer"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Vælg et tema for dette album. (Måden som albummet vises på siden)"
-
-msgid "Use this theme in all subalbums"
-msgstr "Benyt dette tema i alle underalbummer"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " Alle elementer kræver en miniature. Angiv standard størrelsen i pixels her."
 
@@ -2548,22 +2574,35 @@ msgstr "Du skal indtaste en gyldig størrelse"
 msgid "Use these target sizes in all subalbums"
 msgstr "Benyt disse målstørrelser i alle underalbummer"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Genopret miniaturer og størrelsesændringer"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Anvend på underelementer"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"Indstillingerne for miniature- og størrelsesændrede billeder gælder for alle nye elementer. "
-"For at anvende indstillingerne på alle elementer i dit album, skal du afkrydse det relevante "
-"felt."
 
-msgid "Recreate thumbnails"
-msgstr "Genopret miniaturer"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "Genopret størrelsesændrede billeder"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Anvend på alle underalbummer"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Genskaber miniaturer"
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Genskaber størrelsesændrede billeder"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2840,23 +2879,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "Genskab original"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Vælg en blok"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "Benyt dette tema i alle underalbummer"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Enhedstest tema"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Dette album er konfigureret til at bruge temaet <b>%s</b>. Ændringerne gælder kun for temaet "
 "på dette album."
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Benyt disse indstillinger i alle underalbummer der benytter %s temaet"
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"Bemærk: for at vælge det same tema for alle under-albummer skal den relevante boks i "
-"<b>Album</b> fanebladet markeres"
 
 msgid "Album Highlight"
 msgstr "Fremhæv"
@@ -3069,9 +3120,6 @@ msgstr "efter"
 
 msgid "Reorder"
 msgstr "Gensorter"
-
-msgid "Continue..."
-msgstr "Fortsæt..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Websitet er midlertidigt nede på grund af vedligeholdelse."
@@ -3545,6 +3593,39 @@ msgstr "[test] En anden tilladelse"
 
 msgid "Unit test theme"
 msgstr "Enhedstest tema"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Genskaber billeder i ny størrelse"
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Vælg et tema for dette album. (Måden som albummet vises på siden)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Genopret miniaturer og størrelsesændringer"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "Indstillingerne for miniature- og størrelsesændrede billeder gælder for alle nye "
+#~ "elementer. For at anvende indstillingerne på alle elementer i dit album, skal du afkrydse "
+#~ "det relevante felt."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Genopret miniaturer"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Genopret størrelsesændrede billeder"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "Bemærk: for at vælge det same tema for alle under-albummer skal den relevante boks i "
+#~ "<b>Album</b> fanebladet markeres"
+
+#~ msgid "Continue..."
+#~ msgstr "Fortsæt..."
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "Udfører systemvedligeholdelse"

@@ -19,7 +19,7 @@
 # Guy Sheffer <guysoft@ort.org.il>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2004-12-18 15:28+0200\n"
 "PO-Revision-Date: 2006-04-05 16:36+0300\n"
 "Last-Translator: Guy Sheffer <guysoft@ort.org.il>\n"
@@ -101,6 +101,10 @@ msgstr ""
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "allery Modules"
 
 msgid "Done."
 msgstr "הושלם."
@@ -202,9 +206,6 @@ msgstr "מנקה את מטמון של ההורדות-המהירות"
 msgid "Deleting old fast-download cache"
 msgstr "מוחקת את המטמון הישן של ההורדות-המהירות"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "ממיר את המידע במסד MySQL לקידוד utf8."
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -225,6 +226,9 @@ msgstr "גלרייה"
 
 msgid "This is the main page of your Gallery"
 msgstr "זהו העמוד הראשי של הגלרייה שלך"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "ממיר את המידע במסד MySQL לקידוד utf8."
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -318,17 +322,15 @@ msgstr "עריכת %s"
 msgid "Settings saved successfully."
 msgstr "הגדרות נשמרו בהצלחה."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; עיצוב ברירת המחדל &raquo;"
-
-msgid "Recreating resized images"
-msgstr "מייצר מחדש גדלים שונים של התמונות"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "הגדרות תבנית שוחזרו"
 
 msgid "Preparing..."
 msgstr ""
 
-msgid "Rebuilding resized images..."
-msgstr "מייצר מחדש גדלים שונים של התמונות"
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "מייצר מחדש תמונות מוקטנות"
@@ -411,6 +413,13 @@ msgstr "התאמת הגודל בוצעה בהצלחה"
 
 msgid "Modify Photo"
 msgstr "שנה תמונה"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "מודול %s הופעל בהצלחה"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; עיצוב ברירת המחדל &raquo;"
 
 msgid "Theme"
 msgstr "עיצוב"
@@ -537,9 +546,6 @@ msgstr "עדיפות ערכת כלים"
 msgid "Graphics Toolkits"
 msgstr "ערכת כלים גרפיים"
 
-msgid "Defaults"
-msgstr "ברירות מחדל"
-
 msgid "Account Settings"
 msgstr "הגדרות חשבון משתמש"
 
@@ -583,6 +589,25 @@ msgstr "%d פריטים נבנו"
 #, c-format
 msgid "%d items failed"
 msgstr "%d פריטים נכשלו"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "ממיר את המידע במסד MySQL לקידוד utf8."
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "פריט נמחק בהצלחה"
+
+msgid "No conversion required"
+msgstr ""
 
 #, fuzzy
 msgid "Delete user sessions"
@@ -1756,11 +1781,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "שם מלא"
 
-msgid "Version"
-msgstr "גירסה"
-
 msgid "Installed"
 msgstr "מותקן"
+
+msgid "Version"
+msgstr "גירסה"
 
 msgid "Actions"
 msgstr "פעולות"
@@ -1874,10 +1899,6 @@ msgstr ""
 
 msgid "Continue"
 msgstr ""
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "allery Modules"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2060,6 +2081,9 @@ msgstr "הגדרות ברירת המחדל לאלבום נשמרו בהצלחה"
 msgid "Restored theme settings"
 msgstr "הגדרות תבנית שוחזרו"
 
+msgid "Defaults"
+msgstr "ברירות מחדל"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2075,6 +2099,10 @@ msgstr "רוחב"
 
 msgid "New albums"
 msgstr "אלבומים חדשים"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "ברירות מחדל"
 
 #, fuzzy, c-format
 msgid "%s Theme Settings"
@@ -2113,6 +2141,10 @@ msgstr "ערך"
 #, fuzzy
 msgid "There are no settings for this theme"
 msgstr "לא קיימות הגדרות לערכת הצבעים הזו"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "הגדרות תבנית שוחזרו"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2461,13 +2493,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "שמור עבור תת-פריטים"
 
-#, fuzzy
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "בחר תבנית עבור אלבום זה. (הדרך שבה האלבום מסודר בעמוד)"
-
-msgid "Use this theme in all subalbums"
-msgstr ""
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr " לכל פריט דרושה תמונה מוקטנת. קבע כאן את גודל ברירת המחדל בפיקסלים."
 
@@ -2495,21 +2520,35 @@ msgstr "אתה מוכרח להכניס גודל תיקני"
 msgid "Use these target sizes in all subalbums"
 msgstr ""
 
-msgid "Recreate thumbnails and resizes"
-msgstr "צור מחדש תמונות מוקטנות ותמונות בגודל שונה"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "שמור עבור תת-פריטים"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"ההגדרות הבאות הן עבור כל הפריטים החדשים. על מנת לכלול הגדרות אלה על כל הפריטים באלבום שלך, "
-"סמן את התיבה הבאה."
 
-msgid "Recreate thumbnails"
-msgstr "צור מחדש תמונות מוקטנות"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "צור מחדש תמונות בגודל שונה"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "שמור עבור תת-פריטים"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "מייצר מחדש תמונות מוקטנות"
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "מייצר מחדש גדלים שונים של התמונות"
+
+msgid "Build resizes too"
+msgstr ""
 
 #, fuzzy
 msgid ""
@@ -2779,20 +2818,34 @@ msgstr ""
 msgid "Restore original"
 msgstr "שחזר מקור"
 
-#, fuzzy, c-format
+#, fuzzy
+msgid "Choose a theme"
+msgstr "בחר אלבום חדש עבורם"
+
+#, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr ""
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "מודול בדיקת יחידה"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "אלבום זה מוגדר לשימוש בערכת הצבעים <b>%s</b>. הגדרות אלו ישפיעו על ערכת הצבעים של אלבום זה "
 "בלבד."
 
 #, c-format
-msgid "Use these settings in all subalbums that use %s theme"
-msgstr ""
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr ""
 
 #, fuzzy
@@ -3016,9 +3069,6 @@ msgstr "אחרי"
 
 msgid "Reorder"
 msgstr "סדר מחדש"
-
-msgid "Continue..."
-msgstr ""
 
 msgid "Site is temporarily down for maintenance."
 msgstr ""
@@ -3462,6 +3512,29 @@ msgstr "עריכת הרשאות עבור %s"
 #, fuzzy
 msgid "Unit test theme"
 msgstr "מודול בדיקת יחידה"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "מייצר מחדש גדלים שונים של התמונות"
+
+#, fuzzy
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "בחר תבנית עבור אלבום זה. (הדרך שבה האלבום מסודר בעמוד)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "צור מחדש תמונות מוקטנות ותמונות בגודל שונה"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "ההגדרות הבאות הן עבור כל הפריטים החדשים. על מנת לכלול הגדרות אלה על כל הפריטים באלבום "
+#~ "שלך, סמן את התיבה הבאה."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "צור מחדש תמונות מוקטנות"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "צור מחדש תמונות בגודל שונה"
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "מבצע פעולות תחזוק"

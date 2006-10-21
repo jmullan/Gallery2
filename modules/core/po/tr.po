@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2005-05-23 02:14+0200\n"
 "PO-Revision-Date: 2006-02-27 00:00+0200\n"
 "Last-Translator: Goker ISIK <admin@ansolon.com>\n"
@@ -101,6 +101,10 @@ msgstr ""
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Galeri Modülleri"
 
 #, fuzzy
 msgid "Done."
@@ -205,9 +209,6 @@ msgstr ""
 msgid "Deleting old fast-download cache"
 msgstr "Eski izin tabloları siliniyor"
 
-msgid "Converting MySQL data to UTF8"
-msgstr ""
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -228,6 +229,9 @@ msgstr "Galeri"
 
 msgid "This is the main page of your Gallery"
 msgstr "Burası Galeri'nin ana sayfasıdır."
+
+msgid "Converting MySQL data to UTF8"
+msgstr ""
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -321,20 +325,16 @@ msgstr "%s düzenle"
 msgid "Settings saved successfully."
 msgstr "Ayarlar başarıyla kaydedildi."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; varsayılan tema &raquo;"
-
 #, fuzzy
-msgid "Recreating resized images"
-msgstr "Recreate thumbnails and resizes"
+msgid "Apply resized image settings"
+msgstr "Tema ayarları iade edildi"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "işleniyor..."
 
-#, fuzzy
-msgid "Rebuilding resized images..."
-msgstr "Recreate thumbnails and resizes"
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Filigranlar yeniden yaratılıyor..."
@@ -420,6 +420,13 @@ msgstr "User '%s' has been modified successfully."
 
 msgid "Modify Photo"
 msgstr "Fotoyu Modifiye Et"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Tema %s başarıyla etkinleştirildi"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; varsayılan tema &raquo;"
 
 msgid "Theme"
 msgstr "Tema"
@@ -546,9 +553,6 @@ msgstr "Araç Önceliği"
 msgid "Graphics Toolkits"
 msgstr "Grafik Araçları"
 
-msgid "Defaults"
-msgstr "Varsayılanlar"
-
 msgid "Account Settings"
 msgstr "Hesap Ayarları"
 
@@ -593,6 +597,24 @@ msgstr "%d öge yapılandırıldı"
 
 #, c-format
 msgid "%d items failed"
+msgstr ""
+
+msgid "Convert MySQL database to UTF8"
+msgstr ""
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Öge başarıyla silindi"
+
+msgid "No conversion required"
 msgstr ""
 
 msgid "Delete user sessions"
@@ -1723,11 +1745,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "İsim"
 
-msgid "Version"
-msgstr "Versiyon"
-
 msgid "Installed"
 msgstr "Kuruldu"
+
+msgid "Version"
+msgstr "Versiyon"
 
 msgid "Actions"
 msgstr "Hareketler"
@@ -1840,10 +1862,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Devam..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Galeri Modülleri"
 
 msgid "Download Plugin List"
 msgstr ""
@@ -2017,6 +2035,9 @@ msgstr "Varsayılan albüm ayarları başarıyla kaydedildi"
 msgid "Restored theme settings"
 msgstr "Tema ayarları iade edildi"
 
+msgid "Defaults"
+msgstr "Varsayılanlar"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2032,6 +2053,10 @@ msgstr "genişlik"
 
 msgid "New albums"
 msgstr "Yeni albümler"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Varsayılanlar"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2067,6 +2092,10 @@ msgstr "Değer"
 
 msgid "There are no settings for this theme"
 msgstr "Bu tema için ayarlar yok"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "%s Tema Ayarları"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2403,12 +2432,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Tüm alt-albümlere uygula"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr ""
-
-msgid "Use this theme in all subalbums"
-msgstr ""
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "Her öge için thumbnail gereklidir. Varsayılan boyutu piksel olarak girin."
 
@@ -2436,18 +2459,34 @@ msgstr "Geçerli bir boyut girmelisiniz."
 msgid "Use these target sizes in all subalbums"
 msgstr ""
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Recreate thumbnails and resizes"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Alt-ögelere uygula"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
 
-msgid "Recreate thumbnails"
-msgstr "Thumbnailları yeniden yarat"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Tüm alt-albümlere uygula"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Filigranlar yeniden yaratılıyor..."
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Recreate thumbnails and resizes"
+
+msgid "Build resizes too"
 msgstr ""
 
 msgid ""
@@ -2701,18 +2740,31 @@ msgstr ""
 msgid "Restore original"
 msgstr "Orjinali geri yükle"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Blok seç"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr ""
+
+msgid "Choose Theme"
 msgstr ""
 
 #, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+msgid "Configure the %s theme"
 msgstr ""
 
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+msgid "These settings only apply to the theme for this album."
+msgstr ""
+
+#, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr ""
 
 msgid "Album Highlight"
@@ -2922,9 +2974,6 @@ msgstr "sonra"
 
 msgid "Reorder"
 msgstr "Yeniden Sırala"
-
-msgid "Continue..."
-msgstr "Devam..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr ""
@@ -3350,6 +3399,19 @@ msgstr "[test] İkinci izin"
 
 msgid "Unit test theme"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Recreate thumbnails and resizes"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Recreate thumbnails and resizes"
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Thumbnailları yeniden yarat"
+
+#~ msgid "Continue..."
+#~ msgstr "Devam..."
 
 #, fuzzy
 #~ msgid "Downloading Files"

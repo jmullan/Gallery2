@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2005-07-27 23:11-0400\n"
 "PO-Revision-Date: 2005-08-24 14:00-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -198,9 +198,6 @@ msgstr "正在清除快速下載快取"
 msgid "Deleting old fast-download cache"
 msgstr "正在清除舊的快速下載快取"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "將 MySQL 資料轉成 UTF8 中"
-
 msgid "Updating panorama items"
 msgstr "更新全景圖片項目中"
 
@@ -221,6 +218,9 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "這是 Gallery 的首頁"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "將 MySQL 資料轉成 UTF8 中"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -577,6 +577,25 @@ msgstr "建立了 %d 個項目"
 #, c-format
 msgid "%d items failed"
 msgstr "%d 個項目失敗"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "將 MySQL 資料轉成 UTF8 中"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "項目已刪除成功"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "刪除用戶連線"
@@ -1467,8 +1486,7 @@ msgstr "鎖定帳戶"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
-msgstr ""
-"被鎖定的用戶無法編輯他們自己的帳戶資訊。（密碼、姓名、電郵等等）"
+msgstr "被鎖定的用戶無法編輯他們自己的帳戶資訊。（密碼、姓名、電郵等等）"
 
 msgid "Group Management"
 msgstr "成員組管理"
@@ -1727,11 +1745,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "外掛組件名稱"
 
-msgid "Version"
-msgstr "版本"
-
 msgid "Installed"
 msgstr "安裝版本"
+
+msgid "Version"
+msgstr "版本"
 
 msgid "Actions"
 msgstr "操作"
@@ -1786,8 +1804,7 @@ msgstr[0] "刪除了%d個語文包。"
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
 "at any time."
-msgstr ""
-"任何有關你或你的 Gallery 安裝資訊都不會被送往 Gallery 伺服器。"
+msgstr "任何有關你或你的 Gallery 安裝資訊都不會被送往 Gallery 伺服器。"
 
 #, c-format
 msgid ""
@@ -1797,10 +1814,9 @@ msgid ""
 "chosen, you must periodically download the latest plugin list to find out about available "
 "updates. %s On slower connections the process might take a minute or two."
 msgstr ""
-"下載和安裝新的外掛組件很簡單。如果你不喜歡某個外掛組件，你可以把它從你的 Gallery 刪除。"
-"外掛組件的軟體庫有好幾個，你可以決定要用那一個（也可以全部一齊使用）。在你選好後，你必需"
-"定期下載最新的外掛組件清單來看有沒有更新。%s在較慢的網路連線下，這個動作可能會花上一兩分"
-"鐘。"
+"下載和安裝新的外掛組件很簡單。如果你不喜歡某個外掛組件，你可以把它從你的 Gallery 刪除。外掛組"
+"件的軟體庫有好幾個，你可以決定要用那一個（也可以全部一齊使用）。在你選好後，你必需定期下載最"
+"新的外掛組件清單來看有沒有更新。%s在較慢的網路連線下，這個動作可能會花上一兩分鐘。"
 
 #, c-format
 msgid "Officially Released Gallery Project plugins (%srecommended%s)"
@@ -1834,8 +1850,8 @@ msgid ""
 "Before you can proceed, you have to change some permissions so that Gallery can install "
 "plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
 msgstr ""
-"在繼續之前，你必需更改一些存取權限，Gallery 才能為你安裝外掛組件。這個動作很簡單。"
-"只要透過指令列或你的 FTP 軟體執行下列的指令："
+"在繼續之前，你必需更改一些存取權限，Gallery 才能為你安裝外掛組件。這個動作很簡單。只要透過指"
+"令列或你的 FTP 軟體執行下列的指令："
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
@@ -2448,10 +2464,10 @@ msgid ""
 "Building images now makes this operation take longer, but saves the time to build and cache "
 "each file when it is first viewed."
 msgstr ""
-"縮略圖和縮放圖片的設定是應用在新加入的項目上的。如果要將這些設定用在相簿中的所有項目，"
-"請勾選適當的選項。包含子相簿會將各個相簿自己的設定用在它的縮略圖和縮放圖片上，這些設定"
-"可能會和上面的設定不同。同時重建圖像會讓這個動作花更久的時間，可是會節省當檔案第一次顯"
-"示時花在建圖和快取的時間。"
+"縮略圖和縮放圖片的設定是應用在新加入的項目上的。如果要將這些設定用在相簿中的所有項目，請勾選"
+"適當的選項。包含子相簿會將各個相簿自己的設定用在它的縮略圖和縮放圖片上，這些設定可能會和上面"
+"的設定不同。同時重建圖像會讓這個動作花更久的時間，可是會節省當檔案第一次顯示時花在建圖和快取"
+"的時間。"
 
 msgid "Apply album setting to thumbnails"
 msgstr "將相簿的設定應用到縮略圖上"
@@ -2701,8 +2717,7 @@ msgstr "這僅是這個照片的鏈接，所以你不能更改原始照片"
 msgid ""
 "There is no toolkit support to modify the original so operations may only be applied to the "
 "copies"
-msgstr ""
-"沒有支援修改原圖的圖形工具，所以這些功能只能應用在拷貝上。"
+msgstr "沒有支援修改原圖的圖形工具，所以這些功能只能應用在拷貝上。"
 
 msgid "Preserve Original Photo"
 msgstr "保留原始照片"
@@ -3395,4 +3410,3 @@ msgstr "[測試] 第二個權限"
 
 msgid "Unit test theme"
 msgstr "單元測試佈景主題"
-

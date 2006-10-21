@@ -22,7 +22,7 @@
 # along with this program; if not, write to the Free Software
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "POT-Creation-Date: 2003-06-25 11:44+0100\n"
 "PO-Revision-Date: 2006-08-07 20:36+0300\n"
 "Last-Translator: Yurii Smetana <Yura@stryi.com.ua>\n"
@@ -106,6 +106,10 @@ msgstr "Оновити Індекси"
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Поновити Усі Додатки"
 
 msgid "Done."
 msgstr "Готово."
@@ -215,9 +219,6 @@ msgstr "Створення кешу для швидкого завантажен
 msgid "Deleting old fast-download cache"
 msgstr "Видалення старого кешу швидкого завантаження"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "Перетворення даних MySQL в UTF8"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -238,6 +239,9 @@ msgstr "Галерея"
 
 msgid "This is the main page of your Gallery"
 msgstr "Це головна сторінка Галереї"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "Перетворення даних MySQL в UTF8"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -337,18 +341,16 @@ msgstr "редагувати %s"
 msgid "Settings saved successfully."
 msgstr "Налаштування успішно збережено."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; типова тема &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Перестворення змінених малюнків"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Відновлені налаштування теми"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Працюю..."
 
-msgid "Rebuilding resized images..."
-msgstr "Перестворення змінених малюнків..."
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Перестворення мініатюр..."
@@ -437,6 +439,13 @@ msgstr "Розмір фото успішно змінено"
 
 msgid "Modify Photo"
 msgstr "Змінити Фото"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Тема %s успішно активована"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; типова тема &raquo;"
 
 msgid "Theme"
 msgstr "Тема"
@@ -564,10 +573,6 @@ msgstr "Приорітет Інструментарію"
 msgid "Graphics Toolkits"
 msgstr "Графічні Інструменти"
 
-#, fuzzy
-msgid "Defaults"
-msgstr "Типово"
-
 msgid "Account Settings"
 msgstr "Налаштування Облікового Запису"
 
@@ -612,6 +617,25 @@ msgstr "%d елементів створено"
 #, c-format
 msgid "%d items failed"
 msgstr "%d елементів не вдалося створити"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "Перетворення даних MySQL в UTF8"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Елемент успішно видалено"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Видалити сесії користувачів"
@@ -1836,11 +1860,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Повне Ім'я"
 
-msgid "Version"
-msgstr "Версія"
-
 msgid "Installed"
 msgstr "Встановлений"
+
+msgid "Version"
+msgstr "Версія"
 
 msgid "Actions"
 msgstr "Дії"
@@ -1957,10 +1981,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Продовжити..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Поновити Усі Додатки"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2145,6 +2165,10 @@ msgstr "Типові налаштування альбому успішно зб
 msgid "Restored theme settings"
 msgstr "Відновлені налаштування теми"
 
+#, fuzzy
+msgid "Defaults"
+msgstr "Типово"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2160,6 +2184,10 @@ msgstr "з"
 
 msgid "New albums"
 msgstr "Нові альбоми"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Типово"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2195,6 +2223,10 @@ msgstr "Значення"
 
 msgid "There are no settings for this theme"
 msgstr "Ця тема немає налаштувань"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Налаштування Теми %s"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2556,12 +2588,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Застосувати для всіх вкладених альбомів"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Виберіть тему для цього альбому. (Як альбом буде розташовуватись на сторінці)"
-
-msgid "Use this theme in all subalbums"
-msgstr "Використовувати цю тему в усіх вкладених альбомах"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "Кожен елемент повинен мати мініатюру. Вкажіть її розміри, в пікселях."
 
@@ -2591,21 +2617,35 @@ msgstr "Ви повинні вказати правильний розмір"
 msgid "Use these target sizes in all subalbums"
 msgstr "Використовувати ці результуючі розміри в усіх вкладених альбомах"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Перестворити мініатюри та зменшені копії"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Застосувати до вкладених альбомів"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"Налагтування мініатюр та зменшених копій впливають на усі нові елементи. Що застосувати їх "
-"для усіх існуючих елементів в Ваших альбомах, поставте відповідну відмітку."
 
-msgid "Recreate thumbnails"
-msgstr "Перестворити мініатюри"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "Перестворити зменшені копії"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Застосувати для всіх вкладених альбомів"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Перестворення мініатюр..."
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Перестворення змінених малюнків"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2884,23 +2924,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "Відновити оригінал"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Виберіть блок"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "Використовувати цю тему в усіх вкладених альбомах"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Тема елементу "
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Альбом налаштовано для використання теми <b>%s</b>. Ці налаштування впливають на тему лише "
 "цього альбому."
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Використовувати ці налаштування для усіх вкладених альбомів що використовують тему %s."
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"Підказка: щоб встановити цю ж тему для усіх вкладених альбомів, встановіть відповідну "
-"помітку на закладці <b>Альбом</b>"
 
 msgid "Album Highlight"
 msgstr "Титульна Альбому"
@@ -3118,9 +3170,6 @@ msgstr "після"
 
 msgid "Reorder"
 msgstr "Перевпорядкувати"
-
-msgid "Continue..."
-msgstr "Продовжити..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Сторінку тимчасово недоступна. Здійснюються профілактичні роботи."
@@ -3593,6 +3642,38 @@ msgstr "[test] Вторинні права"
 
 msgid "Unit test theme"
 msgstr "Тема елементу "
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Перестворення змінених малюнків..."
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Виберіть тему для цього альбому. (Як альбом буде розташовуватись на сторінці)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Перестворити мініатюри та зменшені копії"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "Налагтування мініатюр та зменшених копій впливають на усі нові елементи. Що застосувати "
+#~ "їх для усіх існуючих елементів в Ваших альбомах, поставте відповідну відмітку."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Перестворити мініатюри"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Перестворити зменшені копії"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "Підказка: щоб встановити цю ж тему для усіх вкладених альбомів, встановіть відповідну "
+#~ "помітку на закладці <b>Альбом</b>"
+
+#~ msgid "Continue..."
+#~ msgstr "Продовжити..."
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "Здійснити оптимізацію"

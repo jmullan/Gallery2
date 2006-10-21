@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-14 16:52+0200\n"
 "PO-Revision-Date: 2005-09-06 17:10+0200\n"
@@ -102,6 +102,10 @@ msgstr ""
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Moduli Galerije"
 
 #, fuzzy
 msgid "Done."
@@ -206,9 +210,6 @@ msgstr "Brisanje fast-download keša"
 msgid "Deleting old fast-download cache"
 msgstr "Brisanje fast-download keša"
 
-msgid "Converting MySQL data to UTF8"
-msgstr ""
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -229,6 +230,9 @@ msgstr "Galerija"
 
 msgid "This is the main page of your Gallery"
 msgstr "Ovo je glavna strana vaše Galerije"
+
+msgid "Converting MySQL data to UTF8"
+msgstr ""
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -322,20 +326,16 @@ msgstr "Izmeni %s"
 msgid "Settings saved successfully."
 msgstr "Podešavanja uspešno sačuvana."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; podrazumevan izgled &raquo;"
-
 #, fuzzy
-msgid "Recreating resized images"
-msgstr "Ponovo napravi promenjene veličine"
+msgid "Apply resized image settings"
+msgstr "Vraćeni parametri izgleda"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Obrada..."
 
-#, fuzzy
-msgid "Rebuilding resized images..."
-msgstr "Ponovo napravi promenjene veličine"
+msgid "Apply thumbnail settings"
+msgstr ""
 
 #, fuzzy
 msgid "Rebuilding thumbnails..."
@@ -419,6 +419,13 @@ msgstr "Fotografija uspešno skalirana"
 
 msgid "Modify Photo"
 msgstr "Izmeni fotografiju"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Izgled %s uspešno aktiviran."
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; podrazumevan izgled &raquo;"
 
 msgid "Theme"
 msgstr "Izgled"
@@ -545,9 +552,6 @@ msgstr "Prioritet alatki"
 msgid "Graphics Toolkits"
 msgstr "Grafičke alatke"
 
-msgid "Defaults"
-msgstr "Podrazumevan"
-
 msgid "Account Settings"
 msgstr "Parametri naloga"
 
@@ -593,6 +597,24 @@ msgstr "%d objekata napravljeno"
 #, c-format
 msgid "%d items failed"
 msgstr "%d objekata sa greškom"
+
+msgid "Convert MySQL database to UTF8"
+msgstr ""
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Objekat uspešno izbrisan"
+
+msgid "No conversion required"
+msgstr ""
 
 #, fuzzy
 msgid "Delete user sessions"
@@ -1790,11 +1812,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Puno ime"
 
-msgid "Version"
-msgstr "Verzija"
-
 msgid "Installed"
 msgstr "Instalirana"
+
+msgid "Version"
+msgstr "Verzija"
 
 msgid "Actions"
 msgstr "Akcije"
@@ -1908,10 +1930,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Nastavi..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Moduli Galerije"
 
 msgid "Download Plugin List"
 msgstr ""
@@ -2090,6 +2108,9 @@ msgstr "Podrazumevani parametri albuma uspešno sačuvani"
 msgid "Restored theme settings"
 msgstr "Vraćeni parametri izgleda"
 
+msgid "Defaults"
+msgstr "Podrazumevan"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2105,6 +2126,10 @@ msgstr "sa"
 
 msgid "New albums"
 msgstr "Novi albumi"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Podrazumevan"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2140,6 +2165,10 @@ msgstr "Vrednost"
 
 msgid "There are no settings for this theme"
 msgstr "Ovaj izgled nema parametre"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Parametri izgleda %s"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2495,12 +2524,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Primeni na podobjekte"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Izaberite izgled za ovaj album. (Način na koji je album raspoređen na strani.)"
-
-msgid "Use this theme in all subalbums"
-msgstr ""
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 "Svaki objekat mora imati umanjen prikaz. Ovde zadajte podrazumevanu veličinu u pikselima."
@@ -2531,21 +2554,35 @@ msgstr "Morate uneti ispravnu veličinu"
 msgid "Use these target sizes in all subalbums"
 msgstr ""
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Ponovo napravi umanjene prikaze i promenjene veličine"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Primeni na podobjekte"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"Parametri umanjenih prikaza i promenjenih veličina su za nove objekte. Da primenite ove "
-"parametre na sve objekte u vašem albumu, obeležite odgovarajuće polje za potvrdu."
 
-msgid "Recreate thumbnails"
+msgid "Apply album setting to thumbnails"
+msgstr ""
+
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Primeni na podobjekte"
+
+#, fuzzy
+msgid "Build thumbnails too"
 msgstr "Ponovo napravi umanjene prikaze"
 
-msgid "Recreate resized images"
+#, fuzzy
+msgid "Apply album setting to resized images"
 msgstr "Ponovo napravi promenjene veličine"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2824,20 +2861,34 @@ msgstr ""
 msgid "Restore original"
 msgstr "Vrati original"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Izaberite blok"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr ""
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Testni izgled"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Ovaj album je podešen da koristi <b>%s</b> izgled. Ovi parametri se odnose samo na izgled "
 "ovog albuma."
 
 #, c-format
-msgid "Use these settings in all subalbums that use %s theme"
-msgstr ""
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr ""
 
 msgid "Album Highlight"
@@ -3056,9 +3107,6 @@ msgstr "iza"
 
 msgid "Reorder"
 msgstr "Promeni redosled"
-
-msgid "Continue..."
-msgstr "Nastavi..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr ""
@@ -3526,6 +3574,32 @@ msgstr "[test] Drugo pravo"
 
 msgid "Unit test theme"
 msgstr "Testni izgled"
+
+#, fuzzy
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Ponovo napravi promenjene veličine"
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Izaberite izgled za ovaj album. (Način na koji je album raspoređen na strani.)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Ponovo napravi umanjene prikaze i promenjene veličine"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "Parametri umanjenih prikaza i promenjenih veličina su za nove objekte. Da primenite ove "
+#~ "parametre na sve objekte u vašem albumu, obeležite odgovarajuće polje za potvrdu."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Ponovo napravi umanjene prikaze"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Ponovo napravi promenjene veličine"
+
+#~ msgid "Continue..."
+#~ msgstr "Nastavi..."
 
 #, fuzzy
 #~ msgid "Performing Maintenance Tasks"

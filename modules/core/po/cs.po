@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-01-28 21:40+0100\n"
 "PO-Revision-Date: 2006-03-11 17:40+0100\n"
@@ -107,6 +107,10 @@ msgstr "Aktualizovat index"
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Aktualizovat všechny pluginy"
 
 msgid "Done."
 msgstr "Hotovo."
@@ -208,9 +212,6 @@ msgstr "Mažu cache rychlých downloadů"
 msgid "Deleting old fast-download cache"
 msgstr "Mažu starou cache rychlých downloadů"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "Konvertuji MySQL data do UTF8"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -231,6 +232,9 @@ msgstr "Galerie"
 
 msgid "This is the main page of your Gallery"
 msgstr "Toto je hlavní stránka této Galerie."
+
+msgid "Converting MySQL data to UTF8"
+msgstr "Konvertuji MySQL data do UTF8"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -326,18 +330,16 @@ msgstr "upravit %s"
 msgid "Settings saved successfully."
 msgstr "Nastavení úspěšně uloženo."
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; výchozí téma &raquo;"
-
-msgid "Recreating resized images"
-msgstr "Znovu vytvářím zmenšeniny"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Obnoveno nastavení tématu"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "Zpracovávám..."
 
-msgid "Rebuilding resized images..."
-msgstr "Znovu vytvářím zmenšeniny..."
+msgid "Apply thumbnail settings"
+msgstr ""
 
 msgid "Rebuilding thumbnails..."
 msgstr "Znovu vytvářím náhledy..."
@@ -420,6 +422,13 @@ msgstr "Měřítko úspěšně změněno"
 
 msgid "Modify Photo"
 msgstr "Upravit fotografii"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Úspěšně aktivováno téma %s"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; výchozí téma &raquo;"
 
 msgid "Theme"
 msgstr "Téma"
@@ -546,9 +555,6 @@ msgstr "Priorita nástrojů"
 msgid "Graphics Toolkits"
 msgstr "Grafické nástroje"
 
-msgid "Defaults"
-msgstr "Výchozí hodnoty"
-
 msgid "Account Settings"
 msgstr "Nastavení účtu"
 
@@ -594,6 +600,25 @@ msgstr "vytvořeno %d položek"
 #, c-format
 msgid "%d items failed"
 msgstr "%d položek selhalo"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "Konvertuji MySQL data do UTF8"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "Položka úspěšně smazána"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "Výmaz sezení (sessions) uživatelů"
@@ -1807,11 +1832,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Jméno a příjmení"
 
-msgid "Version"
-msgstr "Verze"
-
 msgid "Installed"
 msgstr "Nainstalovaná"
+
+msgid "Version"
+msgstr "Verze"
 
 msgid "Actions"
 msgstr "Akce"
@@ -1928,10 +1953,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "Pokračovat..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Aktualizovat všechny pluginy"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2114,6 +2135,9 @@ msgstr "Výchozí nastavení alba úspěšně uloženo"
 msgid "Restored theme settings"
 msgstr "Obnoveno nastavení tématu"
 
+msgid "Defaults"
+msgstr "Výchozí hodnoty"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2129,6 +2153,10 @@ msgstr "s"
 
 msgid "New albums"
 msgstr "Nová alba"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Výchozí hodnoty"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2164,6 +2192,10 @@ msgstr "Hodnota"
 
 msgid "There are no settings for this theme"
 msgstr "Pro toto téma není žádné nastavení"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Nastavení tématu %s"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2522,12 +2554,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Aplikovat i na vnořená alba"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "Vyberte téma pro toto album (způsob jak je toto album uspořádáno na stránce)."
-
-msgid "Use this theme in all subalbums"
-msgstr "Použít toto téma pro všechna vnořená alba"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr "Každá položka potřebuje náhled. Vyberte výchozí velikost v pixelech."
 
@@ -2555,21 +2581,35 @@ msgstr "Musíte zadat platnou velikost"
 msgid "Use these target sizes in all subalbums"
 msgstr "Použít tuto cílovou velikost pro všechna vnořená alba"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "Znovu vytvořit náhledy a zmenšeniny"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Použít i pro vnořené položky"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"Nastavení náhledů a zmenšenin bude platné pro všechny nové položky. Pokud toto nastavení "
-"chcete aplikovat na všechny položky ve Vašem albu, zaškrtněte odpovídající nastavení."
 
-msgid "Recreate thumbnails"
-msgstr "Znovu vytvořit náhledy"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "Znovu vytvořit zmenšeniny"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Aplikovat i na vnořená alba"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "Znovu vytvářím náhledy..."
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "Znovu vytvářím zmenšeniny"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2846,23 +2886,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "Obnovit původní"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "Vyberte blok"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "Použít toto téma pro všechna vnořená alba"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "Téma testovací jednotky"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "Toto album je nastavené, aby používalo téma <b>%s</b>. Tato nastavení budou použita pouze "
 "pro téma tohoto alba."
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "Použít toto nastavení pro všechna vnořená alba, která používají téma %s"
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"Poznámka: Pro nastavení stejného tématu pro všechna podalba zaškrtněte odpovídající políčko "
-"v záložce <b>Alba</b>"
 
 msgid "Album Highlight"
 msgstr "Zvýraznit"
@@ -3080,9 +3132,6 @@ msgstr "za"
 
 msgid "Reorder"
 msgstr "Změnit pořadí"
-
-msgid "Continue..."
-msgstr "Pokračovat..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Stránky jsou dočasně nedostupné z důvodu údržby."
@@ -3549,6 +3598,38 @@ msgstr "[test] Druhá oprávnění"
 
 msgid "Unit test theme"
 msgstr "Téma testovací jednotky"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "Znovu vytvářím zmenšeniny..."
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "Vyberte téma pro toto album (způsob jak je toto album uspořádáno na stránce)."
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "Znovu vytvořit náhledy a zmenšeniny"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "Nastavení náhledů a zmenšenin bude platné pro všechny nové položky. Pokud toto nastavení "
+#~ "chcete aplikovat na všechny položky ve Vašem albu, zaškrtněte odpovídající nastavení."
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "Znovu vytvořit náhledy"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "Znovu vytvořit zmenšeniny"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "Poznámka: Pro nastavení stejného tématu pro všechna podalba zaškrtněte odpovídající "
+#~ "políčko v záložce <b>Alba</b>"
+
+#~ msgid "Continue..."
+#~ msgstr "Pokračovat..."
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "Provádím údržbu systému"

@@ -23,7 +23,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2005-08-13 11:42-0500\n"
@@ -107,6 +107,10 @@ msgstr ""
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "Модули на Галерията"
 
 msgid "Done."
 msgstr ""
@@ -209,9 +213,6 @@ msgstr ""
 msgid "Deleting old fast-download cache"
 msgstr "Изтриите временните файлове на базата данни"
 
-msgid "Converting MySQL data to UTF8"
-msgstr ""
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -232,6 +233,9 @@ msgstr "Галерия"
 
 msgid "This is the main page of your Gallery"
 msgstr "Това е началната страница на вашата Галерия"
+
+msgid "Converting MySQL data to UTF8"
+msgstr ""
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -325,16 +329,14 @@ msgstr "редактирайте %s"
 msgid "Settings saved successfully."
 msgstr ""
 
-msgid "&laquo; default theme &raquo;"
-msgstr ""
-
-msgid "Recreating resized images"
-msgstr ""
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "Настройките на стила са възстановени"
 
 msgid "Preparing..."
 msgstr ""
 
-msgid "Rebuilding resized images..."
+msgid "Apply thumbnail settings"
 msgstr ""
 
 msgid "Rebuilding thumbnails..."
@@ -417,6 +419,13 @@ msgid "Scaled photo successfully"
 msgstr ""
 
 msgid "Modify Photo"
+msgstr ""
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "Стила %s е успешно активиран"
+
+msgid "&laquo; default theme &raquo;"
 msgstr ""
 
 msgid "Theme"
@@ -544,9 +553,6 @@ msgstr "Приоритети"
 msgid "Graphics Toolkits"
 msgstr "Графични Програми"
 
-msgid "Defaults"
-msgstr "Презададени Настройки"
-
 msgid "Account Settings"
 msgstr "Потребителски Настройки"
 
@@ -590,6 +596,23 @@ msgstr "Изградени елементи: %d"
 #, c-format
 msgid "%d items failed"
 msgstr "Неуспешно изградени: %d"
+
+msgid "Convert MySQL database to UTF8"
+msgstr ""
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+msgid "Database successfully converted to UTF8"
+msgstr ""
+
+msgid "No conversion required"
+msgstr ""
 
 #, fuzzy
 msgid "Delete user sessions"
@@ -1726,11 +1749,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "Пълно Име"
 
-msgid "Version"
-msgstr "Версия"
-
 msgid "Installed"
 msgstr "Инсталиран"
+
+msgid "Version"
+msgstr "Версия"
 
 msgid "Actions"
 msgstr "Действия"
@@ -1841,10 +1864,6 @@ msgstr ""
 
 msgid "Continue"
 msgstr ""
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "Модули на Галерията"
 
 msgid "Download Plugin List"
 msgstr ""
@@ -2022,6 +2041,9 @@ msgstr "Презададените настройки на албума за у�
 msgid "Restored theme settings"
 msgstr "Настройките на стила са възстановени"
 
+msgid "Defaults"
+msgstr "Презададени Настройки"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2037,6 +2059,10 @@ msgstr "с"
 
 msgid "New albums"
 msgstr "Нови албуми"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "Презададени Настройки"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2074,6 +2100,10 @@ msgstr "Стойност"
 
 msgid "There are no settings for this theme"
 msgstr ""
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "Настройки за стила %s"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2403,12 +2433,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "Приложете към под-елементите"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr ""
-
-msgid "Use this theme in all subalbums"
-msgstr ""
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 
@@ -2436,18 +2460,32 @@ msgstr ""
 msgid "Use these target sizes in all subalbums"
 msgstr ""
 
-msgid "Recreate thumbnails and resizes"
-msgstr ""
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "Приложете към под-елементите"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
 
-msgid "Recreate thumbnails"
+msgid "Apply album setting to thumbnails"
 msgstr ""
 
-msgid "Recreate resized images"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "Приложете към под-елементите"
+
+msgid "Build thumbnails too"
+msgstr ""
+
+msgid "Apply album setting to resized images"
+msgstr ""
+
+msgid "Build resizes too"
 msgstr ""
 
 msgid ""
@@ -2692,18 +2730,30 @@ msgstr ""
 msgid "Restore original"
 msgstr ""
 
-#, c-format
-msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+msgid "Choose a theme"
 msgstr ""
 
 #, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+msgid ""
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
 
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
+msgid "Use this theme in all subalbums"
+msgstr ""
+
+msgid "Choose Theme"
+msgstr ""
+
+#, c-format
+msgid "Configure the %s theme"
+msgstr ""
+
+msgid "These settings only apply to the theme for this album."
+msgstr ""
+
+#, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr ""
 
 msgid "Album Highlight"
@@ -2917,9 +2967,6 @@ msgid "after"
 msgstr ""
 
 msgid "Reorder"
-msgstr ""
-
-msgid "Continue..."
 msgstr ""
 
 msgid "Site is temporarily down for maintenance."

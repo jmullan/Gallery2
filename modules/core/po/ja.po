@@ -21,7 +21,7 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.18\n"
+"Project-Id-Version: Gallery: Core 1.1.20\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
 "PO-Revision-Date: 2006-08-27 10:10+0900\n"
@@ -100,6 +100,10 @@ msgstr "インデックスをアップデート"
 
 msgid "Scanning plugins"
 msgstr ""
+
+#, fuzzy
+msgid "Update Plugin List"
+msgstr "全てのプラグインをアップグレード"
 
 msgid "Done."
 msgstr "完了"
@@ -201,9 +205,6 @@ msgstr "高速ダウンロードキャッシュをクリアしています"
 msgid "Deleting old fast-download cache"
 msgstr "古い高速ダウンロードキャッシュをクリアしています"
 
-msgid "Converting MySQL data to UTF8"
-msgstr "MySQLのデータをUTF8に変換する"
-
 msgid "Updating panorama items"
 msgstr ""
 
@@ -224,6 +225,9 @@ msgstr "Gallery"
 
 msgid "This is the main page of your Gallery"
 msgstr "これはあなたのGalleryのメインページです"
+
+msgid "Converting MySQL data to UTF8"
+msgstr "MySQLのデータをUTF8に変換する"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
@@ -315,18 +319,17 @@ msgstr "%s 編集"
 msgid "Settings saved successfully."
 msgstr "設定の保存に成功しました。"
 
-msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; デフォルトテーマ &raquo;"
-
-msgid "Recreating resized images"
-msgstr "リサイズ済画像を再生成しています"
+#, fuzzy
+msgid "Apply resized image settings"
+msgstr "保存されたテーマの設定"
 
 #, fuzzy
 msgid "Preparing..."
 msgstr "処理中..."
 
-msgid "Rebuilding resized images..."
-msgstr "リサイズ画像を再構築しています・・・"
+#, fuzzy
+msgid "Apply thumbnail settings"
+msgstr "アルバム設定"
 
 msgid "Rebuilding thumbnails..."
 msgstr "サムネイルを再構築しています・・・"
@@ -409,6 +412,13 @@ msgstr "パスワードの変更に成功しました"
 
 msgid "Modify Photo"
 msgstr "画像を変更する"
+
+#, fuzzy
+msgid "Successfully changed theme"
+msgstr "テーマ %s の有効化に成功しました"
+
+msgid "&laquo; default theme &raquo;"
+msgstr "&laquo; デフォルトテーマ &raquo;"
 
 msgid "Theme"
 msgstr "テーマ"
@@ -536,9 +546,6 @@ msgstr "ツールキットの優先順位"
 msgid "Graphics Toolkits"
 msgstr "グラフィック ツールキット"
 
-msgid "Defaults"
-msgstr "デフォルト"
-
 msgid "Account Settings"
 msgstr "アカウント設定"
 
@@ -584,6 +591,25 @@ msgstr "%d アイテムが構築されました"
 #, c-format
 msgid "%d items failed"
 msgstr "%d アイテムが失敗しました"
+
+#, fuzzy
+msgid "Convert MySQL database to UTF8"
+msgstr "MySQLのデータをUTF8に変換する"
+
+msgid ""
+"If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
+"experience scrambled characters until you convert your database to use UTF8.  This operation "
+"is harmless if your database is already converted, so it's safe to try it if you're unsure.  "
+"After using this, you should run the 'Delete database cache' task to get rid of any "
+"corruption in your cache."
+msgstr ""
+
+#, fuzzy
+msgid "Database successfully converted to UTF8"
+msgstr "アイテムの削除に成功しました"
+
+msgid "No conversion required"
+msgstr ""
 
 msgid "Delete user sessions"
 msgstr "ユーザのセッションを削除"
@@ -1791,11 +1817,11 @@ msgstr ""
 msgid "Plugin Name"
 msgstr "フルネーム"
 
-msgid "Version"
-msgstr "バージョン"
-
 msgid "Installed"
 msgstr "インストール済み"
+
+msgid "Version"
+msgstr "バージョン"
 
 msgid "Actions"
 msgstr "アクション"
@@ -1909,10 +1935,6 @@ msgstr ""
 #, fuzzy
 msgid "Continue"
 msgstr "続ける..."
-
-#, fuzzy
-msgid "Update Plugin List"
-msgstr "全てのプラグインをアップグレード"
 
 #, fuzzy
 msgid "Download Plugin List"
@@ -2097,6 +2119,9 @@ msgstr "デフォルトのアルバム設定の保存に成功しました"
 msgid "Restored theme settings"
 msgstr "保存されたテーマの設定"
 
+msgid "Defaults"
+msgstr "デフォルト"
+
 msgid ""
 "These are default display settings for albums in your gallery.  They can be overridden in "
 "each album."
@@ -2110,6 +2135,10 @@ msgstr "with"
 
 msgid "New albums"
 msgstr "新しいアルバム"
+
+#, fuzzy
+msgid "Save Defaults"
+msgstr "デフォルト"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2145,6 +2174,10 @@ msgstr "値"
 
 msgid "There are no settings for this theme"
 msgstr "このテーマの設定項目はありません"
+
+#, fuzzy
+msgid "Save Theme Settings"
+msgstr "%s テーマ設定"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2498,12 +2531,6 @@ msgstr ""
 msgid "Apply to all subalbums"
 msgstr "サブアルバムに適用"
 
-msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-msgstr "このアルバムのテーマを選択してください。 (ギャラリーがページ上で配置される方法)"
-
-msgid "Use this theme in all subalbums"
-msgstr "このテーマをすべてのサブアルバムで使う"
-
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 "各アイテムはサムネイルが必要です。ここにピクセル指定でデフォルトのサイズを入力してください。"
@@ -2534,21 +2561,35 @@ msgstr "有効なサイズを入力しなくてはなりません"
 msgid "Use these target sizes in all subalbums"
 msgstr "これらのターゲットサイズをすべてのサブアルバムで使う"
 
-msgid "Recreate thumbnails and resizes"
-msgstr "サムネイルおよびリサイズを再生成"
+#, fuzzy
+msgid "Apply settings to existing items"
+msgstr "サブアイテムに適用"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
-"all the items in your album, check the appropriate box."
+"all the items in your album, check the appropriate box. Including subalbums will apply each "
+"album's own settings to its thumbnails/resizes, which may not match the settings above. "
+"Building images now makes this operation take longer, but saves the time to build and cache "
+"each file when it is first viewed."
 msgstr ""
-"全ての新規アイテムに対するサムネイルとリサイズ画像の設定。アルバム中の全てのアイテムに対して"
-"この設定を適用するには、適切なチェックボックスにチェックしてください。"
 
-msgid "Recreate thumbnails"
-msgstr "サムネイルを再生成"
+msgid "Apply album setting to thumbnails"
+msgstr ""
 
-msgid "Recreate resized images"
-msgstr "リサイズ済画像を再生成"
+#, fuzzy
+msgid "... and for all subalbums"
+msgstr "サブアルバムに適用"
+
+#, fuzzy
+msgid "Build thumbnails too"
+msgstr "サムネイルを再構築しています・・・"
+
+#, fuzzy
+msgid "Apply album setting to resized images"
+msgstr "リサイズ済画像を再生成しています"
+
+msgid "Build resizes too"
+msgstr ""
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2817,23 +2858,35 @@ msgstr ""
 msgid "Restore original"
 msgstr "オリジナルへ戻す"
 
+#, fuzzy
+msgid "Choose a theme"
+msgstr "ブロックを選択"
+
 #, c-format
 msgid ""
-"This album is configured to use the <b>%s</b> theme. These settings only apply to the theme "
-"for this album."
+"Themes control the look and feel of the album.  You can choose a different theme for each "
+"album.  If you don't choose a theme, we'll use the %s theme by default."
+msgstr ""
+
+msgid "Use this theme in all subalbums"
+msgstr "このテーマをすべてのサブアルバムで使う"
+
+msgid "Choose Theme"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Configure the %s theme"
+msgstr "ユニットテストテーマ"
+
+#, fuzzy
+msgid "These settings only apply to the theme for this album."
 msgstr ""
 "このアルバムはテーマ <b>%s</b>を使うように設定されています。この設定は、このアルバムのための"
 "テーマにだけ適用されます"
 
-#, c-format
-msgid "Use these settings in all subalbums that use %s theme"
+#, fuzzy, c-format
+msgid "Use these settings in all subalbums that use the %s theme"
 msgstr "これらの設定をすべてのテーマ %s を使うサブアルバムで使う"
-
-msgid ""
-"Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> tab"
-msgstr ""
-"注意：すべてのサブアルバムに同じテーマを設定する際には、<b>アルバム</b>タブ内の適切なボックス"
-"にチェックを入れてください"
 
 msgid "Album Highlight"
 msgstr "アルバムハイライト"
@@ -3051,9 +3104,6 @@ msgstr "後"
 
 msgid "Reorder"
 msgstr "並べ替え"
-
-msgid "Continue..."
-msgstr "続ける..."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "サイトは、メンテナンスのため一時的に停止しています"
@@ -3521,6 +3571,38 @@ msgstr "[test] 二番目のパーミッション"
 
 msgid "Unit test theme"
 msgstr "ユニットテストテーマ"
+
+#~ msgid "Rebuilding resized images..."
+#~ msgstr "リサイズ画像を再構築しています・・・"
+
+#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
+#~ msgstr "このアルバムのテーマを選択してください。 (ギャラリーがページ上で配置される方法)"
+
+#~ msgid "Recreate thumbnails and resizes"
+#~ msgstr "サムネイルおよびリサイズを再生成"
+
+#~ msgid ""
+#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
+#~ "to all the items in your album, check the appropriate box."
+#~ msgstr ""
+#~ "全ての新規アイテムに対するサムネイルとリサイズ画像の設定。アルバム中の全てのアイテムに対し"
+#~ "てこの設定を適用するには、適切なチェックボックスにチェックしてください。"
+
+#~ msgid "Recreate thumbnails"
+#~ msgstr "サムネイルを再生成"
+
+#~ msgid "Recreate resized images"
+#~ msgstr "リサイズ済画像を再生成"
+
+#~ msgid ""
+#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
+#~ "tab"
+#~ msgstr ""
+#~ "注意：すべてのサブアルバムに同じテーマを設定する際には、<b>アルバム</b>タブ内の適切なボッ"
+#~ "クスにチェックを入れてください"
+
+#~ msgid "Continue..."
+#~ msgstr "続ける..."
 
 #~ msgid "Performing Maintenance Tasks"
 #~ msgstr "メンテナンスタスクを実行"
@@ -4174,9 +4256,6 @@ msgstr "ユニットテストテーマ"
 #, fuzzy
 #~ msgid "delete album"
 #~ msgstr "アルバム編集"
-
-#~ msgid "Album Settings"
-#~ msgstr "アルバム設定"
 
 #~ msgid "%d file found"
 #~ msgid_plural "%d files found"
