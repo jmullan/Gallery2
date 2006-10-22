@@ -46,13 +46,8 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_platform = new UnitTestPlatform();
-	$gallery->setPlatform($this->_platform);
 	$gallery->_lockSystem = new MockLockSystem();
-	$this->_platform->setReply('legalizePathComponent', array('albumtest'), 'albumtest');
-	$this->_platform->setReply('getDirectorySeparator', array(), '/');
-	$this->_platform->setReply('file_exists', array('fuzzy' => '{.*albumtest}'), false);
-	$this->_platform->setReply('mkdir', array('fuzzy' => '{.*albumtest}', '0755'), true);
+
 	list ($ret, $this->_temporaryAlbum) = GalleryCoreApi::createAlbum(
 		$this->_getRootId(), 'albumtest',
 		'This is my title', 'This is my summary',
@@ -61,14 +56,17 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-
 	$this->_markForCleanup($this->_temporaryAlbum);
+
 	list ($ret, $this->_lockIds) =
 	    GalleryCoreApi::acquireReadLock($this->_temporaryAlbum->getId());
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
+	$this->_platform = new UnitTestPlatform();
+	$gallery->setPlatform($this->_platform);
     }
 
     function tearDown() {
@@ -142,6 +140,9 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	$this->_platform->setReply('is_dir', array('/tmp.dir'), true);
 	$this->_platform->setReply('getcwd', array(), '/');
 	$this->_platform->setReply('chdir', array('/tmp.dir'), true);
+	/**
+	 * @todo this test shouldn't rely on archiveupload module
+	 */
 	list ($ret, $unzip) =
 	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
 	if ($ret) {
@@ -151,6 +152,10 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    array(array(array('0' => $unzip, '1' => '/picasaimport.tmp'))), array(true));
 	$this->_platform->setReply('chdir', array('/'), true);
 	$this->_platform->setReply('recursiveChmod', array('/tmp.dir', null, null), true);
+	$this->_platform->setReply('opendir', array('/tmp.dir'), 'testhand');
+	$this->_platform->setReply('readdir', array('testhand'), null);
+	$this->_platform->setReply('closedir', array('testhand'), true);
+	$this->_platform->setReply('getDirectorySeparator', array(), '/');
 	$this->_platform->setReply('getDirectorySeparator', array(), '/');
 	$this->_platform->setReply('file_exists', array('/tmp.dir/index.xml'), true);
 	$this->_platform->setReply('is_readable', array('/tmp.dir/index.xml'), true);
