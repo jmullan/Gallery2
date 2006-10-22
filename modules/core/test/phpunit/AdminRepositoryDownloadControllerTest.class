@@ -187,9 +187,14 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 
     function testDeleteLanguages() {
 	global $gallery;
-
 	$mockAdapter = new MockTemplateAdapter();
 	$gallery->_templateAdapter =& $mockAdapter;
+
+	/* Make sure translate calls during test won't generate any platform calls */
+	list ($ret) = GalleryCoreApi::getPermissionIds();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	$g2base = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
 	$platform = new UnitTestPlatform();
