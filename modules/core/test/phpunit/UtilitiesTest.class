@@ -984,21 +984,21 @@ class UtilitiesTest extends GalleryTestCase {
 	/* Normal */
 	$key = 'foo' . rand(1,9999);
 	$_COOKIE[$key] = 'foo';
-	$_SERVER['HTTP_COOKIE'] .= !empty($this->_originalServerHttpCookie) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] .= !empty($this->_saveServerHttpCookie) ? ' ; ' : '';
 	$_SERVER['HTTP_COOKIE'] .= $key . '=foo';
 	GalleryUtilities::fixCookieVars(false, true);
 	$this->assertEquals('foo', GalleryUtilities::getCookieVar($key));
 
 	/* Missing */
 	unset($_COOKIE[$key]);
-	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	$_SERVER['HTTP_COOKIE'] = $this->_saveServerHttpCookie;
 	GalleryUtilities::fixCookieVars(false, true);
 	$this->assertEquals(null, GalleryUtilities::getCookieVar($key));
 
 	/* Malicious value */
 	$val = '<script>bar</script>';
 	$_COOKIE[$key] = $val;
-	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	$_SERVER['HTTP_COOKIE'] = $this->_saveServerHttpCookie;
 	$_SERVER['HTTP_COOKIE'] .= !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
 	$_SERVER['HTTP_COOKIE'] .= $key . '=' . urlencode($val);
 	GalleryUtilities::fixCookieVars(false, true);
@@ -1011,7 +1011,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$val1 = 'bar' . $rand;
 	$val2 = 'bar' . ($rand + 3000);
 	$_COOKIE[$key] = $val2;
-	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	$_SERVER['HTTP_COOKIE'] = $this->_saveServerHttpCookie;
 	$delimiter = !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
 	$_SERVER['HTTP_COOKIE'] = $key . '=' . $val1 . ' ; ' . $key .'=' .$val2 . $delimiter .
 	    $_SERVER['HTTP_COOKIE'];
@@ -1038,8 +1038,8 @@ class UtilitiesTest extends GalleryTestCase {
 	$val1 = 'bar' . $rand;
 	$val2 = 'bar' . ($rand + 3000);
 	/* Define cookie with $val1 to be the one with higher precedence (more specific path) */
-	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
-	$_COOKIE = $this->_originalCookie;
+	$_SERVER['HTTP_COOKIE'] = $this->_saveServerHttpCookie;
+	$_COOKIE = $this->_saveCookie;
 	$_SERVER['HTTP_COOKIE'] .= !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
 	$_SERVER['HTTP_COOKIE'] .= "$key=" . urlencode($val1) . '; $key=' . urlencode($val2);
 	/* Set $_COOKIE as php would, with the wrong cookie value for our key */
@@ -1065,17 +1065,17 @@ class UtilitiesTest extends GalleryTestCase {
 	 * Even if we can't live with that case, test what happens if $_SERVER['HTTP_COOKIE']
 	 * does not exist
 	 */
-	$_COOKIE = $this->_originalCookie;
+	$_COOKIE = $this->_saveCookie;
 	unset($_SERVER['HTTP_COOKIE']);
 	GalleryUtilities::fixCookieVars(true);
-	$this->assertEquals($_COOKIE, $this->_originalCookie,
+	$this->assertEquals($_COOKIE, $this->_saveCookie,
 			    'HTTP_COOKIE unset test: $_COOKIE was modified!');
 
 	/*
 	 * Check if $_SERVER['HTTP_COOKIE'] is set (more as a feedback once we know that there are
 	 * still login/auth problems)
 	 */
-	$this->assertEquals(empty($this->_originalCookie), empty($this->_originalServerHttpCookie),
+	$this->assertEquals(empty($this->_saveCookie), empty($this->_saveServerHttpCookie),
 			    'HTTP_COOKIE not set although $_COOKIE is nonempty!');
 
 	/*
