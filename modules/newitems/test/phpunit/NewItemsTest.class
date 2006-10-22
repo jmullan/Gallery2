@@ -79,7 +79,8 @@ class NewItemsTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $content) = $module->getItemSummaries($this->_items, array());
+	$unused = null;
+	list ($ret, $content) = $module->getItemSummaries($this->_items, array(), $unused);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
