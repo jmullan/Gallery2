@@ -167,7 +167,9 @@ class CommentTest extends GalleryTestCase {
 	$itemId = $this->_item->getId();
 	/* Verify we get a non empty item summary for the item */
 	$permissions[$itemId]['comment.view'] = 1;
-	list ($ret, $content) = $module->getItemSummaries(array($this->_item), $permissions);
+	$unused = null;
+	list ($ret, $content) =
+	    $module->getItemSummaries(array($this->_item), $permissions, $unused);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -177,7 +179,7 @@ class CommentTest extends GalleryTestCase {
 	/* Get the item summary again, but without having the permissions */
 	unset($content);
 	list ($ret, $content) = $module->getItemSummaries(array($this->_item),
-							  array($itemId => array()));
+							  array($itemId => array()), $unused);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
