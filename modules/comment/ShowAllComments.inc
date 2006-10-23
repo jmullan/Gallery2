@@ -93,7 +93,9 @@ class ShowAllCommentsView extends GalleryView {
 	    foreach ($itemList as $it) {
 		$items[$it->getId()] = (array)$it;
 	    }
-	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
+
+	    /* get peer thumbnails and resizes */
+	    list ($ret, $derivatives) = GalleryCoreApi::fetchDerivativesByItemIds($itemIds);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -111,8 +113,13 @@ class ShowAllCommentsView extends GalleryView {
 
 	    if (!isset($itemData[$comment['parentId']])) {
 		$it = $items[$comment['parentId']];
-		if (isset($thumbnails[$comment['parentId']])) {
-		    $it['thumb'] = (array)$thumbnails[$comment['parentId']];
+		foreach ($derivatives[$comment['parentId']] as $derivative) {
+		    $type = $derivative->getDerivativeType();
+		    if (empty($it['resize']) && $type == DERIVATIVE_TYPE_IMAGE_RESIZE) {
+			$it['resize'] = (array)$derivative;
+		    } else if ($type == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+			$it['thumb'] = (array)$derivative;
+		    }
 		}
 		$itemData[$comment['parentId']] = $it;
 	    }

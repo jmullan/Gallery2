@@ -40,8 +40,11 @@
   </a>
   <script type="text/javascript">
     //<![CDATA[
-    {if isset($item.thumb)}
     {* force and alt/longdesc parameter here so that we avoid issues with single quotes in the title/description *}
+    {if isset($item.resize)}
+    new YAHOO.widget.Tooltip("gTooltip", {ldelim}
+        context: "CommentThumb", text: '{g->image item=$item image=$item.resize alt="" longdesc=""}', showDelay: 250 {rdelim});
+    {elseif isset($item.thumb)}
     new YAHOO.widget.Tooltip("gTooltip", {ldelim}
         context: "CommentThumb", text: '{g->image item=$item image=$item.thumb alt="" longdesc=""}', showDelay: 250 {rdelim});
     {/if}
