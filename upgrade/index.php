@@ -43,10 +43,12 @@
  */
 @ini_set('magic_quotes_runtime', 0);
 
-require_once(dirname(__FILE__) . '/UpgradeStep.class');
-require_once(dirname(__FILE__) . '/StatusTemplate.class');
-require_once(dirname(dirname(__FILE__)) . '/bootstrap.inc');
-require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryUtilities.class');
+$g2Base = dirname(dirname(__FILE__)) . '/';
+require_once($g2Base . 'upgrade/UpgradeStep.class');
+require_once($g2Base . 'upgrade/StatusTemplate.class');
+require_once($g2Base . 'bootstrap.inc');
+require_once($g2Base . 'modules/core/classes/GalleryUtilities.class');
+require_once($g2Base . 'lib/support/utilities.inc');
 
 /*
  * If gettext isn't enabled, subvert the _() text translation function
@@ -312,49 +314,6 @@ function generateUrl($uri, $print=true) {
 	print $uri;
     }
     return $uri;
-}
-
-/**
- * Regenerate the session id to prevent session fixation attacks
- * Must be called before starting to output any data since it tries to send a cookie
- */
-function regenerateSession() {
-    /* 1. Generate a new session id */
-    $newSessionId = md5(uniqid(substr(rand() . serialize($_REQUEST), 0, 114)));
-    $sessionData = array();
-    if (!empty($_SESSION) && is_array($_SESSION)) {
-	foreach ($_SESSION as $key => $value) {
-	    $sessionData[$key] = $value;
-	}
-    }
-    /* 2. Delete the old session */
-    session_unset();
-    session_destroy();
-    /* Create the new session with the old data, send cookie */
-    session_id($newSessionId);
-    $sessionName = session_name();
-    /* Make sure we don't use invalid data at a later point */
-    foreach (array($_GET, $_POST, $_REQUEST, $_COOKIE) as $superGlobal) {
-	unset($superGlobal[$sessionName]);
-    }
-    session_start();
-    foreach ($sessionData as $key => $value) {
-	$_SESSION[$key] = $value;
-    }
-}
-
-/**
- * Are cookies supported by the current user-agent?
- */
-function areCookiesSupported() {
-    static $areCookiesSupported;
-
-    /* Remember the state since we might unset $_COOKIE */
-    if (!isset($areCookiesSupported)) {
-	$areCookiesSupported = !empty($_COOKIE[session_name()]);
-    }
-
-    return $areCookiesSupported;
 }
 
 /*

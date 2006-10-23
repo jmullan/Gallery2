@@ -43,10 +43,12 @@
  */
 @ini_set('magic_quotes_runtime', 0);
 
-require_once(dirname(__FILE__) . '/GalleryStub.class');
-require_once(dirname(__FILE__) . '/InstallStep.class');
-require_once(dirname(__FILE__) . '/StatusTemplate.class');
-require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryUtilities.class');
+$g2Base = dirname(dirname(__FILE__)) . '/';
+require_once($g2Base . 'install/GalleryStub.class');
+require_once($g2Base . 'install/InstallStep.class');
+require_once($g2Base . 'install/StatusTemplate.class');
+require_once($g2Base. 'modules/core/classes/GalleryUtilities.class');
+require_once($g2Base. 'lib/support/utilities.inc');
 define('INDEX_PHP', basename(__FILE__));
 
 /*
@@ -129,8 +131,8 @@ if (!isset($_SESSION['install_path'])) {
     $_SESSION['install_path'] = __FILE__;
 }
 
-require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryStatus.class');
-require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryTranslator.class');
+require_once($g2Base . 'modules/core/classes/GalleryStatus.class');
+require_once($g2Base . 'modules/core/classes/GalleryTranslator.class');
 if (empty($_SESSION['language'])) {
     /* Select language based on preferences sent from browser */
     $_SESSION['language'] = GalleryTranslator::getLanguageCodeFromRequest();
@@ -347,8 +349,9 @@ function getBaseUrl() {
 
 /** Returns the URL to the G2 folder, e.g. http://example.com/gallery2/. */
 function getGalleryDirUrl() {
-    $galleryDir = dirname(dirname(__FILE__));
-    require_once($galleryDir . '/modules/core/classes/GalleryUrlGenerator.class');
+    global $g2Base;
+
+    require_once($g2Base . 'modules/core/classes/GalleryUrlGenerator.class');
     $urlPath = preg_replace('|^(.*/)install/index.php(?:\?.*)?$|s', '$1',
 			    GalleryUrlGenerator::getCurrentRequestUri());
 
@@ -376,49 +379,6 @@ function generateUrl($uri, $print=true) {
 	print $uri;
     }
     return $uri;
-}
-
-/**
- * Regenerate the session id to prevent session fixation attacks
- * Must be called before starting to output any data since it tries to send a cookie
- */
-function regenerateSession() {
-    /* 1. Generate a new session id */
-    $newSessionId = md5(uniqid(substr(rand() . serialize($_REQUEST), 0, 114)));
-    $sessionData = array();
-    if (!empty($_SESSION) && is_array($_SESSION)) {
-	foreach ($_SESSION as $key => $value) {
-	    $sessionData[$key] = $value;
-	}
-    }
-    /* 2. Delete the old session */
-    session_unset();
-    session_destroy();
-    /* Create the new session with the old data, send cookie */
-    session_id($newSessionId);
-    $sessionName = session_name();
-    /* Make sure we don't use invalid data at a later point */
-    foreach (array($_GET, $_POST, $_REQUEST, $_COOKIE) as $superGlobal) {
-	unset($superGlobal[$sessionName]);
-    }
-    session_start();
-    foreach ($sessionData as $key => $value) {
-	$_SESSION[$key] = $value;
-    }
-}
-
-/**
- * Are cookies supported by the current user-agent?
- */
-function areCookiesSupported() {
-    static $areCookiesSupported;
-
-    /* Remember the state since we might unset $_COOKIE */
-    if (!isset($areCookiesSupported)) {
-	$areCookiesSupported = !empty($_COOKIE[session_name()]);
-    }
-
-    return $areCookiesSupported;
 }
 
 /*
