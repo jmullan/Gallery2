@@ -147,7 +147,9 @@ class MultisiteStep extends InstallStep {
 		     $galleryDir . 'upgrade' . DIRECTORY_SEPARATOR . "index.php');\n?>\n");
 	fclose($out);
 	/* lib/support/index.php is optional; ignore errors */
-	if ($out = @fopen("$dir/lib/support/index.php", 'w')) {
+	if ((is_dir("$dir/lib") || mkdir("$dir/lib", 0755))
+		&& (is_dir("$dir/lib/support") || mkdir("$dir/lib/support", 0755))
+		&& $out = @fopen("$dir/lib/support/index.php", 'w')) {
 	    fwrite($out, "<?php\ndefine('GALLERY_CONFIG_DIR', dirname(dirname(dirname(__FILE__)" .
 		")));\nrequire('" . $galleryDir . 'lib' . DIRECTORY_SEPARATOR . 'support' .
 		DIRECTORY_SEPARATOR . "index.php');\n?>\n");
