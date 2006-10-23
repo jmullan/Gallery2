@@ -41,8 +41,9 @@
   <script type="text/javascript">
     //<![CDATA[
     {if isset($item.thumb)}
+    {* force and alt/longdesc parameter here so that we avoid issues with single quotes in the title/description *}
     new YAHOO.widget.Tooltip("gTooltip", {ldelim}
-        context: "CommentThumb", text: '{g->image item=$item image=$item.thumb}', showDelay: 250 {rdelim});
+        context: "CommentThumb", text: '{g->image item=$item image=$item.thumb alt="" longdesc=""}', showDelay: 250 {rdelim});
     {/if}
     //]]>
   </script>
