@@ -209,25 +209,28 @@ class ItemEditCaptionsView extends GalleryView {
 		return array($ret, null);
 	    }
 
-	    /* Get child thumbnails */
-	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
+	    /* Get child thumbnails and resizes */
+	    list ($ret, $derivatives) = GalleryCoreApi::fetchDerivativesByItemIds($childIds);
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
 	    /* build peers table */
 	    foreach ($childItems as $child) {
-		$form['items'][$child->getId()] = (array)$child;
+		$childId = $child->getId();
+		$form['items'][$childId] = (array)$child;
 
-		/* While we're at it, attach the thumbnails */
-		if (isset($thumbnails[$child->getId()])) {
-		    $thumbnail = $thumbnails[$child->getId()];
-		    list ($ret, $thumbnail) =
-			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
-		    if ($ret) {
-			return array($ret, null);
+		/* While we're at it, attach thumbnails and resizes */
+		if (isset($derivatives[$childId])) {
+		    foreach ($derivatives[$childId] as $derivative) {
+			$type = $derivative->getDerivativeType();
+			if (empty($form['items'][$childId]['resize']) &&
+			        $type == DERIVATIVE_TYPE_IMAGE_RESIZE) {
+			    $form['items'][$childId]['resize'] = (array)$derivative;
+			} else if ($type == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+			    $form['items'][$childId]['thumbnail'] = (array)$derivative;
+			}
 		    }
-		    $form['items'][$child->getId()]['thumbnail'] = (array)$thumbnail;
 		}
 	    }
 	}
@@ -241,6 +244,10 @@ class ItemEditCaptionsView extends GalleryView {
 
 	$template->setVariable('ItemEditCaptions', $ItemEditCaptions);
 	$template->setVariable('controller', 'core.ItemEditCaptions');
+	$template->javascript('lib/yui/yahoo-min.js');
+	$template->javascript('lib/yui/dom-min.js');
+	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/container-min.js');
 	return array(null, array('body' => 'modules/core/templates/ItemEditCaptions.tpl'));
 
     }

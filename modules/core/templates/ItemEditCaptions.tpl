@@ -50,7 +50,7 @@
 
   {if isset($item.thumbnail)}{strip}
   <div style="float: right">
-    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
+    <a id="thumb_{$item.id}" href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
       {g->image item=$item image=$item.thumbnail maxSize=150 class="giThumbnail"}
     </a>
   </div>
@@ -99,6 +99,23 @@
   {/if}
 </div>
 {/foreach}
+<script type="text/javascript">
+  //<![CDATA[
+  {foreach from=$form.items item=item}
+  {if isset($item.resize)}
+  {* force and alt/longdesc parameter here so that we avoid issues with single quotes in the title/description *}
+  new YAHOO.widget.Tooltip("gTooltip", {ldelim}
+      context: "thumb_{$item.id}", text: '{g->image item=$item image=$item.resize class="giThumbnail" maxSize=640 alt="" longdesc="" }',
+      showDelay: 250 {rdelim});
+  {elseif isset($item.thumbnail)}
+  new YAHOO.widget.Tooltip("gTooltip", {ldelim}
+      context: "thumb_{$item.id}", text: '{g->image item=$item image=$item.thumbnail class="giThumbnail" alt="" longdesc=""}',
+      showDelay: 250 {rdelim});
+  {/if}
+  {/foreach}
+  //]]>
+</script>
+
 
 <div class="gbBlock gcBackground1">
   {if $ItemEditCaptions.canCancel}
