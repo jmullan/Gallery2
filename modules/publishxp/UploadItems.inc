@@ -75,6 +75,12 @@ class UploadItemsController extends GalleryController {
 		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 
+	    /* The Windows Web Publishing Wizard does not send the file name in UTF-8 */
+	    $sourceEncoding = $this->_getCharsetFromRequest();
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Source encoding from Windows client: $sourceEncoding");
+	    }
+	    $file['name'] = GalleryCoreApi::convertToUtf8($file['name'], $sourceEncoding);
 	    /*
 	     * Get the mime type from the upload info.  If we don't get useful data from that
 	     * or its a type we don't recognize, take a swing at it using the file name.
@@ -163,6 +169,88 @@ class UploadItemsController extends GalleryController {
 	$results['status'] = $status;
 	$results['error'] = $error;
 	return array(null, $results);
+    }
+
+    /**
+     * Detects the specified Windows locale and translates it into a charset.
+     *
+     * Documentation:
+     * http://windowssdk.msdn.microsoft.com/en-us/library/ms649627.aspx
+     *
+     * @return string charset (MS Windows code page)
+     * @access private
+     */
+    function _getCharsetFromRequest() {
+	$lcid = (int)GalleryUtilities::getRequestVariablesNoPrefix('lcid');
+	/*
+	 * Lookup table: Locale ID to Code Page. Source:
+	 * http://www.microsoft.com/globaldev/reference/oslocversion.mspx
+	 */
+	switch ($lcid) {
+	    case 1054: /* Thai */
+		$codePage = 874;
+		break;
+	    case 1041: /* Japanese */
+		$codePage = 932;
+		break;
+	    case 2052: /* Chinese (Simplified) */
+		$codePage = 936;
+		break; 
+	    case 1042: /* Korean */
+		$codePage = 949;
+		break;
+	    case 1028: /* Chinese (Traditional) */
+	    case 3076: /* Chinese (Hong Kong) */
+		$codePage = 950;
+		break;
+	    case 1050: /* Croatian */
+	    case 1029: /* Czech */
+	    case 1038: /* Hungarian */
+	    case 1045: /* Polish */
+	    case 1048: /* Romanian */
+	    case 1051: /* Slovak */
+	    case 1060: /* Slovenian */
+		$codePage = 1250;
+		break;
+	    case 1026: /* Bulgarian */
+	    case 1049: /* Russian */
+		$codePage = 1251;
+		break;
+	    case 1046: /* Brazilian */
+	    case 1027: /* Catalan */
+	    case 1030: /* Danish */
+	    case 1043: /* Dutch */
+	    case 1033: /* English */
+	    case 1035: /* Finnish */
+	    case 1036: /* French */
+	    case 1031: /* German */
+	    case 1040: /* Italian */
+	    case 1044: /* Norwegian */
+	    case 2070: /* Portuguese */
+	    case 3082: /* Spanish */
+	    case 1053: /* Swedish */
+		$codePage = 1252;
+		break;
+	    case 1032: /* Greek */
+		$codePage = 1253;
+		break;
+	    case 1055: /* Turkish */
+		$codePage = 1254;
+		break;
+	    case 1037: /* Hebrew */
+		$codePage = 1255;
+		break;
+	    case 1025: /* Arabic */
+		$codePage = 1256;
+		break;
+	    case 1061: /* Estonian */
+	    case 1062: /* Latvian */
+	    case 1063: /* Lithuanian */
+		$codePage = 1257;
+		break;
+	    default: $codePage = 1252;
+	}
+	return 'Windows-' . $codePage;
     }
 }
 
