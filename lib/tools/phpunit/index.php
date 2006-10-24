@@ -22,6 +22,7 @@
  * @package Gallery
  * @subpackage PHPUnit
  */
+define('G2_SUPPORT_URL_FRAGMENT', '../../support/');
 
 include('../../support/security.inc');
 include('../../../bootstrap.inc');
