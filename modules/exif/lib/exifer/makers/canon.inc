@@ -183,7 +183,8 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result) {
 			$result['ISO']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//16
 			switch($result['ISO']) {
 				case 32767:
-				case 0: $result['ISO'] = $exif['SubIFD']['ISOSpeedRatings']; break;
+				case 0: $result['ISO'] = isset($exif['SubIFD']['ISOSpeedRatings'])
+					? $exif['SubIFD']['ISOSpeedRatings'] : 'Unknown'; break;
 				case 15: $result['ISO'] = "Auto"; break;
 				case 16: $result['ISO'] = "50"; break;
 				case 17: $result['ISO'] = "100"; break;
