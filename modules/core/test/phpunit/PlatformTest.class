@@ -181,14 +181,6 @@ class PlatformTest extends GalleryTestCase {
 	$this->assert(!$this->_platform->isLegalPathComponent('The!QuickBrownFox'));
     }
 
-    function testgetLegalPathCharacters() {
-	$this->assertEquals('ABCDEFGHIJKLMNOPQRSTUVWXYZ' .
-			    'abcdefghijklmnopqrstuvwxyz' .
-			    '0123456789' .
-			    '# _.-',
-			    $this->_platform->getLegalPathCharacters());
-    }
-
     function testLegalizePathComponent() {
 	$this->assertEquals('The_Quick_',
 			    $this->_platform->legalizePathComponent('The!Quick$'));
@@ -204,23 +196,72 @@ class PlatformTest extends GalleryTestCase {
 			    $this->_platform->legalizePathComponent('test.php.jpg'));
     }
 
+    function testPathComponentLegalCharactersConserved() {
+	$this->assertEquals(true,
+			    $this->_platform->isLegalPathComponent('TheQuickBrownFox'));
+	$this->assertEquals('TheQuickBrownFox',
+			    $this->_platform->legalizePathComponent('TheQuickBrownFox'));
+    }
+
+    function testPathComponentIllegalCharactersToUnderscores() {
+	$this->assertEquals(false,
+			    $this->_platform->isLegalPathComponent('The Quick!Brown#Fox'));
+	$this->assertEquals('The Quick_Brown#Fox',
+			    $this->_platform->legalizePathComponent('The Quick!Brown#Fox'));
+    }
+
+    function testPathComponentDotInFileBaseToUnderscore() {
+	$this->assertEquals(false,
+			    $this->_platform->isLegalPathComponent('test.php.jpg'));
+	$this->assertEquals('test_php.jpg',
+			    $this->_platform->legalizePathComponent('test.php.jpg'));
+    }
+
+    function testPathComponentDotRecognizedExtensionConserved() {
+	$this->assertEquals(true,
+			    $this->_platform->isLegalPathComponent('test.jpg'));
+	$this->assertEquals('test.jpg',
+			    $this->_platform->legalizePathComponent('test.jpg'));
+    }
+
+    function testPathComponentDotUnrecognizedExtensionToUnderscore() {
+	$this->assertEquals(false,
+			    $this->_platform->isLegalPathComponent('test.foo'));
+	$this->assertEquals('test_foo',
+			    $this->_platform->legalizePathComponent('test.foo'));
+    }
+
+    function testPathComponentDotPhpExtensionToUnderscore() {
+	$this->assertEquals(false,
+			    $this->_platform->isLegalPathComponent('test.php'));
+	$this->assertEquals('test_php',
+			    $this->_platform->legalizePathComponent('test.php'));
+    }
+
+    function testPathComponentDotUnderscoreToUnderscoreUnderscore() {
+	$this->assertEquals(false,
+			    $this->_platform->isLegalPathComponent('._test'));
+	$this->assertEquals('__test',
+			    $this->_platform->legalizePathComponent('._test'));
+    }
+
+    /**
+     * Make sure executing a bogus path fails.
+     *
+     * XXX: This is a pretty weak test.  It's hard to improve it without actually shipping a
+     * known-good script though.
+     */
     function testExec() {
-	/*
-	 * Make sure executing a bogus path fails.
-	 *
-	 * XXX: This is a pretty weak test.  It's hard to improve it without
-	 * actually shipping a known-good script though
-	 */
 	$results = $this->_platform->exec(array(array('/bogus/path')));
 	$this->assertEquals(false, $results[0]);
     }
 
+    /**
+     * Make sure files are written with correct permissions by exec, copy, symlink,
+     * atomicWrite; test chmod.
+     */
     function testPermissions() {
 	if (GalleryUtilities::isA($this->_platform, 'UnixPlatform')) {
-	    /*
-	     * Make sure files are written with correct permissions by
-	     * exec, copy, symlink, atomicWrite; test chmod
-	     */
 	    if ($this->_markPluginParametersForCleanup('module', 'core')) {
 		return;
 	    }

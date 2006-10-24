@@ -579,33 +579,26 @@ class GalleryPlatform {
 
     /**
      * Return true if the path component specified is composed of legal characters.
-     *
      * @param string $component the path component (must not contain path separators)
      * @return true if yes
      */
     function isLegalPathComponent($component) {
-	$legalChars = $this->getLegalPathCharacters();
-	if (strspn($component, $legalChars) == strlen($component)) {
-	    return true;
-	} else {
-	    return false;
-	}
+	return !strcmp($this->legalizePathComponent($component), $component);
     }
 
     /**
-     * Legal characters on all systems: A-Z a-z 0-9 _ . -
+     * Legal characters on all systems: A-Z a-z 0-9 # _ . -
      *
      * Specific platform implementations can override this.
      *
      * @return string a string composed of all legal path characters
      */
     function getLegalPathCharacters() {
-	return 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789# _.-';
-
 	/*
 	 * Keep the hyphen at the end of this string, else ereg() functions will complain if you use
 	 * this in a bracket expression.
 	 */
+	return 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789# _.-';
     }
 
     /**
