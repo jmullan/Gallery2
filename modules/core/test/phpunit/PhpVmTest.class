@@ -125,6 +125,18 @@ class PhpVmTest extends GalleryTestCase {
 	/* The other case, $phpVm->headers_sent() == false, is covered by testHeader() */
     }
 
+    function testHeaderDetectsHeaderInjection() {
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
+
+	/*
+	 * If the header call would succeed, there would be a PHP warning about headers already
+	 * been sent.
+	 */
+	$crLf = chr(13) . chr(10);
+	$phpVm->header('X-Foo: foo' . urlencode($crLf) . 'bar');
+    }
+
     /* This setting can't be changed during runtime */
     function testGetMagicQuotesGpc() {
 	$this->assertEquals(get_magic_quotes_gpc(), $this->_phpVm->get_magic_quotes_gpc(),

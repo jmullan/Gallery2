@@ -981,6 +981,20 @@ class UrlGeneratorTest extends GalleryTestCase {
 	}
     }
 
+    function testDetectHeaderInjectionAttack() {
+	$badUrls = array(
+	    'http://EVIL.com/gallery2/main.php?test%0d%0afoo',
+	    'main.php?foo%250Abar',
+	    'main.php?g2_subView=core.UserLogin&amp;%0A',
+	    'main.php?foo' . chr(13). 'bar');
+	foreach ($badUrls as $url) {
+	    $_GET['g2_return'] = $url;
+	    $ret = $this->_urlGenerator->initNavigation();
+	    $this->assert($ret->getErrorCode() & ERROR_PERMISSION_DENIED,
+			  "Header injection '$url' not detected for url");
+	}
+    }
+
     /*
      * Make sure getNavigationLinks() returns unchanged URLs
      * (part of our phishing attack protection)

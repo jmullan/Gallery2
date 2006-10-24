@@ -28,6 +28,7 @@
 /* Include bootstrap.inc in case config.php overrides GALLERY_MAIN_PHP */
 require_once(dirname(__FILE__) . '/bootstrap.inc');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUrlGenerator.class');
+require_once(dirname(__FILE__) . '/modules/core/classes/GalleryCoreApi.class');
 
 /* The REQUEST_URI can either be /path/index.php or just /path/. Get rid of index.php.* */
 $path = GalleryUrlGenerator::getCurrentRequestUri();
@@ -43,5 +44,6 @@ $configBaseUri = @$gallery->getConfig('baseUri');
 $urlGenerator =& new GalleryUrlGenerator();
 $urlGenerator->init(!empty($configBaseUri) ? $configBaseUri : null);
 
-header('Location: ' . $urlGenerator->makeUrl($path));
+$phpVm =& $gallery->getPhpVm();
+$phpVm->header('Location: ' . $urlGenerator->makeUrl($path));
 ?>

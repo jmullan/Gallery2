@@ -785,6 +785,14 @@ class GalleryUrlGenerator {
 	list ($returnUrl, $returnName, $navId, $fromNavId) = $variables;
 	
 	if (!empty($returnUrl)) {
+	    /* Detect header injection attempts */
+	    if (!GalleryUtilities::isSafeHttpHeader($returnUrl)) {
+		$message = sprintf('Invalid return URL! The requested URL %s contains malicious ' .
+				   'characters.',
+				   $this->makeUrl($this->getCurrentRequestUri()), $returnUrl);
+		return GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__, $message);
+	    }
+
 	    /*
 	     * Check for phishing attacks, don't allow return URLs to other sites or to other paths.
 	     * Therefore first get the validPath, e.g. '/gallery2/' Do not allow ../ to break out of
@@ -804,17 +812,10 @@ class GalleryUrlGenerator {
 			    && preg_match('{^\s*[^/\s]}i', $normReturnUrl)))
 		    || preg_match('{^\s*\.\./}', $normReturnUrl)
 		    || strpos($normReturnUrl, '/../') !== false) {
-		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-		if ($ret) {
-		    return $ret;
-		}
-		$message = sprintf(
-		    $module->translate('Invalid return URL! The requested URL %s tried to ' .
-				       'insert a redirection to %s which is not a part of '.
-				       'this Gallery.'),
-		    $this->makeUrl($this->getCurrentRequestUri()), $returnUrl);
+		$message = sprintf('Invalid return URL! The requested URL %s tried to insert a ' .
+				   'redirection to %s which is not a part of this Gallery.',
+				   $this->makeUrl($this->getCurrentRequestUri()), $returnUrl);
 		return GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__, $message);
-
 	    }
 
 	    /* Branch a new navigation */
