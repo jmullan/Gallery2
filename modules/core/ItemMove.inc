@@ -172,6 +172,12 @@ class ItemMoveController extends GalleryController {
 				return array($ret, null);
 			    }
 			}
+
+			$ret = $storage->checkPoint();
+			if ($ret) {
+			    GalleryCoreApi::releaseLocks($lockIds);
+			    return array($ret, null);
+			}
 		    }
 		    $ret = GalleryCoreApi::releaseLocks($currentLockId);
 		    if ($ret) {
