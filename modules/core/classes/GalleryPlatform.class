@@ -19,9 +19,8 @@
  */
 
 /**
- * A framework for doing platform specific tasks.  This is an abstract class that implements
- * many basic tasks that are different from platform to platform.
- *
+ * A framework for doing platform specific tasks.  This is an abstract class that implements many
+ * basic tasks that are different from platform to platform.
  * @package GalleryCore
  * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -31,8 +30,7 @@
 class GalleryPlatform {
 
     /**
-     * Copy a file
-     *
+     * Copy a file.
      * @param string $source the source file
      * @param string $dest the destination file
      * @return boolean true if the copy succeeded, false otherwise
@@ -62,8 +60,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Symlink a file
-     *
+     * Symlink a file.
      * @param string $source the source file
      * @param string $dest the destination file
      * @return boolean true if the copy succeeded, false otherwise
@@ -85,9 +82,8 @@ class GalleryPlatform {
     }
 
     /**
-     * Move an uploaded file to a new location and return the new location.  If the second
-     * filename is not provided, a new file is created in the Gallery temporary directory.
-     *
+     * Move an uploaded file to a new location and return the new location.  If the second filename
+     * is not provided, a new file is created in the Gallery temporary directory.
      * @return string the new file name, if the move was successful
      */
     function move_uploaded_file($filename, $newFilename=null) {
@@ -115,8 +111,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Create a file with a unique file name
-     *
+     * Create a file with a unique file name.
      * @param string $dir target dir
      * @param string $prefix file prefix
      */
@@ -131,7 +126,6 @@ class GalleryPlatform {
 
     /**
      * Does the given file exist?
-     *
      * @param string $filename full filesystem path to a file
      * @return boolean true if the file exists, false otherwise
      */
@@ -146,7 +140,6 @@ class GalleryPlatform {
 
     /**
      * Is the given path a symbolic link?
-     *
      * @param string $filename a filesystem path
      * @return boolean true if the file is a link, false otherwise
      */
@@ -161,7 +154,6 @@ class GalleryPlatform {
 
     /**
      * Is the given path a directory?
-     *
      * @param string $filename a filesystem path
      * @return boolean true if the path is a directory, false otherwise
      */
@@ -176,7 +168,6 @@ class GalleryPlatform {
 
     /**
      * Is the given path a normal file?
-     *
      * @param string $filename a filesystem path
      * @return boolean true if the path is a file, false otherwise
      */
@@ -190,8 +181,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Is the given path a writeable file
-     *
+     * Is the given path a writeable file?
      * @param string $filename a filesystem path
      * @return boolean true if the path is writeable, false otherwise
      */
@@ -205,8 +195,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Is the given path a readable file
-     *
+     * Is the given path a readable file?
      * @param string $filename a filesystem path
      * @return boolean true if the path is readable, false otherwise
      */
@@ -220,8 +209,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Is the given path an uploaded file
-     *
+     * Is the given path an uploaded file?
      * @param string $filename a filesystem path
      * @return boolean true if the path is an uploaded file, false otherwise
      */
@@ -236,7 +224,6 @@ class GalleryPlatform {
 
     /**
      * Is the given path an executable file?
-     *
      * @param string $filename a filesystem path
      * @return boolean true if the path is an executable file, false otherwise
      */
@@ -251,7 +238,6 @@ class GalleryPlatform {
 
     /**
      * How large is the given file?
-     *
      * @param string $filename full filesystem path to a file
      * @return int the size in bytes
      */
@@ -265,7 +251,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Clear the stat cache
+     * Clear the stat cache.
      */
     function clearstatcache() {
 	global $gallery;
@@ -277,8 +263,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Return a file as an array
-     *
+     * Return a file as an array.
      * @param string $filename a file path or URL
      * @param int $use_include_path if this is set to 1, search the include path also
      * @return array of lines
@@ -293,8 +278,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Output a file
-     *
+     * Output a file.
      * @param string $filename a file path or URL
      * @param int $use_include_path if this is set to 1, search the include path also
      * @return int the number of bytes read from the file
@@ -309,7 +293,6 @@ class GalleryPlatform {
 
     /**
      * Reads the entire contents of the specified file into a string.
-     *
      * @param string $path file path
      * @return string file contents or boolean false on failure
      */
@@ -318,8 +301,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Open a file or URL
-     *
+     * Open a file or URL.
      * @param string $filename a file path or URL
      * @param string $mode a file mode
      * @param int $use_include_path if this is set to 1, search the include path also
@@ -335,8 +317,7 @@ class GalleryPlatform {
     }
 
     /**
-     * flock -- Portable advisory file locking
-     *
+     * flock -- Portable advisory file locking.
      * @param resource $handle a file handle
      * @param int $operation (LOCK_SH, LOCK_EX, LOCK_UN) [ | LOCK_NB]
      * @param boolean $wouldblock set to true if the operation would have blocked
@@ -355,7 +336,6 @@ class GalleryPlatform {
      * Perform an atomic write to a file.  This guarantees that the data written is not corrupted
      * (but it does not prevent another process from immediately replacing the file with its own
      * version).
-     *
      * @param string $filename
      * @param string $data data to be written
      * @return boolean success or failure
@@ -385,8 +365,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Open a file or URL
-     *
+     * Open a file or URL.
      * @param string $path a file path
      * @return resource a directory descriptor
      */
@@ -400,8 +379,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Return the next file resource from a directory
-     *
+     * Return the next file resource from a directory.
      * @param resource $resource a directory resource
      */
     function readdir($resource) {
@@ -414,8 +392,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Close a directory resource
-     *
+     * Close a directory resource.
      * @param resource $resource a directory resource
      */
     function closedir($resource) {
@@ -428,7 +405,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Rename a file/dir
+     * Rename a file/dir.
      *
      * As a side bonus, create a backup of the original file.
      *
@@ -446,8 +423,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Get information about a file
-     *
+     * Get information about a file.
      * @param string $filename file/dir name
      * @return array the statistics of the file
      */
@@ -461,15 +437,15 @@ class GalleryPlatform {
     }
 
     /**
-     * Get size information about an image
-     *
+     * Get size information about an image.
      * @param string $filename the image file name
      * @return array with 4 elements.  Index 0 contains the width of the image in pixels.  Index 1
-     *   contains the height.  Index 2 is a flag indicating the type of the image: 1 = GIF, 2 = JPG,
-     *   3 = PNG, 4 = SWF, 5 = PSD, 6 = BMP, 7 = TIFF(intel byte order), 8 = TIFF(motorola byte
-     *   order), 9 = JPC, 10 = JP2, 11 = JPX, 12 = JB2, 13 = SWC, 14 = IFF.  These values correspond
-     *   to the IMAGETYPE constants that were added in PHP 4.3.  Index 3 is a text string with the
-     *   correct height="yyy" width="xxx" string that can be used directly in an IMG tag.
+     *         contains the height.  Index 2 is a flag indicating the type of the image: 1 = GIF, 2
+     *         = JPG, 3 = PNG, 4 = SWF, 5 = PSD, 6 = BMP, 7 = TIFF(intel byte order), 8 =
+     *         TIFF(motorola byte order), 9 = JPC, 10 = JP2, 11 = JPX, 12 = JB2, 13 = SWC, 14 = IFF.
+     *         These values correspond to the IMAGETYPE constants that were added in PHP 4.3.  Index
+     *         3 is a text string with the correct height="yyy" width="xxx" string that can be used
+     *         directly in an IMG tag.
      */
     function getimagesize($filename) {
 	global $gallery;
@@ -485,8 +461,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Delete a file
-     *
+     * Delete a file.
      * @param string $filename
      * @return boolean true on success, false on failure
      */
@@ -500,8 +475,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Delete a directory
-     *
+     * Delete a directory.
      * @param string $filename directory name
      * @return boolean true on success, false on failure
      */
@@ -515,8 +489,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Delete a directory, and all its contents
-     *
+     * Delete a directory, and all its contents.
      * @param string $dirname directory name
      * @return boolean true on success, false on failure
      */
@@ -556,8 +529,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Create a new directory
-     *
+     * Create a new directory.
      * @param string $path a filesystem path
      * @param string $stringPerms permissions of the newly created directory
      * @return boolean true on success, false on failure
@@ -606,10 +578,10 @@ class GalleryPlatform {
      */
     function legalizePathComponent($component) {
 	global $gallery;
-	$legal = $this->getLegalPathCharacters();
+	$legalChars = $this->getLegalPathCharacters();
 
 	/* Scrub out all the illegal characters */
-	$component = ereg_replace("[^$legal]", "_", $component);
+	$component = ereg_replace("[^$legalChars]", '_', $component);
 
 	/* Break it into filebase and extension */
 	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($component);
@@ -631,7 +603,7 @@ class GalleryPlatform {
 	list ($ret, $tmp) = GalleryCoreApi::convertExtensionToMime($extension);
 	if ($ret && $gallery->getDebug()) {
 	    $gallery->debug('Error: convertExtensionToMime in ' .
-	    'GalleryPlatform::legalizePathComponent');
+		'GalleryPlatform::legalizePathComponent');
 	}
 	if (($ret || $tmp == 'application/unknown') && !empty($extension)) {
 	    $fileBase = $fileBase . '_' . $extension;
@@ -639,17 +611,15 @@ class GalleryPlatform {
 	}
 
 	/* Rebuild the baseName according to our transforms above */
-	$baseName = $fileBase;
 	if (!empty($extension)) {
-	    $baseName .= '.' . $extension;
+	    $fileBase .= '.' . $extension;
 	}
 
-	return $baseName;
+	return $fileBase;
     }
 
     /**
      * Execute a command and record the results and status.
-     *
      * @param array $cmdArray array(array('cmd', 'arg'), ...)
      * @return array(boolean true if the command succeeded, false otherwise,
      *               array standard output from the command
@@ -661,8 +631,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Return the filesystem specific directory separator
-     *
+     * Return the filesystem specific directory separator.
      * @return string directory separator
      */
     function getDirectorySeparator() {
@@ -671,7 +640,6 @@ class GalleryPlatform {
 
     /**
      * Return true if the path provided is not allowed by the current open_basedir configuration.
-     *
      * @return true if the path is restricted
      */
     function isRestrictedByOpenBaseDir($path) {
@@ -685,7 +653,6 @@ class GalleryPlatform {
 
     /**
      * Check if path is allowed by open_basedir, given platform path separator & case sensitivity.
-     *
      * @access protected
      */
     function _isRestrictedByOpenBaseDir($path, $separator, $caseSensitive) {
@@ -736,7 +703,6 @@ class GalleryPlatform {
 
     /**
      * Initiates a socket connection to the resource specified by target.
-     *
      * @param string $target the hostname
      * @param int $port the port
      * @param int $errno the error number (out)
@@ -756,7 +722,6 @@ class GalleryPlatform {
 
     /**
      * Write the contents of string to the file stream pointed to by handle.
-     *
      * @param resource $handle the handle
      * @param string $string the buffer
      * @param int $length how many bytes to write (optional)
@@ -777,7 +742,6 @@ class GalleryPlatform {
 
     /**
      * Writes specified data to file.  Uses PHP's file_put_contents() function if it is available.
-     *
      * @param string $path output file path
      * @param string $data data to write
      * @return boolean true on success, false on failure
@@ -795,8 +759,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Closes an open file pointer
-     *
+     * Closes an open file pointer.
      * @param resource $handle
      * @return boolean true on success, false on failure
      */
@@ -810,8 +773,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Flush an open file pointer
-     *
+     * Flush an open file pointer.
      * @param resource $handle
      * @return boolean true on success, false on failure
      */
@@ -825,8 +787,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Tests for end-of-file on a file pointer
-     *
+     * Tests for end-of-file on a file pointer.
      * @param resource $handle
      * @return boolean true if the file pointer is at EOF
      */
@@ -840,8 +801,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Reads data from an open file handle
-     *
+     * Reads data from an open file handle.
      * @param resource $handle
      * @param int $length
      * @return string the bytes read
@@ -856,8 +816,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Seeks on a file pointer
-     *
+     * Seeks on a file pointer.
      * @param resource $handle
      * @param int $offset
      * @param int $whence
@@ -873,8 +832,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Truncates a file to a given length
-     *
+     * Truncates a file to a given length.
      * @param resource $handle
      * @param int $size
      * @return boolean success?
@@ -897,8 +855,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Gets line from file pointer
-     *
+     * Gets line from file pointer.
      * @param resource $handle
      * @param int $length the optional max line length
      * @return the string or false on eof
@@ -916,7 +873,6 @@ class GalleryPlatform {
      * Expand all symbolic links and resolve references to '/./', '/../' and extra '/' characters in
      * the input path and return the canonicalized absolute pathname.  The resulting path will have
      * no symbolic link, '/./' or '/../' components.  [cribbed from http://php.net/realpath]
-     *
      * @return false on failure, eg. if the file does not exists
      */
     function realpath($file) {
@@ -929,7 +885,7 @@ class GalleryPlatform {
     }
 
     /**
-     * touch -- Sets access and modification time of file
+     * touch -- Sets access and modification time of file.
      *
      * Attempts to set the access and modification time of the file named by filename to the value
      * given by time. If the option time is not given, uses the present time. This is equivalent to
@@ -959,7 +915,6 @@ class GalleryPlatform {
     /**
      * mail -- Send an email.  Lines in the headers and body should be terminated with \r\n in
      * accordance with RFC2821.
-     *
      * @param string $to to address(es) (comma separated)
      * @param string $subject
      * @param string $body
@@ -1009,8 +964,9 @@ class GalleryPlatform {
 
     /**
      * Split path into component elements.  Include root path for absolute paths.
-     * Examples: /tmp -> array('/', 'tmp')     rela/tive/path -> array('rela', 'tive', 'path')
-     *           C:\Test\File.txt -> array('C:\', 'Test', 'File.txt')
+     * eg. /tmp -> array('/', 'tmp')
+     *     rela/tive/path -> array('rela', 'tive', 'path')
+     *     C:\Test\File.txt -> array('C:\', 'Test', 'File.txt')
      *
      * @param string $path
      * @return array (path elements) first item is "root" if path is absolute
@@ -1023,8 +979,7 @@ class GalleryPlatform {
 
     /**
      * Return a boolean specifying whether or not this platform can perform a symbolic link
-     * (symlink) command
-     *
+     * (symlink) command.
      * @return boolean true if the platform supports symlinks
      */
     function isSymlinkSupported() {
@@ -1033,8 +988,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Return the string of characters which represent the line ending on this platform
-     *
+     * Return the string of characters which represent the line ending on this platform.
      * @return string Line ending
      */
     function getLineEnding() {
@@ -1042,10 +996,8 @@ class GalleryPlatform {
 	assert(false);
     }
 
-
     /**
-     * chdir -- change working directory
-     *
+     * chdir -- change working directory.
      * @param string $path directory
      * @return boolean true on success
      */
@@ -1058,8 +1010,7 @@ class GalleryPlatform {
     }
 
     /**
-     * getcwd -- gets the current working directory
-     *
+     * getcwd -- gets the current working directory.
      * @return the current working directory, or false on failure.
      */
     function getcwd() {
@@ -1071,8 +1022,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Load preferences for file/dir permissions and calculate umask
-     *
+     * Load preferences for file/dir permissions and calculate umask.
      * @access private
      */
     function _loadPermissionPreferences() {
@@ -1093,7 +1043,6 @@ class GalleryPlatform {
 
     /**
      * Set filesystem permissions; mode defaults to system preference for file/dir permissions.
-     *
      * @param string $path path to file or directory
      * @param int $mode (optional) mode; defaults to system preference
      * @return boolean true on success
@@ -1116,7 +1065,6 @@ class GalleryPlatform {
     /**
      * Recursively set filesystem permissions.  Modes default to system preferences for file/dir
      * permissions.
-     *
      * @param string $path path to directory
      * @param int $dirMode (optional) mode for dirs or -1 to skip chmod of dirs
      * @param int $fileMode (optional) mode for files or -1 to skip chmod of files
@@ -1141,8 +1089,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Helper for recursiveChmod
-     *
+     * Helper for recursiveChmod.
      * @access private
      */
     function _recursiveChmod($path, $dirMode, $fileMode) {
@@ -1174,8 +1121,7 @@ class GalleryPlatform {
 
     /**
      * Fixes the directory permissions (as eg. unzip creates them with file permissions because of
-     * the umask)
-     *
+     * the umask).
      * @param string $path $path the directory which should be fixed
      * @return boolean true if all went well, false if there was an error.
      * @deprecated -- TODO: remove at the next major version bump of core API
@@ -1209,7 +1155,6 @@ class GalleryPlatform {
     /**
      * Format a local time/date according to locale settings.  Converts any text output from
      * strftime tokens to UTF-8.
-     *
      * @param string $format
      * @param int $timestamp (optional)
      * @return string
@@ -1241,9 +1186,8 @@ class GalleryPlatform {
 
     /**
      * The glob() function searches for all the pathnames matching pattern according to the rules
-     * used by the libc glob() function, which is similar to the rules used by common shells. No
+     * used by the libc glob() function, which is similar to the rules used by common shells.  No
      * tilde expansion or parameter substitution is done.
-     *
      * @param string pattern
      * @param int flags (optional)
      * @return array containing the matched files/directories or FALSE on error.

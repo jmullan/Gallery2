@@ -19,7 +19,7 @@
  */
 
 /**
- * Test Platform functionality
+ * Test platform functionality.
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -655,7 +655,7 @@ class PlatformTest extends GalleryTestCase {
     }
 
     /**
-     * Try opening a socket to the current web server
+     * Try opening a socket to the current web server.
      */
     function testFsockopen() {
 	$fd = $this->_platform->fsockopen($_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT'],
@@ -665,7 +665,7 @@ class PlatformTest extends GalleryTestCase {
     }
 
     /**
-     * Try opening a socket to a bogus web server
+     * Try opening a socket to a bogus web server.
      */
     function testFsockopenBadHost() {
 	/* We know this is going to bomb so unset PHPunit's error handler */
@@ -677,7 +677,7 @@ class PlatformTest extends GalleryTestCase {
     }
 
     /**
-     * Verify that we can write a few bytes to a file
+     * Verify that we can write a few bytes to a file.
      */
     function testOpenWriteAndClose() {
 	$fd = $this->_platform->fopen($this->_destFile, 'wb');
@@ -715,9 +715,9 @@ class PlatformTest extends GalleryTestCase {
 
     function testAtomicWrite() {
 	/*
-	 * We should test if our operations are really concurrent-safe,
-	 * but we cannot do that without having multiple processes accessing
-	 * the same file, which is not possible in our test-framework (yet)
+	 * We should test if our operations are really concurrent-safe, but we cannot do that
+	 * without having multiple processes accessing the same file, which is not possible in our
+	 * test-framework (yet)
 	 */
 	$testData1 = "this is a test\nmultiline\ntest";
 	$this->assert($this->_platform->atomicWrite($this->_destFile, $testData1, 'wb'),
@@ -725,7 +725,7 @@ class PlatformTest extends GalleryTestCase {
 	$output = implode('', $this->_platform->file($this->_destFile));
 	$this->assertEquals($testData1, $output);
 
-	/* Now write another text to the same file and see if its ok */
+	/* Now write another text to the same file and see if it's ok */
 	$testData2 = "this is a test\nmultiline\ntest\nmore\ntext";
 	$this->assert($this->_platform->atomicWrite($this->_destFile, $testData2, 'wb'),
 		      'write 2 failed');
@@ -813,6 +813,7 @@ class PlatformTest extends GalleryTestCase {
 }
 
 class PlatformTestPhpVm extends GalleryPhpVm {
+
     function PlatformTestPhpVm($iniVal, &$test) {
 	$this->_iniVal = $iniVal;
 	$this->_test =& $test;
@@ -837,9 +838,11 @@ class PlatformTestPhpVm extends GalleryPhpVm {
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/UnixPlatform.class');
 class PlatformTestOpenBaseDirUnixPlatform extends UnixPlatform {
+
     function setRealpathData($realpathData) {
 	$this->_realpathData = $realpathData;
     }
+
     function setCwd($path) {
 	$this->_cwd = $path;
     }
@@ -847,6 +850,7 @@ class PlatformTestOpenBaseDirUnixPlatform extends UnixPlatform {
     function realpath($path) {
 	return isset($this->_realpathData[$path]) ? $this->_realpathData[$path] : false;
     }
+
     function getcwd() {
 	return isset($this->_cwd) ? $this->_cwd : parent::getcwd();
     }
@@ -854,9 +858,11 @@ class PlatformTestOpenBaseDirUnixPlatform extends UnixPlatform {
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
 class PlatformTestOpenBaseDirWinNtPlatform extends WinNtPlatform {
+
     function setRealpathData($realpathData) {
 	$this->_realpathData = $realpathData;
     }
+
     function setCwd($path) {
 	$this->_cwd = $path;
     }
@@ -864,6 +870,7 @@ class PlatformTestOpenBaseDirWinNtPlatform extends WinNtPlatform {
     function realpath($path) {
 	return isset($this->_realpathData[$path]) ? $this->_realpathData[$path] : false;
     }
+
     function getcwd() {
 	return isset($this->_cwd) ? $this->_cwd : parent::getcwd();
     }
