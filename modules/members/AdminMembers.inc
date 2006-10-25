@@ -109,8 +109,8 @@ class AdminMembersView extends GalleryView {
 	$members['memberViews'] = array($groupIds[1] => $module->translate('Everybody'),
 					$groupIds[2] => $module->translate('Registered Users'),
 					$groupIds[0] => $module->translate('Site Admins'));
-	$members['emailViews'] = array(true => $module->translate('Show Email Addresses'),
-				       false => $module->translate("Don't Show Email Addresses"));
+	$members['emailViews'] = array(1 => $module->translate('Show Email Addresses'),
+				       0 => $module->translate("Don't Show Email Addresses"));
 
 	$template->setVariable('Members', $members);
 	$template->setVariable('controller', 'members.AdminMembers');
