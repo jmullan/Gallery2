@@ -316,31 +316,31 @@ class GalleryTemplate {
 	return $smarty;
     }
 
-   /**
-    * Returns the base directory of the specified template. This is required
-    * to support loading templates from g2data/plugins.
-    *
-    * @author Jozef Selesi (selesi at gmail dot com)
-    *
-    * @param string $templateName Template to get base directory for.
-    * @param object Smarty $smarty
-    */
-   function resourceGetTemplateBaseDir($templateName, &$smarty) {
-	if(preg_match('/^(module|theme)s\/(.+)(\/.+)/iU', $templateName, $pluginId)) {
+    /**
+     * Returns the base directory of the specified template. This is required
+     * to support loading templates from g2data/plugins.
+     *
+     * @author Jozef Selesi (selesi at gmail dot com)
+     *
+     * @param string $templateName Template to get base directory for.
+     * @param object Smarty $smarty
+     */
+    function resourceGetTemplateBaseDir($templateName, &$smarty) {
+	if (preg_match('/^(module|theme)s\/(.+)(\/.+)/iU', $templateName, $pluginId)) {
 	    return GalleryCoreApi::getPluginBaseDir($pluginId[1], $pluginId[2]) . '/';
 	} else {
 	    return $smarty->template_dir . '/';
 	}
     }
 
-   /**
-    * @see http://smarty.php.net/manual/en/template.resources.php
-    *
-    * This is basically the same as the file: resource except that we look for a template
-    * called "local/foo.tpl" first and use that instead, if it exists.  This allows users to
-    * override templates with our own copies without modifying the original.
-    */
-   function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
+    /**
+     * @see http://smarty.php.net/manual/en/template.resources.php
+     *
+     * This is basically the same as the file: resource except that we look for a template
+     * called "local/foo.tpl" first and use that instead, if it exists.  This allows users to
+     * override templates with our own copies without modifying the original.
+     */
+    function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
 	$templateName = GalleryTemplate::_getActualTemplateName(
 	    GalleryTemplate::resourceGetTemplateBaseDir($templateName, $smarty) . $templateName);
 
@@ -349,13 +349,13 @@ class GalleryTemplate {
 	return true;
     }
 
-   /**
-    * @see http://smarty.php.net/manual/en/template.resources.php
-    *
-    * This is basically the same as the file: resource except that we look for a template
-    * called "local/foo.tpl" first and use that instead, if it exists.  This allows users to
-    * override templates with our own copies without modifying the original.
-    */
+    /**
+     * @see http://smarty.php.net/manual/en/template.resources.php
+     *
+     * This is basically the same as the file: resource except that we look for a template
+     * called "local/foo.tpl" first and use that instead, if it exists.  This allows users to
+     * override templates with our own copies without modifying the original.
+     */
     function resourceGetTimestamp($templateName, &$templateTimestamp, &$smarty) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
