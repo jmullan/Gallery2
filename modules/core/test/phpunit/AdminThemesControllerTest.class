@@ -105,17 +105,17 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[default][orderBy]', 'viewCount');
 	GalleryUtilities::putRequestVariable('form[default][orderDirection]', 'desc');
 	GalleryUtilities::putRequestVariable('form[default][presort]', 'albumsFirst');
-	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
-	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
+	GalleryUtilities::putRequestVariable('form[default][theme]', 'AdminThemesControllerTest');
 	GalleryUtilities::putRequestVariable('form[default][newAlbumsUseDefaults]', 'true');
+	GalleryUtilities::putRequestVariable('form[default][doesNotExist]', 'anything');
 	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
-	GalleryUtilities::putRequestVariable('themeId', 'anything');
+	GalleryUtilities::putRequestVariable('themeId', 'currentThemeId');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'core.AdminThemes',
-						      'themeId' => 'anything'),
+						      'themeId' => 'AdminThemesControllerTest'),
 				  'status' => array('savedDefaults' => 1),
 				  'error' => array()),
 			    $results);
@@ -127,10 +127,157 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals('albumsFirst|viewCount', $params['default.orderBy'], 'orderBy');
 	$this->assertEquals('desc', $params['default.orderDirection'], 'orderDirection');
-	$this->assertEquals('matrix', $params['default.theme'], 'theme');
-	$this->assertEquals('matrix', $params['default.theme'], 'theme');
+	$this->assertEquals('AdminThemesControllerTest', $params['default.theme'], 'theme');
 	$this->assertEquals('true', $params['default.newAlbumsUseDefaults'],
 			    'newAlbumsUseDefaults');
+	$this->assert(!isset($params['default.doesNotExist']), 'parameter not whitelisted');
+    }
+
+    function testSaveDefaultsValidatesDefaultTheme() {
+	GalleryUtilities::putRequestVariable('form[default][orderBy]', 'viewCount');
+	GalleryUtilities::putRequestVariable('form[default][orderDirection]', 'desc');
+	GalleryUtilities::putRequestVariable('form[default][presort]', 'albumsFirst');
+	GalleryUtilities::putRequestVariable('form[default][theme]', 'doesNotExist');
+	GalleryUtilities::putRequestVariable('form[default][newAlbumsUseDefaults]', 'true');
+	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
+	GalleryUtilities::putRequestVariable('themeId', 'anything');
+
+	/* Perform the request and verify that we get an error */
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$this->assertEquals(null, $results);
+
+	/* Verify that the default theme has not changed */
+	list ($ret, $themeId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('matrix', $themeId);
+    }
+
+    function testSaveDefaultsValidatesOrderBy() {
+	GalleryUtilities::putRequestVariable('form[default][orderBy]', 'doesNotExist');
+	GalleryUtilities::putRequestVariable('form[default][orderDirection]', 'desc');
+	GalleryUtilities::putRequestVariable('form[default][presort]', 'viewedFirst');
+	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
+	GalleryUtilities::putRequestVariable('form[default][newAlbumsUseDefaults]', 'true');
+	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
+	GalleryUtilities::putRequestVariable('themeId', 'anything');
+
+	/* Prepare the observed value */
+	$originalOrderBy = 'albumsFirst|viewCount';
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
+						  'default.orderBy', $originalOrderBy);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Perform the request and verify that we get an error */
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$this->assertEquals(null, $results);
+
+	/* Verify that the value has not changed */
+	list ($ret, $orderBy) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($originalOrderBy, $orderBy);
+    }
+
+    function testSaveDefaultsValidatesPreSort() {
+	GalleryUtilities::putRequestVariable('form[default][orderBy]', 'title');
+	GalleryUtilities::putRequestVariable('form[default][orderDirection]', 'desc');
+	GalleryUtilities::putRequestVariable('form[default][presort]', 'doesNotExist');
+	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
+	GalleryUtilities::putRequestVariable('form[default][newAlbumsUseDefaults]', 'true');
+	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
+	GalleryUtilities::putRequestVariable('themeId', 'anything');
+
+	/* Prepare the observed value */
+	$originalOrderBy = 'albumsFirst|viewCount';
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
+						  'default.orderBy', $originalOrderBy);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Perform the request and verify that we get an error */
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$this->assertEquals(null, $results);
+
+	/* Verify that the value has not changed */
+	list ($ret, $orderBy) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($originalOrderBy, $orderBy);
+    }
+
+    function testSaveDefaultsValidatesOrderDirection() {
+	GalleryUtilities::putRequestVariable('form[default][orderBy]', 'viewCount');
+	GalleryUtilities::putRequestVariable('form[default][orderDirection]', 'doesNotExist');
+	GalleryUtilities::putRequestVariable('form[default][presort]', 'albumsFirst');
+	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
+	GalleryUtilities::putRequestVariable('form[default][newAlbumsUseDefaults]', 'true');
+	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
+	GalleryUtilities::putRequestVariable('themeId', 'anything');
+
+	/* Prepare the observed value */
+	$originalOrderDirection = 'desc';
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.orderDirection',
+						  $originalOrderDirection);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Perform the request and verify that we get an error */
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$this->assertEquals(null, $results);
+
+	/* Verify that the value has not changed */
+	list ($ret, $orderBy) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($originalOrderDirection, $orderBy);
+    }
+
+    function testSaveDefaultsValidatesNewAlbumsUseDefaults() {
+	GalleryUtilities::putRequestVariable('form[default][orderBy]', 'viewCount');
+	GalleryUtilities::putRequestVariable('form[default][orderDirection]', 'desc');
+	GalleryUtilities::putRequestVariable('form[default][presort]', 'albumsFirst');
+	GalleryUtilities::putRequestVariable('form[default][theme]', 'matrix');
+	GalleryUtilities::putRequestVariable('form[default][newAlbumsUseDefaults]', 'doesNotExist');
+	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
+	GalleryUtilities::putRequestVariable('themeId', 'anything');
+
+	/* Prepare the observed value */
+	$originalNewAlbumDefaults = 'true';
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.newAlbumsUseDefaults',
+						  $originalNewAlbumDefaults);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Perform the request and verify that we get an error */
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$this->assertEquals(null, $results);
+
+	/* Verify that the value has not changed */
+	list ($ret, $newAlbumDefaults) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.newAlbumsUseDefaults');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($originalNewAlbumDefaults, $newAlbumDefaults);
     }
 }
 

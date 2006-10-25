@@ -41,6 +41,47 @@ class AdminThemesController extends GalleryController {
 	$themeId = GalleryUtilities::getRequestVariables('themeId');
 
 	if (isset($form['action']['saveDefaults'])) {
+	    /* Do some basic input validation (by whitelisting) */
+	    GalleryCoreApi::requireOnce('modules/core/classes/GallerySortInterface_1_2.class');
+	    list ($ret, $orderByList, $presortList, $orderDirectionList) =
+		GallerySortInterface_1_2::getAllSortOrders(false);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (isset($form['default']['orderBy'])
+		    && !isset($orderByList[$value = $form['default']['orderBy']])) {
+		$error = GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		    "Unknown sort order '$value'");
+		return array($error, null);
+	    }
+	    if (isset($form['default']['presort'])
+		    && !isset($presortList[$value = $form['default']['presort']])) {
+		$error = GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		   "Unknown presort order '$value'");
+		return array($error, null);
+	    }
+	    if (isset($form['default']['orderDirection'])
+		    && !isset($orderDirectionList[$value = $form['default']['orderDirection']])) {
+		$error = GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		    "Unknown order direction '$value'");
+		return array($error, null);
+	    }
+	    if (isset($form['default']['theme'])) {
+		list ($ret, $defaultTheme) =
+		    GalleryCoreApi::loadPlugin('theme', $form['default']['theme'], false, true);
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    }
+	    if (isset($form['default']['newAlbumsUseDefaults']) &&
+		    !in_array($form['default']['newAlbumsUseDefaults'], array('true', 'false'))) {
+		$error = GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		    'Unknown value for newAlbumDefaults ' .
+		    $form['default']['newAlbumsUseDefaults']);
+		return array($error, null);
+	    }
+
+	    /* Save the values */
 	    foreach (array('default.orderBy',
 			   'default.orderDirection',
 			   'default.theme',
@@ -57,6 +98,11 @@ class AdminThemesController extends GalleryController {
 			return array($ret, null);
 		    }
 		}
+	    }
+
+	    /* Switch to display the theme settings for the default theme if it has changed */
+	    if (!empty($form['default']['theme'])) {
+		$themeId = $form['default']['theme'];
 	    }
 
 	    /* Redirect upon success */
