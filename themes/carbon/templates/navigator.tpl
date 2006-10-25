@@ -23,7 +23,8 @@
 	  {else}
 	  <td>{g->text text="&nbsp;"}</td>
 	  {/if}
-	  {if isset($theme.navigator.back) && (!isset($theme.navigator.first) || $theme.navigator.back.urlParams != $theme.navigator.first.urlParams)}
+	  {if isset($theme.navigator.back)}    {* Uncomment to omit previous when same as first:
+		&& (!isset($theme.navigator.first) || $theme.navigator.back.urlParams != $theme.navigator.first.urlParams)} *}
 	  <td>
 	    <div class="buttonPrev"><a href="{g->url params=$theme.navigator.back.urlParams}"
 	     title="{g->text text="Previous"}"></a></div>
@@ -97,7 +98,8 @@
     <td width="20%" align="right" >
       <div class="next-and-last">
 	<table cellpadding="0" cellspacing="0"><tr>
-	  {if isset($theme.navigator.next) && (!isset($theme.navigator.last) || $theme.navigator.next.urlParams != $theme.navigator.last.urlParams)}
+	  {if isset($theme.navigator.next)}    {* Uncomment to omit next when same as last:
+		&& (!isset($theme.navigator.last) || $theme.navigator.next.urlParams != $theme.navigator.last.urlParams)} *}
 	  <td>
 	    <div class="buttonNext"><a href="{g->url params=$theme.navigator.next.urlParams}"
 	     title="{g->text text="Next"}"></a></div>
