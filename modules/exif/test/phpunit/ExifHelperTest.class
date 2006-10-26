@@ -455,6 +455,18 @@ class ExifHelperTest extends GalleryTestCase {
 	}
     }
 
+    function testPostProcessValueDoesSanitize() {
+	$originalValue = 'A text with \ some backslashes \\.';
+	$this->assertEquals($originalValue,
+			    ExifHelper::postProcessValue('SomeValue', $originalValue),
+			    'backslash');
+
+	$this->assertEquals('&lt;ScRiPt foo=bar&gt;blah&lt;/SCRIPT&gt;',
+			    ExifHelper::postProcessValue('SomeValue',
+							 '<ScRiPt foo=bar>blah</SCRIPT>'),
+			    'html');
+    }
+
     /**
      * Test adding default summary IPTC properties, as used on upgrade.
      */

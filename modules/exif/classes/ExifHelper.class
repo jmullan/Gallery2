@@ -298,7 +298,7 @@ class ExifHelper {
     function postProcessValue($property, $value) {
 	global $gallery;
 
-	GalleryUtilities::sanitizeInputValues($value);
+	GalleryUtilities::sanitizeInputValues($value, false);
 
 	switch ($property) {
 	case 'ApertureValue':
