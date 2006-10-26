@@ -120,15 +120,21 @@
 		    <td class="{if $child.canContainChildren}giAlbumCell{else}giItemCell{/if}"
 			style="width: {$theme.columnWidthPct}%">
 		      {if ($child.canContainChildren || $child.entityType == 'GalleryLinkItem')}
-		      {assign var=frameType value="albumFrame"}
-		      {capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
-						      arg2="itemId=`$child.id`"}{/capture}
+		        {assign var=frameType value="albumFrame"}
+		        {capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
+						        arg2="itemId=`$child.id`"}{/capture}
 		      {else}
-		      {assign var=frameType value="itemFrame"}
-		      {capture assign=linkUrl}{g->url params=$theme.pageUrl
-						      arg1="itemId=`$child.id`"}{/capture}
+		        {assign var=frameType value="albumFrame"}
+			{capture assign=linkUrl}{strip}
+			  {if $theme.params.dynamicLinks == 'jump'}
+			    {g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}
+			  {else}
+			    {g->url params=$theme.pageUrl arg1="itemId=`$child.id`"}
+			  {/if}
+			{/strip}{/capture}
 		      {/if}
 		      <div>
+                        {strip}
 			{if isset($theme.params.$frameType) && isset($child.thumbnail)}
 			{g->container type="imageframe.ImageFrame" frame=$theme.params.$frameType
 				      width=$child.thumbnail.width height=$child.thumbnail.height}
@@ -145,6 +151,7 @@
 			    {g->text text="no thumbnail"}
 			  </a>
 			{/if}
+                        {/strip}
 		      </div>
 
 		      {g->block type="core.ItemLinks" item=$child links=$child.itemLinks}
@@ -216,7 +223,7 @@
 	{/if}
 
 	{* Our emergency edit link, if the user removes all blocks containing edit links *}
-	{g->block type="core.EmergencyEditItemLink" class="gbBlock"
+	{g->block type="core.EmergencyEditItemLink" class="gbBlock" 
 		  checkBlocks="sidebar,album,albumUpper"}
 
 	{* Show any other album blocks (comments, etc) *}

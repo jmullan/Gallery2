@@ -33,15 +33,14 @@ class CarbonTheme extends GalleryTheme {
 	$this->setId('carbon');
 	$this->setName($gallery->i18n('Carbon'));
 	$this->setDescription($gallery->i18n('Gallery2 theme by mincel.com'));
-	$this->setVersion('1.1.3');
+	$this->setVersion('1.2.0');
 	$this->setRequiredCoreApi(array(7, 10));
 	$this->setRequiredThemeApi(array(2, 4));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
-		  'colorpack' => '',
-		  'showMicroThumbs' => 1,
+		  'colorpack' => '', 'showMicroThumbs' => 1, 'dynamicLinks' => 'browse',
 		  'sidebarBlocks' => serialize(array(
 			array('search.SearchBlock', array('showAdvancedLink' => true)),
 			array('core.ItemLinks', array('useDropdown' => false)),

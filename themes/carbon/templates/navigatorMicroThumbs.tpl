@@ -24,35 +24,32 @@
 	{assign var="columnIndex" value=0}
       {/if}
 
-      {if ($peer.peerIndex == $data.thisPeerIndex)}
-	<td align="center" width="44" height="40">
-          {if isset($peer.thumbnail)}
-	    {g->image item=$peer image=$peer.thumbnail maxSize=40 title="$title"}
-	  {else}
-            {g->text text="no thumbnail"}
-	  {/if}
-	</td>
-      {else}
-	<td align="center" width="44" height="40">
-	  {if ($peer.canContainChildren || $peer.entityType == 'GalleryLinkItem')}
-	    {capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
-					    arg2="itemId=`$peer.id`"}{/capture}
-	  {else}
-	    {capture assign=linkUrl}{g->url params=$theme.pageUrl
-					    arg1="itemId=`$peer.id`"}{/capture}
-	  {/if}
-	  <a href="{$linkUrl}">
-            {if isset($peer.thumbnail)}
+      {if (!$peer.canContainChildren && $peer.entityType != 'GalleryLinkItem')}
+	{if ($peer.peerIndex == $data.thisPeerIndex)}
+	  <td id="microThumbCurrent" align="center" width="44" height="40">
+	    {if isset($peer.thumbnail)}
 	      {g->image item=$peer image=$peer.thumbnail maxSize=40 title="$title"}
 	    {else}
-              {g->text text="no thumbnail"}
+	      {g->text text="no thumbnail"}
 	    {/if}
-	  </a>
-	</td>
+	  </td>
+	{else}
+	  <td align="center" width="44" height="40">
+	    {strip}
+	    <a href="{g->url params=$theme.pageUrl arg1="itemId=`$peer.id`"}">
+	      {if isset($peer.thumbnail)}
+	        {g->image item=$peer image=$peer.thumbnail maxSize=40 title="$title"}
+	      {else}
+	        {g->text text="no thumbnail"}
+	      {/if}
+	    </a>
+	    {/strip}
+	  </td>
+	{/if}
+	
+	{assign var="lastIndex" value=$peer.peerIndex}
+	{assign var="columnIndex" value=$columnIndex+1}
       {/if}
-
-      {assign var="lastIndex" value=$peer.peerIndex}
-      {assign var="columnIndex" value=$columnIndex+1}
     {/foreach}
     </tr>
   </table>
