@@ -30,7 +30,7 @@
  * The current protocol version of the template data.  Whenever the template library changes,
  * bump this number to trigger a complete rebuild of all compiled templates.
  */
-define('TEMPLATE_DATA_VERSION', 10);
+define('TEMPLATE_DATA_VERSION', 11);
 
 /**
  * This is Gallery's templating class.  It hides the details of the implementation (eg, Smarty)
@@ -311,9 +311,22 @@ class GalleryTemplate {
 					 'resourceGetSecure',
 					 'resourceGetTrusted'));
 
+	$smarty->register_prefilter(array('GalleryTemplate', 'preFilter'));
+
 	$smarty->assign('head', array('tpl' => array(), 'style' => array()));
 
 	return $smarty;
+    }
+
+    /**
+     * Remove leading whitespace when compiling tpl to produce smaller html page sizes.
+     * @param string $source tpl content
+     * @param object GallerySmarty smarty
+     * @return string processed tpl content ready for compilation
+     * @static
+     */
+    function preFilter($source, &$smarty) {
+	return preg_replace('/^\s+/m', '', $source);
     }
 
     /**

@@ -435,7 +435,6 @@ function _GalleryMain($embedded=false) {
 		if ($ret) {
 		    return array($ret, null);
 		}
-		$html = preg_replace('/^\s+/m', '', $html);
 
 		list ($ret, $shouldCache) = GalleryDataCache::shouldCache('write', 'full');
 		if ($ret) {
