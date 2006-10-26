@@ -27,9 +27,17 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class');
  * @package GalleryCore
  * @subpackage Storage
  * @author vicente
+ * @author Larry Menard <larry.menard@rogers.com>
  * @version $Revision$ $Date$
  */
 class MSSqlStorage extends GalleryStorage {
+
+    /**
+     * Version info of database server
+     * @var string
+     * @access protected
+     */
+    var $_serverInfo;
 
     function MSSqlStorage($config) {
 	$this->GalleryStorage($config);
@@ -48,6 +56,27 @@ class MSSqlStorage extends GalleryStorage {
      */
     function getType() {
 	return 'mssql';
+    }
+
+    /**
+     * @see GalleryStorage::_getSqlReplacements
+     */
+    function _getSqlReplacements() {
+	/* For SQL Server versions pre-2005, use type NTEXT.  For 2005+, use NVARCHAR(MAX). */
+	if (! $this->_serverInfo) {
+	    /* At least one number, followed by at least one "dot followed by at least one number" */
+	    if (preg_match("/(\d{1,}(\.\d{1,}){1,})/", $this->getVersion(), $matches)) {
+		$this->_serverInfo = $matches[0];
+	    } else {
+		return array();
+	    }
+	}
+
+	if (version_compare($this->_serverInfo, '9.0', '<')) {
+	    return array('NVARCHAR(MAX)' => 'NTEXT');
+	} else {
+	    return array();
+	}
     }
 
     /**
@@ -135,7 +164,22 @@ class MSSqlStorage extends GalleryStorage {
      * @return string version
      */
     function getVersion() {
-	return '';
+	list ($ret, $tmpDb) = $this->_getConnection(true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$sql = 'SELECT @@VERSION';
+	$this->_traceStart();
+	$arr =& $tmpDb->GetArray($sql);
+	$this->_traceStop();
+
+	$tmpDb->Close();
+	if (!empty($arr[0][0])) {
+	    return rtrim($arr[0][0]);
+	} else {
+	    return '';
+	}
     }
 
     /**
