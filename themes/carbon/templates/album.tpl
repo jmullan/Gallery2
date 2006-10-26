@@ -124,7 +124,7 @@
 		        {capture assign=linkUrl}{g->url arg1="view=core.ShowItem"
 						        arg2="itemId=`$child.id`"}{/capture}
 		      {else}
-		        {assign var=frameType value="albumFrame"}
+		        {assign var=frameType value="itemFrame"}
 			{capture assign=linkUrl}{strip}
 			  {if $theme.params.dynamicLinks == 'jump'}
 			    {g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}
