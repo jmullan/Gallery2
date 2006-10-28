@@ -672,7 +672,7 @@ class LockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assert(is_int($lockId));
+	$this->assert(is_int($lockId), "$lockSystem: lock id is not an integer");
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {

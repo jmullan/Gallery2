@@ -680,6 +680,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    if ($ret) {
 		return array($ret, null);
 	    }
+	    $lockId = (int)$lockId;
 
 	    /* Check to see if any of the ids that we care about are locked */
 	    $readEntityIdCol = $this->_gs->_translateColumnName('readEntityId');
