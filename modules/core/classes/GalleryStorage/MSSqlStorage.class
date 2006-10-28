@@ -63,8 +63,7 @@ class MSSqlStorage extends GalleryStorage {
      */
     function _getSqlReplacements() {
 	/* For SQL Server versions pre-2005, use type NTEXT.  For 2005+, use NVARCHAR(MAX). */
-	if (! $this->_serverInfo) {
-	    /* At least one number, followed by at least one "one dot followed by at least one number" */
+	if (!$this->_serverInfo) {
 	    if (preg_match("/(\d+(\.\d+)+)/", $this->getVersion(), $matches)) {
 		$this->_serverInfo = $matches[0];
 	    } else {
