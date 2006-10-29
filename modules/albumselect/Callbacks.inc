@@ -142,7 +142,7 @@ class AlbumSelectCallbacks {
 		    }
 		    $links[$id] = $urlGenerator->generateUrl(
 			    array('view' => 'core.ShowItem', 'itemId' => $id),
-			    array('htmlEntities' => false));
+			    array('htmlEntities' => false, 'forceServerRelativeUrl' => true));
 		    /* Find common prefix across all URLs */
 		    if (!isset($links['prefix'])) {
 			$links['prefix'] = $links[$id];
