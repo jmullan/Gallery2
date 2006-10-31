@@ -6,20 +6,20 @@
  *}
 <div class="{$class}">
   {if !empty($showDate)}
-  <span class="date summary">
+  <div class="date summary">
     {capture name=childTimestamp}{g->date timestamp=$item.originationTimestamp}{/capture}
     {g->text text="Date: %s" arg1=$smarty.capture.childTimestamp}
-  </span>
+  </div>
   {/if}
 
   {if !empty($showOwner)}
-  <span class="owner summary">
+  <div class="owner summary">
     {g->text text="Owner: %s" arg1=$item.owner.fullName|default:$item.owner.userName}
-  </span>
+  </div>
   {/if}
 
   {if !empty($showSize) && $item.canContainChildren && $item.childCount > 0}
-  <span class="size summary">
+  <div class="size summary">
     {g->text one="Size: %d item"
 	     many="Size: %d items"
 	     count=$item.childCount
@@ -30,20 +30,20 @@
 	     count=$item.descendentCount
 	     arg1=$item.descendentCount}
     {/if}
-  </span>
+  </div>
   {/if}
 
   {if !empty($showViewCount) && $item.viewCount > 0}
-  <span class="viewCount summary">
+  <div class="viewCount summary">
     {g->text text="Views: %d" arg1=$item.viewCount}
-  </span>
+  </div>
   {/if}
 
   {if !empty($showSummaries)}
   {foreach from=$item.itemSummaries key=name item=summary}
-  <span class="summary-{$name} summary">
+  <div class="summary-{$name} summary">
     {$summary}
-  </span>
+  </div>
   {/foreach}
   {/if}
 </div>
