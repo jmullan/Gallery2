@@ -210,5 +210,25 @@ class GalleryCharsetHelper_simple {
 	}
 	return $string;
     }
+
+    /**
+     * @see GalleryCoreApi::utf8Strcut
+     */
+    function utf8Strcut($string, $start, $length) {
+	static $hasMbStrCut;
+	if (!isset($hasMbStrCut)) {
+	    if (!($hasMbStrCut = function_exists('mb_strcut'))) {
+		GalleryCoreApi::requireOnce(
+			'modules/core/classes/helpers/GalleryCharsetHelper_medium.class');
+	    }
+	}
+
+	if ($hasMbStrCut) {
+	    return (string) mb_strcut($string, $start, $length, 'UTF-8');
+	} else {
+	    
+	    return GalleryCharsetHelper_medium::phpUtf8Strcut($string, $start, $length);
+	}
+    }
 }
 ?>

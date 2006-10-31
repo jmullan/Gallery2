@@ -19,6 +19,7 @@
  */
 
 GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryCharsetHelper_simple.class');
+GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryCharsetHelper_medium.class');
 
 /**
  * Test character set helper
@@ -33,6 +34,13 @@ class CharsetTest extends GalleryTestCase {
 	parent::setUp();
 
 	GalleryDataCache::reset();
+    }
+
+    function testAssertMbFunctionOverloadingDisabled() {
+        /* Assert that we're not accidentaly using mb_ functions in our fallback */
+	$mbFuncOverload = (int) ini_get('mbstring.func_overload');
+	$this->assert(!($mbFuncOverload & 2), 'mb function overload str functions. ' .
+		'Please disable mbstring.func_overload to test PHP fallback.');    
     }
 
     function testConvertToUtf8UsingIconv() {
@@ -451,6 +459,51 @@ class CharsetTest extends GalleryTestCase {
 	$gallery->_phpVm = $phpVm;
 
 	$this->assertEquals('foo', GalleryCoreApi::convertFromUtf8('foo'));
+    }
+
+    function testUtf8Strcut() {
+	/* Russian */
+	$utf8 = ("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0\xba\xd0" .
+		 "\xb8\xd0\xb9\xd0\x97\xd0\xb4\xd1\x80\xd0\xb0" .
+		 "\xd0\xb2\xd1\x81\xd1\x82\xd0\xb2\xd1\x83");
+	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0\xba",
+			    $result = GalleryCoreApi::utf8Strcut($utf8, 0, 10),
+			    'standard version');
+	$this->assertEquals(10, strlen($result), 'length with standard version');
+	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0\xba",
+			    GalleryCharsetHelper_medium::phpUtf8Strcut($utf8, 0, 10),
+			    'PHP version');
+
+	/* With byte offset */
+	$this->assertEquals("\xd1\x81\xd1\x82\xd0\xb2",
+			    GalleryCoreApi::utf8Strcut($utf8, 24, 7),
+			    'standard version with offset');
+	$this->assertEquals("\xd1\x81\xd1\x82\xd0\xb2",
+			    GalleryCharsetHelper_medium::phpUtf8Strcut($utf8, 24, 7),
+			    'PHP version with offset');
+
+	/* With byte offset and length matching total length */
+	$this->assertEquals("\xd1\x81\xd1\x82\xd0\xb2\xd1\x83",
+			    GalleryCoreApi::utf8Strcut($utf8, 24, 8),
+			    'standard version with offset up to end');
+	$this->assertEquals("\xd1\x81\xd1\x82\xd0\xb2\xd1\x83",
+			    GalleryCharsetHelper_medium::phpUtf8Strcut($utf8, 24, 8),
+			    'PHP version with offset up to end');
+
+	/* Start position larger than string */
+	$this->assertEquals('', GalleryCoreApi::utf8Strcut("short", 20, 5),
+			    'standard version with too large start position');
+	$this->assertEquals('', GalleryCharsetHelper_medium::phpUtf8Strcut("short", 20, 5),
+			    'PHP version with too large start position');
+
+	/* Test some special characters */
+	$utf8 = 'apo\'strophe.jpg "quotes"';
+	$this->assertEquals('apo\'strophe.jpg "quote',
+			    GalleryCoreApi::utf8Strcut($utf8, 0, 22),
+			    'standard version special characters');
+	$this->assertEquals('apo\'strophe.jpg "quote',
+			    GalleryCharsetHelper_medium::phpUtf8Strcut($utf8, 0, 22),
+			    'php version special characters');
     }
 }
 

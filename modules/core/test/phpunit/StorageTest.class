@@ -40,6 +40,7 @@ class StorageTest extends GalleryTestCase {
 
 	$storage =& $gallery->getStorage();
 	$this->_db = $storage->_db;
+	$this->_serverInfo = isset($storage->_serverInfo) ? $storage->_serverInfo : null;
 	$this->_isEmptyAllowedForNotNullColumn = $storage->_isEmptyAllowedForNotNullColumn;
 	$storage->_db = new StorageTestDB($this);
     }
@@ -49,6 +50,7 @@ class StorageTest extends GalleryTestCase {
 
 	$storage =& $gallery->getStorage();
 	$storage->_db = $this->_db;
+	$storage->_serverInfo = $this->_serverInfo;
 	$storage->_isEmptyAllowedForNotNullColumn = $this->_isEmptyAllowedForNotNullColumn;
 
 	parent::tearDown();
@@ -121,10 +123,6 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	/*
-	 * We really should use a fake map, but it's hard to insert a fake map definition into
-	 * GalleryStorage at the moment.
-	 */
 	$ret = $storage->addMapEntry(
 	    'ExternalIdMap',
 	    array('externalId' => str_repeat('x', 200),
@@ -770,6 +768,61 @@ class StorageTest extends GalleryTestCase {
 	$ret = $storage->checkPoint();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testTruncateString() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	/* Use a real SQL connection for this test */
+	$storage->_db = $this->_db;
+	$storage->_serverInfo = $this->_serverInfo;
+
+	/* Test UTF-8 string with 5 characters / 10 bytes */
+	$testString = "\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0\xba";
+	/* Get a STRING-LARGE version of that string */
+	$originalStringLarge = str_repeat($testString, 51);
+	$originalStringTooLarge = str_repeat($testString, 52);
+	$key = 'test' . rand();
+	$itemId = -7;
+	foreach (array($originalStringLarge, $originalStringTooLarge) as $testString) {
+	    $ret = GalleryCoreApi::addMapEntry('GalleryDerivativePreferencesMap',
+					       array('itemId' => $itemId,
+						     'order' => 1,
+						     'derivativeType' => 1,
+						     'derivativeOperations' => $testString));
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    list ($ret, $results) = GalleryCoreApi::getMapEntry('GalleryDerivativePreferencesMap',
+								array('derivativeOperations'),
+								array('itemId' => $itemId));
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    /* Cleanup */
+	    $ret = GalleryCoreApi::removeMapEntry('GalleryDerivativePreferencesMap',
+						  array('itemId' => $itemId));
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	    /* Commit our DB transaction to release locks from the PluginParameterMap table */
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+
+	    $expected = $originalStringLarge;
+	    if ($storage->getType() == 'db2'
+		    || ($storage->getType() == 'mysql' && $this->_serverInfo
+			&& version_compare($this->_serverInfo, '4.1.0', '<'))) {
+		$expected = GalleryUtilities::utf8Strcut($originalStringLarge, 0, 255);
+	    }
+
+	    $this->assertEquals(1, $results->resultCount(), 'no / wrong rows selected');
+	    $this->assertEquals(array($expected), $results->nextResult(), 'inserted string');
 	}
     }
 }

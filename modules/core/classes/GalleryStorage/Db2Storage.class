@@ -278,5 +278,14 @@ class Db2Storage extends GalleryStorage {
 	return 'CALL ADMIN_CMD (\'RUNSTATS ON TABLE ' . $this->_username
 		. '.%s WITH DISTRIBUTION ON ALL COLUMNS AND INDEXES ALL\')';
     }
+
+    /**
+     * Truncate UTF-8 strings to given byte length rather than character length since DB2 interprets
+     * string lengths in bytes.
+     * @see GalleryStorage::_truncateString
+     */
+    function _truncateString($value, $size, $lengthInBytes=false) {
+	return parent::_truncateString($value, $size, true);
+    }
 }
 ?>

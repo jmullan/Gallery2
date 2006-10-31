@@ -1334,9 +1334,10 @@ class GalleryStorage {
      *
      * @param string $value the value
      * @param int $size (as a STORAGE_SIZE_XXX constant)
+     * @param bool $lengthInBytes (optional) whether to interpret the size in bytes or in characters
      * @return the truncated string
      */
-    function _truncateString($value, $size) {
+    function _truncateString($value, $size, $lengthInBytes=false) {
 	switch ($size) {
 	case STORAGE_SIZE_SMALL:
 	    $size = 32;
@@ -1350,7 +1351,11 @@ class GalleryStorage {
 	    $size = 255;
 	    break;
 	}
-	return GalleryUtilities::utf8Substring($value, 0, $size);
+	if ($lengthInBytes) {
+	    return GalleryCoreApi::utf8Strcut($value, 0, $size);
+	} else {
+	    return GalleryUtilities::utf8Substring($value, 0, $size);
+	}
     }
 }
 
@@ -1706,6 +1711,22 @@ class MySqlStorage extends GalleryStorage {
 	}
 
 	return $extras->_getUniqueIdWithConnection($db);
+    }
+
+    /**
+     * Truncate UTF-8 strings either to given character or to byte length depending on the MySQL
+     * version.
+     * @see GalleryStorage::_truncateString
+     */
+    function _truncateString($value, $size, $lengthInBytes=false) {
+	static $lengthInBytes;
+
+	if (!isset($lengthInBytes)) {
+	    $lengthInBytes =
+	    	$this->_serverInfo && version_compare($this->_serverInfo, '4.1.0', '<');
+	}
+
+	return parent::_truncateString($value, $size, $lengthInBytes);
     }
 }
 ?>

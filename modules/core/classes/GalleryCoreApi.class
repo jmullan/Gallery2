@@ -2590,6 +2590,19 @@ class GalleryCoreApi {
     }
 
     /**
+     * mb_strcut for UTF-8, with PHP fallback.
+     * @param string $string the input string containing raw UTF-8
+     * @param int $start the byte-offset of the start position
+     * @param int $length the length in bytes (not in characters), not optional
+     * @return string a multibyte safe substring of input value
+     */
+    function utf8Strcut($string, $start, $length) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryCharsetHelper_simple.class');
+	return GalleryCharsetHelper_simple::utf8Strcut($string, $start, $length);
+    }
+
+    /**
      * Returns an array of directories that can contain plugins.
      *
      * OBSOLETE.  Remove on next major API bump.
