@@ -66,12 +66,15 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
 	/* Disable all plugins by default */
 	$this->_controller->setPluginInstances(array());
+
+	$this->_originalLoginRedirect = $gallery->getConfig('loginRedirect');
     }
 
     function tearDown() {
 	global $gallery;
 	$gallery->_session = $this->_saveSession;
 
+	$gallery->setConfig('loginRedirect', $this->_originalLoginRedirect);
 	$ret = GalleryCoreApi::setPluginParameter(
 		'module', 'core', 'validation.level', $this->_validationLevel);
 	if ($ret) {
@@ -326,6 +329,83 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->assert($this->_mockSession->regenerateWasCalled(),
 		      '$session->regenerate() was not called');
     }
+
+    function testLoginRedirect() {
+	global $gallery;
+	$gallery->_phpVm = new UserLoginTestPhpVm();
+
+	$expectedUrl = 'http://otherSite.com';
+	$gallery->setConfig('loginRedirect', array('href' => $expectedUrl));
+	$this->_becomeGuestUser();
+
+	$this->_loadTemplate();
+
+	/* Verify that header and exit has been called */
+	$this->assertEquals("Location: $expectedUrl", $gallery->_phpVm->_headers[0],
+			    'location header');
+	$this->assertEquals(1, $gallery->_phpVm->_exitCalls, 'exit call');
+    }
+
+    function testLoginRedirectIgnoredWhenAlreadyLoggedIn() {
+	global $gallery;
+	$gallery->_phpVm = new UserLoginTestPhpVm();
+
+	$expectedUrl = 'http://otherSite.com';
+	$gallery->setConfig('loginRedirect', array('href' => $expectedUrl));
+
+	list ($ret, $results) = $this->_loadTemplate();
+
+	/* Verify that we render the normal user login view */
+	$this->assertEquals(0, $gallery->_phpVm->_exitCalls, 'exit called');
+	$this->assertEquals(array('body' => 'modules/core/templates/UserLogin.tpl'), $results,
+			    'loadTemplate results');
+    }
+
+    function testLoginRedirectDoesNotRedirectByDefault() {
+	global $gallery;
+	$gallery->_phpVm = new UserLoginTestPhpVm(false);
+
+	$this->_becomeGuestUser();
+
+	list ($ret, $results) = $this->_loadTemplate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify that we render the normal user login view */
+	$this->assertEquals(0, $gallery->_phpVm->_exitCalls, 'exit called');
+	$this->assertEquals(array('body' => 'modules/core/templates/UserLogin.tpl'), $results,
+			    'loadTemplate results');
+    }
+
+    function testLoginRedirectDoesNotRedirectIfRedirectNotDefined() {
+	global $gallery;
+	$gallery->_phpVm = new UserLoginTestPhpVm(false);
+
+	$gallery->setConfig('loginRedirect', array());
+	$this->_becomeGuestUser();
+
+	list ($ret, $results) = $this->_loadTemplate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify that we render the normal user login view */
+	$this->assertEquals(0, $gallery->_phpVm->_exitCalls, 'exit called');
+	$this->assertEquals(array('body' => 'modules/core/templates/UserLogin.tpl'), $results,
+			    'loadTemplate results');
+    }
+
+    /**
+     * Helper method to load the UserLoginView template data.
+     * @see UserLoginView::loadTemplate
+     */
+    function _loadTemplate() {
+	$view = new UserLoginView();
+	$form = array('formName' => '');
+	$template = new GalleryTemplate('');
+	return $view->loadTemplate($template, $form);
+    }
 }
 
 /**
@@ -355,6 +435,14 @@ class UserLoginControllerTestSession {
 	$this->_hash = array();
     }
 
+    function getId() {
+	return '123';
+    }
+
+    function isPersistent() {
+	return false;
+    }
+
     function get($key) {
 	return isset($this->_hash[$key]) ? $this->_hash[$key] : null;
     }
@@ -381,6 +469,29 @@ class UserLoginControllerTestSession {
 
     function setUserId($userId) {
 	$this->_sessionData['core.id.activeUser'] = $userId;
+    }
+}
+
+/**
+ * Mock PHP VM
+ */
+class UserLoginTestPhpVm {
+    function UserLoginTestPhpVm($headersSent=false) {
+	$this->_headersSent = $headersSent;
+	$this->_exitCalls = 0;
+	$this->_headers = array();
+    }
+
+    function header($header, $replace=null) {
+	$this->_headers[] = $header;
+    }
+
+    function headers_sent() {
+	return $this->_headersSent;
+    }
+
+    function exit_($status=null) {
+        $this->_exitCalls++;
     }
 }
 ?>

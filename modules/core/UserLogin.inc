@@ -179,6 +179,26 @@ class UserLoginView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
+	/* Check if the default login view URL has been overridden and redirect appropriately */
+	$loginRedirect = $gallery->getConfig('loginRedirect');
+	if (!(isset($loginRedirect['subView']) && $loginRedirect['subView'] == 'core.UserLogin')
+		&& !empty($loginRedirect)) {
+	    /* Do not redirect if we are logged in already */
+	    list ($ret, $isGuest) = GalleryCoreApi::isAnonymousUser();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $phpVm =& $gallery->getPhpVm();
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    if ($isGuest && !$phpVm->headers_sent()) {
+		$redirectUrl = $urlGenerator->generateUrl($loginRedirect,
+							  array('forceSessionId' => false));
+		$phpVm->header("Location: $redirectUrl");
+		$phpVm->exit_();
+	    }
+	}
+
 	if ($form['formName'] != 'UserLogin') {
 	    $form['formName'] = 'UserLogin';
 	    $form['username'] = '';
