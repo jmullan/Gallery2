@@ -223,12 +223,12 @@ class GalleryCharsetHelper_simple {
 	    }
 	}
 
-	if ($hasMbStrCut) {
-	    return (string) mb_strcut($string, $start, $length, 'UTF-8');
-	} else {
-	    
-	    return GalleryCharsetHelper_medium::phpUtf8Strcut($string, $start, $length);
-	}
+	$result = $hasMbStrCut
+	    ? (string)mb_strcut($string, $start, $length, 'UTF-8')
+	    : GalleryCharsetHelper_medium::phpUtf8Strcut($string, $start, $length);
+
+	/* Truncate partial HTML entity at end of result */
+	return preg_replace('/&[^;]{0,6}$/', '', $result);
     }
 }
 ?>

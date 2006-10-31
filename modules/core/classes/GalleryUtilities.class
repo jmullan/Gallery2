@@ -770,7 +770,7 @@ class GalleryUtilities {
     }
 
     /**
-     * A multibyte safe version of substr() for UTF-8.
+     * mb_substr() for UTF-8, with PHP fallback. Truncates incomplete HTML entity at end of result.
      * @param string $string the input string containing raw UTF-8
      * @param int $start
      * @param int $length
@@ -782,11 +782,12 @@ class GalleryUtilities {
 	    $hasMbSubstr = function_exists('mb_substr');
 	}
 
-	if ($hasMbSubstr) {
-	    return mb_substr($string, $start, $length, 'UTF-8');
-	} else {
-	    return GalleryUtilities::_phpUtf8Substring($string, $start, $length);
-	}
+	$result = $hasMbSubstr
+	    ? (string)mb_substr($string, $start, $length, 'UTF-8')
+	    : GalleryUtilities::_phpUtf8Substring($string, $start, $length);
+
+	/* Truncate partial HTML entity at end of result */
+	return preg_replace('/&[^;]{0,6}$/', '', $result);
     }
 
     /**

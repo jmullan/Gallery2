@@ -936,11 +936,14 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('apo\'strophe.jpg "quotes"',
 			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 24),
 			    'php version');
+	$utf8 = 'e&amp;f';
+	$this->assertEquals('e', GalleryUtilities::utf8Substring($utf8, 0, 4), 'std');
+	$this->assertEquals('e&am', GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
+		'php; html entity not truncated because this preg is in ::utf8Substring');
 
-	/* Other html entities count as single chars in phpUtf8Substring but not in mb_substr */
-	$this->assertEquals('&aacute;bc',
-			    GalleryUtilities::_phpUtf8Substring('&aacute;bcde', 0, 3),
-			    'php version');
+	/* Test incomplete html entity at end of string is truncated */
+	$utf8 = '1234567890- &amp;';
+	$this->assertEquals('67890- ', GalleryUtilities::utf8Substring($utf8, 5, 9), 'entity');
     }
 
     function testIsEmbedded() {

@@ -504,6 +504,14 @@ class CharsetTest extends GalleryTestCase {
 	$this->assertEquals('apo\'strophe.jpg "quote',
 			    GalleryCharsetHelper_medium::phpUtf8Strcut($utf8, 0, 22),
 			    'php version special characters');
+	$utf8 = 'e&amp;f';
+	$this->assertEquals('e', GalleryCoreApi::utf8Strcut($utf8, 0, 4), 'std');
+	$this->assertEquals('e&am', GalleryCharsetHelper_medium::phpUtf8Strcut($utf8, 0, 4),
+		'php; html entity not truncated because this preg is in ::utf8Strcut');
+
+	/* Test incomplete html entity at end of string is truncated */
+	$utf8 = '1234567890- &amp;';
+	$this->assertEquals('67890- ', GalleryCoreApi::utf8Strcut($utf8, 5, 9), 'entity');
     }
 }
 

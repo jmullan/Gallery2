@@ -70,7 +70,7 @@ class GalleryCoreApi {
      * - remove studyPermissions, fetchPermissionsForItems does the same and more.
      */
     function getApiVersion() {
-	return array(7, 11);
+	return array(7, 12);
     }
 
     /**
@@ -2590,7 +2590,7 @@ class GalleryCoreApi {
     }
 
     /**
-     * mb_strcut for UTF-8, with PHP fallback.
+     * mb_strcut for UTF-8, with PHP fallback. Truncates incomplete HTML entity at end of result.
      * @param string $string the input string containing raw UTF-8
      * @param int $start the byte-offset of the start position
      * @param int $length the length in bytes (not in characters), not optional
