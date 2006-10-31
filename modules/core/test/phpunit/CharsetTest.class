@@ -461,6 +461,60 @@ class CharsetTest extends GalleryTestCase {
 	$this->assertEquals('foo', GalleryCoreApi::convertFromUtf8('foo'));
     }
 
+    function testUtf8Substring() {
+	/* Russian */
+	$utf8 = ("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0\xba\xd0" .
+		 "\xb8\xd0\xb9\xd0\x97\xd0\xb4\xd1\x80\xd0\xb0" .
+		 "\xd0\xb2\xd1\x81\xd1\x82\xd0\xb2\xd1\x83");
+	$this->assertEquals("\xd0\xa0",
+			    GalleryCoreApi::utf8Substring($utf8, 0, 1),
+			    '1 char (ru), standard version');
+	$this->assertEquals("\xd0\xa0",
+			    GalleryCharsetHelper_medium::phpUtf8Substring($utf8, 0, 1),
+			    '1 char (ru), php version');
+	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81",
+			    GalleryCoreApi::utf8Substring($utf8, 0, 4),
+			    '4 chars (ru), standard version');
+	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81",
+			    GalleryCharsetHelper_medium::phpUtf8Substring($utf8, 0, 4),
+			    '4 chars (ru), php version');
+
+	/* Hebrew */
+	$utf8 = ("\xd7\x90\xd7\xa0\xd7\x99 \xd7\x99\xd7\x9b\xd7\x95\xd7" .
+		 "\x9c \xd7\x9c\xd7\x90\xd7\x9b\xd7\x95\xd7\x9c \xd7\x96" .
+		 "\xd7\x9b\xd7\x95\xd7\x9b\xd7\x99\xd7\xaa \xd7\x95\xd7" .
+		 "\x96\xd7\x94 \xd7\x9c\xd7\x90 \xd7\x9e\xd7\x96\xd7\x99");
+	$this->assertEquals("\xd7\x90",
+			    GalleryCoreApi::utf8Substring($utf8, 0, 1),
+			    '1 char (he), standard version');
+	$this->assertEquals("\xd7\x90",
+			    GalleryCharsetHelper_medium::phpUtf8Substring($utf8, 0, 1),
+			    '1 char (he), php version');
+	$this->assertEquals("\xd7\x90\xd7\xa0\xd7\x99 ",
+			    GalleryCoreApi::utf8Substring($utf8, 0, 4),
+			    '4 chars (he), standard version');
+	$this->assertEquals("\xd7\x90\xd7\xa0\xd7\x99 ",
+			    GalleryCharsetHelper_medium::phpUtf8Substring($utf8, 0, 4),
+			    '4 chars (he), php version');
+
+	/* Test some special characters */
+	$utf8 = 'apo\'strophe.jpg "quotes"';
+	$this->assertEquals('apo\'strophe.jpg "quotes"',
+			    GalleryCoreApi::utf8Substring($utf8, 0, 24),
+			    'special chars, standard version');
+	$this->assertEquals('apo\'strophe.jpg "quotes"',
+			    GalleryCharsetHelper_medium::phpUtf8Substring($utf8, 0, 24),
+			    'special chars, php version');
+	$utf8 = 'e&amp;f';
+	$this->assertEquals('e', GalleryCoreApi::utf8Substring($utf8, 0, 4), 'std');
+	$this->assertEquals('e&am', GalleryCharsetHelper_medium::phpUtf8Substring($utf8, 0, 4),
+		'php; html entity not truncated because this preg is in ::utf8Substring');
+
+	/* Test incomplete html entity at end of string is truncated */
+	$utf8 = '1234567890- &amp;';
+	$this->assertEquals('67890- ', GalleryCoreApi::utf8Substring($utf8, 5, 9), 'entity');
+    }
+
     function testUtf8Strcut() {
 	/* Russian */
 	$utf8 = ("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0\xba\xd0" .

@@ -892,58 +892,17 @@ class UtilitiesTest extends GalleryTestCase {
 	    GalleryUtilities::utf8ToUnicodeEntities("accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 donne"));
     }
 
+    /**
+     * @todo Remove this test on next core API bump
+     */
     function testUtf8Substring() {
 	/* Russian */
 	$utf8 = ("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0\xba\xd0" .
 		 "\xb8\xd0\xb9\xd0\x97\xd0\xb4\xd1\x80\xd0\xb0" .
 		 "\xd0\xb2\xd1\x81\xd1\x82\xd0\xb2\xd1\x83");
-	$this->assertEquals("\xd0\xa0",
-			    GalleryUtilities::utf8Substring($utf8, 0, 1),
-			    'standard version');
-	$this->assertEquals("\xd0\xa0",
-			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 1),
-			    'php version');
 	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81",
 			    GalleryUtilities::utf8Substring($utf8, 0, 4),
-			    'standard version');
-	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81",
-			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
-			    'php version');
-
-	/* Hebrew */
-	$utf8 = ("\xd7\x90\xd7\xa0\xd7\x99 \xd7\x99\xd7\x9b\xd7\x95\xd7" .
-		 "\x9c \xd7\x9c\xd7\x90\xd7\x9b\xd7\x95\xd7\x9c \xd7\x96" .
-		 "\xd7\x9b\xd7\x95\xd7\x9b\xd7\x99\xd7\xaa \xd7\x95\xd7" .
-		 "\x96\xd7\x94 \xd7\x9c\xd7\x90 \xd7\x9e\xd7\x96\xd7\x99");
-	$this->assertEquals("\xd7\x90",
-			    GalleryUtilities::utf8Substring($utf8, 0, 1),
-			    'standard version');
-	$this->assertEquals("\xd7\x90",
-			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 1),
-			    'php version');
-	$this->assertEquals("\xd7\x90\xd7\xa0\xd7\x99 ",
-			    GalleryUtilities::utf8Substring($utf8, 0, 4),
-			    'standard version');
-	$this->assertEquals("\xd7\x90\xd7\xa0\xd7\x99 ",
-			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
-			    'php version');
-
-	/* Test some special characters */
-	$utf8 = 'apo\'strophe.jpg "quotes"';
-	$this->assertEquals('apo\'strophe.jpg "quotes"',
-			    GalleryUtilities::utf8Substring($utf8, 0, 24),
-			    'standard version');
-	$this->assertEquals('apo\'strophe.jpg "quotes"',
-			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 24),
-			    'php version');
-	$utf8 = 'e&amp;f';
-	$this->assertEquals('e', GalleryUtilities::utf8Substring($utf8, 0, 4), 'std');
-	$this->assertEquals('e&am', GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
-		'php; html entity not truncated because this preg is in ::utf8Substring');
-
-	/* Test incomplete html entity at end of string is truncated */
-	$utf8 = '1234567890- &amp;';
-	$this->assertEquals('67890- ', GalleryUtilities::utf8Substring($utf8, 5, 9), 'entity');
+			    '4 chars (ru), standard version');
     }
 
     function testIsEmbedded() {

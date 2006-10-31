@@ -144,7 +144,7 @@ class GalleryFileSystemEntityHelper_medium {
     function _truncatePathComponent($baseName, $variablePart='', $extension='') {
 
 	$length = 128 - strlen($variablePart) - strlen($extension);
-	$baseName = GalleryUtilities::utf8Substring($baseName, 0, $length);
+	$baseName = GalleryCoreApi::utf8Substring($baseName, 0, $length);
 
 	return $baseName . $variablePart . $extension;
     }

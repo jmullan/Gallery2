@@ -1354,7 +1354,7 @@ class GalleryStorage {
 	if ($lengthInBytes) {
 	    return GalleryCoreApi::utf8Strcut($value, 0, $size);
 	} else {
-	    return GalleryUtilities::utf8Substring($value, 0, $size);
+	    return GalleryCoreApi::utf8Substring($value, 0, $size);
 	}
     }
 }

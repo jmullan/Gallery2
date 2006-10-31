@@ -68,6 +68,7 @@ class GalleryCoreApi {
      * - remove GalleryView::_getItem() (the private version of getItem());
      * - delete GallerySqlFragment.class
      * - remove studyPermissions, fetchPermissionsForItems does the same and more.
+     * - remove GalleryUtilities::utf8Substring (moved to GalleryCoreApi)
      */
     function getApiVersion() {
 	return array(7, 12);
@@ -2587,6 +2588,19 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryCharsetHelper_simple.class');
 	return GalleryCharsetHelper_simple::convertFromUtf8($inputString, $targetEncoding);
+    }
+
+    /**
+     * mb_substr for UTF-8, with PHP fallback. Truncates incomplete HTML entity at end of result.
+     * @param string $string the input string containing raw UTF-8
+     * @param int $start the start position
+     * @param int $length the length of the substring, not optional
+     * @return string a multibyte safe substring of input value
+     */
+    function utf8Substring($string, $start, $length) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryCharsetHelper_simple.class');
+	return GalleryCharsetHelper_simple::utf8Substring($string, $start, $length);
     }
 
     /**

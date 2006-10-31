@@ -711,6 +711,70 @@ class GalleryCharsetHelper_medium {
     }
 
     /**
+     * A multibyte safe PHP implementation of mb_substr for UTF-8.
+     *
+     * This is going to be a whole lot slower than mb_substr, so we should use that instead,
+     * whenever we can.
+     *
+     * @see GalleryCoreApi::utf8Substring
+     */
+    function phpUtf8Substring($string, $start, $length) {
+	$strLenBytes = strlen($string);
+
+	if ($start >= ($strLenBytes - 1) || $strLenBytes == 0 || $length == 0) {
+	    return '';
+	}
+
+	/* We need the string length in characters to support negative $start and $length */
+	$bytePos = 0;
+	$characters = array();
+	/* Parse the whole string into multibyte characters */
+	while ($bytePos < $strLenBytes) {
+	    $type = ord($string[$bytePos]) & 0xF0;
+	    if ($type == 0xF0) {
+		/* 4 chars representing one unicode character */
+		$characters[] = substr($string, $bytePos, 4);
+		$bytePos += 4;
+	    }
+	    else if ($type == 0xE0) {
+		/* 3 chars representing one unicode character */
+		$characters[] = substr($string, $bytePos, 3);
+		$bytePos += 3;
+	    }
+	    else if (($type & 0xC0) == 0xC0) {
+		/* 2 chars representing one unicode character */
+		$characters[] = substr($string, $bytePos, 2);
+		$bytePos += 2;
+	    }
+	    else {
+		/* 1 char (lower ASCII) */
+		$characters[] = $string[$bytePos];
+		$bytePos += 1;
+	    }
+	}
+
+	$strLength = count($characters);
+	$start = $start < 0 ? $strLength + $start : $start;
+	$start = $start < 0 ? 0 : $start;
+	$length = $length < 0 ? $strLength - $start + $length : $length;
+	$length = $length < 0 ? 0 : $length;
+	$length = ($start + $length) > $strLength ? $strLength - $start : $length;
+	$end = $start + $length;
+
+	if ($start >= ($strLength - 1) || $strLength == 0 || $length == 0 || $start > $end) {
+	    return '';
+	}
+
+	/* Extract the substring from the character array */
+	$pos = $start;
+	$result = '';
+	while ($pos < $end) {
+	    $result .= $characters[$pos++];
+	}
+	return $result;
+    }
+
+    /**
      * A multibyte safe PHP implementation of mb_strcut for UTF-8.
      *
      * This is going to be a whole lot slower than mb_strcut, so we should use that instead,

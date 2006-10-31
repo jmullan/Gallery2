@@ -775,44 +775,10 @@ class GalleryUtilities {
      * @param int $start
      * @param int $length
      * @return string a multibyte safe substring of input value
+     * @deprecated Please use GalleryCoreApi::utf8Substring instead
      */
     function utf8Substring($string, $start, $length) {
-	static $hasMbSubstr;
-	if (!isset($hasMbSubstr)) {
-	    $hasMbSubstr = function_exists('mb_substr');
-	}
-
-	$result = $hasMbSubstr
-	    ? (string)mb_substr($string, $start, $length, 'UTF-8')
-	    : GalleryUtilities::_phpUtf8Substring($string, $start, $length);
-
-	/* Truncate partial HTML entity at end of result */
-	return preg_replace('/&[^;]{0,6}$/', '', $result);
-    }
-
-    /**
-     * A multibyte safe version of substr() for UTF-8.
-     *
-     * Convert UTF-8 to Unicode entities, run our entity safe substr() routine on that, then convert
-     * it back to unicode when we're done.
-     *
-     * This is going to be a whole lot slower than mb_substr, so we should use that instead,
-     * whenever we can.
-     *
-     * Note: this function treats all HTML entities like &amp; as single characters, but mb_substr
-     * would treat this as 5 characters.
-     *
-     * @param string $string the input string containing raw UTF-8
-     * @param int $start
-     * @param int $length
-     * @return string a multibyte safe substring of input value
-     * @access private
-     */
-    function _phpUtf8Substring($string, $start, $length) {
-	$string = GalleryUtilities::utf8ToUnicodeEntities($string);
-	list ($len, $string) = GalleryUtilities::entitySubstr($string, $start, $length);
-	$string = GalleryUtilities::unicodeEntitiesToUtf8($string);
-	return $string;
+	return GalleryCoreApi::utf8Substring($string, $start, $length);
     }
 
     /**
