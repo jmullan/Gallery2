@@ -375,7 +375,9 @@ function formatData($type,$tag,$intel,$data) {
 			// The formula can be developed : exposure = 1/(exp(ln(2).shutter))
 			if($tag=='9201') {
 				$data = exp($data * log(2));
-				if ($data >= 1.99) {
+				if ($data >= 1000000) {
+					$data = null; // Throw out near-zero value
+				} else if ($data >= 1.99) {
 					$prec = $data >= 38 ? -1 : 0;
 					$data = '1/' . round($data, $prec) . ' sec';
 				} else if ($data > 0) $data = 1/$data;
