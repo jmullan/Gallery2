@@ -110,7 +110,8 @@ class DownloadRegistryFileView extends GalleryView {
 	    $languageCode = '';
 	}
 
-	list ($ret, $defaultLanguageCode) = GalleryTranslator::getDefaultLanguageCode();
+	list ($ret, $defaultLanguageCode) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 	if ($ret) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug('publishxp.DownloadRegistryFile, failed to get the default ' .
