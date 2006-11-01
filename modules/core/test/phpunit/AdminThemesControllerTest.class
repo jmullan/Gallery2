@@ -142,6 +142,11 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][saveDefaults]', 1);
 	GalleryUtilities::putRequestVariable('themeId', 'anything');
 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.theme', 'matrix');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	/* Perform the request and verify that we get an error */
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
 	$this->assertEquals(null, $results);
