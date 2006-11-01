@@ -68,6 +68,16 @@ class DownloadRegistryFileTest extends GalleryTestCase {
 			    'session override');
     }
 
+    function testGetCharsetFromRequestComparesToSiteDefaultLocale() {
+	/* Ensure it uses the plugin param and not getDefaultLanguageCode() */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'language.useBrowserPref', '1');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'ja';
+	$this->assertEquals('Windows-932', $this->view->_getCharsetFromRequest(), 'HTTP override');
+    }
+
     function testGetCharsetFromRequestChinese() {
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'zh';
 	$this->assertEquals('Windows-950', $this->view->_getCharsetFromRequest(), 'default');
