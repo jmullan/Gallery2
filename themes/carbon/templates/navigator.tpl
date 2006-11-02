@@ -15,21 +15,20 @@
     <td width="20%" align="left">
       <div class="first-and-previous">
 	<table cellpadding="0" cellspacing="0"><tr>
-	  {if isset($theme.navigator.first) && 
-	      (!isset($theme.navigator.back) || $theme.navigator.back.urlParams != $theme.navigator.first.urlParams)}
+	  {if isset($theme.navigator.first)}
 	  <td>
 	    <div class="buttonFirst"><a href="{g->url params=$theme.navigator.first.urlParams}"
 	     title="{g->text text="First"}"></a></div>
 	  </td>
 	  {/if}
+
 	  {if isset($theme.navigator.back)}
 	  <td>
 	    <div class="buttonPrev"><a href="{g->url params=$theme.navigator.back.urlParams}"
 	     title="{g->text text="Previous"}"></a></div>
 	  </td>
-	  {else}
-	  <td>{g->text text="&nbsp;"}</td>
 	  {/if}
+	  <td>{g->text text="&nbsp;"}</td>
 	</tr></table>
       </div>
     </td>
@@ -98,16 +97,15 @@
     <td width="20%" align="right" >
       <div class="next-and-last">
 	<table cellpadding="0" cellspacing="0"><tr>
+	  <td>{g->text text="&nbsp;"}</td>
 	  {if isset($theme.navigator.next)}
 	  <td>
 	    <div class="buttonNext"><a href="{g->url params=$theme.navigator.next.urlParams}"
 	     title="{g->text text="Next"}"></a></div>
 	  </td>
-	  {else}
-	  <td>{g->text text="&nbsp;"}</td>
 	  {/if}
-	  {if isset($theme.navigator.last) && 
-              (!isset($theme.navigator.next) || $theme.navigator.next.urlParams != $theme.navigator.last.urlParams)}
+
+	  {if isset($theme.navigator.last)}
 	  <td>
 	    <div class="buttonLast"><a href="{g->url params=$theme.navigator.last.urlParams}"
 	     title="{g->text text="Last"}"></a></div>
