@@ -515,6 +515,7 @@ class GallerySession {
      */
     function _setCookie($delete=false) {
 	global $gallery;
+	$phpVm = $gallery->getPhpVm();
 
 	/*
 	 * Send back a cookie
@@ -557,10 +558,10 @@ class GallerySession {
 
 	if ($delete) {
 	    /* Expires in the past instructs the browser to delete the cookie */
-	    $expirationDate = GalleryUtilities::getHttpDate(time() - (365 * 24 * 3600));
+	    $expirationDate = GalleryUtilities::getHttpDate($phpVm->time() - (365 * 24 * 3600));
 	    $cookie .= '; expires=' . $expirationDate;
 	} else if ($sessionLifetime > 0) {
-	    $expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
+	    $expirationDate = GalleryUtilities::getHttpDate($phpVm->time() + $sessionLifetime);
 	    $cookie .= '; expires=' . $expirationDate;
 	}
 
@@ -650,7 +651,7 @@ class GallerySession {
 	$storage =& $gallery->getStorage();
 
 	/* Assemble the data */
-	$this->_modificationTime = time();
+	$this->_modificationTime = $phpVm->time();
 	$data = array('userId' => $this->_userId,
 		      'remoteIdentifier' => serialize($this->_remoteIdentifier),
 		      'creationTimestamp' => $this->_creationTime,
@@ -907,11 +908,13 @@ class GallerySession {
      */
     function _emptySessionData() {
 	/* Don't (re-)set sessionId since we can't ensure a collision-free id without DB queries */
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
 	$this->_sessionData = array();
 	$this->_loadedSessionData = '';
-	$this->_creationTime = time();
+	$this->_creationTime = $phpVm->time();
 	$this->_userId = null;
-	$this->_modificationTime = time();
+	$this->_modificationTime = $phpVm->time();
 	$this->_remoteIdentifier = $this->getRemoteIdentifier();
 	/* Don't change userId or isUsingCookies */
 
@@ -993,7 +996,7 @@ class GallerySession {
 	$phpVm = $gallery->getPhpVm();
 	$inactiveCutoff = $phpVm->time() - $sessionInactivityTimeout;
 	$lifetimeCutoff = $phpVm->time() - $lifetime;
-	$lastWeek = $phpVm->time() -  86400 * 7;
+	$lastWeek = $phpVm->time() - 86400 * 7;
 
 	/* Only delete in small chunks, else we may lock the whole Gallery for too long */
 	$where = '

@@ -2167,8 +2167,8 @@ class SessionTest extends GalleryTestCase {
 	    $entry = array('id' => $sid,
 			   'userId' => 10,
 			   'remoteIdentifier' => serialize(array()),
-			   'creationTimestamp' => time() - 100,
-			   'modificationTimestamp' => time() - 50,
+			   'creationTimestamp' => $now - 100,
+			   'modificationTimestamp' => $now - 50,
 			   'data' => serialize($data));
 	    $ret = GalleryCoreApi::addMapEntry('GallerySessionMap', $entry);
 	    if ($ret) {
