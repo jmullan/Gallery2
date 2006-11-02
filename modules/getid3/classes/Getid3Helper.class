@@ -295,7 +295,9 @@ class Getid3Helper {
     function postProcessValue($property, $value) {
 	global $gallery;
 
-	GalleryUtilities::sanitizeInputValues($value, false);
+	if (!is_numeric($value)) {
+	    GalleryUtilities::sanitizeInputValues($value, false);
+	}
 
 	switch ($property) {
 	case 'DateTime':

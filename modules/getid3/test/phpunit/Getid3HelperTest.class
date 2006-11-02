@@ -174,7 +174,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	for ($i = 0; $i < sizeof($id3Data); $i++) {
 	    switch ($id3Data[$i]['title']) {
 	    case 'Audio Bit Rate':
-		$this->assertEquals('88192', $id3Data[$i]['value'], 'Audio Bit Rate Mismatch');
+		$this->assertEquals(88192, $id3Data[$i]['value'], 'Audio Bit Rate Mismatch');
 		$verifiedCount++;
 		break;
 	    case 'Audio Bit Rate Mode':
@@ -182,7 +182,7 @@ class Getid3HelperTest extends GalleryTestCase {
 		$verifiedCount++;
 		break;
 	    case 'Audio Channels':
-		$this->assertEquals('1', $id3Data[$i]['value'], 'Audio Channels Mismatch');
+		$this->assertEquals(1, $id3Data[$i]['value'], 'Audio Channels Mismatch');
 		$verifiedCount++;
 		break;
 	    case 'Audio Codec':
@@ -258,7 +258,7 @@ class Getid3HelperTest extends GalleryTestCase {
 		$verifiedCount++;
 		break;
 	    case 'Audio Channels':
-		$this->assertEquals('1', $id3Data[$i]['value'], 'audio channels');
+		$this->assertEquals(1, $id3Data[$i]['value'], 'audio channels');
 		$verifiedCount++;
 		break;
 	    case 'Channel Mode':
@@ -378,7 +378,8 @@ class Getid3HelperTest extends GalleryTestCase {
 	$verifiedCount = 0;
 	for ($i = 0; $i < sizeof($id3Data); $i++) {
 	    if ($id3Data[$i]['title'] == 'Audio Bit Rate') {
-		$this->assert(abs(205.3466 - $id3Data[$i]['value']) < 0.01, "value $i");
+		$value = abs(205.3466 - $id3Data[$i]['value']);
+		$this->assert($value < 0.01, "value $value");
 		$verifiedCount++;
 	    }
 	}
@@ -412,7 +413,7 @@ class Getid3HelperTest extends GalleryTestCase {
 	$verifiedCount = 0;
 	for ($i = 0; $i < sizeof($id3Data); $i++) {
 	    if ($id3Data[$i]['title'] == 'Audio Bit Rate') {
-		$this->assertEquals('88200', $id3Data[$i]['value']);
+		$this->assertEquals(88200, $id3Data[$i]['value']);
 		$verifiedCount++;
 	    }
 	    if ($id3Data[$i]['title'] == 'Audio Codec') {
