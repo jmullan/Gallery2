@@ -117,13 +117,14 @@ class KeyAlbumModule extends GalleryModule {
 	foreach ($items as $item) {
 	    if ($item->getKeywords()) {
 		$itemId = $item->getId();
-		$summaries[$itemId] = $label;
+		$links = array();
 		foreach (preg_split($split, $item->getKeywords()) as $keyword) {
 		    $keyword = trim($keyword);
-		    $summaries[$itemId] .= ' <a href="' . $urlGenerator->generateUrl(
+		    $links[] = ' <a href="' . $urlGenerator->generateUrl(
 			array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $keyword,
 			      'highlightId' => $itemId)) . '">' . $keyword . '</a>';
 		}
+		$summaries[$itemId] = $label . implode(',', $links);
 	    }
 	}
 	return array(null, $summaries);
