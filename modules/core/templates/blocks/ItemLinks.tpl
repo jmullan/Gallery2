@@ -14,12 +14,12 @@
 
   {if $useDropdown && count($links) > 1}
   <div class="{$class}">
-    <select onchange="{literal}if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}">
-      <option label="{if $item.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $item.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
+    <select onchange="var value = this.value; this.options[0].selected = true; eval(value)">
+      <option value="">{if $item.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
       {foreach from=$links item=link}
 	{if $lowercase}{assign var="linkText" value=$link.text|lower}{else}
 		       {assign var="linkText" value=$link.text}{/if}
-	<option label="{$linkText}" value="{g->url params=$link.params}">{$linkText}</option>
+	<option value="{if isset($link.script)}{$link.script}{else}window.location = '{g->url params=$link.params}'{/if}"{if !empty($link.selected)} selected="selected"{/if}>{$linkText}</option>
       {/foreach}
     </select>
   </div>
@@ -27,7 +27,7 @@
   <div class="{$class}">
     {foreach from=$links item=link}
       <a href="{g->url params=$link.params}" class="gbAdminLink {g->linkid
-	 urlParams=$link.params}">{if $lowercase}{$link.text|lower}{else}{$link.text}{/if}</a>
+	 urlParams=$link.params}"{if isset($link.script)} onclick="{$link.script}"{/if}{if isset($link.attrs)} {$link.attrs}{/if}>{if $lowercase}{$link.text|lower}{else}{$link.text}{/if}</a>
     {/foreach}
   </div>
   {/if}
