@@ -89,15 +89,17 @@
 
             {g->block type="core.ItemLinks" item=$child links=$child.itemLinks}
 
-            {if !empty($child.title)}
-            <p class="giTitle">
-                {if $child.canContainChildren}
-                {g->text text="Album: %s" arg1=$child.title|markup}
-                {else}
-                {$child.title|markup}
-                {/if}
-            </p>
-            {/if}
+	    {if !empty($child.title)}
+	    <p class="giTitle">
+		{if $child.canContainChildren && (!isset($theme.params.albumFrame)
+		 || $theme.params.albumFrame == $theme.params.itemFrame)}
+		  {* Add prefix for albums unless imageframe will differentiate *}
+		  {g->text text="Album: %s" arg1=$child.title|markup}
+		{else}
+		  {$child.title|markup}
+		{/if}
+	    </p>
+	    {/if}
 
             {if !empty($child.summary)}
             <p class="giDescription">{$child.summary|markup|entitytruncate:256}</p>

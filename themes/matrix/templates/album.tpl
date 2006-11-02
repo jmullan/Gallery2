@@ -110,10 +110,12 @@
 
 		{if !empty($child.title)}
 		<p class="giTitle">
-		  {if $child.canContainChildren}
-		  {g->text text="Album: %s" arg1=$child.title|markup}
+		  {if $child.canContainChildren && (!isset($theme.params.albumFrame)
+		   || $theme.params.albumFrame == $theme.params.itemFrame)}
+		    {* Add prefix for albums unless imageframe will differentiate *}
+		    {g->text text="Album: %s" arg1=$child.title|markup}
 		  {else}
-		  {$child.title|markup}
+		    {$child.title|markup}
 		  {/if}
 		</p>
 		{/if}
