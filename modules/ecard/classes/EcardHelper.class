@@ -105,7 +105,7 @@ class EcardHelper {
 	foreach (array('from', 'fromName', 'to', 'toName',
 		       'text', 'header', 'footer', 'image', 'link') as $key) {
 	    if (isset($array[$key])) {
-		$result = preg_replace('/%' . $key . '%/', $array[$key], $result);
+		$result = str_replace('%' . $key . '%', $array[$key], $result);
 	    }
 	}
 	return $result;
