@@ -391,16 +391,15 @@ class DataCacheTest extends GalleryTestCase {
 
     function testGetPageDataExpiredData() {
 	global $gallery;
-	$phpVm = new DataCacheTestMockVm();
-	$gallery->_phpVm =& $phpVm;
+	$gallery->_phpVm = new DataCacheTestMockVm();
 
-	$phpVm->setTime(100);
+	$gallery->_phpVm->setTime(100);
 	$ret = GalleryDataCache::putPageData('test', 0, array('key'), 'test');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$phpVm->setTime(time());
+	$gallery->_phpVm->setTime(time());
 	list ($ret, $result) = GalleryDataCache::getPageData('test', array('key'));
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -519,8 +518,7 @@ class DataCacheTest extends GalleryTestCase {
 	}
 
 	/* Use mock VM to enforce valid headers, so that the active browser doesn't interfere */
-	$phpVm = new DataCacheTestMockVm();
-	$gallery->_phpVm =& $phpVm;
+	$gallery->_phpVm = new DataCacheTestMockVm();
 
 	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'partial');
 	if ($ret) {
@@ -589,9 +587,7 @@ class DataCacheTest extends GalleryTestCase {
 
     function testCleanPageDataCache(){
 	global $gallery;
-
-	$phpVm = new DataCacheTestMockVm();
-	$gallery->_phpVm =& $phpVm;
+	$gallery->_phpVm = new DataCacheTestMockVm();
 	$activeUser = $gallery->getActiveUser();
 
 	$acceleration = array('user' => array('type' => 'full', 'expiration' => 30),
@@ -622,7 +618,7 @@ class DataCacheTest extends GalleryTestCase {
 	}
 
 	/* Setup some cache entries. */
-	$phpVm->setTime(100);
+	$gallery->_phpVm->setTime(100);
 	$ret = GalleryDataCache::putPageData('first', 0, array('key'), 'test');
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -634,7 +630,7 @@ class DataCacheTest extends GalleryTestCase {
 	}
 	$this->assertEquals('test', $result, 'first');
 
-	$phpVm->setTime(125);
+	$gallery->_phpVm->setTime(125);
 	$ret = GalleryDataCache::putPageData('second', 2, array('key'), 'test');
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -655,7 +651,7 @@ class DataCacheTest extends GalleryTestCase {
 	}
 	$this->assertEquals('test', $result, 'first 2');
 
-	$phpVm->setTime(time());
+	$gallery->_phpVm->setTime(time());
 	$ret = GalleryDataCache::putPageData('third', 3, array('key'), 'test');
 	if ($ret) {
 	    $this->failWithStatus($ret);

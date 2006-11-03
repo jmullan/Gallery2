@@ -151,7 +151,7 @@ class GalleryPluginHelper_simple {
 			    $gallery->debug_r($redirectInfo);
 			}
 			$urlGenerator =& $gallery->getUrlGenerator();
-			$phpVm =& $gallery->getPhpVm();
+			$phpVm = $gallery->getPhpVm();
 			$phpVm->header('Location: ' .
 			       $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php');
 			exit;

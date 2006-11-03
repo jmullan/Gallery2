@@ -332,7 +332,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
     function testLoginRedirect() {
 	global $gallery;
-	$gallery->_phpVm = new UserLoginTestPhpVm();
+	$gallery->_phpVm = new UserLoginTestPhpVm($this);
 
 	$expectedUrl = 'http://otherSite.com';
 	$gallery->setConfig('loginRedirect', array('href' => $expectedUrl));
@@ -341,14 +341,14 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->_loadTemplate();
 
 	/* Verify that header and exit has been called */
-	$this->assertEquals("Location: $expectedUrl", $gallery->_phpVm->_headers[0],
+	$this->assertEquals("Location: $expectedUrl", $this->_headers[0],
 			    'location header');
-	$this->assertEquals(1, $gallery->_phpVm->_exitCalls, 'exit call');
+	$this->assertEquals(1, $this->_exitCalls, 'exit call');
     }
 
     function testLoginRedirectIgnoredWhenAlreadyLoggedIn() {
 	global $gallery;
-	$gallery->_phpVm = new UserLoginTestPhpVm();
+	$gallery->_phpVm = new UserLoginTestPhpVm($this);
 
 	$expectedUrl = 'http://otherSite.com';
 	$gallery->setConfig('loginRedirect', array('href' => $expectedUrl));
@@ -356,14 +356,14 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	list ($ret, $results) = $this->_loadTemplate();
 
 	/* Verify that we render the normal user login view */
-	$this->assertEquals(0, $gallery->_phpVm->_exitCalls, 'exit called');
+	$this->assertEquals(0, $this->_exitCalls, 'exit called');
 	$this->assertEquals(array('body' => 'modules/core/templates/UserLogin.tpl'), $results,
 			    'loadTemplate results');
     }
 
     function testLoginRedirectDoesNotRedirectByDefault() {
 	global $gallery;
-	$gallery->_phpVm = new UserLoginTestPhpVm(false);
+	$gallery->_phpVm = new UserLoginTestPhpVm($this);
 
 	$this->_becomeGuestUser();
 
@@ -373,14 +373,14 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Verify that we render the normal user login view */
-	$this->assertEquals(0, $gallery->_phpVm->_exitCalls, 'exit called');
+	$this->assertEquals(0, $this->_exitCalls, 'exit called');
 	$this->assertEquals(array('body' => 'modules/core/templates/UserLogin.tpl'), $results,
 			    'loadTemplate results');
     }
 
     function testLoginRedirectDoesNotRedirectIfRedirectNotDefined() {
 	global $gallery;
-	$gallery->_phpVm = new UserLoginTestPhpVm(false);
+	$gallery->_phpVm = new UserLoginTestPhpVm($this);
 
 	$gallery->setConfig('loginRedirect', array());
 	$this->_becomeGuestUser();
@@ -391,7 +391,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Verify that we render the normal user login view */
-	$this->assertEquals(0, $gallery->_phpVm->_exitCalls, 'exit called');
+	$this->assertEquals(0, $this->_exitCalls, 'exit called');
 	$this->assertEquals(array('body' => 'modules/core/templates/UserLogin.tpl'), $results,
 			    'loadTemplate results');
     }
@@ -476,14 +476,15 @@ class UserLoginControllerTestSession {
  * Mock PHP VM
  */
 class UserLoginTestPhpVm {
-    function UserLoginTestPhpVm($headersSent=false) {
+    function UserLoginTestPhpVm(&$test, $headersSent=false) {
+	$this->_test =& $test;
 	$this->_headersSent = $headersSent;
-	$this->_exitCalls = 0;
-	$this->_headers = array();
+	$this->_test->_exitCalls = 0;
+	$this->_test->_headers = array();
     }
 
     function header($header, $replace=null) {
-	$this->_headers[] = $header;
+	$this->_test->_headers[] = $header;
     }
 
     function headers_sent() {
@@ -491,7 +492,7 @@ class UserLoginTestPhpVm {
     }
 
     function exit_($status=null) {
-        $this->_exitCalls++;
+        $this->_test->_exitCalls++;
     }
 }
 ?>

@@ -189,7 +189,7 @@ class UserLoginView extends GalleryView {
 		return array($ret, null);
 	    }
 
-	    $phpVm =& $gallery->getPhpVm();
+	    $phpVm = $gallery->getPhpVm();
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    if ($isGuest && !$phpVm->headers_sent()) {
 		$redirectUrl = $urlGenerator->generateUrl($loginRedirect,
