@@ -42,7 +42,7 @@ class CaptchaHelperTest extends GalleryTestCase {
 	$phpVm->setFunctionExists('ImageJPEG', true);
 	$phpVm->setFunctionExists('ImageDestroy', true);
 	$phpVm->setFunctionExists('imagesx', true);
-	$gallery->_phpVm =& $phpVm;
+	$gallery->_phpVm = $phpVm;
 
 	$report = CaptchaHelper::testRequiredGdFunctions();
 	$this->assertEquals(array('success' => array('ImageCreateFromJPEG',
@@ -65,7 +65,7 @@ class CaptchaHelperTest extends GalleryTestCase {
 	$phpVm->setFunctionExists('ImageJPEG', true);
 	$phpVm->setFunctionExists('ImageDestroy', true);
 	$phpVm->setFunctionExists('imagesx', false);
-	$gallery->_phpVm =& $phpVm;
+	$gallery->_phpVm = $phpVm;
 
 	$report = CaptchaHelper::testRequiredGdFunctions();
 	$this->assertEquals(array('success' => array('ImageCreateFromJPEG',
@@ -86,7 +86,7 @@ class CaptchaHelperTest extends GalleryTestCase {
 	$phpVm->setFunctionExists('ImageJPEG', false);
 	$phpVm->setFunctionExists('ImageDestroy', false);
 	$phpVm->setFunctionExists('imagesx', false);
-	$gallery->_phpVm =& $phpVm;
+	$gallery->_phpVm = $phpVm;
 
 	$report = CaptchaHelper::testRequiredGdFunctions();
 	$this->assertEquals(array('success' => array(),
