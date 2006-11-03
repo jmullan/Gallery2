@@ -41,13 +41,7 @@
       </select>
     {else}
       {foreach from=$links item="link"}
-	<a class="gbAdminLink {g->linkid urlParams=$link.params}" href="{g->url params=$link.params}"{if isset($link.script)} onclick="{$link.script}"{/if}{if isset($link.attrs)} {$link.attrs}{/if}>
-	  {if $lowercase}
-	    {$link.text|lower}
-	  {else}
-	    {$link.text}
-	  {/if}
-	</a>
+	<a class="gbAdminLink {g->linkid urlParams=$link.params}" href="{g->url params=$link.params}"{if isset($link.script)} onclick="{$link.script}"{/if}{if isset($link.attrs)} {$link.attrs}{/if}>{if $lowercase}{$link.text|lower}{else}{$link.text}{/if}</a>
       {/foreach}
     {/if}
   </div>
