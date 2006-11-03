@@ -818,7 +818,7 @@ class StorageTest extends GalleryTestCase {
 	    if ($storage->getType() == 'db2'
 		    || ($storage->getType() == 'mysql' && $this->_serverInfo
 			&& version_compare($this->_serverInfo, '4.1.0', '<'))) {
-		$expected = GalleryUtilities::utf8Strcut($originalStringLarge, 0, 255);
+		$expected = GalleryCoreApi::utf8Strcut($originalStringLarge, 0, 255);
 	    }
 
 	    $this->assertEquals(1, $results->resultCount(), 'no / wrong rows selected');
