@@ -169,7 +169,7 @@ class EcardControllerTest extends GalleryControllerTestCase {
 	$this->_platform->setReply('mail', array(
 		    'example2@example.com',
 		    'You got eCard',
-		    'fuzzy1' => '/plaintext.*Test < email.*html message.*Test &lt; email/s',
+		    'fuzzy1' => '/plaintext message: Test < email.*html message: Test &lt; email/s',
 		    'fuzzy2' => '/From: eCard Test/'),
 		true);
 	$gallery->setPlatform($this->_platform);
@@ -321,7 +321,8 @@ class EcardControllerTest extends GalleryControllerTestCase {
 	$this->_platform->setReply('mail', array(
 		    'sucker@example.com',
 		    'You got eCard',
-		    'fuzzy1' => '/plaintext.*Hi <script>alert.*html mess.*Hi &lt;script&gt;alert/s',
+		    'fuzzy1' => '/plaintext message: Hi <script>alert.*' .
+		    		'html message: Hi &lt;script&gt;alert/s',
 		    'fuzzy2' => '/From: Bad eCard/'),
 		true);
 	$gallery->setPlatform($this->_platform);
