@@ -28,7 +28,7 @@
 	     title="{g->text text="Previous"}"></a></div>
 	  </td>
 	  {/if}
-	  <td>{g->text text="&nbsp;"}</td>
+	  <td>&nbsp;</td>
 	</tr></table>
       </div>
     </td>
@@ -39,7 +39,7 @@
 	  {g->block type="core.Pager"}
 	</div>
 	{else}
-	  {g->text text="&nbsp;"}
+	  &nbsp;
 	{/if}
       {elseif $theme.pageType == 'photo'}
 	<table cellpadding="0" cellspacing="0">
@@ -97,7 +97,7 @@
     <td width="20%" align="right" >
       <div class="next-and-last">
 	<table cellpadding="0" cellspacing="0"><tr>
-	  <td>{g->text text="&nbsp;"}</td>
+	  <td>&nbsp;</td>
 	  {if isset($theme.navigator.next)}
 	  <td>
 	    <div class="buttonNext"><a href="{g->url params=$theme.navigator.next.urlParams}"

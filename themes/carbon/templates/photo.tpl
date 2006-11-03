@@ -7,9 +7,6 @@
 {if !empty($theme.imageViews)}
   {assign var="image" value=$theme.imageViews[$theme.imageViewsIndex]}
 {/if}
-{if !empty($theme.params.sidebarBlocks)}
-  {g->theme include="sidebar.tpl"}
-{/if}
 <table class="gcBackground1" width="100%" cellspacing="0" cellpadding="0">
   <tr valign="top">
     <td>
@@ -54,9 +51,7 @@
 		  {g->theme include="navigator.tpl"}
 		</div>
 	      </td>
-	      <td>
-		{g->text text="&nbsp;"}
-	      </td>
+	      <td>&nbsp;</td>
 	    </tr>
 	    {/if}
 	    <tr>
@@ -134,9 +129,7 @@
 		  {g->theme include="navigator.tpl"}
 		</div>
 	      </td>
-	      <td>
-		{g->text text="&nbsp;"}
-	      </td>
+	      <td>&nbsp;</td>
 	    </tr>
 	    {/if}
 	  </table>
@@ -194,3 +187,6 @@
     </td>
   </tr>
 </table>
+{if !empty($theme.params.sidebarBlocks)}
+  {g->theme include="sidebar.tpl"}
+{/if}
