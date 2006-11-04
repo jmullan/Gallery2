@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+require_once(dirname(__FILE__) . '/../../lib/support/GallerySetupUtilities.class');
+
 /**
  * Authentication
  * @package Install
@@ -27,12 +29,7 @@ class AuthenticateStep extends InstallStep {
     var $_firstTime;
 
     function AuthenticateStep() {
-	for ($len=64, $rand='';
-	     strlen($rand) < $len;
-	     $rand .= chr(!mt_rand(0,2) ? mt_rand(48,57) :
-			  (!mt_rand(0,1) ? mt_rand(65,90) :
-			   mt_rand(97,122))));
-	$this->_uniqueKey = md5($rand);
+	$this->_uniqueKey = GallerySetupUtilities::generateAuthenticationKey();
 	$this->_firstTime = true;
     }
 
@@ -42,11 +39,7 @@ class AuthenticateStep extends InstallStep {
 
     function processRequest() {
 	if (!empty($_GET['downloadLogin'])) {
-	    header("Content-Type: text/plain");
-	    header("Content-Length: " . strlen($this->_uniqueKey));
-	    header("Content-Description: Download login.txt to your computer.");
-	    header("Content-Disposition: attachment; filename=login.txt");
-	    print $this->_uniqueKey;
+	    GallerySetupUtilities::generateLoginTxtFile($this->_uniqueKey);
 	    return false;
 	}
 
@@ -70,7 +63,7 @@ class AuthenticateStep extends InstallStep {
 		    $templateData['errors'][] =
 			sprintf(_('<b>Error:</b> could not locate <b>login.txt</b>. ' .
 				  'Please place it in your <tt>%s/</tt> directory.'),
-				$authenticationDir);
+				basename($authenticationDir));
 		}
 	    } else if (!is_readable($authFile)) {
 		$templateData['errors'][] =
@@ -78,10 +71,9 @@ class AuthenticateStep extends InstallStep {
 		      'Please give Gallery read permissions on the file.');
 	    } else {
 
-		$fileAuth = trim(join("", file($authFile)));
+		$fileAuth = trim(join('', file($authFile)));
 		if ($fileAuth == $this->_uniqueKey) {
-		    /* Session fixation prevention: regenerate the session id on login */
-		    regenerateSession();
+		    GallerySetupUtilities::authenticateThisSession();
 		    $this->setComplete(true);
 		} else {
 		    $templateData['errors'][] =

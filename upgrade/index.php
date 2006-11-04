@@ -48,7 +48,8 @@ require_once($g2Base . 'upgrade/UpgradeStep.class');
 require_once($g2Base . 'upgrade/StatusTemplate.class');
 require_once($g2Base . 'bootstrap.inc');
 require_once($g2Base . 'modules/core/classes/GalleryUtilities.class');
-require_once($g2Base . 'lib/support/utilities.inc');
+require_once($g2Base . 'lib/support/GallerySetupUtilities.class');
+
 
 /*
  * If gettext isn't enabled, subvert the _() text translation function
@@ -77,55 +78,7 @@ foreach ($stepOrder as $stepName) {
     require("steps/$className.class");
 }
 
-/* Prevent session fixation attack by only accepting sessionIds of existing sessions */
-$sessionName = session_name();
-$sessionId = GalleryUtilities::getRequestVariablesNoPrefix($sessionName);
-if (empty($sessionId)) {
-    $sessionId = !empty($_COOKIE[$sessionName]) ? $_COOKIE[$sessionName] : '';
-}
-/* Remember whether cookies are supported */
-areCookiesSupported();
-/* Sanitize the sessionId */
-if (!empty($sessionId)) {
-    if (function_exists('preg_replace')) {
-	$sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $sessionId);
-    } else {
-	$sessionId = ereg_replace('/[^a-zA-Z0-9]/', '', $sessionId);
-    }
-    /* Make sure we don't use invalid data at a later point */
-    foreach (array($_GET, $_POST, $_REQUEST, $_COOKIE) as $superGlobal) {
-	unset($superGlobal[$sessionName]);
-    }
-    /*
-     * md5 has a 128 bit (32 * 4bit) string, but we want to allow for other possible
-     * hash functions too which possibly have hash strings of only 10 characters
-     */
-    if (strlen($sessionId) >= 10) {
-	session_id($sessionId);
-    }
-}
-
-if (@ini_get('session.save_handler') == 'user') {
-    /*
-     * Escape hatch to avoid conflicting with an application specific session handler, which can
-     * happen in the case where Gallery2 is installed in a subdir of some other app.
-     */
-    @ini_set('session.save_handler', 'files');
-    session_start();
-} else if (!ini_get('session.auto_start')) {
-    session_start();
-} /* In case of session.auto_start we can't prevent showing errors for invalid sessionIds */
-
-if (!isset($_SESSION['path'])) {
-    /* Empty session -> either new or a session fixation attack. Better regenerate */
-    regenerateSession();
-    $_SESSION['path'] = __FILE__;
-} else if ($_SESSION['path'] != __FILE__) {
-    /* Security error!  This session is not valid for this copy of the upgrader. Start over. */
-    regenerateSession();
-    session_unset();
-    $_SESSION['path'] = __FILE__;
-}
+GallerySetupUtilities::startSession();
 
 require_once(dirname(__FILE__) . '/../init.inc');
 /* Check if config.php is ok */
@@ -299,7 +252,7 @@ function generateUrl($uri, $print=true) {
 	}
     } else if (!strncmp($uri, 'index.php', 9)) {
 	/* If session.use_trans_sid is on then it will add the session id. */
-	if (!areCookiesSupported() && !ini_get('session.use_trans_sid')) {
+	if (!GallerySetupUtilities::areCookiesSupported() && !ini_get('session.use_trans_sid')) {
 	    /*
 	     * Don't use SID since it's a constant and we change (regenerate) the session id
 	     * in the request

@@ -28,107 +28,93 @@ if (!defined('G2_SUPPORT_URL_FRAGMENT')) {
     exit;
 }
 
-class GalleryStub {
-    var $_hash;
-    function setConfig($key, $value) {
-	$this->_hash[$key] = $value;
-    }
+require_once(dirname(__FILE__) . '/GallerySetupUtilities.class');
 
-    function getConfig($key) {
-	if (isset($this->_hash[$key])) {
-	    return $this->_hash[$key];
-	}
-	return null;
-    }
+GallerySetupUtilities::startSession();
 
-    function setDebug() { }
-    function setDebugLogFile() { }
-    function setProfile() { }
-}
-
-$gallery = new GalleryStub();
-
-/* Load config.php */
-if (!defined('GALLERY_CONFIG_DIR')) {
-    define('GALLERY_CONFIG_DIR', dirname(dirname(dirname(__FILE__))));
-}
-if (file_exists(GALLERY_CONFIG_DIR . '/config.php')) {
-    include(GALLERY_CONFIG_DIR . '/config.php');
-} else {
-    $baseUrl = '';
-    render('missingConfig');
-    exit;
-}
-if ($baseUrl = $gallery->getConfig('galleryBaseUrl')) {
-    $baseUrl .= 'lib/support/';
+/* The $baseUrl global is used by other scripts to figure out where to find our CSS */
+$config = GallerySetupUtilities::getGalleryConfig();
+if (!empty($config) && $config['galleryBaseUrl'] != '') {
+    $baseUrl = $config['galleryBaseUrl'] . 'lib/support/';
 } else {
     $baseUrl = G2_SUPPORT_URL_FRAGMENT;
 }
 
-$setupPassword = $gallery->getConfig('setup.password');
-if (empty($setupPassword)) {
-    render('missingPassword');
-    exit;
-}
-
-if (passwordProvided()) {
-    if (passwordIsCorrect()) {
-	savePasswordCookie();
-	redirectBackToSelf();
-	exit;
-    } else {
-	wrongPassword();
-	exit;
+/*
+ * If the config, or setup.password is missing, main.php will try to send us to the installer.
+ * We don't want that to happen, so check for ourselves first.
+ */
+$options = array();
+if (empty($config)) {
+    render('missingConfig', $options);
+} else if (empty($config['setup.password'])) {
+    render('missingSetupPassword', $options);
+} else if (!GallerySetupUtilities::isSessionAuthenticated()) {
+    $authFile = GALLERY_CONFIG_DIR . '/login.txt';
+    $options['attempts'] = GallerySetupUtilities::getLoginAttempts();
+    $options['error'] = ($options['attempts'] === false);
+    $options['authFile'] = sprintf(
+	'%s%s%s', basename(dirname($authFile)), DIRECTORY_SEPARATOR, basename($authFile));
+    $options['basedir'] = basename(GALLERY_CONFIG_DIR) . DIRECTORY_SEPARATOR;
+    $options['key'] = GallerySetupUtilities::getAuthenticationKey();
+    if (empty($options['key'])) {
+	$options['key'] = GallerySetupUtilities::generateAuthenticationKey();
+	GallerySetupUtilities::setAuthenticationKey($options['key']);
     }
-} else if (!isset($_COOKIE['g2Setup'])) {
-    askForPassword();
-    exit;
-} else if ($_COOKIE['g2Setup'] == saltedMd5($setupPassword)) {
+
+    if ($options['error'] || $options['attempts'] >= G2_SUPPORT_MAX_LOGIN_ATTEMPTS) {
+	if (!file_exists($authFile)) {
+	    $options['authFileErrors']['missing'] = 1;
+	} else if (!is_readable($authFile)) {
+	    $options['authFileErrors']['unreadable'] = 1;
+	} else {
+	    $authKeyFromFile = trim(join('', file($authFile)));
+	    if ($authKeyFromFile == $options['key']) {
+		GallerySetupUtilities::authenticateThisSession();
+		GallerySetupUtilities::redirectBackToSelf();
+	    } else {
+		$options['authFileErrors']['mismatch'] = 1;
+	    }
+	}
+	render('loginTxtForm', $options);
+    } else if (!empty($_POST['password'])) {
+	if ($_POST['password'] == $config['setup.password']) {
+	    GallerySetupUtilities::authenticateThisSession();
+	    GallerySetupUtilities::redirectBackToSelf();
+	} else {
+	    $options['attempts']++;
+	    if (!GallerySetupUtilities::setLoginAttempts($options['attempts'])) {
+		$options['error'] = true;
+	    }
+
+	    if ($options['error'] || $options['attempts'] >= G2_SUPPORT_MAX_LOGIN_ATTEMPTS) {
+		render('loginTxtForm', $options);
+	    } else {
+		$options['wrongPassword'] = 1;
+		render('passwordForm', $options);
+	    }
+	}
+    } else {
+	if (isset($_POST['password'])) {
+	    $options['missingPassword'] = 1;
+	}
+	render('passwordForm', $options);
+    }
+}
+
+if (GallerySetupUtilities::isSessionAuthenticated()) {
+    /* This is the only safe way out of this include.  Everything else aborts now */
     return;
-} else {
-    askForPassword();
-    exit;
 }
 
-function saltedMd5($cleartext) {
-    $key = __FILE__ . @php_uname() . @phpversion() . $cleartext;
-    return md5($key);
-}
+/* Unless we're properly authenticated, this is the end of the line */
+exit;
 
-function passwordProvided() {
-    return isset($_POST['g2_password']);
-}
-
-function passwordIsCorrect() {
-    global $gallery;
-    return $_POST['g2_password'] == $gallery->getConfig('setup.password');
-}
-
-function savePasswordCookie() {
-    global $gallery;
-
-    header(sprintf('Set-Cookie: g2Setup=%s',
-		   saltedMd5($gallery->getConfig('setup.password'))));
-}
-
-function askForPassword() {
-    render('passwordForm');
-}
-
-function wrongPassword() {
-    render('passwordForm', 'wrongPassword');
-}
-
-function redirectBackToSelf() {
-    require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryUrlGenerator.class');
-    $urlGenerator = new GalleryUrlGenerator();
-    header('Location: ' . $urlGenerator->getCurrentUrl());
-}
-
-function render($renderType, $renderSubtype=null) {
+function render($renderType, $options=array()) {
     global $baseUrl;
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <title>Security Check</title>
@@ -153,7 +139,7 @@ function render($renderType, $renderSubtype=null) {
        </div>
        <?php endif; ?>
 
-       <?php if ($renderType == 'missingPassword'): ?>
+       <?php if ($renderType == 'missingSetupPassword'): ?>
        <div class="error">
 	 You must enter a setup password in your gallery2/config.php file in order
 	 to be able to set up Gallery. If your config.php is empty, you should run
@@ -163,6 +149,13 @@ function render($renderType, $renderSubtype=null) {
 
        <?php if ($renderType == 'passwordForm'): ?>
        <form action="" method="post">
+         <?php if (!empty($options['attempts'])): ?>
+         <div class="warning">
+           Failed login attempts: <?php print $options['attempts'] ?> out of a total of
+          <?php print G2_SUPPORT_MAX_LOGIN_ATTEMPTS; ?>.
+         </div>
+         <?php endif; ?>
+
 	 <p>
 	   In order to verify you, we require you to enter your Gallery setup password.  This is
 	   the password you entered when you installed Gallery.  It can be found in your
@@ -173,15 +166,59 @@ function render($renderType, $renderSubtype=null) {
          </pre>
          <p>
 	   Password:
-	   <input type="password" name="g2_password"/>
-	   <script type="text/javascript">document.forms[0]['g2_password'].focus();</script>
+	   <input type="password" name="password"/>
+	   <script type="text/javascript">document.forms[0]['password'].focus();</script>
 	   <input type="submit" value="Verify Me"/>
          </p>
-         <?php if ($renderSubtype == 'wrongPassword'): ?>
-         <div class="error">
-           Wrong password!
+         <?php if (isset($options['missingPassword'])): ?>
+         <div class="warning">
+           Please enter a password!
          </div>
          <?php endif; ?>
+       </form>
+       <?php endif; ?>
+
+       <?php if ($renderType == 'loginTxtForm'): ?>
+       <form action="" method="post">
+	 <p>
+           <span class="error"><b>
+	   <?php if (!empty($options['error'])): ?>
+	   There was a problem connecting to the database.
+	   <?php else: ?>
+           You have exceeded the maximum attempts to login by entering a password.
+	   <?php endif; ?>
+	   </b></span>
+
+           To prevent somebody from hacking your website, we now
+           require you to complete a stricter authentication
+           process.  You must create a text file called
+	   <strong>login.txt</strong> in the gallery2 directory on your
+	   webserver (that's the same directory where main.php is
+	   located) and put specific text in it.  If you used the preinstaller
+	   to install Gallery, then you may have to use it again to set your directory
+           permissions so that you can create the login.txt file.
+	 </p>
+	 <div class="info">
+	   Create this file: <b><?php print $options['basedir'] ?>login.txt</b> <br/>
+	   Put this in the file: <b><?php print $options['key']; ?></b>
+	 </div>
+	 <?php if (!empty($options['authFileErrors'])): ?>
+	 <div class="error">
+	   <?php if (!empty($options['authFileErrors']['missing'])): ?>
+	     The login.txt file does not exist.
+	   <?php elseif (!empty($options['authFileErrors']['unreadable'])): ?>
+             The login.txt file exists, but is not readable by the webserver.
+             <br/> Try: <b>chmod 644 login.txt</b>
+           <?php elseif (!empty($options['authFileErrors']['mismatch'])): ?>
+             The password in your login.txt file does not match the key above!
+           <?php endif; ?>
+	 </div>
+         <?php endif; ?>
+	 <p>
+	   <?php if (!empty($options['error'])): ?>
+	   <?php endif; ?>
+           <input type="submit" value="Verify me"/>
+         </p>
        </form>
        <?php endif; ?>
      </div>

@@ -6,11 +6,11 @@
 
     <h1><?php print _('Authenticate') ?></h1>
 
-    <p>
-      <?php print _("In order to proceed with the install, we have to verify that you are who you claim.  When you performed the install, you entered a password which went into your config.php.  Type that in now.  Refer to your config.php if you've forgotten what you entered."); ?>
-    </p>
-
     <form method="post" action="">
+    <?php if ($templateData['renderType'] == 'password'): ?>
+      <p>
+	<?php print _("In order to proceed with the install, we have to verify that you are who you claim.  When you performed the install, you entered a password which went into your config.php.  Type that in now.  Refer to your config.php if you've forgotten what you entered."); ?>
+      </p>
       <table>
 	<tr>
 	  <td style="text-align: left;">
@@ -23,6 +23,29 @@
 	  </td>
 	</tr>
       </table>
+      <?php else: ?>
+      <p>
+	<span class="error"><?php print _('You have exceeded the maximum attempts to login by entering a password.') ?></span>
+
+        <?php printf(_('To prevent somebody from hacking your website, we now require you to complete a stricter authentication process. You must create a text file called %s in the %s directory on your webserver (that\'s the same directory where main.php is located) and put specific text in it.'), '<?php print dirname($templateData[authFile]) ?>', '<strong>login.txt</strong>') ?>
+      </p>
+      <div class="example">
+	<?php printf(_('Create this file: %s'), "<b>$templateData[authFile]</b>") ?> <br/>
+	<?php printf(_('Put this in the file: %s'), "<b>$templateData[authKey]</b>") ?>
+      </div>
+      <?php if (!empty($templateData['authFileErrors'])): ?>
+      <div class="error">
+	<?php if (!empty($templateData['authFileErrors']['missing'])): ?>
+	  <?php print _('The login.txt file does not exist.') ?>
+	<?php elseif (!empty($templateData['authFileErrors']['unreadable'])): ?>
+	  <?php print _('The login.txt file exists, but is not readable by the webserver.') ?>
+	  <br/> <?php printf(_('Try: %s'), '<b>chmod 644 login.txt</b>') ?>
+	<?php elseif (!empty($templateData['authFileErrors']['mismatch'])): ?>
+	  <?php print _('The password in your login.txt file does not match the key above!') ?>
+	<?php endif; ?>
+      </div>
+      <?php endif; ?>
+      <?php endif; ?>
     </form>
 
     <div class="go">
