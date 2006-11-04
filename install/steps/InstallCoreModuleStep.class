@@ -29,7 +29,9 @@ class InstallCoreModuleStep extends InstallStep {
 
     function processRequest() {
 	global $galleryStub;
-	define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
+	if (!defined('GALLERY_CONFIG_DIR')) {
+	    define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
+	}
 	require(dirname(__FILE__) . '/../../bootstrap.inc');
 	require(dirname(__FILE__) . '/../../init.inc');
 
