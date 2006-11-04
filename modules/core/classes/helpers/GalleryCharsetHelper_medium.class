@@ -720,8 +720,8 @@ class GalleryCharsetHelper_medium {
      */
     function phpUtf8Substring($string, $start, $length) {
 	$strLenBytes = strlen($string);
-
-	if ($start >= ($strLenBytes - 1) || $strLenBytes == 0 || $length == 0) {
+	$string = (string)$string;
+	if ($start >= $strLenBytes || $strLenBytes == 0 || $length == 0) {
 	    return '';
 	}
 
@@ -761,7 +761,7 @@ class GalleryCharsetHelper_medium {
 	$length = ($start + $length) > $strLength ? $strLength - $start : $length;
 	$end = $start + $length;
 
-	if ($start >= ($strLength - 1) || $strLength == 0 || $length == 0 || $start > $end) {
+	if ($start >= $strLength || $strLength == 0 || $length == 0 || $start > $end) {
 	    return '';
 	}
 
@@ -790,7 +790,7 @@ class GalleryCharsetHelper_medium {
 	$length = $length < 0 ? 0 : $length;
 	$length = ($start + $length) > $strLength ? $strLength - $start : $length;
 
-	if ($start >= ($strLength - 1) || $strLength == 0 || $length == 0) {
+	if ($start >= $strLength || $strLength == 0 || $length == 0) {
 	    return '';
 	}
 

@@ -512,7 +512,19 @@ class CharsetTest extends GalleryTestCase {
 
 	/* Test incomplete html entity at end of string is truncated */
 	$utf8 = '1234567890- &amp;';
-	$this->assertEquals('67890- ', GalleryCoreApi::utf8Substring($utf8, 5, 9), 'entity');
+	$this->assertEquals('67890- ', GalleryCoreApi::utf8Substring($utf8, 5, 9), 'entity');	
+    }
+
+    function testUtf8SubstringOfOneCharacter() {
+	$this->assertEquals('t', GalleryCoreApi::utf8Substring('t', 0, 24), 'standard version');
+	$this->assertEquals('t', GalleryCharsetHelper_medium::phpUtf8Substring('t', 0, 24),
+			    'php version');
+    }
+
+    function testUtf8SubstringOfNumber() {
+	$this->assertEquals('15', GalleryCoreApi::utf8Substring(15, 0, 24), 'standard version');
+	$this->assertEquals('15', GalleryCharsetHelper_medium::phpUtf8Substring(15, 0, 24),
+			    'php version');
     }
 
     function testUtf8Strcut() {
@@ -566,6 +578,18 @@ class CharsetTest extends GalleryTestCase {
 	/* Test incomplete html entity at end of string is truncated */
 	$utf8 = '1234567890- &amp;';
 	$this->assertEquals('67890- ', GalleryCoreApi::utf8Strcut($utf8, 5, 9), 'entity');
+    }
+
+    function testUtf8StrcutOfOneCharacter() {
+	$this->assertEquals('t', GalleryCoreApi::utf8Strcut('t', 0, 24), 'standard version');
+	$this->assertEquals('t', GalleryCharsetHelper_medium::phpUtf8Strcut('t', 0, 24),
+			    'php version');
+    }
+
+    function testUtf8StrcutOfNumber() {
+	$this->assertEquals('15', GalleryCoreApi::utf8Strcut(15, 0, 24), 'standard version');
+	$this->assertEquals('15', GalleryCharsetHelper_medium::phpUtf8Strcut(15, 0, 24),
+			    'php version');
     }
 }
 
