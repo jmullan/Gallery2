@@ -100,7 +100,23 @@ class ShowItemView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	/* Increment the view count */
+	/*
+	 * Don't increment the view count for anything but the first page of the album so that we
+	 * don't count each individual page views as an album view.  This only applies to
+	 * non-persistent sessions because GalleryCoreApi::incrementItemViewCount does the right
+	 * thing for persistent sessions.
+	 */
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    $session =& $gallery->getSession();
+	    if (!$session->isPersistent()) {
+		list ($page, $highlightId) =
+		    GalleryUtilities::getRequestVariables('page', 'highlightId');
+		if ($highlightId || ($page && $page != 1)) {
+		    return array(null, null);
+		}
+	    }
+	}
+
 	$ret = GalleryCoreApi::incrementItemViewCount($item->getId());
 	if ($ret) {
 	    return array($ret, null);

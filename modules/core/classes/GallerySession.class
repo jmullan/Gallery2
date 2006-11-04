@@ -1409,6 +1409,14 @@ class GallerySession {
     function isPersistent() {
 	return $this->_isPersistent;
     }
+
+    /**
+     * Return true if this session is identified as one coming from a search engine.
+     * @return bool true if this is a search engine session
+     */
+    function isSearchEngineSession() {
+	return $this->_isSearchEngineSession;
+    }
 }
 
 /**

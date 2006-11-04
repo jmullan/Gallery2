@@ -227,10 +227,10 @@ class ItemAttributesTest extends GalleryTestCase {
 	$this->assertEquals(2, $viewCount);
     }
 
-    function testIncrementItemViewCountGuestNoSessionIfModifiedNotSetRand() {
+    function testIncrementItemViewCountGuestNoSessionIfModifiedNotSetIsSearchEngine() {
 	global $gallery;
-	$gallery->_phpVm = new ItemAttributesTestPhpVm(false, array(), 0, time());
-	$gallery->_session = new ItemAttributesTestSession(false);
+	$gallery->_phpVm = new ItemAttributesTestPhpVm(false, array(), time());
+	$gallery->_session = new ItemAttributesTestSession(false, true);
 
 	$this->_becomeGuestUser();
 	unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
@@ -250,16 +250,16 @@ class ItemAttributesTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(0, $viewCount, 'first attempt, rand = 0 -> do not increment');
+	$this->assertEquals(0, $viewCount, 'first attempt, search engine -> do not increment');
 	/* It only sets the header if it actually increments */
 	$this->assertEquals(array(), GalleryUtilities::_getResponseHeaders());
     }
 
-    function testIncrementItemViewCountGuestNoSessionIfModifiedNotSetRand2() {
+    function testIncrementItemViewCountGuestNoSessionIfModifiedNotSetIsNotSearchEngine() {
 	global $gallery;
 	$now = time();
-	$gallery->_phpVm = new ItemAttributesTestPhpVm(false, array(), 1, $now);
-	$gallery->_session = new ItemAttributesTestSession(false);
+	$gallery->_phpVm = new ItemAttributesTestPhpVm(false, array(), $now);
+	$gallery->_session = new ItemAttributesTestSession(false, false);
 
 	$this->_becomeGuestUser();
 	unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
@@ -279,7 +279,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(1, $viewCount, 'First attempt, rand = 1 -> increment');
+	$this->assertEquals(1, $viewCount, 'First attempt, not search engine -> increment');
 	$this->assertEquals(
 	    array('last-modified' => 'Last-Modified: ' . GalleryUtilities::getHttpDate($now),
 		  'expires' => 'Expires: ' . GalleryUtilities::getHttpDate($now - 3600 * 24 * 7)),
@@ -672,14 +672,13 @@ class ItemAttributesTest extends GalleryTestCase {
 }
 
 class ItemAttributesTestSession {
-
     var $_userId;
-
     var $_creationTime;
 
-    function ItemAttributesTestSession($isPersistent=true) {
+    function ItemAttributesTestSession($isPersistent=true, $isSearchEngineSession=false) {
 	$this->_creationTime = time();
 	$this->_isPersistent = $isPersistent;
+	$this->_isSearchEngineSession = $isSearchEngineSession;
     }
 
     function put($key, $value) {
@@ -713,15 +712,17 @@ class ItemAttributesTestSession {
     function isPersistent() {
 	return $this->_isPersistent;
     }
+
+    function isSearchEngineSession() {
+	return $this->_isSearchEngineSession;
+    }
 }
 
 class ItemAttributesTestPhpVm extends GalleryPhpVm {
 
-    function ItemAttributesTestPhpVm($getAllHeadersExists=false, $headers=array(), $randValue=null,
-	    $time=null) {
+    function ItemAttributesTestPhpVm($getAllHeadersExists=false, $headers=array(), $time=null) {
 	$this->_getAllHeadersExists = $getAllHeadersExists;
 	$this->_headers = $headers;
-	$this->_randValue = $randValue;
 	$this->_time = $time;
     }
 
@@ -743,14 +744,6 @@ class ItemAttributesTestPhpVm extends GalleryPhpVm {
 
     function headers_sent() {
 	return GalleryUtilities::_getResponseHeaders() != array();
-    }
-
-    function rand($min=null, $max=null) {
-	if (isset($this->_randValue)) {
-	    return $this->_randValue;
-	}
-
-	return parent::rand($min, $max);
     }
 
     function time() {

@@ -54,8 +54,8 @@ class GalleryItemAttributesHelper_simple {
 		    return null;
 		}
 
-		/* Only increment in 50% of all cases since our check is very unreliable */
-		if ($phpVm->rand(0, 1) == 0) {
+		/* Known search engines don't affect view counts */
+		if ($session->isSearchEngineSession()) {
 		    return null;
 		}
 
