@@ -163,13 +163,16 @@ class GallerySetupUtilities {
     }
 
     /**
-     * Mark this session as authenticated
+     * Mark this session as authenticated.
      *
+     * @param bool $updateDatabase true if you want to also reset the login attempts (default: true)
      * @static
      */
-    function authenticateThisSession() {
+    function authenticateThisSession($resetLoginAttempts=true) {
 	$_SESSION['authenticated'] = true;
-	GallerySetupUtilities::setLoginAttempts(0);
+	if ($resetLoginAttempts) {
+	    GallerySetupUtilities::setLoginAttempts(0);
+	}
 	GallerySetupUtilities::regenerateSession();
     }
 
