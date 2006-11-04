@@ -239,8 +239,8 @@ class GallerySession {
 		 */
 		$this->_remoteIdentifier = $currentRemoteIdentifier;
 		$this->_forceSaveSession = true;
-	    } else if ($this->_compareIdentifiers($this->_remoteIdentifier,
-						  $currentRemoteIdentifier) == 0) {
+	    } else if ($this->compareIdentifiers($this->_remoteIdentifier,
+						 $currentRemoteIdentifier) == 0) {
 		/* If we upgrade, allowSessionAccess could be missing */
 		$allowFrom = @$gallery->getConfig('allowSessionAccess');
 		if (!$allowFrom || $currentRemoteIdentifier[0] != $allowFrom) {
@@ -1186,6 +1186,7 @@ class GallerySession {
      * because that changes too frequently (dialup users, users behind proxies) so we have to be
      * creative.  Changing this algorithm will cause all existing sessions to be discarded.
      * @return array
+     * @static
      */
     function getRemoteIdentifier() {
 	$httpUserAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
@@ -1214,9 +1215,8 @@ class GallerySession {
      * (Indexes 0 and 2 match, index 1 does not)
      *
      * @return int a score
-     * @access private
      */
-    function _compareIdentifiers($a, $b) {
+    function compareIdentifiers($a, $b) {
 	$score = 0;
 	if (is_array($a) && is_array($b)) {
 	    for ($i = 0; $i < sizeof($a); $i++) {
