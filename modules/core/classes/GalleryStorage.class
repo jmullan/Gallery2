@@ -1696,7 +1696,7 @@ class MySqlStorage extends GalleryStorage {
      * @see GalleryStorage::_getOptimizeStatement
      */
     function _getOptimizeStatement() {
-	return 'OPTIMIZE TABLE %s';
+	return 'OPTIMIZE TABLE `%1$s`; ANALYZE TABLE `%1$s`;';
     }
 
     /**
