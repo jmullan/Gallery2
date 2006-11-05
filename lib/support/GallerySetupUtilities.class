@@ -20,10 +20,6 @@
 define('G2_SUPPORT_MAX_LOGIN_ATTEMPTS', 7);
 define('G2_SUPPORT_MAX_SESSION_LIFETIME', 2 * 60 * 60);
 
-if (!defined('GALLERY_CONFIG_DIR')) {
-    define('GALLERY_CONFIG_DIR', dirname(dirname(dirname(__FILE__))));
-}
-
 require_once(dirname(dirname(dirname(__FILE__))) . '/modules/core/classes/GalleryUtilities.class');
 require_once(dirname(dirname(dirname(__FILE__))) . '/modules/core/classes/GallerySession.class');
 
@@ -207,8 +203,13 @@ class GallerySetupUtilities {
 	$gallery = new GallerySetupUtilitiesStub();
 
 	/* Load config.php */
-	if (file_exists(GALLERY_CONFIG_DIR . '/config.php')) {
-	    include(GALLERY_CONFIG_DIR . '/config.php');
+	if (defined('GALLERY_CONFIG_DIR')) {
+	    $dir = GALLERY_CONFIG_DIR;
+	} else {
+	    $dir = dirname(dirname(dirname(__FILE__)));
+	}
+	if (file_exists($dir . '/config.php')) {
+	    include($dir . '/config.php');
 	} else {
 	    return null;
 	}
@@ -324,7 +325,7 @@ class GallerySetupUtilities {
 	if ((!isset($_SESSION['_remoteId']) ||
 	     GallerySession::compareIdentifiers($_SESSION['_remoteId'], $remoteId) == 0) ||
 	    (!isset($_SESSION['_startTime']) || $_SESSION['_startTime'] < $cutoff) ||
-	    (!isset($_SESSION['_path']) || $_SESSION['_path'] != GALLERY_CONFIG_DIR)) {
+	    (!isset($_SESSION['_path']) || $_SESSION['_path'] != __FILE__)) {
 
 	    /*
 	     * Empty or invalid session (possibly a session fixation attack).  Get a new session
@@ -332,7 +333,7 @@ class GallerySetupUtilities {
 	     */
 	    GallerySetupUtilities::regenerateSession();
 	    session_unset();
-	    $_SESSION['_path'] = GALLERY_CONFIG_DIR;
+	    $_SESSION['_path'] = __FILE__;
 	    $_SESSION['_remoteId'] = $remoteId;
 	    $_SESSION['_startTime'] = time();
 	}

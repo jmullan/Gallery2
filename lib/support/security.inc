@@ -50,12 +50,14 @@ if (empty($config)) {
 } else if (empty($config['setup.password'])) {
     render('missingSetupPassword', $options);
 } else if (!GallerySetupUtilities::isSessionAuthenticated()) {
-    $authFile = GALLERY_CONFIG_DIR . '/login.txt';
+    $baseDir = defined('GALLERY_CONFIG_DIR') ?
+	GALLERY_CONFIG_DIR : dirname(dirname(dirname(__FILE__)));
+    $authFile = $baseDir . '/login.txt';
     $options['attempts'] = GallerySetupUtilities::getLoginAttempts();
     $options['error'] = ($options['attempts'] === false);
     $options['authFile'] = sprintf(
 	'%s%s%s', basename(dirname($authFile)), DIRECTORY_SEPARATOR, basename($authFile));
-    $options['basedir'] = basename(GALLERY_CONFIG_DIR) . DIRECTORY_SEPARATOR;
+    $options['baseDir'] = basename($baseDir) . DIRECTORY_SEPARATOR;
     $options['key'] = GallerySetupUtilities::getAuthenticationKey();
     if (empty($options['key'])) {
 	$options['key'] = GallerySetupUtilities::generateAuthenticationKey();
@@ -199,7 +201,7 @@ function render($renderType, $options=array()) {
            permissions so that you can create the login.txt file.
 	 </p>
 	 <div class="info">
-	   Create this file: <b><?php print $options['basedir'] ?>login.txt</b> <br/>
+	   Create this file: <b><?php print $options['baseDir'] ?>login.txt</b> <br/>
 	   Put this in the file: <b><?php print $options['key']; ?></b>
 	 </div>
 	 <?php if (!empty($options['authFileErrors'])): ?>
