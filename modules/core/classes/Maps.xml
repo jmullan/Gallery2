@@ -646,7 +646,7 @@
     <map-name>GalleryCacheMap</map-name>
     <schema>
       <schema-major>1</schema-major>
-      <schema-minor>0</schema-minor>
+      <schema-minor>1</schema-minor>
     </schema>
     <member>
       <member-name>key</member-name>
@@ -662,7 +662,6 @@
     <member>
       <member-name>userId</member-name>
       <member-type>INTEGER</member-type>
-      <indexed/>
       <required/>
     </member>
     <member>
@@ -675,14 +674,16 @@
       <member-name>type</member-name>
       <member-type>STRING</member-type>
       <member-size>SMALL</member-size>
-      <indexed/>
       <required/>
     </member>
     <member>
       <member-name>timestamp</member-name>
       <member-type>INTEGER</member-type>
-      <indexed/>
       <required/>
+    </member>
+    <member>
+      <member-name>isEmpty</member-name>
+      <member-type>BOOLEAN</member-type>
     </member>
     <key primary="true">
       <member-name>key</member-name>
@@ -690,6 +691,14 @@
       <member-name>itemId</member-name>
       <member-name>type</member-name>
     </key>
+    <index>
+      <member-name>userId</member-name>
+      <member-name>timestamp</member-name>
+      <member-name>isEmpty</member-name>
+    </index>
   </map>
 </maps>
+
+
+
 

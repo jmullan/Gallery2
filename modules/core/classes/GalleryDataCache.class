@@ -616,11 +616,16 @@ class GalleryDataCache {
 
 	$key = md5(serialize($keyData) . '|' . $extraKey . '|' . implode(",", $aclIds));
 	$userId = $gallery->getActiveUserId();
-
+	/*
+	 * Note: there is no complete index for this WHERE clause because the MySQL query optimizer 
+	 * would still use the PK for this query. This should not lead to a performance decrease as 
+	 * PK is a unique index thus returning only 0/1 rows that need to be compared with isEmpty 
+	 * and timestamp.
+	 */
 	list ($ret, $results) = GalleryCoreApi::getMapEntry('GalleryCacheMap',
 	    array('value'),
 	    array('key' => $key, 'type' => $type, 'userId' => $userId,
-		  'timestamp' => new GallerySqlFragment('>?', $cutoff)));
+		  'timestamp' => new GallerySqlFragment('>?', $cutoff), 'isEmpty' => 0));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -676,7 +681,7 @@ class GalleryDataCache {
 	$ret = GalleryCoreApi::updateMapEntry(
 	    'GalleryCacheMap',
 	    array('key' => $key, 'userId' => $userId, 'itemId' => $itemId, 'type' => $type),
-	    array('value' => $value, 'timestamp' => $now));
+	    array('value' => $value, 'timestamp' => $now, 'isEmpty' => 0));
 
 	$storage =& $gallery->getStorage();
 	list ($ret, $affectedRows) = $storage->getAffectedRows();
@@ -688,18 +693,21 @@ class GalleryDataCache {
 	    $ret = GalleryCoreApi::addMapEntry(
 		'GalleryCacheMap',
 		array('key' => $key, 'value' => $value, 'userId' => $userId,
-		      'itemId' => $itemId, 'type' => $type, 'timestamp' => $now));
+		      'itemId' => $itemId, 'type' => $type, 'timestamp' => $now, 'isEmpty' => 0));
 	    if ($ret) {
 		return $ret;
 	    }
 	}
 
-	/* Clear expired data. */
-	$ret = GalleryDataCache::_cleanPageDataCache();
-	if ($ret) {
-	    return $ret;
+	/* Clear expired data only 5% of the time. */
+	$dieRoll = $phpVm->rand(1,100);
+	if($dieRoll <= 5){
+	    $ret = GalleryDataCache::_cleanPageDataCache();
+	    if ($ret) {
+		return $ret;
+	    }
 	}
-
+	
 	return null;
     }
 
@@ -826,8 +834,8 @@ class GalleryDataCache {
 
 	list ($ret, $results) = GalleryCoreApi::updateMapEntry('GalleryCacheMap',
 		array('userId' => $userIdForSql,
-		      'timestamp' => new GallerySqlFragment('< ?', (int)$cutoff)),
-		array('value' => null));
+		      'timestamp' => new GallerySqlFragment('< ?', (int)$cutoff), 'isEmpty' => 0),
+		array('value' => null, 'isEmpty' => 1));
 	if ($ret) {
 	    return $ret;
 	}

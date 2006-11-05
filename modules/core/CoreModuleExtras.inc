@@ -2078,6 +2078,12 @@ class CoreModuleExtras {
 	    /* Added PHP display_errors ini setting to config.php */
 	case '1.1.19':
 	    /* Added ConvertDatabaseToUtf8Task */
+	case '1.1.20':
+	    /* Add column isEmpty to CacheMap */
+	    $ret = $storage->configureStore($module->getId(), array('GalleryCacheMap:1.0'));
+	    if ($ret) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2358,6 +2364,7 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 @ini_set(\'display_errors\', 0);'));
 
 	case '1.1.19':
+	case '1.1.20':
 
 	case 'end of upgrade path':
 	    /*
