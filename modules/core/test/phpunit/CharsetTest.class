@@ -147,6 +147,22 @@ class CharsetTest extends GalleryTestCase {
 			    GalleryCoreApi::convertFromUtf8(chr(195) . chr(181), 'ISO-8859-1'));
     }
 
+    function testWindowsAndCodePageAreSynonyms() {
+	global $gallery;
+
+	/* Force it to use our PHP charset tables */
+	$phpVm = new CharsetTestPhpVm();
+	$phpVm->setFunctionExists('iconv', false);
+	$phpVm->setFunctionExists('mb_convert_encoding', false);
+	$phpVm->setFunctionExists('recode_string', false);
+	$gallery->_phpVm = $phpVm;
+
+	$this->assertEquals("\xe2\x80\xa0", GalleryCoreApi::convertToUtf8(chr(134), 'Windows-1252'),
+			    'Windows-1252');
+	$this->assertEquals("\xe2\x80\xa0", GalleryCoreApi::convertToUtf8(chr(134), 'CP1252'),
+			    'CP1252');
+    }
+
     /* Iconv fails, so we use mb_convert_encoding instead */
     function testConvertToUtf8UsingIconvFallback1() {
 	global $gallery;
