@@ -58,7 +58,12 @@ function recursiveRmdir($dirname, &$status) {
 
 function clearPageCache() {
     require_once(dirname(__FILE__) . '/../../embed.php');
-    GalleryEmbed::init();
+    $ret = GalleryEmbed::init(array('fullInit' => false));
+    if ($ret) {
+	/* Try to swallow the error, but define a session to make ::done() pass. */
+	global $gallery;
+	$gallery->initEmptySession();
+    }
 
     $ret1 = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
     $ret2 = GalleryEmbed::done();

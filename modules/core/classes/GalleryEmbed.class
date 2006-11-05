@@ -97,10 +97,10 @@ class GalleryEmbed {
 		unset($initParams['embedUri']);
 	    }
 	    $ret = GalleryInitFirstPass($initParams);
-	    GalleryDataCache::put($firstCacheKey, true);
 	    if ($ret) {
 		return $ret;
 	    }
+	    GalleryDataCache::put($firstCacheKey, true);
 	}
 
 	if (isset($initParams['apiVersion'])) {
@@ -127,10 +127,10 @@ class GalleryEmbed {
 	    /* Only InitSecondPass if not already done so in a prior call */
 	    if (!GalleryDataCache::containsKey($secondCacheKey)) {
 		$ret = GalleryInitSecondPass();
-		GalleryDataCache::put($secondCacheKey, true);
 		if ($ret) {
 		    return $ret;
 		}
+		GalleryDataCache::put($secondCacheKey, true);
 	    }
 	}
 

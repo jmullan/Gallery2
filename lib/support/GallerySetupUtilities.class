@@ -106,7 +106,7 @@ class GallerySetupUtilities {
 	 */
 	require_once(dirname(__FILE__) . '/../../embed.php');
 
-	$ret = GalleryEmbed::init();
+	$ret = GalleryEmbed::init(array('fullInit' => false));
 	if ($ret) {
 	    return false;
 	}
@@ -139,7 +139,7 @@ class GallerySetupUtilities {
 	 */
 	require_once(dirname(__FILE__) . '/../../embed.php');
 
-	$ret = GalleryEmbed::init();
+	$ret = GalleryEmbed::init(array('fullInit' => false));
 	if ($ret) {
 	    return false;
 	}
