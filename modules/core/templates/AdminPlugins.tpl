@@ -142,6 +142,8 @@
 	</td>
 
 	<td id="plugin-{$plugin.type}-{$plugin.id}-name">
+	  <a href="http://codex.gallery2.org/index.php/Gallery2:{$plugin.type|capitalize}s:{$plugin.id}">
+	  <div class="gbLink-Help"><span>&nbsp;?&nbsp;</span></div</a>
 	  {if empty($plugin.screenshot)}
 	  {$plugin.name}
 	  {else}
