@@ -512,7 +512,7 @@ class CharsetTest extends GalleryTestCase {
 
 	/* Test incomplete html entity at end of string is truncated */
 	$utf8 = '1234567890- &amp;';
-	$this->assertEquals('67890- ', GalleryCoreApi::utf8Substring($utf8, 5, 9), 'entity');	
+	$this->assertEquals('67890- ', GalleryCoreApi::utf8Substring($utf8, 5, 9), 'entity');
     }
 
     function testUtf8SubstringOfOneCharacter() {
