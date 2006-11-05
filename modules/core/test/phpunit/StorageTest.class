@@ -731,7 +731,7 @@ class StorageTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addMapEntry(
 	    'GalleryCacheMap',
 	    array('key' => $key, 'value' => $escapedString, 'userId' => 55,
-		  'itemId' => 99, 'type' => 'test', 'timestamp' => time()));
+		  'itemId' => 99, 'type' => 'test', 'timestamp' => time(), 'isEmpty' => 0));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
