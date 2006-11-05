@@ -194,6 +194,20 @@ class GallerySetupUtilities {
     }
 
     /**
+     * Return the path to the config dir for this install.  This will return the correct value for
+     * multisite installs vs. the orginal.
+     *
+     * @return string the path to the config dir
+     * @static
+     */
+    function getConfigDir() {
+	if (defined('GALLERY_CONFIG_DIR')) {
+	    return GALLERY_CONFIG_DIR;
+	}
+	return dirname(dirname(dirname(__FILE__)));
+    }
+
+    /**
      * Return the config object from the Gallery class, read out of config.php.
      *
      * @return array the config values from config.php
@@ -203,11 +217,7 @@ class GallerySetupUtilities {
 	$gallery = new GallerySetupUtilitiesStub();
 
 	/* Load config.php */
-	if (defined('GALLERY_CONFIG_DIR')) {
-	    $dir = GALLERY_CONFIG_DIR;
-	} else {
-	    $dir = dirname(dirname(dirname(__FILE__)));
-	}
+	$dir = GallerySetupUtilities::getConfigDir();
 	if (file_exists($dir . '/config.php')) {
 	    include($dir . '/config.php');
 	} else {
@@ -322,10 +332,11 @@ class GallerySetupUtilities {
 	 */
 	$remoteId = GallerySession::getRemoteIdentifier();
 	$cutoff = time() - G2_SUPPORT_MAX_SESSION_LIFETIME;
+	$configDir = GallerySetupUtilities::getConfigDir();
 	if ((!isset($_SESSION['_remoteId']) ||
 	     GallerySession::compareIdentifiers($_SESSION['_remoteId'], $remoteId) == 0) ||
 	    (!isset($_SESSION['_startTime']) || $_SESSION['_startTime'] < $cutoff) ||
-	    (!isset($_SESSION['_path']) || $_SESSION['_path'] != __FILE__)) {
+	    (!isset($_SESSION['_path']) || $_SESSION['_path'] != $configDir)) {
 
 	    /*
 	     * Empty or invalid session (possibly a session fixation attack).  Get a new session
@@ -333,7 +344,7 @@ class GallerySetupUtilities {
 	     */
 	    GallerySetupUtilities::regenerateSession();
 	    session_unset();
-	    $_SESSION['_path'] = __FILE__;
+	    $_SESSION['_path'] = $configDir;
 	    $_SESSION['_remoteId'] = $remoteId;
 	    $_SESSION['_startTime'] = time();
 	}
