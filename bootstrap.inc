@@ -26,7 +26,9 @@
  * The prefix for all HTTP GET/POST arguments.  Define this as early as possible
  * so that we can use it in the FastDownload code in main.php.
  */
-define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
+if (!defined('GALLERY_FORM_VARIABLE_PREFIX')) {
+    define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
+}
 
 require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');
