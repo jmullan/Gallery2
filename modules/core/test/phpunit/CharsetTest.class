@@ -40,7 +40,7 @@ class CharsetTest extends GalleryTestCase {
         /* Assert that we're not accidentaly using mb_ functions in our fallback */
 	$mbFuncOverload = (int) ini_get('mbstring.func_overload');
 	$this->assert(!($mbFuncOverload & 2), 'mb function overload str functions. ' .
-		'Please disable mbstring.func_overload to test PHP fallback.');    
+		'Please disable mbstring.func_overload to test PHP fallback.');
     }
 
     function testConvertToUtf8UsingIconv() {
