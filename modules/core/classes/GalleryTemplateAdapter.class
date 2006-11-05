@@ -602,14 +602,14 @@ class GalleryTemplateAdapter {
 		    preg_replace('/^(\d+\.\d+).*$/', '$1', $installedVersions['gallery']);
 	    }
 	    $version = $core->translate(
-		    array('text' => "Gallery %s", 'arg1' => $installedVersions['gallery']));
+		array('text' => "Powered by Gallery v%s", 'arg1' => $installedVersions['gallery']));
 	    return sprintf(
-		    '%s<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>%s',
-		    $useLink ? ('<a href="http://gallery.sourceforge.net"' . $linkTarget . '>')
-			     : '',
-		    $urlGenerator->generateUrl(array('href' => 'images/gallery.gif')),
-		    $version, $version, 'border-style: none',
-		    $useLink ? '</a>' : '');
+		'%s<img src="%s" alt="%s" title="%s" style="%s" width="80" height="15"/>%s',
+		$useLink ? ('<a href="http://gallery.sourceforge.net"' . $linkTarget . '>')
+		: '',
+		$urlGenerator->generateUrl(array('href' => 'images/gallery.gif')),
+		$version, $version, 'border-style: none',
+		$useLink ? '</a>' : '');
 
 	case 'validation':
 	    if (!$isAdminOrShowAll) {
