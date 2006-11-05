@@ -1299,17 +1299,6 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			    return $ret;
 			}
 
-			/* We need to run ANALYZE TABLE, in case there were index changes */
-			$sql = $this->_gs->_getOptimizeStatement();
-			if (empty($sql)) {
-			    $gallery->debug('Optimize statement unavailable');
-			} else {
-			    $ret = $this->_executeSql(sprintf($sql, $tableName));
-			    if ($ret) {
-				$gallery->debug("Analyze $tableName failed: " . 
-				    $ret->getAsText());
-			    }
-			}
 			/* Reload all table versions, cause one has now changed */
 			list ($ret, $tableVersions) = $this->_loadTableVersions();
 			if ($ret) {
