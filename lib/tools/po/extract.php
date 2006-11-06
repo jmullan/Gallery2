@@ -37,7 +37,12 @@ $skip = array('TEST to be displayed in different languages' => true,
 	      'TT <!-- abbreviation for Translation Test -->' => true);
 $idEmitted = false;
 $strings = array();
+array_shift($_SERVER['argv']);
 foreach ($_SERVER['argv'] as $moduleDir) {
+    if (preg_match('#^/cygdrive/(\w+)/(.*)$#', trim($moduleDir), $matches)) {
+	/* Cygwin and Window PHP filesystem function don't play nice together. */
+	$moduleDir = $matches[1] . ':\\' . str_replace('/', '\\', $matches[2]);
+    }
     if (!is_dir($moduleDir)) {
 	continue;
     }
