@@ -86,7 +86,7 @@ class AuthenticateStep extends InstallStep {
 
 	$this->_firstTime = false;
 
-	$templateData['authenticationDir'] = $authenticationDir;
+	$templateData['authenticationDir'] = basename($authenticationDir);
 
 	if ($this->isComplete()) {
 	    $templateData['bodyFile'] = 'AuthenticateSuccessful.html';
