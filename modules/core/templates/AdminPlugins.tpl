@@ -142,17 +142,18 @@
 	</td>
 
 	<td id="plugin-{$plugin.type}-{$plugin.id}-name">
-	  <a href="http://codex.gallery2.org/index.php/Gallery2:{$plugin.type|capitalize}s:{$plugin.id}">
-	  <div class="gbLink-Help"><span>&nbsp;?&nbsp;</span></div</a>
+	 <div class="gbLink-Help" onclick="window.open('http://codex.gallery2.org/index.php/Gallery2:{$plugin.type|capitalize}s:{$plugin.id}', 'Gallery2_Help')"><a href="javascript:window.open('http://codex.gallery2.org/index.php/Gallery2:{$plugin.type|capitalize}s:{$plugin.id}', 'Gallery2_Help'); return false;">&nbsp;{g->text text="help"}&nbsp;</a></div>
 	  {if empty($plugin.screenshot)}
 	  {$plugin.name}
 	  {else}
 	  <span class="gTooltipTarget">{$plugin.name}</span>
 	  <script type="text/javascript">
+	    // <![CDATA[
 	    new YAHOO.widget.Tooltip("gTooltip", {ldelim}
 		context: "plugin-{$plugin.type}-{$plugin.id}-name",
-		text: '<img src="{g->url href="`$plugin.screenshot`"}">',
+		text: '<img src="{g->url href="`$plugin.screenshot`"}" alt="{g->text text="Screenshot for %s" arg1=$plugin.name}"/>',
 		showDelay: 250 {rdelim});
+            // ]]>
           </script>
 	  {/if}
 	</td>
