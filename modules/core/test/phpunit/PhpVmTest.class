@@ -106,8 +106,8 @@ class PhpVmTest extends GalleryTestCase {
 	$this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');
 	$this->assertEquals(true, isset($headers['Set-Cookie']), 'Set-Cookie header not set');
 	if (isset($headers['Set-Cookie'])) {
-	    $this->assert(strpos($headers['Set-Cookie'],
-				 SESSION_ID_PARAMETER . '=' . $session->getId()) !== false,
+	    $grep = preg_grep('/' . SESSION_ID_PARAMETER .'/', $headers['Set-Cookie']);
+	    $this->assert(!empty($grep),
 			  'no G2 SessionId with a correct SID found in the cookie header');
 	} else {
 	    $this->assert(false, 'no cookie header found in http response for url: ' . $url);
