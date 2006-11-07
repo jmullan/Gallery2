@@ -141,9 +141,16 @@ function makeWindow(img, title) {
   args += ",width=" + wd + ",innerWidth=" + wd;
   args += ",height=" + ht + ",innerHeight=" + ht;
 
-  popwin = window.open(img, title, args);
+  popwin = window.open(img, 'fullSize', args);
   popwin.document.open();
-  popwin.document.write('<html><head><title>'+title+'</title></head><body style="margin:0px"><img src="'+img+'" border="0"></body></html>');
+  popwin.document.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">');
+  popwin.document.write('<html>');
+  popwin.document.write('<head>');
+  popwin.document.write('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>');
+  popwin.document.write('<title>'+title+'</title>');
+  popwin.document.write('</head>');
+  popwin.document.write('<body style="margin:0px"><a href="javascript:window.close()"><img src="'+img+'" border="0" alt="'+title+'"/></a></body>');
+  popwin.document.write('</html>');
   popwin.document.close();
 }
 
