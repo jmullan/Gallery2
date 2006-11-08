@@ -40,8 +40,10 @@ class EditFeedController extends GalleryController {
 	$status = $results = $error = array();
 
 	$mode = empty($form['mode']) ? '' : $form['mode'];
+	$itemId = !empty($form['itemId']) ? (int)$form['itemId']
+					  : (int)GalleryUtilities::getRequestVariables('itemId');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['itemId']);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -168,6 +170,7 @@ class EditFeedController extends GalleryController {
 		return array($ret, null);
 	    }
 
+	    $status['deleted'] = 1;
 	    $mode = 'list';
 	}
 
@@ -177,7 +180,7 @@ class EditFeedController extends GalleryController {
 	$results['error'] = $error;
 	$results[$method]['view'] = 'core.ItemAdmin';
 	$results[$method]['subView'] = 'rss.EditFeed';
-	$results[$method]['itemId'] = GalleryUtilities::getRequestVariables('itemId');
+	$results[$method]['itemId'] = $itemId;
 	$results[$method]['mode'] = $mode;
 
 	if (empty($error)) {

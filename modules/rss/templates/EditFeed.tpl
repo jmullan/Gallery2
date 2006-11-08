@@ -8,10 +8,14 @@
   <h2> {g->text text="RSS Feeds"} </h2>
 </div>
 
-{if isset($status.saved)}
+{if !empty($status)}
 <div class="gbBlock">
   <h2 class="giSuccess">
+  {if isset($status.saved)}
     {g->text text="Settings have been saved"}
+  {elseif isset($status.deleted)}  
+    {g->text text="Feed successfully deleted"}
+  {/if}
   </h2>
 </div>
 {elseif !empty($form.error)}

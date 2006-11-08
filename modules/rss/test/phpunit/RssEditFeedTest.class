@@ -82,7 +82,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    'redirect' => array(
 		'view' => 'core.ItemAdmin',
 		'subView' => 'rss.EditFeed',
-		'itemId' => '',
+		'itemId' => $this->_getRootId(),
 		'mode' => 'list',
 		'form' => array(
 		    'action' => array('cancel' => '1'),
@@ -136,7 +136,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    'redirect' => array(
 		'view' => 'core.ItemAdmin',
 		'subView' => 'rss.EditFeed',
-		'itemId' => '',
+		'itemId' => $this->_getRootId(),
 		'mode' => 'edit',
 		'form' => array_merge(array(
 		    'action' => array('save' => '1', 'create' => '1'),
@@ -210,7 +210,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    'redirect' => array(
 		'view' => 'core.ItemAdmin',
 		'subView' => 'rss.EditFeed',
-		'itemId' => '',
+		'itemId' => $this->_getRootId(),
 		'mode' => 'edit',
 		'form' => array_merge(array(
 		    'action' => array('save' => '1', 'update' => '1'),
@@ -271,12 +271,43 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    'redirect' => array(
 		'view' => 'core.ItemAdmin',
 		'subView' => 'rss.EditFeed',
-		'itemId' => '',
+		'itemId' => $this->_getRootId(),
 		'mode' => 'edit',
 		'form' => array_merge(array(
 		    'action' => array('save' => '1', 'update' => '1'),
 		    'mode' => 'edit',
 		    ), $values))),
+	    $results);
+    }
+
+    function testDeleteFeed() {
+	$name = 'feed' .rand();
+
+	/* Create feed that we're going to delete */
+	$params = array('itemId' => $this->_getRootId());
+	$ret = RssMapHelper::createFeed($name, $params);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/* Cleanup if things go wrong */
+	$this->_feedsToDelete[] = $name;
+	
+	GalleryUtilities::putRequestVariable('form[action][delete]', $name);
+	GalleryUtilities::putRequestVariable('itemId', $this->_getRootId());
+	GalleryUtilities::putRequestVariable('controller', 'rss.EditFeed');
+	
+	$results = $this->handleRequest();
+
+	$this->assertEquals(array(
+	    'status' => array('deleted' => 1),
+	    'error' => array(),
+	    'redirect' => array(
+		'view' => 'core.ItemAdmin',
+		'subView' => 'rss.EditFeed',
+		'itemId' => $this->_getRootId(),
+		'mode' => 'list',
+		'form' => array('action' => array('delete' => $name))
+		)),
 	    $results);
     }
 }
