@@ -84,8 +84,15 @@ gettext("Unable to deactivate the %s module")
 gettext("Welcome") /* also in: templates/Welcome.html */
 
 /* templates/AuthenticateRequest.html */
-gettext("In order to proceed with the install, we have to verify that you are who you claim.  When you performed the install, you entered a password which went into your config.php.  Type that in now.  Refer to your config.php if you've forgotten what you entered.")
+gettext("<b>Error:</b> could not locate %s.  Please place it in your %s directory.")
+gettext("<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the file.")
+gettext("<b>Error:</b> your %s key does not match correctly.  Please use the new authentication string from below and try again.")
+gettext("In order to proceed with the upgrade process, we have to verify that you are who you claim.  When you performed the install, you entered a password which went into your config.php.  Type that in now.  Refer to your config.php if you've forgotten what you entered.")
 gettext("Password:")
+gettext("You have exceeded the maximum attempts to login by entering a password.")
+gettext("To prevent somebody from hacking your website, we now require you to complete a stricter authentication process.")
+gettext("In order to proceed with the upgrade process, we have to verify that you are who you claim.  The best way to be sure is to ask you to make a tiny change in the Gallery directory which will prove that you have the right permissions.  So, we're going to ask that you create a new text file called %s in the %s directory on your webserver (that's the same directory where %s is located). It must contain the following randomly generated characters:")
+gettext("Once you've uploaded the file, click below to continue.")
 gettext("Authenticate Me")
 
 /* templates/AuthenticateSuccessful.html */
