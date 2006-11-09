@@ -167,6 +167,14 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    return false;
 	}
 
+	$dir4 = dirname($dir3);
+	$base5 = basename($dir4);
+
+	if (($base4 == 'lib' && $base3 == 'HTTP') ||
+		($base5 == 'lib' && $base4 == 'HTTP')) {
+	    return false;
+	}
+
 	return parent::shouldCheckFile($fileName);
     }
 
