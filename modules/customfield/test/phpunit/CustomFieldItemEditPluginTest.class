@@ -368,7 +368,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 
 	GalleryUtilities::putRequestVariable('form[fields][Catalog Id]', '1');
 	GalleryUtilities::putRequestVariable('form[fields][My Data]',
-					     'fun <script>alert(1);</script>');
+					     'fun<script>alert(1);</script>');
 	GalleryUtilities::putRequestVariable('form[fields][Location]',
 					     '<p onclick="alert(2)">Click</p>');
 	GalleryUtilities::putRequestVariable('form[fields][Category]', 'A');
@@ -382,7 +382,7 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array('My Data' => 'fun ', 'Location' => '&lt;p&gt;Click&lt;/p&gt;'),
+	$this->assertEquals(array('My Data' => 'fun', 'Location' => '&lt;p&gt;Click&lt;/p&gt;'),
 			    $data[$this->_itemG->getId()], 'Summary data');
     }
 }
