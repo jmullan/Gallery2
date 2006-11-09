@@ -1,0 +1,60 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+
+/**
+ * Get active user from username and password in HTTP headers.
+ * @package HttpAuth
+ * @subpackage Classes
+ * @author Jack Bates <ms419@freezone.co.uk>
+ * @version $Revision$ $Date$
+ */
+class HttpAuthPlugin /* extends GalleryAuthPlugin */ {
+
+    /**
+     * @see GalleryAuthPlugin::getUser
+     */
+    function getUser() {
+	$authtype = GalleryUtilities::getServerVar('AUTH_TYPE');
+	$username = GalleryUtilities::getServerVar('PHP_AUTH_USER');
+	$password = GalleryUtilities::getServerVar('PHP_AUTH_PW');
+
+	if (empty($username)) {
+	    $authorization = GalleryUtilities::getRequestVariables('authorization');
+	    if (!empty($authorization)) {
+		list ($authtype, $authdata) = explode(' ', $authorization);
+		list ($username, $password) = explode(':', base64_decode($authdata));
+	    }
+	}
+
+	list ($ret, $user) = HttpAuthHelper::getUser($authtype, $username);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if (isset($user) && $user->isCorrectPassword($password)) {
+	    return array(null, $user);
+	}
+
+	return array(null, null);
+    }
+}
+?>

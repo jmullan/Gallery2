@@ -1,0 +1,76 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
+ * Server authentication tests.
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Jack Bates <ms419@freezone.co.uk>
+ * @version $Revision$ $Date$
+ */
+class ServerAuthPluginTest extends GalleryTestCase {
+
+    function ServerAuthPluginTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	/* Create a new user */
+	list ($ret, $this->_user) = $this->_createRandomUser(null, 'password');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($this->_user);
+    }
+
+    function testValidUser() {
+	$_SERVER['AUTH_TYPE'] = 'Foo';
+	$_SERVER['REMOTE_USER'] = $this->_user->getUserName();
+
+	GalleryCoreApi::requireOnce('modules/httpauth/classes/ServerAuthPlugin.class');
+
+	$plugin = new ServerAuthPlugin();
+	list ($ret, $user) = $plugin->getUser();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($this->_user, $user);
+    }
+
+    function testInvalidUser() {
+	$_SERVER['AUTH_TYPE'] = 'Foo';
+	$_SERVER['PHP_AUTH_USER'] = 'bogusUser-' . rand();
+
+	GalleryCoreApi::requireOnce('modules/httpauth/classes/ServerAuthPlugin.class');
+
+	$plugin = new ServerAuthPlugin();
+	list ($ret, $user) = $plugin->getUser();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assert(!isset($user));
+    }
+}
+?>
