@@ -495,7 +495,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('form[cmd]', 'add-item');
 	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
-	GalleryUtilities::putRequestVariable('form[caption]', 'caption <script>alert(1);</script>');
+	GalleryUtilities::putRequestVariable('form[caption]', 'caption<script>alert(1);</script>');
 	$this->_controller->setOptionInstances(array());
 
 	$_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
@@ -523,7 +523,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->assertEquals('testfile.txt', $newItem->getPathComponent());
-	$this->assertEquals('caption ', $newItem->getTitle());
+	$this->assertEquals('caption', $newItem->getTitle());
     }
 
     function testAddItemWithOption() {
