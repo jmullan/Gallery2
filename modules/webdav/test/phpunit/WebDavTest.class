@@ -146,9 +146,11 @@ class WebDavTest extends GalleryTestCase {
 	    array('forceServerRelativeUrl' => true)) . '</D:href>
     <D:propstat>
       <D:prop>
-        <D:creationdate ns1:dt="dateTime.tz">' . gmdate('Y-m-d\TH:i:s\Z', $data['creationTimestamp']) . '</D:creationdate>
+        <D:creationdate ns1:dt="dateTime.tz">'
+	    . gmdate('Y-m-d\TH:i:s\Z', $data['creationTimestamp']) . '</D:creationdate>
         <D:displayname>' . $data['title'] . '</D:displayname>
-        <D:getlastmodified ns1:dt="dateTime.rfc1123">' . gmdate('D, d M Y H:i:s', $data['modificationTimestamp']) . ' UTC</D:getlastmodified>
+        <D:getlastmodified ns1:dt="dateTime.rfc1123">'
+	    . gmdate('D, d M Y H:i:s', $data['modificationTimestamp']) . ' UTC</D:getlastmodified>
         <G:summary>' . $data['summary'] . '</G:summary>
         <G:description>' . $data['description'] . '</G:description>
         <G:keywords>' . $data['keywords'] . '</G:keywords>

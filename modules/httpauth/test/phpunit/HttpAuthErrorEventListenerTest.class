@@ -61,7 +61,8 @@ class HttpAuthErrorEventListenerTest extends GalleryTestCase {
         $output = ob_get_contents();
         ob_end_clean();
 
-        list ($ret, $authName) = GalleryCoreApi::getPluginParameter('module', 'httpauth', 'authName');
+        list ($ret, $authName) =
+	    GalleryCoreApi::getPluginParameter('module', 'httpauth', 'authName');
         if ($ret) {
             return $this->failWithStatus($ret);
         }
