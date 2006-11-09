@@ -37,7 +37,7 @@ class ItemAddWebDav extends ItemAddPlugin {
 	/* Check resource is not locked */
 	$ret = WebDavHelper::checkLocks($path);
 	if ($ret) {
-	    return $ret;
+	    return array($ret, null, null);
 	}
 
 	/* Prepare data-structure from PUT request */
