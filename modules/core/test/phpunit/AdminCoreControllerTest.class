@@ -402,6 +402,26 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 		      'emailTestDebug: ' . $results['status']['emailTestDebug']);
 	$this->assertEquals(array(), $results['error'], 'error');
     }
+
+    function testReset() {
+	/* Set the default language to a value such that we can ensure that it hasn't changed */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.language', 'de');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* A request with some changes, but "reset" is requested */
+	GalleryUtilities::putRequestVariable('form[smtp][server]', 'smtp.example.com');
+	GalleryUtilities::putRequestVariable('form[default][language]', 'en');
+	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/UnixPlatform.class');

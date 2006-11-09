@@ -186,7 +186,13 @@ class AdminCoreController extends GalleryController {
 	    } else {
 		$status['emailTestSuccess'] = 1;
 	    }
+	} else if (isset($form['action']['reset'])) {
+
+	    /* Redirect back to the same view to reset the form */
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminCore';
 	}
+
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
@@ -254,6 +260,9 @@ class AdminCoreView extends GalleryView {
 	    $form['formName'] = 'AdminCore';
 	    $form['emailTest']['to'] = '';
 	}
+
+	/* Radio button handling */
+	$form['language']['useBrowserPref'] = (int)!empty($form['language']['useBrowserPref']);
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
