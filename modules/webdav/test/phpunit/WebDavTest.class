@@ -1,0 +1,870 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
+ * WebDAV tests.
+ * @package WebDav
+ * @subpackage PHPUnit
+ * @author Jack Bates <ms419@freezone.co.uk>
+ * @version $Revision$ $Date$
+ */
+class WebDavTest extends GalleryTestCase {
+
+    function WebDavTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	/* Require here to avoid loading if none of our tests will be run */
+	ob_start();
+	GalleryCoreApi::requireOnce('main.php');
+	ob_end_clean();
+
+	/* Use WebDavTestPhpVm and WebDavTestPlatform */
+	$gallery->_phpVm = new WebDavTestPhpVm();
+	$gallery->setPlatform(new WebDavTestPlatform());
+	$_GET['platformStreams'] = array();
+
+	/* Clear response headers */
+	$headers =& GalleryUtilities::_getResponseHeaders();
+	$headers = array();
+
+	/* Create test items */
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
+	    'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Test the WebDAV controller */
+	GalleryUtilities::putRequestVariable('controller', 'webdav.WebDav');
+    }
+
+    function testOptions() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'OPTIONS';
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('allow' => 'Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET'
+		    . ', HEAD, DELETE, PUT, MOVE, LOCK, UNLOCK',
+		'dav' => 'DAV: 1,2',
+		'content-length' => 'Content-Length: 0',
+		'ms-author-via' => 'MS-Author-Via: DAV'),
+	    GalleryUtilities::_getResponseHeaders());
+
+	$this->assertEquals('', $output);
+    }
+
+    function testPropfind() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:propfind xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
+  <D:prop>
+    <D:creationdate/>
+    <D:displayname/>
+    <D:getlastmodified/>
+    <G:summary/>
+    <G:description/>
+    <G:keywords/>
+  </D:prop>
+</D:propfind>';
+	stream_wrapper_register('test', 'WebDavTestStream');
+	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
+	    GalleryUtilities::_getResponseHeaders());
+
+	$path = ltrim($path, '/');
+	$data = (array)$this->_item;
+	$this->assertEquals(explode("\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
+			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
+    <D:href>' . $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav', 'path' => $path),
+	    array('forceServerRelativeUrl' => true)) . '</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:creationdate ns1:dt="dateTime.tz">' . gmdate('Y-m-d\TH:i:s\Z', $data['creationTimestamp']) . '</D:creationdate>
+        <D:displayname>' . $data['title'] . '</D:displayname>
+        <D:getlastmodified ns1:dt="dateTime.rfc1123">' . gmdate('D, d M Y H:i:s', $data['modificationTimestamp']) . ' UTC</D:getlastmodified>
+        <G:summary>' . $data['summary'] . '</G:summary>
+        <G:description>' . $data['description'] . '</G:description>
+        <G:keywords>' . $data['keywords'] . '</G:keywords>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+'), explode("\n", $output));
+    }
+
+    function testProppatch() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:propertyupdate xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
+  <D:set>
+    <D:prop>
+      <D:displayname> new title </D:displayname>
+      <G:summary> new summary </G:summary>
+      <G:description> new description </G:description>
+      <G:keywords> new keywords </G:keywords>
+    </D:prop>
+  </D:set>
+</D:propertyupdate>';
+	stream_wrapper_register('test', 'WebDavTestStream');
+	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
+	    GalleryUtilities::_getResponseHeaders());
+
+	$path = ltrim($path, '/');
+	$this->assertEquals(explode("\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response xmlns:G="http://gallery2.org/dav/props/">
+    <D:href>' . $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav', 'path' => $path),
+	    array('forceServerRelativeUrl' => true)) . '</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:displayname> new title </D:displayname>
+        <G:summary> new summary </G:summary>
+        <G:description> new description </G:description>
+        <G:keywords> new keywords </G:keywords>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+'), explode("\n", $output));
+
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$data = (array)$this->_item;
+	$this->assertEquals(' new title ', $data['title']);
+	$this->assertEquals(' new summary ', $data['summary']);
+	$this->assertEquals(' new description ', $data['description']);
+	$this->assertEquals(' new keywords ', $data['keywords']);
+    }
+
+    function testMkcol() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'testAlbum-' . rand();
+	$path .= $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
+			    GalleryUtilities::_getResponseHeaders());
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $newAlbumId) = GalleryCoreApi::fetchItemIdByPath($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$data = (array)$newAlbum;
+	$this->assertEquals($pathComponent, $data['title']);
+	$this->assertEquals('', $data['summary']);
+	$this->assertEquals('', $data['description']);
+	$this->assertEquals('', $data['keywords']);
+    }
+
+    function testDelete() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'DELETE';
+
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 204 No Content'),
+			    GalleryUtilities::_getResponseHeaders());
+
+	$this->assertEquals('', $output);
+
+	/* Make sure the album is actually gone */
+	$ret = $this->_verifyMissing($this->_subAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testAdd() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$fileSize = $platform->filesize($filePath);
+
+	$pathComponent = basename($filePath);
+	$path .= $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$_SERVER['CONTENT_LENGTH'] = $fileSize;
+	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
+
+	$_GET['platformStreams']['php://input'] = $platform->fopen($filePath, 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$headers = GalleryUtilities::_getResponseHeaders();
+	$this->assertEquals('HTTP/1.0 201 Created', $headers['status']);
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $newItemId) = GalleryCoreApi::fetchItemIdByPath($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$data = (array)$newItem;
+	$this->assertEquals($pathComponent, $data['title']);
+	$this->assertEquals('', $data['summary']);
+	$this->assertEquals('', $data['description']);
+	$this->assertEquals('image/gif', $data['mimeType']);
+	$this->assertEquals($fileSize, $data['size']);
+    }
+
+    function testReplace() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$fileSize = $platform->filesize($filePath);
+
+	$_SERVER['CONTENT_LENGTH'] = $fileSize;
+	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
+
+	$_GET['platformStreams']['php://input'] = $platform->fopen($filePath, 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$headers = GalleryUtilities::_getResponseHeaders();
+	$this->assertEquals('HTTP/1.0 204 No Content', $headers['status']);
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$data = (array)$this->_item;
+	$this->assertEquals('foo/bar', $data['mimeType']);
+	$this->assertEquals($fileSize, $data['size']);
+    }
+
+    function testMove() {
+	global $gallery;
+
+	/* Copy URL generator to set path info */
+	$urlGenerator = $gallery->getUrlGenerator();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'MOVE';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'testItem-' . rand();
+	$newPath .= $pathComponent;
+
+	/*
+	 * Hack to pass destination path to WebDAV library without rewrite module.  WebDAV library
+	 * doesn't understand g2_path request parameter.
+	 */
+	foreach (array(false, true) as $forceDirect) {
+	    $urlGenerator->_file[$forceDirect] .= "/$newPath";
+	}
+
+	$_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
+	    array('controller' => 'webdav.WebDav', 'path' => $newPath),
+	    array('forceFullUrl' => true));
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
+			    GalleryUtilities::_getResponseHeaders());
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($newPath);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($this->_item->getId(), $itemId);
+    }
+
+    function testLockUnlock() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$headers =& GalleryUtilities::_getResponseHeaders();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'LOCK';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
+
+	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:lockinfo xmlns:D="DAV:">
+  <D:lockscope><D:exclusive/></D:lockscope>
+  <D:locktype><D:write/></D:locktype>
+  <D:owner>testOwner</D:owner>
+</D:lockinfo>';
+	stream_wrapper_register('test', 'WebDavTestStream');
+	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$path = ltrim($path, '/');
+	list ($ret, list ($lock)) = WebDavHelper::getLocks($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('exclusive', $lock['scope']);
+	$this->assertEquals('write', $lock['type']);
+	$this->assertEquals('infinity', $lock['depth']);
+	$this->assertEquals('testOwner', $lock['owner']);
+	$this->assertEquals((string)(time() + 10), $lock['expires']);
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"',
+		'lock-token' => 'Lock-Token: <' . $lock['token'] . '>'),
+	    $headers);
+
+	$this->assertEquals(explode("\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:prop xmlns:D="DAV:">
+  <D:lockdiscovery>
+    <D:activelock>
+            <D:lockscope><D:exclusive/></D:lockscope>
+            <D:locktype><D:write/></D:locktype>
+            <D:depth>Infinity</D:depth>
+            <D:owner>testOwner</D:owner>
+            <D:timeout>Second-10</D:timeout>
+            <D:locktoken><D:href>' . $lock['token'] . '</D:href></D:locktoken>
+          </D:activelock>
+  </D:lockdiscovery>
+</D:prop>
+'), explode("\n", $output));
+
+	$headers = array();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'UNLOCK';
+
+	$_SERVER['HTTP_LOCK_TOKEN'] = "<$lock[token]>";
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 204 No Content'), $headers);
+
+	$this->assertEquals('', $output);
+
+	$ret = WebDavHelper::checkLocks($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testMissingObject() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'GET';
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'testItem-' . rand();
+	$path .= $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 404 Not Found'),
+			    GalleryUtilities::_getResponseHeaders());
+
+	//$this->assertEquals('', $output);
+    }
+
+    function testIllegalPathComponent() {
+	$headers =& GalleryUtilities::_getResponseHeaders();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'The!Quick$Brown#Fox';
+	$path .= $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
+
+	//$this->assertEquals('', $output);
+
+	$headers = array();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'GET';
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
+
+	//$this->assertEquals('', $output);
+    }
+
+    function testIllegalDestination() {
+	global $gallery;
+
+	/* Copy URL generator to set path info */
+	$urlGenerator = $gallery->getUrlGenerator();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'MOVE';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'The!Quick$Brown#Fox';
+	$newPath .= $pathComponent;
+
+	/*
+	 * Hack to pass destination path to WebDAV library without rewrite module.  WebDAV library
+	 * doesn't understand g2_path request parameter.
+	 */
+	foreach (array(false, true) as $forceDirect) {
+	    $urlGenerator->_file[$forceDirect] .= "/$newPath";
+	}
+
+	$_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
+	    array('controller' => 'webdav.WebDav', 'path' => $newPath),
+	    array('forceFullUrl' => true));
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'),
+			    GalleryUtilities::_getResponseHeaders());
+
+	//$this->assertEquals('', $output);
+    }
+
+    function testMacDotUnderscore() {
+	$headers =& GalleryUtilities::_getResponseHeaders();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = '._testItem-' . rand();
+	$path .= $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK'), $headers);
+
+	//$this->assertEquals('', $output);
+
+	$headers = array();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'GET';
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK'), $headers);
+
+	//$this->assertEquals('', $output);
+    }
+
+    function testMacDotDsStore() {
+	$headers =& GalleryUtilities::_getResponseHeaders();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = '.DS_Store';
+	$path .= $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
+
+	//$this->assertEquals('', $output);
+
+	$headers = array();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'GET';
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
+
+	//$this->assertEquals('', $output);
+    }
+}
+
+class WebDavTestPhpVm extends GalleryPhpVm {
+
+    function header($header, $replace=null) {
+	/* Avoid modifying actual header information */
+    }
+}
+
+class WebDavTestPlatform extends GalleryPlatform {
+
+    function fopen($filename, $modes, $use_include_path=0) {
+	if (empty($_GET['platformStreams'][$filename])) {
+	    return parent::fopen($filename, $modes, $use_include_path);
+	}
+
+	$handle = $_GET['platformStreams'][$filename];
+	unset($_GET['platformStreams'][$filename]);
+
+	return $handle;
+    }
+}
+
+class WebDavTestStream {
+    var $filename;
+    var $position;
+
+    function stream_open($filename, $modes, $options, &$opened_path) {
+	$this->filename = $filename;
+	$this->position = 0;
+
+	return true;
+    }
+
+    function stream_read($count) {
+	$buffer = substr($_GET['testStream'][$this->filename], $this->position, $count);
+	$this->position += strlen($buffer);
+
+	return $buffer;
+    }
+
+    function stream_eof() {
+	return $this->position >= strlen($_GET['testStream'][$this->filename]);
+    }
+}
+?>
