@@ -17,6 +17,32 @@ function detectBrowser() {
   }
 }
 
+document.onkeydown = function(e) {
+  if (!e) {
+    // If the browser did not pass the event information to the
+    // function, we will have to obtain it from the event register.
+    if(window.event) {
+      e = window.event; // IE 4+
+    } else {
+      return;
+    }
+  }
+  if (typeof(e.keyCode) == 'number') {
+    e = e.keyCode;  // DOM
+  } else if (typeof(e.which) == 'number') {
+    e = e.which;    // NS 4
+  } else if(typeof(e.charCode) == 'number') {
+    e = e.charCode; // NS 6+, Mozilla 0.9+
+  } else {
+    return;
+  }
+  if ((e==39 || e==63235) && document.getElementById("next")) {
+    location.href = document.getElementById("next").href;
+  } else if ((e==37 || e==63234) && document.getElementById("prev")) {
+    location.href = document.getElementById("prev").href;
+  }
+}
+
 /*****************************************************************************/
 
 function MM_findObj(n, d) { //v4.01

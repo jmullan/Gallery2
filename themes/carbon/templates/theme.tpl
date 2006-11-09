@@ -13,6 +13,7 @@
     {if $theme.pageType == 'album' || $theme.pageType == 'photo'}
     <meta name="keywords" content="{$theme.item.keywords}" />
     <meta name="description" content="{$theme.item.description|markup:strip}" />
+    <script type="text/javascript" src="{g->url href='themes/carbon/theme.js'}"></script>
     {/if}
 
     {* If Gallery doesn't provide a header, we use the album/photo title (or filename) *}
@@ -20,9 +21,8 @@
       <title>{$theme.item.title|default:$theme.item.pathComponent|markup:strip}</title>
     {/if}
 
-    {* Include this theme's style sheet and javascript *}
+    {* Include this theme's style sheet *}
     <link rel="stylesheet" type="text/css" href="{g->theme url="theme.css"}"/>
-    <script type="text/javascript" src="{g->url href='themes/carbon/theme.js'}"></script>
   </head>
   <body class="gallery">
     <div {g->mainDivAttributes}>
