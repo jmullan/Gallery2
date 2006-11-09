@@ -19,10 +19,7 @@
  */
 
 /**
- * HTTP Auth Module
- *
- * Get active user using HTTP authentication
- *
+ * HTTP Auth Module.  Get active user using HTTP authentication.
  * @package HttpAuth
  * @author Jack Bates <ms419@freezone.co.uk>
  * @version $Revision$ $Date$
@@ -106,7 +103,7 @@ class HttpAuthModule extends GalleryModule {
 	    }
 
 	case '0.1.0':
-	    /* Added AuthFilterPlugin & RegexAuthFilterPlugin */
+	    /* Added AuthFilterPlugin and RegexAuthFilterPlugin */
 
 	case '0.1.1':
 	    /* Updated to lighter event subsystem */
@@ -180,7 +177,11 @@ class HttpAuthModule extends GalleryModule {
 
     /**
      * @see GalleryModule::getRewriteRules
-     */
+     * Depends on
+     * http://sourceforge.net/tracker/index.php?func=detail&aid=1380292&group_id=7130&atid=107130
+     * The PHP CGI server API and HTTP authentication against Gallery's user database won't work
+     * without this rule because CGI scripts ordinarily can't access the Authorization HTTP header
+     * in which usernames and passwords are sent.  Web server authentication will still work.
     function getRewriteRules() {
 	return array(array('comment' => $this->translate('Authorization Header'),
 		'help' => $this->translate('Put contents of Authorization HTTP header in a request variable'),
@@ -190,5 +191,6 @@ class HttpAuthModule extends GalleryModule {
 		'keywords' => array('authorization' => array('pattern' => '(.+)',
 			'help' => $this->translate('Contents of Authorization HTTP header')))));
     }
+     */
 }
 ?>
