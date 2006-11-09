@@ -174,23 +174,5 @@ class HttpAuthModule extends GalleryModule {
 	return array(null, array(array('name' => $this->getName(),
 	    'view' => 'httpauth.HttpAuthSiteAdmin')));
     }
-
-    /**
-     * @see GalleryModule::getRewriteRules
-     * Depends on
-     * http://sourceforge.net/tracker/index.php?func=detail&aid=1380292&group_id=7130&atid=107130
-     * The PHP CGI server API and HTTP authentication against Gallery's user database won't work
-     * without this rule because CGI scripts ordinarily can't access the Authorization HTTP header
-     * in which usernames and passwords are sent.  Web server authentication will still work.
-    function getRewriteRules() {
-	return array(array('comment' => $this->translate('Authorization Header'),
-		'help' => $this->translate('Put contents of Authorization HTTP header in a request variable'),
-		'locked' => true,
-		'conditions' => array('%{HTTP:Authorization} %authorization%',
-		    '%{QUERY_STRING} !g2_authorization='),
-		'keywords' => array('authorization' => array('pattern' => '(.+)',
-			'help' => $this->translate('Contents of Authorization HTTP header')))));
-    }
-     */
 }
 ?>
