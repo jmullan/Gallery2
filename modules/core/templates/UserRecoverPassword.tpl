@@ -12,8 +12,8 @@
   {g->text text="Recovering your password requires that your user account has an email address assigned, and that you have access to the listed email address.  A confirmation will be emailed to you containing a URL which you must visit to set a new password for your account.  To prevent abuse, password recovery requests can not be attempted more than once in a 20 minute period.  A recovery confirmation is valid for seven days.  If it is not used during that time, it will be purged from the system and a new request will have to be made."}
 </div>
 
+{if isset($status.requestSent)}
 <div class="gbBlock">
-  {if isset($status.requestSent)}
   {capture name="adminResetUrl"}
   <a href='{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPasswordAdmin"}'>
   {/capture}
@@ -24,9 +24,10 @@
     {g->text text="Note that if the account does not have an email address, you may not receive the email and you should contact your system administrator for help."}
     <br/><br/>
     {g->text text="Administrators can use the %sEmergency Password Recovery%s page to recover the admin account if they fail to receive recovery email due to server problems, or lack of a working email address." arg1=$smarty.capture.adminResetUrl arg2="</a>"}
-    {/if}
   </div>
-
+</div>
+{else}
+<div class="gbBlock">
   <h4>{g->text text="Username"}</h4>
 
   <input type="text" id="giFormUsername" size="16"
@@ -54,3 +55,4 @@
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>
+{/if}
