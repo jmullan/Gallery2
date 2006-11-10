@@ -19,9 +19,8 @@
  */
 
 /**
- * A framework for scanning all of our source files for specific patterns.
- * Subclasses must override the checkFile() method to implement their own checks.
- *
+ * A framework for scanning all of our source files for specific patterns.  Subclasses must override
+ * the checkFile() method to implement their own checks.
  * @package Gallery
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -43,6 +42,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 	    $this->assert(false, 'Test skipped: .svn/entries not found');
 	    return;
 	}
+
 	if (!function_exists('xml_parser_create')) {
 	    $this->assert(false, 'Test skipped: PHP does not have XML support');
 	    return;
@@ -71,15 +71,21 @@ class CodeAuditTestCase extends GalleryTestCase {
 	 * terminating line feed) is allowed before or after the number.  The changes in each format
 	 * are listed in wc.h.
 	 */
-	$version = (int)$platform->fread($handle, 2);
-	$platform->fclose($handle);
-
-	if ($version < 7) {
+	if ((int)$platform->fread($handle, 2) < 7) {
 	    /* XML format */
-	    return $this->_scanXmlDir($dirPath);
+	    $functionName = '_scanXmlDir';
 	} else {
 	    /* Non-XML format */
-	    return $this->_scanNonXmlDir($dirPath);
+	    $functionName = '_scanNonXmlDir';
+	}
+	$platform->fclose($handle);
+
+	$dirPaths = array($dirPath);
+	while (($dirPath = array_shift($dirPaths)) !== null) {
+	    $dirPaths = array_merge($dirPaths, $this->$functionName($dirPath));
+	    if ($this->_shouldHalt) {
+		return;
+	    }
 	}
     }
 
@@ -99,47 +105,42 @@ class CodeAuditTestCase extends GalleryTestCase {
 
 	if (empty($xmlIndex['ENTRY'])) {
 	    $this->assert(false, 'Unable to parse .svn/entries for dir: ' . $dirPath);
-	} else {
-	    $dirs = array();
-	    foreach ($xmlIndex['ENTRY'] as $entry) {
-		switch ($xmlValues[$entry]['attributes'][$KIND]) {
-		case 'dir':
-		    if (!empty($xmlValues[$entry]['attributes']['NAME'])) {
-			if (empty($xmlValues[$entry]['attributes']['DELETED']) ||
-			    $xmlValues[$entry]['attributes']['DELETED'] != 'true') {
-			$dirs[] = $xmlValues[$entry]['attributes']['NAME'];
-			} else {
-			    print "Skipping deleted dir: " .
-				"$dirPath/{$xmlValues[$entry]['attributes']['NAME']}<br/>";
-			}
-		    }
-		    break;
+	    return array();
+	}
 
-		case 'file':
-		    $file = $dirPath . '/' . $xmlValues[$entry]['attributes']['NAME'];
-		    if (empty($xmlValues[$entry]['attributes']['DELETED'])
-			    && $this->shouldCheckFile($file)) {
-			$gallery->guaranteeTimeLimit(30);
-			$buf = $platform->file_get_contents($file);
-			$this->checkFile($file, $buf);
-
-			if ($this->_shouldHalt) {
-			    return;
-			}
-		    }
-		    break;
-
-		default:
-		    $this->assert(false,
-			    'Unable to parse ' . $xmlValues[$entry]['attributes'][$KIND]);
-		}
+	$dirPaths = array();
+	foreach ($xmlIndex['ENTRY'] as $entry) {
+	    if (empty($xmlValues[$entry]['attributes']['NAME'])) {
+		continue;
 	    }
-	    foreach ($dirs as $dir) {
-		$this->_scanDir($dirPath . '/' . $dir);
-		if ($this->_shouldHalt) {
-		    return;
-		}
+
+	    if (!empty($xmlValues[$entry]['attributes']['DELETED'])
+		    && $xmlValues[$entry]['attributes']['DELETED'] == 'true') {
+		print "Skipping deleted entry: $subPath<br/>";
+		continue;
 	    }
+
+	    $subPath = $dirPath . '/' . $xmlValues[$entry]['attributes']['NAME'];
+	    switch ($xmlValues[$entry]['attributes'][$KIND]) {
+	    case 'dir':
+		$dirPaths[] = $subPath;
+		break;
+
+	    case 'file':
+		if ($this->shouldCheckFile($subPath)) {
+		    $gallery->guaranteeTimeLimit(30);
+		    $this->checkFile($subPath, $platform->file_get_contents($subPath));
+		    if ($this->_shouldHalt) {
+			return array();
+		    }
+		}
+		break;
+
+	    default:
+		$this->assert(false, 'Unable to parse ' . $xmlValues[$entry]['attributes'][$KIND]);
+	    }
+
+	    return $dirPaths;
 	}
     }
 
@@ -171,25 +172,23 @@ class CodeAuditTestCase extends GalleryTestCase {
 	    $platform->file_get_contents($dirPath . '/.svn/entries'), $matches);
 	$dirPaths = array();
 	for ($i = 0; $i < $count; $i++) {
+	    if ($matches[5][$i] == 'deleted') {
+		print "Skipping deleted entry: $subPath<br/>";
+		continue;
+	    }
+
 	    $subPath = $dirPath . '/' . $matches[1][$i];
 	    switch ($matches[2][$i]) {
 	    case 'dir':
-		if ($matches[5][$i] == 'deleted') {
-		    print "Skipping deleted dir: $subPath<br/>";
-		} else {
-		    $dirPaths[] = $subPath;
-		}
+		$dirPaths[] = $subPath;
+		break;
 
 	    case 'file':
-		if ($matches[5][$i] == 'deleted') {
-		    print "Skipping deleted file: $subPath<br/>";
-		} else {
-		    if ($this->shouldCheckFile($subPath)) {
-			$gallery->guaranteeTimeLimit(30);
-			$this->checkFile($subPath, $platform->file_get_contents($subPath));
-			if ($this->_shouldHalt) {
-			    return;
-			}
+		if ($this->shouldCheckFile($subPath)) {
+		    $gallery->guaranteeTimeLimit(30);
+		    $this->checkFile($subPath, $platform->file_get_contents($subPath));
+		    if ($this->_shouldHalt) {
+			return array();
 		    }
 		}
 		break;
@@ -199,13 +198,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 	    }
 	}
 
-	foreach ($dirPaths as $dirPath) {
-	    /* Assume sub directories use same entries format */
-	    $this->_scanNonXmlDir($dirPath);
-	    if ($this->_shouldHalt) {
-		return;
-	    }
-	}
+	return $dirPaths;
     }
 
     /**
@@ -216,7 +209,7 @@ class CodeAuditTestCase extends GalleryTestCase {
     }
 
     /**
-     * Overload this method in subclasses to audit the file
+     * Overload this method in subclasses to audit the file.
      * @access protected
      */
     function checkFile($fileName, $buffer) {
@@ -224,7 +217,6 @@ class CodeAuditTestCase extends GalleryTestCase {
 
     /**
      * Overload this method in subclasses to run any tasks after the scan is complete.
-     *
      * @param bool $halted true if the scan was halted early
      * @access protected
      */
@@ -232,9 +224,7 @@ class CodeAuditTestCase extends GalleryTestCase {
     }
 
     /**
-     * Overload this method in subclasses.  If this method
-     * returns true, we'll call checkFile() on it
-     *
+     * Overload this method in subclasses.  If this method returns true, we'll call checkFile on it.
      * @return true if we should check this file
      * @access protected
      */
@@ -246,6 +236,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 	if (!preg_match('{\.(?:php|inc|class|tpl|po)$}', $fileName)) {
 	    return false;
 	}
+
 	if (strpos($fileName, $this->_baseDir . '/lib/') === 0) {
 	    return strpos($fileName, $this->_baseDir . '/lib/tools/repository/') === 0;
 	}
