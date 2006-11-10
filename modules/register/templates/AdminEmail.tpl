@@ -12,4 +12,4 @@
 
 {g->text text="Activate or delete this user here"}
 {g->url arg1="view=core.SiteAdmin" arg2="subView=register.AdminSelfRegistration"
-	forceFullUrl=true htmlEntities=false}
+	forceFullUrl=true htmlEntities=false forceSessionId=false}
