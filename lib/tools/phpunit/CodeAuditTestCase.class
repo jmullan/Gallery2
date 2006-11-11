@@ -82,6 +82,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 
 	$dirPaths = array($dirPath);
 	while (($dirPath = array_shift($dirPaths)) !== null) {
+	    $gallery->guaranteeTimeLimit(30);
 	    $dirPaths = array_merge($dirPaths, $this->$functionName($dirPath));
 	    if ($this->_shouldHalt) {
 		return;
@@ -139,9 +140,9 @@ class CodeAuditTestCase extends GalleryTestCase {
 	    default:
 		$this->assert(false, 'Unable to parse ' . $xmlValues[$entry]['attributes'][$KIND]);
 	    }
-
-	    return $dirPaths;
 	}
+
+	return $dirPaths;
     }
 
     function _scanNonXmlDir($dirPath) {
