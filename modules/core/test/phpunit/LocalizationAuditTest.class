@@ -56,7 +56,7 @@ class LocalizationAuditTest extends CodeAuditTestCase {
     function checkFile($fileName, $buffer) {
 	/* Grab Project-Id-Version, which we'll check against this file's peers in finishScan() */
 	preg_match('/Project-Id-Version:(.*).."/', $buffer, $matches);
-	$this->_idMap[dirname($fileName)][basename($fileName)] = $matches[1];
+	$this->_idMap[dirname($fileName)][basename($fileName)] = trim($matches[1]);
 
 	/* First line must be "# <dollar-sign>Id<dollar-sign> */
 	$line = preg_replace("/\n.*/", "", $buffer);
@@ -97,23 +97,33 @@ class LocalizationAuditTest extends CodeAuditTestCase {
     function finishScan($halted) {
 	if (!$halted) {
 	    foreach ($this->_idMap as $dir => $dirMap) {
-		$hash = array();
+		$hash = $flavors = $wrongFormat = array();
 		$max = 0;
+		$probablyCorrect = '';
 		foreach ($dirMap as $localization => $projectIdVersion) {
-		    $hash[$projectIdVersion][] = $localization;
-		    if (count($hash[$projectIdVersion]) > $max) {
-			$probablyCorrect = $projectIdVersion;
-			$max = count($hash[$projectIdVersion]);
+		    if (!preg_match('/^(Gallery: .+) [\d\.]+$/', $projectIdVersion, $matches)) {
+			$wrongFormat[$projectIdVersion] = $localization;
+		    } else {
+			$hash[$projectIdVersion][] = $localization;
+			$flavors[$matches[1]][] = $localization;
+			if (count($hash[$projectIdVersion]) > $max) {
+			    $probablyCorrect = $projectIdVersion;
+			    $max = count($hash[$projectIdVersion]);
+			}
 		    }
 		}
 
-		$matchCount = count(array_keys($hash));
-		if ($matchCount > 1) {
+		$matchCount = count(array_keys($flavors));
+		if (!empty($wrongFormat) || $matchCount > 1) {
 		    $poDir = substr($dir, strlen(dirname(dirname(dirname($dir))))+1);
-		    $mismatches = join(', ', array_keys($hash));
+		    $domain = basename(dirname($poDir));
+		    $mismatches = 
+			join(', ', array_merge(array_keys($wrongFormat), array_keys($hash)));
+		    $probablyCorrect =
+		    	empty($probablyCorrect) ? "Gallery: $domain" : $probablyCorrect;
 		    $this->assert(false, sprintf(
 				      "%s: %d mismatches (%s) (probably should be: %s)",
-				      $poDir, $matchCount, $mismatches, $probablyCorrect));
+				      $poDir, count($wrongFormat), $mismatches, $probablyCorrect));
 
 		    $script[] = sprintf(
 			'perl -pi.bak -e \'s/(Project-Id-Version:).*(..")/$1%s$2/\' %s/*.po',
