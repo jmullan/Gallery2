@@ -287,5 +287,19 @@ class Db2Storage extends GalleryStorage {
     function _truncateString($value, $size, $lengthInBytes=false) {
 	return parent::_truncateString($value, $size, true);
     }
+
+    /**
+     * @see GalleryStorage::encodeBlob
+     */
+    function encodeBlob($blob) {
+	return addcslashes($blob, "\000\134\377");
+    }
+
+    /**
+     * @see GalleryStorage::decodeBlob
+     */
+    function decodeBlob($blob) {
+	return stripcslashes($blob);
+    }
 }
 ?>
