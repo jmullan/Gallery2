@@ -22,7 +22,7 @@
 	{else}
 	  {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail maxSize=130}
 	{/if}
-	<h3> {$ItemAdmin.item.title|markup|wordwrap:10:"<span style=\"font-size: 0px\"> </span>":true} </h3>
+	<h3> {$ItemAdmin.item.title|markup|wordwrap:10:"<span style=\"font-size: 0px\"> </span>":false} </h3>
       </div>
       {/if}
 
