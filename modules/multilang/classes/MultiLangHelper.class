@@ -113,7 +113,7 @@ class MultiLangHelper {
 		if ($ret) {
 		    return $ret;
 		}
-		if (empty($data)) {
+		if (!$item->hasOnLoadHandler('MultiLang')) {
 		    /* First multilang data for this item; add onLoadHandler */
 		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
 		    if ($ret) {
