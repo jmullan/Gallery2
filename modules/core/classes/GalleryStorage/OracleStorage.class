@@ -155,11 +155,11 @@ class OracleStorage extends GalleryStorage {
     }
 
     /**
-     * @see GalleryStorage::_getOptimizeStatement
+     * @see GalleryStorage::_getOptimizeStatements
      */
-    function _getOptimizeStatement() {
+    function _getOptimizeStatements() {
 	/* Is this the right command to use? */
-	return 'ANALYZE TABLE %s COMPUTE STATISTICS';
+	return array('ANALYZE TABLE %s COMPUTE STATISTICS');
     }
 
     /**

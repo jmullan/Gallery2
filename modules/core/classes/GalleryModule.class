@@ -211,6 +211,19 @@ class GalleryModule extends GalleryPlugin {
 		    return $ret;
 		}
 	    }
+
+	    /*
+	     * The changes must be committed before the non-transactional optimize() can be
+	     * executed. 
+	     */
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
+	    }
+	    $storage->optimize();
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	if ($gallery->getDebug()) {

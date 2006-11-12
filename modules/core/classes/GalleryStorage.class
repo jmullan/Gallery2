@@ -933,11 +933,11 @@ class GalleryStorage {
     /**
      * Get sql to optimize a table
      *
-     * @return string sql statement with %s token for table name
+     * @return array(string sql statement with %s token for table name, ...)
      * @access protected
      */
-    function _getOptimizeStatement() {
-	return null;
+    function _getOptimizeStatements() {
+	return array();
     }
 
     /**
@@ -1693,10 +1693,10 @@ class MySqlStorage extends GalleryStorage {
     }
 
     /**
-     * @see GalleryStorage::_getOptimizeStatement
+     * @see GalleryStorage::_getOptimizeStatements
      */
-    function _getOptimizeStatement() {
-	return 'OPTIMIZE TABLE `%1$s`; ANALYZE TABLE `%1$s`;';
+    function _getOptimizeStatements() {
+	return array('OPTIMIZE TABLE `%s`;', 'ANALYZE TABLE `%s`;');
     }
 
     /**

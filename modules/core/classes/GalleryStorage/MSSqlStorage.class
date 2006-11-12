@@ -182,10 +182,10 @@ class MSSqlStorage extends GalleryStorage {
     }
 
     /**
-     * @see GalleryStorage::_getOptimizeStatement
+     * @see GalleryStorage::_getOptimizeStatements
      */
-    function _getOptimizeStatement() {
-	return 'UPDATE STATISTICS %s';
+    function _getOptimizeStatements() {
+	return array('UPDATE STATISTICS %s');
     }
 
     /**

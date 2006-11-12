@@ -272,11 +272,11 @@ class Db2Storage extends GalleryStorage {
     }
 
     /**
-     * @see GalleryStorage::_getOptimizeStatement
+     * @see GalleryStorage::_getOptimizeStatements
      */
-    function _getOptimizeStatement() {
-	return 'CALL ADMIN_CMD (\'RUNSTATS ON TABLE ' . $this->_username
-		. '.%s WITH DISTRIBUTION ON ALL COLUMNS AND INDEXES ALL\')';
+    function _getOptimizeStatements() {
+	return array('CALL ADMIN_CMD (\'RUNSTATS ON TABLE ' . $this->_username .
+		     '.%s WITH DISTRIBUTION ON ALL COLUMNS AND INDEXES ALL\')');
     }
 
     /**

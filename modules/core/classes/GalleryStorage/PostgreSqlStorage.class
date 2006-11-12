@@ -216,10 +216,10 @@ class PostgreSqlStorage extends GalleryStorage {
     }
 
     /**
-     * @see GalleryStorage::_getOptimizeStatement
+     * @see GalleryStorage::_getOptimizeStatements
      */
-    function _getOptimizeStatement() {
-	return 'VACUUM ANALYZE VERBOSE %s';
+    function _getOptimizeStatements() {
+	return array('VACUUM ANALYZE VERBOSE %s');
     }
 
     /**
