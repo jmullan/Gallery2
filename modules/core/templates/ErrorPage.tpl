@@ -25,8 +25,16 @@
     {if isset($ErrorPage.code.obsoleteData)}
       <p class="giDescription">
 	{g->text text="Your change cannot be completed because somebody else has made a conflicting change to the same item.  Use the back button in your browser to go back to the page you were on, then <b>reload that page</b> and try your change again."}
+        <br/>
+        <a href="javascript:history.back()"> {g->text text="Go back and try again"} </a>
       </p>
-      <a href="javascript:history.back()"> {g->text text="Go back and try again"} </a>
+      {if $ErrorPage.isAdmin}
+      <p class="giDescription">
+	{g->text text="If this problem happens repeatedly, it may be because of corruption in your cache.  Site Administrators can clear out this cache."}
+        <br/>
+        <a href="{g->url href="lib/support?cache"}"> {g->text text="Clear the cache"} </a>
+      </p>
+      {/if}
       <p class="giDescription" style="margin-top: 0.5em">
 	{g->text text="Alternatively, you can return to the main Gallery page and resume browsing."}
       </p>
