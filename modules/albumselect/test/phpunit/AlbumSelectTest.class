@@ -154,20 +154,32 @@ class AlbumSelectTest extends GalleryTestCase {
 	/* Test album and its subalbums should be last 4 tree items: subalbums 3,2,1 */
 	$albumNode = count($data['tree']) - 3;
 
-	/*
-	 * Note: this assumes that an album with title zzzz will be the last one in the
-	 * topmost album.  That's not necessarily the case, if you consider non-ascii
-	 * characters
-	 */
+	/* Filter out the albums that already existed before this test */
+	$nodeId = 1;
+	$exptectedNodeIds = array();
+	foreach ($data['tree'] as $idx => $node) {
+	    if (in_array($node['id'], array($this->_album->getId(), $this->_subalbum[1]->getId(),
+	    $this->_subalbum[2]->getId(), $this->_subalbum[3]->getId()))) {
+		$exptectedNodeIds[] = $nodeId;
+		if ($node['id'] == $this->_album->getId()) {
+		    $albumNode = $nodeId;
+		}
+	    } else {
+		unset($data['tree'][$idx]);
+	    }
+	    
+	    $nodeId++;
+	}
+
 	$this->assertEquals(
 	    array(
-		array('id' => $this->_album->getId(), 'nodeId' => $albumNode,
+		array('id' => $this->_album->getId(), 'nodeId' => $exptectedNodeIds[0],
 		      'parentNode' => 0, 'depth' => 0),
-		array('id' => $this->_subalbum[3]->getId(), 'nodeId' => $albumNode + 1,
+		array('id' => $this->_subalbum[3]->getId(), 'nodeId' => $exptectedNodeIds[1],
 		      'parentNode' => $albumNode, 'depth' => 1),
-		array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $albumNode + 2,
+		array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $exptectedNodeIds[2],
 		      'parentNode' => $albumNode, 'depth' => 1),
-		array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $albumNode + 3,
+		array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $exptectedNodeIds[3],
 		      'parentNode' => $albumNode, 'depth' => 1)),
 	    array_slice($data['tree'], -4),
 	    'test albums in tree');
