@@ -296,6 +296,10 @@ class StorageTest extends GalleryTestCase {
 	$select = array('entityType', 'externalId', 'entityId');
 	$match = array('externalId' => 40);
 
+	/* Prepare mocked record set */
+	$recordSet = new StorageTestRecordSet(array(array(1, 6, '15')));
+	$storage->_db->setRecordSet($recordSet);
+
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -307,7 +311,11 @@ class StorageTest extends GalleryTestCase {
 			'FROM %1$sExternalIdMap WHERE %2$sexternalId=?',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 		array(40))),
-	    $this->_results);
+	    $this->_results, 'generated query');
+
+	/* Verify that the fetched values have been normalized */
+	$row = $searchResults->nextResult();
+	$this->assertEquals(array('1', '6', 15), $row, 'normalized values from record set');
     }
 
     function testGetMapEntries() {
@@ -830,19 +838,25 @@ class StorageTest extends GalleryTestCase {
 class StorageTestDB {
     var $_testCase;
     var $transCnt = 1; /* Pretend we're already in a transaction */
+    var $_recordSet;
 
     function StorageTestDB(&$testCase) {
 	$this->_testCase =& $testCase;
+	$this->_recordSet = new StorageTestRecordSet();
+    }
+
+    function setRecordSet($recordSet) {
+	$this->_recordSet = $recordSet;
     }
 
     function execute($query, $data) {
 	$this->_testCase->_results[] = array($query, $data);
-	return 1;
+	return $this->_recordSet;
     }
 
     function SelectLimit($query, $nrows=-1, $offset=-1, $inputarr=false) {
 	$this->_testCase->_results[] = array($query, $nrows, $offset, $inputarr);
-	return 1;
+	return $this->_recordSet;
     }
 
     function GenID($val) {
@@ -851,6 +865,23 @@ class StorageTestDB {
 
     function DBTimeStamp($val) {
 	return (string)($val . $val);
+    }
+}
+
+class StorageTestRecordSet {
+    var $_rows;
+
+    function StorageTestRecordSet($rows=array()) {
+	$this->_rows = $rows;
+	$this->_recordCount = count($rows);
+    }
+
+    function RecordCount() {
+	return $this->_recordCount;
+    }
+
+    function FetchRow() {
+	return empty($this->_rows) ? false : array_shift($this->_rows);
     }
 }
 ?>

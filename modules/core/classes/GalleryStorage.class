@@ -614,7 +614,7 @@ class GalleryStorage {
 	}
 
 	if ($recordSet) {
-	    return array(null, new GallerySearchResults($recordSet));
+	    return array(null, new GallerySearchResults($recordSet, $select, $mapInfo));
 	} else {
 	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	}
@@ -1374,8 +1374,26 @@ class GallerySearchResults {
      */
     var $_recordSet;
 
-    function GallerySearchResults($recordSet) {
+    /**
+     * Field names describing the record set
+     *
+     * @access private
+     * @var array(string name of field 1, ...) $fieldNames
+     */
+    var $_fieldNames;
+
+    /**
+     * Gallery data type info array
+     *
+     * @access private
+     * @var array (string columnName => array data type info, ...) $mapInfo
+     */
+    var $_mapInfo;
+
+    function GallerySearchResults($recordSet, $fieldNames=null, $mapInfo=null) {
 	$this->_recordSet = $recordSet;
+	$this->_fieldNames = $fieldNames;
+	$this->_mapInfo = $mapInfo;
     }
 
     /**
@@ -1393,7 +1411,17 @@ class GallerySearchResults {
      * @return array the next result or false if EOF
      */
     function nextResult() {
-	return $this->_recordSet->FetchRow();
+	$row =& $this->_recordSet->FetchRow();
+	if (!empty($row) && !empty($this->_fieldNames) && !empty($this->_mapInfo)) {
+	    /* Normalize fetched values */
+	    global $gallery;
+	    $storage =& $gallery->getStorage();
+	    for ($i = 0; $i < count($row) && $i < count($this->_fieldNames); $i++) {
+		$field = $this->_fieldNames[$i];
+		$row[$i] = $storage->_normalizeValue($row[$i], $this->_mapInfo[$field], true);
+	    }
+	}
+	return $row;
     }
 }
 
