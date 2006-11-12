@@ -2935,9 +2935,9 @@ function SessionTest_error_handler($errno, $errstr, $errfile, $errline) {
 	    $expected2 = '{pg_exec().*: Query failed: ERROR:  current transaction is aborted,' .
 		' commands ignored until end of transaction block}';
 	    $expected3 = '{db2_exec\(\).*: Statement Execute Failed}';
-	    if (preg_match($expected1, $errstr)
-		    || preg_match($expected2, $errstr)
-		    || preg_match($expected3, $errstr)) {
+	    $expected4 = '{ociexecute\(\).*: ORA-00001: unique constraint.*violated}';
+	    if (preg_match($expected1, $errstr) || preg_match($expected2, $errstr)
+		    || preg_match($expected3, $errstr) || preg_match($expected4, $errstr)) {
 		return;
 	    }
 	}
