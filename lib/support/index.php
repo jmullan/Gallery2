@@ -15,9 +15,9 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 	if ($_SERVER['QUERY_STRING'] == $script ||
 	        strncmp($_SERVER['QUERY_STRING'], $script . '&', strlen($script)+1) == 0) {
 	    include(dirname(__FILE__) . '/' . $script . '.php');
+	    return;
 	}
     }
-    return;
 }
 ?>
 <html>
