@@ -48,11 +48,6 @@ class AuthenticateStep extends InstallStep {
 
     function loadTemplateData(&$templateData) {
 	$authenticationDir = dirname(dirname(dirname(__FILE__)));
-	if (isset($_SERVER['DOCUMENT_ROOT'])
-		&& preg_match('#^' . $_SERVER['DOCUMENT_ROOT'] . '/(.*)#',
-			      $authenticationDir, $matches)) {
-	    $authenticationDir = $matches[1];
-	}
 
 	if (!$this->isComplete()) {
 	    /* Authenticate */
