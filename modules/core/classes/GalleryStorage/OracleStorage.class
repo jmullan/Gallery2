@@ -142,7 +142,14 @@ class OracleStorage extends GalleryStorage {
      */
     function getVersion() {
 	if (function_exists('oci_server_version')) {
-	    return oci_server_version();
+	    if (!isset($this->_db)) {
+		list ($ret, $this->_db) = $this->_getConnection();
+		if ($ret) {
+		    /* Try to fallback */
+		    return ociserverversion();
+		}
+	    }
+	    return oci_server_version($this->_db->_connectionID);
 	}
 	return ociserverversion();
     }
