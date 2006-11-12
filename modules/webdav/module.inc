@@ -104,15 +104,22 @@ class WebDavModule extends GalleryModule {
 	     * Moved parsePath from WebDavHelper to WebDavRewriteHelper, to avoid loading
 	     * WebDavHelper just to generate URLs
 	     */
-	    GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
-	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+	    list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
 	    if ($ret) {
 		return $ret;
 	    }
+	    if (!empty($rewriteApi)) {
+		/* TODO: Don't use RewriteHelper here. */
+		GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+		list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
+		if ($ret) {
+		    return $ret;
+		}
 
-	    list ($ret, $code, $errorId) = $rewriteParser->saveActiveRules(null, $this);
-	    if ($ret) {
-		return $ret;
+		list ($ret, $code, $errorId) = $rewriteParser->saveActiveRules(null, $this);
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 
 	case 'end of upgrade path':
@@ -212,8 +219,18 @@ class WebDavModule extends GalleryModule {
 
     /**
      * Activate essential short URL rules
+     * @todo: Use RewriteApi instead of RewriteHelper. Requires an extension of the RewriteApi.
      */
     function activateRewriteRules() {
+	list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	if ($ret) {
+	    return $ret;
+	}
+	if (empty($rewriteApi)) {
+	    /* TODO: Handle it somehow, e.g. show configuration 'required' */
+	    return null;
+	}
+
 	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $activeRules) =
 	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'activeRules');
@@ -243,6 +260,8 @@ class WebDavModule extends GalleryModule {
 	if ($ret) {
 	    return $ret;
 	}
+
+	return null;
     }
 }
 ?>
