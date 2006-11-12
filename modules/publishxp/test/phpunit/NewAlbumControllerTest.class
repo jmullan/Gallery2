@@ -59,7 +59,8 @@ class NewAlbumControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('test title', $album->getTitle());
 	$this->assertEquals('test summary', $album->getSummary());
 	$this->assertEquals('test description', $album->getDescription());
-	$this->assertEquals(null, $album->getKeywords());
+	/* For Oracle, null is replaced with '' when loading data from the database */
+	$this->assert(in_array($album->getKeywords(), array(null, '')), 'keywords should be empty');
 
 	$ret = GalleryCoreApi::deleteEntityById($albumId);
 	if ($ret) {

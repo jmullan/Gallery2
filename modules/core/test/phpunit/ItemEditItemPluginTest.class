@@ -307,7 +307,8 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(null, $rootAlbum->getPathComponent());
+	/* For Oracle, null is replaced with '' when loading data from the database */
+	$this->assert(in_array($rootAlbum->getPathComponent(), array(null, '')));
     }
 
     function testMissingRootTitle2() {

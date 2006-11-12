@@ -69,7 +69,8 @@ class FlashVideoOptionTest extends ItemAddOptionTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(null, $item->getRenderer(), 'mpeg renderer');
+	/* For Oracle, null is replaced with '' when loading data from the database */
+	$this->assert(in_array($item->getRenderer(), array(null, '')), 'mpeg renderer');
 
 	list ($ret, $item) = $this->_items[1]->refresh();
 	if ($ret) {

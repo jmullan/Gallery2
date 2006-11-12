@@ -103,13 +103,14 @@ class PanoramaOptionTest extends ItemEditOptionTestCase {
 	}
 
 	$result = $this->_handleRequestAfterEdit(array(), $this->_item);
-	$this->assertEquals(array(array(), array()), $result);
+	$this->assertEquals(array(array(), array()), $result, 'controller results');
 
 	list ($ret, $item) = $this->_item->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(null, $item->getRenderer());
+	/* For Oracle, null is replaced with '' when loading data from the database */
+	$this->assert(in_array($item->getRenderer(), array(null, '')), 'renderer not empty');
     }
 
     function testHelper() {

@@ -204,7 +204,9 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 		return $this->failWithStatus($ret);
 	    }
 
-	    $this->assertEquals(null, $derivative->getPostFilterOperations());
+	    /* For Oracle, null is replaced with '' when loading data from the database */
+	    $this->assert(in_array($derivative->getPostFilterOperations(), array(null, '')),
+			  'postFilterOperations not empty');
 	    $this->assertEquals(1, $derivative->getSerialNumber());
 	}
     }
@@ -243,7 +245,9 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 		if ($ret) {
 		    return $this->failWithStatus($ret);
 		}
-		$this->assertEquals(null, $derivative->getPostFilterOperations());
+		/* For Oracle, null is replaced with '' when loading data from the database */
+		$this->assert(in_array($derivative->getPostFilterOperations(), array(null, '')),
+			      "postFilterOperations not empty for test item $j");
 		$this->assertEquals(1, $derivative->getSerialNumber());
 	    }
 	}
@@ -259,7 +263,9 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(null, $derivative->getPostFilterOperations());
+	/* For Oracle, null is replaced with '' when loading data from the database */
+	$this->assert(in_array($derivative->getPostFilterOperations(), array(null, '')),
+		      'postFilterOperations not empty');
 	$this->assertEquals(1, $derivative->getSerialNumber());
     }
 
@@ -289,7 +295,9 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    if ($ret) {
 		return $this->failWithStatus($ret);
 	    }
-	    $this->assertEquals(null, $derivative->getPostFilterOperations());
+	    /* For Oracle, null is replaced with '' when loading data from the database */
+	    $this->assert(in_array($derivative->getPostFilterOperations(), array(null, '')),
+			  "postFilterOperations not empty for test item $j");
 	    $this->assertEquals(1, $derivative->getSerialNumber());
 	}
     }

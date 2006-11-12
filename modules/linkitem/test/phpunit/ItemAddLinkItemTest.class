@@ -122,7 +122,9 @@ class ItemAddLinkItemTest extends ItemAddPluginTestCase {
 	$thumbnail = $thumbnailTable[$childIds[0]];
 	$this->assertEquals($highlight->getId(), $thumbnail->getDerivativeSourceId(), 'src');
 	$this->assertEquals('thumbnail|123', $thumbnail->getDerivativeOperations(), 'op');
-	$this->assertEquals(null, $thumbnail->getPostFilterOperations(), 'postfilter');
+	/* For Oracle, null is replaced with '' when loading data from the database */
+	$this->assert(in_array($thumbnail->getPostFilterOperations(), array(null, '')),
+		      'postfilter');
     }
 
     function testAddEmptyAlbumLink() {

@@ -166,7 +166,8 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(null, $highlight->getOnLoadHandlers(), 'off');
+	/* For Oracle, null is replaced with '' when loading data from the database */
+	$this->assert(in_array($highlight->getOnLoadHandlers(), array(null, '')), 'off');
     }
 
     function testRandomHighlighNew() {

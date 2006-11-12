@@ -1671,7 +1671,8 @@ class ItemTest extends GalleryTestCase {
 	    }
 	}
 
-	$this->assertEquals(null, $items[0]->getRenderer());
+	/* For Oracle, null is replaced with '' when loading data from the database */
+	$this->assert(in_array($items[0]->getRenderer(), array(null, '')));
 	$this->assertEquals('ItemTestRendererToKeep', $items[1]->getRenderer());
     }
 }
