@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-define('G2_SUPPORT_MAX_LOGIN_ATTEMPTS', 7);
+define('G2_SUPPORT_MAX_LOGIN_ATTEMPTS', 14);
 define('G2_SUPPORT_MAX_SESSION_LIFETIME', 2 * 60 * 60);
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/modules/core/classes/GalleryUtilities.class');
@@ -126,7 +126,7 @@ class GallerySetupUtilities {
     }
 
     /**
-     * Set the number of failed attempts to log in to any of the support pages
+     * Set the number of failed attempts to log in to any of the support pages.
      *
      * @param int $attempts the number of attempts
      * @return true on success, false on error
@@ -347,6 +347,48 @@ class GallerySetupUtilities {
 	    $_SESSION['_path'] = $configDir;
 	    $_SESSION['_remoteId'] = $remoteId;
 	    $_SESSION['_startTime'] = time();
+	}
+    }
+
+    /**
+     * Notify the site administrator by email that there have been too many failed attempts
+     * to log in with a password.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function notifySiteAdministrator() {
+	global $gallery;
+
+	list ($ret, $adminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $adminUserIds) = GalleryCoreApi::fetchUsersForGroup($adminGroupId);
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $adminUsers) = GalleryCoreApi::loadEntitiesById(array_keys($adminUserIds));
+	if ($ret) {
+	    return $ret;
+	}
+	$toList = array();
+	foreach ($adminUsers as $admin) {
+	    $email = $admin->getEmail();
+	    if (!empty($email)) {
+		$toList[] = $email;
+	    }
+	}
+
+	/* Note: we don't have localization for lib support yet, so this is not internationalized */
+	if (!empty($toList)) {
+	    $ret = GalleryCoreApi::sendTemplatedEmail(
+		    'lib/support/templates/FailedPasswordEmail.tpl',
+		    array(), '', implode(',', $toList),
+		    'Too many failed login attempts');
+	    if ($ret) {
+		return $ret;
+	    }
 	}
     }
 }

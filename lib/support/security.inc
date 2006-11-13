@@ -90,6 +90,10 @@ if (empty($config)) {
 	    }
 
 	    if ($options['error'] || $options['attempts'] >= G2_SUPPORT_MAX_LOGIN_ATTEMPTS) {
+		if ($options['attempts'] >= G2_SUPPORT_MAX_LOGIN_ATTEMPTS) {
+		    $ret = GallerySetupUtilities::notifySiteAdministrator();
+		    /* swallow return code; we can't do anything with it */
+		}
 		render('loginTxtForm', $options);
 	    } else {
 		$options['wrongPassword'] = 1;
