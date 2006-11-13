@@ -209,6 +209,11 @@ class ThumbnailModuleExtras {
 		if ($ret) {
 		    return $ret;
 		}
+
+		$ret = $storage->checkPoint();
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 
 	    /* Custom thumbnails are now stored hierarchically, not flat anymore. */
@@ -222,8 +227,8 @@ class ThumbnailModuleExtras {
 	      AND
 	      [GalleryChildEntity::parentId] <> ? 
 	    ';
-	    list ($ret, $results) =
-	    	$gallery->search($query, array($containerId));
+	    $gallery->guaranteeTimeLimit(30);
+	    list ($ret, $results) = $gallery->search($query, array($containerId));
 	    if ($ret) {
 		return $ret;
 	    }
@@ -273,13 +278,34 @@ class ThumbnailModuleExtras {
 						     sprintf("Could not create folder '%s'", $dir));
 		    }
 		    $oldPath = $thumb->getThumbnailDir() . $fileNames[$id];
-		    $success = $platform->rename($oldPath, $path);
-		    if (!$success) {
-			GalleryCoreApi::releaseLocks($lockId);
-			return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+		    if ($platform->file_exists($oldPath)) {
+			$success = $platform->rename($oldPath, $path);
+		    	if (!$success) {
+			    GalleryCoreApi::releaseLocks($lockId);
+			    return GalleryCoreApi::error(ERROR_BAD_PATH, __FILE__, __LINE__,
 					sprintf("Failed to rename(%s, %s)", $oldPath, $path));
+			}
+		    } else {
+			$message = sprintf('Moving custom thumbnail with id %d and parentId %d ' .
+					   'failed! File "%s" does not exist.', $thumb->getId(),
+					   $thumb->getparentId(), $oldPath);
+			if (!$platform->file_exists($path)) {
+			    /* Ignore failure */
+			    $platform->copy(
+				dirname(dirname(__FILE__)) . '/core/data/broken-image.gif', $path);
+			    $gallery->debug($message . ' Using image placeholder instead.');
+			} else {
+			    $gallery->debug($message . " And file $path already exists, skipping.");    
+			}
 		    }
 		    $ret = $thumb->save();
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return $ret;
+		    }
+
+		    /* Atomic transactions for each operation that involves moving of a file */
+		    $ret = $storage->checkPoint();
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
 			return $ret;
