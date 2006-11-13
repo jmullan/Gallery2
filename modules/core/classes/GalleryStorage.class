@@ -209,6 +209,11 @@ class GalleryStorage {
 	    $db->debug = true;
 	}
 
+	/* Configure transliteration for COM based DB drivers */
+	if (defined('CP_UTF8')) {
+	    $db->charPage = CP_UTF8;
+	}
+
 	$this->_traceStart();
 	$connectMethod = ($forceNew || !$this->_usePersistentConnections) ? 'NConnect' : 'PConnect';
 	$ret = $db->$connectMethod($this->_hostname,
