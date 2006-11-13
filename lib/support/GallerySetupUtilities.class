@@ -359,6 +359,17 @@ class GallerySetupUtilities {
     function notifySiteAdministrator() {
 	global $gallery;
 
+	/*
+	 * Don't include embed.php in the global scope because it will initiate actions before we
+	 * are ready for them (eg: it will redirect us to the installer if we have no config.php)
+	 */
+	require_once(dirname(__FILE__) . '/../../embed.php');
+
+	$ret = GalleryEmbed::init(array('fullInit' => false));
+	if ($ret) {
+	    return $ret;
+	}
+
 	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
@@ -390,6 +401,13 @@ class GallerySetupUtilities {
 		return $ret;
 	    }
 	}
+
+	$ret = GalleryEmbed::done();
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
     }
 }
 ?>
