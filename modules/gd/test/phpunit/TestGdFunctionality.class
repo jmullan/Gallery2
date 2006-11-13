@@ -39,6 +39,7 @@ class TestGdFunctionality {
      * Keep track of our resources
      */
     var $_resourceCounter = 0;
+    var $_undestroyedResourceCounter = 0;
     var $_resources;
     var $_outputFiles;
 
@@ -70,6 +71,7 @@ class TestGdFunctionality {
      */
     function getNewResource($filename=null) {
 	$this->_resourceCounter++;
+	$this->_undestroyedResourceCounter++;
 	$name = 'res #' . $this->_resourceCounter;
 	$this->_resources[$name] = array(
 	    'x' => 0,
@@ -90,6 +92,7 @@ class TestGdFunctionality {
      */
     function copyResource($otherRes) {
 	$this->_resourceCounter++;
+	$this->_undestroyedResourceCounter++;
 	$newRes = 'Resource #' . $this->_resourceCounter;
 	$this->_resources[$newRes] = $this->_resources[$otherRes];
 	return $newRes;
@@ -489,6 +492,11 @@ class TestGdFunctionality {
 	$this->setResourceData($res, 'x', $newX);
 	$this->setResourceData($res, 'y', $newY);
 	return array(null, $res);
+    }
+
+    function imagedestroy($res) {
+	$this->_undestroyedResourceCounter--;
+	$this->_resources[$res]['destroyed'] = true;
     }
 }
 ?>

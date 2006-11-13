@@ -119,6 +119,8 @@ class GdToolkitTest extends GalleryTestCase {
 		    $this->assertEquals(
 			$this->_gdFunctionality->getOutputFileData('/valid/thumbnail.ext'),
 			array('x' => '100', 'y' => '100', 'mimeType' => $mimeType));
+		    $this->assertEquals(0, $gd->_undestroyedResourceCounter,
+					"memory leak for $mimeType / thumb");
 		}
 
 		if (GdToolkitHelper::isOperationSupported('scale', $gd)) {
@@ -133,6 +135,8 @@ class GdToolkitTest extends GalleryTestCase {
 		    $this->assertEquals(
 			$this->_gdFunctionality->getOutputFileData('/valid/thumbnail.ext'),
 			array('x' => '450', 'y' => '300', 'mimeType' => $mimeType));
+		    $this->assertEquals(0, $gd->_undestroyedResourceCounter,
+					"memory leak for $mimeType / scale");
 		}
 
 		if (GdToolkitHelper::isOperationSupported('resize', $gd)) {
@@ -147,6 +151,8 @@ class GdToolkitTest extends GalleryTestCase {
 		    $this->assertEquals(
 			$this->_gdFunctionality->getOutputFileData('/valid/thumbnail.ext'),
 			array('x' => '900', 'y' => '500', 'mimeType' => $mimeType));
+		    $this->assertEquals(0, $gd->_undestroyedResourceCounter,
+					"memory leak for $mimeType / resize");
 		}
 
 		if (GdToolkitHelper::isOperationSupported('crop', $gd)) {
@@ -164,6 +170,8 @@ class GdToolkitTest extends GalleryTestCase {
 			      'copy' => array('300x300.ext', 0, 0, 74, 71, 154, 156),
 			      ),
 			'crop dimensions mismatch');
+		    $this->assertEquals(0, $gd->_undestroyedResourceCounter,
+					"memory leak for $mimeType / crop");
 		}
 
 		if (GdToolkitHelper::isOperationSupported('rotate', $gd)) {
@@ -182,6 +190,8 @@ class GdToolkitTest extends GalleryTestCase {
 			'rotate');
 		    $this->assertEquals(
 			array('width' => 200, 'height' => 300), $context, 'rotate-context');
+		    $this->assertEquals(0, $gd->_undestroyedResourceCounter,
+					"memory leak for $mimeType / rotate");
 		}
 
 		if (GdToolkitHelper::isOperationSupported('convert-to-image/jpeg', $gd)) {
@@ -197,6 +207,8 @@ class GdToolkitTest extends GalleryTestCase {
 			$this->_gdFunctionality->getOutputFileData('/valid/converted.jpeg'),
 			array('x' => '400', 'y' => '400', 'mimeType' => 'image/jpeg'),
 			'convert-to-image/jpeg');
+		    $this->assertEquals(0, $gd->_undestroyedResourceCounter,
+					"memory leak for $mimeType / convert-to-image/jpeg");
 		}
 
 		if (GdToolkitHelper::isOperationSupported('composite', $gd)) {
@@ -219,6 +231,8 @@ class GdToolkitTest extends GalleryTestCase {
 			      'copy' => array('/valid/50x50.ext', '250', '0', '0', '0', '50', '50')
 			      ),
 			'composite #1 ' . $mimeType);
+		    $this->assertEquals(0, $gd->_undestroyedResourceCounter,
+					"memory leak for $mimeType / composite 1");
 
 		    /* Test another composite with out of range params that should
 		     * get corrected
@@ -235,6 +249,8 @@ class GdToolkitTest extends GalleryTestCase {
 		    if ($ret) {
 			return $this->failWithStatus($ret);
 		    }
+		    $this->assertEquals(0, $gd->_undestroyedResourceCounter,
+					"memory leak for $mimeType / composite 2");
 		}
 
 		if (GdToolkitHelper::isOperationSupported('compress', $gd)) {
@@ -251,6 +267,8 @@ class GdToolkitTest extends GalleryTestCase {
 			$this->_gdFunctionality->getOutputFileData('/valid/compressed.jpg'),
 			array('x' => '0', 'y' => '0', 'mimeType' => 'image/jpeg'),
 			'compress');
+		    $this->assertEquals(0, $gd->_undestroyedResourceCounter,
+					"memory leak for $mimeType / compress");
 		}
 	    }
 	}
@@ -263,6 +281,8 @@ class GdToolkitTest extends GalleryTestCase {
 					      array('BOGUS'));
 
 	$this->assert($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION, 'bad op');
+	$this->assertEquals(0, $gd->_undestroyedResourceCounter,
+			    'memory leak in unsupported operation');
     }
 
     function testGetProperties() {
@@ -288,11 +308,15 @@ class GdToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret);
 	    }
 	    $this->assertEquals(array(300, 300), $results);
+	    $this->assertEquals(0, $this->_gdFunctionality->_undestroyedResourceCounter,
+				'memory leak for image/gif / dimensions');
 
 	    /* Test a property that doesn't exist */
 	    list ($ret, $results) =
 		$this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
 	    $this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+	    $this->assertEquals(0, $this->_gdFunctionality->_undestroyedResourceCounter,
+				'memory leak for bogus property');
 	}
     }
 
