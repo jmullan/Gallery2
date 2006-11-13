@@ -75,8 +75,8 @@ class MailHelperTest extends GalleryTestCase {
 	$from = 'mailhelpertest@test.com';
 	$expectedData['headers'] = array(
 	    'Date: ELIDED',
-	    'Content-Type: text/plain; charset="utf-8"',
 	    'From: ' . $from,
+	    'Content-Type: text/plain; charset="utf-8"',
 	    '');
 
 	/* Test that the from header is retrieved from function input */
@@ -104,8 +104,8 @@ class MailHelperTest extends GalleryTestCase {
 	$from = 'mailhelpertest2@test.com';
 	$expectedData['headers'] = array(
 	    'Date: ELIDED',
-	    'Content-Type: text/plain; charset="utf-8"',
 	    'From: ' . $from,
+	    'Content-Type: text/plain; charset="utf-8"',
 	    '');
 
 	/* Test that the from header is preferred from the function over the core.smtp.from field */

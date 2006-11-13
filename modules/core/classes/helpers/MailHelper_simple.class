@@ -65,6 +65,9 @@ class MailHelper_simple {
 	    }
 	}
 
+	if (strpos(strtolower($headers), 'content-type:') === false) {
+	    $headers = "Content-Type: text/plain; charset=\"utf-8\"\r\n" . $headers;
+	}
 	if (!empty($from)) {
 	    $headers = "From: $from\r\n" . $headers;
 	}
@@ -77,9 +80,6 @@ class MailHelper_simple {
 		/* Encode subject for UTF-8 display if any extended characters are present */
 		$subject = '=?utf-8?q?' . $buf . '?=';
 	    }
-	}
-	if (strpos(strtolower($headers), 'content-type:') === false) {
-	    $headers = "Content-Type: text/plain; charset=\"utf-8\"\r\n" . $headers;
 	}
 
 	/* Add the date; not all mailers will do this for us */
