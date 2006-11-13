@@ -150,7 +150,9 @@ class GalleryLockHelper_simple {
 	$ret = $result[0];
 	if ($ret) {
 	    /* This method doesn't return a status code.  What should we do? */
-	    print $ret->getAsHtml();
+	    if ($gallery->getDebug()) {
+		$gallery->debug($ret->getAsHtml());
+	    }
 	    return false;
 	}
 	$lockSystem =& $result[1];
@@ -189,7 +191,9 @@ class GalleryLockHelper_simple {
 	$ret = $result[0];
 	if ($ret) {
 	    /* This method doesn't return a status code.  What should we do? */
-	    print $ret->getAsHtml();
+	    if ($gallery->getDebug()) {
+		$gallery->debug($ret->getAsHtml());
+	    }
 	    return false;
 	}
 	$lockSystem =& $result[1];
