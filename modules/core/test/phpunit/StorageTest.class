@@ -656,9 +656,7 @@ class StorageTest extends GalleryTestCase {
 	$memberData['type'] = STORAGE_TYPE_BIT;
 	$expected = $storage->convertIntToBits(5);
 	$this->assertEquals($expected, $storage->_normalizeValue(5, $memberData), 'to DB');
-	$this->assertEquals(5, $storage->_normalizeValue(5, $memberData, true), 'from DB');
-	$this->assertEquals(5, $storage->_normalizeValue('5', $memberData, true),
-			    'from DB 2');
+	$this->assertEquals(5, $storage->_normalizeValue($expected, $memberData, true), 'from DB');
 	$this->assertEquals(null, $storage->_normalizeValue(null, $memberData, true), 'null');
 	$this->assertEquals($storage->convertIntToBits(0),
 			    $storage->_normalizeValue('', $memberData), 'empty string');

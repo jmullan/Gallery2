@@ -1320,7 +1320,7 @@ class GalleryStorage {
 	    return (string)$value;
 	} else if ($type & STORAGE_TYPE_BIT) {
 	    if ($fromDb) {
-		return (int)$value;
+		return (int)$this->convertBitsToInt($value);
 	    } else {
 		return $this->convertIntToBits((int)$value);
 	    }

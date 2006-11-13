@@ -602,11 +602,10 @@ class GalleryPermissionHelper_advanced {
 	     * MySQL 3.x since it can't handle subselects from the same table.
 	     */
 	    while ($result = $searchResults->nextResult()) {
-		$permission = $storage->convertBitsToInt($result[1]);
 		$ret = GalleryCoreApi::addMapEntry(
 		    'GalleryAccessMap',
 		    array('userOrGroupId' => (int)$result[0],
-			  'permission' => $permission,
+			  'permission' => (int)$result[1],
 			  'accessListId' => (int)$newAccessListId));
 		if ($ret) {
 		    return array($ret, null);
@@ -1054,6 +1053,7 @@ class GalleryPermissionHelper_advanced {
      */
     function compactAccessLists() {
 	global $gallery;
+	$storage =& $gallery->getStorage();
 
 	list ($ret, $lockId) =
 	    GalleryPermissionHelper_advanced::_getAccessListCompacterLock('write');
@@ -1075,7 +1075,7 @@ class GalleryPermissionHelper_advanced {
 	$gallery->guaranteeTimeLimit(60);
 	while ($result = $searchResults->nextResult()) {
 	    $aclId = $result[0];
-	    $key = sprintf("%s|%s,", $result[1], $result[2]);
+	    $key = sprintf("%s|%s,", $result[1], $storage->convertIntToBits($result[2]));
 	    if (!isset($aclIdToKey[$aclId])) {
 		$aclIdToKey[$aclId] = '';
 	    }

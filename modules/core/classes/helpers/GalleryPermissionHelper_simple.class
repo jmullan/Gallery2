@@ -165,8 +165,6 @@ class GalleryPermissionHelper_simple {
 	    $translator =& $gallery->getTranslator();
 	    $storage =& $gallery->getStorage();
 	    while ($result = $searchResults->nextResult()) {
-		$bits = $storage->convertBitsToInt($result[3]);
-
 		if (!isset($translator)) {
 		    return array(GalleryCoreApi::error(ERROR_UNKNOWN, '', 0), null);
 		}
@@ -180,7 +178,7 @@ class GalleryPermissionHelper_simple {
 		$permissions[$result[1]] = array('module' => $result[0],
 						 'permission' => $result[1],
 						 'description' => $description,
-						 'bits' => (int)$bits,
+						 'bits' => (int)$result[3],
 						 'flags' => (int)$result[4]);
 	    }
 	    GalleryDataCache::put($cacheKey, $permissions);
