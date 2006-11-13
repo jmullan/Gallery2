@@ -32,13 +32,15 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $gallery;
 	parent::setUp();
 
 	/* Require here to avoid loading if none of our tests will be run */
 	ob_start();
 	GalleryCoreApi::requireOnce('main.php');
 	ob_end_clean();
+
+	/* main.php / bootstrap.inc creates a new $gallery object */
+	global $gallery;
 
 	/* Use WebDavTestPhpVm and WebDavTestPlatform */
 	$gallery->_phpVm = new WebDavTestPhpVm();
@@ -69,6 +71,35 @@ class WebDavTest extends GalleryTestCase {
 
 	/* Test the WebDAV controller */
 	GalleryUtilities::putRequestVariable('controller', 'webdav.WebDav');
+
+	/* Tests fail for Oracle / PostgreSQL without this checkpoint */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_streamWrapperRegistration();
+    }
+
+    function tearDown() {
+	$this->_streamWrapperRegistration(true);
+	parent::tearDown();
+    }
+
+    function _streamWrapperRegistration($unregister=false) {
+	static $registered = false;
+
+	/* Guard from re-registering the same wrapper again */
+	if ($unregister) {
+	    if ($registered && function_exists('stream_wrapper_unregister')) {
+		stream_wrapper_unregister('test');
+		$registered = false;
+	    }
+	} else if (!$registered){
+	    stream_wrapper_register('test', 'WebDavTestStream');
+	    $registered = true;
+	}
     }
 
     function testOptions() {
@@ -120,7 +151,7 @@ class WebDavTest extends GalleryTestCase {
     <G:keywords/>
   </D:prop>
 </D:propfind>';
-	stream_wrapper_register('test', 'WebDavTestStream');
+
 	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
 
 	/* Perform the request and verify that we succeeded */
@@ -138,7 +169,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$path = ltrim($path, '/');
 	$data = (array)$this->_item;
-	$this->assertEquals(explode("\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
 			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
@@ -159,7 +190,7 @@ class WebDavTest extends GalleryTestCase {
     </D:propstat>
   </D:response>
 </D:multistatus>
-'), explode("\n", $output));
+'), split("\r?\n", $output));
     }
 
     function testProppatch() {
@@ -188,7 +219,7 @@ class WebDavTest extends GalleryTestCase {
     </D:prop>
   </D:set>
 </D:propertyupdate>';
-	stream_wrapper_register('test', 'WebDavTestStream');
+
 	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
 
 	/* Perform the request and verify that we succeeded */
@@ -205,7 +236,7 @@ class WebDavTest extends GalleryTestCase {
 	    GalleryUtilities::_getResponseHeaders());
 
 	$path = ltrim($path, '/');
-	$this->assertEquals(explode("\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/">
     <D:href>' . $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav', 'path' => $path),
@@ -221,7 +252,7 @@ class WebDavTest extends GalleryTestCase {
     </D:propstat>
   </D:response>
 </D:multistatus>
-'), explode("\n", $output));
+'), split("\r?\n", $output));
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
@@ -495,7 +526,7 @@ class WebDavTest extends GalleryTestCase {
   <D:locktype><D:write/></D:locktype>
   <D:owner>testOwner</D:owner>
 </D:lockinfo>';
-	stream_wrapper_register('test', 'WebDavTestStream');
+
 	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
 
 	/* Perform the request and verify that we succeeded */
@@ -524,7 +555,7 @@ class WebDavTest extends GalleryTestCase {
 		'lock-token' => 'Lock-Token: <' . $lock['token'] . '>'),
 	    $headers);
 
-	$this->assertEquals(explode("\n", '<?xml version="1.0" encoding="utf-8" ?>
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
 <D:prop xmlns:D="DAV:">
   <D:lockdiscovery>
     <D:activelock>
@@ -537,7 +568,7 @@ class WebDavTest extends GalleryTestCase {
           </D:activelock>
   </D:lockdiscovery>
 </D:prop>
-'), explode("\n", $output));
+'), split("\r?\n", $output));
 
 	$headers = array();
 
