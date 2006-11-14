@@ -295,7 +295,7 @@ class ThumbnailModuleExtras {
 				dirname(dirname(__FILE__)) . '/core/data/broken-image.gif', $path);
 			    $gallery->debug($message . ' Using image placeholder instead.');
 			} else {
-			    $gallery->debug($message . " And file $path already exists, skipping.");    
+			    $gallery->debug($message . " And file $path already exists, skipping.");
 			}
 		    }
 		    $ret = $thumb->save();
