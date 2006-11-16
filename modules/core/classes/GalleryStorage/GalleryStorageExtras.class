@@ -1668,7 +1668,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	$statements = $this->_gs->_getOptimizeStatements();
-	if (!empty($statement)) {
+	if (!empty($statements)) {
 	    foreach ($statements as $statement) {
 		foreach (array_keys($tableVersions) as $tableName) {
 		    $query = sprintf($statement, $this->_gs->_tablePrefix . $tableName);
