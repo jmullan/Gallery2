@@ -7,8 +7,12 @@
 <form action="{g->url}" method="post" enctype="{$ItemAdmin.enctype}" id="itemAdminForm">
   <div>
     {g->hiddenFormVars}
+    {if !empty($controller)}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
+    {/if}
+    {if !empty($form.formName)}
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
+    {/if}
     <input type="hidden" name="{g->formVar var="itemId"}" value="{$ItemAdmin.item.id}"/>
   </div>
 
