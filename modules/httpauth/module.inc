@@ -32,7 +32,7 @@ class HttpAuthModule extends GalleryModule {
 	$this->setId('httpauth');
 	$this->setName($gallery->i18n('HTTP Auth'));
 	$this->setVersion('0.3.0');
-	$this->setDescription($gallery->i18n('Get active user using HTTP authentication'));
+	$this->setDescription($gallery->i18n('Login using HTTP authentication'));
 	$this->setGroup('authentication', $gallery->i18n('Authentication'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 10));
