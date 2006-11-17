@@ -97,21 +97,30 @@ class GalleryTemplateAdapter {
 	global $gallery;
 
 	/* Allow the user to pass in bulk params */
-	$hrefParams = isset($params['params']) ? $params['params'] : array();
+	$urlParams = isset($params['params']) ? $params['params'] : array();
 	unset($params['params']);
 
 	/* Search for args and add them to the params */
 	for ($i = 1; ($arg = "arg$i") && isset($params[$arg]); $i++) {
 	    list ($key, $value) = explode('=', $params[$arg], 2);
-	    $hrefParams[$key] = $value;
+	    $urlParams[$key] = $value;
 	    unset($params[$arg]);
 	}
+
+	/* Add special 'href' key to the params */
 	if (isset($params['href'])) {
-	    $hrefParams['href'] = $params['href'];
+	    $urlParams['href'] = $params['href'];
+	    unset($params['href']);
+	}
+
+	/* Allow the user to pass in bulk options */
+	if (isset($params['options'])) {
+	    $params = array_merge($params['options'], $params);
+	    unset($params['options']);
 	}
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	return $urlGenerator->generateUrl($hrefParams, $params);
+	return $urlGenerator->generateUrl($urlParams, $params);
     }
 
     /**

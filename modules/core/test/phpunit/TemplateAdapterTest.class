@@ -128,6 +128,15 @@ class TemplateAdapterTest extends GalleryTestCase {
 			    $this->_mockUrlGenerator->_calls[0]);
     }
 
+    function testUrlOptionsAndBulkOptions() {
+	$this->_setupAdapterWithMocks();
+	$this->_templateAdapter->url(array('options' => array('foo' => 'foo', 'bar' => 'bar'),
+					   'foo' => 'bar'), $this->_mockSmarty);
+
+	$this->assertEquals(array(array(), array('foo' => 'bar', 'bar' => 'bar')),
+			    $this->_mockUrlGenerator->_calls[0]);
+    }
+
     function testChangeInDescendents() {
 	$test = array('module' => 'pirate', 'text' => 'ninja', 'l10Domain' => 'en_US');
 	$this->_setupAdapterWithMocks();
