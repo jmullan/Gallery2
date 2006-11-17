@@ -45,10 +45,15 @@ class AlbumSelectCallbacks {
 	    if ($ret) {
 		return $ret;
 	    }
+	    list ($ret, $rootAlbumId) = GalleryCoreApi::getDefaultAlbumId();
+	    if ($ret) {
+		return $ret;
+	    }
 	    $cachePathInfo = array('type' => 'module-data',
 				   'module' => 'albumselect',
 				   'itemId' => $userId . '_' . $languageCode .
-				   '_' . substr(md5(serialize($callbackParams)), 0, 5));
+				   '_' . substr(md5(serialize(array($callbackParams,
+				   				    $rootAlbumId))), 0, 5));
 	    list ($treeList, $titles, $titlesForJs, $links) =
 		GalleryDataCache::getFromDisk($cachePathInfo);
 	    if (!isset($titles) || !isset($treeList) || !isset($titlesForJs) || !isset($links)) {
@@ -57,10 +62,6 @@ class AlbumSelectCallbacks {
 		}
 		if (isset($callbackParams['truncateTitles'])) {
 		    GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.entitytruncate.php');
-		}
-		list ($ret, $rootAlbumId) = GalleryCoreApi::getDefaultAlbumId();
-		if ($ret) {
-		    return $ret;
 		}
 		list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
 		if ($ret) {
