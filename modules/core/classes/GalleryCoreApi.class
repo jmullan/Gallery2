@@ -71,7 +71,7 @@ class GalleryCoreApi {
      * - remove GalleryUtilities::utf8Substring (moved to GalleryCoreApi)
      */
     function getApiVersion() {
-	return array(7, 12);
+	return array(7, 13);
     }
 
     /**
@@ -1376,13 +1376,15 @@ class GalleryCoreApi {
     /**
      * Get the parent sequence for this item id
      * @param int $itemId
+     * @param bool $forceFullSequence (optional) whether to get the full parent sequence ignoring
+     *             the breadCrumbRootId
      * @return array object GalleryStatus a status code
      *               array the parent id sequence from root album down; given itemId not included
      */
-    function fetchParentSequence($itemId) {
+    function fetchParentSequence($itemId, $forceFullSequence=false) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryItemAttributesHelper_simple.class');
-	return GalleryItemAttributesHelper_simple::fetchParentSequence($itemId);
+	return GalleryItemAttributesHelper_simple::fetchParentSequence($itemId, $forceFullSequence);
     }
 
     /**

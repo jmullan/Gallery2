@@ -135,7 +135,7 @@ class GalleryItemAttributesHelper_simple {
     /**
      * @see GalleryCoreApi::fetchParentSequence
      */
-    function fetchParentSequence($itemId) {
+    function fetchParentSequence($itemId, $forceFullSequence=false) {
 	global $gallery;
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryItemAttributesMap',
@@ -156,7 +156,7 @@ class GalleryItemAttributesHelper_simple {
 	$result = array();
 	if (is_array($parentSequence)) {
 	    $filter = $gallery->getConfig('breadcrumbRootId');
-	    if ($itemId != $filter) {
+	    if ($itemId != $filter && !$forceFullSequence) {
 		foreach ($parentSequence as $id) {
 		    if ($id == $filter) {
 			$result = array((int)$id);
@@ -164,6 +164,8 @@ class GalleryItemAttributesHelper_simple {
 			$result[] = (int)$id;
 		    }
 		}
+	    } else if ($forceFullSequence) {
+		$result = $parentSequence;
 	    }
 	}
 

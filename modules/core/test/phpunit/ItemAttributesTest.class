@@ -505,6 +505,14 @@ class ItemAttributesTest extends GalleryTestCase {
 				  $album->getId()),
 			    $parentSequence,
 			    'virtual root parent sequence');
+
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId(), true);
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_album->getId(),
+				  $this->_items[1]->getId(),
+				  $album->getId()),
+			    $parentSequence,
+			    'virtual root, forced full parent sequence');
     }
 
     function testFetchItemizedDescendentCounts() {
