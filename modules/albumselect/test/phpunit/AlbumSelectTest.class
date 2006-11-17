@@ -86,6 +86,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	global $gallery;
 
 	$gallery->setConfig('defaultAlbumId', $this->_rootAlbumId);
+	$gallery->setConfig('breadcrumbRootId', $this->_rootAlbumId);
 	$_SERVER['REQUEST_URI'] = $this->_originalRequestUri;
 	GalleryDataCache::removeFromDisk(array('type' => 'module-data', 'module' => 'albumselect'));
 	parent::tearDown();
@@ -313,6 +314,7 @@ class AlbumSelectTest extends GalleryTestCase {
 
 	/* And now with an alternative root */
 	$gallery->setConfig('defaultAlbumId', $this->_album->getId());
+	$gallery->setConfig('breadcrumbRootId', $this->_album->getId());
 	$callbacks = new AlbumSelectCallbacks();
 	$ret = $callbacks->callback(
 	    array('albumTree' => true), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
