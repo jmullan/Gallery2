@@ -763,6 +763,53 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assert(!isset($data['ImageBlockData']['blocks'][0]['forceItem']), 'forceItem flag');
     }
 
+    function testImageBlockDefaultsParentIdToDefaultAlbumId() {
+	global $gallery;
+
+	list ($ret, $subAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($subAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$imagePath = GalleryCoreApi::getPluginBaseDir('module', 'core')
+	    . 'modules/core/test/data/test4.gif';
+	list ($ret, $subPhoto, $thumb) = $this->_addItem(
+	    $subAlbum->getId(), $imagePath, 'GalleryPhotoItem', null, 0);
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Prepare the item view counts to make sure it would select the one from the root album */
+	$ret = GalleryCoreApi::setItemViewCount($this->_photo->getId(), 100);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::setItemViewCount($subPhoto->getId(), 5);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Finally the feature under test */
+	$gallery->setConfig('defaultAlbumId', $subAlbum->getId());
+	$gallery->setConfig('breadcrumbRootId', $subAlbum->getId());
+
+	$data = $this->_doImageBlockCallback('viewedImage');
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'missing block');
+	if (count($data['ImageBlockData']['blocks'])) {
+	    $block = array_shift($data['ImageBlockData']['blocks']);
+	    $this->assertEquals(5, $block['viewCount'], 'view count of item under default album');
+	    $this->assertEquals($subPhoto->getId(), $block['id'], 'id of item under default album');
+	}
+    }
+
     function _doImageBlockCallback($blocks=null, $userId=null, $itemId=null) {
 	$smarty = new GallerySmarty();
 	$callbacks = new ImageBlockCallbacks();

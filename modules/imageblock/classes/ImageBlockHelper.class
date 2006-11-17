@@ -49,7 +49,15 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $params['blocks'] .= str_repeat('|' . $params['blocks'], $i - 1);
 	}
 	$params = array_merge($moduleParams, $params);
-	$parentId = isset($params['itemId']) ? $params['itemId'] : null;
+
+	if (isset($params['itemId'])) {
+	    $parentId = $params['itemId'];
+	} else {
+	    list ($ret, $parentId) = GalleryCoreApi::getDefaultAlbumId();
+	    if ($ret) {
+		return $ret;
+	    }
+	}
 	$show = array();
 	foreach (explode('|', $params['show']) as $key) {
 	    $show[$key] = 1;
@@ -530,9 +538,15 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $where[] = '[ImageBlockCacheMap::itemId] = [GalleryItemAttributesMap::itemId]';
 	}
 
-	if (isset($parentId)) {
+	list ($ret, $rootAlbumId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	/* Only use LIKE statement if necessary */
+	if (isset($parentId) && $parentId != $rootAlbumId) {
 	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ?';
-	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentId);
+	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentId, true);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -861,7 +875,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	     * We don't care about ERROR_MISSING_OBJECT because it's generated if
 	     * the album is at the top-level
 	     */
-	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentAlbum->getId());
+	    list ($ret, $sequence) =
+	    		GalleryCoreApi::fetchParentSequence($parentAlbum->getId(), true);
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret;
 	    }
