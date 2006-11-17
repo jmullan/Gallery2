@@ -65,6 +65,11 @@ class HttpAuthSiteAdminController extends GalleryController {
 
 	    foreach (array('httpAuthPlugin', 'authName', 'serverAuthPlugin', 'regexAuthPlugin',
 		    'authtypePattern', 'usernamePattern', 'usernameReplace') as $key) {
+		if (in_array($key,
+			     array('httpAuthPlugin', 'serverAuthPlugin', 'regexAuthPlugin'))) {
+		    /* Handle checkboxes */
+		    $form[$key] = !empty($form[$key]);
+		}
 		$ret = $module->setParameter($key, $form[$key]);
 		if ($ret) {
 		    return array($ret, null);
@@ -132,6 +137,11 @@ class HttpAuthSiteAdminView extends GalleryView {
 		    $form[$key] = $params[$key];
 		}
 	    }
+	}
+
+	/* Handle checkboxes */
+	foreach (array('httpAuthPlugin', 'serverAuthPlugin', 'regexAuthPlugin') as $key) {
+	    $form[$key] = !empty($form[$key]);
 	}
 
 	/* Render HTML body */
