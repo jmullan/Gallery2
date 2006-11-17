@@ -526,6 +526,7 @@ class GalleryUrlGenerator {
      *    'forceServerRelativeUrl' => true; to generate server-relative URLs if possible but no
      *        relative URLs (e.g. /gallery2/main.php instead of
      *        http://example.com/gallery2/main.php but never just main.php (without path))
+     *    'protocol' => string; to override the URL scheme
      * @return string URL
      */
     function generateUrl($params=array(), $options=array()) {
@@ -667,6 +668,11 @@ class GalleryUrlGenerator {
 	/* Add embed session id if needed */
 	if (isset($embedSessionString)) {
 	    $url .= ((strpos($url, '?') === false) ? '?' : '&amp;') . $embedSessionString;
+	}
+
+	/* Replace protocol with $options['protocol'].  See RFC1738 section 2.1. */
+	if (isset($options['protocol'])) {
+	    $url = preg_replace('/^[a-z0-9\+\.\-]+:/i', $options['protocol'] . ':', $url);
 	}
 
 	/*

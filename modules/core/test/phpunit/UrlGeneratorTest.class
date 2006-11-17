@@ -1514,6 +1514,11 @@ class UrlGeneratorTest extends GalleryTestCase {
 		array('forceSessionId' => false));
 	$this->assertEquals('phpunit_test.php', $url, 'alternate default album');
     }
+
+    function testGenerateUrlWithProtocol() {
+	$this->assertEquals('webdav://example.com/gallery2/phpunit_test.php?g2_a=b',
+	    $this->_urlGenerator->generateUrl(array('a' => 'b'), array('protocol' => 'webdav')));
+    }
 }
 
 class UrlGeneratorTestPlatform extends GalleryPlatform {
