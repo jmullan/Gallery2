@@ -298,7 +298,7 @@ class StorageTest extends GalleryTestCase {
 
 	/* Prepare mocked record set */
 	$recordSet = new StorageTestRecordSet(array(array(1, 6, '15')));
-	$storage->_db->setRecordSet($recordSet);
+	$storage->_db->setResults(array($recordSet));
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
 	if ($ret) {
@@ -446,6 +446,9 @@ class StorageTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
+	/* We expect two execute calls */
+	$storage->_db->setResults(array(new StorageTestRecordSet(), new StorageTestRecordSet()));
 
 	$ret = $storage->saveEntity($entity);
 	if ($ret) {
@@ -831,30 +834,93 @@ class StorageTest extends GalleryTestCase {
 	    $this->assertEquals(array($expected), $results->nextResult(), 'inserted string');
 	}
     }
+
+    function testOptimize() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/* Result for loadTableVersions */
+	$tablesRecordSet = new StorageTestRecordSet(array(array('Entity', 1, 0),
+							  array('AccessMap', 1, 6)));
+	$optimizeStatements = $storage->_getOptimizeStatements();
+	/* Results for optimize statements */
+	$expectedQueries = array();
+	foreach (array('Entity', 'AccessMap') as $tableName) {
+	    foreach ($optimizeStatements as $statement) {
+		$mockedResults[] = new StorageTestRecordSet();
+		$expectedQueries[] =
+			array(sprintf($statement, $storage->_tablePrefix . $tableName), false);
+	    }
+	}
+	array_unshift($mockedResults, $tablesRecordSet);
+	$storage->_db->setResults($mockedResults);
+
+	/* Execute the test */
+	$ret = $storage->optimize();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Ignore the loadTableVersions query */
+	array_shift($this->_results);
+	$this->assertEquals($expectedQueries, $this->_results);
+    }
+
+    function testOptimizeSpecificTables() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/* Result for loadTableVersions */
+	$tablesRecordSet = new StorageTestRecordSet(array(array('Entity', 1, 0),
+							  array('AccessMap', 1, 6),
+							  array('Item', 2, 0)));
+	$optimizeStatements = $storage->_getOptimizeStatements();
+	/* Results for optimize statements */
+	$expectedQueries = array();
+	foreach (array('Entity', 'Item') as $tableName) {
+	    foreach ($optimizeStatements as $statement) {
+		$mockedResults[] = new StorageTestRecordSet();
+		$expectedQueries[] =
+			array(sprintf($statement, $storage->_tablePrefix . $tableName), false);
+	    }
+	}
+	array_unshift($mockedResults, $tablesRecordSet);
+	$storage->_db->setResults($mockedResults);
+
+	/* Execute the test */
+	$ret = $storage->optimize(array('GalleryEntity', 'GalleryPhotoItem', 'GalleryItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Ignore the loadTableVersions query */
+	array_shift($this->_results);
+	$this->assertEquals($expectedQueries, $this->_results);
+    }
 }
 
 class StorageTestDB {
     var $_testCase;
     var $transCnt = 1; /* Pretend we're already in a transaction */
-    var $_recordSet;
+    var $_recordSets;
 
     function StorageTestDB(&$testCase) {
 	$this->_testCase =& $testCase;
-	$this->_recordSet = new StorageTestRecordSet();
+	$this->_recordSets = array(new StorageTestRecordSet());
     }
 
-    function setRecordSet($recordSet) {
-	$this->_recordSet = $recordSet;
+    function setResults($recordSets) {
+	$this->_recordSets = $recordSets;
     }
 
-    function execute($query, $data) {
+    function execute($query, $data=false) {
 	$this->_testCase->_results[] = array($query, $data);
-	return $this->_recordSet;
+	return empty($this->_recordSets) ? false : array_shift($this->_recordSets);
     }
 
     function SelectLimit($query, $nrows=-1, $offset=-1, $inputarr=false) {
 	$this->_testCase->_results[] = array($query, $nrows, $offset, $inputarr);
-	return $this->_recordSet;
+	return empty($this->_recordSets) ? false : array_shift($this->_recordSets);
     }
 
     function GenID($val) {

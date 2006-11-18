@@ -1299,6 +1299,14 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			    return $ret;
 			}
 
+			/* Remember altered tables for post-upgrade optimizations */
+			$altered = array($rawTableName);
+			$cacheKey = 'GalleryStorage::configureStore::alter';
+			if (GalleryDataCache::containsKey($cacheKey)) {
+			    $altered = array_merge(GalleryDataCache::get($cacheKey), $altered);
+			}
+			GalleryDataCache::put($cacheKey, $altered);
+
 			/* Reload all table versions, cause one has now changed */
 			list ($ret, $tableVersions) = $this->_loadTableVersions();
 			if ($ret) {
@@ -1653,7 +1661,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
      * @see GalleryStorage::optimize
      */
-    function optimize() {
+    function optimize($tableNames=null) {
 	global $gallery;
 
 	$ret = $this->_dbInit();
@@ -1667,10 +1675,23 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
+	/* Filter the list of tables if requested */
+	$tables = array_keys($tableVersions);
+	if (is_array($tableNames)) {
+	    $tables = array();
+	    foreach ($tableNames as $rawTableName) {
+		list ($tableName, $unused, $tableNameInSchema) =
+		    $this->_gs->_translateTableName($rawTableName);
+		if (isset($tableVersions[$tableNameInSchema])) {
+		    $tables[] = $tableNameInSchema;
+		}
+	    }
+	}
+
 	$statements = $this->_gs->_getOptimizeStatements();
 	if (!empty($statements)) {
 	    foreach ($statements as $statement) {
-		foreach (array_keys($tableVersions) as $tableName) {
+		foreach ($tables as $tableName) {
 		    $query = sprintf($statement, $this->_gs->_tablePrefix . $tableName);
 		    $gallery->guaranteeTimeLimit(300);
 		    $this->_gs->_traceStart();

@@ -212,17 +212,24 @@ class GalleryModule extends GalleryPlugin {
 		}
 	    }
 
-	    /*
-	     * The changes must be committed before the non-transactional optimize() can be
-	     * executed. 
-	     */
-	    $ret = $storage->checkPoint();
-	    if ($ret) {
-		return $ret;
-	    }
-	    $storage->optimize();
-	    if ($ret) {
-		return $ret;
+	    /* Optimize and analyze altered tables */
+	    $cacheKey = 'GalleryStorage::configureStore::alter';
+	    if (GalleryDataCache::containsKey($cacheKey)) {
+		/*
+		 * The changes must be committed before the non-transactional optimize() can be
+		 * executed. 
+		 */
+		$ret = $storage->checkPoint();
+		if ($ret) {
+		    return $ret;
+		}
+
+		$altered = GalleryDataCache::get($cacheKey);
+		$storage->optimize($altered);
+		if ($ret) {
+		    return $ret;
+		}
+		GalleryDataCache::remove($cacheKey);
 	    }
 	}
 

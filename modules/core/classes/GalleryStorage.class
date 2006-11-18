@@ -1000,11 +1000,13 @@ class GalleryStorage {
 
     /**
      * Optimize the database.
+     * @param array $tableNames (optional) of string tableName 1, tableName 2. Leave null to
+     *        optimize all tables.
      * @return object GalleryStatus a status code
      */
-    function optimize() {
+    function optimize($tableNames=null) {
 	$extras =& $this->_getExtras();
-	return $extras->optimize();
+	return $extras->optimize($tableNames);
     }
 
     /**
