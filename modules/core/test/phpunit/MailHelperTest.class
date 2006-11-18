@@ -58,6 +58,8 @@ class MailHelperTest extends GalleryTestCase {
 	    'subject' => 'MailHelperTest subject',
 	    'body' => 'MailHelperTest test string');
 	$expectedData = $emailData;
+	/* Don't expect whitespace to be stripped from tpl, so expect 2 leading spaces in body */
+	$expectedData['body'] = "Hello:\n  " . $expectedData['body'];
 	$expectedData['headers'] = array(
 	    'Date: ELIDED',
 	    'Content-Type: text/plain; charset="utf-8"',

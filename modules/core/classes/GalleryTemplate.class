@@ -60,7 +60,7 @@ class GalleryTemplate {
     var $_compiledTemplateDir;
 
 
-    function GalleryTemplate($templateDir, $initSmarty=true) {
+    function GalleryTemplate($templateDir, $initSmarty=true, $trimWhitespace=true) {
 	global $gallery;
 	$this->_templateDir = $templateDir;
 
@@ -68,7 +68,7 @@ class GalleryTemplate {
 	$this->_compiledTemplateDir = $gallery->getConfig('data.smarty.templates_c') .
 	    '%%' . sprintf("%u", crc32($templateDir));
 	if ($initSmarty) {
-	    $this->_smarty = GalleryTemplate::_getSmarty();
+	    $this->_smarty = GalleryTemplate::_getSmarty($trimWhitespace);
 	}
     }
 
@@ -279,7 +279,7 @@ class GalleryTemplate {
      * @static
      * @access private
      */
-    function _getSmarty() {
+    function _getSmarty($trimWhitespace) {
 	global $gallery;
 
 	GalleryCoreApi::requireOnce('modules/core/classes/GallerySmarty.class');
@@ -312,7 +312,9 @@ class GalleryTemplate {
 					 'resourceGetSecure',
 					 'resourceGetTrusted'));
 
-	$smarty->register_prefilter(array('GalleryTemplate', 'preFilter'));
+	if ($trimWhitespace) {
+	    $smarty->register_prefilter(array('GalleryTemplate', 'preFilter'));
+	}
 
 	$smarty->assign('head', array('tpl' => array(), 'style' => array()));
 

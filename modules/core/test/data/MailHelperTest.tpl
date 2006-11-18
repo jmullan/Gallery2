@@ -5,4 +5,5 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 {* Template used by modules/core/test/phpunit/MailHelperTest.class *}
-{$body}
+Hello:
+  {$body}
