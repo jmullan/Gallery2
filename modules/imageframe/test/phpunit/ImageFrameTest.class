@@ -110,8 +110,8 @@ class ImageFrameTest extends GalleryTestCase {
 	 * not in $smarty so we can use it.  This unit test verifies this behavior
 	 * (in case it changes in a future version of smarty).
 	 */
-	$smarty1 = GalleryTemplate::_getSmarty();
-	$smarty2 = GalleryTemplate::_getSmarty();
+	$smarty1 = GalleryTemplate::_getSmarty(true);
+	$smarty2 = GalleryTemplate::_getSmarty(true);
 	$smarty1->template_dir = dirname(dirname(__FILE__));
 	$smarty2->template_dir = dirname(dirname(__FILE__));
 
@@ -145,7 +145,7 @@ class ImageFrameDummyGalleryTemplate {
     function &getVariableByReference($key) {
 	return $this->data[$key];
     }
-    function &_getSmarty() {
+    function &_getSmarty($trimWhitespace) {
 	return $this;
     }
     function register_block() { }
