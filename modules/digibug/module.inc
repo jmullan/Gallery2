@@ -73,6 +73,7 @@ class DigibugModule extends GalleryModule {
 	case '0.3.3':
 	case '0.3.4':
 	case '0.3.5':
+	case '0.9.0':
 
 	case 'end of upgrade path':
 	    break;
