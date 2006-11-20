@@ -9,6 +9,7 @@ var app_ww, app_wh, // Window width/height
     app_agent = navigator.userAgent.toLowerCase(), // Browser type
     app_version = parseInt(navigator.appVersion),
     app_is_ie = app_agent.indexOf('msie') >= 0 && app_agent.indexOf('opera') < 0,
+    app_is_ie7 = app_agent.indexOf('msie 7') >= 0 && app_agent.indexOf('opera') < 0,
     app_is_safari = app_agent.indexOf('safari') >= 0,
     app_body; // Scrollable document container (<body> element, or html for IE)
 if (window.attachEvent) {
@@ -19,7 +20,7 @@ if (window.attachEvent) {
   window.addEventListener("unload", app_setcookie, false);
 }
 function app_init() {
-  if (!app_is_ie && !app_is_safari) album_setfixedtitle();
+  if (!app_is_ie && !app_is_safari || app_is_ie7) album_setfixedtitle();
   app_body = document.getElementById('hybridMain');
   while (app_body && app_body.tagName != 'BODY') app_body = app_body.parentNode;
   if (app_is_ie) app_body = app_body.parentNode;
