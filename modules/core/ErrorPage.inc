@@ -76,6 +76,9 @@ class ErrorPageView extends GalleryView {
 	if ($errorCode & ERROR_MISSING_OBJECT) {
 	    $ErrorPage['code']['missingObject'] = true;
 	}
+	if ($errorCode & ERROR_REQUEST_FORGED) {
+	    $ErrorPage['code']['requestAuthenticationFailure'] = true;
+	}
 
 	if ($ErrorPage['isAdmin']) {
 	    $ErrorPage['phpversion'] = phpversion();

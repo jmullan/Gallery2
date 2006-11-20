@@ -100,6 +100,8 @@
     var postUrl = '{g->url}';
     var commandArg = '{g->formVar var="command"}';
     var viewArg = '{g->formVar var="view"}';
+    var authTokenArg = '{g->formVar var="authToken"}';
+    authTokenArg += '=' + {$AdminRepository.authToken};
     var repositoryArgs = [
       '{g->formVar var="form[repositories][released]"}',
       '{g->formVar var="form[repositories][experimental]"}',

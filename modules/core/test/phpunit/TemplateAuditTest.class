@@ -56,6 +56,12 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	$this->_exceptions = array();
 	$this->_exceptions['header'] = array();
 
+	$this->_exception['hiddenFormVars'] = array(
+	    'modules/digibug/templates/DigibugPrintPhotos.tpl',
+	    'modules/shutterfly/templates/PrintPhotos.tpl',
+	    'modules/uploadapplet/templates/ItemAddUploadApplet.tpl'
+	    );
+
 	/* Get rid of backslashes so that we can perform string compares later */
 	for ($i = 0; $i < sizeof($this->_expectedHeaderLines); $i++) {
 	    $this->_expectedHeaderLines[$i] = stripslashes($this->_expectedHeaderLines[$i]);
@@ -83,6 +89,11 @@ class TemplateAuditTest extends CodeAuditTestCase {
      * @see CodeAuditTestCase::checkFile
      */
     function checkFile($fileName, $buffer) {
+	$truncatedFileName = substr($fileName,
+				    strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
+
+	$this->_checkHiddenFormVars($truncatedFileName, $buffer);
+
 	if (preg_match('/^' . $this->_headerPattern . '/', $buffer)) {
 	    return;
 	} else {
@@ -97,9 +108,6 @@ class TemplateAuditTest extends CodeAuditTestCase {
 		    break;
 		}
 	    }
-
-	    $truncatedFileName =
-		substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
 
 	    if (empty($revision)) {
 		$this->assert(false, sprintf('[%s] Missing revision line', $truncatedFileName));
@@ -118,6 +126,32 @@ class TemplateAuditTest extends CodeAuditTestCase {
 
 	    if ($this->_errorCount > 3) {
 		$this->halt();
+	    }
+	}
+    }
+    function _checkHiddenFormVars($fileName, $buffer) {
+	$inHtmlForm = false;
+	$hasHiddenFormVars = false;
+	$formStartLine = 0;
+	$lines = split("(\r\n|\n)", $buffer);
+
+	if (in_array($fileName, $this->_exception['hiddenFormVars'])) {
+	    return;
+	}
+
+	for ($i = 0; $i < count($lines); $i++) {
+	    if (preg_match('/<form\s/', $lines[$i], $matches)) {
+		$inHtmlForm = true;
+		$formStartLine = $i;
+	    }
+	    if (preg_match('/hiddenFormVars/', $lines[$i], $matches)) {
+		$hasHiddenFormVars = true;
+	    }
+	    if (preg_match('/<\/form>/', $lines[$i], $matches)) {
+		$this->assert($hasHiddenFormVars, "$fileName: Form (line $formStartLine) is " .
+				"missing hidden form vars");
+		$inHtmlForm = false;
+		$hasHiddenFormVars = false;
 	    }
 	}
     }

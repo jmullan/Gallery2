@@ -48,6 +48,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $ret;
 	}
+	$_SERVER['HTTP_USER_AGENT'] = 'Nokia6630/1.0 (2.39.129) Series60/2.6 Profile/MIDP-2.0';
     }
 
     function tearDown() {

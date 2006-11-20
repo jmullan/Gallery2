@@ -99,6 +99,15 @@ class GalleryView {
     }
 
     /**
+     * Does this view change any data? Only controllers should change data, but AJAX and some
+     * immediate views are handled in views in Gallery.
+     * @return bool true if the view changes data
+     */
+    function isControllerLike() {
+	return false;
+    }
+
+    /**
      * Should session be saved and session cookie sent when this view is accessed?
      * @return boolean
      */

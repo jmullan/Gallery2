@@ -34,11 +34,24 @@ class LoginController extends GalleryController {
     function handleRequest($form) {
 	ImageUploadHelper::logRequest('LoginController');
 
+	/* Request forgery protection */
+	$httpUserAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+	if (strstr($httpUserAgent, 'Nokia') === false) {
+	    return array(GalleryCoreApi::error(ERROR_REQUEST_FORGED), null);
+	}
+
 	$results['delegate'] = array('view' => 'nokiaupload.Login');
 	$results['status'] = ImageUploadHelper::doLogin();
 	$results['error'] = array();
 
 	return array(null, $results);
+    }
+
+    /**
+     * @see GalleryController::omitAuthTokenCheck
+     */
+    function omitAuthTokenCheck() {
+	return true;
     }
 }
 

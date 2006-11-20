@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
+
 /**
  * Test GalleryController functionality
  * @package GalleryCore
@@ -32,14 +34,29 @@ class ControllerTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
+	
+	global $gallery;
+	$session =& $gallery->getSession();
+
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	GalleryPluginHelper_medium::setPluginInstance('module', 'controllertest',
 						      new ControllerTestModule());
+	$session->remove('core.authToken');
+	$this->_originalIsPersistentSession = $session->isPersistent();
+	GalleryUtilities::removeRequestVariable('authToken');
+    }
+
+    function tearDown() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$session->remove('core.authToken');
+	$session->_isPersistent = $this->_originalIsPersistentSession;
+	parent::tearDown();
     }
 
     function testLoadControllerSuccess() {
-	GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
 	list ($ret, $controller) = GalleryController::loadController('core.ItemEdit');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -48,7 +65,6 @@ class ControllerTest extends GalleryTestCase {
     }
 
     function testLoadControllerFail() {
-	GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
 	list ($ret, $controller) =
 	    GalleryController::loadController('controllertest.SomeRandomController');
 	if ($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
@@ -68,6 +84,86 @@ class ControllerTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assert(isset($controller));
+    }
+
+    function testAssertIsGenuineRequestDefaultsToFalse() {
+	$ret = GalleryController::assertIsGenuineRequest();
+	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
+	    /* this is what we expect */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->assert(false, 'should throw an error by default');
+	}
+    }
+
+    function testAssertIsGenuineRequestHandlesEmptyValue() {
+	GalleryUtilities::putRequestVariable('authToken', '');
+	$ret = GalleryController::assertIsGenuineRequest();
+	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
+	    /* this is what we expect */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->assert(false);
+	}
+    }
+
+    function testAssertIsGenuineRequestWithValidAuthToken() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$validAuthToken = 'ABCDEF123456';
+	$session->put('core.authToken', $validAuthToken);
+	GalleryUtilities::putRequestVariable('authToken', $validAuthToken);
+	$ret = GalleryController::assertIsGenuineRequest();
+	if ($ret) {
+	    $this->fail('specified auth token in request parameters should be correct');
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testAssertIsGenuineRequestWithInValidAuthToken() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$validAuthToken = 'ABCDEF123456';
+	$session->put('core.authToken', $validAuthToken);
+	GalleryUtilities::putRequestVariable('authToken', '098765432109');
+	$ret = GalleryController::assertIsGenuineRequest();
+	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
+	    /* this is what we expect */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->assert(false, 'invalid auth token was accepted');
+	}
+    }
+
+    function testAssertIsGenuineRequestIgnoresNonPersistentSessions() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$session->_isPersistent = false;
+	$ret = GalleryController::assertIsGenuineRequest();
+	if ($ret) {
+	    $this->fail('check should be omitted for non-persistent sessions');
+	    return $this->failWithStatus($ret);
+	}
+
+	$validAuthToken = 'ABCDEF123456';
+	$session->put('core.authToken', $validAuthToken);
+	GalleryUtilities::putRequestVariable('authToken', '098765432109');
+	$ret = GalleryController::assertIsGenuineRequest();
+	if ($ret) {
+	    $this->fail('specified auth token should be ignored for non-persistent sessions');
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testOmitAuthTokenCheckDefaultsToFalse() {
+	$controller = new GalleryController();
+	$this->assert(!$controller->omitAuthTokenCheck(), 'should default to false');
     }
 }
 

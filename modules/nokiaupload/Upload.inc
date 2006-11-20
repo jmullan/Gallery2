@@ -34,11 +34,24 @@ class UploadController extends GalleryController {
     function handleRequest($form) {
 	ImageUploadHelper::logRequest('UploadController');
 
+	/* Request forgery protection */
+	$httpUserAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+	if (strstr($httpUserAgent, 'Nokia') === false) {
+	    return array(GalleryCoreApi::error(ERROR_REQUEST_FORGED), null);
+	}
+
 	$results['delegate'] = array('view' => 'nokiaupload.Upload');
 	$results['status'] = ImageUploadHelper::doUpload();
 	$results['error'] = array();
 
 	return array(null, $results);
+    }
+
+    /**
+     * @see GalleryController::omitAuthTokenCheck
+     */
+    function omitAuthTokenCheck() {
+	return true;
     }
 }
 

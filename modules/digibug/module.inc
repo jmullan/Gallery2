@@ -33,11 +33,11 @@ class DigibugModule extends GalleryModule {
 	$this->setId('digibug');
 	$this->setName($gallery->i18n('Digibug'));
 	$this->setDescription($gallery->i18n('Digibug Photo Printing Module'));
-	$this->setVersion('0.9.0'); /* Update upgrade() too */
+	$this->setVersion('0.9.1'); /* Update upgrade() too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
 	$this->setRequiredCoreApi(array(7, 2));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredModuleApi(array(3, 3));
     }
 
     /**
@@ -130,8 +130,10 @@ class DigibugModule extends GalleryModule {
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
-	$links = array();
+	global $gallery;
+	$session =& $gallery->getSession();
 
+	$links = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    if (isset($wantsDetailedLinks[$itemId]) &&
@@ -140,7 +142,8 @@ class DigibugModule extends GalleryModule {
 		$links[$itemId][] =
 		    array('text' => $this->translate('Print on Digibug.com'),
 			  'params' => array('view' => 'digibug.DigibugPrintPhotos',
-					    'itemId' => $itemId, 'returnUrl' => '%CURRENT_URL%'));
+			  		    'itemId' => $itemId, 'returnUrl' => '%CURRENT_URL%',
+					    'authToken' => $session->getAuthToken()));
 	    }
 	}
 

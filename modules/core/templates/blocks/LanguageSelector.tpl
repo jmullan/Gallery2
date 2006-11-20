@@ -9,6 +9,7 @@
 <div class="{$class}">
   <form id="LanguageSelector" method="post"
 	action="{g->url arg1="controller=core.ChangeLanguage" arg2="return=1"}"><div>
+	{g->hiddenFormVars}
     <h3> {g->text text="Language"} </h3>
     <select name="{g->formVar var="language"}" onchange="this.form.submit()" style="direction:ltr">
       {html_options options=$block.core.LanguageSelector.list selected=$block.core.LanguageSelector.language}

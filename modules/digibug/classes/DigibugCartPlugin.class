@@ -57,7 +57,8 @@ class DigibugCartPlugin extends CartPluginInterface_1_0 {
 		array('view' => 'cart.ViewCart'), array('forceFullUrl' => true));
 
 	return array(null,
-		     array('view' => 'digibug.DigibugPrintPhotos', 'returnUrl' => $returnUrl));
+		     array('view' => 'digibug.DigibugPrintPhotos',
+			   'authToken' => $session->getAuthToken(), 'returnUrl' => $returnUrl));
     }
 }
 ?>

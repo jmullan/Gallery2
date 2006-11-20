@@ -102,6 +102,7 @@ class DigibugCartPluginTest extends GalleryTestCase {
     function testFulfillCart() {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
+	$session =& $gallery->getSession();
 
 	$cartItemIds = array();
 	for ($i = 0; $i < count($this->_items); $i++) {
@@ -118,10 +119,10 @@ class DigibugCartPluginTest extends GalleryTestCase {
 	$returnUrl = $urlGenerator->generateUrl(array('view' => 'cart.ViewCart'),
 						array('forceFullUrl' => true));
 	$this->assertEquals(
-		array('view' => 'digibug.DigibugPrintPhotos', 'returnUrl' => $returnUrl),
+		array('view' => 'digibug.DigibugPrintPhotos',
+		      'authToken' => $session->getAuthToken(), 'returnUrl' => $returnUrl),
 		$urlParams);
 
-	$session =& $gallery->getSession();
 	$printCart = $session->get('digibug.cart');
 	$this->assertEquals($cartItemIds, $printCart, 'cart');
 

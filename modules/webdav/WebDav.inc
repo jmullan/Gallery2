@@ -118,6 +118,7 @@ class WebDavController extends GalleryController {
 		/* Until there's a better way to delegate to ItemAdd */
 		GalleryUtilities::putRequestVariable('itemId', $parentId);
 		GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
+		/* Let the ItemAddPlugin handle the replacement for the auth-token check */
 		list ($ret, $data) = ItemAddController::handleRequest($form);
 		if ($ret) {
 		    return array($ret, null);
@@ -131,6 +132,13 @@ class WebDavController extends GalleryController {
 				 'status' => array(),
 				 'error' => array()));
     }
+
+    /**
+     * @see GalleryController::omitAuthTokenCheck
+     */
+    function omitAuthTokenCheck() {
+	return true;
+    }
 }
 
 class WebDavView extends GalleryView {
@@ -140,6 +148,14 @@ class WebDavView extends GalleryView {
      */
     function isImmediate() {
 	return true;
+    }
+
+    /**
+     * @see GalleryView::isControllerLike
+     */
+    function isControllerLike() {
+	/* Although this view is controller-like, we return false since cannot add authTokens */
+	return false;
     }
 
     /**

@@ -35,6 +35,13 @@ class DigibugPrintPhotosView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::isControllerLike
+     */
+    function isControllerLike() {
+	return true;
+    }
+
+    /**
      * @see GalleryView::renderImmedate
      */
     function renderImmediate($status, $error) {

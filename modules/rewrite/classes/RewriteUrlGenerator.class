@@ -126,6 +126,11 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	    $options['forceSessionId'] = true;
 	}
 
+	/* Check if we are forced to append the auth token */
+	if (!empty($params['controller'])) {
+	    $options['useAuthToken'] = true;
+	}
+
 	$trueParams = $params;
 	/* Parse and replace all keywords */
 	$url = $shortUrl['pattern'];

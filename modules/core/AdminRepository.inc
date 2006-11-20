@@ -240,6 +240,7 @@ class AdminRepositoryView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
+	$session =& $gallery->getSession();
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
@@ -355,6 +356,7 @@ class AdminRepositoryView extends GalleryView {
 	$AdminRepository['writeable'] = array(
 	    'modules' => $platform->is_writeable("$baseName/modules"),
 	    'themes' => $platform->is_writeable("$baseName/themes"));
+	$AdminRepository['authToken'] = $session->getAuthToken();
 
 	/* Render the HTML body */
 	$template->setVariable('AdminRepository', $AdminRepository);

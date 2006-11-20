@@ -135,6 +135,7 @@ class GalleryTemplateAdapter {
     function hiddenFormVars($params, &$smarty) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
+	$session =& $gallery->getSession();
 	$vars = array();
 
 	/* The 'return' url */
@@ -171,6 +172,9 @@ class GalleryTemplateAdapter {
 	    /* First time we load this form */
 	    $vars['formUrl'] = $urlGenerator->getNavigationReturnUrl();
 	}
+
+	/* Add the auth token to all controller requests */
+	$vars['authToken'] = $session->getAuthToken();
 
 	$out = '';
 	foreach ($vars as $key => $value) {
@@ -419,13 +423,24 @@ class GalleryTemplateAdapter {
      * @param object Smarty $smarty the smarty instance
      */
     function autoComplete($params, $content, &$smarty) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
 	if (!isset($content)) {
-	    if (!isset($this->_callCount['autoComplete'])) {
-		$this->_callCount['autoComplete'] = 0;
-	    }
 	    return;
 	}
+
+	if (!isset($this->_callCount['autoComplete'])) {
+	    $this->_callCount['autoComplete'] = 0;
+	}
+
 	$url = trim($content);
+	/* Add the auth token to the URL */
+	if (strstr($url, 'authToken') === false) {
+	    $url = GalleryUrlGenerator::appendParamsToUrl($url,
+	    	array('authToken' => $session->getAuthToken()));
+	    $url = str_replace('&amp;', '&', $url);
+	}
 
 	/* Guard template vars so that the include doesn't pollute our namespace */
 	$save = $smarty->_tpl_vars;

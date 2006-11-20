@@ -164,6 +164,12 @@ class GallerySession {
      */
     var $_expirationLimit = 500;
 
+    /**
+     * Authentication token to verify genuine requests.
+     * @var string
+     * @access private
+     */
+    var $_authToken = '';
 
     /**
      * Either create a new session, or attach to an existing one.
@@ -267,7 +273,7 @@ class GallerySession {
     }
 
     /**
-     * Start session by ensuring we've got a valid, unqiue sessionId and send cookie if necessary.
+     * Start session by ensuring we've got a valid, unique sessionId and send cookie if necessary.
      * @return object GalleryStatus a status code
      */
     function start() {
@@ -740,11 +746,13 @@ class GallerySession {
 	     * - language: only useful if it's different from what we'd have set anyway
 	     * - embed.id.externalUser: not important if mapped to the anonymousUser, else the
 	     *                          userId is not == anonymousUserId
+	     * - authToken: we only check the authToken for persistent sessions
 	     */
 	    unset($sessionDataCopy['core.lastViewed']);
 	    unset($sessionDataCopy['permissionCache']);
 	    unset($sessionDataCopy['core.navigation']);
 	    unset($sessionDataCopy['embed.id.externalUser']);
+	    unset($sessionDataCopy['core.authToken']);
 	    list ($ret, $detectedLanguageCode) = GalleryTranslator::getDefaultLanguageCode();
 	    if ($ret) {
 		return array($ret, null);
@@ -1416,6 +1424,37 @@ class GallerySession {
      */
     function isSearchEngineSession() {
 	return $this->_isSearchEngineSession;
+    }
+
+    /**
+     * Returns the authentication token associated with this session.
+     * @return string the authentication token
+     */
+    function getAuthToken() {
+	$authToken = $this->get('core.authToken');
+	if (empty($authToken)) {
+	    global $gallery;
+	    $phpVm = $gallery->getPhpVm();
+	    $authToken = substr($phpVm->md5(uniqid(microtime() . mt_rand())), 0, 12);
+	    $this->put('core.authToken', $authToken);
+	}
+	return $authToken;
+    }
+
+    /**
+     * Checks the given authentication token and resets the internal token on failure.
+     * @param string $authToken Authentication token to be verified
+     * @return bool true if the given 
+     */
+    function isCorrectAuthToken($authToken) {
+	$internalAuthToken = $this->get('core.authToken');
+	if (empty($authToken) || empty($internalAuthToken)
+		|| strcmp($internalAuthToken, $authToken)) {
+	    $this->put('core.authToken', null);
+	    return false;
+	} else {
+	    return true;
+	}
     }
 }
 

@@ -398,6 +398,22 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals($fileSize, $data['size']);
     }
 
+    function testAddMustBePutRequest() {
+	$_SERVER['REQUEST_METHOD'] = 'POST';
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
+	GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
+	list ($ret, $data) = ItemAddController::handleRequest(array());
+	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
+	    /* this is what we expect */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->assert(false, 'HTTP PUT check was not enforced');
+	}
+    }
+
     function testReplace() {
 	global $gallery;
 	$platform =& $gallery->getPlatform();

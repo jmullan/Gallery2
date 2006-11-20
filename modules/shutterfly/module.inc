@@ -33,11 +33,11 @@ class ShutterflyModule extends GalleryModule {
 	$this->setId('shutterfly');
 	$this->setName($gallery->i18n('Shutterfly'));
 	$this->setDescription($gallery->i18n('Shutterfly Photo Printing Module'));
-	$this->setVersion('1.0.4'); /* Update upgrade() too */
+	$this->setVersion('1.0.5'); /* Update upgrade() too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(7, 4));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredModuleApi(array(3, 3));
     }
 
     /**
@@ -89,6 +89,7 @@ class ShutterflyModule extends GalleryModule {
 	case '1.0.1':
 	case '1.0.2':
 	case '1.0.3':
+	case '1.0.4':
 
 	case 'end of upgrade path':
 	    break;
@@ -119,6 +120,9 @@ class ShutterflyModule extends GalleryModule {
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
 	$links = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
@@ -127,8 +131,9 @@ class ShutterflyModule extends GalleryModule {
 		    GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		$links[$itemId][] =
 		    array('text' => $this->translate('Print on Shutterfly.com'),
-			  'params' => array('view' => 'shutterfly.PrintPhotos',
-					    'itemId' => $itemId, 'returnUrl' => '%CURRENT_URL%'));
+			  'params' => array('view' => 'shutterfly.PrintPhotos', 'itemId' => $itemId,
+					    'returnUrl' => '%CURRENT_URL%'),
+					    'authToken' => $session->getAuthToken());
 	    }
 	}
 

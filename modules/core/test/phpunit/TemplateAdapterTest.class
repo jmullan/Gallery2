@@ -200,6 +200,24 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$this->assertEquals(array('href' => 'themes/mock/templates/local/foo.css'),
 			    $results);
     }
+
+    function testAutoCompleteIncludesAuthToken() {
+	global $gallery;
+	$session =& $gallery->getSession();
+	$this->_setupAdapterWithMocks();
+
+	$url = 'http://example.com/main.php?foo=bar';
+	$this->_mockSmarty->_tpl_vars = 1;
+	$this->_templateAdapter->autoComplete(
+				array('element' => 'giFormUsername'), $url, $this->_mockSmarty);
+	$expectedUrl = $url . '&g2_authToken=' . $session->getAuthToken();
+	$this->assertEquals(
+	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/AutoComplete.tpl',
+		  'smarty_include_vars' => array('element' => 'giFormUsername',
+						 'url' => $expectedUrl,
+			      'callCount' => 1)),
+	    $this->_mockSmarty->_includes[0]);
+    }
 }
 
 class TemplateAdapterMockTheme {
@@ -209,6 +227,11 @@ class TemplateAdapterMockTheme {
 }
 
 class TemplateAdapterMockSmarty {
+    var $_includes = array();
+
+    function _smarty_include($params) {
+	$this->_includes[] = $params;
+    }
 }
 
 class TemplateAdapterMockUrlGenerator {

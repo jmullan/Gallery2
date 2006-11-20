@@ -2084,6 +2084,8 @@ class CoreModuleExtras {
 	    if ($ret) {
 		return $ret;
 	    }
+	case '1.1.21':
+	    /* Added authentication token */
 
 	case 'end of upgrade path':
 	    /*
@@ -2365,6 +2367,7 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 
 	case '1.1.19':
 	case '1.1.20':
+	case '1.1.21':
 
 	case 'end of upgrade path':
 	    /*

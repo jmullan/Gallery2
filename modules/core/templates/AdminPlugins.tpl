@@ -191,37 +191,37 @@
 	    &nbsp;
 	  {else}
             <span id="action-install-{$plugin.type}-{$plugin.id}" style="display: none">
-              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=install"}')">
+              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=install" useAuthToken=1}')">
                 {g->text text="install"}
               </a>
             </span>
             <span id="action-upgrade-{$plugin.type}-{$plugin.id}" style="display: none">
-              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=upgrade"}')">
+              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=upgrade" useAuthToken=1}')">
                 {g->text text="upgrade"}
               </a>
             </span>
             <span id="action-configure-{$plugin.type}-{$plugin.id}" style="display: none">
-              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=configure"}')">
+              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=configure" useAuthToken=1}')">
                 {g->text text="configure"}
               </a> |
             </span>
             <span id="action-activate-{$plugin.type}-{$plugin.id}" style="display: none">
-              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=activate"}')">
+              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=activate"  useAuthToken=1}')">
                 {g->text text="activate"}
               </a> |
             </span>
             <span id="action-deactivate-{$plugin.type}-{$plugin.id}" style="display: none">
-              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=deactivate"}')">
+              <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=deactivate" useAuthToken=1}')">
                 {g->text text="deactivate"}
               </a> |
             </span>
             <span id="action-uninstall-{$plugin.type}-{$plugin.id}" style="display: none">
-              <a style="cursor: pointer" onclick="verify(uninstallPrompt, '{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=uninstall"}')">
+              <a style="cursor: pointer" onclick="verify(uninstallPrompt, '{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=uninstall" useAuthToken=1}')">
                 {g->text text="uninstall"}
               </a>
             </span>
             <span id="action-delete-{$plugin.type}-{$plugin.id}" style="display: none">
-              | <a style="cursor: pointer" onclick="verify(deletePrompt, '{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=delete"}')">
+              | <a style="cursor: pointer" onclick="verify(deletePrompt, '{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=delete" useAuthToken=1}')">
                 {g->text text="delete"}
               </a>
             </span>

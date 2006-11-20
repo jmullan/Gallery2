@@ -55,10 +55,18 @@ class GalleryRemoteController extends GalleryController {
     }
 
     /**
+     * @see GalleryController::omitAuthTokenCheck
+     */
+    function omitAuthTokenCheck() {
+	return true;
+    }
+
+    /**
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
 	global $gallery;
+	$session =& $gallery->getSession();
 
 	$start = array_sum(explode(' ', microtime()));
 
@@ -67,6 +75,32 @@ class GalleryRemoteController extends GalleryController {
 	$grStatusCodes = GalleryRemoteConstants::getStatusCodes();
 
 	if (!empty($form['cmd'])) {
+	    /* Request forgery check: Only allow whitelisted, view-like operations */
+	    $gallery->debug('GR Command: ' . $form['cmd']);
+	    switch ($form['cmd']) {
+	    case 'login':
+	    case 'fetch-albums':
+	    case 'fetch-albums-prune':
+	    case 'fetch-album-images':
+	    case 'album-properties':
+	    case 'image-properties':
+	    case 'no-op':
+		$gallery->debug('No CSRF check');
+		break;
+	    default:
+		/* Backwards-compatible request-forgery protection based on the user-agent string */
+		$httpUserAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+		if (strstr($httpUserAgent, 'Gallery Remote') === false
+			&& strstr($httpUserAgent, 'RPT-HTTPClient') === false) {
+		    /* Newer GalleryRemote versions handle auth tokens */
+		    $ret = GalleryController::assertIsGenuineRequest();
+		    if ($ret) {
+			$gallery->debug('Unrecognized User Agent: '  . $httpUserAgent);
+			return array(GalleryCoreApi::error(ERROR_REQUEST_FORGED), null);
+		    }
+		}
+	    }
+
 	    switch ($form['cmd']) {
 	    case 'login':
 		$ret = $this->login($form, $response);
@@ -162,6 +196,10 @@ class GalleryRemoteController extends GalleryController {
 	if (!empty($status['controllerError'])) {
 	    $response->setProperty('debug_exception',
 				   $status['controllerError']->getErrorMessage());
+	}
+
+	if ($session->isPersistent()) {
+	    $response->setProperty('auth_token', $session->getAuthToken());
 	}
 
 	$status['controllerResponse'] = $response;

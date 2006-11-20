@@ -115,6 +115,18 @@ function GalleryMain($embedded=false) {
 	    /* Nuke our transaction, too */
 	    $storage =& $gallery->getStorage();
 	    $storage->rollbackTransaction();
+
+	    /* Reset the auth token */
+	    if ($ret->getErrorCode() & ERROR_REQUEST_FORGED) {
+		$session =& $gallery->getSession();
+		$ret2 = $storage->beginTransaction();
+		if (!$ret2) {
+		    $ret2 = $session->save();
+		}
+		if (!$ret2) {
+		    $storage->commitTransaction();
+		}
+	    }
 	}
     } else if (isset($g2Data['redirectUrl'])) {
 	/* If we're in debug mode, show a redirect page */
@@ -206,6 +218,14 @@ function _GalleryMain($embedded=false) {
 
 	/* Get our form and return variables */
 	$form = GalleryUtilities::getFormVariables('form');
+
+	/* Verify the genuineness of the request */
+	if (!$controller->omitAuthTokenCheck()) {
+	    $ret = GalleryController::assertIsGenuineRequest();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
 
 	/* Let the controller handle the input */
 	list ($ret, $results) = $controller->handleRequest($form);
@@ -359,6 +379,14 @@ function _GalleryMain($embedded=false) {
     } else {
 	/* Initialize our container for template data */
 	$gallery->setCurrentView($viewName);
+
+	if ($view->isControllerLike()) {
+	    /* Verify the genuineness of the request */
+	    $ret = GalleryController::assertIsGenuineRequest();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
 
 	/* If we render directly to the browser, we need a session before, or no session at all */
 	if ($view->isImmediate() || $viewName == 'core.ProgressBar') {

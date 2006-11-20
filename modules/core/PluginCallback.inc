@@ -42,6 +42,13 @@ class PluginCallbackView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::isControllerLike
+     */
+    function isControllerLike() {
+	return true;
+    }
+
+    /**
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {

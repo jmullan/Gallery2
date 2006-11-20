@@ -15,6 +15,8 @@
 	{g->text text="Database Error"}
       {elseif isset($ErrorPage.code.platformFailure)}
 	{g->text text="Platform Error"}
+      {elseif isset($ErrorPage.code.requestAuthenticationFailure)}
+	{g->text text="Authentication Failure"}
       {else}
 	{g->text text="Error"}
       {/if}
@@ -41,6 +43,10 @@
     {elseif isset($ErrorPage.code.securityViolation)}
       <p class="giDescription">
 	{g->text text="The action you attempted is not permitted."}
+      </p>
+    {elseif isset($ErrorPage.code.requestAuthenticationFailure)}
+      <p class="giDescription">
+	{g->text text="Your change cannot be completed due to a loss of session data. Please try again. If it still doesn't work, try logging out and logging back in."}
       </p>
     {elseif isset($ErrorPage.code.storageFailure)}
       <p class="giDescription">

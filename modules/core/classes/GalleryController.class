@@ -188,12 +188,52 @@ class GalleryController {
     }
 
     /**
+     * Whether the controller opts-out from the framework's auth token check.
+     *
+     * Some protocols don't allow to add authentication tokens to controller requests, but all
+     * normal Gallery controllers should not override this method.
+     *
+     * @return boolean true if the controller opts-out from the auth token check
+     */
+    function omitAuthTokenCheck() {
+	return false;
+    }
+
+    /**
      * Should session be saved and session cookie sent when this controller is used?
      *
      * @return boolean true to enable session
      */
     function shouldSaveSession() {
 	return true;
+    }
+
+    /**
+     * Verifies the genuineness of the request
+     * 
+     * All requests that modify data must be signed, except the request is by a guest.
+     * 
+     * @return object GalleryStatus a status code null on success, ERROR_REQUEST_FORGED on failure
+     * @static
+     */
+    function assertIsGenuineRequest() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	if (!$session->isPersistent()) {
+	    /*
+	     * Fake requests on behalf of guests is seen as a form of spam and spam protection
+	     * should take care of that.  Don't handle it here.
+	     */
+	    return null;
+	}
+
+	$authToken = GalleryUtilities::getRequestVariables('authToken');
+	if ($session->isCorrectAuthToken($authToken)) {
+	    return null;
+	} else {
+	    return GalleryCoreApi::error(ERROR_REQUEST_FORGED);
+	}
     }
 }
 ?>

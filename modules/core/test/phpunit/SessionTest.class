@@ -1829,6 +1829,7 @@ class SessionTest extends GalleryTestCase {
 	$session->put('core.navigation', array('foo' => 'bar'));
 	$session->_isUsingCookies = true;
 	$session->put('embed.id.externalUser', 6);
+	$session->put('core.authToken', '1234567890AB');
 	list ($ret, $detectedLanguageCode) = GalleryTranslator::getDefaultLanguageCode();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -2806,6 +2807,160 @@ class SessionTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals($session->_loadedSessionData, $session->_getSerializedSession());
+    }
+
+    function testInitAndStartDoNotGenerateAuthToken() {
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = $session->start();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* We generate auth tokens as late as possible */
+	$this->assertEquals('', $session->_authToken, 'auth token generated too early');
+    }
+
+    function testGetAuthToken() {
+	global $gallery;
+
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$md5 = array('123456789012345678901234567890AB', 'ABCDEF12345678901234567890ABCDEF');
+	$gallery->_phpVm = new SessionTestPhpVm($md5);
+	$validToken = substr($md5[0], 0, 12);
+	$this->assert($validToken, $session->getAuthToken(), 'first auth token');
+	$this->assert($validToken, $session->get('core.authToken'), 'token has not been set');
+
+	$this->assert($validToken, $session->getAuthToken(), 'existing auth token');
+
+	/* Force it to regenerate a new one if there's none already */
+	$session->put('core.authToken', null);
+	$this->assert(substr($md5[1], 0, 12), $session->getAuthToken(), 'new auth token');
+    }
+
+    function testIsCorrectAuthTokenForSessionWithoutAuthToken() {
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(!$session->isCorrectAuthToken('ABCDEF123456'), 'invalid token');
+	$this->assertEquals(null, $session->get('core.authToken'), 'auth token not empty');
+    }
+
+    function testIsCorrectAuthToken() {
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$authToken = 'ABCDEF123456';
+	$session->put('core.authToken', $authToken);
+	$this->assert($session->isCorrectAuthToken($authToken), 'valid token');
+	$this->assertEquals($authToken, $session->getAuthToken(), 'auth token has changed');
+    }
+
+    function testIsCorrectAuthTokenForForgedAuthToken() {
+	global $gallery;
+
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$md5 = array('ABCDEF123456345678901234567890AB');
+	$gallery->_phpVm = new SessionTestPhpVm($md5);
+
+	$session->put('core.authToken', 'ABCDEF123456');
+	$this->assert(!$session->isCorrectAuthToken('123456789012'), 'forged token');
+	$this->assertEquals(null, $session->get('core.authToken'), 'auth token not reset');
+	$this->assertEquals(substr($md5[0], 0, 12), $session->getAuthToken(),
+			    'auth token not regenerated');
+    }
+
+    function testAuthTokenRoundtrip() {
+	global $gallery;
+
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/* Force it to save the session */
+	$session->put('something', 1);
+	$session->setUserId($this->_anonymousUserId);
+	$ret = $session->start();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$md5 = array('ABCDEF123456345678901234567890AB', '123456789012345678901234567890AB');
+	$expectedToken = substr($md5[0], 0, 12);
+	$gallery->_phpVm = new SessionTestPhpVm($md5);
+
+	$this->assertEquals($expectedToken, $session->getAuthToken(), 'auth token');
+
+	$ret = $session->save();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Load the session */
+	$_COOKIE[SESSION_ID_PARAMETER] = $session->getSessionId();
+	$gallery->_session = null;
+	$ret = $gallery->initSession();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$loadedSession =& $gallery->getSession();
+
+	$this->assertEquals($session->getSessionId(), $loadedSession->getSessionId(),
+			    'wrong session loaded');
+	$this->assertEquals($expectedToken, $loadedSession->get('core.authToken'),
+			    'wrong auth token');
+	$this->assert($loadedSession->isCorrectAuthToken($expectedToken), 'auth token invalid');
+	
+	/* Now invalidate the token and simulate a third request */
+	$loadedSession->isCorrectAuthToken('foo');
+	$ret = $loadedSession->save();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$gallery->_session = null;
+	$ret = $gallery->initSession();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$loadedSession =& $gallery->getSession();
+
+	$this->assertEquals($session->getSessionId(), $loadedSession->getSessionId(),
+			    'wrong session loaded (2)');
+	$this->assert(!$loadedSession->isCorrectAuthToken($expectedToken),
+		      'auth token has not been reset');
+	$this->assertEquals(substr($md5[1], 0, 12), $loadedSession->getAuthToken(),
+			    'wrong new auth token');
+    }
+
+    function testIsCorrectAuthTokenCanHandleNull() {
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$session->put('core.authToken', null);
+	$this->assert(!$session->isCorrectAuthToken(null), 'null token');
     }
 }
 

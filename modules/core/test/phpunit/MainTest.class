@@ -86,6 +86,8 @@ class MainTest extends GalleryTestCase {
 	    $translator = new GalleryTranslator();
 	    $translator->init($languageCode);
 	}
+	GalleryUtilities::removeRequestVariable('view');
+	GalleryUtilities::removeRequestVariable('controller');
 
 	parent::tearDown();
     }
@@ -271,6 +273,69 @@ class MainTest extends GalleryTestCase {
 	$this->assertEquals(array('location' => 'Location: http://example.com/main.php'),
 			    GalleryUtilities::_getResponseHeaders(), 'Wrong header');
     }
+
+    function testAuthTokenCheckIsEnforcedForControllers() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	GalleryUtilities::removeRequestVariable('view');
+	GalleryUtilities::putRequestVariable('controller', 'core.UserLogin');
+	GalleryUtilities::removeRequestVariable('authToken');
+	GalleryUtilities::removeRequestVariable('form[authToken]');
+
+	$session->_isPersistent = true;
+
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
+	    /* this is what we expect */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->assert(false, 'auth token check not executed');
+	}
+    }
+
+    function testAuthTokenCheckIsEnforcedForControllerLikeViews() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	GalleryUtilities::removeRequestVariable('controller');
+	GalleryUtilities::putRequestVariable('view', 'core.SimpleCallback');
+	GalleryUtilities::removeRequestVariable('authToken');
+	GalleryUtilities::removeRequestVariable('form[authToken]');
+
+	$session->_isPersistent = true;
+
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
+	    /* this is what we expect */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->assert(false, 'auth token check not executed');
+	}
+    }
+
+    function testAuthTokenCheckIsOmittedForSpecificControllers() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	GalleryUtilities::removeRequestVariable('view');
+	GalleryUtilities::putRequestVariable('controller', 'core.FooControllerController');
+	GalleryUtilities::removeRequestVariable('authToken');
+	GalleryUtilities::removeRequestVariable('form[authToken]');
+
+	$session->_isPersistent = true;
+
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret && $ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+	    /* This is what we expect. The auth check has been omitted. */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->assert(false, 'unexpected result');
+	}
+    }
 }
 
 class MainTestPhpVm extends GalleryPhpVm {
@@ -286,5 +351,8 @@ class FooViewView extends GalleryView {
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
 class FooControllerController extends GalleryController {
+    function omitAuthTokenCheck() {
+	return true;
+    }
 }
 ?>

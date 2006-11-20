@@ -31,12 +31,12 @@ class WebDavModule extends GalleryModule {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('0.4.0');
+	$this->setVersion('0.4.2'); /* Update upgrade() too */
 	$this->setDescription($gallery->i18n('Mount Gallery with HTTP filesystem interface'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
 	$this->setCallbacks('getItemLinks|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 10));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredModuleApi(array(3, 3));
     }
 
     /**
@@ -122,6 +122,9 @@ class WebDavModule extends GalleryModule {
 		}
 	    }
 
+	case '0.4.1':
+	    /* Added isControllerLike() to WebDav view */
+	
 	case 'end of upgrade path':
 	    break;
 

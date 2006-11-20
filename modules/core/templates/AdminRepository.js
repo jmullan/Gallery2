@@ -27,6 +27,7 @@ function validateRepositoryList() {
 function saveRepositoryList() {
     var postArgs = commandArg + '=saveRepositoryList';
     postArgs += '&' + viewArg + '=core.RepositoryCallback';
+    postArgs += '&' + authTokenArg;
     for (i in repositoryArgs) {
         postArgs += '&' + repositoryArgs[i] + '=' +
 	    (formElements[repositoryArgs[i]].checked ? 1 : 0);

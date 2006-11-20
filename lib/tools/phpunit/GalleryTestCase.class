@@ -828,6 +828,26 @@ class GalleryTestCase extends TestCase {
 	}
 	return null;
     }
+
+    /**
+     * Adds an authToken to the given URL
+     * @param string $url
+     * @param bool $htmlEntities whether to use HTML entities or not, defaults to true
+     * @return string URL with authToken
+     */
+    function _signUrl($url, $htmlEntities=true) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$this->assert($session->isPersistent(), 'test for authToken assumes persistent session');
+	
+	$authToken = array('authToken' => $session->getAuthToken());
+	$url = GalleryUrlGenerator::appendParamsToUrl($url, $authToken);
+	if (!$htmlEntities) {
+	    $url = str_replace('&amp;', '&', $url);
+	}
+	return $url;
+    }
 }
 
 /**

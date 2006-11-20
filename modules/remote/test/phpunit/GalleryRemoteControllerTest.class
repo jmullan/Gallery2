@@ -53,10 +53,16 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->_saveUser = $gallery->getActiveUser();
 	$this->_code = GalleryRemoteConstants::getStatusCodes();
 	$this->_version = GalleryRemoteConstants::getVersionCodes();
+
+	$_SERVER['HTTP_USER_AGENT'] = 'RPT-HTTPClient 2.9';
     }
 
     function testLogin() {
 	global $gallery;
+
+	/* Does not require request forgery check */
+	$_SERVER['HTTP_USER_AGENT'] = 'Internet Explorer';
+	GalleryUtilities::removeRequestVariable('authToken');
 
 	GalleryUtilities::putRequestVariable('form[cmd]', 'login');
 	GalleryUtilities::putRequestVariable('form[uname]', $this->_user->getUserName());
@@ -840,6 +846,38 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals($resized->getId().'', $response->getProperty('image.resizedName'));
 	$this->assertEquals($thumb->getId().'', $response->getProperty('image.thumbName'));
+    }
+
+    function testProtectFromRequestForgeryWithUserAgentCheck() {
+	$_SERVER['HTTP_USER_AGENT'] = 'Internet Explorer';
+	GalleryUtilities::removeRequestVariable('authToken');
+
+	/* Just try any request, it should be blocked. */
+	GalleryUtilities::putRequestVariable('form[cmd]', 'add-item');
+
+	$results = $this->handleRequest(ERROR_REQUEST_FORGED);
+    }
+
+    function testProtectFromRequestForgeryWithAuthTokenCheck() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$_SERVER['HTTP_USER_AGENT'] = 'Internet Explorer';
+	GalleryUtilities::putRequestVariable('authToken', '1234567890AB');
+	$session->put('core.authToken', '1234567890AB');
+
+	GalleryUtilities::putRequestVariable('form[cmd]', 'new-album');
+	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[newAlbumName]', 'name'.rand());
+	GalleryUtilities::putRequestVariable('form[newAlbumTitle]', 'title');
+	GalleryUtilities::putRequestVariable('form[newAlbumDesc]', 'desc');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error'], 'error');
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view'], 'delegate');
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
     }
 }
 

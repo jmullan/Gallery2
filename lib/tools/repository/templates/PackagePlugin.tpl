@@ -13,6 +13,7 @@
           <input class="textbox" type="text" name="{$formVariablePrefix}filter" size="60" value="" />
           <input type="hidden" name="{$formVariablePrefix}controller" value="PackagePlugin" />
           <input type="hidden" name="{$formVariablePrefix}action" value="packagePlugins" />
+          {g->hiddenFormVars}
           <input type="submit" value="{g->text text="Package"}" />
         </form>
       </p>
