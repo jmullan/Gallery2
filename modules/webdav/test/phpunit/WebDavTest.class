@@ -871,6 +871,75 @@ class WebDavTest extends GalleryTestCase {
 
 	//$this->assertEquals('', $output);
     }
+
+    function testGetItemLinksForModule() {
+	global $gallery;
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$item = $this->_subAlbum;
+	$itemId = $item->getId();
+	$items = array($this->_item->getId() => $this->_item, $itemId => $item);
+	$wantsDetailedLinks = array($this->_item->getId() => true, $itemId => true);
+	list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(array_keys($items));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$_SERVER['HTTP_USER_AGENT'] = 'Foo bar';
+	$urlGenerator = new GalleryUrlGenerator();
+	$ret = $urlGenerator->init('http://example.com/main.php');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$gallery->setUrlGenerator($urlGenerator);
+
+	/* Execute the method under test */
+	list ($ret, $links) = $module->getItemLinks($items, $wantsDetailedLinks, $permissions,
+						    $gallery->getActiveUserId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$url = $this->_signUrl('http://example.com/main.php?g2_controller=webdav.WebDav&amp;' .
+			       'g2_itemId=' . $itemId);
+	$expected = array($itemId => array(array(
+		'text' => $module->translate(array('text' => 'Mount with WebDAV')),
+		'params' => array('view' => 'webdav.WebDavMount', 'itemId' => $itemId),
+		'attrs' => 'style="behavior: url(#default#anchorClick)" folder="'. $url . '"')));
+	$this->assertEquals($expected, $links, 'link results for any user-agent');
+
+	/* httpfolder script for Internet Explorer */
+	$_SERVER['HTTP_USER_AGENT'] = 'MSIE 6';
+	list ($ret, $links) = $module->getItemLinks($items, $wantsDetailedLinks, $permissions,
+						    $gallery->getActiveUserId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedForIe = $expected;
+	$expectedForIe[$itemId][0]['script'] =
+		"this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$url')";
+	$this->assertEquals($expectedForIe, $links, 'link results for Internet Explorer');
+
+	/* webdav protocol for Konqueror */
+	$_SERVER['HTTP_USER_AGENT'] = 'Konqueror';
+	list ($ret, $links) = $module->getItemLinks($items, $wantsDetailedLinks, $permissions,
+						    $gallery->getActiveUserId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$url = $this->_signUrl('webdav://example.com/main.php?g2_controller=webdav.WebDav&amp;' .
+			       'g2_itemId=' . $itemId);
+	$expectedForKonqueror = $expected;
+	$expectedForKonqueror[$itemId][0]['params'] = array('href' => $url);
+	$expectedForKonqueror[$itemId][0]['attrs'] =
+		'style="behavior: url(#default#anchorClick)" folder="'. $url . '"';
+	$this->assertEquals($expectedForKonqueror, $links, 'link results for Konqueror');
+    }
 }
 
 class WebDavTestPhpVm extends GalleryPhpVm {

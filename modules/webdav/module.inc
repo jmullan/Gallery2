@@ -142,14 +142,9 @@ class WebDavModule extends GalleryModule {
 	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$userAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+	$urlOptions = array('forceFullUrl' => true);
 	if (strpos($userAgent, 'Konqueror') !== false) {
-
-	    /* Copy URL generator to set protocol webdav:// */
-	    $urlGenerator = $gallery->getUrlGenerator();
-	    foreach (array(false, true) as $forceDirect) {
-		$urlGenerator->_currentBaseHost[$forceDirect] = sprintf('%s://%s', 'webdav',
-		    $urlGenerator->_host[$forceDirect]);
-	    }
+	    $urlOptions['protocol'] = 'webdav';
 	}
 
 	$links = array();
@@ -161,8 +156,7 @@ class WebDavModule extends GalleryModule {
 
 	    $params = array('view' => 'webdav.WebDavMount', 'itemId' => $item->getId());
 	    $url = $urlGenerator->generateUrl(
-		array('controller' => 'webdav.WebDav', 'itemId' => $item->getId()),
-		array('forceFullUrl' => true));
+		array('controller' => 'webdav.WebDav', 'itemId' => $item->getId()), $urlOptions);
 	    if (strpos($userAgent, 'Konqueror') !== false) {
 		$params = array('href' => $url);
 	    }
