@@ -41,7 +41,7 @@
   <p><label for="Permalinks_aliasname"> {g->text text="Add a new permalink:"} </label>
     <input type="text" name="{g->formVar var="form[PermalinksOption][aliasName]"}"
       id="Permalinks_aliasname" />
-    <a href="javascript:document.forms['itemAdminForm'].Permalinks_aliasname.value='{$ItemAdmin.item.pathComponent}';return(false);">
+    <a onclick="document.forms['itemAdminForm'].Permalinks_aliasname.value='{$ItemAdmin.item.pathComponent}'">
       {g->text text="Set to '%s'" arg1="`$ItemAdmin.item.pathComponent`"}</a>
   </p>
 
