@@ -19,19 +19,22 @@
  */
 
 /**
- * PublishXp controller tests
+ * Controller to initialize the process of publishing photos.
+ * Allows the user to log in to Gallery to begin the process of uploading
+ * photos through Windows XP's publishing mechanism.
+ *
  * @package PublishXp
- * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage UserInterface
+ * @author Timothy Webb <tiwebb@cisco.com>
  * @version $Revision$ $Date$
  */
-class PublishXpLoginControllerTest extends GalleryControllerTestCase {
-    function PublishXpLoginControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'publishxp.PublishXpLogin');
-    }
 
-    function testLogin() {
-	$this->assert(false);
-    }
+GalleryCoreApi::requireOnce('modules/publishxp/PublishXpLogin.inc');
+
+/**
+ * Obsolete.  This class is kept around to maintain backwards compatibility with older versions of
+ * the PublishXp module, since Windows desktops will have view=publishxp.Login in their registry.
+ */
+class PublishXpLoginView extends LoginView {
 }
 ?>

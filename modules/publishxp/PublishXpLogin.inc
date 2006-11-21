@@ -28,7 +28,7 @@
  * @author Timothy Webb <tiwebb@cisco.com>
  * @version $Revision$ $Date$
  */
-class LoginController extends GalleryController {
+class PublishXpLoginController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -71,7 +71,7 @@ class LoginController extends GalleryController {
 	}
 
 	if (!isset($results['delegate']['view'])) {
-	    $results['delegate']['view'] = 'publishxp.Login';
+	    $results['delegate']['view'] = 'publishxp.PublishXpLogin';
 	}
 	$results['status'] = array();
 	$results['error'] = $error;
@@ -84,15 +84,15 @@ class LoginController extends GalleryController {
  * Allows the user to log in to Gallery to begin the process of uploading
  * photos through Windows XP's publishing mechanism.
  */
-class LoginView extends GalleryView {
+class PublishXpLoginView extends GalleryView {
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	if ($form['formName'] != 'Login') {
+	if ($form['formName'] != 'PublishXpLogin') {
 	    $form['userName'] = '';
-	    $form['formName'] = 'Login';
+	    $form['formName'] = 'PublishXpLogin';
 	}
 
 	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
@@ -105,10 +105,10 @@ class LoginView extends GalleryView {
 	    return array(null, array('redirect' => array('view' => 'publishxp.SelectAlbum')));
 	}
 
-	$template->setVariable('controller', 'publishxp.Login');
+	$template->setVariable('controller', 'publishxp.PublishXpLogin');
 	$template->head('modules/publishxp/templates/Head.tpl');
 
-	return array(null, array('body' => 'modules/publishxp/templates/Login.tpl',
+	return array(null, array('body' => 'modules/publishxp/templates/PublishXpLogin.tpl',
 				 'useFullScreen' => true));
     }
 }
