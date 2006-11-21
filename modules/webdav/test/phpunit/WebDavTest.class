@@ -35,6 +35,10 @@ class WebDavTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
+	global $gallery;
+	$originalUrlGenerator =& $gallery->getUrlGenerator();
+
+	$urlDirectory = $originalUrlGenerator->getCurrentUrlDir();
 
 	/* Require here to avoid loading if none of our tests will be run */
 	ob_start();
@@ -83,9 +87,17 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->_streamWrapperRegistration();
 
-	/* Force the baseUri for all tests (including main.php changed it, among other things). */
-	$urlGenerator = new GalleryUrlGenerator();
-	$ret = $urlGenerator->init('http://example.com/');
+	/* Try to test with the rewrite URL Generator */
+	list ($ret, $urlGenerator) = @GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
+	/* Swallow ERROR_STORAGE_FAILURE, or automatic upgrading fails */
+	if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+	    return $this->failWithStatus($ret);
+	}
+	if (!isset($urlGenerator)) {
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
+	    $urlGenerator = new GalleryUrlGenerator();
+	}
+	$ret = $urlGenerator->init($urlDirectory);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -498,10 +510,7 @@ class WebDavTest extends GalleryTestCase {
 	if (!GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
 	    $_SERVER['HTTP_DESTINATION'] = rtrim($urlGenerator->getCurrentUrlDir(), '/') . $newPath;
 	} else {
-	    /*
-	     * NOTE: Since we test always with the normal URL generator, this is case is never
-	     * entered. Also, it's assuming that the webdav rewrite rules are enabled.
-	     */
+	    /* Assuming that the webdav rewrite rules are enabled. */
 	    $_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
 		array('controller' => 'webdav.WebDav', 'path' => $newPath),
 		array('forceFullUrl' => true));
@@ -745,10 +754,7 @@ class WebDavTest extends GalleryTestCase {
 	if (!GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
 	    $_SERVER['HTTP_DESTINATION'] = rtrim($urlGenerator->getCurrentUrlDir(), '/') . $newPath;
 	} else {
-	    /*
-	     * NOTE: Since we test always with the normal URL generator, this is case is never
-	     * entered. Also, it's assuming that the webdav rewrite rules are enabled.
-	     */
+	    /* Assuming that the webdav rewrite rules are enabled. */
 	    $_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
 		array('controller' => 'webdav.WebDav', 'path' => $newPath),
 		array('forceFullUrl' => true));
