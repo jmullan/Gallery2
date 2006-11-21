@@ -1407,7 +1407,7 @@ class HTTP_WebDAV_Server
 
         // does the destination resource belong on this server?
         if ($url['host'] == $this->baseUrl['host']
-                && empty($url['port']) ? 80 : $url['port'] == empty($this->baseUrl['port']) ? 80 : $this->baseUrl['port']
+                && (empty($url['port']) ? 80 : $url['port']) == (empty($this->baseUrl['port']) ? 80 : $this->baseUrl['port'])
                 && !strncmp($url['path'], $this->baseUrl['path'], strlen($this->baseUrl['path']))) {
             if (!empty($this->baseurl['query'])) {
                 foreach (explode('&', $this->baseUrl['query']) as $queryComponent) {
