@@ -40,7 +40,7 @@ class EventTest extends GalleryTestCase {
 	GalleryCoreApi::registerEventListener($eventName, $listener);
 
 	$event = GalleryCoreApi::newEvent($eventName);
-	$event->setEntity("bogus entity");
+	$event->setEntity('bogus entity');
 	$event->setData('some data');
 	list ($ret, $result) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
@@ -58,7 +58,7 @@ class EventTest extends GalleryTestCase {
 	GalleryCoreApi::registerEventListener($eventName, $listener);
 
 	$event = GalleryCoreApi::newEvent($eventName);
-	$event->setEntity("bogus entity");
+	$event->setEntity('bogus entity');
 	$event->setData('send result');
 	list ($ret, $result) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
