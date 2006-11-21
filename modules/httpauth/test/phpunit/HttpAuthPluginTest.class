@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthPlugin.class');
+
 /**
  * HTTP authentication tests.
  * @package HttpAuth
@@ -41,17 +43,16 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_user);
+	$_SERVER['AUTH_TYPE'] = 'Foo';
+
+	$this->_plugin = new HttpAuthPlugin();
     }
 
     function testValidUser() {
-	$_SERVER['AUTH_TYPE'] = 'Foo';
 	$_SERVER['PHP_AUTH_USER'] = $this->_user->getUserName();
 	$_SERVER['PHP_AUTH_PW'] = 'password';
 
-	GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthPlugin.class');
-
-	$plugin = new HttpAuthPlugin();
-	list ($ret, $user) = $plugin->getUser();
+	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -60,14 +61,10 @@ class HttpAuthPluginTest extends GalleryTestCase {
     }
 
     function testInvalidUser() {
-	$_SERVER['AUTH_TYPE'] = 'Foo';
 	$_SERVER['PHP_AUTH_USER'] = 'bogusUser-' . rand();
 	$_SERVER['PHP_AUTH_PW'] = 'password';
 
-	GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthPlugin.class');
-
-	$plugin = new HttpAuthPlugin();
-	list ($ret, $user) = $plugin->getUser();
+	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -76,14 +73,10 @@ class HttpAuthPluginTest extends GalleryTestCase {
     }
 
     function testValidUserInvalidPassword() {
-	$_SERVER['AUTH_TYPE'] = 'Foo';
 	$_SERVER['PHP_AUTH_USER'] = $this->_user->getUserName();
 	$_SERVER['PHP_AUTH_PW'] = 'wrongPassword';
 
-	GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthPlugin.class');
-
-	$plugin = new HttpAuthPlugin();
-	list ($ret, $user) = $plugin->getUser();
+	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
