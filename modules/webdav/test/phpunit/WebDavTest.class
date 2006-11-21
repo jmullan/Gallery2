@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
+
 /**
  * WebDAV tests.
  * @package WebDav
@@ -80,6 +82,14 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	$this->_streamWrapperRegistration();
+
+	/* Force the baseUri for all tests (including main.php changed it, among other things). */
+	$urlGenerator = new GalleryUrlGenerator();
+	$ret = $urlGenerator->init('http://example.com/');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$gallery->setUrlGenerator($urlGenerator);
     }
 
     function tearDown() {
@@ -460,11 +470,12 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals($fileSize, $data['size']);
     }
 
+    /**
+     * @todo What does a query-string based webdav client send in HTTP_DESTINATION?
+     */
     function testMove() {
 	global $gallery;
-
-	/* Copy URL generator to set path info */
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
@@ -484,17 +495,17 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'testItem-' . rand();
 	$newPath .= $pathComponent;
 
-	/*
-	 * Hack to pass destination path to WebDAV library without rewrite module.  WebDAV library
-	 * doesn't understand g2_path request parameter.
-	 */
-	foreach (array(false, true) as $forceDirect) {
-	    $urlGenerator->_file[$forceDirect] .= "/$newPath";
+	if (!GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = rtrim($urlGenerator->getCurrentUrlDir(), '/') . $newPath;
+	} else {
+	    /*
+	     * NOTE: Since we test always with the normal URL generator, this is case is never
+	     * entered. Also, it's assuming that the webdav rewrite rules are enabled.
+	     */
+	    $_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
+		array('controller' => 'webdav.WebDav', 'path' => $newPath),
+		array('forceFullUrl' => true));
 	}
-
-	$_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
-	    array('controller' => 'webdav.WebDav', 'path' => $newPath),
-	    array('forceFullUrl' => true));
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -516,6 +527,13 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals($this->_item->getId(), $itemId);
+
+	/* Make the the transaction visible to the test framework (tearDown) */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
     }
 
     function testLockUnlock() {
@@ -704,9 +722,7 @@ class WebDavTest extends GalleryTestCase {
 
     function testIllegalDestination() {
 	global $gallery;
-
-	/* Copy URL generator to set path info */
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
@@ -726,17 +742,17 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'The!Quick$Brown#Fox';
 	$newPath .= $pathComponent;
 
-	/*
-	 * Hack to pass destination path to WebDAV library without rewrite module.  WebDAV library
-	 * doesn't understand g2_path request parameter.
-	 */
-	foreach (array(false, true) as $forceDirect) {
-	    $urlGenerator->_file[$forceDirect] .= "/$newPath";
+	if (!GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = rtrim($urlGenerator->getCurrentUrlDir(), '/') . $newPath;
+	} else {
+	    /*
+	     * NOTE: Since we test always with the normal URL generator, this is case is never
+	     * entered. Also, it's assuming that the webdav rewrite rules are enabled.
+	     */
+	    $_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
+		array('controller' => 'webdav.WebDav', 'path' => $newPath),
+		array('forceFullUrl' => true));
 	}
-
-	$_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
-	    array('controller' => 'webdav.WebDav', 'path' => $newPath),
-	    array('forceFullUrl' => true));
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
