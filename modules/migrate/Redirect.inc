@@ -35,6 +35,13 @@ class RedirectController extends GalleryController {
     }
 
     /**
+     * @see GalleryController::omitAuthTokenCheck
+     */
+    function omitAuthTokenCheck() {
+	return true;
+    }
+
+    /**
     * @see GalleryController::handleRequest
     */
     function handleRequest($form) {

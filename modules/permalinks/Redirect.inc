@@ -28,6 +28,12 @@ GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.clas
  * @version $Revision$ $Date$
  */
 class RedirectController extends GalleryController {
+    /**
+     * @see GalleryController::omitAuthTokenCheck
+     */
+    function omitAuthTokenCheck() {
+	return true;
+    }
 
     /**
      * @see GalleryController::handleRequest
