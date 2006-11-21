@@ -961,6 +961,15 @@ class WebDavTest extends GalleryTestCase {
 	$expectedForKonqueror[$itemId][0]['attrs'] =
 		'style="behavior: url(#default#anchorClick)" folder="'. $url . '"';
 	$this->assertEquals($expectedForKonqueror, $links, 'link results for Konqueror');
+
+	/* Verify that the davmount links are only for the detailed mode */
+	$wantsDetailedLinks[$itemId] = false;
+	list ($ret, $links) = $module->getItemLinks($items, $wantsDetailedLinks, $permissions,
+						    $gallery->getActiveUserId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), $links, 'must be a request for detailed links');
     }
 }
 

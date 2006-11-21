@@ -149,8 +149,7 @@ class WebDavModule extends GalleryModule {
 
 	$links = array();
 	foreach ($items as $item) {
-	    if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')
-		    || !isset($wantsDetailedLinks[$item->getId()])) {
+	    if (!$item->getCanContainChildren() || empty($wantsDetailedLinks[$item->getId()])) {
 		continue;
 	    }
 
