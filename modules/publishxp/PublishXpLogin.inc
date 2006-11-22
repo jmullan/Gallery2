@@ -46,6 +46,16 @@ class PublishXpLoginController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
+		list ($ret, $isDisabled) = GalleryCoreApi::isDisabledUsername($form['userName']);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if ($isDisabled) {
+		    $error[] = 'form[error][userName][disabled]';
+		}
+	    }
+
+	    if (empty($error)) {
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret, null);
@@ -64,13 +74,20 @@ class PublishXpLoginController extends GalleryController {
 		    $session->regenerate();
 
 		    $results['redirect']['view'] = 'publishxp.SelectAlbum';
-		} else {
-		    $error[] = 'form[error][password][invalid]';
+		}
+	    }
+
+	    if (!empty($error) && !empty($form['userName'])) {
+		$event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
+		$event->setData(array('userName' => $form['userName']));
+		list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+		if ($ret) {
+		    return array($ret, null);
 		}
 	    }
 	}
 
-	if (!isset($results['delegate']['view'])) {
+	if (empty($results['redirect']) && !isset($results['delegate']['view'])) {
 	    $results['delegate']['view'] = 'publishxp.PublishXpLogin';
 	}
 	$results['status'] = array();

@@ -48,6 +48,15 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	$this->_plugin = new HttpAuthPlugin();
     }
 
+    function tearDown() {
+	$ret = GalleryCoreApi::removeAllMapEntries('FailedLoginsMap');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	parent::tearDown();
+    }
+
     function testValidUser() {
 	$_SERVER['PHP_AUTH_USER'] = $this->_user->getUserName();
 	$_SERVER['PHP_AUTH_PW'] = 'password';
@@ -82,6 +91,24 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	}
 
 	$this->assert(!isset($user));
+    }
+
+
+    function testDisabledUser() {
+	$_SERVER['PHP_AUTH_USER'] = $this->_user->getUserName();
+	$_SERVER['PHP_AUTH_PW'] = 'password';
+
+	$ret = $this->_disableUserName($this->_user->getUsername());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $user) = $this->_plugin->getUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(null, $user);
     }
 }
 ?>

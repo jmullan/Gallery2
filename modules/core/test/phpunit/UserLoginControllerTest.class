@@ -102,6 +102,34 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 		      '$session->regenerate() was not called');
     }
 
+    function testLoginDisabledUserName() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('form[action][login]', 1);
+	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[password]', 'password');
+
+	$ret = $this->_disableUserName($this->_user->getUserName());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$listener = new NullEventListener();
+	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
+						      'subView' => 'core.UserLogin'),
+				  'status' => array(),
+				  'error' => array('form[error][username][disabled]')),
+			    $results);
+
+	/* Verify our event got posted */
+	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
+	$this->assertEquals(array('userName' => $this->_user->getUserName()),
+			    $listener->_event->getData());
+    }
+
     function testEntityPassword() {
 	global $gallery;
 	list ($ret, $user) = $this->_createRandomUser(null, 'pass&word');
@@ -131,12 +159,19 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	/* From _createRandomUser */
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
 
+	$listener = new NullEventListener();
+	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
 						      'subView' => 'core.UserLogin'),
 				  'status' => array(),
 				  'error' => array('form[error][invalidPassword]')),
 			    $results);
+
+	/* Verify our event got posted */
+	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
+	$this->assertEquals(array('userName' => 'some-bogus-user'), $listener->_event->getData());
     }
 
     function testLoginValidUserInvalidPassword() {

@@ -33,6 +33,12 @@
   </div>
   {/if}
 
+  {if isset($form.error.username.disabled)}
+  <div class="giError">
+    {g->text text="Logins temporarily disabled due to multiple failed login attempts."}
+  </div>
+  {/if}
+
   <h4> {g->text text="Password"} </h4>
 
   <input type="password" id="giFormPassword" size="16" name="{g->formVar var="form[password]"}"/>

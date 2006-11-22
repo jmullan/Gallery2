@@ -96,7 +96,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('Password', 'x', false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Login'),
-				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN),
+				  'status' => array('success' => NOKIAUPLOAD_ERR_AUTH),
 				  'error' => array()),
 			    $results, 'user');
 	$this->assertEquals($this->_saveUser, $gallery->getActiveUser(), 'active user 1');

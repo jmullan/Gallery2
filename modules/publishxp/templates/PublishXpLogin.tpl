@@ -33,6 +33,10 @@
     <div class="giError">
       {g->text text="You must enter a username"}
     </div>
+    {elseif isset($form.error.userName.disabled)}
+    <div class="giError">
+      {g->text text="Logins temporarily disabled due to multiple failed login attempts."}
+    </div>
     {/if}
 
     <h4> {g->text text="Password"} </h4>

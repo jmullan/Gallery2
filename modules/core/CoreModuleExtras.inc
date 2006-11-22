@@ -2087,6 +2087,9 @@ class CoreModuleExtras {
 	case '1.1.21':
 	    /* Added authentication token */
 
+	case '1.1.21':
+	    /* Add FailedLoginsMap */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we always

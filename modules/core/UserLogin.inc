@@ -71,6 +71,16 @@ class UserLoginController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
+		list ($ret, $isDisabled) = GalleryCoreApi::isDisabledUsername($form['username']);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if ($isDisabled) {
+		    $error[] = 'form[error][username][disabled]';
+		}
+	    }
+
+	    if (empty($error)) {
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['username']);
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret, null);
@@ -149,6 +159,17 @@ class UserLoginController extends GalleryController {
 		    }
 		} else {
 		    $error[] = 'form[error][invalidPassword]';
+		}
+	    }
+
+	    if (!empty($error)) {
+		if (!empty($form['username'])) {
+		    $event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
+		    $event->setData(array('userName' => $form['username']));
+		    list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+		    if ($ret) {
+			return array($ret, null);
+		    }
 		}
 	    }
 

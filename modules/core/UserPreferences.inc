@@ -95,7 +95,24 @@ class UserPreferencesController extends GalleryController {
 	    if (!empty($form['currentPassword']) &&
 		    !$user->isCorrectPassword($form['currentPassword'])) {
 		$error[] = 'form[error][currentPassword][incorrect]';
+
+		$event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
+		$event->setData(array('userName' => $user->getUserName()));
+		list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    } else {
+		/*
+		 * To be consistent, we really should post a Gallery::Login event here to show
+		 * that the user successfully authenticated.  But they're not really logging in so
+		 * that's misleading.  Perhaps we should rename the events to Gallery::Authenticate
+		 * and Gallery::FailedAuthenticate to be more accurate, and then post those here?
+		 *
+		 * @see UserChangePasswordController::handleRequest
+		 */
 	    }
+
 
 	    /* Set a default if for some reason it doesn't get sent from the browser */
 	    $form['email'] = empty($form['email']) ? '' : $form['email'];

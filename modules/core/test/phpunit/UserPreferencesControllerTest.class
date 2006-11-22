@@ -41,7 +41,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	    $this->_createUser(array('hashedPassword' => GalleryUtilities::md5Salt('TestPassword'),
 				     'email' => 'test@email.com',
 				     'fullName' => 'Test User',
-                                     'language' => 'te', 
+                                     'language' => 'te',
                                      'locked' => 0));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -258,6 +258,9 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[language]', 'language');
 	GalleryUtilities::putRequestVariable('form[currentPassword]', 'invalid');
 
+	$listener = new NullEventListener();
+	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+
 	$results = $this->handleRequest();
 	 $this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
 							  'subView' => 'core.UserPreferences'),
@@ -274,6 +277,11 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('Test User', $this->_user->getFullName());
 	$this->assertEquals('test@email.com', $this->_user->getEmail());
 	$this->assertEquals('te', $this->_user->getLanguage());
+
+	/* Verify our event got posted */
+	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
+	$this->assertEquals(array('userName' => $this->_user->getUserName()),
+			    $listener->_event->getData());
     }
 
     function testEditEmailWithInvalidPassword() {
@@ -285,6 +293,9 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[language]', 'language');
 	GalleryUtilities::putRequestVariable('form[currentPassword]', 'invalid');
 
+	$listener = new NullEventListener();
+	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
+
 	$results = $this->handleRequest();
 	 $this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
 							  'subView' => 'core.UserPreferences'),
@@ -301,6 +312,11 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('Test User', $this->_user->getFullName());
 	$this->assertEquals('test@email.com', $this->_user->getEmail());
 	$this->assertEquals('te', $this->_user->getLanguage());
+
+	/* Verify our event got posted */
+	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
+	$this->assertEquals(array('userName' => $this->_user->getUserName()),
+			    $listener->_event->getData());
     }
 
     function testEditEmailWithoutPassword() {
@@ -348,7 +364,7 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	    $this->_createUser(array('hashedPassword' => GalleryUtilities::md5Salt('TestPassword'),
 				     'email' => 'test2@email.com',
 				     'fullName' => 'Test User 2',
-                                     'language' => 'te', 
+                                     'language' => 'te',
                                      'locked' => 1));
 	if ($ret) {
 	    return $this->failWithStatus($ret);

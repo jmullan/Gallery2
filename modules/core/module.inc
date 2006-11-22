@@ -55,6 +55,10 @@ class CoreModule extends GalleryModule {
 	GalleryCoreApi::registerEventListener('Gallery::RemovePermission', $handler);
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', $handler);
 	GalleryCoreApi::registerEventListener('GalleryEntity::delete', $handler);
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryUserHelper_medium.class');
+	$handler2 = new GalleryUserHelper_medium();
+	GalleryCoreApi::registerEventListener('Gallery::FailedLogin', $handler2);
+	GalleryCoreApi::registerEventListener('Gallery::Login', $handler2);
     }
 
     /**

@@ -68,6 +68,9 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[uname]', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form[password]', 'pass&word');
 
+	$listener = new NullEventListener();
+	$this->_registerTestEventListener('Gallery::Login', $listener);
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array(), $results['error'], 'error');
 	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view'], 'delegate');
@@ -79,6 +82,10 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assert($response->hasProperty('status_text'));
 
 	$this->assertEquals($this->_user->getId(), $gallery->getActiveUserId());
+
+	/* Verify our event got posted */
+	$this->assertEquals('Gallery::Login', $listener->_event->getEventName());
+	$this->assertEquals($this->_user, $listener->_event->getEntity());
     }
 
     function testLoginInvalidUser() {
@@ -87,6 +94,9 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[cmd]', 'login');
 	GalleryUtilities::putRequestVariable('form[uname]', 'some-bogus-user');
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
+
+	$listener = new NullEventListener();
+	$this->_registerTestEventListener('Gallery::FailedLogin', $listener);
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array(), $results['error'], 'error');
@@ -97,6 +107,10 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assert($response->hasProperty('status_text'));
 
 	$this->assertEquals($this->_saveUser->getId(), $gallery->getActiveUserId());
+
+	/* Verify our event got posted */
+	$this->assertEquals('Gallery::FailedLogin', $listener->_event->getEventName());
+	$this->assertEquals(array('userName' => 'some-bogus-user'), $listener->_event->getData());
     }
 
     function testLoginValidUserInvalidPassword() {
@@ -881,6 +895,9 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
     }
 }
 
+/**
+ * Fake ItemAddOption
+ */
 class GalleryRemoteControllerTestAddOption {
 
     function handleRequestAfterAdd($form, $items) {

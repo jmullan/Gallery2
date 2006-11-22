@@ -178,7 +178,7 @@ class GalleryUserHelper_medium {
     /**
      * @see GalleryCoreApi::deleteUserItems
      */
-     function deleteUserItems($userId) {
+    function deleteUserItems($userId) {
 	global $gallery;
 
 	if (empty($userId)) {
@@ -307,6 +307,96 @@ class GalleryUserHelper_medium {
 	}
 
 	return null;
+    }
+
+    /**
+     * Handler for Gallery::Login and Gallery::FailedLogin events.
+     *
+     * @see GalleryEventListener::handleEvent
+     */
+    function handleEvent($event) {
+	global $gallery;
+
+	if ($event->getEventName() == 'Gallery::Login') {
+	    $user = $event->getEntity();
+	    $ret = GalleryCoreApi::removeMapEntry(
+		'FailedLoginsMap',
+		array('userName' => $user->getUserName()));
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	} else if ($event->getEventName() == 'Gallery::FailedLogin') {
+	    $data = $event->getData();
+	    if (!empty($data['userName'])) {
+		list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+		    'FailedLoginsMap',
+		    array('count'),
+		    array('userName' => $data['userName']));
+		if ($ret) {
+		    return array($ret, null);
+		}
+
+		if ($searchResults->resultCount() == 0) {
+		    $count = 0;
+		} else {
+		    $result = $searchResults->nextResult();
+		    $count = $result[0];
+
+		    $ret = GalleryCoreApi::removeMapEntry(
+			'FailedLoginsMap',
+			array('userName' => $data['userName']));
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		}
+		$count++;
+
+		$phpVm = $gallery->getPhpVm();
+		$ret = GalleryCoreApi::addMapEntry(
+		    'FailedLoginsMap',
+		    array('userName' => $data['userName'],
+			  'count' => $count,
+			  'lastAttempt' => $phpVm->time()));
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    }
+	}
+
+	return array(null,  null);
+    }
+
+    /**
+     * @see GalleryCoreApi::isDisabledUsername
+     */
+    function isDisabledUsername($userName) {
+	global $gallery;
+
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+	    'FailedLoginsMap',
+	    array('count', 'lastAttempt'),
+	    array('userName' => $userName));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($searchResults->resultCount() == 0) {
+	    $count = 0;
+	} else {
+	    $result = $searchResults->nextResult();
+	    $count = $result[0];
+	    $lastAttempt = $result[1];
+	}
+
+	if ($count >= 10) {
+	    $phpVm = $gallery->getPhpVm();
+	    $hoursDisabled = ((int)$count / 10);
+	    if (($phpVm->time() - $lastAttempt) < $hoursDisabled * 3600) {
+		return array(null, true);
+	    }
+	}
+
+	return array(null, false);
     }
 }
 ?>

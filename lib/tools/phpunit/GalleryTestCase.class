@@ -840,13 +840,26 @@ class GalleryTestCase extends TestCase {
 	$session =& $gallery->getSession();
 
 	$this->assert($session->isPersistent(), 'test for authToken assumes persistent session');
-	
+
 	$authToken = array('authToken' => $session->getAuthToken());
 	$url = GalleryUrlGenerator::appendParamsToUrl($url, $authToken);
 	if (!$htmlEntities) {
 	    $url = str_replace('&amp;', '&', $url);
 	}
 	return $url;
+    }
+
+    /**
+     * Convenience method to mark a username as disabled.
+     * @param string $userName the username
+     * @return object GalleryStatus a status code
+     */
+    function _disableUserName($userName) {
+	return GalleryCoreApi::addMapEntry(
+	    'FailedLoginsMap',
+	    array('userName' => $userName,
+		  'count' => 100,
+		  'lastAttempt' => time()));
     }
 }
 
@@ -931,6 +944,12 @@ class TestEventListener /* extends GalleryEventListener */ {
 	    }
 	}
 	return array(null, $result);
+    }
+}
+
+class NullEventListener {
+    function handleEvent($event) {
+	$this->_event = $event;
     }
 }
 ?>

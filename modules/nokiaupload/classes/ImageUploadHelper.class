@@ -74,19 +74,40 @@ class ImageUploadHelper {
 	list ($username, $password) =
 	    GalleryUtilities::getRequestVariablesNoPrefix('Username', 'Password');
 
-	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
+	list ($ret, $isDisabled) = GalleryCoreApi::isDisabledUsername($username);
 	if ($ret) {
-	    $gallery->debug("ERROR: Couldn't fetch user by user name.\n" . $ret->getAsText());
-	    return $status;
-	}
-
-	if (empty($user) || !$user->isCorrectPassword($password)) {
-	    $gallery->debug("Couldn't authenticate user $username.");
 	    $status['success'] = NOKIAUPLOAD_ERR_AUTH;
 	    return $status;
 	}
-	$gallery->debug('Username and password correct.');
 
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
+	if ($ret) {
+	    $gallery->debug("ERROR: Couldn't fetch user by user name.\n" . $ret->getAsText());
+	    $status['success'] = NOKIAUPLOAD_ERR_AUTH;
+	}
+
+	if ($isDisabled || empty($user) || !$user->isCorrectPassword($password)) {
+	    $gallery->debug("ERROR: Couldn't authenticate user $username.");
+	    $status['success'] = NOKIAUPLOAD_ERR_AUTH;
+	}
+
+	if ($status['success'] == NOKIAUPLOAD_ERR_AUTH) {
+	    $event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
+	    $event->setData(array('userName' => $username));
+	    list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+	    /* ignore errors, we're erroring out anyway */
+	    return $status;
+	} else {
+	    $event = GalleryCoreApi::newEvent('Gallery::Login');
+	    $event->setEntity($user);
+	    list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+	    if ($ret) {
+		$gallery->debug('ERROR: Unable to log in completely' . $ret->getAsText());
+		return $status;
+	    }
+	}
+
+	$gallery->debug('Username and password correct.');
 	$gallery->setActiveUser($user);
 
 	/* Add user to the mobile users' group if s/he isn't yet a member of it */
@@ -133,7 +154,6 @@ class ImageUploadHelper {
 
 	return $status;
     }
-
 
     /**
      * Remote Storage Capabilities.

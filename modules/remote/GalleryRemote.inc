@@ -230,9 +230,13 @@ class GalleryRemoteController extends GalleryController {
 		return $ret;
 	    }
 
+	    list ($ret, $isDisabled) = GalleryCoreApi::isDisabledUsername($form['uname']);
+	    if ($ret) {
+		return $ret;
+	    }
 	    $password = isset($form['password'])
 		? GalleryUtilities::htmlEntityDecode($form['password']) : '';
-	    if ($user != null && $user->isCorrectPassword($password)) {
+	    if (!$isDisabled && $user != null && $user->isCorrectPassword($password)) {
 		/* login successful */
 		$gallery->setActiveUser($user);
 		$response->setProperty('server_version',
@@ -248,11 +252,27 @@ class GalleryRemoteController extends GalleryController {
 
 		$response->setProperty('status', $grStatusCodes['SUCCESS']);
 		$response->setProperty('status_text', 'Login successful.');
+
+		$event = GalleryCoreApi::newEvent('Gallery::Login');
+		$event->setEntity($user);
+		list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+		if ($ret) {
+		    return $ret;
+		}
+
 		return null;
 	    } else {
 		/* login unsuccessful */
 		$response->setProperty('status', $grStatusCodes['PASSWORD_WRONG']);
 		$response->setProperty('status_text', 'Password incorrect.');
+
+		$event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
+		$event->setData(array('userName' => $form['uname']));
+		list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+		if ($ret) {
+		    return $ret;
+		}
+
 		return null;
 	    }
 	} else {
