@@ -932,6 +932,10 @@ class TestEventListener /* extends GalleryEventListener */ {
     }
 
     function handleEvent($event) {
+	if (empty($this->_eventListeners[$event->getEventName()])) {
+	    return array(null, null);
+	}
+
 	$result = array();
 	$list = $this->_eventListeners[$event->getEventName()];
 	for ($i = 0; $i < count($list); $i++) {
