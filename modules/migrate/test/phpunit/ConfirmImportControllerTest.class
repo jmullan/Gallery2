@@ -1360,6 +1360,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 		|| function_exists('recode_string'))) {
 	    return;
 	}
+	global $gallery;
+	$storage =& $gallery->getStorage();
 
 	$slash = $this->_slash;
 
@@ -1472,12 +1474,11 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array("Western European (ISO)\r\n" .
-				  "Hello World \r\n" .
-				  "Norwegian Norsk\r\n" .
-				  "Hallo Verden\r\n" .
-				  "Gallery er s\xc3\xa5 utrolig bra at jeg " .
-				  "har satt det opp til flere",        // title
+	$expectedTitle =
+		"Western European (ISO)\r\nHello World \r\nNorwegian Norsk\r\nHallo Verden\r\n" .
+		"Gallery er s\xc3\xa5 utrolig bra at jeg har satt det opp til flere";
+	$expectedTitle = $storage->_truncateString($expectedTitle, STORAGE_SIZE_MEDIUM);
+	$this->assertEquals(array($expectedTitle,                        // title
 				  NULL,                                  // summary
 				  NULL,      // keywords
 				  NULL, // description
@@ -1501,6 +1502,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 		|| function_exists('recode_string'))) {
 	    return;
 	}
+	global $gallery;
+	$storage =& $gallery->getStorage();
 
 	$slash = $this->_slash;
 
@@ -1613,12 +1616,12 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array("CHARSET=8859-1, fr-Fr, Hello World, french, " .
-				  "fran\xc3\xa7ais, Bonjour Monde\r\n" .
-				  "Voil\xc3\xa0 du texte " .
-				  "contenant des caract\xc3\xa8res " .
-				  "accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 " .
-				  "donne",                               // title
+	$expectedTitle =
+		"CHARSET=8859-1, fr-Fr, Hello World, french, fran\xc3\xa7ais, Bonjour Monde\r\n" .
+		"Voil\xc3\xa0 du texte contenant des caract\xc3\xa8res accentu\xc3\xa9s. " .
+		"\xc3\xa7\xc3\xa0 donne";
+	$expectedTitle = $storage->_truncateString($expectedTitle, STORAGE_SIZE_MEDIUM);
+	$this->assertEquals(array($expectedTitle,                        // title
 				  NULL,                                  // summary
 				  NULL,                                  // keywords
 				  NULL,                                  // description
