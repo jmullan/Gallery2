@@ -30,7 +30,7 @@ class PathInfoHelper {
     /**
      * @see RewriteParser::saveActiveRules
      */
-    function saveActiveRules($parser, $activeRules=null, $rewriteModule=null) {
+    function saveActiveRules($parser, $activeRules=null, $upgradeModule=null) {
 	/* By default we use the rules we've already got */
 	if (is_null($activeRules)) {
 	    list($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
@@ -45,7 +45,7 @@ class PathInfoHelper {
 	$shortUrls = array();
 	if (!empty($activeRules)) {
 	    list ($ret, $code, $regexRules, $shortUrls, $errorId) = RewriteHelper::parseActiveRules(
-		$activeRules, $parser, $rewriteModule);
+		$activeRules, $parser, $upgradeModule);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

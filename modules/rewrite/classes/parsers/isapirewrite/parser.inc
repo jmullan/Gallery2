@@ -51,10 +51,10 @@ class IsapiRewriteParser extends RewriteParser {
     /**
      * @see RewriteParser::saveActiveRules
      */
-    function saveActiveRules($activeRules=null, $rewriteModule=null) {
+    function saveActiveRules($activeRules=null, $upgradeModule=null) {
 	GalleryCoreApi::requireOnce(
 	    'modules/rewrite/classes/parsers/isapirewrite/IsapiRewriteHelper.class');
-	return IsapiRewriteHelper::saveActiveRules($this, $activeRules, $rewriteModule);
+	return IsapiRewriteHelper::saveActiveRules($this, $activeRules, $upgradeModule);
     }
 
     /**

@@ -55,10 +55,10 @@ class ModRewriteParser extends RewriteParser {
     /**
      * @see RewriteParser::saveActiveRules
      */
-    function saveActiveRules($activeRules=null, $rewriteModule=null) {
+    function saveActiveRules($activeRules=null, $upgradeModule=null) {
 	GalleryCoreApi::requireOnce(
 	    'modules/rewrite/classes/parsers/modrewrite/ModRewriteHelper.class');
-	return ModRewriteHelper::saveActiveRules($this, $activeRules, $rewriteModule);
+	return ModRewriteHelper::saveActiveRules($this, $activeRules, $upgradeModule);
     }
 
     /**

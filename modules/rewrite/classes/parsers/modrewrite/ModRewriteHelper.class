@@ -30,7 +30,7 @@ class ModRewriteHelper {
     /**
      * @see RewriteParser::saveActiveRules
      */
-    function saveActiveRules($parser, $activeRules=null, $rewriteModule=null) {
+    function saveActiveRules($parser, $activeRules=null, $upgradeModule=null) {
 	list ($ret, $code) = ModRewriteHelper::checkFile();
 	if ($ret) {
 	    return array($ret, null, null);
@@ -64,7 +64,7 @@ class ModRewriteHelper {
 	$flags = array('default' => array('QSA', 'L'), 'mandatory' => array('L'));
 	if (!empty($activeRules)) {
 	    list ($ret, $code, $regexRules, $shortUrls, $errorId) = RewriteHelper::parseActiveRules(
-		$activeRules, $parser, $rewriteModule, $flags);
+		$activeRules, $parser, $upgradeModule, $flags);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

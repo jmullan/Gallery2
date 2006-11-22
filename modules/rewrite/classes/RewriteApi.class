@@ -54,7 +54,7 @@ class RewriteApi {
      *
      * @param array $version major, minor version
      * @return array object GalleryStatus a status code
-     *              boolean true if compatible with given version
+     *               boolean true if compatible with given version
      */
     function isCompatibleWithApi($version) {
 	if (isset($this->_error)) {
@@ -144,13 +144,75 @@ class RewriteApi {
 	return array(null, $status, $errstr);
     }
 
+    /**
+     * Activate the rewrite rules for a specific module which can be inactive at the time of this
+     * call.  Does not update active rules by default, only changes the list of active rules for the
+     * given module.
+     * @param string $moduleId id of the module
+     * @param array  $ruleIds (optional) list of rule ids to activate. If omitted, all rules get
+     *               activated
+     * @param bool   $replacePatterns (optional) whether to replace active rules and patterns from
+     *               the pattern history or to replace them. Defaults to false.
+     * @return array object GalleryStatus a status code
+     *               boolean true if the operation was successful, false if not (e.g. if the
+     *               .htaccess could not be written or if the rules are invalid) 
+     */
+    function activateRewriteRulesForModule($moduleId, $ruleIds=null, $replacePatterns=false) {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	list ($ret, $activeRules) =
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'activeRules');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$activeRules = unserialize($activeRules);
+
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list ($ret, $history) = RewriteHelper::getHistoryForModule($moduleId);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$rules = $module->getRewriteRules();
+	foreach ($rules as $ruleId => $rule) {
+	    if ((!isset($activeRules[$moduleId][$ruleId]) || $replacePatterns)
+		    && (!isset($ruleIds) || in_array($ruleId, $ruleIds))) {
+		if (!$replacePatterns && isset($history[$ruleId])) {
+		    $pattern = $history[$ruleId];
+		} else {
+		    $pattern = $rule['pattern'];
+		}
+		$activeRules[$moduleId][$ruleId] = $pattern;
+		unset($history[$ruleId]);
+	    }
+	}
+
+	list ($ret, $code, $errorId) = $this->_parser->saveActiveRules($activeRules, $module);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/* Update the history */
+	if ($code == REWRITE_STATUS_OK) {
+	    $ret = RewriteHelper::setHistoryForModule($moduleId, $history);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	return array(null, $code == REWRITE_STATUS_OK);
+    }
+
     /* Getters below */
 
     /**
      * @return array api version
      */
     function getApiVersion() {
-	return array(1, 0);
+	return array(1, 1);
     }
 
     /**

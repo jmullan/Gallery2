@@ -35,7 +35,7 @@ class RewriteModule extends GalleryModule {
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n(
 	    'Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo'));
-	$this->setVersion('1.1.6'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('1.1.7'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 5));

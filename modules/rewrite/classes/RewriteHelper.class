@@ -76,12 +76,12 @@ class RewriteHelper {
     }
 
     /**
-     * Parse active rules into an array of regular expresions for parsing URLs during page requests
+     * Parse active rules into an array of regular expressions for parsing URLs during page requests
      * and build an array for the URL generator to use when generating short URLs.
      *
      * @param array $activeRules active rules by reference
      * @param object RewriteParser $rewriteParser
-     * @param object RewriteModule $rewriteModule (optional) passed in during activate/upgrade
+     * @param object GalleryModule $upgradeModule (optional) passed in during activate/upgrade
      * @param array $flags optional definition of default and mandator flags
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
@@ -90,7 +90,7 @@ class RewriteHelper {
      *               array string module (on error)
      *                     int rule id (on error)
      */
-    function parseActiveRules(&$activeRules, $rewriteParser, $rewriteModule=null, $flags=null) {
+    function parseActiveRules(&$activeRules, $rewriteParser, $upgradeModule=null, $flags=null) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
@@ -108,9 +108,9 @@ class RewriteHelper {
 	$regexRules = array();
 	$shortUrls = array();
 	foreach (array_keys($activeRules) as $moduleId) {
-	    if ($moduleId == 'rewrite' && isset($rewriteModule)) {
+	    if (isset($upgradeModule) && $upgradeModule->getId() == $moduleId) {
 		/* Avoid PLUGIN_VERSION_MISMATCH during upgrade by passing in module */
-		$module = $rewriteModule;
+		$module = $upgradeModule;
 	    } else {
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret) {
@@ -303,6 +303,45 @@ class RewriteHelper {
 	}
 
 	return (strlen($a['pattern']) < strlen($b['pattern'])) ? 1 : -1;
+    }
+
+
+    /**
+     * Get the rewrite rule history for a specific module.
+     * @param string $moduleId id of the module
+     * @return array object GalleryStatus a status code
+     *               array (mixed ruleId => string pattern)
+     */
+    function getHistoryForModule($moduleId) {
+	list ($ret, $history) =
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'history.' . $moduleId);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$history = empty($history) ? array() : unserialize($history);
+
+	return array(null, $history);
+    }
+
+    /**
+     * Store the rewrite rule history for a specific module.
+     * @param string $moduleId id of the module
+     * @param array $history array (mixed ruleId => string pattern)
+     * @return object GalleryStatus a status code
+     */
+    function setHistoryForModule($moduleId, $history) {
+	if (!empty($history)) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+						      'history.' . $moduleId, serialize($history));
+	} else {
+	    $ret = GalleryCoreApi::removePluginParameter('module', 'rewrite',
+							 'history.' . $moduleId);
+	}
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
     }
 }
 ?>

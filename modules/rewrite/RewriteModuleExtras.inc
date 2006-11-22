@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+
 /**
  * Additional upgrade/event handling code
  * @package Rewrite
@@ -226,6 +228,8 @@ class RewriteModuleExtras {
 	     * if 'match' is subset of URL params, instead of indexing by "$view|$subView".  Means
 	     * adding 'match' to $shortUrls.
 	     */
+	case '1.1.6':
+	    /* Added activateRewriteRulesForModule() to Rewrite API */
 
 	case 'end of upgrade path':
 	    break;
@@ -250,15 +254,13 @@ class RewriteModuleExtras {
 
 	/* Don't update the rules if not necissary */
 	if (isset($activeRules[$pluginId])) {
-	    GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	    list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 	    if ($ret) {
 		return $ret;
 	    }
 
 	    /* Save the old patterns for later use if module gets reactivated */
-	    $ret = $module->setParameter('history.' . $pluginId,
-		serialize($activeRules[$pluginId]));
+	    $ret = RewriteHelper::setHistoryForModule($pluginId, $activeRules[$pluginId]);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -278,7 +280,7 @@ class RewriteModuleExtras {
      * @see GalleryModule::handleEvent
      */
     function handleUninstallPlugin($module, $pluginId) {
-	$ret = $module->removeParameter('history.' . $pluginId);
+	$ret = RewriteHelper::setHistoryForModule($pluginId, array());
 	if ($ret) {
 	    return $ret;
 	}
@@ -297,17 +299,16 @@ class RewriteModuleExtras {
 	}
 	$rules = $plugin->getRewriteRules();
 
-	list ($ret, $history) = $module->getParameter('history.' . $pluginId);
+	list ($ret, $history) = RewriteHelper::getHistoryForModule($pluginId);
 	if ($ret) {
 	    return $ret;
 	}
-	$ret = $module->removeParameter('history.' . $pluginId);
+	$ret = RewriteHelper::setHistoryForModule($pluginId, array());
 	if ($ret) {
-		return $ret;
+	    return $ret;
 	}
 
 	if (!empty($history)) {
-	    $history = unserialize($history);
 	    list ($ret, $activeRules) = $module->getParameter('activeRules');
 	    if ($ret) {
 		return $ret;
@@ -331,7 +332,6 @@ class RewriteModuleExtras {
 
 	    /* Only update the active rules if we added something */
 	    if (count($activeRules) > $originalSize) {
-		GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 		list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
 		if ($ret) {
 		    return $ret;

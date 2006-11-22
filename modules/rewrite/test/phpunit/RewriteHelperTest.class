@@ -328,6 +328,34 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(null, $errno, 'errno');
 	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules');
     }
+
+    function testSetAndGetHistoryForModule() {
+	$moduleId = 'test-' . rand();
+	$expected = array('r1' => 'abc', 1 => '.*');
+	$ret = RewriteHelper::setHistoryForModule($moduleId, $expected);
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	list ($ret, $history) = RewriteHelper::getHistoryForModule($moduleId);
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($expected, $history, 'history after setting');
+
+	$ret = RewriteHelper::setHistoryForModule($moduleId, array());
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	list ($ret, $history) = RewriteHelper::getHistoryForModule($moduleId);
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(), $history, 'history removed');
+    }
 }
 
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');

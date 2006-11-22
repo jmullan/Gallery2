@@ -61,13 +61,13 @@ class RewriteParser {
      * RewriteHelper::parseActiveRules().  It returns REWRITE_STATUS_OK on success.
      *
      * @param array $activeRules (if null, or not set, it defaults to the current rules)
-     * @param object RewriteModule $rewriteModule (optional)
+     * @param object GalleryModule $upgradeModule (optional)
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      *               array string module (on error)
      *                     int rule id (on error)
      */
-    function saveActiveRules($activeRules=null, $rewriteModule=null) {
+    function saveActiveRules($activeRules=null, $upgradeModule=null) {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null);
     }
 
