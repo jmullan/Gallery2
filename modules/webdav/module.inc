@@ -75,6 +75,8 @@ class WebDavModule extends GalleryModule {
 		return $ret;
 	    }
 
+	    break;
+
 	case '0.0.3':
 	    /* Added WebDavSiteAdmin and WebDavLockMap */
 
@@ -102,24 +104,11 @@ class WebDavModule extends GalleryModule {
 	case '0.4.0':
 	    /*
 	     * Moved parsePath from WebDavHelper to WebDavRewriteHelper, to avoid loading
-	     * WebDavHelper just to generate URLs
+	     * WebDavHelper just to generate URLs.
 	     */
-	    list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	    $ret = $this->activateRewriteRules();
 	    if ($ret) {
 		return $ret;
-	    }
-	    if (!empty($rewriteApi)) {
-		/* TODO: Don't use RewriteHelper here. */
-		GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
-		list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
-		if ($ret) {
-		    return $ret;
-		}
-
-		list ($ret, $code, $errorId) = $rewriteParser->saveActiveRules(null, $this);
-		if ($ret) {
-		    return $ret;
-		}
 	    }
 
 	case '0.4.1':
@@ -215,46 +204,23 @@ class WebDavModule extends GalleryModule {
 
     /**
      * Activate essential short URL rules
-     * @todo: Use RewriteApi instead of RewriteHelper. Requires an extension of the RewriteApi.
+     * @return object GalleryStatus a status code
      */
     function activateRewriteRules() {
 	list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
 	if ($ret) {
 	    return $ret;
 	}
-	if (empty($rewriteApi)) {
-	    /* TODO: Handle it somehow, e.g. show configuration 'required' */
+	if (!empty($rewriteApi)) {
+	    list ($ret, $success) =
+		$rewriteApi->activateRewriteRulesForModule($this->getId(), array(0));
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+	if (empty($rewriteApi) || empty($success)) {
+	    /* TODO: Show configuration 'required' or something like that */
 	    return null;
-	}
-
-	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
-	list ($ret, $activeRules) =
-	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'activeRules');
-	if ($ret) {
-	    return $ret;
-	}
-
-	$activeRules = unserialize($activeRules);
-	$rules = $this->getRewriteRules();
-
-	/* Most WebDAV clients don't support query strings */
-	if (!isset($activeRules['webdav'][0])) {
-	    $activeRules['webdav'][0] = $rules[0]['pattern'];
-	}
-
-	/* Give davmount resources correct extension */
-	if (!isset($activeRules['webdav'][1])) {
-	    $activeRules['webdav'][1] = $rules[1]['pattern'];
-	}
-
-	list ($ret, $rewriteParser) = RewriteHelper::getRewriteParser();
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret, $code, $errorId) = $rewriteParser->saveActiveRules($activeRules);
-	if ($ret) {
-	    return $ret;
 	}
 
 	return null;
