@@ -33,6 +33,7 @@ class KeyAlbumCallbacks {
 	    $sizeLimit = (int)$params['sizeLimit'];
 	    $param = 'allKeywords' . ($onlyPublic ? '.public' : '')
 		. ($sizeLimit ? '.' . $sizeLimit : '');
+	    $includeFrequency = (bool)$params['includeFrequency'];
 	    list ($ret, $lastUpdated) =
 		GalleryCoreApi::getPluginParameter('module', 'keyalbum', $param . '.time');
 	    if ($ret) {
@@ -41,7 +42,8 @@ class KeyAlbumCallbacks {
 	    /* Cache keyword list for one day */
 	    if (time() - $lastUpdated > 3600 * 24) {
 		$ret = KeyAlbumCallbacks::_findAllKeywords($param, $onlyPublic, $sizeLimit,
-							   $params['maxCloudFontEnlargement']);
+							   $params['maxCloudFontEnlargement'],
+							   $includeFrequency);
 		if ($ret) {
 		    return $ret;
 		}
@@ -83,14 +85,16 @@ class KeyAlbumCallbacks {
      * @param boolean $onlyPublic true to only get keywords from public items
      * @param int $sizeLimit max number of keywords (least common are dropped; 0 = no limit)
      * @param int $maxWeight max value for font enlargement in keyword cloud
+     * @param boolean $includeFrequency false to only get distinct keywords, but not consider their
+     *        frequency (cloud requires frequency)
      * @return object GalleryStatus a status code
      * @static
      */
-    function _findAllKeywords($param, $onlyPublic, $sizeLimit, $maxWeight) {
+    function _findAllKeywords($param, $onlyPublic, $sizeLimit, $maxWeight, $includeFrequency) {
 	global $gallery;
 
 	$query = '
-	SELECT DISTINCT
+	SELECT' . (!$includeFrequency ? ' DISTINCT' : '') . '
 	  [GalleryItem::keywords]
 	FROM
 	  [GalleryItem]
@@ -138,6 +142,13 @@ class KeyAlbumCallbacks {
 		}
 	    }
 	}
+	$minCount = $maxCount;
+	foreach ($keywords as $i => $keyword) {
+	    if ($keyword['count'] < $minCount) {
+		$minCount = $keyword['count'];
+	    }
+	}
+
 	if ($sizeLimit > 0 && count($keywords) > $sizeLimit) {
 	    /* Sort by frequency and drop least common */
 	    uasort($keywords, create_function('$a,$b', '$c = $a[\'count\']; $d = $b[\'count\']; '
@@ -148,9 +159,17 @@ class KeyAlbumCallbacks {
 	ksort($keywords);
 	$keywords = array_values($keywords);
 
-	/* Compute weights, used for font enlargement in keyword cloud */
+	/* 
+	 * Compute weights, used for font enlargement in keyword cloud.  The adjustment shifts the
+	 * whole range from [x>=1, maxWeight] to [1, maxWeight - minWeight].  In case all
+	 * frequencies are very close together, this makes the resulting font-size rather normal
+	 * than large.
+	 */
+	$adjustment = pow($maxWeight, (float)$minCount / $maxCount) - 1.0;
 	foreach ($keywords as $i => $keyword) {
-	    $keywords[$i]['weight'] = round($keyword['count'] / $maxCount * $maxWeight);
+	    /* Scale the resulting weights to be floats between 1 and $maxWeight. */
+	    $keywords[$i]['weight'] = pow($maxWeight, (float)$keyword['count'] / $maxCount);
+	    $keywords[$i]['weight'] -= $adjustment;
 	    unset($keywords[$i]['count']);
 	}
 

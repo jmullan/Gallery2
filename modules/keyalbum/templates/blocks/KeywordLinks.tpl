@@ -6,6 +6,7 @@
  *}
 {if $forItem|default:true} {* Links for keywords of current item *}
 {if empty($item)} {assign var=item value=$theme.item} {/if}
+{assign var=showCloud value=$showCloud|default:false}
 
 {if !empty($item.keywords)}
 {g->callback type="keyalbum.SplitKeywords" keywords=$item.keywords}
@@ -21,18 +22,16 @@
 {else} {* Select box or cloud for all available keywords *}
 {g->callback type="keyalbum.LoadKeywords"
 	     onlyPublic=$onlyPublic|default:true sizeLimit=$sizeLimit|default:0
-	     maxCloudFontEnlargement=$maxCloudFontEnlargement|default:5}
+	     maxCloudFontEnlargement=$maxCloudFontEnlargement|default:3
+         includeFrequency=$showCloud}
 
 {if !empty($block.keyalbum.keywords)}
 <div class="{$class}">
-  {if $showCloud|default:false}
+  {if $showCloud}
     {foreach from=$block.keyalbum.keywords item=keyword}
-      &nbsp;<a href="{g->url arg1="view=keyalbum.KeywordAlbum" arg2="keyword=`$keyword.name`"}">
-	{if $keyword.weight > 0}
-	  <font size="+{$keyword.weight}px">{$keyword.name}</font>
-	{else}
+      &nbsp;<a href="{g->url arg1="view=keyalbum.KeywordAlbum" arg2="keyword=`$keyword.name`"}"
+               {if $keyword.weight > 0}style="font-size: {$keyword.weight}em;"{/if}>
 	  {$keyword.name}
-	{/if}
       </a>&nbsp;
     {/foreach}
   {else}
