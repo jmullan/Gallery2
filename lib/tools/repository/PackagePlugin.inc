@@ -107,7 +107,12 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	    if (preg_match($filter, $pluginId)) {
 		list ($ret, $pluginInfo) = $this->doPackagePlugin($plugin['type'], $pluginId);
 		if ($ret) {
-		    return $ret;
+		    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+			/* Probably recoverable, so report the error and continue */
+			print $ret->getAsText();
+		    } else {
+			return $ret;
+		    }
 		}
 		$packagedPluginList[] = $pluginInfo;
 	    }
