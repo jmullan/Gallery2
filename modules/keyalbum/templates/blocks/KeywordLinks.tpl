@@ -30,7 +30,7 @@
   {if $showCloud}
     {foreach from=$block.keyalbum.keywords item=keyword}
       &nbsp;<a href="{g->url arg1="view=keyalbum.KeywordAlbum" arg2="keyword=`$keyword.name`"}"
-               {if $keyword.weight > 0}style="font-size: {$keyword.weight}em;"{/if}>
+               {if !empty($keyword.weight)}style="font-size: {$keyword.weight}em;"{/if}>
 	  {$keyword.name}
       </a>&nbsp;
     {/foreach}
