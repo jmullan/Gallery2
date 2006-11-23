@@ -27,7 +27,6 @@ define('G2_SUPPORT_URL_FRAGMENT', '../../support/');
 if (php_sapi_name() == 'cli') {
     for ($i = 1; $i < count($_SERVER['argv']); $i++) {
 	$arg = split('=', $_SERVER['argv'][$i]);
-	printf("<pre>%s</pre>", print_r($arg, 1)); flush();
 	$_GET[$arg[0]] = $arg[1];
     }
 }
