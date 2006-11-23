@@ -36,3 +36,36 @@
    name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
 {/if}
 </div>
+
+<div class="gbBlock gcBackground1">
+  <h2> {g->text text="Icon Pack Browser"} </h2>
+</div>
+
+<div class="gbBlock">
+  <table class="gbDataTable">
+    <tr>
+      <th>
+	{g->text text="Link ID"}
+      </th>
+      {foreach from=$IconsSiteAdmin.packs key=dir item=pack}
+      <th>
+	{$pack.name}
+      </th>
+      {/foreach}
+    </tr>
+    {foreach from=$IconsSiteAdmin.classes key=class item=ignored}
+    <tr>
+      <td>
+	{$class|replace:"_":"."|replace:"-":" "}
+      </td>
+      {foreach from=$IconsSiteAdmin.packs key=dir item=pack}
+      <td>
+	{if isset($pack.map[$class])}
+	<img src="{g->url href="modules/icons/iconpacks/$dir/`$pack.map[$class]`"}"/>
+	{/if}
+      </td>
+      {/foreach}
+    </tr>
+    {/foreach}
+  </table>
+</div>

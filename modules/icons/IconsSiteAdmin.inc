@@ -70,6 +70,8 @@ class IconsSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	global $gallery;
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
@@ -93,9 +95,49 @@ class IconsSiteAdminView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    $template->setVariable('IconsSiteAdmin', array('iconpacks' => $list));
+
+	    $platform =& $gallery->getPlatform();
+	    $packs = array();
+	    $classes = array();
+	    foreach ($list as $dir => $name) {
+		if (empty($dir)) {
+		    continue;
+		}
+
+		$css = $platform->file(
+		    sprintf('%s/iconpacks/%s/icons.css', dirname(__FILE__), $dir));
+		$map = array();
+		$active = array();
+		foreach ($css as $line) {
+		    if (preg_match_all('/gbLink-(.*?)[ },]/', $line, $matches)) {
+			$active = array_merge($active, $matches[1]);
+		    }
+		    if (preg_match('/url\((.*)\)/', $line, $matches)) {
+			$image = $matches[1];
+		    }
+		    if (strpos($line, '}') !== false) {
+			if ($image) {
+			    foreach (array_flip($active) as $class => $ignored) {
+				$map[$class] = $image;
+				$classes[$class] = 1;
+			    }
+			}
+			$active = array();
+			$image = null;
+		    }
+		}
+		$packs[$dir] = array('name' => $name, 'map' => $map);
+	    }
 	}
 
+	ksort($classes);
+
+	$IconsSiteAdmin = array();
+	$IconsSiteAdmin['packs'] = $packs;
+	$IconsSiteAdmin['classes'] = $classes;
+	$IconsSiteAdmin['iconpacks'] = $list;
+
+	$template->setVariable('IconsSiteAdmin', $IconsSiteAdmin);
 	$template->setVariable('controller', 'icons.IconsSiteAdmin');
 	return array(null, array('body' => 'modules/icons/templates/IconsSiteAdmin.tpl'));
     }
