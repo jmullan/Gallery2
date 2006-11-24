@@ -97,17 +97,17 @@
 
   {if $AdminEditUser.show.locked || $AdminEditUser.failedLoginCount}
   <h4> {g->text text="Options"} </h4>
+  {if $AdminEditUser.show.locked}
   <p>
-    {if $AdminEditUser.show.locked}
     <input id="AdminEditUser_lockUser" type="checkbox" name="{g->formVar var="form[locked]"}" {if $form.locked}checked="checked"{/if}>
     <label for="AdminEditUser_lockUser">
       <b>{g->text text="Lock user."}</b>
       <span class="giInfo">{g->text text="Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"}</span>
     </label>
-    {/if}
   </p>
+  {/if}
+  {if $AdminEditUser.failedLoginCount}
   <p>
-    {if $AdminEditUser.failedLoginCount}
     <input id="AdminEditUser_failedLoginAttempts" type="checkbox" name="{g->formVar var="form[action][resetFailedLogins]"}">
     <label for="AdminEditUser_failedLoginAttempts">
       <b>{g->text text="Reset failed login count."}</b>
@@ -118,8 +118,8 @@
 		 arg1=$AdminEditUser.failedLoginCount}
       </span>
     </label>
-    {/if}
   </p>
+  {/if}
   {/if}
 </div>
 
