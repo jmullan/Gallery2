@@ -71,37 +71,39 @@
   <h3> {g->text text="Edit User (by list)"} </h3>
 
   {if ($form.list.maxPages > 1)}
-    <div style="margin-bottom: 10px"><span class="gcBackground1" style="padding: 5px">
-      <input type="hidden"
-       name="{g->formVar var="form[list][page]"}" value="{$form.list.page}"/>
-      <input type="hidden"
-       name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
+  <div style="margin-bottom: 10px"><span class="gcBackground1" style="padding: 5px">
+    <input type="hidden"
+     name="{g->formVar var="form[list][page]"}" value="{$form.list.page}"/>
+    <input type="hidden"
+     name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
 
-      {if ($form.list.page > 1)}
-	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
-	 arg3="form[list][page]=1"}">{g->text text="&laquo; first"}</a>
-	&nbsp;
-	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
-	 arg3="form[list][page]=`$form.list.backPage`"}">{g->text text="&laquo; back"}</a>
-      {/if}
+    {if ($form.list.page > 1)}
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
+     arg3="form[list][page]=1"}">{g->text text="&laquo; first"}</a>
+    &nbsp;
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
+     arg3="form[list][page]=`$form.list.backPage`"}">{g->text text="&laquo; back"}</a>
+    {/if}
 
-      &nbsp;
-      {g->text text="Viewing page %d of %d" arg1=$form.list.page arg2=$form.list.maxPages}
-      &nbsp;
+    &nbsp;
+    {g->text text="Viewing page %d of %d" arg1=$form.list.page arg2=$form.list.maxPages}
+    &nbsp;
 
-      {if ($form.list.page < $form.list.maxPages)}
-	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
-	 arg3="form[list][page]=`$form.list.nextPage`"}">{g->text text="next &raquo;"}</a>
-	&nbsp;
-	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
-	 arg3="form[list][page]=`$form.list.maxPages`"}">{g->text text="last &raquo;"}</a>
-      {/if}
-    </span></div>
+    {if ($form.list.page < $form.list.maxPages)}
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
+     arg3="form[list][page]=`$form.list.nextPage`"}">{g->text text="next &raquo;"}</a>
+    &nbsp;
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
+     arg3="form[list][page]=`$form.list.maxPages`"}">{g->text text="last &raquo;"}</a>
+    {/if}
+  </span></div>
   {/if}
 
   <table class="gbDataTable">
     <tr>
       <th> {g->text text="Username"} </th>
+      <th> {g->text text="Locked"} </th>
+      <th> {g->text text="Failed Logins"} </th>
       <th> {g->text text="Action"} </th>
     </tr>
 
@@ -109,6 +111,20 @@
     <tr class="{cycle values="gbEven,gbOdd"}">
       <td>
 	{$user.userName}
+      </td>
+      <td>
+	{if $user.locked}
+        {g->text text="locked"}
+        {else}
+        &nbsp;
+        {/if}
+      </td>
+      <td>
+	{if $user.failedLogins}
+        <span class="giWarning">{$user.failedLogins}</span>
+        {else}
+        &nbsp;
+        {/if}
       </td>
       <td>
 	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminEditUser"

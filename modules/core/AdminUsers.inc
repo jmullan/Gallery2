@@ -177,10 +177,10 @@ class AdminUsersView extends GalleryView {
 	$form['list']['nextPage'] = min($form['list']['page']+1, $form['list']['maxPages']);
 	$form['list']['backPage'] = max(1, $form['list']['page']-1);
 
-	list ($ret, $userNames) =
-	    GalleryCoreApi::fetchUserNames($form['list']['pageSize'],
-					   ($form['list']['page'] - 1) * $form['list']['pageSize'],
-					   $form['list']['filter']);
+	list ($ret, $userNames) = GalleryCoreApi::fetchUserNames(
+	    $form['list']['pageSize'],
+	    ($form['list']['page'] - 1) * $form['list']['pageSize'],
+	    $form['list']['filter']);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -193,14 +193,35 @@ class AdminUsersView extends GalleryView {
 
 	$myUserId = $gallery->getActiveUserId();
 
+	/* This is inefficient; we should extend GalleryCoreApi::fetchUserNames */
+	list ($ret, $users) = GalleryCoreApi::loadEntitiesById(array_keys($userNames));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+	    'FailedLoginsMap',
+	    array('userName', 'count'),
+	    array('userName' => array_values($userNames)));
+	if ($ret) {
+	    return array($ret, null);
+	}
+	while ($result = $searchResults->nextResult()) {
+	    $failedLogins[$result[0]] = $result[1];
+	}
+
 	$form['list']['userNames'] = array();
-	foreach ($userNames as $userId => $userName) {
-	    $form['list']['userNames'][$userId]['userName'] = $userName;
+	foreach ($users as $user) {
+	    $userId = $user->getId();
+	    $form['list']['userNames'][$userId] = (array)$user;
 	    if ($userId == $anonymousUserId || $userId == $myUserId) {
 		$form['list']['userNames'][$userId]['can']['delete'] = false;
 	    } else {
 		$form['list']['userNames'][$userId]['can']['delete'] = true;
 	    }
+	    $form['list']['userNames'][$userId]['failedLogins'] =
+		(isset($failedLogins[$user->getUserName()])) ?
+		$failedLogins[$user->getUserName()] : 0;
 	}
 
 	$template->setVariable('AdminUsers', array('totalUserCount' => $totalUserCount));
