@@ -102,17 +102,13 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 	    return $ret;
 	}
 
+	$packagedPluginList = array();
 	foreach ($plugins as $pluginId => $plugin) {
 	    $gallery->guaranteeTimeLimit(60);
 	    if (preg_match($filter, $pluginId)) {
 		list ($ret, $pluginInfo) = $this->doPackagePlugin($plugin['type'], $pluginId);
 		if ($ret) {
-		    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
-			/* Probably recoverable, so report the error and continue */
-			print $ret->getAsText();
-		    } else {
-			return $ret;
-		    }
+		    return $ret;
 		}
 		$packagedPluginList[] = $pluginInfo;
 	    }
@@ -124,7 +120,9 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
     /**
      * Creates all packages for the specified plugin.
      *
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array('pluginId' => ..., 'outputDir' => ...,
+     *                     'packageInfo' => ..., 'errors' => ...)
      */
     function doPackagePlugin($pluginType, $pluginId) {
 	global $gallery;

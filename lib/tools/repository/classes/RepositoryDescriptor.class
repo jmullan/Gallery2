@@ -78,6 +78,13 @@ class RepositoryDescriptor extends RepositoryObject {
 	return null;
     }
 
+    /**
+     * Build up all the package information, in preparation for it to be written out
+     * with (eg) writeToDisk()
+     *
+     * @param object GalleryPlugin $plugin the plugin
+     * @return object GalleryStatus a status code
+     */
     function generate($plugin) {
 	global $gallery;
 
@@ -141,6 +148,11 @@ class RepositoryDescriptor extends RepositoryObject {
 	if (!isset($this->_pluginDir)) {
 	    $this->_pluginDir = $platform->realpath(
 		sprintf('%s%ss/%s', $pluginBaseDir, $pluginType, $this->_pluginId)) . '/';
+	}
+
+	if (!$platform->file_exists($this->_pluginDir . 'MANIFEST')) {
+	    /* Don't do anything.  Integrity check will fail on this */
+	    return null;
 	}
 
 	$ret = $this->getFileMetaData($this->_pluginDir, $this->_data);
