@@ -66,10 +66,7 @@ class AdminEditUserController extends GalleryController {
 	    $redirect['userId'] = $userId;
 
 	} else if (isset($form['action']['save'])) {
-
-	    /*
-	     * Validate our data before we continue.
-	     */
+	    /* Validate our data before we continue. */
 
 	    /* username is required and might conflict */
 	    if (empty($form['userName'])) {
@@ -105,9 +102,15 @@ class AdminEditUserController extends GalleryController {
 		}
 	    }
 
-	    /*
-	     * If all the right fields are in place then go ahead and modify the user.
-	     */
+	    if (isset($form['action']['resetFailedLogins'])) {
+		$ret = GalleryCoreApi::removeMapEntry(
+		    'FailedLoginsMap', array('userName' => $user->getUserName()));
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    }
+
+	    /* If all the right fields are in place then go ahead and modify the user. */
 	    if (empty($error)) {
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
 		if ($ret) {
@@ -230,9 +233,25 @@ class AdminEditUserView extends GalleryView {
 	    }
 	}
 
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+	    'FailedLoginsMap',
+	    array('count'),
+	    array('userName' => $user->getUserName()));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if ($searchResults->resultCount() > 0) {
+	    $result = $searchResults->nextResult();
+	    $failedLoginCount = $result[0];
+	} else {
+	    $failedLoginCount = 0;
+	}
+
 	$AdminEditUser = array();
 	$AdminEditUser['show'] = $show;
 	$AdminEditUser['user'] = (array)$user;
+	$AdminEditUser['failedLoginCount'] = $failedLoginCount;
 	if (isset($languageList)) {
 	    $AdminEditUser['languageList'] = $languageList;
 	}

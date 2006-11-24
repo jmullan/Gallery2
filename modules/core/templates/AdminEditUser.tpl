@@ -93,12 +93,33 @@
       {g->text text="The passwords you entered did not match"}
     </div>
     {/if}
+  {/if}
 
-    {if $AdminEditUser.show.locked}
-      <h4> {g->text text="Lock Account"} </h4>
-      <input type="checkbox" name="{g->formVar var="form[locked]"}" {if $form.locked}checked="checked"{/if}>
-      <div class="giInfo">{g->text text="Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"}</div>
-    {/if}
+  {if $AdminEditUser.show.locked || $AdminEditUser.failedLoginCount}
+    <h4> {g->text text="Options"} </h4>
+    <p>
+      {if $AdminEditUser.show.locked}
+      <input id="AdminEditUser_lockUser" type="checkbox" name="{g->formVar var="form[locked]"}" {if $form.locked}checked="checked"{/if}>
+      <label for="AdminEditUser_lockUser">
+	<b>{g->text text="Lock user."}</b>
+	<span class="giInfo">{g->text text="Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"}</span>
+      </label>
+      {/if}
+    </p>
+    <p>
+      {if $AdminEditUser.failedLoginCount}
+      <input id="AdminEditUser_failedLoginAttempts" type="checkbox" name="{g->formVar var="form[action][resetFailedLogins]"}">
+      <label for="AdminEditUser_failedLoginAttempts">
+	<b>{g->text text="Reset failed login count."}</b>
+	<span class="giWarning">
+	  {g->text one="%d failed login attempt since the last successful login."
+		   many="%d failed login attempts since the last successful login."
+		   count=$AdminEditUser.failedLoginCount
+		   arg1=$AdminEditUser.failedLoginCount}
+	</span>
+      </label>
+      {/if}
+    </p>
   {/if}
 </div>
 

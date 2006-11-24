@@ -281,5 +281,44 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(false, $user->isLocked());
     }
+
+    function testResetFailedLoginAttempts() {
+	GalleryUtilities::putRequestVariable('userId', $this->_user[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[userName]', $this->_user[0]->getUserName());
+	GalleryUtilities::putRequestVariable('form[fullName]', $this->_user[0]->getFullName());
+	GalleryUtilities::putRequestVariable('form[email]', $this->_user[0]->getEmail());
+	GalleryUtilities::putRequestVariable('form[language]', $this->_user[0]->getLanguage());
+	GalleryUtilities::putRequestVariable('form[password1]', '');
+	GalleryUtilities::putRequestVariable('form[password2]', '');
+	GalleryUtilities::putRequestVariable('form[locked]', '');
+	GalleryUtilities::putRequestVariable('form[action][resetFailedLogins]', 1);
+
+	$ret = GalleryCoreApi::addMapEntry(
+	    'FailedLoginsMap',
+		array('userName' => $this->_user[0]->getUserName(),
+		      'count' => 10,
+		      'lastAttempt' => time()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminUsers'),
+		  'status' => array('modifiedUser' => $this->_user[0]->getUserName()),
+		  'error' => array()),
+	    $results);
+
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry(
+	    'FailedLoginsMap',
+	    array('userName'),
+	    array('userName' => $this->_user[0]->getUserName()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(0, $searchResults->resultCount());
+    }
 }
 ?>
