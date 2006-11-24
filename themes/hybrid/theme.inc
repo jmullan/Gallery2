@@ -39,16 +39,16 @@ class HybridTheme extends GalleryTheme {
 	$this->setStandardSettings(array(
 	    'rows' => 30, 'columns' => 2,
 	    'albumFrame' => '', 'itemFrame' => '', 'colorpack' => '',
-	    'sidebarBlocks' => serialize(array(
-				array('search.SearchBlock', array('showAdvancedLink' => true)),
-				array('core.ItemLinks', array('useDropdown' => false)),
-				array('core.PeerList', array()),
-				array('imageblock.ImageBlock', array()))),
-	    'albumBlocks' => serialize(array(
-				array('comment.ViewComments', array()))),
-	    'photoBlocks' => serialize(array(
-				array('exif.ExifInfo', array()),
-				array('comment.ViewComments', array()))),
+	    'sidebarBlocks' => serialize(
+		array(array('search.SearchBlock', array('showAdvancedLink' => true)),
+		      array('core.ItemLinks', array('useDropdown' => false)),
+		      array('core.PeerList', array()),
+		      array('imageblock.ImageBlock', array()))),
+	    'albumBlocks' => serialize(
+		array(array('comment.ViewComments', array()))),
+	    'photoBlocks' => serialize(
+		array(array('exif.ExifInfo', array()),
+		      array('comment.ViewComments', array()))),
 	    'showText' => 1, 'showAlbumDate' => 1, 'showImageDate' => 1, 'showDateInViewer' => 1,
 	    'showSize' => 1, 'showViewCount' => 1, 'showAlbumOwner' => 0, 'showImageOwner' => 0,
 	    'thumbTitle' => 'none',
