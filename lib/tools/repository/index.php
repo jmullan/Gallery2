@@ -23,18 +23,21 @@
  */
 define('G2_SUPPORT_URL_FRAGMENT', '../../support/');
 
-/* Simulate HTTP for command line clients */
-if (php_sapi_name() == 'cli') {
-    for ($i = 1; $i < count($_SERVER['argv']); $i++) {
-	$arg = split('=', $_SERVER['argv'][$i]);
-	$_GET[$arg[0]] = $arg[1];
-    }
-}
-
 include('../../support/security.inc');
 include('../../../bootstrap.inc');
 require_once('../../../init.inc');
 define('GALLERY_MAIN_PHP', 'index.php');
+
+/* Simulate HTTP for command line clients */
+if (php_sapi_name() == 'cli') {
+    $argv = GalleryUtilities::getServerVar('argv');
+    for ($i = 1; $i < count($argv); $i++) {
+	$arg = split('=', $argv[$i]);
+	GalleryUtilities::putRequestVariable($arg[0], $arg[1], false);
+    }
+}
+
+printf("<pre>%s</pre>", print_r($_GET, 1)); flush();
 
 function RepositoryToolsMain() {
     $ret = GalleryInitFirstPass();
