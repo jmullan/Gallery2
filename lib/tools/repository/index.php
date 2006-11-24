@@ -37,8 +37,6 @@ if (php_sapi_name() == 'cli') {
     }
 }
 
-printf("<pre>%s</pre>", print_r($_GET, 1)); flush();
-
 function RepositoryToolsMain() {
     $ret = GalleryInitFirstPass();
     if ($ret) {
