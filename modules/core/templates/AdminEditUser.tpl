@@ -35,91 +35,91 @@
    name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
 
   {if $AdminEditUser.show.email}
-    <h4>
-      {g->text text="E-mail Address"}
-      <span class="giSubtitle"> {g->text text="(suggested)"} </span>
-    </h4>
+  <h4>
+    {g->text text="E-mail Address"}
+    <span class="giSubtitle"> {g->text text="(suggested)"} </span>
+  </h4>
 
-    <input type="text" size="32" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
+  <input type="text" size="32" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
 
-    {if isset($form.error.email.missing)}
-    <div class="giError">
-      {g->text text="You must enter an email address"}
-    </div>
-    {/if}
-    {if isset($form.error.email.invalid)}
-    <div class="giError">
-      {g->text text="Invalid email address"}
-    </div>
-    {/if}
+  {if isset($form.error.email.missing)}
+  <div class="giError">
+    {g->text text="You must enter an email address"}
+  </div>
+  {/if}
+  {if isset($form.error.email.invalid)}
+  <div class="giError">
+    {g->text text="Invalid email address"}
+  </div>
+  {/if}
   {/if}
 
   {if $AdminEditUser.show.language}
-    <h4> {g->text text="Language"} </h4>
+  <h4> {g->text text="Language"} </h4>
 
-    <select name="{g->formVar var="form[language]"}">
-      {html_options options=$AdminEditUser.languageList selected=$form.language}
-    </select>
+  <select name="{g->formVar var="form[language]"}">
+    {html_options options=$AdminEditUser.languageList selected=$form.language}
+  </select>
   {/if}
 
   {if $AdminEditUser.show.password}
-    <h4>
-      {g->text text="Password"}
-      <span class="giSubtitle"> {g->text text="(required)"} </span>
-    </h4>
+  <h4>
+    {g->text text="Password"}
+    <span class="giSubtitle"> {g->text text="(required)"} </span>
+  </h4>
 
-    <input type="password" size="32" name="{g->formVar var="form[password1]"}"/>
+  <input type="password" size="32" name="{g->formVar var="form[password1]"}"/>
 
-    {if isset($form.error.password1.missing)}
-    <div class="giError">
-      {g->text text="You must enter a password"}
-    </div>
-    {/if}
+  {if isset($form.error.password1.missing)}
+  <div class="giError">
+    {g->text text="You must enter a password"}
+  </div>
+  {/if}
 
-    <h4>
-      {g->text text="Verify Password"}
-      <span class="giSubtitle"> {g->text text="(required)"} </span>
-    </h4>
+  <h4>
+    {g->text text="Verify Password"}
+    <span class="giSubtitle"> {g->text text="(required)"} </span>
+  </h4>
 
-    <input type="password" size="32" name="{g->formVar var="form[password2]"}"/>
+  <input type="password" size="32" name="{g->formVar var="form[password2]"}"/>
 
-    {if isset($form.error.password2.missing)}
-    <div class="giError">
-      {g->text text="You must enter the password a second time"}
-    </div>
-    {/if}
-    {if isset($form.error.password2.mismatch)}
-    <div class="giError">
-      {g->text text="The passwords you entered did not match"}
-    </div>
-    {/if}
+  {if isset($form.error.password2.missing)}
+  <div class="giError">
+    {g->text text="You must enter the password a second time"}
+  </div>
+  {/if}
+  {if isset($form.error.password2.mismatch)}
+  <div class="giError">
+    {g->text text="The passwords you entered did not match"}
+  </div>
+  {/if}
   {/if}
 
   {if $AdminEditUser.show.locked || $AdminEditUser.failedLoginCount}
-    <h4> {g->text text="Options"} </h4>
-    <p>
-      {if $AdminEditUser.show.locked}
-      <input id="AdminEditUser_lockUser" type="checkbox" name="{g->formVar var="form[locked]"}" {if $form.locked}checked="checked"{/if}>
-      <label for="AdminEditUser_lockUser">
-	<b>{g->text text="Lock user."}</b>
-	<span class="giInfo">{g->text text="Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"}</span>
-      </label>
-      {/if}
-    </p>
-    <p>
-      {if $AdminEditUser.failedLoginCount}
-      <input id="AdminEditUser_failedLoginAttempts" type="checkbox" name="{g->formVar var="form[action][resetFailedLogins]"}">
-      <label for="AdminEditUser_failedLoginAttempts">
-	<b>{g->text text="Reset failed login count."}</b>
-	<span class="giWarning">
-	  {g->text one="%d failed login attempt since the last successful login."
-		   many="%d failed login attempts since the last successful login."
-		   count=$AdminEditUser.failedLoginCount
-		   arg1=$AdminEditUser.failedLoginCount}
-	</span>
-      </label>
-      {/if}
-    </p>
+  <h4> {g->text text="Options"} </h4>
+  <p>
+    {if $AdminEditUser.show.locked}
+    <input id="AdminEditUser_lockUser" type="checkbox" name="{g->formVar var="form[locked]"}" {if $form.locked}checked="checked"{/if}>
+    <label for="AdminEditUser_lockUser">
+      <b>{g->text text="Lock user."}</b>
+      <span class="giInfo">{g->text text="Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"}</span>
+    </label>
+    {/if}
+  </p>
+  <p>
+    {if $AdminEditUser.failedLoginCount}
+    <input id="AdminEditUser_failedLoginAttempts" type="checkbox" name="{g->formVar var="form[action][resetFailedLogins]"}">
+    <label for="AdminEditUser_failedLoginAttempts">
+      <b>{g->text text="Reset failed login count."}</b>
+      <span class="giWarning">
+	{g->text one="%d failed login attempt since the last successful login."
+		 many="%d failed login attempts since the last successful login."
+		 count=$AdminEditUser.failedLoginCount
+		 arg1=$AdminEditUser.failedLoginCount}
+      </span>
+    </label>
+    {/if}
+  </p>
   {/if}
 </div>
 
