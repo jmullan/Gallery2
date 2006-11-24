@@ -56,11 +56,8 @@ class GalleryUserHelper_medium {
 	  [GalleryUser::userName] ASC
 	';
 
-	list ($ret, $searchResults) =
-	    $gallery->search($query,
-			     $data,
-			     array('limit' => array('count' => $count,
-						    'offset' => $offset)));
+	list ($ret, $searchResults) = $gallery->search(
+	    $query, $data, array('limit' => array('count' => $count, 'offset' => $offset)));
 	if ($ret) {
 	    return array($ret, null);
 	}
