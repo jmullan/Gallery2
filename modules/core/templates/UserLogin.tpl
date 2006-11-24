@@ -8,6 +8,7 @@
   <h2> {g->text text="Login to your account"} </h2>
 </div>
 
+{capture name="recoverUrl"}{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPassword" arg3="return=1"}{/capture}
 {if $user.isGuest}
 <input type="hidden" name="{g->formVar var="return"}" value="{$form.returnUrl}"/>
 <input type="hidden" name="{g->formVar var="form[returnUrl]"}" value="{$form.returnUrl}"/>
@@ -35,7 +36,7 @@
 
   {if isset($form.error.username.disabled)}
   <div class="giError">
-    {g->text text="Logins temporarily disabled due to multiple failed login attempts."}
+    {g->text text="Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable this account." arg1=$smarty.capture.recoverUrl}
   </div>
   {/if}
 
@@ -62,7 +63,6 @@
 {/foreach}
 
 <div class="gbBlock">
-  {capture name="recoverUrl"}{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPassword" arg3="return=1"}{/capture}
   {g->text text="Lost or forgotten passwords can be retrieved using the <a href=\"%s\">recover password</a> page" arg1=$smarty.capture.recoverUrl}
 </div>
 
