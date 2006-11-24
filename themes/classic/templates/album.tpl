@@ -14,8 +14,9 @@
       {* hide the sidebar if there's nothing in it *}
       // <![CDATA[
       var el = document.getElementById("gsSidebarCol");
-      var text = el.innerText;
-      if (!text || text.match(/\s/)) el.style.display = 'none';
+      var text = el.innerText;  // IE
+      if (!text) text = el.textContent; // Firefox
+      if (!text || !text.match(/\S/)) el.style.display = 'none';
       // ]]>
     </script>
     {/if}
