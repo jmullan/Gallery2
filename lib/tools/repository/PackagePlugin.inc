@@ -197,6 +197,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
 		return array($ret, null);
 	    }
 
+	    ksort($plugins);
 	    foreach ($plugins as $pluginId => $plugin) {
 		$data[$pluginId]['type'] = $pluginType;
 		$data[$pluginId]['active'] = isset($plugin['active']) ? 'active' : 'inactive';
