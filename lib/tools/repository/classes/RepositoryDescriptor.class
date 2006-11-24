@@ -152,6 +152,7 @@ class RepositoryDescriptor extends RepositoryObject {
 
 	if (!$platform->file_exists($this->_pluginDir . 'MANIFEST')) {
 	    /* Don't do anything.  Integrity check will fail on this */
+	    $this->_data = array();
 	    return null;
 	}
 
