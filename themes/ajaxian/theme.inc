@@ -46,7 +46,7 @@ class AjaxianTheme extends GalleryTheme {
 		  'albumBlocks' => serialize(array(
 		     array('core.ItemLinks', array('useDropdown' => true)))),
 		  'photoBlocks' => serialize(array(
-		     array('exif.ExifInfo')))));
+                     array('exif.ExifInfo', array())))));
     }
 
     /**
