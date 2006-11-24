@@ -10,6 +10,14 @@
     <td id="gsSidebarCol">
       {g->theme include="sidebar.tpl"}
     </td>
+    <script type="text/javascript">
+      {* hide the sidebar if there's nothing in it *}
+      // <![CDATA[
+      var el = document.getElementById("gsSidebarCol");
+      var text = el.innerText;
+      if (!text || text.match(/\s/)) el.style.display = 'none';
+      // ]]>
+    </script>
     {/if}
     <td>
       <div id="gsContent" class="gcBorder1">
