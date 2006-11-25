@@ -53,20 +53,20 @@ class PostgreSqlStorage extends GalleryStorage {
 	    return $ret;
 	}
 
-	/* Create a temporary database connection and install our custom aggregate function */
+	/*
+	 * Use a temporary database connection such that possible errors when dropping the bit_or
+	 * function don't affect the main transaction.
+	 */
 	list ($ret, $tmpDb) = $this->_getConnection(true);
 	if ($ret) {
 	    return $ret;
 	}
 
+	/* Ignore errors when trying to drop the bit_or function */
 	$this->_traceStart();
 	$recordSet = $tmpDb->Execute('DROP AGGREGATE BIT_OR(bit)');
 	$tmpDb->Close();
 	$this->_traceStop();
-
-	if (empty($recordSet)) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
-	}
 
 	return null;
     }
