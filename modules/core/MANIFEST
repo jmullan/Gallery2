@@ -7,7 +7,7 @@ modules/core/AdminDeleteGroup.inc	165133256	4055442971	3516	3633
 modules/core/AdminDeleteUser.inc	4072682781	2131781661	7658	7873
 modules/core/AdminEditGroup.inc	1142042993	3066757551	4473	4626
 modules/core/AdminEditGroupUsers.inc	2837331769	3844457620	7709	7960
-modules/core/AdminEditUser.inc	3774383344	2084922945	7355	7600
+modules/core/AdminEditUser.inc	3336490962	1096415262	7975	8239
 modules/core/AdminGroups.inc	1059881546	3690116694	7797	8045
 modules/core/AdminMaintenance.inc	332889778	4093869460	5997	6201
 modules/core/AdminPerformance.inc	3371636169	1630495197	5838	6031
@@ -16,7 +16,7 @@ modules/core/AdminRepository.inc	2374375799	511404383	12546	12931
 modules/core/AdminRepositoryDownload.inc	896319276	2532710129	15461	15942
 modules/core/AdminThemes.inc	2782873732	3357051709	15527	16004
 modules/core/AdminToolkitPriority.inc	3274184580	496094847	3298	3403
-modules/core/AdminUsers.inc	2788644887	2509087167	6416	6627
+modules/core/AdminUsers.inc	3592763827	4210222765	7086	7318
 modules/core/Callbacks.inc	3624848997	2465149348	6653	6863
 modules/core/ChangeLanguage.inc	426988233	865003582	1568	1617
 modules/core/CoreModuleExtras.inc	3175371545	1637931124	94386	97393
@@ -61,7 +61,7 @@ modules/core/UserLogin.inc	3621762520	2103004808	7078	7317
 modules/core/UserPreferences.inc	245135208	1140164979	7584	7825
 modules/core/UserRecoverPassword.inc	3566720865	961254228	9149	9436
 modules/core/UserRecoverPasswordAdmin.inc	4212197113	2201306692	6110	6310
-modules/core/UserRecoverPasswordConfirm.inc	3660875931	334670142	5576	5752
+modules/core/UserRecoverPasswordConfirm.inc	1993101426	1983767247	5749	5932
 modules/core/UserRecoverPasswordDownload.inc	286248321	3820820045	1917	1977
 modules/core/classes/BuildDerivativesTask.class	2497006306	1136327212	6427	6645
 modules/core/classes/ConvertDatabaseToUtf8Task.class	4206924061	2722746714	2876	2962
@@ -201,7 +201,7 @@ modules/core/classes/helpers/GalleryToolkitHelper_medium.class	3149519323	369245
 modules/core/classes/helpers/GalleryToolkitHelper_simple.class	535716147	257934730	6228	6438
 modules/core/classes/helpers/GalleryUserGroupHelper_medium.class	4161622794	1993282733	5608	5817
 modules/core/classes/helpers/GalleryUserGroupHelper_simple.class	4174898471	1169251701	3478	3599
-modules/core/classes/helpers/GalleryUserHelper_medium.class	902305230	2859205973	9908	10310
+modules/core/classes/helpers/GalleryUserHelper_medium.class	1975764302	4174022033	10653	11076
 modules/core/classes/helpers/GalleryUserHelper_simple.class	411962935	3781692262	3098	3197
 modules/core/classes/helpers/MailHelper_simple.class	1056488653	2885087390	3104	3204
 modules/core/classes/helpers/MaintenanceHelper_simple.class	4196134272	2977605215	3611	3730
@@ -209,7 +209,7 @@ modules/core/classes/helpers/UserRecoverPasswordHelper_simple.class	3535017779	7
 modules/core/classes/helpers/WebHelper_simple.class	2018715144	2395761358	12283	12707
 modules/core/data/broken-image.gif	888290220	888290220	1589	1589
 modules/core/data/donate.png	3710449820	3710449820	299	299
-modules/core/data/gallery.css	2255907718	577579425	9282	9780
+modules/core/data/gallery.css	1643537829	3847308535	9281	9778
 modules/core/data/groupinfo.png	3454340450	3454340450	1212	1212
 modules/core/data/hline.png	218182613	218182613	416	416
 modules/core/data/hue.png	919760189	919760189	1344	1344
@@ -317,7 +317,7 @@ modules/core/templates/AdminDeleteGroup.tpl	1081227305	1432619943	1087	1115
 modules/core/templates/AdminDeleteUser.tpl	3082658749	696686535	3249	3336
 modules/core/templates/AdminEditGroup.tpl	174718646	571049629	1573	1616
 modules/core/templates/AdminEditGroupUsers.tpl	1943491119	3931404335	5691	5855
-modules/core/templates/AdminEditUser.tpl	948246084	2691041394	3606	3718
+modules/core/templates/AdminEditUser.tpl	1378236703	1137357496	4292	4425
 modules/core/templates/AdminGroups.tpl	3060339137	4161476364	5548	5704
 modules/core/templates/AdminMaintenance.tpl	3484859554	1478641533	2922	3009
 modules/core/templates/AdminPerformance.tpl	2008848320	2136400148	5207	5342
@@ -330,7 +330,7 @@ modules/core/templates/AdminRepositoryDownload.js	2345204483	3065531216	1280	132
 modules/core/templates/AdminRepositoryDownload.tpl	1762197604	3107620308	5318	5428
 modules/core/templates/AdminThemes.tpl	1245257464	1399804875	9653	9934
 modules/core/templates/AdminToolkitPriority.tpl	2834837910	2500395293	2364	2432
-modules/core/templates/AdminUsers.tpl	709894104	525552245	5130	5278
+modules/core/templates/AdminUsers.tpl	2352456806	2815898087	5493	5657
 modules/core/templates/AutoComplete.tpl	1832137937	1339306211	1145	1169
 modules/core/templates/CreateThumbnailOption.tpl	909061593	2739105434	943	962
 modules/core/templates/DefaultButton.tpl	793193403	1726200774	1374	1398
@@ -371,7 +371,7 @@ modules/core/templates/SiteAdmin.tpl	2202325978	3731442347	1633	1684
 modules/core/templates/UserAdmin.tpl	3456599599	4117944598	1538	1584
 modules/core/templates/UserChangePassword.tpl	3112024648	261345730	2487	2576
 modules/core/templates/UserLocked.tpl	171513671	3603391687	683	697
-modules/core/templates/UserLogin.tpl	2031892764	762224220	2847	2926
+modules/core/templates/UserLogin.tpl	269350113	37773534	3009	3088
 modules/core/templates/UserPreferences.tpl	2941724183	1250922813	2772	2868
 modules/core/templates/UserRecoverPassword.tpl	3043333541	65697908	2693	2750
 modules/core/templates/UserRecoverPasswordAdmin.tpl	1133638419	359648877	4915	5041
@@ -411,7 +411,7 @@ modules/core/test/phpunit/AdminDeleteGroupControllerTest.class	339160604	2241607
 modules/core/test/phpunit/AdminDeleteUserControllerTest.class	359204017	929852478	18022	18597
 modules/core/test/phpunit/AdminEditGroupControllerTest.class	2619813442	4220799184	4359	4502
 modules/core/test/phpunit/AdminEditGroupUsersControllerTest.class	1982601463	1055238623	7824	8053
-modules/core/test/phpunit/AdminEditUserControllerTest.class	4161334192	576033903	11965	12250
+modules/core/test/phpunit/AdminEditUserControllerTest.class	3166114044	2861902395	13545	13869
 modules/core/test/phpunit/AdminGroupsControllerTest.class	1685635860	3485332618	10318	10627
 modules/core/test/phpunit/AdminMaintenanceControllerTest.class	2470160751	169868123	11362	11706
 modules/core/test/phpunit/AdminPerformanceControllerTest.class	2998364130	1008537839	4318	4443
@@ -511,11 +511,11 @@ modules/core/test/phpunit/TruncateTest.class	544966368	2791779323	6386	6550
 modules/core/test/phpunit/UrlGeneratorTest.class	590843468	1879989229	60526	62096
 modules/core/test/phpunit/UserAndGroupTest.class	1587631206	3819385277	43249	44722
 modules/core/test/phpunit/UserChangePasswordControllerTest.class	2614324362	874626578	7457	7657
-modules/core/test/phpunit/UserHelperTest.class	1834693293	3348287409	7856	8113
+modules/core/test/phpunit/UserHelperTest.class	1556123106	4283953474	8712	8994
 modules/core/test/phpunit/UserLoginControllerTest.class	699163857	1511095837	18155	18688
 modules/core/test/phpunit/UserPreferencesControllerTest.class	1336167963	3296419043	15155	15554
 modules/core/test/phpunit/UserRecoverPasswordAdminControllerTest.class	937576576	2732141925	11476	11815
-modules/core/test/phpunit/UserRecoverPasswordConfirmControllerTest.class	1725890434	315928519	7076	7298
+modules/core/test/phpunit/UserRecoverPasswordConfirmControllerTest.class	2896076683	2995595771	8411	8674
 modules/core/test/phpunit/UserRecoverPasswordControllerTest.class	1675018396	104481788	18078	18652
 modules/core/test/phpunit/UtilitiesTest.class	778608265	2182884974	63485	65166
 modules/core/test/phpunit/ViewTest.class	2054337169	19001187	4693	4845
