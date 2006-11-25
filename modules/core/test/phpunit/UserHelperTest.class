@@ -64,7 +64,8 @@ class UserHelperTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(
-		array('get', 'FailedLoginsMap', array('count'), array('userName' => 'MockUser')),
+		array('get', 'FailedLoginsMap', array('count', 'lastAttempt'),
+		      array('userName' => 'MockUser')),
 		array('add', 'FailedLoginsMap',
 		      array('userName' => 'MockUser', 'count' => 1, 'lastAttempt' => 'NOW'))),
 	    $this->_storage->_operations);
@@ -85,6 +86,7 @@ class UserHelperTest extends GalleryTestCase {
 	$event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
 	$event->setData(array('userName' => 'MockUser'));
 	$this->_storage->_count = 1;
+	$this->_storage->_lastAttempt = 1;  /* way in the past */
 	$this->_phpVm->_time = 'NOW';
 	list ($ret, $ignored) = GalleryUserHelper_medium::handleEvent($event);
 	if ($ret) {
@@ -93,10 +95,29 @@ class UserHelperTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(
-		array('get', 'FailedLoginsMap', array('count'), array('userName' => 'MockUser')),
+		array('get', 'FailedLoginsMap',
+		      array('count', 'lastAttempt'), array('userName' => 'MockUser')),
 		array('remove', 'FailedLoginsMap', array('userName' => 'MockUser')),
 		array('add', 'FailedLoginsMap',
 		      array('userName' => 'MockUser', 'count' => 2, 'lastAttempt' => 'NOW'))),
+	    $this->_storage->_operations);
+    }
+
+    function testGalleryFailedLoginEventFailuresWhenDisabledAreIgnored() {
+	global $gallery;
+	$event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
+	$event->setData(array('userName' => 'MockUser'));
+	$this->_storage->_count = 100;
+	$this->_storage->_lastAttempt = time();
+	$this->_phpVm->_time = time();
+	list ($ret, $ignored) = GalleryUserHelper_medium::handleEvent($event);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(
+	    array(array('get', 'FailedLoginsMap',
+			array('count', 'lastAttempt'), array('userName' => 'MockUser'))),
 	    $this->_storage->_operations);
     }
 
@@ -200,8 +221,12 @@ class UserHelperTestMockStorage {
     function getMapEntry($mapName, $members, $match) {
 	$this->_operations[] = array('get', $mapName, $members, $match);
 
-	return array(
-	    null, new UserHelperTestMockStorageFakeResults($this->_count, $this->_lastAttempt));
+	if (count($members) == 1) {
+	    $results = new UserHelperTestMockStorageFakeResults($this->_count);
+	} else {
+	    $results = new UserHelperTestMockStorageFakeResults($this->_count, $this->_lastAttempt);
+	}
+	return array(null, $results);
     }
 
     function removeMapEntry($mapName, $data) {
