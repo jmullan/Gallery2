@@ -38,7 +38,6 @@ class SitemapView extends GalleryView {
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
-
 	list ($ret, $rootId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
@@ -80,29 +79,74 @@ class SitemapView extends GalleryView {
 	print 'http://www.google.com/schemas/sitemap/0.84/sitemap.xsd">';
 	print "\n";
 
-	$queue = array($rootId);
-	while (!empty($queue)) {
-	    $gallery->guaranteeTimeLimit(30);
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds(
+	    'core.view', $gallery->getActiveUserId());
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (!empty($aclIds)) {
+	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	    $currentId = array_shift($queue);
-	    list ($ret, $newIds) =
-		GalleryCoreApi::fetchChildItemIdsWithPermission($currentId, 'core.view');
+	    $phpVm = $gallery->getPhpVm();
+
+	    $data = array();
+	    $query = sprintf('
+	    SELECT
+              [GalleryItem::id],
+	      [GalleryEntity::modificationTimestamp],
+              ((%s - [GalleryEntity::creationTimestamp]) /
+               [GalleryEntity::serialNumber]) as SecondsPerChange
+	    FROM
+	      [GalleryItem], [GalleryEntity], [GalleryItemAttributesMap],
+              [GalleryAccessSubscriberMap]
+	    WHERE
+              [GalleryItem::id] = [GalleryEntity::id]
+              AND
+              [GalleryItem::id] = [GalleryItemAttributesMap::itemId]
+              AND
+	      ([GalleryItem::id] = ?
+               OR
+               [GalleryItemAttributesMap::parentSequence] LIKE ?
+               OR
+	       [GalleryItemAttributesMap::parentSequence] LIKE ?)
+	      AND
+	      [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
+	      AND
+	      [GalleryAccessSubscriberMap::accessListId] IN (%s)
+            ORDER BY [GalleryEntity::modificationTimestamp] ASC
+	    ', $phpVm->time(), $aclMarkers);
+	    $data[] = $rootId;
+	    $data[] = $rootId . '/%';
+	    $data[] = '%/' . $rootId . '/%';
+	    $data = array_merge($data, $aclIds);
+
+	    list ($ret, $searchResults) = $gallery->search($query, $data);
 	    if ($ret) {
 		return $ret;
 	    }
-	    $queue = array_merge($queue, $newIds);
 
-	    /* TODO: load entities in chunks */
-	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($currentId);
-	    if ($ret) {
-		return $ret;
+	    $frequencyTable = array(
+		3600 => 'hourly',
+		24 * 3600 => 'daily',
+		7 * 24 * 3600 => 'weekly',
+		30 * 24 * 3600 => 'monthly',
+		365 * 24 * 3600 => 'yearly');
+	    while ($result = $searchResults->nextResult()) {
+		$loc = $urlGenerator->generateUrl(
+		    array('view' => 'core.ShowItem', 'itemId' => $result[0]),
+		    array('forceSessionId' => false, 'forceFullUrl' => true));
+		$lastmod = gmstrftime('%Y-%m-%dT%H:%M:%S+00:00', $result[1]);
+		$changefreq = 'never';
+		foreach ($frequencyTable as $comparison => $value) {
+		    if ($result[2] <= $comparison) {
+			$changefreq = $value;
+			break;
+		    }
+		}
+ 		printf('<url><loc>%s</loc><lastmod>%s</lastmod><changefreq>%s</changefreq></url>',
+ 		       $loc, $lastmod, $changefreq);
+		print "\n";
 	    }
-
-	    printf("<url><loc>%s</loc><lastmod>%s</lastmod></url>\n",
-		   $urlGenerator->generateUrl(
-		       array('view' => 'core.ShowItem', 'itemId' => $currentId),
-		       array('forceSessionId' => false, 'forceFullUrl' => true)),
-		   gmstrftime("%Y-%m-%dT%H:%M:%S+00:00", $entity->getModificationTimestamp()));
 	}
 	print '</urlset>';
 

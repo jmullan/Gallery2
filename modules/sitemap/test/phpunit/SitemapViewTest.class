@@ -39,27 +39,43 @@ class SitemapViewTest extends GalleryTestCase {
 
 	parent::setUp();
 
-	$gallery->_phpVm = new SitemapViewTestVm();
+	$this->_start_of_2005 = 1104566400; /* 2005-01-01T08:00:00+00:00 */
+	$this->_start_of_2006 = 1136102400; /* 2006-01-01T08:00:00+00:00 */
 
-	/* Create something to map */
+	$gallery->_phpVm = new SitemapViewTestVm();
+	$gallery->_phpVm->setTime($this->_start_of_2006);
+
+	/* Our data was created in 2005 and modified now (2006) */
 	list ($ret, $this->_root) = $this->_createRandomAlbum(
-	    $this->_getRootId(), array('modificationTimestamp' => 123456789));
+	    $this->_getRootId(), array(
+		'creationTimestamp' => $this->_start_of_2005));
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_root);
 
-	for ($i = 0; $i < 3; $i++) {
-	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($this->_root->getId());
+	$serials = array(
+	    365 * 24, /* change every hour  */
+	    365,      /* change every day   */
+	    53,       /* change every week  (not exactly 52 -- round up) */
+	    13,       /* change every month (not exactly 12 -- round up) */
+	    1);       /* change every year  */
+
+	for ($i = 0; $i < count($serials); $i++) {
+	    $gallery->_phpVm->setTime($this->_start_of_2006 + $i + 1);
+	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem(
+		$this->_root->getId(), 'application/unknown',
+		array('serialNumber' => $serials[$i] - 1 /* it will get incremented internally */,
+		      'creationTimestamp' => $this->_start_of_2005));
 	    if ($ret) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret);
 	    }
 	}
+	$gallery->_phpVm->setTime($this->_start_of_2006);
 
 	$this->_view = new SiteMapView();
-
 	$gallery->_urlGenerator = new SitemapViewTestUrlGenerator();
     }
 
@@ -77,6 +93,11 @@ class SitemapViewTest extends GalleryTestCase {
 	$results = ob_get_contents();
 	ob_end_clean();
 
+	$ids = array($this->_root->getId());
+	foreach ($this->_item as $item) {
+	    $ids[] = $item->getId();
+	}
+
 	$expected =
 	    "Header: Content-type: application/xhtml+xml\n" .
 	    "<?xml version='1.0' encoding='UTF-8'?>\n" .
@@ -84,18 +105,18 @@ class SitemapViewTest extends GalleryTestCase {
 	    "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " .
 	    "xsi:schemaLocation=\"http://www.google.com/schemas/sitemap/0.84 " .
 	    "http://www.google.com/schemas/sitemap/0.84/sitemap.xsd\">\n" .
-	    sprintf(
-		"<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>\n",
-		$this->_root->getId()) .
-	    sprintf(
-		"<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>\n",
-		$this->_item[0]->getId()) .
-	    sprintf(
-		"<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>\n",
-		$this->_item[1]->getId()) .
-	    sprintf(
-		"<url><loc>url:%d</loc><lastmod>2009-02-13T23:31:30+00:00</lastmod></url>\n",
-		$this->_item[2]->getId()) .
+	    ("<url><loc>url:$ids[0]</loc><lastmod>2006-01-01T08:00:00+00:00</lastmod>" .
+	     "<changefreq>yearly</changefreq></url>\n") .
+	    ("<url><loc>url:$ids[1]</loc><lastmod>2006-01-01T08:00:01+00:00</lastmod>" .
+	     "<changefreq>hourly</changefreq></url>\n") .
+	    ("<url><loc>url:$ids[2]</loc><lastmod>2006-01-01T08:00:02+00:00</lastmod>" .
+	     "<changefreq>daily</changefreq></url>\n") .
+	    ("<url><loc>url:$ids[3]</loc><lastmod>2006-01-01T08:00:03+00:00</lastmod>" .
+	     "<changefreq>weekly</changefreq></url>\n") .
+	    ("<url><loc>url:$ids[4]</loc><lastmod>2006-01-01T08:00:04+00:00</lastmod>" .
+	     "<changefreq>monthly</changefreq></url>\n") .
+	    ("<url><loc>url:$ids[5]</loc><lastmod>2006-01-01T08:00:05+00:00</lastmod>" .
+	     "<changefreq>yearly</changefreq></url>\n") .
 	    "</urlset>";
 
 	$this->assertEquals(split("\n", $expected),
@@ -120,8 +141,12 @@ class SitemapViewTestVm extends GalleryPhpVm {
 	print "Header: $string\n";
     }
 
+    function setTime($time) {
+	$this->_time = $time;
+    }
+
     function time() {
-	return 1234567890;
+	return $this->_time;
     }
 }
 ?>
