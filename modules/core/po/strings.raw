@@ -313,7 +313,7 @@ gettext("photo")
 /* classes/GalleryRepository.class */
 gettext("Couldn't create repository cache path.")
 gettext("Couldn't create cache subdirectory. Make sure the web server has write permissions in it.")
-gettext("Officially Release Repository")
+gettext("Official Release Repository")
 gettext("Experimental Repository")
 gettext("Community Repository")
 
@@ -562,8 +562,11 @@ gettext("That username is already in use")
 gettext("You must enter a new username")
 gettext("E-mail Address") /* also in: templates/UserPreferences.tpl */
 gettext("(suggested)")
-gettext("Lock Account")
+gettext("Options") /* also in: templates/ItemAdmin.tpl */
+gettext("Lock user.")
 gettext("Locked users are unable to edit their own account information. (Password, Name, Email, etc.)")
+gettext("Reset failed login count.")
+ngettext("%d failed login attempt since the last successful login.", "%d failed login attempts since the last successful login.")
 
 /* templates/AdminGroups.tpl */
 gettext("Group Management")
@@ -648,6 +651,8 @@ gettext("Plugin Name")
 gettext("Installed") /* also in: templates/AdminRepository.tpl */
 gettext("Version")
 gettext("Actions") /* also in: templates/AdminRepository.tpl */
+gettext("help")
+gettext("Screenshot for %s")
 gettext("Incompatible plugin!") /* also in: templates/AdminRepository.tpl */
 gettext("Core API Required: %s (available: %s)") /* also in: templates/AdminRepository.tpl */
 gettext("Plugin API Required: %s (available: %s)") /* also in: templates/AdminRepository.tpl */
@@ -689,7 +694,7 @@ gettext("Read the %supgrade instructions%s and perform the upgrade")
 gettext("Incompatible plugins are marked with an exclamation icon.")
 gettext("A new core module version is available. There may be plugins that are incompatible with the installed core module, which are not shown here. You can view a %scomplete list%s of plugins, including incompatible ones, which are marked with a red icon.")
 gettext("upgrade available")
-gettext("locked")
+gettext("locked") /* also in: templates/AdminUsers.tpl */
 gettext("Theme Name")
 gettext("Module Name")
 gettext("Latest")
@@ -765,6 +770,8 @@ gettext("Edit User")
 gettext("You cannot delete yourself!")
 gettext("You cannot delete the special guest user.")
 gettext("Edit User (by list)")
+gettext("Locked")
+gettext("Failed Logins")
 
 /* templates/CreateThumbnailOption.tpl */
 gettext("Thumbnails") /* also in: templates/ItemEditAlbum.tpl */
@@ -779,11 +786,15 @@ gettext("Edit Conflict!")
 gettext("Security Violation")
 gettext("Database Error")
 gettext("Platform Error")
+gettext("Authentication Failure")
 gettext("Error")
 gettext("Your change cannot be completed because somebody else has made a conflicting change to the same item.  Use the back button in your browser to go back to the page you were on, then <b>reload that page</b> and try your change again.")
 gettext("Go back and try again")
+gettext("If this problem happens repeatedly, it may be because of corruption in your cache.  Site Administrators can clear out this cache.")
+gettext("Clear the cache")
 gettext("Alternatively, you can return to the main Gallery page and resume browsing.")
 gettext("The action you attempted is not permitted.")
+gettext("Your change cannot be completed due to a loss of session data. Please try again. If it still doesn't work, try logging out and logging back in.")
 gettext("An error has occurred while interacting with the database.")
 gettext("The exact nature of database errors is not captured unless Gallery debug mode is enabled in config.php.  Before seeking support for this error please enable buffered debug output and retry the operation.  Look near the bottom of the lengthy debug output to find error details.")
 gettext("An error has occurred while interacting with the platform.")
@@ -830,7 +841,6 @@ gettext("Assign caption to:")
 
 /* templates/ItemAdmin.tpl */
 gettext("No Thumbnail")
-gettext("Options")
 
 /* templates/ItemDelete.tpl */
 gettext("Delete Items")
@@ -1091,6 +1101,7 @@ gettext("Your administrator has locked this account, preventing changes from bei
 /* templates/UserLogin.tpl */
 gettext("Login to your account")
 gettext("Your password has been recovered, please login.")
+gettext("Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable this account.")
 gettext("Your login information is incorrect.  Please try again.")
 gettext("Lost or forgotten passwords can be retrieved using the <a href=\"%s\">recover password</a> page")
 gettext("Welcome, %s!")
