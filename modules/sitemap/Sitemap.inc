@@ -82,7 +82,7 @@ class SitemapView extends GalleryView {
 	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds(
 	    'core.view', $gallery->getActiveUserId());
 	if ($ret) {
-	    return array($ret, null);
+	    return $ret;
 	}
 	if (!empty($aclIds)) {
 	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
@@ -92,28 +92,28 @@ class SitemapView extends GalleryView {
 	    $data = array();
 	    $query = sprintf('
 	    SELECT
-              [GalleryItem::id],
+	      [GalleryItem::id],
 	      [GalleryEntity::modificationTimestamp],
-              ((%s - [GalleryEntity::creationTimestamp]) /
-               [GalleryEntity::serialNumber]) as SecondsPerChange
+	      ((%s - [GalleryEntity::creationTimestamp]) /
+	       [GalleryEntity::serialNumber]) as SecondsPerChange
 	    FROM
 	      [GalleryItem], [GalleryEntity], [GalleryItemAttributesMap],
-              [GalleryAccessSubscriberMap]
+	      [GalleryAccessSubscriberMap]
 	    WHERE
-              [GalleryItem::id] = [GalleryEntity::id]
-              AND
-              [GalleryItem::id] = [GalleryItemAttributesMap::itemId]
-              AND
+	      [GalleryItem::id] = [GalleryEntity::id]
+	      AND
+	      [GalleryItem::id] = [GalleryItemAttributesMap::itemId]
+	      AND
 	      ([GalleryItem::id] = ?
-               OR
-               [GalleryItemAttributesMap::parentSequence] LIKE ?
-               OR
+	       OR
+	       [GalleryItemAttributesMap::parentSequence] LIKE ?
+	       OR
 	       [GalleryItemAttributesMap::parentSequence] LIKE ?)
 	      AND
 	      [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
 	      AND
 	      [GalleryAccessSubscriberMap::accessListId] IN (%s)
-            ORDER BY [GalleryEntity::modificationTimestamp] ASC
+	    ORDER BY [GalleryEntity::modificationTimestamp] ASC
 	    ', $phpVm->time(), $aclMarkers);
 	    $data[] = $rootId;
 	    $data[] = $rootId . '/%';
@@ -143,8 +143,8 @@ class SitemapView extends GalleryView {
 			break;
 		    }
 		}
- 		printf('<url><loc>%s</loc><lastmod>%s</lastmod><changefreq>%s</changefreq></url>',
- 		       $loc, $lastmod, $changefreq);
+		printf('<url><loc>%s</loc><lastmod>%s</lastmod><changefreq>%s</changefreq></url>',
+		       $loc, $lastmod, $changefreq);
 		print "\n";
 	    }
 	}
