@@ -38,8 +38,7 @@ class SitemapView extends GalleryView {
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
-	list ($ret, $rootId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
 	if ($ret) {
 	    return $ret;
 	}
