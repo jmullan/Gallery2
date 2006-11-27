@@ -15,7 +15,7 @@
   </script>
 
   <p>
-    <?php print _('The following modules can be automatically upgraded for you.  If you choose not to upgrade them now, you may experience problems with your Gallery.   You can always upgrade or deactivate them on the Site Administration page, or return to this page later so any decision you make here is not permanent.') ?>
+    <?php print _('The following plugins can be automatically upgraded for you.  If you choose not to upgrade them now, you may experience problems with your Gallery.   You can always upgrade or deactivate them on the Site Administration page, or return to this page later so any decision you make here is not permanent.') ?>
   </p>
 
   <?php if (!empty($templateData['deactivatedPlugins'])): ?>
@@ -158,7 +158,7 @@
       <a href="<?php generateUrl('index.php?step=' . $nextStep) ?>"><?php printf(_('Skip Upgrade and Continue to Step %d&raquo;'), $nextStep); ?></a>
         </span></span></span></span></div>
         <div class="btn btn-continue"><span><span><span><span>
-      <a href="javascript:document.forms[0].submit();"><?php print _('Upgrade Selected Modules') ?></a>
+      <a href="javascript:document.forms[0].submit();"><?php print _('Upgrade Selected Plugins') ?></a>
         </span></span></span></span></div>
   </div>
   <?php endif; ?>
