@@ -88,6 +88,21 @@ class SitemapView extends GalleryView {
 
 	    $phpVm = $gallery->getPhpVm();
 
+	    list ($ret, $parents) = GalleryCoreApi::fetchParentSequence($rootId, true);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $matchFrag = '';
+	    if (!empty($parents)) {
+		$matchFrag = '
+                AND
+	        ([GalleryItem::id] = ?
+	         OR
+	         [GalleryItemAttributesMap::parentSequence] LIKE ?)
+                ';
+	    }
+
 	    $data = array();
 	    $query = sprintf('
 	    SELECT
@@ -102,21 +117,18 @@ class SitemapView extends GalleryView {
 	      [GalleryItem::id] = [GalleryEntity::id]
 	      AND
 	      [GalleryItem::id] = [GalleryItemAttributesMap::itemId]
-	      AND
-	      ([GalleryItem::id] = ?
-	       OR
-	       [GalleryItemAttributesMap::parentSequence] LIKE ?
-	       OR
-	       [GalleryItemAttributesMap::parentSequence] LIKE ?)
+              ' . $matchFrag . '
 	      AND
 	      [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
 	      AND
 	      [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	    ORDER BY [GalleryEntity::modificationTimestamp] ASC
 	    ', $phpVm->time(), $aclMarkers);
-	    $data[] = $rootId;
-	    $data[] = $rootId . '/%';
-	    $data[] = '%/' . $rootId . '/%';
+	    if (!empty($parents)) {
+		$data[] = $rootId;
+		$parents[] = $rootId;
+		$data[] = implode('/', $parents) . '/%';
+	    }
 	    $data = array_merge($data, $aclIds);
 
 	    list ($ret, $searchResults) = $gallery->search($query, $data);
