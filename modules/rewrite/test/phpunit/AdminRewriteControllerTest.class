@@ -138,8 +138,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$expected = array();
-	$expected['rewrite'][0] = 'uv/%path%';
-	$expected['rewrite'][1] = 'ud/%itemId%-%serialNumber%/%fileName%';
+	$expected['rewrite'][0] = array('pattern' => 'uv/%path%');
+	$expected['rewrite'][1] = array('pattern' => 'ud/%itemId%-%serialNumber%/%fileName%');
 	$this->assertEquals($expected, unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
@@ -188,6 +188,35 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
 
+    function testSaveDupeConditions() {
+	GalleryUtilities::putRequestVariable('form[action][rules]', true);
+	GalleryUtilities::putRequestVariable('form[rules][adminrewritemock][3][active]', true);
+	GalleryUtilities::putRequestVariable('form[rules][adminrewritemock][4][active]', true);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite',
+						      'mode' => 'rules'),
+				  'error' => array(
+					'form[error][conditions][dupe][adminrewritemock][3]',
+					'form[error][conditions][dupe][adminrewritemock][4]'),
+				  'status' => array()), $results, 'handleRequest');
+
+	list ($ret, $value) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'activeRules');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), unserialize($value), 'activeRules');
+
+	list ($ret, $value) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'shortUrls');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), unserialize($value), 'shortUrls');
+    }
+
     function testSaveEmptyPattern() {
 	GalleryUtilities::putRequestVariable('form[action][rules]', 1);
 	GalleryUtilities::putRequestVariable('form[rules][rewrite][0][active]', 1);
@@ -197,7 +226,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'rewrite.AdminRewrite',
 						      'mode' => 'rules'),
-				  'error' => array('form[error][empty][rewrite][0]'),
+				  'error' => array('form[error][pattern][empty][rewrite][0]'),
 				  'status' => array()),
 			    $results, 'handleRequest');
 
@@ -216,7 +245,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
 
-    function testSaveDupeRules() {
+    function testSaveDupePattern() {
 	GalleryUtilities::putRequestVariable('form[action][rules]', 1);
 	GalleryUtilities::putRequestVariable('form[rules][rewrite][0][active]', 1);
 	GalleryUtilities::putRequestVariable('form[rules][rewrite][0][pattern]', 'dupe/');
@@ -227,7 +256,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'rewrite.AdminRewrite',
 						      'mode' => 'rules'),
-				  'error' => array('form[error][dupe][dupe/]'),
+				  'error' => array('form[error][pattern][dupe][rewrite][0]',
+						   'form[error][pattern][dupe][rewrite][1]'),
 				  'status' => array()), $results, 'handleRequest');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
@@ -302,8 +332,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
 
-    /* It might be desirable to activate two rules for one Gallery view */
     function testSaveDupeMatch() {
+	/* It might be desirable to activate two rules for one Gallery view */
 	GalleryUtilities::putRequestVariable('form[action][rules]', 1);
 	GalleryUtilities::putRequestVariable('form[rules][adminrewritemock][0][active]', 1);
 	GalleryUtilities::putRequestVariable('form[rules][adminrewritemock][0][pattern]',
@@ -324,7 +354,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array('adminrewritemock' => array('phpunit/0/', 'phpunit/1/')),
+	$this->assertEquals(array('adminrewritemock' => array(array('pattern' => 'phpunit/0/'),
+							      array('pattern' => 'phpunit/1/'))),
 	    unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
@@ -460,18 +491,20 @@ GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');
 class AdminRewriteMockParser extends RewriteParser {
     function AdminRewriteMockParser() {
 	$this->_setParserId('adminrewritemock');
-	$this->_setParserType('mock');
+	$this->_setParserType('preGallery');
     }
 
     function isValidRule($rule, $pattern=null) {
-	$ret = parent::isValidRule($rule, $pattern);
-	if ($ret) {
-	    if ($rule['pattern'] == 'phpunit/invalid/') {
-		return false;
-	    }
+	$isValid = parent::isValidRule($rule, $pattern);
+	if (!$isValid) {
+	    return false;
 	}
 
-	return $ret;
+	if (isset($rule['pattern']) && $rule['pattern'] == 'phpunit/invalid/') {
+	    return false;
+	}
+
+	return true;
     }
 
     function handleTestResultsRequest($form) {
@@ -573,11 +606,21 @@ class AdminRewriteMockModule extends GalleryModule {
     }
 
     function getRewriteRules() {
-	return array(array('pattern' => 'phpunit/dummy/%itemId%.htm',
-			   'match' => array('view' => 'phpunit.Test')),
-		     array('pattern' => 'phpunit/conflict/',
-			   'match' => array('view' => 'phpunit.Test')),
-		     array('pattern' => 'phpunit/invalid/'));
+	$rules = array();
+
+	$rules[0] = array('pattern' => 'phpunit/dummy/%itemId%.htm',
+			  'match' => array('view' => 'phpunit.Test'));
+	$rules[1] = array('pattern' => 'phpunit/conflict/',
+			  'match' => array('view' => 'phpunit.Test'));
+	$rules[2] = array('pattern' => 'phpunit/invalid/');
+
+	/* Rule 3 and 4: Dupe conditions */
+	$rules[3] = array('conditions' => array(array('test' => 'REQUEST_METHOD',
+						      'pattern' => 'FOO')));
+	$rules[4] = array('conditions' => array(array('test' => 'REQUEST_METHOD',
+						      'pattern' => 'FOO')));
+
+	return $rules;
     }
 }
 

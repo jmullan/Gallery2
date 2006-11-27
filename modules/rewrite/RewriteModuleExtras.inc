@@ -231,6 +231,59 @@ class RewriteModuleExtras {
 	case '1.1.6':
 	    /* Added activateRewriteRulesForModule() to Rewrite API */
 
+	case '1.1.7':
+	    /* Support rewrite rules without 'pattern' */
+	    GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	    list ($ret, $activeRules) = $module->getParameter('activeRules');
+	    if ($ret) {
+		return $ret;
+	    }
+	    $activeRules = unserialize($activeRules);
+
+	    /*
+	     * Convert active rules from array($moduleId => array($ruleId => $pattern)) to
+	     * array($moduleId => array($ruleId => array('pattern' => $pattern)))
+	     */
+	    foreach (array_keys($activeRules) as $moduleId) {
+		foreach ($activeRules[$moduleId] as $ruleId => $pattern) {
+		    $activeRules[$moduleId][$ruleId] = array('pattern' => $pattern);
+		}
+	    }
+
+	    /*
+	     * Save active rules.  There should be no change in the interpretation of active rules,
+	     * only the representation, so don't call $rewriteParser->saveActiveRules.
+	     */
+	    $ret = $module->setParameter('activeRules', serialize($activeRules));
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    /*
+	     * Convert history parameters from array($moduleId => array($ruleId => $pattern)) to
+	     * array($moduleId => array($ruleId => array('pattern' => $pattern)))
+	     */
+	    list ($ret, $parameters) = $module->fetchParameters();
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    foreach ($parameters as $key => $value) {
+		if (strncmp($key, 'history.', 8) !== 0) {
+		    continue;
+		}
+
+		$history = unserialize($value);
+		foreach ($history as $ruleId => $pattern) {
+		    $history[$ruleId] = array('pattern' => $pattern);
+		}
+
+		$ret = $module->setParameter($key, serialize($history));
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+
 	case 'end of upgrade path':
 	    break;
 
@@ -318,15 +371,22 @@ class RewriteModuleExtras {
 
 	    $seen = array();
 	    foreach (array_keys($activeRules) as $moduleId) {
-		foreach (array_keys($activeRules[$moduleId]) as $ruleId) {
-		    $seen[$activeRules[$moduleId][$ruleId]] = 1;
+		foreach ($activeRules[$moduleId] as $ruleId => $rule) {
+		    if (isset($rule['pattern'])) {
+			$seen[$rule['pattern']] = true;
+		    }
 		}
 	    }
 
-	    foreach (array_keys($history) as $ruleId) {
-		if (isset($rules[$ruleId]) && !isset($seen[$history[$ruleId]])) {
-		    $activeRules[$pluginId][$ruleId] = $history[$ruleId];
-		    $seen[$history[$ruleId]] = 1;
+	    foreach ($history as $ruleId => $rule) {
+		if (isset($rules[$ruleId])) {
+		    if (isset($rule['pattern'])) {
+			if (isset($seen[$rule['pattern']])) {
+			    continue;
+			}
+			$seen[$rule['pattern']] = true;
+		    }
+		    $activeRules[$pluginId][$ruleId] = $rule;
 		}
 	    }
 

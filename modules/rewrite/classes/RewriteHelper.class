@@ -79,7 +79,7 @@ class RewriteHelper {
      * Parse active rules into an array of regular expressions for parsing URLs during page requests
      * and build an array for the URL generator to use when generating short URLs.
      *
-     * @param array $activeRules active rules by reference
+     * @param array $activeRules array array ('pattern' => string pattern) active rules by reference
      * @param object RewriteParser $rewriteParser
      * @param object GalleryModule $upgradeModule (optional) passed in during activate/upgrade
      * @param array $flags optional definition of default and mandator flags
@@ -126,7 +126,7 @@ class RewriteHelper {
 	    }
 
 	    $rules = $module->getRewriteRules();
-	    foreach (array_keys($activeRules[$moduleId]) as $ruleId) {
+	    foreach ($activeRules[$moduleId] as $ruleId => $rule) {
 		/* Make sure this rule still exists, if not silently continue */
 		if (!isset($rules[$ruleId])) {
 		    unset($activeRules[$moduleId][$ruleId]);
@@ -141,9 +141,9 @@ class RewriteHelper {
 		}
 
 		/* Save the pattern for the URL generator to use */
-		if (isset($rules[$ruleId]['match'])) {
+		if (isset($rules[$ruleId]['match']) && isset($rule['pattern'])) {
 		    $shortUrl = array('match' => $rules[$ruleId]['match'],
-			'pattern' => $activeRules[$moduleId][$ruleId]);
+			'pattern' => $rule['pattern']);
 
 		    /* Get custom function information */
 		    if (isset($rules[$ruleId]['keywords'])) {
@@ -207,7 +207,7 @@ class RewriteHelper {
 
 		/* Parse the rule */
 		list ($ret, $code) = RewriteHelper::_parseRule($activeRules[$moduleId][$ruleId],
-		    $keywords, $queryString, $regexRules, $settings);
+		    $keywords, $queryString, $regexRules, $settings, $rules[$ruleId]);
 		if ($ret) {
 		    return array($ret, null, null, null, null);
 		}
@@ -225,24 +225,71 @@ class RewriteHelper {
     /**
      * Replaces all keywords with an appropriate pattern and append to $regexRules.
      *
-     * @param string $pattern URL pattern
+     * @param array $activeRule array ('pattern' => string pattern)
      * @param array $keywords of keywords => regular expresion for the htaccess file
      * @param array $queryString of query string params (key => value)
      * @param array $regexRules of parsed rules
      * @param array $settings of settings
+     * @param array $rule rewrite rule
+     * @return array object GalleryStatus a status code
+     *               int rewrite status code (REWRITE_STATUS_OK on success)
      * @access private
      */
-    function _parseRule($pattern, $keywords, $queryString, &$regexRules, $settings) {
+    function _parseRule($activeRule, $keywords, $queryString, &$regexRules, $settings, $rule) {
 	$reference = 1;
-	preg_match_all('/\%([^\%]+)\%/', $pattern, $regs);
+	$regexRule = array('settings' => $settings);
 
-	foreach ($regs[1] as $keyword) {
-	    if (!isset($keywords[$keyword]['pattern'])) {
-		return array(null, REWRITE_STATUS_BAD_KEYWORD);
+	if (isset($rule['conditions'])) {
+	    $regexRule['conditions'] = array();
+	    foreach ($rule['conditions'] as $condition) {
+		$code = RewriteHelper::_parseKeywords(
+		    $reference, $condition['pattern'], $keywords, $queryString);
+		if ($code != REWRITE_STATUS_OK) {
+		    return array(null, $code);
+		}
+
+		$regexRule['conditions'][] = $condition;
+	    }
+	}
+
+	if (isset($activeRule['pattern'])) {
+	    $pattern = preg_quote($activeRule['pattern']);
+	    $code = RewriteHelper::_parseKeywords(
+		$reference, $pattern, $keywords, $queryString);
+	    if ($code != REWRITE_STATUS_OK) {
+		return array(null, $code);
 	    }
 
-	    $pattern = str_replace('%' . $keyword . '%',
-		$keywords[$keyword]['pattern'], $pattern);
+	    $regexRule['pattern'] = $pattern;
+	}
+
+	$args = array();
+	foreach ($queryString as $key => $value) {
+	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
+	}
+	$regexRule['queryString'] = join('&', $args);
+	$regexRules[] = $regexRule;
+
+	return array(null, REWRITE_STATUS_OK);
+    }
+
+    /**
+     * Replaces all keywords with an appropriate pattern.
+     * @param array $reference back reference to next keyword pattern
+     * @param array $pattern
+     * @param array $keywords of keywords => regular expresion for the htaccess file
+     * @param array $queryString of query string params (key => value)
+     * @return int rewrite status code (REWRITE_STATUS_OK on success)
+     * @access private
+     */
+    function _parseKeywords(&$reference, &$pattern, $keywords, &$queryString) {
+	preg_match_all('/\%([^%]+)\%/', $pattern, $matches);
+	foreach ($matches[1] as $keyword) {
+	    if (!isset($keywords[$keyword]['pattern'])) {
+		return REWRITE_STATUS_BAD_KEYWORD;
+	    }
+
+	    $pattern = str_replace('%' . $keyword . '%', $keywords[$keyword]['pattern'], $pattern);
 
 	    if (!isset($keywords[$keyword]['ignore'])) {
 		$queryString[$keyword] = '$' . $reference;
@@ -250,19 +297,7 @@ class RewriteHelper {
 	    $reference++;
 	}
 
-	$args = array();
-	foreach ($queryString as $key => $value) {
-	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
-	}
-
-	if (!empty($pattern)) {
-	    $regexRules[] = array(
-		    'pattern' => $pattern,
-		    'queryString' => join('&', $args),
-		    'settings' => $settings);
-	}
-
-	return array(null, REWRITE_STATUS_OK);
+	return REWRITE_STATUS_OK;
     }
 
     /**
@@ -270,10 +305,21 @@ class RewriteHelper {
      * @access private
      */
     function _sortRules($a, $b) {
+	if (isset($a['conditions']) || isset($b['conditions'])) {
+	    if (isset($a['conditions']) && isset($b['conditions'])) {
+		return count($a['conditions']) - count($b['conditions']);
+	    }
+
+	    if (isset($a['conditions'])) {
+		return -1;
+	    }
+
+	    return 1;
+	}
+
 	if (isset($a['settings']['restrict']) || isset($b['settings']['restrict'])) {
 	    if (isset($a['settings']['restrict']) && isset($b['settings']['restrict'])) {
-		$diff = count($a['settings']['restrict']) - count($b['settings']['restrict']);
-		return $diff;
+		return count($a['settings']['restrict']) - count($b['settings']['restrict']);
 	    }
 
 	    if (isset($a['settings']['restrict'])) {
@@ -310,7 +356,7 @@ class RewriteHelper {
      * Get the rewrite rule history for a specific module.
      * @param string $moduleId id of the module
      * @return array object GalleryStatus a status code
-     *               array (mixed ruleId => string pattern)
+     *               array (mixed ruleId => array ('pattern' => string pattern))
      */
     function getHistoryForModule($moduleId) {
 	list ($ret, $history) =
@@ -326,7 +372,7 @@ class RewriteHelper {
     /**
      * Store the rewrite rule history for a specific module.
      * @param string $moduleId id of the module
-     * @param array $history array (mixed ruleId => string pattern)
+     * @param array $history array (mixed ruleId => array ('pattern' => string pattern))
      * @return object GalleryStatus a status code
      */
     function setHistoryForModule($moduleId, $history) {

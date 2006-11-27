@@ -81,7 +81,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 
     function testSaveBadActiveRulesEmbedded() {
 	GalleryDataCache::put('G2_EMBED', 1, true);
-	$testRules['rewriteparsermock'][0] = 'p/%bogus%';
+	$testRules['rewriteparsermock'][0] = array('pattern' => 'p/%bogus%');
 	list ($ret, $code, $errno) = $this->_parser->saveActiveRules($testRules);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -93,7 +93,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$expected['rewriteparsermock'][0] = 'bogus';
+	$expected['rewriteparsermock'][0] = array('pattern' => 'bogus');
 	$this->assertEquals(REWRITE_STATUS_BAD_KEYWORD, $code);
 	$this->assertEquals(array('rewriteparsermock', '0'), $errno);
 	$this->assertEquals($expected, unserialize($activeRules));

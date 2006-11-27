@@ -35,7 +35,7 @@ class RewriteModule extends GalleryModule {
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n(
 	    'Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo'));
-	$this->setVersion('1.1.7'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('1.1.8'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 5));
@@ -135,13 +135,14 @@ class RewriteModule extends GalleryModule {
 	$activeRules = unserialize($activeRules);
 
 	if (empty($activeRules)) {
-	    $activeRules = array('rewrite' => array(0 => 'v/%path%'));
+	    $activeRules = array('rewrite' => array(0 => array('pattern' => 'v/%path%')));
 	    /*
 	     * We'll break fast download cache if we activate the short URL for download items with
 	     * an inGallery parser
 	     */
 	    if ($rewriteParser->getParserType() != 'inGallery') {
-		$activeRules['rewrite'][1] = 'd/%itemId%-%serialNumber%/%fileName%';
+		$activeRules['rewrite'][1] =
+		    array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%');
 	    }
 	}
 

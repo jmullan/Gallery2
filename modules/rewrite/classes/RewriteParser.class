@@ -102,19 +102,36 @@ class RewriteParser {
      * a sanity check to minimize possible conflicts and bad regular expressions.
      *
      * @param array $rule rewrite rule
-     * @param string $pattern (optional) set to the custom pattern when called from saveActiveRules
+     * @param array $activeRule (optional) array ('pattern' => string pattern) set to the custom
+     *        active rule when called from saveActiveRules
      * @return boolean true if the rule is valid
      */
-    function isValidRule($rule, $pattern=null) {
+    function isValidRule($rule, $activeRule=null) {
 	if (isset($rule['parser']) && $rule['parser'] != $this->getParserType()) {
 	    return false;
 	}
 
-	if (isset($rule['locked']) && isset($pattern) && $rule['pattern'] != $pattern) {
+	/* Only supported by preGallery parsers */
+	if (isset($rule['conditions']) && $this->getParserType() != 'preGallery') {
 	    return false;
 	}
 
-	if (isset($pattern) && !preg_match('/^([a-zA-Z0-9\/\.\%\-]+)$/', $pattern)) {
+	/* Only supported by preGallery parsers */
+	if (isset($rule['restrict']) && $this->getParserType() != 'preGallery') {
+	    return false;
+	}
+
+	if (isset($activeRule) && (isset($activeRule['pattern']) != isset($rule['pattern']))) {
+	    return false;
+	}
+
+	if (isset($activeRule['pattern']) && isset($rule['pattern']) && isset($rule['locked'])
+		&& $activeRule['pattern'] != $rule['pattern']) {
+	    return false;
+	}
+
+	if (isset($activeRule['pattern'])
+		&& !preg_match('/^[a-z0-9\/\.\%\-]+$/i', $activeRule['pattern'])) {
 	    return false;
 	}
 

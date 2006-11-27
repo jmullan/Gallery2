@@ -80,6 +80,34 @@ class ModRewriteParser extends RewriteParser {
     }
 
     /**
+     * @see RewriteParser::isValidRule
+     */
+    function isValidRule($rule, $activeRule=null) {
+	$isValid = parent::isValidRule($rule, $activeRule);
+	if (!$isValid) {
+	    return false;
+	}
+
+	if (isset($rule['conditions'])) {
+	    foreach ($rule['conditions'] as $condition) {
+		if (isset($condition['flags'])) {
+		    foreach ($condition['flags'] as $flag) {
+			/*
+			 * Apache mod_rewrite supports only certain flags:
+			 * http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewritecond
+			 */
+			if (!in_array($flag, array('NC', 'OR'))) {
+			    return false;
+			}
+		    }
+		}
+	    }
+	}
+
+	return true;
+    }
+
+    /**
      * @see RewriteParser::getErrorMessage
      */
     function getErrorMessage($code, $rewriteModule=null) {

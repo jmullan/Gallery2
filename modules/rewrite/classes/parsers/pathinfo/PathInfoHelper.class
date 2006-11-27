@@ -87,7 +87,9 @@ class PathInfoHelper {
 	foreach ($regexRules as $rule) {
 	    $queryString = 'Q' . $rule['queryString'];
 
-	    if (strpos($rule['pattern'], '(') === false) {
+	    if (!isset($rule['pattern'])) {
+		$static['/'] = $queryString;
+	    } else if (strpos($rule['pattern'], '(') === false) {
 		$static['/' . $rule['pattern']] = $queryString;
 	    } else {
 		$find[] = '@^\/' . $rule['pattern'] . '$@';

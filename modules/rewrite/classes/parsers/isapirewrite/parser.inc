@@ -78,16 +78,46 @@ class IsapiRewriteParser extends RewriteParser {
     /**
      * @see RewriteParser::isValidRule
      */
-    function isValidRule($rule, $pattern=null) {
-	$ret = parent::isValidRule($rule, $pattern);
-	if ($ret) {
-	    if ((isset($rule['locked']) && substr($rule['pattern'], 0, 1) == '%') ||
-		    (isset($pattern) && substr($pattern, 0, 1) == '%')) {
-		return false;
+    function isValidRule($rule, $activeRule=null) {
+	$isValid = parent::isValidRule($rule, $activeRule);
+	if (!$isValid) {
+	    return false;
+	}
+
+	if (isset($rule['conditions'])) {
+	    foreach ($rule['conditions'] as $condition) {
+		/*
+		 * ISAPI_Rewrite supports only certain test strings:
+		 * http://www.isapirewrite.com/docs/#RewriteCond
+		 */
+		if (!in_array($condition['test'], array('REQUEST_URI',
+						   'QUERY_STRING',
+						   'REQUEST_METHOD',
+						   'VERSION'))
+			&& strncmp($condition['test'], 'HTTP:', 5) !== 0) {
+		    return false;
+		}
+
+		if (isset($condition['flags'])) {
+		    foreach ($condition['flags'] as $flag) {
+			/*
+			 * ISAPI_Rewrite supports only certain flags:
+			 * http://www.isapirewrite.com/docs/#RewriteCond
+			 */
+			if (!in_array($flag, array('O'))) {
+			    return false;
+			}
+		    }
+		}
 	    }
 	}
 
-	return $ret;
+	if ((isset($rule['pattern']) && substr($rule['pattern'], 0, 1) == '%')
+		|| (isset($activeRule['pattern']) && substr($activeRule['pattern'], 0, 1) == '%')) {
+	    return false;
+	}
+
+	return true;
     }
 
     /**

@@ -111,9 +111,12 @@
   <tr class="{$rowClass}">
     <td>
       {assign var="match" value=$AdminRewrite.info.$moduleId.$ruleId.match}
-      {if isset($form.error.dupe[$rule.pattern]) || isset($form.error.empty.$moduleId.$ruleId) ||
-          isset($form.error.1.$moduleId.$ruleId) || isset($form.error.3[$match]) ||
-          isset($form.error.4.$moduleId.$ruleId)}
+      {if isset($form.error.conditions.dupe.$moduleId.$ruleId)
+	  || isset($form.error.pattern.dupe.$moduleId.$ruleId)
+	  || isset($form.error.pattern.empty.$moduleId.$ruleId)
+	  || isset($form.error.1.$moduleId.$ruleId)
+	  || isset($form.error.3.$match)
+	  || isset($form.error.4.$moduleId.$ruleId)}
 	<img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13"
 	       alt="{g->text text="Status: Error"}" />
       {elseif isset($rule.active)}
@@ -137,11 +140,15 @@
       {$AdminRewrite.info.$moduleId.$ruleId.comment}
     </td>
     <td>
+      {if !isset($rule.pattern)}
+	{g->text text="No URL Pattern"}
+      {else}
       {if isset($AdminRewrite.info.$moduleId.$ruleId.locked)}
         <input type="hidden" name="{g->formVar var="form[rules][$moduleId][$ruleId][pattern]"}" value="{$rule.pattern}"/>
         <input type="text" size="40" name="dummy" value="{$rule.pattern}" disabled />
       {else}
         <input type="text" size="40" name="{g->formVar var="form[rules][$moduleId][$ruleId][pattern]"}" value="{$rule.pattern}"/>
+      {/if}
       {/if}
     </td>
     <td>

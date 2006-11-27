@@ -180,12 +180,17 @@ class RewriteApi {
 	foreach ($rules as $ruleId => $rule) {
 	    if ((!isset($activeRules[$moduleId][$ruleId]) || $replacePatterns)
 		    && (!isset($ruleIds) || in_array($ruleId, $ruleIds))) {
-		if (!$replacePatterns && isset($history[$ruleId])) {
-		    $pattern = $history[$ruleId];
-		} else {
-		    $pattern = $rule['pattern'];
+		$activeRule = array();
+		if (isset($rule['pattern'])) {
+		    $activeRule['pattern'] = $rule['pattern'];
+		    if (!$replacePatterns && isset($activeRules[$moduleId][$ruleId]['pattern'])) {
+			$activeRule['pattern'] = $activeRules[$moduleId][$ruleId]['pattern'];
+		    }
+		    if (!$replacePatterns && isset($history[$ruleId]['pattern'])) {
+			$activeRule['pattern'] = $history[$ruleId]['pattern'];
+		    }
 		}
-		$activeRules[$moduleId][$ruleId] = $pattern;
+		$activeRules[$moduleId][$ruleId] = $activeRule;
 		unset($history[$ruleId]);
 	    }
 	}

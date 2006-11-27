@@ -169,8 +169,8 @@ class RewriteApiTest extends GalleryTestCase {
 	/* Verify the results */
 	$this->assert($success, 'should have succeeded');
 
-	$expectedRules[$moduleId]['rule1'] = 'abc';
-	$expectedRules[$moduleId]['rule2'] = '123';
+	$expectedRules[$moduleId]['rule1'] = array('pattern' => 'abc');
+	$expectedRules[$moduleId]['rule2'] = array('pattern' => '123');
 	$this->assertEquals($expectedRules, $_SERVER['saveActiveRules'], 'saved rules');
     }
 
@@ -189,7 +189,7 @@ class RewriteApiTest extends GalleryTestCase {
 
 	/* Verify the results */
 	$this->assert($success, 'should have succeeded');
-	$expectedRules[$moduleId]['rule2'] = '123';
+	$expectedRules[$moduleId]['rule2'] = array('pattern' => '123');
 
 	$this->assertEquals($expectedRules, $_SERVER['saveActiveRules'], 'saved rules');
     }
@@ -227,15 +227,15 @@ class RewriteApiTest extends GalleryTestCase {
 	/* Verify the results */
 	$this->assert($success, 'should have succeeded');
 
-	$expectedRules[$moduleId]['rule1'] = 'existing pattern for r1';
-	$expectedRules[$moduleId]['rule2'] = 'old pattern for r2';
+	$expectedRules[$moduleId]['rule1'] = array('pattern' => 'existing pattern for r1');
+	$expectedRules[$moduleId]['rule2'] = array('pattern' => 'old pattern for r2');
 	$this->assertEquals($expectedRules, $_SERVER['saveActiveRules'], 'saved rules');
 
 	list ($ret, $history) = RewriteHelper::getHistoryForModule($moduleId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array('rule0' => 'foo'), $history,
+	$this->assertEquals(array('rule0' => array('pattern' => 'foo')), $history,
 			    'history for rule1 should have been removed');
     }
 
@@ -256,15 +256,15 @@ class RewriteApiTest extends GalleryTestCase {
 	/* Verify the results */
 	$this->assert($success, 'should have succeeded');
 
-	$expectedRules[$moduleId]['rule1'] = 'abc';
-	$expectedRules[$moduleId]['rule2'] = '123';
+	$expectedRules[$moduleId]['rule1'] = array('pattern' => 'abc');
+	$expectedRules[$moduleId]['rule2'] = array('pattern' => '123');
 	$this->assertEquals($expectedRules, $_SERVER['saveActiveRules'], 'saved rules');
 
 	list ($ret, $history) = RewriteHelper::getHistoryForModule($moduleId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals(array('rule0' => 'foo'), $history,
+	$this->assertEquals(array('rule0' => array('pattern' => 'foo')), $history,
 			    'history for rule1 should have been removed');
     }
 
@@ -274,10 +274,11 @@ class RewriteApiTest extends GalleryTestCase {
 	$module = new RewriteApiMockModule();
 	$moduleId = $module->getId();
 
-	$activeRules = array('a' => array('r1' => 'abc', 'r2' => '123'),
-			     'b' => array('r1' => '.*'));
+	$activeRules = array('a' => array('r1' => array('pattern' => 'abc'),
+					  'r2' => array('pattern' => '123')),
+			     'b' => array('r1' => array('pattern' => '.*')));
 	if ($hasActiveRulesForModule) {
-	    $activeRules[$moduleId]['rule1'] = 'existing pattern for r1';
+	    $activeRules[$moduleId]['rule1'] = array('pattern' => 'existing pattern for r1');
 	}
 
 	$expectedRules = $activeRules;
@@ -292,8 +293,9 @@ class RewriteApiTest extends GalleryTestCase {
 
 	if ($hasHistory) {
 	    /* Create a pattern history for that module */
-	    $ret = RewriteHelper::setHistoryForModule($moduleId,
-	    		array('rule2' => 'old pattern for r2', 'rule0' => 'foo'));
+	    $ret = RewriteHelper::setHistoryForModule(
+		$moduleId, array('rule2' => array('pattern' => 'old pattern for r2'),
+				 'rule0' => array('pattern' => 'foo')));
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

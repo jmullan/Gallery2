@@ -193,8 +193,96 @@ class IsapiRewriteHelper {
 	$Httpdini['mainPhp'] = GALLERY_MAIN_PHP;
 	$Httpdini['galleryId'] = GALLERY_CONFIG_DIR;
 
-	foreach (array_keys($regexRules) as $ruleId) {
-	    $count = preg_match_all('/\(([^\(\)]+)\)/', $regexRules[$ruleId]['pattern'], $tmp);
+	foreach ($regexRules as $ruleId => $rule) {
+	    if (isset($rule['conditions'])) {
+		foreach ($rule['conditions'] as $conditionId => $condition) {
+		    /*
+		     * ISAPI_Rewrite supports only certain test verbs:
+		     * http://www.isapirewrite.com/docs/#RewriteCond
+		     */
+		    switch ($condition['test']) {
+
+		    /*
+		     * The ISAPI_Rewrite URL test verb is actually the concatenation of the Apache
+		     * mod_rewrite REQUEST_URI and QUERY_STRING variables.  By replacing REQUEST_URI
+		     * and QUERY_STRING with URL, we're testing the condition pattern against *both*
+		     * REQUEST_URI and QUERY_STRING.  This works for most condition patterns, but a
+		     * more consistent solution should eventually be found.
+		     */
+		    case 'REQUEST_URI':
+		    case 'QUERY_STRING':
+			$condition['test'] = 'URL';
+			break;
+
+		    case 'REQUEST_METHOD':
+			$condition['test'] = 'METHOD';
+			break;
+
+		    default:
+			if (strncmp($condition['test'], 'HTTP:', 5) === 0) {
+			    $condition['test'] = substr($condition['test'], 5) . ':';
+			}
+		    }
+
+		    /*
+		     * Apache mod_rewrite and ISAPI_Rewrite share the concepts of strings which
+		     * start with, end with, or contain a pattern, however they represent these
+		     * patterns differently:
+		     *
+		     *             | Apache mod_rewrite | ISAPI_Rewrite 
+		     * ------------------------------------------------
+		     * Starts with | ^blah              | blah.*
+		     * ------------------------------------------------
+		     *   Ends with | blah$              | .*blah
+		     * ------------------------------------------------
+		     *    Contains | blah               | .*blah.*
+		     *
+		     * Apache mod_rewrite and ISAPI_Rewrite also share the concept of a negative
+		     * pattern:
+		     *
+		     *             | Apache mod_rewrite | ISAPI_Rewrite 
+		     * ------------------------------------------------
+		     *    Negative | !blah              | (?!.*blah).*
+		     *
+		     * http://www.isapirewrite.com/docs/#RewriteCond
+		     */
+		    $isNegative = false;
+
+		    /* Condition pattern starts with '!' */
+		    if (substr($condition['pattern'], 0, 1) == '!') {
+			$condition['pattern'] = substr($condition['pattern'], 1);
+			$isNegative = true;
+		    }
+
+		    /* Condition pattern starts with '^' */
+		    if (substr($condition['pattern'], 0, 1) == '^') {
+			$condition['pattern'] = substr($condition['pattern'], 1);
+		    } else {
+			$condition['pattern'] = '.*' . $condition['pattern'];
+		    }
+
+		    /* Condition pattern ends with unescaped '$' */
+		    if (substr($condition['pattern'], -1) == '$'
+			    && substr($condition['pattern'], -2) != '\\$') {
+			$condition['pattern'] = substr($condition['pattern'], 0, -1);
+			if ($isNegative) {
+			    $condition['pattern'] = '(?!' . $condition['pattern'] . ')';
+			}
+		    } else {
+			if ($isNegative) {
+			    $condition['pattern'] = '(?!' . $condition['pattern'] . ')';
+			}
+			$condition['pattern'] = $condition['pattern'] . '.*';
+		    }
+
+		    $regexRules[$ruleId]['conditions'][$conditionId] = $condition;
+		}
+	    }
+
+	    $count = 0;
+	    if (isset($rule['pattern'])) {
+		$count = preg_match_all('/\(([^\(\)]+)\)/', $rule['pattern'], $tmp);
+	    }
 	    $regexRules[$ruleId]['queryStringId'] = $count + 1;
 	    $regexRules[$ruleId]['queryString'] = str_replace('%', '$',
 		$regexRules[$ruleId]['queryString']);
@@ -226,7 +314,7 @@ class IsapiRewriteHelper {
 	}
 	$Httpdini['baseFile'] .= (strpos($Httpdini['baseFile'], '?') === false) ? '?' : '&';
 
-	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../templates');
+	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../templates', true, false);
 	$template->setVariable('Httpdini', $Httpdini);
 	list ($ret, $content) = $template->fetch('Httpdini.tpl', 'modules_rewrite');
 	if ($ret) {

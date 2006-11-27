@@ -31,7 +31,7 @@ class AdminRewriteController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest(&$form) {
-	$error = $status = $seen = array();
+	$error = $status = $seenPatterns = $seenConditions = array();
 
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
@@ -48,32 +48,57 @@ class AdminRewriteController extends GalleryController {
 	    $activeRules = array();
 	    $mode = 'rules';
 
-	    /* Build the activeRules array and check for emtpy / seen patterns */
+	    /* Build the activeRules array and check for emtpy / dupe patterns */
 	    if (isset($form['rules'])) {
 		foreach (array_keys($form['rules']) as $moduleId) {
-		    foreach (array_keys($form['rules'][$moduleId]) as $ruleId) {
-			if (isset($form['rules'][$moduleId][$ruleId]['active'])) {
-			    /* Empty or just '/'? */
-			    if (empty($form['rules'][$moduleId][$ruleId]['pattern']) ||
-				    $form['rules'][$moduleId][$ruleId]['pattern'] == '/') {
-				$error[] = 'form[error][empty][' . $moduleId . '][' . $ruleId . ']';
-				break 2;
-			    }
+		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		    if ($ret) {
+			return array($ret, null);
+		    }
 
-			    /* Dupe? */
-			    if (isset($seen[$form['rules'][$moduleId][$ruleId]['pattern']])) {
-				$error[] = 'form[error][dupe][' .
-				    $form['rules'][$moduleId][$ruleId]['pattern'] . ']';
-				break 2;
-			    }
-
+		    $rules = $module->getRewriteRules();
+		    foreach ($form['rules'][$moduleId] as $ruleId => $rule) {
+			if (isset($rule['active'])) {
 			    /* Activate the rule */
-			    $pattern = $form['rules'][$moduleId][$ruleId]['pattern'];
-			    if (substr($pattern, 0, 1) == '/') {
-				$pattern = substr($pattern, 1);
+			    $activeRules[$moduleId][$ruleId] = array();
+
+			    if (isset($rules[$ruleId]['conditions'])) {
+				$condition = serialize($rules[$ruleId]['conditions']);
+
+				/* Dupe? */
+				if (isset($seenConditions[$condition])) {
+				    $error[] = 'form[error][conditions][dupe]['
+					. $seenConditions[$condition];
+				    $error[] = 'form[error][conditions][dupe]['
+					. $moduleId . '][' . $ruleId . ']';
+				    break 2;
+				}
+				$seenConditions[$condition] = $moduleId . '][' . $ruleId . ']';
 			    }
-			    $activeRules[$moduleId][$ruleId] = $pattern;
-			    $seen[$pattern] = 1;
+
+			    if (isset($rule['pattern'])) {
+				$pattern = ltrim($rule['pattern'], '/');
+
+				/* Empty? */
+				if (empty($pattern)) {
+				    $error[] = 'form[error][pattern][empty]['
+					. $moduleId . '][' . $ruleId . ']';
+				    break 2;
+				}
+
+				/* Dupe? */
+				if (isset($seenPatterns[$pattern])) {
+				    $error[] = 'form[error][pattern][dupe]['
+				    	. $seenPatterns[$pattern];
+				    $error[] = 'form[error][pattern][dupe]['
+					. $moduleId . '][' . $ruleId . ']';
+				    break 2;
+				}
+				$seenPatterns[$pattern] = $moduleId . '][' . $ruleId . ']';
+
+				/* Save the pattern */
+				$activeRules[$moduleId][$ruleId]['pattern'] = $pattern;
+			    }
 			}
 		    }
 		}
@@ -242,13 +267,17 @@ class AdminRewriteView extends GalleryView {
 
 			/* If we dont have old form data, populate the array with db info */
 			if ($form['formName'] != 'AdminRewrite') {
-			    $form['rules'][$moduleId][$ruleId]['pattern'] =
-				isset($activeRules[$moduleId][$ruleId])
-				    ? $activeRules[$moduleId][$ruleId]
-				    : $rule['pattern'];
-
+			    $form['rules'][$moduleId][$ruleId] = array();
 			    if (isset($activeRules[$moduleId][$ruleId])) {
 				$form['rules'][$moduleId][$ruleId]['active'] = 1;
+			    }
+			    if (isset($rule['pattern'])) {
+				$form['rules'][$moduleId][$ruleId]['pattern'] =
+				    $rule['pattern'];
+				if (isset($activeRules[$moduleId][$ruleId]['pattern'])) {
+				    $form['rules'][$moduleId][$ruleId]['pattern'] =
+					$activeRules[$moduleId][$ruleId]['pattern'];
+				}
 			    }
 			}
 
