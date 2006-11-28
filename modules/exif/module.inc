@@ -37,7 +37,7 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName($gallery->i18n('EXIF/IPTC'));
 	$this->setDescription($gallery->i18n('Extract EXIF/IPTC data from JPEG photos'));
-	$this->setVersion('1.0.8'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.9'); /* Update upgrade() function below too */
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 10));
@@ -129,6 +129,7 @@ class ExifModule extends GalleryModule {
 	    case '1.0.6':
 		/* Rotate images based on exifdata */
 	    case '1.0.7':
+	    case '1.0.8':
 
 	    case 'end of upgrade path':
 		/*

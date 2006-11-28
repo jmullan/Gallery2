@@ -2103,6 +2103,7 @@ class JPEG // extends PEAR
     /**
      * Parses IPTC data from the given data fragment starting at the given position into some
      * internal structure.
+     * See http://www.iptc.org/IIM/.
      *
      * @param string  the data to read
      * @param int     the position/offset into the data
@@ -2116,38 +2117,85 @@ class JPEG // extends PEAR
         $IPTCTags =& $this->_iptcTagNames();
 
         while ($pos < ($totalLength - 5)) {
-            $signature = $this->_getShort($data, $pos);
-            if ($signature != 0x1C02)
+            $lastPos = $pos;
+            $tagmarker = $this->_getByte($data, $pos);
+            if ($tagmarker != 0x1C)
                 return $pos;
-            $pos += 2;
+            $pos += 1;
+            $recordNumber = $this->_getByte($data, $pos);
+            $pos += 1;
 
             $type = $this->_getByte($data, $pos);
             $pos += 1;
             $length = $this->_getShort($data, $pos);
             $pos += 2;
 
+            /* Detect extended datasets (MSB is flag for standard/extended, rest is length) */
+            $isExtended = (bool)($length >> 15);
+            $length = $length & 0x7fff;
+            if ($isExtended) {
+                /*
+                 * Only handle length up to 2^32 byte (can be up to 2^(2^15) byte long!).
+                 * Thus we accept data which is up to 2^32 byte long.
+                 */
+                $lengthCount = $length;
+                switch ($lengthCount) {
+                case 1:
+                    $length = $this->_getByte($data, $pos);
+                    break;
+                case 2:
+                    $length = $this->_getShort($data, $pos);
+                    break;
+                case 3:
+                    $length = ($this->_getByte($data, $pos) << 16)
+                            + ($this->_getByte($data, $pos + 1) << 8)
+                            + $this->_getByte($data, $pos + 2);
+                case 4:
+                    $length = $this->_getLong($data, $pos);
+                    break;
+                default:
+                    return $lastPos;
+                }
+                $pos += $lengthCount;
+            }
+
             $basePos = $pos;
-            $label = '';
 
-            if (isset($IPTCTags[$type])) {
-                $label = $IPTCTags[$type];
-            }
-            else {
-                $label = sprintf('IPTC_0x%02x', $type);
-            }
-
-            if ($label != '') {
-                if (isset($this->_info['iptc'][$label])) {
-                    if (!is_array($this->_info['iptc'][$label])) {
-                        $aux = array();
-                        $aux[0] = $this->_info['iptc'][$label];
-                        $this->_info['iptc'][$label] = $aux;
-                    }
-                    $this->_info['iptc'][$label][ count($this->_info['iptc'][$label]) ] = $this->_getFixedString($data, $pos, $length);
+            switch ($recordNumber) {
+            case 0x02: // Application Record
+                $label = '';
+                if (isset($IPTCTags[$type])) {
+                    $label = $IPTCTags[$type];
                 }
                 else {
-                    $this->_info['iptc'][$label] = $this->_getFixedString($data, $pos, $length);
+                    $label = sprintf('IPTC_0x%02x', $type);
                 }
+
+                if ($label != '') {
+                    if (isset($this->_info['iptc'][$label])) {
+                        if (!is_array($this->_info['iptc'][$label])) {
+                            $aux = array();
+                            $aux[0] = $this->_info['iptc'][$label];
+                            $this->_info['iptc'][$label] = $aux;
+                        }
+                        $this->_info['iptc'][$label][ count($this->_info['iptc'][$label]) ] =
+                        	$this->_getFixedString($data, $pos, $length);
+                    }
+                    else {
+                        $this->_info['iptc'][$label] = $this->_getFixedString($data, $pos, $length);
+                    }
+                }
+                break;
+            // case 0x01: Envelope    
+            // case 0x03: Digital newsphoto parameter
+            // case 0x04: Not allocated
+            // case 0x05: Not allocated
+            // case 0x06: Abstract relationship
+            // case 0x07: Pre-objectdata descriptor
+            // case 0x08: Object data
+            // case 0x09: Post-objectdata descriptor
+            default:  
+                break; 
             }
 
             $pos = $basePos + $length; // No padding
