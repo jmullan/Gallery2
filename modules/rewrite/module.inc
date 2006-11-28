@@ -151,7 +151,8 @@ class RewriteModule extends GalleryModule {
 	    return array($ret, null);
 	}
 	if ($code != REWRITE_STATUS_OK) {
-	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED, null, null, $code),
+			 null);
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
