@@ -330,14 +330,11 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     function getRewriteRules() {
 	return array(
 	    array( 'comment' => $this->translate('Watermark hotlinked images'),
-		   'pattern' => '.',
-		   'parser' => 'preGallery',
 		   'restrict' => array('view' => 'core.DownloadItem',
 				       'itemId' => '([0-9]+)'),
 		   'queryString' => array('view' => 'watermark.DownloadItem',
 					  'itemId' => '%1'),
-		   'flags' => array(),
-		   'locked' => 1,
+		   'flags' => array('L'),
 		   'exemptReferer' => 1,
 		   'help' => $this->translate(
 		       'Apply watermark to images downloaded from outside your Gallery. Select ' .
