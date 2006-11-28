@@ -222,6 +222,18 @@ class RewriteHelperTest extends GalleryTestCase {
 	    $expectedShortUrls, null, $activeRules, array('default' => array('F1', 'F2'),
 							  'mandatory' => array('F1')));
 
+	/* Test duplicate flags */
+	$activeRules = array();
+	$activeRules['rewritehelpermock'][5] = array('pattern' => 'phpunit');
+	$expectedActiveRules = $activeRules;
+	$expectedShortUrls = array();
+	$expectedRegexRules = array(array('pattern' => 'phpunit',
+					  'queryString' => '',
+					  'settings' => array('flags' => 'C1,C2')));
+	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
+	    $expectedShortUrls, null, $activeRules, array('default' => array('C1', 'C2'),
+							  'mandatory' => array('C1')));
+
 	/* Test conditions */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][11] = array();

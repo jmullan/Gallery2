@@ -190,6 +190,9 @@ class RewriteHelper {
 		    $settings['flags'] = array_merge($rules[$ruleId]['flags'], $flags['mandatory']);
 		}
 
+		/* Ignore duplicate flags */
+		$settings['flags'] = array_unique($settings['flags']);
+
 		/* Make sure that there's no subrequest made when we match by the query string */
 		if (isset($settings['restrict']) && !in_array('L', $settings['flags'])) {
 		    $settings['flags'][] = 'L';
