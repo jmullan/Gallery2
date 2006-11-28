@@ -77,6 +77,14 @@ function clearPageCache() {
 }
 
 function clearG2DataDir($dir) {
+    require_once(dirname(__FILE__) . '/../../embed.php');
+    $ret = GalleryEmbed::init(array('fullInit' => false));
+    if ($ret) {
+	/* Try to swallow the error, but define a session to make ::done() pass. */
+	global $gallery;
+	$gallery->initEmptySession();
+    }
+
     global $gallery;
     $path = $gallery->getConfig('data.gallery.base') . $dir;
     $status[] = array('info', "Deleting dir: $path");
@@ -92,6 +100,12 @@ function clearG2DataDir($dir) {
     } else {
 	$status[] = array('error', "Unable to recreate dir: $path");
     }
+
+    $ret = GalleryEmbed::done();
+    if ($ret) {
+	$status[] = array('error', 'Error deleting data dir!');
+    }
+
     return $status;
 }
 
