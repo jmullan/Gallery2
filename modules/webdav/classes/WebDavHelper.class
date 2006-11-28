@@ -112,7 +112,7 @@ class WebDavHelper {
 
 	$pathComponents = explode('/', $path);
 	$count = 0;
-	while (array_pop($pathComponents)) {
+	while (array_pop($pathComponents) !== null) {
 	    $data[] = implode('/', $pathComponents);
 	    $count++;
 	}
@@ -120,7 +120,7 @@ class WebDavHelper {
 	if ($count) {
 	    $query .= '
 		OR
-		  ((' . implode(' OR ', array_pad(array(), $count, '[WebDavLockMap::path] = ?'))
+		  ([WebDavLockMap::path] IN (' . GalleryUtilities::makeMarkers($count)
 		  . ') AND [WebDavLockMap::depth] = \'infinity\')';
 	}
 
@@ -176,7 +176,6 @@ class WebDavHelper {
      * @see HTTP_WebDAV_Server::options
      */
     function options() {
-
 	/* TODO COPY not implemented */
 	GalleryUtilities::setResponseHeader(
 	    'Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, ' .
@@ -248,6 +247,11 @@ class WebDavHelper {
 	    if ($ret) {
 		return $ret;
 	    }
+	}
+
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'webdav.view');
+	if ($ret) {
+	    return $ret;
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);

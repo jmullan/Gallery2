@@ -1,0 +1,144 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
+
+/**
+ * WebDAV module tests.
+ * @package WebDav
+ * @subpackage PHPUnit
+ * @author Jack Bates <ms419@freezone.co.uk>
+ * @version $Revision$ $Date$
+ */
+class WebDavModuleTest extends GalleryTestCase {
+
+    function WebDavTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+	global $gallery;
+
+	/* Initialize test URL generator */
+	$urlGenerator = new GalleryUrlGenerator();
+	$ret = $urlGenerator->init('http://example.com/main.php');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$gallery->setUrlGenerator($urlGenerator);
+
+	/* Create test items */
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
+	    'test/file');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testGetItemLinks() {
+	global $gallery;
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$items = array($this->_item, $this->_subAlbum);
+	$wantsDetailedLinks =
+	    array($this->_item->getId() => true, $this->_subAlbum->getId() => true);
+	list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($this->_item->getId(), $this->_subAlbum->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Any user agent */
+	$_SERVER['HTTP_USER_AGENT'] = 'Foo Bar';
+
+	list ($ret, $links) = $module->getItemLinks(
+	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$url = $this->_signUrl(
+	    'http://example.com/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
+	    . $this->_subAlbum->getId());
+	$expected = array();
+	$expected[$this->_subAlbum->getId()][0]['text'] =
+	    $module->translate(array('text' => 'Mount with WebDAV'));
+	$expected[$this->_subAlbum->getId()][0]['params'] =
+	    array('view' => 'webdav.WebDavMount', 'itemId' => $this->_subAlbum->getId());
+	$expected[$this->_subAlbum->getId()][0]['attrs'] =
+	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
+	$this->assertEquals($expected, $links, 'item links for any user agent');
+
+	/* Mount with JavaScript only if using MSIE */
+	$_SERVER['HTTP_USER_AGENT'] = 'MSIE 6';
+	list ($ret, $links) = $module->getItemLinks(
+	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedMsie = $expected;
+	$expectedMsie[$this->_subAlbum->getId()][0]['script'] =
+	    "this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$url')";
+	$this->assertEquals($expectedMsie, $links, 'item links for MSIE');
+
+	/* Konqueror supports webdav:// URLs */
+	$_SERVER['HTTP_USER_AGENT'] = 'Konqueror';
+	list ($ret, $links) = $module->getItemLinks(
+	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedKonqueror = $expected;
+	$expectedKonqueror[$this->_subAlbum->getId()][0]['params'] =
+	    array('controller' => 'webdav.WebDav', 'itemId' => $this->_subAlbum->getId());
+	$expectedKonqueror[$this->_subAlbum->getId()][0]['options'] =
+	    array('protocol' => 'webdav');
+	$this->assertEquals($expectedKonqueror, $links, 'item links for Konqueror');
+
+	/* Verify that item links are only for detailed mode */
+	$wantsDetailedLinks[$this->_subAlbum->getId()] = false;
+	list ($ret, $links) = $module->getItemLinks(
+	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(), $links, 'must be a request for detailed links');
+    }
+}
+?>

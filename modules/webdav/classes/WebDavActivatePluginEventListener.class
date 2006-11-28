@@ -31,18 +31,29 @@ class WebDavActivatePluginEventListener /* extends GalleryEventListener */ {
      */
     function handleEvent($event) {
 	$data = $event->getData();
+	if ($data['pluginType'] != 'module' || $data['pluginId'] != 'rewrite') {
+	    return array(null, null);
+	}
 
-	if ($data['pluginType'] == 'module' && $data['pluginId'] == 'rewrite') {
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
-	    if ($ret) {
-		return array($ret, null);
-	    }
+	/*
+	 * Can't use list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	 * because Gallery::ActivatePlugin event is posted before the rewrite module is activated.
+	 */
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteApi.class');
+	$rewriteApi = new RewriteApi();
 
-	    $ret = $module->activateRewriteRules();
+	if (!empty($rewriteApi)) {
+	    list ($ret, $success) = $rewriteApi->activateRewriteRulesForModule('webdav');
 	    if ($ret) {
 		return array($ret, null);
 	    }
 	}
+
+	if (empty($rewriteApi) || empty($success)) {
+	    /* TODO: Show configuration required or something like that */
+	}
+
+	return array(null, null);
     }
 }
 ?>

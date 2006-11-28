@@ -87,16 +87,18 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->_streamWrapperRegistration();
 
-	/* Try to test with the rewrite URL Generator */
+	/* Try to test with the rewrite URL generator */
 	list ($ret, $urlGenerator) = @GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	/* Swallow ERROR_STORAGE_FAILURE, or automatic upgrading fails */
 	if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 	    return $this->failWithStatus($ret);
 	}
+
 	if (!isset($urlGenerator)) {
 	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
 	    $urlGenerator = new GalleryUrlGenerator();
 	}
+
 	$ret = $urlGenerator->init($urlDirectory);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -118,7 +120,7 @@ class WebDavTest extends GalleryTestCase {
 		stream_wrapper_unregister('test');
 		$registered = false;
 	    }
-	} else if (!$registered){
+	} else if (!$registered) {
 	    stream_wrapper_register('test', 'WebDavTestStream');
 	    $registered = true;
 	}
@@ -425,15 +427,15 @@ class WebDavTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
+
+	/* Perform the request and verify that we succeeded */
 	GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
 	list ($ret, $data) = ItemAddController::handleRequest(array());
-	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
-	    /* this is what we expect */
-	} else if ($ret) {
+	if ($ret && !($ret->getErrorCode() & ERROR_REQUEST_FORGED)) {
 	    return $this->failWithStatus($ret);
-	} else {
-	    $this->assert(false, 'HTTP PUT check was not enforced');
 	}
+
+	$this->assert($ret, 'HTTP PUT check was not enforced');
     }
 
     function testReplace() {
@@ -483,7 +485,7 @@ class WebDavTest extends GalleryTestCase {
     }
 
     /**
-     * @todo What does a query-string based webdav client send in HTTP_DESTINATION?
+     * @todo What does a query-string based WebDAV client send in HTTP_DESTINATION?
      */
     function testMove() {
 	global $gallery;
@@ -507,13 +509,12 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'testItem-' . rand();
 	$newPath .= $pathComponent;
 
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	$_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
+	    array('controller' => 'webdav.WebDav', 'path' => $newPath),
+	    array('forceFullUrl' => true));
 	if (!GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
 	    $_SERVER['HTTP_DESTINATION'] = rtrim($urlGenerator->getCurrentUrlDir(), '/') . $newPath;
-	} else {
-	    /* Assuming that the webdav rewrite rules are enabled. */
-	    $_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
-		array('controller' => 'webdav.WebDav', 'path' => $newPath),
-		array('forceFullUrl' => true));
 	}
 
 	/* Perform the request and verify that we succeeded */
@@ -751,13 +752,12 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'The!Quick$Brown#Fox';
 	$newPath .= $pathComponent;
 
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	$_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
+	    array('controller' => 'webdav.WebDav', 'path' => $newPath),
+	    array('forceFullUrl' => true));
 	if (!GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
 	    $_SERVER['HTTP_DESTINATION'] = rtrim($urlGenerator->getCurrentUrlDir(), '/') . $newPath;
-	} else {
-	    /* Assuming that the webdav rewrite rules are enabled. */
-	    $_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
-		array('controller' => 'webdav.WebDav', 'path' => $newPath),
-		array('forceFullUrl' => true));
 	}
 
 	/* Perform the request and verify that we succeeded */
@@ -892,84 +892,6 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
 
 	//$this->assertEquals('', $output);
-    }
-
-    function testGetItemLinksForModule() {
-	global $gallery;
-
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$item = $this->_subAlbum;
-	$itemId = $item->getId();
-	$items = array($this->_item->getId() => $this->_item, $itemId => $item);
-	$wantsDetailedLinks = array($this->_item->getId() => true, $itemId => true);
-	list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(array_keys($items));
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$_SERVER['HTTP_USER_AGENT'] = 'Foo bar';
-	$urlGenerator = new GalleryUrlGenerator();
-	$ret = $urlGenerator->init('http://example.com/main.php');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$gallery->setUrlGenerator($urlGenerator);
-
-	/* Execute the method under test */
-	list ($ret, $links) = $module->getItemLinks($items, $wantsDetailedLinks, $permissions,
-						    $gallery->getActiveUserId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$url = $this->_signUrl('http://example.com/main.php?g2_controller=webdav.WebDav&amp;' .
-			       'g2_itemId=' . $itemId);
-	$expected = array($itemId => array(array(
-		'text' => $module->translate(array('text' => 'Mount with WebDAV')),
-		'params' => array('view' => 'webdav.WebDavMount', 'itemId' => $itemId),
-		'attrs' => 'style="behavior: url(#default#anchorClick)" folder="'. $url . '"')));
-	$this->assertEquals($expected, $links, 'link results for any user-agent');
-
-	/* httpfolder script for Internet Explorer */
-	$_SERVER['HTTP_USER_AGENT'] = 'MSIE 6';
-	list ($ret, $links) = $module->getItemLinks($items, $wantsDetailedLinks, $permissions,
-						    $gallery->getActiveUserId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$expectedForIe = $expected;
-	$expectedForIe[$itemId][0]['script'] =
-		"this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$url')";
-	$this->assertEquals($expectedForIe, $links, 'link results for Internet Explorer');
-
-	/* webdav protocol for Konqueror */
-	$_SERVER['HTTP_USER_AGENT'] = 'Konqueror';
-	list ($ret, $links) = $module->getItemLinks($items, $wantsDetailedLinks, $permissions,
-						    $gallery->getActiveUserId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$url = $this->_signUrl('webdav://example.com/main.php?g2_controller=webdav.WebDav&amp;' .
-			       'g2_itemId=' . $itemId);
-	$expectedForKonqueror = $expected;
-	$expectedForKonqueror[$itemId][0]['params'] = array('href' => $url);
-	$expectedForKonqueror[$itemId][0]['attrs'] =
-		'style="behavior: url(#default#anchorClick)" folder="'. $url . '"';
-	$this->assertEquals($expectedForKonqueror, $links, 'link results for Konqueror');
-
-	/* Verify that the davmount links are only for the detailed mode */
-	$wantsDetailedLinks[$itemId] = false;
-	list ($ret, $links) = $module->getItemLinks($items, $wantsDetailedLinks, $permissions,
-						    $gallery->getActiveUserId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$this->assertEquals(array(), $links, 'must be a request for detailed links');
     }
 }
 

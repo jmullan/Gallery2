@@ -75,6 +75,11 @@ class WebDavController extends GalleryController {
 		}
 	    }
 
+	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'webdav.view');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret) {
 		return array($ret, null);
