@@ -434,6 +434,7 @@ class SystemChecksStep extends InstallStep {
 	$this->setComplete($failCount == 0);
 	$this->setInError($failCount > 0);
 	$template->renderBodyAndFooter($templateData);
+	return false;
     }
 
     function CheckFileDirective() {

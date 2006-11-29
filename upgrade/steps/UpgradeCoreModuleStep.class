@@ -41,7 +41,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	if (empty($translator)) {
 	    $ret = $gallery->initTranslator(true /* dontUseDatabase */ );
 	    if ($ret) {
-		return $ret;
+		return true;
 	    }
 	}
 
@@ -129,6 +129,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	}
 
 	$template->renderBodyAndFooter($templateData);
+	return false;
     }
 }
 ?>

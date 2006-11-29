@@ -67,11 +67,8 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		$this->resetL10Domain();
 		$gallery->guaranteeTimeLimit(120);
 
-		$ret = $template->renderStatusMessage(_('Upgrading modules'),
+		$template->renderStatusMessage(_('Upgrading modules'),
 		    $module->getName(), $currentModule / $totalModules);
-		if ($ret) {
-		    return $ret;
-		}
 
 		$ret = $module->installOrUpgrade();
 		$this->resetL10Domain();
@@ -111,11 +108,8 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		$theme->setDescription($theme->translate($theme->getDescription()));
 		$this->resetL10Domain();
 
-		$ret = $template->renderStatusMessage(_('Upgrading themes'),
+		$template->renderStatusMessage(_('Upgrading themes'),
 		    $theme->getName(), $currentTheme / $totalThemes);
-		if ($ret) {
-		    return $ret;
-		}
 
 		$ret = $theme->installOrUpgrade();
 		$this->resetL10Domain();
@@ -154,6 +148,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	}
 	$template->hideStatusBlock();
 	$template->renderBodyAndFooter($templateData);
+	return false;
     }
 
     function loadTemplateData(&$templateData) {
@@ -171,7 +166,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	if (empty($translator)) {
 	    $ret = $gallery->initTranslator();
 	    if ($ret) {
-		return $ret;
+		return;
 	    }
 	}
 

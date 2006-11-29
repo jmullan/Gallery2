@@ -69,11 +69,7 @@ class SystemChecksStep extends UpgradeStep {
 	    krsort($removeList);
 
 	    $isWindows = !strncasecmp(PHP_OS, 'win', 3);
-	    if ($isWindows) {
-		$fileName = 'cleanup.bat';
-	    } else {
-		$fileName = 'cleanup.sh';
-	    }
+	    $fileName = $isWindows ? 'cleanup.bat' : 'cleanup.sh';
 	    header("Content-Type: application/data");
 	    header('Content-Disposition: attachment; filename=' . $fileName);
 	    include(dirname(__FILE__) . '/../templates/ManifestCleanupScript.html');

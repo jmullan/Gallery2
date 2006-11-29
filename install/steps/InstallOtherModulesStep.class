@@ -69,11 +69,8 @@ class InstallOtherModulesStep extends InstallStep {
 		$this->resetL10Domain();
 		$gallery->guaranteeTimeLimit(120);
 
-		$ret = $template->renderStatusMessage(_('Installing modules'),
+		$template->renderStatusMessage(_('Installing modules'),
 		    $module->getName(), $currentModule / $totalModules);
-		if ($ret) {
-		    return $ret;
-		}
 
 		$ret = $module->installOrUpgrade();
 		if ($ret) {
@@ -144,6 +141,7 @@ class InstallOtherModulesStep extends InstallStep {
 	    }
 	}
 	$template->renderBodyAndFooter($templateData);
+	return false;
     }
 
     function loadTemplateData(&$templateData) {
