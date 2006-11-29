@@ -130,6 +130,7 @@ class SystemChecksStep extends InstallStep {
 			  _('Error: Your PHP is configured without support for %sPerl Compatible ' .
 			    'Regular Expressions%s. You must enable these functions before ' .
 			    'Gallery will run.'), '<a href="http://php.net/pcre">', '</a>'));
+	    $failCount++;
 	} /* skip showing 'success' for this one */
 
 	/* Warning when exec() is disabled */
@@ -167,12 +168,35 @@ class SystemChecksStep extends InstallStep {
 	    $templateData['check'][] =
 		array('title' => _('set_time_limit() allowed'), 'success' => true);
 
-	    /* Set the time limit large enoguh for the remaining checks (slow systems) */
+	    /* Set the time limit large enough for the remaining checks (slow systems) */
 	    set_time_limit(180);
 	    $setTimeLimitAvailable = true;
 	}
 
 	$template->renderStatusMessage(_('Performing system checks'), '', 0.02);
+
+	/* Make sure filesystem operations are allowed */
+	$missingFilesystemFunctions = array();
+	foreach (array('fopen', 'fclose', 'fread', 'fwrite', 'file', 'copy', 'rename', 'readfile',
+		'file_get_contents', 'copy', 'move_uploaded_file', 'file_exists', 'tempnam', 'glob',
+		'closedir', 'stat', 'unlink', 'rmdir', 'mkdir', 'getcwd', 'chdir', 'opendir',
+		'readdir', 'chmod') as $function) {
+	    if (!function_exists($function)) {
+		$missingFilesystemFunctions[] = $function;
+	    }
+	}
+	if (!empty($missingFilesystemFunctions)) {
+	    $templateData['check'][] =
+		array('title' => _('Filesystem Operations'),
+		      'error' => true,
+		      'notice' => sprintf(
+			  _('Error: Essential filesystem operations are disabled in your PHP by ' .
+			    'the <b>disabled_functions</b> parameter in php.ini. You must allow ' .
+			    'these functions before Gallery will run. These functions are ' .
+			    'missing: %s.'),
+			  implode(', ', $missingFilesystemFunctions)));
+	    $failCount++;
+	} /* skip showing 'success' for this one */
 
 	/* Warning if memory_limit is set and is too low */
 	$memoryLimit = ini_get('memory_limit');
@@ -344,7 +368,7 @@ class SystemChecksStep extends InstallStep {
 
 	/* Check all files against MANIFEST */
 	$title = _('Gallery file integrity');
-	if (!SystemChecksStep::CheckFileDirective()) {
+	if (!SystemChecksStep::CheckFileDirective() || !empty($missingFilesystemFunctions)) {
 	    $templateData['check'][] =
 		array('title' => $title,
 		      'warning' => true,
