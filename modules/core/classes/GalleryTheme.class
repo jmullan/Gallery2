@@ -589,19 +589,6 @@ class GalleryTheme extends GalleryPlugin {
 		return $ret;
 	    }
 
-	    /* Reactivate myself to perform any activate based tasks like adding new parameters */
-	    if ($gallery->getDebug()) {
-		$gallery->debug(sprintf('Reactivate %s theme', $this->getId()));
-	    }
-	    list ($ret, $redirect) = $this->reactivate();
-	    if ($ret) {
-		if ($gallery->getDebug()) {
-		    $gallery->debug(sprintf('Error: Failed to reactivate the theme, this' .
-					    ' is the error stack trace: %s', $ret->getAsText()));
-		}
-		return $ret;
-	    }
-
 	    if ($gallery->getDebug()) {
 		$gallery->debug('GalleryTheme::installOrUpgrade set new theme version etc.');
 	    }
@@ -614,6 +601,19 @@ class GalleryTheme extends GalleryPlugin {
 		if ($ret) {
 		    return $ret;
 		}
+	    }
+
+	    /* Reactivate myself to perform any activate based tasks like adding new parameters */
+	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('Reactivate %s theme', $this->getId()));
+	    }
+	    list ($ret, $redirect) = $this->reactivate();
+	    if ($ret) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug(sprintf('Error: Failed to reactivate the theme, this' .
+					    ' is the error stack trace: %s', $ret->getAsText()));
+		}
+		return $ret;
 	    }
 	}
 

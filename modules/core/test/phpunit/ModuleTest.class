@@ -377,6 +377,36 @@ class ModuleTest extends GalleryTestCase {
 	$this->assert($bits > 0, 'bits');
     }
 
+    function testInstallOrUpgradeSetsNewModuleVersion() {
+	/* Manually set the version to an older one */
+	$module = new ModuleTestModule();
+	$ret = $module->setParameter('_version', '0.5.0');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $ignored) = $module->activate();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$module->_activate = false;
+
+	/* Execute the method under test */
+	$ret = $module->installOrUpgrade();
+	if ($ret && $ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED) {
+	    /* That's what we expect */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->fail('should have failed with an activation error');
+	}
+
+	list ($ret, $version) = $module->getParameter('_version');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('1.0.0', $version, 'version not set after upgrade');
+    }
+
     function _fetchPermissionBitsForItem($itemId) {
 	global $gallery;
 
@@ -437,6 +467,8 @@ class ModuleTest extends GalleryTestCase {
  * @subpackage PHPUnit
  */
 class ModuleTestModule extends GalleryModule {
+    var $_activate;
+
     function ModuleTestModule() {
 	global $gallery;
 
@@ -448,6 +480,7 @@ class ModuleTestModule extends GalleryModule {
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
 	$this->setRequiredModuleApi(GalleryModule::getApiVersion());
+	$this->_activate = true;
     }
 
     function upgrade($currentVersion) {
@@ -468,6 +501,19 @@ class ModuleTestModule extends GalleryModule {
 	}
 
 	return null;
+    }
+
+    function activate($postActivationEvent=true) {
+	if (!$this->_activate) {
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
+	}
+
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, array());
     }
 
     function performFactoryRegistrations() {

@@ -162,6 +162,26 @@ class GalleryModule extends GalleryPlugin {
 	    }
 
 	    if ($gallery->getDebug()) {
+		$gallery->debug(sprintf('Update module paramater for the %s module',
+					$this->getId()));
+	    }
+	    $data = array('_version' => $this->getVersion(),
+			  '_callbacks' => $this->getCallbacks(),
+			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
+			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()));
+	    foreach ($data as $key => $value) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret) {
+		    if ($gallery->getDebug()) {
+			$gallery->debug(sprintf('Error: Failed to update the module parameter %s' .
+						', this is the error stack trace: %s', $key,
+						$ret->getAsText()));
+		    }
+		    return $ret;
+		}
+	    }
+
+	    if ($gallery->getDebug()) {
 		$gallery->debug(sprintf('ConfigureStoreCleanup for %s module', $this->getId()));
 	    }
 	    $ret = $storage->configureStoreCleanup($this->getId());
@@ -190,26 +210,6 @@ class GalleryModule extends GalleryPlugin {
 					    ' is the error stack trace: %s', $ret->getAsText()));
 		}
 		return $ret;
-	    }
-
-	    if ($gallery->getDebug()) {
-		$gallery->debug(sprintf('Update module paramater for the %s module',
-					$this->getId()));
-	    }
-	    $data = array('_version' => $this->getVersion(),
-			  '_callbacks' => $this->getCallbacks(),
-			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
-			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()));
-	    foreach ($data as $key => $value) {
-		$ret = $this->setParameter($key, $value);
-		if ($ret) {
-		    if ($gallery->getDebug()) {
-			$gallery->debug(sprintf('Error: Failed to update the module parameter %s' .
-						', this is the error stack trace: %s', $key,
-						$ret->getAsText()));
-		    }
-		    return $ret;
-		}
 	    }
 
 	    /* Optimize and analyze altered tables */
