@@ -29,24 +29,23 @@ class SystemChecksStep extends InstallStep {
 
     /*
      * Returns the exact bytes value from a php.ini setting
-     *
      * Copied from PHP.net's manual entry for ini_get()
      */
     function _getBytes($val) {
 	$val = trim($val);
 	$last = $val{strlen($val)-1};
-	switch($last) {
-	case 'k':
-	case 'K':
-	    return (int) $val * 1024;
-	    break;
+	switch ($last) {
+	case 'g':
+	case 'G':
+	    $val *= 1024;
 	case 'm':
 	case 'M':
-	    return (int) $val * 1048576;
-	    break;
-	default:
-	    return $val;
+	    $val *= 1024;
+	case 'k':
+	case 'K':
+	    $val *= 1024;
 	}
+	return $val;
     }
 
     function processRequest() {
@@ -65,9 +64,7 @@ class SystemChecksStep extends InstallStep {
 	/* Create GalleryStub to store information for the install core step / install log */
 	global $galleryStub;
 	$galleryStub = new GalleryStub();
-
 	$failCount = 0;
-
 	$suggestedHtaccess = array();
 	$setTimeLimitAvailable = false;
 
@@ -112,9 +109,8 @@ class SystemChecksStep extends InstallStep {
 	    $templateData['check'][] =
 		array('title' => _('Safe mode disabled'),
 		      'error' => true,
-		      'notice' =>
-		      _('Error: Your version of PHP is configured with safe mode enabled.  ' .
-			'You must disable safe mode before Gallery will run.'));
+		      'notice' => _('Error: Your version of PHP is configured with safe mode ' .
+			  'enabled.  You must disable safe mode before Gallery will run.'));
 	    $failCount++;
 	} else {
 	    $templateData['check'][] =
@@ -226,9 +222,9 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('File uploads allowed'),
 		      'warning' => true,
 		      'notice' =>
-		      _('Warning: Your PHP is configured not to allow file uploads (<b>file_uplo' .
-			'ads</b> parameter in php.ini). You will need to enable this option if ' .
-			'you want to upload files to your Gallery with a web browser.'),
+		      _('Warning: Your PHP is configured not to allow file uploads (<b>file_' .
+			'uploads</b> parameter in php.ini). You will need to enable this option ' .
+			'if you want to upload files to your Gallery with a web browser.'),
 		);
 	    $suggestedHtaccess[] = 'php_flag file_uploads on';
 	} else {
@@ -247,7 +243,7 @@ class SystemChecksStep extends InstallStep {
 		      'notice' => sprintf(
 			  _('Warning: Your PHP is configured to limit the size of file uploads to' .
 			    ' %sb (<b>upload_max_filesize</b> parameter in php.ini). You should ' .
-			    'rise this limit to allow uploading bigger files.'),
+			    'raise this limit to allow uploading bigger files.'),
 			  ini_get('upload_max_filesize')),
 		);
 	    $suggestedHtaccess[] = sprintf('php_value upload_max_filesize %sM', $minimumUploadsize);
@@ -259,7 +255,8 @@ class SystemChecksStep extends InstallStep {
 	/* Warning if post_max_size is less than 2M */
 	$title = sprintf('%s (%sb)', _('Maximum POST size'), ini_get('post_max_size'));
 	$minimumPostsize = 2;
-	if ((int)ini_get('post_max_size') < $minimumPostsize) {
+	$postSize = $this->_getBytes(ini_get('post_max_size')) / (1024 * 1024);
+	if ($postSize < $minimumPostsize) {
 	    $templateData['check'][] =
 		array('title' => $title,
 		      'warning' => true,
@@ -327,12 +324,11 @@ class SystemChecksStep extends InstallStep {
 	    $templateData['check'][] =
 		array('title' => _('putenv() allowed'),
 		      'warning' => true,
-		      'notice' => sprintf(
-			  _('Warning: The putenv() function is disabled in your php by the ' .
-			    '<b>disabled_functions</b> parameter in php.ini.  Gallery can ' .
-			    'function with this setting, but on some rare systems Gallery will be' .
-			    'unable to run in other languages than the system language and ' .
-			    'English.')),
+		      'notice' =>
+		      _('Warning: The putenv() function is disabled in your PHP by the <b>' .
+			'disabled_functions</b> parameter in php.ini.  Gallery can function with ' .
+			'this setting, but on some rare systems Gallery will be unable to run in ' .
+			'other languages than the system language and English.'),
 		);
 	} /* skip showing 'success' for this one */
 
@@ -364,7 +360,7 @@ class SystemChecksStep extends InstallStep {
 		);
 	} /* skip showing 'success' for this one */
 
-	$template->renderStatusMessage(_('Performing system checks'), '', 0.07);
+	$template->renderStatusMessage(_('Performing system checks'), '', 0.06);
 
 	/* Check all files against MANIFEST */
 	$title = _('Gallery file integrity');
@@ -386,7 +382,7 @@ class SystemChecksStep extends InstallStep {
 			);
 		$failCount++;
 	    } /* skip showing 'success' for this one */
-	    
+
 	    /* Now check the MANIFEST files */
 	    $isSvnInstall = file_exists(dirname(__FILE__) . '/.svn');
 	    $manifest = SystemChecksStep::CheckManifest($template, $setTimeLimitAvailable);
@@ -468,7 +464,6 @@ class SystemChecksStep extends InstallStep {
 	closedir($dh);
 	return false;
     }
-    
 
     function CheckManifest(&$statusMonitor, $useSetTimeLimit) {
 	$base = realpath(dirname(__FILE__) . '/../..') . '/';
@@ -487,8 +482,7 @@ class SystemChecksStep extends InstallStep {
 	}
 
 	$missing = $modified = $shouldRemove = array();
-	$totalCount = count($manifest);
-	$stepSize = (int)($totalCount/22);
+	$stepSize = (int)(count($manifest) / 22);
 	$i = 0;
 	foreach ($manifest as $file => $info) {
 	    $i++;
@@ -499,7 +493,7 @@ class SystemChecksStep extends InstallStep {
 
 	    if ($i % $stepSize == 0) {
 		$statusMonitor->renderStatusMessage(_('Performing system checks'), '',
-				0.15 + $i / $stepSize * 0.04);
+				0.12 + $i / $stepSize * 0.04);
 		if ($useSetTimeLimit) {
 		    set_time_limit(180);
 		}
@@ -514,8 +508,7 @@ class SystemChecksStep extends InstallStep {
 	    } else {
 		/*
 		 * Use size comparison instead of checksum for speed.  We have
-		 * two sizes, one calculated with unix eols, one with windows
-		 * eols.
+		 * two sizes, one calculated with unix eols, one with windows eols.
 		 */
 		$actualSize = filesize($path);
 		if ($actualSize != $info['size'] && $actualSize != $info['size_crlf']) {
