@@ -21,4 +21,9 @@
   <label for="HiddenItem_cb">
     {g->text text="Hidden"}
   </label>
+
+  {if $form.HiddenItemOption.isAlbum}
+    <input type="hidden" name="{g->formVar var="form[HiddenItemOption][progressBar]"}"
+     value="{if $form.HiddenItemOption.isHidden}un{/if}hide"/>
+  {/if}
 </div>

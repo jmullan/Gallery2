@@ -57,4 +57,9 @@
      {g->text text="The passwords you entered did not match"}
    </div>
   {/if}
+
+  {if $form.PasswordOption.isAlbum}
+    <input type="hidden" name="{g->formVar var="form[PasswordOption][progressBar]"}"
+     value="{if $form.PasswordOption.hasPassword}remove{else}add{/if}"/>
+  {/if}
 </div>

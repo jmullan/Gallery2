@@ -219,6 +219,10 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     }
 
     function testHideAlbum() {
+	global $gallery;
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
 	$albumId = $this->_topAlbum->getId();
 	$form['HiddenItemOption']['setHidden'] = 1;
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
@@ -242,6 +246,10 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 		return $this->failWithStatus($ret);
 	    }
 	}
+	$progress = $mockAdapter->getProgressBarDump();
+	$this->assert(count($progress) > 3, 'progress bar: ' . print_r($progress, true));
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
 
 	$form['HiddenItemOption']['setHidden'] = 0;
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
@@ -265,9 +273,15 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 		return $this->failWithStatus($ret);
 	    }
 	}
+	$progress = $mockAdapter->getProgressBarDump();
+	$this->assert(count($progress) > 3, 'progress bar: ' . print_r($progress, true));
     }
 
     function testHideAlbumWithHiddenItem() {
+	global $gallery;
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
 	$ret = HiddenHelper::hideItem($this->_subItems[0]);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -311,6 +325,10 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     }
 
     function testHideAlbumWithHiddenAlbum() {
+	global $gallery;
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -401,6 +419,10 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     }
 
     function testHideAlbumInHiddenAlbum() {
+	global $gallery;
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
 	$ret = HiddenHelper::hideItem($this->_topAlbum);
 	if ($ret) {
 	    return $this->failWithStatus($ret);

@@ -66,25 +66,35 @@ class HiddenItemOption extends ItemEditOption {
     function handleRequestAfterEdit($form, &$item, &$preferred) {
 	GalleryCoreApi::requireOnce('modules/hidden/classes/HiddenHelper.class');
 	$error = $warning = array();
+	$useProgressBar = $item->getCanContainChildren();
 
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.changePermissions');
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	if (isset($form['HiddenItemOption']['setHidden'])
-		&& $form['HiddenItemOption']['setHidden']) {
-	    $ret = HiddenHelper::hideItem($item);
+	if (!empty($form['HiddenItemOption']['setHidden'])) {
+	    $ret = HiddenHelper::hideItem($item, $useProgressBar);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
 	} else {
-	    $ret = HiddenHelper::unHideItem($item);
+	    $ret = HiddenHelper::unHideItem($item, $useProgressBar);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
 	}
 
 	return array(null, $error, $warning);
+    }
+
+    /**
+     * @see ItemEditOption::requiresProgressBar
+     */
+    function requiresProgressBar($form) {
+	/* Progress bar if changing hidden status for an album */
+	return isset($form['HiddenItemOption']['progressBar'])
+	    && ($form['HiddenItemOption']['progressBar'] == 'hide')
+	       == !empty($form['HiddenItemOption']['setHidden']);
     }
 }
 ?>

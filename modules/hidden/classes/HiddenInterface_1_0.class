@@ -34,9 +34,10 @@ class HiddenInterface_1_0 {
      * Hide an item
      *
      * @param object GalleryItem $item
+     * @param boolean $useProgressBar (default is false)
      * @return object GalleryStatus a status code
      */
-    function hideItem(&$item) {
+    function hideItem(&$item, $useProgressBar=false) {
 	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 
@@ -44,9 +45,10 @@ class HiddenInterface_1_0 {
      * Unhide an item
      *
      * @param object GalleryItem $item
+     * @param boolean $useProgressBar (default is false)
      * @return object GalleryStatus a status code
      */
-    function unHideItem(&$item) {
+    function unHideItem(&$item, $useProgressBar=false) {
 	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 

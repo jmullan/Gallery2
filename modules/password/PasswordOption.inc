@@ -54,15 +54,16 @@ class PasswordOption extends ItemEditOption {
      */
     function handleRequestAfterEdit($form, &$item, &$preferred) {
 	$error = $warning = array();
+	$useProgressBar = $item->getCanContainChildren();
 
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.changePermissions');
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 
-	if (isset($form['PasswordOption']['remove']) && $form['PasswordOption']['remove']) {
+	if (!empty($form['PasswordOption']['remove'])) {
 	    GalleryCoreApi::requireOnce('modules/password/classes/PasswordHelper.class');
-	    $ret = PasswordHelper::removePassword($item);
+	    $ret = PasswordHelper::removePassword($item, $useProgressBar);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -72,7 +73,8 @@ class PasswordOption extends ItemEditOption {
 		GalleryUtilities::unsanitizeInputValues($form['PasswordOption']['password1'],
 							false);
 		GalleryCoreApi::requireOnce('modules/password/classes/PasswordHelper.class');
-		$ret = PasswordHelper::setPassword($item, $form['PasswordOption']['password1']);
+		$ret = PasswordHelper::setPassword($item, $form['PasswordOption']['password1'],
+						   $useProgressBar);
 		if ($ret) {
 		    return array($ret, null, null);
 		}
@@ -83,6 +85,22 @@ class PasswordOption extends ItemEditOption {
 	}
 
 	return array(null, $error, $warning);
+    }
+
+    /**
+     * @see ItemEditOption::requiresProgressBar
+     */
+    function requiresProgressBar($form) {
+	/* Progress bar if adding new password or removing password from an album */
+	return isset($form['PasswordOption']['progressBar']) && (
+		($form['PasswordOption']['progressBar'] == 'add'
+		 && !empty($form['PasswordOption']['password1'])
+		 && !empty($form['PasswordOption']['password2'])
+		 && $form['PasswordOption']['password1'] == $form['PasswordOption']['password2'])
+		||
+		($form['PasswordOption']['progressBar'] == 'remove'
+		 && !empty($form['PasswordOption']['remove']))
+	    );
     }
 }
 ?>
