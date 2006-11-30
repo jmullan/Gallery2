@@ -15,8 +15,8 @@
 
   <table width="100%" cellspacing="0" cellpadding="0">
     <tr>
-      <td id="progressDone" style="display: inline-block; width:0%">&nbsp;</td>
-      <td id="progressToGo" style="display: inline-block; width:100%; border-left: none">&nbsp;</td>
+      <td id="progressDone">&nbsp;</td>
+      <td id="progressToGo">&nbsp;</td>
     </tr>
   </table>
 
@@ -36,7 +36,6 @@
     {g->text text="Continue..."}
   </a>
 </div>
-&nbsp;{* Makes text updates appear in IE6 *}
 
 {*
  * After the template is sent to the browser, Gallery will send a

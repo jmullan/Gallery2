@@ -442,17 +442,26 @@ label {
 /*** Progress Bar ***/
 
 #ProgressBar #progressDone {
+  width: 0%;
   background-color: #fd6704;
   border: thin solid #ddd;
 }
 
 #ProgressBar #progressToGo {
+  width: 100%;
   background-color: #eee;
   border: thin solid #ddd;
+  border-left: none;
 }
 
 #ProgressBar #progressContinueLink {
   font-size: 1.5em;
+}
+
+/* Avoid disappearing text on IE6 */
+#gallery.IE #ProgressBar #progressTitle, #gallery.IE #ProgressBar #progressDescription,
+#gallery.IE #ProgressBar #progressTimeRemaining {
+    display: inline-block;
 }
 
 /*** Tooltip ***/

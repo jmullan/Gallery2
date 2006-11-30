@@ -1009,9 +1009,10 @@ class GalleryTemplateAdapter {
 	    array('text' => 'Memory used: %s, total: %s',
 		  'arg1' => $memoryUsed,
 		  'arg2' => $memoryTotal));
+	/* Newline needed or Opera 9.02 won't show updates */
 	printf('<script type="text/javascript">'
-		. 'updateProgressBar("%s", "%s", "%s", "%s", "%s");</script>',
-	       $title, $description, $percentComplete, $timeRemaining, $memoryInfo);
+		. 'updateProgressBar("%s", "%s", "%s", "%s", "%s");</script>%s',
+	       $title, $description, $percentComplete, $timeRemaining, $memoryInfo, "\n");
 	flush();
     }
 
