@@ -37,7 +37,7 @@
   </p>
 
   {assign var="UPLOAD_BOX_COUNT" value = "20"}
-  {assign var="VISIBLE_BOX_COUNT" value = "4"}
+  {assign var="VISIBLE_BOX_COUNT" value = "2"}
   {section name="uploadBoxes" loop=$UPLOAD_BOX_COUNT}
   {assign var=iteration value=$smarty.section.uploadBoxes.iteration}
   <div id="fileDiv_{$iteration}" {if $iteration > $VISIBLE_BOX_COUNT} style="display:none"{/if}>
@@ -51,7 +51,7 @@
   {if $UPLOAD_BOX_COUNT > $VISIBLE_BOX_COUNT}
   <script type="text/javascript">
 	// <![CDATA[
-	document.write('<a id="addOne" href="javascript:addOne()">{g->text text="More.."}</a>');
+	document.write('<h4><a id="addOne" href="javascript:addOne()">{g->text text="More Upload Boxes..."}</a></h4>');
 	var fileIndex = {$VISIBLE_BOX_COUNT};
 	{literal}
 	function addOne() {
