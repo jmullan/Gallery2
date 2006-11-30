@@ -202,8 +202,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 		$recordSet->Close();
 	    } else {
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
-			     null);
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	    }
 	}
 
@@ -575,8 +574,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
-			     null);
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	    }
 
 	    $row = $recordSet->FetchRow();
@@ -619,8 +617,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
-			     null);
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	    }
 	    $lockInfo[$entityId] = true;
 	}
@@ -699,8 +696,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
-			     null);
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	    }
 
 	    $row = $recordSet->FetchRow();
@@ -743,8 +739,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStop();
 	    if (!$recordSet) {
 		$this->releaseLocks($lockId);
-		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE),
-			     null);
+		return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	    }
 	    $lockInfo[$entityId] = true;
 	}
