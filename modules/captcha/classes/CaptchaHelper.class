@@ -53,5 +53,20 @@ class CaptchaHelper {
 
 	return $gdReport;
     }
+
+    /**
+     * Generate a new captcha code and put it into the session.
+     */
+    function generateCaptchaSessionKey() {
+	global $gallery;
+	list ($usec, $sec) = explode(' ', microtime());
+	$random_num = rand();
+	$datekey = date('H i s');
+	$rcode = hexdec(md5(GalleryUtilities::getServerVar('HTTP_USER_AGENT') .
+			    $random_num . $datekey));
+	$code = substr($rcode, 2, 6);
+	$session =& $gallery->getSession();
+	$session->put('captcha.key', $code);
+    }
 }
 ?>

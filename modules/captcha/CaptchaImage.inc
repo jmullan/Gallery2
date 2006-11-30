@@ -42,6 +42,14 @@ class CaptchaImageView extends GalleryView {
 	global $gallery;
 	$session =& $gallery->getSession();
 	$code = $session->get('captcha.key');
+	if (empty($code)) {
+	    GalleryCoreApi::requireOnce('modules/captcha/classes/CaptchaHelper.class');
+	    CaptchaHelper::generateCaptchaSessionKey();
+	    $code = $session->get('captcha.key');
+	    if (!$session->getId()) {
+		$session->start();
+	    }
+	}
 
 	header('Content-type: image/jpeg');
 	header('Pragma: No-cache');

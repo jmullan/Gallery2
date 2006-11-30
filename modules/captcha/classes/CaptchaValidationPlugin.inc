@@ -99,17 +99,8 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
 	}
 
 	if ($useCaptcha) {
-	    /* Generate a new code */
-	    global $gallery;
-	    list ($usec, $sec) = explode(' ', microtime());
-	    $random_num = rand();
-	    $datekey = date('H i s');
-	    $rcode = hexdec(md5(GalleryUtilities::getServerVar('HTTP_USER_AGENT')
-				. $random_num . $datekey));
-	    $code = substr($rcode, 2, 6);
-	    $session =& $gallery->getSession();
-	    $session->put('captcha.key', $code);
-
+	    GalleryCoreApi::requireOnce('modules/captcha/classes/CaptchaHelper.class');
+	    CaptchaHelper::generateCaptchaSessionKey();
 	    return array(null,
 			 'modules/captcha/templates/CaptchaValidationPlugin.tpl',
 			 'modules_captcha');
