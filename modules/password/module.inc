@@ -161,6 +161,10 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function onLoad(&$item, $duringUpgrade) {
 	list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
+	if (empty($itemId)) {
+	    /* Root album may not specify itemId */
+	    $itemId = $item->getId();
+	}
 	if ($view == 'core.ShowItem' && $itemId == $item->getId() && !$duringUpgrade) {
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
 	    if ($ret) {
