@@ -78,7 +78,7 @@ class CommentModule extends GalleryModule {
 	     }
 
 	     foreach (array('comments.show' => 10, 'comments.latest' => 1,
-			    'validation.level' => 'OFF')
+			    'validation.level' => 'HIGH')
 		     as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
