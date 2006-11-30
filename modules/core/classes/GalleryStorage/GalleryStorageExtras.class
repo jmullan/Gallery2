@@ -485,6 +485,11 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$this->_gs->_traceStart();
 	$id = (int)$dbConn->GenId($this->_gs->_tablePrefix . DATABASE_SEQUENCE_ID);
 	$this->_gs->_traceStop();
+	if (empty($id)) {
+	    return array(GalleryCoreApi::error(
+			     ERROR_STORAGE_FAILURE, __FILE__, __LINE__, 'Empty sequence id!'),
+			 null);
+	}
 
 	if (isset($setGenID)) {
 	    $dbConn->hasGenID = false;
@@ -1737,6 +1742,11 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$this->_gs->_traceStart();
 	$lockId = $db->GenId($this->_gs->_tablePrefix . DATABASE_SEQUENCE_LOCK);
 	$this->_gs->_traceStop();
+	if (empty($lockId)) {
+	    return array(GalleryCoreApi::error(
+			     ERROR_STORAGE_FAILURE, __FILE__, __LINE__, 'Empty sequence id!'),
+			 null);
+	}
 
 	/* Put in a lock request */
 	$lockIdCol = $this->_gs->_translateColumnName('lockId');
