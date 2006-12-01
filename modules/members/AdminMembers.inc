@@ -23,7 +23,7 @@
  * @package Members
  * @subpackage UserInterface
  * @author Robert Balousek <rbalousek@hotmail.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminMembersController extends GalleryController {
 

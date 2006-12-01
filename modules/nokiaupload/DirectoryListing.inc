@@ -24,7 +24,7 @@ GalleryCoreApi::requireOnce('modules/nokiaupload/classes/ImageUploadHelper.class
  * This controller implements the Nokia Image Uploader API's 'Retrieve Directory Listing' command.
  * @package NokiaUpload
  * @author Jerome Rannikko <jeromer@hotpop.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class DirectoryListingController extends GalleryController {
 

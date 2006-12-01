@@ -26,7 +26,7 @@
  * @package ImageMagick
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Vallimar <vallimar@sexorcisto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ImageMagickModule extends GalleryModule {
 

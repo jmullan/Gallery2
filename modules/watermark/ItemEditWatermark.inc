@@ -23,7 +23,7 @@
  * @package Watermark
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ItemEditWatermark extends ItemEditPlugin {
 

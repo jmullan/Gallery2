@@ -23,7 +23,7 @@
  * @package Rating
  * @subpackage UserInterface
  * @author  Don Seiler <don@seiler.us>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RatingSiteAdminController extends GalleryController {
 

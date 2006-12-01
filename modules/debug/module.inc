@@ -25,7 +25,7 @@
  *
  * @package Debug
  * @author Ernesto Baschny <ernst@baschny.de>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class DebugModule extends GalleryModule {
 

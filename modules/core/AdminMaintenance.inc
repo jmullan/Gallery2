@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/helpers/MaintenanceHelper_simp
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminMaintenanceController extends GalleryController {
 

@@ -23,7 +23,7 @@
  *
  * @package Icons
  * @author Jesse Mullan <jmullan@visi.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class IconsModule extends GalleryModule {
 

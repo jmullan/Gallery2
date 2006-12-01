@@ -26,7 +26,7 @@ GalleryCoreApi::requireOnce('modules/ecard/classes/EcardHelper.class');
  * @subpackage UserInterface
  * @author Nico Kaiser <nico@siriux.net>
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SendEcardController extends GalleryController {
 

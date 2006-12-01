@@ -21,7 +21,7 @@
 /**
  * @package UploadApplet
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class UploadAppletModule extends GalleryModule {
 

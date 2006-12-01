@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/netpbm/classes/NetPbmToolkitHelper.class');
  * @package NetPbm
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminNetPbmController extends GalleryController {
 

@@ -23,7 +23,7 @@
  * @package Themes
  * @subpackage Carbon
  * @author Mustafa Incel (based on Matrix by Bharat Mediratta <bharat@menalto.com>)
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class CarbonTheme extends GalleryTheme {
 

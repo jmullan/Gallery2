@@ -22,7 +22,7 @@
  * This view handles calls from the javascript (AJAX) side and returns data by printing results.
  * @package Rating
  * @author  Don Seiler <don@seiler.us>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RatingCallbackView extends GalleryView {
 

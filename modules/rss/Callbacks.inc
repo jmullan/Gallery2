@@ -21,7 +21,7 @@
 /**
  * @package Rss
  * @author Pierre-Luc Paour
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RssCallbacks {
 

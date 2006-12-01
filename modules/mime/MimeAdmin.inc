@@ -23,7 +23,7 @@
  * @package Mime
  * @subpackage UserInterface
  * @author Felix Rabinovich <Felix@Rabinovich.org>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class MimeAdminController extends GalleryController {
 

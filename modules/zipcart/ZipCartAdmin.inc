@@ -23,7 +23,7 @@
  * @package ZipCart
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ZipCartAdminController extends GalleryController {
 

@@ -21,7 +21,7 @@
 /**
  * @package Cart
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class CartCallbacks {
 

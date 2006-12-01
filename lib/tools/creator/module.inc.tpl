@@ -19,7 +19,7 @@
  */
 /**
  * @package {$moduleName}
- * @version $Revision$ $Date$
+ * @version $Revision$
  * @author {$authorFullName}
  */
 

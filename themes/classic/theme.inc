@@ -24,7 +24,7 @@
  * @subpackage Classic
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ClassicTheme extends GalleryTheme {
 

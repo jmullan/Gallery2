@@ -23,7 +23,7 @@
  * @package Themes
  * @subpackage Matrix
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class MatrixTheme extends GalleryTheme {
 

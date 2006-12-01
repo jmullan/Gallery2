@@ -25,7 +25,7 @@
  *
  * @package PublishXp
  * @author Timothy Webb <tiwebb@cisco.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class DownloadRegistryFileView extends GalleryView {
 

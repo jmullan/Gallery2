@@ -23,7 +23,7 @@
  * @package Digibug
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class DigibugPrintPhotosView extends GalleryView {
 

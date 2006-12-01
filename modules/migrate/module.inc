@@ -25,7 +25,7 @@
  *
  * @package Migrate
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
     function MigrateModule() {

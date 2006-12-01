@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkitHelper.class');
  * @package Dcraw
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminDcrawController extends GalleryController {
 

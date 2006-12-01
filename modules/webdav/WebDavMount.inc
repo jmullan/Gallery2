@@ -23,7 +23,7 @@
  * @package WebDav
  * @subpackage UserInterface
  * @author Jack Bates <ms419@freezone.co.uk>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class WebDavMountView extends GalleryView {
 

@@ -19,7 +19,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision$
  * @package Captcha
  * @author Stefan Ioachim <stefanioachim@gmail.com>
  * @author Bharat Mediratta <bharat@menalto.com>

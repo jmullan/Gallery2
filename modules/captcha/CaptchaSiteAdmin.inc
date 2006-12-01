@@ -25,7 +25,7 @@
  * @author Stefan Ioachim <stefanioachim@gmail.com>
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class CaptchaSiteAdminController extends GalleryController {
 

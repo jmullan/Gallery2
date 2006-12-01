@@ -1,7 +1,7 @@
 /****************************
  * Tile theme for Gallery2
  * @author Alan Harder <alan.harder@sun.com>
- * $Revision$ $Date$
+ * $Revision$
  */
 
 if (window.attachEvent) { // IE

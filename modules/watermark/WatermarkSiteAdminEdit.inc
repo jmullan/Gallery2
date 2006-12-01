@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
  * @package Watermark
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class WatermarkSiteAdminEditController extends GalleryController {
 

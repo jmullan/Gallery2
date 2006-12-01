@@ -26,7 +26,7 @@ GalleryCoreApi::requireOnce('modules/migrate/classes/G1MigrateHelper.class');
  * @package Migrate
  * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SelectGalleryController extends GalleryController {
 

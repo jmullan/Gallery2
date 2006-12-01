@@ -27,7 +27,7 @@ GalleryCoreApi::requireOnce('lib/tools/repository/classes/RepositoryPackage.clas
  *
  * @author Jozef Selesi <selesi at gmail dot com>
  *
- * @version $Revision$ $Date$
+ * @version $Revision$
  * @package RepositoryTools
  * @subpackage Controllers
  * @module PackagePluginController

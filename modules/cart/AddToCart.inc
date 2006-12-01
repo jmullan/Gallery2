@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/cart/classes/CartHelper.class');
  * @package Cart
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AddToCartController extends GalleryController {
 

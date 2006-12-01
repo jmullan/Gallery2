@@ -25,7 +25,7 @@
  *
  * @package Gd
  * @author Ernesto Baschny <ernst@baschny.de>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class GdModule extends GalleryModule {
 

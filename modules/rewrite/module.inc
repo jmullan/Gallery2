@@ -25,7 +25,7 @@
  *
  * @package Rewrite
  * @author Douglas Cau <douglas@cau.se>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RewriteModule extends GalleryModule {
 

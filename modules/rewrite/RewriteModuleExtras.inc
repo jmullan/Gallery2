@@ -24,7 +24,7 @@ GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
  * Additional upgrade/event handling code
  * @package Rewrite
  * @author Douglas Cau <douglas@cau.se>
- * @version $Revision$ $Date$
+ * @version $Revision$
  * @static
  */
 class RewriteModuleExtras {

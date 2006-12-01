@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/customfield/classes/CustomFieldHelper.class
  * @package CustomField
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class CustomFieldItemEdit extends ItemEditPlugin {
 

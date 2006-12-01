@@ -26,7 +26,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.cla
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Jozef Selesi <selesi at gmail dot com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminRepositoryDownloadController extends GalleryController {
 

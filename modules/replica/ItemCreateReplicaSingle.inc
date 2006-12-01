@@ -23,7 +23,7 @@
  * @package Replica
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ItemCreateReplicaSingleController extends GalleryController {
 

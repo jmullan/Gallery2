@@ -23,7 +23,7 @@
  * @package Comment
  * @subpackage UserInterface
  * @author Johannes Schmittat <Johannes@Schmittat.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ShowAllCommentsView extends GalleryView {
 

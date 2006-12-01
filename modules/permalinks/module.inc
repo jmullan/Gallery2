@@ -26,7 +26,7 @@
  *
  * @package Permalinks
  * @author Pierre-Luc Paour <gallery@paour.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 

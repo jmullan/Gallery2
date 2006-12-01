@@ -22,7 +22,7 @@
  * This view sends the zip file and deletes the temp file.
  * @package ZipCart
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class DownloadView extends GalleryView {
 

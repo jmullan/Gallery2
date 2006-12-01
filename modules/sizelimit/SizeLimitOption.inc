@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/sizelimit/classes/SizeLimitHelper.class');
  * @package SizeLimit
  * @subpackage UserInterface
  * @author Felix Rabinovich <felix@rabinovich.org>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SizeLimitOption extends ItemEditOption {
 

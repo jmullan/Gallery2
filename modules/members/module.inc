@@ -22,7 +22,7 @@
  * The implementation of the members module
  * @package Members
  * @author Robert Balousek <rbalousek@hotmail.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class MembersModule extends GalleryModule {
 

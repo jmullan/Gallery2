@@ -19,7 +19,7 @@
  */
 
 /**
- * @version $Revision$ $Date$
+ * @version $Revision$
  * @package {$ucModuleId}
  * @subpackage UserInterface
  * @author {$authorFullName}

@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/search/classes/SearchUtilities.class');
  * @package Search
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SearchShowAllController extends GalleryController {
 

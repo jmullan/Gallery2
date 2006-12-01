@@ -23,7 +23,7 @@
  * @package Picasa
  * @subpackage UserInterface
  * @author Waldemar Schlackow <waldemar@opencodes.org>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ItemAddFromPicasa extends ItemAddPlugin {
 

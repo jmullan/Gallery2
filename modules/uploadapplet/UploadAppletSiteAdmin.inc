@@ -23,7 +23,7 @@
  * @package UploadApplet
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <paour@users.sf.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class UploadAppletSiteAdminController extends GalleryController {
 

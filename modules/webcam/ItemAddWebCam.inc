@@ -23,7 +23,7 @@
  * @package WebCam
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ItemAddWebCam extends ItemAddPlugin {
 

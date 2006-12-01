@@ -23,7 +23,7 @@
  * @package Debug
  * @subpackage UserInterface
  * @author Ernesto Baschny <ernst@baschny.de>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ShowTreeView extends GalleryView {
 

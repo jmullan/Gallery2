@@ -23,7 +23,7 @@
  *
  * @package ImageBlock
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ImageBlockModule extends GalleryModule {
 

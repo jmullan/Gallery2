@@ -26,7 +26,7 @@ define('FOTOKASTEN_GALLERY_AFFILIATE_PASSWORD', 'f12a65d90445f95b90e5fd30c75ee74
  *
  * @package Fotokasten
  * @author Ioana Ciocanescu <service@fotokasten.de>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class FotokastenModule extends GalleryModule {
 

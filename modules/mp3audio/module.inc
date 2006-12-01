@@ -23,7 +23,7 @@
  * @package MP3Audio
  * @author Alan Harder <alan.harder@sun.com>
  * @author MP3 Audio player: Wayne Patterson <suprsidr@gmail.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class MP3AudioModule extends GalleryModule {
 

@@ -21,7 +21,7 @@
 /**
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class CoreCallbacks {
     function callback($params, &$smarty, $callback, $userId=null) {

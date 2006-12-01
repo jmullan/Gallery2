@@ -23,7 +23,7 @@
  * @package ItemAdd
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ItemAddFromWeb extends ItemAddPlugin {
 

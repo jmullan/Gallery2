@@ -24,7 +24,7 @@
  * by the phpunit tests to test the GdToolkit functionality in different PHP
  * environments in a single installation.
  *
- * @version $Revision$ $Date$
+ * @version $Revision$
  * @package Gd
  * @subpackage PHPUnit
  *

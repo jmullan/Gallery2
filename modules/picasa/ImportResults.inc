@@ -23,7 +23,7 @@
  * @package Picasa
  * @subpackage UserInterface
  * @author Waldemar Schlackow <gallery@schlackow.de> based on code by
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ImportResultsView extends GalleryView {
 

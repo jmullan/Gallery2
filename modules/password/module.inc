@@ -27,7 +27,7 @@
  * @package Password
  * @author Alan Harder <alan.harder@sun.com>
  * @author Jess Martin <jmartin@cs.unc.edu>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
 

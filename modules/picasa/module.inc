@@ -22,7 +22,7 @@
  * Import for Picasa 2 XML-Exports
  * @package Picasa
  * @author Waldemar Schlackow <gallery@schlackow.de>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class PicasaModule extends GalleryModule {
 

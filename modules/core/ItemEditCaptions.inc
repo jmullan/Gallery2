@@ -24,7 +24,7 @@
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Changpeng Zhao
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ItemEditCaptionsController extends GalleryController {
 

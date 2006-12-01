@@ -23,7 +23,7 @@
  * This module provides the NetPBM graphics toolkit for Gallery.
  * @package NetPbm
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class NetPbmModule extends GalleryModule {
 

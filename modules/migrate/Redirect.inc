@@ -23,7 +23,7 @@
  * @package Migrate
  * @subpackage Redirect
  * @author Joseph Elwell <jelwell@yahoo.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RedirectController extends GalleryController {
 

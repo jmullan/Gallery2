@@ -21,7 +21,7 @@
  * Perform all necessary initialization of the Gallery framework
  * @package Gallery
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 
 require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');

@@ -23,7 +23,7 @@
  * @package Thumbnail
  * @author Alan Harder <alan.harder@sun.com>
  * @author Andy Staudacher <ast@gmx.ch>
- * @version $Revision$ $Date$
+ * @version $Revision$
  * @static
  */
 class ThumbnailModuleExtras {

@@ -22,7 +22,7 @@
  * RandomHighlight module - periodically change the album highlight
  * @package RandomHighlight
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RandomHighlightModule extends GalleryModule {
 

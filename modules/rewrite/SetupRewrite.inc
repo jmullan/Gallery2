@@ -23,7 +23,7 @@
  * @package Rewrite
  * @subpackage UserInterface
  * @author Douglas Cau <douglas@cau.se>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SetupRewriteController extends GalleryController {
 

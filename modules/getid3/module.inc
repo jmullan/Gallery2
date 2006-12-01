@@ -25,7 +25,7 @@
  *
  * @package Getid3
  * @author Don Willingham <donwillingham@users.sf.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class Getid3Module extends GalleryModule {
 

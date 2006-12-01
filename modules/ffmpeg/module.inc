@@ -25,7 +25,7 @@
  *
  * @package Ffmpeg
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class FfmpegModule extends GalleryModule {
 

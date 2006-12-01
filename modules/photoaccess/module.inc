@@ -23,7 +23,7 @@
  *
  * @package PhotoAccess
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class PhotoAccessModule extends GalleryModule {
 

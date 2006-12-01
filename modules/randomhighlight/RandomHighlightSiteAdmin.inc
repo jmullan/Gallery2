@@ -23,7 +23,7 @@
  * @package RandomHighlight
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RandomHighlightSiteAdminController extends GalleryController {
 

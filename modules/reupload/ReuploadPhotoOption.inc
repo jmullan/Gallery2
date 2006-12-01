@@ -23,7 +23,7 @@
  * @package Reupload
  * @subpackage UserInterface
  * @author Piotr P. Karwasz <piotr.karwasz@ens.fr>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ReuploadPhotoOption extends ItemEditOption {
 

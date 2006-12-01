@@ -26,7 +26,7 @@
  * @package Panorama
  * @author Alan Harder <alan.harder@sun.com>
  * @author Java applet: Rüdiger Appel
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class PanoramaModule extends GalleryModule {
 

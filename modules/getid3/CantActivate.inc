@@ -23,7 +23,7 @@
  * @package Getid3
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class CantActivateView extends GalleryView {
 

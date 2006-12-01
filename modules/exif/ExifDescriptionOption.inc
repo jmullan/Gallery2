@@ -27,7 +27,7 @@
  * @author Elliot Shepherd <elliot@jarofworms.com>
  * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ExifDescriptionOption extends ItemAddOption {
 

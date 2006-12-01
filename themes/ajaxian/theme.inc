@@ -23,7 +23,7 @@
  * @package Themes
  * @subpackage Ajaxian
  * @author Ross Shannon <ross.shannon@gmail.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AjaxianTheme extends GalleryTheme {
 

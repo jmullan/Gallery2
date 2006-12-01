@@ -22,7 +22,7 @@
  * HTTP Auth Module.  Get active user using HTTP authentication.
  * @package HttpAuth
  * @author Jack Bates <ms419@freezone.co.uk>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class HttpAuthModule extends GalleryModule {
 

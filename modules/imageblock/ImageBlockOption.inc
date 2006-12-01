@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class')
  * @package ImageBlock
  * @subpackage UserInterface
  * @author Jay Rossiter <cryptographite@users.sf.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ImageBlockOption extends ItemEditOption {
 

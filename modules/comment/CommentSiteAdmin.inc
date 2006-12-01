@@ -24,7 +24,7 @@
  * @subpackage UserInterface
  * @author Johannes Schmittat <Johannes@Schmittat.com>
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class CommentSiteAdminController extends GalleryController {
 

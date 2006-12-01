@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/imagemagick/classes/ImageMagickToolkitHelpe
  * @package ImageMagick
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminImageMagickController extends GalleryController {
 

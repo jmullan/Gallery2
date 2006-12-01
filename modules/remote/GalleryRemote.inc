@@ -26,7 +26,7 @@ GalleryCoreApi::requireOnce('modules/remote/classes/GalleryRemoteConstants.class
  * to the data model.
  * @package Remote
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class GalleryRemoteController extends GalleryController {
     /**

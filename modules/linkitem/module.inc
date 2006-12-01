@@ -21,7 +21,7 @@
 /**
  * @package LinkItem
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 

@@ -23,7 +23,7 @@
  * @package SlideshowApplet
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <gallery@paour.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SlideshowAppletView extends GalleryView {
 

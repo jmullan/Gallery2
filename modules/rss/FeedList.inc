@@ -27,7 +27,7 @@ GalleryCoreApi::requireOnce('modules/rss/classes/RssMapHelper.class');
  * @author Jonatan Heyman <http://heyman.info>
  * @author Pierre-Luc Paour
  * @author Daniel Grund <http://www.photogrund.nl>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class FeedListView extends GalleryView {
 

@@ -26,7 +26,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/helpers/UserRecoverPasswordHel
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Jay Rossiter <cryptographite@users.sf.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class UserRecoverPasswordController extends GalleryController {
     /**

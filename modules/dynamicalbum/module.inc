@@ -23,7 +23,7 @@
  *
  * @package DynamicAlbum
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class DynamicAlbumModule extends GalleryModule {
 

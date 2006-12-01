@@ -24,7 +24,7 @@ GalleryCoreApi::requireOnce('modules/nokiaupload/classes/ImageUploadHelper.class
  * This controller implements the Nokia Image Uploader API's 'New Directory' command.
  * @package NokiaUpload
  * @author Jerome Rannikko <jeromer@hotpop.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class NewDirectoryController extends GalleryController {
 

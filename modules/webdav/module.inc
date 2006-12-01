@@ -22,7 +22,7 @@
  * WebDAV Module.  Mount Gallery on your desktop.
  * @package WebDav
  * @author Jack Bates <ms419@freezone.co.uk>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class WebDavModule extends GalleryModule {
 

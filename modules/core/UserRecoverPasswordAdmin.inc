@@ -24,7 +24,7 @@
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Jay Rossiter <cryptographite@users.sf.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class UserRecoverPasswordAdminController extends GalleryController {
 

@@ -26,7 +26,7 @@
  * @package Rewrite
  * @subpackage UserInterface
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class DownloadItemView extends GalleryView {
 

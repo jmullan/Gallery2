@@ -19,7 +19,7 @@
  */
 /**
  * @package Rewrite
- * @version $Revision$ $Date$
+ * @version $Revision$
  * @author Douglas Cau <douglas@cau.se>
  */
 

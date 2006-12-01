@@ -22,7 +22,7 @@
  * The Location header requires an absolute url to conform with HTTP/1.1
  * @package Gallery
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 
 /* Include bootstrap.inc in case config.php overrides GALLERY_MAIN_PHP */

@@ -23,7 +23,7 @@
  * @package Migrate
  * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ConfirmImportController extends GalleryController {
 

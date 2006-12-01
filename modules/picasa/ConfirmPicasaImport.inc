@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/picasa/classes/Picasa2DataParser.class');
  * @package Picasa
  * @subpackage UserInterface
  * @author Waldemar Schlackow <waldemar@opencodes.org> based on the migrate module by Jesse Mullan
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ConfirmPicasaImportController extends GalleryController {
 

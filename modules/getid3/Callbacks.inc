@@ -20,7 +20,7 @@
 
 /**
  * @package Getid3
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class Getid3Callbacks {
 

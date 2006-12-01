@@ -23,7 +23,7 @@
  * @author Jonatan Heyman <http://heyman.info>
  * @author Pierre-Luc Paour
  * @author Daniel Grund <http://www.photogrund.nl>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RssPreloads {
     function preload(&$template, $preload, $paramSet) {

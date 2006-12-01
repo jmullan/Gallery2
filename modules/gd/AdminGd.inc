@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/gd/classes/GdToolkitHelper.class');
  * @package Gd
  * @subpackage UserInterface
  * @author Ernesto Baschny <ernst@baschny.de>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminGdController extends GalleryController {
 

@@ -21,7 +21,7 @@
 /**
  * @package Rating
  * @author  Don Seiler <don@seiler.us>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RatingPreloads {
     function preload(&$template, $preload, $paramSet) {

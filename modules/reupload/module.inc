@@ -23,7 +23,7 @@
  *
  * @package Reupload
  * @author Piotr P. Karwasz <piotr.karwasz@ens.fr>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ReuploadModule extends GalleryModule {
 

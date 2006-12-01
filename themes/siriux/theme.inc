@@ -23,7 +23,7 @@
  * @package Themes
  * @subpackage Siriux
  * @author Nico Kaiser <nico@siriux.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SiriuxTheme extends GalleryTheme {
 

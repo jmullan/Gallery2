@@ -23,7 +23,7 @@
  *
  * @package Registration
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RegisterModule extends GalleryModule {
 

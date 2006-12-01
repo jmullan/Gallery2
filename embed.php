@@ -24,7 +24,7 @@
  *
  * @package Gallery
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 
 /* Define G2_EMBED = 1 to remember to generate correct URLs and return the HTML, etc. */

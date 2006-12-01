@@ -22,7 +22,7 @@
  * Provides item rating mechanism for Gallery2
  * @package Rating
  * @author  Don Seiler <don@seiler.us>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RatingModule extends GalleryModule {
 

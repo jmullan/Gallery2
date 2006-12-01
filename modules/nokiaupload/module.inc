@@ -26,7 +26,7 @@
  *
  * @package NokiaUpload
  * @author Jerome Rannikko <jeromer@hotpop.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class NokiaUploadModule extends GalleryModule {
 

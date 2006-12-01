@@ -28,7 +28,7 @@
  * @package PublishXp
  * @subpackage UserInterface
  * @author Timothy Webb <tiwebb@cisco.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class UploadedItemView extends GalleryView {
     /**

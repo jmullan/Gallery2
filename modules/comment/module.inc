@@ -25,7 +25,7 @@
  *
  * @package Comment
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class CommentModule extends GalleryModule {
 

@@ -25,7 +25,7 @@
  * @package Mime
  * @author Felix Rabinovich <Felix@Rabinovich.org>
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class MimeModule extends GalleryModule {
 

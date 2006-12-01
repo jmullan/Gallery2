@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
  * @package WebDav
  * @subpackage UserInterface
  * @author Jack Bates <ms419@freezone.co.uk>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class WebDavController extends GalleryController {
 

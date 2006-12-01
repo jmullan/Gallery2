@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/permalinks/classes/PermalinksMapHelper.clas
  * @package Permalinks
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <gallery@paour.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class PermalinksOption extends ItemEditOption {
 

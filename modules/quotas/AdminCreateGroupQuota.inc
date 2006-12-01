@@ -23,7 +23,7 @@
  * @package Quotas
  * @subpackage UserInterface
  * @author Robert Balousek <volksport@users.sf.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminCreateGroupQuotaController extends GalleryController {
 

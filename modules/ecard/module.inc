@@ -24,7 +24,7 @@
  * @package Ecard
  * @author Nico Kaiser <nico@siriux.net>
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class EcardModule extends GalleryModule {
 

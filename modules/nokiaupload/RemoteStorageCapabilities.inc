@@ -24,7 +24,7 @@ GalleryCoreApi::requireOnce('modules/nokiaupload/classes/ImageUploadHelper.class
  * This view implements the Nokia Image Uploader API's 'Remote Storage Capabilities' query.
  * @package NokiaUpload
  * @author Jerome Rannikko <jeromer@hotpop.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RemoteStorageCapabilitiesView extends GalleryView {
 

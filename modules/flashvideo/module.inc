@@ -23,7 +23,7 @@
  * @package FlashVideo
  * @author Alan Harder <alan.harder@sun.com>
  * @author Flash Video player: Wayne Patterson <suprsidr@gmail.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class FlashVideoModule extends GalleryModule {
 

@@ -23,7 +23,7 @@
  * @package Exif
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SwitchDetailModeController extends GalleryController {
 

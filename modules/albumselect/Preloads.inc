@@ -21,7 +21,7 @@
 /**
  * @package AlbumSelect
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AlbumSelectPreloads {
     function preload(&$template, $preload, $paramSet) {

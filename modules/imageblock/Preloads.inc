@@ -21,7 +21,7 @@
 /**
  * @package ImageBlock
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ImageBlockPreloads {
     function preload(&$template, $preload, $paramSet) {

@@ -21,7 +21,7 @@
 /**
  * @package Search
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SearchPreloads {
     function preload(&$template, $preload, $paramSet) {

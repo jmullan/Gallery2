@@ -21,7 +21,7 @@
 /**
  * @package AlbumSelect
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AlbumSelectCallbacks {
 

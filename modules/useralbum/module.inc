@@ -23,7 +23,7 @@
  *
  * @package UserAlbum
  * @author Alan Harder <alan.harder@sun.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 

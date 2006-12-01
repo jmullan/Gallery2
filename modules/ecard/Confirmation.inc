@@ -24,7 +24,7 @@
  * @subpackage UserInterface
  * @author Nico Kaiser <nico@siriux.net>
  * @author Dariush Molavi <dari@nukedgallery.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ConfirmationView extends GalleryView {
 

@@ -24,7 +24,7 @@
  * @package AlbumSelect
  * @author Alan Harder <alan.harder@sun.com>
  * @author Jonas Forsberg <jonas@gargamel.nu> (Initial dTree integration)
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AlbumSelectModule extends GalleryModule {
 

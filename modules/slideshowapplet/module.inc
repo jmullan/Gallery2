@@ -21,7 +21,7 @@
 /**
  * @package SlideshowApplet
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SlideshowAppletModule extends GalleryModule {
 

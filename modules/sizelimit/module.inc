@@ -23,7 +23,7 @@
  *
  * @package SizeLimit
  * @author Felix Rabinovich <felix@rabinovich.org>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SizeLimitModule extends GalleryModule {
 

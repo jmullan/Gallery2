@@ -27,7 +27,7 @@ GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
  * @author Bharat Mediratta <bharat@menalto.com>
  * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  * @author Jozsef R.Nagy <jozsef.rnagy@site.hu>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminExifController extends GalleryController {
 

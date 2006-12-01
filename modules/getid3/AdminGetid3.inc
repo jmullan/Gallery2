@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/getid3/classes/Getid3Helper.class');
  * @package Getid3
  * @subpackage UserInterface
  * @author Don Willingham <donwillingham@users.sf.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminGetid3Controller extends GalleryController {
 

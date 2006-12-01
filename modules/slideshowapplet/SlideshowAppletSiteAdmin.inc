@@ -23,7 +23,7 @@
  * @package SlideshowApplet
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <paour@users.sf.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class SlideshowAppletSiteAdminController extends GalleryController {
 

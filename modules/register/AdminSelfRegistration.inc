@@ -23,7 +23,7 @@
  * @package Registration
  * @subpackage UserInterface
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class AdminSelfRegistrationController extends GalleryController {
 

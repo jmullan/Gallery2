@@ -21,7 +21,7 @@
 /**
  * @package Remote
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class RemoteModule extends GalleryModule {
 

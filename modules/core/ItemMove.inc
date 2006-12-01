@@ -23,7 +23,7 @@
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Ernesto Baschny <ernst@baschny.de>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class ItemMoveController extends GalleryController {
 

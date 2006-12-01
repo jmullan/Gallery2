@@ -22,7 +22,7 @@
  * The implementation of the core-module
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 class CoreModule extends GalleryModule {
 
