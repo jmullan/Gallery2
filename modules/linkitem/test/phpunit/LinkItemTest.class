@@ -263,16 +263,20 @@ class LinkItemTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'linkitem', 'snapshotExec',
-		'getSnapshot %URL% %WIDTH% %HEIGHT% %OUTFILE%');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'linkitem',
+						  'snapshotExec', 'getSnapshot');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
 	$platform = new UnitTestPlatform();
 	$platform->setReply('tempnam', array('fuzzy' => '{.}', 'lnk_'), 'tmpfile');
+	$platform->setReply('getDirectorySeparator', array(), '/');
+	$platform->setReply('file_exists', array('fuzzy' => '{params.txt$}'), true);
+	$platform->setReply('file', array('fuzzy' => '{params.txt$}', false),
+			    array('%URL% %WIDTH% %HEIGHT% --out %OUTFILE%'));
 	$platform->setReply('exec',
-		array(array(array('getSnapshot', 'theURL', 1024, 768, 'tmpfile.jpg'))),
+		array(array(array('getSnapshot', 'theURL', 1024, 768, '--out', 'tmpfile.jpg'))),
 		array(true, '', ''));
 	$platform->setReply('unlink', array('tmpfile'), true);
 	$platform->setReply('copy', array('tmpfile.jpg', 'outputFile'), true);

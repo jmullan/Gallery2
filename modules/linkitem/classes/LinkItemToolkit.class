@@ -79,12 +79,13 @@ class LinkItemToolkit extends GalleryToolkit {
 	$tmpFile = $tmpBase . '.jpg';
 	$map = array('%WIDTH%' => 1024, '%HEIGHT%' => 768,
 		     '%URL%' => $url, '%OUTFILE%' => $tmpFile);
-	$exec = explode(' ', $snapshotExec);
+	$exec = explode(' ', LinkItemToolkit::getSnapshotParams());
 	foreach ($exec as $i => $param) {
 	    if (isset($map[$param])) {
 		$exec[$i] = $map[$param];
 	    }
 	}
+	array_unshift($exec, $snapshotExec);
 	list ($success, $output, $error) = $platform->exec(array($exec));
 	@$platform->unlink($tmpBase);
 	if (!$success) {
@@ -99,6 +100,25 @@ class LinkItemToolkit extends GalleryToolkit {
 	$context['width'] = $map['%WIDTH%'];
 	$context['height'] = $map['%HEIGHT%'];
 	return array(null, 'image/jpeg', $context);
+    }
+
+    /**
+     * Get command line parameters for snapshotExec.
+     * Default params for khtml2png are hardcoded; can be overridden by params.txt file.
+     * @return string command line parameters with %URL% %WIDTH% %HEIGHT% %OUTFILE% tokens
+     * @static
+     */
+    function getSnapshotParams() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$paramFile = dirname(dirname(__FILE__)) . $platform->getDirectorySeparator() . 'params.txt';
+	if ($platform->file_exists($paramFile)) {
+	    $lines = $platform->file($paramFile);
+	    if (!empty($lines)) {
+		return array_shift($lines);
+	    }
+	}
+	return '--width %WIDTH% --height %HEIGHT% %URL% %OUTFILE%';
     }
 }
 ?>

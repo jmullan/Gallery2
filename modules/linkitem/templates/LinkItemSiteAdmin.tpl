@@ -30,16 +30,14 @@
     </td><td>
       <input type="checkbox" id="urlSnapshot"{if $form.urlSnapshot} checked="checked"{/if}
        name="{g->formVar var="form[urlSnapshot]"}"/>
-    </td></tr><tr><td>
+    </td></tr><tr><td colspan="2">
       <label for="snapshotExec">
-	{g->text text="Command to capture webpage snapshot"}
+	{g->text text="Command to capture webpage snapshot:"}
       </label>
-    </td><td>
-      <input type="text" id="snapshotExec" size="58"
+      <br/>
+      <input type="text" id="snapshotExec" size="40" style="margin-top:3px"
        name="{g->formVar var="form[snapshotExec]"}" value="{$form.snapshotExec}"/>
-      <p class="giDescription">
-	{g->text text="Use %URL% %WIDTH% %HEIGHT% %OUTFILE% tokens"}
-      </p>
+      {$LinkItemSiteAdmin.snapshotParams}
     </td></tr>
   </table>
   <p class="giDescription">
@@ -48,6 +46,12 @@
     {g->text text="Webpage snapshots can be captured with %skhtml2png%s. This program is not trivial to setup, requiring ImageMagick and a running X server, with appropriate access permission for your webserver/PHP user. Install and test outside of Gallery to ensure the command entered above works as expected. Test with the webserver/PHP user to verify Gallery won't have permission problems. If Gallery produces broken thumbnails then try the Build Thumbnails %sMaintenance task%s to see debug output."
      arg1="<a href=\"http://khtml2png.sourceforge.net/\">" arg2="</a>"
      arg3=$maintenanceLink arg4="</a>"}
+    <br/>
+    {g->text text="The command line parameters default to those for khtml2png. To specify alternate parameters, place them in a text file here:"}
+    <br/>
+    <tt> {$LinkItemSiteAdmin.paramsPath} </tt>
+    <br/>
+    {g->text text="Use %URL% %WIDTH% %HEIGHT% %OUTFILE% tokens."}
     <br/>
     {g->text text="If you don't use webpage snapshots then URL links are given a default thumbnail. Use the Thumbnail Manager module to upload a custom thumbnail for these items."}
   </p>

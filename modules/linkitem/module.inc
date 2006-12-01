@@ -30,7 +30,7 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('linkitem');
 	$this->setName($gallery->i18n('Link Items'));
 	$this->setDescription($gallery->i18n('Create links to other albums or external urls'));
-	$this->setVersion('1.1.0');
+	$this->setVersion('1.1.1');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -71,8 +71,7 @@ class LinkItemModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($ret) {
 	    return $ret;
 	}
-	foreach (array('arrowWatermark' => 1, 'urlSnapshot' => 0,
-		    'snapshotExec' => 'khtml2png --width %WIDTH% --height %HEIGHT% %URL% %OUTFILE%')
+	foreach (array('arrowWatermark' => 1, 'urlSnapshot' => 0, 'snapshotExec' => 'khtml2png')
 		 as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);

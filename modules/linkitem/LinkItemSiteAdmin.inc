@@ -73,6 +73,9 @@ class LinkItemSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
@@ -88,6 +91,12 @@ class LinkItemSiteAdminView extends GalleryView {
 		}
 	    }
 	}
+
+	GalleryCoreApi::requireOnce('modules/linkitem/classes/LinkItemToolkit.class');
+	$template->setVariable('LinkItemSiteAdmin',
+		array('snapshotParams' => LinkItemToolkit::getSnapshotParams(),
+		      'paramsPath' => dirname(__FILE__)
+				      . $platform->getDirectorySeparator() . 'params.txt'));
 
 	$template->setVariable('controller', 'linkitem.LinkItemSiteAdmin');
 	return array(null, array('body' => 'modules/linkitem/templates/LinkItemSiteAdmin.tpl'));
