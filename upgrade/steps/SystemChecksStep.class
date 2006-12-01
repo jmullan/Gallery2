@@ -148,7 +148,7 @@ class SystemChecksStep extends UpgradeStep {
 		array('title' => _('exec() allowed'),
 		      'warning' => true,
 		      'notice' =>
-		      _('Warning: The exec() function is disabled in your php by the <b>disabled' .
+		      _('Warning: The exec() function is disabled in your PHP by the <b>disabled' .
 			'_functions</b> parameter in php.ini. You won\'t be able to use modules ' .
 			'that require external binaries (e.g. ImageMagick, NetPBM or Ffmpeg). ' .
 			'This can only be set server-wide, so you will need to change it in the ' .
@@ -166,7 +166,7 @@ class SystemChecksStep extends UpgradeStep {
 		array('title' => _('set_time_limit() allowed'),
 		      'warning' => true,
 		      'notice' => sprintf(
-			  _('Warning: The set_time_limit() function is disabled in your php by ' .
+			  _('Warning: The set_time_limit() function is disabled in your PHP by ' .
 			    'the <b>disabled_functions</b> parameter in php.ini.  Gallery can ' .
 			    'function with this setting, but it will not operate reliably.  ' .
 			    'Any operation that takes longer than %d seconds will fail (and in ' .
@@ -363,7 +363,7 @@ class SystemChecksStep extends UpgradeStep {
 		array('title' => _('Output buffering disabled'),
 		      'warning' => true,
 		      'notice' => sprintf(
-			  _('Warning: Output buffering is enabled in your php by the <b>%s</b> ' .
+			  _('Warning: Output buffering is enabled in your PHP by the <b>%s</b> ' .
 			    'parameter(s) in php.ini.  Gallery can function with this setting - ' .
 			    'downloading files is even faster - but Gallery might be unable to ' .
 			    'serve large files (e.g. large videos) and run into the memory limit.' .
