@@ -223,8 +223,9 @@ msgstr "Oracle (9i ve üstü)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 ve daha yeni)"
 
-msgid "MSSQL (2005 and newer)"
-msgstr "MSSQL (2005 ve üstü)"
+#, fuzzy
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x ve daha yeni"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Bilinmeyen Veritabanı türü veya bilinen tablo bilgileri yok."
@@ -388,7 +389,7 @@ msgid "exec() allowed"
 msgstr "exec() allowed"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -403,7 +404,7 @@ msgstr "set_time_limit() allowed"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -412,6 +413,19 @@ msgstr ""
 "kullanılarak kapalı konuma getirilmiş. Galeri bu durumda çalışmasını sürdürebilir, ancak "
 "operasyonları güvenilir olarak gerçekleştiremez. %d saniyeden fazla süren her işlem "
 "başarısızlıkla sonuçlanır (bazen boş sayfala sonuçlanır) ve veri bozulmasına yol açabilir."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"Uyarı: putenv() fonksiyonu php.ini de bulunan <b>disabled_functions</b> parametresi "
+"kullanılarak kapalı konuma getirilmiş. Galeri bu durumda çalışmasını sürdürebilir, ancak "
+"ender bulunan sistemlerde Galeri İngilizce ve sistem dili dışındaki dillerde çalışamaz."
 
 msgid "Memory limit"
 msgstr "Hafıza limiti"
@@ -443,10 +457,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Maksimum gönderim boyutu"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "Uyarı: PHP'nizin dosya gönder limiti en fazla %sb olarak yapılandırılmış [php.ini de bulunan "
@@ -509,10 +523,11 @@ msgstr ""
 msgid "putenv() allowed"
 msgstr "putenv() izinli"
 
+#, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "Uyarı: putenv() fonksiyonu php.ini de bulunan <b>disabled_functions</b> parametresi "
 "kullanılarak kapalı konuma getirilmiş. Galeri bu durumda çalışmasını sürdürebilir, ancak "
@@ -523,7 +538,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
@@ -770,16 +785,6 @@ msgstr "Kurulum Yardım"
 
 msgid "Start Over"
 msgstr "Baştan Başla"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Galeri Çekirdeği başarıyla kuruldu"
-
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
 
 msgid "Error installing Gallery Core"
 msgstr "Galeri Çekirdeği kurulumunda Hata"
@@ -1216,6 +1221,12 @@ msgstr "Git"
 
 msgid "Begin Installation&raquo;"
 msgstr "Kurulumu Başlat&raquo;"
+
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MSSQL (2005 ve üstü)"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Galeri Çekirdeği başarıyla kuruldu"
 
 #~ msgid "Install More Modules"
 #~ msgstr "Daha Fazla Modül Kur"

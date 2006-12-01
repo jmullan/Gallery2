@@ -23,7 +23,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "POT-Creation-Date: 2003-05-16 09:41+0300\n"
 "PO-Revision-Date: 2005-12-11 14:35+0200\n"
 "Last-Translator: Marko Kohtala <marko.kohtala@gmail.com>\n"
@@ -744,7 +744,7 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
-msgid "Officially Release Repository"
+msgid "Official Release Repository"
 msgstr ""
 
 msgid "Experimental Repository"
@@ -921,12 +921,6 @@ msgstr "taulukkolaskenta"
 #, fuzzy
 msgid "file"
 msgstr "Tiedosto"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
 
 msgid "Back"
 msgstr "Takaisin"
@@ -1525,13 +1519,26 @@ msgstr "Sähköpostiosoite"
 msgid "(suggested)"
 msgstr "(suositeltava)"
 
+msgid "Options"
+msgstr "Valinnat"
+
 #, fuzzy
-msgid "Lock Account"
-msgstr "Oma Käyttäjätilisi"
+msgid "Lock user."
+msgstr "Lukkojärjestelmä"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "Nollaa katselukerrat"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Group Management"
 msgstr "Ryhmien Hallinta"
@@ -1809,6 +1816,13 @@ msgstr "Versio"
 
 msgid "Actions"
 msgstr "Toiminnot"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 #, fuzzy
 msgid "Incompatible plugin!"
@@ -2210,6 +2224,14 @@ msgstr "Et voi poistaa vierailijoille varattua käyttäjää."
 msgid "Edit User (by list)"
 msgstr "Muokkaa Käyttäjää (valitse listasta)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "Muuta Kokoa"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "Epäonnistui"
+
 msgid "Thumbnails"
 msgstr "Kuvakkeet"
 
@@ -2242,6 +2264,10 @@ msgstr "Tietokantavirhe"
 msgid "Platform Error"
 msgstr ""
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "Autorisointi Vahvistettu"
+
 msgid "Error"
 msgstr "Virhe"
 
@@ -2257,11 +2283,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "Mene takaisin ja yritä uudelleen"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "Poista tietokannan välimuisti"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "Vaihtoehtoisesti voit palata Gallerian pääsivulle ja jatkaa selailua."
 
 msgid "The action you attempted is not permitted."
 msgstr "Yrittämääsi toimenpidettä ei sallittu."
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "Tapahtui virhe tietokannan kanssa."
@@ -2402,8 +2442,8 @@ msgstr ""
 "haluat lähettää enemmän, sinun täytyy lähettää tiedostot yksitellen, käyttää eri "
 "lähetystapaa, tai pyytää järjestelmän ylläpitäjää sallimaan isommat lähetykset."
 
-msgid "More.."
-msgstr "Lisää.."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "Aseta kohteiden otsikot täältä:"
@@ -2413,9 +2453,6 @@ msgstr "Aseta otsakke tähän:"
 
 msgid "No Thumbnail"
 msgstr "Ei Esikatselukuvaa"
-
-msgid "Options"
-msgstr "Valinnat"
 
 msgid "Delete Items"
 msgstr "Poista Kohde"
@@ -3247,6 +3284,13 @@ msgstr "Kirjaudu sisään"
 msgid "Your password has been recovered, please login."
 msgstr "Salasanasi on palautettu, ole hyvä ja kirjaudu sisään."
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Sisäänkirjautumistietosi ovat väärät. Yritä uudelleen."
 
@@ -3554,6 +3598,13 @@ msgstr "[test] Toinen oikeus"
 
 msgid "Unit test theme"
 msgstr "Yksikkötestauksen teema"
+
+#, fuzzy
+#~ msgid "Lock Account"
+#~ msgstr "Oma Käyttäjätilisi"
+
+#~ msgid "More.."
+#~ msgstr "Lisää.."
 
 #, fuzzy
 #~ msgid "Rebuilding resized images..."

@@ -56,6 +56,9 @@ msgstr "升级完毕"
 msgid "System Checks"
 msgstr "系统检查"
 
+msgid "Performing system checks"
+msgstr ""
+
 #, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP 版本大於或等於 4.1.0 或大於或等於 5.0.4"
@@ -113,7 +116,7 @@ msgid "exec() allowed"
 msgstr "允许 exec()"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -127,7 +130,7 @@ msgstr "允许 set_time_limit()"
 
 #, fuzzy, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -135,6 +138,18 @@ msgstr ""
 "警告：你的 PHP 中的 set_time_limit() 函数被 php.ini 中的 <b>disabled_functions</b> 关闭了。图"
 "库仍然可以在这个设定下执行，可是稳定度会有问题。任何功能执行超过 %d 秒钟都会失败（有时会传回"
 "一个空白页面）并可能导致资料损毁。"
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"警告：你的 PHP 中的 putenv() 函式被 php.ini 中的 <b>disabled_functions</b> 参数关闭了。图库仍"
+"然可以在这个设定下执行，可是在极少数的系统上 图库将无法在除了系统和英文以外的语言下执行。"
 
 msgid "Memory limit"
 msgstr "记忆空间限制"
@@ -165,10 +180,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "最大上传大小"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "警告：你的 PHP 设定成上传文件最大为 %sb（在 php.ini 中的 <b>upload_max_filesize</b> 参数）。"
@@ -214,12 +229,12 @@ msgstr "你的 PHP 没有 %sdngettext%s 函式。这表示 图库将无法翻译
 msgid "Zend compatibility mode"
 msgstr "Zend 兼容模式"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your "
-"PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before "
-"proceeding."
+"PHP is ok.  If you get an error or no response then you must turn off ze1_compatibility_mode "
+"before proceeding."
 msgstr ""
 "警告：你的 PHP 设定使用可能使 PHP 当机的 Zend ze1_compatibility_mode 选项。请按<a href=\"%s"
 "\">这里</a>测试 PHP。如果你看到「SUCCESS」表示你的 PHP 正常。如果你得到一个错误讯息，你需要"
@@ -230,7 +245,7 @@ msgstr "允许 putenv()"
 
 #, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
@@ -242,9 +257,9 @@ msgstr "输出缓冲已关闭"
 
 #, fuzzy, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
-"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
@@ -341,16 +356,53 @@ msgstr "无法载入%s模块"
 msgid "Welcome"
 msgstr "欢迎"
 
+#, c-format
+msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
+msgstr ""
+
+#, c-format
 msgid ""
-"In order to proceed with the install, we have to verify that you are who you claim.  When "
-"you performed the install, you entered a password which went into your config.php.  Type "
-"that in now.  Refer to your config.php if you've forgotten what you entered."
+"<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
+"file."
+msgstr ""
+
+#, c-format
+msgid ""
+"<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
+"string from below and try again."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"When you performed the install, you entered a password which went into your config.php.  "
+"Type that in now.  Refer to your config.php if you've forgotten what you entered."
 msgstr ""
 "为了继续安装的程序，我们必需确认你的身分。当你安装时，config.php 存入了你输入的一个密码。请输"
 "入那个密码。如果不记得的话，可以查看 config.php。"
 
 msgid "Password:"
 msgstr "密码："
+
+msgid "You have exceeded the maximum attempts to login by entering a password."
+msgstr ""
+
+msgid ""
+"To prevent somebody from hacking your website, we now require you to complete a stricter "
+"authentication process."
+msgstr ""
+
+#, c-format
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"The best way to be sure is to ask you to make a tiny change in the Gallery directory which "
+"will prove that you have the right permissions.  So, we're going to ask that you create a "
+"new text file called %s in the %s directory on your webserver (that's the same directory "
+"where %s is located). It must contain the following randomly generated characters:"
+msgstr ""
+
+msgid "Once you've uploaded the file, click below to continue."
+msgstr ""
 
 msgid "Authenticate Me"
 msgstr "确认我的身分"
@@ -396,7 +448,7 @@ msgstr "完成了！"
 #, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
-"modules you may use the Site Administrator interface."
+"plugins you may use the Site Administrator interface."
 msgstr "恭禧！你的 图库2 升级已经完成！你可以使用网站管理员界面来升级其他的 图库模块。"
 
 msgid "Go to my Gallery!"
@@ -637,8 +689,9 @@ msgstr "<b>提示</b>：请检查 config.php 文件的存取权限并确定它�
 msgid "Your Gallery Core Module is up to date!"
 msgstr "你的 图库核心模块已经是最新版！"
 
+#, fuzzy
 msgid ""
-"The following modules can be automatically upgraded for you.  If you choose not to upgrade "
+"The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
@@ -684,7 +737,8 @@ msgstr "全部勾选或全部不选"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "略过升级并继续到步骤 %d&raquo;"
 
-msgid "Upgrade Selected Modules"
+#, fuzzy
+msgid "Upgrade Selected Plugins"
 msgstr "升级所选模块"
 
 #, c-format
@@ -695,8 +749,9 @@ msgstr "%s模块升级成功"
 msgid "Upgraded the %s theme successfully"
 msgstr "%s布景主题升级成功。"
 
-msgid "Upgrade More Modules"
-msgstr "升级其他 图库模块"
+#, fuzzy
+msgid "Upgrade More Plugins"
+msgstr "升级模块"
 
 #, fuzzy, c-format
 msgid ""
@@ -721,6 +776,9 @@ msgstr "选择语言："
 
 msgid "Go"
 msgstr "开始"
+
+#~ msgid "Upgrade More Modules"
+#~ msgstr "升级其他 图库模块"
 
 #~ msgid "Unable to verify plugins"
 #~ msgstr "无法校验插件"

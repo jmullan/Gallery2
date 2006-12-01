@@ -213,8 +213,8 @@ msgid "IBM DB2 (v8.2 and newer)"
 msgstr "（实验性质！）IBM DB2（v8.2.2 和更新版）"
 
 #, fuzzy
-msgid "MSSQL (2005 and newer)"
-msgstr "MySQL with Transactions（v3.23.34a 和更新版）"
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x 和更新版"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "不明数据库类型或没有表资讯。"
@@ -380,7 +380,7 @@ msgid "exec() allowed"
 msgstr "允许 exec()"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -394,7 +394,7 @@ msgstr "允许 set_time_limit()"
 
 #, fuzzy, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -402,6 +402,18 @@ msgstr ""
 "警告：你的 PHP 中的 set_time_limit() 函数被 php.ini 中的 <b>disabled_functions</b> 关闭了。图"
 "库仍然可以在这个设置下执行，可是稳定度会有问题。任何功能执行超过 %d 秒钟都会失败（有时会传回"
 "一个空白页面）并可能导致资料损毁。"
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"警告：你的 PHP 中的 putenv() 函数被 php.ini 中的 <b>disabled_functions</b> 参数关闭了。图库仍"
+"然可以在这个设置下执行，可是在极少数的系统上 图库将无法在除了系统和英文以外的语言下执行。"
 
 msgid "Memory limit"
 msgstr "记忆空间限制"
@@ -432,10 +444,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "最大上传大小"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "警告：你的 PHP 设置成上传文件最大为 %sb（在 php.ini 中的 <b>upload_max_filesize</b> 参数）。"
@@ -497,9 +509,9 @@ msgstr "允许 putenv()"
 
 #, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "警告：你的 PHP 中的 putenv() 函数被 php.ini 中的 <b>disabled_functions</b> 参数关闭了。图库仍"
 "然可以在这个设置下执行，可是在极少数的系统上 图库将无法在除了系统和英文以外的语言下执行。"
@@ -509,7 +521,7 @@ msgstr "输出缓冲已关闭"
 
 #, fuzzy, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
@@ -778,20 +790,6 @@ msgstr "安装说明"
 
 msgid "Start Over"
 msgstr "重新开始"
-
-#, fuzzy
-msgid "Installed Gallery Core successfully"
-msgstr "图库核心模块安装成功"
-
-#, fuzzy
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
-"恭禧，我们已经成功地安装了 图库的架构。不过绝大部分 图库的功能来自你需要另外安装和设置的模"
-"块。下一个步骤会指引会选择要安装的模块，这样你可以把 图库调成你想要的样子。"
 
 #, fuzzy
 msgid "Error installing Gallery Core"
@@ -1274,6 +1272,24 @@ msgstr "开始"
 
 msgid "Begin Installation&raquo;"
 msgstr "开始安装&raquo;"
+
+#, fuzzy
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MySQL with Transactions（v3.23.34a 和更新版）"
+
+#, fuzzy
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "图库核心模块安装成功"
+
+#, fuzzy
+#~ msgid ""
+#~ "Congratulations, we've successfully installed the Gallery framework.  However, most of "
+#~ "the really cool features from Gallery come from additional modules that you can install "
+#~ "and configure.  The next step will take you through the process of selecting modules to "
+#~ "install so that you can tune Gallery to do exactly what you want."
+#~ msgstr ""
+#~ "恭禧，我们已经成功地安装了 图库的架构。不过绝大部分 图库的功能来自你需要另外安装和设置的模"
+#~ "块。下一个步骤会指引会选择要安装的模块，这样你可以把 图库调成你想要的样子。"
 
 #~ msgid "Install More Modules"
 #~ msgstr "安装其他模块"

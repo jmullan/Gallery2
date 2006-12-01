@@ -21,7 +21,7 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
 "PO-Revision-Date: 2006-08-27 10:10+0900\n"
@@ -735,7 +735,7 @@ msgstr ""
 "キャッシュサブディレクトリ  を作成できませんでした。ウェブサーバーに書き込み権限を与えてくだ"
 "さい"
 
-msgid "Officially Release Repository"
+msgid "Official Release Repository"
 msgstr ""
 
 #, fuzzy
@@ -915,14 +915,6 @@ msgstr "スプレッドシート"
 #, fuzzy
 msgid "file"
 msgstr "ファイル"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
-"戻り先のＵＲＬが正しくありません!　要求されたＵＲＬ %s はギャラリーの外側のＵＲＬ %s へリダイ"
-"レクトしようとしました"
 
 msgid "Back"
 msgstr "戻る"
@@ -1530,13 +1522,25 @@ msgstr "メールアドレス"
 msgid "(suggested)"
 msgstr "(推奨)"
 
+msgid "Options"
+msgstr "オプション"
+
 #, fuzzy
-msgid "Lock Account"
-msgstr "アカウント"
+msgid "Lock user."
+msgstr "ロックシステム"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "閲覧回数をリセット"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
 
 msgid "Group Management"
 msgstr "グループ管理"
@@ -1825,6 +1829,13 @@ msgstr "バージョン"
 
 msgid "Actions"
 msgstr "アクション"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 msgid "Incompatible plugin!"
 msgstr "互換性のないプラグイン"
@@ -2232,6 +2243,14 @@ msgstr "特別である guest ユーザーを削除することはできませ�
 msgid "Edit User (by list)"
 msgstr "ユーザ編集 (リスト)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "ロケール"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "失敗"
+
 msgid "Thumbnails"
 msgstr "サムネイル"
 
@@ -2263,6 +2282,10 @@ msgstr "データベースエラー"
 msgid "Platform Error"
 msgstr "プラットフォームエラー"
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "権限が確認されました"
+
 msgid "Error"
 msgstr "エラー"
 
@@ -2277,11 +2300,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "戻ってもう一度試す"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "保存されたページを削除"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "もしくは、Gallery のメインページに戻り、再度ブラウジングしてください"
 
 msgid "The action you attempted is not permitted."
 msgstr "あなたが試行したアクションは許可されていません。"
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "データベースと通信中にエラーが発生しました。"
@@ -2427,8 +2464,8 @@ msgstr ""
 "わなくてはなりません。もしくはシステム管理者に問い合わせてより大きなアップロードができるよう"
 "に依頼してください。"
 
-msgid "More.."
-msgstr "もっと.."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "アイテムのタイトル設定:"
@@ -2438,9 +2475,6 @@ msgstr "キャプションを割り当て:"
 
 msgid "No Thumbnail"
 msgstr "サムネイルなし"
-
-msgid "Options"
-msgstr "オプション"
 
 msgid "Delete Items"
 msgstr "アイテム削除"
@@ -3262,6 +3296,13 @@ msgstr "あなたのアカウントにログイン"
 msgid "Your password has been recovered, please login."
 msgstr "あなたのパスワードが回復されました。ログインしてください"
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "ログイン情報が間違っています。もう一度試してください。"
 
@@ -3571,6 +3612,20 @@ msgstr "[test] 二番目のパーミッション"
 
 msgid "Unit test theme"
 msgstr "ユニットテストテーマ"
+
+#~ msgid ""
+#~ "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not "
+#~ "a part of this Gallery."
+#~ msgstr ""
+#~ "戻り先のＵＲＬが正しくありません!　要求されたＵＲＬ %s はギャラリーの外側のＵＲＬ %s へリ"
+#~ "ダイレクトしようとしました"
+
+#, fuzzy
+#~ msgid "Lock Account"
+#~ msgstr "アカウント"
+
+#~ msgid "More.."
+#~ msgstr "もっと.."
 
 #~ msgid "Rebuilding resized images..."
 #~ msgstr "リサイズ画像を再構築しています・・・"

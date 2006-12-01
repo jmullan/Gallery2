@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "POT-Creation-Date: 2006-02-23 10:15+0100\n"
 "PO-Revision-Date: 2006-03-22 17:04+0100\n"
 "Last-Translator: Kappana\n"
@@ -747,7 +747,7 @@ msgstr ""
 "Nie można stworzyć podkatalogu pamięci podręcznej. Upewnij się, że serwer WWW ma ustawione "
 "prawa zapisu."
 
-msgid "Officially Release Repository"
+msgid "Official Release Repository"
 msgstr ""
 
 #, fuzzy
@@ -929,14 +929,6 @@ msgstr "Arkusz"
 #, fuzzy
 msgid "file"
 msgstr "Plik"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
-"Nieprawidłowy adres zwrotny URL! Żądany adres URL %s próbował przekierować do strony %s, "
-"która nie jest częścią tej Galerii."
 
 msgid "Back"
 msgstr "Powrót"
@@ -1541,13 +1533,27 @@ msgstr "Adres E-mail"
 msgid "(suggested)"
 msgstr "(sugerowane)"
 
+msgid "Options"
+msgstr "Opcje"
+
 #, fuzzy
-msgid "Lock Account"
-msgstr "Twoje konto"
+msgid "Lock user."
+msgstr "Sposób blokady"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "Wyzeruj ilości wyświetleń"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 msgid "Group Management"
 msgstr "Zarządzanie grupą"
@@ -1840,6 +1846,13 @@ msgstr "Wersja"
 
 msgid "Actions"
 msgstr "Akcje"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 msgid "Incompatible plugin!"
 msgstr "Niekompatybilny moduł!"
@@ -2248,6 +2261,14 @@ msgstr "Nie możesz usunąć użytkownika-gościa."
 msgid "Edit User (by list)"
 msgstr "Edycja użytkownika (według listy)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "Lokalizacja"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "Nieudane"
+
 msgid "Thumbnails"
 msgstr "Miniaturki"
 
@@ -2281,6 +2302,10 @@ msgstr "Błąd bazy danych"
 msgid "Platform Error"
 msgstr "Błąd platformy"
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "Autoryzacja poprawna"
+
 msgid "Error"
 msgstr "Błąd"
 
@@ -2296,11 +2321,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "Wróć i spróbuj ponownie"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "Wyczyść zapisane strony"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "Opcjonalnie, możesz wrócić do strony głównej Galerii i kontynuować przeglądanie."
 
 msgid "The action you attempted is not permitted."
 msgstr "Akcja niedozwolona."
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "Wystąpił błąd podczas komunikacji z bazą danych."
@@ -2438,8 +2477,8 @@ msgstr ""
 "większy niż %s. Jeśli chcesz wysłać więcej plików, musisz wysłać je oddzielnie, użyć innego "
 "rodzaju wysyłania plików lub poprosić administratora o zwiększenie limitu."
 
-msgid "More.."
-msgstr "Więcej..."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "Ustaw tytuły pozycji z:"
@@ -2449,9 +2488,6 @@ msgstr "Ustaw podpis do:"
 
 msgid "No Thumbnail"
 msgstr "Brak miniaturki"
-
-msgid "Options"
-msgstr "Opcje"
 
 msgid "Delete Items"
 msgstr "Usuń pozycje"
@@ -3294,6 +3330,13 @@ msgstr "Zaloguj się na swoje konto"
 msgid "Your password has been recovered, please login."
 msgstr "Hasło zostało zmienione, proszę się zalogować."
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Twój login lub hasło są nieprawidłowe. Spróbuj ponownie."
 
@@ -3606,6 +3649,20 @@ msgstr "[test] Drugie uprawnienie"
 
 msgid "Unit test theme"
 msgstr "Temat testów poprawności programu"
+
+#~ msgid ""
+#~ "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not "
+#~ "a part of this Gallery."
+#~ msgstr ""
+#~ "Nieprawidłowy adres zwrotny URL! Żądany adres URL %s próbował przekierować do strony %s, "
+#~ "która nie jest częścią tej Galerii."
+
+#, fuzzy
+#~ msgid "Lock Account"
+#~ msgstr "Twoje konto"
+
+#~ msgid "More.."
+#~ msgstr "Więcej..."
 
 #~ msgid "Rebuilding resized images..."
 #~ msgstr "Odtwarzanie przeskalowanych zdjęć..."

@@ -222,8 +222,8 @@ msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 ir naujesnė)"
 
 #, fuzzy
-msgid "MSSQL (2005 and newer)"
-msgstr "MySQL su tranzakcijomis (v3.23.34a ar naujesnė)"
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x ir naujesnė"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Nežinomas duombazės tipas arba nėra žinomos lentelių informacijos."
@@ -391,7 +391,7 @@ msgid "exec() allowed"
 msgstr "exec() leidžiama"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -406,7 +406,7 @@ msgstr "set_time_limit() leidžiama"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -415,6 +415,19 @@ msgstr ""
 "parametro pagalba. Galerija be šios funkcijos gali veikti, tačiau veiks nepatikimai. Bet "
 "kuri operacija, kuri užtruks daugiau nei %d sekundžių nepavyks (ir kai kuriais atvejais "
 "grąžint tuščią puslapį) po ko gali sekti duomenų praradimas."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"Dėmesio: PHP funkcija putenv() išjungta parametro <b>disabled_functions</b> pagalba php.ini "
+"faile. Tokiomis sąlygomis Galerija gali veikti, bet kai kuriose retose sistemose Galerija "
+"galės veikti tik systemos kalba arba anglų kalba."
 
 msgid "Memory limit"
 msgstr "Atminties riba"
@@ -445,10 +458,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Didžiausias įkeliamo failo dydis"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "Dėmesio: Jūsų serverio PHP suderintas taip, kad neleistu įkelti failų didesnių nei %sb "
@@ -514,10 +527,11 @@ msgstr ""
 msgid "putenv() allowed"
 msgstr "putenv() leidžiamas"
 
+#, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "Dėmesio: PHP funkcija putenv() išjungta parametro <b>disabled_functions</b> pagalba php.ini "
 "faile. Tokiomis sąlygomis Galerija gali veikti, bet kai kuriose retose sistemose Galerija "
@@ -528,7 +542,7 @@ msgstr "Išvesties buferiai išjungti"
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
@@ -805,20 +819,6 @@ msgstr "Diegiklio pagalba"
 
 msgid "Start Over"
 msgstr "Pradėti iš naujo"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Galerijos pagrindas įdiegtas sėkmingai"
-
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
-"Sveikinimai, Galerijos pagrindas įdiegtas sėkmingai.  Tačiau daugelis Galerijos labai gerų "
-"savybių gaunama iš papildomų modulių, kuriuos reikia įdiegti ir suderinti.  Sekantis "
-"žingsnis jus nukels į modulių diegimą ir derinimą, kad suderintumėte savo galeriją taip kaip "
-"norite."
 
 msgid "Error installing Gallery Core"
 msgstr "Diegiant Galerijos pagrindą įvyko klaida"
@@ -1338,6 +1338,24 @@ msgstr "Pirmyn"
 
 msgid "Begin Installation&raquo;"
 msgstr "Pradėti diegimą&raquo;"
+
+#, fuzzy
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MySQL su tranzakcijomis (v3.23.34a ar naujesnė)"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Galerijos pagrindas įdiegtas sėkmingai"
+
+#~ msgid ""
+#~ "Congratulations, we've successfully installed the Gallery framework.  However, most of "
+#~ "the really cool features from Gallery come from additional modules that you can install "
+#~ "and configure.  The next step will take you through the process of selecting modules to "
+#~ "install so that you can tune Gallery to do exactly what you want."
+#~ msgstr ""
+#~ "Sveikinimai, Galerijos pagrindas įdiegtas sėkmingai.  Tačiau daugelis Galerijos labai "
+#~ "gerų savybių gaunama iš papildomų modulių, kuriuos reikia įdiegti ir suderinti.  Sekantis "
+#~ "žingsnis jus nukels į modulių diegimą ir derinimą, kad suderintumėte savo galeriją taip "
+#~ "kaip norite."
 
 #~ msgid "Install More Modules"
 #~ msgstr "Įdiegti daugiau modulių"

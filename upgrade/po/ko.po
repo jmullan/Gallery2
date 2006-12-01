@@ -60,6 +60,9 @@ msgstr "판올림을 마침니다."
 msgid "System Checks"
 msgstr "시스템 확인"
 
+msgid "Performing system checks"
+msgstr ""
+
 #, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP version >= 4.1.0 or >= 5.0.4"
@@ -116,7 +119,7 @@ msgid "exec() allowed"
 msgstr "exec() 허용확인"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -127,10 +130,20 @@ msgstr "set_time_limit() 허용확인"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
+msgstr ""
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
 msgstr ""
 
 msgid "Memory limit"
@@ -159,12 +172,14 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "최대 파일 올리기 크기"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
+"경고: 현재 PHP에서 파일 올리기를 허용하고 있지않습니다.(php.ini의 <b>file_uploads</b>). 브라"
+"우저를 통해 파일을 올리고자 한다면 php에서 파일올리기 옵션을 켜두셔야합니다."
 
 msgid "Maximum POST size"
 msgstr ""
@@ -205,15 +220,15 @@ msgstr "Zend 최적화 "
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your "
-"PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before "
-"proceeding."
+"PHP is ok.  If you get an error or no response then you must turn off ze1_compatibility_mode "
+"before proceeding."
 msgstr ""
 
 msgid "putenv() allowed"
 msgstr "putenv() 허용확인"
 
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
@@ -223,9 +238,9 @@ msgstr "버퍼링 출력을 할수 없습니다."
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
-"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
@@ -315,14 +330,50 @@ msgstr "%s 모듈을 불러올수 없습니다."
 msgid "Welcome"
 msgstr "환영합니다."
 
+#, c-format
+msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
+msgstr ""
+
+#, c-format
 msgid ""
-"In order to proceed with the install, we have to verify that you are who you claim.  When "
-"you performed the install, you entered a password which went into your config.php.  Type "
-"that in now.  Refer to your config.php if you've forgotten what you entered."
+"<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
+"file."
+msgstr ""
+
+#, c-format
+msgid ""
+"<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
+"string from below and try again."
+msgstr ""
+
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"When you performed the install, you entered a password which went into your config.php.  "
+"Type that in now.  Refer to your config.php if you've forgotten what you entered."
 msgstr ""
 
 msgid "Password:"
 msgstr "열쇠글:"
+
+msgid "You have exceeded the maximum attempts to login by entering a password."
+msgstr ""
+
+msgid ""
+"To prevent somebody from hacking your website, we now require you to complete a stricter "
+"authentication process."
+msgstr ""
+
+#, c-format
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"The best way to be sure is to ask you to make a tiny change in the Gallery directory which "
+"will prove that you have the right permissions.  So, we're going to ask that you create a "
+"new text file called %s in the %s directory on your webserver (that's the same directory "
+"where %s is located). It must contain the following randomly generated characters:"
+msgstr ""
+
+msgid "Once you've uploaded the file, click below to continue."
+msgstr ""
 
 msgid "Authenticate Me"
 msgstr "사용자 확인을 합니다."
@@ -359,9 +410,10 @@ msgstr "다시 시도"
 msgid "Finished!"
 msgstr "마침"
 
+#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
-"modules you may use the Site Administrator interface."
+"plugins you may use the Site Administrator interface."
 msgstr ""
 "축하합니다! Gallery2의 판올림이 끝이 났습니다. 추가모듈은 언제든 사이트 관리자 페이지에서 언"
 "제든 판올림이 될것입니다."
@@ -576,7 +628,7 @@ msgid "Your Gallery Core Module is up to date!"
 msgstr "가장 최근의 Core 모듈입니다."
 
 msgid ""
-"The following modules can be automatically upgraded for you.  If you choose not to upgrade "
+"The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
@@ -619,7 +671,8 @@ msgstr "모두 체크/체크해제"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "판올림 무시하고 %d 단계로 계속&raquo;"
 
-msgid "Upgrade Selected Modules"
+#, fuzzy
+msgid "Upgrade Selected Plugins"
 msgstr "선택된 모듈을 판올림합니다."
 
 #, c-format
@@ -630,8 +683,9 @@ msgstr "%s개의 모듈을 판올림하였습니다."
 msgid "Upgraded the %s theme successfully"
 msgstr "%s개의 테마를 판올림하였습니다."
 
-msgid "Upgrade More Modules"
-msgstr "나머지 모듈 판올림"
+#, fuzzy
+msgid "Upgrade More Plugins"
+msgstr "모튤을 판올림합니다."
 
 #, c-format
 msgid ""
@@ -653,6 +707,9 @@ msgstr "언어 선택:"
 
 msgid "Go"
 msgstr ""
+
+#~ msgid "Upgrade More Modules"
+#~ msgstr "나머지 모듈 판올림"
 
 #~ msgid "Unable to verify plugins"
 #~ msgstr "플러그인을 확인할 수 없습니다."

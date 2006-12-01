@@ -65,6 +65,9 @@ msgstr "Започнете Обновяването"
 msgid "System Checks"
 msgstr "Проверка на Системата"
 
+msgid "Performing system checks"
+msgstr ""
+
 #, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "Версията na PHP >= 4.1.0 или >= 5.0.4"
@@ -124,7 +127,7 @@ msgid "exec() allowed"
 msgstr "Функцията exec() е позволена"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -139,10 +142,25 @@ msgstr "Функцията set_time_limit() е позволена"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
+msgstr ""
+"Внимание: Функцията set_time_limit() e е изключена чрез параметъра <b>disabled_functions</b> "
+"в конфигурационния файл 'php.ini'. Галерията може да функционира и без тази настройки, но "
+"няма да е стабилна. Всяка операция която отнеме повече от %d секунди за изпълнение, ще даде "
+"грешка (и в някои от случаите ще върне празна страница) и може да доведе до повреда на "
+"данните."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
 msgstr ""
 "Внимание: Функцията set_time_limit() e е изключена чрез параметъра <b>disabled_functions</b> "
 "в конфигурационния файл 'php.ini'. Галерията може да функционира и без тази настройки, но "
@@ -177,7 +195,7 @@ msgstr "Максимален размер при качване "
 #, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 
@@ -220,8 +238,8 @@ msgstr ""
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your "
-"PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before "
-"proceeding."
+"PHP is ok.  If you get an error or no response then you must turn off ze1_compatibility_mode "
+"before proceeding."
 msgstr ""
 
 #, fuzzy
@@ -230,7 +248,7 @@ msgstr "Функцията exec() е позволена"
 
 #, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
@@ -245,9 +263,9 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
-"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
@@ -337,10 +355,27 @@ msgstr "Модула %s не можа да бъде зареден"
 msgid "Welcome"
 msgstr "Добре дошли"
 
+#, c-format
+msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
+msgstr ""
+
+#, c-format
 msgid ""
-"In order to proceed with the install, we have to verify that you are who you claim.  When "
-"you performed the install, you entered a password which went into your config.php.  Type "
-"that in now.  Refer to your config.php if you've forgotten what you entered."
+"<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
+"file."
+msgstr ""
+
+#, c-format
+msgid ""
+"<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
+"string from below and try again."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"When you performed the install, you entered a password which went into your config.php.  "
+"Type that in now.  Refer to your config.php if you've forgotten what you entered."
 msgstr ""
 "За да продължим с инсталацията, трябва да сме сигурни че вие е сте този за който се "
 "представяте. Когато сте инсталирали Галерията за първи път, сте въвели парола която е била "
@@ -349,6 +384,26 @@ msgstr ""
 
 msgid "Password:"
 msgstr "Парола:"
+
+msgid "You have exceeded the maximum attempts to login by entering a password."
+msgstr ""
+
+msgid ""
+"To prevent somebody from hacking your website, we now require you to complete a stricter "
+"authentication process."
+msgstr ""
+
+#, c-format
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"The best way to be sure is to ask you to make a tiny change in the Gallery directory which "
+"will prove that you have the right permissions.  So, we're going to ask that you create a "
+"new text file called %s in the %s directory on your webserver (that's the same directory "
+"where %s is located). It must contain the following randomly generated characters:"
+msgstr ""
+
+msgid "Once you've uploaded the file, click below to continue."
+msgstr ""
 
 msgid "Authenticate Me"
 msgstr "Поискайте Достъп"
@@ -390,9 +445,10 @@ msgstr "Опитайте Отново"
 msgid "Finished!"
 msgstr "Готово!"
 
+#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
-"modules you may use the Site Administrator interface."
+"plugins you may use the Site Administrator interface."
 msgstr ""
 "Поздравления! Обновяеането на вашата Галерия v2 завърши! Ако искате да обновите който и да е "
 "от останалите допълнителни модули за Галерията трябва да използвате страницата за "
@@ -624,8 +680,9 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Модула 'Ядро' на Галерията е последна версия!"
 
+#, fuzzy
 msgid ""
-"The following modules can be automatically upgraded for you.  If you choose not to upgrade "
+"The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
@@ -673,7 +730,8 @@ msgstr "изберете всичко"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "Пропуснете обновяването и продължете към Фаза %d&raquo;"
 
-msgid "Upgrade Selected Modules"
+#, fuzzy
+msgid "Upgrade Selected Plugins"
 msgstr "Обновете избраните модули"
 
 #, c-format
@@ -684,8 +742,9 @@ msgstr "Модула %s е успешно обновен"
 msgid "Upgraded the %s theme successfully"
 msgstr "Стила %s е успешно обновен"
 
-msgid "Upgrade More Modules"
-msgstr "Обновете още модули"
+#, fuzzy
+msgid "Upgrade More Plugins"
+msgstr "Развитие на Обновяването"
 
 #, c-format
 msgid ""
@@ -709,6 +768,9 @@ msgstr "Изберете Език:"
 # Badly chosen mgsid: means: switch to selected language
 msgid "Go"
 msgstr ""
+
+#~ msgid "Upgrade More Modules"
+#~ msgstr "Обновете още модули"
 
 #~ msgid "Upgrade Modules"
 #~ msgstr "Обновяване на Модулите"

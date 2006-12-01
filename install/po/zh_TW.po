@@ -362,7 +362,7 @@ msgid "exec() allowed"
 msgstr "允許 exec()"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -376,7 +376,7 @@ msgstr "允許 set_time_limit()"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -384,6 +384,19 @@ msgstr ""
 "警告：你的 PHP 中的 set_time_limit() 函式被 php.ini 中的 <b>disabled_functions</b> 關閉了。"
 "Gallery 仍然可以在這個設定下執行，可是穩定度會有問題。任何功能執行超過 %d 秒鐘都會失敗（有時"
 "會傳回一個空白頁面）並可能導致資料損毀。"
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"警告：你的 PHP 中的 putenv() 函式被 php.ini 中的 <b>disabled_functions</b> 參數關閉了。"
+"Gallery 仍然可以在這個設定下執行，可是在極少數的系統上 Gallery 將無法在除了系統和英文以外的語"
+"文下執行。"
 
 msgid "Memory limit"
 msgstr "記憶空間限制"
@@ -413,10 +426,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "最大上傳大小"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "警告：你的 PHP 設定成上傳檔案最大為 %sb（在 php.ini 中的 <b>upload_max_filesize</b> 參數）。"
@@ -477,10 +490,11 @@ msgstr ""
 msgid "putenv() allowed"
 msgstr "允許 putenv()"
 
+#, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "警告：你的 PHP 中的 putenv() 函式被 php.ini 中的 <b>disabled_functions</b> 參數關閉了。"
 "Gallery 仍然可以在這個設定下執行，可是在極少數的系統上 Gallery 將無法在除了系統和英文以外的語"
@@ -491,7 +505,7 @@ msgstr "輸出緩衝已關閉"
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "

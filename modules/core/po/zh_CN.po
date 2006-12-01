@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "POT-Creation-Date: 2005-03-28 14:00+0800\n"
 "PO-Revision-Date: 2006-03-10 11:37+0800\n"
 "Last-Translator: Lyric <lyric@lyricli.com>\n"
@@ -730,7 +730,7 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr "不能创建缓存子目录，确保Web服务器有写权限。"
 
-msgid "Officially Release Repository"
+msgid "Official Release Repository"
 msgstr ""
 
 #, fuzzy
@@ -910,12 +910,6 @@ msgstr "数据表"
 #, fuzzy
 msgid "file"
 msgstr "文件"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr "非法的 URL！请求的 URL %s 试图插入一个重定位到不属于 Gallery 的 %s 。"
 
 msgid "Back"
 msgstr "返回"
@@ -1501,13 +1495,26 @@ msgstr "Email 地址"
 msgid "(suggested)"
 msgstr "(推荐值)"
 
+msgid "Options"
+msgstr "选项"
+
 #, fuzzy
-msgid "Lock Account"
-msgstr "您的帐户"
+msgid "Lock user."
+msgstr "锁定系统"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "重置人气计数器"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Group Management"
 msgstr "成员组管理"
@@ -1787,6 +1794,13 @@ msgstr "版本"
 
 msgid "Actions"
 msgstr "操作"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 msgid "Incompatible plugin!"
 msgstr "模块不兼容！"
@@ -2185,6 +2199,14 @@ msgstr "您不能删除访客"
 msgid "Edit User (by list)"
 msgstr "编辑用户(列表)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "缩放"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "失败"
+
 msgid "Thumbnails"
 msgstr "缩略图"
 
@@ -2215,6 +2237,10 @@ msgstr "数据库错误"
 msgid "Platform Error"
 msgstr "平台错误"
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "认证通过"
+
 msgid "Error"
 msgstr "错误"
 
@@ -2229,11 +2255,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "返回并重试"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "清除存储页面"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "您可以选择返回主图库页面，或继续浏览。"
 
 msgid "The action you attempted is not permitted."
 msgstr "您尝试的操作无效。"
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "与数据库交换时发生一个错误。"
@@ -2367,8 +2407,8 @@ msgstr ""
 "<b>提示：</b>您一次可以上传 %s。每个文件不能大于 %s。如果您需要上传更多，请分开上传文件，或使"
 "用其他上传方法，或联络系统管理员允许更大上传空间。"
 
-msgid "More.."
-msgstr "更多……"
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "设定项目标题从:"
@@ -2378,9 +2418,6 @@ msgstr "指定标题到:"
 
 msgid "No Thumbnail"
 msgstr "无缩略图"
-
-msgid "Options"
-msgstr "选项"
 
 msgid "Delete Items"
 msgstr "删除项目"
@@ -3161,6 +3198,13 @@ msgstr "登录到您的帐户"
 msgid "Your password has been recovered, please login."
 msgstr "您的密码已经恢复，请登录。"
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "您的登录信息不正确，请再试。"
 
@@ -3451,6 +3495,18 @@ msgstr "[测试]权限"
 
 msgid "Unit test theme"
 msgstr "公测主题"
+
+#~ msgid ""
+#~ "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not "
+#~ "a part of this Gallery."
+#~ msgstr "非法的 URL！请求的 URL %s 试图插入一个重定位到不属于 Gallery 的 %s 。"
+
+#, fuzzy
+#~ msgid "Lock Account"
+#~ msgstr "您的帐户"
+
+#~ msgid "More.."
+#~ msgstr "更多……"
 
 #~ msgid "Rebuilding resized images..."
 #~ msgstr "正在重建变更尺寸的图像...."

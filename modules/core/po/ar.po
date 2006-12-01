@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-03-31 20:26+0200\n"
 "PO-Revision-Date: 2005-08-14 13:34+0300\n"
@@ -737,7 +737,7 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
-msgid "Officially Release Repository"
+msgid "Official Release Repository"
 msgstr ""
 
 msgid "Experimental Repository"
@@ -915,12 +915,6 @@ msgstr "جدول حسابي"
 #, fuzzy
 msgid "file"
 msgstr "ملف"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
 
 msgid "Back"
 msgstr "العودة"
@@ -1505,13 +1499,26 @@ msgstr "عنوان البريد الإلكتروني"
 msgid "(suggested)"
 msgstr "(مفضل)"
 
+msgid "Options"
+msgstr "خيارات"
+
 #, fuzzy
-msgid "Lock Account"
-msgstr "حسابك الشخصي"
+msgid "Lock user."
+msgstr "نظام الإقفال"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "إعادة تعيين عدد المشاهدات"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Group Management"
 msgstr "إدارة الموجوعة"
@@ -1788,6 +1795,13 @@ msgstr "نسخة"
 
 msgid "Actions"
 msgstr "عمليات"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 #, fuzzy
 msgid "Incompatible plugin!"
@@ -2189,6 +2203,14 @@ msgstr "لا يمكنك حذف المستخدم زائر(guest)."
 msgid "Edit User (by list)"
 msgstr "تعديل المستخدم ( من القائمة)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "تحديد المقاس"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "فشل"
+
 msgid "Thumbnails"
 msgstr "صور مصغرة"
 
@@ -2220,6 +2242,10 @@ msgstr "خطأ في قاعدة البيانات"
 msgid "Platform Error"
 msgstr ""
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "حجم العرض"
+
 msgid "Error"
 msgstr "خطأ"
 
@@ -2234,11 +2260,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "إذهب للخلف و أعد المحاولة"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "حذف الكاش لقاعدة البينات"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "كذلك تستطيع الرجوع للصفحة الرئيسية ومتابعة العرض"
 
 msgid "The action you attempted is not permitted."
 msgstr "العملية التي تحاول القيام بها غير مصرحه."
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "حصل خطاء أثناء محاولة الإتصال بقاعدة البيانات"
@@ -2376,8 +2416,8 @@ msgstr ""
 "في المزيد، يجب تحميل الملفات بشكل منفصل، أو غير نوعية الملفات، أو اسأل المسؤول ليسمح لك "
 "بتحميل أكبر"
 
-msgid "More.."
-msgstr "المزيد.."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr ""
@@ -2387,9 +2427,6 @@ msgstr "إضافة تعليق ل :"
 
 msgid "No Thumbnail"
 msgstr "لا توجد صورة مصغرة"
-
-msgid "Options"
-msgstr "خيارات"
 
 msgid "Delete Items"
 msgstr "حذف المواد"
@@ -3206,6 +3243,13 @@ msgstr "الدخول لحسابك الشخصي"
 msgid "Your password has been recovered, please login."
 msgstr "تم إستعادة كلمة المرور , رجاءاً قم بالدخول."
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "معلومات الدخول غير صحيحة . رجاءاً أعد المحاولة."
 
@@ -3507,6 +3551,13 @@ msgstr ""
 
 msgid "Unit test theme"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Lock Account"
+#~ msgstr "حسابك الشخصي"
+
+#~ msgid "More.."
+#~ msgstr "المزيد.."
 
 #, fuzzy
 #~ msgid "Rebuilding resized images..."

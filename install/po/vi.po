@@ -221,8 +221,8 @@ msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 và mới hơn)"
 
 #, fuzzy
-msgid "MSSQL (2005 and newer)"
-msgstr "MySQL với Transactions (v3.23.34a và mới hơn)"
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x và mới hơn"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Không xác định được kiểu cơ sở dữ liệu hoặc thông tin về bảng."
@@ -394,7 +394,7 @@ msgid "exec() allowed"
 msgstr "cho phép dùng exec()"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -409,10 +409,24 @@ msgstr "cho phép dùng set_time_limit()"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
+msgstr ""
+"Cảnh báo: Hàm set_time_limit() đang bị tắt trong chương trình PHP bằng thông số "
+"<b>disabled_functions</b> trong tập tin php.ini. Gallery tuy vẫn có thể hoạt động nhưng có "
+"thể sẽ không ổn định. Bất kỳ thao tác nào cần chạy lâu hơn %d giây sẽ thất bại (trong một số "
+"trường hợp chỉ hiển thị một trang trắng) và có khả năng dẫn đến hỏng dữ liệu."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
 msgstr ""
 "Cảnh báo: Hàm set_time_limit() đang bị tắt trong chương trình PHP bằng thông số "
 "<b>disabled_functions</b> trong tập tin php.ini. Gallery tuy vẫn có thể hoạt động nhưng có "
@@ -449,10 +463,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Kích thước tải lên tối đa"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "Cảnh báo: Chương trình PHP của bạn đặt giới hạn kích thước tập tin tải lên là %sb (trong "
@@ -514,9 +528,9 @@ msgstr "cho phép dùng putenv()"
 
 #, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "Cảnh báo: Hàm set_time_limit() đang bị tắt trong chương trình PHP bằng thông số "
 "<b>disabled_functions</b> trong tập tin php.ini. Gallery tuy vẫn có thể hoạt động nhưng có "
@@ -528,7 +542,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
@@ -802,20 +816,6 @@ msgstr "Hướng dẫn Chương trình Cài đặt"
 
 msgid "Start Over"
 msgstr "Bắt đầu lại từ đầu"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Lõi của Gallery đã được cài đặt thành công"
-
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
-"Chúc mừng bạn, khung chương trình Gallery đã được cài đặt thành công. Tuy nhiên, hầu hết các "
-"tính năng hấp dẫn của Gallery được cung cấp bởi các module mà bạn có thể tự cài và cấu hình. "
-"Trong bước tiếp theo bạn sẽ chọn các module để cài đặt và tinh chỉnh chương trình Gallery "
-"theo như bạn muốn."
 
 msgid "Error installing Gallery Core"
 msgstr "Có lỗi khi cài đặt Lõi của Gallery"
@@ -1333,6 +1333,24 @@ msgstr "Đi tiếp"
 
 msgid "Begin Installation&raquo;"
 msgstr "Bắt đầu cài đặt&raquo;"
+
+#, fuzzy
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MySQL với Transactions (v3.23.34a và mới hơn)"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Lõi của Gallery đã được cài đặt thành công"
+
+#~ msgid ""
+#~ "Congratulations, we've successfully installed the Gallery framework.  However, most of "
+#~ "the really cool features from Gallery come from additional modules that you can install "
+#~ "and configure.  The next step will take you through the process of selecting modules to "
+#~ "install so that you can tune Gallery to do exactly what you want."
+#~ msgstr ""
+#~ "Chúc mừng bạn, khung chương trình Gallery đã được cài đặt thành công. Tuy nhiên, hầu hết "
+#~ "các tính năng hấp dẫn của Gallery được cung cấp bởi các module mà bạn có thể tự cài và "
+#~ "cấu hình. Trong bước tiếp theo bạn sẽ chọn các module để cài đặt và tinh chỉnh chương "
+#~ "trình Gallery theo như bạn muốn."
 
 #~ msgid "Install More Modules"
 #~ msgstr "Cài thêm module"

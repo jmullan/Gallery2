@@ -21,7 +21,7 @@
 # - Sverre M. Vikan <sverre AT urven DOT net>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-01 23:38+0100\n"
 "PO-Revision-Date: 2006-10-20 12:27+0100\n"
@@ -731,7 +731,8 @@ msgstr ""
 "Kunne ikke opprette underkatalog for hurtigminne. Sørg for at nettjeneren har "
 "skrivetilganger i den."
 
-msgid "Officially Release Repository"
+#, fuzzy
+msgid "Official Release Repository"
 msgstr "Offisielt utgivelseskodelager"
 
 msgid "Experimental Repository"
@@ -906,14 +907,6 @@ msgstr "regneark"
 
 msgid "file"
 msgstr "fil"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
-"Ugyldig tilbakemeldt adresse! Den forespurte nettadressen %s forsøkte å sette inn en "
-"videresending til %s, som ikke er en del av denne Gallery-installasjonen."
 
 msgid "Back"
 msgstr "Tilbake"
@@ -1527,13 +1520,27 @@ msgstr "E-postadresse"
 msgid "(suggested)"
 msgstr "(foreslått)"
 
-msgid "Lock Account"
-msgstr "Lås konto"
+msgid "Options"
+msgstr "Valg"
+
+#, fuzzy
+msgid "Lock user."
+msgstr "Sperresystem"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
 "Låste brukere kan ikke redigere sin egen kontoinformasjon. (Passord, navn, e-post, osv.)"
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "Nullstill visningsteller"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Group Management"
 msgstr "Gruppebehandling"
@@ -1811,6 +1818,13 @@ msgstr "Versjon"
 
 msgid "Actions"
 msgstr "Handlinger"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 msgid "Incompatible plugin!"
 msgstr "Ikke-kompatibelt programtillegg!"
@@ -2219,6 +2233,14 @@ msgstr "Du kan ikke fjerne den spesielle brukeren gjest."
 msgid "Edit User (by list)"
 msgstr "Rediger bruker (listeform)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "låst"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "Mislykket"
+
 msgid "Thumbnails"
 msgstr "Miniatyrbilder"
 
@@ -2251,6 +2273,10 @@ msgstr "Databasefeil"
 msgid "Platform Error"
 msgstr "Platformfeil"
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "Autorisasjon bekreftet"
+
 msgid "Error"
 msgstr "Feil"
 
@@ -2266,11 +2292,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "Gå tilbake og forsøk igjen"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "Fjern lagrede sider"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "Alternativt kan du returnere til hovedsiden av Gallery og gjenoppta surfingen der."
 
 msgid "The action you attempted is not permitted."
 msgstr "Handlingen du forsøkte er ikke tillatt."
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "En feil har oppstått under samhandling med databasen."
@@ -2413,8 +2453,8 @@ msgstr ""
 "Onsker du å laste opp mer enn det må du laste opp filene hver for seg, bruke et annet "
 "opplastingsformat eller be din systemadministrator tillate større opplastinger."
 
-msgid "More.."
-msgstr "Mer ..."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "Velg objekttitler fra:"
@@ -2424,9 +2464,6 @@ msgstr "Gi billedtekst til:"
 
 msgid "No Thumbnail"
 msgstr "Miniatyrbilde mangler"
-
-msgid "Options"
-msgstr "Valg"
 
 msgid "Delete Items"
 msgstr "Slett objekter"
@@ -3257,6 +3294,13 @@ msgstr "Logg inn på din konto"
 msgid "Your password has been recovered, please login."
 msgstr "Passordet ditt er gjenopprettet, vennligst logg inn."
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Din innlogginsinformasjon er ukorrekt.  Vennligst forsøk igjen."
 
@@ -3569,6 +3613,19 @@ msgstr "[test] En andre tilgang"
 
 msgid "Unit test theme"
 msgstr "Enhetstesttema"
+
+#~ msgid ""
+#~ "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not "
+#~ "a part of this Gallery."
+#~ msgstr ""
+#~ "Ugyldig tilbakemeldt adresse! Den forespurte nettadressen %s forsøkte å sette inn en "
+#~ "videresending til %s, som ikke er en del av denne Gallery-installasjonen."
+
+#~ msgid "Lock Account"
+#~ msgstr "Lås konto"
+
+#~ msgid "More.."
+#~ msgstr "Mer ..."
 
 #~ msgid "Rebuilding resized images..."
 #~ msgstr "Gjenskaper skalerte bilder ..."

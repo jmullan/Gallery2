@@ -225,8 +225,8 @@ msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 en nieuwer)"
 
 #, fuzzy
-msgid "MSSQL (2005 and newer)"
-msgstr "MySQL met Transacties (v3.23.34a of nieuwer)"
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x en nieuwer"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Onbekende DB type of geen bekende tabellen informatie."
@@ -394,7 +394,7 @@ msgid "exec() allowed"
 msgstr "exec() toegestaan"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -409,7 +409,7 @@ msgstr "set_time_limit() toegestaan"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -418,6 +418,19 @@ msgstr ""
 "ini uitgezet. Gallery kan functioneren zonder deze instelling, maar zal niet betrouwbaar "
 "zijn. Elke actie die dan dan %d seconden duurt zal mislukken (en in sommige gevallen alleen "
 "resulteren in een blanco pagina) wat mogelijk kan leiden tot datacorruptie."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"Let Op: De putenv() functie is door de <b>disabled_functions</b> parameter in uw php.ini "
+"uitgeschakeld. Op sommige systemen zonder deze instelling zal Gallery niet in staat zijn om "
+"andere talen dan de systeem taal en Engels te gebruiken."
 
 msgid "Memory limit"
 msgstr "Geheugenlimiet"
@@ -449,10 +462,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Maximale upload grootte"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "Let Op: uw PHP is ingesteld om de grootte van de bestandsuploads te beperken tot %sb "
@@ -519,10 +532,11 @@ msgstr ""
 msgid "putenv() allowed"
 msgstr "putenv() toegestaan"
 
+#, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "Let Op: De putenv() functie is door de <b>disabled_functions</b> parameter in uw php.ini "
 "uitgeschakeld. Op sommige systemen zonder deze instelling zal Gallery niet in staat zijn om "
@@ -533,13 +547,13 @@ msgstr "Bufferen van uitvoer uitgeschakeld"
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
-"Let Op: Het bufferen van uitvoer is in uw php ingeschakeld door de <b>%s</b> parameter(s) in "
+"Let Op: Het bufferen van uitvoer is in uw PHP ingeschakeld door de <b>%s</b> parameter(s) in "
 "php.ini. Gallery kan functioneren met deze instelling - het downloaden van bestanden is "
 "zelfs sneller -, maar Gallerry is mogelijk niet in staat om grote bestanden (bijv. grote "
 "videos) aan te bieden en tegen een geheugenlimiet aanlopen. Ook kunnen sommige "
@@ -819,20 +833,6 @@ msgstr "Installatie Help"
 
 msgid "Start Over"
 msgstr "Start Opnieuw"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Gallery Core succesvol geïnstalleerd"
-
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
-"Gefeliciteerd, we hebben het Gallery raamwerk succesvol geïnstalleerd.Hoe dan ook, de meeste "
-"te gekke Gallery functionaliteiten komen van additionele modules de u kunt installeren en "
-"configureren. De volgende stap zal u door het proces loodsen waarbij u modules kunt "
-"installeren, waarmee u Gallery kunt afstemmen naar uw behoeften."
 
 msgid "Error installing Gallery Core"
 msgstr "Fout bij het installeren van Gallery Core"
@@ -1359,6 +1359,24 @@ msgstr "Gaan"
 
 msgid "Begin Installation&raquo;"
 msgstr "Begin Installatie&raquo;"
+
+#, fuzzy
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MySQL met Transacties (v3.23.34a of nieuwer)"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Gallery Core succesvol geïnstalleerd"
+
+#~ msgid ""
+#~ "Congratulations, we've successfully installed the Gallery framework.  However, most of "
+#~ "the really cool features from Gallery come from additional modules that you can install "
+#~ "and configure.  The next step will take you through the process of selecting modules to "
+#~ "install so that you can tune Gallery to do exactly what you want."
+#~ msgstr ""
+#~ "Gefeliciteerd, we hebben het Gallery raamwerk succesvol geïnstalleerd.Hoe dan ook, de "
+#~ "meeste te gekke Gallery functionaliteiten komen van additionele modules de u kunt "
+#~ "installeren en configureren. De volgende stap zal u door het proces loodsen waarbij u "
+#~ "modules kunt installeren, waarmee u Gallery kunt afstemmen naar uw behoeften."
 
 #~ msgid "Install More Modules"
 #~ msgstr "Meer Modules Installeren"

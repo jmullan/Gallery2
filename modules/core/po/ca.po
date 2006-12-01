@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "Report-Msgid-Bugs-To: <gallery-devel@lists.sourceforge.net>\n"
 "POT-Creation-Date: 2005-10-25 17:54+0200\n"
 "PO-Revision-Date: 2006-06-16 15:39+0100\n"
@@ -737,7 +737,7 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
-msgid "Officially Release Repository"
+msgid "Official Release Repository"
 msgstr ""
 
 msgid "Experimental Repository"
@@ -914,12 +914,6 @@ msgstr "Fulles de Càlcul"
 #, fuzzy
 msgid "file"
 msgstr "Arxiu"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
 
 msgid "Back"
 msgstr "Enrere"
@@ -1534,13 +1528,26 @@ msgstr "Adreça de Correu Electrònic"
 msgid "(suggested)"
 msgstr "(suggerit)"
 
+msgid "Options"
+msgstr "Opcions"
+
 #, fuzzy
-msgid "Lock Account"
-msgstr "El teu compte"
+msgid "Lock user."
+msgstr "Sistema de bloqueig"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "Reiniciar contadors de visites"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Group Management"
 msgstr "Gestió de Grups"
@@ -1815,6 +1822,13 @@ msgstr "Versió"
 
 msgid "Actions"
 msgstr "Accions"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 msgid "Incompatible plugin!"
 msgstr "&iexcl;Mòdul Incompatible!"
@@ -2211,6 +2225,14 @@ msgstr "No pots eliminar l'usuari especial invitat."
 msgid "Edit User (by list)"
 msgstr "Editar Usuari (per llista)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "Escalar"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "Fracàs"
+
 msgid "Thumbnails"
 msgstr "Vistes en Miniatura"
 
@@ -2243,6 +2265,10 @@ msgstr "Error en la Base de Dades"
 msgid "Platform Error"
 msgstr ""
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "Autorització Confirmada"
+
 msgid "Error"
 msgstr "Error"
 
@@ -2258,11 +2284,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "Torna-ho a intentar novament."
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "Borrar la cache de la base de dades"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "Com alternativa, pots tornar a la página principal de Gallery i reprendre la recerca."
 
 msgid "The action you attempted is not permitted."
 msgstr "L'acció que has intentat fer no està permesa."
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "S'ha produït un error interactuant amb la base de dades."
@@ -2405,8 +2445,8 @@ msgstr ""
 "per blocs, fer servir un format diferent de pujada, o demanar-li a l'administrador del "
 "sistema que habiliti un major ample de banda de pujada."
 
-msgid "More.."
-msgstr "Més..."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "Establir els títols dels elements de:"
@@ -2416,9 +2456,6 @@ msgstr "Assignar etiqueta a:"
 
 msgid "No Thumbnail"
 msgstr "Sense Miniatura"
-
-msgid "Options"
-msgstr "Opcions"
 
 msgid "Delete Items"
 msgstr "Borrar Elements"
@@ -3259,6 +3296,13 @@ msgstr "Iniciar sessió amb el teu compte"
 msgid "Your password has been recovered, please login."
 msgstr "Tu contrasenya ha sigut recuperada, si us plau inicia sessió."
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "La teva informació d'inici de sessió és incorrecta. Si us plau intenta-ho de nou."
 
@@ -3578,6 +3622,13 @@ msgstr "[test] Un permís secundari"
 
 msgid "Unit test theme"
 msgstr "Tema de prova d'unitat"
+
+#, fuzzy
+#~ msgid "Lock Account"
+#~ msgstr "El teu compte"
+
+#~ msgid "More.."
+#~ msgstr "Més..."
 
 #~ msgid "Rebuilding resized images..."
 #~ msgstr "Refer imatges redimensionades"

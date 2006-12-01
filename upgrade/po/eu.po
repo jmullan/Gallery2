@@ -59,6 +59,9 @@ msgstr "Bertsio berritzea amaitu"
 msgid "System Checks"
 msgstr "Sistema Egiaztapenak"
 
+msgid "Performing system checks"
+msgstr ""
+
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP bertsioa >= 4.3.0 edo >= 5.0.4"
 
@@ -68,7 +71,7 @@ msgid ""
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
-"Errorea: Gallery 2 PHP 4.3.0 bertsio edo berriagoa edo 5.0.4 edo berriagoa behar du.Zuk php %"
+"Errorea: Gallery 2 PHP 4.3.0 bertsio edo berriagoa edo 5.0.4 edo berriagoa behar du.Zuk PHP %"
 "s bertsioa duzu instalaturik. Harremanetan ipini zerbitzari kudeatzailearekin %sPGP webgunean"
 "%s eskuragarri dagoen eguneraketa eskatzeko."
 
@@ -116,12 +119,12 @@ msgid "exec() allowed"
 msgstr "exec() onarturik"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
 msgstr ""
-"Abisua: exec() funtzioa ezgaiturik dago zure php konfigurazioan php.ini fitxategian "
+"Abisua: exec() funtzioa ezgaiturik dago zure PHP konfigurazioan php.ini fitxategian "
 "<b>disabled_functions</b> parametroaz.  Kanpo bitarrik behar duten modulurik (adib "
 "ImageMagick, NetPBM edo Ffmpeg) erabili. Hau zerbitzari aldean bakarrik ezarri daiteke, "
 "beraz erabili nahi izanez gero php.ini orokorrean aldatu beharko duzu."
@@ -131,7 +134,7 @@ msgstr "set_time_limit() onarturik"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -140,6 +143,19 @@ msgstr ""
 "<b>disabled_functions</b> parametroaren bidez.  Gallery-k ezarpena hauez funtziona dezake "
 "baina ez behar bezain ondo. %d segundutik gora behar duen edozein eskarik huts egin dezake "
 "(kasu batzuetan orri zuri bat itzuliaz) datu apurtze aukeraz."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"Abisua: zure putenv()  funtzioa ezgaiturik dago php.ini fitxategiko <b>disabled_functions</"
+"b> parametroaren bidez.  Gallery-k ezarpena hauez funtziona dezake baina sistema arraro "
+"batzuetan ezin izango da abiarazi ingelesaz beste hizkuntzarik."
 
 msgid "Memory limit"
 msgstr "Memoria muga"
@@ -171,13 +187,13 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Gehienezko igoera tamaina"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
-"Abisua: Zure php igotako fitxategi tamaina %sb-ra mugatzeko konfiguraturik dago (php.ini "
+"Abisua: Zure PHP igotako fitxategi tamaina %sb-ra mugatzeko konfiguraturik dago (php.ini "
 "fitxategiko <b>upload_max_filesize</b> parametroaren bidez). Muga hau handitu beharko zenuke "
 "fitxategi handiagoak onartzeko"
 
@@ -225,12 +241,12 @@ msgstr ""
 msgid "Zend compatibility mode"
 msgstr "Zend bateragarritasun modua"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your "
-"PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before "
-"proceeding."
+"PHP is ok.  If you get an error or no response then you must turn off ze1_compatibility_mode "
+"before proceeding."
 msgstr ""
 "Abisua: PHP Zend ze1_compatibility_mode onarpenaz konfiguraturik dago, honek PHP apurtzea "
 "eragin dezake <a href=\"%s\">Hemen</b> klikatu zure PHP probatzeko. \"Lortua\" ikusi ezkero "
@@ -241,7 +257,7 @@ msgid "putenv() allowed"
 msgstr "putenv() onarturik"
 
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
@@ -252,11 +268,11 @@ msgstr ""
 msgid "Output buffering disabled"
 msgstr "Irteera buferra ezgaiturik"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
-"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
@@ -354,10 +370,27 @@ msgstr "Ezin da %s modulua kargatu"
 msgid "Welcome"
 msgstr "Ongi etorri"
 
+#, c-format
+msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
+msgstr ""
+
+#, c-format
 msgid ""
-"In order to proceed with the install, we have to verify that you are who you claim.  When "
-"you performed the install, you entered a password which went into your config.php.  Type "
-"that in now.  Refer to your config.php if you've forgotten what you entered."
+"<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
+"file."
+msgstr ""
+
+#, c-format
+msgid ""
+"<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
+"string from below and try again."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"When you performed the install, you entered a password which went into your config.php.  "
+"Type that in now.  Refer to your config.php if you've forgotten what you entered."
 msgstr ""
 "Instalazioarekin aurrera jarraitu ahal izateko zu esaten duzuna zarela ziurtatu behar dugu.  "
 "Instalazioa egiterakoan config.php fitxategian gordetzen den pasahitz bat idatzi duzu.  "
@@ -366,6 +399,26 @@ msgstr ""
 
 msgid "Password:"
 msgstr "Pasahitza:"
+
+msgid "You have exceeded the maximum attempts to login by entering a password."
+msgstr ""
+
+msgid ""
+"To prevent somebody from hacking your website, we now require you to complete a stricter "
+"authentication process."
+msgstr ""
+
+#, c-format
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"The best way to be sure is to ask you to make a tiny change in the Gallery directory which "
+"will prove that you have the right permissions.  So, we're going to ask that you create a "
+"new text file called %s in the %s directory on your webserver (that's the same directory "
+"where %s is located). It must contain the following randomly generated characters:"
+msgstr ""
+
+msgid "Once you've uploaded the file, click below to continue."
+msgstr ""
 
 msgid "Authenticate Me"
 msgstr "Egiaztatu iezadazu"
@@ -411,9 +464,10 @@ msgstr "Saiatu berriro"
 msgid "Finished!"
 msgstr "Amaituta!"
 
+#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
-"modules you may use the Site Administrator interface."
+"plugins you may use the Site Administrator interface."
 msgstr ""
 "Zorionak! Gallery 2 bertsio berritzea osatua da.  Beste modulu gehigarriak bertsio "
 "berritzeko gune kudeaketa interfazea erabil dezakezu."
@@ -660,8 +714,9 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Galeria Muina Modulua eguneraturik dago!"
 
+#, fuzzy
 msgid ""
-"The following modules can be automatically upgraded for you.  If you choose not to upgrade "
+"The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
@@ -708,7 +763,8 @@ msgstr "(des)markatu denak"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "Saltatu Bertsio berritzea eta Jarraitu %d Urratsera&raquo;"
 
-msgid "Upgrade Selected Modules"
+#, fuzzy
+msgid "Upgrade Selected Plugins"
 msgstr "Hautatutako Moduluak Bertsio berritu"
 
 #, c-format
@@ -719,8 +775,9 @@ msgstr "%s modulua behar bezala bertsio berritu da"
 msgid "Upgraded the %s theme successfully"
 msgstr "%s gaia behar bezala bertsio berritu da"
 
-msgid "Upgrade More Modules"
-msgstr "Modulu Gehiago Bertsio berritu"
+#, fuzzy
+msgid "Upgrade More Plugins"
+msgstr "Moduluak Bertsio berritu"
 
 #, c-format
 msgid ""
@@ -747,6 +804,9 @@ msgstr "Hizkuntza Hautatu:"
 
 msgid "Go"
 msgstr "Joan"
+
+#~ msgid "Upgrade More Modules"
+#~ msgstr "Modulu Gehiago Bertsio berritu"
 
 #~ msgid "Unable to verify plugins"
 #~ msgstr "Ezin dira plugin-ak egiaztatu"

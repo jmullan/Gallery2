@@ -18,6 +18,7 @@ gettext("Finish Upgrade")
 
 /* steps/SystemChecksStep.class */
 gettext("System Checks") /* also in: templates/SystemChecks.html */
+gettext("Performing system checks")
 gettext("PHP version >= 4.3.0 or >= 5.0.4")
 gettext("Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the %sPHP website%s.")
 gettext("PHP Version")
@@ -30,16 +31,18 @@ gettext("Safe Mode")
 gettext("Regular expressions")
 gettext("Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. You must enable these functions before Gallery will run.")
 gettext("exec() allowed")
-gettext("Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini. You won't be able to use modules that require external binaries (e.g. ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change it in the global php.ini.")
+gettext("Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> parameter in php.ini. You won't be able to use modules that require external binaries (e.g. ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change it in the global php.ini.")
 gettext("set_time_limit() allowed")
-gettext("Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini.  Gallery can function with this setting, but it will not operate reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just return a blank page) possibly leading to data corruption.")
+gettext("Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</b> parameter in php.ini.  Gallery can function with this setting, but it will not operate reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just return a blank page) possibly leading to data corruption.")
+gettext("Filesystem Operations")
+gettext("Error: Essential filesystem operations are disabled in your PHP by the <b>disabled_functions</b> parameter in php.ini. You must allow these functions before Gallery will run. These functions are missing: %s.")
 gettext("Memory limit")
 gettext("no limit")
 gettext("Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</b> parameter in php.ini). You should raise this limit to at least <b>%sMB</b> for proper Gallery operation.")
 gettext("File uploads allowed")
 gettext("Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in php.ini). You will need to enable this option if you want to upload files to your Gallery with a web browser.")
 gettext("Maximum upload size")
-gettext("Warning: Your PHP is configured to limit the size of file uploads to %sb (<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow uploading bigger files.")
+gettext("Warning: Your PHP is configured to limit the size of file uploads to %sb (<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow uploading bigger files.")
 gettext("Maximum POST size")
 gettext("Warning: Your PHP is configured to limit the post data to a maximum of %sb (<b>post_max_size</b> parameter in php.ini). You should raise this limit to allow uploading bigger files.")
 gettext("Translation support")
@@ -47,11 +50,11 @@ gettext("Your webserver does not support localization. To enable support for add
 gettext("Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display extended characters for some languages incorrectly.")
 gettext("Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to translate plural forms.")
 gettext("Zend compatibility mode")
-gettext("Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before proceeding.")
+gettext("Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your PHP is ok.  If you get an error or no response then you must turn off ze1_compatibility_mode before proceeding.")
 gettext("putenv() allowed")
-gettext("Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini.  Gallery can function with this setting, but on some rare systems Gallery will be unable to run in other languages than the system language and English.")
+gettext("Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> parameter in php.ini.  Gallery can function with this setting, but on some rare systems Gallery will be unable to run in other languages than the system language and English.")
 gettext("Output buffering disabled")
-gettext("Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  Gallery can function with this setting - downloading files is even faster - but Gallery might be unable to serve large files (e.g. large videos) and run into the  memory limit. Also, some features like the progress bars might not work correctly if output buffering is enabled unless ini_set() is allowed.")
+gettext("Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  Gallery can function with this setting - downloading files is even faster - but Gallery might be unable to serve large files (e.g. large videos) and run into the memory limit. Also, some features like the progress bars might not work correctly if output buffering is enabled unless ini_set() is allowed.")
 gettext("Storage Directory Permissions")
 gettext("Test skipped due to other errors.")
 gettext("Error: Some files and or directories in your storage directory are not writeable by the webserver user. Run chown -R webserverUser %s OR run chmod -R 777 %s.")
@@ -108,7 +111,7 @@ gettext("Try Again")
 
 /* templates/Finished.html */
 gettext("Finished!")
-gettext("Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 modules you may use the Site Administrator interface.")
+gettext("Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 plugins you may use the Site Administrator interface.")
 gettext("Go to my Gallery!")
 
 /* templates/Header.html */
@@ -186,7 +189,7 @@ gettext("<b>Reminder</b>: Now check the permissions on config.php and make sure 
 gettext("Your Gallery Core Module is up to date!")
 
 /* templates/UpgradeOtherModulesRequest.html */
-gettext("The following modules can be automatically upgraded for you.  If you choose not to upgrade them now, you may experience problems with your Gallery.   You can always upgrade or deactivate them on the Site Administration page, or return to this page later so any decision you make here is not permanent.")
+gettext("The following plugins can be automatically upgraded for you.  If you choose not to upgrade them now, you may experience problems with your Gallery.   You can always upgrade or deactivate them on the Site Administration page, or return to this page later so any decision you make here is not permanent.")
 gettext("Deactivated Plugins")
 gettext("The following plugins were active, but they are missing or incompatible with your current version of Gallery.  They have been deactivated.  Install the latest version of these plugins to reactivate them.")
 gettext("Module")
@@ -198,12 +201,12 @@ gettext("Description")
 gettext("Incompatible with this version of Gallery")
 gettext("(un)check all")
 gettext("Skip Upgrade and Continue to Step %d&raquo;")
-gettext("Upgrade Selected Modules")
+gettext("Upgrade Selected Plugins")
 
 /* templates/UpgradeOtherModulesSuccess.html */
 gettext("Upgraded the %s module successfully")
 gettext("Upgraded the %s theme successfully")
-gettext("Upgrade More Modules")
+gettext("Upgrade More Plugins")
 
 /* templates/Welcome.html */
 gettext("Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these steps and provide assistance along the way if additional steps are required. Please read the %sHelp File%s before proceeding.")

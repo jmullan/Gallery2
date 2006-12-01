@@ -222,8 +222,9 @@ msgstr "Oracle (9i et plus récent)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 et plus récentes)"
 
-msgid "MSSQL (2005 and newer)"
-msgstr "MSSQL (2005 et plus récent)"
+#, fuzzy
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x et plus récentes"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Type de base de données inconnu ou aucune information sur les tables connues."
@@ -393,7 +394,7 @@ msgid "exec() allowed"
 msgstr "Autorisation de la commande exec()"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -409,7 +410,7 @@ msgstr "Autorisation de la commande set_time_limit()"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -419,6 +420,20 @@ msgstr ""
 "dans cette configuration, mais sa fiabilité n'est pas garantie&nbsp;: toute opération qui "
 "dure plus de %d secondes échouera (et dans certains cas retournera une page blanche), ce qui "
 "pourra entraîner une corruption des données."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"Attention&nbsp;: la fonction putenv() est désactivée dans votre installation de PHP par le "
+"paramètre <b>disabled_functions</b> dans le fichier php.ini. Gallery peut fonctionner dans "
+"cette configuration, mais sur certains systèmes, Gallery ne pourra pas s'afficher dans une "
+"autre langue que la langue par défaut du système et l'anglais."
 
 msgid "Memory limit"
 msgstr "Limite mémoire"
@@ -451,10 +466,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Taille maximale des téléchargements"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "Attention&nbsp;: votre installation de PHP est configurée pour limiter la taille des "
@@ -522,10 +537,11 @@ msgstr ""
 msgid "putenv() allowed"
 msgstr "Autorisation de la commande putenv()"
 
+#, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "Attention&nbsp;: la fonction putenv() est désactivée dans votre installation de PHP par le "
 "paramètre <b>disabled_functions</b> dans le fichier php.ini. Gallery peut fonctionner dans "
@@ -537,7 +553,7 @@ msgstr "Mise en buffer de la sortie désactivée"
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
@@ -832,20 +848,6 @@ msgstr "Aide pour l'installation"
 
 msgid "Start Over"
 msgstr "Reprendre depuis le début"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Noyau de Gallery installé avec succès"
-
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
-"Félicitations&nbsp;! Nous avons installé le framework de Gallery avec succès. Cependant, la "
-"plupart des fonctionnalités avancées de Gallery viennent des modules supplémentaires que "
-"vous pouvez installer et configurer. L'étape suivante vous conduira à la sélection des "
-"modules qui vous permettrons de configurer Gallery suivant vos besoins."
 
 msgid "Error installing Gallery Core"
 msgstr "Erreur à l'installation du noyau de Gallery (Gallery Core)"
@@ -1394,3 +1396,20 @@ msgstr "Go"
 
 msgid "Begin Installation&raquo;"
 msgstr "Commencer l'installation&raquo;"
+
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MSSQL (2005 et plus récent)"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Noyau de Gallery installé avec succès"
+
+#~ msgid ""
+#~ "Congratulations, we've successfully installed the Gallery framework.  However, most of "
+#~ "the really cool features from Gallery come from additional modules that you can install "
+#~ "and configure.  The next step will take you through the process of selecting modules to "
+#~ "install so that you can tune Gallery to do exactly what you want."
+#~ msgstr ""
+#~ "Félicitations&nbsp;! Nous avons installé le framework de Gallery avec succès. Cependant, "
+#~ "la plupart des fonctionnalités avancées de Gallery viennent des modules supplémentaires "
+#~ "que vous pouvez installer et configurer. L'étape suivante vous conduira à la sélection "
+#~ "des modules qui vous permettrons de configurer Gallery suivant vos besoins."

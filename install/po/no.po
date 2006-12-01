@@ -216,8 +216,9 @@ msgstr "Oracle (9i og nyere)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 og nyere)"
 
-msgid "MSSQL (2005 and newer)"
-msgstr "MSSQL (2005 og nyere)"
+#, fuzzy
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x og nyere"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Ukjent DB-type eller ingen kjent tabellinformasjon."
@@ -382,7 +383,7 @@ msgid "exec() allowed"
 msgstr "exec() tillatt"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -397,7 +398,7 @@ msgstr "set_time_limit() tillatt"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -406,6 +407,19 @@ msgstr ""
 "<b>disable_functions</b> i php.ini. Gallery kan fungere uten denne innstillingen, men vil "
 "ikke jobbe stabilt. Enhver operasjon som tar lengre enn %d sekunder vil mislykkes (og i noen "
 "tilfeller gi en blank side) og muligens lede til ødelagte filer."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"Advarsel: Funksjonen putenv() er deaktivert i din PHP med parameteret <b>disabled_functions</"
+"b> i php.ini. Gallery kan fungere med denne innstillingen, men på noen sjeldne systemer vil "
+"Gallery være ute av stand til å vise andre språk en systemspråket og engelsk."
 
 msgid "Memory limit"
 msgstr "Minnebegrensning"
@@ -437,10 +451,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Største opplastingsstørrelse"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "Advarsel: Din PHP er satt opp til å begrense størelsen på filopplastinger til %s B "
@@ -505,10 +519,11 @@ msgstr ""
 msgid "putenv() allowed"
 msgstr "putenv() tillatt"
 
+#, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "Advarsel: Funksjonen putenv() er deaktivert i din PHP med parameteret <b>disabled_functions</"
 "b> i php.ini. Gallery kan fungere med denne innstillingen, men på noen sjeldne systemer vil "
@@ -519,7 +534,7 @@ msgstr "Mellomlagring av utdata er deaktivert"
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
@@ -802,20 +817,6 @@ msgstr "Installasjonshjelp"
 
 msgid "Start Over"
 msgstr "Start på nytt"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Vellykket installasjon av Gallerykjernen"
-
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
-"Gratulerer, du har gjort en vellykket installasjon av Gallerys rammeverk. De fleste virkelig "
-"kule funksjonene i Gallery kommer imidlertid fra tilleggsmoduler som du kan installere og "
-"sette opp. Det neste trinnet vil føre deg gjennom prosessen med å velge ut de modulene du "
-"vil installere slik at du kan finjustere Gallery til å gjøre nøyaktig det du vil."
 
 msgid "Error installing Gallery Core"
 msgstr "Feil ved installasjon av Gallerykjerne"
@@ -1347,3 +1348,21 @@ msgstr "Gå"
 
 msgid "Begin Installation&raquo;"
 msgstr "Start installasjonen&raquo;"
+
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MSSQL (2005 og nyere)"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Vellykket installasjon av Gallerykjernen"
+
+#~ msgid ""
+#~ "Congratulations, we've successfully installed the Gallery framework.  However, most of "
+#~ "the really cool features from Gallery come from additional modules that you can install "
+#~ "and configure.  The next step will take you through the process of selecting modules to "
+#~ "install so that you can tune Gallery to do exactly what you want."
+#~ msgstr ""
+#~ "Gratulerer, du har gjort en vellykket installasjon av Gallerys rammeverk. De fleste "
+#~ "virkelig kule funksjonene i Gallery kommer imidlertid fra tilleggsmoduler som du kan "
+#~ "installere og sette opp. Det neste trinnet vil føre deg gjennom prosessen med å velge ut "
+#~ "de modulene du vil installere slik at du kan finjustere Gallery til å gjøre nøyaktig det "
+#~ "du vil."

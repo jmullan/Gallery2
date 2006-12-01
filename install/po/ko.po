@@ -212,8 +212,9 @@ msgstr "Oracle (9i 이상)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 이상)"
 
-msgid "Microsoft SQL Server"
-msgstr ""
+#, fuzzy
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x 이상"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "DB 유형 또는 테이블 정보를 알 수 없습니다."
@@ -374,7 +375,7 @@ msgid "exec() allowed"
 msgstr "exec() 허용 확인"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -388,7 +389,7 @@ msgstr "set_time_limit() 허용 확인"
 
 #, fuzzy, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -397,6 +398,16 @@ msgstr ""
 "다. Gallery는 이 설정을 따르기는 하겠지만 확실한 운영여부는 보장하지 못합니다. Any operation "
 "that takes longer than %d seconds will fail (and in some cases just return a blank page) "
 "possibly leading to data corruption."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
 
 msgid "Memory limit"
 msgstr ""
@@ -426,10 +437,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "파일 올리기 최대 크기 확인"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "경고: PHP의 파일 올리기 최대 크기가 %sb로 제한(php.ini의 매개 변수 <b>upload_max_filesize</"
@@ -485,18 +496,23 @@ msgstr ""
 msgid "putenv() allowed"
 msgstr "putenv() 허용 여부 확인"
 
+#, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
+"경고: php.ini의 매개 변수 <b>disabled_functions</b>에 의해 set_time() 함수를 사용할 수 없습니"
+"다. Gallery는 이 설정을 따르기는 하겠지만 확실한 운영여부는 보장하지 못합니다. Any operation "
+"that takes longer than %d seconds will fail (and in some cases just return a blank page) "
+"possibly leading to data corruption."
 
 msgid "Output buffering disabled"
 msgstr "버퍼링 출력을 할 수 없습니다."
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
@@ -760,16 +776,6 @@ msgstr "설치 도움말"
 
 msgid "Start Over"
 msgstr "처음부터 다시"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Gallery Core 설치 성공"
-
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
 
 msgid "Error installing Gallery Core"
 msgstr "Gallery Core 설치 중 오류가 발생했습니다."
@@ -1256,6 +1262,9 @@ msgstr "이동."
 
 msgid "Begin Installation&raquo;"
 msgstr "Gallery 설치를 시작합니다. &raquo;"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Gallery Core 설치 성공"
 
 #~ msgid "PostgreSQL v6.x (not well tested)"
 #~ msgstr "PostgreSQL v6.x (검수하지 않았음)"

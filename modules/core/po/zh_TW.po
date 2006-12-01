@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "POT-Creation-Date: 2005-07-27 23:11-0400\n"
 "PO-Revision-Date: 2005-08-24 14:00-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -588,10 +588,10 @@ msgid ""
 "After using this, you should run the 'Delete database cache' task to get rid of any "
 "corruption in your cache."
 msgstr ""
-"如果你是在 MySQL 3.x 產生你的資料庫，然後升級到 MySQL 4.x，如果你沒有將資料庫"
-"轉換成使用 UTF8 你可能會看到一些亂碼。如果你的資料庫已經轉換過，這個動作不會造成"
-"任何損壞，所以如果你不確定，還是可以試著使用這個功能。使用過這個功能後，你需要執行"
-"「刪除資料庫快取」工作來刪除任何在快取中的錯誤資料。"
+"如果你是在 MySQL 3.x 產生你的資料庫，然後升級到 MySQL 4.x，如果你沒有將資料庫轉換成使用 UTF8 "
+"你可能會看到一些亂碼。如果你的資料庫已經轉換過，這個動作不會造成任何損壞，所以如果你不確定，"
+"還是可以試著使用這個功能。使用過這個功能後，你需要執行「刪除資料庫快取」工作來刪除任何在快取"
+"中的錯誤資料。"
 
 msgid "Database successfully converted to UTF8"
 msgstr "成功的將資料庫轉換成 UTF8"
@@ -717,7 +717,8 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr "無法產生快取子目錄。請確定網頁伺服器有寫入的權限。"
 
-msgid "Officially Release Repository"
+#, fuzzy
+msgid "Official Release Repository"
 msgstr "正式釋出的軟體庫"
 
 msgid "Experimental Repository"
@@ -892,12 +893,6 @@ msgstr "試算表"
 
 msgid "file"
 msgstr "檔案"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr "無效的 URL！要求的 URL %s 試著轉向到不在 Gallery 中的 %s。"
 
 msgid "Back"
 msgstr "返回"
@@ -1483,12 +1478,25 @@ msgstr "電子郵件地址"
 msgid "(suggested)"
 msgstr "（建議輸入）"
 
-msgid "Lock Account"
-msgstr "鎖定帳戶"
+msgid "Options"
+msgstr "選項"
+
+#, fuzzy
+msgid "Lock user."
+msgstr "鎖定系統"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr "被鎖定的用戶無法編輯他們自己的帳戶資訊。（密碼、姓名、電郵等等）"
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "重置觀賞次數"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
 
 msgid "Group Management"
 msgstr "成員組管理"
@@ -1755,6 +1763,13 @@ msgstr "版本"
 
 msgid "Actions"
 msgstr "操作"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 msgid "Incompatible plugin!"
 msgstr "不相容的外掛組件！"
@@ -2146,6 +2161,14 @@ msgstr "你不能刪除訪客"
 msgid "Edit User (by list)"
 msgstr "編輯用戶（列表）"
 
+#, fuzzy
+msgid "Locked"
+msgstr "鎖住"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "失敗"
+
 msgid "Thumbnails"
 msgstr "縮略圖"
 
@@ -2176,6 +2199,10 @@ msgstr "資料庫錯誤"
 msgid "Platform Error"
 msgstr "系統錯誤"
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "授權已確認"
+
 msgid "Error"
 msgstr "錯誤"
 
@@ -2190,11 +2217,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "返回並重試"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "清除儲存頁面"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "你可以選擇返回主 Gallery 頁面，繼續瀏覽。"
 
 msgid "The action you attempted is not permitted."
 msgstr "你嘗試的操作無效。"
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "與資料庫交換時發生一個錯誤。"
@@ -2327,8 +2368,8 @@ msgstr ""
 "<b>注意：</b>你一次可以上傳 %s。每個檔案不能大於 %s。如果你需要上傳更多，請分開上傳檔案，或使"
 "用其他上傳方法，或聯絡系統管理員允許更大上傳空間。"
 
-msgid "More.."
-msgstr "更多..."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "設定項目主題為："
@@ -2338,9 +2379,6 @@ msgstr "將說明設為："
 
 msgid "No Thumbnail"
 msgstr "無縮略圖"
-
-msgid "Options"
-msgstr "選項"
 
 msgid "Delete Items"
 msgstr "刪除項目"
@@ -3120,6 +3158,13 @@ msgstr "登入到你的帳戶"
 msgid "Your password has been recovered, please login."
 msgstr "你的密碼已經重新取得，請登入。"
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "你的登入資訊不正確，請再試。"
 
@@ -3412,3 +3457,14 @@ msgstr "[測試] 第二個權限"
 
 msgid "Unit test theme"
 msgstr "單元測試佈景主題"
+
+#~ msgid ""
+#~ "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not "
+#~ "a part of this Gallery."
+#~ msgstr "無效的 URL！要求的 URL %s 試著轉向到不在 Gallery 中的 %s。"
+
+#~ msgid "Lock Account"
+#~ msgstr "鎖定帳戶"
+
+#~ msgid "More.."
+#~ msgstr "更多..."

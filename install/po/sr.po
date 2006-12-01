@@ -226,8 +226,8 @@ msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 i novije)"
 
 #, fuzzy
-msgid "MSSQL (2005 and newer)"
-msgstr "MySQL sa transakcijama (v3.23.34a ili novija)"
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x ili novija"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Nepoznat tip baze ili nema informacija o postojećim tabelama."
@@ -401,7 +401,7 @@ msgid "exec() allowed"
 msgstr "exec() je dozvoljen"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -417,10 +417,25 @@ msgstr "set_time_limit() je dozvoljen"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
+msgstr ""
+"Upozorenje: Funkcija set_time_limit() je onemogućena u vašoj verziji PHP-a parametrom "
+"<b>disabled_functions</b> u php.ini datoteci. Galerija može da radi sa ovakvim "
+"podešavanjima, ali ne pouzdano. Bilo koja radnja koja traje duže od %d sekundi će biti "
+"neuspešna (a u nekim slučajevima samo prikazati praznu stranu), uz mogućnost oštećenja "
+"podataka."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
 msgstr ""
 "Upozorenje: Funkcija set_time_limit() je onemogućena u vašoj verziji PHP-a parametrom "
 "<b>disabled_functions</b> u php.ini datoteci. Galerija može da radi sa ovakvim "
@@ -458,10 +473,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Maksimalna veličina prenosa"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "Upozorenje: Vaša verzija PHP-a je podešena da ograniči veličinu datoteka pri prenosu na %sb "
@@ -524,9 +539,9 @@ msgstr "putenv() je dozvoljen"
 
 #, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "Upozorenje: Funkcija set_time_limit() je onemogućena u vašoj verziji PHP-a parametrom "
 "<b>disabled_functions</b> u php.ini datoteci. Galerija može da radi sa ovakvim "
@@ -539,7 +554,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
@@ -816,20 +831,6 @@ msgstr "Pomoć u vezi sa instalacijom"
 
 msgid "Start Over"
 msgstr "Kreni ispočetka"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Jezgro Galerije je uspešno instalirano."
-
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
-"Čestitamo, uspešno smo instalirali osnovu Galerije. Međutim, većina zaista zanimljivih "
-"mogućnosti Galerije se nalazi u dodatnim modulima koje možete instalirati i podesiti. Da "
-"biste mogli da prilagodite Galeriju svojim potrebama, u sledećem koraku ćete moći da "
-"izaberete module koji vas zanimaju."
 
 msgid "Error installing Gallery Core"
 msgstr "Greška prilikom instalacije jezgra Galerije"
@@ -1348,6 +1349,24 @@ msgstr "Kreni"
 
 msgid "Begin Installation&raquo;"
 msgstr "Počni instalaciju&raquo;"
+
+#, fuzzy
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MySQL sa transakcijama (v3.23.34a ili novija)"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Jezgro Galerije je uspešno instalirano."
+
+#~ msgid ""
+#~ "Congratulations, we've successfully installed the Gallery framework.  However, most of "
+#~ "the really cool features from Gallery come from additional modules that you can install "
+#~ "and configure.  The next step will take you through the process of selecting modules to "
+#~ "install so that you can tune Gallery to do exactly what you want."
+#~ msgstr ""
+#~ "Čestitamo, uspešno smo instalirali osnovu Galerije. Međutim, većina zaista zanimljivih "
+#~ "mogućnosti Galerije se nalazi u dodatnim modulima koje možete instalirati i podesiti. Da "
+#~ "biste mogli da prilagodite Galeriju svojim potrebama, u sledećem koraku ćete moći da "
+#~ "izaberete module koji vas zanimaju."
 
 #~ msgid "Install More Modules"
 #~ msgstr "Instalacija dodatnih modula"

@@ -19,7 +19,7 @@
 # Darius Žitkevičius <skystis@splius.lt>, 2005, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-12 22:28+0200\n"
 "PO-Revision-Date: 2006-03-12 23:02+0200\n"
@@ -745,7 +745,7 @@ msgid ""
 msgstr ""
 "Nepavyko sukurti talpyklos aplanko. Įsitikinkite kad web serveris turi teisę į jį rašyti."
 
-msgid "Officially Release Repository"
+msgid "Official Release Repository"
 msgstr ""
 
 #, fuzzy
@@ -926,13 +926,6 @@ msgstr "skaičiuoklės dokumetas"
 #, fuzzy
 msgid "file"
 msgstr "Failas"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
-"Blogas URL! Užklaustas URL %s bandė įterpti nukreipimą į %s, kas nėra šios galerijos dalis."
 
 msgid "Back"
 msgstr "Atgal"
@@ -1533,13 +1526,27 @@ msgstr "El. pašto adresas"
 msgid "(suggested)"
 msgstr "(rekomenduojamas)"
 
+msgid "Options"
+msgstr "Parinktys"
+
 #, fuzzy
-msgid "Lock Account"
-msgstr "Jūsų duomenys"
+msgid "Lock user."
+msgstr "Rakinimo sistema"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "Anuliuoti peržiūros skaitliukus"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 msgid "Group Management"
 msgstr "Grupių tvarkymas"
@@ -1834,6 +1841,13 @@ msgstr "Versija"
 
 msgid "Actions"
 msgstr "Veiksmai"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 msgid "Incompatible plugin!"
 msgstr "Nesuderinamas priedas!"
@@ -2243,6 +2257,14 @@ msgstr "Negalima ištrinti specialaus vartotojo svečias."
 msgid "Edit User (by list)"
 msgstr "Redaguoti vartotoją (pagal sąrašą)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "Localė"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "Klaida"
+
 msgid "Thumbnails"
 msgstr "Miniatiūros"
 
@@ -2275,6 +2297,10 @@ msgstr "Duombazės klaida"
 msgid "Platform Error"
 msgstr "Platformos klaida"
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "Autorizacija patvirtinta"
+
 msgid "Error"
 msgstr "Klaida"
 
@@ -2290,6 +2316,15 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "Grįžti ir bandyti dar kartą"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "Išvalyti išsaugotus puslapius"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr ""
 "Kaip alternatyva, jūs galite sugrįžti į pagrindinį Galerijos puslapį ir pradėti naršyti iš "
@@ -2297,6 +2332,11 @@ msgstr ""
 
 msgid "The action you attempted is not permitted."
 msgstr "Veiksmas kurį bandote atlikti draudžiamas."
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "Keičiantis duomenimis su duomenų baze įvyko klaida."
@@ -2444,8 +2484,8 @@ msgstr ""
 "naudoti kitokį failų  įkėlimo būdą, arba paprašyti administratoriaus, kad suteiktu galimybę "
 "atlikti didesnius įkėlimus."
 
-msgid "More.."
-msgstr "Daugiau..."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "Nustatyti antraštes pagal:"
@@ -2455,9 +2495,6 @@ msgstr "Antraštę priskirti:"
 
 msgid "No Thumbnail"
 msgstr "Be miniatiūros"
-
-msgid "Options"
-msgstr "Parinktys"
 
 msgid "Delete Items"
 msgstr "Trinti elementus"
@@ -3297,6 +3334,13 @@ msgstr "Prisijungi į savo paskyrą"
 msgid "Your password has been recovered, please login."
 msgstr "Jūsų slaptažodis atkurtas, prašom prisijungti."
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Jūsų prisijungimo informacija neteisinga.  Prašome bandyti dar kartą."
 
@@ -3611,6 +3655,20 @@ msgstr "[test] antra teisė"
 
 msgid "Unit test theme"
 msgstr "Elemento testavimo tema"
+
+#~ msgid ""
+#~ "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not "
+#~ "a part of this Gallery."
+#~ msgstr ""
+#~ "Blogas URL! Užklaustas URL %s bandė įterpti nukreipimą į %s, kas nėra šios galerijos "
+#~ "dalis."
+
+#, fuzzy
+#~ msgid "Lock Account"
+#~ msgstr "Jūsų duomenys"
+
+#~ msgid "More.."
+#~ msgstr "Daugiau..."
 
 #~ msgid "Rebuilding resized images..."
 #~ msgstr "Pergeneruojami sumažinti paveikslai..."

@@ -59,12 +59,21 @@ msgstr "Atjaunošana pabeigta"
 msgid "System Checks"
 msgstr "Sistēmas pārbaudes"
 
+msgid "Performing system checks"
+msgstr ""
+
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP versija >= 4.3.0 vai >= 5.0.4"
 
 #, c-format
-msgid "Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the %sPHP website%s."
-msgstr "Kļūda: Lai strādātu ar Galerija 2, nepieciešamas PHP versija 4.3.0 vai jaunāka vai 5.0.4 vai jaunāka. Jums ir instalēta PHP versija %s. Sazinieties ar webservera administratoru, lai pieprasītu atjaunojumu, kurš pieejams %sPHP weblapā%s."
+msgid ""
+"Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
+"%s installed. Contact your webserver administrator to request an upgrade, available at the %"
+"sPHP website%s."
+msgstr ""
+"Kļūda: Lai strādātu ar Galerija 2, nepieciešamas PHP versija 4.3.0 vai jaunāka vai 5.0.4 vai "
+"jaunāka. Jums ir instalēta PHP versija %s. Sazinieties ar webservera administratoru, lai "
+"pieprasītu atjaunojumu, kurš pieejams %sPHP weblapā%s."
 
 msgid "PHP Version"
 msgstr "PHP versija"
@@ -72,8 +81,12 @@ msgstr "PHP versija"
 msgid "FILE directive supported"
 msgstr "Tiek atbalstīta FILE direktīva"
 
-msgid "Error: your PHP __FILE__ directive is not functioning correctly. Please file a support request with your webserver administrator or in the Gallery forums."
-msgstr "Kļūda: Jūsu PHP __FILE__ direktīva nestrādā korekti. Lūdzu aizpildiet atbalsta pieprasījumu no Jūsu webservera administratora vai Galerijas forumā."
+msgid ""
+"Error: your PHP __FILE__ directive is not functioning correctly. Please file a support "
+"request with your webserver administrator or in the Gallery forums."
+msgstr ""
+"Kļūda: Jūsu PHP __FILE__ direktīva nestrādā korekti. Lūdzu aizpildiet atbalsta pieprasījumu "
+"no Jūsu webservera administratora vai Galerijas forumā."
 
 msgid "FILE Directive"
 msgstr "FILE direktīva"
@@ -81,8 +94,12 @@ msgstr "FILE direktīva"
 msgid "Safe mode disabled"
 msgstr "Drošais režims atspējots"
 
-msgid "Error: Your version of PHP is configured with safe mode enabled.  You must disable safe mode before Gallery will run."
-msgstr "Kļūda: Jūsu PHP versija ir konfigurēta darbam ar drošo režīmu. Pirms palaist Galeriju, vispirms jums ir jāatspējo drošais režīms"
+msgid ""
+"Error: Your version of PHP is configured with safe mode enabled.  You must disable safe mode "
+"before Gallery will run."
+msgstr ""
+"Kļūda: Jūsu PHP versija ir konfigurēta darbam ar drošo režīmu. Pirms palaist Galeriju, "
+"vispirms jums ir jāatspējo drošais režīms"
 
 msgid "Safe Mode"
 msgstr "Drošais režīms"
@@ -91,20 +108,40 @@ msgid "Regular expressions"
 msgstr "Regulārās izteiksmes"
 
 #, c-format
-msgid "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. You must enable these functions before Gallery will run."
+msgid ""
+"Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
+"You must enable these functions before Gallery will run."
 msgstr ""
 
 msgid "exec() allowed"
 msgstr "exec() atļauts"
 
-msgid "Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini. You won't be able to use modules that require external binaries (e.g. ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change it in the global php.ini."
+msgid ""
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
+"parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
+"ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
+"it in the global php.ini."
 msgstr ""
 
 msgid "set_time_limit() allowed"
 msgstr "set_time_limit() atļauts"
 
 #, c-format
-msgid "Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini.  Gallery can function with this setting, but it will not operate reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just return a blank page) possibly leading to data corruption."
+msgid ""
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
+"b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
+"reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
+"return a blank page) possibly leading to data corruption."
+msgstr ""
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
 msgstr ""
 
 msgid "Memory limit"
@@ -114,62 +151,92 @@ msgid "no limit"
 msgstr "nav limita"
 
 #, c-format
-msgid "Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</b> parameter in php.ini). You should raise this limit to at least <b>%sMB</b> for proper Gallery operation."
+msgid ""
+"Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</b> parameter in "
+"php.ini). You should raise this limit to at least <b>%sMB</b> for proper Gallery operation."
 msgstr ""
 
 msgid "File uploads allowed"
 msgstr "Failu augšupielāde atļauta"
 
-msgid "Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in php.ini). You will need to enable this option if you want to upload files to your Gallery with a web browser."
+msgid ""
+"Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in "
+"php.ini). You will need to enable this option if you want to upload files to your Gallery "
+"with a web browser."
 msgstr ""
 
 msgid "Maximum upload size"
 msgstr "Maksimālais augšupielādes izmērs"
 
 #, c-format
-msgid "Warning: Your PHP is configured to limit the size of file uploads to %sb (<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow uploading bigger files."
+msgid ""
+"Warning: Your PHP is configured to limit the size of file uploads to %sb "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
+"uploading bigger files."
 msgstr ""
 
 msgid "Maximum POST size"
 msgstr "Maksimālais POST izmērs"
 
 #, c-format
-msgid "Warning: Your PHP is configured to limit the post data to a maximum of %sb (<b>post_max_size</b> parameter in php.ini). You should raise this limit to allow uploading bigger files."
+msgid ""
+"Warning: Your PHP is configured to limit the post data to a maximum of %sb "
+"(<b>post_max_size</b> parameter in php.ini). You should raise this limit to allow uploading "
+"bigger files."
 msgstr ""
 
 msgid "Translation support"
 msgstr "Tulkošanas atbalts"
 
 #, c-format
-msgid "Your webserver does not support localization. To enable support for additional languages please instruct your system administrator to reconfigure PHP with the %sgettext%s option enabled."
+msgid ""
+"Your webserver does not support localization. To enable support for additional languages "
+"please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
+"enabled."
 msgstr ""
 
 #, c-format
-msgid "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display extended characters for some languages incorrectly."
+msgid ""
+"Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
+"extended characters for some languages incorrectly."
 msgstr ""
 
 #, c-format
-msgid "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to translate plural forms."
+msgid ""
+"Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
+"translate plural forms."
 msgstr ""
 
 msgid "Zend compatibility mode"
 msgstr "Zend savietojamības režīms"
 
 #, c-format
-msgid "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before proceeding."
+msgid ""
+"Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
+"crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your "
+"PHP is ok.  If you get an error or no response then you must turn off ze1_compatibility_mode "
+"before proceeding."
 msgstr ""
 
 msgid "putenv() allowed"
 msgstr "putenv() atļauts"
 
-msgid "Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> parameter in php.ini.  Gallery can function with this setting, but on some rare systems Gallery will be unable to run in other languages than the system language and English."
+msgid ""
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
+"parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 
 msgid "Output buffering disabled"
 msgstr "Izvades buferēšana atspējota"
 
 #, c-format
-msgid "Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  Gallery can function with this setting - downloading files is even faster - but Gallery might be unable to serve large files (e.g. large videos) and run into the  memory limit. Also, some features like the progress bars might not work correctly if output buffering is enabled unless ini_set() is allowed."
+msgid ""
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
+"Gallery can function with this setting - downloading files is even faster - but Gallery "
+"might be unable to serve large files (e.g. large videos) and run into the memory limit. "
+"Also, some features like the progress bars might not work correctly if output buffering is "
+"enabled unless ini_set() is allowed."
 msgstr ""
 
 msgid "Storage Directory Permissions"
@@ -179,7 +246,9 @@ msgid "Test skipped due to other errors."
 msgstr "Tests izlaists citu kļūdu dēļ."
 
 #, c-format
-msgid "Error: Some files and or directories in your storage directory are not writeable by the webserver user. Run chown -R webserverUser %s OR run chmod -R 777 %s."
+msgid ""
+"Error: Some files and or directories in your storage directory are not writeable by the "
+"webserver user. Run chown -R webserverUser %s OR run chmod -R 777 %s."
 msgstr ""
 
 msgid "Gallery file integrity"
@@ -254,11 +323,50 @@ msgstr "Nav iespējams deaktivizēt moduli %s"
 msgid "Welcome"
 msgstr "Laipni lūdzam"
 
-msgid "In order to proceed with the install, we have to verify that you are who you claim.  When you performed the install, you entered a password which went into your config.php.  Type that in now.  Refer to your config.php if you've forgotten what you entered."
+#, c-format
+msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
+msgstr ""
+
+#, c-format
+msgid ""
+"<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
+"file."
+msgstr ""
+
+#, c-format
+msgid ""
+"<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
+"string from below and try again."
+msgstr ""
+
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"When you performed the install, you entered a password which went into your config.php.  "
+"Type that in now.  Refer to your config.php if you've forgotten what you entered."
 msgstr ""
 
 msgid "Password:"
 msgstr "Parole:"
+
+msgid "You have exceeded the maximum attempts to login by entering a password."
+msgstr ""
+
+msgid ""
+"To prevent somebody from hacking your website, we now require you to complete a stricter "
+"authentication process."
+msgstr ""
+
+#, c-format
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"The best way to be sure is to ask you to make a tiny change in the Gallery directory which "
+"will prove that you have the right permissions.  So, we're going to ask that you create a "
+"new text file called %s in the %s directory on your webserver (that's the same directory "
+"where %s is located). It must contain the following randomly generated characters:"
+msgstr ""
+
+msgid "Once you've uploaded the file, click below to continue."
+msgstr ""
 
 msgid "Authenticate Me"
 msgstr "Autentificēt mani"
@@ -272,13 +380,21 @@ msgstr "Kešatmiņa veiksmīgi iztīrīta."
 msgid "Delete Caches"
 msgstr "Kešatmiņas dzēšana"
 
-msgid "Gallery creates temporary copies of some of your data on your hard drive.  This helps it to run faster.  But when you upgrade, some of these files might be out of date so it's a good idea to get rid of them now.  Gallery will create them again as it needs them."
+msgid ""
+"Gallery creates temporary copies of some of your data on your hard drive.  This helps it to "
+"run faster.  But when you upgrade, some of these files might be out of date so it's a good "
+"idea to get rid of them now.  Gallery will create them again as it needs them."
 msgstr ""
 
-msgid "We were unable to clean the following cache directories.  This is probably ok, but if you notice any weird behaviour, you should try to delete these directories yourself.  It's perfectly safe to get rid of them at any time."
+msgid ""
+"We were unable to clean the following cache directories.  This is probably ok, but if you "
+"notice any weird behaviour, you should try to delete these directories yourself.  It's "
+"perfectly safe to get rid of them at any time."
 msgstr ""
 
-msgid "Even though there were errors, you can still continue.  Or, you can try deleting these directories yourself and then click the <b>Try Again</b> link below."
+msgid ""
+"Even though there were errors, you can still continue.  Or, you can try deleting these "
+"directories yourself and then click the <b>Try Again</b> link below."
 msgstr ""
 
 msgid "Try Again"
@@ -287,7 +403,9 @@ msgstr "Mēģiniet vēreiz"
 msgid "Finished!"
 msgstr "Pabeigts!"
 
-msgid "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 modules you may use the Site Administrator interface."
+msgid ""
+"Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
+"plugins you may use the Site Administrator interface."
 msgstr ""
 
 msgid "Go to my Gallery!"
@@ -303,7 +421,9 @@ msgid "Warning"
 msgstr "Brīdinājums"
 
 #, c-format
-msgid "Your config.php appears to use the old form of multisite support.  Please see the %sHelp File%s for instructions to update your configuration before proceeding."
+msgid ""
+"Your config.php appears to use the old form of multisite support.  Please see the %sHelp File"
+"%s for instructions to update your configuration before proceeding."
 msgstr ""
 
 msgid "Welcome to the Gallery Upgrader"
@@ -327,14 +447,19 @@ msgstr ""
 msgid "Missing files (%d)"
 msgstr "Trūkst faili (%d)"
 
-msgid "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might be safe to ignore these."
+msgid ""
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
+"be safe to ignore these."
 msgstr ""
 
 #, c-format
 msgid "Modified files (%d)"
 msgstr "Modificēti faili (%d)"
 
-msgid "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can probably ignore these, but to be safe you should make sure that you do 'svn update' before continuing."
+msgid ""
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
 msgstr ""
 
 #, c-format
@@ -342,7 +467,10 @@ msgid "Old files (%d)"
 msgstr "Veci faili (%d)"
 
 #, c-format
-msgid "These files are no longer part of Gallery. They probably won't cause any problems but it is a good idea to remove them to keep your install clean.  Gallery can't remove these files for you, but you can download and run %s in your gallery2 directory to delete them for you."
+msgid ""
+"These files are no longer part of Gallery. They probably won't cause any problems but it is "
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 
 msgid "this script"
@@ -357,13 +485,18 @@ msgstr "Trūkstošs vai nekorekts config.php"
 msgid "You tried to run the upgrade process but a valid config.php is missing."
 msgstr ""
 
-msgid "If you've lost your config.php file when replacing the Gallery 2 files in the preparation for this upgrade, please restore it and try again."
+msgid ""
+"If you've lost your config.php file when replacing the Gallery 2 files in the preparation "
+"for this upgrade, please restore it and try again."
 msgstr ""
 
 msgid "If you actually want to run the Gallery 2 installer, please follow the link below."
 msgstr ""
 
-msgid "If you want to upgrade from Gallery 1, you first need to install Gallery 2 and then use the import module to import your data from Gallery 1. Please follow the link below to install Gallery 2."
+msgid ""
+"If you want to upgrade from Gallery 1, you first need to install Gallery 2 and then use the "
+"import module to import your data from Gallery 1. Please follow the link below to install "
+"Gallery 2."
 msgstr ""
 
 msgid "Go to the Gallery 2 Installer"
@@ -375,14 +508,19 @@ msgstr "Veiksmīgi"
 msgid "Failed"
 msgstr "Neveiksmīgi"
 
-msgid "If you are using Apache, create a file named .htaccess in the main Gallery directory with the following content:"
+msgid ""
+"If you are using Apache, create a file named .htaccess in the main Gallery directory with "
+"the following content:"
 msgstr ""
 
 msgid "An error occurred while upgrading Gallery Core Module"
 msgstr ""
 
 #, c-format
-msgid "Something went wrong when we tried to upgrade the core module.  In the boxes below you can find some debug information.  Report this in the %sGallery Forums%s and we'll help you diagnose the problem."
+msgid ""
+"Something went wrong when we tried to upgrade the core module.  In the boxes below you can "
+"find some debug information.  Report this in the %sGallery Forums%s and we'll help you "
+"diagnose the problem."
 msgstr ""
 
 msgid "Stack Trace:"
@@ -394,7 +532,10 @@ msgstr "Lāgošanas izvads:"
 msgid "Upgrading the Gallery Core Module"
 msgstr "Atjauno galerijas kodola moduli"
 
-msgid "The Gallery Core Module is the heart of the Gallery application.  You can upgrade most other modules using the Site Administration interface, but this module must be handled separately in order for the upgrade to go smoothly."
+msgid ""
+"The Gallery Core Module is the heart of the Gallery application.  You can upgrade most other "
+"modules using the Site Administration interface, but this module must be handled separately "
+"in order for the upgrade to go smoothly."
 msgstr ""
 
 msgid "Currently installed"
@@ -420,10 +561,16 @@ msgstr ""
 msgid "You can do <i>chmod 666 config.php</i> to fix this."
 msgstr "Lai to izdarītu, Jūs varat izpildīt <i>chmod 666 config.php</i>."
 
-msgid "The installed version is newer than the version you are trying to upgrade to. You cannot downgrade G2. Please replace the gallery2 files with files from the currently installed version or later."
+msgid ""
+"The installed version is newer than the version you are trying to upgrade to. You cannot "
+"downgrade G2. Please replace the gallery2 files with files from the currently installed "
+"version or later."
 msgstr ""
 
-msgid "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  If you fail to make a backup and something goes wrong, there is a strong possibility that we will not be able to help you recover your data!  Refer to the following examples:"
+msgid ""
+"Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
+"If you fail to make a backup and something goes wrong, there is a strong possibility that we "
+"will not be able to help you recover your data!  Refer to the following examples:"
 msgstr ""
 
 msgid "MySQL"
@@ -440,7 +587,9 @@ msgstr "PostgreSQL"
 msgid "pg_dump -h %s --format=t %s > %s.sql"
 msgstr "pg_dump -h %s --format=t %s > %s.sql"
 
-msgid "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may interfere with the upgrade process."
+msgid ""
+"Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
+"interfere with the upgrade process."
 msgstr ""
 
 msgid "Begin Upgrade"
@@ -455,19 +604,28 @@ msgstr "Galerijas kodola modulis atjaunots veiksmīgi"
 msgid "We've successfully upgraded the Gallery Core Module."
 msgstr "Esam veiksmīgi atjaunojuši Galerijas kodola moduli"
 
-msgid "<b>Reminder</b>: Now check the permissions on config.php and make sure it is not globally writeable."
+msgid ""
+"<b>Reminder</b>: Now check the permissions on config.php and make sure it is not globally "
+"writeable."
 msgstr ""
 
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Jums ir jaunākā Galerijas kodola moduļa versija"
 
-msgid "The following modules can be automatically upgraded for you.  If you choose not to upgrade them now, you may experience problems with your Gallery.   You can always upgrade or deactivate them on the Site Administration page, or return to this page later so any decision you make here is not permanent."
+msgid ""
+"The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
+"them now, you may experience problems with your Gallery.   You can always upgrade or "
+"deactivate them on the Site Administration page, or return to this page later so any "
+"decision you make here is not permanent."
 msgstr ""
 
 msgid "Deactivated Plugins"
 msgstr "Deaktivizētie spraudņi"
 
-msgid "The following plugins were active, but they are missing or incompatible with your current version of Gallery.  They have been deactivated.  Install the latest version of these plugins to reactivate them."
+msgid ""
+"The following plugins were active, but they are missing or incompatible with your current "
+"version of Gallery.  They have been deactivated.  Install the latest version of these "
+"plugins to reactivate them."
 msgstr ""
 
 msgid "Module"
@@ -498,7 +656,8 @@ msgstr "atzīmēt visus"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "Izlaist šo atjaunojumu un turpināt ar soli %d&raquo;"
 
-msgid "Upgrade Selected Modules"
+#, fuzzy
+msgid "Upgrade Selected Plugins"
 msgstr "Atjaunot izvēlētos moduļus"
 
 #, c-format
@@ -509,14 +668,21 @@ msgstr "Veiksmīgi atjaunots modulis %s"
 msgid "Upgraded the %s theme successfully"
 msgstr "Veiksmīgi atjaunota tēma %s"
 
-msgid "Upgrade More Modules"
-msgstr "Atjaunot vairāk moduļus"
+#, fuzzy
+msgid "Upgrade More Plugins"
+msgstr "Atjauno spraudņus"
 
 #, c-format
-msgid "Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these steps and provide assistance along the way if additional steps are required. Please read the %sHelp File%s before proceeding."
+msgid ""
+"Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these steps "
+"and provide assistance along the way if additional steps are required. Please read the %"
+"sHelp File%s before proceeding."
 msgstr ""
 
-msgid "If you have a busy site, consider putting your Gallery in maintenance mode. This gives visitors a message that the site is temporarily offline, rather than showing everybody this upgrade page. Edit your config.php file to activate maintenance mode."
+msgid ""
+"If you have a busy site, consider putting your Gallery in maintenance mode. This gives "
+"visitors a message that the site is temporarily offline, rather than showing everybody this "
+"upgrade page. Edit your config.php file to activate maintenance mode."
 msgstr ""
 
 msgid "Select Language:"
@@ -525,3 +691,5 @@ msgstr "Izvēlieties valodu:"
 msgid "Go"
 msgstr "Aiziet"
 
+#~ msgid "Upgrade More Modules"
+#~ msgstr "Atjaunot vairāk moduļus"

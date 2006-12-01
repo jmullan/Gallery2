@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-14 16:52+0200\n"
 "PO-Revision-Date: 2005-09-06 17:10+0200\n"
@@ -741,7 +741,7 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
-msgid "Officially Release Repository"
+msgid "Official Release Repository"
 msgstr ""
 
 msgid "Experimental Repository"
@@ -918,12 +918,6 @@ msgstr "proračunska tabela"
 #, fuzzy
 msgid "file"
 msgstr "Datoteka"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
 
 msgid "Back"
 msgstr "Nazad"
@@ -1535,13 +1529,26 @@ msgstr "Email adresa"
 msgid "(suggested)"
 msgstr "(predloženo)"
 
+msgid "Options"
+msgstr "Parametri"
+
 #, fuzzy
-msgid "Lock Account"
-msgstr "Vaš nalog"
+msgid "Lock user."
+msgstr "Sistem zaključavanja"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "Anuliranje broja pregleda"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Group Management"
 msgstr "Upravljanje grupama"
@@ -1820,6 +1827,13 @@ msgstr "Verzija"
 
 msgid "Actions"
 msgstr "Akcije"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 #, fuzzy
 msgid "Incompatible plugin!"
@@ -2222,6 +2236,14 @@ msgstr "Ne možete izbrisati posebnog korisnika Gost."
 msgid "Edit User (by list)"
 msgstr "Izmena korisnika (pomoću liste)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "Skaliranje"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "Neuspešno"
+
 msgid "Thumbnails"
 msgstr "Umanjeni prikazi"
 
@@ -2254,6 +2276,10 @@ msgstr "Greška u vezi sa bazom podataka"
 msgid "Platform Error"
 msgstr ""
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "Ovlašćenje potvrđeno"
+
 msgid "Error"
 msgstr "Greška"
 
@@ -2269,11 +2295,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "Vratite se nazad i pokušajte ponovo"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "Izbriši keš baze podataka"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "Druga mogućnost je da se vratite na glavnu stranicu Galeriju i nastavite sa pregledom."
 
 msgid "The action you attempted is not permitted."
 msgstr "Akcija koju ste pokušali nije dozvoljena."
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "Desila se greška prilikom interakcije sa bazom podataka."
@@ -2415,8 +2455,8 @@ msgstr ""
 "od %s. Ako želite da prenesete više, morate ih prenositi zasebno, koristiti drugi način "
 "prenosa ili zamoliti vašeg administratora sistema da omogući veće prenose."
 
-msgid "More.."
-msgstr "Još..."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "Preuzmi naslove iz:"
@@ -2426,9 +2466,6 @@ msgstr "Preuzmi natpise iz:"
 
 msgid "No Thumbnail"
 msgstr "Nema umanjenih prikaza"
-
-msgid "Options"
-msgstr "Parametri"
 
 msgid "Delete Items"
 msgstr "Brisanje objekata"
@@ -3262,6 +3299,13 @@ msgstr "Prijavite se na vaš nalog"
 msgid "Your password has been recovered, please login."
 msgstr "Vaša lozinka je vraćena, molimo vas da se prijavite."
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Vaši podaci za prijavu su netačni. Molimo da pokušate ponovo."
 
@@ -3574,6 +3618,13 @@ msgstr "[test] Drugo pravo"
 
 msgid "Unit test theme"
 msgstr "Testni izgled"
+
+#, fuzzy
+#~ msgid "Lock Account"
+#~ msgstr "Vaš nalog"
+
+#~ msgid "More.."
+#~ msgstr "Još..."
 
 #, fuzzy
 #~ msgid "Rebuilding resized images..."

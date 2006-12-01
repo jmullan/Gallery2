@@ -227,8 +227,8 @@ msgid "IBM DB2 (v8.2 and newer)"
 msgstr ""
 
 #, fuzzy
-msgid "MSSQL (2005 and newer)"
-msgstr "MySQL met Transaksies (v3.23.34a of nuwer)"
+msgid "Microsoft SQL Server v7 and newer"
+msgstr "PostgreSQL v7.x"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Onbekende DB tipe of geen bekende tabelinligting."
@@ -399,7 +399,7 @@ msgid "exec() allowed"
 msgstr "exec() toegestaan"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -414,10 +414,24 @@ msgstr "set_time_limit() toegestaan"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
+msgstr ""
+"Waarskuwing: Die set_time_limit() funksie is deur die <b>disabled_functions</b> parameter in "
+"u php.ini afgeskakel.  Gallery kan sonder dit funksioneer maar sal egter onbetroubaar wees.  "
+"Elke aksie wat langer as %d sekondes duur sal misluk  (en in sommige gevalle slegs le&euml; "
+"bladsye oplewer) wat moontlik kan lei tot datakorrupsie."
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
 msgstr ""
 "Waarskuwing: Die set_time_limit() funksie is deur die <b>disabled_functions</b> parameter in "
 "u php.ini afgeskakel.  Gallery kan sonder dit funksioneer maar sal egter onbetroubaar wees.  "
@@ -454,10 +468,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Maksimum oplaai grootte"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "Waarskuwing: U PHP is ingestel om die grootte van die l&ecirc;ers wat gelaai word te beperk "
@@ -520,9 +534,9 @@ msgstr "exec() toegestaan"
 
 #, fuzzy
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
-"Gallery will beunable to run in other languages than the system language and English."
+"Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "Waarskuwing: Die set_time_limit() funksie is deur die <b>disabled_functions</b> parameter in "
 "u php.ini afgeskakel.  Gallery kan sonder dit funksioneer maar sal egter onbetroubaar wees.  "
@@ -534,7 +548,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
 "might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
@@ -813,20 +827,6 @@ msgstr "Installeerderhulp"
 
 msgid "Start Over"
 msgstr "Begin Oor"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Gallery Core suksesvol geïnstalleer"
-
-msgid ""
-"Congratulations, we've successfully installed the Gallery framework.  However, most of the "
-"really cool features from Gallery come from additional modules that you can install and "
-"configure.  The next step will take you through the process of selecting modules to install "
-"so that you can tune Gallery to do exactly what you want."
-msgstr ""
-"Geluk, ons het die Gallery raamwerk suksesvol geïnstalleer.  Die beste funksies van Gallery "
-"kom van die addisionele modules wat u kan installeer en opstel.  Die volgende stap sal u "
-"deur die proses begelei om modules te kies en te installeer sodat u Gallery na u behoeftes "
-"kan aanpas."
 
 msgid "Error installing Gallery Core"
 msgstr "Fout tydens installasie van Gallery Core"
@@ -1352,6 +1352,24 @@ msgstr "Gaan"
 
 msgid "Begin Installation&raquo;"
 msgstr "Begin Installasie&raquo;"
+
+#, fuzzy
+#~ msgid "MSSQL (2005 and newer)"
+#~ msgstr "MySQL met Transaksies (v3.23.34a of nuwer)"
+
+#~ msgid "Installed Gallery Core successfully"
+#~ msgstr "Gallery Core suksesvol geïnstalleer"
+
+#~ msgid ""
+#~ "Congratulations, we've successfully installed the Gallery framework.  However, most of "
+#~ "the really cool features from Gallery come from additional modules that you can install "
+#~ "and configure.  The next step will take you through the process of selecting modules to "
+#~ "install so that you can tune Gallery to do exactly what you want."
+#~ msgstr ""
+#~ "Geluk, ons het die Gallery raamwerk suksesvol geïnstalleer.  Die beste funksies van "
+#~ "Gallery kom van die addisionele modules wat u kan installeer en opstel.  Die volgende "
+#~ "stap sal u deur die proses begelei om modules te kies en te installeer sodat u Gallery na "
+#~ "u behoeftes kan aanpas."
 
 #~ msgid "Install More Modules"
 #~ msgstr "Installeer Meer Modules"

@@ -25,7 +25,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-04 20:08+0100\n"
 "PO-Revision-Date: 2006-01-06 17:02+0100\n"
@@ -738,7 +738,7 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr ""
 
-msgid "Officially Release Repository"
+msgid "Official Release Repository"
 msgstr ""
 
 msgid "Experimental Repository"
@@ -916,12 +916,6 @@ msgstr ""
 #, fuzzy
 msgid "file"
 msgstr "Fájl"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
 
 msgid "Back"
 msgstr "Vissza"
@@ -1498,13 +1492,25 @@ msgstr "E-mail cím"
 msgid "(suggested)"
 msgstr "(ajánlott)"
 
+msgid "Options"
+msgstr "Opciók"
+
 #, fuzzy
-msgid "Lock Account"
-msgstr "A Te fiókod"
+msgid "Lock user."
+msgstr "Rendszer zárolása"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "Nézettségi számláló nullázása"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
 
 msgid "Group Management"
 msgstr "Csoport beállítások"
@@ -1782,6 +1788,13 @@ msgstr "Verzió"
 
 msgid "Actions"
 msgstr "Műveletek"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 #, fuzzy
 msgid "Incompatible plugin!"
@@ -2182,6 +2195,14 @@ msgstr "Nem törölheted ezt a speciális vendégfelhasználót."
 msgid "Edit User (by list)"
 msgstr "Felhasználó szerkesztése (lista)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "Nagyítás"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "Sikertelen"
+
 msgid "Thumbnails"
 msgstr "Előnézeti képek"
 
@@ -2214,6 +2235,10 @@ msgstr "Adatbázis hiba"
 msgid "Platform Error"
 msgstr ""
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "Azonosítás Megtörtént"
+
 msgid "Error"
 msgstr "Hiba"
 
@@ -2226,11 +2251,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "Vissza, és újra"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "Adatbázis gyorsítótár törlése"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "Esetleg visszatérhetsz a Galéria főoldalára és folytathatod a böngészést."
 
 msgid "The action you attempted is not permitted."
 msgstr "A kért művelethez nincs jogosultsága"
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "Hiba történt az adatbázishoz való kapcsolódás közben."
@@ -2368,8 +2407,8 @@ msgstr ""
 "más feltöltési formát, (esetleg kérd meg az admint, hogy engedélyezze a nagyobb "
 "felöltéseket)."
 
-msgid "More.."
-msgstr "Több.."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "Elem címének beállítása innen:"
@@ -2379,9 +2418,6 @@ msgstr "Felirat hozzárendelése ehhez: "
 
 msgid "No Thumbnail"
 msgstr "Nincs előnézet"
-
-msgid "Options"
-msgstr "Opciók"
 
 msgid "Delete Items"
 msgstr "Elemek Törlése"
@@ -3213,6 +3249,13 @@ msgstr "Lépj be a fiókodba"
 msgid "Your password has been recovered, please login."
 msgstr "Jelszavad pótoltuk, lépj be."
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "A belépési információk hibásak. Kérlek próbálkozz újra."
 
@@ -3523,6 +3566,13 @@ msgstr "[test] Egy második jogosultság"
 
 msgid "Unit test theme"
 msgstr "Egységtesztelő felület"
+
+#, fuzzy
+#~ msgid "Lock Account"
+#~ msgstr "A Te fiókod"
+
+#~ msgid "More.."
+#~ msgstr "Több.."
 
 #, fuzzy
 #~ msgid "Rebuilding resized images..."

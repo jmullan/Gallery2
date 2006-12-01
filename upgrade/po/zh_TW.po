@@ -56,6 +56,9 @@ msgstr "升級完畢"
 msgid "System Checks"
 msgstr "系統檢查"
 
+msgid "Performing system checks"
+msgstr ""
+
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP 版本大於等於 4.3.0 或大於等於 5.0.4"
 
@@ -111,7 +114,7 @@ msgid "exec() allowed"
 msgstr "允許 exec()"
 
 msgid ""
-"Warning: The exec() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini. You won't be able to use modules that require external binaries (e.g. "
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
@@ -125,7 +128,7 @@ msgstr "允許 set_time_limit()"
 
 #, c-format
 msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the <b>disabled_functions</"
+"Warning: The set_time_limit() function is disabled in your PHP by the <b>disabled_functions</"
 "b> parameter in php.ini.  Gallery can function with this setting, but it will not operate "
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
@@ -133,6 +136,19 @@ msgstr ""
 "警告：你的 PHP 中的 set_time_limit() 函數被 php.ini 中的 <b>disabled_functions</b> 關閉了。"
 "Gallery 仍然可以在這個設定下執行，可是穩定度會有問題。任何功能執行超過 %d 秒鐘都會失敗（有時"
 "會傳回一個空白頁面）並可能導致資料損毀。"
+
+msgid "Filesystem Operations"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"Error: Essential filesystem operations are disabled in your PHP by the "
+"<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
+"Gallery will run. These functions are missing: %s."
+msgstr ""
+"警告：你的 PHP 中的 putenv() 函式被 php.ini 中的 <b>disabled_functions</b> 參數關閉了。"
+"Gallery 仍然可以在這個設定下執行，可是在極少數的系統上 Gallery 將無法在除了系統和英文以外的語"
+"文下執行。"
 
 msgid "Memory limit"
 msgstr "記憶空間限制"
@@ -162,10 +178,10 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "最大上傳大小"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this limit to allow "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
 "警告：你的 PHP 設定成上傳檔案最大為 %sb（在 php.ini 中的 <b>upload_max_filesize</b> 參數）。"
@@ -212,12 +228,12 @@ msgstr "你的 PHP 沒有 %sdngettext%s 函式。這表示 Gallery 將無法翻�
 msgid "Zend compatibility mode"
 msgstr "Zend 相容模式"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your "
-"PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before "
-"proceeding."
+"PHP is ok.  If you get an error or no response then you must turn off ze1_compatibility_mode "
+"before proceeding."
 msgstr ""
 "警告：你的 PHP 設定使用可能使 PHP 當機的 Zend ze1_compatibility_mode 選項。請按<a href=\"%s"
 "\">這裡</a>測試 PHP。如果你看到「SUCCESS」表示你的 PHP 正常。如果你得到一個錯誤訊息，你需要"
@@ -227,7 +243,7 @@ msgid "putenv() allowed"
 msgstr "允許 putenv()"
 
 msgid ""
-"Warning: The putenv() function is disabled in your php by the <b>disabled_functions</b> "
+"Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
@@ -238,11 +254,11 @@ msgstr ""
 msgid "Output buffering disabled"
 msgstr "輸出緩衝已關閉"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Warning: Output buffering is enabled in your php by the <b>%s</b> parameter(s) in php.ini.  "
+"Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
-"might be unable to serve large files (e.g. large videos) and run into the  memory limit. "
+"might be unable to serve large files (e.g. large videos) and run into the memory limit. "
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
@@ -337,16 +353,53 @@ msgstr "無法停用%s模組"
 msgid "Welcome"
 msgstr "歡迎"
 
+#, c-format
+msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
+msgstr ""
+
+#, c-format
 msgid ""
-"In order to proceed with the install, we have to verify that you are who you claim.  When "
-"you performed the install, you entered a password which went into your config.php.  Type "
-"that in now.  Refer to your config.php if you've forgotten what you entered."
+"<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
+"file."
+msgstr ""
+
+#, c-format
+msgid ""
+"<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
+"string from below and try again."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"When you performed the install, you entered a password which went into your config.php.  "
+"Type that in now.  Refer to your config.php if you've forgotten what you entered."
 msgstr ""
 "為了繼續安裝的程序，我們必需確認你的身分。當你安裝時，config.php 存入了你輸入的一個密碼。請輸"
 "入那個密碼。如果不記得的話，可以查看 config.php。"
 
 msgid "Password:"
 msgstr "密碼："
+
+msgid "You have exceeded the maximum attempts to login by entering a password."
+msgstr ""
+
+msgid ""
+"To prevent somebody from hacking your website, we now require you to complete a stricter "
+"authentication process."
+msgstr ""
+
+#, c-format
+msgid ""
+"In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
+"The best way to be sure is to ask you to make a tiny change in the Gallery directory which "
+"will prove that you have the right permissions.  So, we're going to ask that you create a "
+"new text file called %s in the %s directory on your webserver (that's the same directory "
+"where %s is located). It must contain the following randomly generated characters:"
+msgstr ""
+
+msgid "Once you've uploaded the file, click below to continue."
+msgstr ""
 
 msgid "Authenticate Me"
 msgstr "確認我的身分"
@@ -388,9 +441,10 @@ msgstr "再試一次"
 msgid "Finished!"
 msgstr "完成了！"
 
+#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
-"modules you may use the Site Administrator interface."
+"plugins you may use the Site Administrator interface."
 msgstr "恭禧！你的 Gallery 2 升級已經完成！你可以使用網站管理員界面來升級其他的 Gallery 模組。"
 
 msgid "Go to my Gallery!"
@@ -617,8 +671,9 @@ msgstr "<b>提示</b>：請檢查 config.php 檔案的存取權限並確定它�
 msgid "Your Gallery Core Module is up to date!"
 msgstr "你的 Gallery 核心模組已經是最新版！"
 
+#, fuzzy
 msgid ""
-"The following modules can be automatically upgraded for you.  If you choose not to upgrade "
+"The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
@@ -635,8 +690,8 @@ msgid ""
 "version of Gallery.  They have been deactivated.  Install the latest version of these "
 "plugins to reactivate them."
 msgstr ""
-"下列外掛組件原為使用中，但它們目前找不到檔案或和你目前的 Gallery 版本不相容。"
-"它們已被停用。請安裝最新的版本以重新啟用。"
+"下列外掛組件原為使用中，但它們目前找不到檔案或和你目前的 Gallery 版本不相容。它們已被停用。請"
+"安裝最新的版本以重新啟用。"
 
 msgid "Module"
 msgstr "模組"
@@ -666,7 +721,8 @@ msgstr "全部勾選或全部不選"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "略過升級並繼續到步驟 %d&raquo;"
 
-msgid "Upgrade Selected Modules"
+#, fuzzy
+msgid "Upgrade Selected Plugins"
 msgstr "升級所選模組"
 
 #, c-format
@@ -677,8 +733,9 @@ msgstr "%s模組升級成功"
 msgid "Upgraded the %s theme successfully"
 msgstr "%s佈景主題升級成功。"
 
-msgid "Upgrade More Modules"
-msgstr "升級其他 Gallery 模組"
+#, fuzzy
+msgid "Upgrade More Plugins"
+msgstr "升級外掛組件"
 
 #, c-format
 msgid ""
@@ -703,3 +760,5 @@ msgstr "選擇語言："
 msgid "Go"
 msgstr "開始"
 
+#~ msgid "Upgrade More Modules"
+#~ msgstr "升級其他 Gallery 模組"

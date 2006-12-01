@@ -28,7 +28,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.20\n"
+"Project-Id-Version: Gallery: Core 1.1.23\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-10-02 18:40+0200\n"
@@ -742,7 +742,8 @@ msgid ""
 msgstr ""
 "Kunde inte skapa cache katalog, kontrollera att web servern har skrivrättigheter i katalogen."
 
-msgid "Officially Release Repository"
+#, fuzzy
+msgid "Official Release Repository"
 msgstr "Officiellt release lager"
 
 msgid "Experimental Repository"
@@ -917,14 +918,6 @@ msgstr "kalkylblad"
 
 msgid "file"
 msgstr "fil"
-
-#, c-format
-msgid ""
-"Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not a "
-"part of this Gallery."
-msgstr ""
-"Otillåten URL! Den begärda URL'en %s försökte sätta in en återpekning till %s vilken inte är "
-"en del av detta Gallery."
 
 msgid "Back"
 msgstr "Tillbaka"
@@ -1538,13 +1531,27 @@ msgstr "E-postadress"
 msgid "(suggested)"
 msgstr "(föreslagen)"
 
-msgid "Lock Account"
-msgstr "Lås Konto"
+msgid "Options"
+msgstr "Alternativ"
+
+#, fuzzy
+msgid "Lock user."
+msgstr "Låssystem"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
 "Låsta användare kan inte redigera sin egen konto information. (Lösenord, Namn, E-port, mm.)"
+
+#, fuzzy
+msgid "Reset failed login count."
+msgstr "återställ antalet sidvisningar"
+
+#, c-format
+msgid "%d failed login attempt since the last successful login."
+msgid_plural "%d failed login attempts since the last successful login."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Group Management"
 msgstr "Grupphantering"
@@ -1827,6 +1834,13 @@ msgstr "Version"
 
 msgid "Actions"
 msgstr "Händelser"
+
+msgid "help"
+msgstr ""
+
+#, c-format
+msgid "Screenshot for %s"
+msgstr ""
 
 msgid "Incompatible plugin!"
 msgstr "Inkompatibel plugin!"
@@ -2235,6 +2249,14 @@ msgstr "Du kan inte ta bort speciell gästanvändare."
 msgid "Edit User (by list)"
 msgstr "Redigera Användare (genom lista)"
 
+#, fuzzy
+msgid "Locked"
+msgstr "låst"
+
+#, fuzzy
+msgid "Failed Logins"
+msgstr "Misslyckades"
+
 msgid "Thumbnails"
 msgstr "Miniatyrbilder"
 
@@ -2267,6 +2289,10 @@ msgstr "Databasfel"
 msgid "Platform Error"
 msgstr "Plattforms fel"
 
+#, fuzzy
+msgid "Authentication Failure"
+msgstr "Tillstånd Bekräftad"
+
 msgid "Error"
 msgstr "Fel"
 
@@ -2282,11 +2308,25 @@ msgstr ""
 msgid "Go back and try again"
 msgstr "Gå tillbaka och försök igen"
 
+msgid ""
+"If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
+"Administrators can clear out this cache."
+msgstr ""
+
+#, fuzzy
+msgid "Clear the cache"
+msgstr "Rensa Sparade Sidor"
+
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "Alternativt kan du returnerna till Galleriets huvudsida och fortsätta browsa."
 
 msgid "The action you attempted is not permitted."
 msgstr "Det du försökte göra är inte tillåtet."
+
+msgid ""
+"Your change cannot be completed due to a loss of session data. Please try again. If it still "
+"doesn't work, try logging out and logging back in."
+msgstr ""
 
 msgid "An error has occurred while interacting with the database."
 msgstr "Ett fel har uppstått vid databaskommunikation"
@@ -2428,8 +2468,8 @@ msgstr ""
 "du vill ladda upp mer än det så måste du ladda upp filerna separat, använda ett annat "
 "uppladdningsformat eller be din systemadministratör att tillåta större uppladdningar"
 
-msgid "More.."
-msgstr "Mer.."
+msgid "More Upload Boxes..."
+msgstr ""
 
 msgid "Set item titles from:"
 msgstr "Sätt item titel från:"
@@ -2439,9 +2479,6 @@ msgstr "Ange rubrik till:"
 
 msgid "No Thumbnail"
 msgstr "Ingen miniatyrbild"
-
-msgid "Options"
-msgstr "Alternativ"
 
 msgid "Delete Items"
 msgstr "Ta bort Objekt"
@@ -3280,6 +3317,13 @@ msgstr "Logga in på ditt konto"
 msgid "Your password has been recovered, please login."
 msgstr "Ditt lösenord har återskapats, vänligen logga in."
 
+#, c-format
+msgid ""
+"Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
+"for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
+"this account."
+msgstr ""
+
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Din inloggningsinformation är inte rätt. Vänligen försök igen."
 
@@ -3591,6 +3635,19 @@ msgstr "[test] En andra rättighet"
 
 msgid "Unit test theme"
 msgstr "Tema för unittest"
+
+#~ msgid ""
+#~ "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not "
+#~ "a part of this Gallery."
+#~ msgstr ""
+#~ "Otillåten URL! Den begärda URL'en %s försökte sätta in en återpekning till %s vilken inte "
+#~ "är en del av detta Gallery."
+
+#~ msgid "Lock Account"
+#~ msgstr "Lås Konto"
+
+#~ msgid "More.."
+#~ msgstr "Mer.."
 
 #~ msgid "Rebuilding resized images..."
 #~ msgstr "Återskapar storleksändrade bilder..."
