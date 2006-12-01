@@ -85,14 +85,14 @@ foreach my $manifest (keys %sections) {
       close($fd);
 
       my ($data_crlf, $size, $size_crlf);
+      $data_crlf = $data;
       if ($isBinary) {
-	$data_crlf = $data;
 	$size = $size_crlf = (stat($file))[7];
       } else {
-	if ($data =~ /\r/) {
-	  ($data_crlf = $data) =~ s/\r//g;
+	if ($data =~ /\r\n/) {
+	  $data =~ s/\r\n/\n/g;
 	} else {
-	  ($data_crlf = $data) =~ s/\n/\r\n/g;
+	  $data_crlf =~ s/\n/\r\n/g;
 	}
 	$size = length($data);
 	$size_crlf = length($data_crlf);
