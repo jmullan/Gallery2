@@ -249,11 +249,6 @@ class WebDavHelper {
 	    }
 	}
 
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'webdav.view');
-	if ($ret) {
-	    return $ret;
-	}
-
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret) {
 	    return $ret;

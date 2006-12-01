@@ -31,7 +31,7 @@ class WebDavModule extends GalleryModule {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('0.6.0'); /* Update upgrade() too */
+	$this->setVersion('0.6.1'); /* Update upgrade() too */
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
 	$this->setCallbacks('getItemLinks|registerEventListeners');
@@ -88,6 +88,8 @@ class WebDavModule extends GalleryModule {
 		/* TODO: Show configuration required or something like that */
 	    }
 
+	    break;
+
 	case '0.0.3':
 	    /* Add WebDavSiteAdmin and WebDavLockMap */
 
@@ -124,28 +126,9 @@ class WebDavModule extends GalleryModule {
 	case '0.4.2':
 	    /* Add support for the PHP CGI server API */
 
-	case '0.5.0':
-	    /* Add view with WebDAV permission */
-	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'webdav.view',
-		$gallery->i18n('[webdav] View with WebDAV'));
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    list ($ret, $defaultId) = GalleryCoreApi::getDefaultAlbumId();
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    list ($ret, $everybodyId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    /* Give everybody WebDAV permission by default */
-	    $ret = GalleryCoreApi::addGroupPermission(
-		$defaultId, $everybodyId, 'webdav.view', true);
+	case '0.6.0':
+	    /* Remove view with WebDAV permission */
+	    $ret = GalleryCoreApi::unregisterModulePermissions($this->getId());
 	    if ($ret) {
 		return $ret;
 	    }
@@ -169,9 +152,7 @@ class WebDavModule extends GalleryModule {
 	$links = array();
 	$userAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	foreach ($items as $item) {
-	    if (!$item->getCanContainChildren()
-		    || empty($wantsDetailedLinks[$item->getId()])
-		    || empty($permissions[$item->getId()]['webdav.view'])) {
+	    if (!$item->getCanContainChildren() || empty($wantsDetailedLinks[$item->getId()])) {
 		continue;
 	    }
 
