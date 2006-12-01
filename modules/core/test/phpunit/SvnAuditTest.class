@@ -58,7 +58,7 @@ class SvnAuditTest extends CodeAuditTestCase {
 	} else if (in_array($base, array('MANIFEST', 'GNUmakefile', 'strings.raw'))
 		|| preg_match('{\.(php|inc|class|tpl|html|css|js|xml|po)$}', $base)) {
 	    $expected = array('svn:eol-style' => 'native',
-			      'svn:keywords' => 'Author Date Id Revision');
+			      'svn:keywords' => 'Author Id Revision');
 	} else {
 	    $expected = array('svn:mime-type' => '(image|application)/.*');
 	}
