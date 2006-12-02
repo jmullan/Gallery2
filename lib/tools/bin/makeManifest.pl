@@ -9,9 +9,17 @@ use File::Basename;
 use Cwd;
 use String::CRC32;
 my $quiet = 0;
+my $path;
 foreach my $i (0 .. $#ARGV) {
     if ('-q' eq $ARGV[$i]) {
 	$quiet = 1;
+    } elsif ('-p' eq $ARGV[$i] && $#ARGV > $i) {
+	$path = $ARGV[$i+1];
+	# Relative path which serves as filter
+	die "$path does not exist" unless (-e $path);
+	die "$path must be a directory" unless (-d $path);
+	die "$path must be a relative path to a plugin (e.g. modules/core)"
+	  unless ($path =~ m{^(modules|themes)(/\w+)?/?$});
     }
 }
 sub quietprint {
@@ -22,14 +30,16 @@ sub quietprint {
 }
 $| = 1;
 
-chdir(dirname($0) . '/../../..');
+# Current working directory must be gallery2 folder, else we assume that we are in lib/tools/bin/.
+chdir(dirname($0)  . '/../../..') unless (-e 'modules' or -e 'themes');
 my $basedir = cwd();
 
 # Get a list of every file committed to Subversion.
 #
 my @entries = ();
-quietprint("Finding all files...");
-&listSvn(\@entries);
+quietprint("Finding all files...\n");
+my $filterPath = defined($path) ? $path : "";
+&listSvn(\@entries, $filterPath);
 quietprint("\n");
 
 # Strip base dir, sort
@@ -152,15 +162,16 @@ sub replaceIfNecessary {
 
 sub listSvn {
   my $entries = shift;
+  my $filterPath = shift;
   my %binaryList = ();
   local *FD;
-  open(FD, "svn propget --non-interactive -R svn:mime-type |") or die;
+  open(FD, "svn propget --non-interactive -R svn:mime-type $filterPath |") or die;
   while (<FD>) {
     split / - /;
     $binaryList{$_[0]} = 1;
   }
   close FD;
-  open(FD, "svn status --non-interactive -v -q |") or die;
+  open(FD, "svn status --non-interactive -v -q $filterPath |") or die;
   while (<FD>) {
     die "\n$_" unless /^(.).....\s*\d+\s+\d+\s+\S+\s+(.*)$/;
     die "\n$2" unless (-e $2);
