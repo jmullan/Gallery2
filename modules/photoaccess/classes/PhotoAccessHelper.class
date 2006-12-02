@@ -86,7 +86,7 @@ class PhotoAccessHelper {
 	}
 
 	/* Assemble all our data */
-	$entries = array();
+	$entries = $protectedIds = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    $entry = array();
@@ -109,21 +109,18 @@ class PhotoAccessHelper {
 	    $source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
 	    $needSession = !isset($publicPermissions['core.viewSource']);
 
-	    if ($needSession && !isset($paSession)) {
+	    if ($needSession && !isset($pwSession)) {
 		/*
 		 * Get G2 session for photoaccess to access non-public images.
 		 * We can't use this session because hijack protection will prevent access
 		 * plus the current user could logout before photoaccess retrieves the images.
 		 * Create a new session with the rights of current user for photoaccess to use.
 		 */
-		$paSession = new GallerySession();
-		$ret = $paSession->initEmpty(true, $gallery->getActiveUserId());
+		$pwSession = new GallerySession();
+		$ret = $pwSession->initEmpty(true, $gallery->getActiveUserId());
 		if ($ret) {
 		    return array($ret, null);
 		}
-
-		/* Mark this session so that it can be treated specially */
-		$paSession->put('core.isPrintService', 1);
 
 		/**
 		 * @todo Would like to enforce a particular session timeout to ensure this session
@@ -131,13 +128,17 @@ class PhotoAccessHelper {
 		 * sessionid in this session so we can reuse it for multiple print requests (and
 		 * just bump timeout each time).
 		 */
-		$ret = $paSession->save();
+		$ret = $pwSession->save();
 		if ($ret) {
 		    return array($ret, null);
 		}
 	    }
-	    $sessionParam =
-		$needSession ? array($paSession->getKey() => $paSession->getId()) : array();
+	    if ($needSession) {
+		$sessionParam = array($pwSession->getKey() => $pwSession->getId());
+		$protectedIds[] = $source->getId();
+	    } else {
+		$sessionParam = array();
+	    }
 
 	    $entry['id'] = $source->getId();
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
@@ -152,6 +153,9 @@ class PhotoAccessHelper {
 		$thumbSource = $source;
 	    } else {
 		$thumbSource = $thumbnails[$itemId];
+		if ($needSession) {
+		    $protectedIds[] = $thumbSource->getId();
+		}
 	    }
 
 	    $entry['thumbUrl'] = $urlGenerator->generateUrl(
@@ -162,6 +166,10 @@ class PhotoAccessHelper {
 
 	    $entries[] = $entry;
 	    /* We should scan the results for a "200 OK" result */
+	}
+	if (isset($pwSession)) {
+	    /* Mark this session so that it can be treated specially */
+	    $pwSession->put('core.isPrintService', $protectedIds);
 	}
 
 	/*

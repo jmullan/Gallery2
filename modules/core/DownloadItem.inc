@@ -102,7 +102,8 @@ class DownloadItemView extends GalleryView {
 				      'derivativeType' => $derivativeType,
 				      'mimeType' => $item->getMimeType(),
 				      'pseudoFileName' => $pseudoFileName,
-				      'parentId' => $itemForPermission));
+				      'parentId' => $itemForPermission,
+				      'id' => $itemId));
 	if ($ret) {
 	    return $ret;
 	}
@@ -117,17 +118,19 @@ class DownloadItemView extends GalleryView {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$session =& $gallery->getSession();
+	$phpVm = $gallery->getPhpVm();
 
 	if (function_exists('apache_setenv')) {
 	    @apache_setenv('no-gzip', '1');
 	}
 
-	/* Print services bypass security so they can get access to full size version of prints */
-	if (!$session->get('core.isPrintService')) {
-
-	    /* Make sure we have permission */
+	/* Make sure we have permission */
+	if (($ids = $session->get('core.isPrintService')) && in_array($data['id'], $ids)) {
+	    /* Print services only need core.view to get access to full size version of photos */
+	    $permission = 'core.view';
+	} else {
 	    $permission = 'core.viewSource';
-	    switch($data['derivativeType']) {
+	    switch ($data['derivativeType']) {
 	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 		$permission = 'core.view';
 		break;
@@ -138,26 +141,26 @@ class DownloadItemView extends GalleryView {
 
 		/* DERIVATIVE_TYPE_IMAGE_PREFERRED uses core.viewSource */
 	    }
-	    $ret = GalleryCoreApi::assertHasItemPermission($data['parentId'], $permission);
-	    if ($ret) {
-		return $ret;
-	    }
+	}
+	$ret = GalleryCoreApi::assertHasItemPermission($data['parentId'], $permission);
+	if ($ret) {
+	    return $ret;
 	}
 
 	$requestMethod = strtolower(GalleryUtilities::getServerVar('REQUEST_METHOD'));
 
-	header('Content-type: ' . $data['mimeType']);
-	header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');
+	$phpVm->header('Content-type: ' . $data['mimeType']);
+	$phpVm->header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');
 	$stats = $platform->stat($data['derivativePath']);
-	header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
-	header('Expires: ' . GalleryUtilities::getHttpDate(time() + 31536000));
+	$phpVm->header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
+	$phpVm->header('Expires: ' . GalleryUtilities::getHttpDate(time() + 31536000));
 
 	/* If the request method is HEAD, don't send back the body */
 	if ($requestMethod == 'head') {
-	    header('Content-length: 0');
+	    $phpVm->header('Content-length: 0');
 	} else {
 	    if ($stats[7] > 0) {
-		header('Content-length: ' . $stats[7]);
+		$phpVm->header('Content-length: ' . $stats[7]);
 	    }
 	    /*
 	     * Don't use readfile() because it buffers the entire file in memory.  Profiling shows

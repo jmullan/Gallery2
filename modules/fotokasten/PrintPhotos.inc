@@ -100,7 +100,7 @@ class PrintPhotosController extends GalleryController {
 	}
 	/* Assemble all our data */
 	$i = 0;
-	$entries = array();
+	$entries = $protectedIds = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
@@ -134,9 +134,6 @@ class PrintPhotosController extends GalleryController {
 		    return array($ret, null);
 		}
 
-		/* Mark this session so that it can be treated specially */
-		$foSession->put('core.isPrintService', 1);
-
 		/*
 		 * TODO: Would like to enforce a particular session timeout to ensure this session
 		 * lasts long enough for fotokasten to retrieve the images.  Maybe also store the
@@ -148,8 +145,12 @@ class PrintPhotosController extends GalleryController {
 		    return array($ret, null);
 		}
 	    }
-	    $sessionParam =
-		$needSession ? array($foSession->getKey() => $foSession->getId()) : array();
+	    if ($needSession) {
+		$sessionParam = array($foSession->getKey() => $foSession->getId());
+		$protectedIds[] = $source->getId();
+	    } else {
+		$sessionParam = array();
+	    }
 
 	    /* attributes of the photo: url, thumbnail_url, height and width */
 	    $basket_item = array(
@@ -167,6 +168,9 @@ class PrintPhotosController extends GalleryController {
 		$thumbSource = $source;
 	    } else {
 		$thumbSource = $thumbnails[$itemId];
+		if ($needSession) {
+		    $protectedIds[] = $thumbSource->getId();
+		}
 	    }
 
 	    $basket_item['thumbnail_url'] = $urlGenerator->generateUrl(
@@ -177,6 +181,10 @@ class PrintPhotosController extends GalleryController {
 		      'htmlEntities' => false));
 
 	    $basket["item" . ++$i] = $basket_item;
+	}
+	if (isset($foSession)) {
+	    /* Mark this session so that it can be treated specially */
+	    $foSession->put('core.isPrintService', $protectedIds);
 	}
 
 	/* prepare for connection */

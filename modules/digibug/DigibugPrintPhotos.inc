@@ -100,7 +100,7 @@ class DigibugPrintPhotosView extends GalleryView {
 
 	/* Assemble all our data */
 	$i = 1;
-	$entries = array();
+	$entries = $protectedIds = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
@@ -134,9 +134,6 @@ class DigibugPrintPhotosView extends GalleryView {
 		    return $ret;
 		}
 
-		/* Mark this session so that it can be treated specially */
-		$dgSession->put('core.isPrintService', 1);
-
 		/*
 		 * TODO: Would like to enforce a particular session timeout to ensure this session
 		 * lasts long enough for digibug to retrieve the images.  Maybe also store the
@@ -148,8 +145,12 @@ class DigibugPrintPhotosView extends GalleryView {
 		    return $ret;
 		}
 	    }
-	    $sessionParam =
-		$needSession ? array($dgSession->getKey() => $dgSession->getId()) : array();
+	    if ($needSession) {
+		$sessionParam = array($dgSession->getKey() => $dgSession->getId());
+		$protectedIds[] = $source->getId();
+	    } else {
+		$sessionParam = array();
+	    }
 
 	    $entry = array('item' => (array)$item);
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
@@ -179,6 +180,10 @@ class DigibugPrintPhotosView extends GalleryView {
 	    for ($j = 0; $j < $cartItemIds[$itemId]; $j++) {
 		$entries[$i++] = $entry;
 	    }
+	}
+	if (isset($dgSession)) {
+	    /* Mark this session so that it can be treated specially */
+	    $dgSession->put('core.isPrintService', $protectedIds);
 	}
 
 	/*

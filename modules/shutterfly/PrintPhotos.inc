@@ -100,7 +100,7 @@ class PrintPhotosView extends GalleryView {
 
 	/* Assemble all our data */
 	$i = 1;
-	$entries = array();
+	$entries = $protectedIds = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
@@ -134,9 +134,6 @@ class PrintPhotosView extends GalleryView {
 		    return $ret;
 		}
 
-		/* Mark this session so that it can be treated specially */
-		$sfSession->put('core.isPrintService', 1);
-
 		/*
 		 * TODO: Would like to enforce a particular session timeout to ensure this session
 		 * lasts long enough for shutterfly to retrieve the images.  Maybe also store the
@@ -148,8 +145,12 @@ class PrintPhotosView extends GalleryView {
 		    return $ret;
 		}
 	    }
-	    $sessionParam =
-		$needSession ? array($sfSession->getKey() => $sfSession->getId()) : array();
+	    if ($needSession) {
+		$sessionParam = array($sfSession->getKey() => $sfSession->getId());
+		$protectedIds[] = $source->getId();
+	    } else {
+		$sessionParam = array();
+	    }
 
 	    $entry = array('item' => (array)$item);
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
@@ -179,6 +180,10 @@ class PrintPhotosView extends GalleryView {
 	    for ($j = 0; $j < $cartItemIds[$itemId]; $j++) {
 		$entries[$i++] = $entry;
 	    }
+	}
+	if (isset($sfSession)) {
+	    /* Mark this session so that it can be treated specially */
+	    $sfSession->put('core.isPrintService', $protectedIds);
 	}
 
 	/*
