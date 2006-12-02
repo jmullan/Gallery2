@@ -271,14 +271,9 @@ function getPermissionSets() {
     return $permissionSets;
 }
 
-function getGalleryBasePath() {
-    /* For multisites, return the multisite home and not the codebase */
-    return GALLERY_CONFIG_DIR;
-}
-
 function getGalleryStoragePath() {
-    global $gallery;
-    return $gallery->getConfig('data.gallery.base');
+    $config = GallerySetupUtilities::getGalleryConfig();
+    return $config['data.gallery.base'];
 }
 
 /**
@@ -377,8 +372,8 @@ function error($msg, $obj) {
 }
 
 function isModulesOrThemesDirWriteable() {
-    return is_writeable(GALLERY_CONFIG_DIR . '/modules/') &&
-        is_writeable(GALLERY_CONFIG_DIR . '/themes/');
+    return is_writeable(GallerySetupUtilities::getConfigDir() . '/modules/') &&
+        is_writeable(GallerySetupUtilities::getConfigDir() . '/themes/');
 }
 
 /**
@@ -390,10 +385,10 @@ function chmodModulesAndThemesDir($makeItWriteable) {
     $mode = $makeItWriteable ? 0777 : 0555;
     $ret = null;
     foreach (array('/modules/', '/themes/') as $dir) {
-    	if (file_exists(GALLERY_CONFIG_DIR . $dir)) {
+    	if (file_exists(GallerySetupUtilities::getConfigDir() . $dir)) {
     	    /* Try to chmod all dirs, even if one fails */
-	    if (!@chmod(GALLERY_CONFIG_DIR . $dir, $mode)) {
-		error("[ERROR]", GALLERY_CONFIG_DIR . $dir);
+	    if (!@chmod(GallerySetupUtilities::getConfigDir() . $dir, $mode)) {
+		error("[ERROR]", GallerySetupUtilities::getConfigDir() . $dir);
 	        $ret = 1;
 	    }
     	}
@@ -402,7 +397,7 @@ function chmodModulesAndThemesDir($makeItWriteable) {
 }
 
 function isGalleryDirWriteable() {
-    return is_writeable(GALLERY_CONFIG_DIR);
+    return is_writeable(GallerySetupUtilities::getConfigDir());
 }
 
 /**
@@ -414,7 +409,8 @@ function chmodGalleryDirRecursively($makeItWriteable) {
     /* This is just a wrapper function for the general chmod recursively function */
     $folderMode = $makeItWriteable ? 0777 : 0555;
     $fileMode = $makeItWriteable ? 0666 : 0444;
-    return chmodRecursively(GALLERY_CONFIG_DIR, $folderMode, $fileMode, time() - 60);
+    return chmodRecursively(GallerySetupUtilities::getConfigDir(), $folderMode, $fileMode,
+			    time() - 60);
 }
 
 /* Chmod a specific plugin dir recursively */
@@ -422,7 +418,8 @@ function chmodPluginDir($pluginPath, $makeItWriteable) {
     /* This is just a wrapper function for the general chmod recursively function */
     $folderMode = $makeItWriteable ? 0777 : 0555;
     $fileMode = $makeItWriteable ? 0666 : 0444;
-    return chmodRecursively(GALLERY_CONFIG_DIR . $pluginPath, $folderMode, $fileMode, time() - 60);
+    return chmodRecursively(GallerySetupUtilities::getConfigDir() . $pluginPath, $folderMode,
+			    $fileMode, time() - 60);
 }
 
 function chmodStorageDirRecursively() {
@@ -442,10 +439,10 @@ function getPluginList() {
      */
     $plugins = array();
     foreach (array('/modules/', '/themes/') as $base) {
-	if (!file_exists(GALLERY_CONFIG_DIR . $base)) {
+	if (!file_exists(GallerySetupUtilities::getConfigDir() . $base)) {
 	    continue;
 	}
-	$fh = opendir(GALLERY_CONFIG_DIR . $base);
+	$fh = opendir(GallerySetupUtilities::getConfigDir() . $base);
 	if (empty($fh)) {
 	  continue;
         }
@@ -456,8 +453,9 @@ function getPluginList() {
 		continue;
 	    }
 	    $pluginId = $base . trim($folderName);
-	    if ((int)is_dir(GALLERY_CONFIG_DIR . $base . $folderName)) {
-                $plugins[$pluginId] = (int)is_writeable(GALLERY_CONFIG_DIR . $base . $folderName);
+	    if ((int)is_dir(GallerySetupUtilities::getConfigDir() . $base . $folderName)) {
+                $plugins[$pluginId] = (int)is_writeable(
+                	GallerySetupUtilities::getConfigDir() . $base . $folderName);
             }
     	}
 	closedir($fh);
@@ -636,7 +634,7 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
       ?>">Make the data folder read/write</a></h2>
       <p class="description">
         For some reason, your Gallery data folder might no longer be writeable by Gallery itself
-        and if that happens, Gallery will usually show a ERROR_STORAGE_FAILURE. In that case the
+        and if that happens, Gallery will usually show a ERROR_PLATFORM_FAILURE. In that case the
         problem might be solved by the above action. If the problem persists, you will have to talk
         to your webhost to get data folder writeable again.
       </p>
@@ -669,7 +667,7 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
 	  <input type="text" name="path" size="50" value="<?php print $path; ?>"/>
           <br/>
 	  <span class="subtext">
-	    Gallery folder: <i><?php print getGalleryBasePath(); ?></i> <br/>
+	    Gallery folder: <i><?php print GallerySetupUtilities::getConfigDir(); ?></i> <br/>
             Gallery data folder: <i><?php print getGalleryStoragePath(); ?></i> <br/>
 	  </span>
           <br/>
