@@ -546,7 +546,101 @@ class WebDavTest extends GalleryTestCase {
 	}
     }
 
-    function testLockRefreshUnlock() {
+    function testLockUnlock() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$headers =& GalleryUtilities::_getResponseHeaders();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'LOCK';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
+
+	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:lockinfo xmlns:D="DAV:">
+  <D:lockscope><D:exclusive/></D:lockscope>
+  <D:locktype><D:write/></D:locktype>
+  <D:owner>testOwner</D:owner>
+</D:lockinfo>';
+
+	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$path = ltrim($path, '/');
+	list ($ret, list ($lock)) = WebDavHelper::getLocks($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('exclusive', $lock['scope']);
+	$this->assertEquals('write', $lock['type']);
+	$this->assertEquals('infinity', $lock['depth']);
+	$this->assertEquals('testOwner', $lock['owner']);
+	$this->assertEquals((string)(time() + 10), $lock['expires']);
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"',
+		'lock-token' => 'Lock-Token: <' . $lock['token'] . '>'),
+	    $headers);
+
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:prop xmlns:D="DAV:">
+  <D:lockdiscovery>
+    <D:activelock>
+            <D:lockscope><D:exclusive/></D:lockscope>
+            <D:locktype><D:write/></D:locktype>
+            <D:depth>Infinity</D:depth>
+            <D:owner>testOwner</D:owner>
+            <D:timeout>Second-10</D:timeout>
+            <D:locktoken><D:href>' . $lock['token'] . '</D:href></D:locktoken>
+          </D:activelock>
+  </D:lockdiscovery>
+</D:prop>
+'), split("\r?\n", $output));
+
+	$headers = array();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'UNLOCK';
+
+	$_SERVER['HTTP_LOCK_TOKEN'] = "<$lock[token]>";
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 204 No Content'), $headers);
+
+	$this->assertEquals('', $output);
+
+	$ret = WebDavHelper::checkLocks($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testLockRefresh() {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
@@ -663,6 +757,158 @@ class WebDavTest extends GalleryTestCase {
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'UNLOCK';
+
+	$_SERVER['HTTP_LOCK_TOKEN'] = "<$lock[token]>";
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 204 No Content'), $headers);
+
+	$this->assertEquals('', $output);
+
+	$ret = WebDavHelper::checkLocks($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testLockConflict() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$headers =& GalleryUtilities::_getResponseHeaders();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'LOCK';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
+
+	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:lockinfo xmlns:D="DAV:">
+  <D:lockscope><D:exclusive/></D:lockscope>
+  <D:locktype><D:write/></D:locktype>
+  <D:owner>testOwner</D:owner>
+</D:lockinfo>';
+
+	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$path = ltrim($path, '/');
+	list ($ret, list ($lock)) = WebDavHelper::getLocks($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('exclusive', $lock['scope']);
+	$this->assertEquals('write', $lock['type']);
+	$this->assertEquals('infinity', $lock['depth']);
+	$this->assertEquals('testOwner', $lock['owner']);
+	$this->assertEquals((string)(time() + 10), $lock['expires']);
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"',
+		'lock-token' => 'Lock-Token: <' . $lock['token'] . '>'),
+	    $headers);
+
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:prop xmlns:D="DAV:">
+  <D:lockdiscovery>
+    <D:activelock>
+            <D:lockscope><D:exclusive/></D:lockscope>
+            <D:locktype><D:write/></D:locktype>
+            <D:depth>Infinity</D:depth>
+            <D:owner>testOwner</D:owner>
+            <D:timeout>Second-10</D:timeout>
+            <D:locktoken><D:href>' . $lock['token'] . '</D:href></D:locktoken>
+          </D:activelock>
+  </D:lockdiscovery>
+</D:prop>
+'), split("\r?\n", $output));
+
+	$headers = array();
+
+	/* Use valid inputs */
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:lockinfo xmlns:D="DAV:">
+  <D:lockscope><D:exclusive/></D:lockscope>
+  <D:locktype><D:write/></D:locktype>
+  <D:owner>testOwner</D:owner>
+</D:lockinfo>';
+
+	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$path = ltrim($path, '/');
+	list ($ret, $locks) = WebDavHelper::getLocks($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(), $locks);
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 409 Conflict',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
+	    $headers);
+
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response>
+    <D:href>' . $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav', 'path' => $path),
+	    array('forceServerRelativeUrl' => true)) . '</D:href>
+    <D:status>HTTP/1.1 423 Locked</D:status>
+  </D:response>
+</D:multistatus>
+'), split("\r?\n", $output));
+
+	$headers = array();
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'UNLOCK';
+
+	GalleryUtilities::putRequestVariable('path', $path);
 
 	$_SERVER['HTTP_LOCK_TOKEN'] = "<$lock[token]>";
 
