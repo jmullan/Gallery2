@@ -78,6 +78,7 @@ class WebDavHelper {
 	/* We haven't done any database calls yet, so GallerySqlFragment isn't defined */
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class');
 
+	/* Remove stale locks */
 	$ret = GalleryCoreApi::removeMapEntry('WebDavLockMap',
 	    array('expires' => new GallerySqlFragment('< ?', time())));
 	if ($ret) {
@@ -112,6 +113,8 @@ class WebDavHelper {
 
 	$pathComponents = explode('/', $path);
 	$count = 0;
+
+	/* Get ancestors' locks */
 	while (array_pop($pathComponents) !== null) {
 	    $data[] = implode('/', $pathComponents);
 	    $count++;
@@ -165,7 +168,7 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	if (!empty($locks) && !$webDavServer->check_lock_helper($locks[0])) {
+	if (!empty($locks) && !$webDavServer->check_locks_helper($locks, $path)) {
 	    WebDavServer::setResponseStatus('423 Locked');
 	    return GalleryCoreApi::error(ERROR_LOCK_IN_USE);
 	}
@@ -176,10 +179,10 @@ class WebDavHelper {
      * @see HTTP_WebDAV_Server::options
      */
     function options() {
-	/* TODO COPY not implemented */
+	/* TODO: COPY not implemented */
 	GalleryUtilities::setResponseHeader(
-	    'Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, ' .
-	    'DELETE, PUT, MOVE, LOCK, UNLOCK');
+	    'Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, DELETE, PUT, MOVE'
+	    . ', LOCK, UNLOCK');
 	GalleryUtilities::setResponseHeader('DAV: 1,2');
 	GalleryUtilities::setResponseHeader('Content-Length: 0');
 	GalleryUtilities::setResponseHeader('MS-Author-Via: DAV');
@@ -815,7 +818,8 @@ class WebDavHelper {
 	    return array(GalleryCoreApi::error(ERROR_UNKNOWN), null, null, null);
 	}
 
-	return array(null, $webDavOptions, $webDavOptions['stream'],
+	return array(null, $webDavOptions,
+		     $webDavOptions['stream'],
 		     $webDavOptions['content_type']);
     }
 
@@ -884,7 +888,9 @@ class WebDavHelper {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null, null, null, null);
 	}
 
-	return array(null, $webDavOptions, $webDavOptions['depth'], $webDavOptions['overwrite'],
+	return array(null, $webDavOptions,
+		     $webDavOptions['depth'],
+		     $webDavOptions['overwrite'],
 		     $webDavOptions['dest']);
     }
 
@@ -1258,18 +1264,24 @@ class WebDavHelper {
      *               int timeout of WebDAV lock
      *               string token of WebDAV lock to create
      * @see HTTP_WebDAV_Server::lock_request_helper
+     * @todo Simplify function signature
      */
     function lockRequestHelper() {
 	$webDavServer =& WebDavHelper::getWebDavServer();
 
 	if (!$webDavServer->lock_request_helper($webDavOptions)) {
 	    /* WebDAV library found error in the request */
-	    return array(GalleryCoreApi::error(ERROR_UNKNOWN), null, null, null, null, null, null,
-		null, null);
+	    return array(GalleryCoreApi::error(ERROR_UNKNOWN),
+			 null, null, null, null, null, null, null, null);
+	}
+
+	if (isset($webDavOptions['update'])) {
+	    return array(null, $webDavOptions,
+	    		 $webDavOptions['update'], null, null, null, null, null, null);
 	}
 
 	return array(null, $webDavOptions,
-		     isset($webDavOptions['update']) ? $webDavOptions['update'] : null,
+		     null,
 		     $webDavOptions['scope'],
 		     $webDavOptions['type'],
 		     $webDavOptions['depth'],
@@ -1284,15 +1296,28 @@ class WebDavHelper {
      * Wrapper around HTTP_WebDAV_Server::lock_response_helper which formates LOCK responses.
      *
      * @param array $webDavOptions WebDAV library options
+     * @param array $locks for response (path)
      * @param mixed $status HTTP response status
-     * @param array $locks locks for response (path)
+     * @param string $scope of WebDAV lock (exclusive or shared)
+     * @param string $type of WebDAV lock (read or write)
+     * @param int $depth maximum depth of descendant paths
+     * @param string $owner of WebDAV lock
+     * @param int $timeout of WebDAV lock
      * @param int $expires timestamp of WebDAV lock expiration
+     * @param string $token of WebDAV lock
      * @see HTTP_WebDAV_Server::lock_response_helper
+     * @todo Simplify function signature
      */
-    function lockResponseHelper($webDavOptions, $status, $locks, $expires) {
+    function lockResponseHelper(
+	    $webDavOptions, $locks, $status, $scope, $type, $depth, $owner, $expires, $token) {
 	$webDavServer =& WebDavHelper::getWebDavServer();
 	$webDavOptions['locks'] = $locks;
+	$webDavOptions['scope'] = $scope;
+	$webDavOptions['type'] = $type;
+	$webDavOptions['depth'] = $depth;
+	$webDavOptions['owner'] = $owner;
 	$webDavOptions['expires'] = $expires;
+	$webDavOptions['token'] = $token;
 	$webDavServer->lock_response_helper($webDavOptions, $status);
     }
 
@@ -1323,27 +1348,6 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	if ($scope != 'exclusive' || $type != 'write') {
-	    /*
-	     * 412 (Precondition Failed) - The included lock token was not enforceable on this
-	     * resource or the server could not satisfy the request in the lockinfo XML element.
-	     */
-	    WebDavServer::setResponseStatus('412 Precondition Failed');
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
-	}
-
-	if ($depth == 'infinity') {
-	    list ($ret, $locks) = WebDavHelper::getDescendentsLocks($path);
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    if (!empty($locks)) {
-		/* Format LOCK response */
-		return WebDavHelper::lockResponseHelper($webDavOptions, false, $locks, null);
-	    }
-	}
-
 	if (empty($path)) {
 	    list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
 	    if ($ret) {
@@ -1358,31 +1362,43 @@ class WebDavHelper {
 
 	/* Refresh lock */
 	if (!empty($update)) {
+	    /* Don't join with the Gallery lock table since we might be using flock system */
 	    $query = '
 		SELECT
+		  [WebDavLockMap::depth],
+		  [WebDavLockMap::owner],
 		  [WebDavLockMap::galleryLockId]
 		FROM
-		  [WebDavLockMap],
-		  [Lock]
+		  [WebDavLockMap]
 		WHERE
 		  [WebDavLockMap::path] = ?
 		AND
-		  [WebDavLockMap::token] = ?
-		AND
-		  [WebDavLockMap::galleryLockId] = [Lock::lockId]';
-	    list ($ret, $results) = $gallery->search($query, array($path, $token));
+		  [WebDavLockMap::token] = ?';
+	    list ($ret, $results) = $gallery->search($query, array($path, $update));
 	    if ($ret) {
 		return $ret;
 	    }
 
-	    if (($result = $results->nextResult()) !== false) {
-		$lockId = $result[0];
+	    /* Tried to refresh a lock which no longer exists */
+	    if (($result = $results->nextResult()) === false) {
+		/*
+		 * 412 (Precondition Failed) - The included lock token was not enforceable on this
+		 * resource or the server could not satisfy the request in the lockinfo XML element.
+		 */
+		WebDavServer::setResponseStatus('412 Precondition Failed');
+		return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
+	    }
 
-		/* Need an interface to update g_freshUntil for only $lockId */
-		$ret = GalleryCoreApi::refreshLocks();
-		if ($ret) {
-		    return $ret;
-		}
+	    /* Load WebDAV lock information */
+	    $scope = 'exclusive';
+	    $type = 'write';
+	    $depth = $result[0];
+	    $owner = $result[1];
+	    $lockId = $result[2];
+
+	    /* Check that the Gallery lock didn't disappear before the WebDAV lock */
+	    if (GalleryCoreApi::isWriteLocked($itemId)) {
+		/* TODO: Need an interface to update g_freshUntil for only $lockId */
 	    } else {
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
 		if ($ret) {
@@ -1390,6 +1406,29 @@ class WebDavHelper {
 		}
 	    }
 	} else {
+	    /* Support only exclusive write locks */
+	    if ($scope != 'exclusive' || $type != 'write') {
+		/*
+		 * 412 (Precondition Failed) - The included lock token was not enforceable on this
+		 * resource or the server could not satisfy the request in the lockinfo XML element.
+		 */
+		WebDavServer::setResponseStatus('412 Precondition Failed');
+		return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
+	    }
+
+	    if ($depth == 'infinity') {
+		list ($ret, $locks) = WebDavHelper::getDescendentsLocks($path);
+		if ($ret) {
+		    return $ret;
+		}
+
+		if (!empty($locks)) {
+		    /* Format LOCK response */
+		    return WebDavHelper::lockResponseHelper(
+			$webDavOptions, $locks, null, null, null, null, null, null, null);
+		}
+	    }
+
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
 	    if ($ret) {
 		return $ret;
@@ -1414,7 +1453,7 @@ class WebDavHelper {
 	} else {
 	    /*
 	     * Might be using flock system
-	     * TODO Get expires from flock locks
+	     * TODO: Get expires from flock locks
 	    return GalleryCoreApi::error(ERROR_MISSING_VALUE);
 	     */
 	    $expires = time() + 10;
@@ -1441,7 +1480,8 @@ class WebDavHelper {
 	}
 
 	/* Format LOCK response */
-	$ret = WebDavHelper::lockResponseHelper($webDavOptions, true, null, $expires);
+	$ret = WebDavHelper::lockResponseHelper(
+	    $webDavOptions, null, true, $scope, $type, $depth, $owner, $expires, $token);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1558,15 +1598,15 @@ class WebDavServer extends HTTP_WebDAV_Server {
     /**
      * @see HTTP_WebDAV_Server::setResponseHeader
      */
-    function setResponseHeader($header) {
-	GalleryUtilities::setResponseHeader($header);
+    function setResponseHeader($header, $replace=true) {
+	GalleryUtilities::setResponseHeader($header, $replace);
     }
 
     /**
      * @see HTTP_WebDAV_Server::setResponseStatus
      */
-    function setResponseStatus($status) {
-	GalleryUtilities::setResponseHeader("HTTP/1.0 $status");
+    function setResponseStatus($status, $replace=true) {
+	GalleryUtilities::setResponseHeader("HTTP/1.0 $status", $replace);
     }
 }
 ?>

@@ -76,11 +76,11 @@ class HTTP_WebDAV_Server
     var $_if_header_uris = array();
 
     /**
-     * HTTP response status/message
+     * HTTP response headers
      *
-     * @var string
+     * @var array
      */
-    var $_http_status = '200 OK';
+    var $headers = array();
 
     /**
      * Encoding of property values passed in
@@ -143,7 +143,7 @@ class HTTP_WebDAV_Server
         }
 
         // check
-        if (! $this->_check_if_header_conditions()) {
+        if (!$this->_check_if_header_conditions()) {
             $this->setResponseStatus('412 Precondition Failed');
             return;
         }
@@ -731,7 +731,7 @@ class HTTP_WebDAV_Server
     function proppatch_wrapper()
     {
         // check resource is not locked
-        if (!$this->check_lock_wrapper($this->path)) {
+        if (!$this->check_locks_wrapper($this->path)) {
             $this->setResponseStatus('423 Locked');
             return;
         }
@@ -1189,10 +1189,10 @@ class HTTP_WebDAV_Server
             $options['content_type'] = $_SERVER['CONTENT_TYPE'];
         }
 
-        // RFC2616 2.6 says: The recipient of the entity MUST NOT ignore any
+        // RFC2616 2.6: The recipient of the entity MUST NOT ignore any
         // Content-* (e.g. Content-Range) headers that it does not understand
-        // or implement and MUST return a 501 (Not Implemented) response in such
-        // cases.
+        // or implement and MUST return a 501 (Not Implemented) response in
+        // such cases.
         foreach ($_SERVER as $key => $value) {
             if (strncmp($key, 'HTTP_CONTENT', 11)) {
                 continue;
@@ -1322,7 +1322,7 @@ class HTTP_WebDAV_Server
     function put_wrapper()
     {
         // check resource is not locked
-        if (!$this->check_lock_wrapper($this->path)) {
+        if (!$this->check_locks_wrapper($this->path)) {
             $this->setResponseStatus('423 Locked');
             return;
         }
@@ -1359,7 +1359,7 @@ class HTTP_WebDAV_Server
         }
 
         // check resource is not locked
-        if (!$this->check_lock_wrapper($this->path)) {
+        if (!$this->check_locks_wrapper($this->path)) {
             $this->setResponseStatus('423 Locked');
             return;
         }
@@ -1422,7 +1422,7 @@ class HTTP_WebDAV_Server
             $options['dest'] =
                 substr($url['path'], strlen($this->baseUrl['path']));
 
-	    $options['dest'] = $this->_urldecode($options['dest']);
+            $options['dest'] = $this->_urldecode($options['dest']);
             $options['dest'] = trim($options['dest'], '/');
 
             // check source and destination are not the same - data could be lost
@@ -1461,7 +1461,7 @@ class HTTP_WebDAV_Server
 
         // check destination is not locked
         if (!empty($options['dest']) &&
-                !$this->check_lock_wrapper($options['dest'])) {
+                !$this->check_locks_wrapper($options['dest'])) {
             $this->setResponseStatus('423 Locked');
             return;
         }
@@ -1489,7 +1489,7 @@ class HTTP_WebDAV_Server
     function move_wrapper()
     {
         // check resource is not locked
-        if (!$this->check_lock_wrapper($this->path)) {
+        if (!$this->check_locks_wrapper($this->path)) {
             $this->setResponseStatus('423 Locked');
             return;
         }
@@ -1501,7 +1501,7 @@ class HTTP_WebDAV_Server
 
         // check destination is not locked
         if (!empty($options['dest']) &&
-                !$this->check_lock_wrapper($options['dest'])) {
+                !$this->check_locks_wrapper($options['dest'])) {
             $this->setResponseStatus('423 Locked');
             return;
         }
@@ -1531,6 +1531,14 @@ class HTTP_WebDAV_Server
         $options = array();
         $options['path'] = $this->path;
 
+        if (empty($_SERVER['CONTENT_LENGTH']) && !empty($_SERVER['HTTP_IF'])) {
+
+            // FIXME: Refresh multiple locks?
+            $options['update'] = substr($_SERVER['HTTP_IF'], 2, -2);
+
+            return true;
+        }
+
         $options['depth'] = 'infinity';
         if (!empty($_SERVER['HTTP_DEPTH'])) {
             $options['depth'] = $_SERVER['HTTP_DEPTH'];
@@ -1538,14 +1546,6 @@ class HTTP_WebDAV_Server
 
         if (!empty($_SERVER['HTTP_TIMEOUT'])) {
             $options['timeout'] = explode(',', $_SERVER['HTTP_TIMEOUT']);
-        }
-
-        if (empty($_SERVER['CONTENT_LENGTH']) && !empty($_SERVER['HTTP_IF'])) {
-
-            // refresh lock
-            $options['update'] = substr($_SERVER['HTTP_IF'], 2, -2);
-
-            return true;
         }
 
         // extract lock request information from request XML payload
@@ -1603,8 +1603,8 @@ class HTTP_WebDAV_Server
 
         if ($status === true) {
             $status = '200 OK';
-	} else if ($status === false) {
-	    $status = '423 Locked';
+        } else if ($status === false) {
+            $status = '423 Locked';
         }
 
         // set headers before we start printing
@@ -1612,12 +1612,38 @@ class HTTP_WebDAV_Server
 
         if ($status{0} == 2) { // 2xx states are ok
             $this->setResponseHeader('Content-Type: text/xml; charset="utf-8"');
-            $this->setResponseHeader("Lock-Token: <$options[token]>");
+
+            // RFC2518 8.10.1: In order to indicate the lock token associated
+            // with a newly created lock, a Lock-Token response header MUST be
+            // included in the response for every successful LOCK request for a
+            // new lock.  Note that the Lock-Token header would not be returned
+            // in the response for a successful refresh LOCK request because a
+            // new lock was not created.
+            if (empty($options['update']) || !empty($options['token'])) {
+                $this->setResponseHeader("Lock-Token: <$options[token]>");
+            }
+
+            $lock = array();
+            foreach (array('scope', 'type', 'depth', 'owner') as $key) {
+                $lock[$key] = $options[$key];
+            }
+
+            if (!empty($options['expires'])) {
+                $lock['expires'] = $options['expires'];
+            } else {
+                $lock['timeout'] = $options['timeout'];
+            }
+
+            if (!empty($options['update'])) {
+                $lock['token'] = $options['update'];
+            } else {
+                $lock['token'] = $options['token'];
+            }
 
             echo "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
             echo "<D:prop xmlns:D=\"DAV:\">\n";
             echo "  <D:lockdiscovery>\n";
-            echo '    ' . $this->_activelocksResponseHelper(array($options))
+            echo '    ' . $this->_activelocksResponseHelper(array($lock))
                 . "\n";
             echo "  </D:lockdiscovery>\n";
             echo "</D:prop>\n";
@@ -1643,9 +1669,8 @@ class HTTP_WebDAV_Server
 
         // check resource is not locked
         if (!empty($options['update'])
-                && !$this->check_lock_wrapper($this->path)
-                || !$this->check_lock_wrapper($this->path,
-                    $options['scope'] == 'shared')) {
+                && !$this->check_locks_wrapper(
+                    $this->path, $options['scope'] == 'shared')) {
             $this->setResponseStatus('423 Locked');
             return;
         }
@@ -1719,7 +1744,7 @@ class HTTP_WebDAV_Server
     function _multistatusResponseHelper($responses)
     {
         // now we generate the response header...
-        $this->setResponseStatus('207 Multi-Status');
+        $this->setResponseStatus('207 Multi-Status', false);
         $this->setResponseHeader('Content-Type: text/xml; charset="utf-8"');
 
         // ...& payload
@@ -1733,11 +1758,13 @@ class HTTP_WebDAV_Server
                 continue;
             }
 
-            $ns_defs = array();
-            foreach ($response['namespaces'] as $name => $prefix) {
-                $ns_defs[] = "xmlns:$prefix=\"$name\"";
+            $namespaces = '';
+            if (!empty($response['namespaces'])) {
+                foreach ($response['namespaces'] as $name => $prefix) {
+                    $namespaces .= " xmlns:$prefix=\"$name\"";
+                }
             }
-            echo '  <D:response ' . implode(' ', $ns_defs) . ">\n";
+            echo "  <D:response$namespaces>\n";
             echo "    <D:href>$response[href]</D:href>\n";
 
             // report all found properties and their values (if any)
@@ -1835,7 +1862,7 @@ class HTTP_WebDAV_Server
             }
 
             if (!empty($response['status'])) {
-                echo "    <D:status>HTTP/1.1 $status</D:status>\n";
+                echo "    <D:status>HTTP/1.1 $response[status]</D:status>\n";
             }
 
             if (!empty($response['responsedescription'])) {
@@ -1874,7 +1901,7 @@ class HTTP_WebDAV_Server
             }
 
             // genreate response block
-                $locks[$key] = "<D:activelock>
+            $locks[$key] = "<D:activelock>
             <D:lockscope><D:$lock[scope]/></D:lockscope>
             <D:locktype><D:$lock[type]/></D:locktype>
             <D:depth>" . ($lock['depth'] == 'infinity' ? 'Infinity' : $lock['depth']) . "</D:depth>
@@ -2220,11 +2247,11 @@ class HTTP_WebDAV_Server
                         break;
 
                     case 'ETAG_WEAK':
-                        $list[] = $not . "[W/'$token[1]']>";
+                        $list[] = $not . "[W/'$token[1]']";
                         break;
 
                     case 'ETAG_STRONG':
-                        $list[] = $not . "['$token[1]']>";
+                        $list[] = $not . "['$token[1]']";
                         break;
 
                     default:
@@ -2232,7 +2259,19 @@ class HTTP_WebDAV_Server
                 }
             }
 
-            if (is_array($uris[$uri])) {
+            // RFC2518 9.4.1: The No-tag-list production describes a series of
+            // state tokens and ETags.  If multiple No-tag-list productions are
+            // used then one only needs to match the state of the resource for
+            // the method to be allowed to continue.
+            //
+            // FIXME: Since only one list of conditions must be satisfied, it
+            // is a mistake to merge all lists of conditions.  Instead, a URL
+            // should reference an array of arrays of conditions, the inner
+            // array representing a conjunction and the outer array
+            // representing a disjunction, or $uris shouldn't be associative,
+            // but be an array of productions array('href' => $href,
+            // 'conditions' => array($condition, ...))
+            if (!empty($uris[$uri])) {
                 $uris[$uri] = array_merge($uris[$uri], $list);
                 continue;
             }
@@ -2260,9 +2299,14 @@ class HTTP_WebDAV_Server
             $this->_if_header_parser($_SERVER['HTTP_IF']);
 
         // any match is ok
-        foreach($this->_if_header_uris as $uri => $conditions) {
+        foreach ($this->_if_header_uris as $uri => $conditions) {
+
+            // RFC2518 9.4.1: If a method, due to the presence of a Depth or
+            // Destination header, is applied to multiple resources then the
+            // No-tag-list production MUST be applied to each resource the
+            // method is applied to.
             if (empty($uri)) {
-                $uri = $this->baseUrl['path'] . '/' . $this->path;
+                $uri = $this->getHref($this->path);
             }
 
             // all must match
@@ -2278,7 +2322,7 @@ class HTTP_WebDAV_Server
                 }
 
                 if (!$this->_check_uri_condition($uri, $condition)) {
-                    continue (2);
+                    continue 2;
                 }
             }
 
@@ -2302,38 +2346,53 @@ class HTTP_WebDAV_Server
     }
 
     /**
+     * For each lock on the requested resource, check that the lock token is in
+     * the If header.  If requesting a shared lock, check only exclusive locks
+     * on the requested resource.
+     *
      * @param array of locks
+     * @param string path of resource to check
      * @param boolean exclusive lock?
+     * @return boolean true if the request is allowed
      */
-    function check_lock_helper($lock, $exclusive_only=false)
+    function check_locks_helper($locks, $path, $exclusive_only=false)
     {
-        if (!is_array($lock) || empty($lock)) {
-            return true;
+        $conditions = array();
+        if (!empty($_SERVER['HTTP_IF'])) {
+            $conditions = $this->_if_header_parser($_SERVER['HTTP_IF']);
         }
 
-        // FIXME doesn't check URL restrictions yet
-        if (!empty($_SERVER['HTTP_IF']) && strstr($_SERVER['HTTP_IF'], $lock['token'])) {
-            return true;
+        foreach ($locks as $lock) {
+            if ($exclusive_only && ($lock['scope'] == 'shared')) {
+                continue;
+            }
+
+            // for both Tagged-list and No-tag-list productions
+            foreach (array($this->getHref($path), '') as $href) {
+                if (!empty($conditions[$href])
+                        && in_array("<$lock[token]>", $conditions[$href])) {
+                    continue 2;
+                }
+            }
+
+            return false;
         }
 
-        if ($exclusive_only && ($lock['scope'] == 'shared')) {
-            return true;
-        }
+        return true;
     }
 
     /**
      * @param string path of resource to check
      * @param boolean exclusive lock?
      */
-    function check_lock_wrapper($path, $exclusive_only = false)
+    function check_locks_wrapper($path, $exclusive_only=false)
     {
         if (!method_exists($this, 'getLocks')) {
             return true;
         }
 
-        $lock = $this->getLocks($path);
-
-        return $this->check_lock_helper($lock, $exclusive_only);
+        return $this->check_locks_helper(
+            $this->getLocks($path), $path, $exclusive_only);
     }
 
     // }}}
@@ -2365,9 +2424,17 @@ class HTTP_WebDAV_Server
      * @param string status code and message
      * @return void
      */
-    function setResponseHeader($header)
+    function setResponseHeader($header, $replace=true)
     {
-        header($header);
+        $key = 'status';
+        if (strncasecmp($header, 'HTTP/', 5) !== 0) {
+            $key = strtolower(substr($header, 0, strpos($header, ':')));
+        }
+
+        if ($replace || empty($this->headers[$key])) {
+            header($header);
+            $this->headers[$key] = $header;
+        }
     }
 
     /**
@@ -2376,7 +2443,7 @@ class HTTP_WebDAV_Server
      * @param string status code and message
      * @return void
      */
-    function setResponseStatus($status)
+    function setResponseStatus($status, $replace=true)
     {
         // simplified success case
         if ($status === true) {
@@ -2388,12 +2455,9 @@ class HTTP_WebDAV_Server
             $status = '500 Internal Server Error';
         }
 
-        // remember status
-        $this->_http_status = $status;
-
         // generate HTTP status response
-        $this->setResponseHeader("HTTP/1.1 $status");
-        $this->setResponseHeader("X-WebDAV-Status: $status");
+        $this->setResponseHeader("HTTP/1.1 $status", $replace);
+        $this->setResponseHeader("X-WebDAV-Status: $status", $replace);
     }
 
     /**
