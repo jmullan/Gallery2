@@ -24,7 +24,7 @@
  * @author Jack Bates <ms419@freezone.co.uk>
  * @version $Revision$
  */
-class WebDavModule extends GalleryModule {
+class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
     function WebDavModule() {
 	global $gallery;
@@ -55,10 +55,7 @@ class WebDavModule extends GalleryModule {
      * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
-	GalleryCoreApi::requireOnce(
-	    'modules/webdav/classes/WebDavActivatePluginEventListener.class');
-	return GalleryCoreApi::registerEventListener(
-	    'Gallery::ActivatePlugin', new WebDavActivatePluginEventListener());
+	return GalleryCoreApi::registerEventListener('Gallery::ActivatePlugin', $this);
     }
 
     /**
@@ -72,20 +69,9 @@ class WebDavModule extends GalleryModule {
 	    /* Initial install */
 
 	    /* Activate essential rewrite rules */
-	    list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	    $ret = $this->_activateRewriteRules();
 	    if ($ret) {
 		return $ret;
-	    }
-
-	    if (!empty($rewriteApi)) {
-		list ($ret, $success) = $rewriteApi->activateRewriteRulesForModule($this->getId());
-		if ($ret) {
-		    return $ret;
-		}
-	    }
-
-	    if (empty($rewriteApi) || empty($success)) {
-		/* TODO: Show configuration required or something like that */
 	    }
 
 	    break;
@@ -236,6 +222,41 @@ class WebDavModule extends GalleryModule {
 	}
 
 	return $rules;
+    }
+
+    /**
+     * @see GalleryEventListener::handleEvent
+     */
+    function handleEvent($event) {
+	$data = $event->getData();
+	if ($data['pluginType'] != 'module' || $data['pluginId'] != 'rewrite') {
+	    return array(null, null);
+	}
+
+	$ret = $this->_activateRewriteRules();
+	if ($ret) {
+	    return array($ret, null);
+	}
+    }
+
+    function _activateRewriteRules() {
+	list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (!empty($rewriteApi)) {
+	    list ($ret, $success) = $rewriteApi->activateRewriteRulesForModule($this->getId());
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	if (empty($rewriteApi) || empty($success)) {
+	    /* TODO: Show configuration required or something like that */
+	}
+
+	return null;
     }
 }
 ?>
