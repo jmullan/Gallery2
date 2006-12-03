@@ -845,8 +845,8 @@ class StorageTest extends GalleryTestCase {
 	$optimizeStatements = $storage->_getOptimizeStatements();
 	/* Results for optimize statements */
 	$expectedQueries = array();
-	foreach (array('Entity', 'AccessMap') as $tableName) {
-	    foreach ($optimizeStatements as $statement) {
+	foreach ($optimizeStatements as $statement) {
+	    foreach (array('Entity', 'AccessMap') as $tableName) {
 		$mockedResults[] = new StorageTestRecordSet();
 		$expectedQueries[] =
 			array(sprintf($statement, $storage->_tablePrefix . $tableName), false);
@@ -877,8 +877,8 @@ class StorageTest extends GalleryTestCase {
 	$optimizeStatements = $storage->_getOptimizeStatements();
 	/* Results for optimize statements */
 	$expectedQueries = array();
-	foreach (array('Entity', 'Item') as $tableName) {
-	    foreach ($optimizeStatements as $statement) {
+	foreach ($optimizeStatements as $statement) {
+	    foreach (array('Entity', 'Item') as $tableName) {
 		$mockedResults[] = new StorageTestRecordSet();
 		$expectedQueries[] =
 			array(sprintf($statement, $storage->_tablePrefix . $tableName), false);
