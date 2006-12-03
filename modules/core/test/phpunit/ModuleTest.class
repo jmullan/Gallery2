@@ -41,8 +41,6 @@ class ModuleTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$module->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
-	$module->setRequiredModuleApi(GalleryModule::getApiVersion());
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('onLoadHandlers' => '|ModuleTestOnLoadHandler|'));

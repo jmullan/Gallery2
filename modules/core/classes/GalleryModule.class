@@ -366,6 +366,11 @@ class GalleryModule extends GalleryPlugin {
 			 null);
 	}
 
+	$ret = $this->performFactoryRegistrations();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
 	if ($ret) {
 	    return array($ret, null);
@@ -373,11 +378,6 @@ class GalleryModule extends GalleryPlugin {
 
 	if (!empty($redirect)) {
 	    return array(null, $redirect);
-	}
-
-	$ret = $this->performFactoryRegistrations();
-	if ($ret) {
-	    return array($ret, null);
 	}
 
 	return array(null, array());
