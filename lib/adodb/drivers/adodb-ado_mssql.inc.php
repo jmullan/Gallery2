@@ -135,6 +135,12 @@ class  ADODB_ado_mssql extends ADODB_ado {
 		// in old implementation, pre 1.90, we returned GUID...
 		//return $this->GetOne("SELECT CONVERT(varchar(255), NEWID()) AS 'Char'");
 	}
+
+	function qstr($s,$magic_quotes=false)
+	{
+		$s = parent::qstr($s, $magic_quotes);
+		return str_replace("\0", "\\\\000", $s);
+	}
 	
 	} // end class 
 	
