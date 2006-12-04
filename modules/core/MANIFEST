@@ -19,7 +19,7 @@ modules/core/AdminToolkitPriority.inc	105756882	94682431	3244	3349
 modules/core/AdminUsers.inc	1086739559	3592872682	7032	7264
 modules/core/Callbacks.inc	3263872441	3557609542	6599	6809
 modules/core/ChangeLanguage.inc	2999677340	3382744154	1514	1563
-modules/core/CoreModuleExtras.inc	1371447179	4261807468	94332	97339
+modules/core/CoreModuleExtras.inc	802939688	1402277511	94402	97413
 modules/core/CreateThumbnailOption.inc	3104742095	1658116518	2288	2363
 modules/core/DownloadItem.inc	1089488694	3565178436	5430	5616
 modules/core/ErrorPage.inc	2762782569	684722633	6596	6810
@@ -96,7 +96,7 @@ modules/core/classes/GalleryFileSystemEntity.class	1616292249	1031537471	11049	1
 modules/core/classes/GalleryGroup.class	1086725921	1464608101	4526	4707
 modules/core/classes/GalleryItem.class	2587867314	2256125614	13301	13818
 modules/core/classes/GalleryLockSystem.class	975981218	2902627221	10190	10553
-modules/core/classes/GalleryModule.class	4239478967	4138565135	20641	21273
+modules/core/classes/GalleryModule.class	215284602	2478817866	20641	21273
 modules/core/classes/GalleryMovieItem.class	3235279570	2976437279	8428	8747
 modules/core/classes/GalleryPersistent.class	1356876078	3878524526	4640	4791
 modules/core/classes/GalleryPhotoItem.class	1217855251	3324018259	7324	7599
@@ -154,7 +154,7 @@ modules/core/classes/GalleryStorage/xml-src/T_InstallerTest_3.xml	508896771	8144
 modules/core/classes/GalleryStorage/xml-src/T_InstallerTest_4.xml	3727832861	3705143938	276	287
 modules/core/classes/GalleryTemplate.class	659131051	2296332060	13059	13492
 modules/core/classes/GalleryTemplateAdapter.class	216669671	137619892	33967	35025
-modules/core/classes/GalleryTheme.class	2838415405	2713569040	62452	64410
+modules/core/classes/GalleryTheme.class	2203930691	3461605375	62452	64410
 modules/core/classes/GalleryToolkit.class	1931513238	1327552023	9211	9470
 modules/core/classes/GalleryTranslator.class	3445712709	481241922	17998	18553
 modules/core/classes/GalleryUnknownItem.class	801516018	254882060	3712	3824
@@ -266,7 +266,7 @@ modules/core/locale/uk/LC_MESSAGES/modules_core.mo	3629020388	3629020388	111393	
 modules/core/locale/vi/LC_MESSAGES/modules_core.mo	3088819845	3088819845	82339	82339
 modules/core/locale/zh_CN/LC_MESSAGES/modules_core.mo	3715958016	3715958016	80014	80014
 modules/core/locale/zh_TW/LC_MESSAGES/modules_core.mo	3401699701	3401699701	96381	96381
-modules/core/module.inc	1680708657	1930076576	16396	16892
+modules/core/module.inc	4071794176	4195091891	16396	16892
 modules/core/po/GNUmakefile	1866879166	2808215985	98	103
 modules/core/po/af.po	836994493	2004139519	101295	105116
 modules/core/po/ar.po	3590522856	1772234059	107889	111597
@@ -322,13 +322,13 @@ modules/core/templates/AdminGroups.tpl	3566666160	3629106710	5548	5704
 modules/core/templates/AdminMaintenance.tpl	2914086177	3771497574	2922	3009
 modules/core/templates/AdminPerformance.tpl	2938508000	1476987358	5207	5342
 modules/core/templates/AdminPlugins.js	3373366232	64356158	7957	8197
-modules/core/templates/AdminPlugins.tpl	274881364	3210918190	11285	11521
+modules/core/templates/AdminPlugins.tpl	3459162042	1610412071	11358	11596
 modules/core/templates/AdminPluginsLegend.tpl	2042806874	3537232441	1322	1354
 modules/core/templates/AdminRepository.js	300453090	177871495	2103	2168
 modules/core/templates/AdminRepository.tpl	1304081566	4147365187	12573	12868
 modules/core/templates/AdminRepositoryDownload.js	2345204483	3065531216	1280	1321
 modules/core/templates/AdminRepositoryDownload.tpl	4175646754	3987917927	5318	5428
-modules/core/templates/AdminThemes.tpl	299908647	61267752	9653	9934
+modules/core/templates/AdminThemes.tpl	3408235206	1500651059	9726	10009
 modules/core/templates/AdminToolkitPriority.tpl	1759607716	3616960899	2365	2433
 modules/core/templates/AdminUsers.tpl	2596077093	1151593518	5493	5657
 modules/core/templates/AutoComplete.tpl	1337773861	2713891692	1145	1169
@@ -354,7 +354,7 @@ modules/core/templates/ItemEditItem.tpl	1428926207	2965838050	7326	7543
 modules/core/templates/ItemEditMovie.tpl	336972428	3498487429	1725	1770
 modules/core/templates/ItemEditPhoto.tpl	753510636	1642410947	2170	2228
 modules/core/templates/ItemEditPhotoThumbnail.css	2517483465	817094381	1175	1253
-modules/core/templates/ItemEditPhotoThumbnail.tpl	3890512311	2500827954	4725	4837
+modules/core/templates/ItemEditPhotoThumbnail.tpl	1622137022	1567097987	4798	4912
 modules/core/templates/ItemEditRotateAndScalePhoto.tpl	3450914850	2360900523	4722	4839
 modules/core/templates/ItemEditTheme.tpl	2265818124	2937882993	1875	1916
 modules/core/templates/ItemMakeHighlight.tpl	403370741	4288684334	1191	1223
@@ -362,6 +362,7 @@ modules/core/templates/ItemMove.tpl	218306862	3003192179	10532	10798
 modules/core/templates/ItemMoveSingle.tpl	8013002	940019288	1681	1731
 modules/core/templates/ItemPermissions.tpl	1416039999	4035687919	9479	9745
 modules/core/templates/ItemReorder.tpl	866760582	714075774	2108	2168
+modules/core/templates/JavaScriptWarning.tpl	1058259032	2827968779	580	591
 modules/core/templates/MaintenanceMode.tpl	4087350788	2538396215	679	699
 modules/core/templates/MarkupBar.tpl	3660339360	1858233749	6775	6931
 modules/core/templates/ShowItem.tpl	2293912855	2205012850	280	287
@@ -391,7 +392,7 @@ modules/core/templates/blocks/PeerList.tpl	3735666696	666223219	1265	1298
 modules/core/templates/blocks/PhotoSizes.tpl	2033605046	1022032780	1804	1855
 modules/core/templates/blocks/SystemLink.tpl	3643200621	4047141486	464	476
 modules/core/templates/blocks/SystemLinks.tpl	1950007329	1980823451	1267	1304
-modules/core/templates/blocks/ThemeSettingsForm.tpl	3909509424	917533304	8243	8482
+modules/core/templates/blocks/ThemeSettingsForm.tpl	1549968410	353239461	8314	8555
 modules/core/templates/blocks/blocks.inc	3504865617	701317870	514	533
 modules/core/test/data/DataCacheTest_1.class	3924075277	63834186	40	41
 modules/core/test/data/DataCacheTest_2.class	3496583112	3908678473	40	41
