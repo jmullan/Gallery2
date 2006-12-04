@@ -71,6 +71,10 @@ class GalleryEventHelper_simple {
      */
     function postEvent($event) {
 	static $allListenersRegistered;
+	/*
+	 * TODO: We should push this information into the database.  It's very costly to
+	 * load up all the modules now that there are so many of them.
+	 */
 	if (!isset($allListenersRegistered)) {
 	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret) {
