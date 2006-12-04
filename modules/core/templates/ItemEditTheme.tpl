@@ -22,7 +22,8 @@
    name="{g->formVar var="form[action][chooseTheme]"}" value="{g->text text="Choose Theme"}"/>
 </div>
 
-{capture assign="message"}<h3>{g->text text="Configure the %s theme" arg1="<b>`$ItemEditTheme.themeList[$ItemEditTheme.theme]`</b>"}</h3>{g->text text="These settings only apply to the theme for this album."}{/capture}
+{capture assign="message"}<h3>{g->text text="Configure the %s theme" arg1="<b>`$ThemeSettingsForm.theme.name`</b>"}</h3>
+{g->text text="These settings only apply to the theme for this album."}{/capture}
 {g->block type="core.ThemeSettingsForm" class="gbBlock" message=$message formId="itemAdminForm"}
 
 {if !empty($ThemeSettingsForm.settings)}

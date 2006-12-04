@@ -31,25 +31,16 @@ class ItemEditTheme extends ItemEditPlugin {
      * @see ItemEditPlugin::handleRequest
      */
     function handleRequest($form, &$item, &$preferred) {
-	list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
-	if ($ret) {
-	    return array($ret, null, null, null);
-	}
-
 	if (isset($form['action']['chooseTheme'])) {
 	    $error = array();
 	    if (!empty($form['theme'])) {
 		$themeId = $form['theme'];
-	    } else {
-		list ($ret, $themeId) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+		list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
 		if ($ret) {
 		    return array($ret, null, null, null);
 		}
-	    }
-	    list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
-	    if ($ret) {
-		return array($ret, null, null, null);
+	    } else {
+		$themeId = null;
 	    }
 
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
@@ -68,7 +59,7 @@ class ItemEditTheme extends ItemEditPlugin {
 	    }
 
 	    $item->setSerialNumber($form['serialNumber']);
-	    $item->setTheme($theme->getId());
+	    $item->setTheme($themeId);
 	    $ret = $item->save();
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
@@ -117,6 +108,10 @@ class ItemEditTheme extends ItemEditPlugin {
 
 	    $status = $module->translate('Successfully changed theme');
 	} else {
+	    list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
+	    if ($ret) {
+		return array($ret, null, null, null);
+	    }
 	    list ($ret, $error, $status) = GalleryCoreApi::handleThemeSettingsRequest(
 		$themeId, $item->getId(), $form);
 	    if ($ret) {
@@ -131,10 +126,7 @@ class ItemEditTheme extends ItemEditPlugin {
      * @see ItemEditPlugin::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	list ($ret, $themeId) = GalleryCoreApi::fetchThemeId($item);
-	if ($ret) {
-	    return array($ret, null, null);
-	}
+	$themeId = $item->getTheme();
 
 	$ret = GalleryCoreApi::loadThemeSettingsForm($themeId, $item->getId(), $template, $form);
 	if ($ret) {

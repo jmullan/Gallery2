@@ -211,6 +211,25 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals('ItemEditThemeControllerTest', $this->_album->getTheme());
     }
 
+    function testChooseDefaultTheme() {
+	$this->_setTheme($this->_album, 'ItemEditThemeControllerTest');
+
+	GalleryUtilities::putRequestVariable('form[action][chooseTheme]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[serialNumber]', $this->_album->getSerialNumber());
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Successfully changed theme')),
+			    $results);
+
+	list ($ret, $this->_album) = $this->_album->refresh();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	$this->assertEquals(null, $this->_album->getTheme());
+    }
+
     function testChooseBogusTheme() {
 	GalleryUtilities::putRequestVariable('form[theme]', 'BogusBogus!');
 	GalleryUtilities::putRequestVariable('form[action][chooseTheme]', 1);
