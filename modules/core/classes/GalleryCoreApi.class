@@ -72,7 +72,7 @@ class GalleryCoreApi {
      * - remove GalleryUtilities::utf8Substring (moved to GalleryCoreApi)
      */
     function getApiVersion() {
-	return array(7, 14);
+	return array(7, 15);
     }
 
     /**
@@ -2565,6 +2565,20 @@ class GalleryCoreApi {
     function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/WebHelper_simple.class');
 	return WebHelper_simple::postToWebPage($url, $postDataArray, $extraHeaders);
+    }
+
+    /**
+     * Make an HTTP request to a remote URL and return the HTTP response status, headers and body.
+     * @param string $url
+     * @param string $requestMethod (optional) the HTTP request method, defaults to 'GET'
+     * @param array $requestHeaders (optional) extra headers to pass to the server
+     * @param string $requestBody (optional) the request body to pass to the server
+     * @return array($responseStatus, $responseHeaders, $responseBody)
+     */
+    function requestWebPage($url, $requestMethod='GET', $requestHeaders=array(), $requestBody='') {
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/WebHelper_simple.class');
+	return WebHelper_simple::requestWebPage(
+	    $url, $requestMethod, $requestHeaders, $requestBody);
     }
 
     /**

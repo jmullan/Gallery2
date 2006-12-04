@@ -186,168 +186,67 @@ class WebHelper_simple {
      * @see GalleryCoreApi::fetchWebPage
      */
     function fetchWebPage($url, $extraHeaders=array(), $depth=0) {
-	global $gallery;
-
-	/* Convert illegal characters */
-	$url = str_replace(' ', '%20', $url);
-
-	$components = parse_url($url);
-	$port = empty($components['port']) ? 80 : $components['port'];
-	if (empty($components['path'])) {
-	    $components['path'] = '/';
-	}
-
 	/* Don't redirect too far */
 	if ($depth > 5) {
 	    $gallery->debug('Too many levels of HTTP redirection!');
 	    return array(false, null, null, null, null);
 	}
 
-	$platform =& $gallery->getPlatform();
-	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
-	if (empty($fd)) {
-	    $gallery->debug("Error $errno: '$errstr' retrieving $url");
-	    return array(false, null, null, null, null);
-	}
+	/* Convert illegal characters */
+	$url = str_replace(' ', '%20', $url);
 
-	$get = $components['path'];
-	if (!empty($components['query'])) {
-	    $get .= '?' . $components['query'];
-	}
-
-	/* Unescape ampersands, since if the url comes from form input it will be escaped */
-	$get = str_replace('&amp;', '&', $get);
+	/* Unescape ampersands, since if the URL comes from form input it will be escaped */
+	$url = str_replace('&amp;', '&', $url);
 
 	/* Read the web page into a buffer */
-	$extraHeaderLines = array();
-	foreach ($extraHeaders as $headerKey => $headerValue) {
-	    $extraHeaderLines[] = "$headerKey: $headerValue";
-	}
+	list ($responseStatus, $responseHeaders, $responseBody) =
+	    WebHelper_simple::requestWebPage($url, 'GET', $extraHeaders);
 
-	$ok = $platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
-					     "Host: %s\r\n" .
-					     "%s\r\n",
-					     $get,
-					     $components['host'],
-					     empty($extraHeaderLines) ? '' :
-					     implode("\r\n", $extraHeaderLines) . "\r\n"));
-	if (!$ok) {
-	    /* Zero bytes written or false was returned */
-	    $gallery->debug(
-		"fwrite call failed in fetchWebPage($url)" . ($ok === false ? ' - false' : ''));
-	    return array(false, null, null, null, null);
-	}
-	$platform->fflush($fd);
-
-	/*
-	 * Read the response code. fgets stops after newlines.
-	 * The first line contains only the status code (200, 404, etc.).
-	 */
-	$headers = array();
-	$response = trim($platform->fgets($fd, 4096));
-	/* Read the headers. */
-	while (!$platform->feof($fd)) {
-	    $line = trim($platform->fgets($fd, 4096));
-	    if (empty($line)) {
-		break;
-	    }
-
-	    /* Normalize the line endings */
-	    $line = str_replace("\r", '', $line);
-
-	    list ($key, $value) = explode(':', $line, 2);
-	    if (isset($headers[$key])) {
-		if (!is_array($headers[$key])) {
-		    $headers[$key] = array($headers[$key]);
-		}
-		$headers[$key][] = trim($value);
-	    } else {
-		$headers[$key] = trim($value);
-	    }
-	}
-
-	if (isset($headers['Location'])) {
-	    $redirectUrl = $headers['Location'];
+	if (isset($responseHeaders['Location'])) {
+	    $redirectUrl = $responseHeaders['Location'];
 	    if (is_array($redirectUrl)) {
-		/* If odd http response has multiple Location headers just pick the first */
+		/* If odd HTTP response has multiple Location headers just pick the first */
 		$redirectUrl = array_shift($redirectUrl);
 	    }
 
-	    /* The redirect url is supposed to be absolute, but not everybody plays by the rules */
+	    $urlComponents = parse_url($url);
+	    if (empty($urlComponents['port'])) {
+		$urlComponents['port'] = 80;
+	    }
+
+	    /* The redirect URL is supposed to be absolute, but not everybody plays by the rules */
 	    $redirectComponents = parse_url($redirectUrl);
-	    foreach (array('scheme', 'host') as $key) {
+	    foreach (array('scheme', 'host', 'port') as $key) {
 		if (empty($redirectComponents[$key])) {
-		    $redirectComponents[$key] = $components[$key];
+		    $redirectComponents[$key] = $urlComponents[$key];
 		}
-	    }
-
-	    if (empty($redirectComponents['port'])) {
-		if (isset($components['port'])) {
-		    $redirectPort = ':' . $components['port'];
-		} else {
-		    $redirectPort = '';
-		}
-	    }
-
-	    if (empty($redirectComponents['query'])) {
-		$query = '';
-	    } else {
-		$query = '?' . $redirectComponents['query'];
 	    }
 
 	    $redirectUrl = sprintf('%s://%s%s%s%s',
 				   $redirectComponents['scheme'],
 				   $redirectComponents['host'],
-				   $redirectPort,
+				   $redirectComponents['port'] == 80
+				       ? '' : ':' . $redirectComponents['port'],
 				   $redirectComponents['path'],
-				   $query);
+				   empty($redirectComponents['query'])
+				       ? '' : '?' . $redirectComponents['query']);
 
-	    /* Returning output directly from fetchWebPage() confuses the CodeAudit */
-	    $result = WebHelper_simple::fetchWebPage($redirectUrl, $extraHeaders, $depth+1);
+	    /* Returning output directly from fetchWebPage confuses the CodeAudit */
+	    $result = WebHelper_simple::fetchWebPage($redirectUrl, $extraHeaders, $depth + 1);
+
 	    return array($result[0], $result[1], $result[2], $result[3], $result[4]);
 	}
 
-	/* Read the body */
-	$body = '';
-	while (!$platform->feof($fd)) {
-	    $body .= $platform->fread($fd, 4096);
-	}
-	$platform->fclose($fd);
+	/* If the HTTP response code did not begin with 2 this request was not successful */
+	$success = preg_match("/^HTTP\/\d+\.\d+\s2\d{2}/", $responseStatus);
 
-	$success = true;
-
-	/* if the HTTP response code did not begin with a 2 this request was not successful */
-	if (!preg_match("/^HTTP\/\d+\.\d+\s2\d{2}/", $response)) {
-	    $success = false;
-	}
-
-	return array($success, $body, $response, $headers, $url);
+	return array($success, $responseBody, $responseStatus, $responseHeaders, $url);
     }
 
     /**
      * @see GalleryCoreApi::postToWebPage
      */
     function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
-	global $gallery;
-
-	$components = parse_url($url);
-	$port = empty($components['port']) ? 80 : $components['port'];
-	if (empty($components['path'])) {
-	    $components['path'] = '/';
-	}
-
-	$platform =& $gallery->getPlatform();
-	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
-	if (empty($fd)) {
-	    $gallery->debug("Error $errno: '$errstr' retrieving $url");
-	    return array(null, null, null);
-	}
-
-	$post = $components['path'];
-	if (!empty($components['query'])) {
-	    $post .= '?' . $components['query'];
-	}
-
 	$postDataRaw = '';
 	foreach ($postDataArray as $key => $value) {
 	    if (!empty($postDataRaw)) {
@@ -355,43 +254,77 @@ class WebHelper_simple {
 	    }
 	    $postDataRaw .= urlencode($key) . '=' . urlencode($value);
 	}
+	$postDataRaw .= "\r\n";
 
-	$extraHeaderLines = array();
-	foreach ($extraHeaders as $headerKey => $headerValue) {
-	    $extraHeaderLines[] = "$headerKey: $headerValue";
+	$extraHeaders['Content-Type'] = 'application/x-www-form-urlencoded';
+	$extraHeaders['Content-Length'] = strlen($postDataRaw);
+
+	/* Read the web page into a buffer */
+	list ($responseStatus, $responseHeaders, $responseBody) =
+	    WebHelper_simple::requestWebPage($url, 'POST', $extraHeaders, $postDataRaw);
+
+	return array($responseBody, $responseStatus, $responseHeaders);
+    }
+
+    /**
+     * @see GalleryCoreApi::requestWebPage
+     */
+    function requestWebPage($url, $requestMethod='GET', $requestHeaders=array(), $requestBody='') {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$urlComponents = parse_url($url);
+	if (empty($urlComponents['port'])) {
+	    $urlComponents['port'] = 80;
 	}
-	$postRequest = sprintf("POST %s HTTP/1.0\r\n" .
-			       "Host: %s\r\n" .
-			       "%s" .
-			       "Content-Type: application/x-www-form-urlencoded\r\n" .
-			       "Content-Length: %s\r\n" .
-			       "\r\n" .
-			       "%s\r\n",
-			       $post,
-			       $components['host'],
-			       empty($extraHeaderLines) ? '' :
-			       implode("\r\n", $extraHeaderLines) . "\r\n",
-			       strlen($postDataRaw),
-			       $postDataRaw);
-	$ok = $platform->fwrite($fd, $postRequest);
-	if (!$ok) {
-	    /* Zero bytes written or false was returned */
-	    $gallery->debug(
-		"fwrite call failed in postToWebPage($url)" . ($ok === false ? ' - false' : ''));
+	if (empty($urlComponents['path'])) {
+	    $urlComponents['path'] = '/';
+	}
+
+	$handle = @$platform->fsockopen(
+	    $urlComponents['host'], $urlComponents['port'], $errno, $errstr, 1);
+	if (empty($handle)) {
+	    $gallery->debug("Error $errno: '$errstr' requesting $url");
 	    return array(null, null, null);
 	}
-	$platform->fflush($fd);
+
+	$requestUri = $urlComponents['path'];
+	if (!empty($urlComponents['query'])) {
+	    $requestUri .= '?' . $urlComponents['query'];
+	}
+
+	$requestHeaders['Host'] = $urlComponents['host'];
+
+	$requestHeaderLines = array();
+	foreach ($requestHeaders as $key => $value) {
+	    $requestHeaderLines[] = $key . ': ' . $value;
+	}
+
+	$ret = $platform->fwrite($handle, sprintf("%s %s HTTP/1.0\r\n"
+						  . "%s\r\n"
+						  . "%s",
+						  $requestMethod,
+						  $requestUri,
+						  implode("\r\n", $requestHeaderLines) . "\r\n",
+						  $requestBody));
+	if (!$ret) {
+	    /* Zero bytes written or false was returned */
+	    $gallery->debug(
+		"fwrite failed in requestWebPage($url)" . ($ret === false ? ' - false' : ''));
+	    return array(null, null, null);
+	}
+	$platform->fflush($handle);
 
 	/*
-	 * Read the response code. fgets stops after newlines.
-	 * The first line contains only the status code (200, 404, etc.).
+	 * Read the status line.  fgets stops after newlines.  The first line is the protocol
+	 * version followed by a numeric status code and its associated textual phrase.
 	 */
-	$headers = array();
-	$response = trim($platform->fgets($fd, 4096));
+	$responseStatus = trim($platform->fgets($handle, 4096));
 
-	/* Read the headers. */
-	while (!$platform->feof($fd)) {
-	    $line = trim($platform->fgets($fd, 4096));
+	/* Read the headers */
+	$responseHeaders = array();
+	while (!$platform->feof($handle)) {
+	    $line = trim($platform->fgets($handle, 4096));
 	    if (empty($line)) {
 		break;
 	    }
@@ -400,25 +333,24 @@ class WebHelper_simple {
 	    $line = str_replace("\r", '', $line);
 
 	    list ($key, $value) = explode(':', $line, 2);
-	    if (isset($headers[$key])) {
-		if (!is_array($headers[$key])) {
-		    $headers[$key] = array($headers[$key]);
+	    if (isset($responseHeaders[$key])) {
+		if (!is_array($responseHeaders[$key])) {
+		    $responseHeaders[$key] = array($responseHeaders[$key]);
 		}
-		$headers[$key][] = trim($value);
+		$responseHeaders[$key][] = trim($value);
 	    } else {
-		$headers[$key] = trim($value);
+		$responseHeaders[$key] = trim($value);
 	    }
 	}
 
-	/* Now read the body */
-	$body = '';
-	while (!$platform->feof($fd)) {
-	    $body .= $platform->fread($fd, 4096);
-	    $platform->fflush($fd);
+	/* Read the body */
+	$responseBody = '';
+	while (!$platform->feof($handle)) {
+	    $responseBody .= $platform->fread($handle, 4096);
 	}
-	$platform->fclose($fd);
+	$platform->fclose($handle);
 
-	return array($body, $response, $headers);
+	return array($responseStatus, $responseHeaders, $responseBody);
     }
 }
 ?>
