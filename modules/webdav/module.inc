@@ -55,8 +55,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
-	$listener = new WebDavModule();
-	return GalleryCoreApi::registerEventListener('Gallery::ActivatePlugin', $listener);
+	return GalleryCoreApi::registerEventListener('Gallery::ActivatePlugin', new WebDavModule());
     }
 
     /**
