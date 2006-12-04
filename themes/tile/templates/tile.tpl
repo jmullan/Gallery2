@@ -14,9 +14,7 @@
   </div>
 </td><td id="gsContent">
 
-<noscript><p class="giError">
-  {g->text text="Warning: This site requires javascript."}
-</p></noscript>
+{include file="gallery:modules/core/templates/JavaScriptWarning.tpl" l10Domain="modules_core"}
 
 <div style="display: none">
 {foreach from=$theme.children key=i item=it}

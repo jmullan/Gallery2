@@ -33,9 +33,9 @@ class FloatrixTheme extends GalleryTheme {
 	$this->setId('floatrix');
 	$this->setName($gallery->i18n('Floatrix'));
 	$this->setDescription($gallery->i18n('Variable column theme based on Matrix'));
-	$this->setVersion('1.0.3');
+	$this->setVersion('1.0.4');
 	$this->setRequiredCoreApi(array(7, 10));
-	$this->setRequiredThemeApi(array(2, 4));
+	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(
 	    array('perPage' => 12,
 		  'columnWidth' => 200, 'rowHeight' => 300,
@@ -86,6 +86,11 @@ class FloatrixTheme extends GalleryTheme {
 	    return array($ret, null);
 	}
 
+	/* Check for JavaScript warning flag */
+	if (GalleryUtilities::getRequestVariables('jsWarning') != null) {
+	    $template->setVariable('jsWarning', true);
+	}
+
 	$this->_splitItemLinks($template);
 	return array(null, 'theme.tpl');
     }
@@ -106,6 +111,11 @@ class FloatrixTheme extends GalleryTheme {
 	$ret = $this->preloadBlock($template, 'search.SearchBlock');
 	if ($ret) {
 	    return array($ret, null);
+	}
+
+	/* Check for JavaScript warning flag */
+	if (GalleryUtilities::getRequestVariables('jsWarning') != null) {
+	    $template->setVariable('jsWarning', true);
 	}
 
 	$this->_splitItemLinks($template);
@@ -142,6 +152,11 @@ class FloatrixTheme extends GalleryTheme {
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
 	    return array($ret, null);
+	}
+
+	/* Check for JavaScript warning flag */
+	if (GalleryUtilities::getRequestVariables('jsWarning') != null) {
+	    $template->setVariable('jsWarning', true);
 	}
 
 	return array(null, 'theme.tpl');

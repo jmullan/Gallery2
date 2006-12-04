@@ -229,6 +229,8 @@
   </div>
 </div>
 
+{include file="gallery:modules/core/templates/JavaScriptWarning.tpl" l10Domain="modules_core"}
+
 <script type="text/JavaScript">
   // <![CDATA[
   linkStop = document.getElementById('stop');

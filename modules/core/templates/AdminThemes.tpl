@@ -127,6 +127,8 @@
     {g->text text="These are the global settings for the theme.  They can be overridden at the album level."}
   </p>
 
+  {include file="gallery:modules/core/templates/JavaScriptWarning.tpl"}
+
   {if isset($AdminThemes.customTemplate)}
     {include file="gallery:`$AdminThemes.customTemplate`"
 	     l10Domain=$AdminThemes.themes[$AdminThemes.themeId].l10Domain}

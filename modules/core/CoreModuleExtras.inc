@@ -2090,6 +2090,9 @@ class CoreModuleExtras {
 	case '1.1.22':
 	    /* Add FailedLoginsMap */
 
+	case '1.1.23':
+	    /* Add JavaScriptWarning.tpl */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we always
@@ -2372,6 +2375,7 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 	case '1.1.20':
 	case '1.1.21':
 	case '1.1.22':
+	case '1.1.23':
 
 	case 'end of upgrade path':
 	    /*

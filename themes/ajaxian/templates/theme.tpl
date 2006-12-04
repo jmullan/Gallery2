@@ -65,9 +65,7 @@
 	</div>
       </div>
 
-      <noscript><div id="warning"><p>
-	{g->text text="This album's theme requires JavaScript to function correctly. For the best experience, please enable JavaScript or upgrade to a browser that supports JavaScript correctly."}
-	</p></div></noscript>
+      {include file="gallery:modules/core/templates/JavaScriptWarning.tpl" l10Domain="modules_core"}
 
       <div id="main">
 	<div id="frame">

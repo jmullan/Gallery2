@@ -50,6 +50,8 @@
     {g->text text="Place your watermark on the canvas below in the location where you'd like it to appear when you watermark newly uploaded photos.  You'll be able to edit individual photos to move the watermark later on, if you choose."}
   </p>
 
+  {include file="gallery:modules/core/templates/JavaScriptWarning.tpl" l10Domain="modules_core"}
+
   <div id="watermark_background" class="gcBackground1"
    style="width: 400px; height: 300px; border-width: 1px; margin: 5px 0 10px 5px">
     <img id="watermark_floater"

@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div id="gsSidebar" class="inner gcBorder1 gcBackground3" style="overflow: auto;">
-  <a href="javascript:return true;" id="hideSidebarTab"
+  <a href="{g->url params=$theme.pageUrl arg1="jsWarning=true"}" id="hideSidebarTab"
       onclick="MM_changeProp('gsSidebarCol','','style.display','none','DIV');
             MM_changeProp('showSidebarTab','','style.display','block','DIV');
             return false;">

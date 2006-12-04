@@ -87,9 +87,7 @@
   <div id="title" class="giTitle">&nbsp;</div>
 
   <div id="thumbs" class="gcBackground1 gcBorder2 sliderHoriz">
-    <noscript><p class="giError">
-      {g->text text="Warning: This site requires javascript."}
-    </p></noscript>
+    {include file="gallery:modules/core/templates/JavaScriptWarning.tpl" l10Domain="modules_core"}
     {foreach from=$theme.children key=i item=it}{strip}
     {if isset($it.image)}
       <a href="" onclick="this.blur();image_show({$it.imageIndex});return false">

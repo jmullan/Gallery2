@@ -25,6 +25,10 @@
     <link rel="stylesheet" type="text/css" href="{g->theme url="theme.css"}"/>
   </head>
   <body class="gallery">
+    {if !empty($jsWarning)}
+      {include file="gallery:modules/core/templates/JavaScriptWarning.tpl" l10Domain="modules_core"}
+    {/if}
+
     <div {g->mainDivAttributes}>
       {*
        * Some module views (eg slideshow) want the full screen.  So for those, we don't draw
@@ -75,7 +79,8 @@
 		    othersAt=4}
 	  {if $theme.pageType != 'admin'}
 	  <span class="block-core-SystemLink">
-	    <a href="javascript: toggleSidebar('sidebar')">{g->text text="Sidebar"}</a>
+	    <a href="{g->url params=$theme.pageUrl arg1="jsWarning=true"}" 
+	      onClick="toggleSidebar('sidebar'); return false;">{g->text text="Sidebar"}</a>
 	  </span>
 	  {/if}
 	</div>

@@ -20,6 +20,10 @@
     <script type="text/javascript" src="{g->theme url="functions.js"}"></script>
   </head>
   <body class="gallery">
+    {if !empty($jsWarning)}
+      {include file="gallery:modules/core/templates/JavaScriptWarning.tpl" l10Domain="modules_core"}
+    {/if}
+
     <div {g->mainDivAttributes}>
       {*
        * Some module views (eg slideshow) want the full screen.  So for those, we don't draw
@@ -52,7 +56,7 @@
 
       {* Add the sidebar menu to pages but not admin pages. *}
       {if !empty($theme.params.sidebarBlocks) && $theme.pageType != 'admin'}
-      <a href="javascript:return true;" id="showSidebarTab"
+      <a href="{g->url params=$theme.pageUrl arg1="jsWarning=true"}" id="showSidebarTab"
           onclick="MM_changeProp('gsSidebarCol','','style.display','block','DIV');
 	      MM_changeProp('showSidebarTab','','style.display','none','DIV');
 	      return false;">

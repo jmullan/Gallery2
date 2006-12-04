@@ -11,6 +11,8 @@
     {g->text text="You can select which part of the photo will be used for the thumbnail.  This will have no effect on the resized or original versions of the image."}
   </p>
 
+  {include file="gallery:modules/core/templates/JavaScriptWarning.tpl"}
+
   {if $ItemEditPhotoThumbnail.editThumbnail.can.crop}
   <div id="crop-canvas" style="width: 630px; height: 480px">
     <img id="crop-image" style="z-index: 1"/>

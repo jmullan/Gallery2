@@ -66,6 +66,8 @@
 <div class="gbBlock">
   <h3> {g->text text="Step 2.  Placement for the watermark"} </h3>
 
+  {include file="gallery:modules/core/templates/JavaScriptWarning.tpl" l10Domain="modules_core"}
+
   {if isset($ItemEditWatermark.image)}
     {g->image id="watermark_original" maxSize=400 style="display: block"
 	      item=$ItemEditWatermark.item image=$ItemEditWatermark.image forceRawImage=true}

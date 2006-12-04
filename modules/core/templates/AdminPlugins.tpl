@@ -115,6 +115,8 @@
     {g->text text="Gallery features come as separate plugins.  You can download and install plugins to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it."}
   </p>
 
+  {include file="gallery:modules/core/templates/JavaScriptWarning.tpl"}
+
   {include file="gallery:modules/core/templates/AdminPluginsLegend.tpl" legendId="top"}
   <table class="gbDataTable">
     {assign var="group" value=""}

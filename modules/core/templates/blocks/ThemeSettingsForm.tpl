@@ -9,6 +9,8 @@
   <p class="giDescription"> {$message} </p>
 {/if}
 
+{include file="gallery:modules/core/templates/JavaScriptWarning.tpl"}
+
 {if isset($ThemeSettingsForm.customTemplate)}
   {include file="gallery:`$ThemeSettingsForm.customTemplate`" l10Domain=$ThemeSettingsForm.theme.l10Domain}
 {/if}

@@ -33,9 +33,9 @@ class CarbonTheme extends GalleryTheme {
 	$this->setId('carbon');
 	$this->setName($gallery->i18n('Carbon'));
 	$this->setDescription($gallery->i18n('Gallery2 theme by mincel.com'));
-	$this->setVersion('1.2.0');
+	$this->setVersion('1.2.1');
 	$this->setRequiredCoreApi(array(7, 10));
-	$this->setRequiredThemeApi(array(2, 4));
+	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
@@ -183,6 +183,11 @@ class CarbonTheme extends GalleryTheme {
 	$theme =& $template->getVariableByReference('theme');
 	$theme['columnWidthPct'] = floor(100 / $params['columns']);
 
+	/* Check for JavaScript warning flag */
+	if (GalleryUtilities::getRequestVariables('jsWarning') != null) {
+	    $template->setVariable('jsWarning', true);
+	}
+
 	/* Add our header and styles */
 	return array(null, 'theme.tpl');
     }
@@ -201,6 +206,11 @@ class CarbonTheme extends GalleryTheme {
 	    return array($ret, null);
 	}
 
+	/* Check for JavaScript warning flag */
+	if (GalleryUtilities::getRequestVariables('jsWarning') != null) {
+	    $template->setVariable('jsWarning', true);
+	}
+
 	return array(null, 'theme.tpl');
     }
 
@@ -212,6 +222,11 @@ class CarbonTheme extends GalleryTheme {
 	    $template, $item, $params, array('parents', 'systemLinks'));
 	if ($ret) {
 	    return array($ret, null);
+	}
+
+	/* Check for JavaScript warning flag */
+	if (GalleryUtilities::getRequestVariables('jsWarning') != null) {
+	    $template->setVariable('jsWarning', true);
 	}
 
 	return array(null, 'theme.tpl');
