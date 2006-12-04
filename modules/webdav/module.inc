@@ -55,7 +55,8 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
-	return GalleryCoreApi::registerEventListener('Gallery::ActivatePlugin', $this);
+	$listener = new WebDavModule();
+	return GalleryCoreApi::registerEventListener('Gallery::ActivatePlugin', $listener);
     }
 
     /**
@@ -108,7 +109,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	case '0.4.1':
 	    /* Add GalleryView::isControllerLike to WebDAV view */
-	
+
 	case '0.4.2':
 	    /* Add support for the PHP CGI server API */
 
