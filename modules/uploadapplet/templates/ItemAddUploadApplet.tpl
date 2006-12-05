@@ -18,6 +18,7 @@
     <param name="archive" value="{g->url href="modules/uploadapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/uploadapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/uploadapplet/applets/applet_img.jar"}"/>
     <param name="type" value="application/x-java-applet;version=1.4"/>
     <param name="scriptable" value="false"/>
+    <param name="mayscript" value="false"/>
     <param name="progressbar" value="true"/>
     <param name="boxmessage" value="{g->text text="Downloading the Gallery Remote Applet"}"/>
     <param name="gr_url" value="{$ItemAddUploadApplet.g2BaseUrl}"/>
@@ -133,15 +134,6 @@
       return document.getElementById("uploadapplet_Feedback");
     } else if (document.all) {
       return document.all["uploadapplet_Feedback"];
-    }
-  }
-
-  function printfire() {
-    if (document.createEvent) {
-	printfire.args = arguments;
-	var ev = document.createEvent("Events");
-	ev.initEvent("printfire", false, true);
-	dispatchEvent(ev);
     }
   }
   {/literal}
