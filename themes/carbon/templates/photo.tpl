@@ -17,7 +17,7 @@
 	      <td class="gsActionIcon">
 		<div class="buttonShowSidebar"><a href="{g->url params=$theme.pageUrl 
 		  arg1="jsWarning=true"}"
-		 onClick="slideIn('sidebar'); return false;"
+		 onclick="slideIn('sidebar'); return false;"
 		 title="{g->text text="Show Sidebar"}"></a></div>
 	      </td>
 	      {if (isset($links) || isset($theme.itemLinks))}

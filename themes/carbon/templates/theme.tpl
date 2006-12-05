@@ -80,7 +80,7 @@
 	  {if $theme.pageType != 'admin'}
 	  <span class="block-core-SystemLink">
 	    <a href="{g->url params=$theme.pageUrl arg1="jsWarning=true"}" 
-	      onClick="toggleSidebar('sidebar'); return false;">{g->text text="Sidebar"}</a>
+	      onclick="toggleSidebar('sidebar'); return false;">{g->text text="Sidebar"}</a>
 	  </span>
 	  {/if}
 	</div>

@@ -25,7 +25,7 @@
 	  {if isset($theme.navigator.back)}    {* Uncomment to omit previous when same as first:
 		&& (!isset($theme.navigator.first) || $theme.navigator.back.urlParams != $theme.navigator.first.urlParams)} *}
 	  <td>
-	    <div class="buttonPrev"><a id="prev" href="{g->url params=$theme.navigator.back.urlParams}"
+	    <div class="buttonPrev"><a href="{g->url params=$theme.navigator.back.urlParams}"
 	     title="{g->text text="Previous"}"></a></div>
 	  </td>
 	  {/if}
@@ -102,7 +102,7 @@
 	  {if isset($theme.navigator.next)}    {* Uncomment to omit next when same as last:
 		&& (!isset($theme.navigator.last) || $theme.navigator.next.urlParams != $theme.navigator.last.urlParams)} *}
 	  <td>
-	    <div class="buttonNext"><a id="next" href="{g->url params=$theme.navigator.next.urlParams}"
+	    <div class="buttonNext"><a href="{g->url params=$theme.navigator.next.urlParams}"
 	     title="{g->text text="Next"}"></a></div>
 	  </td>
 	  {/if}
