@@ -1434,7 +1434,7 @@ class GallerySession {
 	$authToken = $this->get('core.authToken');
 	if (empty($authToken)) {
 	    global $gallery;
-	    $phpVm = $gallery->getPhpVm();
+	    $phpVm =& $gallery->getPhpVm();
 	    $authToken = substr($phpVm->md5(uniqid(microtime() . mt_rand())), 0, 12);
 	    $this->put('core.authToken', $authToken);
 	}
@@ -1444,7 +1444,7 @@ class GallerySession {
     /**
      * Checks the given authentication token and resets the internal token on failure.
      * @param string $authToken Authentication token to be verified
-     * @return bool true if the given 
+     * @return bool true if the given
      */
     function isCorrectAuthToken($authToken) {
 	$internalAuthToken = $this->get('core.authToken');
