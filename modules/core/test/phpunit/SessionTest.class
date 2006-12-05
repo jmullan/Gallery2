@@ -1742,6 +1742,76 @@ class SessionTest extends GalleryTestCase {
 	$this->assertEquals($expected, $session->replaceTempSessionIdIfNecessary($html));
     }
 
+    function testReplaceSessionIdInDataDoStringReplaceOnNestedArray() {
+	$session = new GallerySession();
+	$search = 'OLD_SESSION_ID';
+	$replace = 'NEW_SESSION_ID';
+	$sessionString = GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . $search;
+
+	/*
+	 * Our test string serves the following purposes:
+	 *  - Verify that str_replace or an equivalent function is used on all string members.
+	 *  - Verify that only the $search string is touched, but not the rest of g2_GALLERYSID=...
+	 *    since replaceSessionIdData called with just one parameter does the exact opposite.
+	 *  - Using some hex and non-hex characters around the $search string to ensure it doesn't
+	 *    deal with session id characters in a special way.
+	 */
+	$html = 'ksaj' . $search . 'sajlksa' . "?$sessionString\"" . 'jsaj29' .
+		urlencode($sessionString) . '131j0s0enld9u1odu' . urlencode("?$sessionString") .
+		"'" . '109' . "main.php?$sessionString" . '211j' . "%26amp%3B$sessionString'" .
+		'0';
+	$expectedString = str_replace($search, $replace, $html);
+
+	$data = array();
+	$data[$search] = $html;
+	$data[] = array($html, 15, array(1));
+	$data['object'] = new stdClass();
+	$data['object']->stringMember = $html;
+	$data[] = 15;
+
+	$expected = array();
+	/* Don't touch array keys */
+	$expected[$search] = $expectedString;
+	$expected[] = array($expectedString, 15, array(1));
+	$expected['object'] = new stdClass();
+	$expected['object']->stringMember = $expectedString;
+	$expected[] = 15;
+
+	$this->assertEquals($expected, $session->replaceSessionIdInData($data, $search, $replace));
+    }
+
+    function testReplaceSessionIdInDataDoReplaceSessionIdIfNecessaryOnNestedObject() {
+	$session = new GallerySession();
+	$session->_isPersistentSessionNew = false;
+	$session->_sessionId = '';
+	$sessionString =
+	    GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . SESSION_TEMP_ID;
+
+	/* Verify that replaceSessionIdIfNecessary is applied to all string members. */
+	$html = 'ksaj' . SESSION_TEMP_ID . 'sajlksa' . "?$sessionString\"" . 'jsaj29' .
+		urlencode($sessionString) . '131j0s0enld9u1odu' . urlencode("?$sessionString") .
+		"'" . '109' . "main.php?$sessionString" . '211j' . "%26amp%3B$sessionString'" .
+		'0';
+	$expectedString = 'ksaj' . 'sajlksa' . '"' .  'jsaj29' . '131j0s0enld9u1odu' . "'" .
+		    '109' . 'main.php?' . '211j' . "'" . '0';
+
+	$data = new stdClass();
+	$data->stringMember = $html;
+	$data->arrayMember = array($html, 15, array(1));
+	$data->objectMember = new stdClass();
+	$data->objectMember->stringMember = $html;
+	$data->objectMember->integerMember = 15;
+
+	$expected = new stdClass();
+	$expected->stringMember = $expectedString;
+	$expected->arrayMember = array($expectedString, 15, array(1));
+	$expected->objectMember = new stdClass();
+	$expected->objectMember->stringMember = $expectedString;
+	$expected->objectMember->integerMember = 15;
+
+	$this->assertEquals($expected, $session->replaceSessionIdInData($data));
+    }
+
     /**
      * Our replaceTempSessionIdIfNecessary() code and the page caching assume that the session key
      * and the temp session string have no characters that change when HTML or URL encoded.

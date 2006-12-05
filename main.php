@@ -362,20 +362,37 @@ function _GalleryMain($embedded=false) {
 	if ($ret) {
 	    return array($ret, null);
 	}
+
+	if (!empty($html) && $embedded) {
+	     /* Also get the theme data */
+	    list ($ret, $themeData) = GalleryDataCache::getPageData(
+		'theme', $urlGenerator->getCacheableUrl());
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
     }
 
-    if (!empty($html)) {
+    if (!empty($html) && (!$embedded || !empty($themeData))) {
 	/* TODO: If we cache all the headers and replay them here, we could send a 304 back */
 	$session =& $gallery->getSession();
-	$html = $session->replaceTempSessionIdIfNecessary($html);
 
-	/* Set the appropriate charset in our HTTP header */
-	if (!headers_sent()) {
-	    header('Content-Type: text/html; charset=UTF-8');
+	if (!$embedded) {
+	    /* Set the appropriate charset in our HTTP header */
+	    if (!headers_sent()) {
+		header('Content-Type: text/html; charset=UTF-8');
+	    }
+	    print $session->replaceTempSessionIdIfNecessary($html);
+	    $data['isDone'] = true;
+	} else {
+	    $html = unserialize($html);
+	    $themeData = unserialize($themeData);
+
+	    $data = $session->replaceSessionIdInData($html);
+	    $data['themeData'] = $session->replaceSessionIdInData($themeData);
+
+	    $data['isDone'] = false;
 	}
-
-	print $html;
-	$data['isDone'] = true;
     } else {
 	/* Initialize our container for template data */
 	$gallery->setCurrentView($viewName);
@@ -464,15 +481,6 @@ function _GalleryMain($embedded=false) {
 		    return array($ret, null);
 		}
 
-		list ($ret, $shouldCache) = GalleryDataCache::shouldCache('write', 'full');
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		if ($shouldCache && $results['cacheable']) {
-		    $htmlForCache = $html;
-		}
-
 		/*
 		 * Session: Find out whether we need to send a cookie & need a new session (only if
 		 * we don't have one yet)
@@ -482,33 +490,69 @@ function _GalleryMain($embedded=false) {
 		if ($ret) {
 		    return array($ret, null);
 		}
-		$html = $session->replaceTempSessionIdIfNecessary($html);
+
+		list ($ret, $shouldCache) = GalleryDataCache::shouldCache('write', 'full');
+		if ($ret) {
+		    return array($ret, null);
+		}
 
 		if ($embedded) {
-		    $data = $theme->splitHtml($html, $results);
+		    $html = $theme->splitHtml($html, $results);
+		}
+
+		if ($shouldCache && $results['cacheable']) {
+		    $htmlForCache = $html;
+		    if ($embedded) {
+			$themeDataForCache = $template->getVariable('theme');
+		    }
+		}
+
+		if ($embedded) {
+		    $data = $session->replaceSessionIdInData($html);
+
 		    $data['themeData'] =& $template->getVariableByReference('theme');
+		    $data['themeData'] = $session->replaceSessionIdInData($data['themeData']);
 		    $data['isDone'] = false;
 		} else {
 		    /* Set the appropriate charset in our HTTP header */
 		    if (!headers_sent()) {
 			header('Content-Type: text/html; charset=UTF-8');
 		    }
-		    print $html;
+		    print $session->replaceTempSessionIdIfNecessary($html);
 
-		    if ($shouldCache && $results['cacheable']) {
-			$session =& $gallery->getSession();
-			if ($session->getId() != SESSION_TEMP_ID) {
-			    $htmlForCache = str_replace($session->getId(), SESSION_TEMP_ID,
-				$htmlForCache);
+		    $data['isDone'] = true;
+		}
+
+		if ($shouldCache && $results['cacheable']) {
+		    $session =& $gallery->getSession();
+		    $cacheKey = $urlGenerator->getCacheableUrl();
+		    $sessionId = $session->getId();
+
+		    if (!empty($sessionId) && $sessionId != SESSION_TEMP_ID) {
+			$htmlForCache = $session->replaceSessionIdInData(
+				$htmlForCache, $sessionId, SESSION_TEMP_ID);
+
+			if ($embedded) {
+			    $data['themeData'] = $session->replaceSessionIdInData(
+				    $data['themeData'], $sessionId, SESSION_TEMP_ID);
 			}
+		    }
 
-			$ret = GalleryDataCache::putPageData('page', $results['cacheable'],
-			    $urlGenerator->getCacheableUrl(), $htmlForCache);
+		    if ($embedded) {
+			$htmlForCache = serialize($htmlForCache);
+
+			$ret = GalleryDataCache::putPageData('theme', $results['cacheable'],
+				$cacheKey, serialize($data['themeData']));
 			if ($ret) {
 			    return array($ret, null);
 			}
 		    }
-		    $data['isDone'] = true;
+
+		    $ret = GalleryDataCache::putPageData('page', $results['cacheable'],
+			$cacheKey, $htmlForCache);
+		    if ($ret) {
+			return array($ret, null);
+		    }
 		}
 	    }
 	}

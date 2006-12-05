@@ -980,6 +980,45 @@ class GallerySession {
     }
 
     /**
+     * Replaces the session id in all string members of an object or in all elements of an array.
+     *
+     * Applies replaceTempSessionIdIfNecessary to all strings if $search and $replace are omitted.
+     * Else it applies str_replace($search, $replace, $subject) on all strings.
+     *
+     * Examples:
+     *   $themeData = $session->replaceSessionIdInData($themeData, $sessionId, SESSION_TEMP_ID);
+     *
+     *   $themeData = $session->replaceSessionIdInData($themeData);
+     *
+     * @param mixed $subject array, object or string that should be modified
+     * @param string $search (optional) string to be replaced
+     * @param string $replace (optional) replacement string
+     * @return mixed converted subject
+     */
+    function replaceSessionIdInData($subject, $search=null, $replace=null) {
+	if (($isArray = is_array($subject)) || is_object($subject)) {
+	    foreach ($subject as $key => $value) {
+		$value = $this->replaceSessionIdInData($value, $search, $replace);
+		if ($isArray) {
+		    $subject[$key] = $value;
+		} else {
+		    $subject->$key = $value;
+		}
+	    }
+	} else if (is_string($subject)) {
+	    if ($search !== null) {
+		return str_replace($search, $replace, $subject);
+	    } else {
+		return $this->replaceTempSessionIdIfNecessary($subject);
+	    }
+	} else {
+	    return $subject;
+	}
+
+	return $subject;
+    }
+
+    /**
      * Get rid of any sessions that have not been accessed within our inactivity timeout or have
      * exceeded the max lifetime.
      * @return object GalleryStatus a status code

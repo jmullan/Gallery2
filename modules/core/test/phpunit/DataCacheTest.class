@@ -534,10 +534,6 @@ class DataCacheTest extends GalleryTestCase {
 
 	/* Backup values */
 	$isUsingCookies = $session->isUsingCookies();
-	list ($ret, $activeLanguageCode) = $gallery->getActiveLanguageCode();
-	if ($ret) {
-	    $this->failWithStatus($ret);
-	}
 
 	/* Set test environment */
 	$ret = $gallery->setActiveLanguageCode('en');
@@ -546,18 +542,39 @@ class DataCacheTest extends GalleryTestCase {
 	}
 	$session->_isUsingCookies = false;
 
+	GalleryDataCache::put('G2_EMBED', 1);
+
 	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-
-	$this->assertEquals('0-en', $extraKey);
+	$this->assertEquals('0-en-1', $extraKey, 'embedded, cookieless, English');
 
 	/* Clean up */
-	$ret = $gallery->setActiveLanguageCode($activeLanguageCode);
+	$session->_isUsingCookies = $isUsingCookies;
+    }
+
+    function testGetExtraPageCacheKeyForStandalone() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	/* Backup values */
+	$isUsingCookies = $session->isUsingCookies();
+
+	/* Set test environment */
+	$ret = $gallery->setActiveLanguageCode('fr');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
+	$session->_isUsingCookies = true;
+
+	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+	$this->assertEquals('1-fr-0', $extraKey, 'standalone, using cookies, French');
+
+	/* Clean up */
 	$session->_isUsingCookies = $isUsingCookies;
     }
 

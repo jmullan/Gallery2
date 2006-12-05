@@ -788,7 +788,8 @@ class GalleryDataCache {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	$extraKey = (int)($session->isUsingCookies()) . '-' . $languageCode;
+	$isEmbedded = (int)$gallery->isEmbedded();
+	$extraKey = (int)($session->isUsingCookies()) . '-' . $languageCode . '-' . $isEmbedded;
 
 	return array(null, $extraKey);
     }

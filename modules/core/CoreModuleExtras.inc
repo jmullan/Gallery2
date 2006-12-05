@@ -2086,12 +2086,12 @@ class CoreModuleExtras {
 	    }
 	case '1.1.21':
 	    /* Added authentication token */
-
 	case '1.1.22':
 	    /* Add FailedLoginsMap */
-
 	case '1.1.23':
 	    /* Add JavaScriptWarning.tpl */
+	case '1.1.24':
+	    /* Add page-level caching for embedded mode */
 
 	case 'end of upgrade path':
 	    /*
@@ -2376,6 +2376,7 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 	case '1.1.21':
 	case '1.1.22':
 	case '1.1.23':
+	case '1.1.24':
 
 	case 'end of upgrade path':
 	    /*
