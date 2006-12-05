@@ -274,7 +274,7 @@ class LinkItemTest extends GalleryTestCase {
 	$platform->setReply('getDirectorySeparator', array(), '/');
 	$platform->setReply('file_exists', array('fuzzy' => '{params.txt$}'), true);
 	$platform->setReply('file', array('fuzzy' => '{params.txt$}', false),
-			    array('%URL% %WIDTH% %HEIGHT% --out %OUTFILE%'));
+			    array('%URL% %WIDTH% %HEIGHT% --out %OUTFILE%' . "\n"));
 	$platform->setReply('exec',
 		array(array(array('getSnapshot', 'theURL', 1024, 768, '--out', 'tmpfile.jpg'))),
 		array(true, '', ''));

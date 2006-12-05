@@ -115,7 +115,7 @@ class LinkItemToolkit extends GalleryToolkit {
 	if ($platform->file_exists($paramFile)) {
 	    $lines = $platform->file($paramFile);
 	    if (!empty($lines)) {
-		return array_shift($lines);
+		return rtrim(array_shift($lines));
 	    }
 	}
 	return '--width %WIDTH% --height %HEIGHT% %URL% %OUTFILE%';
