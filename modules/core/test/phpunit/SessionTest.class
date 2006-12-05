@@ -2930,9 +2930,9 @@ class SessionTest extends GalleryTestCase {
 	$this->assertEquals($expectedToken, $loadedSession->get('core.authToken'),
 			    'wrong auth token');
 	$this->assert($loadedSession->isCorrectAuthToken($expectedToken), 'auth token invalid');
-	
+
 	/* Now invalidate the token and simulate a third request */
-	$loadedSession->isCorrectAuthToken('foo');
+	$loadedSession->isCorrectAuthToken('wrong value that invalidates old token');
 	$ret = $loadedSession->save();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -2967,7 +2967,7 @@ class SessionTest extends GalleryTestCase {
 class SessionTestPhpVm extends GalleryPhpVm {
 
     function SessionTestPhpVm($md5Override=array(), $timeValue=null, $randValue=null) {
-	$this->_md5Overrive = $md5Override;
+	$_REQUEST['md5Override'] = $md5Override;
 	$this->_randValue = $randValue;
 	$this->_timeValue = $timeValue;
     }
@@ -2981,8 +2981,8 @@ class SessionTestPhpVm extends GalleryPhpVm {
     }
 
     function md5($string) {
-	if (!empty($this->_md5Overrive)) {
-	    return array_shift($this->_md5Overrive);
+	if (!empty($_REQUEST['md5Override'])) {
+	    return array_shift($_REQUEST['md5Override']);
 	}
 
 	return md5($string);
