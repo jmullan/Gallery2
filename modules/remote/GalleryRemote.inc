@@ -725,6 +725,8 @@ class GalleryRemoteController extends GalleryController {
 				   'albumName doesn\'t correspond to an actual album');
 	    return null;
 	}
+	
+	$response->setProperty('album.caption', $album->getTitle());
 
 	if (isset($form['random']) && $form['random'] == 'yes' && isset($form['limit'])) {
 	    /* get random descendants (only GalleryPhotoItems) of the album */
