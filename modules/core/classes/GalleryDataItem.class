@@ -352,40 +352,6 @@ class GalleryDataItem extends GalleryItem {
     }
 
     /**
-     * Move this item to a new parent
-     *
-     * @param int $newParentId the id of the GalleryItem parent
-     * @return object GalleryStatus a status code
-     */
-    function move($newParentId) {
-	/* Get the current parent sequence */
-	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->getId());
-	if ($ret) {
-	    return $ret;
-	}
-
-	$ret = parent::move($newParentId);
-	if ($ret) {
-	    return $ret;
-	}
-
-	/* Set the new parent sequence */
-	list ($ret, $newParentSequence) = GalleryCoreApi::fetchParentSequence($this->getParentId());
-	if ($ret) {
-	    return $ret;
-	}
-	$newParentSequence[] = $this->getParentId();
-
-	/* Set my parent sequence accordingly */
-	$ret = GalleryCoreApi::setParentSequence($this->getId(), $newParentSequence);
-	if ($ret) {
-	    return $ret;
-	}
-
-	return null;
-    }
-
-    /**
      * Get the full path to the data file.
      *
      * @return array object GalleryStatus a status code,

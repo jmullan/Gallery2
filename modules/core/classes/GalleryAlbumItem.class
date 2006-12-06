@@ -397,14 +397,8 @@ class GalleryAlbumItem extends GalleryItem {
 	if ($ret) {
 	    return $ret;
 	}
-	$newParentSequence[] = $this->getParentId();
-	$newChildParentSequence = array_merge($newParentSequence, array($this->getId()));
-
-	/* Convert my parent sequence */
-	$ret = GalleryCoreApi::setParentSequence($this->getId(), $newParentSequence);
-	if ($ret) {
-	    return $ret;
-	}
+	$newChildParentSequence = array_merge($newParentSequence,
+					      array($this->getParentId(), $this->getId()));
 
 	/* Convert my children's parent sequences */
 	$ret = GalleryCoreApi::updateParentSequence(

@@ -364,6 +364,17 @@ class GalleryItem extends GalleryFileSystemEntity {
 	    return $ret;
 	}
 
+	/* Set the new parent sequence */
+	list ($ret, $newParentSequence) = GalleryCoreApi::fetchParentSequence($this->getParentId());
+	if ($ret) {
+	    return $ret;
+	}
+	$newParentSequence[] = $this->getParentId();
+	$ret = GalleryCoreApi::setParentSequence($this->getId(), $newParentSequence);
+	if ($ret) {
+	    return $ret;
+	}
+
 	return null;
     }
 

@@ -97,8 +97,14 @@ class LinkItemTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->_link->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
-	$this->assertEquals($this->_targetAlbum->getId(), $this->_link->getParentId());
+	$this->assertEquals($this->_targetAlbum->getId(), $this->_link->getParentId(), 'parent');
+	$this->assertEquals(array($this->_getRootId(), $this->_targetAlbum->getId()),
+			    $parentSequence, 'parent sequence');
     }
 
     function testDeleteAlbum() {
