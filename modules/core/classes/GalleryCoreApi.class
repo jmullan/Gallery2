@@ -1377,15 +1377,14 @@ class GalleryCoreApi {
     /**
      * Get the parent sequence for this item id
      * @param int $itemId
-     * @param bool $forceFullSequence (optional) whether to get the full parent sequence ignoring
-     *             the breadCrumbRootId
+     * @param bool $filterBreadcrumb (optional) whether to filter results with breadcrumbRootId
      * @return array object GalleryStatus a status code
      *               array the parent id sequence from root album down; given itemId not included
      */
-    function fetchParentSequence($itemId, $forceFullSequence=false) {
+    function fetchParentSequence($itemId, $filterBreadcrumb=false) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryItemAttributesHelper_simple.class');
-	return GalleryItemAttributesHelper_simple::fetchParentSequence($itemId, $forceFullSequence);
+	return GalleryItemAttributesHelper_simple::fetchParentSequence($itemId, $filterBreadcrumb);
     }
 
     /**
@@ -2408,13 +2407,14 @@ class GalleryCoreApi {
      *
      * @param object GalleryItem $item
      * @param string $permission (optional) only return ancestors with this permission
+     * @param bool $filterBreadcrumb (optional) whether to filter results with breadcrumbRootId
      * @return array object GalleryStatus a status code
      *               array of GalleryItem, from top level to parent item
      */
-    function fetchParents($item, $permission=null) {
+    function fetchParents($item, $permission=null, $filterBreadcrumb=false) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchParents($item, $permission);
+	return GalleryChildEntityHelper_simple::fetchParents($item, $permission, $filterBreadcrumb);
     }
 
     /**

@@ -233,16 +233,18 @@ class GalleryChildEntityHelper_simple {
     /**
      * @see GalleryCoreApi::fetchParents
      */
-    function fetchParents($item, $permission=null) {
+    function fetchParents($item, $permission=null, $filterBreadcrumb=false) {
 	global $gallery;
 
 	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($item->getId());
+	    list ($ret, $parentIds) =
+		GalleryCoreApi::fetchParentSequence($item->getId(), $filterBreadcrumb);
 	    if ($ret) {
 		return array($ret, null);
 	    }
 	} else {
-	    list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($item->getParentId());
+	    list ($ret, $parentIds) =
+		GalleryCoreApi::fetchParentSequence($item->getParentId(), $filterBreadcrumb);
 	    if ($ret) {
 		return array($ret, null);
 	    }

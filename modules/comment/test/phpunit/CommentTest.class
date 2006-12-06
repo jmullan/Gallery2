@@ -157,6 +157,15 @@ class CommentTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array($this->_comment[0]), $comments, 'guest/offset');
+
+	/* This multiroot setting used to break query */
+	$gallery->setConfig('breadcrumbRootId', $this->_album->getId());
+	list ($ret, $comments) = GalleryCommentHelper::fetchAllComments($this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array($this->_comment[0], $this->_comment[1], $this->_comment[2]),
+			    $comments, 'multiroot');
     }
 
     function testGetItemSummaries() {

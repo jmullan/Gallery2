@@ -58,7 +58,7 @@ class ShowTreeView extends GalleryView {
 
 	    /* Get the parent ids leading up to this entity */
 	    if (GalleryUtilities::isA($entity, 'GalleryItem')) {
-		list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($entityId);
+		list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($entityId, true);
 		if ($ret) {
 		    return array($ret, null);
 		}

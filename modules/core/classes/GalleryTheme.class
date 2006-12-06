@@ -1207,7 +1207,7 @@ class GalleryTheme extends GalleryPlugin {
 	     * strange for the active user.
 	     */
 	    if ($itemId && !isset($item->parent)) {
-		list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+		list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId, true);
 		if ($ret) {
 		    return $ret;
 		}

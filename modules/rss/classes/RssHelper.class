@@ -421,10 +421,9 @@ class RssHelper {
      * @return array object GalleryStatus
      *               array of item Ids
      *
-     * copied and modified from GalleryItemHelper_advanced
+     * copied and modified from GalleryItemHelper_simple
      */
-    function fetchAlbumTree($itemId=null, $limit=null, $newOnly,
-	    $allowPhotos, $perAlbumLimit = 0) {
+    function fetchAlbumTree($itemId, $limit, $newOnly, $allowPhotos, $perAlbumLimit = 0) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	$userId = $gallery->getActiveUserId();
@@ -435,18 +434,9 @@ class RssHelper {
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	$parentSequence = array();
-	if (isset($itemId)) {
-	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	} else {
-	    list ($ret, $itemId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	    if ($ret) {
-		return array($ret, null);
-	    }
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+	if ($ret) {
+	    return array($ret, null);
 	}
 
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
@@ -548,8 +538,6 @@ class RssHelper {
      *
      * @return array object GalleryStatus
      *               array of feedType => translation
-     *
-     * copied and modified from GalleryItemHelper_advanced
      */
     function getFeedTypeTranslation() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');

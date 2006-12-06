@@ -546,7 +546,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	/* Only use LIKE statement if necessary */
 	if (isset($parentId) && $parentId != $rootAlbumId) {
 	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ?';
-	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentId, true);
+	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentId);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -876,7 +876,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	     * the album is at the top-level
 	     */
 	    list ($ret, $sequence) =
-	    		GalleryCoreApi::fetchParentSequence($parentAlbum->getId(), true);
+	    		GalleryCoreApi::fetchParentSequence($parentAlbum->getId());
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret;
 	    }

@@ -364,7 +364,7 @@ class GalleryItemHelper_simple {
 		return array($ret, null);
 	    }
 	}
-	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId, true);
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
 	if ($ret) {
 	    return array($ret, null);
 	}

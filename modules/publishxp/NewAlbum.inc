@@ -118,7 +118,7 @@ class NewAlbumView extends GalleryView {
 	}
 
 	/* Load the item's parents */
-	list ($ret, $parents) = GalleryCoreApi::fetchParents($parent, 'core.view');
+	list ($ret, $parents) = GalleryCoreApi::fetchParents($parent, 'core.view', true);
 	if ($ret) {
 	    return array($ret, null);
 	}

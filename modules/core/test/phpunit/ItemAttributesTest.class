@@ -490,6 +490,9 @@ class ItemAttributesTest extends GalleryTestCase {
 	}
 
 	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 	$this->assertEquals(array($this->_getRootId(),
 				  $this->_album->getId(),
 				  $this->_items[1]->getId(),
@@ -500,19 +503,43 @@ class ItemAttributesTest extends GalleryTestCase {
 	/* Set virtual root */
 	$gallery->setConfig('breadcrumbRootId', $this->_items[1]->getId());
 
-	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId(), true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 	$this->assertEquals(array($this->_items[1]->getId(),
 				  $album->getId()),
 			    $parentSequence,
 			    'virtual root parent sequence');
 
-	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId(), true);
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 	$this->assertEquals(array($this->_getRootId(),
 				  $this->_album->getId(),
 				  $this->_items[1]->getId(),
 				  $album->getId()),
 			    $parentSequence,
 			    'virtual root, forced full parent sequence');
+
+	/* Used to have a bug in item creation with breadcrumbRootId set */
+	list ($ret, $item) = $this->_createRandomDataItem($album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$gallery->setConfig('breadcrumbRootId', null);
+
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array($this->_getRootId(),
+				  $this->_album->getId(),
+				  $this->_items[1]->getId(),
+				  $album->getId()),
+			    $parentSequence,
+			    'item parent sequence, item created in multiroot');
     }
 
     function testFetchItemizedDescendentCounts() {

@@ -1131,6 +1131,16 @@ class PermissionTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array('core.changePermissions' => 1, 'core.delete' => 1),
 			    $permissions, 'album 3');
+
+	/* This multiroot setting used to break descendent query */
+	$gallery->setConfig('breadcrumbRootId', $this->_albums[0]->getId());
+	$ret = GalleryCoreApi::addUserPermission(
+		$this->_albums[0]->getId(), $this->_user->getId(), 'core.view', true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::assertHasItemPermission($this->_albums[2]->getId(), 'core.view');
+	$this->assert(!$ret, 'multiroot');
     }
 
     function testRecursiveRemove() {

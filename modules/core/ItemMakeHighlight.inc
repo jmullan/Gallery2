@@ -89,7 +89,7 @@ class ItemMakeHighlightView extends GalleryView {
 	    $form['formName'] = 'ItemMakeHighlight';
 	}
 
-	list ($ret, $parents) = GalleryCoreApi::fetchParents($item, 'core.edit');
+	list ($ret, $parents) = GalleryCoreApi::fetchParents($item, 'core.edit', true);
 	if ($ret) {
 	    return array($ret, null);
 	}

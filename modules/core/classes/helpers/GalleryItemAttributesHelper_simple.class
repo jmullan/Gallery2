@@ -135,8 +135,12 @@ class GalleryItemAttributesHelper_simple {
     /**
      * @see GalleryCoreApi::fetchParentSequence
      */
-    function fetchParentSequence($itemId, $forceFullSequence=false) {
+    function fetchParentSequence($itemId, $filterBreadcrumb=false) {
 	global $gallery;
+	if ($filterBreadcrumb && ($filter = $gallery->getConfig('breadcrumbRootId'))
+		&& $itemId == $filter) {
+	    return array(null, array());
+	}
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryItemAttributesMap',
 	    array('parentSequence'), array('itemId' => (int)$itemId));
@@ -152,21 +156,10 @@ class GalleryItemAttributesHelper_simple {
 	$result = $searchResults->nextResult();
 	/* DB2 doesn't trim when storing data in a varchar column */
 	$parentSequence = preg_split('/\//', trim($result[0]), -1, PREG_SPLIT_NO_EMPTY);
+	$result = is_array($parentSequence) ? $parentSequence : array();
 
-	$result = array();
-	if (is_array($parentSequence)) {
-	    $filter = $gallery->getConfig('breadcrumbRootId');
-	    if ($itemId != $filter && !$forceFullSequence) {
-		foreach ($parentSequence as $id) {
-		    if ($id == $filter) {
-			$result = array((int)$id);
-		    } else {
-			$result[] = (int)$id;
-		    }
-		}
-	    } else if ($forceFullSequence) {
-		$result = $parentSequence;
-	    }
+	if ($filterBreadcrumb && $filter && ($i = array_search($filter, $result))) {
+	    array_splice($result, 0, $i);
 	}
 
 	return array(null, $result);

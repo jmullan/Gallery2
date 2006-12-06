@@ -88,7 +88,7 @@ class SitemapView extends GalleryView {
 
 	    $phpVm = $gallery->getPhpVm();
 
-	    list ($ret, $parents) = GalleryCoreApi::fetchParentSequence($rootId, true);
+	    list ($ret, $parents) = GalleryCoreApi::fetchParentSequence($rootId);
 	    if ($ret) {
 		return $ret;
 	    }

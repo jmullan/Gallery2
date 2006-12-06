@@ -127,7 +127,7 @@ class ItemAdminView extends GalleryView {
 	$itemType = $item->itemTypeName(true);
 
 	/* Load the item's parents */
-	list ($ret, $parents) = GalleryCoreApi::fetchParents($item, 'core.view');
+	list ($ret, $parents) = GalleryCoreApi::fetchParents($item, 'core.view', true);
 	if ($ret) {
 	    return array($ret, null);
 	}
