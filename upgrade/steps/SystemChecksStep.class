@@ -58,7 +58,9 @@ class SystemChecksStep extends UpgradeStep {
 	    print "SUCCESS\n";
 	    return false;
 	} else if (!empty($_GET['downloadCleaupScript'])) {
-	    $manifest = SystemChecksStep::CheckManifest();
+	    $statusMonitor = null;
+	    $manifest = SystemChecksStep::CheckManifest(
+		    $statusMonitor, function_exists('set_time_limit'));
 	    $removeList = array();
 	    $base = dirname(dirname(dirname(__FILE__))) . '/';
 	    foreach ($manifest['shouldRemove'] as $file) {
@@ -534,7 +536,9 @@ class SystemChecksStep extends UpgradeStep {
 	    return null;
 	}
 
-	$statusMonitor->renderStatusMessage(_('Performing system checks'), '', 0.1);
+	if (isset($statusMonitor)) {
+	    $statusMonitor->renderStatusMessage(_('Performing system checks'), '', 0.1);
+	}
 	if ($useSetTimeLimit) {
 	    set_time_limit(180);
 	}
@@ -550,8 +554,10 @@ class SystemChecksStep extends UpgradeStep {
 	    $path = $base . $file;
 
 	    if ($i % $stepSize == 0) {
-		$statusMonitor->renderStatusMessage(_('Performing system checks'), '',
-				0.12 + $i / $stepSize * 0.04);
+		if (isset($statusMonitor)) {
+		    $statusMonitor->renderStatusMessage(_('Performing system checks'), '',
+							0.12 + $i / $stepSize * 0.04);
+		}
 		if ($useSetTimeLimit) {
 		    set_time_limit(180);
 		}
