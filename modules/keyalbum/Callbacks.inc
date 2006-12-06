@@ -94,7 +94,7 @@ class KeyAlbumCallbacks {
 	global $gallery;
 
 	$query = '
-	SELECT' . (!$includeFrequency ? ' DISTINCT' : '') . '
+	SELECT ' . ($includeFrequency ? '' : 'DISTINCT') . '
 	  [GalleryItem::keywords]
 	FROM
 	  [GalleryItem]
@@ -168,8 +168,8 @@ class KeyAlbumCallbacks {
 	$adjustment = pow($maxWeight, (float)$minCount / $maxCount) - 1.0;
 	foreach ($keywords as $i => $keyword) {
 	    /* Scale the resulting weights to be floats between 1 and $maxWeight. */
-	    $keywords[$i]['weight'] = pow($maxWeight, (float)$keyword['count'] / $maxCount);
-	    $keywords[$i]['weight'] -= $adjustment;
+	    $keywords[$i]['weight'] = GalleryUtilities::roundToString(
+		    pow($maxWeight, (float)$keyword['count'] / $maxCount) - $adjustment, 2);
 	    unset($keywords[$i]['count']);
 	}
 

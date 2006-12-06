@@ -238,10 +238,9 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	$this->assert(isset($found['testkeyword54321']), 'item keyword 1');
 	$this->assert(isset($found['testkeyword99999']), 'item keyword 2');
 
-	$adj = pow(6, 1/3) - 1;
-	$this->assertEquals(1.0, $weight['testkeyword12345'], 'weight of singular keyword');
-	$this->assertEquals(6.0 - $adj, $weight['testkeyword54321'], 'weight of triple keyword');
-	$this->assertEquals(pow(6, 2/3) - $adj, $weight['testkeyword99999'],
+	$this->assertEquals('1', $weight['testkeyword12345'], 'weight of singular keyword');
+	$this->assertEquals('5.18', $weight['testkeyword54321'], 'weight of triple keyword');
+	$this->assertEquals('2.48', $weight['testkeyword99999'],
 			    'weight of double keyword');
     }
 
@@ -279,10 +278,9 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	$this->assert(isset($found['testkeyword54321']), 'item keyword 1');
 	$this->assert(isset($found['testkeyword99999']), 'item keyword 2');
 
-	$this->assertEquals(1.0, $weight['testkeyword12345'], 'weight of singular keyword');
-	$this->assertEquals(2.0 - (sqrt(2) - 1), $weight['testkeyword54321'],
-			    'weight of triple keyword');
-	$this->assertEquals(1.0, $weight['testkeyword99999'], 'weight of double keyword');
+	$this->assertEquals('1', $weight['testkeyword12345'], 'weight of singular keyword');
+	$this->assertEquals('1.59', $weight['testkeyword54321'], 'weight of triple keyword');
+	$this->assertEquals('1', $weight['testkeyword99999'], 'weight of double keyword');
     }
 
     function testSplitKeywords() {
