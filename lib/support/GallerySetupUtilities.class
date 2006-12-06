@@ -251,7 +251,7 @@ class GallerySetupUtilities {
      * @static
      */
     function generateAuthenticationKey() {
-        for ($len = 64, $rand='';
+	for ($len = 64, $rand='';
 	     strlen($rand) < $len;
 	     $rand .= chr(!mt_rand(0,2) ? mt_rand(48,57) :
 			  (!mt_rand(0,1) ? mt_rand(65,90) :
