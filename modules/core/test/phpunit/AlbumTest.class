@@ -851,24 +851,25 @@ class AlbumTest extends GalleryTestCase {
 			    GalleryUtilities::arrayKeysRecursive($tree), 'depth one');
 
 	/* Test multiroot */
-	$gallery->setConfig('breadcrumbRootId', $album[0]->getId());
+	$gallery->setConfig('defaultAlbumId', $album[0]->getId()); /* Used when no itemId given */
+	$gallery->setConfig('breadcrumbRootId', $album[2]->getId()); /* Should have no effect */
+	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($subTree, $tree, 'defaultAlbum tree');
+
 	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($this->_parentAlbum->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals($fullTree, $tree, 'defaultAlbum: full tree');
-
-	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($album[0]->getId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$this->assertEquals($subTree, $tree, 'defaultAlbum: full default tree');
+	$this->assertEquals($fullTree, $tree, 'full tree above defaultAlbum');
 
 	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($album[2]->getId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assertEquals($subTree[$album[2]->getId()], $tree, 'defaultAlbum: sub tree');
+	$this->assertEquals($subTree[$album[2]->getId()], $tree, 'defaultAlbum sub tree');
     }
 
     function testFetchAlbumTreeNoPermissions() {
