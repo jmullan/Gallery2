@@ -300,14 +300,14 @@ class WebHelper_simple {
 	    $requestHeaderLines[] = $key . ': ' . $value;
 	}
 
-	$ret = $platform->fwrite($handle, sprintf("%s %s HTTP/1.0\r\n"
-						  . "%s\r\n"
-						  . "%s",
-						  $requestMethod,
-						  $requestUri,
-						  implode("\r\n", $requestHeaderLines) . "\r\n",
-						  $requestBody));
-	if (!$ret) {
+	$success = $platform->fwrite($handle, sprintf("%s %s HTTP/1.0\r\n"
+						      . "%s\r\n"
+						      . "%s",
+						      $requestMethod,
+						      $requestUri,
+						      implode("\r\n", $requestHeaderLines) . "\r\n",
+						      $requestBody));
+	if (!$success) {
 	    /* Zero bytes written or false was returned */
 	    $gallery->debug(
 		"fwrite failed in requestWebPage($url)" . ($ret === false ? ' - false' : ''));
