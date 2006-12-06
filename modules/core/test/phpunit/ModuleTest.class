@@ -35,8 +35,8 @@ class ModuleTest extends GalleryTestCase {
 	$gallery->setPlatform($this->_platform);
 
 	/* Register a new module */
-	GalleryDataCache::reset();
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	GalleryDataCache::reset(true);
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -60,7 +60,7 @@ class ModuleTest extends GalleryTestCase {
 
     function tearDown() {
 	/* If a unittest fails it might not deactivate/uninstall the mock module properly */
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -81,7 +81,7 @@ class ModuleTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	$ret = GalleryCoreApi::removePlugin('module', 'ModuleTest');
+	$ret = GalleryCoreApi::removePlugin('module', 'moduletest');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -91,7 +91,7 @@ class ModuleTest extends GalleryTestCase {
 
     function testModuleCycle() {
 	global $gallery;
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -237,7 +237,7 @@ class ModuleTest extends GalleryTestCase {
 
     function testInstallBadModuleApi() {
 	global $gallery;
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -249,13 +249,12 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
-	    'success?');
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
     }
 
     function testActivateBadModuleApiActivate() {
 	global $gallery;
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -272,8 +271,7 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
-	    'success?');
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
 
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
@@ -284,7 +282,7 @@ class ModuleTest extends GalleryTestCase {
 
     function testInstallBadCoreApi() {
 	global $gallery;
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -296,13 +294,12 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
-	    'success?');
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
     }
 
     function testActivateBadCoreApiActivate() {
 	global $gallery;
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -319,8 +316,7 @@ class ModuleTest extends GalleryTestCase {
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
-	    'success?');
+	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
 
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
@@ -332,7 +328,7 @@ class ModuleTest extends GalleryTestCase {
     function testPermissionsCleanup() {
 	/* Test against bug where module uninstall can leave AccessMap rows with g_permission=0 */
 	global $gallery;
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
