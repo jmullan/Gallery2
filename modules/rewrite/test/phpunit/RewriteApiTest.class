@@ -154,6 +154,40 @@ class RewriteApiTest extends GalleryTestCase {
 	$this->assert(ERROR_UNSUPPORTED_OPERATION & $ret->getErrorCode());
     }
 
+    function testFetchActiveRulesForModule() {
+	list ($ret, $expectedRules, $moduleId) =
+	    $this->_prepareActivateRewriteRulesForModule(REWRITE_STATUS_OK, true, true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Execute the method under test */
+	list ($ret, $activeRules) = $this->_rewriteApi->fetchActiveRulesForModule($moduleId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify the results */
+	$this->assertEquals(array_keys($expectedRules[$moduleId]), $activeRules, 'active rules');
+    }
+
+    function testFetchActiveRulesForModuleUsesHistory() {
+	list ($ret, $expectedRules, $moduleId) =
+	    $this->_prepareActivateRewriteRulesForModule(REWRITE_STATUS_OK, false, true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Execute the method under test */
+	list ($ret, $activeRules) = $this->_rewriteApi->fetchActiveRulesForModule($moduleId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify the results */
+	$this->assertEquals(array('rule2', 'rule0'), $activeRules, 'active rules');
+    }
+
     function testActivateRewriteRulesForModule() {
 	list ($ret, $expectedRules, $moduleId) = $this->_prepareActivateRewriteRulesForModule();
 	if ($ret) {

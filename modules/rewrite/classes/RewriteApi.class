@@ -145,6 +145,34 @@ class RewriteApi {
     }
 
     /**
+     * Fetch the active rewrite rules for a specific module which can be inactive at the time of
+     * this call.
+     * @param string $moduleId id of the module
+     * @return array object GalleryStatus a status code
+     *               array $ruleIds list of the active rewrite rule ids
+     */
+    function fetchActiveRulesForModule($moduleId) {
+	list ($ret, $activeRules) =
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'activeRules');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$activeRules = unserialize($activeRules);
+
+	if (isset($activeRules[$moduleId])) {
+	    return array(null, array_keys($activeRules[$moduleId]));
+	}
+
+	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
+	list ($ret, $history) = RewriteHelper::getHistoryForModule($moduleId);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, array_keys($history));
+    }
+
+    /**
      * Activate the rewrite rules for a specific module which can be inactive at the time of this
      * call.  Does not update active rules by default, only changes the list of active rules for the
      * given module.
