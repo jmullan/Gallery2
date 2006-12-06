@@ -23,7 +23,7 @@
 {foreach from=$Htaccess.rules item=rule}
 {if isset($rule.conditions)}
 {foreach from=$rule.conditions item="condition"}
-    RewriteCond %{ldelim}{$condition.test}{rdelim} {$condition.pattern}{if !empty($condition.flags)}   [{$condition.flags|@implode:','}]{/if}
+    RewriteCond %{ldelim}{$condition.test}{rdelim} {$condition.pattern}{if !empty($condition.flags)}   [{$condition.flags|@implode:","}]{/if}
 
 {/foreach}
 {/if}
@@ -43,9 +43,9 @@
 {/if}
 {if strpos($rule.queryString, 'view=core.DownloadItem') !== false ||
     strpos($rule.queryString, 'view=watermark.DownloadItem') !== false}
-    RewriteRule .   {$Htaccess.galleryDirectory}{$Htaccess.mainPhp}?{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags}]{/if}
+    RewriteRule .   {$Htaccess.galleryDirectory}{$Htaccess.mainPhp}?{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {else}
-    RewriteRule .   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags}]{/if}
+    RewriteRule .   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {/if}
 
 {/foreach}

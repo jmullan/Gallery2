@@ -13,7 +13,7 @@ RewriteRule {$Httpdini.galleryDirectory}modules/rewrite/data/isapi_rewrite/Rewri
 {foreach from=$Httpdini.rules item=rule}
 {if isset($rule.conditions)}
 {foreach from=$rule.conditions item="condition"}
-RewriteCond {$condition.test} {$condition.pattern}{if !empty($condition.flags)}   [{$condition.flags|@implode:','}]{/if}
+RewriteCond {$condition.test} {$condition.pattern}{if !empty($condition.flags)}   [{$condition.flags|@implode:","}]{/if}
 
 {/foreach}
 {/if}
@@ -31,25 +31,25 @@ RewriteCond Referer: (?!^$)
 {/if}
 
 RewriteCond Host: {$Httpdini.host}
-RewriteRule {$Httpdini.rewriteBase}.* {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags}]{/if}
+RewriteRule {$Httpdini.rewriteBase}.* {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@impload:","}]{/if}
 {elseif isset($rule.pattern)}
 RewriteCond Host: {$Httpdini.host}
 
 {if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags}]{/if}
+RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}{if !empty($rule.settings.flags|@implode:",")}   [{$rule.settings.flags}]{/if}
 {else}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags}]{/if}
+RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {/if}
 
 RewriteCond Host: {$Httpdini.host}
 {if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}\?(.*) {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}&${$rule.queryStringId}{if !empty($rule.settings.flags)}   [{$rule.settings.flags}]{/if}
+RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}\?(.*) {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}&${$rule.queryStringId}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {else}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}\?(.*) {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}&${$rule.queryStringId}{if !empty($rule.settings.flags)}   [{$rule.settings.flags}]{/if}
+RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}\?(.*) {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}&${$rule.queryStringId}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {/if}
 {else}
 RewriteCond Host: {$Httpdini.host}
-RewriteRule {$Httpdini.rewriteBase}.* {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags}]{/if}
+RewriteRule {$Httpdini.rewriteBase}.* {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {/if}
 
 {/foreach}
