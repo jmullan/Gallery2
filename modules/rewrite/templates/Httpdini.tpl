@@ -31,12 +31,12 @@ RewriteCond Referer: (?!^$)
 {/if}
 
 RewriteCond Host: {$Httpdini.host}
-RewriteRule {$Httpdini.rewriteBase}.* {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@impload:","}]{/if}
+RewriteRule {$Httpdini.rewriteBase}.* {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {elseif isset($rule.pattern)}
 RewriteCond Host: {$Httpdini.host}
 
 {if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}{if !empty($rule.settings.flags|@implode:",")}   [{$rule.settings.flags}]{/if}
+RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {else}
 RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {/if}
