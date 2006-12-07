@@ -185,14 +185,13 @@ class AdminRepositoryController extends GalleryController {
 	foreach ($repositories as $source => $repository) {
 	    list ($ret, $message) = GalleryRepository::translateRepositoryName($source);
 	    if ($ret) {
-		$status['error'][] = $ret->getErrorMessage();
-		$message = '';
+		return $ret;
 	    }
 
 	    $templateAdapter->updateProgressBar($heading, $message, $currentProgress);
 	    $ret = $repository->downloadIndex();
 	    if ($ret) {
-		$status['error'][] = $ret->getErrorMessage();
+		$status['error']['download'][] = $ret->getErrorMessage();
 	    }
 	    $currentProgress += $indexWeight * $increment;
 	}
@@ -206,7 +205,17 @@ class AdminRepositoryController extends GalleryController {
 		$templateAdapter->updateProgressBar(
 			$heading, $pluginType . $sSlash . $pluginId, $currentProgress);
 		$ret = $repository->scanPlugin($pluginType, $pluginId);
-		if ($ret) {
+		if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+		    /*
+		     * Something is wrong with this plugin. Maybe it's a 3rd party plugin w/o
+		     * MANIFEST file, maybe it has no revisions in the po files, maybe the
+		     * module.inc is foobar. Just log and ignore it.
+		     */
+		    if ($gallery->getDebug()) {
+			$gallery->debug_r($ret);
+		    }
+		    $status['error']['scanPlugin'][] = $pluginId;
+		} else if ($ret) {
 		    return $ret;
 		}
 		$currentProgress += $increment;

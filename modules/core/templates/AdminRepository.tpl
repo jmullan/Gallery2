@@ -10,10 +10,17 @@
 
 {if !empty($status.error)}
 <div class="gbBlock"><h2 class="giError">
-  {foreach from=$status.error item=error}
+  {if !empty($status.error.download)}
+  {foreach from=$status.error.download item=error}
   {$error}<br/>
   {/foreach}
-  {g->text text="Please make sure that your internet connection is set up properly or try again later."}
+  {g->text text="Please make sure that your internet connection is set up properly or try again later."}<br/>
+  {/if}
+  {if !empty($status.error.scanPlugin)}  
+  {foreach from=$status.error.scanPlugin item=pluginId}
+  {g->text text="Failed to scan status from plugin: %s." arg1=$pluginId}<br/>
+  {/foreach}
+  {/if}
 </h2></div>
 {/if}
 

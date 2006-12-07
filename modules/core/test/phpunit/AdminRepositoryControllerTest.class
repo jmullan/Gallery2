@@ -37,13 +37,15 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 	global $gallery;
 
+	$this->_originalSession = $gallery->_session;
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
     }
 
     function tearDown() {
 	global $gallery;
 	$gallery->_templateAdapter =& $this->_galleryTemplateAdapter;
-
+	$gallery->_session = $this->_originalSession;
+	
 	parent::tearDown();
     }
 
@@ -139,6 +141,89 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	    $mockAdapter->getProgressBarDump());
 
 	$this->assert($repository->isComplete(), $repository->getRemaining());
+    }
+
+    function testUpdatePluginStatusIgnoresPluginScanErrors() {
+	global $gallery;
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+	$gallery->_session = new AdminRepositoryControllerTestSession();
+
+	$repository = new AdminRepositoryControllerTestRepository();
+	$repository->setReply('downloadIndex', array(), null);
+	$repository->setReply('scanPlugin', array('module', 'module1'), null);
+	$repository->setReply('scanPlugin',
+			      array('module', 'module2'),
+			      GalleryCoreApi::error(ERROR_BAD_PATH));
+	$repository->setReply('scanPlugin', array('theme', 'theme1'), null);
+	$repository->setReply('scanPlugin', array('theme', 'theme2'), null);
+
+	$mockUrlGenerator = new AdminRepositoryControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$ret = $this->_controller->updatePluginStatus(
+	    array('module' => array(
+		      'module1' => array('active' => true, 'available' => true),
+		      'module2' => array('active' => false, 'available' => true)),
+		  'theme' => array(
+		      'theme1' => array('active' => true, 'available' => true),
+		      'theme2' => array('active' => true, 'available' => true))),
+	    array('test' => $repository));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Assert that we saw what we expected */
+	$this->assertEquals(
+	    array('0', '0', '0.56' /* index downloads have a higher weight */,
+		  '0.67', '0.78', '0.89', '1.0' /* 4 steps for the plugins */,
+		  'complete:view=core.SiteAdmin,subView=core.AdminRepository,statusId=STATUSID'),
+	    $mockAdapter->getProgressBarDump());
+
+	$this->assert($repository->isComplete(), $repository->getRemaining());
+
+	$session =& $gallery->getSession();
+	$expectedStatus['error']['scanPlugin'] = array('module2');
+	$this->assertEquals($expectedStatus, $session->getStatus('STATUSID'),
+			    'scanPlugin error should be in status');
+    }
+
+    function testUpdatePluginStatusFailsHardOnStorageError() {
+	global $gallery;
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+	$gallery->_session = new AdminRepositoryControllerTestSession();
+
+	$repository = new AdminRepositoryControllerTestRepository();
+	$repository->setReply('downloadIndex', array(), null);
+	$repository->setReply('scanPlugin', array('module', 'module1'), null);
+	$repository->setReply('scanPlugin',
+			      array('module', 'module2'),
+			      GalleryCoreApi::error(ERROR_STORAGE_FAILURE));
+	$repository->setReply('scanPlugin', array('theme', 'theme1'), null);
+	$repository->setReply('scanPlugin', array('theme', 'theme2'), null);
+
+	$mockUrlGenerator = new AdminRepositoryControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	/* Run the test and verify that the operation fails as expected */
+	$ret = $this->_controller->updatePluginStatus(
+	    array('module' => array(
+		      'module1' => array('active' => true, 'available' => true),
+		      'module2' => array('active' => false, 'available' => true)),
+		  'theme' => array(
+		      'theme1' => array('active' => true, 'available' => true),
+		      'theme2' => array('active' => true, 'available' => true))),
+	    array('test' => $repository));
+	if ($ret && $ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+	    /* Good, as expected */
+	} else if ($ret) {
+	    $this->failWithStatus($ret);
+	} else {
+	    $this->fail('ERROR_STORAGE_FAILURE should not be ignored');
+	}
     }
 
     function testUpgradeAllNoUpgradeAvailable() {
@@ -277,6 +362,22 @@ class AdminRepositoryControllerTestRepository {
 
     function getAllUpgradeablePackages() {
 	return $this->_makeReply('getAllUpgradeablePackages', array());
+    }
+}
+
+class AdminRepositoryControllerTestSession extends GallerySession {
+    var $_testStatus = array();
+
+    function putStatus($statusData) {
+	$this->_testStatus[] = $statusData;
+	return 'STATUSID';
+    }
+
+    function getStatus($statusId, $remove=true) {
+	if ($statusId == 'STATUSID') {
+	    return empty($this->_testStatus) ? false : array_pop($this->_testStatus);
+	}
+	return false;
     }
 }
 ?>

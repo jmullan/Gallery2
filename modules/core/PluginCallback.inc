@@ -279,7 +279,16 @@ class PluginCallbackView extends GalleryView {
 	    }
 
 	    $ret = $this->_repository->scanPlugin($pluginType, $pluginId);
-	    if ($ret) {
+	    if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+		/*
+		 * Something is wrong with this plugin. Maybe it's a 3rd party plugin w/o MANIFEST
+		 * file, maybe it has no revisions in the po files, maybe the module.inc is foobar.
+		 * Just log and ignore it.
+		 */
+		if ($gallery->getDebug()) {
+		    $gallery->debug_r($ret);
+		}
+	    } else if ($ret) {
 		return $ret;
 	    }
 
