@@ -591,7 +591,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('write', $lock['type']);
 	$this->assertEquals('infinity', $lock['depth']);
 	$this->assertEquals('testOwner', $lock['owner']);
-	$this->assertEquals((string)(time() + 10), $lock['expires']);
+	$this->assertEquals((string)(time() + 30), $lock['expires']);
 
 	$headers = GalleryUtilities::_getResponseHeaders();
 	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK',
@@ -607,7 +607,7 @@ class WebDavTest extends GalleryTestCase {
             <D:locktype><D:write/></D:locktype>
             <D:depth>Infinity</D:depth>
             <D:owner>testOwner</D:owner>
-            <D:timeout>Second-10</D:timeout>
+            <D:timeout>Second-30</D:timeout>
             <D:locktoken><D:href>' . $lock['token'] . '</D:href></D:locktoken>
           </D:activelock>
   </D:lockdiscovery>
@@ -713,7 +713,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('write', $lock['type']);
 	$this->assertEquals('infinity', $lock['depth']);
 	$this->assertEquals('testOwner', $lock['owner']);
-	$this->assertEquals((string)(time() + 10), $lock['expires']);
+	$this->assertEquals((string)(time() + 30), $lock['expires']);
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK',
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
@@ -727,7 +727,7 @@ class WebDavTest extends GalleryTestCase {
             <D:locktype><D:write/></D:locktype>
             <D:depth>Infinity</D:depth>
             <D:owner>testOwner</D:owner>
-            <D:timeout>Second-10</D:timeout>
+            <D:timeout>Second-30</D:timeout>
             <D:locktoken><D:href>' . $lock['token'] . '</D:href></D:locktoken>
           </D:activelock>
   </D:lockdiscovery>
