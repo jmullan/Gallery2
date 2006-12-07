@@ -195,7 +195,6 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	$platform->setReply('feof', array('testFd'), false);
 	$platform->setReply('fread', array('testFd', 4096),
 	    '<add-cart-response request-url="/REQUEST_URL" redirect-url="/REDIRECT_URL"/>');
-	$platform->setReply('fflush', array('testFd'), true);
 	$platform->setReply('feof', array('testFd'), true);
 	$platform->setReply('fclose', array('testFd'), true);
 	$gallery->setPlatform($platform);

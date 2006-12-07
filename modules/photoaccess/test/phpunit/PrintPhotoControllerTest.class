@@ -155,7 +155,6 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	$platform->setReply('feof', array('testFd'), false);
 	$platform->setReply('fread', array('testFd', 4096), '<add-cart-response request-url="' .
 	    $requestUrl . '" redirect-url="' . $redirectUrl . '"/>');
-	$platform->setReply('fflush', array('testFd'), true);
 	$platform->setReply('feof', array('testFd'), true);
 	$platform->setReply('fclose', array('testFd'), true);
 	return $platform;
