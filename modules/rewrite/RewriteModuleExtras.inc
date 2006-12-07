@@ -284,6 +284,9 @@ class RewriteModuleExtras {
 		}
 	    }
 
+	case '1.1.8':
+	    /* Remove L from mandatory flags */
+
 	case 'end of upgrade path':
 	    break;
 

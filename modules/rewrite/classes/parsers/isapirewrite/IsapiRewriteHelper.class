@@ -51,7 +51,7 @@ class IsapiRewriteHelper {
 
 	$regexRules = array();
 	$shortUrls = array();
-	$flags = array('default' => array('N'), 'mandatory' => array());
+	$flags = array('default' => array('N', 'L'), 'mandatory' => array());
 	if (!empty($activeRules)) {
 	    list ($ret, $code, $regexRules, $shortUrls, $errorId) = RewriteHelper::parseActiveRules(
 		$activeRules, $parser, $upgradeModule, $flags);

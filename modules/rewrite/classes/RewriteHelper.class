@@ -82,7 +82,7 @@ class RewriteHelper {
      * @param array $activeRules array array ('pattern' => string pattern) active rules by reference
      * @param object RewriteParser $rewriteParser
      * @param object GalleryModule $upgradeModule (optional) passed in during activate/upgrade
-     * @param array $flags optional definition of default and mandator flags
+     * @param array $flags optional definition of default and mandatory flags
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      *               array parsed patterns translated to regular expressions
@@ -214,8 +214,7 @@ class RewriteHelper {
 		    return array($ret, null, null, null, null);
 		}
 		if ($code != REWRITE_STATUS_OK) {
-		    return array(null, $code, null, null,
-			array($moduleId, $ruleId));
+		    return array(null, $code, null, null, array($moduleId, $ruleId));
 		}
 	    }
 	}
@@ -303,10 +302,24 @@ class RewriteHelper {
     }
 
     /**
-     * Comparison function used to order rewrite rules.
+     * Comparison function used to order regex rules.
+     * @param array $a first rule to compare
+     * @param array $b second rule to compare
+     * @return int an integer less than, equal to, or greater than zero if the first rule is
+     *             considered to be respectively less than, equal to, or greater than the second
      * @access private
      */
     function _sortRules($a, $b) {
+	/* Flags: rules which don't allow subrequests come last */
+	if (in_array('L', $a['settings']['flags']) xor in_array('L', $b['settings']['flags'])) {
+	    if (in_array('L', $b['settings']['flags'])) {
+		return -1;
+	    }
+
+	    return 1;
+	}
+
+	/* Conditions */
 	if (isset($a['conditions']) || isset($b['conditions'])) {
 	    if (isset($a['conditions']) && isset($b['conditions'])) {
 		return count($a['conditions']) - count($b['conditions']);
@@ -319,6 +332,7 @@ class RewriteHelper {
 	    return 1;
 	}
 
+	/* Restrict */
 	if (isset($a['settings']['restrict']) || isset($b['settings']['restrict'])) {
 	    if (isset($a['settings']['restrict']) && isset($b['settings']['restrict'])) {
 		return count($a['settings']['restrict']) - count($b['settings']['restrict']);
@@ -331,28 +345,36 @@ class RewriteHelper {
 	    return 1;
 	}
 
-	/* Regular expression in both */
-	if (strpos($a['pattern'], '(') !== false && strpos($b['pattern'], '(') !== false) {
-	    if (strpos($a['pattern'], '(') == strpos($b['pattern'], '(')) {
-		if (strlen($a['pattern']) == strlen($b['pattern'])) {
-		    return 0;
+	/* Pattern: long patterns come before short patterns.  Empty patterns come last. */
+	if (isset($a['pattern']) || isset($b['pattern'])) {
+	    if (isset($a['pattern']) && isset($b['pattern'])) {
+		/* Regex patterns come before static patterns */
+		if (strpos($a['pattern'], '(') !== false
+			|| strpos($b['pattern'], '(') !== false) {
+		    if (strpos($a['pattern'], '(') !== false
+			    && strpos($b['pattern'], '(') !== false) {
+			return strpos($b['pattern'], '(') - strpos($a['pattern'], '(');
+		    }
+
+		    if (strpos($a['pattern'], '(') !== false) {
+			return -1;
+		    }
+
+		    return 1;
 		}
 
-		return (strlen($a['pattern']) < strlen($b['pattern'])) ? 1 : -1;
+		return strlen($b['pattern']) - strlen($a['pattern']);
 	    }
 
-	    return (strpos($a['pattern'], '(') < strpos($b['pattern'], '(')) ? 1 : -1;
-	}
-	if (strpos($a['pattern'], '(') !== false) {
+	    if (isset($a['pattern'])) {
+		return -1;
+	    }
+
 	    return 1;
 	}
-	if (strpos($b['pattern'], '(') !== false) {
-	    return -1;
-	}
 
-	return (strlen($a['pattern']) < strlen($b['pattern'])) ? 1 : -1;
+	return 0;
     }
-
 
     /**
      * Get the rewrite rule history for a specific module.

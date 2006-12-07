@@ -35,7 +35,7 @@ class RewriteModule extends GalleryModule {
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n(
 	    'Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo'));
-	$this->setVersion('1.1.8'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('1.1.9'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 5));
@@ -307,22 +307,16 @@ class RewriteModule extends GalleryModule {
 	/* Rule 3: Block hotlinked items */
 	$rules[3] = array(
 	    'comment' => $this->translate('Block hotlinked items'),
-	    'pattern' => '.',
-	    'locked' => 1,
 	    'flags' => array('F'),
 	    'restrict' => array('view' => 'core.DownloadItem'),
-	    'parser' => 'preGallery',
 	    'exemptReferer' => 1);
 
 	/* Rule 5: Send HTML for hotlinked items */
 	$rules[5] = array(
 	    'comment' => $this->translate('Send HTML for hotlinked items'),
-	    'pattern' => '.',
-	    'locked' => 1,
-	    'flags' => array(),
+	    'flags' => array('L'),
 	    'restrict' => array('view' => 'core.DownloadItem', 'itemId' => '([0-9]+)'),
 	    'queryString' => array('view' => 'rewrite.DownloadItem', 'itemId' => '%1'),
-	    'parser' => 'preGallery',
 	    'exemptReferer' => 1,
 	    'help' => $this->translate('Blocks use of images in other sites (HTML creates broken'
 				     . ' image), but allows linking to images.'));

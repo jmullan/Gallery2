@@ -365,6 +365,81 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules');
     }
 
+    function testSortRules() {
+	$serverName = GalleryUtilities::getServerVar('HTTP_HOST');
+
+	/* Initialize active rules in reverse order */
+	$activeRules = array();
+	/* Empty pattern */
+	$activeRules['rewritehelpermock'][10] = array();
+	/* Short pattern */
+	$activeRules['rewritehelpermock'][9] = array('pattern' => 'p');
+	/* Long pattern */
+	$activeRules['rewritehelpermock'][0] = array('pattern' => 'phpunit');
+	/* Regex pattern */
+	$activeRules['rewritehelpermock'][1] = array('pattern' => 'php/%unit%');
+	/* Restrict */
+	$activeRules['rewritehelpermock'][6] = array();
+	/* Conditions */
+	$activeRules['rewritehelpermock'][11] = array();
+	/* Custom flags */
+	$activeRules['rewritehelpermock'][5] = array('pattern' => 'phpunit');
+	$expectedActiveRules = $activeRules;
+
+	list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
+	    $activeRules, $this->_parser, null, array('default' => array('QSA', 'L'),
+	    					      'mandatory' => array()));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(REWRITE_STATUS_OK, $code, 'code');
+	/* Custom flags */
+	$this->assertEquals(array('pattern' => 'phpunit',
+				  'queryString' => '',
+				  'settings' => array('flags' => array('C1', 'C2'))),
+			    $regexRules[0], 'regex rules');
+	/* Conditions */
+	$this->assertEquals(array('conditions' => array(array('test' => 'REQUEST_METHOD',
+							      'pattern' => 'OPTIONS'),
+							array('test' => 'HTTP:Authorization',
+							      'pattern' => '(.+)')),
+				  'queryString' => 'g2_authorization=$1',
+				  'settings' => array('flags' => array('QSA', 'L'))),
+			    $regexRules[1], 'regex rules');
+	/* Restrict */
+	$this->assertEquals(array('queryString' => 'g2_static=value',
+				  'settings' => array('restrict' => array('param=bogus'),
+						      'exempt' => array('phpunit1',
+									'phpunit2',
+									$serverName),
+						      'flags' => array('QSA', 'L'))),
+			    $regexRules[2], 'regex rules');
+	/* Regex pattern */
+	$this->assertEquals(array('pattern' => 'php/(.*)',
+				  'queryString' => 'g2_unit=$1',
+				  'settings' => array('flags' => array('QSA', 'L'))),
+			    $regexRules[3], 'regex rules');
+	/* Long pattern */
+	$this->assertEquals(array('pattern' => 'phpunit',
+				  'queryString' => '',
+				  'settings' => array('flags' => array('QSA', 'L'))),
+			    $regexRules[4], 'regex rules');
+	/* Short pattern */
+	$this->assertEquals(array('pattern' => 'p',
+				  'queryString' => 'g2_view=php.Unit',
+				  'settings' => array('flags' => array('QSA', 'L'))),
+			    $regexRules[5], 'regex rules');
+	/* Empty pattern */
+	$this->assertEquals(array('queryString' => 'g2_view=php.Unit',
+				  'settings' => array('flags' => array('QSA', 'L'))),
+			    $regexRules[6], 'regex rules');
+	$this->assertEquals(array(array('match' => array('view' => 'php.Unit'),
+					'pattern' => 'p')), $shortUrls, 'short urls');
+	$this->assertEquals(null, $errno, 'errno');
+	$this->assertEquals($expectedActiveRules, $activeRules, 'active rules');
+    }
+
     function testParseQuoteMetaChars() {
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][1] = array('pattern' => 'php.-/%unit%');

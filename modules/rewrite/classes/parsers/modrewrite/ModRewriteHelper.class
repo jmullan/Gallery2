@@ -61,7 +61,7 @@ class ModRewriteHelper {
 
 	$regexRules = array();
 	$shortUrls = array();
-	$flags = array('default' => array('QSA', 'L'), 'mandatory' => array('L'));
+	$flags = array('default' => array('QSA', 'L'), 'mandatory' => array());
 	if (!empty($activeRules)) {
 	    list ($ret, $code, $regexRules, $shortUrls, $errorId) = RewriteHelper::parseActiveRules(
 		$activeRules, $parser, $upgradeModule, $flags);
