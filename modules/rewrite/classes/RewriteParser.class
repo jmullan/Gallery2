@@ -131,7 +131,7 @@ class RewriteParser {
 	}
 
 	if (isset($activeRule['pattern'])
-		&& !preg_match('/^[a-z0-9\/\.\%\-]+$/i', $activeRule['pattern'])) {
+		&& !preg_match('/^[a-zA-Z0-9\/\.\%\-]+$/', $activeRule['pattern'])) {
 	    return false;
 	}
 
