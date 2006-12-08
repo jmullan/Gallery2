@@ -678,7 +678,7 @@ class GalleryUrlGenerator {
 
 	/* Replace protocol with $options['protocol'].  See RFC1738 section 2.1. */
 	if (isset($options['protocol'])) {
-	    $url = preg_replace('/^[a-z0-9\+\.\-]+:/i', $options['protocol'] . ':', $url);
+	    $url = preg_replace('/^[a-zA-Z0-9\+\.\-]+:/', $options['protocol'] . ':', $url);
 	}
 
 	/*
