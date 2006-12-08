@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>README: Gallery 2.next (SVN)</title>
+    <title>README: Gallery 2.2 (Double Double)</title>
     <style type="text/css">
       html {
 	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
@@ -198,11 +198,13 @@
     </div>
 
     <p>
-      Welcome to Gallery 2. This is Gallery from Subversion sometime nearing 2.2.
-      Please read through this document carefully before installing Gallery 2
-      and before asking for help.  We have taken care to try to answer as many
-      of your questions here as possible.  If you don't read this and have
-      problems, we may refer you back to this document as a first resource.
+      Welcome to Gallery 2. This is the first release candidate of
+      Gallery 2.2, code named "<b>Double Double</b>".  Please read
+      through this document carefully before installing Gallery 2 and
+      before asking for help.  We have taken care to try to answer as
+      many of your questions here as possible.  If you don't read this
+      and have problems, we may refer you back to this document as a
+      first resource.
     </p>
 
     <h2><a name="quick_start">Quick Start</a></h2>
@@ -321,7 +323,7 @@
     </p>
 
     <h3>
-      Highlight of changes in Gallery 2.2 (?)
+      Highlight of changes in Gallery 2.2 (Double Double)
       <span id="toggle-2-2" class="toggle"
        onclick="toggle('list-2-2', 'toggle-2-2')"> - </span>
     </h3>
@@ -1554,11 +1556,11 @@
 	Everything you need to publish photos, and nothing more.
       </li>
       <li>
-	<b>Typical</b> - The base application, 7 themes and a selection of popular
+	<b>Typical</b> - The base application, 9 themes and a selection of popular
 	modules.  Enough to satisfy the demands of most Gallery users.
       </li>
       <li>
-	<b>Full</b> - The base application, 7 themes and 56 modules.  Every cool
+	<b>Full</b> - The base application, 9 themes and 68 modules.  Every cool
 	feature we've got.
       </li>
       <li>
@@ -2134,38 +2136,26 @@
     </p>
 
     <div class="important">
-      <h3> Warning! </h3>
+      <h3> Warning When Upgrading from Gallery 2.0! </h3>
       <p>
-	There are changes in Gallery 2.1 that cause it to be
-	incompatible with modules and themes from Gallery 2.0.  All
-	modules and themes released by the Gallery project have been
-	updated to work with 2.1, but if you're using third party
-	modules/themes you may find that they do not work with the 2.1
-	release.
-      </p>
-      <p>
-	If you're worried, you can either deactivate any third party
-	modules before beginning your upgrade, or find and use the
-	latest version of the third party module.
-      </p>
-      <p>
-	Gallery 2.1 will detect if you're missing the appropriate
-	version of a necessary module and will abort the upgrade
-	<b>before making any changes</b> so you will not lose any
-	data.
-      </p>
-      <p>
-	Third party modules and themes: <a href="http://codex.gallery2.org/index.php/Gallery2:UserContributions">http://codex.gallery2.org/index.php/Gallery2:UserContributions</a>
+	Third party modules and themes designed for Gallery 2.0 will
+	not work with Gallery 2.2.  During the upgrade process, these
+	modules and themes will be automatically deactivated for you.
+	You can find updated versions for most of these modules and
+	themes here: <a
+	href="http://codex.gallery2.org/index.php/Gallery2:UserContributions">http://codex.gallery2.org/index.php/Gallery2:UserContributions</a>
       </p>
     </div>
 
     <ol>
       <li>
-	If you have a busy site, consider putting your Gallery in maintenance mode
-	before updating the code and performing the upgrade. This gives visitors a
-	message that the site is temporarily offline, rather than showing everybody
-	the upgrade page. Edit your config.php file to activate maintenance mode.
-	This feature is new in 2.1, so it is not available in an upgrade from 2.0.x.
+	If you have a busy site, consider putting your Gallery in
+	maintenance mode before updating the code and performing the
+	upgrade. This gives visitors a message that the site is
+	temporarily offline, rather than showing everybody the upgrade
+	page. Edit your config.php file to activate maintenance mode.
+	This feature is new starting in 2.1, so it is not available in
+	an upgrade from 2.0.x.
       </li>
 
       <li>
@@ -2193,12 +2183,13 @@
       </li>
 
       <li>
-	Browse to <a href="upgrade/index.php" target="_guided">the upgrader</a> and follow the
-	instructions there.  Make a backup of your data (g2data folder and the database)
-	when it tells you to!  Should you lose your data due to a bug in the
-	upgrader, the first thing we're going to tell you to do is to
-	restore from your backups!  (Then we'll probably ask you to
-	help us reproduce the bug.)
+	Browse to <a href="upgrade/index.php" target="_guided">the
+	upgrader</a> and follow the instructions there.  <b>Make a
+	backup of your data</b> (g2data folder and especially the
+	database) when it tells you to!  Should you lose your data due
+	to a bug in the upgrader, the first thing we're going to tell
+	you to do is to restore from your backups!  (Then we'll
+	probably ask you to help us reproduce the bug.)
       </li>
 
       <li>
@@ -2244,11 +2235,15 @@
 	  so that we can cut down on the number of spurious reports.
 	</li>
 	<li>
-	  If you're unsure whether to file a bug you can always post in the
-	  forums first and we'll ask you to file a bug if needed.  If you
-	  want to chat in real time, you can talk on our user-to-user irc
-	  support channel, <a href="irc://chat.freenode.net/#gallery-support"
-	    target="_blank">#gallery-support on chat.freenode.net</a>
+	  If you're unsure whether to file a bug you can always post
+	  in the forums first and we'll ask you to file a bug if
+	  needed.  If you want to chat in real time, you can talk on
+	  our user-to-user irc support channel, <a
+	  href="irc://chat.freenode.net/#gallery-support"
+	  target="_blank">#gallery-support on chat.freenode.net
+	  (irc client)</a> or <a
+	  href="http://jtty.com/GallerySupport">#gallery-support (web
+	  based irc)</a>
 	</li>
       </ul>
 
@@ -2336,6 +2331,7 @@
 	  src="images/gallery.gif"
 	  alt="Gallery 2" title="Gallery 2"
 	  style="border: none" width="80" height="15"/></a>
+
     </p>
 
     <hr />
