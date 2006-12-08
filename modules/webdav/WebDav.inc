@@ -61,7 +61,8 @@ class WebDavController extends GalleryController {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
 	}
 
-	$requestMethod = strtolower(GalleryUtilities::getServerVar('REQUEST_METHOD'));
+	$requestMethod = GalleryUtilities::strToLower(
+		GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if ($requestMethod == 'get' || $requestMethod == 'head') {
 	    if (empty($path)) {
 		list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
@@ -162,7 +163,8 @@ class WebDavView extends GalleryView {
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
-	$requestMethod = strtolower(GalleryUtilities::getServerVar('REQUEST_METHOD'));
+	$requestMethod = GalleryUtilities::strToLower(
+		GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if (!in_array($requestMethod, array('options', 'propfind', 'proppatch', 'mkcol', 'delete',
 		'move', 'lock', 'unlock'))) {
 	    return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
