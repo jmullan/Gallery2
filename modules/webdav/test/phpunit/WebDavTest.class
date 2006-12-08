@@ -111,6 +111,11 @@ class WebDavTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
+    function skip() {
+	echo 'Webdav test(s) skipped because function stream_wrapper_register not found', "\n";
+	return parent::skip();
+    }
+
     function _streamWrapperRegistration($unregister=false) {
 	static $registered = false;
 
@@ -120,7 +125,7 @@ class WebDavTest extends GalleryTestCase {
 		stream_wrapper_unregister('test');
 		$registered = false;
 	    }
-	} else if (!$registered) {
+	} else if (!$registered && function_exists('stream_wrapper_register')) {
 	    stream_wrapper_register('test', 'WebDavTestStream');
 	    $registered = true;
 	}
@@ -153,6 +158,9 @@ class WebDavTest extends GalleryTestCase {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$urlGenerator =& $gallery->getUrlGenerator();
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
@@ -221,6 +229,9 @@ class WebDavTest extends GalleryTestCase {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$urlGenerator =& $gallery->getUrlGenerator();
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
@@ -651,6 +662,9 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testLockUnlock() {
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
 	$headers =& GalleryUtilities::_getResponseHeaders();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
@@ -672,6 +686,9 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testLockRefresh() {
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
 	$headers =& GalleryUtilities::_getResponseHeaders();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
@@ -746,6 +763,9 @@ class WebDavTest extends GalleryTestCase {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$urlGenerator =& $gallery->getUrlGenerator();
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
 
 	$headers =& GalleryUtilities::_getResponseHeaders();
 
