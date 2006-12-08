@@ -671,7 +671,7 @@ class GalleryPlatform {
 	     * same, though it isn't perfect.
 	     */
 	    $s = '\\\/';  /* Do this by hand because preg_quote() isn't reliable */
-	    if (!preg_match("{^([a-z]+:)?[$s]}i", $path)) {
+	    if (!preg_match("{^([a-zA-Z]+:)?[$s]}", $path)) {
 		$path = $this->getcwd() . $slash . $path;
 	    }
 	    for ($realpath = $path, $lastpath = ''; $realpath != $lastpath;) {
@@ -949,9 +949,9 @@ class GalleryPlatform {
 	    /* Convert \r\n to the appropriate line ending style */
 	    if ($this->getLineEnding() == "\n") {
 		if (isset($headers)) {
-		    $headers = preg_replace("#\r\n#si", "\n", $headers);
+		    $headers = preg_replace("#\r\n#s", "\n", $headers);
 		}
-		$body = preg_replace("#\r\n#si", "\n", $body);
+		$body = preg_replace("#\r\n#s", "\n", $body);
 	    }
 
 	    if (isset($headers)) {
