@@ -944,8 +944,9 @@ class StorageTestRecordSet {
 	return $this->_recordCount;
     }
 
-    function FetchRow() {
-	return empty($this->_rows) ? false : array_shift($this->_rows);
+    function &FetchRow() {
+	$result = empty($this->_rows) ? false : array_shift($this->_rows);
+	return $result;
     }
 }
 ?>
