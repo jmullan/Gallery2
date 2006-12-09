@@ -345,10 +345,12 @@ class RewriteHelper {
 	    return 1;
 	}
 
-	/* Pattern: long patterns come before short patterns.  Empty patterns come last. */
+	/*
+	 * Pattern: static patterns come before regex patterns, long patterns come before short
+	 * patterns, empty patterns come last.
+	 */
 	if (isset($a['pattern']) || isset($b['pattern'])) {
 	    if (isset($a['pattern']) && isset($b['pattern'])) {
-		/* Regex patterns come before static patterns */
 		if (strpos($a['pattern'], '(') !== false
 			|| strpos($b['pattern'], '(') !== false) {
 		    if (strpos($a['pattern'], '(') !== false
@@ -356,7 +358,7 @@ class RewriteHelper {
 			return strpos($b['pattern'], '(') - strpos($a['pattern'], '(');
 		    }
 
-		    if (strpos($a['pattern'], '(') !== false) {
+		    if (strpos($b['pattern'], '(') !== false) {
 			return -1;
 		    }
 

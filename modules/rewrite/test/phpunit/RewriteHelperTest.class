@@ -415,19 +415,19 @@ class RewriteHelperTest extends GalleryTestCase {
 									$serverName),
 						      'flags' => array('QSA', 'L'))),
 			    $regexRules[2], 'regex rules');
-	/* Regex pattern */
-	$this->assertEquals(array('pattern' => 'php/(.*)',
-				  'queryString' => 'g2_unit=$1',
-				  'settings' => array('flags' => array('QSA', 'L'))),
-			    $regexRules[3], 'regex rules');
 	/* Long pattern */
 	$this->assertEquals(array('pattern' => 'phpunit',
 				  'queryString' => '',
 				  'settings' => array('flags' => array('QSA', 'L'))),
-			    $regexRules[4], 'regex rules');
+			    $regexRules[3], 'regex rules');
 	/* Short pattern */
 	$this->assertEquals(array('pattern' => 'p',
 				  'queryString' => 'g2_view=php.Unit',
+				  'settings' => array('flags' => array('QSA', 'L'))),
+			    $regexRules[4], 'regex rules');
+	/* Regex pattern */
+	$this->assertEquals(array('pattern' => 'php/(.*)',
+				  'queryString' => 'g2_unit=$1',
 				  'settings' => array('flags' => array('QSA', 'L'))),
 			    $regexRules[5], 'regex rules');
 	/* Empty pattern */
