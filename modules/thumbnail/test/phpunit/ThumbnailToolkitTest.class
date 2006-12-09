@@ -84,7 +84,7 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	    $this->assert(false, 'Unlink failed');
 	}
 	$ret = GalleryCoreApi::unregisterToolkitOperation(
-		'Thumbnail', 'thumbnail', array('test/fakemime'));
+		'Thumbnail', 'thumbnail', array('test/fakemime', 'image/jpeg'));
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -137,6 +137,63 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	    array(150));
 	if ($ret) {
 	    $this->failWithStatus($ret);
+	}
+    }
+
+    function testRecursiveToolkitOperationIsBlocked() {
+	global $gallery;
+
+	/* First ensure ThumbnailToolkit is also the primary toolkit for jpg thumbnail operations */
+	$ret = GalleryCoreApi::unregisterToolkitOperation('ThumbnailTestToolkit', 'thumbnail');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$fileName = realpath(dirname(__FILE__) . '/../../images/G2video.jpg');
+	list ($ret, $jpegImageId) = ThumbnailHelper::addItem('image/jpeg', null, $fileName, $fileName,
+		'image/jpeg', array('width' => 400, 'height' => 352));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $jpegImage) = GalleryCoreApi::loadEntitiesById($jpegImageId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($jpegImage);
+
+	$ret = GalleryCoreApi::updateMapEntry('GalleryToolkitOperationMimeTypeMap',
+		array('toolkitId' => 'Thumbnail', 'operationName' => 'thumbnail',
+		      'mimeType' => 'image/jpeg'), array('priority' => 1));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify precondition */
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/jpeg', 'thumbnail');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	if (isset($toolkit)) {
+	    $this->assertEquals('thumbnailtoolkit',
+				GalleryUtilities::strToLower(get_class($toolkit)), 'wrong toolkit');
+	} else {
+	    $this->fail('Could not successfully register the Thumbnail tookit for image/jpeg');
+	}
+
+	/*
+	 * Call the toolkit for a mime-type thumbnail operation and ensure it doesn't call itself
+	 * again for the thumbnail operation.
+	 */
+	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
+	    'test/fakemime', 'thumbnail',
+	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg',
+	    array(150));
+	if ($ret && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION) {
+	    /* Error expected for bad operation */
+	} else if ($ret) {
+	    $this->failWithStatus($ret);
+	} else {
+	    $this->assert(false, 'Error expected for bad operation');
 	}
     }
 }

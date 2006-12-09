@@ -76,7 +76,7 @@ class ThumbnailToolkit extends GalleryToolkit {
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	if (!isset($toolkit)) {
+	if (!isset($toolkit) || get_class($toolkit) == get_class($this)) {
 	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					       "thumbnail $mimeType"), null, null);
 	}
