@@ -247,10 +247,10 @@ class WebDavTest extends GalleryTestCase {
 <D:propertyupdate xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
   <D:set>
     <D:prop>
-      <D:displayname> new title </D:displayname>
-      <G:summary> new summary </G:summary>
-      <G:description> new description </G:description>
-      <G:keywords> new keywords </G:keywords>
+      <D:displayname>new title</D:displayname>
+      <G:summary>new summary</G:summary>
+      <G:description>new description</G:description>
+      <G:keywords>new keywords</G:keywords>
     </D:prop>
   </D:set>
 </D:propertyupdate>';
@@ -278,10 +278,10 @@ class WebDavTest extends GalleryTestCase {
 	    array('forceServerRelativeUrl' => true)) . '</D:href>
     <D:propstat>
       <D:prop>
-        <D:displayname> new title </D:displayname>
-        <G:summary> new summary </G:summary>
-        <G:description> new description </G:description>
-        <G:keywords> new keywords </G:keywords>
+        <D:displayname>new title</D:displayname>
+        <G:summary>new summary</G:summary>
+        <G:description>new description</G:description>
+        <G:keywords>new keywords</G:keywords>
       </D:prop>
       <D:status>HTTP/1.1 200 OK</D:status>
     </D:propstat>
@@ -295,10 +295,10 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	$data = (array)$this->_item;
-	$this->assertEquals(' new title ', $data['title']);
-	$this->assertEquals(' new summary ', $data['summary']);
-	$this->assertEquals(' new description ', $data['description']);
-	$this->assertEquals(' new keywords ', $data['keywords']);
+	$this->assertEquals('new title', $data['title']);
+	$this->assertEquals('new summary', $data['summary']);
+	$this->assertEquals('new description', $data['description']);
+	$this->assertEquals('new keywords', $data['keywords']);
     }
 
     function testMkcol() {
