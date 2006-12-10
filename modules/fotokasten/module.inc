@@ -116,8 +116,10 @@ class FotokastenModule extends GalleryModule {
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions) {
-	$links = array();
+	global $gallery;
+	$session =& $gallery->getSession();
 
+	$links = array();
 	foreach ($items as $item) {
 	    $itemId = $item->getId();
 	    if (isset($wantsDetailedLinks[$itemId]) &&
@@ -126,7 +128,9 @@ class FotokastenModule extends GalleryModule {
 		$links[$itemId][] =
 		    array('text' => $this->translate('Print on Fotokasten.de'),
 			  'params' => array('controller' => 'fotokasten.PrintPhotos',
-					    'itemId' => $itemId, 'return' => 1));
+					    'itemId' => $itemId,
+					    'authToken' => $session->getAuthToken(),
+					    'return' => 1));
 	    }
 	}
 
