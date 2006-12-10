@@ -150,8 +150,9 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	}
 
 	$fileName = realpath(dirname(__FILE__) . '/../../images/G2video.jpg');
-	list ($ret, $jpegImageId) = ThumbnailHelper::addItem('image/jpeg', null, $fileName, $fileName,
-		'image/jpeg', array('width' => 400, 'height' => 352));
+	list ($ret, $jpegImageId) = ThumbnailHelper::addItem(
+	    'image/jpeg', null, $fileName, $fileName,
+	    'image/jpeg', array('width' => 400, 'height' => 352));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
