@@ -132,8 +132,8 @@ class ShutterflyModule extends GalleryModule {
 		$links[$itemId][] =
 		    array('text' => $this->translate('Print on Shutterfly.com'),
 			  'params' => array('view' => 'shutterfly.PrintPhotos', 'itemId' => $itemId,
-					    'returnUrl' => '%CURRENT_URL%'),
-					    'authToken' => $session->getAuthToken());
+					    'returnUrl' => '%CURRENT_URL%',
+					    'authToken' => $session->getAuthToken()));
 	    }
 	}
 
