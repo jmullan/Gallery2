@@ -121,17 +121,6 @@ class PhotoAccessHelper {
 		if ($ret) {
 		    return array($ret, null);
 		}
-
-		/**
-		 * @todo Would like to enforce a particular session timeout to ensure this session
-		 * lasts long enough for photoworks to retrieve the images.  Maybe also store the
-		 * sessionid in this session so we can reuse it for multiple print requests (and
-		 * just bump timeout each time).
-		 */
-		$ret = $pwSession->save();
-		if ($ret) {
-		    return array($ret, null);
-		}
 	    }
 	    if ($needSession) {
 		$sessionParam = array($pwSession->getKey() => $pwSession->getId());
@@ -170,6 +159,17 @@ class PhotoAccessHelper {
 	if (isset($pwSession)) {
 	    /* Mark this session so that it can be treated specially */
 	    $pwSession->put('core.isPrintService', $protectedIds);
+
+	    /**
+	     * @todo Would like to enforce a particular session timeout to ensure this session
+	     * lasts long enough for photoworks to retrieve the images.  Maybe also store the
+	     * sessionid in this session so we can reuse it for multiple print requests (and
+	     * just bump timeout each time).
+	     */
+	    $ret = $pwSession->save();
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	}
 
 	/*

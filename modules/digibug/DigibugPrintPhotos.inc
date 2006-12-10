@@ -133,17 +133,6 @@ class DigibugPrintPhotosView extends GalleryView {
 		if ($ret) {
 		    return $ret;
 		}
-
-		/*
-		 * TODO: Would like to enforce a particular session timeout to ensure this session
-		 * lasts long enough for digibug to retrieve the images.  Maybe also store the
-		 * sessionid in this session so we can reuse it for multiple print requests (and
-		 * just bump timeout each time).
-		 */
-		$ret = $dgSession->save();
-		if ($ret) {
-		    return $ret;
-		}
 	    }
 	    if ($needSession) {
 		$sessionParam = array($dgSession->getKey() => $dgSession->getId());
@@ -184,6 +173,17 @@ class DigibugPrintPhotosView extends GalleryView {
 	if (isset($dgSession)) {
 	    /* Mark this session so that it can be treated specially */
 	    $dgSession->put('core.isPrintService', $protectedIds);
+
+	    /*
+	     * TODO: Would like to enforce a particular session timeout to ensure this session
+	     * lasts long enough for digibug to retrieve the images.  Maybe also store the
+	     * sessionid in this session so we can reuse it for multiple print requests (and
+	     * just bump timeout each time).
+	     */
+	    $ret = $dgSession->save();
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	/*

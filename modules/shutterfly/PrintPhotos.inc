@@ -133,17 +133,6 @@ class PrintPhotosView extends GalleryView {
 		if ($ret) {
 		    return $ret;
 		}
-
-		/*
-		 * TODO: Would like to enforce a particular session timeout to ensure this session
-		 * lasts long enough for shutterfly to retrieve the images.  Maybe also store the
-		 * sessionid in this session so we can reuse it for multiple print requests (and
-		 * just bump timeout each time).
-		 */
-		$ret = $sfSession->save();
-		if ($ret) {
-		    return $ret;
-		}
 	    }
 	    if ($needSession) {
 		$sessionParam = array($sfSession->getKey() => $sfSession->getId());
@@ -181,9 +170,21 @@ class PrintPhotosView extends GalleryView {
 		$entries[$i++] = $entry;
 	    }
 	}
+
 	if (isset($sfSession)) {
 	    /* Mark this session so that it can be treated specially */
 	    $sfSession->put('core.isPrintService', $protectedIds);
+
+	    /*
+	     * TODO: Would like to enforce a particular session timeout to ensure this session
+	     * lasts long enough for shutterfly to retrieve the images.  Maybe also store the
+	     * sessionid in this session so we can reuse it for multiple print requests (and
+	     * just bump timeout each time).
+	     */
+	    $ret = $sfSession->save();
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	/*

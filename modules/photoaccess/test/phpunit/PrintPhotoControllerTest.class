@@ -203,6 +203,67 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 			    $session->get('photoaccess.cartUrlFragment'));
     }
 
+    function testPrintProtectedPhoto() {
+	global $gallery;
+
+	$itemId = $this->_photo->getId();
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+	GalleryUtilities::putRequestVariable('returnUrl', 'RETURN_URL');
+
+	/* We only have permission to print and view the thumbnail */
+	$ret = GalleryCoreApi::removeItemPermissions($itemId);
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $itemId, $gallery->getActiveUserId(), 'photoaccess.print');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $itemId, $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$gallery->setPlatform(
+	    $this->_getTestPlatform('anonCartXML.jsp', '/REQUEST_URL', '/REDIRECT_URL'));
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$expectedHref = 'http://www.photoworks.com/REDIRECT_URL';
+	$this->assertEquals(array('redirect' => array('href' => $expectedHref),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	$session =& $gallery->getSession();
+	$this->assertEquals('/REQUEST_URL', $session->get('photoaccess.cartUrlFragment'));
+
+	/* Get the session id that we passed to PhotoWorks */
+
+	$written = $gallery->_platform->getCalled('fwrite');
+	$content = urldecode($written[0][1]);
+
+
+	$sessionVar = $session->getKey();
+	preg_match_all("#url=\"view=core.DownloadItem.*?$sessionVar=(.*?)\"#",
+		       $content, $matches);
+	$photoaccessSessionId = $matches[1][0];
+
+	$_COOKIE[SESSION_ID_PARAMETER] = $photoaccessSessionId;
+	$photoaccessSession = new GallerySession();
+	$ret = $photoaccessSession->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array($itemId, $this->_thumbId),
+			    $photoaccessSession->get('core.isPrintService'),
+			    'Photoaccess session missing item id');
+    }
 }
 
 /**

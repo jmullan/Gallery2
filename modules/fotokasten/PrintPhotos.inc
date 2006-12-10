@@ -133,17 +133,6 @@ class PrintPhotosController extends GalleryController {
 		if ($ret) {
 		    return array($ret, null);
 		}
-
-		/*
-		 * TODO: Would like to enforce a particular session timeout to ensure this session
-		 * lasts long enough for fotokasten to retrieve the images.  Maybe also store the
-		 * sessionid in this session so we can reuse it for multiple print requests (and
-		 * just bump timeout each time).
-		 */
-		$ret = $foSession->save();
-		if ($ret) {
-		    return array($ret, null);
-		}
 	    }
 	    if ($needSession) {
 		$sessionParam = array($foSession->getKey() => $foSession->getId());
@@ -180,11 +169,22 @@ class PrintPhotosController extends GalleryController {
 		array('forceSessionId' => false, 'forceFullUrl' => true,
 		      'htmlEntities' => false));
 
-	    $basket["item" . ++$i] = $basket_item;
+	    $basket['item' . ++$i] = $basket_item;
 	}
 	if (isset($foSession)) {
 	    /* Mark this session so that it can be treated specially */
 	    $foSession->put('core.isPrintService', $protectedIds);
+
+	    /*
+	     * TODO: Would like to enforce a particular session timeout to ensure this session
+	     * lasts long enough for fotokasten to retrieve the images.  Maybe also store the
+	     * sessionid in this session so we can reuse it for multiple print requests (and
+	     * just bump timeout each time).
+	     */
+	    $ret = $foSession->save();
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	}
 
 	/* prepare for connection */

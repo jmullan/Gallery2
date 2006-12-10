@@ -142,6 +142,63 @@ class PrintPhotosControllerTest extends GalleryControllerTestCase {
 		      'item id');
     }
 
+    function testPrintProtectedPhoto() {
+	global $gallery;
+
+	$itemId = $this->_items[2]->getId();
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+
+	/* We only have permission to print and view the thumbnail */
+	$ret = GalleryCoreApi::removeItemPermissions($itemId);
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $itemId, $gallery->getActiveUserId(), 'fotokasten.print');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $itemId, $gallery->getActiveUserId(), 'core.view');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$result = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('href' => 'TEST_redirect'),
+				  'status' => array(),
+				  'error' => array()),
+			    $result);
+
+	$this->assertEquals('TEST_endpoint', $this->_basketEndpoint, 'endpoint');
+	$this->assert(isset($this->_basketParams['request']['basket']), 'basket');
+	$basket = $this->_basketParams['request']['basket'];
+	$this->assertEquals(array('item1'), array_keys($basket), 'item keys');
+	$this->assert(isset($basket['item1']['photo_url']), 'photo url');
+	$this->assert(strpos($basket['item1']['photo_url'], $this->_sessionKey),
+		      'should be a session param in photo url for private photo');
+	$this->assert(strpos($basket['item1']['photo_url'], 'itemId=' . $this->_items[2]->getId()),
+		      'item id');
+
+	/* Grab session we provide for the raw image */
+	$session =& $gallery->getSession();
+	$sessionVar = GalleryUtilities::prefixFormVariable($session->getKey());
+	preg_match_all("/$sessionVar=([0-9a-f]*)/", $basket['item1']['photo_url'], $matches);
+	$fotokastenSessionId = $matches[1][0];
+
+	$_COOKIE[SESSION_ID_PARAMETER] = $fotokastenSessionId;
+	$fotokastenSession = new GallerySession();
+	$ret = $fotokastenSession->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array($itemId), $fotokastenSession->get('core.isPrintService'),
+			    'Fotokasten session missing item id');
+    }
+
     function testPrintCart() {
 	global $gallery;
 	$session =& $gallery->getSession();
