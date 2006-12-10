@@ -3032,6 +3032,32 @@ class SessionTest extends GalleryTestCase {
 	$session->put('core.authToken', null);
 	$this->assert(!$session->isCorrectAuthToken(null), 'null token');
     }
+
+    function testSessionIdInUrlOverridesCookie() {
+	foreach (array('from_url', 'from_cookie') as $key) {
+	    $sessions[$key] = new GallerySession();
+	    $ret = $sessions[$key]->init();
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	    $ret = $sessions[$key]->_acquireNewPersistentSession();
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	    $sessions[$key]->put('some key', 'some value');
+	}
+
+	$_COOKIE[SESSION_ID_PARAMETER] = $sessions['from_cookie']->getId();
+	GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $sessions['from_url']->getId());
+
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($sessions['from_url']->getId(), $session->getId());
+    }
 }
 
 class SessionTestPhpVm extends GalleryPhpVm {

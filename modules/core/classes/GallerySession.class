@@ -182,6 +182,7 @@ class GallerySession {
 	$this->_sessionId = '';
 	$this->_isSearchEngineSession = $this->_isSessionSaved = $this->_isPersistent = false;
 	$this->_isPersistentSessionNew = false;
+
 	if (!empty($_COOKIE[SESSION_ID_PARAMETER])) {
 	    /* Fix PHP HTTP_COOKIE header bug http://bugs.php.net/bug.php?id=32802 */
 	    GalleryUtilities::fixCookieVars();
@@ -192,6 +193,9 @@ class GallerySession {
 
 	    /* Allow the URL to override the cookie, in rare occasions */
 	    $sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
+	    if ($sessionId) {
+		$this->_sessionId = $sessionId;
+	    }
 	} else {
 	    /*
 	     * Many search engine crawlers don't use cookies.  Normally this leads to us putting the
@@ -222,7 +226,6 @@ class GallerySession {
 	    $this->_sessionId = '';
 	}
 	$this->_sessionId = GalleryUtilities::strToLower($this->_sessionId);
-
 
 	/* Load session data if a session with that id exists and expire the session if necessary */
 	$ret = $this->_loadSessionData();
