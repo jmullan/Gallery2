@@ -130,7 +130,17 @@ class ItemEditTheme extends ItemEditPlugin {
 
 	$ret = GalleryCoreApi::loadThemeSettingsForm($themeId, $item->getId(), $template, $form);
 	if ($ret) {
-	    return array($ret, null, null);
+	    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+		/*
+		 * This theme could be invalid, which can happen after an upgrade.  Swallow the
+		 * error for now so that the user can get to the administration form and pick a
+		 * new theme.
+		 *
+		 * @todo Log this error when we have a logging system.
+		 */
+	    } else {
+		return array($ret, null, null);
+	    }
 	}
 
 	if ($form['formName'] != 'ItemEditTheme') {

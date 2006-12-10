@@ -33,7 +33,7 @@
 	 arg3="mode=config" arg4="return=1"}">
     {/capture}
 
-    {if isset($theme.isFallback) || empty($ShowItemError.itemId)}
+    {if isset($theme.isFallback) && empty($ShowItemError.itemId)}
       {if $ShowItemError.isAdmin}
 	{g->text text="To fix this problem you can %sinstall or activate this theme%s or select another default theme." arg1=$smarty.capture.adminLink arg2="</a>"}
       {else}
