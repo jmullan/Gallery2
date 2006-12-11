@@ -157,7 +157,7 @@ class GalleryUrlGenerator {
 		$components = parse_url($path);
 		$path = $components['path'];
 		$path .= empty($components['query']) ? '' : '?' . $components['query'];
-		$path .= empty($components['fragment']) ? '' : '#' . $components['fragment'];  
+		$path .= empty($components['fragment']) ? '' : '#' . $components['fragment'];
 	    }
 	} else if ($path = GalleryUtilities::getServerVar('SCRIPT_NAME')) {
 	    if (($tmp = GalleryUtilities::getServerVar('PATH_INFO')) && $tmp != $path) {
@@ -590,10 +590,10 @@ class GalleryUrlGenerator {
 	}
 
 	/* Decide whether to include session id in the URL */
-	if (    (isset($options['forceSessionId']) &&
-		 $options['forceSessionId'] === true && $session =& $gallery->getSession()) ||
-		(!isset($options['forceSessionId']) &&
-		 $session =& $gallery->getSession() && !$session->isUsingCookies()) ) {
+	if ((isset($options['forceSessionId']) &&
+	     $options['forceSessionId'] === true && $session =& $gallery->getSession()) ||
+	    (!isset($options['forceSessionId']) &&
+	     $session =& $gallery->getSession() && !$session->isUsingCookies()) ) {
 	    if (!empty($this->_embedSessionString) && isset($appSession)) {
 		$embedSessionString = $this->_embedSessionString;
 	    } else {
@@ -795,7 +795,7 @@ class GalleryUrlGenerator {
 	    $variables[$key] = is_string($value) ? $value : null;
 	}
 	list ($returnUrl, $returnName, $navId, $fromNavId) = $variables;
-	
+
 	if (!empty($returnUrl)) {
 	    /* Detect header injection attempts */
 	    if (!GalleryUtilities::isSafeHttpHeader($returnUrl)) {
