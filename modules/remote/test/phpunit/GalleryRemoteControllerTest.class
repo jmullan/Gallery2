@@ -388,7 +388,6 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assert(empty($seen[3]), 'seen 3');
     }
 
-
     function testFetchAlbumsPruneNoPerms() {
 	global $gallery;
 
@@ -892,6 +891,30 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
 	$response = $results['status']['controllerResponse'];
 	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+    }
+
+    function testAcceptIPhotoToGalleryUserAgentString() {
+	global $gallery;
+
+	$_SERVER['HTTP_USER_AGENT'] = 'iPhotoToGallery v1';
+	GalleryUtilities::removeRequestVariable('authToken');
+
+	GalleryUtilities::putRequestVariable('form[cmd]', 'new-album');
+	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[newAlbumName]', 'name'.rand());
+	GalleryUtilities::putRequestVariable('form[newAlbumTitle]', 'title');
+	GalleryUtilities::putRequestVariable('form[newAlbumDesc]', 'desc');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error'], 'error');
+	$this->assertEquals('remote.GalleryRemote', $results['delegate']['view'], 'delegate');
+
+	$response = $results['status']['controllerResponse'];
+	if ($response) {
+	    $this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+	} else {
+	    $this->fail('response not set');
+	}
     }
 }
 

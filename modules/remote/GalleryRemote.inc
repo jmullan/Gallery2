@@ -91,7 +91,8 @@ class GalleryRemoteController extends GalleryController {
 		/* Backwards-compatible request-forgery protection based on the user-agent string */
 		$httpUserAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 		if (strstr($httpUserAgent, 'Gallery Remote') === false
-			&& strstr($httpUserAgent, 'RPT-HTTPClient') === false) {
+			&& strstr($httpUserAgent, 'RPT-HTTPClient') === false
+			&& strstr($httpUserAgent, 'iPhotoToGallery') === false) {
 		    /* Newer GalleryRemote versions handle auth tokens */
 		    $ret = GalleryController::assertIsGenuineRequest();
 		    if ($ret) {
