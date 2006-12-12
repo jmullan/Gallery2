@@ -34,7 +34,8 @@ class GalleryTestCase extends TestCase {
 	$this->_cleanup = array('entity' => array(),
 				'factoryModuleId' => array(),
 				'toolkitId' => array(),
-				'pluginParameters' => array());
+				'pluginParameters' => array(),
+				'factoryRegistry' => null);
     }
 
     function &getEntityCounter() {
@@ -213,6 +214,13 @@ class GalleryTestCase extends TestCase {
 		    print $ret->getAsHtml();
 		}
 	    }
+	}
+
+	if (isset($this->_cleanup['factoryRegistry'])) {
+	    GalleryCoreApi::requireOnce(
+		'modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
+	    $registryData =& GalleryFactoryHelper_simple::_getFactoryData();
+	    $registryData[1] = $this->_cleanup['factoryRegistry'];
 	}
 
 	foreach ($this->_cleanup['entity'] as $entity) {
@@ -860,6 +868,93 @@ class GalleryTestCase extends TestCase {
 	    array('userName' => $userName,
 		  'count' => 100,
 		  'lastAttempt' => time()));
+    }
+
+    /**
+     * Create a backup of the factory data which will be restored in tearDown.
+     */
+    function _markFactoryForCleanup() {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
+	/* Don't use references here */
+	list ($ret, $registry) = GalleryFactoryHelper_simple::_getFactoryData();
+	$this->_cleanup['factoryRegistry'] = $registry;
+    }
+
+    /**
+     * Register a factory implementation temporarily for this test.
+     * You need to call _markFactoryForCleanup() before changing the factory during a test.
+     * @see GalleryCoreApi::registerFactoryImplementation
+     */
+    function _registerFactoryImplementationForTest($classType, $className, $implId, $implPath,
+						   $implModuleId, $hints=array()) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
+	$registryData =& GalleryFactoryHelper_simple::_getFactoryData();
+	$registry =& $registryData[1];
+
+	$registry['implementations'][$classType][$className] = $implPath;
+	$registry['ids'][$classType][$implId] = $className;
+	$registry['pluginIds'][$classType][$className] = $implModuleId;
+
+	foreach ($hints as $hint) {
+	    $registry['hints'][$classType][$hint][$implId] = $className;
+	}
+    }
+
+    /**
+     * Unregister a specific factory implementation or all implementations of a spefific type
+     * temporarily for this test.
+     * You need to call _markFactoryForCleanup() before changing the factory during a test.
+     * To register all implementations of a specific type, leave implId and className empty.
+     * @param string $classType
+     * @param string $implId (optional)
+     * @param string $className (optional)
+     * @access private
+     */
+    function _unregisterFactoryImplementationForTest($classType, $implId=null, $className=null) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryFactoryHelper_simple.class');
+	$registryData =& GalleryFactoryHelper_simple::_getFactoryData();
+	$registry =& $registryData[1];
+
+	/* Remove the implementation from all internal data structures */
+	if (isset($implId)) {
+	    unset($registry['ids'][$classType][$implId]);
+		if (empty($registry['ids'][$classType])) {
+		    unset($registry['ids'][$classType]);
+	    }
+	} else {
+	    unset($registry['ids'][$classType]);
+	}
+
+	if (isset($className)) {
+	    unset($registry['implementations'][$classType][$className]);
+	    if (empty($registry['implementations'][$classType])) {
+		unset($registry['ids'][$classType]);
+	    }
+	    unset($registry['pluginIds'][$classType][$className]);
+	    if (empty($registry['pluginIds'][$classType])) {
+		unset($registry['pluginIds'][$classType]);
+	    }
+	} else {
+	    unset($registry['implementations'][$classType]);
+	    unset($registry['pluginIds'][$classType]);
+	}
+	if (isset($registry['hints'][$classType])) {
+	    foreach ($registry['hints'][$classType] as $hint => $implementation) {
+		list ($implementationId, $ignore) = each($implementation);
+		if (!isset($implId) || $implementationId == $implId) {
+		    unset($registry['hints'][$classType][$hint][$implId]);
+		}
+	    }
+	    if (empty($registry['hints'][$classType][$hint])) {
+		unset($registry['hints'][$classType][$hint]);
+	    }
+	    if (empty($registry['hints'][$classType])) {
+		unset($registry['hints'][$classType]);
+	    }
+	}
     }
 }
 
