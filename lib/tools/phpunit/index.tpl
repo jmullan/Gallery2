@@ -17,6 +17,14 @@
         document.forms[0].submit();
       }
     </script>
+    <div id="status" style="display: none;">
+      <div class="header">Run Status</div>
+      <div class="body">
+	Pass: <span id="pass_count">&nbsp;</span>, Fail <span id="fail_count">&nbsp;</span>, Skip: <span id="skip_count">&nbsp;</span>, Total: <span id="total_count">&nbsp;</span> <br/>
+	Estimated time remaining: <span id="estimated_time_remaining">&nbsp;</span> <br/>
+      </div>
+    </div>
+
     <h1>Gallery Unit Tests</h1>
     <div class="section">
       This is the Gallery test framework.  We'll use this to verify
@@ -230,7 +238,7 @@
     <td><?php print $test->classname() ?></td>
     <td><?php print $test->name() ?></td>
     <td><a href="#fail<?php print $i ?>" style="display:none">FAIL</a>&nbsp;</td><td>&nbsp;</td>
-  </tr><?php endforeach; endforeach; ?>
+  </tr><?php endforeach; endforeach; $totalTests = $i;?>
   </table>
 
   <div id="testSummary" style="display:none">
@@ -270,6 +278,47 @@
       function changeUsername() {
 	setUsername(getUsernameFromCookie(), prompt('What is your username?'));
       }
+
+      function showStatus() {
+	document.getElementById("status").style.display = 'block';
+      }
+
+      function hideStatus() {
+	document.getElementById("status").style.display = 'none';
+      }
+
+      function updateStats(pass, fail, skip, force) {
+	if (pass || force) {
+	  passCount += pass;
+	  passCountEl.innerHTML = passCount;
+	}
+	if (fail || force) {
+	  failCount += fail;
+	  failCountEl.innerHTML = failCount;
+	}
+	if (skip || force) {
+	  skipCount += skip;
+	  skipCountEl.innerHTML = skipCount;
+	}
+
+	var completedCount = passCount + failCount + skipCount;
+	var elapsed = (new Date().getTime() / 1000) - startTime;
+	var completionPercent = completedCount / totalCount;
+        var estimatedTotalTime = elapsed / completionPercent;
+	var estimatedRemainingTime = (1 - completionPercent) * estimatedTotalTime;
+	estimatedRemainingTime = Math.round(estimatedRemainingTime);
+	estimatedTimeRemainingEl.innerHTML = estimatedRemainingTime + " seconds";
+      }
+
+      var startTime = new Date().getTime() / 1000;
+      var passCount = failCount = skipCount = 0;
+      var totalCount = <?php print $totalTests; ?>;
+      var passCountEl = document.getElementById('pass_count');
+      var failCountEl = document.getElementById('fail_count');
+      var skipCountEl = document.getElementById('skip_count');
+      var estimatedTimeRemainingEl = document.getElementById('estimated_time_remaining');
+      document.getElementById('total_count').innerHTML = totalCount;
+      updateStats(0, 0, 0, 1);
     </script>
 
     <input type="button" onclick="reRun();" value="Re-run broken tests"

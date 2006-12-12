@@ -173,6 +173,8 @@ class GalleryTestResult extends TestResult {
 	$nRun = $this->countTests();
 	$nFailures = $this->failureCount();
 
+	print '<script text="text/javascript">hideStatus();</script>';
+
 	if ($nFailures) print("</ol>\n");
 	if (!isset($compactView)) {
 	    print '<script type="text/javascript">';
@@ -242,6 +244,10 @@ class GalleryTestResult extends TestResult {
     }
 
     function _endTest($test) {
+
+	if ($this->fRunTests == 1) {
+	    print '<script text="text/javascript">showStatus();</script>';
+	}
 	$failure = $extra = '';
 	if ($test->wasSkipped()) {
 	    global $compactView;
@@ -250,6 +256,7 @@ class GalleryTestResult extends TestResult {
 	    $text = 'r.cells[4].lastChild.nodeValue="SKIP";';
 	    $extra = 'r.className="skip";';
 	    $elapsed = '0.0000';
+	    $cmd = "updateStats(0, 0, 1)";
 	} else {
 	    $elapsed = sprintf("%2.4f", $test->elapsed());
 	    $this->_totalElapsed += $elapsed;
@@ -266,6 +273,7 @@ class GalleryTestResult extends TestResult {
 		    $failure .= '<li>' . $exception->getMessage() . "</li>\n";
 		}
 		$failure .= "</ul>\n";
+		$cmd = "updateStats(0, 1, 0)";
 	    } else {
 		$class = 'Pass';
 		$text = 'r.cells[4].lastChild.nodeValue="OK";';
@@ -276,12 +284,13 @@ class GalleryTestResult extends TestResult {
 		    print '<meta http-equiv="refresh" content="0; index.php?filter=' .
 			"$x$i-$i" . '&amp;onebyone=true"/>';
 		}
+		$cmd = "updateStats(1, 0, 0)";
 	    }
 	}
 	print '<script type="text/javascript">r=document.getElementById(\'testRow'
 		. $this->fRunTests . "');$extra";
 	print "r.cells[4].className='$class';$text";
-	print "r.cells[5].firstChild.nodeValue='$elapsed';</script>\n$failure";
+	print "r.cells[5].firstChild.nodeValue='$elapsed';$cmd;</script>\n$failure";
 	flush();
     }
 }
