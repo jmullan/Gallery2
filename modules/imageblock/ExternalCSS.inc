@@ -59,6 +59,17 @@ class ExternalCSSController extends GalleryController {
 				empty($frames) ? 'imageblock.ExternalCSS' : 'imageframe.CSS'),
 			   'status' => array(), 'error' => array()));
     }
+
+    /**
+     * @see GalleryController::omitAuthTokenCheck
+     */
+    function omitAuthTokenCheck() {
+	/*
+	 * The sole purpose of this controller is to delegate dynamically to different views.
+	 * It does not do any controller-like action, thus there is no need for an auth-token check.
+	 */
+	return true;
+    }
 }
 
 /**

@@ -103,6 +103,11 @@ class ExternalCSSControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);	
     }
+
+    function testExternalCSSDoesNotRequireAuthToken() {
+	$controller = new ExternalCSSController();
+	$this->assert($controller->omitAuthTokenCheck());
+    }
 }
 
 /**
