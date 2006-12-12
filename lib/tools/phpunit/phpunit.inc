@@ -56,7 +56,7 @@ if (phpversion() >= '4') {
 	     */
 	    return;
 	}
-	
+
 	/*
 	 * http://us4.php.net/file_exists#47860
 	 * Older php versions generate stat warnings whenever a file_exists or
@@ -168,7 +168,7 @@ class Assert {
     for($i=0; $i< sizeof($lines0); $i++) {
       $this->assertEquals(trim($lines0[$i]),
                           trim($lines1[$i]),
-                          "line ".($i+1)." of multiline strings differ. ".$message); 
+                          "line ".($i+1)." of multiline strings differ. ".$message);
     }
   }
 
@@ -262,7 +262,7 @@ class TestCase extends Assert /* implements Test */ {
     $this->fResult = 0;
     return $testResult;
   }
-  
+
   function classname() {
 	  if (isset($this->fClassName)) {
 		return $this->fClassName;
@@ -418,7 +418,7 @@ class TestSuite /* implements Test */ {
     $this->fModuleId = $moduleid;
     $this->fFilter = $filter;
 
- 
+
     // PHP4 ONLY - introspection, submitted by Dylan Kuhn
 
     $names = get_class_methods($classname);
@@ -550,7 +550,7 @@ class TestResult {
         $test->skip();
     }
     $this->_startTest($test);
-    
+
     if (!$test->wasSkipped()) {
 	$this->fUnskippedTests++;
 	$test->runBare();
@@ -604,7 +604,7 @@ class TextTestResult extends TestResult {
   function TextTestResult() {
     $this->TestResult();  // call superclass constructor
   }
-  
+
   function report() {
     /* report result of test run */
     $nRun = $this->countTests();
@@ -674,16 +674,16 @@ class TextTestResult extends TestResult {
 class PrettyTestResult extends TestResult {
 
     var $_totalElapsed = 0;
-    
+
   /* Specialize TestResult to produce text/html report */
   function PrettyTestResult() {
     $this->TestResult();  // call superclass constructor
 	echo "<h2>Test Results</h2>";
-	
+
 	echo "<TABLE CELLSPACING=\"1\" CELLPADDING=\"1\" BORDER=\"0\" WIDTH=\"90%\" ALIGN=\"CENTER\" class=\"details\">";
 	echo "<TR><TH>#</TH><TH>Module</TH><TH>Class</TH><TH>Function</TH><TH>Success?</TH><TH>Time</TH></TR>";
   }
-  
+
   function report() {
 	echo "</TABLE>";
     /* report result of test run */
@@ -704,7 +704,7 @@ class PrettyTestResult extends TestResult {
     }
     printf('<input type="button" onClick="javascript:reRun(\'%s\');" value="Re-run broken tests">',
 	   '(' . join('|', array_keys($newFilter)) . ')$');
-    
+
     echo "<h2>Failure Details</h2>";
     print("\n<ol>\n");
     reset($failures);
