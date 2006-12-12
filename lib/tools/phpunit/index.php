@@ -183,6 +183,8 @@ class GalleryTestResult extends TestResult {
 		    $this->_testsFailed, ($this->_testsFailed == 1) ? '' : 's');
 	    printf("setTxt('testErrorCount','%s error%s');",
 		    $nFailures, ($nFailures == 1) ? '' : 's');
+	    printf("setTxt('testReport', '%s');", $this->_getTestResultRecord());
+	    printf('setUsername("NAME_PLACEHOLDER", getUsernameFromCookie());');
 	    print "document.getElementById('testSummary').style.display='block';</script>\n";
 	}
 	if ($nFailures == 0)
@@ -196,6 +198,47 @@ class GalleryTestResult extends TestResult {
 	printf('<script type="text/javascript">var failedTestFilter="(%s)$";%s</script>',
 		implode('|', array_keys($newFilter)),
 		"document.getElementById('runBrokenButton').style.display='block';");
+    }
+
+    function _getTestResultRecord() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$translator =& $gallery->getTranslator();
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret) {
+	    return $ret->getAsHtml();
+	}
+
+	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret) {
+	    return $ret->getAsHtml();
+	}
+
+	$notes = array();
+	foreach ($moduleStatusList as $moduleId => $moduleStatus) {
+	    if (empty($moduleStatus['active'])) {
+		$notes[] = "-$moduleId";
+	    }
+	}
+
+	$webserver = GalleryUtilities::getServerVar('SERVER_SOFTWARE');
+	$php = 'PHP ' . phpversion();
+	$database = $storage->getAdoDbType() . ' ' . $storage->getVersion();
+	$OS = array_shift(split(' ', php_uname()));
+	$locking = $params['lock.system'];
+	$language = $translator->_languageCode;
+	$owner = 'NAME_PLACEHOLDER';
+	$count = $this->countTests();
+	$failed = $this->failureCount();
+	$date = date('m/d/Y', time());
+
+	$buf = sprintf(
+	    '|%s||%s||%s||%s||%s||%s||%s||%d||%d||%s||%s',
+	    $webserver, $php, $database, $OS, $locking, $language, $owner,
+	    $count, $failed, $date, join(' ', $notes));
+
+	return $buf;
     }
 
     function _endTest($test) {
