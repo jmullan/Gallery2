@@ -122,7 +122,7 @@
 	{if !empty($entry.deleteList)}
 	  <select name="{g->formVar var="form[group][delete][$index]"}" size="1">
 	  {foreach from=$entry.deleteList item=deleteEntry}
-	    <option value="{$entry.group.id},{$deleteEntry.id}">{$deleteEntry.description}</option>
+	    <option value="{$entry.group.id},{$deleteEntry.id}"{if ($deleteEntry.id == $entry.permission.id)} selected="selected"{/if}>{$deleteEntry.description}</option>
 	  {/foreach}
 	  </select>
 	  <input type="submit" class="inputTypeSubmit"
