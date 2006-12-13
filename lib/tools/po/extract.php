@@ -89,7 +89,10 @@ function find($dir) {
 	foreach ($listing as $file) {
 	    $filename = $dir . $file;
 	    if (is_dir($filename)) {
-		$subdirs[] = $filename;
+		/* Don't parse unit tests */
+		if ($file != 'test') {
+		    $subdirs[] = $filename;
+		}
 	    } else if (preg_match("/\." . $exts . "$/", $file)) {
 		extractStrings($filename);
 	    }
