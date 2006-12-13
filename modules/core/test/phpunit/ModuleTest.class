@@ -468,9 +468,9 @@ class ModuleTestModule extends GalleryModule {
 
 	$this->setId('moduletest');
 	$this->setName('ModuleTest Module');
-	$this->setDescription($gallery->i18n('Unit test module'));
+	$this->setDescription('Unit test module');
 	$this->setVersion('1.0.0');
-	$this->setGroup('data', $gallery->i18n('Gallery'));
+	$this->setGroup('data', 'Gallery');
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
 	$this->setRequiredModuleApi(GalleryModule::getApiVersion());
@@ -482,13 +482,13 @@ class ModuleTestModule extends GalleryModule {
 
 	if (!isset($currentVersion)) {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(),
-		'moduletest.one', $gallery->i18n('[test] A permission'));
+		'moduletest.one', '[test] A permission');
 	    if ($ret) {
 		return $ret;
 	    }
 	} else {
 	    $ret = GalleryCoreApi::registerPermission($this->getId(),
-		'moduletest.two', $gallery->i18n('[test] A second permission'));
+		'moduletest.two', '[test] A second permission');
 	    if ($ret) {
 		return $ret;
 	    }

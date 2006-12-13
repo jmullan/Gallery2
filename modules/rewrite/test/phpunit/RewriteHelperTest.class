@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 
 /**
@@ -512,9 +511,9 @@ class RewriteHelperMockModule extends GalleryModule {
 
 	$this->setId('rewritehelpermock');
 	$this->setName('RewriteHelper Test Module');
-	$this->setDescription($gallery->i18n('Unit test module'));
+	$this->setDescription('Unit test module');
 	$this->setVersion('1');
-	$this->setGroup('data', $gallery->i18n('Gallery'));
+	$this->setGroup('data', 'Gallery');
 	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
 	$this->setRequiredModuleApi(GalleryModule::getApiVersion());
     }
