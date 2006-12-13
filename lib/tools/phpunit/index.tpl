@@ -257,7 +257,7 @@
 	var dc = document.cookie;
 	if (dc) {
 	  var m = dc.match(/g2_phpunit_username=(.*?);/);
-	  if (m.length == 2) {
+	  if (m && m.length == 2) {
            return m[1];
           }
 	}
