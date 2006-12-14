@@ -176,7 +176,7 @@
               <a href="javascript:setFilter('comment:-3,4-')">comment:-3,4-</a>
             </li>
             <li>
-              <a href="javascript:setFilter('core:1by1)">core:1by1</a>
+              <a href="javascript:setFilter('core:1by1')">core:1by1</a>
             </li>
           </ul>
         </div>
