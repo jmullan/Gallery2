@@ -63,7 +63,7 @@ class ExternalCSSControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	$this->assertEquals('frameA|frameB', GalleryUtilities::getRequestVariables('frames'));	
+	$this->assertEquals('frameA|frameB', GalleryUtilities::getRequestVariables('frames'));
     }
 
     function testExternalCSSWithSpecifiedImageFrames() {
@@ -75,7 +75,7 @@ class ExternalCSSControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	$this->assertEquals('frameFromRequest', GalleryUtilities::getRequestVariables('frames'));	
+	$this->assertEquals('frameFromRequest', GalleryUtilities::getRequestVariables('frames'));
     }
 
     function testExternalCSSWithoutImageFrameModule() {
@@ -85,7 +85,7 @@ class ExternalCSSControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'imageblock.ExternalCSS'),
 				  'status' => array(),
 				  'error' => array()),
-			    $results);	
+			    $results);
     }
 
     function testExternalCSSWithoutDefaultImageFrames() {
@@ -101,7 +101,7 @@ class ExternalCSSControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('delegate' => array('view' => 'imageblock.ExternalCSS'),
 				  'status' => array(),
 				  'error' => array()),
-			    $results);	
+			    $results);
     }
 
     function testExternalCSSDoesNotRequireAuthToken() {
