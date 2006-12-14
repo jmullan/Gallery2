@@ -173,50 +173,60 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Append parameters to a URL using the Gallery prefix and urlencoding the keys and values.
-     *
+     * Append parameters to a URL using the Gallery prefix and URL encoding keys and values.
      * @param string $url the original URL
      * @param array $params key/value pairs to be appended; may contain nested arrays
-     * @param boolean $addPrefix (optional) false to not add prefix on parameter names
+     * @param boolean $addPrefix (optional) false to not add prefix to parameter names
+     * @param boolean $htmlEntities (optional) false to not convert ampersands to HTML entities
+     * @param boolean $urlEncode (optional) false to not URL encode parameter names and values
      * @return string the new URL (&amp; separates added params)
      * @static
      */
-    function appendParamsToUrl($url, $params, $addPrefix=true) {
+    function appendParamsToUrl($url, $params, $addPrefix=true, $htmlEntities=true,
+			       $urlEncode=true) {
 	if (empty($params)) {
 	    return $url;
 	}
 
-	$args = array();
-	foreach ($params as $key => $value) {
-	    $key = $addPrefix ? GalleryUtilities::prefixFormVariable(urlencode($key))
-			      : urlencode($key);
-	    if (is_array($value)) {
-		GalleryUrlGenerator::_appendNestedParams($args, $value, $key . '[');
-	    } else {
-		$args[] = $key . '=' . urlencode($value);
+	$args = $flatParams = array();
+	GalleryUrlGenerator::_flattenParamsArray($params, $flatParams);
+
+	foreach ($flatParams as $key => $value) {
+	    if ($addPrefix) {
+		$key = GalleryUtilities::prefixFormVariable($key);
 	    }
+	    if ($urlEncode) {
+		$key = urlencode($key);
+		$value = urlencode($value);
+	    }
+	    $args[] = $key . '=' . $value;
 	}
 
 	/* Prefix appended params with ? if the URL doesn't already have a query string */
-	return $url . ((strpos($url, '?') === false) ? '?' : '&amp;') . implode('&amp;', $args);
+	$amp = $htmlEntities ? '&amp;' : '&';
+	return $url . ((strpos($url, '?') === false) ? '?' : $amp) . implode($amp, $args);
     }
 
     /**
-     * Append array of (possibly nested) query parameters to flat array of keys/values.
+     * Convert a structure of nested URL parameters into a flat array of parameters.
      *
-     * @param array $args output array
-     * @param array $params input key/value pairs; may contain nested arrays
-     * @param string $prefix used in recursive calls
+     * Preserves the order of the parameters and does not encode them yet.
+     * Example: Input  array('a' => '1', 'b' => array('c' => 2), 'd' = 3)
+     *          Result array('a' => '1', 'b[c]' => 2, 'd' = 3)
+     *
+     * @param array $nestedParams array of URL parameters, can have nested arrays
+     * @param array $flatParams flat array of URL parameters
+     * @param string $keyBase (optional) base of the key for nested array parameters
      * @static
      * @access private
      */
-    function _appendNestedParams(&$args, $params, $prefix) {
-	foreach ($params as $key => $value) {
+    function _flattenParamsArray($nestedParams, &$flatParams, $keyBase=null) {
+	foreach ($nestedParams as $key => $value) {
+	    $key = empty($keyBase) ? $key : $keyBase . '[' . $key . ']';
 	    if (is_array($value)) {
-		GalleryUrlGenerator::_appendNestedParams($args, $value,
-							 $prefix . urlencode($key) . '][');
+		GalleryUrlGenerator::_flattenParamsArray($value, $flatParams, $key);
 	    } else {
-		$args[] = $prefix . urlencode($key) . ']=' . urlencode($value);
+		$flatParams[$key] = $value;
 	    }
 	}
     }
