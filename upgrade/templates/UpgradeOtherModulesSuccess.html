@@ -46,12 +46,12 @@
 
     <?php if ($templateData['anyUpgradeable']): ?>
     <div class="go">
-	  <div class="btn btn-continue"><span><span><span><span>
+	  <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
 	<a href="<?php generateUrl('index.php?step=' . $currentStep->getStepNumber()) ?>"><?php print _('Upgrade More Plugins'); ?></a>
-	  </span></span></span></span></div>
+	  </div></div></div></div></div></div></div></div></div>
       <?php $nextStep = $stepNumber + 1 ?>
-	  <div class="btn btn-continue"><span><span><span><span>
+	  <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
 	<a href="<?php generateUrl('index.php?step=' . $nextStep) ?>"><?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?></a>
-	  </span></span></span></span></div>
+	  </div></div></div></div></div></div></div></div></div>
     </div>
     <?php endif; ?>
