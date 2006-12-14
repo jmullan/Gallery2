@@ -232,7 +232,7 @@ class GalleryTestResult extends TestResult {
 	$language = $translator->_languageCode;
 	$owner = 'NAME_PLACEHOLDER';
 	$count = $this->countTests();
-	$failed = $this->failureCount();
+	$failed = $this->_testsFailed;
 	$date = date('m/d/Y', time());
 
 	$buf = sprintf(
