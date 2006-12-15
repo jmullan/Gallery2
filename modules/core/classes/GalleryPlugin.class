@@ -301,8 +301,6 @@ class GalleryPlugin {
 	}
 
 	if (!empty($redirect)) {
-	    /* Try to send the deactivation event before returning the redirect. */
-	    $this->_postDeactivationEvent();
 	    return array(null, $redirect);
 	}
 
