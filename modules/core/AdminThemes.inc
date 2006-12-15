@@ -462,7 +462,8 @@ class AdminThemesView extends GalleryView {
 	    }
 
 	    if (isset($settingTypes['block-list'])) {
-		$template->javascript('lib/javascript/BlockSelectWidget.js');
+		/* Query param is "version".. bump if data format in js changes */
+		$template->javascript('lib/javascript/BlockSelectWidget.js?1');
 	    }
 	}
 

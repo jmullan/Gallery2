@@ -299,6 +299,7 @@ class GalleryTheme extends GalleryPlugin {
      * @return array errors in the form of array('key' => 'translated text', ...)
      */
     function validateSettings($settings) {
+	global $gallery;
 	$error = array();
 	$standard = $this->getStandardSettings();
 
@@ -333,8 +334,11 @@ class GalleryTheme extends GalleryPlugin {
 		    list ($success, $newValue) =
 			$this->packSetting('block-list', $settings[$blockKey]);
 		    if (!$success) {
-			$error[$blockKey] =
-			    $core->translate('Format: [module.BlockName param=value] ...');
+			if ($gallery->getDebug()) {
+			    $gallery->debug('Unable to parse block-list: ' . $settings[$blockKey]);
+			}
+			$error[$blockKey] = $core->translate(
+			  'Error reading block settings. Clear your browser cache and try again.');
 		    }
 		}
 	    }

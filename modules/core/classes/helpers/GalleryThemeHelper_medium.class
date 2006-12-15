@@ -105,7 +105,8 @@ class GalleryThemeHelper_medium {
 	    return $ret;
 	}
 
-	$template->javascript('lib/javascript/BlockSelectWidget.js');
+	/* Query param is "version".. bump if data format in js changes */
+	$template->javascript('lib/javascript/BlockSelectWidget.js?1');
 	$template->setVariable('ThemeSettingsForm', $data);
 
 	return null;
