@@ -117,12 +117,10 @@ function extractStrings($filename) {
      * grab phrases for translate( or i18n( or _( calls; capture string parameter enclosed
      * in single or double quotes including concatenated strings like 'one' . "two"
      */
-    if (preg_match_all("/(translate|i18n|_)\(\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\]\"))+)\s*(?:,\s*(true|false)\s*)?\)/s",
+    if (preg_match_all("/(translate|i18n|_)\(\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+)\s*(?:,\s*(true|false)\s*)?\)/s",
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
-	    $text = $match[2];
-	    $cmd = sprintf('return %s;', $text);
-	    $text = eval($cmd);
+	    $text = eval('return ' . $match[2] . ';');
 	    $text = str_replace('"', '\\"', $text);    /* escape double-quotes */
 	    if (isset($skip[$text])) {
 		continue;
@@ -143,11 +141,11 @@ function extractStrings($filename) {
     }
 
     /* grab phrases of this format: translate(array('one' => '...', 'many' => '...')) */
-    if (preg_match_all("/translate\(.*?array\(\s*'one'\s*=>\s*'(.*?)'.*?'many'\s*=>\s*'(.*?)'.*?\).*?\)/s",
+    if (preg_match_all("/translate\(\s*array\(\s*'one'\s*=>\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+).*?'many'\s*=>\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+)\s*[,)]/s",
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
-	    $one = $match[1];
-	    $many = $match[2];
+	    $one = eval('return ' . $match[1] . ';');
+	    $many = eval('return ' . $match[2] . ';');
 	    $one = str_replace('"', '\\"', $one);      /* escape double-quotes */
 	    $many = str_replace('"', '\\"', $many);    /* escape double-quotes */
 	    $string = sprintf('ngettext("%s", "%s")', $one, $many);
@@ -161,10 +159,10 @@ function extractStrings($filename) {
     }
 
     /* grab phrases of this format: translate(array('text' => '...', ...)) */
-    if (preg_match_all("/translate\(\s*array\(\s*'text'\s*=>\s+'(.*?[^\\\])'/s",
+    if (preg_match_all("/translate\(\s*array\(\s*'text'\s*=>\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+)\s*[,)]/s",
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
-	    $text = $match[1];
+	    $text = eval('return ' . $match[1] . ';');
 	    $text = str_replace('"', '\\"', $text);    /* escape double-quotes */
 	    $string = sprintf('gettext("%s")', $text);
 	    if (!isset($strings[$string])) {

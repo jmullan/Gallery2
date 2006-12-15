@@ -978,8 +978,8 @@ class CoreModuleExtras {
 			/* Prevent apache timeout */
 			$ret = $statusMonitor->renderStatusMessage(
 			    $module->translate(
-				array('text' =>
-		    'Detecting broken derivatives, loading (%d derivatives checked, %d remaining)',
+				array('text' => 'Detecting broken derivatives, loading '
+						. '(%d derivatives checked, %d remaining)',
 				      'arg1' => $itemsProcessed,
 				      'arg2' => sizeof($derivativeIds))),
 			    '',  $itemsProcessed / $totalDerivatives);
@@ -1009,8 +1009,8 @@ class CoreModuleExtras {
 				$itemsProcessed == $totalDerivatives) {
 			    $ret = $statusMonitor->renderStatusMessage(
 				$module->translate(
-				    array('text' =>
-			    'Detecting broken derivatives (%d derivatives checked, %d remaining)',
+				    array('text' => 'Detecting broken derivatives (%d derivatives '
+						    . 'checked, %d remaining)',
 					  'arg1' => $itemsProcessed,
 					  'arg2' => $totalDerivatives - $itemsProcessed)),
 				'', $itemsProcessed / $totalDerivatives);
@@ -1066,8 +1066,8 @@ class CoreModuleExtras {
 
 			$ret = $statusMonitor->renderStatusMessage(
 			    $module->translate(
-				array('text' =>
-		    'Detecting broken derivatives, saving (%d derivatives checked, %d remaining)',
+				array('text' => 'Detecting broken derivatives, saving '
+						. '(%d derivatives checked, %d remaining)',
 				      'arg1' => $itemsProcessed,
 				      'arg2' => $totalDerivatives - $itemsProcessed)),
 			    '', $itemsProcessed / $totalDerivatives);
@@ -1086,13 +1086,13 @@ class CoreModuleExtras {
 			    $itemsSaved++;
 			    if ($itemsSaved % $saveProgressStepSize == 0) {
 				$ret = $statusMonitor->renderStatusMessage(
-				    $module->translate(
-					array('text' =>
-    'Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)',
-					      'arg1' => $itemsSaved,
-					      'arg2' => sizeof($brokenDerivatives),
-					      'arg3' => $itemsProcessed,
-					      'arg4' => $totalDerivatives - $itemsProcessed)),
+				    $module->translate(array(
+					'text' => 'Detecting broken derivatives, saving item '
+					    . '%d of %d (%d derivatives complete, %d remaining)',
+					'arg1' => $itemsSaved,
+					'arg2' => sizeof($brokenDerivatives),
+					'arg3' => $itemsProcessed,
+					'arg4' => $totalDerivatives - $itemsProcessed)),
 				    '', $itemsProcessed / $totalDerivatives);
 				if ($ret) {
 				    GalleryCoreApi::releaseLocks($lockId);

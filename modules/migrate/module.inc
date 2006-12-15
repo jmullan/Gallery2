@@ -124,7 +124,9 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 		  'queryString' => array('controller' => 'migrate.Redirect'),
 		  'locked' => 1,
 		  'help' =>$this->translate(
-		      array('text' => 'G1 URL redirect. Use only if G2 is installed where G1 used to be and you have run a G1 import with the URL redirect option selected. Otherwise follow instructions in %sMigrate Site Admin%s.',
+		      array('text' => 'G1 URL redirect. Use only if G2 is installed where G1 used '
+			  . 'to be and you have run a G1 import with the URL redirect option '
+			  . 'selected. Otherwise follow instructions in %sMigrate Site Admin%s.',
 			    'arg1' => '<a href="' . $url . '">', 'arg2' => '</a>'))
 	    )
 	);
