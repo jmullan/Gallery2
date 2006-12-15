@@ -61,7 +61,7 @@ class RewriteApi {
 	    return array($this->_error, null);
 	}
 
-	return array(null, GalleryUtilities::isCompatibleWithApi($this->getApiVersion(), $version));
+	return array(null, GalleryUtilities::isCompatibleWithApi($version, $this->getApiVersion()));
     }
 
     /**

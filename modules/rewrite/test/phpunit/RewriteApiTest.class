@@ -80,6 +80,30 @@ class RewriteApiTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
+    function testIsCompatibleWithApi() {
+	$currentVersion = $this->_rewriteApi->getApiVersion();
+
+	list ($ret, $isCompatible) = $this->_rewriteApi->isCompatibleWithApi($currentVersion);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert($isCompatible, 'same version');
+
+	$compatibleVersion = array($currentVersion[0], 0);
+	list ($ret, $isCompatible) = $this->_rewriteApi->isCompatibleWithApi($compatibleVersion);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert($isCompatible, 'should be compatible, requiring same or lower minor version');
+
+	$incompatibleVersion = array(--$currentVersion[0], 0);
+	list ($ret, $isCompatible) = $this->_rewriteApi->isCompatibleWithApi($incompatibleVersion);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!$isCompatible, 'should be incompatible, requiring lower major version');
+    }
+
     function testGetParserId() {
 	$this->assertEquals('rewriteapimock', $this->_rewriteApi->getParserId());
     }
