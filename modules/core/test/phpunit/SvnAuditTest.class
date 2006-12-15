@@ -51,6 +51,11 @@ class SvnAuditTest extends CodeAuditTestCase {
 	$slash = $this->_platform->getDirectorySeparator();
 	$base = basename($fileName);
 	$propsFile = dirname($fileName) . "${slash}.svn${slash}props${slash}${base}.svn-work";
+	if (!$this->_platform->file_exists($propsFile)) {
+	    /* svn 1.4.x doesn't write .svn-work unless local prop changes are made */
+	    $propsFile =
+		dirname($fileName) . "${slash}.svn${slash}prop-base${slash}${base}.svn-base";
+	}
 
 	if (in_array($base, array('mime.php', 'mimePart.php')) || preg_match('{\.txt$}', $base)
 		|| preg_match('{.lib.yui.*\.js$}', $fileName)) {
