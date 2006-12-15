@@ -90,7 +90,7 @@
     <div style="float: right; width: 500px; border: 2px solid red; padding: 3px">
       <h2 style="margin: 0px"> Development Environment Warning </h2>
       <div style="margin-left: 5px">
-        The following settings in your development environment are not correct.  See the <a href="http://gallery.menalto.com/modules.php?op=modload&name=phpWiki&file=index&pagename=Development%20Environment">G2 Development Environment</a> page for more information
+        The following settings in your development environment are not correct.  See the <a href="http://codex.gallery2.org/index.php/Gallery2:Developer_Guidelines#PHP_Settings">G2 Development Environment</a> page for more information
       </div>
       <br/>
       <table border="0" class="details">
