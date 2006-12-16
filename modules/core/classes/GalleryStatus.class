@@ -114,7 +114,7 @@ class GalleryStatus {
 	$message = $showMessage ? $this->_errorMessage : '';
 	$buf = 'Error  (' . join(', ', $codes) . ')';
 	if (!is_null($message)) {
-	    $buf .= ' : ' . htmlentities($message);
+	    $buf .= ' : ' . htmlentities($message) . ' ';
 	}
 	$buf .= '<ul>';
 	foreach ($trace as $traceEntry) {
@@ -144,7 +144,7 @@ class GalleryStatus {
 	$message = $showMessage ? $this->_errorMessage : '';
 	$buf = 'Error (' . join(', ', $codes) . ')';
 	if (!is_null($message)) {
-	    $buf .= ' : ' . htmlentities($message);
+	    $buf .= ' : ' . htmlentities($message) . ' ';
 	}
 	foreach ($trace as $traceEntry) {
 	    $buf .= sprintf("<b>in</b> %s <b>at line</b> %d",
