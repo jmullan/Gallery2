@@ -227,7 +227,8 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals(null, $this->_album->getTheme());
+	$themeId = $this->_album->getTheme();
+	$this->assert(empty($themeId));
     }
 
     function testChooseBogusTheme() {
