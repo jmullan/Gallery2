@@ -41,25 +41,27 @@ class MailHelperTest extends GalleryTestCase {
 	}
 
 	$this->templateFile = 'modules/core/test/data/MailHelperTest.tpl';
+
+	global $gallery;
+	$this->_originalPlatform =& $gallery->getPlatform();
+	$this->_dummyPlatform = new MailHelperDummyPlatform($this->_originalPlatform);
+	$gallery->setPlatform($this->_dummyPlatform);
+
+	$this->_emailData = array(
+	    'to' => 'mailhelpertest@test.com',
+	    'subject' => 'MailHelperTest subject',
+	    'body' => 'MailHelperTest test string');
     }
 
-    function testSendTemplatedEmail() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-	$gallery->setPlatform($dummyPlatform = new MailHelperDummyPlatform($platform));
-
+    function testSendTemplatedEmailEmptyFromHeader() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', '');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$emailData = array(
-	    'to' => 'mailhelpertest@test.com',
-	    'subject' => 'MailHelperTest subject',
-	    'body' => 'MailHelperTest test string');
-	$expectedData = $emailData;
+	$expectedData = $this->_emailData;
 	/* Don't expect whitespace to be stripped from tpl, so expect 2 leading spaces in body */
-	$expectedData['body'] = GalleryUtilities::isA($platform, 'WinNtPlatform')
+	$expectedData['body'] = GalleryUtilities::isA($this->_originalPlatform, 'WinNtPlatform')
 		? "Hello:\r\n  " . $expectedData['body']
 		: "Hello:\n  " . $expectedData['body'];
 	$expectedData['headers'] = array(
@@ -69,96 +71,92 @@ class MailHelperTest extends GalleryTestCase {
 
 	/* Test that the from header is empty */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $emailData, null, $emailData['to'], $emailData['subject']);
+	    $this->templateFile, $this->_emailData, null, $this->_emailData['to'], $this->_emailData['subject']);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals($expectedData, $dummyPlatform->getMailData(), 'Blank From');
+	$this->assertEquals($expectedData, $this->_dummyPlatform->getMailData(), 'Blank From');
+    }
 
-	/* Set the from address and update the test data */
-	$from = 'mailhelpertest@test.com';
-	$expectedData['headers'] = array(
-	    'Date: ELIDED',
-	    'From: ' . $from,
-	    'Content-Type: text/plain; charset="utf-8"',
-	    '');
-
+    function testSendTemplatedEmailFromAddressSetByFunctionInput() {
 	/* Test that the from header is retrieved from function input */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject']);
+	    $this->templateFile, $this->_emailData, 'mailhelpertest1@test.com',
+	    $this->_emailData['to'], $this->_emailData['subject']);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals($expectedData, $dummyPlatform->getMailData(), 'Function From');
 
+	$response = $this->_dummyPlatform->getMailData();
+	$this->assertEquals('From: mailhelpertest1@test.com', $response['headers'][1]);
+    }
+
+    function testSendTemplatedEmailFromAddressSetByCoreSmtpParameter() {
 	/* Test that the from header is retrieved from the core.smtp.from field */
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', $from);
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'smtp.from', 'mailhelpertest2@test.com');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $emailData, null, $emailData['to'], $emailData['subject']);
+	    $this->templateFile, $this->_emailData, null,
+	    $this->_emailData['to'], $this->_emailData['subject']);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals($expectedData, $dummyPlatform->getMailData(), 'smtp.from');
+
+	$response = $this->_dummyPlatform->getMailData();
+	$this->assertEquals('From: mailhelpertest2@test.com', $response['headers'][1]);
+    }
+
+    function testSendTemplatedEmailFunctionInputOverridesCoreSmtpParameter() {
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'smtp.from', 'mailhelpertest3_core_smtp@test.com');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
 
 	/* Set the from address and update the test data */
 	$from = 'mailhelpertest2@test.com';
-	$expectedData['headers'] = array(
-	    'Date: ELIDED',
-	    'From: ' . $from,
-	    'Content-Type: text/plain; charset="utf-8"',
-	    '');
 
 	/* Test that the from header is preferred from the function over the core.smtp.from field */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject']);
+	    $this->templateFile, $this->_emailData, 'mailhelpertest3_function_input@test.com',
+	    $this->_emailData['to'], $this->_emailData['subject']);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals($expectedData, $dummyPlatform->getMailData(),
-			    'function over smtp.from');
 
-	/* Specify content-type */
-	$emailData['headers'] = "Content-Type: text/html\r\n";
-	$expectedData['headers'] = array(
-	    'Date: ELIDED',
-	    'From: ' . $from,
-	    'Content-Type: text/html',
-	    '');
+	$response = $this->_dummyPlatform->getMailData();
+	$this->assertEquals('From: mailhelpertest3_function_input@test.com',
+			    $response['headers'][1]);
+    }
 
+    function testSendTemplatedEmailWithContentType() {
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $emailData, $from, $emailData['to'],
-	    $emailData['subject'], $emailData['headers']);
+	    $this->templateFile, $this->_emailData, null, $this->_emailData['to'],
+	    $this->_emailData['subject'], "Content-Type: text/html\r\n");
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals($expectedData, $dummyPlatform->getMailData(),
-			    'Specify content-type');
+	$response = $this->_dummyPlatform->getMailData();
+	$this->assertEquals("Content-Type: text/html", $response['headers'][1]);
+    }
 
-	/* Extended character in subject */
-	$emailData['subject'] = "s\xc3\xa5 utrolig";
-	$expectedData['subject'] = '=?utf-8?q?s=c3=a5 utrolig?=';
-
+    function testSendTemplatedEmailExtendedCharactersInSubject() {
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $emailData, $from, $emailData['to'],
-	    $emailData['subject'], $emailData['headers']);
+	    $this->templateFile, $this->_emailData, null, $this->_emailData['to'],
+	    "s\xc3\xa5 utrolig", null);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals($expectedData, $dummyPlatform->getMailData(),
-			    'Specify content-type');
+	$response = $this->_dummyPlatform->getMailData();
+	$this->assertEquals('=?utf-8?q?s=c3=a5 utrolig?=', $response['subject']);
     }
 
     function testSendTemplatedEmailMultiRecipient() {
-	global $gallery;
-
-	$platform =& $gallery->getPlatform();
-	$gallery->setPlatform($dummyPlatform = new MailHelperDummyPlatform($platform));
-
-	$emailData = array(
+	$this->_emailData = array(
 	    'to' => 'mailhelpertest@test.com',
 	    'subject' => 'MailHelperTest subject',
 	    'body' => 'MailHelperTest test string',
@@ -167,11 +165,11 @@ class MailHelperTest extends GalleryTestCase {
 	$multiTo = "test1@example.com,test2@example.com,test3@example.com,test4@example.com";
 
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $emailData, null, $multiTo, $emailData['subject']);
+	    $this->templateFile, $this->_emailData, null, $multiTo, $this->_emailData['subject']);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals(4, $dummyPlatform->getMailedCount(), 'MailedCount incorrect');
+	$this->assertEquals(4, $this->_dummyPlatform->getMailedCount(), 'MailedCount incorrect');
     }
 }
 
