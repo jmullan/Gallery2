@@ -213,19 +213,26 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	/* We only have permission to print and view the thumbnail */
 	$ret = GalleryCoreApi::removeItemPermissions($itemId);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $itemId, $gallery->getActiveUserId(), 'photoaccess.print');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $itemId, $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Make sure we don't get any platform calls during test from releasing flock locks */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
 	}
 
 	$gallery->setPlatform(
