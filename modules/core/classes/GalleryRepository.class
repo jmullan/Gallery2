@@ -277,6 +277,12 @@ class GalleryRepository {
 		return array($ret, null);
 	    }
 
+	    /* Load the core module for translation */
+	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
 	    /* Fall back to en_US if there are no descriptions in the active language. */
 	    if (!isset($plugin['descriptions'][$language])) {
 		$language = 'en_US';
@@ -302,9 +308,13 @@ class GalleryRepository {
 		$isUpgradeable = false;
 	    }
 
-	    $groupLabel = isset($plugin['descriptions'][$language]['groupLabel'])
-		? $plugin['descriptions'][$language]['groupLabel']
-		: $gallery->i18n('General');
+	    if (isset($plugin['descriptions'][$language]['groupLabel'])) {
+		$groupLabel = $plugin['descriptions'][$language]['groupLabel'];
+	    } else if ($pluginType == 'theme') {
+		$groupLabel = $core->translate('Themes');
+	    } else {
+		$groupLabel = $core->translate('General');
+	    }
 
 	    list ($providedCoreApiVersion, $providedPluginApiVersion) =
 		$this->_utilities->getProvidedApis($pluginType, $coreApis);

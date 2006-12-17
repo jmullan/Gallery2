@@ -503,6 +503,40 @@ class RepositoryTest extends GalleryTestCase {
 	}
     }
 
+    function testGetRepositoryPluginListThemeGroupLabel() {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$testTheme = $this->_sampleIndex['themes']['testTheme'];
+	$testTheme['isCompatible'] = true;
+	unset($testTheme['descriptions']['en_US']['groupLabel']);
+
+	$repository = new GalleryRepository();
+	$repository->_utilities = new RepositoryTestUtilities();
+
+	$pluginData = array(
+		'showAll' => 'showAll', 'pluginType' => 'theme', 'coreApis' => array(
+		    'core' => array(1, 2), 'module' => array(3, 4), 'theme' => array(5, 6)),
+		'plugins' => array('theme' => array('testTheme' => $testTheme)));
+
+	$repository->_index = new RepositoryTestIndex($this->_sampleIndex, $pluginData);
+
+	list ($ret, $pluginList) =
+		$repository->getRepositoryPluginList('theme', true,  $pluginData['coreApis']);
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	if (!isset($pluginList['testTheme']['groupLabel'])) {
+	    $this->fail('Group label not set');
+	} else {
+	    $this->assertEquals($core->translate('Themes'), $pluginList['testTheme']['groupLabel'],
+				'wrong group label for test theme');
+	}
+    }
+
     function testComparePluginListEntries() {
 	$repository = new GalleryRepository();
 
