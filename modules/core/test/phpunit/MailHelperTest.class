@@ -61,9 +61,7 @@ class MailHelperTest extends GalleryTestCase {
 
 	$expectedData = $this->_emailData;
 	/* Don't expect whitespace to be stripped from tpl, so expect 2 leading spaces in body */
-	$expectedData['body'] = GalleryUtilities::isA($this->_originalPlatform, 'WinNtPlatform')
-		? "Hello:\r\n  " . $expectedData['body']
-		: "Hello:\n  " . $expectedData['body'];
+	$expectedData['body'] = "Hello:\n  " . $expectedData['body'];
 	$expectedData['headers'] = array(
 	    'Date: ELIDED',
 	    'Content-Type: text/plain; charset="utf-8"',
@@ -75,7 +73,15 @@ class MailHelperTest extends GalleryTestCase {
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals($expectedData, $this->_dummyPlatform->getMailData(), 'Blank From');
+
+	/*
+	 * Normalize \r\n to \n in the body to eliminate variance on Windows.  Some
+	 * Windows installs will have \r\n, but some (eg Cygwin) will just have \n.
+	 */
+	$response = $this->_dummyPlatform->getMailData();
+	$response['body'] = str_replace("\r\n", "\n", $response['body']);
+
+	$this->assertEquals($expectedData, $response);
     }
 
     function testSendTemplatedEmailFromAddressSetByFunctionInput() {
