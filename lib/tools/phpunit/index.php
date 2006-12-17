@@ -219,6 +219,10 @@ class GalleryTestResult extends TestResult {
 
 	$notes = array();
 	foreach ($moduleStatusList as $moduleId => $moduleStatus) {
+	    if ($moduleId == 'multiroot') {
+		/* This module is never active */
+		continue;
+	    }
 	    if (empty($moduleStatus['active'])) {
 		$notes[] = "-$moduleId";
 	    }
