@@ -233,7 +233,7 @@ class GalleryTestResult extends TestResult {
 	$owner = 'NAME_PLACEHOLDER';
 	$count = $this->countTests();
 	$failed = $this->_testsFailed;
-	$date = date('m/d/Y', time());
+	$date = date('Y-m-d', time());
 
 	$buf = sprintf(
 	    '|%s||%s||%s||%s||%s||%s||%s||%d||%d||%s||%s',
