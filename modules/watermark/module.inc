@@ -33,11 +33,11 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('watermark');
 	$this->setName($gallery->i18n('Watermark'));
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('1.0.8'); /* Update upgrade() too */
+	$this->setVersion('1.0.9'); /* Update upgrade() too */
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));
-	$this->setRequiredModuleApi(array(3, 4));
+	$this->setRequiredModuleApi(array(3, 5));
     }
 
     /**
@@ -167,6 +167,8 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	case '1.0.5':
 	case '1.0.6':
 	case '1.0.7':
+	case '1.0.8':
+	    /* Adding dependency on getRewriteRule() changes */
 
 	case 'end of upgrade path':
 	    /*
@@ -327,21 +329,43 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 
     /**
      * @see GalleryModule::getRewriteRules
+     * @todo The explicit rewrite module version check can be removed on the next major Module API
+     *       version.
      */
     function getRewriteRules() {
-	return array(
-	    array( 'comment' => $this->translate('Watermark hotlinked images'),
-		   'restrict' => array('view' => 'core.DownloadItem',
-				       'itemId' => '([0-9]+)'),
-		   'queryString' => array('view' => 'watermark.DownloadItem',
-					  'itemId' => '%1'),
-		   'flags' => array('L'),
-		   'exemptReferer' => 1,
-		   'help' => $this->translate(
-		       'Apply watermark to images downloaded from outside your Gallery. Select ' .
-		       'which watermark to use in Watermark Site Admin.')
-		 )
-	    );
+	/* Ensure the rewrite module is compatible, 'pattern' is optional since v1.1.8 of rewrite */
+	list ($ret, $rewrite) = GalleryCoreApi::loadPlugin('module', 'rewrite', true);
+	if ($ret) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug('WatermarkModule::getRewriteRules ingoring error: ' .
+				$ret->getAsText());
+	    }
+	    $oldRewriteVersion = false;
+	} else {
+	    $oldRewriteVersion = version_compare($rewrite->getVersion(), '1.1.8', '<');
+	}
+
+	$rules = array();
+	$rule = array(
+		'comment' => $this->translate('Watermark hotlinked images'),
+		'restrict' => array('view' => 'core.DownloadItem',
+				    'itemId' => '([0-9]+)'),
+		'queryString' => array('view' => 'watermark.DownloadItem',
+				       'itemId' => '%1'),
+		'flags' => array('L'),
+		'exemptReferer' => 1,
+		'help' => $this->translate(
+			'Apply watermark to images downloaded from outside your Gallery. Select ' .
+			'which watermark to use in Watermark Site Admin.'));
+	if ($oldRewriteVersion) {
+	    /* Add a pseudo pattern since it was mandatory until v1.1.8 of the rewrite module. */
+	    $rule['pattern'] = '.';
+	    $rule['locked'] = true;
+	    $rule['parser'] = 'preGallery';
+	}
+	$rules[0] = $rule;
+
+	return $rules;
     }
 }
 ?>

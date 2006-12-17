@@ -245,8 +245,21 @@ class RewriteModuleExtras {
 	     * array($moduleId => array($ruleId => array('pattern' => $pattern)))
 	     */
 	    foreach (array_keys($activeRules) as $moduleId) {
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
+		if ($ret) {
+		    return $ret;
+		}
+		$rules = $module->getRewriteRules();
+
 		foreach ($activeRules[$moduleId] as $ruleId => $pattern) {
-		    $activeRules[$moduleId][$ruleId] = array('pattern' => $pattern);
+		    $activeRules[$moduleId][$ruleId] = array();
+		    /*
+		     * Only save old pattern if the rule defines a pattern.  Saving a pattern for a
+		     * rule which doesn't define a pattern is invalid.
+		     */
+		    if (isset($rules[$ruleId]['pattern'])) {
+			$activeRules[$moduleId][$ruleId]['pattern'] = $pattern;
+		    }
 		}
 	    }
 
@@ -272,10 +285,23 @@ class RewriteModuleExtras {
 		if (strncmp($key, 'history.', 8) !== 0) {
 		    continue;
 		}
-
 		$history = unserialize($value);
+
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', substr($key, 8), true);
+		if ($ret) {
+		    return $ret;
+		}
+		$rules = $module->getRewriteRules();
+
 		foreach ($history as $ruleId => $pattern) {
-		    $history[$ruleId] = array('pattern' => $pattern);
+		    $history[$ruleId] = array();
+		    /*
+		     * Only save old pattern if the rule defines a pattern.  Saving a pattern for a
+		     * rule which doesn't define a pattern is invalid.
+		     */
+		    if (isset($rules[$ruleId]['pattern'])) {
+			$history[$ruleId]['pattern'] = $pattern;
+		    }
 		}
 
 		$ret = $module->setParameter($key, serialize($history));
@@ -285,7 +311,9 @@ class RewriteModuleExtras {
 	    }
 
 	case '1.1.8':
-	    /* Remove L from mandatory flags */
+	    /* Remove L from mandatory flags, remove pattern for restrict rules */
+	case '1.1.9':
+	    /* Updating required Module API version for getRewriteRules change from v1.1.8 */
 
 	case 'end of upgrade path':
 	    break;
@@ -383,11 +411,13 @@ class RewriteModuleExtras {
 
 	    foreach ($history as $ruleId => $rule) {
 		if (isset($rules[$ruleId])) {
-		    if (isset($rule['pattern'])) {
+		    if (isset($rules[$ruleId]['pattern']) && isset($rule['pattern'])) {
 			if (isset($seen[$rule['pattern']])) {
 			    continue;
 			}
 			$seen[$rule['pattern']] = true;
+		    } else {
+			$rule = array();
 		    }
 		    $activeRules[$pluginId][$ruleId] = $rule;
 		}

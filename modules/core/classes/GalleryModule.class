@@ -76,11 +76,12 @@ class GalleryModule extends GalleryPlugin {
      *   major bump in GalleryTheme)
      * - Remove TYPE=DB_TABLE_TYPE replacement in MySqlStorage::_getSqlReplacements
      * - change signature of getItemlinks() in all modules (add new parameter) 
+     * - Remove rewrite v1.1.8 version checks in webdav, watermark, httpauth, ... (look for todo)
      *
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(3, 4);
+	return array(3, 5);
     }
 
     /**

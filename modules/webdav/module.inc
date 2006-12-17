@@ -31,12 +31,12 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('0.6.1'); /* Update upgrade() too */
+	$this->setVersion('0.6.2'); /* Update upgrade() too */
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
 	$this->setCallbacks('getItemLinks|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 10));
-	$this->setRequiredModuleApi(array(3, 3));
+	$this->setRequiredCoreApi(array(7, 16));
+	$this->setRequiredModuleApi(array(3, 5));
     }
 
     /**
@@ -118,6 +118,11 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    if ($ret) {
 		return $ret;
 	    }
+	case '0.6.1':
+	    /*
+	     * Adding dependency on latest changes in getRewriteRules() and on generateUrl's
+	     * protocol option.
+	     */
 
 	case 'end of upgrade path':
 	    break;
@@ -126,6 +131,37 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 		sprintf('Unknown module version %s', $currentVersion));
 	}
+    }
+
+    /**
+     * @see GalleryModule::activate
+     * @todo The explicit rewrite module version check can be removed on the next major Module API
+     *       version.
+     */
+    function activate($postActivationEvent=true) {
+	/* Ensure the rewrite module is compatible, 'pattern' is optional since v1.1.8 of rewrite */
+	list ($ret, $modules) = GalleryCoreApi::fetchPluginList('module');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if (isset($modules['rewrite'])) {
+	    list ($ret, $rewrite) = GalleryCoreApi::loadPlugin('module', 'rewrite', true);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    if (version_compare($rewrite->getVersion(), '1.1.8', '<')) {
+		return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
+	    }
+	}
+
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, $redirect);
     }
 
     /**
