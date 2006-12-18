@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Core 1.1.25\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-01 23:38+0100\n"
-"PO-Revision-Date: 2006-10-20 12:27+0100\n"
+"PO-Revision-Date: 2006-12-17 11:20+0100\n"
 "Last-Translator: Sverre M. Vikan <sverre AT urven DOT net>\n"
 "Language-Team: Norwegian <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -233,22 +233,24 @@ msgstr "Omdanner MySQL-data til UTF8"
 msgid "Upgrading permissions (%d items complete, %d remaining)"
 msgstr "Oppgraderer tilganger (%d objekter fullført, %d gjenstår)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Gjenkjenner ugyldige avledninger, laster "
+msgstr "Gjenkjenner ødelagte avledninger, laster (%d avledninger kontrollert, %d gjenstår)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Gjenkjenner ugyldige avledninger, lagrer "
+msgstr "Gjenkjenner ødelagte avledninger (%d avledninger kontrollert, %d gjenstår)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Gjenkjenner ugyldige avledninger, lagrer "
+msgstr "Gjenkjenner ødelagte avledninger, lagrer (%d avledninger kontrollert, %d gjenstår)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Oppgraderer tilganger (%d objekter fullført, %d gjenstår)"
+msgstr ""
+"Gjenkjenner ødelagte avledninger, lagrer enhet %d av %d (%d avledninger fullført, %d "
+"gjenstår)"
 
 #, c-format
 msgid "Deleting old session files (iteration %d)"
@@ -594,9 +596,8 @@ msgstr "%d objekter opprettet"
 msgid "%d items failed"
 msgstr "%d objekter mislyktes"
 
-#, fuzzy
 msgid "Convert MySQL database to UTF8"
-msgstr "Omdanner MySQL-data til UTF8"
+msgstr "KOnverter MySQL-database til UTF8"
 
 msgid ""
 "If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
@@ -605,13 +606,17 @@ msgid ""
 "After using this, you should run the 'Delete database cache' task to get rid of any "
 "corruption in your cache."
 msgstr ""
+"Om du opprettet din database med MySQL 3.x og du oppgraderer til MySQL 4.x, vil du oppleve "
+"uforståelige tegn inntil du konverterer databasen din til å bruke UTF8. Denne operasjonen er "
+"harmløs hvis databasen din allerede er konvertert, så det er trygt å prøve det om du er "
+"usikker. Etter å ha brukt dette, burde du kjøre «Slett databasehurtiglager» for å bli kvitt "
+"skader i hurtiglageret."
 
-#, fuzzy
 msgid "Database successfully converted to UTF8"
-msgstr "Vellykket sletting av objekt"
+msgstr "Vellykket konvertering til UTF8"
 
 msgid "No conversion required"
-msgstr ""
+msgstr "Ingen konvertering nødvendig"
 
 msgid "Delete user sessions"
 msgstr "Slett brukerøkter"
@@ -736,7 +741,6 @@ msgstr ""
 "Kunne ikke opprette underkatalog for hurtigminne. Sørg for at nettjeneren har "
 "skrivetilganger i den."
 
-#, fuzzy
 msgid "Official Release Repository"
 msgstr "Offisielt utgivelseskodelager"
 
@@ -806,7 +810,7 @@ msgid "Donate to the Gallery project"
 msgstr "Doner til Gallery-prosjektet"
 
 msgid "G2.2: Double Double"
-msgstr ""
+msgstr "G2.2: Double Double"
 
 #, c-format
 msgid "Powered by Gallery v%s"
@@ -883,8 +887,8 @@ msgstr "Fargepakke"
 msgid "You must enter a number greater than 0"
 msgstr "Du må skrive inn et tall større enn 0"
 
-msgid "Format: [module.BlockName param=value] ..."
-msgstr "Format: [modul.BlokkNavn param=verdi] ..."
+msgid "Error reading block settings. Clear your browser cache and try again."
+msgstr ""
 
 #, c-format
 msgid "%dx%d"
@@ -1532,24 +1536,22 @@ msgstr "(foreslått)"
 msgid "Options"
 msgstr "Valg"
 
-#, fuzzy
 msgid "Lock user."
-msgstr "Sperresystem"
+msgstr "Sperr bruker"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
 "Låste brukere kan ikke redigere sin egen kontoinformasjon. (Passord, navn, e-post, osv.)"
 
-#, fuzzy
 msgid "Reset failed login count."
-msgstr "Nullstill visningsteller"
+msgstr "Nullstill teller for mislykkede innloggingsforsøk."
 
 #, c-format
 msgid "%d failed login attempt since the last successful login."
 msgid_plural "%d failed login attempts since the last successful login."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d mislykket innloggingsforsøk siden siste vellykkede innlogging."
+msgstr[1] "%d mislykkede innloggingsforsøk siden siste vellykkede innlogging."
 
 msgid "Group Management"
 msgstr "Gruppebehandling"
@@ -1829,11 +1831,11 @@ msgid "Actions"
 msgstr "Handlinger"
 
 msgid "help"
-msgstr ""
+msgstr "hjelp"
 
 #, c-format
 msgid "Screenshot for %s"
-msgstr ""
+msgstr "Skjermbilde for %s"
 
 msgid "Incompatible plugin!"
 msgstr "Ikke-kompatibelt programtillegg!"
@@ -1870,7 +1872,7 @@ msgstr ""
 
 #, c-format
 msgid "Failed to scan status from plugin: %s."
-msgstr ""
+msgstr "Kunne ikke hente status fra programtillegg: %s."
 
 msgid "The repository index has been successfully updated."
 msgstr "Vellykket oppdatering av kodelagerindeksen"
@@ -2246,13 +2248,11 @@ msgstr "Du kan ikke fjerne den spesielle brukeren gjest."
 msgid "Edit User (by list)"
 msgstr "Rediger bruker (listeform)"
 
-#, fuzzy
 msgid "Locked"
-msgstr "låst"
+msgstr "Sperret"
 
-#, fuzzy
 msgid "Failed Logins"
-msgstr "Mislykket"
+msgstr "Mislykkede innlogginger"
 
 msgid "Thumbnails"
 msgstr "Miniatyrbilder"
@@ -2286,9 +2286,8 @@ msgstr "Databasefeil"
 msgid "Platform Error"
 msgstr "Platformfeil"
 
-#, fuzzy
 msgid "Authentication Failure"
-msgstr "Autorisasjon bekreftet"
+msgstr "Autentiseringsfeil"
 
 msgid "Error"
 msgstr "Feil"
@@ -2309,10 +2308,11 @@ msgid ""
 "If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
 "Administrators can clear out this cache."
 msgstr ""
+"Om dette problemet oppstår gjentatte ganger, kan det være på grunn av skader i "
+"hurtiglageret. Nettstedadministratorer kan rense hurtiglageret."
 
-#, fuzzy
 msgid "Clear the cache"
-msgstr "Fjern lagrede sider"
+msgstr "Tøm lageret"
 
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "Alternativt kan du returnere til hovedsiden av Gallery og gjenoppta surfingen der."
@@ -2324,6 +2324,8 @@ msgid ""
 "Your change cannot be completed due to a loss of session data. Please try again. If it still "
 "doesn't work, try logging out and logging back in."
 msgstr ""
+"Endringen din kan ikke fullføres grunnet tap av øktdata. Vennligst forsøk igjen. Om det "
+"fremdeles ikke virker, prøv å logge ut og logge inn igjen."
 
 msgid "An error has occurred while interacting with the database."
 msgstr "En feil har oppstått under samhandling med databasen."
@@ -2467,7 +2469,7 @@ msgstr ""
 "opplastingsformat eller be din systemadministrator tillate større opplastinger."
 
 msgid "More Upload Boxes..."
-msgstr ""
+msgstr "Flere opplastingsbokser …"
 
 msgid "Set item titles from:"
 msgstr "Velg objekttitler fra:"
@@ -2566,7 +2568,7 @@ msgid ""
 "added items."
 msgstr ""
 "Dette angir sorteringsrekkefølgen for albumet.  Dette gjelder alle nåværende objekter, og "
-"nylig tillagte elementer."
+"nylig tillagte objekter."
 
 msgid "Apply to all subalbums"
 msgstr "Bruk på alle underalbum"
@@ -3152,6 +3154,9 @@ msgid ""
 "is either disabled or not supported by your browser. Please enable JavaScript by changing "
 "your browser options, then try again."
 msgstr ""
+"JavaScript må være aktivert for at denne siden skal virke ordentlig. Derimot ser det ut til "
+"at JavaScript enten er deaktivert eller ikke støttes av nettleseren din. Vennligst aktiver "
+"JavaScript ved å endre nettleserinnstillingene dine, og forsøk så igjen."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Nettstedet er midlertidig nede for vedlikehold."
@@ -3319,6 +3324,9 @@ msgid ""
 "for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
 "this account."
 msgstr ""
+"Innlogging til denne kontoen er midlertidig deaktivert grunnet gjentatte mislykkede "
+"innloggingsforsøk. Vent på at tilgang skal bli gjenopprettet, eller bruk <a href=\"%s"
+"\">gjenopprett passord</a> for å reaktivere denne kontoen."
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Din innlogginsinformasjon er ukorrekt.  Vennligst forsøk igjen."
@@ -3621,68 +3629,5 @@ msgstr "Innloggingsblokk"
 msgid "Links to album/photo peers"
 msgstr "Lenker til album/fotonoder"
 
-#~ msgid "Detecting broken derivatives "
-#~ msgstr "Gjenkjenner ugyldige avledninger "
-
-#~ msgid "Detecting broken derivatives, "
-#~ msgstr "Gjenkjenner ugyldige avledninger, "
-
-#~ msgid "G2.1: Blackjack"
-#~ msgstr "G2.1: Blackjack"
-
-#~ msgid "Unit test module"
-#~ msgstr "Enhetstestmodul"
-
-#~ msgid "[test] A permission"
-#~ msgstr "[test] En tilgang"
-
-#~ msgid "[test] A second permission"
-#~ msgstr "[test] En andre tilgang"
-
-#~ msgid "Unit test theme"
-#~ msgstr "Enhetstesttema"
-
-#~ msgid ""
-#~ "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not "
-#~ "a part of this Gallery."
-#~ msgstr ""
-#~ "Ugyldig tilbakemeldt adresse! Den forespurte nettadressen %s forsøkte å sette inn en "
-#~ "videresending til %s, som ikke er en del av denne Gallery-installasjonen."
-
-#~ msgid "Lock Account"
-#~ msgstr "Lås konto"
-
-#~ msgid "More.."
-#~ msgstr "Mer ..."
-
-#~ msgid "Rebuilding resized images..."
-#~ msgstr "Gjenskaper skalerte bilder ..."
-
-#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-#~ msgstr "Velg et tema for dette albumet. (Hvordan albumet er ordnet på siden)"
-
-#~ msgid "Recreate thumbnails and resizes"
-#~ msgstr "Gjenskap miniatyrbilder og skaleringer"
-
-#~ msgid ""
-#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
-#~ "to all the items in your album, check the appropriate box."
-#~ msgstr ""
-#~ "Innstillingene for miniatyrbilder og skalerte bilder er for alle nye objekter. Marker den "
-#~ "riktige boksen for å gi alle objektene i ditt album disse innstillingene."
-
-#~ msgid "Recreate thumbnails"
-#~ msgstr "Gjenskap miniatyrbilder"
-
-#~ msgid "Recreate resized images"
-#~ msgstr "Gjenskap skalerte bilder"
-
-#~ msgid ""
-#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
-#~ "tab"
-#~ msgstr ""
-#~ "Merknad: marker den rette boksen i arkfanen <b>Album</b> for å velge det samme temaet for "
-#~ "alle underalbum."
-
-#~ msgid "Continue..."
-#~ msgstr "Fortsett ..."
+#~ msgid "Format: [module.BlockName param=value] ..."
+#~ msgstr "Format: [modul.BlokkNavn param=verdi] ..."
