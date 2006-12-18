@@ -69,7 +69,8 @@ class MailHelperTest extends GalleryTestCase {
 
 	/* Test that the from header is empty */
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-	    $this->templateFile, $this->_emailData, null, $this->_emailData['to'], $this->_emailData['subject']);
+		$this->templateFile, $this->_emailData, null,
+		$this->_emailData['to'], $this->_emailData['subject']);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
