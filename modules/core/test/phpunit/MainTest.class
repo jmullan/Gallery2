@@ -279,7 +279,7 @@ class MainTest extends GalleryTestCase {
 	$session =& $gallery->getSession();
 
 	GalleryUtilities::removeRequestVariable('view');
-	GalleryUtilities::putRequestVariable('controller', 'core.UserLogin');
+	GalleryUtilities::putRequestVariable('controller', 'core.UserPreferences');
 	GalleryUtilities::removeRequestVariable('authToken');
 	GalleryUtilities::removeRequestVariable('form[authToken]');
 
