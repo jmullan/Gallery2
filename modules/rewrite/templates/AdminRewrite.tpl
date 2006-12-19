@@ -145,7 +145,7 @@
       {else}
       {if isset($AdminRewrite.info.$moduleId.$ruleId.locked)}
         <input type="hidden" name="{g->formVar var="form[rules][$moduleId][$ruleId][pattern]"}" value="{$rule.pattern}"/>
-        <input type="text" size="40" name="dummy" value="{$rule.pattern}" disabled />
+        <input type="text" size="40" name="dummy" value="{$rule.pattern}" disabled="disabled"/>
       {else}
         <input type="text" size="40" name="{g->formVar var="form[rules][$moduleId][$ruleId][pattern]"}" value="{$rule.pattern}"/>
       {/if}
@@ -213,7 +213,7 @@
   </p>
 
   <table class="gbDataTable"><tr>
-    <td><input type="text" name="{g->formVar var="form[dummy]"}" size="60" value="{$AdminRewrite.serverName}" disabled/></td>
+    <td><input type="text" name="{g->formVar var="form[dummy]"}" size="60" value="{$AdminRewrite.serverName}" disabled="disabled"/></td>
   {counter start=0 assign="i"}
   {foreach from=$form.accessList item=host}
   </tr><tr>
