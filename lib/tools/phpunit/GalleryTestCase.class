@@ -884,6 +884,7 @@ class GalleryTestCase extends TestCase {
     /**
      * Register a factory implementation temporarily for this test.
      * You need to call _markFactoryForCleanup() before changing the factory during a test.
+     * Will register the new implementation always with top priority.
      * @see GalleryCoreApi::registerFactoryImplementation
      */
     function _registerFactoryImplementationForTest($classType, $className, $implId, $implPath,
@@ -893,13 +894,37 @@ class GalleryTestCase extends TestCase {
 	$registryData =& GalleryFactoryHelper_simple::_getFactoryData();
 	$registry =& $registryData[1];
 
-	$registry['implementations'][$classType][$className] = $implPath;
-	$registry['ids'][$classType][$implId] = $className;
-	$registry['pluginIds'][$classType][$className] = $implModuleId;
+	/* Prepend the new implementation at the beginning of the arrays */
+	foreach (array('implementations', 'ids', 'pluginIds') as $key) {
+	    if (!isset($registry[$key][$classType]) || !is_array($registry[$key][$classType])) {
+		$registry[$key][$classType] = array();
+	    }
+	}
+
+	$this->_array_unshift_key_value($registry['implementations'][$classType],
+					$className, $implPath);
+	$this->_array_unshift_key_value($registry['ids'][$classType],
+					$implId, $className);
+	$this->_array_unshift_key_value($registry['pluginIds'][$classType],
+					$className, $implModuleId);
 
 	foreach ($hints as $hint) {
-	    $registry['hints'][$classType][$hint][$implId] = $className;
+	    if (!isset($registry['hints'][$classType][$hint])
+		    || !is_array($registry['hints'][$classType][$hint])) {
+		$registry['hints'][$classType][$hint] = array();
+	    }
+	    $this->_array_unshift_key_value($registry['hints'][$classType][$hint],
+					    $implId, $className);
 	}
+    }
+
+    /**
+     * Utility method to array_unshift a single key => value pair.
+     * @access private
+     */
+    function _array_unshift_key_value(&$array, $key, $value) {
+	unset($array[$key]);
+	$array = array_merge(array($key => $value), $array);
     }
 
     /**
