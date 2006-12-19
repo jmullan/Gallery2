@@ -170,7 +170,7 @@ class WebDavView extends GalleryView {
      * @see GalleryView::isControllerLike
      */
     function isControllerLike() {
-	/* Although this view is controller-like, we return false since cannot add authTokens */
+	/* Although this view is controller-like, we return false since we can't add authTokens */
 	return false;
     }
 
