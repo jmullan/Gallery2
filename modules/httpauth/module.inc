@@ -19,24 +19,47 @@
  */
 
 /**
- * HTTP Auth Module.  Get active user using HTTP authentication.
+ * HTTP Auth Module.  Login using HTTP authentication.
  * @package HttpAuth
  * @author Jack Bates <ms419@freezone.co.uk>
  * @version $Revision$
  */
-class HttpAuthModule extends GalleryModule {
+class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
     function HttpAuthModule() {
 	global $gallery;
 
 	$this->setId('httpauth');
 	$this->setName($gallery->i18n('HTTP Auth'));
-	$this->setVersion('0.3.0');
-	$this->setDescription($gallery->i18n('Login using HTTP authentication'));
+	$this->setVersion('0.4.0'); /* Update upgrade() too! */
+	$this->setDescription($gallery->i18n('Login using HTTP authentication.'));
 	$this->setGroup('authentication', $gallery->i18n('Authentication'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 10));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 15));
+	$this->setRequiredModuleApi(array(3, 5));
+    }
+
+    /**
+     * @see GalleryModule::activate
+     * @todo Explicit rewrite module version check can be removed on next major module API version.
+     */
+    function activate($postActivationEvent=true) {
+	/* Ensure the rewrite module is compatible, 'pattern' is optional since v1.1.8 of rewrite */
+	list ($ret, $rewrite) = GalleryCoreApi::loadPlugin('module', 'rewrite', true);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if (version_compare($rewrite->getVersion(), '1.1.8') < 0) {
+	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
+	}
+
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, $redirect);
     }
 
     /**
@@ -49,8 +72,8 @@ class HttpAuthModule extends GalleryModule {
 	}
 
 	if (!empty($params['httpAuthPlugin'])) {
-	    $ret = GalleryCoreApi::registerFactoryImplementation('GalleryAuthPlugin',
-		'HttpAuthPlugin', 'HttpAuthPlugin',
+	    $ret = GalleryCoreApi::registerFactoryImplementation(
+		'GalleryAuthPlugin', 'HttpAuthPlugin', 'HttpAuthPlugin',
 		'modules/httpauth/classes/HttpAuthPlugin.class', $this->getId(), null);
 	    if ($ret) {
 		return $ret;
@@ -58,8 +81,8 @@ class HttpAuthModule extends GalleryModule {
 	}
 
 	if (!empty($params['serverAuthPlugin'])) {
-	    $ret = GalleryCoreApi::registerFactoryImplementation('GalleryAuthPlugin',
-		'ServerAuthPlugin', 'ServerAuthPlugin',
+	    $ret = GalleryCoreApi::registerFactoryImplementation(
+		'GalleryAuthPlugin', 'ServerAuthPlugin', 'ServerAuthPlugin',
 		'modules/httpauth/classes/ServerAuthPlugin.class', $this->getId(), null);
 	    if ($ret) {
 		return $ret;
@@ -71,16 +94,19 @@ class HttpAuthModule extends GalleryModule {
      * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
-	if (is_callable(array('GalleryCoreApi', 'registerEventListener_NEW'))) {
-	    return GalleryCoreApi::registerEventListener_NEW('Gallery::Error',
-		'HttpAuthErrorEventListener', 'HttpAuthErrorEventListener',
-		'modules/httpauth/classes/HttpAuthErrorEventListener.class', $this->getId());
+	$ret = GalleryCoreApi::registerEventListener(
+	    'Gallery::ActivatePlugin', new HttpAuthModule());
+	if ($ret) {
+	    return $ret;
 	}
 
-	GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthErrorEventListener.class');
+	$ret = GalleryCoreApi::registerEventListener(
+	    'Gallery::Error', new HttpAuthModule());
+	if ($ret) {
+	    return $ret;
+	}
 
-	return GalleryCoreApi::registerEventListener('Gallery::Error',
-	    new HttpAuthErrorEventListener());
+	return null;
     }
 
     /**
@@ -90,7 +116,6 @@ class HttpAuthModule extends GalleryModule {
 	switch ($currentVersion) {
 	case null:
 	    /* Initial install */
-
 	    foreach (array('httpAuthPlugin' => true,
 		    'authName' => 'Gallery',
 		    'authtypePattern' => '//',
@@ -102,14 +127,14 @@ class HttpAuthModule extends GalleryModule {
 		}
 	    }
 
+	case '0.0.1':
+	    /* Add AuthFilterPlugin and RegexAuthFilterPlugin */
+
 	case '0.1.0':
-	    /* Added AuthFilterPlugin and RegexAuthFilterPlugin */
+	    /* Update to lighter event subsystem */
 
 	case '0.1.1':
-	    /* Updated to lighter event subsystem */
-
-	case '0.2.0':
-	    /* Introduced auth plugins */
+	    /* Introduce auth plugins */
 
 	    list ($ret, $params) = $this->fetchParameters();
 	    if ($ret) {
@@ -152,11 +177,18 @@ class HttpAuthModule extends GalleryModule {
 		}
 	    }
 
-	case '0.2.1':
+	case '0.2.0':
 	    /* Some 2.2 API changes */
 
+	case '0.2.1':
+	    /* Simplify auth plugin system */
+
 	case '0.3.0':
-	    /* Simplified auth plugin system */
+	    /* Add support for the php-cgi server API */
+	    $ret = $this->_activateRewriteRules();
+	    if ($ret && !($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED)) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    break;
@@ -171,8 +203,158 @@ class HttpAuthModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	return array(null, array(array('name' => $this->getName(),
-	    'view' => 'httpauth.HttpAuthSiteAdmin')));
+	return array(null, array(array('name' => $this->translate($this->getName()),
+				       'view' => 'httpauth.HttpAuthSiteAdmin')));
+    }
+
+    /**
+     * @see GalleryModule::getRewriteRules
+     */
+    function getRewriteRules() {
+	$rules = array();
+
+	/*
+	 * Only define the rule to pass the Authorization header to Gallery in a request variable if
+	 * it is already active, or if Gallery can't access HTTP usernames and passwords
+	 */
+	list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	if ($ret) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug('Error in HttpAuthModule::getRewriteRules: ' . $ret->getAsText());
+	    }
+	    return $rules;
+	}
+	if (empty($rewriteApi)) {
+	    return $rules;
+	}
+
+	list ($ret, $isCompatible) = $rewriteApi->isCompatibleWithApi(array(1, 1));
+	if ($ret) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug('Error in HttpAuthModule::getRewriteRules: ' . $ret->getAsText());
+	    }
+	    return $rules;
+	}
+	if (!$isCompatible) {
+	    return $rules;
+	}
+
+	list ($ret, $activeRules) = $rewriteApi->fetchActiveRulesForModule($this->getId());
+	if ($ret) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug('Error in HttpAuthModule::getRewriteRules: ' . $ret->getAsText());
+	    }
+	    return $rules;
+	}
+	if (!in_array('authorization', $activeRules)) {
+	    /* Check that Gallery can access HTTP usernames and passwords */
+	    GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+	    list ($ret, $success) = HttpAuthHelper::checkHttpAuth();
+	    if ($ret) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug(
+			'Error in HttpAuthModule::getRewriteRules: ' . $ret->getAsText());
+		}
+		return $rules;
+	    }
+	    if ($success) {
+		return $rules;
+	    }
+	}
+
+	/* Pass the Authorization header to Gallery in a request variable */
+	$rules['authorization'] = array(
+	    'comment' => $this->translate('Authorization Header'),
+	    'help' => $this->translate(
+		'Pass the Authorization header to Gallery in a request variable.'),
+	    'match' => array('href' => ''),
+	    'conditions' => array(array('test' => 'HTTP:Authorization',
+					'pattern' => '%authorization%'),
+				  array('test' => 'QUERY_STRING',
+					'pattern' => '!' . GalleryUtilities::prefixFormVariable(
+					    'authorization') . '=')),
+	    'flags' => array('QSA'),
+	    'keywords' => array(
+		'authorization' => array(
+		    'pattern' => '(.+)',
+		    'help' => $this->translate('Authorization header.'))));
+
+	return $rules;
+    }
+
+    /**
+     * @see GalleryEventListener::handleEvent
+     */
+    function handleEvent($event) {
+	switch ($event->getEventName()) {
+	case 'Gallery::ActivatePlugin':
+	    $data = $event->getData();
+	    if ($data['pluginType'] != 'module' || $data['pluginId'] != 'rewrite') {
+		return array(null, null);
+	    }
+
+	    $ret = $this->_activateRewriteRules();
+	    if ($ret && !($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED)) {
+		return array($ret, null);
+	    }
+
+	    return array(null, null);
+
+	case 'Gallery::Error':
+	    $data = $event->getData();
+	    if (!($data['error']->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+		return array(null, null);
+	    }
+
+	    list ($ret, $params) = $this->fetchParameters();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    if (empty($params['httpAuthPlugin'])) {
+		return array(null, null);
+	    }
+
+	    GalleryUtilities::setResponseHeader('HTTP/1.0 401 Unauthorized', false);
+	    GalleryUtilities::setResponseHeader(
+		"WWW-Authenticate: Basic realm='$params[authName]'", false);
+
+	    return array(null, null);
+	}
+
+	return array(null, null);
+    }
+
+    /**
+     * Activate essential rewrite rules.
+     * @return object GalleryStatus a status code
+     */
+    function _activateRewriteRules() {
+	list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	if ($ret) {
+	    return $ret;
+	}
+	if (empty($rewriteApi)) {
+	    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
+	}
+
+	list ($ret, $isCompatible) = $rewriteApi->isCompatibleWithApi(array(1, 1));
+	if ($ret) {
+	    return $ret;
+	}
+	if (!$isCompatible) {
+	    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
+	}
+
+	list ($ret, $success) = $rewriteApi->activateRewriteRulesForModule($this->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	if (!$success) {
+	    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
+	}
+
+	return null;
     }
 }
 ?>

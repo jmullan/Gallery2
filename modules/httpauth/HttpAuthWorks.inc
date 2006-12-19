@@ -18,36 +18,29 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+
 /**
+ * Reflect the HTTP authtype, username, and password so we can check that Gallery can access them.
  * @package HttpAuth
- * @subpackage Classes
+ * @subpackage UserInterface
  * @author Jack Bates <ms419@freezone.co.uk>
  * @version $Revision$
  */
-class HttpAuthErrorEventListener /* extends GalleryEventListener */ {
+class HttpAuthWorksView extends GalleryView {
 
     /**
-     * @see GalleryEventListener::handleEvent
+     * @see GalleryView::isImmediate
      */
-    function handleEvent($event) {
-	$data = $event->getData();
-	if ($data['error']->getErrorCode() & ERROR_PERMISSION_DENIED) {
-	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
-	    if ($ret) {
-		return array($ret, null);
-	    }
+    function isImmediate() {
+	return true;
+    }
 
-	    if ($params['httpAuthPlugin']) {
-		GalleryUtilities::setResponseHeader('HTTP/1.0 401 Authorization Required', false);
-		GalleryUtilities::setResponseHeader(
-		    "WWW-Authenticate: Basic realm='$params[authName]'", false);
-
-		/* Signal the error page that there's no need to send back any HTML response */
-		return array(null, array('suppressBody' => 1));
-	    }
-	}
-
-	return array(null, null);
+    /**
+     * @see GalleryView::renderImmediate
+     */
+    function renderImmediate($status, $error) {
+	echo implode("\n", HttpAuthHelper::getHttpAuth());
     }
 }
 ?>

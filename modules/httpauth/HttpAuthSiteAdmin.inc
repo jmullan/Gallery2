@@ -18,7 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+
 /**
+ * Show configuration warnings and settings to site admins.
  * @package HttpAuth
  * @subpackage UserInterface
  * @author Jack Bates <ms419@freezone.co.uk>
@@ -65,14 +68,16 @@ class HttpAuthSiteAdminController extends GalleryController {
 
 	    foreach (array('httpAuthPlugin', 'authName', 'serverAuthPlugin', 'regexAuthPlugin',
 		    'authtypePattern', 'usernamePattern', 'usernameReplace') as $key) {
-		if (in_array($key,
-			     array('httpAuthPlugin', 'serverAuthPlugin', 'regexAuthPlugin'))) {
-		    /* Handle checkboxes */
-		    $form[$key] = !empty($form[$key]);
-		}
-		$ret = $module->setParameter($key, $form[$key]);
-		if ($ret) {
-		    return array($ret, null);
+		if (isset($form[$key])) {
+		    $ret = $module->setParameter($key, $form[$key]);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		} else {
+		    $ret = $module->removeParameter($key);
+		    if ($ret) {
+			return array($ret, null);
+		    }
 		}
 	    }
 
@@ -96,6 +101,9 @@ class HttpAuthSiteAdminController extends GalleryController {
     }
 }
 
+/**
+ * Show configuration warnings and settings to site admins.
+ */
 class HttpAuthSiteAdminView extends GalleryView {
 
     /**
@@ -113,19 +121,10 @@ class HttpAuthSiteAdminView extends GalleryView {
 	}
 
 	$HttpAuthSiteAdmin = array();
-	if ($params['httpAuthPlugin'] && strstr(php_sapi_name(), 'cgi')) {
 
-	    /* Check Authorization HTTP header rewrite rule is enabled, until RewriteApi is ready */
-	    list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
-		'activeRules');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    $activeRules = unserialize($activeRules);
-
-	    if (!in_array('httpauth', array_keys($activeRules))) {
-		$HttpAuthSiteAdmin['rewriteWarning'] = true;
-	    }
+	list ($ret, $HttpAuthSiteAdmin['code']) = HttpAuthHelper::checkConfiguration();
+	if ($ret) {
+	    return array($ret, null);
 	}
 
 	/* Load our default values if we didn't just come from this form */
@@ -137,11 +136,6 @@ class HttpAuthSiteAdminView extends GalleryView {
 		    $form[$key] = $params[$key];
 		}
 	    }
-	}
-
-	/* Handle checkboxes */
-	foreach (array('httpAuthPlugin', 'serverAuthPlugin', 'regexAuthPlugin') as $key) {
-	    $form[$key] = !empty($form[$key]);
 	}
 
 	/* Render HTML body */

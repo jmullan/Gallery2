@@ -14,12 +14,55 @@
   </div>
 {/if}
 
-{if isset($HttpAuthSiteAdmin.rewriteWarning)}
+{if $HttpAuthSiteAdmin.code & HTTPAUTH_STATUS_MISSING_AUTHORIZATION}
   <div class="gbBlock">
-    <h2 class="giWarning"> {g->text text="Rewrite rule not configured"} </h2>
+    <h3 class="giWarning"> {g->text text="Missing HTTP Authorization"} </h3>
 
     <p class="giDescription">
-      {g->text text="You are running Gallery with the PHP CGI server API but the Authorization HTTP header rewrite rule isn't enabled.  HTTP authentication against Gallery's user database won't work without this rule because CGI scripts ordinarily can't access the Authorization HTTP header in which usernames and passwords are sent.  Web server authentication will still work."}
+      {g->text text="Gallery can't access HTTP usernames and passwords.  You can still use your web server's authentication.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:httpauth\">" arg2="</a>"}
+    </p>
+  </div>
+{/if}
+
+{if $HttpAuthSiteAdmin.code & HTTPAUTH_STATUS_REWRITE_MODULE_DISABLED}
+  <div class="gbBlock">
+    <h3 class="giWarning"> {g->text text="URL rewrite module disabled"} </h3>
+
+    <p class="giDescription">
+      {capture assign="adminPluginsUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins" return=true}{/capture}
+      {g->text text="We can't fall back on passing HTTP usernames and passwords to Gallery because the URL rewrite module is disabled.  You should activate the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminPluginsUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:httpauth\">" arg4="</a>"}
+    </p>
+  </div>
+{/if}
+
+{if $HttpAuthSiteAdmin.code & HTTPAUTH_STATUS_BAD_REWRITE_PARSER}
+  <div class="gbBlock">
+    <h3 class="giWarning"> {g->text text="Bad URL rewrite configuration"} </h3>
+
+    <p class="giDescription">
+      {capture assign="adminPluginsUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins" return=true}{/capture}
+      {g->text text="PHP PathInfo rewrite doesn't support the rule to fall back on passing HTTP usernames and passwords to Gallery.  You should uninstall and reinstall the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminPluginsUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:httpauth\">" arg4="</a>"}
+    </p>
+  </div>
+{/if}
+
+{if $HttpAuthSiteAdmin.code & HTTPAUTH_STATUS_AUTHORIZATION_RULE_DISABLED}
+  <div class="gbBlock">
+    <h3 class="giWarning"> {g->text text="'Authorization Header' rule disabled"} </h3>
+
+    <p class="giDescription">
+      {capture assign="adminRewriteUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite" return=true}{/capture}
+      {g->text text="The URL rewrite rule to fall back on passing HTTP usernames and passwords to Gallery is disabled.  You should activate the HTTP auth 'Authorization Header' rule in the %sSite Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminRewriteUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:httpauth\">" arg4="</a>"}
+    </p>
+  </div>
+{/if}
+
+{if $HttpAuthSiteAdmin.code & HTTPAUTH_STATUS_ERROR_UNKNOWN}
+  <div class="gbBlock">
+    <h3 class="giWarning"> {g->text text="Unknown Cause"} </h3>
+
+    <p class="giDescription">
+      {g->text text="Gallery can't access HTTP usernames and passwords and automated checks failed to find a cause.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:httpauth\">" arg2="</a>"}
     </p>
   </div>
 {/if}
@@ -30,10 +73,10 @@
   </p>
 
   <label for="cbHttpAuthPluginInput"> {g->text text="Use HTTP Authentication:"} </label>
-  <input id="cbHttpAuthPluginInput" name="{g->formVar var="form[httpAuthPlugin]"}" type="checkbox"{if $form.httpAuthPlugin} checked="checked"{/if} onclick="BlockToggle('cbAuthName')"/>
+  <input id="cbHttpAuthPluginInput" name="{g->formVar var="form[httpAuthPlugin]"}" type="checkbox"{if !empty($form.httpAuthPlugin)} checked="checked"{/if} onclick="BlockToggle('cbAuthName')"/>
 </div>
 
-<div class="gbBlock" id="cbAuthName"{if !$form.httpAuthPlugin} style="display: none"{/if}>
+<div class="gbBlock" id="cbAuthName"{if empty($form.httpAuthPlugin)} style="display: none"{/if}>
   <p class="giDescription">
     {g->text text="Gallery will prompt you to login with HTTP authentication when permission is denied.  HTTP authentication sends your client a realm to which your username belongs.  It's safe to leave the realm blank."}
   </p>
@@ -47,7 +90,7 @@
   </p>
 
   <label for="cbServerAuthPluginInput"> {g->text text="Use Web Server Authentication:"} </label>
-  <input id="cbServerAuthPluginInput" name="{g->formVar var="form[serverAuthPlugin]"}" type="checkbox"{if $form.serverAuthPlugin} checked="checked"{/if}/>
+  <input id="cbServerAuthPluginInput" name="{g->formVar var="form[serverAuthPlugin]"}" type="checkbox"{if !empty($form.serverAuthPlugin)} checked="checked"{/if}/>
 </div>
 
 <div class="gbBlock">
@@ -56,10 +99,10 @@
   </p>
 
   <label for="cbRegexAuthPluginInput"> {g->text text="Use Regular Expressions:"} </label>
-  <input id="cbRegexAuthPluginInput" name="{g->formVar var="form[regexAuthPlugin]"}" type="checkbox"{if $form.regexAuthPlugin} checked="checked"{/if} onclick="BlockToggle('cbAuthtypeRegex'); BlockToggle('cbUsernameRegex')"/>
+  <input id="cbRegexAuthPluginInput" name="{g->formVar var="form[regexAuthPlugin]"}" type="checkbox"{if !empty($form.regexAuthPlugin)} checked="checked"{/if} onclick="BlockToggle('cbAuthtypeRegex'); BlockToggle('cbUsernameRegex')"/>
 </div>
 
-<div class="gbBlock" id="cbAuthtypeRegex"{if !$form.regexAuthPlugin} style="display: none"{/if}>
+<div class="gbBlock" id="cbAuthtypeRegex"{if empty($form.regexAuthPlugin)} style="display: none"{/if}>
   <p class="giDescription">
     {g->text text="Specify here a regular expression which the authentication type must match for authentication to proceed; for instance /Negotiate/"}
   </p>
@@ -68,12 +111,12 @@
   <input name="{g->formVar var="form[authtypePattern]"}" type="text" value="{$form.authtypePattern}"/>
 
   {if !empty($form.error.authtype.regex.invalid)}
-  <div class="giError"> {g->text text="You must enter a valid regular expression"} </div>
-  <div class="giError"> {$status.authtypeRegexMessage} </div>
+    <div class="giError"> {g->text text="You must enter a valid regular expression"} </div>
+    <div class="giError"> {$status.authtypeRegexMessage} </div>
   {/if}
 </div>
 
-<div class="gbBlock" id="cbUsernameRegex" {if !$form.regexAuthPlugin} style="display: none"{/if}>
+<div class="gbBlock" id="cbUsernameRegex" {if empty($form.regexAuthPlugin)} style="display: none"{/if}>
   <p class="giDescription">
     {g->text text="Specify here a regular expression which the username must match for authentication to proceed and a string with which to replace it.  See PHP %s documentation for more information." arg1="<a href=\"http://php.net/preg_replace\"> preg_replace </a>"}
   </p>
@@ -85,8 +128,8 @@
   <input name="{g->formVar var="form[usernameReplace]"}" type="text" value="{$form.usernameReplace}"/>
 
   {if !empty($form.error.username.regex.invalid)}
-  <div class="giError"> {g->text text="You must enter a valid regular expression"} </div>
-  <div class="giError"> {$status.usernameRegexMessage} </div>
+    <div class="giError"> {g->text text="You must enter a valid regular expression"} </div>
+    <div class="giError"> {$status.usernameRegexMessage} </div>
   {/if}
 </div>
 

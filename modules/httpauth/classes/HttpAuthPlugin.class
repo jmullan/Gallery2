@@ -33,17 +33,7 @@ class HttpAuthPlugin /* extends GalleryAuthPlugin */ {
      * @see GalleryAuthPlugin::getUser
      */
     function getUser() {
-	$authtype = GalleryUtilities::getServerVar('AUTH_TYPE');
-	$username = GalleryUtilities::getServerVar('PHP_AUTH_USER');
-	$password = GalleryUtilities::getServerVar('PHP_AUTH_PW');
-
-	if (empty($username)) {
-	    $authorization = GalleryUtilities::getRequestVariables('authorization');
-	    if (!empty($authorization)) {
-		list ($authtype, $authdata) = explode(' ', $authorization);
-		list ($username, $password) = explode(':', base64_decode($authdata));
-	    }
-	}
+	list ($authtype, $username, $password) = HttpAuthHelper::getHttpAuth();
 
 	/* Ignore disabled users, since we don't have a facility for showing an error */
 	list ($ret, $isDisabled) = GalleryCoreApi::isDisabledUsername($username);

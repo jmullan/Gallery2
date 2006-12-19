@@ -18,13 +18,141 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/* HTTP auth status codes */
+define('HTTPAUTH_STATUS_MISSING_AUTHORIZATION', 0x00000002);
+define('HTTPAUTH_STATUS_REWRITE_MODULE_DISABLED', 0x00000004);
+define('HTTPAUTH_STATUS_BAD_REWRITE_PARSER', 0x00000008);
+define('HTTPAUTH_STATUS_AUTHORIZATION_RULE_DISABLED', 0x00000010);
+define('HTTPAUTH_STATUS_ERROR_UNKNOWN', 0x80000000);
+
 /**
+ * HTTP auth helper class.
  * @package HttpAuth
  * @subpackage Classes
  * @author Jack Bates <ms419@freezone.co.uk>
  * @version $Revision$
+ * @static
  */
 class HttpAuthHelper {
+
+    /**
+     * Check this module's configuration.
+     * @return array object GalleryStatus a status code
+     *               int HTTP auth status code
+     */
+    function checkConfiguration() {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$code = 0x00000000;
+
+	/* Check that Gallery can access HTTP usernames and passwords */
+	list ($ret, $success) = HttpAuthHelper::checkHttpAuth();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/* Check for causes why Gallery can't access HTTP usernames and passwords */
+	if (!$success) {
+	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginList('module');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    if (empty($moduleStatus['rewrite']['active'])) {
+		$code |= HTTPAUTH_STATUS_REWRITE_MODULE_DISABLED;
+	    } else {
+		list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (empty($rewriteApi)) {
+		    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
+		}
+
+		list ($ret, $isCompatible) = $rewriteApi->isCompatibleWithApi(array(1, 1));
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (!$isCompatible) {
+		    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
+		}
+
+		if ($rewriteApi->getParserType() != 'preGallery') {
+		    $code |= HTTPAUTH_STATUS_BAD_REWRITE_PARSER;
+		} else {
+		    list ($ret, $activeRules) = $rewriteApi->fetchActiveRulesForModule('httpauth');
+		    if ($ret) {
+			return array($ret, null);
+		    }
+
+		    if (!in_array('authorization', $activeRules)) {
+			$code |= HTTPAUTH_STATUS_AUTHORIZATION_RULE_DISABLED;
+		    }
+		}
+	    }
+
+	    /* No causes found for why Gallery can't access HTTP usernames and passwords! */
+	    if (!$code) {
+		$code |= HTTPAUTH_STATUS_ERROR_UNKNOWN;
+	    }
+
+	    $code |= HTTPAUTH_STATUS_MISSING_AUTHORIZATION;
+	}
+
+	return array(null, $code);
+    }
+
+    /**
+     * Check that Gallery can access HTTP usernames and passwords.
+     * @return array object GalleryStatus a status code
+     *               boolean true if Gallery can access HTTP usernames and passwords
+     */
+    function checkHttpAuth() {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	/*
+	 * Only check if the HTTP auth plugin is enabled.  Otherwise, access to HTTP usernames and
+	 * passwords is not required.
+	 */
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (empty($params['httpAuthPlugin'])) {
+	    return array(null, true);
+	}
+
+	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage($urlGenerator->generateUrl(
+		array('view' => 'httpauth.HttpAuthWorks'),
+		array('forceFullUrl' => true,
+		      'htmlEntities' => false)),
+	    'GET', array('Authorization' => 'AUTHTYPE ' . base64_encode('USERNAME:PASSWORD')));
+
+	return array(null, trim($body) == "AUTHTYPE\nUSERNAME\nPASSWORD");
+    }
+
+    /**
+     * Get the HTTP authtype, username, and password using either the PHP server variables or the
+     * authorization request variable.
+     * @return array string HTTP authtype
+     *               string HTTP username
+     *               string HTTP password
+     */
+    function getHttpAuth() {
+	$authtype = GalleryUtilities::getServerVar('AUTH_TYPE');
+	$username = GalleryUtilities::getServerVar('PHP_AUTH_USER');
+	$password = GalleryUtilities::getServerVar('PHP_AUTH_PW');
+
+	$authorization = GalleryUtilities::getRequestVariables('authorization');
+	if (!empty($authorization)) {
+	    list ($authtype, $authdata) = explode(' ', $authorization);
+	    list ($username, $password) = explode(':', base64_decode($authdata));
+	}
+
+	return array($authtype, $username, $password);
+    }
 
     /**
      * Common code from HttpAuthPlugin::getUser and ServerAuthPlugin::getUser.
@@ -45,13 +173,11 @@ class HttpAuthHelper {
 
 	if (!empty($params['regexAuthPlugin'])) {
 	    if (!preg_match($params['authtypePattern'], $authtype)) {
-
 		/* Reject authentication type */
 	    	return array(null, null);
 	    }
 
 	    if (!preg_match($params['usernamePattern'], $username)) {
-
 		/* Reject username */
 	    	return array(null, null);
 	    }
