@@ -117,14 +117,14 @@
 	  || isset($form.error.1.$moduleId.$ruleId)
 	  || isset($form.error.3.$match)
 	  || isset($form.error.4.$moduleId.$ruleId)}
-	<img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13"
-	       alt="{g->text text="Status: Error"}" />
+	<div class="icon-plugin-incompatible" style="height:16px"
+	     title="{g->text text="Status: Error"}"></div>
       {elseif isset($rule.active)}
-	<img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13"
-	     alt="{g->text text="Status: Active"}" />
+	<div class="icon-plugin-active" style="height:16px"
+	     title="{g->text text="Status: Active"}"></div>
       {else}
-	<img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13"
-	     alt="{g->text text="Status: Not Active"}" />
+	<div class="icon-plugin-uninstall" style="height:16px"
+	     title="{g->text text="Status: Not Active"}"></div>
       {/if}
     </td>
     <td>
