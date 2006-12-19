@@ -109,7 +109,8 @@ class IconsSiteAdminView extends GalleryView {
 		$map = array();
 		$active = array();
 		foreach ($css as $line) {
-		    if (preg_match_all('/gbLink-(.*?)[ },]/', $line, $matches)) {
+		    if (preg_match_all('/(?:gbLink|icon(?=-plugin))-(.*?)[ {,]/',
+				       $line, $matches)) {
 			$active = array_merge($active, $matches[1]);
 		    }
 		    if (preg_match('/url\((.*)\)/', $line, $matches)) {
