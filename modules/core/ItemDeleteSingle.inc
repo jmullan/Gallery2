@@ -32,8 +32,10 @@ class ItemDeleteSingleController extends GalleryController {
      */
     function handleRequest($form) {
 	global $gallery;
+	$session =& $gallery->getSession();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($itemId, $navId) = GalleryUtilities::getRequestVariables('itemId', 'navId');
 
 	$status = $error = array();
 	if (isset($form['action']['delete'])) {
@@ -58,9 +60,15 @@ class ItemDeleteSingleController extends GalleryController {
 	    /* The view shouldn't let us try to delete the root album, either */
 	    if ($itemId == $rootId) {
 		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  "Can't delete the root album"), null);
+						   "Can't delete the root album"), null);
 	    }
 
+	    /* Save URL for trimming from navigation links */
+	    $itemUrl = $urlGenerator->generateUrl(
+		    array('view' => 'core.ShowItem', 'itemId' => $itemId),
+		    array('forceSessionId' => false));
+
+	    /* Delete */
 	    $ret = GalleryCoreApi::deleteEntityById($itemId);
 	    if ($ret) {
 		return array($ret, null);
@@ -72,6 +80,17 @@ class ItemDeleteSingleController extends GalleryController {
 		return array($ret, null);
 	    }
 	    /* What do we do if we weren't successful?  No thumbnail, I guess */
+
+	    /* Trim navigation if previous URL is ShowItem for this item */
+	    if (!empty($navId)) {
+		$navigation = $session->getNavigation($navId);
+		if ($i = strpos($itemUrl, '?')) {
+		    $itemUrl = substr($itemUrl, 0, $i);
+		}
+		if (strpos($navigation[0]['returnUrl'], $itemUrl) !== false) {
+		    $session->jumpNavigation($navId);
+		}
+	    }
 
 	    $status['deleted'] = 1;
 
@@ -103,8 +122,6 @@ class ItemDeleteSingleView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	if ($form['formName'] != 'ItemDeleteSingle') {
