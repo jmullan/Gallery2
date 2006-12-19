@@ -13,6 +13,8 @@
     {if $theme.pageType == 'album' || $theme.pageType == 'photo'}
     <meta name="keywords" content="{$theme.item.keywords}" />
     <meta name="description" content="{$theme.item.description|markup:strip}" />
+    {/if}
+    {if $theme.pageType != 'admin'}
     <script type="text/javascript" src="{g->url href='themes/carbon/theme.js'}"></script>
     {/if}
 
