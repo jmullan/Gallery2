@@ -106,7 +106,11 @@ class GallerySetupUtilities {
 	 */
 	require_once(dirname(__FILE__) . '/../../embed.php');
 
-	$ret = GalleryEmbed::init(array('fullInit' => false));
+	$init = array('fullInit' => false);
+	if (isset($_SESSION['language'])) {
+	    $init['activeLanguage'] = $_SESSION['language'];
+	}
+	$ret = GalleryEmbed::init($init);
 	if ($ret) {
 	    return false;
 	}
