@@ -130,11 +130,14 @@ class AdminPerformanceView extends GalleryView {
 	    }
 	    if ($acceleration) {
 		$form['acceleration'] = unserialize($acceleration);
-	    } else {
-		$form['acceleration']['guest']['type'] = 'none';
-		$form['acceleration']['guest']['expiration'] = '3600';
-		$form['acceleration']['user']['type'] = 'none';
-		$form['acceleration']['user']['expiration'] = '3600';
+	    }
+	    foreach (array('user', 'guest') as $class) {
+		if (!isset($form['acceleration'][$class]['type'])) {
+		    $form['acceleration'][$class]['type'] = 'none';
+		}
+		if (!isset($form['acceleration'][$class]['expiration'])) {
+		    $form['acceleration'][$class]['expiration'] = '0';
+		}
 	    }
 	}
 
