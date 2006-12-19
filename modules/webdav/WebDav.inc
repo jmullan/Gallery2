@@ -22,6 +22,7 @@ GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
 GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
 
 /**
+ * The WebDAV controller handles all WebDAV requests.
  * @package WebDav
  * @subpackage UserInterface
  * @author Jack Bates <ms419@freezone.co.uk>
@@ -35,6 +36,17 @@ class WebDavController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
+
+	/*
+	 * Suppress generating HTML error pages for WebDAV clients.  Exploit the fact that event
+	 * listeners aren't currently stored in the database, so this event listener is only
+	 * registered for this request.  Since this is the WebDAV controller, we know it is a WebDAV
+	 * request.
+	 */
+	$ret = GalleryCoreApi::registerEventListener('Gallery::Error', new WebDavModule());
+	if ($ret) {
+	    return array($ret, null);
+	}
 
 	/*
 	 * GalleryCoreApi::addItemToAlbum normalizes path components but
@@ -142,6 +154,9 @@ class WebDavController extends GalleryController {
     }
 }
 
+/**
+ * The WebDAV view generates WebDAV responses.
+ */
 class WebDavView extends GalleryView {
 
     /**

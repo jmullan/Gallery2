@@ -18,14 +18,23 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/* WebDAV status codes */
+define('WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED', 0x00000002);
+define('WEBDAV_STATUS_REWRITE_MODULE_DISABLED', 0x00000004);
+define('WEBDAV_STATUS_CONNECT_RULE_DISABLED', 0x00000008);
+define('WEBDAV_STATUS_MISSING_DAV_HEADERS', 0x00000010);
+define('WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS', 0x00000020);
+define('WEBDAV_STATUS_BAD_REWRITE_PARSER', 0x00000040);
+define('WEBDAV_STATUS_OPTIONS_RULE_DISABLED', 0x00000080);
+define('WEBDAV_STATUS_ERROR_UNKNOWN', 0x80000000);
+
+/* Gallery property namespace - RFC2518 18 */
+define('WEBDAV_GALLERY_NAMESPACE', 'http://gallery2.org/dav/props/');
+
 GalleryCoreApi::requireOnce('modules/webdav/lib/HTTP/WebDAV/Server.php');
 
 /**
- * Gallery property namespace - RFC2518 18
- */
-define('WEBDAV_GALLERY_NAMESPACE', 'http://gallery2.org/dav/props/');
-
-/**
+ * A WebDAV helper class.
  * @package WebDav
  * @subpackage Classes
  * @author Jack Bates <ms419@freezone.co.uk>
@@ -33,6 +42,139 @@ define('WEBDAV_GALLERY_NAMESPACE', 'http://gallery2.org/dav/props/');
  * @static
  */
 class WebDavHelper {
+
+    /**
+     * Check this module's configuration.
+     * @return array object GalleryStatus a status code
+     *               int WebDAV status code
+     */
+    function checkConfiguration() {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$code = 0x00000000;
+
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginList('module');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/*
+	 * Rewrite module must be enabled.  Check it regardless of missing DAV headers because it
+	 * also implies the connect rule is disabled.  Check it before checking for missing DAV
+	 * headers causes because it is a missing DAV headers cause.
+	 */
+	if (empty($moduleStatus['rewrite']['active'])) {
+	    $code |= WEBDAV_STATUS_REWRITE_MODULE_DISABLED;
+	} else {
+	    list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (empty($rewriteApi)) {
+		return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
+	    }
+
+	    list ($ret, $isCompatible) = $rewriteApi->isCompatibleWithApi(array(1, 1));
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (!$isCompatible) {
+		return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
+	    }
+
+	    list ($ret, $activeRules) = $rewriteApi->fetchActiveRulesForModule('webdav');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	/*
+	 * Check for missing DAV headers causes first so we can show the error unknown warning if no
+	 * causes are found.
+	 */
+	if (!WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
+		array('controller' => 'webdav.WebDav'),
+		array('forceFullUrl' => true,
+		      'htmlEntities' => false)))) {
+
+	    /* Already checked one cause: rewrite module disabled.  Check other causes. */
+	    if (!WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
+		    array('href' => 'modules/webdav/data/options/'),
+		    array('forceDirect' => true,
+			  'forceFullUrl' => true,
+			  'htmlEntities' => false)))) {
+		$code |= WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS;
+	    }
+
+	    if (!empty($moduleStatus['rewrite']['active'])) {
+		if ($rewriteApi->getParserType() != 'preGallery') {
+		    $code |= WEBDAV_STATUS_BAD_REWRITE_PARSER;
+		} else {
+		    if (!in_array('options', $activeRules)) {
+			$code |= WEBDAV_STATUS_OPTIONS_RULE_DISABLED;
+		    }
+		}
+	    }
+
+	    /* No causes found for missing DAV headers! */
+	    if (!$code) {
+		$code |= WEBDAV_STATUS_ERROR_UNKNOWN;
+	    }
+
+	    $code |= WEBDAV_STATUS_MISSING_DAV_HEADERS;
+	}
+
+	/*
+	 * Must use short URL because most WebDAV clients don't support query strings.  Check it
+	 * after checking for missing DAV headers causes so we can show the error unknown warning if
+	 * no causes are found.
+	 */
+	if (!empty($moduleStatus['rewrite']['active'])) {
+	    if (!in_array('connect', $activeRules)) {
+		$code |= WEBDAV_STATUS_CONNECT_RULE_DISABLED;
+	    }
+	}
+
+	/*
+	 * HTTP auth module must be enabled to authenticate with WebDAV.  Check it after checking
+	 * for missing DAV headers causes so we can show the error unknown warning if no causes are
+	 * found.
+	 */
+	if (empty($moduleStatus['httpauth']['active'])) {
+	    $code |= WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED;
+	}
+
+	return array(null, $code);
+    }
+
+    /**
+     * Check that OPTIONS responses includes the DAV headers.
+     * @param string $url
+     * @return boolean true if OPTIONS responses include the DAV headers
+     */
+    function checkDavHeaders($url) {
+	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage($url, 'OPTIONS');
+
+	if (!preg_match('/^HTTP\/[0-9]\.[0-9] 200/', $status)) {
+	    return false;
+	}
+
+	if (empty($headers['Allow']) || $headers['Allow'] != 'OPTIONS, PROPFIND, PROPPATCH, MKCOL'
+		. ', GET, HEAD, DELETE, PUT, MOVE, LOCK, UNLOCK') {
+	    return false;
+	}
+
+	if (empty($headers['DAV']) || $headers['DAV'] != '1,2') {
+	    return false;
+	}
+
+	if (empty($headers['MS-Author-Via']) || $headers['MS-Author-Via'] != 'DAV') {
+	    return false;
+	}
+
+	return true;
+    }
 
     /**
      * Get singleton WebDAV server library instance.
@@ -180,9 +322,8 @@ class WebDavHelper {
      */
     function options() {
 	/* TODO: COPY not implemented */
-	GalleryUtilities::setResponseHeader(
-	    'Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, DELETE, PUT, MOVE'
-	    . ', LOCK, UNLOCK');
+	GalleryUtilities::setResponseHeader('Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD'
+	    . ', DELETE, PUT, MOVE, LOCK, UNLOCK');
 	GalleryUtilities::setResponseHeader('DAV: 1,2');
 	GalleryUtilities::setResponseHeader('Content-Length: 0');
 	GalleryUtilities::setResponseHeader('MS-Author-Via: DAV');
@@ -839,10 +980,10 @@ class WebDavHelper {
     }
 
     /**
-     * COPY/MOVE request helper.
+     * COPY / MOVE request helper.
      *
      * Wrapper around HTTP_WebDAV_Server::copymove_request_helper which prepates data-structures
-     * from COPY/MOVE requests.
+     * from COPY / MOVE requests.
      *
      * @return array object GalleryStatus a status code
      *               array WebDAV library options

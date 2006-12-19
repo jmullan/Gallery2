@@ -872,7 +872,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals(array('status' => 'HTTP/1.0 404 Not Found'),
 			    GalleryUtilities::_getResponseHeaders());
 
-	//$this->assertEquals('', $output);
+	$this->assertEquals('', $output);
     }
 
     function testIllegalPathComponent() {
@@ -906,7 +906,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
 
-	//$this->assertEquals('', $output);
+	$this->assertEquals('', $output);
 
 	$headers = array();
 
@@ -929,7 +929,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
 
-	//$this->assertEquals('', $output);
+	$this->assertEquals('', $output);
     }
 
     function testIllegalDestination() {
@@ -979,7 +979,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'),
 			    GalleryUtilities::_getResponseHeaders());
 
-	//$this->assertEquals('', $output);
+	$this->assertEquals('', $output);
     }
 
     function testMacDotUnderscore() {
@@ -1013,7 +1013,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK'), $headers);
 
-	//$this->assertEquals('', $output);
+	$this->assertEquals('', $output);
 
 	$headers = array();
 
@@ -1036,7 +1036,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK'), $headers);
 
-	//$this->assertEquals('', $output);
+	$this->assertEquals('', $output);
     }
 
     function testMacDotDsStore() {
@@ -1070,7 +1070,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
 
-	//$this->assertEquals('', $output);
+	$this->assertEquals('', $output);
 
 	$headers = array();
 
@@ -1093,7 +1093,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
 
-	//$this->assertEquals('', $output);
+	$this->assertEquals('', $output);
     }
 }
 

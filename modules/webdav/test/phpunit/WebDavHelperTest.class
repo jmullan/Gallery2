@@ -1,0 +1,331 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2006 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
+
+/**
+ * WebDAV helper tests.
+ * @package WebDav
+ * @subpackage PHPUnit
+ * @author Jack Bates <ms419@freezone.co.uk>
+ * @version $Revision$
+ */
+class WebDavHelperTest extends GalleryTestCase {
+
+    function WebDavHelperTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	/* Mock activate the HTTP auth and rewrite modules */
+	$moduleStatus = array('httpauth' => array('active' => true),
+			      'rewrite' => array('active' => true));
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)', $moduleStatus);
+
+	/* Mock preGallery rewrite parser.  Mock activate WebDAV rewrite rules. */
+	$parserType =& WebDavHelperTestRewriteApi::_getParserType();
+	$parserType = 'preGallery';
+	$activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
+	$activeRules = array('connect', 'davmount', 'options');
+	$this->_markFactoryForCleanup();
+	$this->_registerFactoryImplementationForTest(
+	    'RewriteApi', 'WebDavHelperTestRewriteApi', 'WebDavHelperTestRewriteApi',
+	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'test');
+
+	/* Define OPTIONS and alternative URL requests */
+	$this->_optionsRequest = 'OPTIONS ' . $urlGenerator->generateUrl(
+		array('controller' => 'webdav.WebDav'),
+		array('forceServerRelativeUrl' => true,
+		      'htmlEntities' => false)) . " HTTP/1.0\r\n"
+	    . 'Host: ' . $urlGenerator->getHostName() . "\r\n"
+	    . "\r\n";
+	$this->_alternativeUrlRequest = 'OPTIONS ' . $urlGenerator->generateUrl(
+		array('href' => 'modules/webdav/data/options/'),
+		array('forceServerRelativeUrl' => true,
+		      'htmlEntities' => false)) . " HTTP/1.0\r\n"
+	    . 'Host: ' . $urlGenerator->getHostName() . "\r\n"
+	    . "\r\n";
+
+	/* Define success and failure responses */
+	$this->_includesDavHeadersResponse = 'HTTP/1.1 200 OK
+Date: Mon, 24 Nov 2003 05:40:03 GMT
+Server: Apache/1.3.28 (Unix)
+Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, DELETE, PUT, MOVE, LOCK, UNLOCK
+DAV: 1,2
+MS-Author-Via: DAV
+Content-Length: 0
+Connection: close
+Content-Type: text/html
+';
+	$this->_missingDavHeadersResponse = 'HTTP/1.1 200 OK
+Date: Mon, 24 Nov 2003 05:40:03 GMT
+Server: Apache/1.3.28 (Unix)
+Allow: OPTIONS, GET, HEAD, DELETE, PUT, LOCK, UNLOCK
+Content-Length: 0
+Connection: close
+Content-Type: text/html
+';
+
+	/* Use WebDavHelperTestPlatform */
+	$platform = new WebDavHelperTestPlatform();
+	$platform->_messages[$this->_optionsRequest] = $this->_includesDavHeadersResponse;
+	$platform->_messages[$this->_alternativeUrlRequest] = $this->_includesDavHeadersResponse;
+	$gallery->setPlatform($platform);
+    }
+
+    function tearDown() {
+	GalleryDataCache::reset();
+	parent::tearDown();
+    }
+
+    function testCheckConfiguration() {
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(!$code);
+    }
+
+    function testCheckConfigurationHttpAuthModuleDisabled() {
+	$moduleStatus = array('rewrite' => array('active' => true));
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)', $moduleStatus);
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED, $code);
+    }
+
+    function testCheckConfigurationRewriteModuleDisabled() {
+	$moduleStatus = array('httpauth' => array('active' => true));
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)', $moduleStatus);
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_REWRITE_MODULE_DISABLED, $code);
+    }
+
+    function testCheckConfigurationConnectRuleDisabled() {
+	$activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
+	$activeRules = array('davmount', 'options');
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_CONNECT_RULE_DISABLED, $code);
+    }
+
+    function testCheckConfigurationAlternativeUrlHeaders() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
+	$platform->_messages[$this->_alternativeUrlRequest] = $this->_missingDavHeadersResponse;
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
+			    | WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS, $code);
+    }
+
+    function testCheckConfigurationBadRewriteParser() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
+	$parserType =& WebDavHelperTestRewriteApi::_getParserType();
+	$parserType = 'inGallery';
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
+			    | WEBDAV_STATUS_BAD_REWRITE_PARSER, $code);
+    }
+
+    function testCheckConfigurationOptionsRuleDisabled() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
+	$activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
+	$activeRules = array('connect', 'davmount');
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
+			    | WEBDAV_STATUS_OPTIONS_RULE_DISABLED, $code);
+    }
+
+    function testCheckConfigurationErrorUnknown() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
+			    | WEBDAV_STATUS_ERROR_UNKNOWN, $code);
+    }
+
+    function testCheckConfigurationIncludesDavHeadersIgnoresCauses() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$platform->_messages[$this->_alternativeUrlRequest] = $this->_missingDavHeadersResponse;
+	$parserType =& WebDavHelperTestRewriteApi::_getParserType();
+	$parserType = 'bogus';
+	$activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
+	$activeRules = array('connect', 'davmount');
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(!$code);
+    }
+
+    function testCheckDavHeaders() {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$success = WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
+	    array('controller' => 'webdav.WebDav'),
+	    array('forceFullUrl' => true,
+		  'htmlEntities' => false)));
+	$this->assert($success);
+    }
+
+    function testCheckMissingDavHeaders() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
+
+	$success = WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
+	    array('controller' => 'webdav.WebDav'),
+	    array('forceFullUrl' => true,
+		  'htmlEntities' => false)));
+	$this->assert(!$success);
+    }
+}
+
+class WebDavHelperTestRewriteApi {
+    var $foo;
+
+    function &_fetchActiveRulesForModule($moduleId) {
+	static $activeRules;
+	return $activeRules;
+    }
+
+    function &_getParserType() {
+	static $parserType;
+	return $parserType;
+    }
+
+    function isCompatibleWithApi($version) {
+	return array(null, true);
+    }
+
+    function fetchActiveRulesForModule($moduleId) {
+	return array(null, WebDavHelperTestRewriteApi::_fetchActiveRulesForModule($moduleId));
+    }
+
+    function getParserType() {
+	return WebDavHelperTestRewriteApi::_getParserType();
+    }
+}
+
+class WebDavHelperTestPlatform extends GalleryPlatform {
+    var $_messages;
+    var $_buffer;
+
+    function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
+	return 'test';
+    }
+
+    function feof($handle) {
+	return empty($this->_buffer);
+    }
+
+    function fgets($handle, $length) {
+	if (empty($this->_buffer)) {
+	    return null;
+	}
+
+	if (strpos($this->_buffer, "\n") < $length) {
+	    $length = strpos($this->_buffer, "\n") + 1;
+	}
+
+	return $this->fread($handle, $length);
+    }
+
+    function fread($handle, $length) {
+	if (empty($this->_buffer)) {
+	    return null;
+	}
+
+	$buffer = substr($this->_buffer, 0, $length);
+	$this->_buffer = substr($this->_buffer, $length);
+	return $buffer;
+    }
+
+    function fwrite($handle, $string, $length=0) {
+	if (isset($this->_messages[$string])) {
+	    $this->_buffer = $this->_messages[$string];
+	    return strlen($string);
+	}
+    }
+
+    function fflush($handle) {
+	return true;
+    }
+
+    function fclose($handle) {
+	return true;
+    }
+}
+?>

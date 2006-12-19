@@ -21,6 +21,8 @@
 GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
 
 /**
+ * Add items with WebDAV.  Handle WebDAV PUT requests and describe to users how to add items with
+ * WebDAV.
  * @package WebDav
  * @subpackage UserInterface
  * @author Jack Bates <ms419@freezone.co.uk>

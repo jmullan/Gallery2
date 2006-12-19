@@ -18,8 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
-
 /**
  * WebDAV module tests.
  * @package WebDav
@@ -29,7 +27,7 @@ GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
  */
 class WebDavModuleTest extends GalleryTestCase {
 
-    function WebDavTest($methodName) {
+    function WebDavModuleTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
 
@@ -62,6 +60,55 @@ class WebDavModuleTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
+	/* Mock disable WebDAV rewrite rules */
+	$activeRules =& WebDavModuleTestRewriteApi::_fetchActiveRulesForModule('webdav');
+	$activeRules = array();
+	$this->_markFactoryForCleanup();
+	$this->_registerFactoryImplementationForTest(
+	    'RewriteApi', 'WebDavModuleTestRewriteApi', 'WebDavModuleTestRewriteApi',
+	    'modules/webdav/test/phpunit/WebDavModuleTest.class', 'test');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Define OPTIONS request */
+	$this->_optionsRequest = 'OPTIONS ' . $urlGenerator->generateUrl(
+		array('controller' => 'webdav.WebDav'),
+		array('forceServerRelativeUrl' => true,
+		      'htmlEntities' => false)) . " HTTP/1.0\r\n"
+	    . 'Host: ' . $urlGenerator->getHostName() . "\r\n"
+	    . "\r\n";
+
+	/* Define success and failure responses */
+	$this->_includesDavHeadersResponse = 'HTTP/1.1 200 OK
+Date: Mon, 24 Nov 2003 05:40:03 GMT
+Server: Apache/1.3.28 (Unix)
+Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, DELETE, PUT, MOVE, LOCK, UNLOCK
+DAV: 1,2
+MS-Author-Via: DAV
+Content-Length: 0
+Connection: close
+Content-Type: text/html
+';
+	$this->_missingDavHeadersResponse = 'HTTP/1.1 200 OK
+Date: Mon, 24 Nov 2003 05:40:03 GMT
+Server: Apache/1.3.28 (Unix)
+Allow: OPTIONS, GET, HEAD, DELETE, PUT, LOCK, UNLOCK
+Content-Length: 0
+Connection: close
+Content-Type: text/html
+';
+
+	/* Use WebDavModuleTestPlatform */
+	$platform = new WebDavModuleTestPlatform();
+	$platform->_messages[$this->_optionsRequest] = $this->_includesDavHeadersResponse;
+	$gallery->setPlatform($platform);
+    }
+
+    function tearDown() {
+	GalleryDataCache::reset();
+	parent::tearDown();
     }
 
     function testGetItemLinks() {
@@ -139,6 +186,114 @@ class WebDavModuleTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array(), $links, 'must be a request for detailed links');
+    }
+
+    function testGetRewriteRules() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$rules = $module->getRewriteRules();
+
+	$this->assertEquals(array('connect', 'davmount'), array_keys($rules));
+    }
+
+    function testGetRewriteRulesOptionsRuleActive() {
+	$activeRules =& WebDavModuleTestRewriteApi::_fetchActiveRulesForModule('webdav');
+	$activeRules = array('options');
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$rules = $module->getRewriteRules();
+
+	$this->assertEquals(array('connect', 'davmount', 'options'), array_keys($rules));
+    }
+
+    function testGetRewriteRulesMissingDavHeaders() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$rules = $module->getRewriteRules();
+
+	$this->assertEquals(array('connect', 'davmount', 'options'), array_keys($rules));
+    }
+}
+
+class WebDavModuleTestRewriteApi {
+    var $foo;
+
+    function &_fetchActiveRulesForModule($moduleId) {
+	static $activeRules;
+	return $activeRules;
+    }
+
+    function isCompatibleWithApi($version) {
+	return array(null, true);
+    }
+
+    function fetchActiveRulesForModule($moduleId) {
+	return array(null, WebDavModuleTestRewriteApi::_fetchActiveRulesForModule($moduleId));
+    }
+}
+
+class WebDavModuleTestPlatform extends GalleryPlatform {
+    var $_messages;
+    var $_buffer;
+
+    function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
+	return 'test';
+    }
+
+    function feof($handle) {
+	return empty($this->_buffer);
+    }
+
+    function fgets($handle, $length) {
+	if (empty($this->_buffer)) {
+	    return null;
+	}
+
+	if (strpos($this->_buffer, "\n") < $length) {
+	    $length = strpos($this->_buffer, "\n") + 1;
+	}
+
+	return $this->fread($handle, $length);
+    }
+
+    function fread($handle, $length) {
+	if (empty($this->_buffer)) {
+	    return null;
+	}
+
+	$buffer = substr($this->_buffer, 0, $length);
+	$this->_buffer = substr($this->_buffer, $length);
+	return $buffer;
+    }
+
+    function fwrite($handle, $string, $length=0) {
+	if (isset($this->_messages[$string])) {
+	    $this->_buffer = $this->_messages[$string];
+	    return strlen($string);
+	}
+    }
+
+    function fflush($handle) {
+	return true;
+    }
+
+    function fclose($handle) {
+	return true;
     }
 }
 ?>
