@@ -162,7 +162,6 @@ class EditCommentController extends GalleryController {
 
 	if (!empty($redirect)) {
 	    /* Redirect back to the confirmation page by default */
-	    $results['return'] = 1;
 	    $results['redirect'] = $redirect;
 	} else {
 	    /* Stay on the same page */
