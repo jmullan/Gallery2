@@ -22,7 +22,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: WebDAV 0.6.1\n"
+"Project-Id-Version: Gallery: WebDAV 0.7.0\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2006-11-18 16:01+0100\n"
 "PO-Revision-Date: 2006-11-18 16:38+0100\n"
@@ -35,14 +35,15 @@ msgstr ""
 msgid "WebDAV"
 msgstr "WebDAV"
 
-msgid "Mount Gallery on your desktop"
+msgid "Mount Gallery on your desktop."
 msgstr ""
 
 msgid "Remote Interfaces"
 msgstr "Interfaces Remotas"
 
-msgid "Access WebDAV"
-msgstr "Acceso WebDAV"
+#, fuzzy
+msgid "Connect to WebDAV"
+msgstr "Montar con WebDAV"
 
 msgid ""
 "Use short URL because most WebDAV clients don't support query strings.  The Windows WebDAV "
@@ -58,31 +59,143 @@ msgstr "Ruta al elemento (ej. /album/imagen.jpg.html)"
 msgid "Mount WebDAV"
 msgstr "Montar WebDAV"
 
-msgid "Give davmount resources correct extension"
+#, fuzzy
+msgid "Give davmount resources the correct extension."
 msgstr "Dar a los recursos davmount la extensión correcta"
 
 msgid "OPTIONS Requests"
 msgstr ""
 
-msgid "Redirect HTTP OPTIONS requests so DAV HTTP header can be set"
+msgid "Redirect OPTIONS requests so we can set DAV headers."
 msgstr ""
 
 msgid "Mount with WebDAV"
 msgstr "Montar con WebDAV"
 
 #, c-format
-msgid "You can drag & drop items into Gallery by mounting it with a %s client"
-msgstr "Puedes arrastrar y soltar elementos en Gallery montandola con un cliente %s"
+msgid ""
+"You can mount Gallery on your desktop with a WebDAV client.  You can then add items to "
+"Gallery by drag and drop.  Documentation on mounting Gallery with WebDAV is in the %sGallery "
+"Codex%s."
+msgstr ""
 
-msgid "Open this album's WebDAV URL with a WebDAV client: "
+#, fuzzy
+msgid "This album's WebDAV URL is:"
 msgstr "Abrir esta URL WebDAV del álbum con un cliente WebDAV: "
+
+msgid "WebDAV Settings"
+msgstr ""
+
+msgid "Configuration checked successfully"
+msgstr ""
+
+#, c-format
+msgid ""
+"Most WebDAV clients will successfully connect.  Documentation on mounting Gallery with "
+"WebDAV is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "The URL to connect to Gallery with WebDAV is:"
+msgstr ""
+
+msgid "HTTP auth module disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"You can connect with WebDAV anonymously, but you can't do anything which requires you to "
+"login because the HTTP auth module is disabled.  You should activate the HTTP auth module in "
+"the %sSite Admin Plugins option%s.  Troubleshooting documentation is in the %sGallery Codex%"
+"s."
+msgstr ""
+
+msgid "'Connect to WebDAV' rule disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"Most WebDAV clients will fail to connect because the URL rewrite rule to generate short "
+"WebDAV URLs is disabled.  You should activate the 'Connect to WebDAV' rule in the %sSite "
+"Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "Missing DAV headers"
+msgstr ""
+
+#, c-format
+msgid ""
+"Some WebDAV clients, e.g. Mac OS X WebDAVFS, will fail to connect because OPTIONS responses "
+"are missing DAV headers.  Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "Alternative URL missing DAV headers"
+msgstr ""
+
+#, c-format
+msgid ""
+"Because OPTIONS responses are missing DAV headers, we try to fall back on an alternative "
+"URL, but alternative URL responses are also missing DAV headers.  Troubleshooting "
+"documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "URL rewrite module disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"Most WebDAV clients will fail to connect because the URL rewrite module is disabled.  You "
+"should activate the URL rewrite module in the %sSite Admin Plugins option%s and choose "
+"either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %"
+"sGallery Codex%s."
+msgstr ""
+
+msgid "Bad URL rewrite configuration"
+msgstr ""
+
+#, c-format
+msgid ""
+"PHP PathInfo rewrite doesn't support the rule to fall back on an alternative URL.  You "
+"should uninstall and reinstall the URL rewrite module in the %sSite Admin Plugins option%s "
+"and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting information is in "
+"the %sGallery Codex%s."
+msgstr ""
+
+msgid "'OPTIONS Requests' rule disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"The URL rewrite rule to fall back on an alternative URL is disabled.  You should activate "
+"the WebDAV 'OPTIONS Requests' rule in the %sSite Admin URL Rewrite option%s.  "
+"Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "Unknown Cause"
+msgstr ""
+
+#, c-format
+msgid ""
+"Some WebDAV clients, e.g. Mac OS X WebDAVFS, will fail to connect and automated checks "
+"failed to find a cause.  Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
 
 msgid "WebDAV URL"
 msgstr "URL de WebDAV"
 
 #, c-format
-msgid "Open this album's %s URL with a %s client: "
-msgstr "Abrir esta URL %s del ábum con un cliente %s: "
+msgid ""
+"You can mount Gallery on your desktop with a WebDAV client.  Documentation on mounting "
+"Gallery with WebDAV is in the %sGallery Codex%s."
+msgstr ""
+
+#~ msgid "Access WebDAV"
+#~ msgstr "Acceso WebDAV"
+
+#~ msgid "You can drag & drop items into Gallery by mounting it with a %s client"
+#~ msgstr "Puedes arrastrar y soltar elementos en Gallery montandola con un cliente %s"
+
+#~ msgid "Open this album's %s URL with a %s client: "
+#~ msgstr "Abrir esta URL %s del ábum con un cliente %s: "
 
 #~ msgid "Mount Gallery with HTTP filesystem interface"
 #~ msgstr "Montar Gallery con una interfaz de archivos HTTP"

@@ -19,7 +19,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: HTTP Auth 0.3.0\n"
+"Project-Id-Version: Gallery: HTTP Auth 0.4.0\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2006-11-16 00:56+0100\n"
 "PO-Revision-Date: 2006-11-16 03:32+0100\n"
@@ -33,11 +33,23 @@ msgstr ""
 msgid "HTTP Auth"
 msgstr "HTTP Authentifizierung"
 
-msgid "Login using HTTP authentication"
+#, fuzzy
+msgid "Login using HTTP authentication."
 msgstr "Benutzer-Anmeldung via HTTP Authentifizierung"
 
 msgid "Authentication"
 msgstr "Authentifizierung"
+
+#, fuzzy
+msgid "Authorization Header"
+msgstr "Authentifizierungs-Art Muster"
+
+msgid "Pass the Authorization header to Gallery in a request variable."
+msgstr ""
+
+#, fuzzy
+msgid "Authorization header."
+msgstr "Authentifizierungs-Art Muster"
 
 msgid "HTTP Auth Settings"
 msgstr "Einstellungen für HTTP Authentifizierung"
@@ -45,39 +57,113 @@ msgstr "Einstellungen für HTTP Authentifizierung"
 msgid "Settings saved successfully"
 msgstr "Einstellungen erfolgreich gespeichert"
 
-msgid "Rewrite rule not configured"
-msgstr "Regel für kurze URLs nicht konfiguriert"
+#, fuzzy
+msgid "Missing HTTP Authorization"
+msgstr "Benutzer-Anmeldung via HTTP Authentifizierung"
 
-msgid "You are running Gallery with the PHP CGI server API but the Authorization HTTP header rewrite rule isn't enabled.  HTTP authentication against Gallery's user database won't work without this rule because CGI scripts ordinarily can't access the Authorization HTTP header in which usernames and passwords are sent.  Web server authentication will still work."
-msgstr "Ihre Gallery Installation läuft auf einem Web-Server, der PHP-CGI verwendet (im Gegensatz zu mod_php). Das heisst, dass Sie die Regel für kurze URLs für dieses Modul aktivieren müssen, damit HTTP Authentifizierung funktionieren kann.  Solange diese Regel für kurze URLs nicht aktiviert ist, funktioniert bloss die Web-Server Authentifizierung, nicht aber die HTTP Authentifizierung."
+#, c-format
+msgid ""
+"Gallery can't access HTTP usernames and passwords.  You can still use your web server's "
+"authentication.  Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "URL rewrite module disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"We can't fall back on passing HTTP usernames and passwords to Gallery because the URL "
+"rewrite module is disabled.  You should activate the URL rewrite module in the %sSite Admin "
+"Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting "
+"documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "Bad URL rewrite configuration"
+msgstr ""
+
+#, c-format
+msgid ""
+"PHP PathInfo rewrite doesn't support the rule to fall back on passing HTTP usernames and "
+"passwords to Gallery.  You should uninstall and reinstall the URL rewrite module in the %"
+"sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  "
+"Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "'Authorization Header' rule disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"The URL rewrite rule to fall back on passing HTTP usernames and passwords to Gallery is "
+"disabled.  You should activate the HTTP auth 'Authorization Header' rule in the %sSite Admin "
+"URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "Unknown Cause"
+msgstr ""
+
+#, c-format
+msgid ""
+"Gallery can't access HTTP usernames and passwords and automated checks failed to find a "
+"cause.  Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
 
 msgid "Gallery can handle HTTP Basic authentication directly."
-msgstr "Gallery ist in der Lage die Authentifizierung mittels 'HTTP Basic' direkt zu verarbeiten."
+msgstr ""
+"Gallery ist in der Lage die Authentifizierung mittels 'HTTP Basic' direkt zu verarbeiten."
 
 msgid "Use HTTP Authentication:"
 msgstr "Verwende HTTP Authentifizierung:"
 
-msgid "Gallery will prompt you to login with HTTP authentication when permission is denied.  HTTP authentication sends your client a realm to which your username belongs.  It's safe to leave the realm blank."
-msgstr "Gallery wird die Benutzer zur Anmeldung via HTTP Authentifizierung auffordern, falls es die Benutzerrechte erfordern.  Die HTTP Authentifizierung zeigt den Benutzern einen Bereich ('Realm'), zu welchem die Nutzer gehören.  Diese Einstellung ('Realm') ist optional und Sie können Sie einfach leer lassen."
+msgid ""
+"Gallery will prompt you to login with HTTP authentication when permission is denied.  HTTP "
+"authentication sends your client a realm to which your username belongs.  It's safe to leave "
+"the realm blank."
+msgstr ""
+"Gallery wird die Benutzer zur Anmeldung via HTTP Authentifizierung auffordern, falls es die "
+"Benutzerrechte erfordern.  Die HTTP Authentifizierung zeigt den Benutzern einen Bereich "
+"('Realm'), zu welchem die Nutzer gehören.  Diese Einstellung ('Realm') ist optional und Sie "
+"können Sie einfach leer lassen."
 
 msgid "HTTP Authentication Realm:"
 msgstr "HTTP Authentifizierung 'Realm':"
 
-msgid "Your web server may offer more comprehensive and more secure authentication.  If you configured your web server to authenticate requests to Gallery, you may choose to trust the username it reports in the REMOTE_USER environment variable."
-msgstr "Falls Ihr Web-Server eine umfangreichere oder sicherere Authentifizierungs-Art besitzt und so konfiguriert ist, dass diese für Gallery verwendet wird, können Sie sich dazu entschliessen, den Benutzernamen in der REMOTE_USER Umgebungsvariable des Web-Servers zu vertrauen."
+msgid ""
+"Your web server may offer more comprehensive and more secure authentication.  If you "
+"configured your web server to authenticate requests to Gallery, you may choose to trust the "
+"username it reports in the REMOTE_USER environment variable."
+msgstr ""
+"Falls Ihr Web-Server eine umfangreichere oder sicherere Authentifizierungs-Art besitzt und "
+"so konfiguriert ist, dass diese für Gallery verwendet wird, können Sie sich dazu "
+"entschliessen, den Benutzernamen in der REMOTE_USER Umgebungsvariable des Web-Servers zu "
+"vertrauen."
 
 msgid "Use Web Server Authentication:"
 msgstr "Verwende Web-Server Authentifizierung:"
 
 #, c-format
-msgid "You may wish to trust only HTTP authentication types or HTTP usernames which match specified regular expressions - or HTTP usernames may not match your Gallery usernames; for instance if using %s authentication, the REMOTE_USER environment variable may be username@REALM.TLD.  In these cases, you may use regular expressions to filter authentication types and usernames."
-msgstr "Falls Sie bloss gewissen HTTP Authentifizierungs-Arten oder HTTP Benutzernamen zulassen wollen, können Sie diese durch reguläre Ausdrücke einschränken.  Oder Sie können reguläre Ausdrücke dazu verwenden, um HTTP Benutzrnamen Ihren Gallery Benutzernamen anzugleichen. Falls z.B. %s Authentifizierung verwendet wird, könnte der Wert der REMOTE_USER Umgebungsvariable 'Benutzername@REALM.TLD' sein.  In diesem Fall können Sie mit einem regulären Ausdruck den Teil '@REALM.TLD' wegfiltern."
+msgid ""
+"You may wish to trust only HTTP authentication types or HTTP usernames which match specified "
+"regular expressions - or HTTP usernames may not match your Gallery usernames; for instance "
+"if using %s authentication, the REMOTE_USER environment variable may be username@REALM.TLD.  "
+"In these cases, you may use regular expressions to filter authentication types and usernames."
+msgstr ""
+"Falls Sie bloss gewissen HTTP Authentifizierungs-Arten oder HTTP Benutzernamen zulassen "
+"wollen, können Sie diese durch reguläre Ausdrücke einschränken.  Oder Sie können reguläre "
+"Ausdrücke dazu verwenden, um HTTP Benutzrnamen Ihren Gallery Benutzernamen anzugleichen. "
+"Falls z.B. %s Authentifizierung verwendet wird, könnte der Wert der REMOTE_USER "
+"Umgebungsvariable 'Benutzername@REALM.TLD' sein.  In diesem Fall können Sie mit einem "
+"regulären Ausdruck den Teil '@REALM.TLD' wegfiltern."
 
 msgid "Use Regular Expressions:"
 msgstr "Verwende reguläre Ausdrücke:"
 
-msgid "Specify here a regular expression which the authentication type must match for authentication to proceed; for instance /Negotiate/"
-msgstr "Geben Sie hier einen regulären Ausdruck an, welcher auf die Authentifikations-Art zutreffen soll, damit die Authentifizierung durchgeführt werden kann, z.B. /Negotiate/."
+msgid ""
+"Specify here a regular expression which the authentication type must match for "
+"authentication to proceed; for instance /Negotiate/"
+msgstr ""
+"Geben Sie hier einen regulären Ausdruck an, welcher auf die Authentifikations-Art zutreffen "
+"soll, damit die Authentifizierung durchgeführt werden kann, z.B. /Negotiate/."
 
 msgid "Authentication Type Pattern:"
 msgstr "Authentifizierungs-Art Muster"
@@ -86,8 +172,15 @@ msgid "You must enter a valid regular expression"
 msgstr "Sie müssen einen gültigen regulären Ausdruck eingeben"
 
 #, c-format
-msgid "Specify here a regular expression which the username must match for authentication to proceed and a string with which to replace it.  See PHP %s documentation for more information."
-msgstr "Geben Sie hier einen regulären Ausdruck an, welcher auf die Benutzernamen zutreffen soll, damit die Authentifizierung durchgeführt werden kann.  Desweiteren geben Sie bitte eine Zeichenfolge an, mit welcher der reguläre Ausdruck ersetzt werden soll.  Für weitere Informationen zu diesem sehr technischen Thema lesen Sie bitte die PHP-Dokumentation über %s."
+msgid ""
+"Specify here a regular expression which the username must match for authentication to "
+"proceed and a string with which to replace it.  See PHP %s documentation for more "
+"information."
+msgstr ""
+"Geben Sie hier einen regulären Ausdruck an, welcher auf die Benutzernamen zutreffen soll, "
+"damit die Authentifizierung durchgeführt werden kann.  Desweiteren geben Sie bitte eine "
+"Zeichenfolge an, mit welcher der reguläre Ausdruck ersetzt werden soll.  Für weitere "
+"Informationen zu diesem sehr technischen Thema lesen Sie bitte die PHP-Dokumentation über %s."
 
 msgid "Username Pattern:"
 msgstr "Benutzername-Muser:"
@@ -101,3 +194,18 @@ msgstr "Speichern"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
+#~ msgid "Rewrite rule not configured"
+#~ msgstr "Regel für kurze URLs nicht konfiguriert"
+
+#~ msgid ""
+#~ "You are running Gallery with the PHP CGI server API but the Authorization HTTP header "
+#~ "rewrite rule isn't enabled.  HTTP authentication against Gallery's user database won't "
+#~ "work without this rule because CGI scripts ordinarily can't access the Authorization HTTP "
+#~ "header in which usernames and passwords are sent.  Web server authentication will still "
+#~ "work."
+#~ msgstr ""
+#~ "Ihre Gallery Installation läuft auf einem Web-Server, der PHP-CGI verwendet (im Gegensatz "
+#~ "zu mod_php). Das heisst, dass Sie die Regel für kurze URLs für dieses Modul aktivieren "
+#~ "müssen, damit HTTP Authentifizierung funktionieren kann.  Solange diese Regel für kurze "
+#~ "URLs nicht aktiviert ist, funktioniert bloss die Web-Server Authentifizierung, nicht aber "
+#~ "die HTTP Authentifizierung."

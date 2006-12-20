@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: HTTP Auth 0.3.0\n"
+"Project-Id-Version: Gallery: HTTP Auth 0.4.0\n"
 "POT-Creation-Date: 2006-11-16 20:11-0500\n"
 "PO-Revision-Date: 2006-11-16 14:00-0500\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -32,11 +32,23 @@ msgstr ""
 msgid "HTTP Auth"
 msgstr "HTTP 認証"
 
-msgid "Login using HTTP authentication"
+#, fuzzy
+msgid "Login using HTTP authentication."
 msgstr "使用 HTTP 認証登入"
 
 msgid "Authentication"
 msgstr "認証"
+
+#, fuzzy
+msgid "Authorization Header"
+msgstr "認証類型樣式："
+
+msgid "Pass the Authorization header to Gallery in a request variable."
+msgstr ""
+
+#, fuzzy
+msgid "Authorization header."
+msgstr "認証類型樣式："
 
 msgid "HTTP Auth Settings"
 msgstr "HTTP 認証設定"
@@ -44,18 +56,56 @@ msgstr "HTTP 認証設定"
 msgid "Settings saved successfully"
 msgstr "設定儲存成功"
 
-msgid "Rewrite rule not configured"
-msgstr "未設定網址改寫規則"
+#, fuzzy
+msgid "Missing HTTP Authorization"
+msgstr "使用 HTTP 認証登入"
 
+#, c-format
 msgid ""
-"You are running Gallery with the PHP CGI server API but the Authorization HTTP header "
-"rewrite rule isn't enabled.  HTTP authentication against Gallery's user database won't work "
-"without this rule because CGI scripts ordinarily can't access the Authorization HTTP header "
-"in which usernames and passwords are sent.  Web server authentication will still work."
+"Gallery can't access HTTP usernames and passwords.  You can still use your web server's "
+"authentication.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
-"你正在使用 PHP CGI 伺服器 API 的方式執行 Gallery，但是認証 HTTP 檔頭網址改寫規則"
-"並沒有啟用。沒有這個規則，對 Gallery 的用戶資料庫的 HTTP 認証就無法使用，因為通常 "
-"CGI 程式無法存取含有用戶名稱和密碼的 HTTP 檔頭。網頁伺服器認証仍可使用。"
+
+msgid "URL rewrite module disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"We can't fall back on passing HTTP usernames and passwords to Gallery because the URL "
+"rewrite module is disabled.  You should activate the URL rewrite module in the %sSite Admin "
+"Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting "
+"documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "Bad URL rewrite configuration"
+msgstr ""
+
+#, c-format
+msgid ""
+"PHP PathInfo rewrite doesn't support the rule to fall back on passing HTTP usernames and "
+"passwords to Gallery.  You should uninstall and reinstall the URL rewrite module in the %"
+"sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  "
+"Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "'Authorization Header' rule disabled"
+msgstr ""
+
+#, c-format
+msgid ""
+"The URL rewrite rule to fall back on passing HTTP usernames and passwords to Gallery is "
+"disabled.  You should activate the HTTP auth 'Authorization Header' rule in the %sSite Admin "
+"URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
+
+msgid "Unknown Cause"
+msgstr ""
+
+#, c-format
+msgid ""
+"Gallery can't access HTTP usernames and passwords and automated checks failed to find a "
+"cause.  Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
 
 msgid "Gallery can handle HTTP Basic authentication directly."
 msgstr "Gallery 可以直接處理 HTTP 基本認証。"
@@ -68,8 +118,8 @@ msgid ""
 "authentication sends your client a realm to which your username belongs.  It's safe to leave "
 "the realm blank."
 msgstr ""
-"Gallery 會在存取被拒時要求你使用 HTTP 認証來登入。HTTP 認証會送給你的網頁用戶程式一個"
-"你的用戶名稱所屬的領域。將領域留白也沒有關係。"
+"Gallery 會在存取被拒時要求你使用 HTTP 認証來登入。HTTP 認証會送給你的網頁用戶程式一個你的用戶"
+"名稱所屬的領域。將領域留白也沒有關係。"
 
 msgid "HTTP Authentication Realm:"
 msgstr "HTTP 認証領域："
@@ -79,8 +129,8 @@ msgid ""
 "configured your web server to authenticate requests to Gallery, you may choose to trust the "
 "username it reports in the REMOTE_USER environment variable."
 msgstr ""
-"你的網頁伺服器可能會提供更周詳和更安全的認証方式。如果你設定了你的網頁伺服器來認証"
-"對 Gallery 的要求，你可以選擇信任它在 REMOTE_USER 環境變數中報告的用戶名稱。"
+"你的網頁伺服器可能會提供更周詳和更安全的認証方式。如果你設定了你的網頁伺服器來認証對 Gallery "
+"的要求，你可以選擇信任它在 REMOTE_USER 環境變數中報告的用戶名稱。"
 
 msgid "Use Web Server Authentication:"
 msgstr "使用網頁伺服器認証："
@@ -92,9 +142,9 @@ msgid ""
 "if using %s authentication, the REMOTE_USER environment variable may be username@REALM.TLD.  "
 "In these cases, you may use regular expressions to filter authentication types and usernames."
 msgstr ""
-"你可以只信任符何指定的使用常規表示式的 HTTP 認証類型或 HTTP 用戶名稱，或不符合"
-"你的 Gallery 的用戶名稱；例如，在使用 %s 認証時，REMOTE_USER 環境變數可能是"
-" username@REALM.TLD。在這些情形下，你可以用常規表示式來過濾認証類型或用戶名稱。"
+"你可以只信任符何指定的使用常規表示式的 HTTP 認証類型或 HTTP 用戶名稱，或不符合你的 Gallery 的"
+"用戶名稱；例如，在使用 %s 認証時，REMOTE_USER 環境變數可能是 username@REALM.TLD。在這些情形"
+"下，你可以用常規表示式來過濾認証類型或用戶名稱。"
 
 msgid "Use Regular Expressions:"
 msgstr "使用常規表示式（regexp）："
@@ -102,8 +152,7 @@ msgstr "使用常規表示式（regexp）："
 msgid ""
 "Specify here a regular expression which the authentication type must match for "
 "authentication to proceed; for instance /Negotiate/"
-msgstr ""
-"在這裡指定一個認証類型必需符合才能繼續認証手續的常規表示式；例如 /Negotiate/"
+msgstr "在這裡指定一個認証類型必需符合才能繼續認証手續的常規表示式；例如 /Negotiate/"
 
 msgid "Authentication Type Pattern:"
 msgstr "認証類型樣式："
@@ -117,8 +166,8 @@ msgid ""
 "proceed and a string with which to replace it.  See PHP %s documentation for more "
 "information."
 msgstr ""
-"在這裡指定一個用戶名稱必需符合才能繼續認証手續的常規表示式，和一個用來替換的字串。"
-"請參考 PHP %s 說明文件。"
+"在這裡指定一個用戶名稱必需符合才能繼續認証手續的常規表示式，和一個用來替換的字串。請參考 PHP "
+"%s 說明文件。"
 
 msgid "Username Pattern:"
 msgstr "用戶名稱樣式："
@@ -131,3 +180,17 @@ msgstr "儲存"
 
 msgid "Reset"
 msgstr "重置"
+
+#~ msgid "Rewrite rule not configured"
+#~ msgstr "未設定網址改寫規則"
+
+#~ msgid ""
+#~ "You are running Gallery with the PHP CGI server API but the Authorization HTTP header "
+#~ "rewrite rule isn't enabled.  HTTP authentication against Gallery's user database won't "
+#~ "work without this rule because CGI scripts ordinarily can't access the Authorization HTTP "
+#~ "header in which usernames and passwords are sent.  Web server authentication will still "
+#~ "work."
+#~ msgstr ""
+#~ "你正在使用 PHP CGI 伺服器 API 的方式執行 Gallery，但是認証 HTTP 檔頭網址改寫規則並沒有啟"
+#~ "用。沒有這個規則，對 Gallery 的用戶資料庫的 HTTP 認証就無法使用，因為通常 CGI 程式無法存取"
+#~ "含有用戶名稱和密碼的 HTTP 檔頭。網頁伺服器認証仍可使用。"
