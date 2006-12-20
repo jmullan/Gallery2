@@ -310,7 +310,7 @@ class WebHelper_simple {
 	if (!$success) {
 	    /* Zero bytes written or false was returned */
 	    $gallery->debug(
-		"fwrite failed in requestWebPage($url)" . ($ret === false ? ' - false' : ''));
+		"fwrite failed in requestWebPage($url)" . ($success === false ? ' - false' : ''));
 	    return array(null, null, null);
 	}
 	$platform->fflush($handle);
