@@ -1537,7 +1537,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($expectedUrl, $url);
     }
 
-    function testGenerateUrlUseAuthTokenOption() {
+    function testGenerateUrlUseAuthTokenTrueHasAuthToken() {
 	global $gallery;
 	$session =& $gallery->getSession();
 
@@ -1546,6 +1546,31 @@ class UrlGeneratorTest extends GalleryTestCase {
 		array('view' => 'core.UserLogin', 'foo' => 123), array('useAuthToken' => 1));
 	$expectedUrl = 'phpunit_test.php?g2_view=core.UserLogin&amp;g2_foo=123' .
 		'&amp;g2_authToken=AUTH-TOKEN';
+	$this->assertEquals($expectedUrl, $url);
+    }
+
+    function testGenerateUrlUseAuthTokenTrueControllerUrlHasAuthToken() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$session->put('core.authToken', 'AUTH-TOKEN');
+	$url = $this->_urlGenerator->generateUrl(
+	    array('controller' => 'core.UserLogin', 'foo' => 123),
+	    array('useAuthToken' => true));
+	$expectedUrl = 'phpunit_test.php?g2_controller=core.UserLogin&amp;g2_foo=123'
+	    . '&amp;g2_authToken=AUTH-TOKEN';
+	$this->assertEquals($expectedUrl, $url);
+    }
+
+    function testGenerateUrlUseAuthTokenFalseHasNoAuthToken() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$session->put('core.authToken', 'AUTH-TOKEN');
+	$url = $this->_urlGenerator->generateUrl(
+	    array('controller' => 'core.UserLogin', 'foo' => 123),
+	    array('useAuthToken' => false));
+	$expectedUrl = 'phpunit_test.php?g2_controller=core.UserLogin&amp;g2_foo=123';
 	$this->assertEquals($expectedUrl, $url);
     }
 

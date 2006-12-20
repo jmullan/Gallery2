@@ -201,7 +201,10 @@ class WebDavHelper {
 	    $webDavServer->path = $path;
 	    $webDavServer->baseUrl = parse_url($urlGenerator->generateUrl(
 		array('controller' => 'webdav.WebDav'),
-		array('forceFullUrl' => true, 'forceSessionId' => false)));
+		array('forceFullUrl' => true,
+		      'htmlEntities' => false,
+		      'forceSessionId' => false,
+		      'useAuthToken' => false)));
 	}
 
 	return $webDavServer;
@@ -1723,7 +1726,9 @@ class WebDavServer extends HTTP_WebDAV_Server {
 
 	return $urlGenerator->generateUrl(
 	    array('controller' => 'webdav.WebDav', 'path' => $path),
-	    array('forceSessionId' => false, 'forceServerRelativeUrl' => true));
+	    array('forceServerRelativeUrl' => true,
+		  'forceSessionId' => false,
+		  'useAuthToken' => false));
     }
 
     /**

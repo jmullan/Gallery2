@@ -536,7 +536,8 @@ class GalleryUrlGenerator {
      *    'forceServerRelativeUrl' => true; to generate server-relative URLs if possible but no
      *        relative URLs (e.g. /gallery2/main.php instead of
      *        http://example.com/gallery2/main.php but never just main.php (without path))
-     *    'useAuthToken' => true; to add an authToken to the URL parameters, false is ignored
+     *    'useAuthToken' => boolean; to force auth token to be in/not in the URL; by default it is
+     *        included in controller URLs
      *    'protocol' => string; to override the URL scheme
      * @return string URL
      */
@@ -672,7 +673,8 @@ class GalleryUrlGenerator {
 		unset($params['navId']);
 	    } else {
 		/* Add authToken to all controller URLs */
-		if (isset($params['controller']) || !empty($options['useAuthToken'])) {
+		if (!empty($options['useAuthToken'])
+			|| (!isset($options['useAuthToken']) && !empty($params['controller']))) {
 		    $params['authToken'] = $session->getAuthToken();
 		}
 	    }

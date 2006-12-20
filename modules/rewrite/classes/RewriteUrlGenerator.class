@@ -127,7 +127,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	}
 
 	/* Check if we are forced to append the auth token */
-	if (!empty($params['controller'])) {
+	if (!isset($options['useAuthToken']) && !empty($params['controller'])) {
 	    $options['useAuthToken'] = true;
 	}
 

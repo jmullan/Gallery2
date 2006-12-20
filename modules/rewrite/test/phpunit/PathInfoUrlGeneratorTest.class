@@ -552,5 +552,72 @@ class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
 	parent::testGenerateUrlRewriteErrorFallback();
     }
+
+    function testGenerateUrlUseAuthTokenTrue() {
+	$this->_expectedUrl[0] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '?g2_view=rand164.NonShort&amp;g2_foo=bar');
+	$this->_expectedUrl[1] =
+	    $this->_signUrl(sprintf('/gallery2/' . GALLERY_MAIN_PHP . '/d/%d-%d/%s',
+			    $this->_testItem->getId(),
+			    $this->_testItem->getSerialNumber(),
+			    urlencode($this->_testItem->getPathComponent())));
+	$this->_expectedUrl[2] = $this->_signUrl('http://href_website.com/foo');
+	$this->_expectedUrl[3] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '?g2_controller=core.ShowItem&amp;g2_itemId=' . $this->_testItem->getId());
+	$this->_expectedUrl[4] = $this->_signUrl('/gallery2/themes/foo/images/bar.jpg');
+	$this->_expectedUrl[5] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP);
+	$this->_expectedUrl[6] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '/v' . $this->_testAlbumPath);
+	$this->_expectedUrl[7] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '/v' . $this->_testItemPath . '.html');
+	$this->_expectedUrl[8] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '?g2_itemId=-5759');
+	$this->_expectedUrl[9] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '?g2_itemId=' . $this->_derivative->getId());
+	$this->_expectedUrl[10] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '/' . ltrim($this->_testAlbumPath, '/') . 'test.html');
+	$this->_expectedUrl[11] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '/' . ltrim($this->_testItemPath, '/') . '/test.html');
+	$this->_expectedUrl[12] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '/t' . rtrim($this->_testAlbumPath, '/') . '.test');
+	$this->_expectedUrl[13] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP
+	    . '/t' . $this->_testItemPath . '.test');
+	$this->_expectedUrl[14] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP . '/phpunit1/');
+	$this->_expectedUrl[15] = $this->_signUrl('/gallery2/' . GALLERY_MAIN_PHP . '/phpunit2/');
+
+	return parent::testGenerateUrlUseAuthTokenTrue();
+    }
+
+    function testGenerateUrlUseAuthTokenFalse() {
+	$this->_expectedUrl[0] = '/gallery2/' . GALLERY_MAIN_PHP
+	    . '?g2_view=rand164.NonShort&amp;g2_foo=bar';
+	$this->_expectedUrl[1] = sprintf('/gallery2/' . GALLERY_MAIN_PHP . '/d/%d-%d/%s',
+					 $this->_testItem->getId(),
+					 $this->_testItem->getSerialNumber(),
+					 urlencode($this->_testItem->getPathComponent()));
+	$this->_expectedUrl[2] = 'http://href_website.com/foo';
+	$this->_expectedUrl[3] = '/gallery2/' . GALLERY_MAIN_PHP
+	    . '?g2_controller=core.ShowItem&amp;g2_itemId=' . $this->_testItem->getId();
+	$this->_expectedUrl[4] = '/gallery2/themes/foo/images/bar.jpg';
+	$this->_expectedUrl[5] = '/gallery2/' . GALLERY_MAIN_PHP;
+	$this->_expectedUrl[6] = '/gallery2/' . GALLERY_MAIN_PHP . '/v' . $this->_testAlbumPath;
+	$this->_expectedUrl[7] = '/gallery2/' . GALLERY_MAIN_PHP
+	    . '/v' . $this->_testItemPath . '.html';
+	$this->_expectedUrl[8] = '/gallery2/' . GALLERY_MAIN_PHP . '?g2_itemId=-5759';
+	$this->_expectedUrl[9] = '/gallery2/' . GALLERY_MAIN_PHP
+	    . '?g2_itemId=' .  $this->_derivative->getId();
+	$this->_expectedUrl[10] = '/gallery2/' . GALLERY_MAIN_PHP
+	    . '/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
+	$this->_expectedUrl[11] = '/gallery2/' . GALLERY_MAIN_PHP
+	    . '/' . ltrim($this->_testItemPath, '/') . '/test.html';
+	$this->_expectedUrl[12] = '/gallery2/' . GALLERY_MAIN_PHP
+	    . '/t' . rtrim($this->_testAlbumPath, '/') . '.test';
+	$this->_expectedUrl[13] = '/gallery2/' . GALLERY_MAIN_PHP
+	    . '/t' . $this->_testItemPath . '.test';
+	$this->_expectedUrl[14] = '/gallery2/' . GALLERY_MAIN_PHP . '/phpunit1/';
+	$this->_expectedUrl[15] = '/gallery2/' . GALLERY_MAIN_PHP . '/phpunit2/';
+
+	return parent::testGenerateUrlUseAuthTokenFalse();
+    }
 }
 ?>
