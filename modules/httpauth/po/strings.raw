@@ -2,14 +2,25 @@
 
 /* module.inc */
 gettext("HTTP Auth")
-gettext("Login using HTTP authentication")
+gettext("Login using HTTP authentication.")
 gettext("Authentication")
+gettext("Authorization Header")
+gettext("Pass the Authorization header to Gallery in a request variable.")
+gettext("Authorization header.")
 
 /* templates/HttpAuthSiteAdmin.tpl */
 gettext("HTTP Auth Settings")
 gettext("Settings saved successfully")
-gettext("Rewrite rule not configured")
-gettext("You are running Gallery with the PHP CGI server API but the Authorization HTTP header rewrite rule isn't enabled.  HTTP authentication against Gallery's user database won't work without this rule because CGI scripts ordinarily can't access the Authorization HTTP header in which usernames and passwords are sent.  Web server authentication will still work.")
+gettext("Missing HTTP Authorization")
+gettext("Gallery can't access HTTP usernames and passwords.  You can still use your web server's authentication.  Troubleshooting documentation is in the %sGallery Codex%s.")
+gettext("URL rewrite module disabled")
+gettext("We can't fall back on passing HTTP usernames and passwords to Gallery because the URL rewrite module is disabled.  You should activate the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %sGallery Codex%s.")
+gettext("Bad URL rewrite configuration")
+gettext("PHP PathInfo rewrite doesn't support the rule to fall back on passing HTTP usernames and passwords to Gallery.  You should uninstall and reinstall the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %sGallery Codex%s.")
+gettext("'Authorization Header' rule disabled")
+gettext("The URL rewrite rule to fall back on passing HTTP usernames and passwords to Gallery is disabled.  You should activate the HTTP auth 'Authorization Header' rule in the %sSite Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s.")
+gettext("Unknown Cause")
+gettext("Gallery can't access HTTP usernames and passwords and automated checks failed to find a cause.  Troubleshooting documentation is in the %sGallery Codex%s.")
 gettext("Gallery can handle HTTP Basic authentication directly.")
 gettext("Use HTTP Authentication:")
 gettext("Gallery will prompt you to login with HTTP authentication when permission is denied.  HTTP authentication sends your client a realm to which your username belongs.  It's safe to leave the realm blank.")
