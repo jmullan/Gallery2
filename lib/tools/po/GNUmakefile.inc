@@ -111,8 +111,10 @@ install:
 compendium: messages.po
 	@perl -pi -e 's|^("Content-Type: text/plain; charset)=CHARSET|$$1=UTF-8|' messages.po
 	@for POFILE in `ls $(PO).po | grep -v messages.po`; do \
-	    CORE=`perl -e '$$_="../../../modules/core/po/'$${POFILE}'"; print "-C $$_" if -s'`; \
-	    MATRIX=`perl -e '$$_="../../../themes/matrix/po/'$${POFILE}'"; print "-C $$_" if -s'`; \
+	    CORE=`perl -e '$$_="$(TOOLDIR)/../../modules/core/po/'$${POFILE}'"; \
+			   print "-C $$_" if -s'`; \
+	    MATRIX=`perl -e '$$_="$(TOOLDIR)/../../themes/matrix/po/'$${POFILE}'"; \
+			     print "-C $$_" if -s'`; \
 	    if [ -n "$${CORE}" -o -n "$${MATRIX}" ]; then \
 		echo -n "$${POFILE} "; \
 		msgmerge --width=95 -N $${CORE} $${MATRIX} \
@@ -123,7 +125,7 @@ compendium: messages.po
 	done;
 
 create-from-core:
-	@for POFILE in `ls ../../../modules/core/po/*.po | grep -v messages.po`; do \
+	@for POFILE in `ls $(TOOLDIR)/../../modules/core/po/$(PO).po | grep -v messages.po`; do \
 	    PO=`basename $${POFILE}`; \
 	    if [ ! -f $${PO} ]; then \
 		perl -p -e '$$x++ if /^msgid/; exit if $$x eq 2' $${POFILE} > $${PO}; \

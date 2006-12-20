@@ -24,6 +24,7 @@ GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
 	   'pattern=s' => \$OPTS{'PATTERN'},
 	   'dry-run!' => \$OPTS{'DRY_RUN'},
 	   'verbose|v!' => \$OPTS{'VERBOSE'},
+	   'compendium!' => \$OPTS{'COMPENDIUM'},
 	   'remove-obsolete!' => \$OPTS{'REMOVE_OBSOLETE'},
 	   'po=s' => \$OPTS{'PO'},
 	   'permissions!' => \$OPTS{'PERMISSIONS'},
@@ -76,6 +77,7 @@ if ($OPTS{'SVN_ADD'}) {
 }
 
 my $TARGET = $OPTS{'REMOVE_OBSOLETE'} ? 'all-remove-obsolete' : 'all';
+$TARGET = 'compendium' if $OPTS{'COMPENDIUM'};
 foreach my $poDir (keys(%PO_DIRS)) {
   (my $printableDir = $poDir) =~ s|$basedir.||;
   print STDERR "$printableDir: ";
@@ -139,10 +141,9 @@ sub locatePoDir {
   my $file = $File::Find::name;
   my $dir  = $File::Find::dir;
   if (basename($dir) eq 'po') {
-    next if ($dir =~ m|lib/tools|);
-    if ($OPTS{'PATTERN'}) {
-      next unless $dir =~ m/$OPTS{'PATTERN'}/;
-    }
+    next if $dir =~ m|lib/tools/|;
+    next if $OPTS{'PATTERN'} and $dir !~ m/$OPTS{'PATTERN'}/;
+    next if $OPTS{'COMPENDIUM'} and $dir =~ m|modules/core/|;
     $PO_DIRS{$dir}++;
   }
 }
