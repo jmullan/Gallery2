@@ -35,10 +35,6 @@ class WebDavTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
-	global $gallery;
-	$originalUrlGenerator =& $gallery->getUrlGenerator();
-
-	$urlDirectory = $originalUrlGenerator->getCurrentUrlDir();
 
 	/* Require here to avoid loading if none of our tests will be run */
 	ob_start();
@@ -99,7 +95,7 @@ class WebDavTest extends GalleryTestCase {
 	    $urlGenerator = new GalleryUrlGenerator();
 	}
 
-	$ret = $urlGenerator->init($urlDirectory);
+	$ret = $urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -129,6 +125,18 @@ class WebDavTest extends GalleryTestCase {
 	    stream_wrapper_register('test', 'WebDavTestStream');
 	    $registered = true;
 	}
+    }
+
+    function _getHref($path) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
+	    return '/gallery2/w/' . $path;
+	}
+
+	return '/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_path=' . urlencode($path);
     }
 
     function testOptions() {
@@ -205,8 +213,7 @@ class WebDavTest extends GalleryTestCase {
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
 			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
-    <D:href>' . $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav', 'path' => $path),
-	    array('forceServerRelativeUrl' => true)) . '</D:href>
+    <D:href>' . $this->_getHref($path) . '</D:href>
     <D:propstat>
       <D:prop>
         <D:creationdate ns1:dt="dateTime.tz">'
@@ -274,8 +281,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/">
-    <D:href>' . $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav', 'path' => $path),
-	    array('forceServerRelativeUrl' => true)) . '</D:href>
+    <D:href>' . $this->_getHref($path) . '</D:href>
     <D:propstat>
       <D:prop>
         <D:displayname>new title</D:displayname>
@@ -520,12 +526,10 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'testItem-' . rand();
 	$newPath .= $pathComponent;
 
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
 	/* Assuming that the WebDAV rewrite rules are enabled */
-	$_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
-	    array('controller' => 'webdav.WebDav', 'path' => $newPath),
-	    array('forceFullUrl' => true));
-	if (!GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = rtrim($urlGenerator->getCurrentUrlDir(), '/') . $newPath;
+	if (GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
 	}
 
 	/* Perform the request and verify that we succeeded */
@@ -826,9 +830,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response>
-    <D:href>' . $urlGenerator->generateUrl(
-	    array('controller' => 'webdav.WebDav', 'path' => $lock['path']),
-	    array('forceServerRelativeUrl' => true)) . '</D:href>
+    <D:href>' . $this->_getHref($lock['path']) . '</D:href>
     <D:status>HTTP/1.1 423 Locked</D:status>
   </D:response>
 </D:multistatus>
@@ -954,12 +956,10 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'The!Quick$Brown#Fox';
 	$newPath .= $pathComponent;
 
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
 	/* Assuming that the WebDAV rewrite rules are enabled */
-	$_SERVER['HTTP_DESTINATION'] = $urlGenerator->generateUrl(
-	    array('controller' => 'webdav.WebDav', 'path' => $newPath),
-	    array('forceFullUrl' => true));
-	if (!GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = rtrim($urlGenerator->getCurrentUrlDir(), '/') . $newPath;
+	if (GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
 	}
 
 	/* Perform the request and verify that we succeeded */
