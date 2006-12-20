@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <title> Gallery 2: Localization Status Report (<?php print strftime("%x") ?>)s</title>
+    <title> Gallery 2: Localization Status Report (<?php print strftime("%x") ?>)</title>
     <link rel="stylesheet" type="text/css" href="localization/style.css"/>
   </head>
     <body>
@@ -26,7 +26,7 @@
 	      </td>
 	      <td rowspan="<?php print sizeof($localeData['plugins'])?>" class="locale_percent"
 		  style="background-color:#<?php print percentColor($localeData['percentDone']) ?>">
-		<?php print round($localeData['percentDone'], $precision) ?>%
+		<?php print $localeData['percentDone'] ?>%
 	      </td>
 	      <?php $keys = array_keys($localeData['plugins']); ?>
 	      <?php $plugin = $keys[0]; ?>
