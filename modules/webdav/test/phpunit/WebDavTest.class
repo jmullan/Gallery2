@@ -219,7 +219,8 @@ class WebDavTest extends GalleryTestCase {
 	    . gmdate('Y-m-d\TH:i:s\Z', $this->_item->getCreationTimestamp()) . '</D:creationdate>
         <D:displayname>' . $this->_item->getTitle() . '</D:displayname>
         <D:getlastmodified ns1:dt="dateTime.rfc1123">'
-	    . gmdate('D, d M Y H:i:s', $this->_item->getModificationTimestamp()) . ' UTC</D:getlastmodified>
+	    . gmdate('D, d M Y H:i:s', $this->_item->getModificationTimestamp())
+	    . ' UTC</D:getlastmodified>
         <G:summary>' . $this->_item->getSummary() . '</G:summary>
         <G:description>' . $this->_item->getDescription() . '</G:description>
         <G:keywords>' . $this->_item->getKeywords() . '</G:keywords>
