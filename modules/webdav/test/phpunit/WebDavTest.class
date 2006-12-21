@@ -45,9 +45,14 @@ class WebDavTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Use WebDavTestPhpVm and WebDavTestPlatform */
-	$gallery->_phpVm = new WebDavTestPhpVm();
-	$gallery->setPlatform(new WebDavTestPlatform());
-	$_GET['platformStreams'] = array();
+	$this->_phpVm = new WebDavTestPhpVm();
+	$gallery->_phpVm =& $this->_phpVm;
+
+	/* Use WebDavTestPlatform */
+	$this->_platform = new WebDavTestPlatform();
+	$this->_platform->_platform =& $gallery->getPlatform();
+	$this->_platform->_streams = array();
+	$gallery->setPlatform($this->_platform);
 
 	/* Clear response headers */
 	$headers =& GalleryUtilities::_getResponseHeaders();
@@ -84,22 +89,22 @@ class WebDavTest extends GalleryTestCase {
 	$this->_streamWrapperRegistration();
 
 	/* Try to test with the rewrite URL generator */
-	list ($ret, $urlGenerator) = @GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
-	/* Swallow ERROR_STORAGE_FAILURE, or automatic upgrading fails */
-	if ($ret && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
-	    return $this->failWithStatus($ret);
-	}
-
-	if (!isset($urlGenerator)) {
-	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
-	    $urlGenerator = new GalleryUrlGenerator();
-	}
-
-	$ret = $urlGenerator->init('http://example.com/gallery2/main.php');
+	list ($ret, $this->_urlGenerator) =
+	    GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$gallery->setUrlGenerator($urlGenerator);
+
+	if (!isset($this->_urlGenerator)) {
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
+	    $this->_urlGenerator = new GalleryUrlGenerator();
+	}
+
+	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$gallery->setUrlGenerator($this->_urlGenerator);
     }
 
     function tearDown() {
@@ -128,11 +133,8 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function _getHref($path) {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
-
 	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
 	    return '/gallery2/w/' . $path;
 	}
 
@@ -163,9 +165,6 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testPropfind() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-	$urlGenerator =& $gallery->getUrlGenerator();
 	if (!function_exists('stream_wrapper_register')) {
 	    return $this->skip();
 	}
@@ -180,7 +179,8 @@ class WebDavTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('path', $path);
 
-	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+	$streams =& WebDavTestStream::_getStreams();
+	$streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
 <D:propfind xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
   <D:prop>
     <D:creationdate/>
@@ -192,7 +192,7 @@ class WebDavTest extends GalleryTestCase {
   </D:prop>
 </D:propfind>';
 
-	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -208,7 +208,6 @@ class WebDavTest extends GalleryTestCase {
 	    GalleryUtilities::_getResponseHeaders());
 
 	$path = ltrim($path, '/');
-	$data = (array)$this->_item;
 	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
   <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
@@ -217,13 +216,13 @@ class WebDavTest extends GalleryTestCase {
     <D:propstat>
       <D:prop>
         <D:creationdate ns1:dt="dateTime.tz">'
-	    . gmdate('Y-m-d\TH:i:s\Z', $data['creationTimestamp']) . '</D:creationdate>
-        <D:displayname>' . $data['title'] . '</D:displayname>
+	    . gmdate('Y-m-d\TH:i:s\Z', $this->_item->getCreationTimestamp()) . '</D:creationdate>
+        <D:displayname>' . $this->_item->getTitle() . '</D:displayname>
         <D:getlastmodified ns1:dt="dateTime.rfc1123">'
-	    . gmdate('D, d M Y H:i:s', $data['modificationTimestamp']) . ' UTC</D:getlastmodified>
-        <G:summary>' . $data['summary'] . '</G:summary>
-        <G:description>' . $data['description'] . '</G:description>
-        <G:keywords>' . $data['keywords'] . '</G:keywords>
+	    . gmdate('D, d M Y H:i:s', $this->_item->getModificationTimestamp()) . ' UTC</D:getlastmodified>
+        <G:summary>' . $this->_item->getSummary() . '</G:summary>
+        <G:description>' . $this->_item->getDescription() . '</G:description>
+        <G:keywords>' . $this->_item->getKeywords() . '</G:keywords>
       </D:prop>
       <D:status>HTTP/1.1 200 OK</D:status>
     </D:propstat>
@@ -233,9 +232,6 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testProppatch() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-	$urlGenerator =& $gallery->getUrlGenerator();
 	if (!function_exists('stream_wrapper_register')) {
 	    return $this->skip();
 	}
@@ -250,7 +246,8 @@ class WebDavTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('path', $path);
 
-	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+	$streams =& WebDavTestStream::_getStreams();
+	$streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
 <D:propertyupdate xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
   <D:set>
     <D:prop>
@@ -262,7 +259,7 @@ class WebDavTest extends GalleryTestCase {
   </D:set>
 </D:propertyupdate>';
 
-	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -300,11 +297,10 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$data = (array)$this->_item;
-	$this->assertEquals('new title', $data['title']);
-	$this->assertEquals('new summary', $data['summary']);
-	$this->assertEquals('new description', $data['description']);
-	$this->assertEquals('new keywords', $data['keywords']);
+	$this->assertEquals('new title', $this->_item->getTitle());
+	$this->assertEquals('new summary', $this->_item->getSummary());
+	$this->assertEquals('new description', $this->_item->getDescription());
+	$this->assertEquals('new keywords', $this->_item->getKeywords());
     }
 
     function testMkcol() {
@@ -344,11 +340,10 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$data = (array)$newAlbum;
-	$this->assertEquals($pathComponent, $data['title']);
-	$this->assertEquals('', $data['summary']);
-	$this->assertEquals('', $data['description']);
-	$this->assertEquals('', $data['keywords']);
+	$this->assertEquals($pathComponent, $newAlbum->getTitle());
+	$this->assertEquals('', $newAlbum->getSummary());
+	$this->assertEquals('', $newAlbum->getDescription());
+	$this->assertEquals('', $newAlbum->getKeywords());
     }
 
     function testDelete() {
@@ -384,9 +379,6 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testAdd() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
@@ -396,7 +388,7 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
-	$fileSize = $platform->filesize($filePath);
+	$fileSize = $this->_platform->filesize($filePath);
 
 	$pathComponent = basename($filePath);
 	$path .= $pathComponent;
@@ -405,7 +397,7 @@ class WebDavTest extends GalleryTestCase {
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
 
-	$_GET['platformStreams']['php://input'] = $platform->fopen($filePath, 'rb');
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -431,12 +423,61 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$data = (array)$newItem;
-	$this->assertEquals($pathComponent, $data['title']);
-	$this->assertEquals('', $data['summary']);
-	$this->assertEquals('', $data['description']);
-	$this->assertEquals('image/gif', $data['mimeType']);
-	$this->assertEquals($fileSize, $data['size']);
+	$this->assertEquals($pathComponent, $newItem->getTitle());
+	$this->assertEquals('', $newItem->getSummary());
+	$this->assertEquals('', $newItem->getDescription());
+	$this->assertEquals('image/gif', $newItem->getMimeType());
+	$this->assertEquals($fileSize, $newItem->getSize());
+    }
+
+    /**
+     * Mac OS X and GNOME both make PUT requests with empty bodies.
+     */
+    function testAddEmptyBody() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'test1.gif';
+	$path .= $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$_SERVER['CONTENT_LENGTH'] = 0;
+	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$headers = GalleryUtilities::_getResponseHeaders();
+	$this->assertEquals('HTTP/1.0 201 Created', $headers['status']);
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $newItemId) = GalleryCoreApi::fetchItemIdByPath($path);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($pathComponent, $newItem->getTitle());
+	$this->assertEquals('', $newItem->getSummary());
+	$this->assertEquals('', $newItem->getDescription());
+	$this->assertEquals('image/gif', $newItem->getMimeType());
+	$this->assertEquals(0, $newItem->getSize());
     }
 
     function testAddMustBePutRequest() {
@@ -456,9 +497,6 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testReplace() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
@@ -470,12 +508,12 @@ class WebDavTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('path', $path);
 
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
-	$fileSize = $platform->filesize($filePath);
+	$fileSize = $this->_platform->filesize($filePath);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
 
-	$_GET['platformStreams']['php://input'] = $platform->fopen($filePath, 'rb');
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -496,18 +534,14 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$data = (array)$this->_item;
-	$this->assertEquals('foo/bar', $data['mimeType']);
-	$this->assertEquals($fileSize, $data['size']);
+	$this->assertEquals('foo/bar', $this->_item->getMimeType());
+	$this->assertEquals($fileSize, $this->_item->getSize());
     }
 
     /**
      * @todo What does a query-string based WebDAV client send in HTTP_DESTINATION?
      */
     function testMove() {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
-
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
@@ -528,7 +562,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
 	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
 	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
 	}
 
@@ -568,9 +602,6 @@ class WebDavTest extends GalleryTestCase {
      *               array new WebDAV lock (scope, type, depth, owner, expires, token, path)
      */
     function _testLock($path) {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
 
@@ -578,14 +609,15 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
-	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+	$streams =& WebDavTestStream::_getStream();
+	$streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
 <D:lockinfo xmlns:D="DAV:">
   <D:lockscope><D:exclusive/></D:lockscope>
   <D:locktype><D:write/></D:locktype>
   <D:owner>testOwner</D:owner>
 </D:lockinfo>';
 
-	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -764,9 +796,6 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testLockConflict() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-	$urlGenerator =& $gallery->getUrlGenerator();
 	if (!function_exists('stream_wrapper_register')) {
 	    return $this->skip();
 	}
@@ -797,14 +826,15 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
-	$_GET['testStream']['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+	$streams =& WebDavTestStream::_getStreams();
+	$streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
 <D:lockinfo xmlns:D="DAV:">
   <D:lockscope><D:exclusive/></D:lockscope>
   <D:locktype><D:write/></D:locktype>
   <D:owner>testOwner</D:owner>
 </D:lockinfo>';
 
-	$_GET['platformStreams']['php://input'] = $platform->fopen('test://input', 'rb');
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -935,9 +965,6 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testIllegalDestination() {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
-
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
@@ -958,7 +985,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
 	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($urlGenerator, 'RewriteUrlGenerator')) {
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
 	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
 	}
 
@@ -1105,39 +1132,53 @@ class WebDavTestPhpVm extends GalleryPhpVm {
 }
 
 class WebDavTestPlatform extends GalleryPlatform {
+    var $_platform;
+    var $_streams;
 
     function fopen($filename, $modes, $use_include_path=0) {
-	if (empty($_GET['platformStreams'][$filename])) {
-	    return parent::fopen($filename, $modes, $use_include_path);
+	if (empty($this->_streams[$filename])) {
+	    return $this->_platform->fopen($filename, $modes, $use_include_path);
 	}
 
-	$handle = $_GET['platformStreams'][$filename];
-	unset($_GET['platformStreams'][$filename]);
+	$handle = $this->_streams[$filename];
+	unset($this->_streams[$filename]);
 
 	return $handle;
+    }
+
+    function exec($cmdArray) {
+	/* Pass exec requests to the real platform */
+	return $this->_platform->exec($cmdArray);
     }
 }
 
 class WebDavTestStream {
-    var $filename;
-    var $position;
+    var $_filename;
+    var $_position;
+
+    function &_getStreams() {
+	static $streams;
+	return $streams;
+    }
 
     function stream_open($filename, $modes, $options, &$opened_path) {
-	$this->filename = $filename;
-	$this->position = 0;
+	$this->_filename = $filename;
+	$this->_position = 0;
 
 	return true;
     }
 
     function stream_read($count) {
-	$buffer = substr($_GET['testStream'][$this->filename], $this->position, $count);
-	$this->position += strlen($buffer);
+	$streams = WebDavTestStream::_getStreams();
+	$buffer = substr($streams[$this->_filename], $this->_position, $count);
+	$this->_position += strlen($buffer);
 
 	return $buffer;
     }
 
     function stream_eof() {
-	return $this->position >= strlen($_GET['testStream'][$this->filename]);
+	$streams = WebDavTestStream::_getStreams();
+	return $this->_position >= strlen($streams[$this->_filename]);
     }
 }
 ?>

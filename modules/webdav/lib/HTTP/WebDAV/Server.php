@@ -1167,10 +1167,10 @@ class HTTP_WebDAV_Server
         $options = array();
         $options['path'] = $this->path;
 
-        if (empty($_SERVER['CONTENT_LENGTH'])) {
+        /* Content-Length may be zero */
+        if (!isset($_SERVER['CONTENT_LENGTH'])) {
             return;
         }
-
         $options['content_length'] = $_SERVER['CONTENT_LENGTH'];
 
         // default content type if none given
@@ -1531,6 +1531,8 @@ class HTTP_WebDAV_Server
         $options = array();
         $options['path'] = $this->path;
 
+        // a LOCK request with an If header but without a body is used to
+        // refresh a lock.  Content-Lenght may be unset or zero.
         if (empty($_SERVER['CONTENT_LENGTH']) && !empty($_SERVER['HTTP_IF'])) {
 
             // FIXME: Refresh multiple locks?
