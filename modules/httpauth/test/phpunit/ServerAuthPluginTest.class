@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/httpauth/classes/ServerAuthPlugin.class');
+
 /**
  * Server auth tests.
  * @package HttpAuth
@@ -35,22 +37,30 @@ class ServerAuthPluginTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
-	/* Create a new user */
-	list ($ret, $this->_user) = $this->_createRandomUser(null, 'password');
+	/* Create test user */
+	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_user);
+	$_SERVER['AUTH_TYPE'] = 'Test';
+
+	$this->_plugin = new ServerAuthPlugin();
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::removeAllMapEntries('FailedLoginsMap');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	parent::tearDown();
     }
 
     function testValidUser() {
-	$_SERVER['AUTH_TYPE'] = 'Foo';
 	$_SERVER['REMOTE_USER'] = $this->_user->getUserName();
 
-	GalleryCoreApi::requireOnce('modules/httpauth/classes/ServerAuthPlugin.class');
-
-	$plugin = new ServerAuthPlugin();
-	list ($ret, $user) = $plugin->getUser();
+	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -59,18 +69,14 @@ class ServerAuthPluginTest extends GalleryTestCase {
     }
 
     function testInvalidUser() {
-	$_SERVER['AUTH_TYPE'] = 'Foo';
-	$_SERVER['PHP_AUTH_USER'] = 'bogusUser-' . rand();
+	$_SERVER['REMOTE_USER'] = 'bogusUser-' . rand();
 
-	GalleryCoreApi::requireOnce('modules/httpauth/classes/ServerAuthPlugin.class');
-
-	$plugin = new ServerAuthPlugin();
-	list ($ret, $user) = $plugin->getUser();
+	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$this->assert(!isset($user));
+	$this->assertEquals(null, $user);
     }
 }
 ?>

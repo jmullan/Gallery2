@@ -36,7 +36,7 @@ class ServerAuthPlugin /* extends GalleryAuthPlugin */ {
 	$authtype = GalleryUtilities::getServerVar('AUTH_TYPE');
 	$username = GalleryUtilities::getServerVar('REMOTE_USER');
 
-	/* TODO http://issues.apache.org/bugzilla/show_bug.cgi?id=38325 */
+	/* TODO: http://issues.apache.org/bugzilla/show_bug.cgi?id=38325 */
 	if (empty($username)) {
 	    $authtype = GalleryUtilities::getServerVar('REDIRECT_AUTH_TYPE');
 	    $username = GalleryUtilities::getServerVar('REDIRECT_REMOTE_USER');

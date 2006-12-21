@@ -182,18 +182,28 @@ class HttpAuthHelper {
 	    	return array(null, null);
 	    }
 
-	    $username = preg_replace($params['usernamePattern'], $params['usernameReplace'],
-		$username);
+	    $username =
+		preg_replace($params['usernamePattern'], $params['usernameReplace'], $username);
 	}
 
-	$user = null;
-	if (!empty($username)) {
-	    list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
+	if (empty($username)) {
+	    return array(null, null);
+	}
 
-	    /* ERROR_MISSING_OBJECT check to suppress error if username doesn't exist */
-	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		return array($ret, null);
-	    }
+	/* Ignore disabled users, since we don't have a facility for showing an error */
+	list ($ret, $isDisabled) = GalleryCoreApi::isDisabledUsername($username);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if ($isDisabled) {
+	    return array(null, null);
+	}
+
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
+
+	/* ERROR_MISSING_OBJECT check to suppress error if username doesn't exist */
+	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    return array($ret, null);
 	}
 
 	return array(null, $user);

@@ -35,12 +35,6 @@ class HttpAuthPlugin /* extends GalleryAuthPlugin */ {
     function getUser() {
 	list ($authtype, $username, $password) = HttpAuthHelper::getHttpAuth();
 
-	/* Ignore disabled users, since we don't have a facility for showing an error */
-	list ($ret, $isDisabled) = GalleryCoreApi::isDisabledUsername($username);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
 	list ($ret, $user) = HttpAuthHelper::getUser($authtype, $username);
 	if ($ret) {
 	    return array($ret, null);
@@ -51,7 +45,7 @@ class HttpAuthPlugin /* extends GalleryAuthPlugin */ {
 	 * post an event each time we do this; it will cause guest users to endlessly post
 	 * Gallery::FailedLogin events and regular users to post Gallery::Login events.
 	 */
-	if (!$isDisabled && isset($user) && $user->isCorrectPassword($password)) {
+	if (isset($user) && $user->isCorrectPassword($password)) {
 	    return array(null, $user);
 	}
 
