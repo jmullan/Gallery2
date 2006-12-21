@@ -38,16 +38,21 @@ class WebDavHelperTest extends GalleryTestCase {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
+	/* Use WebDavHelperTestPhpVm */
+	$this->_phpVm = new WebDavHelperTestPhpVm();
+	$this->_phpVm->_function_exists = true;
+	$gallery->_phpVm =& $this->_phpVm;
+
 	/* Mock activate the HTTP auth and rewrite modules */
 	$moduleStatus = array('httpauth' => array('active' => true),
 			      'rewrite' => array('active' => true));
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)', $moduleStatus);
 
 	/* Mock preGallery rewrite parser.  Mock activate WebDAV rewrite rules. */
-	$parserType =& WebDavHelperTestRewriteApi::_getParserType();
-	$parserType = 'preGallery';
-	$activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
-	$activeRules = array('connect', 'davmount', 'options');
+	$this->_parserType =& WebDavHelperTestRewriteApi::_getParserType();
+	$this->_parserType = 'preGallery';
+	$this->_activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
+	$this->_activeRules = array('connect', 'davmount', 'options');
 	$this->_markFactoryForCleanup();
 	$this->_registerFactoryImplementationForTest(
 	    'RewriteApi', 'WebDavHelperTestRewriteApi', 'WebDavHelperTestRewriteApi',
@@ -88,10 +93,12 @@ Content-Type: text/html
 ';
 
 	/* Use WebDavHelperTestPlatform */
-	$platform = new WebDavHelperTestPlatform();
-	$platform->_messages[$this->_optionsRequest] = $this->_includesDavHeadersResponse;
-	$platform->_messages[$this->_alternativeUrlRequest] = $this->_includesDavHeadersResponse;
-	$gallery->setPlatform($platform);
+	$this->_platform = new WebDavHelperTestPlatform();
+	$this->_platform->_messages[$this->_optionsRequest] =
+	    $this->_includesDavHeadersResponse;
+	$this->_platform->_messages[$this->_alternativeUrlRequest] =
+	    $this->_includesDavHeadersResponse;
+	$gallery->setPlatform($this->_platform);
     }
 
     function tearDown() {
@@ -106,6 +113,17 @@ Content-Type: text/html
 	}
 
 	$this->assert(!$code);
+    }
+
+    function testCheckConfigurationNoXmlParser() {
+	$this->_phpVm->_function_exists = false;
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_NO_XML_PARSER, $code);
     }
 
     function testCheckConfigurationHttpAuthModuleDisabled() {
@@ -133,8 +151,7 @@ Content-Type: text/html
     }
 
     function testCheckConfigurationConnectRuleDisabled() {
-	$activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
-	$activeRules = array('davmount', 'options');
+	$this->_activeRules = array('davmount', 'options');
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -145,11 +162,10 @@ Content-Type: text/html
     }
 
     function testCheckConfigurationAlternativeUrlHeaders() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
-	$platform->_messages[$this->_alternativeUrlRequest] = $this->_missingDavHeadersResponse;
+	$this->_platform->_messages[$this->_optionsRequest] =
+	    $this->_missingDavHeadersResponse;
+	$this->_platform->_messages[$this->_alternativeUrlRequest] =
+	    $this->_missingDavHeadersResponse;
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -161,12 +177,9 @@ Content-Type: text/html
     }
 
     function testCheckConfigurationBadRewriteParser() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
-	$parserType =& WebDavHelperTestRewriteApi::_getParserType();
-	$parserType = 'inGallery';
+	$this->_platform->_messages[$this->_optionsRequest] =
+	    $this->_missingDavHeadersResponse;
+	$this->_parserType = 'inGallery';
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -178,12 +191,9 @@ Content-Type: text/html
     }
 
     function testCheckConfigurationOptionsRuleDisabled() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
-	$activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
-	$activeRules = array('connect', 'davmount');
+	$this->_platform->_messages[$this->_optionsRequest] =
+	    $this->_missingDavHeadersResponse;
+	$this->_activeRules = array('connect', 'davmount');
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -195,10 +205,8 @@ Content-Type: text/html
     }
 
     function testCheckConfigurationErrorUnknown() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
+	$this->_platform->_messages[$this->_optionsRequest] =
+	    $this->_missingDavHeadersResponse;
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -210,14 +218,10 @@ Content-Type: text/html
     }
 
     function testCheckConfigurationIncludesDavHeadersIgnoresCauses() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$platform->_messages[$this->_alternativeUrlRequest] = $this->_missingDavHeadersResponse;
-	$parserType =& WebDavHelperTestRewriteApi::_getParserType();
-	$parserType = 'bogus';
-	$activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
-	$activeRules = array('connect', 'davmount');
+	$this->_platform->_messages[$this->_alternativeUrlRequest] =
+	    $this->_missingDavHeadersResponse;
+	$this->_parserType = 'bogus';
+	$this->_activeRules = array('connect', 'davmount');
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -240,16 +244,24 @@ Content-Type: text/html
 
     function testCheckMissingDavHeaders() {
 	global $gallery;
-	$platform =& $gallery->getPlatform();
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
+	$this->_platform->_messages[$this->_optionsRequest] =
+	    $this->_missingDavHeadersResponse;
 
 	$success = WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
 	    array('controller' => 'webdav.WebDav'),
 	    array('forceFullUrl' => true,
 		  'htmlEntities' => false)));
 	$this->assert(!$success);
+    }
+}
+
+class WebDavHelperTestPhpVm extends GalleryPhpVm {
+    var $_function_exists;
+
+    function function_exists($functionName) {
+	return $this->_function_exists;
     }
 }
 

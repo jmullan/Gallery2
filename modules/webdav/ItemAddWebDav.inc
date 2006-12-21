@@ -34,12 +34,12 @@ class ItemAddWebDav extends ItemAddPlugin {
      * @see ItemAddPlugin::handleRequest
      */
     function handleRequest($form, &$item) {
-	$path = GalleryUtilities::getRequestVariables('path');
 	$requestMethod = strtolower(GalleryUtilities::getServerVar('REQUEST_METHOD'));
-
 	if ($requestMethod != 'put') {
 	    return array(GalleryCoreApi::error(ERROR_REQUEST_FORGED), null, null);
 	}
+
+	$path = GalleryUtilities::getRequestVariables('path');
 
 	/* Check resource is not locked */
 	$ret = WebDavHelper::checkLocks($path);

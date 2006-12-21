@@ -22,6 +22,16 @@
   </div>
 {/if}
 
+{if $WebDavSiteAdmin.code & WEBDAV_STATUS_NO_XML_PARSER}
+  <div class="gbBlock">
+    <h3 class="giError"> {g->text text="PHP has no XML support"} </h3>
+
+    <p class="giDescription">
+      {g->text text="You can't connect with WebDAV because PHP has no XML support on this server.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:webdav:admin\">" arg2="</a>"}
+    </p>
+  </div>
+{/if}
+
 {if $WebDavSiteAdmin.code & WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED}
   <div class="gbBlock">
     <h3 class="giWarning"> {g->text text="HTTP auth module disabled"} </h3>

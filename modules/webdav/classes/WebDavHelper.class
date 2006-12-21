@@ -19,13 +19,14 @@
  */
 
 /* WebDAV status codes */
-define('WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED', 0x00000002);
-define('WEBDAV_STATUS_REWRITE_MODULE_DISABLED', 0x00000004);
-define('WEBDAV_STATUS_CONNECT_RULE_DISABLED', 0x00000008);
-define('WEBDAV_STATUS_MISSING_DAV_HEADERS', 0x00000010);
-define('WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS', 0x00000020);
-define('WEBDAV_STATUS_BAD_REWRITE_PARSER', 0x00000040);
-define('WEBDAV_STATUS_OPTIONS_RULE_DISABLED', 0x00000080);
+define('WEBDAV_STATUS_NO_XML_PARSER', 0x00000002);
+define('WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED', 0x00000004);
+define('WEBDAV_STATUS_REWRITE_MODULE_DISABLED', 0x00000008);
+define('WEBDAV_STATUS_CONNECT_RULE_DISABLED', 0x00000010);
+define('WEBDAV_STATUS_MISSING_DAV_HEADERS', 0x00000020);
+define('WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS', 0x00000040);
+define('WEBDAV_STATUS_BAD_REWRITE_PARSER', 0x00000080);
+define('WEBDAV_STATUS_OPTIONS_RULE_DISABLED', 0x00000100);
 define('WEBDAV_STATUS_ERROR_UNKNOWN', 0x80000000);
 
 /* Gallery property namespace - RFC2518 18 */
@@ -50,6 +51,7 @@ class WebDavHelper {
      */
     function checkConfiguration() {
 	global $gallery;
+	$phpVm = $gallery->getPhpVm();
 	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$code = 0x00000000;
@@ -143,6 +145,14 @@ class WebDavHelper {
 	 */
 	if (empty($moduleStatus['httpauth']['active'])) {
 	    $code |= WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED;
+	}
+
+	/*
+	 * The WebDAV library requires a PHP XML parser.  Check it after checking for missing DAV
+	 * headers causes so we can show the error unknown warning if no causes are found.
+	 */
+	if (!$phpVm->function_exists('xml_parser_create_ns')) {
+	    $code |= WEBDAV_STATUS_NO_XML_PARSER;
 	}
 
 	return array(null, $code);
