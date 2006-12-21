@@ -182,9 +182,11 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 		continue;
 	    }
 
-	    $url = $urlGenerator->generateUrl(
-		array('controller' => 'webdav.WebDav', 'itemId' => $item->getId()),
-		array('forceFullUrl' => true));
+	    $url = $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav',
+						    'itemId' => $item->getId()),
+					      array('forceFullUrl' => true,
+						    'forceSessionId' => false,
+						    'useAuthToken' => false));
 	    $link = array(
 		'text' => $this->translate(array('text' => 'Mount with WebDAV')),
 		'params' => array('view' => 'webdav.WebDavMount', 'itemId' => $item->getId()),
@@ -194,6 +196,12 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 		 * Mount with JavaScript only if using MSIE.  By default, dropdowns link to davmount
 		 * resources.
 		 */
+		$url = $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav',
+							'itemId' => $item->getId()),
+						  array('forceFullUrl' => true,
+							'htmlEntities' => false,
+							'forceSessionId' => false,
+							'useAuthToken' => false));
 		$link['script'] =
 		    "this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$url')";
 	    }
@@ -202,7 +210,9 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 		$link['params'] =
 		    array('controller' => 'webdav.WebDav', 'itemId' => $item->getId());
 		$link['options'] =
-		    array('protocol' => 'webdav');
+		    array('protocol' => 'webdav',
+			  'forceSessionId' => false,
+			  'useAuthToken' => false);
 	    }
 
 	    $links[$item->getId()][] = $link;

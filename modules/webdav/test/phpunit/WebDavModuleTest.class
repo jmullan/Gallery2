@@ -37,7 +37,7 @@ class WebDavModuleTest extends GalleryTestCase {
 
 	/* Initialize test URL generator */
 	$urlGenerator = new GalleryUrlGenerator();
-	$ret = $urlGenerator->init('http://example.com/main.php');
+	$ret = $urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -137,9 +137,8 @@ Content-Type: text/html
 	    return $this->failWithStatus($ret);
 	}
 
-	$url = $this->_signUrl(
-	    'http://example.com/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
-	    . $this->_subAlbum->getId());
+	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
+	    . $this->_subAlbum->getId();
 	$expected = array();
 	$expected[$this->_subAlbum->getId()][0]['text'] =
 	    $module->translate(array('text' => 'Mount with WebDAV'));
@@ -157,6 +156,8 @@ Content-Type: text/html
 	    return $this->failWithStatus($ret);
 	}
 
+	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&g2_itemId='
+	    . $this->_subAlbum->getId();
 	$expectedMsie = $expected;
 	$expectedMsie[$this->_subAlbum->getId()][0]['script'] =
 	    "this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$url')";
@@ -174,7 +175,9 @@ Content-Type: text/html
 	$expectedKonqueror[$this->_subAlbum->getId()][0]['params'] =
 	    array('controller' => 'webdav.WebDav', 'itemId' => $this->_subAlbum->getId());
 	$expectedKonqueror[$this->_subAlbum->getId()][0]['options'] =
-	    array('protocol' => 'webdav');
+	    array('protocol' => 'webdav',
+		  'forceSessionId' => false,
+		  'useAuthToken' => false);
 	$this->assertEquals($expectedKonqueror, $links, 'item links for Konqueror');
 
 	/* Verify that item links are only for detailed mode */
