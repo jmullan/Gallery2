@@ -25,7 +25,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.1.25\n"
 "POT-Creation-Date: 2003-05-16 09:41+0300\n"
-"PO-Revision-Date: 2006-12-20 12:21+0200\n"
+"PO-Revision-Date: 2006-12-21 12:17+0200\n"
 "Last-Translator: Erkka Hakkarainen <erkka.hakkarainen@pp.inet.fi>\n"
 "Language-Team: Finnish <gallery-translations@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -63,25 +63,25 @@ msgstr "Tiedosto"
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
-msgstr[0] "yksi minuutti"
+msgstr[0] "%d minuutti"
 msgstr[1] "%d minuuttia"
 
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] "yksi tunti"
+msgstr[0] "%d tunti"
 msgstr[1] "%d tuntia"
 
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] "yksi päivä"
+msgstr[0] "%d päivä"
 msgstr[1] "%d päivää"
 
 #, c-format
 msgid "%d week"
 msgid_plural "%d weeks"
-msgstr[0] "yksi viikko"
+msgstr[0] "%d viikko"
 msgstr[1] "%d viikkoa"
 
 msgid "<none>"
@@ -99,38 +99,34 @@ msgstr "Täysi kiihdytys"
 msgid "Themes"
 msgstr "Teema"
 
-#, fuzzy
 msgid "Updating Repository Index"
-msgstr "Päivitä indeksi"
+msgstr "Päivitetään Repositoryn indeksi"
 
 msgid "Scanning plugins"
-msgstr ""
+msgstr "Etsitään moduleita"
 
-#, fuzzy
 msgid "Update Plugin List"
-msgstr "Päivitä kaikki pluginit"
+msgstr "Päivitä modulilista"
 
 msgid "Done."
 msgstr "Valmis."
 
 msgid "Updating Packages"
-msgstr ""
+msgstr "Päivitetään paketteja"
 
 #, c-format
 msgid "Downloading %s"
 msgstr "Ladataan %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Activating %s"
-msgstr "Toiminnot"
+msgstr "Aktivoidaan %s"
 
-#, fuzzy
 msgid "Deleting Language Packs"
-msgstr "Oletuskieli"
+msgstr "Poistetaan kielipaketteja"
 
-#, fuzzy
 msgid "Update complete."
-msgstr "Lähetys Valmis"
+msgstr "Päivitys valmis"
 
 msgid "install"
 msgstr "asenna"
@@ -139,16 +135,16 @@ msgid "upgrade"
 msgstr "päivitä"
 
 msgid "activate"
-msgstr "ota käyttöön"
+msgstr "aktivoi"
 
 msgid "uninstall"
-msgstr "poista"
+msgstr "poista asennus"
 
 msgid "deactivate"
-msgstr "poista käytöstä"
+msgstr "deaktivoi"
 
 msgid "Inherit settings from parent album"
-msgstr "Peri asetukset ulommasta albumista"
+msgstr "Peri asetukset ylemmän tason albumista"
 
 msgid "Use these settings"
 msgstr "Käytä näitä asetuksia"
@@ -166,7 +162,7 @@ msgid "[core] View item"
 msgstr "[ydin] Näytä kohde"
 
 msgid "[core] View resized version(s)"
-msgstr "[ydin] Näytä muokatut versiot"
+msgstr "[ydin] Näytä skaalatut versiot"
 
 msgid "[core] View original version"
 msgstr "[ydin] Näytä alkuperäinen versio"
@@ -211,10 +207,10 @@ msgid "Deleting old fast-download cache"
 msgstr "Tyhjennetään nopean latauksen välimuisti"
 
 msgid "Updating panorama items"
-msgstr ""
+msgstr "Päivitetään panoraamakohteita"
 
 msgid "Optimizing AccessSubscriberMap table"
-msgstr ""
+msgstr "Optimoidaan AccessSubscriberMap taulua"
 
 msgid "Site Admins"
 msgstr "Gallerian Ylläpitäjät"
@@ -238,22 +234,25 @@ msgstr "Muutetaan MySQL tietoja UTF8 merkistöön"
 msgid "Upgrading permissions (%d items complete, %d remaining)"
 msgstr "Päivitetään oikeuksia (%d suoritettu, %d jäljellä)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Etsii rikkoutuneita johdannaisia, lataa "
+msgstr "Etsitään rikkinäisiä johdannaisia, ladataan (%d johdannaista tarkastettu, %d jäljellä)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Etsii rikkoutuneita johdannaisia, tallentaa "
+msgstr "Etsitään rikkinäisiä johdannaisia (%d johdannaista tarkastettu, %d jäljellä)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Etsii rikkoutuneita johdannaisia, tallentaa "
+msgstr ""
+"Etsitään rikkinäisiä johdannaisia, tallenetaan (%d johdannaista tarkastettu, %d jäljellä)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Päivitetään oikeuksia (%d suoritettu, %d jäljellä)"
+msgstr ""
+"Etsitään rikkinäisiä johdannaisia, tallennetaan kohdetta %d / %d (%d johdannaista "
+"tarkastettu, %d jäljellä)"
 
 #, c-format
 msgid "Deleting old session files (iteration %d)"
@@ -297,19 +296,19 @@ msgstr[1] "%d kilotavua"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
-msgstr ""
+msgstr "Tiedoston %s koko ylittää suurimman sallitun tiedostokoon"
 
 #, c-format
 msgid "Input file %s exceeds file size specified in the form"
-msgstr ""
+msgstr "Tiedoston %s koko ylittää lomakkella määritetyn koon"
 
 #, c-format
 msgid "Input file %s was only partially uploaded"
-msgstr ""
+msgstr "Tiedosto %s saatiin ladattua vain osittain"
 
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
-msgstr ""
+msgstr "Tiedostoa %s ei saatu ladattua. Virhe %d"
 
 msgid "Gallery Item Administration"
 msgstr "Gallerian Kohteen Ylläpito"
@@ -331,16 +330,14 @@ msgstr "muokkaa %s"
 msgid "Settings saved successfully."
 msgstr "Asetukset tallennettu."
 
-#, fuzzy
 msgid "Apply resized image settings"
-msgstr "Teeman asetukset palautettu"
+msgstr "Käytä skaalattujen kuvien asetuksia"
 
-#, fuzzy
 msgid "Preparing..."
-msgstr "Työstää..."
+msgstr "Valmistellaan..."
 
 msgid "Apply thumbnail settings"
-msgstr ""
+msgstr "Käytä esikatselukuvien asetuksia"
 
 msgid "Rebuilding thumbnails..."
 msgstr "Luodaan esikatselukuvat uudelleen..."
@@ -424,9 +421,8 @@ msgstr "Valokuvan koko muutettu"
 msgid "Modify Photo"
 msgstr "Muokkaa Kuvaa"
 
-#, fuzzy
 msgid "Successfully changed theme"
-msgstr "Teema %s otettu käyttöön"
+msgstr "Teema vaihdettiin onnistuneesti"
 
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; oletusteema &raquo;"
@@ -539,7 +535,7 @@ msgid "Logout"
 msgstr "Kirjaudu Ulos"
 
 msgid "Plugins"
-msgstr ""
+msgstr "Modulit"
 
 msgid "Users"
 msgstr "Käyttäjät"
@@ -602,9 +598,8 @@ msgstr "%d kohdetta tehty"
 msgid "%d items failed"
 msgstr "%d kohdetta epäonnistui"
 
-#, fuzzy
 msgid "Convert MySQL database to UTF8"
-msgstr "Muutetaan MySQL tietoja UTF8 merkistöön"
+msgstr "Muuta MySQL tietokanta UTF8 merkistöön"
 
 msgid ""
 "If you created your database with MySQL 3.x and you upgrade to MySQL 4.x, you will "
@@ -613,13 +608,17 @@ msgid ""
 "After using this, you should run the 'Delete database cache' task to get rid of any "
 "corruption in your cache."
 msgstr ""
+"Jos loit tietokannan MySQL 3.x:llä ja päivitin sen MySQL 4.x:ksi, sinun täytyy muuttaa "
+"merkistö UTF8:ksi (muuten merkeissä saattaa esiintyä sekaannuksia). Toiminto on vaaraton "
+"vaikka tietokannan merkistö olisi jo muunnettu, joten sen tekeminen varmuuden vuoksi ei "
+"epävarmuustilanteessa haittaa. Suoritettuasi tämän toiminnon, suorita 'Tyhjennä tietokannan "
+"välimuisti' -toiminto, jotta merkistö olisi oikea myös välimuistin tiedoille."
 
-#, fuzzy
 msgid "Database successfully converted to UTF8"
-msgstr "Kohde poistettu"
+msgstr "Tietokanta muutettu UTF8 merkistöön"
 
 msgid "No conversion required"
-msgstr ""
+msgstr "Konversiota ei tarvita"
 
 msgid "Delete user sessions"
 msgstr "Poista käyttäjäsessiot"
@@ -628,9 +627,9 @@ msgid ""
 "Delete all persistent user sessions according to your current session expiration settings."
 msgstr "Poista kaikki \"roikkuvat\" käyttäjäsessiot niiden vanhentumisasetusten mukaisesti."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Deleted %d sessions."
-msgstr "Poista käyttäjäsessiot"
+msgstr "Poistettu %d sessiota."
 
 msgid "Delete database cache"
 msgstr "Poista tietokannan välimuisti"
@@ -711,13 +710,11 @@ msgstr "Otsikko"
 msgid "Owner"
 msgstr "Omistaja"
 
-#, fuzzy
 msgid "Dynamic Album"
-msgstr "Muokkaa Albumia"
+msgstr "Dynaaminen albumi"
 
-#, fuzzy
 msgid "dynamic album"
-msgstr "Muokkaa Albumia"
+msgstr "dynaaminen albumi"
 
 msgid "Group"
 msgstr "Ryhmä"
@@ -747,15 +744,13 @@ msgstr ""
 "kirjoitusoikeudet kohteeseen"
 
 msgid "Official Release Repository"
-msgstr ""
+msgstr "Virallinen julkaisu Repository"
 
-#, fuzzy
 msgid "Experimental Repository"
-msgstr "Varasto"
+msgstr "Kokeellinen (beta) Repository"
 
-#, fuzzy
 msgid "Community Repository"
-msgstr "Varasto"
+msgstr "Käyttäjien tekemä Repository"
 
 #, c-format
 msgid "Error downloading index from '%s'."
@@ -817,11 +812,11 @@ msgid "Donate to the Gallery project"
 msgstr "Lahjoita Gallery projektille"
 
 msgid "G2.2: Double Double"
-msgstr ""
+msgstr "G2.2: Double Double"
 
 #, c-format
 msgid "Powered by Gallery v%s"
-msgstr ""
+msgstr "Powered by Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -864,19 +859,17 @@ msgstr "Albumilla näytettävät lohkot"
 msgid "Blocks to show on photo pages"
 msgstr "Kuvasivulla näytettävät lohkot"
 
-#, fuzzy
 msgid "Thumbnail links in dynamic albums"
-msgstr "Käytä tätä pikkukuvan kokoa kaikissa alialbumeissa"
+msgstr "Käytä tätä esikatselukuvan kokoa kaikissa dynaamisissa albumeissa"
 
-#, fuzzy
 msgid "Browse dynamic album"
-msgstr "Valitse albumi määränpääksi"
+msgstr "Selaa dynaamista albumia"
 
 msgid "Jump to original album"
-msgstr ""
+msgstr "Siirry alkuperäiseen albumiin"
 
 msgid "Separate link to original album"
-msgstr ""
+msgstr "Erillinen linkki alkuperäiseen albumiin"
 
 msgid "View Samples"
 msgstr "Katso Näytteet"
@@ -897,7 +890,7 @@ msgid "You must enter a number greater than 0"
 msgstr "Sinun on syötettävä numero, joka on suurempi kuin nolla"
 
 msgid "Error reading block settings. Clear your browser cache and try again."
-msgstr ""
+msgstr "Virhe luettaessa lohkon asetuksia. Tyhjennä selaimen välimuisti ja yritä uudelleen."
 
 #, c-format
 msgid "%dx%d"
@@ -927,9 +920,8 @@ msgstr "Taulukkolaskenta"
 msgid "spreadsheet"
 msgstr "taulukkolaskenta"
 
-#, fuzzy
 msgid "file"
-msgstr "Tiedosto"
+msgstr "tiedosto"
 
 msgid "Back"
 msgstr "Takaisin"
@@ -1032,13 +1024,11 @@ msgstr "Oletusteema"
 msgid "gettext"
 msgstr "gettext"
 
-#, fuzzy
 msgid "enabled"
-msgstr "Asennettu"
+msgstr "on käytössä"
 
-#, fuzzy
 msgid "disabled"
-msgstr "%d kohdetta epäonnistui"
+msgstr "pois käytöstä"
 
 msgid "Locale"
 msgstr "Lokaali"
@@ -1048,7 +1038,7 @@ msgstr "Selain"
 
 #, c-format
 msgid "Rows in %s table = %d"
-msgstr ""
+msgstr "Taulussa %s on %d riviä"
 
 msgid "Successfully saved theme settings"
 msgstr "Teeman asetukset tallennettu"
@@ -1547,23 +1537,22 @@ msgstr "(suositeltava)"
 msgid "Options"
 msgstr "Valinnat"
 
-#, fuzzy
 msgid "Lock user."
-msgstr "Lukkojärjestelmä"
+msgstr "Lukitse käyttäjätili"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+"Lukitut käyttäjät eivät voi muokata oman käyttäjätilinsä tietoja. (Salasana, nimi, email...)"
 
-#, fuzzy
 msgid "Reset failed login count."
-msgstr "Nollaa katselukerrat"
+msgstr "Nollaa epäonnistuneisen kirjausyritysten laskuri."
 
 #, c-format
 msgid "%d failed login attempt since the last successful login."
 msgid_plural "%d failed login attempts since the last successful login."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d epäonnistunut kirjaantumisyritys sitten viimeisen onnistuneen kirjautumisen."
+msgstr[1] "%d epäonnistunutta kirjaantumisyritystä sitten viimeisen onnistuneen kirjautumisen."
 
 msgid "Group Management"
 msgstr "Ryhmien Hallinta"
@@ -1740,103 +1729,97 @@ msgstr "Poista tallennetut sivut"
 msgid "Status: Inactive"
 msgstr "Tila: Ei Käytössä"
 
-#, fuzzy
 msgid "__PLUGIN__ deactivated"
-msgstr "poista käytöstä"
+msgstr "__PLUGIN__ deaktivoitu"
 
 msgid "Status: Active"
 msgstr "Tila: Käytössä"
 
 msgid "__PLUGIN__ activated"
-msgstr ""
+msgstr "__PLUGIN__ aktivoitu"
 
 msgid "Status: Not Installed"
 msgstr "Tila: Ei Asennettu"
 
 msgid "__PLUGIN__ uninstalled"
-msgstr ""
+msgstr "__PLUGIN__ asennus poistettu"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr "Tila: Tarvitsee Päivityksen (Ei Käytössä)"
 
-#, fuzzy
 msgid "Status: Incompatible Plugin (Inactive)"
-msgstr "Tila: Epäyhteensopiva (Ei Käytössä)"
+msgstr "Status: Yhteensopimaton moduli (Ei Käytössä)"
 
 msgid "Status: Inactive (Configuration Required)"
-msgstr ""
+msgstr "Status: Ei käytössä (Määritys vaaditaan)"
 
 msgid "__PLUGIN__ needs configuration"
-msgstr ""
+msgstr "__PLUGIN__ tarvitsee määrityksen"
 
 msgid "__PLUGIN__ deleted"
-msgstr ""
+msgstr "__PLUGIN__ poistettu"
 
-#, fuzzy
 msgid "Warning!"
-msgstr "Varoitus"
+msgstr "Varoitus!"
 
-#, fuzzy
 msgid "Do you really want to uninstall __PLUGIN__?"
-msgstr "Haluatko varmasti poistaa moduulin %s?"
+msgstr "Haluat poistaa asennuksen __PLUGIN__?"
 
 msgid ""
 "This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
 msgstr ""
+"Tämän modulin asennus poistetaan, mutta tiedostot jätetään, jotta voit uudelleenasentaa sen "
+"tarvittaessa."
 
 msgid "Yes"
-msgstr ""
+msgstr "Kyllä"
 
 msgid "No"
-msgstr ""
+msgstr "Ei"
 
-#, fuzzy
 msgid "Do you really want to delete __PLUGIN__?"
-msgstr "Haluatko varmasti poistaa moduulin %s?"
+msgstr "Haluatko poistaa __PLUGIN__?"
 
 msgid "This plugin will be uninstalled and its files will be deleted."
-msgstr ""
+msgstr "Tämän modulin asennus poistetaan ja sen tiedostot tuhotaan."
 
 msgid "disabled(__COUNT__)"
-msgstr ""
+msgstr "disabloi(__COUNT__)"
 
 msgid "up to date(__COUNT__)"
-msgstr ""
+msgstr "ajantasalla(__COUNT__)"
 
 msgid "not installed(__COUNT__)"
-msgstr ""
+msgstr "ei asennettu(__COUNT__)"
 
 msgid "upgrade required(__COUNT__)"
-msgstr ""
+msgstr "päivitys tarvitaan(__COUNT__)"
 
 msgid "incompatible(__COUNT__)"
-msgstr ""
+msgstr "yhteensopimattomia(__COUNT__)"
 
 msgid "Failed to completely delete __PLUGIN__"
-msgstr ""
+msgstr "Kohteen poistaminen kokonaan ei onnistunut __PLUGIN__"
 
-#, fuzzy
 msgid "Gallery Plugins"
-msgstr "Gallerian Moduulit"
+msgstr "Gallerian Modulit"
 
 msgid "Get More Plugins"
-msgstr ""
+msgstr "Hae lisää moduleita"
 
-#, fuzzy
 msgid ""
 "Gallery features come as separate plugins.  You can download and install plugins to add more "
 "features to your Gallery, or you can disable features if you don't want to use them.  In "
 "order to use a feature, you must install, configure (if necessary) and activate it.  If you "
 "don't wish to use a feature, you can deactivate it."
 msgstr ""
-"Gallerian ominaisuuksiin kuuluu erilliset moduulit. Voit ladata ja asentaa moduuleita, "
-"joilla saat lisää ominaisuuksia Galleriaasi, tai jos et halua käyttää jotain tiettyä "
-"moduulia, voit poistaa sen käytöstä. Käyttääksesi moduulia, sinun täytyy asentaa, "
-"konfiguroida ja otaa se käyttöön."
+"Gallerian ominaisuudet sisältyvät eri moduleihin. Voit ladata ja asentaa moduuleita, joilla "
+"saat lisää ominaisuuksia Galleriaasi, tai jos et halua käyttää jotain tiettyä moduulia, voit "
+"poistaa sen käytöstä. Käyttääksesi moduulia, sinun täytyy asentaa, konfiguroida ja otaa se "
+"käyttöön."
 
-#, fuzzy
 msgid "Plugin Name"
-msgstr "Koko Nimi"
+msgstr "Modulin nimi"
 
 msgid "Installed"
 msgstr "Asennettu"
@@ -1848,14 +1831,14 @@ msgid "Actions"
 msgstr "Toiminnot"
 
 msgid "help"
-msgstr ""
+msgstr "ohjeet"
 
 #, c-format
 msgid "Screenshot for %s"
-msgstr ""
+msgstr "Ruutukaappaus %s"
 
 msgid "Incompatible plugin!"
-msgstr "Yhteensopimaton plugin!"
+msgstr "Yhteensopimaton moduli!"
 
 #, c-format
 msgid "Core API Required: %s (available: %s)"
@@ -1863,26 +1846,22 @@ msgstr "Vaadittu Ytimen Rajapinta: %s (käytettävissä: %s)"
 
 #, c-format
 msgid "Plugin API Required: %s (available: %s)"
-msgstr "Tarvittava plugin rajapinta (API): %s (käytettävissä: %s)"
+msgstr "Tarvittava modulin rajapinta (API): %s (käytettävissä: %s)"
 
 msgid "configure"
 msgstr "konfiguroi"
 
-#, fuzzy
 msgid "up to date"
-msgstr "Päivitä"
+msgstr "ajan tasalla"
 
-#, fuzzy
 msgid "upgrade required"
-msgstr "(vaadittu)"
+msgstr "päivitys vaaditaan"
 
-#, fuzzy
 msgid "not installed"
-msgstr "poista"
+msgstr "ei asennettu"
 
-#, fuzzy
 msgid "incompatible"
-msgstr "Yhteensopimaton plugin"
+msgstr "Yhteensopimaton moduli"
 
 msgid "Repository"
 msgstr "Varasto"
@@ -1893,28 +1872,28 @@ msgstr ""
 
 #, c-format
 msgid "Failed to scan status from plugin: %s."
-msgstr ""
+msgstr "Modulien %s statuskysely epäonnistui."
 
 msgid "The repository index has been successfully updated."
 msgstr "Varaston (repository) indeksin päivitys onnistui."
 
 msgid "All plugins are already up-to-date."
-msgstr "Kaikki plugin:it ovat jo ajantasalla."
+msgstr "Kaikki modulit ovat jo ajantasalla."
 
 #, c-format
 msgid "%s plugin updated."
-msgstr ""
+msgstr "%s modulia päivitettiin."
 
 #, c-format
 msgid "%d language pack deleted."
 msgid_plural "%d language packs deleted."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d kielipaketti poistettiin."
+msgstr[1] "%d kielipakettia poistettiin."
 
 msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
 "at any time."
-msgstr ""
+msgstr "Tietoja sinusta tai Galleria-asennuksestasi ei lähetetä Galleria-palvelimille."
 
 #, c-format
 msgid ""
@@ -1924,58 +1903,66 @@ msgid ""
 "chosen, you must periodically download the latest plugin list to find out about available "
 "updates. %s On slower connections the process might take a minute or two."
 msgstr ""
+"Lataa ja asenna uusia moduleita nopeasti ja helposti. Jos et halkua pitää yksittäistä "
+"modulia voit poistaa sen Galleriasta. Moduli Repositoryjä on useita ja voit valita mitä "
+"niistä haluat käyttää (myös kaikkien yhtäaikainen käyttö onnistuu). Kun olet valinnut "
+"käytettävät Repositoryt, sinun pitää aika-ajoin ladata lista saatavilla olevista "
+"päivityksistä ja uusimmista moduleista. %s Hitaammilla yhteyksillä prosessi voi kestää "
+"minuutin-kaksi."
 
 #, c-format
 msgid "Officially Released Gallery Project plugins (%srecommended%s)"
-msgstr ""
+msgstr "Galleriaprojektin virallisesti julkaistut modulit (%ssuositellut%s)"
 
 #, c-format
 msgid "last updated on %s"
-msgstr ""
+msgstr "viimeksi päivitetty %s"
 
 #, c-format
 msgid "Experimental Gallery Project plugins (%scool new features, might be buggy%s)"
 msgstr ""
+"Kokeelliset (beta) Galleriaprojektin modulit (%shienoa uutta ominaisuutta, saattaa olla "
+"bugeja%s)"
 
 #, c-format
 msgid "Community plugins (%suse at your own risk!%s)"
-msgstr ""
+msgstr "Käyttäjien tekemät modulit (%skäyttö omalla vastuulla!%s)"
 
-#, fuzzy
 msgid "Repository Error"
-msgstr "Varasto"
+msgstr "Repository virhe"
 
-#, fuzzy
 msgid "You must select at least one repository."
-msgstr "Sinun tulee valita poistettava käyttäjä."
+msgstr "Sinun tulee valita ainakin yksi repository."
 
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 msgid "Configure your Gallery"
-msgstr ""
+msgstr "Määritä Galleria"
 
 msgid ""
 "Before you can proceed, you have to change some permissions so that Gallery can install "
 "plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
 msgstr ""
+"Ennenkuin voit jatkaa, sinun täytyy muuttaa pääsyoikeuksia, jotta Galleria voi asentaa "
+"moduleita puolestasi. Tämä on helppoa - suorita seuraavat komennot komentoriviltä tai ftp-"
+"clientista:"
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
 "When you've fixed the permissions, click the Continue button to proceed."
 msgstr ""
+"Jos sinulla on hankaluuksia oikeuksien muuttamisessa, pyydä apua järjestelmän "
+"pääkäyttäjältä. Kun oikeudet on asetettu, paina 'Jatka' siirtyäksesi seuraavaan vaiheeseen."
 
-#, fuzzy
 msgid "Continue"
-msgstr "Jatka..."
+msgstr "Jatka"
 
-#, fuzzy
 msgid "Download Plugin List"
-msgstr "Lataa yksikkötestit (unit tests)"
+msgstr "Lataa lista moduleista"
 
-#, fuzzy
 msgid "Show Repository List"
-msgstr "Varasto"
+msgstr "Näytä lista repositoryistä"
 
 msgid "Upgrade Gallery"
 msgstr "Päivitä Galleria"
@@ -1987,11 +1974,11 @@ msgid ""
 "upgrading:"
 msgstr ""
 "Uusi versio Gallery:stä on julkaistu, mutta et voi päivittää sitä tämän käyttöliittymän "
-"kautta. Päivitys saattaa rikkoa joitakin käyttämiäsi plugineja, mutta korvaavia versioita "
+"kautta. Päivitys saattaa rikkoa joitakin käyttämiäsi moduleita, mutta korvaavia versioita "
 "saattaa tulla tilalle. Tässä näet päivitysohjeet:"
 
 msgid "Review plugin compatibility (on the Themes and Modules tabs)"
-msgstr "Tarkista pluginien yhteensopivuus (Teemat ja Modulit -välilehdellä)"
+msgstr "Tarkista modulien yhteensopivuus (Teemat ja Modulit -välilehdellä)"
 
 #, c-format
 msgid "%sDownload%s Gallery core"
@@ -2002,7 +1989,7 @@ msgid "Read the %supgrade instructions%s and perform the upgrade"
 msgstr "Lue %späivitysohjeet%s ja suorita päivitys"
 
 msgid "Incompatible plugins are marked with an exclamation icon."
-msgstr "Yhteensopimattomat pluginit on merkitty huutomerkillä."
+msgstr "Yhteensopimattomat modulit on merkitty huutomerkillä."
 
 #, c-format
 msgid ""
@@ -2010,16 +1997,15 @@ msgid ""
 "installed core module, which are not shown here. You can view a %scomplete list%s of "
 "plugins, including incompatible ones, which are marked with a red icon."
 msgstr ""
-"Uusi ydinmoduli on julkaistu. Osa plugineista voi olla yhteensopimattomia asennetun "
-"ydinmodulin kanssa ja niitä ei näytetä. Voi katsoa %skoko plugin listaa%s "
-"(yhteensopimattomat kohteet on merkitty punaisilla kuvakkeilla)"
+"Uusi ydinmoduli on julkaistu. Osa moduleista voi olla yhteensopimattomia asennetun "
+"ydinmodulin kanssa ja niitä ei näytetä. Voi katsoa %skoko modulilistaa%s (yhteensopimattomat "
+"kohteet on merkitty punaisilla kuvakkeilla)"
 
-#, fuzzy
 msgid "upgrade available"
-msgstr "Päivitä Galleria"
+msgstr "päivitys saatavilla"
 
 msgid "locked"
-msgstr ""
+msgstr "lukittu"
 
 msgid "Theme Name"
 msgstr "Teeman Nimi"
@@ -2031,14 +2017,13 @@ msgid "Latest"
 msgstr "Viimeisin"
 
 msgid "Locked Plugin"
-msgstr ""
+msgstr "Lukittu moduli"
 
 msgid "Incompatible Plugin"
-msgstr "Yhteensopimaton plugin"
+msgstr "Yhteensopimaton moduli"
 
-#, fuzzy
 msgid "Upgrade Available"
-msgstr "Päivitä kaikki"
+msgstr "Päivitys saatavilla"
 
 msgid "download"
 msgstr "lataa"
@@ -2047,21 +2032,21 @@ msgid "modify"
 msgstr "muokkaa"
 
 msgid "Upgrade All Plugins"
-msgstr "Päivitä kaikki pluginit"
+msgstr "Päivitä kaikki modulit"
 
 msgid ""
 "Gallery can automatically upgrade your themes and modules to the latest available versions. "
 "No new plugins will be downloaded."
 msgstr ""
 "Gallery voi automaattisesti päivittää teemat ja modulit uusimpiin versioihin. Uusia "
-"pluginejä ei ladata."
+"moduleita ei ladata."
 
 msgid "Upgrade All"
 msgstr "Päivitä kaikki"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Download %s"
-msgstr "Ladataan %s"
+msgstr "Lataa %s"
 
 msgid "No packages have been selected."
 msgstr "Yhtään pakettia ei ole valittu."
@@ -2071,52 +2056,53 @@ msgid ""
 "of the package to download.  Language packages are optional, You only need to download the "
 "ones that you want to use on your site."
 msgstr ""
+"Lataa paketti käyttääksesi tätä modulia. Voit päivittää paketin valitsemalla ja lataamalla "
+"uudemman version. Kielipaketit eivät ole pakollisia, lataa vain ne joita tarvitset omaan "
+"Galleriaasi."
 
-#, fuzzy
 msgid "Base Packages"
-msgstr "Perustiedostot"
+msgstr "Peruspaketit"
 
 #, c-format
 msgid "%s: version %s (build %s)"
-msgstr ""
+msgstr "%s: versio %s (build %s)"
 
 #, c-format
 msgid "%s: version %s (build %s) %sdowngrading is not supported!%s"
-msgstr ""
+msgstr "%s: versio %s (build %s) %späivitys vanhempaan versiion ei ole sallittua!%s"
 
 #, c-format
 msgid "%sCurrently Installed%s: version %s (build %s)"
-msgstr ""
+msgstr "%sAsennettu%s: versio %s (build %s)"
 
-#, fuzzy
 msgid "Language Packages"
-msgstr "Kielen Asetukset"
+msgstr "Kielipaketit"
 
 #, c-format
 msgid "(%sselect all%s%sselect none%s)"
-msgstr ""
+msgstr "(%svalitse kaikkil%s%spoista valinnat%s)"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
-msgstr ""
+msgstr "%s versio %s (päivitetään versiosta %s)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s version %s"
-msgstr "PHP versio"
+msgstr "%s versio %s"
 
 #, c-format
 msgid "%s version %s (%snewer version %s is installed%s)"
-msgstr ""
+msgstr "%s versio %s (%suudempi versio %s on asennettu%s)"
 
 #, c-format
 msgid "%s version %s (currently installed)"
-msgstr ""
+msgstr "%s versio %s (olemassa oleva asennus)"
 
 msgid "No compatible language packages available"
-msgstr ""
+msgstr "Yhteensopivia kielipaketteja ei ole tarjolla"
 
 msgid "You must select a base package before choosing language packs."
-msgstr ""
+msgstr "Sinun täytyy valita peruspaketit ennen kielipakettien valitsemista."
 
 msgid "Update"
 msgstr "Päivitä"
@@ -2167,9 +2153,8 @@ msgstr "sekä"
 msgid "New albums"
 msgstr "Uusia albumeja"
 
-#, fuzzy
 msgid "Save Defaults"
-msgstr "Oletukset"
+msgstr "Tallenna oletukset"
 
 #, c-format
 msgid "%s Theme Settings"
@@ -2206,9 +2191,8 @@ msgstr "Arvo"
 msgid "There are no settings for this theme"
 msgstr "Tällä teemalla ei ole asetuksia"
 
-#, fuzzy
 msgid "Save Theme Settings"
-msgstr "Teeman %s Asetukset"
+msgstr "Tallenna teeman asetukset"
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime types.  Rank the "
@@ -2262,13 +2246,11 @@ msgstr "Et voi poistaa vierailijoille varattua käyttäjää."
 msgid "Edit User (by list)"
 msgstr "Muokkaa Käyttäjää (valitse listasta)"
 
-#, fuzzy
 msgid "Locked"
-msgstr "Lokaali"
+msgstr "Lukittu"
 
-#, fuzzy
 msgid "Failed Logins"
-msgstr "Epäonnistui"
+msgstr "Epäonnistuneita kirjautumisyrityksiä"
 
 msgid "Thumbnails"
 msgstr "Kuvakkeet"
@@ -2302,9 +2284,8 @@ msgstr "Tietokantavirhe"
 msgid "Platform Error"
 msgstr "Järjestelmävirhe"
 
-#, fuzzy
 msgid "Authentication Failure"
-msgstr "Autorisointi Vahvistettu"
+msgstr "Autentikointi epäonnistui"
 
 msgid "Error"
 msgstr "Virhe"
@@ -2325,10 +2306,11 @@ msgid ""
 "If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
 "Administrators can clear out this cache."
 msgstr ""
+"Jos ongelma on toistuva, kyseessä voi olla välimuistin korruptoituminen. Pyydä Gallerian "
+"ylläpitäjää tyhjentämään välimuisti."
 
-#, fuzzy
 msgid "Clear the cache"
-msgstr "Poista tallennetut sivut"
+msgstr "Tyhjennä välimuisti"
 
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "Vaihtoehtoisesti voit palata Gallerian pääsivulle ja jatkaa selailua."
@@ -2340,6 +2322,8 @@ msgid ""
 "Your change cannot be completed due to a loss of session data. Please try again. If it still "
 "doesn't work, try logging out and logging back in."
 msgstr ""
+"Sessiotietojen katoamisen takia muutoksiasi ei voida tehdä. Ole hyvä ja yritä uudelleen. Jos "
+"ongelma toistuu, kokeile kirjautua ulos ja takaisin sisään."
 
 msgid "An error has occurred while interacting with the database."
 msgstr "Tapahtui virhe tietokannan kanssa."
@@ -2367,7 +2351,7 @@ msgstr ""
 "palautus varmuuskopiolta."
 
 msgid "Item not found."
-msgstr ""
+msgstr "Kohdetta ei löytynyt"
 
 msgid "An error has occurred."
 msgstr "Tapahtui virhe."
@@ -2483,7 +2467,7 @@ msgstr ""
 "lähetystapaa, tai pyytää järjestelmän ylläpitäjää sallimaan isommat lähetykset."
 
 msgid "More Upload Boxes..."
-msgstr ""
+msgstr "Lisää latauskenttiä..."
 
 msgid "Set item titles from:"
 msgstr "Aseta kohteiden otsikot täältä:"
@@ -2585,7 +2569,7 @@ msgstr ""
 "lisättyjä kohteita."
 
 msgid "Apply to all subalbums"
-msgstr "Käytä kaikissa alialbumeissa"
+msgstr "Käytä kaikissa albumeissa"
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
@@ -2595,7 +2579,7 @@ msgid "You must enter a number (greater than zero)"
 msgstr "Sinun on syötettävä numero, joka on suurempi kuin nolla"
 
 msgid "Use this thumbnail size in all subalbums"
-msgstr "Käytä tätä pikkukuvan kokoa kaikissa alialbumeissa"
+msgstr "Käytä tätä esikatselukuvan kokoa kaikissa seuraavissa albumeissa"
 
 msgid "Resized Images"
 msgstr "Skaalatut Kuvat"
@@ -2613,11 +2597,10 @@ msgid "You must enter a valid size"
 msgstr "Sinun tulee syöttää käyttökelpoinen koko"
 
 msgid "Use these target sizes in all subalbums"
-msgstr "Käytä näitä kohdekokoja kaikissa alialbumeissa"
+msgstr "Käytä näitä kohdekokoja kaikissa seuraavissa albumeissa"
 
-#, fuzzy
 msgid "Apply settings to existing items"
-msgstr "Muuta myös sisältyvät kohteet"
+msgstr "Käytä asetuksia olemassa olevilla kohteilla"
 
 msgid ""
 "The thumbnail and resized image settings are for all new items. To apply these settings to "
@@ -2626,24 +2609,27 @@ msgid ""
 "Building images now makes this operation take longer, but saves the time to build and cache "
 "each file when it is first viewed."
 msgstr ""
+"Esikatselu- ja skaalattujen kuvien asetukset koskevat uusia kuvia. Jotta asetuksia "
+"käytettäisiin kaikkiin albumin kuviin, rastita ko. vaihtoehto. Vaihtoehdolla seuraavien "
+"albumien kuva-asetukset asetetaan uudelleen albumikohtaisten asetuksiensa mukaisiksi, jotka "
+"saattavat poiketa yo. asetuksista. Kuvien uudelleenrenderointi nyt vie pidempään, mutta "
+"säästää aikaa verrattuna uudelleenrenderointiin silloin kun kuvaa katsellaan ensimmäisen "
+"kerran."
 
 msgid "Apply album setting to thumbnails"
-msgstr ""
+msgstr "Käytä albumin asetuksia esikatselukuvissa"
 
-#, fuzzy
 msgid "... and for all subalbums"
-msgstr "Käytä kaikissa alialbumeissa"
+msgstr "... ja kaikissa seuraavissa albumeissa"
 
-#, fuzzy
 msgid "Build thumbnails too"
-msgstr "Luodaan esikatselukuvat uudelleen..."
+msgstr "Luo esikatselukuvat uudelleen myös"
 
-#, fuzzy
 msgid "Apply album setting to resized images"
-msgstr "Luodaan skaalatut kuvat uudelleen"
+msgstr "Käytä albumin asetuksia skaalatuille kuville"
 
 msgid "Build resizes too"
-msgstr ""
+msgstr "Renderoi myös skaalatut koot"
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the animation's "
@@ -2772,9 +2758,8 @@ msgstr ""
 "Ei ole työkalua tämän tyyppiselle kohteelle, joten emme voi tehdä tai muokata "
 "esikatselukuvaa."
 
-#, fuzzy
 msgid "Unable to create a thumbnail for this item"
-msgstr "Sinun tulee antaa nimi tälle kohteelle."
+msgstr "Kohteelle ei voitu luoda esikatselukuvaa"
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
@@ -2819,9 +2804,8 @@ msgstr "Mittasuhteet: "
 msgid "Crop"
 msgstr "Rajaa"
 
-#, fuzzy
 msgid "Undo Changes"
-msgstr "Muuta"
+msgstr "Peruuta muutokset"
 
 msgid "Reset to default"
 msgstr "Palauta oletusarvo"
@@ -2901,6 +2885,8 @@ msgid ""
 "There is no toolkit support to modify the original so operations may only be applied to the "
 "copies"
 msgstr ""
+"Työkaluja alkuperäisten kohteiden muokkaukseen ei ole, joten operaatio suoritetaan vain "
+"kopioihin"
 
 msgid "Preserve Original Photo"
 msgstr "Säilytä Alkuperäinen Kuva"
@@ -2919,34 +2905,33 @@ msgstr ""
 msgid "Restore original"
 msgstr "Palauta alkuperäinen"
 
-#, fuzzy
 msgid "Choose a theme"
-msgstr "Valitse lohko"
+msgstr "Valitse teema"
 
 #, c-format
 msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
+"Teemoilla mukautat albumien ulkonäköä ja toiminnallisuutta. Voit valita eri teeman eri "
+"albumeille. Oletuksena käytetään teemaa %s, jos valintaa ei suoriteta."
 
 msgid "Use this theme in all subalbums"
-msgstr "Käytä tätä temaa kaikissa alialbumeissa"
+msgstr "Käytä tätä temaa kaikissa seuraavissa albumeissa"
 
 msgid "Choose Theme"
-msgstr ""
+msgstr "Valitse teema"
 
 #, c-format
 msgid "Configure the %s theme"
-msgstr ""
+msgstr "Määritä %s teema"
 
-#, fuzzy
 msgid "These settings only apply to the theme for this album."
-msgstr ""
-"Tämä albumi käyttää teemaa <b>%s</b>. Nämä asetukset koskevat vain tämän albumin teemaa."
+msgstr "Näitä asetuksia käytetään vain tämän albumin teemassa."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Use these settings in all subalbums that use the %s theme"
-msgstr "Käytä näitä asetuksia kaikissa alialbumeissa, jotka käyttävät teemaa %s"
+msgstr "Käytä asetuksia kaikissa seuraavissa albumeissa, jotka käyttävät teemaa %s"
 
 msgid "Album Highlight"
 msgstr "Albumin Esimerkkikuva"
@@ -3162,13 +3147,16 @@ msgid "after"
 msgstr "jälkeen"
 
 msgid "Reorder"
-msgstr "Järjestä"
+msgstr "Järjestä uudelleen"
 
 msgid ""
 "JavaScript must be enabled for this page to function properly. However, it seems JavaScript "
 "is either disabled or not supported by your browser. Please enable JavaScript by changing "
 "your browser options, then try again."
 msgstr ""
+"JavaScriptin täytyy olla päällä, jotta sivu toimisi kunnolla. Näyttäisi siltä, että "
+"selaimesi ei tue JavaScriptiä. Ole hyvä ja salli JavaScriptin käyttö selaimesi asetuksista "
+"ja yritä uudelleen."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "Palvelin on tilapäisesti poissa käytöstä huollon takia."
@@ -3180,7 +3168,7 @@ msgid "Enter a URL"
 msgstr "Kirjoita URL"
 
 msgid "Enter some text describing the URL"
-msgstr "Kirjoita jotain kuvaamaan URL"
+msgstr "Anna URL:n kuvaus"
 
 msgid "Enter an image URL"
 msgstr "Kirjoita kuvan URL"
@@ -3203,13 +3191,12 @@ msgstr "url"
 msgid "image"
 msgstr "kuva"
 
-#, fuzzy
 msgid "color"
-msgstr "ydin"
+msgstr "väri"
 
 #, c-format
 msgid "You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s"
-msgstr ""
+msgstr "Voit myös käyttää <a href=\"%s\" target=\"_new\">värin nimi</a> esim: %s"
 
 msgid "Configuration Error: Missing Theme"
 msgstr "Konfigurointivirhe: Puuttuva Teema"
@@ -3315,11 +3302,13 @@ msgid ""
 "This account is not allowed to modify account settings.  Please contact your Gallery "
 "administrator"
 msgstr ""
+"Tällä tilillä ei ole oikeuksia muuttaa tilien asetuksia. Ole hyvä ja ota yhteyttä Gallerian "
+"ylläpitoon."
 
 msgid ""
 "Your administrator has locked this account, preventing changes from being made to the "
 "account information."
-msgstr ""
+msgstr "Ylläpito on lukinnut tämä tilin. Muutoksia tilin tietoihin ei voida suorittaa."
 
 msgid "Login to your account"
 msgstr "Kirjaudu sisään"
@@ -3333,6 +3322,9 @@ msgid ""
 "for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
 "this account."
 msgstr ""
+"Kirjautuminen näillä käyttäjätunnuksilla on tilapäisesti estetty. Syynä tähän ovat lukuisat "
+"epäonnistuneet kirjautumisyritykset. Odota tilin oikeuksien palautumista tai käytä <a href="
+"\"%s\">palauta salasana</a> sivua käyttäjätilin palauttamiseen."
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Sisäänkirjautumistietosi ovat väärät. Yritä uudelleen."
@@ -3633,499 +3625,3 @@ msgstr "Sisään kirjautumisen lohko"
 
 msgid "Links to album/photo peers"
 msgstr "Linkit albumin/kuvan vastapuoliin"
-
-#~ msgid "Performing Maintenance Tasks"
-#~ msgstr "Suorita ylläpitotehtäviä"
-
-#~ msgid "Upgrade"
-#~ msgstr "Päivitä"
-
-#~ msgid "Download"
-#~ msgstr "Lataus"
-
-#~ msgid "Detecting broken derivatives "
-#~ msgstr "Etsii rikkoutuneita johdannaisia"
-
-#~ msgid "Detecting broken derivatives, "
-#~ msgstr "Etsii rikkoutuneita johdannaisia, "
-
-#~ msgid "From Local Server"
-#~ msgstr "Paikalliselta Palvelimelta"
-
-#~ msgid "From Web Page"
-#~ msgstr "Web-sivulta"
-
-#~ msgid "create link"
-#~ msgstr "luo linkki"
-
-#~ msgid "link an item"
-#~ msgstr "linkitä kohde"
-
-#~ msgid "Rebuilding resized images..."
-#~ msgstr "Luodaan skaalatut kuvat uudelleen..."
-
-#~ msgid "Create Link"
-#~ msgstr "Luo Linkki"
-
-#~ msgid "Modules"
-#~ msgstr "Moduulit"
-
-#~ msgid "Display"
-#~ msgstr "Näyttö"
-
-#~ msgid "Link Album"
-#~ msgstr "Linkitä Albumi"
-
-#~ msgid "Link Photo"
-#~ msgstr "Linkitä Kuva"
-
-#~ msgid "Link Movie"
-#~ msgstr "Linkitä Video"
-
-#~ msgid "Link %s"
-#~ msgstr "Linkitä %s"
-
-#~ msgid "Plugins directory does not exist."
-#~ msgstr "Plugin hakemistoa ei ole olemassa."
-
-#~ msgid ""
-#~ "Couldn't create plugins subdirectory. Make sure the webserver has write permissions in it."
-#~ msgstr ""
-#~ "Lisäosien (plugin) alihakemistoa ei voitu luoda. Varmista että http-palvelimella on "
-#~ "kirjoitusoikeudet kohteeseen."
-
-#~ msgid "G2.1: Blackjack"
-#~ msgstr "G2.1: Blackjack"
-
-#~ msgid "Format: [module.BlockName param=value] ..."
-#~ msgstr "Muoto: [module.BlockName param=value] ..."
-
-#~ msgid ""
-#~ "Invalid return URL! The requested URL %s tried to insert a redirection to %s which is not "
-#~ "a part of this Gallery."
-#~ msgstr ""
-#~ "Epäkelpo paluu URL! Pyydetty URL %s yritti lisätä tämän Gallerian ulkopuolisen "
-#~ "uudelleenohjauksen %s:ään."
-
-#~ msgid "Local Server Upload Paths"
-#~ msgstr "Paikallisen Palvelimen Siirtohakemistot"
-
-#~ msgid ""
-#~ "Specify the legal directories on the local server where a user can store files and then "
-#~ "upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths "
-#~ "you enter here and all the files and directories under those paths will be available to "
-#~ "any Gallery user who has upload privileges, so you should limit this to directories that "
-#~ "won't contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
-#~ msgstr ""
-#~ "Määritä hakemisto paikallisella palveimella, jonne käyttäjät voivat tallettaa "
-#~ "tiedostojaan ja sitten lähettää ne Galleriaan käyttämällä <i>Lähetä paikalliselta "
-#~ "palvelimelta</i> -ominaisuutta. Antamasi hakemisto ja tiedostot näkyvät kaikille "
-#~ "Gallerian käyttäjille, joilla on lähetysoikeudet, joten älä laita tähän hakemistoja jotka "
-#~ "sisältävät arkaluontoista materiaalia! (esim. /tmp tai /usr/ftp/incoming)"
-
-#~ msgid "remove"
-#~ msgstr "poista"
-
-#~ msgid "You must enter a directory to add."
-#~ msgstr "Sinun on annettava hakemisto jonka haluat lisätä."
-
-#~ msgid "open_basedir documentation"
-#~ msgstr "open_basedir dokumentaatio"
-
-#~ msgid ""
-#~ "Your webserver is configured to prevent you from accessing that directory.  Please refer "
-#~ "to the %s and consult your webserver administrator."
-#~ msgstr ""
-#~ "Palvelin on asetettu estämään sinua käyttämästä kyseistä hakemistoa. Ole hyvä ja katso "
-#~ "hakemistoon %s ja selvitä asia palvelimen ylläpitäjän kanssa."
-
-#~ msgid "The webserver does not have permissions to read that directory."
-#~ msgstr "Palvelimella ei ole oikeuksia lukea kyseistä hakemistoa."
-
-#~ msgid "The path you specified is not a valid directory."
-#~ msgstr "Polku jonka annoit ei ole hakemisto."
-
-#~ msgid "Successfully installed and auto-configured module %s"
-#~ msgstr "Asennettu ja itse-konfiguroitu moduuli %s"
-
-#~ msgid "Successfully installed module %s"
-#~ msgstr "Moduuli %s asennettu"
-
-#~ msgid "Successfully configured module %s"
-#~ msgstr "Moduuli %s konfiguroitu"
-
-#~ msgid "Successfully upgraded module %s"
-#~ msgstr "Moduuli %s päivitetty"
-
-#~ msgid "Successfully activated module %s"
-#~ msgstr "Moduuli %s otettu käyttöön"
-
-#~ msgid "Successfully deactivated module %s"
-#~ msgstr "Moduuli %s otettu pois käytöstä"
-
-#~ msgid "Successfully uninstalled module %s"
-#~ msgstr "Moduuli %s poistettu"
-
-#~ msgid "Incompatible module!"
-#~ msgstr "Epäyhteensopiva moduuli!"
-
-#~ msgid "Module API Required: %s (available: %s)"
-#~ msgstr "Tarvittava Moduulin Rajapinta: %s (käytettävissä: %s)"
-
-#~ msgid "Confirm module uninstall"
-#~ msgstr "Vahvista moduulin poisto"
-
-#~ msgid "This will also remove any permissions and clean up any data created by this module."
-#~ msgstr "Tämä poistaa myös kaikki oikeudet ja siivoaa moduulin luomat tilapäistiedot."
-
-#~ msgid "Uninstall"
-#~ msgstr "Poista"
-
-#~ msgid "Common Tasks"
-#~ msgstr "Yleiset tehtävät"
-
-#~ msgid "Warning: Experimental feature!"
-#~ msgstr "Varoitus: Toiminto on kokeellinen!"
-
-#~ msgid ""
-#~ "The repository features are currently experimental, and no actual repository has been set "
-#~ "up yet, so none of these features will work at this time."
-#~ msgstr ""
-#~ "Tietovaraston (repository) toiminnot ovat vasta kokeiluasteella ja varsinaista "
-#~ "tietovarastoa ei ole vielä toteutettu, joten mikään näistä toiminnoista ei toimi."
-
-#~ msgid ""
-#~ "The Gallery repository contains the latest modules and themes extensively tested by the "
-#~ "Gallery team. The repository index contains information about available plugins, such as "
-#~ "the latest versions, available languages and compatibility. The index must be "
-#~ "synchronized periodically with the Gallery server so you are informed about any available "
-#~ "updates. No personal information is sent to the Gallery server during updating. On slower "
-#~ "connections the process might take a minute or two."
-#~ msgstr ""
-#~ "Galleryn tietovarasto sisältää viimeisimmät modulit ja teemat, jotka on testannut Gallery-"
-#~ "kehitystiimi. Tietovaraston indeksi sisältää tiedot saatavilla olevista plugineistä, "
-#~ "uusimmista versioista, yhteensopivuudesta ja käännöksistä (kielet). Indeksi täytyy "
-#~ "päivittää ajoittain Gallery-palvelimelta, jotta tiedot uusimmista päivityksistä olisivat "
-#~ "saatavissa. Indeksiä päivitettäessä henkilötietoja ei välitetä palvelimelle. Hitaammilla "
-#~ "yhteyksillä indeksin päivitys voi viedä minuutin-kaksi."
-
-#~ msgid ""
-#~ "As of the last update on %s, the repository contains %s modules and %s themes. Its "
-#~ "contents can be viewed on the Modules and Themes tabs."
-#~ msgstr ""
-#~ "Viimeisen päivityksen %s jälkeen tietovarastossa (repository) on %s modulia ja %s teemaa. "
-#~ "Pääset katsomaan sisältöä välilehdeltä \"Modulit ja Teemat\"."
-
-#~ msgid ""
-#~ "The index has never been updated. Click on the Update button to see what updates are "
-#~ "available."
-#~ msgstr ""
-#~ "Indeksiä ei ole päivitetty ikinä. Paina \"Päivitä\" -painiketta nähdäksesi mitä "
-#~ "päivityksiä on saatavilla."
-
-#~ msgid "Gallery Up-To-Date"
-#~ msgstr "Galleria ajan tasalla"
-
-#~ msgid ""
-#~ "Gallery cannot be upgraded through this interface. When a new version becomes available, "
-#~ "upgrade instructions will be presented here."
-#~ msgstr ""
-#~ "Et voi päivittää Gallery:ä tämän käyttöliittymän kautta. Kun uusia versioita julkaistaan, "
-#~ "päivitysohjeet esitetään täällä."
-
-#~ msgid ""
-#~ "Once the repository index has been downloaded, a list of available plugins will be "
-#~ "presented. It can be downloaded by clicking on the Update button on the Common Tasks tab."
-#~ msgstr ""
-#~ "Kun tietovaraston (repository) indeksi on ladattu, näet listan saatavilla olevista "
-#~ "plugineistä. Lataa kohteet painamalla \"Päivitä\" painiketta välilehdellä \"Yleiset "
-#~ "toiminnot\"."
-
-#~ msgid ""
-#~ "The following plugins are available. Click on the action beside the plugin you're "
-#~ "interested in to see what's available in the repository."
-#~ msgstr ""
-#~ "Seuraavat pluginit ovat saatavilla. Paina kiinnostavan pluginin vieressä olevaa toimintoa "
-#~ "saadaksesi selville mitä tietovarastossa on kohteesta tarjolla."
-
-#~ msgid ""
-#~ "The base files required for the theme to work and the English (US) translation will be "
-#~ "downloaded."
-#~ msgstr "Teeman tarvitsemat perustiedostot ja englanninkielinen (ENU) käännös ladataan."
-
-#~ msgid "Upgrade Base Files"
-#~ msgstr "Päivitä perustiedostot"
-
-#~ msgid "You can upgrade the base module files."
-#~ msgstr "Voit päivittää perusmodulien tiedostot"
-
-#~ msgid "Upgrade base files"
-#~ msgstr "Päivitä perustiedostot"
-
-#~ msgid "Base Files Up-To-Date"
-#~ msgstr "Perustiedosto ovat ajantasalla"
-
-#~ msgid "This plugin's base files are up-to-date."
-#~ msgstr "Pluginien perustiedost ovat ajantasalla."
-
-#~ msgid "Updated Translations"
-#~ msgstr "Päivitetyt käännösversiot (kielet)"
-
-#~ msgid ""
-#~ "Below is a list of translations that have been updated since they were last downloaded. "
-#~ "Select the ones you want to download."
-#~ msgstr ""
-#~ "Alla on lista käännöksistä, joita on päivitetty viimeisen päivityslatauksen jälkeen. "
-#~ "Valitse ne jotka haluat ladata."
-
-#~ msgid "Additional Languages"
-#~ msgstr "Muut kielet"
-
-#~ msgid ""
-#~ "Below is a list of languages this plugin has been translated to. Select the ones you want "
-#~ "included in addition to the ones already downloaded."
-#~ msgstr ""
-#~ "Alla on lista kieleistä, joille tämä plugin on käännetty. Jo lataamiesi lisäksi valitse "
-#~ "ne, jotka haluat lisätä."
-
-#~ msgid "Unit Tests"
-#~ msgstr "Yksikkötestit (unit tests)"
-
-#~ msgid ""
-#~ "This plugin has unit tests available for download, which are useful for Gallery "
-#~ "developers. All of the module's features are available without the tests."
-#~ msgstr ""
-#~ "Tälle pluginille on saatavilla yksikkötestejä (unit tests), jotka ovat hyödyllisiä "
-#~ "Gallery kehittäjille. Kaikki modulin ominaisuudet ovat saatavilla ilman ko. testejä."
-
-#~ msgid "Gallery Repository Setup"
-#~ msgstr "Gallerian tietovaraston (repository) asennus"
-
-#~ msgid ""
-#~ "In order to download plugins from the Gallery repository, a special directory needs to be "
-#~ "created where Gallery will store the data. Under your Gallery base directory, create a "
-#~ "directory called '%s' and allow the web server to write into it by appropriately setting "
-#~ "the permissions."
-#~ msgstr ""
-#~ "Ladataksesi pluginejä Gallery tietovarastosta (repository), sinun pitää luoda hakemisto, "
-#~ "jonne Gallery tallentaa tiedot. Luo hakemisto '%s' Galleryn perushakemistoon ja anna http-"
-#~ "palvelimelle kirjoitusoikeudet siihen."
-
-#~ msgid "Instructions for Unix-type platforms:"
-#~ msgstr "Ohjeet Unix-tyylisille järjestelmille:"
-
-#~ msgid ""
-#~ "Refreshing this page will take you to the Repository if the directory has been "
-#~ "successfully created."
-#~ msgstr ""
-#~ "Päivittällä tämän sivun (esim. Shift+F5) näet tietovaraston (repository), jos hakemiston "
-#~ "luonti onnistui."
-
-#~ msgid "All Themes"
-#~ msgstr "Kaikki Teemat"
-
-#~ msgid "Status: Incompatible Theme (Inactive)"
-#~ msgstr "Tila: Epäyhteensopiva Teema (Ei Käytössä)"
-
-#~ msgid "Incompatible theme!"
-#~ msgstr "Epäyhteensopiva teema!"
-
-#~ msgid "Theme API Required: %s (available: %s)"
-#~ msgstr "Vaadittu Teeman Rajapinta: %s (käytettävissä: %s)"
-
-#~ msgid "(default)"
-#~ msgstr "(oletusarvo)"
-
-#~ msgid "More.."
-#~ msgstr "Lisää.."
-
-#~ msgid ""
-#~ "Transfer files that are already on your server into your Gallery.  The files must already "
-#~ "have been uploaded to your server some other way (like FTP) and must be placed in a "
-#~ "directory where they are accessibly by any element on the server.  If you're on Unix this "
-#~ "means that the files and the directory the files are in should have modes of at least 755."
-#~ msgstr ""
-#~ "Siirrä palvelimella jo sijaitsevat tiedostot Galleriaan. Tiedostojen pitää olla jo "
-#~ "siirretty palvelimelle jollain tavalla (kuten FTP) ja ne täytyy sijaita jossain "
-#~ "hakemistossa minne kaikilla palvelimella on lukuoikeudet. UNIX:issa tämä tarkoittaa "
-#~ "yleensä sitä, että hakemistoilla ja tiedostoilla täytyy olla käyttöoikeudet 0755."
-
-#~ msgid ""
-#~ "For security purposes, you can't use this feature until the Gallery Site Administrator "
-#~ "configures a set of legal upload directories."
-#~ msgstr ""
-#~ "Turvallisuussyistä et voi käyttää tätä ominaisuutta ennenkuin Gallerian ylläpitäjä "
-#~ "määrittelee paikalliset kopiointihakemistot."
-
-#~ msgid "Server Path"
-#~ msgstr "Palvelimen Polku"
-
-#~ msgid "You must enter a directory."
-#~ msgstr "Sinun on annettava hakemisto."
-
-#~ msgid ""
-#~ "The directory you entered is invalid.  Make sure that the directory is readable by all "
-#~ "users."
-#~ msgstr ""
-#~ "Antamasi hakemisto ei kelpaa. Tarkista, että hakemiston lukeminen onnistuu kaikilta "
-#~ "käyttäjiltä."
-
-#~ msgid ""
-#~ "The directory you entered is illegal.  It must be a sub directory of one of the "
-#~ "directories listed below."
-#~ msgstr "Antamasi hakemisto ei käy. Sen täytyy olla allaolevien hakemistojen alahakemisto."
-
-#~ msgid "An item with the same name already exists."
-#~ msgstr "Kohde samalla nimellä on jo olemassa."
-
-#~ msgid "Legal Directories"
-#~ msgstr "Luvalliset Hakemistot"
-
-#~ msgid "Recent Directories"
-#~ msgstr "Viimeaikaiset Hakemistot"
-
-#~ msgid "Find Files"
-#~ msgstr "Etsi Tiedostoja"
-
-#~ msgid "Directory: %s"
-#~ msgstr "Hakemisto: %s"
-
-#~ msgid "File name"
-#~ msgstr "Tiedostonnimi"
-
-#~ msgid "Type"
-#~ msgstr "Tyyppi"
-
-#~ msgid "Size"
-#~ msgstr "Koko"
-
-#~ msgid "Use Symlink"
-#~ msgstr "Käytä Symbolista Linkkiä"
-
-#~ msgid "%d byte"
-#~ msgid_plural "%d bytes"
-#~ msgstr[0] "%d tavu"
-#~ msgstr[1] "%d tavua"
-
-#~ msgid "Parent Directory"
-#~ msgstr "Ylempi Hakemisto"
-
-#~ msgid "Directory"
-#~ msgstr "Hakemisto"
-
-#~ msgid "(Un)check all known types"
-#~ msgstr "Valitse/Poista kaikki tunnistetut tyypit"
-
-#~ msgid "(Un)check symlinks"
-#~ msgstr "Valitse/Poista symboliset linkit"
-
-#~ msgid "for selected items"
-#~ msgstr "valituille kohteille"
-
-#~ msgid "Copy base filenames to:"
-#~ msgstr "Kopioi tiedostonimet tänne:"
-
-#~ msgid "Add Files"
-#~ msgstr "Lisää tiedostoja"
-
-#~ msgid "Start Over"
-#~ msgstr "Aloita Alusta"
-
-#~ msgid ""
-#~ "Import files into Gallery from another website.  Enter a URL below to a web page anywhere "
-#~ "on the net and Gallery will allow you to upload any media files that it finds on that "
-#~ "page.  Note that if you're entering a URL to a directory, you should end the URL with a "
-#~ "trailing slash (eg, http://example.com/directory/). "
-#~ msgstr ""
-#~ "Tuo tiedostoja Galleriaan toiselta web-sivustolta. Kirjoita sivun URL ja Galleria antaa "
-#~ "sinun siirtää mitä hyvänsä mediatiedostoja jotka se löytää kyseiseltä sivulta. Huomaa "
-#~ "että jos annat URL:n hakemistoon, sinun tulee päättää URL kauttaviivalla (esim. http://"
-#~ "example.com/hakemisto/)."
-
-#~ msgid "URL"
-#~ msgstr "URL"
-
-#~ msgid "You must enter a URL to a web page"
-#~ msgstr "Sinun tulee antaa URL web-sivulle"
-
-#~ msgid "The URL entered must begin with http://"
-#~ msgstr "URL täytyy alkaa http://"
-
-#~ msgid "The web page you specified is unavailable"
-#~ msgstr "Antamasi web-sivu ei ole saatavilla"
-
-#~ msgid "Nothing to add found from this URL"
-#~ msgstr "Sivulta ei löytynyt mitään lisättävää"
-
-#~ msgid "Nothing added since no items were selected"
-#~ msgstr "Mitään ei lisätty sillä yhtään kohdetta ei valittu"
-
-#~ msgid "Recent URLs"
-#~ msgstr "Viimeaikaiset URL:t"
-
-#~ msgid "URL: %s"
-#~ msgstr "URL: %s"
-
-#~ msgid "%d url found"
-#~ msgid_plural "%d urls found"
-#~ msgstr[0] "yksi url löytyi"
-#~ msgstr[1] "%d url:aa löytyi"
-
-#~ msgid "(Un)check all"
-#~ msgstr "Valitse/Poista kaikki"
-
-#~ msgid "Add URLs"
-#~ msgstr "Lisää URL:ia"
-
-#~ msgid "Link an Item"
-#~ msgstr "Linkitä Kohde"
-
-#~ msgid "Successfully linked %d item"
-#~ msgid_plural "Successfully linked %d items"
-#~ msgstr[0] "Onnistuneesti linkitetty yksi kohde."
-#~ msgstr[1] "Onnistuneesti linkitetty %d kohdetta."
-
-#~ msgid "This album contains no items to link."
-#~ msgstr "Albumissa ei ole linkitettäviä kohteita."
-
-#~ msgid "Choose the items you want to link"
-#~ msgstr "Valitse linkitettävät kohteet"
-
-#~ msgid "No sources chosen"
-#~ msgstr "Lähdettä ei ole valittu"
-
-#~ msgid "Choose a new album for the link"
-#~ msgstr "Valitse linkille uusi albumi"
-
-#~ msgid "Link"
-#~ msgstr "Linkitä"
-
-#~ msgid "Successfully linked"
-#~ msgstr "Linkitetty"
-
-#~ msgid "Choose a theme for this album. (The way the album is arranged on the page)"
-#~ msgstr "Valitse teema tälle albumille. (Tapa jolla albumi sommitellaan sivulle)"
-
-#~ msgid "Recreate thumbnails and resizes"
-#~ msgstr "Luo esikatseluvat sekä skaalaukset uudelleen"
-
-#~ msgid ""
-#~ "The thumbnail and resized image settings are for all new items. To apply these settings "
-#~ "to all the items in your album, check the appropriate box."
-#~ msgstr ""
-#~ "Esikatselukuvien sekä skaalattujen kuvien asetukset ovat vain kaikille uusille kohteille. "
-#~ "Hyväksyäksesi nämä asetukset kaikkiin jo albumissa oleviin kohteisiin, valitse "
-#~ "asianmukainen ruutu."
-
-#~ msgid "Recreate thumbnails"
-#~ msgstr "Luo esikatselukuvat uudelleen"
-
-#~ msgid "Recreate resized images"
-#~ msgstr "Luo skaalatut kuvat uudelleen"
-
-#~ msgid ""
-#~ "Note: to set the same theme for all subalbums, check the appropriate box in <b>Album</b> "
-#~ "tab"
-#~ msgstr ""
-#~ "Huom: asettaaksesi saman teeman kaikille alialbumeille, rastita ko. valinta <b>Albumi</b> "
-#~ "välilehdellä."
