@@ -437,6 +437,9 @@ class WebDavTest extends GalleryTestCase {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
+	/* Tolerate suppressed error in getImageSize() */
+	set_error_handler('WebDavTest_error_handler');
+
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -542,6 +545,8 @@ class WebDavTest extends GalleryTestCase {
      * @todo What does a query-string based WebDAV client send in HTTP_DESTINATION?
      */
     function testMove() {
+	global $gallery;
+
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
@@ -609,7 +614,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
-	$streams =& WebDavTestStream::_getStream();
+	$streams =& WebDavTestStream::_getStreams();
 	$streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
 <D:lockinfo xmlns:D="DAV:">
   <D:lockscope><D:exclusive/></D:lockscope>
@@ -1180,5 +1185,22 @@ class WebDavTestStream {
 	$streams = WebDavTestStream::_getStreams();
 	return $this->_position >= strlen($streams[$this->_filename]);
     }
+}
+
+/*
+ * Our default unit test error_handler doesn't allow the suppression of errors, but getImageSize()
+ * returns a PHP error when operating on an empty file.
+ */
+function WebDavTest_error_handler($errno, $errstr, $errfile, $errline) {
+    if ($errno == 2) {
+	$expected1 = '{getimagesize().*: Read error}';
+	$expected2 = '{imagecreatefromgif().*:.* is not a valid GIF file}';
+	if (preg_match($expected1, $errstr) || preg_match($expected2, $errstr)) {
+	    return;
+	}
+    }
+
+    /* Else call our default error_handler */
+    return PHPUnit_error_handler($errno, $errstr, $errfile, $errline);
 }
 ?>
