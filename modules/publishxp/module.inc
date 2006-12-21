@@ -35,7 +35,7 @@ class PublishXpModule extends GalleryModule {
 	global $gallery;
 	$this->setId('publishxp');
 	$this->setName($gallery->i18n('Publish XP'));
-	$this->setDescription($gallery->i18n('Implementation for direct publishing from XP'));
+	$this->setDescription($gallery->i18n('Publish photos to Gallery directly from Windows XP'));
 	$this->setVersion('1.0.5');
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('');
