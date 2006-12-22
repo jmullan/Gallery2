@@ -31,7 +31,7 @@ class RemoteModule extends GalleryModule {
 	$this->setName($gallery->i18n('Remote'));
 	$this->setDescription($gallery->i18n('Implementation for the remote control protocol'));
 	$this->setVersion('1.0.8');
-	$this->setGroup('import', $gallery->i18n('Import'));
+	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));
 	$this->setRequiredModuleApi(array(3, 3));
