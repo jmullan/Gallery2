@@ -255,6 +255,167 @@ Content-Type: text/html
 		  'htmlEntities' => false)));
 	$this->assert(!$success);
     }
+
+    function testPropfindFilesRespectsExternalAccessRulesAndDoesNotRepeatProperties() {
+	$files = array();
+	list ($ret, $item, $path, $expectedProps) = $this->_preparePropfindFiles();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = WebDavHelper::_propfindFiles($item, $path, 0, $files);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(array('path' => $path, 'props' => $expectedProps)), $files);
+    }
+
+    function testPropfindFilesIgnoresArraysAndObjectData() {
+	$files = array();
+	list ($ret, $item, $path, $expectedProps) = $this->_preparePropfindFiles(true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = WebDavHelper::_propfindFiles($item, $path, 0, $files);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(array('path' => $path, 'props' => $expectedProps)), $files);
+    }
+
+    function testPropfindFilesUsesPathComponentAsFallbackForTitle() {
+	$files = array();
+	list ($ret, $item, $path, $expectedProps) = $this->_preparePropfindFiles(false, '');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = WebDavHelper::_propfindFiles($item, $path, 0, $files);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(array('path' => $path, 'props' => $expectedProps)), $files);
+    }
+
+    function _preparePropfindFiles($addObjectAndArrayData=false, $itemTitle='This is the title') {
+	/* Create a test item and add a few object members for test */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_rootAlbumId);
+	if ($ret) {
+	    return array($ret, null, null, null);
+	}
+	$this->_markForCleanup($item);
+	list ($ret, $path) = $item->fetchLogicalPath();
+	if ($ret) {
+	    return array($ret, null, null, null);
+	}
+	$item->setCreationTimestamp(10000000);
+	$item->setModificationTimestamp(20000000);
+	$item->setSize(300);
+	$item->setTitle($itemTitle);
+	if ($addObjectAndArrayData) {
+	    $item->summary = array(1, 2, 3);
+	    $item->description = new stdClass();
+	}
+
+	/* Prepare expected result */
+	list ($ret, $memberInfo) =
+	    GalleryCoreApi::getExternalAccessMemberList('GalleryUnknownItem');
+	if ($ret) {
+	    return array($ret, null, null, null);
+	}
+
+	$expectedProps = array();
+	$expectedProps[] = WebDavServer::mkprop('creationdate', 10000000);
+	$expectedProps[] = WebDavServer::mkprop('displayname',
+		empty($itemTitle) ? $item->getPathComponent() : $itemTitle);
+	$expectedProps[] = WebDavServer::mkprop('getlastmodified', 20000000);
+	$expectedProps[] = WebDavServer::mkprop('supportedlock',
+						array(array('scope' => 'exclusive',
+							    'type' => 'write')));
+	$expectedProps[] = WebDavServer::mkprop('lockdiscovery', array());
+	$expectedProps[] = WebDavServer::mkprop('getcontentlength', 300);
+	$expectedProps[] = WebDavServer::mkprop('getcontenttype', 'application/unknown');
+	$expectedProps[] = WebDavServer::mkprop('resourcetype', null);
+	$defaultMembers = array('pathComponent', 'title', 'creationTimestamp',
+				'modificationTimestamp', 'size', 'mimeType');
+	foreach ($memberInfo as $memberName => $accessInfo) {
+	    if ($addObjectAndArrayData && in_array($memberName, array('summary', 'description'))) {
+		continue;
+	    }
+	    if ($accessInfo['read'] && !in_array($memberName, $defaultMembers)) {
+		$getter = 'get' . $memberName;
+		$expectedProps[] = WebDavServer::mkprop(WEBDAV_GALLERY_NAMESPACE,
+							$memberName, $item->$getter());
+	    }
+	}
+
+	return array(null, $item, $path, $expectedProps);
+    }
+
+    function testPropfindFilesRejectsItemObjectWithoutProperMethods() {
+	global $gallery;
+	$user = $gallery->getActiveUser();
+
+	$files = array();
+	$ret = WebDavHelper::_propfindFiles($user, '/', 0, $files);
+	if ($ret && $ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+	    /* As expected */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->fail('propfindFiles should only handle item-like objects');
+	}
+    }
+
+    function testSetItemPropsRespectsExternalAccessRules() {
+	list ($ret, $item) = $this->_createRandomDataItem($this->_rootAlbumId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($item);
+	list ($ret, $path) = $item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$item->setTitle('old title');
+	$item->setSummary('old summary');
+	$item->setCreationTimestamp(10000000);
+
+	$props = array(0 => array('ns' => WEBDAV_GALLERY_NAMESPACE, 'name' => 'summary',
+				  'value' => 'new summary', 'status' => null),
+		       1 => array('ns' => WEBDAV_GALLERY_NAMESPACE, 'name' => 'entityType',
+				  'value' => 'GalleryItem', 'status' => null),
+		       2 => array('ns' => WEBDAV_GALLERY_NAMESPACE,
+				  'name' => 'creationTimestamp', 'value' => 20000000,
+				  'status' => null),
+		       3 => array('ns' => 'DAV:', 'name' => 'displayname',
+				  'value' => 'new title', 'status' => null),
+		       4 => array('ns' => 'DAV:', 'name' => 'foo',
+				  'value' => 'new foo value', 'status' => null),
+		       5 => array('ns' => 'bar:', 'name' => 'summary',
+				  'value' => 'from invalid namespace', 'status' => null));
+
+	$ret = WebDavHelper::_setItemProps($item, $props);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('new title', $item->getTitle(), 'title');
+	$this->assertEquals('new summary', $item->getSummary(), 'summary');
+	$this->assertEquals(20000000, $item->getCreationTimestamp(), 'creation timestamp');
+	$this->assertEquals('GalleryUnknownItem', $item->getEntityType(), 'entity type changed');
+
+	/* Verify the status of the props */
+	$this->assertEquals(null, $props[0]['status'], 'summary is writable');
+	$this->assertEquals('403 Forbidden', $props[1]['status'],
+			    'entityType is not writable');
+	$this->assertEquals(null, $props[2]['status'], 'creation timestamp is writable');
+	$this->assertEquals(null, $props[3]['status'], 'DAV:displayname is writable');
+	$this->assertEquals('403 Forbidden', $props[4]['status'],
+			    'DAV:foo is not writable');
+	$this->assertEquals('403 Forbidden', $props[5]['status'], 'invalid namespace');
+    }
 }
 
 class WebDavHelperTestPhpVm extends GalleryPhpVm {

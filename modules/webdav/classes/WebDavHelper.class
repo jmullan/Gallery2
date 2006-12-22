@@ -438,17 +438,30 @@ class WebDavHelper {
      * @param string $path
      * @param int $depth maximum depth of descendant paths
      * @param array $files files for WebDAV response (path, props)
+     * @return object GalleryStatus a status code
      * @access private
      */
     function _propfindFiles($item, $path, $depth, &$files) {
+	/* Verify that the provided object implements the required methods */
+	foreach (array('creationTimestamp', 'title', 'modificationTimestamp',
+		'pathComponent') as $memberName) {
+	    if (!method_exists($item, 'get' . $memberName)) {
+		return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+			"Item object does not implement a getter for '$memberName'");
+	    }
+	}
+
 	$file = array('path' => $path, 'props' => array());
 
-	$data = (array)$item;
-
 	/* Build standard DAV: properties */
-	$file['props'][] = WebDavServer::mkprop('creationdate', $data['creationTimestamp']);
-	$file['props'][] = WebDavServer::mkprop('displayname', $data['title']);
-	$file['props'][] = WebDavServer::mkprop('getlastmodified', $data['modificationTimestamp']);
+	$file['props'][] = WebDavServer::mkprop('creationdate', $item->getCreationTimestamp());
+	$displayName = $item->getTitle();
+	if (empty($displayName)) {
+	    $displayName = $item->getPathComponent();
+	}
+	$file['props'][] = WebDavServer::mkprop('displayname', $displayName);
+	$file['props'][] =
+		WebDavServer::mkprop('getlastmodified', $item->getModificationTimestamp());
 
 	/*
 	 * Support exclusive write locks.
@@ -480,16 +493,42 @@ class WebDavHelper {
 	    $file['props'][] = WebDavServer::mkprop('getcontenttype', 'httpd/unix-directory');
 	    $file['props'][] = WebDavServer::mkprop('resourcetype', 'collection');
 	} else {
-	    $file['props'][] = WebDavServer::mkprop('getcontentlength', $data['size']);
-	    $file['props'][] = WebDavServer::mkprop('getcontenttype', $data['mimeType']);
+	    $size = 0;
+	    if (method_exists($item, 'getSize')) {
+		$size = $item->getSize();
+	    }
+	    $mimeType = 'application/unknown';
+	    if (method_exists($item, 'getMimeType')) {
+		$mimeType = $item->getMimeType();
+	    }
+	    $file['props'][] = WebDavServer::mkprop('getcontentlength', $size);
+	    $file['props'][] = WebDavServer::mkprop('getcontenttype', $mimeType);
 	    $file['props'][] = WebDavServer::mkprop('resourcetype', null);
 	}
 
 	/* Build Gallery properties */
-	foreach ($data as $name => $value) {
-	    /* Ignore array valued properties */
-	    if (!is_array($value)) {
-		$file['props'][] = WebDavServer::mkprop(WEBDAV_GALLERY_NAMESPACE, $name, $value);
+	if (method_exists($item, 'getClassName')) {
+	    list ($ret, $memberInfo) =
+		GalleryCoreApi::getExternalAccessMemberList($item->getClassName());
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    /* Keep track of the properties that we add to prevent repetition */
+	    $defaultMembers = array('pathComponent', 'creationTimestamp', 'title',
+				    'modificationTimestamp', 'mimeType', 'size');
+	    foreach ($memberInfo as $memberName => $accessInfo) {
+		$getter = 'get' . $memberName;
+		/* Only show properties that are not intended for internal use only */
+		if ($accessInfo['read'] && !in_array($memberName, $defaultMembers)
+			&& method_exists($item, $getter)) {
+		    $value = $item->$getter();
+		    /* Ignore array valued properties */
+		    if (!is_array($value) && !is_object($value)) {
+			$file['props'][] = WebDavServer::mkprop(WEBDAV_GALLERY_NAMESPACE,
+								$memberName, $value);
+		    }
+		}
 	    }
 	}
 
@@ -614,25 +653,9 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	foreach ($props as $key => $prop) {
-	    if ($prop['ns'] == 'DAV:') {
-		if ($prop['name'] == 'displayname') {
-		    $item->setTitle($prop['value']);
-
-		/* Want to support any other DAV: properties? */
-		} else {
-		    $props[$key]['status'] = '403 Forbidden';
-		}
-	    } else if ($prop['ns'] == WEBDAV_GALLERY_NAMESPACE) {
-		$method = 'set' . $prop['name'];
-		if (method_exists($item, $method)) {
-		    $item->$method($prop['value']);
-		} else {
-		    $props[$key]['status'] = '403 Forbidden';
-		}
-	    } else {
-		$props[$key]['status'] = '403 Forbidden';
-	    }
+	$ret = WebDavHelper::_setItemProps($item, $props);
+	if ($ret) {
+	    return $ret;
 	}
 
 	if ($item->isModified()) {
@@ -655,6 +678,50 @@ class WebDavHelper {
 	if ($ret) {
 	    return $ret;
 	}
+    }
+
+    /**
+     * Set item properties
+     * @param object GalleryItem reference $item
+     * @param array reference $propos DAV file properties
+     * @return object GalleryStatus a status code
+     */
+    function _setItemProps(&$item, &$props) {
+	if (!method_exists($item, 'getClassName')) {
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
+	}
+
+	list ($ret, $memberInfo) =
+		GalleryCoreApi::getExternalAccessMemberList($item->getClassName());
+	if ($ret) {
+	    return $ret;
+	}
+
+	foreach ($props as $key => $prop) {
+	    $name = $prop['name'];
+	    if ($prop['ns'] == 'DAV:') {
+		if ($prop['name'] == 'displayname') {
+		    $name = 'title';
+		    /* Want to support any other DAV: properties? */
+		} else {
+		    $props[$key]['status'] = '403 Forbidden';
+		    continue;
+		}
+	    } else if ($prop['ns'] != WEBDAV_GALLERY_NAMESPACE) {
+		$props[$key]['status'] = '403 Forbidden';
+		continue;
+	    }
+
+	    $setter = 'set' . $name;
+	    if (!isset($memberInfo[$name])|| !$memberInfo[$name]['write']
+		    || !method_exists($item, $setter)) {
+		$props[$key]['status'] = '403 Forbidden';
+		continue;
+	    }
+
+	    $item->$setter($prop['value']);
+	}
+	return null;
     }
 
     /**
