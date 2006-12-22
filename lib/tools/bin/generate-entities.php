@@ -140,6 +140,26 @@ foreach ($root[0]['child'] as $entity) {
 			$entities[$entityName]['members'][$name]['notNullEmptyAllowed'] = true;
 		    }
 		    break;
+
+		case 'MEMBER-EXTERNAL-ACCESS':
+		    switch (trim($member['child'][$k]['content'])) {
+		    case 'READ':
+			$entities[$entityName]['members'][$name]['external-access'] =
+				'EXTERNAL_ACCESS_READ';
+			break;
+		    case 'WRITE':
+			$entities[$entityName]['members'][$name]['external-access'] =
+				'EXTERNAL_ACCESS_WRITE';
+			break;
+		    case 'FULL':
+			$entities[$entityName]['members'][$name]['external-access'] =
+				'EXTERNAL_ACCESS_FULL';
+			break;
+		    default:
+			printf('Unknown value for member-external-access "%s"\n',
+			       $member['child'][$k]['content']);
+		    }
+		    break;
 		}
 	    }
 	}

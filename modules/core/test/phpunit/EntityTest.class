@@ -388,6 +388,25 @@ class EntityTest extends GalleryTestCase {
 	 */
 	GalleryDataCache::reset();
     }
+
+    function testGetExternalAccessMemberList() {
+	list ($ret, $memberInfo) =
+		GalleryCoreApi::getExternalAccessMemberList('GalleryUser');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(false, $memberInfo['hashedPassword']['read'],
+			    'no read access for the user password');
+	$this->assertEquals(false, $memberInfo['email']['read'],
+			    'no read access for the email of a user');
+	$this->assertEquals(false, $memberInfo['email']['write'],
+			    'no write access for the email of a user');
+	$this->assertEquals(true, $memberInfo['fullName']['read'],
+			    'read access for the full name of a user ');
+	$this->assertEquals(true, $memberInfo['fullName']['write'],
+			    'write access for the full name of a user ');
+    }
 }
 
 /**

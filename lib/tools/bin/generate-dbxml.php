@@ -116,6 +116,10 @@ function generateEntityDbXml() {
 			$member['default'] = $child['child'][$i]['content'];
 			break;
 
+		    case 'MEMBER-EXTERNAL-ACCESS':
+			/* Not relevant for storage layer */
+			break;
+
 		    default:
 			print 'Unknown member type: ' . $child['child'][$i]['name'] . '\n';
 		    }
@@ -249,6 +253,10 @@ function generateMapDbXml() {
 
 		    case 'DEFAULT':
 			$member['default'] = $child['child'][$i]['content'];
+			break;
+
+		    case 'MEMBER-EXTERNAL-ACCESS':
+			/* Not relevant for storage layer */
 			break;
 
 		    default:

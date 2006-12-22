@@ -72,7 +72,7 @@ class GalleryCoreApi {
      * - remove GalleryUtilities::utf8Substring (moved to GalleryCoreApi)
      */
     function getApiVersion() {
-	return array(7, 16);
+	return array(7, 17);
     }
 
     /**
@@ -3051,6 +3051,22 @@ class GalleryCoreApi {
     function isDisabledUsername($userName) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryUserHelper_medium.class');
 	return GalleryUserHelper_medium::isDisabledUsername($userName);
+    }
+
+    /**
+     * Get a list of entity members which are allowed to be shown / set by external systems (e.g.
+     * via remote protocols like WebDAV, XML-RPC, etc).
+     * This does not include any permission checking.
+     * @param string $entityName name of the entity
+     * @return array object GalleryStatus a status code
+     *               array(string memberName =>
+     *                                array('read' => boolean true if it's ok to show,
+     *                                      'write' => boolean true if it's ok to set))
+     */
+    function getExternalAccessMemberList($entityName) {
+	GalleryCoreApi::requireOnce(
+		'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
+	return GalleryEntityHelper_medium::getExternalAccessMemberList($entityName);
     }
 }
 ?>

@@ -330,5 +330,29 @@ class GalleryEntityHelper_medium {
 
 	return null;
     }
+
+    /**
+     * @see GalleryCoreApi::getExternalAccessMemberList
+     */
+    function getExternalAccessMemberList($entityName) {
+	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity($entityName);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$memberAccessInfo = array();
+	$target = $entityName;
+	while ($target) {
+	    foreach ($entityInfo[$target]['members'] as $memberName => $memberInfo) {
+		$memberAccessInfo[$memberName]['read'] = !empty($memberInfo['external-access'])
+			&& $memberInfo['external-access'] & EXTERNAL_ACCESS_READ;
+		$memberAccessInfo[$memberName]['write'] = !empty($memberInfo['external-access'])
+			&& $memberInfo['external-access'] & EXTERNAL_ACCESS_WRITE;
+	    }
+	    $target = $entityInfo[$target]['parent'];
+	}
+
+	return array(null, $memberAccessInfo);
+    }
 }
 ?>
