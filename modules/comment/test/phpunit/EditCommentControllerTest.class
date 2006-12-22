@@ -110,8 +110,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 					     $this->_anonymousUser->getUserName());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+	$this->assertEquals(array('redirect' => array('view' => 'comment.CommentChangeConfirmation',
 						      'itemId' => $this->_item[0]->getId()),
 				  'status' => array('changed' => 1),
 				  'error' => array()),
@@ -266,8 +265,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 					     $this->_anonymousUser->getUserName());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+	$this->assertEquals(array('redirect' => array('view' => 'comment.CommentChangeConfirmation',
 						      'itemId' => $this->_item[0]->getId()),
 				  'status' => array('changed' => 1),
 				  'error' => array()),
@@ -298,8 +296,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 					     $this->_anonymousUser->getUserName());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core.ShowItem',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_item[0]->getId()),
 				  'status' => array(),
 				  'error' => array()),

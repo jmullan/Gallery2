@@ -72,8 +72,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'comment.CommentChangeConfirmation',
+	$this->assertEquals(array('redirect' => array('view' => 'comment.CommentChangeConfirmation',
 						      'itemId' => $this->_item[0]->getId()),
 				  'status' => array('deleted' => 1),
 				  'error' => array()),
@@ -110,8 +109,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core.ShowItem',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_item[0]->getId()),
 				  'status' => array(),
 				  'error' => array()),
