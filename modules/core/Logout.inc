@@ -37,7 +37,7 @@ class LogoutController extends GalleryController {
     /**
      * @see GalleryController::handleRequest
      */
-    function handleRequest() {
+    function handleRequest($form) {
 	global $gallery;
 
 	$event = GalleryCoreApi::newEvent('Gallery::Logout');
