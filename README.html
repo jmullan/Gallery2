@@ -41,7 +41,7 @@
 	padding: 0.2em 0;
 	line-height: 1.5em;
       }
-      ol ul {
+      ol ul, ul ul {
 	margin-top: 0.4em;
 	margin-bottom: 0.4em;
       }
@@ -1976,158 +1976,73 @@
 
     <h2><a name="getting_started">Using your new Gallery</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
-    <ol>
+    <p>
+    	Once you&rsquo;ve successfully got Gallery 2 installed, you should take a look at the
+	<a href="http://codex.gallery2.org/index.php/Gallery2:Quick_Start_Guide" target="_new">
+	Gallery 2 Quick Start Guide</a>.  It will help you get started with Gallery and will
+	walk you through the steps from zero to managing your first photo album in your
+	freshly installed Gallery.  Below are some links to your gallery that will make it 
+	easier for you to follow the Quick Start Guide. Note: You may need to activate certain
+	modules to be able to use some of these links.
+    </p>
+    <ul>
       <li>
-	<b> Log in </b> - Once you&rsquo;ve successfully got Gallery 2 installed, you should
-	start by <a href="main.php?g2_view=core.UserAdmin&amp;g2_subView=core.UserLogin&amp;g2_form[formName]=UserLogin&amp;g2_form[username]=admin"
-	target="_guided">logging in</a> as the admin user that was created for you at install
-	time.  The admin user has special privileges that you&rsquo;ll need
-	in order to administer your new Gallery 2.
-      </li>
-      <li>
-	<b> Activate Graphics Toolkits </b> - Click on the
-	<a href="main.php?g2_view=core.SiteAdmin" target="_guided">Site Admin</a> link then the
-	<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminPlugins"
-	target="_guided">Plugins</a> link to see the plugin list.
-	Install, configure and activate one of the NetPBM,
-	ImageMagick, or GD modules.  You can activate as many of them
-	as you want (more is better, here).
-      </li>
-      <li>
-	<b> Add photos </b> - Browse back to
-	<a href="main.php" target="_guided">the top of your new Gallery 2</a>
-	and click on the
-	<a href="main.php?g2_view=core.ItemAdmin&amp;g2_subView=core.ItemAdd&amp;g2_itemId=7"
-	target="_guided">Add Items</a> link.  This will bring up a
-	page with a few different upload options (at least 3, more if
-	you have other upload modules installed).  Select the one you
-	want and try adding a new photo to your album.  If all goes well, you should see
-	the new photos in your <a href="main.php" target="_guided">Gallery!</a>.
-      </li>
-      <li>
-	<b> Add an album </b> - You don't want to put all of your
-	images into the top level of your Gallery 2, so you should try
-	creating a new album.  Browse back to <a href="main.php"
-	target="_guided">the top of your new Gallery 2</a> and click on the
-	<a href="main.php?g2_view=core.ItemAdmin&amp;g2_subView=core.ItemAddAlbum&amp;g2_itemId=7"
-	target="_guided">Add Album</a> link from the left side of
-	the page.  This will give you a form where you can enter
-	information about the new album you want to create.  Fill it
-	out and click the <b>Create</b> button.  Now try adding images
-	to that album instead, or select the <b>Move Photo</b> link
-	from under any of the images you added earlier and move them
-	into this new album.
-      </li>
-      <li>
-	<b> Import Gallery 1 albums </b> - you can easily import
-	albums from Gallery 1.  It won&rsquo;t cause any harm
-	to your Gallery 1.  Just go to the
-	<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=migrate.SelectGallery"
-	target="_guided">Migration Page</a> and enter the path to your
-	Gallery 1 albums directory and then follow the instructions.
-      </li>
-      <li>
-	<b> Plenty to do and see! </b> -
+      	<a href="main.php" target="_guided">Your Gallery 2</a>
 	<ul>
 	  <li>
-	    Explore the different <a href="main.php?g2_view=core.SiteAdmin"
-	    target="_guided">Site Admin</a> options and tune your Gallery 2
-	    the way that you want it.
+	    <a href="main.php?g2_view=core.UserAdmin&amp;g2_subView=core.UserLogin&amp;g2_form[formName]=UserLogin&amp;g2_form[username]=admin"
+		target="_guided">Log In</a>
 	  </li>
-
 	  <li>
-	    You can <a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminThemes&amp;g2_mode=config"
-	    target="_guided">activate different themes</a> and experiment with them.
-	    You can use a different theme on each album!
+	    <a href="main.php?g2_view=core.ItemAdmin&amp;g2_subView=core.ItemAdd"
+	    target="_guided">Add Items</a>
 	  </li>
-
 	  <li>
-	    You can <a href="main.php?g2_view=search.SearchScan&amp;g2_form[useDefaultSettings]=1"
-	    target="_guided">search your Gallery 2</a> and view the
-	    <a href="main.php?g2_view=members.MembersList" target="_guided">members list</a>
-	    if these modules are active.
+	    <a href="main.php?g2_view=core.ItemAdmin&amp;g2_subView=core.ItemAddAlbum"
+	    target="_guided">Add Album</a>
 	  </li>
-
 	  <li>
-	    Activate the <b>Icons</b> module and select the fun icons
-	    from Paul Armstrong Designs.
+	    <a href="main.php?g2_view=search.SearchScan&amp;g2_form[useDefaultSettings]=1"
+	    target="_guided">Search</a>
 	  </li>
-
 	  <li>
-	    If the <b>Ffmpeg</b> module is activated, you can upload movies
-	    and it will automatically create thumbnails of them for
-	    you.
-	  </li>
-
-	  <li>
-	    Activate the <b>Panorama</b> module and then try uploading
-	    really wide images and then edit them to put them in
-	    Panorama mode to activate the panorama viewer.
-	  </li>
-
-	  <li>
-	    Activate the <b>Cart</b> and <b>Photoaccess</b> modules,
-	    add all the photos from an album to the cart and try
-	    printing them all at once (you can cancel the print job at
-	    the last second so it&rsquo;s ok to play around with this)
-	  </li>
-
-	  <li>
-	    Activate the <b>Cart</b> and <b>Zip Download</b> modules, add
-	    all the photos from an album to the cart and then download
-	    them all at once as a zip file!
-	  </li>
-
-	  <li>
-	    <a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminUsers"
-	    target="_guided">Create some new users</a> then
-	    <a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminGroups"
-	    target="_guided">create some new groups</a> and then try
-	    adding users to groups.  You can assign permissions to
-	    entire groups instead of individual users, which makes
-	    permission management much easier.
-	  </li>
-
-	  <li>
-	    Try uploading a Shockwave or a Director file.  You can
-	    view them in-line.
-	  </li>
-
-	  <li>
-	    Activate the <b>Thumbnail Manager</b> module then try uploading an
-	    MP3 and see that it&rsquo;s got a custom thumbnail. Use the
-	    <a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=thumbnail.ThumbnailSiteAdmin"
-	    target="_guided">thumbnail manager</a> to upload your own
-	    custom thumbnails for different file types.  Gallery 2 lets you
-	    upload files of any type!
-	  </li>
-
-	  <li>
-	    Activate the <b>ImageBlock</b> module and see random
-	    images appear in the sidebar when you browse through your
-	    Gallery 2.
-	  </li>
-
-	  <li>
-	    Play around with the <a
-	    href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminPlugins"
-	    target="_guided">other plugins</a> and see what they do!
-	    There are over 50 different cool modules that do all kinds
-	    of neat stuff. If you decide that you don't want a module
-	    any more, just deactivate and uninstall it and it goes
-	    away.
-	  </li>
-
-	  <li>
-	    Take a look at the list of
-	    <a href="http://codex.gallery2.org/index.php/Gallery2:UserContributions"
-	    target="_blank">User Contributions</a> to find even more modules, themes,
-	    utilities, mods and more.
+	    <a href="main.php?g2_view=core.SiteAdmin" target="_guided">Site Admin</a>
+	    <ul>
+	      <li>
+	  	<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminPlugins"
+		target="_guided">Plugins</a>
+	      </li>
+	      <li>
+	        <a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminThemes&amp;g2_mode=config"
+	        target="_guided">Themes</a>
+	      </li>
+	      <li>
+		<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminGroups"
+		target="_guided">Create Groups</a> 
+	      </li>
+	      <li>
+	      	<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminUsers"
+		target="_guided">Create Users</a>
+	      </li>
+	      <li>
+		<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=migrate.SelectGallery"
+		target="_guided">Gallery 1 Migration Page</a>
+	      </li>
+	      <li>
+		<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=thumbnail.ThumbnailSiteAdmin"
+		target="_guided">Thumbnail Manager</a>
+	      </li>
+	    </ul>
 	  </li>
 	</ul>
       </li>
-    </ol>
-
+    </ul>
+    <p>
+    	Take a look at the list of
+	<a href="http://codex.gallery2.org/index.php/Gallery2:UserContributions"
+	target="_blank">User Contributions</a> to find even more modules, themes,
+	utilities, mods and more.
+    </p>
 
     <h2><a name="updating">Updating your Gallery 2 Installation</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
