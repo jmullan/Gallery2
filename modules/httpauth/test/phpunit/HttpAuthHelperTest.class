@@ -62,26 +62,26 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	    . "\r\n";
 
 	/* Define success and failure responses */
-	$this->_accessAuthorizationResponse = 'HTTP/1.1 200 OK
-Date: Mon, 24 Nov 2003 05:40:03 GMT
-Server: Apache/1.3.28 (Unix)
-Content-Length: 26
-Connection: close
-Content-Type: text/html
-
-AUTHTYPE
-USERNAME
-PASSWORD';
-	$this->_missingAuthorizationResponse = 'HTTP/1.1 200 OK
-Date: Mon, 24 Nov 2003 05:40:03 GMT
-Server: Apache/1.3.28 (Unix)
-Content-Length: 26
-Connection: close
-Content-Type: text/html
-
-
-
-';
+	$this->_accessAuthorizationResponse = implode("\r\n", array(
+		'HTTP/1.1 200 OK',
+		'Date: Mon, 24 Nov 2003 05:40:03 GMT',
+		'Server: Apache/1.3.28 (Unix)',
+		'Content-Length: 26',
+		'Connection: close',
+		'Content-Type: text/html',
+		'',
+		''))
+		.  "AUTHTYPE\nUSERNAME\nPASSWORD";
+	$this->_missingAuthorizationResponse = implode("\r\n", array(
+		'HTTP/1.1 200 OK',
+		'Date: Mon, 24 Nov 2003 05:40:03 GMT',
+		'Server: Apache/1.3.28 (Unix)',
+		'Content-Length: 26',
+		'Connection: close',
+		'Content-Type: text/html',
+		'',
+		''))
+		. "\n\n\n\n";
 
 	/* Use HttpAuthHelperTestPlatform */
 	$this->_platform = new HttpAuthHelperTestPlatform();
@@ -145,7 +145,7 @@ Content-Type: text/html
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assert(!$code);
+	$this->assertEquals(0, $code, 'unexpected error code');
     }
 
     function testCheckConfigurationRewriteModuleDisabled() {
@@ -419,6 +419,8 @@ class HttpAuthHelperTestPlatform extends GalleryPlatform {
 	if (isset($this->_messages[$string])) {
 	    $this->_buffer = $this->_messages[$string];
 	    return strlen($string);
+	} else {
+	    print "unexpected fwrite: $string ";
 	}
     }
 
