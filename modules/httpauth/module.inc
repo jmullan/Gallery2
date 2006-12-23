@@ -31,7 +31,7 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('httpauth');
 	$this->setName($gallery->i18n('HTTP Auth'));
-	$this->setVersion('0.4.0'); /* Update upgrade() too! */
+	$this->setVersion('0.5.0'); /* Update upgrade() too! */
 	$this->setDescription($gallery->i18n('Login using HTTP authentication.'));
 	$this->setGroup('authentication', $gallery->i18n('Authentication'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
@@ -102,6 +102,12 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$ret = GalleryCoreApi::registerEventListener(
 	    'Gallery::Error', new HttpAuthModule());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::registerEventListener(
+	    'Gallery::Logout', new HttpAuthModule());
 	if ($ret) {
 	    return $ret;
 	}
@@ -189,6 +195,9 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 	    if ($ret && !($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED)) {
 		return $ret;
 	    }
+
+	case '0.4.0':
+	    /* Add logout view to clear browsers' authentication cache */
 
 	case 'end of upgrade path':
 	    break;
@@ -320,6 +329,18 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 		"WWW-Authenticate: Basic realm='$params[authName]'", false);
 
 	    return array(null, null);
+
+	case 'Gallery::Logout':
+	    /*
+	     * If this request includes an HTTP username, delegate to the HTTP auth logout view
+	     * which tries to clear the browser's authentication cache
+	     */
+	    GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+	    list ($authtype, $username, $password) = HttpAuthHelper::getHttpAuth();
+	    $remoteUser = GalleryUtilities::getServerVar('REMOTE_USER');
+	    if (!empty($username) || !empty($remoteUser)) {
+		return array(null, array('delegate' => array('view' => 'httpauth.TryLogout')));
+	    }
 	}
 
 	return array(null, null);

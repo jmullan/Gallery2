@@ -42,9 +42,16 @@ class LogoutController extends GalleryController {
 
 	$event = GalleryCoreApi::newEvent('Gallery::Logout');
 	$event->setEntity($gallery->getActiveUser());
-	list ($ret) = GalleryCoreApi::postEvent($event);
+	list ($ret, $eventResults) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    return array($ret, null);
+	}
+
+	$results = array();
+	foreach ($eventResults as $key => $value) {
+	    if (!empty($value['delegate'])) {
+		$results['delegate'] = $value['delegate'];
+	    }
 	}
 
 	$session =& $gallery->getSession();
@@ -53,24 +60,33 @@ class LogoutController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
+	list ($ret, $anonymousId) = GalleryCoreApi::getAnonymousUserId();
 	if ($ret) {
 	    return array($ret, null);
 	}
-	list ($ret, $guestUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+	list ($ret, $guestUser) = GalleryCoreApi::loadEntitiesById($anonymousId);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	$gallery->setActiveUser($guestUser);
 
+	if (!isset($results['status'])) {
+	    $results['status'] = array();
+	}
+	if (!isset($results['error'])) {
+	    $results['error'] = array();
+	}
+
 	/*
-	 * Force return to core.ShowItem, as we don't know if the guest user
-	 * has necessary permissions for the return page
+	 * Force return to core.ShowItem, as we don't know if the guest user has necessary
+	 * permissions for the return page
 	 */
-	$results['redirect']['view'] = 'core.ShowItem';
-	$results['status'] = array();
-	$results['error'] = array();
+	if (!isset($results['return'])
+		&& !isset($results['redirect'])
+		&& !isset($results['delegate'])) {
+	    $results['redirect']['view'] = GALLERY_DEFAULT_VIEW;
+	}
 
 	return array(null, $results);
     }
