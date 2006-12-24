@@ -31,7 +31,7 @@
 {foreach from=$ShowAllComments.comments item=comment}
 <tr><td style="text-align: center; padding: 0 4px">
   {assign var="item" value=$ShowAllComments.itemData[$comment.parentId]}
-  <a id="CommentThumb" href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
+  <a id="CommentThumb-{$item.id}" href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
     {if isset($item.thumb)}
       {g->image item=$item image=$item.thumb maxSize=120}
     {else}
@@ -43,10 +43,10 @@
     {* force and alt/longdesc parameter here so that we avoid issues with single quotes in the title/description *}
     {if isset($item.resize)}
     new YAHOO.widget.Tooltip("gTooltip", {ldelim}
-        context: "CommentThumb", text: '{g->image item=$item image=$item.resize alt="" longdesc=""}', showDelay: 250 {rdelim});
+        context: "CommentThumb-{$item.id}", text: '{g->image item=$item image=$item.resize alt="" longdesc=""}', showDelay: 250 {rdelim});
     {elseif isset($item.thumb)}
     new YAHOO.widget.Tooltip("gTooltip", {ldelim}
-        context: "CommentThumb", text: '{g->image item=$item image=$item.thumb alt="" longdesc=""}', showDelay: 250 {rdelim});
+        context: "CommentThumb-{$item.id}", text: '{g->image item=$item image=$item.thumb alt="" longdesc=""}', showDelay: 250 {rdelim});
     {/if}
     //]]>
   </script>
