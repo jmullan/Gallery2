@@ -208,5 +208,62 @@ class HttpAuthHelper {
 
 	return array(null, $user);
     }
+
+    /**
+     * Adds the given pair of username / password to the given URL as HTTP auth user:pass@hostname. 
+     * @param string $url An absolute URL
+     * @param string $username
+     * @param string $password
+     */
+    function addHttpAuthToUrl($url, $username, $password) {
+	$components = parse_url($url);
+	$components['user'] = $username;
+	$components['pass'] = $password;
+	return HttpAuthHelper::_buildUrl($components);
+    }
+
+    /**
+     * Removes user:pass from the given URL.
+     * @param string $url An absolute URL
+     */
+    function stripHttpAuthFromUrl($url) {
+	$components = parse_url($url);
+	unset($components['user']);
+	unset($components['pass']);
+	return HttpAuthHelper::_buildUrl($components);
+    }
+
+    /**
+     * Build a URL from its components.
+     * @param array $components URL components in the format of parse_url
+     * @access private
+     */
+    function _buildUrl($components) {
+	$url = '';
+	if (!empty($components['scheme']) && !empty($components['host'])) {
+	    $auth = '';
+	    if (!empty($components['user'])) {
+		$auth = $components['user'];
+		if (!empty($components['pass'])) {
+		    $auth .= ':' . $components['pass'];
+		}
+		$auth .= '@';
+	    }
+
+	    $url = sprintf('%s://%s%s', $components['scheme'], $auth, $components['host']);
+	}
+
+	if (!empty($components['path'])) {
+	    $url .= $components['path'];
+	}
+	if (!empty($components['query'])) {
+	     $url .= '?' . $components['query'];
+	}
+	if (!empty($components['fragment'])) {
+	     $url .= '#' . $components['fragment'];
+	}
+
+	return $url;
+    }
 }
 ?>

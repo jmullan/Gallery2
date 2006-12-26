@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+
 /**
  * Try to clear the browser's authentication cache by as many tricks as possible and redirect to a
  * view which checks that logout was successful.  https://bugzilla.mozilla.org/show_bug.cgi?id=55181
@@ -45,9 +47,7 @@ class TryLogoutView extends GalleryView {
 	    $url = $urlGenerator->generateUrl(array('view' => 'httpauth.FinishLogout'),
 					      array('forceFullUrl' => true,
 						    'htmlEntities' => $key == 'hrefUrl'));
-	    $url = preg_replace('/(^[a-zA-Z0-9\+\.\-]+:\/\/)/',
-		'${1}' . rand() . ':' . rand() . '@', $url);
-	    $TryLogout[$key] = $url;
+	    $TryLogout[$key] = HttpAuthHelper::addHttpAuthToUrl($url, rand(), rand());
 	}
 
 	/* Render HTML body */

@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+
 /**
  * Check that logout was successful and warn the user to close the browser window if not.
  * @package HttpAuth
@@ -31,13 +33,20 @@ class FinishLogoutView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
 	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	if ($isAnonymous) {
-	    return array(null, array('redirect' => array('view' => GALLERY_DEFAULT_VIEW)));
+	    /* Use an absolute return URI to remove user:pass again after the logout */
+	    $url = $urlGenerator->generateUrl(array('view' => GALLERY_DEFAULT_VIEW),
+						    array('forceFullUrl' => true));
+
+	    return array(null, array('redirectUrl' => HttpAuthHelper::stripHttpAuthFromUrl($url)));
 	}
 
 	return array(null, array('body' => 'modules/httpauth/templates/FinishLogout.tpl'));
