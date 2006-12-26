@@ -523,7 +523,8 @@ class ImageUploadHelper {
 	/* Set the album info and save it */
 	$urlGen =& $gallery->getUrlGenerator();
 	$url = $urlGen->generateUrl(array('controller' => 'nokiaupload.Login'),
-				    array('forceFullUrl' => true, 'forceSessionId' => false));
+				    array('forceFullUrl' => true, 'forceSessionId' => false,
+					  'useAuthToken' => false));
 
 	$summary = $module->translate(
 	    'To upload to this album you need Image Uploader enabled mobile phone '
