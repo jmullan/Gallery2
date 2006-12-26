@@ -875,6 +875,12 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_GET['g2_returnName'] = 'name';
 	$_GET['g2_navId'] = 'navId';
 	$_GET['g2_fromNavId'] = 'fromNavId';
+	/*
+	 * We're forwarding the HTTP authorization header via mod_rewrite to the URL params and
+	 * need to remove it manually for return URLs again.  But we keep it in other places (e.g.
+	 * cacheable URLs) since it might influence Gallery's behavior.
+	 */
+	$_GET['g2_authorization'] = 'authorization';
 	$expected = '/gallery2/phpunit_test.php?g2_foo=bar';
 
 	/* Normal behaviour (php+apache) */
