@@ -106,6 +106,12 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	/* Clear response headers */
 	$this->_headers =& GalleryUtilities::_getResponseHeaders();
 	$this->_headers = array();
+
+	/* Reset auth related server and request variables */
+	unset($_SERVER['PHP_AUTH_USER']);
+	unset($_SERVER['PHP_AUTH_PW']);
+	unset($_SERVER['REMOTE_USER']);
+	GalleryUtilities::removeRequestVariable('authorization');
     }
 
     function tearDown() {
