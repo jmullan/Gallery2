@@ -37,14 +37,10 @@ class MovieTest extends GalleryTestCase {
 	parent::setUp();
 
 	$path = 'modules/core/test/phpunit/MovieTest.class';
-	$ret = $this->_registerFactoryImplementationForTest(
+	$this->_registerFactoryImplementationForTest(
 	    'GalleryToolkit', 'MovieTestToolkit', 'MovieTestToolkit',
 	    $path, 'coreTest', array('test/movie'));
 	$this->_markFactoryForCleanup();
-	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
-	}
 	$this->_markFactoryModuleForCleanup('coreTest');
 
 	$ret = GalleryCoreApi::registerToolkitProperty(
