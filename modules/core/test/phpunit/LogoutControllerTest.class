@@ -45,6 +45,12 @@ class LogoutControllerTest extends GalleryControllerTestCase {
 	$this->_saveSession = $gallery->_session;
 	$this->_session = new LogoutControllerTestSession();
 	$gallery->_session =& $this->_session;
+
+	/* TODO: Remove the following once we can disable httpauth's event handler for tests */
+	unset($_SERVER['PHP_AUTH_USER']);
+	unset($_SERVER['PHP_AUTH_PW']);
+	unset($_SERVER['REMOTE_USER']);
+	GalleryUtilities::removeRequestVariable('authorization');
     }
 
     function tearDown() {
