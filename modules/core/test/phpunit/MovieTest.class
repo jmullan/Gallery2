@@ -40,7 +40,7 @@ class MovieTest extends GalleryTestCase {
 	$ret = $this->_registerFactoryImplementationForTest(
 	    'GalleryToolkit', 'MovieTestToolkit', 'MovieTestToolkit',
 	    $path, 'coreTest', array('test/movie'));
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markFactoryForCleanup();
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
