@@ -176,13 +176,20 @@ class GalleryMovieItem extends GalleryDataItem {
 	    list ($ret, $dimensions) =
 		$toolkit->getProperty($mimeType, 'dimensions-and-duration', $path);
 	    if ($ret) {
-
-		/*
-		 * If we can't get the dimensions, it's probably a bad movie.
-		 * Or our graphics code is broken.  Hard to tell which at this point.
-		 */
-		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
-		return $ret;
+		if (!($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+		    /*
+		     * We can't get the dimensions.  It may be a bad movie, or the graphics toolkit
+		     * may be broken.  We can't tell, so set everything to zero for now.
+		     *
+		     * TODO: trapping everything but storage failures is too broad.  Trap only
+		     * toolkit failures after we refactor all toolkits to set the
+		     * ERROR_TOOLKIT_FAILURE bit on every error that they generate or pass
+		     * through.
+		     */
+		    $dimensions = array(0, 0, 0);
+		} else {
+		    return $ret;
+		}
 	    }
 
 	    $this->setWidth($dimensions[0]);
