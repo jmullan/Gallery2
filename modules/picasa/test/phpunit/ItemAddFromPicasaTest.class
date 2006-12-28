@@ -47,7 +47,8 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	$this->_markToolkitForCleanup('ItemAddFromPicasaTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
-	    'ItemAddFromPicasaTestToolkit', array('application/zip'), 'extract', array(), '');
+		'ItemAddFromPicasaTestToolkit', array('application/zip'), 'extract', array(),
+		'', '', 1);
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
