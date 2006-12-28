@@ -41,7 +41,7 @@ class MovieTest extends GalleryTestCase {
 	    'GalleryToolkit', 'MovieTestToolkit', 'MovieTestToolkit',
 	    $path, 'coreTest', array('test/movie'));
 	$this->_markFactoryForCleanup();
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('MovieTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitProperty(
 	    'MovieTestToolkit', array('test/movie'),
