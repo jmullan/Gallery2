@@ -52,7 +52,8 @@ messages.po:
 	@perl $(TOOLDIR)/po/premerge-messages.pl $@ messages.po > messages.tmp
 	@# ignore errors from msgmerge, we'll catch them on the msgfmt command:
 	@-if [ -s messages.tmp ]; then \
-	    msgmerge --quiet --width=95 $(COMPENDIUM) --suffix= --update $@ messages.tmp; \
+	    msgmerge --quiet --width=95 $(COMPENDIUM) $@ messages.tmp > $@.tmp; \
+	    if [ -s $@.tmp ]; then mv $@.tmp $@; else $(RM) $@.tmp; fi; \
 	    perl -pi $(TOOLDIR)/po/header.pl $@; \
 	  elif [ -z "$(NOCREATE)" ]; then \
 	    if [ -n "$(LANGPO)" ]; then \
