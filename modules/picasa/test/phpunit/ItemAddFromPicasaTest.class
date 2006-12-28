@@ -44,7 +44,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    'GalleryToolkit', 'ItemAddFromPicasaTestToolkit', 'ItemAddFromPicasaTestToolkit',
 	    'modules/picasa/test/phpunit/ItemAddFromPicasaTest.class', 'picasaTest');
 	$this->_markFactoryForCleanup();
-	$this->_markFactoryModuleForCleanup('picasaTest');
+	$this->_markToolkitForCleanup('ItemAddFromPicasaTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemAddFromPicasaTestToolkit', array('application/zip'), 'extract', array(), '');
