@@ -8,6 +8,10 @@ gettext("Authorization Header")
 gettext("Pass the Authorization header to Gallery in a request variable.")
 gettext("Authorization header.")
 
+/* templates/FinishLogout.tpl */
+gettext("Logout failed")
+gettext("Gallery tried to logout but failed.  You should close the browser window to logout successfully.")
+
 /* templates/HttpAuthSiteAdmin.tpl */
 gettext("HTTP Auth Settings")
 gettext("Settings saved successfully")
@@ -16,7 +20,7 @@ gettext("Gallery can't access HTTP usernames and passwords.  You can still use y
 gettext("URL rewrite module disabled")
 gettext("We can't fall back on passing HTTP usernames and passwords to Gallery because the URL rewrite module is disabled.  You should activate the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %sGallery Codex%s.")
 gettext("Bad URL rewrite configuration")
-gettext("PHP PathInfo rewrite doesn't support the rule to fall back on passing HTTP usernames and passwords to Gallery.  You should uninstall and reinstall the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %sGallery Codex%s.")
+gettext("PHP Path Info rewrite doesn't support the rule to fall back on passing HTTP usernames and passwords to Gallery.  You should uninstall and reinstall the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %sGallery Codex%s.")
 gettext("'Authorization Header' rule disabled")
 gettext("The URL rewrite rule to fall back on passing HTTP usernames and passwords to Gallery is disabled.  You should activate the HTTP auth 'Authorization Header' rule in the %sSite Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s.")
 gettext("Unknown Cause")
@@ -37,3 +41,6 @@ gettext("Username Pattern:")
 gettext("Username Replacement:")
 gettext("Save")
 gettext("Reset")
+
+/* templates/TryLogout.tpl */
+gettext("If you're not automatically redirected, %sclick here to finish logging out%s.")
