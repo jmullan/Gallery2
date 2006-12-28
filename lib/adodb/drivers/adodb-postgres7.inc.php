@@ -1,6 +1,6 @@
 <?php
 /*
- V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V4.93 10 Oct 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -28,16 +28,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		if (ADODB_ASSOC_CASE !== 2) {
 			$this->rsPrefix .= 'assoc_';
 		}
-		//G2: Disable pg_query_params support due to http://bugs.php.net/36969
-		$this->_bindInputArray = false; // PHP_VERSION >= 5.1;
-
-		//G2: This code doesn't work because it tries to make a query before connected.
-		//    We don't need nestedSQL so just leave unset/false.
-		//$info = $this->ServerInfo();
-		//$this->pgVersion = (float) substr($info['version'],0,3);
-		//if ($this->pgVersion >= 7.1) { // good till version 999
-		//	$this->_nestedSQL = true;
-		//}
+		$this->_bindInputArray = PHP_VERSION >= 5.1;
 	}
 
 	
