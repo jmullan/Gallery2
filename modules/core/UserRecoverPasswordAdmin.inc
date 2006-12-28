@@ -39,9 +39,9 @@ class UserRecoverPasswordAdminController extends GalleryController {
 	$status = $error = $results = array();
 
 	if (isset($form['action']['recover'])) {
-	    $authFile = dirname(dirname(dirname(__FILE__))) . '/login.txt';
+	    $authFile = GALLERY_CONFIG_DIR . '/login.txt';
 	    $authFromFile = $platform->is_readable($authFile) ?
-		trim(implode('', $platform->file($authFile))) : '';
+		trim($platform->file_get_contents($authFile)) : '';
 
 	    if ($session->get('core.UserRecoverPasswordAdminAuthKey') != $authFromFile) {
 		$error[] = 'form[error][authString][incorrect]';
@@ -60,10 +60,6 @@ class UserRecoverPasswordAdminController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
-		/*
-		 * TODO - We need to be able to support a renamed administrator account
-		 * or, possibly, the recovery of any administrator account.
-		 */
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret, null);
@@ -144,7 +140,7 @@ class UserRecoverPasswordAdminView extends GalleryView {
 	$session =& $gallery->getSession();
 
 	$status = $error = array();
-	$authFile = dirname(__FILE__) . '/../../login.txt';
+	$authFile = GALLERY_CONFIG_DIR . '/login.txt';
 
 	if ($form['formName'] != 'UserRecoverPasswordAdmin') {
 	    $form['formName'] = 'UserRecoverPasswordAdmin';
@@ -163,7 +159,7 @@ class UserRecoverPasswordAdminView extends GalleryView {
 	} else if (!$platform->is_readable($authFile)) {
 	    $error['authFile']['unreadable'] = 1;
 	} else {
-	    $authStringFromFile = trim(join('', $platform->file($authFile)));
+	    $authStringFromFile = trim($platform->file_get_contents($authFile));
 	    if ($authStringFromFile == $authString) {
 		$status['authString']['correct'] = 1;
 	    } else {
