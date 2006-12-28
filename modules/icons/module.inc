@@ -32,7 +32,7 @@ class IconsModule extends GalleryModule {
 	$this->setId('icons');
 	$this->setName($gallery->i18n('Icons'));
 	$this->setDescription($gallery->i18n('Display icons for links'));
-	$this->setVersion('1.1.0'); /* Update upgrade() function below too */
+	$this->setVersion('1.1.1'); /* Update upgrade() function below too */
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -85,6 +85,7 @@ class IconsModule extends GalleryModule {
 	case '1.0.0':
 	case '1.0.1':
 	case '1.0.2':
+	case '1.1.0':
 
 	case 'end of upgrade path':
 	    break;
