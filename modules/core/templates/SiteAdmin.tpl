@@ -8,8 +8,12 @@
       enctype="{$SiteAdmin.enctype|default:"application/x-www-form-urlencoded"}">
   <div>
     {g->hiddenFormVars}
+    {if !empty($controller)}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
+    {/if}
+    {if !empty($form.formName)}
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}" />
+    {/if}
   </div>
 
   <table width="100%" cellspacing="0" cellpadding="0">
