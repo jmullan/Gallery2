@@ -100,19 +100,18 @@ class GallerySetupUtilities {
      * @static
      */
     function getLoginAttempts() {
-	/*
-	 * Don't include embed.php in the global scope because it will initiate actions before we
-	 * are ready for them (eg: it will redirect us to the installer if we have no config.php)
-	 */
-	require_once(dirname(__FILE__) . '/../../embed.php');
-
-	$init = array('fullInit' => false);
-	if (isset($_SESSION['language'])) {
-	    $init['activeLanguage'] = $_SESSION['language'];
-	}
-	$ret = GalleryEmbed::init($init);
-	if ($ret) {
-	    return false;
+	/* Init if needed (like from lib/support; upgrader already init'ed) */
+	global $gallery;
+	if (!isset($gallery)) {
+	    /*
+	     * Don't include embed.php in the global scope because it will initiate actions before
+	     * we are ready for them (eg: redirect us to the installer if we have no config.php)
+	     */
+	    require_once(dirname(__FILE__) . '/../../embed.php');
+	    $ret = GalleryEmbed::init(array('fullInit' => false));
+	    if ($ret) {
+		return false;
+	    }
 	}
 
 	list ($ret, $attempts) =
@@ -121,9 +120,11 @@ class GallerySetupUtilities {
 	    return false;
 	}
 
-	$ret = GalleryEmbed::done();
-	if ($ret) {
-	    return false;
+	if (!isset($gallery)) {
+	    $ret = GalleryEmbed::done();
+	    if ($ret) {
+		return false;
+	    }
 	}
 
 	return $attempts;
@@ -137,15 +138,18 @@ class GallerySetupUtilities {
      * @static
      */
     function setLoginAttempts($attempts) {
-	/*
-	 * Don't include embed.php in the global scope because it will initiate actions before we
-	 * are ready for them (eg: it will redirect us to the installer if we have no config.php)
-	 */
-	require_once(dirname(__FILE__) . '/../../embed.php');
-
-	$ret = GalleryEmbed::init(array('fullInit' => false));
-	if ($ret) {
-	    return false;
+	/* Init if needed (like from lib/support; upgrader already init'ed) */
+	global $gallery;
+	if (!isset($gallery)) {
+	    /*
+	     * Don't include embed.php in the global scope because it will initiate actions before
+	     * we are ready for them (eg: redirect us to the installer if we have no config.php)
+	     */
+	    require_once(dirname(__FILE__) . '/../../embed.php');
+	    $ret = GalleryEmbed::init(array('fullInit' => false));
+	    if ($ret) {
+		return false;
+	    }
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter(
@@ -154,9 +158,17 @@ class GallerySetupUtilities {
 	    return false;
 	}
 
-	$ret = GalleryEmbed::done();
-	if ($ret) {
-	    return false;
+	if (!isset($gallery)) {
+	    $ret = GalleryEmbed::done();
+	    if ($ret) {
+		return false;
+	    }
+	} else {
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return false;
+	    }
 	}
 
 	return true;
