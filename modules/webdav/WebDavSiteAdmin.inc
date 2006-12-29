@@ -45,11 +45,6 @@ class WebDavSiteAdminView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	/* Load our default values if we didn't just come from this form */
-	if ($form['formName'] != 'WebDavSiteAdmin') {
-	    $form['formName'] = 'WebDavSiteAdmin';
-	}
-
 	/* Render HTML body */
 	$template->setVariable('WebDavSiteAdmin', $WebDavSiteAdmin);
 
