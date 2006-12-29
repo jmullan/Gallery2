@@ -2090,6 +2090,8 @@ class CoreModuleExtras {
 	    /* Add JavaScriptWarning.tpl */
 	case '1.1.24':
 	    /* Add page-level caching for embedded mode */
+	case '1.1.25':
+	    /* 2.2 Release Candidate 1! */
 
 	case 'end of upgrade path':
 	    /*
@@ -2375,6 +2377,7 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 	case '1.1.22':
 	case '1.1.23':
 	case '1.1.24':
+	case '1.1.25':
 
 	case 'end of upgrade path':
 	    /*
