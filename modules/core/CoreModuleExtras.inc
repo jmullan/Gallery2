@@ -1516,7 +1516,7 @@ class CoreModuleExtras {
 		    return $ret;
 		}
 
-		$stepSize = min(100, intval($totalDerivatives / 10));
+		$stepSize = min(100, max(intval($totalDerivatives / 10), 5));
 		for ($i = 0; $i < $totalDerivatives; $i++) {
 		    /* Delete the file if it exists */
 		    list ($first, $second) = GalleryDataCache::getCacheTuple($derivativeIds[$i]);
