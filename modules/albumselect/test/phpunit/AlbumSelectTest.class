@@ -248,10 +248,15 @@ class AlbumSelectTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$callbackParams = array();
+	list ($ret, $rootAlbumId) = GalleryCoreApi::getDefaultAlbumId();
+	if ($ret) {
+	    return $ret;
+	}
 	$cachePathInfo = array('type' => 'module-data',
 			       'module' => 'albumselect',
 			       'itemId' => $userId . '_' . $languageCode .
-			       '_' . substr(md5(serialize($callbackParams)), 0, 5));
+			       '_' . substr(md5(serialize(array($callbackParams,
+								$rootAlbumId))), 0, 5));
 
 	/* Call it a first time */
 	$ret = $callbacks->callback($callbackParams, $smarty, 'LoadAlbumData', $userId);
@@ -264,11 +269,12 @@ class AlbumSelectTest extends GalleryTestCase {
 			    'title');
 	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
 			    $data['titlesForJs'][$this->_album->getId()], 'title for javascript');
-	list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
-	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $data['titles'][$this->_album->getId()],
+	list ($treeList, $titles, $titlesForJs, $links) =
+	    GalleryDataCache::getFromDisk($cachePathInfo);
+	$this->assertEquals('zzz\\z&amp;zz&quot;zz', $titles[$this->_album->getId()],
 			    'cached title');
 	$this->assertEquals('zzz\\\\z&amp;zz&quot;zz',
-		$data['titlesForJs'][$this->_album->getId()], 'cached title for javascript');
+		$titlesForJs[$this->_album->getId()], 'cached title for javascript');
 
 	/* Change the album title */
 	$this->_album->setTitle('Changed Title');
