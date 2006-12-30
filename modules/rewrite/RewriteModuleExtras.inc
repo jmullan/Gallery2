@@ -245,11 +245,11 @@ class RewriteModuleExtras {
 	     * array($moduleId => array($ruleId => array('pattern' => $pattern)))
 	     */
 	    foreach (array_keys($activeRules) as $moduleId) {
-		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
+		list ($ret, $tmpModule) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
 		if ($ret) {
 		    return $ret;
 		}
-		$rules = $module->getRewriteRules();
+		$rules = $tmpModule->getRewriteRules();
 
 		foreach ($activeRules[$moduleId] as $ruleId => $pattern) {
 		    $activeRules[$moduleId][$ruleId] = array();
@@ -287,11 +287,12 @@ class RewriteModuleExtras {
 		}
 		$history = unserialize($value);
 
-		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', substr($key, 8), true);
+		list ($ret, $tmpModule) =
+		    GalleryCoreApi::loadPlugin('module', substr($key, 8), true);
 		if ($ret) {
 		    return $ret;
 		}
-		$rules = $module->getRewriteRules();
+		$rules = $tmpModule->getRewriteRules();
 
 		foreach ($history as $ruleId => $pattern) {
 		    $history[$ruleId] = array();
