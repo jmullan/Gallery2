@@ -207,12 +207,14 @@ class GalleryStatus {
 
 	$codes = $this->getErrorCodeConstants($this->_errorCode);
 	$trace = array();
+	$basePaths = array();
 	if (!class_exists('GalleryTestCase')) {
 	    $platform =& $gallery->getPlatform();
-	    $base = $platform->realpath(dirname(__FILE__) . '/../../../') .
+	    $basePaths[] = $platform->realpath(dirname(__FILE__) . '/../../../') .
 		$platform->getDirectorySeparator();
-	} else {
-	    $base = '';
+	    /* The codebase isn't necessarily the config dir (multisites) */
+	    $basePaths[] = $platform->realpath(GALLERY_CONFIG_DIR . '/') .
+		$platform->getDirectorySeparator();
 	}
 	if (empty($this->_stackTrace)) {
 	    for ($i = 0; $i < count($this->_fileName); $i++) {
@@ -230,7 +232,7 @@ class GalleryStatus {
 		    $traceEntry['line'] = '???';
 		}
 		$trace[] =
-		    array('file' => str_replace($base, '', $traceEntry['file']),
+		    array('file' => str_replace($basePaths, '', $traceEntry['file']),
 			  'line' => $traceEntry['line'],
 			  'class' => empty($traceEntry['class']) ? null : $traceEntry['class'],
 			  'function' => empty($traceEntry['function']) ?
