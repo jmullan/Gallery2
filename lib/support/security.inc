@@ -74,6 +74,7 @@ if (empty($config)) {
 	    if ($authKeyFromFile == $options['key']) {
 		GallerySetupUtilities::authenticateThisSession();
 		GallerySetupUtilities::redirectBackToSelf();
+		exit;
 	    } else {
 		$options['authFileErrors']['mismatch'] = 1;
 	    }
@@ -83,6 +84,7 @@ if (empty($config)) {
 	if ($_POST['password'] == $config['setup.password']) {
 	    GallerySetupUtilities::authenticateThisSession();
 	    GallerySetupUtilities::redirectBackToSelf();
+	    exit;
 	} else {
 	    $options['attempts']++;
 	    if (!GallerySetupUtilities::setLoginAttempts($options['attempts'])) {
