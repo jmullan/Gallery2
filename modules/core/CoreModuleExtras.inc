@@ -781,6 +781,13 @@ class CoreModuleExtras {
 	    /* Added SetOriginationTimestampTask */
 
 	case '0.9.15':
+	    /* Remove lock subdirs -- this is from 1.1.8->1.1.9 upgrade */
+	    $locksDir = $gallery->getConfig('data.gallery.locks');
+	    if ($platform->file_exists($locksDir)) {
+		@$platform->recursiveRmDir($locksDir);
+	    }
+	    @$platform->mkdir($locksDir);
+
 	    /*
 	     * Changed 'All Users' to 'Registered Users'
 	     * Don't change if the user modified the name already!
@@ -904,6 +911,13 @@ class CoreModuleExtras {
 	    }
 
 	case '0.9.27':
+	    /* Remove lock subdirs -- this is from 1.1.8->1.1.9 upgrade */
+	    $locksDir = $gallery->getConfig('data.gallery.locks');
+	    if ($platform->file_exists($locksDir)) {
+		@$platform->recursiveRmDir($locksDir);
+	    }
+	    @$platform->mkdir($locksDir);
+
 	    /* Mark old broken derivatives as such with our new isBroken flag */
 	    /*
 	     * This is the filesize and the crc32 checksum of the broken derivative placeholder
