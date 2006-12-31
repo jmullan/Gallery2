@@ -140,6 +140,13 @@
       ul.toc-level-2 li {
 	margin: auto;
       }
+      .relurl  {
+      	color: #666 !important;
+	text-decoration: none !important;
+      }
+      .relurl:hover {
+        border-bottom: #666 dotted;
+      }
       </style>
       <script type="text/javascript">
 	// <![CDATA[
@@ -153,11 +160,39 @@
 	    t.innerHTML = '+';
 	  }
 	}
+
+	/* 
+	 * if the URL doesn't contain http or is on sourceforge, replace relative urls
+	 * with an alert instead of a link that probably won't work 
+	 */
+	function fixURLs() {
+	  if (!document.location.toString().match(/(^http|\bsourceforge\b|\bsf.net\b|\bmenalto\b)/)) {
+	    var as = document.getElementsByTagName("a");
+	    for (var i = 0; i < as.length; i++) {
+	      href = as[i].getAttribute('href');
+	      if (href) {
+	        /* links to replace don't begin with # or http or irc */
+	        if ((href.search('http') != 0) && (href.search('irc') != 0) &&
+		    (href.toString().charAt(0) != '#')) {
+		  /* Don't use setAttribute for onclick (workaround for IE) */
+		  as[i].onclick = function() {
+		    alert('It looks like you are not accessing this README through your ' +
+				    'webserver so this link will not work!'); 
+		    return false;
+		  };
+		  as[i].setAttribute('title',"This link only works when you access the README " +
+		  	"through your web server!");
+		  as[i].className="relurl";
+		}
+	      }
+	    }
+	  }
+	}
 	// ]]>
       </script>
   </head>
 
-  <body>
+  <body onload="fixURLs();">
     <div class="toc">
       <h2> <a name="toc">Contents</a> </h2>
       <ul class="toc-level-1">
@@ -1620,7 +1655,7 @@
 	  <li>
 	    <b>Nightly Snapshot</b> - You can download a tarball or zip file with
 	    a snapshot of the most recent code.  Find links to these on the
-	    <a href="http://gallery.menalto.com/wiki/Download"
+	    <a href="http://gallery.menalto.com/downloads"
 	       target="_blank">Gallery Download Page</a>.
 	  </li>
 	  <li>
@@ -2137,7 +2172,7 @@
 	    target="_blank">Gallery Documentation Website</a>
 	</li>
 	<li>
-	  Read the <a href="http://codex.gallery2.org/index.php/Gallery2:faq" target="_blank" >Gallery 2 FAQ</a>
+	  Read the <a href="http://codex.gallery2.org/index.php/Gallery2:FAQ" target="_blank" >Gallery 2 FAQ</a>
 	</li>
 	<li>
 	  Use the <a href="http://gallery.menalto.com/forum/11"
@@ -2234,7 +2269,7 @@
 
     <p>
       <b> For Developers </b> - We've gotten started on some
-      <a href="http://gallery.menalto.com/wiki/Development_Documents"
+      <a href="http://gallery.menalto.com/dev"
       target="_guided">developer documentation</a> that you should read if you want to
       start hacking on Gallery 2.  Some of the information is a little bit out of date
       or in early drafts, but it's a start.
