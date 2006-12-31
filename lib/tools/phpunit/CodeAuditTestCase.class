@@ -32,6 +32,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
 	$this->_shouldHalt = false;
 	$this->_baseDir = realpath(dirname(__FILE__) . '/../../..');
+	$this->_checkTime = time();
     }
 
     function testCodeAudit() {
@@ -82,7 +83,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 
 	$dirPaths = array($dirPath);
 	while (($dirPath = array_shift($dirPaths)) !== null) {
-	    $gallery->guaranteeTimeLimit(30);
+	    $this->_timeCheck();
 	    $dirPaths = array_merge($dirPaths, $this->$functionName($dirPath));
 	    if ($this->_shouldHalt) {
 		return;
@@ -129,7 +130,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 
 	    case 'file':
 		if ($this->shouldCheckFile($subPath)) {
-		    $gallery->guaranteeTimeLimit(30);
+		    $this->_timeCheck();
 		    $this->checkFile($subPath, $platform->file_get_contents($subPath));
 		    if ($this->_shouldHalt) {
 			return array();
@@ -186,7 +187,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 
 	    case 'file':
 		if ($this->shouldCheckFile($subPath)) {
-		    $gallery->guaranteeTimeLimit(30);
+		    $this->_timeCheck();
 		    $this->checkFile($subPath, $platform->file_get_contents($subPath));
 		    if ($this->_shouldHalt) {
 			return array();
@@ -200,6 +201,20 @@ class CodeAuditTestCase extends GalleryTestCase {
 	}
 
 	return $dirPaths;
+    }
+
+    /**
+     * Keep this test running.
+     */
+    function _timeCheck() {
+	global $gallery;
+	$gallery->guaranteeTimeLimit(30);
+	if (time() - $this->_checkTime >= 20) {
+	    $this->_checkTime = time();
+	    $usedMemory = (function_exists('memory_get_usage')) ? memory_get_usage() : '"unknown"';
+	    print '<script type="text/javascript">updateStats(0,0,0,'
+		    . $usedMemory . ");</script>\n";
+	}
     }
 
     /**
