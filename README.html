@@ -166,7 +166,8 @@
 	 * with an alert instead of a link that probably won't work 
 	 */
 	function fixURLs() {
-	  if (!document.location.toString().match(/(^http|\bsourceforge\b|\bsf.net\b|\bmenalto\b)/)) {
+	  if ((document.location.toString().indexOf('http') != 0) ||
+	      (document.location.toString().match(/(\bsourceforge\b|\bsf.net\b|\bmenalto\b)/))) {
 	    var as = document.getElementsByTagName("a");
 	    for (var i = 0; i < as.length; i++) {
 	      href = as[i].getAttribute('href');
