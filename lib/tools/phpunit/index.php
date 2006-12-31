@@ -253,6 +253,8 @@ class GalleryTestResult extends TestResult {
 	    print '<script text="text/javascript">showStatus();</script>';
 	}
 	$failure = $extra = '';
+	$usedMemory = (function_exists('memory_get_usage')) ? memory_get_usage() : '"unknown"';
+
 	if ($test->wasSkipped()) {
 	    global $compactView;
 	    if (isset($compactView)) return;
@@ -260,7 +262,7 @@ class GalleryTestResult extends TestResult {
 	    $text = 'r.cells[4].lastChild.nodeValue="SKIP";';
 	    $extra = 'r.className="skip";';
 	    $elapsed = '0.0000';
-	    $cmd = "updateStats(0, 0, 1)";
+	    $cmd = "updateStats(0, 0, 1, $usedMemory)";
 	} else {
 	    $elapsed = sprintf("%2.4f", $test->elapsed());
 	    $this->_totalElapsed += $elapsed;
@@ -277,7 +279,7 @@ class GalleryTestResult extends TestResult {
 		    $failure .= '<li>' . $exception->getMessage() . "</li>\n";
 		}
 		$failure .= "</ul>\n";
-		$cmd = "updateStats(0, 1, 0)";
+		$cmd = "updateStats(0, 1, 0, $usedMemory)";
 	    } else {
 		$class = 'Pass';
 		$text = 'r.cells[4].lastChild.nodeValue="OK";';
@@ -288,7 +290,7 @@ class GalleryTestResult extends TestResult {
 		    print '<meta http-equiv="refresh" content="0; index.php?filter=' .
 			"$x$i-$i" . '&amp;onebyone=true"/>';
 		}
-		$cmd = "updateStats(1, 0, 0)";
+		$cmd = "updateStats(1, 0, 0, $usedMemory)";
 	    }
 	}
 	print '<script type="text/javascript">r=document.getElementById(\'testRow'

@@ -22,6 +22,7 @@
       <div class="body">
 	Pass: <span id="pass_count">&nbsp;</span>, Fail <span id="fail_count">&nbsp;</span>, Skip: <span id="skip_count">&nbsp;</span>, Total: <span id="total_count">&nbsp;</span> <br/>
 	Estimated time remaining: <span id="estimated_time_remaining">&nbsp;</span> <br/>
+	Memory Usage: <span id="used_memory">&nbsp;</span> (<?php print (0 < ini_get('memory_limit')) ? ini_get('memory_limit') : 0; ?> allowed)
       </div>
     </div>
 
@@ -287,7 +288,7 @@
 	document.getElementById("status").style.display = 'none';
       }
 
-      function updateStats(pass, fail, skip, force) {
+      function updateStats(pass, fail, skip, usedMemory, force) {
 	if (pass || force) {
 	  passCount += pass;
 	  passCountEl.innerHTML = passCount;
@@ -300,6 +301,7 @@
 	  skipCount += skip;
 	  skipCountEl.innerHTML = skipCount;
 	}
+	usedMemoryEl.innerHTML = usedMemory;
 
 	var completedCount = passCount + failCount + skipCount;
 	var elapsed = (new Date().getTime() / 1000) - startTime;
@@ -317,8 +319,9 @@
       var failCountEl = document.getElementById('fail_count');
       var skipCountEl = document.getElementById('skip_count');
       var estimatedTimeRemainingEl = document.getElementById('estimated_time_remaining');
+      var usedMemoryEl = document.getElementById('used_memory');
       document.getElementById('total_count').innerHTML = totalCount;
-      updateStats(0, 0, 0, 1);
+      updateStats(0, 0, 0, 0, 1);
     </script>
 
     <input type="button" onclick="reRun();" value="Re-run broken tests"
