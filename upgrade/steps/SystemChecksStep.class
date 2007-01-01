@@ -57,7 +57,7 @@ class SystemChecksStep extends UpgradeStep {
 	    $x = $x[0];
 	    print "SUCCESS\n";
 	    return false;
-	} else if (!empty($_GET['downloadCleaupScript'])) {
+	} else if (!empty($_GET['downloadCleanupScript'])) {
 	    $statusMonitor = null;
 	    $manifest = SystemChecksStep::CheckManifest(
 		    $statusMonitor, function_exists('set_time_limit'));
