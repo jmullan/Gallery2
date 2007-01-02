@@ -35,7 +35,8 @@ class GalleryTestCase extends TestCase {
 				'factoryModuleId' => array(),
 				'toolkitId' => array(),
 				'pluginParameters' => array(),
-				'factoryRegistry' => null);
+				'factoryRegistry' => null,
+				'eventListeners' => null);
     }
 
     function &getEntityCounter() {
@@ -46,18 +47,13 @@ class GalleryTestCase extends TestCase {
 
 	return $_counter;
     }
-
-    function &getTestEventListener() {
-	static $_eventListener;
-	if (!isset($_eventListener)) {
-	    $_eventListener = new TestEventListener();
-	}
-	return $_eventListener;
-    }
-
+ 
     function _registerTestEventListener($eventName, &$listener) {
-	$eventListener =& $this->getTestEventListener();
-	$eventListener->registerEventListener($eventName, $listener);
+	/*
+	 * Right now, this is just a wrapper for the normal core API method.
+	 * The magic is done in setUp and tearDown / markEventListenersForCleanup.
+	 */
+	GalleryCoreApi::registerEventListener($eventName, $listener);
     }
 
     function failWithStatus($ret) {
@@ -115,6 +111,12 @@ class GalleryTestCase extends TestCase {
 	$this->_saveSID = $session->getId();
 	$this->_saveVars[] = $session->get('core.language');
 
+	$ret = $this->_markEventListenersForCleanup();
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $ret;
+	}
+
 	/*
 	 * Try to ensure enough time for this test to complete.  If a test
 	 * needs more time, then it should extend the limit itself.
@@ -131,12 +133,14 @@ class GalleryTestCase extends TestCase {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->beginTransaction();
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
 	list ($ret, $this->_rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -279,8 +283,8 @@ class GalleryTestCase extends TestCase {
 	    $this->assert(false, 'Session is not an object anymore!');
 	}
 
-	$eventListener =& $this->getTestEventListener();
-	$eventListener->reset();
+	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
+	$eventListeners = $this->_cleanup['eventListeners'];
 
 	/* Clean out any saved state in the platform */
 	$gallery->_platform->resetPlatform();
@@ -882,6 +886,30 @@ class GalleryTestCase extends TestCase {
     }
 
     /**
+     * Create a backup of the registered event listeners which will be restored in tearDown.
+     */
+    function _markEventListenersForCleanup() {
+	static $listenersAreRegistered;
+	if (empty($listenersAreRegistered)) {
+	    GalleryCoreApi::requireOnce(
+			'modules/core/classes/helpers/GalleryEventHelper_simple.class');
+	    /* Trigger all modules to register their event listeners */
+	    $event = GalleryCoreApi::newEvent('GalleryTest:PseudoEvent');
+	    list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $listenersAreRegistered = true;
+	}
+
+	/* Don't use references here */
+	$eventListeners = GalleryEventHelper_simple::_getEventListeners();
+	$this->_cleanup['eventListeners'] = $eventListeners;
+
+	return null;
+    }
+
+    /**
      * Register a factory implementation temporarily for this test.
      * You need to call _markFactoryForCleanup() before changing the factory during a test.
      * Will register the new implementation always with top priority.
@@ -1023,51 +1051,6 @@ class EntityCounterEventListener /* extends GalleryEventListener */ {
 
     function getCount() {
 	return $this->_count;
-    }
-}
-
-/**
- * Event listener wrapper for unit tests.  Some event listeners are disabled by default for
- * unit tests, but you can use GalleryTestCase::_registerTestEventListener() to register one
- * with this listener, which will do dispatching for you.
- */
-class TestEventListener /* extends GalleryEventListener */ {
-
-    function TestEventListener() {
-	$this->_eventListeners = array();
-    }
-
-    function reset() {
-	foreach (array_keys($this->_eventListeners) as $eventName) {
-	    $this->_eventListeners[$eventName] = array();
-	}
-    }
-
-    function registerEventListener($eventName, &$listener) {
-	if (!isset($this->_eventListeners[$eventName])) {
-	    GalleryCoreApi::registerEventListener($eventName, $this);
-	    $this->_eventListeners[$eventName] = array();
-	}
-	$this->_eventListeners[$eventName][] =& $listener;
-    }
-
-    function handleEvent($event) {
-	if (empty($this->_eventListeners[$event->getEventName()])) {
-	    return array(null, null);
-	}
-
-	$result = array();
-	$list = $this->_eventListeners[$event->getEventName()];
-	for ($i = 0; $i < count($list); $i++) {
-	    list ($ret, $data) = $list[$i]->handleEvent($event);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    if (isset($data)) {
-		$result[] = $data;
-	    }
-	}
-	return array(null, $result);
     }
 }
 
