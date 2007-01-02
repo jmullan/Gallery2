@@ -1675,6 +1675,22 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(in_array($items[0]->getRenderer(), array(null, '')));
 	$this->assertEquals('ItemTestRendererToKeep', $items[1]->getRenderer());
     }
+
+    function testCreateLinkCopiesRenderer() {
+	/* Create target item */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(),
+		'application/unknown', array('renderer' => 'TEST_RENDERER'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $linkedItem) = $this->_createLinkedItem($this->_album->getId(), $item);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('TEST_RENDERER', $linkedItem->getRenderer());
+    }
 }
 
 /**
