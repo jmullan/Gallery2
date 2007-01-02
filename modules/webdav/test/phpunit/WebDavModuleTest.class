@@ -61,9 +61,16 @@ class WebDavModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	/* Load WebDAV module */
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'webdav');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	/* Mock disable WebDAV rewrite rules */
-	$activeRules =& WebDavModuleTestRewriteApi::_fetchActiveRulesForModule('webdav');
-	$activeRules = array();
+	$this->_activeRules =& WebDavModuleTestRewriteApi::_fetchActiveRulesForModule('webdav');
+	$this->_activeRules = array();
+	$this->_activateCalls =& WebDavModuleTestRewriteApi::_getActivateCalls();
 	$this->_markFactoryForCleanup();
 	$this->_registerFactoryImplementationForTest(
 	    'RewriteApi', 'WebDavModuleTestRewriteApi', 'WebDavModuleTestRewriteApi',
@@ -73,37 +80,45 @@ class WebDavModuleTest extends GalleryTestCase {
 	}
 
 	/* Define OPTIONS request */
-	$this->_optionsRequest = 'OPTIONS ' . $urlGenerator->generateUrl(
+	$this->_optionsRequest = implode("\r\n", array(
+	    'OPTIONS ' . $urlGenerator->generateUrl(
 		array('controller' => 'webdav.WebDav'),
 		array('forceServerRelativeUrl' => true,
-		      'htmlEntities' => false)) . " HTTP/1.0\r\n"
-	    . 'Host: ' . $urlGenerator->getHostName() . "\r\n"
-	    . "\r\n";
+		      'htmlEntities' => false)) . ' HTTP/1.0',
+	    'Host: ' . $urlGenerator->getHostName(),
+	    '',
+	    ''));
 
 	/* Define success and failure responses */
-	$this->_includesDavHeadersResponse = 'HTTP/1.1 200 OK
-Date: Mon, 24 Nov 2003 05:40:03 GMT
-Server: Apache/1.3.28 (Unix)
-Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, DELETE, PUT, MOVE, LOCK, UNLOCK
-DAV: 1,2
-MS-Author-Via: DAV
-Content-Length: 0
-Connection: close
-Content-Type: text/html
-';
-	$this->_missingDavHeadersResponse = 'HTTP/1.1 200 OK
-Date: Mon, 24 Nov 2003 05:40:03 GMT
-Server: Apache/1.3.28 (Unix)
-Allow: OPTIONS, GET, HEAD, DELETE, PUT, LOCK, UNLOCK
-Content-Length: 0
-Connection: close
-Content-Type: text/html
-';
+	$this->_includesDavHeadersResponse = implode("\r\n", array(
+	    'HTTP/1.1 200 OK',
+	    'Date: Mon, 24 Nov 2003 05:40:03 GMT',
+	    'Server: Apache/1.3.28 (Unix)',
+	    'Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, DELETE, PUT, MOVE, LOCK'
+		. ', UNLOCK',
+	    'DAV: 1,2',
+	    'MS-Author-Via: DAV',
+	    'Content-Length: 0',
+	    'Connection: close',
+	    'Content-Type: text/html',
+	    '',
+	    ''));
+	$this->_missingDavHeadersResponse = implode("\r\n", array(
+	    'HTTP/1.1 200 OK',
+	    'Date: Mon, 24 Nov 2003 05:40:03 GMT',
+	    'Server: Apache/1.3.28 (Unix)',
+	    'Allow: OPTIONS, GET, HEAD, DELETE, PUT, LOCK, UNLOCK',
+	    'Content-Length: 0',
+	    'Connection: close',
+	    'Content-Type: text/html',
+	    '',
+	    ''));
 
 	/* Use WebDavModuleTestPlatform */
-	$platform = new WebDavModuleTestPlatform();
-	$platform->_messages[$this->_optionsRequest] = $this->_includesDavHeadersResponse;
-	$gallery->setPlatform($platform);
+	$this->_platform = new WebDavModuleTestPlatform();
+	$this->_platform->_messages[$this->_optionsRequest] =
+	    $this->_includesDavHeadersResponse;
+	$gallery->setPlatform($this->_platform);
     }
 
     function tearDown() {
@@ -113,11 +128,6 @@ Content-Type: text/html
 
     function testGetItemLinks() {
 	global $gallery;
-
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
 
 	$items = array($this->_item, $this->_subAlbum);
 	$wantsDetailedLinks =
@@ -131,7 +141,7 @@ Content-Type: text/html
 	/* Any user agent */
 	$_SERVER['HTTP_USER_AGENT'] = 'Foo Bar';
 
-	list ($ret, $links) = $module->getItemLinks(
+	list ($ret, $links) = $this->_module->getItemLinks(
 	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -141,7 +151,7 @@ Content-Type: text/html
 	    . $this->_subAlbum->getId();
 	$expected = array();
 	$expected[$this->_subAlbum->getId()][0]['text'] =
-	    $module->translate(array('text' => 'Mount with WebDAV'));
+	    $this->_module->translate(array('text' => 'Mount with WebDAV'));
 	$expected[$this->_subAlbum->getId()][0]['params'] =
 	    array('view' => 'webdav.WebDavMount', 'itemId' => $this->_subAlbum->getId());
 	$expected[$this->_subAlbum->getId()][0]['attrs'] =
@@ -150,7 +160,7 @@ Content-Type: text/html
 
 	/* Mount with JavaScript only if using MSIE */
 	$_SERVER['HTTP_USER_AGENT'] = 'MSIE 6';
-	list ($ret, $links) = $module->getItemLinks(
+	list ($ret, $links) = $this->_module->getItemLinks(
 	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -165,7 +175,7 @@ Content-Type: text/html
 
 	/* Konqueror supports webdav:// URLs */
 	$_SERVER['HTTP_USER_AGENT'] = 'Konqueror';
-	list ($ret, $links) = $module->getItemLinks(
+	list ($ret, $links) = $this->_module->getItemLinks(
 	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -182,7 +192,7 @@ Content-Type: text/html
 
 	/* Verify that item links are only for detailed mode */
 	$wantsDetailedLinks[$this->_subAlbum->getId()] = false;
-	list ($ret, $links) = $module->getItemLinks(
+	list ($ret, $links) = $this->_module->getItemLinks(
 	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -192,44 +202,52 @@ Content-Type: text/html
     }
 
     function testGetRewriteRules() {
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$rules = $module->getRewriteRules();
-
+	$rules = $this->_module->getRewriteRules();
 	$this->assertEquals(array('connect', 'davmount'), array_keys($rules));
     }
 
     function testGetRewriteRulesOptionsRuleActive() {
-	$activeRules =& WebDavModuleTestRewriteApi::_fetchActiveRulesForModule('webdav');
-	$activeRules = array('options');
+	$this->_activeRules = array('options');
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$rules = $module->getRewriteRules();
-
+	$rules = $this->_module->getRewriteRules();
 	$this->assertEquals(array('connect', 'davmount', 'options'), array_keys($rules));
     }
 
     function testGetRewriteRulesMissingDavHeaders() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
+	$this->_platform->_messages[$this->_optionsRequest] =
+	    $this->_missingDavHeadersResponse;
 
-	$platform->_messages[$this->_optionsRequest] = $this->_missingDavHeadersResponse;
+	$rules = $this->_module->getRewriteRules();
+	$this->assertEquals(array('connect', 'davmount', 'options'), array_keys($rules));
+    }
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'webdav');
+    function testHandleEventActivatePlugin() {
+	$event = GalleryCoreApi::newEvent('Gallery::ActivatePlugin');
+	$event->setData(array('pluginType' => 'module',
+			      'pluginId' => 'rewrite'));
+	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$rules = $module->getRewriteRules();
+	//$this->assertEquals(array(array('webdav')), $this->_activateCalls);
+    }
 
-	$this->assertEquals(array('connect', 'davmount', 'options'), array_keys($rules));
+    function testHandleEventError() {
+	$ret = GalleryCoreApi::registerEventListener('Gallery::Error', $this->_module);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$error = GalleryCoreApi::error(GALLERY_ERROR);
+	$event = GalleryCoreApi::newEvent('Gallery::Error');
+	$event->setData(array('error' => $error));
+	list ($ret, $results) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(array('suppressBody' => 1)), $results);
     }
 }
 
@@ -241,12 +259,22 @@ class WebDavModuleTestRewriteApi {
 	return $activeRules;
     }
 
+    function &_getActivateCalls() {
+	static $activateCalls;
+	return $activateCalls;
+    }
+
     function isCompatibleWithApi($version) {
 	return array(null, true);
     }
 
     function fetchActiveRulesForModule($moduleId) {
 	return array(null, WebDavModuleTestRewriteApi::_fetchActiveRulesForModule($moduleId));
+    }
+
+    function activateRewriteRulesForModule($moduleId) {
+	$activateCalls =& WebDavModuleTestRewriteApi::_getActivateCalls();
+	$activateCalls[] = array($moduleId);
     }
 }
 

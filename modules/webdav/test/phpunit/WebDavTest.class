@@ -55,8 +55,8 @@ class WebDavTest extends GalleryTestCase {
 	$gallery->setPlatform($this->_platform);
 
 	/* Clear response headers */
-	$headers =& GalleryUtilities::_getResponseHeaders();
-	$headers = array();
+	$this->_headers =& GalleryUtilities::_getResponseHeaders();
+	$this->_headers = array();
 
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
@@ -86,6 +86,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$this->_streams =& WebDavTestStream::_getStreams();
 	$this->_streamWrapperRegistration();
 
 	/* Try to test with the rewrite URL generator */
@@ -159,7 +160,7 @@ class WebDavTest extends GalleryTestCase {
 		'dav' => 'DAV: 1,2',
 		'content-length' => 'Content-Length: 0',
 		'ms-author-via' => 'MS-Author-Via: DAV'),
-	    GalleryUtilities::_getResponseHeaders());
+	    $this->_headers);
 
 	$this->assertEquals('', $output);
     }
@@ -179,8 +180,7 @@ class WebDavTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('path', $path);
 
-	$streams =& WebDavTestStream::_getStreams();
-	$streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
 <D:propfind xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
   <D:prop>
     <D:creationdate/>
@@ -205,7 +205,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
-	    GalleryUtilities::_getResponseHeaders());
+	    $this->_headers);
 
 	$path = ltrim($path, '/');
 	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
@@ -247,8 +247,7 @@ class WebDavTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('path', $path);
 
-	$streams =& WebDavTestStream::_getStreams();
-	$streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
 <D:propertyupdate xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
   <D:set>
     <D:prop>
@@ -273,7 +272,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
-	    GalleryUtilities::_getResponseHeaders());
+	    $this->_headers);
 
 	$path = ltrim($path, '/');
 	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
@@ -327,7 +326,7 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
-			    GalleryUtilities::_getResponseHeaders());
+			    $this->_headers);
 
 	$this->assertEquals('', $output);
 
@@ -368,7 +367,7 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 204 No Content'),
-			    GalleryUtilities::_getResponseHeaders());
+			    $this->_headers);
 
 	$this->assertEquals('', $output);
 
@@ -409,8 +408,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$headers = GalleryUtilities::_getResponseHeaders();
-	$this->assertEquals('HTTP/1.0 201 Created', $headers['status']);
+	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
 
 	$this->assertEquals('', $output);
 
@@ -462,8 +460,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$headers = GalleryUtilities::_getResponseHeaders();
-	$this->assertEquals('HTTP/1.0 201 Created', $headers['status']);
+	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
 
 	$this->assertEquals('', $output);
 
@@ -528,8 +525,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$headers = GalleryUtilities::_getResponseHeaders();
-	$this->assertEquals('HTTP/1.0 204 No Content', $headers['status']);
+	$this->assertEquals('HTTP/1.0 204 No Content', $this->_headers['status']);
 
 	$this->assertEquals('', $output);
 
@@ -582,7 +578,7 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
-			    GalleryUtilities::_getResponseHeaders());
+			    $this->_headers);
 
 	$this->assertEquals('', $output);
 
@@ -615,8 +611,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
-	$streams =& WebDavTestStream::_getStreams();
-	$streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
 <D:lockinfo xmlns:D="DAV:">
   <D:lockscope><D:exclusive/></D:lockscope>
   <D:locktype><D:write/></D:locktype>
@@ -646,11 +641,10 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('testOwner', $lock['owner']);
 	$this->assertEquals((string)(time() + 30), $lock['expires']);
 
-	$headers = GalleryUtilities::_getResponseHeaders();
 	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK',
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"',
 		'lock-token' => 'Lock-Token: <' . $lock['token'] . '>'),
-	    $headers);
+	    $this->_headers);
 
 	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
 <D:prop xmlns:D="DAV:">
@@ -692,8 +686,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$headers = GalleryUtilities::_getResponseHeaders();
-	$this->assertEquals(array('status' => 'HTTP/1.0 204 No Content'), $headers);
+	$this->assertEquals(array('status' => 'HTTP/1.0 204 No Content'), $this->_headers);
 
 	$this->assertEquals('', $output);
 
@@ -707,7 +700,6 @@ class WebDavTest extends GalleryTestCase {
 	if (!function_exists('stream_wrapper_register')) {
 	    return $this->skip();
 	}
-	$headers =& GalleryUtilities::_getResponseHeaders();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
@@ -719,7 +711,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$headers = array();
+	$this->_headers = array();
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
@@ -731,7 +723,6 @@ class WebDavTest extends GalleryTestCase {
 	if (!function_exists('stream_wrapper_register')) {
 	    return $this->skip();
 	}
-	$headers =& GalleryUtilities::_getResponseHeaders();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
@@ -743,7 +734,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$headers = array();
+	$this->_headers = array();
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
@@ -776,7 +767,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK',
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
-	    $headers);
+	    $this->_headers);
 
 	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
 <D:prop xmlns:D="DAV:">
@@ -793,7 +784,7 @@ class WebDavTest extends GalleryTestCase {
 </D:prop>
 '), split("\r?\n", $output));
 
-	$headers = array();
+	$this->_headers = array();
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
@@ -806,8 +797,6 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->skip();
 	}
 
-	$headers =& GalleryUtilities::_getResponseHeaders();
-
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -818,7 +807,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$headers = array();
+	$this->_headers = array();
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
@@ -832,8 +821,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
-	$streams =& WebDavTestStream::_getStreams();
-	$streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
 <D:lockinfo xmlns:D="DAV:">
   <D:lockscope><D:exclusive/></D:lockscope>
   <D:locktype><D:write/></D:locktype>
@@ -861,7 +849,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 409 Conflict',
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
-	    $headers);
+	    $this->_headers);
 
 	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
 <D:multistatus xmlns:D="DAV:">
@@ -872,7 +860,7 @@ class WebDavTest extends GalleryTestCase {
 </D:multistatus>
 '), split("\r?\n", $output));
 
-	$headers = array();
+	$this->_headers = array();
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
@@ -908,14 +896,12 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT, $ret->getErrorCode());
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 404 Not Found'),
-			    GalleryUtilities::_getResponseHeaders());
+			    $this->_headers);
 
 	$this->assertEquals('', $output);
     }
 
     function testIllegalPathComponent() {
-	$headers =& GalleryUtilities::_getResponseHeaders();
-
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
@@ -942,11 +928,11 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
 
-	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $this->_headers);
 
 	$this->assertEquals('', $output);
 
-	$headers = array();
+	$this->_headers = array();
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -965,7 +951,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
 
-	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $this->_headers);
 
 	$this->assertEquals('', $output);
     }
@@ -1010,14 +996,12 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'),
-			    GalleryUtilities::_getResponseHeaders());
+			    $this->_headers);
 
 	$this->assertEquals('', $output);
     }
 
     function testMacDotUnderscore() {
-	$headers =& GalleryUtilities::_getResponseHeaders();
-
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
@@ -1044,11 +1028,11 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
 
-	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK'), $headers);
+	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK'), $this->_headers);
 
 	$this->assertEquals('', $output);
 
-	$headers = array();
+	$this->_headers = array();
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -1067,14 +1051,12 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
 
-	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK'), $headers);
+	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK'), $this->_headers);
 
 	$this->assertEquals('', $output);
     }
 
     function testMacDotDsStore() {
-	$headers =& GalleryUtilities::_getResponseHeaders();
-
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
@@ -1101,11 +1083,11 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
 
-	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $this->_headers);
 
 	$this->assertEquals('', $output);
 
-	$headers = array();
+	$this->_headers = array();
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -1124,7 +1106,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
 
-	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $headers);
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $this->_headers);
 
 	$this->assertEquals('', $output);
     }
