@@ -112,6 +112,10 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	unset($_SERVER['PHP_AUTH_PW']);
 	unset($_SERVER['REMOTE_USER']);
 	GalleryUtilities::removeRequestVariable('authorization');
+
+	$this->_registerTestEventListener('Gallery::ActivatePlugin', $this->_module);
+	$this->_registerTestEventListener('Gallery::Error', $this->_module);
+	$this->_registerTestEventListener('Gallery::Logout', $this->_module);
     }
 
     function tearDown() {
@@ -148,7 +152,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	//$this->assertEquals(array(array('httpauth')), $this->_activateCalls);
+	$this->assertEquals(array(array('httpauth')), $this->_activateCalls);
     }
 
     function testHandleEventErrorPermissionDenied() {

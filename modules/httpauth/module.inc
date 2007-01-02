@@ -94,20 +94,18 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
-	$ret = GalleryCoreApi::registerEventListener(
-	    'Gallery::ActivatePlugin', new HttpAuthModule());
+	$listener = new HttpAuthModule();
+	$ret = GalleryCoreApi::registerEventListener('Gallery::ActivatePlugin', $listener, true);
 	if ($ret) {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::registerEventListener(
-	    'Gallery::Error', new HttpAuthModule());
+	$ret = GalleryCoreApi::registerEventListener('Gallery::Error', $listener, true);
 	if ($ret) {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::registerEventListener(
-	    'Gallery::Logout', new HttpAuthModule());
+	$ret = GalleryCoreApi::registerEventListener('Gallery::Logout', $listener, true);
 	if ($ret) {
 	    return $ret;
 	}

@@ -119,6 +119,8 @@ class WebDavModuleTest extends GalleryTestCase {
 	$this->_platform->_messages[$this->_optionsRequest] =
 	    $this->_includesDavHeadersResponse;
 	$gallery->setPlatform($this->_platform);
+
+	$this->_registerTestEventListener('Gallery::ActivatePlugin', $this->_module);
     }
 
     function tearDown() {
@@ -230,14 +232,11 @@ class WebDavModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	//$this->assertEquals(array(array('webdav')), $this->_activateCalls);
+	$this->assertEquals(array(array('webdav')), $this->_activateCalls);
     }
 
     function testHandleEventError() {
-	$ret = GalleryCoreApi::registerEventListener('Gallery::Error', $this->_module);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
+	$this->_registerTestEventListener('Gallery::Error', $this->_module);
 
 	$error = GalleryCoreApi::error(GALLERY_ERROR);
 	$event = GalleryCoreApi::newEvent('Gallery::Error');

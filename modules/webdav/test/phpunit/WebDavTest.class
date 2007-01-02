@@ -106,6 +106,8 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$gallery->setUrlGenerator($this->_urlGenerator);
+
+	$this->_registerTestEventListener('Gallery::Error', new WebDavModule());
     }
 
     function tearDown() {
