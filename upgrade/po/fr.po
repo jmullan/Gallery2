@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-07-06 23:48+0200\n"
-"PO-Revision-Date: 2006-09-30 00:00+0100\n"
+"PO-Revision-Date: 2007-01-01 00:00+0100\n"
 "Last-Translator: Arnaud MOURONVAL <Arnaud.Mouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -58,7 +58,7 @@ msgid "System Checks"
 msgstr "Vérifications du système"
 
 msgid "Performing system checks"
-msgstr ""
+msgstr "Vérifications du système en cours"
 
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "Version de PHP >= 4.3.0 ou >= 5.0.4"
@@ -147,18 +147,18 @@ msgstr ""
 "pourra entraîner une corruption des données."
 
 msgid "Filesystem Operations"
-msgstr ""
+msgstr "Opérations sur le système de fichier"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Essential filesystem operations are disabled in your PHP by the "
 "<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
 "Gallery will run. These functions are missing: %s."
 msgstr ""
-"Attention&nbsp;: la fonction putenv() est désactivée dans votre installation de PHP par le "
-"paramètre <b>disabled_functions</b> dans le fichier php.ini. Gallery peut fonctionner dans "
-"cette configuration, mais sur certains systèmes, Gallery ne pourra pas s'afficher dans une "
-"autre langue que la langue par défaut du système et l'anglais."
+"Erreur&nbsp;: des opérations essentielles sur le système de fichier sont désactivées dans "
+"votre configuration de PHP avec le paramètre <b>disabled_functions</b> dans le fichierphp."
+"ini. Vous devez autoriser ces fonctions pour Gallery puisse fonctionner. Les fonctions "
+"suivantes sont absentes&nbsp;: %s."
 
 msgid "Memory limit"
 msgstr "Limite mémoire"
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Taille maximale des téléchargements"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
 "(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
@@ -246,7 +246,7 @@ msgstr ""
 msgid "Zend compatibility mode"
 msgstr "Mode compatible avec Zend"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your "
@@ -275,7 +275,7 @@ msgstr ""
 msgid "Output buffering disabled"
 msgstr "Mise en buffer de la sortie désactivée"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
@@ -286,10 +286,10 @@ msgstr ""
 "Attention&nbsp;: la mise en buffer de la sortie est activée dans votre installation de PHP "
 "par le(s) paramètre(s) <b>%s</b> dans le fichier php.ini. Gallery peut fonctionner dans "
 "cette configuration (le téléchargement de fichier sera même plus rapide), mais Gallery "
-"pourra être dans l'incapacité de fournir de gros fichiers (des vidéos par exemple) et "
-"arriver en saturation de mémoire. De plus, quelques fonctions comme les barres de "
-"progression pourront ne pas s'afficher correctement si la mise en buffer de la sortie est "
-"activée à moins que la fonction ini_set() soit autorisée."
+"pourra être dans l'incapacité de servir de gros fichiers (des vidéos par exemple) et arriver "
+"en saturation de mémoire. De plus, quelques fonctions comme les barres de progression "
+"pourront ne pas s'afficher correctement si la mise en buffer de la sortie est activée à "
+"moins que la fonction ini_set() soit autorisée."
 
 msgid "Storage Directory Permissions"
 msgstr "Permissions du répertoire de stockage"
@@ -381,20 +381,24 @@ msgstr "Bienvenue"
 #, c-format
 msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
 msgstr ""
+"<b>Erreur</b>&nbsp;: Impossible de localiser %s. Veuillez le placer dans le répertoire %s."
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
 "file."
 msgstr ""
+"<b>Erreur</b>&nbsp;: le fichier %s n'est pas accessible en lecture. Veuillez donnez les "
+"droits nécessaires sur ce fichier pour que Gallery puisse le lire."
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
 "string from below and try again."
 msgstr ""
+"<b>Erreur</b>&nbsp;: Votre clé %s ne correspond pas à ce qui est attendu. Veuillez utiliser "
+"la nouvelle chaîne d'authentification ci-dessous et réessayer."
 
-#, fuzzy
 msgid ""
 "In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
 "When you performed the install, you entered a password which went into your config.php.  "
@@ -409,12 +413,14 @@ msgid "Password:"
 msgstr "Mot de passe&nbsp;:"
 
 msgid "You have exceeded the maximum attempts to login by entering a password."
-msgstr ""
+msgstr "Vous avez dépassé le nombre maximal de tentatives d'authentification."
 
 msgid ""
 "To prevent somebody from hacking your website, we now require you to complete a stricter "
 "authentication process."
 msgstr ""
+"Afin de prévenir un accès non autorisé à votre site, nous vous demandons de suivre une "
+"procédure d'authentification renforcée."
 
 #, c-format
 msgid ""
@@ -424,9 +430,15 @@ msgid ""
 "new text file called %s in the %s directory on your webserver (that's the same directory "
 "where %s is located). It must contain the following randomly generated characters:"
 msgstr ""
+"Afin de continuer la mise à jour, nous devons vérifier que vous êtes bien un administrateur "
+"de Gallery. La meilleure solution consiste à vous demander de réaliser une petite "
+"modification dans le répertoire de Gallery ce qui prouvera que vous disposez des bons droits "
+"d'administration. Nous allons vous demander de créer un fichier nommé %s dans le répertoire %"
+"s de votre serveur web (le même répertoire dans lequel %s est localisé). Ce fichier doit "
+"contenir la chaîne de caractères aléatoires suivants &nbsp;:"
 
 msgid "Once you've uploaded the file, click below to continue."
-msgstr ""
+msgstr "Une fois le fichier téléchargé, cliquez ci-dessous pour continuer."
 
 msgid "Authenticate Me"
 msgstr "M'authentifier"
@@ -473,14 +485,13 @@ msgstr "Essayer de nouveau"
 msgid "Finished!"
 msgstr "Fin&nbsp;!"
 
-#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
 "plugins you may use the Site Administrator interface."
 msgstr ""
 "Félicitations&nbsp! Votre mise à jour de Gallery 2 est maintenant terminée. Pour mettre à "
-"jour les autres modules de Gallery, veuillez vous rendre dans la section d'administration "
-"des modules."
+"jour les autres composants de Gallery, veuillez vous rendre dans la section d'administration "
+"des composants."
 
 msgid "Go to my Gallery!"
 msgstr "Se rendre dans Gallery&nbsp;!"
@@ -674,7 +685,6 @@ msgstr ""
 "les fichiers de code de Gallery 2 par ceux de la version actuellement installée ou d'une "
 "version plus récente."
 
-#, fuzzy
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -683,7 +693,7 @@ msgstr ""
 "Avant que vous ne lanciez le mise à jour, nous vous <b>recommandons fortement</b> de "
 "réaliser une sauvegarde de votre base de données. Si vous ne réalisez pas de sauvegarde et "
 "que quelque chose se passe mal pendant la mise à jour, il y très probable que vous ne "
-"puissiez pas récupérer vos données&nbsp;! Veuillez vous référer aux exemples suivants pour "
+"puissiez pas récupérer vos données&nbsp;! Veuillez vous référer à l'exemple suivant pour "
 "sauvegarder votre base&nbsp;:"
 
 msgid "MySQL"
@@ -693,13 +703,13 @@ msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
 msgid "Oracle"
-msgstr ""
+msgstr "Oracle"
 
 msgid "IBM DB2"
-msgstr ""
+msgstr "IBM DB2"
 
 msgid "Microsoft SQL Server"
-msgstr ""
+msgstr "Microsft SQL Server"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -725,20 +735,23 @@ msgid ""
 "<b>Reminder</b>: Now update the permissions on config.php to make sure it is not writeable "
 "by other people.  Right now your config.php has modes of %s.  We suggest that you do this:"
 msgstr ""
+"<b>Rappel</b>&nbsp;: Veuillez maintenant mettre à jour les permissions du fichier config.php "
+"pour vous assurer qu'il n'est pas accessible en écriture pour d'autres utilisateurs. "
+"Actuellement votre fichier config.php est dans le mode %s. Nous vous suggérons de faire "
+"ceci&nbsp;:"
 
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Le noyau de Gallery est à jour&nbsp;!"
 
-#, fuzzy
 msgid ""
 "The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
 msgstr ""
-"Les modules suivants peuvent être automatiquement mis à jour. Si vous ne souhaitez pas les "
-"mettre à jour maintenant, vous pourrez rencontrer quelques problèmes avec Gallery. Vous "
-"pouvez toujours les mettre à jour ou les désactiver depuis la pages des modules de la "
+"Les composants suivants peuvent être automatiquement mis à jour. Si vous ne souhaitez pas "
+"les mettre à jour maintenant, vous pourrez rencontrer quelques problèmes avec Gallery. Vous "
+"pouvez toujours les mettre à jour ou les désactiver depuis la pages des composants de la "
 "section d'administration de Gallery, ou revenir plus tard sur cette page. Ainsi, aucune "
 "décision n'est définitive."
 
@@ -767,7 +780,7 @@ msgid "Current"
 msgstr "Version actuelle"
 
 msgid "New"
-msgstr "Nouvelle version"
+msgstr "Nouveau"
 
 msgid "Description"
 msgstr "Description"
@@ -782,9 +795,8 @@ msgstr "(dé)cocher tous"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "Passer cette mise à jour et continuer à l'étape %d&raquo;"
 
-#, fuzzy
 msgid "Upgrade Selected Plugins"
-msgstr "Mettre à jour les modules sélectionnés"
+msgstr "Mettre à jour les composants sélectionnés"
 
 #, c-format
 msgid "Upgraded the %s module successfully"
@@ -794,9 +806,8 @@ msgstr "Module %s mis à jour avec succès"
 msgid "Upgraded the %s theme successfully"
 msgstr "Thème %s mis à jour avec succès"
 
-#, fuzzy
 msgid "Upgrade More Plugins"
-msgstr "Mise à jour des composants"
+msgstr "Mise à jour plus de composants"
 
 #, c-format
 msgid ""
@@ -823,19 +834,3 @@ msgstr "Choix de la langue&nbsp;:"
 
 msgid "Go"
 msgstr "Go"
-
-#~ msgid ""
-#~ "<b>Reminder</b>: Now check the permissions on config.php and make sure it is not globally "
-#~ "writeable."
-#~ msgstr ""
-#~ "<b>Rappel</b>&nbsp;: Vérifiez maintenant les permissions de config.php et assurez vous "
-#~ "qu'il n'est pas accessible en écriture par tout le monde."
-
-#~ msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-#~ msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-
-#~ msgid "pg_dump -h %s --format=t %s > %s.sql"
-#~ msgstr "pg_dump -h %s --format=t %s > %s.sql"
-
-#~ msgid "Upgrade More Modules"
-#~ msgstr "Mettre à jour d'autres modules"
