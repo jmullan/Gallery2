@@ -54,6 +54,8 @@ class LocalizationAuditTest extends CodeAuditTestCase {
      * 4. Check charset header is UTF-8
      */
     function checkFile($fileName, $buffer) {
+	$path = substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName))))) + 1);
+
 	/* Grab Project-Id-Version, which we'll check against this file's peers in finishScan() */
 	preg_match('/Project-Id-Version:(.*).."/', $buffer, $matches);
 	$this->_idMap[dirname($fileName)][basename($fileName)] = trim($matches[1]);
@@ -61,7 +63,6 @@ class LocalizationAuditTest extends CodeAuditTestCase {
 	/* First line must be "# <dollar-sign>Id<dollar-sign> */
 	$line = preg_replace("/\n.*/", "", $buffer);
 	if (!preg_match('/^# \$Id(: [^\$]*|)\$/', $line)) {
-	    $path = substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
 	    $line = preg_replace("/\n.*/", "", $buffer);
 	    $this->assert(false, $path . ': first line should be "# $" ."Id$" but was: ' . $line);
 	    $this->_errorCount++;
@@ -72,15 +73,31 @@ class LocalizationAuditTest extends CodeAuditTestCase {
 	$msgIdPos = strpos($buffer, 'msgid');
 
 	if ($fuzzyPos !== false && $msgIdPos !== false && $fuzzyPos < $msgIdPos) {
-	    $path = substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
 	    $this->assert(false, $path . ': first msgid is marked fuzzy!');
 	    $this->_errorCount++;
 	}
 
 	/* Make sure charset header specifies UTF-8 */
 	if (strpos($buffer, 'Content-Type: text/plain; charset=UTF-8') === false) {
-	    $path = substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
 	    $this->assert(false, $path . ': does not specify UTF-8 charset');
+	    $this->_errorCount++;
+	}
+
+	/* Make sure __TOKEN__ things aren't translated */
+	preg_match_all(
+	    '/(?<!^#, fuzzy\n)^msgid ("(?:.(?!^msgstr))*__[A-Z]+__.*)^msgstr (.*)(?:^$|$(?!.))/Ums',
+	    $buffer, $matches, PREG_SET_ORDER);
+	foreach ($matches as $match) {
+	    if (strlen($match[2]) < 5) {
+		continue; /* No translation for this string */
+	    }
+	    preg_match_all('/__[A-Z]+__/', $match[1], $tokens);
+	    foreach ($tokens[0] as $token) {
+		if (strpos($match[2], $token) === false) {
+		    $this->assert(false, $path . ': improper translation of ' . $token . ' token');
+		    $this->_errorCount++;
+		}
+	    }
 	}
 
 	if ($this->_errorCount > 10) {
@@ -90,9 +107,7 @@ class LocalizationAuditTest extends CodeAuditTestCase {
 
     /**
      * @see CodeAuditTestCase::finishScan
-     *
-     * Collate our Project-Id-Version info and make sure that they're consistent in every
-     * localization.
+     * Collate our Project-Id-Version info and make sure they're consistent in every localization.
      */
     function finishScan($halted) {
 	if (!$halted) {
