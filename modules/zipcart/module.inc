@@ -128,7 +128,7 @@ class ZipCartModule extends GalleryModule {
 
 	/* Now try each path in turn to see which ones work */
 	foreach ($paths as $path) {
-	    if ($platform->is_executable($path)) {
+	    if (!$platform->isRestrictedByOpenBaseDir($path) && $platform->is_executable($path)) {
 		/* We have a winner */
 		$ret = $this->setParameter('path', $path);
 		if ($ret) {
