@@ -1846,6 +1846,24 @@ class SessionTest extends GalleryTestCase {
 	$this->assertEquals($expected, $session->replaceTempSessionIdIfNecessary($html));
     }
 
+    function testReplaceTempSessionIdIfNecessaryRemovesTrailingQueryStringSeparator() {
+	$session = new GallerySession();
+	$session->_isPersistentSessionNew = false;
+	$session->_sessionId = '';
+	$sessionString =
+	    GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . SESSION_TEMP_ID;
+	$html = sprintf('<a href="main.php?%s">', $sessionString);
+	$this->assertEquals('<a href="main.php">',
+			    $session->replaceTempSessionIdIfNecessary($html), 'case 1');
+
+	foreach (array('?', '%3F', '&', '&amp;', '%26amp%3B', '%26') as $separator) {
+	    $html = sprintf("<img src='foo%s%s'>", $separator, $sessionString);
+	    $this->assertEquals("<img src='foo'>",
+				$session->replaceTempSessionIdIfNecessary($html),
+				'separator: ' . $separator);
+	}
+    }
+
     function testIsPersistentSessionRequired() {
 	$session = new GallerySession();
 	$ret = $session->init();
