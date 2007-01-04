@@ -18,9 +18,9 @@
 //
 // $Id$
 
-require_once 'Tools/_parse_propfind.php';
-require_once 'Tools/_parse_proppatch.php';
-require_once 'Tools/_parse_lockinfo.php';
+require_once(dirname(__FILE__) . '/Tools/_parse_propfind.php');
+require_once(dirname(__FILE__) . '/Tools/_parse_proppatch.php');
+require_once(dirname(__FILE__) . '/Tools/_parse_lockinfo.php');
 
 define('HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE',
     'urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882');
