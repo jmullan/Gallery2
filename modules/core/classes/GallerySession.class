@@ -958,9 +958,9 @@ class GallerySession {
 	    $sessionString =
 		GalleryUtilities::prefixFormVariable($this->getKey()) . '=' . SESSION_TEMP_ID;
 	    /*
-	     * Handling only most cases here, still leaving &&, ?& but handling traling ? and &
+	     * Handling only most cases here, still leaving &&, ?& but handling trailing ? and &
 	     * Experimented a lot with str_replace and preg_replace. A perfect solution would be
-	     * again 40% slower (eg. 12 instead of 8.5ms on a slow box for a lot of data).
+	     * again 40% slower (e.g. 12 instead of 8.5ms on a slow box for a lot of data).
 	     */
 	    /* sessionString normal and URL encoded */
 	    $regexp = GalleryUtilities::prefixFormVariable($this->getKey()) . '(?:=|%3D)' .
