@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-22 11:57+0100\n"
-"PO-Revision-Date: 2006-09-30 08:50+0200\n"
+"PO-Revision-Date: 2007-01-02 19:30+0100\n"
 "Last-Translator: Anders Lindquist <andersl@saaf.se>\n"
 "Language-Team: Swedish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -46,10 +46,10 @@ msgid "Empty Cache"
 msgstr "Töm Cache"
 
 msgid "Unable to clear the page cache"
-msgstr "Kan ej tömma sid cachen"
+msgstr "Kan ej tömma cachen"
 
 msgid "Unable to commit database transaction"
-msgstr "Kan ej komitta databas transaktionen"
+msgstr "Kan ej utföra databas-transaktionen"
 
 msgid "Finish Upgrade"
 msgstr "Slutför Uppgraderingen"
@@ -58,7 +58,7 @@ msgid "System Checks"
 msgstr "Konroll av Systemet"
 
 msgid "Performing system checks"
-msgstr ""
+msgstr "Utför systemkontroller"
 
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP version >= 4.3.0 eller >= 5.0.4"
@@ -70,8 +70,8 @@ msgid ""
 "sPHP website%s."
 msgstr ""
 "Fel: Gallery 2 kräver PHP version 4.3.0 eller nyare alternativt 5.0.4 eller nyare. Du har "
-"PHP versionen %s installerad. Kontakta din webservers administratör och behär en "
-"uppgradering, tillgänglig på %sPHPs webbsida%s."
+"PHP versionen %s installerad. Kontakta din webbadministratör och begär en uppgradering, "
+"tillgänglig på %sPHPs webbsida%s."
 
 msgid "PHP Version"
 msgstr "PHP Version"
@@ -96,11 +96,11 @@ msgid ""
 "Error: Your version of PHP is configured with safe mode enabled.  You must disable safe mode "
 "before Gallery will run."
 msgstr ""
-"Fel: Din version av PHP är konfigurerad med safe mode påslaget. Du måste slåav safe mode för "
-"att Gallery skall fungera."
+"Fel: Din version av PHP är konfigurerad med safe mode påslaget. Du måste slå av safe-mode "
+"för att Gallery skall fungera."
 
 msgid "Safe Mode"
-msgstr "Safe Mode"
+msgstr "Safe mode"
 
 msgid "Regular expressions"
 msgstr "Reguljärt utryck"
@@ -144,18 +144,17 @@ msgstr ""
 "korruption."
 
 msgid "Filesystem Operations"
-msgstr ""
+msgstr "Filsystems operationer"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Essential filesystem operations are disabled in your PHP by the "
 "<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
 "Gallery will run. These functions are missing: %s."
 msgstr ""
-"Varning: Funktionen putenv() är inte aktiverad i din PHP genom direktivet "
-"<b>disabled_functions</b> parametern i din php.ini. Gallery kan fungera med den "
-"inställningen, men i sällsynta fall på vissa system så kan Gallery inte fungera med något "
-"annat språk än systemets installations språk och Engelska."
+"Fel: Väsentliga filsystems operationer är avaktiverade i din php.ini genom "
+"<disabled_functions</b> parametern. Du måste tillåta dessa funktioner innan Gallery kan "
+"fungera. Dessa funktioner saknas: %s."
 
 msgid "Memory limit"
 msgstr "Minnesgräns"
@@ -187,7 +186,7 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Maximal storlek på uppladdade filer"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
 "(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
@@ -241,7 +240,7 @@ msgstr ""
 msgid "Zend compatibility mode"
 msgstr "Zend kompabilitets mod"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your "
@@ -269,7 +268,7 @@ msgstr ""
 msgid "Output buffering disabled"
 msgstr "Utmatningsbuffer avslagen"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
@@ -280,8 +279,8 @@ msgstr ""
 "Varning: Utmatningsbuffer är aktiverad i din PHP genom <b>%s</b> parametern i php.ini. "
 "Gallery kan fungera med denna inställning - nerladdning av filer är tom. snabbare - men "
 "Gallery kan få svårt att skicka stora filer (t.ex. stora videofilmer) pga. att minnesgränsen "
-"kan överskridas. Men även vissa funktioner som progress bars fungerar inte på rätt sätt om "
-"utmatningsbuffer är påslagen ominte ini_set() är tillåten."
+"kan överskridas. Men även vissa funktioner som 'progress bars' fungerar inte på rätt sätt om "
+"utmatningsbuffer är påslagen om inte ini_set() är tillåten."
 
 msgid "Storage Directory Permissions"
 msgstr "Lagerkatalogens Accesser"
@@ -310,14 +309,14 @@ msgid "Upgrade Plugins"
 msgstr "Uppgradera Pluginer"
 
 msgid "Unable to initialize Gallery session"
-msgstr "Kan inte initiera Gallery session"
+msgstr "Kan inte initiera Gallery-sessionen"
 
 #, c-format
 msgid "Unable to load the %s module"
 msgstr "Kan ej ladda %s modulen"
 
 msgid "Upgrading modules"
-msgstr "Uppgraderar Moduler"
+msgstr "Uppgraderar moduler"
 
 #, c-format
 msgid "%s module needs configuration"
@@ -339,10 +338,10 @@ msgid "Unable to upgrade the %s theme"
 msgstr "Kan ej upprader %s temat"
 
 msgid "Unable to get the module list"
-msgstr "Kan ej hämta modul listan"
+msgstr "Kan ej hämta modullistan"
 
 msgid "Unable to get the theme list"
-msgstr "Kan ej hämta tema listan"
+msgstr "Kan ej hämta temalistan"
 
 #, c-format
 msgid "Unable to query the %s module"
@@ -371,27 +370,28 @@ msgstr "Välkommen"
 
 #, c-format
 msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
-msgstr ""
+msgstr "<b>Fel:</b> kan ej hitta %s. Placera filen i din %s katalog."
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
 "file."
-msgstr ""
+msgstr "<b>Fel:</b> din %s fil är inte läsbar. Ge Gallery läsrättigheter till filen."
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
 "string from below and try again."
 msgstr ""
+"<b>Fel:</b> din %s nyckel stämmer inte. Använd verifierings strängen här nedan och försök "
+"igen."
 
-#, fuzzy
 msgid ""
 "In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
 "When you performed the install, you entered a password which went into your config.php.  "
 "Type that in now.  Refer to your config.php if you've forgotten what you entered."
 msgstr ""
-"För att kunna fortsätta med installationen, så måste vi verifiera att du är den du utger dig "
+"För att kunna fortsätta med uppgraderingen, så måste vi verifiera att du är den du utger dig "
 "för att vara. När du utförde installationen, så angav du ett lösenord som vi skrev in i din "
 "config.php. Ange det lösenordet nu. Se efter i din config.php om du har glömt vad du angav."
 
@@ -399,12 +399,14 @@ msgid "Password:"
 msgstr "Lösenord"
 
 msgid "You have exceeded the maximum attempts to login by entering a password."
-msgstr ""
+msgstr "Du har överskridit maximala antalet inloggnings försök."
 
 msgid ""
 "To prevent somebody from hacking your website, we now require you to complete a stricter "
 "authentication process."
 msgstr ""
+"För att förhindra hacknings försök på din webplats, så kräver vi nu att du utför en mer "
+"strikt verifierings process."
 
 #, c-format
 msgid ""
@@ -414,9 +416,14 @@ msgid ""
 "new text file called %s in the %s directory on your webserver (that's the same directory "
 "where %s is located). It must contain the following randomly generated characters:"
 msgstr ""
+"För att kunna fortsätta med uppgraderingen, så måste vi verifiera att du är den du utger dig "
+"för att vara. Det bästa sättet är att be dig om att göra en liten ändring i Gallery:s "
+"katalog, vilket bevisar för oss att du har rätta accesserna för att utföra en uppgradering. "
+"Så vi vill att du skapar en ny textfil med namnet %s i %s katalogen på din webbserver (det "
+"är samma katalog som %s finns i). Filen måste innehålla följande slumpmässiga sträng:"
 
 msgid "Once you've uploaded the file, click below to continue."
-msgstr ""
+msgstr "När du har laddat upp filen, klicka här under för att fortsätta."
 
 msgid "Authenticate Me"
 msgstr "Verifiera mig"
@@ -428,7 +435,7 @@ msgid "Successfully cleaned caches."
 msgstr "Lyckades rensa cacherna."
 
 msgid "Delete Caches"
-msgstr "Radera Cacharna"
+msgstr "Radera cacharna"
 
 msgid ""
 "Gallery creates temporary copies of some of your data on your hard drive.  This helps it to "
@@ -462,22 +469,21 @@ msgstr "Försök Igen"
 msgid "Finished!"
 msgstr "Klart!"
 
-#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
 "plugins you may use the Site Administrator interface."
 msgstr ""
-"Grattis! Gallery 2 uppgraderingen är klar! För att uppgradera ytterligare Gallery 2 moduler "
+"Grattis! Gallery 2 uppgraderingen är klar! För att uppgradera ytterligare Gallery 2 pluginer "
 "gå till Site Admininstratörs gränssnittet."
 
 msgid "Go to my Gallery!"
 msgstr "Gå till mitt Gallery!"
 
 msgid "Upgrader Help"
-msgstr "Uppgraderings Hjälp"
+msgstr "Uppgraderings hjälp"
 
 msgid "Start Over"
-msgstr "Börja Om"
+msgstr "Börja om"
 
 msgid "Warning"
 msgstr "Varning"
@@ -549,7 +555,7 @@ msgid "this script"
 msgstr "detta skript"
 
 msgid "Upgrade Steps"
-msgstr "Uppgraderings Steg"
+msgstr "Uppgraderings steg"
 
 msgid "Missing or invalid config.php"
 msgstr "Saknad eller ogiltig config.php"
@@ -589,7 +595,7 @@ msgid ""
 "If you are using Apache, create a file named .htaccess in the main Gallery directory with "
 "the following content:"
 msgstr ""
-"Om du använder Apache, skapa en fil med namnet .htaccess i Gallerys huvud katalog med "
+"Om du använder Apache, skapa en fil med namnet .htaccess i Gallerys huvudkatalog med "
 "följande innehåll:"
 
 msgid "An error occurred while upgrading Gallery Core Module"
@@ -606,7 +612,7 @@ msgstr ""
 "dig att diagnostisera felet."
 
 msgid "Stack Trace:"
-msgstr "Stack Trace"
+msgstr "Stack trace"
 
 msgid "Debug Output:"
 msgstr "Avlusnings medelande"
@@ -655,7 +661,6 @@ msgstr ""
 "nergradera G2. Var snäll och ersätt gallery2 filerna med filer från den version som "
 "förnärvarande är installerad eller nyare filer."
 
-#, fuzzy
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -672,13 +677,13 @@ msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
 msgid "Oracle"
-msgstr ""
+msgstr "Oracle"
 
 msgid "IBM DB2"
-msgstr ""
+msgstr "IBM DB2"
 
 msgid "Microsoft SQL Server"
-msgstr ""
+msgstr "Microsoft SQL Server"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -688,7 +693,7 @@ msgstr ""
 "du störa uppgraderings processen."
 
 msgid "Begin Upgrade"
-msgstr "Starta Uppgraderingen"
+msgstr "Starta uppgraderingen"
 
 msgid "Recheck config.php"
 msgstr "Kontrollera config.php"
@@ -704,21 +709,22 @@ msgid ""
 "<b>Reminder</b>: Now update the permissions on config.php to make sure it is not writeable "
 "by other people.  Right now your config.php has modes of %s.  We suggest that you do this:"
 msgstr ""
+"<b>Påminnelse</b>: Uppdatera rättigheterna till filen config.php så att den ej är skrivbar "
+"för andra. Just nu har din config.php rättigheterna %s. Vi föreslår att du gör detta:"
 
 msgid "Your Gallery Core Module is up to date!"
-msgstr "Din Gallery KärnModul är up to date!"
+msgstr "Din Gallery KärnModul är 'up to date'!"
 
-#, fuzzy
 msgid ""
 "The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
 msgstr ""
-"Följande moduler kan automatisk uppgraderas åt dig. Om du väljer att inte uppgradera dom nu, "
-"så kan du förvänta dig problem med ditt Gallery. Du kan alltid uppgradera eller avaktivera "
-"dem på Site Administratörs sidan, eller återvända till denna sida senare, så vilket beslut "
-"du än gör så är det inte permanent."
+"Följande pluginer kan automatisk uppgraderas åt dig. Om du väljer att inte uppgradera dom "
+"nu, så kan du förvänta dig problem med ditt Gallery. Du kan alltid uppgradera eller "
+"avaktivera dem på Site Administratörs sidan, eller återvända till denna sida senare, så "
+"vilket beslut du än gör så är det inte permanent."
 
 msgid "Deactivated Plugins"
 msgstr "Avaktiverade Pluginer"
@@ -730,7 +736,7 @@ msgid ""
 msgstr ""
 "Följande pluginer var aktiverade, men dom är inkompatibla eller saknas för din nuvarande "
 "version av Gallery. Dom har avaktiverats. Installera den senaste versionen av dessa pluginer "
-"för att kunna återaktivera dem."
+"för att kunna reaktivera dem."
 
 msgid "Module"
 msgstr "Modul"
@@ -760,9 +766,8 @@ msgstr "(av)markera alla"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "Strunta i Uppgradering och fortsätt med nästa Steg %d&raquo;"
 
-#, fuzzy
 msgid "Upgrade Selected Plugins"
-msgstr "Uppgradera Valda Moduler"
+msgstr "Uppgradera valda pluginer"
 
 #, c-format
 msgid "Upgraded the %s module successfully"
@@ -772,9 +777,8 @@ msgstr "Lyckades uppgraderade %s modulen"
 msgid "Upgraded the %s theme successfully"
 msgstr "Lyckades uppgradera %s temat"
 
-#, fuzzy
 msgid "Upgrade More Plugins"
-msgstr "Uppgradera Pluginer"
+msgstr "Uppgradera fler pluginer"
 
 #, c-format
 msgid ""
@@ -800,19 +804,3 @@ msgstr "Välj Språk:"
 
 msgid "Go"
 msgstr "Gå"
-
-#~ msgid ""
-#~ "<b>Reminder</b>: Now check the permissions on config.php and make sure it is not globally "
-#~ "writeable."
-#~ msgstr ""
-#~ "<b>Påminnelse</b>: Kontrollera rättigheterna på config.php och se till så att den inte är "
-#~ "globalt skrivbar."
-
-#~ msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-#~ msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-
-#~ msgid "pg_dump -h %s --format=t %s > %s.sql"
-#~ msgstr "pg_dump -h %s --format=t %s > %s.sql"
-
-#~ msgid "Upgrade More Modules"
-#~ msgstr "Uppgradera Fler Moduler"
