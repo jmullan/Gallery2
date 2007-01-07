@@ -85,7 +85,7 @@ class LocalizationAuditTest extends CodeAuditTestCase {
 
 	/* Make sure __TOKEN__ things aren't translated */
 	preg_match_all(
-	    '/(?<!^#, fuzzy\n)^msgid ("(?:.(?!^msgstr))*__[A-Z]+__.*)^msgstr (.*)(?:^$|$(?!.))/Ums',
+	    '/(?<!^#, fuzzy\n)^msgid ("(?:.(?!^msgstr))*__[A-Z]+__.*)^msgstr (.*)(?:^$|\z)/Ums',
 	    $buffer, $matches, PREG_SET_ORDER);
 	foreach ($matches as $match) {
 	    if (strlen($match[2]) < 5) {
