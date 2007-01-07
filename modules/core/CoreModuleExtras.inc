@@ -2400,17 +2400,15 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 	     * for the $gallery object before the first setConfig() call.
 	     */
 	    $edit = array();
-	    $edit['regexp'] = '#/\*.{1,2} \* As a security precaution, we limit access to ' .
-		'Gallery\'s test suite#s';
-	    $edit['replacement'] = '/*
+	    $edit['regexp'] = '{(<\?php\s*(?:/\*.*?\*/\s*)?)}s';
+	    $edit['replacement'] = '\1/*
  * Prevent direct access to config.php.
  */
 if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
     exit;
 }
 
-/*
- * As a security precaution, we limit access to Gallery\'s test suite';
+';
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
 
 	case 'end of upgrade path':
@@ -2457,15 +2455,28 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 
 	$configChanges = CoreModuleExtras::_prepareConfigUpgrade($currentVersion);
 	foreach ($configChanges as $change) {
+	    /* preg_replace $count param is only PHP 5.1.0+ */
 	    foreach ($change['remove'] as $regexp) {
-		$configContents = preg_replace($regexp, '', $configContents);
+		$configContents = preg_replace($regexp, '', $old = $configContents);
+		if ($configContents == $old) {
+		    $gallery->debug('Warning: config.php remove pattern not matched: ' . $regexp);
+		}
 	    }
 	    foreach ($change['edit'] as $edit) {
 		$configContents =
-		    preg_replace($edit['regexp'], $edit['replacement'], $configContents);
+		    preg_replace($edit['regexp'], $edit['replacement'], $old = $configContents);
+		if ($configContents == $old) {
+		    $gallery->debug('Warning: config.php edit pattern not matched: ' . $regexp);
+		}
 	    }
 	    foreach ($change['add'] as $content) {
-		$configContents = preg_replace('{\?>\s*\z}', $content . "\n?>\n", $configContents);
+		$configContents =
+		    preg_replace('{\?>\s*\z}', $content . "\n?>\n", $old = $configContents);
+		if ($configContents == $old) {
+		    $gallery->debug(
+			'Warning: config.php add pattern not matched, appending to file instead');
+		    $configContents .= "\n" . $content . "\n?>\n";
+		}
 	    }
 	}
 
