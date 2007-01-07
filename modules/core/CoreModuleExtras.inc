@@ -2106,6 +2106,8 @@ class CoreModuleExtras {
 	    /* Add page-level caching for embedded mode */
 	case '1.1.25':
 	    /* 2.2 Release Candidate 1! */
+	case '1.1.26':
+	    /* Prevent PHP from showing errors on direct access to config.php */
 
 	case 'end of upgrade path':
 	    /*
@@ -2392,6 +2394,24 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 	case '1.1.23':
 	case '1.1.24':
 	case '1.1.25':
+	case '1.1.26':
+	    /*
+	     * Prevent PHP from showing errors on direct access to config.php by adding a check
+	     * for the $gallery object before the first setConfig() call.
+	     */
+	    $edit = array();
+	    $edit['regexp'] = '#/\*.{1,2} \* As a security precaution, we limit access to ' .
+		'Gallery\'s test suite#s';
+	    $edit['replacement'] = '/*
+ * Prevent direct access to config.php.
+ */
+if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
+    exit;
+}
+
+/*
+ * As a security precaution, we limit access to Gallery\'s test suite';
+	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
 
 	case 'end of upgrade path':
 	    /*

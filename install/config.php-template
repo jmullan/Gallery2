@@ -19,6 +19,13 @@
  */
 
 /*
+ * Prevent direct access to config.php.
+ */
+if (!isset($gallery) || !method_exists($gallery, 'setConfig')) {
+    exit;
+}
+
+/*
  * As a security precaution, we limit access to Gallery's test suite
  * to those people who know the password, below.  Example:
  *
