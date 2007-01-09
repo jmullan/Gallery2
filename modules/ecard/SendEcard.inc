@@ -127,15 +127,25 @@ class SendEcardController extends GalleryController {
 		return array($ret, null);
 	    }
 
+	    list ($ret, $anonymousUserId) = GalleryCoreApi::getAnonymousUserId();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    list ($ret, $canLink) =
+		GalleryCoreApi::hasItemPermission($itemId, 'core.view', $anonymousUserId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
 	    /* Get pseudo filename and attach image */
-	    list ($ret, $filename) = GalleryUtilities::getPseudoFileName($item);
+	    list ($ret, $filename) = GalleryUtilities::getPseudoFileName($resize);
 	    if ($ret) {
 		return array($ret, null);
 	    }
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $link = $urlGenerator->generateUrl(
+	    $link = $canLink ? $urlGenerator->generateUrl(
 		    array('view' => 'core.ShowItem', 'itemId' => $itemId),
-		    array('forceFullUrl' => true, 'forceSessionId' => false));
+		    array('forceFullUrl' => true, 'forceSessionId' => false)) : '';
 
 	    $data = $form;
 	    $data['header'] = EcardHelper::replaceKeywords($config['header'], $form);
