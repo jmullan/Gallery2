@@ -26,7 +26,7 @@
 	  <li> <span>{$group.0.groupLabel}</span>
 	    <ul>
 	      {foreach from=$group item=choice}
-		<li class="gbAdminLink {g->linkId view=$choice.view.subView}">
+		<li class="{g->linkId view=$choice.view.subView}">
 		{if !empty($choice.selected)}
 		  {$choice.name}
 		{else}
