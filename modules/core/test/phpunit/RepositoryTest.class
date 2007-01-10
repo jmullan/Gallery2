@@ -504,9 +504,10 @@ class RepositoryTest extends GalleryTestCase {
     }
 
     function testGetRepositoryPluginListThemeGroupLabel() {
+	global $gallery;
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
 	}
 
 	$testTheme = $this->_sampleIndex['themes']['testTheme'];
@@ -526,13 +527,21 @@ class RepositoryTest extends GalleryTestCase {
 	list ($ret, $pluginList) =
 		$repository->getRepositoryPluginList('theme', true,  $pluginData['coreApis']);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
 	}
 
 	if (!isset($pluginList['testTheme']['groupLabel'])) {
 	    $this->fail('Group label not set');
 	} else {
-	    $this->assertEquals($core->translate('Themes'), $pluginList['testTheme']['groupLabel'],
+	    list ($ret, $locale) = $gallery->getActiveLanguageCode();
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	    $data = array('en_GB' => 'en_GB-themes_testTheme-Test Group',
+			  'pt_BR' => 'pt_BR-themes_testTheme-Test Group',
+			  'pt_PT' => 'pt_PT-themes_testTheme-Test Group');
+	    $expected = isset($data[$locale]) ? $data[$locale] : $core->translate('Themes');
+	    $this->assertEquals($expected, $pluginList['testTheme']['groupLabel'],
 				'wrong group label for test theme');
 	}
     }
