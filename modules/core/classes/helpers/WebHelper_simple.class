@@ -50,7 +50,7 @@ class WebHelper_simple {
 	}
 
 	$platform =& $gallery->getPlatform();
-	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
+	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 5);
 	if (empty($fd)) {
 	    $gallery->debug("Error $errno: '$errstr' retrieving $url");
 	    return array(false, null, null, null);
@@ -64,19 +64,14 @@ class WebHelper_simple {
 	/* Unescape ampersands, since if the url comes from form input it will be escaped */
 	$get = str_replace('&amp;', '&', $get);
 
-	/* Read the web page into a buffer */
-	$extraHeaderLines = array();
+	$headerLines = array('Host: ' . $components['host']);
 	foreach ($extraHeaders as $headerKey => $headerValue) {
-	    $extraHeaderLines[] = "$headerKey: $headerValue";
+	    $headerLines[] = "$headerKey: $headerValue";
 	}
 
-	$ok = $platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
-					     "Host: %s\r\n" .
-					     "%s\r\n",
+	$ok = $platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n%s\r\n\r\n",
 					     $get,
-					     $components['host'],
-					     empty($extraHeaderLines) ? '' :
-					     implode("\r\n", $extraHeaderLines) . "\r\n"));
+					     implode("\r\n", $headerLines)));
 	if (!$ok) {
 	    /* Zero bytes written or false was returned */
 	    $gallery->debug(
@@ -91,6 +86,10 @@ class WebHelper_simple {
 	 */
 	$headers = array();
 	$response = trim($platform->fgets($fd, 4096));
+	if (empty($response)) {
+	    $gallery->debug('Empty http response code, maybe timeout');
+	    return array(false, null, null, null);
+	}
 
 	/* Read the headers. */
 	while (!$platform->feof($fd)) {
@@ -282,7 +281,7 @@ class WebHelper_simple {
 	}
 
 	$handle = @$platform->fsockopen(
-	    $urlComponents['host'], $urlComponents['port'], $errno, $errstr, 1);
+	    $urlComponents['host'], $urlComponents['port'], $errno, $errstr, 5);
 	if (empty($handle)) {
 	    $gallery->debug("Error $errno: '$errstr' requesting $url");
 	    return array(null, null, null);
@@ -293,19 +292,15 @@ class WebHelper_simple {
 	    $requestUri .= '?' . $urlComponents['query'];
 	}
 
-	$requestHeaders['Host'] = $urlComponents['host'];
-
-	$requestHeaderLines = array();
+	$headerLines = array('Host: ' . $urlComponents['host']);
 	foreach ($requestHeaders as $key => $value) {
-	    $requestHeaderLines[] = $key . ': ' . $value;
+	    $headerLines[] = $key . ': ' . $value;
 	}
 
-	$success = $platform->fwrite($handle, sprintf("%s %s HTTP/1.0\r\n"
-						      . "%s\r\n"
-						      . "%s",
+	$success = $platform->fwrite($handle, sprintf("%s %s HTTP/1.0\r\n%s\r\n\r\n%s",
 						      $requestMethod,
 						      $requestUri,
-						      implode("\r\n", $requestHeaderLines) . "\r\n",
+						      implode("\r\n", $headerLines),
 						      $requestBody));
 	if (!$success) {
 	    /* Zero bytes written or false was returned */
@@ -320,6 +315,10 @@ class WebHelper_simple {
 	 * version followed by a numeric status code and its associated textual phrase.
 	 */
 	$responseStatus = trim($platform->fgets($handle, 4096));
+	if (empty($responseStatus)) {
+	    $gallery->debug('Empty http response code, maybe timeout');
+	    return array(null, null, null);
+	}
 
 	/* Read the headers */
 	$responseHeaders = array();

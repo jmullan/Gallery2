@@ -159,10 +159,10 @@ class WebTest extends GalleryTestCase {
 	$expectedBody[] = 'test';
 	$expectedBody[] = '';			  /* newline at the end of the file */
 
-	$this->assert($success);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
-	$this->assertEquals($expectedHeaders, $headers);
-	$this->assertEquals(join("\n", $expectedBody), $body);
+	$this->assert($success, 'fetch failed!');
+	$this->assertEquals('HTTP/1.1 200 OK', $response, 'http response status');
+	$this->assertEquals($expectedHeaders, $headers, 'http response headers');
+	$this->assertEquals(implode("\n", $expectedBody), $body, 'body');
 	$this->assertEquals('http://www.test.server/testFetchWebPageExtraHeaders', $actualUrl);
     }
 
@@ -444,8 +444,8 @@ class WebTestPlatform {
 		"Host: www.test.server\r\n" .
 		"\r\n":
 	    case "GET /testFetchWebPageExtraHeaders HTTP/1.0\r\n" .
-		"ExtraHeader: ExtraValue\r\n" .
 		"Host: www.test.server\r\n" .
+		"ExtraHeader: ExtraValue\r\n" .
 		"\r\n":
 	    case "GET /testFetchWebFileExtraHeaders HTTP/1.0\r\n" .
 		"Host: www.test.server\r\n" .
@@ -579,9 +579,9 @@ class WebTestPlatform {
 		return strlen($string);
 
 	    case "POST /testPostToWebPage HTTP/1.0\r\n" .
+		 "Host: www.test.server\r\n" .
 		 "Content-Type: application/x-www-form-urlencoded\r\n".
 		 "Content-Length: 58\r\n" .
-		 "Host: www.test.server\r\n" .
 		 "\r\n" .
 		 "key1=value1&key2=value+2&key+3=http%3A%2F%2Fvalue%3A3%2F\r\n":
 		$buffer = array();
@@ -604,8 +604,8 @@ class WebTestPlatform {
 		return strlen($string);
 
 	    case "OPTIONS /testRequestWebPage HTTP/1.0\r\n" .
-		 "ExtraHeader: ExtraValue\r\n" .
 		 "Host: www.test.server\r\n" .
+		 "ExtraHeader: ExtraValue\r\n" .
 		 "\r\n" .
 		 "request body":
 		$buffer = array();
