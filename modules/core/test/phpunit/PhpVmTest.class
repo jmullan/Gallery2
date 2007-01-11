@@ -50,6 +50,12 @@ class PhpVmTest extends GalleryTestCase {
 			    'PhpVm function_exists output doesn\'t match PHP output');
     }
 
+    function testExtensionLoaded() {
+	$this->assertEquals(extension_loaded('test'),
+			    $this->_phpVm->extension_loaded('test'),
+			    'PhpVm extension_loaded output doesn\'t match PHP output');
+    }
+
     function testIconv() {
 	if (function_exists('iconv')) {
 	    $this->assertEquals(

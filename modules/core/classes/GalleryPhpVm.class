@@ -42,6 +42,15 @@ class GalleryPhpVm {
     }
 
     /**
+     * Return true if the given extension is loaded.
+     * @param string $name
+     * @return boolean
+     */
+    function extension_loaded($name) {
+	return extension_loaded($name);
+    }
+
+    /**
      * iconv -- Convert string to requested character encoding
      *
      * @param string $inCharset source character set
