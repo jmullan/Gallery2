@@ -1355,11 +1355,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     }
 
     function testImportno_NO() {
-	if (!(function_exists('iconv')
-		|| function_exists('mb_convert_encoding')
-		|| function_exists('recode_string'))) {
-	    return;
-	}
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
@@ -1497,11 +1492,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     }
 
     function testImportfr_FR() {
-	if (!(function_exists('iconv')
-		|| function_exists('mb_convert_encoding')
-		|| function_exists('recode_string'))) {
-	    return;
-	}
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
@@ -1639,12 +1629,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     }
 
     function testImportKOI_8() {
-	if (!(function_exists('iconv')
-		|| function_exists('mb_convert_encoding')
-		|| function_exists('recode_string'))) {
-	    return;
-	}
-
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	$slash = $this->_slash;
@@ -1825,6 +1809,61 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	}
     }
 
+    function testImportNonAsciiCustomFieldIntoDescription() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$slash = $this->_slash;
+
+	/* Custom field names will be provided in UTF8 */
+	$utf8CustomFieldName = "\xd0\x95\xd1\x81\xd0\xbb\xd0\xb8";
+
+	GalleryUtilities::putRequestVariable('albumsPath',
+	    dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+	GalleryUtilities::putRequestVariable('form[sourceAlbums][KOI-8]', 1);
+	GalleryUtilities::putRequestVariable('form[sourceEncoding]', 'KOI8-R');
+	GalleryUtilities::putRequestVariable('form[action][import]', 1);
+	GalleryUtilities::putRequestVariable('form[destinationAlbumID]', $this->_temporaryAlbumId);
+	GalleryUtilities::putRequestVariable('form[set][title]', 'blank');
+	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
+	GalleryUtilities::putRequestVariable('form[set][description]', 'custom');
+	GalleryUtilities::putRequestVariable(
+	    'form[customfield][description]', $utf8CustomFieldName);
+
+	list ($ret, $test) = GalleryCoreApi::newFactoryInstance('CustomFieldInterface_1_0');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$importCustomFields = isset($test);
+	if ($importCustomFields) {
+	    GalleryUtilities::putRequestVariable('form[customFields]', 1);
+	}
+
+	list ($ret, $status) = $this->_runBackgroundTask(
+	    '1 reset [\d \.]* reset ' .
+	    'complete:view=core.SiteAdmin,subView=migrate.ImportResults,statusId=STATUSID');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$testAlbumId = $status['albumImportSuccess']['KOI-8'];
+	list ($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($testAlbum);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('value', $testItem->getDescription(),
+			    'Custom field value not placed into the description field');
+    }
+
     function testConvertHtmlToBbcode() {
 	/* UTF8 characters are ignored */
 	$this->assertEquals("\xc3\xb1o\nthis",
@@ -1930,7 +1969,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	}
 	return strcmp($aVal, $bVal);
     }
-    
+
     /* Verify that we set the perPage size correctly. */
     function testAlbumThemeWithPerPage() {
        	/* Assign our test theme */
@@ -1950,7 +1989,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	/* Test stimuli. */
 	$slash = $this->_slash;
 	GalleryUtilities::putRequestVariable('albumsPath',
@@ -1978,7 +2017,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$testAlbumId = $status['albumImportSuccess']['album03'];
 
 	/* Verify the results. */
-	
+
 	/* Get the allegedly successfully imported album */
 	list ($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
 	if ($ret) {

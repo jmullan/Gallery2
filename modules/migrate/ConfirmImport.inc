@@ -886,9 +886,11 @@ class ConfirmImportController extends GalleryController {
 			    break;
 			case 'custom':
 			    $customField = $form['customfield'][$field];
-			    if (isset($importAlbumItem->extraFields[$customField])) {
+			    $encodedField = GalleryCoreApi::convertFromUtf8(
+				$customField, $form['sourceEncoding']);
+			    if (isset($importAlbumItem->extraFields[$encodedField])) {
 				$data[$field] = $this->convertHtml(
-					$markupType, $importAlbumItem->extraFields[$customField],
+					$markupType, $importAlbumItem->extraFields[$encodedField],
 					$sourceEncoding);
 			    } else if ($field == 'description' &&
 				    isset($form['set']['defaultDescription'])) {
