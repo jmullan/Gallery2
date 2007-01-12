@@ -23,7 +23,7 @@
                     item=$theme.item
                     showDate=true
                     showSize=true
-                    showOwner=true
+                    showOwner=$theme.params.showAlbumOwner
                     class="giInfo"}
 	  {if !empty($theme.userLinks)}
             {g->block type="core.ItemLinks" useDropdown=false

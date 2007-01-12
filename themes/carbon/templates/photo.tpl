@@ -111,7 +111,7 @@
 		    {g->block type="core.ItemInfo"
 			      item=$theme.item
 			      showDate=true
-			      showOwner=true
+			      showOwner=$theme.params.showImageOwner
 			      class="giInfo"}
 		  </div>
 		  <div class="gbBlock">

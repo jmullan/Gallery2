@@ -40,7 +40,7 @@
                           item=$theme.item
                           showDate=true
                           showSize=true
-                          showOwner=true
+                          showOwner=$theme.params.showAlbumOwner
                           class="giInfo"}
               </td>
             </tr>
