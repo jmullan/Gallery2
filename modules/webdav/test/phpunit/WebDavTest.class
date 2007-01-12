@@ -641,7 +641,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('write', $lock['type']);
 	$this->assertEquals('infinity', $lock['depth']);
 	$this->assertEquals('testOwner', $lock['owner']);
-	$this->assertEquals((string)(time() + 30), $lock['expires']);
+	$this->assertEquals((time() + 30), $lock['expires']);
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK',
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"',
@@ -765,7 +765,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('write', $lock['type']);
 	$this->assertEquals('infinity', $lock['depth']);
 	$this->assertEquals('testOwner', $lock['owner']);
-	$this->assertEquals((string)(time() + 30), $lock['expires']);
+	$this->assertEquals((time() + 30), $lock['expires']);
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK',
 		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),

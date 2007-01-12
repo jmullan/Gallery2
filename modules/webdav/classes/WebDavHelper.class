@@ -293,7 +293,7 @@ class WebDavHelper {
 		'type' => 'write',
 		'depth' => $result[0],
 		'owner' => $result[1],
-		'expires' => $result[2],
+		'expires' => (int)$result[2],
 		'token' => $result[3],
 		'path' => $result[4]);
 	}
