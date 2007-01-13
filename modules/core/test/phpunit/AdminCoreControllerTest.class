@@ -175,6 +175,34 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			    "mismatched number of stars shouldn't change the password");
     }
 
+    function testSaveEmailPasswordWithHtmlEntity() {
+	global $gallery;
+
+	$valueMap = $this->_valueMap;
+
+	$valueMap['smtp.password'] = 'pass&word';
+	$this->_setFormFromValues($valueMap);
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+
+	list ($ret, $storedPass) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.password');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('pass&word', base64_decode($storedPass));
+    }
+
     /* Test that we don't accept just any cookie path */
     function testChangeCookiePath() {
 	global $gallery;

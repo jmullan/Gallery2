@@ -62,16 +62,18 @@ class UserChangePasswordController extends GalleryController {
 	     */
 	    if (empty($form['currentPassword'])) {
 		$error[] = 'form[error][currentPassword][missing]';
-	    } else if (!$user->isCorrectPassword($form['currentPassword'])) {
-		$error[] = 'form[error][currentPassword][incorrect]';
-
-		$event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
-		$event->setData(array('userName' => $user->getUserName()));
-		list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
-		if ($ret) {
-		    return array($ret, null);
-		}
 	    } else {
+		GalleryUtilities::unsanitizeInputValues($form['currentPassword'], false);
+		if (!$user->isCorrectPassword($form['currentPassword'])) {
+		    $error[] = 'form[error][currentPassword][incorrect]';
+
+		    $event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
+		    $event->setData(array('userName' => $user->getUserName()));
+		    list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		} else {
 		/*
 		 * To be consistent, we really should post a Gallery::Login event here to show
 		 * that the user successfully authenticated.  But they're not really logging in so
@@ -80,6 +82,7 @@ class UserChangePasswordController extends GalleryController {
 		 *
 		 * @see UserPreferencesController::handleRequest
 		 */
+		}
 	    }
 
 	    if (empty($form['password1'])) {

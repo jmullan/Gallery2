@@ -158,6 +158,7 @@ class AdminCoreController extends GalleryController {
 	    }
 	    if (isset($form['smtp']['password']) &&
 		!preg_match('/^\*+/', $form['smtp']['password'])) {
+		GalleryUtilities::unsanitizeInputValues($form['smtp']['password'], false);
 		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.password',
 							  base64_encode($form['smtp']['password']));
 		if ($ret) {

@@ -382,6 +382,37 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	$this->handleRequest(ERROR_PERMISSION_DENIED);
     }
 
+    function testEditEmailWithEntityPassword() {
+	global $gallery;
+	list ($ret, $user) = $this->_createRandomUser(null, 'pass&word');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($user);
+	$gallery->setActiveUser($user);
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[fullName]', 'full name');
+	GalleryUtilities::putRequestVariable('form[email]', 'new-email@example.com');
+	GalleryUtilities::putRequestVariable('form[currentPassword]', 'pass&word');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'core.UserPreferences'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Load back the user object and make sure the data got saved */
+	list ($ret, $user) = $user->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('full name', $user->getFullName());
+	$this->assertEquals('new-email@example.com', $user->getEmail());
+    }
+
     function _addUserToAdminGroup() {
 	/* Make ourselves an admin */
 	list ($ret, $adminGroupId) =
