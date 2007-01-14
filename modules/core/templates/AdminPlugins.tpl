@@ -222,11 +222,13 @@
                 {g->text text="uninstall"}
               </a>
             </span>
+	    {if $AdminPlugins.canDeletePlugins}
             <span id="action-delete-{$plugin.type}-{$plugin.id}" style="display: none">
               | <a style="cursor: pointer" onclick="verify(deletePrompt, '{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=delete" useAuthToken=1}')">
                 {g->text text="delete"}
               </a>
             </span>
+            {/if}
 	  {/if}
           <script type="text/javascript"> updatePluginState('{$plugin.type}', '{$plugin.id}', '{$plugin.state}', false); </script>
 	</td>
