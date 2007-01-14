@@ -175,7 +175,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	}
 
 	$platform = new UnitTestPlatform();
-	$platform->setReply('fsockopen', array('www.photoworks.com', 80, '', '', 1), 'testFd');
+	$platform->setReply('fsockopen', array('www.photoworks.com', 80, '', '', 5), 'testFd');
 	$platform->setReply('fwrite', array('testFd',
 	    'fuzzy' => '{POST /sbo/anonCartXML.jsp HTTP/1\.0.*xml_request.*return-url.*ViewCart'
 	    /* First image/url/thumb use new sessionid */

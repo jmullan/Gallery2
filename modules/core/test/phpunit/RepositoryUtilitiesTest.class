@@ -363,7 +363,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	 * instead of mocking the platform.
 	 */
 	$platform = new UnitTestPlatform();
-	$platform->setReply('fsockopen', array('example.com', 80, null, null, 1), 'fd');
+	$platform->setReply('fsockopen', array('example.com', 80, null, null, 5), 'fd');
 	$platform->setReply(
 	    'fwrite',
 	    array('fd', "GET /repository/index HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
@@ -394,7 +394,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	 * instead of mocking the platform.
 	 */
 	$platform = new UnitTestPlatform();
-	$platform->setReply('fsockopen', array('example.com', 80, null, null, 1), 'fd');
+	$platform->setReply('fsockopen', array('example.com', 80, null, null, 5), 'fd');
 	$platform->setReply(
 	    'fwrite',
 	    array('fd', "GET /repository/index.gz HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
@@ -425,7 +425,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	 * instead of mocking the platform.
 	 */
 	$platform = new UnitTestPlatform();
-	$platform->setReply('fsockopen', array('example.com', 80, null, null, 1), 'fd');
+	$platform->setReply('fsockopen', array('example.com', 80, null, null, 5), 'fd');
 	$platform->setReply(
 	    'fwrite',
 	    array('fd', "GET /repository/index HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
