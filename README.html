@@ -385,6 +385,33 @@
 	</li></ul>
       </li>
       <li>
+	Security fixes and improvements
+	<p>
+	  There are no known exploits for these issues.  All of them were discovered during a
+	  private, internal security audit.  However, we highly recommend that you upgrade to
+	  Gallery 2.2 to secure your Gallery installation.
+	</p>
+	<ul><li>
+	  Added protection from <a href="http://en.wikipedia.org/wiki/Brute_force_attack"
+	  target="_blank">brute force attacks</a> on setup and account passwords.
+	</li><li>
+	  Added protection from <a href="http://en.wikipedia.org/wiki/Cross-site_request_forgery"
+	  target="_blank">"Cross Site Request Forgery"</a> attacks.
+	</li><li>
+	  Added protection from <a href="http://en.wikipedia.org/wiki/Cross_site_scripting"
+	  target="_blank">"Cross Site Scripting"</a> through item titles, summaries and description
+	  (only applies to the non-default HTML markup).  This has been fixed for comments in
+	  Gallery 2.1 already.
+	</li><li>
+	  Added protection from <a href="http://en.wikipedia.org/wiki/HTTP_response_splitting"
+	  target="_blank">"HTTP Response Splitting"</a> attacks.
+	</li><li>
+	  Fixed information disclosure through application errors.
+	</li><li>
+	  Hardened Session Handling in upgrade, install and support area.
+	</li></ul>
+      </li>
+      <li>
 	Watermarking changes
 	<ul><li>
 	  Edit Album now has a Watermark tab where watermarks may be added or
