@@ -210,14 +210,20 @@ class AdminRepositoryDownloadController extends GalleryController {
 		    $packageUrls = $pluginDownloadData['files'];
 		    $pluginName = $pluginDownloadData['name'];
 
-		    /* Set up progress bar variables. */
-		    $currentAction++;
+		    $templateAdapter->updateProgressBar(
+			$titleText,
+			sprintf($module->translate('Downloading %s'), $pluginName),
+			$currentAction / $totalActions);
 
 		    foreach ($packageUrls as $packageName => $relativePackageUrl) {
-			$templateAdapter->updateProgressBar(
-			    $titleText,
-			    sprintf($module->translate('Downloading %s'), $pluginName),
-			    $currentAction / $totalActions);
+			$gallery->guaranteeTimeLimit(30);
+
+			if (++$currentAction % 5 == 0) {
+			    $templateAdapter->updateProgressBar(
+				$titleText,
+				sprintf($module->translate('Downloading %s'), $pluginName),
+				$currentAction / $totalActions);
+			}
 
 			/* Download and unpack package. */
 			list ($ret, $pluginDescriptor) = $repository->downloadAndUnpack(
