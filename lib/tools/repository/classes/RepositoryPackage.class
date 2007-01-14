@@ -101,7 +101,7 @@ class RepositoryPackage extends RepositoryObject {
     function writeSinglePackageToDisk($packageType, $overwritePackage=false, $compressToo=false) {
 	global $gallery;
 
-	$randomString = $this->getPackageHash($packageType, 5);
+	$randomString = $this->getPackageHash($packageType, 10);
 	$this->_template->setVariable('random', $randomString);
 
 	/* Directory structure creation code. */
