@@ -2108,6 +2108,12 @@ class CoreModuleExtras {
 	    /* 2.2 Release Candidate 1! */
 	case '1.1.26':
 	    /* Prevent PHP from showing errors on direct access to config.php */
+	case '1.1.27':
+	    /* Changed repository cache directory, easiest to just blow away the old one. */
+	    $oldDir = $gallery->getConfig('data.gallery.plugins_data') . 'modules/core/repository';
+	    if ($platform->file_exists($oldDir)) {
+		@$platform->recursiveRmDir($oldDir);
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2410,6 +2416,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 
 ';
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
+	case '1.1.27':
 
 	case 'end of upgrade path':
 	    /*
