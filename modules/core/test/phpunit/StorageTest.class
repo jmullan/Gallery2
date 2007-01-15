@@ -897,6 +897,146 @@ class StorageTest extends GalleryTestCase {
 	array_shift($this->_results);
 	$this->assertEquals($expectedQueries, $this->_results);
     }
+
+    function testDescribeMapWritesToDiskAndMemoryCache() {
+	global $gallery;
+	GalleryDataCache::setFileCachingEnabled(true);
+	GalleryDataCache::reset();
+
+	/* Mock the list of active modules */
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
+			      array('core' => array('active' => 1)));
+	/* Mock the platform */
+	$platform = new UnitTestPlatform();
+	/* There's nothing cached yet */
+	$platform->setReply('file_exists', array('fuzzy' => '/GalleryStorage_describeMap\.inc/'),
+			    false);
+	$platform->setReply('file_exists', array('fuzzy' => '#module/_all/0/0#'), true);
+	$platform->setReply('is_dir', array('fuzzy' => '#module/_all/0/0#'), true);
+	$platform->setReply('atomicWrite',
+			    array('fuzzy1' => '/GalleryStorage_describeMap\.inc/',
+				  'fuzzy2' => '/|ExternalIdMap/'),
+			    true);
+	$gallery->setPlatform($platform);
+
+	list ($ret, $externalMapInfo) = GalleryCoreApi::describeMap('ExternalIdMap');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!empty($externalMapInfo), 'empty result');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+
+	/* Verify that a second call reads from memory, no platform activity */
+	list ($ret, $externalMapInfo) = GalleryCoreApi::describeMap('ExternalIdMap');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!empty($externalMapInfo), 'empty result on second call');
+    }
+
+    function testDescribeMapReadsFromDiskAndMemoryCache() {
+	global $gallery;
+	GalleryDataCache::setFileCachingEnabled(true);
+	GalleryDataCache::reset();
+
+	/* Mock the platform */
+	$platform = new UnitTestPlatform();
+	/* There's nothing cached yet */
+	$platform->setReply('file_exists', array('fuzzy' => '/GalleryStorage_describeMap\.inc/'),
+			    true);
+	$platform->setReply('file_get_contents',
+			    array('fuzzy' => '/GalleryStorage_describeMap\.inc/'),
+			    '|' . serialize(array('RandomTestMap' => array('TestMember'))));
+	$gallery->setPlatform($platform);
+
+	list ($ret, $testMapInfo) = GalleryCoreApi::describeMap('RandomTestMap');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array('TestMember'), $testMapInfo, 'map info, first call');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+
+	/*
+	 * Verify that the last operation also cached the result in memory. Expect no platform
+	 * activity.
+	 */
+	list ($ret, $testMapInfo) = GalleryCoreApi::describeMap('RandomTestMap');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array('TestMember'), $testMapInfo, 'map info, second call');
+    }
+
+    function testDescribeEntityWritesToDiskAndMemoryCache() {
+	global $gallery;
+	GalleryDataCache::setFileCachingEnabled(true);
+	GalleryDataCache::reset();
+
+	/* Mock the list of active modules */
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
+			      array('core' => array('active' => 1)));
+	/* Mock the platform */
+	$platform = new UnitTestPlatform();
+	/* There's nothing cached yet */
+	$platform->setReply('file_exists', array('fuzzy' => '/GalleryStorage_describeEntity\.inc/'),
+			    false);
+	$platform->setReply('file_exists', array('fuzzy' => '#module/_all/0/0#'), true);
+	$platform->setReply('is_dir', array('fuzzy' => '#module/_all/0/0#'), true);
+	$platform->setReply('atomicWrite',
+			    array('fuzzy1' => '/GalleryStorage_describeEntity\.inc/',
+				  'fuzzy2' => '/|GalleryEntity/'),
+			    true);
+	$gallery->setPlatform($platform);
+
+	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryEntity');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!empty($entityInfo), 'empty result');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+
+	/* Verify that a second call reads from memory, no platform activity */
+	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryEntity');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!empty($entityInfo), 'empty result on second call');
+    }
+
+    function testDescribeMapReadsFromDiskCache() {
+	global $gallery;
+	GalleryDataCache::setFileCachingEnabled(true);
+	GalleryDataCache::reset();
+
+	/* Mock the platform */
+	$platform = new UnitTestPlatform();
+	/* There's nothing cached yet */
+	$platform->setReply('file_exists', array('fuzzy' => '/GalleryStorage_describeEntity\.inc/'),
+			    true);
+	$platform->setReply('file_get_contents',
+			    array('fuzzy' => '/GalleryStorage_describeEntity\.inc/'),
+			    '|' . serialize(array('RandomTestEntity' => array('TestMember'))));
+	$gallery->setPlatform($platform);
+
+	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('RandomTestEntity');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array('RandomTestEntity' => array('TestMember')), $entityInfo,
+			    'entity info, first call');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+
+	/*
+	 * Verify that the last operation also cached the result in memory. Expect no platform
+	 * activity.
+	 */
+	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('RandomTestEntity');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array('RandomTestEntity' => array('TestMember')), $entityInfo,
+			    'entity info, second call');
+    }
 }
 
 class StorageTestDB {
