@@ -25,7 +25,7 @@
  * @author Jack Bates <ms419@freezone.co.uk>
  * @version $Revision$
  */
-class WebDavMountView extends GalleryView {
+class DownloadDavMountView extends GalleryView {
 
     /**
      * @see GalleryView::isImmediate
