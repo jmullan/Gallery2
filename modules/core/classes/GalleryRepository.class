@@ -52,28 +52,46 @@ class GalleryRepository {
     var $_source;
 
     /**
-     * Return a set of all the repositories that are currently active.
+     * Return a set of all the repositories that are currently active.  The error count indicates
+     * the number of repositories that failed to initialize for some reason (perhaps from a
+     * malformed local copy of the index).  The fix for this is to download a new version of the
+     * repository.
      *
-     * @return array (repository name => object GalleryRepository the repository, ...)
+     * @param array $sources (optional) an array of source names, eg 'official', 'community'
+     *                       If this is left empty, use the value stored in core.repositories.
+     * @param string $repositoryClassName (optional) the name of the repository class to use.
+     *               should be GalleryRepository, except for test code.
+     * @return array object GalleryStatus a status code
+     *               array repository name => object GalleryRepository the repository
+     *               int error count (repositories that failed to load for some reason)
      * @static
      */
-    function getRepositories() {
-	list ($ret, $sources) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'core.repositories');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	$repositories = array();
-	foreach (array_keys(unserialize($sources)) as $source) {
-	    $repositories[$source] = new GalleryRepository();
-	    $ret = $repositories[$source]->init($source);
+    function getRepositories($sources=array(), $repositoryClassName='GalleryRepository') {
+	if (empty($sources)) {
+	    list ($ret, $sources) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'core.repositories');
 	    if ($ret) {
 		return array($ret, null);
 	    }
+	    $sources = array_keys(unserialize($sources));
 	}
 
-	return array(null, $repositories);
+	$repositories = array();
+	$errorCount = 0;
+	foreach ($sources as $source) {
+	    $repositories[$source] = new $repositoryClassName;
+	    $ret = $repositories[$source]->init($source);
+	    if ($ret) {
+		if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+		    unset($repositories[$source]);
+		    $errorCount++;
+		} else {
+		    return array($ret, null);
+		}
+	    }
+	}
+
+	return array(null, $repositories, $errorCount);
     }
 
     /**
@@ -268,6 +286,7 @@ class GalleryRepository {
 	    return array($ret, null);
 	}
 
+	$pluginList = array();
 	foreach ($repositoryPluginList[$pluginType] as $pluginId => $plugin) {
 	    $localVersion = '';
 

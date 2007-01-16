@@ -119,6 +119,11 @@ class GalleryRepositoryIndex {
 
 	$ret = $this->unserializeIndex($indexContents);
 	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+		$ret = GalleryCoreApi::error(
+		    ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		    "Error unserializing index [$indexPath]");
+	    }
 	    return $ret;
 	}
 	return null;
@@ -178,19 +183,26 @@ class GalleryRepositoryIndex {
 
 	$ret = $this->unserializeIndex($index);
 	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+		/* Remove the broken index so that a subsequent download will fix it */
+		$platform->unlink($indexPath);
+		$ret = GalleryCoreApi::error(
+		    ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+		    "Error unserializing index [$indexPath]");
+	    }
 	    return $ret;
 	}
 	return null;
     }
 
     /**
-     * Deserillizes the index into memory.
+     * Deserializes the index into memory.
      * @return object GalleryStatus a status code
      */
     function unserializeIndex(&$index) {
-	if (false === ($this->_index = unserialize($index))) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					 "Error unserializing index [$index]");
+	if (false === ($this->_index = @unserialize($index))) {
+	    $this->_index = array('modules' => array(), 'themes' => array());
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 	$this->_isLoaded = true;
 	return null;

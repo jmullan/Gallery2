@@ -297,6 +297,31 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$this->assert($this->_index->_isLoaded, 'GalleryRepositoryIndex::isLoaded bit not set.');
     }
 
+    function testLoadMalformedIndex() {
+	global $gallery;
+
+	$index = new GalleryRepositoryIndex('test');
+	$index->_index = '';
+	$index->_isLoaded = false;
+
+	$indexPath = $this->_index->getRepositoryCacheDir() . 'index.repository';
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_get_contents', array($indexPath),
+			    serialize(false) /* this will cause unserialize to return false */);
+	$platform->setReply('unlink', array($indexPath), true);
+	$gallery->setPlatform($platform);
+
+	$ret = $index->load();
+	if (!$ret) {
+	    $this->assert(false, 'Should return an error');
+	}
+	$this->assert($ret->getErrorCode() & ERROR_BAD_PARAMETER,
+		      'Should return ERROR_BAD_PARMETER');
+	$this->assertEquals(array('modules' => array(), 'themes' => array()), $index->_index);
+	$this->assert(!$index->_isLoaded, 'GalleryRepositoryIndex::isLoaded is set.');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
     function testUnserializeIndex() {
 	$this->_index->_index = '';
 	$this->_index->_isLoaded = false;
@@ -308,6 +333,22 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	$this->assertEquals($this->_sampleIndex, $this->_index->_index);
 	$this->assert($this->_index->_isLoaded, 'GalleryRepositoryIndex::isLoaded bit not set.');
+    }
+
+    function testUnserializeMalformedIndex() {
+	$this->_index->_index = '';
+	$this->_index->_isLoaded = false;
+
+	/* Cheat by serializing false, which is the value returned when unserialize fails */
+	$ret = $this->_index->unserializeIndex($serializedIndex = serialize(false));
+	if (!$ret) {
+	    return $this->assert(false, 'Should have returned ERROR_BAD_PARAMETER');
+	}
+	$this->assert($ret->getErrorCode() & ERROR_BAD_PARAMETER);
+	$this->assertEquals(array('modules' => array(), 'themes' => array()),
+			    $this->_index->_index);
+	$this->assertEquals(false, $this->_index->_isLoaded,
+			    'GalleryRepositoryIndex::isLoaded bit set.');
     }
 
     function testGetPluginHeader() {

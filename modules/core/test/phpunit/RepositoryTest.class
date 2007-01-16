@@ -954,6 +954,28 @@ class RepositoryTest extends GalleryTestCase {
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
+
+    function testGetRepositories() {
+	list ($ret, $repositories, $repositoryErrors) = GalleryRepository::getRepositories(
+	    array('works', 'broken'), 'RepositoryTest_GalleryRepository');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* 'broken' returns an error, 'works' is valid */
+	$this->assertEquals(
+	    array('works' => new RepositoryTest_GalleryRepository()), $repositories);
+	$this->assertEquals(1, $repositoryErrors);
+    }
+}
+
+class RepositoryTest_GalleryRepository {
+    function init($sourceName) {
+	if ($sourceName == 'broken') {
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
+	}
+	return null;
+    }
 }
 
 class RepositoryTestModule {

@@ -191,6 +191,7 @@ class AdminRepositoryController extends GalleryController {
 	    $templateAdapter->updateProgressBar($heading, $message, $currentProgress);
 	    $ret = $repository->downloadIndex();
 	    if ($ret) {
+		/* TODO: Internationalize this error message */
 		$status['error']['download'][] = $ret->getErrorMessage();
 	    }
 	    $currentProgress += $indexWeight * $increment;
@@ -198,6 +199,17 @@ class AdminRepositoryController extends GalleryController {
 
 	$heading = $module->translate('Scanning plugins');
 	$sSlash = 's' . $platform->getDirectorySeparator();
+
+	if (!isset($repository)) {
+	    /*
+	     * The loop below needs a working repository, but we don't have one because all of our
+	     * existing indexes are missing or corrupted.  So create a new bogus one expressly for
+	     * the purpose of calling GalleryRepository::scanPlugin().
+	     */
+	    $repository = new GalleryRepository();
+	    $repository->init('bogus');
+	}
+
 	foreach (array('module', 'theme') as $pluginType) {
 	    foreach (array_keys($pluginStatus[$pluginType]) as $pluginId) {
 		$gallery->guaranteeTimeLimit(30);
@@ -256,8 +268,11 @@ class AdminRepositoryView extends GalleryView {
 	    return array($ret, null);
 	}
 
+	$AdminRepository = array();
+
 	/* Init repository. */
-	list ($ret, $repositories) = GalleryRepository::getRepositories();
+	list ($ret, $repositories, $repositoryInitErrorCount) =
+	    GalleryRepository::getRepositories();
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -275,8 +290,6 @@ class AdminRepositoryView extends GalleryView {
 	if (empty($form['repositories'])) {
 	    $form['repositories'] = array('released' => 1);
 	}
-
-	$AdminRepository = array();
 
 	/* Check if incompatible plugins should be shown. */
 	$coreApis = array();
@@ -370,6 +383,11 @@ class AdminRepositoryView extends GalleryView {
 	/* Render the HTML body */
 	$template->setVariable('AdminRepository', $AdminRepository);
 	$template->setVariable('controller', 'core.AdminRepository');
+
+	if ($repositoryInitErrorCount) {
+	    $status =& $template->getVariableByReference('status');
+	    $status['error']['repositoryInitErrorCount'] = $repositoryInitErrorCount;
+	}
 
 	$template->javascript('lib/yui/yahoo-min.js');
 	$template->javascript('lib/yui/dom-min.js');
