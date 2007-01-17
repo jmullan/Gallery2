@@ -47,6 +47,8 @@ class SitemapView extends GalleryView {
 	if ($ret) {
 	    return $ret;
 	}
+
+	return null;
     }
 
     /**
@@ -84,26 +86,27 @@ class SitemapView extends GalleryView {
 	    return $ret;
 	}
 	if (!empty($aclIds)) {
-	    $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
-
-	    $phpVm = $gallery->getPhpVm();
-
 	    list ($ret, $parents) = GalleryCoreApi::fetchParentSequence($rootId);
 	    if ($ret) {
 		return $ret;
 	    }
 
-	    $matchFrag = '';
+	    $data = array();
+	    $matchJoin = $matchFrag = '';
 	    if (!empty($parents)) {
+		$matchJoin = '
+		INNER JOIN [GalleryItemAttributesMap]
+			ON [GalleryItem::id] = [GalleryItemAttributesMap::itemId]
+		';
 		$matchFrag = '
-                AND
-	        ([GalleryItem::id] = ?
-	         OR
-	         [GalleryItemAttributesMap::parentSequence] LIKE ?)
-                ';
+		([GalleryItem::id] = ?
+		 OR
+		 [GalleryItemAttributesMap::parentSequence] LIKE ?)
+		AND
+		';
+		$data = array($rootId, implode('/', $parents) . '/' . $rootId . '/%');
 	    }
 
-	    $data = array();
 	    $query = sprintf('
 	    SELECT
 	      [GalleryItem::id],
@@ -111,27 +114,19 @@ class SitemapView extends GalleryView {
 	      ((%s - [GalleryEntity::creationTimestamp]) /
 	       [GalleryEntity::serialNumber]) as SecondsPerChange
 	    FROM
-	      [GalleryItem], [GalleryEntity], [GalleryItemAttributesMap],
-	      [GalleryAccessSubscriberMap]
+	      [GalleryItem]
+	      INNER JOIN [GalleryEntity] ON [GalleryItem::id] = [GalleryEntity::id]
+	      INNER JOIN [GalleryAccessSubscriberMap]
+		      ON [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
+	      %s
 	    WHERE
-	      [GalleryItem::id] = [GalleryEntity::id]
-	      AND
-	      [GalleryItem::id] = [GalleryItemAttributesMap::itemId]
-              ' . $matchFrag . '
-	      AND
-	      [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
-	      AND
+	      %s
 	      [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	    ORDER BY [GalleryEntity::modificationTimestamp] ASC
-	    ', $phpVm->time(), $aclMarkers);
-	    if (!empty($parents)) {
-		$data[] = $rootId;
-		$parents[] = $rootId;
-		$data[] = implode('/', $parents) . '/%';
-	    }
-	    $data = array_merge($data, $aclIds);
+	    ', $phpVm->time(), $matchJoin, $matchFrag,
+	       GalleryUtilities::makeMarkers(count($aclIds)));
 
-	    list ($ret, $searchResults) = $gallery->search($query, $data);
+	    list ($ret, $searchResults) = $gallery->search($query, array_merge($data, $aclIds));
 	    if ($ret) {
 		return $ret;
 	    }
