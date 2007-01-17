@@ -187,6 +187,55 @@ class WebDavHelper {
     }
 
     /**
+     * Returns a browser-specifc mount link for the given item.
+     * @param int $itemId
+     * @return array('href' => string the davmount URL,
+     *               'script' (optional) => string JavaScript to be used as onclick,
+     *               'attrs' => array() string additional link tag attributes)
+     */
+    function getMountLink($itemId) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$userAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+
+	$url = $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav',
+						'itemId' => $itemId),
+					  array('forceFullUrl' => true,
+						'forceSessionId' => false,
+						'useAuthToken' => false));
+	$link['attrs'] = 'style="behavior: url(#default#anchorClick)" folder="'. $url . '"';
+
+	if (strpos($userAgent, 'MSIE') !== false) {
+	    /*
+	     * Mount with JavaScript only if using MSIE.  By default, dropdowns link to davmount
+	     * resources.
+	     */
+	    $url = $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav',
+						    'itemId' => $itemId),
+					      array('forceFullUrl' => true,
+						    'htmlEntities' => false,
+						    'forceSessionId' => false,
+						    'useAuthToken' => false));
+	    $link['script'] =
+		    "this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$url')";
+	}
+	if (strpos($userAgent, 'Konqueror') !== false) {
+	    /* Konqueror supports webdav:// URLs */
+	    $urlParams = array('controller' => 'webdav.WebDav', 'itemId' => $itemId);
+	    $urlOptions = array('protocol' => 'webdav', 'forceSessionId' => false,
+				'useAuthToken' => false);
+	} else {
+	    $urlParams = array('view' => 'webdav.DownloadDavMount', 'itemId' => $itemId);
+	    $urlOptions = array();    
+	}
+
+	$link['href'] = $urlGenerator->generateUrl($urlParams, $urlOptions);
+
+	return $link;
+    }
+
+    /**
      * Get singleton WebDAV server library instance.
      *
      * If it didn't need path and baseUrl, we could eliminate and call library methods staticly.

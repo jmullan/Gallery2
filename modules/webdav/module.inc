@@ -176,50 +176,15 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions, $userId) {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
-
 	$links = array();
-	$userAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	foreach ($items as $item) {
 	    if (!$item->getCanContainChildren() || empty($wantsDetailedLinks[$item->getId()])) {
 		continue;
 	    }
-
-	    $url = $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav',
-						    'itemId' => $item->getId()),
-					      array('forceFullUrl' => true,
-						    'forceSessionId' => false,
-						    'useAuthToken' => false));
-	    $link = array(
-		'text' => $this->translate(array('text' => 'Mount with WebDAV')),
-		'params' => array('view' => 'webdav.DownloadDavMount', 'itemId' => $item->getId()),
-		'attrs' => 'style="behavior: url(#default#anchorClick)" folder="'. $url . '"');
-	    if (strpos($userAgent, 'MSIE') !== false) {
-		/*
-		 * Mount with JavaScript only if using MSIE.  By default, dropdowns link to davmount
-		 * resources.
-		 */
-		$url = $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav',
-							'itemId' => $item->getId()),
-						  array('forceFullUrl' => true,
-							'htmlEntities' => false,
-							'forceSessionId' => false,
-							'useAuthToken' => false));
-		$link['script'] =
-		    "this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$url')";
-	    }
-	    if (strpos($userAgent, 'Konqueror') !== false) {
-		/* Konqueror supports webdav:// URLs */
-		$link['params'] =
-		    array('controller' => 'webdav.WebDav', 'itemId' => $item->getId());
-		$link['options'] =
-		    array('protocol' => 'webdav',
-			  'forceSessionId' => false,
-			  'useAuthToken' => false);
-	    }
-
-	    $links[$item->getId()][] = $link;
+	    $links[$item->getId()][] = array(
+			'text' => $this->translate('Mount with WebDAV'),
+			'params' => array('view' => 'webdav.WebDavMount',
+					  'itemId' => $item->getId()));
 	}
 
 	return array(null, $links);
