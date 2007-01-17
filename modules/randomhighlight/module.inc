@@ -31,7 +31,7 @@ class RandomHighlightModule extends GalleryModule {
 	$this->setId('randomhighlight');
 	$this->setName($gallery->i18n('Random Highlight'));
 	$this->setDescription($gallery->i18n('Periodically change the album highlight'));
-	$this->setVersion('1.0.4'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.5'); /* Update upgrade() function below too */
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -107,6 +107,7 @@ class RandomHighlightModule extends GalleryModule {
 	    case '1.0.1':
 	    case '1.0.2':
 	    case '1.0.3':
+	    case '1.0.4':
 
 	    case 'end of upgrade path':
 		break;
@@ -221,45 +222,65 @@ class RandomHighlightModule extends GalleryModule {
 	}
 
 	if ($picknew) {
+	    global $gallery;
 	    GalleryDataCache::put('randomhighlight:count', $count + 1);
-	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($thumbnail->getParentId());
+	    /* Query for child items */
+	    list ($ret, $query, $data) = GalleryCoreApi::buildItemQuery(
+		    'GalleryChildEntity', 'id', '[GalleryChildEntity::parentId] = ?', 'id', null,
+		    null, 'core.view', false, $gallery->getActiveUserId());
+	    if ($ret || empty($query)) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret;
+	    }
+	    array_unshift($data, $thumbnail->getParentId());
+	    list ($ret, $searchResults) = $gallery->search($query, $data);
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;
 	    }
-	    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($album);
-	    if ($ret) {
-		GalleryCoreApi::releaseLocks($lockId);
-		return $ret;
+	    $itemIds = array();
+	    while ($result = $searchResults->nextResult()) {
+		$itemIds[] = (int)$result[0];
 	    }
-	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
-	    if ($ret) {
-		GalleryCoreApi::releaseLocks($lockId);
-		return $ret;
+	    /* Pick a new random highlight */
+	    $query = '
+	    SELECT [GalleryDerivative::id] FROM [GalleryDerivative]
+	    INNER JOIN [GalleryChildEntity]
+		  ON [GalleryDerivative::id] = [GalleryChildEntity::id]
+	    WHERE
+		[GalleryDerivative::derivativeType] = ?
+	      AND
+		[GalleryDerivative::id] <> ?
+	      AND
+		([GalleryDerivative::isBroken] = 0 OR [GalleryDerivative::isBroken] IS NULL)
+	      AND
+		[GalleryChildEntity::parentId] IN (';
+	    for ($n = 5; !empty($itemIds); $n += 10) {
+		/* Hopefully most items have a thumbnail; pick n ids at a time until we find one */
+		$data = array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, $thumbnail->getDerivativeSourceId());
+		for ($i = 0; !empty($itemIds) && $i < $n; $i++) {
+		    $data[] = array_shift(array_splice($itemIds, rand(0, count($itemIds) - 1), 1));
+		}
+		list ($ret, $searchResults) = $gallery->search(
+		    $query . GalleryUtilities::makeMarkers(count($data) - 2) . ')', $data);
+		if ($ret) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret;
+		}
+		if ($result = $searchResults->nextResult()) {
+		    $highlightId = (int)$result[0];
+		    break;
+		}
 	    }
-	    if (empty($thumbnails)) {
+	    if (empty($highlightId)) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return null;
 	    }
-	    /* Prevent from choosing the old highlight again if there are 2 or more candidates */
-	    if (count($thumbnails) > 1) {
-		/* Get the id of the highlight if we don't have it already */
-		if (!isset($highlight)) {
-		    list ($ret, $highlight) =
-			GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
-		    if ($ret) {
-			return $ret;
-		    }
-		}
-		/* $thumbnails array is indexed by itemIds */
-		if (isset($thumbnails[$highlight->getParentId()])) {
-		    unset($thumbnails[$highlight->getParentId()]);
-		}
+	    list ($ret, $highlight) = GalleryCoreApi::loadEntitiesById($highlightId);
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret;
 	    }
-	    /* Pick a new random highlight */
-	    $itemId = array_keys($thumbnails);
-	    $itemId = $itemId[rand(0, count($itemId)-1)];
-	    $highlight = $thumbnails[$itemId];
 
 	    /* Check if we have selected a public item for the highlight */
 	    list ($ret, $guestId) = GalleryCoreApi::getAnonymousUserId();
@@ -268,7 +289,7 @@ class RandomHighlightModule extends GalleryModule {
 		return $ret;
 	    }
 	    list ($ret, $isPublic) =
-		GalleryCoreApi::hasItemPermission($itemId, 'core.view', $guestId);
+		GalleryCoreApi::hasItemPermission($highlight->getParentId(), 'core.view', $guestId);
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;
