@@ -47,16 +47,17 @@ class ErrorPageView extends GalleryView {
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	$ErrorPage = array('isAdmin' => !$ret && $isAdmin);
 
+	$showDetails = $ErrorPage['isAdmin'] || $gallery->getDebug();
 	if (empty($this->_error)) {
 	    $session =& $gallery->getSession();
 	    $errorCode = $session->get('core.error.code');
 	    $errorTrace = $session->get('core.error.trace');
 	} else {
 	    $errorCode = $this->_error->getErrorCode();
-	    $errorTrace = $this->_error->getAsHtml($ErrorPage['isAdmin']);
+	    $errorTrace = $this->_error->getAsHtml($showDetails);
 	}
 
-	if ($gallery->getDebug() || $ErrorPage['isAdmin']) {
+	if ($showDetails) {
 	    $ErrorPage['stackTrace'] = $errorTrace;
 	}
 
@@ -204,7 +205,7 @@ class ErrorPageView extends GalleryView {
 
 	if ($failsafe) {
 	    /* A catastrophic failure has occurred so just dump the error out to the browser */
-	    print '<h2>Error</h2>' . $error->getAsHtml(false);
+	    print '<h2>Error</h2>' . $error->getAsHtml($gallery->getDebug());
 	    if ($gallery->getDebug() == 'buffered') {
 		print '<h3>Debug Output</h3><pre>' . $gallery->getDebugBuffer() . '</pre>';
 	    }
