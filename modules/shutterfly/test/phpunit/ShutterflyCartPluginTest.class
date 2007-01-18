@@ -105,6 +105,7 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
     function testFulfillCart() {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
+	$session =& $gallery->getSession();
 
 	$cartItemIds = array();
 	for ($i = 0; $i < count($this->_items); $i++) {
@@ -122,7 +123,8 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 	$returnUrl = $urlGenerator->generateUrl(array('view' => 'cart.ViewCart'),
 						array('forceFullUrl' => true));
 	$this->assertEquals(
-		array('view' => 'shutterfly.PrintPhotos', 'returnUrl' => $returnUrl),
+		array('view' => 'shutterfly.PrintPhotos', 'returnUrl' => $returnUrl,
+		      'authToken' => $session->getAuthToken()),
 		$urlParams);
 
 	$session =& $gallery->getSession();
