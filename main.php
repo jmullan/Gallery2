@@ -563,9 +563,10 @@ function _GalleryMain($embedded=false) {
 
 function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null) {
     global $gallery;
+    $session =& $gallery->getSession();
+    $urlGenerator =& $gallery->getUrlGenerator();
 
     /* Create a valid sessionId for guests, if required */
-    $session =& $gallery->getSession();
     $ret = $session->start();
     if ($ret) {
 	return array($ret, null);
@@ -590,6 +591,8 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
 	 */
 	$redirectUrl = str_replace('&amp;', '&', $redirectUrl);
 	$redirectUrl = rtrim($redirectUrl, '&? ');
+
+	$redirectUrl = $urlGenerator->makeAbsoluteUrl($redirectUrl);
 
 	/*
 	 * IIS 3.0 - 5.0 webservers will ignore all other headers if the location header is set.  It

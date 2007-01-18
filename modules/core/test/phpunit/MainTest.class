@@ -112,7 +112,9 @@ class MainTest extends GalleryTestCase {
      */
     function testEmbedOnlyUrl() {
 	global $gallery;
-	$gallery->setConfig('mode.embed.only', $expectedUrl = '/embedApp/index.php');
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$expectedUrl = $urlGenerator->makeUrl('/embedApp/index.php');
+	$gallery->setConfig('mode.embed.only', $expectedUrl);
 
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret) {
@@ -152,7 +154,10 @@ class MainTest extends GalleryTestCase {
      */
     function testMaintenanceModeUrl() {
 	global $gallery;
-	$gallery->setConfig('mode.maintenance', $expectedUrl = '/maintenance.html');
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	$expectedUrl = $urlGenerator->makeUrl('/maintenance.html');
+	$gallery->setConfig('mode.maintenance', $expectedUrl);
 
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret) {
@@ -249,6 +254,31 @@ class MainTest extends GalleryTestCase {
 		}
 	    }
 	}
+    }
+
+    function testDoRedirectConvertsToAbsoluteUrl() {
+	global $gallery;
+
+	/* Make sure the redirect has no sessionId in it */
+	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	unset($_SERVER['HTTP_COOKIE']);
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
+	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'SESSION_TEMP_ID');
+
+	/* Execute the function under test */
+	$this->assertEquals(array('isDone' => true),
+			    _GalleryMain_doRedirect('main.php?&amp; '),
+			    'Unexpected return value');
+
+	/* Verify the result */
+	$this->assertEquals(array('location' => 'Location: http://example.com/gallery2/main.php'),
+			    GalleryUtilities::_getResponseHeaders(), 'Wrong header');
     }
 
     function testDoRedirectRemoveTrailingQMark() {

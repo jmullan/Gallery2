@@ -2114,6 +2114,8 @@ class CoreModuleExtras {
 	    if ($platform->file_exists($oldDir)) {
 		@$platform->recursiveRmDir($oldDir);
 	    }
+	case '1.1.28':
+	    /* Added GalleryUrlGenerator::makeAbsoluteUrl() */
 
 	case 'end of upgrade path':
 	    /*
@@ -2417,6 +2419,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 ';
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
 	case '1.1.27':
+	case '1.1.28':
 
 	case 'end of upgrade path':
 	    /*

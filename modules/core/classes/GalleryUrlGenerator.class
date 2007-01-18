@@ -421,6 +421,27 @@ class GalleryUrlGenerator {
     }
 
     /**
+     * Make a given URL an absolute Gallery URL. The specified URL can be relative (e.g. main.php),
+     * server-relative (e.g. /gallery2/main.php) or already absolute.
+     *
+     * @param string a relative, server-relative or absolute URL
+     * @param boolean $forceDirect (optional) if true, Gallery base protocol/host is used in case
+     *                             the URL isn't absolute already
+     * @return string the absolute URL
+     */
+    function makeAbsoluteUrl($url, $forceDirect=false) {
+	$url = trim($url);
+	if (!preg_match('#^[A-Za-z0-9+.\-]+://#', $url)) {
+	    if (substr($url, 0, 1) == '/') {
+		$url = $this->makeUrl($url, $forceDirect);
+	    } else {
+		$url = $this->getCurrentUrlDir($forceDirect) . $url;
+	    }
+	}
+	return $url;
+    }
+
+    /**
      * Return the complete URL of the current request.
      *
      * The returned URL may differ from the actual request URL since we allow for overriding the
