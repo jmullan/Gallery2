@@ -245,7 +245,7 @@ function populateDataDirectory($dataBase) {
 	}
 
 	if (!file_exists($dir)) {
-	    if (!mkdir($dir, 0755)) {
+	    if (!@mkdir($dir, 0755)) {
 		return false;
 	    }
 	}
