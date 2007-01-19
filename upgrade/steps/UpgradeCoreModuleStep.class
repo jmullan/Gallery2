@@ -29,9 +29,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 
     function processRequest() {
 	global $gallery;
-	if (!$gallery->getDebug()) {
-	    $gallery->setDebug('buffered');
-	}
+	$gallery->startRecordingDebugSnippet();
 
 	/*
 	 * We'll need a translator to load up the core module for the
@@ -73,6 +71,10 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	$template = new StatusTemplate();
 
 	if (isset($_POST['confirm'])) {
+	    /* We want to log all debug output in our upgrade log */
+	    $this->_startDebugLog('Upgrade Core Module');
+	    $this->_addSystemInformationToDebugLog($versions);
+
 	    $template->renderHeader(true);
 	    $ret = selectAdminUser(true);
 	    if (!$ret) {
@@ -99,7 +101,7 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	    $this->resetL10Domain();
 	    if ($ret) {
 		$templateData['stackTrace'] = $ret->getAsHtml();
-		$templateData['debug'] = $gallery->getDebugBuffer();
+		$templateData['debug'] = $gallery->stopRecordingDebugSnippet();
 		$templateData['bodyFile'] = 'UpgradeCoreModuleError.html';
 	    } else {
 		$templateData['bodyFile'] = 'UpgradeCoreModuleSuccess.html';
@@ -138,6 +140,31 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 
 	$template->renderBodyAndFooter($templateData);
 	return false;
+    }
+
+    function _addSystemInformationToDebugLog($versions) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	$isSvnInstall = file_exists(dirname(dirname(dirname(__FILE__))) . '/.svn');
+	$fileIntegrity = isset($_SESSION['fileintegrity']) ? $_SESSION['fileintegrity'] : 'Unknown';
+
+	$gallery->debug("\n
+--------------------------------------------------------
+System and Gallery information:
+--------------------------------------------------------
+    Gallery version:\t" . $versions['gallery'] . "
+    File integrity:\t" . $fileIntegrity . "
+    SVN install:\t" . ($isSvnInstall ? 'Yes' : 'No') . "
+    PHP version:\t" . phpversion() . " " . php_sapi_name() . "
+    PHP memory limit:\t" . ini_get('memory_limit') . "
+    PHP disable_functions:\t" . ini_get('disable_functions') . "
+    PHP zend.ze1_compatibility_mode:\t" . ini_get('zend.ze1_compatibility_mode') . "
+    Webserver:\t" . GalleryUtilities::getServerVar('SERVER_SOFTWARE') . "
+    Database:\t" . $storage->getAdoDbType() . " " . @$storage->getVersion() . "
+    Operating system:\t" . php_uname() . "
+    Browser:\t " . GalleryUtilities::getServerVar('HTTP_USER_AGENT') . "
+--------------------------------------------------------\n\n
+");
     }
 }
 ?>

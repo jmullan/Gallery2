@@ -62,6 +62,8 @@ class CoreModuleExtras {
 		$currentVersion = '0';
 	    }
 	}
+	$gallery->debug('Old version: ' . $currentVersion
+			. '   New version: ' . $module->getVersion());
 	/* Enable upgrade from any patch release version */
 	$currentVersion = preg_replace('/^(1\.[01]\.0)\.\d+$/', '$1.x', $currentVersion);
 

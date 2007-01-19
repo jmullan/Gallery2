@@ -34,6 +34,10 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    return true;
 	}
 
+	/* We want to log all debug output in our upgrade log */
+	$this->_startDebugLog('Upgrade Plugins');
+	$gallery->startRecordingDebugSnippet();
+
 	$totalPlugins = $currentModule = $currentTheme = 0;
 	$templateData['stackTrace'] = '';
 	$template = new StatusTemplate();
@@ -138,7 +142,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	$templateData['bodyFile'] = 'UpgradeOtherModulesSuccess.html';
 	$templateData['anyUpgradeable'] = false;
 	if (!empty($templateData['errors'])) {
-	    $templateData['debug'] = $gallery->getDebugBuffer();
+	    $templateData['debug'] = $gallery->stopRecordingDebugSnippet();
 	} else {
 	    if ($totalPlugins < $_REQUEST['upgrade']) {
 		$templateData['anyUpgradeable'] = true;

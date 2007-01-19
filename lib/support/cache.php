@@ -11,6 +11,7 @@ function getCaches() {
 	'tmp' => array(true, 'clearG2dataDir', array('tmp'), 'Temporary directory'),
 	'repository' => array(true, 'clearG2dataDir', array('cache/repository'),
 			      'Downloadable Plugin Cache'),
+	'log' => array(false, 'clearInstallUpgradeLogs', array(), 'Install/Upgrade log files'),
 	'derivative' => array(
 	    false, 'clearG2dataDir', array('cache/derivative'),
 	    'Thumbnails and resizes <span class="subtext">(expensive to rebuild)</span>')
@@ -39,9 +40,9 @@ function recursiveRmdir($dirname, &$status) {
 	} else {
 	    if (!@unlink($path)) {
 		if (!@is_writeable($path)) {
-		    $status[] = array("error", "Permission denied removing file $path");
+		    $status[] = array('error', "Permission denied removing file $path");
 		} else {
-		    $status[] = array("error", "Error removing $path");
+		    $status[] = array('error', "Error removing $path");
 		}
 	    } else {
 		$count++;
@@ -51,7 +52,7 @@ function recursiveRmdir($dirname, &$status) {
     closedir($fd);
 
     if (!@rmdir($dirname)) {
-	$status[] = array("error", "Unable to remove directory $dirname");
+	$status[] = array('error', "Unable to remove directory $dirname");
     } else {
 	$count++;
     }
@@ -60,43 +61,31 @@ function recursiveRmdir($dirname, &$status) {
 }
 
 function clearPageCache() {
-    require_once(dirname(__FILE__) . '/../../embed.php');
-    $ret = GalleryEmbed::init(array('fullInit' => false));
-    if ($ret) {
-	/* Try to swallow the error, but define a session to make ::done() pass. */
-	global $gallery;
-	$gallery->initEmptySession();
-    }
+    global $gallery;
+    $storage =& $gallery->getStorage();
 
-    $ret1 = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
-    $ret2 = GalleryEmbed::done();
-    if ($ret1 || $ret2) {
-	$status[] = array('error', 'Error deleting page cache!');
+    $ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
+    if ($ret) {
+	$status = array(array('error', 'Error deleting page cache!'));
     } else {
-	$status[] = array('info', 'Successfully deleted page cache');
+	$status = array(array('info', 'Successfully deleted page cache'));
+    }
+    $ret = $storage->checkPoint();
+    if ($ret) {
+	$status[] = array('error', 'Error committing transaction!');
     }
 
     return $status;
 }
 
 function clearG2DataDir($dir) {
-    require_once(dirname(__FILE__) . '/../../embed.php');
-    $ret = GalleryEmbed::init(array('fullInit' => false));
-    if ($ret) {
-	/* Try to swallow the error, but define a session to make ::done() pass. */
-	global $gallery;
-	$gallery->initEmptySession();
-    }
-
     global $gallery;
     $path = $gallery->getConfig('data.gallery.base') . $dir;
-    $status[] = array('info', "Deleting dir: $path");
+    $status = array(array('info', "Deleting dir: $path"));
     $count = recursiveRmdir($path, $status);
 
     /* Commented this out because it's a little noisy */
-    /*
-     * $status[] = array('info', "Removed $count files and directories");
-     */
+    /* $status[] = array('info', "Removed $count files and directories"); */
 
     if (@mkdir($path)) {
 	$status[] = array('info', "Recreating dir: $path");
@@ -104,29 +93,55 @@ function clearG2DataDir($dir) {
 	$status[] = array('error', "Unable to recreate dir: $path");
     }
 
-    $ret = GalleryEmbed::done();
-    if ($ret) {
-	$status[] = array('error', 'Error deleting data dir!');
-    }
+    return $status;
+}
 
+function clearInstallUpgradeLogs() {
+    global $gallery;
+    $path = $gallery->getConfig('data.gallery.base');
+    $status = array();
+    $count = 0;
+    if ($fd = opendir($path)) {
+	while (($filename = readdir($fd)) !== false) {
+	    if (preg_match('/^(install|upgrade)_[0-9a-f]+\.log$/', $filename)
+		    && is_file($path . $filename)) {
+		if (@unlink($path . $filename)) {
+		    $count++;
+		} else {
+		    $status[] = array('error', "Error removing $path$filename");
+		}
+	    }
+	}
+	closedir($fd);
+    }
+    $status[] = array('info', "Removed $count install/upgrade log files");
     return $status;
 }
 
 $status = array();
-if (isset($_REQUEST['clear'])) {
-    if (isset($_REQUEST['target'])) {
-	$caches = getCaches();
-	foreach ($_REQUEST['target'] as $key => $ignored) {
-	    /* Make sure the dir is legit */
-	    if (!array_key_exists($key, $caches)) {
-		$status[] = array("error", "Ignoring illegal cache: $key");
-		continue;
-	    }
-
-	    $func = $caches[$key][1];
-	    $args = $caches[$key][2];
-	    $status = array_merge($status, call_user_func_array($func, $args));
+if (isset($_REQUEST['clear']) && isset($_REQUEST['target'])) {
+    require_once(dirname(__FILE__) . '/../../embed.php');
+    $ret = GalleryEmbed::init(array('fullInit' => false));
+    if ($ret) {
+	/* Try to swallow the error, but define a session to make ::done() pass. */
+	global $gallery;
+	$gallery->initEmptySession();
+    }
+    $caches = getCaches();
+    foreach ($_REQUEST['target'] as $key => $ignored) {
+	/* Make sure the dir is legit */
+	if (!array_key_exists($key, $caches)) {
+	    $status[] = array('error', "Ignoring illegal cache: $key");
+	    continue;
 	}
+
+	$func = $caches[$key][1];
+	$args = $caches[$key][2];
+	$status = array_merge($status, call_user_func_array($func, $args));
+    }
+    $ret = GalleryEmbed::done();
+    if ($ret) {
+	$status[] = array('error', 'Error completing transaction!');
     }
 }
 ?>

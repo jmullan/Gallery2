@@ -564,10 +564,6 @@ class GalleryTheme extends GalleryPlugin {
 		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId()));
 	}
 
-	if ($gallery->getDebug()) {
-	    $gallery->debug('GalleryTheme::installOrUpgrade get the version parameter');
-	}
-
 	list ($ret, $installedVersion) = $this->getParameter('_version');
 	if ($ret) {
 	    return $ret;
@@ -579,8 +575,8 @@ class GalleryTheme extends GalleryPlugin {
 
 	if ($installedVersion != $this->getVersion()) {
 	    if ($gallery->getDebug()) {
-		$gallery->debug(sprintf('GalleryTheme::installOrUpgrade, installed version is %s,' .
-					' theme upgrade required', $installedVersion));
+		$gallery->debug('Old version: ' . $installedVersion
+				. '   New version: ' . $this->getVersion());
 	    }
 
 	    $ret = $this->upgrade($installedVersion);

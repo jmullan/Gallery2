@@ -135,6 +135,10 @@ class GalleryModule extends GalleryPlugin {
 
 	if ($installedVersion != $this->getVersion()) {
 	    if ($gallery->getDebug()) {
+		if (!$bootstrap) {
+		    $gallery->debug('Old version: ' . $installedVersion
+				    . '   New version: ' . $this->getVersion());
+		}
 		$gallery->debug(sprintf('Configure store for %s module', $this->getId()));
 	    }
 	    /* The store requires configuration. */

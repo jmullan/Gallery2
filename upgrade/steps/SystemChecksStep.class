@@ -418,9 +418,11 @@ class SystemChecksStep extends UpgradeStep {
 		    array('title' => $title,
 			  'warning' => true,
 			  'notice' => _('Manifest missing or inaccessible.'));
+		$_SESSION['fileintegrity'] = 'Manifest missing or inaccessible';
 	    } else if (empty($manifest['missing']) && empty($manifest['modified'])
 		       && empty($manifest['shouldRemove'])) {
 		$templateData['check'][] = array('title' => $title, 'success' => true);
+		$_SESSION['fileintegrity'] = 'Ok';
 	    } else {
 		global $currentStep; /* needed for ManifestSystemCheck.html */
 
@@ -433,6 +435,9 @@ class SystemChecksStep extends UpgradeStep {
 		    array('title' => $title,
 			  'warning' => true,
 			  'notice' => $notice);
+		$_SESSION['fileintegrity'] =
+		    (empty($manifest['missing']) && empty($manifest['modified']))
+		     ? 'There are some old files' : 'There are missing/modified files!';
 	    }
 	}
 
