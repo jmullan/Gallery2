@@ -1902,7 +1902,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	/* We only cache the results for active modules */
 	if (!$tryAllModules) {
 	    if (!GalleryDataCache::containsKey($cacheKey)) {
-		$entityInfo = GalleryDataCache::getFromDisk($cacheParams);
+		$entityInfo =& GalleryDataCache::getFromDisk($cacheParams);
 		if (!empty($entityInfo)) {
 		    GalleryDataCache::put($cacheKey, $entityInfo);
 		}

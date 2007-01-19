@@ -100,7 +100,7 @@ class EntityTest extends GalleryTestCase {
 	if (GalleryDataCache::isFileCachingEnabled()) {
 	    /* Load back from disk cache and verify it */
 	    GalleryDataCache::reset();
-	    $data = GalleryDataCache::getFromDisk(
+	    $data =& GalleryDataCache::getFromDisk(
 		array('type' => 'entity', 'itemId' => $this->_entity->getId()));
 	    $this->assert(!empty($data), 'Entity data should be in disk cache');
 

@@ -48,10 +48,7 @@ class GalleryFactoryHelper_simple {
      * @access private
      */
     function &_getSingleton() {
-	static $registry;
-	if (!isset($registry)) {
-	    $registry = array();
-	}
+	static $registry = array();
 	return $registry;
     }
 
@@ -63,8 +60,6 @@ class GalleryFactoryHelper_simple {
      * @access private
      */
     function &_getFactoryData() {
-	global $gallery;
-	static $registry;
 	$registry =& GalleryFactoryHelper_simple::_getSingleton();
 	if (empty($registry)) {
 	    $cacheParams = array('type' => 'module',

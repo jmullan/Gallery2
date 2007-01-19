@@ -307,7 +307,7 @@ class DataCacheTest extends GalleryTestCase {
 			     'id' => '_all');
 	$data = array('key' => 'value,with|pipe', 'test' => 5);
 	GalleryDataCache::putToDisk($cacheParams, $data);
-	$readBack = GalleryDataCache::getFromDisk($cacheParams);
+	$readBack =& GalleryDataCache::getFromDisk($cacheParams);
 	$this->assertEquals($data, $readBack, 'no classes');
 	GalleryDataCache::removeFromDisk($cacheParams);
 
@@ -316,7 +316,7 @@ class DataCacheTest extends GalleryTestCase {
 	GalleryDataCache::putToDisk($cacheParams, $data,
 				    array('modules/core/test/data/DataCacheTest_1.class',
 					  'modules/core/test/data/DataCacheTest_2.class'));
-	$readBack = GalleryDataCache::getFromDisk($cacheParams);
+	$readBack =& GalleryDataCache::getFromDisk($cacheParams);
 	$this->assertEquals($data, $readBack, 'two required classes');
 	GalleryDataCache::removeFromDisk($cacheParams);
 	$this->assert(class_exists('DataCacheTest_class1'), 'class1 should exist');

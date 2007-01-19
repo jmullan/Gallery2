@@ -1175,7 +1175,7 @@ class GalleryStorage {
 	/* We only cache the results for active modules */
 	if (!$tryAllModules) {
 	    if (!GalleryDataCache::containsKey($cacheKey)) {
-		$mapInfo = GalleryDataCache::getFromDisk($cacheParams);
+		$mapInfo =& GalleryDataCache::getFromDisk($cacheParams);
 		if (!empty($mapInfo)) {
 		    GalleryDataCache::put($cacheKey, $mapInfo);
 		}
