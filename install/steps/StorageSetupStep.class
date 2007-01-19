@@ -69,7 +69,7 @@ class StorageSetupStep extends InstallStep {
 			$dir = $parentDir . DIRECTORY_SEPARATOR
 			     . basename($dir) . DIRECTORY_SEPARATOR;
 			/* Create the storage folder with restrictive permissions */
-			if (mkdir($dir)) {
+			if (@mkdir($dir)) {
 			    chmod($dir, 0700);
 			}
 		    }
