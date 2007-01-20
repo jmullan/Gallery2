@@ -44,7 +44,7 @@ class WebDavTest extends GalleryTestCase {
 	/* main.php / bootstrap.inc creates a new $gallery object */
 	global $gallery;
 
-	/* Use WebDavTestPhpVm and WebDavTestPlatform */
+	/* Use WebDavTestPhpVm */
 	$this->_phpVm = new WebDavTestPhpVm();
 	$gallery->_phpVm =& $this->_phpVm;
 
@@ -95,7 +95,6 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
 	if (!isset($this->_urlGenerator)) {
 	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
 	    $this->_urlGenerator = new GalleryUrlGenerator();
@@ -116,7 +115,7 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function skip() {
-	echo 'Webdav test(s) skipped because function stream_wrapper_register not found', "\n";
+	print "Webdav test(s) skipped because function stream_wrapper_register not found\n";
 	return parent::skip();
     }
 
@@ -157,12 +156,13 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(array('allow' => 'Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET'
-		    . ', HEAD, DELETE, PUT, MOVE, LOCK, UNLOCK',
-		'dav' => 'DAV: 1,2',
-		'content-length' => 'Content-Length: 0',
-		'ms-author-via' => 'MS-Author-Via: DAV'),
-	    $this->_headers);
+	$expectedHeaders = array();
+	$expectedHeaders['allow'] =
+	    'Allow: OPTIONS,PROPFIND,PROPPATCH,MKCOL,GET,HEAD,DELETE,PUT,MOVE,LOCK,UNLOCK';
+	$expectedHeaders['dav'] = 'DAV: 1,2';
+	$expectedHeaders['content-length'] = 'Content-Length: 0';
+	$expectedHeaders['ms-author-via'] = 'MS-Author-Via: DAV';
+	$this->assertEquals($expectedHeaders, $this->_headers);
 
 	$this->assertEquals('', $output);
     }

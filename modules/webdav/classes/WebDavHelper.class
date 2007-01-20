@@ -18,24 +18,25 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/webdav/lib/HTTP/WebDAV/Server.php');
+
 /* WebDAV status codes */
 define('WEBDAV_STATUS_NO_XML_PARSER', 0x00000002);
-define('WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED', 0x00000004);
-define('WEBDAV_STATUS_REWRITE_MODULE_DISABLED', 0x00000008);
-define('WEBDAV_STATUS_CONNECT_RULE_DISABLED', 0x00000010);
-define('WEBDAV_STATUS_MISSING_DAV_HEADERS', 0x00000020);
-define('WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS', 0x00000040);
-define('WEBDAV_STATUS_BAD_REWRITE_PARSER', 0x00000080);
-define('WEBDAV_STATUS_OPTIONS_RULE_DISABLED', 0x00000100);
+define('WEBDAV_STATUS_METHOD_NOT_HANDLED', 0x00000004);
+define('WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED', 0x00000008);
+define('WEBDAV_STATUS_REWRITE_MODULE_DISABLED', 0x00000010);
+define('WEBDAV_STATUS_CONNECT_RULE_DISABLED', 0x00000020);
+define('WEBDAV_STATUS_MISSING_DAV_HEADERS', 0x00000040);
+define('WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS', 0x00000080);
+define('WEBDAV_STATUS_BAD_REWRITE_PARSER', 0x00000100);
+define('WEBDAV_STATUS_OPTIONS_RULE_DISABLED', 0x00000200);
 define('WEBDAV_STATUS_ERROR_UNKNOWN', 0x80000000);
 
 /* Gallery property namespace - RFC2518 18 */
 define('WEBDAV_GALLERY_NAMESPACE', 'http://gallery2.org/dav/props/');
 
-GalleryCoreApi::requireOnce('modules/webdav/lib/HTTP/WebDAV/Server.php');
-
 /**
- * A WebDAV helper class.
+ * WebDAV helper class.
  * @package WebDav
  * @subpackage Classes
  * @author Jack Bates <ms419@freezone.co.uk>
@@ -62,8 +63,8 @@ class WebDavHelper {
 	}
 
 	/*
-	 * Rewrite module must be enabled.  Check it regardless of missing DAV headers because it
-	 * also implies the connect rule is disabled.  Check it before checking for missing DAV
+	 * URL rewrite module must be enabled.  Check it regardless of missing DAV headers because
+	 * it also implies the connect rule is disabled.  Check it before checking for missing DAV
 	 * headers causes because it is a missing DAV headers cause.
 	 */
 	if (empty($moduleStatus['rewrite']['active'])) {
@@ -100,7 +101,7 @@ class WebDavHelper {
 		array('forceFullUrl' => true,
 		      'htmlEntities' => false)))) {
 
-	    /* Already checked one cause: rewrite module disabled.  Check other causes. */
+	    /* Already checked one cause: URL rewrite module disabled.  Check other causes. */
 	    if (!WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
 		    array('href' => 'modules/webdav/data/options/'),
 		    array('forceDirect' => true,
@@ -148,14 +149,54 @@ class WebDavHelper {
 	}
 
 	/*
+	 * Check that Gallery handles WebDAV request methods.  Check it after checking for missing
+	 * DAV headers causes so we can show the error unknown warning if no causes are found.
+	 */
+	foreach (array('PROPFIND', 'PROPPATCH', 'MKCOL', 'MOVE', 'LOCK', 'UNLOCK')
+		as $requestMethod) {
+	    if (!WebDavHelper::checkRequestMethod($requestMethod)) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug('Error in WebDavHelper::checkConfiguration:'
+			. ' this server doesn\'t pass ' . $requestMethod . ' requests to Gallery.');
+		}
+		$code |= WEBDAV_STATUS_METHOD_NOT_HANDLED;
+	    }
+	}
+
+	/*
 	 * The WebDAV library requires a PHP XML parser.  Check it after checking for missing DAV
 	 * headers causes so we can show the error unknown warning if no causes are found.
 	 */
-	if (!$phpVm->function_exists('xml_parser_create_ns')) {
+	if (!$phpVm->extension_loaded('xml')) {
 	    $code |= WEBDAV_STATUS_NO_XML_PARSER;
 	}
 
 	return array(null, $code);
+    }
+
+    /**
+     * Check that Gallery handles WebDAV request methods.
+     * @param string $requestMethod
+     * @return boolean true if Gallery handles the request method
+     */
+    function checkRequestMethod($requestMethod) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage($urlGenerator->generateUrl(
+		array('view' => 'webdav.WebDavWorks'),
+		array('forceFullUrl' => true,
+		      'htmlEntities' => false)), $requestMethod);
+
+	if (!preg_match('/^HTTP\/[0-9]\.[0-9] 200/', $status)) {
+	    return false;
+	}
+
+	if (trim($body) != 'PASS_WEBDAV') {
+	    return false;
+	}
+
+	return true;
     }
 
     /**
@@ -170,8 +211,8 @@ class WebDavHelper {
 	    return false;
 	}
 
-	if (empty($headers['Allow']) || $headers['Allow'] != 'OPTIONS, PROPFIND, PROPPATCH, MKCOL'
-		. ', GET, HEAD, DELETE, PUT, MOVE, LOCK, UNLOCK') {
+	if (empty($headers['Allow']) || $headers['Allow'] != 'OPTIONS,PROPFIND,PROPPATCH,MKCOL,GET'
+		. ',HEAD,DELETE,PUT,MOVE,LOCK,UNLOCK') {
 	    return false;
 	}
 
@@ -384,8 +425,8 @@ class WebDavHelper {
      */
     function options() {
 	/* TODO: COPY not implemented */
-	GalleryUtilities::setResponseHeader('Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD'
-	    . ', DELETE, PUT, MOVE, LOCK, UNLOCK');
+	GalleryUtilities::setResponseHeader(
+	    'Allow: OPTIONS,PROPFIND,PROPPATCH,MKCOL,GET,HEAD,DELETE,PUT,MOVE,LOCK,UNLOCK');
 	GalleryUtilities::setResponseHeader('DAV: 1,2');
 	GalleryUtilities::setResponseHeader('Content-Length: 0');
 	GalleryUtilities::setResponseHeader('MS-Author-Via: DAV');
@@ -876,7 +917,6 @@ class WebDavHelper {
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 	    return $ret;
 	}
-
 	if (!$ret) {
 	    /*
 	     * 405 (Method Not Allowed) - MKCOL can only be executed on a deleted/non-existent
@@ -900,7 +940,6 @@ class WebDavHelper {
 	    list ($ret, $parentId) = GalleryCoreApi::fetchItemIdByPath($parentPath);
 	    if ($ret) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-
 		    /*
 		     * 409 (Conflict) - A resource cannot be created at the destination until one or
 		     * more intermediate collections have been created.
@@ -980,7 +1019,6 @@ class WebDavHelper {
 	}
 
 	foreach ($itemIds as $itemId) {
-
 	    /* Make sure we have permission to delete this item */
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
 	    if ($ret) {
@@ -1057,12 +1095,11 @@ class WebDavHelper {
 	    return $ret;
 	}
 
+	/* What do we do if we weren't successful?  No thumbnail, I guess. */
 	list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($item->getParentId());
 	if ($ret) {
 	    return $ret;
 	}
-
-	/* What do we do if we weren't successful?  No thumbnail, I guess. */
 
 	WebDavServer::setResponseStatus('204 No Content');
 	return null;
@@ -1285,7 +1322,6 @@ class WebDavHelper {
 	if ($ret) {
 	    return $ret;
 	}
-
 	if ($itemId == $rootId) {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
@@ -1353,7 +1389,6 @@ class WebDavHelper {
 	    if ($ret) {
 		return $ret;
 	    }
-
 	    if (!empty($error)) {
 		foreach ($error as $error) {
 		    if (!strpos($error, 'permission')) {
@@ -1370,10 +1405,8 @@ class WebDavHelper {
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 	    return $ret;
 	}
-
 	if (!$ret) {
 	    if (!$overwrite) {
-
 		/*
 		 * 412 (Precondition Failed) - The server was unable to maintain the liveness of the
 		 * properties listed in the propertybehavior XML element or the Overwrite header is
@@ -1390,7 +1423,6 @@ class WebDavHelper {
 	}
 
 	if ($newParentPath != $parentPath) {
-
 	    /*
 	     * Read lock both parent hierarchies
 	     * TODO Optimize this
@@ -1442,9 +1474,9 @@ class WebDavHelper {
 	    /* Do the move */
 	    $ret = $item->move($newParentId);
 	    if ($ret) {
-
 		if ($newPathComponent != $pathComponent) {
 		    $item->rename($pathComponent);
+		    /* Ignore cascading failures here */
 		}
 
 		GalleryCoreApi::releaseLocks($lockIds);
@@ -1482,6 +1514,7 @@ class WebDavHelper {
 
 	/* Fix thumbnail integrity */
 	if ($newParentPath != $parentPath) {
+	    /* What do we do if we weren't successful?  No thumbnail, I guess. */
 	    list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($oldParentId);
 	    if ($ret) {
 		return $ret;
@@ -1503,12 +1536,11 @@ class WebDavHelper {
 	    $newParentId = $item->getParentId();
 	}
 
+	/* What do we do if we weren't successful?  No thumbnail, I guess. */
 	list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($newParentId);
 	if ($ret) {
 	    return $ret;
 	}
-
-	/* What do we do if we weren't successful?  No thumbnail, I guess. */
 
 	/*
 	 * 204 (No Content) - The source resource was successfully copied to a pre-existing
@@ -1819,8 +1851,8 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::removeMapEntry('WebDavLockMap', array('token' => $token,
-	    'path' => $path));
+	$ret = GalleryCoreApi::removeMapEntry(
+	    'WebDavLockMap', array('token' => $token, 'path' => $path));
 	if ($ret) {
 	    return $ret;
 	}

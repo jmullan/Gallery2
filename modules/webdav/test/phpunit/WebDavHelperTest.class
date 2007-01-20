@@ -47,7 +47,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	/* Use WebDavHelperTestPhpVm */
 	$this->_phpVm = new WebDavHelperTestPhpVm();
-	$this->_phpVm->_function_exists = true;
+	$this->_phpVm->_extension_loaded = true;
 	$gallery->_phpVm =& $this->_phpVm;
 
 	/* Mock activate the HTTP auth and rewrite modules */
@@ -65,7 +65,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	    'RewriteApi', 'WebDavHelperTestRewriteApi', 'WebDavHelperTestRewriteApi',
 	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'test');
 
-	/* Define OPTIONS and alternative URL requests */
+	/* Define requests */
 	$this->_optionsRequest = implode("\r\n", array(
 	    'OPTIONS ' . $this->_urlGenerator->generateUrl(
 		array('controller' => 'webdav.WebDav'),
@@ -84,12 +84,31 @@ class WebDavHelperTest extends GalleryTestCase {
 	    ''));
 
 	/* Define success and failure responses */
+	$this->_methodHandledResponse = implode("\r\n", array(
+	    'HTTP/1.1 200 OK',
+	    'Date: Mon, 24 Nov 2003 05:40:03 GMT',
+	    'Server: Apache/1.3.28 (Unix)',
+	    'Allow: OPTIONS,GET,HEAD,POST',
+	    'Content-Length: 0',
+	    'Connection: close',
+	    'Content-Type: text/html',
+	    '',
+	    'PASS_WEBDAV'));
+	$this->_methodNotHandledResponse = implode("\r\n", array(
+	    'HTTP/1.1 200 OK',
+	    'Date: Mon, 24 Nov 2003 05:40:03 GMT',
+	    'Server: Apache/1.3.28 (Unix)',
+	    'Allow: OPTIONS,GET,HEAD,POST',
+	    'Content-Length: 0',
+	    'Connection: close',
+	    'Content-Type: text/html',
+	    '',
+	    ''));
 	$this->_includesDavHeadersResponse = implode("\r\n", array(
 	    'HTTP/1.1 200 OK',
 	    'Date: Mon, 24 Nov 2003 05:40:03 GMT',
 	    'Server: Apache/1.3.28 (Unix)',
-	    'Allow: OPTIONS, PROPFIND, PROPPATCH, MKCOL, GET, HEAD, DELETE, PUT, MOVE, LOCK'
-		. ', UNLOCK',
+	    'Allow: OPTIONS,PROPFIND,PROPPATCH,MKCOL,GET,HEAD,DELETE,PUT,MOVE,LOCK,UNLOCK',
 	    'DAV: 1,2',
 	    'MS-Author-Via: DAV',
 	    'Content-Length: 0',
@@ -101,7 +120,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	    'HTTP/1.1 200 OK',
 	    'Date: Mon, 24 Nov 2003 05:40:03 GMT',
 	    'Server: Apache/1.3.28 (Unix)',
-	    'Allow: OPTIONS, GET, HEAD, DELETE, PUT, LOCK, UNLOCK',
+	    'Allow: OPTIONS,GET,HEAD,POST',
 	    'Content-Length: 0',
 	    'Connection: close',
 	    'Content-Type: text/html',
@@ -110,6 +129,23 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	/* Use WebDavHelperTestPlatform */
 	$this->_platform = new WebDavHelperTestPlatform();
+
+	$this->_requests = array();
+	foreach (array('PROPFIND', 'PROPPATCH', 'MKCOL', 'MOVE', 'LOCK', 'UNLOCK')
+		as $requestMethod) {
+	    $this->_requests[$requestMethod] = implode("\r\n", array(
+		$requestMethod . ' ' . $this->_urlGenerator->generateUrl(
+		    array('view' => 'webdav.WebDavWorks'),
+		    array('forceServerRelativeUrl' => true,
+			  'htmlEntities' => false)) . ' HTTP/1.0',
+		'Host: ' . $this->_urlGenerator->getHostName(),
+		'',
+		''));
+
+	    $this->_platform->_messages[$this->_requests[$requestMethod]] =
+		$this->_methodHandledResponse;
+	}
+
 	$this->_platform->_messages[$this->_optionsRequest] =
 	    $this->_includesDavHeadersResponse;
 	$this->_platform->_messages[$this->_alternativeUrlRequest] =
@@ -132,7 +168,7 @@ class WebDavHelperTest extends GalleryTestCase {
     }
 
     function testCheckConfigurationNoXmlParser() {
-	$this->_phpVm->_function_exists = false;
+	$this->_phpVm->_extension_loaded = false;
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -140,6 +176,18 @@ class WebDavHelperTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_NO_XML_PARSER, $code);
+    }
+
+    function testCheckConfigurationMethodNotHandled() {
+	$this->_platform->_messages[$this->_requests['PROPFIND']] =
+	    $this->_methodNotHandledResponse;
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_METHOD_NOT_HANDLED, $code);
     }
 
     function testCheckConfigurationHttpAuthModuleDisabled() {
@@ -247,11 +295,21 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->assert(!$code);
     }
 
-    function testCheckDavHeaders() {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
+    function testCheckRequestMethod() {
+	$success = WebDavHelper::checkRequestMethod('PROPFIND');
+	$this->assert($success);
+    }
 
-	$success = WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
+    function testCheckRequestMethodNotHandled() {
+	$this->_platform->_messages[$this->_requests['PROPFIND']] =
+	    $this->_methodNotHandledResponse;
+
+	$success = WebDavHelper::checkRequestMethod('PROPFIND');
+	$this->assert(!$success);
+    }
+
+    function testCheckDavHeaders() {
+	$success = WebDavHelper::checkDavHeaders($this->_urlGenerator->generateUrl(
 	    array('controller' => 'webdav.WebDav'),
 	    array('forceFullUrl' => true,
 		  'htmlEntities' => false)));
@@ -259,13 +317,10 @@ class WebDavHelperTest extends GalleryTestCase {
     }
 
     function testCheckMissingDavHeaders() {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
-
 	$this->_platform->_messages[$this->_optionsRequest] =
 	    $this->_missingDavHeadersResponse;
 
-	$success = WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
+	$success = WebDavHelper::checkDavHeaders($this->_urlGenerator->generateUrl(
 	    array('controller' => 'webdav.WebDav'),
 	    array('forceFullUrl' => true,
 		  'htmlEntities' => false)));
@@ -486,10 +541,10 @@ class WebDavHelperTest extends GalleryTestCase {
 }
 
 class WebDavHelperTestPhpVm extends GalleryPhpVm {
-    var $_function_exists;
+    var $_extension_loaded;
 
-    function function_exists($functionName) {
-	return $this->_function_exists;
+    function extension_loaded($functionName) {
+	return $this->_extension_loaded;
     }
 }
 
