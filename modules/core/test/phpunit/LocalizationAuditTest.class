@@ -52,6 +52,7 @@ class LocalizationAuditTest extends CodeAuditTestCase {
      * 2. Check first msgid doesn't have #,fuzzy before it
      * 3. Check that the first line is "Id" svn keyword
      * 4. Check charset header is UTF-8
+     * 5. Make sure translator hints and __TOKEN__ things aren't translated
      */
     function checkFile($fileName, $buffer) {
 	$path = substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName))))) + 1);
@@ -81,6 +82,11 @@ class LocalizationAuditTest extends CodeAuditTestCase {
 	if (strpos($buffer, 'Content-Type: text/plain; charset=UTF-8') === false) {
 	    $this->assert(false, $path . ': does not specify UTF-8 charset');
 	    $this->_errorCount++;
+	}
+
+	/* Make sure translator hints aren't in translations */
+	if (preg_match('/^msgstr "(?:.(?!^msgid))*?<!--/ms', $buffer)) {
+	    $this->assert(false, $path . ': translator hint should be removed in translation');
 	}
 
 	/* Make sure __TOKEN__ things aren't translated */

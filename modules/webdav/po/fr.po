@@ -19,10 +19,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: WebDAV 0.7.1\n"
+"Project-Id-Version: Gallery: WebDAV 0.7.2\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2006-12-31 15:39+0100\n"
-"PO-Revision-Date: 2006-12-31 16:00+0100\n"
+"PO-Revision-Date: 2007-01-20 12:00+0100\n"
 "Last-Translator: Arnaud MOURONVAL <ArnaudMouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -33,14 +33,17 @@ msgstr ""
 msgid "WebDAV"
 msgstr "WebDAV"
 
+msgid "Mount with WebDAV"
+msgstr "Monter avec WebDAV"
+
 msgid "Mount Gallery on your desktop."
-msgstr "Accès à Gallery depuis votre bureau"
+msgstr "Accès à Gallery depuis votre bureau avec le protocole WebDAV"
 
 msgid "Remote Interfaces"
 msgstr "Interfaces distantes"
 
 msgid "Connect to WebDAV"
-msgstr "Se connecter à WebDAV"
+msgstr "Se connecter en WebDAV"
 
 msgid ""
 "Use short URL because most WebDAV clients don't support query strings.  The Windows WebDAV "
@@ -60,23 +63,25 @@ msgid "Give davmount resources the correct extension."
 msgstr "Donnez aux ressources WebDAV l'extension correcte."
 
 msgid "OPTIONS Requests"
-msgstr ""
+msgstr "Requêtes OPTIONS"
 
 msgid "Redirect OPTIONS requests so we can set DAV headers."
 msgstr ""
+"Rediriger les requêtes OPTIONS de telle sorte que Gallery puisse positionner les entêtes DAV"
 
-msgid "Mount with WebDAV"
-msgstr "Monter avec WebDAV"
+msgid "WebDAV Mount Instructions"
+msgstr "Instructions de montage WebDAV"
 
 #, c-format
 msgid ""
-"You can mount Gallery on your desktop with a WebDAV client.  You can then add items to "
-"Gallery by drag and drop.  Documentation on mounting Gallery with WebDAV is in the %sGallery "
-"Codex%s."
+"%sClick here%s to mount Gallery on your desktop with a WebDAV client.  Documentation on "
+"mounting Gallery with WebDAV is in the %sGallery Codex%s."
 msgstr ""
+"%sCliquez ici%s pour monter Gallery sur votre bureau avec un client WebDAV. La documentation "
+"pour accéder à Gallery par WebDAC est disponible sur le %sCodex de Gallery%s."
 
-msgid "This album's WebDAV URL is:"
-msgstr "L'URL WebDAV de cet album est&nbsp;:"
+msgid "Alternatively, you can enter the following URL in your WebDAV client:"
+msgstr "Vous pouvez également saisir l'URL suivante dans votre client WebDAV&nbsp;:"
 
 msgid "WebDAV Settings"
 msgstr "Paramètres de WebDAV"
@@ -104,8 +109,20 @@ msgid ""
 "Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
 
-msgid "HTTP auth module disabled"
+msgid "WebDAV requests not handled"
 msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"You can't connect with WebDAV because this server doesn't pass WebDAV requests to Gallery.  "
+"Troubleshooting documentation is in the %sGallery Codex%s."
+msgstr ""
+"Certains clients WebDAV (par exemple Mac OS X WebDAVFS) ne pourront pas se connecter car les "
+"réponses aux requêtes OPTIONS ne contiennent pas d'entêtes WebDAV. Une documentation d'aide "
+"à l'analyse d'incidents est disponible dans le %sCodex de Gallery%s."
+
+msgid "HTTP auth module disabled"
+msgstr "Le module d'authentification HTTP est désactivé"
 
 #, c-format
 msgid ""
@@ -114,9 +131,14 @@ msgid ""
 "the %sSite Admin Plugins option%s.  Troubleshooting documentation is in the %sGallery Codex%"
 "s."
 msgstr ""
+"Vous pouvez vous connecter de manière anonyme en WebDAV, mais vous ne pourrez pas réaliser "
+"la moindre opération qui requiert une authentification de votre part car le module "
+"d'Authentification HTTP est désactivé. Vous devriez activer le module d'Authentification "
+"HTTP dans la section %sComposants de la page d'administration%s. Une documentation d'aide à "
+"l'analyse d'incidents est disponible dans le %sCodex de Gallery%s."
 
 msgid "'Connect to WebDAV' rule disabled"
-msgstr ""
+msgstr "La règle 'Se connecter en WebDAV' est désactivée"
 
 #, c-format
 msgid ""
@@ -124,15 +146,22 @@ msgid ""
 "WebDAV URLs is disabled.  You should activate the 'Connect to WebDAV' rule in the %sSite "
 "Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"La plupart des clients WebDAV ne parviendront pas à se connecter car la règle de réécriture "
+"des URL permettant d'avoir des URL courtes est désactivée. Vous devriez activer la règle 'Se "
+"connecter en WebDAV' dans %sOptions de réécriture d'URL de l'administration de Gallery%s. "
+"Une documentation d'aide à l'analyse d'incidents est disponible dans le %sCodex de Gallery%s."
 
 msgid "Missing DAV headers"
-msgstr ""
+msgstr "Entêtes DAV manquantes"
 
 #, c-format
 msgid ""
 "Some WebDAV clients, e.g. Mac OS X WebDAVFS, will fail to connect because OPTIONS responses "
 "are missing DAV headers.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Certains clients WebDAV (par exemple Mac OS X WebDAVFS) ne pourront pas se connecter car les "
+"réponses aux requêtes OPTIONS ne contiennent pas d'entêtes WebDAV. Une documentation d'aide "
+"à l'analyse d'incidents est disponible dans le %sCodex de Gallery%s."
 
 msgid "Alternative URL missing DAV headers"
 msgstr ""
@@ -145,7 +174,7 @@ msgid ""
 msgstr ""
 
 msgid "URL rewrite module disabled"
-msgstr ""
+msgstr "Le module de réécriture d'URL est désactivé"
 
 #, c-format
 msgid ""
@@ -156,7 +185,7 @@ msgid ""
 msgstr ""
 
 msgid "Bad URL rewrite configuration"
-msgstr ""
+msgstr "Mauvaise configuration de réécriture d'URL"
 
 #, c-format
 msgid ""
@@ -167,7 +196,7 @@ msgid ""
 msgstr ""
 
 msgid "'OPTIONS Requests' rule disabled"
-msgstr ""
+msgstr "La règle ''Requêtes OPTIONS' est désactivée"
 
 #, c-format
 msgid ""
@@ -177,19 +206,16 @@ msgid ""
 msgstr ""
 
 msgid "Unknown Cause"
-msgstr ""
+msgstr "Raison inconnue"
 
 #, c-format
 msgid ""
 "Some WebDAV clients, e.g. Mac OS X WebDAVFS, will fail to connect and automated checks "
 "failed to find a cause.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Certains clients WebDAV (par exemple Mac OS X WebDAVFS) ne pourront pas se connecter et les "
+"tests automatiques ne parviendront pas à établir la cause. Une documentation d'aide à "
+"l'analyse d'incidents est disponible dans le %sCodex de Gallery%s."
 
 msgid "WebDAV URL"
 msgstr "URL de WebDAV"
-
-#, c-format
-msgid ""
-"You can mount Gallery on your desktop with a WebDAV client.  Documentation on mounting "
-"Gallery with WebDAV is in the %sGallery Codex%s."
-msgstr ""

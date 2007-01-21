@@ -3,6 +3,9 @@
 /* ItemAddWebDav.inc */
 gettext("WebDAV") /* also in: module.inc */
 
+/* WebDavMount.inc */
+gettext("Mount with WebDAV") /* also in: module.inc */
+
 /* module.inc */
 gettext("Mount Gallery on your desktop.")
 gettext("Remote Interfaces")
@@ -13,11 +16,11 @@ gettext("Mount WebDAV")
 gettext("Give davmount resources the correct extension.")
 gettext("OPTIONS Requests")
 gettext("Redirect OPTIONS requests so we can set DAV headers.")
-gettext("Mount with WebDAV")
 
-/* templates/ItemAddWebDav.tpl */
-gettext("You can mount Gallery on your desktop with a WebDAV client.  You can then add items to Gallery by drag and drop.  Documentation on mounting Gallery with WebDAV is in the %sGallery Codex%s.")
-gettext("This album's WebDAV URL is:") /* also in: templates/blocks/WebDavUrl.tpl */
+/* templates/WebDavMount.tpl */
+gettext("WebDAV Mount Instructions")
+gettext("%sClick here%s to mount Gallery on your desktop with a WebDAV client.  Documentation on mounting Gallery with WebDAV is in the %sGallery Codex%s.")
+gettext("Alternatively, you can enter the following URL in your WebDAV client:")
 
 /* templates/WebDavSiteAdmin.tpl */
 gettext("WebDAV Settings")
@@ -26,6 +29,8 @@ gettext("Most WebDAV clients will successfully connect.  Documentation on mounti
 gettext("The URL to connect to Gallery with WebDAV is:")
 gettext("PHP has no XML support")
 gettext("You can't connect with WebDAV because PHP has no XML support on this server.  Troubleshooting documentation is in the %sGallery Codex%s.")
+gettext("WebDAV requests not handled")
+gettext("You can't connect with WebDAV because this server doesn't pass WebDAV requests to Gallery.  Troubleshooting documentation is in the %sGallery Codex%s.")
 gettext("HTTP auth module disabled")
 gettext("You can connect with WebDAV anonymously, but you can't do anything which requires you to login because the HTTP auth module is disabled.  You should activate the HTTP auth module in the %sSite Admin Plugins option%s.  Troubleshooting documentation is in the %sGallery Codex%s.")
 gettext("'Connect to WebDAV' rule disabled")
@@ -45,4 +50,3 @@ gettext("Some WebDAV clients, e.g. Mac OS X WebDAVFS, will fail to connect and a
 
 /* templates/blocks/WebDavUrl.tpl */
 gettext("WebDAV URL") /* also in: templates/blocks/blocks.inc */
-gettext("You can mount Gallery on your desktop with a WebDAV client.  Documentation on mounting Gallery with WebDAV is in the %sGallery Codex%s.")
