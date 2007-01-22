@@ -751,8 +751,8 @@ class GalleryEmbed {
      * Get HTML for an image block
      *
      * @param array $params ('blocks' => string, 'show' => string, (optional)'heading' => int,
-     *                (optional)'itemId' => int, (optional)'maxSize' => int,
-     *                (optional)'itemFrame' => frameId, (optional)'albumFrame' => frameId)
+     *        (optional)'itemId' => int, (optional)'maxSize' => int, (optional)'exactSize' => int,
+     *        (optional)'itemFrame' => frameId, (optional)'albumFrame' => frameId)
      * 'blocks' is a pipe (|) separated list, of one or more possible blocks which are:
      * randomImage|recentImage|viewedImage|randomAlbum|recentAlbum|viewedAlbum|specificItem
      * dailyImage|weeklyImage|monthlyImage|dailyAlbum|weeklyAlbum|monthlyAlbum
@@ -762,6 +762,7 @@ class GalleryEmbed {
      * example: GalleryEmbed::getImageBlock(array('blocks' => 'randomImage',
      *                                            'show' => 'title|date'));
      * itemFrame/albumFrame may require CSS to be displayed.
+     * See Image Block Site Admin page for info on optional parameters.
      * @return array object GalleryStatus
      *               string html content
      *               string head content or null if none required
