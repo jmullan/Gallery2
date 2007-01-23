@@ -80,8 +80,8 @@ class GalleryItemAttributesHelper_simple {
 	    $lastViewed[$itemId] = $elapsed;
 	}
 
-	GalleryCoreApi::requireOnce(
-	    'modules/core/classes/GalleryStorage/GallerySqlFragment.class');
+	/* Ensure GallerySqlFragment class is loaded by initializing storage */
+	$gallery->getStorage();
 	$func = '= [GalleryItemAttributesMap::viewCount] + ?';
 	$ret = GalleryCoreApi::updateMapEntry(
 	    'GalleryItemAttributesMap',
