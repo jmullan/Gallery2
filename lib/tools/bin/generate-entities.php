@@ -26,7 +26,7 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 require_once(dirname(__FILE__) . '/../../smarty/Smarty.class.php');
 
-$tmpdir = 'tmp_entities_' . rand(1, 30000);
+$tmpdir = dirname(__FILE__) . '/tmp_entities_' . rand(1, 30000);
 if (file_exists($tmpdir)) {
     print "Tmp dir already exists: $tmpdir\n";
     exit(1);

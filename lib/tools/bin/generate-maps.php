@@ -26,7 +26,7 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 require_once(dirname(__FILE__) . '/../../smarty/Smarty.class.php');
 
-$tmpdir = 'tmp_entities_' . rand(1, 30000);
+$tmpdir = dirname(__FILE__) . '/tmp_maps_' . rand(1, 30000);
 if (file_exists($tmpdir)) {
     print "Tmp dir already exists: $tmpdir\n";
     exit(1);
@@ -48,7 +48,7 @@ $xmlFile = 'Maps.xml';
 
 if (!file_exists($xmlFile)) {
     print "Missing Maps.xml, can't continue.\n";
-    exit(1);
+    cleanExit(1);
 }
 
 $p =& new XmlParser();
@@ -103,8 +103,15 @@ $fd = fopen('Maps.inc', 'w');
 fwrite($fd, $new);
 fclose($fd);
 
-/* Clean up the cheap and easy way */
-if (file_exists($tmpdir)) {
-    system("rm -rf $tmpdir");
+/* Done */
+cleanExit(0);
+
+function cleanExit($status=0) {
+    /* Clean up the cheap and easy way */
+    global $tmpdir;
+    if (file_exists($tmpdir)) {
+	system("rm -rf $tmpdir");
+    }
+    exit($status);
 }
 ?>
