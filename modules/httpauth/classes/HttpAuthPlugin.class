@@ -22,6 +22,10 @@ GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
 
 /**
  * Get active user from username and password in HTTP headers.
+ *
+ * HTTP authentication is handled between the user-agent and Gallery.  Gallery is responsible to
+ * authenticate a user-supplied username / password pair.
+ *
  * @package HttpAuth
  * @subpackage Classes
  * @author Jack Bates <ms419@freezone.co.uk>

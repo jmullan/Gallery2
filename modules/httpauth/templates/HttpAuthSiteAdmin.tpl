@@ -95,6 +95,15 @@
 
 <div class="gbBlock">
   <p class="giDescription">
+    {g->text text="By default HTTP authentication is only enabled for specific modules."}
+  </p>
+
+  <label for="cbUseGlobally"> {g->text text="Use the authentication plugins for all modules:"} </label>
+  <input id="cbUseGlobally" name="{g->formVar var="form[useGlobally]"}" type="checkbox"{if !empty($form.useGlobally)} checked="checked"{/if}/>
+</div>
+
+<div class="gbBlock">
+  <p class="giDescription">
     {g->text text="You may wish to trust only HTTP authentication types or HTTP usernames which match specified regular expressions - or HTTP usernames may not match your Gallery usernames; for instance if using %s authentication, the REMOTE_USER environment variable may be username@REALM.TLD.  In these cases, you may use regular expressions to filter authentication types and usernames." arg1="<a href=\"http://modauthkerb.sourceforge.net/\"> Kerberos </a>"}
   </p>
 

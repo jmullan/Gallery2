@@ -33,7 +33,7 @@ define('HTTPAUTH_STATUS_ERROR_UNKNOWN', 0x80000000);
  * @version $Revision$
  * @static
  */
-class HttpAuthHelper {
+class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 
     /**
      * Check this module's configuration.
@@ -231,6 +231,72 @@ class HttpAuthHelper {
 	unset($components['user']);
 	unset($components['pass']);
 	return HttpAuthHelper::_buildUrl($components);
+    }
+
+    /**
+     * @see HttpAuthInterface_1_0::getConfiguration
+     */
+    function getConfiguration() {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
+	if ($ret) {
+	    return array($ret, null, null, null);
+	}
+	return array(null, !empty($params['httpAuthPlugin']), !empty($params['serverAuthPlugin']),
+		     !empty($params['useGlobally']));
+    }
+
+    /**
+     * @see HttpAuthInterface_1_0::setConfiguration
+     */
+    function setConfiguration($enableHttpAuth, $enableServerAuth=false, $useGlobally=false) {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'httpauth');
+	if ($ret) {
+	    return $ret;
+	}
+
+	foreach (array('httpAuthPlugin' => $enableHttpAuth,
+		       'serverAuthPlugin' => $enableServerAuth,
+		       'useGlobally' => $useGlobally) as $key => $value) {
+	    $ret = $module->setParameter($key, $value);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId('httpauth');
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = $module->performFactoryRegistrations();
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
+    }
+
+    /**
+     * @see HttpAuthInterface_1_0::requestAuthentication
+     */
+    function requestAuthentication($ignoreUseGloballyFlag=true) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (empty($params['httpAuthPlugin'])) {
+	    return null;
+	}
+
+	if (!$ignoreUseGloballyFlag && empty($params['useGlobally'])) {
+	    return null;
+	}
+
+	GalleryUtilities::setResponseHeader('HTTP/1.0 401 Unauthorized', false);
+	GalleryUtilities::setResponseHeader("WWW-Authenticate: Basic realm='$params[authName]'",
+					    false);
+
+	return null;
     }
 
     /**

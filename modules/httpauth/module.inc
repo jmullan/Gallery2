@@ -31,7 +31,7 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('httpauth');
 	$this->setName($gallery->i18n('HTTP Auth'));
-	$this->setVersion('0.5.0'); /* Update upgrade() too! */
+	$this->setVersion('0.5.1'); /* Update upgrade() too! */
 	$this->setDescription($gallery->i18n('Login using HTTP authentication.'));
 	$this->setGroup('authentication', $gallery->i18n('Authentication'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
@@ -88,6 +88,13 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 		return $ret;
 	    }
 	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+		'HttpAuthInterface_1_0', 'HttpAuthHelper', 'HttpAuthInterface',
+		'modules/httpauth/classes/HttpAuthHelper.class', $this->getId(), null);
+	if ($ret) {
+	    return $ret;
+	}
     }
 
     /**
@@ -124,7 +131,8 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 		    'authName' => 'Gallery',
 		    'authtypePattern' => '//',
 		    'usernamePattern' => '/^(.+\\\\)?([^\\\\@]+)(@.+)?$/',
-		    'usernameReplace' => '$2') as $key => $value) {
+		    'usernameReplace' => '$2',
+		    'useGlobally' => false) as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
 		    return $ret;
@@ -196,6 +204,13 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
 	case '0.4.0':
 	    /* Add logout view to clear browsers' authentication cache */
+
+	case '0.5.0':
+	    /* Adding HttpAuthInterface and new site admin option */
+	    $ret = $this->setParameter('useGlobally', false);
+	    if ($ret) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    break;
@@ -313,18 +328,11 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 		return array(null, null);
 	    }
 
-	    list ($ret, $params) = $this->fetchParameters();
+	    GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+	    $ret = HttpAuthHelper::requestAuthentication(false);
 	    if ($ret) {
 		return array($ret, null);
 	    }
-
-	    if (empty($params['httpAuthPlugin'])) {
-		return array(null, null);
-	    }
-
-	    GalleryUtilities::setResponseHeader('HTTP/1.0 401 Unauthorized', false);
-	    GalleryUtilities::setResponseHeader(
-		"WWW-Authenticate: Basic realm='$params[authName]'", false);
 
 	    return array(null, null);
 

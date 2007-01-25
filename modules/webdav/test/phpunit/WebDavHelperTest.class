@@ -65,6 +65,12 @@ class WebDavHelperTest extends GalleryTestCase {
 	    'RewriteApi', 'WebDavHelperTestRewriteApi', 'WebDavHelperTestRewriteApi',
 	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'test');
 
+	$this->_registerFactoryImplementationForTest(
+	    'HttpAuthInterface_1_0', 'WebDavHelperTestHttpAuthInterface',
+	    'WebDavHelperTestHttpAuthInterface',
+	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'test');
+	WebDavHelperTestHttpAuthInterface::_getConfiguration(true);
+
 	/* Define requests */
 	$this->_optionsRequest = implode("\r\n", array(
 	    'OPTIONS ' . $this->_urlGenerator->generateUrl(
@@ -164,7 +170,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assert(!$code);
+	$this->assertEquals(0, $code, 'error code');
     }
 
     function testCheckConfigurationNoXmlParser() {
@@ -200,6 +206,17 @@ class WebDavHelperTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED, $code);
+    }
+
+    function testCheckConfigurationHttpAuthPluginDisabled() {
+	WebDavHelperTestHttpAuthInterface::_getConfiguration(false);
+	/* Even when the httpauth module is active, none of its auth plugins could be active. */
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_HTTPAUTH_AUTH_PLUGINS_DISABLED, $code, 'error code');
     }
 
     function testCheckConfigurationRewriteModuleDisabled() {
@@ -621,6 +638,20 @@ class WebDavHelperTestPlatform extends GalleryPlatform {
 
     function fclose($handle) {
 	return true;
+    }
+}
+
+class WebDavHelperTestHttpAuthInterface /* extends HttpAuthInterface_1_0 */ {
+    function _getConfiguration($initPluginsEnabled=null) {
+	static $pluginsEnabled;
+	if (isset($initPluginsEnabled)) {
+	    $pluginsEnabled = $initPluginsEnabled;
+	}
+	return array(null, $pluginsEnabled, $pluginsEnabled, false);
+    }
+
+    function getConfiguration() {
+	return WebDavHelperTestHttpAuthInterface::_getConfiguration();
     }
 }
 ?>

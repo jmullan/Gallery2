@@ -57,8 +57,8 @@ class HttpAuthModuleTest extends GalleryTestCase {
 		array('view' => 'httpauth.HttpAuthWorks'),
 		array('forceServerRelativeUrl' => true,
 		      'htmlEntities' => false)) . ' HTTP/1.0',
-	    'Authorization: AUTHTYPE ' . base64_encode('USERNAME:PASSWORD'),
 	    'Host: ' . $urlGenerator->getHostName(),
+	    'Authorization: AUTHTYPE ' . base64_encode('USERNAME:PASSWORD'),
 	    '',
 	    ''));
 
@@ -93,10 +93,11 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	/* Activate HTTP auth plugin */
-	$ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', 'httpAuthPlugin', true);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
+	foreach (array('httpAuthPlugin' => true, 'useGlobally' => true) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', $key, $value);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
 	}
 
 	/* Use HttpAuthModuleTestPhpVm */
@@ -172,6 +173,23 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	$this->assertEquals(array('status' => 'HTTP/1.0 401 Unauthorized',
 		'www-authenticate' => "WWW-Authenticate: Basic realm='$params[authName]'"),
 	    $this->_headers);
+    }
+
+    function testHandleEventErrorPermissionDeniedIgnoredIfUseGloballyDisabled() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', 'useGlobally', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$error = GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
+	$event = GalleryCoreApi::newEvent('Gallery::Error');
+	$event->setData(array('error' => $error));
+	list ($ret, $results) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(), $this->_headers);
     }
 
     function testHandleEventLogoutNoUsername() {

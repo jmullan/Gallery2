@@ -51,7 +51,7 @@ class HttpAuthPluginTest extends GalleryTestCase {
     function tearDown() {
 	$ret = GalleryCoreApi::removeAllMapEntries('FailedLoginsMap');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    $this->failWithStatus($ret);
 	}
 
 	parent::tearDown();

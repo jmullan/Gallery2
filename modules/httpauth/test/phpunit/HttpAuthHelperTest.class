@@ -57,8 +57,8 @@ class HttpAuthHelperTest extends GalleryTestCase {
 		array('view' => 'httpauth.HttpAuthWorks'),
 		array('forceServerRelativeUrl' => true,
 		      'htmlEntities' => false)) . " HTTP/1.0\r\n"
-	    . 'Authorization: AUTHTYPE ' . base64_encode('USERNAME:PASSWORD') . "\r\n"
 	    . 'Host: ' . $urlGenerator->getHostName() . "\r\n"
+	    . 'Authorization: AUTHTYPE ' . base64_encode('USERNAME:PASSWORD') . "\r\n"
 	    . "\r\n";
 
 	/* Define success and failure responses */
@@ -94,36 +94,16 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	/* Activate HTTP auth plugin */
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'httpauth', 'httpAuthPlugin', true);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	/* Activate regex auth plugin */
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'httpauth', 'regexAuthPlugin', true);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'httpauth', 'authtypePattern', '//');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'httpauth', 'usernamePattern', '/^(.+\\\\)?([^\\\\@]+)(@.+)?$/');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'httpauth', 'usernameReplace', '$2');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
+	/* Configure plugin */
+	foreach (array('httpAuthPlugin' => true, 'regexAuthPlugin' => true,
+		       'authtypePattern' => '//', 'usernameReplace' => '$2',
+		       'usernamePattern' => '/^(.+\\\\)?([^\\\\@]+)(@.+)?$/',
+		       'serverAuthPlugin' => false, 'useGlobally' => true,
+		       'authName' => 'TEST_AUTH_NAME') as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', $key, $value);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
 	}
 
 	/* Create test user */
@@ -132,11 +112,43 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_user);
+
+	list ($ret, $this->_authInterface) =
+		GalleryCoreApi::newFactoryInstance('HttpAuthInterface_1_0');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!empty($this->_authInterface), 'Could not instantiate auth interface.');
+
+	/* Use HttpAuthModuleTestPhpVm */
+	$this->_phpVm = new HttpAuthHelperTestPhpVm();
+	$gallery->_phpVm =& $this->_phpVm;
+
+	/* Clear response headers */
+	$this->_headers =& GalleryUtilities::_getResponseHeaders();
+	$this->_headers = array();
     }
 
     function tearDown() {
 	GalleryDataCache::reset();
 	parent::tearDown();
+
+	if (!empty($this->_resetFactory)) {    
+	    /* After the plugin parameters have been reset, reset the factory as well */
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'httpauth');
+	    if ($ret) {
+		$this->failWithStatus($ret);
+	    } else {
+		$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId('httpauth');
+		if ($ret) {
+		    $this->failWithStatus($ret);
+		}
+		$ret = $module->performFactoryRegistrations();
+		if ($ret) {
+		    $this->failWithStatus($ret);
+		}
+	    }
+	}
     }
 
     function testCheckConfiguration() {
@@ -354,6 +366,19 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	$this->assertEquals($this->_user, $user);
     }
 
+    function testGetUserIgnoresUseGloballyFlag() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', 'useGlobally', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $user) = HttpAuthHelper::getUser('Test', $this->_user->getUserName());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($this->_user, $user);
+    }
+
     function testAddHttpAuthToUrl() {
 	$url = 'http://www.example.com/gallery2/main.php?foo=bar&amp;view=baz#some';
 	$this->assertEquals('http://FAKEUSER:FAKEPASS@www.example.com/gallery2/' .
@@ -394,6 +419,117 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	$this->assertEquals('webdav://example.com/gallery2/main.php?foo=bar&view=baz',
 			    HttpAuthHelper::stripHttpAuthFromUrl($url),
 			    'URL without HTML entities, anchor, other protocol');
+    }
+
+    function testGetConfiguration() {
+	list ($ret, $authPluginEnabled, $serverPluginEnabled, $usedGlobally) = 
+		$this->_authInterface->getConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(true, false, true),
+			    array($authPluginEnabled, $serverPluginEnabled, $usedGlobally));
+    }
+
+    function testSetConfiguration() {
+	$this->_resetFactory = true;
+	$ret = $this->_authInterface->setConfiguration(false, true, false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(!(bool)$params['httpAuthPlugin'], 'wrong httpAuthPlugin value');
+	$this->assert((bool)$params['serverAuthPlugin'], 'wrong serverAuthPlugin value');
+	$this->assert(!(bool)$params['useGlobally'], 'wrong useGlobally value');
+	list ($ret, $authPlugins) =
+		GalleryCoreApi::getAllFactoryImplementationIds('GalleryAuthPlugin');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!isset($authPlugins['HttpAuthPlugin']), 'HttpAuthPlugin still registerd');
+	$this->assert(isset($authPlugins['ServerAuthPlugin']), 'ServerAuthPlugin not registered');
+    }
+
+    function testSetConfigurationDefaults() {
+	$this->_resetFactory = true;
+	$ret = $this->_authInterface->setConfiguration(true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert((bool)$params['httpAuthPlugin'], 'wrong httpAuthPlugin value');
+	$this->assert(!(bool)$params['serverAuthPlugin'], 'wrong serverAuthPlugin value');
+	$this->assert(!(bool)$params['useGlobally'], 'wrong useGlobally value');
+    }
+
+    function testRequestAuthentication() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', 'useGlobally', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_authInterface->requestAuthentication();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 401 Unauthorized',
+		'www-authenticate' => "WWW-Authenticate: Basic realm='TEST_AUTH_NAME'"),
+			    $this->_headers);
+    }
+
+    function testRequestAuthenticationDoNotIgnoreUseGloballyFlag() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', 'useGlobally', false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = HttpAuthHelper::requestAuthentication(false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(), $this->_headers);
+    }
+
+    function testRequestAuthenticationIgnoredIfHttpAuthNotEnabled() {
+	foreach (array('httpAuthPlugin' => false, 'serverAuthPlugin' => true) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', $key, $value);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+
+	$ret = HttpAuthHelper::requestAuthentication();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(), $this->_headers);
+    }
+
+    function testRequestAuthenticationAlsoSentWhenAlreadyLoggedIn() {
+	$this->_becomeGuestUser();
+
+	$ret = HttpAuthHelper::requestAuthentication();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 401 Unauthorized',
+		'www-authenticate' => "WWW-Authenticate: Basic realm='TEST_AUTH_NAME'"),
+			    $this->_headers);
     }
 }
 
@@ -472,6 +608,11 @@ class HttpAuthHelperTestPlatform extends GalleryPlatform {
 
     function fclose($handle) {
 	return true;
+    }
+}
+class HttpAuthHelperTestPhpVm extends GalleryPhpVm {
+    function header($header, $replace=null) {
+	/* Avoid modifying actual header information */
     }
 }
 ?>

@@ -79,6 +79,12 @@ class WebDavModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$this->_registerFactoryImplementationForTest(
+	    'HttpAuthInterface_1_0', 'WebDavModuleTestHttpAuthInterface',
+	    'WebDavModuleTestHttpAuthInterface',
+	    'modules/webdav/test/phpunit/WebDavModuleTest.class', 'test');
+	WebDavModuleTestHttpAuthInterface::_requestAuthenticationCalls('reset');
+
 	/* Define OPTIONS request */
 	$this->_optionsRequest = implode("\r\n", array(
 	    'OPTIONS ' . $urlGenerator->generateUrl(
@@ -199,6 +205,8 @@ class WebDavModuleTest extends GalleryTestCase {
     }
 
     function testHandleEventError() {
+	GalleryUtilities::removeRequestVariable('controller');
+	GalleryUtilities::putRequestVariable('view', 'webdav.WebDav');
 	$this->_registerTestEventListener('Gallery::Error', $this->_module);
 
 	$error = GalleryCoreApi::error(GALLERY_ERROR);
@@ -210,6 +218,28 @@ class WebDavModuleTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array(array('suppressBody' => 1)), $results);
+	$this->assertEquals(0,
+		WebDavModuleTestHttpAuthInterface::_requestAuthenticationCalls('read'),
+		'httpauth should only be called for ERROR_PERMISSION_DENIED');
+    }
+
+    function testHandleEventErrorPermissionDenied() {
+	GalleryUtilities::removeRequestVariable('controller');
+	GalleryUtilities::putRequestVariable('view', 'webdav.WebDav');
+	$this->_registerTestEventListener('Gallery::Error', $this->_module);
+
+	$error = GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
+	$event = GalleryCoreApi::newEvent('Gallery::Error');
+	$event->setData(array('error' => $error));
+	list ($ret, $results) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(array('suppressBody' => 1)), $results);
+	$this->assertEquals(1,
+		WebDavModuleTestHttpAuthInterface::_requestAuthenticationCalls('read'),
+		'httpauth has not been called');
     }
 }
 
@@ -287,6 +317,24 @@ class WebDavModuleTestPlatform extends GalleryPlatform {
 
     function fclose($handle) {
 	return true;
+    }
+}
+
+class WebDavModuleTestHttpAuthInterface /* extends HttpAuthInterface_1_0 */ {
+    function _requestAuthenticationCalls($mode=false) {
+	static $calls = 0;
+	if ($mode == 'reset') {
+	    $calls = 0;
+	} else if ($mode == 'read') {
+	    return $calls;
+	} else {
+	    $calls++;
+	}
+    }
+
+    function requestAuthentication() {
+	WebDavModuleTestHttpAuthInterface::_requestAuthenticationCalls();
+	return null;
     }
 }
 ?>
