@@ -39,6 +39,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	/* Load HTTP auth module */
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'httpauth');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -90,12 +91,14 @@ class HttpAuthModuleTest extends GalleryTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'httpauth');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	foreach (array('httpAuthPlugin' => true, 'useGlobally' => true) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', $key, $value);
 	    if ($ret) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret);
 	    }
 	}

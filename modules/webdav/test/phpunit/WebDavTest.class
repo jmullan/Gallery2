@@ -61,6 +61,7 @@ class WebDavTest extends GalleryTestCase {
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
@@ -68,11 +69,13 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 	    'test/file');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -83,6 +86,7 @@ class WebDavTest extends GalleryTestCase {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->checkPoint();
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -93,6 +97,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $this->_urlGenerator) =
 	    GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	if (!isset($this->_urlGenerator)) {
@@ -102,6 +107,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$gallery->setUrlGenerator($this->_urlGenerator);

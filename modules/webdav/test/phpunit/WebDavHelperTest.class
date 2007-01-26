@@ -41,6 +41,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$gallery->setUrlGenerator($this->_urlGenerator);

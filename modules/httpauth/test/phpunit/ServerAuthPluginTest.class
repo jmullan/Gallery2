@@ -40,6 +40,7 @@ class ServerAuthPluginTest extends GalleryTestCase {
 	/* Create test user */
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_user);
