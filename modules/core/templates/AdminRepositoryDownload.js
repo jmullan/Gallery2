@@ -37,5 +37,8 @@ function showLanguagePacks(source) {
 	    ? 'block'
 	    : 'none';
     }
-    document.getElementById('languageListPlaceholder').style.display = 'none';
+    var el = document.getElementById('languageListPlaceholder');
+    if (el) {
+	el.style.display = 'none';
+    }
 }
