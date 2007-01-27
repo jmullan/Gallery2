@@ -405,6 +405,13 @@ class WebDavTest extends GalleryTestCase {
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
 
+	/*
+	 * Regression: Ensure that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.
+	 * These variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+
 	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
 	/* Perform the request and verify that we succeeded */

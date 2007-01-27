@@ -170,7 +170,7 @@ class WebDavHelper {
 	 * Check that Gallery handles WebDAV request methods.  Check it after checking for missing
 	 * DAV headers causes so we can show the error unknown warning if no causes are found.
 	 */
-	foreach (array('PROPFIND', 'PROPPATCH', 'MKCOL', 'MOVE', 'LOCK', 'UNLOCK')
+	foreach (array('PROPFIND', 'PROPPATCH', 'MKCOL', 'DELETE', 'PUT', 'MOVE', 'LOCK', 'UNLOCK')
 		as $requestMethod) {
 	    if (!WebDavHelper::checkRequestMethod($requestMethod)) {
 		if ($gallery->getDebug()) {
@@ -204,7 +204,7 @@ class WebDavHelper {
 	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage($urlGenerator->generateUrl(
 		array('view' => 'webdav.WebDavWorks'),
 		array('forceFullUrl' => true,
-		      'htmlEntities' => false)), $requestMethod);
+		      'htmlEntities' => false)), $requestMethod, array('Content-length' => 0));
 
 	if (!preg_match('/^HTTP\/[0-9]\.[0-9] 200/', $status)) {
 	    return false;

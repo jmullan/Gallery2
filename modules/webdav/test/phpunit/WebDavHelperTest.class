@@ -138,7 +138,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->_platform = new WebDavHelperTestPlatform();
 
 	$this->_requests = array();
-	foreach (array('PROPFIND', 'PROPPATCH', 'MKCOL', 'MOVE', 'LOCK', 'UNLOCK')
+	foreach (array('PROPFIND', 'PROPPATCH', 'MKCOL', 'DELETE', 'PUT', 'MOVE', 'LOCK', 'UNLOCK')
 		as $requestMethod) {
 	    $this->_requests[$requestMethod] = implode("\r\n", array(
 		$requestMethod . ' ' . $this->_urlGenerator->generateUrl(
@@ -146,6 +146,7 @@ class WebDavHelperTest extends GalleryTestCase {
 		    array('forceServerRelativeUrl' => true,
 			  'htmlEntities' => false)) . ' HTTP/1.0',
 		'Host: ' . $this->_urlGenerator->getHostName(),
+		'Content-length: 0', /* IIS requires a Content-length at least for PUT requests */
 		'',
 		''));
 
