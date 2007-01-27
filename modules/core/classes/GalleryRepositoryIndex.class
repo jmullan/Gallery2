@@ -168,7 +168,7 @@ class GalleryRepositoryIndex {
     }
 
     /**
-     * Loads and deserializes the index from the local filesystem into memory.
+     * Loads and unserializes the index from the local filesystem into memory.
      * @return object GalleryStatus a status code
      */
     function load() {
@@ -196,7 +196,7 @@ class GalleryRepositoryIndex {
     }
 
     /**
-     * Deserializes the index into memory.
+     * Unserializes the index into memory.
      * @return object GalleryStatus a status code
      */
     function unserializeIndex(&$index) {
@@ -284,7 +284,7 @@ class GalleryRepositoryIndex {
      * @param string $pluginType
      * @param string $pluginId
      * @return array object GalleryStatus a status code
-     *		     string descriptor URL
+     *		     string the plugin name
      */
     function getPluginName($pluginType, $pluginId) {
 	global $gallery;
@@ -462,15 +462,18 @@ class GalleryRepositoryIndex {
     }
 
     /**
-     * Returns the complete index array.
+     * Returns the complete index array.  Used for testing purposes.
+     *
      * @return array the index
+     * @access private
      */
     function &getRawData() {
 	return $this->_index;
     }
 
     /**
-     * Returns the path of the local repository cache
+     * Returns the path of the local repository cache.
+     *
      * @return string index path
      */
     function getRepositoryCacheDir() {
