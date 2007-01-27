@@ -654,6 +654,18 @@ class PlatformTest extends GalleryTestCase {
 		      'valid relative path with two dotdots');
     }
 
+    function testIsRestrictedByOpenBaseDirForMatchAllOpenBaseDir() {
+	global $gallery;
+
+	$gallery->_phpVm = new PlatformTestPhpVm('/', $this);
+	$platform = new PlatformTestOpenBaseDirUnixPlatform();
+	$platform->setRealpathData(array('/test/file' => '/test/file',
+					 '/' => '/'));
+	$this->assert(!$platform->isRestrictedByOpenBaseDir('/'), '/ should be allowed');
+	$this->assert(!$platform->isRestrictedByOpenBaseDir('/test/file'),
+		      '/test/file should be allowed');
+    }
+
     /**
      * Try opening a socket to the current web server.
      */
@@ -854,6 +866,10 @@ class PlatformTestOpenBaseDirUnixPlatform extends UnixPlatform {
     function getcwd() {
 	return isset($this->_cwd) ? $this->_cwd : parent::getcwd();
     }
+
+    function getDirectorySeparator() {
+	return '/';
+    }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
@@ -873,6 +889,10 @@ class PlatformTestOpenBaseDirWinNtPlatform extends WinNtPlatform {
 
     function getcwd() {
 	return isset($this->_cwd) ? $this->_cwd : parent::getcwd();
+    }
+
+    function getDirectorySeparator() {
+	return '\\';
     }
 }
 ?>

@@ -688,7 +688,7 @@ class GalleryPlatform {
 	foreach (explode($separator, $openBasedir) as $baseDir) {
 	    if (($baseDirMatch = $this->realpath($baseDir)) === false) {
 		$baseDirMatch = $baseDir;
-	    } else if ($baseDir{strlen($baseDir)-1} == $slash) {
+	    } else if (substr($baseDir, -1) == $slash && substr($baseDirMatch, -1) != $slash) {
 		/* Realpath will remove a trailing slash, add it back to avoid prefix match */
 		$baseDirMatch .= $slash;
 	    }
