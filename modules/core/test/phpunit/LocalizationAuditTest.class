@@ -55,6 +55,9 @@ class LocalizationAuditTest extends CodeAuditTestCase {
      * 5. Make sure translator hints and __TOKEN__ things aren't translated
      */
     function checkFile($fileName, $buffer) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
 	$path = substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName))))) + 1);
 
 	/* Grab Project-Id-Version, which we'll check against this file's peers in finishScan() */
@@ -89,9 +92,16 @@ class LocalizationAuditTest extends CodeAuditTestCase {
 	    $this->assert(false, $path . ': translator hint should be removed in translation');
 	}
 
+	/* Lookbehind assertions must be of a fixed length */
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    $newline = '\r\n';
+	} else {
+	    $newline = '\n';
+	}
 	/* Make sure __TOKEN__ things aren't translated */
 	preg_match_all(
-	    '/(?<!^#, fuzzy\n)^msgid ("(?:.(?!^msgstr))*__[A-Z]+__.*)^msgstr (.*)(?:^$|\z)/Ums',
+	    '/(?<!^#, fuzzy' . $newline . ')^msgid ("(?:.(?!^msgstr))*__[A-Z]+__.*)^msgstr (.*)' .
+	    '(?:\r?\n\r?\n|^$|\z)/Ums', /* ^$ doesn't match an empty line on Windows */
 	    $buffer, $matches, PREG_SET_ORDER);
 	foreach ($matches as $match) {
 	    if (strlen($match[2]) < 5) {
