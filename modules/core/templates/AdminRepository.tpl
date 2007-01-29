@@ -26,6 +26,18 @@
     {g->text text="Your local copy of the repository was broken and has been fixed.  Please download the plugin list again."}
     {/if}
   </h2>
+  {if !empty($status.error.failedToDownload)}
+  {foreach name=plugin from=$status.error.failedToInstall key=pluginName item=failedFiles}
+  <h2 class="giError"> {g->text text="Failed to download the %s plugin because the following files/directories could not be modified:" arg1=$pluginName} </h2>
+  <ul>
+  {foreach from=$failedFiles item=file}
+    <li class="giError"> {$file} </li>
+  {/foreach}
+  </ul>
+  {if !$smarty.foreach.plugin.last}<br/>{/if}
+  {/foreach}
+  {/if}
+
 </div>
 {/if}
 

@@ -568,6 +568,9 @@ class GalleryRepository {
      * directory. If it is a descriptor, it will be deserialized and returned to the calling
      * function.
      *
+     * @todo Split this into two separate functions, one that downloads the file, the other that
+     *       returns the descriptor.
+     *
      * @param string $pluginType
      * @param string $pluginId
      * @param string $packageName
@@ -622,6 +625,64 @@ class GalleryRepository {
 	}
 
 	return array(null, $descriptor);
+    }
+
+    /**
+     * Verify that a package will install cleanly by examining all of its paths and making sure
+     * that any file operations that we intend to make will be successful.
+     *
+     * @param string $packageName name of the package to check
+     * @param array $descriptor descriptor of the plugin the package belongs to
+     * @return array of files that can't be overwritten (empty array if everything is ok)
+     */
+    function preVerifyPackage($packageName, $descriptor) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$errorMessages = array();
+
+	$pluginType = $descriptor['pluginType'];
+	$pluginId = $descriptor['pluginId'];
+	$pluginOutputDir = sprintf(
+	    '%s/%ss/%s/', dirname(dirname(dirname(dirname(__FILE__)))), $pluginType, $pluginId);
+
+	if ($platform->file_exists($pluginOutputDir)) {
+	    if (!$platform->is_writeable($pluginOutputDir) ||
+		!$platform->is_dir($pluginOutputDir)) {
+		return array($pluginOutputDir);
+	    }
+	} else {
+	    return array();
+	}
+
+	foreach ($descriptor['contents']['files'] as $relativePath => $metaData) {
+	    foreach ($metaData['packages'] as $descriptorPackage) {
+		$gallery->guaranteeTimeLimit(10);
+
+		if ($descriptorPackage == $packageName) {
+		    $filePath = $pluginOutputDir . $relativePath;
+
+		    if ($platform->file_exists($filePath)) {
+			if (!$platform->is_writeable($filePath)) {
+			    $errorMessages[$filePath] = 1;
+			}
+		    } else {
+			$checkPath = dirname($filePath) . '/';
+			while ($checkPath != $pluginOutputDir && $checkPath != '.') {
+			    if ($platform->file_exists($checkPath) &&
+				    (!$platform->is_writeable($checkPath) ||
+				     !$platform->is_dir($checkPath))) {
+				$errorMessages[$filePath] = 1;
+				break;
+			    }
+			    $checkPath = dirname($checkPath) . '/';
+			}
+		    }
+		}
+	    }
+	}
+
+	return array_keys($errorMessages);
     }
 
     /**

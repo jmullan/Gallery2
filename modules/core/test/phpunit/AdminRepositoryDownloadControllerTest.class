@@ -137,6 +137,13 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
 			      array(null, 'descriptorContents'));
 	/* lang-en_US */
+	$repository->setReply('preVerifyPackage',
+			      array('lang-en_US', 'descriptorContents'),
+			      array());
+	$repository->setReply('preVerifyPackage',
+			      array('lang-hu_HU', 'descriptorContents'),
+			      array());
+
 	$repository->setReply('downloadAndUnpack',
 			      array('module', $testModule, 'lang-en_US', 'en_US-package'),
 			      array(null, array()));
@@ -336,6 +343,10 @@ class AdminRepositoryDownloadControllerTestRepository {
 
     function verifyPackageIntegrity($packageName, $descriptor) {
 	return $this->_makeReply('verifyPackageIntegrity', array($packageName, $descriptor));
+    }
+
+    function preVerifyPackage($packageName, $descriptor) {
+	return $this->_makeReply('preVerifyPackage', array($packageName, $descriptor));
     }
 
     function getPackageVersionAndBuild($pluginType, $pluginId, $packageName) {

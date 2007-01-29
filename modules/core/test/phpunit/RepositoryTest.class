@@ -734,6 +734,170 @@ class RepositoryTest extends GalleryTestCase {
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
+    function _getDescriptorForPreVerifyPackageTests() {
+	return array(
+	    'pluginType' => 'module', 'pluginId' => 'm1',
+	    'contents' => array('files' => array(
+		'f1' => array('packages' => array('p1'), 'bytes' => 1, 'hash' => md5('f1')),
+		'd2/f2' => array('packages' => array('p1'), 'bytes' => 1, 'hash' => md5('f2')),
+		'd3/f3' => array('packages' => array('p2'), 'bytes' => 1, 'hash' => md5('f3')))));
+    }
+
+    function testPreVerifyPackageModuleNotInstalled() {
+	global $gallery;
+
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array("$modules/m1/"), false);
+	$gallery->setPlatform($platform);
+
+	$repository = new GalleryRepository();
+	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
+	$this->assertEquals(array(), $errors);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testPreVerifyPackageModuleAlreadyInstalledAndWriteable() {
+	global $gallery;
+
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array("$modules/m1/"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/"), true);
+	$platform->setReply('is_dir', array("$modules/m1/"), true);
+	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/f1"), true);
+	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/d2/f2"), true);
+	$gallery->setPlatform($platform);
+
+	$repository = new GalleryRepository();
+	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
+	$this->assertEquals(array(), $errors);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testPreVerifyPackageModuleNotOverwriteable() {
+	global $gallery;
+
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array("$modules/m1/"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/"), true);
+	$platform->setReply('is_dir', array("$modules/m1/"), true);
+	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/f1"), false); /* bad! */
+	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/d2/f2"), false); /* bad! */
+	$gallery->setPlatform($platform);
+
+	$repository = new GalleryRepository();
+	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
+	$this->assertEquals(array("$modules/m1/f1", "$modules/m1/d2/f2"), $errors);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testPreVerifyPackageMissingOneDirectory() {
+	global $gallery;
+
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array("$modules/m1/"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/"), true);
+	$platform->setReply('is_dir', array("$modules/m1/"), true);
+	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/f1"), true);
+	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), false);
+	$platform->setReply('file_exists', array("$modules/m1/d2/"), false); /* missing! */
+	$gallery->setPlatform($platform);
+
+	$repository = new GalleryRepository();
+	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
+	$this->assertEquals(array(), $errors);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testPreVerifyPackageMissingOneFile() {
+	global $gallery;
+
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array("$modules/m1/"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/"), true);
+	$platform->setReply('is_dir', array("$modules/m1/"), true);
+	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/f1"), true);
+	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), false);
+	$platform->setReply('file_exists', array("$modules/m1/d2/"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/d2/"), true);
+	$platform->setReply('is_dir', array("$modules/m1/d2/"), true);
+	$gallery->setPlatform($platform);
+
+	$repository = new GalleryRepository();
+	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
+	$this->assertEquals(array(), $errors);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testPreVerifyPackageModuleContainsFileInPlaceOfADirectory() {
+	global $gallery;
+
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array("$modules/m1/"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/"), true);
+	$platform->setReply('is_dir', array("$modules/m1/"), true);
+	$platform->setReply('file_exists', array("$modules/m1/f1"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/f1"), true);
+	$platform->setReply('file_exists', array("$modules/m1/d2/f2"), false);
+	$platform->setReply('file_exists', array("$modules/m1/d2/"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/d2/"), true);
+	$platform->setReply('is_dir', array("$modules/m1/d2/"), false);  /* bad! */
+	$gallery->setPlatform($platform);
+
+	$repository = new GalleryRepository();
+	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
+	$this->assertEquals(array("$modules/m1/d2/f2"), $errors);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testPreVerifyPackageNonWriteableModuleDir() {
+	global $gallery;
+
+	$modules = dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/modules';
+	$gallery->setConfig('data.gallery.plugins', '/');
+	$testDescriptor = $this->_getDescriptorForPreVerifyPackageTests();
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array("$modules/m1/"), true);
+	$platform->setReply('is_writeable', array("$modules/m1/"), false); /* bad! */
+	$gallery->setPlatform($platform);
+
+	$repository = new GalleryRepository();
+	$errors = $repository->preVerifyPackage('p1', $testDescriptor);
+	$this->assertEquals(array("$modules/m1/"), $errors);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
     function testVerifyPackageIntegrity() {
 	global $gallery;
 

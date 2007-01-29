@@ -188,7 +188,11 @@ class AdminRepositoryDownloadController extends GalleryController {
 	foreach ($sourcedFiles as $source => $files) {
 	    foreach ($files as $pluginType => $plugins) {
 		foreach ($plugins as $pluginId => $pluginDownloadData) {
-		    $totalActions += count($pluginDownloadData['files']);
+		    /*
+		     * 2 actions (preverify, then download) for all files except the descriptor
+		     * which we just download.
+		     */
+		    $totalActions += 2 * count($pluginDownloadData['files']) - 1;
 		}
 	    }
 	}
@@ -199,9 +203,11 @@ class AdminRepositoryDownloadController extends GalleryController {
 	}
 
 	$status = array();
+	$status['error'] = array();
 
 	/* Download files. */
 	$currentAction = 0;
+
 	foreach ($sourcedFiles as $source => $files) {
 	    $repository = $repositories[$source];
 
@@ -212,8 +218,48 @@ class AdminRepositoryDownloadController extends GalleryController {
 
 		    $templateAdapter->updateProgressBar(
 			$titleText,
+			sprintf($module->translate('Preparing %s'), $pluginName),
+			++$currentAction / $totalActions);
+
+		    /*
+		     * Extract the descriptor and verify that all of our packages will unpack
+		     * safely before starting.
+		     */
+		    $relativeDescriptorUrl = $packageUrls['descriptor'];
+		    unset($packageUrls['descriptor']);
+
+		    list ($ret, $descriptor) = $repository->downloadAndUnpack(
+			$pluginType, $pluginId, 'descriptor', $relativeDescriptorUrl);
+		    if ($ret) {
+			return $ret;
+		    }
+
+		    $errors = array();
+		    foreach (array_keys($packageUrls) as $packageName) {
+			$gallery->guaranteeTimeLimit(30);
+
+			if (++$currentAction % 5 == 0) {
+			    $templateAdapter->updateProgressBar(
+				$titleText,
+				sprintf($module->translate('Preparing %s'), $pluginName),
+				$currentAction / $totalActions);
+			}
+
+			/* pre-verify here */
+			$errors = array_merge(
+			    $errors, $repository->preVerifyPackage($packageName, $descriptor));
+		    }
+		    $errors = array_unique($errors);
+		    if ($errors) {
+			$status['error']['failedToDownload'][$pluginName] = $errors;
+			continue;
+		    }
+
+		    $templateAdapter->updateProgressBar(
+			$titleText,
 			sprintf($module->translate('Downloading %s'), $pluginName),
 			$currentAction / $totalActions);
+
 
 		    foreach ($packageUrls as $packageName => $relativePackageUrl) {
 			$gallery->guaranteeTimeLimit(30);
@@ -226,39 +272,28 @@ class AdminRepositoryDownloadController extends GalleryController {
 			}
 
 			/* Download and unpack package. */
-			list ($ret, $pluginDescriptor) = $repository->downloadAndUnpack(
+			list ($ret, $ignored) = $repository->downloadAndUnpack(
 			    $pluginType, $pluginId, $packageName, $relativePackageUrl);
 			if ($ret) {
 			    return $ret;
 			}
 
-			if (!empty($pluginDescriptor)) {
-			    /* Save current package's descriptor. */
-			    $descriptor = $pluginDescriptor;
-			} else {
-			    /* Sanity check. */
-			    if (empty($descriptor)) {
-				return GalleryCoreApi::error(ERROR_STORAGE_FAILURE,
-					__FILE__, __LINE__, 'Descriptor must not be empty.');
-			    }
+			/* Check the unpacked files' integrity. */
+			$ret = $repository->verifyPackageIntegrity($packageName, $descriptor);
+			if ($ret) {
+			    return $ret;
+			}
 
-			    /* Check the unpacked files' integrity. */
-			    $ret = $repository->verifyPackageIntegrity($packageName, $descriptor);
-			    if ($ret) {
-				return $ret;
-			    }
-
-			    /* Update plugin package map. */
-			    list ($ret, $version, $build) = $repository->getPackageVersionAndBuild(
-				$pluginType, $pluginId, $packageName);
-			    if ($ret) {
-				return $ret;
-			    }
-			    $ret = $repository->updatePackageMetaData(
-				$pluginType, $pluginId, $packageName, $version, $build, 0);
-			    if ($ret) {
-				return $ret;
-			    }
+			/* Update plugin package map. */
+			list ($ret, $version, $build) = $repository->getPackageVersionAndBuild(
+			    $pluginType, $pluginId, $packageName);
+			if ($ret) {
+			    return $ret;
+			}
+			$ret = $repository->updatePackageMetaData(
+			    $pluginType, $pluginId, $packageName, $version, $build, 0);
+			if ($ret) {
+			    return $ret;
 			}
 		    }
 
@@ -356,7 +391,12 @@ class AdminRepositoryDownloadController extends GalleryController {
 	}
 
 	/* Update progress bar. */
-	$templateAdapter->updateProgressBar($titleText, $module->translate('Update complete.'), 1);
+	if (!empty($status['error']['failedToDownload'])) {
+	    $message = $module->translate('Update completed with errors.');
+	} else {
+	    $message = $module->translate('Update complete.');
+	}
+	$templateAdapter->updateProgressBar($titleText, $message, 1);
 
 	/* Show link to return to the previously selected tab. */
 	$redirect['view'] = 'core.SiteAdmin';
