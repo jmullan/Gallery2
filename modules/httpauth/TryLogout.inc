@@ -47,7 +47,8 @@ class TryLogoutView extends GalleryView {
 	    $url = $urlGenerator->generateUrl(array('view' => 'httpauth.FinishLogout'),
 					      array('forceFullUrl' => true,
 						    'htmlEntities' => $key == 'hrefUrl'));
-	    $TryLogout[$key] = HttpAuthHelper::addHttpAuthToUrl($url, rand(), rand());
+	    $TryLogout[$key] =
+		HttpAuthHelper::addHttpAuthToUrl($url, '__LOGOUT__' . rand(), rand());
 	}
 
 	/* Render HTML body */
