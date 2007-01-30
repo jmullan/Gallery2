@@ -22,10 +22,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: HTTP Auth 0.5.0\n"
+"Project-Id-Version: Gallery: HTTP Auth 0.5.1\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2006-11-16 13:57+0100\n"
-"PO-Revision-Date: 2006-11-18 16:01+0100\n"
+"PO-Revision-Date: 2007-01-25 12:54+0100\n"
 "Last-Translator: Oscar Garcia Amor <oscar.garcia@moire.org>\n"
 "Language-Team: Spanish <gallery-translations@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -35,31 +35,30 @@ msgstr ""
 msgid "HTTP Auth"
 msgstr "HTTP Auth"
 
-#, fuzzy
 msgid "Login using HTTP authentication."
-msgstr "Identificarse usando autenticación HTTP"
+msgstr "Identificarse usando autenticación HTTP."
 
 msgid "Authentication"
 msgstr "Autenticación"
 
-#, fuzzy
 msgid "Authorization Header"
-msgstr "Tipo de Patrón de la autencicación:"
+msgstr "Cabecera de Autorización"
 
 msgid "Pass the Authorization header to Gallery in a request variable."
-msgstr ""
+msgstr "Pasar la cabecera de Autorización a Gallery en una variable de petición."
 
-#, fuzzy
 msgid "Authorization header."
-msgstr "Tipo de Patrón de la autencicación:"
+msgstr "Cabecera de autorización."
 
 msgid "Logout failed"
-msgstr ""
+msgstr "Fallo al cerrar sesión"
 
 msgid ""
 "Gallery tried to logout but failed.  You should close the browser window to logout "
 "successfully."
 msgstr ""
+"Gallery intentó cerrar sesión pero falló.  Deberías cerrar la ventana del navegador para "
+"cerrar la sesión con éxito."
 
 msgid "HTTP Auth Settings"
 msgstr "Configuración de HTTP Auth"
@@ -67,18 +66,20 @@ msgstr "Configuración de HTTP Auth"
 msgid "Settings saved successfully"
 msgstr "Configuración guardada con éxito"
 
-#, fuzzy
 msgid "Missing HTTP Authorization"
-msgstr "Identificarse usando autenticación HTTP"
+msgstr "Autorización HTTP no encontrada"
 
 #, c-format
 msgid ""
 "Gallery can't access HTTP usernames and passwords.  You can still use your web server's "
 "authentication.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Gallery no puede acceder al los nombres de usuario y contraseñas HTTP.  Puedes seguir usando "
+"la autenticación de tu servidor web.  La documentación para la solución de problemas se "
+"encuentra en el %sGallery Codex%s."
 
 msgid "URL rewrite module disabled"
-msgstr ""
+msgstr "Módulo de reescritura de URL deshabilitado"
 
 #, c-format
 msgid ""
@@ -87,9 +88,14 @@ msgid ""
 "Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting "
 "documentation is in the %sGallery Codex%s."
 msgstr ""
+"No podemos pasar los nombres de usuario y las contraseñas a Gallery porque el módulo de "
+"reescritura de URL se encuentra deshabilitado.  Debes activar el módulo de reescritura de "
+"URL en la %sopción de Plugins de la Administración del Sitio%s y elegir mod_rewrite de "
+"Apache o bien ISAPI_Rewrite.  La documentación para la solución de problemas se encuentra en "
+"el %sGallery Codex%s."
 
 msgid "Bad URL rewrite configuration"
-msgstr ""
+msgstr "Mala configuración de reescritura de URL"
 
 #, c-format
 msgid ""
@@ -98,9 +104,14 @@ msgid ""
 "sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  "
 "Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"La reescritura de Información de Ruta PHP no soporta la regla para pasar nombres de usuario "
+"y contraseñas HTTP a Gallery.  Deberias desinstalar y reinstalar el módulo de reescritura de "
+"URL en la %sopción de Plugins de la Administración del Sitio%s y elegir mod_rewrite de "
+"Apache o bien ISAPI_Rewrite.  La documentación para la solución de problemas se encuentra en "
+"el %sGallery Codex%s."
 
 msgid "'Authorization Header' rule disabled"
-msgstr ""
+msgstr "'Cabecera de Autorización' regla deshabilitada"
 
 #, c-format
 msgid ""
@@ -108,15 +119,22 @@ msgid ""
 "disabled.  You should activate the HTTP auth 'Authorization Header' rule in the %sSite Admin "
 "URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"La regla de reescritura de URL para pasar nombres de usuario y contraseñas HTTP a Gallery "
+"está deshabilitada.  Debes activar la regla de HTTP auth 'Cabecera de Autorización' en la %"
+"sopción de Reescritura de URL de la Administración del Sitio%s.  La documentación para la "
+"solución de problemas se encuentra en el %sGallery Codex%s."
 
 msgid "Unknown Cause"
-msgstr ""
+msgstr "Causa Desconocida"
 
 #, c-format
 msgid ""
 "Gallery can't access HTTP usernames and passwords and automated checks failed to find a "
 "cause.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Gallery no puede acceder a las contraseñas y nombres de usuario HTTP y las comprobaciones "
+"automáticas fallan al buscar la causa.  La documentación para la solución de problemas se "
+"encuentra en el %sGallery Codex%s."
 
 msgid "Gallery can handle HTTP Basic authentication directly."
 msgstr "Gallery puede manejar directamente la autenticación básica de HTTP"
@@ -129,8 +147,8 @@ msgid ""
 "authentication sends your client a realm to which your username belongs.  It's safe to leave "
 "the realm blank."
 msgstr ""
-"Gallery te impulsará a identificarte con la autenticación HTTP cuando se niegue el permiso.  "
-"La autenticación HTTP envía a tu cliente al dominio al cual tu nombre de usuario "
+"Gallery te preguntará para identificarte con la autenticación HTTP cuando se niegue el "
+"permiso.  La autenticación HTTP envía a tu cliente al dominio al cual tu nombre de usuario "
 "pertenezca.  Es seguro dejar el dominio en blanco."
 
 msgid "HTTP Authentication Realm:"
@@ -147,6 +165,12 @@ msgstr ""
 
 msgid "Use Web Server Authentication:"
 msgstr "Usar Autenticación del Servidor Web:"
+
+msgid "By default HTTP authentication is only enabled for specific modules."
+msgstr ""
+
+msgid "Use the authentication plugins for all modules:"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -203,20 +227,5 @@ msgstr "Reiniciar"
 #, c-format
 msgid "If you're not automatically redirected, %sclick here to finish logging out%s."
 msgstr ""
-
-#~ msgid "Rewrite rule not configured"
-#~ msgstr "Regla de reescritura no configurada"
-
-#~ msgid ""
-#~ "You are running Gallery with the PHP CGI server API but the Authorization HTTP header "
-#~ "rewrite rule isn't enabled.  HTTP authentication against Gallery's user database won't "
-#~ "work without this rule because CGI scripts ordinarily can't access the Authorization HTTP "
-#~ "header in which usernames and passwords are sent.  Web server authentication will still "
-#~ "work."
-#~ msgstr ""
-#~ "Estás ejecutando Gallery con la API PHP CGI del servidor pero la regla de reescritura de "
-#~ "la cabecera de Autorización HTTP no está habilitada.  La autenticación HTTP al contrario "
-#~ "que la base de datos de usuarios de Gallery no puede funcionar sin esta regla ya que los "
-#~ "scripts CGI normalmente no pueden acceder a la cabecera de Autenticación HTTP en la cual "
-#~ "se envían los nombres de usuario y las contraseñas.  La autenticación del servidor web "
-#~ "dejará de funcionar."
+"Si no eres redirigido de forma automática, %shaz click aquí para cerrar sesión "
+"definitivamente%s."

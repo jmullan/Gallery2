@@ -22,10 +22,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.25\n"
+"Project-Id-Version: Gallery: Core 1.1.29\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2005-10-25 17:54+0200\n"
-"PO-Revision-Date: 2006-11-07 16:38+0100\n"
+"PO-Revision-Date: 2007-01-23 17:31+0100\n"
 "Last-Translator: Oscar Garcia Amor <oscar.garcia@moire.org>\n"
 "Language-Team: Spanish <gallery-translations@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -114,6 +114,10 @@ msgstr "Hecho."
 msgid "Updating Packages"
 msgstr "Actualizando Paquetes"
 
+#, fuzzy, c-format
+msgid "Preparing %s"
+msgstr "Preparando..."
+
 #, c-format
 msgid "Downloading %s"
 msgstr "Descargando %s"
@@ -124,6 +128,10 @@ msgstr "Activando %s"
 
 msgid "Deleting Language Packs"
 msgstr "Borrando Paquetes de Idioma"
+
+#, fuzzy
+msgid "Update completed with errors."
+msgstr "Actualización completa."
 
 msgid "Update complete."
 msgstr "Actualización completa."
@@ -234,22 +242,23 @@ msgstr "Convirtiendo los datos en MySQL a UTF8"
 msgid "Upgrading permissions (%d items complete, %d remaining)"
 msgstr "Actualizando permisos (%d elementos competos, faltan %d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Detectando derivadas rotas, cargando "
+msgstr "Detectando derivadas rotas, cargando (%d derivadas comprobadas, faltan %d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Detectando derivadas rotas, guardando "
+msgstr "Detectando derivadas rotas, guardando (%d derivadas comprobadas, faltan %d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Detectando derivadas rotas, guardando "
+msgstr "Detectando derivadas rotas, guardando (%d derivadas comprobadas, faltan %d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Actualizando permisos (%d elementos competos, faltan %d)"
+msgstr ""
+"Detectando derivadas rotas, guardando elemento %d de %d (%d derivadas competas, faltan %d)"
 
 #, c-format
 msgid "Deleting old session files (iteration %d)"
@@ -742,7 +751,6 @@ msgstr ""
 "No puedo crear el subdirectorio de cache. Asegurate de que el servidor web tiene permiso de "
 "escritura en él."
 
-#, fuzzy
 msgid "Official Release Repository"
 msgstr "Repositorio de la Versión Oficial"
 
@@ -812,11 +820,11 @@ msgid "Donate to the Gallery project"
 msgstr "Dona al proyecto Gallery"
 
 msgid "G2.2: Double Double"
-msgstr ""
+msgstr "G2.2: Doble Doble"
 
 #, c-format
 msgid "Powered by Gallery v%s"
-msgstr ""
+msgstr "Potenciado por Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -891,6 +899,8 @@ msgstr "Debes escribir un numero mayor que cero"
 
 msgid "Error reading block settings. Clear your browser cache and try again."
 msgstr ""
+"Error leyendo la configuración del bloque. Borra la caché de tu navegador e intentalo de "
+"nuevo."
 
 #, c-format
 msgid "%dx%d"
@@ -1177,7 +1187,7 @@ msgid ""
 msgstr ""
 "Por defecto Gallery usa la función de correo interna de PHP para enviar correos lo cual no "
 "requiere configuración.  Para usar un servidor de correo smtp introduce la información a "
-"continuación, incluyendo la información de autenticació si es necesario.  Opcionalmente "
+"continuación, incluyendo la información de autenticación si es necesario.  Opcionalmente "
 "agrega :puerto después del nombre del servidor para usar un puerto no estándar."
 
 msgid "Server"
@@ -1550,9 +1560,8 @@ msgstr "(sugerido)"
 msgid "Options"
 msgstr "Opciones"
 
-#, fuzzy
 msgid "Lock user."
-msgstr "Sistema de bloqueo"
+msgstr "Bloquear usuario."
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
@@ -1560,15 +1569,14 @@ msgstr ""
 "Los usuarios bloqueados no pueden editar la información de su propia cuenta. (Contraseña, "
 "Nombre, Dirección de correo electrónico, etc.)"
 
-#, fuzzy
 msgid "Reset failed login count."
-msgstr "Reiniciar contadores de visitas"
+msgstr "Reiniciar contadores de fallos de autenticación."
 
 #, c-format
 msgid "%d failed login attempt since the last successful login."
 msgid_plural "%d failed login attempts since the last successful login."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d fallo de autenticación desde la última conexión con éxito."
+msgstr[1] "%d fallos de autenticación desde la última conexión con éxito."
 
 msgid "Group Management"
 msgstr "Gestión de Grupos"
@@ -1852,11 +1860,11 @@ msgid "Actions"
 msgstr "Acciones"
 
 msgid "help"
-msgstr ""
+msgstr "ayuda"
 
 #, c-format
 msgid "Screenshot for %s"
-msgstr ""
+msgstr "Captura de pantalla para %s"
 
 msgid "Incompatible plugin!"
 msgstr "&iexcl;Plugin Incompatible!"
@@ -1894,6 +1902,17 @@ msgstr ""
 
 #, c-format
 msgid "Failed to scan status from plugin: %s."
+msgstr "Fallo al escanear el estado del plugin: %s."
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+
+#, c-format
+msgid ""
+"Failed to download the %s plugin because the following files/directories could not be "
+"modified:"
 msgstr ""
 
 msgid "The repository index has been successfully updated."
@@ -2273,13 +2292,11 @@ msgstr "No puedes eliminar el usuario especial invitado."
 msgid "Edit User (by list)"
 msgstr "Editar Usuario (por lista)"
 
-#, fuzzy
 msgid "Locked"
-msgstr "bloqueado"
+msgstr "Bloqueado"
 
-#, fuzzy
 msgid "Failed Logins"
-msgstr "Fracaso"
+msgstr "Conexiones Fallidas"
 
 msgid "Thumbnails"
 msgstr "Miniaturas"
@@ -2313,9 +2330,8 @@ msgstr "Error en la Base de Datos"
 msgid "Platform Error"
 msgstr "Error de Plataforma"
 
-#, fuzzy
 msgid "Authentication Failure"
-msgstr "Autorización Confirmada"
+msgstr "Fallo de Autenticación"
 
 msgid "Error"
 msgstr "Error"
@@ -2336,10 +2352,11 @@ msgid ""
 "If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
 "Administrators can clear out this cache."
 msgstr ""
+"Si este problema sucede en repetidas ocasiones, puede ser por una corrupcion en tu caché.  "
+"Los Administradores del Sitio pueden limpiar esta caché."
 
-#, fuzzy
 msgid "Clear the cache"
-msgstr "Borrar Paginas Guardadas"
+msgstr "Vaciar la caché"
 
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr ""
@@ -2352,6 +2369,8 @@ msgid ""
 "Your change cannot be completed due to a loss of session data. Please try again. If it still "
 "doesn't work, try logging out and logging back in."
 msgstr ""
+"Tu cambio no se puede completar debido a una perdida de datos de sesión. Por favor "
+"reintentalo. Si sigue sin funcionar, intenta desconectarte y volver a conectarte de nuevo."
 
 msgid "An error has occurred while interacting with the database."
 msgstr "Ha ocurrido un error interactuando con la base de datos."
@@ -2499,7 +2518,7 @@ msgstr ""
 "sistemas que habilite un mayor ratio de subida."
 
 msgid "More Upload Boxes..."
-msgstr ""
+msgstr "Mas Cajas de Subida..."
 
 msgid "Set item titles from:"
 msgstr "Establecer los títulos de los elementos de:"
@@ -3198,6 +3217,9 @@ msgid ""
 "is either disabled or not supported by your browser. Please enable JavaScript by changing "
 "your browser options, then try again."
 msgstr ""
+"JavaScript debe ser habilitado para que esta página funcione correctamente. Sin embargo, "
+"parece que JavaScript está deshabilitado o bien no está soportado por tu navegador. Por "
+"favor habilita JavaScript cambiando las opciones de tu navegador e intentalo de nuevo."
 
 msgid "Site is temporarily down for maintenance."
 msgstr "El sitio está caido de forma temporal por mantenimiento."
@@ -3366,6 +3388,9 @@ msgid ""
 "for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
 "this account."
 msgstr ""
+"La conexión a esta cuenta se encuentra deshabilitada temporalmente debido a multiples "
+"intentos fallidos de autenticación.  Espera a que el acceso sea reestablecido o usa la <a "
+"href=\"%s\">página de recuperación de contraseña</a> para rehabilitar esta cuenta."
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Tu información de inicio de sesión es incorrecta. Por favorinténtalo de nuevo."
@@ -3677,18 +3702,3 @@ msgstr "Bloque de Inicio de Sesión"
 
 msgid "Links to album/photo peers"
 msgstr "Enlaces a los pares de álbum/foto"
-
-#~ msgid "Format: [module.BlockName param=value] ..."
-#~ msgstr "Formato: [módulo.NombredelBloque param=valor] ..."
-
-#~ msgid "Detecting broken derivatives "
-#~ msgstr "Detectando derivadas rotas "
-
-#~ msgid "Detecting broken derivatives, "
-#~ msgstr "Detectando derivadas rotas, "
-
-#~ msgid "More.."
-#~ msgstr "Mas..."
-
-#~ msgid "Lock Account"
-#~ msgstr "Bloquear Cuenta"
