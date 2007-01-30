@@ -309,6 +309,7 @@ class AdminRepositoryView extends GalleryView {
 	    $AdminRepository['showIncompatible'] = 1;
 	}
 
+	$AdminRepository['coreUpgradeAvailable'] = false;
 	foreach ($repositories as $source => $repository) {
 	    if (!$repository->localIndexExists()) {
 		break;
@@ -354,18 +355,17 @@ class AdminRepositoryView extends GalleryView {
 		array_merge(array('name' => $message), $indexMetaData);
 
 	    /* Get core upgrade info. */
-	    if (empty($AdminRepository['coreUpgradeAvailable'])) {
-		list ($ret, $isCoreUpgradeAvailable, $apiVersions) =
+	    if ($source == 'released') {
+		list ($ret, $AdminRepository['isCoreUpgradeAvailable'], $apiVersions) =
 		    $repository->isCoreUpgradeAvailable();
 		if ($ret) {
 		    return array($ret, null);
 		}
-		if ($isCoreUpgradeAvailable) {
+		if ($AdminRepository['isCoreUpgradeAvailable']) {
 		    $AdminRepository['latestCoreApiVersion'] = $apiVersions['core'];
 		    $AdminRepository['latestThemeApiVersion'] = $apiVersions['theme'];
 		    $AdminRepository['latestModuleApiVersion'] = $apiVersions['module'];
 		}
-		$AdminRepository['coreUpgradeAvailable'] = $isCoreUpgradeAvailable;
 	    }
 	}
 
