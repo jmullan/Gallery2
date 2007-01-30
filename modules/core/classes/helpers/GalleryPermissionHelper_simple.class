@@ -421,6 +421,12 @@ class GalleryPermissionHelper_simple {
      * @see GalleryCoreApi::getPermissions
      */
     function getPermissions($itemId, $userId=null) {
+	global $gallery;
+
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
+
 	$cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId)";
 	if (GalleryDataCache::containsKey($cacheKey)) {
 	    $permissions = GalleryDataCache::get($cacheKey);
