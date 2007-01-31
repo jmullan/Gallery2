@@ -322,6 +322,12 @@ class GalleryUserHelper_medium {
 	    if ($ret) {
 		return array($ret, null);
 	    }
+
+	    $session =& $gallery->getSession();
+	    $ret = $session->regenerate();
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	} else if ($event->getEventName() == 'Gallery::FailedLogin') {
 	    $data = $event->getData();
 	    if (!empty($data['userName'])) {

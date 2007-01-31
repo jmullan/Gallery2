@@ -49,8 +49,13 @@ class HttpAuthPlugin /* extends GalleryAuthPlugin */ {
 	 * post a login event each time we do this, but we need to post FailedLogin events.
 	 */
 	if (isset($user) && $user->isCorrectPassword($password)) {
+	    $ret = HttpAuthHelper::regenerateSessionIfNecessary($user);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
 	    return array(null, $user);
-	} else if (!empty($username) && strncmp($username, '__LOGOUT__', strlen('__LOGOUT__'))) {
+	} else if (!empty($username) && strpos($username, '__LOGOUT__') !== 0) {
 	    /*
 	     * Don't post an event if the username starts with __logout__ since that is used when we
 	     * try to force the user-agent to clear its auth cache.

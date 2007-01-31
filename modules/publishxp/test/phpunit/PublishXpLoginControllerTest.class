@@ -40,14 +40,6 @@ class PublishXpLoginControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_user);
-	$this->_saveSession = $gallery->_session;
-	$gallery->_session = new GallerySession();
-    }
-
-    function tearDown() {
-	global $gallery;
-	$gallery->_session = $this->_saveSession;
-	parent::tearDown();
     }
 
     function testLogin() {

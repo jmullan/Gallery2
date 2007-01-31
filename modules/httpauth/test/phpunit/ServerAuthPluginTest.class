@@ -47,9 +47,15 @@ class ServerAuthPluginTest extends GalleryTestCase {
 	$_SERVER['AUTH_TYPE'] = 'Test';
 
 	$this->_plugin = new ServerAuthPlugin();
+
+	$this->_saveSession = $gallery->_session;
+	$gallery->_session = new HttpAuthPluginTestSession();
     }
 
     function tearDown() {
+	global $gallery;
+	$gallery->_session = $this->_saveSession;
+
 	$ret = GalleryCoreApi::removeAllMapEntries('FailedLoginsMap');
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -59,6 +65,9 @@ class ServerAuthPluginTest extends GalleryTestCase {
     }
 
     function testValidUser() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
 	$_SERVER['REMOTE_USER'] = $this->_user->getUserName();
 
 	list ($ret, $user) = $this->_plugin->getUser();
@@ -67,6 +76,7 @@ class ServerAuthPluginTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals($this->_user, $user);
+	$this->assert($session->regenerateWasCalled(), 'Session has not been regenerated!');
     }
 
     function testInvalidUser() {
@@ -78,6 +88,27 @@ class ServerAuthPluginTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(null, $user);
+    }
+}
+
+/**
+ * Mock Session
+ */
+class ServerAuthPluginTestSession {
+    function ServerAuthPluginTestSession() {
+	$this->_regenerateWasCalled = false;
+    }
+
+    function getUserId() {
+	return null;
+    }
+
+    function regenerate() {
+	$this->_regenerateWasCalled = true;
+    }
+
+    function regenerateWasCalled() {
+	return $this->_regenerateWasCalled;
     }
 }
 ?>

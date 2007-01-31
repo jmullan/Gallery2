@@ -98,6 +98,9 @@ class ImageUploadHelper {
 	    /* ignore errors, we're erroring out anyway */
 	    return $status;
 	} else {
+	    $gallery->debug('Username and password correct.');
+	    $gallery->setActiveUser($user);
+
 	    $event = GalleryCoreApi::newEvent('Gallery::Login');
 	    $event->setEntity($user);
 	    list ($ret, $ignored) = GalleryCoreApi::postEvent($event);
@@ -106,9 +109,6 @@ class ImageUploadHelper {
 		return $status;
 	    }
 	}
-
-	$gallery->debug('Username and password correct.');
-	$gallery->setActiveUser($user);
 
 	/* Add user to the mobile users' group if s/he isn't yet a member of it */
 	list ($ret, $groupId) =
@@ -420,7 +420,8 @@ class ImageUploadHelper {
 	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem',
 								'core.addDataItem');
 	if ($ret || count($albumIds) < 1) {
-	    $gallery->debug("ERROR: No albums with addDataItem permission.\n" . $ret->getAsText());
+	    $gallery->debug("ERROR: No albums with addDataItem permission.\n"
+	    	    . ($ret ? $ret->getAsText() : ''));
 	    return $status;
 	}
 

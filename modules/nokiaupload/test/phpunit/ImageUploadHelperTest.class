@@ -55,7 +55,8 @@ class ImageUploadHelperTest extends GalleryTestCase {
 
 	$status = ImageUploadHelper::doLogin();
 
-	$this->assertEquals($this->_user, $listener->_event->getEntity());
+	$this->assertEquals('Gallery::Login', $listener->_event->getEventName(), 'Login event');
+	$this->assertEquals($this->_user, $listener->_event->getEntity(), 'Event entity');
 	$suffix = "&\r\n";
 	$this->assertEquals(
 	    array('success' => '0',

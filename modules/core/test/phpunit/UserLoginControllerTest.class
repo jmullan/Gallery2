@@ -19,6 +19,7 @@
  */
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryValidationPlugin.class');
+GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryUserHelper_medium.class');
 
 /**
  * UserLogin controller tests
@@ -51,6 +52,9 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	/* Set up a mock session so that we don't accidentally log out the PHPUnit session */
 	$this->_mockSession = new UserLoginControllerTestSession();
 	$gallery->_session =& $this->_mockSession;
+
+	$eventHandler = new GalleryUserHelper_medium();
+	$this->_registerTestEventListener('Gallery::Login', $eventHandler);
 
 	list ($ret, $this->_validationLevel) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'validation.level');
@@ -91,6 +95,9 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
 
+	$listener = new NullEventListener();
+	$this->_registerTestEventListener('Gallery::Login', $listener);
+
 	$results = $this->handleRequest();
 	/* May get a redirect url (like from useralbum module) or return */
 	$this->assert(isset($results['return']) || isset($results['redirect']), 'result');
@@ -100,6 +107,10 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_user->getId(), $gallery->getActiveUserId());
 	$this->assert($this->_mockSession->regenerateWasCalled(),
 		      '$session->regenerate() was not called');
+
+	/* Verify our event got posted */
+	$this->assertEquals('Gallery::Login', $listener->_event->getEventName(), 'Login event');
+	$this->assertEquals($this->_user, $listener->_event->getEntity(), 'Event entity');
     }
 
     function testLoginDisabledUserName() {

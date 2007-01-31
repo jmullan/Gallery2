@@ -53,6 +53,13 @@ class ServerAuthPlugin /* extends GalleryAuthPlugin */ {
 	    return array($ret, null);
 	}
 
+	if (!empty($user)) {
+	    $ret = HttpAuthHelper::regenerateSessionIfNecessary($user);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
 	return array(null, $user);
     }
 }

@@ -70,9 +70,6 @@ class PublishXpLoginController extends GalleryController {
 			return array($ret, null);
 		    }
 
-		    $session =& $gallery->getSession();
-		    $session->regenerate();
-
 		    $results['redirect']['view'] = 'publishxp.SelectAlbum';
 		}
 	    }

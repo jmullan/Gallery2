@@ -210,6 +210,27 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
     }
 
     /**
+     * Regenerate the session if this request might the initial login (active auth vs passive auth).
+     * @param object GalleryUser $authenticatedUser user authenticated for this request
+     * @return object GalleryStatus a status code
+     */
+    function regenerateSessionIfNecessary($authenticatedUser) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$oldUserId = $session->getUserId();
+	if (isset($authenticatedUser) && $oldUserId != $authenticatedUser->getId()) {
+	    /* This *may* be an initial authentication.  We need to regenerate the session. */
+	    $ret = $session->regenerate();
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	return null;
+    }
+
+    /**
      * Adds the given pair of username / password to the given URL as HTTP auth user:pass@hostname. 
      * @param string $url An absolute URL
      * @param string $username

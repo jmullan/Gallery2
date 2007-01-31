@@ -130,10 +130,15 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	/* Clear response headers */
 	$this->_headers =& GalleryUtilities::_getResponseHeaders();
 	$this->_headers = array();
+
+	$this->_saveSession = $gallery->_session;
     }
 
     function tearDown() {
+	global $gallery;
 	GalleryDataCache::reset();
+	$gallery->_session = $this->_saveSession;
+
 	parent::tearDown();
 
 	if (!empty($this->_resetFactory)) {    
@@ -534,6 +539,54 @@ class HttpAuthHelperTest extends GalleryTestCase {
 		'www-authenticate' => "WWW-Authenticate: Basic realm='TEST_AUTH_NAME'"),
 			    $this->_headers);
     }
+
+    function testRegenerateSessionIfNecessary() {
+	global $gallery;
+	$gallery->_session = new HttpAuthHelperTestSession();
+
+	$ret = HttpAuthHelper::regenerateSessionIfNecessary($this->_user);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($gallery->_session->regenerateWasCalled());
+    }
+
+    function testRegenerateSessionIfNecessarySameUserAsFromSession() {
+	global $gallery;
+	$gallery->_session = new HttpAuthHelperTestSession($this->_user->getId());
+
+	$ret = HttpAuthHelper::regenerateSessionIfNecessary($this->_user);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(!$gallery->_session->regenerateWasCalled());
+    }
+
+    function testRegenerateSessionIfNecessaryOtherUserThanFromSession() {
+	global $gallery;
+	$gallery->_session = new HttpAuthHelperTestSession('OTHER_USER');
+
+	$ret = HttpAuthHelper::regenerateSessionIfNecessary($this->_user);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($gallery->_session->regenerateWasCalled());
+    }
+
+    function testRegenerateSessionIfNecessaryNoAuthenticatedUser() {
+	global $gallery;
+	$gallery->_session = new HttpAuthHelperTestSession($this->_user->getId());
+
+	$ret = HttpAuthHelper::regenerateSessionIfNecessary(null);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(!$gallery->_session->regenerateWasCalled());
+    }
 }
 
 class HttpAuthHelperTestRewriteApi {
@@ -613,9 +666,29 @@ class HttpAuthHelperTestPlatform extends GalleryPlatform {
 	return true;
     }
 }
+
 class HttpAuthHelperTestPhpVm extends GalleryPhpVm {
     function header($header, $replace=null) {
 	/* Avoid modifying actual header information */
+    }
+}
+
+class HttpAuthHelperTestSession {
+    function HttpAuthHelperTestSession($userId=null) {
+	$this->_userId = $userId;
+	$this->_regenerateWasCalled = false;
+    }
+
+    function getUserId() {
+	return $this->_userId;
+    }
+
+    function regenerate() {
+	$this->_regenerateWasCalled = true;
+    }
+
+    function regenerateWasCalled() {
+	return $this->_regenerateWasCalled;
     }
 }
 ?>

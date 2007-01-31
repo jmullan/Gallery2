@@ -63,12 +63,12 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-
 	$this->_markForCleanup($this->_user);
 
-	$this->_password = 'password';
-	if (!$this->_user->isCorrectPassword($this->_password)) {
-	    return $this->assert(false, "test user wasn't created with expected password");
+	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $this->_group->getId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
 	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'nokiaupload');
@@ -96,15 +96,8 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	// Login our test user
-	GalleryUtilities::putRequestVariable('Username', $this->_user->getUserName(), false);
-	GalleryUtilities::putRequestVariable('Password', $this->_password, false);
-	$results = ImageUploadHelper::doLogin();
-	if ($results['success'] != NOKIAUPLOAD_ERR_NOERR ||
-		$gallery->getActiveUser() != $this->_user) {
-	    return $this->assert(false, 'unable to login test user');
-	}
-	GalleryUtilities::removeRequestVariable('Username', false);
-	GalleryUtilities::removeRequestVariable('Password', false);
+	$gallery->setActiveUser($this->_user);
+
 	$session =& $gallery->getSession();
 	$session->remove('permissionCache');
 	$ret = GalleryCoreApi::assertHasItemPermission($this->_getRootId(), 'core.addAlbumItem');

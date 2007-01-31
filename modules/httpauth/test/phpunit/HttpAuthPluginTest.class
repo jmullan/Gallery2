@@ -48,11 +48,17 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	$this->_plugin = new HttpAuthPlugin();
 
+	$this->_saveSession = $gallery->_session;	
+	$gallery->_session = new HttpAuthPluginTestSession();
+
 	$this->_listener = new NullEventListener();
 	$this->_registerTestEventListener('Gallery::FailedLogin', $this->_listener);
     }
 
     function tearDown() {
+	global $gallery;
+	$gallery->_session = $this->_saveSession;
+
 	$ret = GalleryCoreApi::removeAllMapEntries('FailedLoginsMap');
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -62,6 +68,9 @@ class HttpAuthPluginTest extends GalleryTestCase {
     }
 
     function testValidUser() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
 	$_SERVER['PHP_AUTH_USER'] = $this->_user->getUserName();
 	$_SERVER['PHP_AUTH_PW'] = 'password';
 
@@ -72,6 +81,7 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	$this->assertEquals($this->_user, $user);
 	$this->assert(!isset($this->_listener->_event), 'There was a FailedLogin event!');
+	$this->assert($session->regenerateWasCalled(), 'Session has not been regenerated!');
     }
 
     function testInvalidUser() {
@@ -123,6 +133,27 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	$this->assert(!isset($user));
 	$this->assert(!isset($this->_listener->_event), 'There was a FailedLogin event!');
+    }
+}
+
+/**
+ * Mock Session
+ */
+class HttpAuthPluginTestSession {
+    function HttpAuthPluginTestSession() {
+	$this->_regenerateWasCalled = false;
+    }
+
+    function getUserId() {
+	return null;
+    }
+
+    function regenerate() {
+	$this->_regenerateWasCalled = true;
+    }
+
+    function regenerateWasCalled() {
+	return $this->_regenerateWasCalled;
     }
 }
 ?>

@@ -38,9 +38,21 @@ class UserHelperTest extends GalleryTestCase {
 	$this->_storage = new UserHelperTestMockStorage();
 	$gallery->_storage =& $this->_storage;
 	$gallery->_phpVm =& $this->_phpVm;
+	$this->_saveSession = $gallery->_session;
+    }
+
+    function tearDown() {
+	global $gallery;
+	$gallery->_session = $this->_saveSession;
+
+	parent::tearDown();
     }
 
     function testGalleryLoginEvent() {
+	global $gallery;
+
+	$gallery->_session = new UserHelperTestSession();
+
 	$event = GalleryCoreApi::newEvent('Gallery::Login');
 	$event->setEntity(new UserHelperTestMockUser());
 	list ($ret, $ignored) = GalleryUserHelper_medium::handleEvent($event);
@@ -51,6 +63,9 @@ class UserHelperTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array(array('remove', 'FailedLoginsMap', array('userName' => 'MockUser'))),
 	    $this->_storage->_operations);
+
+	$this->assert($gallery->_session->regenerateWasCalled(),
+		      'Regenerate session was not called!');
     }
 
     function testGalleryFailedLoginEventFirstFailure() {
@@ -277,6 +292,23 @@ class UserHelperTestPhpVm {
 
     function time() {
 	return $this->_time;
+    }
+}
+
+/**
+ * Mock Session
+ */
+class UserHelperTestSession {
+    function UserHelperTestSession() {
+	$this->_regenerateWasCalled = false;
+    }
+
+    function regenerate() {
+	$this->_regenerateWasCalled = true;
+    }
+
+    function regenerateWasCalled() {
+	return $this->_regenerateWasCalled;
     }
 }
 ?>
