@@ -246,7 +246,7 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 	    return $rules;
 	}
-	if (empty($rewriteApi)) {
+	if (!isset($rewriteApi)) {
 	    return $rules;
 	}
 
@@ -361,7 +361,7 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($ret) {
 	    return $ret;
 	}
-	if (empty($rewriteApi)) {
+	if (!isset($rewriteApi)) {
 	    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
 	}
 

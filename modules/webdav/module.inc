@@ -251,7 +251,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 	    return $rules;
 	}
-	if (empty($rewriteApi)) {
+	if (!isset($rewriteApi)) {
 	    return $rules;
 	}
 
@@ -325,7 +325,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 		if ($ret) {
 		    return array($ret, null);
 		}
-		if (!empty($httpAuthInterface)) {
+		if (isset($httpAuthInterface)) {
 		    $ret = $httpAuthInterface->requestAuthentication();
 		    if ($ret) {
 			return array($ret, null);
@@ -349,7 +349,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($ret) {
 	    return $ret;
 	}
-	if (empty($rewriteApi)) {
+	if (!isset($rewriteApi)) {
 	    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
 	}
 

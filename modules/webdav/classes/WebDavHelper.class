@@ -75,7 +75,7 @@ class WebDavHelper {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    if (empty($rewriteApi)) {
+	    if (!isset($rewriteApi)) {
 		return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
 	    }
 
@@ -154,7 +154,7 @@ class WebDavHelper {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    if (!empty($httpAuthInterface)) {
+	    if (isset($httpAuthInterface)) {
 		list ($ret, $httpAuthPluginEnabled, $serverAuthPluginEnabled) =
 			$httpAuthInterface->getConfiguration();
 		if ($ret) {
@@ -643,7 +643,7 @@ class WebDavHelper {
 	$files[] = $file;
 
 	if ($depth <= 0) {
-	    return;
+	    return null;
 	}
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
@@ -652,7 +652,7 @@ class WebDavHelper {
 	}
 
 	if (empty($childIds)) {
-	    return;
+	    return null;
 	}
 
 	list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
@@ -672,6 +672,8 @@ class WebDavHelper {
 		return $ret;
 	    }
 	}
+
+	return null;
     }
 
     /**
@@ -786,6 +788,8 @@ class WebDavHelper {
 	if ($ret) {
 	    return $ret;
 	}
+
+	return null;
     }
 
     /**
