@@ -121,7 +121,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
-	$this->assert(!empty($this->_authInterface), 'Could not instantiate auth interface.');
+	$this->assert(isset($this->_authInterface), 'Could not instantiate auth interface.');
 
 	/* Use HttpAuthModuleTestPhpVm */
 	$this->_phpVm = new HttpAuthHelperTestPhpVm();
