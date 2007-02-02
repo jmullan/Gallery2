@@ -557,6 +557,51 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	$this->assertEquals($expected, $link);
     }
+
+    function testGetParentItemIdByPathDefaultForNoParent() {
+	list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath('foo');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($this->_getRootId(), $parentId);
+    }
+
+    function testGetParentItemIdByPathForTopLevelItems() {
+	list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath('/foo');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($this->_getRootId(), $parentId);
+    }
+
+    function testGetParentItemIdByPathForNonExistentPath() {
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($album);
+
+	list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath(
+		'/' . $album->getPathComponent()  . '/foo');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($album->getId(), $parentId);
+    }
+
+    function testGetParentItemIdByPathForMissingParent() {
+	list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath('/test_' . rand() . '/foo');
+	if ($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+	    /* As expected */
+	} else if ($ret) {
+	    return $this->failWithStatus($ret);
+	} else {
+	    $this->fail('should have failed with ERROR_MISSING_OBJECT');
+	}
+    }
 }
 
 class WebDavHelperTestPhpVm extends GalleryPhpVm {

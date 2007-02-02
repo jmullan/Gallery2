@@ -105,40 +105,30 @@ class WebDavController extends GalleryController {
 				     'status' => array(),
 				     'error' => array()));
 	} else if ($requestMethod == 'put') {
-	    $parentPath = dirname($path);
-
-	    /* dirname('foo') is '.' */
-	    if ($parentPath == '.') {
-		list ($ret, $parentId) = GalleryCoreApi::getDefaultAlbumId();
-		if ($ret) {
-		    return array($ret, null);
-		}
-	    } else {
-		list ($ret, $parentId) = GalleryCoreApi::fetchItemIdByPath($parentPath);
-		if ($ret) {
-		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			/*
-			 * A PUT that would result in the creation of a resource without an
-			 * appropriately scoped parent collection MUST fail with a 409
-			 * (Conflict).
-			 */
-			WebDavServer::setResponseStatus('409 Conflict');
-		    }
-
-		    return array($ret, null);
+	    list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath($path);
+	    if ($ret) {
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    /*
+		     * A PUT that would result in the creation of a resource without an
+		     * appropriately scoped parent collection MUST fail with a 409
+		     * (Conflict).
+		     */
+		    WebDavServer::setResponseStatus('409 Conflict');
 		}
 
-		/* Until there's a better way to delegate to ItemAdd */
-		GalleryUtilities::putRequestVariable('itemId', $parentId);
-		GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
-		/* Let the ItemAddPlugin handle the replacement for the auth-token check */
-		list ($ret, $data) = ItemAddController::handleRequest($form);
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		return array(null, $data);
+		return array($ret, null);
 	    }
+
+	    /* Until there's a better way to delegate to ItemAdd */
+	    GalleryUtilities::putRequestVariable('itemId', $parentId);
+	    GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
+	    /* Let the ItemAddPlugin handle the replacement for the auth-token check */
+	    list ($ret, $data) = ItemAddController::handleRequest($form);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    return array(null, $data);
 	}
 
 	return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
