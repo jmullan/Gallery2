@@ -135,7 +135,7 @@
     {g->text text="Image frames require CSS to be displayed correctly. Include the following in the %s section to support image frames." arg1="&lt;head&gt;"}
   </p>
   <p class="giInfo">
-    {capture name="cssUrl"}{g->url arg1="controller=imageblock.ExternalCSS" arg2="frames=wood" forceDirect=true forceSessionId=false forceFullUrl=true}{/capture}
+    {capture name="cssUrl"}{g->url arg1="controller=imageblock.ExternalCSS" arg2="frames=wood" forceDirect=true forceSessionId=false forceFullUrl=true useAuthToken=false}{/capture}
     &lt;link rel="stylesheet" href="{$smarty.capture.cssUrl|replace:"&":"&amp;"}"/&gt;
   </p>
   <p class="giDescription">
