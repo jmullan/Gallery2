@@ -112,6 +112,22 @@ class DcrawToolkitHelperTest extends GalleryTestCase {
 	$this->assertEquals('7.73', $version);
     }
 
+    function testBinaryV853() {
+	$this->_platform->setReply('isRestrictedByOpenBaseDir', array('/path/to/dcraw'), 0);
+	$this->_platform->setReply('is_file', array('/path/to/dcraw'), 1);
+	/* Newer versions of dcraw return the help screen to stdout and not in title case. */
+	$this->_platform->setReply('exec', array(array(array('/path/to/dcraw'))),
+				   array(0, array('Raw photo decoder "dcraw" v8.53'), array()));
+
+	list ($ret, $testArray, $version) = DcrawToolkitHelper::testBinary('/path/to/dcraw');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(array('name' => 'dcraw', 'success' => true)), $testArray);
+	$this->assertEquals('8.53', $version);
+    }
+
     function testBinaryOutsideOpenBasedir() {
 	$this->_platform->setReply('isRestrictedByOpenBaseDir', array('/path/to/dcraw'), 1);
 	$this->_platform->setReply('exec', array(array(array('/path/to/dcraw'))),
