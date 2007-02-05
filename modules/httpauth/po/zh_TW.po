@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: HTTP Auth 0.5.0\n"
+"Project-Id-Version: Gallery: HTTP Auth 0.5.1\n"
 "POT-Creation-Date: 2006-11-16 20:11-0500\n"
 "PO-Revision-Date: 2006-11-16 14:00-0500\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -32,31 +32,28 @@ msgstr ""
 msgid "HTTP Auth"
 msgstr "HTTP 認証"
 
-#, fuzzy
 msgid "Login using HTTP authentication."
-msgstr "使用 HTTP 認証登入"
+msgstr "使用 HTTP 認証登入。"
 
 msgid "Authentication"
 msgstr "認証"
 
-#, fuzzy
 msgid "Authorization Header"
-msgstr "認証類型樣式："
+msgstr "認証檔頭"
 
 msgid "Pass the Authorization header to Gallery in a request variable."
-msgstr ""
+msgstr "在要求變數中將認証檔頭傳給 Gallery。"
 
-#, fuzzy
 msgid "Authorization header."
-msgstr "認証類型樣式："
+msgstr "認証檔頭。"
 
 msgid "Logout failed"
-msgstr ""
+msgstr "登入失敗"
 
 msgid ""
 "Gallery tried to logout but failed.  You should close the browser window to logout "
 "successfully."
-msgstr ""
+msgstr "Gallery 試著登出但是失敗了。你必需關掉網頁瀏覽程式才能完全登出。"
 
 msgid "HTTP Auth Settings"
 msgstr "HTTP 認証設定"
@@ -64,18 +61,19 @@ msgstr "HTTP 認証設定"
 msgid "Settings saved successfully"
 msgstr "設定儲存成功"
 
-#, fuzzy
 msgid "Missing HTTP Authorization"
-msgstr "使用 HTTP 認証登入"
+msgstr "沒有 HTTP 認証"
 
 #, c-format
 msgid ""
 "Gallery can't access HTTP usernames and passwords.  You can still use your web server's "
 "authentication.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Gallery 無法存取 HTTP 用戶名稱和密碼。你必需用你的網頁伺服器的認証手續。排除問題的說明在 %"
+"sGallery Codex%s。"
 
 msgid "URL rewrite module disabled"
-msgstr ""
+msgstr "網址改寫模組未啟用"
 
 #, c-format
 msgid ""
@@ -84,9 +82,12 @@ msgid ""
 "Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting "
 "documentation is in the %sGallery Codex%s."
 msgstr ""
+"因為網址改寫模組沒有啟用，我們無法回到傳送用戶名稱和密碼給 Gallery 的方法。你需要在%s網站管理"
+"的外掛組件設定%s中啟用網址改寫模組，並選擇 Apache mode_rewrite 或 ISAPI_Rewrite。排除問題的說"
+"明在 %sGallery Codex%s。"
 
 msgid "Bad URL rewrite configuration"
-msgstr ""
+msgstr "網址改寫設定不正確"
 
 #, c-format
 msgid ""
@@ -95,9 +96,12 @@ msgid ""
 "sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  "
 "Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"PHP PathInfo 的改寫方式並不容許改寫規則傳送用戶名稱和密碼給 Gallery。你需要在%s網站管理的外掛"
+"組件設定%s中卸載再安裝網址改寫模組，並選擇 Apache mode_rewrite 或 ISAPI_Rewrite。排除問題的說"
+"明在 %sGallery Codex%s。"
 
 msgid "'Authorization Header' rule disabled"
-msgstr ""
+msgstr "認証檔頭規則未啟用"
 
 #, c-format
 msgid ""
@@ -105,15 +109,19 @@ msgid ""
 "disabled.  You should activate the HTTP auth 'Authorization Header' rule in the %sSite Admin "
 "URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"傳送用戶名稱和密碼給 Gallery 的網址改寫規則沒有啟用。你需要在%s網站管理的網址改寫設定%s中啟"
+"用 HTTP 認証「認証檔頭」的規則。排除問題的說明在 %sGallery Codex%s。"
 
 msgid "Unknown Cause"
-msgstr ""
+msgstr "不明原因"
 
 #, c-format
 msgid ""
 "Gallery can't access HTTP usernames and passwords and automated checks failed to find a "
 "cause.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Gallery 無法取得 HTTP 用戶名稱和密碼而且自動檢查無法找出原因。排除問題的說明在 %sGallery "
+"Codex%s。"
 
 msgid "Gallery can handle HTTP Basic authentication directly."
 msgstr "Gallery 可以直接處理 HTTP 基本認証。"
@@ -142,6 +150,12 @@ msgstr ""
 
 msgid "Use Web Server Authentication:"
 msgstr "使用網頁伺服器認証："
+
+msgid "By default HTTP authentication is only enabled for specific modules."
+msgstr ""
+
+msgid "Use the authentication plugins for all modules:"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -191,18 +205,4 @@ msgstr "重置"
 
 #, c-format
 msgid "If you're not automatically redirected, %sclick here to finish logging out%s."
-msgstr ""
-
-#~ msgid "Rewrite rule not configured"
-#~ msgstr "未設定網址改寫規則"
-
-#~ msgid ""
-#~ "You are running Gallery with the PHP CGI server API but the Authorization HTTP header "
-#~ "rewrite rule isn't enabled.  HTTP authentication against Gallery's user database won't "
-#~ "work without this rule because CGI scripts ordinarily can't access the Authorization HTTP "
-#~ "header in which usernames and passwords are sent.  Web server authentication will still "
-#~ "work."
-#~ msgstr ""
-#~ "你正在使用 PHP CGI 伺服器 API 的方式執行 Gallery，但是認証 HTTP 檔頭網址改寫規則並沒有啟"
-#~ "用。沒有這個規則，對 Gallery 的用戶資料庫的 HTTP 認証就無法使用，因為通常 CGI 程式無法存取"
-#~ "含有用戶名稱和密碼的 HTTP 檔頭。網頁伺服器認証仍可使用。"
+msgstr "如果你沒有被自動轉到新的網頁，請%s按這裡完成登出手續%s。"

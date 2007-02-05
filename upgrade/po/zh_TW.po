@@ -57,7 +57,7 @@ msgid "System Checks"
 msgstr "系統檢查"
 
 msgid "Performing system checks"
-msgstr ""
+msgstr "進行系統檢查中"
 
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
 msgstr "PHP 版本大於等於 4.3.0 或大於等於 5.0.4"
@@ -138,17 +138,16 @@ msgstr ""
 "會傳回一個空白頁面）並可能導致資料損毀。"
 
 msgid "Filesystem Operations"
-msgstr ""
+msgstr "檔案系統功能"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Essential filesystem operations are disabled in your PHP by the "
 "<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
 "Gallery will run. These functions are missing: %s."
 msgstr ""
-"警告：你的 PHP 中的 putenv() 函式被 php.ini 中的 <b>disabled_functions</b> 參數關閉了。"
-"Gallery 仍然可以在這個設定下執行，可是在極少數的系統上 Gallery 將無法在除了系統和英文以外的語"
-"文下執行。"
+"錯誤：你的 PHP 中的基本檔案系統功能被 php.ini 中的 <b>disabled_functions</b> 參數關閉了。你必"
+"需允許這些函式 Gallery 才能執行。被關閉的函式為：%s"
 
 msgid "Memory limit"
 msgstr "記憶空間限制"
@@ -178,14 +177,14 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "最大上傳大小"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
 "(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
-"警告：你的 PHP 設定成上傳檔案最大為 %sb（在 php.ini 中的 <b>upload_max_filesize</b> 參數）。"
-"你應該提高這個限制以允許上傳更大的檔案。"
+"警告：你的 PHP 最大上傳檔案設定為 %sb（在 php.ini 中的 <b>upload_max_filesize</b> 參數）。你"
+"應該提高這個限制以允許上傳更大的檔案。"
 
 msgid "Maximum POST size"
 msgstr "最大 POST 大小"
@@ -228,7 +227,7 @@ msgstr "你的 PHP 沒有 %sdngettext%s 函式。這表示 Gallery 將無法翻�
 msgid "Zend compatibility mode"
 msgstr "Zend 相容模式"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you see \"SUCCESS\" then your "
@@ -236,8 +235,8 @@ msgid ""
 "before proceeding."
 msgstr ""
 "警告：你的 PHP 設定使用可能使 PHP 當機的 Zend ze1_compatibility_mode 選項。請按<a href=\"%s"
-"\">這裡</a>測試 PHP。如果你看到「SUCCESS」表示你的 PHP 正常。如果你得到一個錯誤訊息，你需要"
-"把 ze1_compatibility_mode關掉才能繼續。"
+"\">這裡</a>測試 PHP。如果你看到「SUCCESS」表示你的 PHP 正常。如果你得到一個錯誤訊息或完全沒有"
+"反應，你需要把 ze1_compatibility_mode關掉才能繼續。"
 
 msgid "putenv() allowed"
 msgstr "允許 putenv()"
@@ -254,7 +253,7 @@ msgstr ""
 msgid "Output buffering disabled"
 msgstr "輸出緩衝已關閉"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
@@ -355,39 +354,38 @@ msgstr "歡迎"
 
 #, c-format
 msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
-msgstr ""
+msgstr "<b>錯誤：</b>找不到 %s。請把它放在你的 %s 目錄中。"
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
 "file."
-msgstr ""
+msgstr "<b>錯誤：</b>無法讀取你的 %s 檔案。請給 Gallery 讀取這個檔案的權限。"
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
 "string from below and try again."
-msgstr ""
+msgstr "<b>錯誤：</b>你的 %s 解碼字串不符合。請從下面下載一個新的認證字串後再試一次。"
 
-#, fuzzy
 msgid ""
 "In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
 "When you performed the install, you entered a password which went into your config.php.  "
 "Type that in now.  Refer to your config.php if you've forgotten what you entered."
 msgstr ""
-"為了繼續安裝的程序，我們必需確認你的身分。當你安裝時，config.php 存入了你輸入的一個密碼。請輸"
+"為了繼續升級的程序，我們必需確認你的身分。當你安裝時，config.php 存入了你輸入的一個密碼。請輸"
 "入那個密碼。如果不記得的話，可以查看 config.php。"
 
 msgid "Password:"
 msgstr "密碼："
 
 msgid "You have exceeded the maximum attempts to login by entering a password."
-msgstr ""
+msgstr "你超過輸入密碼登入的最大容許次數。"
 
 msgid ""
 "To prevent somebody from hacking your website, we now require you to complete a stricter "
 "authentication process."
-msgstr ""
+msgstr "為了防止別人侵入你的網站，我們現在需要你通過更嚴格的認証手續。"
 
 #, c-format
 msgid ""
@@ -397,9 +395,13 @@ msgid ""
 "new text file called %s in the %s directory on your webserver (that's the same directory "
 "where %s is located). It must contain the following randomly generated characters:"
 msgstr ""
+"在繼續升級之前，我們必需確定你確實是你宣稱的身份。最好的方法是要求你在 Gallery 目錄中作一個小"
+"小的改變，這可以用來證明你有正確的權限。所以，我們要求你在你的網頁伺服器的 %2$s 目錄中產生一"
+"個叫 %1$s 的檔案。（那個目錄是 %3$s 所在的同一個目錄）這個檔案的內容必需是下面隨機產生的文"
+"字："
 
 msgid "Once you've uploaded the file, click below to continue."
-msgstr ""
+msgstr "在你上傳這個檔案後，按下面繼續。"
 
 msgid "Authenticate Me"
 msgstr "確認我的身分"
@@ -441,11 +443,11 @@ msgstr "再試一次"
 msgid "Finished!"
 msgstr "完成了！"
 
-#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
 "plugins you may use the Site Administrator interface."
-msgstr "恭禧！你的 Gallery 2 升級已經完成！你可以使用網站管理員界面來升級其他的 Gallery 模組。"
+msgstr ""
+"恭禧！你的 Gallery 2 升級已經完成！你可以使用網站管理員界面來升級其他的 Gallery 外掛組件。"
 
 msgid "Go to my Gallery!"
 msgstr "前往我的 Gallery！"
@@ -623,14 +625,13 @@ msgstr ""
 "目前安裝的版本比你要升級的版本還新。你不能把 G2 降級。請把 Gallery 2 的檔案換成目前安裝或更新"
 "的版本"
 
-#, fuzzy
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
 "will not be able to help you recover your data!  Refer to the following example:"
 msgstr ""
-"在你升級之前，我們<b>強烈地建議</b>你先備份你的資料庫！如果你沒有備份而且發生了問題，很可能我"
-"們會無法協助你復原你的資料！請參考下面的範例："
+"在你升級之前，我們<b>強烈建議</b>你先備份你的資料庫！如果你沒有備份而且發生了問題，很可能我們"
+"會無法幫你復原你的資料！請參考下面的範例："
 
 msgid "MySQL"
 msgstr "MySQL"
@@ -639,13 +640,13 @@ msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
 msgid "Oracle"
-msgstr ""
+msgstr "Oracle"
 
 msgid "IBM DB2"
-msgstr ""
+msgstr "IBM DB2"
 
 msgid "Microsoft SQL Server"
-msgstr ""
+msgstr "Microsoft SQL Server"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -670,20 +671,21 @@ msgid ""
 "<b>Reminder</b>: Now update the permissions on config.php to make sure it is not writeable "
 "by other people.  Right now your config.php has modes of %s.  We suggest that you do this:"
 msgstr ""
+"<b>提示</b>：現在請更新 config.php 的權限，確定它不能被其他人更動。現在你的 config.sys 的權限"
+"是 %s。我們建議你做："
 
 msgid "Your Gallery Core Module is up to date!"
 msgstr "你的 Gallery 核心模組已經是最新版！"
 
-#, fuzzy
 msgid ""
 "The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
 msgstr ""
-"下列的模組可以自動為你升級。如果你選擇不要現在升級它們，你可能會在你的 Gallery 中遭遇問題。你"
-"可以在網站管理頁面中升級或停用這些模組，或稍後回到這個頁面。所以你在這裡做的任何決定都不是不"
-"能改變的。"
+"下列的外掛組件可以自動為你升級。如果你選擇不要現在升級它們，你可能會在你的 Gallery 中遭遇問"
+"題。你可以在網站管理頁面中升級或停用這些模組，或稍後回到這個頁面。所以你在這裡做的任何決定都"
+"是可以改變的。"
 
 msgid "Deactivated Plugins"
 msgstr "停用中的外掛組件"
@@ -724,9 +726,8 @@ msgstr "全部勾選或全部不選"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "略過升級並繼續到步驟 %d&raquo;"
 
-#, fuzzy
 msgid "Upgrade Selected Plugins"
-msgstr "升級所選模組"
+msgstr "升級選取的外掛組件"
 
 #, c-format
 msgid "Upgraded the %s module successfully"
@@ -736,9 +737,8 @@ msgstr "%s模組升級成功"
 msgid "Upgraded the %s theme successfully"
 msgstr "%s佈景主題升級成功。"
 
-#, fuzzy
 msgid "Upgrade More Plugins"
-msgstr "升級外掛組件"
+msgstr "升級其他外掛組件"
 
 #, c-format
 msgid ""
@@ -762,17 +762,3 @@ msgstr "選擇語言："
 
 msgid "Go"
 msgstr "開始"
-
-#~ msgid ""
-#~ "<b>Reminder</b>: Now check the permissions on config.php and make sure it is not globally "
-#~ "writeable."
-#~ msgstr "<b>提示</b>：請檢查 config.php 檔案的存取權限並確定它不是所有人都可寫入。"
-
-#~ msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-#~ msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-
-#~ msgid "pg_dump -h %s --format=t %s > %s.sql"
-#~ msgstr "pg_dump -h %s --format=t %s > %s.sql"
-
-#~ msgid "Upgrade More Modules"
-#~ msgstr "升級其他 Gallery 模組"

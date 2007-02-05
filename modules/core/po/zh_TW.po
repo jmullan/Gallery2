@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.1.25\n"
+"Project-Id-Version: Gallery: Core 1.1.29\n"
 "POT-Creation-Date: 2005-07-27 23:11-0400\n"
 "PO-Revision-Date: 2005-08-24 14:00-0400\n"
 "Last-Translator: Stephen Chu <stephen@ju-ju.com>\n"
@@ -106,6 +106,10 @@ msgstr "完成。"
 msgid "Updating Packages"
 msgstr "正在更新軟體包"
 
+#, fuzzy, c-format
+msgid "Preparing %s"
+msgstr "準備中..."
+
 #, c-format
 msgid "Downloading %s"
 msgstr "正在下載 %s"
@@ -116,6 +120,10 @@ msgstr "正在啟用 %s"
 
 msgid "Deleting Language Packs"
 msgstr "正在刪除語文包"
+
+#, fuzzy
+msgid "Update completed with errors."
+msgstr "更新完畢。"
 
 msgid "Update complete."
 msgstr "更新完畢。"
@@ -226,22 +234,23 @@ msgstr "將 MySQL 資料轉成 UTF8 中"
 msgid "Upgrading permissions (%d items complete, %d remaining)"
 msgstr "升級權限中（已完成 %d 項，還有 %d 項）"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "偵測壞掉的衍生檔案，正在載入"
+msgstr "偵測壞掉的衍生檔案，正在載入（檢查了 %d 個衍生檔案，還有 %d 個）"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "偵測壞掉的衍生檔案，正在儲存"
+msgstr "偵測壞掉的衍生檔案（檢查了 %d 個衍生檔案，還有 %d 個）"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "偵測壞掉的衍生檔案，正在儲存"
+msgstr "偵測壞掉的衍生檔案，正在儲存（檢查了 %d 個衍生檔案，還有 %d 個）"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "升級權限中（已完成 %d 項，還有 %d 項）"
+msgstr ""
+"偵測壞掉的衍生檔案，正在儲存 %2$d 中的第 %1$d 個（已完成 %3$d 個衍生檔案，還有 %4$d 個）"
 
 #, c-format
 msgid "Deleting old session files (iteration %d)"
@@ -453,7 +462,7 @@ msgid "your account"
 msgstr "你的帳戶"
 
 msgid "Password Recovery"
-msgstr "密碼重獲"
+msgstr "重新取得密碼"
 
 msgid "Core"
 msgstr "核心"
@@ -722,9 +731,8 @@ msgid ""
 "Couldn't create cache subdirectory. Make sure the web server has write permissions in it."
 msgstr "無法產生快取子目錄。請確定網頁伺服器有寫入的權限。"
 
-#, fuzzy
 msgid "Official Release Repository"
-msgstr "正式釋出的軟體庫"
+msgstr "正式版本軟體庫"
 
 msgid "Experimental Repository"
 msgstr "試驗用軟體庫"
@@ -792,11 +800,11 @@ msgid "Donate to the Gallery project"
 msgstr "捐款給 Gallery 專案"
 
 msgid "G2.2: Double Double"
-msgstr ""
+msgstr "G2.2: Double Double"
 
 #, c-format
 msgid "Powered by Gallery v%s"
-msgstr ""
+msgstr "使用 Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -870,7 +878,7 @@ msgid "You must enter a number greater than 0"
 msgstr "你必須輸入一個大於零的數字"
 
 msgid "Error reading block settings. Clear your browser cache and try again."
-msgstr ""
+msgstr "讀取區塊設定時發生錯誤。請清除你的瀏覽程式的快取再試一次。"
 
 #, c-format
 msgid "%dx%d"
@@ -1490,22 +1498,20 @@ msgstr "（建議輸入）"
 msgid "Options"
 msgstr "選項"
 
-#, fuzzy
 msgid "Lock user."
-msgstr "鎖定系統"
+msgstr "鎖定用戶"
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr "被鎖定的用戶無法編輯他們自己的帳戶資訊。（密碼、姓名、電郵等等）"
 
-#, fuzzy
 msgid "Reset failed login count."
-msgstr "重置觀賞次數"
+msgstr "重置失敗的登入次數。"
 
 #, c-format
 msgid "%d failed login attempt since the last successful login."
 msgid_plural "%d failed login attempts since the last successful login."
-msgstr[0] ""
+msgstr[0] "自從上次成功登入後有 %d 次失敗的登入嘗試。"
 
 msgid "Group Management"
 msgstr "成員組管理"
@@ -1774,11 +1780,11 @@ msgid "Actions"
 msgstr "操作"
 
 msgid "help"
-msgstr ""
+msgstr "說明"
 
 #, c-format
 msgid "Screenshot for %s"
-msgstr ""
+msgstr "%s 的螢幕快照"
 
 msgid "Incompatible plugin!"
 msgstr "不相容的外掛組件！"
@@ -1814,6 +1820,17 @@ msgstr "請確定你的網路連線的設定是正確的或稍後再試。"
 
 #, c-format
 msgid "Failed to scan status from plugin: %s."
+msgstr "無法掃描外掛組件%s的狀況。"
+
+msgid ""
+"Your local copy of the repository was broken and has been fixed.  Please download the plugin "
+"list again."
+msgstr ""
+
+#, c-format
+msgid ""
+"Failed to download the %s plugin because the following files/directories could not be "
+"modified:"
 msgstr ""
 
 msgid "The repository index has been successfully updated."
@@ -2174,13 +2191,11 @@ msgstr "你不能刪除訪客"
 msgid "Edit User (by list)"
 msgstr "編輯用戶（列表）"
 
-#, fuzzy
 msgid "Locked"
 msgstr "鎖住"
 
-#, fuzzy
 msgid "Failed Logins"
-msgstr "失敗"
+msgstr "登入失敗次數"
 
 msgid "Thumbnails"
 msgstr "縮略圖"
@@ -2212,9 +2227,8 @@ msgstr "資料庫錯誤"
 msgid "Platform Error"
 msgstr "系統錯誤"
 
-#, fuzzy
 msgid "Authentication Failure"
-msgstr "授權已確認"
+msgstr "認証失敗"
 
 msgid "Error"
 msgstr "錯誤"
@@ -2233,11 +2247,10 @@ msgstr "返回並重試"
 msgid ""
 "If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
 "Administrators can clear out this cache."
-msgstr ""
+msgstr "如果這個問題反覆的發生，可能是因為你的快取資料損壞了。網站管理員可以清除這個快取。"
 
-#, fuzzy
 msgid "Clear the cache"
-msgstr "清除儲存頁面"
+msgstr "清除快取"
 
 msgid "Alternatively, you can return to the main Gallery page and resume browsing."
 msgstr "你可以選擇返回主 Gallery 頁面，繼續瀏覽。"
@@ -2248,7 +2261,7 @@ msgstr "你嘗試的操作無效。"
 msgid ""
 "Your change cannot be completed due to a loss of session data. Please try again. If it still "
 "doesn't work, try logging out and logging back in."
-msgstr ""
+msgstr "因為失去了連線資料，你的更動無法完成。請再試一次。如果仍然不能完完，試著登出再登入。"
 
 msgid "An error has occurred while interacting with the database."
 msgstr "與資料庫交換時發生一個錯誤。"
@@ -2382,7 +2395,7 @@ msgstr ""
 "用其他上傳方法，或聯絡系統管理員允許更大上傳空間。"
 
 msgid "More Upload Boxes..."
-msgstr ""
+msgstr "更多上載框..."
 
 msgid "Set item titles from:"
 msgstr "設定項目主題為："
@@ -3030,6 +3043,8 @@ msgid ""
 "is either disabled or not supported by your browser. Please enable JavaScript by changing "
 "your browser options, then try again."
 msgstr ""
+"這個頁面需要 JavaScript 才能正常工作。不過看來你的瀏覽程式中並未啟用或是根本不支援 "
+"JavaScript。請在你的瀏覽程式設定中啟用 JavaScript 再試一次。"
 
 msgid "Site is temporarily down for maintenance."
 msgstr "網站維護中，暫時離線。"
@@ -3183,6 +3198,8 @@ msgid ""
 "for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable "
 "this account."
 msgstr ""
+"由於多次失敗的登入嘗試，這個帳號的登入功能已暫時停用。請等待登入功能恢復，或利用<a href=\"%s"
+"\">重新取得密碼</a>頁面來重新啟用這個帳號。"
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "你的登入資訊不正確，請再試。"
@@ -3191,7 +3208,7 @@ msgstr "你的登入資訊不正確，請再試。"
 msgid ""
 "Lost or forgotten passwords can be retrieved using the <a href=\"%s\">recover password</a> "
 "page"
-msgstr "遺失或忘記的密碼可以用<a href=\"%s\">密碼重獲</a>頁面來重新取得。"
+msgstr "遺失或忘記的密碼可以用<a href=\"%s\">重新取得密碼</a>頁面來重新取得。"
 
 #, c-format
 msgid "Welcome, %s!"
@@ -3224,9 +3241,9 @@ msgid ""
 "time, it will be purged from the system and a new request will have to be made."
 msgstr ""
 "你的帳戶必需已經指定一個電郵地址，而且你必需能夠存取那個電郵地址才能重新取得你的密碼。一封包"
-"含一個你必需前往的網址才能設定新密碼的確認信會寄到那個電郵地址。為了避免濫用，密碼重獲的功能"
-"每二十分鐘才能使用一次。重獲確認信的有效期限是七天。如果在那段時間內沒有使用，它會從系統裡清"
-"除且必需發出新的請求。"
+"含一個你必需前往的網址才能設定新密碼的確認信會寄到那個電郵地址。為了避免濫用，重新取得密碼的"
+"功能每二十分鐘才能使用一次。重獲確認信的有效期限是七天。如果在那段時間內沒有使用，它會從系統"
+"裡清除且必需發出新的請求。"
 
 msgid "Your recovery request has been sent!"
 msgstr "你的重獲請求已經送出！"
@@ -3359,7 +3376,7 @@ msgstr "你的用戶名稱是：%s"
 msgid ""
 "To finish the password recovery process please click the following link and enter the "
 "required information:"
-msgstr "請按下面的鏈接並輸入所需資訊以完成密碼重獲的手續："
+msgstr "請按下面的鏈接並輸入所需資訊以完成重新取得密碼的手續："
 
 msgid "If you did not request this recovery email, you may safely ignore it."
 msgstr "如果你並未要求這封重護電子郵件，你可以安全的忽略它。"
