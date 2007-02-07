@@ -224,6 +224,9 @@ function sidebar_onoff() {
   ui_vis('sidebar_max', sidebar_on, 1);
   ui_vis('sidebar_min', (sidebar_on = sidebar_on?0:1), 1);
   ui_vis('sidebar', sidebar_on);
+  if (app_is_safari) {
+    document.getElementById('sidebar').parentNode.style.width = sidebar_on ? 'auto' : '0';
+  }
 }
 
 //Class image :: div imageview(imagearea(imagediv),textdiv(tools_left,tools_right,title,text))
