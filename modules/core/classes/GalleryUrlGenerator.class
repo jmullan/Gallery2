@@ -542,24 +542,24 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Return a valid Gallery URL.
-     *
-     * @param array $params (optional) key/value pairs to be included in the URL
-     *    special 'href' key specifies path to append to Gallery base URL instead of a query param
-     *    %CURRENT_URL% token in a parameter value will be replaced with current URL
+     * Generate a Gallery URL.
+     * @param array $params (optional) key=value pairs to be included in the URL
+     *     special 'href' key specifies path to append to Gallery base URL instead of a query param
+     *     %CURRENT_URL% token in a parameter value will be replaced with current URL
      * @param array $options (optional) additional URL generation options:
-     *    'baseUrl' => string; to override the default baseUrl
-     *    'forceDirect' => true; to generate from Gallery site URL even if embedded/multisite
-     *    'forceFullUrl' => true; to generate absolute URL instead of relative path URL
-     *    'forceSessionId' => boolean; to force session id to be in/not in the URL; by default
-     *        it is included when cookies are not in use (for href URLs, default=not included)
-     *    'htmlEntities' => false; to use & parameter separator instead of &amp;
-     *    'forceServerRelativeUrl' => true; to generate server-relative URLs if possible but no
-     *        relative URLs (e.g. /gallery2/main.php instead of
-     *        http://example.com/gallery2/main.php but never just main.php (without path))
-     *    'useAuthToken' => boolean; to force auth token to be in/not in the URL; by default it is
-     *        included in controller URLs
-     *    'protocol' => string; to override the URL scheme
+     *     'baseUrl' => string; to override the default baseUrl
+     *     'forceDirect' => true; to generate from Gallery site URL even if embedded or multisite
+     *     'forceFullUrl' => true; to generate absolute URL instead of relative path URL
+     *     'forceSessionId' => boolean; to force session id to be included or excluded; by default
+     *         it is included when cookies are not in use (by default it is excluded from href URLs)
+     *     'htmlEntities' => false; to use '&' parameter separator instead of '&amp;'
+     *     'urlEncode' => false; to not URL encode parameter names and values
+     *     'forceServerRelativeUrl' => true; to generate server-relative URLs if possible but no
+     *         relative URLs (e.g. /gallery2/main.php instead of
+     *         http://example.com/gallery2/main.php but never just main.php (without path))
+     *     'useAuthToken' => boolean; to force auth token to be included or excluded; by default it
+     *         is included in controller URLs
+     *     'protocol' => string; to override the URL scheme
      * @return string URL
      */
     function generateUrl($params=array(), $options=array()) {
@@ -568,11 +568,10 @@ class GalleryUrlGenerator {
 
 	/*
 	 * For 'core.DownloadItem' URLs or if 'forceDirect' option given, use Gallery site URL
-	 * (direct to main.php in directory for active config.php, even if embedded/multisite)
-	 * For other non-absolute 'href' URLs use Gallery base URL
-	 * (direct to Gallery codebase location, even if multisite or embedded),
-	 * Otherwise use application URL
-	 * (embed URL; same as Gallery site URL if not embedded)
+	 * (direct to main.php in directory for active config.php, even if embedded/multisite).  For
+	 * other non-absolute 'href' URLs use Gallery base URL (direct to Gallery codebase location,
+	 * even if multisite or embedded).  Otherwise use application URL (embed URL; same as
+	 * Gallery site URL if not embedded).
 	 */
 	if (isset($options['baseUrl'])) {
 	    $url = $options['baseUrl'];
@@ -584,14 +583,14 @@ class GalleryUrlGenerator {
 		$url = $this->getCurrentUrlDir(true);
 	    }
 
+	    /* Default to not including session id in href URLs */
 	    if (!isset($options['forceSessionId'])) {
-		/* Default to not including session id in href URLs */
 		$options['forceSessionId'] = false;
 	    }
 
 	    $href = $params['href'];
 	    unset($params['href']);
-	    if (preg_match('{^[a-z]+://}', $href)) {
+	    if (preg_match('/^[a-zA-Z0-9\+\.\-]+:\/\//', $href)) {
 		/* Absolute URL */
 		$url = $href;
 	    } else if (($pos = strpos($href, '/')) === 0) {
@@ -608,10 +607,11 @@ class GalleryUrlGenerator {
 	    } else {
 		$url .= $href;
 	    }
-	} else if ((isset($params['view']) && $params['view'] == 'core.DownloadItem') ||
-		   !empty($options['forceDirect'])) {
+	} else if ((isset($params['view']) && $params['view'] == 'core.DownloadItem')
+		|| !empty($options['forceDirect'])) {
 	    /* DownloadItem requests go always directly to Gallery, even when embedded */
 	    $url = $this->getCurrentUrlDir(true) . $this->_file[true];
+
 	    /* Check if we are forced to append the session id in embedded Gallery */
 	    if ($this->embedForceSessionId($params)) {
 		$options['forceSessionId'] = true;
@@ -619,18 +619,6 @@ class GalleryUrlGenerator {
 	} else {
 	    $url = $this->getCurrentUrlDir() . $this->_file[0];
 	    $appSession = true;
-	}
-
-	/* Decide whether to include session id in the URL */
-	if ((isset($options['forceSessionId']) &&
-	     $options['forceSessionId'] === true && $session =& $gallery->getSession()) ||
-	    (!isset($options['forceSessionId']) &&
-	     $session =& $gallery->getSession() && !$session->isUsingCookies()) ) {
-	    if (!empty($this->_embedSessionString) && isset($appSession)) {
-		$embedSessionString = $this->_embedSessionString;
-	    } else {
-		$params[$session->getKey()] = $session->getId();
-	    }
 	}
 
 	/* Swap in the actual URL for the 'return' placeholder */
@@ -650,11 +638,13 @@ class GalleryUrlGenerator {
 
 	/* Navigation */
 	$targetView = isset($params['view']) ? $params['view'] : '';
-	if (!empty($this->_navId) && empty($options['forceDirect']) &&
-	    (empty($currentView) || $currentView == $targetView || !empty($params['controller']))) {
+	if (!empty($this->_navId) && empty($options['forceDirect'])
+		&& (empty($currentView)
+		    || $currentView == $targetView
+		    || !empty($params['controller']))) {
 	    /*
 	     * We are moving around in the same view or we are redirecting to a controller,
-	     * who knows where it will redirect to.  Let's keep the navigation
+	     * who knows where it will redirect to.  Let's keep the navigation.
 	     */
 	    $params['navId'] = $this->_navId;
 	}
@@ -681,16 +671,14 @@ class GalleryUrlGenerator {
 	    }
 	}
 
-	/*
-	 * Remove session related params if requested (we're already outputting or output without
-	 * fetching the html (immediate view / progressbar)
-	 */
 	if ($session =& $gallery->getSession()) {
 	    $sessionId = $session->getId();
-	    if (empty($sessionId)) {
-		unset($params[$session->getKey()]);
-		unset($params['navId']);
-	    } else if (!$session->isPersistent()) {
+
+	    /*
+	     * Remove session related parameters if requested (we're already outputting or output
+	     * without fetching the HTML (immediate view / progressbar)
+	     */
+	    if (empty($sessionId) || !$session->isPersistent()) {
 		unset($params['navId']);
 	    } else {
 		/* Add authToken to all controller URLs */
@@ -699,14 +687,30 @@ class GalleryUrlGenerator {
 		    $params['authToken'] = $session->getAuthToken();
 		}
 	    }
+
+	    /* Add session parameters to URL */
+	    if (!empty($options['forceSessionId'])
+		|| (!isset($options['forceSessionId']) && !$session->isUsingCookies())) {
+		if (!empty($this->_embedSessionString) && !empty($appSession)) {
+		    list ($sessionKey, $sessionId) = explode(
+			'=', $this->_embedSessionString, 2);
+		    $embedSessionParams = array();
+		    $embedSessionParams[$sessionKey] = $sessionId;
+		} else if (!empty($sessionId)) {
+		    $params[$session->getKey()] = $sessionId;
+		}
+	    }
 	}
 
 	/* Add parameters to URL */
-	$url = GalleryUrlGenerator::appendParamsToUrl($url, $params);
+	$url = GalleryUrlGenerator::appendParamsToUrl($url, $params, true,
+	    !empty($options['htmlEntities']) || !isset($options['htmlEntities']),
+	    !empty($options['urlEncode']) || !isset($options['urlEncode']));
 
-	/* Add embed session id if needed */
-	if (isset($embedSessionString)) {
-	    $url .= ((strpos($url, '?') === false) ? '?' : '&amp;') . $embedSessionString;
+	/* Add embed session parameters to URL */
+	if (!empty($embedSessionParams)) {
+	    $url = GalleryUrlGenerator::appendParamsToUrl($url, $embedSessionParams, false,
+		!empty($options['htmlEntities']) || !isset($options['htmlEntities']), false);
 	}
 
 	/* Replace protocol with $options['protocol'].  See RFC1738 section 2.1. */
@@ -723,10 +727,6 @@ class GalleryUrlGenerator {
 	 */
 	if (empty($options['forceFullUrl'])) {
 	    $url = $this->makeRelativeUrl($url, !empty($options['forceServerRelativeUrl']));
-	}
-
-	if (isset($options['htmlEntities']) && !$options['htmlEntities']) {
-	    $url = str_replace('&amp;', '&', $url);
 	}
 
 	return $url;

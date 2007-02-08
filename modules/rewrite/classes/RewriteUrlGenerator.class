@@ -21,7 +21,7 @@
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
 
 /**
- * Generic rewrite URL generator class
+ * Generic rewrite URL generator.
  * @package Rewrite
  * @subpackage Classes
  * @author Douglas Cau <douglas@cau.se>
@@ -31,7 +31,6 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 
     /**
      * If there's an error, use parent GalleryUrlGenerator functions.
-     *
      * @var bool has an error occured?
      * @access private
      */
@@ -39,15 +38,13 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 
     /**
      * Short URL map.
-     *
      * @var array of view => short URL pattern
      * @access private
      */
     var $_shortUrls = array();
 
     /**
-     * Return first short URL to match URL params
-     *
+     * Return first short URL to match URL params.
      * @param array $params URL params
      * @return array first short URL to match URL params
      */
@@ -86,8 +83,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * This function is called at the end of URL generator initialization.  If an onLoad function is
      * specified for the current view it loads the needed file and calls the function which should
-     * parse any request params that wasn't parsed by the rewrite parser (eg. %path% to itemId).
-     *
+     * parse any request params that wasn't parsed by the rewrite parser (e.g. %path% to itemId).
      * @return object GalleryStatus a status code
      * @private
      */
@@ -95,8 +91,8 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	$shortUrl = $this->_getShortUrl(GalleryUtilities::getAllRequestVariables());
 
 	if (!empty($shortUrl['onLoad'])) {
-	    GalleryCoreApi::requireOnce('modules/' . $shortUrl['onLoad'][0] . '/classes/'
-		. $shortUrl['onLoad'][1] . '.class');
+	    GalleryCoreApi::requireOnce('modules/' . $shortUrl['onLoad'][0]
+		. '/classes/' . $shortUrl['onLoad'][1] . '.class');
 	    $ret = call_user_func(array($shortUrl['onLoad'][1], $shortUrl['onLoad'][2]));
 	    if ($ret) {
 		return $ret;
@@ -132,20 +128,21 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	}
 
 	$trueParams = $params;
+
 	/* Parse and replace all keywords */
 	$url = $shortUrl['pattern'];
 	$functions = array();
 	if (isset($shortUrl['functions'])) {
 	    $functions = $shortUrl['functions'];
 	}
-	if (!$this->_parseShortUrl($url, $params, $functions)) {
+	if (!$this->_parseShortUrl($url, $params, $options, $functions)) {
 	    return parent::generateUrl($trueParams, $options);
 	}
 
 	$forceDirect = !empty($options['forceDirect'])
 	    || (isset($trueParams['view']) && $trueParams['view'] == 'core.DownloadItem');
-	$options['baseUrl'] =
-	    $this->_getBaseUrl($forceDirect) . $url . $this->_getBaseParamString($forceDirect);
+	$options['baseUrl'] = $this->_getBaseUrl($forceDirect)
+	    . ltrim($url, '/') . $this->_getBaseParamString($forceDirect);
 
 	foreach ($shortUrl['match'] as $key => $value) {
 	    unset($params[$key]);
@@ -155,15 +152,15 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     }
 
     /**
-     * Substitute all keywords with values from URL params or custom functions
-     *
+     * Substitute all keywords with values from URL params or custom functions.
      * @param string $url URL to be parsed
      * @param array $params of URL parameters
+     * @param array $options of generation options
      * @param array $functions of custom functions
      * @return boolean true on success
      * @access private
      */
-    function _parseShortUrl(&$url, &$params, $functions) {
+    function _parseShortUrl(&$url, &$params, $options, $functions) {
 	$entity = null;
 
 	preg_match_all('/%([a-zA-Z]+)%/', $url, $regs);
@@ -179,7 +176,12 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		    return $ret;
 		}
 	    } else if (!empty($params[$arg])) {
-		$url = str_replace('%' . $arg . '%', urlencode($params[$arg]), $url);
+		$value = $params[$arg];
+		if (!empty($options['urlEncode']) || !isset($options['urlEncode'])) {
+		    $value = urlencode($value);
+		}
+
+		$url = str_replace('%' . $arg . '%', $value, $url);
 
 		/* We can't unset the itemId until we have replaced all keywords */
 		if ($arg != 'itemId') {
@@ -195,10 +197,12 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	if (isset($unsetItemId)) {
 	    unset($params['itemId']);
 	}
+
 	return true;
     }
 
     /**
+     * Load entity.
      * @param int $itemId itemId of the entity to load
      * @return object GalleryEntity or null on failure
      */
@@ -215,12 +219,12 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	if ($ret) {
 	    return null;
 	}
+
 	return $entity;
     }
 
     /**
-     * Return the base URL for all generated short URLs
-     *
+     * Return the base URL for all generated short URLs.
      * @param boolean $forceDirect (optional) if true, return Gallery base URL
      *        (different when embedded)
      * @return string the base URL
@@ -231,8 +235,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     }
 
     /**
-     * Return the base URL parameters for all generated short URLs, eg. '?module=gallery'
-     *
+     * Return the base URL parameters for all generated short URLs, e.g. '?module=gallery'.
      * @param boolean $forceDirect (optional) if true, return Gallery base URL
      *        (different when embedded)
      * @return string the base URL parameters

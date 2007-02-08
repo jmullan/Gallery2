@@ -19,7 +19,7 @@
  */
 
 /**
- * Test UrlGenerator functionality
+ * URL generator tests.
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -397,7 +397,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    'relative embedded, no trailing slash');
     }
 
-    function testGenerateUrlNoEntities() {
+    function testGenerateUrlNoHtmlEntities() {
 	$values[] = GalleryUtilities::prefixFormVariable('a') . '=' . urlencode('123');
 	$values[] = GalleryUtilities::prefixFormVariable('b') . '=' . urlencode('ab&amp;c');
 
@@ -411,6 +411,24 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $this->_urlGenerator->generateUrl(array('href' => 'test/blah.php',
 						    'a' => 123, 'b' => 'ab&amp;c'),
 					      array('htmlEntities' => false)), 'href');
+    }
+
+    function testGenerateUrlNoUrlEncode() {
+	$values[] = GalleryUtilities::prefixFormVariable('a') . '=' . 'The Quick!Brown#Fox';
+	$values[] = GalleryUtilities::prefixFormVariable('b') . '=' . 'Jumps Over%The/Lazy_Dog';
+
+	$this->assertEquals(
+	    'phpunit_test.php?' . implode('&amp;', $values),
+	    $this->_urlGenerator->generateUrl(array('a' => 'The Quick!Brown#Fox',
+						    'b' => 'Jumps Over%The/Lazy_Dog'),
+					      array('urlEncode' => false)), 'url');
+
+	$this->assertEquals(
+	    'test/blah.php?' . implode('&amp;', $values),
+	    $this->_urlGenerator->generateUrl(array('href' => 'test/blah.php',
+						    'a' => 'The Quick!Brown#Fox',
+						    'b' => 'Jumps Over%The/Lazy_Dog'),
+					      array('urlEncode' => false)), 'href');
     }
 
     function testGenerateReturnUrl() {
