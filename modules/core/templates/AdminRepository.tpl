@@ -175,7 +175,7 @@
   <p>
     <ol>
       <li>{g->text text="Review plugin compatibility (on the Themes and Modules tabs)"}</a></li>
-      <li>{g->text text="%sDownload%s Gallery core" arg1="<a href=\"http://codex.gallery2.org/index.php/Download\">" arg2="</a>"}</li>
+      <li>{g->text text="%sDownload%s Gallery core" arg1="<a href=\"http://codex.gallery2.org/index.php/Downloads\">" arg2="</a>"}</li>
       <li>{g->text text="Read the %supgrade instructions%s and perform the upgrade" arg1="<a href=\"http://codex.gallery2.org/index.php/CoreUpgradeInstructions\">" arg2="</a>"}</li>
     </ol>
   </p>
