@@ -125,28 +125,32 @@ function toggleSidebar(menuId) {
 
 function popImage(img, title) {
   picfile = new Image();
-  picfile.src = (img);
-  fileCheck(img, title);
+  picfile.src = img;
+  picfile.imageTitle = title;
+  fileCheck(100);
 }
 
-function fileCheck(img, title) {
-  if( (picfile.width!=0) && (picfile.height!=0) ) {
-    makeWindow(img, title);
+function fileCheck(i) {
+  if ((picfile.width != 0 && picfile.height != 0) || i == 0) {
+    makeWindow();
   } else {
-    funzione="fileCheck('"+img+"')";
-    intervallo=setTimeout(funzione, 50);
+    setTimeout("fileCheck(" + (i-1) + ")", 50);
   }
 }
 
-function makeWindow(img, title) {
-  wd = picfile.width;
-  ht = picfile.height;
-
-  var isIE = (navigator.appName.indexOf("Microsoft") != -1) ? 1 : 0;
+function makeWindow() {
+  var img = picfile.src, wd = picfile.width, ht = picfile.height, title = picfile.imageTitle;
   var args = "resizable=yes";
+  if (wd == 0) {
+    // Default window size if image load is slow
+    wd = 800;
+    ht = 600;
+    args += ",scrollbars=yes";
+  }
+
   if (window.screen) {
-    var avwd = screen.availWidth;
-    var avht = screen.availHeight;
+    var isIE = (navigator.appName.indexOf("Microsoft") != -1) ? 1 : 0;
+    var avwd = screen.availWidth, avht = screen.availHeight;
 
     if (avwd < wd || avht < ht) { args += ",scrollbars=yes"; }
 
