@@ -197,34 +197,6 @@ class IsapiRewriteHelper {
 	    if (isset($rule['conditions'])) {
 		foreach ($rule['conditions'] as $conditionId => $condition) {
 		    /*
-		     * ISAPI_Rewrite supports only certain test verbs:
-		     * http://www.isapirewrite.com/docs/#RewriteCond
-		     */
-		    switch ($condition['test']) {
-
-		    /*
-		     * The ISAPI_Rewrite URL test verb is actually the concatenation of the Apache
-		     * mod_rewrite REQUEST_URI and QUERY_STRING variables.  By replacing REQUEST_URI
-		     * and QUERY_STRING with URL, we're testing the condition pattern against *both*
-		     * REQUEST_URI and QUERY_STRING.  This works for most condition patterns, but a
-		     * more consistent solution should eventually be found.
-		     */
-		    case 'REQUEST_URI':
-		    case 'QUERY_STRING':
-			$condition['test'] = 'URL';
-			break;
-
-		    case 'REQUEST_METHOD':
-			$condition['test'] = 'METHOD';
-			break;
-
-		    default:
-			if (strncmp($condition['test'], 'HTTP:', 5) === 0) {
-			    $condition['test'] = substr($condition['test'], 5) . ':';
-			}
-		    }
-
-		    /*
 		     * Apache mod_rewrite and ISAPI_Rewrite share the concepts of strings which
 		     * start with, end with, or contain a pattern, however they represent these
 		     * patterns differently:
@@ -259,6 +231,36 @@ class IsapiRewriteHelper {
 			$condition['pattern'] = substr($condition['pattern'], 1);
 		    } else {
 			$condition['pattern'] = '.*' . $condition['pattern'];
+		    }
+
+		    /*
+		     * ISAPI_Rewrite supports only certain test verbs:
+		     * http://www.isapirewrite.com/docs/#RewriteCond
+		     */
+		    switch ($condition['test']) {
+
+		    /*
+		     * The ISAPI_Rewrite URL test verb is actually the concatenation of the Apache
+		     * mod_rewrite REQUEST_URI and QUERY_STRING variables, but by adding a '\\?' to
+		     * the pattern, we can test the correct part of the URL.
+		     */
+		    case 'REQUEST_URI':
+			$condition['test'] = 'URL';
+			break;
+
+		    case 'QUERY_STRING':
+			$condition['test'] = 'URL';
+			$condition['pattern'] = '.*\\?' . $condition['pattern'];
+			break;
+
+		    case 'REQUEST_METHOD':
+			$condition['test'] = 'METHOD';
+			break;
+
+		    default:
+			if (strncmp($condition['test'], 'HTTP:', 5) === 0) {
+			    $condition['test'] = substr($condition['test'], 5) . ':';
+			}
 		    }
 
 		    /* Condition pattern ends with unescaped '$' */
