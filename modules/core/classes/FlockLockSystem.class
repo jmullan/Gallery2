@@ -206,7 +206,7 @@ class FlockLockSystem extends GalleryLockSystem {
      * @see GalleryLockSystem::_newLockId
      */
     function _newLockId() {
-	return array(null, md5(microtime()));
+	return array(null, crc32(microtime()));
     }
 }
 ?>
