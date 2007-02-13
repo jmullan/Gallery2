@@ -105,8 +105,7 @@ class WebDavHelper {
 	    /* Already checked one cause: URL rewrite module disabled.  Check other causes. */
 	    if (!WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
 		    array('href' => 'modules/webdav/data/options/'),
-		    array('forceDirect' => true,
-			  'forceFullUrl' => true,
+		    array('forceFullUrl' => true,
 			  'htmlEntities' => false)))) {
 		$code |= WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS;
 	    }
