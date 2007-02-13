@@ -232,7 +232,12 @@ class GalleryController {
 	if ($session->isCorrectAuthToken($authToken)) {
 	    return null;
 	} else {
-	    return GalleryCoreApi::error(ERROR_REQUEST_FORGED);
+	    /* Omit check if we're in maintenance mode */
+	    if ($gallery->getConfig('mode.maintenance')) {
+		return null;
+	    } else {
+		return GalleryCoreApi::error(ERROR_REQUEST_FORGED);
+	    }
 	}
     }
 }

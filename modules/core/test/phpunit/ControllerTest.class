@@ -161,6 +161,21 @@ class ControllerTest extends GalleryTestCase {
 	}
     }
 
+    function testAssertIsGunuineRequestOmittedInMaintenanceMode() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$validAuthToken = 'ABCDEF123456';
+	$session->put('core.authToken', $validAuthToken);
+	GalleryUtilities::putRequestVariable('authToken', '098765432109');
+	$gallery->setConfig('mode.maintenance', true);
+	$ret = GalleryController::assertIsGenuineRequest();
+	if ($ret) {
+	    $this->fail('specified auth token should be ignored in maintenance mode');
+	    return $this->failWithStatus($ret);
+	}
+    }
+
     function testOmitAuthTokenCheckDefaultsToFalse() {
 	$controller = new GalleryController();
 	$this->assert(!$controller->omitAuthTokenCheck(), 'should default to false');
