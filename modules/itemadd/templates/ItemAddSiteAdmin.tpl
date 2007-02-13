@@ -32,6 +32,11 @@
       </select>
     </td>
   </tr></table>
+
+  <h4 class="giWarning"> {g->text text="Security Warning"} </h4>
+  <div>
+    {g->text text='"Add From Web" can be abused to attack other websites in your name.  For the attacked party it would seem as if you, the administrator of this Gallery, deliberately attacked their website because your Gallery acts on behalf of your users.  Therefore it is recommended to enable "Add From Web" only for trusted users.'}
+  </div>
 </div>
 
 <div class="gbBlock">

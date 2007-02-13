@@ -33,7 +33,7 @@ class ItemAddModule extends GalleryModule {
 	$this->setId('itemadd');
 	$this->setName($gallery->i18n('Add Items'));
 	$this->setDescription($gallery->i18n('Add items from local server or the web'));
-	$this->setVersion('0.9.0');
+	$this->setVersion('0.9.1');
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -77,7 +77,7 @@ class ItemAddModule extends GalleryModule {
 	if ($ret) {
 	    return $ret;
 	}
-	foreach (array('fromserver' => 'on', 'fromweb' => 'on') as $key => $value) {
+	foreach (array('fromserver' => 'on', 'fromweb' => 'admin') as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
