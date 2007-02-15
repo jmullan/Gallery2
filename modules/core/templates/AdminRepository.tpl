@@ -304,7 +304,7 @@
 
 </div>
 
-{if isset($AdminRepository.indexMetaData)}
+{if $AdminRepository.upgradesAvailable}
 <div class="gbBlock">
   <h3>{g->text text="Upgrade All Plugins"}</h3>
   <p class="giDescription">

@@ -310,6 +310,7 @@ class AdminRepositoryView extends GalleryView {
 	}
 
 	$AdminRepository['coreUpgradeAvailable'] = false;
+	$AdminRepository['upgradesAvailable'] = false;
 	foreach ($repositories as $source => $repository) {
 	    if (!$repository->localIndexExists()) {
 		break;
@@ -353,6 +354,15 @@ class AdminRepositoryView extends GalleryView {
 
 	    $AdminRepository['indexMetaData'][$source] =
 		array_merge(array('name' => $message), $indexMetaData);
+
+	    list ($ret, $tmp) = $repository->getAllUpgradeablePackages();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    if (!empty($tmp)) {
+		$AdminRepository['upgradesAvailable'] = true;
+	    }
 
 	    /* Get core upgrade info. */
 	    if ($source == 'released') {
