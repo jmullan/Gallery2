@@ -81,16 +81,12 @@
 {g->addToTrailer}
 <script type="text/javascript">
   // <![CDATA[
-  var text = '';
-  var textUrls = '';
-  var apphead = '';
-  var appfoot = '';
+  var text = '', textUrls = '', apphead = '', appfoot = '';
 
   function startingUpload() {ldelim}
     text = textUrls = '';
     apphead = '<h2>{g->text text="Uploading files..." forJavascript=true}</h2><ul>';
     appfoot = '</ul>';
-
     addText('');
   {rdelim}
 
@@ -136,6 +132,10 @@
       return document.all["uploadapplet_Feedback"];
     }
   }
+
+  // Something is buggy in firefox, it tries to call "nullFindProxyForURL" and
+  // all js calls after that do nothing.. define the function so our js works.
+  function nullFindProxyForURL() { }
   {/literal}
   // ]]>
 </script>
