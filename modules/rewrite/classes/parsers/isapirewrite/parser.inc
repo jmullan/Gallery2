@@ -19,6 +19,7 @@
  */
 /**
  * @package Rewrite
+ * @subpackage Parsers
  * @version $Revision$
  * @author Douglas Cau <douglas@cau.se>
  */
@@ -33,12 +34,9 @@ define('REWRITE_STATUS_HTTPDINI_CANT_READ', 33);
 define('REWRITE_STATUS_HTTPDINI_CANT_WRITE', 34);
 
 /**
- * This URL Rewrite parser provides ISAPI_Rewrite support for short URLs.
+ * This URL rewrite parser provides ISAPI_Rewrite support for short URLs.
  *
  *   http://www.isapirewrite.com/
- *
- * @package Rewrite
- * @subpackage Parsers
  */
 class IsapiRewriteParser extends RewriteParser {
 
@@ -90,24 +88,10 @@ class IsapiRewriteParser extends RewriteParser {
 		 * ISAPI_Rewrite supports only certain test strings:
 		 * http://www.isapirewrite.com/docs/#RewriteCond
 		 */
-		if (!in_array($condition['test'], array('REQUEST_URI',
-						   'QUERY_STRING',
-						   'REQUEST_METHOD',
-						   'VERSION'))
+		if (!in_array($condition['test'], array(
+			    'REQUEST_URI', 'QUERY_STRING', 'REQUEST_METHOD', 'VERSION'))
 			&& strncmp($condition['test'], 'HTTP:', 5) !== 0) {
 		    return false;
-		}
-
-		if (isset($condition['flags'])) {
-		    foreach ($condition['flags'] as $flag) {
-			/*
-			 * ISAPI_Rewrite supports only certain flags:
-			 * http://www.isapirewrite.com/docs/#RewriteCond
-			 */
-			if (!in_array($flag, array('O'))) {
-			    return false;
-			}
-		    }
 		}
 	    }
 	}
@@ -178,8 +162,8 @@ class IsapiRewriteParser extends RewriteParser {
 	}
 
 	if (isset($form['force']['test'])) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-		'isapirewrite.forced', '1');
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'rewrite', 'isapirewrite.forced', true);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -232,8 +216,8 @@ class IsapiRewriteParser extends RewriteParser {
 	    return array(null, $error, $status);
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-	    'isapirewrite.httpdini', $path);
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'rewrite', 'isapirewrite.httpdini', $path);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
@@ -245,8 +229,7 @@ class IsapiRewriteParser extends RewriteParser {
 	    }
 
 	    list ($ret, $code) = IsapiRewriteHelper::saveEmbedConfig(
-		array('embeddedLocation' => $form['embeddedLocation']),
-		$this,
+		array('embeddedLocation' => $form['embeddedLocation']), $this,
 		GalleryUtilities::getRequestVariables('controller') != 'SetupRewriteController');
 	    if ($ret) {
 		return array($ret, null, null);
@@ -268,8 +251,8 @@ class IsapiRewriteParser extends RewriteParser {
      * @see RewriteParser::needsEmbedConfig
      */
     function needsEmbedConfig() {
-	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
-	    'isapirewrite.embeddedLocation');
+	list ($ret, $value) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'isapirewrite.embeddedLocation');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -281,8 +264,8 @@ class IsapiRewriteParser extends RewriteParser {
      * @see RewriteParser::fetchEmbedConfig
      */
     function fetchEmbedConfig() {
-	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
-	    'isapirewrite.embeddedLocation');
+	list ($ret, $value) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'isapirewrite.embeddedLocation');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -302,8 +285,8 @@ class IsapiRewriteParser extends RewriteParser {
 	    return array($ret, null, null);
 	}
 
-	return array(null, $code,
-	    ($code != REWRITE_STATUS_OK) ? $this->getErrorMessage($code) : null);
+	return array(
+	    null, $code, ($code != REWRITE_STATUS_OK) ? $this->getErrorMessage($code) : null);
     }
 }
 ?>

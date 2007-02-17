@@ -19,7 +19,7 @@
  */
 
 /**
- * This is a helper for the Apache mod_rewrite parser.
+ * Apache mod_rewrite helper.
  * @package Rewrite
  * @subpackage Parsers
  * @author Douglas Cau <douglas@cau.se>
@@ -63,8 +63,8 @@ class ModRewriteHelper {
 	$shortUrls = array();
 	$flags = array('default' => array('QSA', 'L'), 'mandatory' => array());
 	if (!empty($activeRules)) {
-	    list ($ret, $code, $regexRules, $shortUrls, $errorId) = RewriteHelper::parseActiveRules(
-		$activeRules, $parser, $upgradeModule, $flags);
+	    list ($ret, $code, $regexRules, $shortUrls, $errorId) =
+		RewriteHelper::parseActiveRules($activeRules, $parser, $upgradeModule, $flags);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -137,8 +137,8 @@ class ModRewriteHelper {
 	    return array($ret, null);
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'allowEmptyReferer',
-	    $allowEmptyReferer ? '1' : '0');
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'rewrite', 'allowEmptyReferer', $allowEmptyReferer ? '1' : '0');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -205,8 +205,7 @@ class ModRewriteHelper {
     }
 
     /**
-     * Returns the .htaccess content given a set or rewrite rules.
-     *
+     * Return the .htaccess content given a set or rewrite rules.
      * @param array $regexRules regular expression rules with settings
      * @param boolean $embedded (optional) true if the embedded .htaccess is wanted
      * @return array object GalleryStatus a status code
@@ -221,7 +220,22 @@ class ModRewriteHelper {
 	$Htaccess['g2Prefix'] = GALLERY_FORM_VARIABLE_PREFIX;
 	$Htaccess['mainPhp'] = GALLERY_MAIN_PHP;
 
-	foreach (array_keys($regexRules) as $ruleId) {
+	foreach ($regexRules as $ruleId => $rule) {
+	    if (!empty($rule['conditions'])) {
+		foreach ($rule['conditions'] as $conditionId => $condition) {
+		    /*
+		     * Apache mod_rewrite supports only certain flags:
+		     * http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewritecond
+		     */
+		    if (!empty($condition['flags'])) {
+			$condition['flags'] = array_intersect(
+			    $condition['flags'], array('NC', 'OR'));
+		    }
+
+		    $regexRules[$ruleId]['conditions'][$conditionId] = $condition;
+		}
+	    }
+
 	    $regexRules[$ruleId]['queryString'] = str_replace('$', '%',
 		$regexRules[$ruleId]['queryString']);
 	}
@@ -229,11 +243,6 @@ class ModRewriteHelper {
 
 	list ($ret, $Htaccess['galleryDirectory']) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.galleryLocation');
-	if ($ret) {
-	    return array($ret, null);
-	}
-	list ($ret, $Htaccess['allowEmptyReferer']) = GalleryCoreApi::getPluginParameter(
-	    'module', 'rewrite', 'allowEmptyReferer');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -280,15 +289,14 @@ class ModRewriteHelper {
 
     /**
      * Return the absolute file name of .htaccess
-     *
      * @param boolean $embedded (optional) true if embedded .htaccess is wanted
      * @return array object GalleryStatus a status code
      *               string .htaccess file name
      */
     function getHtaccessPath($embedded=false) {
 	if ($embedded) {
-	    list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
-		    'modrewrite.embeddedHtaccess');
+	    list ($ret, $path) = GalleryCoreApi::getPluginParameter(
+		'module', 'rewrite', 'modrewrite.embeddedHtaccess');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -300,8 +308,7 @@ class ModRewriteHelper {
     }
 
     /**
-     * Checks if the .htaccess file is writeable.
-     *
+     * Check if the .htaccess file is writeable.
      * @param boolean $embedded (optional) if true then the embedded .htaccess is checked
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
@@ -342,8 +349,7 @@ class ModRewriteHelper {
     }
 
     /**
-     * Writes Gallery data to the .htaccess file.
-     *
+     * Write Gallery data to the .htaccess file.
      * @param array $regexRules regular expression rules with settings
      * @param boolean $embedded (optional) if true then the embedded .htaccess is written
      * @return array object GalleryStatus a status code
@@ -368,9 +374,8 @@ class ModRewriteHelper {
 
 	if ($platform->file_exists($file)) {
 	    if (!$platform->is_readable($file)) {
-		return array(null,
-		    $embedded ? REWRITE_STATUS_EMBED_HTACCESS_CANT_READ
-			      : REWRITE_STATUS_HTACCESS_CANT_READ);
+		return array(null, $embedded ? REWRITE_STATUS_EMBED_HTACCESS_CANT_READ
+					     : REWRITE_STATUS_HTACCESS_CANT_READ);
 	    }
 
 	    $oldHtaccess = implode('', $platform->file($file));
@@ -392,9 +397,8 @@ class ModRewriteHelper {
 	    $platform->fwrite($fd, $newHtaccess);
 	    $platform->fclose($fd);
 	} else {
-	    return array(null,
-		$embedded ? REWRITE_STATUS_EMBED_HTACCESS_CANT_WRITE
-			  : REWRITE_STATUS_HTACCESS_CANT_WRITE);
+	    return array(null, $embedded ? REWRITE_STATUS_EMBED_HTACCESS_CANT_WRITE
+					 : REWRITE_STATUS_HTACCESS_CANT_WRITE);
 	}
 
 	return array(null, REWRITE_STATUS_OK);
@@ -424,12 +428,12 @@ class ModRewriteHelper {
 
 	/* We can't test with multisite, there are no test files */
 	if ($gallery->getConfig('galleryBaseUrl')) {
-	    return array(null,
-			 isset($status['forced']) ? REWRITE_STATUS_OK : REWRITE_STATUS_MULTISITE,
+	    return array(null, isset($status['forced']) ? REWRITE_STATUS_OK
+							: REWRITE_STATUS_MULTISITE,
 			 REWRITE_STATUS_MULTISITE);
 	}
-	$baseUrl = preg_replace('{(install|upgrade)/index\.php.*}', '',
-				$urlGenerator->getCurrentUrlDir(true));
+	$baseUrl = preg_replace(
+	    '{(install|upgrade)/index\.php.*}', '', $urlGenerator->getCurrentUrlDir(true));
 	$components = parse_url($baseUrl);
 	$path = $components['path'];
 	$baseUrl .= 'modules/rewrite/data/';
@@ -468,8 +472,8 @@ class ModRewriteHelper {
 	list ($success, $body) = GalleryCoreAPI::fetchWebPage($fetch);
 
 	if ($success && !strncmp('PASS_REWRITE', $body, 12)) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'modrewrite.status',
-		serialize(array('needOptions' => true)));
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'rewrite', 'modrewrite.status', serialize(array('needOptions' => true)));
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -482,14 +486,14 @@ class ModRewriteHelper {
 	 * directions to edit the custom .htaccess file and then test again.
 	 */
 	if ($target == 'custom') {
-	    return array(null,
-		isset($status['forced']) ? REWRITE_STATUS_OK : REWRITE_STATUS_APACHE_UNABLE_TO_TEST,
-		REWRITE_STATUS_APACHE_UNABLE_TO_TEST);
+	    return array(null, isset($status['forced']) ? REWRITE_STATUS_OK
+							: REWRITE_STATUS_APACHE_UNABLE_TO_TEST,
+			 REWRITE_STATUS_APACHE_UNABLE_TO_TEST);
 	}
 
-	return array(null,
-	     isset($status['forced']) ? REWRITE_STATUS_OK : REWRITE_STATUS_APACHE_NO_MOD_REWRITE,
-	     REWRITE_STATUS_APACHE_NO_MOD_REWRITE);
+	return array(null, isset($status['forced']) ? REWRITE_STATUS_OK
+						    : REWRITE_STATUS_APACHE_NO_MOD_REWRITE,
+		     REWRITE_STATUS_APACHE_NO_MOD_REWRITE);
     }
 
     /**
@@ -594,16 +598,14 @@ class ModRewriteHelper {
 
 	if (GalleryUtilities::isEmbedded()) {
 	    if (empty($form['formName'])) {
-		list ($ret, $form['embeddedLocation']) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite',
-			'modrewrite.embeddedLocation');
+		list ($ret, $form['embeddedLocation']) = GalleryCoreApi::getPluginParameter(
+		    'module', 'rewrite', 'modrewrite.embeddedLocation');
 		if ($ret) {
 		    return $ret;
 		}
 
-		list ($ret, $form['embeddedHtaccess']) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite',
-			'modrewrite.embeddedHtaccess');
+		list ($ret, $form['embeddedHtaccess']) = GalleryCoreApi::getPluginParameter(
+		    'module', 'rewrite', 'modrewrite.embeddedHtaccess');
 		if ($ret) {
 		    return $ret;
 		}
@@ -643,14 +645,14 @@ class ModRewriteHelper {
 	    return array(null, REWRITE_STATUS_HTACCESS_CANT_WRITE);
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-	    'modrewrite.embeddedHtaccess', $embeddedHtaccess);
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'rewrite', 'modrewrite.embeddedHtaccess', $embeddedHtaccess);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-	    'modrewrite.embeddedLocation', $embeddedLocation);
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'rewrite', 'modrewrite.embeddedLocation', $embeddedLocation);
 	if ($ret) {
 	    return array($ret, null);
 	}

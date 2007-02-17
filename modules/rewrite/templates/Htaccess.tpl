@@ -21,23 +21,13 @@
     RewriteRule .   -   [L]
 
 {foreach from=$Htaccess.rules item=rule}
-{if isset($rule.conditions)}
+{if !empty($rule.conditions)}
 {foreach from=$rule.conditions item="condition"}
     RewriteCond %{ldelim}{$condition.test}{rdelim} {$condition.pattern}{if !empty($condition.flags)}   [{$condition.flags|@implode:","}]{/if}
 
 {/foreach}
 {/if}
-{if isset($rule.settings.restrict)}
-{foreach from=$rule.settings.restrict item=condition}
-    RewriteCond %{ldelim}QUERY_STRING{rdelim} {$condition}
-{/foreach}
-{foreach from=$rule.settings.exempt item=host}
-    RewriteCond %{ldelim}HTTP_REFERER{rdelim} !://{$host}/ [NC]
-{/foreach}
-{if $Htaccess.allowEmptyReferer}
-    RewriteCond %{ldelim}HTTP_REFERER{rdelim} !^$
-{/if}
-{elseif isset($rule.pattern)}
+{if isset($rule.pattern)}
     RewriteCond %{ldelim}THE_REQUEST{rdelim} \ {$Htaccess.rewriteBase}{$rule.pattern}(\?.|\ .)
     RewriteCond %{ldelim}REQUEST_URI{rdelim} !{$Htaccess.matchBaseFile}$
 {/if}

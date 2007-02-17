@@ -19,6 +19,7 @@
  */
 /**
  * @package Rewrite
+ * @subpackage Parsers
  * @version $Revision$
  * @author Douglas Cau <douglas@cau.se>
  */
@@ -37,12 +38,9 @@ define('REWRITE_STATUS_EMBED_HTACCESS_CANT_READ', 17);
 define('REWRITE_STATUS_EMBED_HTACCESS_CANT_WRITE', 18);
 
 /**
- * This URL Rewrite parser provides Apache mod_rewrite support for short URLs.
+ * This URL rewrite parser provides Apache mod_rewrite support for short URLs.
  *
  *   http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html
- *
- * @package Rewrite
- * @subpackage Parsers
  */
 class ModRewriteParser extends RewriteParser {
 
@@ -77,34 +75,6 @@ class ModRewriteParser extends RewriteParser {
 	GalleryCoreApi::requireOnce(
 	    'modules/rewrite/classes/parsers/modrewrite/ModRewriteHelper.class');
 	return ModRewriteHelper::needsConfiguration();
-    }
-
-    /**
-     * @see RewriteParser::isValidRule
-     */
-    function isValidRule($rule, $activeRule=null) {
-	$isValid = parent::isValidRule($rule, $activeRule);
-	if (!$isValid) {
-	    return false;
-	}
-
-	if (isset($rule['conditions'])) {
-	    foreach ($rule['conditions'] as $condition) {
-		if (isset($condition['flags'])) {
-		    foreach ($condition['flags'] as $flag) {
-			/*
-			 * Apache mod_rewrite supports only certain flags:
-			 * http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewritecond
-			 */
-			if (!in_array($flag, array('NC', 'OR'))) {
-			    return false;
-			}
-		    }
-		}
-	    }
-	}
-
-	return true;
     }
 
     /**

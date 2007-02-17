@@ -11,30 +11,14 @@ RewriteCond Host: {$Httpdini.host}
 RewriteRule {$Httpdini.galleryDirectory}modules/rewrite/data/isapi_rewrite/Rewrite.txt {$Httpdini.galleryDirectory}modules/rewrite/data/isapi_rewrite/Works.txt [O]
 
 {foreach from=$Httpdini.rules item=rule}
-{if isset($rule.conditions)}
+{if !empty($rule.conditions)}
 {foreach from=$rule.conditions item="condition"}
 RewriteCond {$condition.test} {$condition.pattern}{if !empty($condition.flags)}   [{$condition.flags|@implode:","}]{/if}
 
 {/foreach}
 {/if}
-{if isset($rule.settings.restrict)}
-{foreach from=$rule.settings.restrict item=condition}
-RewriteCond URL .*\?.*{$condition}.*
-{/foreach}
-
-{foreach from=$rule.settings.exempt item=host}
-RewriteCond Referer: (?!.*://{$host}/.*)
-{/foreach}
-
-{if $Httpdini.allowEmptyReferer && !empty($rule.settings.exempt)}
-RewriteCond Referer: (?!^$)
-{/if}
-
+{if isset($rule.pattern)}
 RewriteCond Host: {$Httpdini.host}
-RewriteRule {$Httpdini.rewriteBase}.* {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
-{elseif isset($rule.pattern)}
-RewriteCond Host: {$Httpdini.host}
-
 {if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
 RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
 {else}

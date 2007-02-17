@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * A helper class for the URL rewrite module
+ * URL rewrite helper.
  * @package Rewrite
  * @subpackage Classes
  * @author Douglas Cau <douglas@cau.se>
@@ -35,15 +35,14 @@ define('REWRITE_STATUS_INVALID_PATTERN', 4);
 define('REWRITE_STATUS_EMPTY_VALUE', 5);
 
 /**
- * A helper class for the URL rewrite module
+ * URL rewrite helper.
  * @static
  */
 class RewriteHelper {
 
     /**
-     * Load and initialize the rewrite plugin.  If no plugin has been configured yet
-     * it returns a GalleryStatus ERROR_MISSING_VALUE.
-     *
+     * Load and initialize the rewrite plugin.  If no plugin has been configured yet it returns a
+     * GalleryStatus ERROR_MISSING_VALUE.
      * @param boolean $new (optional) true if we need a new instance
      * @return array object GalleryStatus a status code
      *               object RewritePlugin a loaded parser
@@ -78,7 +77,6 @@ class RewriteHelper {
     /**
      * Parse active rules into an array of regular expressions for parsing URLs during page requests
      * and build an array for the URL generator to use when generating short URLs.
-     *
      * @param array $activeRules array array ('pattern' => string pattern) active rules by reference
      * @param object RewriteParser $rewriteParser
      * @param object GalleryModule $upgradeModule (optional) passed in during activate/upgrade
@@ -104,6 +102,13 @@ class RewriteHelper {
 	$ourHostNames[$urlGenerator->getHostName()] = true;
 	$ourHostNames[$urlGenerator->getHostName(true)] = true;
 	$accessList = array_merge($accessList, array_keys($ourHostNames));
+
+	/* Get allow empty referer */
+	list ($ret, $allowEmptyReferer) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'allowEmptyReferer');
+	if ($ret) {
+	    return array($ret, null, null, null, null);
+	}
 
 	$regexRules = array();
 	$shortUrls = array();
@@ -134,8 +139,8 @@ class RewriteHelper {
 		}
 
 		/* Make sure this parser supports this kind of rule */
-		if (!$rewriteParser->isValidRule($rules[$ruleId],
-			$activeRules[$moduleId][$ruleId])) {
+		if (!$rewriteParser->isValidRule(
+			$rules[$ruleId], $activeRules[$moduleId][$ruleId])) {
 		    return array(null, REWRITE_STATUS_INVALID_PATTERN,
 			null, null, array($moduleId, $ruleId));
 		}
@@ -143,7 +148,7 @@ class RewriteHelper {
 		/* Save the pattern for the URL generator to use */
 		if (isset($rules[$ruleId]['match']) && isset($rule['pattern'])) {
 		    $shortUrl = array('match' => $rules[$ruleId]['match'],
-			'pattern' => $rule['pattern']);
+				      'pattern' => $rule['pattern']);
 
 		    /* Get custom function information */
 		    if (isset($rules[$ruleId]['keywords'])) {
@@ -174,13 +179,26 @@ class RewriteHelper {
 		/* Restrict this rule to given query string conditions */
 		if (!empty($rules[$ruleId]['restrict'])) {
 		    foreach ($rules[$ruleId]['restrict'] as $key => $value) {
-			$settings['restrict'][] = $key . '=' . $value;
+			$rules[$ruleId]['conditions'][] = array(
+			    'test' => 'QUERY_STRING',
+			    'pattern' => $key . '=' . $value);
+		    }
+		}
+
+		/* Exempt requests from the following hosts */
+		if (!empty($rules[$ruleId]['exemptReferer'])) {
+		    foreach ($accessList as $host) {
+			$rules[$ruleId]['conditions'][] = array(
+			    'test' => 'HTTP:Referer',
+			    'pattern' => '!^[a-zA-Z0-9\\+\\.\\-]+://' . $host . '/',
+			    'flags' => array('NC'));
 		    }
 
-		    $settings['exempt'] = array();
-		    /* Exempt request from the following hosts */
-		    if  (isset($rules[$ruleId]['exemptReferer'])) {
-			$settings['exempt'] = $accessList;
+		    /* Exempt requests with empty referer */
+		    if (!empty($allowEmptyReferer)) {
+			$rules[$ruleId]['conditions'][] = array(
+			    'test' => 'HTTP:Referer',
+			    'pattern' => '!^$');
 		    }
 		}
 
@@ -191,7 +209,7 @@ class RewriteHelper {
 		}
 
 		/* Make sure that there's no subrequest made when we match by the query string */
-		if (isset($settings['restrict'])) {
+		if (!empty($rules[$ruleId]['restrict'])) {
 		    $settings['flags'][] = 'L';
 		}
 
@@ -200,7 +218,7 @@ class RewriteHelper {
 
 		/* Build the query string to map the request on to */
 		$queryString = array();
-		if (isset($rules[$ruleId]['match'])) {
+		if (!empty($rules[$ruleId]['match'])) {
 		    $queryString = $rules[$ruleId]['match'];
 		}
 		if (!empty($rules[$ruleId]['queryString'])) {
@@ -240,7 +258,7 @@ class RewriteHelper {
 	$reference = 1;
 	$regexRule = array('settings' => $settings);
 
-	if (isset($rule['conditions'])) {
+	if (!empty($rule['conditions'])) {
 	    $regexRule['conditions'] = array();
 	    foreach ($rule['conditions'] as $condition) {
 		$code = RewriteHelper::_parseKeywords(
@@ -253,7 +271,7 @@ class RewriteHelper {
 	    }
 	}
 
-	if (isset($activeRule['pattern'])) {
+	if (!empty($activeRule['pattern'])) {
 	    $pattern = preg_quote($activeRule['pattern']);
 	    $code = RewriteHelper::_parseKeywords(
 		$reference, $pattern, $keywords, $queryString);
@@ -302,7 +320,8 @@ class RewriteHelper {
     }
 
     /**
-     * Comparison function used to order regex rules.
+     * Comparison function used to order regex rules.  Order rules from most specific to least
+     * specific.  
      * @param array $a first rule to compare
      * @param array $b second rule to compare
      * @return int an integer less than, equal to, or greater than zero if the first rule is
@@ -320,25 +339,12 @@ class RewriteHelper {
 	}
 
 	/* Conditions */
-	if (isset($a['conditions']) || isset($b['conditions'])) {
-	    if (isset($a['conditions']) && isset($b['conditions'])) {
+	if (!empty($a['conditions']) || !empty($b['conditions'])) {
+	    if (!empty($a['conditions']) && !empty($b['conditions'])) {
 		return count($a['conditions']) - count($b['conditions']);
 	    }
 
-	    if (isset($a['conditions'])) {
-		return -1;
-	    }
-
-	    return 1;
-	}
-
-	/* Restrict */
-	if (isset($a['settings']['restrict']) || isset($b['settings']['restrict'])) {
-	    if (isset($a['settings']['restrict']) && isset($b['settings']['restrict'])) {
-		return count($a['settings']['restrict']) - count($b['settings']['restrict']);
-	    }
-
-	    if (isset($a['settings']['restrict'])) {
+	    if (!empty($a['conditions'])) {
 		return -1;
 	    }
 
@@ -385,8 +391,8 @@ class RewriteHelper {
      *               array (mixed ruleId => array ('pattern' => string pattern))
      */
     function getHistoryForModule($moduleId) {
-	list ($ret, $history) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'history.' . $moduleId);
+	list ($ret, $history) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'history.' . $moduleId);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -403,11 +409,11 @@ class RewriteHelper {
      */
     function setHistoryForModule($moduleId, $history) {
 	if (!empty($history)) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-						      'history.' . $moduleId, serialize($history));
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'rewrite', 'history.' . $moduleId, serialize($history));
 	} else {
-	    $ret = GalleryCoreApi::removePluginParameter('module', 'rewrite',
-							 'history.' . $moduleId);
+	    $ret = GalleryCoreApi::removePluginParameter(
+		'module', 'rewrite', 'history.' . $moduleId);
 	}
 	if ($ret) {
 	    return $ret;

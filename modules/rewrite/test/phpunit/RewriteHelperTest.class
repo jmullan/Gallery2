@@ -21,8 +21,7 @@
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 
 /**
- * Rewrite helper tests
- *
+ * Rewrite helper tests.
  * @package Rewrite
  * @subpackage PHPUnit
  * @author Douglas Cau <douglas@cau.se>
@@ -44,16 +43,16 @@ class RewriteHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'accessList',
-	    serialize(array('phpunit1', 'phpunit2')));
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'rewrite', 'accessList', serialize(array('phpunit1', 'phpunit2')));
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	/* Set up our mock parser */
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-						  'parserId', 'rewritehelpermock');
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'rewrite', 'parserId', 'rewritehelpermock');
 	if ($ret) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
@@ -105,7 +104,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	return parent::tearDown();
     }
 
     function testGetRewriteParser() {
@@ -138,7 +137,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$tests = array();
 	$serverName = GalleryUtilities::getServerVar('HTTP_HOST');
 
-	/* Test basic rule without keyword */
+	/* Without keyword */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][0] = array('pattern' => 'phpunit');
 	$expectedActiveRules = $activeRules;
@@ -149,7 +148,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, null);
 
-	/* Test basic rule with keyword */
+	/* With keyword */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][1] = array('pattern' => 'php/%unit%');
 	$expectedActiveRules = $activeRules;
@@ -160,7 +159,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, null);
 
-	/* Test custom functions */
+	/* Custom functions */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][2] = array('pattern' => 'php/%unit%');
 	$expectedActiveRules = $activeRules;
@@ -174,7 +173,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, null);
 
-	/* Test multiple keywords */
+	/* Multiple keywords */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][3] = array('pattern' => 'p/%php%/%unit%');
 	$expectedActiveRules = $activeRules;
@@ -185,7 +184,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, null);
 
-	/* Test query string and match combination */
+	/* Query string and match combination */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][4] = array('pattern' => 'php/%unit%');
 	$expectedActiveRules = $activeRules;
@@ -198,7 +197,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, null);
 
-	/* Test default flags */
+	/* Default flags */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][0] = array('pattern' => 'phpunit');
 	$expectedActiveRules = $activeRules;
@@ -209,7 +208,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, array('default' => array('F1', 'F2')));
 
-	/* Test custom flags */
+	/* Custom flags */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][5] = array('pattern' => 'phpunit');
 	$expectedActiveRules = $activeRules;
@@ -221,7 +220,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	    $expectedShortUrls, null, $activeRules, array('default' => array('F1', 'F2'),
 							  'mandatory' => array('F1')));
 
-	/* Test duplicate flags */
+	/* Duplicate flags */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][5] = array('pattern' => 'phpunit');
 	$expectedActiveRules = $activeRules;
@@ -233,36 +232,47 @@ class RewriteHelperTest extends GalleryTestCase {
 	    $expectedShortUrls, null, $activeRules, array('default' => array('C1', 'C2'),
 							  'mandatory' => array('C1')));
 
-	/* Test conditions */
+	/* Conditions */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][11] = array();
 	$expectedActiveRules = $activeRules;
 	$expectedShortUrls = array();
-	$expectedRegexRules = array(array(
-	    'conditions' => array(array('test' => 'REQUEST_METHOD',
-					'pattern' => 'OPTIONS'),
-				  array('test' => 'HTTP:Authorization',
-					'pattern' => '(.+)')),
-	    'queryString' => 'g2_authorization=$1',
-	    'settings' => array('flags' => array())));
+	$expectedRegexRules = array(array('conditions' => array(
+					  array('test' => 'REQUEST_METHOD',
+						'pattern' => 'OPTIONS'),
+					  array('test' => 'HTTP:Authorization',
+						'pattern' => '(.+)')),
+				      'queryString' => 'g2_authorization=$1',
+				      'settings' => array('flags' => array())));
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, null);
 
-	/* Test restrict */
+	/* Restrict */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][6] = array();
 	$expectedActiveRules = $activeRules;
 	$expectedShortUrls = array();
-	$expectedRegexRules = array(array('queryString' => 'g2_static=value',
-					  'settings' => array('restrict' => array('param=bogus'),
-							      'exempt' => array('phpunit1',
-										'phpunit2',
-										$serverName),
-							      'flags' => array('L'))));
+	$expectedRegexRules = array(array('conditions' => array(
+					  array('test' => 'QUERY_STRING',
+						'pattern' => 'param=bogus'),
+					  array('test' => 'HTTP:Referer',
+						'pattern' => '!^[a-zA-Z0-9\\+\\.\\-]+://phpunit1/',
+						'flags' => array('NC')),
+					  array('test' => 'HTTP:Referer',
+						'pattern' => '!^[a-zA-Z0-9\\+\\.\\-]+://phpunit2/',
+						'flags' => array('NC')),
+					  array('test' => 'HTTP:Referer',
+						'pattern' => '!^[a-zA-Z0-9\\+\\.\\-]+://'
+						    . $serverName . '/',
+						'flags' => array('NC')),
+					  array('test' => 'HTTP:Referer',
+						'pattern' => '!^$')),
+				      'queryString' => 'g2_static=value',
+				      'settings' => array('flags' => array('L'))));
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, null);
 
-	/* Test empty pattern */
+	/* Empty pattern */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][10] = array();
 	$expectedActiveRules = $activeRules;
@@ -272,7 +282,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, null);
 
-	/* Test parser */
+	/* Parser */
 	$activeRules = array();
 	$activeRules['rewritehelpermock'][7] = array('pattern' => 'phpunit');
 	$expectedActiveRules = $activeRules;
@@ -283,18 +293,18 @@ class RewriteHelperTest extends GalleryTestCase {
 	$tests[] = array($activeRules, REWRITE_STATUS_OK, $expectedRegexRules,
 	    $expectedShortUrls, null, $activeRules, null);
 
-	foreach (array_keys($tests) as $i) {
+	foreach ($tests as $key => $test) {
 	    list ($ret, $code, $regexRules, $shortUrls, $errno) = RewriteHelper::parseActiveRules(
-		$tests[$i][0], $this->_parser, null, $tests[$i][6]);
+		$test[0], $this->_parser, null, $test[6]);
 	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
 
-	    $this->assertEquals($tests[$i][1], $code, 'code ' . $i);
-	    $this->assertEquals($tests[$i][2], $regexRules, 'regex rules ' . $i);
-	    $this->assertEquals($tests[$i][3], $shortUrls, 'short urls ' . $i);
-	    $this->assertEquals($tests[$i][4], $errno, 'errno ' . $i);
-	    $this->assertEquals($tests[$i][5], $tests[$i][0], 'active rules ' . $i);
+	    $this->assertEquals($test[1], $code, 'code ' . $key);
+	    $this->assertEquals($test[2], $regexRules, 'regex rules ' . $key);
+	    $this->assertEquals($test[3], $shortUrls, 'short urls ' . $key);
+	    $this->assertEquals($test[4], $errno, 'errno ' . $key);
+	    $this->assertEquals($test[5], $test[0], 'active rules ' . $key);
 	}
     }
 
@@ -399,20 +409,32 @@ class RewriteHelperTest extends GalleryTestCase {
 				  'settings' => array('flags' => array('C1', 'C2'))),
 			    $regexRules[0], 'regex rules');
 	/* Conditions */
-	$this->assertEquals(array('conditions' => array(array('test' => 'REQUEST_METHOD',
-							      'pattern' => 'OPTIONS'),
-							array('test' => 'HTTP:Authorization',
-							      'pattern' => '(.+)')),
-				  'queryString' => 'g2_authorization=$1',
-				  'settings' => array('flags' => array('QSA', 'L'))),
+	$this->assertEquals(array('conditions' => array(
+					  array('test' => 'REQUEST_METHOD',
+						'pattern' => 'OPTIONS'),
+					  array('test' => 'HTTP:Authorization',
+						'pattern' => '(.+)')),
+				      'queryString' => 'g2_authorization=$1',
+				      'settings' => array('flags' => array('QSA', 'L'))),
 			    $regexRules[1], 'regex rules');
 	/* Restrict */
-	$this->assertEquals(array('queryString' => 'g2_static=value',
-				  'settings' => array('restrict' => array('param=bogus'),
-						      'exempt' => array('phpunit1',
-									'phpunit2',
-									$serverName),
-						      'flags' => array('QSA', 'L'))),
+	$this->assertEquals(array('conditions' => array(
+					  array('test' => 'QUERY_STRING',
+						'pattern' => 'param=bogus'),
+					  array('test' => 'HTTP:Referer',
+						'pattern' => '!^[a-zA-Z0-9\\+\\.\\-]+://phpunit1/',
+						'flags' => array('NC')),
+					  array('test' => 'HTTP:Referer',
+						'pattern' => '!^[a-zA-Z0-9\\+\\.\\-]+://phpunit2/',
+						'flags' => array('NC')),
+					  array('test' => 'HTTP:Referer',
+						'pattern' => '!^[a-zA-Z0-9\\+\\.\\-]+://'
+						    . $serverName . '/',
+						'flags' => array('NC')),
+					  array('test' => 'HTTP:Referer',
+						'pattern' => '!^$')),
+				      'queryString' => 'g2_static=value',
+				      'settings' => array('flags' => array('QSA', 'L'))),
 			    $regexRules[2], 'regex rules');
 	/* Long pattern */
 	$this->assertEquals(array('pattern' => 'phpunit',
@@ -492,20 +514,16 @@ class RewriteHelperTest extends GalleryTestCase {
 
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');
 
-/**
- * Mock rewrite parser for this test
- */
 class RewriteHelperMockParser extends RewriteParser {
+
     function RewriteHelperMockParser() {
 	$this->_setParserId('rewritehelpermock');
 	$this->_setParserType('preGallery');
     }
 }
 
-/**
- * Mock module for this test
- */
 class RewriteHelperMockModule extends GalleryModule {
+
     function RewriteHelperMockModule() {
 	global $gallery;
 
@@ -551,10 +569,11 @@ class RewriteHelperMockModule extends GalleryModule {
 			  'flags' => array('C1', 'C2'));
 
 	/* Rule 11: Conditions */
-	$rules[11] = array('conditions' => array(array('test' => 'REQUEST_METHOD',
-						       'pattern' => 'OPTIONS'),
-						 array('test' => 'HTTP:Authorization',
-						       'pattern' => '%authorization%')),
+	$rules[11] = array('conditions' => array(
+			       array('test' => 'REQUEST_METHOD',
+				     'pattern' => 'OPTIONS'),
+			       array('test' => 'HTTP:Authorization',
+				     'pattern' => '%authorization%')),
 			   'keywords' => array('authorization' => array('pattern' => '(.+)')));
 
 	/* Rule 6: Restrict */
@@ -581,13 +600,8 @@ class RewriteHelperMockModule extends GalleryModule {
     }
 }
 
-/**
- * Test platform for this test
- *
- * @package Rewrite
- * @subpackage PHPUnit
- */
 class RewriteHelperMockPlatform extends GalleryPlatform {
+
     function file_exists($file) {
 	if (strpos($file, 'modules/rewritehelpermock/module.inc') !== false) {
 	    return true;

@@ -18,10 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 /**
- * Global rewrite parser tests
- *
+ * Global URL rewrite parser tests.
  * @package Rewrite
  * @subpackage PHPUnit
  * @author Douglas Cau <douglas@cau.se>
@@ -220,25 +218,6 @@ class RewriteParserTestCase extends GalleryTestCase {
 	}
     }
 
-    function testSaveBadFlagCondition() {
-	$testRules['rewriteparsermock'][7] = array();
-	list ($ret, $code, $errno) = $this->_parser->saveActiveRules($testRules);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
-	    'module', 'rewrite', 'activeRules');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$expected['rewriteparsermock'][0] = array('pattern' => 'bogus');
-	$this->assertEquals(REWRITE_STATUS_INVALID_PATTERN, $code);
-	$this->assertEquals(array('rewriteparsermock', 7), $errno);
-	$this->assertEquals($expected, unserialize($activeRules));
-    }
-
     function testSaveRestrict() {
 	$testRules['rewriteparsermock'][5] = array();
 	list ($ret, $code, $errno) = $this->_parser->saveActiveRules($testRules);
@@ -416,12 +395,6 @@ class RewriteParserTestCase extends GalleryTestCase {
     }
 }
 
-/**
- * Mock module for this test
- *
- * @package Rewrite
- * @subpackage PHPUnit
- */
 class RewriteParserMockModule extends GalleryModule {
     function RewriteParserMockModule() {
 	global $gallery;
@@ -460,11 +433,6 @@ class RewriteParserMockModule extends GalleryModule {
 	$rules[4] = array('conditions' => array(array('test' => 'REQUEST_FILENAME',
 						      'pattern' => '/foo/bar')));
 
-	/* Rule 7: Bad flags condition */
-	$rules[7] = array('conditions' => array(array('test' => 'REQUEST_METHOD',
-						      'pattern' => 'OPTIONS',
-						      'flags' => array('bogus'))));
-
 	/* Rule 5: Restrict */
 	$rules[5] = array('restrict' => array('view' => 'php.Unit'));
 
@@ -475,12 +443,6 @@ class RewriteParserMockModule extends GalleryModule {
     }
 }
 
-/**
- * Test platform for this test
- *
- * @package Rewrite
- * @subpackage PHPUnit
- */
 class RewriteParserMockPlatform extends GalleryPlatform {
     var $_readBuffer = array();
     var $_isWriteable = true;

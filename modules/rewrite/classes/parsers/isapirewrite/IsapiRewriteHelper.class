@@ -19,7 +19,7 @@
  */
 
 /**
- * This is a helper for the ISAPI_Rewrite parser.
+ * ISAPI_Rewrite helper.
  * @package Rewrite
  * @subpackage Parsers
  * @author Douglas Cau <douglas@cau.se>
@@ -105,8 +105,8 @@ class IsapiRewriteHelper {
 	    return array($ret, null);
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'allowEmptyReferer',
-	    $allowEmptyReferer ? '1' : '0');
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'rewrite', 'allowEmptyReferer', $allowEmptyReferer ? '1' : '0');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -130,19 +130,19 @@ class IsapiRewriteHelper {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	if (strpos($urlGenerator->getCurrentUrlDir(true), 'install/index.php') !== false &&
-		$gallery->getConfig('galleryBaseUrl')) {
+	if (strpos($urlGenerator->getCurrentUrlDir(true), 'install/index.php') !== false
+		&& $gallery->getConfig('galleryBaseUrl')) {
 	    /*
-	     * We can't autoconfigure from installer in a multisite install because
-	     * the current url is for the primary site, not the site being installed.
+	     * We can't autoconfigure from installer in a multisite install because the current URL
+	     * is for the primary site, not the site being installed.
 	     */
 	    return array(null, true);
 	}
 
 	$baseUrlComponents = parse_url(preg_replace('{(install|upgrade)/index\.php.*}', '',
 						    $urlGenerator->getCurrentUrlDir(true)));
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-	    'isapirewrite.galleryLocation', $baseUrlComponents['path']);
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'rewrite', 'isapirewrite.galleryLocation', $baseUrlComponents['path']);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -176,8 +176,7 @@ class IsapiRewriteHelper {
     }
 
     /**
-     * Returns the httpd.ini content given a set of rewrite rules
-     *
+     * Return the httpd.ini content given a set of rewrite rules.
      * @param array $regexRules regular expression rules with settings
      * @param boolean $embedded (optional) true if embedded httpd.ini content is wanted
      * @return array object GalleryStatus a status code
@@ -194,7 +193,7 @@ class IsapiRewriteHelper {
 	$Httpdini['galleryId'] = GALLERY_CONFIG_DIR;
 
 	foreach ($regexRules as $ruleId => $rule) {
-	    if (isset($rule['conditions'])) {
+	    if (!empty($rule['conditions'])) {
 		foreach ($rule['conditions'] as $conditionId => $condition) {
 		    /*
 		     * Apache mod_rewrite and ISAPI_Rewrite share the concepts of strings which
@@ -277,6 +276,15 @@ class IsapiRewriteHelper {
 			$condition['pattern'] = $condition['pattern'] . '.*';
 		    }
 
+		    /*
+		     * ISAPI_Rewrite supports only certain flags:
+		     * http://www.isapirewrite.com/docs/#RewriteCond
+		     */
+		    if (!empty($condition['flags'])) {
+			$condition['flags'] = array_intersect(
+			    $condition['flags'], array('O'));
+		    }
+
 		    $regexRules[$ruleId]['conditions'][$conditionId] = $condition;
 		}
 	    }
@@ -293,12 +301,6 @@ class IsapiRewriteHelper {
 
 	list ($ret, $Httpdini['galleryDirectory']) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'isapirewrite.galleryLocation');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	list ($ret, $Httpdini['allowEmptyReferer']) = GalleryCoreApi::getPluginParameter(
-	    'module', 'rewrite', 'allowEmptyReferer');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -327,14 +329,13 @@ class IsapiRewriteHelper {
     }
 
     /**
-     * Return the .htaccess absolute file name
-     *
+     * Return the .htaccess absolute file name.
      * @return array object GalleryStatus a status code
      *               string .htaccess file name
      */
     function getHttpdiniPath() {
-	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
-	    'isapirewrite.httpdini');
+	list ($ret, $path) =
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'isapirewrite.httpdini');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -343,8 +344,7 @@ class IsapiRewriteHelper {
     }
 
     /**
-     * Checks if the httpd.ini file is writeable.
-     *
+     * Check if the httpd.ini file is writeable.
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      */
@@ -375,9 +375,9 @@ class IsapiRewriteHelper {
     }
 
     /**
-     * Returns one of the following codes:
-     *   REWRITE_STATUS_OK                              everything is fine
-     *   REWRITE_STATUS_NO_ISAPI_REWRITE                 no isapi rewrite support
+     * Return one of the following codes:
+     *     REWRITE_STATUS_OK                  everything is fine
+     *     REWRITE_STATUS_NO_ISAPI_REWRITE    no ISAPI_Rewrite support
      *
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
@@ -409,8 +409,7 @@ class IsapiRewriteHelper {
 
 
     /**
-     * Writes Gallery2 data to the httpd.ini file.
-     *
+     * Write Gallery data to the httpd.ini file.
      * @param array $regexRules regular expression rules with settings
      * @return array object GalleryStatus a status code
      *               int rewrite status code
