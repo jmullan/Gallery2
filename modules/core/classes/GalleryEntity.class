@@ -659,5 +659,13 @@ class GalleryEntity extends GalleryPersistent {
     function setOnLoadHandlers($onLoadHandlers) {
 	$this->onLoadHandlers = $onLoadHandlers;
     }
+
+    /**
+     * @todo Consider removing this method when refactoring the renderer code.
+     */
+    function getRenderer() {
+	/* See bug 1662652 */
+	return null;
+    }
 }
 ?>
