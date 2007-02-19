@@ -930,7 +930,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$lockId = $db->GenId($this->_gs->_tablePrefix . DATABASE_SEQUENCE_LOCK);
 	$this->_gs->_traceStop();
 
-	return array(null, $lockId);
+	return array(null, (int)$lockId);
     }
 
     /**
@@ -1753,6 +1753,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			     ERROR_STORAGE_FAILURE, __FILE__, __LINE__, 'Empty sequence id!'),
 			 null);
 	}
+	$lockId = (int)$lockId;
 
 	/* Put in a lock request */
 	$lockIdCol = $this->_gs->_translateColumnName('lockId');
