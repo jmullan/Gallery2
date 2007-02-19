@@ -224,6 +224,43 @@ class DataItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
     }
-}
 
+    function testRescan() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	/* Create a data item with wrong "size" attribute, and a fast-download file */
+	list ($ret, $item) = $this->_createRandomDataItem(
+		$this->_album->getId(), 'test/file', array('size' => 123), __FILE__);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $everybodyId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addGroupPermission($item->getId(), $everybodyId, 'core.viewAll');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::createFastDownloadFile($item, true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/* Verify setup */
+	$this->assertEquals(123, $item->getSize(), 'size');
+	$path = GalleryDataCache::getCachePath(
+		array('type' => 'fast-download', 'itemId' => $item->getId()));
+	$this->assert($platform->file_exists($path), 'fast-download file should exist');
+	/* Rescan */
+	$ret = $item->rescan();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	/* Verify results */
+	$this->assertEquals($platform->filesize(__FILE__), $item->getSize(), 'updated size');
+	$this->assert(!$platform->file_exists($path), 'fast-download file should be removed');
+    }
+}
 ?>
