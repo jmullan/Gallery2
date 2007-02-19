@@ -252,6 +252,23 @@ class GalleryPermissionHelper_advanced {
 	    if ($ret) {
 		return $ret;
 	    }
+
+	    if ($searchResults->resultCount() < 1) {
+		/* This entity was (accidentally) created without an ACL entry. Create one first. */
+		$ret = GalleryCoreApi::addMapEntry('GalleryAccessSubscriberMap',
+						   array('itemId' => $itemId, 'accessListId' => 0));
+		if ($ret) {
+		    return $ret;
+		}
+
+		list ($ret, $searchResults) =
+			GalleryCoreApi::getMapEntry('GalleryAccessSubscriberMap',
+						    array('accessListId', 'itemId'),
+						    array('itemId' => $itemId));
+		if ($ret) {
+		    return $ret;
+		}
+	    }
 	}
 
 	/*

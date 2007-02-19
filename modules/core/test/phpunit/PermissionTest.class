@@ -1208,6 +1208,60 @@ class PermissionTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array('core.changePermissions' => 1), $permissions, 'album 3');
     }
+
+    function testAddPermissionToEntityWithoutPermissions() {
+	/* See bug 1662627 */
+	/* 1. Create an entity without any ACL entry */
+	list ($ret, $entity) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryEntity');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	if (!isset($entity)) {
+	    $this->fail('Got no GalleryEntity instance');
+	    return;
+	}
+	$ret = $entity->create();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = $entity->save();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($entity);
+
+	/* 2. Precondition for the test */
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryAccessSubscriberMap',
+		array('accessListId', 'itemId'), array('itemId' => $entity->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(!$searchResults->resultCount(), 'Precondition failed');
+
+	/* 3. Execute the method under test */
+	list ($ret, $groupId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addGroupPermission($entity->getId(), $groupId, 'core.viewSource');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* 4. Verify the results */
+	$ret = GalleryCoreApi::assertHasItemPermission($entity->getId(), 'core.viewSource');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryAccessSubscriberMap',
+		array('accessListId', 'itemId'), array('itemId' => $entity->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert($searchResults->resultCount(), 'Entity still has no ACL entry');
+    }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryEventListener.class');
