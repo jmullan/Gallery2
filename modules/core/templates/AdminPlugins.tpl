@@ -104,11 +104,22 @@
   </span></span>
 
   <span class="o"><span>
-    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminRepository"}">
-      {g->text text="Get More Plugins"}
-    </a>
+    {capture name=getMoreLink}
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminRepository"}">{g->text text="Get More Plugins"}</a>
+    {/capture}
+    {$smarty.capture.getMoreLink}
   </span></span>
 </div>
+
+{if $AdminPlugins.showGetMorePluginsTip}
+<div class="gbBlock">
+  <p class="giDescription">
+    <h2>
+      {g->text text="Want more features?  New plugins are just a click away.  Just click the %s link to get started." arg1=$smarty.capture.getMoreLink}
+    </h2>
+  </p>
+</div>
+{/if}
 
 <div class="gbBlock">
   <p class="giDescription">

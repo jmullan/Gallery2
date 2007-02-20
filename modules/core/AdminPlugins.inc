@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepository.class');
+
 /**
  * This view will show administration options for available plugins
  * @package GalleryCore
@@ -132,6 +134,20 @@ class AdminPluginsView extends GalleryView {
 	    'module', 'core', 'default.theme');
 	if ($ret) {
 	    return array($ret, null);
+	}
+
+	list ($ret, $repositories, $repositoryInitErrorCount) =
+	    GalleryRepository::getRepositories();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$AdminPlugins['showGetMorePluginsTip'] = 1;
+	foreach ($repositories as $source => $repository) {
+	    if ($repository->localIndexExists()) {
+		$AdminPlugins['showGetMorePluginsTip'] = 0;
+		break;
+	    }
 	}
 
 	/* Only the codebase install can delete plugins, not multisites */
