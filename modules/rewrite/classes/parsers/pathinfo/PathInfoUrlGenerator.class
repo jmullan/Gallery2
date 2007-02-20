@@ -21,7 +21,7 @@
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
 
 /**
- * URL generator for PHP Path Info parser.
+ * PHP path info URL generator.
  * @package Rewrite
  * @subpackage Parsers
  * @author Douglas Cau <douglas@cau.se>
@@ -30,19 +30,17 @@ GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class')
 class PathInfoUrlGenerator extends RewriteUrlGenerator {
 
     /**
-     * Base parameter string for all generated URLs, eg. 'module=galllery'
-     * Index of array = $forceDirect (true/false) only relevant for embedded Gallery
-     *
-     * @var array (0 => string query string, 1 => string forceDirect query string)
+     * Base parameter string for all generated URLs, e.g. 'module=gallery'.  Index of array =
+     * $forceDirect (true/false) only relevant for embedded Gallery.
+     * @var array 0 => string query string, 1 => string forceDirect query string
      * @access private
      */
     var $_baseParamString;
 
     /**
-     * URL base filename of Gallery
-     * Doesn't include URL parameters (unlike GalleryUrlGenerator::_file)
-     * Index of array = $forceDirect (true/false) only relevant for embedded Gallery
-     *
+     * URL base filename of Gallery.  Doesn't include URL parameters (unlike
+     * GalleryUrlGenerator::_file).  Index of array = $forceDirect (true/false) only relevant for
+     * embedded Gallery.
      * @var array (0 => string file, 1 => string forceDirect file)
      * @access private
      */
@@ -79,8 +77,8 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 	    }
 	}
 
-	list($ret, $parser) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
-	    'pathinfo.parser');
+	list($ret, $parser) = GalleryCoreApi::getPluginParameter(
+	    'module', 'rewrite', 'pathinfo.parser');
 	if ($ret) {
 	    return $ret;
 	}
@@ -90,31 +88,42 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 	if (($pathInfo = GalleryUtilities::getServerVar('PATH_INFO'))
 		!= GalleryUtilities::getServerVar('SCRIPT_NAME') && !empty($pathInfo)) {
 	    /* Remove the path of the existing base file if necessary */
-	    $base = substr($this->getCurrentUrlDir() . $this->_piFile[0],
-			   strlen($this->makeUrl('/')) - 1);
+	    $base = substr(
+		$this->getCurrentUrlDir() . $this->_piFile[0], strlen($this->makeUrl('/')) - 1);
 	    $len = strlen($base);
 	    if (strncmp($pathInfo, $base, $len) == 0) {
 		$pathInfo = substr($pathInfo, $len);
 	    }
 
-	    /* Do the parsing (add params to REQUEST/GET params */
+	    /* Do the parsing (add params to request variables) */
 	    $pathInfo = str_replace('+', ' ', $pathInfo);
-	    if (isset($parser['static'][$pathInfo])) {
-		$queryString = $parser['static'][$pathInfo];
+	    if (!empty($parser['static'][$pathInfo])) {
+		foreach ($parser['static'][$pathInfo]['queryString'] as $key => $value) {
+		    GalleryUtilities::putRequestVariable($key, $value);
+		}
 	    } else {
-		$queryString = preg_replace($parser['dynamic.find'],
-		    $parser['dynamic.replace'], $pathInfo);
-	    }
+		foreach ($parser['dynamic'] as $dynamic) {
+		    if (!preg_match($dynamic['pattern'], $pathInfo, $matches)) {
+			continue;
+		    }
 
-	    if (!empty($queryString) && $queryString{0} == 'Q') {
-		$queryString = explode('&', substr($queryString, 1));
+		    foreach ($dynamic['keywords'] as $reference => $name) {
+		    	if (empty($name)) {
+			    continue;
+			}
 
-		foreach ($queryString as $arg) {
-		    $param = explode('=', $arg);
-		    GalleryUtilities::putRequestVariable($param[0], $param[1], false);
+			GalleryUtilities::putRequestVariable($name, $matches[$reference]);
+		    }
+
+		    foreach ($dynamic['queryString'] as $key => $value) {
+			GalleryUtilities::putRequestVariable($key, $value);
+		    }
+
+		    break;
 		}
 	    }
 	}
+
 	return null;
     }
 
@@ -144,7 +153,7 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 	}
 
 	/*
-	 * Since the baseFile (eg. main.php) is in the REQUEST_URI, eg.
+	 * Since the baseFile (e.g. main.php) is in the REQUEST_URI, e.g.
 	 *     http://example.com/gallery2/main.php/albumA/itemB.jpg.htm
 	 * GalleryUrlGenerator::makeRelativeUrl would generate relative URLs when it actually should
 	 * generate server-relative URLs.  Thus enforce server-relative URLs.
@@ -174,12 +183,12 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
     }
 
     /**
-     * Return the base directory of all generated URLs, eg. if the URL is:
+     * Return the base directory of all generated URLs, e.g. if the URL is:
      *   http://example.com/gallery2/main.php/Travels/Somewhere/IMG001.jpg.htm
      * Then we return:
      *   http://example.com/gallery2/
      *
-     * Note that the URL parts can all be overidden
+     * Note that the URL parts can all be overridden.
      *
      * @param boolean $forceDirect (optional) ensure Gallery base URL is returned
      *        (different when embedded)
@@ -207,7 +216,7 @@ class PathInfoUrlGenerator extends RewriteUrlGenerator {
 		if (empty($this->_file[0])) {
 		    $url = substr($url, 0, strrpos($url, '/') + 1);
 		} else if (($i = strpos($url, $this->_file[0])) !== false) {
-		    /* $this->_file might include query params, eg. 'index.php?mod=gallery' */
+		    /* $this->_file might include query params, e.g. 'index.php?mod=gallery' */
 		    $url = substr($url, 0, $i);
 		} else if (($i = strpos($url, $this->_piFile[0])) !== false) {
 		    /* $this->_piFile doesn't include query params, but a traling slash */

@@ -228,8 +228,9 @@ class RewriteModuleExtras {
 	     * if 'match' is subset of URL params, instead of indexing by "$view|$subView".  Means
 	     * adding 'match' to $shortUrls.
 	     */
+
 	case '1.1.6':
-	    /* Added activateRewriteRulesForModule() to Rewrite API */
+	    /* Add activateRewriteRulesForModule to rewrite API */
 
 	case '1.1.7':
 	    /* Support rewrite rules without 'pattern' */
@@ -314,14 +315,17 @@ class RewriteModuleExtras {
 	case '1.1.8':
 	    /* Remove L from mandatory flags, remove pattern for restrict rules */
 	case '1.1.9':
-	    /* Updating required Module API version for getRewriteRules change from v1.1.8 */
+	    /* Update required module API version for getRewriteRules change from 1.1.8 */
+
+	case '1.1.10':
+	    /* Update regex rules structure to reuse code from GalleryUrlGenerator */
 
 	case 'end of upgrade path':
 	    break;
 
 	default:
 	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+					 sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return null;

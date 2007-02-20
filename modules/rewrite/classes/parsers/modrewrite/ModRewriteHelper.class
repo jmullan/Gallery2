@@ -212,34 +212,10 @@ class ModRewriteHelper {
      *               string the Gallery .htaccess section
      */
     function getHtaccessContent($regexRules, $embedded=false) {
-	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$Htaccess = array();
-	$Htaccess['g2Prefix'] = GALLERY_FORM_VARIABLE_PREFIX;
-	$Htaccess['mainPhp'] = GALLERY_MAIN_PHP;
-
-	foreach ($regexRules as $ruleId => $rule) {
-	    if (!empty($rule['conditions'])) {
-		foreach ($rule['conditions'] as $conditionId => $condition) {
-		    /*
-		     * Apache mod_rewrite supports only certain flags:
-		     * http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewritecond
-		     */
-		    if (!empty($condition['flags'])) {
-			$condition['flags'] = array_intersect(
-			    $condition['flags'], array('NC', 'OR'));
-		    }
-
-		    $regexRules[$ruleId]['conditions'][$conditionId] = $condition;
-		}
-	    }
-
-	    $regexRules[$ruleId]['queryString'] = str_replace('$', '%',
-		$regexRules[$ruleId]['queryString']);
-	}
-	$Htaccess['rules'] = $regexRules;
 
 	list ($ret, $Htaccess['galleryDirectory']) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.galleryLocation');
@@ -259,7 +235,7 @@ class ModRewriteHelper {
 	$Htaccess['rewriteBase'] = $Htaccess['galleryDirectory'];
 	$Htaccess['baseFile'] = GALLERY_MAIN_PHP;
 	if ($embedded) {
-	    $Htaccess['baseFile'] = $urlGenerator->_file[0];
+	    $Htaccess['baseFile'] = $urlGenerator->_file[false];
 	    list ($ret, $Htaccess['directory']) = GalleryCoreApi::getPluginParameter(
 		'module', 'rewrite', 'modrewrite.embeddedLocation');
 	    if ($ret) {
@@ -272,11 +248,68 @@ class ModRewriteHelper {
 		$Htaccess['directory'] = '';
 	    }
 	}
-	$Htaccess['baseFile'] .= (strpos($Htaccess['baseFile'], '?') === false) ? '?' : '&';
 
-	$Htaccess['matchBaseFile'] = $Htaccess['directory'] . preg_quote(
-	    preg_replace('/(\?.*)/', '', $Htaccess['baseFile']));
+	$Htaccess['matchBaseFile'] = $Htaccess['directory']
+	    . preg_quote(preg_replace('/\?.*/', '', $Htaccess['baseFile']));
 
+	/* Substitute with what the Gallery URL generator would generate */
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init($Htaccess['directory'] . $Htaccess['baseFile'],
+			    $Htaccess['galleryDirectory'] . GALLERY_MAIN_PHP);
+
+	foreach ($regexRules as $ruleId => $regexRule) {
+	    /* Conditions */
+	    if (!empty($regexRule['conditions'])) {
+		foreach ($regexRule['conditions'] as $conditionId => $condition) {
+		    /*
+		     * Apache mod_rewrite supports only certain flags:
+		     * http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewritecond
+		     */
+		    if (!empty($condition['flags'])) {
+			$condition['flags'] = array_intersect($condition['flags'],
+			    array('NC', 'OR'));
+		    }
+
+		    $regexRule['conditions'][$conditionId] = $condition;
+		}
+	    }
+
+	    /* Pattern */
+	    if (!empty($regexRule['pattern'])) {
+		$regexRule['conditions'][] = array(
+		    'test' => 'THE_REQUEST',
+		    'pattern' => $Htaccess['rewriteBase'] . $regexRule['pattern'] . '(\\?.|\\ .)');
+		$regexRule['conditions'][] = array(
+		    'test' => 'REQUEST_URI',
+		    'pattern' => '!' . $Htaccess['matchBaseFile'] . '$');
+	    }
+
+	    /* Substitution */
+	    $params = $regexRule['queryString'];
+	    foreach ($regexRule['keywords'] as $reference => $name) {
+		if (empty($name)) {
+		    continue;
+		}
+
+		/* $N are RewriteRule backreferences, %N are RewriteCond backreferences */
+		$params[$name] = '%' . $reference;
+	    }
+
+	    $regexRule['substitution'] = $urlGenerator->generateUrl(
+		$params, array('forceDirect' => isset($params['view'])
+				   && $params['view'] == 'watermark.DownloadItem',
+			       'forceServerRelativeUrl' => true,
+			       'forceSessionId' => false,
+			       'htmlEntities' => false,
+			       'urlEncode' => false,
+			       'useAuthToken' => false));
+
+	    $regexRules[$ruleId] = $regexRule;
+	}
+	$Htaccess['rules'] = $regexRules;
+
+	/* Render template */
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../templates', true, false);
 	$template->setVariable('Htaccess', $Htaccess);
 	list ($ret, $content) = $template->fetch('Htaccess.tpl', 'modules_rewrite');
@@ -288,10 +321,10 @@ class ModRewriteHelper {
     }
 
     /**
-     * Return the absolute file name of .htaccess
+     * Return the absolute path to the .htaccess file.
      * @param boolean $embedded (optional) true if embedded .htaccess is wanted
      * @return array object GalleryStatus a status code
-     *               string .htaccess file name
+     *               string .htaccess file path
      */
     function getHtaccessPath($embedded=false) {
 	if ($embedded) {
@@ -406,10 +439,10 @@ class ModRewriteHelper {
 
     /**
      * Returns one of the following codes:
-     *   REWRITE_STATUS_OK                              everything is fine
-     *   REWRITE_STATUS_APACHE_NO_MOD_REWRITE           no mod rewrite support
-     *   REWRITE_STATUS_APACHE_UNABLE_TO_TEST           unable to properly test mod_rewrite
-     *   REWRITE_STATUS_MULTISITE                       can't test mod_rewrite in multisite
+     *     REWRITE_STATUS_OK                       everything is fine
+     *     REWRITE_STATUS_APACHE_NO_MOD_REWRITE    no mod rewrite support
+     *     REWRITE_STATUS_APACHE_UNABLE_TO_TEST    unable to properly test mod_rewrite
+     *     REWRITE_STATUS_MULTISITE                can't test mod_rewrite in multisite
      *
      * @return array object GalleryStatus a status code
      *               int rewrite status code

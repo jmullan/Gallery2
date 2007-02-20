@@ -19,7 +19,7 @@
  */
 
 /**
- * This is a helper for the PHP Path Info parser.
+ * PHP path info helper.
  * @package Rewrite
  * @subpackage Parsers
  * @author Douglas Cau <douglas@cau.se>
@@ -76,31 +76,32 @@ class PathInfoHelper {
     }
 
     /**
-     * This saves the rules in a way that the parser can grab quickly and compare agains.
-     *
+     * Save the rules in a way the parser can grab quickly and compare against the request.
      * @param array $regexRules regular expression rules used by the parser
      * @return object GalleryStatus a status code
      */
     function saveParser($regexRules) {
-	$static = $find = $replace = array();
-
+	$static = $dynamic = array();
 	foreach ($regexRules as $rule) {
-	    $queryString = 'Q' . $rule['queryString'];
+	    if (empty($rule['pattern'])) {
+		$static['/'] = array('queryString' => $rule['queryString']);
 
-	    if (!isset($rule['pattern'])) {
-		$static['/'] = $queryString;
-	    } else if (strpos($rule['pattern'], '(') === false) {
-		$static['/' . $rule['pattern']] = $queryString;
+	    /*
+	     * Backreference 0 contains the text that matched the full pattern, backreference 1
+	     * contains the text that matched the first parenthesized subpattern, and so on
+	     */
+	    } else if (count($rule['keywords']) < 2) {
+		$static['/' . $rule['pattern']] = array('queryString' => $rule['queryString']);
 	    } else {
-		$find[] = '@^\/' . $rule['pattern'] . '$@';
-		$replace[] = $queryString;
+		$dynamic[] = array('pattern' => '@^/' . $rule['pattern'] . '$@',
+				   'keywords' => $rule['keywords'],
+				   'queryString' => $rule['queryString']);
 	    }
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'pathinfo.parser',
-	    serialize(array('static' => $static,
-			    'dynamic.find' => $find,
-			    'dynamic.replace' => $replace)));
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'rewrite', 'pathinfo.parser', serialize(array('static' => $static,
+								    'dynamic' => $dynamic)));
 	if ($ret) {
 	    return $ret;
 	}

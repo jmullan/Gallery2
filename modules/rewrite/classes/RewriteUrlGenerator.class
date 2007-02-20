@@ -88,7 +88,14 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      * @private
      */
     function _onLoad() {
-	$shortUrl = $this->_getShortUrl(GalleryUtilities::getAllRequestVariables());
+	$variables = GalleryUtilities::getAllRequestVariables();
+
+	/* Make sure the onLoad function is called even if the default view is omitted */
+	if (empty($variables['controller']) && empty($variables['view'])) {
+	    $variables['view'] = GALLERY_DEFAULT_VIEW;
+	}
+
+	$shortUrl = $this->_getShortUrl($variables);
 
 	if (!empty($shortUrl['onLoad'])) {
 	    GalleryCoreApi::requireOnce('modules/' . $shortUrl['onLoad'][0]

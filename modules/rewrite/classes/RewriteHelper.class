@@ -63,8 +63,8 @@ class RewriteHelper {
 	    }
 
 	    $path = 'modules/rewrite/classes/parsers/' . $rewriteParserId . '/parser.inc';
-	    if ($platform->file_exists(GalleryCoreApi::getPluginBaseDir('module', 'rewrite') .
-		    $path)) {
+	    if ($platform->file_exists(
+		    GalleryCoreApi::getPluginBaseDir('module', 'rewrite') . $path)) {
 		GalleryCoreApi::requireOnce($path);
 	    }
 	    $class = $rewriteParserId . 'Parser';
@@ -79,7 +79,7 @@ class RewriteHelper {
      * and build an array for the URL generator to use when generating short URLs.
      * @param array $activeRules array array ('pattern' => string pattern) active rules by reference
      * @param object RewriteParser $rewriteParser
-     * @param object GalleryModule $upgradeModule (optional) passed in during activate/upgrade
+     * @param object GalleryModule $upgradeModule (optional) passed in during activate / upgrade
      * @param array $flags optional definition of default and mandatory flags
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
@@ -131,7 +131,7 @@ class RewriteHelper {
 	    }
 
 	    $rules = $module->getRewriteRules();
-	    foreach ($activeRules[$moduleId] as $ruleId => $rule) {
+	    foreach ($activeRules[$moduleId] as $ruleId => $activeRule) {
 		/* Make sure this rule still exists, if not silently continue */
 		if (!isset($rules[$ruleId])) {
 		    unset($activeRules[$moduleId][$ruleId]);
@@ -139,22 +139,21 @@ class RewriteHelper {
 		}
 
 		/* Make sure this parser supports this kind of rule */
-		if (!$rewriteParser->isValidRule(
-			$rules[$ruleId], $activeRules[$moduleId][$ruleId])) {
+		if (!$rewriteParser->isValidRule($rules[$ruleId], $activeRule)) {
 		    return array(null, REWRITE_STATUS_INVALID_PATTERN,
 			null, null, array($moduleId, $ruleId));
 		}
 
 		/* Save the pattern for the URL generator to use */
-		if (isset($rules[$ruleId]['match']) && isset($rule['pattern'])) {
+		if (isset($rules[$ruleId]['match']) && isset($activeRule['pattern'])) {
 		    $shortUrl = array('match' => $rules[$ruleId]['match'],
-				      'pattern' => $rule['pattern']);
+				      'pattern' => $activeRule['pattern']);
 
 		    /* Get custom function information */
-		    if (isset($rules[$ruleId]['keywords'])) {
-			foreach ($rules[$ruleId]['keywords'] as $key => $info) {
-			    if (isset($info['function'])) {
-				$shortUrl['functions'][$key] = $info['function'];
+		    if (!empty($rules[$ruleId]['keywords'])) {
+			foreach ($rules[$ruleId]['keywords'] as $key => $value) {
+			    if (isset($value['function'])) {
+				$shortUrl['functions'][$key] = $value['function'];
 			    }
 			}
 		    }
@@ -168,12 +167,14 @@ class RewriteHelper {
 		}
 
 		/* Parse the pattern and create regular expressions with conditions */
-		$settings = array();
-		$keywords = array('itemId' => array('pattern' => '([0-9]+)'));
+		if (empty($rules[$ruleId]['keywords'])) {
+		    $rules[$ruleId]['keywords'] = array();
+		}
 
 		/* Add custom keywords to the list of allowed keywords */
-		if (isset($rules[$ruleId]['keywords'])) {
-		    $keywords = array_merge($keywords, $rules[$ruleId]['keywords']);
+		if (!isset($rules[$ruleId]['keywords']['itemId'])) {
+		    $rules[$ruleId]['keywords']['itemId'] = array('pattern' => '([0-9]+)');
+
 		}
 
 		/* Restrict this rule to given query string conditions */
@@ -202,32 +203,35 @@ class RewriteHelper {
 		    }
 		}
 
+		/* Build the query string to map the request on to */
+		if (empty($rules[$ruleId]['queryString'])) {
+		    $rules[$ruleId]['queryString'] = array();
+		}
+
+		if (!empty($rules[$ruleId]['match'])) {
+		    $rules[$ruleId]['queryString'] = array_merge(
+			$rules[$ruleId]['match'], $rules[$ruleId]['queryString']);
+		}
+
 		/* Build the list of flags to apply to this rule */
-		$settings['flags'] = isset($flags) ? $flags['default'] : array();
-		if (isset($rules[$ruleId]['flags']) && isset($flags)) {
-		    $settings['flags'] = array_merge($rules[$ruleId]['flags'], $flags['mandatory']);
+		if (isset($rules[$ruleId]['flags'])) {
+		    $rules[$ruleId]['flags'] = array_merge(
+			$rules[$ruleId]['flags'], $flags['mandatory']);
+		} else {
+		    $rules[$ruleId]['flags'] = isset($flags) ? $flags['default'] : array();
 		}
 
 		/* Make sure that there's no subrequest made when we match by the query string */
 		if (!empty($rules[$ruleId]['restrict'])) {
-		    $settings['flags'][] = 'L';
+		    $rules[$ruleId]['flags'][] = 'L';
 		}
 
 		/* Ignore duplicate flags */
-		$settings['flags'] = array_unique($settings['flags']);
-
-		/* Build the query string to map the request on to */
-		$queryString = array();
-		if (!empty($rules[$ruleId]['match'])) {
-		    $queryString = $rules[$ruleId]['match'];
-		}
-		if (!empty($rules[$ruleId]['queryString'])) {
-		    $queryString = array_merge($queryString, $rules[$ruleId]['queryString']);
-		}
+		$rules[$ruleId]['flags'] = array_unique($rules[$ruleId]['flags']);
 
 		/* Parse the rule */
-		list ($ret, $code) = RewriteHelper::_parseRule($activeRules[$moduleId][$ruleId],
-		    $keywords, $queryString, $regexRules, $settings, $rules[$ruleId]);
+		list ($ret, $code) = RewriteHelper::_parseRule(
+		    $regexRules, $rules[$ruleId], $activeRule);
 		if ($ret) {
 		    return array($ret, null, null, null, null);
 		}
@@ -242,27 +246,31 @@ class RewriteHelper {
     }
 
     /**
-     * Replaces all keywords with an appropriate pattern and append to $regexRules.
-     *
-     * @param array $activeRule array ('pattern' => string pattern)
-     * @param array $keywords of keywords => regular expresion for the htaccess file
-     * @param array $queryString of query string params (key => value)
+     * Replace keywords with appropriate pattern and append to $regexRules.
      * @param array $regexRules of parsed rules
-     * @param array $settings of settings
      * @param array $rule rewrite rule
+     * @param array $activeRule array ('pattern' => string pattern)
      * @return array object GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      * @access private
      */
-    function _parseRule($activeRule, $keywords, $queryString, &$regexRules, $settings, $rule) {
-	$reference = 1;
-	$regexRule = array('settings' => $settings);
+    function _parseRule(&$regexRules, $rule, $activeRule) {
+	$regexRule = array();
+	$regexRule['keywords'] = array();
+	$regexRule['queryString'] = $rule['queryString'];
+	$regexRule['flags'] = $rule['flags'];
+
+	/*
+	 * Backreference 0 contains the text that matched the full pattern, backreference 1
+	 * contains the text that matched the first parenthesized subpattern, and so on
+	 */
+	$regexRule['keywords'][] = null;
 
 	if (!empty($rule['conditions'])) {
 	    $regexRule['conditions'] = array();
 	    foreach ($rule['conditions'] as $condition) {
 		$code = RewriteHelper::_parseKeywords(
-		    $reference, $condition['pattern'], $keywords, $queryString);
+		    $regexRule, $condition['pattern'], $rule['keywords']);
 		if ($code != REWRITE_STATUS_OK) {
 		    return array(null, $code);
 		}
@@ -272,48 +280,42 @@ class RewriteHelper {
 	}
 
 	if (!empty($activeRule['pattern'])) {
-	    $pattern = preg_quote($activeRule['pattern']);
+	    $regexRule['pattern'] = preg_quote($activeRule['pattern']);
 	    $code = RewriteHelper::_parseKeywords(
-		$reference, $pattern, $keywords, $queryString);
+		$regexRule, $regexRule['pattern'], $rule['keywords']);
 	    if ($code != REWRITE_STATUS_OK) {
 		return array(null, $code);
 	    }
-
-	    $regexRule['pattern'] = $pattern;
 	}
 
-	$args = array();
-	foreach ($queryString as $key => $value) {
-	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
-	}
-	$regexRule['queryString'] = join('&', $args);
 	$regexRules[] = $regexRule;
 
 	return array(null, REWRITE_STATUS_OK);
     }
 
     /**
-     * Replaces all keywords with an appropriate pattern.
-     * @param array $reference back reference to next keyword pattern
+     * Replace keywords with appropriate pattern and add backreference to $regexRule['keywords'].
+     * @param array $regexRule parsed rule
      * @param array $pattern
      * @param array $keywords of keywords => regular expresion for the htaccess file
-     * @param array $queryString of query string params (key => value)
      * @return int rewrite status code (REWRITE_STATUS_OK on success)
      * @access private
      */
-    function _parseKeywords(&$reference, &$pattern, $keywords, &$queryString) {
+    function _parseKeywords(&$regexRule, &$pattern, $keywords) {
 	preg_match_all('/\%([^%]+)\%/', $pattern, $matches);
 	foreach ($matches[1] as $keyword) {
 	    if (!isset($keywords[$keyword]['pattern'])) {
 		return REWRITE_STATUS_BAD_KEYWORD;
 	    }
 
+	    /* TODO: What if $pattern contains more than one instance of "%$keyword%"? */
 	    $pattern = str_replace('%' . $keyword . '%', $keywords[$keyword]['pattern'], $pattern);
 
-	    if (!isset($keywords[$keyword]['ignore'])) {
-		$queryString[$keyword] = '$' . $reference;
+	    if (empty($keywords[$keyword]['ignore'])) {
+		$regexRule['keywords'][] = $keyword;
+	    } else {
+		$regexRule['keywords'][] = null;
 	    }
-	    $reference++;
 	}
 
 	return REWRITE_STATUS_OK;
@@ -330,8 +332,8 @@ class RewriteHelper {
      */
     function _sortRules($a, $b) {
 	/* Flags: rules which don't allow subrequests come last */
-	if (in_array('L', $a['settings']['flags']) xor in_array('L', $b['settings']['flags'])) {
-	    if (in_array('L', $b['settings']['flags'])) {
+	if (in_array('L', $a['flags']) xor in_array('L', $b['flags'])) {
+	    if (in_array('L', $b['flags'])) {
 		return -1;
 	    }
 
@@ -355,16 +357,10 @@ class RewriteHelper {
 	 * Pattern: static patterns come before regex patterns, long patterns come before short
 	 * patterns, empty patterns come last.
 	 */
-	if (isset($a['pattern']) || isset($b['pattern'])) {
-	    if (isset($a['pattern']) && isset($b['pattern'])) {
-		if (strpos($a['pattern'], '(') !== false
-			|| strpos($b['pattern'], '(') !== false) {
-		    if (strpos($a['pattern'], '(') !== false
-			    && strpos($b['pattern'], '(') !== false) {
-			return strpos($b['pattern'], '(') - strpos($a['pattern'], '(');
-		    }
-
-		    if (strpos($b['pattern'], '(') !== false) {
+	if (!empty($a['pattern']) || !empty($b['pattern'])) {
+	    if (!empty($a['pattern']) && !empty($b['pattern'])) {
+		if (count($a['keywords']) < 2 xor count($b['keywords']) < 2) {
+		    if (count($a['keywords']) < 2) {
 			return -1;
 		    }
 
@@ -374,7 +370,7 @@ class RewriteHelper {
 		return strlen($b['pattern']) - strlen($a['pattern']);
 	    }
 
-	    if (isset($a['pattern'])) {
+	    if (!empty($a['pattern'])) {
 		return -1;
 	    }
 

@@ -38,12 +38,14 @@ class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	global $gallery;
 	parent::setUp();
 
-	$parser = array(
-	    'static' => array('/static' => 'Qg2_view=php.Static'),
-	    'dynamic.find' => array('/\/p\/([a-z]{2})\/([^\?]+)/',
-				    '/\/p\/([0-9]+).html/'),
-	    'dynamic.replace' => array('Qg2_view=php.Dynamic&g2_language=$1&g2_path=$2',
-				       'Qg2_view=php.Dynamic2&g2_itemId=$1'));
+	$parser = array();
+	$parser['static']['/static'] = array('queryString' => array('view' => 'php.Static'));
+	$parser['dynamic'][] = array('pattern' => '/\/p\/([a-z]{2})\/([^\?]+)/',
+				     'keywords' => array(null, 'language', 'path'),
+				     'queryString' => array('view' => 'php.Dynamic'));
+	$parser['dynamic'][] = array('pattern' => '/\/p\/([0-9]+).html/',
+				     'keywords' => array(null, 'itemId'),
+				     'queryString' => array('view' => 'php.Dynamic2'));
 
 	/* Set up our environment */
 	$ret = GalleryCoreApi::setPluginParameter(

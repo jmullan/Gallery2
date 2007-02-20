@@ -17,24 +17,7 @@ RewriteCond {$condition.test} {$condition.pattern}{if !empty($condition.flags)} 
 
 {/foreach}
 {/if}
-{if isset($rule.pattern)}
-RewriteCond Host: {$Httpdini.host}
-{if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
-{else}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
-{/if}
-
-RewriteCond Host: {$Httpdini.host}
-{if strpos($rule.queryString, 'view=core.DownloadItem') !== false}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}\?(.*) {$Httpdini.galleryDirectory}{$Httpdini.mainPhp}?{$rule.queryString}&${$rule.queryStringId}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
-{else}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern}\?(.*) {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}&${$rule.queryStringId}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
-{/if}
-{else}
-RewriteCond Host: {$Httpdini.host}
-RewriteRule {$Httpdini.rewriteBase}.* {$Httpdini.rewriteBase}{$Httpdini.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
-{/if}
+RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$rule.substitution}{if !empty($rule.flags)}   [{$rule.flags|@implode:","}]{/if}
 
 {/foreach}
 

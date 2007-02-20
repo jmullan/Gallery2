@@ -19,8 +19,7 @@
  */
 
 /**
- * This module provides support for adding watermarks to images
- *
+ * Watermark your images.
  * @package Watermark
  * @author Alan Harder <alan.harder@sun.com>
  * @version $Revision$
@@ -172,8 +171,8 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 
 	case 'end of upgrade path':
 	    /*
-	     * Leave this bogus case at the end of the legitimate case statements so that we
-	     * always properly terminate our upgrade path with a break.
+	     * Leave this bogus case at the end of the legitimate case statements so that we always
+	     * properly terminate our upgrade path with a break.
 	     */
 	    break;
 
@@ -299,9 +298,8 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
-     * Handler for GalleryEntity::delete event.  Get rid of any watermarks
-     * for users that are deleted.
-     *
+     * Handler for GalleryEntity::delete event.  Get rid of any watermarks for users that are
+     * deleted.
      * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
@@ -329,41 +327,49 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 
     /**
      * @see GalleryModule::getRewriteRules
-     * @todo The explicit rewrite module version check can be removed on the next major Module API
-     *       version.
+     * @todo The explicit URL rewrite module version check can be removed on the next major module
+     *     API version.
      */
     function getRewriteRules() {
-	/* Ensure the rewrite module is compatible, 'pattern' is optional since v1.1.8 of rewrite */
+	$rules = array();
+	$rules[0] = array(
+	    'comment' => $this->translate('Watermark hotlinked images'),
+	    'help' => $this->translate(
+		'Apply watermark to images downloaded from outside your Gallery.'
+		. ' Select which watermark to use in Watermark Site Admin.'),
+	    'restrict' => array(
+		GalleryUtilities::prefixFormVariable('view') => 'core.DownloadItem',
+		GalleryUtilities::prefixFormVariable('itemId') => '%itemId%'),
+	    'exemptReferer' => true,
+	    'match' => array('view' => 'watermark.DownloadItem'),
+	    'options' => array('forceDirect' => true),
+	    'flags' => array('L'));
+
+	/* Check that the URL rewrite module is compatible */
 	list ($ret, $rewrite) = GalleryCoreApi::loadPlugin('module', 'rewrite', true);
 	if ($ret) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug('WatermarkModule::getRewriteRules ingoring error: ' .
 				$ret->getAsText());
 	    }
-	    $oldRewriteVersion = false;
-	} else {
-	    $oldRewriteVersion = version_compare($rewrite->getVersion(), '1.1.8', '<');
+	    return $rules;
 	}
-
-	$rules = array();
-	$rule = array(
-		'comment' => $this->translate('Watermark hotlinked images'),
-		'restrict' => array('view' => 'core.DownloadItem',
-				    'itemId' => '([0-9]+)'),
-		'queryString' => array('view' => 'watermark.DownloadItem',
-				       'itemId' => '%1'),
-		'flags' => array('L'),
-		'exemptReferer' => 1,
-		'help' => $this->translate(
-			'Apply watermark to images downloaded from outside your Gallery. Select ' .
-			'which watermark to use in Watermark Site Admin.'));
-	if ($oldRewriteVersion) {
-	    /* Add a pseudo pattern since it was mandatory until v1.1.8 of the rewrite module. */
-	    $rule['pattern'] = '.';
-	    $rule['locked'] = true;
-	    $rule['parser'] = 'preGallery';
+	if (version_compare($rewrite->getVersion(), '1.1.11') < 0) {
+	    /*
+	     * Add a backreference manually since keywords in restrict are parsed since URL
+	     * rewrite module 1.1.11
+	     */
+	    $rules[0]['restrict'] = array(
+		GalleryUtilities::prefixFormVar('view') => 'core.DownloadItem',
+		GalleryUtilities::prefixFormVar('itemId') => '([0-9]+)');
+	    $rules[0]['queryString'] = array('itemId' => '%1');
 	}
-	$rules[0] = $rule;
+	if (version_compare($rewrite->getVersion(), '1.1.8') < 0) {
+	    /* Add a pseudo pattern, it's optional since URL rewrite module 1.1.8 */
+	    $rules[0]['pattern'] = '.';
+	    $rules[0]['locked'] = true;
+	    $rules[0]['parser'] = 'preGallery';
+	}
 
 	return $rules;
     }

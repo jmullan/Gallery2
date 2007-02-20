@@ -21,7 +21,7 @@
 /**
  * URL Rewrite Module
  *
- * This module provides URL rewriting support
+ * Enables short URLs using Apache mod_rewrite, ISAPI_Rewrite, or PHP path info.
  *
  * @package Rewrite
  * @author Douglas Cau <douglas@cau.se>
@@ -35,7 +35,7 @@ class RewriteModule extends GalleryModule {
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n(
 	    'Enables short URLs using Apache mod_rewrite, ISAPI Rewrite, or PathInfo'));
-	$this->setVersion('1.1.10'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('1.1.11'); /* Update RewriteModuleExtras::upgrade too! */
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 5));
@@ -280,7 +280,7 @@ class RewriteModule extends GalleryModule {
 			'Ensures browsers do not use cached version when image has changed'),
 		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parseSerialNumber')),
 		'fileName' => array(
-		    'pattern' => '([^\/\?]+)',
+		    'pattern' => '([^/?]+)',
 		    'help' => $this->translate('The item file name.'),
 		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parseFileName'))),
 	    'help' => $this->translate('The general URL for downloading items.'));
@@ -292,34 +292,36 @@ class RewriteModule extends GalleryModule {
 	    'pattern' => 'admin/',
 	    'help' => $this->translate('Quick and easy way to access Site Admin.'));
 
-	/* Rule 2: File not found*/
+	/* Rule 2: File not found */
 	$rules[2] = array(
 	    'comment' => $this->translate('404 File not found'),
-	    'pattern' => '%path%',
-	    'queryString' => array('view' => 'rewrite.FileNotFound'),
 	    'keywords' => array(
 		'path' => array(
 		    'pattern' => '([^?]+)',
-		    'ignore' => 1)),
-	    'locked' => 1,
-	    'parser' => 'preGallery');
+		    'ignore' => true)),
+	    'match' => array('view' => 'rewrite.FileNotFound'),
+	    'pattern' => '%path%',
+	    'locked' => true);
 
 	/* Rule 3: Block hotlinked items */
 	$rules[3] = array(
 	    'comment' => $this->translate('Block hotlinked items'),
 	    'flags' => array('F'),
 	    'restrict' => array('view' => 'core.DownloadItem'),
-	    'exemptReferer' => 1);
+	    'exemptReferer' => true);
 
 	/* Rule 5: Send HTML for hotlinked items */
 	$rules[5] = array(
 	    'comment' => $this->translate('Send HTML for hotlinked items'),
+	    'restrict' => array(
+		GalleryUtilities::prefixFormVariable('view') => 'core.DownloadItem',
+		GalleryUtilities::prefixFormVariable('itemId') => '%itemId%'),
+	    'exemptReferer' => true,
+	    'match' => array('view' => 'rewrite.DownloadItem'),
+	    'options' => array('forceDirect' => true),
 	    'flags' => array('L'),
-	    'restrict' => array('view' => 'core.DownloadItem', 'itemId' => '([0-9]+)'),
-	    'queryString' => array('view' => 'rewrite.DownloadItem', 'itemId' => '%1'),
-	    'exemptReferer' => 1,
 	    'help' => $this->translate('Blocks use of images in other sites (HTML creates broken'
-				     . ' image), but allows linking to images.'));
+		. ' image), but allows linking to images.'));
 
 	return $rules;
     }

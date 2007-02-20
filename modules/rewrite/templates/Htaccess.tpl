@@ -27,16 +27,7 @@
 
 {/foreach}
 {/if}
-{if isset($rule.pattern)}
-    RewriteCond %{ldelim}THE_REQUEST{rdelim} \ {$Htaccess.rewriteBase}{$rule.pattern}(\?.|\ .)
-    RewriteCond %{ldelim}REQUEST_URI{rdelim} !{$Htaccess.matchBaseFile}$
-{/if}
-{if strpos($rule.queryString, 'view=core.DownloadItem') !== false ||
-    strpos($rule.queryString, 'view=watermark.DownloadItem') !== false}
-    RewriteRule .   {$Htaccess.galleryDirectory}{$Htaccess.mainPhp}?{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
-{else}
-    RewriteRule .   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}{if !empty($rule.settings.flags)}   [{$rule.settings.flags|@implode:","}]{/if}
-{/if}
+    RewriteRule .   {$rule.substitution}{if !empty($rule.flags)}   [{$rule.flags|@implode:","}]{/if}
 
 {/foreach}
 </IfModule>
