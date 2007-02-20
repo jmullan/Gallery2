@@ -49,6 +49,26 @@ class WebDavController extends GalleryController {
 	}
 
 	/*
+	 * Windows Web Folders does not respect HTTP auth requests in PUT responses, so the user
+	 * will not be prompted to login.  To work around this, request HTTP auth in all responses
+	 * to anonymous Windows Web Folders requests.  Consequently anonymous users can't connect to
+	 * WebDAV with Windows Web Folders.
+	 */
+	$userAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+	if (strpos($userAgent, 'Microsoft Data Access Internet Publishing Provider DAV') !== false
+		|| strpos($userAgent, 'Microsoft-WebDAV-MiniRedir') !== false) {
+	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
+	    if ($ret) {
+		return array($ret, null);
+ 	    }
+	    if ($isAnonymous) {
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
+			'WebDAV: Anonymous request by MS Windows Webfolders WebDAV client detected.'
+			. '  Usability workaround: Require auth on all requests.'), null);
+	    }
+	}
+
+	/*
 	 * GalleryCoreApi::addItemToAlbum normalizes path components but
 	 * GalleryCoreApi::fetchItemIdByPath does not.  This is a problem for WebDAV because GET
 	 * following a successful PUT at the same URL should succeed.
