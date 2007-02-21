@@ -299,7 +299,7 @@ class RewriteModule extends GalleryModule {
 		'path' => array(
 		    'pattern' => '([^?]+)',
 		    'ignore' => true)),
-	    'match' => array('view' => 'rewrite.FileNotFound'),
+	    'queryString' => array('view' => 'rewrite.FileNotFound'),
 	    'pattern' => '%path%',
 	    'locked' => true);
 
@@ -317,7 +317,7 @@ class RewriteModule extends GalleryModule {
 		GalleryUtilities::prefixFormVariable('view') => 'core.DownloadItem',
 		GalleryUtilities::prefixFormVariable('itemId') => '%itemId%'),
 	    'exemptReferer' => true,
-	    'match' => array('view' => 'rewrite.DownloadItem'),
+	    'queryString' => array('view' => 'rewrite.DownloadItem'),
 	    'options' => array('forceDirect' => true),
 	    'flags' => array('L'),
 	    'help' => $this->translate('Blocks use of images in other sites (HTML creates broken'

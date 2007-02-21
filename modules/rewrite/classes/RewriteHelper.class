@@ -214,11 +214,13 @@ class RewriteHelper {
 		}
 
 		/* Build the list of flags to apply to this rule */
-		if (isset($rules[$ruleId]['flags'])) {
+		if (isset($rules[$ruleId]['flags']) && isset($flags)) {
 		    $rules[$ruleId]['flags'] = array_merge(
 			$rules[$ruleId]['flags'], $flags['mandatory']);
+		} else if (isset($flags)){
+		    $rules[$ruleId]['flags'] = $flags['default'];
 		} else {
-		    $rules[$ruleId]['flags'] = isset($flags) ? $flags['default'] : array();
+		    $rules[$ruleId]['flags'] = array();
 		}
 
 		/* Make sure that there's no subrequest made when we match by the query string */

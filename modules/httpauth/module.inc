@@ -289,7 +289,6 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 	    'comment' => $this->translate('Authorization Header'),
 	    'help' => $this->translate(
 		'Pass the Authorization header to Gallery in a request variable.'),
-	    'match' => array('href' => ''),
 	    'conditions' => array(array('test' => 'HTTP:Authorization',
 					'pattern' => '%authorization%'),
 				  array('test' => 'QUERY_STRING',
