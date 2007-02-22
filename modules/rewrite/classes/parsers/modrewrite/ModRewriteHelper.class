@@ -253,9 +253,9 @@ class ModRewriteHelper {
 	    . preg_quote(preg_replace('/\?.*/', '', $Htaccess['baseFile']));
 
 	/* Substitute with what the Gallery URL generator would generate */
-	$urlGenerator = new GalleryUrlGenerator();
-	$urlGenerator->init($Htaccess['directory'] . $Htaccess['baseFile'],
-			    $Htaccess['galleryDirectory'] . GALLERY_MAIN_PHP);
+	$galleryUrlGenerator = new GalleryUrlGenerator();
+	$galleryUrlGenerator->init($Htaccess['directory'] . $Htaccess['baseFile'],
+				   $Htaccess['galleryDirectory'] . GALLERY_MAIN_PHP);
 
 	foreach ($regexRules as $ruleId => $regexRule) {
 	    /* Conditions */
@@ -295,7 +295,7 @@ class ModRewriteHelper {
 		$params[$name] = '%' . $reference;
 	    }
 
-	    $regexRule['substitution'] = $urlGenerator->generateUrl(
+	    $regexRule['substitution'] = $galleryUrlGenerator->generateUrl(
 		$params, array('forceDirect' => isset($params['view'])
 				   && $params['view'] == 'watermark.DownloadItem',
 			       'forceServerRelativeUrl' => true,
