@@ -222,22 +222,22 @@ class IsapiRewriteHelper {
 		    /*
 		     * Apache mod_rewrite and ISAPI_Rewrite share the concepts of strings which
 		     * start with, end with, or contain a pattern, however they represent these
-		     * patterns differently:
+		     * patterns differently (using ungreedy wildcards):
 		     *
 		     *             | Apache mod_rewrite | ISAPI_Rewrite 
 		     * ------------------------------------------------
-		     * Starts with | ^blah              | blah.*
+		     * Starts with | ^blah              | blah.*?
 		     * ------------------------------------------------
-		     *   Ends with | blah$              | .*blah
+		     *   Ends with | blah$              | .*?blah
 		     * ------------------------------------------------
-		     *    Contains | blah               | .*blah.*
+		     *    Contains | blah               | .*?blah.*?
 		     *
 		     * Apache mod_rewrite and ISAPI_Rewrite also share the concept of a negative
 		     * pattern:
 		     *
 		     *             | Apache mod_rewrite | ISAPI_Rewrite 
 		     * ------------------------------------------------
-		     *    Negative | !blah              | (?!.*blah).*
+		     *    Negative | !blah              | (?!.*?blah).*?
 		     *
 		     * http://www.isapirewrite.com/docs/#RewriteCond
 		     */
@@ -253,7 +253,7 @@ class IsapiRewriteHelper {
 		    if (substr($condition['pattern'], 0, 1) == '^') {
 			$condition['pattern'] = substr($condition['pattern'], 1);
 		    } else {
-			$condition['pattern'] = '.*' . $condition['pattern'];
+			$condition['pattern'] = '.*?' . $condition['pattern'];
 		    }
 
 		    /*
@@ -297,7 +297,7 @@ class IsapiRewriteHelper {
 			if ($isNegative) {
 			    $condition['pattern'] = '(?!' . $condition['pattern'] . ')';
 			}
-			$condition['pattern'] = $condition['pattern'] . '.*';
+			$condition['pattern'] = $condition['pattern'] . '.*?';
 		    }
 
 		    /*
