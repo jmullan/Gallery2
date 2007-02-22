@@ -124,13 +124,17 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 	    return array(null, true);
 	}
 
+	/*
+	 * Use the Basic auth-type for tests. PHP does not define auth variables for arbitrary
+	 * auth-types.
+	 */
 	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage($urlGenerator->generateUrl(
 		array('view' => 'httpauth.HttpAuthWorks'),
 		array('forceFullUrl' => true,
 		      'htmlEntities' => false)),
-	    'GET', array('Authorization' => 'AUTHTYPE ' . base64_encode('USERNAME:PASSWORD')));
+	    'GET', array('Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD')));
 
-	return array(null, trim($body) == "AUTHTYPE\nUSERNAME\nPASSWORD");
+	return array(null, trim($body) == "Basic\nUSERNAME\nPASSWORD");
     }
 
     /**
@@ -146,9 +150,18 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 	$password = GalleryUtilities::getServerVar('PHP_AUTH_PW');
 
 	$authorization = GalleryUtilities::getRequestVariables('authorization');
+	if (empty($authorization)) {
+	    /* IIS ISAPI PHP defines HTTP_AUTHORIZATION */
+	    $authorization = GalleryUtilities::getServerVar('HTTP_AUTHORIZATION');
+	}
 	if (!empty($authorization)) {
 	    list ($authtype, $authdata) = explode(' ', $authorization);
 	    list ($username, $password) = explode(':', base64_decode($authdata));
+	}
+
+	/* AUTH_TYPE is often not defined, assume a default. */
+	if (!empty($username) && empty($authtype)) {
+	    $authtype = 'Basic';
 	}
 
 	return array($authtype, $username, $password);

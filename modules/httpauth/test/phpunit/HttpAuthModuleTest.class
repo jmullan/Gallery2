@@ -59,7 +59,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 		array('forceServerRelativeUrl' => true,
 		      'htmlEntities' => false)) . ' HTTP/1.0',
 	    'Host: ' . $urlGenerator->getHostName(),
-	    'Authorization: AUTHTYPE ' . base64_encode('USERNAME:PASSWORD'),
+	    'Authorization: Basic ' . base64_encode('USERNAME:PASSWORD'),
 	    '',
 	    ''));
 
@@ -72,7 +72,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	    'Connection: close',
 	    'Content-Type: text/html',
 	    '',
-	    '')) .  "AUTHTYPE\nUSERNAME\nPASSWORD";
+	    '')) .  "Basic\nUSERNAME\nPASSWORD";
 	$this->_missingAuthorizationResponse = implode("\r\n", array(
 	    'HTTP/1.1 200 OK',
 	    'Date: Mon, 24 Nov 2003 05:40:03 GMT',

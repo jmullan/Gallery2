@@ -58,7 +58,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 		array('forceServerRelativeUrl' => true,
 		      'htmlEntities' => false)) . " HTTP/1.0\r\n"
 	    . 'Host: ' . $urlGenerator->getHostName() . "\r\n"
-	    . 'Authorization: AUTHTYPE ' . base64_encode('USERNAME:PASSWORD') . "\r\n"
+	    . 'Authorization: Basic ' . base64_encode('USERNAME:PASSWORD') . "\r\n"
 	    . "\r\n";
 
 	/* Define success and failure responses */
@@ -71,7 +71,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 		'Content-Type: text/html',
 		'',
 		''))
-		.  "AUTHTYPE\nUSERNAME\nPASSWORD";
+		.  "Basic\nUSERNAME\nPASSWORD";
 	$this->_missingAuthorizationResponse = implode("\r\n", array(
 		'HTTP/1.1 200 OK',
 		'Date: Mon, 24 Nov 2003 05:40:03 GMT',
@@ -132,6 +132,10 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	$this->_headers = array();
 
 	$this->_saveSession = $gallery->_session;
+
+	$_SERVER['AUTH_TYPE'] = $_SERVER['PHP_AUTH_USER'] = $_SERVER['PHP_AUTH_PW'] = null;
+	GalleryUtilities::removeRequestVariable('authorization');
+	$_SERVER['HTTP_AUTHORIZATION'] = null;
     }
 
     function tearDown() {
@@ -290,10 +294,41 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable(
 	    'authorization', 'AUTHTYPE ' . base64_encode('USERNAME:PASSWORD'));
 
+	$_SERVER['HTTP_AUTHORIZATION'] = 'OTHER ' . base64_encode('NOUSER:NOPASS');
+
 	list ($authtype, $username, $password) = HttpAuthHelper::getHttpAuth();
 	$this->assertEquals('AUTHTYPE', $authtype);
 	$this->assertEquals('USERNAME', $username);
 	$this->assertEquals('PASSWORD', $password);
+    }
+
+    function testGetHttpAuthFromHttpAuthorizationHeader() {
+	$_SERVER['HTTP_AUTHORIZATION'] = 'AUTHTYPE ' . base64_encode('USERNAME:PASSWORD');
+
+	list ($authtype, $username, $password) = HttpAuthHelper::getHttpAuth();
+	$this->assertEquals('AUTHTYPE', $authtype);
+	$this->assertEquals('USERNAME', $username);
+	$this->assertEquals('PASSWORD', $password);
+    }
+
+    function testGetHttpAuthWithoutAuthTypeDefaultsToBasic() {
+	$_SERVER['PHP_AUTH_USER'] = 'USERNAME';
+	$_SERVER['PHP_AUTH_PW'] = 'PASSWORD';
+
+	list ($authtype, $username, $password) = HttpAuthHelper::getHttpAuth();
+	$this->assertEquals('Basic', $authtype);
+	$this->assertEquals('USERNAME', $username);
+	$this->assertEquals('PASSWORD', $password);
+    }
+
+    function testGetHttpAuthWithoutAuthAndUserDoesNotDefault() {
+	$_SERVER['PHP_AUTH_USER'] = '';
+	$_SERVER['PHP_AUTH_PW'] = 'PASSWORD';
+
+	list ($authtype, $username, $password) = HttpAuthHelper::getHttpAuth();
+	$this->assertEquals(null, $authtype, 'auth type');
+	$this->assertEquals('', $username, 'user name');
+	$this->assertEquals('PASSWORD', $password, 'password');
     }
 
     function testGetUser() {
