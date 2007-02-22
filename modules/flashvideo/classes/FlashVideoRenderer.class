@@ -54,14 +54,39 @@ class FlashVideoRenderer extends GalleryRenderer {
 		array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
 		      'serialNumber' => $entity->getSerialNumber()),
 		array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
-	list ($width, $height) = array($entity->getWidth(), $entity->getHeight());
+	list ($width, $height, $title) = array($entity->getWidth(), $entity->getHeight(), $entity->getTitle());
+	GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
+	$title = smarty_modifier_markup($title, 'strip');
 
 	/* Default player: G2flv.swf */
 	$playerUrl = $urlGenerator->generateUrl(
 		array('href' => 'modules/flashvideo/lib/G2flv.swf'),
 		array('forceFullUrl' => true));
-	$flashVars = 'streamName=' . urlencode($src);
+	$flashVars = 'flvUrl=' . urlencode($src) . '&Width=' . $width . '&Height=' . $height . '&title=' . urlencode($title);
 	$extraAttr = '';
+	
+	/* Set allowDL=false to omit download button in upper right of player */
+	$flashVars .= '&allowDl=true';
+	
+	$itemId = $item->getId();
+	list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
+	if (!$ret && !empty($thumbnail)) {
+	    $thumbUrl = $urlGenerator->generateUrl(
+		array('view' => 'core.DownloadItem', 'itemId' => $thumbnail[$itemId]->getId(),
+		      'serialNumber' => $thumbnail[$itemId]->getSerialNumber()),
+		array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
+	    $flashVars .= '&thumbUrl=' . urlencode($thumbUrl);
+	}
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'flashvideo');
+	if ($ret) {
+	    return null;
+	}
+	foreach (array('langDownload' => $module->translate('Download'),
+		       'langLarge' => $module->translate('Large'),
+			   'langNormal' => $module->translate('Normal'),
+		    ) as $key => $value) {
+	    $flashVars .= '&' . $key . '=' . urlencode($value);
+	}
 
 	/*
 	 * To use FlowPlayer ( http://flowplayer.sourceforge.net )
@@ -93,25 +118,15 @@ class FlashVideoRenderer extends GalleryRenderer {
 
 	return sprintf(
 		'<script type="text/javascript">
-		 // <![CDATA[
-		 function divResize(id,nw,nh) {
-		   var obj = document.getElementById(id);
-		   if (obj.saveTop) {
-		     obj.style.left = obj.saveLeft + "px";
-		     obj.style.top = obj.saveTop + "px";
-		     obj.saveTop = 0;
-		   } else {
-		     obj.saveLeft = obj.offsetLeft;
-		     obj.saveTop = obj.offsetTop;
-		     obj.style.top = 0;
-		     obj.style.left = 0;
-		   }
-		   obj.style.width = nw + "px";
-		   obj.style.height = nh + "px";
-		 }
-		 // ]]>
-		 </script>
-		 <div id="videoDiv" style="width:%spx;height:%spx;position:absolute">
+		// <![CDATA[
+		function divResize(id, nw, nh) {
+			var obj = document.getElementById(id);
+			obj.style.width = nw + "px";
+			obj.style.height = nh + "px";
+		}
+		// ]]>
+		</script>
+		 <div id="flashvideo" style="align:left;width:525px;height:292px">
 		 <object classid="clsid:D27CDB6E-AE6D-11CF-96B8-444553540000"
     codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0"
 			 width="100%%" height="100%%" id="%s"%s%s>
@@ -124,13 +139,11 @@ class FlashVideoRenderer extends GalleryRenderer {
 			   width="100%%" height="100%%" quality="high" scale="noscale" salign="lt"
 			   pluginspage="http://www.macromedia.com/go/getflashplayer"/>
 		    <noembed>%s</noembed>
-		 </object></div>
-		 <div style="width:%spx;height:%spx"></div>',
+		 </object></div>',
 
-		$width, $height,
 		!empty($params['id']) ? $params['id'] : 'movie',
 		!empty($params['class']) ? ' class="' . $params['class'] . '"' : '', $extraAttr,
-		$playerUrl, $flashVars, $playerUrl, $flashVars, $fallback, $width, $height);
+		$playerUrl, $flashVars, $playerUrl, $flashVars, $fallback);
     }
 }
 ?>
