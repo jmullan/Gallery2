@@ -95,7 +95,7 @@ class AdminRepositoryController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    /* Get list of upgradeable packages in re */
+	    /* Get list of upgradeable packages in repository */
 	    foreach ($repositories as $source => $repository) {
 		list ($ret, $tmp) = $repository->getAllUpgradeablePackages();
 		if ($ret) {
