@@ -14,7 +14,11 @@ tmp:
 	@if [ ! -d tmp/dbxml ]; then mkdir tmp/dbxml; fi
 
 dbxml:
-	perl $(TOOLDIR)/bin/extractClassXml.pl --dtd=$(TOOLDIR)/dtd/GalleryClass2.0.dtd --quiet --out-dir=tmp/classxml $(CLASSDIR)/*.class
+	@if [ "x" != "$(wildcard $(CLASSDIR)/*.class)x" ]; then \
+		perl $(TOOLDIR)/bin/extractClassXml.pl --dtd=$(TOOLDIR)/dtd/GalleryClass2.0.dtd --quiet --out-dir=tmp/classxml $(CLASSDIR)/*.class; \
+	else \
+		echo "No .class files to parse!"; \
+	fi
 	@if [ "x" != "$(XMLFILES)x" ]; then cp xml-src/*.xml tmp/dbxml; fi
 	$(PHP) -q -C -f $(TOOLDIR)/bin/generate-dbxml.php
 
