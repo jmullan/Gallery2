@@ -348,6 +348,10 @@ class IsapiRewriteHelper {
 			       'urlEncode' => false,
 			       'useAuthToken' => false));
 
+	    /* Convert references from mod_rewrite style to isapi_rewrite style */
+	    $regexRule['substitution'] =
+		    preg_replace('/%(\d+)/', '$\1', $regexRule['substitution']);
+
 	    /* Flags */
 	    if (!empty($regexRule['flags'])) {
 		/*
