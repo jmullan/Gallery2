@@ -17,7 +17,7 @@ RewriteCond {$condition.test} {$condition.pattern}{if !empty($condition.flags)} 
 
 {/foreach}
 {/if}
-RewriteRule {$Httpdini.rewriteBase}{$rule.pattern} {$rule.substitution}{if !empty($rule.flags)}   [{$rule.flags|@implode:","}]{/if}
+RewriteRule ([^?]*)(?:\?(.*))? {$rule.substitution}{if !empty($rule.flags)}   [{$rule.flags|@implode:","}]{/if}
 
 {/foreach}
 

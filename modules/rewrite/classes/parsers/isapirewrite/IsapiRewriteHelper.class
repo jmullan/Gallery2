@@ -200,7 +200,7 @@ class IsapiRewriteHelper {
 	$Httpdini['baseFile'] = GALLERY_MAIN_PHP;
 	$Httpdini['host'] = preg_quote(GalleryUtilities::getServerVar('SERVER_NAME'));
 	if ($embedded) {
-	    $Htaccess['baseFile'] = $urlGenerator->_file[false];
+	    $Httpdini['baseFile'] = $urlGenerator->_file[false];
 	    list ($ret, $Httpdini['directory']) = GalleryCoreApi::getPluginParameter(
 		'module', 'rewrite', 'isapirewrite.embeddedLocation');
 	    if ($ret) {
@@ -318,16 +318,11 @@ class IsapiRewriteHelper {
 		'pattern' => $Httpdini['host']);
 
 	    /* Pattern */
-	    if (empty($regexRule['pattern'])) {
-		$regexRule['pattern'] = '[^?]*';
+	    if (!empty($regexRule['pattern'])) {
+		$regexRule['conditions'][] = array(
+		    'test' => 'URL',
+		    'pattern' => $Httpdini['rewriteBase'] . $regexRule['pattern'] . '(?:\\?.*)?');
 	    }
-
-	    /*
-	     * ISAPI_Rewrite matches the query string, so optionally match it with non-marking
-	     * parentheses and match the query string excluding '?' so it can be appended to the
-	     * substitution.
-	     */
-	    $regexRule['pattern'] .= '(?:\\?(.*))?';
 
 	    /* Substitution */
 	    $params = $regexRule['queryString'];
@@ -340,28 +335,32 @@ class IsapiRewriteHelper {
 	    }
 
 	    $regexRule['substitution'] = $galleryUrlGenerator->generateUrl(
-		$params, array('forceDirect' => isset($params['view'])
-				   && $params['view'] == 'watermark.DownloadItem',
-			       'forceServerRelativeUrl' => true,
-			       'forceSessionId' => false,
-			       'htmlEntities' => false,
-			       'urlEncode' => false,
-			       'useAuthToken' => false));
+		$params, $regexRule['options']);
 
 	    /* Convert references from mod_rewrite style to isapi_rewrite style */
 	    $regexRule['substitution'] =
 		    preg_replace('/%(\d+)/', '$\1', $regexRule['substitution']);
 
+	    /*
+	     * ISAPI_Rewrite doesn't support the %{QUERY_STRING} or %{REQUEST_URI} variables but
+	     * the last sub-expression, count($regexRules['keywords'] + 1, matches %{QUERY_STRING}
+	     * and the second last sub-expression, count($regexRules['keywords']), matches
+	     * %{REQUEST_URI}
+	     */
+	    $regexRule['substitution'] = str_replace('%{REQUEST_URI}',
+		'$' . count($regexRule['keywords']), $regexRule['substitution']);
+	    $regexRule['substitution'] = str_replace('%{QUERY_STRING}',
+		'$' . (count($regexRule['keywords']) + 1), $regexRule['substitution']);
+
 	    /* Flags */
 	    if (!empty($regexRule['flags'])) {
 		/*
-		 * ISAPI_Rewrite doesn't support the 'QSA' flag, but we can append the query string
-		 * by modifying our regular expression.  count($regexRule['keywords']) is the last
-		 * sub-expression.
+		 * ISAPI_Rewrite doesn't support the 'QSA' flag but we can append the query string
+		 * with the last sub-expression, count($regexRules['keywords'] + 1
 		 */
 		if (in_array('QSA', $regexRule['flags'])) {
 		    $regexRule['substitution'] .= (strpos($regexRule['substitution'], '?') === false
-			? '?' : '&') . '$' . count($regexRule['keywords']);
+			? '?' : '&') . '$' . (count($regexRule['keywords']) + 1);
 		}
 
 		/*

@@ -213,6 +213,21 @@ class RewriteHelper {
 			$rules[$ruleId]['match'], $rules[$ruleId]['queryString']);
 		}
 
+		/* Options */
+		if (empty($rules[$ruleId]['options'])) {
+		    $rules[$ruleId]['options'] = array();
+		}
+
+		/* Merge with default options.  Later values override defaults. */
+		$rules[$ruleId]['options'] = array_merge(
+		    array('forceDirect' => isset($rules[$ruleId]['queryString']['view'])
+			      && $rules[$ruleId]['queryString']['view'] == 'watermark.DownloadItem',
+			  'forceServerRelativeUrl' => true,
+			  'forceSessionId' => false,
+			  'htmlEntities' => false,
+			  'urlEncode' => false,
+			  'useAuthToken' => false), $rules[$ruleId]['options']);
+
 		/* Build the list of flags to apply to this rule */
 		if (isset($rules[$ruleId]['flags']) && isset($flags)) {
 		    $rules[$ruleId]['flags'] = array_merge(
@@ -260,6 +275,7 @@ class RewriteHelper {
 	$regexRule = array();
 	$regexRule['keywords'] = array();
 	$regexRule['queryString'] = $rule['queryString'];
+	$regexRule['options'] = $rule['options'];
 	$regexRule['flags'] = $rule['flags'];
 
 	/*

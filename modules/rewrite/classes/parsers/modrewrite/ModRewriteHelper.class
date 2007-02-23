@@ -296,13 +296,7 @@ class ModRewriteHelper {
 	    }
 
 	    $regexRule['substitution'] = $galleryUrlGenerator->generateUrl(
-		$params, array('forceDirect' => isset($params['view'])
-				   && $params['view'] == 'watermark.DownloadItem',
-			       'forceServerRelativeUrl' => true,
-			       'forceSessionId' => false,
-			       'htmlEntities' => false,
-			       'urlEncode' => false,
-			       'useAuthToken' => false));
+		$params, $regexRule['options']);
 
 	    $regexRules[$ruleId] = $regexRule;
 	}

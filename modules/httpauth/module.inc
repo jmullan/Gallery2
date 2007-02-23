@@ -294,6 +294,7 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 				  array('test' => 'QUERY_STRING',
 					'pattern' => '!' . GalleryUtilities::prefixFormVariable(
 					    'authorization') . '=')),
+	    'options' => array('baseUrl' => '%{REQUEST_URI}'),
 	    'flags' => array('QSA'),
 	    'keywords' => array(
 		'authorization' => array(
