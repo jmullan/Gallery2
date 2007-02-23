@@ -320,6 +320,9 @@ class RewriteModuleExtras {
 	case '1.1.10':
 	    /* Update regex rules structure to reuse code from GalleryUrlGenerator */
 
+	case '1.1.11':
+	    /* Add generateUrl options and %{REQUEST_URI} handling to rewrite rule format */
+
 	case 'end of upgrade path':
 	    break;
 
