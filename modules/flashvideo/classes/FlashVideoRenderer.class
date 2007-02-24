@@ -54,7 +54,8 @@ class FlashVideoRenderer extends GalleryRenderer {
 		array('view' => 'core.DownloadItem', 'itemId' => $entity->getId(),
 		      'serialNumber' => $entity->getSerialNumber()),
 		array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
-	list ($width, $height, $title) = array($entity->getWidth(), $entity->getHeight(), $entity->getTitle());
+	list ($width, $height, $title) =
+		array($entity->getWidth(), $entity->getHeight(), $entity->getTitle());
 	GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
 	$title = smarty_modifier_markup($title, 'strip');
 
@@ -62,7 +63,8 @@ class FlashVideoRenderer extends GalleryRenderer {
 	$playerUrl = $urlGenerator->generateUrl(
 		array('href' => 'modules/flashvideo/lib/G2flv.swf'),
 		array('forceFullUrl' => true));
-	$flashVars = 'flvUrl=' . urlencode($src) . '&Width=' . $width . '&Height=' . $height . '&title=' . urlencode($title);
+	$flashVars = 'flvUrl=' . urlencode($src) . '&Width=' . $width . '&Height=' . $height
+		   . '&title=' . urlencode($title);
 	$extraAttr = '';
 	
 	/* Set allowDL=false to omit download button in upper right of player */
