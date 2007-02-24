@@ -155,6 +155,10 @@ class ReuploadOptionTestPlatform extends GalleryPlatform {
 	return !strstr($file,'albumtest');
     }
 
+    function unlink($file) {
+	return true;
+    }
+
     function copy($input, $output) {
 	return true;
     }
