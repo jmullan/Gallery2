@@ -86,6 +86,10 @@ class WebDavController extends GalleryController {
 	    /* Special case to suppress Mac '._' files.  Ignore request but return success. */
 	    if (!strncmp($pathComponent, '._', 2)) {
 		WebDavServer::setResponseStatus('200 OK');
+		$handle = WebDavServer::openRequestBody();
+		while (!feof($handle)) {
+		    fgets($handle);
+		}
 		return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
 	    }
 
@@ -148,7 +152,10 @@ class WebDavController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    return array(null, $data);
+	    /*
+	     * Don't send HTTP redirects or HTML status/error back to DAV clients since we
+	     * have already set our status code. Fall through to the standard empty return.
+	     */
 	}
 
 	return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
@@ -191,7 +198,13 @@ class WebDavView extends GalleryView {
 	$requestMethod = GalleryUtilities::strToLower(
 		GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if (!in_array($requestMethod, array('options', 'propfind', 'proppatch', 'mkcol', 'delete',
-		'move', 'lock', 'unlock'))) {
+					    'move', 'lock', 'unlock'))) {
+
+	    /* If we just completed a PUT request and got delegated here, just silently return */
+	    if ($requestMethod == 'put') {
+		return null;
+	    }
+
 	    return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
 	}
 
