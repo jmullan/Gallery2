@@ -887,11 +887,14 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    SELECT
 	      [GalleryItemAttributesMap::itemId]
 	    FROM
-	      [GalleryItemAttributesMap]
+	      [GalleryItemAttributesMap] LEFT JOIN [ImageBlockDisabledMap]
+	      ON [GalleryItemAttributesMap::itemId] = [ImageBlockDisabledMap::itemId]
 	    WHERE
-	      [GalleryItemAttributesMap::parentSequence] LIKE ?
+	      ([GalleryItemAttributesMap::parentSequence] LIKE ?
 	      OR
-	      [GalleryItemAttributesMap::itemId] = ?
+	      [GalleryItemAttributesMap::itemId] = ?)
+	      AND
+	      [ImageBlockDisabledMap::itemId] IS ' . ($disabled ? '' : 'NOT '). 'NULL
 	    ';
 	    $data = array($sequence . $parentAlbumId . '/%', (int)$parentAlbum->getId());
 

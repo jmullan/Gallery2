@@ -219,6 +219,73 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$this->assertEquals(array(), $dbItemIds, 'Items not removed from the DisabledMap');
     }
 
+    function testImageBlockHelperSetDisabledFlagFirstSubAlbumThenRecursive() {
+	global $gallery;
+
+	$ret = $this->_createHierarchy();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Prepare the test by first disabling the subalbum */
+	$ret = ImageBlockHelper::setDisabledFlag($this->_subAlbum, false, true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$itemIds = array();
+	foreach ($this->_subItems as $item) {
+	    $itemIds[] = (int)$item->getId();
+	}
+	$itemIds[] = (int)$this->_subAlbum->getId();
+
+	/* Verify the precondition of the test */
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('ImageBlockDisabledMap',
+								  array('itemId'),
+								  array('itemId' => $itemIds));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$dbItemIds = array();
+	while ($rec = $searchResults->nextResult()) {
+	    $dbItemIds[] = (int)$rec[0];
+	}
+
+	sort($itemIds);
+	sort($dbItemIds);
+	$this->assertEquals($itemIds, $dbItemIds,
+			    'Precondition: Items not added to the DisableMap');
+
+	/* Execute the test: Ensure that we succeed and don't attempt to insert duplicate rows. */
+	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	foreach ($this->_topItems as $item) {
+	    $itemIds[] = (int)$item->getId();
+	}
+	$itemIds[] = (int)$this->_topAlbum->getId();
+
+	/* Verify the results */
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('ImageBlockDisabledMap',
+								  array('itemId'),
+								  array('itemId' => $itemIds));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$dbItemIds = array();
+	while ($rec = $searchResults->nextResult()) {
+	    $dbItemIds[] = (int)$rec[0];
+	}
+
+	sort($dbItemIds);
+	sort($itemIds);
+	$this->assertEquals($itemIds, $dbItemIds, 'Not all items have been flagged as disabled');
+    }
+
     /**
      * Verify the fix for bug 1536395
      * http://sourceforge.net/tracker/index.php?func=detail&aid=1536395&group_id=7130&atid=107130
