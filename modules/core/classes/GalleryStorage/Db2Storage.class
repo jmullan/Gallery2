@@ -115,22 +115,25 @@ class Db2Storage extends GalleryStorage {
 	    $recordSet = $tmpDb->Execute($sql);
 	    $this->_traceStop();
 	    if (empty($recordSet)) {
-		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
-	    }
-
-	    /* 3) Create/Catalog the UDFs */
-	    $ret = $this->_executeSqlFile(dirname(__FILE__) . $slash . 'Db2CreateUdfs.sql');
-	    if ($ret) {
-		return $ret;
+		/*
+		 * XXX: At some point figure out a way to detect if the UDFs are
+		 * already there before trying to install them again.
+		 */
+		if ($gallery->getDebug()) {
+		    $gallery->debug('Failed to install g2_db2.jar .. continuing ' .
+				    'under the assumption that this is an upgrade');
+		}
+	    } else {
+		/* 3) Create/Catalog the UDFs */
+		$ret = $this->_executeSqlFile(dirname(__FILE__) . $slash . 'Db2CreateUdfs.sql');
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 
 	    /* 4) Disconnect from the database */
 	    $tmpDb->Close();
 
-	    /*
-	     * XXX: At some point figure out a way to detect if the UDFs are
-	     * already there before trying to install them again.
-	     */
 	}
 
 	$ret = parent::configureStore($moduleId, $upgradeInfo);
