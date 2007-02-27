@@ -161,9 +161,9 @@
 	  }
 	}
 
-	/* 
+	/*
 	 * if the URL doesn't contain http or is on sourceforge, replace relative urls
-	 * with an alert instead of a link that probably won't work 
+	 * with an alert instead of a link that probably won't work
 	 */
 	function fixURLs() {
 	  if ((document.location.toString().indexOf('http') != 0) ||
@@ -178,7 +178,7 @@
 		  /* Don't use setAttribute for onclick (workaround for IE) */
 		  as[i].onclick = function() {
 		    alert('It looks like you are not accessing this README through your ' +
-				    'webserver so this link will not work!'); 
+				    'webserver so this link will not work!');
 		    return false;
 		  };
 		  as[i].setAttribute('title',"This link only works when you access the README " +
@@ -305,20 +305,42 @@
 
     <h2><a name="security">Security</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
+    <div style="float:right; margin:10px; border: 1px solid #ddd; padding: 3px;">
+      <img src="images/gulftech.png" alt="" width="254" height="60"/>
+    </div>
+    <p>
+      The Gallery team retained <a
+      href="http://www.gulftech.org/">James Bercegay</a> of <a
+      href="http://www.gulftech.org/">Gulftech Research and
+      Development</a> to do a complete security audit of <b>Gallery 2.2
+      Release Candidate 1</b>.
+    </p>
+
+    <p>
+      <i>Recently we have performed a very thorough audit of the
+      Gallery2 code base. Our review consisted of both a complete
+      source code audit, as well as us performing multiple "real
+      world" attack scenarios against the Gallery2 application. During
+      the audit we identified multiple minor security issues which
+      have since been resolved by the Gallery2 developers. The result
+      is a much more secure Gallery2 application with enhanced
+      security features to keep your Gallery, and it's users as safe
+      and secure as possible.</i>
+    </p>
+
     <div style="float:right; margin:10px;">
-      <img src="http://www.intershot.com/security/security-seal.png"
-	   alt="" width="196" height="52"/>
+      <img src="images/intershot.png" alt="" width="196" height="52"/>
     </div>
     <p>
       The Gallery team retained <a href="http://www.jibble.org/">Paul
       Mutton</a> of <a
       href="http://www.intershot.com/security/">Intershot Limited</a>
-      to do a complete security audit of Gallery 2.1 Release Candidate
-      1.
+      to do a complete security audit of <b>Gallery 2.1 Release Candidate
+      1</b>.
     </p>
 
     <p>
-      <i>"The Gallery installer and Gallery application were
+      <i>The Gallery installer and Gallery application were
 	subjected to a manual web application security test. It is
 	important to note that such tests cannot be exhaustive and may
 	not discover all vulnerabilities. All tests were carried out
@@ -327,12 +349,12 @@
 	security of external tools used by the Gallery application,
 	such as graphics toolkits, were not included in this test. No
 	denial of service attacks were carried out against the
-	application server."</i>
+	application server.</i>
     </p>
 
     <p>
-      The development team resolved the security issues raised by
-      Intershot and other auditors during the release candidate phases.
+      <b>The development team resolved the security issues raised by
+      auditors during the release candidate phases.</b>
     </p>
 
     <div class="important">
@@ -2055,7 +2077,7 @@
 	<a href="http://codex.gallery2.org/index.php/Gallery2:Quick_Start_Guide" target="_new">
 	Gallery 2 Quick Start Guide</a>.  It will help you get started with Gallery and will
 	walk you through the steps from zero to managing your first photo album in your
-	freshly installed Gallery.  Below are some links to your gallery that will make it 
+	freshly installed Gallery.  Below are some links to your gallery that will make it
 	easier for you to follow the Quick Start Guide. Note: You may need to activate certain
 	modules to be able to use some of these links.
     </p>
@@ -2092,7 +2114,7 @@
 	      </li>
 	      <li>
 		<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminGroups"
-		target="_guided">Create Groups</a> 
+		target="_guided">Create Groups</a>
 	      </li>
 	      <li>
 	      	<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminUsers"
