@@ -56,7 +56,7 @@ class MP3AudioRenderer extends GalleryRenderer {
 	$flashVars = 'mp3Url=' . urlencode($src) . '&allowDl=true';
 	
 	GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
-	$title = smarty_modifier_markup($entity->getTitle(), 'strip');
+	$title = smarty_modifier_markup($item->getTitle(), 'strip');
 	$flashVars .= '&title=' . urlencode($title);
 
 	$itemId = $item->getId();
