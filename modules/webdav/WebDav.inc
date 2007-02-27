@@ -82,23 +82,27 @@ class WebDavController extends GalleryController {
 	 */
 	$path = GalleryUtilities::getRequestVariables('path');
 	$pathComponent = basename($path);
-	if (!$platform->isLegalPathComponent($pathComponent)) {
-	    /* Special case to suppress Mac '._' files.  Ignore request but return success. */
-	    if (!strncmp($pathComponent, '._', 2)) {
-		WebDavServer::setResponseStatus('200 OK');
-		$handle = WebDavServer::openRequestBody();
-		while (!feof($handle)) {
-		    fgets($handle);
-		}
-		return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
-	    }
 
-	    WebDavServer::setResponseStatus('403 Forbidden');
+	/* Special case to suppress Mac '._' files.  Ignore request but return success. */
+	if (!strncmp($pathComponent, '._', 2)) {
+	    WebDavServer::setResponseStatus('200 OK');
+	    $handle = WebDavServer::openRequestBody();
+	    while (!feof($handle)) {
+		fgets($handle);
+	    }
 	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
 	}
 
+ 	/* Silently legalize path component */
+ 	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
+ 	foreach ($pathComponents as $key => $pathComponent) {
+ 	    $pathComponents[$key] = $platform->legalizePathComponent($pathComponent);
+ 	}
+ 	$path = implode('/', $pathComponents);
+ 	GalleryUtilities::putRequestVariable('path', $path);
+
 	$requestMethod = GalleryUtilities::strToLower(
-		GalleryUtilities::getServerVar('REQUEST_METHOD'));
+	    GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if ($requestMethod == 'get' || $requestMethod == 'head') {
 	    if (empty($path)) {
 		list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
