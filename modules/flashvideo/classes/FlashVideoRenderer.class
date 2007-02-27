@@ -55,7 +55,7 @@ class FlashVideoRenderer extends GalleryRenderer {
 		      'serialNumber' => $entity->getSerialNumber()),
 		array('forceFullUrl' => true, 'forceSessionId' => true, 'htmlEntities' => false));
 	list ($width, $height, $title) =
-		array($entity->getWidth(), $entity->getHeight(), $entity->getTitle());
+		array($entity->getWidth(), $entity->getHeight(), $item->getTitle());
 	GalleryCoreApi::requireOnce('lib/smarty_plugins/modifier.markup.php');
 	$title = smarty_modifier_markup($title, 'strip');
 
