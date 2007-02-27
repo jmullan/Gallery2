@@ -66,10 +66,10 @@ class FlashVideoRenderer extends GalleryRenderer {
 	$flashVars = 'flvUrl=' . urlencode($src) . '&Width=' . $width . '&Height=' . $height
 		   . '&title=' . urlencode($title);
 	$extraAttr = '';
-	
+
 	/* Set allowDL=false to omit download button in upper right of player */
 	$flashVars .= '&allowDl=true';
-	
+
 	$itemId = $item->getId();
 	list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($itemId));
 	if (!$ret && !empty($thumbnail)) {
