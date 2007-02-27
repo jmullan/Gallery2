@@ -249,7 +249,7 @@
     <p><span id="testCount">&nbsp;</span> run</p>
     <p><span id="testFailCount">&nbsp;</span> failed
        with <span id="testErrorCount">&nbsp;</span></p>
-    <p><a href="http://codex.gallery2.org/index.php/Gallery2:Test_Matrix#Unit_Tests">Test Matrix Entry</a>:
+    <p><a href="http://codex.gallery2.org/Gallery2:Test_Matrix#Unit_Tests">Test Matrix Entry</a>:
        <br/><b><span id="testReport">&nbsp;</span></b>
        <br/>(<span><a href="javascript:changeUsername()">change username</a></span>)
     </p>
