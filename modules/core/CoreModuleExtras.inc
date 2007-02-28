@@ -2424,6 +2424,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	    $configChanges[] = array('remove' => array(), 'add' => array(), 'edit' => array($edit));
 	case '1.1.27':
 	case '1.1.28':
+	case '1.1.29':
 
 	case 'end of upgrade path':
 	    /*
