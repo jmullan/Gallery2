@@ -2118,6 +2118,8 @@ class CoreModuleExtras {
 	    }
 	case '1.1.28':
 	    /* Added GalleryUrlGenerator::makeAbsoluteUrl() */
+	case '1.1.29':
+	    /* 2.2 Release Candidate 2! */
 
 	case 'end of upgrade path':
 	    /*
@@ -2129,7 +2131,7 @@ class CoreModuleExtras {
 	default:
 	    $gallery->debug('Error: Unknown module version');
 	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+					 sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	$gallery->debug('Write new version to versions file');

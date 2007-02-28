@@ -31,10 +31,10 @@ class CoreModule extends GalleryModule {
 
 	$this->setId('core');
 	$this->setName($gallery->i18n('Core'));
-	$this->setGalleryVersion('2.2-rc-1');
+	$this->setGalleryVersion('2.2-rc-2');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.1.29');
+	$this->setVersion('1.1.30');
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
