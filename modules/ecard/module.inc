@@ -34,7 +34,7 @@ class EcardModule extends GalleryModule {
 	$this->setId('ecard');
 	$this->setName($gallery->i18n('eCard'));
 	$this->setDescription($gallery->i18n('Send photos as eCards'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.1'); /* Update upgrade() too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 9));
@@ -46,7 +46,6 @@ class EcardModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	global $gallery;
-
 	if (!isset($currentVersion)) {
 	    $currentVersion = '0';
 	}
@@ -104,6 +103,7 @@ class EcardModule extends GalleryModule {
 	case '0.0.9':
 	case '0.1.0':
 	case '0.1.1':
+	case '0.9.0':
 
 	case 'end of upgrade path':
 	    break;
