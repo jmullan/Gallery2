@@ -30,6 +30,10 @@ class WebHelper_simple {
 
     /**
      * @see GalleryCoreApi::fetchWebFile
+     *
+     * @todo We should probably be checking the data we get back against the HTTP Content-Length
+     *       header to verify that we got all the data we expected.
+     *
      */
     function fetchWebFile($url, $outputFile, $extraHeaders=array(), $depth=0) {
 	global $gallery;

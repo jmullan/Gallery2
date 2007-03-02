@@ -569,7 +569,9 @@ class GalleryRepository {
      * function.
      *
      * @todo Split this into two separate functions, one that downloads the file, the other that
-     *       returns the descriptor.
+     *       returns the descriptor.  The function that downloads the file should take the
+     *       descriptor so that it can verify that the file that got downloaded is the right
+     *       length.
      *
      * @param string $pluginType
      * @param string $pluginId
