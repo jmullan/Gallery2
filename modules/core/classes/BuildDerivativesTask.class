@@ -82,7 +82,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 	GROUP BY
 	  [GalleryDataItem::id]
 	HAVING
-	  MIN([GalleryDerivative::derivativeType]) IS NULL
+	  COUNT([GalleryDerivative::derivativeType]) = 0
 	';
 	$gallery->guaranteeTimeLimit(120);
 	list ($ret, $items) = $gallery->search($query);
