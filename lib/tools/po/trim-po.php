@@ -8,6 +8,11 @@
  * handled in this translation (and will appear in the application).
  */
 $path = $argv[1];
+if (preg_match('#^/cygdrive/(\w+)/(.*)$#', trim($path), $matches)) {
+    /* Cygwin and Window PHP filesystem function don't play nice together. */
+    $path = $matches[1] . ':\\' . str_replace('/', '\\', $matches[2]);
+}
+
 $langpath = preg_replace('{(..)_..\.po$}', '$1.po', $path);
 
 if ($langpath == $path || !file_exists($langpath)) {
