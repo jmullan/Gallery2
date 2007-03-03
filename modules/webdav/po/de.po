@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: WebDAV 0.7.3\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2006-11-16 01:37+0100\n"
-"PO-Revision-Date: 2006-11-16 02:14+0100\n"
+"PO-Revision-Date: 2007-03-03 22:11+0100\n"
 "Last-Translator: Andy Staudacher <ast@gmx.ch>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -37,12 +37,11 @@ msgid "Mount with WebDAV"
 msgstr "Als Netzwerklaufwerk verbinden"
 
 msgid "Mount Gallery on your desktop."
-msgstr ""
+msgstr "Gallery von Ihrem Computer als Netzlaufwerk öffnen"
 
 msgid "Remote Interfaces"
 msgstr "Anwendungs- und Programm-Schnittstellen"
 
-#, fuzzy
 msgid "Connect to WebDAV"
 msgstr "Als Netzwerklaufwerk verbinden"
 
@@ -60,63 +59,73 @@ msgstr "Pfad eines Elementes (z.B. /album/bild.jpg.html)"
 msgid "Mount WebDAV"
 msgstr "Als Netzwerklaufwerk verbinden"
 
-#, fuzzy
 msgid "Give davmount resources the correct extension."
 msgstr "Geben Sie davmount Ressourcen die richtige Dateiendung"
 
 msgid "OPTIONS Requests"
-msgstr ""
+msgstr "HTTP OPTIONS Anfragen"
 
 msgid "Redirect OPTIONS requests so we can set DAV headers."
-msgstr ""
+msgstr "HTTP OPTIONs Anfragen umleiten, damit Gallery die DAV Kopfzeilen setzen kann."
 
 msgid "WebDAV Mount Instructions"
-msgstr ""
+msgstr "WebDAV Benutzer Anleitung"
 
 #, c-format
 msgid ""
 "%sClick here%s to mount Gallery on your desktop with a WebDAV client.  Documentation on "
 "mounting Gallery with WebDAV is in the %sGallery Codex%s."
 msgstr ""
+"%sKlicken Sie hier%s um Gallery als Netzlaufwerk auf Ihrem Computer zu öffnen. Eine "
+"ausführliche Anleitung um Gallery mit einem WebDAV Programm zu öffnen befindet sich "
+"im %sGallery Codex%s."
 
 msgid "Alternatively, you can enter the following URL in your WebDAV client:"
-msgstr ""
+msgstr "Alternativ können Sie auch die folgende URL in Ihrem WebDAV Programm eingeben:"
 
 msgid "WebDAV Settings"
-msgstr ""
+msgstr "WebDAV Einstellungen"
 
 msgid "Configuration checked successfully"
-msgstr ""
+msgstr "Konfiguration erforlgreich überprüft"
 
 #, c-format
 msgid ""
 "Most WebDAV clients will successfully connect.  Documentation on mounting Gallery with "
 "WebDAV is in the %sGallery Codex%s."
 msgstr ""
+"Die meisten WebDAV Programme können erfolgreich mit dieser Gallery verbinden. Eine "
+"ausführliche Anleitung um Gallery mit einem WebDAV Programm zu öffnen befindet sich "
+"im %sGallery Codex%s."
 
 msgid "The URL to connect to Gallery with WebDAV is:"
-msgstr ""
+msgstr "Die URL um mit Gallery als WebDAV Netzlaufwerk zu öffnen ist:"
 
 msgid "PHP has no XML support"
-msgstr ""
+msgstr "Ihrer PHP Installation fehlt die XML Unterstützung"
 
 #, c-format
 msgid ""
 "You can't connect with WebDAV because PHP has no XML support on this server.  "
 "Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Ihre Gallery unterstützt WebDAV nicht, da Ihre PHP Installation XML nicht "
+"interpretieren kann. Hinweise zur Fehlerbehandlung sind im %sGallery Codex%s "
+"zu finden."
 
 msgid "WebDAV requests not handled"
-msgstr ""
+msgstr "WebDAV Anfragen werden nicht verarbeitet"
 
 #, c-format
 msgid ""
 "You can't connect with WebDAV because this server doesn't pass WebDAV requests to Gallery.  "
 "Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Ihre Gallery unterstützt WebDAV nicht, da Ihr Webserver die WebDAV Anfragen nicht an "
+"Gallery weiterleitet. Hinweise zur Fehlerbehandlung sind im %sGallery Codex%s zu finden."
 
 msgid "HTTP auth module disabled"
-msgstr ""
+msgstr "HTTP auth Modul ist inaktiv"
 
 #, c-format
 msgid ""
@@ -125,19 +134,25 @@ msgid ""
 "the %sSite Admin Plugins option%s.  Troubleshooting documentation is in the %sGallery Codex%"
 "s."
 msgstr ""
+"Sie können als Gast-Benutzer WebDAV nutzen, aber Sie können keine Aktionen als registrierter "
+"Benutzer durchführen, da das 'HTTP auth' Modul inaktiv ist. Bitte aktivieren Sie das HTTP "
+"auth Modul auf der %sPlugin Management Seite%s. Hinweise zur Fehlerbehandlung sind im "
+"%sGallery Codex%s zu finden."
 
 msgid "HTTP auth plugin disabled"
-msgstr ""
+msgstr "HTTP auth Plugin ist inaktiv"
 
 msgid ""
 "You can connect with WebDAV anonymously, but you can't do anything which requires you to "
 "login because neither HTTP authentication nor server authentication are enabled in the HTTP "
-"auth module.  You should activate HTTP authentication in the settings of the HTTP auth "
-"module."
+"auth module.  You should activate HTTP authentication in the settings of the HTTP auth module."
 msgstr ""
+"Sie können als Gast-Benutzer WebDAV nutzen, aber Sie können keine Aktionen als registrierter "
+"Benutzer durchführen, da keine 'HTTP auth' Plugins aktiv sind. Bitte aktivieren Sie die HTTP "
+"Authentifizierung in den Einstellungen des HTTP auth Moduls."
 
 msgid "'Connect to WebDAV' rule disabled"
-msgstr ""
+msgstr "'Als Netzwerklaufwerk verbinden' Regel ist inaktiv"
 
 #, c-format
 msgid ""
@@ -145,18 +160,25 @@ msgid ""
 "WebDAV URLs is disabled.  You should activate the 'Connect to WebDAV' rule in the %sSite "
 "Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Die meisten WebDAV Programme können nicht mit Ihrer Gallery verbinden, da die 'Kurze URLs' "
+"Regel für WebDAV URLs inaktiv ist. Bitte aktivieren Sie die 'Als Netzlaufwerk verbinden' "
+"Regel in den %sEinstellungen des 'Kurze URLs' Moduls%s. Hinweise zur Fehlerbehandlung sind "
+"im %sGallery Codex%s zu finden."
 
 msgid "Missing DAV headers"
-msgstr ""
+msgstr "Fehlende DAV Kopfzeilen"
 
 #, c-format
 msgid ""
 "Some WebDAV clients, e.g. Mac OS X WebDAVFS, will fail to connect because OPTIONS responses "
 "are missing DAV headers.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Einige WebDAV Programme (z.B. Mac OS X WebDAVFS) können nicht mit Ihrer Gallery verbinden, "
+"da Antworten auf HTTP OPTIONS Anfragen keine DAV Kopfzeilen enthalten. Hinweise zur "
+"Fehlerbehandlung sind im %sGallery Codex%s zu finden."
 
 msgid "Alternative URL missing DAV headers"
-msgstr ""
+msgstr "Alternative URL liefert keine DAV Kopfzeilen"
 
 #, c-format
 msgid ""
@@ -164,9 +186,12 @@ msgid ""
 "URL, but alternative URL responses are also missing DAV headers.  Troubleshooting "
 "documentation is in the %sGallery Codex%s."
 msgstr ""
+"Da Antworten auf HTTP OPTIONS Anfragen keine DAV Kopfzeilen enthalten, versucht Gallery auf "
+"eine alternative URL zurückzufallen. Aber Antworten auf die alternative URL haben auch "
+"keine DAV Kopfzeilen. Hinweise zur Fehlerbehandlung sind im %sGallery Codex%s zu finden."
 
 msgid "URL rewrite module disabled"
-msgstr ""
+msgstr "'Kurze URLs' Modul ist inaktiv"
 
 #, c-format
 msgid ""
@@ -175,9 +200,13 @@ msgid ""
 "either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %"
 "sGallery Codex%s."
 msgstr ""
+"Die meisten WebDAV Programme können nicht mit Ihrer Gallery verbinden, da das 'Kurze "
+"URLs' Modul inaktiv ist. Bitte aktivieren Sie das 'Kurze URLs' Modul auf der %sPlugin "
+"Management Seite%s und wählen Sie Apache mod_rewrite oder ISAPI_Rewrite. Hinweise zur "
+"Fehlerbehandlung sind im %sGallery Codex%s zu finden."
 
 msgid "Bad URL rewrite configuration"
-msgstr ""
+msgstr "Inkorrekte Konfiguration von 'Kurze URLs'"
 
 #, c-format
 msgid ""
@@ -186,9 +215,13 @@ msgid ""
 "and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting information is in "
 "the %sGallery Codex%s."
 msgstr ""
+"'Kurze URLs' mit PHP PathInfo kann die alternative WebDAV URL Regel nicht unterstützen. "
+"Bitte deinstallieren Sie das 'Kurze URLs' Modul auf der %sPlugin Management Seite%s und "
+"wählen Sie beim installieren des Moduls entweder Apache mod_rewrite oder ISAPI_Rewrite, "
+"jedoch nicht PathInfo. Hinweise zur Fehlerbehandlung sind im %sGallery Codex%s zu finden."
 
 msgid "'OPTIONS Requests' rule disabled"
-msgstr ""
+msgstr "'HTTP OPTIONS Anfragen' Regel ist inaktiv"
 
 #, c-format
 msgid ""
@@ -196,15 +229,22 @@ msgid ""
 "the WebDAV 'OPTIONS Requests' rule in the %sSite Admin URL Rewrite option%s.  "
 "Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Die 'Kurze URLs' Regel um auf eine alternative URL zurückzufallen ist inaktiv.  Bitte "
+"aktivieren Sie die WebDAV 'HTTP OPTIONS Anfragen' Regel in den %sKurze URLs "
+"Site-Administration's Optionen%s. Hinweise zur Fehlerbehandlung sind im %sGallery Codex%s "
+"zu finden."
 
 msgid "Unknown Cause"
-msgstr ""
+msgstr "Unbekannte Ursache"
 
 #, c-format
 msgid ""
 "Some WebDAV clients, e.g. Mac OS X WebDAVFS, will fail to connect and automated checks "
 "failed to find a cause.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Einige WebDAV Programme (z.B. Mac OS X WebDAVFS) funktionieren nicht mit Ihrer Gallery "
+"und die Ursache für dieses Fehlerverhalten konnte nicht festgestellt werden. Hinweise "
+"zur Fehlerbehandlung sind im %sGallery Codex%s zu finden."
 
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
@@ -212,18 +252,15 @@ msgstr "WebDAV URL"
 #, fuzzy
 #~ msgid "This album's WebDAV URL is:"
 #~ msgstr "Bitte öffnen Sie die WebDAV URL dieses Albums mit einem WebDAV Client Programm:"
-
 #~ msgid "Access WebDAV"
 #~ msgstr "WebDAV Zugriff"
-
 #~ msgid "You can drag & drop items into Gallery by mounting it with a %s client"
 #~ msgstr ""
 #~ "Mit einem %s Client Programm können Sie Gallery als Netzwerklaufwerk mit Ihrem Computer "
 #~ "verbinden und Dateien wie im Explorer ganz einfach mit der Maus hochladen, runterladen, "
 #~ "verschieben, löschen, usw."
-
 #~ msgid "Open this album's %s URL with a %s client: "
 #~ msgstr "Bitte öffnen Sie die %s URL dieses Albums mit einem %s Client Programm:"
-
 #~ msgid "Mount Gallery with HTTP filesystem interface"
 #~ msgstr "Gallery als Netzlaufwerk bereitstellen"
+
