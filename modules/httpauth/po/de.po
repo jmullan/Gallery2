@@ -33,31 +33,30 @@ msgstr ""
 msgid "HTTP Auth"
 msgstr "HTTP Authentifizierung"
 
-#, fuzzy
 msgid "Login using HTTP authentication."
 msgstr "Benutzer-Anmeldung via HTTP Authentifizierung"
 
 msgid "Authentication"
 msgstr "Authentifizierung"
 
-#, fuzzy
 msgid "Authorization Header"
-msgstr "Authentifizierungs-Art Muster"
+msgstr "HTTP Authentifizierungs-Kopfzeilen"
 
 msgid "Pass the Authorization header to Gallery in a request variable."
-msgstr ""
+msgstr "HTTP Authentifizierungs-Kopfzeilen zur Gallery in einer HTTP Request-Variable weiterleiten."
 
-#, fuzzy
 msgid "Authorization header."
-msgstr "Authentifizierungs-Art Muster"
+msgstr "HTTP Authentifizierungs-Kopfzeilen"
 
 msgid "Logout failed"
-msgstr ""
+msgstr "Abmeldung fehlgeschlagen"
 
 msgid ""
 "Gallery tried to logout but failed.  You should close the browser window to logout "
 "successfully."
 msgstr ""
+"Benutzer-Abmeldung fehlgeschlagen.  Bitte schliessen sie Ihren Web-Browser um die "
+"Abmeldung erfolgreich abzuschliessen."
 
 msgid "HTTP Auth Settings"
 msgstr "Einstellungen für HTTP Authentifizierung"
@@ -65,18 +64,20 @@ msgstr "Einstellungen für HTTP Authentifizierung"
 msgid "Settings saved successfully"
 msgstr "Einstellungen erfolgreich gespeichert"
 
-#, fuzzy
 msgid "Missing HTTP Authorization"
-msgstr "Benutzer-Anmeldung via HTTP Authentifizierung"
+msgstr "Fehlende HTTP Authentifizierung"
 
 #, c-format
 msgid ""
 "Gallery can't access HTTP usernames and passwords.  You can still use your web server's "
 "authentication.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Gallery kann auf die HTTP Authentifizierungs-Daten nicht zugreifen. Sie können jedoch "
+"die Server Authentifizierung verwenden. Hinweise zur Fehlerbehandlung sind im %sGallery "
+"Codex%s zu finden."
 
 msgid "URL rewrite module disabled"
-msgstr ""
+msgstr "'Kurze URLs' Module ist inaktiv"
 
 #, c-format
 msgid ""
@@ -85,9 +86,13 @@ msgid ""
 "Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting "
 "documentation is in the %sGallery Codex%s."
 msgstr ""
+"HTTP Benutzernamen und Passwort kann nicht von Gallery gelesen werden, da das 'Kurze "
+"URLs' Modul inaktiv ist. Bitte aktivieren Sie das 'Kurze URLs' Modul auf der %sPlugin "
+"Management Seite%s und wählen Sie Apache mod_rewrite oder ISAPI_Rewrite. Hinweise zur "
+"Fehlerbehandlung sind im %sGallery Codex%s zu finden."
 
 msgid "Bad URL rewrite configuration"
-msgstr ""
+msgstr "Inkorrekte Konfiguration von 'Kurze URLs'"
 
 #, c-format
 msgid ""
@@ -96,9 +101,13 @@ msgid ""
 "sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  "
 "Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"'Kurze URLs' mit PHP PathInfo kann die alternative HTTP auth URL Regel nicht unterstützen. "
+"Bitte deinstallieren Sie das 'Kurze URLs' Modul auf der %sPlugin Management Seite%s und "
+"wählen Sie beim installieren des Moduls entweder Apache mod_rewrite oder ISAPI_Rewrite, "
+"jedoch nicht PathInfo. Hinweise zur Fehlerbehandlung sind im %sGallery Codex%s zu finden."
 
 msgid "'Authorization Header' rule disabled"
-msgstr ""
+msgstr "'HTTP Authentifizierungs-Kopfzeilen' Regel ist inaktiv"
 
 #, c-format
 msgid ""
@@ -106,15 +115,22 @@ msgid ""
 "disabled.  You should activate the HTTP auth 'Authorization Header' rule in the %sSite Admin "
 "URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Die 'Kurze URLs' Regel um auf eine alternative URL zurückzufallen ist inaktiv.  Bitte "
+"aktivieren Sie die HTTP auth 'HTTP Authentifizierungs-Kopfzeilen' Regel in den %sKurze URLs "
+"Site-Administration's Optionen%s. Hinweise zur Fehlerbehandlung sind im %sGallery Codex%s "
+"zu finden."
 
 msgid "Unknown Cause"
-msgstr ""
+msgstr "Unbekannte Ursache"
 
 #, c-format
 msgid ""
 "Gallery can't access HTTP usernames and passwords and automated checks failed to find a "
 "cause.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Gallery kann die HTTP Authentifizierungs-Angaben nicht lesen und die Ursache für dieses "
+"Fehlerverhalten konnte nicht festgestellt werden. Hinweise zur Fehlerbehandlung sind im "
+"%sGallery Codex%s zu finden."
 
 msgid "Gallery can handle HTTP Basic authentication directly."
 msgstr ""
@@ -150,10 +166,10 @@ msgid "Use Web Server Authentication:"
 msgstr "Verwende Web-Server Authentifizierung:"
 
 msgid "By default HTTP authentication is only enabled for specific modules."
-msgstr ""
+msgstr "Als Vorgabewert ist HTTP Authentifizierung nur für bestimmte Module aktiviert."
 
 msgid "Use the authentication plugins for all modules:"
-msgstr ""
+msgstr "HTTP Authentifizierung für alle Module aktivieren:"
 
 #, c-format
 msgid ""
@@ -210,7 +226,7 @@ msgstr "Zurücksetzen"
 
 #, c-format
 msgid "If you're not automatically redirected, %sclick here to finish logging out%s."
-msgstr ""
+msgstr "Falls Sie nicht automatisch weitergeleitet werden, %sklicken Sie bitte hier um sich abzumelden%s."
 
 #~ msgid "Rewrite rule not configured"
 #~ msgstr "Regel für kurze URLs nicht konfiguriert"
