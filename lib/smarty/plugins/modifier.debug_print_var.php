@@ -9,6 +9,8 @@
 /**
  * Smarty debug_print_var modifier plugin
  *
+ * Gallery modification: Filter all (hashed) passwords in smarty's debug output.
+ *
  * Type:     modifier<br>
  * Name:     debug_print_var<br>
  * Purpose:  formats variable contents for display in the console
@@ -18,9 +20,10 @@
  * @param array|object
  * @param integer
  * @param integer
+ * @param string
  * @return string
  */
-function smarty_modifier_debug_print_var($var, $depth = 0, $length = 40)
+function smarty_modifier_debug_print_var($var, $depth = 0, $length = 40, $parentKey='')
 {
     $_replace = array(
         "\n" => '<i>\n</i>',
@@ -28,13 +31,19 @@ function smarty_modifier_debug_print_var($var, $depth = 0, $length = 40)
         "\t" => '<i>\t</i>'
     );
 
+    if (!in_array(gettype($var), array('array', 'object'))) {
+	if (stristr($parentKey, 'password') !== false) {
+	    $var = '[Not shown in debug output]';
+	}
+    }
+
     switch (gettype($var)) {
         case 'array' :
             $results = '<b>Array (' . count($var) . ')</b>';
             foreach ($var as $curr_key => $curr_val) {
                 $results .= '<br>' . str_repeat('&nbsp;', $depth * 2)
                     . '<b>' . strtr($curr_key, $_replace) . '</b> =&gt; '
-                    . smarty_modifier_debug_print_var($curr_val, ++$depth, $length);
+                    . smarty_modifier_debug_print_var($curr_val, ++$depth, $length, $curr_key);
                     $depth--;
             }
             break;
@@ -44,7 +53,7 @@ function smarty_modifier_debug_print_var($var, $depth = 0, $length = 40)
             foreach ($object_vars as $curr_key => $curr_val) {
                 $results .= '<br>' . str_repeat('&nbsp;', $depth * 2)
                     . '<b> -&gt;' . strtr($curr_key, $_replace) . '</b> = '
-                    . smarty_modifier_debug_print_var($curr_val, ++$depth, $length);
+                    . smarty_modifier_debug_print_var($curr_val, ++$depth, $length, $curr_key);
                     $depth--;
             }
             break;
