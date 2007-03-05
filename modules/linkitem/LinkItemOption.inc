@@ -59,6 +59,12 @@ class LinkItemOption extends ItemEditOption {
 		return array($ret, null, null);
 	    }
 
+	    list ($ret, $item) = $item->refresh();
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return array($ret, null, null);
+	    }
+
 	    $item->setLink($form['LinkItemOption']['link']);
 	    $ret = $item->save();
 	    if ($ret) {

@@ -62,6 +62,11 @@ class RandomHighlightOption extends ItemEditOption {
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
+	    list ($ret, $thumbnail) = $thumbnail->refresh();
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return array($ret, null, null);
+	    }
 	    if ($isRandomHighlight) {
 		$thumbnail->addOnLoadHandler('RandomHighlight');
 	    } else {

@@ -61,8 +61,14 @@ class FlashVideoOption extends ItemAddOption {
 	    }
 
 	    foreach ($currentItems as $item) {
+		list ($ret, $item) = $item->refresh();
+		if ($ret) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return array($ret, null, null);
+		}
+
 		$item->setRenderer('FlashVideoRenderer');
-		$item->save();
+		$ret = $item->save();
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return array($ret, null, null);

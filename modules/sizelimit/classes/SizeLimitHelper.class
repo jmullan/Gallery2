@@ -61,6 +61,12 @@ class SizeLimitHelper {
 	    return $ret;
 	}
 
+	list ($ret, $item) = $item->refresh();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret;
+	}
+
 	/* Perform the operation */
 	list ($ret, $outputMimeType) = $toolkit->performOperation(
 		$item->getMimeType(), $operation, $sourcePath, $sourcePath, $args);

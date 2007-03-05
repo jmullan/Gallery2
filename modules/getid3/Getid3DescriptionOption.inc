@@ -73,6 +73,12 @@ class Getid3DescriptionOption extends ItemAddOption {
 
 	    for ($i = 0; $i < count($currentItems); $i++) {
 		if ($currentItems[$i]->getMimeType() == 'audio/mpeg') {
+		    list ($ret, $currentItems[$i]) = $currentItems[$i]->refresh();
+		    if ($ret) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return array($ret, null, null);
+		    }
+
 		    $itemId = $currentItems[$i]->getId();
 
 		    list ($ret, $getid3Data) =

@@ -72,6 +72,12 @@ class MovieThumbnailOption extends ItemAddOption {
 
 	$op = 'composite|plugins_data/modules/ffmpeg/filmreel.png,image/png,12,399';
 	foreach ($thumbTable as $itemId => $thumbnail) {
+	    list ($ret, $thumbnail) = $thumbnail->refresh();
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return array($ret, null, null);
+	    }
+
 	    /*
 	     * Set operations not postFilter so if this item is selected as an album highlight
 	     * then the highlight will get the watermark too.

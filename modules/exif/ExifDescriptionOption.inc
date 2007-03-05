@@ -92,8 +92,10 @@ class ExifDescriptionOption extends ItemAddOption {
 
 		    $mustSave = false;
 
-		    /* TODO(xlerb) reconsider, if ExifHelper should be changed to do the
-										preferences. */
+		    /*
+		     * TODO(xlerb) reconsider, if ExifHelper should be changed to do the
+		     * preferences.
+		     */
 		    $itemDescription = '';
 		    if (!empty($exifData[$itemId]['IPTC/Caption']['value'])) {
 			$itemDescription = $exifData[$itemId]['IPTC/Caption']['value'];
@@ -179,6 +181,16 @@ class ExifDescriptionOption extends ItemAddOption {
 		    }
 
 		    if ($mustSave && empty($args)) {
+			/**
+			 * @TODO This is going to generate errors in a few cases because we're
+			 * not refreshing the item after we lock it.  We really should be locking
+			 * all the items at the top of this loop and releasing them at the bottom,
+			 * but that will conflict with GalleryCoreApi::applyToolkitOperation above
+			 * which also wants to lock the item.  Alternatively, we can buffer up all
+			 * the changes we want to make to the item and then lock it here,
+			 * refresh the item after locking it and then replay the changes here
+			 * before saving.
+			 */
 			list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
 			if ($ret) {
 			    return array($ret, null, null);

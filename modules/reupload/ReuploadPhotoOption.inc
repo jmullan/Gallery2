@@ -66,6 +66,11 @@ class ReuploadPhotoOption extends ItemEditOption {
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
+	    list ($ret, $item) = $item->refresh();
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return array($ret, null, null);
+	    }
 
 	    /* take backup first */
 	    $tmpfname = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'tmp_');

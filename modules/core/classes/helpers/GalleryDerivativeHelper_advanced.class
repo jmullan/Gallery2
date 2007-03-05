@@ -203,10 +203,22 @@ class GalleryDerivativeHelper_advanced {
 		return GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
 	    }
 
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    list ($ret, $item) = $item->refresh();
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
+		return $ret;
+	    }
+
 	    /* Perform the operation */
 	    list ($ret, $outputMimeType) = $toolkit->performOperation(
 		$item->getMimeType(), $operation, $sourcePath, $sourcePath, $args);
 	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;
 	    }
 	    $item->setMimeType($outputMimeType);
@@ -214,6 +226,7 @@ class GalleryDerivativeHelper_advanced {
 	    /* Get the item to rescan its data object */
 	    $ret = $item->rescan();
 	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;
 	    }
 
@@ -221,16 +234,12 @@ class GalleryDerivativeHelper_advanced {
 	    $ret = GalleryCoreApi::adjustDependentDerivatives(
 		    $item->getId(), sprintf('%s|%s', $operation, implode(',', $args)));
 	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;
 	    }
 
 	    /* Save the item, if it's modified */
 	    if ($item->isModified()) {
-		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
-		if ($ret) {
-		    return $ret;
-		}
-
 		if (isset($serialNumber)) {
 		    $item->setSerialNumber($serialNumber);
 		}
@@ -240,11 +249,11 @@ class GalleryDerivativeHelper_advanced {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return $ret;
 		}
+	    }
 
-		$ret = GalleryCoreApi::releaseLocks($lockId);
-		if ($ret) {
-		    return $ret;
-		}
+	    $ret = GalleryCoreApi::releaseLocks($lockId);
+	    if ($ret) {
+		return $ret;
 	    }
 	} else {
 	    /* If we have no preferred, then create one */
