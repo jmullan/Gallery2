@@ -87,11 +87,6 @@ class LocalizationAuditTest extends CodeAuditTestCase {
 	    $this->_errorCount++;
 	}
 
-	/* Make sure translator hints aren't in translations */
-	if (preg_match('/^msgstr "(?:.(?!^msgid))*?<!--/ms', $buffer)) {
-	    $this->assert(false, $path . ': translator hint should be removed in translation');
-	}
-
 	/* Lookbehind assertions must be of a fixed length */
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 	    $newline = '\r\n';

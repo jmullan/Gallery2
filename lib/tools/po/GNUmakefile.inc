@@ -33,11 +33,11 @@ PO ?= *
 LANGPO = $(shell echo $@ | perl -ne 'chomp; print if (s/^(..)_..\.po/$$1.po/ and -s)')
 COMPENDIUM = $(shell echo $@ | perl -ne 'chomp; print "-C $$_" if (s/^(..)_..\.po/$$1.po/ and -s)')
 
-all: update install
+all: install
 
 all-remove-obsolete: update remove-obsolete install
 
-messages.po:
+messages.po: alwaysbuild
 	@php -f $(TOOLDIR)/po/extract.php $(MODULE_DIR) > strings.raw.tmp
 	@# Don't extract right to strings.raw because extract.php tries to preserve
 	@# some old data from strings.raw and the > redirect blanks it out.
@@ -63,48 +63,48 @@ messages.po:
 	  fi
 	@$(RM) messages.tmp
 
+alwaysbuild:
+
 clean:
 	@$(RM) messages.po
 
 update: $(PO).po
 
-install:
+install: update
 	@if test "$(OSTYPE)" = "solaris"; then \
-		echo "You'll probably get some warnings on Solaris. This is normal."; \
+	    echo "You'll probably get some warnings on Solaris. This is normal."; \
 	fi; \
 	FAIL=0; \
 	echo "Updating $(PO)"; \
 	for LOCALE in `ls $(PO).po | grep -v messages.po | sed 's/\.[^.]*$$//g'`; do \
-		if test -z "$${QUIET}"; then echo $${LOCALE}; fi; \
-		if $(TOOLDIR)/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
-			php -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
-			if test "$(OSTYPE)" = "solaris"; then \
-				if {MSGFMTSOL} ../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo \
-						tmp.po; then \
-					if test -n "$${QUIET}"; then \
-						echo -n '.'; \
-					fi \
-				else \
-					echo -n "Fail: $${LOCALE}"; \
-					FAIL=1; \
-				fi \
-			else \
-				if $(MSGFMT) ../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo \
-						tmp.po; then \
-					if test -n "$${QUIET}"; then \
-						echo -n '.'; \
-					fi \
-				else \
-					echo -n "Fail: $${LOCALE}"; \
-					FAIL=1; \
-				fi \
-			fi; \
-			$(RM) tmp.po; \
-		else \
-			echo "Could not create locale directory for $${LOCALE}."; \
+	    if test -z "$${QUIET}"; then echo $${LOCALE}; fi; \
+	    if $(TOOLDIR)/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
+		php -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
+		if test "$(OSTYPE)" = "solaris"; then \
+		    if {MSGFMTSOL} ../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo tmp.po; then \
+			if test -n "$${QUIET}"; then \
+			    echo -n '.'; \
+			fi \
+		    else \
+			echo -n "Fail: $${LOCALE}"; \
 			FAIL=1; \
+		    fi \
+		else \
+		    if $(MSGFMT) ../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo tmp.po; then \
+			if test -n "$${QUIET}"; then \
+			    echo -n '.'; \
+			fi \
+		    else \
+			echo -n "Fail: $${LOCALE}"; \
+			FAIL=1; \
+		    fi \
 		fi; \
-		if test -z "$${QUIET}"; then echo; fi; \
+		$(RM) tmp.po; \
+	    else \
+		echo "Could not create locale directory for $${LOCALE}."; \
+		FAIL=1; \
+	    fi; \
+	    if test -z "$${QUIET}"; then echo; fi; \
 	done; \
 	if test $${FAIL} -gt 0; then exit 1; fi;
 	@echo '';

@@ -22,9 +22,7 @@ if ($langpath == $path || !file_exists($langpath)) {
     list ($po, $header) = readPo($path);
     print $header;
     foreach ($po as $id => $data) {
-	if (strpos($id, '<!--') !== false && $data['msgstr'] == "msgstr \"\"\n") {
-	    fwrite(stdErr(), "\nWarning: Unhandled translator hint in $path\n");
-	}
+	checkHint($id, $data['msgstr'], $path);
 	if (substr($id, 5) != substr($data['msgstr'], 6)) {
 	    print $data['before'] . $id . $data['msgstr'] . "\n";
 	}
@@ -37,8 +35,18 @@ list ($langpo) = readPo($langpath);
 
 print $header;
 foreach ($po as $id => $data) {
-    if (!isset($langpo[$id]) || $langpo[$id] != $data['msgstr']) {
+    checkHint($id, $data['msgstr'], $path);
+    if (!isset($langpo[$id]) || $langpo[$id]['msgstr'] != $data['msgstr']) {
 	print $data['before'] . $id . $data['msgstr'] . "\n";
+    }
+}
+
+function checkHint($msgid, $msgstr, $path) {
+    if (strpos($msgid, '<!--') !== false && $msgstr == "msgstr \"\"\n") {
+	fwrite(stdErr(), "\nWarning: Unhandled translator hint in $path\n");
+    }
+    if (strpos($msgstr, '<!--') !== false) {
+	fwrite(stdErr(), "\nWarning: Translation contains hint in $path\n");
     }
 }
 
