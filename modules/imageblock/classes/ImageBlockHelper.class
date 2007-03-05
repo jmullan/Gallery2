@@ -416,7 +416,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 			    /* Get the list of resizes */
 			    list ($ret, $resizes) =
-				GalleryCoreApi::fetchResizesByItemIds(array($image->getId()));
+				GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
 			    if ($ret) {
 				return array($ret, null);
 			    }
