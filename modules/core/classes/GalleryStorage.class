@@ -1206,7 +1206,7 @@ class GalleryStorage {
 		    return array($ret, null);
 		}
 
-		$mapsFile = "$moduleDir/modules/$moduleId/classes/Maps.inc";
+		$mapsFile = sprintf('%smodules/%s/classes/Maps.inc', $moduleDir, $moduleId);
 		if (file_exists($mapsFile)) {
 		    include($mapsFile);
 		}

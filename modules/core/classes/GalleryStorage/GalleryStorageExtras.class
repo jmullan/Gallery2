@@ -1940,7 +1940,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		    return array($ret, null);
 		}
 
-		$entitiesFile = "$moduleDir/modules/$moduleId/classes/Entities.inc";
+		$entitiesFile = sprintf('%smodules/%s/classes/Entities.inc', $moduleDir, $moduleId);
 		if (file_exists($entitiesFile)) {
 		    include($entitiesFile);
 		}
