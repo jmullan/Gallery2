@@ -1005,7 +1005,9 @@ class WebDavHelper {
 	    return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	}
 
-	$ret = WebDavHelper::mkcolHelper($parentId, $pathComponent, $pathComponent, '', '', '');
+	$originalPath = GalleryUtilities::getRequestVariables('originalPath');
+	$title = empty($originalPath) ? $pathComponent :  basename($originalPath);
+	$ret = WebDavHelper::mkcolHelper($parentId, $pathComponent, $title, '', '', '');
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_ILLEGAL_CHILD) {
 

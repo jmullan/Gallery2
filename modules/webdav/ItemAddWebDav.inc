@@ -120,8 +120,10 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    }
 	}
 
+	$originalPath = GalleryUtilities::getRequestVariables('originalPath');
+	$title = empty($originalPath) ? basename($path) :  basename($originalPath);
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile, basename($path),
-	    basename($path), '', '', $mimeType, $item->getId());
+	    $title, '', '', $mimeType, $item->getId());
 	@$platform->unlink($tmpFile);
 	if ($ret) {
 	    return array($ret, null, null);

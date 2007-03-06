@@ -81,6 +81,10 @@ class WebDavController extends GalleryController {
 	 * This condition may be relaxed in future if it's a problem.
 	 */
 	$path = GalleryUtilities::getRequestVariables('path');
+	/**
+ 	 * @todo Refactor towards a cleaner approach, e.g. using a map for public paths.
+ 	 */
+ 	GalleryUtilities::putRequestVariable('originalPath', $path);
 	$pathComponent = basename($path);
 
 	/* Special case to suppress Mac '._' files.  Ignore request but return success. */

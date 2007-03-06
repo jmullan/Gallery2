@@ -925,7 +925,7 @@ class WebDavTest extends GalleryTestCase {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	list ($ret, $albumPath) = $this->_album->fetchLogicalPath();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -933,8 +933,8 @@ class WebDavTest extends GalleryTestCase {
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
 	$fileSize = $this->_platform->filesize($filePath);
 
-	$pathComponent = 'The!Quick$Brown#Fox';
-	$path .= $pathComponent;
+	$pathComponent = 'The!Quick$Brown#Fox.gif';
+	$path = $albumPath . $pathComponent;
 	GalleryUtilities::putRequestVariable('path', $path);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
@@ -974,6 +974,26 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(file_get_contents($filePath), $output);
+
+	/* Verify that the item has the right title, name, etc. */
+	$legalPathComponent = $this->_platform->legalizePathComponent($pathComponent);
+	list ($ret, $newItemId) =
+		GalleryCoreApi::fetchItemIdByPath($albumPath . $legalPathComponent);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($pathComponent, $newItem->getTitle(), 'title');
+	$this->assertEquals($legalPathComponent, $newItem->getPathComponent(), 'path component');
+	$this->assertEquals('', $newItem->getSummary(), 'summary');
+	$this->assertEquals('', $newItem->getDescription(), 'description');
+	$this->assertEquals('image/gif', $newItem->getMimeType(), 'mime-type');
+	$this->assertEquals($fileSize, $newItem->getSize(), 'size');
     }
 
     function testIllegalDestination() {
@@ -1110,6 +1130,52 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
+    }
+
+    function testMkcolIllegalPathComponent() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
+
+	list ($ret, $albumPath) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'The!Quick$Brown#Fox';
+	$path = $albumPath . $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
+			    $this->_headers);
+
+	$this->assertEquals('', $output);
+
+	$legalPathComponent = $this->_platform->legalizePathComponent($pathComponent);
+	list ($ret, $newAlbumId) =
+		GalleryCoreApi::fetchItemIdByPath($albumPath . $legalPathComponent);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($pathComponent, $newAlbum->getTitle(), 'title');
+	$this->assertEquals($legalPathComponent, $newAlbum->getPathComponent(), 'path component');
+	$this->assertEquals('', $newAlbum->getSummary(), 'summary');
+	$this->assertEquals('', $newAlbum->getDescription(), 'description');
+	$this->assertEquals('', $newAlbum->getKeywords(), 'keywords');
     }
 }
 
