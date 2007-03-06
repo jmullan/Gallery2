@@ -231,6 +231,12 @@ class AdminRepositoryDownloadController extends GalleryController {
 		    list ($ret, $descriptor) = $repository->downloadAndUnpack(
 			$pluginType, $pluginId, 'descriptor', $relativeDescriptorUrl);
 		    if ($ret) {
+			if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+			    /* XXX: storage failure means we failed to download the file properly */
+			    $status['error']['failedToDownload'][$pluginName] =
+				$relativeDescriptorUrl;
+			    continue;
+			}
 			return $ret;
 		    }
 
@@ -251,7 +257,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 		    }
 		    $errors = array_unique($errors);
 		    if ($errors) {
-			$status['error']['failedToDownload'][$pluginName] = $errors;
+			$status['error']['failedToInstall'][$pluginName] = $errors;
 			continue;
 		    }
 
@@ -261,6 +267,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 			$currentAction / $totalActions);
 
 
+		    $dontReactivate = array();
 		    foreach ($packageUrls as $packageName => $relativePackageUrl) {
 			$gallery->guaranteeTimeLimit(30);
 
@@ -275,6 +282,17 @@ class AdminRepositoryDownloadController extends GalleryController {
 			list ($ret, $ignored) = $repository->downloadAndUnpack(
 			    $pluginType, $pluginId, $packageName, $relativePackageUrl);
 			if ($ret) {
+			    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+				/* XXX: storage failure means we failed to download the file */
+				$status['error']['failedToDownload'][$pluginName][] =
+				    $relativePackageUrl;
+				if ($packageName == 'base') {
+				    $dontReactivate[$pluginType][$pluginId] = 1;
+				    break;
+				} else {
+				    continue;
+				}
+			    }
 			    return $ret;
 			}
 
@@ -316,35 +334,38 @@ class AdminRepositoryDownloadController extends GalleryController {
 			$titleText, sprintf($module->translate('Activating %s'), $pluginName),
 			$currentAction / $totalActions);
 
-		    list ($ret, $plugin) = GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
-		    if ($ret) {
-			return $ret;
-		    }
-
-		    $ret = $plugin->installOrUpgrade();
-		    if ($ret) {
-			return $ret;
-		    }
-
-		    if ($pluginType == 'module') {
-			list ($ret, $autoConfigured) = $plugin->autoConfigure();
+		    if (empty($dontReactivate[$pluginType][$pluginId])) {
+			list ($ret, $plugin) =
+			    GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
 			if ($ret) {
 			    return $ret;
 			}
-		    } else {
-			/* Themes don't need this step */
-			$autoConfigured = true;
-		    }
 
-		    if ($autoConfigured) {
-			list ($ret, $redirect) = $plugin->activate();
+			$ret = $plugin->installOrUpgrade();
 			if ($ret) {
 			    return $ret;
 			}
-			/* Ignore the redirect */
-		    }
 
-		    $status['updated'][] = $pluginName;
+			if ($pluginType == 'module') {
+			    list ($ret, $autoConfigured) = $plugin->autoConfigure();
+			    if ($ret) {
+				return $ret;
+			    }
+			} else {
+			    /* Themes don't need this step */
+			    $autoConfigured = true;
+			}
+
+			if ($autoConfigured) {
+			    list ($ret, $redirect) = $plugin->activate();
+			    if ($ret) {
+				return $ret;
+			    }
+			    /* Ignore the redirect */
+			}
+
+			$status['updated'][] = $pluginName;
+		    }
 
 		    /*********************************************************/
 		}
@@ -391,7 +412,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 	}
 
 	/* Update progress bar. */
-	if (!empty($status['error']['failedToDownload'])) {
+	if (!empty($status['error'])) {
 	    $message = $module->translate('Update completed with errors.');
 	} else {
 	    $message = $module->translate('Update complete.');

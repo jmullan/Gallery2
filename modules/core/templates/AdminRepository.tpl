@@ -27,6 +27,24 @@
     {/if}
   </h2>
   {if !empty($status.error.failedToDownload)}
+  {foreach name=plugin from=$status.error.failedToDownload key=pluginName item=failedFiles}
+  {*
+   * TODO: Update this message to something more appropriate in 2.3 (couldn't do it in 2.2 because it was
+   * added after the localization freeze.  Suggested text:
+   * "Failed to install the following packages for the %s plugin"
+   *}
+  <h2 class="giError"> {g->text text="Failed to download the %s plugin because the following files/directories could not be modified:" arg1=$pluginName}</h2>
+  <ul>
+  {foreach from=$failedFiles item=file}
+    {* TODO: remove the non-localized "(unable to download)" text as soon as 2.2 ships *}
+    <li class="giError"> {$file} (unable to download) </li>
+  {/foreach}
+  </ul>
+  {if !$smarty.foreach.plugin.last}<br/>{/if}
+  {/foreach}
+  {/if}
+
+  {if !empty($status.error.failedToInstall)}
   {foreach name=plugin from=$status.error.failedToInstall key=pluginName item=failedFiles}
   <h2 class="giError"> {g->text text="Failed to download the %s plugin because the following files/directories could not be modified:" arg1=$pluginName} </h2>
   <ul>

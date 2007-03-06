@@ -37,12 +37,17 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 	global $gallery;
 
+	/* XXX: We should be backing this up in GalleryTestCase.  Fix this in 2.3 */
+	$this->_saveRequest = $_REQUEST;
+
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
     }
 
     function tearDown() {
 	global $gallery;
 	$gallery->_templateAdapter =& $this->_galleryTemplateAdapter;
+
+	$_REQUEST = $this->_saveRequest;
 
 	parent::tearDown();
     }
@@ -136,7 +141,8 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$repository->setReply('downloadAndUnpack',
 			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
 			      array(null, 'descriptorContents'));
-	/* lang-en_US */
+
+	/* Preverify both language packages */
 	$repository->setReply('preVerifyPackage',
 			      array('lang-en_US', 'descriptorContents'),
 			      array());
@@ -144,6 +150,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 			      array('lang-hu_HU', 'descriptorContents'),
 			      array());
 
+	/* lang-en_US */
 	$repository->setReply('downloadAndUnpack',
 			      array('module', $testModule, 'lang-en_US', 'en_US-package'),
 			      array(null, array()));
@@ -185,6 +192,163 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret);
 	}
 
+	$this->assert($repository->isComplete(), $repository->getRemaining());
+	$this->assertEquals(array('installOrUpgrade' => 1,
+				  'autoConfigure' => 1,
+				  'activate' => 1),
+			    $_REQUEST['called']);
+    }
+
+    function testPerformDownloadAndInstallationFailedBaseDownload() {
+	global $gallery;
+	$testModule = 'AdminRepositoryDownloadControllerTest';
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$mockUrlGenerator = new AdminRepositoryDownloadControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$expectedPluginData = array('module' => array($testModule => array(
+            'base' => 1, 'lang-en_US' => 1, 'lang-hu_HU' => 1)));
+
+	$pluginDownloadFileList = array('module' => array($testModule => array(
+	    'name' => 'Test Module',
+	    'files' => array('descriptor' => 'testModule-descriptor',
+			     'base' => 'base-package',
+			     'lang-en_US' => 'en_US-package',
+			     'lang-hu_HU' => 'hu_HU-package'))));
+
+	$repository = new AdminRepositoryDownloadControllerTestRepository();
+	$repository->setReply('getDownloadFileList',
+			      array($expectedPluginData),
+			      array(null, $pluginDownloadFileList));
+	/* Descriptor. */
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
+			      array(null, 'descriptorContents'));
+
+	/* Preverify everything  */
+	$repository->setReply('preVerifyPackage',
+			      array('base', 'descriptorContents'),
+			      array());
+	$repository->setReply('preVerifyPackage',
+			      array('lang-en_US', 'descriptorContents'),
+			      array());
+	$repository->setReply('preVerifyPackage',
+			      array('lang-hu_HU', 'descriptorContents'),
+			      array());
+
+	/* base fails, so nothing else gets unpacked */
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'base', 'base-package'),
+			      array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null));
+
+	$ret = $this->_controller->performDownloadAndInstallation(
+	    array('test' =>
+		  array('module' => array(
+			    $testModule => array(
+				'base' => 1,
+				'lang-en_US' => 1,
+				'lang-hu_HU' => 1)))),
+	    array(),
+	    array('test' => $repository));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assert($repository->isComplete(), $repository->getRemaining());
+	$this->assert(empty($_REQUEST['called']), 'Nothing should have gotten called');
+    }
+
+    function testPerformDownloadAndInstallationFailedLanguageDownload() {
+	global $gallery;
+	$testModule = 'AdminRepositoryDownloadControllerTest';
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$mockUrlGenerator = new AdminRepositoryDownloadControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$expectedPluginData = array('module' => array($testModule => array(
+            'base' => 1, 'lang-en_US' => 1, 'lang-hu_HU' => 1)));
+
+	$pluginDownloadFileList = array('module' => array($testModule => array(
+	    'name' => 'Test Module',
+	    'files' => array('descriptor' => 'testModule-descriptor',
+			     'base' => 'base-package',
+			     'lang-en_US' => 'en_US-package',
+			     'lang-hu_HU' => 'hu_HU-package'))));
+
+	$repository = new AdminRepositoryDownloadControllerTestRepository();
+	$repository->setReply('getDownloadFileList',
+			      array($expectedPluginData),
+			      array(null, $pluginDownloadFileList));
+	/* Descriptor. */
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
+			      array(null, 'descriptorContents'));
+
+	/* Preverify everything  */
+	$repository->setReply('preVerifyPackage',
+			      array('base', 'descriptorContents'),
+			      array());
+	$repository->setReply('preVerifyPackage',
+			      array('lang-en_US', 'descriptorContents'),
+			      array());
+	$repository->setReply('preVerifyPackage',
+			      array('lang-hu_HU', 'descriptorContents'),
+			      array());
+
+	/* base */
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'base', 'base-package'),
+			      array(null, array()));
+	$repository->setReply('verifyPackageIntegrity',
+			      array('base', 'descriptorContents'),
+			      null);
+	$repository->setReply('getPackageVersionAndBuild',
+			      array('module', $testModule, 'base'),
+			      array(null, 'base-version', 'base-build'));
+	$repository->setReply('updatePackageMetaData',
+			      array('module', $testModule, 'base',
+				    'base-version', 'base-build'),
+			      null);
+	/* lang-en_US */
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'lang-en_US', 'en_US-package'),
+			      array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null));
+
+	/* lang-hu_HU */
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'lang-hu_HU', 'hu_HU-package'),
+			      array(null, array()));
+	$repository->setReply('verifyPackageIntegrity',
+			      array('lang-hu_HU', 'descriptorContents'),
+			      null);
+	$repository->setReply('getPackageVersionAndBuild',
+			      array('module', $testModule, 'lang-hu_HU'),
+			      array(null, 'hu_HU-version', 'hu_HU-build'));
+	$repository->setReply('updatePackageMetaData',
+			      array('module', $testModule, 'lang-hu_HU',
+				    'hu_HU-version', 'hu_HU-build'),
+			      null);
+
+	$ret = $this->_controller->performDownloadAndInstallation(
+	    array('test' =>
+		  array('module' => array(
+			    $testModule => array(
+				'base' => 1,
+				'lang-en_US' => 1,
+				'lang-hu_HU' => 1)))),
+	    array(),
+	    array('test' => $repository));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	/* Even though one language failed, the base got updated so we should reactivate it */
 	$this->assert($repository->isComplete(), $repository->getRemaining());
 	$this->assertEquals(array('installOrUpgrade' => 1,
 				  'autoConfigure' => 1,
