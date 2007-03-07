@@ -422,6 +422,10 @@ class GalleryRepository {
 		    return array($ret, null);
 		}
 
+		if ($upgradeInfo['base']['locked']) {
+		    continue;
+		}
+
 		if ($upgradeInfo['base']['relation'] == 'older' &&
 		    $upgradeInfo['base']['currentVersion']) {
 		    $packages[$pluginType][$pluginId]['base'] = 1;

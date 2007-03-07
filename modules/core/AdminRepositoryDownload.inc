@@ -341,6 +341,11 @@ class AdminRepositoryDownloadController extends GalleryController {
 			    return $ret;
 			}
 
+			list ($ret, $isActive) = $plugin->isActive();
+			if ($ret) {
+			    return $ret;
+			}
+
 			$ret = $plugin->installOrUpgrade();
 			if ($ret) {
 			    return $ret;
@@ -356,7 +361,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 			    $autoConfigured = true;
 			}
 
-			if ($autoConfigured) {
+			if ($autoConfigured && $isActive) {
 			    list ($ret, $redirect) = $plugin->activate();
 			    if ($ret) {
 				return $ret;

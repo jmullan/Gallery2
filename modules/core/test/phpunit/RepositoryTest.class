@@ -215,7 +215,40 @@ class RepositoryTest extends GalleryTestCase {
 					    'testModule' => array(
 						'lang-en_US' => 1, 'lang-en_GB' => 1)),
 					'theme' => array(
-					    'testTheme' => array('lang-en_US' => 1)))));
+					    'testTheme' => array('lang-en_US' => 1)))),
+			   array( /* case 7 */
+
+	    'installedPackages' => array(
+		'base' => array('version' => '1.0.0', 'build' => '11111', 'locked' => 1),
+		'lang-en_US' => array('version' => '22222', 'build' => '00001', 'locked' => 1),
+		'lang-en_GB' => array('version' => '22222', 'build' => '22222', 'locked' => 1),
+		'lang-pt_PT' => array('version' => '22222', 'build' => '33333', 'locked' => 1)),
+	    'expectedUpgradeInfo' => array(
+		'base' => array(
+		    'newVersion' => '1.0.0',
+		    'newBuild' => '44444',
+		    'currentVersion' => '1.0.0',
+		    'currentBuild' => '11111',
+		    'relation' => 'older',
+		    'locked' => 1),
+		'upgradeable' => true,
+		'complete' => 0,
+		'languages' => array(
+		    'en_US' => array('name' => 'en_US', 'currentBuild' => '00001',
+				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 1),
+		    'en_GB' => array('name' => 'en_GB', 'currentBuild' => '22222',
+				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 1),
+		    'pt_PT' => array('name' => 'pt_PT', 'currentBuild' => '33333',
+				     'newBuild' => '33333', 'relation' => 'equal', 'locked' => 1),
+		    /**
+		     * this language is not considered "locked" because it doesn't exist in the
+		     * original install.  This is not optimal.
+		     *
+		     * @TODO: lock missing languages when teh base package is locked.
+		     */
+		    'pt_BR' => array('name' => 'pt_BR', 'currentBuild' => NULL,
+				     'newBuild' => '33333', 'relation' => 'older', 'locked' => 0))),
+		 'expectedPackages' => array(/* no upgrades; the base package is locked */)));
 
 	$i = 0;
 	foreach ($testcases as $case) {
