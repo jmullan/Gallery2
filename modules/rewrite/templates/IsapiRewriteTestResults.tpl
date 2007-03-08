@@ -40,7 +40,7 @@
 
         <pre class="giDescription">{$TestResults.contents}</pre>
 
-        <p class="giDescription"><b>{g->text text="If you add this at the bottom, please make sure that there's atleast one empty line below the section"}</b></p>
+        <p class="giDescription"><b>{g->text text="If you add this at the bottom, please make sure that there's at least one empty line below the section"}</b></p>
       </div>
 
       <div class="gbBlock">

@@ -35,7 +35,7 @@
         <h3> {g->text text="Test Path Info Manually"} </h3>
 
         <p class="giDescription">
-          {g->text text="Gallery did not detect Path Info, please run this thest yourself to verify."}
+          {g->text text="Gallery did not detect Path Info, please run this test yourself to verify."}
         </p>
 
         <table class="gbDataTable"><tr>
