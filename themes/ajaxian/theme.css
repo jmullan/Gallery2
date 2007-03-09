@@ -547,6 +547,8 @@ h2 {
     padding: 10px 8px 10px 10px;
     background-color: #191919;
     -moz-border-radius: 10px 0 0 10px;
+    max-width: 250px;
+    overflow: hidden;
 }
 
 #gsContent {
@@ -650,8 +652,10 @@ h2.giError {
 
 /* Debug Only */
 #msgarea {
+    display: none;
     width: 150px;
     position: absolute;
+    z-index: 10;
     top: 60px;
     left: 10px;
     background-color: #fdf;

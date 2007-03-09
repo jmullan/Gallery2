@@ -127,6 +127,7 @@ function addMessage(msg) {
     if (DEBUG_AJAXIAN) {
 	var msgarea = document.getElementById('msgarea');
 	if (msgarea) {
+	    msgarea.style.display = 'block';
 	    if (msgarea.getElementsByTagName('h4').length < 1) {
 		var debugHeading = document.createElement('h4');
 		debugHeading.appendChild(document.createTextNode('Debug output'));
