@@ -392,6 +392,22 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(1, $this->_exitCalls, 'exit call');
     }
 
+    function testLoginRedirectUrlIsAbsolute() {
+	global $gallery;
+	$gallery->_phpVm = new UserLoginTestPhpVm($this);
+	$urlGenerator =& $gallery->getUrlgenerator();
+
+	$gallery->setConfig('loginRedirect', array('href' => '/'));
+	$this->_becomeGuestUser();
+
+	$this->_loadTemplate();
+
+	/* Verify that header and exit has been called */
+	$this->assertEquals("Location: " . $urlGenerator->makeUrl('/'), $this->_headers[0],
+			    'location header');
+	$this->assertEquals(1, $this->_exitCalls, 'exit call');
+    }
+
     function testLoginRedirectIgnoredWhenAlreadyLoggedIn() {
 	global $gallery;
 	$gallery->_phpVm = new UserLoginTestPhpVm($this);
