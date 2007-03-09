@@ -94,6 +94,13 @@
       </select>
     </td>
   </tr></table>
+
+  <p class="giDescription">
+    {capture assign="pluginsLink"}<a href="{g->url arg1="view=core.SiteAdmin"
+     arg2="subView=core.AdminPlugins"}">{/capture}
+    {g->text text="To activate more themes visit the %sPlugins%s page."
+	     arg1=$pluginsLink arg2="</a>"}
+  </p>
 </div>
 
 <div class="gbBlock gcBackground1">
