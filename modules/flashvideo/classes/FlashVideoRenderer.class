@@ -137,8 +137,10 @@ class FlashVideoRenderer extends GalleryRenderer {
 		    <param name="quality" value="high"/>
 		    <param name="scale" value="noscale"/>
 		    <param name="salign" value="lt"/>
-		    <embed src="%s" flashvars="%s" type="application/x-shockwave-flash"
-			   width="100%%" height="100%%" quality="high" scale="noscale" salign="lt"
+		    <param name="wmode" value="transparent"/>
+		    <param name="allowScriptAccess" value="always"/>
+		    <embed src="%s" flashvars="%s" wmode="transparent" type="application/x-shockwave-flash"
+			   width="100%%" height="100%%" quality="high" scale="noscale" salign="lt" allowScriptAccess="always"
 			   pluginspage="http://www.macromedia.com/go/getflashplayer"/>
 		    <noembed>%s</noembed>
 		 </object></div>',
