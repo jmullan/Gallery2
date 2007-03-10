@@ -265,7 +265,7 @@ class ADODB_mysqli extends ADOConnection {
 			$rs = $this->Execute($getnext);
 		}
 		if ($rs) {
-			$this->genID = mysql_insert_id($this->_connectionID);
+			$this->genID = mysqli_insert_id($this->_connectionID);
 			$rs->Close();
 		} else {
 			$this->genID = 0;
