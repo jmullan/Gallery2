@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Migration 1.0.6\n"
 "POT-Creation-Date: 2003-09-20 19:40+0900\n"
-"PO-Revision-Date: 2005-11-29 00:39+0900\n"
+"PO-Revision-Date: 2007-03-11 14:17+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,7 @@ msgstr "サムネイルの生成"
 msgid "%sTitle%s was truncated for %sitem %d%s."
 msgstr "%sタイトル%s は %sアイテム %d%s のために切り詰められました"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sSummary%s was truncated for %sitem %d%s."
 msgstr "%3$sアイテム %4$d%5$s に対する %1$s概要%2$s が省略されました。"
 
@@ -80,7 +80,8 @@ msgid ""
 "import with the URL redirect option selected. Otherwise follow instructions in %sMigrate "
 "Site Admin%s."
 msgstr ""
-"G1 URL リダイレクト。\n"
+"G1 URL リダイレクト。G1を使用していた場所にG2をインストールした場合のみ使用してください。G1 "
+"URL リダイレクト。\n"
 "G1 URL redirect. Use only if G2 is installed where G1 used to be and you have run a G1 "
 "import with the URL redirect option selected. Otherwise follow instructions in %sMigrate "
 "Site Admin%s."
@@ -193,9 +194,8 @@ msgstr "空欄"
 msgid "Set summary from:"
 msgstr "概要の設定:"
 
-#, fuzzy
 msgid "Set description from:"
-msgstr "詳細文の設定:"
+msgstr "説明の設定:"
 
 msgid "Default to same as summary if custom field not set"
 msgstr "カスタムフィールドが設定されていない場合は概要と同じです。"
@@ -258,6 +258,8 @@ msgstr "%s を今すぐインポート"
 msgid ""
 "Top level albums and albums whose parents are not selected will be imported into this album:"
 msgstr ""
+"トップレベルアルバムと、親アルバムが選択されていないアルバムはこのアルバムにインポートされま"
+"せん。"
 
 #, c-format
 msgid "Title: %s"
@@ -268,7 +270,7 @@ msgid "Description: %s"
 msgstr "詳細: %s"
 
 msgid "Your Gallery 1 will be converted from this character encoding into UTF-8:"
-msgstr ""
+msgstr "あなたのGallery 1は以下の文字がUTF-8に変換されます:"
 
 #, c-format
 msgid "Encoding: %s"
@@ -292,12 +294,11 @@ msgstr "カスタムフィールド:"
 msgid "Summary"
 msgstr "概要"
 
-#, fuzzy
 msgid "Description"
-msgstr "詳細"
+msgstr "説明"
 
 msgid "(Default to summary value if not set)"
-msgstr ""
+msgstr "(設定されない場合は概要がデフォルトになります)"
 
 msgid "Custom fields will be imported"
 msgstr "カスタムフィールドはインポートされます"
@@ -306,7 +307,7 @@ msgid "Custom fields imported into item fields above will not be duplicated as c
 msgstr ""
 
 msgid "Hidden Items"
-msgstr ""
+msgstr "隠されたアイテム"
 
 msgid ""
 "Any hidden albums or items will be imported with restricted view permissions. Activate the "
@@ -324,7 +325,6 @@ msgstr "インポート完了"
 msgid "Successfully imported %d user."
 msgid_plural "Successfully imported %d users."
 msgstr[0] "%dユーザのインポートに成功しました。<"
-msgstr[1] ""
 
 msgid "No users imported."
 msgstr "ユーザはインポートされませんでした。"
@@ -337,7 +337,6 @@ msgstr "インポート完了 %s"
 msgid "Error while importing %d user."
 msgid_plural "Errors while importing %d users."
 msgstr[0] "%d ユーザをインポート中にエラーが起こりました。"
-msgstr[1] ""
 
 #, c-format
 msgid "Error importing %s"
@@ -347,7 +346,6 @@ msgstr "%s のインポートエラー"
 msgid "Successfully imported %d album."
 msgid_plural "Successfully imported %d albums."
 msgstr[0] "%d アルバムのインポートに成功しました。"
-msgstr[1] ""
 
 msgid "No albums imported."
 msgstr "アルバムはインポートされませんでした。"
@@ -356,7 +354,6 @@ msgstr "アルバムはインポートされませんでした。"
 msgid "Error while importing %d album."
 msgid_plural "Errors while importing %d albums."
 msgstr[0] "%d アルバムをインポート中にエラーが起こりました。"
-msgstr[1] ""
 
 msgid "Import more data"
 msgstr "さらなるデータのインポート"
@@ -461,21 +458,3 @@ msgstr "全てを削除"
 
 msgid "Map entries deleted successfully"
 msgstr "マップエントリの削除に成功しました。"
-
-#, fuzzy
-#~ msgid "Import complete"
-#~ msgstr "インポート完了"
-
-#, fuzzy
-#~ msgid "Migration Status"
-#~ msgstr "アルバム移動"
-
-#, fuzzy
-#~ msgid "Path"
-#~ msgstr "パス:"
-
-#~ msgid "Enter the path to migrate"
-#~ msgstr "移動するパスを入力してください"
-
-#~ msgid "Use this module to migrate a gallery from v1 to this version."
-#~ msgstr "このモジュールはバージョン 1からギャラリーを移動するときに使います。"

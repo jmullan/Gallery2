@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.2\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2006-12-20 09:55-0800\n"
-"PO-Revision-Date: 2006-08-27 22:49+0900\n"
+"PO-Revision-Date: 2007-03-04 17:31+0900\n"
 "Last-Translator: Yosuke Suzuki\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -61,19 +61,18 @@ msgstr "システムチェック"
 msgid "Performing system checks"
 msgstr ""
 
-#, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
-msgstr "PHP バージョン 4.1.0 以上または 5.0.4 以上"
+msgstr "PHP バージョン 4.3.0 以上または 5.0.4 以上"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
-"エラー: Gallery2は PHPのバージョン4.1.0より新しいもの、もしくは5.0.4より新しいものが必要で"
-"す。あなたのPHPはバージョンが %s です。あなたの利用するウエブサーバーの管理者に連絡して、アッ"
-"プグレードをしてもらってください。%sPHP website%sのサイトで入手できます。"
+"エラー: Gallery2は PHPのバージョン4.3.0以降、もしくは5.0.4以降が必要です。あなたのPHPはバー"
+"ジョンが %s です。あなたの利用するウェブサーバーの管理者に連絡して、アップグレードをしても"
+"らってください。%sPHP website%sのサイトで入手できます。"
 
 msgid "PHP Version"
 msgstr "PHP バージョン"
@@ -105,7 +104,7 @@ msgid "Safe Mode"
 msgstr "セーフモード"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "正規表現"
 
 #, c-format
 msgid ""
@@ -147,15 +146,15 @@ msgstr ""
 msgid "Filesystem Operations"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Essential filesystem operations are disabled in your PHP by the "
 "<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
 "Gallery will run. These functions are missing: %s."
 msgstr ""
-"警告: putenv() 機能はphp.iniファイルの<b>disabled_functions</b> パラメータによって無効にされ"
-"ています。Galleryはこの設定でも機能しますが、一部まれに英語以外の言語で動作しない場合がありま"
-"す。"
+"警告: 不可欠なファイルシステムの操作がphp.iniファイルの <b>disabled_functions</b> パラメータ"
+"によって無効にされています。Galleryを動作させる前にこれらの機能を許可しなければなりません。以"
+"下の機能がありません: %s"
 
 msgid "Memory limit"
 msgstr "メモリ制限"
@@ -186,15 +185,15 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "アップロード最大サイズ"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
 "(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
-"警告: あなたの使用しているPHPはアップロードできるファイルのサイズが %sb までに制限されていま"
-"す。(php.iniの<b>upload_max_filesize</b> パラメータ)。より大きいファイルをアップロードする場"
-"合は、この制限を引き上げてください"
+"警告: あなたの使用しているPHPはアップロードできるファイルのサイズが %s バイトまでに制限されて"
+"います。(php.iniの<b>upload_max_filesize</b> パラメータ)。より大きいファイルをアップロードす"
+"る場合は、この制限を引き上げてください"
 
 msgid "Maximum POST size"
 msgstr "POSTの最大サイズ"
@@ -210,14 +209,18 @@ msgstr ""
 "げてください"
 
 msgid "Translation support"
-msgstr ""
+msgstr "翻訳の対応"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Your webserver does not support localization. To enable support for additional languages "
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"ウェブサーバがローカライゼーションをサポートしていません。\n"
+"Your webserver does not support localization. To enable support for additional languages "
+"please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
+"enabled."
 
 #, c-format
 msgid ""
@@ -298,12 +301,11 @@ msgstr "Manifest がないかアクセスできません"
 msgid "Upgrade Core"
 msgstr "コアをアップグレード"
 
-#, fuzzy
 msgid "Upgrade Plugins"
-msgstr "アップグレードの状況"
+msgstr "プラグインのアップグレード"
 
 msgid "Unable to initialize Gallery session"
-msgstr ""
+msgstr "Galleryセッションを初期化できません"
 
 #, c-format
 msgid "Unable to load the %s module"
@@ -337,27 +339,27 @@ msgstr "モジュールリストを取得できません"
 msgid "Unable to get the theme list"
 msgstr "テーマリストを取得できません"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to query the %s module"
-msgstr "%s モジュールをアップグレードできません"
+msgstr ""
 
 msgid "Other"
 msgstr "その他"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to query the %s theme"
-msgstr "テーマ %s をアップグレードできません"
+msgstr ""
 
 msgid "Themes"
 msgstr "テーマ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to deactivate the %s theme"
-msgstr "テーマ %s を読み込むことができません"
+msgstr "テーマ %s を無効にできません"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to deactivate the %s module"
-msgstr "%s モジュールを読み込むことができません"
+msgstr "%s モジュールを無効にできません"
 
 msgid "Welcome"
 msgstr "ようこそ"
@@ -454,13 +456,12 @@ msgstr "もう一度実行する"
 msgid "Finished!"
 msgstr "完了！"
 
-#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
 "plugins you may use the Site Administrator interface."
 msgstr ""
-"おめでとうございます！あなたのGallery 2 のアップグレードは完了しました。さらに追加的なモ"
-"ジュールをアップグレードするには、サイト管理の項目を利用してください"
+"おめでとうございます! あなたのGallery 2 のアップグレードは完了しました。さらに追加のプラグイ"
+"ンをアップグレードするには、サイト管理の項目を利用してください"
 
 msgid "Go to my Gallery!"
 msgstr "Gallery を訪れる"
@@ -503,41 +504,39 @@ msgstr "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgid "Missing files (%d)"
 msgstr "欠落したファイル (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
-"注意: あなたはCVSから取得したGalleryを動かしています。そのため最近削除されたファイルがここに"
-"存在するかもしれません。これらは無視しておく方が安全です"
+"注意: あなたはSVNから取得した Gallery を動かしています。そのため最近削除されたファイルがここ"
+"に存在するかもしれません。これらは無視しておく方が安全です"
 
 #, c-format
 msgid "Modified files (%d)"
 msgstr "変更されたファイル (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'svn update' before "
 "continuing."
 msgstr ""
-"注意: あなたはCVSから取得したGalleryを動かしています。そのためいくつかの変更されたファイルが"
-"あると思われます。これらを無視することもできますが、アップデート続ける前に<b>cvs update -Pd</"
-"b> を実行したほうが確実です"
+"注意: あなたはSVNから取得した Gallery を動かしています。そのためいくつかの変更されたファイル"
+"があると思われます。これらを無視することもできますが、アップデート続ける前に 'scn update' を"
+"実行したほうが安全です"
 
 #, c-format
 msgid "Old files (%d)"
 msgstr "古いファイル (%d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
 "a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
 "you, but you can download and run %s in your gallery2 directory to delete them for you."
 msgstr ""
 "これらのファイルはもはや Gallery の一部ではありません。特に何の問題も引き起こさないと思います"
-"が、インストールをクリーンな状態に保つには削除した方が良いです。Galleryにはこれらのファイルを"
-"削除する機能はありませんが、%s をダウンロードして実行すれば削除してくれます。"
+"が、システムをクリーンな状態に保つには削除した方が良いです。Gallery はこれらのファイルを削除"
+"できませんが、%s をダウンロードして gallery2 のディレクトリで実行すれば削除してくれます。"
 
 msgid "this script"
 msgstr "このスクリプト"
@@ -650,15 +649,14 @@ msgstr ""
 "す。G2 をダウングレードすることはできません。gallery2 のファイルを現在インストールされている"
 "バージョンかより新しいバージョンのファイルに置き換えてください"
 
-#, fuzzy
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
 "will not be able to help you recover your data!  Refer to the following example:"
 msgstr ""
 "アップグレードするまえに、データベースのバックアップをとることを<b>強くおすすめ</b>します。"
-"バックアップをとらずに、何か問題が発生した場合、データを修復する手伝いをできない可能性がきわ"
-"めて高いです。次の例を参照してください:"
+"バックアップをとらずに何か問題が発生した場合、データを修復する手伝いをできない可能性がきわめ"
+"て高いです。次の例を参照してください:"
 
 msgid "MySQL"
 msgstr "MySQL"
@@ -715,13 +713,16 @@ msgstr ""
 "での決定は、恒久的なものではなく、いつでもこのページに戻ってくることができます"
 
 msgid "Deactivated Plugins"
-msgstr ""
+msgstr "無効化されたプラグイン"
 
 msgid ""
 "The following plugins were active, but they are missing or incompatible with your current "
 "version of Gallery.  They have been deactivated.  Install the latest version of these "
 "plugins to reactivate them."
 msgstr ""
+"以下のプラグインは動作中でしたが、欠落しているか、Galleryの現在のバージョンと互換性がありませ"
+"ん。これらは無効化されました。最新版のプラグインをインストールして、もう一度有効化しなおして"
+"ください。"
 
 msgid "Module"
 msgstr "モジュール"
@@ -742,10 +743,10 @@ msgid "Description"
 msgstr "説明"
 
 msgid "Incompatible with this version of Gallery"
-msgstr ""
+msgstr "このバージョンのGalleryと互換性がありません。"
 
 msgid "(un)check all"
-msgstr "すべてをチェック（しない）"
+msgstr "すべてをチェック (しない)"
 
 #, c-format
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
@@ -767,15 +768,15 @@ msgstr "%s テーマのアップグレードに成功"
 msgid "Upgrade More Plugins"
 msgstr "アップグレードの状況"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these steps "
 "and provide assistance along the way if additional steps are required. Please read the %"
 "sHelp File%s before proceeding."
 msgstr ""
-"Gallery 2.0 をアップグレードするのには、%d ステップが必要です。このアップグレードツールは、こ"
-"れらのステップを通じてガイドし、追加的なステップが必要になった場合は知らせてくれます。進む前"
-"に %sHelp File%s を読んでください"
+"Gallery 2 をアップグレードするのには、%d ステップが必要です。このアップグレードツールは、これ"
+"らのステップを通じてガイドし、追加的なステップが必要になった場合は知らせてくれます。進む前に "
+"%sHelp File%s を読んでください"
 
 msgid ""
 "If you have a busy site, consider putting your Gallery in maintenance mode. This gives "
@@ -792,61 +793,10 @@ msgstr "言語選択:"
 msgid "Go"
 msgstr "進む"
 
-#~ msgid ""
-#~ "<b>Reminder</b>: Now check the permissions on config.php and make sure it is not globally "
-#~ "writeable."
-#~ msgstr ""
-#~ "<b>リマインダー</b>:config.php のパーミッションをチェックしてください。必ずグローバルに書"
-#~ "き込まれないようにしてください。"
-
 #, fuzzy
 #~ msgid "mysqldump -u%s -p -h %s --opt %s > %s.sql"
-#~ msgstr "mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"
+#~ msgstr "mysqldump -u%s -p -h %s --opt %s > %s.sql"
 
 #, fuzzy
 #~ msgid "pg_dump -h %s --format=t %s > %s.sql"
-#~ msgstr "pg_dump --format=t %s > %s.sql"
-
-#~ msgid "Upgrade More Modules"
-#~ msgstr "さらに別のモジュールをアップグレード"
-
-#~ msgid "Upgrade Modules"
-#~ msgstr "モジュールをアップグレード"
-
-#~ msgid "the Gallery website"
-#~ msgstr "Gallery のウェブサイト"
-
-#~ msgid ""
-#~ "Your upgrade cannot begin because some of your active modules/themes are incompatible or "
-#~ "missing.  You must either locate more recent versions of these modules or themes, or "
-#~ "revert to your original version of Gallery.  No changes have been made so it's safe to "
-#~ "revert.  If you have many incompatible modules listed below, it's possible that you "
-#~ "downloaded a smaller distribution of Gallery than what you originally installed.  You can "
-#~ "download a larger distribution from %s."
-#~ msgstr ""
-#~ "アップグレードは、いくつかの有効になっているモジュールやテーマが整合性がとれないか、ないた"
-#~ "め始めることができませんこれらのモジュールやテーマの最新版を配置するか、元のバージョンに戻"
-#~ "す必要がありますまだ何の変更もされてないため、元のバージョンに戻すのは安全です。もし多くの"
-#~ "モジュールが整合性がとれない場合、元のバージョンより小さなパッケージのGalleryをダウンロー"
-#~ "ドした可能性があります%s からより大きいパッケージをダウンロードできます。"
-
-#~ msgid "Download replacement modules from %s"
-#~ msgstr "%s から置き換えるモジュールをダウンロードする"
-
-#~ msgid "Upgrade Other Modules"
-#~ msgstr "他のモジュールをアップグレード"
-
-#~ msgid "Missing Code"
-#~ msgstr "見つからないコード"
-
-#~ msgid ""
-#~ "The code for some plugins that were previously active can no longer be found. You must "
-#~ "restore code for these plugins before this upgrade can continue. Code for the plugins "
-#~ "must be the same version or newer than what was installed before."
-#~ msgstr ""
-#~ "以前は有効だったいくつかのプラグインのコードは、もはや見つかりません。アップグレードを続け"
-#~ "る前に、これらのコードを回復させてください。コードは現在インストールされているものと同じ"
-#~ "バージョンかより新しいものでなければいけません"
-
-#~ msgid "Finished"
-#~ msgstr "完了"
+#~ msgstr "pg_dump -h %s --format=t %s > %s.sql"
