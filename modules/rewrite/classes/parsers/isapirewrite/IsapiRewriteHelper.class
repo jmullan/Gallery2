@@ -293,6 +293,10 @@ class IsapiRewriteHelper {
 			if ($isNegative) {
 			    $condition['pattern'] = '(?!' . $condition['pattern'] . ')';
 			}
+			if ($condition['pattern'] == '(?!)') {
+			    /* Avoid pattern (?!) (isapi_rewrite logs a parse error). */
+			    $condition['pattern'] = '(?!.{0})';
+			}
 		    } else {
 			if ($isNegative) {
 			    $condition['pattern'] = '(?!' . $condition['pattern'] . ')';
