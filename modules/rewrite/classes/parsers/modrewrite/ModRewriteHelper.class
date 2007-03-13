@@ -306,7 +306,8 @@ class ModRewriteHelper {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../templates', true, false);
 	$template->setVariable('Htaccess', $Htaccess);
-	list ($ret, $content) = $template->fetch('Htaccess.tpl', 'modules_rewrite');
+	$template->setVariable('l10Domain', 'modules_rewrite');
+	list ($ret, $content) = $template->fetch('Htaccess.tpl');
 	if ($ret) {
 	    return array($ret, null);
 	}
