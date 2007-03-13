@@ -65,7 +65,7 @@ if ($OPTS{'SVN_ADD'}) {
     @_ = glob $poParam;
     chdir '..';
     foreach my $poFile (@_) {
-      if (exists $svn{$poFile}) {
+      if (exists $svn{$poFile} and $poFile ne 'messages.po') {
 	$_ = 'locale/' . substr($poFile, 0, -3);
 	my_system("svn add po/$poFile" . (-d $_ ? " $_" : ''));
 	-d $_ and

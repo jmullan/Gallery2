@@ -171,5 +171,10 @@ class PhpVmTest extends GalleryTestCase {
     function testCrc32() {
 	$this->assertEquals(crc32('test'), $this->_phpVm->crc32('test'));
     }
+
+    function testClassExists() {
+	$this->assert($this->_phpVm->class_exists('PhpVmTest'));
+	$this->assert(!$this->_phpVm->class_exists('ThisIsAClassThatCanNeverExist'));
+    }
 }
 ?>

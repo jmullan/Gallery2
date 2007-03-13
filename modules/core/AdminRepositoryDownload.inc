@@ -159,6 +159,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 	global $gallery;
 	$session =& $gallery->getSession();
 	$platform =& $gallery->getPlatform();
+	$phpVm = $gallery->getPhpVm();
 	$templateAdapter =& $gallery->getTemplateAdapter();
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
@@ -335,41 +336,55 @@ class AdminRepositoryDownloadController extends GalleryController {
 			$currentAction / $totalActions);
 
 		    if (empty($dontReactivate[$pluginType][$pluginId])) {
-			list ($ret, $plugin) =
-			    GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
-			if ($ret) {
-			    return $ret;
-			}
-
-			list ($ret, $isActive) = $plugin->isActive();
-			if ($ret) {
-			    return $ret;
-			}
-
-			$ret = $plugin->installOrUpgrade();
-			if ($ret) {
-			    return $ret;
-			}
-
-			if ($pluginType == 'module') {
-			    list ($ret, $autoConfigured) = $plugin->autoConfigure();
-			    if ($ret) {
-				return $ret;
-			    }
+			/**
+			 * Some plugins may already be loaded (e.g. the default theme, or
+			 * authentication modules) so PHP will not let us evaluate the newly
+			 * downloaded code.  This means that we can't upgrade those modules
+			 * via DP; the site admin must do it by hand on the AdminPlugins page.
+			 * For now, just notify the user.
+			 *
+			 * @todo convert this to a two-phase approach so that we can reactivate
+			 *       plugins that are already loaded at this point.
+			 */
+			if ($phpVm->class_exists($pluginId . $pluginType)) {
+			    $status['cantUpgradeInUse'][] = $pluginName;
 			} else {
-			    /* Themes don't need this step */
-			    $autoConfigured = true;
-			}
-
-			if ($autoConfigured && $isActive) {
-			    list ($ret, $redirect) = $plugin->activate();
+			    list ($ret, $plugin) =
+				GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
 			    if ($ret) {
 				return $ret;
 			    }
-			    /* Ignore the redirect */
-			}
 
-			$status['updated'][] = $pluginName;
+			    list ($ret, $isActive) = $plugin->isActive();
+			    if ($ret) {
+				return $ret;
+			    }
+
+			    $ret = $plugin->installOrUpgrade();
+			    if ($ret) {
+				return $ret;
+			    }
+
+			    if ($pluginType == 'module') {
+				list ($ret, $autoConfigured) = $plugin->autoConfigure();
+				if ($ret) {
+				    return $ret;
+				}
+			    } else {
+				/* Themes don't need this step */
+				$autoConfigured = true;
+			    }
+
+			    if ($autoConfigured && $isActive) {
+				list ($ret, $redirect) = $plugin->activate();
+				if ($ret) {
+				    return $ret;
+				}
+				/* Ignore the redirect */
+			    }
+
+			    $status['updated'][] = $pluginName;
+			}
 		    }
 
 		    /*********************************************************/

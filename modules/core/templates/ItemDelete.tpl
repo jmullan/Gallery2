@@ -104,7 +104,7 @@
       {if isset($peer.resize)}
       {* force and alt/longdesc parameter here so that we avoid issues with single quotes in the title/description *}
       new YAHOO.widget.Tooltip("gTooltip", {ldelim}
-          context: "thumb_{$peer.id}", text: '{g->image item=$peer image=$peer.resize class="giThumbnail" maxSize=640 alt="" longdesc="" }',
+          context: "thumb_{$peer.id}", text: '{g->image item=$peer image=$peer.resize class="giThumbnail" maxSize=500 alt="" longdesc="" }',
           showDelay: 250 {rdelim});
       {elseif isset($peer.thumbnail)}
       new YAHOO.widget.Tooltip("gTooltip", {ldelim}

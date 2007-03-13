@@ -208,7 +208,8 @@ class UserLoginView extends GalleryView {
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    if ($isGuest && !$phpVm->headers_sent()) {
 		$redirectUrl = $urlGenerator->generateUrl($loginRedirect,
-							  array('forceSessionId' => false));
+							  array('forceSessionId' => false,
+							  	'forceFullUrl' => true));
 		$phpVm->header("Location: $redirectUrl");
 		$phpVm->exit_();
 	    }

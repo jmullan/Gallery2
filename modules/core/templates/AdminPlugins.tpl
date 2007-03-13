@@ -8,7 +8,7 @@
   //<![CDATA[
   var pluginData = {ldelim} "module" : {ldelim} {rdelim}, "theme" : {ldelim} {rdelim} {rdelim};
   {foreach name=names from=$AdminPlugins.plugins item=plugin}
-  pluginData["{$plugin.type}"]["{$plugin.id}"] = {ldelim} "name" : "{$plugin.name}", "deletable" : {$plugin.deletable}, "state" : "{$plugin.state}" {rdelim};
+  pluginData["{$plugin.type}"]["{$plugin.id}"] = {ldelim} "name" : "{$plugin.name|escape:"javascript"}", "deletable" : {$plugin.deletable}, "state" : "{$plugin.state}" {rdelim};
   {/foreach}
 
   var stateData = {ldelim}

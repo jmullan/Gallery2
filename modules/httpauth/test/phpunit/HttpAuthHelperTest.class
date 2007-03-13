@@ -160,6 +160,12 @@ class HttpAuthHelperTest extends GalleryTestCase {
 		    $this->failWithStatus($ret);
 		}
 	    }
+
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->commitTransaction();
+	    if ($ret) {
+		$this->failWithStatus($ret);
+	    }
 	}
     }
 

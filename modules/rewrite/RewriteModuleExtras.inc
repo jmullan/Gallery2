@@ -323,6 +323,18 @@ class RewriteModuleExtras {
 	case '1.1.11':
 	    /* Add generateUrl options and %{REQUEST_URI} handling to rewrite rule format */
 
+	    /**
+	     * Clear the tpl cache since our .htaccess and isapi templates have changed and the file
+	     * modification timestamp is not guaranteed to be older than the one of the compiled
+	     * files.
+	     * @todo: Revisit when we have per module .tpl versioning.
+	     */
+	    $gallery->guaranteeTimeLimit(60);
+	    $dir = $gallery->getConfig('data.smarty.templates_c');
+	    if ($platform->file_exists($dir)) {
+		$platform->recursiveRmdir($dir);
+	    }
+
 	case 'end of upgrade path':
 	    break;
 

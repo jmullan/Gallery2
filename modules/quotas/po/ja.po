@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Quotas 1.0.7\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-15 22:39+0900\n"
-"PO-Revision-Date: 2005-11-28 00:47+0900\n"
+"PO-Revision-Date: 2007-03-11 15:04+0900\n"
 "Last-Translator: Kennichi Uehara <ken.w3m+nospam@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -39,13 +39,13 @@ msgstr "MB"
 msgid "GB"
 msgstr "GB"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: You have reached your disk quota (%s %s), this item will not be added."
-msgstr "警告: クォータの制限に達しました (%s %s) このアイテムは追加されません。"
+msgstr "警告: ディスククォータの制限に達しました (%s %s) このアイテムは追加されません。"
 
 #, c-format
 msgid "You are using %s %s of your allotted %s %s."
-msgstr ""
+msgstr "割り当て %3$s %4$s のうち %1$s %2$s を使用しています。"
 
 msgid "Quotas"
 msgstr "クォータ"
@@ -78,7 +78,6 @@ msgstr "クォータサイズを入力しなればなりません。"
 msgid "Quota size must be less than 2097152 MB (2048 GB)."
 msgstr "クォータサイズは 2097152 MB (2048 GB) より少なくなければなりません。"
 
-#, fuzzy
 msgid "Invalid quota size, positive numbers and decimals only."
 msgstr "クォータのサイズが無効です。正の整数か小数でなければなりません。"
 
@@ -96,7 +95,7 @@ msgstr "ユーザ名"
 
 #, c-format
 msgid "User quota for '%s' already exists"
-msgstr ""
+msgstr "'%s' に対するユーザクォータは既に存在しています"
 
 msgid "Create User Quota"
 msgstr "ユーザクォータを作成する"
@@ -110,6 +109,7 @@ msgstr "よろしいですか?"
 #, c-format
 msgid "This will completely remove the %s (%s %s) group quota from Gallery.  There is no undo!"
 msgstr ""
+"これは %s (%s %s) グループクォータをGalleryから完全に削除します。やり直しは効きません。"
 
 msgid "Delete"
 msgstr "削除"
@@ -119,7 +119,7 @@ msgstr "ユーザクォータを削除"
 
 #, c-format
 msgid "This will completely remove the %s (%s %s) user quota from Gallery. There is no undo!"
-msgstr ""
+msgstr "これは %s (%s %s) ユーザクォータをGalleryから完全に削除します。やり直しは効きません。"
 
 msgid "Edit A Group Quota"
 msgstr "グループクォータを編集"
@@ -171,7 +171,6 @@ msgstr ""
 msgid "There is %d group quota in the system."
 msgid_plural "There are %d total group quotas in the system."
 msgstr[0] "システムには %d のグループクォータが存在します。"
-msgstr[1] ""
 
 msgid "Group Quotas"
 msgstr "グループクォータ"
@@ -235,7 +234,6 @@ msgstr "削除"
 msgid "There is %d user quota in the system."
 msgid_plural "There are %d total user quotas in the system."
 msgstr[0] "システムには %d のユーザクォータが存在します。"
-msgstr[1] ""
 
 msgid "User Quotas"
 msgstr "ユーザクォータ"
@@ -263,24 +261,18 @@ msgstr "ユーザ名"
 
 #, c-format
 msgid "Used: %0.2f %s (%s%%)"
-msgstr ""
+msgstr "使用済: %0.2f %s (%s%%)"
 
 #, c-format
 msgid "Quota: %0.2f %s"
-msgstr ""
+msgstr "クォータ: %0.2f %s"
 
 #, c-format
 msgid "Used: %0.2f %s"
-msgstr ""
+msgstr "使用済: %0.2f %s"
 
-#, fuzzy
 msgid "Quota: Unlimited"
-msgstr "クォータサイズ"
+msgstr "クォータ: 無制限"
 
-#, fuzzy
 msgid "User Quota Block"
-msgstr "ユーザクォータ"
-
-#, fuzzy
-#~ msgid "Warning: You have reached your disk quota (%s %s), "
-#~ msgstr "警告: クォータの制限に達しました (%s %s) このアイテムは追加されません。"
+msgstr "ユーザクォータブロック"

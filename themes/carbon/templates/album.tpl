@@ -58,8 +58,8 @@
 	{/if}
 
 	<table width="100%" cellspacing="0" cellpadding="0">
-	  <tr>
-	    <td width="30%" valign="top">
+	  <tr valign="top">
+	    <td width="30%">
 	      <div class="gsContentDetail">
 		<div class="gbBlock">
 		  {if !empty($theme.item.title)}
