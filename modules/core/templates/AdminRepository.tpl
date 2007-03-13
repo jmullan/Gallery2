@@ -56,6 +56,15 @@
   {/foreach}
   {/if}
 
+  {if !empty($status.error.cantUpgradeInUse)}
+    {* TODO: as soon as possible in 2.3, convert this to an internationalized string *}
+    <h2 class="giError"> Some plugins could not be automatically upgraded because they are in use.  Please return to the <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins"}">{g->text text="Plugins"}</a> page and click the {g->text text="upgrade"} link for each of the following plugins: </h2>
+    <ul>
+      {foreach from=$status.error.cantUpgradeInUse item=pluginName}
+      <li class="giError"> {$pluginName} </li>
+      {/foreach}
+    </ul>
+  {/if}
 </div>
 {/if}
 

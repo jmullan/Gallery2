@@ -41,6 +41,8 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$this->_saveRequest = $_REQUEST;
 
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
+
+	$gallery->_phpVm = new AdminRepositoryDownloadControllerTestPhpVm();
     }
 
     function tearDown() {
@@ -258,6 +260,70 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 			    $_REQUEST['called']);
     }
 
+    function testPerformDownloadAndInstallationInUseModule() {
+	global $gallery;
+	$testModule = 'AdminRepositoryDownloadControllerTest';
+	$_REQUEST['expected']['isActive'] = 0;
+	$gallery->_phpVm->_class_exists = true;
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$mockUrlGenerator = new AdminRepositoryDownloadControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$expectedPluginData = array('module' => array($testModule => array('base' => 1)));
+
+	$pluginDownloadFileList = array('module' => array($testModule => array(
+	    'name' => 'Test Module',
+	    'files' => array('descriptor' => 'testModule-descriptor',
+			     'base' => 'base-package'))));
+
+	$repository = new AdminRepositoryDownloadControllerTestRepository();
+	$repository->setReply('getDownloadFileList',
+			      array($expectedPluginData),
+			      array(null, $pluginDownloadFileList));
+	/* Descriptor. */
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
+			      array(null, 'descriptorContents'));
+
+	$repository->setReply('preVerifyPackage',
+			      array('base', 'descriptorContents'),
+			      array());
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'base', 'base-package'),
+			      array(null, array()));
+	$repository->setReply('verifyPackageIntegrity',
+			      array('base', 'descriptorContents'),
+			      null);
+	$repository->setReply('getPackageVersionAndBuild',
+			      array('module', $testModule, 'base'),
+			      array(null, 'base-version', 'base-build'));
+	$repository->setReply('updatePackageMetaData',
+			      array('module', $testModule, 'base',
+				    'base-version', 'base-build'),
+			      null);
+
+	$ret = $this->_controller->performDownloadAndInstallation(
+	    array('test' => array('module' => array($testModule => array('base' => 1)))),
+	    array(),
+	    array('test' => $repository));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assert($repository->isComplete(), $repository->getRemaining());
+	$this->assert(empty($_REQUEST['called']), 'No actions should have been taken');
+
+	$status = $this->_getStatusFromProgressBar();
+	$this->assertEquals(
+	    array('error' => array(),
+		  'cantUpgradeInUse' => array('Test Module'),
+		  'languagePacksDeleted' => 0),
+	    $status);
+    }
+
     function testPerformDownloadAndInstallationFailedBaseDownload() {
 	global $gallery;
 	$testModule = 'AdminRepositoryDownloadControllerTest';
@@ -468,6 +534,18 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($repository->isComplete(), $repository->getRemaining());
     }
+
+    /**
+     * This should probably get moved into GalleryTestCase
+     */
+    function _getStatusFromProgressBar() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$progress = $gallery->_templateAdapter->getProgressBarDump();
+	preg_match('/statusId=([^,]*)/', $progress[5], $matches);
+	return $session->getStatus($matches[1]);
+    }
 }
 
 /**
@@ -612,6 +690,16 @@ class AdminRepositoryDownloadControllerTestModule {
 
     function isActive() {
 	return array(null, $_REQUEST['expected']['isActive']);
+    }
+}
+
+class AdminRepositoryDownloadControllerTestPhpVm {
+    function AdminRepositoryDownloadControllerTestPhpVm() {
+	$this->_class_exists = false;
+    }
+
+    function class_exists($class_name) {
+	return $this->_class_exists;
     }
 }
 ?>

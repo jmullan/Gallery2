@@ -257,5 +257,14 @@ class GalleryPhpVm {
 	    return gzinflate($data);
 	}
     }
+
+    /**
+     * Checks if the class has been defined
+     * @param string $class_name
+     * @return bool true if $class_name is a defined class, false otherwise.
+     */
+    function class_exists($class_name) {
+	return class_exists($class_name);
+    }
 }
 ?>
