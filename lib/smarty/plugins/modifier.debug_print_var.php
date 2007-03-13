@@ -31,10 +31,8 @@ function smarty_modifier_debug_print_var($var, $depth = 0, $length = 40, $parent
         "\t" => '<i>\t</i>'
     );
 
-    if (!in_array(gettype($var), array('array', 'object'))) {
-	if (stristr($parentKey, 'password') !== false) {
-	    $var = '[Not shown in debug output]';
-	}
+    if (!is_array($var) && !is_object($var) && stristr($parentKey, 'password') !== false) {
+	$var = '[Not shown in debug output]';
     }
 
     switch (gettype($var)) {
