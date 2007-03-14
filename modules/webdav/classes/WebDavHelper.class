@@ -30,7 +30,6 @@ define('WEBDAV_STATUS_MISSING_DAV_HEADERS', 0x00000040);
 define('WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS', 0x00000080);
 define('WEBDAV_STATUS_BAD_REWRITE_PARSER', 0x00000100);
 define('WEBDAV_STATUS_OPTIONS_RULE_DISABLED', 0x00000200);
-define('WEBDAV_STATUS_HTTPAUTH_AUTH_PLUGINS_DISABLED', 0x00000400);
 define('WEBDAV_STATUS_ERROR_UNKNOWN', 0x80000000);
 
 /* Gallery property namespace - RFC2518 18 */
@@ -75,7 +74,7 @@ class WebDavHelper {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    if (!isset($rewriteApi)) {
+	    if (empty($rewriteApi)) {
 		return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
 	    }
 
@@ -105,7 +104,8 @@ class WebDavHelper {
 	    /* Already checked one cause: URL rewrite module disabled.  Check other causes. */
 	    if (!WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
 		    array('href' => 'modules/webdav/data/options/'),
-		    array('forceFullUrl' => true,
+		    array('forceDirect' => true,
+			  'forceFullUrl' => true,
 			  'htmlEntities' => false)))) {
 		$code |= WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS;
 	    }
@@ -146,30 +146,13 @@ class WebDavHelper {
 	 */
 	if (empty($moduleStatus['httpauth']['active'])) {
 	    $code |= WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED;
-	} else {
-	    /* Ensure HTTP auth is enabled */
-	    list ($ret, $httpAuthInterface) =
-	    	GalleryCoreApi::newFactoryInstance('HttpAuthInterface_1_0');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    if (isset($httpAuthInterface)) {
-		list ($ret, $httpAuthPluginEnabled, $serverAuthPluginEnabled) =
-			$httpAuthInterface->getConfiguration();
-		if ($ret) {
-		    return array($ret, null);
-		}
-		if (!$httpAuthPluginEnabled && !$serverAuthPluginEnabled) {
-		    $code |= WEBDAV_STATUS_HTTPAUTH_AUTH_PLUGINS_DISABLED;
-		}
-	    }
 	}
 
 	/*
 	 * Check that Gallery handles WebDAV request methods.  Check it after checking for missing
 	 * DAV headers causes so we can show the error unknown warning if no causes are found.
 	 */
-	foreach (array('PROPFIND', 'PROPPATCH', 'MKCOL', 'DELETE', 'PUT', 'MOVE', 'LOCK', 'UNLOCK')
+	foreach (array('PROPFIND', 'PROPPATCH', 'MKCOL', 'MOVE', 'LOCK', 'UNLOCK')
 		as $requestMethod) {
 	    if (!WebDavHelper::checkRequestMethod($requestMethod)) {
 		if ($gallery->getDebug()) {
@@ -203,7 +186,7 @@ class WebDavHelper {
 	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage($urlGenerator->generateUrl(
 		array('view' => 'webdav.WebDavWorks'),
 		array('forceFullUrl' => true,
-		      'htmlEntities' => false)), $requestMethod, array('Content-length' => 0));
+		      'htmlEntities' => false)), $requestMethod);
 
 	if (!preg_match('/^HTTP\/[0-9]\.[0-9] 200/', $status)) {
 	    return false;
@@ -291,34 +274,6 @@ class WebDavHelper {
 	$link['href'] = $urlGenerator->generateUrl($urlParams, $urlOptions);
 
 	return $link;
-    }
-
-    /**
-     * Returns the id of item that corresponds to the parent of the given path.
-     * The item at the given path doesn't have to exist, but its parent is expected to exist.
-     *
-     * @param string $path, e.g. /foo/bar
-     * @return array object GalleryStatus a status code,
-     *               int the id of the parent item
-     */
-    function getParentItemIdByPath($path) {
-	$parentPath = dirname($path);
-
-	/* dirname('foo') is '.' and \ for dirname ('/foo') on Windows */
-	if (in_array($parentPath, array('.', '\\'))) {
-	    list ($ret, $parentId) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	} else {
-	    list ($ret, $parentId) = GalleryCoreApi::fetchItemIdByPath($parentPath);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	}
-
-	return array(null, (int)$parentId);
     }
 
     /**
@@ -670,7 +625,7 @@ class WebDavHelper {
 	$files[] = $file;
 
 	if ($depth <= 0) {
-	    return null;
+	    return;
 	}
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
@@ -679,7 +634,7 @@ class WebDavHelper {
 	}
 
 	if (empty($childIds)) {
-	    return null;
+	    return;
 	}
 
 	list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
@@ -699,8 +654,6 @@ class WebDavHelper {
 		return $ret;
 	    }
 	}
-
-	return null;
     }
 
     /**
@@ -815,8 +768,6 @@ class WebDavHelper {
 	if ($ret) {
 	    return $ret;
 	}
-
-	return null;
     }
 
     /**
@@ -976,17 +927,28 @@ class WebDavHelper {
 	}
 
 	$pathComponent = basename($path);
+	$parentPath = dirname($path);
 
-	list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath($path);
-	if ($ret) {
-	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		/*
-		 * 409 (Conflict) - A resource cannot be created at the destination until one or
-		 * more intermediate collections have been created.
-		 */
-		WebDavServer::setResponseStatus('409 Conflict');
+	/* dirname('foo') is '.' */
+	if ($parentPath == '.') {
+	    list ($ret, $parentId) = GalleryCoreApi::getPluginParameter('module', 'core',
+		'id.rootAlbum');
+	    if ($ret) {
+		return $ret;
 	    }
-	    return $ret;
+	} else {
+	    list ($ret, $parentId) = GalleryCoreApi::fetchItemIdByPath($parentPath);
+	    if ($ret) {
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    /*
+		     * 409 (Conflict) - A resource cannot be created at the destination until one or
+		     * more intermediate collections have been created.
+		     */
+		    WebDavServer::setResponseStatus('409 Conflict');
+		}
+
+		return $ret;
+	    }
 	}
 
 	list ($ret, $error) = WebDavHelper::mkcolValidateHelper($parentId, $pathComponent);
@@ -1005,9 +967,7 @@ class WebDavHelper {
 	    return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	}
 
-	$originalPath = GalleryUtilities::getRequestVariables('originalPath');
-	$title = empty($originalPath) ? $pathComponent :  basename($originalPath);
-	$ret = WebDavHelper::mkcolHelper($parentId, $pathComponent, $title, '', '', '');
+	$ret = WebDavHelper::mkcolHelper($parentId, $pathComponent, $pathComponent, '', '', '');
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_ILLEGAL_CHILD) {
 
@@ -1394,28 +1354,37 @@ class WebDavHelper {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
-	list ($ret, $newParentId) = WebDavHelper::getParentItemIdByPath($newPath);
-	if ($ret) {
-	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		/*
-		 * 409 (Conflict) - A resource cannot be created at the destination until
-		 * one or more intermediate collections have been created.
-		 */
-		WebDavServer::setResponseStatus('409 Conflict');
-	    }
-	    return $ret;
-	}
-
-	list ($ret, $newParent) = GalleryCoreApi::loadEntitiesById($newParentId);
-	if ($ret) {
-	    return $ret;
-	}
-
 	$pathComponent = basename($path);
 	$newPathComponent = basename($newPath);
-	$oldParentId = $item->getParentId();
 
-	if ($oldParentId != $newParentId) {
+	$parentPath = dirname($path);
+	$newParentPath = dirname($newPath);
+	if ($newParentPath != $parentPath) {
+
+	    /* dirname('foo') is '.' */
+	    if ($newParentPath == '.') {
+		$newParentId = $rootId;
+	    } else {
+		list ($ret, $newParentId) = GalleryCoreApi::fetchItemIdByPath($newParentPath);
+		if ($ret) {
+		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+
+			/*
+			 * 409 (Conflict) - A resource cannot be created at the destination until
+			 * one or more intermediate collections have been created.
+			 */
+			WebDavServer::setResponseStatus('409 Conflict');
+		    }
+
+		    return $ret;
+		}
+	    }
+
+	    list ($ret, $newParent) = GalleryCoreApi::loadEntitiesById($newParentId);
+	    if ($ret) {
+		return $ret;
+	    }
+
 	    list ($ret, $error) = WebDavHelper::moveValidateHelper($item, $newParent);
 	    if ($ret) {
 		return $ret;
@@ -1453,7 +1422,7 @@ class WebDavHelper {
 	    }
 	}
 
-	if ($oldParentId != $newParentId) {
+	if ($newParentPath != $parentPath) {
 	    /*
 	     * Read lock both parent hierarchies
 	     * TODO Optimize this
@@ -1463,6 +1432,7 @@ class WebDavHelper {
 		return $ret;
 	    }
 
+	    $oldParentId = $item->getParentId();
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($oldParentId);
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockIds);
@@ -1500,7 +1470,7 @@ class WebDavHelper {
 	    }
 	}
 
-	if ($newParentId != $oldParentId) {
+	if ($newParentPath != $parentPath) {
 	    /* Do the move */
 	    $ret = $item->move($newParentId);
 	    if ($ret) {
@@ -1525,7 +1495,7 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	if ($newParentId != $oldParentId) {
+	if ($newParentPath != $parentPath) {
 	    if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
 		/* Update for derivative preferences of new parent */
 		$ret = GalleryCoreApi::addExistingItemToAlbum($item, $newParentId);
@@ -1543,7 +1513,7 @@ class WebDavHelper {
 	}
 
 	/* Fix thumbnail integrity */
-	if ($newParentId != $oldParentId) {
+	if ($newParentPath != $parentPath) {
 	    /* What do we do if we weren't successful?  No thumbnail, I guess. */
 	    list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($oldParentId);
 	    if ($ret) {

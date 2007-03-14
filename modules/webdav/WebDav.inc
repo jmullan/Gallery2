@@ -49,26 +49,6 @@ class WebDavController extends GalleryController {
 	}
 
 	/*
-	 * Windows Web Folders does not respect HTTP auth requests in PUT responses, so the user
-	 * will not be prompted to login.  To work around this, request HTTP auth in all responses
-	 * to anonymous Windows Web Folders requests.  Consequently anonymous users can't connect to
-	 * WebDAV with Windows Web Folders.
-	 */
-	$userAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
-	if (strpos($userAgent, 'Microsoft Data Access Internet Publishing Provider DAV') !== false
-		|| strpos($userAgent, 'Microsoft-WebDAV-MiniRedir') !== false) {
-	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
-	    if ($ret) {
-		return array($ret, null);
- 	    }
-	    if ($isAnonymous) {
-		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
-			'WebDAV: Anonymous request by MS Windows Webfolders WebDAV client detected.'
-			. '  Usability workaround: Require auth on all requests.'), null);
-	    }
-	}
-
-	/*
 	 * GalleryCoreApi::addItemToAlbum normalizes path components but
 	 * GalleryCoreApi::fetchItemIdByPath does not.  This is a problem for WebDAV because GET
 	 * following a successful PUT at the same URL should succeed.
@@ -81,32 +61,20 @@ class WebDavController extends GalleryController {
 	 * This condition may be relaxed in future if it's a problem.
 	 */
 	$path = GalleryUtilities::getRequestVariables('path');
-	/**
- 	 * @todo Refactor towards a cleaner approach, e.g. using a map for public paths.
- 	 */
- 	GalleryUtilities::putRequestVariable('originalPath', $path);
 	$pathComponent = basename($path);
-
-	/* Special case to suppress Mac '._' files.  Ignore request but return success. */
-	if (!strncmp($pathComponent, '._', 2)) {
-	    WebDavServer::setResponseStatus('200 OK');
-	    $handle = WebDavServer::openRequestBody();
-	    while (!feof($handle)) {
-		fgets($handle);
+	if (!$platform->isLegalPathComponent($pathComponent)) {
+	    /* Special case to suppress Mac '._' files.  Ignore request but return success. */
+	    if (!strncmp($pathComponent, '._', 2)) {
+		WebDavServer::setResponseStatus('200 OK');
+		return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
 	    }
+
+	    WebDavServer::setResponseStatus('403 Forbidden');
 	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
 	}
 
- 	/* Silently legalize path component */
- 	$pathComponents = preg_split('/\//', $path, -1, PREG_SPLIT_NO_EMPTY);
- 	foreach ($pathComponents as $key => $pathComponent) {
- 	    $pathComponents[$key] = $platform->legalizePathComponent($pathComponent);
- 	}
- 	$path = implode('/', $pathComponents);
- 	GalleryUtilities::putRequestVariable('path', $path);
-
 	$requestMethod = GalleryUtilities::strToLower(
-	    GalleryUtilities::getServerVar('REQUEST_METHOD'));
+		GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if ($requestMethod == 'get' || $requestMethod == 'head') {
 	    if (empty($path)) {
 		list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
@@ -137,33 +105,40 @@ class WebDavController extends GalleryController {
 				     'status' => array(),
 				     'error' => array()));
 	} else if ($requestMethod == 'put') {
-	    list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath($path);
-	    if ($ret) {
-		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		    /*
-		     * A PUT that would result in the creation of a resource without an
-		     * appropriately scoped parent collection MUST fail with a 409
-		     * (Conflict).
-		     */
-		    WebDavServer::setResponseStatus('409 Conflict');
+	    $parentPath = dirname($path);
+
+	    /* dirname('foo') is '.' */
+	    if ($parentPath == '.') {
+		list ($ret, $parentId) = GalleryCoreApi::getDefaultAlbumId();
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    } else {
+		list ($ret, $parentId) = GalleryCoreApi::fetchItemIdByPath($parentPath);
+		if ($ret) {
+		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+			/*
+			 * A PUT that would result in the creation of a resource without an
+			 * appropriately scoped parent collection MUST fail with a 409
+			 * (Conflict).
+			 */
+			WebDavServer::setResponseStatus('409 Conflict');
+		    }
+
+		    return array($ret, null);
 		}
 
-		return array($ret, null);
-	    }
+		/* Until there's a better way to delegate to ItemAdd */
+		GalleryUtilities::putRequestVariable('itemId', $parentId);
+		GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
+		/* Let the ItemAddPlugin handle the replacement for the auth-token check */
+		list ($ret, $data) = ItemAddController::handleRequest($form);
+		if ($ret) {
+		    return array($ret, null);
+		}
 
-	    /* Until there's a better way to delegate to ItemAdd */
-	    GalleryUtilities::putRequestVariable('itemId', $parentId);
-	    GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
-	    /* Let the ItemAddPlugin handle the replacement for the auth-token check */
-	    list ($ret, $data) = ItemAddController::handleRequest($form);
-	    if ($ret) {
-		return array($ret, null);
+		return array(null, $data);
 	    }
-
-	    /*
-	     * Don't send HTTP redirects or HTML status/error back to DAV clients since we
-	     * have already set our status code. Fall through to the standard empty return.
-	     */
 	}
 
 	return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
@@ -206,13 +181,7 @@ class WebDavView extends GalleryView {
 	$requestMethod = GalleryUtilities::strToLower(
 		GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if (!in_array($requestMethod, array('options', 'propfind', 'proppatch', 'mkcol', 'delete',
-					    'move', 'lock', 'unlock'))) {
-
-	    /* If we just completed a PUT request and got delegated here, just silently return */
-	    if ($requestMethod == 'put') {
-		return null;
-	    }
-
+		'move', 'lock', 'unlock'))) {
 	    return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
 	}
 

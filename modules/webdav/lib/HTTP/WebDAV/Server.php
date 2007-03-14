@@ -1213,11 +1213,6 @@ class HTTP_WebDAV_Server
                 $options['content_language'] = $value;
                 break;
 
-            case 'HTTP_CONTENT_LENGTH':
-
-                // defined on IIS and has the same value as CONTENT_LENGTH
-                break;
-
             case 'HTTP_CONTENT_LOCATION': // RFC2616 14.14
 
                 // meaning of the Content-Location header in PUT or POST
@@ -1253,11 +1248,6 @@ class HTTP_WebDAV_Server
                 $this->setResponseStatus('501 Not Implemented');
                 echo 'The service does not support content MD5 checksum verification';
                 return;
-
-            case 'HTTP_CONTENT_TYPE':
-
-                // defined on IIS and has the same value as CONTENT_TYPE
-                break;
 
             default:
 

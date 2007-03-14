@@ -61,7 +61,6 @@ class WebDavTest extends GalleryTestCase {
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
@@ -69,13 +68,11 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 	    'test/file');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -86,7 +83,6 @@ class WebDavTest extends GalleryTestCase {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -97,7 +93,6 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $this->_urlGenerator) =
 	    GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	if (!isset($this->_urlGenerator)) {
@@ -107,7 +102,6 @@ class WebDavTest extends GalleryTestCase {
 
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$gallery->setUrlGenerator($this->_urlGenerator);
@@ -404,13 +398,6 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
-
-	/*
-	 * Regression: Ensure that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.
-	 * These variables are defined on IIS + mod_php.
-	 */
-	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
-	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
 
 	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
@@ -916,31 +903,18 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('', $output);
     }
 
-    /**
-     * Illegal path components will be silently legalized, but treated consistently
-     * so if you PUT an illegal path, a subsequent GET of the same path will refer to
-     * the same item.
-     */
-    function testPutAndGetIllegalPathComponent() {
+    function testIllegalPathComponent() {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	list ($ret, $albumPath) = $this->_album->fetchLogicalPath();
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
-	$fileSize = $this->_platform->filesize($filePath);
-
-	$pathComponent = 'The!Quick$Brown#Fox.gif';
-	$path = $albumPath . $pathComponent;
+	$pathComponent = 'The!Quick$Brown#Fox';
+	$path .= $pathComponent;
 	GalleryUtilities::putRequestVariable('path', $path);
-
-	$_SERVER['CONTENT_LENGTH'] = $fileSize;
-	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
-
-	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -950,11 +924,15 @@ class WebDavTest extends GalleryTestCase {
 	}
 	$output = ob_get_contents();
 	ob_end_clean();
-	if ($ret) {
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $this->_headers);
+
+	$this->assertEquals('', $output);
 
 	$this->_headers = array();
 
@@ -969,31 +947,15 @@ class WebDavTest extends GalleryTestCase {
 	}
 	$output = ob_get_contents();
 	ob_end_clean();
-	if ($ret) {
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(file_get_contents($filePath), $output);
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
 
-	/* Verify that the item has the right title, name, etc. */
-	$legalPathComponent = $this->_platform->legalizePathComponent($pathComponent);
-	list ($ret, $newItemId) =
-		GalleryCoreApi::fetchItemIdByPath($albumPath . $legalPathComponent);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $this->_headers);
 
-	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->assertEquals($pathComponent, $newItem->getTitle(), 'title');
-	$this->assertEquals($legalPathComponent, $newItem->getPathComponent(), 'path component');
-	$this->assertEquals('', $newItem->getSummary(), 'summary');
-	$this->assertEquals('', $newItem->getDescription(), 'description');
-	$this->assertEquals('image/gif', $newItem->getMimeType(), 'mime-type');
-	$this->assertEquals($fileSize, $newItem->getSize(), 'size');
+	$this->assertEquals('', $output);
     }
 
     function testIllegalDestination() {
@@ -1062,7 +1024,6 @@ class WebDavTest extends GalleryTestCase {
 	}
 	$output = ob_get_contents();
 	ob_end_clean();
-
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
 	    return $this->failWithStatus($ret);
 	}
@@ -1106,16 +1067,9 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
-	$fileSize = $this->_platform->filesize($filePath);
-
 	$pathComponent = '.DS_Store';
 	$path .= $pathComponent;
 	GalleryUtilities::putRequestVariable('path', $path);
-
-	$_SERVER['CONTENT_LENGTH'] = $fileSize;
-	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
-	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -1129,53 +1083,34 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
-    }
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
 
-    function testMkcolIllegalPathComponent() {
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $this->_headers);
+
+	$this->assertEquals('', $output);
+
+	$this->_headers = array();
+
 	/* Use valid inputs */
-	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
-
-	list ($ret, $albumPath) = $this->_album->fetchLogicalPath();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$pathComponent = 'The!Quick$Brown#Fox';
-	$path = $albumPath . $pathComponent;
-	GalleryUtilities::putRequestVariable('path', $path);
+	$_SERVER['REQUEST_METHOD'] = 'GET';
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
 	$output = ob_get_contents();
 	ob_end_clean();
-	if ($ret) {
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
-			    $this->_headers);
+	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 403 Forbidden'), $this->_headers);
 
 	$this->assertEquals('', $output);
-
-	$legalPathComponent = $this->_platform->legalizePathComponent($pathComponent);
-	list ($ret, $newAlbumId) =
-		GalleryCoreApi::fetchItemIdByPath($albumPath . $legalPathComponent);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$this->assertEquals($pathComponent, $newAlbum->getTitle(), 'title');
-	$this->assertEquals($legalPathComponent, $newAlbum->getPathComponent(), 'path component');
-	$this->assertEquals('', $newAlbum->getSummary(), 'summary');
-	$this->assertEquals('', $newAlbum->getDescription(), 'description');
-	$this->assertEquals('', $newAlbum->getKeywords(), 'keywords');
     }
 }
 

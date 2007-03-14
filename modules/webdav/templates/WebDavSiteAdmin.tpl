@@ -51,15 +51,6 @@
       {g->text text="You can connect with WebDAV anonymously, but you can't do anything which requires you to login because the HTTP auth module is disabled.  You should activate the HTTP auth module in the %sSite Admin Plugins option%s.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminPluginsUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:webdav:admin\">" arg4="</a>"}
     </p>
   </div>
-{elseif $WebDavSiteAdmin.code & WEBDAV_STATUS_HTTPAUTH_AUTH_PLUGINS_DISABLED}
-  <div class="gbBlock">
-    <h3 class="giWarning"> {g->text text="HTTP auth plugin disabled"} </h3>
-
-    <p class="giDescription">
-      {g->text text="You can connect with WebDAV anonymously, but you can't do anything which requires you to login because neither HTTP authentication nor server authentication are enabled in the HTTP auth module.  You should activate HTTP authentication in the settings of the HTTP auth module."}
-    </p>
-  </div>
-
 {/if}
 
 {if $WebDavSiteAdmin.code & WEBDAV_STATUS_CONNECT_RULE_DISABLED}

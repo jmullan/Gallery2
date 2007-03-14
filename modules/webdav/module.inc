@@ -31,7 +31,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('0.7.3'); /* Update upgrade() too! */
+	$this->setVersion('0.7.2'); /* Update upgrade() too! */
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop.'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews|registerEventListeners');
@@ -131,8 +131,6 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    /* Add whitelist for external interface */
 	case '0.7.1':
 	    /* Rename WebDavMount to DownloadDavMount */
-	case '0.7.2':
-	    /* Add HttpAuth check through interface */
 
 	case 'end of upgrade path':
 	    break;
@@ -251,7 +249,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 	    return $rules;
 	}
-	if (!isset($rewriteApi)) {
+	if (empty($rewriteApi)) {
 	    return $rules;
 	}
 
@@ -317,22 +315,6 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    return array(null, null);
 
 	case 'Gallery::Error':
-	    $data = $event->getData();
-	    if (($data['error']->getErrorCode() & ERROR_PERMISSION_DENIED)) {
-		/* Prompt for authentication */
-		list ($ret, $httpAuthInterface) =
-		    GalleryCoreApi::newFactoryInstance('HttpAuthInterface_1_0');
-		if ($ret) {
-		    return array($ret, null);
-		}
-		if (isset($httpAuthInterface)) {
-		    $ret = $httpAuthInterface->requestAuthentication();
-		    if ($ret) {
-			return array($ret, null);
-		    }
-		}
-	    }
-
 	    /* Suppress generating HTML error pages for WebDAV clients */
 	    return array(null, array('suppressBody' => true));
 	}
@@ -349,7 +331,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($ret) {
 	    return $ret;
 	}
-	if (!isset($rewriteApi)) {
+	if (empty($rewriteApi)) {
 	    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
 	}
 
