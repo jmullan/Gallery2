@@ -1,0 +1,443 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2007 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
+
+/**
+ * Download davmount tests.
+ * @package WebDav
+ * @subpackage PHPUnit
+ * @author Jack Bates <ms419@freezone.co.uk>
+ * @version $Revision: 15636 $
+ */
+class DownloadDavMountTest extends GalleryTestCase {
+
+    function DownloadDavMountTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	/* Require here to avoid loading if none of our tests will be run */
+	ob_start();
+	GalleryCoreApi::requireOnce('main.php');
+	ob_end_clean();
+
+	/* main.php / bootstrap.inc creates a new $gallery object */
+	global $gallery;
+
+	/* Use DownloadDavMountTestPhpVm */
+	$this->_phpVm = new DownloadDavMountTestPhpVm();
+	$gallery->_phpVm =& $this->_phpVm;
+
+	/* Clear request variables */
+	$this->_variables =& WebDavHelper::_getRequestVariables();
+	$this->_variables = null;
+
+	/* Clear response headers */
+	$this->_headers =& GalleryUtilities::_getResponseHeaders();
+	$this->_headers = null;
+
+	/* Create test items */
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_subAlbum) =
+	    $this->_createRandomAlbum($this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Test the download davmount view */
+	GalleryUtilities::putRequestVariable('view', 'webdav.DownloadDavMount');
+
+	/* Try to test with the rewrite URL generator */
+	list ($ret, $this->_urlGenerator) =
+	    GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	if (!isset($this->_urlGenerator)) {
+	    $this->_urlGenerator = new GalleryUrlGenerator();
+	}
+
+	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$gallery->setUrlGenerator($this->_urlGenerator);
+
+	$this->_user = $gallery->getActiveUser();
+    }
+
+    function tearDown() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/* Tests fail for Oracle / PostgreSQL without this checkpoint */
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	
+	return parent::tearDown();
+    }
+
+    function _rename(&$item, $pathComponent) {
+	/* Write lock the item we're moving */
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($item->getId());
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $ret;
+	}
+
+	/* Refresh the item in case it changed before it was locked */
+	list ($ret, $item) = $item->refresh();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $ret;
+	}
+
+	/* Rename the item */
+	$oldPathComponent = $item->getPathComponent();
+	$ret = $item->rename($pathComponent);
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $ret;
+	}
+
+	$ret = $item->save();
+	if ($ret) {
+	    $item->rename($oldPathComponent);
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Set WebDAV path component */
+	if ($item->getPathComponent() != $pathComponent) {
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'webdav', 'pathComponent', $pathComponent, $item->getId());
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	return null;
+    }
+
+    function _getHref($path=null) {
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $href = '/gallery2/w/';
+	    if (!empty($path)) {
+		$href .= $path;
+	    }
+
+	    return $href;
+	}
+
+	$href = '/gallery2/main.php?g2_controller=webdav.WebDav';
+	if (!empty($path)) {
+	    $href .= '&amp;g2_path=' . $path;
+	}
+
+	return $href;
+    }
+
+    function testWithItemId() {
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_variables['g2_itemId'] = $this->_subAlbum->getId();
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedHeaders = array();
+	$expectedHeaders['content-type'] =
+	    'Content-Type: application/davmount+xml; charset=UTF-8';
+	$expectedHeaders['content-disposition'] =
+	    'Content-Disposition: inline; filename='
+	    . $this->_subAlbum->getPathComponent() . '.davmount';
+	$this->assertEquals($expectedHeaders, $this->_headers);
+
+	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
+	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
+	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
+	    '</dm:mount>');
+	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
+    }
+
+    function testWithPath() {
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_variables['g2_path'] = $path;
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedHeaders = array();
+	$expectedHeaders['content-type'] =
+	    'Content-Type: application/davmount+xml; charset=UTF-8';
+	$expectedHeaders['content-disposition'] =
+	    'Content-Disposition: inline; filename='
+	    . $this->_subAlbum->getPathComponent() . '.davmount';
+	$this->assertEquals($expectedHeaders, $this->_headers);
+
+	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
+	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
+	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
+	    '</dm:mount>');
+	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
+    }
+
+    function testRootWithItemId() {
+	$this->_variables['g2_itemId'] = $this->_getRootId();
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedHeaders = array();
+	$expectedHeaders['content-type'] =
+	    'Content-Type: application/davmount+xml; charset=UTF-8';
+	$expectedHeaders['content-disposition'] =
+	    'Content-Disposition: inline; filename=Gallery.davmount';
+	$this->assertEquals($expectedHeaders, $this->_headers);
+
+	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
+	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
+	    '</dm:mount>');
+	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
+    }
+
+    function testRoot() {
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedHeaders = array();
+	$expectedHeaders['content-type'] =
+	    'Content-Type: application/davmount+xml; charset=UTF-8';
+	$expectedHeaders['content-disposition'] =
+	    'Content-Disposition: inline; filename=Gallery.davmount';
+	$this->assertEquals($expectedHeaders, $this->_headers);
+
+	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
+	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
+	    '</dm:mount>');
+	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
+    }
+
+    function testAsAnonymous() {
+	global $gallery;
+
+	list ($ret, $anonymousId) = GalleryCoreApi::getAnonymousUserId();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($anonymousId);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$gallery->setActiveUser($user);
+
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_variables['g2_itemId'] = $this->_subAlbum->getId();
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedHeaders = array();
+	$expectedHeaders['content-type'] =
+	    'Content-Type: application/davmount+xml; charset=UTF-8';
+	$expectedHeaders['content-disposition'] =
+	    'Content-Disposition: inline; filename='
+	    . $this->_subAlbum->getPathComponent() . '.davmount';
+	$this->assertEquals($expectedHeaders, $this->_headers);
+
+	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
+	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
+	    '</dm:mount>');
+	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
+    }
+
+    function testWithItemIdAndSpecialCharacters() {
+	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$path = '/' . rawurlencode('The Quick!Brown#Fox')
+	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog') . '/';
+
+	$this->_variables['g2_itemId'] = $this->_subAlbum->getId();
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedHeaders = array();
+	$expectedHeaders['content-type'] =
+	    'Content-Type: application/davmount+xml; charset=UTF-8';
+	$expectedHeaders['content-disposition'] =
+	    'Content-Disposition: inline; filename=Jumps Over%The/Lazy_Dog.davmount';
+	$this->assertEquals($expectedHeaders, $this->_headers);
+
+	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
+	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
+	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
+	    '</dm:mount>');
+	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
+    }
+
+    function testWithPathAndSpecialCharacters() {
+	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$path = '/' . rawurlencode('The Quick!Brown#Fox')
+	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog') . '/';
+
+	$this->_variables['g2_path'] = $path;
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedHeaders = array();
+	$expectedHeaders['content-type'] =
+	    'Content-Type: application/davmount+xml; charset=UTF-8';
+	$expectedHeaders['content-disposition'] =
+	    'Content-Disposition: inline; filename=Jumps Over%The/Lazy_Dog.davmount';
+	$this->assertEquals($expectedHeaders, $this->_headers);
+
+	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
+	    '  <dm:url>http://example.com' . $this->_getHref() . '</dm:url>',
+	    '  <dm:open>' . ltrim($path, '/') . '</dm:open>',
+	    '  <dm:username>' . $this->_user->getUserName() . '</dm:username>',
+	    '</dm:mount>');
+	$this->assertEquals($expectedOutput, split("\r?\n", trim($output)));
+    }
+}
+
+class DownloadDavMountTestPhpVm extends GalleryPhpVm {
+
+    function header($header, $replace=null) {
+	/* Avoid modifying actual header information */
+    }
+}
+?>

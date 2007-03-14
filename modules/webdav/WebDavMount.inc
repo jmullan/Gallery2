@@ -19,13 +19,14 @@
  */
 
 /**
- * Show WebDAV mount instructions.
+ * Show instructions to mount Gallery with WebDAV.
  * @package WebDav
  * @subpackage UserInterface
  * @author Andy Staudacher <ast@gmx.ch>
  * @version $Revision$
  */
 class WebDavMountView extends GalleryView {
+
     /**
      * @see GalleryView::loadTemplate
      */

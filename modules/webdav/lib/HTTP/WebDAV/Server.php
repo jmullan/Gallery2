@@ -18,10 +18,6 @@
 //
 // $Id$
 
-require_once(dirname(__FILE__) . '/Tools/_parse_propfind.php');
-require_once(dirname(__FILE__) . '/Tools/_parse_proppatch.php');
-require_once(dirname(__FILE__) . '/Tools/_parse_lockinfo.php');
-
 define('HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE',
     'urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882');
 
@@ -111,20 +107,29 @@ class HTTP_WebDAV_Server
 
         // set path
         if (empty($this->path)) {
-            $this->path = $this->_urldecode($_SERVER['PATH_INFO']);
-            $this->path = trim($this->path, '/');
+            $this->path = $_SERVER['PATH_INFO'];
         }
 
+        // undo damage caused by magic_quotes
         if (ini_get('magic_quotes_gpc')) {
             $this->path = stripslashes($this->path);
         }
 
         // set base URL
         if (empty($this->baseUrl)) {
-            $this->baseUrl = parse_url(
-                "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
-            $this->baseUrl['path'] = substr($this->baseUrl['path'], 0,
-                strlen($this->baseUrl['path']) - strlen($_SERVER['PATH_INFO']));
+            if (!empty($_SERVER['SCRIPT_NAME'])) {
+                $this->baseUrl = parse_url($_SERVER['SCRIPT_NAME']);
+            }
+            if (!empty($_SERVER['REQUEST_URI'])) {
+                $this->baseUrl = parse_url($_SERVER['REQUEST_URI']);
+                $this->baseUrl['path'] = substr($this->baseUrl['path'], 0, strlen($this->baseUrl['path']) - strlen($_SERVER['PATH_INFO']));
+            }
+            if (!empty($_SERVER['HTTP_HOST'])) {
+                $this->baseUrl['host'] = $_SERVER['HTTP_HOST'];
+            }
+            if (!empty($_SERVER['QUERY_STRING'])) {
+                $this->baseUrl['query'] = $_SERVER['QUERY_STRING'];
+            }
         }
 
         // check authentication
@@ -138,11 +143,11 @@ class HTTP_WebDAV_Server
 
             // Windows seems to require this being the last header sent
             // (changed according to PECL bug #3138)
-            $this->setResponseStatus('401 Authentication Required');
+            $this->setResponseStatus('401 Unauthorized');
             return;
         }
 
-        // check
+        // check if header conditions
         if (!$this->_check_if_header_conditions()) {
             $this->setResponseStatus('412 Precondition Failed');
             return;
@@ -152,20 +157,22 @@ class HTTP_WebDAV_Server
         $method = strtolower($_SERVER['REQUEST_METHOD']);
         $wrapper = $method . '_wrapper';
 
-        // emulate HEAD using GET if no HEAD method found
-        if ($wrapper == 'head_wrapper' &&
-                !method_exists($this, 'head')) {
+        // no wrapper for OPTIONS
+        if ($method == 'options') {
+            $wrapper = 'options';
+        }
+
+        // simulate HEAD using GET if no HEAD method exists
+        if ($method == 'head' && !method_exists($this, 'head')) {
             $method = 'get';
         }
 
-        if (method_exists($this, $method) &&
-                method_exists($this, $wrapper) ||
-                $method == 'options') {
+        if (method_exists($this, $method) && method_exists($this, $wrapper)) {
             $this->$wrapper();
             return;
         }
 
-        // method not found/implemented
+        // method not implemented
         if ($method == 'lock') {
             $this->setResponseStatus('412 Precondition Failed');
             return;
@@ -173,7 +180,7 @@ class HTTP_WebDAV_Server
 
         // tell client what's allowed
         $this->setResponseStatus('405 Method Not Allowed');
-        $this->setResponseHeader('Allow: ' . implode(', ', $this->_allow()));
+        $this->setResponseHeader('Allow: ' . implode(',', $this->_allow()));
     }
 
     // }}}
@@ -456,7 +463,7 @@ class HTTP_WebDAV_Server
         }
 
         // tell clients what we found
-        $this->setResponseHeader('Allow: ' . implode(', ', $allow));
+        $this->setResponseHeader('Allow: ' . implode(',', $allow));
         $this->setResponseHeader('DAV: ' . implode(',', $dav));
         $this->setResponseHeader('Content-Length: 0');
 
@@ -489,6 +496,7 @@ class HTTP_WebDAV_Server
         }
 
         // analyze request payload
+        require_once(dirname(__FILE__) . '/Tools/_parse_propfind.php');
         $parser = new _parse_propfind($this->openRequestBody());
         if (!$parser->success) {
             $this->setResponseStatus('400 Bad Request');
@@ -647,14 +655,14 @@ class HTTP_WebDAV_Server
         $options = array();
         $options['path'] = $this->path;
 
-        $propinfo = new _parse_proppatch($this->openRequestBody());
-
-        if (!$propinfo->success) {
+        require_once(dirname(__FILE__) . '/Tools/_parse_proppatch.php');
+        $parser = new _parse_proppatch($this->openRequestBody());
+        if (!$parser->success) {
             $this->setResponseStatus('400 Bad Request');
             return;
         }
 
-        $options['props'] = $propinfo->props;
+        $options['props'] = $parser->props;
 
         return true;
     }
@@ -1403,39 +1411,39 @@ class HTTP_WebDAV_Server
             $options['overwrite'] = $_SERVER['HTTP_OVERWRITE'] == 'T';
         }
 
-        $url = parse_url($_SERVER['HTTP_DESTINATION']);
+        $destUrl = parse_url($_SERVER['HTTP_DESTINATION']);
 
         // does the destination resource belong on this server?
-        if ($url['host'] == $this->baseUrl['host']
-                && (empty($url['port']) ? 80 : $url['port']) == (empty($this->baseUrl['port']) ? 80 : $this->baseUrl['port'])
-                && !strncmp($url['path'], $this->baseUrl['path'], strlen($this->baseUrl['path']))) {
-            if (!empty($this->baseurl['query'])) {
-                foreach (explode('&', $this->baseUrl['query']) as $queryComponent) {
-                    if (!in_array($queryComponent, explode('&', $url['query']))) {
-                        $options['dest_url'] = $_SERVER['HTTP_DESTINATION'];
-
-                        return true;
-                    }
-                }
-            }
-
-            $options['dest'] =
-                substr($url['path'], strlen($this->baseUrl['path']));
-
-            $options['dest'] = $this->_urldecode($options['dest']);
-            $options['dest'] = trim($options['dest'], '/');
-
-            // check source and destination are not the same - data could be lost
-            // if overwrite is true - RFC2518 8.8.5
-            if ($options['dest'] == $this->path) {
-                $this->setResponseStatus('403 Forbidden');
-                return;
-            }
-
+        if ($destUrl['host'] != $this->baseUrl['host']
+                || (empty($destUrl['port']) ? 80 : $destUrl['port']) != (empty($this->baseUrl['port']) ? 80 : $this->baseUrl['port'])
+                || strncmp($destUrl['path'], $this->baseUrl['path'], strlen($this->baseUrl['path']))) {
+            $options['dest_url'] = $_SERVER['HTTP_DESTINATION'];
             return true;
         }
+        if (!empty($this->baseUrl['query'])) {
+            if (empty($destUrl['query'])) {
+                $options['dest_url'] = $_SERVER['HTTP_DESTINATION'];
+                return true;
+            }
 
-        $options['dest_url'] = $_SERVER['HTTP_DESTINATION'];
+	    $queryComponents = preg_split('/&/', $this->baseUrl['query'], -1, PREG_SPLIT_NO_EMPTY);
+	    $destQueryComponents = preg_split('/&/', $destUrl['query'], -1, PREG_SPLIT_NO_EMPTY);
+            foreach ($queryComponents as $queryComponent) {
+                if (!in_array($queryComponent, $destQueryComponents)) {
+                    $options['dest_url'] = $_SERVER['HTTP_DESTINATION'];
+                    return true;
+                }
+            }
+        }
+
+        $options['dest'] = substr($destUrl['path'], strlen($this->baseUrl['path']));
+
+        // check source and destination are not the same - data could be lost
+        // if overwrite is true - RFC2518 8.8.5
+        if ($options['dest'] == $this->path) {
+            $this->setResponseStatus('403 Forbidden');
+            return;
+        }
 
         return true;
     }
@@ -1551,16 +1559,17 @@ class HTTP_WebDAV_Server
         }
 
         // extract lock request information from request XML payload
-        $lockinfo = new _parse_lockinfo($this->openRequestBody());
-        if (!$lockinfo->success) {
+        require_once(dirname(__FILE__) . '/Tools/_parse_lockinfo.php');
+        $parser = new _parse_lockinfo($this->openRequestBody());
+        if (!$parser->success) {
             $this->setResponseStatus('400 Bad Request');
             return;
         }
 
         // new lock
-        $options['scope'] = $lockinfo->lockscope;
-        $options['type']  = $lockinfo->locktype;
-        $options['owner'] = $lockinfo->owner;
+        $options['scope'] = $parser->lockscope;
+        $options['type']  = $parser->locktype;
+        $options['owner'] = $parser->owner;
 
         $options['token'] = $this->_new_locktoken();
 
@@ -1938,7 +1947,7 @@ class HTTP_WebDAV_Server
 
     function getHref($path)
     {
-        return $this->baseUrl['path'] . '/' . $path;
+        return '/' . trim($this->baseUrl['path'], '/') . '/' . $path;
     }
 
     function getProp($reqprop, $file, $options)
@@ -1958,7 +1967,7 @@ class HTTP_WebDAV_Server
                 $this->getLocks($file['path']));
         }
 
-        // incase the requested property had a value, like calendar-data
+        // in case the requested property had a value, like calendar-data
         unset($reqprop['value']);
         $reqprop['status'] = '404 Not Found';
 

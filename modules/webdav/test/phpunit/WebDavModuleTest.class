@@ -34,14 +34,7 @@ class WebDavModuleTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 	global $gallery;
-
-	/* Initialize test URL generator */
-	$urlGenerator = new GalleryUrlGenerator();
-	$ret = $urlGenerator->init('http://example.com/gallery2/main.php');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$gallery->setUrlGenerator($urlGenerator);
+	$this->_urlGenerator =& $gallery->getUrlGenerator();
 
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
@@ -60,6 +53,19 @@ class WebDavModuleTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
+	$this->_items = array($this->_item, $this->_subAlbum);
+
+	$this->_wantsDetailedLinks =
+	    array($this->_item->getId() => true, $this->_subAlbum->getId() => true);
+
+	list ($ret, $this->_permissions) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($this->_item->getId(), $this->_subAlbum->getId()));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_userId = $gallery->getActiveUserId();
 
 	/* Load WebDAV module */
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'webdav');
@@ -81,11 +87,11 @@ class WebDavModuleTest extends GalleryTestCase {
 
 	/* Define OPTIONS request */
 	$this->_optionsRequest = implode("\r\n", array(
-	    'OPTIONS ' . $urlGenerator->generateUrl(
+	    'OPTIONS ' . $this->_urlGenerator->generateUrl(
 		array('controller' => 'webdav.WebDav'),
 		array('forceServerRelativeUrl' => true,
 		      'htmlEntities' => false)) . ' HTTP/1.0',
-	    'Host: ' . $urlGenerator->getHostName(),
+	    'Host: ' . $this->_urlGenerator->getHostName(),
 	    '',
 	    ''));
 
@@ -120,6 +126,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	$gallery->setPlatform($this->_platform);
 
 	$this->_registerTestEventListener('Gallery::ActivatePlugin', $this->_module);
+	$this->_registerTestEventListener('GalleryEntity::save', $this->_module);
     }
 
     function tearDown() {
@@ -128,37 +135,24 @@ class WebDavModuleTest extends GalleryTestCase {
     }
 
     function testGetItemLinks() {
-	global $gallery;
-
-	$items = array($this->_item, $this->_subAlbum);
-	$wantsDetailedLinks =
-	    array($this->_item->getId() => true, $this->_subAlbum->getId() => true);
-	list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
-	    array($this->_item->getId(), $this->_subAlbum->getId()));
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	/* Any user agent */
-	$_SERVER['HTTP_USER_AGENT'] = 'Foo Bar';
-
 	list ($ret, $links) = $this->_module->getItemLinks(
-	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
+	    $this->_items, $this->_wantsDetailedLinks, $this->_permissions, $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$expected = array();
-	$expected[$this->_subAlbum->getId()][0]['text'] =
+	$expectedLinks = array();
+	$expectedLinks[$this->_subAlbum->getId()][0]['text'] =
 	    $this->_module->translate(array('text' => 'Mount with WebDAV'));
-	$expected[$this->_subAlbum->getId()][0]['params'] =
-	    array('view' => 'webdav.WebDavMount', 'itemId' => $this->_subAlbum->getId());
-	$this->assertEquals($expected, $links, 'item links for summary');
+	$expectedLinks[$this->_subAlbum->getId()][0]['params'] =
+	    array('view' => 'webdav.WebDavMount',
+		  'itemId' => $this->_subAlbum->getId());
+	$this->assertEquals($expectedLinks, $links, 'item links for any user agent');
+    }
 
-	/* Verify that item links are only for detailed mode */
-	$wantsDetailedLinks[$this->_subAlbum->getId()] = false;
+    function testGetItemLinksNoDetail() {
 	list ($ret, $links) = $this->_module->getItemLinks(
-	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
+	    $this->_items, array(), $this->_permissions, $this->_userId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -211,10 +205,108 @@ class WebDavModuleTest extends GalleryTestCase {
 
 	$this->assertEquals(array(array('suppressBody' => 1)), $results);
     }
+
+    function testHandleEventSave() {
+	$expectedPathComponent = 'The Quick!Brown#Fox';
+
+	/* Set WebDAV path component */
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'webdav', 'pathComponent', $expectedPathComponent, $this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Write lock the item we're moving */
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Refresh the item in case it changed before it was locked */
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Rename the item */
+	$oldPathComponent = $this->_item->getPathComponent();
+	$ret = $this->_item->rename('testItem-' . rand());
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_item->save();
+	if ($ret) {
+	    $this->_item->rename($oldPathComponent);
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $webDavPathComponent) = GalleryCoreApi::getPluginParameter(
+	    'module', 'webdav', 'pathComponent', $this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assert(empty($webDavPathComponent), 'WebDAV patch component should be removed');
+    }
+
+    function testHandleEventSaveNoRename() {
+	$expectedPathComponent = 'The Quick!Brown#Fox';
+
+	/* Set WebDAV path component */
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'webdav', 'pathComponent', $expectedPathComponent, $this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Write lock the item we're moving */
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Refresh the item in case it changed before it was locked */
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_item->setTitle('new title');
+	$this->_item->setSummary('new summary');
+	$this->_item->setDescription('new description');
+
+	$ret = $this->_item->save();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $webDavPathComponent) = GalleryCoreApi::getPluginParameter(
+	    'module', 'webdav', 'pathComponent', $this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($expectedPathComponent, $webDavPathComponent);
+    }
 }
 
 class WebDavModuleTestRewriteApi {
-    var $foo;
 
     function &_fetchActiveRulesForModule($moduleId) {
 	static $activeRules;

@@ -18,10 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
 GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
 
 /**
- * Add items with WebDAV.  Handle WebDAV PUT requests and describe to users how to add items with
+ * Add items with WebDAV.  Handle WebDAV PUT requests and show instructions to mount Gallery with
  * WebDAV.
  * @package WebDav
  * @subpackage UserInterface
@@ -33,13 +34,15 @@ class ItemAddWebDav extends ItemAddPlugin {
     /**
      * @see ItemAddPlugin::handleRequest
      */
-    function handleRequest($form, &$item) {
-	$requestMethod = strtolower(GalleryUtilities::getServerVar('REQUEST_METHOD'));
+    function handleRequest($form, &$album) {
+	$requestMethod = GalleryUtilities::strToLower(
+	    GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if ($requestMethod != 'put') {
 	    return array(GalleryCoreApi::error(ERROR_REQUEST_FORGED), null, null);
 	}
 
-	$path = GalleryUtilities::getRequestVariables('path');
+	$path = WebDavHelper::getRequestVariable('path', true, false);
+	$pathComponent = urldecode(basename($path));
 
 	/* Check resource is not locked */
 	$ret = WebDavHelper::checkLocks($path);
@@ -53,12 +56,12 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 
-	list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($path);
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		/* Item doesn't already exist at this path.  Create it. */
 		list ($ret, $error, $status) = $this->_addItem(
-		    $item, $webDavOptions, $stream, $mimeType, $path);
+		    $webDavOptions, $stream, $pathComponent, $mimeType, $album->getId());
 		if ($ret) {
 		    return array($ret, null, null);
 		}
@@ -70,7 +73,7 @@ class ItemAddWebDav extends ItemAddPlugin {
 	}
 
 	list ($ret, $error, $status) = $this->_replaceItem(
-	    $item, $webDavOptions, $stream, $mimeType, $path, $itemId);
+	    $webDavOptions, $stream, $pathComponent, $mimeType, $itemId);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
@@ -80,14 +83,14 @@ class ItemAddWebDav extends ItemAddPlugin {
 
     /**
      * Add new item.
-     * @param object GalleryItem $item
      * @param array $webDavOptions WebDAV library options
      * @param resource $stream request body file handle
+     * @param string $pathComponent the path component
      * @param string $mimeType request content type
-     * @param string $path the path to the destination in the Gallery hierarchy
+     * @param int $albumId the id of the target album
      * @access private
      */
-    function _addItem(&$item, $webDavOptions, $stream, $mimeType, $path) {
+    function _addItem($webDavOptions, $stream, $pathComponent, $mimeType, $albumId) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
@@ -113,36 +116,44 @@ class ItemAddWebDav extends ItemAddPlugin {
 	if ($mimeType == 'application/octet-stream'
 		|| $mimeType == 'application/unknown'
 		|| empty($mimeExtensions)) {
-	    $extension = GalleryUtilities::getFileExtension(basename($path));
+	    $extension = GalleryUtilities::getFileExtension($pathComponent);
 	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
 	    if ($ret) {
 		$mimeType = 'application/unknown';
 	    }
 	}
 
-	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile, basename($path),
-	    basename($path), '', '', $mimeType, $item->getId());
+	list ($ret, $item) = GalleryCoreApi::addItemToAlbum(
+	    $tmpFile, $pathComponent, $pathComponent, '', '', $mimeType, $albumId);
 	@$platform->unlink($tmpFile);
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 
+	/* Set WebDAV path component */
+	if ($item->getPathComponent() != $pathComponent) {
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'webdav', 'pathComponent', $pathComponent, $item->getId());
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	}
+
 	WebDavServer::setResponseStatus('201 Created');
 	return array(null, array(), array('addedFiles' => array(array(
-	    'fileName' => basename($path), 'id' => $newItem->getId()))));
+	    'fileName' => $pathComponent, 'id' => $item->getId()))));
     }
 
     /**
      * Replace existing item.
-     * @param object GalleryItem $item
      * @param array $webDavOptions WebDAV library options
      * @param resource $stream request body file handle
+     * @param string $pathComponent the path component
      * @param string $mimeType request content type
-     * @param string $path the path to the destination in the Gallery hierarchy
-     * @param int $itemId
+     * @param int $itemId the id of the target item
      * @access private
      */
-    function _replaceItem(&$item, $webDavOptions, $stream, $mimeType, $path, $itemId) {
+    function _replaceItem($webDavOptions, $stream, $pathComponent, $mimeType, $itemId) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
@@ -206,11 +217,10 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 
-	/* TODO: a GalleryCoreApi method for replacing file contents would be nice here. */
+	/* TODO: A GalleryCoreApi method for replacing file contents would be nice here */
 
-	return array(
-	    null, array(),
-	    array('addedFiles' => array(array('fileName' => basename($path), 'id' => $itemId))));
+	return array(null, array(), array('addedFiles' => array(array(
+	    'fileName' => $pathComponent, 'id' => $itemId))));
     }
 
     /**

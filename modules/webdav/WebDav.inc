@@ -22,7 +22,7 @@ GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
 GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
 
 /**
- * The WebDAV controller handles all WebDAV requests.
+ * Handle WebDAV requests.
  * @package WebDav
  * @subpackage UserInterface
  * @author Jack Bates <ms419@freezone.co.uk>
@@ -48,44 +48,38 @@ class WebDavController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	/*
-	 * GalleryCoreApi::addItemToAlbum normalizes path components but
-	 * GalleryCoreApi::fetchItemIdByPath does not.  This is a problem for WebDAV because GET
-	 * following a successful PUT at the same URL should succeed.
-	 *
-	 * An alternative is to consistantly normalize all requests.  While this shouldn't break any
-	 * clients, PROPFIND following a successful PUT should strictly include the URL of the PUT.
-	 *
-	 * Consequently we reject an illegal path component.
-	 *
-	 * This condition may be relaxed in future if it's a problem.
-	 */
-	$path = GalleryUtilities::getRequestVariables('path');
-	$pathComponent = basename($path);
-	if (!$platform->isLegalPathComponent($pathComponent)) {
-	    /* Special case to suppress Mac '._' files.  Ignore request but return success. */
-	    if (!strncmp($pathComponent, '._', 2)) {
-		WebDavServer::setResponseStatus('200 OK');
-		return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
+	$userAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+	if (strpos($userAgent, 'WINDOWS WEBFOLDERS USER AGENT STRING') !== false) {
+	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
+	    if ($ret) {
+		return array($ret, null);
 	    }
+	    if ($isAnonymous) {
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+	    }
+	}
 
+	$path = WebDavHelper::getRequestVariable('path', true, false);
+	$pathComponent = urldecode(basename($path));
+
+	/* Special case to suppress Mac '._' files.  Ignore request but return success. */
+	if (!strncmp($pathComponent, '._', 2)) {
+	    WebDavServer::setResponseStatus('200 OK');
+	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
+	}
+
+	/* Special case to suppress Mac '.DS_Store' files.  Return 403 Forbidden. */
+	if ($pathComponent == '.DS_Store') {
 	    WebDavServer::setResponseStatus('403 Forbidden');
 	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null);
 	}
 
 	$requestMethod = GalleryUtilities::strToLower(
-		GalleryUtilities::getServerVar('REQUEST_METHOD'));
+	    GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if ($requestMethod == 'get' || $requestMethod == 'head') {
-	    if (empty($path)) {
-		list ($ret, $itemId) = GalleryCoreApi::getDefaultAlbumId();
-		if ($ret) {
-		    return array($ret, null);
-		}
-	    } else {
-		list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($path);
-		if ($ret) {
-		    return array($ret, null);
-		}
+	    list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	    if ($ret) {
+		return array($ret, null);
 	    }
 
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -93,7 +87,7 @@ class WebDavController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    /* Until there's a better way to delegate to Show/DownloadItem */
+	    /* Until there's a better way to delegate to ShowItem / DownloadItem */
 	    GalleryUtilities::putRequestVariable('itemId', $itemId);
 	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 		return array(null, array('delegate' => array('view' => 'core.ShowItem'),
@@ -105,40 +99,32 @@ class WebDavController extends GalleryController {
 				     'status' => array(),
 				     'error' => array()));
 	} else if ($requestMethod == 'put') {
-	    $parentPath = dirname($path);
-
-	    /* dirname('foo') is '.' */
-	    if ($parentPath == '.') {
-		list ($ret, $parentId) = GalleryCoreApi::getDefaultAlbumId();
-		if ($ret) {
-		    return array($ret, null);
-		}
-	    } else {
-		list ($ret, $parentId) = GalleryCoreApi::fetchItemIdByPath($parentPath);
-		if ($ret) {
-		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			/*
-			 * A PUT that would result in the creation of a resource without an
-			 * appropriately scoped parent collection MUST fail with a 409
-			 * (Conflict).
-			 */
-			WebDavServer::setResponseStatus('409 Conflict');
-		    }
-
-		    return array($ret, null);
+	    $parentPath = WebDavHelper::getParentPath($path);
+	    list ($ret, $parentId) = WebDavHelper::fetchItemIdByPath($parentPath);
+	    if ($ret) {
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    /*
+		     * A PUT that would result in the creation of a resource without an
+		     * appropriately scoped parent collection MUST fail with a 409
+		     * (Conflict).
+		     */
+		    WebDavServer::setResponseStatus('409 Conflict');
 		}
 
-		/* Until there's a better way to delegate to ItemAdd */
-		GalleryUtilities::putRequestVariable('itemId', $parentId);
-		GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
-		/* Let the ItemAddPlugin handle the replacement for the auth-token check */
-		list ($ret, $data) = ItemAddController::handleRequest($form);
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		return array(null, $data);
+		return array($ret, null);
 	    }
+
+	    /* Until there's a better way to delegate to ItemAdd */
+	    GalleryUtilities::putRequestVariable('itemId', $parentId);
+	    GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
+
+	    /* Let the ItemAddPlugin handle the replacement for the auth-token check */
+	    list ($ret, $data) = ItemAddController::handleRequest($form);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    return array(null, $data);
 	}
 
 	return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
@@ -155,7 +141,7 @@ class WebDavController extends GalleryController {
 }
 
 /**
- * The WebDAV view generates WebDAV responses.
+ * Generate WebDAV responses.
  */
 class WebDavView extends GalleryView {
 
@@ -179,7 +165,7 @@ class WebDavView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 	$requestMethod = GalleryUtilities::strToLower(
-		GalleryUtilities::getServerVar('REQUEST_METHOD'));
+	    GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if (!in_array($requestMethod, array('options', 'propfind', 'proppatch', 'mkcol', 'delete',
 		'move', 'lock', 'unlock'))) {
 	    return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);

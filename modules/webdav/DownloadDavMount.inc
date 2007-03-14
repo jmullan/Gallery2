@@ -18,8 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavRewriteHelper.class');
+
 /**
- * Mount WebDAV resource using mime type.  RFC4609.
+ * Automatically mount Gallery with WebDAV using davmount mime type.  RFC4609.
  * @package WebDav
  * @subpackage UserInterface
  * @author Jack Bates <ms419@freezone.co.uk>
@@ -41,52 +43,58 @@ class DownloadDavMountView extends GalleryView {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	GalleryUtilities::setResponseHeader(
-	    'Content-Type: application/davmount+xml; charset=UTF-8');
-	GalleryUtilities::setResponseHeader(
-	    'Content-Disposition: inline; filename="Gallery.davmount"');
-	echo "<dm:mount xmlns:dm=\"http://purl.org/NET/webdav/mount\">\n";
-
-	/*
-	 * I guess URL shouldn't include session id because a query string may break some clients
-	 * and reusing session id by another browser may be considdered session hijacking
-	 */
-	echo '  <dm:url>' . $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav'),
-	    array('forceFullUrl' => true, 'forceSessionId' => false)) . "</dm:url>\n";
-
-	list ($itemId, $path) = GalleryUtilities::getRequestVariables('itemId', 'path');
-	if (isset($itemId)) {
+	$itemId = WebDavHelper::getRequestVariable('itemId');
+	$path = WebDavHelper::getRequestVariable('path', true, false);
+	if (!empty($itemId)) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret) {
 		return $ret;
 	    }
 
-	    if (!GalleryUtilities::isA($item, 'GalleryFileSystemEntity')) {
-		return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
-	    }
-
-	    list ($ret, $path) = $item->fetchLogicalPath();
+	    list ($ret, $path) = WebDavRewriteHelper::fetchLogicalPath($item);
 	    if ($ret) {
 		return $ret;
 	    }
 	}
 
+	$pathComponent = urldecode(basename($path));
+	if (empty($pathComponent)) {
+	    $pathComponent = 'Gallery';
+	}
+
+	GalleryUtilities::setResponseHeader(
+	    'Content-Type: application/davmount+xml; charset=UTF-8');
+	GalleryUtilities::setResponseHeader(
+	    "Content-Disposition: inline; filename=$pathComponent.davmount");
+
+	print "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
+	print "<dm:mount xmlns:dm=\"http://purl.org/NET/webdav/mount\">\n";
+
+	/*
+	 * I guess URL shouldn't include session id because a query string may break some clients
+	 * and reusing session id by another browser may be considdered session hijacking
+	 */
+	print '  <dm:url>' . $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav'),
+						       array('forceFullUrl' => true,
+							     'forceSessionId' => false,
+							     'useAuthToken' => false))
+	    . "</dm:url>\n";
+
 	$path = ltrim($path, '/');
 	if (!empty($path)) {
-	    echo '  <dm:open>' . $path . "</dm:open>\n";
+	    print '  <dm:open>' . $path . "</dm:open>\n";
 	}
 
 	list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	if ($ret) {
 	    return $ret;
 	}
-
 	if (!$isAnonymous) {
 	    $user = $gallery->getActiveUser();
-	    echo '  <dm:username>' . $user->getUserName() . "</dm:username>\n";
+	    print '  <dm:username>' . $user->getUserName() . "</dm:username>\n";
 	}
 
-	echo "</dm:mount>\n";
+	print "</dm:mount>\n";
     }
 }
 ?>

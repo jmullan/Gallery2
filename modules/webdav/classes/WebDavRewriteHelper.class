@@ -29,9 +29,63 @@
 class WebDavRewriteHelper {
 
     /**
-     * Hacked version of RewriteSimpleHelper::parserPath to support either 'path' or 'itemId' and
-     * empty path or '/' for short URL to the root album.  Uses rawurlencode instead of urlencode to
-     * encode ' ' as '%20', instead of '+'.
+     * Version of GalleryFileSystemEntity::fetchLogicalPath which uses WebDAV path components.  The
+     * path returned is already URL encoded because WebDAV paths may contain special characters, in
+     * which case it's impossible to distinguish '/' in path components from the path separator.
+     * @param object GalleryItem $item
+     * @return array object GalleryStatus a status code
+     *               string logical path
+     * @see GalleryFileSystemEntity::fetchLogicalPath
+     */
+    function fetchLogicalPath($item) {
+	if (!GalleryUtilities::isA($item, 'GalleryFileSystemEntity')) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
+	}
+
+	list ($ret, $parentItems) = GalleryCoreApi::fetchParents($item);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/* Ignore the root item */
+	array_shift($parentItems);
+
+	/* Append the given item */
+	array_push($parentItems, $item);
+
+	$path = '';
+	foreach ($parentItems as $parentItem) {
+	    /* Check if the item has a WebDAV path component */
+	    list ($ret, $pathComponent) = GalleryCoreApi::getPluginParameter(
+		'module', 'webdav', 'pathComponent', $parentItem->getId());
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    /* Otherwise use the regular path component */
+	    if (empty($pathComponent)) {
+		$pathComponent = $parentItem->getPathComponent();
+	    }
+
+	    /* Use rawurlencode to encode ' ' as '%20' instead of '+' */
+	    $path .= '/' . rawurlencode($pathComponent);
+	}
+
+	/* Append trailing '/' */
+	if ($item->isContainer()) {
+	    $path .= '/';
+	}
+
+	return array(null, $path);
+    }
+
+    /**
+     * Version of RewriteSimpleHelper::parserPath to support:
+     * o either 'path' or 'itemId' params
+     * o empty path or '/' for root album URL
+     * o patterns starting with the '%path%' keyword
+     * o patterns with or without a path separator before the '%path%' keyword
+     * o WebDAV path components with special characters
      * @see RewriteSimpleHelper::parsePath
      */
     function parsePath(&$url, &$params, &$entity) {
@@ -43,13 +97,13 @@ class WebDavRewriteHelper {
 		$entity = $urlGenerator->loadEntity($params['itemId']);
 	    }
 
-	    if (!GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
-		return;
-	    }
-
-	    list ($ret, $params['path']) = $entity->fetchLogicalPath();
+	    list ($ret, $params['path']) = WebDavRewriteHelper::fetchLogicalPath($entity);
 	    if ($ret) {
-		return;
+		if ($gallery->getDebug()) {
+		    $gallery->debug(
+			'Error in WebDavRewriteHelper::parsePath: ' .  $ret->getAsText());
+		}
+		return false;
 	    }
 
 	    unset($params['itemId']);
@@ -57,19 +111,17 @@ class WebDavRewriteHelper {
 
 	if (empty($params['path'])) {
 	    $params['path'] = '';
-	} else {
-	    $params['path'] = ltrim($params['path'], '/');
-
-	    /* rawurlencode except for path separators */
-	    $params['path'] = str_replace('%2F', '/', rawurlencode($params['path']));
 	}
 
+
+	/* First check if the URL starts with %path% to avoid replacing it with a leading slash */
+	$url = preg_replace('/^%path%/', ltrim($params['path'], '/'), $url);
+
 	/*
-	 * We add in a leading slash to the path because the rule is designed not to have
-	 * one, so that it can trigger on gallery2/w/ and gallery2/w (Windows XP will
-	 * PROPFIND the path without the trailing slash
-	 */
-	$url = str_replace('%path%', '/' . $params['path'], $url);
+	 * Windows makes PROPFIND requests without trailing slashes, so the URL rewrite rule must
+	 * support requests without trailing slashes.  Match here patterns with and without a path
+	 * separator. */
+	$url = preg_replace('/(\/)*%path%/', '/' . ltrim($params['path'], '/'), $url);
 	unset($params['path']);
 
 	return true;

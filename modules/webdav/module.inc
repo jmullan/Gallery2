@@ -19,7 +19,7 @@
  */
 
 /**
- * WebDAV Module.  Mount Gallery on your desktop.
+ * WebDAV module.  Mount Gallery on your desktop.
  * @package WebDav
  * @author Jack Bates <ms419@freezone.co.uk>
  * @version $Revision$
@@ -31,7 +31,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('0.7.2'); /* Update upgrade() too! */
+	$this->setVersion('0.8.0'); /* Update upgrade() too! */
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop.'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews|registerEventListeners');
@@ -55,8 +55,19 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::registerEventListeners
      */
     function registerEventListeners() {
-	return GalleryCoreApi::registerEventListener(
+	$ret = GalleryCoreApi::registerEventListener(
 	    'Gallery::ActivatePlugin', new WebDavModule(), true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::registerEventListener(
+	    'GalleryEntity::save', new WebDavModule(), true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
     }
 
     /**
@@ -119,6 +130,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    if ($ret) {
 		return $ret;
 	    }
+
 	case '0.6.1':
 	    /*
 	     * Add dependency on latest changes in GalleryModule::getRewriteRules and on
@@ -127,10 +139,15 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	case '0.6.2':
 	    /* Add configuration checks */
+
 	case '0.7.0':
-	    /* Add whitelist for external interface */
+	    /* Add whitelist of properties for external access */
+
 	case '0.7.1':
 	    /* Rename WebDavMount to DownloadDavMount */
+
+	case '0.7.2':
+	    /* Add special character support */
 
 	case 'end of upgrade path':
 	    break;
@@ -181,10 +198,10 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    if (!$item->getCanContainChildren() || empty($wantsDetailedLinks[$item->getId()])) {
 		continue;
 	    }
-	    $links[$item->getId()][] = array(
-			'text' => $this->translate('Mount with WebDAV'),
-			'params' => array('view' => 'webdav.WebDavMount',
-					  'itemId' => $item->getId()));
+
+	    $links[$item->getId()][] = array('text' => $this->translate('Mount with WebDAV'),
+					     'params' => array('view' => 'webdav.WebDavMount',
+							       'itemId' => $item->getId()));
 	}
 
 	return array(null, $links);
@@ -209,7 +226,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	/* Use short URL because most WebDAV clients don't support query strings */
 	$rules['connect'] = array(
-	    'comment' => $this->translate('Connect to WebDAV'),
+	    'comment' => $this->translate('Connect with WebDAV'),
 	    'help' => $this->translate(
 		'Use short URL because most WebDAV clients don\'t support query strings.'
 		. '  The Windows WebDAV client requires that you don\'t add a slash before the'
@@ -220,7 +237,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 		'path' => array(
 		    'pattern' => '([^?]*)',
 		    'function' => array('webdav', 'WebDavRewriteHelper', 'parsePath'),
-		    'help' => $this->translate('Path to an item (eg. /album/image.jpg.html)'))));
+		    'help' => $this->translate('Path to an item (e.g. /album/image.jpg.html)'))));
 
 	/* Give davmount resources the correct extension */
 	$rules['davmount'] = array(
@@ -228,14 +245,12 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    'help' => $this->translate(
 		'Give davmount resources the correct extension.'),
 	    'match' => array('view' => 'webdav.DownloadDavMount'),
-
-	    /* TODO: How to work with the root album? */
 	    'pattern' => 'v/%path%.davmount',
 	    'keywords' => array(
 		'path' => array(
 		    'pattern' => '([^?]+)',
 		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parsePath'),
-		    'help' => $this->translate('Path to an item (eg. /album/image.jpg.html)'))),
+		    'help' => $this->translate('Path to an item (e.g. /album/image.jpg.html)'))),
 	    'onLoad' => array('rewrite', 'RewriteSimpleHelper', 'loadItemIdFromPath'));
 
 	/*
@@ -245,11 +260,12 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
 	if ($ret) {
 	    if ($gallery->getDebug()) {
-		$gallery->debug('Error in WebDavModule::getRewriteRules: ' . $ret->getAsText());
+		$gallery->debug(
+		    'Error in WebDavModule::getRewriteRules: ' . $ret->getAsText());
 	    }
 	    return $rules;
 	}
-	if (empty($rewriteApi)) {
+	if (!isset($rewriteApi)) {
 	    return $rules;
 	}
 
@@ -302,6 +318,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
     function handleEvent($event) {
 	switch ($event->getEventName()) {
 	case 'Gallery::ActivatePlugin':
+	    /* Activate essential rewrite rules */
 	    $data = $event->getData();
 	    if ($data['pluginType'] != 'module' || $data['pluginId'] != 'rewrite') {
 		return array(null, null);
@@ -317,6 +334,18 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	case 'Gallery::Error':
 	    /* Suppress generating HTML error pages for WebDAV clients */
 	    return array(null, array('suppressBody' => true));
+
+	case 'GalleryEntity::save':
+	    /* Remove WebDAV path component */
+	    $entity = $event->getEntity();
+	    if (!$entity->isModified('pathComponent')) {
+		return array(null, null);
+	    }
+
+	    $ret = $this->removeParameter('pathComponent', $entity->getId());
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	}
 
 	return array(null, null);
@@ -331,7 +360,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($ret) {
 	    return $ret;
 	}
-	if (empty($rewriteApi)) {
+	if (!isset($rewriteApi)) {
 	    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
 	}
 

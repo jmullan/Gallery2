@@ -19,7 +19,6 @@
  */
 
 GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavRewriteHelper.class');
-GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
 
 /**
  * WebDAV rewrite helper tests.
@@ -35,123 +34,248 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $gallery;
 	parent::setUp();
+	global $gallery;
 
-	$urlGenerator = new RewriteUrlGenerator();
-	$urlGenerator->init('phpunit');
-	$gallery->setUrlGenerator($urlGenerator);
+	/* Try to test with the rewrite URL generator */
+	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
+	    'GalleryUrlGenerator');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	if (!isset($this->_urlGenerator)) {
+	    return $this->skip();
+	}
+
+	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$gallery->setUrlGenerator($this->_urlGenerator);
+
+	/* Create test items */
+	list ($ret, $this->_album) = $this->_createRandomAlbum(
+	    $this->_getRootId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum(
+	    $this->_album->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
     }
 
-    function testParsePath() {
-	/* Create test items */
-	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-	$this->_markForCleanup($album);
-
-	/* Write lock the album we're moving */
-	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($album->getId());
-	if ($ret) {
-	    GalleryCoreApi::releaseLocks($lockIs);
-	    return $this->failWithStatus($ret);
-	}
-
-	/* Refresh the album incase it changed before it was locked */
-	list ($ret, $album) = $album->refresh();
-	if ($ret) {
-	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
-	}
-
-	/* Rename the album */
-	$oldPathComponent = $album->getPathComponent();
-	$ret = $album->rename('The Quick!Brown#Fox');
-	if ($ret) {
-	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
-	}
-
-	$ret = $album->save();
-	if ($ret) {
-	    $album->rename($oldPathComponent);
-	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
-	}
-
-	$ret = GalleryCoreApi::releaseLocks($lockIds);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	list ($ret, $item) = $this->_createRandomDataItem($album->getId(), 'test/file');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
+    function _rename(&$item, $pathComponent) {
 	/* Write lock the item we're moving */
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($item->getId());
 	if ($ret) {
-	    GalleryCoreApi::releaseLocks($lockIs);
-	    return $this->failWithStatus($ret);
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return $ret;
 	}
 
-	/* Refresh the item incase it changed before it was locked */
+	/* Refresh the item in case it changed before it was locked */
 	list ($ret, $item) = $item->refresh();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Rename the item */
 	$oldPathComponent = $item->getPathComponent();
-	$ret = $item->rename('Jumps Over%The/Lazy_Dog');
+	$ret = $item->rename($pathComponent);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $item->save();
 	if ($ret) {
 	    $item->rename($oldPathComponent);
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret) {
+	    return $ret;
+	}
+
+	/* Set WebDAV path component */
+	if ($item->getPathComponent() != $pathComponent) {
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'webdav', 'pathComponent', $pathComponent, $item->getId());
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	return null;
+    }
+
+    function testFetchLogicalPath() {
+	list ($ret, $path) = WebDavRewriteHelper::fetchLogicalPath($this->_subAlbum);
+	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	/* Use valid inputs */
-	$url = 'w%path%';
-	$params = array('controller' => 'webdav.WebDav', 'itemId' => $item->getId());
-	$entity = null;
+	list ($ret, $expectedPath) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
-	/* Perform the request and verify that we succeeded */
-	$ret = WebDavRewriteHelper::parsePath($url, $params, $entity);
+	$this->assertEquals($expectedPath, $path);
+    }
 
-	$this->assert($ret, 'status');
-	$this->assertEquals('w/The%20Quick_Brown%23Fox/Jumps%20Over_The_Lazy_Dog', $url, 'url');
-	$this->assertEquals(array('controller' => 'webdav.WebDav'), $params, 'params');
-	$this->assertEquals($item, $entity, 'entity');
+    function testFetchLogicalPathWithWebDavPath() {
+	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
-	/* Use valid inputs */
-	list ($ret, $path) = $item->fetchLogicalPath();
+	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $path) = WebDavRewriteHelper::fetchLogicalPath($this->_subAlbum);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedPath = '/' . rawurlencode('The Quick!Brown#Fox')
+	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog') . '/';
+	$this->assertEquals($expectedPath, $path);
+    }
+
+    function testParsePathWithItemId() {
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
 	$url = 'w%path%';
-	$params = array('controller' => 'webdav.WebDav', 'path' => $path);
+	$params = array('controller' => 'webdav.WebDav',
+			'itemId' => $this->_subAlbum->getId());
 	$entity = null;
 
-	/* Perform the request and verify that we succeeded */
+	$success = WebDavRewriteHelper::parsePath($url, $params, $entity);
+
+	$this->assert($success, 'success');
+	$this->assertEquals('w/' . ltrim($path, '/'), $url, 'url');
+	$this->assertEquals(array('controller' => 'webdav.WebDav'), $params, 'params');
+	$this->assertEquals($this->_subAlbum, $entity, 'entity');
+    }
+
+    function testParsePathWithPath() {
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$url = 'w%path%';
+	$params = array('controller' => 'webdav.WebDav',
+			'path' => $path);
+	$entity = null;
+
 	$ret = WebDavRewriteHelper::parsePath($url, $params, $entity);
 
 	$this->assert($ret, 'status');
-	$this->assertEquals('w/The%20Quick_Brown%23Fox/Jumps%20Over_The_Lazy_Dog', $url, 'url');
+	$this->assertEquals('w/' . ltrim($path, '/'), $url, 'url');
+	$this->assertEquals(array('controller' => 'webdav.WebDav'), $params, 'params');
+	$this->assertEquals(null, $entity, 'entity');
+    }
+
+    function testParsePathWithStartingKeyword() {
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$url = '%path%';
+	$params = array('controller' => 'webdav.WebDav',
+			'path' => $path);
+	$entity = null;
+
+	$ret = WebDavRewriteHelper::parsePath($url, $params, $entity);
+
+	$this->assert($ret, 'status');
+	$this->assertEquals(ltrim($path, '/'), $url, 'url');
+	$this->assertEquals(array('controller' => 'webdav.WebDav'), $params, 'params');
+	$this->assertEquals(null, $entity, 'entity');
+    }
+
+    function testParsePathWithPathSeparator() {
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$url = 'w/%path%';
+	$params = array('controller' => 'webdav.WebDav',
+			'path' => $path);
+	$entity = null;
+
+	$ret = WebDavRewriteHelper::parsePath($url, $params, $entity);
+
+	$this->assert($ret, 'status');
+	$this->assertEquals('w/' . ltrim($path, '/'), $url, 'url');
+	$this->assertEquals(array('controller' => 'webdav.WebDav'), $params, 'params');
+	$this->assertEquals(null, $entity, 'entity');
+    }
+
+    function testParsePathWithItemIdWithPathAndSpecialCharacters() {
+	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$path = '/' . rawurlencode('The Quick!Brown#Fox')
+	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog') . '/';
+
+	$url = 'w%path%';
+	$params = array('controller' => 'webdav.WebDav',
+			'itemId' => $this->_subAlbum->getId());
+	$entity = null;
+
+	$success = WebDavRewriteHelper::parsePath($url, $params, $entity);
+
+	$this->assert($success, 'success');
+	$this->assertEquals('w/' . ltrim($path, '/'), $url, 'url');
+	$this->assertEquals(array('controller' => 'webdav.WebDav'), $params, 'params');
+	$this->assertEquals($this->_subAlbum, $entity, 'entity');
+    }
+
+    function testParsePathWithPathAndSpecialCharacters() {
+	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$path = '/' . rawurlencode('The Quick!Brown#Fox')
+	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog') . '/';
+
+	$url = 'w%path%';
+	$params = array('controller' => 'webdav.WebDav',
+			'path' => $path);
+	$entity = null;
+
+	$ret = WebDavRewriteHelper::parsePath($url, $params, $entity);
+
+	$this->assert($ret, 'status');
+	$this->assertEquals('w/' . ltrim($path, '/'), $url, 'url');
 	$this->assertEquals(array('controller' => 'webdav.WebDav'), $params, 'params');
 	$this->assertEquals(null, $entity, 'entity');
     }

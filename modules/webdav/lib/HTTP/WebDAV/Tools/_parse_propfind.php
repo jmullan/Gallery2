@@ -86,13 +86,13 @@ class _parse_propfind
             $line = fgets($handle);
             if (is_string($line)) {
                 $had_input = true;
-                $this->success &= xml_parse($parser, $line, false);
+                $this->success = xml_parse($parser, $line, false);
             }
         }
 
         // finish parsing
         if ($had_input) {
-            $this->success &= xml_parse($parser, '', true);
+            $this->success = xml_parse($parser, '', true);
         }
 
         // free parser resource
