@@ -213,19 +213,16 @@ function findPosX(obj) {
 
 function findPosY(obj) {
   var curtop = 0;
-  var printstring = '';
 
   if (!obj) { return curtop; }
   if (obj.offsetParent) {
     while (obj.offsetParent) {
-      printstring += ' element ' + obj.tagName + ' has ' + obj.offsetTop;
       curtop += obj.offsetTop
       obj = obj.offsetParent;
     }
   } else if (obj.y) {
     curtop += obj.y;
   }
-  window.status = printstring;
   return curtop;
 }
 
