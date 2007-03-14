@@ -318,8 +318,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 
 	$status = $this->_getStatusFromProgressBar();
 	$this->assertEquals(
-	    array('error' => array(),
-		  'cantUpgradeInUse' => array('Test Module'),
+	    array('error' => array('cantUpgradeInUse' => array('Test Module')),
 		  'languagePacksDeleted' => 0),
 	    $status);
     }

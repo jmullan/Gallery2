@@ -347,7 +347,7 @@ class AdminRepositoryDownloadController extends GalleryController {
 			 *       plugins that are already loaded at this point.
 			 */
 			if ($phpVm->class_exists($pluginId . $pluginType)) {
-			    $status['cantUpgradeInUse'][] = $pluginName;
+			    $status['error']['cantUpgradeInUse'][] = $pluginName;
 			} else {
 			    list ($ret, $plugin) =
 				GalleryCoreApi::loadPlugin($pluginType, $pluginId, true);
