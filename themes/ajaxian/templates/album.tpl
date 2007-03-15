@@ -4,9 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{if !empty($theme.item.title)}
-  <h2 id="item-title">{$theme.item.title|markup}</h2>
-{/if}
+<h2 id="item-title">{$theme.item.title|markup|default:" "}</h2>
 
 {if !empty($theme.navigator)}
   <div class="gbBlock gcBackground2 gbNavigator">
