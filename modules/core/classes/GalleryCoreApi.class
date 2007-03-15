@@ -3071,5 +3071,21 @@ class GalleryCoreApi {
 		'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::getExternalAccessMemberList($entityName);
     }
+
+    /**
+     * Get the local path to the Gallery code base path (not URL or web root).  Optionally append a
+     * relative path.
+     * @param string $relativePath (optional) Relative path to append to the code base path.
+     * @return string local path to the Gallery code base.  If the optional parameter has not been
+     *                supplied the return value will have the trailing slash appended.
+     */
+    function getCodeBasePath($relativePath=null) {
+        static $codeBaseDirectory;
+        if (!isset($codeBaseDirectory)) {
+	    $codeBaseDirectory = dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR;
+        }
+
+        return ($relativePath == null) ? $codeBaseDirectory : $codeBaseDirectory . $relativePath;
+    }
 }
 ?>

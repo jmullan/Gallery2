@@ -2120,6 +2120,8 @@ class CoreModuleExtras {
 	    /* Added GalleryUrlGenerator::makeAbsoluteUrl() */
 	case '1.1.29':
 	    /* 2.2 Release Candidate 2! */
+	case '1.1.30':
+	    /* Added getCodeBasePath Method */
 
 	case 'end of upgrade path':
 	    /*
@@ -2425,6 +2427,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.1.27':
 	case '1.1.28':
 	case '1.1.29':
+	case '1.1.30':
 
 	case 'end of upgrade path':
 	    /*
