@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: Gallery: Installer 2.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-08 17:49+0200\n"
-"PO-Revision-Date: 2007-03-14 21:03+0100\n"
+"PO-Revision-Date: 2007-03-15 14:51+0100\n"
 "Last-Translator: B. Scheijgrond <bsmfenj@wanadoo.nl>\n"
 "Language-Team: Dutch <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -98,9 +98,8 @@ msgstr "Database Setup"
 msgid "You must have the MySQL PHP module installed"
 msgstr "U dient de MySQL PHP module geïnstalleerd te hebben"
 
-#, fuzzy
 msgid "You must have the MySQL Improved PHP module installed"
-msgstr "U dient de MySQL PHP module geïnstalleerd te hebben"
+msgstr "U dient de MySQL Improved PHP module geïnstalleerd te hebben"
 
 msgid "You must have the ibm_db2 PHP module installed"
 msgstr "U dient de ibm_db2 PHP module geïnstalleerd te hebben"
@@ -207,13 +206,11 @@ msgstr ""
 "Kan de G2 API niet laden. Verwijder de Gallery databasetabellen en de opslagdirectory "
 "handmatig."
 
-#, fuzzy
 msgid "MySQL (v3.23.34a and newer)"
-msgstr "MySQL met Transacties (v3.23.34a of nieuwer)"
+msgstr "MySQL (v3.23.34a of nieuwer)"
 
-#, fuzzy
 msgid "MySQL (versions before v3.23.34a)"
-msgstr "MySQL (alle versies)"
+msgstr "MySQL (alle versies ouder dan v3.23.34a)"
 
 msgid "PostgreSQL v7.x and newer"
 msgstr "PostgreSQL v7.x en nieuwer"
@@ -224,9 +221,8 @@ msgstr "Oracle (9i of nieuwer)"
 msgid "IBM DB2 (v8.2 and newer)"
 msgstr "IBM DB2 (v8.2 en nieuwer)"
 
-#, fuzzy
 msgid "Microsoft SQL Server v7 and newer"
-msgstr "PostgreSQL v7.x en nieuwer"
+msgstr "Microsoft SQL Server v7 en nieuwer"
 
 msgid "Unknown DB type or no known tables information."
 msgstr "Onbekende DB type of geen bekende tabellen informatie."
@@ -293,9 +289,8 @@ msgstr "Kan de databasetransactie niet uitvoeren"
 msgid "Core module is only partially installed."
 msgstr "Core module is slechts gedeeltelijk geïnstalleerd."
 
-#, fuzzy
 msgid "Install Plugins"
-msgstr "Installatie Stappen"
+msgstr "Installeer Plug-ins"
 
 msgid "Unable to initialize our Gallery session"
 msgstr "Kan onze Gallery sessie niet initialiseren"
@@ -336,19 +331,18 @@ msgstr "Systeemcontroles"
 msgid "Performing system checks"
 msgstr "Systeem controle wordt uitgevoerd"
 
-#, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
-msgstr "PHP versie >= 4.1.0 of >= 5.0.4"
+msgstr "PHP versie >= 4.3.0 of >= 5.0.4"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or newer. You have PHP version "
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
-"Fout: Gallery 2 vereist PHP versie 4.1.0 of nieuwer of 5.0.4 of nieuwer. U heeft PHP versie %"
-"s geïnstalleerd. Neem contact op met uw beheerder om een upgrade aan te vragen, beschikbaar "
-"op de %sPHP website%s."
+"Fout: Gallery 2 vereist PHP versie 4.3.0 of nieuwer of versie 5.0.4 of nieuwer. U heeft PHP "
+"versie %s geïnstalleerd. Neem contact op met de beheerder van uw webserver om om een upgrade "
+"te vragen, die op de %sPHP website%s beschikbaar is."
 
 msgid "PHP Version"
 msgstr "PHP Versie"
@@ -428,9 +422,9 @@ msgid ""
 "<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
 "Gallery will run. These functions are missing: %s."
 msgstr ""
-"Let Op: De putenv() functie is door de <b>disabled_functions</b> parameter in uw php.ini "
-"uitgeschakeld. Op sommige systemen zonder deze instelling zal Gallery niet in staat zijn om "
-"andere talen dan de systeem taal en Engels te gebruiken."
+"Fout: Essentiële bestandssysteem-functies zijn in uw PHP uitgeschakeld door de "
+"<b>disabled_functions</b> parameter in php.ini. U moet deze functies inschakelen om Gallery "
+"uit te doen werken. Deze functies worden gemist: %s."
 
 msgid "Memory limit"
 msgstr "Geheugenlimiet"
@@ -462,7 +456,7 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Maximale upload grootte"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
 "(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
@@ -532,15 +526,15 @@ msgstr ""
 msgid "putenv() allowed"
 msgstr "putenv() toegestaan"
 
-#, fuzzy
 msgid ""
 "Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
 "Let Op: De putenv() functie is door de <b>disabled_functions</b> parameter in uw php.ini "
-"uitgeschakeld. Op sommige systemen zonder deze instelling zal Gallery niet in staat zijn om "
-"andere talen dan de systeem taal en Engels te gebruiken."
+"uitgeschakeld. Gallery kan met deze instelling wel uitgevoerd worden, maar op sommige "
+"systemen zonder deze instelling zal Gallery niet in staat zijn om andere talen dan de "
+"systeemtaal en Engels te gebruiken."
 
 msgid "Output buffering disabled"
 msgstr "Bufferen van uitvoer uitgeschakeld"
@@ -980,27 +974,25 @@ msgstr "Gallery: <strong>uw foto's</strong> op <strong>uw website</strong>"
 msgid "Missing files (%d)"
 msgstr "Missende bestanden (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
-"Let op: u voert Gallery uit vanuit CVS, daarom kunnen recent verwijderde bestanden hier "
+"Let op: u voert Gallery uit vanuit SVN, daarom kunnen recent verwijderde bestanden hier "
 "verschijnen. U kunt deze veilig negeren."
 
 #, c-format
 msgid "Modified files (%d)"
 msgstr "Gewijzigde bestanden (%d)"
 
-#, fuzzy
 msgid ""
 "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'svn update' before "
 "continuing."
 msgstr ""
-"Let op: u voert Gallery uit vanuit CVS, daarom kunt u hier een aantal gewijzigde bestanden "
-"verwachten. U kunt deze waarschijnlijk veilig negeren, maar om veilig te zijn dient er er "
-"zeker van te zijn dat u 'cvs update -Pd' uitvoert voordat u doorgaat."
+"Let op: u voert Gallery uit vanuit SVN en daarom kunt u hier een aantal gewijzigde bestanden "
+"verwachten. U kunt deze waarschijnlijk zonder veilgheidsproblemen negeren, maar om daar "
+"helemaal zeker van te zijn te zijn, dient u 'svn update' uit te voeren voordat u doorgaat."
 
 #, c-format
 msgid "Old files (%d)"
@@ -1188,11 +1180,14 @@ msgstr ""
 "beveiliging. Maak of een nieuwe map aan buiten de %sdocument root%s map of voeg een "
 "willekeurig aantal tekens toe aan de naam van de map (bijvoorbeeld %s)."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
 "not possible, specify a randomized name for this directory."
-msgstr "Voor de beste beveiliging mag deze directory niet benaderbaar zijn vanaf het internet."
+msgstr ""
+"Voor de maximale beveiliging moet u een map aanmaken die niet vanaf het %sinternet "
+"toegankelijk%s is. Indien dit niet mogelijk is wordt u aangeraden de naam van de huidige map "
+"in een willekeurige andere te wijzigen."
 
 msgid ""
 "If you choose a randomized name or prefer to stick with the specified directory, please "
@@ -1255,15 +1250,14 @@ msgstr ""
 msgid "Unix (with ftp access)"
 msgstr "Unix (met ftp toegang)"
 
-#, fuzzy
 msgid ""
 "Note that ftp servers and clients vary so these instructions may not work for you. Consult "
 "the manual for your FTP client or talk to a system administrator for help with this if you "
 "have problems."
 msgstr ""
-"Let op dat ftpservers en -clients variëren, daarom kan het zijn dat deze instructies voor u "
-"niet werken. Raadpleeg de handleiding van uw FTP client of raadpleeg uw systeembeheerder als "
-"u hier problemen mee heeft"
+"Let er op dat ftpservers en -clients kunnen verschillen, waardoor deze instructies in uw "
+"geval niet werken. Raadpleeg de handleiding van uw FTP client of neem contact op met uw "
+"systeembeheerder als u hier problemen mee heeft"
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via FTP are not the "
@@ -1371,7 +1365,7 @@ msgstr ""
 "veranderingen maken. Raadpleeg het %sInstallatie Help Bestand%s voordat U verder gaat."
 
 msgid "Select Language:"
-msgstr "Kies Taal:"
+msgstr "Kies een taal:"
 
 msgid "Go"
 msgstr "Gaan"
