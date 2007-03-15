@@ -24,12 +24,13 @@ GalleryCoreApi::requireOnce('modules/webdav/lib/HTTP/WebDAV/Server.php');
 define('WEBDAV_STATUS_NO_XML_PARSER', 0x00000002);
 define('WEBDAV_STATUS_METHOD_NOT_HANDLED', 0x00000004);
 define('WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED', 0x00000008);
-define('WEBDAV_STATUS_REWRITE_MODULE_DISABLED', 0x00000010);
-define('WEBDAV_STATUS_CONNECT_RULE_DISABLED', 0x00000020);
-define('WEBDAV_STATUS_MISSING_DAV_HEADERS', 0x00000040);
-define('WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS', 0x00000080);
-define('WEBDAV_STATUS_BAD_REWRITE_PARSER', 0x00000100);
-define('WEBDAV_STATUS_OPTIONS_RULE_DISABLED', 0x00000200);
+define('WEBDAV_STATUS_HTTPAUTH_PLUGINS_DISABLED', 0x00000010);
+define('WEBDAV_STATUS_REWRITE_MODULE_DISABLED', 0x00000020);
+define('WEBDAV_STATUS_CONNECT_RULE_DISABLED', 0x00000040);
+define('WEBDAV_STATUS_MISSING_DAV_HEADERS', 0x00000080);
+define('WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS', 0x00000100);
+define('WEBDAV_STATUS_BAD_REWRITE_PARSER', 0x00000200);
+define('WEBDAV_STATUS_OPTIONS_RULE_DISABLED', 0x00000400);
 define('WEBDAV_STATUS_ERROR_UNKNOWN', 0x80000000);
 
 /* Gallery property namespace - RFC2518 18 */
@@ -104,8 +105,7 @@ class WebDavHelper {
 	    /* Already checked one cause: URL rewrite module disabled.  Check other causes. */
 	    if (!WebDavHelper::checkDavHeaders($urlGenerator->generateUrl(
 		    array('href' => 'modules/webdav/data/options/'),
-		    array('forceDirect' => true,
-			  'forceFullUrl' => true,
+		    array('forceFullUrl' => true,
 			  'htmlEntities' => false)))) {
 		$code |= WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS;
 	    }
@@ -146,6 +146,23 @@ class WebDavHelper {
 	 */
 	if (empty($moduleStatus['httpauth']['active'])) {
 	    $code |= WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED;
+	} else {
+	    /* Check that HTTP auth plugins are enabled */
+	    list ($ret, $httpAuthInterface) = GalleryCoreApi::newFactoryInstance(
+		'HttpAuthInterface_1_0');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (isset($httpAuthInterface)) {
+		list ($ret, $httpAuthPluginEnabled, $serverAuthPluginEnabled) =
+		    $httpAuthInterface->getConfiguration();
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (!$httpAuthPluginEnabled && !$serverAuthPluginEnabled) {
+		    $code |= WEBDAV_STATUS_HTTPAUTH_PLUGINS_DISABLED;
+		}
+	    }
 	}
 
 	/*
@@ -186,7 +203,9 @@ class WebDavHelper {
 	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage(
 	    $urlGenerator->generateUrl(array('view' => 'webdav.WebDavWorks'),
 				       array('forceFullUrl' => true,
-					     'htmlEntities' => false)), $requestMethod);
+					     'htmlEntities' => false)),
+	    $requestMethod,
+	    array('Content-Length' => 0));
 	if (!preg_match('/^HTTP\/[0-9]\.[0-9] 200/', $status)) {
 	    return false;
 	}
@@ -681,6 +700,8 @@ class WebDavHelper {
 	if ($ret) {
 	    return $ret;
 	}
+
+	return null;
     }
 
     /**
@@ -795,7 +816,7 @@ class WebDavHelper {
 	$files[] = $file;
 
 	if ($depth <= 0) {
-	    return;
+	    return null;
 	}
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
@@ -804,7 +825,7 @@ class WebDavHelper {
 	}
 
 	if (empty($childIds)) {
-	    return;
+	    return null;
 	}
 
 	list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
@@ -952,6 +973,8 @@ class WebDavHelper {
 	if ($ret) {
 	    return $ret;
 	}
+
+	return null;
     }
 
     /**

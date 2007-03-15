@@ -41,6 +41,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
 	    'GalleryUrlGenerator');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	if (!isset($this->_urlGenerator)) {
@@ -49,6 +50,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$gallery->setUrlGenerator($this->_urlGenerator);
@@ -63,12 +65,18 @@ class WebDavHelperTest extends GalleryTestCase {
 			      'rewrite' => array('active' => true));
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)', $moduleStatus);
 
+	/* Mock activate HTTP auth plugins */
+	WebDavHelperTestHttpAuthInterface::_getConfiguration(true);
+	$this->_markFactoryForCleanup();
+	$this->_registerFactoryImplementationForTest('HttpAuthInterface_1_0',
+	    'WebDavHelperTestHttpAuthInterface', 'WebDavHelperTestHttpAuthInterface',
+	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'test');
+
 	/* Mock preGallery rewrite parser.  Mock activate WebDAV rewrite rules. */
 	$this->_parserType =& WebDavHelperTestRewriteApi::_getParserType();
 	$this->_parserType = 'preGallery';
 	$this->_activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
 	$this->_activeRules = array('connect', 'davmount', 'options');
-	$this->_markFactoryForCleanup();
 	$this->_registerFactoryImplementationForTest(
 	    'RewriteApi', 'WebDavHelperTestRewriteApi', 'WebDavHelperTestRewriteApi',
 	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'test');
@@ -146,6 +154,7 @@ class WebDavHelperTest extends GalleryTestCase {
 		    array('view' => 'webdav.WebDavWorks'),
 		    array('forceServerRelativeUrl' => true,
 			  'htmlEntities' => false)) . ' HTTP/1.0',
+		'Content-Length: 0', /* IIS requires Content-Length at least for PUT requests */
 		'Host: ' . $this->_urlGenerator->getHostName(),
 		'',
 		''));
@@ -167,6 +176,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
 	    $this->_getRootId());
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
@@ -174,6 +184,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/file');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -244,7 +255,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assert(!$code);
+	$this->assertEquals(0, $code, 'Status code');
     }
 
     function testCheckConfigurationNoXmlParser() {
@@ -255,7 +266,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(WEBDAV_STATUS_NO_XML_PARSER, $code);
+	$this->assertEquals(WEBDAV_STATUS_NO_XML_PARSER, $code, 'Status code');
     }
 
     function testCheckConfigurationMethodNotHandled() {
@@ -267,7 +278,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(WEBDAV_STATUS_METHOD_NOT_HANDLED, $code);
+	$this->assertEquals(WEBDAV_STATUS_METHOD_NOT_HANDLED, $code, 'Status code');
     }
 
     function testCheckConfigurationHttpAuthModuleDisabled() {
@@ -279,7 +290,21 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED, $code);
+	$this->assertEquals(WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED, $code, 'Status code');
+    }
+
+    /**
+     * Though the HTTP auth module is active, all its plugins might be disabled.
+     */
+    function testCheckConfigurationHttpAuthPluginsDisabled() {
+	WebDavHelperTestHttpAuthInterface::_getConfiguration(false);
+
+	list ($ret, $code) = WebDavHelper::checkConfiguration();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(WEBDAV_STATUS_HTTPAUTH_PLUGINS_DISABLED, $code, 'Status code');
     }
 
     function testCheckConfigurationRewriteModuleDisabled() {
@@ -291,7 +316,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(WEBDAV_STATUS_REWRITE_MODULE_DISABLED, $code);
+	$this->assertEquals(WEBDAV_STATUS_REWRITE_MODULE_DISABLED, $code, 'Status code');
     }
 
     function testCheckConfigurationConnectRuleDisabled() {
@@ -302,7 +327,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(WEBDAV_STATUS_CONNECT_RULE_DISABLED, $code);
+	$this->assertEquals(WEBDAV_STATUS_CONNECT_RULE_DISABLED, $code, 'Status code');
     }
 
     function testCheckConfigurationAlternativeUrlHeaders() {
@@ -317,7 +342,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
-			    | WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS, $code);
+			    | WEBDAV_STATUS_ALTERNATIVE_URL_HEADERS, $code, 'Status code');
     }
 
     function testCheckConfigurationBadRewriteParser() {
@@ -331,7 +356,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
-			    | WEBDAV_STATUS_BAD_REWRITE_PARSER, $code);
+			    | WEBDAV_STATUS_BAD_REWRITE_PARSER, $code, 'Status code');
     }
 
     function testCheckConfigurationOptionsRuleDisabled() {
@@ -345,7 +370,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
-			    | WEBDAV_STATUS_OPTIONS_RULE_DISABLED, $code);
+			    | WEBDAV_STATUS_OPTIONS_RULE_DISABLED, $code, 'Status code');
     }
 
     function testCheckConfigurationErrorUnknown() {
@@ -358,7 +383,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
-			    | WEBDAV_STATUS_ERROR_UNKNOWN, $code);
+			    | WEBDAV_STATUS_ERROR_UNKNOWN, $code, 'Status code');
     }
 
     function testCheckConfigurationIncludesDavHeadersIgnoresCauses() {
@@ -372,7 +397,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assert(!$code);
+	$this->assertEquals(0, $code, 'Status code');
     }
 
     function testCheckRequestMethod() {
@@ -883,6 +908,22 @@ class WebDavHelperTestPhpVm extends GalleryPhpVm {
 
     function extension_loaded($functionName) {
 	return $this->_extension_loaded;
+    }
+}
+
+class WebDavHelperTestHttpAuthInterface /* extends HttpAuthInterface_1_0 */ {
+
+    function _getConfiguration($initPluginsEnabled=null) {
+	static $pluginsEnabled;
+	if (isset($initPluginsEnabled)) {
+	    $pluginsEnabled = $initPluginsEnabled;
+	}
+
+	return array(null, $pluginsEnabled, $pluginsEnabled, false);
+    }
+
+    function getConfiguration() {
+	return WebDavHelperTestHttpAuthInterface::_getConfiguration();
     }
 }
 

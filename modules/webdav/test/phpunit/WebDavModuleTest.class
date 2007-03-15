@@ -40,6 +40,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
 	    $this->_getRootId());
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
@@ -47,17 +48,20 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/file');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_derivative) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -70,6 +74,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $this->_permissions) = GalleryCoreApi::fetchPermissionsForItems(
 	    array($this->_album->getId(), $this->_item->getId(), $this->_subAlbum->getId()));
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -78,20 +83,29 @@ class WebDavModuleTest extends GalleryTestCase {
 	/* Load WebDAV module */
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'webdav');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	/* Mock disable WebDAV rewrite rules */
 	$this->_activeRules =& WebDavModuleTestRewriteApi::_fetchActiveRulesForModule('webdav');
 	$this->_activeRules = array();
-	$this->_activateCalls =& WebDavModuleTestRewriteApi::_getActivateCalls();
+	$this->_activateCalls =& WebDavModuleTestRewriteApi::_activateCalls();
 	$this->_markFactoryForCleanup();
 	$this->_registerFactoryImplementationForTest(
 	    'RewriteApi', 'WebDavModuleTestRewriteApi', 'WebDavModuleTestRewriteApi',
 	    'modules/webdav/test/phpunit/WebDavModuleTest.class', 'test');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
+	/* Use WebDavModuleTestHttpAuthInterface */
+	$this->_requestCalls =& WebDavModuleTestHttpAuthInterface::_requestCalls();
+	$this->_requestCalls = array();
+	$this->_registerFactoryImplementationForTest('HttpAuthInterface_1_0',
+	    'WebDavModuleTestHttpAuthInterface', 'WebDavModuleTestHttpAuthInterface',
+	    'module/webdav/test/phpunit/WebDavModuleTest.class', 'test');
 
 	/* Define OPTIONS request */
 	$this->_optionsRequest = implode("\r\n", array(
@@ -219,6 +233,24 @@ class WebDavModuleTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array(array('suppressBody' => 1)), $results);
+	$this->assertEquals(array(), $this->_requestCalls,
+	    'Authentication should be requested only on ERROR_PERMISSION_DENIED');
+    }
+
+    function testHandleEventErrorPermissionDenied() {
+	$this->_registerTestEventListener('Gallery::Error', $this->_module);
+
+	$error = GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
+	$event = GalleryCoreApi::newEvent('Gallery::Error');
+	$event->setData(array('error' => $error));
+	list ($ret, $results) = GalleryCoreApi::postEvent($event);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(array('suppressBody' => 1)), $results);
+	$this->assertEquals(array(array()), $this->_requestCalls,
+	    'Authentication should be requested');
     }
 
     function testHandleEventDelete() {
@@ -408,7 +440,7 @@ class WebDavModuleTestRewriteApi {
 	return $activeRules;
     }
 
-    function &_getActivateCalls() {
+    function &_activateCalls() {
 	static $activateCalls;
 	return $activateCalls;
     }
@@ -422,8 +454,21 @@ class WebDavModuleTestRewriteApi {
     }
 
     function activateRewriteRulesForModule($moduleId) {
-	$activateCalls =& WebDavModuleTestRewriteApi::_getActivateCalls();
+	$activateCalls =& WebDavModuleTestRewriteApi::_activateCalls();
 	$activateCalls[] = array($moduleId);
+    }
+}
+
+class WebDavModuleTestHttpAuthInterface /* extends HttpAuthInterface_1_0 */ {
+
+    function &_requestCalls() {
+	static $requestCalls;
+	return $requestCalls;
+    }
+
+    function requestAuthentication() {
+	$requestCalls =& WebDavModuleTestHttpAuthInterface::_requestCalls();
+	$requestCalls[] = array();
     }
 }
 

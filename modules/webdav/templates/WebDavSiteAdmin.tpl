@@ -53,13 +53,24 @@
   </div>
 {/if}
 
+{if $WebDavSiteAdmin.code & WEBDAV_STATUS_HTTPAUTH_PLUGINS_DISABLED}
+  <div class="gbBlock">
+    <h3 class="giWarning"> {g->text text="HTTP auth plugins disabled"} </h3>
+
+    <p class="giDescription">
+      {capture assign="adminHttpAuthUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=httpauth.HttpAuthSiteAdmin" return=true}{/capture}
+      {g->text text="You can connect with WebDAV anonymously, but you can't do anything which requires you to login because neither HTTP authentication nor web server authentication are enabled.  You should activate HTTP authentication in the %sSite Admin HTTP auth option%s." arg1=<a href=\"$adminHttpAuthUrl\">" arg2="</a>"}
+    </p>
+  </div>
+{/if}
+
 {if $WebDavSiteAdmin.code & WEBDAV_STATUS_CONNECT_RULE_DISABLED}
   <div class="gbBlock">
     <h3 class="giWarning"> {g->text text="'Connect to WebDAV' rule disabled"} </h3>
 
     <p class="giDescription">
-      {capture assign="adminRewriteUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite" return=true}{/capture}
-      {g->text text="Most WebDAV clients will fail to connect because the URL rewrite rule to generate short WebDAV URLs is disabled.  You should activate the 'Connect to WebDAV' rule in the %sSite Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminRewriteUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:webdav:admin\">" arg4="</a>"}
+      {capture assign="adminUrlRewriteUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite" return=true}{/capture}
+      {g->text text="Most WebDAV clients will fail to connect because the URL rewrite rule to generate short WebDAV URLs is disabled.  You should activate the 'Connect to WebDAV' rule in the %sSite Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminUrlRewriteUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:webdav:admin\">" arg4="</a>"}
     </p>
 
     <p class="giDescription">
@@ -105,7 +116,7 @@
 
     <p class="giDescription">
       {capture assign="adminPluginsUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins" return=true}{/capture}
-      {g->text text="PHP PathInfo rewrite doesn't support the rule to fall back on an alternative URL.  You should uninstall and reinstall the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting information is in the %sGallery Codex%s." arg1="<a href=\"$adminPluginsUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:webdav:admin\">" arg4="</a>"}
+      {g->text text="PHP path info doesn't support the rule to fall back on an alternative URL.  You should uninstall and reinstall the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting information is in the %sGallery Codex%s." arg1="<a href=\"$adminPluginsUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:webdav:admin\">" arg4="</a>"}
     </p>
   </div>
 {/if}
@@ -115,8 +126,8 @@
     <h3 class="giWarning"> {g->text text="'OPTIONS Requests' rule disabled"} </h3>
 
     <p class="giDescription">
-      {capture assign="adminRewriteUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite" return=true}{/capture}
-      {g->text text="The URL rewrite rule to fall back on an alternative URL is disabled.  You should activate the WebDAV 'OPTIONS Requests' rule in the %sSite Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminRewriteUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:webdav:admin\">" arg4="</a>"}
+      {capture assign="adminUrlRewriteUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite" return=true}{/capture}
+      {g->text text="The URL rewrite rule to fall back on an alternative URL is disabled.  You should activate the WebDAV 'OPTIONS Requests' rule in the %sSite Admin URL Rewrite option%s.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminUrlRewriteUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:webdav:admin\">" arg4="</a>"}
     </p>
   </div>
 {/if}

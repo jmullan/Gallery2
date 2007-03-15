@@ -153,6 +153,9 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    /* Rename WebDavMount to DownloadDavMount */
 
 	case '0.7.2':
+	    /* Add HTTP auth plugins check with HTTP auth interface */
+
+	case '0.7.3':
 	    /* Add special character support */
 
 	case 'end of upgrade path':
@@ -338,6 +341,25 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    return array(null, null);
 
 	case 'Gallery::Error':
+	    $data = $event->getData();
+	    if (!($data['error']->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+		/* Suppress generating HTML error pages for WebDAV clients */
+		return array(null, array('suppressBody' => true));
+	    }
+
+	    /* Request authentication */
+	    list ($ret, $httpAuthInterface) = GalleryCoreApi::newFactoryInstance(
+		'HttpAuthInterface_1_0');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (isset($httpAuthInterface)) {
+		$ret = $httpAuthInterface->requestAuthentication();
+		if ($ret) {
+		    return array($ret, null);
+		}
+	    }
+
 	    /* Suppress generating HTML error pages for WebDAV clients */
 	    return array(null, array('suppressBody' => true));
 

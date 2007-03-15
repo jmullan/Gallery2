@@ -66,6 +66,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
 	    $this->_getRootId());
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$this->_markForCleanup($this->_album);
@@ -73,12 +74,14 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/file');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
 	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum(
 	    $this->_album->getId());
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 
@@ -91,6 +94,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
 	    'GalleryUrlGenerator');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	if (!isset($this->_urlGenerator)) {
@@ -99,6 +103,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
 	$gallery->setUrlGenerator($this->_urlGenerator);
@@ -763,6 +768,13 @@ class WebDavTest extends GalleryTestCase {
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
 
+	/*
+	 * Regression: Check that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.  These
+	 * variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+
 	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
 	ob_start();
@@ -819,6 +831,13 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
+
+	/*
+	 * Regression: Check that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.  These
+	 * variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
 
 	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
@@ -892,6 +911,13 @@ class WebDavTest extends GalleryTestCase {
 	$_SERVER['CONTENT_LENGTH'] = 0;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
 
+	/*
+	 * Regression: Check that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.  These
+	 * variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret) {
@@ -954,6 +980,13 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
+
+	/*
+	 * Regression: Check that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.  These
+	 * variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
 
 	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 

@@ -19,6 +19,7 @@
  */
 
 /**
+ * WebDAV callbacks.
  * @package WebDav
  * @subpackage UserInterface
  * @author Andy Staudacher <ast@gmx.ch>

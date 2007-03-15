@@ -48,14 +48,23 @@ class WebDavController extends GalleryController {
 	    return array($ret, null);
 	}
 
+	/*
+	 * Windows Web Folders doesn't respect HTTP auth in PUT responses, so the user is not
+	 * prompted to login.  To work around this, request HTTP auth in all responses to anonymous
+	 * Windows Web Folders requests.  Consequently anonymous users can't connect with Windows
+	 * Web Folders.
+	 */
 	$userAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
-	if (strpos($userAgent, 'WINDOWS WEBFOLDERS USER AGENT STRING') !== false) {
+	if (strpos($userAgent, 'Microsoft Data Access Internet Publishing Provider DAV') !== false
+		|| strpos($userAgent, 'Microsoft-WebDAV-MiniRedir') !== false) {
 	    list ($ret, $isAnonymous) = GalleryCoreApi::isAnonymousUser();
 	    if ($ret) {
 		return array($ret, null);
 	    }
 	    if ($isAnonymous) {
-		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
+		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__,
+		    'WebDAV: Anonymous request with Windows Web Folders.'
+		    . '  Workaround: Request HTTP auth in all responses.'), null);
 	    }
 	}
 
@@ -124,7 +133,10 @@ class WebDavController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    return array(null, $data);
+	    /*
+	     * Don't send HTTP redirects of HTML status / error back to WebDAV clients since we have
+	     * already set our status code.  Fall through to the standard empty return.
+	     */
 	}
 
 	return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
@@ -166,8 +178,13 @@ class WebDavView extends GalleryView {
     function renderImmediate($status, $error) {
 	$requestMethod = GalleryUtilities::strToLower(
 	    GalleryUtilities::getServerVar('REQUEST_METHOD'));
+	/* If we just completed a PUT request and got delegated here, just silently return */
+	if ($requestMethod == 'put') {
+	    return null;
+	}
+
 	if (!in_array($requestMethod, array('options', 'propfind', 'proppatch', 'mkcol', 'delete',
-		'move', 'lock', 'unlock'))) {
+					    'move', 'lock', 'unlock'))) {
 	    return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
 	}
 
