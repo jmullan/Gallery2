@@ -617,9 +617,9 @@ class GalleryDataCache {
 	$key = md5(serialize($keyData) . '|' . $extraKey . '|' . implode(",", $aclIds));
 	$userId = $gallery->getActiveUserId();
 	/*
-	 * Note: there is no complete index for this WHERE clause because the MySQL query optimizer 
-	 * would still use the PK for this query. This should not lead to a performance decrease as 
-	 * PK is a unique index thus returning only 0/1 rows that need to be compared with isEmpty 
+	 * Note: there is no complete index for this WHERE clause because the MySQL query optimizer
+	 * would still use the PK for this query. This should not lead to a performance decrease as
+	 * PK is a unique index thus returning only 0/1 rows that need to be compared with isEmpty
 	 * and timestamp.
 	 */
 	list ($ret, $results) = GalleryCoreApi::getMapEntry('GalleryCacheMap',
@@ -707,7 +707,7 @@ class GalleryDataCache {
 		return $ret;
 	    }
 	}
-	
+
 	return null;
     }
 
@@ -775,6 +775,8 @@ class GalleryDataCache {
 
     /**
      * Returns session related page cache key, eg. to make the page cache language sensitive
+     * @todo The extra key for exif module is a quick fix, not a permanent fix; it should be
+     *       cached on the block level not on page level.
      *
      * @return array object GalleryStatus a status code
      *               string extra cache key
@@ -790,6 +792,11 @@ class GalleryDataCache {
 	}
 	$isEmbedded = (int)$gallery->isEmbedded();
 	$extraKey = (int)($session->isUsingCookies()) . '-' . $languageCode . '-' . $isEmbedded;
+
+	$mode = $session->get('exif.module.LoadExifInfo.mode');
+	if (!empty($mode) && $mode != 'summary') {
+	    $extraKey .= '-exif' . $mode;
+	}
 
 	return array(null, $extraKey);
     }
