@@ -16,6 +16,19 @@ INSERT INTO DB_TABLE_PREFIXSchema (
  DB_COLUMN_PREFIXminor
 ) VALUES('WebDavLockMap', 0, 1);
 
+# WebDavPathComponentMap
+CREATE TABLE DB_TABLE_PREFIXWebDavPathComponentMap(
+ DB_COLUMN_PREFIXitemId int(11),
+ DB_COLUMN_PREFIXpathComponent varchar(128)
+) DB_TABLE_TYPE
+/*!40100 DEFAULT CHARACTER SET utf8 */;
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('WebDavPathComponentMap', 0, 1);
+
 ## postgres
 # WebDavLockMap
 CREATE TABLE DB_TABLE_PREFIXWebDavLockMap(
@@ -31,6 +44,17 @@ INSERT INTO DB_TABLE_PREFIXSchema (
  DB_COLUMN_PREFIXmajor,
  DB_COLUMN_PREFIXminor
 ) VALUES('WebDavLockMap', 0, 1);
+
+# WebDavPathComponentMap
+CREATE TABLE DB_TABLE_PREFIXWebDavPathComponentMap(
+ DB_COLUMN_PREFIXitemId INTEGER,
+ DB_COLUMN_PREFIXpathComponent VARCHAR(128));
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('WebDavPathComponentMap', 0, 1);
 
 ## oracle
 # WebDavLockMap
@@ -48,6 +72,17 @@ INSERT INTO DB_TABLE_PREFIXSchema (
  DB_COLUMN_PREFIXminor
 ) VALUES('WebDavLockMap', 0, 1);
 
+# WebDavPathComponentMap
+CREATE TABLE DB_TABLE_PREFIXWebDavPathComponentMap(
+ DB_COLUMN_PREFIXitemId INTEGER,
+ DB_COLUMN_PREFIXpathComponent VARCHAR2(128));
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('WebDavPathComponentMap', 0, 1);
+
 ## db2
 # WebDavLockMap
 CREATE TABLE DB_TABLE_PREFIXWebDavLockMap(
@@ -64,6 +99,17 @@ INSERT INTO DB_TABLE_PREFIXSchema (
  DB_COLUMN_PREFIXminor
 ) VALUES('WebDavLockMap', 0, 1);
 
+# WebDavPathComponentMap
+CREATE TABLE DB_TABLE_PREFIXWebDavPathComponentMap(
+ DB_COLUMN_PREFIXitemId INTEGER,
+ DB_COLUMN_PREFIXpathComponent VARCHAR(128));
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('WebDavPathComponentMap', 0, 1);
+
 ## mssql
 # WebDavLockMap
 CREATE TABLE DB_TABLE_PREFIXWebDavLockMap(
@@ -79,4 +125,15 @@ INSERT INTO DB_TABLE_PREFIXSchema (
  DB_COLUMN_PREFIXmajor,
  DB_COLUMN_PREFIXminor
 ) VALUES('WebDavLockMap', 0, 1);
+
+# WebDavPathComponentMap
+CREATE TABLE DB_TABLE_PREFIXWebDavPathComponentMap(
+ DB_COLUMN_PREFIXitemId INT NULL,
+ DB_COLUMN_PREFIXpathComponent NVARCHAR(128) NULL);
+
+INSERT INTO DB_TABLE_PREFIXSchema (
+ DB_COLUMN_PREFIXname,
+ DB_COLUMN_PREFIXmajor,
+ DB_COLUMN_PREFIXminor
+) VALUES('WebDavPathComponentMap', 0, 1);
 

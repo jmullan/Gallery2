@@ -464,13 +464,21 @@ class WebDavHelper {
 	}
 
 	/* Check if the item has a WebDAV path component */
-	list ($ret, $webDavPathComponent) = GalleryCoreApi::getPluginParameter(
-	    'module', 'webdav', 'pathComponent', $itemId);
+	$query = '
+	    SELECT
+	      [WebDavPathComponentMap::pathComponent]
+	    FROM
+	      [WebDavPathComponentMap]
+	    WHERE
+	      [WebDavPathComponentMap::itemId] = ?';
+	list ($ret, $results) = $gallery->search($query, $itemId);
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if ((empty($webDavPathComponent) && $pathComponent != $legalPathComponent)
-		|| (!empty($webDavPathComponent) && $pathComponent != $webDavPathComponent)) {
+	$result = $results->nextResult();
+
+	if (($result === false && $pathComponent != $legalPathComponent)
+		|| ($result !== false && $pathComponent != $result[0])) {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
 					       "Parent $parentId path $pathComponent"), null);
 	}
@@ -691,6 +699,8 @@ class WebDavHelper {
      * @access private
      */
     function _propfindFiles($item, $path, $depth, &$files) {
+	global $gallery;
+
 	/* Verify that the provided object implements the required methods */
 	foreach (array('creationTimestamp', 'title', 'modificationTimestamp', 'pathComponent')
 		as $memberName) {
@@ -803,13 +813,21 @@ class WebDavHelper {
 	}
 
 	foreach ($childItems as $childItem) {
-	    list ($ret, $pathComponent) = GalleryCoreApi::getPluginParameter(
-		'module', 'webdav', 'pathComponent', $childItem->getId());
+	    $query = '
+		SELECT
+		  [WebDavPathComponentMap::pathComponent]
+		FROM
+		  [WebDavPathComponentMap]
+		WHERE
+		  [WebDavPathComponentMap::itemId] = ?';
+	    list ($ret, $results) = $gallery->search($query, $childItem->getId());
 	    if ($ret) {
 		return $ret;
 	    }
-	    if (empty($pathComponent)) {
+	    if (($result = $results->nextResult()) === false) {
 		$pathComponent = $childItem->getPathComponent();
+	    } else {
+	    	$pathComponent = $result[0];
 	    }
 
 	    /*
@@ -1077,8 +1095,8 @@ class WebDavHelper {
 
 	/* Set WebDAV path component */
 	if ($album->getPathComponent() != $pathComponent) {
-	    $ret = GalleryCoreApi::setPluginParameter(
-		'module', 'webdav', 'pathComponent', $pathComponent, $album->getId());
+	    $ret = GalleryCoreApi::addMapEntry('WebDavPathComponentMap',
+		array('itemId' => $album->getId(), 'pathComponent' => $pathComponent));
 	    if ($ret) {
 		return $ret;
 	    }
@@ -1575,8 +1593,8 @@ class WebDavHelper {
 
 	/* Set WebDAV path component */
 	if ($item->getPathComponent() != $newPathComponent) {
-	    $ret = GalleryCoreApi::setPluginParameter(
-		'module', 'webdav', 'pathComponent', $newPathComponent, $itemId);
+	    $ret = GalleryCoreApi::addMapEntry('WebDavPathComponentMap',
+		array('itemId' => $itemId, 'pathComponent' => $newPathComponent));
 	    if ($ret) {
 		return $ret;
 	    }

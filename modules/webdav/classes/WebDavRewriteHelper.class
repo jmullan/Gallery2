@@ -38,33 +38,66 @@ class WebDavRewriteHelper {
      * @see GalleryFileSystemEntity::fetchLogicalPath
      */
     function fetchLogicalPath($item) {
+	global $gallery;
+
 	if (!GalleryUtilities::isA($item, 'GalleryFileSystemEntity')) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
-	list ($ret, $parentItems) = GalleryCoreApi::fetchParents($item);
+	$parentId = $item->getParentId();
+	if (empty($parentId)) {
+	    return array(null, '/');
+	}
+
+	list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($parentId);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
+	/* Append the parent item */
+	array_push($parentIds, $parentId);
+
 	/* Ignore the root item */
-	array_shift($parentItems);
+	array_shift($parentIds);
+
+	if (empty($parentIds)) {
+	    $parentItems = array();
+	} else {
+	    list ($ret, $parentItems) = GalleryCoreApi::loadEntitiesById($parentIds);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
 
 	/* Append the given item */
+	array_push($parentIds, $item->getId());
 	array_push($parentItems, $item);
+
+	$query = '
+	    SELECT
+	      [WebDavPathComponentMap::itemId],
+	      [WebDavPathComponentMap::pathComponent]
+	    FROM
+	      [WebDavPathComponentMap]
+	    WHERE
+	      [WebDavPathComponentMap::itemId] IN ('
+	    . GalleryUtilities::makeMarkers($parentIds) . ')';
+	list ($ret, $results) = $gallery->search($query, $parentIds);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$webDavPathComponents = array();
+	while (($result = $results->nextResult()) !== false) {
+	    $webDavPathComponents[$result[0]] = $result[1];
+	}
 
 	$path = '';
 	foreach ($parentItems as $parentItem) {
 	    /* Check if the item has a WebDAV path component */
-	    list ($ret, $pathComponent) = GalleryCoreApi::getPluginParameter(
-		'module', 'webdav', 'pathComponent', $parentItem->getId());
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    /* Otherwise use the regular path component */
-	    if (empty($pathComponent)) {
-		$pathComponent = $parentItem->getPathComponent();
+	    $pathComponent = $parentItem->getPathComponent();
+	    if (!empty($webDavPathComponents[$parentItem->getId()])) {
+		$pathComponent = $webDavPathComponents[$parentItem->getId()];
 	    }
 
 	    /* Use rawurlencode to encode ' ' as '%20' instead of '+' */

@@ -62,6 +62,12 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	}
 
 	$ret = GalleryCoreApi::registerEventListener(
+	    'GalleryEntity::delete', new WebDavModule(), true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::registerEventListener(
 	    'GalleryEntity::save', new WebDavModule(), true);
 	if ($ret) {
 	    return $ret;
@@ -335,17 +341,35 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    /* Suppress generating HTML error pages for WebDAV clients */
 	    return array(null, array('suppressBody' => true));
 
-	case 'GalleryEntity::save':
-	    /* Remove WebDAV path component */
+	case 'GalleryEntity::delete':
 	    $entity = $event->getEntity();
+
+	    /* Remove WebDAV path component */
+	    $ret = GalleryCoreApi::removeMapEntry('WebDavPathComponentMap',
+		array('itemId' => $entity->getId()));
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    return array(null, null);
+
+	case 'GalleryEntity::save':
+	    $entity = $event->getEntity();
+	    if (!GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
+		return array(null, null);
+	    }
 	    if (!$entity->isModified('pathComponent')) {
 		return array(null, null);
 	    }
 
-	    $ret = $this->removeParameter('pathComponent', $entity->getId());
+	    /* Remove WebDAV path component */
+	    $ret = GalleryCoreApi::removeMapEntry('WebDavPathComponentMap',
+		array('itemId' => $entity->getId()));
 	    if ($ret) {
 		return array($ret, null);
 	    }
+
+	    return array(null, null);
 	}
 
 	return array(null, null);

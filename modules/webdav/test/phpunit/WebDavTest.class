@@ -103,7 +103,10 @@ class WebDavTest extends GalleryTestCase {
 	}
 	$gallery->setUrlGenerator($this->_urlGenerator);
 
+	/* Register event listeners */
 	$this->_registerTestEventListener('Gallery::Error', new WebDavModule());
+	$this->_registerTestEventListener('GalleryEntity::delete', new WebDavModule());
+	$this->_registerTestEventListener('GalleryEntity::save', new WebDavModule());
     }
 
     function tearDown() {
@@ -165,8 +168,8 @@ class WebDavTest extends GalleryTestCase {
 
 	/* Set WebDAV path component */
 	if ($item->getPathComponent() != $pathComponent) {
-	    $ret = GalleryCoreApi::setPluginParameter(
-		'module', 'webdav', 'pathComponent', $pathComponent, $item->getId());
+	    $ret = GalleryCoreApi::addMapEntry('WebDavPathComponentMap',
+		array('itemId' => $item->getId(), 'pathComponent' => $pathComponent));
 	    if ($ret) {
 		return $ret;
 	    }
@@ -642,6 +645,8 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testMkcolWithSpecialCharacters() {
+	global $gallery;
+
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -688,13 +693,21 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('', $item->getDescription());
 	$this->assertEquals('', $item->getKeywords());
 
-	list ($ret, $webDavPathComponent) = GalleryCoreApi::getPluginParameter(
-	    'module', 'webdav', 'pathComponent', $itemId);
+	$query = '
+	    SELECT
+	      [WebDavPathComponentMap::pathComponent]
+	    FROM
+	      [WebDavPathComponentMap]
+	    WHERE
+	      [WebDavPathComponentMap::itemId] = ?';
+	list ($ret, $results) = $gallery->search($query, $itemId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	$this->assertEquals($pathComponent, $webDavPathComponent);
+	if (($result = $results->nextResult()) === false) {
+	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_MISSING_VALUE));
+	}
+	$this->assertEquals($pathComponent, $result[0]);
     }
 
     function testDelete() {
@@ -785,6 +798,8 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testAddWithSpecialCharacters() {
+	global $gallery;
+
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -838,13 +853,21 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('application/unknown', $item->getMimeType());
 	$this->assertEquals($fileSize, $item->getSize());
 
-	list ($ret, $webDavPathComponent) = GalleryCoreApi::getPluginParameter(
-	    'module', 'webdav', 'pathComponent', $itemId);
+	$query = '
+	    SELECT
+	      [WebDavPathComponentMap::pathComponent]
+	    FROM
+	      [WebDavPathComponentMap]
+	    WHERE
+	      [WebDavPathComponentMap::itemId] = ?';
+	list ($ret, $results) = $gallery->search($query, $itemId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	$this->assertEquals($pathComponent, $webDavPathComponent);
+	if (($result = $results->nextResult()) === false) {
+	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_MISSING_VALUE));
+	}
+	$this->assertEquals($pathComponent, $result[0]);
     }
 
     /**
@@ -1072,13 +1095,21 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals($this->_item->getId(), $itemId);
 
-	list ($ret, $webDavPathComponent) = GalleryCoreApi::getPluginParameter(
-	    'module', 'webdav', 'pathComponent', $itemId);
+	$query = '
+	    SELECT
+	      [WebDavPathComponentMap::pathComponent]
+	    FROM
+	      [WebDavPathComponentMap]
+	    WHERE
+	      [WebDavPathComponentMap::itemId] = ?';
+	list ($ret, $results) = $gallery->search($query, $itemId);
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	$this->assertEquals($pathComponent, $webDavPathComponent);
+	if (($result = $results->nextResult()) === false) {
+	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_MISSING_VALUE));
+	}
+	$this->assertEquals($pathComponent, $result[0]);
     }
 
     /**

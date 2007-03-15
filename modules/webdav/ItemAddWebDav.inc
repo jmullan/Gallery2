@@ -132,8 +132,8 @@ class ItemAddWebDav extends ItemAddPlugin {
 
 	/* Set WebDAV path component */
 	if ($item->getPathComponent() != $pathComponent) {
-	    $ret = GalleryCoreApi::setPluginParameter(
-		'module', 'webdav', 'pathComponent', $pathComponent, $item->getId());
+	    $ret = GalleryCoreApi::addMapEntry('WebDavPathComponentMap',
+		array('itemId' => $item->getId(), 'pathComponent' => $pathComponent));
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

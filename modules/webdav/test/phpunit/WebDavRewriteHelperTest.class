@@ -66,6 +66,10 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
+	/* Register event listeners */
+	$this->_registerTestEventListener('GalleryEntity::delete', new WebDavModule());
+	$this->_registerTestEventListener('GalleryEntity::save', new WebDavModule());
     }
 
     function _rename(&$item, $pathComponent) {
@@ -105,8 +109,8 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 
 	/* Set WebDAV path component */
 	if ($item->getPathComponent() != $pathComponent) {
-	    $ret = GalleryCoreApi::setPluginParameter(
-		'module', 'webdav', 'pathComponent', $pathComponent, $item->getId());
+	    $ret = GalleryCoreApi::addMapEntry('WebDavPathComponentMap',
+		array('itemId' => $item->getId(), 'pathComponent' => $pathComponent));
 	    if ($ret) {
 		return $ret;
 	    }
