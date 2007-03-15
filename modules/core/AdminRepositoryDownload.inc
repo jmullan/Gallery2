@@ -162,6 +162,17 @@ class AdminRepositoryDownloadController extends GalleryController {
 	$phpVm = $gallery->getPhpVm();
 	$templateAdapter =& $gallery->getTemplateAdapter();
 
+	/*
+	 * Get the original plugin status from before we start making changes so that we can
+	 * try to counteract any activate/deactivate ripple effects.
+	 */
+	foreach (array('module', 'theme') as $pluginType) {
+	    list ($ret, $pluginStatus[$pluginType]) = $this->_fetchPluginStatus($pluginType, false);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return $ret;
@@ -355,11 +366,6 @@ class AdminRepositoryDownloadController extends GalleryController {
 				return $ret;
 			    }
 
-			    list ($ret, $isActive) = $plugin->isActive();
-			    if ($ret) {
-				return $ret;
-			    }
-
 			    $ret = $plugin->installOrUpgrade();
 			    if ($ret) {
 				return $ret;
@@ -375,7 +381,10 @@ class AdminRepositoryDownloadController extends GalleryController {
 				$autoConfigured = true;
 			    }
 
-			    if ($autoConfigured && $isActive) {
+			    $isActive = !empty($pluginStatus[$pluginType][$pluginId]['active']);
+			    $notInstalled = empty($pluginStatus[$pluginType][$pluginId]['version']);
+
+			    if ($autoConfigured && ($isActive || $notInstalled)) {
 				list ($ret, $redirect) = $plugin->activate();
 				if ($ret) {
 				    return $ret;
@@ -447,6 +456,16 @@ class AdminRepositoryDownloadController extends GalleryController {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$templateAdapter->completeProgressBar($urlGenerator->generateUrl($redirect));
 	return null;
+    }
+
+    /**
+     * Passthrough to GalleryCoreApi::fetchPluginStatus, used by test code to
+     * allow us to inject mock plugins.
+     * @see GalleryCoreApi::fetchPluginStatus
+     * @private
+     */
+    function _fetchPluginStatus($pluginType, $ignoreCache) {
+	return GalleryCoreApi::fetchPluginStatus($pluginType, $ignoreCache);
     }
 }
 
