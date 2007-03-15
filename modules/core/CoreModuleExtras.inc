@@ -2120,6 +2120,8 @@ class CoreModuleExtras {
 	    /* Added GalleryUrlGenerator::makeAbsoluteUrl() */
 	case '1.1.29':
 	    /* 2.2 Release Candidate 2! */
+	case '1.1.30':
+	    /* Reposition display_errors in config.php */
 
 	case 'end of upgrade path':
 	    /*
@@ -2387,18 +2389,7 @@ $gallery->setConfig(\'baseUri\', \'\');'));
 	case '1.1.16':
 	case '1.1.17':
 	case '1.1.18':
-	    /* Add PHP display_errors setting */
-	    $configChanges[] = array('remove' => array(), 'edit' => array(), 'add' => array(
-'
-/*
- * When display_errors is enabled, PHP errors are printed to the output.
- * For production web sites, you\'re strongly encouraged to turn this feature off,
- * and use error logging instead.
- * During development, you should set the value to 1 to ensure that you notice PHP
- * warnings and notices that are not covered in unit tests (e.g. template issues).
- */
-@ini_set(\'display_errors\', 0);'));
-
+	    /* Originally added PHP display_errors setting in this step, but at the end. */
 	case '1.1.19':
 	case '1.1.20':
 	case '1.1.21':
@@ -2425,7 +2416,22 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.1.27':
 	case '1.1.28':
 	case '1.1.29':
+	case '1.1.30':
+	    /* Reposition display_errors from the end to the beginning of the config file. */
+	    $remove = array('{/\*[^/]*\*/\s*\@?ini_set\(\'display_errors\',.*?;\s*}s');
+	    $edit = array();
+	    $edit['regexp'] = '{(<\?php\s*(?:/\*.*?\*/\s*)?)}s';
+	    $edit['replacement'] = '\1/*
+ * When display_errors is enabled, PHP errors are printed to the output.
+ * For production web sites, you\'re strongly encouraged to turn this feature off,
+ * and use error logging instead.
+ * During development, you should set the value to 1 to ensure that you notice PHP
+ * warnings and notices that are not covered in unit tests (e.g. template issues).
+ */
+@ini_set(\'display_errors\', 0);
 
+';
+	    $configChanges[] = array('remove' => $remove, 'add' => array(), 'edit' => array($edit));
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we always
