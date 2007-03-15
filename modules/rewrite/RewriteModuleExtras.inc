@@ -325,8 +325,7 @@ class RewriteModuleExtras {
 
 	    /**
 	     * Clear the tpl cache since our .htaccess and isapi templates have changed and the file
-	     * modification timestamp is not guaranteed to be older than the one of the compiled
-	     * files.
+	     * modification timestamp is not guaranteed to be newer than the compiled files.
 	     * @todo: Revisit when we have per module .tpl versioning.
 	     */
 	    $gallery->guaranteeTimeLimit(60);

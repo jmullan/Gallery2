@@ -285,7 +285,7 @@ class WebDavHelper {
 				'useAuthToken' => false);
 	} else {
 	    $urlParams = array('view' => 'webdav.DownloadDavMount', 'itemId' => $itemId);
-	    $urlOptions = array();    
+	    $urlOptions = array();
 	}
 
 	$link['href'] = $urlGenerator->generateUrl($urlParams, $urlOptions);
@@ -1006,7 +1006,7 @@ class WebDavHelper {
 	}
 
 	$originalPath = GalleryUtilities::getRequestVariables('originalPath');
-	$title = empty($originalPath) ? $pathComponent :  basename($originalPath);
+	$title = empty($originalPath) ? $pathComponent : basename($originalPath);
 	$ret = WebDavHelper::mkcolHelper($parentId, $pathComponent, $title, '', '', '');
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_ILLEGAL_CHILD) {
