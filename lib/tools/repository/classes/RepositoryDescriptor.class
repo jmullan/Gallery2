@@ -222,11 +222,6 @@ class RepositoryDescriptor extends RepositoryObject {
 	$g2Base = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
 	$ignoreOffset = strlen(substr($pluginDir, strlen($g2Base) + 1));
 
-	$data['files']['MANIFEST'] = array(
-	    'bytes' => (string)$platform->filesize($manifestFile),
-	    'hash' => sprintf('%u', crc32($platform->file_get_contents($manifestFile))),
-	    'packages' => array('base'));
-
 	foreach ($manifest as $file => $fileInfo) {
 	    /* Strip off the {modules,themes}/foo/ part */
 	    $file = substr($file, $ignoreOffset);

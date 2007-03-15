@@ -45,9 +45,6 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	/* This maps to ../data/MANIFEST */
 	$this->_canonicalFileMetaData = array(
 	    'files' => array(
-		'MANIFEST' => array(
-		    'bytes' => '12121', 'hash' => '381282740',
-		    'packages' => array('base')),
 		'file.1' => array(
 		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
 		'file.2' => array(
@@ -116,9 +113,6 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 			  'description' => 'pt_PT-modules_testModule-This is a test module.',
 			  'groupLabel' => 'pt_PT-modules_testModule-Test Group')),
 		  'files' => array(
-		      'MANIFEST' => array(
-			  'bytes' => '12121', 'hash' => '381282740',
-			  'packages' => array('base')),
 		      'file.1' => array(
 			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
 		      'file.2' => array(
@@ -207,7 +201,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(
-	    array('MANIFEST', 'file.1', 'file.2', 'po/strings.raw'),
+	    array('file.1', 'file.2', 'po/strings.raw'),
 	    $descriptor->getFilesInPackage('base'));
 
 	$this->assertEquals(
