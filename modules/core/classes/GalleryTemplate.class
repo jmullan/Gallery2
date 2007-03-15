@@ -155,7 +155,7 @@ class GalleryTemplate {
      */
     function style($path) {
 	$head =& $this->getVariableByReference('head');
-	$head['style'][] = $path;
+	$head['style'][$path] = true;
     }
 
     /**
@@ -164,7 +164,7 @@ class GalleryTemplate {
      */
     function javascript($path) {
 	$head =& $this->getVariableByReference('head');
-	$head['javascript'][] = $path;
+	$head['javascript'][$path] = true;
     }
 
     /**
@@ -316,7 +316,8 @@ class GalleryTemplate {
 	    $smarty->register_prefilter(array('GalleryTemplate', 'preFilter'));
 	}
 
-	$smarty->assign('head', array('tpl' => array(), 'style' => array()));
+	$smarty->assign('head',
+			array('tpl' => array(), 'style' => array(), 'javascript' => array()));
 
 	return $smarty;
     }

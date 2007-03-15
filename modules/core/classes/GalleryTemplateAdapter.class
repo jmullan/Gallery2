@@ -386,17 +386,15 @@ class GalleryTemplateAdapter {
 	}
 
 	/* Style */
-	foreach ($head['style'] as $path) {
+	foreach ($head['style'] as $path => $unused) {
 	    $output[] = sprintf('<link rel="stylesheet" type="text/css" href="%s"/>' . "\n",
 				$urlGenerator->generateUrl(array('href' => $path)));
 	}
 
 	/* Javascript */
-	if (isset($head['javascript'])) {
-	    foreach ($head['javascript'] as $path) {
-		$output[] = sprintf('<script type="text/javascript" src="%s"></script>' . "\n",
-			$urlGenerator->generateUrl(array('href' => $path)));
-	    }
+	foreach ($head['javascript'] as $path => $unused) {
+	    $output[] = sprintf('<script type="text/javascript" src="%s"></script>' . "\n",
+				$urlGenerator->generateUrl(array('href' => $path)));
 	}
 
 	/* Tpl to include. */
