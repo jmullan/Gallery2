@@ -562,6 +562,12 @@
 	Support for
 	<a href="http://www.microsoft.com/sql/" target="_blank">MSSQL</a> database.
       </li>
+      <li>
+	Microsoft IIS doesn't work with PHP-CGI due to a PHP/IIS bug. Microsoft recommends
+	<a href="http://www.iis.net/default.aspx?tabid=1000051" target="_blank">FastCGI</a> instead
+	and doesn't support PHP-CGI. Please use ISAPI PHP or FastCGI with IIS instead.  Users of
+	Apache on Windows can still use PHP-CGI (and mod_php or FastCGI).
+      </li>
     </ol>
 
     <h3>
