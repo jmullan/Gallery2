@@ -334,6 +334,8 @@ class RewriteModuleExtras {
 		$platform->recursiveRmdir($dir);
 	    }
 
+	case '1.1.12':
+
 	case 'end of upgrade path':
 	    break;
 

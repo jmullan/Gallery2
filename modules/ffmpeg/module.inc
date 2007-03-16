@@ -35,7 +35,7 @@ class FfmpegModule extends GalleryModule {
 	$this->setId('ffmpeg');
 	$this->setName($gallery->i18n('Ffmpeg'));
 	$this->setDescription($gallery->i18n('A toolkit for processing movies'));
-	$this->setVersion('1.0.6');
+	$this->setVersion('1.0.7');
 	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));

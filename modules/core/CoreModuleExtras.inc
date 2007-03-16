@@ -2122,6 +2122,8 @@ class CoreModuleExtras {
 	    /* 2.2 Release Candidate 2! */
 	case '1.1.30':
 	    /* Reposition display_errors in config.php */
+	case '1.1.31':
+	    /* 2.2 Release! */
 
 	case 'end of upgrade path':
 	    /*
@@ -2432,6 +2434,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 
 ';
 	    $configChanges[] = array('remove' => $remove, 'add' => array(), 'edit' => array($edit));
+	case '1.1.31':
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we always

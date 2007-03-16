@@ -33,7 +33,7 @@ class CarbonTheme extends GalleryTheme {
 	$this->setId('carbon');
 	$this->setName($gallery->i18n('Carbon'));
 	$this->setDescription($gallery->i18n('Gallery2 theme by mincel.com'));
-	$this->setVersion('1.2.2');
+	$this->setVersion('1.2.3');
 	$this->setRequiredCoreApi(array(7, 10));
 	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(
