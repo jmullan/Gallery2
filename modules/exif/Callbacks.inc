@@ -27,10 +27,10 @@ class ExifCallbacks {
 
     function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
+	static $blockNum = 0;
 
 	switch ($callback) {
 	case 'LoadExifInfo':
-
 	    GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
 
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['itemId']);
@@ -59,11 +59,7 @@ class ExifCallbacks {
 		}
 	    }
 
-	    if ($mode == 'detailed') {
-		$filter = EXIF_DETAILED;
-	    } else {
-		$filter = EXIF_SUMMARY;
-	    }
+	    $filter = ($mode == 'detailed') ? EXIF_DETAILED : EXIF_SUMMARY;
 
 	    list ($ret, $exifData) = ExifHelper::getExifData($path, $filter);
 	    if ($ret) {
@@ -84,9 +80,12 @@ class ExifCallbacks {
 		return null;
 	    }
 
+	    $ajaxBlockNum = GalleryUtilities::getRequestVariables('blockNum');
+	    $thisBlockNum = !empty($ajaxBlockNum) ? $ajaxBlockNum : ++$blockNum;
 	    $block =& $smarty->_tpl_vars['block'];
-	    $block['exif']['LoadExifInfo']['exifData'] = $exifData;
-	    $block['exif']['LoadExifInfo']['mode'] = $mode;
+	    $block['exif']['LoadExifInfo'] = array('exifData' => $exifData,
+						   'mode' => $mode,
+						   'blockNum' => $thisBlockNum);
 
 	    return null;
 	}
