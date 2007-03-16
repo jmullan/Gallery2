@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: Gallery: WebDAV 0.7.3\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2006-11-16 01:37+0100\n"
-"PO-Revision-Date: 2007-03-13 10:05+0000\n"
+"PO-Revision-Date: 2007-03-16 10:46+0000\n"
 "Last-Translator: Bjørn Graabek <bjorn AT graabek DOT com>\n"
 "Language-Team: Danish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -43,10 +43,10 @@ msgid "Mount Gallery on your desktop."
 msgstr "Monter Gallery på dit skrivebord."
 
 msgid "Remote Interfaces"
-msgstr "Fjernstyringsgrænseflade"
+msgstr "Fjernbetjenings-grænseflader"
 
 msgid "Connect to WebDAV"
-msgstr "Koble til WebDAV"
+msgstr "Kobl til WebDAV"
 
 msgid ""
 "Use short URL because most WebDAV clients don't support query strings.  The Windows WebDAV "
@@ -136,7 +136,7 @@ msgid ""
 msgstr ""
 "Du kan koble til med WebDAV anonymt, men du kan ikke gøre noget der kræver at du logger ind "
 "da HTTP-auth modulet er deaktiveret. Du bør aktivere HTTP-auth modulet i %sAdministratorens "
-"Plugin indstillinger%s. Fejlsøgingsdokumentationen er at finde i %sGallerycodexen%s."
+"Plugin indstillinger%s. Fejlsøgingsdokumentationen er i %sGallerycodexen%s."
 
 msgid "HTTP auth plugin disabled"
 msgstr "HTTP-auth plugin er deaktiveret"
@@ -147,13 +147,12 @@ msgid ""
 "auth module.  You should activate HTTP authentication in the settings of the HTTP auth "
 "module."
 msgstr ""
-"Du kan koble til med WebDAV anonymt, men du kan ikke gjøre noe som krever at du logger inn "
-"fordi hverken modulen HTTP-autentifisering  eller tjenerautentifisering er aktivert i "
-"modulen HTTP-autentifisering. Du bør aktivere HTTP-autentifisering i innstillingene for "
-"modulen HTTP-autentifisering."
+"Du kan koble til WebDAV anonymt, men du kan ikke gøre noget der kræver at du logger ind da "
+"hverken HTTP-authentication  eller server authentication er aktivert i HTTP-auth modulet. Du "
+"bør aktivere HTTP-authentication i indstillingene for HTTP-auth modulet."
 
 msgid "'Connect to WebDAV' rule disabled"
-msgstr "'Forbind til WebDAV' regelen er deaktiveret"
+msgstr "'Forbind til WebDAV' reglen er deaktiveret"
 
 #, fuzzy, c-format
 msgid ""
@@ -169,13 +168,13 @@ msgstr ""
 msgid "Missing DAV headers"
 msgstr "Mangler DAV headers"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Some WebDAV clients, e.g. Mac OS X WebDAVFS, will fail to connect because OPTIONS responses "
 "are missing DAV headers.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
-"Noen WebDAV-klienter, f.eks. Mac OS X WebDAVFS, vil ikke kunne koble til fordi OPTIONS-"
-"responser mangler DAV-hoder. Feilsøkingsdokumentasjon er i %sGallerycodexen%s."
+"Nogle WebDAV-klienter, f.eks. Mac OS X WebDAVFS, vil ikke kunne koble til fordi OPTIONS-svar "
+"mangler DAV-headers. Fejlsøgningsdokumentation er i %sGallerycodexen%s."
 
 msgid "Alternative URL missing DAV headers"
 msgstr "Alternativ nettadresse mangler DAV-hoder"
@@ -193,20 +192,20 @@ msgstr ""
 msgid "URL rewrite module disabled"
 msgstr "Modul for omskriving av nettadresser er deaktivert"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Most WebDAV clients will fail to connect because the URL rewrite module is disabled.  You "
 "should activate the URL rewrite module in the %sSite Admin Plugins option%s and choose "
 "either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %"
 "sGallery Codex%s."
 msgstr ""
-"De fleste WebDAV-klienter vil ikke kunne koble til fordi modulen for omskriving av "
-"nettadresser er deaktivert. Du bør aktivere modulen for omskriving av nettadresser i %"
-"sNettstadaministrasjonens innstillinger for programtillegg%s og velge enten Apache "
-"mod_rewrite eller ISAPI_Rewrite. Feilsøkingsdokumentasjon er i %sGallerycodexen%s."
+"De fleste WebDAV-klienter vil ikke kunne koble til fordi  URLomskrivingsmodulet er "
+"deaktivert. Du bør aktivere URL omskrivningsmodulet i %sPlugin Aministrationen%s og enten "
+"vælge Apache mod_rewrite eller ISAPI_Rewrite. Fejlsøgningsdokumentation er i %sGallerycodexen"
+"%s."
 
 msgid "Bad URL rewrite configuration"
-msgstr "Feil med oppsett av nettadresseomskriving"
+msgstr "Forkerte indstillinger for URL omskrivning"
 
 #, fuzzy, c-format
 msgid ""
@@ -221,7 +220,7 @@ msgstr ""
 "mod_rewrite eller ISAPI_Rewrite. Feilsøkingsdokumentasjon er i %sGallerycodexen%s."
 
 msgid "'OPTIONS Requests' rule disabled"
-msgstr "Regel for ‘OPTIONS-forespørsler’ er deaktivert"
+msgstr "Regel for ‘OPTIONS-forespørsler’ er deaktiveret"
 
 #, fuzzy, c-format
 msgid ""
@@ -237,13 +236,14 @@ msgstr ""
 msgid "Unknown Cause"
 msgstr "Ukendt årsag"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Some WebDAV clients, e.g. Mac OS X WebDAVFS, will fail to connect and automated checks "
 "failed to find a cause.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
-"Noen WebDAV-klienter, f.eks. Mac OS X WebDAVFS, vil ikke kunne koble til og automatiske "
-"kontroller kunne ikke finne noen årsak. Feilsøkingsdokumentasjon er i %sGallerycodexen%s."
+"Nogle WebDAV-klienter, f.eks. Mac OS X WebDAVFS, kan ikke kunne koble til og automatiske "
+"kontroller kunne ikke finde nogen årsag dertil. Fejilsøgningsdokumentation er i %"
+"sGallerycodexen%s."
 
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
