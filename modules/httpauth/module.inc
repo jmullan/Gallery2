@@ -31,7 +31,7 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('httpauth');
 	$this->setName($gallery->i18n('HTTP Auth'));
-	$this->setVersion('0.5.1'); /* Update upgrade() too! */
+	$this->setVersion('1.0.0'); /* Update upgrade() too! */
 	$this->setDescription($gallery->i18n('Login using HTTP authentication.'));
 	$this->setGroup('authentication', $gallery->i18n('Authentication'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
@@ -218,6 +218,9 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 	    if ($ret) {
 		return $ret;
 	    }
+
+	case '0.5.1':
+	    /* Version 1.0.0 for Gallery 2.2 release */
 
 	case 'end of upgrade path':
 	    break;
