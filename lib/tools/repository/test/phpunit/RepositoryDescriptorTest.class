@@ -46,7 +46,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$this->_canonicalFileMetaData = array(
 	    'files' => array(
 		'MANIFEST' => array(
-		    'bytes' => '12121', 'hash' => '381282740',
+		    'bytes' => '12121', 'hash' => '1908582732',
 		    'packages' => array('base')),
 		'file.1' => array(
 		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
@@ -117,7 +117,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 			  'groupLabel' => 'pt_PT-modules_testModule-Test Group')),
 		  'files' => array(
 		      'MANIFEST' => array(
-			  'bytes' => '12121', 'hash' => '381282740',
+			  'bytes' => '12121', 'hash' => '1908582732',
 			  'packages' => array('base')),
 		      'file.1' => array(
 			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
@@ -170,8 +170,9 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor->setUtilities($utils);
 
 	$platform = new UnitTestPlatform();
-	$platform->setReply('filesize', array($testDataDir . 'MANIFEST'), 12121);
-	$platform->setReply('file_get_contents', array($testDataDir . 'MANIFEST'), 'manifest_data');
+
+	$platform->setReply('file_get_contents', array($testDataDir . 'MANIFEST'),
+			    str_repeat('x', 12121));
 	$gallery->setPlatform($platform);
 
 	$descriptor->getFileMetaData(dirname(dirname(__FILE__)) . '/data/', $data);
