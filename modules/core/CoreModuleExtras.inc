@@ -2125,6 +2125,9 @@ class CoreModuleExtras {
 	case '1.1.31':
 	    /* 2.2 Release! */
 
+	case '1.2.0':
+	    /* Added GalleryCoreApi::getCodeBasePath */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we always
@@ -2435,6 +2438,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 ';
 	    $configChanges[] = array('remove' => $remove, 'add' => array(), 'edit' => array($edit));
 	case '1.1.31':
+	case '1.2.0':
 
 	case 'end of upgrade path':
 	    /*
