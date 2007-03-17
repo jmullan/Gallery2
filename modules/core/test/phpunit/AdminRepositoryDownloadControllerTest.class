@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/core/AdminRepositoryDownload.inc');
+
 /**
  * AdminRepository controller tests
  * @package GalleryCore
@@ -43,6 +45,11 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
 
 	$gallery->_phpVm = new AdminRepositoryDownloadControllerTestPhpVm();
+
+	/* Use our own wrapped controller so that we can override _fetchPluginStatus */
+	$this->_controller = new AdminRepositoryDownloadControllerTestWrapper();
+	$this->_controller->_version = '0.1';
+	$this->_controller->_active = true;
     }
 
     function tearDown() {
@@ -118,7 +125,6 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
     function testPerformDownloadAndInstallation() {
 	global $gallery;
 	$testModule = 'AdminRepositoryDownloadControllerTest';
-	$_REQUEST['expected']['isActive'] = 1;
 
 	/* Test regular download. */
 	$mockAdapter = new MockTemplateAdapter();
@@ -205,7 +211,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
     function testPerformDownloadAndInstallationInactiveModule() {
 	global $gallery;
 	$testModule = 'AdminRepositoryDownloadControllerTest';
-	$_REQUEST['expected']['isActive'] = 0;
+	$this->_controller->_active = 0;
 
 	$mockAdapter = new MockTemplateAdapter();
 	$gallery->_templateAdapter =& $mockAdapter;
@@ -260,10 +266,70 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 			    $_REQUEST['called']);
     }
 
+    function testPerformDownloadAndInstallationNotInstalledModule() {
+	global $gallery;
+	$testModule = 'AdminRepositoryDownloadControllerTest';
+	$this->_controller->_active = 0;
+	$this->_controller->_version = 0;
+
+	$mockAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockAdapter;
+
+	$mockUrlGenerator = new AdminRepositoryDownloadControllerTestUrlGenerator();
+	$gallery->_urlGenerator =& $mockUrlGenerator;
+
+	$expectedPluginData = array('module' => array($testModule => array('base' => 1)));
+
+	$pluginDownloadFileList = array('module' => array($testModule => array(
+	    'name' => 'Test Module',
+	    'files' => array('descriptor' => 'testModule-descriptor',
+			     'base' => 'base-package'))));
+
+	$repository = new AdminRepositoryDownloadControllerTestRepository();
+	$repository->setReply('getDownloadFileList',
+			      array($expectedPluginData),
+			      array(null, $pluginDownloadFileList));
+	/* Descriptor. */
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'descriptor', 'testModule-descriptor'),
+			      array(null, 'descriptorContents'));
+
+	$repository->setReply('preVerifyPackage',
+			      array('base', 'descriptorContents'),
+			      array());
+	$repository->setReply('downloadAndUnpack',
+			      array('module', $testModule, 'base', 'base-package'),
+			      array(null, array()));
+	$repository->setReply('verifyPackageIntegrity',
+			      array('base', 'descriptorContents'),
+			      null);
+	$repository->setReply('getPackageVersionAndBuild',
+			      array('module', $testModule, 'base'),
+			      array(null, 'base-version', 'base-build'));
+	$repository->setReply('updatePackageMetaData',
+			      array('module', $testModule, 'base',
+				    'base-version', 'base-build'),
+			      null);
+
+	$ret = $this->_controller->performDownloadAndInstallation(
+	    array('test' => array('module' => array($testModule => array('base' => 1)))),
+	    array(),
+	    array('test' => $repository));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
+	$this->assert($repository->isComplete(), $repository->getRemaining());
+	$this->assertEquals(array('installOrUpgrade' => 1,
+				  'autoConfigure' => 1,
+				  'activate' => 1),
+			    $_REQUEST['called']);
+    }
+
     function testPerformDownloadAndInstallationInUseModule() {
 	global $gallery;
 	$testModule = 'AdminRepositoryDownloadControllerTest';
-	$_REQUEST['expected']['isActive'] = 0;
+	$this->_controller->_active = 0;
 	$gallery->_phpVm->_class_exists = true;
 
 	$mockAdapter = new MockTemplateAdapter();
@@ -318,8 +384,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 
 	$status = $this->_getStatusFromProgressBar();
 	$this->assertEquals(
-	    array('error' => array(),
-		  'cantUpgradeInUse' => array('Test Module'),
+	    array('error' => array('cantUpgradeInUse' => array('Test Module')),
 		  'languagePacksDeleted' => 0),
 	    $status);
     }
@@ -389,7 +454,6 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
     function testPerformDownloadAndInstallationFailedLanguageDownload() {
 	global $gallery;
 	$testModule = 'AdminRepositoryDownloadControllerTest';
-	$_REQUEST['expected']['isActive'] = 1;
 
 	$mockAdapter = new MockTemplateAdapter();
 	$gallery->_templateAdapter =& $mockAdapter;
@@ -687,9 +751,24 @@ class AdminRepositoryDownloadControllerTestModule {
 	$_REQUEST['called']['activate'] = 1;
 	return array(null, array());
     }
+}
 
-    function isActive() {
-	return array(null, $_REQUEST['expected']['isActive']);
+class AdminRepositoryDownloadControllerTestWrapper extends AdminRepositoryDownloadController {
+
+    var $_version = null;
+    var $_active = null;
+
+    function _fetchPluginStatus($pluginType, $ignoreCache) {
+	list ($ret, $pluginStatus) = parent::_fetchPluginStatus($pluginType, $ignoreCache);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$testModule = 'AdminRepositoryDownloadControllerTest';
+	$pluginStatus[$testModule]['active'] = $this->_active;
+	$pluginStatus[$testModule]['version'] = $this->_version;
+
+	return array(null, $pluginStatus);
     }
 }
 

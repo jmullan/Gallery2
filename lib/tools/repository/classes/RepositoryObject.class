@@ -167,6 +167,29 @@ class RepositoryObject {
     }
 
     /**
+     * Remove any files from the manifest that aren't applicable for the base package
+     * with any developer files elided.
+     *
+     * @param string $manifestContents the original manifest as a single string
+     * @return string the filtered version as a single string
+     */
+    function filterManifestForBasePackage($manifestContents) {
+	$result = array();
+	foreach (explode("\n", $manifestContents) as $line) {
+	    if (!strncmp($line, "R\t", 2)) {
+		continue;
+	    }
+
+	    if (preg_match('@^(modules|themes)/\w+/(test|po|locale)/@', $line)) {
+		continue;
+	    }
+
+	    $result[] = $line;
+	}
+	return implode("\n", $result);
+    }
+
+    /**
      * Returns the currently set output directory.
      *
      * @return string directory

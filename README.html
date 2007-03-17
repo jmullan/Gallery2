@@ -141,11 +141,11 @@
 	margin: auto;
       }
       .relurl  {
-      	color: #666 !important;
+	color: #666 !important;
 	text-decoration: none !important;
       }
       .relurl:hover {
-        border-bottom: #666 dotted;
+	border-bottom: #666 dotted;
       }
       </style>
       <script type="text/javascript">
@@ -172,8 +172,8 @@
 	    for (var i = 0; i < as.length; i++) {
 	      href = as[i].getAttribute('href');
 	      if (href) {
-	        /* links to replace don't begin with # or http or irc */
-	        if ((href.search('http') != 0) && (href.search('irc') != 0) &&
+		/* links to replace don't begin with # or http or irc */
+		if ((href.search('http') != 0) && (href.search('irc') != 0) &&
 		    (href.toString().charAt(0) != '#')) {
 		  /* Don't use setAttribute for onclick (workaround for IE) */
 		  as[i].onclick = function() {
@@ -182,8 +182,8 @@
 		    return false;
 		  };
 		  as[i].setAttribute('title',"This link only works when you access the README " +
-		  	"through your web server!");
-		  as[i].className="relurl";
+			"through your web server!");
+		  as[i].className = "relurl";
 		}
 	      }
 	    }
@@ -234,8 +234,8 @@
     </div>
 
     <p>
-      Welcome to Gallery 2. This is the second release candidate of
-      Gallery 2.2, code named "<b>Double Double</b>".  Please read
+      Welcome to Gallery 2. This is the official release of Gallery 2.2,
+      code named &ldquo;<b>Double Double</b>&rdquo;.  Please read
       through this document carefully before installing Gallery 2 and
       before asking for help.  We have taken care to try to answer as
       many of your questions here as possible.  If you don't read this
@@ -324,7 +324,7 @@
       the audit we identified multiple minor security issues which
       have since been resolved by the Gallery2 developers. The result
       is a much more secure Gallery2 application with enhanced
-      security features to keep your Gallery, and it's users as safe
+      security features to keep your Gallery and its users as safe
       and secure as possible.</i>
     </p>
 
@@ -455,7 +455,7 @@
 	</ul>
       </li>
       <li>
-	New <a href="http://codex.gallery2.org/index.php/Gallery2:Modules:webdav"
+	New <a href="http://codex.gallery2.org/Gallery2:Modules:webdav"
 	       target="_blank">WebDAV module</a> to mount Gallery as network device on your
 	computer.  This allows you to easily manage your Gallery with any WebDAV client like Windows
 	Explorer.
@@ -475,7 +475,7 @@
       </li>
       <li>
 	Added support for HTTP authentication through the new
-	<a href="http://codex.gallery2.org/index.php/Gallery2:Modules:httpauth"
+	<a href="http://codex.gallery2.org/Gallery2:Modules:httpauth"
 	   target="_blank">httpauth module</a>.
       </li>
       <li>
@@ -553,14 +553,20 @@
 	Resize dimensions now accept percentages of full size in addition to pixel size.
       </li>
       <li>
-	Minimum PHP version now 4.3.0.
-      </li>
-      <li>
 	Added support for PHP mysqli extension (newer version of mysql interface).
       </li>
       <li>
 	Support for
 	<a href="http://www.microsoft.com/sql/" target="_blank">MSSQL</a> database.
+      </li>
+      <li>
+	Minimum PHP version now 4.3.0.
+      </li>
+      <li>
+	Microsoft IIS doesn't work with PHP-CGI due to a PHP/IIS bug. Microsoft recommends
+	<a href="http://www.iis.net/default.aspx?tabid=1000051" target="_blank">FastCGI</a> instead
+	and doesn't support PHP-CGI. Please use ISAPI PHP or FastCGI with IIS instead.  Users of
+	Apache on Windows can still use PHP-CGI (and mod_php or FastCGI).
       </li>
     </ol>
 
@@ -697,7 +703,7 @@
 	    New option to specify whether Gallery checks the browser language
 	    preference to select the language for new sessions.
 	  </li>
-        </ul>
+	</ul>
       </li>
       <li>
 	User Interface updates in installer/upgrader based on a review
@@ -713,9 +719,9 @@
 	Multisite installs can now use the tools in lib/support.
       </li>
       <li>
-        Sessions are now stored in the database and no longer in files. And guest users don't
-        get a session anymore unless they add items to the cart, choose a non-default language
-        or do something else that requires a session.
+	Sessions are now stored in the database and no longer in files. And guest users don't
+	get a session anymore unless they add items to the cart, choose a non-default language
+	or do something else that requires a session.
       </li>
       <li>
 	New development tool: sample module creator in lib/tools/creator.
@@ -1405,7 +1411,7 @@
 	embedding Gallery 2 into other applications.  We've
 	successfully (though not completely) embedded it into Xaraya
 	and have begun working on other platforms.  See
-	<a href="http://codex.gallery2.org/index.php/Gallery2:Embedding"
+	<a href="http://codex.gallery2.org/Gallery2:Embedding"
 	target="_blank">Gallery 2 Embedding</a>.
       </li>
 
@@ -1652,7 +1658,7 @@
 	Everything you need to publish photos, and nothing more.
       </li>
       <li>
-	<b>Typical</b> - The base application, 9 themes and a selection of popular
+	<b>Typical</b> - The base application, 8 themes and a selection of popular
 	modules.  Enough to satisfy the demands of most Gallery users.
       </li>
       <li>
@@ -1668,18 +1674,17 @@
       You get to pick and choose which modules you activate, so even if you download
       a package that has more modules than you need you can always choose not to
       activate the ones you don't want.  You can also activate a module and test it
-      out for a while, then later deactivate and deinstall it.  You can also delete
+      out for a while, then later deactivate and uninstall it.  You can also delete
       any modules/themes that you're not using if you want to save space.
     </p>
     <p>
       All of our modules and themes are available separately so if you install a
-      smaller package and then later on decide that you want to add more
-      functionality you can download just the modules/themes that you want and install
-      them yourself.
+      smaller package you can still add more functionality later on, either by
+      downloading yourself or using the new Downloadable Plugins feature in Gallery 2.2.
     </p>
     <p>
       Download Gallery packages, modules and themes from the
-      <a href="http://codex.gallery2.org/index.php/Gallery2:Download"
+      <a href="http://codex.gallery2.org/Gallery2:Download"
       target="_guided">Gallery Download Page</a>.
     </p>
 
@@ -1698,7 +1703,7 @@
 	  <li>
 	    <b>Pre-Installer</b> - If you only have FTP access to your webserver and don't
 	    have the option to extract zip or tar files directly on the server, you should
-	    give the <a href="http://codex.gallery2.org/index.php/Gallery2:Preinstaller"
+	    give the <a href="http://codex.gallery2.org/Gallery2:Preinstaller"
 	    target="_blank">Gallery 2 Pre-Installer</a> a try. It transfers the archive
 	    directly to your webserver and extracts it for you.
 	  </li>
@@ -1711,7 +1716,7 @@
 	  <li>
 	    <b>Subversion</b> - This is a better way to get the latest code,
 	    but it&rsquo;s for <i>advanced</i> users.  Follow the
-	    <a href="http://codex.gallery2.org/index.php/Gallery:Using_Subversion"
+	    <a href="http://codex.gallery2.org/Gallery:Using_Subversion"
 	      target="_blank">Subversion instructions</a> to obtain the latest Gallery 2
 	    code.  It&rsquo;s easier to stay up to date with this method since
 	    you can run one command and get the latest code at any time.
@@ -1749,7 +1754,7 @@
 	change the permissions on that directory to make it so that
 	Gallery can still write to the files but that others
 	can&rsquo;t.  Refer to the <a
-	href="http://codex.gallery2.org/index.php/Gallery2:Security">Gallery
+	href="http://codex.gallery2.org/Gallery2:Security">Gallery
 	2 Security Guide</a> for more information.
       </li>
 
@@ -1809,8 +1814,8 @@
 	    $ create database gallery2 {additional parameters};
 	  </p>
 	</div>
-        <ul class="note">
-	  <li> Also see our <a href="http://codex.gallery2.org/index.php/Gallery2:Oracle"
+	<ul class="note">
+	  <li> Also see our <a href="http://codex.gallery2.org/Gallery2:Oracle"
 	    target="_blank">Oracle documentation page</a>
 	  </li>
 	</ul>
@@ -1822,7 +1827,7 @@
 	  </p>
 	</div>
 	<ul class="note">
-	  <li> Also see our <a href="http://codex.gallery2.org/index.php/Gallery2:DB2"
+	  <li> Also see our <a href="http://codex.gallery2.org/Gallery2:DB2"
 	    target="_blank">IBM DB2 documentation page</a>
 	  </li>
 	</ul>
@@ -1879,7 +1884,7 @@
 	  </p>
 	</div>
 	<ul class="note">
-	  <li> Also see our <a href="http://codex.gallery2.org/index.php/Gallery2:MSSQL"
+	  <li> Also see our <a href="http://codex.gallery2.org/Gallery2:MSSQL"
 	    target="_blank">Microsoft SQL Server documentation page</a>
 	  </li>
 	</ul>
@@ -1931,7 +1936,7 @@
       your desktop, you will have to upload it to your server as part
       of the install process.  Then you can configure it using your web browser.<br/>
       As an alternative to the lengthy upload via FTP, take a look at the
-      <a href="http://codex.gallery2.org/index.php/Gallery2:Preinstaller"
+      <a href="http://codex.gallery2.org/Gallery2:Preinstaller"
       target="_blank">Gallery 2 Pre-Installer</a>.
     </p>
     <ol style="margin-top: 0.2em">
@@ -1942,7 +1947,7 @@
 	  <li>
 	    <b>Fastest way</b>: Upload the gallery package to your web
 	    server archive via FTP or another method, then unpack it
-	    using an interactive shell session (eg. ssh or telnet).
+	    using an interactive shell session (e.g. ssh or telnet).
 	    Example unpacking commands (choose the appropriate one):
 	    <div class="instructions">
 	      <h3> For .tar.gz archives </h3>
@@ -1984,7 +1989,7 @@
 	    <b>Advanced way</b>: The best way to install Gallery
 	    <b>and</b> stay up to date if you have shell access to
 	    your webserver is to use
-	    <a href="http://codex.gallery2.org/index.php/Gallery:Using_Subversion"
+	    <a href="http://codex.gallery2.org/Gallery:Using_Subversion"
 	      target="_blank">Subversion</a>.
 	  </li>
 	</ul>
@@ -2014,7 +2019,7 @@
 	<b> Installation Type </b> - Gallery can support multiple independent sites with
 	a single installation of the code.  Here you will select a standard single install
 	or the location of a new multisite install. There is more information about multisite
-	in the <a href="http://codex.gallery2.org/index.php/Gallery2:Multisite"
+	in the <a href="http://codex.gallery2.org/Gallery2:Multisite"
 	target="_blank">Gallery Codex</a>.
       </li>
       <li>
@@ -2073,17 +2078,17 @@
     <h2><a name="getting_started">Using your new Gallery</a></h2>
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
     <p>
-    	Once you&rsquo;ve successfully got Gallery 2 installed, you should take a look at the
-	<a href="http://codex.gallery2.org/index.php/Gallery2:Quick_Start_Guide" target="_new">
-	Gallery 2 Quick Start Guide</a>.  It will help you get started with Gallery and will
-	walk you through the steps from zero to managing your first photo album in your
-	freshly installed Gallery.  Below are some links to your gallery that will make it
+	Once you&rsquo;ve successfully got Gallery 2 installed, you should take a look at the
+	<a href="http://codex.gallery2.org/Gallery2:Quick_Start_Guide"
+	 target="_new">Gallery 2 Quick Start Guide</a>.  It will help you get started with
+	Gallery and will walk you through the steps from zero to managing your first photo album
+	in your freshly installed Gallery.  Below are some links to your gallery that will make it
 	easier for you to follow the Quick Start Guide. Note: You may need to activate certain
 	modules to be able to use some of these links.
     </p>
     <ul>
       <li>
-      	<a href="main.php" target="_guided">Your Gallery 2</a>
+	<a href="main.php" target="_guided">Your Gallery 2</a>
 	<ul>
 	  <li>
 	    <a href="main.php?g2_view=core.UserAdmin&amp;g2_subView=core.UserLogin&amp;g2_form[formName]=UserLogin&amp;g2_form[username]=admin"
@@ -2105,19 +2110,19 @@
 	    <a href="main.php?g2_view=core.SiteAdmin" target="_guided">Site Admin</a>
 	    <ul>
 	      <li>
-	  	<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminPlugins"
+		<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminPlugins"
 		target="_guided">Plugins</a>
 	      </li>
 	      <li>
-	        <a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminThemes&amp;g2_mode=config"
-	        target="_guided">Themes</a>
+		<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminThemes"
+		target="_guided">Themes</a>
 	      </li>
 	      <li>
 		<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminGroups"
 		target="_guided">Create Groups</a>
 	      </li>
 	      <li>
-	      	<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminUsers"
+		<a href="main.php?g2_view=core.SiteAdmin&amp;g2_subView=core.AdminUsers"
 		target="_guided">Create Users</a>
 	      </li>
 	      <li>
@@ -2134,8 +2139,8 @@
       </li>
     </ul>
     <p>
-    	Take a look at the list of
-	<a href="http://codex.gallery2.org/index.php/Gallery2:UserContributions"
+	Take a look at the list of
+	<a href="http://codex.gallery2.org/Gallery2:User_Contributions"
 	target="_blank">User Contributions</a> to find even more modules, themes,
 	utilities, mods and more.
     </p>
@@ -2154,7 +2159,7 @@
 	modules and themes will be automatically deactivated for you.
 	You can find updated versions for most of these modules and
 	themes here: <a
-	href="http://codex.gallery2.org/index.php/Gallery2:UserContributions">http://codex.gallery2.org/index.php/Gallery2:UserContributions</a>
+	href="http://codex.gallery2.org/Gallery2:User_Contributions">http://codex.gallery2.org/Gallery2:User_Contributions</a>
       </p>
     </div>
 
@@ -2181,9 +2186,9 @@
 	config.php in place, and don't touch your (g2data) data folder
 	or the database.  If you're using Subversion, you can just do
 	"svn update" at any time. Alternatively, you can also use the
-	<a href="http://codex.gallery2.org/index.php/Gallery2:Preinstaller"
-        target="_blank">Gallery 2 Pre-Installer</a> to get the latest code
-        onto the webserver.
+	<a href="http://codex.gallery2.org/Gallery2:Preinstaller"
+	target="_blank">Gallery 2 Pre-Installer</a> to get the latest code
+	onto the webserver.
       </li>
 
       <li>
@@ -2216,13 +2221,14 @@
       <ul>
 	<li>
 	  Look at the <a
-	    href="http://codex.gallery2.org/index.php/Gallery2:How_do_I_Install_Gallery2"
+	    href="http://codex.gallery2.org/Gallery2:How_do_I_Install_Gallery2"
 	    target="_blank">&quot;How do I Install Gallery2&quot;
 	    article</a> on the <a href="http://codex.gallery2.org/"
 	    target="_blank">Gallery Documentation Website</a>
 	</li>
 	<li>
-	  Read the <a href="http://codex.gallery2.org/index.php/Gallery2:FAQ" target="_blank" >Gallery 2 FAQ</a>
+	  Read the <a href="http://codex.gallery2.org/Gallery2:FAQ"
+	    target="_blank" >Gallery 2 FAQ</a>
 	</li>
 	<li>
 	  Use the <a href="http://gallery.menalto.com/forum/11"
@@ -2270,7 +2276,7 @@
     <p class="toc-link"> <a href="#toc">[table of contents]</a> </p>
 
     <p>
-      Check our <a href="http://codex.gallery2.org/index.php/Gallery2:Known_Issues"
+      Check our <a href="http://codex.gallery2.org/Gallery2:Known_Issues"
       target="_blank">Known Issues</a> list and
       <a href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130"
       target="_blank">Bug Tracker</a> for information and some workarounds for
@@ -2299,8 +2305,7 @@
 
     <p>
       <b> For Themers </b> - There is now some
-      <a href="http://codex.gallery2.org/index.php/Gallery2:Themes"
-      target="_guided">theme documentation</a>
+      <a href="http://codex.gallery2.org/Gallery2:Themes" target="_guided">theme documentation</a>
       that you should read if you want to change the look of your Gallery 2 by customizing
       an existing theme and its templates or by creating your own theme.
     </p>
@@ -2310,7 +2315,7 @@
       Gallery 2 into another language, you can
       <a href="lib/tools/reports/localization.php"
       target="_guided">review the current state of localization</a>
-      and then <a href="http://codex.gallery2.org/index.php/Gallery2:Localization"
+      and then <a href="http://codex.gallery2.org/Gallery2:Localization"
       target="_guided">read the localization how-to</a> and get started.
       <a href="http://sourceforge.net/tracker/?atid=582564&amp;group_id=7130&amp;func=browse"
       target="_guided">Submit your localizations</a> early and often -
@@ -2328,7 +2333,7 @@
     <p>
       <b> Embedding </b> - To learn more about embedding Gallery 2 into your website and
       about existing integrations in content management systems, portals, blogs etc.
-      please see <a href="http://codex.gallery2.org/index.php/Gallery2:Embedding"
+      please see <a href="http://codex.gallery2.org/Gallery2:Embedding"
       target="_blank">Gallery 2 Embedding</a>.
     </p>
 

@@ -120,6 +120,9 @@ compendium: messages.po
 		echo -n "$${POFILE} "; \
 		msgmerge --width=95 -N $${CORE} $${MATRIX} \
 			 --suffix= --update $${POFILE} messages.po; \
+		if [ `svn diff $${POFILE} | grep -c '^+msgstr'` -eq 0 ]; then \
+		    svn revert --quiet $${POFILE}; \
+		fi; \
 	    else \
 		echo "No compendium for $${POFILE}"; \
 	    fi; \

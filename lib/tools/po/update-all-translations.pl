@@ -1,11 +1,8 @@
 #!/usr/bin/perl
 #
-# Update all translations and create a report.  This is a very crude hack
-# and should really be cleaned up.
+# Update all translations and create a report.
 #
 use strict;
-use File::Basename;
-use File::Find;
 use Cwd;
 use Data::Dumper;
 use Getopt::Long;
@@ -30,31 +27,30 @@ GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
 	   'permissions!' => \$OPTS{'PERMISSIONS'},
 	   'svn-add!' => \$OPTS{'SVN_ADD'});
 
-my %PO_DIRS = ();
-my %MO_FILES = ();
 my @failures = ();
 my @warnings = ();
-
-my $curdir = cwd();
 my $basedir = cwd();
 $basedir =~ s{(/.*)/(lib|themes|modules|install|upgrade)/.*?$}{$1};
 
-find(\&locatePoDir, $basedir);
+# Find po dirs in modules/* themes/* install upgrade
+my @PO_DIRS = glob "$basedir/modules/*/po $basedir/themes/*/po $basedir/[iu][np][sg]*/po";
+@PO_DIRS = grep(/$OPTS{PATTERN}/, @PO_DIRS) if $OPTS{'PATTERN'};
+@PO_DIRS = grep($_ !~ m{modules/core/po$}, @PO_DIRS) if $OPTS{'COMPENDIUM'};
 
 if ($OPTS{'PERMISSIONS'}) {
   my $poParam = $OPTS{'PO'} ? "$OPTS{PO}.po" : '*.po';
-  foreach my $poDir (keys(%PO_DIRS)) {
+  foreach my $poDir (@PO_DIRS) {
     chmod(0755, $poDir);
     chdir $poDir;
     &my_system("chmod 644 $poParam 2> /dev/null");
   }
-  print STDERR "Updated permissions for $poParam in " . scalar(keys %PO_DIRS) . " directories.\n";
+  print STDERR "Updated permissions for $poParam in " . scalar(@PO_DIRS) . " directories.\n";
   exit;
 }
 
 if ($OPTS{'SVN_ADD'}) {
   my $poParam = $OPTS{'PO'} ? "$OPTS{PO}.po" : '*.po';
-  foreach my $poDir (keys(%PO_DIRS)) {
+  foreach my $poDir (@PO_DIRS) {
     my %svn = ();
     chdir $poDir;
     open(SVN, 'svn status --non-interactive |') or die;
@@ -76,9 +72,18 @@ if ($OPTS{'SVN_ADD'}) {
   exit;
 }
 
+if ($OPTS{'MAKE_BINARY'}) {
+  # Make all .mo files binary in SVN.
+  chdir $basedir;
+  my @MO_FILES =
+    glob "modules/*/locale/*/*/*.mo themes/*/locale/*/*/*.mo [iu][np][sg]*/locale/*/*/*.mo";
+  my_system("svn propset svn:mime-type application/octet-stream " . join(' ', @MO_FILES));
+  exit;
+}
+
 my $TARGET = $OPTS{'REMOVE_OBSOLETE'} ? 'all-remove-obsolete' : 'all';
 $TARGET = 'compendium' if $OPTS{'COMPENDIUM'};
-foreach my $poDir (keys(%PO_DIRS)) {
+foreach my $poDir (@PO_DIRS) {
   (my $printableDir = $poDir) =~ s|$basedir.||;
   print STDERR "$printableDir: ";
   unless ($OPTS{'DRY_RUN'}) {
@@ -98,13 +103,6 @@ foreach my $poDir (keys(%PO_DIRS)) {
       push(@warnings, $poDir);
     }
   }
-}
-
-if ($OPTS{'MAKE_BINARY'}) {
-  # Make all .mo files binary in SVN.
-  find(\&locateMoFile, $basedir);
-  chdir $basedir;
-  my_system("svn propset svn:mime-type application/octet-stream " . join(' ', keys(%MO_FILES)));
 }
 
 sub my_system {
@@ -136,23 +134,3 @@ sub out {
   print $file " " x ($indent * 4) . $msg . "\n";
 }
 
-
-sub locatePoDir {
-  my $file = $File::Find::name;
-  my $dir  = $File::Find::dir;
-  if (basename($dir) eq 'po') {
-    next if $dir =~ m|lib/tools/|;
-    next if $OPTS{'PATTERN'} and $dir !~ m/$OPTS{'PATTERN'}/;
-    next if $OPTS{'COMPENDIUM'} and $dir =~ m|modules/core/|;
-    $PO_DIRS{$dir}++;
-  }
-}
-
-sub locateMoFile {
-  my $file = $File::Find::name;
-  my $dir  = $File::Find::dir;
-  if ($file =~ /\.mo$/) {
-    $file =~ s|$basedir/||;
-    $MO_FILES{$file}++;
-  }
-}

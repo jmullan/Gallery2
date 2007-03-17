@@ -534,6 +534,7 @@ class DataCacheTest extends GalleryTestCase {
 
 	/* Backup values */
 	$isUsingCookies = $session->isUsingCookies();
+	$modeExif = $session->get('exif.module.LoadExifInfo.mode');
 
 	/* Set test environment */
 	$ret = $gallery->setActiveLanguageCode('en');
@@ -542,16 +543,20 @@ class DataCacheTest extends GalleryTestCase {
 	}
 	$session->_isUsingCookies = false;
 
+	/* Exif module */
+	$session->remove('exif.module.LoadExifInfo.mode');
+
 	GalleryDataCache::put('G2_EMBED', 1);
 
 	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals('0-en-1', $extraKey, 'embedded, cookieless, English');
+	$this->assertEquals('0-en-1', $extraKey, 'embedded, cookieless, English, exif summary');
 
 	/* Clean up */
 	$session->_isUsingCookies = $isUsingCookies;
+	$session->put('exif.module.LoadExifInfo.mode', $modeExif);
     }
 
     function testGetExtraPageCacheKeyForStandalone() {
@@ -560,6 +565,7 @@ class DataCacheTest extends GalleryTestCase {
 
 	/* Backup values */
 	$isUsingCookies = $session->isUsingCookies();
+	$modeExif = $session->get('exif.module.LoadExifInfo.mode');
 
 	/* Set test environment */
 	$ret = $gallery->setActiveLanguageCode('fr');
@@ -568,14 +574,19 @@ class DataCacheTest extends GalleryTestCase {
 	}
 	$session->_isUsingCookies = true;
 
+	/* Exif module */
+	$session->put('exif.module.LoadExifInfo.mode', 'detailed');
+
 	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	$this->assertEquals('1-fr-0', $extraKey, 'standalone, using cookies, French');
+	$this->assertEquals('1-fr-0-exifdetailed', $extraKey,
+			    'standalone, using cookies, French, exif detail');
 
 	/* Clean up */
 	$session->_isUsingCookies = $isUsingCookies;
+	$session->put('exif.module.LoadExifInfo.mode', $modeExif);
     }
 
     /* Same test as userOk, but in guest preview mode */
@@ -651,12 +662,12 @@ class DataCacheTest extends GalleryTestCase {
 
 	/* Clean on, 25 seconds after start, no rows should be cleaned. */
 	$gallery->_phpVm->setTime(125);
-	
+
 	$ret = GalleryDataCache::putPageData('second', 2, array('key'), 'test');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
+
 	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
 	if ($ret) {
 	    $this->failWithStatus($ret);
@@ -680,7 +691,7 @@ class DataCacheTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 	$this->assertEquals('test', $result, 'Guest cleaned user row!');
-	
+
 	/* Check if dice is set to 6 we don't clean. */
 	$gallery->_phpVm->setRand(6);
 	$gallery->_phpVm->setTime(135);
@@ -703,7 +714,7 @@ class DataCacheTest extends GalleryTestCase {
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
-	
+
 	/* Move treshold, making all rows valid again. */
 	$acceleration = array('user' => array('type' => 'full', 'expiration' => 200),
 			      'guest' => array('type' => 'full', 'expiration' => 200));
@@ -712,7 +723,7 @@ class DataCacheTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	
+
 	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
 	if ($ret) {
 	    $this->failWithStatus($ret);

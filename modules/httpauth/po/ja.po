@@ -21,10 +21,10 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: HTTP Auth 0.5.1\n"
+"Project-Id-Version: Gallery: HTTP Auth 1.0.0\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2006-12-20 09:56-0800\n"
-"PO-Revision-Date: 2007-03-07 11:29+0900\n"
+"PO-Revision-Date: 2007-03-15 21:12+0900\n"
 "Last-Translator: Yosuke Suzuki <yosuke.suzuki@gmail.com>\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -65,13 +65,15 @@ msgid "Settings saved successfully"
 msgstr "設定の保存に成功しました"
 
 msgid "Missing HTTP Authorization"
-msgstr ""
+msgstr "HTTP 認証は利用できません"
 
 #, c-format
 msgid ""
 "Gallery can't access HTTP usernames and passwords.  You can still use your web server's "
 "authentication.  Troubleshooting documentation is in the %sGallery Codex%s."
 msgstr ""
+"Gallery はHTTPユーザ名とパスワードにアクセスできません。あなたはまだウェブサーバの認証を使用"
+"することができます。トラブルシューティングのドキュメントは %sGallery Codex%s にあります。"
 
 msgid "URL rewrite module disabled"
 msgstr "URL 書き換えモジュールが無効です"
@@ -83,6 +85,10 @@ msgid ""
 "Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting "
 "documentation is in the %sGallery Codex%s."
 msgstr ""
+"URL書き換えモジュールが無効になっているので、HTTPユーザ名とパスワード経由に頼ることができませ"
+"ん。%sサイト管理のプラグインオプション%s でURL書き換えモジュールを有効にし、Apache "
+"mod_rewrite か IAPI_Rewite を選択してください。トラブルシューティングのドキュメントは %"
+"sGallery Codex%s にあります。"
 
 msgid "Bad URL rewrite configuration"
 msgstr "URL 書き換えの設定が間違っています"
@@ -115,19 +121,23 @@ msgid ""
 msgstr ""
 
 msgid "Gallery can handle HTTP Basic authentication directly."
-msgstr ""
+msgstr "Gallery はHTTP Basic 認証を直接扱うことができます。"
 
 msgid "Use HTTP Authentication:"
 msgstr "HTTP 認証を使用する:"
 
+#, fuzzy
 msgid ""
 "Gallery will prompt you to login with HTTP authentication when permission is denied.  HTTP "
 "authentication sends your client a realm to which your username belongs.  It's safe to leave "
 "the realm blank."
 msgstr ""
+"承認が拒否された場合、GalleryはHTTP認証でログインするよう促します。HTTP認証はあなたのユーザ名"
+"がどの分野に属するか送信します。分野名は空白にしておくのが安全です。"
 
+#, fuzzy
 msgid "HTTP Authentication Realm:"
-msgstr ""
+msgstr "HTTP 認証 分野名:"
 
 msgid ""
 "Your web server may offer more comprehensive and more secure authentication.  If you "
@@ -153,7 +163,7 @@ msgid ""
 msgstr ""
 
 msgid "Use Regular Expressions:"
-msgstr ""
+msgstr "正規表現を使用する:"
 
 msgid ""
 "Specify here a regular expression which the authentication type must match for "
@@ -174,10 +184,10 @@ msgid ""
 msgstr ""
 
 msgid "Username Pattern:"
-msgstr ""
+msgstr "ユーザ名のパターン:"
 
 msgid "Username Replacement:"
-msgstr ""
+msgstr "ユーザ名の置換:"
 
 msgid "Save"
 msgstr "保存"
@@ -187,4 +197,4 @@ msgstr "リセット"
 
 #, c-format
 msgid "If you're not automatically redirected, %sclick here to finish logging out%s."
-msgstr ""
+msgstr "自動的にリダイレクトされなければ、%sここをクリックしてログアウトを完了してください%s。"

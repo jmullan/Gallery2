@@ -327,6 +327,8 @@ class ThumbnailModuleExtras {
 		return $ret;
 	    }
 
+	case '1.0.8':
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -336,7 +338,7 @@ class ThumbnailModuleExtras {
 
 	default:
 	    return GalleryCoreApi::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+					 sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return null;

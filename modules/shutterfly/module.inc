@@ -33,7 +33,7 @@ class ShutterflyModule extends GalleryModule {
 	$this->setId('shutterfly');
 	$this->setName($gallery->i18n('Shutterfly'));
 	$this->setDescription($gallery->i18n('Shutterfly Photo Printing Module'));
-	$this->setVersion('1.0.6'); /* Update upgrade() too */
+	$this->setVersion('1.0.7'); /* Update upgrade() too */
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -91,6 +91,7 @@ class ShutterflyModule extends GalleryModule {
 	case '1.0.3':
 	case '1.0.4':
 	case '1.0.5':
+	case '1.0.6':
 
 	case 'end of upgrade path':
 	    break;

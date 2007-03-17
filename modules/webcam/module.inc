@@ -105,6 +105,7 @@ class WebCamModule extends GalleryModule {
 	    case '1.0.2':
 	    case '1.0.3':
 	    case '1.0.4':
+	    case '1.0.5':
 
 	    case 'end of upgrade path':
 		break;
