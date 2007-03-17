@@ -12,9 +12,35 @@
       <b>{g->text text="Step 1"}</b><br>
       {g->text text="Download the configuration file using right-click 'Save Target As...'  Once downloaded, rename it to 'install_registry.reg'.  If it asks you for confirmation about changing the file type, answer 'yes'.  Right click on this file and you should see a menu appear.  Select the Merge option (this should be at the top of the menu).  It will ask you if you want to import these values into your registry.  Click 'Ok'.  It will tell you that the files were imported successfully.  Click 'Ok' again."}
       <br/>
-      <a href="{g->url arg1="view=publishxp.DownloadRegistryFile"}">
-        {g->text text="Download [install_registry.reg]"}
-      </a>
+      {capture assign=vistaCaption}{g->text text="(for Windows Vista)"}{/capture}
+      {capture assign=otherWindowsCaption}{g->text text="(for Windows XP, Windows 2000 and earllier Windows versions)"}{/capture}
+      {capture assign=captionForRecommendedVersion}
+        {if $ItemAddPublishXp.isUsingWindowsVista}
+        {$vistaCaption}
+        {else}
+        {$otherWindowsCaption}
+        {/if}
+      {/capture}
+      {capture assign=captionForAlternativeVersion}
+        {if $ItemAddPublishXp.isUsingWindowsVista}
+        {$otherWindowsCaption}
+        {else}
+        {$vistaCaption}
+        {/if}
+      {/capture}
+      {capture assign=fileCaption}{g->text text="Download [install_registry.reg]"}{/capture}
+      <ul>
+        <li style="font-weight: bold; line-height: 1.2em; font-size: 1.2em">
+          <a href="{g->url arg1="view=publishxp.DownloadRegistryFile" arg2="vistaVersion=`$ItemAddPublishXp.isUsingWindowsVista`"}">
+            {$fileCaption}
+          </a> {$captionForRecommendedVersion}
+        </li>
+        <li>
+          <a href="{g->url arg1="view=publishxp.DownloadRegistryFile" arg2="vistaVersion=`$ItemAddPublishXp.isUsingOtherWindows`"}">
+            {$fileCaption}
+          </a> {$captionForAlternativeVersion}
+        </li>
+      </ul>
     </p>
     <p>
       <b>{g->text text="Step 2"}</b><br>
