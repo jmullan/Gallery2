@@ -28,16 +28,10 @@
   </h2>
   {if !empty($status.error.failedToDownload)}
   {foreach name=plugin from=$status.error.failedToDownload key=pluginName item=failedFiles}
-  {*
-   * TODO: Update this message to something more appropriate in 2.3 (couldn't do it in 2.2 because it was
-   * added after the localization freeze.  Suggested text:
-   * "Failed to install the following packages for the %s plugin"
-   *}
-  <h2 class="giError"> {g->text text="Failed to download the %s plugin because the following files/directories could not be modified:" arg1=$pluginName}</h2>
+  <h2 class="giError"> {g->text text="Failed to download the following packages for the %s plugin:" arg1=$pluginName}</h2>
   <ul>
   {foreach from=$failedFiles item=file}
-    {* TODO: remove the non-localized "(unable to download)" text as soon as 2.2 ships *}
-    <li class="giError"> {$file} (unable to download) </li>
+    <li class="giError"> {$file} </li>
   {/foreach}
   </ul>
   {if !$smarty.foreach.plugin.last}<br/>{/if}
@@ -46,7 +40,7 @@
 
   {if !empty($status.error.failedToInstall)}
   {foreach name=plugin from=$status.error.failedToInstall key=pluginName item=failedFiles}
-  <h2 class="giError"> {g->text text="Failed to download the %s plugin because the following files/directories could not be modified:" arg1=$pluginName} </h2>
+  <h2 class="giError"> {g->text text="Failed to install the %s plugin because the following files/directories could not be modified:" arg1=$pluginName} </h2>
   <ul>
   {foreach from=$failedFiles item=file}
     <li class="giError"> {$file} </li>
@@ -57,8 +51,9 @@
   {/if}
 
   {if !empty($status.error.cantUpgradeInUse)}
-    {* TODO: as soon as possible in 2.3, convert this to an internationalized string *}
-    <h2 class="giError"> Some plugins could not be automatically upgraded because they are in use.  Please return to the <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins"}">{g->text text="Plugins"}</a> page and click the {g->text text="upgrade"} link for each of the following plugins: </h2>
+    {capture assign="pluginsLink"}<a href="{g->url arg1="view=core.SiteAdmin"
+     arg2="subView=core.AdminPlugins"}">{/capture}
+    <h2 class="giError"> {g->text text="Some plugins could not be automatically upgraded because they are in use.  Please return to the %sPlugins%s page and click the upgrade link for each of the following plugins:" arg1=$pluginsLink arg2="</a>"} </h2>
     <ul>
       {foreach from=$status.error.cantUpgradeInUse item=pluginName}
       <li class="giError"> {$pluginName} </li>
