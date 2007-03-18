@@ -260,7 +260,8 @@ class RandomHighlightModule extends GalleryModule {
 		/* Hopefully most items have a thumbnail; pick n ids at a time until we find one */
 		$data = array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, $thumbnail->getDerivativeSourceId());
 		for ($i = 0; !empty($itemIds) && $i < $n; $i++) {
-		    $data[] = array_shift(array_splice($itemIds, rand(0, count($itemIds) - 1), 1));
+		    $oneItemIdAsArray = array_splice($itemIds, rand(0, count($itemIds) - 1), 1);
+		    $data[] = array_shift($oneItemIdAsArray);
 		}
 		list ($ret, $searchResults) = $gallery->search(
 		    $query . GalleryUtilities::makeMarkers(count($data) - 2) . ')', $data);
