@@ -105,6 +105,7 @@ class RepositoryPackage extends RepositoryObject {
 	$this->_template->setVariable('random', $randomString);
 
 	/* Directory structure creation code. */
+	$packageDirectories = array();
 	foreach ($this->_descriptor->getDirectoriesInPackage($packageType) as $dir) {
 	    $packageDirectories[] = $dir;
 	}

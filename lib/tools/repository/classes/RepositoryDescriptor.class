@@ -335,16 +335,12 @@ class RepositoryDescriptor extends RepositoryObject {
     function getPackages() {
 	$packageTypes = array();
 
-	if (!empty($this->_data['directories'])) {
-	    foreach ($this->_data['directories'] as $dir => $directoryMetaData) {
-		foreach ($this->_data['directories'][$dir]['packages'] as $package) {
-		    if (!in_array($package, $packageTypes)) {
-			$packageTypes[] = $package;
-		    }
-		}
+	if (!empty($this->_data['files'])) {
+	    foreach ($this->_data['files'] as $file => $info) {
+		$packageTypes = array_merge($packageTypes, $info['packages']);
 	    }
 	}
-
+	$packageTypes = array_unique($packageTypes);
 	sort($packageTypes);
 	return $packageTypes;
     }
