@@ -75,7 +75,7 @@ class SvnAuditTest extends CodeAuditTestCase {
 		dirname($fileName) . "${slash}.svn${slash}prop-base${slash}${base}.svn-base";
 	}
 
-	$g2Path = str_replace(GalleryCoreApi::getCodeBasePath(), '', $fileName);
+	$g2Path = str_replace($this->_baseDir . '/', '', $fileName);
 	if (isset($this->_exceptions[$g2Path])) {
 	    $expected = $this->_exceptions[$g2Path];
 	} else if (preg_match('{\.txt$}', $base)) {
