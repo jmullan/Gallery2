@@ -39,9 +39,6 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 	global $gallery;
 
-	/* XXX: We should be backing this up in GalleryTestCase.  Fix this in 2.3 */
-	$this->_saveRequest = $_REQUEST;
-
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
 
 	$gallery->_phpVm = new AdminRepositoryDownloadControllerTestPhpVm();
@@ -55,8 +52,6 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 	$gallery->_templateAdapter =& $this->_galleryTemplateAdapter;
-
-	$_REQUEST = $this->_saveRequest;
 
 	parent::tearDown();
     }
