@@ -116,13 +116,13 @@ class CodeAuditTestCase extends GalleryTestCase {
 		continue;
 	    }
 
+	    $subPath = $dirPath . '/' . $xmlValues[$entry]['attributes']['NAME'];
 	    if (!empty($xmlValues[$entry]['attributes']['DELETED'])
 		    && $xmlValues[$entry]['attributes']['DELETED'] == 'true') {
 		print "Skipping deleted entry: $subPath<br/>";
 		continue;
 	    }
 
-	    $subPath = $dirPath . '/' . $xmlValues[$entry]['attributes']['NAME'];
 	    switch ($xmlValues[$entry]['attributes'][$KIND]) {
 	    case 'dir':
 		$dirPaths[] = $subPath;
