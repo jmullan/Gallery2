@@ -62,6 +62,8 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    'modules/uploadapplet/templates/ItemAddUploadApplet.tpl'
 	    );
 
+	$this->_exception['textInJavascript'] = array();
+
 	/* Get rid of backslashes so that we can perform string compares later */
 	for ($i = 0; $i < sizeof($this->_expectedHeaderLines); $i++) {
 	    $this->_expectedHeaderLines[$i] = stripslashes($this->_expectedHeaderLines[$i]);
@@ -93,6 +95,8 @@ class TemplateAuditTest extends CodeAuditTestCase {
 				    strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
 
 	$this->_checkHiddenFormVars($truncatedFileName, $buffer);
+
+	$this->_checkTextInJavascript($truncatedFileName, $buffer);
 
 	if (preg_match('/^' . $this->_headerPattern . '/', $buffer)) {
 	    return;
@@ -129,6 +133,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    }
 	}
     }
+
     function _checkHiddenFormVars($fileName, $buffer) {
 	$inHtmlForm = false;
 	$hasHiddenFormVars = false;
@@ -152,6 +157,39 @@ class TemplateAuditTest extends CodeAuditTestCase {
 				"missing hidden form vars");
 		$inHtmlForm = false;
 		$hasHiddenFormVars = false;
+	    }
+	}
+    }
+
+    function _checkTextInJavascript($fileName, $buffer) {
+	if (in_array($fileName, $this->_exception['textInJavascript'])) {
+	    return;
+	}
+
+	$inScriptTag = false;
+	$lines = split("(\r\n|\n)", $buffer);
+	/* Parsing for the closing brace of {g->text } is too complex. Using check-sum instead. */
+	$scriptStartLine = $textCount = $forJsCount = 0;
+
+	for ($i = 0; $i < count($lines); $i++) {
+	    if (preg_match('/<script(\s.*)?$/', $lines[$i])) {
+		$inScriptTag = true;
+		$scriptStartLine = $i;
+	    }
+	    if ($inScriptTag && ($matchCount = preg_match_all('/\{g\->text/',
+							      $lines[$i], $ignored))) {
+		$textCount += $matchCount;
+	    }
+	    if ($inScriptTag && ($matchCount = preg_match_all('/forJavascript=(true|1|"1")/',
+							       $lines[$i], $ignored))) {
+		$forJsCount += $matchCount;
+	    }
+	    if (strpos($lines[$i], '</script>') !== false) {
+		$this->assertEquals($forJsCount, $textCount,
+			"$fileName: script block (line $scriptStartLine) has {g->text} calls " .
+			"without the forJavascript=true attribute.");
+		$inScriptTag = false;
+		$textCount = $forJsCount = 0; 
 	    }
 	}
     }

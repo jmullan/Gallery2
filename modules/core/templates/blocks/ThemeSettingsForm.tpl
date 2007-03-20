@@ -116,18 +116,18 @@
 	      {foreach from=$ThemeSettingsForm.availableBlocks key=moduleId item=blocks}
 		{foreach from=$blocks key=blockName item=block}
 		  block = bsw_addAvailableBlock("{$setting.key}", "{$moduleId}.{$blockName}",
-			  "{g->text text=$block.description l10Domain="modules_$moduleId"}");
+			  "{g->text text=$block.description l10Domain="modules_$moduleId" forJavascript=true}");
 		  {if !empty($block.vars)}
 		    {foreach from=$block.vars key=varKey item=varInfo}
 		      tmp = new Array();
 		      {if ($varInfo.type == 'choice')}
 			{foreach from=$varInfo.choices key=choiceKey item=choiceValue}
 			  tmp["{$choiceKey}"] = "{g->text text=$choiceValue
-							  l10Domain="modules_$moduleId"}";
+							  l10Domain="modules_$moduleId" forJavascript=true}";
 			{/foreach}
 		      {/if}
 		      block.addVariable("{$varKey}", "{$varInfo.default}",
-			"{g->text text=$varInfo.description l10Domain="modules_$moduleId"}",
+			"{g->text text=$varInfo.description l10Domain="modules_$moduleId" forJavascript=true}",
 			"{$varInfo.type}", tmp);
 		      {if !empty($varInfo.overrides)}
 		      {foreach from=$varInfo.overrides item=override}
@@ -139,8 +139,8 @@
 		{/foreach}
 	      {/foreach}
 	      {* Now initialize the form with the album block values *}
-	      bsw_initAdminForm("{$setting.key}", "{g->text text="Parameter"}",
-						  "{g->text text="Value"}");
+	      bsw_initAdminForm("{$setting.key}", "{g->text text="Parameter" forJavascript=true}",
+						  "{g->text text="Value" forJavascript=true}");
 	      // ]]>
 	    </script>
 	{/if}

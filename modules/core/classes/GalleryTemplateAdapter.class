@@ -238,7 +238,8 @@ class GalleryTemplateAdapter {
 	}
 
 	if (!empty($params['forJavascript'])) {
-	    $text = str_replace("'", "\\'", $text);
+	    GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	    $text = smarty_modifier_escape($text, 'javascript', 'UTF-8');
 	}
 
 	return $text;

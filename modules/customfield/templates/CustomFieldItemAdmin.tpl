@@ -24,9 +24,9 @@
 
 <script type="text/javascript">
   // <![CDATA[
-  var removeWarning = '{g->text text="WARNING: Values for this custom field in this album will be deleted!"}';
-  var albumWarning = '{g->text text="WARNING: Values for this custom field in this album will be deleted!"}';
-  var photoWarning = '{g->text text="WARNING: Values for this custom field on non-photo items in this album will be deleted!"}';
+  var removeWarning = '{g->text text="WARNING: Values for this custom field in this album will be deleted!" forJavascript=true}';
+  var albumWarning = '{g->text text="WARNING: Values for this custom field in this album will be deleted!" forJavascript=true}';
+  var photoWarning = '{g->text text="WARNING: Values for this custom field on non-photo items in this album will be deleted!" forJavascript=true}';
   // ]]>
 </script>
 

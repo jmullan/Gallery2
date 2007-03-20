@@ -143,6 +143,7 @@
     </p>
   </div>
   <script type="text/javascript">
+    // <![CDATA[
     var postUrl = '{g->url}';
     var commandArg = '{g->formVar var="command"}';
     var viewArg = '{g->formVar var="view"}';
@@ -152,10 +153,11 @@
       '{g->formVar var="form[repositories][experimental]"}',
       '{g->formVar var="form[repositories][community]"}' ];
 
-    var repositoryMessageTitle = '{g->text text="Repository Error"}';
-    var repositoryMessageBody = '{g->text text="You must select at least one repository."}';
-    var repositoryMessageOkButton = '{g->text text="Ok"}';
+    var repositoryMessageTitle = '{g->text text="Repository Error" forJavascript=true}';
+    var repositoryMessageBody = '{g->text text="You must select at least one repository." forJavascript=true}';
+    var repositoryMessageOkButton = '{g->text text="Ok" forJavascript=true}';
     var formElements = document.getElementById("siteAdminForm").elements;
+    // ]]>
   </script>
 </div>
 

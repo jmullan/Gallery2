@@ -138,7 +138,7 @@ class TemplateAdapterTest extends GalleryTestCase {
     }
 
     function testChangeInDescendents() {
-	$test = array('module' => 'pirate', 'text' => 'ninja', 'l10Domain' => 'en_US');
+	$test = array('module' => 'pirate', 'text' => 'ninja', 'l10Domain' => 'modules_foo');
 	$this->_setupAdapterWithMocks();
 	$result = GalleryTemplateAdapter::changeInDescendents($test, $this->_mockSmarty);
 	$this->assertEquals('<input type="checkbox" id="pirate_ChangeInDescendents" ' .
@@ -151,12 +151,39 @@ class TemplateAdapterTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->_translator = new TemplateAdapterMockTranslator();
 	$this->_setupAdapterWithMocks();
-	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'en_US';
-	$this->_mockSmarty->_tpl_vars['viewL10domain'] = 'te_TE';
+	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'modules_testfail';
+	$this->_mockSmarty->_tpl_vars['viewL10domain'] = 'modules_testpass';
 	$translated = $this->_templateAdapter->text(array('text' => 'Test failed'),
 						    $this->_mockSmarty);
 
 	$this->assertEquals('Test passed', $translated);
+    }
+
+    function testTextNotForJavaScript() {
+	$this->_setupAdapterWithMocks();
+	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'modules_foo';
+	$translated = $this->_templateAdapter->text(array('text' => "Text with a single ' quote"),
+						    $this->_mockSmarty);
+	$this->assertEquals("Text with a single ' quote", $translated);
+    }
+
+    function testTextForJavaScript() {
+	$this->_setupAdapterWithMocks();
+	$this->_mockSmarty->_tpl_vars['l10Domain'] = 'modules_foo';
+	$translated = $this->_templateAdapter->text(array('text' => "Text with a single ' quote",
+							  'forJavascript' => true),
+						    $this->_mockSmarty);
+	$this->assertEquals("Text with a single \\' quote", $translated, 'single quote');
+
+	$translated = $this->_templateAdapter->text(array('text' => 'Text with a double " quote',
+							  'forJavascript' => true),
+						    $this->_mockSmarty);
+	$this->assertEquals('Text with a double \\" quote', $translated, 'double quote');
+
+	$translated = $this->_templateAdapter->text(array('text' => 'Text with a %s backslash',
+							  'arg1' => '\\', 'forJavascript' => true),
+						    $this->_mockSmarty);
+	$this->assertEquals('Text with a \\\\ backslash', $translated, 'backslash in arg1');
     }
 
     function testThemeUrls() {
@@ -243,7 +270,7 @@ class TemplateAdapterMockUrlGenerator {
 
 class TemplateAdapterMockTranslator {
     function translateDomain($domain, $params) {
-	if ($domain == 'te_TE' && $params['text'] == 'Test failed') {
+	if ($domain == 'modules_testpass' && $params['text'] == 'Test failed') {
 	    return array(null, 'Test passed');
 	}
 	return array(null, null);

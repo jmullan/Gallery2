@@ -9,7 +9,7 @@
 {g->addToTrailer}
 <script type="text/javascript">
   // <![CDATA[
-  search_SearchBlock_init('{g->text text="Search the Gallery"}', '{g->text text="Please enter a search term."}');
+  search_SearchBlock_init('{g->text text="Search the Gallery" forJavascript=true}', '{g->text text="Please enter a search term." forJavascript=true}');
   // ]]>
 </script>
 {/g->addToTrailer}

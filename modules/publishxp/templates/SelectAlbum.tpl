@@ -10,7 +10,7 @@
     <script type="text/javascript">
       // <![CDATA[
       {capture name=url}{g->url arg1="view=publishxp.NewAlbum"}{/capture}
-      setSubtitle("{g->text text="Choose an album for new photos, or create a new album." arg1=$smarty.capture.url}");
+      setSubtitle("{g->text text="Choose an album for new photos, or create a new album." arg1=$smarty.capture.url forJavascript=true}");
       setOnBackUrl("{g->url arg1="view=publishxp.SelectAlbum"}");
       setSubmitOnNext(true);
       setButtons(false, true, false);

@@ -51,7 +51,7 @@
   {if $UPLOAD_BOX_COUNT > $VISIBLE_BOX_COUNT}
   <script type="text/javascript">
 	// <![CDATA[
-	document.write('<h4><a id="addOne" href="javascript:addOne()">{g->text text="More Upload Boxes..."}</a></h4>');
+	document.write('<h4><a id="addOne" href="javascript:addOne()">{g->text text="More Upload Boxes..." forJavascript=true}</a></h4>');
 	var fileIndex = {$VISIBLE_BOX_COUNT};
 	{literal}
 	function addOne() {

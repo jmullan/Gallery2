@@ -93,7 +93,7 @@
 	  form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
 	{/foreach}
 	if (changed && !quiet) {ldelim}
-	  alert("{g->text text="The destination you chose does not accept sub-albums, so all sub-albums have been deselected."}");
+	  alert("{g->text text="The destination you chose does not accept sub-albums, so all sub-albums have been deselected." forJavascript=true}");
 	{rdelim}
       {rdelim} else {ldelim}
 	{foreach from=$ItemMove.peerTypes.data key=id item=unused}
@@ -107,7 +107,7 @@
 	  form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
 	{/foreach}
 	if (changed && !quiet) {ldelim}
-	  alert("{g->text text="The destination you chose only accepts sub-albums, so all non-albums have been deselected."}");
+	  alert("{g->text text="The destination you chose only accepts sub-albums, so all non-albums have been deselected." forJavascript=true}");
 	{rdelim}
       {rdelim}
     {rdelim}
