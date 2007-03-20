@@ -39,21 +39,8 @@
     <h2> <span class="error">ERROR!</span> </h2>
     <div class="section">
       You are not logged in as a Gallery site administrator so you are
-      not allowed to run the unit tests.  If you have cookies disabled, then you
-      must go back to the page where you logged in and copy the part of your URL
-      that looks like this:
-      <p>
-	<code>g2_GALLERYSID=51c0ca5a9ce1296ccfd5307fa77fd998</code>
-      </p>
-      get rid of the <i>g2_GALLERYSID</i> part and paste it into this text box then
-      click the Reload Page button.  That will transfer your session from
-      the page where you logged in over to this page.
-
-      <a href="../../../main.php?g2_view=core.UserAdmin&g2_subView=core.UserLogin&g2_return=<?php echo $_SERVER['REQUEST_URI']?>">[ login ]</a>
-      <form>
-	<input type="text" size=33 name="<?php echo isset($sessionKey) ? $sessionKey : '' ?>">
-	  <input type="submit" value="Reload page">
-      </form>
+      not allowed to run the unit tests.
+      [<a href="../../../main.php?g2_view=core.UserAdmin&g2_subView=core.UserLogin&g2_return=<?php echo $_SERVER['REQUEST_URI']?>">login</a>]
     </div>
     <?php endif; ?>
 
