@@ -406,5 +406,115 @@ class TranslatorTest extends GalleryTestCase {
 	}
 	$this->assertEquals('Test foo Test bar', $text);
     }
+
+    function testInstallTranslationsForPluginMoFilesInPoDirectory() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+
+	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$modulePath = GalleryCoreApi::getCodeBasePath() . 'modules/TranslatorTest/';
+	$poPath = "${modulePath}po/";
+	$platform->setReply('glob', array("${poPath}*.mo", null), array("${poPath}aa.mo"));
+	$platform->setReply('file_exists', array('/g2data/locale/aa/LC_MESSAGES/'), true);
+	$platform->setReply('is_dir', array('/g2data/locale/aa/LC_MESSAGES/'), true);
+	$platform->setReply(
+	    'copy',
+	    array("${poPath}aa.mo", '/g2data/locale/aa/LC_MESSAGES/modules_TranslatorTest.mo'),
+	    true);
+	$gallery->setPlatform($platform);
+
+	$ret = GalleryCoreApi::installTranslationsForPlugin('module', 'TranslatorTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testInstallTranslationsForPluginMoFilesInLocaleDirectory() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+
+	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$modulePath = GalleryCoreApi::getCodeBasePath() . 'modules/TranslatorTest/';
+	$poPath = "${modulePath}po/";
+	$platform->setReply('glob', array("${poPath}*.mo", null), array());
+	$platform->setReply('glob',
+			    array("${modulePath}locale/*/LC_MESSAGES/*.mo", null),
+			    array("${modulePath}locale/aa/LC_MESSAGES/aa.mo"));
+	$platform->setReply('file_exists', array('/g2data/locale/aa/LC_MESSAGES/'), true);
+	$platform->setReply('is_dir', array('/g2data/locale/aa/LC_MESSAGES/'), true);
+	$platform->setReply(
+	    'copy',
+	    array("${modulePath}locale/aa/LC_MESSAGES/aa.mo",
+		  '/g2data/locale/aa/LC_MESSAGES/modules_TranslatorTest.mo'),
+	    true);
+	$gallery->setPlatform($platform);
+
+	$ret = GalleryCoreApi::installTranslationsForPlugin('module', 'TranslatorTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testInstallTranslationsForPluginCreateDirectory() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+
+	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$modulePath = GalleryCoreApi::getCodeBasePath() . 'modules/TranslatorTest/';
+	$poPath = "${modulePath}po/";
+	$platform->setReply('glob', array("${poPath}*.mo", null), array("${poPath}aa.mo"));
+
+	/* This next block is what GalleryUtilities::guaranteeDirExists requires */
+	$platform->setReply('file_exists', array('/g2data/locale/aa/LC_MESSAGES/'), false);
+	$platform->setReply('file_exists', array('/g2data/locale/aa/LC_MESSAGES/'), false);
+	$platform->setReply('file_exists', array('/g2data/locale/aa'), false);
+	$platform->setReply('file_exists', array('/g2data/locale'), false);
+	$platform->setReply('file_exists', array('/g2data'), true);
+	$platform->setReply('is_dir', array('/g2data'), true);
+	$platform->setReply('mkdir', array('/g2data/locale', 755), true);
+	$platform->setReply('mkdir', array('/g2data/locale/aa', 755), true);
+	$platform->setReply('mkdir', array('/g2data/locale/aa/LC_MESSAGES/', 755), true);
+
+	$platform->setReply(
+	    'copy',
+	    array($poPath . 'aa.mo', '/g2data/locale/aa/LC_MESSAGES/modules_TranslatorTest.mo'),
+	    true);
+	$gallery->setPlatform($platform);
+
+	$ret = GalleryCoreApi::installTranslationsForPlugin('module', 'TranslatorTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testRemoveTranslationsForPlugin() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+
+	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$base = GalleryCoreApi::getCodeBasePath();
+	$platform->setReply(
+	    'glob',
+	    array('/g2data/locale/*/LC_MESSAGES/modules_TranslatorTest.mo', null),
+	    array('/g2data/locale/aa/LC_MESSAGES/modules_TranslatorTest.mo'));
+	$platform->setReply(
+	    'unlink',
+	    array('/g2data/locale/aa/LC_MESSAGES/modules_TranslatorTest.mo'),
+	    true);
+	$gallery->setPlatform($platform);
+
+	$ret = GalleryCoreApi::removeTranslationsForPlugin('module', 'TranslatorTest');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
 }
 ?>

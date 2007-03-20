@@ -617,6 +617,11 @@ class GalleryTheme extends GalleryPlugin {
 	    }
 	}
 
+	$ret = parent::installOrUpgrade();
+	if ($ret) {
+	    return $ret;
+	}
+
 	if ($gallery->getDebug()) {
 	    $gallery->debug('GalleryTheme::installOrUpgrade finished successfully');
 	}

@@ -72,9 +72,12 @@ class GalleryCoreApi {
      * - remove GalleryUtilities::utf8Substring (moved to GalleryCoreApi)
      * - remove lib/wz_dragdrop/ (currently used by G2.1's watermark module)
      * - refactor renderer code (methods: getRenderer and render, GalleryEntity vs GalleryItem)
+     * - remove support for {modules,themes}/.../locale dirs from lib/tools/po scripts
+     *   from GalleryTranslatorHelper_medium::installTranslationsForPlugin,
+     *   and from getPackageNames() in lib/tools/repository/classes/RepositoryDescriptor.class
      */
     function getApiVersion() {
-	return array(7, 19);
+	return array(7, 20);
     }
 
     /**
@@ -3070,6 +3073,32 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryEntityHelper_medium.class');
 	return GalleryEntityHelper_medium::getExternalAccessMemberList($entityName);
+    }
+
+    /**
+     * Copy the translations for a given plugin into our locale hierarchy.
+     *
+     * @param string $pluginType 'module' or 'theme'
+     * @param string $pluginId the id of the plugin
+     * @return object GalleryStatus a status code
+     */
+    function installTranslationsForPlugin($pluginType, $pluginId) {
+	GalleryCoreApi::requireOnce(
+		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
+	GalleryTranslatorHelper_medium::installTranslationsForPlugin($pluginType, $pluginId);
+    }
+
+    /**
+     * Remove the translations for a given plugin from our locale hierarchy.
+     *
+     * @param string $pluginType 'module' or 'theme'
+     * @param string $pluginId the id of the plugin
+     * @return object GalleryStatus a status code
+     */
+    function removeTranslationsForPlugin($pluginType, $pluginId) {
+	GalleryCoreApi::requireOnce(
+		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
+	GalleryTranslatorHelper_medium::removeTranslationsForPlugin($pluginType, $pluginId);
     }
 
     /**

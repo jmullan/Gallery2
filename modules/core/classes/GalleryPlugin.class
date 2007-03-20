@@ -352,6 +352,14 @@ class GalleryPlugin {
 	    $platform->recursiveRmdir($dataDir);
 	}
 
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('Removing translations for %s plugin', $this->getId()));
+	}
+	$ret = GalleryCoreApi::removeTranslationsForPlugin($this->getPluginType(), $this->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
 	$event = GalleryCoreApi::newEvent('Gallery::UninstallPlugin');
 	$event->setData(array('pluginType' => $this->getPluginType(),
 			      'pluginId' => $this->getId()));
@@ -373,6 +381,31 @@ class GalleryPlugin {
      * @return object GalleryStatus a status code
      */
     function installOrUpgrade() {
+	global $gallery;
+
+	/**
+	 * Remove old translations before installing new ones so that if any translations
+	 * got removed we don't wind up with old copies hanging around.
+	 *
+	 * @todo keep track of which translations didn't get updated and remove them
+	 *       instead of using this heavy approach.
+	 */
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('Removing translations for %s plugin', $this->getId()));
+	}
+	$ret = GalleryCoreApi::removeTranslationsForPlugin($this->getPluginType(), $this->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	if ($gallery->getDebug()) {
+	    $gallery->debug(sprintf('Installing translations for %s plugin', $this->getId()));
+	}
+	$ret = GalleryCoreApi::installTranslationsForPlugin($this->getPluginType(), $this->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
 	return null;
     }
 

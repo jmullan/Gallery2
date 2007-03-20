@@ -447,7 +447,7 @@ class GalleryTranslator {
      *  $data['arg1'] = 'fun';
      *  $data['arg2'] = 2;  or  $data['args'] = array('fun', 2);
      *
-     *  localized:  'Some text to localize with 5 arguments'
+     *  localized:  'Some fun text to localize with 5 arguments'
      *
      * Example 2:
      *  $data['one'] = 'You have %d orange'
@@ -475,20 +475,14 @@ class GalleryTranslator {
 
 	if (function_exists('dgettext') && $this->_languageCode != 'en_US') {
 	    if (isset($domain) && !isset($this->_boundDomains[$domain])) {
-		$platform =& $gallery->getPlatform();
-		list ($componentType, $componentName) = split('_', $domain);
-		$basePath = sprintf('%s/%s/%s/locale',
-				    $platform->realpath(dirname(__FILE__) . '/../../..'),
-				    $componentType, $componentName);
-		if ($gallery->getDebug()) {
-		    $gallery->debug("Binding text domain: $domain -> $basePath");
-		}
-		bindtextdomain($domain, $basePath);
+		$localeDir = $gallery->getConfig('data.gallery.base') . 'locale';
+		bindtextdomain($domain, $localeDir);
 		textdomain($domain);
 		if (function_exists('bind_textdomain_codeset')) {
 		    bind_textdomain_codeset($domain, 'UTF-8');
 		}
-		$this->_boundDomains[$domain] = $basePath;
+
+		$this->_boundDomains[$domain] = 1;
 	    }
 
 	    /*
@@ -547,7 +541,7 @@ class GalleryTranslator {
 	 * This is a useful debug routine.  Uncomment it to have every string prefixed with the
 	 * domain it was localized in.
 	 */
-	//$localized = "<font size=1 color=#C33>$domain:</font>$localized";
+	// $localized = "<font size=1 color=#C33>$domain/{$this->_languageCode}:</font>$localized";
 
 	return array(null, $localized);
     }

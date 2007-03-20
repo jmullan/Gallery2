@@ -1,0 +1,95 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2007 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
+ * A collection of useful utilities for managing translations
+ * @package GalleryCore
+ * @subpackage Helpers
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$
+ * @static
+ */
+class GalleryTranslatorHelper_medium {
+
+    /**
+     * @see GalleryCoreApi::installTranslationsForPlugin
+     */
+    function installTranslationsForPlugin($pluginType, $pluginId) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$codeBase = GalleryCoreApi::getCodeBasePath();
+
+	$gallery->guaranteeTimeLimit(30);  /* the glob may take a long time */
+	$pluginPath = "$codeBase${pluginType}s/$pluginId/";
+	$moFilesInPoDir = $platform->glob("${pluginPath}po/*.mo");
+	if (!empty($moFilesInPoDir)) {
+	    $moFiles = $moFilesInPoDir;
+	    $codePattern = '#(\w+).mo$#';
+	} else {
+	    $moFiles = $platform->glob("${pluginPath}locale/*/LC_MESSAGES/*.mo");
+	    $codePattern = '#locale/(\w+)/LC_MESSAGES#';
+	}
+
+	$g2data = $gallery->getConfig('data.gallery.base');
+	if (!empty($moFiles)) {
+	    $localeDirPattern = 'locale/%s/LC_MESSAGES/';
+	    foreach ($moFiles as $moPath) {
+		$gallery->guaranteeTimeLimit(30);
+
+		preg_match($codePattern, $moPath, $matches);
+		$destinationDir = $g2data . sprintf($localeDirPattern, $matches[1]);
+
+		list ($success, $created) =
+		    GalleryUtilities::guaranteeDirExists($destinationDir);
+		if (!$success) {
+		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
+		}
+
+		$destinationPath = $destinationDir . "${pluginType}s_$pluginId.mo";
+		$success = $platform->copy($moPath, $destinationPath);
+		if (!$success) {
+		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
+		}
+	    }
+	}
+	return null;
+    }
+
+    /**
+     * @see GalleryCoreApi::removeTranslationsForPlugin
+     */
+    function removeTranslationsForPlugin($pluginType, $pluginId) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$gallery->guaranteeTimeLimit(30);  /* the glob may take a long time */
+	$moFiles = $platform->glob($gallery->getConfig('data.gallery.base')
+				   . "locale/*/LC_MESSAGES/${pluginType}s_$pluginId.mo");
+	$success = true;
+	if (!empty($moFiles)) {
+	    foreach ($moFiles as $moPath) {
+		$gallery->guaranteeTimeLimit(30);
+		$success &= $platform->unlink($moPath);
+	    }
+	}
+	return $success ? null : GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
+    }
+}
+?>

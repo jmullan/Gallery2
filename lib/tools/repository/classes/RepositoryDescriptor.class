@@ -281,7 +281,7 @@ class RepositoryDescriptor extends RepositoryObject {
 	} else if (preg_match('#^(locale/|po/)[^G]#', $path) && $path != 'po/strings.raw') {
 	    if (preg_match('#locale/([^/]*)#', $path, $localeId)) {
 		$packages[] = 'lang-' . $localeId[1];
-	    } else if (preg_match('#po/(.*?)\.po#', $path, $localeId)) {
+	    } else if (preg_match('#po/(.*?)\.[pm]o#', $path, $localeId)) {
 		$packages[] = 'lang-' . $localeId[1];
 	    }
 	} else {

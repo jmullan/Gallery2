@@ -552,33 +552,19 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$g2base = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
+	$moduleBase = GalleryCoreApi::getCodeBasePath()
+	    . 'modules/AdminRepositoryDownloadControllerTest';
 	$platform = new UnitTestPlatform();
-	$platform->setReply(
-	    'is_dir',
-	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/locale/aa"),
-	    true);
-	$platform->setReply(
-	    'is_writeable',
-	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/locale/aa"),
-	    true);
-	$platform->setReply(
-	    'recursiveRmdir',
-	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/locale/aa"),
-	    true);
-	$platform->setReply(
-	    'is_file',
-	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/po/aa.po"),
-	    true);
-	$platform->setReply(
-	    'is_writeable',
-	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/po/aa.po"),
-	    true);
-	$platform->setReply(
-	    'unlink',
-	    array("$g2base/modules/AdminRepositoryDownloadControllerTest/po/aa.po"),
-	    true);
-	$gallery->_platform =& $platform;
+	$platform->setReply('is_dir', array("$moduleBase/locale/aa"), true);
+	$platform->setReply('is_writeable', array("$moduleBase/locale/aa"), true);
+	$platform->setReply('recursiveRmdir', array("$moduleBase/locale/aa"), true);
+	$platform->setReply('is_file', array("$moduleBase/po/aa.mo"), true);
+	$platform->setReply('is_writeable', array("$moduleBase/po/aa.mo"), true);
+	$platform->setReply('unlink', array("$moduleBase/po/aa.mo"), true);
+	$platform->setReply('is_file', array("$moduleBase/po/aa.po"), true);
+	$platform->setReply('is_writeable', array("$moduleBase/po/aa.po"), true);
+	$platform->setReply('unlink', array("$moduleBase/po/aa.po"), true);
+	$gallery->setPlatform($platform);
 
 	$repository = new AdminRepositoryDownloadControllerTestRepository();
 
@@ -602,7 +588,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	$session =& $gallery->getSession();
 
 	$progress = $gallery->_templateAdapter->getProgressBarDump();
-	preg_match('/statusId=([^,]*)/', $progress[5], $matches);
+	preg_match('/statusId=([^,]*)/', $progress[count($progress)-1], $matches);
 	return $session->getStatus($matches[1]);
     }
 }

@@ -75,7 +75,7 @@ class GalleryModule extends GalleryPlugin {
      * - Drop the redirect url from GalleryPlugin::deactivate() (also requires a
      *   major bump in GalleryTheme)
      * - Remove TYPE=DB_TABLE_TYPE replacement in MySqlStorage::_getSqlReplacements
-     * - change signature of getItemlinks() in all modules (add new parameter) 
+     * - change signature of getItemlinks() in all modules (add new parameter)
      * - Remove rewrite v1.1.8 version checks in webdav, watermark, httpauth, ... (look for todo)
      *
      * @return array major number, minor number
@@ -222,7 +222,7 @@ class GalleryModule extends GalleryPlugin {
 	    if (GalleryDataCache::containsKey($cacheKey)) {
 		/*
 		 * The changes must be committed before the non-transactional optimize() can be
-		 * executed. 
+		 * executed.
 		 */
 		$ret = $storage->checkPoint();
 		if ($ret) {
@@ -236,6 +236,11 @@ class GalleryModule extends GalleryPlugin {
 		}
 		GalleryDataCache::remove($cacheKey);
 	    }
+	}
+
+	$ret = parent::installOrUpgrade();
+	if ($ret) {
+	    return $ret;
 	}
 
 	if ($gallery->getDebug()) {

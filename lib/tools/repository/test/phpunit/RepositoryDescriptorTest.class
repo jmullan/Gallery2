@@ -56,6 +56,8 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
 		'po/aa.po' => array(
 		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
+		'po/aa.mo' => array(
+		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
 		'locale/aa/LC_MESSAGES/test.mo' => array(
 		    'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
 		'test/phpunit/file.test' => array(
@@ -126,6 +128,8 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 		      'po/strings.raw' => array(
 			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('base')),
 		      'po/aa.po' => array(
+			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
+		      'po/aa.mo' => array(
 			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
 		      'locale/aa/LC_MESSAGES/test.mo' => array(
 			  'bytes' => '11111', 'hash' => '12345', 'packages' => array('lang-aa')),
@@ -212,7 +216,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	    $descriptor->getFilesInPackage('base'));
 
 	$this->assertEquals(
-	    array('locale/aa/LC_MESSAGES/test.mo', 'po/aa.po'),
+	    array('locale/aa/LC_MESSAGES/test.mo', 'po/aa.mo', 'po/aa.po'),
 	    $descriptor->getFilesInPackage('lang-aa'));
     }
 
@@ -265,6 +269,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$phpVm->setCrc32('file.2',      12345); /* correct checksum */
 	$phpVm->setCrc32('strings.raw', 12345); /* correct checksum */
 	$phpVm->setCrc32('aa.po',       12345); /* correct checksum */
+	$phpVm->setCrc32('aa.mo',       12345); /* correct checksum */
 	$phpVm->setCrc32('test.mo',     12345); /* correct checksum */
 	$phpVm->setCrc32('file.test',   12345); /* correct checksum */
 	$gallery->_phpVm = $phpVm;
@@ -290,11 +295,15 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$platform->setReply('file_exists', array($base . 'po/aa.po'), true);
 	$platform->setReply('file_get_contents', array($base . 'po/aa.po'), 'aa.po');
 	$platform->setReply('stat', array($base . 'po/aa.po'), array(7 => 11111, 9 => 1));
+	$platform->setReply('file_exists', array($base . 'po/aa.mo'), true);
+	$platform->setReply('file_get_contents', array($base . 'po/aa.mo'), 'aa.mo');
+ 	$platform->setReply('stat', array($base . 'po/aa.mo'),
+ 			    array(7 => 11111, 9 => 1));
 	$platform->setReply('file_exists', array($base . 'locale/aa/LC_MESSAGES/test.mo'), true);
 	$platform->setReply('file_get_contents',
 			    array($base . 'locale/aa/LC_MESSAGES/test.mo'), 'test.mo');
- 	$platform->setReply('stat', array($base . 'locale/aa/LC_MESSAGES/test.mo'),
- 			    array(7 => 11111, 9 => 1));
+  	$platform->setReply('stat', array($base . 'locale/aa/LC_MESSAGES/test.mo'),
+  			    array(7 => 11111, 9 => 1));
  	$platform->setReply('file_exists', array($base . 'test/phpunit/file.test'), true);
  	$platform->setReply('file_get_contents',
  			    array($base . 'test/phpunit/file.test'), 'file.test');
