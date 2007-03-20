@@ -49,7 +49,7 @@ class AdminJpegtranController extends GalleryController {
 		$platform =& $gallery->getPlatform();
 		$slash = $platform->getDirectorySeparator();
 		$form['path'] = trim($form['path']);
-		if (!$platform->isRestrictedByOpenBaseDir($platform->realpath($form['path']))) {
+		if (!$platform->isRestrictedByOpenBaseDir($form['path'])) {
 		    if ($platform->is_dir($form['path'])) {
 			if (!empty($form['path'])) {
 			    $form['path'] = rtrim($form['path'], $slash) . $slash;
