@@ -19,6 +19,7 @@
  */
 define('G2_SUPPORT_MAX_LOGIN_ATTEMPTS', 7);
 define('G2_SUPPORT_MAX_SESSION_LIFETIME', 2 * 60 * 60);
+define('G2_SETUP_SESSION_NAME', 'G2SETUPSID');
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/modules/core/classes/GalleryUtilities.class');
 require_once(dirname(dirname(dirname(__FILE__))) . '/modules/core/classes/GallerySession.class');
@@ -299,9 +300,16 @@ class GallerySetupUtilities {
      * @static
      */
     function startSession() {
+	/* Set our own session name */
+	if (@ini_get('session.auto_start')) {
+	    session_unset();
+	    session_destroy();
+	}
+	session_name(G2_SETUP_SESSION_NAME);
+
 	$sessionName = session_name();
 	$sessionId = GalleryUtilities::getRequestVariablesNoPrefix($sessionName);
-	if (empty($sessionId)) {
+	if (empty($sessionId) || is_array($sessionId)) {
 	    $sessionId = !empty($_COOKIE[$sessionName]) ? $_COOKIE[$sessionName] : '';
 	}
 
@@ -335,10 +343,9 @@ class GallerySetupUtilities {
 	     * app.
 	     */
 	    @ini_set('session.save_handler', 'files');
-	    session_start();
-	} else if (!@ini_get('session.auto_start')) {
-	    session_start();
-	} /* In case of session.auto_start we can't prevent showing errors for invalid sessionIds */
+	}
+
+	session_start();
 
 	/*
 	 * Detect the case where we have a session id, but the data that it's associated with is
