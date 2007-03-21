@@ -2164,6 +2164,9 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 
+	case '1.2.2':
+	    /* Move modules/core/locale/ hierarchy into po/ */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we always
@@ -2476,6 +2479,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.1.31':
 	case '1.2.0':
 	case '1.2.1':
+	case '1.2.2':
 
 	case 'end of upgrade path':
 	    /*
