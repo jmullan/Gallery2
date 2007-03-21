@@ -236,6 +236,10 @@ class MailHelperDummyPlatform {
 	return $this->_platform->is_writeable($filename);
     }
 
+    function is_readable($filename) {
+	return $this->_platform->is_readable($filename);
+    }
+
     function stat($filename) {
 	return $this->_platform->stat($filename);
     }

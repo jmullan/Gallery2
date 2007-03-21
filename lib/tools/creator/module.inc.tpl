@@ -38,10 +38,11 @@ class {$ucModuleId}Module extends GalleryModule {ldelim}
 	$this->setName($gallery->i18n('{$moduleName}'));
 	$this->setDescription($gallery->i18n('My {$moduleName} module'));
 	$this->setVersion('1.0.0');
+	$this->setTemplateVersion(1);
 	$this->setCallbacks('getItemLinks');
 	$this->setGroup('other', $gallery->i18n('Other'));
-	$this->setRequiredCoreApi(array(7, 0));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     {rdelim}
 
     /**

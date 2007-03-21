@@ -62,6 +62,12 @@ class GalleryModule extends GalleryPlugin {
      */
     var $_requiredModuleApi;
 
+    /**
+     * The version of the templates associated with this plugin
+     * @var int
+     * @access private
+     */
+    var $_templateVersion;
 
     /**
      * Return the major and minor version of the GalleryModule API.
@@ -81,7 +87,7 @@ class GalleryModule extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(3, 5);
+	return array(3, 6);
     }
 
     /**
@@ -171,6 +177,7 @@ class GalleryModule extends GalleryPlugin {
 					$this->getId()));
 	    }
 	    $data = array('_version' => $this->getVersion(),
+                          '_templateVersion' => $this->getTemplateVersion(),
 			  '_callbacks' => $this->getCallbacks(),
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
 			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()));
@@ -583,6 +590,14 @@ class GalleryModule extends GalleryPlugin {
 	}
 	return array('group' => $this->_group['group'],
 		     'groupLabel' => $this->translate($this->_group['groupLabel']));
+    }
+
+    function setTemplateVersion($version) {
+        $this->_templateVersion = $version;
+    }
+
+    function getTemplateVersion() {
+        return (int)$this->_templateVersion;
     }
 
     function getCallbacks() {
