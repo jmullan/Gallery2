@@ -342,7 +342,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 
     /**
      * @see ItemEditPlugin::isSupported
-     * @TODO: Broaden this interface to allow a GalleryStatus return code
+     * @todo: Broaden this interface to allow a GalleryStatus return code
      */
     function isSupported($item, $thumbnail) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'watermark');
