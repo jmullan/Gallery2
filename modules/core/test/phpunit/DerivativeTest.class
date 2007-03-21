@@ -918,7 +918,6 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryDataItem.class');
 
 /**
  * Test toolkit
- *
  */
 class DerivativeTestToolkit extends GalleryToolkit {
 
@@ -993,7 +992,10 @@ class DerivativeTestItem extends GalleryDataItem {
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPlatform/UnixPlatform.class');
-/* Used for the rebuildCache test */
+
+/**
+ * Used for the rebuildCache test
+ */
 class DerivativeTestWinNtPlatform extends WinNtPlatform {
     /* Let the copy() call fail */
     function copy($source, $dest) {

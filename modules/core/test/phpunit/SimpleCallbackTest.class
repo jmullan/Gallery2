@@ -365,7 +365,9 @@ class SimpleCallbackTest extends GalleryTestCase {
     }
 }
 
-/* For the directory listing tests, we need a mock PHP VM */
+/**
+ * For the directory listing tests, we need a mock PHP VM
+ */
 class SimpleCallbackTestPhpVm {
     function function_exists($functionName) {
 	/* make it use our charset tables, they work on all platforms */

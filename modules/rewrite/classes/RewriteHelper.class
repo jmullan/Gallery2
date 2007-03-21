@@ -17,14 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * URL rewrite helper.
- * @package Rewrite
- * @subpackage Classes
- * @author Douglas Cau <douglas@cau.se>
- * @version $Revision$
- * @static
- */
 
 /* General status codes */
 define('REWRITE_STATUS_OK', 0);
@@ -36,6 +28,10 @@ define('REWRITE_STATUS_EMPTY_VALUE', 5);
 
 /**
  * URL rewrite helper.
+ * @package Rewrite
+ * @subpackage Classes
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$
  * @static
  */
 class RewriteHelper {
@@ -341,7 +337,7 @@ class RewriteHelper {
 
     /**
      * Comparison function used to order regex rules.  Order rules from most specific to least
-     * specific.  
+     * specific.
      * @param array $a first rule to compare
      * @param array $b second rule to compare
      * @return int an integer less than, equal to, or greater than zero if the first rule is

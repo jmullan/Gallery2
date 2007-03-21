@@ -17,13 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$
- * @author Douglas Cau <douglas@cau.se>
- */
 
-/* Required class */
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteParser.class');
 
 /* Status code used by the PHP Path Info parser */
@@ -34,6 +28,8 @@ define('REWRITE_STATUS_NO_PATH_INFO', 21);
  *
  * @package Rewrite
  * @subpackage Parsers
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$
  */
 class PathInfoParser extends RewriteParser {
 
@@ -56,7 +52,7 @@ class PathInfoParser extends RewriteParser {
      * @see RewriteParser::needsConfiguration
      */
     function needsConfiguration() {
-    	GalleryCoreApi::requireOnce(
+	GalleryCoreApi::requireOnce(
 	    'modules/rewrite/classes/parsers/pathinfo/PathInfoHelper.class');
 
 	list ($ret, $code) = PathInfoHelper::checkPathInfo();
@@ -71,7 +67,7 @@ class PathInfoParser extends RewriteParser {
      * @see RewriteParser::loadTestResultsTemplate
      */
     function loadTestResultsTemplate(&$template, &$form) {
-    	GalleryCoreApi::requireOnce(
+	GalleryCoreApi::requireOnce(
 	    'modules/rewrite/classes/parsers/pathinfo/PathInfoHelper.class');
 	return PathInfoHelper::loadTestResultsTemplate($template, $form);
     }
