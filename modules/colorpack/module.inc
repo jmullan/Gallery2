@@ -32,11 +32,12 @@ class ColorPackModule extends GalleryModule {
 	$this->setId('colorpack');
 	$this->setName($gallery->i18n('Color Packs'));
 	$this->setDescription($gallery->i18n('Select different color palettes for themes'));
-	$this->setVersion('1.0.5');
+	$this->setVersion('1.0.6');
+	$this->setTemplateVersion(1);
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi(array(7, 10));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**

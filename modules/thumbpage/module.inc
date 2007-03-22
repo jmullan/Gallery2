@@ -34,11 +34,12 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Thumbnail Page'));
 	$this->setDescription(
 	    $gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
-	$this->setVersion('1.0.5');
+	$this->setVersion('1.0.6');
+	$this->setTemplateVersion(1);
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 4));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**

@@ -33,11 +33,12 @@ class DigibugModule extends GalleryModule {
 	$this->setId('digibug');
 	$this->setName($gallery->i18n('Digibug'));
 	$this->setDescription($gallery->i18n('Digibug Photo Printing Module'));
-	$this->setVersion('1.0.0'); /* Update upgrade() too */
+	$this->setVersion('1.0.1'); /* Update upgrade() too */
+	$this->setTemplateVersion(1);
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
-	$this->setRequiredCoreApi(array(7, 2));
-	$this->setRequiredModuleApi(array(3, 3));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**
@@ -75,6 +76,8 @@ class DigibugModule extends GalleryModule {
 	case '0.3.5':
 	case '0.9.0':
 	case '0.9.1':
+	case '1.0.0':
+	    /* .mo file migration */
 
 	case 'end of upgrade path':
 	    break;

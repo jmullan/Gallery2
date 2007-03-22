@@ -154,7 +154,7 @@ class ThumbnailModuleExtras {
 	    WHERE
 	      [ThumbnailImage::id] = [GalleryChildEntity::id]
 	      AND
-	      [GalleryChildEntity::parentId] IN (?,?) 
+	      [GalleryChildEntity::parentId] IN (?,?)
 	    ';
 	    list ($ret, $results) =
 	    	$gallery->search($query, array((int)$rootId, 0));
@@ -225,7 +225,7 @@ class ThumbnailModuleExtras {
 	    WHERE
 	      [ThumbnailImage::id] = [GalleryChildEntity::id]
 	      AND
-	      [GalleryChildEntity::parentId] <> ? 
+	      [GalleryChildEntity::parentId] <> ?
 	    ';
 	    $gallery->guaranteeTimeLimit(30);
 	    list ($ret, $results) = $gallery->search($query, array($containerId));
@@ -328,6 +328,8 @@ class ThumbnailModuleExtras {
 	    }
 
 	case '1.0.8':
+	case '1.0.9':
+	    /* .mo file migration */
 
 	case 'end of upgrade path':
 	    /*
@@ -417,12 +419,12 @@ class ThumbnailModuleExtras {
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	$ret = $module->setParameter('id.container', $container->getId());
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	return null;
     }
 }

@@ -33,9 +33,9 @@ class SiriuxTheme extends GalleryTheme {
 	$this->setId('siriux');
 	$this->setName($gallery->i18n('Siriux'));
 	$this->setDescription($gallery->i18n('Siriux.net Gallery theme'));
-	$this->setVersion('1.1.3');
-	$this->setRequiredCoreApi(array(7, 10));
-	$this->setRequiredThemeApi(array(2, 4));
+	$this->setVersion('1.1.4');
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredThemeApi(array(2, 6));
 	$this->setStandardSettings(
 	    array('perPage' => 9,
 		  'contentWidth' => 700,

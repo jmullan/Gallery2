@@ -35,11 +35,12 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('rss');
 	$this->setName($gallery->i18n('RSS'));
 	$this->setDescription($gallery->i18n('RSS'));
-	$this->setVersion('1.1.0');
+	$this->setVersion('1.1.1');
+	$this->setTemplateVersion(1);
 	$this->setGroup('export', $gallery->i18n('Export'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 10));
-	$this->setRequiredModuleApi(array(3, 1));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**
@@ -170,6 +171,11 @@ class RssModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
+
+	/**
+	 * @todo add a default to this switch statement and include all historical versions, like
+	 * we do in other modules.
+	 */
 	switch($currentVersion) {
 	    case null:
 		/* Initial install */

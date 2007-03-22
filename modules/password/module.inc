@@ -38,11 +38,12 @@ class PasswordModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Password Items'));
 	$this->setDescription(
 	    $gallery->i18n('Assign passwords for viewing particular albums or items'));
-	$this->setVersion('1.0.4');
+	$this->setVersion('1.0.5');
+	$this->setTemplateVersion(1);
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 4));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**

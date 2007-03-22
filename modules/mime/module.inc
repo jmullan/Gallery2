@@ -34,11 +34,12 @@ class MimeModule extends GalleryModule {
 	$this->setId('mime');
 	$this->setName($gallery->i18n('MIME Maintenance'));
 	$this->setDescription($gallery->i18n('Maintain MIME types and file extensions'));
-	$this->setVersion('1.1.2');
+	$this->setVersion('1.1.3');
+	$this->setTemplateVersion(1);
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 10));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**

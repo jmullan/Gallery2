@@ -36,11 +36,12 @@ class ImageMagickModule extends GalleryModule {
 	$this->setId('imagemagick');
 	$this->setName($gallery->i18n('ImageMagick'));
 	$this->setDescription($gallery->i18n('ImageMagick / GraphicsMagick Graphics Toolkit'));
-	$this->setVersion('1.1.1');
+	$this->setVersion('1.1.2');
+	$this->setTemplateVersion(1);
 	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 4));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**

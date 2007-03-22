@@ -31,11 +31,12 @@ class RandomHighlightModule extends GalleryModule {
 	$this->setId('randomhighlight');
 	$this->setName($gallery->i18n('Random Highlight'));
 	$this->setDescription($gallery->i18n('Periodically change the album highlight'));
-	$this->setVersion('1.0.6'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.7'); /* Update upgrade() function below too */
+	$this->setTemplateVersion(1);
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 4));
-	$this->setRequiredModuleApi(array(3, 0));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**
@@ -109,6 +110,8 @@ class RandomHighlightModule extends GalleryModule {
 	    case '1.0.3':
 	    case '1.0.4':
 	    case '1.0.5':
+	    case '1.0.6':
+		/* .mo file migration */
 
 	    case 'end of upgrade path':
 		break;
