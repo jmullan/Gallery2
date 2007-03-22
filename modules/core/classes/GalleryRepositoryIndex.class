@@ -423,7 +423,7 @@ class GalleryRepositoryIndex {
      * @return array plugin list
      */
     function getPlugins($pluginType, $showAllPlugins = false, $coreApis = null) {
-	$pluginList = array();
+	$pluginList = array($pluginType => array());
 
 	foreach ($this->_index[$pluginType . 's'] as $pluginId => $plugin) {
 	    /* Skip core module. */
