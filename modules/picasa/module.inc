@@ -32,7 +32,6 @@ class PicasaModule extends GalleryModule {
 	$this->setName($gallery->i18n('Picasa'));
 	$this->setDescription($gallery->i18n('Import for Picasa 2 XML-Exports'));
 	$this->setVersion('1.0.6');
-	$this->setTemplateVersion(1);
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 20));

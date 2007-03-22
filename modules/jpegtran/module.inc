@@ -38,7 +38,6 @@ class JpegtranModule extends GalleryModule {
 	$this->setDescription(
 	    $gallery->i18n('Graphics toolkit for lossless JPEG transformations'));
 	$this->setVersion('0.9.1');
-	$this->setTemplateVersion(1);
 	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 20));

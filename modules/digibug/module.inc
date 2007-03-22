@@ -34,7 +34,6 @@ class DigibugModule extends GalleryModule {
 	$this->setName($gallery->i18n('Digibug'));
 	$this->setDescription($gallery->i18n('Digibug Photo Printing Module'));
 	$this->setVersion('1.0.1'); /* Update upgrade() too */
-	$this->setTemplateVersion(1);
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
 	$this->setRequiredCoreApi(array(7, 20));

@@ -35,7 +35,6 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Migration'));
 	$this->setDescription($gallery->i18n('Migrate your Gallery 1 albums to Gallery 2'));
 	$this->setVersion('1.0.8'); /* Update upgrade() also */
-	$this->setTemplateVersion(1);
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 20));

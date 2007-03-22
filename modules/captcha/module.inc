@@ -35,7 +35,6 @@ class CaptchaModule extends GalleryModule {
 	$this->setDescription($gallery->i18n('Prevents abuse by deterring automated bots with ' .
 					     'input that requires visual comprehension'));
 	$this->setVersion('1.1.5'); /* Update upgrade() function below too */
-	$this->setTemplateVersion(1);
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 20));

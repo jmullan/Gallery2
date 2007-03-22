@@ -36,7 +36,6 @@ class CommentModule extends GalleryModule {
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
 	$this->setVersion('1.1.4'); /* Update upgrade() function below too */
-	$this->setTemplateVersion(1);
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('registerEventListeners|getItemLinks|getItemSummaries|' .
 			    'getSiteAdminViews|getItemAdminViews');

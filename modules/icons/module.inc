@@ -33,7 +33,6 @@ class IconsModule extends GalleryModule {
 	$this->setName($gallery->i18n('Icons'));
 	$this->setDescription($gallery->i18n('Display icons for links'));
 	$this->setVersion('1.1.3'); /* Update upgrade() function below too */
-	$this->setTemplateVersion(1);
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 20));

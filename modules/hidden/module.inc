@@ -39,7 +39,6 @@ class HiddenModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setDescription($gallery->i18n('Hide items/albums from guests until directly ' .
 					     'accessed with the right URL'));
 	$this->setVersion('1.0.5');
-	$this->setTemplateVersion(1);
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
 	$this->setRequiredCoreApi(array(7, 20));

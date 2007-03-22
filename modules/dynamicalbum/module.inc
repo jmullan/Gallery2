@@ -34,7 +34,6 @@ class DynamicAlbumModule extends GalleryModule {
 	$this->setDescription(
 		$gallery->i18n('Dynamic albums for newest, most viewed or random items'));
 	$this->setVersion('1.0.1');
-	$this->setTemplateVersion(1);
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
 	$this->setRequiredCoreApi(array(7, 20));

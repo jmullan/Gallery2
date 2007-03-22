@@ -35,7 +35,6 @@ class MultirootModule extends GalleryModule {
 	$this->setName($gallery->i18n('Multiroot'));
 	$this->setDescription($gallery->i18n('Define an alternate guest view of the Gallery'));
 	$this->setVersion('1.0.1');
-	$this->setTemplateVersion(1);
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(7, 20));

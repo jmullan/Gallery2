@@ -37,7 +37,6 @@ class FotokastenModule extends GalleryModule {
 	$this->setName($gallery->i18n('Fotokasten'));
 	$this->setDescription($gallery->i18n('Fotokasten Photo Printing Module'));
 	$this->setVersion('1.0.7');
-	$this->setTemplateVersion(1);
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
 	$this->setRequiredCoreApi(array(7, 20));

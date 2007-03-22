@@ -34,7 +34,6 @@ class MP3AudioModule extends GalleryModule {
 	$this->setDescription(
 		$gallery->i18n('Enable inline play of mp3 audio files with a flash player'));
 	$this->setVersion('1.0.1');
-	$this->setTemplateVersion(1);
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(7, 20));
