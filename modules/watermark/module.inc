@@ -34,6 +34,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Watermark'));
 	$this->setDescription($gallery->i18n('Watermark your images'));
 	$this->setVersion('1.1.1'); /* Update upgrade() too */
+	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
 	$this->setRequiredCoreApi(array(7, 20));

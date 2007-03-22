@@ -38,6 +38,7 @@ class PermalinksModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setDescription(
 		$gallery->i18n('Create simpler permanent aliases to your items space'));
 	$this->setVersion('1.0.9');
+	$this->_templateVersion = 1;
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 20));

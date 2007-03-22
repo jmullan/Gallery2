@@ -34,6 +34,7 @@ class PhotoAccessModule extends GalleryModule {
 	$this->setName($gallery->i18n('PhotoWorks'));
 	$this->setDescription($gallery->i18n('PhotoWorks Photo Printing Module'));
 	$this->setVersion('1.0.8'); /* Update upgrade() too */
+	$this->_templateVersion = 1;
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(7, 20));

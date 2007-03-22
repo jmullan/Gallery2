@@ -67,7 +67,7 @@ class GalleryModule extends GalleryPlugin {
      * @var int
      * @access private
      */
-    var $_templateVersion = 1;
+    var $_templateVersion;
 
     /**
      * Return the major and minor version of the GalleryModule API.
@@ -83,6 +83,7 @@ class GalleryModule extends GalleryPlugin {
      * - Remove TYPE=DB_TABLE_TYPE replacement in MySqlStorage::_getSqlReplacements
      * - change signature of getItemlinks() in all modules (add new parameter)
      * - Remove rewrite v1.1.8 version checks in webdav, watermark, httpauth, ... (look for todo)
+     * - Change ->_templateVersion = x to ->setTemplateVersion(x) in module constructors
      *
      * @return array major number, minor number
      */
@@ -177,7 +178,7 @@ class GalleryModule extends GalleryPlugin {
 					$this->getId()));
 	    }
 	    $data = array('_version' => $this->getVersion(),
-                          '_templateVersion' => $this->getTemplateVersion(),
+			  '_templateVersion' => $this->getTemplateVersion(),
 			  '_callbacks' => $this->getCallbacks(),
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
 			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()));
@@ -593,11 +594,11 @@ class GalleryModule extends GalleryPlugin {
     }
 
     function setTemplateVersion($version) {
-        $this->_templateVersion = $version;
+	$this->_templateVersion = $version;
     }
 
     function getTemplateVersion() {
-        return (int)$this->_templateVersion;
+	return (int)$this->_templateVersion;
     }
 
     function getCallbacks() {

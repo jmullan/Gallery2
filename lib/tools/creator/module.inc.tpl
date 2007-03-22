@@ -38,7 +38,7 @@ class {$ucModuleId}Module extends GalleryModule {ldelim}
 	$this->setName($gallery->i18n('{$moduleName}'));
 	$this->setDescription($gallery->i18n('My {$moduleName} module'));
 	$this->setVersion('1.0.0');
-	$this->setTemplateVersion(1);
+	$this->_templateVersion = 1;
 	$this->setCallbacks('getItemLinks');
 	$this->setGroup('other', $gallery->i18n('Other'));
 	$this->setRequiredCoreApi(array(7, 20));
