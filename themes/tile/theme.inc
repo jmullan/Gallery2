@@ -35,7 +35,7 @@ class TileTheme extends GalleryTheme {
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails'));
 	$this->setVersion('1.0.8');
 	$this->setRequiredCoreApi(array(7, 20));
-	$this->setRequiredThemeApi(array(2, 6));
+	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(array('colorpack' => '',
 	    'sidebarBlocks' => serialize(array(
 		array('search.SearchBlock', array('showAdvancedLink' => true)),

@@ -35,7 +35,7 @@ class CarbonTheme extends GalleryTheme {
 	$this->setDescription($gallery->i18n('Gallery2 theme by mincel.com'));
 	$this->setVersion('1.2.4');
 	$this->setRequiredCoreApi(array(7, 20));
-	$this->setRequiredThemeApi(array(2, 6));
+	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(
 	    array('rows' => 3, 'columns' => 3,
 		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
