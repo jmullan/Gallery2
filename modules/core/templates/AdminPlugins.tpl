@@ -14,74 +14,74 @@
   var stateData = {ldelim}
     "inactive" : {ldelim}
       "class" : "icon-plugin-inactive",
-      "text" : "{g->text text="Status: Inactive"}",
+      "text" : "{g->text text="Status: Inactive" forJavascript=true}",
       "actions" : {ldelim} "activate": 1, "uninstall" : 1, "delete" : 1 {rdelim},
       "callback": "copyVersionToInstalledVersion",
-      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deactivated"}" {rdelim}
+      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deactivated" forJavascript=true}" {rdelim}
     {rdelim},
     "active" : {ldelim}
       "class" : "icon-plugin-active",
-      "text" : "{g->text text="Status: Active"}",
+      "text" : "{g->text text="Status: Active" forJavascript=true}",
       "actions" : {ldelim} "deactivate": 1, "uninstall" : 1, "delete" : 1  {rdelim},
       "callback": "copyVersionToInstalledVersion",
-      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ activated"}" {rdelim}
+      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ activated" forJavascript=true}" {rdelim}
     {rdelim},
     "uninstalled" : {ldelim}
       "class" : "icon-plugin-uninstall",
-      "text" : "{g->text text="Status: Not Installed"}",
+      "text" : "{g->text text="Status: Not Installed" forJavascript=true}",
       "actions" : {ldelim} "install": 1, "delete" : 1 {rdelim},
       "callback": "eraseInstalledVersion",
-      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ uninstalled"}" {rdelim}
+      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ uninstalled" forJavascript=true}" {rdelim}
     {rdelim},
     "unupgraded" : {ldelim}
       "class" : "icon-plugin-upgrade",
-      "text" : "{g->text text="Status: Upgrade Required (Inactive)"}",
+      "text" : "{g->text text="Status: Upgrade Required (Inactive)" forJavascript=true}",
       "actions" : {ldelim} "upgrade": 1 {rdelim}
     {rdelim},
     "incompatible" : {ldelim}
       "class" : "icon-plugin-incompatible",
-      "text" : "{g->text text="Status: Incompatible Plugin (Inactive)"}",
+      "text" : "{g->text text="Status: Incompatible Plugin (Inactive)" forJavascript=true}",
       "actions" : {ldelim} {rdelim}
     {rdelim},
     "unconfigured" : {ldelim}
       "class" : "icon-plugin-inactive",
-      "text" : "{g->text text="Status: Inactive (Configuration Required)"}",
+      "text" : "{g->text text="Status: Inactive (Configuration Required)" forJavascript=true}",
       "actions" : {ldelim} "configure" : 1, "uninstall" : 1, "delete" : 1 {rdelim},
       "callback": "copyVersionToInstalledVersion",
-      "message" : {ldelim} "type" : "giWarning", "text" : "{g->text text="__PLUGIN__ needs configuration"}" {rdelim}
+      "message" : {ldelim} "type" : "giWarning", "text" : "{g->text text="__PLUGIN__ needs configuration" forJavascript=true}" {rdelim}
     {rdelim},
     "deleted" : {ldelim}
-      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deleted"}" {rdelim}
+      "message" : {ldelim} "type" : "giSuccess", "text" : "{g->text text="__PLUGIN__ deleted" forJavascript=true}" {rdelim}
     {rdelim}
   {rdelim};
   var errorPageUrl = '{g->url arg1="view=core.ErrorPage" htmlEntities=0}';
   var uninstallPrompt = {ldelim}
-    "header" : '{g->text text="Warning!"}',
-    "body"   : '{g->text text="Do you really want to uninstall __PLUGIN__?"}' +
+    "header" : '{g->text text="Warning!" forJavascript=true}',
+    "body"   : '{g->text text="Do you really want to uninstall __PLUGIN__?" forJavascript=true}' +
 	       '<br/>' +
-               '{g->text text="This plugin will be uninstalled, but its files will be kept so that you can reinstall it."}',
-    "yes"    : '{g->text text="Yes"}',
-    "no"     : '{g->text text="No"}'
+               '{g->text text="This plugin will be uninstalled, but its files will be kept so that you can reinstall it." forJavascript=true}',
+    "yes"    : '{g->text text="Yes" forJavascript=true}',
+    "no"     : '{g->text text="No" forJavascript=true}'
   {rdelim};
 
   var deletePrompt = {ldelim}
-    "header" : '{g->text text="Warning!"}',
-    "body"   : '{g->text text="Do you really want to delete __PLUGIN__?"}' +
+    "header" : '{g->text text="Warning!" forJavascript=true}',
+    "body"   : '{g->text text="Do you really want to delete __PLUGIN__?" forJavascript=true}' +
 	       '<br/>' +
-               '{g->text text="This plugin will be uninstalled and its files will be deleted."}',
-    "yes"    : '{g->text text="Yes"}',
-    "no"     : '{g->text text="No"}'
+               '{g->text text="This plugin will be uninstalled and its files will be deleted." forJavascript=true}',
+    "yes"    : '{g->text text="Yes" forJavascript=true}',
+    "no"     : '{g->text text="No" forJavascript=true}'
   {rdelim};
 
   var legendStrings = {ldelim}
-    "inactive"     : '{g->text text="disabled(__COUNT__)"}',
-    "active"       : '{g->text text="up to date(__COUNT__)"}',
-    "uninstalled"  : '{g->text text="not installed(__COUNT__)"}',
-    "unupgraded"   : '{g->text text="upgrade required(__COUNT__)"}',
-    "incompatible" : '{g->text text="incompatible(__COUNT__)"}'
+    "inactive"     : '{g->text text="disabled(__COUNT__)" forJavascript=true}',
+    "active"       : '{g->text text="up to date(__COUNT__)" forJavascript=true}',
+    "uninstalled"  : '{g->text text="not installed(__COUNT__)" forJavascript=true}',
+    "unupgraded"   : '{g->text text="upgrade required(__COUNT__)" forJavascript=true}',
+    "incompatible" : '{g->text text="incompatible(__COUNT__)" forJavascript=true}'
   {rdelim};
 
-  var failedToDeleteMessage = '{g->text text="Failed to completely delete __PLUGIN__"}';
+  var failedToDeleteMessage = '{g->text text="Failed to completely delete __PLUGIN__" forJavascript=true}';
 
   {literal}
   var contexts = {"module": {}, "theme": {}};
@@ -160,11 +160,12 @@
 	  {$plugin.name}
 	  {else}
 	  <span class="gTooltipTarget">{$plugin.name}</span>
+	  {capture assign=screenshotLabel}{g->text text="Screenshot for %s" arg1=$plugin.name}{/capture}
 	  <script type="text/javascript">
 	    // <![CDATA[
 	    new YAHOO.widget.Tooltip("gTooltip", {ldelim}
 		context: "plugin-{$plugin.type}-{$plugin.id}-name",
-		text: '<img src="{g->url href="`$plugin.screenshot`"}" alt="{g->text text="Screenshot for %s" arg1=$plugin.name}"/>',
+		text: '<img src="{g->url href="`$plugin.screenshot`"}" alt="{$screenshotLabel|escape:"html":"UTF-8"|escape:"javascript":"UTF-8"}"/>',
 		showDelay: 250 {rdelim});
             // ]]>
           </script>
