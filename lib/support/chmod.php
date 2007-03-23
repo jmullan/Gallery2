@@ -563,8 +563,7 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
         gallery2 folder is probably owned by you which means that you can edit the files
         directly.  However, if you used the preinstaller then your gallery2 directory is
         also owned by the webserver. For more information, see the <b><a
-        href="http://codex.gallery2.org/index.php/Gallery2:Security"> Gallery Security
-        Guide</a>.</b>
+        href="http://codex.gallery2.org/Gallery2:Security">Gallery Security Guide</a>.</b>
       </p>
 
       <!-- Identifyable placeholders such that we can insert our messages during runtime via JS. -->
