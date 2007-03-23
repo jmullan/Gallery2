@@ -17,15 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$
- * @author Douglas Cau <douglas@cau.se>
- */
 
-/**
- * Required class
- */
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
 
 /**
@@ -33,6 +25,8 @@ GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class')
  *
  * @package Rewrite
  * @subpackage Parsers
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$
  */
 class ModRewriteUrlGenerator extends RewriteUrlGenerator {
 
@@ -81,12 +75,12 @@ class ModRewriteUrlGenerator extends RewriteUrlGenerator {
 		    return parent::getCurrentUrl($forceDirect);
 		}
 	    }
-	    
+
 	    $tmp = $path . $this->_file[$forceDirect];
 	    $queryString = GalleryUtilities::getServerVar('QUERY_STRING');
 	    if (!empty($queryString)) {
 		GalleryUtilities::unsanitizeInputValues($queryString, false);
-		$tmp .= '?' . $queryString;
+		$tmp .= ((strpos($tmp, '?') === false) ? '?' : '&') . $queryString;
 	    }
 
 	    $this->_currentUrl[$forceDirect] = $this->makeUrl($tmp);
@@ -102,7 +96,7 @@ class ModRewriteUrlGenerator extends RewriteUrlGenerator {
 	if (GalleryUtilities::isEmbedded()) {
 	    $options['forceServerRelativeUrl'] = 1;
 	}
-	
+
 	return parent::generateUrl($params, $options);
     }
 }

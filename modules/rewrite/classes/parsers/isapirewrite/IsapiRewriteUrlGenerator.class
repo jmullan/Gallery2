@@ -17,15 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * @package Rewrite
- * @version $Revision$
- * @author Douglas Cau <douglas@cau.se>
- */
 
-/**
- * Required class
- */
 GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class');
 
 /**
@@ -33,6 +25,8 @@ GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class')
  *
  * @package Rewrite
  * @subpackage Parsers
+ * @author Douglas Cau <douglas@cau.se>
+ * @version $Revision$
  */
 class IsapiRewriteUrlGenerator extends RewriteUrlGenerator {
 
@@ -73,7 +67,7 @@ class IsapiRewriteUrlGenerator extends RewriteUrlGenerator {
      * GalleryUrlGenerator::getCurrentUrlDir() because REQUEST_URI gets rewritten correctly by
      * isapi_rewrite. (REQUEST_URI is only non-empty on IIS if isapi_rewrite is used!)
      *
-     * But we want to add a check if the RewriteUrlGenerator has been configured 
+     * But we want to add a check if the RewriteUrlGenerator has been configured
      * and force a fallback if that is not the case.
      */
     function getCurrentUrlDir($forceDirect=false) {
