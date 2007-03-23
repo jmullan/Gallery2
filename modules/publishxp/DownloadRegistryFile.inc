@@ -70,6 +70,8 @@ class DownloadRegistryFileView extends GalleryView {
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../..');
 	$template->setVariable('l10Domain', 'modules_publishxp');
 
+	$vistaVersion = GalleryUtilities::getRequestVariables('vistaVersion');
+	$DownloadRegistryFile['vistaVersion'] = !empty($vistaVersion);
 	$DownloadRegistryFile['title'] = $title;
 	$DownloadRegistryFile['domain'] = $domain;
 	$template->setVariable('DownloadRegistryFile', $DownloadRegistryFile);

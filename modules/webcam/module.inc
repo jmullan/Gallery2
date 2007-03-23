@@ -30,7 +30,7 @@ class WebCamModule extends GalleryModule {
 	$this->setId('webcam');
 	$this->setName($gallery->i18n('WebCam'));
 	$this->setDescription($gallery->i18n('Support periodically updated images like a webcam'));
-	$this->setVersion('1.0.5'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.5.1'); /* Update upgrade() function below too */
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(7, 4));
@@ -105,6 +105,7 @@ class WebCamModule extends GalleryModule {
 	    case '1.0.2':
 	    case '1.0.3':
 	    case '1.0.4':
+	    case '1.0.5':
 
 	    case 'end of upgrade path':
 		break;
@@ -190,15 +191,22 @@ class WebCamModule extends GalleryModule {
 	    global $gallery;
 	    $platform =& $gallery->getPlatform();
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
-	    $tmpFile = $platform->tempnam($tmpDir, 'webcam');
+	    $backupFile = $platform->tempnam($tmpDir, 'webcambak');
 	    list ($ret, $url) = $this->getParameter('imageUrl', $id);
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;
 	    }
 
-	    list ($successfullyCopied, $response, $headers) =
-		GalleryCoreApi::fetchWebFile($url, $tmpFile);
+	    $urlComponents = parse_url($url);
+	    if ($urlComponents['scheme'] == 'file') {
+		$tmpFile = $urlComponents['path'];
+		$successfullyCopied = $platform->file_exists($tmpFile);
+	    } else {
+		$tmpFile = $platform->tempnam($tmpDir, 'webcam');
+		list ($successfullyCopied, $response, $headers) =
+		    GalleryCoreApi::fetchWebFile($url, $tmpFile);
+	    }
 	    if (!$successfullyCopied) {
 		/* Can't get the current image.. just keep what we have now */
 	    } else {
@@ -208,7 +216,7 @@ class WebCamModule extends GalleryModule {
 		    return $ret;
 		}
 		/* Backup previous file */
-		$ret = $platform->copy($path, $tmpFile . '.bak');
+		$ret = $platform->copy($path, $backupFile);
 		if (!$ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
@@ -225,7 +233,7 @@ class WebCamModule extends GalleryModule {
 			return $ret;
 		    }
 		    /* Problem with new file (maybe html response, not data file); rollback */
-		    $platform->copy($tmpFile . '.bak', $path);
+		    $platform->copy($backupFile, $path);
 		} else {
 		    $item->setOriginationTimestamp(time());
 		    $ret = $item->save();
@@ -239,9 +247,11 @@ class WebCamModule extends GalleryModule {
 			return $ret;
 		    }
 		}
-		@$platform->unlink($tmpFile . '.bak');
+		@$platform->unlink($backupFile);
 	    }
-	    @$platform->unlink($tmpFile);
+	    if ($urlComponents['scheme'] != 'file') {
+		@$platform->unlink($tmpFile);
+	    }
 	}
 	if (isset($lockId)) {
 	    $ret = GalleryCoreApi::releaseLocks($lockId);

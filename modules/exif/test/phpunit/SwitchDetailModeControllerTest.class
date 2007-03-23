@@ -118,7 +118,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	foreach (array('detailed', 'summary') as $mode) {
+	foreach (array(1 => 'detailed', 2 => 'summary') as $i => $mode) {
 	    /* Set the mode */
 	    $session->put('exif.module.LoadExifInfo.mode', $mode);
 	    $this->assertEquals($mode, $session->get('exif.module.LoadExifInfo.mode'),
@@ -171,6 +171,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	    if (isset($data['exifData'])) {
 		$this->assertEquals($exifData, $data['exifData'], "data for mode $mode");
 	    }
+	    $this->assertEquals($i, $data['blockNum'], "blockNum for $mode");
 	}
     }
 }

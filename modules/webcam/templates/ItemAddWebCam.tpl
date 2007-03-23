@@ -22,7 +22,7 @@
     {/if}
     {if isset($form.error.imageUrl.invalid)}
     <div class="giError">
-      {g->text text="The URL entered must begin with http://"}
+      {g->text text="The URL entered must begin with http:// or file://"}
     </div>
     {/if}
     {if isset($form.error.imageUrl.unavailable)}

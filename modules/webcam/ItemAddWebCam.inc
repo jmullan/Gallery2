@@ -33,40 +33,51 @@ class ItemAddWebCam extends ItemAddPlugin {
     function handleRequest($form, &$item) {
 	global $gallery;
 
-	$status = array();
-	$error = array();
+	$status = $error = array();
 	if (isset($form['action']['checkUrl'])) {
 	    /* Delegate back to the same view */
 	} else if (isset($form['action']['addWebCam'])) {
 	    /* fetch url, create item, set WebCam handler, save params */
 	    $platform =& $gallery->getPlatform();
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
-	    $tmpFile = $platform->tempnam($tmpDir, 'webcam');
 	    $url = $form['imageUrl'];
 	    GalleryUtilities::unsanitizeInputValues($url, false);
+	    $urlComponents = parse_url($url);
 
-	    list ($successfullyCopied, $response, $headers) =
-		GalleryCoreApi::fetchWebFile($url, $tmpFile);
+	    if ($urlComponents['scheme'] == 'http') {
+		$tmpFile = $platform->tempnam($tmpDir, 'webcam');
+		list ($successfullyCopied, $response, $headers) =
+		    GalleryCoreApi::fetchWebFile($url, $tmpFile);
+	    } else if ($urlComponents['scheme'] == 'file') {
+		$tmpFile = $urlComponents['path'];
+		$successfullyCopied = $platform->file_exists($tmpFile);
+	    } else {
+		$error[] = 'form[error][imageUrl][invalid]';
+		$successfullyCopied = true;
+	    }
 	    if (!$successfullyCopied) {
 		$error[] = 'form[error][imageUrl][unavailable]';
 	    }
 
-	    if (!empty($headers['Content-Type'])) {
-		$mimeType = $headers['Content-Type'];
-	    } else if (!empty($headers['Content-type'])) {
-		$mimeType = $headers['Content-type'];
-	    } else {
-		list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
-		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-		if ($ret) {
-		    $mimeType = 'application/unknown';
-		}
-	    }
-
 	    if (empty($error)) {
+		$basename = basename($urlComponents['path']);
+		if (!empty($headers['Content-Type'])) {
+		    $mimeType = $headers['Content-Type'];
+		} else if (!empty($headers['Content-type'])) {
+		    $mimeType = $headers['Content-type'];
+		} else {
+		    list ($base, $extension) = GalleryUtilities::getFileNameComponents($basename);
+		    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+		    if ($ret) {
+			$mimeType = 'application/unknown';
+		    }
+		}
+
 		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
-		    $tmpFile, basename($url), basename($url), '', '', $mimeType, $item->getId());
-		@$platform->unlink($tmpFile);
+		    $tmpFile, $basename, $basename, '', '', $mimeType, $item->getId());
+		if ($urlComponents['scheme'] == 'http') {
+		    @$platform->unlink($tmpFile);
+		}
 		if ($ret) {
 		    return array($ret, null, null);
 		}
@@ -104,7 +115,7 @@ class ItemAddWebCam extends ItemAddPlugin {
 
 		    $error[] = 'form[error][imageUrl][notImage]';
 		}
-	    } else {
+	    } else if ($urlComponents['scheme'] == 'http') {
 		@$platform->unlink($tmpFile);
 	    }
 	}
@@ -132,8 +143,9 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    if (empty($form['imageUrl'])) {
 		$form['error']['imageUrl']['missing'] = 1;
 	    } else {
-		$baseUrlComponents = parse_url($form['imageUrl']);
-		if (empty($baseUrlComponents['scheme']) || $baseUrlComponents['scheme'] != 'http') {
+		$urlComponents = parse_url($form['imageUrl']);
+		if (empty($urlComponents['scheme'])
+			|| !in_array($urlComponents['scheme'], array('http', 'file'))) {
 		    $form['error']['imageUrl']['invalid'] = 1;
 		}
 	    }
