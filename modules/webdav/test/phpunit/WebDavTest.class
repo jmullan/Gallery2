@@ -788,7 +788,9 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
+	$this->assertEquals($expectedHeaders, $this->_headers);
 
 	$this->assertEquals('', $output);
 
@@ -852,7 +854,9 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
+	$this->assertEquals($expectedHeaders, $this->_headers);
 
 	$this->assertEquals('', $output);
 
@@ -929,7 +933,9 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
+	$this->assertEquals($expectedHeaders, $this->_headers);
 
 	$this->assertEquals('', $output);
 
@@ -1001,7 +1007,9 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('HTTP/1.0 204 No Content', $this->_headers['status']);
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 204 No Content';
+	$this->assertEquals($expectedHeaders, $this->_headers);
 
 	$this->assertEquals('', $output);
 

@@ -173,21 +173,50 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
      *       version.
      */
     function activate($postActivationEvent=true) {
-	/* Ensure the rewrite module is compatible, 'pattern' is optional since v1.1.8 of rewrite */
+	global $gallery;
+
+	/* Check that the URL rewrite module is compatible, 'pattern' is optional since 1.1.8 */
 	list ($ret, $modules) = GalleryCoreApi::fetchPluginList('module');
 	if ($ret) {
 	    return array($ret, null);
 	}
-
 	if (isset($modules['rewrite'])) {
 	    list ($ret, $rewrite) = GalleryCoreApi::loadPlugin('module', 'rewrite', true);
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
-	    if (version_compare($rewrite->getVersion(), '1.1.8', '<')) {
+	    if (version_compare($rewrite->getVersion(), '1.1.8') < 0) {
 		return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
 	    }
+	}
+
+	/* Remove orphaned WebDAV path components */
+	$query = '
+	    SELECT
+	      [WebDavPathComponentMap::itemId]
+	    FROM
+	      [WebDavPathComponentMap]
+	    LEFT JOIN
+	      [Entity]
+	    ON
+	      [WebDavPathComponentMap::itemId] = [Entity::id]
+	    WHERE
+	      [Entity::id] IS NULL';
+	list ($ret, $results) = $gallery->search($query);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$itemIds = array();
+	while (($result = $results->nextResult()) !== false) {
+	    $itemIds[] = (int)$result[0];
+	}
+
+	$ret = GalleryCoreApi::removeMapEntry('WebDavPathComponentMap',
+	    array('itemId' => $itemIds));
+	if ($ret) {
+	    return array($ret, null);
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
