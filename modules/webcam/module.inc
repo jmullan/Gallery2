@@ -107,9 +107,9 @@ class WebCamModule extends GalleryModule {
 	    case '1.0.3':
 	    case '1.0.4':
 	    case '1.0.5':
+	    case '1.0.5.1':
 	    case '1.1.0':
-	    /* .mo file migration */
-
+		/* .mo file migration */
 
 	    case 'end of upgrade path':
 		break;

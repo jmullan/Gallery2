@@ -133,6 +133,7 @@ class ExifModule extends GalleryModule {
 	    case '1.0.8':
 	    case '1.0.9':
 	    case '1.1.0':
+	    case '1.1.0.1':
 	    case '1.2.0':
 		/* .mo file migration */
 

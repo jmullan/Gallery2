@@ -111,6 +111,7 @@ class RandomHighlightModule extends GalleryModule {
 	    case '1.0.4':
 	    case '1.0.5':
 	    case '1.0.6':
+	    case '1.0.6.1':
 		/* .mo file migration */
 
 	    case 'end of upgrade path':
