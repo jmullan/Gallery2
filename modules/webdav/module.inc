@@ -31,7 +31,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('1.0.1'); /* Update upgrade() too! */
+	$this->setVersion('1.0.2'); /* Update upgrade() too! */
 	$this->_templateVersion = 1;
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop.'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
@@ -140,6 +140,13 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	case '1.0.0':
 	    /* .mo file migration */
 
+	case '1.0.1':
+	    /* Avoid matching paths starting with 'w[^/]' with URL rewrite rule keyword */
+	    $ret = $this->_activateRewriteRules();
+	    if ($ret && !($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED)) {
+		return $ret;
+	    }
+
 	case 'end of upgrade path':
 	    break;
 
@@ -226,7 +233,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    'pattern' => 'w%path%',
 	    'keywords' => array(
 		'path' => array(
-		    'pattern' => '([^?]*)',
+		    'pattern' => '(/[^?]*)?',
 		    'function' => array('webdav', 'WebDavRewriteHelper', 'parsePath'),
 		    'help' => $this->translate('Path to an item (eg. /album/image.jpg.html)'))));
 
