@@ -189,6 +189,8 @@ class GalleryRepository {
 	$repositoryDataBuild = $header['buildTimestamp'];
 	$upgradeInfo['base']['newVersion'] = $repositoryDataVersion;
 	$upgradeInfo['base']['newBuild'] = $repositoryDataBuild;
+	$upgradeInfo['base']['isCompatible'] = $this->_utilities->isPluginCompatible(
+	    $pluginType, $header['requiredCoreApi'], $header['requiredPluginApi']);
 
 	/* Check if this plugin's base files are installed. */
 	if (isset($installedPackages['base'])) {
@@ -209,7 +211,7 @@ class GalleryRepository {
 	}
 
 	if ($upgradeInfo['base']['relation'] == 'older') {
-	    $upgradeInfo['upgradeable'] = 1;
+	    $upgradeInfo['upgradeable'] = $upgradeInfo['base']['isCompatible'];
 	}
 	$upgradeInfo['base']['currentVersion'] = $dataVersion;
 	$upgradeInfo['base']['currentBuild'] = $dataBuild;
@@ -253,7 +255,7 @@ class GalleryRepository {
 		'locked' => $locked);
 
 	    if ($relation == 'older' && $currentBuild) {
-		$upgradeInfo['upgradeable'] = true;
+		$upgradeInfo['upgradeable'] = $upgradeInfo['base']['isCompatible'];
 	    }
 
 	    $upgradeInfo['complete'] &= !empty($currentBuild);
@@ -422,7 +424,7 @@ class GalleryRepository {
 		    return array($ret, null);
 		}
 
-		if ($upgradeInfo['base']['locked']) {
+		if ($upgradeInfo['base']['locked'] || !$upgradeInfo['base']['isCompatible']) {
 		    continue;
 		}
 

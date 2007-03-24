@@ -251,6 +251,11 @@ class GalleryRepositoryUtilities {
     function getProvidedApis($pluginType, $providedApis=null) {
 	if (empty($providedApis)) {
 	    $providedCoreApi = GalleryCoreApi::getApiVersion();
+	    /*
+	     * GalleryModule will be loaded, but GalleryTheme may not be, yet because this
+	     * is typically called from controller code.
+	     */
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
 	    $providedPluginApi = $pluginType == 'module' ? GalleryModule::getApiVersion()
 							 : GalleryTheme::getApiVersion();
 	} else {
