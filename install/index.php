@@ -94,7 +94,7 @@ if (function_exists('dgettext')) {
     $translator = new GalleryTranslator();
     $translator->init($_SESSION['language'], true);
     unset($gallery);
-    bindtextdomain('gallery2_install', dirname(__FILE__) . '/locale');
+    bindtextdomain('gallery2_install', dirname(dirname(__FILE__)) . '/locale');
     textdomain('gallery2_install');
     if (function_exists('bind_textdomain_codeset')) {
 	bind_textdomain_codeset('gallery2_install', 'UTF-8');
