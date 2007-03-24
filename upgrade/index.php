@@ -102,7 +102,7 @@ if (!empty($storageConfig)) {
 	}
 	$translator->init($_SESSION['language'], true);
 	/* Select domain for translation */
-	bindtextdomain('gallery2_upgrade', dirname(__FILE__) . '/locale');
+	bindtextdomain('gallery2_upgrade', dirname(dirname(__FILE__)) . '/locale');
 	textdomain('gallery2_upgrade');
 	if (function_exists('bind_textdomain_codeset')) {
 	    bind_textdomain_codeset('gallery2_upgrade', 'UTF-8');
