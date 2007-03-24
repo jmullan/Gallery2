@@ -556,6 +556,10 @@ class AdminRepositoryDownloadView extends GalleryView {
 		return array($ret, null);
 	    }
 
+            if (!$upgradeData['base']['isCompatible']) {
+		continue;
+	    }
+
 	    list ($ret, $upgradeData['pluginName']) =
 		$repository->getPluginName($pluginType, $pluginId);
 	    if ($ret) {
