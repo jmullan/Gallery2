@@ -2124,6 +2124,8 @@ class CoreModuleExtras {
 	    /* Reposition display_errors in config.php */
 	case '1.1.31':
 	    /* 2.2 Release! */
+	case '1.2.0':
+	    /* 2.2.1 Bugfix Release */
 
 	case 'end of upgrade path':
 	    /*
@@ -2435,6 +2437,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 ';
 	    $configChanges[] = array('remove' => $remove, 'add' => array(), 'edit' => array($edit));
 	case '1.1.31':
+	case '1.2.0':
 
 	case 'end of upgrade path':
 	    /*
