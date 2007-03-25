@@ -65,7 +65,7 @@ class CoreModuleExtras {
 	$gallery->debug('Old version: ' . $currentVersion
 			. '   New version: ' . $module->getVersion());
 	/* Enable upgrade from any patch release version */
-	$currentVersion = preg_replace('/^(1\.[01]\.0)\.\d+$/', '$1.x', $currentVersion);
+	$currentVersion = preg_replace('/^(1\.\d\.0)\.\d+$/', '$1.x', $currentVersion);
 
 	/*
 	 * We converted the character set for MySQL to UTF8 in version 1.0.27, but this only
@@ -2126,6 +2126,7 @@ class CoreModuleExtras {
 	    /* 2.2 Release! */
 
 	case '1.2.0':
+	case '1.2.0.x':
 	    /* Added GalleryCoreApi::getCodeBasePath */
 
 	case '1.2.1':
