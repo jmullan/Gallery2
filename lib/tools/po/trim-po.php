@@ -23,6 +23,8 @@ if ($langpath == $path || !file_exists($langpath)) {
     print $header;
     foreach ($po as $id => $data) {
 	checkHint($id, $data['msgstr'], $path);
+	$isFuzzy = strpos($data['before'], ', fuzzy') !== false;
+	checkMessageForHtml($id, $data['msgstr'], $isFuzzy, $path);
 	if (substr($id, 5) != substr($data['msgstr'], 6)) {
 	    print $data['before'] . $id . $data['msgstr'] . "\n";
 	}
@@ -36,6 +38,8 @@ list ($langpo) = readPo($langpath);
 print $header;
 foreach ($po as $id => $data) {
     checkHint($id, $data['msgstr'], $path);
+    $isFuzzy = strpos($data['before'], ', fuzzy') !== false;
+    checkMessageForHtml($id, $data['msgstr'], $isFuzzy, $path);
     if (!isset($langpo[$id]) || $langpo[$id]['msgstr'] != $data['msgstr']) {
 	print $data['before'] . $id . $data['msgstr'] . "\n";
     }
@@ -48,6 +52,66 @@ function checkHint($msgid, $msgstr, $path) {
     if (strpos($msgstr, '<!--') !== false) {
 	fwrite(stdErr(), "\nWarning: Translation contains hint in $path\n");
     }
+}
+
+function checkMessageForHtml($msgid, $msgstr, $isFuzzy, $path) {
+    $string = _parsePoLinesForMessageString($msgid);
+    checkStringForHtml($string, 'msgid', $path);
+    if (!$isFuzzy) {
+	$string = _parsePoLinesForMessageString($msgstr);
+	checkStringForHtml($string, 'msgstr', $path);
+    }
+}
+
+function checkStringForHtml($string, $type, $path) {
+    static $ltRegExpPattern, $gtRegExpPattern;
+    if (empty($ltRegExpPattern)) {
+	$allowedHtmlTags = array('b', 'i', 'strong', 'tt');
+
+	$openTags = implode('>|', $allowedHtmlTags) . '>';
+	$closeTags = '/' . implode('>|/', $allowedHtmlTags) . '>';
+	$ltRegExpPattern = '#<(?!' . $openTags . '|' . $closeTags . ')#';
+
+	$openTags = '<' . implode('|<', $allowedHtmlTags);
+	$closeTags = '</' . implode('|</', $allowedHtmlTags);
+	$gtRegExpPattern = '#(?<!' . $openTags . '|' . $closeTags . ')>#';
+    }
+
+    /* Allow for HTML comment tags as well. chechHint takes care of them. */
+    $string = preg_replace('/<!--.*-->/U', '', $string);
+
+    if (preg_match($ltRegExpPattern, $string)) {
+	fwrite(stdErr(), "\nWarning: Translation contains < (should be &lt;) in $type "
+		       . "\"$string\" in file $path\n");
+    }
+    
+    if (preg_match($gtRegExpPattern, $string)) {
+	fwrite(stdErr(), "\nWarning: Translation contains > (should be &gt;) in $type "
+		       . "\"$string\" in file $path\n");
+    }
+
+    if (strpos($string, '&') !== false) {
+	/* Can't use look-ahead assertion of variable length. Therefore exploding on &. */
+	$ampStrings = explode('&', $string);
+	array_shift($ampStrings);
+	foreach ($ampStrings as $ampString) {
+	    if (!preg_match('/^[a-z0-9#]{2,9};/', $ampString)) {
+		fwrite(stdErr(), "\nWarning: Translation contains & (should be &amp;) in $type "
+			       . "\"$string\" in file $path\n");
+	    }
+	}
+    }
+}
+
+function _parsePoLinesForMessageString($poLines) {
+    $lines = explode("\n", $poLines);
+    $message = '';
+    foreach ($lines as $line) {
+	if (preg_match('/^[^"]*"(.*)"/', $line, $matches)) {
+	    $message .= $matches[1];
+	}
+    }
+    return $message;
 }
 
 function readPo($path) {

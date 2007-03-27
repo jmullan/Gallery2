@@ -77,7 +77,7 @@ class SystemChecksStep extends InstallStep {
 		|| (version_compare(phpversion(), '5.0.0', '>=')
 		    && version_compare(phpversion(), '5.0.4', '<'))) {
 	    $templateData['check'][] =
-		array('title' => _('PHP version >= 4.3.0 or >= 5.0.4'),
+		array('title' => _('PHP version &gt;= 4.3.0 or &gt;= 5.0.4'),
 		      'error' => true,
 		      'notice' => sprintf(
 			  _("Error: Gallery 2 requires PHP version 4.3.0 or newer or 5.0.4 or " .
@@ -311,11 +311,13 @@ class SystemChecksStep extends InstallStep {
 		      'warning' => true,
 		      'notice' => sprintf(
 			  _('Warning: Your PHP is configured with Zend ze1_compatibility_mode ' .
-			    'which can cause PHP to crash.  Click <a href="%s">here</a> to test ' .
-			    'your PHP.  If you see "SUCCESS" then your PHP is ok.  If you get an ' .
+			    'which can cause PHP to crash.  Click %shere%s to test your PHP.  ' .
+			    'If you see "SUCCESS" then your PHP is ok.  If you get an ' .
 			    'error or no response then you must turn off ze1_compatibility_mode ' .
 			    'before proceeding.'),
-			  INDEX_PHP . '?step=' . $this->_stepNumber . '&amp;zendtest=1'),
+			  sprintf('<a href="%s">',
+				  INDEX_PHP . '?step=' . $this->_stepNumber . '&amp;zendtest=1'),
+			  '</a>'),
 		);
 	} /* skip showing 'success' for this one */
 
