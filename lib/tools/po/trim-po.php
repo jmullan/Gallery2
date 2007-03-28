@@ -95,7 +95,7 @@ function checkStringForHtml($string, $type, $path) {
 	$ampStrings = explode('&', $string);
 	array_shift($ampStrings);
 	foreach ($ampStrings as $ampString) {
-	    if (!preg_match('/^[a-z0-9#]{2,9};/', $ampString)) {
+	    if (!preg_match('/^[A-Za-z0-9#]{2,9};/', $ampString)) {
 		fwrite(stdErr(), "\nWarning: Translation contains & (should be &amp;) in $type "
 			       . "\"$string\" in file $path\n");
 	    }
