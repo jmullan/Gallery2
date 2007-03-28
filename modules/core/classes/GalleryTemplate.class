@@ -129,7 +129,7 @@ class GalleryTemplate {
      * Add a template to include in the <head> section
      * @param string $tpl template path
      * @param string $l10Domain (optional) localization domain
-     *	       default={1stdir}_{2nddir} from template path
+     *        default={1stdir}_{2nddir} from template path
      */
     function head($tpl, $l10Domain=null) {
 	$head =& $this->getVariableByReference('head');
@@ -172,7 +172,7 @@ class GalleryTemplate {
      *
      * @param string $templateName
      * @return array object GalleryStatus the status of the call
-     *	       string the HTML content
+     *         string the HTML content
      */
     function fetch($templateName) {
 	$this->_smarty->template_dir = $this->_templateDir;
@@ -238,7 +238,7 @@ class GalleryTemplate {
 	    list ($success) = GalleryUtilities::guaranteeDirExists($dir);
 	    if (!$success) {
 		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					    "Unable to mkdir($dir)");
+					     "Unable to mkdir($dir)");
 	    }
 	    if ($fd = $platform->fopen($templateVersionFile, 'w')) {
 		$platform->fclose($fd);
@@ -260,7 +260,7 @@ class GalleryTemplate {
 		/* Get rid of the current dir and start again. */
 		if (!$platform->recursiveRmDir($dir)) {
 		    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-						"Unable to remove dir $dir");
+						 "Unable to remove dir $dir");
 		}
 		$this->_initCompiledTemplateDir();
 	    }
@@ -459,7 +459,7 @@ class GalleryTemplate {
     /**
      * Return the themeid for the current item.
      * @return array object GalleryStatus a status code
-     *	       string ThemeId
+     *         string ThemeId
      * @static
      */
     function _getThemeId() {
