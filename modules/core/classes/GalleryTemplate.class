@@ -365,9 +365,12 @@ class GalleryTemplate {
     function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
 	$templateName = GalleryTemplate::_getActualTemplateName($templateName, $smarty);
 
-	$templateSource = $smarty->_read_file($templateName);
-
-	return true;
+	if (isset($templateName)) {
+	    $templateSource = $smarty->_read_file($templateName);
+	    return true;
+	} else {
+	    return false;
+	}
     }
 
     /**
@@ -382,12 +385,15 @@ class GalleryTemplate {
 	$platform =& $gallery->getPlatform();
 
 	$templateName = GalleryTemplate::_getActualTemplateName($templateName, $smarty);
+	if (isset($templateName)) {
+	    if ($platform->file_exists($templateName)) {
+	        $stat = $platform->stat($templateName);
+	        $templateTimestamp = $stat[9];
 
-	if ($platform->file_exists($templateName)) {
-	    $stat = $platform->stat($templateName);
-	    $templateTimestamp = $stat[9];
-
-	    return true;
+	        return true;
+	    } else {
+	        return false;
+	    }
 	} else {
 	    return false;
 	}
@@ -415,7 +421,17 @@ class GalleryTemplate {
             list ($unused, $moduleId, $moduleBase, $tplFile) = $match;
 
             $theme = $smarty->get_template_vars("theme");
-            $themeId = $theme['themeId'];
+            /* Bug 1689907: [G2] themeId not defined */
+            if (empty($theme['themeId'])) {
+                list ($ret, $themeId) = GalleryTemplate::_getThemeId();
+                if ($ret) {
+                    $smarty->trigger_error($ret->getErrorMessage(), $ret->getErrorCode());
+	            return null;
+                }
+            } else {
+                $themeId = $theme['themeId'];
+            }
+
 
             list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
             if (!$ret) {
@@ -447,6 +463,27 @@ class GalleryTemplate {
 
 	/* Use whatever was passed and use the smarty default template as the directory base */
 	return $qualifiedTemplate;
+    }
+
+    /**
+     * Return the themeid for the current item.
+     * @return array object GalleryStatus a status code
+     *               string ThemeId
+     * @static
+     */
+    function _getThemeId() {
+    	$view = new GalleryView();
+        list ($ret, $itemId) = $view->getItem();
+        if ($ret) {
+	    return array($ret, null);
+        }
+
+        list ($ret, $theme) = $view->loadThemeForItem($itemId);
+        if ($ret) {
+	    return array($ret, null);
+        }
+
+        return array(null, $theme->getId());
     }
 
     /**
