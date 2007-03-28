@@ -64,7 +64,7 @@
 
 <div class="gbBlock">
   <p class="giDescription">
-    {g->text text="getID3() is a PHP4 script that extracts useful information (such as ID3 tags, bitrate, playtime, etc.) from MP3s & other multimedia file formats (Ogg, WMA, WMV, ASF, WAV, AVI, AAC, VQF, FLAC, MusePack, Real, QuickTime, Monkey's Audio, MIDI and more)."}
+    {g->text text="getID3() is a PHP4 script that extracts useful information (such as ID3 tags, bitrate, playtime, etc.) from MP3s &amp; other multimedia file formats (Ogg, WMA, WMV, ASF, WAV, AVI, AAC, VQF, FLAC, MusePack, Real, QuickTime, Monkey's Audio, MIDI and more)."}
   </p>
 </div>
 
