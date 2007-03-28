@@ -17,7 +17,7 @@
     {capture name="url"}
       {g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins"}
     {/capture}
-    {g->text text="You don't have any Graphics Toolkit activated to handle JPEG images.  If you import now, you will not have any thumbnails.  Visit the <a href=\"%s\">Modules</a> page to activate a Graphics Toolkit." arg1=$smarty.capture.url}
+    {g->text text="You don't have any Graphics Toolkit activated to handle JPEG images.  If you import now, you will not have any thumbnails.  Visit the %sModules%s page to activate a Graphics Toolkit." arg1="<a href=\"`$smarty.capture.url`\">" arg2="</a>"}
   </p></div>
 {/if}
 
