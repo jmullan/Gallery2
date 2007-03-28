@@ -223,7 +223,7 @@ class AdminEditUserView extends GalleryView {
 	    }
 
 	    $languageList = array();
-	    $languageList[''] = $module->translate('<none>');
+	    $languageList[''] = $module->translate('&lt;none&gt;');
 	    $translator =& $gallery->getTranslator();
 	    $supportedLanguages = $translator->getSupportedLanguages();
 	    foreach ($supportedLanguages as $language => $countryList) {

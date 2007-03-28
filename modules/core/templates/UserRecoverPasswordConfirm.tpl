@@ -19,13 +19,13 @@
 
   {if isset($form.error.request.missing)}
   <div class="giError">
-    {g->text text="There is no request which matches the username and authorization provided. Request a new authorization from the <a href=\"%s\">lost password page</a>"}
+    {g->text text="There is no request which matches the username and authorization provided. Request a new authorization from the %slost password page%s." arg1="<a href=\"`$smarty.capture.recoverUrl`\">" arg2="</a>"}
   </div>
   {/if}
 
   {if isset($form.error.request.tooOld)}
   <div class="giError">
-    {g->text text="The request you are trying to access has expired.  Request a new authorization from the <a href=\"%s\">lost password page</a>." arg1=$smarty.capture.recoverUrl}
+    {g->text text="The request you are trying to access has expired.  Request a new authorization from the %slost password page%s." arg1="<a href=\"`$smarty.capture.recoverUrl`\">" arg2="</a>"}
   </div>
   {/if}
 

@@ -36,7 +36,7 @@
 
   {if isset($form.error.username.disabled)}
   <div class="giError">
-    {g->text text="Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait for access to be restored, or use the <a href=\"%s\">recover password</a> page to re-enable this account." arg1=$smarty.capture.recoverUrl}
+    {g->text text="Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait for access to be restored, or use the %srecover password%s page to re-enable this account." arg1="<a href=\"`$smarty.capture.recoverUrl`\">" arg2="</a>"}
   </div>
   {/if}
 
@@ -63,7 +63,7 @@
 {/foreach}
 
 <div class="gbBlock">
-  {g->text text="Lost or forgotten passwords can be retrieved using the <a href=\"%s\">recover password</a> page" arg1=$smarty.capture.recoverUrl}
+  {g->text text="Lost or forgotten passwords can be retrieved using the %srecover password%s page" arg1="<a href=\"`$smarty.capture.recoverUrl`\">" arg2="</a>"}
 </div>
 
 <div class="gbBlock gcBackground1">

@@ -150,7 +150,7 @@
       onclick="userUpdate()"/>
   </div>
   <div id="Markup_swatch">&nbsp;</div>
-  <div id="Markup_hint">{g->text text="You can also use the <a href=\"%s\" target=\"_new\">color name</a> for example: %s" arg1="http://www.w3.org/TR/2002/WD-css3-color-20020418/#html4" arg2="[color=red]Your Text[/color]"}</div>
+  <div id="Markup_hint">{g->text text="You can also use the %scolor name%s for example: %s" arg1="<a href=\"http://www.w3.org/TR/2002/WD-css3-color-20020418/#html4\" target=\"_new\">" arg2="</a>" arg3="[color=red]Your Text[/color]"}</div>
 </div>
 {/if}
 {/if}
