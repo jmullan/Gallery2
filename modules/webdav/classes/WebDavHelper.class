@@ -172,10 +172,6 @@ class WebDavHelper {
 	foreach (array('PROPFIND', 'PROPPATCH', 'MKCOL', 'DELETE', 'PUT', 'MOVE', 'LOCK', 'UNLOCK')
 		as $requestMethod) {
 	    if (!WebDavHelper::checkRequestMethod($requestMethod)) {
-		if ($gallery->getDebug()) {
-		    $gallery->debug('Error in WebDavHelper::checkConfiguration:'
-			. ' this server doesn\'t pass ' . $requestMethod . ' requests to Gallery.');
-		}
 		$code |= WEBDAV_STATUS_METHOD_NOT_HANDLED;
 	    }
 	}
@@ -200,16 +196,24 @@ class WebDavHelper {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
+	/* Request WebDavWorks view.  IIS requires the Content-Length header for PUT requests. */
 	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage(
 	    $urlGenerator->generateUrl(array('view' => 'webdav.WebDavWorks'),
 				       array('forceFullUrl' => true,
 					     'htmlEntities' => false)),
 	    $requestMethod,
 	    array('Content-Length' => 0));
-	if (!preg_match('/^HTTP\/[0-9]\.[0-9] 200/', $status)) {
-	    return false;
-	}
-	if (trim($body) != 'PASS_WEBDAV') {
+
+	/* Check the response status and response body to confirm Gallery handled the request */
+	if (!preg_match('/^HTTP\/[0-9]\.[0-9] 200/', $status) || trim($body) != 'PASS_WEBDAV') {
+	    $response = $status . "\n";
+	    foreach ($headers as $key => $value) {
+		$response .= $key . ': ' . $value . "\n";
+	    }
+	    $response .= "\n" . $body;
+	    $gallery->debug(
+		'Error in WebDavHelper::checkRequestMethod: ' . $requestMethod . "\n" . $response);
+
 	    return false;
 	}
 
@@ -241,7 +245,7 @@ class WebDavHelper {
     }
 
     /**
-     * Returns a browser-specifc mount link for the given item.
+     * Return a browser specific mount link for the given item.
      * @param int $itemId
      * @return array 'href' => string the mount URL
      *               'script' (optional) => string JavaScript to mount the item with WebDAV
