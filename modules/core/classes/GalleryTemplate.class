@@ -368,9 +368,8 @@ class GalleryTemplate {
 	if (isset($templateName)) {
 	    $templateSource = $smarty->_read_file($templateName);
 	    return true;
-	} else {
-	    return false;
 	}
+	return false;
     }
 
     /**
@@ -385,18 +384,12 @@ class GalleryTemplate {
 	$platform =& $gallery->getPlatform();
 
 	$templateName = GalleryTemplate::_getActualTemplateName($templateName, $smarty);
-	if (isset($templateName)) {
-	    if ($platform->file_exists($templateName)) {
-	        $stat = $platform->stat($templateName);
-	        $templateTimestamp = $stat[9];
-
-	        return true;
-	    } else {
-	        return false;
-	    }
-	} else {
-	    return false;
+	if (isset($templateName) && $platform->file_exists($templateName)) {
+	    $stat = $platform->stat($templateName);
+	    $templateTimestamp = $stat[9];
+	    return true;
 	}
+	return false;
     }
 
     /**
@@ -414,14 +407,13 @@ class GalleryTemplate {
      * @access private
      */
     function _getActualTemplateName($templateName, &$smarty) {
-    	global $gallery;
+	global $gallery;
         $platform =& $gallery->getPlatform();
 
         if (preg_match('#^modules/(\w+)/templates/(.*/)?([^/]+)$#', $templateName, $match)) {
             list ($unused, $moduleId, $moduleBase, $tplFile) = $match;
 
             $theme = $smarty->get_template_vars("theme");
-            /* Bug 1689907: [G2] themeId not defined */
             if (empty($theme['themeId'])) {
                 list ($ret, $themeId) = GalleryTemplate::_getThemeId();
                 if ($ret) {
@@ -438,7 +430,7 @@ class GalleryTemplate {
                 $tplVersion = $module->getTemplateVersion();
 
                 $themeOverrideDir =
-                        "{$smarty->template_dir}/themes/$themeId/templates/{$moduleId}_$tplVersion";
+		    "{$smarty->template_dir}/themes/$themeId/templates/{$moduleId}_$tplVersion";
 
                 $file = "$themeOverrideDir/{$moduleBase}local/$tplFile";
                 if ($platform->is_readable($file)) {
@@ -472,7 +464,7 @@ class GalleryTemplate {
      * @static
      */
     function _getThemeId() {
-    	$view = new GalleryView();
+	$view = new GalleryView();
         list ($ret, $itemId) = $view->getItem();
         if ($ret) {
 	    return array($ret, null);
