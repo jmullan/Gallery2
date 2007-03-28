@@ -94,7 +94,7 @@
 {if isset($form.urlRedirect)}
 <div class="gbBlock">
   <p class="giDescription">
-    {g->text text="G1->G2 mappings will be recorded for use in URL Redirection"}
+    {g->text text="G1-&gt;G2 mappings will be recorded for use in URL Redirection"}
   </p>
   <input type="hidden" name="{g->formVar var="form[urlRedirect]"}" value="{$form.urlRedirect}"/>
 </div>

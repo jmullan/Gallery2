@@ -148,7 +148,7 @@
     <input type="checkbox" id="cbUrlRedirect"{if !empty($form.urlRedirect)} checked="checked"{/if}
      name="{g->formVar var="form[urlRedirect]"}"/>
     <label for="cbUrlRedirect">
-      {g->text text="Record G1->G2 mappings during import"}
+      {g->text text="Record G1-&gt;G2 mappings during import"}
     </label>
   </div>
 
