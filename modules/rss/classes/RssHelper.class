@@ -329,9 +329,9 @@ class RssHelper {
 		array('forceSessionId' => false, 'forceFullUrl' => true));
 
 	    $description .= '<br/>' . $module->translate(
-		array('text' => 'In album <a href="%s">%s</a>',
-		'arg1' => $url1,
-		'arg2' => $param['parents'][$item->getParentId()]->getTitle()));
+		array('text' => 'In album %s',
+		      'arg1' => sprintf('<a href="%s">%s</a>', $url1,
+					$param['parents'][$item->getParentId()]->getTitle())));
 	}
 
 	$title = $item->getTitle();
