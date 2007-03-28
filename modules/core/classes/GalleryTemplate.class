@@ -129,7 +129,7 @@ class GalleryTemplate {
      * Add a template to include in the <head> section
      * @param string $tpl template path
      * @param string $l10Domain (optional) localization domain
-     *               default={1stdir}_{2nddir} from template path
+     *	       default={1stdir}_{2nddir} from template path
      */
     function head($tpl, $l10Domain=null) {
 	$head =& $this->getVariableByReference('head');
@@ -172,7 +172,7 @@ class GalleryTemplate {
      *
      * @param string $templateName
      * @return array object GalleryStatus the status of the call
-     *               string the HTML content
+     *	       string the HTML content
      */
     function fetch($templateName) {
 	$this->_smarty->template_dir = $this->_templateDir;
@@ -408,50 +408,49 @@ class GalleryTemplate {
      */
     function _getActualTemplateName($templateName, &$smarty) {
 	global $gallery;
-        $platform =& $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
-        if (preg_match('#^modules/(\w+)/templates/(.*/)?([^/]+)$#', $templateName, $match)) {
-            list ($unused, $moduleId, $moduleBase, $tplFile) = $match;
+	if (preg_match('#^modules/(\w+)/templates/(.*/)?([^/]+)$#', $templateName, $match)) {
+	    list ($unused, $moduleId, $moduleBase, $tplFile) = $match;
 
-            $theme = $smarty->get_template_vars("theme");
-            if (empty($theme['themeId'])) {
-                list ($ret, $themeId) = GalleryTemplate::_getThemeId();
-                if ($ret) {
-                    $smarty->trigger_error($ret->getErrorMessage(), $ret->getErrorCode());
-	            return null;
-                }
-            } else {
-                $themeId = $theme['themeId'];
-            }
+	    $theme = $smarty->get_template_vars("theme");
+	    if (empty($theme['themeId'])) {
+		list ($ret, $themeId) = GalleryTemplate::_getThemeId();
+		if ($ret) {
+		    $smarty->trigger_error($ret->getErrorMessage(), $ret->getErrorCode());
+		    return null;
+		}
+	    } else {
+		$themeId = $theme['themeId'];
+	    }
 
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    if (!$ret) {
+		$tplVersion = $module->getTemplateVersion();
 
-            list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-            if (!$ret) {
-                $tplVersion = $module->getTemplateVersion();
-
-                $themeOverrideDir =
+		$themeOverrideDir =
 		    "{$smarty->template_dir}/themes/$themeId/templates/{$moduleId}_$tplVersion";
 
-                $file = "$themeOverrideDir/{$moduleBase}local/$tplFile";
-                if ($platform->is_readable($file)) {
-                    return $file;
-                }
+		$file = "$themeOverrideDir/{$moduleBase}local/$tplFile";
+		if ($platform->is_readable($file)) {
+		    return $file;
+		}
 
-                $file = "$themeOverrideDir/{$moduleBase}$tplFile";
-                if ($platform->is_readable($file)) {
-                    return $file;
-                }
-            }
-        }
+		$file = "$themeOverrideDir/{$moduleBase}$tplFile";
+		if ($platform->is_readable($file)) {
+		    return $file;
+		}
+	    }
+	}
 
-        $tplFile = basename($templateName);
-        $qualifiedTemplate = $smarty->template_dir . '/' . $templateName;
-        $base = dirname($qualifiedTemplate);
+	$tplFile = basename($templateName);
+	$qualifiedTemplate = $smarty->template_dir . '/' . $templateName;
+	$base = dirname($qualifiedTemplate);
 
-        $file = "$base/local/$tplFile";
-        if ($platform->is_readable($file)) {
-            return $file;
-        }
+	$file = "$base/local/$tplFile";
+	if ($platform->is_readable($file)) {
+	    return $file;
+	}
 
 	/* Use whatever was passed and use the smarty default template as the directory base */
 	return $qualifiedTemplate;
@@ -460,22 +459,22 @@ class GalleryTemplate {
     /**
      * Return the themeid for the current item.
      * @return array object GalleryStatus a status code
-     *               string ThemeId
+     *	       string ThemeId
      * @static
      */
     function _getThemeId() {
 	$view = new GalleryView();
-        list ($ret, $itemId) = $view->getItem();
-        if ($ret) {
+	list ($ret, $itemId) = $view->getItem();
+	if ($ret) {
 	    return array($ret, null);
-        }
+	}
 
-        list ($ret, $theme) = $view->loadThemeForItem($itemId);
-        if ($ret) {
+	list ($ret, $theme) = $view->loadThemeForItem($itemId);
+	if ($ret) {
 	    return array($ret, null);
-        }
+	}
 
-        return array(null, $theme->getId());
+	return array(null, $theme->getId());
     }
 
     /**
