@@ -13,7 +13,7 @@
       {g->text text="Download the configuration file using right-click 'Save Target As...'  Once downloaded, rename it to 'install_registry.reg'.  If it asks you for confirmation about changing the file type, answer 'yes'.  Right click on this file and you should see a menu appear.  Select the Merge option (this should be at the top of the menu).  It will ask you if you want to import these values into your registry.  Click 'Ok'.  It will tell you that the files were imported successfully.  Click 'Ok' again."}
       <br/>
       {capture assign=vistaCaption}{g->text text="(for Windows Vista)"}{/capture}
-      {capture assign=otherWindowsCaption}{g->text text="(for Windows XP, Windows 2000 and earllier Windows versions)"}{/capture}
+      {capture assign=otherWindowsCaption}{g->text text="(for Windows XP, Windows 2000 and earlier Windows versions)"}{/capture}
       {capture assign=captionForRecommendedVersion}
         {if $ItemAddPublishXp.isUsingWindowsVista}
         {$vistaCaption}
