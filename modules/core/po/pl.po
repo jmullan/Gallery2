@@ -87,7 +87,7 @@ msgstr[1] "%d tygodnie"
 msgstr[2] "%d tygodni"
 
 msgid "&lt;none&gt;"
-msgstr ""
+msgstr "&lt;nic&gt;"
 
 msgid "No acceleration"
 msgstr "Bez przyspieszenia"
@@ -131,9 +131,8 @@ msgstr "Aktywowanie %s"
 msgid "Deleting Language Packs"
 msgstr "Usuwanie pakietu językowego"
 
-#, fuzzy
 msgid "Synchronizing Language Packs"
-msgstr "Usuwanie pakietu językowego"
+msgstr "Synchronizowanie pakietu językowego"
 
 msgid "Update completed with errors."
 msgstr "Aktualizacja zakończona z błędami."
@@ -225,9 +224,8 @@ msgstr "Aktualizowanie panoram"
 msgid "Optimizing AccessSubscriberMap table"
 msgstr "Optymalizacja tabeli AccessSubscriberMap"
 
-#, fuzzy
 msgid "Upgrading Plugin Translations"
-msgstr "Aktualizacja uprawnień"
+msgstr "Aktualizacja lokalizacji modułu"
 
 msgid "Site Admins"
 msgstr "Administratorzy strony"
@@ -1930,21 +1928,23 @@ msgstr ""
 
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
-msgstr ""
+msgstr "Nieudane pobranie następujących pakietów dla modułóu %s:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to install the %s plugin because the following files/directories could not be "
 "modified:"
 msgstr ""
-"Nieudane pobranie modułu %s ze względu na brak uprawnień do modyfikacji następujących plików/"
-"katalogów:"
+"Nieudana instalacja modułu %s ze względu na brak uprawnień do modyfikacji następujących "
+"plików/katalogów:"
 
 #, c-format
 msgid ""
 "Some plugins could not be automatically upgraded because they are in use.  Please return to "
 "the %sPlugins%s page and click the upgrade link for each of the following plugins:"
 msgstr ""
+"Niektóre moduły nie mogą być automatycznie zaktualizowane ze względu na ich użycie.Proszę "
+"przejść do strony %sModułów%s i kliknąć link aktualizacyjny dla następujących modułów:"
 
 msgid "The repository index has been successfully updated."
 msgstr "Lista repozytorium została zaktualizowana"
@@ -2050,11 +2050,8 @@ msgstr ""
 "interfejsu. Aktualizacja mogłaby spowodować zatrzymanie działania niektórych dodatków. "
 "Zalecane kroki aktualizacji:"
 
-msgid "Review plugin compatibility (on the Themes and Modules tabs)"
-msgstr "Sprawdź kompatybilność modułów (na zakładkach Tematy i Moduły)"
-
-#, c-format
-msgid "%sDownload%s Gallery core"
+#, fuzzy, c-format
+msgid "%sDownload%s the new Gallery package"
 msgstr "%sPobierz%s moduł główny galerii"
 
 #, c-format
@@ -2229,7 +2226,7 @@ msgstr "Nowe albumy"
 
 #, c-format
 msgid "To activate more themes visit the %sPlugins%s page."
-msgstr ""
+msgstr "Aby aktywować więcej tematów proszę przejść do strony %sModułów%s."
 
 msgid "Save Defaults"
 msgstr "Zapisz wartości domyślne"
@@ -2452,11 +2449,9 @@ msgstr ""
 "Brak aktywnego narzędzia graficznego obsługującego pliki JPEG. Po dodaniu zdjęć nie będzie "
 "widać żadnych miniaturek."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Visit the %sModules%s page to activate a Graphics Toolkit."
-msgstr ""
-"Proszę przejść do sekcji <a href=\"%s\">Moduły</a>, aby aktywować jedno z narzędzi "
-"graficznych."
+msgstr "Proszę przejść do sekcji %sModuły%s, aby aktywować jedno z narzędzi graficznych."
 
 msgid "Add Sub-Album"
 msgstr "Dodaj podalbum"
@@ -3296,9 +3291,9 @@ msgstr "obrazek"
 msgid "color"
 msgstr "kolor"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You can also use the %scolor name%s for example: %s"
-msgstr "Możliwe jest również użycie <a href=\"%s\" target=\"_new\">kolorowych nazw</a> np.: %s"
+msgstr "Możliwe jest również użycie %skolorowych nazw%s np.: %s"
 
 msgid "Configuration Error: Missing Theme"
 msgstr "Błąd konfiguracji: brak tematu"
@@ -3417,20 +3412,20 @@ msgstr "Zaloguj się na swoje konto"
 msgid "Your password has been recovered, please login."
 msgstr "Hasło zostało zmienione, proszę się zalogować."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
 "for access to be restored, or use the %srecover password%s page to re-enable this account."
 msgstr ""
 "Logowanie jest tymczasowo wyłaczone ze względu na zbyt wiele nieudanych prób. Proszę "
-"poczekać na odnowienie dostępu lub użyć strony <a href=\"%s\">odzyskiwania hasła</a>."
+"poczekać na odnowienie dostępu lub użyć strony %sodzyskiwania hasła%s."
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Login lub hasło są nieprawidłowe. Proszę spróbować ponownie."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Lost or forgotten passwords can be retrieved using the %srecover password%s page"
-msgstr "Zapomniane hasło może być odzyskane <a href=\"%s\">tutaj</a>."
+msgstr "Zapomniane hasło może być odzyskane %stutaj%s."
 
 #, c-format
 msgid "Welcome, %s!"
@@ -3568,20 +3563,19 @@ msgstr "Odśwież"
 msgid "This page will allow you to reset the password on your account."
 msgstr "Na tej stronie można zresetować hasło do swojego konta."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "There is no request which matches the username and authorization provided. Request a new "
 "authorization from the %slost password page%s."
 msgstr ""
 "Podana nazwa użytkownika i kod autoryzacyjny nie pasują do tego żadnego zgłoszenia. Prośbę o "
-"nowy kod autoryzacyjny można zgłosić <a href=\"%s\">tutaj</a>."
+"nowy kod autoryzacyjny można zgłosić %stutaj%s."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The request you are trying to access has expired.  Request a new authorization from the %"
 "slost password page%s."
-msgstr ""
-"Zgłoszenie wygasło. Prośbę o nowy kod autoryzacyjny można zgłosić <a href=\"%s\">tutaj</a>."
+msgstr "Zgłoszenie wygasło. Prośbę o nowy kod autoryzacyjny można zgłosić %stutaj%s."
 
 msgid "Authorization missing"
 msgstr "Brak autoryzacji"
@@ -3721,5 +3715,5 @@ msgstr "Blok loginu"
 msgid "Links to album/photo peers"
 msgstr "Linki do albumów i zdjęć znajomych"
 
-#~ msgid "<none>"
-#~ msgstr "<nic>"
+#~ msgid "Review plugin compatibility (on the Themes and Modules tabs)"
+#~ msgstr "Sprawdź kompatybilność modułów (na zakładkach Tematy i Moduły)"
