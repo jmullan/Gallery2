@@ -7,6 +7,39 @@
 {if !empty($theme.imageViews)}
   {assign var="image" value=$theme.imageViews[$theme.imageViewsIndex]}
 {/if}
+{* Check for exif block *}
+{assign var="showExifLink" value=false}
+{if $theme.params.photoProperties}
+  {foreach from=$theme.params.photoBlocks item=block}
+    {if $block.0 == 'exif.ExifInfo'}
+      {capture name="exifBlock"}{g->block type=$block.0 params=$block.1}{/capture}
+      {if $smarty.capture.exifBlock|trim}
+	{assign var="showExifLink" value=true}
+	<div id="exif" class="gcPopupBackground"
+	 style="position:absolute; left:0px; top:0px; padding:1px; visibility:hidden;">
+	  <table cellspacing="0" cellpadding="0">
+	    <tr>
+	      <td style="padding-left:5px;">
+		<h2>{g->text text="Exif"}</h2>
+	      </td>
+	      <td align="right">
+		<div class="buttonClose"><a href="javascript:void(0);"
+		 onclick="toggleExif('photo','exif'); return false;"
+		 title="{g->text text="Close"}"></a></div>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td colspan="2" class="gcBackground2" style="padding-bottom:5px;">
+		{$smarty.capture.exifBlock}
+	      </td>
+	    </tr>
+	  </table>
+	</div>
+      {/if}
+    {/if}
+  {/foreach}
+{/if}
+
 <table class="gcBackground1" width="100%" cellspacing="0" cellpadding="0">
   <tr valign="top">
     <td>
@@ -49,7 +82,6 @@
 	    <tr>
 	      <td class="gbNavigatorPhoto">
 		<div class="gbNavigator">
-		  {* {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true} *}
 		  {g->theme include="navigator.tpl"}
 		</div>
 	      </td>
@@ -127,7 +159,6 @@
 	    <tr>
 	      <td class="gbNavigatorPhoto">
 		<div class="gbNavigator">
-		  {* {g->block type="core.Navigator" navigator=$theme.navigator reverseOrder=true} *}
 		  {g->theme include="navigator.tpl"}
 		</div>
 	      </td>
@@ -154,30 +185,9 @@
 	</div>
 	{/if}
 
-	{* Show any other photo blocks (comments, exif etc) *}
+	{* Show any other photo blocks (comments, etc) *}
 	{foreach from=$theme.params.photoBlocks item=block}
-	  {if $block.0 == 'exif.ExifInfo'}
-	    <div id="exif" class="gcPopupBackground"
-	     style="position:absolute; left:0px; top:0px; padding:1px; visibility:hidden;">
-	      <table cellspacing="0" cellpadding="0">
-		<tr>
-		  <td style="padding-left:5px;">
-		    <h2>{g->text text="Exif"}</h2>
-		  </td>
-		  <td align="right">
-		    <div class="buttonClose"><a href="javascript:void(0);"
-		     onclick="toggleExif('photo','exif'); return false;"
-		     title="{g->text text="Close"}"></a></div>
-		  </td>
-		</tr>
-		<tr>
-		  <td colspan="2" class="gcBackground2" style="padding-bottom:5px;">
-		    {g->block type=$block.0 params=$block.1}
-		  </td>
-		</tr>
-	      </table>
-	    </div>
-	  {else}
+	  {if !$theme.params.photoProperties || $block.0 != 'exif.ExifInfo'}
 	    {g->block type=$block.0 params=$block.1}
 	  {/if}
 	{/foreach}
