@@ -34,143 +34,172 @@ class TemplateTest extends GalleryTestCase {
     }
 
     function setUp() {
-        global $gallery;
-        parent::setUp();
+	global $gallery;
+	parent::setUp();
 
-        $this->_template = new GalleryTemplate('/legal/path');
-        $this->_mockSmarty = new TemplateTestMockSmarty();
+	$this->_template = new GalleryTemplate('/legal/path');
+	$this->_mockSmarty = new TemplateTestMockSmarty();
 
-        list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-        if ($ret) {
-            return $this->failWithStatus($ret);
-        }
-        $tplVersion = $module->getTemplateVersion();
-        $this->_baseDirOverride = '/legal/path/themes/mockTheme/templates/core_' . $tplVersion;
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$tplVersion = $module->getTemplateVersion();
+	$this->_baseDirOverride = '/legal/path/themes/mockTheme/templates/core_' . $tplVersion;
 
-        $this->_mockPlatform = new TemplateTestMockPlatform();
-        $gallery->setPlatform($this->_mockPlatform);
+	$this->_mockPlatform = new TemplateTestMockPlatform();
+	$gallery->setPlatform($this->_mockPlatform);
+
+	GalleryDataCache::put('GalleryDataCache::templatePathMap', array());
+	GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', false);
+     }
+
+    function tearDown() {
+	GalleryDataCache::remove('GalleryDataCache::templatePathMap');
+	GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', false);
+
+    	parent::tearDown();
     }
 
     /* Test retrieving a template that falls outside the module or theme template pattern*/
     function testResourceGetTemplateNonModule() {
-        $this->_mockPlatform->set('is_readable', '/legal/path/local/templateThatHasNoLocal.tpl',
-                                 false);
-        $this->_mockPlatform->set('is_readable', '/legal/path/templateThatHasNoLocal.tpl', true);
-        $success = $this->_template->resourceGetTemplate(
-                              'templateThatHasNoLocal.tpl', $templateSource, $this->_mockSmarty);
-        $this->assert($success, "Didn't return success");
+	$this->_mockPlatform->set('is_readable', '/legal/path/local/templateThatHasNoLocal.tpl',
+				 false);
+	$this->_mockPlatform->set('is_readable', '/legal/path/templateThatHasNoLocal.tpl', true);
+	$success = $this->_template->resourceGetTemplate(
+			      'templateThatHasNoLocal.tpl', $templateSource, $this->_mockSmarty);
+	$this->assert($success, "Didn't return success");
 
-        $this->assertEquals('/legal/path/templateThatHasNoLocal.tpl', $templateSource,
-                            'Non module template not retrieved');
+	$this->assertEquals('/legal/path/templateThatHasNoLocal.tpl', $templateSource,
+			    'Non module template not retrieved');
     }
 
     /* Test retrieving non-overridden template */
     function testResourceGetTemplateNonOverriden() {
-        $this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
-                                  false);
-        $this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
-        $this->_mockPlatform->set('is_readable',
-                                  '/legal/path/modules/core/templates/local/template.tpl', false);
-        $this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
-                                  true);
-        $success = $this->_template->resourceGetTemplate('modules/core/templates/template.tpl',
-                                                               $templateSource, $this->_mockSmarty);
-        $this->assert($success, "Didn't return success");
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
+				  false);
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
+	$this->_mockPlatform->set('is_readable',
+				  '/legal/path/modules/core/templates/local/template.tpl', false);
+	$this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
+				  true);
+	$success = $this->_template->resourceGetTemplate('modules/core/templates/template.tpl',
+							       $templateSource, $this->_mockSmarty);
+	$this->assert($success, "Didn't return success");
 
-        $this->assertEquals('/legal/path/modules/core/templates/template.tpl',
-                            $templateSource, 'Failed to get the base template');
+	$this->assertEquals('/legal/path/modules/core/templates/template.tpl',
+			    $templateSource, 'Failed to get the base template');
     }
 
     /* Test retrieving local override template */
     function testResourceGetTemplateLocalOverride() {
-        $this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
-                                  false);
-        $this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
-        $this->_mockPlatform->set('is_readable',
-                                  '/legal/path/modules/core/templates/local/template.tpl', true);
-        $this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
-                                  true);
-        $success = $this->_template->resourceGetTemplate('modules/core/templates/template.tpl',
-                                                  $templateSource, $this->_mockSmarty);
-        $this->assert($success, "Didn't return success");
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
+				  false);
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
+	$this->_mockPlatform->set('is_readable',
+				  '/legal/path/modules/core/templates/local/template.tpl', true);
+	$this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
+				  true);
+	$success = $this->_template->resourceGetTemplate('modules/core/templates/template.tpl',
+						  $templateSource, $this->_mockSmarty);
+	$this->assert($success, "Didn't return success");
 
-        $this->assertEquals('/legal/path/modules/core/templates/local/template.tpl',
-                            $templateSource, 'Failed to retrieve the /local/ supplied template');
+	$this->assertEquals('/legal/path/modules/core/templates/local/template.tpl',
+			    $templateSource, 'Failed to retrieve the /local/ supplied template');
     }
 
     /* Test retrieving an overridden template block */
     function testResourceGetTemplateThemeOverride() {
-        $this->_mockPlatform->set('is_readable',
-                                  $this->_baseDirOverride . '/block/local/template.tpl', true);
-        $this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/block/template.tpl',
-                                  true);
-        $this->_mockPlatform->set('is_readable',
-                               '/legal/path/modules/core/templates/block/local/template.tpl', true);
-        $this->_mockPlatform->set('is_readable',
-                                  '/legal/path/modules/core/templates/block/template.tpl', true);
-        $success = $this->_template->resourceGetTemplate(
-                  'modules/core/templates/block/template.tpl', $templateSource, $this->_mockSmarty);
-        $this->assert($success, "Didn't return success");
+	$this->_mockPlatform->set('is_readable',
+				  $this->_baseDirOverride . '/block/local/template.tpl', true);
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/block/template.tpl',
+				  true);
+	$this->_mockPlatform->set('is_readable',
+			       '/legal/path/modules/core/templates/block/local/template.tpl', true);
+	$this->_mockPlatform->set('is_readable',
+				  '/legal/path/modules/core/templates/block/template.tpl', true);
+	$success = $this->_template->resourceGetTemplate(
+		  'modules/core/templates/block/template.tpl', $templateSource, $this->_mockSmarty);
+	$this->assert($success, "Didn't return success");
 
-        $this->assertEquals($this->_baseDirOverride . '/block/local/template.tpl', $templateSource,
-                            'Failed to retrieve the them overriden template');
+	$this->assertEquals($this->_baseDirOverride . '/block/local/template.tpl', $templateSource,
+			    'Failed to retrieve the them overriden template');
+    }
+
+    function testResourceGetTemplateCached() {
+    	GalleryDataCache::putTemplatePath('modules/core/templates/template.tpl', 'template1.tpl');
+
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
+				  false);
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
+	$this->_mockPlatform->set('is_readable',
+				  '/legal/path/modules/core/templates/local/template.tpl', false);
+	$this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
+				  true);
+
+	$success = $this->_template->resourceGetTemplate(
+			'modules/core/templates/template.tpl', $templateSource, $this->_mockSmarty);
+	$this->assert($success, "Didn't return success");
+
+	$this->assertEquals('template1.tpl', $templateSource,
+			    			     'Failed to retrieve the them cached template');
     }
 
     /* Test retrieving non-overridden template */
     function testResourceGetTimestampNonOverridden() {
-        $this->_mockPlatform->set('is_readable', '/legal/path/local/templateThatHasNoLocal.tpl',
-                                  false);
-        $this->_mockPlatform->set('is_readable', '/legal/path/templateThatHasNoLocal.tpl', true);
-        $this->_mockPlatform->set('file_exists', '/legal/path/templateThatHasNoLocal.tpl', true);
-        $this->_mockPlatform->set('stat', '/legal/path/templateThatHasNoLocal.tpl',
-                                  array(0, 0, 0, 0, 0, 0, 0, 0, 0, 98765));
-        $success = $this->_template->resourceGetTimestamp('templateThatHasNoLocal.tpl',
-                                                          $templateTimestamp, $this->_mockSmarty);
-        $this->assert($success, "Didn't return success");
-        $this->assertEquals(98765, $templateTimestamp, 'no override');
+	$this->_mockPlatform->set('is_readable', '/legal/path/local/templateThatHasNoLocal.tpl',
+				  false);
+	$this->_mockPlatform->set('is_readable', '/legal/path/templateThatHasNoLocal.tpl', true);
+	$this->_mockPlatform->set('file_exists', '/legal/path/templateThatHasNoLocal.tpl', true);
+	$this->_mockPlatform->set('stat', '/legal/path/templateThatHasNoLocal.tpl',
+				  array(0, 0, 0, 0, 0, 0, 0, 0, 0, 98765));
+	$success = $this->_template->resourceGetTimestamp('templateThatHasNoLocal.tpl',
+							  $templateTimestamp, $this->_mockSmarty);
+	$this->assert($success, "Didn't return success");
+	$this->assertEquals(98765, $templateTimestamp, 'no override');
 
-        list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-        if ($ret) {
-            return $this->failWithStatus($ret);
-        }
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
     }
 
     /* Test retrieving an overridden template */
     function testResourceGetTimestampOverridden() {
-        $this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
-                                  false);
-        $this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
-        $this->_mockPlatform->set('is_readable',
-                                  '/legal/path/modules/core/templates/local/template.tpl', true);
-        $this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
-                                  true);
-        $this->_mockPlatform->set('file_exists',
-                                  '/legal/path/modules/core/templates/local/template.tpl', true);
-        $this->_mockPlatform->set('stat', '/legal/path/modules/core/templates/local/template.tpl',
-                                  array(0, 0, 0, 0, 0, 0, 0, 0, 0, 12345));
-        $success = $this->_template->resourceGetTimestamp('modules/core/templates/template.tpl',
-                                                   $templateTimestamp, $this->_mockSmarty);
-        $this->assert($success, "Didn't return success");
-        $this->assertEquals(12345, $templateTimestamp, 'override');
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
+				  false);
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
+	$this->_mockPlatform->set('is_readable',
+				  '/legal/path/modules/core/templates/local/template.tpl', true);
+	$this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
+				  true);
+	$this->_mockPlatform->set('file_exists',
+				  '/legal/path/modules/core/templates/local/template.tpl', true);
+	$this->_mockPlatform->set('stat', '/legal/path/modules/core/templates/local/template.tpl',
+				  array(0, 0, 0, 0, 0, 0, 0, 0, 0, 12345));
+	$success = $this->_template->resourceGetTimestamp('modules/core/templates/template.tpl',
+						   $templateTimestamp, $this->_mockSmarty);
+	$this->assert($success, "Didn't return success");
+	$this->assertEquals(12345, $templateTimestamp, 'override');
     }
 
     function testResourceGetTimestampStaticCall() {
-        /* Ensure static call is ok */
-        $this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
-                                  false);
-        $this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
-        $this->_mockPlatform->set('is_readable',
-                                  '/legal/path/modules/core/templates/local/template.tpl', true);
-        $this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
-                                  true);
-        $this->_mockPlatform->set('file_exists',
-                                  '/legal/path/modules/core/templates/local/template.tpl', true);
-        $this->_mockPlatform->set('stat', '/legal/path/modules/core/templates/local/template.tpl',
-                                  array(0, 0, 0, 0, 0, 0, 0, 0, 0, 12345));
-        $success = GalleryTemplate::resourceGetTimestamp('modules/core/templates/template.tpl',
-                                                         $templateTimestamp, $this->_mockSmarty);
-        $this->assert($success, "Didn't return success");
-        $this->assertEquals(12345, $templateTimestamp, 'static');
+	/* Ensure static call is ok */
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
+				  false);
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
+	$this->_mockPlatform->set('is_readable',
+				  '/legal/path/modules/core/templates/local/template.tpl', true);
+	$this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
+				  true);
+	$this->_mockPlatform->set('file_exists',
+				  '/legal/path/modules/core/templates/local/template.tpl', true);
+	$this->_mockPlatform->set('stat', '/legal/path/modules/core/templates/local/template.tpl',
+				  array(0, 0, 0, 0, 0, 0, 0, 0, 0, 12345));
+	$success = GalleryTemplate::resourceGetTimestamp('modules/core/templates/template.tpl',
+							 $templateTimestamp, $this->_mockSmarty);
+	$this->assert($success, "Didn't return success");
+	$this->assertEquals(12345, $templateTimestamp, 'static');
     }
 }
 
@@ -194,7 +223,7 @@ class TemplateTestMockPlatform {
 
 class TemplateTestMockSmarty {
     function TemplatetestMockSmarty() {
-        $this->template_dir = '/legal/path';
+	$this->template_dir = '/legal/path';
 	$this->_tpl_vars = array('theme' => array('themeId' => 'mockTheme'));
     }
 
@@ -204,15 +233,15 @@ class TemplateTestMockSmarty {
     }
 
     function &get_template_vars($name=null) {
-        if (!isset($name)) {
-            return $this->_tpl_vars;
-        } else if (isset($this->_tpl_vars[$name])) {
-            return $this->_tpl_vars[$name];
-        } else {
-            /* var non-existent, return valid reference */
-            $_tmp = null;
-            return $_tmp;
-        }
+	if (!isset($name)) {
+	    return $this->_tpl_vars;
+	} else if (isset($this->_tpl_vars[$name])) {
+	    return $this->_tpl_vars[$name];
+	} else {
+	    /* var non-existent, return valid reference */
+	    $_tmp = null;
+	    return $_tmp;
+	}
     }
 
 }

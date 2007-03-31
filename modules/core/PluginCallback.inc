@@ -360,6 +360,9 @@ class PluginCallbackView extends GalleryView {
 	    break;
 	}
 
+	/* This will delete the template path mapping from the Gallery Data Cache */
+	GalleryDataCache::resetTemplatePathMap();
+
 	return null;
     }
 

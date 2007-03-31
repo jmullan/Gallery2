@@ -62,6 +62,8 @@ class FlushTemplatesTask extends MaintenanceTask {
 	    $success = $platform->recursiveRmdir($dir);
 	}
 
+	GalleryDataCache::resetTemplatePathMap();
+
 	$details = array();
 	if ($success) {
 	    $details[] = $module->translate('Template cache deleted successfully');

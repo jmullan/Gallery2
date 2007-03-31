@@ -753,6 +753,71 @@ class DataCacheTest extends GalleryTestCase {
 	}
 	$this->assertEquals(2, (int)$results->resultCount(), 'remaining valid cache entries');
     }
+
+    /* Test persisting the template path map to disk and removing it */
+    function testSaveAndResetTemplatePathMap() {
+	global $gallery;
+
+	GalleryDataCache::setFileCachingEnabled(true);
+
+	$gallery->setConfig('data.gallery.cache', '/data/cache/');
+	$gallery->setPlatform(new DataCacheTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	$testdata = array('template1' => 'template1.tpl', 'template2' => 'template1.tp2');
+	$cacheKey = 'GalleryDataCache::templatePathMap';
+
+	GalleryDataCache::put($cacheKey, $testdata);
+	$this->assert(GalleryDataCache::containsKey($cacheKey));
+
+	GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', true);
+
+	GalleryDataCache::_saveTemplatePathMap();
+
+	$this->assert(!GalleryDataCache::get('GalleryDataCache::templatePathMap::isDirty'),
+			'the template path map is dirty flag was not reset');
+
+	$this->assertEquals('|' . serialize($testdata),
+			   $platform->getFileContents("/data/cache/theme/_all/templateMap.txt"),
+			   'The template path map was persisted to disk improperly');
+
+	GalleryDataCache::resetTemplatePathMap();
+	$this->assert(!GalleryDataCache::containsKey('GalleryDataCache::templatePathMap'),
+			'The template path map has not been reset');
+
+	$this->assert($platform->wasFileDeleted("/data/cache/theme/_all/templateMap.txt"),
+			'The persisted copy of the template path map was not deleted from disk');
+
+    }
+
+    /* Test the loading the template path map, adding and retrieving entries */
+    function testGetAndPutTemplatePath() {
+	global $gallery;
+
+	GalleryDataCache::setFileCachingEnabled(true);
+
+	$gallery->setConfig('data.gallery.cache', '/data/cache/');
+	$gallery->setPlatform(new DataCacheTestPlatform());
+	$platform =& $gallery->getPlatform();
+
+	$cacheKey = 'GalleryDataCache::templatePathMap';
+
+	$pathMap = GalleryDataCache::_getTemplatePathMap();
+	$this->assertEquals(array(), $pathMap, '_getTemplatePathMap failed');
+
+	GalleryDataCache::putTemplatePath('template1', 'template1.tpl');
+	$pathMap = GalleryDataCache::_getTemplatePathMap();
+	$this->assertEquals(array('template1' => 'template1.tpl'), $pathMap,
+			    'template path added successfully');
+	$this->assert(GalleryDataCache::get('GalleryDataCache::templatePathMap::isDirty'),
+			'The template path map should be dirty');
+
+	$expected = array(array(array('GalleryDataCache', '_saveTemplatePathMap'), array()));
+	$this->assertEquals($expected, $gallery->_shutdownActions, 'Shutdown not registered');
+
+	$this->assertEquals('template1.tpl', GalleryDataCache::getTemplatePath('template1'),
+				'The template path does not match');
+    }
 }
 
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryPhpVm.class');
@@ -815,6 +880,10 @@ class DataCacheTestPlatform {
 	}
 
 	return $record;
+    }
+
+    function file_get_contents($path) {
+	return DataCacheTestPlatform::getFileContents($path);
     }
 
     function getFileContents($path) {

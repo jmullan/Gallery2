@@ -338,7 +338,7 @@ class GalleryTemplate {
      * to support loading templates from g2data/plugins.
      *
      * This method was only used in resourceGetTemplate and resourceGetTimestamp to determine the
-     * base directory.  That functionality is now handled in the _getActualTemplateName method as
+     * base directory.  That functionality is now handled in the _getActualTemplatePath method as
      * part of the template override version checking, so is no longer required.
      *
      * @author Jozef Selesi (selesi at gmail dot com)
@@ -358,42 +358,53 @@ class GalleryTemplate {
     /**
      * @see http://smarty.php.net/manual/en/template.resources.php
      *
-     * This is basically the same as the file: resource except that we look for a template
-     * called "local/foo.tpl" first and use that instead, if it exists.  This allows users to
-     * override templates with our own copies without modifying the original.
+     * This is basically the same as the file: resource except that we look for templates based on
+     * the search algorithm used by the _getActualTemplatePath method. This allows users and
+     * theme developers to override templates with our own copies without modifying the original.
+     *
+     * @see function _getActualTemplatePath
      */
     function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
-	$templateName = GalleryTemplate::_getActualTemplateName($templateName, $smarty);
+	$templatePath = GalleryTemplate::_getActualTemplatePath($templateName, $smarty);
 
-	if (isset($templateName)) {
-	    $templateSource = $smarty->_read_file($templateName);
-	    return true;
+        $success = false;
+	if (isset($templatePath)) {
+	    $templateSource = $smarty->_read_file($templatePath);
+	    if ($templateSource !== false) {
+		$success = true;
+	    } else {
+		$smarty->trigger_error("The template '$templateName' does not exist.",
+				       GALLERY_ERROR);
+	    }
 	}
-	return false;
+	return $success;
     }
 
     /**
      * @see http://smarty.php.net/manual/en/template.resources.php
      *
-     * This is basically the same as the file: resource except that we look for a template
-     * called "local/foo.tpl" first and use that instead, if it exists.  This allows users to
-     * override templates with our own copies without modifying the original.
+     * This is basically the same as the file: resource except that we look for templates based on
+     * the search algorithm used by the _getActualTemplatePath method. This allows users and theme
+     * developers to override templates with our own copies without modifying the original.
+     *
+     * @see function _getActualTemplatePath
      */
     function resourceGetTimestamp($templateName, &$templateTimestamp, &$smarty) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	$templateName = GalleryTemplate::_getActualTemplateName($templateName, $smarty);
-	if (isset($templateName) && $platform->file_exists($templateName)) {
-	    $stat = $platform->stat($templateName);
+        $success = false;
+	$templatePath = GalleryTemplate::_getActualTemplatePath($templateName, $smarty);
+	if (isset($templatePath) && $platform->file_exists($templatePath)) {
+	    $stat = $platform->stat($templatePath);
 	    $templateTimestamp = $stat[9];
-	    return true;
+	    $success = true;
 	}
-	return false;
+	return $success;
     }
 
     /**
-     * Given a template name (foo/bar/path/file.tpl), return the actual template based on the
+     * Given a template name (foo/bar/path/file.tpl), return the active template path based on the
      * following:
      * if (module bar): /fullpath/themes/themeId/templates/bar_templateversion/path/local/file.tpl
      * if (module bar): /fullpath/themes/themeId/templates/bar_templateversion/path/file.tpl
@@ -402,14 +413,20 @@ class GalleryTemplate {
      *
      * @param string $templateName base template name
      * @param object Smarty $smarty
-     * @return string template to use
+     * @return string path to the current active template file for the specified template name
      * @static
      * @access private
      */
-    function _getActualTemplateName($templateName, &$smarty) {
+     function _getActualTemplatePath($templateName, &$smarty) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
+	$qualifiedTemplatePath = GalleryDataCache::getTemplatePath($templateName);
+	if (!empty($qualifiedTemplatePath)) {
+	    return $qualifiedTemplatePath;
+	}
+
+	/* Check template override */
 	if (preg_match('#^modules/(\w+)/templates/(.*/)?([^/]+)$#', $templateName, $match)) {
 	    list ($unused, $moduleId, $moduleBase, $tplFile) = $match;
 
@@ -417,50 +434,65 @@ class GalleryTemplate {
 	    if (empty($theme['themeId'])) {
 		list ($ret, $themeId) = GalleryTemplate::_getThemeId();
 		if ($ret) {
-		    $smarty->trigger_error($ret->getErrorMessage(), $ret->getErrorCode());
-		    return null;
+		    /** @todo Log this as soon as we have an event log */
+		    $gallery->debug('_getThemId failed with the following error: ' .
+										 $ret->getAsHtml());
 		}
 	    } else {
 		$themeId = $theme['themeId'];
 	    }
 
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if (!$ret) {
-		$tplVersion = $module->getTemplateVersion();
+	    if (!empty($themeId)) {
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if (!$ret) {
+		    $tplVersion = $module->getTemplateVersion();
+		    $themeOverrideDir =
+			"{$smarty->template_dir}/themes/$themeId/templates/{$moduleId}_$tplVersion";
 
-		$themeOverrideDir =
-		    "{$smarty->template_dir}/themes/$themeId/templates/{$moduleId}_$tplVersion";
-
-		$file = "$themeOverrideDir/{$moduleBase}local/$tplFile";
-		if ($platform->is_readable($file)) {
-		    return $file;
-		}
-
-		$file = "$themeOverrideDir/{$moduleBase}$tplFile";
-		if ($platform->is_readable($file)) {
-		    return $file;
+		    /* Check local module template override */
+		    $file = "$themeOverrideDir/{$moduleBase}local/$tplFile";
+		    if ($platform->is_readable($file)) {
+			    $qualifiedTemplatePath = $file;
+		    } else {
+			/* Check module template override through theme */
+			$file = "$themeOverrideDir/{$moduleBase}$tplFile";
+			if ($platform->is_readable($file)) {
+			    $qualifiedTemplatePath = $file;
+	    		}
+		    }
+		} else {
+		    /** @todo Log this as soon as we have an event log */
+		    $gallery->debug('loadPlugin failed with the following error: ' .
+										 $ret->getAsHtml());
 		}
 	    }
 	}
 
-	$tplFile = basename($templateName);
-	$qualifiedTemplate = $smarty->template_dir . '/' . $templateName;
-	$base = dirname($qualifiedTemplate);
+	if (empty($qualifiedTemplatePath)) {
+	    $tplFile = basename($templateName);
+	    $qualifiedTemplateName = $smarty->template_dir . '/' . $templateName;
+	    $base = dirname($qualifiedTemplateName);
 
-	$file = "$base/local/$tplFile";
-	if ($platform->is_readable($file)) {
-	    return $file;
+	    $file = "$base/local/$tplFile";
+
+	    if ($platform->is_readable($file)) {
+		$qualifiedTemplatePath = $file;
+	    } else {
+		/* Use whatever was passed. Use the smarty default as the directory base */
+		$qualifiedTemplatePath = $qualifiedTemplateName;
+	    }
 	}
 
-	/* Use whatever was passed and use the smarty default template as the directory base */
-	return $qualifiedTemplate;
+	GalleryDataCache::putTemplatePath($templateName, $qualifiedTemplatePath);
+	return $qualifiedTemplatePath;
     }
 
     /**
      * Return the themeid for the current item.
      * @return array object GalleryStatus a status code
-     *         string ThemeId
+     * 		     string ThemeId
      * @static
+     * @access private
      */
     function _getThemeId() {
 	$view = new GalleryView();
