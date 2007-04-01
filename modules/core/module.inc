@@ -42,7 +42,7 @@ class CoreModule extends GalleryModule {
 	$this->setCallbacks('registerEventListeners'
 	    . '|getItemLinks|getSystemLinks'
 	    . '|getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredCoreApi(array(7, 21));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -251,11 +251,11 @@ class CoreModule extends GalleryModule {
 							  'subView' => 'core.UserLogin',
 							  'return' => 1));
 	    } else {
-                $user = $gallery->getActiveUser();
-                $links['YourAccount'] = array('text' => $this->translate('Your Account'),
-                                              'params' => array('view' => 'core.UserAdmin',
-                                                                'subView' => 'core.UserPreferences',
-                                                                'return' => 1));
+		$user = $gallery->getActiveUser();
+		$links['YourAccount'] = array('text' => $this->translate('Your Account'),
+					      'params' => array('view' => 'core.UserAdmin',
+								'subView' => 'core.UserPreferences',
+								'return' => 1));
 		$links['Logout'] = array('text' => $this->translate('Logout'),
 					 'params' => array('controller' => 'core.Logout',
 							   'return' => 1));
@@ -313,12 +313,12 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if (!$isAnonymous) {
-                if (!$user->isLocked()) {
-                    $views[] = array('name' => $this->translate('Account Settings'),
-                                     'view' => 'core.UserPreferences');
-                    $views[] = array('name' => $this->translate('Change Password'),
-                                     'view' => 'core.UserChangePassword');
-                }
+		if (!$user->isLocked()) {
+		    $views[] = array('name' => $this->translate('Account Settings'),
+				     'view' => 'core.UserPreferences');
+		    $views[] = array('name' => $this->translate('Change Password'),
+				     'view' => 'core.UserChangePassword');
+		}
 	    } else {
 		$views[] = array('name' => $this->translate('Login'),
 				 'view' => 'core.UserLogin');
