@@ -52,6 +52,11 @@ class MimeTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
+	$ret = GalleryCoreApi::removeMimeType(array('extension' => 'mimetest'));
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+
 	parent::tearDown();
     }
 
@@ -129,6 +134,22 @@ class MimeTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals('test/test', $mime);
+    }
+
+    function testAddMimeTypeForLongMimeTypeString() {
+	/* See bug 1634796 */
+	$mimeType = 'application/super.long.test.mime-type.test+html+application+test';
+	$ret = GalleryCoreApi::addMimeType('mimetest', $mimeType, 0);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime('mimetest');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($mimeType, $mime);
     }
 }
 ?>

@@ -2169,6 +2169,12 @@ class CoreModuleExtras {
 	    /* Move modules/core/locale/ hierarchy into po/ */
 	case '1.2.3':
             /* Added template version number */
+	case '1.2.4':
+	    /* Increase allowed length of mime-type strings */
+	    $ret = $storage->configureStore($module->getId(), array('GalleryMimeTypeMap:1.0'));
+	    if ($ret) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2484,6 +2490,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.1':
 	case '1.2.2':
 	case '1.2.3':
+	case '1.2.4':
 
 	case 'end of upgrade path':
 	    /*
