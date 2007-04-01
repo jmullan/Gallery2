@@ -1,6 +1,5 @@
-var search_SearchBlock_prompt;
-var search_SearchBlock_error;
-var search_SearchBlock_input;
+var search_SearchBlock_prompt, search_SearchBlock_input,
+    search_SearchBlock_error, search_SearchBlock_inProgressString;
 var search_submitted = false;
 
 function search_SearchBlock_init(prompt, error, inProgress) {
@@ -18,8 +17,8 @@ function search_SearchBlock_checkForm() {
 	alert(search_SearchBlock_inProgressString);
 	return false;
     } else if (sc == search_SearchBlock_promptString || sc == '') {
-        alert(search_SearchBlock_errorString);
-        return false;
+	alert(search_SearchBlock_errorString);
+	return false;
     }
     document.getElementById('search_SearchBlock').submit();
     search_submitted = true;
