@@ -860,8 +860,8 @@ class GalleryDataCache {
      * @return mixed path to the corresponding template or false if the path is not found
      */
     function getTemplatePath($templateName) {
-    	$pathMap = GalleryDataCache::_getTemplatePathMap();
-    	return isset($pathMap[$templateName]) ? $pathMap[$templateName] : false;
+	$pathMap = GalleryDataCache::_getTemplatePathMap();
+	return isset($pathMap[$templateName]) ? $pathMap[$templateName] : false;
     }
 
     /**
@@ -875,7 +875,7 @@ class GalleryDataCache {
 	} else {
 	    $pathMapping = GalleryDataCache::getFromDisk(array('type' => 'template-map'));
 	    if ($pathMapping == null) {
-	    	$pathMapping = array();
+		$pathMapping = array();
 	    }
 	    GalleryDataCache::put($cacheKey, $pathMapping);
 	    GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', false);
@@ -890,9 +890,9 @@ class GalleryDataCache {
      * @param string $path the path to the active template
      */
     function putTemplatePath($templateName, $path) {
-    	global $gallery;
+	global $gallery;
 
-    	$pathMap = GalleryDataCache::_getTemplatePathMap();
+	$pathMap = GalleryDataCache::_getTemplatePathMap();
 	$pathMap[$templateName] = $path;
 	GalleryDataCache::put('GalleryDataCache::templatePathMap', $pathMap);
 
@@ -909,7 +909,7 @@ class GalleryDataCache {
      */
     function resetTemplatePathMap() {
 	GalleryDataCache::removeFromDisk(array('type' => 'template-map'));
-    	GalleryDataCache::remove('GalleryDataCache::templatePathMap');
+	GalleryDataCache::remove('GalleryDataCache::templatePathMap');
     }
 
     /**

@@ -367,7 +367,7 @@ class GalleryTemplate {
     function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
 	$templatePath = GalleryTemplate::_getActualTemplatePath($templateName, $smarty);
 
-        $success = false;
+	$success = false;
 	if (isset($templatePath)) {
 	    $templateSource = $smarty->_read_file($templatePath);
 	    if ($templateSource !== false) {
@@ -393,7 +393,7 @@ class GalleryTemplate {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-        $success = false;
+	$success = false;
 	$templatePath = GalleryTemplate::_getActualTemplatePath($templateName, $smarty);
 	if (isset($templatePath) && $platform->file_exists($templatePath)) {
 	    $stat = $platform->stat($templatePath);
@@ -435,8 +435,8 @@ class GalleryTemplate {
 		list ($ret, $themeId) = GalleryTemplate::_getThemeId();
 		if ($ret) {
 		    /** @todo Log this as soon as we have an event log */
-		    $gallery->debug('_getThemeId failed with the following error: ' .
-										 $ret->getAsHtml());
+		    $gallery->debug('_getThemeId failed with the following error: '
+				    . $ret->getAsHtml());
 		}
 	    } else {
 		$themeId = $theme['themeId'];
@@ -458,12 +458,12 @@ class GalleryTemplate {
 			$file = "$themeOverrideDir/{$moduleBase}$tplFile";
 			if ($platform->is_readable($file)) {
 			    $qualifiedTemplatePath = $file;
-	    		}
+			}
 		    }
 		} else {
 		    /** @todo Log this as soon as we have an event log */
-		    $gallery->debug('loadPlugin failed with the following error: ' .
-										 $ret->getAsHtml());
+		    $gallery->debug('loadPlugin failed with the following error: '
+				    . $ret->getAsHtml());
 		}
 	    }
 	}
@@ -490,7 +490,7 @@ class GalleryTemplate {
     /**
      * Return the themeid for the current item.
      * @return array object GalleryStatus a status code
-     * 		     string ThemeId
+     *               string ThemeId
      * @static
      * @access private
      */

@@ -58,7 +58,7 @@ class TemplateTest extends GalleryTestCase {
 	GalleryDataCache::remove('GalleryDataCache::templatePathMap');
 	GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', false);
 
-    	parent::tearDown();
+	parent::tearDown();
     }
 
     /* Test retrieving a template that falls outside the module or theme template pattern*/
@@ -127,7 +127,7 @@ class TemplateTest extends GalleryTestCase {
     }
 
     function testResourceGetTemplateCached() {
-    	GalleryDataCache::putTemplatePath('modules/core/templates/template.tpl', 'template1.tpl');
+	GalleryDataCache::putTemplatePath('modules/core/templates/template.tpl', 'template1.tpl');
 
 	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
 				  false);
@@ -142,7 +142,7 @@ class TemplateTest extends GalleryTestCase {
 	$this->assert($success, "Didn't return success");
 
 	$this->assertEquals('template1.tpl', $templateSource,
-			    			          'Failed to retrieve the cached template');
+			    'Failed to retrieve the cached template path');
     }
 
     /* Test retrieving non-overridden template */
