@@ -445,7 +445,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	list ($ret, $id) = $this->_gs->getUniqueId();
+	list ($ret, $id) = $this->_gs->getUniqueId(DATABASE_SEQUENCE_ID);
 	if ($ret) {
 	    return $ret;
 	}
@@ -460,7 +460,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
      * @see GalleryStorage::getUniqueId
      */
-    function getUniqueId() {
+    function getUniqueId($sequence=DATABASE_SEQUENCE_ID) {
 	$ret = $this->_dbInit();
 	if ($ret) {
 	    return array($ret, null);
@@ -471,13 +471,17 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * subclasses to use a different connection if necessary, like MySQL which
 	 * wants a non-transactional connection.
 	 */
-	return $this->_getUniqueIdWithConnection($this->_gs->_db);
+	return $this->_getUniqueIdWithConnection($this->_gs->_db, $sequence);
     }
 
     /**
+     * Internal implementation of GalleryStorage::getUniqueId that additionally takes a database
+     * connection.
+     *
+     * @param string $sequence A sequence name
      * @see GalleryStorage::getUniqueId
      */
-    function _getUniqueIdWithConnection($dbConn) {
+    function _getUniqueIdWithConnection($dbConn, $sequence) {
 	/* In case we're embedded in an app that sets adodb hasGenID to false (xaraya/postnuke) */
 	if (isset($dbConn->hasGenID) && !$dbConn->hasGenID) {
 	    $dbConn->hasGenID = $setGenID = true;
@@ -485,7 +489,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 	/* Get the id of the next object from our sequence */
 	$this->_gs->_traceStart();
-	$id = (int)$dbConn->GenId($this->_gs->_tablePrefix . DATABASE_SEQUENCE_ID);
+	$id = (int)$dbConn->GenId($this->_gs->_tablePrefix . $sequence);
 	$this->_gs->_traceStop();
 	if (empty($id)) {
 	    return array(GalleryCoreApi::error(
