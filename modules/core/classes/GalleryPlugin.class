@@ -136,14 +136,15 @@ class GalleryPlugin {
     /**
      * Activate this plugin
      *
-     * @param boolean $postActivationEvent should we post an activation event?  Normally true,
-     *             but the upgrader may choose to suppress this event so that it can
-     *             reactivate a module without causing a ripple effect.
+     * @param boolean $postActivationEvent (optional) should we post an activation event?  Normally
+     *                true, but the upgrader may choose to suppress this event so that it can
+     *                reactivate a module without causing a ripple effect.
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
     function activate($postActivationEvent=true) {
 	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	$pluginType = $this->getPluginType();
 	$pluginId = $this->getId();
@@ -182,6 +183,15 @@ class GalleryPlugin {
 
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
+	/* Ensure that we pick up template changes and template overrides by flushing the cache */
+	GalleryDataCache::resetTemplatePathMap();
+
+	$templateCacheDir = $gallery->getConfig('data.smarty.templates_c');
+	if ($platform->file_exists($templateCacheDir)) {
+	    /* Ignore errors */
+	    $platform->recursiveRmdir($templateCacheDir);
+	}
+
 	if ($postActivationEvent) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug('GalleryPlugin::activate post activation event');
@@ -211,8 +221,8 @@ class GalleryPlugin {
      * Modules and themes can be forcibly deactivated during the upgrade process and it's
      * important that this doesn't leave the app in a broken state.
      *
-     * @param bool $postDeactivationEvent should we post a deactivation event?  Normally true,
-     *             but the upgrader may choose to suppress this event so that it can
+     * @param bool $postDeactivationEvent (optional) should we post a deactivation event?  Normally
+     *             true, but the upgrader may choose to suppress this event so that it can
      *             reactivate a module without causing a ripple effect.
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
@@ -236,6 +246,7 @@ class GalleryPlugin {
 					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
 					       'id' => '_all'));
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
+	GalleryDataCache::resetTemplatePathMap();
 
 	if ($postDeactivationEvent) {
 	    $ret = $this->_postDeactivationEvent();

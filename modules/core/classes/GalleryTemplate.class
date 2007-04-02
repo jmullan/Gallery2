@@ -301,6 +301,8 @@ class GalleryTemplate {
 	}
 	$smarty->use_sub_dirs = false;
 
+	$smarty->compile_check = false;
+
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$smarty->register_object('g', $templateAdapter, array(), true,
 				 array('addToTrailer', 'autoComplete', 'container'));

@@ -100,6 +100,7 @@ class PluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
     }
+
     function testFetchPluginStatusForWrongPluginType() {
 	list ($ret, $status) = GalleryCoreApi::fetchPluginStatus('foo');
 	$this->assert(ERROR_BAD_PARAMETER & $ret->getErrorCode(), 'Wrong status code');
@@ -139,6 +140,78 @@ class PluginTest extends GalleryTestCase {
 	    $this->assertEquals($expectedIds, $pluginIds, "$type ids do not match");
 	}
     }
+
+    function testActivateFlushesTemplateAndTemplatePathMapCaches() {
+	global $gallery;
+
+	/* Test preparation */
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('theme');
+	$plugin->setId('plugintest');
+	$plugin->setVersion('1.0.0');
+	$plugin->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$plugin->setRequiredThemeApi(GalleryTheme::getApiVersion());
+
+	$themeStatus = array($plugin->getId() => array('available' => true));
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)', $themeStatus);
+
+	GalleryDataCache::putTemplatePath('foo', 'bar');
+	$this->assertEquals('bar', GalleryDataCache::getTemplatePath('foo'));
+	$templateDir = '/templates';
+	$gallery->setConfig('data.smarty.templates_c', $templateDir);
+
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array($templateDir), true);
+	$platform->setReply('recursiveRmdir', array($templateDir), false);
+	$gallery->setPlatform($platform);
+
+	$gallery->_storage = new PluginTestMockStorage();
+
+	/* Execute the test */
+	list ($ret, $ignored) = $plugin->activate(false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify the results */
+	$this->assertEquals(false, GalleryDataCache::getTemplatePath('foo'),
+			    'template path mapping has not been flushed');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testDeactivateFlushesTemplateCache() {
+	global $gallery;
+
+	/* Test preparation */
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('theme');
+	$plugin->setId('plugintest');
+	$plugin->setVersion('1.0.0');
+	$plugin->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$plugin->setRequiredThemeApi(GalleryTheme::getApiVersion());
+
+	$themeStatus = array($plugin->getId() => array('active' => true, 'available' => true));
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)', $themeStatus);
+
+	GalleryDataCache::putTemplatePath('foo', 'bar');
+	$this->assertEquals('bar', GalleryDataCache::getTemplatePath('foo'));
+
+	$platform = new UnitTestPlatform();
+	$gallery->setPlatform($platform);
+
+	$gallery->_storage = new PluginTestMockStorage();
+
+	/* Execute the test */
+	list ($ret, $ignored) = $plugin->deactivate(false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Verify the results */
+	$this->assertEquals(false, GalleryDataCache::getTemplatePath('foo'),
+			    'template path mapping has not been flushed');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
 }
 
 class PluginTestCompatibleModule extends GalleryModule {
@@ -167,6 +240,19 @@ class PluginTestPlugin extends GalleryPlugin {
 
     function getRequiredThemeApi() {
 	return $this->_requiredThemeApi;
+    }
+}
+
+/**
+ * @todo Replace with generic test storage similar to the UnitTestPlatform
+ */
+class PluginTestMockStorage {
+    function addMapEntry($mapName, $data) {
+	return null;
+    }
+
+    function updateMapEntry($mapName, $match, $change) {
+	return null;
     }
 }
 ?>
