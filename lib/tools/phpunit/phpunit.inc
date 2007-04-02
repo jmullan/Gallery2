@@ -68,6 +68,20 @@ if (phpversion() >= '4') {
 	    return;
 	}
 
+	/*
+	 * Smarty smarty_core_write_file does @unlink() on Windows platforms without doing a
+	 * file_exists. Ignore these errors.
+	 */
+	if (error_reporting() == 0 && DIRECTORY_SEPARATOR == '\\') {
+	    global $gallery;
+	    if (isset($gallery)) {
+		$templateDir = $gallery->getConfig('data.smarty.templates_c');
+		if (strpos($errstr, 'unlink(' . $templateDir) !== false) {
+		    return;
+		}
+	    }
+	}
+
 	$message = "<B>PHP ERROR:</B> ".$errstr;
 	if (function_exists('debug_backtrace')) {
 	    $traceSource = debug_backtrace();
