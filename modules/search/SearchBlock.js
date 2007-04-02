@@ -1,5 +1,5 @@
-var search_SearchBlock_prompt, search_SearchBlock_input,
-    search_SearchBlock_error, search_SearchBlock_inProgressString;
+var search_SearchBlock_promptString, search_SearchBlock_input,
+    search_SearchBlock_errorString, search_SearchBlock_inProgressString;
 var search_submitted = false;
 
 function search_SearchBlock_init(prompt, error, inProgress) {
