@@ -245,6 +245,17 @@ class WebTest extends GalleryTestCase {
 	$this->assertEquals($actualUrl, 'http://www.test.server/testFetchWebPage');
     }
 
+    function testFetchWebPageTooManyRedirects() {
+	list ($success, $body, $response, $headers, $actualUrl) =
+	    WebHelper_simple::fetchWebPage('http://www.test.server/testFetchRedirectedWebPage',
+					   array(), 6);
+	$this->assert(!$success);
+	$this->assertEquals(null, $body);
+	$this->assertEquals(null, $response);
+	$this->assertEquals(null, $headers);
+	$this->assertEquals(null, $actualUrl);
+    }
+
     function testFetchRedirectedDoubleLocation() {
 	/* Make sure we redirect ok if bad http response sends 2 Location headers */
 	list ($success, $body, $response, $headers, $actualUrl) =

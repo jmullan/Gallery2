@@ -189,6 +189,8 @@ class WebHelper_simple {
      * @see GalleryCoreApi::fetchWebPage
      */
     function fetchWebPage($url, $extraHeaders=array(), $depth=0) {
+	global $gallery;
+
 	/* Don't redirect too far */
 	if ($depth > 5) {
 	    $gallery->debug('Too many levels of HTTP redirection!');
