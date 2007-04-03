@@ -61,6 +61,8 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
+	GalleryDataCache::reset();
     }
 
     function testGetCurrentUrl() {

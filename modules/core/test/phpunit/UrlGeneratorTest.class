@@ -60,6 +60,9 @@ class UrlGeneratorTest extends GalleryTestCase {
 	if (GalleryDataCache::containsKey('G2_EMBED')) {
 	    $this->_origEmbed = GalleryDataCache::get('G2_EMBED');
 	}
+
+	/* As a last preparation, clear the cache (e.g. cached requestUri) */
+	GalleryDataCache::reset();
     }
 
     function tearDown() {
@@ -81,6 +84,7 @@ class UrlGeneratorTest extends GalleryTestCase {
      * Initiates a new url generator
      */
     function _initNewUrlGenerator($baseUri=null, $g2Uri=null, $embedSessionString=null) {
+	GalleryDataCache::reset();
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$baseUri = !isset($baseUri) ? 'phpunit_test.php' : $baseUri;
 	return $this->_urlGenerator->init($baseUri, $g2Uri, $embedSessionString);
@@ -92,6 +96,8 @@ class UrlGeneratorTest extends GalleryTestCase {
      */
     function _prepareGenerateUrl($cookiePath, $baseUri, $g2Uri, $embedSessionString=null) {
 	global $gallery;
+
+	GalleryDataCache::reset();
 
 	/*
 	 * Configure the cookie path:
@@ -374,6 +380,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* Simulate embedded */
 	$_SERVER['REQUEST_URI'] = '/phpunit_test.php?module=gallery2&foo=bar';
+	GalleryDataCache::reset();
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/phpunit_test.php?module=gallery2', '/gallery2/');
 	if ($ret) {
@@ -386,6 +393,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* Embedded, trailing slash omitted */
 	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?module=gallery2&foo=bar';
+	GalleryDataCache::reset();
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/cms/phpunit_test.php?module=gallery2', '/gallery2');
 	if ($ret) {
@@ -585,10 +593,12 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['REQUEST_URI'] = '';
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$_SERVER['QUERY_STRING'] = 'foo=bar';
+	GalleryDataCache::reset();
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri(), 'iis');
 
 	/* Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME.. */
 	$_SERVER['PATH_INFO'] = $_SERVER['SCRIPT_NAME'];
+	GalleryDataCache::reset();
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri(),
 			    'iis path_info');
     }
@@ -608,7 +618,17 @@ class UrlGeneratorTest extends GalleryTestCase {
 	/* And a case with a fragment part. */
 	$expected = '/gallery2/phpunit_test.php?foo=bar#anchor';
 	$_SERVER['REQUEST_URI'] = 'http://example.com' . $expected;
+	GalleryDataCache::reset();
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri());
+    }
+
+    function testGetCurrentRequestUriCachesResult() {
+	$expected = '/gallery2/PASSED?true';
+	$_SERVER['REQUEST_URI'] = 'http://example.com' . $expected;
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri(), 'first call');
+
+	$_SERVER['REQUEST_URI'] = 'http://example.com/FAILED';
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri(), 'cached call');
     }
 
     function testGetCurrentUrl() {
@@ -620,11 +640,13 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$_SERVER['QUERY_STRING'] = 'foo=bar';
 	unset($this->_urlGenerator->_currentUrl);
+	GalleryDataCache::reset();
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl(), 'iis');
 
 	/* Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME.. */
 	$_SERVER['PATH_INFO'] = $_SERVER['SCRIPT_NAME'];
 	unset($this->_urlGenerator->_currentUrl);
+	GalleryDataCache::reset();
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl(), 'iis path_info');
     }
 
@@ -634,6 +656,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* Simulate embedded.. */
 	$_SERVER['REQUEST_URI'] = '/phpunit_test.php?module=gallery2&foo=bar';
+	GalleryDataCache::reset();
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/phpunit_test.php?module=gallery2','/gallery2/');
 	if ($ret) {
@@ -644,6 +667,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 			    'embedded forceDirect');
 
 	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?module=gallery2&foo=bar';
+	GalleryDataCache::reset();
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/cms/phpunit_test.php?module=gallery2', '/gallery2/');
 	if ($ret) {
@@ -657,6 +681,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
     function testGetCurrentUrlDirBaseFileNotFound() {
 	$_SERVER['REQUEST_URI'] = '/somedir/?filter=foo';
+	GalleryDataCache::reset();
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('index.php');
 	if ($ret) {
@@ -902,6 +927,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?test=on&foo=bar';
+	GalleryDataCache::reset();
 
 	$params['a'] = 123;
 	$params['b'] = 'bBbB';
@@ -1023,7 +1049,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	foreach ($badUrls as $url) {
 	    $_GET['g2_return'] = $url;
 	    $ret = $this->_urlGenerator->initNavigation();
-	    $this->assert($ret->getErrorCode() & ERROR_PERMISSION_DENIED,
+	    $this->assert($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED,
 			  "Phishing attack '$url' not detected for url");
 	}
 	/*
@@ -1056,7 +1082,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	foreach ($badUrls as $url) {
 	    $_GET['g2_return'] = $url;
 	    $ret = $this->_urlGenerator->initNavigation();
-	    $this->assert($ret->getErrorCode() & ERROR_PERMISSION_DENIED,
+	    $this->assert($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED,
 			  "Header injection '$url' not detected for url");
 	}
     }
@@ -1157,6 +1183,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals('/bad/', $realValue, 'could not set plugin parameter cookie.path');
 	/* Now do the actual check */
 	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?a=b';
+	GalleryDataCache::reset();
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/cms/phpunit_test.php', '/gallery2/');
 	if ($ret) {
@@ -1220,6 +1247,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	foreach ($tests as $testCase) {
 	    $_SERVER['REQUEST_URI'] = !isset($testCase['g2Uri']) ? '/foobar/' : '';
 	    $_SERVER['REQUEST_URI'] .= $testCase['baseUri'];
+	    GalleryDataCache::reset();
 	    $urlGenerator = new GalleryUrlGenerator();
 	    $ret = $urlGenerator->init($testCase['baseUri'], $testCase['g2Uri']);
 	    if ($ret) {

@@ -127,6 +127,7 @@ class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 		list ($pathInfo, $expectedParams) = $test;
 		$_SERVER['REQUEST_URI'] = $path . '/phpunit_test.php' . $pathInfo;
 		$_SERVER['PATH_INFO'] = $path . '/phpunit_test.php' . $pathInfo;
+		GalleryDataCache::reset();
 		$urlGenerator = new PathInfoUrlGenerator();
 		$ret = $urlGenerator->init($path . '/phpunit_test.php');
 		if ($ret) {

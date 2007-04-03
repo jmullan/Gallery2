@@ -103,6 +103,8 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret);
 	}
+
+	GalleryDataCache::reset();
     }
 
     function tearDown() {
@@ -159,6 +161,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
     function _urlGeneratorInit($urlGeneratorName) {
 	$this->_urlGeneratorName = $urlGeneratorName;
 	$this->_urlGenerator = new $urlGeneratorName();
+	GalleryDataCache::reset();
 	$ret = $this->_urlGenerator->init('phpunit_test.php');
 	if ($ret) {
 	    return $ret;
@@ -222,8 +225,8 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
     }
 
     function testGetBaseUrl() {
-	$urlGenerator = new $this->_urlGeneratorName();
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=1&bar=2';
+	$urlGenerator = new $this->_urlGeneratorName();
 	$ret = $urlGenerator->init('phpunit_test.php');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
@@ -307,6 +310,7 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
      */
     function _runGenerateUrlTest($env, $expectedUrl, $params=null, $options=null) {
 	global $gallery;
+	GalleryDataCache::reset();
 
 	/* Multisite */
 	if (isset($env['galleryBaseUrl'])) {
