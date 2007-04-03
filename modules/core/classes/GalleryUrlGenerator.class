@@ -752,11 +752,15 @@ class GalleryUrlGenerator {
      * @return string relative URL (or unchanged absolute URL)
      */
     function makeRelativeUrl($url, $forceServerRelativeUrl=false) {
-	$requestUri = $this->getCurrentRequestUri();
-	/* When embedded, file can be empty */
-	if ($forceServerRelativeUrl || empty($this->_file[0])
+	if (!isset($this->_hasRequestUriShortUrlPrefix)) {
+	    $requestUri = $this->getCurrentRequestUri();
+	    /* When embedded, file can be empty */
+	    $this->_hasRequestUriShortUrlPrefix = empty($this->_file[0])
 		|| ($pos = strpos($requestUri, $this->_file[0])) === false
-		|| (($qPos = strpos($requestUri, '?')) !== false && $pos >= $qPos)
+		|| (($qPos = strpos($requestUri, '?')) !== false && $pos >= $qPos);
+	}
+
+	if ($forceServerRelativeUrl || $this->_hasRequestUriShortUrlPrefix
 		|| strpos($url, $this->getCurrentUrlDir()) !== 0) {
 	    /* Don't use forceDirect, keep the URL absolute if necessary */
 	    $url = str_replace($this->makeUrl('/'), '/', $url);
