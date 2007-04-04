@@ -48,6 +48,7 @@ require_once($g2Base . 'install/GalleryStub.class');
 require_once($g2Base . 'install/InstallStep.class');
 require_once($g2Base . 'install/StatusTemplate.class');
 require_once($g2Base . 'modules/core/classes/GalleryUtilities.class');
+require_once($g2Base . 'modules/core/classes/GalleryDataCache.class');
 require_once($g2Base . 'lib/support/GallerySetupUtilities.class');
 define('INDEX_PHP', basename(__FILE__));
 
