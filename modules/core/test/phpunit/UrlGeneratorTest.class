@@ -1138,6 +1138,90 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals(null, $ret);
     }
 
+    function testGenerateUrlSwapsInReturnUrl() {
+	global $gallery;
+
+	$currentView = 'core.SiteAdmin';
+	list ($ret, $view) = GalleryView::loadView($currentView);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $viewDescription) = $view->getViewDescription();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$gallery->setCurrentView($currentView);
+	GalleryUtilities::putRequestVariable('view', $currentView);
+	GalleryUtilities::putRequestVariable('foo', 'bar');
+	$actualUrl = $this->_urlGenerator->generateUrl(
+					array('href' => '/foo.php', 'return' => true),
+					array('forceServerRelativeUrl' => true));
+	$expectedUrl = sprintf('/foo.php?g2_return=%s&amp;g2_returnName=%s',
+			       urlencode('/gallery2/phpunit_test.php?g2_view=core.SiteAdmin'
+				       . '&g2_foo=bar'),
+			       urlencode($viewDescription));
+	$this->assertEquals($expectedUrl, $actualUrl);
+    }
+
+    function testGenerateUrlCachesReturnUrlByCurrentView() {
+	global $gallery;
+
+	$currentView = 'core.MaintenanceMode';
+	list ($ret, $view) = GalleryView::loadView($currentView);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $viewDescription) = $view->getViewDescription();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$gallery->setCurrentView($currentView);
+	GalleryUtilities::putRequestVariable('view', $currentView);
+	GalleryUtilities::putRequestVariable('foo', 'bar');
+	$actualUrl = $this->_urlGenerator->generateUrl(
+					array('href' => '/1st.url', 'return' => true),
+					array('forceServerRelativeUrl' => true));
+	$returnParams = sprintf('g2_return=%s&amp;g2_returnName=%s',
+				urlencode('/gallery2/phpunit_test.php?g2_view=core.MaintenanceMode'
+					. '&g2_foo=bar'),
+				urlencode($viewDescription));
+	$expectedUrl = '/1st.url?' . $returnParams;
+	$this->assertEquals($expectedUrl, $actualUrl, "1st call with $currentView");
+
+	/* Generate a second URL with the same currentView */
+	GalleryUtilities::putRequestVariable('view', 'failed.test');
+	GalleryUtilities::removeRequestVariable('foo');
+	$actualUrl = $this->_urlGenerator->generateUrl(
+					array('href' => '/2nd.url', 'return' => true),
+					array('forceServerRelativeUrl' => true));
+	$this->assertEquals('/2nd.url?' . $returnParams, $actualUrl,
+			    "2nd call with $currentView, cached return URL");
+
+	/* Change the current view and generate a 3rd URL */
+	$currentView = 'core.SiteAdmin';
+	list ($ret, $view) = GalleryView::loadView($currentView);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $viewDescription) = $view->getViewDescription();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$gallery->setCurrentView($currentView);
+	GalleryUtilities::putRequestVariable('view', $currentView);
+	$actualUrl = $this->_urlGenerator->generateUrl(
+					array('href' => '/3rd.url', 'return' => true),
+					array('forceServerRelativeUrl' => true));
+	$returnParams = sprintf('g2_return=%s&amp;g2_returnName=%s',
+				urlencode('/gallery2/phpunit_test.php?g2_view=core.SiteAdmin'),
+				urlencode($viewDescription));
+	$expectedUrl = '/3rd.url?' . $returnParams;
+	$this->assertEquals($expectedUrl, $actualUrl, "3rd call with $currentView");
+    }
+
     function testRelativeUrlOverrides() {
 	global $gallery;
 	$session =& $gallery->getSession();

@@ -630,14 +630,23 @@ class GalleryUrlGenerator {
 
 	/* Swap in the actual URL for the 'return' placeholder */
 	if (isset($params['return'])) {
-	    list ($ret, $view) = GalleryView::loadView($currentView);
-	    if (!$ret) {
-		list ($ret, $viewDescription) = $view->getViewDescription();
+	    /* Cache the return URL / name, they're quite expensive to generate */
+	    if (!isset($this->_returnUrlData[$currentView])) {
+		list ($ret, $view) = GalleryView::loadView($currentView);
 		if (!$ret) {
-		    $params['returnName'] = $viewDescription;
+		    list ($ret, $viewDescription) = $view->getViewDescription();
+		    if (!$ret) {
+			$this->_returnUrlData[$currentView]['returnName'] = $viewDescription;
+		    }
 		}
+		$this->_returnUrlData[$currentView]['return'] =
+			str_replace('&amp;', '&', $this->getNavigationReturnUrl());
 	    }
-	    $params['return'] = str_replace('&amp;', '&', $this->getNavigationReturnUrl());
+
+	    if (isset($this->_returnUrlData[$currentView]['returnName'])) {
+		$params['returnName'] = $this->_returnUrlData[$currentView]['returnName'];
+	    }
+	    $params['return'] = $this->_returnUrlData[$currentView]['return'];
 	    if (!empty($this->_navId)) {
 		$params['navId'] = $this->_navId;
 	    }
