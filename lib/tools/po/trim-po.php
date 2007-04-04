@@ -22,7 +22,6 @@ if ($langpath == $path || !file_exists($langpath)) {
     list ($po, $header) = readPo($path);
     print $header;
     foreach ($po as $id => $data) {
-	checkHint($id, $data['msgstr'], $path);
 	$isFuzzy = strpos($data['before'], ', fuzzy') !== false;
 	checkMessageForHtml($id, $data['msgstr'], $isFuzzy, $path);
 	if (substr($id, 5) != substr($data['msgstr'], 6)) {
@@ -37,20 +36,10 @@ list ($langpo) = readPo($langpath);
 
 print $header;
 foreach ($po as $id => $data) {
-    checkHint($id, $data['msgstr'], $path);
     $isFuzzy = strpos($data['before'], ', fuzzy') !== false;
     checkMessageForHtml($id, $data['msgstr'], $isFuzzy, $path);
     if (!isset($langpo[$id]) || $langpo[$id]['msgstr'] != $data['msgstr']) {
 	print $data['before'] . $id . $data['msgstr'] . "\n";
-    }
-}
-
-function checkHint($msgid, $msgstr, $path) {
-    if (strpos($msgid, '<!--') !== false && $msgstr == "msgstr \"\"\n") {
-	fwrite(stdErr(), "\nWarning: Unhandled translator hint in $path\n");
-    }
-    if (strpos($msgstr, '<!--') !== false) {
-	fwrite(stdErr(), "\nWarning: Translation contains hint in $path\n");
     }
 }
 
@@ -76,9 +65,6 @@ function checkStringForHtml($string, $type, $path) {
 	$closeTags = '</' . implode('|</', $allowedHtmlTags);
 	$gtRegExpPattern = '#(?<!' . $openTags . '|' . $closeTags . ')>#';
     }
-
-    /* Allow for HTML comment tags as well. chechHint takes care of them. */
-    $string = preg_replace('/<!--.*-->/U', '', $string);
 
     if (preg_match($ltRegExpPattern, $string)) {
 	fwrite(stdErr(), "\nWarning: Translation contains < (should be &lt;) in $type "

@@ -87,9 +87,10 @@ class GalleryPlugin {
      * and you are all set for pure literals. The translation teams will receive that literal
      * string as a job to translate and will translate it (when the message is clear enough).
      * At runtime the message is then localized when printed.
-     * The input string can contain a hint to assist translators:
-     *   print $this->translate('TT <!-- abbreviation for Translation Test -->');
-     * The hint portion of the string will not be printed.
+     * Input may also include $params['hint'] which is text to appear in the po file to assist
+     * translators, but is not text to be translated.  Example:
+     *   print $this->translate(array('text' => 'TT', 'hint' => 'Abbreviation for ToolTip'));
+     * 'hint' must follow 'text' or 'many' in the array, and its value must use '..' not ".."
      *
      * But consider this case:
      *   $message_to_be_localized = 'TEST to be displayed in different languages';
@@ -112,6 +113,7 @@ class GalleryPlugin {
      * @param mixed $params a single string, or an array of parameters
      * @param boolean $cFormat (optional) hint for gettext whether to use c-format
      * @return string the localized value
+     * @see GalleryTranslator::translateDomain
      * @see Gallery::i18n
      */
     function translate($params, $cFormat=null) {

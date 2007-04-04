@@ -96,11 +96,11 @@
 
 <div class="gbMarkupBar">
   <input type="button" class="inputTypeButton" tabindex="32767"
-	 value="{g->text text="B <!-- Button label for Bold -->"}"
+	 value="{g->text text="B" hint="Button label for Bold"}"
 	 onclick="openOrCloseTextElement('{$element}', 'b', this)"
 	 style="font-weight: bold;"/>
   <input type="button" class="inputTypeButton" tabindex="32767"
-	 value="{g->text text="i <!-- Button label for italic -->"}"
+	 value="{g->text text="i" hint="Button label for italic"}"
 	 onclick="openOrCloseTextElement('{$element}', 'i', this)"
 	 style="font-style: italic; padding-left: 1px; padding-right: 4px"/>
   <input type="button" class="inputTypeButton" tabindex="32767"

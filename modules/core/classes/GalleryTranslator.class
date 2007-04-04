@@ -514,10 +514,6 @@ class GalleryTranslator {
 	    } else {
 		$localized = $data['many'];
 	    }
-	    /* Strip out comment text used to assist translators */
-	    if (substr($localized, -3) == '-->' && $i = strpos($localized, ' <!--')) {
-		$localized = substr($localized, 0, $i);
-	    }
 	}
 
 	$i = 1;

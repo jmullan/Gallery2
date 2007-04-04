@@ -34,7 +34,7 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 $exts = '(class|php|inc|tpl|css|html)';
 /* These are in phpdoc and don't really need translations: */
 $skip = array('TEST to be displayed in different languages' => true,
-	      'TT <!-- abbreviation for Translation Test -->' => true);
+	      "// HINT: Abbreviation for ToolTip\ngettext(\"TT\")" => true);
 $idEmitted = false;
 $strings = array();
 array_shift($_SERVER['argv']);
@@ -125,12 +125,9 @@ function extractStrings($filename) {
 	    if (isset($skip[$text])) {
 		continue;
 	    }
-	    if (!empty($match[3])) {
-		$hint = '/* xgettext:' . ($match[3] == 'false' ? 'no-' : '') . "c-format */\n";
-	    } else {
-		$hint = '';
-	    }
-	    $string = $hint . sprintf('gettext("%s")', $text);
+	    $cFormatHint = empty($match[3]) ? ''
+		: '/* xgettext:' . ($match[3] == 'false' ? 'no-' : '') . "c-format */\n";
+	    $string = $cFormatHint . sprintf('gettext("%s")', $text);
 	    if (!isset($strings[$string])) {
 		$strings[$string] = array();
 	    } else if (!isset($localStrings[$string])) {
@@ -141,7 +138,7 @@ function extractStrings($filename) {
     }
 
     /* grab phrases of this format: translate(array('one' => '...', 'many' => '...')) */
-    if (preg_match_all("/translate\(\s*array\(\s*'one'\s*=>\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+).*?'many'\s*=>\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+)\s*[,)]/s",
+    if (preg_match_all("/translate\(\s*array\(\s*'one'\s*=>\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+).*?'many'\s*=>\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+)(?:\s*,\s*'hint'\s*=>\s*'(.*?)')?\s*[,)]/s",
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
 	    $one = eval('return ' . $match[1] . ';');
@@ -149,6 +146,9 @@ function extractStrings($filename) {
 	    $one = str_replace('"', '\\"', $one);      /* escape double-quotes */
 	    $many = str_replace('"', '\\"', $many);    /* escape double-quotes */
 	    $string = sprintf('ngettext("%s", "%s")', $one, $many);
+	    if (!empty($match[3])) {
+		$string = '// HINT: ' . str_replace("\\'", "'", $match[3]) . "\n" . $string;
+	    }
 	    if (!isset($strings[$string])) {
 		$strings[$string] = array();
 	    } else if (!isset($localStrings[$string])) {
@@ -159,12 +159,18 @@ function extractStrings($filename) {
     }
 
     /* grab phrases of this format: translate(array('text' => '...', ...)) */
-    if (preg_match_all("/translate\(\s*array\(\s*'text'\s*=>\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+)\s*[,)]/s",
+    if (preg_match_all("/translate\(\s*array\(\s*'text'\s*=>\s*((?:(?:\s*\.\s*)?(?:'(?:(?:\\')?[^']*?)*[^\\\\]'|\"(?:(?:\")?[^\"]*?)*[^\\\\]\"))+)(?:\s*,\s*'hint'\s*=>\s*'(.*?)')?\s*[,)]/s",
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
 	    $text = eval('return ' . $match[1] . ';');
 	    $text = str_replace('"', '\\"', $text);    /* escape double-quotes */
 	    $string = sprintf('gettext("%s")', $text);
+	    if (!empty($match[2])) {
+		$string = '// HINT: ' . str_replace("\\'", "'", $match[2]) . "\n" . $string;
+	    }
+	    if (isset($skip[$string])) {
+		continue;
+	    }
 	    if (!isset($strings[$string])) {
 		$strings[$string] = array();
 	    } else if (!isset($localStrings[$string])) {
@@ -194,7 +200,7 @@ function extractStrings($filename) {
 	    /* text=..... */
 	    if (preg_match("/text=\"(.*?[^\\\])\"/s", $string, $matches)) {
 		$text = $matches[1];
-	    } elseif (preg_match("/text='(.*?)'/s", $string, $matches)) {
+	    } else if (preg_match("/text='(.*?)'/s", $string, $matches)) {
 		$text = $matches[1];
 		$text = str_replace('"', '\\"', $text);    /* escape double-quotes */
 	    }
@@ -202,7 +208,7 @@ function extractStrings($filename) {
 	    /* one = ..... */
 	    if (preg_match("/\s+one=\"(.*?[^\\\])\"/s", $string, $matches)) {
 		$one = $matches[1];
-	    } elseif (preg_match("/\s+one='(.*?)'/s", $string, $matches)) {
+	    } else if (preg_match("/\s+one='(.*?)'/s", $string, $matches)) {
 		$one = $matches[1];
 		$one = str_replace('"', '\\"', $one);    /* escape double-quotes */
 	    }
@@ -210,23 +216,24 @@ function extractStrings($filename) {
 	    /* many = ..... */
 	    if (preg_match("/\s+many=\"(.*?[^\\\])\"/s", $string, $matches)) {
 		$many = $matches[1];
-	    } elseif (preg_match("/\s+many='(.*?)'/s", $string, $matches)) {
+	    } else if (preg_match("/\s+many='(.*?)'/s", $string, $matches)) {
 		$many = $matches[1];
 		$many = str_replace('"', '\\"', $many);    /* escape double-quotes */
 	    }
 
+	    /* hint for translators */
+	    $translatorHint = preg_match('/hint="(.*?[^\\\])"/s', $string, $matches)
+		? str_replace('\\"', '"', $matches[1]) : '';
+
 	    /* c-format hint for xgettext */
-	    if (preg_match('/c[Ff]ormat=(true|false)/s', $string, $matches)) {
-		$hint = '/* xgettext:' . ($matches[1] == 'false' ? 'no-' : '') . "c-format */\n";
-	    } else {
-		$hint = '';
-	    }
+	    $cFormatHint = preg_match('/c[Ff]ormat=(true|false)/s', $string, $matches)
+		? '/* xgettext:' . ($matches[1] == 'false' ? 'no-' : '') . "c-format */\n" : '';
 
 	    /* pick gettext() or ngettext() */
 	    if ($text != null) {
-		$string = $hint . sprintf('gettext("%s")', $text);
+		$string = $cFormatHint . sprintf('gettext("%s")', $text);
 	    } else if ($one != null && $many != null) {
-		$string = $hint . sprintf('ngettext("%s", "%s")', $one, $many);
+		$string = $cFormatHint . sprintf('ngettext("%s", "%s")', $one, $many);
 	    } else {
 		/* parse error */
 		$stderr = fopen('php://stderr', 'w');
@@ -237,6 +244,9 @@ function extractStrings($filename) {
 	    }
 
 	    $string = str_replace('\\}', '}', $string);    /* unescape right-curly-braces */
+	    if ($translatorHint) {
+		$string = "// HINT: $translatorHint\n$string";
+	    }
 	    if (!isset($strings[$string])) {
 		$strings[$string] = array();
 	    } else if (!isset($localStrings[$string])) {

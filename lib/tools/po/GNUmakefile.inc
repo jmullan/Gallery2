@@ -42,7 +42,7 @@ messages.po: alwaysbuild
 	@# Don't extract right to strings.raw because extract.php tries to preserve
 	@# some old data from strings.raw and the > redirect blanks it out.
 	@mv strings.raw.tmp strings.raw
-	@xgettext --keyword=_ -C --no-location \
+	@xgettext --keyword=_ -C --no-location --add-comments=HINT: \
 		  --msgid-bugs-address=gallery-translations@lists.sourceforge.net strings.raw
 	@sed '1,4 d' < messages.po > messages.tmp
 	@cat $(TOOLDIR)/po/header.txt messages.tmp > messages.po
