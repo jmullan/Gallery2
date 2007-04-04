@@ -620,7 +620,7 @@ class GalleryUrlGenerator {
 	    $url = $this->getCurrentUrlDir(true) . $this->_file[true];
 
 	    /* Check if we are forced to append the session id in embedded Gallery */
-	    if ($this->embedForceSessionId($params)) {
+	    if (!isset($options['forceSessionId']) && $this->embedForceSessionId($params)) {
 		$options['forceSessionId'] = true;
 	    }
 	} else {

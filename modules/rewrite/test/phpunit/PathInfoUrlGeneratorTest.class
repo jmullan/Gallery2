@@ -553,6 +553,43 @@ class PathInfoUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	parent::testGenerateUrlEmbeddedForceFullUrl();
     }
 
+    function testGenerateUrlEmbeddedForceSessionIdToFalse() {
+	$this->_expectedUrl[0] = 'https://cms.com/cms/index.php?mod=gallery2'
+	    . '&amp;g2_view=rand164.NonShort&amp;g2_foo=bar';
+	$this->_expectedUrl[1] = sprintf(
+	    'http://photos.com:81/gallery2/' . GALLERY_MAIN_PHP . '/d/%d-%d/%s',
+	    $this->_testItem->getId(),
+	    $this->_testItem->getSerialNumber(),
+	    urlencode($this->_testItem->getPathComponent()));
+	$this->_expectedUrl[2] = 'http://href_website.com/foo';
+	$this->_expectedUrl[3] = $this->_signUrl('https://cms.com/cms/index.php?mod=gallery2'
+	    . '&amp;g2_controller=core.ShowItem&amp;g2_itemId=' . $this->_testItem->getId());
+	$this->_expectedUrl[4] = 'http://photos.com:81/gallery2/themes/foo/images/bar.jpg';
+	$this->_expectedUrl[5] = 'https://cms.com/cms/index.php?mod=gallery2';
+	$this->_expectedUrl[6] = 'https://cms.com/cms/index.php/v'
+	    . $this->_testAlbumPath . '?mod=gallery2';
+	$this->_expectedUrl[7] = 'https://cms.com/cms/index.php/v' . $this->_testItemPath
+	    . '.html?mod=gallery2';
+	$this->_expectedUrl[8] = 'https://cms.com/cms/index.php?mod=gallery2&amp;g2_itemId=-5759';
+	$this->_expectedUrl[9] = 'https://cms.com/cms/index.php?mod=gallery2&amp;g2_itemId='
+	    . $this->_derivative->getId();
+	$this->_expectedUrl[10] = 'https://cms.com/cms/index.php/'
+	    . ltrim($this->_testAlbumPath, '/') . 'test.html?mod=gallery2';
+	$this->_expectedUrl[11] = 'https://cms.com/cms/index.php/'
+	    . ltrim($this->_testItemPath, '/') . '/test.html?mod=gallery2';
+	$this->_expectedUrl[12] = 'https://cms.com/cms/index.php/t'
+	    . rtrim($this->_testAlbumPath, '/') . '.test?mod=gallery2';
+	$this->_expectedUrl[13] = 'https://cms.com/cms/index.php/t'
+	    . $this->_testItemPath . '.test?mod=gallery2';
+	$this->_expectedUrl[14] = 'https://cms.com/cms/index.php/phpunit/?mod=gallery2';
+	$this->_expectedUrl[15] = $this->_signUrl(
+	    'https://cms.com/cms/index.php/phpunit2/?mod=gallery2');
+	$this->_expectedUrl[16] = 'https://cms.com/cms/index.php/phpunit/'
+	    . urlencode($this->_urlEncodePath) . '?mod=gallery2';
+
+	parent::testGenerateUrlEmbeddedForceSessionIdToFalse();
+    }
+
     function testGenerateUrlOverrideBaseUri() {
 	$this->_expectedUrl[0] = '/gallery2/index.php?page=photos&amp;g2_view=rand164.NonShort'
 	    . '&amp;g2_foo=bar';

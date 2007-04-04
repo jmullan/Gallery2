@@ -208,6 +208,29 @@ class ModRewriteHelperTest extends GalleryTestCase {
 	$this->assert(!isset($this->_embeddedFileContent), 'writeable fileContent');
     }
 
+    function testGetHtaccessContentForEmbeddedDownloadItemRule() {
+	/*
+	 * Bug 1693956 - Verify that embedded core.DownloadItem rules don't have a session id in
+	 * the RewriteRule.
+	 */
+	GalleryDataCache::put('G2_EMBED', 1, true);
+	$testRules[0] = array('pattern' => 'd/Test-Download-Rule',
+			      'keywords' => array(),
+			      'queryString' => array('view' => 'core.DownloadItem'),
+			      'options' => array(
+		'forceDirect' => true, 'forceSessionId' => false, 'forceServerRelativeUrl' => true,
+		'htmlEntities' => false, 'urlEncode' => false, 'useAuthToken' => false));
+	list ($ret, $htaccess) = ModRewriteHelper::getHtaccessContent($testRules, true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert(
+		preg_match('{RewriteRule \.   /gallery2/main.php\?g2_view=core\.DownloadItem\s*$}m',
+			   $htaccess),
+		'<pre>' . $htaccess . '</pre>');
+    }
+
     function testCheckModRewrite() {
 	GalleryUtilities::putRequestVariable('modRewriteTest', 'pass');
 	list ($ret, $status, $trueStatus) = ModRewriteHelper::checkModRewrite();
