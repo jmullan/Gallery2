@@ -38,7 +38,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
 	}
 
 	$acceleration['user']['type'] = 'none';
@@ -48,7 +48,12 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', 0);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
 	}
     }
 
@@ -62,6 +67,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[acceleration][guest][expiration]', '1234');
 	GalleryUtilities::putRequestVariable('form[acceleration][user][type]', 'full');
 	GalleryUtilities::putRequestVariable('form[acceleration][user][expiration]', '5678');
+	/* disableCompileCheck unchecked (disabled checkboxes are not set) */
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -80,6 +86,13 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('user' => array('type' => 'full', 'expiration' => 5678),
 				  'guest' => array('type' => 'partial', 'expiration' => 1234)),
 	    $acceleration);
+
+	list ($ret, $compileCheck) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'smarty.compile_check');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(1, (int)$compileCheck, 'compile check');
     }
 
     function testSaveError() {

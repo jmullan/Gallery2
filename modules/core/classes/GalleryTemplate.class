@@ -292,8 +292,6 @@ class GalleryTemplate {
 	$smarty->error_reporting = error_reporting();
 
 	/* We have our own plugins */
-	$platform =& $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
 	$smarty->plugins_dir[] = dirname(__FILE__) . '/../../../lib/smarty_plugins';
 
 	if ($gallery->getDebug()) {
@@ -301,7 +299,7 @@ class GalleryTemplate {
 	}
 	$smarty->use_sub_dirs = false;
 
-	$smarty->compile_check = false;
+	$smarty->compile_check = GalleryTemplate::_shouldDoCompileCheck();
 
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$smarty->register_object('g', $templateAdapter, array(), true,
@@ -322,6 +320,30 @@ class GalleryTemplate {
 			array('tpl' => array(), 'style' => array(), 'javascript' => array()));
 
 	return $smarty;
+    }
+
+    /**
+     * Check whether any modification checks should be done to see whether the compiled templates
+     * are still up to date. The result is cached in memory.
+     * @return boolean false if the compiled templates should be used without any checking
+     * @access private
+     */
+    function _shouldDoCompileCheck() {
+	$cacheKey = 'GalleryTemplate::compileCheck';
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    $compileCheck = (GalleryUtilities::getServerVar('HTTP_PRAGMA') == 'no-cache'
+			  || GalleryUtilities::getServerVar('HTTP_CACHE_CONTROL') == 'no-cache');
+	    if (!$compileCheck) {
+		list ($ret, $compileCheck) = GalleryCoreApi::getPluginParameter(
+			'module', 'core', 'smarty.compile_check');
+		/** @todo Log this error */
+	    }
+	    $compileCheck = (bool)$compileCheck;
+	    GalleryDataCache::put($cacheKey, $compileCheck);
+	} else {
+	    $compileCheck = GalleryDataCache::get($cacheKey);
+	}
+	return $compileCheck;
     }
 
     /**
@@ -423,9 +445,11 @@ class GalleryTemplate {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	$qualifiedTemplatePath = GalleryDataCache::getTemplatePath($templateName);
-	if (!empty($qualifiedTemplatePath)) {
-	    return $qualifiedTemplatePath;
+	if (!GalleryTemplate::_shouldDoCompileCheck()) {
+	    $qualifiedTemplatePath = GalleryDataCache::getTemplatePath($templateName);
+	    if (!empty($qualifiedTemplatePath)) {
+		return $qualifiedTemplatePath;
+	    }
 	}
 
 	/* Check template override */

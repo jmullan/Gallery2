@@ -151,6 +151,7 @@ class CoreModuleExtras {
 			   'repository.updateTime' => '0',
 			   'acceleration' => serialize(array('guest' => array('type' => 'none'),
 							     'user' => array('type' => 'none'))),
+			   'smarty.compile_check' => '0',
 			   'validation.level' => 'MEDIUM',
 			   'core.repositories' => serialize(array('released' => 1)),
 			   ) as $key => $value) {
@@ -2175,6 +2176,12 @@ class CoreModuleExtras {
 	    if ($ret) {
 		return $ret;
 	    }
+	case '1.2.5':
+	    /* Expose smarty.compile_check flag as a new option and set the default to false */
+	    $ret = $module->setParameter('smarty.compile_check', '0');
+	    if ($ret) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2491,6 +2498,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.2':
 	case '1.2.3':
 	case '1.2.4':
+	case '1.2.5':
 
 	case 'end of upgrade path':
 	    /*

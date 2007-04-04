@@ -37,13 +37,24 @@ class TemplateTest extends GalleryTestCase {
 	global $gallery;
 	parent::setUp();
 
-	$this->_template = new GalleryTemplate('/legal/path');
-	$this->_mockSmarty = new TemplateTestMockSmarty();
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+
+	$ret = $module->setParameter('smarty.compile_check', 0);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->_template = new GalleryTemplate('/legal/path');
+	$this->_mockSmarty = new TemplateTestMockSmarty();
+
 	$tplVersion = $module->getTemplateVersion();
 	$this->_baseDirOverride = '/legal/path/themes/mockTheme/templates/core_' . $tplVersion;
 
@@ -145,6 +156,31 @@ class TemplateTest extends GalleryTestCase {
 			    'Failed to retrieve the cached template path');
     }
 
+    function testResourceGetTemplateNotCachedIfCompileCheckEnabled() {
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'smarty.compile_check', 1);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	GalleryDataCache::remove('GalleryTemplate::compileCheck');
+	GalleryDataCache::putTemplatePath('modules/core/templates/template.tpl', 'CACHED.tpl');
+
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
+				  true);
+	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
+	$this->_mockPlatform->set('is_readable',
+				  '/legal/path/modules/core/templates/local/template.tpl', false);
+	$this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
+				  true);
+
+	$success = $this->_template->resourceGetTemplate(
+			'modules/core/templates/template.tpl', $templateSource, $this->_mockSmarty);
+	$this->assert($success, "Didn't return success");
+
+	$this->assertEquals($this->_baseDirOverride . '/local/template.tpl', $templateSource,
+			    'compile_check param was ignored');
+    }
+
     /* Test retrieving non-overridden template */
     function testResourceGetTimestampNonOverridden() {
 	$this->_mockPlatform->set('is_readable', '/legal/path/local/templateThatHasNoLocal.tpl',
@@ -200,6 +236,40 @@ class TemplateTest extends GalleryTestCase {
 							 $templateTimestamp, $this->_mockSmarty);
 	$this->assert($success, "Didn't return success");
 	$this->assertEquals(12345, $templateTimestamp, 'static');
+    }
+
+    function testSmartyCompileCheckByPluginParam() {
+	GalleryDataCache::remove('GalleryTemplate::compileCheck');
+	$template = new GalleryTemplate('/legal/path');
+	$this->assertEquals(false, $template->_smarty->compile_check);
+
+	GalleryDataCache::remove('GalleryTemplate::compileCheck');	
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'smarty.compile_check', 1);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$template = new GalleryTemplate('/legal/path');
+	$this->assertEquals(true, $template->_smarty->compile_check);
+    }
+
+    function testSmartyCompileCheckEnabledIfNoCacheRequested() {
+	GalleryDataCache::remove('GalleryTemplate::compileCheck');
+	$_SERVER['HTTP_PRAGMA'] = 'no-cache';
+	$template = new GalleryTemplate('/legal/path');
+	$this->assertEquals(true, $template->_smarty->compile_check);
+    }
+
+    function testSmartyCompileCheckUsesCache() {
+	GalleryDataCache::remove('GalleryTemplate::compileCheck');
+	$template = new GalleryTemplate('/legal/path');
+	$this->assertEquals(false, $template->_smarty->compile_check);
+
+	$_SERVER['HTTP_PRAGMA'] = 'no-cache';
+
+	$newTemplate = new GalleryTemplate('/legal/path');
+	$this->assertEquals(false, $newTemplate->_smarty->compile_check);
     }
 }
 
