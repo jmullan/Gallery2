@@ -110,21 +110,19 @@ class ImageFrameTest extends GalleryTestCase {
 	 * not in $smarty so we can use it.  This unit test verifies this behavior
 	 * (in case it changes in a future version of smarty).
 	 */
-	$smarty1 = GalleryTemplate::_getSmarty(true);
-	$smarty2 = GalleryTemplate::_getSmarty(true);
-	$smarty1->template_dir = dirname(dirname(__FILE__));
-	$smarty2->template_dir = dirname(dirname(__FILE__));
+	$template1 = new GalleryTemplate(dirname(dirname(__FILE__)), true, true);
+	$template2 = new GalleryTemplate(dirname(dirname(__FILE__)), true, true);
 
 	/* Verify these are separate instances */
-	$smarty1->assign('foo', 'bar');
-	$smarty2->assign('foo', 'hoho');
-	$this->assertEquals('bar', $smarty1->get_template_vars('foo'));
+	$template1->setVariable('foo', 'bar');
+	$template2->setVariable('foo', 'hoho');
+	$this->assertEquals('bar', $template1->getVariable('foo'));
 
 	/* Verify {counter} works across smarty instances */
-	$result = $smarty1->fetch('gallery:data/counter.tpl');
+	$result = $template1->fetch('gallery:data/counter.tpl');
 	$result[1] = trim($result[1]);
 	$this->assertEquals(array(null, '1'), $result);
-	$result = $smarty2->fetch('gallery:data/counter.tpl');
+	$result = $template2->fetch('gallery:data/counter.tpl');
 	$result[1] = trim($result[1]);
 	$this->assertEquals(array(null, '2'), $result);
     }
