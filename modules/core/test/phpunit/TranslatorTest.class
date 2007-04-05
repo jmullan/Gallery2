@@ -379,11 +379,12 @@ class TranslatorTest extends GalleryTestCase {
 	}
 
 	list ($ret, $text) = $translator->translateDomain('modules_core',
-	    array('text' => 'test <!-- this is a comment to assist translators -->'));
+		array('text' => 'test <!-- old style hint, no longer removed -->',
+		      'hint' => 'this is a hint to assist translators'));
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals('test', $text);
+	$this->assertEquals('test <!-- old style hint, no longer removed -->', $text);
     }
 
     function testApiChange() {
