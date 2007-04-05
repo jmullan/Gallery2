@@ -63,19 +63,6 @@ class TemplateTest extends GalleryTestCase {
 
 	$this->_mockPlatform = new TemplateTestMockPlatform();
 	$gallery->setPlatform($this->_mockPlatform);
-
-	GalleryDataCache::put('GalleryDataCache::templatePathMap', array());
-	GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', false);
-     }
-
-    function tearDown() {
-	GalleryDataCache::remove('GalleryDataCache::templatePathMap');
-	GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', false);
-
-	$ret = parent::tearDown();
-	if ($ret) {
-	   $this->failWithStatus($ret);
-	}
     }
 
     /* Test retrieving a template that falls outside the module or theme template pattern*/
@@ -141,50 +128,6 @@ class TemplateTest extends GalleryTestCase {
 
 	$this->assertEquals($this->_baseDirOverride . '/block/local/template.tpl', $templateSource,
 			    'Failed to retrieve the them overriden template');
-    }
-
-    function testResourceGetTemplateCached() {
-	GalleryDataCache::putTemplatePath('modules/core/templates/template.tpl', 'template1.tpl');
-
-	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
-				  false);
-	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
-	$this->_mockPlatform->set('is_readable',
-				  '/legal/path/modules/core/templates/local/template.tpl', false);
-	$this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
-				  true);
-
-	$success = $this->_template->resourceGetTemplate(
-			'modules/core/templates/template.tpl', $templateSource, $this->_mockSmarty);
-	$this->assert($success, "Didn't return success");
-
-	$this->assertEquals('template1.tpl', $templateSource,
-			    'Failed to retrieve the cached template path');
-    }
-
-    function testResourceGetTemplateNotCachedIfCompileCheckEnabled() {
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'core', 'smarty.compile_check', 1);
-	if ($ret) {
-	    return $ret;
-	}
-	GalleryDataCache::remove('GalleryTemplate::compileCheck');
-	GalleryDataCache::putTemplatePath('modules/core/templates/template.tpl', 'CACHED.tpl');
-
-	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/local/template.tpl',
-				  true);
-	$this->_mockPlatform->set('is_readable', $this->_baseDirOverride . '/template.tpl', false);
-	$this->_mockPlatform->set('is_readable',
-				  '/legal/path/modules/core/templates/local/template.tpl', false);
-	$this->_mockPlatform->set('is_readable', '/legal/path/modules/core/templates/template.tpl',
-				  true);
-
-	$success = $this->_template->resourceGetTemplate(
-			'modules/core/templates/template.tpl', $templateSource, $this->_mockSmarty);
-	$this->assert($success, "Didn't return success");
-
-	$this->assertEquals($this->_baseDirOverride . '/local/template.tpl', $templateSource,
-			    'compile_check param was ignored');
     }
 
     /* Test retrieving non-overridden template */

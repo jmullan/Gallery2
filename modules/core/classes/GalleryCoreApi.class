@@ -3118,5 +3118,15 @@ class GalleryCoreApi {
 
         return ($relativePath == null) ? $codeBaseDirectory : $codeBaseDirectory . $relativePath;
     }
+
+    /**
+     * Check whether modification checks should be done to see if the compiled templates
+     * are still up to date. The result is cached in memory.
+     * @return boolean false if the compiled templates should be used without any checking
+     */
+    function shouldDoCompileCheck() {
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
+	return GalleryTemplate::shouldDoCompileCheck();
+    }
 }
 ?>

@@ -182,11 +182,8 @@ class GalleryPlugin {
 	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
 					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
 					       'id' => '_all'));
-
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
-
-	/* Ensure that we pick up template changes and template overrides by flushing the cache */
-	GalleryDataCache::resetTemplatePathMap();
+	GalleryDataCache::removeFromDisk(array('type' => 'local-url-map'));
 
 	$templateCacheDir = $gallery->getConfig('data.smarty.templates_c');
 	if ($platform->file_exists($templateCacheDir)) {
@@ -248,7 +245,6 @@ class GalleryPlugin {
 					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
 					       'id' => '_all'));
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
-	GalleryDataCache::resetTemplatePathMap();
 
 	if ($postDeactivationEvent) {
 	    $ret = $this->_postDeactivationEvent();

@@ -141,7 +141,7 @@ class PluginTest extends GalleryTestCase {
 	}
     }
 
-    function testActivateFlushesTemplateAndTemplatePathMapCaches() {
+    function testActivateFlushesTemplateCacheAndLocalUrlMap() {
 	global $gallery;
 
 	/* Test preparation */
@@ -154,13 +154,18 @@ class PluginTest extends GalleryTestCase {
 
 	$themeStatus = array($plugin->getId() => array('available' => true));
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)', $themeStatus);
+	GalleryDataCache::setFileCachingEnabled(true);
 
-	GalleryDataCache::putTemplatePath('foo', 'bar');
-	$this->assertEquals('bar', GalleryDataCache::getTemplatePath('foo'));
 	$templateDir = '/templates';
 	$gallery->setConfig('data.smarty.templates_c', $templateDir);
+	$gallery->setConfig('data.gallery.cache', '/cache/');
 
 	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists',
+		array('/cache/theme/_all/0/0/GalleryPluginHelper_fetchPluginStatus.inc'), false);
+	$platform->setReply('file_exists', array('/cache/theme/_all/localUrlMap.txt'), true);
+	$platform->setReply('is_dir', array('/cache/theme/_all/localUrlMap.txt'), false);
+	$platform->setReply('unlink', array('/cache/theme/_all/localUrlMap.txt'), true);
 	$platform->setReply('file_exists', array($templateDir), true);
 	$platform->setReply('recursiveRmdir', array($templateDir), false);
 	$gallery->setPlatform($platform);
@@ -174,42 +179,6 @@ class PluginTest extends GalleryTestCase {
 	}
 
 	/* Verify the results */
-	$this->assertEquals(false, GalleryDataCache::getTemplatePath('foo'),
-			    'template path mapping has not been flushed');
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-    }
-
-    function testDeactivateFlushesTemplateCache() {
-	global $gallery;
-
-	/* Test preparation */
-	$plugin = new PluginTestPlugin();
-	$plugin->setPluginType('theme');
-	$plugin->setId('plugintest');
-	$plugin->setVersion('1.0.0');
-	$plugin->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
-	$plugin->setRequiredThemeApi(GalleryTheme::getApiVersion());
-
-	$themeStatus = array($plugin->getId() => array('active' => true, 'available' => true));
-	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(theme)', $themeStatus);
-
-	GalleryDataCache::putTemplatePath('foo', 'bar');
-	$this->assertEquals('bar', GalleryDataCache::getTemplatePath('foo'));
-
-	$platform = new UnitTestPlatform();
-	$gallery->setPlatform($platform);
-
-	$gallery->_storage = new PluginTestMockStorage();
-
-	/* Execute the test */
-	list ($ret, $ignored) = $plugin->deactivate(false);
-	if ($ret) {
-	    return $ret;
-	}
-
-	/* Verify the results */
-	$this->assertEquals(false, GalleryDataCache::getTemplatePath('foo'),
-			    'template path mapping has not been flushed');
 	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 }

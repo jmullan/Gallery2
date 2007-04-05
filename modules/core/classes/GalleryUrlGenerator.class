@@ -605,12 +605,7 @@ class GalleryUrlGenerator {
 		$url = $this->makeUrl($href, true);
 	    } else if ($pos > 0) {
 		/* Check for local override */
-		$override = sprintf('%s/local/%s', dirname($href), basename($href));
-		$platform =& $gallery->getPlatform();
-		if ($platform->file_exists(dirname(__FILE__) . '/../../../' . $override)) {
-		    $href = $override;
-		}
-		$url .= $href;
+		$url .= $this->_getLocalPath($href);
 	    } else {
 		$url .= $href;
 	    }
@@ -1019,6 +1014,55 @@ class GalleryUrlGenerator {
 	    return true;
 	} else {
 	    return false;
+	}
+    }
+
+    /**
+     * Check for a local override of an href path (to override a css or js file, for example).
+     * @param string $href relative path
+     * @return string path to local override, or given path if override not found
+     * @access private
+     */
+    function _getLocalPath($href) {
+	global $gallery;
+	if (!isset($this->_localUrlMap)) {
+	    $this->_localUrlMap = GalleryDataCache::getFromDisk(array('type' => 'local-url-map'));
+	    if (!isset($this->_localUrlMap)) {
+		$this->_localUrlMap = array();
+	    }
+	}
+	$check = GalleryCoreApi::shouldDoCompileCheck();
+	if (!$check && isset($this->_localUrlMap[$href])) {
+	    $path = $this->_localUrlMap[$href];
+	} else {
+	    $override = dirname($href) . '/local/' . basename($href);
+	    $platform =& $gallery->getPlatform();
+	    $path = $platform->file_exists(GalleryCoreApi::getCodeBasePath($override))
+		  ? $override : $href;
+	    $this->_localUrlMap[$href] = $path;
+	    if (!$check && empty($this->_localUrlMapDirty)) {
+		$this->_localUrlMapDirty = true;
+		/*
+		 * Would do array(&$this, '_saveLocalUrlMap') but this triggers a bug
+		 * in PHP 5.1.x with array comparison (@see Gallery::addShutdownAction)
+		 */
+		$gallery->addShutdownAction(
+			array('GalleryUrlGenerator', '_saveLocalUrlMap'), array(&$this));
+	    }
+	}
+	return $path;
+    }
+
+    /**
+     * Save changes to the local URL map.
+     * @access private
+     * @static
+     */
+    function _saveLocalUrlMap(&$urlGenerator) {
+	if (!empty($urlGenerator->_localUrlMapDirty)) {
+	    GalleryDataCache::putToDisk(array('type' => 'local-url-map'),
+					$urlGenerator->_localUrlMap);
+	    $urlGenerator->_localUrlMapDirty = false;
 	}
     }
 }

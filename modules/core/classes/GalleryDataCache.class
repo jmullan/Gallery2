@@ -309,7 +309,7 @@ class GalleryDataCache {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	if (in_array($pathInfo['type'],
-		     array('entity', 'derivative-meta', 'module-data', 'template-map'))
+		     array('entity', 'derivative-meta', 'module-data', 'local-url-map'))
 		|| isset($pathInfo['id'])) {
 	    $cacheFile = GalleryDataCache::getCachePath($pathInfo);
 	    if ($platform->file_exists($cacheFile)) {
@@ -468,8 +468,8 @@ class GalleryDataCache {
 	    }
 	    break;
 
-	case 'template-map':
-	    $cacheFile = "{$base}theme/_all/templateMap.txt";
+	case 'local-url-map':
+	    $cacheFile = "{$base}theme/_all/localUrlMap.txt";
 	    break;
 	}
 
@@ -850,78 +850,6 @@ class GalleryDataCache {
 	}
 
 	return null;
-    }
-
-    /* Template Path Mapping Support functions */
-    /**
-     * Get a Template Path.
-     *
-     * @param string $templateName The name for which the path is requested
-     * @return mixed path to the corresponding template or false if the path is not found
-     */
-    function getTemplatePath($templateName) {
-	$pathMap = GalleryDataCache::_getTemplatePathMap();
-	return isset($pathMap[$templateName]) ? $pathMap[$templateName] : false;
-    }
-
-    /**
-     * Return the Template Path Caching map.  If it is not in memcache, then load it.
-     * @return array Template Path Mapping cache
-     */
-    function _getTemplatePathMap() {
-	$cacheKey = 'GalleryDataCache::templatePathMap';
-	if (GalleryDataCache::containsKey($cacheKey)) {
-	    $pathMapping = GalleryDataCache::get($cacheKey);
-	} else {
-	    $pathMapping = GalleryDataCache::getFromDisk(array('type' => 'template-map'));
-	    if ($pathMapping == null) {
-		$pathMapping = array();
-	    }
-	    GalleryDataCache::put($cacheKey, $pathMapping);
-	    GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', false);
-	}
-	return $pathMapping;
-    }
-
-    /**
-     * Add or replace a template path in the map.
-     *
-     * @param string $templateName The name of the template for which the path is requested
-     * @param string $path the path to the active template
-     */
-    function putTemplatePath($templateName, $path) {
-	global $gallery;
-
-	$pathMap = GalleryDataCache::_getTemplatePathMap();
-	$pathMap[$templateName] = $path;
-	GalleryDataCache::put('GalleryDataCache::templatePathMap', $pathMap);
-
-	$isDirty = GalleryDataCache::get('GalleryDataCache::templatePathMap::isDirty');
-	if (!$isDirty) {
-	    GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', true);
-	    $gallery->addShutdownAction(array('GalleryDataCache', '_saveTemplatePathMap'),
-					array());
-	}
-    }
-
-    /**
-     * Resets the in-memory and the persistent template-map cache.
-     */
-    function resetTemplatePathMap() {
-	GalleryDataCache::removeFromDisk(array('type' => 'template-map'));
-	GalleryDataCache::remove('GalleryDataCache::templatePathMap');
-    }
-
-    /**
-     * Shutdown callback function to persist the memcache version of the template path map to disk.
-     */
-    function _saveTemplatePathMap() {
-	$cacheKey = 'GalleryDataCache::templatePathMap';
-	if (GalleryDataCache::containsKey($cacheKey)) {
-	    $pathMapping = GalleryDataCache::get($cacheKey);
-	    GalleryDataCache::putToDisk(array('type' => 'template-map'), $pathMapping);
-	    GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', false);
-	}
     }
 }
 ?>

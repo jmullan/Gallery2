@@ -2182,6 +2182,12 @@ class CoreModuleExtras {
 	    if ($ret) {
 		return $ret;
 	    }
+	case '1.2.6':
+	    /* Remove GalleryDataCache template-map */
+	    $mapFile = $gallery->getConfig('data.gallery.cache') . 'theme/_all/templateMap.txt';
+	    if ($platform->file_exists($mapFile)) {
+		@$platform->unlink($mapFile);
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2499,6 +2505,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.3':
 	case '1.2.4':
 	case '1.2.5':
+	case '1.2.6':
 
 	case 'end of upgrade path':
 	    /*

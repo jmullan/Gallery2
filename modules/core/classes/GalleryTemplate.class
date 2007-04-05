@@ -299,7 +299,7 @@ class GalleryTemplate {
 	}
 	$smarty->use_sub_dirs = false;
 
-	$smarty->compile_check = GalleryTemplate::_shouldDoCompileCheck();
+	$smarty->compile_check = GalleryTemplate::shouldDoCompileCheck();
 
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$smarty->register_object('g', $templateAdapter, array(), true,
@@ -323,12 +323,12 @@ class GalleryTemplate {
     }
 
     /**
-     * Check whether any modification checks should be done to see whether the compiled templates
+     * Check whether modification checks should be done to see if the compiled templates
      * are still up to date. The result is cached in memory.
      * @return boolean false if the compiled templates should be used without any checking
-     * @access private
+     * @static
      */
-    function _shouldDoCompileCheck() {
+    function shouldDoCompileCheck() {
 	$cacheKey = 'GalleryTemplate::compileCheck';
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $compileCheck = (GalleryUtilities::getServerVar('HTTP_PRAGMA') == 'no-cache'
@@ -445,13 +445,6 @@ class GalleryTemplate {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	if (!GalleryTemplate::_shouldDoCompileCheck()) {
-	    $qualifiedTemplatePath = GalleryDataCache::getTemplatePath($templateName);
-	    if (!empty($qualifiedTemplatePath)) {
-		return $qualifiedTemplatePath;
-	    }
-	}
-
 	/* Check template override */
 	if (preg_match('#^modules/(\w+)/templates/(.*/)?([^/]+)$#', $templateName, $match)) {
 	    list ($unused, $moduleId, $moduleBase, $tplFile) = $match;
@@ -509,7 +502,6 @@ class GalleryTemplate {
 	    }
 	}
 
-	GalleryDataCache::putTemplatePath($templateName, $qualifiedTemplatePath);
 	return $qualifiedTemplatePath;
     }
 

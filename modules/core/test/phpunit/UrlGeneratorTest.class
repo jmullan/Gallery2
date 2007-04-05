@@ -1230,10 +1230,17 @@ class UrlGeneratorTest extends GalleryTestCase {
 	global $gallery;
 	$session =& $gallery->getSession();
 
-	$gallery->setPlatform(new UrlGeneratorTestPlatform());
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+	$platform->setReply('file_exists',
+		array(GalleryCoreApi::getCodeBasePath('test/local/test1.css')), false);
+	$platform->setReply('file_exists',
+		array(GalleryCoreApi::getCodeBasePath('test/local/test2.css')), true);
+
 	$qs = $session->isUsingCookies() ? '' : '?' .
 	    GalleryUtilities::prefixFormVariable($session->getKey()) . '=' .
 	    urlencode($session->getId());
+	$this->_urlGenerator->_localUrlMap = array();
 
 	/* Try with a file that has no local override */
 	$actual = $this->_urlGenerator->generateUrl(array('href' => 'test/test1.css'));
@@ -1246,6 +1253,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 	/* We don't allow overrides with top level files (nor do we generate an error) */
 	$actual = $this->_urlGenerator->generateUrl(array('href' => 'favicon.ico'));
 	$this->assertEquals('favicon.ico' . $qs, $actual);
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
     function testCurrentUrlToken() {
@@ -1874,23 +1883,87 @@ class UrlGeneratorTest extends GalleryTestCase {
 		array('foo[bar' => '1', 'a[b]' => '2'),
 		false, false, false)); /* Makes it easier to read */
     }
-}
 
-class UrlGeneratorTestPlatform extends GalleryPlatform {
-
-    function file_exists($filename) {
-	$basedir = realpath(dirname(__FILE__) . '/../../classes');
-	switch($filename) {
-	case "$basedir/../../../test/local/test1.css":
-	    return false;
-
-	case "$basedir/../../../test/local/test2.css":
-	    return true;
-
-	default:
-	    print "Unexpected file_exists($filename) call";
-	    return false;
+    function testLocalUrlMapAddNew() {
+	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', '0');
+	if ($ret) {
+	    return $ret;
 	}
+	$this->_urlGenerator->_localUrlMap = array();
+
+	$this->assertEquals('test/test.css',
+		$this->_urlGenerator->generateUrl(array('href' => 'test/test.css')), 'url');
+	$this->assertEquals(array('test/test.css' => 'test/test.css'),
+		$this->_urlGenerator->_localUrlMap, 'url map');
+	$this->assertEquals(true, $this->_urlGenerator->_localUrlMapDirty, 'dirty flag');
+	$this->assert(!empty($gallery->_shutdownActions), 'shutdown action');
+    }
+
+    function testLocalUrlMapCacheHit() {
+	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', '0');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_urlGenerator->_localUrlMap = array('test/test.js' => 'test/local/test.js');
+
+	$this->assertEquals('test/local/test.js',
+		$this->_urlGenerator->generateUrl(array('href' => 'test/test.js')), 'url');
+	$this->assert(!isset($this->_urlGenerator->_localUrlMapDirty), 'dirty flag');
+	$this->assert(empty($gallery->_shutdownActions), 'shutdown action');
+    }
+
+    function testLocalUrlMapSave() {
+	global $gallery;
+	/* Turn on file caching, then precache core params before setting UnitTestPlatform */
+	GalleryDataCache::setFileCachingEnabled(true);
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', '0');
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$gallery->setConfig('data.gallery.cache', '/cache/');
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
+	$platform->setReply('file_exists', array('/cache/theme/_all/localUrlMap.txt'), false);
+	$platform->setReply('file_exists',
+		array(GalleryCoreApi::getCodeBasePath('test/local/test.css')), true);
+	$platform->setReply('file_exists',
+		array(GalleryCoreApi::getCodeBasePath('test/local/test.js')), false);
+	$platform->setReply('file_exists', array('/cache/theme/_all'), true);
+	$platform->setReply('is_dir', array('/cache/theme/_all'), true);
+	$platform->setReply('atomicWrite', array('/cache/theme/_all/localUrlMap.txt',
+		    '|' . serialize(array('test/test.css' => 'test/local/test.css',
+					  'test/test.js' => 'test/test.js'))), true);
+
+	/* Adding 2 entries verifies the shutdown handler gets a reference */
+	$this->assertEquals('test/local/test.css',
+		$this->_urlGenerator->generateUrl(array('href' => 'test/test.css')));
+	$this->assertEquals('test/test.js',
+		$this->_urlGenerator->generateUrl(array('href' => 'test/test.js')));
+	$gallery->performShutdownActions();
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testLocalUrlMapForceCheckDoesNotSave() {
+	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', '1');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_urlGenerator->_localUrlMap = array();
+
+	$this->assertEquals('test/test.css',
+		$this->_urlGenerator->generateUrl(array('href' => 'test/test.css')), 'url');
+	$this->assertEquals(array('test/test.css' => 'test/test.css'),
+		$this->_urlGenerator->_localUrlMap, 'url map');
+	$this->assert(!isset($this->_urlGenerator->_localUrlMapDirty), 'dirty flag');
+	$this->assert(empty($gallery->_shutdownActions), 'shutdown action');
     }
 }
 ?>
