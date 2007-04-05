@@ -48,8 +48,8 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$this->_platform = $gallery->_platform =
-		new JpegtranToolkitTestPlatform($this, $this->_jpegtranPath);
+	$this->_platform = new JpegtranToolkitTestPlatform($this, $this->_jpegtranPath);
+	$gallery->setPlatform($this->_platform);
 
 	/* Get a toolkit to work with */
 	$this->_toolkit = new JpegtranToolkit();
