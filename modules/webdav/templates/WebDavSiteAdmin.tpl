@@ -13,12 +13,10 @@
     <h3 class="giSuccess"> {g->text text="Configuration checked successfully"} </h3>
 
     <p class="giDescription">
-      {g->text text="Most WebDAV clients will successfully connect.  Documentation on mounting Gallery with WebDAV is in the %sGallery Codex%s." arg1="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:webdav:user\">" arg2="</a>"}
+      {g->text text="Most WebDAV clients will successfully connect."}
     </p>
 
-    <p class="giDescription">
-      {g->text text="The URL to connect to Gallery with WebDAV is:"} <a href="{g->url arg1="controller=webdav.WebDav" forceFullUrl=true forceSessionId=false useAuthToken=false}"> {g->url arg1="controller=webdav.WebDav" forceFullUrl=true forceSessionId=false useAuthToken=false} </a>
-    </p>
+    {g->block type="webdav.WebDavMountBlock"}
   </div>
 {/if}
 

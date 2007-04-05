@@ -37,7 +37,7 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 	parent::setUp();
 	global $gallery;
 
-	/* Try to test with the rewrite URL generator */
+	/* Try to use the rewrite URL generator */
 	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
 	    'GalleryUrlGenerator');
 	if ($ret) {

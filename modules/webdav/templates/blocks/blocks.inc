@@ -1,5 +1,5 @@
 <?php
 $blocks = array(
-    'WebDavUrl' => array(
-	'description' => $gallery->i18n('WebDAV URL')));
+    'WebDavMountBlock' => array(
+	'description' => $gallery->i18n('Mount with WebDAV')));
 ?>

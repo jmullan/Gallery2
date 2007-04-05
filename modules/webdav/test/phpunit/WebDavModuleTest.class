@@ -170,12 +170,14 @@ class WebDavModuleTest extends GalleryTestCase {
 	    $this->_module->translate(array('text' => 'Mount with WebDAV'));
 	$expectedLinks[$this->_album->getId()][0]['params'] =
 	    array('view' => 'webdav.WebDavMount',
-		  'itemId' => $this->_album->getId());
+		  'itemId' => $this->_album->getId(),
+		  'return' => true);
 	$expectedLinks[$this->_subAlbum->getId()][0]['text'] =
 	    $this->_module->translate(array('text' => 'Mount with WebDAV'));
 	$expectedLinks[$this->_subAlbum->getId()][0]['params'] =
 	    array('view' => 'webdav.WebDavMount',
-		  'itemId' => $this->_subAlbum->getId());
+		  'itemId' => $this->_subAlbum->getId(),
+		  'return' => true);
 	$this->assertEquals($expectedLinks, $links, 'item links for any user agent');
     }
 

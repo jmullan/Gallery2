@@ -37,7 +37,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	parent::setUp();
 	global $gallery;
 
-	/* Try to test with the rewrite URL generator */
+	/* Try to use the rewrite URL generator */
 	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
 	    'GalleryUrlGenerator');
 	if ($ret) {
@@ -65,18 +65,17 @@ class WebDavHelperTest extends GalleryTestCase {
 			      'rewrite' => array('active' => true));
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)', $moduleStatus);
 
-	/* Mock activate HTTP auth plugins */
-	WebDavHelperTestHttpAuthInterface::_getConfiguration(true);
+	/* Mock activate an HTTP auth plugin */
 	$this->_markFactoryForCleanup();
-	$this->_registerFactoryImplementationForTest('HttpAuthInterface_1_0',
-	    'WebDavHelperTestHttpAuthInterface', 'WebDavHelperTestHttpAuthInterface',
-	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'test');
+	$this->_registerFactoryImplementationForTest('GalleryAuthPlugin',
+	    'WebDavHelperTestHttpAuthPlugin', 'WebDavHelperTestHttpAuthPlugin',
+	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'httpauth');
 
 	/* Mock preGallery rewrite parser.  Mock activate WebDAV rewrite rules. */
-	$this->_parserType =& WebDavHelperTestRewriteApi::_getParserType();
+	$this->_parserType =& WebDavHelperTestRewriteApi::_parserType();
 	$this->_parserType = 'preGallery';
-	$this->_activeRules =& WebDavHelperTestRewriteApi::_fetchActiveRulesForModule('webdav');
-	$this->_activeRules = array('connect', 'davmount', 'options');
+	$this->_activeRules =& WebDavHelperTestRewriteApi::_activeRules();
+	$this->_activeRules = array(null, array('connect', 'davmount', 'options'));
 	$this->_registerFactoryImplementationForTest(
 	    'RewriteApi', 'WebDavHelperTestRewriteApi', 'WebDavHelperTestRewriteApi',
 	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'test');
@@ -172,6 +171,14 @@ class WebDavHelperTest extends GalleryTestCase {
 	/* Any user agent */
 	$_SERVER['HTTP_USER_AGENT'] = 'Test';
 
+	/* Use WebDavHelperTestHttpAuthInterface */
+	$this->_requestAuthenticationCalls =&
+	    WebDavHelperTestHttpAuthInterface::_requestAuthenticationCalls();
+	$this->_requestAuthenticationCalls = null;
+	$this->_registerFactoryImplementationForTest('HttpAuthInterface_1_0',
+	    'WebDavHelperTestHttpAuthInterface', 'WebDavHelperTestHttpAuthInterface',
+	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'test');
+
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
 	    $this->_getRootId());
@@ -188,9 +195,10 @@ class WebDavHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	/* Clear request variables */
-	$this->_variables =& WebDavHelper::_getRequestVariables();
-	$this->_variables = null;
+	/* Reset request variables */
+	$_SERVER['QUERY_STRING'] = null;
+	$this->_requestVariables =& WebDavHelper::_requestVariables();
+	$this->_requestVariables = null;
 
 	/* Register event listeners */
 	$this->_registerTestEventListener('GalleryEntity::delete', new WebDavModule());
@@ -297,7 +305,7 @@ class WebDavHelperTest extends GalleryTestCase {
      * Though the HTTP auth module is active, all its plugins might be disabled.
      */
     function testCheckConfigurationHttpAuthPluginsDisabled() {
-	WebDavHelperTestHttpAuthInterface::_getConfiguration(false);
+	$this->_unregisterFactoryImplementationForTest('GalleryAuthPlugin');
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -320,7 +328,7 @@ class WebDavHelperTest extends GalleryTestCase {
     }
 
     function testCheckConfigurationConnectRuleDisabled() {
-	$this->_activeRules = array('davmount', 'options');
+	$this->_activeRules = array(null, array('davmount', 'options'));
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -362,7 +370,7 @@ class WebDavHelperTest extends GalleryTestCase {
     function testCheckConfigurationOptionsRuleDisabled() {
 	$this->_platform->_messages[$this->_optionsRequest] =
 	    $this->_missingDavHeadersResponse;
-	$this->_activeRules = array('connect', 'davmount');
+	$this->_activeRules = array(null, array('connect', 'davmount'));
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -390,7 +398,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->_platform->_messages[$this->_alternativeUrlRequest] =
 	    $this->_missingDavHeadersResponse;
 	$this->_parserType = 'bogus';
-	$this->_activeRules = array('connect', 'davmount');
+	$this->_activeRules = array(null, array('connect', 'davmount'));
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -432,18 +440,115 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->assert(!$success);
     }
 
+    function testGetMountLink() {
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$link = WebDavHelper::getMountLink($this->_item->getId());
+
+	$expectedLink = array();
+	$expectedLink['href'] = '/gallery2/main.php?g2_view=webdav.DownloadDavMount&amp;g2_itemId='
+	    . $this->_item->getId();
+	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
+	    . $this->_item->getId();
+
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $expectedLink['href'] = '/gallery2/v/' . ltrim($path, '/') . '.davmount';
+	    $url = 'http://example.com/gallery2/w/' . ltrim($path, '/');
+	}
+
+	$expectedLink['attrs'] =
+	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
+	$this->assertEquals($expectedLink, $link);
+    }
+
+    function testGetMountLinkForInternetExplorer() {
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$_SERVER['HTTP_USER_AGENT'] = 'MSIE 6';
+
+	$link = WebDavHelper::getMountLink($this->_item->getId());
+
+	$expectedLink = array();
+	$expectedLink['href'] = '/gallery2/main.php?g2_view=webdav.DownloadDavMount&amp;g2_itemId='
+	    . $this->_item->getId();
+	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
+	    . $this->_item->getId();
+	$scriptUrl = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&g2_itemId='
+	    . $this->_item->getId();
+
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $expectedLink['href'] = '/gallery2/v/' . ltrim($path, '/') . '.davmount';
+	    $url = 'http://example.com/gallery2/w/' . ltrim($path, '/');
+	    $scriptUrl = 'http://example.com/gallery2/w/' . ltrim($path, '/');
+	}
+
+	$expectedLink['attrs'] =
+	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
+	$expectedLink['script'] =
+	    "this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$scriptUrl')";
+	$this->assertEquals($expectedLink, $link);
+    }
+
+    function testGetMountLinkForKonqueror() {
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$_SERVER['HTTP_USER_AGENT'] = 'Konqueror';
+
+	$link = WebDavHelper::getMountLink($this->_item->getId());
+
+	$expectedLink = array();
+	$expectedLink['href'] =
+	    'webdav://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
+	    . $this->_item->getId();
+	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
+	    . $this->_item->getId();
+
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $expectedLink['href'] =
+		'webdav://example.com/gallery2/w/' . ltrim($path, '/');
+	    $url = 'http://example.com/gallery2/w/' . ltrim($path, '/');
+	}
+
+	$expectedLink['attrs'] =
+	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
+	$this->assertEquals($expectedLink, $link);
+    }
+
+    function testRequestAuthentication() {
+	$ret = WebDavHelper::requestAuthentication(true);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array(array(true)), $this->_requestAuthenticationCalls);
+    }
+
     function testGetRequestVariable() {
 	$expectedValue = '/The Quick!Brown#Fox/Jumps Over%The/Lazy_Dog';
 	$_SERVER['QUERY_STRING'] =
 	    'g2_foo=foo&g2_test=' . rawurlencode($expectedValue) . '&g2_bar=bar';
 
-	$this->assertEquals($expectedValue, WebDavHelper::getRequestVariable('test'));
+	$this->assertEquals(
+	    $expectedValue, WebDavHelper::getRequestVariable('test'));
     }
 
     function testGetBadRequestVariable() {
 	$_SERVER['QUERY_STRING'] = 'g2_foo=foo&g2_bar=bar';
 
-	$this->assertEquals(null, WebDavHelper::getRequestVariable('test'));
+	$this->assertEquals(
+	    null, WebDavHelper::getRequestVariable('test'));
     }
 
     function testGetRequestVariableNoPrefix() {
@@ -451,7 +556,8 @@ class WebDavHelperTest extends GalleryTestCase {
 	$_SERVER['QUERY_STRING'] =
 	    'foo=foo&test=' . rawurlencode($expectedValue) . '&bar=bar';
 
-	$this->assertEquals($expectedValue, WebDavHelper::getRequestVariable('test', false));
+	$this->assertEquals(
+	    $expectedValue, WebDavHelper::getRequestVariable('test', false));
     }
 
     function testGetRequestVariableNoUrlDecode() {
@@ -460,15 +566,50 @@ class WebDavHelperTest extends GalleryTestCase {
 	$_SERVER['QUERY_STRING'] =
 	    'g2_foo=foo&g2_test=' . $expectedValue . '&g2_bar=bar';
 
-	$this->assertEquals($expectedValue, WebDavHelper::getRequestVariable('test', true, false));
+	$this->assertEquals(
+	    $expectedValue, WebDavHelper::getRequestVariable('test', true, false));
     }
 
     function testGetRequestVariableWithStructuredKey() {
-	$expectedValue = array('test' => '/The Quick!Brown#Fox/Jumps Over%The/Lazy_Dog');
+	$expectedValue = '/The Quick!Brown#Fox/Jumps Over%The/Lazy_Dog';
 	$_SERVER['QUERY_STRING'] = 'g2_foo=foo&' . rawurlencode('g2_test[test][test]')
-	    . '=' . rawurlencode($expectedValue['test']) . '&g2_bar=bar';
+	    . '=' . rawurlencode($expectedValue) . '&g2_bar=bar';
 
-	$this->assertEquals($expectedValue, WebDavHelper::getRequestVariable('test[test]'));
+	$this->assertEquals(
+	     array('test' => $expectedValue), WebDavHelper::getRequestVariable('test[test]'));
+    }
+
+    function testPutRequestVariable() {
+	$expectedValue = '/The Quick!Brown#Fox/Jumps Over%The/Lazy_Dog';
+	WebDavHelper::putRequestVariable('test', $expectedValue);
+
+	$this->assertEquals(
+	    array('g2_test' => rawurlencode($expectedValue)), $this->_requestVariables);
+    }
+
+    function testPutRequestVariableNoPrefix() {
+	$expectedValue = '/The Quick!Brown#Fox/Jumps Over%The/Lazy_Dog';
+	WebDavHelper::putRequestVariable('test', $expectedValue, false);
+
+	$this->assertEquals(
+	    array('test' => rawurlencode($expectedValue)), $this->_requestVariables);
+    }
+
+    function testGetRequestVariableNoUrlEncode() {
+	$expectedValue = '/' . rawurlencode('The Quick!Brown#Fox')
+	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog');
+	WebDavHelper::putRequestVariable('test', $expectedValue, true, false);
+
+	$this->assertEquals(
+	    array('g2_test' => $expectedValue), $this->_requestVariables);
+    }
+
+    function testPutRequestVariableWithStructuredKey() {
+	$expectedValue = array('test' => '/The Quick!Brown#Fox/Jumps Over%The/Lazy_Dog');
+	WebDavHelper::putRequestVariable('test[test]', $expectedValue);
+
+	$this->assertEquals(array('g2_test' => array('test' => array('test' => rawurlencode(
+	    $expectedValue['test'])))), $this->_requestVariables);
     }
 
     function testGetParentPathOfTwoPathComponents() {
@@ -815,126 +956,32 @@ class WebDavHelperTest extends GalleryTestCase {
 			    'DAV:foo is not writable');
 	$this->assertEquals('403 Forbidden', $props[5]['status'], 'invalid namespace');
     }
-
-    function testGetMountLink() {
-	list ($ret, $path) = $this->_item->fetchLogicalPath();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$link = WebDavHelper::getMountLink($this->_item->getId());
-
-	$expectedLink = array();
-	$expectedLink['href'] = '/gallery2/main.php?g2_view=webdav.DownloadDavMount&amp;g2_itemId='
-	    . $this->_item->getId();
-	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
-	    . $this->_item->getId();
-
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $expectedLink['href'] = '/gallery2/v/' . ltrim($path, '/') . '.davmount';
-	    $url = 'http://example.com/gallery2/w/' . ltrim($path, '/');
-	}
-
-	$expectedLink['attrs'] =
-	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
-	$this->assertEquals($expectedLink, $link);
-    }
-
-    function testGetMountLinkForMsie() {
-	list ($ret, $path) = $this->_item->fetchLogicalPath();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$_SERVER['HTTP_USER_AGENT'] = 'MSIE 6';
-
-	$link = WebDavHelper::getMountLink($this->_item->getId());
-
-	$expectedLink = array();
-	$expectedLink['href'] = '/gallery2/main.php?g2_view=webdav.DownloadDavMount&amp;g2_itemId='
-	    . $this->_item->getId();
-	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
-	    . $this->_item->getId();
-	$scriptUrl = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&g2_itemId='
-	    . $this->_item->getId();
-
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $expectedLink['href'] = '/gallery2/v/' . ltrim($path, '/') . '.davmount';
-	    $url = 'http://example.com/gallery2/w/' . ltrim($path, '/');
-	    $scriptUrl = 'http://example.com/gallery2/w/' . ltrim($path, '/');
-	}
-
-	$expectedLink['attrs'] =
-	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
-	$expectedLink['script'] =
-	    "this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$scriptUrl')";
-	$this->assertEquals($expectedLink, $link);
-    }
-
-    function testGetMountLinkForKonqueror() {
-	list ($ret, $path) = $this->_item->fetchLogicalPath();
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$_SERVER['HTTP_USER_AGENT'] = 'Konqueror';
-
-	$link = WebDavHelper::getMountLink($this->_item->getId());
-
-	$expectedLink = array();
-	$expectedLink['href'] =
-	    'webdav://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
-	    . $this->_item->getId();
-	$url = 'http://example.com/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_itemId='
-	    . $this->_item->getId();
-
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $expectedLink['href'] =
-		'webdav://example.com/gallery2/w/' . ltrim($path, '/');
-	    $url = 'http://example.com/gallery2/w/' . ltrim($path, '/');
-	}
-
-	$expectedLink['attrs'] =
-	    'style="behavior: url(#default#anchorClick)" folder="' . $url . '"';
-	$this->assertEquals($expectedLink, $link);
-    }
-}
-
-class WebDavHelperTestPhpVm extends GalleryPhpVm {
-    var $_extension_loaded;
-
-    function extension_loaded($functionName) {
-	return $this->_extension_loaded;
-    }
 }
 
 class WebDavHelperTestHttpAuthInterface /* extends HttpAuthInterface_1_0 */ {
 
-    function _getConfiguration($initPluginsEnabled=null) {
-	static $pluginsEnabled;
-	if (isset($initPluginsEnabled)) {
-	    $pluginsEnabled = $initPluginsEnabled;
-	}
-
-	return array(null, $pluginsEnabled, $pluginsEnabled, false);
+    function &_requestAuthenticationCalls() {
+	static $requestAuthenticationCalls;
+	return $requestAuthenticationCalls;
     }
 
-    function getConfiguration() {
-	return WebDavHelperTestHttpAuthInterface::_getConfiguration();
+    function requestAuthentication($ignoreGloballyEnabled=false) {
+	$requestAuthenticationCalls =&
+	    WebDavHelperTestHttpAuthInterface::_requestAuthenticationCalls();
+	$requestAuthenticationCalls[] = array($ignoreGloballyEnabled);
+
+	return null;
     }
 }
 
 class WebDavHelperTestRewriteApi {
 
-    function &_fetchActiveRulesForModule($moduleId) {
+    function &_activeRules() {
 	static $activeRules;
 	return $activeRules;
     }
 
-    function &_getParserType() {
+    function &_parserType() {
 	static $parserType;
 	return $parserType;
     }
@@ -944,11 +991,19 @@ class WebDavHelperTestRewriteApi {
     }
 
     function fetchActiveRulesForModule($moduleId) {
-	return array(null, WebDavHelperTestRewriteApi::_fetchActiveRulesForModule($moduleId));
+	return WebDavHelperTestRewriteApi::_activeRules();
     }
 
     function getParserType() {
-	return WebDavHelperTestRewriteApi::_getParserType();
+	return WebDavHelperTestRewriteApi::_parserType();
+    }
+}
+
+class WebDavHelperTestPhpVm extends GalleryPhpVm {
+    var $_extension_loaded;
+
+    function extension_loaded($functionName) {
+	return $this->_extension_loaded;
     }
 }
 

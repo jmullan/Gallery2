@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
 GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
 
 /**
@@ -98,7 +97,7 @@ class WebDavController extends GalleryController {
 
 	    /* Until there's a better way to delegate to ShowItem / DownloadItem */
 	    GalleryUtilities::putRequestVariable('itemId', $itemId);
-	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    if ($item->getCanContainChildren()) {
 		return array(null, array('delegate' => array('view' => 'core.ShowItem'),
 					 'status' => array(),
 					 'error' => array()));
@@ -108,27 +107,53 @@ class WebDavController extends GalleryController {
 				     'status' => array(),
 				     'error' => array()));
 	} else if ($requestMethod == 'put') {
-	    $parentPath = WebDavHelper::getParentPath($path);
-	    list ($ret, $parentId) = WebDavHelper::fetchItemIdByPath($parentPath);
+	    list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	    if ($ret) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    /* Item doesn't already exist at this path.  Create it. */
+		    $parentPath = WebDavHelper::getParentPath($path);
+		    list ($ret, $parentId) = WebDavHelper::fetchItemIdByPath($parentPath);
+		    if ($ret) {
+			if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+			    /*
+			     * A PUT that would result in the creation of a resource without an
+			     * appropriately scoped parent collection MUST fail with a 409
+			     * (Conflict).
+			     */
+			    WebDavServer::setResponseStatus('409 Conflict');
+			}
+
+			return array($ret, null);
+		    }
+
+		    GalleryUtilities::putRequestVariable('itemId', $parentId);
+		    GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
+
+		    GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
+		    list ($ret, $results) = ItemAddController::handleRequest($form);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+
 		    /*
-		     * A PUT that would result in the creation of a resource without an
-		     * appropriately scoped parent collection MUST fail with a 409
-		     * (Conflict).
+		     * Don't send HTTP redirects of HTML status / error back to WebDAV clients since
+		     * we have already set our status code.  Fall through to the standard empty
+		     * return.
 		     */
-		    WebDavServer::setResponseStatus('409 Conflict');
+		    return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
+					     'status' => array(),
+					     'error' => array()));
 		}
 
 		return array($ret, null);
 	    }
 
-	    /* Until there's a better way to delegate to ItemAdd */
-	    GalleryUtilities::putRequestVariable('itemId', $parentId);
-	    GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
+	    /* Item already exists at this path.  Replace it. */
+	    GalleryUtilities::putRequestVariable('itemId', $itemId);
+	    GalleryUtilities::putRequestVariable('editPlugin', 'ItemEditWebDav');
 
-	    /* Let the ItemAddPlugin handle the replacement for the auth-token check */
-	    list ($ret, $data) = ItemAddController::handleRequest($form);
+	    GalleryCoreApi::requireOnce('modules/core/ItemEdit.inc');
+	    list ($ret, $results) = ItemEditController::handleRequest($form);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -137,6 +162,9 @@ class WebDavController extends GalleryController {
 	     * Don't send HTTP redirects of HTML status / error back to WebDAV clients since we have
 	     * already set our status code.  Fall through to the standard empty return.
 	     */
+	    return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
+				     'status' => array(),
+				     'error' => array()));
 	}
 
 	return array(null, array('delegate' => array('view' => 'webdav.WebDav'),

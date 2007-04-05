@@ -105,7 +105,7 @@ class WebDavRewriteHelper {
 	}
 
 	/* Append trailing '/' */
-	if ($item->isContainer()) {
+	if ($item->getCanContainChildren()) {
 	    $path .= '/';
 	}
 
@@ -114,11 +114,11 @@ class WebDavRewriteHelper {
 
     /**
      * Version of RewriteSimpleHelper::parserPath to support:
-     * o either 'path' or 'itemId' params
-     * o empty path or '/' for root album URL
-     * o patterns starting with the '%path%' keyword
-     * o patterns with or without a path separator before the '%path%' keyword
-     * o WebDAV path components with special characters
+     * - Either 'path' or 'itemId' params
+     * - Empty path or '/' for root album URL
+     * - Patterns starting with the '%path%' keyword
+     * - Patterns with or without a path separator before the '%path%' keyword
+     * - WebDAV path components with special characters
      * @see RewriteSimpleHelper::parsePath
      */
     function parsePath(&$url, &$params, &$entity) {
@@ -154,7 +154,7 @@ class WebDavRewriteHelper {
 	 * Windows makes PROPFIND requests without trailing slashes, so the URL rewrite rule must
 	 * support requests without trailing slashes.  Match here patterns with and without a path
 	 * separator. */
-	$url = preg_replace('/(\/)*%path%/', '/' . ltrim($params['path'], '/'), $url);
+	$url = preg_replace('/\/*%path%/', '/' . ltrim($params['path'], '/'), $url);
 	unset($params['path']);
 
 	return true;

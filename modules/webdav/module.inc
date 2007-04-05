@@ -31,7 +31,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('1.0.2'); /* Update upgrade() too! */
+	$this->setVersion('1.0.4'); /* Update upgrade() too! */
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop.'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews|registerEventListeners');
@@ -43,12 +43,21 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'ItemAddPlugin', 'ItemAddWebDav', 'ItemAddWebDav',
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+	    'ItemAddWebDav', 'ItemAddWebDav',
 	    'modules/webdav/ItemAddWebDav.inc', 'webdav', null);
 	if ($ret) {
 	    return $ret;
 	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+	    'ItemEditWebDav', 'ItemEditWebDav',
+	    'modules/webdav/ItemEditWebDav.inc', 'webdav', null);
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
     }
 
     /**
@@ -171,6 +180,9 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	case '1.0.2':
 	    /* Add special character support */
 
+	case '1.0.3':
+	    /* Add ItemEditWebDav to require correct permissions when replacing an item */
+
 	case 'end of upgrade path':
 	    break;
 
@@ -226,10 +238,12 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    $itemIds[] = (int)$result[0];
 	}
 
-	$ret = GalleryCoreApi::removeMapEntry('WebDavPathComponentMap',
-	    array('itemId' => $itemIds));
-	if ($ret) {
-	    return array($ret, null);
+	if (!empty($itemIds)) {
+	    $ret = GalleryCoreApi::removeMapEntry('WebDavPathComponentMap',
+		array('itemId' => $itemIds));
+	    if ($ret) {
+		return array($ret, null);
+	    }
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
@@ -252,7 +266,8 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	    $links[$item->getId()][] = array('text' => $this->translate('Mount with WebDAV'),
 					     'params' => array('view' => 'webdav.WebDavMount',
-							       'itemId' => $item->getId()));
+							       'itemId' => $item->getId(),
+							       'return' => true));
 	}
 
 	return array(null, $links);
@@ -292,7 +307,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	/* Give davmount resources the correct extension */
 	$rules['davmount'] = array(
-	    'comment' => $this->translate('Mount WebDAV'),
+	    'comment' => $this->translate('Mount with WebDAV'),
 	    'help' => $this->translate(
 		'Give davmount resources the correct extension.'),
 	    'match' => array('view' => 'webdav.DownloadDavMount'),
@@ -310,10 +325,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	 */
 	list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');
 	if ($ret) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug(
-		    'Error in WebDavModule::getRewriteRules: ' . $ret->getAsText());
-	    }
+	    $gallery->debug('Error in WebDavModule::getRewriteRules: ' . $ret->getAsText());
 	    return $rules;
 	}
 	if (!isset($rewriteApi)) {
@@ -322,9 +334,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	list ($ret, $isCompatible) = $rewriteApi->isCompatibleWithApi(array(1, 1));
 	if ($ret) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug('Error in WebDavModule::getRewriteRules: ' . $ret->getAsText());
-	    }
+	    $gallery->debug('Error in WebDavModule::getRewriteRules: ' . $ret->getAsText());
 	    return $rules;
 	}
 	if (!$isCompatible) {
@@ -333,9 +343,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	list ($ret, $activeRules) = $rewriteApi->fetchActiveRulesForModule($this->getId());
 	if ($ret) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug('Error in WebDavModule::getRewriteRules: ' . $ret->getAsText());
-	    }
+	    $gallery->debug('Error in WebDavModule::getRewriteRules: ' . $ret->getAsText());
 	    return $rules;
 	}
 	if (!in_array('options', $activeRules)) {
@@ -384,19 +392,10 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	case 'Gallery::Error':
 	    $data = $event->getData();
-	    if (!($data['error']->getErrorCode() & ERROR_PERMISSION_DENIED)) {
-		/* Suppress generating HTML error pages for WebDAV clients */
-		return array(null, array('suppressBody' => true));
-	    }
-
-	    /* Request authentication */
-	    list ($ret, $httpAuthInterface) = GalleryCoreApi::newFactoryInstance(
-		'HttpAuthInterface_1_0');
-	    if ($ret) {
-		return array($ret, null);
-	    }
-	    if (isset($httpAuthInterface)) {
-		$ret = $httpAuthInterface->requestAuthentication();
+	    if ($data['error']->getErrorCode() & ERROR_PERMISSION_DENIED) {
+		/* Request authentication */
+		GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
+		$ret = WebDavHelper::requestAuthentication(true);
 		if ($ret) {
 		    return array($ret, null);
 		}

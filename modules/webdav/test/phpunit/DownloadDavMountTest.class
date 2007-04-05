@@ -48,13 +48,14 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$this->_phpVm = new DownloadDavMountTestPhpVm();
 	$gallery->_phpVm =& $this->_phpVm;
 
-	/* Clear request variables */
-	$this->_variables =& WebDavHelper::_getRequestVariables();
-	$this->_variables = null;
+	/* Reset request variables */
+	$_SERVER['QUERY_STRING'] = null;
+	$this->_requestVariables =& WebDavHelper::_requestVariables();
+	$this->_requestVariables = null;
 
-	/* Clear response headers */
-	$this->_headers =& GalleryUtilities::_getResponseHeaders();
-	$this->_headers = null;
+	/* Reset response headers */
+	$this->_responseHeaders =& GalleryUtilities::_getResponseHeaders();
+	$this->_responseHeaders = null;
 
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
@@ -72,7 +73,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	/* Test the download davmount view */
 	GalleryUtilities::putRequestVariable('view', 'webdav.DownloadDavMount');
 
-	/* Try to test with the rewrite URL generator */
+	/* Try to use the rewrite URL generator */
 	list ($ret, $this->_urlGenerator) =
 	    GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	if ($ret) {
@@ -180,7 +181,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_variables['g2_itemId'] = $this->_subAlbum->getId();
+	WebDavHelper::putRequestVariable('itemId', $this->_subAlbum->getId());
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -199,7 +200,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$expectedHeaders['content-disposition'] =
 	    'Content-Disposition: inline; filename='
 	    . $this->_subAlbum->getPathComponent() . '.davmount';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
@@ -216,7 +217,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -235,7 +236,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$expectedHeaders['content-disposition'] =
 	    'Content-Disposition: inline; filename='
 	    . $this->_subAlbum->getPathComponent() . '.davmount';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
@@ -247,7 +248,7 @@ class DownloadDavMountTest extends GalleryTestCase {
     }
 
     function testRootWithItemId() {
-	$this->_variables['g2_itemId'] = $this->_getRootId();
+	WebDavHelper::putRequestVariable('itemId', $this->_getRootId());
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -265,7 +266,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	    'Content-Type: application/davmount+xml; charset=UTF-8';
 	$expectedHeaders['content-disposition'] =
 	    'Content-Disposition: inline; filename=Gallery.davmount';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
@@ -292,7 +293,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	    'Content-Type: application/davmount+xml; charset=UTF-8';
 	$expectedHeaders['content-disposition'] =
 	    'Content-Disposition: inline; filename=Gallery.davmount';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
@@ -322,7 +323,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_variables['g2_itemId'] = $this->_subAlbum->getId();
+	WebDavHelper::putRequestVariable('itemId', $this->_subAlbum->getId());
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -341,7 +342,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$expectedHeaders['content-disposition'] =
 	    'Content-Disposition: inline; filename='
 	    . $this->_subAlbum->getPathComponent() . '.davmount';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
@@ -365,7 +366,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')
 	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog') . '/';
 
-	$this->_variables['g2_itemId'] = $this->_subAlbum->getId();
+	WebDavHelper::putRequestVariable('itemId', $this->_subAlbum->getId());
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -383,7 +384,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	    'Content-Type: application/davmount+xml; charset=UTF-8';
 	$expectedHeaders['content-disposition'] =
 	    'Content-Disposition: inline; filename=Jumps Over%The/Lazy_Dog.davmount';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',
@@ -408,7 +409,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')
 	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog') . '/';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -426,7 +427,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	    'Content-Type: application/davmount+xml; charset=UTF-8';
 	$expectedHeaders['content-disposition'] =
 	    'Content-Disposition: inline; filename=Jumps Over%The/Lazy_Dog.davmount';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<dm:mount xmlns:dm="http://purl.org/NET/webdav/mount">',

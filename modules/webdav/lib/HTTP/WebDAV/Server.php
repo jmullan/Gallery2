@@ -608,6 +608,10 @@ class HTTP_WebDAV_Server
                 }
             }
 
+            if (!empty($file['status'])) {
+                $response['status'] = $file['status'];
+            }
+
             $responses[] = $response;
         }
 
@@ -722,6 +726,10 @@ class HTTP_WebDAV_Server
         }
 
         $response['responsedescription'] = $responsedescription;
+
+        if (!empty($options['status'])) {
+            $response['status'] = $options['status'];
+        }
 
         $this->_multistatusResponseHelper(array($response));
     }
@@ -1963,10 +1971,12 @@ class HTTP_WebDAV_Server
     function getProp($reqprop, $file, $options)
     {
         // check if property exists in response
-        foreach ($file['props'] as $prop) {
-            if ($reqprop['name'] == $prop['name']
-                    && $reqprop['ns'] == $prop['ns']) {
-                return $prop;
+        if (!empty($file['props'])) {
+            foreach ($file['props'] as $prop) {
+                if ($reqprop['name'] == $prop['name']
+                        && $reqprop['ns'] == $prop['ns']) {
+                    return $prop;
+                }
             }
         }
 

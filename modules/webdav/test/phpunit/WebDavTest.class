@@ -54,13 +54,14 @@ class WebDavTest extends GalleryTestCase {
 	$this->_platform->_streams = array();
 	$gallery->setPlatform($this->_platform);
 
-	/* Clear request variables */
-	$this->_variables =& WebDavHelper::_getRequestVariables();
-	$this->_variables = null;
+	/* Reset request variables */
+	$_SERVER['QUERY_STRING'] = null;
+	$this->_requestVariables =& WebDavHelper::_requestVariables();
+	$this->_requestVariables = null;
 
-	/* Clear response headers */
-	$this->_headers =& GalleryUtilities::_getResponseHeaders();
-	$this->_headers = null;
+	/* Reset response headers */
+	$this->_responseHeaders =& GalleryUtilities::_getResponseHeaders();
+	$this->_responseHeaders = null;
 
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
@@ -85,12 +86,14 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
+	$this->_userId = $gallery->getActiveUserId();
+
 	/* Test the WebDAV controller */
 	GalleryUtilities::putRequestVariable('controller', 'webdav.WebDav');
 
-	$this->_streams =& WebDavTestStream::_getStreams();
+	$this->_streams =& WebDavTestStream::_streams();
 
-	/* Try to test with the rewrite URL generator */
+	/* Try to use the rewrite URL generator */
 	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
 	    'GalleryUrlGenerator');
 	if ($ret) {
@@ -222,12 +225,23 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders['dav'] = 'DAV: 1,2';
 	$expectedHeaders['content-length'] = 'Content-Length: 0';
 	$expectedHeaders['ms-author-via'] = 'MS-Author-Via: DAV';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
     }
 
     function testPropfind() {
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.view');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	$this->_streamWrapperRegister();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
@@ -237,7 +251,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -268,7 +282,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 207 Multi-Status';
 	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:multistatus xmlns:D="DAV:">',
@@ -296,25 +310,33 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals($expectedOutput, split("\r?\n", $output));
     }
 
-    function testPropfindWithSpecialCharacters() {
+    function testPropfindRequiresViewPermission() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.view');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+if ($ret) {
+    return $this->failWithStatus($ret);
+}
 	$this->_streamWrapperRegister();
 
-	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-
-	$ret = $this->_rename($this->_item, 'Jumps Over%The/Lazy_Dog');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$path = '/' . rawurlencode('The Quick!Brown#Fox')
-	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog');
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -345,7 +367,70 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 207 Multi-Status';
 	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<D:multistatus xmlns:D="DAV:">',
+	    '  <D:response xmlns:G="http://gallery2.org/dav/props/"'
+	    . ' xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
+	    '    <D:status>HTTP/1.1 401 Unauthorized</D:status>',
+	    '  </D:response>',
+	    '</D:multistatus>',
+	    '');
+	$this->assertEquals($expectedOutput, split("\r?\n", $output));
+    }
+
+    function testPropfindWithSpecialCharacters() {
+	$this->_streamWrapperRegister();
+
+	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = $this->_rename($this->_item, 'Jumps Over%The/Lazy_Dog');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$path = '/' . rawurlencode('The Quick!Brown#Fox')
+	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog');
+
+	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	$this->_streams['test://input'] =
+	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<D:propfind xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">',
+	    '  <D:prop>',
+	    '    <D:creationdate/>',
+	    '    <D:displayname/>',
+	    '    <D:getlastmodified/>',
+	    '    <G:summary/>',
+	    '    <G:description/>',
+	    '    <G:keywords/>',
+	    '  </D:prop>',
+	    '</D:propfind>'));
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 207 Multi-Status';
+	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:multistatus xmlns:D="DAV:">',
@@ -374,6 +459,17 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testProppatch() {
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	$this->_streamWrapperRegister();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
@@ -383,7 +479,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -414,7 +510,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 207 Multi-Status';
 	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:multistatus xmlns:D="DAV:">',
@@ -445,6 +541,69 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('new keywords', $this->_item->getKeywords());
     }
 
+    function testProppatchRequiresEditPermission() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+if ($ret) {
+    return $this->failWithStatus($ret);
+}
+	$this->_streamWrapperRegister();
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	$this->_streams['test://input'] =
+	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
+	    '<D:propertyupdate xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">',
+	    '  <D:set>',
+	    '    <D:prop>',
+	    '      <D:displayname>new title</D:displayname>',
+	    '      <G:summary>new summary</G:summary>',
+	    '      <G:description>new description</G:description>',
+	    '      <G:keywords>new keywords</G:keywords>',
+	    '    </D:prop>',
+	    '  </D:set>',
+	    '</D:propertyupdate>'));
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
+    }
+
     function testProppatchWithSpecialCharacters() {
 	$this->_streamWrapperRegister();
 
@@ -463,7 +622,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$this->_streams['test://input'] =
 	    implode("\r\n", array('<?xml version="1.0" encoding="utf-8" ?>',
@@ -494,7 +653,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 207 Multi-Status';
 	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:multistatus xmlns:D="DAV:">',
@@ -535,7 +694,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$newTitle = "\xd8\xa7\xd9\x84\xd8\xb9\xd9\x86\xd9\x88\xd8\xa7\xd9\x86";
 	$newSummary = "\xd8\xa7\xd9\x84\xd9\x85\xd9\x84\xd8\xae\xd8\xb5";
@@ -572,7 +731,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 207 Multi-Status';
 	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:multistatus xmlns:D="DAV:">',
@@ -614,7 +773,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -629,9 +788,9 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
@@ -664,7 +823,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -679,9 +838,9 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
@@ -723,7 +882,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'DELETE';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -738,9 +897,9 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 204 No Content';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	/* Make sure the album is really gone */
 	$ret = $this->_verifyMissing($this->_subAlbum->getId());
@@ -763,7 +922,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
@@ -790,9 +949,9 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
@@ -829,7 +988,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
@@ -856,9 +1015,9 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
@@ -910,7 +1069,7 @@ class WebDavTest extends GalleryTestCase {
 	/* Tolerate suppressed error in getImageSize() */
 	set_error_handler('WebDavTest_error_handler');
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = 0;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
@@ -935,9 +1094,9 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
@@ -956,14 +1115,14 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals(0, $item->getSize());
     }
 
-    function testAddMustBePutRequest() {
+    function testAddRequiresPutRequest() {
 	$_SERVER['REQUEST_METHOD'] = 'POST';
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
 
 	GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
-	list ($ret, $data) = ItemAddController::handleRequest(array());
+	list ($ret, $data) = ItemAddController::handleRequest(null);
 	if ($ret && !($ret->getErrorCode() & ERROR_REQUEST_FORGED)) {
 	    return $this->failWithStatus($ret);
 	}
@@ -982,7 +1141,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
 	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
@@ -1009,17 +1168,77 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 204 No Content';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals('foo/bar', $this->_item->getMimeType());
+	$this->assertEquals('application/unknown', $this->_item->getMimeType());
 	$this->assertEquals($fileSize, $this->_item->getSize());
+    }
+
+    function testReplaceRequiresPutRequest() {
+	$_SERVER['REQUEST_METHOD'] = 'POST';
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('editPlugin', 'ItemEditWebDav');
+
+	GalleryCoreApi::requireOnce('modules/core/ItemEdit.inc');
+	list ($ret, $data) = ItemEditController::handleRequest(null);
+	if ($ret && !($ret->getErrorCode() & ERROR_REQUEST_FORGED)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($ret, 'HTTP PUT check was not enforced');
+    }
+
+    function testReplaceRequiresDataItem() {
+	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$fileSize = $this->_platform->filesize($filePath);
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	$_SERVER['CONTENT_LENGTH'] = $fileSize;
+	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
+
+	/*
+	 * Regression: Check that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.  These
+	 * variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_BAD_DATA_TYPE)) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 403 Forbidden';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
     }
 
     function testMove() {
@@ -1040,7 +1259,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['HTTP_DESTINATION'] =
 	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
@@ -1062,9 +1281,9 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($newPath);
 	if ($ret) {
@@ -1103,7 +1322,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['HTTP_DESTINATION'] =
 	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
@@ -1125,9 +1344,9 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 201 Created';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($newPath);
 	if ($ret) {
@@ -1162,7 +1381,7 @@ class WebDavTest extends GalleryTestCase {
     function _testLock($path) {
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
@@ -1202,7 +1421,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders['status'] = 'HTTP/1.0 200 OK';
 	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
 	$expectedHeaders['lock-token'] = 'Lock-Token: <' . $lock['token'] . '>';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:prop xmlns:D="DAV:">',
@@ -1231,7 +1450,7 @@ class WebDavTest extends GalleryTestCase {
     function _testUnlock($lock) {
 	$_SERVER['REQUEST_METHOD'] = 'UNLOCK';
 
-	$this->_variables['g2_path'] = $lock['path'];
+	WebDavHelper::putRequestVariable('path', $lock['path'], true, false);
 
 	$_SERVER['HTTP_LOCK_TOKEN'] = "<$lock[token]>";
 
@@ -1248,9 +1467,9 @@ class WebDavTest extends GalleryTestCase {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 204 No Content';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
 	$ret = WebDavHelper::checkLocks($lock['path']);
 	if ($ret) {
@@ -1273,7 +1492,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_headers = null;
+	$this->_responseHeaders = null;
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
@@ -1294,11 +1513,11 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_headers = null;
+	$this->_responseHeaders = null;
 
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['HTTP_IF'] = '(<' . $lock['token'] . '>)';
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
@@ -1328,7 +1547,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 200 OK';
 	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:prop xmlns:D="DAV:">',
@@ -1346,7 +1565,7 @@ class WebDavTest extends GalleryTestCase {
 	    '');
 	$this->assertEquals($expectedOutput, split("\r?\n", $output));
 
-	$this->_headers = null;
+	$this->_responseHeaders = null;
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
@@ -1367,7 +1586,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_headers = null;
+	$this->_responseHeaders = null;
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
@@ -1376,7 +1595,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
@@ -1411,7 +1630,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 409 Conflict';
 	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:multistatus xmlns:D="DAV:">',
@@ -1423,7 +1642,7 @@ class WebDavTest extends GalleryTestCase {
 	    '');
 	$this->assertEquals($expectedOutput, split("\r?\n", $output));
 
-	$this->_headers = null;
+	$this->_responseHeaders = null;
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
@@ -1453,13 +1672,13 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 /*
-	$this->_headers = null;
+	$this->_responseHeaders = null;
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox') . '/';
 
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	$_SERVER['HTTP_TIMEOUT'] = 'Infinite, Second-4100000000';
 
@@ -1494,7 +1713,7 @@ class WebDavTest extends GalleryTestCase {
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 409 Conflict';
 	$expectedHeaders['content-type'] = 'Content-Type: text/xml; charset="utf-8"';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
 	    '<D:multistatus xmlns:D="DAV:">',
@@ -1507,7 +1726,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals($expectedOutput, split("\r?\n", $output));
 */
 
-	$this->_headers = null;
+	$this->_responseHeaders = null;
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
@@ -1526,7 +1745,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'GET';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -1539,13 +1758,13 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT, $ret->getErrorCode());
+	$this->assert($ret);
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 404 Not Found';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
     }
 
     function testMacDotUnderscore() {
@@ -1559,7 +1778,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -1572,15 +1791,15 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+	$this->assert($ret);
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 200 OK';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	$this->_headers = null;
+	$this->_responseHeaders = null;
 
 	$_SERVER['REQUEST_METHOD'] = 'GET';
 
@@ -1595,13 +1814,13 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+	$this->assert($ret);
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 200 OK';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
     }
 
     function testMacDotDsStore() {
@@ -1615,7 +1834,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
-	$this->_variables['g2_path'] = $path;
+	WebDavHelper::putRequestVariable('path', $path, true, false);
 
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -1628,15 +1847,15 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+	$this->assert($ret);
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 403 Forbidden';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	$this->_headers = null;
+	$this->_responseHeaders = null;
 
 	$_SERVER['REQUEST_METHOD'] = 'GET';
 
@@ -1651,13 +1870,13 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
+	$this->assert($ret);
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 403 Forbidden';
-	$this->assertEquals($expectedHeaders, $this->_headers);
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals(array(''), split("\r?\n", $output));
     }
 }
 
@@ -1693,7 +1912,7 @@ class WebDavTestStream {
     var $_filename;
     var $_position;
 
-    function &_getStreams() {
+    function &_streams() {
 	static $streams;
 	return $streams;
     }
@@ -1706,7 +1925,7 @@ class WebDavTestStream {
     }
 
     function stream_read($count) {
-	$streams = WebDavTestStream::_getStreams();
+	$streams = WebDavTestStream::_streams();
 	$buffer = substr($streams[$this->_filename], $this->_position, $count);
 	$this->_position += strlen($buffer);
 
@@ -1714,7 +1933,7 @@ class WebDavTestStream {
     }
 
     function stream_eof() {
-	$streams = WebDavTestStream::_getStreams();
+	$streams = WebDavTestStream::_streams();
 	return $this->_position >= strlen($streams[$this->_filename]);
     }
 }

@@ -148,20 +148,13 @@ class WebDavHelper {
 	    $code |= WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED;
 	} else {
 	    /* Check that HTTP auth plugins are enabled */
-	    list ($ret, $httpAuthInterface) = GalleryCoreApi::newFactoryInstance(
-		'HttpAuthInterface_1_0');
+	    list ($ret, $pluginIds) = GalleryCoreApi::getAllFactoryImplementationIds(
+		'GalleryAuthPlugin');
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    if (isset($httpAuthInterface)) {
-		list ($ret, $httpAuthPluginEnabled, $serverAuthPluginEnabled) =
-		    $httpAuthInterface->getConfiguration();
-		if ($ret) {
-		    return array($ret, null);
-		}
-		if (!$httpAuthPluginEnabled && !$serverAuthPluginEnabled) {
-		    $code |= WEBDAV_STATUS_HTTPAUTH_PLUGINS_DISABLED;
-		}
+	    if (empty($pluginIds['HttpAuthPlugin']) && empty($pluginIds['ServerAuthPlugin'])) {
+		$code |= WEBDAV_STATUS_HTTPAUTH_PLUGINS_DISABLED;
 	    }
 	}
 
@@ -206,13 +199,15 @@ class WebDavHelper {
 
 	/* Check the response status and response body to confirm Gallery handled the request */
 	if (!preg_match('/^HTTP\/[0-9]\.[0-9] 200/', $status) || trim($body) != 'PASS_WEBDAV') {
-	    $response = $status . "\n";
+	    $response = array();
+	    $response[] = $status;
 	    foreach ($headers as $key => $value) {
-		$response .= $key . ': ' . $value . "\n";
+		$response[] = $key . ': ' . $value;
 	    }
-	    $response .= "\n" . $body;
-	    $gallery->debug(
-		'Error in WebDavHelper::checkRequestMethod: ' . $requestMethod . "\n" . $response);
+	    $response[] = null;
+	    $response[] = $body;
+	    $gallery->debug('Error in WebDavHelper::checkRequestMethod: ' . $requestMethod);
+	    $gallery->debug(implode("\n", $response));
 
 	    return false;
 	}
@@ -257,7 +252,7 @@ class WebDavHelper {
 
 	$link = array();
 	$params = array('view' => 'webdav.DownloadDavMount',
-			   'itemId' => $itemId);
+		        'itemId' => $itemId);
 	$options = array();    
 
 	$url = $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav',
@@ -270,8 +265,8 @@ class WebDavHelper {
 	$userAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	if (strpos($userAgent, 'MSIE') !== false) {
 	    /*
-	     * Mount with JavaScript only if using MSIE.  By default, dropdowns link to davmount
-	     * resources.
+	     * Mount with JavaScript only if using Internet Explorer.  By default, dropdowns link to
+	     * davmount resources.
 	     */
 	    $url = $urlGenerator->generateUrl(array('controller' => 'webdav.WebDav',
 						    'itemId' => $itemId),
@@ -281,8 +276,7 @@ class WebDavHelper {
 						    'useAuthToken' => false));
 	    $link['script'] =
 		"this.style.behavior = 'url(#default#httpFolder)'; this.navigate('$url')";
-	}
-	if (strpos($userAgent, 'Konqueror') !== false) {
+	} else if (strpos($userAgent, 'Konqueror') !== false) {
 	    /* Konqueror supports webdav:// URLs */
 	    $params = array('controller' => 'webdav.WebDav',
 			    'itemId' => $itemId);
@@ -294,6 +288,26 @@ class WebDavHelper {
 	$link['href'] = $urlGenerator->generateUrl($params, $options);
 
 	return $link;
+    }
+
+    /**
+     * Prompt the user to login.
+     * @see HttpAuthInterface_1_0::requestAuthenction
+     */
+    function requestAuthentication($ignoreGloballyEnabled=false) {
+	list ($ret, $httpAuthInterface) = GalleryCoreApi::newFactoryInstance(
+	    'HttpAuthInterface_1_0');
+	if ($ret) {
+	    return $ret;
+	}
+	if (isset($httpAuthInterface)) {
+	    $ret = $httpAuthInterface->requestAuthentication($ignoreGloballyEnabled);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	return null;
     }
 
     /**
@@ -558,15 +572,15 @@ class WebDavHelper {
     }
 
     /**
-     * Version of GalleryUtilities::getRequestVariables which returns request variables from
-     * WebDavHelper::_getRequestVariables instead of $_GET.  This is necessary because the values in
+     * Version of GalleryUtilities::getRequestVariable which returns request variables from
+     * WebDavHelper::_requestVariables instead of $_GET.  This is necessary because the values in
      * $_GET are URL decoded and once the value is URL decoded, it's impossible to distinguish '%2F'
      * from '/'.
      * @param string $key
      * @param boolean $addPrefix (optional) false to omit Gallery variable prefix
      * @param boolean $urlDecode (optional) false to not URL decode variable value
      * @return mixed value
-     * @see GalleryUtilities::getRequestVariables
+     * @see GalleryUtilities::getRequestVariable
      */
     function getRequestVariable($key, $addPrefix=true, $urlDecode=true) {
 	if ($addPrefix) {
@@ -575,7 +589,7 @@ class WebDavHelper {
 
 	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
 	$value = GalleryUtilities::_internalGetRequestVariable(
-	    $keyPath, WebDavHelper::_getRequestVariables());
+	    $keyPath, WebDavHelper::_requestVariables());
 
 	if (!isset($value)) {
 	    return null;
@@ -606,6 +620,46 @@ class WebDavHelper {
     }
 
     /**
+     * Version of GalleryUtilities::putRequestVariable which pushes request variables into
+     * WebDavHelper::_requestVariables instead of $_GET.
+     * @param string $key
+     * @param string $value
+     * @param boolean $addPrefix (optional) false to omit Gallery variable prefix
+     * @param boolean $urlEncode (optional) false to not URL encode variable value
+     * @see GalleryUtilities::putRequestVariable
+     */
+    function putRequestVariable($key, $value, $addPrefix=true, $urlEncode=true) {
+	if ($addPrefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
+
+	/* Iterate over possibly structured value, recursively URL encoding */
+	if ($urlEncode) {
+	    $valueComponents = array();
+	    $valueComponents[] =& $value;
+	    while (count($valueComponents) > 0) {
+		/* Get next value component by reference */
+		$valueComponent =& $valueComponents[0];
+		array_shift($valueComponents);
+
+		if (is_array($valueComponent)) {
+		    foreach ($valueComponent as $subKey => $subValue) {
+			$valueComponents[] =& $valueComponent[$subKey];
+		    }
+
+		    continue;
+		}
+
+		$valueComponent = rawurlencode($valueComponent);
+	    }
+	}
+
+	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
+	GalleryUtilities::_internalPutRequestVariable(
+	    $keyPath, $value, WebDavHelper::_requestVariables());
+    }
+
+    /**
      * Return structured array of request variables parsed from the current request URL.  This is
      * necessary because the values in $_GET are URL decoded and once the value is URL decoded, it's
      * impossible to distinguish '%2F' from '/'.  Cache the array for multiple calls in the same
@@ -613,7 +667,7 @@ class WebDavHelper {
      * @return array structured request variables
      * @access private
      */
-    function &_getRequestVariables() {
+    function &_requestVariables() {
 	static $params;
 	if (!isset($params)) {
 	    $params = array();
@@ -954,92 +1008,110 @@ class WebDavHelper {
     function _propfindFiles($item, $path, $depth, &$files) {
 	global $gallery;
 
-	/* Verify that the provided object implements the required methods */
-	foreach (array('creationTimestamp', 'title', 'modificationTimestamp', 'pathComponent')
-		as $memberName) {
-	    if (!method_exists($item, 'get' . $memberName)) {
-		return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-			"Item object does not implement a getter for '$memberName'");
-	    }
-	}
-
 	$file = array();
 	$file['path'] = $path;
-	$file['props'] = array();
 
-	/* Build standard DAV: properties */
-	$file['props'][] = WebDavServer::mkprop('creationdate', $item->getCreationTimestamp());
-	$displayName = $item->getTitle();
-	if (empty($displayName)) {
-	    $displayName = $item->getPathComponent();
-	}
-	$file['props'][] = WebDavServer::mkprop('displayname', $displayName);
-	$file['props'][] = WebDavServer::mkprop(
-	    'getlastmodified', $item->getModificationTimestamp());
-
-	/*
-	 * Support exclusive write locks.
-	 *
-	 * Any DAV compliant resource that supports the LOCK method MUST support the supportedlock
-	 * property.
-	 */
-	$file['props'][] = WebDavServer::mkprop(
-	    'supportedlock', array(array('scope' => 'exclusive', 'type' => 'write')));
-
-	/*
-	 * WebDavHelper::getLocks is potentially expensive.  Could optimize this if we knew
-	 * $webDavOptions['props'] didn't contain 'lockdiscovery' or 'allprop'.
-	 */
-	list ($ret, $locks) = WebDavHelper::getLocks($path);
+	/* Check we have permission to view this item */
+	list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission(
+	    $item->getId(), 'core.view');
 	if ($ret) {
 	    return $ret;
 	}
-
-	$file['props'][] = WebDavServer::mkprop('lockdiscovery', $locks);
-
-	if ($item->isContainer()) {
-	    if (!empty($path)) {
-		$file['path'] = '/' . trim($path, '/') . '/';
-	    }
-
-	    $file['props'][] = WebDavServer::mkprop('getcontentlength', 0);
-	    $file['props'][] = WebDavServer::mkprop('getcontenttype', 'httpd/unix-directory');
-	    $file['props'][] = WebDavServer::mkprop('resourcetype', 'collection');
-	} else {
-	    $size = 0;
-	    if (method_exists($item, 'getSize')) {
-		$size = $item->getSize();
-	    }
-	    $mimeType = 'application/unknown';
-	    if (method_exists($item, 'getMimeType')) {
-		$mimeType = $item->getMimeType();
-	    }
-	    $file['props'][] = WebDavServer::mkprop('getcontentlength', $size);
-	    $file['props'][] = WebDavServer::mkprop('getcontenttype', $mimeType);
-	    $file['props'][] = WebDavServer::mkprop('resourcetype', null);
-	}
-
-	/* Build Gallery properties */
-	if (method_exists($item, 'getClassName')) {
-	    list ($ret, $memberInfo) = GalleryCoreApi::getExternalAccessMemberList(
-		$item->getClassName());
+	if (!$hasPermission) {
+	    /* Set multi-status response status despite requesting authentication */
+	    WebDavServer::setResponseStatus('207 Multi-Status');
+	    $ret = WebDavHelper::requestAuthentication(true);
 	    if ($ret) {
 		return $ret;
 	    }
 
-	    /* Keep track of the properties that we add to prevent repetition */
-	    $defaultMembers = array('pathComponent', 'creationTimestamp', 'title',
-				    'modificationTimestamp', 'mimeType', 'size');
-	    foreach ($memberInfo as $memberName => $accessInfo) {
-		$getter = 'get' . $memberName;
-		/* Only show properties that are not intended for internal use only */
-		if ($accessInfo['read'] && !in_array($memberName, $defaultMembers)
-			&& method_exists($item, $getter)) {
-		    $value = $item->$getter();
-		    /* Ignore array valued properties */
-		    if (!is_array($value) && !is_object($value)) {
-			$file['props'][] = WebDavServer::mkprop(WEBDAV_GALLERY_NAMESPACE,
-								$memberName, $value);
+	    $file['status'] = '401 Unauthorized';
+	} else {
+	    $file['props'] = array();
+
+	    /* Verify that the provided object implements the required methods */
+	    foreach (array('creationTimestamp', 'title', 'modificationTimestamp', 'pathComponent')
+		    as $memberName) {
+		if (!method_exists($item, 'get' . $memberName)) {
+		    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+			    "Item object does not implement a getter for '$memberName'");
+		}
+	    }
+
+	    /* Build standard DAV: properties */
+	    $file['props'][] = WebDavServer::mkprop('creationdate', $item->getCreationTimestamp());
+	    $displayName = $item->getTitle();
+	    if (empty($displayName)) {
+		$displayName = $item->getPathComponent();
+	    }
+	    $file['props'][] = WebDavServer::mkprop('displayname', $displayName);
+	    $file['props'][] = WebDavServer::mkprop(
+		'getlastmodified', $item->getModificationTimestamp());
+
+	    /*
+	     * Support exclusive write locks.
+	     *
+	     * Any DAV compliant resource that supports the LOCK method MUST support the
+	     * supportedlock property.
+	     */
+	    $file['props'][] = WebDavServer::mkprop(
+		'supportedlock', array(array('scope' => 'exclusive', 'type' => 'write')));
+
+	    /*
+	     * WebDavHelper::getLocks is potentially expensive.  Could optimize this if we knew
+	     * $webDavOptions['props'] didn't contain 'lockdiscovery' or 'allprop'.
+	     */
+	    list ($ret, $locks) = WebDavHelper::getLocks($path);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $file['props'][] = WebDavServer::mkprop('lockdiscovery', $locks);
+
+	    if ($item->getCanContainChildren()) {
+		if (!empty($path)) {
+		    $file['path'] = '/' . trim($path, '/') . '/';
+		}
+
+		$file['props'][] = WebDavServer::mkprop('getcontentlength', 0);
+		$file['props'][] = WebDavServer::mkprop('getcontenttype', 'httpd/unix-directory');
+		$file['props'][] = WebDavServer::mkprop('resourcetype', 'collection');
+	    } else {
+		$size = 0;
+		if (method_exists($item, 'getSize')) {
+		    $size = $item->getSize();
+		}
+		$mimeType = 'application/unknown';
+		if (method_exists($item, 'getMimeType')) {
+		    $mimeType = $item->getMimeType();
+		}
+		$file['props'][] = WebDavServer::mkprop('getcontentlength', $size);
+		$file['props'][] = WebDavServer::mkprop('getcontenttype', $mimeType);
+		$file['props'][] = WebDavServer::mkprop('resourcetype', null);
+	    }
+
+	    /* Build Gallery properties */
+	    if (method_exists($item, 'getClassName')) {
+		list ($ret, $memberInfo) = GalleryCoreApi::getExternalAccessMemberList(
+		    $item->getClassName());
+		if ($ret) {
+		    return $ret;
+		}
+
+		/* Keep track of the properties that we add to prevent repetition */
+		$defaultMembers = array('pathComponent', 'creationTimestamp', 'title',
+					'modificationTimestamp', 'mimeType', 'size');
+		foreach ($memberInfo as $memberName => $accessInfo) {
+		    $getter = 'get' . $memberName;
+		    /* Only show properties that are not intended for internal use only */
+		    if ($accessInfo['read'] && !in_array($memberName, $defaultMembers)
+			    && method_exists($item, $getter)) {
+			$value = $item->$getter();
+			/* Ignore array valued properties */
+			if (!is_array($value) && !is_object($value)) {
+			    $file['props'][] = WebDavServer::mkprop(WEBDAV_GALLERY_NAMESPACE,
+								    $memberName, $value);
+			}
 		    }
 		}
 	    }
@@ -1055,7 +1127,6 @@ class WebDavHelper {
 	if ($ret) {
 	    return $ret;
 	}
-
 	if (empty($childIds)) {
 	    return null;
 	}
@@ -1161,6 +1232,12 @@ class WebDavHelper {
 	}
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Check we have permission to edit this item */
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1301,7 +1378,7 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	/* Make sure we have permission do edit this item */
+	/* Check we have permission to add an album to this parent item */
 	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.addAlbumItem');
 	if ($ret) {
 	    return $ret;
@@ -1394,13 +1471,13 @@ class WebDavHelper {
 	}
 
 	foreach ($itemIds as $itemId) {
-	    /* Make sure we have permission to delete this item */
+	    /* Check we have permission to delete this item */
 	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.delete');
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
-	    /* Make sure we're not deleting the root album */
+	    /* Check we're not deleting the root album */
 	    if ($itemId == $rootId) {
 		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 		    "Can't delete the root album"), null);
@@ -1585,12 +1662,12 @@ class WebDavHelper {
 	    $error[] = 'form[error][destination][permission]';
 	}
 
-	if (!GalleryUtilities::isA($newParent, 'GalleryAlbumItem')) {
+	if (!$newParent->getCanContainChildren()) {
 	    /* The view should never let this happen */
 	    return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE), null);
 	}
 
-	/* Load destination parent ids: we don't want recursive moves */
+	/* Load destination parent ids: We don't want recursive moves */
 	list ($ret, $newParentAncestorIds) = GalleryCoreApi::fetchParentSequence(
 	    $newParent->getId());
 	if ($ret) {
@@ -1621,7 +1698,7 @@ class WebDavHelper {
 		    $error[] =
 			'form[error][source][' . $item->getId() . '][permission][addDataItem]';
 		}
-	    } else if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    } else if ($item->getCanContainChildren()) {
 		if (!$canAddAlbum) {
 		    $error[] =
 			'form[error][source][' . $item->getId() . '][permission][addAlbumItem]';
@@ -1684,7 +1761,7 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	if (GalleryUtilities::isA($item, 'GalleryAlbumItem') && $depth != 'infinity') {
+	if ($item->getCanContainChildren() && $depth != 'infinity') {
 	    /*
 	     * The MOVE method on a collection MUST act as if a "Depth: infinity" header was used on
 	     * it.  A client MUST NOT submit a Depth header on a MOVE on a collection with any value

@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavHelper.class');
 GalleryCoreApi::requireOnce('modules/webdav/classes/WebDavRewriteHelper.class');
 
 /**
@@ -43,8 +44,9 @@ class DownloadDavMountView extends GalleryView {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	$itemId = WebDavHelper::getRequestVariable('itemId');
 	$path = WebDavHelper::getRequestVariable('path', true, false);
+
+	$itemId = WebDavHelper::getRequestVariable('itemId');
 	if (!empty($itemId)) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	    if ($ret) {
