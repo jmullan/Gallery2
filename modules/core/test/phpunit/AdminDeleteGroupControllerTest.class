@@ -49,19 +49,19 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	/* Create a group that we can delete */
 	list ($ret, $group) = $this->_createGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$groupId = $group->getId();
 
 	/* Assign a permission using this group */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($album);
 	$ret = GalleryCoreApi::addGroupPermission($album->getId(), $groupId, 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $groupId);
@@ -89,7 +89,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	/* Verify the permissions are cleaned up */
 	list ($ret, $perms) = GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	foreach ($perms as $perm) {
 	    if (isset($perm['groupId']) && $perm['groupId'] == $groupId) {
@@ -103,7 +103,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $groupId);
@@ -118,7 +118,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $groupId);
@@ -133,7 +133,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $groupId);
@@ -168,7 +168,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
     function _deleteGroup($group) {
 	$ret = GalleryCoreApi::deleteEntityById($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

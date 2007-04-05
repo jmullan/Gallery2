@@ -33,12 +33,14 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'zipcart');
 	if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	}
 
 	$this->_platform = new UnitTestPlatform();
@@ -47,7 +49,10 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	$this->assert($this->_platform->isComplete(), $this->_platform->getRemaining());
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testReset() {

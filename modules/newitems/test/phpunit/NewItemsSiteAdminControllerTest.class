@@ -35,31 +35,30 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'newitems');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.orderBy', 'NewItems');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('orderBy' => 'NewItems', 'orderDirection' => ORDER_DESCENDING));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -92,7 +91,7 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $days) = GalleryCoreApi::getPluginParameter('module', 'newitems', 'days.new');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('13', $days, 'days');
     }
@@ -126,12 +125,12 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
     function testNewItemsSiteAdminControllerReset() {
 	$ret = $this->_saveNewItemSorts();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $count) = NewItemsHelper::fetchAlbumCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($count > 0, 'Should be at least one NewItems sort in db');
 
@@ -146,19 +145,19 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $count) = NewItemsHelper::fetchAlbumCount();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(0, $count, 'Should be no NewItems sorts in db after reset');
 
 	$ret = $this->_restoreNewItemSorts();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $defaultSort) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('orderWeight', $defaultSort, 'default sort');
     }

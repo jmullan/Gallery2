@@ -39,21 +39,23 @@ class RssEditFeedTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rss');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'allowConfigurableFeed', 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'allowAlbums', 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -62,12 +64,15 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	    foreach ($this->_feedsToDelete as $name) {
 		$ret = RssMapHelper::deleteFeed($name);
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 	    }
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testRssEditFeedCancel() {
@@ -150,7 +155,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	/* check the feed values */
 	list ($ret, $feed) = RssMapHelper::fetchFeed($name);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -161,7 +166,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	$params = array('itemId' => $this->_getRootId());
 	$ret = RssMapHelper::createFeed($name, $params);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* remember to delete this new feed */
@@ -221,7 +226,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	/* check the feed values */
 	list ($ret, $feed) = RssMapHelper::fetchFeed($name);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -287,7 +292,7 @@ class RssEditFeedTest extends GalleryControllerTestCase {
 	$params = array('itemId' => $this->_getRootId());
 	$ret = RssMapHelper::createFeed($name, $params);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* Cleanup if things go wrong */
 	$this->_feedsToDelete[] = $name;

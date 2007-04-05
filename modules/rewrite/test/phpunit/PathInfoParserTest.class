@@ -37,7 +37,10 @@ class PathInfoParserTest extends RewriteParserTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp('PathInfoParser');
+	$ret = parent::setUp('PathInfoParser');
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_testPassString = 'PASS_PATH_INFO';
     }
@@ -48,13 +51,13 @@ class PathInfoParserTest extends RewriteParserTestCase {
 	$form['force']['test'] = 1;
 	list ($ret, $error, $status) = $this->_parser->handleTestResultsRequest($form);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $forced) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'pathinfo.forced');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('1', $forced);
@@ -67,13 +70,13 @@ class PathInfoParserTest extends RewriteParserTestCase {
 
 	list ($ret, $error, $status) = $this->_parser->handleTestResultsRequest($form);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $forced) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'pathinfo.forced');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('0', $forced);
@@ -84,13 +87,13 @@ class PathInfoParserTest extends RewriteParserTestCase {
     function testNeedsConfigurationForced() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'pathinfo.forced', '1');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('pathInfoTest', 'fail');
 	list ($ret, $status) = $this->_parser->needsConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!$status, 'forced');

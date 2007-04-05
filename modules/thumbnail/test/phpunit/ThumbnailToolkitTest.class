@@ -34,16 +34,19 @@ class ThumbnailToolkitTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'thumbnail');
 	if ($ret || !isset($module)) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	list ($ret, $this->_toolkit) =
 	    GalleryCoreApi::newFactoryInstance('GalleryToolkit', 'ThumbnailToolkit');
 	if ($ret || !isset($this->_toolkit)) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Register high priority thumbnail operation for image/jpeg */
@@ -51,8 +54,7 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	    'GalleryToolkit', 'ThumbnailTestToolkit', 'ThumbnailTestToolkit',
 	    'modules/thumbnail/test/phpunit/ThumbnailToolkitTest.class', 'thumbnailTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markToolkitForCleanup('ThumbnailTestToolkit');
 
@@ -62,14 +64,13 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 		  array('type' => 'int', 'description' => 'foo')),
 	    'bar', null, 1);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_itemId) = ThumbnailHelper::addItem('test/fakemime', null,
 		'unittest.jpg', dirname(__FILE__) . '/../../images/G2video.jpg', 'image/jpeg');
 	if ($ret || !isset($this->_itemId)) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
     }
 
@@ -89,7 +90,10 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testToolkit() {
@@ -136,7 +140,7 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg',
 	    array(150));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
     }
 
@@ -146,7 +150,7 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	/* First ensure ThumbnailToolkit is also the primary toolkit for jpg thumbnail operations */
 	$ret = GalleryCoreApi::unregisterToolkitOperation('ThumbnailTestToolkit', 'thumbnail');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$fileName = realpath(dirname(__FILE__) . '/../../images/G2video.jpg');
@@ -154,11 +158,11 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	    'image/jpeg', null, $fileName, $fileName,
 	    'image/jpeg', array('width' => 400, 'height' => 352));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $jpegImage) = GalleryCoreApi::loadEntitiesById($jpegImageId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($jpegImage);
 
@@ -166,13 +170,13 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 		array('toolkitId' => 'Thumbnail', 'operationName' => 'thumbnail',
 		      'mimeType' => 'image/jpeg'), array('priority' => 1));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify precondition */
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/jpeg', 'thumbnail');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (isset($toolkit)) {
 	    $this->assertEquals('thumbnailtoolkit',
@@ -192,7 +196,7 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION) {
 	    /* Error expected for bad operation */
 	} else if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	} else {
 	    $this->assert(false, 'Error expected for bad operation');
 	}

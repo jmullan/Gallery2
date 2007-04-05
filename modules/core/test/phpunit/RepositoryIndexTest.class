@@ -34,7 +34,10 @@ class RepositoryIndexTest extends GalleryTestCase {
     var $_galleryStorage;
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Set up mock storage. */
 	global $gallery;
@@ -59,7 +62,10 @@ class RepositoryIndexTest extends GalleryTestCase {
 	$gallery->_storage =& $this->_galleryStorage;
 	GalleryDataCache::reset();
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testGetDescriptorUrl() {
@@ -76,7 +82,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    list ($ret, $url) =
 		$this->_index->getDescriptorUrl($case['pluginType'], $case['pluginId']);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 
 	    $this->assertEquals($case['expectedUrl'], $url, 'Unexpected URL returned.');
@@ -121,7 +127,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    list ($ret, $url) = $this->_index->getPackageUrl(
 		$case['pluginType'], $case['pluginId'], $case['package']);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 
 	    $this->assertEquals($case['expectedUrl'], $url, 'Unexpected URL returned.');
@@ -132,7 +138,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $saveLanguage) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$testcases = array(
@@ -158,14 +164,14 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    if (!is_array($case)) {
 		$ret = $gallery->setActiveLanguageCode($case);
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 		continue;
 	    }
 	    list ($ret, $name) =
 		$this->_index->getPluginName($case['pluginType'], $case['pluginId']);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 
 	    $this->assertEquals($case['expectedName'], $name, 'Unexpected name returned.');
@@ -173,7 +179,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	$ret = $gallery->setActiveLanguageCode($saveLanguage);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -215,7 +221,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	/* Perform update and verify that the sample index has been loaded. */
 	$ret = $this->_index->update();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals($this->_sampleIndex, $this->_index->_index);
 	$this->assert($this->_index->_isLoaded, 'GalleryRepositoryIndex::isLoaded bit not set.');
@@ -255,7 +261,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	list ($ret, $metaData) = $this->_index->getMetaData();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array('timestamp' => 'updateTime',
 				  'moduleCount' => 1,
@@ -291,7 +297,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	$ret = $this->_index->load();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals($this->_sampleIndex, $this->_index->_index);
 	$this->assert($this->_index->_isLoaded, 'GalleryRepositoryIndex::isLoaded bit not set.');
@@ -328,7 +334,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	$ret = $this->_index->unserializeIndex($serializedIndex = serialize($this->_sampleIndex));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals($this->_sampleIndex, $this->_index->_index);
@@ -361,7 +367,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 
 	    list ($ret, $header) = $this->_index->getPluginHeader($pluginType, $pluginId);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals($this->_sampleIndex[$pluginType . 's'][$pluginId]['header'],
 				$header);
@@ -384,7 +390,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 		$this->_index->getAvailableLanguagesInPlugin($case['pluginType'],
 							     $case['pluginId']);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals($case['languages'], $languages);
 	}
@@ -427,7 +433,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    list ($ret, $version, $build) = $this->_index->getPackageVersionAndBuild(
 		$case['pluginType'], $case['pluginId'], $case['package']);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals($version, $case['expectedVersion']);
 	    $this->assertEquals($build, $case['expectedBuild']);
@@ -477,7 +483,7 @@ class RepositoryIndexTest extends GalleryTestCase {
 	    list ($ret, $plugins) =
 		$this->_index->getPlugins($case['pluginType'], $case['showAll']);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 
 	    $pluginType = $case['pluginType'];

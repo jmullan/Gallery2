@@ -33,20 +33,21 @@ class FlashVideoRendererTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_renderer) =
 	    GalleryCoreApi::newFactoryInstance('GalleryRenderer', 'FlashVideoRenderer');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 		$this->_getRootId(), 'video/x-flv', array('width' => 320, 'height' => 240));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_item);
     }
@@ -54,7 +55,7 @@ class FlashVideoRendererTest extends GalleryTestCase {
     function testCanBeViewedInline() {
 	list ($ret, $item) = GalleryCoreApi::newItemByMimeType('image/jpeg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item->setMimeType('image/jpeg');
 	$item->setWidth(100);
@@ -63,7 +64,7 @@ class FlashVideoRendererTest extends GalleryTestCase {
 
 	list ($ret, $item) = GalleryCoreApi::newItemByMimeType('video/mpeg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item->setMimeType('video/mpeg');
 	$item->setWidth(100);
@@ -72,14 +73,14 @@ class FlashVideoRendererTest extends GalleryTestCase {
 
 	list ($ret, $item) = GalleryCoreApi::newItemByMimeType('video/x-flv');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item->setMimeType('video/x-flv');
 	$this->assert(!$this->_renderer->canBeViewedInline($item), 'flv no size');
 
 	list ($ret, $item) = GalleryCoreApi::newItemByMimeType('video/x-flv');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item->setMimeType('video/x-flv');
 	$item->setWidth(100);

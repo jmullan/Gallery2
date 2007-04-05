@@ -33,12 +33,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Set up our environment */
@@ -49,8 +51,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 		as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -58,8 +59,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $parser) = RewriteHelper::getRewriteParser(true);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('adminrewritemock', $parser->getParserId(), 'parserId');
 
@@ -71,22 +71,19 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	GalleryDataCache::reset();
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'adminrewritemock');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Install it */
 	$ret = $this->_module->installOrUpgrade();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Activate the module */
 	list ($ret, $redirect) = $this->_module->activate(false);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -101,7 +98,10 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testRefresh() {
@@ -135,7 +135,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$expected = array();
 	$expected['rewrite'][0] = array('pattern' => 'uv/%path%');
@@ -145,7 +145,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'shortUrls');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$expected = array(array('match' => array('view' => 'core.ShowItem'),
 		'pattern' => 'uv/%path%',
@@ -176,14 +176,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'shortUrls');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
@@ -205,14 +205,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'shortUrls');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
@@ -233,14 +233,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'shortUrls');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
@@ -263,14 +263,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'shortUrls');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
@@ -291,14 +291,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'shortUrls');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
@@ -320,14 +320,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'shortUrls');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'shortUrls');
     }
@@ -352,7 +352,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array('adminrewritemock' => array(array('pattern' => 'phpunit/0/'),
 							      array('pattern' => 'phpunit/1/'))),
@@ -361,7 +361,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'shortUrls');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(array('match' => array('view' => 'phpunit.Test'),
 		'pattern' => 'phpunit/0/'),
@@ -385,14 +385,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'accessList');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array('unit1.test', 'unit2.test'), unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'allowEmptyReferer');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('0', $value, 'activeRules');
     }
@@ -413,14 +413,14 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'accessList');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($value), 'activeRules');
 
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'allowEmptyReferer');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('1', $value, 'activeRules');
     }

@@ -34,11 +34,13 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'dcraw');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -48,13 +50,16 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	$this->assert($this->_platform->isComplete(), $this->_platform->getRemaining());
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function _getParam($param) {
 	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'dcraw', $param);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	    return 'FAILED';
 	}
 	return $path;

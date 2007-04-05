@@ -34,7 +34,10 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 
 	$this->_originalSession = $gallery->_session;
@@ -46,7 +49,10 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	$gallery->_templateAdapter =& $this->_galleryTemplateAdapter;
 	$gallery->_session = $this->_originalSession;
 	
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testUpdateIndex() {
@@ -83,7 +89,7 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'core.repositories', serialize(array()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$mockAdapter = new MockTemplateAdapter();
@@ -98,7 +104,7 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	list ($ret, $data) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'core.repositories');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('released' => 1, 'community' => 1, 'experimental' => 1),
@@ -130,7 +136,7 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 		      'theme2' => array('active' => true, 'available' => true))),
 	    array('test' => $repository));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Assert that we saw what we expected */
@@ -171,7 +177,7 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 		      'theme2' => array('active' => true, 'available' => true))),
 	    array('test' => $repository));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Assert that we saw what we expected */
@@ -220,7 +226,7 @@ class AdminRepositoryControllerTest extends GalleryControllerTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
 	    /* Good, as expected */
 	} else if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	} else {
 	    $this->fail('ERROR_STORAGE_FAILURE should not be ignored');
 	}

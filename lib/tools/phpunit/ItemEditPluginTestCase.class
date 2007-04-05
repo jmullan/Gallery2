@@ -43,12 +43,12 @@ class ItemEditPluginTestCase extends GalleryTestCase {
 	list ($ret, $this->_plugin) =
 	    GalleryCoreApi::newFactoryInstanceById('ItemEditPlugin', $pluginName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', $moduleName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -68,7 +68,7 @@ class ItemEditPluginTestCase extends GalleryTestCase {
 	    }
 	    $this->assertEquals($expectedErrorCode, $actualErrorCode, 'Unexpected error code!');
 	} else if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	} else {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($error) && is_array($error), 'plugin error results missing');

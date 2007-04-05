@@ -32,15 +32,17 @@ class HttpAuthModuleTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
 	/* Load HTTP auth module */
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'httpauth');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Mock disable HTTP auth URL rewrite rules */
@@ -91,15 +93,13 @@ class HttpAuthModuleTest extends GalleryTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'httpauth');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	foreach (array('httpAuthPlugin' => true, 'useGlobally' => true) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', $key, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -124,7 +124,10 @@ class HttpAuthModuleTest extends GalleryTestCase {
 
     function tearDown() {
 	GalleryDataCache::reset();
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testGetRewriteRules() {
@@ -153,7 +156,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 			      'pluginId' => 'rewrite'));
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(array('httpauth')), $this->_activateCalls);
@@ -165,12 +168,12 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	$event->setData(array('error' => $error));
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $params) = $this->_module->fetchParameters();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 401 Unauthorized',
@@ -181,7 +184,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
     function testHandleEventErrorPermissionDeniedIgnoredIfUseGloballyDisabled() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', 'useGlobally', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$error = GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
@@ -189,7 +192,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	$event->setData(array('error' => $error));
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $this->_headers);
@@ -203,7 +206,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	$event->setEntity($activeUser);
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $results);
@@ -219,7 +222,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	$event->setEntity($activeUser);
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(array('delegate' => array('view' => 'httpauth.TryLogout'))),
@@ -236,7 +239,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	$event->setEntity($activeUser);
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(array('delegate' => array('view' => 'httpauth.TryLogout'))),

@@ -33,12 +33,14 @@ class AdminDigibugControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'digibug');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -67,7 +69,7 @@ class AdminDigibugControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'digibug');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {

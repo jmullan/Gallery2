@@ -45,14 +45,14 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_topAlbum);
 
 	list ($ret, $this->_subAlbum, $this->_subItems) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -77,13 +77,13 @@ class ImageBlockHelperTest extends GalleryTestCase {
     function testImageBlockHelperGetDisabledFlag() {
 	$ret = $this->_createHierarchy();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::addMapEntry(
 	    'ImageBlockDisabledMap', array('itemId' => $this->_topAlbum->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
 	$this->assert($disabledFlag, 'getDisabledFlag returned false');
@@ -91,7 +91,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'ImageBlockDisabledMap', array('itemId' => $this->_topAlbum->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($this->_topAlbum->getId());
@@ -103,12 +103,12 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	$ret = $this->_createHierarchy();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, false, true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$itemIds = array();
@@ -126,7 +126,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$dbItemIds = array();
@@ -139,12 +139,12 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, false, false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$dbItemIds = array();
@@ -159,7 +159,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	$ret = $this->_createHierarchy();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$mockAdapter = new MockTemplateAdapter();
@@ -167,7 +167,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$itemIds = array();
@@ -186,7 +186,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$dbItemIds = array();
@@ -198,7 +198,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$query = 'SELECT [ImageBlockDisabledMap::itemId] ' .
@@ -209,7 +209,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$dbItemIds = array();
@@ -224,13 +224,13 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	$ret = $this->_createHierarchy();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Prepare the test by first disabling the subalbum */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_subAlbum, false, true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$itemIds = array();
@@ -244,7 +244,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 								  array('itemId'),
 								  array('itemId' => $itemIds));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$dbItemIds = array();
@@ -260,7 +260,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	/* Execute the test: Ensure that we succeed and don't attempt to insert duplicate rows. */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	foreach ($this->_topItems as $item) {
@@ -273,7 +273,7 @@ class ImageBlockHelperTest extends GalleryTestCase {
 								  array('itemId'),
 								  array('itemId' => $itemIds));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$dbItemIds = array();
@@ -295,40 +295,40 @@ class ImageBlockHelperTest extends GalleryTestCase {
 
 	list ($ret, $top) = $this->_createTopAlbum();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $album) = $this->_createRandomAlbum($top->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $photo) = $this->_createRandomDataItem($album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $thumbnail) = $this->_createDerivative(
 	    $album, $photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::removeItemPermissions($photo->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $photo->getId(), $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $results) = ImageBlockHelper::_getBlockData(
 	    'Album', 'recent', 1, $top->getId(), false, null, 200 /* maxSize */);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($thumbnail->getId(), $results[0]['thumb']['id']);

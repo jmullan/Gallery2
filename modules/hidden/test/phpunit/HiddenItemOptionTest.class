@@ -37,27 +37,27 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_coreParams) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId(), true);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_topAlbum);
 
 	list ($ret, $this->_subAlbum, $this->_subItems) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -176,7 +176,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topItems[1], $this->_topItems[1]->getId(), 'hide:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$form['HiddenItemOption']['setHidden'] = 0;
@@ -185,7 +185,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topItems[1], false, 'unhide:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -193,7 +193,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 	$ret = GalleryCoreApi::removeUserPermission($this->_topItems[1]->getId(),
 		$this->_coreParams['id.anonymousUser'], 'core.changePermissions');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_becomeGuestUser();
@@ -205,7 +205,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topItems[0], $this->_topItems[0]->getId(), 'item0:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* No core.changePermissions permission for topItems[1] */
@@ -214,7 +214,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topItems[1], false, 'item1:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -230,20 +230,20 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topAlbum, $albumId, 'hide album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $albumId, 'hide subalbum:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_topItems[$i], $albumId, "hide item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $ret = $this->_assertHidden($this->_subItems[$i], $albumId, "hide subitem$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 	$progress = $mockAdapter->getProgressBarDump();
@@ -257,20 +257,20 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topAlbum, false, 'unhide album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, false, 'unhide subalbum:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_topItems[$i], false, "unhide item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $ret = $this->_assertHidden($this->_subItems[$i], false, "unhide subitem$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 	$progress = $mockAdapter->getProgressBarDump();
@@ -284,11 +284,11 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = HiddenHelper::hideItem($this->_subItems[0]);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subItems[0], $this->_subItems[0]->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$form['HiddenItemOption']['setHidden'] = 1;
@@ -297,13 +297,13 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_subAlbum->getId(), 'hide album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_subItems[$i],
 		    $i ? $this->_subAlbum->getId() : $this->_subItems[0]->getId(), "hide item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -313,13 +313,13 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_subAlbum, false, 'unhide album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_subItems[$i],
 		    $i ? false : $this->_subItems[0]->getId(), "item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -331,11 +331,11 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_subAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$form['HiddenItemOption']['setHidden'] = 1;
@@ -344,23 +344,23 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topAlbum, $this->_topAlbum->getId(), 'hide album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_subAlbum->getId(),
 				    'hidden subalbum:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_topItems[$i], $this->_topAlbum->getId(),
 					"hide item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $ret = $this->_assertHidden($this->_subItems[$i], $this->_subAlbum->getId(),
 					"hidden subitem$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -370,21 +370,21 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topAlbum, false, 'unhide album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_subAlbum->getId(), 'subalbum:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_topItems[$i], false, "unhide item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $ret = $this->_assertHidden($this->_subItems[$i], $this->_subAlbum->getId(),
 					"subitem$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -392,11 +392,11 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     function testHideItemInHiddenAlbum() {
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subItems[1], $this->_subAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$form['HiddenItemOption']['setHidden'] = 1;
@@ -405,7 +405,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_subItems[1], $this->_subItems[1]->getId(), 'hide:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$form = array();
@@ -414,7 +414,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_subItems[1], $this->_subAlbum->getId(), 'unhide:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -425,11 +425,11 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = HiddenHelper::hideItem($this->_topAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_topAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$form['HiddenItemOption']['setHidden'] = 1;
@@ -438,22 +438,22 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topAlbum, $this->_topAlbum->getId(), 'hidden album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_subAlbum->getId(), 'hide subalbum:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_topItems[$i], $this->_topAlbum->getId(),
 					"hidden item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $ret = $this->_assertHidden($this->_subItems[$i], $this->_subAlbum->getId(),
 					"hide subitem$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -463,23 +463,23 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	$ret = $this->_assertHidden($this->_topAlbum, $this->_topAlbum->getId(), 'hidden album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_topAlbum->getId(),
 				    'unhide subalbum:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_topItems[$i], $this->_topAlbum->getId(),
 					"hidden item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $ret = $this->_assertHidden($this->_subItems[$i], $this->_topAlbum->getId(),
 					"unhide subitem$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -487,151 +487,151 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     function testAddItemToHiddenAlbum() {
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_subAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($item, $this->_subAlbum->getId(), 'item:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function testMoveItemIntoHiddenAlbum() {
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_subAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_moveItem($this->_topItems[2], $this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($this->_topItems[2], $this->_subAlbum->getId(), 'item:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function testMoveItemDeepIntoHiddenAlbum() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $subAlbum) = $this->_createRandomAlbum($album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($subAlbum, $this->_subAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_moveItem($this->_topItems[2], $subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($this->_topItems[2], $this->_subAlbum->getId(), 'item:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function testMoveItemOutOfHiddenAlbum() {
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subItems[2], $this->_subAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_moveItem($this->_subItems[2], $this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($this->_subItems[2], false, 'item:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function testMoveItemBetweenHiddenAlbums() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = HiddenHelper::hideItem($album);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subItems[2], $this->_subAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_moveItem($this->_subItems[2], $album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($this->_subItems[2], $album->getId(), 'item:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function testMoveAlbumIntoHiddenAlbum() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_topAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = HiddenHelper::hideItem($album);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($album, $album->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_moveItem($this->_subAlbum, $album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($this->_subAlbum, $album->getId(), 'album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_subItems[$i], $album->getId(), "item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -639,31 +639,31 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     function testMoveAlbumOutOfHiddenAlbum() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($album);
 	$ret = HiddenHelper::hideItem($this->_topAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_topAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_moveItem($this->_subAlbum, $album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($this->_subAlbum, false, 'album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_subItems[$i], false, "item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -671,35 +671,35 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     function testMoveAlbumBetweenHiddenAlbums() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($album);
 	$ret = HiddenHelper::hideItem($album);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = HiddenHelper::hideItem($this->_topAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subItems[1], $this->_topAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_moveItem($this->_subAlbum, $album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($this->_subAlbum, $album->getId(), 'album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_subItems[$i], $album->getId(), "item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -707,56 +707,56 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     function testMoveHiddenItemIntoHiddenAlbum() {
 	$ret = HiddenHelper::hideItem($this->_topItems[1]);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_moveItem($this->_topItems[1], $this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($this->_topItems[1], $this->_topItems[1]->getId(), 'item:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function testMoveHiddenAlbumIntoHiddenAlbum() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($album);
 	$ret = HiddenHelper::hideItem($album);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = HiddenHelper::hideItem($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_assertHidden($this->_subItems[1], $this->_subAlbum->getId(), 'setup:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_moveItem($this->_subAlbum, $album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_assertHidden($this->_subAlbum, $this->_subAlbum->getId(), 'album:');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	for ($i = 0; $i < 3; $i++) {
 	    $ret = $this->_assertHidden($this->_subItems[$i], $this->_subAlbum->getId(), "item$i:");
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -764,38 +764,38 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
     function testHiddenInterface() {
 	list ($ret, $interface) = GalleryCoreApi::newFactoryInstance('HiddenInterface_1_0');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (isset($interface)) {
 	    $ret = $interface->hideItem($this->_topItems[1]);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $ret = $this->_assertHidden($this->_topItems[1], $this->_topItems[1]->getId(), 'item:');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    list ($ret, $isHidden) = $interface->isHidden($this->_topItems[1]);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assert($isHidden, 'isHidden item');
 	    list ($ret, $isHidden) = $interface->isHidden($this->_topItems[2]);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assert(!$isHidden, 'isHidden other item');
 	    $ret = $interface->hideItem($this->_subAlbum);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $ret = $this->_assertHidden($this->_subAlbum, $this->_subAlbum->getId(), 'album:');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    list ($ret, $isHidden) = $interface->isHidden($this->_subAlbum);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assert($isHidden, 'isHidden album');
 	} else {
@@ -809,11 +809,11 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'hidden');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = HiddenHelper::hideItem($this->_topItems[1]);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$saveSessionPerms = $session->get(GALLERY_PERMISSION_SESSION_KEY);
@@ -824,7 +824,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 	/* No action if we already have core.view, like admin */
 	$ret = $module->onLoad($this->_topItems[1], false);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array(), $session->get(GALLERY_PERMISSION_SESSION_KEY), 'admin');
 
@@ -835,7 +835,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 	/* Session permission is granted if we have viewResizes or viewSource */
 	$ret = $module->onLoad($this->_topItems[1], false);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array($this->_topItems[1]->getId()),
 			    $session->get(GALLERY_PERMISSION_SESSION_KEY), 'guest');
@@ -843,7 +843,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 	$ret = GalleryCoreApi::removeGroupPermission($this->_topItems[1]->getId(),
 		$this->_coreParams['id.everybodyGroup'], 'core.viewAll');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	GalleryDataCache::reset();
 	$session->put(GALLERY_PERMISSION_SESSION_KEY, array());
@@ -854,7 +854,7 @@ class HiddenItemOptionTest extends ItemEditOptionTestCase {
 	 */
 	$ret = $module->onLoad($this->_topItems[1], false);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array(), $session->get(GALLERY_PERMISSION_SESSION_KEY), 'no view');
 

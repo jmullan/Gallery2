@@ -33,7 +33,10 @@ class UtilitiesTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_saveCookie = isset($_COOKIE) ? $_COOKIE : null;
 	$this->_saveServerHttpCookie =
@@ -52,7 +55,10 @@ class UtilitiesTest extends GalleryTestCase {
 	$_COOKIE = $this->_saveCookie;
 	$_SERVER['HTTP_COOKIE'] = $this->_saveServerHttpCookie;
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testGetFileNameComponents() {
@@ -306,7 +312,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$gallery->setUrlGenerator($urlGenerator);
 
@@ -323,7 +329,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php?test=on', '/gallery2/');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$gallery->setUrlGenerator($urlGenerator);
 	$_SERVER['REQUEST_URI'] = '/testcms/phpunit_test.php?test=on&foo=bar';
@@ -338,7 +344,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$gallery->setUrlGenerator($urlGenerator);
 
@@ -388,7 +394,7 @@ class UtilitiesTest extends GalleryTestCase {
 	list ($ret, $album) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(GalleryUtilities::isExactlyA($album, 'GalleryAlbumItem'), 'album');
 	$this->assert(!GalleryUtilities::isExactlyA($album, 'GalleryItem'), 'item');
@@ -645,7 +651,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    list ($ret, $albums[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $albums[$i]->setId($i);
 	}
@@ -1345,33 +1351,33 @@ class UtilitiesTest extends GalleryTestCase {
 
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($album);
 
 	$ret = GalleryCoreApi::addMimeType('phpunit_movie', 'test/movie', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $item) = $this->_createRandomDataItem($album->getId(), 'test/movie',
 	    array('pathComponent' => 'testitem.phpunit_movie'));
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $clip) = $this->_createDerivative($item, $item->getId(),
 	    DERIVATIVE_TYPE_IMAGE_PREFERRED, 'movieclip|5,10', 'test/movie');
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::addMimeType('phpunit_image', 'test/image', true);
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(array('extension' => 'phpunit_movie'));
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $thumb) = $this->_createDerivative($item, $item->getId(),
@@ -1379,7 +1385,7 @@ class UtilitiesTest extends GalleryTestCase {
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(
 		array('extension' => array('phpunit_movie', 'phpunit_image')));
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $highlight) = $this->_createDerivative($album, $thumb->getId(),
@@ -1387,41 +1393,41 @@ class UtilitiesTest extends GalleryTestCase {
 	if ($ret) {
 	    GalleryCoreApi::removeMimeType(
 		array('extension' => array('phpunit_movie', 'phpunit_image')));
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Item gives its own name */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($item);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('testitem.phpunit_movie', $result);
 
 	/* Derivative with same mime type as parent */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($clip);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('testitem.phpunit_movie', $result);
 
 	/* Derivative with different mime type from parent */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($thumb);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('testitem.phpunit_image', $result);
 
 	/* Derivative with non-item parent */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($highlight);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals($album->getPathComponent() . '.phpunit_image', $result);
 
 	/* Entity that is not a FileSystemEntity or Derivative */
 	list ($ret, $result) = GalleryUtilities::getPseudoFileName($gallery->getActiveUser());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('unknown', $result);
 
@@ -1429,7 +1435,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::removeMimeType(
 	    array('extension' => array('phpunit_movie', 'phpunit_image')));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
     }
 

@@ -304,9 +304,13 @@ class TestCase extends Assert /* implements Test */ {
       $name = $this->name();
       if (phpversion() >= '4' && ! method_exists($this, $name)) {
           $this->error("Method '$name' does not exist");
+      } else {
+          $ret = $this->$name();
+	  if ($ret) {
+	      global $gallery;
+	      $this->fail($ret->getAsHtml() . $gallery->getDebugBuffer());
+	  }
       }
-      else
-          $this->$name();
 
       if (phpversion() >= '4') {
 	  if (isset($old_handler)) {
@@ -321,11 +325,13 @@ class TestCase extends Assert /* implements Test */ {
   function setUp() /* expect override */ {
       //print("TestCase::setUp()<br>\n");
       $this->fLifeCycle['setUp'] = 1;
+      return null;
   }
 
   function tearDown() /* possible override */ {
       //print("TestCase::tearDown()<br>\n");
       $this->fLifeCycle['tearDown'] = 1;
+      return null;
   }
 
   ////////////////////////////////////////////////////////////////
@@ -390,13 +396,20 @@ class TestCase extends Assert /* implements Test */ {
   }
 
   function runBare() {
+    global $gallery;
     $this->fTiming['start'] = microtime();
-    $this->setUp();
+    $ret = $this->setUp();
+    if ($ret) {
+	$this->fail($ret->getAsHtml() . $gallery->getDebugBuffer());
+    }
     $this->assert(!empty($this->fLifeCycle['setUp']), 'TestSuite setUp() method did not call parent::setUp()');
     if (!($this->errored() || $this->failed())) {
 	$this->runTest();
     }
-    $this->tearDown();
+    $ret = $this->tearDown();
+    if ($ret) {
+	$this->fail($ret->getAsHtml() . $gallery->getDebugBuffer());
+    }
     $this->assert(!empty($this->fLifeCycle['tearDown']), 'TestSuite tearDown() method did not call parent::tearDown()');
     $this->fTiming['stop'] = microtime();
   }

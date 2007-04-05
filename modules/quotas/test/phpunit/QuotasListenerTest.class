@@ -34,27 +34,27 @@ class QuotasListenerTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Create a container album for any data items we create */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Create a dummy user */
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Create dummy group */
 	list ($ret, $this->_group) = $this->_createRandomGroup();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Save/clear quotas for All Users,Everybody groups so they won't interfere with tests */
@@ -63,13 +63,11 @@ class QuotasListenerTest extends GalleryTestCase {
 	    list ($ret, $groupId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.' . $groupName);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    list ($ret, $hasQuota, $quota) = GalleryQuotasHelper::fetchGroupQuota($groupId);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    if ($hasQuota) {
 		$this->_saveQuota[$groupId] = $quota;
@@ -104,7 +102,10 @@ class QuotasListenerTest extends GalleryTestCase {
 	    }
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testDeleteEntityQuotasListener() {
@@ -116,7 +117,7 @@ class QuotasListenerTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userQuotaInfo) =
 	    GalleryQuotasHelper::fetchUserQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($quotaExists == false, 'Quota should not exist for this user');
 	$this->assert(empty($userQuotaInfo), 'User should have no quota information');
@@ -128,7 +129,7 @@ class QuotasListenerTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userQuotaInfo) =
 	    GalleryQuotasHelper::fetchUserQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($quotaExists == true, 'Quota should exist for this user');
 	$this->assertEquals(array('id' => $this->_user->getId(), 'quota' => 86,
@@ -140,7 +141,7 @@ class QuotasListenerTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $userQuotaInfo) =
 	    GalleryQuotasHelper::fetchUserQuota($userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($quotaExists == false, 'Quota should not exist for this user');
 	$this->assert(empty($userQuotaInfo), 'User should have no quota information');
@@ -150,7 +151,7 @@ class QuotasListenerTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $groupQuotaInfo) =
 	    GalleryQuotasHelper::fetchGroupQuota($this->_group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($quotaExists == false, 'Quota should not exist for this group');
 	$this->assert(empty($groupQuotaInfo), 'Group should have no quota information');
@@ -162,7 +163,7 @@ class QuotasListenerTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $groupQuotaInfo) =
 	    GalleryQuotasHelper::fetchGroupQuota($this->_group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($quotaExists == true, 'Quota should exist for this group');
 	$this->assertEquals(array('id' => $this->_group->getId(), 'quota' => 47,
@@ -174,7 +175,7 @@ class QuotasListenerTest extends GalleryTestCase {
 	list ($ret, $quotaExists, $groupQuotaInfo) =
 	    GalleryQuotasHelper::fetchGroupQuota($groupId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($quotaExists == false, 'Quota should not exist for this group');
 	$this->assert(empty($groupQuotaInfo), 'Group should have no quota information');
@@ -182,36 +183,34 @@ class QuotasListenerTest extends GalleryTestCase {
 	/* Create a dummy user */
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Create dummy group */
 	list ($ret, $this->_group) = $this->_createRandomGroup();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function _removeMapEntry($remove) {
 	$ret = GalleryCoreApi::removeMapEntry('QuotasMap', $remove);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
     }
 
     function _addMapEntry($add) {
 	$ret = GalleryCoreApi::addMapEntry('QuotasMap', $add);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
     }
 
     function _deleteEntity($entity) {
 	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

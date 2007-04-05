@@ -35,7 +35,10 @@ class BuildDerivativesTaskTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_task = new BuildDerivativesTask();
     }
@@ -55,12 +58,12 @@ class BuildDerivativesTaskTest extends GalleryTestCase {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $success, $details) = $this->_task->run();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($success);

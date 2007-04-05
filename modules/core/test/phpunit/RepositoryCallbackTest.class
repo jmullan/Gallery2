@@ -46,19 +46,19 @@ class RepositoryCallbackTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'core.repositories', serialize(array()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$view = new RepositoryCallbackView();
 	$ret = $view->renderImmediate(array(), array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $data) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'core.repositories');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('released' => 1, 'community' => 1, 'experimental' => 1),

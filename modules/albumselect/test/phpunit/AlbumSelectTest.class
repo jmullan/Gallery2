@@ -36,26 +36,26 @@ class AlbumSelectTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'albumselect');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'albumselect');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('title' => 'zzz\\z&amp;zz&quot;zz', 'summary' => 'zzzzzzzz',
 		  'orderBy' => 'summary', 'orderDirection' => 'asc'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
@@ -63,20 +63,17 @@ class AlbumSelectTest extends GalleryTestCase {
 	list ($ret, $this->_subalbum[1]) = $this->_createRandomAlbum($this->_album->getId(),
 	    array('title' => 'zzzz', 'summary' => 'zzzz'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $this->_subalbum[2]) = $this->_createRandomAlbum($this->_album->getId(),
 	    array('title' => 'mmmm', 'summary' => 'aaaa'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $this->_subalbum[3]) = $this->_createRandomAlbum($this->_album->getId(),
 	    array('title' => 'aaaa', 'summary' => 'mmmm'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_originalRequestUri = $_SERVER['REQUEST_URI'];
@@ -89,14 +86,17 @@ class AlbumSelectTest extends GalleryTestCase {
 	$gallery->setConfig('breadcrumbRootId', $this->_rootAlbumId);
 	$_SERVER['REQUEST_URI'] = $this->_originalRequestUri;
 	GalleryDataCache::removeFromDisk(array('type' => 'module-data', 'module' => 'albumselect'));
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testAlbumSelectManualSort() {
 	global $gallery;
 	$ret = $this->_module->setParameter('sort', 'manual');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$smarty = new GallerySmarty();
@@ -104,7 +104,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $callbacks->callback(
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
@@ -134,7 +134,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	global $gallery;
 	$ret = $this->_module->setParameter('sort', 'title');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$smarty = new GallerySmarty();
@@ -142,7 +142,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $callbacks->callback(
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
@@ -190,7 +190,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	global $gallery;
 	$ret = $this->_module->setParameter('sort', 'album');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$smarty = new GallerySmarty();
@@ -198,7 +198,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $callbacks->callback(
 	    array(), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 
@@ -245,7 +245,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$userId = $gallery->getActiveUserId();
 	list ($ret, $languageCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$callbackParams = array();
 	list ($ret, $rootAlbumId) = GalleryCoreApi::getDefaultAlbumId();
@@ -261,7 +261,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	/* Call it a first time */
 	$ret = $callbacks->callback($callbackParams, $smarty, 'LoadAlbumData', $userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumSelect'];
 	/* Make sure the value is correct and that it is cached */
@@ -280,16 +280,16 @@ class AlbumSelectTest extends GalleryTestCase {
 	$this->_album->setTitle('Changed Title');
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_album->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Make sure the cache was invalidated */
@@ -303,7 +303,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	
 	$ret = $this->_module->setParameter('sort', 'manual');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* A first call to file-cache a result and to ensure the cache-key includes the rootId */
@@ -312,7 +312,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $callbacks->callback(
 	    array('albumTree' => true), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumTree'];
 
@@ -325,7 +325,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $callbacks->callback(
 	    array('albumTree' => true), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumTree'];
 
@@ -354,7 +354,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	$ret = $callbacks->callback(
 	    array('albumTree' => true), $smarty, 'LoadAlbumData', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $smarty->_tpl_vars['block']['albumselect']['LoadAlbumData']['albumTree'];
 

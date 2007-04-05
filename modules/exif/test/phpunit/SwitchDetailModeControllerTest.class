@@ -102,7 +102,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	/* Create a test photo with exif data */
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_rootAlbumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$title = '_test_exif_' . rand();
 	$path = dirname(__FILE__) . '/../data/CanonS30.small.jpg';
@@ -110,12 +110,12 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	    GalleryCoreApi::addItemToAlbum($path, $title, $title, '', '', 'image/jpeg',
 					   $this->_rootAlbumId, false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($item);
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	foreach (array(1 => 'detailed', 2 => 'summary') as $i => $mode) {
@@ -133,7 +133,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	    $expModeSet = $expDataSet = true;
 	    list ($ret, $exifData) = ExifHelper::getExifData($path, $filter);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    if (empty($exifData)) {
 		if ($filter == EXIF_SUMMARY) {
@@ -142,7 +142,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 		    list ($ret, $exifData) = ExifHelper::getExifData($path, EXIF_SUMMARY);
 		}
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 		$mode = null;
 	    }
@@ -156,7 +156,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	    $callback = new ExifCallbacks;
 	    $ret = $callback->callback(array('itemId' => $item->getId()), $smarty, 'LoadExifInfo');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    /* Verify the results */

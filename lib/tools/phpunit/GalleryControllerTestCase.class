@@ -39,7 +39,7 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryController.class');
 	list ($ret, $this->_controller) = GalleryController::loadController($controllerName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -57,7 +57,7 @@ class GalleryControllerTestCase extends GalleryTestCase {
 							  $ret->getErrorCode()))));
 	    }
 	} else if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	} else {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($results['status']), 'controller results missing status');

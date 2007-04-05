@@ -33,23 +33,26 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_item);
 
 	list ($ret, $this->_thumb) = $this->_createDerivative($this->_item, $this->_item->getId(),
 							      DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $this->_sized) = $this->_createDerivative($this->_item, $this->_item->getId(),
 							      DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_albumId = 12345;
@@ -62,13 +65,13 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	    'G1MigrateMap',
 	    array('itemId' => $this->_albumId, 'g1album' => $this->_albumName, 'g1item' => null));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addMapEntry(
 	    'G1MigrateMap', array('itemId' => $this->_itemId,
 	    'g1album' => $this->_albumName, 'g1item' => $this->_itemName));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['PHP_SELF'] = '/gallery2/' . GALLERY_MAIN_PHP;
@@ -82,10 +85,13 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::removeMapEntry(
 	    'G1MigrateMap', array('g1album' => $this->_albumName));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testRedirect() {

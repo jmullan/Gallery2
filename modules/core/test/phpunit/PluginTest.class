@@ -97,7 +97,7 @@ class PluginTest extends GalleryTestCase {
     function testLoadPlugin() {
 	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', 'PluginTestCompatible');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -135,7 +135,7 @@ class PluginTest extends GalleryTestCase {
 
 	    list ($ret, $pluginIds) = GalleryCoreApi::getAllPluginIds($type);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($expectedIds, $pluginIds, "$type ids do not match");
 	}
@@ -170,7 +170,7 @@ class PluginTest extends GalleryTestCase {
 	/* Execute the test */
 	list ($ret, $ignored) = $plugin->activate(false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify the results */
@@ -204,7 +204,7 @@ class PluginTest extends GalleryTestCase {
 	/* Execute the test */
 	list ($ret, $ignored) = $plugin->deactivate(false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify the results */

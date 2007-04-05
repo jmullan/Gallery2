@@ -33,7 +33,10 @@ class WebTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$gallery->_platform = new WebTestPlatform($this);
     }

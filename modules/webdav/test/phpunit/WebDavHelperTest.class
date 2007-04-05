@@ -34,15 +34,17 @@ class WebDavHelperTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 
 	/* Initialize test URL generator */
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$gallery->setUrlGenerator($this->_urlGenerator);
 
@@ -163,13 +165,16 @@ class WebDavHelperTest extends GalleryTestCase {
 
     function tearDown() {
 	GalleryDataCache::reset();
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testCheckConfiguration() {
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(0, $code, 'error code');
@@ -180,7 +185,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_NO_XML_PARSER, $code);
@@ -192,7 +197,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_METHOD_NOT_HANDLED, $code);
@@ -204,7 +209,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED, $code);
@@ -215,7 +220,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	/* Even when the httpauth module is active, none of its auth plugins could be active. */
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_HTTPAUTH_AUTH_PLUGINS_DISABLED, $code, 'error code');
@@ -227,7 +232,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_REWRITE_MODULE_DISABLED, $code);
@@ -238,7 +243,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_CONNECT_RULE_DISABLED, $code);
@@ -252,7 +257,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
@@ -266,7 +271,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
@@ -280,7 +285,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
@@ -293,7 +298,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(WEBDAV_STATUS_MISSING_DAV_HEADERS
@@ -308,7 +313,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!$code);
@@ -350,12 +355,12 @@ class WebDavHelperTest extends GalleryTestCase {
 	$files = array();
 	list ($ret, $item, $path, $expectedProps) = $this->_preparePropfindFiles();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = WebDavHelper::_propfindFiles($item, $path, 0, $files);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(array('path' => $path, 'props' => $expectedProps)), $files);
     }
@@ -364,12 +369,12 @@ class WebDavHelperTest extends GalleryTestCase {
 	$files = array();
 	list ($ret, $item, $path, $expectedProps) = $this->_preparePropfindFiles(true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = WebDavHelper::_propfindFiles($item, $path, 0, $files);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(array('path' => $path, 'props' => $expectedProps)), $files);
     }
@@ -378,12 +383,12 @@ class WebDavHelperTest extends GalleryTestCase {
 	$files = array();
 	list ($ret, $item, $path, $expectedProps) = $this->_preparePropfindFiles(false, '');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = WebDavHelper::_propfindFiles($item, $path, 0, $files);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(array('path' => $path, 'props' => $expectedProps)), $files);
     }
@@ -452,7 +457,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_BAD_PARAMETER) {
 	    /* As expected */
 	} else if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	} else {
 	    $this->fail('propfindFiles should only handle item-like objects');
 	}
@@ -461,12 +466,12 @@ class WebDavHelperTest extends GalleryTestCase {
     function testSetItemPropsRespectsExternalAccessRules() {
 	list ($ret, $item) = $this->_createRandomDataItem($this->_rootAlbumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($item);
 	list ($ret, $path) = $item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item->setTitle('old title');
 	$item->setSummary('old summary');
@@ -488,7 +493,7 @@ class WebDavHelperTest extends GalleryTestCase {
 
 	$ret = WebDavHelper::_setItemProps($item, $props);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('new title', $item->getTitle(), 'title');
@@ -561,7 +566,7 @@ class WebDavHelperTest extends GalleryTestCase {
     function testGetParentItemIdByPathDefaultForNoParent() {
 	list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath('foo');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_getRootId(), $parentId);
@@ -570,7 +575,7 @@ class WebDavHelperTest extends GalleryTestCase {
     function testGetParentItemIdByPathForTopLevelItems() {
 	list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath('/foo');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_getRootId(), $parentId);
@@ -579,14 +584,14 @@ class WebDavHelperTest extends GalleryTestCase {
     function testGetParentItemIdByPathForNonExistentPath() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($album);
 
 	list ($ret, $parentId) = WebDavHelper::getParentItemIdByPath(
 		'/' . $album->getPathComponent()  . '/foo');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($album->getId(), $parentId);
@@ -597,7 +602,7 @@ class WebDavHelperTest extends GalleryTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 	    /* As expected */
 	} else if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	} else {
 	    $this->fail('should have failed with ERROR_MISSING_OBJECT');
 	}

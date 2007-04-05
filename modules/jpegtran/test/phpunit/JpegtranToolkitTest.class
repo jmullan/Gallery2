@@ -37,13 +37,15 @@ class JpegtranToolkitTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_jpegtranPath) =
 		GalleryCoreApi::getPluginParameter('module', 'jpegtran', 'path');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_platform = $gallery->_platform =
@@ -57,7 +59,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	$this->_platform->setTestEnvironment('normal');
 	list ($ret, $results) = JpegtranToolkitHelper::testBinary($this->_jpegtranPath);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('rotate', $results[0]['name'], 'first test should be rotate');
@@ -70,7 +72,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	$this->_platform->setTestEnvironment('rotateOnly');
 	list ($ret, $results) = JpegtranToolkitHelper::testBinary($this->_jpegtranPath);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('rotate', $results[0]['name'], 'first test should be rotate');
@@ -92,7 +94,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	$this->_platform->setTestEnvironment('badBinary');
 	list ($ret, $results) = JpegtranToolkitHelper::testBinary($this->_jpegtranPath);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('rotate', $results[0]['name'], 'first test should be rotate');
@@ -105,7 +107,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	$this->_platform->setTestEnvironment('normal');
 	list ($ret, $results) = JpegtranToolkitHelper::getOperations();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedMimeTypes = array('image/jpeg', 'image/pjpeg');
@@ -144,7 +146,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	$this->_platform->setTestEnvironment('rotateOnly');
 	list ($ret, $results) = JpegtranToolkitHelper::getOperations();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedMimeTypes = array('image/jpeg', 'image/pjpeg');
@@ -165,7 +167,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	$this->_platform->setTestEnvironment('badBinary');
 	list ($ret, $results) = JpegtranToolkitHelper::getOperations();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedMimeTypes = array('image/jpeg', 'image/pjpeg');
@@ -177,7 +179,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	list ($ret, $mimeType, $context) = $this->_toolkit->performOperation('image/jpeg', 'crop',
 			'SOURCE', 'DEST', array('10', '20', '60', '40.4'), array('IGNORE'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('IGNORE'), $context, 'context altered');
@@ -189,7 +191,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	list ($ret, $mimeType, $context) = $this->_toolkit->performOperation('image/pjpeg',
 			 'rotate', 'SOURCE', 'DEST', array('-90'), array('IGNORE'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('IGNORE'), $context, 'context altered');
@@ -201,7 +203,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	list ($ret, $mimeType, $context) = $this->_toolkit->performOperation('image/jpeg', 'crop',
 			'SOURCE', 'DEST', array('10', '20', '60', '40.4'), array('IGNORE'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Crop triggers 2 jpegtran calls and thus 4 chdir calls */
@@ -238,7 +240,7 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	list ($ret, $mimeType, $context) = $this->_toolkit->performOperation('image/jpeg', 'crop',
 			'SOURCE', 'DEST', array('10', '20', '60', '40.4'), array('IGNORE'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('image/jpeg', $mimeType, 'output mimetype != input mimetype');

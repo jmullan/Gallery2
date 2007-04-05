@@ -34,7 +34,10 @@ class UrlGeneratorTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
@@ -45,14 +48,12 @@ class UrlGeneratorTest extends GalleryTestCase {
 	/* For the cookie.path */
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$ret = $this->_urlGenerator->init('phpunit_test.php');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -77,7 +78,10 @@ class UrlGeneratorTest extends GalleryTestCase {
 	}
 	$session->remove('core.authToken');
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     /*
@@ -158,7 +162,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	/* Make sure the cookie path is not set etc. */
 	list ($ret, $params, $values) = $this->_prepareGenerateUrl('', 'phpunit_test.php', null);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$session =& $gallery->getSession();
 
@@ -184,7 +188,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 				       'http://example.com/cms/phpunit_test.php?module=gallery2',
 				       '/gallery2/');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals('/cms/phpunit_test.php?module=gallery2&amp;' .
@@ -200,7 +204,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	list ($ret, $params, $values) =
 	    $this->_prepareGenerateUrl('', '/cms/phpunit_test.php?module=gallery2', '/gallery2/');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals('phpunit_test.php?module=gallery2&amp;' .
@@ -218,7 +222,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $this->_prepareGenerateUrl('', '/cms/phpunit_test.php?module=gallery2',
 				       '/gallery2/', 'CMSSID=123456');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$session =& $gallery->getSession();
 
@@ -272,7 +276,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	list ($ret) =
 	    $this->_prepareGenerateUrl('', '/cms/phpunit_test.php?module=gallery2', '/gallery2/');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$session =& $gallery->getSession();
 
@@ -303,7 +307,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	list ($ret) = $this->_prepareGenerateUrl('', '/cms/phpunit_test.php?module=gallery2',
 							 '/gallery2/|');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$session =& $gallery->getSession();
 
@@ -326,7 +330,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	list ($ret) = $this->_prepareGenerateUrl('/', '/cms/phpunit_test.php?module=gallery2',
 						 '/gallery2/main.php');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Do the actual test */
@@ -351,7 +355,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('phpunit_test.php?g2_view=foo',
@@ -384,7 +388,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/phpunit_test.php?module=gallery2', '/gallery2/');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('gallery2/test/test.css',
@@ -397,7 +401,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/cms/phpunit_test.php?module=gallery2', '/gallery2');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('/test/test.css',
@@ -552,7 +556,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	list ($ret) = $this->_prepareGenerateUrl('/', '/cms/phpunit_test.php?module=gallery2',
 						 '/gallery2/main.php');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Views should go to the embedded multisite */
@@ -660,7 +664,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/phpunit_test.php?module=gallery2','/gallery2/');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('http://example.com/', $urlGenerator->getCurrentUrlDir(), 'embedded');
 	$this->assertEquals('http://example.com/gallery2/', $urlGenerator->getCurrentUrlDir(true),
@@ -671,7 +675,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/cms/phpunit_test.php?module=gallery2', '/gallery2/');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('http://example.com/cms/', $urlGenerator->getCurrentUrlDir(),
 			    'embedded, different path');
@@ -685,7 +689,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('index.php');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('http://example.com/somedir/', $urlGenerator->getCurrentUrlDir());
     }
@@ -693,13 +697,13 @@ class UrlGeneratorTest extends GalleryTestCase {
     function testGetHostName() {
 	$_SERVER['HTTP_HOST'] = 'http_host';
 	if ($ret = $this->_initNewUrlGenerator()) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('http_host', $this->_urlGenerator->getHostName());
 
 	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_x_forwarded_host';
 	if ($ret = $this->_initNewUrlGenerator()) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('http_x_forwarded_host', $this->_urlGenerator->getHostName());
     }
@@ -709,7 +713,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_host';
 
 	if ($ret = $this->_initNewUrlGenerator('override/')) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('override', $this->_urlGenerator->getHostName());
 	$this->assertEquals('override', $this->_urlGenerator->getHostName(false));
@@ -721,7 +725,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_host';
 
 	if ($ret = $this->_initNewUrlGenerator('embedded_override/', 'http://direct_override/')) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('embedded_override', $this->_urlGenerator->getHostName());
 	$this->assertEquals('embedded_override', $this->_urlGenerator->getHostName(false));
@@ -749,7 +753,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_HOST'] = 'example.com:8080';
 	$_SERVER['SERVER_PORT'] = 8080;
 	if ($ret = $this->_initNewUrlGenerator()) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('http://example.com:8080/test.php?fun=yes',
 			    $this->_urlGenerator->makeUrl('/test.php?fun=yes'));
@@ -763,7 +767,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['SERVER_PORT'] = 443;
 	$_SERVER['HTTPS'] = 'on';
 	if ($ret = $this->_initNewUrlGenerator()) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('https://example.com/test/go.php?a=one&amp;b=two',
 			    $this->_urlGenerator->makeUrl('test/go.php?a=one&amp;b=two'));
@@ -779,7 +783,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 82;
 	if ($ret = $this->_initNewUrlGenerator()) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('http://example.com/test.php?fun=yes',
 			    $this->_urlGenerator->makeUrl('/test.php?fun=yes'));
@@ -848,7 +852,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_HOST'] = 'example.com:8080';
 	$_SERVER['SERVER_PORT'] = 8080;
 	if ($ret = $this->_initNewUrlGenerator()) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('http', $this->_urlGenerator->_protocol[0], 'protocol');
 	$this->assertEquals('http', $this->_urlGenerator->_protocol[1], 'forceDirect protocol');
@@ -865,7 +869,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_x_forwarded_host';
 	$uG = new GalleryUrlGenerator();
 	if ($ret = $uG->init()) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	foreach (array(0, 1) as $i) {
@@ -884,7 +888,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_x_forwarded_host';
 	$uG = new GalleryUrlGenerator();
 	if ($ret = $uG->init('https://override:8080/new_path/index.php?foo=bar')) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	foreach (array(0, 1) as $i) {
@@ -902,7 +906,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_X_FORWARDED_HOST'] = 'http_x_forwarded_host';
 	$uG = new GalleryUrlGenerator();
 	if ($ret = $uG->init('/cms/index.php?foo=bar', 'http://direct/gallery2/', 'session=123')) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('index.php?foo=bar', $uG->_file[0], 'file[0]');
@@ -924,7 +928,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php?test=on');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?test=on&foo=bar';
 	GalleryDataCache::reset();
@@ -1068,7 +1072,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $ret = $this->_urlGenerator->initNavigation();
 	    if ($ret) {
 		$this->assert(false, "Normal returnUrl '$url' not accepted");
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	}
     }
@@ -1094,7 +1098,7 @@ class UrlGeneratorTest extends GalleryTestCase {
     function testGetNavigationLinks() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/*
@@ -1107,11 +1111,11 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_GET['g2_returnName'] = 'I want a pony';
 	$ret = $this->_urlGenerator->initNavigation();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	list ($ret, $links) = $this->_urlGenerator->getNavigationLinks();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$params = array('fromNavId' => $this->_urlGenerator->_navId);
 	$expectedUrl = GalleryUrlGenerator::appendParamsToUrl('www.DONTCARE.com', $params);
@@ -1125,7 +1129,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/foo/bar/');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('return', 'foo');
@@ -1256,13 +1260,13 @@ class UrlGeneratorTest extends GalleryTestCase {
 	/* First check if the configured value is taken if available */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '/bad/');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* Check if the correct value was stored */
 	list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
 								     'cookie.path');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('/bad/', $realValue, 'could not set plugin parameter cookie.path');
 	/* Now do the actual check */
@@ -1271,16 +1275,16 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('/cms/phpunit_test.php', '/gallery2/');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $path) = $urlGenerator->getCookiePath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('/bad/', $path, 'test 0');
 	list ($ret, $path) = $urlGenerator->getCookiePath(true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('/bad/', $path, 'test 0.1');
 
@@ -1290,13 +1294,13 @@ class UrlGeneratorTest extends GalleryTestCase {
 	 */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* Check if the correct value was stored */
 	list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
 								     'cookie.path');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('', $realValue, 'could not reset plugin parameter cookie.path');
 
@@ -1335,11 +1339,11 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $urlGenerator = new GalleryUrlGenerator();
 	    $ret = $urlGenerator->init($testCase['baseUri'], $testCase['g2Uri']);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    list ($ret, $path) = $urlGenerator->getCookiePath($testCase['force']);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($testCase['er'], $path, "test $i");
 	    $i++;
@@ -1584,13 +1588,13 @@ class UrlGeneratorTest extends GalleryTestCase {
 		$value = $isSet ? '/' : '';
 		$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', $value);
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 		/* Check if the correct value was stored */
 		list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
 									     'cookie.path');
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 		$this->assertEquals($value, $realValue,
 				    'could not set plugin parameter cookie.path');
@@ -1599,7 +1603,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 		$urlGenerator = new GalleryUrlGenerator();
 		$ret = $urlGenerator->init();
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 		/* Check what we want to verfiy */
 		$msg = $embedded ? 'embedded, ' : 'standalone, ';
@@ -1642,7 +1646,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret) = $this->_prepareGenerateUrl('', 'phpunit_test.php', null);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$session =& $gallery->getSession();
 	$this->assertEquals(true, $session->isPersistent(), 'persistent session');
@@ -1665,7 +1669,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$backup = $gallery->_session;
 	$gallery->_session =& $session;
@@ -1696,7 +1700,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$view = GALLERY_DEFAULT_VIEW;
 	list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Omit view parameter for default view */

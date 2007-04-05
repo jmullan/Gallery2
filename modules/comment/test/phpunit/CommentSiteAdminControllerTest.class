@@ -33,12 +33,14 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -69,7 +71,7 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 	    list ($ret, $value) =
 		GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.' . $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}

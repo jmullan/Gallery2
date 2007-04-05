@@ -35,19 +35,20 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'shortUrls',
 	    serialize(array('php.Unit' => array('pattern' => 'p/%test%'))));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['HTTP_HOST'] = 'example.com';
@@ -58,8 +59,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	$this->_urlGenerator = new RewriteUrlGenerator();
 	$ret = $this->_urlGenerator->init('phpunit_test.php');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryDataCache::reset();
@@ -81,7 +81,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	$urlGenerator = new RewriteUrlGenerator();
 	$ret = $urlGenerator->init('phpunit_test.php');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!$urlGenerator->_error);

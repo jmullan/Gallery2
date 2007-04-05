@@ -36,7 +36,7 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
@@ -54,7 +54,7 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
     function testUndo() {
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
@@ -74,7 +74,7 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
     function testEditGroupQuota() {
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_createGroupQuota($group->getId(), 4096);
@@ -95,7 +95,7 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	list ($ret, $quotaExists, $groupQuota) =
 	    GalleryQuotasHelper::fetchGroupQuota($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($quotaExists, 'Quota does not exist');
 	$this->assertEquals($group->getId(), $groupQuota['id'], 'Group Ids do not match');
@@ -114,7 +114,7 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	/* Create a group for our tests */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_createGroupQuota($group->getId(), 1024);
@@ -152,7 +152,7 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	/* Create a group, but no quota for it */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
@@ -181,21 +181,21 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addMapEntry(
 	    'QuotasMap', array('userOrGroupId' => $groupId, 'quotaSize' => $quota));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function _deleteEntity($entity) {
 	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function _deleteGroupQuota($groupId) {
 	$ret = GalleryCoreApi::removeMapEntry('QuotasMap', array('userOrGroupId' => $groupId));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

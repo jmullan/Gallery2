@@ -32,12 +32,15 @@ class DataCacheTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$acceleration['user']['type'] = 'full';
@@ -46,7 +49,7 @@ class DataCacheTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$session =& $gallery->getSession();
@@ -62,7 +65,10 @@ class DataCacheTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testPutAndGet() {
@@ -235,12 +241,12 @@ class DataCacheTest extends GalleryTestCase {
 
 	list ($ret, $modulePluginStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $themePluginStatus) = GalleryCoreApi::fetchPluginStatus('theme');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->setConfig('data.gallery.cache', '/data/cache/');
@@ -352,12 +358,12 @@ class DataCacheTest extends GalleryTestCase {
 	$value = '<html><head><title>foo</title><body>this is some content</body></html>';
 	$ret = GalleryDataCache::putPageData('test', 0, array('key'), $value);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $result) = GalleryDataCache::getPageData('test', array('key'));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals($value, $result);
@@ -366,24 +372,24 @@ class DataCacheTest extends GalleryTestCase {
     function testRemovePageData() {
 	$ret = GalleryDataCache::putPageData('test', 0, array('key'), 'test');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $result) = GalleryDataCache::getPageData('test', array('key'));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals('test', $result);
 
 	$ret = GalleryDataCache::removePageData(0);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $result) = GalleryDataCache::getPageData('test', array('key'));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(NULL, $result);
@@ -396,13 +402,13 @@ class DataCacheTest extends GalleryTestCase {
 	$gallery->_phpVm->setTime(100);
 	$ret = GalleryDataCache::putPageData('test', 0, array('key'), 'test');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$gallery->_phpVm->setTime(time());
 	list ($ret, $result) = GalleryDataCache::getPageData('test', array('key'));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(NULL, $result);
@@ -412,7 +418,7 @@ class DataCacheTest extends GalleryTestCase {
 	$_SERVER['REQUEST_METHOD'] = 'POST';
 	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'page');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(false, $shouldCache);
@@ -425,7 +431,7 @@ class DataCacheTest extends GalleryTestCase {
 	$_SERVER['REQUEST_METHOD'] = 'POST';
 	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'page');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(false, $shouldCache);
@@ -438,7 +444,7 @@ class DataCacheTest extends GalleryTestCase {
 	$_SERVER['REQUEST_METHOD'] = 'POST';
 	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'page');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(false, $shouldCache);
@@ -451,12 +457,12 @@ class DataCacheTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(true, $shouldCache);
@@ -470,12 +476,12 @@ class DataCacheTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(true, $shouldCache);
@@ -488,7 +494,7 @@ class DataCacheTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'id.anonymousUser', $gallery->getActiveUserId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$acceleration['user']['type'] = 'none';
@@ -496,12 +502,12 @@ class DataCacheTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(false, $shouldCache);
@@ -514,7 +520,7 @@ class DataCacheTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Use mock VM to enforce valid headers, so that the active browser doesn't interfere */
@@ -522,7 +528,7 @@ class DataCacheTest extends GalleryTestCase {
 
 	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'partial');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(false, $shouldCache);
@@ -539,7 +545,7 @@ class DataCacheTest extends GalleryTestCase {
 	/* Set test environment */
 	$ret = $gallery->setActiveLanguageCode('en');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$session->_isUsingCookies = false;
 
@@ -550,7 +556,7 @@ class DataCacheTest extends GalleryTestCase {
 
 	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('0-en-1', $extraKey, 'embedded, cookieless, English, exif summary');
 
@@ -570,7 +576,7 @@ class DataCacheTest extends GalleryTestCase {
 	/* Set test environment */
 	$ret = $gallery->setActiveLanguageCode('fr');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$session->_isUsingCookies = true;
 
@@ -579,7 +585,7 @@ class DataCacheTest extends GalleryTestCase {
 
 	list ($ret, $extraKey) = GalleryDataCache::_getExtraPageCacheKey();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('1-fr-0-exifdetailed', $extraKey,
 			    'standalone, using cookies, French, exif detail');
@@ -600,12 +606,12 @@ class DataCacheTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $shouldCache) = GalleryDataCache::shouldCache('read', 'full');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(false, $shouldCache);
@@ -625,17 +631,17 @@ class DataCacheTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* Initialize to language of active user, so we don't get a different cache key later. */
 	$gallery->setActiveUser($anonymousUser);
@@ -644,19 +650,19 @@ class DataCacheTest extends GalleryTestCase {
 	/* Clear the cache. */
 	$ret = GalleryCoreApi::removeAllMapEntries('GalleryCacheMap');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Setup some cache entries. */
 	$gallery->_phpVm->setTime(100);
 	$ret = GalleryDataCache::putPageData('first', 1, array('key'), 'test');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('test', $result, 'first');
 
@@ -665,12 +671,12 @@ class DataCacheTest extends GalleryTestCase {
 
 	$ret = GalleryDataCache::putPageData('second', 2, array('key'), 'test');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('test', $result, 'We cleaned to early.');
 
@@ -680,7 +686,7 @@ class DataCacheTest extends GalleryTestCase {
 
 	$ret = GalleryDataCache::putPageData('guest', 2, array('key'), 'test');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Switch back to user and back in time check first entry. */
@@ -688,7 +694,7 @@ class DataCacheTest extends GalleryTestCase {
 	$gallery->_phpVm->setTime(125);
 	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('test', $result, 'Guest cleaned user row!');
 
@@ -697,13 +703,13 @@ class DataCacheTest extends GalleryTestCase {
 	$gallery->_phpVm->setTime(135);
 	$ret = GalleryDataCache::putPageData('third', 3, array('key'), 'test');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$gallery->_phpVm->setTime(125);
 	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('test', $result, 'We cleaned first row while rand() returned 6.');
 
@@ -712,7 +718,7 @@ class DataCacheTest extends GalleryTestCase {
 	$gallery->_phpVm->setRand(1);
 	$ret = GalleryDataCache::putPageData('fourth', 4, array('key'), 'test');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Move treshold, making all rows valid again. */
@@ -721,12 +727,12 @@ class DataCacheTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $result) = GalleryDataCache::getPageData('first', array('key'));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(null, $result, 'Cache entry should be obsolete.');
 
@@ -734,7 +740,7 @@ class DataCacheTest extends GalleryTestCase {
 	$query = 'SELECT * FROM [GalleryCacheMap]';
 	list ($ret, $results) = $gallery->search($query);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(5, (int)$results->resultCount(), 'Total cache entries.');
 
@@ -749,7 +755,7 @@ class DataCacheTest extends GalleryTestCase {
 	';
 	list ($ret, $results) = $gallery->search($query);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(2, (int)$results->resultCount(), 'remaining valid cache entries');
     }

@@ -33,18 +33,19 @@ class DynamicAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'dynamicalbum');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_entity) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_entity);
 
@@ -52,16 +53,14 @@ class DynamicAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 		       'themeSettingsId' => $this->_entity->getId()) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'dynamicalbum', $key, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
 	list ($ret, $this->_defaultThemeId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -105,7 +104,7 @@ class DynamicAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $themeParam) = GalleryCoreApi::getPluginParameter(
 		'theme', 'dynamicalbumTest', 'perPage', $this->_entity->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(null, $themeParam, 'Theme param');
     }
@@ -127,7 +126,7 @@ class DynamicAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we succeeded */
@@ -143,7 +142,7 @@ class DynamicAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Verify the information in the DB */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'dynamicalbum');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {
@@ -170,7 +169,7 @@ class DynamicAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $themeParam) = GalleryCoreApi::getPluginParameter(
 		'theme', 'dynamicalbumTest', 'perPage', $this->_entity->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('6', $themeParam, 'Theme param');
     }

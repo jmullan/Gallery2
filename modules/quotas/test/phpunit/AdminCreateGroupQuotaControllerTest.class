@@ -35,7 +35,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	/* Create a group to add a quota to */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
@@ -55,7 +55,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	/* Create a group to add a quota to */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
 	GalleryUtilities::putRequestVariable('form[groupName]', $group->getGroupName());
@@ -77,7 +77,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	/* Create a group for our tests */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* No Values */
@@ -125,7 +125,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	/* Create a group to add a quota to */
 	list ($ret, $group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
 	GalleryUtilities::putRequestVariable('form[groupName]', $group->getGroupName());
@@ -156,7 +156,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -165,14 +165,14 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	    'QuotasMap',
 	    array('userOrGroupId' => $groupId, 'quotaSize' => $quota));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function _deleteGroupQuota($groupId) {
 	$ret = GalleryCoreApi::removeMapEntry('QuotasMap', array('userOrGroupId' => $groupId));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

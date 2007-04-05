@@ -36,7 +36,10 @@ class RewriteModuleTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Enable event listener (normally disabled for unit tests) */
 	$listener = new RewriteModule();
@@ -49,8 +52,7 @@ class RewriteModuleTest extends GalleryTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
 	if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	}
 
 	/* Set up our environment */
@@ -59,8 +61,7 @@ class RewriteModuleTest extends GalleryTestCase {
 		as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -68,8 +69,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $parser) = RewriteHelper::getRewriteParser(true);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('rewritemodulemock', $parser->getParserId(), 'parserId');
 
@@ -77,23 +77,20 @@ class RewriteModuleTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'rewritemodulemock');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Install it */
 	$ret = $this->_module->installOrUpgrade();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Use empty table by default */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'activeRules',
 	    serialize(array()));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Dummy active rules */
@@ -106,7 +103,10 @@ class RewriteModuleTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testHandleEvent1() {
@@ -114,20 +114,20 @@ class RewriteModuleTest extends GalleryTestCase {
 	    'history.rewritemodulemock',
 	    serialize(array('phpunit/dummy/%itemId%.html')));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Activate the module */
 	list ($ret, $redirect) = $this->_module->activate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($redirect), 'activate redirect');
 
 	list ($ret, $history) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'history.rewritemodulemock');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($history), 'empty history (activate)');
 
@@ -135,14 +135,14 @@ class RewriteModuleTest extends GalleryTestCase {
 	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($this->_activeRules, unserialize($activeRules), 'rules (activate)');
 
 	/* Deactivate the module */
 	list ($ret, $redirect) = $this->_module->deactivate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($redirect), 'deactivate redirect');
 
@@ -150,14 +150,14 @@ class RewriteModuleTest extends GalleryTestCase {
 	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($activeRules), 'rules (deactivate)');
 
 	list ($ret, $history) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'history.rewritemodulemock');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array('phpunit/dummy/%itemId%.html'),
 			    unserialize($history),
@@ -166,13 +166,13 @@ class RewriteModuleTest extends GalleryTestCase {
 	/* Uninstall the module */
 	$ret = $this->_module->uninstall();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $history) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'history.rewritemodulemock');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($history), 'empty history (uninstall)');
 
@@ -180,7 +180,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($activeRules), 'active rules (uninstall)');
     }
@@ -189,7 +189,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	/* Activate the module */
 	list ($ret, $redirect) = $this->_module->activate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($redirect), '2nd activate redirect');
 
@@ -197,14 +197,14 @@ class RewriteModuleTest extends GalleryTestCase {
 	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), unserialize($activeRules), 'rules (reactivate)');
 
 	/* Deactivate the module */
 	list ($ret, $redirect) = $this->_module->deactivate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($redirect), '2nd deactivate redirect');
 
@@ -212,14 +212,14 @@ class RewriteModuleTest extends GalleryTestCase {
 	list ($ret, $history) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'history.rewritemodulemock');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($history), 'empty history (uninstall)');
 
 	/* Uninstall the module */
 	$ret = $this->_module->uninstall();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -228,20 +228,20 @@ class RewriteModuleTest extends GalleryTestCase {
 	    'history.rewritemodulemock',
 	    serialize(array('phpunit/dummy/%itemId%.html')));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedRules['rewrite'][0] = 'phpunit/dummy/%itemId%.html';
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'activeRules',
 	    serialize($expectedRules));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Activate the module */
 	list ($ret, $redirect) = $this->_module->activate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($redirect), 'activate redirect');
 
@@ -249,7 +249,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	list ($ret, $history) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'history.rewritemodulemock');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($history), 'empty history (activate)');
 
@@ -257,14 +257,14 @@ class RewriteModuleTest extends GalleryTestCase {
 	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($expectedRules, unserialize($activeRules), 'active rules (activate)');
 
 	/* Deactivate the module */
 	list ($ret, $redirect) = $this->_module->deactivate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($redirect), 'deactivate redirect');
 
@@ -272,7 +272,7 @@ class RewriteModuleTest extends GalleryTestCase {
 	list ($ret, $history) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'history.rewritemodulemock');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($history), 'empty history (dectivate)');
 
@@ -280,14 +280,14 @@ class RewriteModuleTest extends GalleryTestCase {
 	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($expectedRules, unserialize($activeRules), 'rules (dectivate)');
 
 	/* Uninstall the module */
 	$ret = $this->_module->uninstall();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

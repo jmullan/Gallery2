@@ -47,7 +47,7 @@ class GalleryTestCase extends TestCase {
 
 	return $_counter;
     }
- 
+
     function _registerTestEventListener($eventName, &$listener) {
 	/*
 	 * Right now, this is just a wrapper for the normal core API method.
@@ -56,11 +56,17 @@ class GalleryTestCase extends TestCase {
 	GalleryCoreApi::registerEventListener($eventName, $listener);
     }
 
+    /**
+     * This is deprecated in Gallery 2.3 -- now tests should just return $ret and let the
+     * framework generate the right failure message.
+     * @deprecated
+     */
     function failWithStatus($ret) {
 	global $gallery;
 
 	/* Fail with as much debug info as we can muster. */
 	$this->assert(false, $ret->getAsHtml() . $gallery->getDebugBuffer());
+	return $ret;
     }
 
     function setUp() {
@@ -71,7 +77,10 @@ class GalleryTestCase extends TestCase {
 
 	GalleryDataCache::setFileCachingEnabled(false);
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	    return $ret;
+	}
 
 	switch (strtolower(get_class($gallery->getPlatform()))) {
 	case 'unixplatform':
@@ -115,7 +124,6 @@ class GalleryTestCase extends TestCase {
 
 	$ret = $this->_markEventListenersForCleanup();
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -135,18 +143,17 @@ class GalleryTestCase extends TestCase {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->beginTransaction();
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
 	list ($ret, $this->_rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
 	$gallery->clearDebugBuffer();
+	return null;
     }
 
     function tearDown() {
@@ -197,7 +204,6 @@ class GalleryTestCase extends TestCase {
 	    list($ret, $newPluginParams) =
 		GalleryCoreApi::fetchAllPluginParameters($pluginType, $pluginId);
 	    if ($ret) {
-		print $ret->getAsHtml();
 		return $ret;
 	    }
 
@@ -233,24 +239,21 @@ class GalleryTestCase extends TestCase {
 	foreach ($this->_cleanup['entity'] as $entity) {
 	    $ret = GalleryCoreApi::deleteEntityById($entity->getId());
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
 	foreach ($this->_cleanup['toolkitId'] as $toolkitId) {
 	    $ret = GalleryCoreApi::unregisterToolkit($toolkitId);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
 	foreach ($this->_cleanup['factoryModuleId'] as $moduleId) {
 	    $ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($moduleId);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -268,7 +271,10 @@ class GalleryTestCase extends TestCase {
 	    $session->remove('core.language');
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
 
 	GalleryDataCache::setFileCachingEnabled(true);
 	GalleryDataCache::setMemoryCachingEnabled(true);
@@ -291,6 +297,8 @@ class GalleryTestCase extends TestCase {
 
 	/* Clean out any saved state in the platform */
 	$gallery->_platform->resetPlatform();
+
+	return null;
     }
 
     /** @return int id */
@@ -324,7 +332,6 @@ class GalleryTestCase extends TestCase {
 	list($ret, $pluginParams) =
 	    GalleryCoreApi::fetchAllPluginParameters($pluginType, $pluginId);
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -778,12 +785,12 @@ class GalleryTestCase extends TestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->setActiveUser($anonymousUser);

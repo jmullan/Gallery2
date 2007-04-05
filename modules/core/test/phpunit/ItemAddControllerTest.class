@@ -32,13 +32,15 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 							       array('orderBy' => 'orderWeight'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
@@ -47,32 +49,28 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    'ItemAddPlugin', 'ItemAddControllerTestPluginSuccess',
 	    'ItemAddControllerTestPluginSuccess', $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddPlugin', 'ItemAddControllerTestPluginContinue',
 	    'ItemAddControllerTestPluginContinue', $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddPlugin', 'ItemAddControllerTestPluginFail', 'ItemAddControllerTestPluginFail',
 	    $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'ItemAddControllerTestToolkit', 'ItemAddControllerTestToolkit',
 	    $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markToolkitForCleanup('ItemAddControllerTestToolkit');
 	$this->_markFactoryModuleForCleanup('coreTest');
@@ -81,8 +79,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    'ItemAddControllerTestToolkit', array('test/archive'), 'extract',
 	    array(), 'test-description');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_controller->setOptionInstances(array());
@@ -105,7 +102,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     function testHandleRequestDoneAdding() {
 	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
@@ -126,7 +123,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     function testHandleRequestWithOption() {
 	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_controller->setOptionInstances(
@@ -155,11 +152,11 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    $this->_album->getId(), 'test/archive',
 	    array('pathComponent' => 'foo.zip', 'title' => 'foo', 'summary' => 'hoho'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_controller->setOptionInstances(
@@ -194,13 +191,13 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!in_array($archive->getId(), $childIds), 'archive item has been deleted');
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($addedFiles[1]['id']);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('blah', $item->getTitle(), 'title set with base filename');
 	$this->assertEquals('hoho', $item->getSummary(), 'summary set from archive');

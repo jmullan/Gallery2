@@ -34,7 +34,10 @@ class DatabaseStorageTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	$this->_data = array("## database_with_everything\n",
 			     "# A_SomeTable_1.0\n",
 			     "Some 0->1 alter SQL\n",

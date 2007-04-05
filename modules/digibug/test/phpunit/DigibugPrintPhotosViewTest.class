@@ -36,7 +36,10 @@ class DigibugPrintPhotosViewTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_view = new DigibugPrintPhotosView();
 
@@ -44,8 +47,7 @@ class DigibugPrintPhotosViewTest extends GalleryTestCase {
 	    $this->_getRootId(), 'application/unknown', array(), __FILE__,
 	    'GalleryPhotoItem');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_item);
     }
@@ -60,25 +62,25 @@ class DigibugPrintPhotosViewTest extends GalleryTestCase {
 	/* We only have permission to print and view the thumbnail */
 	$ret = GalleryCoreApi::removeItemPermissions($itemId);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $itemId, $gallery->getActiveUserId(), 'digibug.print');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $itemId, $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	ob_start();
 	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$results = ob_get_contents();
 	ob_end_clean();
@@ -93,7 +95,7 @@ class DigibugPrintPhotosViewTest extends GalleryTestCase {
 	$digibugSession = new GallerySession();
 	$ret = $digibugSession->init();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array($itemId), $digibugSession->get('core.isPrintService'),

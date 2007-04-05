@@ -33,7 +33,10 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
     var $_galleryStorage;
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	global $gallery;
 	$this->_galleryStorage =& $gallery->_storage;
@@ -45,7 +48,10 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->_storage =& $this->_galleryStorage;
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testCompareVersions() {
@@ -81,7 +87,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	    list ($ret, $relation) = $utilities->compareVersions($case['version1'],
 		$case['version2'], $case['build1'], $case['build2']);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assert($relation == $case['relation'], sprintf(
 		"Relation('%s':'%s', '%s':'%s') should be '%s', not '%s'.", $case['version1'],
@@ -113,7 +119,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	foreach ($testCases as $case => $result) {
 	    list ($ret, $revision) = $utilities->extractRevision($case);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals($result, $revision, "Testcase: $case");
 	}
@@ -138,7 +144,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 
 	    list ($ret, $bytes) = $utilities->getFirstBytesFromFile($fileName, $bytes);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals($bytes, $result, "Unexpected file data returned for $bytes bytes.");
 	}
@@ -155,7 +161,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	foreach ($testCases as $case => $result) {
 	    list ($ret, $description) = $utilities->getLanguageDescription($case);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals($result, $description, "Testcase: $case");
 	}
@@ -178,7 +184,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$utilities = new GalleryRepositoryUtilities();
 	list ($ret, $revision) = $utilities->getLanguageBaseRevision('testPlugin', 'testModule');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('13933', $revision, 'Incorrect revision returned.');
     }
@@ -208,7 +214,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	    list ($ret, $isAvailable) =
 		$utilities->isPluginAvailable($case['pluginType'], $case['pluginId']);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals($case['isAvailable'], $isAvailable);
 	}
@@ -319,7 +325,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$utilities = new GalleryRepositoryUtilities();
 	list ($ret, $packages) = $utilities->getPluginPackages('module', 'testModule');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(
 	    array('pkg1' => array('locked' => 0, 'version' => '1.23', 'build' => '19700411131300'),
@@ -348,7 +354,7 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$utilities = new GalleryRepositoryUtilities();
 	list ($ret, $version) = $utilities->getPluginVersion('module', 'testModule');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('someVersion', $version);
     }

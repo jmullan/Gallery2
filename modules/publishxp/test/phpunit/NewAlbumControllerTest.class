@@ -51,7 +51,7 @@ class NewAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_getRootId(), $album->getParentId());
@@ -64,7 +64,7 @@ class NewAlbumControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::deleteEntityById($albumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 

@@ -37,20 +37,23 @@ class ExifExtractorTest extends GalleryTestCase {
      * Create an album for testing
      */
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 
 	/* Create a new subalbum and add some jpegs */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$photoIds = array();
 	$corePrefix = GalleryCoreApi::getPluginBaseDir('module', 'core');
@@ -65,23 +68,23 @@ class ExifExtractorTest extends GalleryTestCase {
 	    list ($ret, $photoId) = $this->_addPhoto(
 		  $this->_album->getId(), $imagePaths[$i], $i + 1);
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $photoIds[] = $photoId;
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'exif');
 	if ($ret || !isset($module)) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	list ($ret, $exif) =
 	    GalleryCoreApi::newFactoryInstance('ExifInterface_1_0', 'ExifExtractor');
 	if ($ret || !isset($exif)) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->_photoIds = $photoIds;

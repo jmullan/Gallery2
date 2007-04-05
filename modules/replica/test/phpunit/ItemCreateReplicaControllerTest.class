@@ -32,13 +32,15 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Create a container album for all our test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -50,12 +52,12 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
     function testReplicaSuccessful() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	global $gallery;
@@ -80,12 +82,12 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
     function testAlbumReplicaUnsuccessful() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $grandChildAlbum) = $this->_createRandomAlbum($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	global $gallery;
@@ -105,12 +107,12 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::removeItemPermissions($item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
@@ -128,12 +130,12 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
     function testReplicaIntoBogusDestination() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	global $gallery;
@@ -156,18 +158,18 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
     function testReplicaIntoAlbumWithNoAddPermissions() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Remove add permission in the destination */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	global $gallery;
@@ -188,7 +190,7 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 5; $i++) {
 	    list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -222,7 +224,7 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 5; $i++) {
 	    list ($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -254,12 +256,12 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
     function testCreateReplicaCancelButton() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $childItem) = $this->_createRandomDataItem($childAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	global $gallery;
@@ -281,7 +283,7 @@ class ItemCreateReplicaControllerTest extends GalleryControllerTestCase {
     function testReplicaNoSelection() {
 	list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());

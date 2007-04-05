@@ -37,27 +37,27 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'permalinks');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test',
 		array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item->setMimeType('image/gif');
 
 	list ($ret, $item1) = $this->_createRandomDataItem($this->_getRootId(), 'image/test',
 		array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item1->setMimeType('image/gif');
 
@@ -73,12 +73,15 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 		$ret =
 		    PermalinksMapHelper::deleteAlias($name);
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 	    }
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testPermalinksOptionCreate() {

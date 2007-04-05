@@ -35,11 +35,14 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_user) = $this->_createUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_user);
@@ -49,21 +52,18 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $watermark->save();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $watermark->getId(), $this->_user->getId(), 'core.all');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_watermark = $watermark;
@@ -89,7 +89,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('foo bar', $this->_watermark->getName());
@@ -118,7 +118,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('foo bar', $this->_watermark->getName());
@@ -145,7 +145,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(1, $this->_watermark->getSerialNumber());
@@ -165,7 +165,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(1, $this->_watermark->getSerialNumber());
@@ -189,7 +189,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('100', $this->_watermark->getXPercentage());
@@ -210,7 +210,7 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($item);
 	list ($ret, $derivative) = $this->_createDerivative($item, $item->getId(),
@@ -218,21 +218,21 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 		array('postFilterOperations' => 'composite|plugins_data/modules/watermark/'
 		    . $this->_watermark->getFileName() . ',params'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $derivativeFile) = $derivative->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (!GalleryUtilities::guaranteeDirExists(dirname($derivativeFile))) {
-	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE));
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 	}
 	if (!$platform->copy(__FILE__, $derivativeFile)) {
-	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE));
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
 	}
 	$ret = GalleryCoreApi::addMimeType($ext = 'ut' . rand(100, 999), 'test/file', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('watermarkId', $this->_watermark->getId());
@@ -260,13 +260,13 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::removeMimeType(array('extension' => $ext));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Verify the watermark */
 	list ($ret, $this->_watermark) = $this->_watermark->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expected = ($postMimeType == 'test/file')

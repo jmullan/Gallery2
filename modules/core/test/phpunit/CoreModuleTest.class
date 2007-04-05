@@ -34,17 +34,19 @@ class CoreModuleTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_parentAlbum);
@@ -53,15 +55,14 @@ class CoreModuleTest extends GalleryTestCase {
 						       $gallery->getActiveUserId(),
 						       'core.all');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function testGetItemAdminViews() {
 	list ($ret, $content) = $this->_module->getItemAdminViews($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -92,12 +93,12 @@ class CoreModuleTest extends GalleryTestCase {
 
 	list ($ret) = $this->_createRandomDataItem($this->_parentAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $content) = $this->_module->getItemAdminViews($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -139,7 +140,7 @@ class CoreModuleTest extends GalleryTestCase {
 
 	list ($ret, $content) = $this->_module->getSystemLinks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -167,7 +168,7 @@ class CoreModuleTest extends GalleryTestCase {
                                      'language' => 'te',
                                      'locked' => 0));
         if ($ret) {
-            return $this->failWithStatus($ret);
+            return $ret;
         }
 
         $this->_markForCleanup($this->_user1);
@@ -176,7 +177,7 @@ class CoreModuleTest extends GalleryTestCase {
 
 	list ($ret, $content) = $this->_module->getSystemLinks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -199,7 +200,7 @@ class CoreModuleTest extends GalleryTestCase {
                                      'language' => 'te',
                                      'locked' => 1));
         if ($ret) {
-            return $this->failWithStatus($ret);
+            return $ret;
         }
 
         $this->_markForCleanup($this->_user2);
@@ -208,7 +209,7 @@ class CoreModuleTest extends GalleryTestCase {
 
 	list ($ret, $content) = $this->_module->getSystemLinks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -231,18 +232,18 @@ class CoreModuleTest extends GalleryTestCase {
 
 	$ret = $this->_module->setParameter($key, $value);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newValue) = $this->_module->getParameter($key);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Clean up */
 	$ret = GalleryCoreApi::removePluginParameter('module', 'core', $key);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($value, (int)$newValue);

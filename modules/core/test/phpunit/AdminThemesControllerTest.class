@@ -34,14 +34,16 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_testTheme =& AdminThemesControllerTestTheme::getSingleton();
 	$this->_testTheme->resetCalls();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
     }
@@ -122,7 +124,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('albumsFirst|viewCount', $params['default.orderBy'], 'orderBy');
@@ -144,7 +146,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.theme', 'matrix');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we get an error */
@@ -155,7 +157,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	list ($ret, $themeId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('matrix', $themeId);
@@ -175,7 +177,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
 						  'default.orderBy', $originalOrderBy);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we get an error */
@@ -186,7 +188,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	list ($ret, $orderBy) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($originalOrderBy, $orderBy);
@@ -206,7 +208,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
 						  'default.orderBy', $originalOrderBy);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we get an error */
@@ -217,7 +219,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	list ($ret, $orderBy) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($originalOrderBy, $orderBy);
@@ -237,7 +239,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.orderDirection',
 						  $originalOrderDirection);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we get an error */
@@ -248,7 +250,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	list ($ret, $orderBy) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($originalOrderDirection, $orderBy);
@@ -268,7 +270,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.newAlbumsUseDefaults',
 						  $originalNewAlbumDefaults);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we get an error */
@@ -279,7 +281,7 @@ class AdminThemesControllerTest extends GalleryControllerTestCase {
 	list ($ret, $newAlbumDefaults) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.newAlbumsUseDefaults');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($originalNewAlbumDefaults, $newAlbumDefaults);

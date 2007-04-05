@@ -34,21 +34,22 @@ class CartHelperTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Save the existing cart */
 	list ($ret, $this->_saveCartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$cartItemCounts = array(1 => 3,
 				2 => 3);
 	$ret = CartHelper::setCartItemCounts($cartItemCounts);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -56,11 +57,13 @@ class CartHelperTest extends GalleryTestCase {
 	/* Restore the existing cart */
 	$ret = CartHelper::setCartItemCounts($this->_saveCartItemCounts);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testAddItemsToCart() {
@@ -68,38 +71,38 @@ class CartHelperTest extends GalleryTestCase {
 	global $gallery;
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($album);
 
 	$ret = GalleryCoreApi::removeItemPermissions($album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $album->getId(), $gallery->getActiveUserId(), 'core.all');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $item) = $this->_createRandomDataItem($album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $item2) = $this->_createRandomDataItem($album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Add items to cart */
 	$ret = CartHelper::addItemsToCart(array($item->getId(), $item2->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify */
 	list ($ret, $newCartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(1 => 3,
@@ -112,13 +115,13 @@ class CartHelperTest extends GalleryTestCase {
     function testEmptyCart() {
 	$ret = CartHelper::setCartItemCounts(array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify */
 	list ($ret, $newCartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $newCartItemCounts);
@@ -127,13 +130,13 @@ class CartHelperTest extends GalleryTestCase {
     function testSetCartItemCounts() {
 	$ret = CartHelper::setCartItemCounts(array(2 => 3, 4 => 5));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify */
 	list ($ret, $newCartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(2 => 3, 4 => 5), $newCartItemCounts);
@@ -143,19 +146,19 @@ class CartHelperTest extends GalleryTestCase {
 	/* Empty it out */
 	$ret = CartHelper::setCartItemCounts(array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Fill it again */
 	$ret = CartHelper::setCartItemCounts(array(2 => 3, 4 => 5));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify */
 	list ($ret, $newCartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(2 => 3, 4 => 5), $newCartItemCounts);
@@ -164,35 +167,35 @@ class CartHelperTest extends GalleryTestCase {
     function testLoadCartItems() {
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($item);
 	list ($ret, $item2) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($item2);
 	$ret = GalleryCoreApi::removeItemPermissions($item2->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = CartHelper::setCartItemCounts(
 	    array($item2->getId() => 1, '1000000' => 3, $item->getId() => 2));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Load cart items and verify invalid id and no-permission item were removed from cart */
 	list ($ret, $cartItems) = CartHelper::loadCartItems();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array($item), $cartItems, 'cart items');
 
 	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array($item->getId() => 2), $cartItemCounts, 'deleted invalid');
     }
@@ -202,19 +205,19 @@ class CartHelperTest extends GalleryTestCase {
 	/* Set an empty cart */
 	$ret = CartHelper::setCartItemCounts(array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* Just make sure it's really empty */
 	list ($ret, $cartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), $cartItemCounts, 'preparation of test failed');
 
 	/* Load the items */
 	list ($ret, $cartItems) = CartHelper::loadCartItems();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), $cartItems, 'cart items');
     }

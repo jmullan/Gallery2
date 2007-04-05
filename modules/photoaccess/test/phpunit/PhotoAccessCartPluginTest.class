@@ -34,7 +34,10 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Control the user agent; we pass this to PhotoAccess */
 	$_SERVER['HTTP_USER_AGENT'] = 'Test User Agent';
@@ -43,21 +46,18 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	/* Create some random photo items that we can print */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.all');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	for ($i = 0; $i < 3; $i++) {
@@ -70,8 +70,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 		$this->_createRandomDataItem($this->_album->getId(),
 					     'test/jpeg', array(), __FILE__, 'GalleryPhotoItem');
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    /* Create a thumbnail, watermark one of them */
@@ -80,8 +79,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 		    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|150', 'test/file',
 		    $i ? array() : array('postFilterOperations' => 'watermark|yes'));
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    /*
@@ -97,8 +95,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 		$this->_items[2], $this->_items[2]->getId(),
 		DERIVATIVE_TYPE_IMAGE_PREFERRED, 'scale|400', 'test/file');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_sourceIds[2] = $derivative->getId();
@@ -107,29 +104,25 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::removeUserPermission(
 	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'photoaccess.print');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Public view permission on one */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_items[2]->getId(), $anonymousUserId, 'core.viewAll');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$storage =& $gallery->getStorage();
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Empty out the plugin session id */
@@ -140,8 +133,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	/* Make sure translate calls during test won't generate any platform calls */
 	list ($ret) = GalleryCoreApi::getPermissionIds();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Swap in a dummy url generator */
@@ -158,7 +150,10 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	} else {
 	    $session->remove('photoaccess.cartUrlFragment');
 	}
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testFulfillCart() {
@@ -202,7 +197,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	$cartPlugin = new PhotoAccessCartPlugin();
 	list ($ret, $urlParams) = $cartPlugin->fulfillCart($cartItemIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('href' => 'http://www.photoworks.com/REDIRECT_URL'), $urlParams);

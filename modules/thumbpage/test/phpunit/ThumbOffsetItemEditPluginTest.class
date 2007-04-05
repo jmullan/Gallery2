@@ -32,7 +32,10 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Register a dummy toolkit and property */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
@@ -40,23 +43,20 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 	    'modules/thumbpage/test/phpunit/ThumbOffsetItemEditPluginTest.class',
 	    'thumbpageTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markToolkitForCleanup('ThumbOffsetTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitProperty('ThumbOffsetTestToolkit',
 	    array('test/movie'), 'dimensions-and-duration', 'int,int,float', 'desc');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_getRootId(), 'test/movie', array(), __FILE__, 'GalleryMovieItem');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_item);
@@ -64,8 +64,7 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_thumbnail) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -88,7 +87,7 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $item) = $this->_thumbnail->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('select-offset|4.8;test-operation|100',
 			    $item->getDerivativeOperations(),
@@ -103,7 +102,7 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $item) = $this->_thumbnail->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('test-operation|100', $item->getDerivativeOperations(),
 			    'no offset');

@@ -44,7 +44,10 @@ class RepositoryPackageTest extends GalleryTestCase {
      * Prepare a RepositoryPackage for testing.
      */
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_package = new RepositoryPackage();
 	$this->_package->setTemplate(new RepositoryTestTemplate());
@@ -97,7 +100,7 @@ class RepositoryPackageTest extends GalleryTestCase {
 	$this->_package->_descriptor = $testDescriptor;
 	$ret = $this->_package->writeSinglePackageToDisk('package1');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Get data from template. */
@@ -138,7 +141,7 @@ class RepositoryPackageTest extends GalleryTestCase {
 	/* Send data to template. */
 	list ($ret, $packagesWritten) = $this->_package->writeAllPackagesToDisk();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(array('packagesWritten' => array('package1', 'package2'),

@@ -35,12 +35,14 @@ class GalleryPendingUserTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'register');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -50,7 +52,7 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	/* Create a new pending user */
 	list ($ret, $user) = $this->_createRandomPendingUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryDataCache::reset();
@@ -58,13 +60,13 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	/* Verify it */
 	$ret = $this->_verifyEntity($user);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Delete it */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -73,12 +75,12 @@ class GalleryPendingUserTest extends GalleryTestCase {
 	list ($ret, $pendingUser) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $user) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (empty($pendingUser) || empty($user)) {
 	    return $this->assert(false, 'factory error');

@@ -89,7 +89,7 @@ class RepositoryObjectTest extends GalleryTestCase {
 	/* Test that an existing file is not overwritten by default. */
 	$ret = $object->writeToDisk();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assert(!$object->wasFileWritten(), 'Existing file overwritten.');
 
@@ -97,7 +97,7 @@ class RepositoryObjectTest extends GalleryTestCase {
 	$object->setTemplate(new RepositoryTestTemplate('', $templateVariableContents));
 	$ret = $object->writeToDisk(true);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assert($object->wasFileWritten(), 'Existing file not overwritten.');
 
@@ -106,7 +106,7 @@ class RepositoryObjectTest extends GalleryTestCase {
 	$object->setTemplateFile('test.tpl');
 	$ret = $object->writeToDisk(true);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assert($object->wasFileWritten(), 'Existing file not overwritten.');
 

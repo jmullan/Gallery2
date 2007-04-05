@@ -33,7 +33,10 @@ class EventTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_platform = new EventTestPlatform();
 	$gallery->setPlatform($this->_platform);
@@ -42,7 +45,7 @@ class EventTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'EventTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -50,24 +53,24 @@ class EventTest extends GalleryTestCase {
 	/* If a test fails it might not deactivate / uninstall the mock module */
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'EventTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $isActive) = $module->isActive();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	if ($isActive) {
 	    list ($ret, $redirect) = $module->deactivate();
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
 	$ret = $module->uninstall();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::removePlugin('module', 'EventTest');
@@ -75,7 +78,10 @@ class EventTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testPostEvent() {
@@ -89,7 +95,7 @@ class EventTest extends GalleryTestCase {
 	$event->setData('some data');
 	list ($ret, $result) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($event, $listener->getEvent());
@@ -107,7 +113,7 @@ class EventTest extends GalleryTestCase {
 	$event->setData('send result');
 	list ($ret, $result) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($event, $listener->getEvent());
@@ -123,7 +129,7 @@ class EventTest extends GalleryTestCase {
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($item);
 
@@ -132,7 +138,7 @@ class EventTest extends GalleryTestCase {
 
 	list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(array('userId' => $gallery->getActiveUserId(),
 					'permission' => 'core.delete')),
@@ -149,17 +155,17 @@ class EventTest extends GalleryTestCase {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'EventTest');
 	if ($ret) {
-	    return $this->failWithStatus();
+	    return ;
 	}
 
 	$ret = $module->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $redirect) = $module->activate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($listener->_factory !== null, 'null factory');

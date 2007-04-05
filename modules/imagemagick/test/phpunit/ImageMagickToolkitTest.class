@@ -58,11 +58,13 @@ class ImageMagickToolkitTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'imagemagick');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -70,8 +72,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	foreach (array('jpegQuality' => 75) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', $key, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -95,8 +96,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick',
 						  'path', $environment['path']);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_currentEnvironment = $environment;
@@ -104,8 +104,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	$ret = ImageMagickToolkitHelper::savePlatformParameters();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	return true;
@@ -190,7 +189,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					 array(100),
 					 array('width' => 100, 'height' => 100));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = $this->_testOperation('image/jpeg', 'thumbnail',
@@ -198,21 +197,21 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					 array(100),
 					 array('width' => 100, 'height' => 100));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = $this->_testOperation('image/tiff', 'rotate',
 					 'test.tiff', 'output.tiff',
 					 array(90), array('angle' => 90));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = $this->_testOperation('image/bmp', 'rotate',
 					 'test.bmp', 'output.bmp',
 					 array(180), array('angle' => 180));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = $this->_testOperation('image/png', 'crop',
@@ -221,21 +220,21 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					 array('width' => '329', 'height' => '250',
 					       'x' => '158', 'y' => '113'));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = $this->_testOperation('image/gif', 'convert-to-image/png',
 					 'test.gif', 'output.png',
 					 array(), array());
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = $this->_testOperation('application/pdf', 'select-page',
 					 'test.pdf', 'output.pdf',
 					 array('2'), array());
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    /* Test a basic composite operation (top right corner) */
@@ -254,7 +253,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					       'x' => '45',
 					       'y' => '0'));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    /* Test another composite with out of range params that should get corrected */
@@ -272,7 +271,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					       'x' => '0',
 					       'y' => '0'));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    /* Test compress */
@@ -283,7 +282,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					 array(150),
 					 array(), 58);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    if (in_array('image/jpeg-cmyk', $environment['mimeTypes'])) {
@@ -291,7 +290,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					     'cmyk.jpg', 'rgb.jpg',
 					     array(), array());
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 	    }
 
@@ -315,7 +314,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					 array('15%'),
 					 array('width' => 150, 'height' => 150));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = $this->_testOperation('image/jpeg', 'scale',
@@ -323,7 +322,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					 array('50%', 400),
 					 array('width' => 500, 'height' => 400));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = $this->_testOperation('image/png', 'resize',
@@ -331,7 +330,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					 array('60%', '80%'),
 					 array('width' => 600, 'height' => 800));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -339,7 +338,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
     function testPngQuality() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality', 94);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	foreach ($this->_environments as $environment) {
@@ -355,7 +354,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					 'qualityTestIn.png', 'qualityTestOut.png',
 					 array(90), array('angle' => 90), 95);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -378,7 +377,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  'test[640x480].png', 'outputTmp.png',
 						  array('150'), $context);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assertEquals(array(), $this->_files, 'no exec yet ' . $this->_envName());
@@ -399,7 +398,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  array('24.667', '23.5', '51.375', '52'),
 						  $context);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assertEquals(
@@ -436,7 +435,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  array('24.667', '23.5', '51.375', '52'),
 						  $context);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assertEquals(
@@ -458,7 +457,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  'output1.png', 'output.png',
 						  array('150'), $context);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assertEquals(
@@ -494,7 +493,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  array('320', '240'),
 						  $context);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assertEquals(array(), $this->_files, 'no exec yet ' . $this->_envName());
@@ -514,7 +513,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  'output.png', 'output.png',
 						  array('90'), $context);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $context['next.toolkit'] = null;
@@ -532,7 +531,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  'output.png', 'output.png',
 						  array('150'), $context);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assertEquals(array_merge(
@@ -563,7 +562,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		$this->_toolkit->performOperation('application/pdf', 'convert-to-image/jpeg',
 						  'test.pdf', 'TEMPFILE', array(), $context);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $context['next.toolkit'] = null;
@@ -581,7 +580,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  'TEMPFILE', 'output.jpg',
 						  array('150'), $context);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assertEquals(array_merge(
@@ -605,14 +604,14 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    list ($ret, $results) =
 		$this->_toolkit->getProperty('image/gif', 'dimensions', 'test[10x20].gif');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals(array(10, 20), $results, 'dimensions ' . $this->_envName());
 
 	    list ($ret, $results) =
 		$this->_toolkit->getProperty('application/pdf', 'page-count', 'test.pdf');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals(array(2), $results, 'page-count ' . $this->_envName());
 
@@ -620,7 +619,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		list ($ret, $results) =
 		    $this->_toolkit->getProperty('image/jpeg', 'colorspace', 'cmyk.jpg');
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 		$this->assertEquals(array('CMYK'), $results, 'colorspace ' . $this->_envName());
 	    }
@@ -711,7 +710,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    list ($ret, $results) =
 		ImageMagickToolkitHelper::discoverMimeTypes($this->_currentEnvironment['path']);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($environment['mimeTypes'], $results);
 	}
@@ -723,7 +722,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	    list ($ret, $results) = ImageMagickToolkitHelper::getOperationsAndProperties();
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $canConvert = array();
@@ -889,7 +888,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    list ($ret, $results) =
 		ImageMagickToolkitHelper::testBinaries($this->_currentEnvironment['path']);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $wanted = array('identify', 'convert', 'combine', 'composite');

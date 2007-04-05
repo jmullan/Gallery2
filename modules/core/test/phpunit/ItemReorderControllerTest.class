@@ -34,13 +34,15 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_parentAlbum) =
 	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_parentAlbum);
@@ -49,21 +51,19 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 						       $gallery->getActiveUserId(),
 						       'core.all');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	for ($i = 0; $i < 5; $i++) {
 	    list ($ret, $this->_child[$i]) =
 		$this->_createRandomDataItem($this->_parentAlbum->getId());
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $i * 1000);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -96,7 +96,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array($this->_child[0]->getId(),
@@ -124,7 +124,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array($this->_child[3]->getId(),
@@ -152,7 +152,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array($this->_child[0]->getId(),
@@ -180,7 +180,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array($this->_child[1]->getId(),
@@ -194,7 +194,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
     function testReorderItemsWithoutPermissions() {
 	$ret = GalleryCoreApi::removeItemPermissions($this->_parentAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
@@ -242,7 +242,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 5; $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $i);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -262,7 +262,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array($this->_child[0]->getId(),
@@ -278,7 +278,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 5; $i++) {
 	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $i);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -298,7 +298,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array($this->_child[0]->getId(),

@@ -35,23 +35,23 @@ class ArchiveExtractToolkitTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'archiveupload');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'archiveupload', 'removeMeta', 0);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $this->_unzipPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Get a toolkit to work with */
@@ -74,7 +74,7 @@ class ArchiveExtractToolkitTest extends GalleryTestCase {
 	    $this->_toolkit->performOperation('application/zip', 'extract',
 					      'testZip.zip', 'testDir', array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($results, 'application/zip');
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -84,7 +84,7 @@ class ArchiveExtractToolkitTest extends GalleryTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', 'archiveupload', 'removeMeta', 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$platform = new UnitTestPlatform();
@@ -131,7 +131,7 @@ class ArchiveExtractToolkitTest extends GalleryTestCase {
 	    $this->_toolkit->performOperation('application/zip', 'extract',
 					      'testZip.zip', 'testDir', array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($results, 'application/zip');
 	$this->assert($platform->isComplete(), $platform->getRemaining());

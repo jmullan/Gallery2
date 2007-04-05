@@ -37,20 +37,21 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	GalleryCoreApi::requireOnce('modules/exif/classes/ExifHelper.class');
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'exif');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_items = array();
@@ -61,8 +62,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 		      'description' => 'original description 0'),
 		dirname(__FILE__) . '/../data/descr.jpg');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $this->_items[1]) = $this->_createRandomDataItem(
 		$this->_album->getId(),
@@ -73,8 +73,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 		      'keywords' => 'original keyword 0; original keyword 1'),
 		dirname(__FILE__) . '/../data/exif-iptc-xmp-ps.jpg');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_noWarnings = array();
@@ -85,7 +84,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 						  EXIF_ITEM_DESCRIPTION);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
@@ -93,7 +92,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 	list ($ret, $item) = $this->_items[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('exif description', $item->getDescription(), 'description 0');
@@ -110,14 +109,14 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 						   'description' => "original description $j"),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 						  EXIF_ITEM_DESCRIPTION);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
@@ -126,7 +125,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $item) = $this->_items[$j]->refresh();
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals('exif description', $item->getDescription(), "description $j");
 	    $this->assertEquals("original summary $j", $item->getSummary(), "summary $j");
@@ -136,7 +135,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
     function testCreateWithCheckDisabled() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', '0');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
@@ -144,7 +143,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 	list ($ret, $item) = $this->_items[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('original title', $item->getTitle(), 'title');
@@ -164,13 +163,13 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 						   'description' => "original description $j"),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', '0');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
@@ -179,7 +178,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $item) = $this->_items[$j]->refresh();
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals("original description $j", $item->getDescription(),
 				"description $j");
@@ -191,7 +190,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 						  IPTC_ITEM_KEYWORDS | IPTC_ITEM_TITLE);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
@@ -199,7 +198,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 	list ($ret, $item) = $this->_items[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('ObjectName, Dokumenttitel', $item->getTitle(), 'title mismatch');
@@ -213,13 +212,13 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 					     array(),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 							EXIF_ITEM_ROTATE_PRESERVE);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
@@ -229,7 +228,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	list ($ret, $preferredIds) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_items[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(0, sizeof($preferredIds), 'there should not be any preferred');
     }
@@ -238,13 +237,13 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	list ($ret, $this->_items[0]) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'image/test');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 							EXIF_ITEM_ROTATE);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
@@ -259,7 +258,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 					     array(),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Register a dummy toolkit */
@@ -268,7 +267,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    'GalleryToolkit', 'ExifDescriptionOptionTestToolkit',
 	    'ExifDescriptionOptionTestToolkit', $path, 'exifTest', null, 0);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markToolkitForCleanup('ExifDescriptionOptionTestToolkit');
 
@@ -277,14 +276,14 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    'ExifDescriptionOptionTestToolkit', array('image/jpeg'), 'rotate',
 	    array(array('type' => 'int', 'description' => 'test')), 'test-description', null, 0);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Register property for dimensions */
 	$ret = GalleryCoreApi::registerToolkitProperty('ExifDescriptionOptionTestToolkit',
 			array('image/test'), 'dimensions', 'int,int', 'Get the dimensions');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Save current size */
@@ -302,7 +301,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 							EXIF_ITEM_ROTATE);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
@@ -312,14 +311,14 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	list ($ret, $preferredIds) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_items[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(0, sizeof($preferredIds), 'there should be no preferreds');
 
 	/* Verify that the item serial is NOT the same */
 	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($originalSerial != $this->_items[0]->getSerialNumber(),
@@ -343,7 +342,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 					     array(),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Save current serial */
@@ -353,7 +352,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption',
 						(EXIF_ITEM_ROTATE | EXIF_ITEM_ROTATE_PRESERVE));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
@@ -363,14 +362,14 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	list ($ret, $preferredIds) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_items[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(1, sizeof($preferredIds), 'there should be a preferred');
 
 	/* Verify that the item serial is the same */
 	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($originalSerial, $this->_items[0]->getSerialNumber());
 

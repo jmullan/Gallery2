@@ -36,7 +36,10 @@ class StorageTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$storage =& $gallery->getStorage();
 	$this->_db = $storage->_db;
@@ -53,7 +56,10 @@ class StorageTest extends GalleryTestCase {
 	$storage->_serverInfo = $this->_serverInfo;
 	$storage->_isEmptyAllowedForNotNullColumn = $this->_isEmptyAllowedForNotNullColumn;
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testTranslateQuery() {
@@ -82,12 +88,12 @@ class StorageTest extends GalleryTestCase {
 	 */
 	list ($ret, $id1) = $storage->getUniqueId();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $id2) = $storage->getUniqueId();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(is_int($id1), 'Id1 is not an int');
@@ -107,7 +113,7 @@ class StorageTest extends GalleryTestCase {
 	    'GalleryUserGroupMap',
 	    array('userId' => 0, 'groupId' => 1));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -129,7 +135,7 @@ class StorageTest extends GalleryTestCase {
 		  'entityType' => 'test',
 		  'entityId' => 1));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -154,7 +160,7 @@ class StorageTest extends GalleryTestCase {
 	    array('externalId' => str_repeat('y', 200)),
 	    array('externalId' => str_repeat('x', 200)));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -178,7 +184,7 @@ class StorageTest extends GalleryTestCase {
 	    array('externalId' => array(str_repeat('y', 200), str_repeat('z', 200))),
 	    array('externalId' => str_repeat('x', 200)));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -201,7 +207,7 @@ class StorageTest extends GalleryTestCase {
 	$ret = $storage->updateMapEntry('GalleryFactoryMap', array('classType' => null),
 					array('classType' => 'testType'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -222,7 +228,7 @@ class StorageTest extends GalleryTestCase {
 	 */
 	$ret = $storage->removeMapEntry('GalleryFactoryMap', array('classType' => null));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -244,7 +250,7 @@ class StorageTest extends GalleryTestCase {
 	    'GalleryUserGroupMap',
 	    array('userId' =>array(1, 2, 3), 'groupId' => array(4, 5, 6)));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $sql) = $storage->getFunctionSql(
@@ -272,7 +278,7 @@ class StorageTest extends GalleryTestCase {
 		  'entityType' => array('test1', 'test2'),
 		  'entityId' => array(1, 2)));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $sql) = $storage->getFunctionSql(
@@ -302,7 +308,7 @@ class StorageTest extends GalleryTestCase {
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -328,7 +334,7 @@ class StorageTest extends GalleryTestCase {
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -351,7 +357,7 @@ class StorageTest extends GalleryTestCase {
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -375,7 +381,7 @@ class StorageTest extends GalleryTestCase {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match,
 								  $optional);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -402,7 +408,7 @@ class StorageTest extends GalleryTestCase {
 	list ($ret, $searchResults) =
 	    GalleryCoreApi::getMapEntry($mapName, $select, $match, $optional);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -426,7 +432,7 @@ class StorageTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::updateMapEntry($mapName, $match, $set);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -444,7 +450,7 @@ class StorageTest extends GalleryTestCase {
 	$entity = new GalleryChildEntity();
 	$ret = $entity->create(1234);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* We expect two execute calls */
@@ -452,7 +458,7 @@ class StorageTest extends GalleryTestCase {
 
 	$ret = $storage->saveEntity($entity);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
@@ -479,7 +485,7 @@ class StorageTest extends GalleryTestCase {
 	$entity = new GalleryEntity();
 	$ret = $entity->create();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* onLoadHandlers is a medium string, which is 128 chars */
@@ -487,7 +493,7 @@ class StorageTest extends GalleryTestCase {
 
 	$ret = $storage->saveEntity($entity);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
@@ -692,13 +698,13 @@ class StorageTest extends GalleryTestCase {
 					   'parameterValue' => $testString));
 	/* If the \0 character wasn't properly escaped, PG would throw an error here */
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $value) =
 	    GalleryCoreApi::getPluginParameter('module', 'unitTestModule', $key, 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/*
@@ -712,12 +718,12 @@ class StorageTest extends GalleryTestCase {
 	/* Cleanup */
 	$ret = GalleryCoreApi::removeAllPluginParameters('module', 'unitTestModule');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* Commit our DB transaction to release locks from the PluginParameterMap table */
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -742,14 +748,14 @@ class StorageTest extends GalleryTestCase {
 	    array('key' => $key, 'value' => $escapedString, 'userId' => 55,
 		  'itemId' => 99, 'type' => 'test', 'timestamp' => time(), 'isEmpty' => 0));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* No (PHP) error? Good! Next, get the entry from the db and compare */
 
 	list ($ret, $results) = GalleryCoreApi::getMapEntry('GalleryCacheMap',
 		array('value'), array('key' => $key));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	if ($results->resultCount() > 0) {
@@ -771,12 +777,12 @@ class StorageTest extends GalleryTestCase {
 	/* Cleanup */
 	$ret = GalleryCoreApi::removeMapEntry('GalleryCacheMap', array('type' => 'test'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* Commit our DB transaction to release locks from the Cache table */
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -801,26 +807,26 @@ class StorageTest extends GalleryTestCase {
 						     'derivativeType' => 1,
 						     'derivativeOperations' => $testString));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    list ($ret, $results) = GalleryCoreApi::getMapEntry('GalleryDerivativePreferencesMap',
 								array('derivativeOperations'),
 								array('itemId' => $itemId));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    /* Cleanup */
 	    $ret = GalleryCoreApi::removeMapEntry('GalleryDerivativePreferencesMap',
 						  array('itemId' => $itemId));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    /* Commit our DB transaction to release locks from the PluginParameterMap table */
 	    $ret = $storage->checkPoint();
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $expected = $originalStringLarge;
@@ -858,7 +864,7 @@ class StorageTest extends GalleryTestCase {
 	/* Execute the test */
 	$ret = $storage->optimize();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Ignore the loadTableVersions query */
@@ -890,7 +896,7 @@ class StorageTest extends GalleryTestCase {
 	/* Execute the test */
 	$ret = $storage->optimize(array('GalleryEntity', 'GalleryPhotoItem', 'GalleryItem'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Ignore the loadTableVersions query */
@@ -921,7 +927,7 @@ class StorageTest extends GalleryTestCase {
 
 	list ($ret, $externalMapInfo) = GalleryCoreApi::describeMap('ExternalIdMap');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!empty($externalMapInfo), 'empty result');
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -929,7 +935,7 @@ class StorageTest extends GalleryTestCase {
 	/* Verify that a second call reads from memory, no platform activity */
 	list ($ret, $externalMapInfo) = GalleryCoreApi::describeMap('ExternalIdMap');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!empty($externalMapInfo), 'empty result on second call');
     }
@@ -951,7 +957,7 @@ class StorageTest extends GalleryTestCase {
 
 	list ($ret, $testMapInfo) = GalleryCoreApi::describeMap('RandomTestMap');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array('TestMember'), $testMapInfo, 'map info, first call');
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -962,7 +968,7 @@ class StorageTest extends GalleryTestCase {
 	 */
 	list ($ret, $testMapInfo) = GalleryCoreApi::describeMap('RandomTestMap');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array('TestMember'), $testMapInfo, 'map info, second call');
     }
@@ -990,7 +996,7 @@ class StorageTest extends GalleryTestCase {
 
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryEntity');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!empty($entityInfo), 'empty result');
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -998,7 +1004,7 @@ class StorageTest extends GalleryTestCase {
 	/* Verify that a second call reads from memory, no platform activity */
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryEntity');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!empty($entityInfo), 'empty result on second call');
     }
@@ -1020,7 +1026,7 @@ class StorageTest extends GalleryTestCase {
 
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('RandomTestEntity');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array('RandomTestEntity' => array('TestMember')), $entityInfo,
 			    'entity info, first call');
@@ -1032,7 +1038,7 @@ class StorageTest extends GalleryTestCase {
 	 */
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('RandomTestEntity');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array('RandomTestEntity' => array('TestMember')), $entityInfo,
 			    'entity info, second call');

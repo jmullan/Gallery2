@@ -38,14 +38,16 @@ class ImageBlockDisabledTest extends GalleryTestCase {
      */
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	/* Register a dummy toolkit and operation */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'ImageBlockToolkit', 'ImageBlockToolkit',
 	    'modules/imageblock/test/phpunit/ImageBlockDisabledTest.class', 'imageblock', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markToolkitForCleanup('ImageBlockToolkit');
 
@@ -53,21 +55,18 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    'ImageBlockToolkit', array('image/gif'), 'testoperation',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
 	if ($ret || !isset($this->_module)) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_topAlbum);
@@ -75,27 +74,23 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	list ($ret, $this->_subAlbum, $this->_subItems) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Set the ImageBlockDisabled flag */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, true);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_itemId) = $this->_module->getParameter('itemId');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_module->setParameter('itemId', $this->_topAlbum->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -106,18 +101,19 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::removePluginParameter(
 	    $this->_module->getPluginType(), $this->_module->getId(), 'itemId');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Unset the ImageBlockDisabled flag */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function _createSubAlbumWithItems($parentId) {
@@ -237,7 +233,7 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	$callbacks = new ImageBlockCallbacks();
 	$ret = $callbacks->callback(array('useDefaults' => true), $smarty, 'LoadImageBlock');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $smarty->_tpl_vars;
 	$this->assert(!isset($data['ImageBlockData']['blocks']), 'Block should not exist');
@@ -247,14 +243,14 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	/* Unset the ImageBlockDisabled flag on the subAlbum */
 	$ret = ImageBlockHelper::setDisabledFlag($this->_subAlbum, true, false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$smarty = new GallerySmarty();
 	$callbacks = new ImageBlockCallbacks();
 	$ret = $callbacks->callback(array('useDefaults' => true), $smarty, 'LoadImageBlock');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $smarty->_tpl_vars;
 

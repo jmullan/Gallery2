@@ -37,7 +37,10 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp('ModRewriteParser');
+	$ret = parent::setUp('ModRewriteParser');
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Set up our environment */
 	foreach (array('modrewrite.status' => serialize(array('needOptions' => true)),
@@ -47,8 +50,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 		as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -60,13 +62,13 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	$testRules['rewriteparsermock'][0] = 'bogus1';
 	list ($ret, $code, $errno) = $this->_parser->saveActiveRules($testRules);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expected['rewriteparsermock'][0] = 'bogus1';
@@ -84,13 +86,13 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	$testRules['rewriteparsermock'][0] = array('pattern' => 'p/%bogus%');
 	list ($ret, $code, $errno) = $this->_parser->saveActiveRules($testRules);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $activeRules) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'activeRules');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expected['rewriteparsermock'][0] = array('pattern' => 'bogus');
@@ -226,7 +228,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	GalleryUtilities::putRequestVariable('modRewriteTest', 'pass');
 	list ($ret, $status) = $this->_parser->needsConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!$status, 'pass');
 
@@ -239,13 +241,13 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	$form['force']['test1'] = 1;
 	list ($ret, $error, $status) = $this->_parser->handleTestResultsRequest($form);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $forced) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.status');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('needOptions' => false, 'forced' => 1), unserialize($forced));
@@ -259,13 +261,13 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	$form['force']['test2'] = 1;
 	list ($ret, $error, $status) = $this->_parser->handleTestResultsRequest($form);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $forced) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.status');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('needOptions' => true, 'forced' => 1), unserialize($forced));
@@ -278,13 +280,13 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 
 	list ($ret, $error, $status) = $this->_parser->handleTestResultsRequest($form);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $forced) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.status');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('needOptions' => true), unserialize($forced));
@@ -300,19 +302,19 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	$form['embeddedHtaccess'] = '/phpunit/test/';
 	list ($ret, $error, $status) = $this->_parser->handleAdminParserRequest($form);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $embeddedLocation) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.embeddedLocation');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $embeddedHtaccess) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.embeddedHtaccess');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('/phpunit/test', $embeddedHtaccess);
@@ -332,19 +334,19 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	$form['embeddedHtaccess'] = '/phpunit/test';
 	list ($ret, $error, $status) = $this->_parser->handleAdminParserRequest($form);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $embeddedLocation) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.embeddedLocation');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $embeddedHtaccess) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.embeddedHtaccess');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('/phpunit/test', $embeddedHtaccess);
@@ -365,19 +367,19 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 	$form['embeddedHtaccess'] = '/phpunit/test';
 	list ($ret, $error, $status) = $this->_parser->handleAdminParserRequest($form);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $embeddedLocation) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.embeddedLocation');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $embeddedHtaccess) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.embeddedHtaccess');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('/phpunit/embedded', $embeddedHtaccess);
@@ -396,19 +398,19 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 
 	list ($ret, $error, $status) = $this->_parser->handleAdminParserRequest($form);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $embeddedLocation) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.embeddedLocation');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $embeddedHtaccess) = GalleryCoreApi::getPluginParameter(
 	    'module', 'rewrite', 'modrewrite.embeddedHtaccess');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('/phpunit/embedded', $embeddedHtaccess);
@@ -423,7 +425,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
     function testNeedsEmbedConfig1() {
 	list ($ret, $status) = $this->_parser->needsEmbedConfig();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!$status, 'status');
@@ -435,13 +437,13 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 		as $key) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, '');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
 	list ($ret, $status) = $this->_parser->needsEmbedConfig();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($status, 'status');
@@ -450,7 +452,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
     function testFetchEmbedConfig() {
 	list ($ret, $params) = $this->_parser->fetchEmbedConfig();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('embeddedLocation' => '/embedded/',
@@ -464,7 +466,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 
 	list ($ret, $code, $errstr) = $this->_parser->saveEmbedConfig($params);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_OK, $code);
@@ -478,7 +480,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 
 	list ($ret, $code, $errstr) = $this->_parser->saveEmbedConfig($params);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_WRITE, $code);
@@ -492,7 +494,7 @@ class ModRewriteParserTest extends RewriteParserTestCase {
 
 	list ($ret, $code, $errstr) = $this->_parser->saveEmbedConfig($params);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_EMPTY_VALUE, $code);

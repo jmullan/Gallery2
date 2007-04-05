@@ -33,12 +33,14 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'archiveupload');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->_platform = new ArchiveUploadSiteAdminControllerTestPlatform();
@@ -60,7 +62,7 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Verify the settings went in properly */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'archiveupload');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('/validPath/unzip', $params['unzipPath'], 'unzipPath');
 	$this->assertEquals('1', $params['removeMeta'], 'removeMeta');
@@ -82,7 +84,7 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Verify the settings went in properly */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'archiveupload');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('/incompletePath/unzip', $params['unzipPath'], 'unzipPath');
 	$this->assertEquals('0', $params['removeMeta'], 'removeMeta');

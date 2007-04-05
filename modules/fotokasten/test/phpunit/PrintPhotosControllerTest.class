@@ -34,7 +34,10 @@ class PrintPhotosControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Use mock soap client */
 	$this->_controller->soapclient = 'FotokastenTestSoapClient';
@@ -43,21 +46,18 @@ class PrintPhotosControllerTest extends GalleryControllerTestCase {
 	/* Create some random photo items that we can print */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.all');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	for ($i = 0; $i < 3; $i++) {
@@ -68,8 +68,7 @@ class PrintPhotosControllerTest extends GalleryControllerTestCase {
 					     __FILE__,
 					     'GalleryPhotoItem');
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -77,21 +76,18 @@ class PrintPhotosControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::removeUserPermission(
 	    $this->_items[1]->getId(), $gallery->getActiveUserId(), 'fotokasten.print');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* Public view permission on one */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_items[2]->getId(), $anonymousUserId, 'core.viewAll');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Clear any existing fotokasten session */
@@ -119,7 +115,10 @@ class PrintPhotosControllerTest extends GalleryControllerTestCase {
 	    $testSession->reset();
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testPrintSingle() {
@@ -151,19 +150,19 @@ class PrintPhotosControllerTest extends GalleryControllerTestCase {
 	/* We only have permission to print and view the thumbnail */
 	$ret = GalleryCoreApi::removeItemPermissions($itemId);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $itemId, $gallery->getActiveUserId(), 'fotokasten.print');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $itemId, $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$result = $this->handleRequest();
@@ -192,7 +191,7 @@ class PrintPhotosControllerTest extends GalleryControllerTestCase {
 	$fotokastenSession = new GallerySession();
 	$ret = $fotokastenSession->init();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array($itemId), $fotokastenSession->get('core.isPrintService'),

@@ -32,12 +32,14 @@ class PublishXpLoginControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_user);
     }
@@ -69,7 +71,7 @@ class PublishXpLoginControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_disableUserName($this->_user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$listener = new NullEventListener();

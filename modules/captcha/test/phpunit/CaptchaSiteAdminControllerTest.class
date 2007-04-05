@@ -32,19 +32,20 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'captcha');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Set our threshold to a known value */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'captcha', 'failedAttemptThreshold', 1);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -63,7 +64,7 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $threshold) =
 	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failedAttemptThreshold');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(3, (int)$threshold);
@@ -95,7 +96,7 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $threshold) =
 	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failedAttemptThreshold');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(0, (int)$threshold);
@@ -116,7 +117,7 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $threshold) =
 	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failedAttemptThreshold');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(5, (int)$threshold);
@@ -137,7 +138,7 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $threshold) =
 	    GalleryCoreApi::getPluginParameter('module', 'captcha', 'failedAttemptThreshold');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Unchanged */
@@ -164,7 +165,7 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'captcha');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(3, (int)$params['failedAttemptThreshold'], 'threshold');

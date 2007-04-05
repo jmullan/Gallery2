@@ -37,12 +37,14 @@ class DcrawToolkitTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'dcraw');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_setParam('path', '/usr/bin/dcraw');
 
@@ -58,13 +60,16 @@ class DcrawToolkitTest extends GalleryTestCase {
 
     function tearDown() {
 	$this->assert($this->_platform->isComplete(), $this->_platform->getRemaining());
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function _setParam($key, $value) {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'dcraw', $key, $value);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
     }
 
@@ -85,7 +90,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
     }
 
@@ -104,7 +109,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	    'image/x-dcraw', 'convert-to-image/x-portable-pixmap',
 	    'INPUTFILE', 'OUTPUTFILE', array(), array());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
     }
 
@@ -196,8 +201,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	    'GalleryToolkit', 'DcrawTestToolkit', 'DcrawTestToolkit',
 	    'modules/dcraw/test/phpunit/DcrawToolkitTest.class', 'dcrawTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markToolkitForCleanup('DcrawTestToolkit');
 
@@ -205,13 +209,13 @@ class DcrawToolkitTest extends GalleryTestCase {
 	    'DcrawTestToolkit', array('image/x-portable-pixmap'),
 	    'dimensions', 'int,int', 'test-description');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $results) = $this->_toolkit->getProperty(
 	    'image/x-dcraw', 'dimensions', 'INPUTFILE');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array(1, 2), $results);
     }

@@ -37,7 +37,10 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testApplyNotViewable() {
@@ -55,7 +58,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('xxx'), $extensions);
 	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!$isViewable);
     }
@@ -76,7 +79,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('xxx'), $extensions);
 	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($isViewable);
     }
@@ -93,12 +96,12 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 			    $results, 'Add new');
 	list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array('xxx'), $extensions);
 	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!$isViewable, 'viewable');
     }
@@ -144,7 +147,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	$extension = 'test-' . rand(111, 999);
 	$ret = GalleryCoreApi::addMimeType($extension, 'test/test2', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -171,17 +174,17 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 			    $results, 'Add new');
 	list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array('xxx'), $extensions);
 	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('xxx');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('test/test', $mimeType);
 	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assert(!$isViewable, 'viewable');
 
@@ -189,7 +192,7 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	    /* Delete mime entry in case test failed.. */
 	    $ret = GalleryCoreApi::removeMimeType(array('mimeType' => 'Test/Test'));
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	}
     }

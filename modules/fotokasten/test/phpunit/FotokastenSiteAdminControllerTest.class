@@ -33,12 +33,14 @@ class FotokastenSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'fotokasten');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -68,7 +70,7 @@ class FotokastenSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $params) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'fotokasten');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('1234', $params['affiliateId'], 'affiliateId');
 	$this->assertEquals('abcde12345', $params['affiliateIdPass'], 'affiliateIdPass');
@@ -89,7 +91,7 @@ class FotokastenSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $params) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'fotokasten');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(
 	    FOTOKASTEN_GALLERY_AFFILIATE_ID, $params['affiliateId'], 'affiliateId');

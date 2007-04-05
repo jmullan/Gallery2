@@ -33,20 +33,21 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Set up our mock parser */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId',
 	    'setuprewritemock');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryUtilities::putRequestVariable('phpunit[config]', 1);
 
@@ -54,8 +55,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteHelper.class');
 	list ($ret, $parser) = RewriteHelper::getRewriteParser(true);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('setuprewritemock', $parser->getParserId(), 'parserId');
     }
@@ -63,7 +63,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
     function testSave1() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId', '');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[parser]', 'setuprewritemock');
@@ -78,17 +78,17 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $parserId) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'parserId');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('setuprewritemock', $parserId, 'parserId');
 
 	list ($ret, $parser) = RewriteHelper::getRewriteParser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $result) = $parser->needsConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(false, $result);
     }
@@ -96,7 +96,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
     function testSave2() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'parserId', '');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[parser]', 'setuprewritemock');
@@ -112,17 +112,17 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $parserId) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'parserId');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('setuprewritemock', $parserId, 'parserId');
 
 	list ($ret, $parser) = RewriteHelper::getRewriteParser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $result) = $parser->needsConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(true, $result);
     }
@@ -140,7 +140,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $parserId) = GalleryCoreApi::getPluginParameter('module', 'rewrite',
 	    'parserId');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('', $parserId, 'parserId');
     }

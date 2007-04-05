@@ -32,12 +32,14 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -48,8 +50,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    'GalleryToolkit', 'ItemEditRotateAndScalePhotoPluginTestToolkit',
 	    'ItemEditRotateAndScalePhotoPluginTestToolkit', $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markToolkitForCleanup('ItemEditRotateAndScalePhotoPluginTestToolkit');
 
@@ -60,16 +61,14 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 		  array('type' => 'int', 'description' => 'test')),
 	    'test-description');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemEditRotateAndScalePhotoPluginTestToolkit', array('test/file'), 'rotate',
 	    array(array('type' => 'int', 'description' => 'test')), 'test-description');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
@@ -78,60 +77,53 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 		  array('type' => 'int', 'description' => 'test')),
 	    'test-description', '');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'ItemEditRotateAndScalePhotoPluginTestToolkit', array('test/blob'),
 	    'convert-to-image/jpeg', array(), 'test-description', 'image/jpeg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_item) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_derivative[0]) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_derivative[1]) = $this->_createDerivative(
 	    $this->_item, $this->_derivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 	    'crop|10,10,30,40;thumbnail|200', 'test/file', array('width' => 200, 'height' => 150));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_derivative[2]) = $this->_createDerivative(
 	    $this->_item, $this->_derivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE,
 	    'scale|500', 'test/file', array('width' => 640, 'height' => 480));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_blob) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'test/blob');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_blobDerivative[0]) = $this->_createDerivative(
 	    $this->_blob, $this->_blob->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED,
 	    'convert-to-image/jpeg');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
     }
@@ -148,13 +140,13 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::remapSourceIds($this->_derivative[0]->getId(),
 					      $this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Delete the preferred */
 	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Save current serial */
@@ -171,21 +163,21 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferredIds) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(1, sizeof($preferredIds), 'there should be a preferred');
 
 	/* Verify that the item serial is the same */
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($originalSerial, $this->_item->getSerialNumber());
 
 	/* Verify that the thumbnail's crop is the same */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('crop|10,10,30,40;thumbnail|200',
 			    $this->_derivative[1]->getDerivativeOperations());
@@ -202,13 +194,13 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::remapSourceIds($this->_derivative[0]->getId(),
 					      $this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Delete the preferred */
 	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Save current size */
@@ -225,14 +217,14 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferredIds) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(0, sizeof($preferredIds), 'there should be no preferreds');
 
 	/* Verify that the item modification time has changed */
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$newSize = $this->_item->getSize();
@@ -241,7 +233,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the thumbnail's crop is the same */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('crop|10,10,30,40;thumbnail|200',
 			    $this->_derivative[1]->getDerivativeOperations());
@@ -263,7 +255,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the transform went ok */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('rotate|90;scale|200,200',
@@ -286,7 +278,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the transform went ok */
 	list ($ret, $this->_blobDerivative[0]) = $this->_blobDerivative[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('convert-to-image/jpeg;scale|200,200',
@@ -330,14 +322,14 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the transform went ok */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('rotate|180', $this->_derivative[0]->getDerivativeOperations());
 
 	/* Verify that the thumbnail's crop was adjusted */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('crop|50,10,40,30;thumbnail|200',
 			    $this->_derivative[1]->getDerivativeOperations());
@@ -360,7 +352,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the thumbnail's crop was adjusted */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('crop|10,60,40,30;thumbnail|200',
 			    $this->_derivative[1]->getDerivativeOperations());
@@ -374,7 +366,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(0, $this->_derivative[1]->getWidth());
@@ -390,7 +382,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(200, $this->_derivative[1]->getWidth());
@@ -410,14 +402,14 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the transform went ok */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('rotate|-90', $this->_derivative[0]->getDerivativeOperations());
 
 	/* Verify that the thumbnail's crop was adjusted */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('crop|60,50,30,40;thumbnail|200',
 			    $this->_derivative[1]->getDerivativeOperations());
@@ -429,7 +421,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    $this->_blob, $this->_blobDerivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 	    'crop|10,10,30,40;thumbnail|200');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Use valid inputs */
@@ -444,7 +436,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the transform went ok */
 	list ($ret, $this->_blobDerivative[0]) = $this->_blobDerivative[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('convert-to-image/jpeg;rotate|180',
 			    $this->_blobDerivative[0]->getDerivativeOperations());
@@ -452,7 +444,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the thumbnail's crop was adjusted */
 	list ($ret, $this->_blobDerivative[1]) = $this->_blobDerivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('crop|60,50,30,40;thumbnail|200',
 			    $this->_blobDerivative[1]->getDerivativeOperations());
@@ -477,7 +469,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	for ($i = 1; $i <= 2; $i++) {
 	    list ($ret, $this->_derivative[$i]) = $this->_derivative[$i]->refresh();
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assert($this->_item->getId(), $this->_derivative[$i]->getDerivativeSourceId());
@@ -486,7 +478,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the thumbnail's crop was adjusted */
 	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('crop|10,60,40,30;thumbnail|200',
 			    $this->_derivative[1]->getDerivativeOperations());
@@ -501,19 +493,19 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Put a postfilter on our derivative */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_derivative[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_derivative[0]->setDerivativeOperations('rotate|90;bogus|1,2,3');
 	$this->_derivative[0]->setPostFilterOperations('bogus|4,5,6');
 	$ret = $this->_derivative[0]->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Use valid inputs */
@@ -545,7 +537,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Delete the preferred */
 	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$preferred = null;
@@ -555,34 +547,34 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
     function testCheckForOperation() {
 	list ($ret, $result) = $this->_plugin->_checkForOperation('scale', array('test/file'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($result, 'should be supported');
 
 	list ($ret, $result) = $this->_plugin->_checkForOperation(
 	    'scale', array('test/notsupported', 'test/file'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($result, 'should be supported');
 
 	list ($ret, $result) = $this->_plugin->_checkForOperation(
 	    'scale', array('test/file', 'test/notsupported'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($result, 'should be supported');
 
 	list ($ret, $result) = $this->_plugin->_checkForOperation(
 	    'scale', array('test/notsupported'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!$result, 'should not be supported');
 
 	list ($ret, $result) = $this->_plugin->_checkForOperation('scale', array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!$result, 'should not be supported');
     }

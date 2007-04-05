@@ -34,11 +34,14 @@ class AdminEditUserQuotaControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_user);
     }
@@ -87,7 +90,7 @@ class AdminEditUserQuotaControllerTest extends GalleryControllerTestCase {
 	list ($ret, $quotaExists, $userQuota) =
 	    GalleryQuotasHelper::fetchUserQuota($this->_user->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($quotaExists, 'Quota does not exist');
 	$this->assertEquals($this->_user->getId(), $userQuota['id'], 'User Ids do not match');
@@ -154,14 +157,14 @@ class AdminEditUserQuotaControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addMapEntry(
 	    'QuotasMap', array('userOrGroupId' => $userId, 'quotaSize' => $quota));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function _deleteUserQuota($userId) {
 	$ret = GalleryCoreApi::removeMapEntry('QuotasMap', array('userOrGroupId' => $userId));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

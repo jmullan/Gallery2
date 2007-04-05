@@ -37,22 +37,23 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit.php';
 
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('phpunit.php');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$gallery->setUrlGenerator($urlGenerator);
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Set up our environment */
@@ -63,8 +64,7 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 		as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -78,7 +78,7 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
     function testHttpdiniPath() {
 	list ($ret, $path) = IsapiRewriteHelper::getHttpdiniPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('C:\phpunit\gallery2\httpd.ini', $path);
@@ -87,28 +87,28 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
     function testCheckFile() {
 	list ($ret, $code) = IsapiRewriteHelper::checkFile();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(REWRITE_STATUS_OK, $code, 'success');
 
 	$this->_platform->_isWriteable = false;
 	list ($ret, $code) = IsapiRewriteHelper::checkFile();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(REWRITE_STATUS_HTTPDINI_CANT_WRITE, $code, 'writeable');
 
 	$this->_platform->_isReadable = false;
 	list ($ret, $code) = IsapiRewriteHelper::checkFile();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(REWRITE_STATUS_HTTPDINI_CANT_READ, $code, 'readable');
 
 	$this->_platform->_fileExists = false;
 	list ($ret, $code) = IsapiRewriteHelper::checkFile();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(REWRITE_STATUS_HTTPDINI_MISSING, $code, 'exists');
     }
@@ -116,7 +116,7 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
     function testWriteFile() {
 	list ($ret, $code) = IsapiRewriteHelper::writeFile(array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_OK, $code, 'success');
@@ -126,7 +126,7 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 	$this->_platform->_isReadable = false;
 	list ($ret, $code) = IsapiRewriteHelper::writeFile(array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_HTTPDINI_CANT_READ, $code, 'readable');
@@ -136,7 +136,7 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 	$this->_platform->_isWriteable = false;
 	list ($ret, $code) = IsapiRewriteHelper::writeFile(array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_HTTPDINI_CANT_WRITE, $code, 'writeable');
@@ -147,7 +147,7 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('isapiRewriteTest', 'pass');
 	list ($ret, $status, $trueStatus) = IsapiRewriteHelper::checkIsapiRewrite();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_OK, $status, 'status, pass');
@@ -156,7 +156,7 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('isapiRewriteTest', 'fail');
 	list ($ret, $status, $trueStatus) = IsapiRewriteHelper::checkIsapiRewrite();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $status, 'status, fail');
@@ -165,7 +165,7 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('isapiRewriteTest', '404');
 	list ($ret, $status, $trueStatus) = IsapiRewriteHelper::checkIsapiRewrite();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_NO_ISAPI_REWRITE, $status, 'status, 404');
@@ -175,13 +175,13 @@ class IsapiRewriteHelperTest extends GalleryTestCase {
     function testCheckIsapiRewriteForced() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'isapirewrite.forced', '1');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('isapiRewriteTest', 'fail');
 	list ($ret, $status, $trueStatus) = IsapiRewriteHelper::checkIsapiRewrite();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(REWRITE_STATUS_OK, $status);

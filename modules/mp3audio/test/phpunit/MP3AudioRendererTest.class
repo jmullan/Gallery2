@@ -33,19 +33,20 @@ class MP3AudioRendererTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_renderer) =
 	    GalleryCoreApi::newFactoryInstance('GalleryRenderer', 'MP3AudioRenderer');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId(), 'audio/mpeg');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_item);
     }
@@ -53,7 +54,7 @@ class MP3AudioRendererTest extends GalleryTestCase {
     function testCanBeViewedInline() {
 	list ($ret, $item) = GalleryCoreApi::newItemByMimeType('image/jpeg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item->setMimeType('image/jpeg');
 	$item->setWidth(100);
@@ -62,14 +63,14 @@ class MP3AudioRendererTest extends GalleryTestCase {
 
 	list ($ret, $item) = GalleryCoreApi::newItemByMimeType('audio/wav');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item->setMimeType('audio/wav');
 	$this->assert(!$this->_renderer->canBeViewedInline($item), 'wav');
 
 	list ($ret, $item) = GalleryCoreApi::newItemByMimeType('audio/mpeg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$item->setMimeType('audio/mpeg');
 	$this->assert($this->_renderer->canBeViewedInline($item), 'mp3');

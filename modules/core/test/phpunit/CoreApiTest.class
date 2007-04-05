@@ -36,7 +36,7 @@ class CoreApiTest extends GalleryTestCase {
 
 	list ($ret, $defaultId) = GalleryCoreApi::getDefaultAlbumId();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($expectedId, $defaultId);
@@ -50,7 +50,7 @@ class CoreApiTest extends GalleryTestCase {
 
 	list ($ret, $defaultId) = GalleryCoreApi::getDefaultAlbumId();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($expectedId, $defaultId);

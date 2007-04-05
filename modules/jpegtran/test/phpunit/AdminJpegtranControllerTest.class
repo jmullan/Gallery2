@@ -33,12 +33,14 @@ class AdminJpegtranControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'jpegtran');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_savePlatform =& $gallery->getPlatform();
@@ -61,7 +63,7 @@ class AdminJpegtranControllerTest extends GalleryControllerTestCase {
 	/* Verify the settings went in properly */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'jpegtran');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('/validPath/jpegtran', $params['path'], 'wrong path stored in DB');
     }
@@ -146,7 +148,7 @@ class AdminJpegtranControllerTest extends GalleryControllerTestCase {
 	/* Verify the settings went in properly */
 	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'jpegtran', 'path');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('/incompletePath/jpegtran.exe', $path);
     }

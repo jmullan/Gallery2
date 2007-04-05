@@ -31,7 +31,10 @@ GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryCharsetHelper_m
 class CharsetTest extends GalleryTestCase {
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	GalleryDataCache::reset();
     }

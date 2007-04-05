@@ -32,12 +32,14 @@ class RegisterModuleTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'register');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -47,7 +49,7 @@ class RegisterModuleTest extends GalleryTestCase {
 
 	list ($ret, $links) = $this->_module->getSystemLinks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* None for non-guest */
 	$this->assertEquals(array(), $links, 'admin');
@@ -55,7 +57,7 @@ class RegisterModuleTest extends GalleryTestCase {
 	$gallery->setConfig('anonymousUserId', $gallery->getActiveUserId());
 	list ($ret, $links) = $this->_module->getSystemLinks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(
 		array('Register' => array('text' => $label,
@@ -68,7 +70,7 @@ class RegisterModuleTest extends GalleryTestCase {
 	$this->_becomeGuestUser();
 	list ($ret, $links) = $this->_module->getSystemLinks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(
 		array('Register' => array('text' => $label,

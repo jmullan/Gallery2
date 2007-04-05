@@ -33,18 +33,19 @@ class ImageFrameTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_imageframe) =
 	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1', 'ImageFrameImpl');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (!isset($this->_imageframe)) {
 	    print 'Missing ImageFrameImpl';
-	    return $this->failWithStatus(
-		GalleryCoreApi::error(ERROR_MISSING_OBJECT));
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
     }
 
@@ -52,7 +53,7 @@ class ImageFrameTest extends GalleryTestCase {
     function testImageFrameList() {
 	list ($ret, $list) = $this->_imageframe->getImageFrameList();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(isset($list['none']) && isset($list['dots']) && isset($list['wood']));
     }
@@ -61,7 +62,7 @@ class ImageFrameTest extends GalleryTestCase {
 	$template = new ImageFrameDummyGalleryTemplate();
 	$ret = $this->_imageframe->init($template, array('none', 'dots', 'wood'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(isset($template->data['ImageFrameData']), 'template data');
 	$data = $template->data['ImageFrameData'];
@@ -82,7 +83,7 @@ class ImageFrameTest extends GalleryTestCase {
 	/* Another init should add data, not overwrite */
 	$ret = $this->_imageframe->init($template, array('solid'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$data = $template->data['ImageFrameData'];
 	$this->assertEquals('none|dots|wood|solid', $data['idList'], 'Id list 2');
@@ -91,12 +92,12 @@ class ImageFrameTest extends GalleryTestCase {
     function testImageFrameSample() {
 	list ($ret, $url) = $this->_imageframe->getSampleUrl();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(strpos($url, 'imageframe.Sample'), 'sample url');
 	list ($ret, $url) = $this->_imageframe->getSampleUrl(12345);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(strpos($url, 'itemId=12345'), 'url2 id');
     }

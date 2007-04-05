@@ -34,12 +34,15 @@ class AdminDeleteGroupQuotaControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Create a group for quota testing */
 	list ($ret, $this->_group) = $this->_createRandomGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_group);
     }
@@ -108,7 +111,7 @@ class AdminDeleteGroupQuotaControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::addMapEntry(
 	    'QuotasMap', array('userOrGroupId' => $userOrGroupId, 'quotaSize' => $quota));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -116,7 +119,7 @@ class AdminDeleteGroupQuotaControllerTest extends GalleryControllerTestCase {
 	$ret =
 	    GalleryCoreApi::removeMapEntry('QuotasMap', array('userOrGroupId' => $userOrGroupId));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

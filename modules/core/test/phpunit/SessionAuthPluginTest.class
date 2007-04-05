@@ -36,13 +36,15 @@ class SessionAuthTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Create a new user */
 	list ($ret, $this->_user) = $this->_createRandomUser(null, 'password');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_user);
@@ -58,7 +60,10 @@ class SessionAuthTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->_session = $this->_saveSession;
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testSessionAuthValidUser() {
@@ -69,7 +74,7 @@ class SessionAuthTest extends GalleryTestCase {
 	$plugin = new SessionAuthPlugin();
 	list ($ret, $user) = $plugin->getUser();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals($this->_user, $user);
@@ -78,7 +83,7 @@ class SessionAuthTest extends GalleryTestCase {
     function testSessionAuthInvalidUser() {
 	list ($ret, $userId) = $this->_getUnusedId();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->_mockSession->setUserId($userId);
@@ -88,7 +93,7 @@ class SessionAuthTest extends GalleryTestCase {
 	$plugin = new SessionAuthPlugin();
 	list ($ret, $user) = $plugin->getUser();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assert(!isset($user));

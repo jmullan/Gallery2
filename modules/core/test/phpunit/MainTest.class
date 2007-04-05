@@ -33,7 +33,10 @@ class MainTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_saveGallery = $gallery;
 
@@ -60,8 +63,7 @@ class MainTest extends GalleryTestCase {
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$ret = $this->_urlGenerator->init('phpunit_test.php');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->_phpVm = new MainTestPhpVm();
@@ -89,7 +91,10 @@ class MainTest extends GalleryTestCase {
 	GalleryUtilities::removeRequestVariable('view');
 	GalleryUtilities::removeRequestVariable('controller');
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     /**
@@ -101,7 +106,7 @@ class MainTest extends GalleryTestCase {
 
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_PERMISSION_DENIED, $ret->getErrorCode());
@@ -118,7 +123,7 @@ class MainTest extends GalleryTestCase {
 
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify the result */
@@ -139,7 +144,7 @@ class MainTest extends GalleryTestCase {
 
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify the result */
@@ -161,7 +166,7 @@ class MainTest extends GalleryTestCase {
 
 	list ($ret, $g2Data) = _GalleryMain();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify the result */
@@ -203,11 +208,11 @@ class MainTest extends GalleryTestCase {
 	$session =& $gallery->getSession();
 	$ret = $session->init();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $session->start();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$sessionId = $session->getId();
 	$sessionKey = $session->getKey();
@@ -266,7 +271,7 @@ class MainTest extends GalleryTestCase {
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'SESSION_TEMP_ID');
@@ -289,7 +294,7 @@ class MainTest extends GalleryTestCase {
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'SESSION_TEMP_ID');
@@ -319,7 +324,7 @@ class MainTest extends GalleryTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
 	    /* this is what we expect */
 	} else if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	} else {
 	    $this->assert(false, 'auth token check not executed');
 	}
@@ -340,7 +345,7 @@ class MainTest extends GalleryTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
 	    /* this is what we expect */
 	} else if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	} else {
 	    $this->assert(false, 'auth token check not executed');
 	}
@@ -361,7 +366,7 @@ class MainTest extends GalleryTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_BAD_PARAMETER) {
 	    /* This is what we expect. The auth check has been omitted. */
 	} else if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	} else {
 	    $this->assert(false, 'unexpected result');
 	}

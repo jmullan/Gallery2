@@ -33,12 +33,14 @@ class EcardSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'ecard');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -81,7 +83,7 @@ class EcardSiteAdminControllerTest extends GalleryControllerTestCase {
 	    list ($ret, $value) =
 		GalleryCoreApi::getPluginParameter('module', 'ecard', $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}

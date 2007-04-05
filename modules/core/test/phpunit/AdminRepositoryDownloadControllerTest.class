@@ -36,7 +36,10 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 
 	$this->_galleryTemplateAdapter =& $gallery->getTemplateAdapter();
@@ -53,7 +56,10 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$gallery->_templateAdapter =& $this->_galleryTemplateAdapter;
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testDownloadCancel() {
@@ -193,7 +199,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    array(),
 	    array('test' => $repository));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assert($repository->isComplete(), $repository->getRemaining());
@@ -252,7 +258,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    array(),
 	    array('test' => $repository));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assert($repository->isComplete(), $repository->getRemaining());
@@ -311,7 +317,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    array(),
 	    array('test' => $repository));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assert($repository->isComplete(), $repository->getRemaining());
@@ -371,7 +377,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    array(),
 	    array('test' => $repository));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assert($repository->isComplete(), $repository->getRemaining());
@@ -439,7 +445,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    array(),
 	    array('test' => $repository));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assert($repository->isComplete(), $repository->getRemaining());
@@ -530,7 +536,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    array(),
 	    array('test' => $repository));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Even though one language failed, the base got updated so we should reactivate it */
@@ -549,7 +555,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	/* Make sure translate calls during test won't generate any platform calls */
 	list ($ret) = GalleryCoreApi::getPermissionIds();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$moduleBase = GalleryCoreApi::getCodeBasePath()
@@ -573,7 +579,7 @@ class AdminRepositoryDownloadControllerTest extends GalleryControllerTestCase {
 	    array('module' => array('AdminRepositoryDownloadControllerTest' => array('aa'))),
 	    array('test' => $repository));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());

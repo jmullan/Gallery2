@@ -32,12 +32,14 @@ class ImageUploadHelperTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->setUrlGenerator(new ImageUploadHelperUrlGenerator());
@@ -79,7 +81,7 @@ class ImageUploadHelperTest extends GalleryTestCase {
 
 	$ret = $this->_disableUserName($this->_user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$listener = new NullEventListener();

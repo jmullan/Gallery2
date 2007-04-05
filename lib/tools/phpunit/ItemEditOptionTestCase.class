@@ -49,16 +49,15 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 	list ($ret, $this->_option) =
 	    GalleryCoreApi::newFactoryInstanceById('ItemEditOption', $optionName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (!isset($this->_option)) {
-	    return $this->failWithStatus(
-			  GalleryCoreApi::error(ERROR_MISSING_OBJECT));
+	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', $moduleName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_statusMonitor = new ItemEditOptionTestImmediateStatusView();
     }
@@ -81,7 +80,7 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 							  $ret->getErrorCode()))));
 	    }
 	} else if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	} else {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($error) && is_array($error), 'option error results missing');

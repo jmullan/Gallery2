@@ -28,33 +28,32 @@
 class LinkItemTest extends GalleryTestCase {
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_targetAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock(
 	    array($this->_album->getId(), $this->_targetAlbum->getId()));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_link) =
 	    $this->_createLinkItem($this->_album->getId(), 'http://test.com/test.html');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -86,7 +85,10 @@ class LinkItemTest extends GalleryTestCase {
 	    }
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testMoveLink() {
@@ -95,11 +97,11 @@ class LinkItemTest extends GalleryTestCase {
 
 	$ret = $this->_link->move($this->_targetAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->_link->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_targetAlbum->getId(), $this->_link->getParentId(), 'parent');
@@ -112,17 +114,17 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $link) =
 	    $this->_createLinkItem($this->_album->getId(), $this->_targetAlbum->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	unset($this->_lockId);
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $gone) = $link->refresh();
@@ -139,22 +141,22 @@ class LinkItemTest extends GalleryTestCase {
 	/* Verify delete of an album also deletes links that point to its subalbums */
 	list ($ret, $subalbum) = $this->_createRandomAlbum($this->_targetAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $link) =
 	    $this->_createLinkItem($this->_album->getId(), $subalbum->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	unset($this->_lockId);
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $gone) = $link->refresh();
@@ -177,7 +179,7 @@ class LinkItemTest extends GalleryTestCase {
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'temp session id');
@@ -192,11 +194,11 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $this->_lockId[]) =
 	    GalleryCoreApi::acquireWriteLock(array($this->_link->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_link->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$gallery->_session = $session;
 	/* Make sure it passes the onLoad conditions */
@@ -208,7 +210,7 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $link) = GalleryCoreApi::loadEntitiesById($this->_link->getId());
 	if ($ret) {
 	    $gallery->_session = $backup;
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryDataCache::setMemoryCachingEnabled(true);
 	/* Verify results */
@@ -234,7 +236,7 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $toolkit, $mimeType) =
 	    GalleryCoreApi::getToolkitByOperation('gallery/linkitem', 'convert-to-image/jpeg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('image/jpeg', $mimeType);
 	if (!GalleryUtilities::isExactlyA($toolkit, 'LinkItemToolkit')) {
@@ -243,11 +245,11 @@ class LinkItemTest extends GalleryTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'linkitem');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'linkitem', 'urlSnapshot', '0');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$savePlatform =& $gallery->getPlatform();
@@ -258,7 +260,7 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $mimeType, $context) = $toolkit->performOperation('gallery/linkitem',
 		'convert-to-image/jpeg', 'theURL', 'outputFile', array(), array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('image/jpeg', $mimeType);
@@ -267,12 +269,12 @@ class LinkItemTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'linkitem', 'urlSnapshot', '1');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'linkitem',
 						  'snapshotExec', 'getSnapshot');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$platform = new UnitTestPlatform();
@@ -292,7 +294,7 @@ class LinkItemTest extends GalleryTestCase {
 	list ($ret, $mimeType, $context) = $toolkit->performOperation('gallery/linkitem',
 		'convert-to-image/jpeg', 'theURL', 'outputFile', array(), array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('image/jpeg', $mimeType);

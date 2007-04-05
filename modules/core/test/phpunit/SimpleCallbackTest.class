@@ -32,13 +32,15 @@ class SimpleCallbackTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_tag = 'SmplCb-' . rand(0, 999999);
 	list ($ret, $this->_view) = GalleryView::loadView('core.SimpleCallback');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_userNames = $this->_groupNames = array();
 	GalleryDataCache::reset();
@@ -48,7 +50,7 @@ class SimpleCallbackTest extends GalleryTestCase {
 	list ($ret, $user) =
 	    $this->_createRandomUser($this->_tag . '-' . count($this->_userNames));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($user);
 	$this->_users[] = $user;
@@ -59,7 +61,7 @@ class SimpleCallbackTest extends GalleryTestCase {
 	list ($ret, $group) =
 	    $this->_createRandomGroup($this->_tag . '-' . count($this->_groupNames));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($group);
 	$this->_groupNames[] = $group->getGroupName();
@@ -71,7 +73,7 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$results = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	return $results;

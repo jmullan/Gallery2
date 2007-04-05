@@ -43,7 +43,7 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 	list ($ret, $this->_plugin) =
 	    GalleryCoreApi::newFactoryInstanceById('ItemAddPlugin', $pluginName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (!isset($this->_plugin)) {
 	    return $this->assert(false, "Unable to create ItemAddPlugin, type $pluginName");
@@ -51,7 +51,7 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', $moduleName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -69,7 +69,7 @@ class ItemAddPluginTestCase extends GalleryTestCase {
 							  $ret->getErrorCode()))));
 	    }
 	} else if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	} else {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($error) && is_array($error), 'plugin error results missing');

@@ -37,12 +37,14 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rss');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -51,12 +53,15 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 	    foreach ($this->_feedsToDelete as $name) {
 		$ret = RssMapHelper::deleteFeed($name);
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 	    }
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testRssSiteAdminControllerReset() {
@@ -123,7 +128,7 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 	foreach ($values as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rss', $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}
@@ -155,7 +160,7 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 	foreach ($values as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'rss', $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($expectedValue, $value, $key);
 	}
@@ -167,7 +172,7 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 	$params = array('itemId' => $this->_getRootId());
 	$ret = RssMapHelper::createFeed($name, $params);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][delete]', $name);

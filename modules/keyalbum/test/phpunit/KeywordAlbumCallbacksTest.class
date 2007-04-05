@@ -36,75 +36,67 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	$this->_userId = $gallery->getActiveUserId();
 	$this->_originalGuestUserId = $gallery->getConfig('anonymousUserId');
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 		array('keywords' => 'testkeyword12345'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $everybodyGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission(
 		$this->_album->getId(), $this->_userId, 'core.all');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addGroupPermission(
 		$this->_album->getId(), $everybodyGroupId, 'core.viewAll');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 		'test/file', array('keywords' => 'testkeyword54321; testkeyword99999'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::removeGroupPermission(
 		$this->_item->getId(), $everybodyGroupId, 'core.viewAll');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'keyalbum');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'allKeywords.time', 0);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum',
 						  'allKeywords.public.time', 0);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'split', ';,\s');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_smarty = new GallerySmarty();
@@ -114,7 +106,10 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	$gallery->setConfig('anonymousUserId', $this->_originalGuestUserId);
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testLoadKeywords() {
@@ -123,7 +118,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 		      'includeFrequency' => false),
 		$this->_smarty, 'LoadKeywords', $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
@@ -144,7 +139,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 		      'includeFrequency' => false),
 		$this->_smarty, 'LoadKeywords', $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
@@ -159,7 +154,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
     function testLoadKeywordsSizeLimit() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'allKeywords.3.time', '0');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_callbacks->callback(
@@ -167,7 +162,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 		      'includeFrequency' => true),
 		$this->_smarty, 'LoadKeywords', $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
@@ -176,7 +171,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	list ($ret, $param) =
 	    GalleryCoreApi::getPluginParameter('module', 'keyalbum', 'allKeywords.3');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(serialize($data), $param, 'param');
     }
@@ -185,11 +180,11 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum',
 						  'allKeywords', serialize(array()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'allKeywords.time', time());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_callbacks->callback(
@@ -197,7 +192,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 		      'includeFrequency' => false),
 		$this->_smarty, 'LoadKeywords', $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
@@ -208,17 +203,17 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	list ($ret, $ignore) = $this->_createRandomDataItem($this->_album->getId(),
 		'test/file', array('keywords' => 'testkeyword54321; testkeyword99999'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $ignore) = $this->_createRandomDataItem($this->_album->getId(),
 		'test/file', array('keywords' => 'testkeyword54321'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_makeOnlyTestItemsPublic($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_callbacks->callback(
@@ -226,7 +221,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 		      'includeFrequency' => true),
 		$this->_smarty, 'LoadKeywords', $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
@@ -248,17 +243,17 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	list ($ret, $ignore) = $this->_createRandomDataItem($this->_album->getId(),
 		'test/file', array('keywords' => 'testkeyword54321; testkeyword99999'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $ignore) = $this->_createRandomDataItem($this->_album->getId(),
 		'test/file', array('keywords' => 'testkeyword54321'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_makeOnlyTestItemsPublic($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_callbacks->callback(
@@ -266,7 +261,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 		      'includeFrequency' => false),
 		$this->_smarty, 'LoadKeywords', $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
@@ -288,7 +283,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 		array('keywords' => 'abc;def ghi,jkl'),
 		$this->_smarty, 'SplitKeywords', $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
@@ -296,14 +291,14 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'split', ';');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_callbacks->callback(
 		array('keywords' => 'abc;def ghi,jkl'),
 		$this->_smarty, 'SplitKeywords', $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];

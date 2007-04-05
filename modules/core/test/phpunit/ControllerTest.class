@@ -33,7 +33,10 @@ class ControllerTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	
 	global $gallery;
 	$session =& $gallery->getSession();
@@ -53,13 +56,16 @@ class ControllerTest extends GalleryTestCase {
 
 	$session->remove('core.authToken');
 	$session->_isPersistent = $this->_originalIsPersistentSession;
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testLoadControllerSuccess() {
 	list ($ret, $controller) = GalleryController::loadController('core.ItemEdit');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(isset($controller));
     }
@@ -81,7 +87,7 @@ class ControllerTest extends GalleryTestCase {
 	 */
 	list ($ret, $controller) = GalleryController::loadController('controllertest.ConfigView');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(isset($controller));
     }
@@ -91,7 +97,7 @@ class ControllerTest extends GalleryTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
 	    /* this is what we expect */
 	} else if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	} else {
 	    $this->assert(false, 'should throw an error by default');
 	}
@@ -103,7 +109,7 @@ class ControllerTest extends GalleryTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
 	    /* this is what we expect */
 	} else if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	} else {
 	    $this->assert(false);
 	}
@@ -119,7 +125,7 @@ class ControllerTest extends GalleryTestCase {
 	$ret = GalleryController::assertIsGenuineRequest();
 	if ($ret) {
 	    $this->fail('specified auth token in request parameters should be correct');
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -134,7 +140,7 @@ class ControllerTest extends GalleryTestCase {
 	if ($ret && $ret->getErrorCode() & ERROR_REQUEST_FORGED) {
 	    /* this is what we expect */
 	} else if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	} else {
 	    $this->assert(false, 'invalid auth token was accepted');
 	}
@@ -148,7 +154,7 @@ class ControllerTest extends GalleryTestCase {
 	$ret = GalleryController::assertIsGenuineRequest();
 	if ($ret) {
 	    $this->fail('check should be omitted for non-persistent sessions');
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$validAuthToken = 'ABCDEF123456';
@@ -157,7 +163,7 @@ class ControllerTest extends GalleryTestCase {
 	$ret = GalleryController::assertIsGenuineRequest();
 	if ($ret) {
 	    $this->fail('specified auth token should be ignored for non-persistent sessions');
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -172,7 +178,7 @@ class ControllerTest extends GalleryTestCase {
 	$ret = GalleryController::assertIsGenuineRequest();
 	if ($ret) {
 	    $this->fail('specified auth token should be ignored in maintenance mode');
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 

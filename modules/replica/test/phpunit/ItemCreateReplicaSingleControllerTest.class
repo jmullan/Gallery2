@@ -32,20 +32,21 @@ class ItemCreateReplicaSingleControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_rootAlbum);
 
 	list ($ret, $this->_destinationAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_destinationAlbum);
@@ -53,8 +54,7 @@ class ItemCreateReplicaSingleControllerTest extends GalleryControllerTestCase {
 	/* Create a data item */
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_rootAlbum->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -96,7 +96,7 @@ class ItemCreateReplicaSingleControllerTest extends GalleryControllerTestCase {
     function testReplicaWithNoViewPermissions() {
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	global $gallery;
@@ -136,7 +136,7 @@ class ItemCreateReplicaSingleControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::removeItemPermissions($this->_destinationAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* The UI never displays targets that we can't add to */

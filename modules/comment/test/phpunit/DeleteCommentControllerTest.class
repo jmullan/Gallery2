@@ -33,13 +33,16 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Create two random items */
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($this->_getRootId());
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->_markForCleanup($this->_item[$i]);
@@ -48,8 +51,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	    list ($ret, $this->_comment[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assert(isset($this->_comment[$i]), 'Missing comment instance');
@@ -60,8 +62,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	    $this->_comment[$i]->setDate(time());
 	    $ret = $this->_comment[$i]->save();
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }

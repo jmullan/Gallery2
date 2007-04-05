@@ -32,44 +32,42 @@ class WebDavModuleTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 
 	/* Initialize test URL generator */
 	$urlGenerator = new GalleryUrlGenerator();
 	$ret = $urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$gallery->setUrlGenerator($urlGenerator);
 
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 	    'test/file');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Load WebDAV module */
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'webdav');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Mock disable WebDAV rewrite rules */
@@ -81,8 +79,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	    'RewriteApi', 'WebDavModuleTestRewriteApi', 'WebDavModuleTestRewriteApi',
 	    'modules/webdav/test/phpunit/WebDavModuleTest.class', 'test');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_registerFactoryImplementationForTest(
@@ -136,7 +133,10 @@ class WebDavModuleTest extends GalleryTestCase {
 
     function tearDown() {
 	GalleryDataCache::reset();
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testGetItemLinks() {
@@ -148,7 +148,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(
 	    array($this->_item->getId(), $this->_subAlbum->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Any user agent */
@@ -157,7 +157,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $links) = $this->_module->getItemLinks(
 	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expected = array();
@@ -172,7 +172,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $links) = $this->_module->getItemLinks(
 	    $items, $wantsDetailedLinks, $permissions, $gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $links, 'must be a request for detailed links');
@@ -204,7 +204,7 @@ class WebDavModuleTest extends GalleryTestCase {
 			      'pluginId' => 'rewrite'));
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(array('webdav')), $this->_activateCalls);
@@ -220,7 +220,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	$event->setData(array('error' => $error));
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(array('suppressBody' => 1)), $results);
@@ -239,7 +239,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	$event->setData(array('error' => $error));
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(array('suppressBody' => 1)), $results);

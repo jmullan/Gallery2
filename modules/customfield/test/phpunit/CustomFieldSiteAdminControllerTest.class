@@ -32,19 +32,20 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
 	foreach (array('common', 'album', 'photo') as $key) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'customfield', $key, '');
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
     }
@@ -131,7 +132,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Check data so far.. */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {
@@ -164,7 +165,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Check data so far.. */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {
@@ -212,7 +213,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Check data so far.. */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {
@@ -239,7 +240,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	/* Check data so far.. */
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	foreach ($params as $key => $value) {
 	    if ($key[0] == '_') {

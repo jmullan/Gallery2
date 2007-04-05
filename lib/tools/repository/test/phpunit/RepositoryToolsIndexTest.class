@@ -67,7 +67,7 @@ class RepositoryToolsIndexTest extends GalleryTestCase {
 	/* Generate the index. */
 	list ($ret, $pluginsInIndex) = $index->generate();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array('themes' => 1, 'modules' => 1), $pluginsInIndex,
 	    'Incorrect number of plugins in index.');
@@ -80,7 +80,7 @@ class RepositoryToolsIndexTest extends GalleryTestCase {
 
 	list ($ret, $pluginInfo) = $index->getPluginInfo();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array(
 	    0 => array(

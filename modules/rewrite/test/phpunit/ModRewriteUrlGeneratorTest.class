@@ -38,15 +38,17 @@ class ModRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Set up our environment */
 	foreach (array('modrewrite.galleryLocation' => '/gallery2/',
 		       'modrewrite.embeddedLocation' => '/cms/') as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -57,8 +59,7 @@ class ModRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 
 	$ret = $this->_urlGeneratorInit('ModRewriteUrlGenerator');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -99,7 +100,7 @@ class ModRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	$this->_urlGenerator = new $this->_urlGeneratorName();
 	$ret = $this->_urlGenerator->init('/cms/index.php?mod=gallery2', '/gallery2/');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($expectedUrl, $this->_urlGenerator->getCurrentUrl());
 	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');

@@ -34,29 +34,29 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_group) = $this->_createRandomGroup();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_group);
 
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_user);
@@ -69,21 +69,18 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'nokiaupload');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter(
 			  'module', 'nokiaupload', 'id.mobileGroup', $this->_group->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter(
 			  'module', 'nokiaupload', 'id.uploadAlbum', $this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$_SERVER['HTTP_USER_AGENT'] = 'Nokia6630/1.0 (2.39.129) Series60/2.6 Profile/MIDP-2.0';
     }
@@ -125,7 +122,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	list ($ret, $isMember) =
 	    GalleryCoreApi::isUserInGroup($this->_user->getId(), $this->_group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(true, $isMember, 'user added to mobile users group');
     }

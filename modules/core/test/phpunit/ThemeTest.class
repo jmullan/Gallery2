@@ -35,7 +35,10 @@ class ThemeTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_platform = new ThemeTestPlatform();
 	$gallery->setPlatform($this->_platform);
@@ -43,20 +46,19 @@ class ThemeTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 	list ($ret, $this->_theme) = GalleryCoreApi::loadPlugin('theme', 'ThemeTest');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_theme->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
 	$this->_theme->setRequiredThemeApi(GalleryTheme::getApiVersion());
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_item);
     }
@@ -84,7 +86,10 @@ class ThemeTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testPackSettingBlockList1() {
@@ -223,7 +228,7 @@ class ThemeTest extends GalleryTestCase {
 
 	$ret = $this->_theme->installOrUpgrade();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH),
 	    'success?');
@@ -232,7 +237,7 @@ class ThemeTest extends GalleryTestCase {
     function testActivateBadThemeApiActivate() {
 	$ret = $this->_theme->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($major, $minor) = $this->_theme->getRequiredThemeApi();
@@ -240,13 +245,13 @@ class ThemeTest extends GalleryTestCase {
 
 	list ($ret, $redirect) = $this->_theme->activate();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
 
 	list ($ret, $isActive) = $this->_theme->isActive();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!$isActive, 'is active');
     }
@@ -257,7 +262,7 @@ class ThemeTest extends GalleryTestCase {
 
 	$ret = $this->_theme->installOrUpgrade();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
     }
@@ -265,7 +270,7 @@ class ThemeTest extends GalleryTestCase {
     function testActivateBadCoreApiActivate() {
 	$ret = $this->_theme->installOrUpgrade();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($major, $minor) = $this->_theme->getRequiredCoreApi();
@@ -273,13 +278,13 @@ class ThemeTest extends GalleryTestCase {
 
 	list ($ret, $redirect) = $this->_theme->activate();
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH), 'success?');
 
 	list ($ret, $isActive) = $this->_theme->isActive();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!$isActive, 'is active');
     }
@@ -288,12 +293,12 @@ class ThemeTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'default.theme', 'themetest');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $redirect) = $this->_theme->deactivate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('href' => 'upgrade/'), $redirect);
@@ -306,7 +311,7 @@ class ThemeTest extends GalleryTestCase {
 	$ret = $this->_theme->loadCommonTemplateData($template, $this->_item,
 						     array(), array(), array(), false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$theme['foo'] = 'bar';
@@ -330,7 +335,7 @@ class ThemeTest extends GalleryTestCase {
 		    'photoBlocks' => $block[3], 'moreBlocks' => $block[4]),
 		array('body' => 'test.tpl'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(
 		array('core.ThemeTestBlock1', 'core.ThemeTestBlock2', 'core.ThemeTestBlock3',

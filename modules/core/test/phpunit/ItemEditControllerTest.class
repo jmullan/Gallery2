@@ -32,11 +32,14 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -44,7 +47,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_item) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = 'modules/core/test/phpunit/ItemEditControllerTest.class';
@@ -52,24 +55,21 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	    'ItemEditPlugin', 'ItemEditControllerTestPluginSuccess',
 	    'ItemEditControllerTestPluginSuccess', $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditPlugin', 'ItemEditControllerTestPluginFailAndWarn',
 	    'ItemEditControllerTestPluginFailAndWarn', $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemEditOption', 'ItemEditControllerTestOption', 'ItemEditControllerTestOption',
 	    $path, 'coreTest', array('ItemEditControllerTestPluginFailAndWarn'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
     }
@@ -79,7 +79,7 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	    $this->_createDerivative($this->_item, $this->_item->getId(),
 				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());

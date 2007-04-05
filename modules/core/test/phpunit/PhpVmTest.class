@@ -35,7 +35,10 @@ class PhpVmTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	$this->_phpVm = new GalleryPhpVm();
     }
 
@@ -101,7 +104,7 @@ class PhpVmTest extends GalleryTestCase {
 	$session = new GallerySession();
 	$ret = $session->initEmpty(true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!empty($session->_sessionId), 'persistent session preparation failed');
 	$url = GalleryUrlGenerator::appendParamsToUrl(

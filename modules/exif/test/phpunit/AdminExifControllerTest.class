@@ -38,36 +38,34 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_save['summary']) = ExifHelper::getProperties(EXIF_SUMMARY);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_save['detailed']) = ExifHelper::getProperties(EXIF_DETAILED);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'exif');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -76,17 +74,18 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 
 	$ret = ExifHelper::setProperties(EXIF_SUMMARY, $this->_save['summary']);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = ExifHelper::setProperties(EXIF_DETAILED, $this->_save['detailed']);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testSaveAvailableToSummary() {
@@ -105,7 +104,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're there */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(in_array('SubjectLocation', $properties));
@@ -129,7 +128,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're gone */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!in_array('Make', $properties));
@@ -167,7 +166,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Verify the new positions */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* check for the first entry to be still the first entry. */
@@ -208,7 +207,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Verify the new positions */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Count summary entries, must be equal to before the move, one has to adapt. */
@@ -236,7 +235,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Remove all properties */
 	$ret = ExifHelper::setProperties(EXIF_SUMMARY, array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][resetSummary]', 1);
@@ -250,7 +249,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're all back again */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_SUMMARY);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(14, sizeof($properties));
@@ -276,7 +275,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're there */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(in_array('SubjectLocation', $properties));
@@ -300,7 +299,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're gone */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!in_array('Make', $properties));
@@ -339,7 +338,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Verify the new positions */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('Make', $properties[0], 'First entry moved up/disappeared???');
@@ -381,7 +380,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Verify the new positions */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('Make', $properties[1], 'Make should have been moved down???');
@@ -407,7 +406,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Remove all properties */
 	$ret = ExifHelper::setProperties(EXIF_DETAILED, array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][resetDetailed]', 1);
@@ -421,7 +420,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 	/* Make sure they're all back again */
 	list ($ret, $properties) = ExifHelper::getProperties(EXIF_DETAILED);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Spot check */
@@ -446,19 +445,19 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $addOption) = GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(EXIF_ITEM_DESCRIPTION, (int)$addOption);
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 0);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $addOption) = GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(0, (int)$addOption);
@@ -479,7 +478,7 @@ class AdminExifControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $addOption) = GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals((EXIF_ITEM_DESCRIPTION | IPTC_ITEM_KEYWORDS | EXIF_ITEM_ROTATE),
 			    (int)$addOption);

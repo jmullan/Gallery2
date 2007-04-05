@@ -34,11 +34,14 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$acceleration['user']['type'] = 'none';
@@ -48,17 +51,20 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'acceleration', serialize($acceleration));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smarty.compile_check', 0);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
     function tearDown() {
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testSave() {
@@ -79,7 +85,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	list ($ret, $acceleration) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'acceleration');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$acceleration = unserialize($acceleration);
 
@@ -90,7 +96,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	list ($ret, $compileCheck) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'smarty.compile_check');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(1, (int)$compileCheck, 'compile check');
     }
@@ -107,7 +113,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryDataCache::putPageData('test-key', 0, 'key', 'test-value');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][clear]', 1);
@@ -129,7 +135,7 @@ class AdminPerformanceControllerTest extends GalleryControllerTestCase {
 	$storage =& $gallery->getStorage();
 	list ($ret, $results) = $storage->search('SELECT COUNT(*) FROM [GalleryCacheMap]', array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$result = $results->nextResult();
 	$this->assertEquals(0, (int)$result[0]);

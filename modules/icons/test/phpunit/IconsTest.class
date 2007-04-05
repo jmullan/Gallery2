@@ -36,11 +36,13 @@ class IconsTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'icons');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -53,13 +55,16 @@ class IconsTest extends GalleryControllerTestCase {
 	global $gallery;
 	$gallery->_translator->_isRightToLeft = $this->_saveRtl;
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testGetIconPacks() {
 	list ($ret, $list) = $this->_icons->getIconPacks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(isset($list['paularmstrongdesigns']),
@@ -69,7 +74,7 @@ class IconsTest extends GalleryControllerTestCase {
     function testNewFactoryInstance() {
 	list ($ret, $iconpack) = GalleryCoreApi::newFactoryInstance('IconsInterface_1_0');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(isset($iconpack), 'Icon pack was not set');
 	$this->assert(GalleryUtilities::isA($iconpack, 'IconsImpl'),
@@ -79,12 +84,12 @@ class IconsTest extends GalleryControllerTestCase {
     function testSetupTemplateNone() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$template = new IconsDummyGalleryTemplate();
 	$ret = $this->_icons->init($template);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(null, $template->style);
     }
@@ -92,12 +97,12 @@ class IconsTest extends GalleryControllerTestCase {
     function testSetupTemplateIcons() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '_phpunitfoo');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$template = new IconsDummyGalleryTemplate();
 	$ret = $this->_icons->init($template);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('modules/icons/iconpacks/_phpunitfoo/icons.css', $template->style);
     }
@@ -108,12 +113,12 @@ class IconsTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '_phpunitfoo');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$template = new IconsDummyGalleryTemplate();
 	$ret = $this->_icons->init($template);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('modules/icons/iconpacks/_phpunitfoo/icons-rtl.css', $template->style);
     }

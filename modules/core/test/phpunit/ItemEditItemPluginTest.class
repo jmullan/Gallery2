@@ -32,14 +32,16 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_item[$i]) =
 		$this->_createRandomDataItem($this->_getRootId(), 'test/file');
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->_markForCleanup($this->_item[$i]);
 	}
@@ -47,8 +49,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($this->_getRootId());
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->_markForCleanup($this->_album[$i]);
 	}
@@ -58,8 +59,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	    'GalleryToolkit', 'ItemEditItemPluginTestToolkit', 'ItemEditItemPluginTestToolkit',
 	    'modules/core/test/phpunit/ItemEditItemPluginTest.class', 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markToolkitForCleanup('ItemEditItemPluginTestToolkit');
 
@@ -68,7 +68,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	    'ItemEditItemPluginTestToolkit', array('test/file'), 'convert-to-image/jpeg',
 	    array(), 'test-description', 'image/jpeg');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
@@ -77,16 +77,14 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 		  array('type' => 'int', 'description' => 'test')),
 	    'test-description', '');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_thumbnail) =
 	    $this->_createDerivative($this->_item[0], $this->_item[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_preferred = null;
@@ -121,7 +119,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('new title', $this->_item[0]->getTitle());
@@ -133,7 +131,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	if (isset($thumbTable[$this->_item[0]->getId()])) {
@@ -159,7 +157,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	foreach (array('html', 'bbcode') as $i => $markup) {
 	    $ret = $this->_setMarkupType($markup, $i == 0);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    GalleryUtilities::putRequestVariable('form[serialNumber]', $item->getSerialNumber());
@@ -170,7 +168,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	    list ($ret, $item) = $item->refresh();
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $value = $markup == 'html'
@@ -232,17 +230,17 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Make sure the object has been renamed to something similar to the new path */
 	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newPath) = $this->_item[0]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $comparePath) =  $this->_item[1]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($comparePath . '_001', $newPath);
@@ -255,7 +253,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     function testMissingRootTitle() {
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$originalTitle = $rootAlbum->getTitle();
@@ -277,7 +275,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Make sure the title was not changed */
 	list ($ret, $rootAlbum) = $rootAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($originalTitle, $rootAlbum->getTitle());
@@ -286,7 +284,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     function testRenameRoot() {
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Use invalid inputs */
@@ -304,7 +302,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the path component is still the same */
 	list ($ret, $rootAlbum) = $rootAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* For Oracle, null is replaced with '' when loading data from the database */
@@ -314,7 +312,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     function testMissingRootTitle2() {
 	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$originalTitle = $rootAlbum->getTitle();
@@ -338,7 +336,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Make sure the title was not changed */
 	list ($ret, $rootAlbum) = $rootAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($originalTitle, $rootAlbum->getTitle());
@@ -365,17 +363,17 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* The object is in the new path, but with a trailing _001 in the name to disambiguate it */
 	list ($ret, $this->_album[0]) = $this->_album[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newPath) = $this->_album[0]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $targetPath) = $this->_album[1]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify that the new path is correct */
@@ -410,7 +408,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	$platform =& $gallery->getPlatform();
 	list ($ret, $originalPath) = $this->_item[0]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Use an invalid Serial */
@@ -427,12 +425,12 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Make sure the object is still in the original path */
 	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newPath) = $this->_item[0]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($originalPath, $newPath);
 
@@ -447,7 +445,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	$platform =& $gallery->getPlatform();
 	list ($ret, $originalPath) = $this->_album[0]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Use an invalid Serial */
@@ -464,12 +462,12 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	/* Make sure the object is still in the original path */
 	list ($ret, $this->_album[0]) = $this->_album[0]->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newPath) = $this->_album[0]->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($originalPath, $newPath);
 
@@ -510,7 +508,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[1]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	if (isset($thumbTable[$this->_item[1]->getId()])) {
@@ -525,14 +523,14 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     function testCreateAlbumHighlight() {
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album[0]->getId(), 'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify we don't have a highlight */
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(empty($thumbTable), 'We shouldn\'t have a thumbnail');
 
@@ -549,7 +547,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	if (isset($thumbTable[$this->_album[0]->getId()])) {
@@ -565,7 +563,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(isset($thumbTable[$this->_item[0]->getId()]), 'We should have a thumbnail');
 
@@ -583,7 +581,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!isset($thumbTable[$this->_item[0]->getId()]),
 		      'We should not have a thumbnail');
@@ -594,7 +592,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(isset($thumbTable[$this->_item[0]->getId()]), 'We should have a thumbnail');
 
@@ -612,7 +610,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $thumbTable) =
 	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!isset($thumbTable[$this->_item[0]->getId()]),
 		      'We should not have a thumbnail');

@@ -35,25 +35,25 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'mime');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'mime');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_rejectMessage =
 	    $this->_module->translate('This type of file not allowed; item will not be added.');
@@ -69,12 +69,12 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
     function testAllowAll() {
 	$ret = $this->_module->setParameter('allowMime', 'all');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $isAppropriate) = $this->_option->isAppropriate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!$isAppropriate);
     }
@@ -84,20 +84,20 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 
 	$ret = $this->_module->setParameter('allowMime', 'allow');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_module->setParameter('mimeList', 'image/jpeg | test/file | image/gif');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $badItem) = $this->_createRandomDataItem($this->_album->getId(), 'test/bad');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
@@ -112,7 +112,7 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 
 	$ret = $this->_verifyMissing($badItem->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -121,20 +121,20 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 
 	$ret = $this->_module->setParameter('allowMime', 'block');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_module->setParameter('mimeList', 'video/mpeg | test/bad');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $badItem) = $this->_createRandomDataItem($this->_album->getId(), 'test/bad');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
@@ -149,7 +149,7 @@ class RestrictMimeOptionTest extends ItemAddOptionTestCase {
 
 	$ret = $this->_verifyMissing($badItem->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

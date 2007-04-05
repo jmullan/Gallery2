@@ -33,12 +33,14 @@ class LogoutControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_anonymousId) = GalleryCoreApi::getAnonymousUserId();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Save the session */
@@ -58,7 +60,10 @@ class LogoutControllerTest extends GalleryControllerTestCase {
 
 	/* Restore the session */
 	$gallery->_session = $this->_saveSession;
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testLogout() {
@@ -88,7 +93,7 @@ class LogoutControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::registerEventListener(
 	    'Gallery::Logout', new LogoutControllerTestEventListener());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$results = $this->handleRequest();

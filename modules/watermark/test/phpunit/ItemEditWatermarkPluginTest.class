@@ -33,7 +33,10 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Create a watermark */
 	$this->_watermark = new WatermarkImage();
@@ -41,14 +44,12 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    GalleryCoreApi::getPluginBaseDir('module', 'core') . 'modules/core/test/data/test1.gif',
 	    'image/gif', 'phpunit_' . rand() . '.gif');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_watermark->save();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_watermark);
 
@@ -58,16 +59,14 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	 */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 	$albumId = $this->_album->getId();
 
 	list ($ret, $this->_subalbum) = $this->_createRandomAlbum($albumId);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$subalbumId = $this->_subalbum->getId();
 
@@ -83,8 +82,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 		  $this->_items[], $this->_preferreds[], $this->_resizes[], $this->_thumbnails[]) =
 		call_user_func_array(array($this, '_createItem'), $info);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
@@ -158,7 +156,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	foreach (array($this->_preferred, $this->_resize, $this->_thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals(sprintf('composite|plugins_data/modules/watermark/' .
 					'%s,image/gif,62,75,manual,25.000,50.000',
@@ -190,7 +188,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	foreach (array($this->_preferred, $this->_resize, $this->_thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals('', $derivative->getPostFilterOperations(),
 				'Post filter mismatch');
@@ -201,12 +199,12 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	/* Remap and get rid of the preferred to start */
 	$ret = GalleryCoreApi::remapSourceIds($this->_preferred->getId(), $this->_item->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_preferred->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -226,7 +224,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferredTable) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$preferred = $preferredTable[$this->_item->getId()];
@@ -243,7 +241,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    foreach (array($this->_resize, $this->_thumbnail) as $derivative) {
 		list ($ret, $derivative) = $derivative->refresh();
 		if ($ret) {
-		    $this->failWithStatus($ret);
+		    return ($ret);
 		}
 		$this->assertEquals($preferred->getId(), $derivative->getDerivativeSourceId(),
 				    'Derivative not remapped to point to item');
@@ -255,7 +253,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	/* Give our preferred a watermark but no operation */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_preferred->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->_preferred->setDerivativeOperations(null);
 	$this->_preferred->setPostFilterOperations(
@@ -263,11 +261,11 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 		. ',image/gif,62,75,manual,25.000,50.000');
 	$ret = $this->_preferred->save();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Now tell the controller to remove watermarks */
@@ -282,7 +280,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	list ($ret, $preferredTable) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assert(empty($preferredTable), 'Preferred should be gone, but isn\'t');
@@ -291,7 +289,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	foreach (array($this->_resize, $this->_thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret) {
-		$this->failWithStatus($ret);
+		return ($ret);
 	    }
 	    $this->assertEquals($this->_item->getId(), $derivative->getDerivativeSourceId(),
 				'Derivative not remapped to point to item');
@@ -331,7 +329,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(1, $this->_templateAdapter->getCallbackCount(), 'Callback count');
 	$ret = $this->_templateAdapter->runCallbacks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$progress = $this->_templateAdapter->getProgressBarDump();
 	$this->assert(preg_match('/0.*core.ItemEdit.*' . $this->_album->getId() . '/',
@@ -345,7 +343,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 		list ($ret, $preferred) =
 		    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 		if (isset($preferred[$item->getId()])) {
 		    $this->_preferreds[$i] = $preferred[$item->getId()];
@@ -360,7 +358,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 		}
 		list ($ret, $derivative) = $derivative->refresh();
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 		$expected = $getsWatermark && ($applyToThumbnail
 			|| $derivative->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_THUMBNAIL)
@@ -406,7 +404,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
     function testIsSupportedAlbum() {
 	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/jpeg', 'composite');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(isset($toolkit), $this->_plugin->isSupported($this->_album, null),
 			    'album should be supported if we can watermark image/jpeg');
@@ -416,16 +414,16 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	global $gallery;
 	$ret = $this->_markPluginParametersForCleanup('module', 'watermark');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark',
 						  'forceDefaultWatermark', 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'watermark', 'defaultWatermarkId', 27);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_registerTestToolkit('test/file');
@@ -435,7 +433,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(),
 						 $gallery->getActiveUserId(), 'core.all');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!$this->_plugin->isSupported($this->_item, $this->_thumbnail), 'non admin');
@@ -452,7 +450,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    'modules/watermark/test/phpunit/ItemEditWatermarkPluginTest.class',
 	    'watermarkTest', null);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markToolkitForCleanup('ItemEditWatermarkPluginTestToolkit');
 
@@ -468,7 +466,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 		  array('type' => 'int', 'description' => 'test')),
 	    'test-description');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

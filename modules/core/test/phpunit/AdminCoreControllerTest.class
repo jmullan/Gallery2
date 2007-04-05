@@ -34,11 +34,13 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
@@ -98,7 +100,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	foreach ($valueMap as $key => $expectedValue) {
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core', $key);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assertEquals($expectedValue, $realValue, "value mismatch for $key");
@@ -113,7 +115,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	/* Set the password to a 3-letter value (it should be b64 encoded, but this is a dummy) */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.password', 'abc');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$valueMap['smtp.password'] = '***';
@@ -133,7 +135,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	list ($ret, $storedPass) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.password');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('abc', $storedPass,
@@ -148,7 +150,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	/* Set the password to a 3-letter value (it should be b64 encoded, but this is a dummy) */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.password', 'abc');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* But oops, the user entered 4 stars */
@@ -168,7 +170,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	list ($ret, $storedPass) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.password');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('abc', $storedPass,
@@ -197,7 +199,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	list ($ret, $storedPass) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.password');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('pass&word', base64_decode($storedPass));
@@ -236,7 +238,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    /* Set the cookie path manually to a known value to check later if it was changed */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '/bad/');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    /* Try to change the parameter */
@@ -267,7 +269,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
 									 'cookie.path');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $expPath = $testCase['saved'] ? $testCase['ep'] : '/bad/';
 	    $this->assertEquals($expPath, $realValue,
@@ -308,7 +310,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    /* Set the cookie domain manually to a known value to check later if it was changed */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.domain', 'bad');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    /* Try to change the parameter */
@@ -340,7 +342,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
 									 'cookie.domain');
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $expPath = $testCase['saved'] ? $testCase['ep'] : 'bad';
 	    $this->assertEquals($expPath, $realValue,
@@ -435,7 +437,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	/* Set the default language to a value such that we can ensure that it hasn't changed */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.language', 'de');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* A request with some changes, but "reset" is requested */

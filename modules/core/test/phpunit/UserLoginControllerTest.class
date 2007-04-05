@@ -36,13 +36,15 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Create a new user */
 	list ($ret, $this->_user) = $this->_createRandomUser(null, 'password');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_user);
@@ -59,13 +61,11 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_validationLevel) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'validation.level');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'validation.level', 'HIGH');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Disable all plugins by default */
@@ -85,7 +85,10 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testLogin() {
@@ -122,7 +125,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
 	$ret = $this->_disableUserName($this->_user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$listener = new NullEventListener();
@@ -145,7 +148,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $user) = $this->_createRandomUser(null, 'pass&word');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($user);
 
@@ -352,7 +355,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'validation.level', 'OFF');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][login]', 1);
@@ -431,7 +434,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $results) = $this->_loadTemplate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify that we render the normal user login view */
@@ -449,7 +452,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $results) = $this->_loadTemplate();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Verify that we render the normal user login view */

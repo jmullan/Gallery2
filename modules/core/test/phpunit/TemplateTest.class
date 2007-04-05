@@ -35,21 +35,24 @@ class TemplateTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $module->setParameter('smarty.compile_check', 0);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_template = new GalleryTemplate('/legal/path');
@@ -69,7 +72,10 @@ class TemplateTest extends GalleryTestCase {
 	GalleryDataCache::remove('GalleryDataCache::templatePathMap');
 	GalleryDataCache::put('GalleryDataCache::templatePathMap::isDirty', false);
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     /* Test retrieving a template that falls outside the module or theme template pattern*/
@@ -160,7 +166,7 @@ class TemplateTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'smarty.compile_check', 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryDataCache::remove('GalleryTemplate::compileCheck');
 	GalleryDataCache::putTemplatePath('modules/core/templates/template.tpl', 'CACHED.tpl');
@@ -196,7 +202,7 @@ class TemplateTest extends GalleryTestCase {
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -247,7 +253,7 @@ class TemplateTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'smarty.compile_check', 1);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$template = new GalleryTemplate('/legal/path');

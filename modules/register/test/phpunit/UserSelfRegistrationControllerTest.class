@@ -36,23 +36,23 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'register');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'emailadmins', '0');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'validation.level', 'HIGH');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_controller->setPluginInstances(array());
@@ -70,7 +70,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     function testRegisterWithAutomaticActivation() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'auto');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$userName = 'user-selfreg' . rand();
@@ -94,7 +94,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	/* the newly registered user is a real user by now */
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(GalleryUtilities::isA($user, 'GalleryUser'), true);
 
@@ -105,7 +105,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'email');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$userName = 'user-' . rand();
@@ -136,7 +136,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	/* make sure the pending user exists */
 	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($userName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($user);
     }
@@ -147,7 +147,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'email');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$userName = $entitizedName = 'test < & > ' . rand();
@@ -180,7 +180,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	/* make sure the pending user exists */
 	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($entitizedName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($user);
 
@@ -192,7 +192,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	list ($ret, $userEntity) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assert(!empty($userEntity), 'factory error');
 	$userEntity->setHashedPassword($user->getHashedPassword());
@@ -259,7 +259,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'admin');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Create one user */
@@ -293,7 +293,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($userName);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($user);
     }
@@ -303,7 +303,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'auto');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Create one user */
@@ -416,7 +416,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     function testPlugins3() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'auto');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$userName = 'user-selfreg' . rand();
@@ -453,11 +453,11 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     function testPluginsOff() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'validation.level', 'OFF');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'auto');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$userName = 'user-selfreg' . rand();

@@ -33,24 +33,24 @@ class DownloadItemTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_item);
 
 	list ($ret, $this->_view) = GalleryView::loadView('core.DownloadItem');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_userId = $gallery->getActiveUserId();
 	$gallery->_phpVm = new DownloadItemTestPhpVm();
@@ -81,12 +81,12 @@ class DownloadItemTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.viewResizes');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
@@ -96,7 +96,7 @@ class DownloadItemTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.viewSource');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $output) = $this->_download();
@@ -108,17 +108,17 @@ class DownloadItemTest extends GalleryTestCase {
 	list ($ret, $derivative) = $this->_createDerivative($this->_item, $this->_item->getId(),
 							    DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.viewResizes');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $derivative->getId());
@@ -128,7 +128,7 @@ class DownloadItemTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.viewSource');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $output) = $this->_download();
@@ -140,17 +140,17 @@ class DownloadItemTest extends GalleryTestCase {
 	list ($ret, $derivative) = $this->_createDerivative($this->_item, $this->_item->getId(),
 							    DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.viewSource');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $derivative->getId());
@@ -160,7 +160,7 @@ class DownloadItemTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.viewResizes');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $output) = $this->_download();
@@ -172,17 +172,17 @@ class DownloadItemTest extends GalleryTestCase {
 	list ($ret, $derivative) = $this->_createDerivative($this->_item, $this->_item->getId(),
 							    DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.viewResizes');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.viewSource');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('itemId', $derivative->getId());
@@ -192,7 +192,7 @@ class DownloadItemTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $output) = $this->_download();
@@ -213,7 +213,7 @@ class DownloadItemTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission($this->_item->getId(), $this->_userId,
 						 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$session->put('core.isPrintService', array(2, 5));

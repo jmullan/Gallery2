@@ -34,7 +34,10 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Require here to avoid loading if none of our tests will be run */
 	ob_start();
@@ -61,22 +64,19 @@ class WebDavTest extends GalleryTestCase {
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 	    'test/file');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Test the WebDAV controller */
@@ -86,8 +86,7 @@ class WebDavTest extends GalleryTestCase {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_streams =& WebDavTestStream::_getStreams();
@@ -97,8 +96,7 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $this->_urlGenerator) =
 	    GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (!isset($this->_urlGenerator)) {
 	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
@@ -107,8 +105,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$gallery->setUrlGenerator($this->_urlGenerator);
 
@@ -117,7 +114,10 @@ class WebDavTest extends GalleryTestCase {
 
     function tearDown() {
 	$this->_streamWrapperRegistration(true);
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function skip() {
@@ -159,7 +159,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -183,7 +183,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
@@ -208,7 +208,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
@@ -250,7 +250,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
@@ -275,7 +275,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
@@ -302,7 +302,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('new title', $this->_item->getTitle());
@@ -317,7 +317,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$pathComponent = 'testAlbum-' . rand();
@@ -330,7 +330,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
@@ -340,12 +340,12 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $newAlbumId) = GalleryCoreApi::fetchItemIdByPath($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $newAlbum->getTitle());
@@ -360,7 +360,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
@@ -371,7 +371,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 204 No Content'),
@@ -382,7 +382,7 @@ class WebDavTest extends GalleryTestCase {
 	/* Make sure the album is actually gone */
 	$ret = $this->_verifyMissing($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -392,7 +392,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
@@ -420,7 +420,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
@@ -429,12 +429,12 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $newItemId) = GalleryCoreApi::fetchItemIdByPath($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $newItem->getTitle());
@@ -456,7 +456,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$pathComponent = 'test1.gif';
@@ -472,7 +472,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
@@ -481,12 +481,12 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $newItemId) = GalleryCoreApi::fetchItemIdByPath($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $newItem->getTitle());
@@ -506,7 +506,7 @@ class WebDavTest extends GalleryTestCase {
 	GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
 	list ($ret, $data) = ItemAddController::handleRequest(array());
 	if ($ret && !($ret->getErrorCode() & ERROR_REQUEST_FORGED)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret, 'HTTP PUT check was not enforced');
@@ -518,7 +518,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
@@ -537,7 +537,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('HTTP/1.0 204 No Content', $this->_headers['status']);
@@ -546,7 +546,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('foo/bar', $this->_item->getMimeType());
@@ -564,14 +564,14 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
 
 	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$pathComponent = 'testItem-' . rand();
@@ -589,7 +589,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
@@ -599,7 +599,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($newPath);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_item->getId(), $itemId);
@@ -608,7 +608,7 @@ class WebDavTest extends GalleryTestCase {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -718,19 +718,19 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $lock) = $this->_testLock($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_headers = array();
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -741,12 +741,12 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $lock) = $this->_testLock($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_headers = array();
@@ -765,13 +765,13 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = ltrim($path, '/');
 	list ($ret, list ($lock)) = WebDavHelper::getLocks($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('exclusive', $lock['scope']);
@@ -803,7 +803,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -814,12 +814,12 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $lock) = $this->_testLock($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_headers = array();
@@ -829,7 +829,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
@@ -851,13 +851,13 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = ltrim($path, '/');
 	list ($ret, $locks) = WebDavHelper::getLocks($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $locks);
@@ -879,7 +879,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -889,7 +889,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$pathComponent = 'testItem-' . rand();
@@ -905,7 +905,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT, $ret->getErrorCode());
@@ -927,7 +927,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $albumPath) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
@@ -951,7 +951,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
@@ -970,7 +970,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(file_get_contents($filePath), $output);
@@ -980,12 +980,12 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $newItemId) =
 		GalleryCoreApi::fetchItemIdByPath($albumPath . $legalPathComponent);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $newItem->getTitle(), 'title');
@@ -1002,14 +1002,14 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
 
 	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$pathComponent = 'The!Quick$Brown#Fox';
@@ -1030,7 +1030,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
@@ -1047,7 +1047,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$pathComponent = '._testItem-' . rand();
@@ -1064,7 +1064,7 @@ class WebDavTest extends GalleryTestCase {
 	ob_end_clean();
 
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
@@ -1087,7 +1087,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(GALLERY_ERROR | ERROR_BAD_PATH, $ret->getErrorCode());
@@ -1103,7 +1103,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
@@ -1126,7 +1126,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
@@ -1138,7 +1138,7 @@ class WebDavTest extends GalleryTestCase {
 
 	list ($ret, $albumPath) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$pathComponent = 'The!Quick$Brown#Fox';
@@ -1151,7 +1151,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
@@ -1163,12 +1163,12 @@ class WebDavTest extends GalleryTestCase {
 	list ($ret, $newAlbumId) =
 		GalleryCoreApi::fetchItemIdByPath($albumPath . $legalPathComponent);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $newAlbum->getTitle(), 'title');

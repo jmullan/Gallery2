@@ -35,31 +35,30 @@ class TranslatorTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_languageCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	/* Disable browser check and set default lang != hardcoded lang */
 	foreach (array('default.language' => 'fr_FR', 'language.useBrowserPref' => '0')
 		 as $param => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $param, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    list ($ret, $actual) =
 		GalleryCoreApi::getPluginParameter('module', 'core', $param);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($value, $actual, $param);
 	}
@@ -69,15 +68,17 @@ class TranslatorTest extends GalleryTestCase {
 	global $gallery;
 	$ret = $gallery->setActiveLanguageCode($this->_languageCode);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Init a new translator so that we reset our locale */
 	$translator = new GalleryTranslator();
 	$translator->init($this->_languageCode);
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testGetLanguageCodeFromRequest() {
@@ -88,12 +89,12 @@ class TranslatorTest extends GalleryTestCase {
 		 as $param => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $param, $value);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    list ($ret, $actual) =
 		GalleryCoreApi::getPluginParameter('module', 'core', $param);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($value, $actual, $param);
 	}
@@ -103,7 +104,7 @@ class TranslatorTest extends GalleryTestCase {
 	$translator = new GalleryTranslator();
 	list ($ret, $languageCode) = $translator->init();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (function_exists('dgettext')) {
 	    $this->assertEquals('de_DE', getenv('LANG'), 'null init, valid language');
@@ -158,12 +159,12 @@ class TranslatorTest extends GalleryTestCase {
 		 as $param => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $param, $value);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    list ($ret, $actual) =
 		GalleryCoreApi::getPluginParameter('module', 'core', $param);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	    $this->assertEquals($value, $actual, $param);
 	}
@@ -173,7 +174,7 @@ class TranslatorTest extends GalleryTestCase {
 	$gallery->_translator = null;
 	$ret = $gallery->initTranslator();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (function_exists('dgettext')) {
 	    $this->assertEquals('de_DE', getenv('LANG'), 'null init, valid language');
@@ -183,7 +184,7 @@ class TranslatorTest extends GalleryTestCase {
 	/* Verify that the activeLanguageCode was changed */
 	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('de_DE', $langCode, 'active language code');
     }
@@ -201,11 +202,11 @@ class TranslatorTest extends GalleryTestCase {
 	$gallery->_translator = null;
 	$ret = $gallery->initTranslator();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('fr_FR', $langCode);
     }
@@ -220,11 +221,11 @@ class TranslatorTest extends GalleryTestCase {
 	$gallery->_translator = null;
 	$ret = $gallery->initTranslator(true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('en_US', $langCode);
     }
@@ -236,17 +237,17 @@ class TranslatorTest extends GalleryTestCase {
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de_DE';
 	$ret = $gallery->setActiveLanguageCode('fr_FR');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->_translator = null;
 	$ret = $gallery->initTranslator();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('fr_FR', $langCode);
     }
@@ -257,17 +258,17 @@ class TranslatorTest extends GalleryTestCase {
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de_DE';
 	$ret = $gallery->setActiveLanguageCode('fr_FR');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->_translator = null;
 	$ret = $gallery->initTranslator(true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $langCode) = $gallery->getActiveLanguageCode();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('fr_FR', $langCode);
     }
@@ -283,7 +284,7 @@ class TranslatorTest extends GalleryTestCase {
 	list ($ret, $results) =
 	    $translator->translateDomain($domain, array('text' => 'Description'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if ($translator->canTranslate()) {
 	    $this->assertEquals('Descripci&oacute;n', $results);
@@ -296,7 +297,7 @@ class TranslatorTest extends GalleryTestCase {
 	list ($ret, $results) =
 	    $translator->translateDomain($domain, array('text' => 'Create'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if ($translator->canTranslate()) {
 	    $this->assertEquals('Créer', $results);
@@ -320,7 +321,7 @@ class TranslatorTest extends GalleryTestCase {
 					       'count' => 1,
 					       'arg1' => 1));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if ($translator->canTranslate()) {
 	    $this->assertEquals('1 usuario coincide con su filtro', $results);
@@ -336,7 +337,7 @@ class TranslatorTest extends GalleryTestCase {
 					       'count' => 2,
 					       'arg1' => 2));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if ($translator->canTranslate()) {
 	    if ($translator->canTranslatePlural()) {
@@ -361,7 +362,7 @@ class TranslatorTest extends GalleryTestCase {
 	list ($ret, $results) =
 	    $translator->translateDomain($domain, array('text' => 'Album'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if ($translator->canTranslate()) {
 	    $this->assertEquals("\xC3\x81lbum", $results);
@@ -374,13 +375,13 @@ class TranslatorTest extends GalleryTestCase {
 	$translator = new GalleryTranslator();
 	list ($ret, $languageCode) = $translator->init('en_US');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $text) = $translator->translateDomain('modules_core',
 	    array('text' => 'test <!-- this is a comment to assist translators -->'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('test', $text);
     }
@@ -390,19 +391,19 @@ class TranslatorTest extends GalleryTestCase {
 	$translator = new GalleryTranslator();
 	list ($ret, $languageCode) = $translator->init('en_US');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $text) = $translator->translateDomain('modules_core', 'Test');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('Test', $text);
 
 	list ($ret, $text) = $translator->translateDomain('modules_core',
 		array('text' => 'Test %s Test %s', 'args' => array('foo', 'bar')));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('Test foo Test bar', $text);
     }
@@ -425,7 +426,7 @@ class TranslatorTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::installTranslationsForPlugin('module', 'TranslatorTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -453,7 +454,7 @@ class TranslatorTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::installTranslationsForPlugin('module', 'TranslatorTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -487,7 +488,7 @@ class TranslatorTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::installTranslationsForPlugin('module', 'TranslatorTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());
@@ -511,7 +512,7 @@ class TranslatorTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::removeTranslationsForPlugin('module', 'TranslatorTest');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($platform->isComplete(), $platform->getRemaining());

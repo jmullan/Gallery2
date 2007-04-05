@@ -35,19 +35,20 @@ class PathInfoHelperTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Set up our environment */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'pathinfo.forced', '0');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_parser = new PathInfoParser();
@@ -62,7 +63,7 @@ class PathInfoHelperTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('pathInfoTest', 'pass');
 	list ($ret, $status, $trueStatus) = PathInfoHelper::checkPathInfo();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(REWRITE_STATUS_OK, $status, 'status');
 	$this->assertEquals(REWRITE_STATUS_OK, $trueStatus, 'trueStatus');
@@ -72,7 +73,7 @@ class PathInfoHelperTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('pathInfoTest', 'fail');
 	list ($ret, $status, $trueStatus) = PathInfoHelper::checkPathInfo();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(REWRITE_STATUS_NO_PATH_INFO, $status, 'status');
 	$this->assertEquals(REWRITE_STATUS_NO_PATH_INFO, $trueStatus, 'trueStatus');
@@ -80,7 +81,7 @@ class PathInfoHelperTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('pathInfoTest', '404');
 	list ($ret, $status, $trueStatus) = PathInfoHelper::checkPathInfo();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(REWRITE_STATUS_NO_PATH_INFO, $status, 'status');
 	$this->assertEquals(REWRITE_STATUS_NO_PATH_INFO, $trueStatus, 'trueStatus');
@@ -89,13 +90,13 @@ class PathInfoHelperTest extends GalleryTestCase {
     function testCheckPathInfoForced() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'pathinfo.forced', '1');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('pathInfoTest', 'fail');
 	list ($ret, $status, $trueStatus) = PathInfoHelper::checkPathInfo();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(REWRITE_STATUS_OK, $status, 'status');
 	$this->assertEquals(REWRITE_STATUS_NO_PATH_INFO, $trueStatus, 'trueStatus');

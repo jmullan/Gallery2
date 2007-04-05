@@ -55,7 +55,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	/* Normal */
 	list ($ret, $user) = $this->_createUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($user);
 
@@ -98,7 +98,7 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	/* Normal */
 	list ($ret, $user) = $this->_createUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($user);
 
@@ -143,12 +143,12 @@ class AdminUsersControllerTest extends GalleryControllerTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);

@@ -33,12 +33,14 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'multilang');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -69,7 +71,7 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $languages) =
 	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('de_DE|he_IL|zh_CN', $languages, 'languages');
     }
@@ -87,7 +89,7 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
 	list ($ret, $languages) =
 	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('', $languages, 'languages');
     }

@@ -33,43 +33,40 @@ class KeywordAlbumTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 		array('keywords' => 'abc testkey def'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 		'test/item', array('keywords' => 'testkey;foo,fun,time'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'keyalbum');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	list ($ret, $this->_view) = GalleryView::loadView('keyalbum.KeywordAlbum');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'keyalbum');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_module->setParameter('split', ';,\s');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
@@ -80,18 +77,18 @@ class KeywordAlbumTest extends GalleryTestCase {
     function testLoadThemeAndSettingsForAlbum() {
 	$ret = $this->_markPluginParametersForCleanup('module', 'keyalbum');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'description', 'desc');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('keyword', 'testkey');
 
 	list ($ret, $theme, $params, $item) = $this->_view->loadThemeAndParameters();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(GalleryUtilities::isA($theme, 'GalleryTheme'), 'theme');
@@ -107,7 +104,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 
 	list ($ret, $theme, $params, $item) = $this->_view->loadThemeAndParameters();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(GalleryUtilities::isA($theme, 'GalleryTheme'), 'theme');
@@ -128,7 +125,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 
 	list ($ret, $result) = $this->_view->loadTemplate($this->_template, $form = array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('view' => 'keyalbum.KeywordAlbum', 'keyword' => 'testkey'),
@@ -147,7 +144,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 
 	list ($ret, $result) = $this->_view->loadTemplate($this->_template, $form = array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('view' => 'keyalbum.KeywordAlbum', 'keyword' => 'testkey,fun'),
@@ -159,7 +156,7 @@ class KeywordAlbumTest extends GalleryTestCase {
     function testLoadTemplateForItem() {
 	list ($ret, $count) = GalleryCoreApi::fetchItemViewCount($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(0, $count, 'count before');
 
@@ -168,7 +165,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 
 	list ($ret, $result) = $this->_view->loadTemplate($this->_template, $form = array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$theme =& $this->_template->getVariableByReference('theme');
@@ -177,7 +174,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 
 	list ($ret, $count) = GalleryCoreApi::fetchItemViewCount($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(1, $count, 'count after');
     }
@@ -185,7 +182,7 @@ class KeywordAlbumTest extends GalleryTestCase {
     function testLoadTemplateForItemNoPermission() {
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('keyword', 'testkey');
@@ -193,7 +190,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 
 	list ($ret, $result) = $this->_view->loadTemplate($this->_template, $form = array());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -207,7 +204,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 	$permissions = array();
 	$ret = $this->_module->setParameter('summaryLinks', 'all');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryUtilities::putRequestVariable('view', 'test.TestView');
 
@@ -215,7 +212,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 	list ($ret, $summaries) =
 	    $this->_module->getItemSummaries($itemList, $permissions, $unused);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($idList, array_keys($summaries), 'all');
 	$this->assertEquals(3, substr_count($summaries[$idList[0]], '<a href'), '3 album keywords');
@@ -223,30 +220,30 @@ class KeywordAlbumTest extends GalleryTestCase {
 
 	$ret = $this->_module->setParameter('summaryLinks', 'none');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryUtilities::putRequestVariable('view', 'keyalbum.KeywordAlbum');
 
 	list ($ret, $summaries) =
 	    $this->_module->getItemSummaries($itemList, $permissions, $unused);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), $summaries, 'none');
 
 	$ret = $this->_module->setParameter('split', ',');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_module->setParameter('summaryLinks', 'key');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $summaries) =
 	    $this->_module->getItemSummaries($itemList, $permissions, $unused);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($idList, array_keys($summaries), 'key');
 	$this->assertEquals(1, substr_count($summaries[$idList[0]], '<a href'), '1 album keyword');
@@ -256,23 +253,23 @@ class KeywordAlbumTest extends GalleryTestCase {
 	list ($ret, $summaries) =
 	    $this->_module->getItemSummaries($itemList, $permissions, $unused);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), $summaries, 'key not');
 
 	$ret = $this->_module->setParameter('split', ';\s');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $this->_module->setParameter('summaryLinks', 'album');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $summaries) =
 	    $this->_module->getItemSummaries($itemList, $permissions, $unused);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($idList, array_keys($summaries), 'album');
 	$this->assertEquals(3, substr_count($summaries[$idList[0]], '<a href'), 'album keywords');
@@ -282,7 +279,7 @@ class KeywordAlbumTest extends GalleryTestCase {
 	list ($ret, $summaries) =
 	    $this->_module->getItemSummaries($itemList, $permissions, $unused);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(array(), $summaries, 'album not');
     }

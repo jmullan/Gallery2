@@ -35,15 +35,17 @@ class MaintenanceHelperTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$path = 'modules/core/test/phpunit/MaintenanceHelperTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'MaintenanceHelperTestTask',
 	    'MaintenanceHelperTestTask', $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
     }
@@ -53,17 +55,19 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	    'GalleryMaintenanceMap',
 	    array('taskId' => 'MaintenanceHelperTestTask'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testFetchTasks() {
 	list ($ret, $tasks) = MaintenanceHelper_simple::fetchTasks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(GalleryUtilities::isA($tasks['MaintenanceHelperTestTask'],
@@ -76,7 +80,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	$ret = MaintenanceHelper_simple::addRun(
 	    'MaintenanceHelperTestTask', $time, true, array('some details'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $info) = MaintenanceHelper_simple::fetchLastRun('MaintenanceHelperTestTask');
@@ -91,7 +95,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	$ret = MaintenanceHelper_simple::addRun(
 	    'MaintenanceHelperTestTask', $time, false, array('different details'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $info) = MaintenanceHelper_simple::fetchLastRun('MaintenanceHelperTestTask');

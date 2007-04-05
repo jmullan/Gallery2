@@ -36,7 +36,10 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$urlGenerator = new RewriteUrlGenerator();
 	$urlGenerator->init('phpunit');
@@ -47,7 +50,7 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 	/* Create test items */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($album);
 
@@ -55,14 +58,14 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($album->getId());
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIs);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Refresh the album incase it changed before it was locked */
 	list ($ret, $album) = $album->refresh();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Rename the album */
@@ -70,38 +73,38 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 	$ret = $album->rename('The Quick!Brown#Fox');
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $album->save();
 	if ($ret) {
 	    $album->rename($oldPathComponent);
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $item) = $this->_createRandomDataItem($album->getId(), 'test/file');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Write lock the item we're moving */
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($item->getId());
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIs);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Refresh the item incase it changed before it was locked */
 	list ($ret, $item) = $item->refresh();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Rename the item */
@@ -109,19 +112,19 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 	$ret = $item->rename('Jumps Over%The/Lazy_Dog');
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $item->save();
 	if ($ret) {
 	    $item->rename($oldPathComponent);
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Use valid inputs */
@@ -140,7 +143,7 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 	/* Use valid inputs */
 	list ($ret, $path) = $item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$url = 'w%path%';

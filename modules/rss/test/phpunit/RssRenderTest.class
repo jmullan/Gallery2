@@ -40,12 +40,14 @@ class RssRenderTest extends GalleryControllerTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rss');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* set the expected default parameters */
@@ -77,8 +79,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	list ($ret, $this->_root) = $this->_createRandomAlbum(
 		$this->_getRootId(), array('modificationTimestamp' => 123456789));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_root);
 
@@ -89,15 +90,13 @@ class RssRenderTest extends GalleryControllerTestCase {
 		__FILE__,
 		'GalleryPhotoItem');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
 		$this->_root->getId(), array('modificationTimestamp' => 123456789));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_item2) = $this->_createRandomDataItem(
@@ -107,8 +106,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 		__FILE__,
 		'GalleryPhotoItem');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_simpleRender = new SimpleRenderView();
@@ -163,7 +161,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	    );
 	$ret = RssMapHelper::createFeed($name, $params);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_feedsToDelete[] = $name;
@@ -197,12 +195,12 @@ class RssRenderTest extends GalleryControllerTestCase {
 	list ($ret, $version) =
 	    GalleryCoreApi::getPluginParameter('module', 'rss', '_version');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'sfAlbumType', 'album');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->_urlGenerator = new RenderViewTestUrlGenerator();
@@ -210,7 +208,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	$ret = $this->_simpleRender->renderImmediate(null, null);
 	if ($ret) {
 	    ob_end_clean();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$results = ob_get_contents();
@@ -249,12 +247,12 @@ class RssRenderTest extends GalleryControllerTestCase {
 	list ($ret, $version) =
 	    GalleryCoreApi::getPluginParameter('module', 'rss', '_version');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rss', 'sfAlbumType', 'photos');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->_urlGenerator = new RenderViewTestUrlGenerator();
@@ -262,7 +260,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	$ret = $this->_simpleRender->renderImmediate(null, null);
 	if ($ret) {
 	    ob_end_clean();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$results = ob_get_contents();

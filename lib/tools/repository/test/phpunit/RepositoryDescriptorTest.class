@@ -39,7 +39,10 @@ class RepositoryDescriptorTest extends GalleryTestCase {
     var $_testModule;
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 
 	/* This maps to ../data/MANIFEST */
@@ -97,7 +100,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
 	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(
@@ -154,7 +157,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
 	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array(),
 	    $descriptor->_data,
@@ -188,7 +191,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
 	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(
@@ -208,7 +211,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
 	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(
@@ -224,7 +227,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
 	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals(
@@ -237,7 +240,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
 	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$platform = new UnitTestPlatform();
@@ -261,7 +264,7 @@ class RepositoryDescriptorTest extends GalleryTestCase {
 	$descriptor = $this->_getDescriptorWithFakeFileMetadata();
 	$ret = $descriptor->generate(new RepositoryDescriptorTestPlugin());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$phpVm = new RepositoryDescriptorTestPhpVm();

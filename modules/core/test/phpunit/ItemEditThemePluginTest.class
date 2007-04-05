@@ -34,20 +34,22 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Create a random album */
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
 	    $this->_getRootId(), array('theme' => 'ItemEditThemeControllerTest'));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Create child album here, since test theme is too rudimentary */
 	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/*
@@ -57,8 +59,7 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 	list ($ret, $this->_grandchildAlbum) = $this->_createRandomAlbum(
 		$this->_childAlbum->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_album);
@@ -74,18 +75,18 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
     function _setTheme(&$item, $themeId) {
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$item->setTheme($themeId);
 	$ret = $item->save();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -206,7 +207,7 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals('ItemEditThemeControllerTest', $this->_album->getTheme());
     }
@@ -225,7 +226,7 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$themeId = $this->_album->getTheme();
 	$this->assert(empty($themeId));
@@ -264,15 +265,15 @@ class ItemEditThemePluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $album) = $this->_album->refresh();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	list ($ret, $childAlbum) = $this->_childAlbum->refresh();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	list ($ret, $grandchildAlbum) = $this->_grandchildAlbum->refresh();
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	$this->assertEquals('ItemEditThemeControllerTest', $album->getTheme(), 'album');

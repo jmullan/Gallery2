@@ -34,31 +34,31 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$path = 'modules/core/test/phpunit/AdminMaintenanceControllerTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskSuccess',
 	    'AdminMaintenanceControllerTestTaskSuccess', $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskProgressBar',
 	    'AdminMaintenanceControllerTestTaskProgressBar', $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskFail',
 	    'AdminMaintenanceControllerTestTaskFail', $path, 'coreTest', null);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
     }
@@ -75,7 +75,10 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	    }
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testRunTaskSuccess() {
@@ -95,7 +98,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskSuccess');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($info['runId'] > 0);
@@ -129,7 +132,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	/* Run the tasks */
 	$ret = $mockAdapter->runCallbacks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Assert that we saw what we expected */
@@ -141,7 +144,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskProgressBar');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($info['runId'] > 0);
@@ -176,7 +179,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	/* Run the tasks */
 	$ret = $mockAdapter->runCallbacks();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Assert that we saw what we expected */
@@ -188,7 +191,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskProgressBar');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($info['runId'] > 0);
@@ -226,7 +229,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	    if ($ret->getErrorCode() & ERROR_UNKNOWN) {
 		/* This is what we expected */
 	    } else {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	} else {
 	    $this->assert(false, 'The task should have failed');
@@ -238,7 +241,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskProgressBar');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($info['runId'] > 0);
@@ -264,7 +267,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	list ($ret, $info) =
 	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskFail');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($info['runId'] > 0);

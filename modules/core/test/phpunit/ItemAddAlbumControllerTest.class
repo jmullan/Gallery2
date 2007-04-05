@@ -32,12 +32,14 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_parentAlbum);
     }
@@ -55,7 +57,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we succeeded */
@@ -74,7 +76,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	/* Create an album */
 	list ($ret, $subAlbum) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Use valid inputs */
@@ -91,7 +93,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we succeeded */
@@ -107,7 +109,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($this->_getSecondChildId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 
 	/* Verify that the new album's path component is unique (it's got _001 as a suffix) */
@@ -167,7 +169,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we succeeded */
@@ -183,13 +185,13 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(trim($name), $newAlbum->getPathComponent(), 'path component');
 
 	list ($ret, $path) = $newAlbum->fetchPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert($platform->is_dir($path), "directory '$path'");
 	$this->assertEquals(trim($name), basename($path),
@@ -213,7 +215,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
     function testMaliciousMarkup() {
 	$ret = $this->_setMarkupType('html', true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$name = 'testalbum-' . rand();
@@ -227,7 +229,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Perform the request and verify that we succeeded */
@@ -243,7 +245,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(' title', $newAlbum->getTitle(), 'title');
 	$this->assertEquals('summary &lt;div&gt;.&lt;/div&gt;', $newAlbum->getSummary(), 'summary');

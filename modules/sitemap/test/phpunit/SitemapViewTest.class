@@ -37,7 +37,10 @@ class SitemapViewTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_start_of_2005 = 1104566400; /* 2005-01-01T08:00:00+00:00 */
 	$this->_start_of_2006 = 1136102400; /* 2006-01-01T08:00:00+00:00 */
@@ -50,8 +53,7 @@ class SitemapViewTest extends GalleryTestCase {
 	    $this->_getRootId(), array(
 		'creationTimestamp' => $this->_start_of_2005));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_root);
 
@@ -69,8 +71,7 @@ class SitemapViewTest extends GalleryTestCase {
 		array('serialNumber' => $serials[$i] - 1 /* it will get incremented internally */,
 		      'creationTimestamp' => $this->_start_of_2005));
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 	$gallery->_phpVm->setTime($this->_start_of_2006);
@@ -84,7 +85,7 @@ class SitemapViewTest extends GalleryTestCase {
 	$ret = $this->_view->renderSitemap($this->_root->getId());
 	if ($ret) {
 	    ob_end_clean();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$results = ob_get_contents();
@@ -127,11 +128,11 @@ class SitemapViewTest extends GalleryTestCase {
 	/* Precache ACLs and clear locks before using mock storage */
 	list ($ret) = GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$gallery->_storage = new SitemapViewTestStorage($storage);
 
@@ -139,7 +140,7 @@ class SitemapViewTest extends GalleryTestCase {
 	$ret = $this->_view->renderImmediate(array(), array());
 	if ($ret) {
 	    ob_end_clean();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$results = ob_get_contents();

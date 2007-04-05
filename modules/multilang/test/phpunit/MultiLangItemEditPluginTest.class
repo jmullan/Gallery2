@@ -36,29 +36,29 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('title' => 'title', 'summary' => 'summary', 'description' => 'description',
 		  'onLoadHandlers' => '|MultiLang|'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_album);
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'multilang');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'multilang',
 						  'languages', 'de_DE|he_IL|zh_CN');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$session =& $gallery->getSession();
@@ -75,7 +75,10 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	    $session->put('core.language', $this->_saveLanguage);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testReset() {
@@ -97,8 +100,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	    array('title' => 'title', 'summary' => 'summary', 'description' => 'description',
 		  'onLoadHandlers' => '|MultiLang|'));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$results = $this->handleRequest($this->_subAlbum, $this->_subAlbum);
@@ -108,7 +110,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$gallery->setActiveLanguageCode('en_US');
 	list ($ret, $album) = $this->_subAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('title', $album->getTitle());
 	$this->assertEquals('summary', $album->getSummary());
@@ -117,7 +119,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$gallery->setActiveLanguageCode('zh_CN');
 	list ($ret, $album) = $this->_subAlbum->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals('cn title', $album->getTitle());
 	$this->assertEquals('cn summary', $album->getSummary());
@@ -125,12 +127,12 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $data) = MultiLangHelper::getItemData($this->_subAlbum->getId());
 	if ($ret) {
-	    $this->failWithStatus($ret);
+	    return ($ret);
 	}
 	$this->assertEquals(array(), $data, 'MultiLang data for test item not deleted!');
     }
@@ -140,7 +142,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'id.rootAlbum', $this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	GalleryUtilities::putRequestVariable('form[language]', 'zh_CN');
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -150,7 +152,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'id.rootAlbum', $rootAlbumId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -158,7 +160,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	global $gallery;
 	$ret = $this->_setMarkupType('html', true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[language]', 'de_DE');
@@ -174,7 +176,7 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	$gallery->setActiveLanguageCode('de_DE');
 	list ($ret, $album) = $this->_album->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(' title', $album->getTitle());
 	$this->assertEquals('summary fun', $album->getSummary());

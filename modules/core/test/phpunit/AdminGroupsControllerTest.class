@@ -56,7 +56,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	/* Normal */
 	list ($ret, $group) = $this->_createGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][editFromText]', 1);
@@ -99,7 +99,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	/* Normal */
 	list ($ret, $group) = $this->_createGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
@@ -142,12 +142,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
@@ -165,12 +165,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
@@ -188,12 +188,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][addRemoveUsersFromText]', 1);
@@ -212,12 +212,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core',
 							      'id.everybodyGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
@@ -235,7 +235,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	/* Normal */
 	list ($ret, $group) = $this->_createGroup();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	GalleryUtilities::putRequestVariable('form[action][addRemoveUsersFromText]', 1);
@@ -302,7 +302,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	$ret = GalleryCoreApi::deleteEntityById($group->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 }

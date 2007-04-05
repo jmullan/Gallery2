@@ -38,21 +38,22 @@ class RssMapTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_feedsToDelete = array();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'rss');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* create an album */
 	list ($ret, $this->_root) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_root);
 
@@ -61,7 +62,7 @@ class RssMapTest extends GalleryTestCase {
 	$params = array('itemId' => $this->_root->getId());
 	$ret = RssMapHelper::createFeed($this->_name, $params);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_feedsToDelete[] = $this->_name;
@@ -72,12 +73,15 @@ class RssMapTest extends GalleryTestCase {
 	    foreach ($this->_feedsToDelete as $name) {
 		$ret = RssMapHelper::deleteFeed($name);
 		if ($ret) {
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 	    }
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testCollision() {
@@ -94,7 +98,7 @@ class RssMapTest extends GalleryTestCase {
     function testDelete() {
 	$ret = RssMapHelper::deleteFeed($this->_name);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $feed) = RssMapHelper::fetchFeed($this->_name);
@@ -111,7 +115,7 @@ class RssMapTest extends GalleryTestCase {
 
 	list ($ret, $feeds) = RssMapHelper::fetchFeedsForItem($this->_root->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($feeds, array(array(
@@ -127,7 +131,7 @@ class RssMapTest extends GalleryTestCase {
 
 	list ($ret, $names) = RssMapHelper::fetchFeedNames();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(in_array($this->_name, $names));

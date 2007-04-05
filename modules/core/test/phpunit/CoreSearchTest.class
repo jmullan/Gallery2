@@ -34,11 +34,14 @@ class CoreSearchTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	if (empty($moduleStatusList['search']['active'])) {
@@ -48,14 +51,14 @@ class CoreSearchTest extends GalleryTestCase {
 	list ($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_randomKey = "a" . rand(1,100000) . "z";
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_markForCleanup($this->_parentAlbum);
@@ -71,13 +74,12 @@ class CoreSearchTest extends GalleryTestCase {
 			  'summary' => 'Summary ' . $this->_randomKey,
 			  'keywords' => 'Keywords ' . $this->_randomKey));
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $ret = GalleryCoreApi::removeItemPermissions($this->_item[$i]->getId());
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    switch($i) {
@@ -88,8 +90,7 @@ class CoreSearchTest extends GalleryTestCase {
 							       $gallery->getActiveUserId(),
 							       'core.view');
 		if ($ret) {
-		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret);
+		    return $ret;
 		}
 		break;
 	    }
@@ -100,8 +101,7 @@ class CoreSearchTest extends GalleryTestCase {
 		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0',
 						   'GalleryCoreSearch');
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 
 	    $this->assert(isset($this->_coreSearch), 'Missing GalleryCoreSearch instance');
@@ -109,8 +109,7 @@ class CoreSearchTest extends GalleryTestCase {
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_user = $gallery->getActiveUser();
@@ -123,7 +122,7 @@ class CoreSearchTest extends GalleryTestCase {
 
 	list ($ret, $info) = $this->_coreSearch->getSearchModuleInfo();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(isset($info['name']), 'name missing');
@@ -153,7 +152,7 @@ class CoreSearchTest extends GalleryTestCase {
 					     'keywords' => 1),
 				       $this->_randomKey);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$keywords = $this->_module->translate('Keywords');
@@ -224,7 +223,7 @@ class CoreSearchTest extends GalleryTestCase {
 					     'keywords' => 1),
 				       $this->_randomKey);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$title = $this->_module->translate('Title');
@@ -289,7 +288,7 @@ class CoreSearchTest extends GalleryTestCase {
 				       1,
 				       2);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$keywords = $this->_module->translate('Keywords');
@@ -344,7 +343,7 @@ class CoreSearchTest extends GalleryTestCase {
 	    $this->_coreSearch->search(array('titles' => 1),
 				       'some string that will never show up');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('start' => 0,
@@ -363,7 +362,7 @@ class CoreSearchTest extends GalleryTestCase {
 	list ($ret, $linkedItem) =
 	    $this->_createLinkedItem($this->_parentAlbum->getId(), $this->_item[1]);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $results) =
@@ -373,7 +372,7 @@ class CoreSearchTest extends GalleryTestCase {
 					     'keywords' => 1),
 				       $this->_randomKey);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$keywords = $this->_module->translate('Keywords');

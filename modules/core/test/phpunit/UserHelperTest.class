@@ -32,7 +32,10 @@ class UserHelperTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	$this->_phpVm = new UserHelperTestPhpVm();
 	$this->_storage = new UserHelperTestMockStorage();
@@ -45,7 +48,10 @@ class UserHelperTest extends GalleryTestCase {
 	global $gallery;
 	$gallery->_session = $this->_saveSession;
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testGalleryLoginEvent() {
@@ -57,7 +63,7 @@ class UserHelperTest extends GalleryTestCase {
 	$event->setEntity(new UserHelperTestMockUser());
 	list ($ret, $ignored) = GalleryUserHelper_medium::handleEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -74,7 +80,7 @@ class UserHelperTest extends GalleryTestCase {
 	$this->_phpVm->_time = 'NOW';
 	list ($ret, $ignored) = GalleryUserHelper_medium::handleEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -90,7 +96,7 @@ class UserHelperTest extends GalleryTestCase {
 	$event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
 	list ($ret, $ignored) = GalleryUserHelper_medium::handleEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $this->_storage->_operations);
@@ -105,7 +111,7 @@ class UserHelperTest extends GalleryTestCase {
 	$this->_phpVm->_time = 'NOW';
 	list ($ret, $ignored) = GalleryUserHelper_medium::handleEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -127,7 +133,7 @@ class UserHelperTest extends GalleryTestCase {
 	$this->_phpVm->_time = time();
 	list ($ret, $ignored) = GalleryUserHelper_medium::handleEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -139,7 +145,7 @@ class UserHelperTest extends GalleryTestCase {
     function testIsDisabledUsernameNoRows() {
 	list ($ret, $disabled) = GalleryUserHelper_medium::isDisabledUsername('SomeBogusUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -155,7 +161,7 @@ class UserHelperTest extends GalleryTestCase {
 	$this->_storage->_lastAttempt = 10000;
 	list ($ret, $disabled) = GalleryUserHelper_medium::isDisabledUsername('MockUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -171,7 +177,7 @@ class UserHelperTest extends GalleryTestCase {
 	$this->_phpVm->_time = 10001;
 	list ($ret, $disabled) = GalleryUserHelper_medium::isDisabledUsername('MockUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -187,7 +193,7 @@ class UserHelperTest extends GalleryTestCase {
 	$this->_phpVm->_time = 10000 + 9 * 3600; /* 9 hours since last attempt */
 	list ($ret, $disabled) = GalleryUserHelper_medium::isDisabledUsername('MockUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
@@ -203,7 +209,7 @@ class UserHelperTest extends GalleryTestCase {
 	$this->_phpVm->_time = 1000000; /* last attempt is in the distant past */
 	list ($ret, $disabled) = GalleryUserHelper_medium::isDisabledUsername('MockUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(
