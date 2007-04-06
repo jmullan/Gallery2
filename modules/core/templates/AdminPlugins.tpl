@@ -57,6 +57,7 @@
     "header" : '{g->text text="Warning!" forJavascript=true}',
     "body"   : '{g->text text="Do you really want to uninstall __PLUGIN__?" forJavascript=true}' +
 	       '<br/>' +
+               '<b>{g->text text="This will also remove any permissions and clean up any data created by this module." forJavascript=true}</b> ' +
                '{g->text text="This plugin will be uninstalled, but its files will be kept so that you can reinstall it." forJavascript=true}',
     "yes"    : '{g->text text="Yes" forJavascript=true}',
     "no"     : '{g->text text="No" forJavascript=true}'
