@@ -15,7 +15,7 @@ tmp:
 
 dbxml:
 	@if [ "x" != "$(wildcard $(CLASSDIR)/*.class)x" ]; then \
-		perl $(TOOLDIR)/bin/extractClassXml.pl --dtd=$(TOOLDIR)/dtd/GalleryClass2.0.dtd --quiet --out-dir=tmp/classxml $(CLASSDIR)/*.class; \
+		perl $(TOOLDIR)/bin/extractClassXml.pl --dtd=$(TOOLDIR)/dtd/GalleryClass2.1.dtd --quiet --out-dir=tmp/classxml $(CLASSDIR)/*.class; \
 	else \
 		echo "No .class files to parse!"; \
 	fi
