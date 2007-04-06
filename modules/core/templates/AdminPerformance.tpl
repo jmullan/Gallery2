@@ -96,7 +96,7 @@
   </h3>
 
   <p class="giDescription">
-    {g->text text="For optimal performance, Gallery caches all templates.  If you would like to customize your template files, you should disable template caching temporarily so that changes take effect immediately without clearing the template cache."}
+    {g->text text="For optimal performance, Gallery caches all templates.  If you would like to %scustomize your template files%s, you should disable template caching temporarily so that changes take effect immediately without clearing the template cache." arg1="<a href=\"http://codex.gallery2.org/Gallery2:Editing_Templates\">" arg2="</a>"}
   </p>
 
   <table class="gbDataTable">
