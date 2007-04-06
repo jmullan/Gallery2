@@ -79,7 +79,7 @@ class GalleryCoreApi {
      * - delete GalleryTestCase::failWithStatus
      */
     function getApiVersion() {
-	return array(7, 23);
+	return array(7, 24);
     }
 
     /**
@@ -3127,6 +3127,17 @@ class GalleryCoreApi {
     function shouldDoCompileCheck() {
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 	return GalleryTemplate::shouldDoCompileCheck();
+    }
+
+    /**
+     * Allows the application to programmatically set Gallery into or out of maintenance mode.
+     * @param mixed $mode This can either be a boolean flag or a string representing the url of the
+     * 			  custom maintenance mode page.
+     * @return object GalleryStatus a status code
+     */
+    function setMaintenanceMode($mode) {
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/MaintenanceHelper_simple.class');
+	return MaintenanceHelper_simple::setMaintenanceMode($mode);
     }
 }
 ?>

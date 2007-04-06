@@ -115,5 +115,50 @@ class MaintenanceHelper_simple {
 
 	return null;
     }
+
+    /**
+     * @see GalleryCoreApi::setMaintenanceMode
+     */
+    function setMaintenanceMode($mode) {
+	global $gallery;
+
+	$currentMode = $gallery->getConfig('mode.maintenance');
+
+	/* If already in the requested mode, don't have to do anything. */
+	if ($currentMode !== $mode) {
+	    $platform =& $gallery->getPlatform();
+	    $versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $versions = $module->getInstalledVersions();
+	    $versionsData = array($versions['core'], $versions['gallery']);
+	    if (!empty($mode)) {
+		$modeText = 'maintenance-mode';
+
+		/* If $mode is a string then treat as a url of the custom maintenance page. */
+		if (is_string($mode)) {
+		    $modeText .= ":$mode";
+		}
+		$versionsData[] = $modeText;
+	    }
+
+	    $gallery->debug('Update versions file with maintenance mode');
+
+	    $data = implode("\n", $versionsData);
+	    if (!$platform->atomicWrite($versionFile, $data)) {
+		$gallery->debug('Error: Can\'t write to versions file');
+		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+							       'Can\'t write to the versions file');
+	    }
+
+	    $gallery->setConfig('mode.maintenance', $mode);
+	}
+
+	return null;
+    }
 }
 ?>

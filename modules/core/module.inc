@@ -34,7 +34,7 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.3-svn');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.2.7');
+	$this->setVersion('1.2.8');
 	$this->_templateVersion = 1;
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
@@ -455,27 +455,41 @@ class CoreModule extends GalleryModule {
     /**
      * Get the version of the core module and of Gallery itself.  We store this on disk to avoid
      * having to load up the database (which can be problematic if we're doing an upgrade and don't
-     * want to count a specific database schema.
+     * want to count a specific database schema). If the versions.dat file indicates that Gallery
+     * is in maintenance mode, then set the configuration value to indicate this.
      *
      * @return array 'core' => core module version, 'gallery' => gallery version
      * @static
      */
     function getInstalledVersions() {
 	global $gallery;
-	static $versions;
 
-	if (!isset($versions)) {
+	if (GalleryDataCache::containsKey('CoreModule::installedVersions')) {
+	    $versions = GalleryDataCache::get('CoreModule::installedVersions');
+	} else {
 	    $platform =& $gallery->getPlatform();
 	    $versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
 
-	    $moduleVersion = null;
-	    $galleryVersion = null;
 	    if ($platform->file_exists($versionFile)) {
 		$versionArray = $platform->file($versionFile);
 		if (count($versionArray) >= 2) {
 		    $versions['core'] = rtrim($versionArray[0]);
 		    $versions['gallery'] = rtrim($versionArray[1]);
+		    GalleryDataCache::put('CoreModule::installedVersions', $versions, true);
+		    if (isset($versionArray[2])) {
+		    	$maintenanceMode = explode(':', rtrim($versionArray[2]), 2);
+		    	if ($maintenanceMode[0] == 'maintenance-mode') {
+			    $newMode = empty($maintenanceMode[1]) ? true : $maintenanceMode[1];
+			    $gallery->setConfig('mode.maintenance', $newMode);
+			}
+		    }
 		}
+	    } else {
+	    	/*
+	    	 * If we get here we are probably doing a fresh install so just return 0, 0 and
+	    	 * the rest of the install should work properly.
+	    	 */
+	    	$versions = array('core' => 0, 'gallery' => 0);
 	    }
 	}
 

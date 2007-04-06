@@ -68,6 +68,31 @@ class AdminMaintenanceController extends GalleryController {
 		    $redirect['subView'] = 'core.AdminMaintenance';
 		}
 	    }
+	} else if (isset($form['action']['setMode'])) {
+	    $platform =& $gallery->getPlatform();
+
+	    $newMode = !empty($form['setMode']['mode']);
+	    $maintenanceUrl = $form['setMode']['url'];
+
+	    $statusMsg = $newMode ? 'setOn' : 'setOff';
+	    if ($newMode && !empty($maintenanceUrl)) {
+		$urlGenerator =& $gallery->getUrlGenerator();
+	    	$newMode = $urlGenerator->makeAbsoluteUrl($maintenanceUrl);
+	    }
+	    $ret = GalleryCoreApi::setMaintenanceMode($newMode);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core',
+						       'mode.maintenance.lastUrl', $maintenanceUrl);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $status['setMode'][$statusMsg] = 1;
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminMaintenance';
 	}
 
 	if (!empty($redirect)) {
@@ -119,11 +144,12 @@ class AdminMaintenanceController extends GalleryController {
  * This view will show available maintenance tasks
  */
 class AdminMaintenanceView extends GalleryView {
-
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	global $gallery;
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
@@ -159,6 +185,23 @@ class AdminMaintenanceView extends GalleryView {
 		$AdminMaintenance['tasks'][$taskId]['details'] = null;
 	    }
 	}
+
+	$maintenanceMode = $gallery->getConfig('mode.maintenance');
+	list ($ret, $maintenanceModeUrl) = GalleryCoreApi::getPluginParameter('module',
+								'core', 'mode.maintenance.lastUrl');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	if (!empty($maintenanceMode)) {
+	    if (is_string($maintenanceMode)) {
+	    	$maintenanceModeUrl = $maintenanceMode;
+		$maintenanceMode = true;
+	    }
+	} else {
+	}
+	$AdminMaintenance['setMode']['mode'] = $maintenanceMode;
+	$AdminMaintenance['setMode']['url'] = $maintenanceModeUrl;
 
 	$template->setVariable('AdminMaintenance', $AdminMaintenance);
 	$template->setVariable('controller', 'core.AdminMaintenance');

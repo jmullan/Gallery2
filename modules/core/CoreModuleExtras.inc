@@ -2188,6 +2188,8 @@ class CoreModuleExtras {
 	    if ($platform->file_exists($mapFile)) {
 		@$platform->unlink($mapFile);
 	    }
+	case '1.2.7':
+	    /* Added the ability to set the maintenance mode programmatically. */
 
 	case 'end of upgrade path':
 	    /*
@@ -2506,6 +2508,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.4':
 	case '1.2.5':
 	case '1.2.6':
+	case '1.2.7':
 
 	case 'end of upgrade path':
 	    /*
