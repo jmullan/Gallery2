@@ -1,8 +1,6 @@
 {*
  * $Revision$
- * If you want to customize this file, do not edit it directly since future upgrades
- * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
- * version.  Gallery will look for that file first and use it if it exists.
+ * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
 img.ImageFrame_image {ldelim} vertical-align:bottom; border:none; {rdelim}
 {foreach from=$ImageFrameData.data key=id item=data}
