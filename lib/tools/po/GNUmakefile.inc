@@ -149,5 +149,5 @@ create-from-core:
 
 remove-obsolete:
 	@for LOCALE in `ls $(PO).po | grep -v messages.po | sed 's/\.[^.]*$$//g'`; do \
-		msgattrib --no-obsolete --output-file=$${LOCALE}.po $${LOCALE}; \
+		msgattrib --no-obsolete --width=95 --output-file=$${LOCALE}.po $${LOCALE}; \
 	done;
