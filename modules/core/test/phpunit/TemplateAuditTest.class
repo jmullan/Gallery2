@@ -40,8 +40,8 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	$this->_revisionPattern = ' \* \$Revision(:.+)?\$';
 	$lines[] = '\{\*';
 	$lines[] = $this->_revisionPattern;
-	$lines[] = ' * Read this before changing templates!  http://codex.gallery2.org/Gallery2:' .
-			'Editing_Templates';
+	$lines[] = ' * Read this before changing templates!  http://codex.gallery2.org/Gallery2:'
+		 . 'Editing_Templates';
 	$lines[] = ' \*}';
 
 	$this->_revisionPlaceHolder = ' * REVISION PLACEHOLDER';
@@ -111,7 +111,6 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    }
 
 	    if (empty($revision)) {
-	    	print sprintf('[%s] Missing revision line', $truncatedFileName) . '<br/>';
 		$this->assert(false, sprintf('[%s] Missing revision line', $truncatedFileName));
 	    } else if (!preg_match('/^' . $this->_revisionPattern . '/', $revision)) {
 		$this->assert(false, sprintf('[%s] Invalid revision line: [%s]<br/>' .
@@ -121,11 +120,12 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    }
 
 	    if (!isset($this->_exceptions['header'][$truncatedFileName])) {
-	    	if ($this->_expectedHeaderLines !== $actual) {
+		if ($this->_expectedHeaderLines !== $actual) {
 		    $this->assertEquals($this->_expectedHeaderLines, $actual,
-				    sprintf('[%s] Malformed template header', $truncatedFileName));
+					sprintf('[%s] Malformed template header',
+						$truncatedFileName));
 		    $this->_errorCount++;
-	    	}
+		}
 	    }
 
 	    if ($this->_errorCount > 3) {
