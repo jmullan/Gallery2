@@ -249,8 +249,8 @@ class ThumbnailHelper {
 	if (isset($parentId)) {
 	    $item->setParentId($parentId);
 	}
-	if ($item->getWidth()==0 && $item->getHeight()==0 &&
-		isset($knownSize['width']) && isset($knownSize['height'])) {
+	if ($item->getWidth() == 0 && $item->getHeight() == 0
+		&& isset($knownSize['width']) && isset($knownSize['height'])) {
 	    $item->setWidth($knownSize['width']);
 	    $item->setHeight($knownSize['height']);
 	}
