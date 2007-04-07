@@ -185,7 +185,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 
 	$platform->setReply('file_exists', array($versionFile), true);
 	$platform->setReply('file', array($versionFile, false),
-			    array($module->getVersion() . "\n" .
+			    array($module->getVersion() . "\n",
 				  $module->getGalleryVersion() . "\n"));
 	$platform->setReply('atomicWrite', array($versionFile, $writeString), true);
 
