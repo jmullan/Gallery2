@@ -121,11 +121,6 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    }
 
 	    if (!isset($this->_exceptions['header'][$truncatedFileName])) {
-//	    	print sprintf('[%s] Malformed template header', $truncatedFileName)  . '<br/>';
-//	    	var_dump($this->_expectedHeaderLines);
-//	    	print '<br/>';
-//	    	var_dump($actual);
-//	    	print '<br/>';
 	    	if ($this->_expectedHeaderLines !== $actual) {
 		    $this->assertEquals($this->_expectedHeaderLines, $actual,
 				    sprintf('[%s] Malformed template header', $truncatedFileName));
