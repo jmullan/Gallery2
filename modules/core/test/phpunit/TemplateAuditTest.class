@@ -40,11 +40,8 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	$this->_revisionPattern = ' \* \$Revision(:.+)?\$';
 	$lines[] = '\{\*';
 	$lines[] = $this->_revisionPattern;
-	$lines[] = ' \* If you want to customize this file, do not edit it directly since ' .
-	    'future upgrades';
-	$lines[] = ' \* may overwrite it.  Instead, copy it into a new directory called ' .
-	    '"local" and edit that';
-	$lines[] = ' \* version.  Gallery will look for that file first and use it if it exists.';
+	$lines[] = ' * Read this before changing templates!  http://codex.gallery2.org/Gallery2:' .
+			'Editing_Templates';
 	$lines[] = ' \*}';
 
 	$this->_revisionPlaceHolder = ' * REVISION PLACEHOLDER';
@@ -98,7 +95,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 
 	$this->_checkTextInJavascript($truncatedFileName, $buffer);
 
-	if (preg_match('/^' . $this->_headerPattern . '/', $buffer)) {
+	if (preg_match('#^' . $this->_headerPattern . '#', $buffer)) {
 	    return;
 	} else {
 	    /* Grab the expected number of lines and compare them */
@@ -114,6 +111,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    }
 
 	    if (empty($revision)) {
+	    	print sprintf('[%s] Missing revision line', $truncatedFileName) . '<br/>';
 		$this->assert(false, sprintf('[%s] Missing revision line', $truncatedFileName));
 	    } else if (!preg_match('/^' . $this->_revisionPattern . '/', $revision)) {
 		$this->assert(false, sprintf('[%s] Invalid revision line: [%s]<br/>' .
@@ -123,9 +121,16 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    }
 
 	    if (!isset($this->_exceptions['header'][$truncatedFileName])) {
-		$this->assertEquals($this->_expectedHeaderLines, $actual,
+//	    	print sprintf('[%s] Malformed template header', $truncatedFileName)  . '<br/>';
+//	    	var_dump($this->_expectedHeaderLines);
+//	    	print '<br/>';
+//	    	var_dump($actual);
+//	    	print '<br/>';
+	    	if ($this->_expectedHeaderLines !== $actual) {
+		    $this->assertEquals($this->_expectedHeaderLines, $actual,
 				    sprintf('[%s] Malformed template header', $truncatedFileName));
-		$this->_errorCount++;
+		    $this->_errorCount++;
+	    	}
 	    }
 
 	    if ($this->_errorCount > 3) {
@@ -189,7 +194,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 			"$fileName: script block (line $scriptStartLine) has {g->text} calls " .
 			"without the forJavascript=true attribute.");
 		$inScriptTag = false;
-		$textCount = $forJsCount = 0; 
+		$textCount = $forJsCount = 0;
 	    }
 	}
     }
