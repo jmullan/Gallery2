@@ -305,13 +305,13 @@ class CoreModuleTest extends GalleryTestCase {
 
 	$platform->setReply('file_exists', array($versionFile), true);
 	$platform->setReply('file', array($versionFile, false),
-				    array("{$this->_module->getVersion()}\n",
-					  "{$this->_module->getGalleryVersion()}"));
+				    array($this->_module->getVersion() . "\n",
+					  $this->_module->getGalleryVersion()));
 
 	$unused = $this->_module->getInstalledVersions();
 
 	$this->assertEquals('TEST-VALUE', $gallery->getConfig('mode.maintenance'),
-				      'Config:mode.maintenance should not have been overwritten.');
+			    'Config:mode.maintenance should not have been overwritten.');
     }
 
     function testGetInstalledVersionsSetsMaintenanceModeFromFile() {
@@ -327,8 +327,8 @@ class CoreModuleTest extends GalleryTestCase {
 
 	$platform->setReply('file_exists', array($versionFile), true);
 	$platform->setReply('file', array($versionFile, false),
-				    array("{$this->_module->getVersion()}\n",
-					  "{$this->_module->getGalleryVersion()}\n",
+				    array($this->_module->getVersion() . "\n",
+					  $this->_module->getGalleryVersion() . "\n",
 					  'maintenance-mode'));
 
 	$unused = $this->_module->getInstalledVersions();
@@ -350,8 +350,8 @@ class CoreModuleTest extends GalleryTestCase {
 
 	$platform->setReply('file_exists', array($versionFile), true);
 	$platform->setReply('file', array($versionFile, false),
-				    array("{$this->_module->getVersion()}\n",
-					  "{$this->_module->getGalleryVersion()}\n",
+				    array($this->_module->getVersion() . "\n",
+					  $this->_module->getGalleryVersion() . "\n",
 					  'maintenance-mode:http://g2.com/maintenance.html'));
 
 	$unused = $this->_module->getInstalledVersions();

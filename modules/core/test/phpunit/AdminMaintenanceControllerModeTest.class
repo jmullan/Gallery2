@@ -35,7 +35,7 @@ class AdminMaintenanceControllerModeTest extends GalleryControllerTestCase {
     	global $gallery;
 	$ret = parent::setUp();
 	if ($ret) {
-	   return $ret;
+	    return $ret;
 	}
 
     	$gallery->setPlatform(new UnitTestPlatform());
@@ -46,10 +46,10 @@ class AdminMaintenanceControllerModeTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->_versionFileContents = array("{$module->getVersion()}\n",
-					    "{$module->getGalleryVersion()}\n");
+	$this->_versionFileContents = array($module->getVersion() . "\n",
+					    $module->getGalleryVersion() . "\n");
 	$this->_versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
-	$this->_versionContentsBase = "{$module->getVersion()}\n{$module->getGalleryVersion()}";
+	$this->_versionContentsBase = $module->getVersion() . "\n" . $module->getGalleryVersion();
 	GalleryDataCache::remove('CoreModule::installedVersions');
     }
 
@@ -62,7 +62,7 @@ class AdminMaintenanceControllerModeTest extends GalleryControllerTestCase {
 
 	$this->_platform->setReply('file_exists', array($this->_versionFile), true);
 	$this->_platform->setReply('file', array($this->_versionFile, false),
-								      $this->_versionFileContents);
+				   $this->_versionFileContents);
 	$this->_platform->setReply('atomicWrite', array($this->_versionFile, $versionStr), true);
 
 	GalleryUtilities::putRequestVariable('form[action][setMode]', 1);
@@ -87,7 +87,7 @@ class AdminMaintenanceControllerModeTest extends GalleryControllerTestCase {
 
 	$this->_platform->setReply('file_exists', array($this->_versionFile), true);
 	$this->_platform->setReply('file', array($this->_versionFile, false),
-								      $this->_versionFileContents);
+				   $this->_versionFileContents);
 	$this->_platform->setReply('atomicWrite', array($this->_versionFile, $versionStr), true);
 
 	GalleryUtilities::putRequestVariable('form[action][setMode]', 1);
@@ -112,7 +112,7 @@ class AdminMaintenanceControllerModeTest extends GalleryControllerTestCase {
 
 	$this->_platform->setReply('file_exists', array($this->_versionFile), true);
 	$this->_platform->setReply('file', array($this->_versionFile, false),
-								      $this->_versionFileContents);
+				   $this->_versionFileContents);
 	$this->_platform->setReply('atomicWrite',
 				   array($this->_versionFile, $this->_versionContentsBase), true);
 
