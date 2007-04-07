@@ -968,10 +968,18 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
      * @see GalleryStorage::addMapEntry
      */
-    function addMapEntry($mapName, $entry) {
-	$ret = $this->_dbInit(true);
-	if ($ret) {
-	    return $ret;
+    function addMapEntry($mapName, $entry, $useNonTransactionalConnection=false) {
+	if ($useNonTransactionalConnection && $this->_gs->isTransactional()) {
+	    list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	    if ($ret) {
+		return $ret;
+	    }
+	} else {
+	    $ret = $this->_dbInit(true);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $db = $this->_gs->_db;
 	}
 
 	list ($ret, $mapInfo) = $this->_gs->describeMap($mapName);
@@ -987,7 +995,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    }
 
 	    if (is_array($entry[$memberName])) {
-		return $this->_addMapEntries($mapInfo, $tableName, $entry);
+		return $this->_addMapEntries($mapInfo, $tableName, $entry, $db);
 	    }
 	    $columns[] = $this->_gs->_translateColumnName($memberName);
 	    $data[] = $this->_gs->_normalizeValue($entry[$memberName], $memberData);
@@ -999,7 +1007,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$query .= ') VALUES (' . $markers . ')';
 
 	$this->_gs->_traceStart();
-	$recordSet = $this->_gs->_db->Execute($query, $data);
+	$recordSet = $db->Execute($query, $data);
 	$this->_gs->_traceStop();
 	if ($recordSet === false) {
 	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
@@ -1018,10 +1026,11 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * @param string $tableName the translated table name
      * @param array $entry an associative array of data about the entry
      *              each data element is an array of values
+     * @param object ADOdb $db the database connection to use
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _addMapEntries($mapInfo, $tableName, $entry) {
+    function _addMapEntries($mapInfo, $tableName, $entry, $db) {
 	$columns = array();
 	foreach ($mapInfo as $memberName => $memberData) {
 	    $columns[$memberName] = $this->_gs->_translateColumnName($memberName);
@@ -1043,7 +1052,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	$this->_gs->_traceStart();
-	$recordSet = $this->_gs->_db->Execute($query, $data);
+	$recordSet = $db->Execute($query, $data);
 	$this->_gs->_traceStop();
 	if ($recordSet === false) {
 	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);

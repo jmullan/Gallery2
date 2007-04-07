@@ -499,11 +499,13 @@ class GalleryStorage {
      *
      * @param string $mapName the map we're working on
      * @param array $entry an associative array of data about the entry
+     * @param boolean $useNonTransactionalConnection (optional) set to true if we should use a new
+     *                non transactional database connection for this operation.  Default is false.
      * @return object GalleryStatus a status code
      */
-    function addMapEntry($mapName, $entry) {
+    function addMapEntry($mapName, $entry, $useNonTransactionalConnection=false) {
 	$extras =& $this->_getExtras();
-	return $extras->addMapEntry($mapName, $entry);
+	return $extras->addMapEntry($mapName, $entry, $useNonTransactionalConnection);
     }
 
     /**
@@ -632,14 +634,25 @@ class GalleryStorage {
      * @param string $mapName the map we're working on
      * @param array $match the entries to match
      * @param array $change the values to change
+     * @param boolean $useNonTransactionalConnection (optional) set to true if we should use a new
+     *                non transactional database connection for this operation.  Default is false.
      * @return object GalleryStatus a status code
      */
-    function updateMapEntry($mapName, $match, $change) {
-	if (!isset($this->_db)) {
-	    list ($ret, $this->_db) = $this->_getConnection();
+    function updateMapEntry($mapName, $match, $change, $useNonTransactionalConnection=false) {
+	if ($useNonTransactionalConnection && $this->isTransactional()) {
+	    $extras =& $this->_getExtras();
+	    list ($ret, $db) = $extras->_getNonTransactionalDatabaseConnection();
 	    if ($ret) {
 		return $ret;
 	    }
+	} else {
+	    if (!isset($this->_db)) {
+		list ($ret, $this->_db) = $this->_getConnection();
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	    $db = $this->_db;
 	}
 
 	$ret = $this->_guaranteeTransaction();
@@ -685,7 +698,7 @@ class GalleryStorage {
 	$data = array_merge($data, $wheredata);
 
 	$this->_traceStart();
-	$recordSet = $this->_db->Execute($query, $data);
+	$recordSet = $db->Execute($query, $data);
 	$this->_traceStop();
 	if (!$recordSet) {
 	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);

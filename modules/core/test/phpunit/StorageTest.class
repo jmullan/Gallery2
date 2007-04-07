@@ -28,7 +28,8 @@
 class StorageTest extends GalleryTestCase {
 
     var $_db;		/* backup of ADODB object */
-    var $_results;	/* results from the generated query */
+    var $_results;	/* results from the generated query on the regular db connection */
+    var $_resultsNonTransactional;   /* results on the non transactional db connection */
 
     function StorageTest($methodName) {
 	$this->GalleryTestCase($methodName);
@@ -42,10 +43,13 @@ class StorageTest extends GalleryTestCase {
 	}
 
 	$storage =& $gallery->getStorage();
+
 	$this->_db = $storage->_db;
+	$this->_nonTransactionalDb = $storage->_nonTransactionalDb;
 	$this->_serverInfo = isset($storage->_serverInfo) ? $storage->_serverInfo : null;
 	$this->_isEmptyAllowedForNotNullColumn = $storage->_isEmptyAllowedForNotNullColumn;
-	$storage->_db = new StorageTestDB($this);
+	$storage->_db = new StorageTestDB($this, '_results');
+	$storage->_nonTransactionalDb = new StorageTestDB($this, '_resultsNonTransactional');
     }
 
     function tearDown() {
@@ -53,6 +57,7 @@ class StorageTest extends GalleryTestCase {
 
 	$storage =& $gallery->getStorage();
 	$storage->_db = $this->_db;
+	$storage->_nonTransactionalDb = $this->_nonTransactionalDb;
 	$storage->_serverInfo = $this->_serverInfo;
 	$storage->_isEmptyAllowedForNotNullColumn = $this->_isEmptyAllowedForNotNullColumn;
 
@@ -123,6 +128,31 @@ class StorageTest extends GalleryTestCase {
 			$storage->_columnPrefix),
 		array(0, 1))),
 	    $this->_results);
+    }
+
+    function testAddMapNonTransactionalDatabaseConnection() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'GalleryUserGroupMap',
+	    array('userId' => 0, 'groupId' => 1),
+	    true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf('INSERT INTO %sUserGroupMap (%suserId, %sgroupId) VALUES (?,?)',
+			$storage->_tablePrefix, $storage->_columnPrefix,
+			$storage->_columnPrefix),
+		array(0, 1))),
+	    $this->_resultsNonTransactional);
     }
 
     function testAddMapTruncate() {
@@ -258,10 +288,43 @@ class StorageTest extends GalleryTestCase {
 	    array($storage->_tablePrefix . 'UserGroupMap',
 		  array($storage->_columnPrefix . 'userId',
 			$storage->_columnPrefix . 'groupId'), 3));
+	if ($ret) {
+	    return $ret;
+	}
 
 	$this->assertEquals(
 	    array(array($sql, array(1, 4, 2, 5, 3, 6))),
 	    $this->_results);
+    }
+
+    function testAddMapArrayNonTransactionalDatabaseConnection() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * We really should use a fake map, but it's hard to insert a fake map definition into
+	 * GalleryStorage at the moment.
+	 */
+	$ret = $storage->addMapEntry(
+	    'GalleryUserGroupMap',
+	    array('userId' =>array(1, 2, 3), 'groupId' => array(4, 5, 6)),
+	    true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $sql) = $storage->getFunctionSql(
+	    'MULTI_INSERT',
+	    array($storage->_tablePrefix . 'UserGroupMap',
+		  array($storage->_columnPrefix . 'userId',
+			$storage->_columnPrefix . 'groupId'), 3));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    array(array($sql, array(1, 4, 2, 5, 3, 6))),
+	    $this->_resultsNonTransactional);
     }
 
     function testAddMapArrayTruncate() {
@@ -287,6 +350,9 @@ class StorageTest extends GalleryTestCase {
 		  array($storage->_columnPrefix . 'externalId',
 			$storage->_columnPrefix . 'entityType',
 			$storage->_columnPrefix . 'entityId'), 2));
+	if ($ret) {
+	    return $ret;
+	}
 
 	$this->assertEquals(
 	    array(array($sql, array(str_repeat('x', 128), 'test1', 1,
@@ -442,6 +508,28 @@ class StorageTest extends GalleryTestCase {
 			$storage->_tablePrefix, $storage->_columnPrefix),
 			array(54, 38, 40, 42))),
 	    $this->_results);
+    }
+
+    function testUpdateMapEntryNonTransactionalDatabaseConnection() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	$mapName = 'ExternalIdMap';
+	$match = array('externalId' => array(38, 40, 42));
+	$set = array('entityType' => 54);
+
+	$ret = GalleryCoreApi::updateMapEntry($mapName, $match, $set, true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    array(array(
+		sprintf('UPDATE %1$sExternalIdMap SET %2$sentityType=? ' .
+			'WHERE %2$sexternalId IN (?,?,?)',
+			$storage->_tablePrefix, $storage->_columnPrefix),
+			array(54, 38, 40, 42))),
+	    $this->_resultsNonTransactional);
     }
 
     function testSaveEntity() {
@@ -1050,8 +1138,9 @@ class StorageTestDB {
     var $transCnt = 1; /* Pretend we're already in a transaction */
     var $_recordSets;
 
-    function StorageTestDB(&$testCase) {
+    function StorageTestDB(&$testCase, $resultsType) {
 	$this->_testCase =& $testCase;
+	$this->_results =& $testCase->$resultsType;
 	$this->_recordSets = array(new StorageTestRecordSet());
     }
 
@@ -1060,12 +1149,12 @@ class StorageTestDB {
     }
 
     function execute($query, $data=false) {
-	$this->_testCase->_results[] = array($query, $data);
+	$this->_results[] = array($query, $data);
 	return empty($this->_recordSets) ? false : array_shift($this->_recordSets);
     }
 
     function SelectLimit($query, $nrows=-1, $offset=-1, $inputarr=false) {
-	$this->_testCase->_results[] = array($query, $nrows, $offset, $inputarr);
+	$this->_results[] = array($query, $nrows, $offset, $inputarr);
 	return empty($this->_recordSets) ? false : array_shift($this->_recordSets);
     }
 
