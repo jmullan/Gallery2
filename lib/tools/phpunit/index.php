@@ -34,7 +34,9 @@ require_once('ItemAddPluginTestCase.class');
 require_once('ItemEditPluginTestCase.class');
 require_once('ItemEditOptionTestCase.class');
 require_once('CodeAuditTestCase.class');
+require_once('MockObject.class');
 require_once('UnitTestPlatform.class');
+require_once('UnitTestStorage.class');
 require_once('MockTemplateAdapter.class');
 
 @ini_set('output_buffering', 0);

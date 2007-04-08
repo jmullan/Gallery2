@@ -1,0 +1,222 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2007 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/**
+ * Unit test storage.  This is a mock storage that the unit tests can use to simulate
+ * the exact conditions that they want from the storage in order to exercise the code.
+ *
+ * Use setReply() to tell it what function calls to expect.  Provide it with an array of
+ * input parameters to expect, exact values by default or use an array key starting with
+ * 'fuzzy' to match the parameter to a regular expression.
+ * It will expect to receive calls in that specific order and play them back.
+ *
+ * In setUp() call:
+ *
+ *  $this->_storage = new UnitTestStorage();
+ *  $gallery->setStorage($this->_storage);
+ *
+ * In tearDown() call:
+ *
+ *  $this->assert($this->_storage->isComplete(), $this->_storage->getRemaining());
+ *
+ * The check in tearDown() verifies that all expected calls were received.
+ *
+ * @package Gallery
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$
+ */
+class UnitTestStorage extends MockObject {
+    function getAdoDbType() {
+	return $this->_makeReply('getAdoDbType', array());
+    }
+
+    function isTransactional() {
+	return $this->_makeReply('isTransactional', array());
+    }
+
+    function loadEntities($ids) {
+	return $this->_makeReply('loadEntities', array($ids));
+    }
+
+    function saveEntity(&$entity) {
+	return $this->_makeReply('saveEntity', array(&$entity));
+    }
+
+    function deleteEntity(&$entity) {
+	return $this->_makeReply('deleteEntity', array(&$entity));
+    }
+
+    function newEntity(&$entity) {
+	return $this->_makeReply('newEntity', array(&$entity));
+    }
+
+    function getUniqueId($sequence=DATABASE_SEQUENCE_ID) {
+	return $this->_makeReply('getUniqueId', array($sequence));
+    }
+
+    function refreshEntity($entity) {
+	return $this->_makeReply('refreshEntity', array($entity));
+    }
+
+    function acquireReadLock($entityIds, $timeout) {
+	return $this->_makeReply('acquireReadLock', array($entityIds, $timeout));
+    }
+
+    function acquireWriteLock($entityIds, $timeout) {
+	return $this->_makeReply('acquireWriteLock', array($entityIds, $timeout));
+    }
+
+    function refreshLocks($lockIds, $freshUntil) {
+	return $this->_makeReply('refreshLocks', array($lockIds, $freshUntil));
+    }
+
+    function releaseLocks($lockIds) {
+	return $this->_makeReply('releaseLocks', array($lockIds));
+    }
+
+    function removeIdsFromLock($lock, $ids) {
+	return $this->_makeReply('removeIdsFromLock', array($lock, $ids));
+    }
+
+    function moveIdsBetweenLocks($relock, $newLockId, $lockType) {
+	return $this->_makeReply('moveIdsBetweenLocks', array($relock, $newLockId, $lockType));
+    }
+
+    function newLockId() {
+	return $this->_makeReply('newLockId', array());
+    }
+
+    function search($query, $data=array(), $optional=array()) {
+	return $this->_makeReply('search', array($query, $data, $optional));
+    }
+
+    function execute($statement, $data=array()) {
+	return $this->_makeReply('execute', array($statement, $data));
+    }
+
+    function addMapEntry($mapName, $entry, $useNonTransactionalConnection=false) {
+	return $this->_makeReply(
+	    'addMapEntry', array($mapName, $entry, $useNonTransactionalConnection));
+    }
+
+    function removeMapEntry($mapName, $entry) {
+	return $this->_makeReply('removeMapEntry', array($mapName, $entry));
+    }
+
+    function removeAllMapEntries($mapName) {
+	return $this->_makeReply('removeAllMapEntries', array($mapName));
+    }
+
+    function getMapEntry($mapName, $select, $match=array(), $optional=array()) {
+	return $this->_makeReply(
+	    'getMapEntry', array($mapName, $select, $match, $optional));
+    }
+
+    function updateMapEntry($mapName, $match, $change, $useNonTransactionalConnection=false) {
+	return $this->_makeReply(
+	    'updateMapEntry', array($mapName, $match, $change, $useNonTransactionalConnection));
+    }
+
+    function configureStore($moduleId, $upgradeInfo=array()) {
+	return $this->_makeReply('configureStore', array($moduleId, $upgradeInfo));
+    }
+
+    function configureStoreCleanup($moduleId) {
+	return $this->_makeReply('configureStoreCleanup', array($moduleId));
+    }
+
+    function unconfigureStore($moduleId) {
+	return $this->_makeReply('unconfigureStore', array($moduleId));
+    }
+
+    function cleanStore() {
+	return $this->_makeReply('cleanStore', array());
+    }
+
+    function beginTransaction() {
+	return $this->_makeReply('beginTransaction', array());
+    }
+
+    function commitTransaction() {
+	return $this->_makeReply('commitTransaction', array());
+    }
+
+    function checkPoint() {
+	return $this->_makeReply('checkPoint', array());
+    }
+
+    function rollbackTransaction() {
+	return $this->_makeReply('rollbackTransaction', array());
+    }
+
+    function convertIntToBits($intVal) {
+	return $this->_makeReply('convertIntToBits', array($intVal));
+    }
+
+    function convertBitsToInt($bitsVal) {
+	return $this->_makeReply('convertBitsToInt', array($bitsVal));
+    }
+
+    function getFunctionSql($functionName, $args) {
+	return $this->_makeReply('getFunctionSql', array($functionName, $args));
+    }
+
+    function extractClasses($query) {
+	return $this->_makeReply('extractClasses', array($query));
+    }
+
+    function getProfilingHtml() {
+	return $this->_makeReply('getProfilingHtml', array());
+    }
+
+    function isInstalled() {
+	return $this->_makeReply('isInstalled', array());
+    }
+
+    function optimize($tableNames=null) {
+	return $this->_makeReply('optimize', array($tableNames));
+    }
+
+    function getAffectedRows() {
+	return $this->_makeReply('getAffectedRows', array());
+    }
+
+    function describeEntity($entityName, $tryAllModules=false) {
+	return $this->_makeReply('describeEntity', array($entityName, $tryAllModules));
+    }
+
+    function describeMap($mapName, $tryAllModules=false) {
+	return $this->_makeReply('describeMap', array($mapName, $tryAllModules));
+    }
+
+    function encodeBlob($blob) {
+	return $this->_makeReply('encodeBlob', array($blob));
+    }
+
+    function decodeBlob($blob) {
+	return $this->_makeReply('decodeBlob', array($blob));
+    }
+
+    function setDebug($debug) {
+	return $this->_makeReply('setDebug', array($debug));
+    }
+}
+?>
