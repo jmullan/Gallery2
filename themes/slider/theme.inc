@@ -35,7 +35,7 @@ class SliderTheme extends GalleryTheme {
 	$this->setName($gallery->i18n('Slider'));
 	$this->setDescription(
 	    $gallery->i18n('Image viewer/slideshow; subalbums/other items not shown'));
-	$this->setVersion('1.0.7');
+	$this->setVersion('1.0.7.1');
 	$this->setRequiredCoreApi(array(7, 4));
 	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(array(
@@ -69,7 +69,7 @@ class SliderTheme extends GalleryTheme {
      */
     function showAlbumPage(&$template, $item, $params, $childIds) {
 	$ret = $this->loadCommonTemplateData($template, $item, $params,
-	    array('parents', 'systemLinks', 'itemLinks'),
+	    array('parents', 'systemLinks', 'itemLinks', 'childItemLinksDetailed'),
 	    $childIds);
 	if ($ret) {
 	    return array($ret, null);
