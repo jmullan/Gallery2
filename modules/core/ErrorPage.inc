@@ -116,8 +116,11 @@ class ErrorPageView extends GalleryView {
      * Entry point from main.php
      *
      * @param object GalleryStatus $error
-     * @param mixed $g2Data GalleryMain result, if available
-     * @param boolean $initOk false if Gallery has not initialized (can't use theme system)
+     * @param mixed $g2Data (optional) GalleryMain result, if available
+     * @param boolean $initOk (optional) false if Gallery has not initialized which means
+     *                we can't use the theme system.
+     * @return boolean true if the error was handled at the last moment and should therefore
+     *                 not be considered an error.
      * @static
      */
     function errorHandler($error, $g2Data=null, $initOk=true) {
@@ -142,11 +145,15 @@ class ErrorPageView extends GalleryView {
 	    GalleryUtilities::setResponseHeader('HTTP/1.0 500 Internal Server Error', false);
 	}
 
+	$suppressBody = false;
+	$errorHandled = false;
 	foreach ($eventResults as $eventResult) {
-	    if (!empty($eventResult['suppressBody'])) {
-		/* One of our error handlers has dealt with the output */
-		return;
-	    }
+	    $suppressBody |= !empty($eventResult['suppressBody']);
+	    $errorHandled |= !empty($eventResult['errorHandled']);
+	}
+	if ($suppressBody) {
+	    /* One of our error handlers has dealt with the output */
+	    return $errorHandled;
 	}
 
 	if (!$failsafe) {
@@ -210,6 +217,8 @@ class ErrorPageView extends GalleryView {
 		print '<h3>Debug Output</h3><pre>' . $gallery->getDebugBuffer() . '</pre>';
 	    }
 	}
+
+	return $errorHandled;
     }
 }
 ?>

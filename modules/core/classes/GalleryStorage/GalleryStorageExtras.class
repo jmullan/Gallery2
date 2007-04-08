@@ -1265,7 +1265,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    unset($moduleSql['table']['Schema']);
 
 	    /* Create our sequences now */
-	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID) as $sequenceId) {
+	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID,
+			   DATABASE_SEQUENCE_EVENT_LOG) as $sequenceId) {
 		$this->_gs->_traceStart();
 		$result = $this->_gs->_db->CreateSequence($this->_gs->_tablePrefix . $sequenceId);
 		$this->_gs->_traceStop();

@@ -96,7 +96,32 @@ function GalleryMain($embedded=false) {
 
     /* Process the request */
     list ($ret, $g2Data) = _GalleryMain($embedded);
-    if (!$ret) {
+    if ($ret) {
+	_GalleryMain_errorHandler($ret, $g2Data);
+
+	/**
+	 * @todo security question: should we be resetting the auth code (below) even if the
+	 * storage is not initialized here?
+	 */
+	if ($gallery->isStorageInitialized()) {
+	    /* Nuke our transaction, too */
+	    $storage =& $gallery->getStorage();
+	    $storage->rollbackTransaction();
+
+	    /* Reset the auth token */
+	    /** @todo Allow GallerySession::save to work without transactions */
+	    if ($ret->getErrorCode() & ERROR_REQUEST_FORGED) {
+		$session =& $gallery->getSession();
+		$ret2 = $storage->beginTransaction();
+		if (!$ret2) {
+		    $ret2 = $session->save();
+		}
+		if (!$ret2) {
+		    $storage->commitTransaction();
+		}
+	    }
+	}
+    } else {
 	$gallery->performShutdownActions();
 
 	/* Write out our session data */
@@ -110,28 +135,8 @@ function GalleryMain($embedded=false) {
 	$ret = $storage->commitTransaction();
     }
 
-    /* Error handling (or redirect info in debug mode) */
     if ($ret) {
-	_GalleryMain_errorHandler($ret, $g2Data);
 	$g2Data['isDone'] = true;
-
-	if ($ret && $gallery->isStorageInitialized()) {
-	    /* Nuke our transaction, too */
-	    $storage =& $gallery->getStorage();
-	    $storage->rollbackTransaction();
-
-	    /* Reset the auth token */
-	    if ($ret->getErrorCode() & ERROR_REQUEST_FORGED) {
-		$session =& $gallery->getSession();
-		$ret2 = $storage->beginTransaction();
-		if (!$ret2) {
-		    $ret2 = $session->save();
-		}
-		if (!$ret2) {
-		    $storage->commitTransaction();
-		}
-	    }
-	}
     } else if (isset($g2Data['redirectUrl'])) {
 	/* If we're in debug mode, show a redirect page */
 	print '<h1> Debug Redirect </h1> ' .
@@ -633,8 +638,24 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
     return array('isDone' => true, 'redirectUrl' => $redirectUrl, 'template' => $template);
 }
 
+/**
+ * Handle an error condition that happened somewhere in our main request processing code.  If the
+ * error cannot be handled, then add an error in the event log.
+ * @param object GalleryStatus a status code
+ * @param array $g2Data the results from _GalleryMain
+ * @param bool $initOk true if GalleryInitFirstPass succeeded for this request
+ */
 function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
+    global $gallery;
+
     GalleryCoreApi::requireOnce('modules/core/ErrorPage.inc');
-    ErrorPageView::errorHandler($error, $g2Data, $initOk);
+    $handledError = ErrorPageView::errorHandler($error, $g2Data, $initOk);
+    if (!$handledError) {
+	$summary = $error->getErrorMessage();
+	if (empty($summary)) {
+	    $summary = join(', ', $error->getErrorCodeConstants($error->getErrorCode()));
+	}
+	GalleryCoreApi::addEventLogEntry('Gallery Error', $summary, $error->getAsText());
+    }
 }
 ?>

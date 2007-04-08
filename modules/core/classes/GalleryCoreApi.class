@@ -79,7 +79,7 @@ class GalleryCoreApi {
      * - delete GalleryTestCase::failWithStatus
      */
     function getApiVersion() {
-	return array(7, 25);
+	return array(7, 26);
     }
 
     /**
@@ -3142,6 +3142,20 @@ class GalleryCoreApi {
     function setMaintenanceMode($mode) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/MaintenanceHelper_simple.class');
 	return MaintenanceHelper_simple::setMaintenanceMode($mode);
+    }
+
+    /**
+     * Store a value in the event log.
+     * @param string $type a short string with the type of event
+     *                     (e.g.: 'Gallery Error', 'PHP Error', 'comment module')
+     * @param string $summary a brief summary of the event
+     * @param string $detail the event details
+     * @return object GalleryStatus a status code
+     */
+    function addEventLogEntry($type, $summary, $details) {
+	GalleryCoreApi::requireOnce(
+		'modules/core/classes/helpers/GalleryEventLogHelper_medium.class');
+	return GalleryEventLogHelper_advanced::addEventLogEntry($type, $summary, $details);
     }
 }
 ?>

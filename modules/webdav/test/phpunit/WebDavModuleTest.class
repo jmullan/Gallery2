@@ -223,7 +223,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$this->assertEquals(array(array('suppressBody' => 1)), $results);
+	$this->assertEquals(array(array('suppressBody' => 1, 'errorHandled' => 1)), $results);
 	$this->assertEquals(0,
 		WebDavModuleTestHttpAuthInterface::_requestAuthenticationCalls('read'),
 		'httpauth should only be called for ERROR_PERMISSION_DENIED');
@@ -242,7 +242,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$this->assertEquals(array(array('suppressBody' => 1)), $results);
+	$this->assertEquals(array(array('suppressBody' => 1, 'errorHandled' => 1)), $results);
 	$this->assertEquals(1,
 		WebDavModuleTestHttpAuthInterface::_requestAuthenticationCalls('read'),
 		'httpauth has not been called');

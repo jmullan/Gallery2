@@ -348,7 +348,7 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 		return array($ret, null);
 	    }
 
-	    return array(null, null);
+	    return array(null, array('errorHandled' => true));
 
 	case 'Gallery::Logout':
 	    /*

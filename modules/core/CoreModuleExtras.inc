@@ -2196,6 +2196,22 @@ class CoreModuleExtras {
 	    if ($ret) {
 		return $ret;
 	    }
+	case '1.2.9':
+	    /**
+	     * Added EventLogMap.  We do this by using ADOdb directly because GalleryStorage
+	     * does not yet expose a way to create sequences.  Note that we don't need to do this
+	     * at install time because at that time, all core sequences are created in
+	     * GalleryStorage::configureStore.
+	     * @todo Convert this code to use GalleryStorage::createSequence when that
+	     *       becomes available.
+	     */
+	    $storage->_traceStart();
+	    $result = $storage->_db->CreateSequence(
+		$storage->_tablePrefix . DATABASE_SEQUENCE_EVENT_LOG);
+	    $storage->_traceStop();
+	    if (empty($result)) {
+		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2516,6 +2532,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.6':
 	case '1.2.7':
 	case '1.2.8':
+	case '1.2.9':
 
 	case 'end of upgrade path':
 	    /*

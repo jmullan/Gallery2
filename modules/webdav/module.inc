@@ -350,7 +350,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 
 	    /* Suppress generating HTML error pages for WebDAV clients */
-	    return array(null, array('suppressBody' => true));
+	    return array(null, array('suppressBody' => true, 'errorHandled' => true));
 	}
 
 	return array(null, null);
