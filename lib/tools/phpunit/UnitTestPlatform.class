@@ -273,6 +273,10 @@ class UnitTestPlatform extends MockObject{
 	return $this->_makeReply('recursiveFixDirPermissions', array($path));
     }
 
+    function strftime($format, $timestamp=null) {
+	return $this->_makeReply('strftime', array($format, $timestamp));
+    }
+
     function glob($pattern, $flags=null) {
 	return $this->_makeReply('glob', array($pattern, $flags));
     }
