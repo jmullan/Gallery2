@@ -2190,6 +2190,12 @@ class CoreModuleExtras {
 	    }
 	case '1.2.7':
 	    /* Added the ability to set the maintenance mode programmatically. */
+	case '1.2.8':
+	    /* Changed the length of the SessionMap data field for mySql & DB2. */
+	    $ret = $storage->configureStore($module->getId(), array('GallerySessionMap:1.0'));
+	    if ($ret) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2509,6 +2515,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.5':
 	case '1.2.6':
 	case '1.2.7':
+	case '1.2.8':
 
 	case 'end of upgrade path':
 	    /*
