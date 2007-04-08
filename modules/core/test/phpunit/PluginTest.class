@@ -170,7 +170,14 @@ class PluginTest extends GalleryTestCase {
 	$platform->setReply('recursiveRmdir', array($templateDir), false);
 	$gallery->setPlatform($platform);
 
-	$gallery->_storage = new PluginTestMockStorage();
+	$gallery->_storage = new UnitTestStorage();
+	$gallery->_storage->setReply(
+		'addMapEntry',
+		array('GalleryPluginMap', array('pluginType'=> 'theme',
+						'pluginId' => 'plugintest',
+						'active' => 1),
+		      null),
+		null);
 
 	/* Execute the test */
 	list ($ret, $ignored) = $plugin->activate(false);
@@ -180,6 +187,7 @@ class PluginTest extends GalleryTestCase {
 
 	/* Verify the results */
 	$this->assert($platform->isComplete(), $platform->getRemaining());
+	$this->assert($gallery->_storage->isComplete(), $gallery->_storage->getRemaining());
     }
 }
 
@@ -209,19 +217,6 @@ class PluginTestPlugin extends GalleryPlugin {
 
     function getRequiredThemeApi() {
 	return $this->_requiredThemeApi;
-    }
-}
-
-/**
- * @todo Replace with generic test storage similar to the UnitTestPlatform
- */
-class PluginTestMockStorage {
-    function addMapEntry($mapName, $data) {
-	return null;
-    }
-
-    function updateMapEntry($mapName, $match, $change) {
-	return null;
     }
 }
 ?>
