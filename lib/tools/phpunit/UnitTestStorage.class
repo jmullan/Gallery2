@@ -219,4 +219,20 @@ class UnitTestStorage extends MockObject {
 	return $this->_makeReply('setDebug', array($debug));
     }
 }
+
+class UnitTestStorageSearchResults {
+    var $_data;
+
+    function UnitTestStorageSearchResults($data) {
+	$this->_data = $data;
+    }
+
+    function resultCount() {
+	return count($this->_data);
+    }
+
+    function nextResult() {
+	return array_shift($this->_data);
+    }
+}
 ?>
