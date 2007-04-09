@@ -36,6 +36,13 @@ class CaptchaImageView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::isAllowedInMaintenance
+     */
+    function isAllowedInMaintenance() {
+	return true;
+    }
+
+    /**
      * @see GalleryView::renderImmediate
      */
     function renderImmediate($status, $error) {
