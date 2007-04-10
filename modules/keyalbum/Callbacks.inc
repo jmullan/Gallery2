@@ -64,7 +64,7 @@ class KeyAlbumCallbacks {
 	    if ($ret) {
 		return $ret;
 	    }
-	    $split = '/[' . $split . ']+/';
+	    $split = '/[' . $split . ']+/u';
 	    $keywords = array();
 	    foreach (preg_split($split, $params['keywords']) as $keyword) {
 		$keywords[] = trim($keyword);
@@ -128,7 +128,7 @@ class KeyAlbumCallbacks {
 	if ($ret) {
 	    return $ret;
 	}
-	$split = '/[' . $split . ']+/';
+	$split = '/[' . $split . ']+/u';
 	$maxCount = 1;
 	while ($result = $searchResults->nextResult()) {
 	    if ($result[0]) {

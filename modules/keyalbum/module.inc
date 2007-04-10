@@ -32,7 +32,7 @@ class KeyAlbumModule extends GalleryModule {
 	$this->setId('keyalbum');
 	$this->setName($gallery->i18n('Keyword Albums'));
 	$this->setDescription($gallery->i18n('Dynamic albums based on keyword search'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.0.1');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
 	$this->setRequiredCoreApi(array(7, 10));
@@ -112,7 +112,8 @@ class KeyAlbumModule extends GalleryModule {
 	}
 
 	$summaries = array();
-	$split = '/[' . $params['split'] . ']+/';
+	/** @todo Create a helper function getKeywords to split the keywords */
+	$split = '/[' . $params['split'] . ']+/u';
 	$label = $this->translate('Keywords:');
 	foreach ($items as $item) {
 	    if ($item->getKeywords()) {
