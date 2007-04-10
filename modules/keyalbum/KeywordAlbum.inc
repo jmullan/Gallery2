@@ -163,7 +163,7 @@ class KeywordAlbumView extends GalleryView {
 	}
 
 	$keywords = $where = array();
-	foreach (preg_split('/[' . $params['split'] . ']+/', $keyword) as $k) {
+	foreach (preg_split('/[' . $params['split'] . ']+/u', $keyword) as $k) {
 	    $keywords[] = '%' . trim($k) . '%';
 	    $where[] = '[GalleryItem::keywords] LIKE ?';
 	}
