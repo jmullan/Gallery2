@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.7\n"
+"Project-Id-Version: Gallery: Core 1.2.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-01-28 21:40+0100\n"
 "PO-Revision-Date: 2006-12-09 23:51+0100\n"
@@ -88,6 +88,14 @@ msgstr[2] "%d týdnů"
 
 msgid "&lt;none&gt;"
 msgstr ""
+
+#, fuzzy
+msgid "Link"
+msgstr "Přihlásit"
+
+#, c-format
+msgid "Page %d of %d"
+msgstr "Strana %d z %d"
 
 msgid "No acceleration"
 msgstr "Bez akcelerace"
@@ -562,6 +570,9 @@ msgstr "Skupiny"
 
 msgid "Performance"
 msgstr "Výkon"
+
+msgid "Event Logs"
+msgstr ""
 
 msgid "Toolkit Priority"
 msgstr "Priorita nástrojů"
@@ -1567,6 +1578,49 @@ msgstr[0] "%d neúspěšných pokusů o přihlášení od posledního úspěšn�
 msgstr[1] "%d neúspěšných pokusů o přihlášení od posledního úspěšného přihlášení."
 msgstr[2] "%d neúspěšných pokusů o přihlášení od posledního úspěšného přihlášení."
 
+#, fuzzy
+msgid "Recent Events"
+msgstr "Vynulování počítadla zobrazení"
+
+msgid "Type"
+msgstr ""
+
+#, fuzzy
+msgid "Location"
+msgstr "Akce"
+
+#, fuzzy
+msgid "Client"
+msgstr "seznam"
+
+#, fuzzy
+msgid "No events have been reported yet."
+msgstr "Nebyly vybrány žádné balíčky."
+
+#, fuzzy
+msgid "Event Details"
+msgstr "Detail chyby"
+
+#, fuzzy
+msgid "User Id"
+msgstr "Uživatel"
+
+#, fuzzy
+msgid "Referer"
+msgstr "Změnit pořadí"
+
+#, fuzzy
+msgid "Details"
+msgstr "Výchozí hodnoty"
+
+#, fuzzy
+msgid "no summary"
+msgstr "Souhrn"
+
+#, fuzzy
+msgid "An error occurred while retrieving the event log entry details."
+msgstr "Nastala chyba při operaci s databází."
+
 msgid "Group Management"
 msgstr "Správa skupin"
 
@@ -1640,6 +1694,35 @@ msgstr "Úspěšně dokončena úloha: %s."
 #, c-format
 msgid "The %s task failed to complete successfully."
 msgstr "Chyba při úloze: %s."
+
+msgid "Maintenance Mode has been turned on."
+msgstr ""
+
+msgid "Maintenance Mode has been turned off."
+msgstr ""
+
+#, fuzzy
+msgid "Maintenance Mode"
+msgstr "Údržba"
+
+msgid "Restrict user access to the system while maintenance is being performed."
+msgstr ""
+
+#, fuzzy
+msgid "Maintenance Mode Url"
+msgstr "Údržba"
+
+msgid ""
+"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
+"been restricted by the administrator."
+msgstr ""
+
+msgid "Example: /maintenance.html"
+msgstr ""
+
+#, fuzzy
+msgid "Set"
+msgstr "Nastavení"
 
 msgid "Task name"
 msgstr "Jméno úlohy"
@@ -2570,7 +2653,11 @@ msgstr "(strana %d z %d)"
 msgid "Items selected here will remain selected when moving between pages."
 msgstr "Položky zde vybrané zůstanou během přesunů mezi stránkami vybrané."
 
-#, c-format
+# gettext claims msgstr[0] should have a %d
+# perhaps because msgstr[0] could be used for numbers other than ONE
+# based on the plurals formula in the header of this file.
+# perhaps replace jedna with %d ?
+#, fuzzy, c-format
 msgid "One item selected on other pages."
 msgid_plural "%d items selected on other pages."
 msgstr[0] "Vybrána jedna položka na jiné stránce."
@@ -3637,10 +3724,6 @@ msgstr "další"
 
 msgid "last"
 msgstr "poslední"
-
-#, c-format
-msgid "Page %d of %d"
-msgstr "Strana %d z %d"
 
 #, c-format
 msgid "%d of %d"

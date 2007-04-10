@@ -76,7 +76,11 @@ msgstr ""
 msgid "Delete Watermark"
 msgstr "Smazat vodotisk"
 
-#, c-format
+# gettext claims msgstr[0] should have a %d
+# perhaps because msgstr[0] could be used for numbers other than ONE
+# based on the plurals formula in the header of this file.
+# perhaps replace jedné with %d ?
+#, fuzzy, c-format
 msgid "This watermark is used on one item."
 msgid_plural "This watermark is used on %d items."
 msgstr[0] "Tento vodotisk je použit na jedné položce."

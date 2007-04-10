@@ -18,6 +18,10 @@ ngettext("%d week", "%d weeks") /* also in: AdminPerformance.inc */
 /* AdminCreateUser.inc */
 gettext("&lt;none&gt;") /* also in: AdminEditUser.inc UserPreferences.inc */
 
+/* AdminEventLogViewerCallback.inc */
+gettext("Link") /* also in: templates/AdminEventLogViewer.tpl */
+gettext("Page %d of %d") /* also in: templates/blocks/Navigator.tpl */
+
 /* AdminPerformance.inc */
 gettext("No acceleration") /* also in: templates/AdminPerformance.tpl */
 gettext("Partial acceleration")
@@ -237,6 +241,7 @@ gettext("Plugins") /* also in: templates/AdminPlugins.tpl templates/AdminReposit
 gettext("Users")
 gettext("Groups")
 gettext("Performance")
+gettext("Event Logs")
 gettext("Toolkit Priority") /* also in: templates/AdminToolkitPriority.tpl */
 gettext("Graphics Toolkits")
 gettext("Account Settings") /* also in: templates/UserLocked.tpl templates/UserPreferences.tpl */
@@ -292,7 +297,7 @@ gettext("Search summaries")
 gettext("Search titles")
 gettext("Description") /* also in: classes/GallerySortInterface_1_2.class templates/AdminPlugins.tpl templates/AdminRepository.tpl templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl */
 gettext("Keywords") /* also in: classes/GallerySortInterface_1_2.class templates/ItemAddAlbum.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl */
-gettext("Summary") /* also in: classes/GallerySortInterface_1_2.class templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl */
+gettext("Summary") /* also in: classes/GallerySortInterface_1_2.class templates/AdminEventLogViewer.tpl templates/ItemAddAlbum.tpl templates/ItemAddFromBrowser.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl */
 gettext("Title") /* also in: classes/GallerySortInterface_1_2.class templates/ItemAddAlbum.tpl templates/ItemEditCaptions.tpl templates/ItemEditItem.tpl */
 gettext("Owner") /* also in: templates/ItemPermissions.tpl */
 
@@ -452,7 +457,7 @@ gettext("Specify how dates and times are displayed by Gallery.  See %sphp.net%s 
 gettext("Style")
 gettext("Format")
 gettext("Sample")
-gettext("Date")
+gettext("Date") /* also in: templates/AdminEventLogViewer.tpl */
 gettext("Time")
 gettext("Date/Time")
 gettext("Filesystem Permissions")
@@ -544,9 +549,9 @@ ngettext("Removed user '%s' from group '%s'", "Removed %s users from group '%s'"
 ngettext("This group contains %d user", "This group contains %d users")
 gettext("Members")
 gettext("&laquo; first") /* also in: templates/AdminGroups.tpl templates/AdminUsers.tpl */
-gettext("&laquo; back") /* also in: templates/AdminGroups.tpl templates/AdminUsers.tpl */
+gettext("&laquo; back") /* also in: templates/AdminEventLogViewer.tpl templates/AdminGroups.tpl templates/AdminUsers.tpl */
 gettext("Viewing page %d of %d") /* also in: templates/AdminGroups.tpl templates/AdminUsers.tpl */
-gettext("next &raquo;") /* also in: templates/AdminGroups.tpl templates/AdminUsers.tpl */
+gettext("next &raquo;") /* also in: templates/AdminEventLogViewer.tpl templates/AdminGroups.tpl templates/AdminUsers.tpl */
 gettext("last &raquo;") /* also in: templates/AdminGroups.tpl templates/AdminUsers.tpl */
 gettext("Filter") /* also in: templates/AdminGroups.tpl templates/AdminUsers.tpl */
 gettext("Clear") /* also in: templates/AdminGroups.tpl templates/AdminUsers.tpl */
@@ -573,6 +578,19 @@ gettext("Locked users are unable to edit their own account information. (Passwor
 gettext("Reset failed login count.")
 ngettext("%d failed login attempt since the last successful login.", "%d failed login attempts since the last successful login.")
 
+/* templates/AdminEventLogViewer.tpl */
+gettext("Recent Events")
+gettext("Type")
+gettext("Location")
+gettext("Client")
+gettext("No events have been reported yet.")
+gettext("Event Details")
+gettext("User Id")
+gettext("Referer")
+gettext("Details")
+gettext("no summary")
+gettext("An error occurred while retrieving the event log entry details.")
+
 /* templates/AdminGroups.tpl */
 gettext("Group Management")
 gettext("Removed group '%s'")
@@ -596,6 +614,14 @@ ngettext("%d group matches your filter", "%d groups match your filter")
 gettext("System Maintenance")
 gettext("Completed %s task successfully.")
 gettext("The %s task failed to complete successfully.")
+gettext("Maintenance Mode has been turned on.")
+gettext("Maintenance Mode has been turned off.")
+gettext("Maintenance Mode")
+gettext("Restrict user access to the system while maintenance is being performed.")
+gettext("Maintenance Mode Url")
+gettext("The Maintenance Mode Url is where requests will be redirected to when access to the site has been restricted by the administrator.")
+gettext("Example: /maintenance.html")
+gettext("Set")
 gettext("Task name")
 gettext("Last run")
 gettext("Success/Fail")
@@ -1200,7 +1226,6 @@ gettext("Navigation")
 /* templates/blocks/Navigator.tpl */
 gettext("next")
 gettext("last")
-gettext("Page %d of %d")
 gettext("%d of %d")
 gettext("first")
 gettext("previous")
