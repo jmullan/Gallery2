@@ -408,6 +408,135 @@ class EntityTest extends GalleryTestCase {
 	$this->assertEquals(true, $memberInfo['fullName']['write'],
 			    'write access for the full name of a user ');
     }
+
+    function testLoadEntitiesByIdAssertsTheRequestedEntityTypeExactMatch() {
+	list ($ret, $entity) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals($this->_getRootId(), $entity->getId());
+    }
+
+    function testLoadEntitiesByIdAssertsTheRequestedEntityTypeSubclassMatch() {
+	list ($ret, $entity) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryChildEntity');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals($this->_getRootId(), $entity->getId());
+    }
+
+    function testLoadEntitiesByIdEntityTypeParameterIsOptional() {
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals($this->_getRootId(), $entity->getId());
+    }
+
+    function testLoadEntitiesByIdAssertsTheRequestedEntityTypeNoMatch() {
+	list ($ret, $entity) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryDerivative');
+	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		/* Successfully detected entity-type mismatch */
+	    } else {
+		$this->fail('Unexpected error type');
+		return $ret;
+	    }
+	} else {
+	    $this->fail('Requested entity-type not asserted');
+	}
+	$this->assertEquals(null, $entity);
+    }
+
+    function testLoadEntitiesByIdAssertsTheRequestedEntityTypeForMultipleEntities() {
+	list ($ret, $dataItem) = $this->_createRandomDataItem($this->_getRootId());
+	$this->_markForCleanup($dataItem);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $entities) = GalleryCoreApi::loadEntitiesById(
+	    array($this->_getRootId(), $dataItem->getId()), 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (count($entities) != 2) {
+	    $this->assertEquals(2, count($entities), 'entity count');
+	} else {
+	    $this->assertEquals($this->_getRootId(), $entities[0]->getId(), 'root album id');
+	    $this->assertEquals($dataItem->getId(), $entities[1]->getId(), 'data item id');
+	}
+    }
+
+    function testLoadEntitiesByIdAssertsTheRequestedEntityTypeMismatchForMultipleEntities() {
+	list ($ret, $dataItem) = $this->_createRandomDataItem($this->_getRootId());
+	$this->_markForCleanup($dataItem);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $entities) = GalleryCoreApi::loadEntitiesById(
+	    array($this->_getRootId(), $dataItem->getId()), 'GalleryAlbumItem');
+	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		/* Successfully detected entity-type mismatch */
+	    } else {
+		$this->fail('Unexpected error type');
+		return $ret;
+	    }
+	} else {
+	    $this->fail('Requested entity-type not asserted');
+	}
+
+	$this->assertEquals(null, $entities);
+    }
+
+    function testLoadEntitiesByIdAssertsTheMultipleRequestedEntityTypes() {
+	/* Any of the entity-types has to match (boolean OR) */
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById(
+	    $this->_getRootId(), array('GalleryDerivative', 'GalleryAlbumItem'));
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals($this->_getRootId(), $entity->getId());
+    }
+
+    function deleteEntityByIdAssertsTheRequestedEntityTypeSubclassMatch() {
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	$this->_markForCleanup($album);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($album->getId(), 'GalleryChildEntity');
+	if ($ret) {
+	    return $ret;
+	}
+    }
+
+    function deleteEntityByIdAssertsTheRequestedEntityTypeNoMatch() {
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	$this->_markForCleanup($album);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($album->getId(), 'GalleryDerivative');
+	if ($ret) {
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		/* Successfully detected entity-type mismatch */
+	    } else {
+		$this->fail('Unexpected error type');
+		return $ret;
+	    }
+	} else {
+	    $this->fail('Requested entity-type not asserted');
+	}
+    }
 }
 
 /**
