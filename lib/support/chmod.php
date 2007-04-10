@@ -73,7 +73,8 @@ if (empty($status['error'])) {
     $folderPermissions = PermissionBits::fromString(substr($permissions, 0, 3));
     $filePermissions = PermissionBits::fromString(substr($permissions, 3, 3));
     if (!$folderPermissions->isValid()) {
-	$status['error'][] = 'Invalid folder permissions! Aborting action and resetting permissions.';
+	$status['error'][] =
+	    'Invalid folder permissions! Aborting action and resetting permissions.';
 	$folderPermissions = $DEFAULT_FOLDER_PERMISSIONS;
     }
     if (!$filePermissions->isValid()) {
@@ -99,11 +100,11 @@ if (empty($status['error'])) {
         $ret = chmodRecursively($path, $folderPermissions->getAsInt(),
 		     $filePermissions->getAsInt(), time() - 60);
 	if (!empty($ret)) {
-            $status['error'][] = "Failed to change the filesystem permissions " .
-			       "of '$path'.";
+            $status['error'][] = "Failed to change the filesystem permissions "
+		. "of '$path'.";
         } else {
-	    $status['message'] = "Successfully changed the filesystem permissions " .
-				  "of '$path'.";
+	    $status['message'] = "Successfully changed the filesystem permissions "
+		. "of '$path'.";
         }
         break;
     case CMD_CHMOD_MODULES_AND_THEMES_DIR:
@@ -114,11 +115,11 @@ if (empty($status['error'])) {
         } else {
             $ret = chmodModulesAndThemesDir($mode == 'open');
             if (!empty($ret)) {
-                $status['error'][] = 'Failed to change the filesystem permissions ' .
-                		     'of the modules/ and themes/ folder.';
+                $status['error'][] = 'Failed to change the filesystem permissions '
+		    . 'of the modules/ and themes/ folder.';
             } else {
-            	$status['message'] = 'Successfully changed the filesystem permissions ' .
-            			     'of the modules/ and the themes/ folder.';
+            	$status['message'] = 'Successfully changed the filesystem permissions '
+		    . 'of the modules/ and the themes/ folder.';
             }
         }
         break;
@@ -135,11 +136,11 @@ if (empty($status['error'])) {
         } else {
             $ret = chmodPluginDir($pluginPath, $mode == 'open');
             if (!empty($ret)) {
-                $status['error'][] = "Failed to change the filesystem permissions " .
-                		     "of the '$pluginPath' folder.";
+                $status['error'][] = "Failed to change the filesystem permissions "
+		    . "of the '$pluginPath' folder.";
             } else {
-            	$status['message'] = "Successfully changed the filesystem permissions " .
-                		     "of the '$pluginPath' folder.";
+            	$status['message'] = "Successfully changed the filesystem permissions "
+		    . "of the '$pluginPath' folder.";
             }
         }
 
@@ -152,11 +153,11 @@ if (empty($status['error'])) {
         } else {
             $ret = chmodGalleryDirRecursively($mode == 'open');
             if (!empty($ret)) {
-                $status['error'][] = 'Failed to change the filesystem permissions ' .
-                		     'of the Gallery folder.';
+                $status['error'][] = 'Failed to change the filesystem permissions '
+		    . 'of the Gallery folder.';
             } else {
-            	$status['message'] = 'Successfully changed the filesystem permissions ' .
-            			     'of the Gallery folder.';
+            	$status['message'] = 'Successfully changed the filesystem permissions '
+		    . 'of the Gallery folder.';
             }
         }
         break;
@@ -164,11 +165,11 @@ if (empty($status['error'])) {
         /* Chmod the entire storage dir writeable */
 	$ret = chmodStorageDirRecursively();
 	if (!empty($ret)) {
-            $status['error'][] = 'Failed to change the filesystem permissions ' .
-                		 'of the storage folder.';
+            $status['error'][] = 'Failed to change the filesystem permissions '
+		. 'of the storage folder.';
         } else {
-            $status['message'] = 'Successfully changed the filesystem permissions ' .
-            			   'of the storage folder.';
+            $status['message'] = 'Successfully changed the filesystem permissions '
+		. 'of the storage folder.';
         }
         break;
     default:
