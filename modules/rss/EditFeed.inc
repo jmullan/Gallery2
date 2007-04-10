@@ -94,11 +94,11 @@ class EditFeedController extends GalleryController {
 		$error[] = 'form[error][feedName]';
 	    }
 
-	    /* conditionally check the recurse limit */
-	    if ($form['feedType'] == 'photosRecurse' &&
-		    (!isset($form['photosRecurseLimit']) ||
-			((int)$form['photosRecurseLimit']) < 0)) {
-		$error[] = 'form[error][photosRecurseLimit]';
+	    /* conditionally check the recursive limit */
+	    if ($form['feedType'] == 'photosRecursive' &&
+		    (!isset($form['photosRecursiveLimit']) ||
+			((int)$form['photosRecursiveLimit']) < 0)) {
+		$error[] = 'form[error][photosRecursiveLimit]';
 	    }
 
 	    /* If there are no form errors, create array to be saved to DB */
@@ -115,10 +115,11 @@ class EditFeedController extends GalleryController {
 		    'description' => $form['description'],
 		    'useImage' => (isset($form['useImage']) ? '1' : '0'),
 		    'useEnclosure' => (isset($form['useEnclosure']) ? '1' : '0'),
-		    'useCloud' => (isset($form['useCloud']) ? '1' : '0'));
+		    'useCloud' => (isset($form['useCloud']) ? '1' : '0'),
+		    'useMedia' => (isset($form['useMedia']) ? '1' : '0'));
 
-		if ($parameters['feedType'] == 'photosRecurse') {
-		    $parameters['photosRecurseLimit'] = $form['photosRecurseLimit'];
+		if ($parameters['feedType'] == 'photosRecursive') {
+		    $parameters['photosRecursiveLimit'] = $form['photosRecursiveLimit'];
 		}
 
 		if (isset($form['useCloud'])) {
@@ -267,12 +268,13 @@ class EditFeedView extends GalleryView {
 			       'useImage' => true,
 			       'useEnclosure' => false,
 			       'useCloud' => false,
+			       'useMedia' => true,
 			       'cloudDomain' => '',
 			       'cloudPort' => '',
 			       'cloudPath' => '',
 			       'cloudRegisterProcedure' => '',
 			       'cloudProtocol' => '',
-			       'photosRecurseLimit' => '0',
+			       'photosRecursiveLimit' => '0',
 			       'ttl' => $param['defaultTtl'],
 			       'category' => '',
 			       'description' => '',

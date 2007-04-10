@@ -71,7 +71,7 @@ class SimpleRenderView extends RenderView {
 	foreach (array('copyright' => 'defaultCopyright',
 		      'version' => 'defaultVersion',
 		      'count' => 'defaultCount',
-		      'photosRecurseLimit' => 'sfPhotosRecurseLimit',
+		      'photosRecursiveLimit' => 'sfPhotosRecursiveLimit',
 		      'ttl' => 'defaultTtl') as $name => $defaultName) {
 	    $params[$name] = $params[$defaultName];
 	}
@@ -80,6 +80,7 @@ class SimpleRenderView extends RenderView {
 	$params['useImage'] = true;
 	$params['useEnclosure'] = false;
 	$params['useCloud'] = false;
+	$params['useMedia'] = false;
 
 	$ret = $this->continueRender($params);
 	if ($ret) {

@@ -58,6 +58,8 @@ class RssSiteAdminController extends GalleryController {
 		    $error[] = 'form[error][defaultCount]';
 	       } else if (!isset($form['maxCount']) || ((int)$form['maxCount']) <= 0) {
 		    $error[] = 'form[error][maxCount]';
+	       } else if (!isset($form['maxAge']) || ((int)$form['maxAge']) <= 0) {
+		    $error[] = 'form[error][maxAge]';
 	       } else if (!isset($form['defaultTtl']) || ((int)$form['defaultTtl']) < 0) {
 		    $error[] = 'form[error][defaultTtl]';
 	       } else if (!isset($form['defaultCopyright'])) {
@@ -67,6 +69,7 @@ class RssSiteAdminController extends GalleryController {
 		    foreach (array('defaultVersion',
 				   'defaultCount',
 				   'maxCount',
+				   'maxAge',
 				   'defaultCopyright',
 				   'defaultTtl') as $setting) {
 			$ret = GalleryCoreApi::setPluginParameter('module', 'rss',
@@ -80,10 +83,12 @@ class RssSiteAdminController extends GalleryController {
 				   'allowConfigurableFeed',
 				   'allowAlbums',
 				   'allowPhotos',
-				   'allowPhotosRecurse',
+				   'allowPhotosRecursive',
 				   'allowCommentsPhoto',
 				   'allowCommentsAlbum',
-				   'allowCommentsRecursive') as $setting) {
+				   'allowCommentsRecursive',
+				   'allowPhotosRandom',
+				   'allowPhotosRandomRecursive') as $setting) {
 			$ret = GalleryCoreApi::setPluginParameter('module', 'rss', $setting,
 			    (isset($form[$setting]) && $form[$setting]) ? 1 : 0);
 			if ($ret) {
@@ -95,13 +100,13 @@ class RssSiteAdminController extends GalleryController {
 		}
 	    } else if ($mode == 'simplefeedsettings') {
 		/* error checking */
-		if (!isset($form['sfPhotosRecurseLimit'])
-			|| ((int)$form['sfPhotosRecurseLimit']) < 0) {
-		    $error[] = 'form[error][sfPhotosRecurseLimit]';
+		if (!isset($form['sfPhotosRecursiveLimit'])
+			|| ((int)$form['sfPhotosRecursiveLimit']) < 0) {
+		    $error[] = 'form[error][sfPhotosRecursiveLimit]';
 		} else {
 		    /* save parameters */
 		    foreach (array('sfAlbumType',
-				   'sfPhotosRecurseLimit',
+				   'sfPhotosRecursiveLimit',
 				   'sfDate') as $setting) {
 			$ret = GalleryCoreApi::setPluginParameter('module', 'rss',
 								  $setting, $form[$setting]);

@@ -201,8 +201,13 @@ class RssGenerator {
 
 	$platform =& $gallery->getPlatform();
 	$lf = $platform->getLineEnding();
-
-	$data = '<rss version="2.0">' . $lf . '<channel>' . $lf .
+	
+	if (isset($this->_properties['useMedia']) && $this->_properties['useMedia'] == 1) {
+	    $data = '<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">';
+	} else {
+	    $data = '<rss version="2.0">';
+	}
+	$data .= $lf . '<channel>' . $lf .
 	    '<title>' . $this->cdata(GalleryUtilities::markup($this->_properties['title'])) .
 	    '</title>' . $lf .
 	    '<link>' . $this->_properties['link'] . '</link>' . $lf .
@@ -237,7 +242,7 @@ class RssGenerator {
 	       ' <title>' .
 	       $this->cdata(GalleryUtilities::markup($this->_properties['image']['title'])) .
 		'</title>' . $lf .
-		' <link>' . $this->_properties['image']['link'] . '</link></image>' : '');
+		' <link>' . $this->_properties['image']['link'] . '</link></image>' . $lf : '');
 
 	foreach ($this->_items as $item) {
 	    if (isset($item['title']) && isset($item['link']) && isset($item['description'])) {
@@ -269,6 +274,29 @@ class RssGenerator {
 		    $data .= ' <enclosure url="' . $item['enclosure']['url'] . '" length="' .
 			$item['enclosure']['length'] . '" type="' .
 			$item['enclosure']['type'] . '" />' . $lf;
+		}
+
+		if (isset($this->_properties['useMedia']) && $this->_properties['useMedia']) {
+		    if (isset($item['media'])) {
+			$data .= ' <media:content url="' . $item['media']['url'] 
+			    . '" type="' . $item['media']['type'] 
+			    . '" height="' . $item['media']['height'] 
+			    . '" width="' . $item['media']['width'] . '" />' . $lf;
+			
+		    }
+		    
+		    $data .= ' <media:title>'
+			. $this->cdata(GalleryUtilities::markup($item['title']))
+			. '</media:title>' . $lf
+			. ' <media:text type="html">'
+			. $this->cdata(GalleryUtilities::markup($item['description']))
+			. '</media:text>' . $lf;
+		    
+		    if (isset($item['thumbnail'])) {
+			$data .= ' <media:thumbnail url="' . $item['thumbnail']['url'] . '" width="'
+			    . $item['thumbnail']['width'] . '" height="'
+			    . $item['thumbnail']['height'] . '" />' . $lf;
+		    }
 		}
 
 		if (isset($item['guid'])) {

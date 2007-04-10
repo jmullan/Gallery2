@@ -114,6 +114,9 @@ class RssHelper {
 	if (isset($param['category'])) {
 	    $generator->addProperty('category', $param['category']);
 	}
+	if (isset($param['useMedia'])) {
+	    $generator->addProperty('useMedia', $param['useMedia']);
+	}
 	list ($ret, $version) =
 	    GalleryCoreApi::getPluginParameter('module', 'rss', '_version');
 	$generator->addProperty('generator', 'Gallery 2 RSS Module, version ' . $version);
@@ -129,14 +132,16 @@ class RssHelper {
 
 	switch ($param['feedType']) {
 	    case 'album':
-	    case 'photosRecurse':
+	    case 'photosRecursive':
+	    case 'photosRandomRecursive':
 		/* get sub-albums or items, ordered by date */
 		list ($ret, $items) = RssHelper::fetchAlbumTree(
 		    $entity->getId(),
 		    $param['count'],
 		    $newOnly,
 		    $param['feedType'] != 'album',
-		    $param['feedType'] == 'photosRecurse'?$param['photosRecurseLimit']:0);
+		    $param['feedType'] == 'photosRecursive' ? $param['photosRecursiveLimit'] : 0,
+		    $param['feedType'] == 'photosRandomRecursive');
 		if ($ret) {
 		    return $ret;
 		}
@@ -147,7 +152,8 @@ class RssHelper {
 			return $ret;
 		    }
 
-		    if ($param['feedType'] == 'photosRecurse') {
+		    if ($param['feedType'] == 'photosRecursive'
+			    || $param['feedType'] == 'photosRandomRecursive') {
 			/* load parents also, so we can display the name of the parent albums */
 			$parentIds = array();
 
@@ -174,7 +180,9 @@ class RssHelper {
 		break;
 
 	    case 'photos':
-		list ($ret, $items) = RssHelper::getPhotoFeed($entity, $newOnly);
+	    case 'photosRandom':
+		list ($ret, $items) = RssHelper::getPhotoFeed($entity, $newOnly,
+		    $param['feedType'] == 'photosRandom');
 		if ($ret) {
 		    return $ret;
 		}
@@ -190,6 +198,7 @@ class RssHelper {
 		}
 
 		break;
+		
 	    case 'commentsRecursive':
 		list ($ret, $items) = GalleryCommentHelper::fetchAllComments($id,
 		    $param['count'], null, ORDER_DESCENDING);
@@ -198,6 +207,21 @@ class RssHelper {
 		}
 
 		break;
+	}
+	
+	/* if necessary, fetch the thumbnails */
+	if (! strstr($param['feedType'], 'comments')) {
+	    $itemIds = array();
+	    
+	    foreach ($items as $item) {
+		$itemIds[] = $item->getId();
+	    }
+	    
+	    list ($ret, $param['thumbnails']) =
+		GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	/* go through subitems array and pass data to generator */
@@ -212,46 +236,6 @@ class RssHelper {
 	}
 
 	return null;
-    }
-
-    /**
-     * This function retrieves photos and put them in an array.
-     *
-     * @param object GalleryAlbumItem $entity Album that we shall retrieve photos/comments from.
-     * @return array object GalleryStatus
-     *               array  creationTimeStamp => GalleryItem
-     */
-    function getPhotoFeed($entity, $newOnly) {
-	/* retrieve subitems' ids */
-	list ($ret, $subIds) = GalleryCoreApi::fetchChildItemIds($entity);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	$itemsAcc = array();
-	$sortParam = $newOnly ? 'creationTimestamp' : 'modificationTimestamp';
-
-	/* go through subitems array and pass data to generator */
-	if (!empty($subIds)) {
-	    /* retrieve array of subitems */
-	    list ($ret, $subItems) = GalleryCoreApi::loadEntitiesById($subIds);
-	    if ($ret) {
-		return array($ret, null);
-	    }
-
-	    foreach ($subItems as $key => $subItem) {
-		/* check if the subitem is a photo */
-		if (GalleryUtilities::isA($subItem, 'GalleryDataItem')) {
-		    $itemData = (array) $subItem;
-		    $key = $itemData[$sortParam] . '_' . $itemData['id'];
-		    $itemsAcc[$key] = $subItem;
-		}
-	    }
-	}
-
-	krsort($itemsAcc);
-
-	return array(null, $itemsAcc);
     }
 
     /**
@@ -296,13 +280,10 @@ class RssHelper {
 	    $description = '';
 	}
 
-	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
-	if ($ret) {
-	    return $ret;
-	}
+	$itemSettings = array();
 
-	if (!empty($thumbnails) && !empty($thumbnails[$item->getId()])) {
-	    $thumbnail = $thumbnails[$item->getId()];
+	if (!empty($param['thumbnails']) && !empty($param['thumbnails'][$item->getId()])) {
+	    $thumbnail = $param['thumbnails'][$item->getId()];
 	    $imageUrl = $urlGenerator->generateUrl(
 		array(
 		    'view' => 'core.DownloadItem',
@@ -315,9 +296,13 @@ class RssHelper {
 		'" width="' . $thumbnail->getWidth() .
 		'" height="' . $thumbnail->getHeight() .
 		'"/></a>' . (!empty($description) ? '<br/>' . $description : $description);
+	
+	    $itemSettings['thumbnail']['url'] = $url;
+	    $itemSettings['thumbnail']['width'] = $thumbnail->getWidth();
+	    $itemSettings['thumbnail']['height'] = $thumbnail->getHeight();
 	}
 
-	if ($param['feedType'] == 'photosRecurse') {
+	if ($param['feedType'] == 'photosRecursive' || $param['feedType'] == 'photosRandomRecursive') {
 	    /* add a link to the parent album */
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rss');
 	    if ($ret) {
@@ -339,9 +324,9 @@ class RssHelper {
 	    $title = $item->getPathComponent();
 	}
 
-	$itemSettings = array('title' => $title,
-			      'link' => $url,
-			      'description' => $description);
+	$itemSettings['title'] = $title;
+	$itemSettings['link'] = $url;
+	$itemSettings['description'] = $description;
 
 	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 	    $itemSettings['category'] = 'album';
@@ -352,9 +337,9 @@ class RssHelper {
 	$itemSettings['pubDate'] = date('r', $item->getModificationTimestamp());
 
 	/* check if the enclosure tag should be used */
-	if (GalleryUtilities::isA($item, 'GalleryDataItem')
-		&& isset($param['useEnclosure'])
-		&& $param['useEnclosure'] == '1') {
+	if (GalleryUtilities::isA($item, 'GalleryPhotoItem')
+		&& ((isset($param['useEnclosure']) && $param['useEnclosure'] == '1') 
+		  || (isset($param['useMedia']) && $param['useMedia'] == '1'))) {
 	    $imageUrl = $urlGenerator->generateUrl(
 		array(
 		    'view' => 'core.DownloadItem',
@@ -362,10 +347,22 @@ class RssHelper {
 		array(
 		    'forceSessionId' => false,
 		    'forceFullUrl' => true));
-	    $itemSettings['enclosure'] = array(
-		'url' => $imageUrl,
-		'length' => $item->getSize(),
-		'type' => $item->getMimeType());
+	    
+	    if (isset($param['useEnclosure']) && $param['useEnclosure'] == '1') {
+		$itemSettings['enclosure'] = array(
+		    'url' => $imageUrl,
+		    'length' => $item->getSize(),
+		    'type' => $item->getMimeType());
+	    }
+
+	    if (isset($param['useMedia']) && $param['useMedia'] == '1') {
+		$itemSettings['media'] = array(
+		    'url' => $imageUrl,
+		    'type' => $item->getMimeType(),
+		    'width' => $item->getWidth(),
+		    'height' => $item->getHeight(),
+		    );
+	    }
 	}
 
 	$generator->addItem($itemSettings, $item->getId());
@@ -411,6 +408,48 @@ class RssHelper {
     }
 
     /**
+     * This function retrieves photos and put them in an array.
+     *
+     * @param object GalleryAlbumItem $entity Album that we shall retrieve photos/comments from.
+     *        boolean whether to get only new items, or also updated items
+     *        boolean whether to use random order, or dates
+     * @return array object GalleryStatus
+     *               array  creationTimeStamp => GalleryItem
+     */
+    function getPhotoFeed($entity, $newOnly, $random) {
+	/* retrieve subitems' ids */
+	list ($ret, $subIds) = GalleryCoreApi::fetchChildItemIds($entity);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$itemsAcc = array();
+	$sortParam = $newOnly ? 'creationTimestamp' : 'modificationTimestamp';
+
+	/* go through subitems array and pass data to generator */
+	if (!empty($subIds)) {
+	    /* retrieve array of subitems */
+	    list ($ret, $subItems) = GalleryCoreApi::loadEntitiesById($subIds);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    foreach ($subItems as $key => $subItem) {
+		/* check if the subitem is a photo */
+		if (GalleryUtilities::isA($subItem, 'GalleryDataItem')) {
+		    $itemData = (array) $subItem;
+		    $key = $random ? rand() : $itemData[$sortParam] . '_' . $itemData['id'];
+		    $itemsAcc[$key] = $subItem;
+		}
+	    }
+	}
+
+	krsort($itemsAcc);
+
+	return array(null, $itemsAcc);
+    }
+
+    /**
      * This function fetches albums or items inside a root album
      *
      * @param int $itemId the root album Id
@@ -423,7 +462,8 @@ class RssHelper {
      *
      * copied and modified from GalleryItemHelper_simple
      */
-    function fetchAlbumTree($itemId, $limit, $newOnly, $allowPhotos, $perAlbumLimit = 0) {
+    function fetchAlbumTree($itemId, $limit, $newOnly, $allowPhotos, $perAlbumLimit = 0,
+	    $random = false) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 	$userId = $gallery->getActiveUserId();
@@ -434,60 +474,86 @@ class RssHelper {
 	}
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 
-	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+	list ($ret, $rootId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
-	    return array($ret, null);
+	    return $ret;
 	}
+	
+	if ($itemId == $rootId) {
+	    $parentSequence = '';
+	} else {
+	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
+	    if ($ret) {
+		return array($ret, null);
+	    }
 
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
-	if ($ret) {
-	    return array($ret, null);
+	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $parentSequence[] = $itemId;
+	    $parentSequence = implode('/', $parentSequence);
 	}
-	$parentSequence[] = $itemId;
-	$parentSequence = implode('/', $parentSequence);
 
 	$timestamp = $newOnly ? 'creationTimestamp' : 'modificationTimestamp';
 	$table = $allowPhotos ? 'GalleryDataItem' : 'GalleryAlbumItem';
 
 	list ($ret, $newDays) =
-	    GalleryCoreApi::getPluginParameter('module', 'newitems', 'days.new');
+	    GalleryCoreApi::getPluginParameter('module', 'rss', 'maxAge');
 	if ($ret || !$newDays) {
-	    $newDays = 1; /* Use default on error or zero setting */
+	    $newDays = 21; /* Use default on error or zero setting */
 	}
 	$timeCutOff = time() - 3600 * 24 * $newDays;
-
+	
+	if ($random) {
+	    /* get the random function for the DB */
+	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	} else {
+	    $orderBy = "[GalleryEntity::$timestamp] DESC";
+	}
+	
 	$query = "
 	    SELECT
 	      [$table::id]";
-
+	
 	if ($perAlbumLimit != 0) {
 	    $query .= ', [GalleryItemAttributesMap::parentSequence]';
 	}
-
+	
 	$query .= "
 	    FROM
 	      [$table], [GalleryItemAttributesMap],
 	      [GalleryAccessSubscriberMap], [GalleryEntity]
-	    WHERE
+	    WHERE ";
+	
+	if (! $random) {
+	    $query .= "
 	      [GalleryEntity::$timestamp] >= $timeCutOff
-	      AND
+	      AND ";
+	}
+	
+	$query .= "
 	      [$table::id] = [GalleryItemAttributesMap::itemId]
 	      AND
 	      [$table::id] = [GalleryEntity::id]";
-
+	
 	if (!empty($parentSequence)) {
 	    $query .= "
 	      AND
 	      [GalleryItemAttributesMap::parentSequence] LIKE '$parentSequence/%'";
 	}
-
+	
 	$query .= "
 	      AND
 	      [$table::id] = [GalleryAccessSubscriberMap::itemId]
 	      AND
 	      [GalleryAccessSubscriberMap::accessListId] IN ($aclMarkers)
 	    ORDER BY
-	      [GalleryEntity::$timestamp] DESC
+	      $orderBy
 	    ";
 
 	$data = $aclIds;
@@ -548,12 +614,15 @@ class RssHelper {
 	return array(null, array(
 		'photos' => $module->translate('Items in an album'),
 		'album' => $module->translate('Sub-albums of an album'),
-		'photosRecurse' => $module->translate('Items in an album and its sub-albums'),
+		'photosRecursive' => $module->translate('Items in an album and its sub-albums'),
 		'commentsAlbum' => $module->translate('Comments for an album'),
 		'commentsPhoto' => $module->translate('Comments for an item'),
 		'commentsRecursive' =>
 		    $module->translate('Comments for an album and its subalbums'),
-		));
+		'photosRandom' => $module->translate('Random items in an album'),
+		'photosRandomRecursive' => 
+		    $module->translate('Random items in an album and its subalbums'),
+		    ));
     }
 }
 ?>

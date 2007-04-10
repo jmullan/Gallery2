@@ -242,7 +242,7 @@ class RssMapHelper {
 		    (GalleryUtilities::isA($item, 'GalleryAlbumItem')
 		     && ($params['allowAlbums'] == 1
 			 || $params['allowPhotos'] == 1
-			 || $params['allowPhotosRecurse'] == 1
+			 || $params['allowPhotosRecursive'] == 1
 			 || $params['allowCommentsAlbum'] == 1))
 		    || (GalleryUtilities::isA($item, 'GalleryDataItem') &&
 			$params['allowCommentsPhoto'] == 1))) {

@@ -58,14 +58,14 @@ class RssRenderTest extends GalleryControllerTestCase {
 		       'allowConfigurableFeed' => 1,
 		       'allowAlbums' => 1,
 		       'allowPhotos' => 1,
-		       'allowPhotosRecurse' => 1,
+		       'allowPhotosRecursive' => 1,
 		       'allowCommentsAlbum' => 1,
 		       'allowCommentsPhoto' => 1,
 		       'defaultCopyright' => '',
 		       'defaultTtl' => 120,
 		       'sfAlbumType' => 'photos',
 		       'sfDate' => 'new',
-		       'sfPhotosRecurseLimit' => '10',
+		       'sfPhotosRecursiveLimit' => '10',
 		    ) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rss', $key, $value);
 	    if ($ret) {
@@ -145,7 +145,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	$name = 'test'.rand();
 	$params = array(
 	    'itemId' => $this->_root->getId(),
-	    'feedType' => 'photosRecurse',
+	    'feedType' => 'photosRecursive',
 	    'feedDate' => 'new',
 	    'version' => '2.0',
 	    'count' => '10',
@@ -157,7 +157,7 @@ class RssRenderTest extends GalleryControllerTestCase {
 	    'useImage' => true,
 	    'useEnclosure' => false,
 	    'useCloud' => false,
-	    'photosRecurseLimit' => '5',
+	    'photosRecursiveLimit' => '5',
 	    );
 	$ret = RssMapHelper::createFeed($name, $params);
 	if ($ret) {

@@ -102,6 +102,7 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 	    'defaultVersion' => '2.0',
 	    'defaultCount' => '30',
 	    'maxCount' => '100',
+	    'maxAge' => '35',
 	    'defaultTtl' => '120',
 	    'defaultCopyright' => 'Test copyright',
 	    'allowSimpleFeed' => '1',
@@ -140,7 +141,7 @@ class RssSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$values = array(
 	    'sfAlbumType' => 'photos',
-	    'sfPhotosRecurseLimit' => '10',
+	    'sfPhotosRecursiveLimit' => '10',
 	    'sfDate' => 'new');
 	foreach ($values as $key => $value) {
 	    GalleryUtilities::putRequestVariable('form['.$key.']', $value);
