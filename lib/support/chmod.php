@@ -26,6 +26,7 @@ define('CMD_ADVANCED', 'advanced');
 define('CMD_CHMOD_PLUGIN_DIR', 'chmodPluginDir');
 define('CMD_CHMOD_GALLERY_DIR', 'chmodGalleryDir');
 define('CMD_CHMOD_STORAGE_DIR', 'chmodStorageDir');
+define('CMD_CHMOD_LOCALE_DIR', 'chmodLocaleDir');
 /* For get/post input sanitation */
 require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryUtilities.class');
 
@@ -170,6 +171,17 @@ if (empty($status['error'])) {
         } else {
             $status['message'] = 'Successfully changed the filesystem permissions '
 		. 'of the storage folder.';
+        }
+        break;
+    case CMD_CHMOD_LOCALE_DIR:
+        /* Chmod the entire locale dir writeable */
+	$ret = chmodLocaleDirRecursively();
+	if (!empty($ret)) {
+            $status['error'][] = 'Failed to change the filesystem permissions '
+		. 'of the locale folder.';
+        } else {
+            $status['message'] = 'Successfully changed the filesystem permissions '
+		. 'of the locale folder.';
         }
         break;
     default:
@@ -428,6 +440,11 @@ function chmodStorageDirRecursively() {
     return chmodRecursively(getGalleryStoragePath(), 0777, 0666, time() - 60);
 }
 
+function chmodLocaleDirRecursively() {
+    /* This is just a wrapper function for the general chmod recursively function */
+    return chmodRecursively(getGalleryStoragePath() . 'locale', 0777, 0666, time() - 60);
+}
+
 /**
  * @return array (pluginId => boolean writeable, .. )
  */
@@ -637,6 +654,16 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
         and if that happens, Gallery will usually show a ERROR_PLATFORM_FAILURE. In that case the
         problem might be solved by the above action. If the problem persists, you will have to talk
         to your webhost to get data folder writeable again.
+      </p>
+
+      <hr class="faint"/>
+
+      <h2><a href="index.php?chmod&amp;command=<?php print CMD_CHMOD_LOCALE_DIR;
+      ?>">Make the locale folder read/write</a></h2>
+      <p class="description">
+        If you're localizing Gallery, you may see warnings when you compile up your localization
+        since you may not have permissions to copy the the new localized version into your
+        g2data/locale folder.  Making the locale folder read/write should solve this problem.
       </p>
 
       <hr class="faint"/>

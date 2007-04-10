@@ -20,6 +20,12 @@ MODULE_DIR = $(shell dirname `pwd`)
 TYPE_DIR = $(shell dirname $(MODULE_DIR))
 APPLICATION ?= $(shell basename $(TYPE_DIR))_$(shell basename $(MODULE_DIR))
 
+# It's best to let PHP parse the config.php file to get the g2data directory.  However we can't
+# rely on php's -r flag since that's only available in the CLI version of PHP.  The -a flag is
+# available in both CLI and CGI versions, but it puts the text "Interactive mode enabled" into the
+# output.  Use GNUmake's filter-out command to remove those words.
+G2DATA = $(filter-out Interactive mode enabled, $(shell echo '<?php include("$(GALLERYDIR)/lib/support/GallerySetupUtilities.class"); $$gallery = new GallerySetupUtilitiesStub(); include("$(GALLERYDIR)/config.php"); print $$gallery->getConfig("data.gallery.base"); ?>' | php -a 2>&1))
+
 ifdef QUIET
     MSGFMT_FLAGS =
 else
@@ -70,13 +76,35 @@ clean:
 
 update: $(PO).po
 
-install: update
-	@if test "$(OSTYPE)" = "solaris"; then \
+check-g2data:
+	@if ! test -d "$(G2DATA)"; then \
+	    echo "************************************************************"; \
+	    echo "WARNING: We detected the following as your g2data dir but"; \
+	    echo "this directory does not appear to exist.  We will be unable"; \
+	    echo "to copy new .mo files into the g2data/locale directory until"; \
+	    echo "this is fixed."; \
+	    echo ""; \
+	    echo "$(G2DATA)"; \
+	    echo ""; \
+	    echo "Alternatively, point your browser at gallery2/lib/support, "; \
+	    echo "click the \"Filesystem Permissions\" link and then click "; \
+            echo "the 'Make the locale folder read/write' link"; \
+	    echo "************************************************************"; \
+	fi
+
+install: check-g2data update
+	@if ! test -z "$(DEBUG)"; then set -x; fi; \
+	if test "$(OSTYPE)" = "solaris"; then \
 	    echo "You'll probably get some warnings on Solaris. This is normal."; \
+	    MSGFMT_CMD="$(MSGFMTSOL)"; \
+	else \
+	    MSGFMT_CMD="$(MSGFMT)"; \
 	fi; \
 	FAIL=0; \
+	COPY_FAIL=0; \
 	echo "Updating $(PO)"; \
 	for LOCALE in `ls $(PO).po | grep -v messages.po | sed 's/\.[^.]*$$//g'`; do \
+            INSTALL_FILE=""; \
 	    if test -z "$${QUIET}"; then echo $${LOCALE}; fi; \
 	    if test -d ../locale; then \
 		if ! $(TOOLDIR)/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
@@ -93,30 +121,50 @@ install: update
 		MO_FILE=../../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo; \
 	    else \
 		MO_FILE=$${LOCALE}.mo; \
+	        INSTALL_DIR="$(G2DATA)/locale/$${LOCALE}/LC_MESSAGES"; \
+	        INSTALL_FILE="$${INSTALL_DIR}/$(APPLICATION).mo"; \
 	    fi; \
 	    php -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
-	    if test "$(OSTYPE)" = "solaris"; then \
-		if {MSGFMTSOL} $${MO_FILE} tmp.po; then \
-		    if test -n "$${QUIET}"; then \
-			echo -n '.'; \
+            if $${MSGFMT_CMD} $${MO_FILE} tmp.po; then \
+		if test -n "$${QUIET}"; then \
+		    echo -n '.'; \
+		fi; \
+		if test -n "$${INSTALL_FILE}"; then \
+		    if ! test -d "$${INSTALL_DIR}"; then \
+			echo ">> Creating $${INSTALL_DIR}"; \
+			if ! $(TOOLDIR)/po/shtool mkdir -p $${INSTALL_DIR}; then \
+			    echo "** Unable to create $${INSTALL_DIR}!"; \
+			    COPY_FAIL=1; \
+			fi \
+		    fi; \
+		    if test -d "$${INSTALL_DIR}"; then \
+			if cp $${MO_FILE} $${INSTALL_FILE}; then \
+			    chmod 777 $${INSTALL_FILE} 2>/dev/null ; \
+			else \
+			    echo "** Unable to install $${INSTALL_FILE}!"; \
+			    COPY_FAIL=1; \
+			fi; \
 		    fi \
-		else \
-		    echo -n "Fail: $${LOCALE}"; \
-		    FAIL=1; \
 		fi \
 	    else \
-		if $(MSGFMT) $${MO_FILE} tmp.po; then \
-		    if test -n "$${QUIET}"; then \
-			echo -n '.'; \
-		    fi \
-		else \
-		    echo -n "Fail: $${LOCALE}"; \
-		    FAIL=1; \
-		fi \
+		echo -n "Fail: $${LOCALE}"; \
+		FAIL=1; \
 	    fi; \
-	    $(RM) tmp.po; \
+            $(RM) tmp.po; \
 	    if test -z "$${QUIET}"; then echo; fi; \
 	done; \
+	if test $${COPY_FAIL} -gt 0; then \
+	    echo "************************************************************"; \
+	    echo "WARNING: Failed to copy some .mo files to the g2data/locale"; \
+            echo "directory! Try changing the permissions on your g2data dir: "; \
+	    echo ""; \
+	    echo "chmod -R 777 $(G2DATA)/locale"; \
+	    echo ""; \
+	    echo "Alternatively, point your browser at gallery2/lib/support, "; \
+	    echo "click the \"Filesystem Permissions\" link and then click "; \
+            echo "the 'Make the locale folder read/write' link"; \
+	    echo "************************************************************"; \
+        fi; \
 	if test $${FAIL} -gt 0; then exit 1; fi;
 	@echo '';
 
