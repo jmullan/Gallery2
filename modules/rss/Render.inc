@@ -72,7 +72,8 @@ class RenderView extends GalleryView {
 		|| ($feedType == 'commentsPhoto' && $params['allowCommentsPhoto'] != 1)
 		|| ($feedType == 'commentsRecursive' && $params['allowCommentsRecursive'] != 1)
 		|| ($feedType == 'photosRandom' && $params['allowPhotosRandom'] != 1)
-		|| ($feedType == 'photosRandomRecursive' && $params['allowPhotosRandomRecursive'] != 1)
+		|| ($feedType ==
+			'photosRandomRecursive' && $params['allowPhotosRandomRecursive'] != 1)
 		) {
 	    $this->handleError($gallery->i18n('Feeds of that type are not allowed!'));
 	    return null;
