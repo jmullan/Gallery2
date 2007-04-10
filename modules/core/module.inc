@@ -120,7 +120,9 @@ class CoreModule extends GalleryModule {
 
 	    $itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 	    if (isset($permissions[$itemId]['core.edit'])) {
-		/* Specific translations: _('Edit Album') _('Edit Photo') _('Edit Movie') */
+		if (false) {
+		    /* Specific translations: */ _('Edit Album'); _('Edit Photo'); _('Edit Movie');
+		}
 		$links[$itemId][] =
 		    array('text' => $this->_translate(
 			      array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0]),
@@ -153,7 +155,10 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
-		/* Specific translations: _('Delete Album') _('Delete Photo') _('Delete Movie') */
+		if (false) {
+		    /* Specific translations: */
+		    _('Delete Album'); _('Delete Photo'); _('Delete Movie');
+		}
 		$links[$itemId][] =
 		    array('text' => $this->_translate(
 			      array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]),
@@ -166,7 +171,9 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
-		/* Specific translations: _('Move Album') _('Move Photo') _('Move Movie') */
+		if (false) {
+		    /* Specific translations: */ _('Move Album'); _('Move Photo'); _('Move Movie');
+		}
 		$links[$itemId][] =
 		    array('text' => $this->_translate(
 			      array('text' => 'Move %s', 'arg1' => $itemTypeNames[0]),

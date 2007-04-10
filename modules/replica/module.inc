@@ -96,8 +96,10 @@ class ReplicaModule extends GalleryModule {
 		return array($ret, null);
 	    }
 	    if ($count > 0) {
-		/* Specific translations: */
-		/* _('Replicate Album') _('Replicate Photo') _('Replicate Movie') */
+		if (false) {
+		    /* Specific translations: */
+		    _('Replicate Album'); _('Replicate Photo'); _('Replicate Movie');
+		}
 		$itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 		$views[] = array('name' => $this->_translate(
 				   array('text' => 'Replicate %s', 'arg1' => $itemTypeNames[0]),

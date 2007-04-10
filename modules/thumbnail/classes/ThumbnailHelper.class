@@ -183,7 +183,8 @@ class ThumbnailHelper {
 	$ret = GalleryCoreApi::registerToolkitOperation(
 		'Thumbnail', $mimeTypes, 'thumbnail',
 		array(array('type' => 'int', 'description' =>
-			$gallery->i18n('target width (# pixels or #% of full size)', false)),
+			$gallery->i18n(array('text' => 'target width (# pixels or #% of full size)',
+					     'cFormat' => false))),
 		    array('type' => 'int', 'description' =>
 			$gallery->i18n('(optional) target height, defaults to same as width'))),
 		$gallery->i18n('Scale the image to the target size, maintain aspect ratio'),

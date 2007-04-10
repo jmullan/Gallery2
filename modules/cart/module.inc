@@ -146,7 +146,9 @@ class CartModule extends GalleryModule {
 	foreach ($items as $item) {
 	    if (isset($permissions[$item->getId()]['cart.add'])) {
 		$itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
-		/* Specific translations: _('Add Album To Cart') _('Add Photo To Cart') */
+		if (false) {
+		    /* Specific translations: */ _('Add Album To Cart'); _('Add Photo To Cart');
+		}
 		$links[$item->getId()][] =
 		    array('text' => $this->_translate(
 				array('text' => 'Add %s To Cart',

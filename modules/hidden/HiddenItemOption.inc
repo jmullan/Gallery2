@@ -52,7 +52,9 @@ class HiddenItemOption extends ItemEditOption {
 	    return array($ret, null, null);
 	}
 
-	/* Specific translations: _('Hide Album') _('Hide Photo') _('Hide Movie') */
+	if (false) {
+	    /* Specific translations: */ _('Hide Album'); _('Hide Photo'); _('Hide Movie');
+	}
 	$itemTypeNames = array_merge($item->itemTypeName(), $item->itemTypeName(false));
 	$form['HiddenItemOption']['heading'] = $module->_translate(
 		array('text' => 'Hide %s', 'arg1' => $itemTypeNames[0]), $itemTypeNames[2]);

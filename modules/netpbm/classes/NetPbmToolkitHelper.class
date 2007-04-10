@@ -76,7 +76,8 @@ class NetPbmToolkitHelper {
 
 	/* Scale */
 	$operations['scale']['params'][] = array('type' => 'int', 'description' =>
-		$gallery->i18n('target width (# pixels or #% of full size)', false));
+		$gallery->i18n(array('text' => 'target width (# pixels or #% of full size)',
+				     'cFormat' => false)));
 	$operations['scale']['params'][] = array('type' => 'int', 'description' =>
 		$gallery->i18n('(optional) target height, defaults to same as width'));
 	$operations['scale']['description'] =
@@ -88,9 +89,11 @@ class NetPbmToolkitHelper {
 
 	/* Resize */
 	$operations['resize']['params'][] = array('type' => 'int', 'description' =>
-		$gallery->i18n('target width (# pixels or #% of full size)', false));
+		$gallery->i18n(array('text' => 'target width (# pixels or #% of full size)',
+				     'cFormat' => false)));
 	$operations['resize']['params'][] = array('type' => 'int', 'description' =>
-		$gallery->i18n('target height (# pixels or #% of full size)', false));
+		$gallery->i18n(array('text' => 'target height (# pixels or #% of full size)',
+				     'cFormat' => false)));
 	$operations['resize']['description'] =
 	    $gallery->i18n('Resize the image to the target dimensions');
 	$operations['resize']['mimeTypes'] = $mimeTypes;

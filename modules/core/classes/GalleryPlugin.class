@@ -76,21 +76,17 @@ class GalleryPlugin {
      * Localize the given content.
      *
      * Gallery uses GNU gettext for internationalization (i18n) and localization (l10n) of
-     * text presented to the user. Gettext needs to know about all places involving strings,
-     * that must be translated. Mark any place, where localization at runtime shall take place
+     * text presented to the user. Gettext needs to know about all places involving strings
+     * that must be translated. Mark any place where localization at runtime shall take place
      * by using this function.
      *
      * E.g. instead of:
      *   print 'TEST to be displayed in different languages';
-     * use (in any modules subclass of GalleryPlugin):
+     * use (in any subclass of GalleryPlugin):
      *   print $this->translate('TEST to be displayed in different languages');
      * and you are all set for pure literals. The translation teams will receive that literal
      * string as a job to translate and will translate it (when the message is clear enough).
      * At runtime the message is then localized when printed.
-     * Input may also include $params['hint'] which is text to appear in the po file to assist
-     * translators, but is not text to be translated.  Example:
-     *   print $this->translate(array('text' => 'TT', 'hint' => 'Abbreviation for ToolTip'));
-     * 'hint' must follow 'text' or 'many' in the array, and its value must use '..' not ".."
      *
      * But consider this case:
      *   $message_to_be_localized = 'TEST to be displayed in different languages';
@@ -110,13 +106,19 @@ class GalleryPlugin {
      * The i18n() method does nothing, but feeding translators with that new string.
      * This method does the runtime job, thanks to GNU gettext.
      *
+     * Input parameters may also include $params['hint'] which is text to appear in the po file to
+     * assist translators, but is not text to be translated.  Example:
+     *   print $this->translate(array('text' => 'TT', 'hint' => 'Abbreviation for ToolTip'));
+     * Input parameters may also include $params['cFormat'] (boolean value) which tells gettext
+     * whether or not to use "c-format" for this string (it may guess wrong for "5% faster",
+     * for example).
+     *
      * @param mixed $params a single string, or an array of parameters
-     * @param boolean $cFormat (optional) hint for gettext whether to use c-format
      * @return string the localized value
      * @see GalleryTranslator::translateDomain
      * @see Gallery::i18n
      */
-    function translate($params, $cFormat=null) {
+    function translate($params) {
 	global $gallery;
 	$translator =& $gallery->getTranslator();
 	if (!isset($translator)) {

@@ -797,22 +797,9 @@ class Gallery {
     /**
      * Mark a string as being internationalized.  This is a semaphore method; it does nothing but it
      * allows us to easily identify strings that require translation.  Generally this is used to
-     * mark strings that will be stored in the database (like descriptions of permissions).
+     * mark strings that will be stored in the database (like module names and descriptions).
      *
-     * Gallery uses GNU gettext for internationalization (i18n) and localization (l10n) of text
-     * presented to the user.  Gettext needs to know about all places involving strings, that must
-     * be translated.  Mark any place, where localization at runtime shall take place by using the
-     * function GalleryPlugin::translate().
-     *
-     * eg. instead of:
-     *   print 'TEST to be displayed in different languages';
-     * use (in any modules subclass of GalleryPlugin):
-     *   print $this->translate('TEST to be displayed in different languages');
-     * and you are all set for pure literals. The translation teams will receive that literal
-     * string as a job to translate and will translate it (when the message is clear enough).
-     * At runtime the message is then localized when printed.
-     *
-     * But consider this case:
+     * Consider this case:
      *   $message_to_be_localized = 'TEST to be displayed in different languages';
      *   print $this->translate($message_to_be_localized);
      *
@@ -826,12 +813,12 @@ class Gallery {
      *   $message_to_be_localized = $gallery->i18n('TEST to be displayed in different languages');
      *   print $this->translate($message_to_be_localized);
      *
-     * @param string $value
-     * @param boolean $cFormat (optional) hint for gettext whether to use c-format
-     * @return string the same value
+     * @param mixed $value string or array (array must have 'text' key; hint/cFormat keys optional)
+     * @return string the text value
+     * @see GalleryPlugin::translate
      */
-    function i18n($value, $cFormat=null) {
-	return $value;  /* Just pass the value through */
+    function i18n($value) {
+	return is_array($value) ? $value['text'] : $value;  /* Just pass the text through */
     }
 
     /**
