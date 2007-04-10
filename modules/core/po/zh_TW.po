@@ -32,6 +32,26 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Gallery 電郵測試"
 
+#, c-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d 分鐘"
+
+#, c-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d 小時"
+
+#, c-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] "%d 天"
+
+#, c-format
+msgid "%d week"
+msgid_plural "%d weeks"
+msgstr[0] "%d 星期"
+
 msgid "forever"
 msgstr "永久"
 
@@ -55,26 +75,6 @@ msgstr "資料庫"
 
 msgid "File"
 msgstr "檔案"
-
-#, c-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d 分鐘"
-
-#, c-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] "%d 小時"
-
-#, c-format
-msgid "%d day"
-msgid_plural "%d days"
-msgstr[0] "%d 天"
-
-#, c-format
-msgid "%d week"
-msgid_plural "%d weeks"
-msgstr[0] "%d 星期"
 
 msgid "&lt;none&gt;"
 msgstr ""
@@ -163,9 +163,6 @@ msgstr "使用這些設定"
 msgid "Installing the core module"
 msgstr "安裝核心模組中"
 
-msgid "key"
-msgstr "主鍵"
-
 msgid "All access"
 msgstr "完全存取"
 
@@ -199,6 +196,10 @@ msgstr "[核心] 刪除項目"
 msgid "Upgrading permissions"
 msgstr "正在升級權限"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "升級權限中（已完成 %d 項，還有 %d 項）"
+
 msgid "Deleting old permission tables"
 msgstr "正在刪除舊的權限表格"
 
@@ -211,11 +212,33 @@ msgstr "所有用戶"
 msgid "Detecting broken derivatives"
 msgstr "偵測壞掉的衍生檔案"
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "偵測壞掉的衍生檔案，正在載入（檢查了 %d 個衍生檔案，還有 %d 個）"
+
+#, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "偵測壞掉的衍生檔案（檢查了 %d 個衍生檔案，還有 %d 個）"
+
+#, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "偵測壞掉的衍生檔案，正在儲存（檢查了 %d 個衍生檔案，還有 %d 個）"
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr ""
+"偵測壞掉的衍生檔案，正在儲存 %2$d 中的第 %1$d 個（已完成 %3$d 個衍生檔案，還有 %4$d 個）"
+
 msgid "Clearing fast-download cache"
 msgstr "正在清除快速下載快取"
 
 msgid "Deleting old fast-download cache"
 msgstr "正在清除舊的快速下載快取"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "正在刪除舊的連線檔案（第%d次）"
 
 msgid "Updating panorama items"
 msgstr "更新全景圖片項目中"
@@ -245,32 +268,6 @@ msgstr "這是 Gallery 的首頁"
 msgid "Converting MySQL data to UTF8"
 msgstr "將 MySQL 資料轉成 UTF8 中"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "升級權限中（已完成 %d 項，還有 %d 項）"
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "偵測壞掉的衍生檔案，正在載入（檢查了 %d 個衍生檔案，還有 %d 個）"
-
-#, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "偵測壞掉的衍生檔案（檢查了 %d 個衍生檔案，還有 %d 個）"
-
-#, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "偵測壞掉的衍生檔案，正在儲存（檢查了 %d 個衍生檔案，還有 %d 個）"
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr ""
-"偵測壞掉的衍生檔案，正在儲存 %2$d 中的第 %1$d 個（已完成 %3$d 個衍生檔案，還有 %4$d 個）"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "正在刪除舊的連線檔案（第%d次）"
-
 msgid "add items"
 msgstr "增加項目"
 
@@ -282,28 +279,6 @@ msgstr "增加子相簿"
 
 msgid "add items confirmation"
 msgstr "增加項目確認"
-
-msgid "Base filename"
-msgstr "檔案名稱"
-
-msgid "Caption"
-msgstr "說明"
-
-msgid "Blank"
-msgstr "空白"
-
-msgid "From Web Browser"
-msgstr "從瀏覽程式"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d MB"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d KB"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -320,6 +295,28 @@ msgstr "輸入檔案 %s 只上載了一部分"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "輸入檔案 %s 並沒有上載。錯誤 %d"
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d MB"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d KB"
+
+msgid "Base filename"
+msgstr "檔案名稱"
+
+msgid "Caption"
+msgstr "說明"
+
+msgid "Blank"
+msgstr "空白"
+
+msgid "From Web Browser"
+msgstr "從瀏覽程式"
 
 msgid "Gallery Item Administration"
 msgstr "Gallery 項目管理"
@@ -347,6 +344,10 @@ msgstr "應用改變圖像大小設定"
 msgid "Preparing..."
 msgstr "準備中..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "正在處理 %2$d 個圖片中的第 %1$d 個"
+
 msgid "Apply thumbnail settings"
 msgstr "應用縮略圖設定"
 
@@ -355,10 +356,6 @@ msgstr "正在重建縮略圖..."
 
 msgid "Album"
 msgstr "相簿"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "正在處理 %2$d 個圖片中的第 %1$d 個"
 
 msgid "Changes saved successfully"
 msgstr "變更已儲存成功"
@@ -497,6 +494,10 @@ msgstr "編輯照片"
 msgid "Edit Movie"
 msgstr "編輯影片"
 
+#, c-format
+msgid "Edit %s"
+msgstr "編輯%s"
+
 msgid "Add Album"
 msgstr "增加子相簿"
 
@@ -515,6 +516,10 @@ msgstr "刪除照片"
 msgid "Delete Movie"
 msgstr "刪除影片"
 
+#, c-format
+msgid "Delete %s"
+msgstr "刪除%s"
+
 msgid "Move Album"
 msgstr "移動相簿"
 
@@ -523,6 +528,10 @@ msgstr "移動照片"
 
 msgid "Move Movie"
 msgstr "移動影片"
+
+#, c-format
+msgid "Move %s"
+msgstr "移動%s"
 
 msgid "Edit Captions"
 msgstr "編輯說明"
@@ -572,18 +581,6 @@ msgstr "帳戶設定"
 msgid "Change Password"
 msgstr "變更密碼"
 
-#, c-format
-msgid "Edit %s"
-msgstr "編輯%s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "刪除%s"
-
-#, c-format
-msgid "Move %s"
-msgstr "移動%s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "建立所有縮略圖和縮放大小圖"
 
@@ -594,9 +591,6 @@ msgstr "確保所有衍生的檔案資料（縮略圖等等）有被建立。"
 
 msgid "Build All Thumbnails/Resizes"
 msgstr "建立所有縮略圖和縮放大小圖"
-
-msgid "Debug output for failed items:"
-msgstr "失敗項目的除蟲輸出："
 
 #, c-format
 msgid "Checked %d items"
@@ -609,6 +603,9 @@ msgstr "建立了 %d 個項目"
 #, c-format
 msgid "%d items failed"
 msgstr "%d 個項目失敗"
+
+msgid "Debug output for failed items:"
+msgstr "失敗項目的除蟲輸出："
 
 msgid "Convert MySQL database to UTF8"
 msgstr "將 MySQL 資料庫轉成 UTF8"
@@ -809,6 +806,10 @@ msgstr "升序"
 msgid "Descending"
 msgstr "降序"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "使用 Gallery v%s"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "在 config.php 中設定 allowSessionAccess 之前，驗證功能是關閉的。"
 
@@ -817,13 +818,6 @@ msgstr "這個頁面符合 XHTML 1.0 標準"
 
 msgid "Donate to the Gallery project"
 msgstr "捐款給 Gallery 專案"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Double Double"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "使用 Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -930,12 +924,12 @@ msgstr "試算表"
 msgid "file"
 msgstr "檔案"
 
-msgid "Back"
-msgstr "返回"
-
 #, c-format
 msgid "Back to %s"
 msgstr "返回%s"
+
+msgid "Back"
+msgstr "返回"
 
 msgid "User"
 msgstr "用戶"
@@ -3603,3 +3597,9 @@ msgstr "登入區塊"
 
 msgid "Links to album/photo peers"
 msgstr "連到同級相簿或照片"
+
+#~ msgid "key"
+#~ msgstr "主鍵"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Double Double"

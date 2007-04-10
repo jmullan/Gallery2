@@ -31,30 +31,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Galerii Emaili Test"
 
-msgid "forever"
-msgstr "igavesti"
-
-msgid "High Priority (Me first!)"
-msgstr "Kõrge Prioriteet (Mina enne!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Madal Prioriteet (Ma tahan jagada!)"
-
-msgid "No Markup"
-msgstr "No Markup"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "Töötlemata HTML"
-
-msgid "Database"
-msgstr "Andmebaas"
-
-msgid "File"
-msgstr "Fail"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -78,6 +54,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d nädal"
 msgstr[1] "%d nädalat"
+
+msgid "forever"
+msgstr "igavesti"
+
+msgid "High Priority (Me first!)"
+msgstr "Kõrge Prioriteet (Mina enne!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Madal Prioriteet (Ma tahan jagada!)"
+
+msgid "No Markup"
+msgstr "No Markup"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "Töötlemata HTML"
+
+msgid "Database"
+msgstr "Andmebaas"
+
+msgid "File"
+msgstr "Fail"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;mitte ühtki&gt;"
@@ -170,9 +170,6 @@ msgstr "Kasuta neid seadeid"
 msgid "Installing the core module"
 msgstr "Tuum-mooduli installimine"
 
-msgid "key"
-msgstr "võti"
-
 msgid "All access"
 msgstr "Kõik õigused"
 
@@ -206,6 +203,10 @@ msgstr "[tuum] Kustuta pilt"
 msgid "Upgrading permissions"
 msgstr "Õiguste uuendamine"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Õiguste uuendamine (%d pilti/albumit valmis, %d veel)"
+
 msgid "Deleting old permission tables"
 msgstr "Vanade õiguste-tabelite kustutamine"
 
@@ -218,11 +219,32 @@ msgstr "Kõik Kasutajad"
 msgid "Detecting broken derivatives"
 msgstr "Katkiste tuletiste avastamine"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Katkiste tuletiste avastamine, sisse lugemine"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Katkiste tuletiste avastamine, salvestamine"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Katkiste tuletiste avastamine, salvestamine"
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Õiguste uuendamine (%d pilti/albumit valmis, %d veel)"
+
 msgid "Clearing fast-download cache"
 msgstr "Kiire-allatõmbamise vahemälu tühjendamine"
 
 msgid "Deleting old fast-download cache"
 msgstr "Vana kiire-allatõmbamise vahemälu tühjendamine"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Vanade sessioonifailide kustutamine (iteratsioon %d)"
 
 msgid "Updating panorama items"
 msgstr ""
@@ -252,31 +274,6 @@ msgstr "See on Galerii avaleht"
 msgid "Converting MySQL data to UTF8"
 msgstr "MySQL andmete UTF8 andmeteks muutmine"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Õiguste uuendamine (%d pilti/albumit valmis, %d veel)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Katkiste tuletiste avastamine, sisse lugemine"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Katkiste tuletiste avastamine, salvestamine"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Katkiste tuletiste avastamine, salvestamine"
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Õiguste uuendamine (%d pilti/albumit valmis, %d veel)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Vanade sessioonifailide kustutamine (iteratsioon %d)"
-
 msgid "add items"
 msgstr "Lisa pilt"
 
@@ -288,30 +285,6 @@ msgstr "Lisa alam-album"
 
 msgid "add items confirmation"
 msgstr "Pildi/albumi lisamiskinnitus"
-
-msgid "Base filename"
-msgstr "Baas-failinimi"
-
-msgid "Caption"
-msgstr "Pildi allkiri"
-
-msgid "Blank"
-msgstr "Tühi"
-
-msgid "From Web Browser"
-msgstr "Veebilehitsejast"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabait"
-msgstr[1] "%d megabaiti"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobait"
-msgstr[1] "%d kilobaiti"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -328,6 +301,30 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabait"
+msgstr[1] "%d megabaiti"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobait"
+msgstr[1] "%d kilobaiti"
+
+msgid "Base filename"
+msgstr "Baas-failinimi"
+
+msgid "Caption"
+msgstr "Pildi allkiri"
+
+msgid "Blank"
+msgstr "Tühi"
+
+msgid "From Web Browser"
+msgstr "Veebilehitsejast"
 
 msgid "Gallery Item Administration"
 msgstr "Galerii-eseme Administreerimine"
@@ -356,6 +353,10 @@ msgstr ""
 msgid "Preparing..."
 msgstr "Tegelen..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Pildiga %d / %d 'st tegelemine"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -364,10 +365,6 @@ msgstr "Ikoonide uuestiehitamine"
 
 msgid "Album"
 msgstr "Album"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Pildiga %d / %d 'st tegelemine"
 
 msgid "Changes saved successfully"
 msgstr "Muudatused edukalt salvestatud"
@@ -507,6 +504,10 @@ msgstr "Muuda Foto"
 msgid "Edit Movie"
 msgstr "Muuda Film"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Muuda %s"
+
 msgid "Add Album"
 msgstr "Lisa Album"
 
@@ -525,6 +526,10 @@ msgstr "Kustuta Foto"
 msgid "Delete Movie"
 msgstr "Kustuta Film"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Kustuta %s"
+
 msgid "Move Album"
 msgstr "Liiguta Albumit"
 
@@ -533,6 +538,10 @@ msgstr "Liiguta Foto"
 
 msgid "Move Movie"
 msgstr "Liiguta Film"
+
+#, c-format
+msgid "Move %s"
+msgstr "Liiguta %s"
 
 msgid "Edit Captions"
 msgstr "Muuda Kirjeldusi"
@@ -582,18 +591,6 @@ msgstr "Konto Seaded"
 msgid "Change Password"
 msgstr "Vaheta Parool"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Muuda %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Kustuta %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Liiguta %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Ehita kõik ikoonid/suurusemuudatused"
 
@@ -607,9 +604,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Valmista Kõik Ikoonid/Suurusemuudatused"
 
-msgid "Debug output for failed items:"
-msgstr "Silumisväljund läbikukkunud esemetele:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Kontrollitud %d eset"
@@ -621,6 +615,9 @@ msgstr "%d eset valmistatud"
 #, c-format
 msgid "%d items failed"
 msgstr "%d eset ebaõnnestus"
+
+msgid "Debug output for failed items:"
+msgstr "Silumisväljund läbikukkunud esemetele:"
 
 #, fuzzy
 msgid "Convert MySQL database to UTF8"
@@ -825,6 +822,10 @@ msgstr "Tähestikujärjekorras"
 msgid "Descending"
 msgstr "Tagurpidijärjekorras"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Kinnitamine keelatud, kuni sa sead allowSessionAccess'i config.php's"
 
@@ -833,13 +834,6 @@ msgstr "See leht on kinnitatud XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Anneta Galerii projektile"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -948,12 +942,12 @@ msgstr "tabel"
 msgid "file"
 msgstr "Fail"
 
-msgid "Back"
-msgstr "Tagasi"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Tagasi %s juurde"
+
+msgid "Back"
+msgstr "Tagasi"
 
 msgid "User"
 msgstr "Kasutaja"
@@ -3597,3 +3591,6 @@ msgstr ""
 
 msgid "Links to album/photo peers"
 msgstr ""
+
+#~ msgid "key"
+#~ msgstr "võti"

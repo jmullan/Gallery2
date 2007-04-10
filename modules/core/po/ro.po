@@ -37,30 +37,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "E-mail-ul de test al galeriei"
 
-msgid "forever"
-msgstr "intotdeauna"
-
-msgid "High Priority (Me first!)"
-msgstr "Prioritate ridicata (Eu primul!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Prioritate scazuta (Vreau sa impart!)"
-
-msgid "No Markup"
-msgstr "Fara Markup"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "HTML chior"
-
-msgid "Database"
-msgstr "Baza de date"
-
-msgid "File"
-msgstr "Fisier"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -84,6 +60,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d saptamana"
 msgstr[1] "%d saptamani"
+
+msgid "forever"
+msgstr "intotdeauna"
+
+msgid "High Priority (Me first!)"
+msgstr "Prioritate ridicata (Eu primul!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Prioritate scazuta (Vreau sa impart!)"
+
+msgid "No Markup"
+msgstr "Fara Markup"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "HTML chior"
+
+msgid "Database"
+msgstr "Baza de date"
+
+msgid "File"
+msgstr "Fisier"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;fara&gt;"
@@ -172,9 +172,6 @@ msgstr "Foloseste aceste setari"
 msgid "Installing the core module"
 msgstr "Instalez modulul de baza"
 
-msgid "key"
-msgstr "cheie"
-
 msgid "All access"
 msgstr "Fara restrictie"
 
@@ -208,6 +205,10 @@ msgstr "[baza] Sterge articol"
 msgid "Upgrading permissions"
 msgstr "Actualizarea permisiunilor"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Actualizeaza permisiunile (%d complete, %d ramase)"
+
 msgid "Deleting old permission tables"
 msgstr "Sterge vechile tabele de permisiuni"
 
@@ -220,11 +221,32 @@ msgstr "Toti utilizatorii"
 msgid "Detecting broken derivatives"
 msgstr "Detectez derivatii pierduti"
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Detectez derivati distrusi, incarc (%d derivati verificati, %d ramasi)"
+
+#, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Detectez derivati distrusi (%d derivati verificati, %d ramasi)"
+
+#, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Detectez derivati distrusi, salvez (%d derivati verificati, %d ramasi)"
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Detectez derivatii distrusi, salvez articol %d din %d (%d complete, %d ramase)"
+
 msgid "Clearing fast-download cache"
 msgstr "Sterg cache download rapid"
 
 msgid "Deleting old fast-download cache"
 msgstr "Sterg vechiul cache download rapid"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Sterg vechile fisiere sesiune (iteratia %d)"
 
 msgid "Updating panorama items"
 msgstr "Actualizez articolele pentru panorama"
@@ -254,31 +276,6 @@ msgstr "Aceasta este pagina principala a Gallery"
 msgid "Converting MySQL data to UTF8"
 msgstr "Convertesc datele MySQL la UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Actualizeaza permisiunile (%d complete, %d ramase)"
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Detectez derivati distrusi, incarc (%d derivati verificati, %d ramasi)"
-
-#, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Detectez derivati distrusi (%d derivati verificati, %d ramasi)"
-
-#, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Detectez derivati distrusi, salvez (%d derivati verificati, %d ramasi)"
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Detectez derivatii distrusi, salvez articol %d din %d (%d complete, %d ramase)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Sterg vechile fisiere sesiune (iteratia %d)"
-
 msgid "add items"
 msgstr "adauga articole"
 
@@ -290,30 +287,6 @@ msgstr "adauga sub-album"
 
 msgid "add items confirmation"
 msgstr "confirma adaugarea articolelor"
-
-msgid "Base filename"
-msgstr "Baza numelui de fisier"
-
-msgid "Caption"
-msgstr "Descriere"
-
-msgid "Blank"
-msgstr "Gol"
-
-msgid "From Web Browser"
-msgstr "Din browser-ul web"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabyte"
-msgstr[1] "%d megabyte"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobyte"
-msgstr[1] "%d kilobyte"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -330,6 +303,30 @@ msgstr "Fisierul %s a fost incarcat partial"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "Fisierul %s nu a fost incarcat. Eroare %d"
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabyte"
+msgstr[1] "%d megabyte"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobyte"
+msgstr[1] "%d kilobyte"
+
+msgid "Base filename"
+msgstr "Baza numelui de fisier"
+
+msgid "Caption"
+msgstr "Descriere"
+
+msgid "Blank"
+msgstr "Gol"
+
+msgid "From Web Browser"
+msgstr "Din browser-ul web"
 
 msgid "Gallery Item Administration"
 msgstr "Administrarea articolelor din galerie"
@@ -357,6 +354,10 @@ msgstr "Aplica setarile imaginilor redimensionate"
 msgid "Preparing..."
 msgstr "Pregatesc..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Procesez imaginea %d din %d"
+
 msgid "Apply thumbnail settings"
 msgstr "Aplica setarile pentru thumbnail-uri"
 
@@ -365,10 +366,6 @@ msgstr "Reconstruire thumbnail-uri..."
 
 msgid "Album"
 msgstr "Album"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Procesez imaginea %d din %d"
 
 msgid "Changes saved successfully"
 msgstr "Modificari salvate cu success"
@@ -507,6 +504,10 @@ msgstr "Modifica Foto"
 msgid "Edit Movie"
 msgstr "Modifica Film"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Modifica %s"
+
 msgid "Add Album"
 msgstr "Adauga Album"
 
@@ -525,6 +526,10 @@ msgstr "Sterge Foto"
 msgid "Delete Movie"
 msgstr "Sterge Film"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Sterge %s"
+
 msgid "Move Album"
 msgstr "Muta Album"
 
@@ -533,6 +538,10 @@ msgstr "Muta Foto"
 
 msgid "Move Movie"
 msgstr "Muta Film"
+
+#, c-format
+msgid "Move %s"
+msgstr "Muta %s"
 
 msgid "Edit Captions"
 msgstr "Modifica Descriere"
@@ -582,18 +591,6 @@ msgstr "Configurari Profil"
 msgid "Change Password"
 msgstr "Modifica Parola"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Modifica %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Sterge %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Muta %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Construieste toate thumbnail-urile/redimensionarile"
 
@@ -607,9 +604,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Construieste toate Thumbnail-urile/Redimensionarile"
 
-msgid "Debug output for failed items:"
-msgstr "Debug pentru erorile obiectelor:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Am verificat %d articole"
@@ -621,6 +615,9 @@ msgstr "%d articole construite"
 #, c-format
 msgid "%d items failed"
 msgstr "%d articole eronate"
+
+msgid "Debug output for failed items:"
+msgstr "Debug pentru erorile obiectelor:"
 
 msgid "Convert MySQL database to UTF8"
 msgstr "Converteste baza de date MYSQL la UTF8"
@@ -821,6 +818,10 @@ msgstr "Ascendent"
 msgid "Descending"
 msgstr "Descendent"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "Cu Gallery v%s"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Validare dezactivata pina cind setati allowSessionAccess in config.php"
 
@@ -829,13 +830,6 @@ msgstr "Aceasta pagina este conforma cu XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Faceti o donatie proiectului Gallery"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Double Double"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "Cu Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -944,12 +938,12 @@ msgstr "spreadsheet"
 msgid "file"
 msgstr "fisier"
 
-msgid "Back"
-msgstr "Inapoi"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Inapoi la %s"
+
+msgid "Back"
+msgstr "Inapoi"
 
 msgid "User"
 msgstr "Utilizator"
@@ -3765,3 +3759,9 @@ msgstr "Bloc login"
 
 msgid "Links to album/photo peers"
 msgstr "Link-uri catre albume/corespondenti"
+
+#~ msgid "key"
+#~ msgstr "cheie"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Double Double"

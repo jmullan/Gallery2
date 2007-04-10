@@ -35,30 +35,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Galerijas e-pasta tests"
 
-msgid "forever"
-msgstr "pavisam"
-
-msgid "High Priority (Me first!)"
-msgstr "Augsta prioritāte (Es pirmais!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Zema prioritāte (Es vēlos dalīties!)"
-
-msgid "No Markup"
-msgstr "Nav starpibas"
-
-msgid "BBCode"
-msgstr "BBKods"
-
-msgid "Raw HTML"
-msgstr "Neapstrādts HTML"
-
-msgid "Database"
-msgstr "Datubāze"
-
-msgid "File"
-msgstr "Fails"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -86,6 +62,30 @@ msgid_plural "%d weeks"
 msgstr[0] "%d nedēļa"
 msgstr[1] "%d nedēļas"
 msgstr[2] "%d nedēļas"
+
+msgid "forever"
+msgstr "pavisam"
+
+msgid "High Priority (Me first!)"
+msgstr "Augsta prioritāte (Es pirmais!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Zema prioritāte (Es vēlos dalīties!)"
+
+msgid "No Markup"
+msgstr "Nav starpibas"
+
+msgid "BBCode"
+msgstr "BBKods"
+
+msgid "Raw HTML"
+msgstr "Neapstrādts HTML"
+
+msgid "Database"
+msgstr "Datubāze"
+
+msgid "File"
+msgstr "Fails"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;nav&gt;"
@@ -177,9 +177,6 @@ msgstr "Lietot šos iestatījumus"
 msgid "Installing the core module"
 msgstr "Instalē kodola moduli"
 
-msgid "key"
-msgstr "atslēga"
-
 msgid "All access"
 msgstr "Visa pieeja"
 
@@ -213,6 +210,10 @@ msgstr "[kodols] Dzēst vienu u"
 msgid "Upgrading permissions"
 msgstr "Atjauno tiesības"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Atjauno tiesības (%d vienumi pabeigti, %d atlikuši)"
+
 msgid "Deleting old permission tables"
 msgstr "Dzēš veco tiesību tabulu"
 
@@ -225,11 +226,32 @@ msgstr "Visi lietotāji"
 msgid "Detecting broken derivatives"
 msgstr "Nosaka sabojātos atvasinājumus"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Nosaka sabojātos atvasinājumus, ielādē"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Nosaka sabojātos atvasinājumus, saglabā"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Nosaka sabojātos atvasinājumus, saglabā"
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Atjauno tiesības (%d vienumi pabeigti, %d atlikuši)"
+
 msgid "Clearing fast-download cache"
 msgstr "Tīra ātrās lejupielādes kešatmiņu"
 
 msgid "Deleting old fast-download cache"
 msgstr "Dzēš veco ātrās lejupielādes kešatmiņu"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Dzēš vecos sesiju failus (%d iterācija)"
 
 msgid "Updating panorama items"
 msgstr "Atjauno panorāmas vienumus"
@@ -259,31 +281,6 @@ msgstr "Šī ir Jūsu Galerijas pamatlapa"
 msgid "Converting MySQL data to UTF8"
 msgstr "Konvertē MySQL datus uz UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Atjauno tiesības (%d vienumi pabeigti, %d atlikuši)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Nosaka sabojātos atvasinājumus, ielādē"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Nosaka sabojātos atvasinājumus, saglabā"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Nosaka sabojātos atvasinājumus, saglabā"
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Atjauno tiesības (%d vienumi pabeigti, %d atlikuši)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Dzēš vecos sesiju failus (%d iterācija)"
-
 msgid "add items"
 msgstr "pievienot vienumus"
 
@@ -295,32 +292,6 @@ msgstr "pievienot apakšalbumu"
 
 msgid "add items confirmation"
 msgstr "pievienot vienumu konfigurāciju"
-
-msgid "Base filename"
-msgstr "Pamata faila nosaukums"
-
-msgid "Caption"
-msgstr "Uzraksts"
-
-msgid "Blank"
-msgstr "Tukšs"
-
-msgid "From Web Browser"
-msgstr "No pārlūkprogrammas"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabaits"
-msgstr[1] "%d megabaiti"
-msgstr[2] "%d megabaiti"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobaits"
-msgstr[1] "%d kilobaiti"
-msgstr[2] "%d kilobaiti"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -337,6 +308,32 @@ msgstr "Ieejas fails %s tika augšupielādēts tikai daļēji"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "Ieejas fails %s netika augšupielādēts. Kļūda %d"
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabaits"
+msgstr[1] "%d megabaiti"
+msgstr[2] "%d megabaiti"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobaits"
+msgstr[1] "%d kilobaiti"
+msgstr[2] "%d kilobaiti"
+
+msgid "Base filename"
+msgstr "Pamata faila nosaukums"
+
+msgid "Caption"
+msgstr "Uzraksts"
+
+msgid "Blank"
+msgstr "Tukšs"
+
+msgid "From Web Browser"
+msgstr "No pārlūkprogrammas"
 
 msgid "Gallery Item Administration"
 msgstr "Galerijas vienumu administrēšana"
@@ -364,6 +361,10 @@ msgstr ""
 msgid "Preparing..."
 msgstr "Sagatavo..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Apstrādā attēlu %d no %d"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -372,10 +373,6 @@ msgstr "Pārbūvē sīktēlus..."
 
 msgid "Album"
 msgstr "Albums"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Apstrādā attēlu %d no %d"
 
 msgid "Changes saved successfully"
 msgstr "Izmaiņas veiksmīgi saglabātas"
@@ -515,6 +512,10 @@ msgstr "Labot foto"
 msgid "Edit Movie"
 msgstr "Labot filmu"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Labot %s"
+
 msgid "Add Album"
 msgstr "Pievienot albumu"
 
@@ -533,6 +534,10 @@ msgstr "Dzēst foto"
 msgid "Delete Movie"
 msgstr "Dzēst filmu"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Dzēst %s"
+
 msgid "Move Album"
 msgstr "Pārvietot albumu"
 
@@ -541,6 +546,10 @@ msgstr "Pārvietot foto"
 
 msgid "Move Movie"
 msgstr "Pārvietot filmu"
+
+#, c-format
+msgid "Move %s"
+msgstr "Pārvietot %s"
 
 msgid "Edit Captions"
 msgstr "Labot uzrakstus"
@@ -590,18 +599,6 @@ msgstr "Konta iestatījumi"
 msgid "Change Password"
 msgstr "Mainīt paroli"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Labot %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Dzēst %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Pārvietot %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Veidot visus sīktēlus/attēlus ar izmainītu izmēru"
 
@@ -612,9 +609,6 @@ msgstr ""
 
 msgid "Build All Thumbnails/Resizes"
 msgstr "Veidot visus sīktēlus/attēlus ar izmainītu izmēru"
-
-msgid "Debug output for failed items:"
-msgstr "Lāgošanas izvads kļūdainajiem vienumiem:"
 
 #, c-format
 msgid "Checked %d items"
@@ -627,6 +621,9 @@ msgstr "Izveidoti %d vienumi"
 #, c-format
 msgid "%d items failed"
 msgstr "%d vienumu viedošana neizdevās"
+
+msgid "Debug output for failed items:"
+msgstr "Lāgošanas izvads kļūdainajiem vienumiem:"
 
 #, fuzzy
 msgid "Convert MySQL database to UTF8"
@@ -822,6 +819,10 @@ msgstr "Augoši"
 msgid "Descending"
 msgstr "Dilstoši"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Validācija atspējota līdz Jūs uzstādīsiest allowSessionAccess config.php failā"
 
@@ -830,13 +831,6 @@ msgstr "Šī lapa ir XHTML 1.0 valīda"
 
 msgid "Donate to the Gallery project"
 msgstr "Ziedot Galerija projektam"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -944,12 +938,12 @@ msgstr "izklājlapa"
 msgid "file"
 msgstr "fails"
 
-msgid "Back"
-msgstr "Atpakaļ"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Atpakaļ uz %s"
+
+msgid "Back"
+msgstr "Atpakaļ"
 
 msgid "User"
 msgstr "Lietotājs"
@@ -3508,3 +3502,6 @@ msgstr ""
 
 msgid "Links to album/photo peers"
 msgstr ""
+
+#~ msgid "key"
+#~ msgstr "atslēga"

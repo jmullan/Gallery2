@@ -34,30 +34,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Email provera Galerije"
 
-msgid "forever"
-msgstr "zauvek"
-
-msgid "High Priority (Me first!)"
-msgstr ""
-
-msgid "Low Priority (I want to share!)"
-msgstr ""
-
-msgid "No Markup"
-msgstr "Bez označavanja"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "Čist HTML"
-
-msgid "Database"
-msgstr "Baza podataka"
-
-msgid "File"
-msgstr "Datoteka"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -81,6 +57,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d nedelja"
 msgstr[1] "%d nedelje"
+
+msgid "forever"
+msgstr "zauvek"
+
+msgid "High Priority (Me first!)"
+msgstr ""
+
+msgid "Low Priority (I want to share!)"
+msgstr ""
+
+msgid "No Markup"
+msgstr "Bez označavanja"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "Čist HTML"
+
+msgid "Database"
+msgstr "Baza podataka"
+
+msgid "File"
+msgstr "Datoteka"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;ni jedan&gt;"
@@ -175,9 +175,6 @@ msgstr "Koristi ova podešavanja"
 msgid "Installing the core module"
 msgstr "Modul sa jezgrom Galerije"
 
-msgid "key"
-msgstr "slovo"
-
 msgid "All access"
 msgstr "Pun pristup"
 
@@ -211,6 +208,10 @@ msgstr "[jezgro] Brisanje objekata"
 msgid "Upgrading permissions"
 msgstr "Nadogradnja prava"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr ""
+
 msgid "Deleting old permission tables"
 msgstr "Brisanje starih tabela sa dozvolama"
 
@@ -223,12 +224,33 @@ msgstr "Svi korisnici"
 msgid "Detecting broken derivatives"
 msgstr "Otkrivanje oštećenih derivata"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Otrivanje oštećenih derivata, učitavanje "
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Otkrivanje oštećenih derivata, čuvanje "
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Otkrivanje oštećenih derivata, čuvanje "
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr ""
+
 msgid "Clearing fast-download cache"
 msgstr "Brisanje fast-download keša"
 
 #, fuzzy
 msgid "Deleting old fast-download cache"
 msgstr "Brisanje fast-download keša"
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Brisanje starih tabela sa dozvolama"
 
 msgid "Updating panorama items"
 msgstr ""
@@ -258,31 +280,6 @@ msgstr "Ovo je glavna strana vaše Galerije"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Otrivanje oštećenih derivata, učitavanje "
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Otkrivanje oštećenih derivata, čuvanje "
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Otkrivanje oštećenih derivata, čuvanje "
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Brisanje starih tabela sa dozvolama"
-
 msgid "add items"
 msgstr "dodaj objekat"
 
@@ -294,30 +291,6 @@ msgstr "dodavanje podalbuma"
 
 msgid "add items confirmation"
 msgstr "potvrda prilikom dodavanja objekata"
-
-msgid "Base filename"
-msgstr "Osnovni naziv datoteke"
-
-msgid "Caption"
-msgstr "Natpis"
-
-msgid "Blank"
-msgstr "Prazno"
-
-msgid "From Web Browser"
-msgstr "Iz web čitača"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabajt"
-msgstr[1] "%d megabajta"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobajt"
-msgstr[1] "%d kilobajta"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -334,6 +307,30 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabajt"
+msgstr[1] "%d megabajta"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobajt"
+msgstr[1] "%d kilobajta"
+
+msgid "Base filename"
+msgstr "Osnovni naziv datoteke"
+
+msgid "Caption"
+msgstr "Natpis"
+
+msgid "Blank"
+msgstr "Prazno"
+
+msgid "From Web Browser"
+msgstr "Iz web čitača"
 
 msgid "Gallery Item Administration"
 msgstr "Administracija objekta Galerije"
@@ -363,6 +360,10 @@ msgstr "Vraćeni parametri izgleda"
 msgid "Preparing..."
 msgstr "Obrada..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Obrađivanje %d. slike od %d"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -372,10 +373,6 @@ msgstr "Ponovo napravi umanjene prikaze"
 
 msgid "Album"
 msgstr "Album"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Obrađivanje %d. slike od %d"
 
 msgid "Changes saved successfully"
 msgstr "Izmene uspešno sačuvane"
@@ -515,6 +512,10 @@ msgstr "Izmena fotografije"
 msgid "Edit Movie"
 msgstr "Izmena filma"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Izmena %s"
+
 msgid "Add Album"
 msgstr "Dodavanje albuma"
 
@@ -533,6 +534,10 @@ msgstr "Brisanje fotografije"
 msgid "Delete Movie"
 msgstr "Brisanje filma"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Brisanje %s"
+
 msgid "Move Album"
 msgstr "Premeštanje albuma"
 
@@ -541,6 +546,10 @@ msgstr "Premeštanje fotografije"
 
 msgid "Move Movie"
 msgstr "Premeštanje filma"
+
+#, c-format
+msgid "Move %s"
+msgstr "Premeštanje %s"
 
 msgid "Edit Captions"
 msgstr "Izmena natpisa"
@@ -590,18 +599,6 @@ msgstr "Parametri naloga"
 msgid "Change Password"
 msgstr "Promena lozinke"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Izmena %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Brisanje %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Premeštanje %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Napravi sve umanjene prikaze i promenjene veličine"
 
@@ -615,9 +612,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Napravi sve umanjene prikaze i promenjene veličine"
 
-msgid "Debug output for failed items:"
-msgstr "Izlat za otklanjanje grešaka za objekte sa greškom"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Provereno %d objekata"
@@ -629,6 +623,9 @@ msgstr "%d objekata napravljeno"
 #, c-format
 msgid "%d items failed"
 msgstr "%d objekata sa greškom"
+
+msgid "Debug output for failed items:"
+msgstr "Izlat za otklanjanje grešaka za objekte sa greškom"
 
 msgid "Convert MySQL database to UTF8"
 msgstr ""
@@ -833,6 +830,10 @@ msgstr "Rastući"
 msgid "Descending"
 msgstr "Opadajući"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Provera ispravnosti je onemogućena dok ne podesite allowSessionAccess u config.php"
 
@@ -841,13 +842,6 @@ msgstr "Ova stranica je ispravna XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Donirajte projektu Galerija"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -956,12 +950,12 @@ msgstr "proračunska tabela"
 msgid "file"
 msgstr "Datoteka"
 
-msgid "Back"
-msgstr "Nazad"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Povratak na %s"
+
+msgid "Back"
+msgstr "Nazad"
 
 msgid "User"
 msgstr "Korisnik"
@@ -3766,3 +3760,6 @@ msgstr "Prijavni blok"
 
 msgid "Links to album/photo peers"
 msgstr "Veze ka ravnopravnim albumima i fotografijama"
+
+#~ msgid "key"
+#~ msgstr "slovo"

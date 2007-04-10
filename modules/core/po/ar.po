@@ -33,30 +33,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "تجربة البريد الإلكتروني للجاليري"
 
-msgid "forever"
-msgstr "إلى الأبد"
-
-msgid "High Priority (Me first!)"
-msgstr ""
-
-msgid "Low Priority (I want to share!)"
-msgstr ""
-
-msgid "No Markup"
-msgstr "غير محدد"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "HTML أصلي"
-
-msgid "Database"
-msgstr "قاعدة البيانات"
-
-msgid "File"
-msgstr "ملف"
-
 # missing plural translation on these four..
 #, fuzzy, c-format
 msgid "%d minute"
@@ -81,6 +57,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d أسبوع"
 msgstr[1] ""
+
+msgid "forever"
+msgstr "إلى الأبد"
+
+msgid "High Priority (Me first!)"
+msgstr ""
+
+msgid "Low Priority (I want to share!)"
+msgstr ""
+
+msgid "No Markup"
+msgstr "غير محدد"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "HTML أصلي"
+
+msgid "Database"
+msgstr "قاعدة البيانات"
+
+msgid "File"
+msgstr "ملف"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;لا يوجد&gt;"
@@ -175,9 +175,6 @@ msgstr "إستخدم هذه الأعدادات"
 msgid "Installing the core module"
 msgstr "موديول البينة الرئيسية للجاليري"
 
-msgid "key"
-msgstr "مفتاح"
-
 msgid "All access"
 msgstr "جميع الصلاحيات"
 
@@ -211,6 +208,10 @@ msgstr "[البنية الرئيسية] حذف المادة"
 msgid "Upgrading permissions"
 msgstr "صلاحيات الترقية"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr ""
+
 msgid "Deleting old permission tables"
 msgstr "حذف جداول الصلاحيات القديمة"
 
@@ -223,11 +224,32 @@ msgstr "جميع المستخدمين"
 msgid "Detecting broken derivatives"
 msgstr ""
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr ""
+
+#, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr ""
+
+#, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr ""
+
 msgid "Clearing fast-download cache"
 msgstr ""
 
 #, fuzzy
 msgid "Deleting old fast-download cache"
+msgstr "حذف جداول الصلاحيات القديمة"
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
 msgstr "حذف جداول الصلاحيات القديمة"
 
 msgid "Updating panorama items"
@@ -258,31 +280,6 @@ msgstr "هذه هي الصفحة الرئيسية لألبومك"
 msgid "Converting MySQL data to UTF8"
 msgstr ""
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr ""
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr ""
-
-#, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr ""
-
-#, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr ""
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "حذف جداول الصلاحيات القديمة"
-
 msgid "add items"
 msgstr "إضافة مواد"
 
@@ -294,30 +291,6 @@ msgstr "إضافة ألبوم فرعي"
 
 msgid "add items confirmation"
 msgstr "تاكيد إضافة مواد"
-
-msgid "Base filename"
-msgstr "قاعدة أسم الملف"
-
-msgid "Caption"
-msgstr "العنوان"
-
-msgid "Blank"
-msgstr "فارغ"
-
-msgid "From Web Browser"
-msgstr "من متصفح الإنترنت"
-
-#, fuzzy, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d ميغا بايت"
-msgstr[1] ""
-
-#, fuzzy, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d كيلو بايت"
-msgstr[1] ""
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -334,6 +307,30 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d ميغا بايت"
+msgstr[1] ""
+
+#, fuzzy, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d كيلو بايت"
+msgstr[1] ""
+
+msgid "Base filename"
+msgstr "قاعدة أسم الملف"
+
+msgid "Caption"
+msgstr "العنوان"
+
+msgid "Blank"
+msgstr "فارغ"
+
+msgid "From Web Browser"
+msgstr "من متصفح الإنترنت"
 
 msgid "Gallery Item Administration"
 msgstr "إدارة مادة جاليري"
@@ -363,6 +360,10 @@ msgstr "تم إستعادة إعدادات الثيم"
 msgid "Preparing..."
 msgstr "يتم التنفيذ....."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "معالجة الصورة %d  من %d"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -372,10 +373,6 @@ msgstr "إعادة إنشاء الصور المصغرة"
 
 msgid "Album"
 msgstr "ألبوم"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "معالجة الصورة %d  من %d"
 
 msgid "Changes saved successfully"
 msgstr "التغييرات تم حفظها بنجاح"
@@ -515,6 +512,10 @@ msgstr "تعديل صورة"
 msgid "Edit Movie"
 msgstr "تعديل فلم"
 
+#, c-format
+msgid "Edit %s"
+msgstr "تعديل %s"
+
 msgid "Add Album"
 msgstr "أضف ألبوم"
 
@@ -533,6 +534,10 @@ msgstr "حذف صورة"
 msgid "Delete Movie"
 msgstr "حذف فلم"
 
+#, c-format
+msgid "Delete %s"
+msgstr "حذف %s"
+
 msgid "Move Album"
 msgstr "نقل الألبوم"
 
@@ -541,6 +546,10 @@ msgstr "نقل الصورة"
 
 msgid "Move Movie"
 msgstr "نقل الفلم"
+
+#, c-format
+msgid "Move %s"
+msgstr "نقل %s"
 
 msgid "Edit Captions"
 msgstr "تعديل العناوبن"
@@ -590,18 +599,6 @@ msgstr "إعدادات الحساب الشخصي"
 msgid "Change Password"
 msgstr "تغيير كلمة المرور"
 
-#, c-format
-msgid "Edit %s"
-msgstr "تعديل %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "حذف %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "نقل %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "بناء جميع الصور المصغرة / تعديل الحجم"
 
@@ -612,9 +609,6 @@ msgstr ""
 
 msgid "Build All Thumbnails/Resizes"
 msgstr "بناء جميع الصور المصغرة / تعديل الحجم"
-
-msgid "Debug output for failed items:"
-msgstr ""
 
 #, c-format
 msgid "Checked %d items"
@@ -627,6 +621,9 @@ msgstr "تم إنشاء %d مادة"
 #, c-format
 msgid "%d items failed"
 msgstr "%d مادة فشلت"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 msgid "Convert MySQL database to UTF8"
 msgstr ""
@@ -830,6 +827,10 @@ msgstr "تصاعدي"
 msgid "Descending"
 msgstr "تنازلي"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr ""
 
@@ -839,13 +840,6 @@ msgstr "هذه الصفحة مطابقة لـ XHTML 1.0"
 #, fuzzy
 msgid "Donate to the Gallery project"
 msgstr "العودة إلى الجاليري"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -954,12 +948,12 @@ msgstr "جدول حسابي"
 msgid "file"
 msgstr "ملف"
 
-msgid "Back"
-msgstr "العودة"
-
 #, c-format
 msgid "Back to %s"
 msgstr "العودة إلى %s"
+
+msgid "Back"
+msgstr "العودة"
 
 msgid "User"
 msgstr "المستخدم"
@@ -3698,3 +3692,6 @@ msgstr ""
 
 msgid "Links to album/photo peers"
 msgstr ""
+
+#~ msgid "key"
+#~ msgstr "مفتاح"

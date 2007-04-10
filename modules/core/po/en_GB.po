@@ -31,30 +31,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Gallery Email Test"
 
-msgid "forever"
-msgstr "forever"
-
-msgid "High Priority (Me first!)"
-msgstr "High Priority (Me first!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Low Priority (I want to share!)"
-
-msgid "No Markup"
-msgstr "No Markup"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "Raw HTML"
-
-msgid "Database"
-msgstr "Database"
-
-msgid "File"
-msgstr "File"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -78,6 +54,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d week"
 msgstr[1] "%d weeks"
+
+msgid "forever"
+msgstr "forever"
+
+msgid "High Priority (Me first!)"
+msgstr "High Priority (Me first!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Low Priority (I want to share!)"
+
+msgid "No Markup"
+msgstr "No Markup"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "Raw HTML"
+
+msgid "Database"
+msgstr "Database"
+
+msgid "File"
+msgstr "File"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;none&gt;"
@@ -165,9 +165,6 @@ msgstr "Use these settings"
 msgid "Installing the core module"
 msgstr "Installing the core module"
 
-msgid "key"
-msgstr "key"
-
 msgid "All access"
 msgstr "All access"
 
@@ -201,6 +198,10 @@ msgstr "[core] Delete item"
 msgid "Upgrading permissions"
 msgstr "Upgrading permissions"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Upgrading permissions (%d items complete, %d remaining)"
+
 msgid "Deleting old permission tables"
 msgstr "Deleting old permission tables"
 
@@ -213,11 +214,33 @@ msgstr "All Users"
 msgid "Detecting broken derivatives"
 msgstr "Detecting broken derivatives"
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+
+#, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+
+#, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+
 msgid "Clearing fast-download cache"
 msgstr "Clearing fast-download cache"
 
 msgid "Deleting old fast-download cache"
 msgstr "Deleting old fast-download cache"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Deleting old session files (iteration %d)"
 
 msgid "Updating panorama items"
 msgstr "Updating panorama items"
@@ -246,32 +269,6 @@ msgstr "This is the main page of your Gallery"
 msgid "Converting MySQL data to UTF8"
 msgstr "Converting MySQL data to UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Upgrading permissions (%d items complete, %d remaining)"
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-
-#, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-
-#, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Deleting old session files (iteration %d)"
-
 msgid "add items"
 msgstr "add items"
 
@@ -283,30 +280,6 @@ msgstr "add sub-album"
 
 msgid "add items confirmation"
 msgstr "add items confirmation"
-
-msgid "Base filename"
-msgstr "Base filename"
-
-msgid "Caption"
-msgstr "Caption"
-
-msgid "Blank"
-msgstr "Blank"
-
-msgid "From Web Browser"
-msgstr "From Web Browser"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabyte"
-msgstr[1] "%d megabytes"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobytes"
-msgstr[1] "%d kilobytes"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -323,6 +296,30 @@ msgstr "Input file %s was only partially uploaded"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "Input file %s was not uploaded. Error %d"
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabyte"
+msgstr[1] "%d megabytes"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobytes"
+msgstr[1] "%d kilobytes"
+
+msgid "Base filename"
+msgstr "Base filename"
+
+msgid "Caption"
+msgstr "Caption"
+
+msgid "Blank"
+msgstr "Blank"
+
+msgid "From Web Browser"
+msgstr "From Web Browser"
 
 msgid "Gallery Item Administration"
 msgstr "Gallery Item Administration"
@@ -350,6 +347,10 @@ msgstr "Apply resized image settings"
 msgid "Preparing..."
 msgstr "Preparing..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Processing image %d of %d"
+
 msgid "Apply thumbnail settings"
 msgstr "Apply thumbnail settings"
 
@@ -358,10 +359,6 @@ msgstr "Rebuilding thumbnails..."
 
 msgid "Album"
 msgstr "Album"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Processing image %d of %d"
 
 msgid "Changes saved successfully"
 msgstr "Changes saved successfully"
@@ -500,6 +497,10 @@ msgstr "Edit Photo"
 msgid "Edit Movie"
 msgstr "Edit Movie"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Edit %s"
+
 msgid "Add Album"
 msgstr "Add Album"
 
@@ -518,6 +519,10 @@ msgstr "Delete Photo"
 msgid "Delete Movie"
 msgstr "Delete Movie"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Delete %s"
+
 msgid "Move Album"
 msgstr "Move Album"
 
@@ -526,6 +531,10 @@ msgstr "Move Photo"
 
 msgid "Move Movie"
 msgstr "Move Movie"
+
+#, c-format
+msgid "Move %s"
+msgstr "Move %s"
 
 msgid "Edit Captions"
 msgstr "Edit Captions"
@@ -575,18 +584,6 @@ msgstr "Account Settings"
 msgid "Change Password"
 msgstr "Change Password"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Edit %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Delete %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Move %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Build all thumbnails/resizes"
 
@@ -600,9 +597,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Build All Thumbnails/Resizes"
 
-msgid "Debug output for failed items:"
-msgstr "Debug output for failed items:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Checked %d items"
@@ -614,6 +608,9 @@ msgstr "%d items built"
 #, c-format
 msgid "%d items failed"
 msgstr "%d items failed"
+
+msgid "Debug output for failed items:"
+msgstr "Debug output for failed items:"
 
 msgid "Convert MySQL database to UTF8"
 msgstr "Convert MySQL database to UTF8"
@@ -819,6 +816,10 @@ msgstr "Ascending"
 msgid "Descending"
 msgstr "Descending"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "Powered by Gallery v%s"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Validation disabled until you set allowSessionAccess in config.php"
 
@@ -827,13 +828,6 @@ msgstr "This page is valid XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Donate to the Gallery project"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Double Double"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "Powered by Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -940,12 +934,12 @@ msgstr "spreadsheet"
 msgid "file"
 msgstr "file"
 
-msgid "Back"
-msgstr "Back"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Back to %s"
+
+msgid "Back"
+msgstr "Back"
 
 msgid "User"
 msgstr "User"
@@ -3763,3 +3757,9 @@ msgstr "Login block"
 
 msgid "Links to album/photo peers"
 msgstr "Links to album/photo peers"
+
+#~ msgid "key"
+#~ msgstr "key"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Double Double"

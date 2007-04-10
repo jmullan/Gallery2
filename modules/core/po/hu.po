@@ -37,30 +37,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Galéria Emailteszt"
 
-msgid "forever"
-msgstr "örökké"
-
-msgid "High Priority (Me first!)"
-msgstr "Magas Prioritás (Engem először!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Alacsony Prioritás (Osztozni akarok!)"
-
-msgid "No Markup"
-msgstr ""
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "Nyers HTML"
-
-msgid "Database"
-msgstr "Adatbázis"
-
-msgid "File"
-msgstr "Fájl"
-
 # c-format
 #, c-format
 msgid "%d minute"
@@ -84,6 +60,30 @@ msgstr[0] "%d nap"
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d hét"
+
+msgid "forever"
+msgstr "örökké"
+
+msgid "High Priority (Me first!)"
+msgstr "Magas Prioritás (Engem először!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Alacsony Prioritás (Osztozni akarok!)"
+
+msgid "No Markup"
+msgstr ""
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "Nyers HTML"
+
+msgid "Database"
+msgstr "Adatbázis"
+
+msgid "File"
+msgstr "Fájl"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;nincs&gt;"
@@ -171,9 +171,6 @@ msgstr "Ezen beállítások használata"
 msgid "Installing the core module"
 msgstr "Mag (core) modul telepítése"
 
-msgid "key"
-msgstr "kulcs"
-
 msgid "All access"
 msgstr "Minden hozzáférés"
 
@@ -207,6 +204,10 @@ msgstr "[core] Elem törlése"
 msgid "Upgrading permissions"
 msgstr "Jogok frissítése"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Upgrading permissions (%d items complete, %d remaining)"
+
 msgid "Deleting old permission tables"
 msgstr "Régi jogosultsági táblák törlése"
 
@@ -219,11 +220,32 @@ msgstr "Minden felhasználó"
 msgid "Detecting broken derivatives"
 msgstr "Hiányzó/hibás leszármazottak keresése"
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr ""
+
+#, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr ""
+
+#, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr ""
+
 msgid "Clearing fast-download cache"
 msgstr "Gyors-letöltési gyorsítótár törlése"
 
 msgid "Deleting old fast-download cache"
 msgstr "Régi gyors-letöltési gyorsítótár törlése"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Régi munkamenet fájlok törlése (%d. kör)"
 
 msgid "Updating panorama items"
 msgstr "Panoráma elemek frissítése"
@@ -252,31 +274,6 @@ msgstr "Ez a Galéria főoldala"
 msgid "Converting MySQL data to UTF8"
 msgstr "MySQL adatbázis konvertálása UTF8 kódolásra"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Upgrading permissions (%d items complete, %d remaining)"
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr ""
-
-#, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr ""
-
-#, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr ""
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr ""
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Régi munkamenet fájlok törlése (%d. kör)"
-
 # "add" doesn't mean "feltöltése" as items could be added from local/remote host too => using "hozzáadása"
 msgid "add items"
 msgstr "Elemek hozzáadása"
@@ -289,30 +286,6 @@ msgstr "Belső album hozzáadása"
 
 msgid "add items confirmation"
 msgstr "elemek hozzáadásának megerősítése"
-
-msgid "Base filename"
-msgstr "Alap fájlnév"
-
-msgid "Caption"
-msgstr "Felirat"
-
-msgid "Blank"
-msgstr "Üres"
-
-msgid "From Web Browser"
-msgstr "Webböngészőből"
-
-# c-format
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabájt"
-
-# c-format
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobájt"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -329,6 +302,30 @@ msgstr "%s fájl csak részben került feltöltésre"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "%s fájl feltöltése nem sikerült. Hiba %d"
+
+# c-format
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabájt"
+
+# c-format
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobájt"
+
+msgid "Base filename"
+msgstr "Alap fájlnév"
+
+msgid "Caption"
+msgstr "Felirat"
+
+msgid "Blank"
+msgstr "Üres"
+
+msgid "From Web Browser"
+msgstr "Webböngészőből"
 
 msgid "Gallery Item Administration"
 msgstr "Galéria elem adminisztráció"
@@ -356,6 +353,10 @@ msgstr "Átméretezett képek beállításainak alkalmazása"
 msgid "Preparing..."
 msgstr "Felkészülés..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "%d/%d kép feldolgozása"
+
 msgid "Apply thumbnail settings"
 msgstr "Előnézeti kép beállításainak alkalmazása"
 
@@ -364,10 +365,6 @@ msgstr "Előnézeti képek újragyártása..."
 
 msgid "Album"
 msgstr "Album"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "%d/%d kép feldolgozása"
 
 msgid "Changes saved successfully"
 msgstr "Változtatások elmentve"
@@ -506,6 +503,10 @@ msgstr "Fénykép szerkesztése"
 msgid "Edit Movie"
 msgstr "Videó szerkesztése"
 
+#, c-format
+msgid "Edit %s"
+msgstr "%s szerkesztése"
+
 msgid "Add Album"
 msgstr "Album hozzáadása"
 
@@ -524,6 +525,10 @@ msgstr "Fénykép törlése"
 msgid "Delete Movie"
 msgstr "Videó törlése"
 
+#, c-format
+msgid "Delete %s"
+msgstr "%s törlése"
+
 msgid "Move Album"
 msgstr "Album mozgatása"
 
@@ -533,6 +538,10 @@ msgstr "Fénykép mozgatása"
 
 msgid "Move Movie"
 msgstr "Videó mozgatása"
+
+#, c-format
+msgid "Move %s"
+msgstr "%s mozgatása"
 
 msgid "Edit Captions"
 msgstr "Feliratok szerkesztése"
@@ -582,18 +591,6 @@ msgstr "Felhasználói beállítások"
 msgid "Change Password"
 msgstr "Jelszóváltoztatás"
 
-#, c-format
-msgid "Edit %s"
-msgstr "%s szerkesztése"
-
-#, c-format
-msgid "Delete %s"
-msgstr "%s törlése"
-
-#, c-format
-msgid "Move %s"
-msgstr "%s mozgatása"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Minden előnézeti/átméretezett kép legyártása"
 
@@ -604,9 +601,6 @@ msgstr ""
 
 msgid "Build All Thumbnails/Resizes"
 msgstr "Minden Előnézeti/Áméretezett Kép Legyártása"
-
-msgid "Debug output for failed items:"
-msgstr ""
 
 #, c-format
 msgid "Checked %d items"
@@ -619,6 +613,9 @@ msgstr "%d elem létrehozva"
 #, c-format
 msgid "%d items failed"
 msgstr "%d elem sikertelen"
+
+msgid "Debug output for failed items:"
+msgstr ""
 
 msgid "Convert MySQL database to UTF8"
 msgstr "MySQL adatbázis konvertálása UTF8 kódolásra"
@@ -812,6 +809,10 @@ msgstr "Növekvő"
 msgid "Descending"
 msgstr "Csökkenő"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "Gallery v%s alapokon"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr ""
 
@@ -820,13 +821,6 @@ msgstr "Az oldal helyes XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Támogasd a Galéria projektet"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Double Double"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "Gallery v%s alapokon"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -935,12 +929,12 @@ msgstr "táblázat"
 msgid "file"
 msgstr "fájl"
 
-msgid "Back"
-msgstr "Vissza"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Vissza ide: %s"
+
+msgid "Back"
+msgstr "Vissza"
 
 msgid "User"
 msgstr "Felhasználó"
@@ -3699,3 +3693,9 @@ msgstr "Bejelentkezési blokk"
 
 msgid "Links to album/photo peers"
 msgstr "Linkek az albumok/fotók oldalaira"
+
+#~ msgid "key"
+#~ msgstr "kulcs"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Double Double"

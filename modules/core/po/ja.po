@@ -34,6 +34,26 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Gallery 電子メールテスト"
 
+#, c-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d 分"
+
+#, c-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d 時間"
+
+#, c-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] "%d 日"
+
+#, c-format
+msgid "%d week"
+msgid_plural "%d weeks"
+msgstr[0] "%d 週間"
+
 msgid "forever"
 msgstr "永久"
 
@@ -57,26 +77,6 @@ msgstr "データベース"
 
 msgid "File"
 msgstr "ファイル"
-
-#, c-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d 分"
-
-#, c-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] "%d 時間"
-
-#, c-format
-msgid "%d day"
-msgid_plural "%d days"
-msgstr[0] "%d 日"
-
-#, c-format
-msgid "%d week"
-msgid_plural "%d weeks"
-msgstr[0] "%d 週間"
 
 msgid "&lt;none&gt;"
 msgstr ""
@@ -166,9 +166,6 @@ msgstr "これらの設定を使う"
 msgid "Installing the core module"
 msgstr "Gallery Core モジュールをインストール中"
 
-msgid "key"
-msgstr "キー"
-
 msgid "All access"
 msgstr "全てのアクセス"
 
@@ -202,6 +199,10 @@ msgstr "[core] アイテム削除"
 msgid "Upgrading permissions"
 msgstr "パーミッションをアップグレード"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "パーミッションを更新中（ %d の項目が完了、残り %d）"
+
 msgid "Deleting old permission tables"
 msgstr "古いパーミッションテーブルを削除しています"
 
@@ -214,11 +215,32 @@ msgstr "全てのユーザー"
 msgid "Detecting broken derivatives"
 msgstr "壊れた派生物を検出"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "壊れた派生物を検出しています　ロード中 (%d がチェック済み、残り %d)"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "壊れた派生物を検出しています　ロード中 (%d がチェック済み、残り %d)"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "壊れた派生物を検出しています 保存中 (%d がチェック済み、残り %d)"
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "パーミッションを更新中（ %d の項目が完了、残り %d）"
+
 msgid "Clearing fast-download cache"
 msgstr "高速ダウンロードキャッシュをクリアしています"
 
 msgid "Deleting old fast-download cache"
 msgstr "古い高速ダウンロードキャッシュをクリアしています"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "古いセッションファイルを削除しています ( %d の繰り返し)"
 
 msgid "Updating panorama items"
 msgstr "パノラマアイテムをアップデート"
@@ -248,31 +270,6 @@ msgstr "これはあなたのGalleryのメインページです"
 msgid "Converting MySQL data to UTF8"
 msgstr "MySQLのデータをUTF8に変換する"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "パーミッションを更新中（ %d の項目が完了、残り %d）"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "壊れた派生物を検出しています　ロード中 (%d がチェック済み、残り %d)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "壊れた派生物を検出しています　ロード中 (%d がチェック済み、残り %d)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "壊れた派生物を検出しています 保存中 (%d がチェック済み、残り %d)"
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "パーミッションを更新中（ %d の項目が完了、残り %d）"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "古いセッションファイルを削除しています ( %d の繰り返し)"
-
 msgid "add items"
 msgstr "アイテム追加"
 
@@ -284,28 +281,6 @@ msgstr "サブアルバム追加"
 
 msgid "add items confirmation"
 msgstr "アイテムの確認を追加する"
-
-msgid "Base filename"
-msgstr "ベースファイル名"
-
-msgid "Caption"
-msgstr "キャプション"
-
-msgid "Blank"
-msgstr "ブランク"
-
-msgid "From Web Browser"
-msgstr "ブラウザから"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d MB"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kB"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -322,6 +297,28 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d MB"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kB"
+
+msgid "Base filename"
+msgstr "ベースファイル名"
+
+msgid "Caption"
+msgstr "キャプション"
+
+msgid "Blank"
+msgstr "ブランク"
+
+msgid "From Web Browser"
+msgstr "ブラウザから"
 
 msgid "Gallery Item Administration"
 msgstr "Gallery アイテム管理"
@@ -349,6 +346,10 @@ msgstr "リサイズされた画像の設定を適用"
 msgid "Preparing..."
 msgstr "準備中..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "画像処理 %d / %d"
+
 msgid "Apply thumbnail settings"
 msgstr "サムネイル設定を適用"
 
@@ -357,10 +358,6 @@ msgstr "サムネイルを再構築しています・・・"
 
 msgid "Album"
 msgstr "アルバム"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "画像処理 %d / %d"
 
 msgid "Changes saved successfully"
 msgstr "変更の保存に成功しました。"
@@ -499,6 +496,10 @@ msgstr "画像の編集"
 msgid "Edit Movie"
 msgstr "動画の編集"
 
+#, c-format
+msgid "Edit %s"
+msgstr "%s の編集"
+
 msgid "Add Album"
 msgstr "アルバム追加"
 
@@ -517,6 +518,10 @@ msgstr "画像削除"
 msgid "Delete Movie"
 msgstr "動画削除"
 
+#, c-format
+msgid "Delete %s"
+msgstr "%s の削除"
+
 msgid "Move Album"
 msgstr "アルバム移動"
 
@@ -525,6 +530,10 @@ msgstr "画像移動"
 
 msgid "Move Movie"
 msgstr "動画移動"
+
+#, c-format
+msgid "Move %s"
+msgstr "%s の移動"
 
 msgid "Edit Captions"
 msgstr "キャプション編集"
@@ -574,18 +583,6 @@ msgstr "アカウント設定"
 msgid "Change Password"
 msgstr "パスワード変更"
 
-#, c-format
-msgid "Edit %s"
-msgstr "%s の編集"
-
-#, c-format
-msgid "Delete %s"
-msgstr "%s の削除"
-
-#, c-format
-msgid "Move %s"
-msgstr "%s の移動"
-
 msgid "Build all thumbnails/resizes"
 msgstr "サムネイル/リサイズ画像を生成"
 
@@ -599,9 +596,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "全てのサムネイル/リサイズ画像を生成"
 
-msgid "Debug output for failed items:"
-msgstr "失敗したアイテムのデバッグ出力:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "%d アイテムをチェック"
@@ -613,6 +607,9 @@ msgstr "%d アイテムが構築されました"
 #, c-format
 msgid "%d items failed"
 msgstr "%d アイテムが失敗しました"
+
+msgid "Debug output for failed items:"
+msgstr "失敗したアイテムのデバッグ出力:"
 
 msgid "Convert MySQL database to UTF8"
 msgstr "MySQLのデータベースをUTF8に変換する"
@@ -813,6 +810,10 @@ msgstr "昇順"
 msgid "Descending"
 msgstr "降順"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "Powered by Gallery v%s"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "config.php の allowSessionAccess を設定しない限り、妥当性の確認ができません"
 
@@ -821,13 +822,6 @@ msgstr "このページは XHTML 1.0 に準拠しています。"
 
 msgid "Donate to the Gallery project"
 msgstr "Galleryプロジェクトに寄付をする"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Double Double"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "Powered by Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -936,12 +930,12 @@ msgstr "スプレッドシート"
 msgid "file"
 msgstr "ファイル"
 
-msgid "Back"
-msgstr "戻る"
-
 #, c-format
 msgid "Back to %s"
 msgstr "%s に戻る"
+
+msgid "Back"
+msgstr "戻る"
 
 msgid "User"
 msgstr "ユーザー"
@@ -3693,3 +3687,9 @@ msgstr "ログインブロック"
 
 msgid "Links to album/photo peers"
 msgstr "アルバム／画像へのリンク"
+
+#~ msgid "key"
+#~ msgstr "キー"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Double Double"

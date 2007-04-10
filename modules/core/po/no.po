@@ -35,30 +35,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Gallery e-posttest"
 
-msgid "forever"
-msgstr "uendelig"
-
-msgid "High Priority (Me first!)"
-msgstr "Høy prioritet (Meg først!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Lav prioritet (Jeg vil dele!)"
-
-msgid "No Markup"
-msgstr "Ingen formatering"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "Rå HTML"
-
-msgid "Database"
-msgstr "Database"
-
-msgid "File"
-msgstr "Fil"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -82,6 +58,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d uke"
 msgstr[1] "%d uker"
+
+msgid "forever"
+msgstr "uendelig"
+
+msgid "High Priority (Me first!)"
+msgstr "Høy prioritet (Meg først!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Lav prioritet (Jeg vil dele!)"
+
+msgid "No Markup"
+msgstr "Ingen formatering"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "Rå HTML"
+
+msgid "Database"
+msgstr "Database"
+
+msgid "File"
+msgstr "Fil"
 
 msgid "&lt;none&gt;"
 msgstr ""
@@ -170,9 +170,6 @@ msgstr "Bruk disse innstillingene"
 msgid "Installing the core module"
 msgstr "Installerer kjernemodulen"
 
-msgid "key"
-msgstr "nøkkel"
-
 msgid "All access"
 msgstr "Alle tilganger"
 
@@ -206,6 +203,10 @@ msgstr "[kjerne] Slett objekt"
 msgid "Upgrading permissions"
 msgstr "Oppgraderer tilganger"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Oppgraderer tilganger (%d objekter fullført, %d gjenstår)"
+
 msgid "Deleting old permission tables"
 msgstr "Sletter gamle tilgangstabeller"
 
@@ -218,11 +219,34 @@ msgstr "Alle brukere"
 msgid "Detecting broken derivatives"
 msgstr "Gjenkjenner ugyldige avledninger"
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Gjenkjenner ødelagte avledninger, laster (%d avledninger kontrollert, %d gjenstår)"
+
+#, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Gjenkjenner ødelagte avledninger (%d avledninger kontrollert, %d gjenstår)"
+
+#, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Gjenkjenner ødelagte avledninger, lagrer (%d avledninger kontrollert, %d gjenstår)"
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr ""
+"Gjenkjenner ødelagte avledninger, lagrer enhet %d av %d (%d avledninger fullført, %d "
+"gjenstår)"
+
 msgid "Clearing fast-download cache"
 msgstr "Renser hurtigminne for rask nedlasting"
 
 msgid "Deleting old fast-download cache"
 msgstr "Sletter gammelt hurtigminne for rask nedlasting"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Sletter gamle tilgangstabeller (iterasjon %d)"
 
 msgid "Updating panorama items"
 msgstr "Oppdaterer panoramaobjekter"
@@ -252,33 +276,6 @@ msgstr "Dette er ditt galleris hovedside"
 msgid "Converting MySQL data to UTF8"
 msgstr "Omdanner MySQL-data til UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Oppgraderer tilganger (%d objekter fullført, %d gjenstår)"
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Gjenkjenner ødelagte avledninger, laster (%d avledninger kontrollert, %d gjenstår)"
-
-#, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Gjenkjenner ødelagte avledninger (%d avledninger kontrollert, %d gjenstår)"
-
-#, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Gjenkjenner ødelagte avledninger, lagrer (%d avledninger kontrollert, %d gjenstår)"
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr ""
-"Gjenkjenner ødelagte avledninger, lagrer enhet %d av %d (%d avledninger fullført, %d "
-"gjenstår)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Sletter gamle tilgangstabeller (iterasjon %d)"
-
 msgid "add items"
 msgstr "legg til objekter"
 
@@ -290,30 +287,6 @@ msgstr "legg til underalbum"
 
 msgid "add items confirmation"
 msgstr "bekreftelse av tilleggelse av objekter"
-
-msgid "Base filename"
-msgstr "Basisfilnavn"
-
-msgid "Caption"
-msgstr "Billedtekst"
-
-msgid "Blank"
-msgstr "Blank"
-
-msgid "From Web Browser"
-msgstr "Fra nettleser"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabyte"
-msgstr[1] "%d megabyte"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobyte"
-msgstr[1] "%d kilobyte"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -330,6 +303,30 @@ msgstr "Inndatafilen %s ble bare delvis lastet opp"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "Inndatafilen %s ble ikke lastet opp. Feil %d"
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabyte"
+msgstr[1] "%d megabyte"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobyte"
+msgstr[1] "%d kilobyte"
+
+msgid "Base filename"
+msgstr "Basisfilnavn"
+
+msgid "Caption"
+msgstr "Billedtekst"
+
+msgid "Blank"
+msgstr "Blank"
+
+msgid "From Web Browser"
+msgstr "Fra nettleser"
 
 msgid "Gallery Item Administration"
 msgstr "Administrasjon av Gallery-objekter"
@@ -357,6 +354,10 @@ msgstr "Bruk innstillinger for bilder med endrede størrelser"
 msgid "Preparing..."
 msgstr "Forbereder ..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Behandler bilde %d av %d"
+
 msgid "Apply thumbnail settings"
 msgstr "Bruk miniatyrinnstillinger"
 
@@ -365,10 +366,6 @@ msgstr "Gjenskaper miniatyrbilder ..."
 
 msgid "Album"
 msgstr "Album"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Behandler bilde %d av %d"
 
 msgid "Changes saved successfully"
 msgstr "Vellykket lagring av endringer"
@@ -507,6 +504,10 @@ msgstr "Rediger foto"
 msgid "Edit Movie"
 msgstr "Rediger film"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Rediger %s"
+
 msgid "Add Album"
 msgstr "Legg til album"
 
@@ -525,6 +526,10 @@ msgstr "Slett foto"
 msgid "Delete Movie"
 msgstr "Slett film"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Slett %s"
+
 msgid "Move Album"
 msgstr "Flytt album"
 
@@ -533,6 +538,10 @@ msgstr "Flytt foto"
 
 msgid "Move Movie"
 msgstr "Flytt film"
+
+#, c-format
+msgid "Move %s"
+msgstr "Flytt %s"
 
 msgid "Edit Captions"
 msgstr "Rediger billedtekster"
@@ -582,18 +591,6 @@ msgstr "Kontoinnstillinger"
 msgid "Change Password"
 msgstr "Endre passord"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Rediger %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Slett %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Flytt %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Opprett alle miniatyrbilder/skaleringer"
 
@@ -607,9 +604,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Opprett alle miniatyrbilder/skaleringer"
 
-msgid "Debug output for failed items:"
-msgstr "Feilrettingsutdata for mislykkede objekter:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Markerte %d objekter"
@@ -621,6 +615,9 @@ msgstr "%d objekter opprettet"
 #, c-format
 msgid "%d items failed"
 msgstr "%d objekter mislyktes"
+
+msgid "Debug output for failed items:"
+msgstr "Feilrettingsutdata for mislykkede objekter:"
 
 msgid "Convert MySQL database to UTF8"
 msgstr "KOnverter MySQL-database til UTF8"
@@ -827,6 +824,10 @@ msgstr "Stigende"
 msgid "Descending"
 msgstr "Synkende"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "Drives av Gallery v%s"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Gyldighetssjekk er deaktivert til du velger allowSessionAccess i config.php"
 
@@ -835,13 +836,6 @@ msgstr "Denne siden er gyldig XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Doner til Gallery-prosjektet"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Double Double"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "Drives av Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -948,12 +942,12 @@ msgstr "regneark"
 msgid "file"
 msgstr "fil"
 
-msgid "Back"
-msgstr "Tilbake"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Tilbake til %s"
+
+msgid "Back"
+msgstr "Tilbake"
 
 msgid "User"
 msgstr "Bruker"
@@ -3775,3 +3769,9 @@ msgstr "Innloggingsblokk"
 
 msgid "Links to album/photo peers"
 msgstr "Lenker til album/fotonoder"
+
+#~ msgid "key"
+#~ msgstr "nøkkel"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Double Double"

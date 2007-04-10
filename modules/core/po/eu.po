@@ -35,30 +35,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Gallery ePosta Proba"
 
-msgid "forever"
-msgstr "betiko"
-
-msgid "High Priority (Me first!)"
-msgstr "Lehentasun Altua (Ni lehenengo!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Lehentasun baxua (partekatu nahi dut!)"
-
-msgid "No Markup"
-msgstr "Ez Markaketa"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "Formaturik gabeko HTML"
-
-msgid "Database"
-msgstr "Datu-basea"
-
-msgid "File"
-msgstr "Fitxategia"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -82,6 +58,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "aste %d"
 msgstr[1] "%d aste"
+
+msgid "forever"
+msgstr "betiko"
+
+msgid "High Priority (Me first!)"
+msgstr "Lehentasun Altua (Ni lehenengo!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Lehentasun baxua (partekatu nahi dut!)"
+
+msgid "No Markup"
+msgstr "Ez Markaketa"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "Formaturik gabeko HTML"
+
+msgid "Database"
+msgstr "Datu-basea"
+
+msgid "File"
+msgstr "Fitxategia"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;bat ere ez&gt;"
@@ -175,9 +175,6 @@ msgstr "Ezarpen hauek erabili"
 msgid "Installing the core module"
 msgstr "Muin modulua instalatzen"
 
-msgid "key"
-msgstr "gakoa"
-
 msgid "All access"
 msgstr "Sarrera denak"
 
@@ -211,6 +208,10 @@ msgstr "[muina] Elementua ezabatu"
 msgid "Upgrading permissions"
 msgstr "Baimenak eguneratzen"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Baimenak eguneratzen (%d elementu buruturik, %d falta dira)"
+
 msgid "Deleting old permission tables"
 msgstr "Baimen taula zaharrak ezabatzen"
 
@@ -223,11 +224,32 @@ msgstr "Erabiltzaile guztiak"
 msgid "Detecting broken derivatives"
 msgstr "Hautsitako eratorriak atzematen"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Hautsitako eratorriak atzematen, kargatzen "
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Hautsitako eratorriak atzematen, gordetzen "
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Hautsitako eratorriak atzematen, gordetzen "
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Baimenak eguneratzen (%d elementu buruturik, %d falta dira)"
+
 msgid "Clearing fast-download cache"
 msgstr "Deskarga-azkar katxea garbitzen"
 
 msgid "Deleting old fast-download cache"
 msgstr "Deskarga-azkar katxea garbitzen"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Saio fitxategi zaharrak ezabatzen (%d iterazioa)"
 
 msgid "Updating panorama items"
 msgstr ""
@@ -257,31 +279,6 @@ msgstr "Hau zure galeriaren orrialde nagusia da"
 msgid "Converting MySQL data to UTF8"
 msgstr "MySQL datuak UTF-8 bihurtzen"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Baimenak eguneratzen (%d elementu buruturik, %d falta dira)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Hautsitako eratorriak atzematen, kargatzen "
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Hautsitako eratorriak atzematen, gordetzen "
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Hautsitako eratorriak atzematen, gordetzen "
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Baimenak eguneratzen (%d elementu buruturik, %d falta dira)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Saio fitxategi zaharrak ezabatzen (%d iterazioa)"
-
 msgid "add items"
 msgstr "elementuak gehitu"
 
@@ -293,30 +290,6 @@ msgstr "azpi-albuma gehitu"
 
 msgid "add items confirmation"
 msgstr "elementu berrespena gehitu"
-
-msgid "Base filename"
-msgstr "Oinarri fitxategi-izena"
-
-msgid "Caption"
-msgstr "Epigrafea"
-
-msgid "Blank"
-msgstr "Hutsa"
-
-msgid "From Web Browser"
-msgstr "Web Nabigatzailetik"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "megabyte %d"
-msgstr[1] "%d megabyte"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "kilobyte %d"
-msgstr[1] "%d kilobyte"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -333,6 +306,30 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "megabyte %d"
+msgstr[1] "%d megabyte"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "kilobyte %d"
+msgstr[1] "%d kilobyte"
+
+msgid "Base filename"
+msgstr "Oinarri fitxategi-izena"
+
+msgid "Caption"
+msgstr "Epigrafea"
+
+msgid "Blank"
+msgstr "Hutsa"
+
+msgid "From Web Browser"
+msgstr "Web Nabigatzailetik"
 
 msgid "Gallery Item Administration"
 msgstr "Galeria elementu kudeaketa"
@@ -362,6 +359,10 @@ msgstr "Gai ezarpenak berreskuraturik"
 msgid "Preparing..."
 msgstr "Prozesatzen..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "%d irudia prozesatzen %d iruditik"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -370,10 +371,6 @@ msgstr "Argazkitxoak birsortzen..."
 
 msgid "Album"
 msgstr "Albuma"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "%d irudia prozesatzen %d iruditik"
 
 msgid "Changes saved successfully"
 msgstr "Aldaketak behar bezala gorde dira"
@@ -513,6 +510,10 @@ msgstr "Argazkia Editatu"
 msgid "Edit Movie"
 msgstr "Pelikula Editatu"
 
+#, c-format
+msgid "Edit %s"
+msgstr "%s editatu"
+
 msgid "Add Album"
 msgstr "Albuma Gehitu"
 
@@ -531,6 +532,10 @@ msgstr "Argazkia Ezabatu"
 msgid "Delete Movie"
 msgstr "Pelikula Ezabatu"
 
+#, c-format
+msgid "Delete %s"
+msgstr "%s ezabatu"
+
 msgid "Move Album"
 msgstr "Albuma lekuz aldatu"
 
@@ -539,6 +544,10 @@ msgstr "Argazkia lekuz aldatu"
 
 msgid "Move Movie"
 msgstr "Pelikula Lekuz aldatu"
+
+#, c-format
+msgid "Move %s"
+msgstr "%s lekuz aldatu"
 
 msgid "Edit Captions"
 msgstr "Epigrafeak Editatu"
@@ -588,18 +597,6 @@ msgstr "Kontu ezarpenak"
 msgid "Change Password"
 msgstr "Aldatu pasahitza"
 
-#, c-format
-msgid "Edit %s"
-msgstr "%s editatu"
-
-#, c-format
-msgid "Delete %s"
-msgstr "%s ezabatu"
-
-#, c-format
-msgid "Move %s"
-msgstr "%s lekuz aldatu"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Argazkitxo/tamaina ezberdin guztiak sortu"
 
@@ -613,9 +610,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Argazkitxo/Tamaina aldaketa guztiak sortu"
 
-msgid "Debug output for failed items:"
-msgstr "Huts egin duten elementuen arazpen irteera:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "%d elementu egiazturik"
@@ -627,6 +621,9 @@ msgstr "%d elementu eginak"
 #, c-format
 msgid "%d items failed"
 msgstr "%d elementuk huts egin dute"
+
+msgid "Debug output for failed items:"
+msgstr "Huts egin duten elementuen arazpen irteera:"
 
 #, fuzzy
 msgid "Convert MySQL database to UTF8"
@@ -834,6 +831,10 @@ msgstr "Gorantz"
 msgid "Descending"
 msgstr "Beherantz"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Egiaztapena ezgaiturik config.php fitxategian allowSessionAccess ezarri arte"
 
@@ -842,13 +843,6 @@ msgstr "Orrialde hau XHTML 1.0 baliozkoa da"
 
 msgid "Donate to the Gallery project"
 msgstr "Gallery proiektuari dohaintza egin"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -957,12 +951,12 @@ msgstr "kalkulu-orria"
 msgid "file"
 msgstr "fitxategia"
 
-msgid "Back"
-msgstr "Atzera"
-
 #, c-format
 msgid "Back to %s"
 msgstr "%s-(e)ra Atzera"
+
+msgid "Back"
+msgstr "Atzera"
 
 msgid "User"
 msgstr "Erabiltzailea"
@@ -3785,3 +3779,6 @@ msgstr "Saio-hasiera blokea"
 
 msgid "Links to album/photo peers"
 msgstr "Ondoko album/argazkietara loturak"
+
+#~ msgid "key"
+#~ msgstr "gakoa"

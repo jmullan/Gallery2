@@ -37,30 +37,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Galerijos testas el. paštu"
 
-msgid "forever"
-msgstr "visada"
-
-msgid "High Priority (Me first!)"
-msgstr "Aukštas prioritetas (Aš pirmas!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Žemas prioritetas (Aš noriu dalytis!)"
-
-msgid "No Markup"
-msgstr "Be žymėjimo"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "Grynas HTML"
-
-msgid "Database"
-msgstr "Duombazė"
-
-msgid "File"
-msgstr "Failas"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -88,6 +64,30 @@ msgid_plural "%d weeks"
 msgstr[0] "%d savaitė"
 msgstr[1] "%d savaitės"
 msgstr[2] "%d savaičių"
+
+msgid "forever"
+msgstr "visada"
+
+msgid "High Priority (Me first!)"
+msgstr "Aukštas prioritetas (Aš pirmas!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Žemas prioritetas (Aš noriu dalytis!)"
+
+msgid "No Markup"
+msgstr "Be žymėjimo"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "Grynas HTML"
+
+msgid "Database"
+msgstr "Duombazė"
+
+msgid "File"
+msgstr "Failas"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;tuščia&gt;"
@@ -176,9 +176,6 @@ msgstr "Naudoti šiuos nustatymus"
 msgid "Installing the core module"
 msgstr "Įdiegiamas pagrindinis modulis"
 
-msgid "key"
-msgstr "raktas"
-
 msgid "All access"
 msgstr "Pinas priėjimas"
 
@@ -212,6 +209,10 @@ msgstr "[core] Pašalinti elementą"
 msgid "Upgrading permissions"
 msgstr "Atnaujinamos teisės"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Atnaujinamos prieigos teisės (%d pakeista, liko %d)"
+
 msgid "Deleting old permission tables"
 msgstr "Šalinamos senos teisių lentelės"
 
@@ -224,11 +225,32 @@ msgstr "Visi vartotojai"
 msgid "Detecting broken derivatives"
 msgstr "Trinami blogi pagalbiniai failai"
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Ieškoma blogų pagalbinių failų, įkeliama (%d patikrinta, liko %d)"
+
+#, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Ieškoma blogų pagalbinių failų (%d patikrinta, liko %d)"
+
+#, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Ieškoma blogų pagalbinių failų, išsaugoma (%d patikrinta, liko %d)"
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Atnaujinamos prieigos teisės, saugomas elementas %d iš %d (%d pakeista, liko %d)"
+
 msgid "Clearing fast-download cache"
 msgstr "Valoma greito gavimo talpyklė"
 
 msgid "Deleting old fast-download cache"
 msgstr "Trinama sena greito gavimo talpyklė"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Šalinami seni sesijos failai (pakartojimas %d)"
 
 msgid "Updating panorama items"
 msgstr "Atnaujinami panoramos elementai"
@@ -258,31 +280,6 @@ msgstr "Tai pagrindinis Jūsų galerijos puslapis"
 msgid "Converting MySQL data to UTF8"
 msgstr "Keičiami MySQL duomenys į UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Atnaujinamos prieigos teisės (%d pakeista, liko %d)"
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Ieškoma blogų pagalbinių failų, įkeliama (%d patikrinta, liko %d)"
-
-#, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Ieškoma blogų pagalbinių failų (%d patikrinta, liko %d)"
-
-#, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Ieškoma blogų pagalbinių failų, išsaugoma (%d patikrinta, liko %d)"
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Atnaujinamos prieigos teisės, saugomas elementas %d iš %d (%d pakeista, liko %d)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Šalinami seni sesijos failai (pakartojimas %d)"
-
 msgid "add items"
 msgstr "pridėti elementus"
 
@@ -294,32 +291,6 @@ msgstr "pridėti vidinį albumą"
 
 msgid "add items confirmation"
 msgstr "elementų pridėjimo patvirtinimas"
-
-msgid "Base filename"
-msgstr "Bazinis failo vardas"
-
-msgid "Caption"
-msgstr "Antraštė"
-
-msgid "Blank"
-msgstr "Tuščia"
-
-msgid "From Web Browser"
-msgstr "Iš naršyklės"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabaitas"
-msgstr[1] "%d megabaitai"
-msgstr[2] "%d megabaitų"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobaitas"
-msgstr[1] "%d kilobaitai"
-msgstr[2] "%d kilobaitų"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -336,6 +307,32 @@ msgstr "Nurodytas failas %s nepilnai įkeltas"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "Nurodytas failas %s neįkeltas. Klaida %d"
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabaitas"
+msgstr[1] "%d megabaitai"
+msgstr[2] "%d megabaitų"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobaitas"
+msgstr[1] "%d kilobaitai"
+msgstr[2] "%d kilobaitų"
+
+msgid "Base filename"
+msgstr "Bazinis failo vardas"
+
+msgid "Caption"
+msgstr "Antraštė"
+
+msgid "Blank"
+msgstr "Tuščia"
+
+msgid "From Web Browser"
+msgstr "Iš naršyklės"
 
 msgid "Gallery Item Administration"
 msgstr "Galerijos elemento administravimas"
@@ -363,6 +360,10 @@ msgstr "Pritaikyti sumažintų vaizdų nustatymus"
 msgid "Preparing..."
 msgstr "Pasiruošimas..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Apdorojamas elementas %d iš %d"
+
 msgid "Apply thumbnail settings"
 msgstr "Pritaikyti miniatiūrų nustatymus"
 
@@ -371,10 +372,6 @@ msgstr "Pergeneruojamos miniatiūros..."
 
 msgid "Album"
 msgstr "Albumas"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Apdorojamas elementas %d iš %d"
 
 msgid "Changes saved successfully"
 msgstr "Pakeitimai išsaugoti sėkmingai"
@@ -513,6 +510,10 @@ msgstr "Keisti foto"
 msgid "Edit Movie"
 msgstr "Keisti video"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Keisti %s"
+
 msgid "Add Album"
 msgstr "Naujas albumas"
 
@@ -531,6 +532,10 @@ msgstr "Pašalinti foto"
 msgid "Delete Movie"
 msgstr "Pašalinti video"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Ištrinti %s"
+
 msgid "Move Album"
 msgstr "Perkelti albumą"
 
@@ -539,6 +544,10 @@ msgstr "Perkelti foto"
 
 msgid "Move Movie"
 msgstr "Perkelti video"
+
+#, c-format
+msgid "Move %s"
+msgstr "Perkelti %s"
 
 msgid "Edit Captions"
 msgstr "Keisti santrauką"
@@ -588,18 +597,6 @@ msgstr "Paskyros nustatymai"
 msgid "Change Password"
 msgstr "Keisti slaptažodį"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Keisti %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Ištrinti %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Perkelti %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Generuoti visas miniatiūras/keisti matmenis"
 
@@ -613,9 +610,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Generuoti visas miniatiūras/keisti matmenis"
 
-msgid "Debug output for failed items:"
-msgstr "Papildoma informacija apie sugadintus elementus"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Patikrinta %d elementų"
@@ -627,6 +621,9 @@ msgstr "%d elementų sugeneruota"
 #, c-format
 msgid "%d items failed"
 msgstr "%d elementų nepavyko sutvarkyti"
+
+msgid "Debug output for failed items:"
+msgstr "Papildoma informacija apie sugadintus elementus"
 
 msgid "Convert MySQL database to UTF8"
 msgstr "Konvertuoti MySQL duomenys į UTF8"
@@ -832,6 +829,10 @@ msgstr "Didėlimo tvarka"
 msgid "Descending"
 msgstr "Mažėjimo tvarka"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "Veikia su Galerija v%s"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr ""
 "Patvirtinimas neįgalintas, kad įgalinti reikia nustatyti allowSessionAccess faile config.php"
@@ -841,13 +842,6 @@ msgstr "Šis puslapis yra teisingas XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Paremti projektą Gallery"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Dvigubas dvejetas"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "Veikia su Galerija v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -955,12 +949,12 @@ msgstr "skaičiuoklės dokumetas"
 msgid "file"
 msgstr "failas"
 
-msgid "Back"
-msgstr "Atgal"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Atgal į %s"
+
+msgid "Back"
+msgstr "Atgal"
 
 msgid "User"
 msgstr "Vartotojas"
@@ -3791,3 +3785,9 @@ msgstr "Prisijungimo blokas"
 
 msgid "Links to album/photo peers"
 msgstr "Nuorodos į albumus/fotografijas"
+
+#~ msgid "key"
+#~ msgstr "raktas"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Dvigubas dvejetas"

@@ -38,30 +38,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Проверка электронной почты Галереи"
 
-msgid "forever"
-msgstr "всегда"
-
-msgid "High Priority (Me first!)"
-msgstr "Высокий приоритет (Сначала мой сервер!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Низкий приоритет (Совместно с другими!)"
-
-msgid "No Markup"
-msgstr "разметка выключена"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "Чистый HTML"
-
-msgid "Database"
-msgstr "База данных"
-
-msgid "File"
-msgstr "Файл"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -89,6 +65,30 @@ msgid_plural "%d weeks"
 msgstr[0] "%d неделя"
 msgstr[1] "%d недели"
 msgstr[2] "%d недель"
+
+msgid "forever"
+msgstr "всегда"
+
+msgid "High Priority (Me first!)"
+msgstr "Высокий приоритет (Сначала мой сервер!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Низкий приоритет (Совместно с другими!)"
+
+msgid "No Markup"
+msgstr "разметка выключена"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "Чистый HTML"
+
+msgid "Database"
+msgstr "База данных"
+
+msgid "File"
+msgstr "Файл"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;нет&gt;"
@@ -182,9 +182,6 @@ msgstr "Использовать эти настройки"
 msgid "Installing the core module"
 msgstr "Инсталляция основного модуля (ядра)"
 
-msgid "key"
-msgstr "ключ"
-
 msgid "All access"
 msgstr "Полный доступ"
 
@@ -218,6 +215,10 @@ msgstr "[общее] Удалять элемент"
 msgid "Upgrading permissions"
 msgstr "Разрешения на обновления"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Обновление разрешение (%d элементов завершено, %d осталось)"
+
 msgid "Deleting old permission tables"
 msgstr "Удаление старых таблиц с разрешениями"
 
@@ -230,11 +231,32 @@ msgstr "Все Пользователи"
 msgid "Detecting broken derivatives"
 msgstr "Обнаружение неисправных модификаций"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Обнаружение неисправных модификаций, при загрузке"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Обнаружение неисправных модификаций, при сохранении"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Обнаружение неисправных модификаций, при сохранении"
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Обновление разрешение (%d элементов завершено, %d осталось)"
+
 msgid "Clearing fast-download cache"
 msgstr "Очистка кэша быстрой загрузки файлов"
 
 msgid "Deleting old fast-download cache"
 msgstr "Очистка старого кэша быстрой загрузки"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Удаление старых файлов сессий (итераций %d)"
 
 msgid "Updating panorama items"
 msgstr ""
@@ -264,31 +286,6 @@ msgstr "Это главная страница вашей Галереи"
 msgid "Converting MySQL data to UTF8"
 msgstr "Преобразование данных в базе MySQL в кодировку UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Обновление разрешение (%d элементов завершено, %d осталось)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Обнаружение неисправных модификаций, при загрузке"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Обнаружение неисправных модификаций, при сохранении"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Обнаружение неисправных модификаций, при сохранении"
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Обновление разрешение (%d элементов завершено, %d осталось)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Удаление старых файлов сессий (итераций %d)"
-
 msgid "add items"
 msgstr "добавить элементы"
 
@@ -300,32 +297,6 @@ msgstr "Создать вложенные альбом"
 
 msgid "add items confirmation"
 msgstr "подтверждение на добавление элементов"
-
-msgid "Base filename"
-msgstr "Основного имени файла"
-
-msgid "Caption"
-msgstr "Заголовок"
-
-msgid "Blank"
-msgstr "Оставить пустым"
-
-msgid "From Web Browser"
-msgstr "Через форму"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d мегабайт"
-msgstr[1] "%d мегабайта"
-msgstr[2] "%d мегабайта"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d килобайт"
-msgstr[1] "%d килобайта"
-msgstr[2] "%d килобайта"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -342,6 +313,32 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d мегабайт"
+msgstr[1] "%d мегабайта"
+msgstr[2] "%d мегабайта"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d килобайт"
+msgstr[1] "%d килобайта"
+msgstr[2] "%d килобайта"
+
+msgid "Base filename"
+msgstr "Основного имени файла"
+
+msgid "Caption"
+msgstr "Заголовок"
+
+msgid "Blank"
+msgstr "Оставить пустым"
+
+msgid "From Web Browser"
+msgstr "Через форму"
 
 msgid "Gallery Item Administration"
 msgstr "Администрирование Элементов Галереи"
@@ -371,6 +368,10 @@ msgstr "Настройки темы восстановлены"
 msgid "Preparing..."
 msgstr "Обработка..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Обработано изображений %d из %d"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -379,10 +380,6 @@ msgstr "Переделать макеты..."
 
 msgid "Album"
 msgstr "Альбом"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Обработано изображений %d из %d"
 
 msgid "Changes saved successfully"
 msgstr "Изменения успешно сохранены"
@@ -522,6 +519,10 @@ msgstr "Настройки Фото"
 msgid "Edit Movie"
 msgstr "Настройки Видеоролика"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Редактировать %s"
+
 msgid "Add Album"
 msgstr "Добавить Альбом"
 
@@ -540,6 +541,10 @@ msgstr "Удалить Фото"
 msgid "Delete Movie"
 msgstr "Удалить Видеоролик"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Удалить %s"
+
 msgid "Move Album"
 msgstr "Переместить Альбом"
 
@@ -548,6 +553,10 @@ msgstr "Переместить Фото"
 
 msgid "Move Movie"
 msgstr "Переместить Видеоролик"
+
+#, c-format
+msgid "Move %s"
+msgstr "Переместить %s"
 
 msgid "Edit Captions"
 msgstr "Изменить Названия"
@@ -597,18 +606,6 @@ msgstr "Настройки Учетной Записи"
 msgid "Change Password"
 msgstr "Изменить Пароль"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Редактировать %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Удалить %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Переместить %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Создание всех макетов/промежуточных размеров"
 
@@ -622,9 +619,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Создать все Макеты/Промежуточные размеры"
 
-msgid "Debug output for failed items:"
-msgstr "Результаты отладки для поврежденных элементов:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Проверено %d элементов"
@@ -636,6 +630,9 @@ msgstr "%d элементов создано"
 #, c-format
 msgid "%d items failed"
 msgstr "%d элементов подвреждено"
+
+msgid "Debug output for failed items:"
+msgstr "Результаты отладки для поврежденных элементов:"
 
 #, fuzzy
 msgid "Convert MySQL database to UTF8"
@@ -845,6 +842,10 @@ msgstr "По возрастанию"
 msgid "Descending"
 msgstr "По убыванию"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr ""
 "Проверка соответствия отключена до тех пор, пока Вы не установите параметр "
@@ -855,13 +856,6 @@ msgstr "Эта страница соответствует спецификац�
 
 msgid "Donate to the Gallery project"
 msgstr "Поддержите проект Галерея"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -971,12 +965,12 @@ msgstr "электронная таблица"
 msgid "file"
 msgstr "Файл"
 
-msgid "Back"
-msgstr "Назад"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Назад в %s"
+
+msgid "Back"
+msgstr "Назад"
 
 msgid "User"
 msgstr "Пользователь"
@@ -3877,3 +3871,6 @@ msgstr "Блок входа в систему"
 
 msgid "Links to album/photo peers"
 msgstr "Соседние альбомы/фотографии"
+
+#~ msgid "key"
+#~ msgstr "ключ"

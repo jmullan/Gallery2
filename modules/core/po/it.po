@@ -36,30 +36,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Email di Test di Gallery"
 
-msgid "forever"
-msgstr "per sempre"
-
-msgid "High Priority (Me first!)"
-msgstr "Priorità Alta (Io per primo!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Priorità Bassa (Voglio condividere!)"
-
-msgid "No Markup"
-msgstr "Nessun Markup"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "HTML Grezzo"
-
-msgid "Database"
-msgstr "Database"
-
-msgid "File"
-msgstr "File"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -83,6 +59,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d settimana"
 msgstr[1] "%d settimane"
+
+msgid "forever"
+msgstr "per sempre"
+
+msgid "High Priority (Me first!)"
+msgstr "Priorità Alta (Io per primo!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Priorità Bassa (Voglio condividere!)"
+
+msgid "No Markup"
+msgstr "Nessun Markup"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "HTML Grezzo"
+
+msgid "Database"
+msgstr "Database"
+
+msgid "File"
+msgstr "File"
 
 msgid "&lt;none&gt;"
 msgstr ""
@@ -171,9 +171,6 @@ msgstr "Utilizza questa configurazione"
 msgid "Installing the core module"
 msgstr "Installazione modulo core in corso"
 
-msgid "key"
-msgstr "chiave"
-
 msgid "All access"
 msgstr "Nessuna restrizione"
 
@@ -207,6 +204,10 @@ msgstr "[core] Elimina oggetto"
 msgid "Upgrading permissions"
 msgstr "Aggiornamento permessi"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Aggiornamento permessi in corso (%d oggetti completati, %d rimanenti)"
+
 msgid "Deleting old permission tables"
 msgstr "Eliminazione vecchia tabella permessi"
 
@@ -219,11 +220,36 @@ msgstr "Tutti gli Utenti"
 msgid "Detecting broken derivatives"
 msgstr "Ricerca derivati danneggiati"
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr ""
+"Ricerca derivati danneggiati, caricamento in corso (%d derivati controllati, %d rimanenti)"
+
+#, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Ricerca derivati danneggiati (%d derivati controllati, %d rimanenti)"
+
+#, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr ""
+"Ricerca derivati danneggiati, salvataggio in corso (%d derivati controllati, %d rimanenti)"
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr ""
+"Ricerca derivati danneggiati, salvataggio in corso oggetto %d di %d (%d derivati "
+"controllati, %d rimanenti)"
+
 msgid "Clearing fast-download cache"
 msgstr "Pulizia cache per il download veloce"
 
 msgid "Deleting old fast-download cache"
 msgstr "Eliminazione vecchia cache per il download veloce"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Eliminazione vecchi file di sessione (iterazione %d)"
 
 msgid "Updating panorama items"
 msgstr "Aggiornamenti in corso degli oggetti panoramici"
@@ -253,35 +279,6 @@ msgstr "Questa è la pagina principale della tua Gallery"
 msgid "Converting MySQL data to UTF8"
 msgstr "Conversione dati MySQL in UTF8 in corso"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Aggiornamento permessi in corso (%d oggetti completati, %d rimanenti)"
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr ""
-"Ricerca derivati danneggiati, caricamento in corso (%d derivati controllati, %d rimanenti)"
-
-#, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Ricerca derivati danneggiati (%d derivati controllati, %d rimanenti)"
-
-#, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr ""
-"Ricerca derivati danneggiati, salvataggio in corso (%d derivati controllati, %d rimanenti)"
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr ""
-"Ricerca derivati danneggiati, salvataggio in corso oggetto %d di %d (%d derivati "
-"controllati, %d rimanenti)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Eliminazione vecchi file di sessione (iterazione %d)"
-
 msgid "add items"
 msgstr "aggiungi oggetti"
 
@@ -293,30 +290,6 @@ msgstr "aggiungi sotto-album"
 
 msgid "add items confirmation"
 msgstr "conferma aggiunta oggetti"
-
-msgid "Base filename"
-msgstr "Nome del file base"
-
-msgid "Caption"
-msgstr "Didascalia"
-
-msgid "Blank"
-msgstr "Vuoto"
-
-msgid "From Web Browser"
-msgstr "Dal Browser Web"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabyte"
-msgstr[1] "%d megabyte"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobyte"
-msgstr[1] "%d kilobyte"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -333,6 +306,30 @@ msgstr "Il file in input %s è stato caricato solo parzialmente"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "Il file in input %s non è stato caricato. Errore %d"
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabyte"
+msgstr[1] "%d megabyte"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobyte"
+msgstr[1] "%d kilobyte"
+
+msgid "Base filename"
+msgstr "Nome del file base"
+
+msgid "Caption"
+msgstr "Didascalia"
+
+msgid "Blank"
+msgstr "Vuoto"
+
+msgid "From Web Browser"
+msgstr "Dal Browser Web"
 
 msgid "Gallery Item Administration"
 msgstr "Amministrazione Oggetto di Gallery"
@@ -360,6 +357,10 @@ msgstr "Applica configurazione immagini ridimensionate"
 msgid "Preparing..."
 msgstr "Preparazione in corso..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Elaborazione immagine %d di %d"
+
 msgid "Apply thumbnail settings"
 msgstr "Applica configurazione anteprime"
 
@@ -368,10 +369,6 @@ msgstr "Ricostruzione anteprime..."
 
 msgid "Album"
 msgstr "Album"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Elaborazione immagine %d di %d"
 
 msgid "Changes saved successfully"
 msgstr "Modifiche salvate con successo"
@@ -510,6 +507,10 @@ msgstr "Modifica Foto"
 msgid "Edit Movie"
 msgstr "Modifica Filmato"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Modifica %s"
+
 msgid "Add Album"
 msgstr "Aggiungi Album"
 
@@ -528,6 +529,10 @@ msgstr "Elimina Foto"
 msgid "Delete Movie"
 msgstr "Elimina Filmato"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Elimina %s"
+
 msgid "Move Album"
 msgstr "Sposta Album"
 
@@ -536,6 +541,10 @@ msgstr "Sposta Foto"
 
 msgid "Move Movie"
 msgstr "Sposta Filmato"
+
+#, c-format
+msgid "Move %s"
+msgstr "Sposta %s"
 
 msgid "Edit Captions"
 msgstr "Modifica Didascalie"
@@ -585,18 +594,6 @@ msgstr "Configurazione Account"
 msgid "Change Password"
 msgstr "Modifica Password"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Modifica %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Elimina %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Sposta %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Rigenera tutte le anteprime/ridimensionamenti"
 
@@ -610,9 +607,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Genera Tutte le Anteprime/Ridimensionamenti"
 
-msgid "Debug output for failed items:"
-msgstr "Output del debug per gli oggetti falliti:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Controllati %d oggetti"
@@ -624,6 +618,9 @@ msgstr "%d oggetti generati"
 #, c-format
 msgid "%d items failed"
 msgstr "%d oggetti falliti"
+
+msgid "Debug output for failed items:"
+msgstr "Output del debug per gli oggetti falliti:"
 
 msgid "Convert MySQL database to UTF8"
 msgstr "Converti database MySQL in UTF8"
@@ -831,6 +828,10 @@ msgstr "Ascendente"
 msgid "Descending"
 msgstr "Discendente"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "Powered by Gallery v%s"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Validazione disabilitata finché non imposti allowSessionAccess in config.php"
 
@@ -839,13 +840,6 @@ msgstr "Questa pagina è conforme a XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Fai una donazione al Gallery project"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Double Double"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "Powered by Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -954,12 +948,12 @@ msgstr "foglio di lavoro"
 msgid "file"
 msgstr "file"
 
-msgid "Back"
-msgstr "Indietro"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Torna a %s"
+
+msgid "Back"
+msgstr "Indietro"
 
 msgid "User"
 msgstr "Utente"
@@ -3825,3 +3819,9 @@ msgstr "Blocco di login"
 
 msgid "Links to album/photo peers"
 msgstr "Link ai peers della foto/album"
+
+#~ msgid "key"
+#~ msgstr "chiave"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Double Double"

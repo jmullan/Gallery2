@@ -39,30 +39,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Skúška pošty z Galérie"
 
-msgid "forever"
-msgstr "navždy"
-
-msgid "High Priority (Me first!)"
-msgstr "Vysoká priorita (Mne najskôr!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Nízka priorita (Chcem zdieľať) "
-
-msgid "No Markup"
-msgstr "Neznačkovať"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "Čisté HTML"
-
-msgid "Database"
-msgstr "Databáza"
-
-msgid "File"
-msgstr "Súbor"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -90,6 +66,30 @@ msgid_plural "%d weeks"
 msgstr[0] "%d týždeň"
 msgstr[1] "%d týždne"
 msgstr[2] "%d týždňov"
+
+msgid "forever"
+msgstr "navždy"
+
+msgid "High Priority (Me first!)"
+msgstr "Vysoká priorita (Mne najskôr!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Nízka priorita (Chcem zdieľať) "
+
+msgid "No Markup"
+msgstr "Neznačkovať"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "Čisté HTML"
+
+msgid "Database"
+msgstr "Databáza"
+
+msgid "File"
+msgstr "Súbor"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;žiadne&gt;"
@@ -181,9 +181,6 @@ msgstr "Použiť tieto nastavenia"
 msgid "Installing the core module"
 msgstr "Inštalujú sa základné moduly"
 
-msgid "key"
-msgstr "kľúč"
-
 msgid "All access"
 msgstr "Voľný prístup"
 
@@ -217,6 +214,10 @@ msgstr "(jadro) Zmazanie položky"
 msgid "Upgrading permissions"
 msgstr "Aktualizujú sa oprávnenia"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Aktualizujú sa oprávnenia (%d položiek hotových, %d zostáva)"
+
 msgid "Deleting old permission tables"
 msgstr "Mažú sa staré tabuľky oprávnení"
 
@@ -229,11 +230,32 @@ msgstr "Všetci používatelia"
 msgid "Detecting broken derivatives"
 msgstr "Odhaľujú sa chybné zmenšeniny"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Odhaľujú sa chybné zmenšeniny, nahráva sa "
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Odhaľujú sa chybné zmenšeniny, ukladá sa"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Odhaľujú sa chybné zmenšeniny, ukladá sa"
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Aktualizujú sa oprávnenia (%d položiek hotových, %d zostáva)"
+
 msgid "Clearing fast-download cache"
 msgstr "Vymazáva sa vyrovnávacia pamäť rýchlych sťahovaní"
 
 msgid "Deleting old fast-download cache"
 msgstr "Vymazáva sa obsah starej vyrovnávacej pamäti rýchlych sťahovaní"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Mažú sa staré súbory sedení (prechod %d)"
 
 msgid "Updating panorama items"
 msgstr ""
@@ -263,31 +285,6 @@ msgstr "Toto je hlavná stránka vašej Galérie"
 msgid "Converting MySQL data to UTF8"
 msgstr "Údaje z MySQL sa konvertujú do UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Aktualizujú sa oprávnenia (%d položiek hotových, %d zostáva)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Odhaľujú sa chybné zmenšeniny, nahráva sa "
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Odhaľujú sa chybné zmenšeniny, ukladá sa"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Odhaľujú sa chybné zmenšeniny, ukladá sa"
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Aktualizujú sa oprávnenia (%d položiek hotových, %d zostáva)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Mažú sa staré súbory sedení (prechod %d)"
-
 msgid "add items"
 msgstr "pridať položky"
 
@@ -299,32 +296,6 @@ msgstr "pridať vnorený album"
 
 msgid "add items confirmation"
 msgstr "potvrdenie pridania položiek"
-
-msgid "Base filename"
-msgstr "Meno súboru"
-
-msgid "Caption"
-msgstr "Nadpis"
-
-msgid "Blank"
-msgstr "Prázdne"
-
-msgid "From Web Browser"
-msgstr "Z webového prehliadača"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabyte"
-msgstr[1] "%d megabyty"
-msgstr[2] "%d megabytov"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobyte"
-msgstr[1] "%d kilobyty"
-msgstr[2] "%d kilobytov"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -341,6 +312,32 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabyte"
+msgstr[1] "%d megabyty"
+msgstr[2] "%d megabytov"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobyte"
+msgstr[1] "%d kilobyty"
+msgstr[2] "%d kilobytov"
+
+msgid "Base filename"
+msgstr "Meno súboru"
+
+msgid "Caption"
+msgstr "Nadpis"
+
+msgid "Blank"
+msgstr "Prázdne"
+
+msgid "From Web Browser"
+msgstr "Z webového prehliadača"
 
 msgid "Gallery Item Administration"
 msgstr "Správa položky Galérie"
@@ -370,6 +367,10 @@ msgstr "Nastavenie témy bolo obnovené"
 msgid "Preparing..."
 msgstr "Spracováva sa ..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Spracováva sa  obrázok %d z %d"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -378,10 +379,6 @@ msgstr "Znovu sa vytvárajú náhledy..."
 
 msgid "Album"
 msgstr "album"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Spracováva sa  obrázok %d z %d"
 
 msgid "Changes saved successfully"
 msgstr "Zmeny boli úspešne uložené"
@@ -521,6 +518,10 @@ msgstr "Upraviť foto"
 msgid "Edit Movie"
 msgstr "Upraviť video"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Upraviť %s"
+
 msgid "Add Album"
 msgstr "Pridať album"
 
@@ -539,6 +540,10 @@ msgstr "Odstrániť fotku"
 msgid "Delete Movie"
 msgstr "Odstrániť video"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Odstrániť %s"
+
 msgid "Move Album"
 msgstr "Presunúť album"
 
@@ -547,6 +552,10 @@ msgstr "Presunúť fotku"
 
 msgid "Move Movie"
 msgstr "Presunúť video"
+
+#, c-format
+msgid "Move %s"
+msgstr "Presunúť %s"
 
 msgid "Edit Captions"
 msgstr "Upraviť nadpisy"
@@ -596,18 +605,6 @@ msgstr "Nastavenie účtu"
 msgid "Change Password"
 msgstr "Zmeniť heslo"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Upraviť %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Odstrániť %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Presunúť %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Vytvorenie všetkých náhľadov/zmenšenín"
 
@@ -621,9 +618,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Vytvoriť všetky náhľady a zmenšené obrázky"
 
-msgid "Debug output for failed items:"
-msgstr "Ladiaci výstup pre položky ktoré zlyhali:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Skontrolované %d položiek"
@@ -635,6 +629,9 @@ msgstr "vytvorených %d položiek"
 #, c-format
 msgid "%d items failed"
 msgstr "%d položiek zlyhalo"
+
+msgid "Debug output for failed items:"
+msgstr "Ladiaci výstup pre položky ktoré zlyhali:"
 
 #, fuzzy
 msgid "Convert MySQL database to UTF8"
@@ -843,6 +840,10 @@ msgstr "Vzostupne"
 msgid "Descending"
 msgstr "Zostupne"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Overovanie je vypnuté pokiaľ nenastavíte allowSessionAccess v config.php"
 
@@ -851,13 +852,6 @@ msgstr "Tato stránka je validné XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Finančná podpora projektu Galéria"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -966,12 +960,12 @@ msgstr "tabuľka"
 msgid "file"
 msgstr "Súbor"
 
-msgid "Back"
-msgstr "Naspäť"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Naspäť na %s"
+
+msgid "Back"
+msgstr "Naspäť"
 
 msgid "User"
 msgstr "Používateľ"
@@ -3620,3 +3614,6 @@ msgstr ""
 
 msgid "Links to album/photo peers"
 msgstr ""
+
+#~ msgid "key"
+#~ msgstr "kľúč"

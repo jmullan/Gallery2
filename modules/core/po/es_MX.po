@@ -35,6 +35,30 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "M&oacute;dulos de Gallery"
 
+#, fuzzy, c-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d minuto"
+msgstr[1] "%d minutos"
+
+#, fuzzy, c-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d hora"
+msgstr[1] "%d horas"
+
+#, fuzzy, c-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] "%d d&iacute;a"
+msgstr[1] "%d d&iacute;as"
+
+#, fuzzy, c-format
+msgid "%d week"
+msgid_plural "%d weeks"
+msgstr[0] "%d semana"
+msgstr[1] "%d semanas"
+
 msgid "forever"
 msgstr "para siempre"
 
@@ -59,30 +83,6 @@ msgstr "Base de Datos"
 #, fuzzy
 msgid "File"
 msgstr "Archivo: "
-
-#, fuzzy, c-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d minuto"
-msgstr[1] "%d minutos"
-
-#, fuzzy, c-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] "%d hora"
-msgstr[1] "%d horas"
-
-#, fuzzy, c-format
-msgid "%d day"
-msgid_plural "%d days"
-msgstr[0] "%d d&iacute;a"
-msgstr[1] "%d d&iacute;as"
-
-#, fuzzy, c-format
-msgid "%d week"
-msgid_plural "%d weeks"
-msgstr[0] "%d semana"
-msgstr[1] "%d semanas"
 
 msgid "&lt;none&gt;"
 msgstr ""
@@ -180,9 +180,6 @@ msgstr "Opciones de vista restauradas"
 msgid "Installing the core module"
 msgstr "M&oacute;dulo Core de Gallery"
 
-msgid "key"
-msgstr "llave"
-
 msgid "All access"
 msgstr "Acceso Total"
 
@@ -218,6 +215,10 @@ msgstr "[core] Borrar elemento"
 msgid "Upgrading permissions"
 msgstr "editar permisos"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Actualizando permisos (%d elementos competos, faltan %d)"
+
 #, fuzzy
 msgid "Deleting old permission tables"
 msgstr "editar permisos %s"
@@ -232,11 +233,32 @@ msgstr "Todos los usuarios"
 msgid "Detecting broken derivatives"
 msgstr "Detectando derivadas rotas"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Detectando derivadas rotas, cargando "
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Detectando derivadas rotas, guardando "
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Detectando derivadas rotas, guardando "
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Actualizando permisos (%d elementos competos, faltan %d)"
+
 msgid "Clearing fast-download cache"
 msgstr "Borrando la cache de descarga rápida"
 
 #, fuzzy
 msgid "Deleting old fast-download cache"
+msgstr "editar permisos %s"
+
+#, fuzzy, c-format
+msgid "Deleting old session files (iteration %d)"
 msgstr "editar permisos %s"
 
 msgid "Updating panorama items"
@@ -269,31 +291,6 @@ msgstr "Esto es la parte superior de su Gallery"
 msgid "Converting MySQL data to UTF8"
 msgstr "Convirtiendo los datos en MySQL a UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Actualizando permisos (%d elementos competos, faltan %d)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Detectando derivadas rotas, cargando "
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Detectando derivadas rotas, guardando "
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Detectando derivadas rotas, guardando "
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Actualizando permisos (%d elementos competos, faltan %d)"
-
-#, fuzzy, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "editar permisos %s"
-
 #, fuzzy
 msgid "add items"
 msgstr "agregar elementos"
@@ -310,33 +307,6 @@ msgstr "agregar sub-album"
 msgid "add items confirmation"
 msgstr "Agregar confirmaci&oacute;n de elementos"
 
-#, fuzzy
-msgid "Base filename"
-msgstr "Nombre de usuario"
-
-#, fuzzy
-msgid "Caption"
-msgstr "Subt&iacute;tulo: "
-
-#, fuzzy
-msgid "Blank"
-msgstr "<< Atr&aacute;s"
-
-msgid "From Web Browser"
-msgstr "Agregar desde su navegador web"
-
-#, fuzzy, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabyte"
-msgstr[1] "%d megabytes"
-
-#, fuzzy, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobyte"
-msgstr[1] "%d kilobytes"
-
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
 msgstr "El archivo de entrada %s excede del tamaño máximo de archivo permido"
@@ -352,6 +322,33 @@ msgstr "El archivo de entrada %s solo ha sido cargado parcialmente"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "El archivo de entrada %s no ha sido cargado. Error %d"
+
+#, fuzzy, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabyte"
+msgstr[1] "%d megabytes"
+
+#, fuzzy, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobyte"
+msgstr[1] "%d kilobytes"
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Nombre de usuario"
+
+#, fuzzy
+msgid "Caption"
+msgstr "Subt&iacute;tulo: "
+
+#, fuzzy
+msgid "Blank"
+msgstr "<< Atr&aacute;s"
+
+msgid "From Web Browser"
+msgstr "Agregar desde su navegador web"
 
 msgid "Gallery Item Administration"
 msgstr "Administrador de elementos"
@@ -383,6 +380,10 @@ msgstr "Restaurar la configuración del tema"
 msgid "Preparing..."
 msgstr "Procesando..."
 
+#, fuzzy, c-format
+msgid "Processing image %d of %d"
+msgstr "Visualizando p&aacute;gina %d de %d"
+
 msgid "Apply thumbnail settings"
 msgstr "Aplicar configuración de miniaturas"
 
@@ -393,10 +394,6 @@ msgstr "Recrear miniaturas"
 #, fuzzy
 msgid "Album"
 msgstr "Agregar Album"
-
-#, fuzzy, c-format
-msgid "Processing image %d of %d"
-msgstr "Visualizando p&aacute;gina %d de %d"
 
 #, fuzzy
 msgid "Changes saved successfully"
@@ -559,6 +556,10 @@ msgstr "Imagen modificada"
 msgid "Edit Movie"
 msgstr "Pel&iacute;cula"
 
+#, fuzzy, c-format
+msgid "Edit %s"
+msgstr "Editar %s"
+
 #, fuzzy
 msgid "Add Album"
 msgstr "Agregar Sub-Album"
@@ -583,6 +584,10 @@ msgstr "Borrar %s"
 msgid "Delete Movie"
 msgstr "Borrar %s"
 
+#, fuzzy, c-format
+msgid "Delete %s"
+msgstr "Borrar %s"
+
 #, fuzzy
 msgid "Move Album"
 msgstr "Reordenar Album"
@@ -594,6 +599,10 @@ msgstr "Imagen modificada"
 #, fuzzy
 msgid "Move Movie"
 msgstr "Tama&ntilde;o de la pel&iacute;cula"
+
+#, fuzzy, c-format
+msgid "Move %s"
+msgstr "Mover %s"
 
 #, fuzzy
 msgid "Edit Captions"
@@ -649,18 +658,6 @@ msgstr "Opciones de la cuenta"
 msgid "Change Password"
 msgstr "Cambiar contrase&ntilde;a"
 
-#, fuzzy, c-format
-msgid "Edit %s"
-msgstr "Editar %s"
-
-#, fuzzy, c-format
-msgid "Delete %s"
-msgstr "Borrar %s"
-
-#, fuzzy, c-format
-msgid "Move %s"
-msgstr "Mover %s"
-
 #, fuzzy
 msgid "Build all thumbnails/resizes"
 msgstr "Recrear miniaturas y escalas"
@@ -675,9 +672,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Crear Todas las Miniaturas/Imágenes Redimensionadas"
 
-msgid "Debug output for failed items:"
-msgstr "Salida de depuración para los elementos fallidos:"
-
 #, fuzzy, c-format
 msgid "Checked %d items"
 msgstr "agregar elementos"
@@ -689,6 +683,9 @@ msgstr "agregar elementos"
 #, c-format
 msgid "%d items failed"
 msgstr "%d elementos fallidos"
+
+msgid "Debug output for failed items:"
+msgstr "Salida de depuración para los elementos fallidos:"
 
 msgid "Convert MySQL database to UTF8"
 msgstr "Convertir la base de datos MySQL a UTF8"
@@ -922,6 +919,10 @@ msgstr "Ascendente"
 msgid "Descending"
 msgstr "Descendente"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "Potenciado por Gallery v%s"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Validació deshabilitada hasta que se configure allowSessionAccess en config.php"
 
@@ -931,13 +932,6 @@ msgstr "Esta p&aacute;gina es v&aacute;lida XHTML 1.0"
 #, fuzzy
 msgid "Donate to the Gallery project"
 msgstr "Volver a la Galer&iacute;a"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Doble Doble"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "Potenciado por Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -1057,13 +1051,13 @@ msgstr "Hoja de c&aacute;lculo"
 msgid "file"
 msgstr "Archivo: "
 
-#, fuzzy
-msgid "Back"
-msgstr "<< Atr&aacute;s"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Regresar a %s"
+
+#, fuzzy
+msgid "Back"
+msgstr "<< Atr&aacute;s"
 
 #, fuzzy
 msgid "User"
@@ -4180,3 +4174,9 @@ msgstr "Login"
 
 msgid "Links to album/photo peers"
 msgstr "Enlaces a los pares de álbum/foto"
+
+#~ msgid "key"
+#~ msgstr "llave"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Doble Doble"

@@ -36,30 +36,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Тест Надсилання Пошти"
 
-msgid "forever"
-msgstr "назавжди"
-
-msgid "High Priority (Me first!)"
-msgstr "Високий пріоритет (Спочатку мене!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Низький Пріоритет (Я поділюсь!)"
-
-msgid "No Markup"
-msgstr "Без Розмітки"
-
-msgid "BBCode"
-msgstr "BBКод"
-
-msgid "Raw HTML"
-msgstr "Чистий HTML"
-
-msgid "Database"
-msgstr "База Даних"
-
-msgid "File"
-msgstr "Файл"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -83,6 +59,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d тиждень"
 msgstr[1] "%d тижнів"
+
+msgid "forever"
+msgstr "назавжди"
+
+msgid "High Priority (Me first!)"
+msgstr "Високий пріоритет (Спочатку мене!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Низький Пріоритет (Я поділюсь!)"
+
+msgid "No Markup"
+msgstr "Без Розмітки"
+
+msgid "BBCode"
+msgstr "BBКод"
+
+msgid "Raw HTML"
+msgstr "Чистий HTML"
+
+msgid "Database"
+msgstr "База Даних"
+
+msgid "File"
+msgstr "Файл"
 
 msgid "&lt;none&gt;"
 msgstr ""
@@ -182,10 +182,6 @@ msgid "Installing the core module"
 msgstr "Встановлення головних модулів"
 
 #, fuzzy
-msgid "key"
-msgstr "ключ"
-
-#, fuzzy
 msgid "All access"
 msgstr "Весь доступ"
 
@@ -220,6 +216,10 @@ msgstr "[ядро] Видалити елемент"
 msgid "Upgrading permissions"
 msgstr "Оновлення повноважень"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Оновлення повноважень (%d елементів завершено, %d залишилось)"
+
 msgid "Deleting old permission tables"
 msgstr "Видалення старих таблиць повноважень"
 
@@ -232,11 +232,32 @@ msgstr "Усі Користувачі"
 msgid "Detecting broken derivatives"
 msgstr "Визначення самотніх похідних"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Знайдено самотні похідні, завантажуюсь"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Пошук самотніх похідних, збереження"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Пошук самотніх похідних, збереження"
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Оновлення повноважень (%d елементів завершено, %d залишилось)"
+
 msgid "Clearing fast-download cache"
 msgstr "Створення кешу для швидкого завантаження"
 
 msgid "Deleting old fast-download cache"
 msgstr "Видалення старого кешу швидкого завантаження"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Пошук старих файлів сесій (ітерація %d)"
 
 msgid "Updating panorama items"
 msgstr ""
@@ -266,31 +287,6 @@ msgstr "Це головна сторінка Галереї"
 msgid "Converting MySQL data to UTF8"
 msgstr "Перетворення даних MySQL в UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Оновлення повноважень (%d елементів завершено, %d залишилось)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Знайдено самотні похідні, завантажуюсь"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Пошук самотніх похідних, збереження"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Пошук самотніх похідних, збереження"
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Оновлення повноважень (%d елементів завершено, %d залишилось)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Пошук старих файлів сесій (ітерація %d)"
-
 msgid "add items"
 msgstr "додати елемент"
 
@@ -303,32 +299,6 @@ msgstr "додати вкладений альбом"
 #, fuzzy
 msgid "add items confirmation"
 msgstr "додати підтвердження елементу"
-
-#, fuzzy
-msgid "Base filename"
-msgstr "Основна назва файлу"
-
-msgid "Caption"
-msgstr "Заголовок"
-
-#, fuzzy
-msgid "Blank"
-msgstr "Порожньо"
-
-msgid "From Web Browser"
-msgstr "З Веб Оглядача"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d мегабайт"
-msgstr[1] "%d мегабайтів"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d кілобайт"
-msgstr[1] "%d кілобайтів"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -345,6 +315,32 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d мегабайт"
+msgstr[1] "%d мегабайтів"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d кілобайт"
+msgstr[1] "%d кілобайтів"
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Основна назва файлу"
+
+msgid "Caption"
+msgstr "Заголовок"
+
+#, fuzzy
+msgid "Blank"
+msgstr "Порожньо"
+
+msgid "From Web Browser"
+msgstr "З Веб Оглядача"
 
 msgid "Gallery Item Administration"
 msgstr "Адміністратор Елементу Галереї"
@@ -374,6 +370,10 @@ msgstr "Відновлені налаштування теми"
 msgid "Preparing..."
 msgstr "Працюю..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Обробляється зображення %d з %d"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -382,10 +382,6 @@ msgstr "Перестворення мініатюр..."
 
 msgid "Album"
 msgstr "Альбом"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Обробляється зображення %d з %d"
 
 msgid "Changes saved successfully"
 msgstr "Зміни успішно збережено"
@@ -532,6 +528,10 @@ msgstr "Редагувати Фото"
 msgid "Edit Movie"
 msgstr "Редагувати Фільм"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Редагувати %s"
+
 msgid "Add Album"
 msgstr "Додати Альбом"
 
@@ -550,6 +550,10 @@ msgstr "Видалити Фото"
 msgid "Delete Movie"
 msgstr "Видалити Фільм"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Видалити %s"
+
 msgid "Move Album"
 msgstr "Перемістити Альбом"
 
@@ -558,6 +562,10 @@ msgstr "Перемістити Фото"
 
 msgid "Move Movie"
 msgstr "Перемістити Фільм"
+
+#, c-format
+msgid "Move %s"
+msgstr "Перемістити %s"
 
 msgid "Edit Captions"
 msgstr "Редагувати Підписи"
@@ -607,18 +615,6 @@ msgstr "Налаштування Облікового Запису"
 msgid "Change Password"
 msgstr "Змінити Пароль"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Редагувати %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Видалити %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Перемістити %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Створити усі мініатюри/зміни розміру"
 
@@ -631,9 +627,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Створити Усі Мініатюри/Зміни Розміру"
 
-msgid "Debug output for failed items:"
-msgstr "Результати вад проблемних елементів:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "Перевірено %d елементів"
@@ -645,6 +638,9 @@ msgstr "%d елементів створено"
 #, c-format
 msgid "%d items failed"
 msgstr "%d елементів не вдалося створити"
+
+msgid "Debug output for failed items:"
+msgstr "Результати вад проблемних елементів:"
 
 #, fuzzy
 msgid "Convert MySQL database to UTF8"
@@ -853,6 +849,10 @@ msgstr "За Зростанням"
 msgid "Descending"
 msgstr "За Спаданням"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Перевірку вимкнено, поки не встановлено allowSessionAccess в config.php"
 
@@ -861,13 +861,6 @@ msgstr "На цій сторінці правильний XHTML 1.0"
 
 msgid "Donate to the Gallery project"
 msgstr "Допомогти проекту Галереї"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -977,12 +970,12 @@ msgstr "таблиця"
 msgid "file"
 msgstr "Файл"
 
-msgid "Back"
-msgstr "Назад"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Назад в %s"
+
+msgid "Back"
+msgstr "Назад"
 
 msgid "User"
 msgstr "Користувач"
@@ -3825,3 +3818,7 @@ msgstr "Блок входу в систему"
 
 msgid "Links to album/photo peers"
 msgstr "Посилання на інші елементи альбому/фото"
+
+#, fuzzy
+#~ msgid "key"
+#~ msgstr "ключ"

@@ -36,30 +36,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Prova de Correu de Gallery"
 
-msgid "forever"
-msgstr "per sempre"
-
-msgid "High Priority (Me first!)"
-msgstr "Prioritat Alta (jo primer!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Prioritat baixa (vull compartir!)"
-
-msgid "No Markup"
-msgstr "Sense format"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "HTML Raw"
-
-msgid "Database"
-msgstr "Base de Dades"
-
-msgid "File"
-msgstr "Arxiu"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -83,6 +59,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d setmana"
 msgstr[1] "%d setmanes"
+
+msgid "forever"
+msgstr "per sempre"
+
+msgid "High Priority (Me first!)"
+msgstr "Prioritat Alta (jo primer!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Prioritat baixa (vull compartir!)"
+
+msgid "No Markup"
+msgstr "Sense format"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "HTML Raw"
+
+msgid "Database"
+msgstr "Base de Dades"
+
+msgid "File"
+msgstr "Arxiu"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;ningun&gt;"
@@ -176,9 +176,6 @@ msgstr "Usar aquesta configuració"
 msgid "Installing the core module"
 msgstr "Mòdul central de Gallery"
 
-msgid "key"
-msgstr "clau"
-
 msgid "All access"
 msgstr "Accés Total"
 
@@ -212,6 +209,10 @@ msgstr "[core] Borrar element"
 msgid "Upgrading permissions"
 msgstr "Actualitzant permisos"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Permissos de millora (%d items completats, %d pendents)"
+
 msgid "Deleting old permission tables"
 msgstr "Borrant les taules de permisos antigues"
 
@@ -224,11 +225,32 @@ msgstr "Tots els Usuaris"
 msgid "Detecting broken derivatives"
 msgstr "Detectant derivades trencades"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Detectant derivades trencades, carregant "
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Detectant derivades trencades, guardant"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "Detectant derivades trencades, guardant"
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "Permissos de millora (%d items completats, %d pendents)"
+
 msgid "Clearing fast-download cache"
 msgstr "Borrant la cache de descàrrega ràpida"
 
 msgid "Deleting old fast-download cache"
 msgstr "Borrant la cache de descàrrega ràpida"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Borrant arxius de sessi&oacute; antics (iteraci&oacute;  %d)"
 
 msgid "Updating panorama items"
 msgstr ""
@@ -258,31 +280,6 @@ msgstr "Aquesta és la pàgina principal de la teva Galeria"
 msgid "Converting MySQL data to UTF8"
 msgstr "Convertint dades de MySQL a UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Permissos de millora (%d items completats, %d pendents)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Detectant derivades trencades, carregant "
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Detectant derivades trencades, guardant"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "Detectant derivades trencades, guardant"
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "Permissos de millora (%d items completats, %d pendents)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Borrant arxius de sessi&oacute; antics (iteraci&oacute;  %d)"
-
 msgid "add items"
 msgstr "agregar elements"
 
@@ -294,30 +291,6 @@ msgstr "agregar sub-àlbum"
 
 msgid "add items confirmation"
 msgstr "confirmació per agregar elements"
-
-msgid "Base filename"
-msgstr "Nom del fitxer rael"
-
-msgid "Caption"
-msgstr "Etiqueta"
-
-msgid "Blank"
-msgstr "En blanc"
-
-msgid "From Web Browser"
-msgstr "Desde el Navegador"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megabyte"
-msgstr[1] "%d megabytes"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilobyte"
-msgstr[1] "%d kilobytes"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -334,6 +307,30 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megabyte"
+msgstr[1] "%d megabytes"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilobyte"
+msgstr[1] "%d kilobytes"
+
+msgid "Base filename"
+msgstr "Nom del fitxer rael"
+
+msgid "Caption"
+msgstr "Etiqueta"
+
+msgid "Blank"
+msgstr "En blanc"
+
+msgid "From Web Browser"
+msgstr "Desde el Navegador"
 
 msgid "Gallery Item Administration"
 msgstr "Administració d'Elements de Gallery"
@@ -363,6 +360,10 @@ msgstr "Restaurar la configuració del tema"
 msgid "Preparing..."
 msgstr "Processant..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Processant imatge %d de %d"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -371,10 +372,6 @@ msgstr "Refer miniatures"
 
 msgid "Album"
 msgstr "Àlbum"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Processant imatge %d de %d"
 
 msgid "Changes saved successfully"
 msgstr "Els canvis han estat guardats amb èxit"
@@ -514,6 +511,10 @@ msgstr "Editar Foto"
 msgid "Edit Movie"
 msgstr "Editar Pel·lícula"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Editar %s"
+
 msgid "Add Album"
 msgstr "Agregar Àlbum"
 
@@ -532,6 +533,10 @@ msgstr "Borrar Foto"
 msgid "Delete Movie"
 msgstr "Borrar Pel·lícula"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Borrar %s"
+
 msgid "Move Album"
 msgstr "Moure Àlbum"
 
@@ -540,6 +545,10 @@ msgstr "Moure Foto"
 
 msgid "Move Movie"
 msgstr "Moure Pel·lícula"
+
+#, c-format
+msgid "Move %s"
+msgstr "Moure %s"
 
 msgid "Edit Captions"
 msgstr "Editar Etiquetes"
@@ -589,18 +598,6 @@ msgstr "Propietats del Compte"
 msgid "Change Password"
 msgstr "Canviar Contrasenya"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Editar %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Borrar %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Moure %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Crear totes les vistes en miniatura/Imatges redimensionades"
 
@@ -614,9 +611,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Crear Totes les vistes en miniatura/imatges redimensionades"
 
-msgid "Debug output for failed items:"
-msgstr "Sortida de depuració per als elements que han fallat:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "%d elements sel·leccionats"
@@ -628,6 +622,9 @@ msgstr "%d elements creats"
 #, c-format
 msgid "%d items failed"
 msgstr "%d elements que han fallat"
+
+msgid "Debug output for failed items:"
+msgstr "Sortida de depuració per als elements que han fallat:"
 
 #, fuzzy
 msgid "Convert MySQL database to UTF8"
@@ -837,6 +834,10 @@ msgstr "Ascendent"
 msgid "Descending"
 msgstr "Descendent"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Validació deshabilitada fins que es configuri allowSessionAccess al config.php"
 
@@ -845,13 +846,6 @@ msgstr "Aquesta pàgina es XHTML 1.0 vàlid"
 
 msgid "Donate to the Gallery project"
 msgstr "Dóna al projecte Gallery"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -961,12 +955,12 @@ msgstr "Fulles de Càlcul"
 msgid "file"
 msgstr "Arxiu"
 
-msgid "Back"
-msgstr "Enrere"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Tornar a %s"
+
+msgid "Back"
+msgstr "Enrere"
 
 msgid "User"
 msgstr "Usuari"
@@ -3813,3 +3807,6 @@ msgstr "Bloc d'Inici de Sessió"
 
 msgid "Links to album/photo peers"
 msgstr "Enllaços als parells d'àlbum/foto"
+
+#~ msgid "key"
+#~ msgstr "clau"

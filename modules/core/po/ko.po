@@ -36,6 +36,26 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Gallery 전자 편지 시험 발송입니다."
 
+#, c-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d 분"
+
+#, c-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d 시간"
+
+#, c-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] "%d 일"
+
+#, c-format
+msgid "%d week"
+msgid_plural "%d weeks"
+msgstr[0] "%d 주"
+
 msgid "forever"
 msgstr "지속"
 
@@ -59,26 +79,6 @@ msgstr "데이터베이스"
 
 msgid "File"
 msgstr "파일"
-
-#, c-format
-msgid "%d minute"
-msgid_plural "%d minutes"
-msgstr[0] "%d 분"
-
-#, c-format
-msgid "%d hour"
-msgid_plural "%d hours"
-msgstr[0] "%d 시간"
-
-#, c-format
-msgid "%d day"
-msgid_plural "%d days"
-msgstr[0] "%d 일"
-
-#, c-format
-msgid "%d week"
-msgid_plural "%d weeks"
-msgstr[0] "%d 주"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;없음&gt;"
@@ -172,9 +172,6 @@ msgstr "이 설정값을 사용합니다."
 msgid "Installing the core module"
 msgstr "Core 모듈 설치중"
 
-msgid "key"
-msgstr ""
-
 msgid "All access"
 msgstr "모두 접근"
 
@@ -209,6 +206,10 @@ msgstr "[core] 아이템 지우기"
 msgid "Upgrading permissions"
 msgstr "권한 업그레이드중입니다."
 
+#, fuzzy, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "권한 업그레이드중입니다. (%d 아이템 완료, %d 남았습니다.)"
+
 #, fuzzy
 msgid "Deleting old permission tables"
 msgstr "오래된 테이블 권한을 삭제중입니다."
@@ -222,6 +223,23 @@ msgstr "모든 사용자"
 msgid "Detecting broken derivatives"
 msgstr ""
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "권한 업그레이드중입니다. (%d 아이템 완료, %d 남았습니다.)"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "권한 업그레이드중입니다. (%d 아이템 완료, %d 남았습니다.)"
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "권한 업그레이드중입니다. (%d 아이템 완료, %d 남았습니다.)"
+
 #, fuzzy
 msgid "Clearing fast-download cache"
 msgstr "빠른-내려받기 캐쉬 지우는중입니다."
@@ -229,6 +247,10 @@ msgstr "빠른-내려받기 캐쉬 지우는중입니다."
 #, fuzzy
 msgid "Deleting old fast-download cache"
 msgstr "예전 빠른-내려받기 캐쉬 지우는 중"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "오래된 세션파일을 삭제중입니다. ( %d번 반복됨)"
 
 msgid "Updating panorama items"
 msgstr ""
@@ -259,31 +281,6 @@ msgstr "Gallery의 첫장입니다."
 msgid "Converting MySQL data to UTF8"
 msgstr "MYSQL 자료 UTF-8로 변환중"
 
-#, fuzzy, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "권한 업그레이드중입니다. (%d 아이템 완료, %d 남았습니다.)"
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "권한 업그레이드중입니다. (%d 아이템 완료, %d 남았습니다.)"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "권한 업그레이드중입니다. (%d 아이템 완료, %d 남았습니다.)"
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "권한 업그레이드중입니다. (%d 아이템 완료, %d 남았습니다.)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "오래된 세션파일을 삭제중입니다. ( %d번 반복됨)"
-
 msgid "add items"
 msgstr "아이템 추가"
 
@@ -295,28 +292,6 @@ msgstr "하위 산진첩 추가"
 
 msgid "add items confirmation"
 msgstr "추가 아이템 확인"
-
-msgid "Base filename"
-msgstr "파일 이름을 기본으로"
-
-msgid "Caption"
-msgstr "설명"
-
-msgid "Blank"
-msgstr "비워둠"
-
-msgid "From Web Browser"
-msgstr "웹 브라우저로"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d 메가바이트"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d 킬로바이트"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -333,6 +308,28 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d 메가바이트"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d 킬로바이트"
+
+msgid "Base filename"
+msgstr "파일 이름을 기본으로"
+
+msgid "Caption"
+msgstr "설명"
+
+msgid "Blank"
+msgstr "비워둠"
+
+msgid "From Web Browser"
+msgstr "웹 브라우저로"
 
 msgid "Gallery Item Administration"
 msgstr "Gallery 아이템 관리"
@@ -362,6 +359,10 @@ msgstr "테마 설정이 복구되었습니다."
 msgid "Preparing..."
 msgstr "실행중...."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "%d개의 이미지 처리중입니다. (총 %d개의 아이템이 있습니다.)"
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -370,10 +371,6 @@ msgstr ""
 
 msgid "Album"
 msgstr "사진첩"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "%d개의 이미지 처리중입니다. (총 %d개의 아이템이 있습니다.)"
 
 msgid "Changes saved successfully"
 msgstr "수정 사항을 저장하였습니다."
@@ -513,6 +510,10 @@ msgstr "사진 편집"
 msgid "Edit Movie"
 msgstr "동영상 편집"
 
+#, c-format
+msgid "Edit %s"
+msgstr "%s 편집"
+
 msgid "Add Album"
 msgstr "사진첩 추가하기"
 
@@ -531,6 +532,10 @@ msgstr "사진 삭제"
 msgid "Delete Movie"
 msgstr "동영상 삭제"
 
+#, c-format
+msgid "Delete %s"
+msgstr "%s 지우기"
+
 msgid "Move Album"
 msgstr "사진첩 이동"
 
@@ -539,6 +544,10 @@ msgstr "사진 이동"
 
 msgid "Move Movie"
 msgstr "동영상 이동"
+
+#, c-format
+msgid "Move %s"
+msgstr "%s 이동"
 
 msgid "Edit Captions"
 msgstr "설명 편집"
@@ -588,18 +597,6 @@ msgstr "계정 설정"
 msgid "Change Password"
 msgstr "열쇠 글 바꾸기"
 
-#, c-format
-msgid "Edit %s"
-msgstr "%s 편집"
-
-#, c-format
-msgid "Delete %s"
-msgstr "%s 지우기"
-
-#, c-format
-msgid "Move %s"
-msgstr "%s 이동"
-
 msgid "Build all thumbnails/resizes"
 msgstr ""
 
@@ -610,9 +607,6 @@ msgstr ""
 
 msgid "Build All Thumbnails/Resizes"
 msgstr ""
-
-msgid "Debug output for failed items:"
-msgstr "실패한 아이템에 대한 디버그 출력:"
 
 #, fuzzy, c-format
 msgid "Checked %d items"
@@ -625,6 +619,9 @@ msgstr ""
 #, c-format
 msgid "%d items failed"
 msgstr "%d개의 아이템 실패함"
+
+msgid "Debug output for failed items:"
+msgstr "실패한 아이템에 대한 디버그 출력:"
 
 #, fuzzy
 msgid "Convert MySQL database to UTF8"
@@ -823,6 +820,10 @@ msgstr "오름 차순"
 msgid "Descending"
 msgstr "내림 차순"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr ""
 
@@ -831,13 +832,6 @@ msgstr "이 페이지는 XHTML 1.0 규격을 따릅니다."
 
 msgid "Donate to the Gallery project"
 msgstr "Gallery 프로젝트에 기부를 부탁합니다."
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -947,12 +941,12 @@ msgstr "스프레드 시트"
 msgid "file"
 msgstr "파일"
 
-msgid "Back"
-msgstr "뒤로"
-
 #, c-format
 msgid "Back to %s"
 msgstr "%s으(로) 돌아가기"
+
+msgid "Back"
+msgstr "뒤로"
 
 msgid "User"
 msgstr "사용자"

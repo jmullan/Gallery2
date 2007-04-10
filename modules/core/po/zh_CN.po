@@ -32,30 +32,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "图库电子邮件测试"
 
-msgid "forever"
-msgstr "永久"
-
-msgid "High Priority (Me first!)"
-msgstr "高优先级（Me First）"
-
-msgid "Low Priority (I want to share!)"
-msgstr "低优先级（分享）"
-
-msgid "No Markup"
-msgstr "无标签"
-
-msgid "BBCode"
-msgstr "BBCode代码"
-
-msgid "Raw HTML"
-msgstr "HTML源码"
-
-msgid "Database"
-msgstr "数据库"
-
-msgid "File"
-msgstr "文件"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -79,6 +55,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d 星期"
 msgstr[1] "%d 星期"
+
+msgid "forever"
+msgstr "永久"
+
+msgid "High Priority (Me first!)"
+msgstr "高优先级（Me First）"
+
+msgid "Low Priority (I want to share!)"
+msgstr "低优先级（分享）"
+
+msgid "No Markup"
+msgstr "无标签"
+
+msgid "BBCode"
+msgstr "BBCode代码"
+
+msgid "Raw HTML"
+msgstr "HTML源码"
+
+msgid "Database"
+msgstr "数据库"
+
+msgid "File"
+msgstr "文件"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;无&gt;"
@@ -172,9 +172,6 @@ msgstr "使用这些设置"
 msgid "Installing the core module"
 msgstr "正在安装核心模块"
 
-msgid "key"
-msgstr "主键"
-
 msgid "All access"
 msgstr "完全存取"
 
@@ -208,6 +205,10 @@ msgstr "[核心] 删除项目"
 msgid "Upgrading permissions"
 msgstr "正在升级权限"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "升级权限 （%d 项目完成，%d 保留）"
+
 msgid "Deleting old permission tables"
 msgstr "正在删除旧的权限数据表"
 
@@ -220,11 +221,32 @@ msgstr "所有用户"
 msgid "Detecting broken derivatives"
 msgstr "检查受损衍生对象"
 
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "检查受损衍生对象，加载......"
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "检查受损衍生对象，保存....."
+
+#, fuzzy, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr "检查受损衍生对象，保存....."
+
+#, fuzzy, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr "升级权限 （%d 项目完成，%d 保留）"
+
 msgid "Clearing fast-download cache"
 msgstr "清除快速下载缓存"
 
 msgid "Deleting old fast-download cache"
 msgstr "正在删除旧的快速下载缓存"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "正在删除旧的会话文件（重复 %d）"
 
 msgid "Updating panorama items"
 msgstr ""
@@ -254,31 +276,6 @@ msgstr "这是Gallery的首页"
 msgid "Converting MySQL data to UTF8"
 msgstr "将 MySQL 数据转换到 UTF8"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "升级权限 （%d 项目完成，%d 保留）"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "检查受损衍生对象，加载......"
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "检查受损衍生对象，保存....."
-
-#, fuzzy, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr "检查受损衍生对象，保存....."
-
-#, fuzzy, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "升级权限 （%d 项目完成，%d 保留）"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "正在删除旧的会话文件（重复 %d）"
-
 msgid "add items"
 msgstr "添加项目"
 
@@ -290,30 +287,6 @@ msgstr "添加子相册"
 
 msgid "add items confirmation"
 msgstr "添加项目确认"
-
-msgid "Base filename"
-msgstr "文件名"
-
-msgid "Caption"
-msgstr "标题"
-
-msgid "Blank"
-msgstr "空白"
-
-msgid "From Web Browser"
-msgstr "从浏览器"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d MB"
-msgstr[1] "%d MB"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d KB"
-msgstr[1] "%d KB"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -330,6 +303,30 @@ msgstr ""
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr ""
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d MB"
+msgstr[1] "%d MB"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d KB"
+msgstr[1] "%d KB"
+
+msgid "Base filename"
+msgstr "文件名"
+
+msgid "Caption"
+msgstr "标题"
+
+msgid "Blank"
+msgstr "空白"
+
+msgid "From Web Browser"
+msgstr "从浏览器"
 
 msgid "Gallery Item Administration"
 msgstr "图库项目管理"
@@ -359,6 +356,10 @@ msgstr "恢复主题设置"
 msgid "Preparing..."
 msgstr "处理中..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "正在处理图像 %d，共 %d "
+
 msgid "Apply thumbnail settings"
 msgstr ""
 
@@ -367,10 +368,6 @@ msgstr "正在重建缩略图......"
 
 msgid "Album"
 msgstr "相册"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "正在处理图像 %d，共 %d "
 
 msgid "Changes saved successfully"
 msgstr "变更已保存成功"
@@ -510,6 +507,10 @@ msgstr "编辑照片"
 msgid "Edit Movie"
 msgstr "编辑电影"
 
+#, c-format
+msgid "Edit %s"
+msgstr "编辑 %s"
+
 msgid "Add Album"
 msgstr "添加相册"
 
@@ -528,6 +529,10 @@ msgstr "删除照片"
 msgid "Delete Movie"
 msgstr "删除电影"
 
+#, c-format
+msgid "Delete %s"
+msgstr "删除 %s"
+
 msgid "Move Album"
 msgstr "移动相册"
 
@@ -536,6 +541,10 @@ msgstr "移动照片"
 
 msgid "Move Movie"
 msgstr "移动电影"
+
+#, c-format
+msgid "Move %s"
+msgstr "移动 %s"
 
 msgid "Edit Captions"
 msgstr "编辑标题"
@@ -585,18 +594,6 @@ msgstr "帐户设置"
 msgid "Change Password"
 msgstr "变更密码"
 
-#, c-format
-msgid "Edit %s"
-msgstr "编辑 %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "删除 %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "移动 %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "创建所有缩略图和变更尺寸的图片"
 
@@ -607,9 +604,6 @@ msgstr "确保所有衍生对象（缩略图等...）的数据已经建立并重
 
 msgid "Build All Thumbnails/Resizes"
 msgstr "创建所有缩略图和/或更改尺寸的图像"
-
-msgid "Debug output for failed items:"
-msgstr "为错误项目输出调试信息："
 
 #, c-format
 msgid "Checked %d items"
@@ -622,6 +616,9 @@ msgstr "%d个项目创建"
 #, c-format
 msgid "%d items failed"
 msgstr "%d 个项目错误"
+
+msgid "Debug output for failed items:"
+msgstr "为错误项目输出调试信息："
 
 #, fuzzy
 msgid "Convert MySQL database to UTF8"
@@ -824,6 +821,10 @@ msgstr "升序"
 msgid "Descending"
 msgstr "降序"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr ""
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "校验功能被关闭，除非在 config.php 中设置 allowSessionAccess "
 
@@ -832,13 +833,6 @@ msgstr "此页面符合XHTML 1.0标准"
 
 msgid "Donate to the Gallery project"
 msgstr "赞助图库项目"
-
-msgid "G2.2: Double Double"
-msgstr ""
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr ""
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -948,12 +942,12 @@ msgstr "数据表"
 msgid "file"
 msgstr "文件"
 
-msgid "Back"
-msgstr "返回"
-
 #, c-format
 msgid "Back to %s"
 msgstr "返回 %s"
+
+msgid "Back"
+msgstr "返回"
 
 msgid "User"
 msgstr "用户"
@@ -3643,3 +3637,6 @@ msgstr "登录"
 
 msgid "Links to album/photo peers"
 msgstr "链接到同级相册/相片"
+
+#~ msgid "key"
+#~ msgstr "主键"

@@ -37,30 +37,6 @@ msgstr ""
 msgid "Gallery Email Test"
 msgstr "Gallerian sähköpostin testaus"
 
-msgid "forever"
-msgstr "ikuisesti"
-
-msgid "High Priority (Me first!)"
-msgstr "Korkein Prioriteetti (Minä ensin!)"
-
-msgid "Low Priority (I want to share!)"
-msgstr "Matalin Prioriteetti (ei niin väliä)"
-
-msgid "No Markup"
-msgstr "Vain teksti"
-
-msgid "BBCode"
-msgstr "BBCode"
-
-msgid "Raw HTML"
-msgstr "HTML"
-
-msgid "Database"
-msgstr "Tietokanta"
-
-msgid "File"
-msgstr "Tiedosto"
-
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -84,6 +60,30 @@ msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d viikko"
 msgstr[1] "%d viikkoa"
+
+msgid "forever"
+msgstr "ikuisesti"
+
+msgid "High Priority (Me first!)"
+msgstr "Korkein Prioriteetti (Minä ensin!)"
+
+msgid "Low Priority (I want to share!)"
+msgstr "Matalin Prioriteetti (ei niin väliä)"
+
+msgid "No Markup"
+msgstr "Vain teksti"
+
+msgid "BBCode"
+msgstr "BBCode"
+
+msgid "Raw HTML"
+msgstr "HTML"
+
+msgid "Database"
+msgstr "Tietokanta"
+
+msgid "File"
+msgstr "Tiedosto"
 
 msgid "&lt;none&gt;"
 msgstr "&lt;ei valittu&gt;"
@@ -172,9 +172,6 @@ msgstr "Käytä näitä asetuksia"
 msgid "Installing the core module"
 msgstr "Asennetaan Gallerian ydinmoduuli"
 
-msgid "key"
-msgstr "avain"
-
 msgid "All access"
 msgstr "Täydet käyttöoikeudet"
 
@@ -208,6 +205,10 @@ msgstr "[ydin] Poista kohde"
 msgid "Upgrading permissions"
 msgstr "Päivittää oikeuksia"
 
+#, c-format
+msgid "Upgrading permissions (%d items complete, %d remaining)"
+msgstr "Päivitetään oikeuksia (%d suoritettu, %d jäljellä)"
+
 msgid "Deleting old permission tables"
 msgstr "Poistaa vanhoja oikeus tietoja"
 
@@ -220,11 +221,35 @@ msgstr "Kaikki Käyttäjät"
 msgid "Detecting broken derivatives"
 msgstr "Etsii rikkoutuneita johdannaisia"
 
+#, c-format
+msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
+msgstr "Etsitään rikkinäisiä johdannaisia, ladataan (%d johdannaista tarkastettu, %d jäljellä)"
+
+#, c-format
+msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
+msgstr "Etsitään rikkinäisiä johdannaisia (%d johdannaista tarkastettu, %d jäljellä)"
+
+#, c-format
+msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
+msgstr ""
+"Etsitään rikkinäisiä johdannaisia, tallennetaan (%d johdannaista tarkastettu, %d jäljellä)"
+
+#, c-format
+msgid ""
+"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
+msgstr ""
+"Etsitään rikkinäisiä johdannaisia, tallennetaan kohdetta %d / %d (%d johdannaista "
+"tarkastettu, %d jäljellä)"
+
 msgid "Clearing fast-download cache"
 msgstr "Tyhjentää nopean latauksen välimuistia"
 
 msgid "Deleting old fast-download cache"
 msgstr "Tyhjennetään nopean latauksen välimuisti"
+
+#, c-format
+msgid "Deleting old session files (iteration %d)"
+msgstr "Poistaa vanhoja sessiotiedostoja (vaihe %d)"
 
 msgid "Updating panorama items"
 msgstr "Päivitetään panoraamakohteita"
@@ -254,34 +279,6 @@ msgstr "Tämä on Gallerian etusivu"
 msgid "Converting MySQL data to UTF8"
 msgstr "Muutetaan MySQL tietoja UTF8 merkistöön"
 
-#, c-format
-msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr "Päivitetään oikeuksia (%d suoritettu, %d jäljellä)"
-
-#, c-format
-msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
-msgstr "Etsitään rikkinäisiä johdannaisia, ladataan (%d johdannaista tarkastettu, %d jäljellä)"
-
-#, c-format
-msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "Etsitään rikkinäisiä johdannaisia (%d johdannaista tarkastettu, %d jäljellä)"
-
-#, c-format
-msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
-msgstr ""
-"Etsitään rikkinäisiä johdannaisia, tallennetaan (%d johdannaista tarkastettu, %d jäljellä)"
-
-#, c-format
-msgid ""
-"Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr ""
-"Etsitään rikkinäisiä johdannaisia, tallennetaan kohdetta %d / %d (%d johdannaista "
-"tarkastettu, %d jäljellä)"
-
-#, c-format
-msgid "Deleting old session files (iteration %d)"
-msgstr "Poistaa vanhoja sessiotiedostoja (vaihe %d)"
-
 msgid "add items"
 msgstr "lisää kuvia"
 
@@ -293,30 +290,6 @@ msgstr "lisää albumi"
 
 msgid "add items confirmation"
 msgstr "kuvien lisäämisen varmistus"
-
-msgid "Base filename"
-msgstr "Tiedostonimi"
-
-msgid "Caption"
-msgstr "Kuvateksti"
-
-msgid "Blank"
-msgstr "Tyhjä"
-
-msgid "From Web Browser"
-msgstr "Web-selaimesta"
-
-#, c-format
-msgid "%d megabyte"
-msgid_plural "%d megabytes"
-msgstr[0] "%d megatavu"
-msgstr[1] "%d megatavua"
-
-#, c-format
-msgid "%d kilobytes"
-msgid_plural "%d kilobytes"
-msgstr[0] "%d kilotavu"
-msgstr[1] "%d kilotavua"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
@@ -333,6 +306,30 @@ msgstr "Tiedosto %s saatiin ladattua vain osittain"
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
 msgstr "Tiedostoa %s ei saatu ladattua. Virhe %d"
+
+#, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d megatavu"
+msgstr[1] "%d megatavua"
+
+#, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d kilotavu"
+msgstr[1] "%d kilotavua"
+
+msgid "Base filename"
+msgstr "Tiedostonimi"
+
+msgid "Caption"
+msgstr "Kuvateksti"
+
+msgid "Blank"
+msgstr "Tyhjä"
+
+msgid "From Web Browser"
+msgstr "Web-selaimesta"
 
 msgid "Gallery Item Administration"
 msgstr "Gallerian Kohteen Ylläpito"
@@ -360,6 +357,10 @@ msgstr "Käytä skaalattujen kuvien asetuksia"
 msgid "Preparing..."
 msgstr "Valmistellaan..."
 
+#, c-format
+msgid "Processing image %d of %d"
+msgstr "Käsitellään kuvaa %d/%d"
+
 msgid "Apply thumbnail settings"
 msgstr "Käytä esikatselukuvien asetuksia"
 
@@ -368,10 +369,6 @@ msgstr "Luodaan esikatselukuvat uudelleen..."
 
 msgid "Album"
 msgstr "Albumi"
-
-#, c-format
-msgid "Processing image %d of %d"
-msgstr "Käsitellään kuvaa %d/%d"
 
 msgid "Changes saved successfully"
 msgstr "Muutokset tallennettu"
@@ -510,6 +507,10 @@ msgstr "Muokkaa Kuvaa"
 msgid "Edit Movie"
 msgstr "Muokkaa Videota"
 
+#, c-format
+msgid "Edit %s"
+msgstr "Muokkaa %s"
+
 msgid "Add Album"
 msgstr "Lisää Albumi"
 
@@ -528,6 +529,10 @@ msgstr "Poista Kuva"
 msgid "Delete Movie"
 msgstr "Poista Video"
 
+#, c-format
+msgid "Delete %s"
+msgstr "Poista %s"
+
 msgid "Move Album"
 msgstr "Siirrä Albumi"
 
@@ -536,6 +541,10 @@ msgstr "Siirrä Kuva"
 
 msgid "Move Movie"
 msgstr "Siirrä Video"
+
+#, c-format
+msgid "Move %s"
+msgstr "Siirrä %s"
 
 msgid "Edit Captions"
 msgstr "Muokkaa Kuvatekstejä"
@@ -585,18 +594,6 @@ msgstr "Omat Asetukset"
 msgid "Change Password"
 msgstr "Vaihda Salasana"
 
-#, c-format
-msgid "Edit %s"
-msgstr "Muokkaa %s"
-
-#, c-format
-msgid "Delete %s"
-msgstr "Poista %s"
-
-#, c-format
-msgid "Move %s"
-msgstr "Siirrä %s"
-
 msgid "Build all thumbnails/resizes"
 msgstr "Tee kaikki kuvakkeet/koon muutokset"
 
@@ -610,9 +607,6 @@ msgstr ""
 msgid "Build All Thumbnails/Resizes"
 msgstr "Tee Kaikki Kuvakkeet/Koot"
 
-msgid "Debug output for failed items:"
-msgstr "Tulostus vianhakuun epäonnistuneille kohteille:"
-
 #, c-format
 msgid "Checked %d items"
 msgstr "%d kohdetta tarkistettu"
@@ -624,6 +618,9 @@ msgstr "%d kohdetta tehty"
 #, c-format
 msgid "%d items failed"
 msgstr "%d kohdetta epäonnistui"
+
+msgid "Debug output for failed items:"
+msgstr "Tulostus vianhakuun epäonnistuneille kohteille:"
 
 msgid "Convert MySQL database to UTF8"
 msgstr "Muuta MySQL tietokanta UTF8 merkistöön"
@@ -830,6 +827,10 @@ msgstr "Nouseva"
 msgid "Descending"
 msgstr "Laskeva"
 
+#, c-format
+msgid "Powered by Gallery v%s"
+msgstr "Powered by Gallery v%s"
+
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Varmennus poistettu kunnes teet allowSessionAccess asetuksen config.php:ssa"
 
@@ -838,13 +839,6 @@ msgstr "Tämä sivu on käypää XHTML 1.0 -koodia."
 
 msgid "Donate to the Gallery project"
 msgstr "Lahjoita Gallery projektille"
-
-msgid "G2.2: Double Double"
-msgstr "G2.2: Double Double"
-
-#, c-format
-msgid "Powered by Gallery v%s"
-msgstr "Powered by Gallery v%s"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -951,12 +945,12 @@ msgstr "taulukkolaskenta"
 msgid "file"
 msgstr "tiedosto"
 
-msgid "Back"
-msgstr "Takaisin"
-
 #, c-format
 msgid "Back to %s"
 msgstr "Takaisin %s sivulle"
+
+msgid "Back"
+msgstr "Takaisin"
 
 msgid "User"
 msgstr "Käyttäjä"
@@ -3770,3 +3764,9 @@ msgstr "Sisään kirjautumisen lohko"
 
 msgid "Links to album/photo peers"
 msgstr "Linkit albumin/kuvan vastapuoliin"
+
+#~ msgid "key"
+#~ msgstr "avain"
+
+#~ msgid "G2.2: Double Double"
+#~ msgstr "G2.2: Double Double"

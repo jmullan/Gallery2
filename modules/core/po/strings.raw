@@ -2,6 +2,10 @@
 
 /* AdminCore.inc */
 gettext("Gallery Email Test")
+ngettext("%d minute", "%d minutes") /* also in: AdminPerformance.inc */
+ngettext("%d hour", "%d hours") /* also in: AdminPerformance.inc */
+ngettext("%d day", "%d days") /* also in: AdminPerformance.inc */
+ngettext("%d week", "%d weeks") /* also in: AdminPerformance.inc */
 gettext("forever")
 gettext("High Priority (Me first!)")
 gettext("Low Priority (I want to share!)")
@@ -10,10 +14,6 @@ gettext("BBCode")
 gettext("Raw HTML")
 gettext("Database") /* also in: classes/SystemInfoTask.class templates/ErrorPage.tpl */
 gettext("File") /* also in: classes/GalleryUnknownItem.class templates/ItemAddFromBrowser.tpl */
-ngettext("%d minute", "%d minutes") /* also in: AdminPerformance.inc */
-ngettext("%d hour", "%d hours") /* also in: AdminPerformance.inc */
-ngettext("%d day", "%d days") /* also in: AdminPerformance.inc */
-ngettext("%d week", "%d weeks") /* also in: AdminPerformance.inc */
 
 /* AdminCreateUser.inc */
 gettext("&lt;none&gt;") /* also in: AdminEditUser.inc UserPreferences.inc */
@@ -57,7 +57,6 @@ gettext("Use these settings")
 
 /* CoreModuleExtras.inc */
 gettext("Installing the core module")
-gettext("key")
 gettext("All access")
 gettext("[core] View item")
 gettext("[core] View resized version(s)")
@@ -69,12 +68,18 @@ gettext("[core] Edit item")
 gettext("[core] Change item permissions")
 gettext("[core] Delete item")
 gettext("Upgrading permissions")
+gettext("Upgrading permissions (%d items complete, %d remaining)")
 gettext("Deleting old permission tables")
 gettext("Registered Users") /* also in: templates/AdminPerformance.tpl */
 gettext("All Users")
 gettext("Detecting broken derivatives")
+gettext("Detecting broken derivatives, loading (%d derivatives checked, %d remaining)")
+gettext("Detecting broken derivatives (%d derivatives checked, %d remaining)")
+gettext("Detecting broken derivatives, saving (%d derivatives checked, %d remaining)")
+gettext("Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)")
 gettext("Clearing fast-download cache")
 gettext("Deleting old fast-download cache")
+gettext("Deleting old session files (iteration %d)")
 gettext("Updating panorama items")
 gettext("Optimizing AccessSubscriberMap table")
 gettext("Upgrading Plugin Translations")
@@ -84,12 +89,6 @@ gettext("Guest")
 gettext("Gallery") /* also in: module.inc */
 gettext("This is the main page of your Gallery")
 gettext("Converting MySQL data to UTF8")
-gettext("Upgrading permissions (%d items complete, %d remaining)")
-gettext("Detecting broken derivatives, loading (%d derivatives checked, %d remaining)")
-gettext("Detecting broken derivatives (%d derivatives checked, %d remaining)")
-gettext("Detecting broken derivatives, saving (%d derivatives checked, %d remaining)")
-gettext("Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)")
-gettext("Deleting old session files (iteration %d)")
 
 /* ItemAdd.inc */
 gettext("add items")
@@ -102,16 +101,16 @@ gettext("add sub-album")
 gettext("add items confirmation")
 
 /* ItemAddFromBrowser.inc */
-gettext("Base filename")
-gettext("Caption") /* also in: templates/ItemAddFromBrowser.tpl */
-gettext("Blank")
-gettext("From Web Browser")
-ngettext("%d megabyte", "%d megabytes")
-ngettext("%d kilobytes", "%d kilobytes")
 gettext("Input file %s exceeds maximum permitted file size")
 gettext("Input file %s exceeds file size specified in the form")
 gettext("Input file %s was only partially uploaded")
 gettext("Input file %s was not uploaded. Error %d")
+ngettext("%d megabyte", "%d megabytes")
+ngettext("%d kilobytes", "%d kilobytes")
+gettext("Base filename")
+gettext("Caption") /* also in: templates/ItemAddFromBrowser.tpl */
+gettext("Blank")
+gettext("From Web Browser")
 
 /* ItemAdmin.inc */
 gettext("Gallery Item Administration")
@@ -132,10 +131,10 @@ gettext("edit %s")
 gettext("Settings saved successfully.")
 gettext("Apply resized image settings")
 gettext("Preparing...")
+gettext("Processing image %d of %d") /* also in: classes/BuildDerivativesTask.class */
 gettext("Apply thumbnail settings")
 gettext("Rebuilding thumbnails...")
 gettext("Album") /* also in: classes/GalleryAlbumItem.class */
-gettext("Processing image %d of %d") /* also in: classes/BuildDerivativesTask.class */
 
 /* ItemEditAnimation.inc */
 gettext("Changes saved successfully") /* also in: ItemEditItem.inc ItemEditMovie.inc ItemEditPhoto.inc */
@@ -221,15 +220,18 @@ gettext("Add Items") /* also in: templates/ItemAdd.tpl templates/ItemAddFromBrow
 gettext("Edit Album")
 gettext("Edit Photo")
 gettext("Edit Movie")
+gettext("Edit %s") /* also in: templates/ItemEdit.tpl */
 gettext("Add Album")
 gettext("Edit Permissions")
 gettext("View Permissions")
 gettext("Delete Album")
 gettext("Delete Photo")
 gettext("Delete Movie")
+gettext("Delete %s") /* also in: templates/ItemDeleteSingle.tpl */
 gettext("Move Album")
 gettext("Move Photo")
 gettext("Move Movie")
+gettext("Move %s") /* also in: templates/ItemMoveSingle.tpl */
 gettext("Edit Captions") /* also in: templates/ItemEditCaptions.tpl */
 gettext("Make Highlight")
 gettext("Reorder Items")
@@ -246,18 +248,15 @@ gettext("Toolkit Priority") /* also in: templates/AdminToolkitPriority.tpl */
 gettext("Graphics Toolkits")
 gettext("Account Settings") /* also in: templates/UserLocked.tpl templates/UserPreferences.tpl */
 gettext("Change Password") /* also in: templates/UserChangePassword.tpl templates/UserRecoverPasswordConfirm.tpl */
-gettext("Edit %s") /* also in: templates/ItemEdit.tpl */
-gettext("Delete %s") /* also in: templates/ItemDeleteSingle.tpl */
-gettext("Move %s") /* also in: templates/ItemMoveSingle.tpl */
 
 /* classes/BuildDerivativesTask.class */
 gettext("Build all thumbnails/resizes")
 gettext("Ensure data files for all derivatives (thumbnails, etc) have been built and rebuild broken ones.")
 gettext("Build All Thumbnails/Resizes")
-gettext("Debug output for failed items:")
 gettext("Checked %d items")
 gettext("%d items built")
 gettext("%d items failed")
+gettext("Debug output for failed items:")
 
 /* classes/ConvertDatabaseToUtf8Task.class */
 gettext("Convert MySQL database to UTF8")
@@ -347,11 +346,10 @@ gettext("Ascending")
 gettext("Descending")
 
 /* classes/GalleryTemplateAdapter.class */
+gettext("Powered by Gallery v%s")
 gettext("Validation disabled until you set allowSessionAccess in config.php")
 gettext("This page is valid XHTML 1.0")
 gettext("Donate to the Gallery project")
-gettext("G2.2: Double Double")
-gettext("Powered by Gallery v%s")
 gettext("Estimated time remaining: %d:%02d")
 gettext("Memory used: %s, total: %s")
 
@@ -392,8 +390,8 @@ gettext("spreadsheet")
 gettext("file")
 
 /* classes/GalleryUrlGenerator.class */
-gettext("Back")
 gettext("Back to %s")
+gettext("Back")
 
 /* classes/GalleryUser.class */
 gettext("User")
