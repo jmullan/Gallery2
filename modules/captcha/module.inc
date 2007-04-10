@@ -99,6 +99,7 @@ class CaptchaModule extends GalleryModule {
 	case '1.1.2':
 	case '1.1.3':
 	case '1.1.4':
+	case '1.1.4.1':
 	    /* .mo file migration */
 
 	case 'end of upgrade path':
