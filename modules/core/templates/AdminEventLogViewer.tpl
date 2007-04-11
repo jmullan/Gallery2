@@ -1,8 +1,6 @@
 {*
  * $Revision$
- * If you want to customize this file, do not edit it directly since future upgrades
- * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
- * version.  Gallery will look for that file first and use it if it exists.
+ * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="Recent Events"} </h2>
@@ -67,7 +65,7 @@ var pageSize = 20;
 var totalPages = 1;
 var noSummaryText = '{g->text text="no summary" forJavascript=1}';
 var locationLink = '<a href="__PLACEHOLDER__">{g->text text="Link" forJavascript=1}</a>';
-var failureMessage = '{g->text text="An error occurred while retrieving the event log entry details." forJavscript=1}';
+var failureMessage = '{g->text text="An error occurred while retrieving the event log entry details." forJavascript=1}';
 
 {literal}
 var eventTableBody = document.getElementById("eventTableBody");
