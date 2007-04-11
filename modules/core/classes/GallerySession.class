@@ -350,12 +350,14 @@ class GallerySession {
 		    $ret = $this->_acquireNewPersistentSession();
 		} else {
 		    $this->_modificationTime = $phpVm->time();
-		    $ret = GalleryCoreApi::updateMapEntry('GallerySessionMap',
-			array('id' => $this->_sessionId), array('userId' => $this->_userId,
-			'remoteIdentifier' => serialize($this->_remoteIdentifier),
-			'creationTimestamp' => $this->_creationTime,
-			'modificationTimestamp' => $this->_modificationTime,
-			'data' => serialize($this->_sessionData)));
+		    $ret = GalleryCoreApi::updateMapEntry(
+			'GallerySessionMap',
+			array('id' => $this->_sessionId),
+			array('userId' => $this->_userId,
+			      'remoteIdentifier' => serialize($this->_remoteIdentifier),
+			      'creationTimestamp' => $this->_creationTime,
+			      'modificationTimestamp' => $this->_modificationTime,
+			      'data' => serialize($this->_sessionData)));
 		}
 		if ($ret) {
 		    return $ret;
