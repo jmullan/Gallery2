@@ -12,8 +12,8 @@
 {g->callback type="keyalbum.SplitKeywords" keywords=$item.keywords}
 <div class="{$class}">
   {g->text text="Keywords:"}
-  {foreach from=$block.keyalbum.keywords item=keyword}
-    <a href="{g->url arg1="view=keyalbum.KeywordAlbum" arg2="keyword=$keyword"
+  {foreach from=$block.keyalbum.keywords key=rawKeyword item=keyword}
+    <a href="{g->url arg1="view=keyalbum.KeywordAlbum" arg2="keyword=$rawKeyword"
 		     arg3="highlightId=`$item.id`"}">{$keyword}</a>
   {/foreach}
 </div>
@@ -23,14 +23,14 @@
 {g->callback type="keyalbum.LoadKeywords"
 	     onlyPublic=$onlyPublic|default:true sizeLimit=$sizeLimit|default:0
 	     maxCloudFontEnlargement=$maxCloudFontEnlargement|default:3
-         includeFrequency=$showCloud}
+	     includeFrequency=$showCloud}
 
 {if !empty($block.keyalbum.keywords)}
 <div class="{$class}">
   {if $showCloud}
     {foreach from=$block.keyalbum.keywords item=keyword}
-      &nbsp;<a href="{g->url arg1="view=keyalbum.KeywordAlbum" arg2="keyword=`$keyword.name`"}"
-               {if !empty($keyword.weight)}style="font-size: {$keyword.weight}em;"{/if}>
+      &nbsp;<a href="{g->url arg1="view=keyalbum.KeywordAlbum" arg2="keyword=`$keyword.raw`"}"{if
+	     !empty($keyword.weight)} style="font-size: {$keyword.weight}em;"{/if}>
 	  {$keyword.name}
       </a>&nbsp;
     {/foreach}
