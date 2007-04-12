@@ -386,21 +386,25 @@ class SystemChecksStep extends UpgradeStep {
 		array('title' => $title,
 		      'warning' => true,
 		      'notice' => _('Test skipped due to other errors.'));
-	} else if (!SystemChecksStep::CheckStorageDirectory()) {
-	    $templateData['check'][] =
-		array('title' => $title,
-		      'error' => true,
-		      'notice' => sprintf(
+	} else {
+	    $storageFiles = SystemChecksStep::CheckStorageDirectory();
+	    if (!empty($storageFiles)) {
+		$notice = sprintf(
 			  _('Error: Some files and or directories in your storage directory are ' .
 			    'not writeable by the webserver user. Run chown -R webserverUser ' .
 			    '%s OR run chmod -R 777 %s.'),
 			  $gallery->getConfig('data.gallery.base'),
-			  $gallery->getConfig('data.gallery.base'))
-		      );
-	    $failCount++;
-	} else {
-	    $templateData['check'][] =
-		array('title' => $title, 'success' => true);
+			  $gallery->getConfig('data.gallery.base'));
+		$heading = sprintf(_('Inaccessible or missing  files (%d)'), count($storageFiles));
+		$message = $this->renderFileList($storageFiles, 'storagefiles', $heading, $notice);
+		$templateData['check'][] = array(
+		    'title' => $title,
+		    'error' => true,
+		    'notice' => $message);
+		$failCount++;
+	    } else {
+		$templateData['check'][] = array('title' => $title, 'success' => true);
+	    }
 	}
 
 	$template->renderStatusMessage(_('Performing system checks'), '', 0.09);
@@ -428,15 +432,55 @@ class SystemChecksStep extends UpgradeStep {
 	    } else {
 		global $currentStep; /* needed for ManifestSystemCheck.html */
 
-		ob_start();
-		include(dirname(__FILE__) . '/../templates/ManifestSystemCheck.html');
-		$notice = ob_get_contents();
-		ob_end_clean();
+		$message = $notice = '';
+		if (!empty($manifest['missing'])) {
+		    if ($isSvnInstall) {
+			$notice = _('Note: You\'re running Gallery from SVN, so recently ' .
+			    'removed files may appear here.  It might be safe to ignore these.');
+		    }
+		    $heading = sprintf(_('Missing files (%d)'), count($manifest['missing']));
+		    $message .= $this->renderFileList($manifest['missing'], 'missing', $heading,
+						      $notice);
+		}
 
+		if (!empty($manifest['missing']) && !empty($manifest['modified'])) {
+		    $message .= '<br /> <br />';
+		}
+
+		if (!empty($manifest['modified'])) {
+		    if ($isSvnInstall) {
+			$notice = _('Note: You\'re running Gallery from SVN, so some modified ' .
+			    'files are to be expected.  You can probably ignore these, but to be ' .
+			    'safe you should make sure that you do \'svn update\' before ' .
+			    'continuing.');
+		    }
+		    $heading = sprintf(_('Modified files (%d)'), count($manifest['modified']));
+		    $message .= $this->renderFileList($manifest['modified'], 'modified', $heading,
+						      $notice);
+		}
+	
+		if ((!empty($manifest['modified']) || !empty($manifest['missing']))
+			&& !empty($manifest['shouldRemove'])) {
+		    $message .= '<br /> <br />';
+		}
+
+		if (!empty($manifest['shouldRemove'])) {
+		    $notice = sprintf(_('These files are no longer part of Gallery. They probably' .
+			' won\'t cause any problems but it is a good idea to remove them to keep ' .
+			'your install clean.  Gallery can\'t remove these files for you, but you ' .
+			'can download and run %sthis script%s in your gallery2 directory to ' .
+			'delete them for you.'), sprintf('<a href="%s">',
+			    generateUrl('index.php?step=' . $currentStep->getStepNumber()
+				. '&amp;downloadCleanupScript=1', false)), '</a>');
+		    $heading = sprintf(_('Old files (%d)'), count($manifest['shouldRemove']));
+		    $message .= $this->renderFileList($manifest['shouldRemove'], 'shouldRemove',
+						      $heading, $notice);
+		}
+  
 		$templateData['check'][] =
 		    array('title' => $title,
 			  'warning' => true,
-			  'notice' => $notice);
+			  'notice' => $message);
 		$_SESSION['fileintegrity'] =
 		    (empty($manifest['missing']) && empty($manifest['modified']))
 		     ? 'There are some old files' : 'There are missing/modified files!';
@@ -470,23 +514,24 @@ class SystemChecksStep extends UpgradeStep {
 	$storagePath = $gallery->getConfig('data.gallery.base');
 	$platform =& $gallery->getPlatform();
 	if (empty($storagePath)) {
-	    return false;
+	    return array(sprintf(_('The storage folder path is not defined in config.php (%s)'),
+				 'data.gallery.base'));
 	} else if ($storagePath{strlen($storagePath)-1} != $platform->getDirectorySeparator()) {
 	    $storagePath .= $platform->getDirectorySeparator();
 	}
 
 	/* An exhaustive test would take too long, test a few dirs / files */
-	foreach (array('.', 'versions.dat', 'albums') as $path) {
+	foreach (array('', 'versions.dat', 'albums') as $path) {
 	    $path = $storagePath . $path;
-	    if (!$platform->file_exists($path) || !$platform->is_readable($path) ||
-		    !$platform->is_writeable($path)) {
-		return false;
+	    if (!$platform->file_exists($path) || !$platform->is_readable($path)
+		    || !$platform->is_writeable($path)) {
+		return array($path);
 	    }
 	}
 
-	/* Check up to 200 other files */
+	/* Check up to 400 other files */
 	$tested = 0;
-	$max = 200;
+	$max = 400;
 	$storagePath = substr($storagePath, 0, strlen($storagePath)-1);
 	return SystemChecksStep::_checkStorageSubDirectory($storagePath, $tested, $max);
     }
@@ -497,14 +542,16 @@ class SystemChecksStep extends UpgradeStep {
      * @param string $dirname directory
      * @param int $tested number of already tested files / dirs
      * @param int $max max files/dirs to check
-     * @return boolean success
+     * @return array a list of files with insufficient permissions
      */
     function _checkStorageSubDirectory($dirname, &$tested, $max) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
+	$storageFiles = array();
 	if (!($fd = $platform->opendir($dirname))) {
-	    return false;
+	    $storageFiles[] = $dirname;
+	    return $storageFiles;
 	}
 
 	while (($filename = $platform->readdir($fd)) !== false && $tested < $max) {
@@ -517,19 +564,18 @@ class SystemChecksStep extends UpgradeStep {
 
 	    if (!$platform->is_link($path) &&
 		(!$platform->is_writeable($path) || !$platform->is_readable($path))) {
-		return false;
+		$storageFiles[] = $path;
 	    }
 
 	    if ($platform->is_dir($path) && $tested < $max) {
 		/* Threshold not yet reached, check subdirectory tree */
-		if (!SystemChecksStep::_checkStorageSubDirectory($path, $tested, $max)) {
-		    return false;
-		}
+		$storageFiles = array_merge($storageFiles,
+		    SystemChecksStep::_checkStorageSubDirectory($path, $tested, $max));
 	    }
 	}
 	$platform->closedir($fd);
 
-	return true;
+	return $storageFiles;
     }
 
     function CheckManifest(&$statusMonitor, $useSetTimeLimit) {
@@ -595,6 +641,22 @@ class SystemChecksStep extends UpgradeStep {
 
 	return array('missing' => $missing, 'modified' => $modified,
 		     'shouldRemove' => $shouldRemove);
+    }
+
+    /**
+     * Render a file-list in a minimizable block with a heading and an optional notice text.
+     * @param array $files
+     * @param string $blockId The HTML id for the block toggle mechanism
+     * @param string $heading Heading for the block
+     * @param string $notice (optional) A longer notice to be shown on top of the file list
+     */
+    function renderFileList($files, $blockId, $heading, $notice=null) {
+	ob_start();
+	include(dirname(__FILE__) . '/../templates/SystemCheckFileList.html');
+	$html = ob_get_contents();
+	ob_end_clean();
+
+	return $html;
     }
 }
 ?>
