@@ -19,7 +19,7 @@
  */
 
 /**
- * Test KeywordAlbum view
+ * Test KeywordAlbum view and module
  *
  * @package KeyAlbum
  * @subpackage PHPUnit
@@ -39,14 +39,14 @@ class KeywordAlbumTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
-		array('keywords' => 'abc testkey def'));
+		array('keywords' => 'abc test&amp;key def'));
 	if ($ret) {
 	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
-		'test/item', array('keywords' => 'testkey;foo,fun,time'));
+		'test/item', array('keywords' => 'test&amp;key;foo,fun,time'));
 	if ($ret) {
 	    return $ret;
 	}
@@ -121,14 +121,15 @@ class KeywordAlbumTest extends GalleryTestCase {
 	$theme =& $this->_template->getVariableByReference('theme');
 	$theme['actingUserId'] = $gallery->getActiveUserId();
 
-	GalleryUtilities::putRequestVariable('keyword', 'testkey');
+	GalleryUtilities::putRequestVariable('keyword', 'test&key');
 
 	list ($ret, $result) = $this->_view->loadTemplate($this->_template, $form = array());
 	if ($ret) {
 	    return $ret;
 	}
 
-	$this->assertEquals(array('view' => 'keyalbum.KeywordAlbum', 'keyword' => 'testkey'),
+	/* Keyword param should be unsanitized as it will be resanitized when URL is used */
+	$this->assertEquals(array('view' => 'keyalbum.KeywordAlbum', 'keyword' => 'test&key'),
 			    $theme['pageUrl'], 'page url');
 	$this->assert(in_array($this->_album->getId(), $theme['allChildIds']), 'album id');
 	$this->assert(in_array($this->_item->getId(), $theme['allChildIds']), 'item id');
@@ -140,15 +141,16 @@ class KeywordAlbumTest extends GalleryTestCase {
 	$theme['actingUserId'] = $gallery->getActiveUserId();
 
 	/* Query for items with both testkey and fun keywords */
-	GalleryUtilities::putRequestVariable('keyword', 'testkey,fun');
+	GalleryUtilities::putRequestVariable('keyword', 'test&key,fun');
 
 	list ($ret, $result) = $this->_view->loadTemplate($this->_template, $form = array());
 	if ($ret) {
 	    return $ret;
 	}
 
-	$this->assertEquals(array('view' => 'keyalbum.KeywordAlbum', 'keyword' => 'testkey,fun'),
-			    $theme['pageUrl'], 'page url');
+	$this->assertEquals(
+		array('view' => 'keyalbum.KeywordAlbum', 'keyword' => 'test&key,fun'),
+		$theme['pageUrl'], 'page url');
 	$this->assert(!in_array($this->_album->getId(), $theme['allChildIds']), 'album id');
 	$this->assert(in_array($this->_item->getId(), $theme['allChildIds']), 'item id');
     }

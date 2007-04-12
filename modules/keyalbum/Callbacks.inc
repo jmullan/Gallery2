@@ -60,18 +60,17 @@ class KeyAlbumCallbacks {
 	    return null;
 
 	case 'SplitKeywords':
-	    list ($ret, $split) = GalleryCoreApi::getPluginParameter('module', 'keyalbum', 'split');
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'keyalbum');
 	    if ($ret) {
 		return $ret;
 	    }
-	    $split = '/[' . $split . ']+/u';
-	    $keywords = array();
-	    foreach (preg_split($split, $params['keywords']) as $keyword) {
-		$keywords[] = trim($keyword);
+	    list ($ret, $split) = $module->getParameter('split');
+	    if ($ret) {
+		return $ret;
 	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
-	    $block['keyalbum']['keywords'] = $keywords;
+	    $block['keyalbum']['keywords'] = $module->splitKeywords($params['keywords'], $split);
 
 	    return null;
 	}
@@ -110,7 +109,8 @@ class KeyAlbumCallbacks {
 		return $ret;
 	    }
 	    if (empty($aclIds)) {
-		$query = '';
+		/* Force empty results */
+		$query .= ' WHERE [GalleryItem::id] IS NULL';
 	    } else {
 		$query .= ' INNER JOIN [GalleryAccessSubscriberMap]
 		  ON [GalleryItem::id] = [GalleryAccessSubscriberMap::itemId]
@@ -124,26 +124,27 @@ class KeyAlbumCallbacks {
 	if ($ret) {
 	    return $ret;
 	}
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'keyalbum');
+	if ($ret) {
+	    return $ret;
+	}
 	list ($ret, $split) = GalleryCoreApi::getPluginParameter('module', 'keyalbum', 'split');
 	if ($ret) {
 	    return $ret;
 	}
-	$split = '/[' . $split . ']+/u';
 	$maxCount = 1;
 	while ($result = $searchResults->nextResult()) {
-	    if ($result[0]) {
-		foreach (preg_split($split, $result[0]) as $keyword) {
-		    $keyword = trim($keyword);
-		    if (!isset($keywords[$keyword])) {
-			$keywords[$keyword] = array('name' => $keyword, 'count' => 1);
-		    } else if (++$keywords[$keyword]['count'] > $maxCount) {
-			$maxCount = $keywords[$keyword]['count'];
-		    }
+	    foreach ($module->splitKeywords($result[0], $split) as $rawKeyword => $keyword) {
+		if (!isset($keywords[$keyword])) {
+		    $keywords[$keyword] =
+			array('name' => $keyword, 'raw' => $rawKeyword, 'count' => 1);
+		} else if (++$keywords[$keyword]['count'] > $maxCount) {
+		    $maxCount = $keywords[$keyword]['count'];
 		}
 	    }
 	}
 	$minCount = $maxCount;
-	foreach ($keywords as $i => $keyword) {
+	foreach ($keywords as $keyword) {
 	    if ($keyword['count'] < $minCount) {
 		$minCount = $keyword['count'];
 	    }
@@ -154,7 +155,12 @@ class KeyAlbumCallbacks {
 	    uasort($keywords, create_function('$a,$b', '$c = $a[\'count\']; $d = $b[\'count\']; '
 						    . 'return $c > $d ? -1 : ($c == $d ? 0 : 1);'));
 
-	    array_splice($keywords, $sizeLimit);
+	    /* Avoid renumbering of numeric keys from array_splice */
+	    for ($newKeywords = array(), reset($keywords), $i = 0; $i < $sizeLimit; $i++) {
+		$entry = each($keywords);
+		$newKeywords[$entry[0]] = $entry[1];
+	    }
+	    $keywords = $newKeywords;
 	}
 	ksort($keywords);
 	$keywords = array_values($keywords);

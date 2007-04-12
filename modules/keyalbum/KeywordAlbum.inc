@@ -111,7 +111,9 @@ class KeywordAlbumView extends GalleryView {
 	$theme =& $template->getVariableByReference('theme');
 
 	list ($keyword, $itemId) = GalleryUtilities::getRequestVariables('keyword', 'itemId');
-	$theme['pageUrl'] = array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $keyword);
+	$rawKeyword = $keyword;
+	GalleryUtilities::unsanitizeInputValues($rawKeyword, false);
+	$theme['pageUrl'] = array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $rawKeyword);
 
 	if (empty($itemId)) {
 	    /* Perform query for this dynamic album */
@@ -157,14 +159,18 @@ class KeywordAlbumView extends GalleryView {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'keyalbum');
+	if ($ret) {
+	    return array($ret, null);
+	}
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'keyalbum');
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	$keywords = $where = array();
-	foreach (preg_split('/[' . $params['split'] . ']+/u', $keyword) as $k) {
-	    $keywords[] = '%' . trim($k) . '%';
+	foreach ($module->splitKeywords($keyword, $params['split']) as $k) {
+	    $keywords[] = '%' . $k . '%';
 	    $where[] = '[GalleryItem::keywords] LIKE ?';
 	}
 
