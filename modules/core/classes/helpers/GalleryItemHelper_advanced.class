@@ -130,7 +130,8 @@ class GalleryItemHelper_advanced {
 	    $thumbnail = $thumbnails[$albumId];
 
 	    list ($ret, $thumbnailSource) = GalleryCoreApi::loadEntitiesById(
-		$thumbnail->getDerivativeSourceId(), array('GalleryDataItem', 'GalleryDerivative'));
+		$thumbnail->getDerivativeSourceId(),
+		array('GalleryFileSystemEntity', 'GalleryDerivative'));
 	    if ($ret) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    /* Derivative source is missing.. pick a new one */

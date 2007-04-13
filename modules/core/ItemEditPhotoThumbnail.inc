@@ -52,7 +52,8 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	if (isset($form['action']['crop']) && isset($thumbnail)) {
 	    /* Get our source */
 	    list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
-		$thumbnail->getDerivativeSourceId(), array('GalleryDataItem', 'GalleryDerivative'));
+		$thumbnail->getDerivativeSourceId(),
+		array('GalleryFileSystemEntity', 'GalleryDerivative'));
 	    if ($ret) {
 		return array($ret, null, null, null);
 	    }
@@ -197,7 +198,8 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	 * have different derivative commands from the source.
 	 */
 	list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
-	    $thumbnail->getDerivativeSourceId(), array('GalleryDataItem', 'GalleryDerivative'));
+	    $thumbnail->getDerivativeSourceId(),
+	    array('GalleryFileSystemEntity', 'GalleryDerivative'));
 	if ($ret) {
 	    return array($ret, null, null);
 	}

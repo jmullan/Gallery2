@@ -617,7 +617,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 		    /* Load the source of the thumbnail */
 		    list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
-			$sourceId, array('GalleryDataItem', 'GalleryDerivative'));
+			$sourceId, array('GalleryFileSystemEntity', 'GalleryDerivative'));
 		    if ($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 			/* Someone deleted the source image, we can only delete the thumbnail */
 			list ($ret, $lockIds[]) =

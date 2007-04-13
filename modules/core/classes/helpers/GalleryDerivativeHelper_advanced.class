@@ -811,7 +811,7 @@ class GalleryDerivativeHelper_advanced {
 
 	/* Load the source */
 	list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
-	    $sourceId, array('GalleryDataItem', 'GalleryDerivative'));
+	    $sourceId, array('GalleryFileSystemEntity', 'GalleryDerivative'));
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -889,7 +889,7 @@ class GalleryDerivativeHelper_advanced {
 
 	if (!empty($sourceId)) {
 	    list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
-		$sourceId, array('GalleryDataItem', 'GalleryDerivative'));
+		$sourceId, array('GalleryFileSystemEntity', 'GalleryDerivative'));
 	    if ($ret) {
 		return array($ret, null);
 	    }

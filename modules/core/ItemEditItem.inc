@@ -338,7 +338,8 @@ class ItemEditItem extends ItemEditPlugin {
 	    }
 	} else if (isset($thumbnail) && $thumbnail->getDerivativeSourceId() != $item->getId()) {
 	    list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
-		$thumbnail->getDerivativeSourceId(), array('GalleryDataItem', 'GalleryDerivative'));
+		$thumbnail->getDerivativeSourceId(),
+		array('GalleryFileSystemEntity', 'GalleryDerivative'));
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
