@@ -144,7 +144,7 @@ class GalleryUserHelper_medium {
 	} else {
 	    $result = $searchResults->nextResult();
 	    $id = $result[0];
-	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($id);
+	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($id, 'GalleryUser');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -188,7 +188,7 @@ class GalleryUserHelper_medium {
 	}
 
 	/* First check if the User is a valid gallery user! */
-	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId, 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}
@@ -228,7 +228,7 @@ class GalleryUserHelper_medium {
 	}
 
 	/* Load all items */
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -244,7 +244,7 @@ class GalleryUserHelper_medium {
 		continue;
 	    }
 	    /* delete the item */
-	    $ret = GalleryCoreApi::deleteEntityById($item->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($item->getId(), 'GalleryItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -281,7 +281,7 @@ class GalleryUserHelper_medium {
 			$newModifiedAlbumIds[$albums[$albumId]->getParentId()] = 1;
 		    }
 		    /* delete albumItem */
-		    $ret = GalleryCoreApi::deleteEntityById($albumId);
+		    $ret = GalleryCoreApi::deleteEntityById($albumId, 'GalleryItem');
 		    if ($ret) {
 			return $ret;
 		    }

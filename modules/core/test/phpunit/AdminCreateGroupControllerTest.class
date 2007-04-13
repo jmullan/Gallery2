@@ -104,7 +104,7 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::deleteEntityById($group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($group->getId(), 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}

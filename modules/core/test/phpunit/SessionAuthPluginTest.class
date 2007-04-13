@@ -28,9 +28,9 @@ GalleryCoreApi::requireOnce('modules/core/test/phpunit/UserLoginControllerTest.c
  * @author Bharat Mediratta <bharat@menalto.com>
  * @version $Revision$
  */
-class SessionAuthTest extends GalleryTestCase {
+class SessionAuthPluginTest extends GalleryTestCase {
 
-    function SessionAuthTest($methodName) {
+    function SessionAuthPluginTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
 
@@ -69,8 +69,6 @@ class SessionAuthTest extends GalleryTestCase {
     function testSessionAuthValidUser() {
 	$this->_mockSession->setUserId($this->_user->getId());
 
-	GalleryCoreApi::requireOnce('modules/core/classes/SessionAuthPlugin.class');
-
 	$plugin = new SessionAuthPlugin();
 	list ($ret, $user) = $plugin->getUser();
 	if ($ret) {
@@ -88,8 +86,6 @@ class SessionAuthTest extends GalleryTestCase {
 
 	$this->_mockSession->setUserId($userId);
 
-	GalleryCoreApi::requireOnce('modules/core/classes/SessionAuthPlugin.class');
-
 	$plugin = new SessionAuthPlugin();
 	list ($ret, $user) = $plugin->getUser();
 	if ($ret) {
@@ -97,6 +93,26 @@ class SessionAuthTest extends GalleryTestCase {
 	}
 
 	$this->assert(!isset($user));
+    }
+
+    function testSessionAuthLoadInvalidEntity() {
+	/* Assume an invalid userId ended up in our session data and attempt to load it */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($group);
+
+	$this->_mockSession->setUserId($group->getId());
+
+	/* The error should be caught and null should be returned. */
+	$plugin = new SessionAuthPlugin();
+	list ($ret, $user) = $plugin->getUser();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(null, $user);
     }
 }
 ?>

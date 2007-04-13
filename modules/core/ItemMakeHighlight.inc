@@ -35,7 +35,7 @@ class ItemMakeHighlightController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['makeHighlight'])) {
 	    $itemId = GalleryUtilities::getRequestVariables('itemId');
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -73,7 +73,7 @@ class ItemMakeHighlightView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

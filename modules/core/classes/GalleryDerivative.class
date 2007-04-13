@@ -177,13 +177,15 @@ class GalleryDerivative extends GalleryChildEntity {
 
 	foreach ($derivativesTable as $itemId => $derivatives) {
 	    foreach ($derivatives as $derivative) {
-		$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
+		$ret = GalleryCoreApi::deleteEntityById($derivative->getId(), 'GalleryDerivative');
 		/*
 		 * Deletes can cascade in interesting ways.  For example, deleting a derivative
 		 * will get rid of any other derivatives that are sourced to it, so it's possible
 		 * that deleting children here can lead to a MISSING_OBJECT result unless we re-run
 		 * the parent/child query each time.  Easier to just ignore the MISSING_OBJECT
 		 * error since we only care that it's gone.
+		 * Note that we get a MISSING_OBJECT error as well if the requested entity isn't an
+		 * entity of type GalleryDerivative.
 		 */
 		if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return $ret;
@@ -370,7 +372,8 @@ class GalleryDerivative extends GalleryChildEntity {
 
 	    if ($rebuild) {
 		/* Fetch the updated version back from our entity cache */
-		list ($ret, $source) = GalleryCoreApi::loadEntitiesById($source->getId());
+		list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
+		    $source->getId(), array('GalleryDataItem', 'GalleryDerivative'));
 		if ($ret) {
 		    return $ret;
 		}
@@ -507,7 +510,8 @@ class GalleryDerivative extends GalleryChildEntity {
      */
     function fetchFinalOperations() {
 	/* Load the source */
-	list ($ret, $source) = GalleryCoreApi::loadEntitiesById($this->getDerivativeSourceId());
+	list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
+	    $this->getDerivativeSourceId(), array('GalleryDataItem', 'GalleryDerivative'));
 	if ($ret) {
 	    return array($ret, null, null);
 	}
@@ -527,8 +531,9 @@ class GalleryDerivative extends GalleryChildEntity {
 	     */
 	    $sources = array($source, $this);
 	    while (GalleryUtilities::isA($sources[0], 'GalleryDerivative')) {
-		list ($ret, $tmp) =
-		    GalleryCoreApi::loadEntitiesById($sources[0]->getDerivativeSourceId());
+		list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById(
+		    $sources[0]->getDerivativeSourceId(),
+		    array('GalleryDataItem', 'GalleryDerivative'));
 		if ($ret) {
 		    return array($ret, null, null);
 		}

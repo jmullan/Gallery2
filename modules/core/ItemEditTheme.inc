@@ -84,7 +84,8 @@ class ItemEditTheme extends ItemEditPlugin {
 			return array($ret, null, null, null);
 		    }
 
-		    list ($ret, $subAlbums) = GalleryCoreApi::loadEntitiesById($subAlbumIds);
+		    list ($ret, $subAlbums) =
+			GalleryCoreApi::loadEntitiesById($subAlbumIds, 'GalleryAlbumItem');
 		    if ($ret) {
 			return array($ret, null, null, null);
 		    }

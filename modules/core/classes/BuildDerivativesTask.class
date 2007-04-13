@@ -116,7 +116,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 	}
 
 	while ($result = $items->nextResult()) {
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($result[0]);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($result[0], 'GalleryDataItem');
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

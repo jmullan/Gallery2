@@ -133,7 +133,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	    $seenWeights[$orderWeight] = 1;
 	}
 
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids, 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -187,7 +187,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	}
 	$this->assertEquals(0, $viewCount);
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0], 'GalleryUnknownItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -227,7 +227,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	}
 	$this->assertEquals(1, count($ids), 'child count');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0], 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -264,7 +264,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	}
 	$this->assertEquals(1, count($ids), 'child count');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($ids[0], 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -376,8 +376,8 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	if (!isset($results[1]['addedFiles'][0]['id'])) {
 	    $this->assert(false, 'Id is not set');
 	} else {
-	    list ($ret, $item) =
-		GalleryCoreApi::loadEntitiesById($results[1]['addedFiles'][0]['id']);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById(
+		$results[1]['addedFiles'][0]['id'], 'GalleryDataItem');
 	    if ($ret) {
 		return $ret;
 	    }

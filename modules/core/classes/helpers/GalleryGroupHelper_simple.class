@@ -129,7 +129,7 @@ class GalleryGroupHelper_simple {
 	} else {
 	    $result = $searchResults->nextResult();
 	    $id = $result[0];
-	    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
+	    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id, 'GalleryGroup');
 	    if ($ret) {
 		return array($ret, null);
 	    }

@@ -144,7 +144,8 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	/* Delete the preferred */
-	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
+	$ret =
+	    GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId(), 'GalleryDerivative');
 	if ($ret) {
 	    return $ret;
 	}
@@ -198,7 +199,8 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	/* Delete the preferred */
-	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
+	$ret =
+	    GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId(), 'GalleryDerivative');
 	if ($ret) {
 	    return $ret;
 	}
@@ -535,7 +537,8 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
 
 	/* Delete the preferred */
-	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
+	$ret =
+	    GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId(), 'GalleryDerivative');
 	if ($ret) {
 	    return $ret;
 	}

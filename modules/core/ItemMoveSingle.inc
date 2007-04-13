@@ -34,7 +34,7 @@ class ItemMoveSingleController extends GalleryController {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -79,15 +79,10 @@ class ItemMoveSingleController extends GalleryController {
 
 	    /* Make sure the destination is the right type of item */
 	    if (empty($error)) {
-		list ($ret, $newParent) = GalleryCoreApi::loadEntitiesById($newParentId);
+		list ($ret, $newParent) =
+		    GalleryCoreApi::loadEntitiesById($newParentId, 'GalleryAlbumItem');
 		if ($ret) {
 		    return array($ret, null);
-		}
-
-		if (!GalleryUtilities::isA($newParent, 'GalleryAlbumItem')) {
-		    /* The view should never let this happen */
-		    return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE),
-				 null);
 		}
 	    }
 
@@ -217,7 +212,7 @@ class ItemMoveSingleView extends GalleryView {
 	    $form['formName'] = 'ItemMoveSingle';
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -237,7 +232,7 @@ class ItemMoveSingleView extends GalleryView {
 	}
 
 	/* Load all the album entities */
-	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
+	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds, 'GalleryAlbumItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

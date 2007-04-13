@@ -107,7 +107,8 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($this->_getSecondChildId());
+	list ($ret, $newAlbum) =
+	    GalleryCoreApi::loadEntitiesById($this->_getSecondChildId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return ($ret);
 	}
@@ -183,7 +184,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -243,7 +244,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

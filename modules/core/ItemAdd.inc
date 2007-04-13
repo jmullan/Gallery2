@@ -59,7 +59,7 @@ class ItemAddController extends GalleryController {
 	    return array($ret, null);
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -105,7 +105,8 @@ class ItemAddController extends GalleryController {
 		    /* we couldn't add this file for whatever reason. move on */
 		    continue;
 		}
-		list ($ret, $addedItem) = GalleryCoreApi::loadEntitiesById($file['id']);
+		list ($ret, $addedItem) =
+		    GalleryCoreApi::loadEntitiesById($file['id'], 'GalleryItem');
 		if ($ret) {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return array($ret, null);
@@ -127,7 +128,7 @@ class ItemAddController extends GalleryController {
 			GalleryCoreApi::releaseLocks($lockId);
 			return array($ret, null);
 		    }
-		    $ret = GalleryCoreApi::deleteEntityById($addedItem->getId());
+		    $ret = GalleryCoreApi::deleteEntityById($addedItem->getId(), 'GalleryItem');
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
 			return array($ret, null);
@@ -331,7 +332,7 @@ class ItemAddView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

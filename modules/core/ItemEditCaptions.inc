@@ -49,7 +49,7 @@ class ItemEditCaptionsController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -160,7 +160,7 @@ class ItemEditCaptionsView extends GalleryView {
 	    $form['formName'] = 'ItemEditCaption';
 	    $form['numPerPage'] = 9;
 
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -204,7 +204,7 @@ class ItemEditCaptionsView extends GalleryView {
 	    $start = $form['numPerPage'] * ($page - 1);
 	    $childIds = array_slice($childIds, $start, $form['numPerPage']);
 
-	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
+	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

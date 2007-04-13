@@ -1128,7 +1128,8 @@ class GalleryUtilities {
 	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
 	    $pseudoFileName = $entity->getPathComponent();
 	} else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
-	    list ($ret, $parentEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
+	    list ($ret, $parentEntity) =
+		GalleryCoreApi::loadEntitiesById($entity->getParentId(), 'GalleryEntity');
 	    if ($ret) {
 		return array($ret, null);
 	    }

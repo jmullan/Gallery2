@@ -810,7 +810,8 @@ class CoreModuleExtras {
 		    if ($ret) {
 			return $ret;
 		    }
-		    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($allUserGroupId);
+		    list ($ret, $group) =
+			GalleryCoreApi::loadEntitiesById($allUserGroupId, 'GalleryGroup');
 		    if ($ret) {
 			return $ret;
 		    }
@@ -1006,7 +1007,8 @@ class CoreModuleExtras {
 
 			$currentDerivativeIds = array_splice($derivativeIds, 0, $loadBatchSize);
 			list ($ret, $derivatives) =
-			    GalleryCoreApi::loadEntitiesById($currentDerivativeIds);
+			    GalleryCoreApi::loadEntitiesById($currentDerivativeIds,
+							     'GalleryDerivative');
 			if ($ret) {
 			    return $ret;
 			}
@@ -2212,6 +2214,8 @@ class CoreModuleExtras {
 	    if (empty($result)) {
 		return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 	    }
+	case '1.2.10':
+	    /* Adding new $requiredEntityType parameter to all loadEntitiesById calls */
 
 	case 'end of upgrade path':
 	    /*
@@ -2533,6 +2537,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.7':
 	case '1.2.8':
 	case '1.2.9':
+	case '1.2.10':
 
 	case 'end of upgrade path':
 	    /*

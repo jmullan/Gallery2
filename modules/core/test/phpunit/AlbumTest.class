@@ -72,7 +72,8 @@ class AlbumTest extends GalleryTestCase {
     function testLoadRootAlbum() {
 	global $gallery;
 
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_parentAlbum->getId());
+	list ($ret, $rootAlbum) =
+	    GalleryCoreApi::loadEntitiesById($this->_parentAlbum->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -337,11 +338,13 @@ class AlbumTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $expected[0]) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	list ($ret, $expected[0]) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $expected[1]) = GalleryCoreApi::loadEntitiesById($this->_parentAlbum->getId());
+	list ($ret, $expected[1]) =
+	    GalleryCoreApi::loadEntitiesById($this->_parentAlbum->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -365,7 +368,8 @@ class AlbumTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	list ($ret, $root) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

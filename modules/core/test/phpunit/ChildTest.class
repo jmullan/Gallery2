@@ -490,7 +490,8 @@ class ChildTest extends GalleryTestCase {
 	foreach ($items as $item) {
 	    $itemIds[] = $item->getId();
 	}
-	list ($ret, $albumRoot) = GalleryCoreApi::loadEntitiesById($this->_getRootID());
+	list ($ret, $albumRoot) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootID(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

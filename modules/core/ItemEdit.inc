@@ -37,7 +37,7 @@ class ItemEditController extends GalleryController {
 	$itemId = (int)GalleryUtilities::getRequestVariables('itemId');
 	
 	/* Load the item */
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -453,10 +453,10 @@ class EntityTest extends GalleryTestCase {
 
     function testLoadEntitiesByIdAssertsTheRequestedEntityTypeForMultipleEntities() {
 	list ($ret, $dataItem) = $this->_createRandomDataItem($this->_getRootId());
-	$this->_markForCleanup($dataItem);
 	if ($ret) {
 	    return $ret;
 	}
+	$this->_markForCleanup($dataItem);
 
 	list ($ret, $entities) = GalleryCoreApi::loadEntitiesById(
 	    array($this->_getRootId(), $dataItem->getId()), 'GalleryItem');
@@ -474,10 +474,10 @@ class EntityTest extends GalleryTestCase {
 
     function testLoadEntitiesByIdAssertsTheRequestedEntityTypeMismatchForMultipleEntities() {
 	list ($ret, $dataItem) = $this->_createRandomDataItem($this->_getRootId());
-	$this->_markForCleanup($dataItem);
 	if ($ret) {
 	    return $ret;
 	}
+	$this->_markForCleanup($dataItem);
 
 	list ($ret, $entities) = GalleryCoreApi::loadEntitiesById(
 	    array($this->_getRootId(), $dataItem->getId()), 'GalleryAlbumItem');
@@ -520,10 +520,10 @@ class EntityTest extends GalleryTestCase {
 
     function deleteEntityByIdAssertsTheRequestedEntityTypeNoMatch() {
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
-	$this->_markForCleanup($album);
 	if ($ret) {
 	    return $ret;
 	}
+	$this->_markForCleanup($album);
 
 	$ret = GalleryCoreApi::deleteEntityById($album->getId(), 'GalleryDerivative');
 	if ($ret) {

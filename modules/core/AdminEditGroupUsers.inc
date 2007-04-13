@@ -42,7 +42,7 @@ class AdminEditGroupUsersController extends GalleryController {
 
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
-	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId, 'GalleryGroup');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -78,7 +78,8 @@ class AdminEditGroupUsersController extends GalleryController {
 
 		if (empty($error)) {
 		    foreach ($form['userIds'] as $userId => $dummy) {
-			list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+			list ($ret, $user) =
+			    GalleryCoreApi::loadEntitiesById($userId, 'GalleryUser');
 			if ($ret) {
 			    return array($ret, null);
 			}
@@ -178,7 +179,7 @@ class AdminEditGroupUsersView extends GalleryView {
 
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
-	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId, 'GalleryGroup');
 	if ($ret) {
 	    return array($ret, null);
 	}

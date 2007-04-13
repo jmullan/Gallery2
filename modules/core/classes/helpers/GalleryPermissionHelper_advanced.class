@@ -78,7 +78,7 @@ class GalleryPermissionHelper_advanced {
      */
     function _postGroupEvent($groupId, $itemId) {
 	$userId = null;
-	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId, 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}

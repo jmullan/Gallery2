@@ -64,7 +64,7 @@ class LogoutController extends GalleryController {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	list ($ret, $guestUser) = GalleryCoreApi::loadEntitiesById($anonymousId);
+	list ($ret, $guestUser) = GalleryCoreApi::loadEntitiesById($anonymousId, 'GalleryUser');
 	if ($ret) {
 	    return array($ret, null);
 	}

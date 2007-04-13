@@ -251,7 +251,8 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function testMissingRootTitle() {
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	list ($ret, $rootAlbum) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -282,7 +283,8 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function testRenameRoot() {
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	list ($ret, $rootAlbum) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -310,7 +312,8 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function testMissingRootTitle2() {
-	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	list ($ret, $rootAlbum) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

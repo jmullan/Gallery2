@@ -69,7 +69,8 @@ class ItemMoveController extends GalleryController {
 		$selectedIds = array_keys($form['selectedIds']);
 
 		/* Load the source items */
-		list ($ret, $selectedItems) = GalleryCoreApi::loadEntitiesById($selectedIds);
+		list ($ret, $selectedItems) =
+		    GalleryCoreApi::loadEntitiesById($selectedIds, 'GalleryItem');
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -263,7 +264,7 @@ class ItemMoveView extends GalleryView {
 	    $form['numPerPage'] = 15;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -312,7 +313,7 @@ class ItemMoveView extends GalleryView {
 	    }
 
 	    /* Load all the peers */
-	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
+	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -377,7 +378,8 @@ class ItemMoveView extends GalleryView {
 							   $albumIds['addAlbumItem']));
 
 	    /* Load all the album entities */
-	    list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds['allIds']);
+	    list ($ret, $albums) =
+		GalleryCoreApi::loadEntitiesById($albumIds['allIds'], 'GalleryAlbumItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

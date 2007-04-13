@@ -114,7 +114,8 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 			return array($ret, null, null, null);
 		    }
 
-		    $ret = GalleryCoreApi::deleteEntityById($preferred->getId());
+		    $ret =
+			GalleryCoreApi::deleteEntityById($preferred->getId(), 'GalleryDerivative');
 		    if ($ret) {
 			return array($ret, null, null, null);
 		    }

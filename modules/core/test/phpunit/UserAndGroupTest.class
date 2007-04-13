@@ -157,7 +157,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	$gallery->setActiveUser($this->_activeUserBackup);
 
 	/* Delete the user */
-	$ret = GalleryCoreApi::deleteEntityById($userId);
+	$ret = GalleryCoreApi::deleteEntityById($userId, 'GalleryUser');
 	if ($ret) {
 	    $this->assert(false, 'The user could not be deleted.');
 	    GalleryCoreApi::removeMapEntry('GalleryUserGroupMap', array('userId' => $userId));
@@ -237,7 +237,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	$this->_markForCleanup($user);
 	$gallery->setActiveUser($user);
 
-	$ret = GalleryCoreApi::deleteEntityById($user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($user->getId(), 'GalleryUser');
 	$this->assertEquals(ERROR_BAD_PARAMETER | GALLERY_ERROR, $ret->getErrorCode());
     }
 
@@ -246,7 +246,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 
-	$ret = GalleryCoreApi::deleteEntityById($anonymousUserId);
+	$ret = GalleryCoreApi::deleteEntityById($anonymousUserId, 'GalleryUser');
 	$this->assertEquals(ERROR_BAD_PARAMETER | GALLERY_ERROR, $ret->getErrorCode());
     }
 
@@ -278,7 +278,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 
 	/* Attempt to delete user */
-	$ret = GalleryCoreApi::deleteEntityById($userId);
+	$ret = GalleryCoreApi::deleteEntityById($userId, 'GalleryUser');
 	$this->assertEquals(ERROR_BAD_PARAMETER | GALLERY_ERROR, $ret->getErrorCode());
     }
 
@@ -338,7 +338,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 
 	/* Delete this admin */
-	$ret = GalleryCoreApi::deleteEntityById($userId);
+	$ret = GalleryCoreApi::deleteEntityById($userId, 'GalleryUser');
 	if ($ret) {
 	    $this->assert(false, 'The user could not be deleted.');
 	    return $ret;
@@ -371,7 +371,7 @@ class UserAndGroupTest extends GalleryTestCase {
 		return $ret;
 	    }
 
-	    $ret = GalleryCoreApi::deleteEntityById($groupId);
+	    $ret = GalleryCoreApi::deleteEntityById($groupId, 'GalleryGroup');
 	    if ($ret && !($ret->getErrorCode() & ERROR_BAD_PARAMETER)) {
 		return $ret;
 	    }
@@ -380,7 +380,7 @@ class UserAndGroupTest extends GalleryTestCase {
 			  "$paramName: expect an error");
 
 	    /* Make sure the entity still exists */
-	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($groupId);
+	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($groupId, 'GalleryGroup');
 	    if ($ret) {
 		return $ret;
 	    }

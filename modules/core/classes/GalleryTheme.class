@@ -658,7 +658,7 @@ class GalleryTheme extends GalleryPlugin {
 	    if ($ret) {
 		return $ret;
 	    }
-	    list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($ids);
+	    list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($ids, 'GalleryAlbumItem');
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;
@@ -1166,7 +1166,7 @@ class GalleryTheme extends GalleryPlugin {
 	    $load[$key] = true;
 	}
 	if (!empty($childIds)) {
-	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
+	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds, 'GalleryItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -1197,12 +1197,13 @@ class GalleryTheme extends GalleryPlugin {
 	 * --------------------------------------------------------------------------------------
 	 * Load additional required entities
 	 */
-	$ids = array();
+	$userIds = array();
+	$itemIds = array();
 	if (isset($load['owner'])) {
-	    $ids[$item->getOwnerId()] = true;
+	    $userIds[$item->getOwnerId()] = true;
 	    $childOwnerIds = array();
 	    foreach ($childItems as $child) {
-		$ids[$child->getOwnerId()] = true;
+		$userIds[$child->getOwnerId()] = true;
 		$childOwnerIds[$child->getOwnerId()] = true;
 	    }
 	    $childOwnerIds = array_keys($childOwnerIds);
@@ -1231,7 +1232,7 @@ class GalleryTheme extends GalleryPlugin {
 		}
 	    }
 	    foreach ($parentSequence as $id) {
-		$ids[$id] = true;
+		$itemIds[$id] = true;
 	    }
 	}
 	if (isset($load['itemNavigator'])) {
@@ -1250,7 +1251,8 @@ class GalleryTheme extends GalleryPlugin {
 		    return $ret;
 		}
 		if ($canViewParent) {
-		    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+		    list ($ret, $parent) =
+			GalleryCoreApi::loadEntitiesById($item->getParentId(), 'GalleryItem');
 		    if ($ret) {
 			return $ret;
 		    }
@@ -1279,7 +1281,7 @@ class GalleryTheme extends GalleryPlugin {
 			$navigator['last'] = $peerDataItemIds[$lastIndex];
 		    }
 		    foreach ($navigator as $id) {
-			$ids[$id] = true;
+			$itemIds[$id] = true;
 		    }
 		}
 	    }
@@ -1287,8 +1289,19 @@ class GalleryTheme extends GalleryPlugin {
 		unset($load['itemNavigator']);
 	    }
 	}
-	if (!empty($ids)) {
-	    list ($ret, $list) = GalleryCoreApi::loadEntitiesById(array_keys($ids));
+	if (!empty($userIds)) {
+	    list ($ret, $list) =
+		GalleryCoreApi::loadEntitiesById(array_keys($userIds), 'GalleryUser');
+	    if ($ret) {
+		return $ret;
+	    }
+	    foreach ($list as $it) {
+		$entities[$it->getId()] = $it;
+	    }
+	}
+	if (!empty($itemIds)) {
+	    list ($ret, $list) =
+		GalleryCoreApi::loadEntitiesById(array_keys($itemIds), 'GalleryItem');
 	    if ($ret) {
 		return $ret;
 	    }

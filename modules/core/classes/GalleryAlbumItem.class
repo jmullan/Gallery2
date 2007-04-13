@@ -102,7 +102,7 @@ class GalleryAlbumItem extends GalleryItem {
 	/* Albums can contain children */
 	$this->setCanContainChildren(true);
 
-	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
+	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}

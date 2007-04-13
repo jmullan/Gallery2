@@ -171,7 +171,7 @@ class PluginParameterTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::deleteEntityById($album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($album->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

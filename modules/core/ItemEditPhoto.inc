@@ -161,7 +161,8 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    }
 		    /* Remove any leftover resizes */
 		    foreach ($resizesTable as $resize) {
-			$ret = GalleryCoreApi::deleteEntityById($resize->getId());
+			$ret =
+			    GalleryCoreApi::deleteEntityById($resize->getId(), 'GalleryDerivative');
 			if ($ret) {
 			    return array($ret, null, null, null);
 			}

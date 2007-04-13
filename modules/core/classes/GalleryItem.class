@@ -178,7 +178,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
-	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
+	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -251,7 +251,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	    return $ret;
 	}
 
-	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId);
+	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -304,7 +304,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 
 	$i = 0;
 	while ($result = $searchResults->nextResult()) {
-	    $ret = GalleryCoreApi::deleteEntityById($result[0]);
+	    $ret = GalleryCoreApi::deleteEntityById($result[0], 'GalleryChildEntity');
 	    /*
 	     * Deletes can cascade in interesting ways.  For example, deleting a derivative will
 	     * get rid of any other derivatives that are sourced to it, so it's possible that

@@ -35,7 +35,7 @@ class ItemAdminView extends GalleryView {
 
 	/* Figure out the item we're referring to */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

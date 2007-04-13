@@ -145,7 +145,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id, 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}
@@ -168,7 +168,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id, 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}
@@ -191,7 +191,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id, 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}
@@ -215,7 +215,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id, 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}
@@ -300,7 +300,7 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 
     function _deleteGroup($group) {
 	global $gallery;
-	$ret = GalleryCoreApi::deleteEntityById($group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($group->getId(), 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}

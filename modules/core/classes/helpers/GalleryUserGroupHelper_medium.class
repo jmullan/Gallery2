@@ -141,7 +141,7 @@ class GalleryUserGroupHelper_medium {
 	    return $ret;
 	}
 
-	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId, 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}

@@ -70,7 +70,8 @@ class FileSystemTest extends GalleryTestCase {
     }
 
     function testFetchLogicalPath() {
-	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	list ($ret, $root) =
+	    GalleryCoreApi::loadEntitiesById($this->_getRootId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

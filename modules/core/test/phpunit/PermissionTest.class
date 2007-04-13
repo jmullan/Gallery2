@@ -147,7 +147,7 @@ class PermissionTest extends GalleryTestCase {
 	 * GalleryPermissionHelper_advanced::_postGroupEvent()
 	 */
 	$groupEventUserId = null;
-	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId, 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}

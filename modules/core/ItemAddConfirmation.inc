@@ -34,7 +34,7 @@ class ItemAddConfirmationView extends GalleryView {
 	global $gallery;
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -48,8 +48,8 @@ class ItemAddConfirmationView extends GalleryView {
 	if (!empty($status['addedFiles'])) {
 	    $count = sizeof($status['addedFiles']);
 	    for ($i = 0; $i < $count; $i++) {
-		list ($ret, $entity) =
-		    GalleryCoreApi::loadEntitiesById($status['addedFiles'][$i]['id']);
+		list ($ret, $entity) = GalleryCoreApi::loadEntitiesById(
+		    $status['addedFiles'][$i]['id'], 'GalleryItem');
 		if (!$ret) {
 		    $status['addedFiles'][$i]['exists'] = true;
 		    $uploaded++;

@@ -52,7 +52,7 @@ class ItemDeleteSingleController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -69,7 +69,7 @@ class ItemDeleteSingleController extends GalleryController {
 		    array('forceSessionId' => false));
 
 	    /* Delete */
-	    $ret = GalleryCoreApi::deleteEntityById($itemId);
+	    $ret = GalleryCoreApi::deleteEntityById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -129,7 +129,7 @@ class ItemDeleteSingleView extends GalleryView {
 	    $form['formName'] = 'ItemDeleteSingle';
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

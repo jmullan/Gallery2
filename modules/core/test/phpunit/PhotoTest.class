@@ -92,7 +92,8 @@ class PhotoTest extends GalleryTestCase {
 	 */
 	GalleryDataCache::reset();
 
-	list ($ret, $newPhoto) = GalleryCoreApi::loadEntitiesById($photo->getId());
+	list ($ret, $newPhoto) =
+	    GalleryCoreApi::loadEntitiesById($photo->getId(), 'GalleryPhotoItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -102,7 +103,7 @@ class PhotoTest extends GalleryTestCase {
 	/*
 	 * Delete the photo
 	 */
-	$ret = GalleryCoreApi::deleteEntityById($photo->getId());
+	$ret = GalleryCoreApi::deleteEntityById($photo->getId(), 'GalleryPhotoItem');
 	if ($ret) {
 	    return $ret;
 	}

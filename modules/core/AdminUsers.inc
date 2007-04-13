@@ -194,7 +194,8 @@ class AdminUsersView extends GalleryView {
 	$myUserId = $gallery->getActiveUserId();
 
 	/* This is inefficient; we should extend GalleryCoreApi::fetchUserNames */
-	list ($ret, $users) = GalleryCoreApi::loadEntitiesById(array_keys($userNames));
+	list ($ret, $users) =
+	    GalleryCoreApi::loadEntitiesById(array_keys($userNames), 'GalleryUser');
 	if ($ret) {
 	    return array($ret, null);
 	}

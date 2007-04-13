@@ -195,7 +195,8 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	}
 
 	/* Get the new parent */
-	list ($ret, $newParent) = GalleryCoreApi::loadEntitiesById($newParentId);
+	list ($ret, $newParent) =
+		GalleryCoreApi::loadEntitiesById($newParentId, 'GalleryFileSystemEntity');
 	if ($ret) {
 	    return $ret;
 	}

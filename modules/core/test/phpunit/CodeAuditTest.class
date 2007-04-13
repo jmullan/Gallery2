@@ -173,6 +173,9 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$fileName = substr($fileName, strlen($this->_baseDir) + 1);
 	$lines = split("(\r\n|\n)", $buffer);
 	$checkSuperglobals = !preg_match('{/test/phpunit|^install/|^upgrade/}', $fileName);
+	/** @todo Extend the loadEntitiesById test to all G2 code */
+	$checkEntityType = strpos($fileName, 'modules/core/') !== false
+	    && strpos($fileName, 'modules/core/test/phpunit/EntityTest.class') === false;
 	$currentFunction = null;
 	$currentClass = null;
 	$longLineTable = $returnTable = array();
@@ -187,6 +190,23 @@ class CodeAuditTest extends CodeAuditTestCase {
 	}
 
 	$this->checkPreamble($fileName, $buffer, $lines);
+
+	/*
+	 * Check for loadEntitiesById and deleteEntityById calls that omit the entity-type parameter
+	 * which will be required after the next major core API bump.
+	 */
+	if ($checkEntityType) {
+	    foreach (array('loadEntitiesById', 'deleteEntityById') as $function) {
+		$calls =
+		    $this->getFunctionCalls($buffer, array('GalleryCoreApi', $function), $fileName);
+		foreach ($calls as $call) {
+		    $params = $this->getFunctionParameters($call);
+		    $this->assert(count($params) == 2,
+				  sprintf('File %s: %s() call without entityType parameter',
+					  $fileName, $function));
+		}
+	    }
+	}
 
 	for ($i = 0; $i < count($lines); $i++) {
 	    if (preg_match('/^\s*class (\S+)/', $lines[$i], $matches)) {

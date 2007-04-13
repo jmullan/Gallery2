@@ -511,7 +511,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	/* Delete any old derivatives that have not been reused */
 	foreach ($derivs as $tmp) {
 	    foreach ($tmp as $derivative) {
-		$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
+		$ret = GalleryCoreApi::deleteEntityById($derivative->getId(), 'GalleryDerivative');
 		if ($ret) {
 		    return $ret;
 		}
@@ -585,7 +585,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	/* 3. The item data itself */
 	if (!$sourceMimeType) {
-	    list ($ret, $fromItem) = GalleryCoreApi::loadEntitiesById($fromItemId);
+	    list ($ret, $fromItem) = GalleryCoreApi::loadEntitiesById($fromItemId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -672,7 +672,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		 * album's parent, so load the album, get its parent's id, get
 		 * that album's preferences and use those for the thumbnail.
 		 */
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 		if ($ret) {
 		    if (!empty($lockIds)) {
 			/* Ignore errors -- we're already in an error handler */

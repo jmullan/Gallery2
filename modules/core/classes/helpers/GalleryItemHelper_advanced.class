@@ -129,8 +129,8 @@ class GalleryItemHelper_advanced {
 	    /* Make sure that the thumbnail's source item is still inside the album */
 	    $thumbnail = $thumbnails[$albumId];
 
-	    list ($ret, $thumbnailSource) =
-		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+	    list ($ret, $thumbnailSource) = GalleryCoreApi::loadEntitiesById(
+		$thumbnail->getDerivativeSourceId(), array('GalleryDataItem', 'GalleryDerivative'));
 	    if ($ret) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    /* Derivative source is missing.. pick a new one */
@@ -139,8 +139,8 @@ class GalleryItemHelper_advanced {
 		    return array($ret, null);
 		}
 	    } else {
-		list ($ret, $highlightItem) =
-		    GalleryCoreApi::loadEntitiesById($thumbnailSource->getParentId());
+		list ($ret, $highlightItem) = GalleryCoreApi::loadEntitiesById(
+		    $thumbnailSource->getParentId(), 'GalleryItem');
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -156,7 +156,7 @@ class GalleryItemHelper_advanced {
 
 	if (empty($thumbnails) || $highlightHasLeftTheAlbum) {
 	    $gallery->debug('Picking new thumbnail');
-	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
+	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId, 'GalleryAlbumItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -182,7 +182,7 @@ class GalleryItemHelper_advanced {
 
 	if (!$success && $highlightHasLeftTheAlbum) {
 	    /* We couldn't find a new thumbnail, but the existing one isn't good anymore */
-	    $ret = GalleryCoreApi::deleteEntityById($thumbnail->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($thumbnail->getId(), 'GalleryDerivative');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -203,7 +203,8 @@ class GalleryItemHelper_advanced {
 	}
 
 	/* Make sure the parent album is indeed an album */
-	list ($ret, $parentAlbum) = GalleryCoreApi::loadEntitiesById($parentAlbumId);
+	list ($ret, $parentAlbum) =
+		GalleryCoreApi::loadEntitiesById($parentAlbumId, 'GalleryAlbumItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -279,7 +280,7 @@ class GalleryItemHelper_advanced {
 	}
 
 	/* First check if new User is a valid gallery user! */
-	list ($ret, $newOwner) = GalleryCoreApi::loadEntitiesById($newUserId);
+	list ($ret, $newOwner) = GalleryCoreApi::loadEntitiesById($newUserId, 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}
@@ -289,7 +290,7 @@ class GalleryItemHelper_advanced {
 	}
 
 	/* We need the user object later on anyway */
-	list ($ret, $oldOwner) = GalleryCoreApi::loadEntitiesById($oldUserId);
+	list ($ret, $oldOwner) = GalleryCoreApi::loadEntitiesById($oldUserId, 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}
@@ -311,7 +312,7 @@ class GalleryItemHelper_advanced {
 	    return $ret;
 	}
 	/* load all items */
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return $ret;
@@ -419,7 +420,8 @@ class GalleryItemHelper_advanced {
 		return $ret;
 	    }
 
-	    list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($currentIds);
+	    list ($ret, $albums) =
+		GalleryCoreApi::loadEntitiesById($currentIds, 'GalleryAlbumItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -489,7 +491,7 @@ class GalleryItemHelper_advanced {
 		return $ret;
 	    }
 
-	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($currentIds);
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($currentIds, 'GalleryItem');
 	    if ($ret) {
 		return $ret;
 	    }

@@ -1518,7 +1518,7 @@ class SessionAuthPlugin /* extends GalleryAuthPlugin */ {
 
 	$userId = $session->getUserId();
 	if (!empty($userId)) {
-	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId, 'GalleryUser');
 
 	    /* ERROR_MISSING_OBJECT check to suppress error if user id doesn't exist */
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {

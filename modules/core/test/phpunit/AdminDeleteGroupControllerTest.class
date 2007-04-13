@@ -166,7 +166,7 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
     }
 
     function _deleteGroup($group) {
-	$ret = GalleryCoreApi::deleteEntityById($group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($group->getId(), 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}

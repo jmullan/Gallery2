@@ -284,7 +284,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 		return $ret;
 	}
-	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+	list ($ret, $anonymousUser) =
+	    GalleryCoreApi::loadEntitiesById($anonymousUserId, 'GalleryUser');
 	if ($ret) {
 		return $ret;
 	}

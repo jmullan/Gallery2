@@ -34,7 +34,8 @@ class GalleryDerivativeHelper_simple {
     function rebuildCacheIfNotCurrent($derivativeId, $fixBroken=false) {
 	global $gallery;
 
-	list ($ret, $derivative) = GalleryCoreApi::loadEntitiesById($derivativeId);
+	list ($ret, $derivative) =
+			GalleryCoreApi::loadEntitiesById($derivativeId, 'GalleryDerivative');
 	if ($ret) {
 	    return array($ret, null, null);
 	}
@@ -167,7 +168,8 @@ class GalleryDerivativeHelper_simple {
 	    sort($derivativeIds, SORT_NUMERIC);
 
 	    /* Load all the derivative images */
-	    list ($ret, $derivativeEntities) = GalleryCoreApi::loadEntitiesById($derivativeIds);
+	    list ($ret, $derivativeEntities) =
+			GalleryCoreApi::loadEntitiesById($derivativeIds, 'GalleryDerivative');
 	    if ($ret) {
 		return array($ret, null);
 	    }

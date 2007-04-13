@@ -441,7 +441,7 @@ class GalleryEmbed {
 	if ($ret) {
 	    return $ret;
 	}
-	$ret = GalleryCoreApi::deleteEntityById($user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($user->getId(), 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}
@@ -502,7 +502,7 @@ class GalleryEmbed {
 	if ($ret) {
 	    return $ret;
 	}
-	$ret = GalleryCoreApi::deleteEntityById($group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($group->getId(), 'GalleryGroup');
 	if ($ret) {
 	    return $ret;
 	}

@@ -1056,7 +1056,7 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Delete the original, now all links should point to the first link */
-	$ret = GalleryCoreApi::deleteEntityById($item->getId());
+	$ret = GalleryCoreApi::deleteEntityById($item->getId(), 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1104,7 +1104,7 @@ class ItemTest extends GalleryTestCase {
 	}
 	$gallery->_shutdownActions = null;
 
-	$ret = GalleryCoreApi::deleteEntityById($album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($album->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

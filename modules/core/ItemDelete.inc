@@ -76,7 +76,7 @@ class ItemDeleteController extends GalleryController {
 		/* if we're still here then all are deletable */
 		$storage =& $gallery->getStorage();
 		foreach ($selectedIds as $selectedId) {
-		    $ret = GalleryCoreApi::deleteEntityById($selectedId);
+		    $ret = GalleryCoreApi::deleteEntityById($selectedId, 'GalleryItem');
 		    if ($ret) {
 			return array($ret, null);
 		    }
@@ -171,7 +171,7 @@ class ItemDeleteView extends GalleryView {
 	    $form['numPerPage'] = 15;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -211,7 +211,7 @@ class ItemDeleteView extends GalleryView {
 	    }
 
 	    /* load peers */
-	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
+	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
