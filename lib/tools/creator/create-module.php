@@ -23,6 +23,10 @@ if (!empty($_SERVER['SERVER_NAME'])) {
     exit(1);
 }
 
+if (php_sapi_name() == 'cgi') {
+    /* Starts in lib/tools/creator for php-cgi */
+    chdir('../../..');
+}
 if (!file_exists('modules')) {
     print "You must run this from the gallery2 directory\n";
     exit(1);
@@ -157,7 +161,7 @@ function ask($prompt, $default='') {
 	print " [$default]";
     }
     print ' ';
-    $line = trim(fgets(STDIN));
+    $line = trim(fgets(stdin()));
     if (empty($line)) {
 	return $default;
     }
@@ -165,8 +169,8 @@ function ask($prompt, $default='') {
 }
 
 function error($message) {
-    fwrite(STDERR, "$message\n");
-    fwrite(STDERR, "*** Exiting!\n");
+    fwrite(stderr(), "$message\n");
+    fwrite(stderr(), "*** Exiting!\n");
     cleanup();
     exit(1);
 }
@@ -182,3 +186,24 @@ function safe_fopen($path) {
     ($fd = fopen($path, 'wb')) || error("Can't write to $path");
     return $fd;
 }
+
+function stdin() {
+    static $stdin;
+    if (!defined('STDERR')) {
+	/* Already defined for CLI but not for CGI */
+	$stdin = fopen('php://stdin', 'w');
+	define('STDERR', $stdin);
+    }
+    return STDERR;
+}
+
+function stderr() {
+    static $stderr;
+    if (!defined('STDERR')) {
+	/* Already defined for CLI but not for CGI */
+	$stderr = fopen('php://stderr', 'w');
+	define('STDERR', $stderr);
+    }
+    return STDERR;
+}
+?>
