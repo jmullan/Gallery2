@@ -329,9 +329,11 @@ class GallerySession {
     /**
      * Save any session changes to the store.  Does not save sessions that don't have a sessionId
      * yet.  Triggers the expiration of existing persistent sessions in 2% of all calls.
+     * @param boolean $useNonTransactionalConnection (optional) set to true if we should save this
+     *                session outside of any existing transaction.
      * @return object GalleryStatus a status code
      */
-    function save() {
+    function save($useNonTransactionalConnection=false) {
 	global $gallery;
 	$phpVm = $gallery->getPhpVm();
 	$dieRoll = $phpVm->rand(1, 100);
@@ -357,23 +359,22 @@ class GallerySession {
 			      'remoteIdentifier' => serialize($this->_remoteIdentifier),
 			      'creationTimestamp' => $this->_creationTime,
 			      'modificationTimestamp' => $this->_modificationTime,
-			      'data' => serialize($this->_sessionData)));
+			      'data' => serialize($this->_sessionData)),
+			$useNonTransactionalConnection);
 		}
 		if ($ret) {
 		    return $ret;
 		}
 		$this->_isSessionSaved = true;
 	    } else if (!$this->_isSessionSaved) {
-		/*
-		 * 5% of the time touch the session file so that it doesn't get expired.  We can't
-		 * count on the atime being set, since you can disable that on some operating
-		 * systems to get performance gains.
-		 */
+		/* Update the session modification timestamp 5% of the time to avoid expiration. */
 		if ($dieRoll <= 5) {
 		    $this->_modificationTime = $phpVm->time();
-		    $ret = GalleryCoreApi::updateMapEntry('GallerySessionMap',
+		    $ret = GalleryCoreApi::updateMapEntry(
+			'GallerySessionMap',
 			array('id' => $this->_sessionId),
-			array('modificationTimestamp' => $this->_modificationTime));
+			array('modificationTimestamp' => $this->_modificationTime),
+			$useNonTransactionalConnection);
 		    if ($ret) {
 			return $ret;
 		    }
@@ -681,7 +682,7 @@ class GallerySession {
 	    }
 	    $this->_sessionId = $data['id'] = GalleryUtilities::strToLower($this->_sessionId);
 
-	    $ret = @GalleryCoreApi::addMapEntry('GallerySessionMap', $data);
+	    $ret = @GalleryCoreApi::addMapEntry('GallerySessionMap', $data, true);
 	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 		    /* No luck after x attempts, give up, stop hitting the server with DB queries */
@@ -689,14 +690,6 @@ class GallerySession {
 		}
 	    } else {
 		$success = true;
-	    }
-	    /*
-	     * Make sure the session exists before other requests (DownloadItem, printing shops,
-	     * ...) arrive that rely on it
-	     */
-	    $ret = $storage->checkPoint();
-	    if ($ret) {
-		return $ret;
 	    }
 	} while (!$success && $attempt++ < 4);
 

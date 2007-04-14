@@ -121,16 +121,16 @@ function GalleryMain($embedded=false) {
 	    $storage =& $gallery->getStorage();
 	    $storage->rollbackTransaction();
 
-	    /* Reset the auth token */
-	    /** @todo Allow GallerySession::save to work without transactions */
 	    if ($ret->getErrorCode() & ERROR_REQUEST_FORGED) {
+		/*
+		 * The auth token was automatically reset as a side-effect when we determined that
+		 * this request was forged, so save the session now.
+		 */
 		$session =& $gallery->getSession();
-		$ret2 = $storage->beginTransaction();
-		if (!$ret2) {
-		    $ret2 = $session->save();
-		}
-		if (!$ret2) {
-		    $storage->commitTransaction();
+		$ret2 = $session->save(true);
+		if ($ret2) {
+		    GalleryCoreApi::addEventLogEntry(
+			'Gallery Error', 'Unable to reset the auth token', $ret2->getAsText());
 		}
 	    }
 	}

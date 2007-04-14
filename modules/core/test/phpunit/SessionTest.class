@@ -22,6 +22,8 @@ GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
 
 /**
  * Test session functionality.
+ * @todo Convert this to using UnitTestStorage
+ *
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -316,6 +318,16 @@ class SessionTest extends GalleryTestCase {
 	    GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
 	}
 
+	/*
+	 * The session is created outside of our main transaction, so we have to checkpoint here
+	 * to make sure that Gallery::initSession will see it when it queries the database.
+	 */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $ret;
+	}
+
 	$gallery->_session = null;
 	$ret = $gallery->initSession();
 	if ($ret) {
@@ -397,6 +409,16 @@ class SessionTest extends GalleryTestCase {
 	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sid;
 	if (!$isUsingCookies) {
 	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $sid);
+	}
+
+	/*
+	 * The session is created outside of our main transaction, so we have to checkpoint here
+	 * to make sure that Gallery::initSession will see it when it queries the database.
+	 */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $ret;
 	}
 
 	/* Request #2, save some more status information */
@@ -723,6 +745,8 @@ class SessionTest extends GalleryTestCase {
     }
 
     function testInitForExistingSession() {
+	global $gallery;
+
 	/* Create a persistent session */
 	$session = new GallerySession();
 	$ret = $session->initEmpty(false, 99);
@@ -735,6 +759,16 @@ class SessionTest extends GalleryTestCase {
 	}
 	$this->assert(!empty($session->_sessionId), 'initial sid');
 	$this->_markSessionForCleanup($session);
+
+	/*
+	 * The session is created outside of our main transaction, so we have to checkpoint here
+	 * to make sure that Gallery::initSession will see it when it queries the database.
+	 */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Execute the test */
 	$_COOKIE[SESSION_ID_PARAMETER] = $session->getId();
@@ -1431,8 +1465,8 @@ class SessionTest extends GalleryTestCase {
 	$this->_markSessionForCleanup($session);
 
 	/* Assert a default DB connection was used */
-	$this->assert(empty($storage->_nonTransactionalDb), 'non transactional db driver');
-	$this->assert(!empty($storage->_db), 'transactional db driver');
+	$this->assert(!empty($storage->_nonTransactionalDb), 'non transactional db driver');
+	$this->assert(empty($storage->_db), 'transactional db driver');
 
 	/* Assert a map entry has been inserted */
 	$this->assert(!empty($session->_sessionId), 'sid');
@@ -2704,6 +2738,8 @@ class SessionTest extends GalleryTestCase {
     }
 
     function testInitEmpty() {
+	global $gallery;
+
 	$session = new GallerySession();
 	$ret = $session->initEmpty();
 	if ($ret) {
@@ -2714,6 +2750,16 @@ class SessionTest extends GalleryTestCase {
 	$this->assert(!empty($session->_remoteIdentifier), 'remoteId should be set');
 	$this->assertEquals(true, $session->isPersistent(), 'is persistent');
 	$this->_markSessionForCleanup($session);
+
+	/*
+	 * The session is created outside of our main transaction, so we have to checkpoint here
+	 * to make sure that Gallery::initSession will see it when it queries the database.
+	 */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Verify the session was stored in the database */
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
@@ -3055,6 +3101,8 @@ class SessionTest extends GalleryTestCase {
     }
 
     function testSessionIdInUrlOverridesCookie() {
+	global $gallery;
+
 	foreach (array('from_url', 'from_cookie') as $key) {
 	    $sessions[$key] = new GallerySession();
 	    $ret = $sessions[$key]->init();
@@ -3066,6 +3114,16 @@ class SessionTest extends GalleryTestCase {
 		return $ret;
 	    }
 	    $sessions[$key]->put('some key', 'some value');
+	}
+
+	/*
+	 * The session is created outside of our main transaction, so we have to checkpoint here
+	 * to make sure that Gallery::initSession will see it when it queries the database.
+	 */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $ret;
 	}
 
 	$_COOKIE[SESSION_ID_PARAMETER] = $sessions['from_cookie']->getId();
