@@ -86,7 +86,7 @@ class RssTest extends GalleryTestCase {
 	}
 
 	/* Delete album: deletes sub-item and aliases */
-	$ret = GalleryCoreApi::deleteEntityById($album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($album->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

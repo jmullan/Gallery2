@@ -33,11 +33,11 @@ class MP3AudioModule extends GalleryModule {
 	$this->setName($gallery->i18n('MP3 Audio'));
 	$this->setDescription(
 		$gallery->i18n('Enable inline play of mp3 audio files with a flash player'));
-	$this->setVersion('1.0.1');
+	$this->setVersion('1.0.2');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredCoreApi(array(7, 27));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -88,7 +88,7 @@ class MP3AudioModule extends GalleryModule {
 	}
 	while (!empty($ids)) {
 	    $itemIds = array_splice($ids, 0, 100);
-	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryDataItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

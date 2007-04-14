@@ -78,17 +78,17 @@ class QuotasListenerTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_user->getId(), 'GalleryUser');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_group->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_group->getId(), 'GalleryGroup');
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -208,7 +208,7 @@ class QuotasListenerTest extends GalleryTestCase {
     }
 
     function _deleteEntity($entity) {
-	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
+	$ret = GalleryCoreApi::deleteEntityById($entity->getId(), $entity->getEntityType());
 	if ($ret) {
 	    return $ret;
 	}

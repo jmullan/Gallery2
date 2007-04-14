@@ -46,7 +46,7 @@ class ShowTreeView extends GalleryView {
 	    }
 	    $entityId = $entity->getId();
 	} else {
-	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($entityId);
+	    list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($entityId, 'GalleryEntity');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -80,8 +80,8 @@ class ShowTreeView extends GalleryView {
 
 	if (!empty($parentIds) || !empty($childIds)) {
 	    /* Load everything at once */
-	    list ($ret, $entityObjects) =
-		GalleryCoreApi::loadEntitiesById(array_merge($parentIds, $childIds));
+	    list ($ret, $entityObjects) = GalleryCoreApi::loadEntitiesById(
+		array_merge($parentIds, $childIds), 'GalleryEntity');
 	    if ($ret) {
 		return array($ret, null);
 	    }

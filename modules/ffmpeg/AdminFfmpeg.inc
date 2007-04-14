@@ -196,7 +196,8 @@ class AdminFfmpegController extends GalleryController {
 	    if ($ret) {
 		return $ret;
 	    }
-	    list ($ret, $thumbnails) = GalleryCoreApi::loadEntitiesById($idSet);
+	    list ($ret, $thumbnails) =
+		GalleryCoreApi::loadEntitiesById($idSet, 'GalleryDerivative');
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;

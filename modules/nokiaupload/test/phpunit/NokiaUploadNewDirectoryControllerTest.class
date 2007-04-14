@@ -132,7 +132,8 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	$ret = GalleryCoreApi::assertHasItemPermission($results['status']['id'], 'core.all');
 	$this->assert(!$ret, 'user should have core.all permission on new album');
 
-	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($results['status']['id']);
+	list ($ret, $album) =
+	    GalleryCoreApi::loadEntitiesById($results['status']['id'], 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

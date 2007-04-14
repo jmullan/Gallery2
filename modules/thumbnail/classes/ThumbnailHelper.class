@@ -98,7 +98,8 @@ class ThumbnailHelper {
 
 	$thumbnailImage = null;
 	if ($result = $searchResults->nextResult()) {
-	    list ($ret, $thumbnailImage) = GalleryCoreApi::loadEntitiesById((int)$result[0]);
+	    list ($ret, $thumbnailImage) =
+		GalleryCoreApi::loadEntitiesById((int)$result[0], 'ThumbnailImage');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -289,7 +290,7 @@ class ThumbnailHelper {
      * @return object GalleryStatus a status code
      */
     function updateItem($itemId, $mimeType, $isAdd=true) {
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'ThumbnailImage');
 	if ($ret) {
 	    return $ret;
 	}

@@ -228,7 +228,7 @@ class ItemAddLinkItem extends ItemAddPlugin {
 	if ($ret) {
 	    return array($ret, null, null);
 	}
-	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
+	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds, 'GalleryAlbumItem');
 	if ($ret) {
 	    return array($ret, null, null);
 	}

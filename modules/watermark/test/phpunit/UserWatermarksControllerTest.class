@@ -63,7 +63,7 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	if (isset($this->_idToDelete)) {
-	    $ret = GalleryCoreApi::deleteEntityById($this->_idToDelete);
+	    $ret = GalleryCoreApi::deleteEntityById($this->_idToDelete, 'WatermarkImage');
 	    if ($ret) {
 		print $ret->getAsHtml();
 		$this->failWithStatus($ret);

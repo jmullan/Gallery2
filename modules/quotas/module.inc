@@ -33,11 +33,11 @@ class QuotasModule extends GalleryModule {
 	$this->setId('quotas');
 	$this->setName($gallery->i18n('Quotas'));
 	$this->setDescription($gallery->i18n('User/Group Disk Quotas'));
-	$this->setVersion('1.1.1');
+	$this->setVersion('1.1.2');
 	$this->_templateVersion = 1;
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredCoreApi(array(7, 27));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 

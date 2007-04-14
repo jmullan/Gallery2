@@ -80,12 +80,14 @@ class ThumbnailSiteAdminController extends GalleryController {
 		}
 		$status = 'deleteMime';
 	    } else {
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['delete']['itemId']);
+		list ($ret, $item) =
+		    GalleryCoreApi::loadEntitiesById($form['delete']['itemId'], 'ThumbnailImage');
 		if ($ret) {
 		    return array($ret, null);
 		}
 		$itemMimeTypesList = $item->getItemMimeTypesList();
-		$ret = GalleryCoreApi::deleteEntityById($form['delete']['itemId']);
+		$ret =
+		    GalleryCoreApi::deleteEntityById($form['delete']['itemId'], 'ThumbnailImage');
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -141,7 +143,8 @@ class ThumbnailSiteAdminView extends GalleryView {
 	}
 	$form['list'] = array();
 	if (!empty($list)) {
-	    list ($ret, $thumbs) = GalleryCoreApi::loadEntitiesById(array_keys($list));
+	    list ($ret, $thumbs) =
+		GalleryCoreApi::loadEntitiesById(array_keys($list), 'ThumbnailImage');
 	    if ($ret) {
 		return array($ret, null);
 	    }

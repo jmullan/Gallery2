@@ -35,11 +35,11 @@ class Getid3Module extends GalleryModule {
 	$this->setId('getid3');
 	$this->setName($gallery->i18n('Getid3'));
 	$this->setDescription($gallery->i18n('A toolkit for getting id3 tag information'));
-	$this->setVersion('1.0.3'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.4'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredCoreApi(array(7, 27));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -70,6 +70,7 @@ class Getid3Module extends GalleryModule {
 	    case '1.0.1':
 	    case '1.0.2':
 		/* .mo file migration */
+	    case '1.0.3':
 
 	    case 'end of upgrade path':
 		break;

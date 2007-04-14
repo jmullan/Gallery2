@@ -183,7 +183,7 @@ class SlideshowTest extends GalleryTestCase {
 	$this->_allUsersGroupId = $allUsersGroupId;
 	$this->_admin = $gallery->getActiveUser();
 
-	list ($ret, $this->_guest) = GalleryCoreApi::loadEntitiesById($guestId);
+	list ($ret, $this->_guest) = GalleryCoreApi::loadEntitiesById($guestId, 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}
@@ -603,7 +603,7 @@ class SlideshowExif extends ExifInterface_1_0 {
 	if (!is_array($itemIds)) {
 	    $itemIds = array($itemIds);
 	}
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

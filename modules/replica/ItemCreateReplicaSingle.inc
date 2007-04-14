@@ -60,7 +60,7 @@ class ItemCreateReplicaSingleController extends GalleryController {
 		}
 
 		/* Load the item */
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -170,7 +170,7 @@ class ItemCreateReplicaSingleView extends GalleryView {
 	    $form['formName'] = 'ItemCreateReplicaSingle';
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -183,7 +183,7 @@ class ItemCreateReplicaSingleView extends GalleryView {
 	}
 
 	/* Load all the album entities */
-	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
+	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds, 'GalleryAlbumItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

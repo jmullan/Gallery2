@@ -120,7 +120,7 @@ class WebDavController extends GalleryController {
 		}
 	    }
 
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

@@ -497,7 +497,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(1, sizeof($childIds));
 
-	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0]);
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0], 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -539,7 +539,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 	$this->assertEquals(1, count($childIds));
-	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0]);
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0], 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -585,7 +585,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(1, sizeof($childIds));
 
-	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0]);
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0], 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -618,7 +618,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$newAlbumId = (int)$response->getProperty('album_name');
 
 	/* Make sure the item was added */
-	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -702,7 +702,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
 
 	/* Make sure the there are 2 images and 1 album */
-	$this->assertEquals('3', $response->getProperty('image_count'));
+	$this->assertEquals('3', $response->getProperty('image_count'), 'image count');
 	$this->assert($response->hasProperty('status_text'));
     }
 

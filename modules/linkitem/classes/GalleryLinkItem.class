@@ -68,12 +68,9 @@ class GalleryLinkItem extends GalleryItem {
 	}
 	if (is_numeric($link)) {
 	    /* Link to an album */
-	    list ($ret, $linkedAlbum) = GalleryCoreApi::loadEntitiesById($link);
+	    list ($ret, $linkedAlbum) = GalleryCoreApi::loadEntitiesById($link, 'GalleryAlbumItem');
 	    if ($ret) {
 		return $ret;
-	    }
-	    if (!GalleryUtilities::isA($linkedAlbum, 'GalleryAlbumItem')) {
-		return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	    }
 	}
 

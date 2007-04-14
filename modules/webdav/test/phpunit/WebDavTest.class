@@ -343,7 +343,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -432,7 +432,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId, 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -484,7 +484,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId, 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -983,7 +983,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId);
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($newItemId, 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1166,7 +1166,7 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

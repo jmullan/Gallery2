@@ -78,7 +78,7 @@ class ThumbnailImageTest extends GalleryTestCase {
 	}
 
 	list ($ret, $thumbnailImages) = GalleryCoreApi::loadEntitiesById(
-					array($customThumbId, $mimeTypeMap['audio/mpeg']));
+	    array($customThumbId, $mimeTypeMap['audio/mpeg']), 'ThumbnailImage');
 	if ($ret) {
 	    return $ret;
 	}
@@ -134,7 +134,7 @@ class ThumbnailImageTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $thumbnail) = GalleryCoreApi::loadEntitiesById($thumbnailId);
+	list ($ret, $thumbnail) = GalleryCoreApi::loadEntitiesById($thumbnailId, 'ThumbnailImage');
 	if ($ret) {
 	    return $ret;
 	}

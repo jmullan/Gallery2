@@ -95,7 +95,7 @@ class WatermarkHelper {
 	/* Convert them to entities */
 	$watermarks = array();
 	if (!empty($ids)) {
-	    list ($ret, $entities) = GalleryCoreApi::loadEntitiesById($ids);
+	    list ($ret, $entities) = GalleryCoreApi::loadEntitiesById($ids, 'WatermarkImage');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -146,7 +146,7 @@ class WatermarkHelper {
      *
      * @param object WatermarkImage $watermark
      * @return array object GalleryStatus a status code
-     *               array (itemId => array of derivative ids, ..)
+     *               array (int GalleryItem id, ...)
      */
     function fetchWatermarkedItemIds($watermark) {
 	global $gallery;
@@ -188,7 +188,7 @@ class WatermarkHelper {
     function deleteWatermarkImageById($itemId, $forceDelete=false) {
 	global $gallery;
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'WatermarkImage');
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		/* Remap it as permission denied so that we avoid object id fishing */
@@ -202,8 +202,7 @@ class WatermarkHelper {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	if (! (GalleryUtilities::isA($item, 'WatermarkImage') &&
-		($isAdmin || $item->getOwnerId() == $gallery->getActiveUserId()) )) {
+	if (!($isAdmin || $item->getOwnerId() == $gallery->getActiveUserId())) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
 
@@ -217,7 +216,8 @@ class WatermarkHelper {
 		return array(null, false);
 	    }
 	    /* Remove watermark from those items.. */
-	    list ($ret, $watermarkedItems) = GalleryCoreApi::loadEntitiesById($watermarkedItemIds);
+	    list ($ret, $watermarkedItems) =
+		GalleryCoreApi::loadEntitiesById($watermarkedItemIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -233,7 +233,7 @@ class WatermarkHelper {
 	    }
 	}
 
-	$ret = GalleryCoreApi::deleteEntityById($itemId);
+	$ret = GalleryCoreApi::deleteEntityById($itemId, 'WatermarkImage');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -394,7 +394,7 @@ class WatermarkHelper {
 		    return $ret;
 		}
 
-		$ret = GalleryCoreApi::deleteEntityById($preferred->getId());
+		$ret = GalleryCoreApi::deleteEntityById($preferred->getId(), 'GalleryDerivative');
 		if ($ret) {
 		    return $ret;
 		}
@@ -516,7 +516,7 @@ class WatermarkHelper {
 		$error[] = 'form[error][whichDerivative][missing]';
 	    }
 	    if (!empty($form['tmp_name'][1])) {
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'WatermarkImage');
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -552,7 +552,7 @@ class WatermarkHelper {
 		    return array($ret, null);
 		}
 
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'WatermarkImage');
 		if ($ret) {
 		    return array($ret, null);
 		}
@@ -592,7 +592,8 @@ class WatermarkHelper {
 			return array($ret, null);
 		    }
 		    while ($result = $searchResults->nextResult()) {
-			list ($ret, $derivative) = GalleryCoreApi::loadEntitiesById($result[0]);
+			list ($ret, $derivative) =
+			    GalleryCoreApi::loadEntitiesById($result[0], 'GalleryDerivative');
 			if ($ret) {
 			    return array($ret, null);
 			}
@@ -647,7 +648,7 @@ class WatermarkHelper {
 	    return $ret;
 	}
 
-	list ($ret, $watermark) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $watermark) = GalleryCoreApi::loadEntitiesById($itemId, 'WatermarkImage');
 	if ($ret) {
 	    return $ret;
 	}

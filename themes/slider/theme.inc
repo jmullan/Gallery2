@@ -35,8 +35,8 @@ class SliderTheme extends GalleryTheme {
 	$this->setName($gallery->i18n('Slider'));
 	$this->setDescription(
 	    $gallery->i18n('Image viewer/slideshow; subalbums/other items not shown'));
-	$this->setVersion('1.0.9');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setVersion('1.0.10');
+	$this->setRequiredCoreApi(array(7, 27));
 	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(array(
 	    'colorpack' => '',
@@ -97,7 +97,7 @@ class SliderTheme extends GalleryTheme {
 	$renderId = GalleryUtilities::getRequestVariables('renderId');
 	if (!empty($renderId)) {
 	    /* Render this item */
-	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
+	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId, 'GalleryDataItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -107,7 +107,8 @@ class SliderTheme extends GalleryTheme {
 	}
 
 	/* Otherwise, load the parent with initial view of this item  */
-	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+	list ($ret, $parent) =
+	    GalleryCoreApi::loadEntitiesById($item->getParentId(), 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -190,7 +191,7 @@ class SliderTheme extends GalleryTheme {
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
-	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
+	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

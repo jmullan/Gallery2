@@ -222,7 +222,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		/* Ignore permission error.. just don't add a block */
 		return array(null, array());
 	    }
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($parentId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($parentId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -262,7 +262,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		if ($ret || !$ok) {
 		    /* Just pick a new item if this one is inaccessible or missing */
 		} else {
-		    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 		    if ($ret) {
 			return array($ret, null);
 		    }
@@ -305,11 +305,12 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 
 	foreach ($data as $itemData) {
 	    $id = $itemData['id'];
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    list ($ret, $owner) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());
+	    list ($ret, $owner) =
+		GalleryCoreApi::loadEntitiesById($item->getOwnerId(), 'GalleryUser');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -339,8 +340,9 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			$source = $image;
 			while (GalleryUtilities::isA($source, 'GalleryDerivative') &&
 			       $source->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
-			    list ($ret, $source) =
-				GalleryCoreApi::loadEntitiesById($source->getDerivativeSourceId());
+			    list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
+				$source->getDerivativeSourceId(),
+				array('GalleryFileSystemEntity', 'GalleryDerivative'));
 			    if ($ret) {
 				return array($ret, null);
 			    }

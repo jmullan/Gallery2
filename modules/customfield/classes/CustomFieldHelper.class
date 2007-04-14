@@ -490,7 +490,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
      * @see CustomFieldInterface_1_0::setCustomFieldValues
      */
     function setCustomFieldValues($itemId, $data) {
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}

@@ -148,7 +148,7 @@ class ItemAddWebDav extends ItemAddPlugin {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryDataItem');
 	if ($ret) {
 	    return array($ret, null, null);
 	}

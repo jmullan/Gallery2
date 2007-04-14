@@ -212,7 +212,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	$gallery->performShutdownActions();
 
 	/* Verify item was deleted */
-	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId());
+	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId(), 'GalleryDataItem');
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_MISSING_OBJECT),
 		      'item should have been deleted');
     }
@@ -249,11 +249,11 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	$gallery->performShutdownActions();
 
 	/* Verify first item ok and second item was deleted */
-	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId());
+	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId(), 'GalleryDataItem');
 	if ($ret) {
 	    return ($ret);
 	}
-	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item2->getId());
+	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item2->getId(), 'GalleryDataItem');
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_MISSING_OBJECT),
 		      'item should have been deleted');
     }
@@ -378,7 +378,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	$gallery->performShutdownActions();
 
 	/* Verify item was deleted */
-	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId());
+	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId(), 'GalleryDataItem');
 	$this->assert($ret && ($ret->getErrorCode() & ERROR_MISSING_OBJECT),
 		      'item should have been deleted');
     }

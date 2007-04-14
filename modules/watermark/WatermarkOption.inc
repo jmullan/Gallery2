@@ -92,8 +92,8 @@ class WatermarkOption extends ItemAddOption {
 	foreach ($items as $i => $item) {
 	    if (!empty($form['WatermarkOption']['watermarkId'])
 		    && GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		list ($ret, $watermark) =
-		    GalleryCoreApi::loadEntitiesById($form['WatermarkOption']['watermarkId']);
+		list ($ret, $watermark) = GalleryCoreApi::loadEntitiesById(
+		    $form['WatermarkOption']['watermarkId'], 'WatermarkImage');
 		if ($ret) {
 		    return array($ret, null, null);
 		}

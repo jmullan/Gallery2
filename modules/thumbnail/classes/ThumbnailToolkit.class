@@ -53,7 +53,8 @@ class ThumbnailToolkit extends GalleryToolkit {
 	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					       "$operationName $mimeType"), null, null);
 	}
-	list ($ret, $thumbImage) = GalleryCoreApi::loadEntitiesById($mimeTypeMap[$mimeType]);
+	list ($ret, $thumbImage) =
+	    GalleryCoreApi::loadEntitiesById($mimeTypeMap[$mimeType], 'ThumbnailImage');
 	if ($ret) {
 	    return array($ret, null, null);
 	}

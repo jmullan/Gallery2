@@ -243,7 +243,8 @@ class ConfirmPicasaImportControllerTest extends GalleryControllerTestCase {
 	$testAlbumId = $status['albumImportSuccess']['GalleryTest 2'];
 
 	/* Get the allegedly successfully imported album */
-	list ($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
+	list ($ret, $testAlbum) =
+	    GalleryCoreApi::loadEntitiesById($testAlbumId, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -266,7 +267,7 @@ class ConfirmPicasaImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(3, count($ids), 'number of children');
 
 	/* Get the allegedly successfully imported items */
-	list ($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[0]);
+	list ($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[0], 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -280,7 +281,7 @@ class ConfirmPicasaImportControllerTest extends GalleryControllerTestCase {
 	    ),
 	    'item 0');
 
-	list ($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[1]);
+	list ($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[1], 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -294,7 +295,7 @@ class ConfirmPicasaImportControllerTest extends GalleryControllerTestCase {
 	    ),
 	    'item 1');
 
-	list ($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[2]);
+	list ($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[2], 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}

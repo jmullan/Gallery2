@@ -267,7 +267,8 @@ class InstallOtherModulesStep extends InstallStep {
 	    return GalleryCoreApi::error(ERROR_MISSING_VALUE);
 	}
 	$adminUserInfo = array_keys($adminUserInfo);
-	list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($adminUserInfo[0]);
+	list ($ret, $adminUser) =
+	    GalleryCoreApi::loadEntitiesById($adminUserInfo[0], 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}

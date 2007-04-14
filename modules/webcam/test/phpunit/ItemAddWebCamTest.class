@@ -190,7 +190,8 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
     }
 
     function testRefresh() {
-	list ($ret, $refresh) = GalleryCoreApi::loadEntitiesById($this->_item->getId());
+	list ($ret, $refresh) =
+	    GalleryCoreApi::loadEntitiesById($this->_item->getId(), 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -215,7 +216,8 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	}
 
 	/* Now we have a toolkit to get image/test dimensions, but it will fail */
-	list ($ret, $refresh) = GalleryCoreApi::loadEntitiesById($this->_item->getId());
+	list ($ret, $refresh) =
+	    GalleryCoreApi::loadEntitiesById($this->_item->getId(), 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}

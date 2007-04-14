@@ -183,7 +183,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 			    $thumbnail->getDerivativeSourceId(), 'source');
 
 	/* Delete thumbnail from item and ensure ThumbnailImage is deleted too */
-	$ret = GalleryCoreApi::deleteEntityById($thumbnail->getId());
+	$ret = GalleryCoreApi::deleteEntityById($thumbnail->getId(), 'GalleryDerivative');
 	if ($ret) {
 	    return $ret;
 	}
@@ -196,7 +196,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 
 	if (isset($thumbnailImage)) {
 	    /* In case test failed, delete ThumbnailImage */
-	    $ret = GalleryCoreApi::deleteEntityById($thumbnailImage->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($thumbnailImage->getId(), 'ThumbnailImage');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -419,7 +419,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $thumbnail) = GalleryCoreApi::loadEntitiesById($thumbnailId);
+	list ($ret, $thumbnail) = GalleryCoreApi::loadEntitiesById($thumbnailId, 'ThumbnailImage');
 	if ($ret) {
 	    return $ret;
 	}

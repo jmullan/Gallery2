@@ -186,7 +186,7 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
     }
 
     function _deleteEntity($entity) {
-	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
+	$ret = GalleryCoreApi::deleteEntityById($entity->getId(), $entity->getEntityType());
 	if ($ret) {
 	    return $ret;
 	}

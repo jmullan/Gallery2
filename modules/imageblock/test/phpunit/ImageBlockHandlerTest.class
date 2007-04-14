@@ -109,7 +109,7 @@ class ImageBlockHandlerTest extends GalleryTestCase {
 	}
 	$this->assert($disabledFlag, 'Add eventHandler failed');
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_handlerItem->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_handlerItem->getId(), 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}

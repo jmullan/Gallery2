@@ -194,7 +194,7 @@ class RssSiteAdminView extends GalleryView {
 		    $itemIds[] = $feed['itemId'];
 		}
 
-		list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+		list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
 		if ($ret) {
 		    return array($ret, null);
 		}

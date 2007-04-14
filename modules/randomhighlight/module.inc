@@ -31,11 +31,11 @@ class RandomHighlightModule extends GalleryModule {
 	$this->setId('randomhighlight');
 	$this->setName($gallery->i18n('Random Highlight'));
 	$this->setDescription($gallery->i18n('Periodically change the album highlight'));
-	$this->setVersion('1.0.7'); /* Update upgrade() function below too */
+	$this->setVersion('1.0.8'); /* Update upgrade() function below too */
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredCoreApi(array(7, 27));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -113,6 +113,7 @@ class RandomHighlightModule extends GalleryModule {
 	    case '1.0.6':
 	    case '1.0.6.1':
 		/* .mo file migration */
+	    case '1.0.7':
 
 	    case 'end of upgrade path':
 		break;
@@ -192,8 +193,9 @@ class RandomHighlightModule extends GalleryModule {
 	$canSee = true;
 	if (!$isOld && $thumbnail->hasOnLoadHandler('RandomHighlightPrivate')) {
 	    /* Highlight is currently a non-public item.. can current user view that item? */
-	    list ($ret, $highlight) =
-		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+	    list ($ret, $highlight) = GalleryCoreApi::loadEntitiesById(
+		$thumbnail->getDerivativeSourceId(),
+		array('GalleryFileSystemEntity', 'GalleryDerivative'));
 	    if ($ret) {
 		return $ret;
 	    }
@@ -282,7 +284,8 @@ class RandomHighlightModule extends GalleryModule {
 		GalleryCoreApi::releaseLocks($lockId);
 		return null;
 	    }
-	    list ($ret, $highlight) = GalleryCoreApi::loadEntitiesById($highlightId);
+	    list ($ret, $highlight) =
+		GalleryCoreApi::loadEntitiesById($highlightId, 'GalleryDerivative');
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockId);
 		return $ret;

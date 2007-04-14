@@ -33,8 +33,8 @@ class TileTheme extends GalleryTheme {
 	$this->setId('tile');
 	$this->setName($gallery->i18n('Tile'));
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails'));
-	$this->setVersion('1.0.8');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setVersion('1.0.9');
+	$this->setRequiredCoreApi(array(7, 27));
 	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(array('colorpack' => '',
 	    'sidebarBlocks' => serialize(array(
@@ -66,7 +66,9 @@ class TileTheme extends GalleryTheme {
 	$theme =& $template->getVariableByReference('theme');
 
 	if (!empty($params['backgroundId'])) {
-	    list ($ret, $bgImage) = GalleryCoreApi::loadEntitiesById($params['backgroundId']);
+	    /* XXX: Use an interface for images instead of 'GalleryEntity' */
+	    list ($ret, $bgImage) =
+		GalleryCoreApi::loadEntitiesById($params['backgroundId'], 'GalleryEntity');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -121,7 +123,7 @@ class TileTheme extends GalleryTheme {
 	$renderId = GalleryUtilities::getRequestVariables('renderId');
 	if (!empty($renderId)) {
 	    /* Render this item */
-	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
+	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId, 'GalleryDataItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -131,7 +133,8 @@ class TileTheme extends GalleryTheme {
 	}
 
 	/* Otherwise, load the parent with initial view of this item  */
-	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+	list ($ret, $parent) =
+	    GalleryCoreApi::loadEntitiesById($item->getParentId(), 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -212,7 +215,7 @@ class TileTheme extends GalleryTheme {
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
-	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
+	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -333,7 +336,7 @@ class TileTheme extends GalleryTheme {
 	 * Our settings template needs everything that an album render requires
 	 * so load enough information to call showAlbumPage.
 	 */
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -372,7 +375,7 @@ class TileTheme extends GalleryTheme {
 	    /* No site admin settings */
 	    return array(null, array(), '');
 	}
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null, null);
 	}

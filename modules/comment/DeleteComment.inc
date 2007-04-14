@@ -47,13 +47,9 @@ class DeleteCommentController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['delete'])) {
 	    /* Delete the comment */
-	    list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
+	    list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId, 'GalleryComment');
 	    if ($ret) {
 		return array($ret, null);
-	    }
-	    
-	    if (!GalleryUtilities::isA($comment, 'GalleryComment')) {
-		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 
 	    /* Make sure that the comment<->parent relationship is right */
@@ -61,7 +57,7 @@ class DeleteCommentController extends GalleryController {
 		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    }
 
-	    $ret = GalleryCoreApi::deleteEntityById($comment->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($comment->getId(), 'GalleryComment');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -119,17 +115,14 @@ class DeleteCommentView extends GalleryView {
 	}
 
 	/* Load the specific comment */
-	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
+	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId, 'GalleryComment');
 	if ($ret) {
 	    return array($ret, null);
-	}
-	if (!GalleryUtilities::isA($comment, 'GalleryComment')) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
 	/* Associate the commenter's info */
 	$commenterId = $comment->getCommenterId();
-	list ($ret, $commenter) = GalleryCoreApi::loadEntitiesById($commenterId);
+	list ($ret, $commenter) = GalleryCoreApi::loadEntitiesById($commenterId, 'GalleryUser');
 	if ($ret) {
 	    return array($ret, null);
 	}

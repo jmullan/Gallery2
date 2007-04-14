@@ -154,7 +154,7 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 
     function _deleteEntity($entity) {
 	global $gallery;
-	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
+	$ret = GalleryCoreApi::deleteEntityById($entity->getId(), $entity->getEntityType());
 	if ($ret) {
 	    return $ret;
 	}

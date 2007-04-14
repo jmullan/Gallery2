@@ -291,7 +291,8 @@ class GalleryRemoteController extends GalleryController {
 		    return $ret;
 		}
 
-		list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+		list ($ret, $anonymousUser) =
+		    GalleryCoreApi::loadEntitiesById($anonymousUserId, 'GalleryUser');
 		if ($ret) {
 		    return $ret;
 		}
@@ -364,7 +365,7 @@ class GalleryRemoteController extends GalleryController {
 	}
 
 	/* Load all the entities */
-	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
+	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -427,7 +428,7 @@ class GalleryRemoteController extends GalleryController {
 	    return $ret;
 	}
 
-	$response->setProperty('can_create_root', ($perm || $isSiteAdmin) ? 'true' : 'false');
+	$response->setProperty('can_create_root', $perm ? 'true' : 'false');
 	$response->setProperty('album_count', sizeof($albums));
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
 	$response->setProperty('status_text', 'Fetch-albums successful.');
@@ -447,7 +448,7 @@ class GalleryRemoteController extends GalleryController {
 
 	if (!empty($parentIds)) {
 	    /* load all the new parents at once */
-	    list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds);
+	    list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -479,7 +480,8 @@ class GalleryRemoteController extends GalleryController {
 	$file = GalleryUtilities::getFile('userfile');
 
 	if (!empty($form['set_albumId'])) {
-	    list ($ret, $parentItem) = GalleryCoreApi::loadEntitiesById($form['set_albumId']);
+	    list ($ret, $parentItem) =
+		GalleryCoreApi::loadEntitiesById($form['set_albumId'], 'GalleryAlbumItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -710,9 +712,9 @@ class GalleryRemoteController extends GalleryController {
 	}
 
 	/* check that the item is an album */
-	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId, 'GalleryAlbumItem');
 	if ($ret) {
-	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT == ERROR_MISSING_OBJECT) {
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		$response->setProperty('status', $grStatusCodes['ERROR']);
 		$response->setProperty('status_text', 'albumName is not a valid G2 object ID');
 		return null;
@@ -720,13 +722,7 @@ class GalleryRemoteController extends GalleryController {
 		return $ret;
 	    }
 	}
-	if (!GalleryUtilities::isA($album, 'GalleryAlbumItem')) {
-	    $response->setProperty('status', $grStatusCodes['ERROR']);
-	    $response->setProperty('status_text',
-				   'albumName doesn\'t correspond to an actual album');
-	    return null;
-	}
-	
+
 	$response->setProperty('album.caption', $album->getTitle());
 
 	if (isset($form['random']) && $form['random'] == 'yes' && isset($form['limit'])) {
@@ -816,7 +812,7 @@ class GalleryRemoteController extends GalleryController {
 	    return null;
 	}
 
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1065,7 +1061,7 @@ class GalleryRemoteController extends GalleryController {
 	    /* todo: handle error */
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}

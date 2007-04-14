@@ -54,7 +54,8 @@ class SlideshowAppletView extends GalleryView {
 	if (!$item->getCanContainChildren()) {
 	    /* Photo: do slideshow of parent album, start at this photo */
 	    $startId = $item->getId();
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+	    list ($ret, $item) =
+		GalleryCoreApi::loadEntitiesById($item->getParentId(), 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

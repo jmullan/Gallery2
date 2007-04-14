@@ -232,7 +232,7 @@ class CommentTest extends GalleryTestCase {
 	}
 
 	/* Delete it */
-	$ret = GalleryCoreApi::deleteEntityById($comment->getId());
+	$ret = GalleryCoreApi::deleteEntityById($comment->getId(), 'GalleryComment');
 	if ($ret) {
 	    return $ret;
 	}
@@ -294,7 +294,7 @@ class CommentTest extends GalleryTestCase {
 	$this->_registerTestEventListener('GalleryEntity::delete', $listener);
 
 	/* Delete the user (execute the test) */
-	$ret = GalleryCoreApi::deleteEntityById($user->getId());
+	$ret = GalleryCoreApi::deleteEntityById($user->getId(), 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}

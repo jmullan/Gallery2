@@ -56,13 +56,10 @@ class DownloadDavMountView extends GalleryView {
 
 	list ($itemId, $path) = GalleryUtilities::getRequestVariables('itemId', 'path');
 	if (isset($itemId)) {
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    list ($ret, $item) =
+		GalleryCoreApi::loadEntitiesById($itemId, 'GalleryFileSystemEntity');
 	    if ($ret) {
 		return $ret;
-	    }
-
-	    if (!GalleryUtilities::isA($item, 'GalleryFileSystemEntity')) {
-		return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	    }
 
 	    list ($ret, $path) = $item->fetchLogicalPath();

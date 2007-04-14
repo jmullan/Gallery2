@@ -43,7 +43,7 @@ class EditFeedController extends GalleryController {
 	$itemId = !empty($form['itemId']) ? (int)$form['itemId']
 					  : (int)GalleryUtilities::getRequestVariables('itemId');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -107,7 +107,7 @@ class ItemAddLinkItemTest extends ItemAddPluginTestCase {
 	}
 	$this->assertEquals(1, count($childIds), 'child count');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($childIds[0]);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($childIds[0], 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -190,7 +190,7 @@ class ItemAddLinkItemTest extends ItemAddPluginTestCase {
 	}
 	$this->assertEquals(1, count($childIds), 'child count');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($childIds[0]);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($childIds[0], 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}

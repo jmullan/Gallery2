@@ -122,7 +122,7 @@ class LinkItemTest extends GalleryTestCase {
 	}
 	unset($this->_lockId);
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -154,7 +154,7 @@ class LinkItemTest extends GalleryTestCase {
 	}
 	unset($this->_lockId);
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_targetAlbum->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -207,7 +207,8 @@ class LinkItemTest extends GalleryTestCase {
 	/* Make sure onLoad is called */
 	GalleryDataCache::setMemoryCachingEnabled(false);
 	/* Execute the test */
-	list ($ret, $link) = GalleryCoreApi::loadEntitiesById($this->_link->getId());
+	list ($ret, $link) =
+	    GalleryCoreApi::loadEntitiesById($this->_link->getId(), 'GalleryLinkItem');
 	if ($ret) {
 	    $gallery->_session = $backup;
 	    return $ret;

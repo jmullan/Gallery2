@@ -74,7 +74,7 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	}
 
 	list ($ret, $this->_anonymousUser) =
-	    GalleryCoreApi::loadEntitiesById($this->_anonymousUserId);
+	    GalleryCoreApi::loadEntitiesById($this->_anonymousUserId, 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}

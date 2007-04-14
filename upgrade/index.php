@@ -218,7 +218,7 @@ function selectAdminUser($fallback=false) {
     }
     /* Fetch the first admin from list */
     list ($userId, $userName) = each($adminUserInfo);
-    list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($userId);
+    list ($ret, $adminUser) = GalleryCoreApi::loadEntitiesById($userId, 'GalleryUser');
     if ($ret) {
 	if ($fallback) {
 	    /* Initialize a GalleryUser with the id of a real admin */

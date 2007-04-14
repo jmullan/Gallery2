@@ -84,7 +84,8 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	    }
 
 	    if ($platform->file_exists($baseDir . $path) && $path != ('/' . GALLERY_MAIN_PHP)) {
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById((int)$result[0]);
+		list ($ret, $item) =
+		    GalleryCoreApi::loadEntitiesById((int)$result[0], 'GalleryItem');
 		if ($ret) {
 		    return array($ret, null, null);
 		}

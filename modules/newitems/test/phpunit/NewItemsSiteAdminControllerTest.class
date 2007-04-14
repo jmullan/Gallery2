@@ -187,7 +187,8 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_keys($this->_newItemSortIds));
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_keys($this->_newItemSortIds),
+							       'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

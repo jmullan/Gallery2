@@ -110,7 +110,7 @@ class UserAlbumTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -208,7 +208,7 @@ class UserAlbumTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::deleteEntityById($album->getId());
+	$ret = GalleryCoreApi::deleteEntityById($album->getId(), 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -247,7 +247,7 @@ class UserAlbumTest extends GalleryTestCase {
 	}
 	$this->assert(!empty($userAlbum), 'User should have valid album');
 
-	$ret = GalleryCoreApi::deleteEntityById($userAlbum);
+	$ret = GalleryCoreApi::deleteEntityById($userAlbum, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -292,7 +292,7 @@ class UserAlbumTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId, 'GalleryAlbumItem');
 	if ($ret) {
 	    return $ret;
 	}

@@ -64,9 +64,10 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	if (isset($this->_pendingUser)) {
-	    $ret = GalleryCoreApi::deleteEntityById($this->_pendingUser->getId());
+	    $ret = GalleryCoreApi::deleteEntityById($this->_pendingUser->getId(),
+						    'GalleryEntity');
 	    if ($ret) {
-		return $ret;
+		$this->failWithStatus($ret);
 	    }
 	}
 	$ret = parent::tearDown();

@@ -58,7 +58,8 @@ class ItemEditWatermark extends ItemEditPlugin {
 	    }
 
 	    if (empty($error)) {
-		list ($ret, $watermark) = GalleryCoreApi::loadEntitiesById($form['watermarkId']);
+		list ($ret, $watermark) =
+		    GalleryCoreApi::loadEntitiesById($form['watermarkId'], 'WatermarkImage');
 		if ($ret) {
 		    return array($ret, null, null, null);
 		}
@@ -140,7 +141,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	$total = count($itemIds);
 	while (!empty($itemIds)) {
 	    $batchIds = array_splice($itemIds, 0, 100);
-	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($batchIds);
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($batchIds, 'GalleryItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -235,7 +236,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 		    return $ret;
 		}
 
-		$ret = GalleryCoreApi::deleteEntityById($preferred->getId());
+		$ret = GalleryCoreApi::deleteEntityById($preferred->getId(), 'GalleryDerivative');
 		if ($ret) {
 		    return $ret;
 		}

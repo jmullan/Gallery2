@@ -40,7 +40,7 @@ class PhotoAccessHelper {
 	$itemIds = array_keys($cartItemIds);
 
 	/* Load the necessary item data */
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryPhotoItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

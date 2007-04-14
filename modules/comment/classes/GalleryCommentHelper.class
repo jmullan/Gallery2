@@ -83,7 +83,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	/* Load all the comments at once */
 	$comments = array();
 	if (!empty($allIds)) {
-	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds);
+	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds, 'GalleryComment');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -182,7 +182,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	/* Load all the comments at once */
 	$comments = array();
 	if (!empty($allIds)) {
-	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds);
+	    list ($ret, $comments) = GalleryCoreApi::loadEntitiesById($allIds, 'GalleryComment');
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
@@ -366,7 +366,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    }
 
 	    while ($result = $searchResults->nextResult()) {
-		$ret = GalleryCoreApi::deleteEntityById((int)$result[0]);
+		$ret = GalleryCoreApi::deleteEntityById((int)$result[0], 'GalleryComment');
 		if ($ret) {
 		    return array($ret, null);
 		}

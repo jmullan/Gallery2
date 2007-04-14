@@ -216,7 +216,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	/* There should have been one album imported */
 	$this->assertEquals(1, count($itemIds), 'child count 1');
 
-	list ($ret, $importedAlbum) = GalleryCoreApi::loadEntitiesById($itemIds[0]);
+	list ($ret, $importedAlbum) = GalleryCoreApi::loadEntitiesById($itemIds[0], 'GalleryItem');
 
 	list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($importedAlbum);
 	if ($ret) {
@@ -241,7 +241,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    $seenWeights[$orderWeight] = 1;
 	}
 
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids, 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}

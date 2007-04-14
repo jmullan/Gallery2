@@ -334,7 +334,7 @@ class ThumbnailImage extends GalleryFileSystemEntity {
 		continue;
 	    }
 
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -365,7 +365,7 @@ class ThumbnailImage extends GalleryFileSystemEntity {
 
 	    if (empty($operations)) {
 		/* Operations not supported.. remove the thumbnail */
-		$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
+		$ret = GalleryCoreApi::deleteEntityById($derivative->getId(), 'GalleryDerivative');
 		if ($ret) {
 		    return $ret;
 		}

@@ -162,7 +162,7 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assertEquals(1, count($itemIds), 'one item with core.all permission');
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById(array_shift($itemIds));
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById(array_shift($itemIds), 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}

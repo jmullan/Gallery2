@@ -173,9 +173,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$fileName = substr($fileName, strlen($this->_baseDir) + 1);
 	$lines = split("(\r\n|\n)", $buffer);
 	$checkSuperglobals = !preg_match('{/test/phpunit|^install/|^upgrade/}', $fileName);
-	/** @todo Extend the loadEntitiesById test to all G2 code */
-	$checkEntityType = strpos($fileName, 'modules/core/') !== false
-	    && strpos($fileName, 'modules/core/test/phpunit/EntityTest.class') === false;
+	$checkEntityType = $fileName != 'modules/core/test/phpunit/EntityTest.class';
 	$currentFunction = null;
 	$currentClass = null;
 	$longLineTable = $returnTable = array();

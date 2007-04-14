@@ -35,11 +35,11 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('1.0.10'); /* Update ThumbnailModuleExtras::upgrade also! */
+	$this->setVersion('1.0.11'); /* Update ThumbnailModuleExtras::upgrade also! */
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredCoreApi(array(7, 27));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -136,7 +136,7 @@ class ThumbnailModule extends GalleryModule {
 	}
 
 	/* Remove the thumbnail container. */
-	$ret = GalleryCoreApi::deleteEntityById($containerId);
+	$ret = GalleryCoreApi::deleteEntityById($containerId, 'GalleryChildEntity');
 	if ($ret) {
 	    return $ret;
 	}
@@ -164,8 +164,9 @@ class ThumbnailModule extends GalleryModule {
 	if (GalleryUtilities::isA($entity, 'GalleryDerivativeImage') &&
 		$entity->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
 		$entity->getDerivativeSourceId() != $entity->getParentId()) {
-	    list ($ret, $source) =
-		GalleryCoreApi::loadEntitiesById($entity->getDerivativeSourceId());
+	    list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
+		$entity->getDerivativeSourceId(),
+		array('GalleryFileSystemEntity', 'GalleryDerivative'));
 	    if ($ret) {
 		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 		    /* Already gone.. ok! */
@@ -177,7 +178,7 @@ class ThumbnailModule extends GalleryModule {
 		/* Prevent that we try to restore the thumbnail during the deletion. */
 		$key = 'ThumbnailImage::delete';
 		GalleryDataCache::put($key, $entity->getId());
-		$ret = GalleryCoreApi::deleteEntityById($source->getId());
+		$ret = GalleryCoreApi::deleteEntityById($source->getId(), 'ThumbnailImage');
 		GalleryDataCache::remove($key);
 		if ($ret) {
 		    return array($ret, null);

@@ -140,7 +140,7 @@ class WatermarkSiteAdminView extends GalleryView {
 		$ownerIds[] = $watermark->getOwnerId();
 		$form['list'][] = (array)$watermark;
 	    }
-	    list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($ownerIds);
+	    list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($ownerIds, 'GalleryUser');
 	    if ($ret) {
 		return array($ret, null);
 	    }

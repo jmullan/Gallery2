@@ -182,7 +182,8 @@ class HiddenHelper extends HiddenInterface_1_0 {
 		return $ret;
 	    }
 	    if (!empty($childIds)) {
-		list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
+		list ($ret, $childItems) =
+		    GalleryCoreApi::loadEntitiesById($childIds, 'GalleryItem');
 		if ($ret) {
 		    return $ret;
 		}
@@ -390,7 +391,8 @@ class HiddenHelper extends HiddenInterface_1_0 {
 		return $ret;
 	    }
 	    if (!empty($childIds)) {
-		list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
+		list ($ret, $childItems) =
+		    GalleryCoreApi::loadEntitiesById($childIds, 'GalleryItem');
 		if ($ret) {
 		    return $ret;
 		}
@@ -463,7 +465,7 @@ class HiddenHelper extends HiddenInterface_1_0 {
 	$oldParentId = $item->getOriginalValue('parentId');
 	$newParentId = $item->getParentId();
 	list ($ret, $parents) =
-	    GalleryCoreApi::loadEntitiesById(array($oldParentId, $newParentId));
+	    GalleryCoreApi::loadEntitiesById(array($oldParentId, $newParentId), 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}

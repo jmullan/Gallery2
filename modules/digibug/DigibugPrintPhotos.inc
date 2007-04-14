@@ -62,7 +62,7 @@ class DigibugPrintPhotosView extends GalleryView {
 
 	/* Load the necessary item data */
 	$itemIds = array_keys($cartItemIds);
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryPhotoItem');
 	if ($ret) {
 	    return $ret;
 	}

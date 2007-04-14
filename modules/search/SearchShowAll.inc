@@ -152,7 +152,8 @@ class SearchShowAllView extends GalleryView {
 
 		if (!empty($itemIds)) {
 		    /* Fetch items */
-		    list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById($itemIds);
+		    list ($ret, $itemList) =
+			GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
 		    if ($ret) {
 			return array($ret, null);
 		    }

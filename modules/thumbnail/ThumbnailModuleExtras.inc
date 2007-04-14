@@ -254,7 +254,7 @@ class ThumbnailModuleExtras {
 		    }
 
 		    /* Move the custom thumbnail to its new home. */
-		    list ($ret, $thumb) = GalleryCoreApi::loadEntitiesById($id);
+		    list ($ret, $thumb) = GalleryCoreApi::loadEntitiesById($id, 'ThumbnailImage');
 		    if ($ret) {
 			GalleryCoreApi::releaseLocks($lockId);
 			return $ret;
@@ -330,6 +330,7 @@ class ThumbnailModuleExtras {
 	case '1.0.8':
 	case '1.0.9':
 	    /* .mo file migration */
+	case '1.0.10':
 
 	case 'end of upgrade path':
 	    /*

@@ -133,7 +133,7 @@ class RatingHelper {
 	}
 
 	/* Make sure the item really exists */
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

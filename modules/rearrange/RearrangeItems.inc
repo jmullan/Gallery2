@@ -44,7 +44,7 @@ class RearrangeItemsController extends GalleryController {
 	if (isset($form['action']['save'])) {
 	    $list = explode(',', $form['list']);
 
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -115,7 +115,7 @@ class RearrangeItemsView extends GalleryView {
 	    $form['formName'] = 'RearrangeItems';
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -136,7 +136,7 @@ class RearrangeItemsView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
+	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

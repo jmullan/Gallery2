@@ -52,7 +52,7 @@ class GalleryPendingUserHelper {
 	} else {
 	    $result = $searchResults->nextResult();
 	    $id = (int)$result[0];
-	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($id);
+	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($id, 'GalleryPendingUser');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -208,7 +208,8 @@ class GalleryPendingUserHelper {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $adminUsers) = GalleryCoreApi::loadEntitiesById(array_keys($adminUserIds));
+	list ($ret, $adminUsers) =
+	    GalleryCoreApi::loadEntitiesById(array_keys($adminUserIds), 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}

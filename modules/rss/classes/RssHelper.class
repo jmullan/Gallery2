@@ -52,7 +52,7 @@ class RssHelper {
 	global $gallery;
 
 	/* get gallery entity by id */
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -147,7 +147,8 @@ class RssHelper {
 		}
 
 		if (!empty($items)) {
-		    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($items);
+		    list ($ret, $items) =
+			GalleryCoreApi::loadEntitiesById($items, 'GalleryAlbumItem');
 		    if ($ret) {
 			return $ret;
 		    }
@@ -163,7 +164,8 @@ class RssHelper {
 			    }
 			}
 
-			list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds);
+			list ($ret, $parents) =
+			    GalleryCoreApi::loadEntitiesById($parentIds, 'GalleryItem');
 			if ($ret) {
 			    return $ret;
 			}
@@ -430,7 +432,7 @@ class RssHelper {
 	/* go through subitems array and pass data to generator */
 	if (!empty($subIds)) {
 	    /* retrieve array of subitems */
-	    list ($ret, $subItems) = GalleryCoreApi::loadEntitiesById($subIds);
+	    list ($ret, $subItems) = GalleryCoreApi::loadEntitiesById($subIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

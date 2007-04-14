@@ -632,12 +632,5 @@ class QuotasHelperTest extends GalleryTestCase {
 	    return ($ret);
 	}
     }
-
-    function _deleteEntity($entity) {
-	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
-	if ($ret) {
-	    return $ret;
-	}
-    }
 }
 ?>

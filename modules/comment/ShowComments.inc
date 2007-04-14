@@ -56,7 +56,7 @@ class ShowCommentsView extends GalleryView {
 	    /* Load all the commenters */
 	    if (sizeof($commenters) > 0) {
 		list ($ret, $commentersList) =
-		    GalleryCoreApi::loadEntitiesById(array_keys($commenters));
+		    GalleryCoreApi::loadEntitiesById(array_keys($commenters), 'GalleryUser');
 		if ($ret) {
 		    return array($ret, null);
 		}

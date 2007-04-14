@@ -30,7 +30,7 @@ class RatingCallbacks {
 	switch ($callback) {
 	case 'LoadRating':
 	    $itemId = $params['itemId'];
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return $ret;
 	    }

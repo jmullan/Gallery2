@@ -70,7 +70,7 @@ class ShowAllCommentsView extends GalleryView {
 
 	if (!empty($commenters)) {
 	    list ($ret, $commentersList) =
-		GalleryCoreApi::loadEntitiesById(array_keys($commenters));
+		GalleryCoreApi::loadEntitiesById(array_keys($commenters), 'GalleryUser');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -86,7 +86,7 @@ class ShowAllCommentsView extends GalleryView {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById($itemIds);
+	    list ($ret, $itemList) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

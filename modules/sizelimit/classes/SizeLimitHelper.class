@@ -220,7 +220,8 @@ class SizeLimitHelper {
 		    $height = empty($matches[2]) ? $width : $matches[2];
 		    if ($imageWidth <= $width && $imageHeight <= $height) {
 			/* The resize is larger or has the same size as the fullsize */
-			$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
+			$ret = GalleryCoreApi::deleteEntityById($derivative->getId(),
+								'GalleryDerivative');
 			if ($ret) {
 			    return $ret;
 			}

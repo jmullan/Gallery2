@@ -405,7 +405,8 @@ class ConfirmImportController extends GalleryController {
 	    $templateAdapter->updateProgressBar($importPhotosMessage,
 		    $album['name'], $numberOfItemsImported / $totalItemsToImport);
 
-	    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($targetAlbumID);
+	    list ($ret, $parent) =
+		GalleryCoreApi::loadEntitiesById($targetAlbumID, 'GalleryAlbumItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -438,7 +439,8 @@ class ConfirmImportController extends GalleryController {
 	    }
 
 	    /* Try to load targeted parent */
-	    list ($ret, $targetAlbumObject) = GalleryCoreApi::loadEntitiesById($targetAlbumID);
+	    list ($ret, $targetAlbumObject) =
+		GalleryCoreApi::loadEntitiesById($targetAlbumID, 'GalleryAlbumItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -822,7 +824,8 @@ class ConfirmImportController extends GalleryController {
 	    }
 
 	    $albumHighlight[$newAlbumInstanceId] = false;
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($newAlbumInstanceId);
+	    list ($ret, $item) =
+		GalleryCoreApi::loadEntitiesById($newAlbumInstanceId, 'GalleryAlbumItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -1312,7 +1315,8 @@ class ConfirmImportController extends GalleryController {
 	foreach ($albumHighlight as $highlightRecipientId => $nameOfAlbumToHighlight) {
 	    if (isset($finishedAlbums[$nameOfAlbumToHighlight]) &&
 		$finishedAlbums[$nameOfAlbumToHighlight]) {
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($highlightRecipientId);
+		list ($ret, $item) =
+		    GalleryCoreApi::loadEntitiesById($highlightRecipientId, 'GalleryAlbumItem');
 		if ($ret) {
 		    return $ret;
 		}
@@ -1558,7 +1562,8 @@ class ConfirmImportView extends GalleryView {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	list ($ret, $targetAlbum) = GalleryCoreApi::loadEntitiesById($destinationAlbumID);
+	list ($ret, $targetAlbum) =
+	    GalleryCoreApi::loadEntitiesById($destinationAlbumID, 'GalleryAlbumItem');
 	if ($ret) {
 	    return array($ret, null);
 	}

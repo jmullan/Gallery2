@@ -315,7 +315,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	}
 	if ($addDirectories) {
 	    $this->assertEquals(count($dirs), count($ids), 'top child count');
-	    list ($ret, $subalbums) = GalleryCoreApi::loadEntitiesById($ids);
+	    list ($ret, $subalbums) = GalleryCoreApi::loadEntitiesById($ids, 'GalleryItem');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -333,7 +333,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$addDirectoriesString = $addDirectories ? ' addDirectories' : ' !addDirectories';
 	$this->assertEquals(count($files), count($ids), 'child count' . $addDirectoriesString);
 
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -411,7 +411,8 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$this->assertEquals(1, count($results[1]));
 	$this->assertEquals(1, count($results[1]['addedFiles']));
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($results[1]['addedFiles'][0]['id']);
+	list ($ret, $item) =
+	    GalleryCoreApi::loadEntitiesById($results[1]['addedFiles'][0]['id'], 'GalleryDataItem');
 	if ($ret) {
 	    return $ret;
 	}

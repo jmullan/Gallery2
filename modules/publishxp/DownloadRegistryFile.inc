@@ -55,7 +55,7 @@ class DownloadRegistryFileView extends GalleryView {
 	if ($ret) {
 	    return $ret;
 	}
-	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($rootId);
+	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($rootId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}

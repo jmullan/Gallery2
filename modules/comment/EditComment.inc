@@ -47,7 +47,7 @@ class EditCommentController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['save'])) {
 	    /* Edit the comment */
-	    list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
+	    list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId, 'GalleryComment');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -201,7 +201,7 @@ class EditCommentView extends GalleryView {
 	$commentId = (int) GalleryUtilities::getRequestVariables('commentId');
 
 	/* Load the specific comment */
-	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId);
+	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId, 'GalleryComment');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -213,7 +213,7 @@ class EditCommentView extends GalleryView {
 
 	/* Associate the commenter's info */
 	$commenterId = $comment->getCommenterId();
-	list ($ret, $commenter) = GalleryCoreApi::loadEntitiesById($commenterId);
+	list ($ret, $commenter) = GalleryCoreApi::loadEntitiesById($commenterId, 'GalleryUser');
 	if ($ret) {
 	    return array($ret, null);
 	}

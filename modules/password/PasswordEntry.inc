@@ -56,7 +56,7 @@ class PasswordEntryController extends GalleryController {
 		    return array($ret, null);
 		}
 		if (isset($hiddenInterface)) {
-		    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 		    if (!$ret) {
 			list ($ret, $canSee) = $hiddenInterface->isHidden($item);
 			if ($ret) {

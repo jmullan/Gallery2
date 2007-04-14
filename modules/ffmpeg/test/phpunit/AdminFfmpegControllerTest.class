@@ -291,7 +291,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 	list ($ret, $thumbnails) =
-	    GalleryCoreApi::loadEntitiesById(array_keys($this->_thumbnailOps));
+	    GalleryCoreApi::loadEntitiesById(array_keys($this->_thumbnailOps), 'GalleryDerivative');
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret;

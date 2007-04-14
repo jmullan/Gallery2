@@ -108,7 +108,7 @@ class ItemAddWebCam extends ItemAddPlugin {
 						    'id' => $newItem->getId(),
 						    'warnings' => array());
 		} else {
-		    $ret = GalleryCoreApi::deleteEntityById($newItem->getId());
+		    $ret = GalleryCoreApi::deleteEntityById($newItem->getId(), 'GalleryDataItem');
 		    if ($ret) {
 			return array($ret, null, null);
 		    }

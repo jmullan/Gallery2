@@ -60,7 +60,7 @@ class UserAlbumController extends GalleryController {
 	}
 
 	if (!empty($albumId)) {
-	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
+	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId, 'GalleryItem');
 	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return array($ret, null);
 	    }

@@ -182,7 +182,7 @@ function GalleryInitSecondPass() {
 	    return $ret;
 	}
 
-	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId, 'GalleryUser');
 	if ($ret) {
 	    return $ret;
 	}

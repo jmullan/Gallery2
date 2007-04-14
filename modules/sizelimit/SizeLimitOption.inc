@@ -258,7 +258,7 @@ class SizeLimitOption extends ItemEditOption {
 	    $chunk = array_splice($descendentIds, 0, $chunkSize);
 	    $gallery->guaranteeTimeLimit(60);
 
-	    list ($ret, $descendents) = GalleryCoreApi::loadEntitiesById($chunk);
+	    list ($ret, $descendents) = GalleryCoreApi::loadEntitiesById($chunk, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null, null);
 	    }

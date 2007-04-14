@@ -426,7 +426,7 @@ class ImageUploadHelper {
 	}
 
 	/* Load albums and get their names */
-	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
+	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds, 'GalleryAlbumItem');
 	if ($ret) {
 	    $gallery->debug(
 		"ERROR: GalleryCoreApi::loadEntitiesById failed.\n" . $ret->getAsText());

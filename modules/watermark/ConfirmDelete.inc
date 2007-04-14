@@ -75,7 +75,8 @@ class ConfirmDeleteView extends GalleryView {
 		GalleryUtilities::getRequestVariables('watermarkId', 'fromAdmin');
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($form['watermarkId']);
+	list ($ret, $item) =
+	    GalleryCoreApi::loadEntitiesById($form['watermarkId'], 'WatermarkImage');
 	if ($ret) {
 	    return array($ret, null);
 	}

@@ -83,7 +83,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 
 	$entityCounter =& GalleryTestCase::getEntityCounter();
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id, 'GalleryUnknownItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -129,7 +129,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 
 	$entityCounter =& GalleryTestCase::getEntityCounter();
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id, 'GalleryUnknownItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -158,7 +158,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 
 	$entityCounter =& GalleryTestCase::getEntityCounter();
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id, 'GalleryUnknownItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -193,7 +193,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 
 	$entityCounter =& GalleryTestCase::getEntityCounter();
 	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
-	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id, 'GalleryUnknownItem');
 	if ($ret) {
 	    return $ret;
 	}

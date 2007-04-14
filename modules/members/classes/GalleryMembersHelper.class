@@ -147,7 +147,7 @@ class GalleryMembersHelper {
 
 	/* Convert them to entities */
 	if (sizeof($itemIds) > 0) {
-	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -226,7 +226,7 @@ class GalleryMembersHelper {
      *                int daysSinceCreation number in days)
      */
     function daysSinceCreation($userId) {
-	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId, 'GalleryUser');
 	if ($ret) {
 	    return array($ret, null);
 	}

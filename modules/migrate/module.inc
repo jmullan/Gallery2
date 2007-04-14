@@ -34,11 +34,11 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('migrate');
 	$this->setName($gallery->i18n('Migration'));
 	$this->setDescription($gallery->i18n('Migrate your Gallery 1 albums to Gallery 2'));
-	$this->setVersion('1.0.8'); /* Update upgrade() also */
+	$this->setVersion('1.0.9'); /* Update upgrade() also */
 	$this->_templateVersion = 1;
 	$this->setGroup('import', $gallery->i18n('Import'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredCoreApi(array(7, 27));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -69,6 +69,7 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	case '1.0.6':
 	case '1.0.7':
 	    /* .mo file migration */
+	case '1.0.8':
 
 	case 'end of upgrade path':
 	    /*
