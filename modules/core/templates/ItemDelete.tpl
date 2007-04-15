@@ -77,7 +77,7 @@
 	 name="{g->formVar var="form[selectedIds][`$peer.id`]"}"/>
       </td><td>
 	<label for="cb_{$peer.id}">
-	  {$peer.title|default:$peer.pathComponent}
+	  {$peer.title|markup:strip|default:$peer.pathComponent}
 	</label>
 	<i>
 	  {if isset($ItemDelete.peerTypes.data[$peer.id])}

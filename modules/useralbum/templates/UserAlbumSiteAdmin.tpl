@@ -46,7 +46,7 @@
 	<option value="{$album.data.id}"{if $album.data.id==$form.targetLocation}
 	 selected="selected"{/if}>
 	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
-	  {$album.data.title|default:$album.data.pathComponent}
+	  {$album.data.title|markup:strip|default:$album.data.pathComponent}
 	</option>
 	{/foreach}
       </select>

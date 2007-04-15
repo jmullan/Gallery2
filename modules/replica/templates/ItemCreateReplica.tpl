@@ -75,7 +75,7 @@
 	 name="{g->formVar var="form[selectedIds][`$peer.id`]"}"/>
       </td><td>
 	<label for="cb_{$peer.id}">
-	  {$peer.title|default:$peer.pathComponent}
+	  {$peer.title|markup:strip|default:$peer.pathComponent}
 	</label>
      </td>
     </tr>
@@ -110,7 +110,7 @@
     {foreach from=$ItemCreateReplica.albumTree item=album}
       <option value="{$album.data.id}">
 	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
-	{$album.data.title|default:$album.data.pathComponent}
+	{$album.data.title|markup:strip|default:$album.data.pathComponent}
       </option>
     {/foreach}
   </select>

@@ -143,7 +143,7 @@
 	 name="{g->formVar var="form[selectedIds][$peerItemId]"}"/>
       </td><td>
 	<label for="cb_{$peerItemId}">
-	  {$peer.title|default:$peer.pathComponent}
+	  {$peer.title|markup:strip|default:$peer.pathComponent}
 	</label>
 	<i>
 	  {if isset($ItemMove.peerTypes.data.$peerItemId)}
@@ -236,7 +236,7 @@
       <option value="{$album.data.id}"
 	      {if ($album.data.id == $form.destination)}selected="selected"{/if}>
 	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
-	{$album.data.title|default:$album.data.pathComponent}
+	{$album.data.title|markup:strip|default:$album.data.pathComponent}
       </option>
     {/foreach}
   </select>
