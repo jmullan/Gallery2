@@ -34,7 +34,7 @@ class GalleryEventLogHelper_advanced {
      */
     function addEventLogEntry($type, $summary, $details) {
 	global $gallery;
-	$phpVm =& $gallery->getPhpVm();
+	$phpVm = $gallery->getPhpVm();
 	$storage =& $gallery->getStorage();
 	$urlGenerator =& $gallery->getUrlGenerator();
 
