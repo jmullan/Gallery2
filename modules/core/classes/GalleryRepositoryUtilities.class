@@ -368,6 +368,16 @@ class GalleryRepositoryUtilities {
 	    $needsInflation = true;
 	}
 
+	static $apiQueryParams;
+	if (empty($apiQueryParams)) {
+	    GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
+	    $apiQueryParams = sprintf('coreApi=%s&moduleApi=%s&themeApi=%s',
+				      join('.', GalleryCoreApi::getApiVersion()),
+				      join('.', GalleryModule::getApiVersion()),
+				      join('.', GalleryTheme::getApiVersion()));
+	}
+
+	$url .= '?' . $apiQueryParams;
 	list ($successful, $contents, $response, $headers, $actualUrl) =
 	    GalleryCoreApi::fetchWebPage($url);
 	if (empty($contents) || !$successful) {

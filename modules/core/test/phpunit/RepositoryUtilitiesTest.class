@@ -21,6 +21,9 @@
 GalleryCoreApi::requireOnce('modules/core/test/phpunit/RepositoryTestStorage.class');
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryRepositoryUtilities.class');
 
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryModule.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
+
 /**
  * Test repository utilities functionality
  * @package GalleryCore
@@ -42,6 +45,12 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$this->_galleryStorage =& $gallery->_storage;
 	$this->_testStorage =& RepositoryTestStorage::getSingleton();
 	$gallery->_storage =& $this->_testStorage;
+
+
+	$this->_apis = sprintf('coreApi=%s&moduleApi=%s&themeApi=%s',
+			       join('.', GalleryCoreApi::getApiVersion()),
+			       join('.', GalleryModule::getApiVersion()),
+			       join('.', GalleryTheme::getApiVersion()));
     }
 
     function tearDown() {
@@ -372,7 +381,8 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$platform->setReply('fsockopen', array('example.com', 80, null, null, 5), 'fd');
 	$platform->setReply(
 	    'fwrite',
-	    array('fd', "GET /repository/index HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
+	    array('fd', "GET /repository/index?{$this->_apis} "
+		  . "HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
 	    true);
 	$platform->setReply('fflush', array('fd'), null);
 	$platform->setReply('fgets', array('fd', 4096), "HTTP/1.1 200 OK\r\n");
@@ -403,7 +413,8 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$platform->setReply('fsockopen', array('example.com', 80, null, null, 5), 'fd');
 	$platform->setReply(
 	    'fwrite',
-	    array('fd', "GET /repository/index.gz HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
+	    array('fd', "GET /repository/index.gz?{$this->_apis} "
+		  . "HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
 	    true);
 	$platform->setReply('fflush', array('fd'), null);
 	$platform->setReply('fgets', array('fd', 4096), "HTTP/1.1 200 OK\r\n");
@@ -434,7 +445,8 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	$platform->setReply('fsockopen', array('example.com', 80, null, null, 5), 'fd');
 	$platform->setReply(
 	    'fwrite',
-	    array('fd', "GET /repository/index HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
+	    array('fd', "GET /repository/index?{$this->_apis} "
+		  . "HTTP/1.0\r\nHost: example.com\r\n\r\n", null),
 	    true);
 	$platform->setReply('fflush', array('fd'), null);
 	$platform->setReply('fgets', array('fd', 4096), "HTTP/1.1 200 OK\r\n");
