@@ -58,8 +58,16 @@ gettext("Warning: Output buffering is enabled in your PHP by the <b>%s</b> param
 gettext("Storage Directory Permissions")
 gettext("Test skipped due to other errors.")
 gettext("Error: Some files and or directories in your storage directory are not writeable by the webserver user. Run chown -R webserverUser %s OR run chmod -R 777 %s.")
+gettext("Inaccessible or missing  files (%d)")
 gettext("Gallery file integrity")
 gettext("Manifest missing or inaccessible.")
+gettext("Note: You're running Gallery from SVN, so recently removed files may appear here.  It might be safe to ignore these.")
+gettext("Missing files (%d)")
+gettext("Note: You're running Gallery from SVN, so some modified files are to be expected.  You can probably ignore these, but to be safe you should make sure that you do 'svn update' before continuing.")
+gettext("Modified files (%d)")
+gettext("These files are no longer part of Gallery. They probably won't cause any problems but it is a good idea to remove them to keep your install clean.  Gallery can't remove these files for you, but you can download and run %sthis script%s in your gallery2 directory to delete them for you.")
+gettext("Old files (%d)")
+gettext("The storage folder path is not defined in config.php (%s)")
 
 /* steps/UpgradeCoreModuleStep.class */
 gettext("Upgrade Core")
@@ -128,15 +136,6 @@ gettext("Upgrade %d%% complete")
 gettext("Redo this step")
 gettext("Continue to Step %d&raquo;") /* also in: templates/UpgradeOtherModulesSuccess.html */
 gettext("Gallery: <strong>your photos</strong> on <strong>your website</strong>")
-
-/* templates/ManifestSystemCheck.html */
-gettext("Missing files (%d)")
-gettext("Note: You're running Gallery from SVN, so recently removed files may appear here.  It might be safe to ignore these.")
-gettext("Modified files (%d)")
-gettext("Note: You're running Gallery from SVN, so some modified files are to be expected.  You can probably ignore these, but to be safe you should make sure that you do 'svn update' before continuing.")
-gettext("Old files (%d)")
-gettext("These files are no longer part of Gallery. They probably won't cause any problems but it is a good idea to remove them to keep your install clean.  Gallery can't remove these files for you, but you can download and run %s in your gallery2 directory to delete them for you.")
-gettext("this script")
 
 /* templates/NavBar.html */
 gettext("Upgrade Steps")
