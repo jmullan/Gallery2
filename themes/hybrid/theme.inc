@@ -167,9 +167,14 @@ class HybridTheme extends GalleryTheme {
 	list ($detail, $renderId) = GalleryUtilities::getRequestVariables('detail', 'renderId');
 	if (!empty($renderId)) {
 	    /* Render this item */
-	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId, 'GalleryDataItem');
+	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById(
+		    $renderId, array('GalleryDataItem', 'GalleryDerivative'));
 	    if ($ret) {
 		return array($ret, null);
+	    }
+	    if ($renderId != ($itemId = $item->getId()) && $image->getParentId() != $itemId) {
+		/* Malicious URL.. renderId not for this item */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	    }
 	    $template->setVariable('theme', array('item' => (array)$item,
 						  'image' => (array)$image));
