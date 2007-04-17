@@ -404,6 +404,54 @@ class ModuleTest extends GalleryTestCase {
 	$this->assertEquals('1.0.0', $version, 'version not set after upgrade');
     }
 
+    function testDeactivatePostsEventAfterFactoryUnregistration() {
+	global $gallery;
+
+	/* Prepare the test by activating a test module with some factory registrations */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = $module->installOrUpgrade();
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $redirect) = $module->activate();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array(), $redirect, 'activate redirect');
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert($isActive, 'Is active');
+
+	list ($ret, $handler) = GalleryCoreApi::newFactoryInstanceById('GalleryOnLoadHandler',
+								       'ModuleTestOnLoadHandler');
+	if ($ret) {
+	    return $ret;
+	}							       
+	$this->assert(isset($handler), 'Precondition failed: No factory implementation registered');
+
+	/* Register our event listener to observe the test */
+	$testEventListener = new ModuleTestEventListener();
+	$this->_registerTestEventListener('Gallery::DeactivatePlugin', $testEventListener);
+
+	/* Execute the method under test */
+	list ($ret, $redirect) = $module->deactivate();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array(), $redirect, 'deactivate redirect');
+
+	$this->assertEquals(1, count($testEventListener->isOnLoadHandlerRegistered),
+	    'number of deactivation events');
+	$this->assertEquals(false, $testEventListener->isOnLoadHandlerRegistered[0],
+	    'Deactivation event was posted before unregistering factory implementations');
+    }
+
     function _fetchPermissionBitsForItem($itemId) {
 	global $gallery;
 
@@ -621,6 +669,21 @@ class ModuleTestPlatform extends GalleryPlatform {
 
     function getDirectorySeparator() {
 	return '/';
+    }
+}
+
+class ModuleTestEventListener {
+    var $isOnLoadHandlerRegistered = array();
+    function handleEvent($event) {
+	if ($event->getEventName() == 'Gallery::DeactivatePlugin') {
+	    list ($ret, $handler) = GalleryCoreApi::newFactoryInstanceById(
+		'GalleryOnLoadHandler', 'ModuleTestOnLoadHandler');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $this->isOnLoadHandlerRegistered[] = isset($handler);
+	}
+	return array(null, null);
     }
 }
 ?>

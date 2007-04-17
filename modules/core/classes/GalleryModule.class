@@ -340,15 +340,6 @@ class GalleryModule extends GalleryPlugin {
      * @see GalleryPlugin::deactivate
      */
     function deactivate($postDeactivationEvent=true) {
-	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	if (!empty($redirect)) {
-	    return array(null, $redirect);
-	}
-
 	$ret = GalleryCoreApi::unregisterToolkitsByModuleId($this->getId());
 	if ($ret) {
 	    return array($ret, null);
@@ -359,7 +350,16 @@ class GalleryModule extends GalleryPlugin {
 	    return array($ret, null);
 	}
 
-	return array(null, array());
+	/*
+	 * Call parent::deactivate after our unregistrations such that listeners for the
+	 * deactivation event see the correct state of G2 without this plugin.
+	 */
+	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, $redirect);
     }
 
     /**
