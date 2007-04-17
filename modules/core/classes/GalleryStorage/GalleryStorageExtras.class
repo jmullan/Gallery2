@@ -1633,7 +1633,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    }
 
 	    /* Get rid of our sequences */
-	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID) as $sequenceId) {
+	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID,
+			   DATABASE_SEQUENCE_EVENT_LOG) as $sequenceId) {
 		$this->_gs->_traceStart();
 		$recordSet = $this->_gs->_db->DropSequence($this->_gs->_tablePrefix . $sequenceId);
 		$this->_gs->_traceStop();
