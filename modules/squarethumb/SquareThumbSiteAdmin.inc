@@ -38,19 +38,40 @@ class SquareThumbSiteAdminController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
-	    if (empty($form['color'])) {
-		$error[] = 'form[error][color][missing]';
-	    } else if (!preg_match('/^[0-9a-f]{6}$/i', $form['color'])) {
-		$error[] = 'form[error][color][invalid]';
+	    if (empty($form['mode'])) {
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	    } else {
-		foreach (array('mode', 'color') as $key) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb',
-							      $key, $form[$key]);
+		if ($form['mode'] == 'fit') {
+		    /* Can't crop-to-square without PPM support */
+		    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation(
+			'image/x-portable-pixmap', 'convert-to-image/jpeg');
 		    if ($ret) {
 			return array($ret, null);
 		    }
+
+		    if (!isset($toolkit)) { 
+			return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
+		    } else if (empty($form['color'])) {
+			$error[] = 'form[error][color][missing]';
+		    } else if (!preg_match('/^[0-9a-f]{6}$/i', $form['color'])) {
+			$error[] = 'form[error][color][invalid]';
+		    } else {
+			$ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb',
+								  'color', $form['color']);
+			if ($ret) {
+			    return array($ret, null);
+			}
+		    }
 		}
-		$status['saved'] = 1;
+
+		if (empty($error)) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb',
+							      'mode', $form['mode']);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    $status['saved'] = 1;
+		}
 	    }
 	} /* else $form['action']['reset'] */
 
@@ -88,6 +109,15 @@ class SquareThumbSiteAdminView extends GalleryView {
 		}
 	    }
 	}
+
+	/* Can't crop-to-square without ppm support */
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/x-portable-pixmap',
+								      'convert-to-image/jpeg');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	$form['allowFitToSquareMode'] = isset($toolkit);
+	$form['mode'] = $form['allowFitToSquareMode'] ? $form['mode'] : 'crop';
 
 	$template->setVariable('controller', 'squarethumb.SquareThumbSiteAdmin');
 	return array(null,

@@ -26,13 +26,20 @@
   </tr><tr>
     <td>
       <input type="radio" id="rbFit" name="{g->formVar var="form[mode]"}" value="fit"
-       {if $form.mode=="fit"}checked="checked"{/if}/>
+       {if $form.mode=="fit"}checked="checked"{/if}
+       {if !$form.allowFitToSquareMode} disabled="disabled"{/if}/>
     </td>
     <td>
+      {if !$form.allowFitToSquareMode}
+      <div class="giWarning">
+	{g->text text="You need to enable a graphics toolkit module with PPM support to use the \"fit images to square\" mode."}
+      </div>
+      {/if}
       <label for="rbFit">
 	{g->text text="Fit images to square, padding with background color:"}
       </label>
-      <input type="text" size="6" name="{g->formVar var="form[color]"}" value="{$form.color}"/>
+      <input type="text" size="6" name="{g->formVar var="form[color]"}" value="{$form.color}"
+        {if !$form.allowFitToSquareMode} disabled="disabled"{/if}/>
 
       {if isset($form.error.color.missing)}
       <div class="giError">

@@ -36,7 +36,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Build all thumbnails so they are square'));
-	$this->setVersion('1.0.6');
+	$this->setVersion('1.0.7');
 	$this->_templateVersion = 1;
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
@@ -91,13 +91,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	/* Omit site admin view if no ppm support; only use crop-to-square in that case */
-	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/x-portable-pixmap',
-								      'convert-to-image/jpeg');
-	if ($ret) {
-	    return array($ret, null);
-	}
-	return array(null, !isset($toolkit) ? array() :
+	return array(null,
 		     array(array('name' => $this->translate('Square Thumbnails'),
 				 'view' => 'squarethumb.SquareThumbSiteAdmin')));
     }

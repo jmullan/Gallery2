@@ -68,8 +68,8 @@ class SquareThumbSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
-    function testSquareThumbSiteAdminControllerSaveNoColor() {
-	GalleryUtilities::putRequestVariable('form[mode]', 'crop');
+    function testSquareThumbSiteAdminControllerSaveFitNoColor() {
+	GalleryUtilities::putRequestVariable('form[mode]', 'fit');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
@@ -77,6 +77,19 @@ class SquareThumbSiteAdminControllerTest extends GalleryControllerTestCase {
 						'subView' => 'squarethumb.SquareThumbSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][color][missing]')),
+			    $results);
+    }
+
+    function testSquareThumbSiteAdminControllerSaveCropColorNotSaved() {
+	GalleryUtilities::putRequestVariable('form[mode]', 'crop');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+	GalleryUtilities::removeRequestVariable('form[color]');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						'subView' => 'squarethumb.SquareThumbSiteAdmin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
 			    $results);
     }
 
@@ -100,6 +113,19 @@ class SquareThumbSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array('form[error][color][invalid]')),
 			    $results);
+    }
+
+    function testSquareThumbSiteAdminControllerSaveFitButNotAvailable() {
+	GalleryUtilities::putRequestVariable('form[mode]', 'fit');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+	GalleryUtilities::putRequestVariable('form[color]', '123456');
+
+	$cacheKey = 'GalleryToolkitHelper::getToolkitByOperation(image/x-portable-pixmap, '
+	    . 'convert-to-image/jpeg)';
+	GalleryDataCache::put($cacheKey, array(null, null));
+
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+	$this->assertEquals(null, $results);
     }
 }
 ?>
