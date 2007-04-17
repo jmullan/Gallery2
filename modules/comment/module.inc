@@ -149,6 +149,7 @@ class CommentModule extends GalleryModule {
 
 	case '1.1.2':
 	case '1.1.3':
+	case '1.1.3.1':
 	    /* .mo file migration */
 	case '1.1.4':
 
