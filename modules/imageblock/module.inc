@@ -52,6 +52,28 @@ class ImageBlockModule extends GalleryModule {
     }
 
     /**
+     * @see GalleryModule::activate
+     */
+    function activate($postActivationEvent=true) {
+	/**
+	 * Our cache is probably out of date. Flush it. 
+	 * @todo What about the ImageBlockDisabledMap which is out of date as well?
+	 */
+	$ret = GalleryCoreApi::removeAllMapEntries('ImageBlockCacheMap');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	list ($ret, $redirect) = parent::activate($postActivationEvent);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	return array(null, $redirect);
+    }
+
+
+    /**
      * @see GalleryModule::upgrade
      */
     function upgrade($currentVersion) {
