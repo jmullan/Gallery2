@@ -113,12 +113,14 @@ class ShowAllCommentsView extends GalleryView {
 
 	    if (!isset($itemData[$comment['parentId']])) {
 		$it = $items[$comment['parentId']];
-		foreach ($derivatives[$comment['parentId']] as $derivative) {
-		    $type = $derivative->getDerivativeType();
-		    if (empty($it['resize']) && $type == DERIVATIVE_TYPE_IMAGE_RESIZE) {
-			$it['resize'] = (array)$derivative;
-		    } else if ($type == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-			$it['thumb'] = (array)$derivative;
+		if (!empty($derivatives[$comment['parentId']])) {
+		    foreach ($derivatives[$comment['parentId']] as $derivative) {
+			$type = $derivative->getDerivativeType();
+			if (empty($it['resize']) && $type == DERIVATIVE_TYPE_IMAGE_RESIZE) {
+			    $it['resize'] = (array)$derivative;
+			} else if ($type == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+			    $it['thumb'] = (array)$derivative;
+			}
 		    }
 		}
 		$itemData[$comment['parentId']] = $it;
