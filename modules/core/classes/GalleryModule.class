@@ -394,11 +394,12 @@ class GalleryModule extends GalleryPlugin {
 	    return array($ret, null);
 	}
 
-	if (!empty($redirect)) {
-	    return array(null, $redirect);
+	$ret = $this->_removeObsoleteThemeBlocks();
+	if ($ret) {
+	    return array($ret, null);
 	}
 
-	return array(null, array());
+	return array(null, $redirect);
     }
 
     /**
@@ -653,6 +654,50 @@ class GalleryModule extends GalleryPlugin {
 	    GalleryDataCache::put('_translate ' . $string, $result);
 	}
 	return $result;
+    }
+
+    /**
+     * Remove obsolete blocks from existing themes (bug #1636339).
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _removeObsoleteThemeBlocks() {
+	list ($ret, $blocks) = GalleryCoreApi::loadAvailableBlocks();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPluginParameterMap',
+	    array('pluginId', 'itemId', 'parameterName', 'parameterValue'),
+	    array('pluginType' => 'theme',
+		  'parameterName' => new GallerySqlFragment('LIKE ?', '%Blocks')));
+	if ($ret) {
+	    return $ret;
+	}
+	
+	/* Go through each available theme and find which blocks they're using. */
+	while ($result = $searchResults->nextResult()) {
+	    $themeId = $result[0];
+	    $itemId = $result[1];
+	    $paramName = $result[2];
+	    $themeBlocks = unserialize($result[3]);
+	    foreach ($themeBlocks as $key => $blockInfo) {
+		$blockInfo = explode('.', $blockInfo[0]);
+		$pluginName = $blockInfo[0];
+		$blockName = $blockInfo[1];
+
+		/* Remove used block if it is not available any more. */
+		if (!isset($blocks[$pluginName][$blockName])) {
+		    unset($themeBlocks[$key]);
+		    $ret = GalleryCoreApi::setPluginParameter(
+			'theme', $themeId, $paramName, serialize($themeBlocks), $itemId);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+	    }
+	}
+	return null;
     }
 }
 ?>

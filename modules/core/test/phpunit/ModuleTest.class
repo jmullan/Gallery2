@@ -99,6 +99,35 @@ class ModuleTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	/* Add bogus used theme blocks to test if they're removed after activate(). Bug #1636339 */
+	$ret = GalleryCoreApi::setPluginParameter('theme', 'bogusTheme', 'albumBlocks',
+	    serialize(array(array('bogusTheme.someBlock', array()))));
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = GalleryCoreApi::setPluginParameter('theme', 'bogusTheme', 'albumBlocks',
+	    serialize(array(array('bogusTheme.someBlock', array()))), 42);
+	if ($ret) {
+	    return $ret;
+	}
+	
+	/* Add a real theme block if one is available, that should not be removed. */
+	list ($ret, $blocks) = GalleryCoreApi::loadAvailableBlocks();
+	if ($ret) {
+	    return $ret;
+	}
+	$blockAvailable = false;
+	if (!empty($blocks)) {
+	    $blockAvailable = true;
+	    $pluginName = key($blocks);
+	    $blockName = key($blocks[$pluginName]);
+	    $ret = GalleryCoreApi::setPluginParameter('theme', 'bogusTheme', 'albumBlocks',
+		serialize(array(array("$pluginName.$blockName", array()))), 1337);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+	
 	/* Install the module */
 	$ret = $module->installOrUpgrade();
 	if ($ret) {
@@ -235,6 +264,39 @@ class ModuleTest extends GalleryTestCase {
 	list ($ret) = $entity->refresh();
 	$this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT, $ret->getErrorCode(), 'entity');
 
+	/* Verify that the bogus blocks have been removed from the theme. */
+	list ($ret, $bogusBlock) =
+	    GalleryCoreApi::getPluginParameter('theme', 'bogusTheme', 'albumBlocks');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array(), unserialize($bogusBlock), 'bogusTheme general parameter');
+	list ($ret, $bogusBlock) =
+	    GalleryCoreApi::getPluginParameter('theme', 'bogusTheme', 'albumBlocks', 42);
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array(), unserialize($bogusBlock), 'bogusTheme parameter');
+	
+	/* Make sure the real block hasn't been removed. */
+	if ($blockAvailable) {
+	    list ($ret, $realBlock) =
+		GalleryCoreApi::getPluginParameter('theme', 'bogusTheme', 'albumBlocks', 1337);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $this->assertEquals(array(array("$pluginName.$blockName", array())),
+				unserialize($realBlock),
+				'Real block removed!');
+	}
+
+	/* Remove all references to the bogus theme from the database. */
+	$ret = GalleryCoreApi::removeMapEntry('GalleryPluginParameterMap',
+					      array('pluginId' => 'bogusTheme'));
+	if ($ret) {
+	    return $ret;
+	}
+	
 	/* TODO: How do we verify that the tables are removed successfully? */
     }
 
