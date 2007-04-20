@@ -80,7 +80,7 @@ class GalleryCoreApi {
      * - loadEntitesById and deleteEntity: make optional $requiredEntityType mandatory
      */
     function getApiVersion() {
-	return array(7, 28);
+	return array(7, 29);
     }
 
     /**
@@ -1791,6 +1791,18 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryUserGroupHelper_simple.class');
 	return GalleryUserGroupHelper_simple::fetchGroupsForUser($userId, $count, $offset);
+    }
+
+    /**
+     * Fetch the preferred language of a specific user.
+     *
+     * @param int $userId
+     * @return array object GalleryStatus a status code
+     *               string code of preferred locale
+     */
+    function fetchLanguageCodeForUser($userId) {
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryUserHelper_medium.class');
+	return GalleryUserHelper_medium::fetchLanguageCodeForUser($userId);
     }
 
     /**

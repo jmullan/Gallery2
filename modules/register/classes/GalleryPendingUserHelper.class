@@ -191,6 +191,8 @@ class GalleryPendingUserHelper {
      * @return object GalleryStatus a status code
      */
     function sendAdminEmail(&$pendingUser) {
+	global $gallery;
+
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
 	if ($ret) {
 	    return $ret;
@@ -213,29 +215,68 @@ class GalleryPendingUserHelper {
 	if ($ret) {
 	    return $ret;
 	}
-	$toList = array();
+	$toList = $languageCodeList = array();
 	foreach ($adminUsers as $admin) {
 	    $email = $admin->getEmail();
 	    if (!empty($email)) {
 		$toList[] = $email;
+		list ($ret, $language) = GalleryCoreApi::fetchLanguageCodeForUser($admin->getId());
+            	if ($ret) {
+		    return $ret;
+		}
+		$languageCodeList[] = $language;
 	    }
 	}
 
 	if (!empty($toList)) {
-	    $decodedUserName = $pendingUser->getUserName();
-	    GalleryUtilities::unsanitizeInputValues($decodedUserName, false);
-	    $ret = GalleryCoreApi::sendTemplatedEmail(
-		    'modules/register/templates/AdminEmail.tpl',
-		    array('name' => $pendingUser->getFullName(),
-			  /* We send plain text email so decode entities in username */
-			  'username' => $decodedUserName,
-			  'email' => $pendingUser->getEmail(),
-			  'l10Domain' => 'modules_register'),
-		    $params['from'],
-		    implode(',', $toList),
-		    $module->translate($params['adminsubject']));
+	    list ($ret, $defaultLanguageCode) = $gallery->getActiveLanguageCode();
 	    if ($ret) {
 		return $ret;
+	    }
+	    $currentLanguageCode = $defaultLanguageCode;
+	    $translator =& $gallery->getTranslator();
+
+	    $decodedUserName = $pendingUser->getUserName();
+	    GalleryUtilities::unsanitizeInputValues($decodedUserName, false);
+	    foreach ($toList as $index => $to) {
+		/* Reinitialize translator with the preferred language of admin where needed */
+		if ($currentLanguageCode != $languageCodeList[$index]) {
+		    list ($ret, $currentLanguageCode) = $translator->init($languageCodeList[$index]);
+		    if ($ret) {
+			if ($defaultLanguageCode != $currentLanguageCode) {
+			    list ($ret2, $currentLanguageCode) = $translator->init($defaultLanguageCode);
+			    if ($ret2) {
+	    		        return $ret2;
+			    }
+			}
+	    		return $ret;
+		    }
+		}
+		$ret = GalleryCoreApi::sendTemplatedEmail(
+			'modules/register/templates/AdminEmail.tpl',
+		        array('name' => $pendingUser->getFullName(),
+		    	      /* We send plain text email so decode entities in username */
+			      'username' => $decodedUserName,
+			      'email' => $pendingUser->getEmail(),
+			      'l10Domain' => 'modules_register'),
+			$params['from'],
+			$to,
+			$module->translate($params['adminsubject']));
+		if ($ret) {
+		    if ($defaultLanguageCode != $currentLanguageCode) {
+			list ($ret2, $currentLanguageCode) = $translator->init($defaultLanguageCode);
+			if ($ret2) {
+		    	    return $ret2;
+			}
+		    }
+		    return $ret;
+		}
+	    }
+	    if ($defaultLanguageCode != $currentLanguageCode) {
+		list ($ret, $currentLanguageCode) = $translator->init($defaultLanguageCode);
+		if ($ret) {
+	    	    return $ret;
+		}
 	    }
 	}
 

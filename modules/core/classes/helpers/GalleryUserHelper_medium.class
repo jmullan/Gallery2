@@ -154,6 +154,28 @@ class GalleryUserHelper_medium {
     }
 
     /**
+     * @see GalleryCoreApi::fetchLanguageCodeForUser
+     */
+    function fetchLanguageCodeForUser($userId) {
+	global $gallery;
+	
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId, 'GalleryUser');
+	if ($ret) {
+	    return array($ret, null);
+	}
+	
+	$language = $user->getLanguage();
+	if (empty($language)) {
+	    list ($ret, $language) = 
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
+            if ($ret) {
+		return array($ret, null);
+	    }
+	}
+	return array(null, $language);
+    }
+
+    /**
      * @see GalleryCoreApi::assertUserIsSiteAdministrator
      */
     function assertSiteAdministrator() {
