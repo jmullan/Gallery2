@@ -295,7 +295,11 @@ class GalleryCoreApi {
      * @param bool $ignoreCache (optional) true if we want to ignore the cache
      * @return array object GalleryStatus as status code
      *                      array (moduleId => array('active' => true/false,
-     *                                               'available' => true/false)
+     *                                               'available' => true/false,
+     *						     'callbacks' => string,
+     *						     'requiredCoreApi' => array
+     *						     'requiredModuleApi' => array,
+     *						     'version' => string)
      */
     function fetchPluginStatus($pluginType, $ignoreCache=false) {
 	GalleryCoreApi::requireOnce(
