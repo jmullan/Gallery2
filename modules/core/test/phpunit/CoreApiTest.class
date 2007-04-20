@@ -55,5 +55,17 @@ class CoreApiTest extends GalleryTestCase {
 
 	$this->assertEquals($expectedId, $defaultId);
     }
+
+    function testLoadAvailableBlocks() {
+	list ($ret, $blocks) = GalleryCoreApi::loadAvailableBlocks();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(!empty($blocks), 'No blocks found!');
+	$this->assert(isset($blocks['core']['LanguageSelector']));
+	$this->assert(isset($blocks['core']['ItemLinks']));
+	$this->assert(isset($blocks['core']['LoginBlock']));
+	$this->assert(isset($blocks['core']['PeerList']));
+    }
 }
 ?>

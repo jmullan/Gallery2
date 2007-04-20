@@ -115,7 +115,7 @@ class GalleryThemeHelper_medium {
     /**
      * @see GalleryCoreApi::loadAvailableBlocks
      */
-    function loadAvailableBlocks() {
+    function loadAvailableBlocks($getInactive=false) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
@@ -125,13 +125,13 @@ class GalleryThemeHelper_medium {
 	}
 
 	$data = array();
-	$base = dirname(dirname(dirname(dirname(__FILE__))));
+	$base = GalleryCoreApi::getCodeBasePath();
 	foreach ($pluginStatus as $pluginId => $status) {
-	    if (empty($status['active'])) {
+	    if (empty($status['active']) && !$getInactive) {
 		continue;
 	    }
 
-	    $configFile = "$base/$pluginId/templates/blocks/blocks.inc";
+	    $configFile = "{$base}modules/$pluginId/templates/blocks/blocks.inc";
 	    if (!$platform->file_exists($configFile)) {
 		continue;
 	    }

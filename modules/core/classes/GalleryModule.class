@@ -662,11 +662,11 @@ class GalleryModule extends GalleryPlugin {
      * @return object GalleryStatus a status code
      */
     function _removeObsoleteThemeBlocks() {
-	list ($ret, $blocks) = GalleryCoreApi::loadAvailableBlocks();
+	/* Get all available blocks, even from inactive modules; and used blocks. */
+	list ($ret, $blocks) = GalleryCoreApi::loadAvailableBlocks(true);
 	if ($ret) {
 	    return $ret;
 	}
-
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('GalleryPluginParameterMap',
 	    array('pluginId', 'itemId', 'parameterName', 'parameterValue'),
 	    array('pluginType' => 'theme',
@@ -674,7 +674,7 @@ class GalleryModule extends GalleryPlugin {
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	/* Go through each available theme and find which blocks they're using. */
 	while ($result = $searchResults->nextResult()) {
 	    $themeId = $result[0];
