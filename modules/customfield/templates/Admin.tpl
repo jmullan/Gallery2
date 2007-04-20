@@ -34,7 +34,7 @@ var pickdata = new Array();
 {/literal}
 {counter start=-1 print=no}
 {foreach from=$form.set item=set}{foreach from=$form.fields[$set.key] item=item}
-pickdata[{counter}] = '{foreach from=$item.choices item=choice}{$choice}\n{/foreach}';
+pickdata[{counter}] = '{foreach from=$item.choices item=choice}{$choice|escape:javascript}\n{/foreach}';
 {assign var="nonempty" value="1"}
 {/foreach}{/foreach}
 {literal}
