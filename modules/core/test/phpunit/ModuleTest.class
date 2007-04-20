@@ -99,18 +99,24 @@ class ModuleTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	/* Add bogus used theme blocks to test if they're removed after activate(). Bug #1636339 */
+	/*
+	 * Add bogus used theme blocks to test if they're removed after activate(). Bug #1636339
+	 * For now not testing false positives in the same module since we can't easily inject
+	 * blocks into loadAvailableBlocks().
+	 */
 	$ret = GalleryCoreApi::setPluginParameter('theme', 'bogusTheme', 'albumBlocks',
-	    serialize(array(array('bogusTheme.someBlock', array()))));
+	    serialize(array(array('moduletest.missingBlock', array()))));
 	if ($ret) {
 	    return $ret;
 	}
 	$ret = GalleryCoreApi::setPluginParameter('theme', 'bogusTheme', 'albumBlocks',
-	    serialize(array(array('bogusTheme.someBlock', array()))), 42);
+	    serialize(array(array('bogusModule.someBlock', array()),
+			    array('moduletest.missingBlock', array()))),
+	    42);
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	/* Add a real theme block if one is available, that should not be removed. */
 	list ($ret, $blocks) = GalleryCoreApi::loadAvailableBlocks();
 	if ($ret) {
@@ -194,6 +200,34 @@ class ModuleTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	/* Verify that the bogus blocks have been removed from the theme. */
+	list ($ret, $bogusBlock) =
+	    GalleryCoreApi::getPluginParameter('theme', 'bogusTheme', 'albumBlocks');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array(), unserialize($bogusBlock), 'bogusTheme general parameter');
+	list ($ret, $bogusBlock) =
+	    GalleryCoreApi::getPluginParameter('theme', 'bogusTheme', 'albumBlocks', 42);
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array(array('bogusModule.someBlock', array())),
+			    unserialize($bogusBlock),
+			    'bogusTheme parameter');
+
+	/* Make sure the real block hasn't been removed. */
+	if ($blockAvailable) {
+	    list ($ret, $realBlock) =
+		GalleryCoreApi::getPluginParameter('theme', 'bogusTheme', 'albumBlocks', 1337);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $this->assertEquals(array(array("$pluginName.$blockName", array())),
+				unserialize($realBlock),
+				'Real block removed!');
+	}
+
 	/* Deactivate the module */
 	list ($ret, $redirect) = $module->deactivate();
 	if ($ret) {
@@ -263,32 +297,6 @@ class ModuleTest extends GalleryTestCase {
 	/* Verify our entity was deleted */
 	list ($ret) = $entity->refresh();
 	$this->assertEquals(GALLERY_ERROR | ERROR_MISSING_OBJECT, $ret->getErrorCode(), 'entity');
-
-	/* Verify that the bogus blocks have been removed from the theme. */
-	list ($ret, $bogusBlock) =
-	    GalleryCoreApi::getPluginParameter('theme', 'bogusTheme', 'albumBlocks');
-	if ($ret) {
-	    return $ret;
-	}
-	$this->assertEquals(array(), unserialize($bogusBlock), 'bogusTheme general parameter');
-	list ($ret, $bogusBlock) =
-	    GalleryCoreApi::getPluginParameter('theme', 'bogusTheme', 'albumBlocks', 42);
-	if ($ret) {
-	    return $ret;
-	}
-	$this->assertEquals(array(), unserialize($bogusBlock), 'bogusTheme parameter');
-	
-	/* Make sure the real block hasn't been removed. */
-	if ($blockAvailable) {
-	    list ($ret, $realBlock) =
-		GalleryCoreApi::getPluginParameter('theme', 'bogusTheme', 'albumBlocks', 1337);
-	    if ($ret) {
-		return $ret;
-	    }
-	    $this->assertEquals(array(array("$pluginName.$blockName", array())),
-				unserialize($realBlock),
-				'Real block removed!');
-	}
 
 	/* Remove all references to the bogus theme from the database. */
 	$ret = GalleryCoreApi::removeMapEntry('GalleryPluginParameterMap',

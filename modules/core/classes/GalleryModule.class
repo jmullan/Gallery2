@@ -687,7 +687,7 @@ class GalleryModule extends GalleryPlugin {
 		$blockName = $blockInfo[1];
 
 		/* Remove used block if it is not available any more. */
-		if (!isset($blocks[$pluginName][$blockName])) {
+		if ($pluginName == $this->getId() && !isset($blocks[$pluginName][$blockName])) {
 		    unset($themeBlocks[$key]);
 		    $ret = GalleryCoreApi::setPluginParameter(
 			'theme', $themeId, $paramName, serialize($themeBlocks), $itemId);
