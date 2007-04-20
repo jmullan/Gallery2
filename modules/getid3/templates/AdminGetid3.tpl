@@ -156,7 +156,7 @@
   <h3> {g->text text="Item Upload"} </h3>
 
   <p class="giDescription">
-    {g->text text="When mp3's are added to Gallery check id3 Title field and apply to:"}
+    {g->text text="When MP3s are added to Gallery check the ID3 title field and apply to:"}
   </p>
   <p class="giDescription">
     <input type="checkbox" id="cbMp3Title"{if $form.item.mp3title} checked="checked"{/if}

@@ -122,7 +122,7 @@
     <tr class="gbOdd"><td>slideshowPreloadAll</td><td>true/false</td>
       <td>{g->text text="if true, the slideshow will download pictures before they're needed, which can speed up, but also may waste bandwidth"}</td>
     <tr class="gbEven"><td>slideshowColor</td><td>0,0,0</td>
-      <td>{g->text text="color or the slideshow background"}</td>
+      <td>{g->text text="color of the slideshow background"}</td>
     <tr class="gbOdd"><td>slideshowFontSize</td><td>30</td>
       <td>{g->text text="size of text overlay"}</td>
     <tr class="gbEven"><td>slideshowFontName</td><td>arial</td>

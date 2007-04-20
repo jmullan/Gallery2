@@ -106,7 +106,7 @@
 </td><td>
 <div class="gbBlock">
   <h3>{g->text text="Help"}</h3>
-  <p>{g->text text="Here are a selection of variables that affect uploads."}</p>
+  <p>{g->text text="Here is a selection of variables that affect uploads."}</p>
   <table class="gbDataTable">
     <tr><th>{g->text text="variable"}</th><th>{g->text text="values"}</th><th>{g->text text="help"}</th></tr>
     <tr class="gbEven"><td>resizeBeforeUpload</td><td>true/false</td>
