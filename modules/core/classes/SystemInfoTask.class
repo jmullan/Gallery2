@@ -62,6 +62,14 @@ class SystemInfoTask extends MaintenanceTask {
 	    ? $version['gallery'] . ' ' . $core->translate('core') . ' ' . $version['core']
 	    : $core->translate('unknown');
 
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
+	GalleryCoreApi::requireOnce('modules/core/classes/GalleryEmbed.class');
+	$api = $core->translate(array('text' => 'API = Core %s, Module %s, Theme %s, Embed %s',
+		    'arg1' => implode('.', GalleryCoreApi::getApiVersion()),
+		    'arg2' => implode('.', GalleryModule::getApiVersion()),
+		    'arg3' => implode('.', GalleryTheme::getApiVersion()),
+		    'arg4' => implode('.', GalleryEmbed::getApiVersion())));
+
 	list ($ret, $list) = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
 	if (!$ret) {
 	    $toolkitList = implode(', ', array_keys($list));
@@ -100,6 +108,7 @@ class SystemInfoTask extends MaintenanceTask {
 
 	$info = array(
 	    $core->translate('Gallery version') . ' = ' . $version,
+	    $api,
 	    $core->translate('PHP version') . ' = ' . phpversion() . ' ' . php_sapi_name(),
 	    $core->translate('Webserver') . ' = ' .
 		GalleryUtilities::getServerVar('SERVER_SOFTWARE'),
