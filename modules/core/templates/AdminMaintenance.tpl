@@ -54,8 +54,10 @@
     <td colspan=3>
       <h4>{g->text text="Maintenance Mode Url"}</h4>
       <p class="giDescription">
-        {g->text text="The Maintenance Mode Url is where requests will be redirected to when access to the site has been restricted by the administrator."}
-        <i>{g->text text="Example: /maintenance.html"}</i>
+        {g->text text="The Maintenance Mode Url specifies where requests will be redirected when access to the site has been restricted by the administrator."}
+        {g->text text="If left blank Gallery will display a default page with an administrator login link. This page will be themed when the code base is up to date, otherwise it will display a plain unstyled page."}
+        <br/>
+        <i>{g->text text="For example: /maintenance.html"}</i>
       </p>
       <input type="text" size="60"
              name="{g->formVar var="form[setMode][url]"}" value="{$AdminMaintenance.setMode.url}"
