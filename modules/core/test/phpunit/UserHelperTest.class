@@ -37,10 +37,10 @@ class UserHelperTest extends GalleryTestCase {
 	   return $ret;
 	}
 
-	$this->_phpVm = new UserHelperTestPhpVm();
-	$this->_storage = new UserHelperTestMockStorage();
-	$gallery->_storage =& $this->_storage;
-	$gallery->_phpVm =& $this->_phpVm;
+	$gallery->_storage = new UserHelperTestMockStorage();
+	$this->_storage =& $gallery->getStorage();
+	$gallery->_phpVm = new UserHelperTestPhpVm();
+	$this->_phpVm =& $gallery->_phpVm;
 	$this->_saveSession = $gallery->_session;
     }
 
