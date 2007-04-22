@@ -148,7 +148,7 @@ class RssHelper {
 
 		if (!empty($items)) {
 		    list ($ret, $items) =
-			GalleryCoreApi::loadEntitiesById($items, 'GalleryAlbumItem');
+			GalleryCoreApi::loadEntitiesById($items, 'GalleryItem');
 		    if ($ret) {
 			return $ret;
 		    }
