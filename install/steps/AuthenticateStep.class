@@ -39,7 +39,7 @@ class AuthenticateStep extends InstallStep {
 
     function processRequest() {
 	if (!empty($_GET['downloadLogin'])) {
-	    GallerySetupUtilities::generateLoginTxtFile($this->_uniqueKey);
+	    GallerySetupUtilities::generateTextFileForDownload('login.txt', $this->_uniqueKey);
 	    return false;
 	}
 

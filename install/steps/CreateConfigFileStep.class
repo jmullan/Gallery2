@@ -33,6 +33,16 @@ class CreateConfigFileStep extends InstallStep {
 	return _('Create Config File');
     }
 
+    function processRequest() {
+	if (!empty($_GET['downloadConfig'])) {
+	    GallerySetupUtilities::generateTextFileForDownload(
+		'config.php', $this->_getConfigContents());
+	    return false;
+	}
+
+	return true;
+    }
+
     function loadTemplateData(&$templateData) {
 	global $galleryStub;
 
@@ -41,14 +51,26 @@ class CreateConfigFileStep extends InstallStep {
 	$templateData['OS'] = strncasecmp(PHP_OS, 'win', 3) ? 'unix' : 'winnt';
 	if (file_exists($configFilePath) && !is_writeable($configFilePath)) {
 	    /* The file exists but we can't write to it */
-	    $templateData['error'] = sprintf(
-		_('Unable to write to the <b>config.php</b> configuration file in your %s ' .
+	    if (file_get_contents($configFilePath) == $this->_getConfigContents()) {
+		/* The proper contents are in the file, we can advance to the next step */
+		$this->setComplete(true);
+		$templateData['bodyFile'] = 'CreateConfigFileSuccess.html';
+	    } else {
+		$templateData['error'] = sprintf(
+		    _('Unable to write to the <b>config.php</b> configuration file in your %s ' .
 			  'directory.  Please change its permissions.  If you\'re on ' .
-			  'Unix you can do <i>chmod 666 config.php</i> to fix this.'),
-			'<tt>' . basename($configDir) . '</tt>');
-	    $this->setInError(true);
-	    $templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
-	    $templateData['galleryDir'] = basename($configDir);
+			  'Unix you can do <i>chmod 666 config.php</i> to fix this. ' .
+		          'You can also download the %sconfig.php%s file and replace the ' .
+		          'existing config.php in the %s directory yourself.'),
+		    '<tt>' . basename($configDir) . '</tt>',
+		    '<a href="' . generateUrl(INDEX_PHP . '?step=' . $this->getStepNumber() .
+			  '&amp;downloadConfig=1', false) . '">',
+		    '</a>',
+		    '<tt>' . basename($configDir) . '</tt>');
+		$this->setInError(true);
+		$templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
+		$templateData['galleryDir'] = basename($configDir);
+	    }
 	} else {
 	    /* Don't (overwrite) the config file, if we recommend an upgrade */
 	    $writeConfigFile = false;
@@ -112,7 +134,7 @@ class CreateConfigFileStep extends InstallStep {
 
 		/* Finally write the config file */
 		if ($writeConfigFile) {
-		    $this->_writeConfig($out, $configDir);
+		    fwrite($out, $this->_getConfigContents());
 		    fclose($out);
 		}
 	    }
@@ -120,13 +142,15 @@ class CreateConfigFileStep extends InstallStep {
 	$this->_firstTime = false;
     }
 
-    function _writeConfig(&$out, $configDir) {
+    function _getConfigContents() {
 	global $galleryStub;
+	$configDir = $session['CONFIG_PATH'];
 	$baseDir = dirname(dirname(dirname(__FILE__)));
 	require_once($baseDir . '/modules/core/classes/GalleryUrlGenerator.class');
 	$baseUrl = getBaseUrl() . preg_replace('{install/' . INDEX_PHP . '\?.*}', '',
 					       GalleryUrlGenerator::getCurrentRequestUri());
 
+	$contents = '';
 	$addslashes = array('\\' => '\\\\', "'" => "\\'");
 	$newStoreConfig = $galleryStub->getConfig('storage.config');
 	$in = @fopen($baseDir . '/install/config.php-template', 'r');
@@ -156,9 +180,11 @@ class CreateConfigFileStep extends InstallStep {
 		$line = sprintf("\$gallery->setConfig('galleryBaseUrl', '%s');\n", $tmp);
 	    }
 
-	    fwrite($out, $line);
+	    $contents .= $line;
 	}
 	fclose($in);
+
+	return $contents;
     }
 
     /**

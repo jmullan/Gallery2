@@ -278,16 +278,18 @@ class GallerySetupUtilities {
     }
 
     /**
-     * Create a downloadable file that contains the contents of the login.txt
-     * file (the authentication key).  Sets headers appropriately.
+     * Create a downloadable text file of a specified name and contents.
+     * Sets headers appropriately.
      *
+     * @param string $name the file's name
+     * @param string $contents the file's contents
      */
-    function generateLoginTxtFile($key) {
+    function generateTextFileForDownload($name, $contents) {
 	header('Content-Type: text/plain');
-	header('Content-Length: ' . strlen($key));
-	header('Content-Description: Download login.txt to your computer.');
-	header('Content-Disposition: attachment; filename=login.txt');
-	print $key;
+	header('Content-Length: ' . strlen($contents));
+	header("Content-Description: Download $name to your computer.");
+	header("Content-Disposition: attachment; filename=$name");
+	print $contents;
     }
 
     /**
