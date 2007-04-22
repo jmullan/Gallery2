@@ -56,18 +56,8 @@ class CreateConfigFileStep extends InstallStep {
 		$this->setComplete(true);
 		$templateData['bodyFile'] = 'CreateConfigFileSuccess.html';
 	    } else {
-		$templateData['error'] = sprintf(
-		    _('Unable to write to the <b>config.php</b> configuration file in your %s ' .
-			  'directory.  Please change its permissions.  If you\'re on ' .
-			  'Unix you can do <i>chmod 666 config.php</i> to fix this. ' .
-		          'You can also download the %sconfig.php%s file and replace the ' .
-		          'existing config.php in the %s directory yourself.'),
-		    '<tt>' . basename($configDir) . '</tt>',
-		    '<a href="' . generateUrl(INDEX_PHP . '?step=' . $this->getStepNumber() .
-			  '&amp;downloadConfig=1', false) . '">',
-		    '</a>',
-		    '<tt>' . basename($configDir) . '</tt>');
 		$this->setInError(true);
+		$templateData['error']['configWriteError'] = 1;
 		$templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
 		$templateData['galleryDir'] = basename($configDir);
 	    }
