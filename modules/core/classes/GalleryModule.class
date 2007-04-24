@@ -681,6 +681,9 @@ class GalleryModule extends GalleryPlugin {
 	    $itemId = $result[1];
 	    $paramName = $result[2];
 	    $themeBlocks = unserialize($result[3]);
+	    if (!is_array($themeBlocks)) {
+		continue;
+	    }
 	    foreach ($themeBlocks as $key => $blockInfo) {
 		$blockInfo = explode('.', $blockInfo[0]);
 		$pluginName = $blockInfo[0];
