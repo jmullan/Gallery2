@@ -8,17 +8,19 @@
     <td id="gsSidebarCol">
       {g->theme include="sidebar.tpl"}
     </td>
-    <script type="text/javascript">
-      {* hide the sidebar if there's nothing in it *}
-      // <![CDATA[
-      var el = document.getElementById("gsSidebarCol");
-      var text = el.innerText;  // IE
-      if (!text) text = el.textContent; // Firefox
-      if (!text || !text.match(/\S/)) el.style.display = 'none';
-      // ]]>
-    </script>
     {/if}
     <td>
+      {if !empty($theme.params.sidebarBlocks)}
+      <script type="text/javascript">
+        {* hide the sidebar if there's nothing in it *}
+        // <![CDATA[
+        var el = document.getElementById("gsSidebarCol");
+        var text = el.innerText;  // IE
+        if (!text) text = el.textContent; // Firefox
+        if (!text || !text.match(/\S/)) el.style.display = 'none';
+        // ]]>
+      </script>
+      {/if}
       <div id="gsContent" class="gcBorder1">
         <div class="gbBlock gcBackground1">
           <table style="width: 100%">
