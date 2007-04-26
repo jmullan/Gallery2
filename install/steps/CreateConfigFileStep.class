@@ -134,7 +134,7 @@ class CreateConfigFileStep extends InstallStep {
 
     function _getConfigContents() {
 	global $galleryStub;
-	$configDir = $session['CONFIG_PATH'];
+	$configDir = $_SESSION['CONFIG_PATH'];
 	$baseDir = dirname(dirname(dirname(__FILE__)));
 	require_once($baseDir . '/modules/core/classes/GalleryUrlGenerator.class');
 	$baseUrl = getBaseUrl() . preg_replace('{install/' . INDEX_PHP . '\?.*}', '',
