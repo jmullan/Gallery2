@@ -113,7 +113,7 @@ class CreateConfigFileStep extends InstallStep {
 		    $templateData['recommendUpgrade'] = $upgradeRecommended;
 		    $templateData['versions'] = $versions;
 		    $templateData['isMultisite'] = $galleryStub->getConfig('isMultisite');
-		    $templateData['galleryDir'] = basename($_SESSION['configPath']);
+		    $templateData['galleryDir'] = basename($configDir);
 		    $templateData['configFileWritten'] = $writeConfigFile;
 		    $templateData['bodyFile'] = 'VersionCheckFailed.html';
 		} else {
@@ -134,7 +134,7 @@ class CreateConfigFileStep extends InstallStep {
 
     function _getConfigContents() {
 	global $galleryStub;
-	$configDir = $_SESSION['CONFIG_PATH'];
+	$configDir = $_SESSION['configPath'];
 	$baseDir = dirname(dirname(dirname(__FILE__)));
 	require_once($baseDir . '/modules/core/classes/GalleryUrlGenerator.class');
 	$baseUrl = getBaseUrl() . preg_replace('{install/' . INDEX_PHP . '\?.*}', '',
