@@ -70,7 +70,7 @@ class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
      * gallery2/v/foobar/randomAlbum/ -> isapi_rewrite changes REQUEST_URI so we'd still assume that
      * a relative URL is alright.  But it isn't, we should use server-relative URLs in this case.
      */
-     function testGenerateUrlMustBeServerRelative() {
+    function testGenerateUrlMustBeServerRelative() {
 	$env = array('REQUEST_URI' => '/gallery2/' . GALLERY_MAIN_PHP .
 		     '?g2_view=core.ShowItem&g2_itemId=17');
 	$params = $this->_getTestUrlParams();
@@ -82,6 +82,54 @@ class IsapiRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	if ($ret) {
 	    return ($ret);
 	}
+    }
+
+    function testDisablesShortUrlsInEmbeddedModeWhenNotConfigured() {
+	$ret = GalleryCoreApi::removePluginParameter(
+	    'module', 'rewrite', 'isapirewrite.embeddedLocation');
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryDataCache::put('G2_EMBED', false, true);
+	$ret = $this->_urlGeneratorInit('IsapiRewriteUrlGenerator');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert(!$this->_urlGenerator->_error, 'init error in non-embedded');
+
+	GalleryDataCache::put('G2_EMBED', true, true);
+	$ret = $this->_urlGeneratorInit('IsapiRewriteUrlGenerator');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($this->_urlGenerator->_error, 'no init error when embedded');
+    }
+
+    function testDisablesShortUrlsInStandaloneModeWhenNotConfigured() {
+	$ret = GalleryCoreApi::removePluginParameter(
+	    'module', 'rewrite', 'isapirewrite.galleryLocation');
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryDataCache::put('G2_EMBED', false, true);
+	$ret = $this->_urlGeneratorInit('IsapiRewriteUrlGenerator');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($this->_urlGenerator->_error, 'no init error in standalone mode');
+
+	GalleryDataCache::put('G2_EMBED', true, true);
+	$ret = $this->_urlGeneratorInit('IsapiRewriteUrlGenerator');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert(!$this->_urlGenerator->_error, 'init error when embedded');
     }
 }
 ?>

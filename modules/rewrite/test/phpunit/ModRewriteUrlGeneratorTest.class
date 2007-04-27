@@ -105,5 +105,53 @@ class ModRewriteUrlGeneratorTest extends RewriteUrlGeneratorTestCase {
 	$this->assertEquals($expectedUrl, $this->_urlGenerator->getCurrentUrl());
 	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
     }
+
+    function testDisablesShortUrlsInEmbeddedModeWhenNotConfigured() {
+	$ret = GalleryCoreApi::removePluginParameter(
+	    'module', 'rewrite', 'modrewrite.embeddedLocation');
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryDataCache::put('G2_EMBED', false, true);
+	$ret = $this->_urlGeneratorInit('ModRewriteUrlGenerator');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert(!$this->_urlGenerator->_error, 'init error in non-embedded');
+
+	GalleryDataCache::put('G2_EMBED', true, true);
+	$ret = $this->_urlGeneratorInit('ModRewriteUrlGenerator');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($this->_urlGenerator->_error, 'no init error when embedded');
+    }
+
+    function testDisablesShortUrlsInStandaloneModeWhenNotConfigured() {
+	$ret = GalleryCoreApi::removePluginParameter(
+	    'module', 'rewrite', 'modrewrite.galleryLocation');
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryDataCache::put('G2_EMBED', false, true);
+	$ret = $this->_urlGeneratorInit('ModRewriteUrlGenerator');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($this->_urlGenerator->_error, 'no init error in standalone mode');
+
+	GalleryDataCache::put('G2_EMBED', true, true);
+	$ret = $this->_urlGeneratorInit('ModRewriteUrlGenerator');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert(!$this->_urlGenerator->_error, 'init error when embedded');
+    }
 }
 ?>

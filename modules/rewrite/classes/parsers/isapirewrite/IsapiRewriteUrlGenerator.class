@@ -31,6 +31,25 @@ GalleryCoreApi::requireOnce('modules/rewrite/classes/RewriteUrlGenerator.class')
 class IsapiRewriteUrlGenerator extends RewriteUrlGenerator {
 
     /**
+     * @see GalleryUrlGenerator::init
+     */
+    function init($baseUri=null, $g2Uri=null, $embedSessionString=null) {
+	/* Verify that we're configured to work in this mode.  Else disable short-URLs. */
+	$location = GalleryUtilities::isEmbedded() ? 'embeddedLocation' : 'galleryLocation';
+	list ($ret, $configuredLocation) =
+	    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'isapirewrite.' . $location);
+	if ($ret) {
+	    return $ret;
+	}
+	if (empty($configuredLocation)) {
+	    /* Disable short-URLs */
+	    $this->_error = true;
+	}
+
+	return parent::init($baseUri, $g2Uri, $embedSessionString);
+    }
+
+    /**
      * @see GalleryUrlGenerator::initNavigation
      */
     function initNavigation() {
