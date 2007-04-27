@@ -19,10 +19,11 @@
  */
 
 /**
- * Setup Database
+ * Setup Database.
  * @package Install
  */
 class DatabaseSetupStep extends InstallStep {
+
     function stepName() {
 	return _('Database Setup');
     }
@@ -284,7 +285,7 @@ class DatabaseSetupStep extends InstallStep {
 			_('Could not execute the required API to drop the Gallery database tables' .
 			  '. Please clean the Gallery database manually.');
 		    $templateData['databaseErrors'] = $gallery->getDebugBuffer();
-		    $templateData['stackTrace'] = $ret->getAsHtml();
+		    $templateData['stackTrace'][] = $ret->getAsHtml();
 		    $gallery->clearDebugBuffer();
 		} else {
 		    $dbCleaned = true;
@@ -444,8 +445,7 @@ class DatabaseSetupStep extends InstallStep {
     }
 
     /**
-     * Execute a series of SQL statements
-     *
+     * Execute a series of SQL statements.
      * @param string $buffer the SQL statements
      * @param string $tablePrefix prefix for table names
      * @return array(boolean success, string error message)
@@ -515,8 +515,7 @@ class DatabaseSetupStep extends InstallStep {
     }
 
     /**
-     * Get the state and the version of the Gallery database
-     *
+     * Get the state and the version of the Gallery database.
      * @param array $metaTables the meta tables info array from the database
      * @return string the db version
      */

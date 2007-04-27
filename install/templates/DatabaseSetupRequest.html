@@ -116,7 +116,7 @@
 
     <?php if (!empty($templateData['stackTrace'])): ?>
     <div class="stack_trace">
-      <?php print $templateData['stackTrace'] ?>
+      <?php print implode('<br/>', $templateData['stackTrace']) ?>
     </div>
     <?php endif; ?>
 
