@@ -108,7 +108,10 @@ class ItemEditWebDav extends ItemEditPlugin {
 	    return array($ret, null, null, null);
 	}
 
-	$handle = $platform->fopen($filePath, 'wb');
+	if (($handle = $platform->fopen($filePath, 'wb')) === false) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null, null);
+	}
 
 	/* Format PUT response */
 	$ret = WebDavHelper::putResponseHelper($webDavOptions, $handle);
@@ -119,13 +122,17 @@ class ItemEditWebDav extends ItemEditPlugin {
 
 	$item->setMimeType($mimeType);
 
-	/* Check if the item class has changed */
+	/* Get a new item by mime type */
 	list ($ret, $newItem) = GalleryCoreApi::newItemByMimeType($mimeType);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret, null, null, null);
 	}
-	if (isset($newItem) && $item->getClassName() != $newItem->getClassName()) {
+
+	/* Check if the class hasn't changed */
+	if (!isset($newItem) || $newItem->getClassName() == $item->getClassName()) {
+	    $newItem = $item;
+	} else {
 	    /* Make the new item as close a copy of the original item as possible */
 	    list ($ret, $newItem) = WebDavHelper::mirrorEntity($item, $newItem);
 	    if ($ret) {
@@ -141,7 +148,7 @@ class ItemEditWebDav extends ItemEditPlugin {
 		    return array($ret, null, null, null);
 		}
 
-		$newItem = null;
+		$newItem = $item;
 	    }
 	}
 
@@ -149,8 +156,8 @@ class ItemEditWebDav extends ItemEditPlugin {
 	 * Fall back on the original item if the new class doesn't support the file content or the
 	 * class hasn't changed
 	 */
-	if (!isset($newItem) || $item->getClassName() == $newItem->getClassName()) {
-	    $ret = $item->rescan();
+	if ($newItem->getClassName() == $item->getClassName()) {
+	    $ret = $newItem->rescan();
 	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_BAD_DATA_TYPE)) {
 		    GalleryCoreApi::releaseLocks($lockIds);
@@ -159,7 +166,7 @@ class ItemEditWebDav extends ItemEditPlugin {
 
 		/*
 		 * Fall back on an unknown item if the original class doesn't support the file
-		 * contents
+		 * content
 		 */
 		list ($ret, $newItem) = GalleryCoreApi::newFactoryInstanceById('GalleryEntity',
 		    'GalleryUnknownItem');
@@ -188,23 +195,48 @@ class ItemEditWebDav extends ItemEditPlugin {
 	    }
 	}
 
-	/* The class name has changed */
-	if (isset($newItem) && $item->getClassName() != $newItem->getClassName()) {
-	    $item = $newItem;
+	/* Follow pattern from ItemAddWebCam */
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$tmpFile = $platform->tempnam($tmpDir, 'webdav');
+
+	/* Backup the file content */
+	if (!$platform->copy($filePath, $tmpFile)) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null, null);
 	}
 
-	$ret = WebDavHelper::saveEntity($item);
+	$ret = $item->delete();
+	if ($ret) {
+	    @$platform->unlink($tmpFile);
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null, null);
+	}
+
+	/*
+	 * Restore the file content.  If this fails, we rollback the database transaction but the
+	 * file content is missing.  Is this inconsistent?
+	 */
+	if (!$platform->copy($tmpFile, $filePath)) {
+	    @$platform->unlink($tmpFile);
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null, null);
+	}
+	@$platform->unlink($tmpFile);
+
+	$newItem->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$ret = $newItem->save();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null, null);
+	}
+
+	$ret = GalleryCoreApi::addExistingItemToAlbum($newItem, $item->getParentId(), true);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret, null, null, null);
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
-	if ($ret) {
-	    return array($ret, null, null, null);
-	}
-
-	$ret = GalleryCoreApi::expireDerivativeTreeBySourceIds($item->getId());
 	if ($ret) {
 	    return array($ret, null, null, null);
 	}

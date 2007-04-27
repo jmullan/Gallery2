@@ -72,12 +72,11 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    }
 	}
 
-	/* Following pattern from ItemAddWebCam */
+	/* Follow pattern from ItemAddWebCam */
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
 	$tmpFile = $platform->tempnam($tmpDir, 'webdav');
 
-	$handle = $platform->fopen($tmpFile, 'wb');
-	if (!$handle) {
+	if (($handle = $platform->fopen($tmpFile, 'wb')) === false) {
 	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 	}
 
