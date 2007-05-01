@@ -23,7 +23,7 @@
  * @package GalleryCore
  * @subpackage UserInterface
  * @author Felix Rabinvoich <felix@rabinovich.org> thanks to mindless for guidance
- * @version $Revision: 1 $
+ * @version $Revision$
  */
 class ItemDeleteJsView extends GalleryView {
     /**
