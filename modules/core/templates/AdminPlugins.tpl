@@ -63,11 +63,21 @@
     "no"     : '{g->text text="No" forJavascript=true}'
   {rdelim};
 
+  var uninstallAndDeletePrompt = {ldelim}
+    "header" : '{g->text text="Warning!" forJavascript=true}',
+    "body"   : '{g->text text="Do you really want to delete __PLUGIN__?" forJavascript=true}' +
+	       '<br/>' +
+               '<b>{g->text text="This will also remove any permissions and clean up any data created by this module." forJavascript=true}</b> ' +
+               '{g->text text="This plugin will be uninstalled and its files will be deleted permanently." forJavascript=true}',
+    "yes"    : '{g->text text="Yes" forJavascript=true}',
+    "no"     : '{g->text text="No" forJavascript=true}'
+  {rdelim};
+
   var deletePrompt = {ldelim}
     "header" : '{g->text text="Warning!" forJavascript=true}',
     "body"   : '{g->text text="Do you really want to delete __PLUGIN__?" forJavascript=true}' +
 	       '<br/>' +
-               '{g->text text="This plugin will be uninstalled and its files will be deleted." forJavascript=true}',
+               '{g->text text="The files of this plugin will be deleted permanently." forJavascript=true}',
     "yes"    : '{g->text text="Yes" forJavascript=true}',
     "no"     : '{g->text text="No" forJavascript=true}'
   {rdelim};
@@ -235,7 +245,7 @@
             </span>
 	    {if $AdminPlugins.canDeletePlugins}
             <span id="action-delete-{$plugin.type}-{$plugin.id}" style="display: none">
-              | <a style="cursor: pointer" onclick="verify(deletePrompt, '{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=delete" useAuthToken=1}')">
+              | <a style="cursor: pointer" onclick="verify(pluginData['{$plugin.type}']['{$plugin.id}']['state'] == 'uninstalled' ? deletePrompt : uninstallAndDeletePrompt, '{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=delete" useAuthToken=1}')">
                 {g->text text="delete"}
               </a>
             </span>
