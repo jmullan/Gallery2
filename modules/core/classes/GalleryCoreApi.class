@@ -80,7 +80,7 @@ class GalleryCoreApi {
      * - loadEntitesById and deleteEntity: make optional $requiredEntityType mandatory
      */
     function getApiVersion() {
-	return array(7, 29);
+	return array(7, 30);
     }
 
     /**
@@ -493,12 +493,14 @@ class GalleryCoreApi {
      * @param int $itemId
      * @param string $permission
      * @param int $userId an optional user id (default is the current user)
+     * @param boolean $sessionPermissions (optional) false to ignore session based permissions
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      */
-    function hasItemPermission($itemId, $permission, $userId=null) {
+    function hasItemPermission($itemId, $permission, $userId=null, $sessionPermissions=true) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryUserHelper_simple.class');
-	return GalleryUserHelper_simple::hasItemPermission($itemId, $permission, $userId);
+	return GalleryUserHelper_simple::hasItemPermission(
+	    $itemId, $permission, $userId, $sessionPermissions);
     }
 
     /**
@@ -637,13 +639,15 @@ class GalleryCoreApi {
      *
      * @param array $itemIds int GalleryItem ids
      * @param int $userId (optional) id of the user whose permissions we search for
+     * @param boolean $sessionPermissions (optional) false to ignore session based permissions
      * @return array object GalleryStatus a status code
      *               array (id => array(array(permission.id => 1, ...), ...)
      */
-    function fetchPermissionsForItems($itemIds, $userId=null) {
+    function fetchPermissionsForItems($itemIds, $userId=null, $sessionPermissions=true) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
-	return GalleryPermissionHelper_simple::fetchPermissionsForItems($itemIds, $userId);
+	return GalleryPermissionHelper_simple::fetchPermissionsForItems(
+	    $itemIds, $userId, $sessionPermissions);
     }
 
     /**
@@ -651,13 +655,15 @@ class GalleryCoreApi {
      *
      * @param int $itemId
      * @param int $userId an optional user id (default is current user)
+     * @param boolean $sessionPermissions (optional) false to ignore session based permissions
      * @return array object GalleryStatus a status code
      *               array (perm1, perm2)
      */
-    function getPermissions($itemId, $userId=null) {
+    function getPermissions($itemId, $userId=null, $sessionPermissions=true) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
-	return GalleryPermissionHelper_simple::getPermissions($itemId, $userId);
+	return GalleryPermissionHelper_simple::getPermissions(
+	    $itemId, $userId, $sessionPermissions);
     }
 
     /**
@@ -667,13 +673,15 @@ class GalleryCoreApi {
      *
      * @param array $itemIds GalleryItem ids
      * @param int $userId an optional user id (default is current user)
+     * @param boolean $sessionPermissions (optional) false to ignore session based permissions
      * @deprecated Use fetchPermissionsForItems instead.
      * @return object GalleryStatus a status code
      */
-    function studyPermissions($itemIds, $userId=null) {
+    function studyPermissions($itemIds, $userId=null, $sessionPermissions=true) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryPermissionHelper_simple.class');
-	return GalleryPermissionHelper_simple::studyPermissions($itemIds, $userId);
+	return GalleryPermissionHelper_simple::studyPermissions(
+	    $itemIds, $userId, $sessionPermissions);
     }
 
     /**
@@ -816,7 +824,7 @@ class GalleryCoreApi {
 
     /**
      * Are any or the given user/group ids directly granted all given permissions
-     * for the target item?
+     * for the target item?  Ignores session-based permissions.
      *
      * @param int $itemId
      * @param mixed $entityIds array of int entity ids (usually user or group ids) or a single id

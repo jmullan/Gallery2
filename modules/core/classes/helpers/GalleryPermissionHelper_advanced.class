@@ -382,7 +382,10 @@ class GalleryPermissionHelper_advanced {
 		    $removeEventData[$targetItemId] = $removeEventDataForAcl[$oldAclId];
 		}
 		/* Clear the in-memory permission cache for this item (all groups, users). */
-		$cacheKey = "GalleryPermissionHelper::getPermissions\\($targetItemId,\\d+\\)";
+		$cacheKey =
+		    'GalleryPermissionHelper::getPermissions\(' . $targetItemId . ',\d+,\d\)';
+		GalleryDataCache::removeByPattern($cacheKey);
+		$cacheKey = 'GalleryPermissionHelper::fetchAccessListIds\(.*\)';
 		GalleryDataCache::removeByPattern($cacheKey);
 	    }
 	}
