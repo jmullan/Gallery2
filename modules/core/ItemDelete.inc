@@ -156,19 +156,22 @@ class ItemDeleteView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$variables = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
+	$variables = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 
+							    'anchorId', 'page');
 	foreach ($variables as $key => $value) {
 	    $variables[$key] = is_numeric($value) ? (int) $value : null;
 	}
-	list ($itemId, $selectedId, $page) = $variables;
+	list ($itemId, $selectedId, $anchorId, $page) = $variables;
 
 	if ($form['formName'] != 'ItemDelete') {
 	    if ($selectedId) {
 		$form['selectedIds'][$selectedId] = true;
+	    } else if ($anchorId) {
+		$selectedId = $anchorId;
 	    }
 	    $form['destination'] = '';
 	    $form['formName'] = 'ItemDelete';
-	    $form['numPerPage'] = 15;
+	    $form['numPerPage'] = 30;
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');

@@ -60,11 +60,19 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetItemAdminViews() {
+	$albumId = $this->_parentAlbum->getId();
+	GalleryUtilities::putRequestVariable('itemId', $albumId);
 	list ($ret, $content) = $this->_module->getItemAdminViews($this->_parentAlbum);
 	if ($ret) {
 	    return $ret;
 	}
 
+	$albumTitle = $this->_parentAlbum->getTitle();
+	GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	$albumTitle = smarty_modifier_escape(GalleryUtilities::markup(
+	    $albumTitle, 'strip'), 'javascript', 'UTF-8');
+	$signedUrl = $this->_signUrl('/gallery2/main.php?g2_view=core.'
+            . 'ItemDeleteSingle&amp;g2_itemId=' . $albumId . '&amp;g2_pageId=' . $albumId);
 	$this->assertEquals(
 	    array(
 		array('name' => $this->_module->_translate(
@@ -78,7 +86,8 @@ class CoreModuleTest extends GalleryTestCase {
 			  array('text' => 'Delete %s',
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
-		      'view' => 'core.ItemDeleteSingle'),
+		      'script' => 'core_confirmDelete(\'' . $signedUrl . '\', \'\', \'' . $albumTitle 
+				   . '\');return false'),
 		array('name' => $this->_module->_translate(
 			  array('text' => 'Move %s',
 				'arg1' => $this->_module->translate('Album')),
@@ -116,12 +125,15 @@ class CoreModuleTest extends GalleryTestCase {
 			  array('text' => 'Delete %s',
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
-		      'view' => 'core.ItemDeleteSingle'),
+		      'script' => 'core_confirmDelete(\'' . $signedUrl . '\', \'\', \'' 
+				   . $albumTitle . '\');return false'),
 		array('name' => $this->_module->_translate(
 			  array('text' => 'Move %s',
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
 		      'view' => 'core.ItemMoveSingle'),
+		array('name' => $this->_module->translate('Delete Items'),
+		      'view' => 'core.ItemDelete'),
 		array('name' => $this->_module->translate('Add Items'),
 		      'view' => 'core.ItemAdd'),
 		array('name' => $this->_module->translate('Add Album'),

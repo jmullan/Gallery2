@@ -63,8 +63,9 @@
   <table>
     <colgroup width="60"/>
     {foreach from=$ItemDelete.peers item=peer}
-    <tr>
-      <td align="center">
+    {cycle values="1,2" assign="alternate"}
+    {if $alternate==1}<tr><td style="text-align: center">{else}<td style="padding-left:50px; text-align: center">{/if}
+      
 	{if isset($peer.thumbnail)}
 	  <a id="thumb_{$peer.id}" href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$peer.id`"}">
 	    {g->image item=$peer image=$peer.thumbnail maxSize=50 class="giThumbnail"}
@@ -94,8 +95,10 @@
 	  {/if}
 	</i>
       </td>
-    </tr>
+    {if $alternate==2}</tr>{/if}
     {/foreach}
+    {if $alternate==1}<td colspan="3">&nbsp;</td></tr>{/if}
+  </table>
     <script type="text/javascript">
       //<![CDATA[
       {foreach from=$ItemDelete.peers item=peer}
@@ -112,7 +115,6 @@
       {/foreach}
       //]]>
   </script>
-  </table>
 
   {foreach from=$ItemDelete.selectedIds item=selectedId}
     <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>

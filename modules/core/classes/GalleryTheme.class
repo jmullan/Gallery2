@@ -1446,6 +1446,25 @@ class GalleryTheme extends GalleryPlugin {
 		    return $ret;
 		}
 	    }
+	    foreach ($permissions as $permission) {
+		if (isset($permission['core.delete'])) {
+		    $template->javascript('lib/yui/yahoo-min.js');
+		    $template->javascript('lib/yui/dom-min.js');
+		    $template->javascript('lib/yui/event-min.js');
+		    $template->javascript('lib/yui/connection-min.js');
+		    $template->javascript('lib/yui/animation-min.js');
+		    $template->javascript('lib/yui/container-min.js');
+		    list ($ret, $lang) = $gallery->getActiveLanguageCode();
+		    if ($ret) {
+			return $ret;
+		    }
+		    $urlGenerator =& $gallery->getUrlGenerator();
+		    $url = $urlGenerator->generateUrl(array('view' => 'core.ItemDeleteJs', 
+			'lang' => $lang), array('forceDirect' => true));
+		    $template->javascript($url);
+		    break;
+		}
+	    }
 
 	    if (isset($load['systemLinks'])) {
 		$theme['systemLinks'] = array();

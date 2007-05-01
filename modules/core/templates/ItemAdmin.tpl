@@ -36,7 +36,7 @@
 	    {if isset($choiceParams.active)}
 	      {$choiceName}
 	    {else}
-	      <a href="{g->url params=$choiceParams}"> {$choiceName} </a>
+	      <a href="{g->url params=$choiceParams}"{if isset($choiceParams.script)} onclick="{$choiceParams.script}"{/if}> {$choiceName} </a>
 	    {/if}
 	    </li>
 	  {/foreach}

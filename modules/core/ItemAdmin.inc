@@ -98,11 +98,13 @@ class ItemAdminView extends GalleryView {
 	    $name = $params['name'];
 	    unset($params['name']);
 
-	    /* Move the view -> subView and set ItemAdmin as the view */
-	    $params['subView'] = $params['view'];
-	    $params['view'] = 'core.ItemAdmin';
-	    if ($subViewName == $params['subView']) {
-		$params['active'] = true;
+	    if (isset($params['view'])) {
+		/* Move the view -> subView and set ItemAdmin as the view */
+		$params['subView'] = $params['view'];
+		$params['view'] = 'core.ItemAdmin';
+		if ($subViewName == $params['subView']) {
+		    $params['active'] = true;
+		}
 	    }
 
 	    /* Set the item id if necessary */

@@ -159,15 +159,32 @@ class CoreModule extends GalleryModule {
 		    /* Specific translations: */
 		    _('Delete Album'); _('Delete Photo'); _('Delete Movie');
 		}
+		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+                $title = smarty_modifier_escape(GalleryUtilities::markup(
+		    $item->getTitle(), 'strip'), 'javascript', 'UTF-8');
+		$thisItemId = GalleryUtilities::getRequestVariables('itemId');
+		/* If no page item defined, we will navigate to the parent of the deleted item */
+		if (empty($thisItemId)) {
+		    $thisItemId = $itemId;
+		}
+		$urlGenerator =& $gallery->getUrlGenerator();
+		$url = $urlGenerator->generateUrl(
+		    array('view' => 'core.ItemDeleteSingle', 'itemId' => $itemId,
+			  'pageId' => $thisItemId),
+		    array('useAuthToken' => true, 'forceDirect' => true));
+		$moreUrl = $isAlbum ? '' : $urlGenerator->generateUrl(
+		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemDelete', 
+			  'itemId' => $item->getParentId(),
+			  'selectedId' => $itemId, 'return' => 1));
 		$links[$itemId][] =
 		    array('text' => $this->_translate(
-			      array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]),
-			      $itemTypeNames[2]),
+			  array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]),
+			  	$itemTypeNames[2]),
+			  /* Params are only for g->linkId that is used by icons */
 			  'params' => array('view' => 'core.ItemAdmin',
-					    'subView' => 'core.ItemDelete',
-					    'itemId' => $item->getParentId(),
-					    'selectedId' => $itemId,
-					    'return' => 1));
+					    'subView' => 'core.ItemDeleteSingle',
+					    'itemId' => $itemId),
+			  'script' => "core_confirmDelete('$url', '$moreUrl', '$title')");
 	    }
 
 	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
@@ -218,6 +235,23 @@ class CoreModule extends GalleryModule {
 					    'subView' => 'core.ItemReorder',
 					    'itemId' => $itemId,
 					    'return' => 1));
+	    }
+	    
+	    if (isset($wantsDetailedLinks[$itemId]) && $isAlbum
+		    && isset($permissions[$itemId]['core.edit']) && !empty($childCounts[$itemId])
+		    && $childCounts[$itemId] > 0) {
+	    	$next = next($items);
+		$params = array('view' => 'core.ItemAdmin',
+					   'subView' => 'core.ItemDelete',
+					   'itemId' => $itemId,
+					   'return' => 1);
+		/* First item on the page will be in the list for deletion */
+		if ($next) {
+		    $params['anchorId'] = $next->getId();
+		}
+
+		$links[$itemId][] = array('text' => $this->_translate('Delete Items'),
+					   'params' => $params);
 	    }
 	}
 
@@ -406,16 +440,33 @@ class CoreModule extends GalleryModule {
 	}
 
 	if (isset($permissions['core.delete'])) {
-	    if ($item->getId() != $rootId) {
+	    $itemId = $item->getId();
+	    if ($itemId != $rootId) {
+		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+                $title = smarty_modifier_escape(GalleryUtilities::markup(
+		    $item->getTitle(), 'strip'), 'javascript', 'UTF-8');
+		/* This is ItemAdmin view, hence page item is the one we are deleting */
+		$thisItemId = $itemId;
+		$urlGenerator =& $gallery->getUrlGenerator();
+		$url = $urlGenerator->generateUrl(
+		    array('view' => 'core.ItemDeleteSingle', 'itemId' => $itemId, 
+			  'pageId' => $thisItemId),
+		    array('useAuthToken' => true, 'forceDirect' => true));
+		$moreUrl = $isAlbum ? '' : $urlGenerator->generateUrl(
+		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemDelete', 
+			  'itemId' => $item->getParentId(),
+			  'selectedId' => $itemId));
 		$views[] = array('name' => $this->_translate(
-				     array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]),
-				     $itemTypeNames[2]),
-				 'view' => 'core.ItemDeleteSingle');
+		    array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
+		    'script' => "core_confirmDelete('$url', '$moreUrl', '$title');return false");
 
 		$views[] = array('name' => $this->_translate(
-				     array('text' => 'Move %s', 'arg1' => $itemTypeNames[0]),
-				     $itemTypeNames[2]),
-				 'view' => 'core.ItemMoveSingle');
+		     array('text' => 'Move %s', 'arg1' => $itemTypeNames[0]),
+		     $itemTypeNames[2]), 'view' => 'core.ItemMoveSingle');
+	    }
+	    if ($isAlbum && $childCount > 0) {
+		$views[] = array('name' => $this->_translate('Delete Items'),
+		    		 'view' => 'core.ItemDelete');
 	    }
 	}
 
