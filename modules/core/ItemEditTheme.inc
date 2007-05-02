@@ -129,19 +129,17 @@ class ItemEditTheme extends ItemEditPlugin {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	$themeId = $item->getTheme();
 
-	$ret = GalleryCoreApi::loadThemeSettingsForm($themeId, $item->getId(), $template, $form);
-	if ($ret) {
-	    if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
-		/*
-		 * This theme could be invalid, which can happen after an upgrade.  Swallow the
-		 * error for now so that the user can get to the administration form and pick a
-		 * new theme.
-		 *
-		 * @todo Log this error when we have a logging system.
-		 */
-	    } else {
+	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, false, true);
+	if (!$ret) {
+	    $ret =
+		GalleryCoreApi::loadThemeSettingsForm($themeId, $item->getId(), $template, $form);
+	    if ($ret) {
 		return array($ret, null, null);
 	    }
+	} else if ($ret->getErrorCode() & (ERROR_BAD_PARAMETER | ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    /* Ignore incompatible / missing themes.  Just show a warning. */
+	} else {
+	    return array($ret, null, null);
 	}
 
 	if ($form['formName'] != 'ItemEditTheme') {
@@ -165,9 +163,14 @@ class ItemEditTheme extends ItemEditPlugin {
 		continue;
 	    }
 
-	    list ($ret, $tmp) = GalleryCoreApi::loadPlugin('theme', $id);
+	    list ($ret, $tmp) = GalleryCoreApi::loadPlugin('theme', $id, false, true);
 	    if ($ret) {
-		return array($ret, null, null);
+		
+		if ($ret->getErrorCode() & (ERROR_BAD_PARAMETER | ERROR_PLUGIN_VERSION_MISMATCH)) {
+		    /* Ignore incompatible themes (but don't list them either) */
+		    continue;
+		}
+	    	return array($ret, null, null);
 	    }
 	    $themeList[$id] = $tmp->translate($tmp->getName());
 	}
