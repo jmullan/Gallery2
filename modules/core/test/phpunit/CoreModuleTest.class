@@ -86,8 +86,8 @@ class CoreModuleTest extends GalleryTestCase {
 			  array('text' => 'Delete %s',
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
-		      'script' => 'core_confirmDelete(\'' . $signedUrl . '\', \'\', \'' . $albumTitle 
-				   . '\');return false'),
+		      'script' => 'core_confirmDelete(\'' . $signedUrl . '\', \'\', \''
+				  . $albumTitle . '\');return false'),
 		array('name' => $this->_module->_translate(
 			  array('text' => 'Move %s',
 				'arg1' => $this->_module->translate('Album')),

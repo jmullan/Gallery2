@@ -25,7 +25,7 @@ GalleryCoreApi::requireOnce('modules/core/ItemDeleteSingle.inc');
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Felix Rabinovich <felix@rabinovich.org>
- * @version $Revision:$
+ * @version $Revision$
  */
 class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 
@@ -204,7 +204,8 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 
 	/* Perform the request and verify that we failed */
 	list ($ret, $result) = $this->_callback->handleCallback();
-	$this->assertEquals($ret->getErrorCode(), ERROR_BAD_PARAMETER | GALLERY_ERROR, 'Root album');
+	$this->assertEquals($ret->getErrorCode(), ERROR_BAD_PARAMETER | GALLERY_ERROR,
+			    'Root album');
     }
 
     /**

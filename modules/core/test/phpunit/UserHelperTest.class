@@ -244,7 +244,8 @@ class UserHelperTest extends GalleryTestCase {
 	}
 
 	/* Verify we get the default language code */
-	list ($ret, $languageCode) = GalleryUserHelper_medium::fetchLanguageCodeForUser($testUserId);
+	list ($ret, $languageCode) =
+	    GalleryUserHelper_medium::fetchLanguageCodeForUser($testUserId);
 	if ($ret) {
 	    return $ret;
 	}
@@ -265,27 +266,27 @@ class UserHelperTest extends GalleryTestCase {
 
 	/* Set Language */
 	$testUser->setLanguage($preSetLanguageCode);
-	
+
 	/* Save it */
 	$ret = $testUser->save();
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	/* Unlock it */
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret) {
 	    return $ret;
 	}
 
-	list ($ret, $languageCode) = GalleryUserHelper_medium::fetchLanguageCodeForUser($testUserId);
+	list ($ret, $languageCode) =
+	    GalleryUserHelper_medium::fetchLanguageCodeForUser($testUserId);
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	$this->assertEquals($preSetLanguageCode, $languageCode, 'should be same as preferred');
     }
-
 }
 
 /**

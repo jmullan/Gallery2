@@ -241,10 +241,12 @@ class GalleryPendingUserHelper {
 	    foreach ($toList as $index => $to) {
 		/* Reinitialize translator with the preferred language of admin where needed */
 		if ($currentLanguageCode != $languageCodeList[$index]) {
-		    list ($ret, $currentLanguageCode) = $translator->init($languageCodeList[$index]);
+		    list ($ret, $currentLanguageCode) =
+			$translator->init($languageCodeList[$index]);
 		    if ($ret) {
 			if ($defaultLanguageCode != $currentLanguageCode) {
-			    list ($ret2, $currentLanguageCode) = $translator->init($defaultLanguageCode);
+			    list ($ret2, $currentLanguageCode) =
+				$translator->init($defaultLanguageCode);
 			    if ($ret2) {
 	    		        return $ret2;
 			    }
@@ -264,7 +266,8 @@ class GalleryPendingUserHelper {
 			$module->translate($params['adminsubject']));
 		if ($ret) {
 		    if ($defaultLanguageCode != $currentLanguageCode) {
-			list ($ret2, $currentLanguageCode) = $translator->init($defaultLanguageCode);
+			list ($ret2, $currentLanguageCode) =
+			    $translator->init($defaultLanguageCode);
 			if ($ret2) {
 		    	    return $ret2;
 			}
