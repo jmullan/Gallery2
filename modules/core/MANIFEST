@@ -31,7 +31,6 @@ modules/core/ItemAddConfirmation.inc	1692851178	1652944804	2771	2858
 modules/core/ItemAddFromBrowser.inc	280644262	1561073015	8324	8576
 modules/core/ItemAdmin.inc	832644557	701019390	6420	6642
 modules/core/ItemDelete.inc	375996283	2414872666	9195	9490
-modules/core/ItemDeleteConfirmation.inc	2811205858	1015518889	1587	1636
 modules/core/ItemDeleteSingle.inc	69176739	3732987961	5314	5488
 modules/core/ItemEdit.inc	1811821182	613684436	16177	16700
 modules/core/ItemEditAlbum.inc	3142822861	774893022	23864	24638
@@ -351,8 +350,6 @@ modules/core/templates/ItemAddConfirmation.tpl	4102070540	764864241	1286	1332
 modules/core/templates/ItemAddFromBrowser.tpl	3289497146	853670020	3881	3976
 modules/core/templates/ItemAdmin.tpl	3410465767	2986469076	1774	1830
 modules/core/templates/ItemDelete.tpl	2308292923	1787845008	5529	5678
-modules/core/templates/ItemDeleteConfirmation.tpl	2451870869	2515618456	318	329
-modules/core/templates/ItemDeleteSingle.tpl	978919550	2504710596	862	889
 modules/core/templates/ItemEdit.tpl	2856875285	4354637	1453	1504
 modules/core/templates/ItemEditAlbum.tpl	1088469751	3319131452	5594	5736
 modules/core/templates/ItemEditAnimation.tpl	266086202	1338436789	1612	1657
@@ -461,7 +458,6 @@ modules/core/test/phpunit/ItemAddControllerTest.class	2659378716	901025042	10877
 modules/core/test/phpunit/ItemAddFromBrowserTest.class	1083899955	426626031	15166	15556
 modules/core/test/phpunit/ItemAttributesTest.class	2130006092	2878980032	21069	21867
 modules/core/test/phpunit/ItemDeleteControllerTest.class	3603591722	2134382542	8401	8681
-modules/core/test/phpunit/ItemDeleteSingleControllerTest.class	46778363	2163351827	4126	4265
 modules/core/test/phpunit/ItemEditAlbumPluginTest.class	2971948719	1660752552	30853	31706
 modules/core/test/phpunit/ItemEditAnimationPluginTest.class	1899823683	3439351216	4212	4341
 modules/core/test/phpunit/ItemEditCaptionsControllerTest.class	1958307210	3083889295	12584	12922
@@ -542,6 +538,7 @@ R	modules/core/ItemAddFromServer.inc
 R	modules/core/ItemAddFromWeb.inc
 R	modules/core/ItemCreateLink.inc
 R	modules/core/ItemCreateLinkSingle.inc
+R	modules/core/ItemDeleteConfirmation.inc
 R	modules/core/ItemEditLayout.inc
 R	modules/core/ItemEditPhotoSizes.inc
 R	modules/core/ModuleCallback.inc
@@ -1029,6 +1026,8 @@ R	modules/core/templates/ItemAddFromServer.tpl
 R	modules/core/templates/ItemAddFromWeb.tpl
 R	modules/core/templates/ItemCreateLink.tpl
 R	modules/core/templates/ItemCreateLinkSingle.tpl
+R	modules/core/templates/ItemDeleteConfirmation.tpl
+R	modules/core/templates/ItemDeleteSingle.tpl
 R	modules/core/templates/ItemEditLayout.tpl
 R	modules/core/templates/ItemEditPhotoSizes.tpl
 R	modules/core/templates/LanguageSelector.tpl
@@ -1078,7 +1077,7 @@ R	modules/core/test/TestCase/RemoveStore.class
 R	modules/core/test/TestCase/ResetGallery.class
 R	modules/core/test/TestCase
 R	modules/core/test/data/RepositoryTest.package
-R	modules/core/test/data/localUploadDir/subädir
+R	modules/core/test/data/localUploadDir/subï¿½dir
 R	modules/core/test/data/localUploadDir/test1.gif
 R	modules/core/test/data/localUploadDir/test1.jpg
 R	modules/core/test/data/localUploadDir/test2.gif
@@ -1087,7 +1086,7 @@ R	modules/core/test/data/localUploadDir/test4.gif
 R	modules/core/test/data/localUploadDir/test[3].gif
 R	modules/core/test/data/localUploadDir
 R	modules/core/test/data/test3.gif
-R	modules/core/test/data/täst1.png
+R	modules/core/test/data/tï¿½st1.png
 R	modules/core/test/phpunit/AdminLayoutsControllerTest.class
 R	modules/core/test/phpunit/AdminLinkIdTest.class
 R	modules/core/test/phpunit/AdminModulesControllerTest.class
@@ -1096,6 +1095,7 @@ R	modules/core/test/phpunit/ItemAddFromServerTest.class
 R	modules/core/test/phpunit/ItemAddFromWebTest.class
 R	modules/core/test/phpunit/ItemCreateLinkControllerTest.class
 R	modules/core/test/phpunit/ItemCreateLinkSingleControllerTest.class
+R	modules/core/test/phpunit/ItemDeleteSingleControllerTest.class
 R	modules/core/test/phpunit/ItemEditLayoutPluginTest.class
 R	modules/core/test/phpunit/ItemEditPhotoSizesPluginTest.class
 R	modules/core/test/phpunit/ItemPropertiesTest.class
