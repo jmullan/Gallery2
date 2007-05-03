@@ -5,12 +5,12 @@
 /* style tags as possible to tightly scope this CSS so that it      */
 /* doesn't leak out and affect our themes.                          */
 /* ================================================================ */
-div#gDialog.yui-overlay {
+.yui-overlay {
   position:absolute;
   display:block;
 }
 
-div#gDialog.yui-tt {
+.yui-tt {
   visibility:hidden;
   position:absolute;
   color:#333;
@@ -38,7 +38,7 @@ div#gDialog.yui-tt {
   visibility:hidden;
 }
 
-div#gDialog_mask {
+div#gDialog_mask, #waitDialog_mask {
   z-index:0;
   display:none;
   position:absolute;
@@ -63,7 +63,7 @@ div#gDialog_c.show-scrollbars textarea, .show-scrollbars select {
   overflow:visible;
 }
 
-div#gDialog_c.yui-panel-container {
+.yui-panel-container {
   position:absolute;
   background-color:transparent;
   z-index:6;
@@ -72,25 +72,25 @@ div#gDialog_c.yui-panel-container {
   width:auto;
 }
 
-div#gDialog_c.yui-panel-container.focused {
+.yui-panel-container.focused {
 }
 
 
-div#gDialog_c.yui-panel-container.matte {
+.yui-panel-container.matte {
   padding:3px;
   background-color:#FFF;
 }
 
-div#gDialog_c.yui-panel-container.matte .underlay {
+.yui-panel-container.matte .underlay {
   display:none;
 }
 
-div#gDialog_c.yui-panel-container.shadow {
+.yui-panel-container.shadow {
   padding:0px;
   background-color:transparent;
 }
 
-div#gDialog_c.yui-panel-container.shadow .underlay {
+.yui-panel-container.shadow .underlay {
   visibility:inherit;
   position:absolute;
   background-color:#CCC;
@@ -104,7 +104,7 @@ div#gDialog_c.yui-panel-container.shadow .underlay {
   zoom:1;
 }
 
-div#gDialog.yui-panel {
+.yui-panel {
   visibility:hidden;
   border-collapse:separate;
   position:relative;
@@ -116,7 +116,7 @@ div#gDialog.yui-panel {
   overflow:hidden;
 }
 
-div#gDialog.yui-panel .hd {
+.yui-panel .hd {
   background-color:#3d77cb;
   color:#FFF;
   font-size:100%;
@@ -128,16 +128,16 @@ div#gDialog.yui-panel .hd {
   padding:4px;
 }
 
-div#gDialog.yui-panel .bd {
+.yui-panel .bd {
   overflow:hidden;
   padding:4px;
 }
 
-div#gDialog.yui-panel .bd p {
+.yui-panel .bd p {
   margin:0 0 1em;
 }
 
-div#gDialog.yui-panel .bd a {
+.yui-panel .bd a {
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: 62.5%;
   font-weight: bold;
@@ -145,7 +145,7 @@ div#gDialog.yui-panel .bd a {
   color: #6b8cb7;
 }
 
-div#gDialog.yui-panel .container-close {
+.yui-panel .container-close {
   position:absolute;
   top:5px;
   right:4px;
@@ -159,12 +159,12 @@ div#gDialog.yui-panel .container-close {
   visibility:inherit;
 }
 
-div#gDialog.yui-panel .ft {
+.yui-panel .ft {
   padding:4px;
   overflow:hidden;
 }
 
-div#gDialog_c.yui-simple-dialog .bd .yui-icon {
+.yui-simple-dialog .bd .yui-icon {
   background-repeat: no-repeat;
   float: left;
   height: 16px;
@@ -173,37 +173,37 @@ div#gDialog_c.yui-simple-dialog .bd .yui-icon {
   width: 16px;
 }
 
-div#gDialog_c.yui-simple-dialog .bd span.blckicon {
+.yui-simple-dialog .bd span.blckicon {
   background: url("blck16_1.gif") no-repeat;
 }
 
-div#gDialog_c.yui-simple-dialog .bd span.alrticon {
+.yui-simple-dialog .bd span.alrticon {
   background: url("alrt16_1.gif") no-repeat;
 }
 
-div#gDialog_c.yui-simple-dialog .bd span.hlpicon {
+.yui-simple-dialog .bd span.hlpicon {
   background: url("hlp16_1.gif") no-repeat;
 }
 
-div#gDialog_c.yui-simple-dialog .bd span.infoicon {
+.yui-simple-dialog .bd span.infoicon {
   background: url("info16_1.gif") no-repeat;
 }
 
-div#gDialog_c.yui-simple-dialog .bd span.warnicon {
+.yui-simple-dialog .bd span.warnicon {
   background: url("warn16_1.gif") no-repeat;
 }
 
-div#gDialog_c.yui-simple-dialog .bd span.tipicon {
+.yui-simple-dialog .bd span.tipicon {
   background: url("tip16_1.gif") no-repeat;
 }
 
-div#gDialog_c.yui-dialog .ft, .simple-dialog .ft {
+.yui-dialog .ft, .simple-dialog .ft {
   padding-bottom:5px;
   padding-right:5px;
   text-align:right;
 }
 
-div#gDialog_c.yui-dialog form, .yui-simple-dialog form {
+.yui-dialog form, .yui-simple-dialog form {
   margin:0;
 }
 
