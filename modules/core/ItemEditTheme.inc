@@ -127,12 +127,20 @@ class ItemEditTheme extends ItemEditPlugin {
      * @see ItemEditPlugin::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	$themeId = $item->getTheme();
+	$themeId = $themeSettingsThemeId = $item->getTheme();
+	if (empty($themeSettingsThemeId)) {
+	    list ($ret, $themeSettingsThemeId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	}
 
-	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, false, true);
+	list ($ret, $theme) =
+	    GalleryCoreApi::loadPlugin('theme', $themeSettingsThemeId, false, true);
 	if (!$ret) {
-	    $ret =
-		GalleryCoreApi::loadThemeSettingsForm($themeId, $item->getId(), $template, $form);
+	    $ret = GalleryCoreApi::loadThemeSettingsForm(
+		$themeSettingsThemeId, $item->getId(), $template, $form);
 	    if ($ret) {
 		return array($ret, null, null);
 	    }
