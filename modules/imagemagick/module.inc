@@ -62,36 +62,24 @@ class ImageMagickModule extends GalleryModule {
 	    }
 	}
 
-	if (!empty($params['path'])) {
+	if (!empty($params['path']) && empty($params['versionOk'])) {
 	    GalleryCoreApi::requireOnce(
 		'modules/imagemagick/classes/ImageMagickToolkitHelper.class');
 	    list ($ret, $version, $vulnerable) =
 		ImageMagickToolkitHelper::discoverVersion($params['path']);
-	    if (empty($params['versionOk'])) {
-		if (!$ret && !$vulnerable) {
-		    $ret = $this->setParameter('versionOk', '1');
-		    if ($ret) {
-			return $ret;
-		    }
-		} else {
-		    list ($ret, $isActive) = $this->isActive();
-		    if ($ret) {
-			return $ret;
-		    }
-		    if ($isActive) {
-			/* Force upgrade from site admin to see vulnerable-version warning */
-			return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
-		    }
+	    if (!$ret && !$vulnerable) {
+		$ret = $this->setParameter('versionOk', '1');
+		if ($ret) {
+		    return $ret;
 		}
-	    }
-
-	    if (version_compare($currentVersion, '1.1.3', '<')) {
-	    	if (!empty($version) && $version[0] == 'ImageMagick'
-			&& version_compare($version[1], '6.2.6-3', '>')) {
-		    $ret = $this->setParameter('useNewCoalesceOptions', '1');
-		    if ($ret) {
-			return $ret;
-		    }
+	    } else {
+		list ($ret, $isActive) = $this->isActive();
+		if ($ret) {
+		    return $ret;
+		}
+		if ($isActive) {
+		    /* Force upgrade from site admin to see vulnerable-version warning */
+		    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
 		}
 	    }
 	}
