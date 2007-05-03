@@ -548,9 +548,25 @@ class ImageMagickToolkit extends GalleryToolkit {
 	case 'image/gif':
 	    /* In case it's an animated gif.. */
 	    if ($cmd == 'convert') {
-		$command[] = '-coalesce';
-		$command[] = '%s';
-		$args[] = '-deconstruct';
+		/**
+		 * Bug 1703410
+		 * ImageMagick 6.2.6 and later needs different arguments for best results
+		 */
+		list ($ret, $useNewCoalesceOptions) = GalleryCoreApi::getPluginParameter(
+		    'module', 'imagemagick', 'useNewCoalesceOptions');
+		if ($ret) {
+		    return $ret;
+		}
+		if ($useNewCoalesceOptions) {
+		    $command[] = '%s';
+		    $command[] = '-coalesce'; /* Needs to be _after_ the filename */
+		    $command[] = '-layers'; /* Better than -deconstruct */
+		    $command[] = 'optimize';
+		} else {
+		    $command[] = '-coalesce'; /* Needs to be _before_ the filename */
+		    $command[] = '%s';
+		    $args[] = '-deconstruct';
+		}
 	    }
 	    break;
 

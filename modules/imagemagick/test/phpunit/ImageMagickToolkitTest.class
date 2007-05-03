@@ -145,11 +145,19 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		$src .= '[0]';
 	    }
 	} else if  ($mimeType == 'image/gif') {
+	    $useNewCoalesceOptions = $this->_currentEnvironment['name'] == 'ImageMagick'
+		&& version_compare($this->_currentEnvironment['version'], '6.2.6-3', '>');
 	    foreach (array_keys($expected) as $key) {
-		if (is_int($i = array_search('%src%', $expected[$key]))) {
+	    	if (!is_int($i = array_search('%src%', $expected[$key]))) {
+		    continue;
+	    	}
+	    	if ($useNewCoalesceOptions) {
+		    unset($expected[$key][$i]);
+		    array_unshift($expected[$key], '%src%', '-coalesce', '-layers', 'optimize');
+		} else {
 		    $expected[$key][$i] = '-deconstruct';
+		    array_unshift($expected[$key], '-coalesce', '%src%');
 		}
-		array_unshift($expected[$key], '-coalesce', '%src%');
 	    }
 	}
 

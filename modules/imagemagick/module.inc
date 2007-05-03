@@ -36,7 +36,7 @@ class ImageMagickModule extends GalleryModule {
 	$this->setId('imagemagick');
 	$this->setName($gallery->i18n('ImageMagick'));
 	$this->setDescription($gallery->i18n('ImageMagick / GraphicsMagick Graphics Toolkit'));
-	$this->setVersion('1.1.2');
+	$this->setVersion('1.1.3');
 	$this->_templateVersion = 1;
 	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
@@ -53,7 +53,7 @@ class ImageMagickModule extends GalleryModule {
 	    return $ret;
 	}
 	foreach (array('path' => '', 'jpegQuality' => '75', 'cmykSupport' => 'none',
-		       'versionOk' => '') as $key => $value) {
+		       'versionOk' => '', 'useNewCoalesceOptions' => 0) as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret) {
@@ -62,24 +62,36 @@ class ImageMagickModule extends GalleryModule {
 	    }
 	}
 
-	if (!empty($params['path']) && empty($params['versionOk'])) {
+	if (!empty($params['path'])) {
 	    GalleryCoreApi::requireOnce(
 		'modules/imagemagick/classes/ImageMagickToolkitHelper.class');
 	    list ($ret, $version, $vulnerable) =
 		ImageMagickToolkitHelper::discoverVersion($params['path']);
-	    if (!$ret && !$vulnerable) {
-		$ret = $this->setParameter('versionOk', '1');
-		if ($ret) {
-		    return $ret;
+	    if (empty($params['versionOk'])) {
+		if (!$ret && !$vulnerable) {
+		    $ret = $this->setParameter('versionOk', '1');
+		    if ($ret) {
+			return $ret;
+		    }
+		} else {
+		    list ($ret, $isActive) = $this->isActive();
+		    if ($ret) {
+			return $ret;
+		    }
+		    if ($isActive) {
+			/* Force upgrade from site admin to see vulnerable-version warning */
+			return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
+		    }
 		}
-	    } else {
-		list ($ret, $isActive) = $this->isActive();
-		if ($ret) {
-		    return $ret;
-		}
-		if ($isActive) {
-		    /* Force upgrade from site admin to see vulnerable-version warning */
-		    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
+	    }
+
+	    if (version_compare($currentVersion, '1.1.3', '<')) {
+	    	if (!empty($version) && $version[0] == 'ImageMagick'
+			&& version_compare($version[1], '6.2.6-3', '>')) {
+		    $ret = $this->setParameter('useNewCoalesceOptions', '1');
+		    if ($ret) {
+			return $ret;
+		    }
 		}
 	    }
 	}

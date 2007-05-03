@@ -763,6 +763,21 @@ class ImageMagickToolkitHelper {
 	    return $ret;
 	}
 
+	/* Find out what parameters to use for animated GIFs */
+	list ($ret, $version) = ImageMagickToolkitHelper::discoverVersion($imageMagickPath);
+	/* Ignore the error, fallback to old / compatible code */
+	if (!empty($version) && $version[0] == 'ImageMagick'
+		&& version_compare($version[1], '6.2.6-3', '>')) {
+	    $useNewCoalesceOptions = 1;
+	} else {
+	    $useNewCoalesceOptions = 0;
+	}
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'imagemagick', 'useNewCoalesceOptions', $useNewCoalesceOptions);
+	if ($ret) {
+	    return $ret;
+	}
+
 	return null;
     }
 }
