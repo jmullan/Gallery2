@@ -36,7 +36,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "Report-Msgid-Bugs-To: <gallery-devel@lists.sourceforge.net>\n"
 "POT-Creation-Date: 2003-05-30 17:11-0700\n"
 "PO-Revision-Date: 2007-03-14 16:07+0100\n"
@@ -388,14 +388,6 @@ msgstr "Riarachán Mír an Ghailearaí"
 msgid "delete an item"
 msgstr "scrios an mhír seo"
 
-#, fuzzy
-msgid "delete confirmation"
-msgstr "scrios an mhír seo"
-
-#, fuzzy, c-format
-msgid "delete %s"
-msgstr "Scrios úsáideoir"
-
 #, fuzzy, c-format
 msgid "edit %s"
 msgstr "Athraigh Úsáideoir"
@@ -644,6 +636,10 @@ msgstr "Cuir Íomhá Ghealáin"
 
 msgid "Reorder Items"
 msgstr "Athshórtáil na Míreanna"
+
+#, fuzzy
+msgid "Delete Items"
+msgstr "Scrios an mhír seo"
 
 #, fuzzy
 msgid "Site Admin"
@@ -1128,6 +1124,10 @@ msgstr "roghnaigh"
 #, fuzzy
 msgid "unknown"
 msgstr "Anaithnid"
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
+msgstr ""
 
 #, fuzzy
 msgid "Gallery version"
@@ -1809,11 +1809,17 @@ msgid "Maintenance Mode Url"
 msgstr ""
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
 msgstr ""
 
-msgid "Example: /maintenance.html"
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
+msgstr ""
+
+msgid "For example: /maintenance.html"
 msgstr ""
 
 #, fuzzy
@@ -1991,7 +1997,10 @@ msgstr ""
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Roghnaigh na míreanna a theastaíonn uait a bhogadh __PLUGIN__"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
+msgstr ""
+
+msgid "The files of this plugin will be deleted permanently."
 msgstr ""
 
 msgid "disabled(__COUNT__)"
@@ -2388,6 +2397,12 @@ msgstr "Ord shóirt loicthe"
 msgid "with"
 msgstr ""
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 #, fuzzy
 msgid "New albums"
 msgstr "athraigh an t-albam seo"
@@ -2717,10 +2732,6 @@ msgstr "Riarachán an Ghailearaí"
 msgid "No Thumbnail"
 msgstr "Níl pictiúrín ann"
 
-#, fuzzy
-msgid "Delete Items"
-msgstr "Scrios an mhír seo"
-
 msgid "No items were selected for deletion"
 msgstr ""
 
@@ -2783,25 +2794,18 @@ msgid "Next Page"
 msgstr "Athraigh Íomhá"
 
 #, fuzzy
-msgid "Deletion Complete"
-msgstr "Uaslodáil Críochnaithe"
+msgid "Do you really want to delete "
+msgstr "Roghnaigh na míreanna a theastaíonn uait a bhogadh __PLUGIN__"
+
+msgid "Deleting... Please wait"
+msgstr ""
+
+msgid "OK"
+msgstr ""
 
 #, fuzzy
-msgid "Item successfully deleted"
-msgstr "Ní raibh aon chomhad curtha."
-
-#, fuzzy, c-format
-msgid "Are you sure you want to delete this %s?"
-msgstr "Roghnaigh na míreanna a theastaíonn uait a bhogadh"
-
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "There is no undo!"
-msgstr ""
+msgid "Delete more items..."
+msgstr "Scrios an mhír seo"
 
 msgid "There was a problem processing your request."
 msgstr ""
@@ -3149,6 +3153,13 @@ msgstr "Togh albam nua dhóibh"
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3451,7 +3462,7 @@ msgid "color"
 msgstr "roghnaigh"
 
 #, c-format
-msgid "You can also use the %scolor name%s for example: %s"
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr ""
 
 msgid "Configuration Error: Missing Theme"
@@ -3851,6 +3862,26 @@ msgstr "Log Ann"
 
 msgid "Links to album/photo peers"
 msgstr ""
+
+#, fuzzy
+#~ msgid "delete confirmation"
+#~ msgstr "scrios an mhír seo"
+
+#, fuzzy
+#~ msgid "delete %s"
+#~ msgstr "Scrios úsáideoir"
+
+#, fuzzy
+#~ msgid "Deletion Complete"
+#~ msgstr "Uaslodáil Críochnaithe"
+
+#, fuzzy
+#~ msgid "Item successfully deleted"
+#~ msgstr "Ní raibh aon chomhad curtha."
+
+#, fuzzy
+#~ msgid "Are you sure you want to delete this %s?"
+#~ msgstr "Roghnaigh na míreanna a theastaíonn uait a bhogadh"
 
 #~ msgid "key"
 #~ msgstr "eochair"

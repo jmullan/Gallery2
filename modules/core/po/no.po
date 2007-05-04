@@ -21,7 +21,7 @@
 # - Sverre M. Vikan <sverre AT urven DOT net>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-01 23:38+0100\n"
 "PO-Revision-Date: 2007-03-02 20:41+0100\n"
@@ -334,13 +334,6 @@ msgstr "Administrasjon av Gallery-objekter"
 msgid "delete an item"
 msgstr "slett et objekt"
 
-msgid "delete confirmation"
-msgstr "bekreftelse av sletting"
-
-#, c-format
-msgid "delete %s"
-msgstr "slett %s"
-
 #, c-format
 msgid "edit %s"
 msgstr "rediger %s"
@@ -551,6 +544,9 @@ msgstr "Lag forgrunnsbilde"
 
 msgid "Reorder Items"
 msgstr "Ordne objekter"
+
+msgid "Delete Items"
+msgstr "Slett objekter"
 
 msgid "Site Admin"
 msgstr "Nettstedadministrasjon"
@@ -1019,6 +1015,10 @@ msgstr "kjerne"
 
 msgid "unknown"
 msgstr "ukjent"
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
+msgstr ""
 
 msgid "Gallery version"
 msgstr "Gallery-versjon"
@@ -1707,11 +1707,17 @@ msgid "Maintenance Mode Url"
 msgstr "Vedlikehold"
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
 msgstr ""
 
-msgid "Example: /maintenance.html"
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
+msgstr ""
+
+msgid "For example: /maintenance.html"
 msgstr ""
 
 #, fuzzy
@@ -1893,8 +1899,12 @@ msgstr "Nei"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Vil du virkelig slette __PLUGIN__?"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+#, fuzzy
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
 msgstr "Dette programtillegget vil avinstalleres og dets filer vil bli slettet."
+
+msgid "The files of this plugin will be deleted permanently."
+msgstr ""
 
 msgid "disabled(__COUNT__)"
 msgstr "deaktivert(__COUNT__)"
@@ -2294,6 +2304,12 @@ msgstr "Standard sorteringsrekkefølge"
 msgid "with"
 msgstr "med"
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 msgid "New albums"
 msgstr "Nye album"
 
@@ -2626,9 +2642,6 @@ msgstr "Gi billedtekst til:"
 msgid "No Thumbnail"
 msgstr "Miniatyrbilde mangler"
 
-msgid "Delete Items"
-msgstr "Slett objekter"
-
 msgid "No items were selected for deletion"
 msgstr "Ingen objekter ble merket for sletting"
 
@@ -2684,24 +2697,19 @@ msgstr "Forrige side"
 msgid "Next Page"
 msgstr "Neste side"
 
-msgid "Deletion Complete"
-msgstr "Sletting fullført"
+#, fuzzy
+msgid "Do you really want to delete "
+msgstr "Vil du virkelig slette __PLUGIN__?"
 
-msgid "Item successfully deleted"
-msgstr "Vellykket sletting av objekt"
+msgid "Deleting... Please wait"
+msgstr ""
 
-#, c-format
-msgid "Are you sure you want to delete this %s?"
-msgstr "Er du sikker på at du ønsker å slette dette %s?"
+msgid "OK"
+msgstr ""
 
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] "Den inneholder %d fil."
-msgstr[1] "Den inneholder %d filer."
-
-msgid "There is no undo!"
-msgstr "Du kan ikke angre!"
+#, fuzzy
+msgid "Delete more items..."
+msgstr "Slett objekter"
 
 msgid "There was a problem processing your request."
 msgstr "Det oppstod et problem under behandlingen av din forespørsel."
@@ -3056,6 +3064,13 @@ msgstr "Velg tema"
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3343,7 +3358,7 @@ msgid "color"
 msgstr "farge"
 
 #, fuzzy, c-format
-msgid "You can also use the %scolor name%s for example: %s"
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr "Du kan også bruke <a href=\"%s\" target=\"_new\">fargenavnet</a>, for eksempel: %s"
 
 msgid "Configuration Error: Missing Theme"
@@ -3769,6 +3784,29 @@ msgstr "Innloggingsblokk"
 
 msgid "Links to album/photo peers"
 msgstr "Lenker til album/fotonoder"
+
+#~ msgid "delete confirmation"
+#~ msgstr "bekreftelse av sletting"
+
+#~ msgid "delete %s"
+#~ msgstr "slett %s"
+
+#~ msgid "Deletion Complete"
+#~ msgstr "Sletting fullført"
+
+#~ msgid "Item successfully deleted"
+#~ msgstr "Vellykket sletting av objekt"
+
+#~ msgid "Are you sure you want to delete this %s?"
+#~ msgstr "Er du sikker på at du ønsker å slette dette %s?"
+
+#~ msgid "It contains %d item."
+#~ msgid_plural "It contains %d items."
+#~ msgstr[0] "Den inneholder %d fil."
+#~ msgstr[1] "Den inneholder %d filer."
+
+#~ msgid "There is no undo!"
+#~ msgstr "Du kan ikke angre!"
 
 #~ msgid "key"
 #~ msgstr "nøkkel"

@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "POT-Creation-Date: 2003-06-25 11:44+0100\n"
 "PO-Revision-Date: 2007-03-14 15:50+0100\n"
 "Last-Translator: Janez Troha <janez@tegleda.com>\n"
@@ -340,13 +340,6 @@ msgstr "Administracija galerije"
 msgid "delete an item"
 msgstr "zbriši predmet"
 
-msgid "delete confirmation"
-msgstr "zbriši potrdilo"
-
-#, c-format
-msgid "delete %s"
-msgstr "zbriši %s"
-
 #, c-format
 msgid "edit %s"
 msgstr "uredi %s"
@@ -557,6 +550,9 @@ msgstr "Privzeta Slika"
 
 msgid "Reorder Items"
 msgstr "Spremeni vrstni red"
+
+msgid "Delete Items"
+msgstr ""
 
 msgid "Site Admin"
 msgstr "Administracija Strani"
@@ -1003,6 +999,10 @@ msgid "core"
 msgstr "jedro"
 
 msgid "unknown"
+msgstr ""
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
 msgstr ""
 
 msgid "Gallery version"
@@ -1627,11 +1627,17 @@ msgid "Maintenance Mode Url"
 msgstr ""
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
 msgstr ""
 
-msgid "Example: /maintenance.html"
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
+msgstr ""
+
+msgid "For example: /maintenance.html"
 msgstr ""
 
 msgid "Set"
@@ -1793,7 +1799,10 @@ msgstr ""
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr ""
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
+msgstr ""
+
+msgid "The files of this plugin will be deleted permanently."
 msgstr ""
 
 msgid "disabled(__COUNT__)"
@@ -2170,6 +2179,12 @@ msgstr ""
 msgid "with"
 msgstr ""
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 msgid "New albums"
 msgstr ""
 
@@ -2471,9 +2486,6 @@ msgstr ""
 msgid "No Thumbnail"
 msgstr ""
 
-msgid "Delete Items"
-msgstr ""
-
 msgid "No items were selected for deletion"
 msgstr ""
 
@@ -2529,24 +2541,18 @@ msgstr ""
 msgid "Next Page"
 msgstr ""
 
-msgid "Deletion Complete"
+msgid "Do you really want to delete "
 msgstr ""
 
-msgid "Item successfully deleted"
+msgid "Deleting... Please wait"
 msgstr ""
 
-#, c-format
-msgid "Are you sure you want to delete this %s?"
+msgid "OK"
 msgstr ""
 
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "There is no undo!"
-msgstr ""
+#, fuzzy
+msgid "Delete more items..."
+msgstr "zbriši predmet"
 
 msgid "There was a problem processing your request."
 msgstr ""
@@ -2856,6 +2862,13 @@ msgstr ""
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3123,7 +3136,7 @@ msgid "color"
 msgstr "jedro"
 
 #, c-format
-msgid "You can also use the %scolor name%s for example: %s"
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr ""
 
 msgid "Configuration Error: Missing Theme"
@@ -3495,3 +3508,9 @@ msgstr "Prijavni blok"
 
 msgid "Links to album/photo peers"
 msgstr ""
+
+#~ msgid "delete confirmation"
+#~ msgstr "zbriši potrdilo"
+
+#~ msgid "delete %s"
+#~ msgstr "zbriši %s"

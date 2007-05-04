@@ -28,7 +28,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2007-03-08 08:30+0100\n"
@@ -348,13 +348,6 @@ msgstr "Galleriets Objektadministration"
 msgid "delete an item"
 msgstr "ta bort ett objekt"
 
-msgid "delete confirmation"
-msgstr "bekräfta borttagning"
-
-#, c-format
-msgid "delete %s"
-msgstr "ta bort %s"
-
 #, c-format
 msgid "edit %s"
 msgstr "redigera %s"
@@ -565,6 +558,9 @@ msgstr "Gör till Förgrundsbild"
 
 msgid "Reorder Items"
 msgstr "Sortera Objekt"
+
+msgid "Delete Items"
+msgstr "Ta bort objekt"
 
 msgid "Site Admin"
 msgstr "Siteadministratör"
@@ -1032,6 +1028,10 @@ msgstr "kärna"
 
 msgid "unknown"
 msgstr "okänd"
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
+msgstr ""
 
 msgid "Gallery version"
 msgstr "Gallery version"
@@ -1721,11 +1721,17 @@ msgid "Maintenance Mode Url"
 msgstr "Underhåll"
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
 msgstr ""
 
-msgid "Example: /maintenance.html"
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
+msgstr ""
+
+msgid "For example: /maintenance.html"
 msgstr ""
 
 #, fuzzy
@@ -1906,8 +1912,12 @@ msgstr "Nej"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Vill du verkligen avinstallera __PLUGIN__?"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+#, fuzzy
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
 msgstr "Den här pluginen kommer att avistalleras och dess filer kommer att raderas."
+
+msgid "The files of this plugin will be deleted permanently."
+msgstr ""
 
 msgid "disabled(__COUNT__)"
 msgstr "avaktiverade(__COUNT__)"
@@ -2304,6 +2314,12 @@ msgstr "Förvald sorteringsordning"
 msgid "with"
 msgstr "med"
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 msgid "New albums"
 msgstr "Nya album"
 
@@ -2635,9 +2651,6 @@ msgstr "Tilldela rubrik till:"
 msgid "No Thumbnail"
 msgstr "Ingen miniatyrbild"
 
-msgid "Delete Items"
-msgstr "Ta bort objekt"
-
 msgid "No items were selected for deletion"
 msgstr "Inga objekt markerades för borttagning"
 
@@ -2693,24 +2706,19 @@ msgstr "Föregående sida"
 msgid "Next Page"
 msgstr "Nästa sida"
 
-msgid "Deletion Complete"
-msgstr "Borttagning slutförd"
+#, fuzzy
+msgid "Do you really want to delete "
+msgstr "Vill du verkligen avinstallera __PLUGIN__?"
 
-msgid "Item successfully deleted"
-msgstr "Objekt framgångsrikt borttaget"
+msgid "Deleting... Please wait"
+msgstr ""
 
-#, c-format
-msgid "Are you sure you want to delete this %s?"
-msgstr "Är du säker på att du vill ta bort detta %s?"
+msgid "OK"
+msgstr ""
 
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] "Det innehåller %d objekt."
-msgstr[1] "Det innehåller %d objekt."
-
-msgid "There is no undo!"
-msgstr "Det finns ingen återvändo!"
+#, fuzzy
+msgid "Delete more items..."
+msgstr "Ta bort objekt"
 
 msgid "There was a problem processing your request."
 msgstr "Ett problem uppstod vid bearbetningen av din förfrågan"
@@ -3070,6 +3078,13 @@ msgstr "Välj ett tema"
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3359,7 +3374,7 @@ msgid "color"
 msgstr "färg"
 
 #, fuzzy, c-format
-msgid "You can also use the %scolor name%s for example: %s"
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr "Du kan också använda <a href=\"%s\" target=\"_new\">färgnamn</a> till exempel: %s"
 
 msgid "Configuration Error: Missing Theme"
@@ -3783,6 +3798,29 @@ msgstr "Block för login"
 
 msgid "Links to album/photo peers"
 msgstr "Länkar till album/foto peers"
+
+#~ msgid "delete confirmation"
+#~ msgstr "bekräfta borttagning"
+
+#~ msgid "delete %s"
+#~ msgstr "ta bort %s"
+
+#~ msgid "Deletion Complete"
+#~ msgstr "Borttagning slutförd"
+
+#~ msgid "Item successfully deleted"
+#~ msgstr "Objekt framgångsrikt borttaget"
+
+#~ msgid "Are you sure you want to delete this %s?"
+#~ msgstr "Är du säker på att du vill ta bort detta %s?"
+
+#~ msgid "It contains %d item."
+#~ msgid_plural "It contains %d items."
+#~ msgstr[0] "Det innehåller %d objekt."
+#~ msgstr[1] "Det innehåller %d objekt."
+
+#~ msgid "There is no undo!"
+#~ msgstr "Det finns ingen återvändo!"
 
 #~ msgid "key"
 #~ msgstr "nyckel"

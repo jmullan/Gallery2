@@ -23,7 +23,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "POT-Creation-Date: 2003-05-16 09:41+0300\n"
 "PO-Revision-Date: 2007-03-10 09:46+0200\n"
 "Last-Translator: Jyrki Heinonen <jyrki.heinonen@gmail.com>\n"
@@ -337,13 +337,6 @@ msgstr "Gallerian Kohteen Ylläpito"
 msgid "delete an item"
 msgstr "poista kohde"
 
-msgid "delete confirmation"
-msgstr "vahvista poisto"
-
-#, c-format
-msgid "delete %s"
-msgstr "poista %s"
-
 #, c-format
 msgid "edit %s"
 msgstr "muokkaa %s"
@@ -554,6 +547,9 @@ msgstr "Laita Esimerkkikuvaksi"
 
 msgid "Reorder Items"
 msgstr "Järjestä Kohteet"
+
+msgid "Delete Items"
+msgstr "Poista Kohde"
 
 msgid "Site Admin"
 msgstr "Gallerian Ylläpito"
@@ -1021,6 +1017,10 @@ msgstr "ydin"
 
 msgid "unknown"
 msgstr "tuntematon"
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
+msgstr ""
 
 msgid "Gallery version"
 msgstr "Gallerian versio"
@@ -1709,11 +1709,17 @@ msgid "Maintenance Mode Url"
 msgstr "Ylläpito"
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
 msgstr ""
 
-msgid "Example: /maintenance.html"
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
+msgstr ""
+
+msgid "For example: /maintenance.html"
 msgstr ""
 
 #, fuzzy
@@ -1893,8 +1899,12 @@ msgstr "Ei"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Haluatko poistaa __PLUGIN__?"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+#, fuzzy
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
 msgstr "Tämän moduulin asennus poistetaan ja sen tiedostot tuhotaan."
+
+msgid "The files of this plugin will be deleted permanently."
+msgstr ""
 
 msgid "disabled(__COUNT__)"
 msgstr "disabloi(__COUNT__)"
@@ -2293,6 +2303,12 @@ msgstr "Lajittelujärjestys"
 msgid "with"
 msgstr "sekä"
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 msgid "New albums"
 msgstr "Uusia albumeja"
 
@@ -2625,9 +2641,6 @@ msgstr "Aseta otsake tähän:"
 msgid "No Thumbnail"
 msgstr "Ei Esikatselukuvaa"
 
-msgid "Delete Items"
-msgstr "Poista Kohde"
-
 msgid "No items were selected for deletion"
 msgstr "Poistettavia kohteita ei oltu valittu"
 
@@ -2683,24 +2696,19 @@ msgstr "Edellinen Sivu"
 msgid "Next Page"
 msgstr "Seuraava Sivu"
 
-msgid "Deletion Complete"
-msgstr "Poistaminen valmis"
+#, fuzzy
+msgid "Do you really want to delete "
+msgstr "Haluatko poistaa __PLUGIN__?"
 
-msgid "Item successfully deleted"
-msgstr "Kohde poistettu"
+msgid "Deleting... Please wait"
+msgstr ""
 
-#, c-format
-msgid "Are you sure you want to delete this %s?"
-msgstr "Haluatko varmasti poistaa kohteen %s?"
+msgid "OK"
+msgstr ""
 
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] "Se sisältää yhden kohteen."
-msgstr[1] "Se sisältää %d kohdetta."
-
-msgid "There is no undo!"
-msgstr "Palautusta ei ole!"
+#, fuzzy
+msgid "Delete more items..."
+msgstr "Poista Kohde"
 
 msgid "There was a problem processing your request."
 msgstr "Pyyntösi toteutuksessa oli ongelma."
@@ -3056,6 +3064,13 @@ msgstr "Valitse teema"
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3342,8 +3357,8 @@ msgstr "kuva"
 msgid "color"
 msgstr "väri"
 
-#, c-format
-msgid "You can also use the %scolor name%s for example: %s"
+#, fuzzy, c-format
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr "Voit myös käyttää %svärin nimi%s esim: %s"
 
 msgid "Configuration Error: Missing Theme"
@@ -3764,6 +3779,29 @@ msgstr "Sisään kirjautumisen lohko"
 
 msgid "Links to album/photo peers"
 msgstr "Linkit albumin/kuvan vastapuoliin"
+
+#~ msgid "delete confirmation"
+#~ msgstr "vahvista poisto"
+
+#~ msgid "delete %s"
+#~ msgstr "poista %s"
+
+#~ msgid "Deletion Complete"
+#~ msgstr "Poistaminen valmis"
+
+#~ msgid "Item successfully deleted"
+#~ msgstr "Kohde poistettu"
+
+#~ msgid "Are you sure you want to delete this %s?"
+#~ msgstr "Haluatko varmasti poistaa kohteen %s?"
+
+#~ msgid "It contains %d item."
+#~ msgid_plural "It contains %d items."
+#~ msgstr[0] "Se sisältää yhden kohteen."
+#~ msgstr[1] "Se sisältää %d kohdetta."
+
+#~ msgid "There is no undo!"
+#~ msgstr "Palautusta ei ole!"
 
 #~ msgid "key"
 #~ msgstr "avain"

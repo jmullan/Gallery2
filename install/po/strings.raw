@@ -16,7 +16,6 @@ gettext("<b>Error:</b> your <b>login.txt</b> key does not match correctly. Pleas
 
 /* steps/CreateConfigFileStep.class */
 gettext("Create Config File")
-gettext("Unable to write to the <b>config.php</b> configuration file in your %s directory.  Please change its permissions.  If you're on Unix you can do <i>chmod 666 config.php</i> to fix this.")
 gettext("The config.php file does not exist in your %s directory")
 gettext("The config.php file exists but is not writeable.  If your server is Windows, you may have to disable file sharing for config.php and set its permissions manually.")
 
@@ -181,6 +180,7 @@ gettext("Try Again")
 
 /* templates/CreateConfigFileInstructions.html */
 gettext("Create a config file")
+gettext("Unable to write to the <b>config.php</b> configuration file in your %s directory.  Please change its permissions.  If you're on Unix you can do <i>chmod 666 config.php</i> to fix this. You can also download the %sconfig.php%s file and replace the existing config.php in the %s directory yourself.")
 gettext("Now we need to write out all the information you provided into a file called <b>config.php</b> in your <b>%s</b> directory.  This is a very important file that gives Gallery all the information that it needs to operate.  After we create it, you can read through this file and make changes to it if you want.")
 gettext("Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config.php</i>.  You must make sure that the webserver will be able to write to it.")
 gettext("Unix (with shell access)") /* also in: templates/StorageSetupRequest.html */

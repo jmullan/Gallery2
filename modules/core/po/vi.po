@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "POT-Creation-Date: 2005-05-04 16:46-0400\n"
 "PO-Revision-Date: 2007-03-14 15:04+0100\n"
 "Last-Translator: Trung Dong Huynh <trungdong@donggiang.com>\n"
@@ -336,13 +336,6 @@ msgstr "Quản trị đối tượng của Gallery"
 msgid "delete an item"
 msgstr "xóa một đối tượng"
 
-msgid "delete confirmation"
-msgstr "xác nhận xóa"
-
-#, c-format
-msgid "delete %s"
-msgstr "xóa %s"
-
 #, c-format
 msgid "edit %s"
 msgstr "chỉnh sửa %s"
@@ -557,6 +550,9 @@ msgstr "Chọn làm ảnh đại diện"
 
 msgid "Reorder Items"
 msgstr "Sắp xếp lại các đối tượng"
+
+msgid "Delete Items"
+msgstr "Xóa đối tượng"
 
 msgid "Site Admin"
 msgstr "Quản trị trang"
@@ -1026,6 +1022,10 @@ msgstr "lõi"
 
 msgid "unknown"
 msgstr "không biết"
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
+msgstr ""
 
 msgid "Gallery version"
 msgstr "Phiên bản Gallery"
@@ -1716,11 +1716,17 @@ msgid "Maintenance Mode Url"
 msgstr "Bảo dưỡng"
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
 msgstr ""
 
-msgid "Example: /maintenance.html"
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
+msgstr ""
+
+msgid "For example: /maintenance.html"
 msgstr ""
 
 #, fuzzy
@@ -1893,7 +1899,10 @@ msgstr ""
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Bạn có thực sự muốn gỡ bỏ __PLUGIN__?"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
+msgstr ""
+
+msgid "The files of this plugin will be deleted permanently."
 msgstr ""
 
 msgid "disabled(__COUNT__)"
@@ -2290,6 +2299,12 @@ msgstr "Thứ tự sắp xếp mặc định"
 msgid "with"
 msgstr "với"
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 msgid "New albums"
 msgstr "Các album mới"
 
@@ -2624,9 +2639,6 @@ msgstr "Đặt tiêu đề vào:"
 msgid "No Thumbnail"
 msgstr "Không có ảnh con"
 
-msgid "Delete Items"
-msgstr "Xóa đối tượng"
-
 msgid "No items were selected for deletion"
 msgstr "Không có đối tượng nào được chọn để xóa"
 
@@ -2684,24 +2696,19 @@ msgstr "Trang trước"
 msgid "Next Page"
 msgstr "Trang tiếp"
 
-msgid "Deletion Complete"
-msgstr "Xóa xong"
+#, fuzzy
+msgid "Do you really want to delete "
+msgstr "Bạn có thực sự muốn gỡ bỏ __PLUGIN__?"
 
-msgid "Item successfully deleted"
-msgstr "Đối tượng đã được xóa"
+msgid "Deleting... Please wait"
+msgstr ""
 
-#, c-format
-msgid "Are you sure you want to delete this %s?"
-msgstr "Bạn có chắc bạn muốn xóa %s này"
+msgid "OK"
+msgstr ""
 
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] "Chứa %d đối tượng."
-msgstr[1] "Chứa %d đối tượng."
-
-msgid "There is no undo!"
-msgstr "Thao tác này không thể phục hồi được"
+#, fuzzy
+msgid "Delete more items..."
+msgstr "Xóa đối tượng"
 
 msgid "There was a problem processing your request."
 msgstr "Có trở ngại khi xử lý yêu cầu của bạn."
@@ -3060,6 +3067,13 @@ msgstr "Hãy chọn một khối"
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3349,7 +3363,7 @@ msgid "color"
 msgstr "lõi"
 
 #, c-format
-msgid "You can also use the %scolor name%s for example: %s"
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr ""
 
 msgid "Configuration Error: Missing Theme"
@@ -3770,6 +3784,29 @@ msgstr "Khối đăng nhập"
 
 msgid "Links to album/photo peers"
 msgstr "Liên kết đến các album/ảnh ngang mức"
+
+#~ msgid "delete confirmation"
+#~ msgstr "xác nhận xóa"
+
+#~ msgid "delete %s"
+#~ msgstr "xóa %s"
+
+#~ msgid "Deletion Complete"
+#~ msgstr "Xóa xong"
+
+#~ msgid "Item successfully deleted"
+#~ msgstr "Đối tượng đã được xóa"
+
+#~ msgid "Are you sure you want to delete this %s?"
+#~ msgstr "Bạn có chắc bạn muốn xóa %s này"
+
+#~ msgid "It contains %d item."
+#~ msgid_plural "It contains %d items."
+#~ msgstr[0] "Chứa %d đối tượng."
+#~ msgstr[1] "Chứa %d đối tượng."
+
+#~ msgid "There is no undo!"
+#~ msgstr "Thao tác này không thể phục hồi được"
 
 #~ msgid "key"
 #~ msgstr "khóa"

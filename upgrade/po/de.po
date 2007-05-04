@@ -310,11 +310,59 @@ msgstr ""
 "Fehler: Einige Dateien oder Ordner in Ihrem Speicherordner können vom Webserver nicht "
 "verändert werden. Führen Sie chown -R webserverBenutzer %s ODER chmod -R 777 %s aus."
 
+#, fuzzy, c-format
+msgid "Inaccessible or missing  files (%d)"
+msgstr "Fehlende Dateien (%d)"
+
 msgid "Gallery file integrity"
 msgstr "Gallery-Dateiintegrität"
 
 msgid "Manifest missing or inaccessible."
 msgstr "Manifest fehlt oder ist nicht abrufbar."
+
+msgid ""
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
+"be safe to ignore these."
+msgstr ""
+"Beachten Sie: Sie verwenden die SVN-Version von Gallery, also kann es sein, dass hier vor "
+"kurzem entfernte Dateien stehen. Sie können diese wahrscheinlich gefahrlos ignorieren."
+
+#, c-format
+msgid "Missing files (%d)"
+msgstr "Fehlende Dateien (%d)"
+
+msgid ""
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
+msgstr ""
+"Beachten Sie: Sie verwenden die SVN-Version von Gallery, also sind veränderte Dateien zu "
+"erwarten. Sie können diese wahrscheinlich ignorieren, aber um sicher zu gehen, sollten Sie "
+"ein <b>svn update</b> ausführen, bevor Sie fortsetzen."
+
+#, c-format
+msgid "Modified files (%d)"
+msgstr "Veränderte Dateien (%d)"
+
+#, fuzzy, c-format
+msgid ""
+"These files are no longer part of Gallery. They probably won't cause any problems but it is "
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %sthis script%s in your gallery2 directory to delete them "
+"for you."
+msgstr ""
+"Diese Dateien gehören nicht mehr zur Gallery. Wahrscheinlich machen sie keine Probleme, aber "
+"es ist dennoch eine gute Idee, sie zu entfernen, um Ihre Installation sauber zu halten.  "
+"Gallery kann diese Dateien nicht entfernen, aber Sie können %s in Ihrem Galley2 Ordner "
+"ausführen um die Dateien zu löschen."
+
+#, c-format
+msgid "Old files (%d)"
+msgstr "Veraltete Dateien (%d)"
+
+#, c-format
+msgid "The storage folder path is not defined in config.php (%s)"
+msgstr ""
 
 msgid "Upgrade Core"
 msgstr "Aktualisiere Kern"
@@ -534,48 +582,6 @@ msgstr "Weiter zum Schritt %d&raquo;"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Gallery: <strong>Ihre Photos</strong> auf <strong>Ihrer Webseite</strong>"
-
-#, c-format
-msgid "Missing files (%d)"
-msgstr "Fehlende Dateien (%d)"
-
-msgid ""
-"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
-"be safe to ignore these."
-msgstr ""
-"Beachten Sie: Sie verwenden die SVN-Version von Gallery, also kann es sein, dass hier vor "
-"kurzem entfernte Dateien stehen. Sie können diese wahrscheinlich gefahrlos ignorieren."
-
-#, c-format
-msgid "Modified files (%d)"
-msgstr "Veränderte Dateien (%d)"
-
-msgid ""
-"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
-"continuing."
-msgstr ""
-"Beachten Sie: Sie verwenden die SVN-Version von Gallery, also sind veränderte Dateien zu "
-"erwarten. Sie können diese wahrscheinlich ignorieren, aber um sicher zu gehen, sollten Sie "
-"ein <b>svn update</b> ausführen, bevor Sie fortsetzen."
-
-#, c-format
-msgid "Old files (%d)"
-msgstr "Veraltete Dateien (%d)"
-
-#, c-format
-msgid ""
-"These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
-"you, but you can download and run %s in your gallery2 directory to delete them for you."
-msgstr ""
-"Diese Dateien gehören nicht mehr zur Gallery. Wahrscheinlich machen sie keine Probleme, aber "
-"es ist dennoch eine gute Idee, sie zu entfernen, um Ihre Installation sauber zu halten.  "
-"Gallery kann diese Dateien nicht entfernen, aber Sie können %s in Ihrem Galley2 Ordner "
-"ausführen um die Dateien zu löschen."
-
-msgid "this script"
-msgstr "dieses Skript"
 
 msgid "Upgrade Steps"
 msgstr "Aktualisierung"
@@ -838,3 +844,6 @@ msgstr "Sprache auswählen:"
 # Badly chosen mgsid: means: switch to selected language
 msgid "Go"
 msgstr "Sprache einstellen"
+
+#~ msgid "this script"
+#~ msgstr "dieses Skript"

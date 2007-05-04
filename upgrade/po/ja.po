@@ -292,11 +292,58 @@ msgstr ""
 "権限で書き込むことができません。chown -R webserverUser %s か chmod -R 777 %s を実行してくださ"
 "い"
 
+#, fuzzy, c-format
+msgid "Inaccessible or missing  files (%d)"
+msgstr "欠落したファイル (%d)"
+
 msgid "Gallery file integrity"
 msgstr "Gallery ファイルの完全性"
 
 msgid "Manifest missing or inaccessible."
 msgstr "Manifest がないかアクセスできません"
+
+msgid ""
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
+"be safe to ignore these."
+msgstr ""
+"注意: あなたはSVNから取得した Gallery を動かしています。そのため最近削除されたファイルがここ"
+"に存在するかもしれません。これらは無視しておく方が安全です"
+
+#, c-format
+msgid "Missing files (%d)"
+msgstr "欠落したファイル (%d)"
+
+msgid ""
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
+msgstr ""
+"注意: あなたはSVNから取得した Gallery を動かしています。そのためいくつかの変更されたファイル"
+"があると思われます。これらを無視することもできますが、アップデート続ける前に 'scn update' を"
+"実行したほうが安全です"
+
+#, c-format
+msgid "Modified files (%d)"
+msgstr "変更されたファイル (%d)"
+
+#, fuzzy, c-format
+msgid ""
+"These files are no longer part of Gallery. They probably won't cause any problems but it is "
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %sthis script%s in your gallery2 directory to delete them "
+"for you."
+msgstr ""
+"これらのファイルはもはや Gallery の一部ではありません。特に何の問題も引き起こさないと思います"
+"が、システムをクリーンな状態に保つには削除した方が良いです。Gallery はこれらのファイルを削除"
+"できませんが、%s をダウンロードして gallery2 のディレクトリで実行すれば削除してくれます。"
+
+#, c-format
+msgid "Old files (%d)"
+msgstr "古いファイル (%d)"
+
+#, c-format
+msgid "The storage folder path is not defined in config.php (%s)"
+msgstr ""
 
 msgid "Upgrade Core"
 msgstr "コアをアップグレード"
@@ -499,47 +546,6 @@ msgstr "続けてステップ %d へ&raquo;"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
-
-#, c-format
-msgid "Missing files (%d)"
-msgstr "欠落したファイル (%d)"
-
-msgid ""
-"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
-"be safe to ignore these."
-msgstr ""
-"注意: あなたはSVNから取得した Gallery を動かしています。そのため最近削除されたファイルがここ"
-"に存在するかもしれません。これらは無視しておく方が安全です"
-
-#, c-format
-msgid "Modified files (%d)"
-msgstr "変更されたファイル (%d)"
-
-msgid ""
-"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
-"continuing."
-msgstr ""
-"注意: あなたはSVNから取得した Gallery を動かしています。そのためいくつかの変更されたファイル"
-"があると思われます。これらを無視することもできますが、アップデート続ける前に 'scn update' を"
-"実行したほうが安全です"
-
-#, c-format
-msgid "Old files (%d)"
-msgstr "古いファイル (%d)"
-
-#, c-format
-msgid ""
-"These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
-"you, but you can download and run %s in your gallery2 directory to delete them for you."
-msgstr ""
-"これらのファイルはもはや Gallery の一部ではありません。特に何の問題も引き起こさないと思います"
-"が、システムをクリーンな状態に保つには削除した方が良いです。Gallery はこれらのファイルを削除"
-"できませんが、%s をダウンロードして gallery2 のディレクトリで実行すれば削除してくれます。"
-
-msgid "this script"
-msgstr "このスクリプト"
 
 msgid "Upgrade Steps"
 msgstr "アップグレードのステップ"
@@ -794,3 +800,6 @@ msgstr "言語選択:"
 
 msgid "Go"
 msgstr "進む"
+
+#~ msgid "this script"
+#~ msgstr "このスクリプト"

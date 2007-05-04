@@ -21,7 +21,7 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
 "PO-Revision-Date: 2007-03-15 15:18+0900\n"
 "Last-Translator: Yosuke Suzuki <yosuke.suzuki@gmail.com>\n"
@@ -326,13 +326,6 @@ msgstr "Gallery アイテム管理"
 msgid "delete an item"
 msgstr "アイテム削除"
 
-msgid "delete confirmation"
-msgstr "削除の確認"
-
-#, c-format
-msgid "delete %s"
-msgstr "%s 削除"
-
 #, c-format
 msgid "edit %s"
 msgstr "%s 編集"
@@ -543,6 +536,9 @@ msgstr "ハイライト作成"
 
 msgid "Reorder Items"
 msgstr "アイテムの再並べ替え"
+
+msgid "Delete Items"
+msgstr "アイテム削除"
 
 msgid "Site Admin"
 msgstr "サイト管理"
@@ -1005,6 +1001,10 @@ msgstr "コア"
 
 msgid "unknown"
 msgstr "未知"
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
+msgstr ""
 
 msgid "Gallery version"
 msgstr "Gallery バージョン"
@@ -1681,11 +1681,17 @@ msgid "Maintenance Mode Url"
 msgstr "メンテナンス"
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
 msgstr ""
 
-msgid "Example: /maintenance.html"
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
+msgstr ""
+
+msgid "For example: /maintenance.html"
 msgstr ""
 
 #, fuzzy
@@ -1865,8 +1871,12 @@ msgstr "いいえ"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "__PLUGIN__ を本当にアンインストールしますか?"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+#, fuzzy
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
 msgstr "このプラグインはアンインストールされ、そのファイルは削除されます。"
+
+msgid "The files of this plugin will be deleted permanently."
+msgstr ""
 
 msgid "disabled(__COUNT__)"
 msgstr "無効(__COUNT__)"
@@ -2244,6 +2254,12 @@ msgstr "既定のソート順:"
 msgid "with"
 msgstr "with"
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 msgid "New albums"
 msgstr "新しいアルバム"
 
@@ -2573,9 +2589,6 @@ msgstr "キャプションを割り当て:"
 msgid "No Thumbnail"
 msgstr "サムネイルなし"
 
-msgid "Delete Items"
-msgstr "アイテム削除"
-
 msgid "No items were selected for deletion"
 msgstr "削除するアイテムが選択されませんでした"
 
@@ -2628,23 +2641,19 @@ msgstr "前のページ"
 msgid "Next Page"
 msgstr "次のページ"
 
-msgid "Deletion Complete"
-msgstr "削除完了"
+#, fuzzy
+msgid "Do you really want to delete "
+msgstr "__PLUGIN__ を本当にアンインストールしますか?"
 
-msgid "Item successfully deleted"
-msgstr "アイテムの削除に成功しました"
+msgid "Deleting... Please wait"
+msgstr ""
 
-#, c-format
-msgid "Are you sure you want to delete this %s?"
-msgstr "この %s を本当に削除しますか?"
+msgid "OK"
+msgstr ""
 
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] "それは、%d の項目を含みます"
-
-msgid "There is no undo!"
-msgstr "やり直しはありません"
+#, fuzzy
+msgid "Delete more items..."
+msgstr "アイテム削除"
 
 msgid "There was a problem processing your request."
 msgstr "要求の処理中に問題が発生しました"
@@ -2989,6 +2998,13 @@ msgstr "テーマを選択"
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3271,7 +3287,7 @@ msgid "color"
 msgstr "文字色"
 
 #, c-format
-msgid "You can also use the %scolor name%s for example: %s"
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr ""
 
 msgid "Configuration Error: Missing Theme"
@@ -3687,6 +3703,28 @@ msgstr "ログインブロック"
 
 msgid "Links to album/photo peers"
 msgstr "アルバム／画像へのリンク"
+
+#~ msgid "delete confirmation"
+#~ msgstr "削除の確認"
+
+#~ msgid "delete %s"
+#~ msgstr "%s 削除"
+
+#~ msgid "Deletion Complete"
+#~ msgstr "削除完了"
+
+#~ msgid "Item successfully deleted"
+#~ msgstr "アイテムの削除に成功しました"
+
+#~ msgid "Are you sure you want to delete this %s?"
+#~ msgstr "この %s を本当に削除しますか?"
+
+#~ msgid "It contains %d item."
+#~ msgid_plural "It contains %d items."
+#~ msgstr[0] "それは、%d の項目を含みます"
+
+#~ msgid "There is no undo!"
+#~ msgstr "やり直しはありません"
 
 #~ msgid "key"
 #~ msgstr "キー"

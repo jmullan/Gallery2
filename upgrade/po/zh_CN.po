@@ -281,12 +281,60 @@ msgstr ""
 "错误：在你的储存目录中的某些文件或目录无法被WEB服务器用户写入。请执行 chown -R webserverUser "
 "%s 或执行 chmod -R 777 %s。"
 
+#, fuzzy, c-format
+msgid "Inaccessible or missing  files (%d)"
+msgstr "缺少的文件（%d）"
+
 #, fuzzy
 msgid "Gallery file integrity"
 msgstr "图库完整性"
 
 msgid "Manifest missing or inaccessible."
 msgstr "找不到或无法存取文件清单"
+
+#, fuzzy
+msgid ""
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
+"be safe to ignore these."
+msgstr ""
+"注意：你正在执行由 CVS 中下载的 Gallery，所以有些最近移除的文件可能会出现在这里。可能可以安全"
+"的忽略它们。"
+
+#, c-format
+msgid "Missing files (%d)"
+msgstr "缺少的文件（%d）"
+
+#, fuzzy
+msgid ""
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
+msgstr ""
+"注意：你正在执行由 CVS 中下载的 Gallery，所以会有些修改过的文件。你大概可以忽略这些文件，可是"
+"为了安全起见，你最好先执行「cvs update -Pd」指令再继续。"
+
+#, c-format
+msgid "Modified files (%d)"
+msgstr "修改过的文件（%d）"
+
+# c-format
+#, fuzzy, c-format
+msgid ""
+"These files are no longer part of Gallery. They probably won't cause any problems but it is "
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %sthis script%s in your gallery2 directory to delete them "
+"for you."
+msgstr ""
+"图库已经不再使用这些文件。它们大概不会造成任何问题可是最好还是把它们删除。图库无法替你删除这"
+"些文件，可是你可以下载并在你的 gallery2 目录中执行%s以删除它们。"
+
+#, c-format
+msgid "Old files (%d)"
+msgstr "旧版的文件（%d）"
+
+#, c-format
+msgid "The storage folder path is not defined in config.php (%s)"
+msgstr ""
 
 msgid "Upgrade Core"
 msgstr "升级核心"
@@ -487,48 +535,6 @@ msgstr "继续到步骤 %d&raquo;"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Gallery：<strong>你的照片</strong>、<strong>你的网站</strong>"
-
-#, c-format
-msgid "Missing files (%d)"
-msgstr "缺少的文件（%d）"
-
-#, fuzzy
-msgid ""
-"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
-"be safe to ignore these."
-msgstr ""
-"注意：你正在执行由 CVS 中下载的 Gallery，所以有些最近移除的文件可能会出现在这里。可能可以安全"
-"的忽略它们。"
-
-#, c-format
-msgid "Modified files (%d)"
-msgstr "修改过的文件（%d）"
-
-#, fuzzy
-msgid ""
-"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
-"continuing."
-msgstr ""
-"注意：你正在执行由 CVS 中下载的 Gallery，所以会有些修改过的文件。你大概可以忽略这些文件，可是"
-"为了安全起见，你最好先执行「cvs update -Pd」指令再继续。"
-
-#, c-format
-msgid "Old files (%d)"
-msgstr "旧版的文件（%d）"
-
-# c-format
-#, fuzzy, c-format
-msgid ""
-"These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
-"you, but you can download and run %s in your gallery2 directory to delete them for you."
-msgstr ""
-"图库已经不再使用这些文件。它们大概不会造成任何问题可是最好还是把它们删除。图库无法替你删除这"
-"些文件，可是你可以下载并在你的 gallery2 目录中执行%s以删除它们。"
-
-msgid "this script"
-msgstr "这个脚本"
 
 msgid "Upgrade Steps"
 msgstr "升级步骤"
@@ -779,3 +785,6 @@ msgstr "选择语言："
 
 msgid "Go"
 msgstr "开始"
+
+#~ msgid "this script"
+#~ msgstr "这个脚本"

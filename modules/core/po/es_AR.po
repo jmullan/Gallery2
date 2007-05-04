@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "POT-Creation-Date: 2003-06-05 16:56-0300\n"
 "PO-Revision-Date: 2007-03-14 15:26+0100\n"
 "Last-Translator: Alvaro Cortizo <alvaro@netpandora.com>\n"
@@ -355,14 +355,6 @@ msgstr "Administrador de items"
 msgid "delete an item"
 msgstr "borrar item"
 
-#, fuzzy
-msgid "delete confirmation"
-msgstr "borrar item"
-
-#, fuzzy, c-format
-msgid "delete %s"
-msgstr "Borrar un usuario"
-
 #, fuzzy, c-format
 msgid "edit %s"
 msgstr "Editar un usuario"
@@ -611,6 +603,10 @@ msgstr "Hacer car&aacute;tula"
 #, fuzzy
 msgid "Reorder Items"
 msgstr "mover item"
+
+#, fuzzy
+msgid "Delete Items"
+msgstr "Borrar &iacute;"
 
 #, fuzzy
 msgid "Site Admin"
@@ -1134,6 +1130,10 @@ msgstr "configurar"
 
 msgid "unknown"
 msgstr "desconocido"
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
+msgstr ""
 
 #, fuzzy
 msgid "Gallery version"
@@ -1884,11 +1884,17 @@ msgid "Maintenance Mode Url"
 msgstr "Mantenimiento"
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
 msgstr ""
 
-msgid "Example: /maintenance.html"
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
+msgstr ""
+
+msgid "For example: /maintenance.html"
 msgstr ""
 
 #, fuzzy
@@ -2088,8 +2094,12 @@ msgstr "No"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Realmente quiere borrar al usuario '__PLUGIN__'?"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+#, fuzzy
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
 msgstr "Este plugin será desinstalado y sus archivos borrados."
+
+msgid "The files of this plugin will be deleted permanently."
+msgstr ""
 
 msgid "disabled(__COUNT__)"
 msgstr "deshabilitados(__COUNT__)"
@@ -2523,6 +2533,12 @@ msgstr "Ordenar el Album"
 msgid "with"
 msgstr "con"
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 #, fuzzy
 msgid "New albums"
 msgstr "editar album"
@@ -2887,10 +2903,6 @@ msgstr "Administrador de Gallery"
 msgid "No Thumbnail"
 msgstr "Sin Miniatura"
 
-#, fuzzy
-msgid "Delete Items"
-msgstr "Borrar &iacute;"
-
 msgid "No items were selected for deletion"
 msgstr "No se han seleccionado elementos para eliminar"
 
@@ -2951,24 +2963,19 @@ msgstr "Página Anterior"
 msgid "Next Page"
 msgstr "&Uacute;tima >|"
 
-msgid "Deletion Complete"
-msgstr "Borrado Completo"
+#, fuzzy
+msgid "Do you really want to delete "
+msgstr "Realmente quiere borrar al usuario '__PLUGIN__'?"
 
-msgid "Item successfully deleted"
-msgstr "Elemento eliminado con éxito"
+msgid "Deleting... Please wait"
+msgstr ""
 
-#, fuzzy, c-format
-msgid "Are you sure you want to delete this %s?"
-msgstr "Realmente quiere borrar este &iacute;tem?"
+msgid "OK"
+msgstr ""
 
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "There is no undo!"
-msgstr "&iexcl;No se puede deshacer!"
+#, fuzzy
+msgid "Delete more items..."
+msgstr "Borrar &iacute;"
 
 msgid "There was a problem processing your request."
 msgstr "Ha habido un problema procesando tu petición"
@@ -3365,6 +3372,13 @@ msgstr "Escoge un bloque"
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3688,7 +3702,7 @@ msgid "color"
 msgstr "central"
 
 #, fuzzy, c-format
-msgid "You can also use the %scolor name%s for example: %s"
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr ""
 "Puedes usar tambien el <a href=\"%s\" target=\"_new\">nombre del color</a>, por ejemplo: %s"
 
@@ -4149,6 +4163,27 @@ msgstr "Login"
 
 msgid "Links to album/photo peers"
 msgstr "Enlaces a los pares de álbum/foto"
+
+#, fuzzy
+#~ msgid "delete confirmation"
+#~ msgstr "borrar item"
+
+#, fuzzy
+#~ msgid "delete %s"
+#~ msgstr "Borrar un usuario"
+
+#~ msgid "Deletion Complete"
+#~ msgstr "Borrado Completo"
+
+#~ msgid "Item successfully deleted"
+#~ msgstr "Elemento eliminado con éxito"
+
+#, fuzzy
+#~ msgid "Are you sure you want to delete this %s?"
+#~ msgstr "Realmente quiere borrar este &iacute;tem?"
+
+#~ msgid "There is no undo!"
+#~ msgstr "&iexcl;No se puede deshacer!"
 
 #~ msgid "key"
 #~ msgstr "llave"

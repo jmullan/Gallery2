@@ -19,7 +19,7 @@
 # Guy Sheffer <guysoft@ort.org.il>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "POT-Creation-Date: 2004-12-18 15:28+0200\n"
 "PO-Revision-Date: 2007-03-14 16:14+0100\n"
 "Last-Translator: Guy Sheffer <guysoft@ort.org.il>\n"
@@ -334,13 +334,6 @@ msgstr "Gallery Item Administration"
 msgid "delete an item"
 msgstr "מחק פריט"
 
-msgid "delete confirmation"
-msgstr "אישור מחיקה"
-
-#, c-format
-msgid "delete %s"
-msgstr "מחיקת %s"
-
 #, c-format
 msgid "edit %s"
 msgstr "עריכת %s"
@@ -553,6 +546,10 @@ msgstr "הצג הדגשות"
 
 msgid "Reorder Items"
 msgstr "סדר פריטים מחדש"
+
+#, fuzzy
+msgid "Delete Items"
+msgstr "מחק פריט"
 
 msgid "Site Admin"
 msgstr "פאנל ניהול"
@@ -1016,6 +1013,10 @@ msgstr "הגדרות"
 
 msgid "unknown"
 msgstr "לא ידוע"
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
+msgstr ""
 
 #, fuzzy
 msgid "Gallery version"
@@ -1672,11 +1673,17 @@ msgid "Maintenance Mode Url"
 msgstr "אחזקה"
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
 msgstr ""
 
-msgid "Example: /maintenance.html"
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
+msgstr ""
+
+msgid "For example: /maintenance.html"
 msgstr ""
 
 #, fuzzy
@@ -1855,7 +1862,10 @@ msgstr ""
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "האם אתה בטוח שברצונך להסיר את מודול __PLUGIN__?"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
+msgstr ""
+
+msgid "The files of this plugin will be deleted permanently."
 msgstr ""
 
 msgid "disabled(__COUNT__)"
@@ -2255,6 +2265,12 @@ msgstr "מיון ברירת המחדל"
 msgid "with"
 msgstr "רוחב"
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 msgid "New albums"
 msgstr "אלבומים חדשים"
 
@@ -2582,10 +2598,6 @@ msgstr ""
 msgid "No Thumbnail"
 msgstr "תמונה מוקטנת לא קיימת"
 
-#, fuzzy
-msgid "Delete Items"
-msgstr "מחק פריט"
-
 msgid "No items were selected for deletion"
 msgstr "לא נבחרו פריטים למחיקה"
 
@@ -2641,24 +2653,19 @@ msgstr "עמוד קודם"
 msgid "Next Page"
 msgstr "עמוד הבא"
 
-msgid "Deletion Complete"
-msgstr "מחיקה הסתיימה"
+#, fuzzy
+msgid "Do you really want to delete "
+msgstr "האם אתה בטוח שברצונך להסיר את מודול __PLUGIN__?"
 
-msgid "Item successfully deleted"
-msgstr "פריט נמחק בהצלחה"
+msgid "Deleting... Please wait"
+msgstr ""
 
-#, c-format
-msgid "Are you sure you want to delete this %s?"
-msgstr "האם אתה בטוח שברצונך למחוק את %s זה?"
+msgid "OK"
+msgstr ""
 
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] "מכיל פריט %d"
-msgstr[1] "מכיל %d פריטים"
-
-msgid "There is no undo!"
-msgstr "אין אפשרות לבטל!"
+#, fuzzy
+msgid "Delete more items..."
+msgstr "מחק פריט"
 
 msgid "There was a problem processing your request."
 msgstr "התגלתה שגיאה בעת ביצוע הבקשה שלך."
@@ -3008,6 +3015,13 @@ msgstr "בחר אלבום חדש עבורם"
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3301,7 +3315,7 @@ msgid "color"
 msgstr "הגדרות"
 
 #, c-format
-msgid "You can also use the %scolor name%s for example: %s"
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr ""
 
 msgid "Configuration Error: Missing Theme"
@@ -3688,6 +3702,29 @@ msgstr "כניסה"
 
 msgid "Links to album/photo peers"
 msgstr ""
+
+#~ msgid "delete confirmation"
+#~ msgstr "אישור מחיקה"
+
+#~ msgid "delete %s"
+#~ msgstr "מחיקת %s"
+
+#~ msgid "Deletion Complete"
+#~ msgstr "מחיקה הסתיימה"
+
+#~ msgid "Item successfully deleted"
+#~ msgstr "פריט נמחק בהצלחה"
+
+#~ msgid "Are you sure you want to delete this %s?"
+#~ msgstr "האם אתה בטוח שברצונך למחוק את %s זה?"
+
+#~ msgid "It contains %d item."
+#~ msgid_plural "It contains %d items."
+#~ msgstr[0] "מכיל פריט %d"
+#~ msgstr[1] "מכיל %d פריטים"
+
+#~ msgid "There is no undo!"
+#~ msgstr "אין אפשרות לבטל!"
 
 #~ msgid "key"
 #~ msgstr "מפתח"

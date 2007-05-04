@@ -280,11 +280,57 @@ msgstr ""
 "錯誤：在你的儲存目錄中的某些檔案或目錄無法被網頁伺服器用戶寫入。請執行 chown -R "
 "webserverUser %s 或執行 chmod -R 777 %s。"
 
+#, fuzzy, c-format
+msgid "Inaccessible or missing  files (%d)"
+msgstr "缺少的檔案（%d）"
+
 msgid "Gallery file integrity"
 msgstr "Gallery 完整性"
 
 msgid "Manifest missing or inaccessible."
 msgstr "找不到或無法存取檔案清單"
+
+msgid ""
+"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
+"be safe to ignore these."
+msgstr ""
+"注意：你正在執行由 SVN 中下載的 Gallery，所以有些最近移除的檔案可能會出現在這裡。可能可以安全"
+"的忽略它們。"
+
+#, c-format
+msgid "Missing files (%d)"
+msgstr "缺少的檔案（%d）"
+
+msgid ""
+"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
+"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
+"continuing."
+msgstr ""
+"注意：你正在執行由 SVN 中下載的 Gallery，所以會有些修改過的檔案。你大概可以忽略這些檔案，可是"
+"為了安全起見，你最好先執行「svn update」指令再繼續。"
+
+#, c-format
+msgid "Modified files (%d)"
+msgstr "修改過的檔案（%d）"
+
+# c-format
+#, fuzzy, c-format
+msgid ""
+"These files are no longer part of Gallery. They probably won't cause any problems but it is "
+"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
+"you, but you can download and run %sthis script%s in your gallery2 directory to delete them "
+"for you."
+msgstr ""
+"Gallery 已經不再使用這些檔案。它們大概不會造成任何問題可是最好還是把它們刪除。Gallery 無法替"
+"你刪除這些檔案，可是你可以下載並在你的 gallery2 目錄中執行%s以刪除它們。"
+
+#, c-format
+msgid "Old files (%d)"
+msgstr "舊版的檔案（%d）"
+
+#, c-format
+msgid "The storage folder path is not defined in config.php (%s)"
+msgstr ""
 
 msgid "Upgrade Core"
 msgstr "升級核心"
@@ -484,46 +530,6 @@ msgstr "繼續到步驟 %d&raquo;"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Gallery：<strong>你的照片</strong>、<strong>你的網站</strong>"
-
-#, c-format
-msgid "Missing files (%d)"
-msgstr "缺少的檔案（%d）"
-
-msgid ""
-"Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
-"be safe to ignore these."
-msgstr ""
-"注意：你正在執行由 SVN 中下載的 Gallery，所以有些最近移除的檔案可能會出現在這裡。可能可以安全"
-"的忽略它們。"
-
-#, c-format
-msgid "Modified files (%d)"
-msgstr "修改過的檔案（%d）"
-
-msgid ""
-"Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
-"probably ignore these, but to be safe you should make sure that you do 'svn update' before "
-"continuing."
-msgstr ""
-"注意：你正在執行由 SVN 中下載的 Gallery，所以會有些修改過的檔案。你大概可以忽略這些檔案，可是"
-"為了安全起見，你最好先執行「svn update」指令再繼續。"
-
-#, c-format
-msgid "Old files (%d)"
-msgstr "舊版的檔案（%d）"
-
-# c-format
-#, c-format
-msgid ""
-"These files are no longer part of Gallery. They probably won't cause any problems but it is "
-"a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
-"you, but you can download and run %s in your gallery2 directory to delete them for you."
-msgstr ""
-"Gallery 已經不再使用這些檔案。它們大概不會造成任何問題可是最好還是把它們刪除。Gallery 無法替"
-"你刪除這些檔案，可是你可以下載並在你的 gallery2 目錄中執行%s以刪除它們。"
-
-msgid "this script"
-msgstr "這個指令檔"
 
 msgid "Upgrade Steps"
 msgstr "升級步驟"
@@ -762,3 +768,6 @@ msgstr "選擇語言："
 
 msgid "Go"
 msgstr "開始"
+
+#~ msgid "this script"
+#~ msgstr "這個指令檔"
