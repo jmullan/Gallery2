@@ -118,12 +118,6 @@ gettext("Gallery Item Administration")
 /* ItemDelete.inc */
 gettext("delete an item")
 
-/* ItemDeleteConfirmation.inc */
-gettext("delete confirmation")
-
-/* ItemDeleteSingle.inc */
-gettext("delete %s")
-
 /* ItemEdit.inc */
 gettext("edit %s")
 
@@ -227,7 +221,7 @@ gettext("View Permissions")
 gettext("Delete Album")
 gettext("Delete Photo")
 gettext("Delete Movie")
-gettext("Delete %s") /* also in: templates/ItemDeleteSingle.tpl */
+gettext("Delete %s")
 gettext("Move Album")
 gettext("Move Photo")
 gettext("Move Movie")
@@ -235,6 +229,7 @@ gettext("Move %s") /* also in: templates/ItemMoveSingle.tpl */
 gettext("Edit Captions") /* also in: templates/ItemEditCaptions.tpl */
 gettext("Make Highlight")
 gettext("Reorder Items")
+gettext("Delete Items") /* also in: templates/ItemDelete.tpl */
 gettext("Site Admin")
 gettext("Login") /* also in: classes/CoreCaptchaAdminOption.class templates/UserLogin.tpl templates/blocks/LoginBlock.tpl */
 gettext("Your Account")
@@ -420,6 +415,7 @@ gettext("System information")
 gettext("Get system details; useful for copy/paste into G2 support forum.")
 gettext("core")
 gettext("unknown")
+gettext("API = Core %s, Module %s, Theme %s, Embed %s")
 gettext("Gallery version") /* also in: templates/ErrorPage.tpl */
 gettext("PHP version") /* also in: templates/ErrorPage.tpl */
 gettext("Webserver") /* also in: templates/ErrorPage.tpl */
@@ -523,7 +519,7 @@ gettext("Create User") /* also in: templates/AdminUsers.tpl */
 gettext("Delete A Group")
 gettext("Are you sure?") /* also in: templates/AdminDeleteUser.tpl templates/AdminMaintenance.tpl */
 gettext("This will completely remove %s from Gallery.  There is no undo!")
-gettext("Delete") /* also in: templates/AdminDeleteUser.tpl templates/AdminGroups.tpl templates/AdminUsers.tpl templates/ItemDelete.tpl templates/ItemDeleteSingle.tpl */
+gettext("Delete") /* also in: templates/AdminDeleteUser.tpl templates/AdminGroups.tpl templates/AdminUsers.tpl templates/ItemDelete.tpl */
 
 /* templates/AdminDeleteUser.tpl */
 gettext("Delete a User")
@@ -617,8 +613,9 @@ gettext("Maintenance Mode has been turned off.")
 gettext("Maintenance Mode")
 gettext("Restrict user access to the system while maintenance is being performed.")
 gettext("Maintenance Mode Url")
-gettext("The Maintenance Mode Url is where requests will be redirected to when access to the site has been restricted by the administrator.")
-gettext("Example: /maintenance.html")
+gettext("The Maintenance Mode Url specifies where requests will be redirected when access to the site has been restricted by the administrator.")
+gettext("If left blank Gallery will display a default page with an administrator login link. This page will be themed when the code base is up to date, otherwise it will display a plain unstyled page.")
+gettext("For example: /maintenance.html")
 gettext("Set")
 gettext("Task name")
 gettext("Last run")
@@ -663,14 +660,15 @@ gettext("Status: Incompatible Plugin (Inactive)")
 gettext("Status: Inactive (Configuration Required)")
 gettext("__PLUGIN__ needs configuration")
 gettext("__PLUGIN__ deleted")
-gettext("Warning!")
+gettext("Warning!") /* also in: templates/ItemDeleteJs.tpl */
 gettext("Do you really want to uninstall __PLUGIN__?")
 gettext("This will also remove any permissions and clean up any data created by this module.")
 gettext("This plugin will be uninstalled, but its files will be kept so that you can reinstall it.")
-gettext("Yes")
-gettext("No")
+gettext("Yes") /* also in: templates/ItemDeleteJs.tpl */
+gettext("No") /* also in: templates/ItemDeleteJs.tpl */
 gettext("Do you really want to delete __PLUGIN__?")
-gettext("This plugin will be uninstalled and its files will be deleted.")
+gettext("This plugin will be uninstalled and its files will be deleted permanently.")
+gettext("The files of this plugin will be deleted permanently.")
 gettext("disabled(__COUNT__)")
 gettext("up to date(__COUNT__)")
 gettext("not installed(__COUNT__)")
@@ -776,6 +774,7 @@ gettext("Defaults")
 gettext("These are default display settings for albums in your gallery.  They can be overridden in each album.")
 gettext("Default sort order")
 gettext("with") /* also in: templates/ItemEditAlbum.tpl */
+gettext("The %s theme is incompatible with your Gallery version or no longer available.  Please upgrade the %s theme or pick another default theme.")
 gettext("New albums")
 gettext("To activate more themes visit the %sPlugins%s page.")
 gettext("Save Defaults")
@@ -882,7 +881,6 @@ gettext("Assign caption to:")
 gettext("No Thumbnail")
 
 /* templates/ItemDelete.tpl */
-gettext("Delete Items")
 gettext("No items were selected for deletion")
 ngettext("Successfully deleted %d item", "Successfully deleted %d items")
 gettext("This album contains no items to delete")
@@ -899,14 +897,11 @@ gettext("Invert") /* also in: templates/ItemMove.tpl */
 gettext("Previous Page") /* also in: templates/ItemMove.tpl */
 gettext("Next Page") /* also in: templates/ItemMove.tpl */
 
-/* templates/ItemDeleteConfirmation.tpl */
-gettext("Deletion Complete")
-gettext("Item successfully deleted")
-
-/* templates/ItemDeleteSingle.tpl */
-gettext("Are you sure you want to delete this %s?")
-ngettext("It contains %d item.", "It contains %d items.")
-gettext("There is no undo!")
+/* templates/ItemDeleteJs.tpl */
+gettext("Do you really want to delete ")
+gettext("Deleting... Please wait")
+gettext("OK")
+gettext("Delete more items...")
 
 /* templates/ItemEdit.tpl */
 gettext("There was a problem processing your request.") /* also in: templates/ItemMove.tpl */
@@ -1011,6 +1006,7 @@ gettext("Restore original")
 
 /* templates/ItemEditTheme.tpl */
 gettext("Choose a theme")
+gettext("This album is configured to use the %s theme which is either incompatible with this Gallery version or no longer available.  Please upgrade the %s theme or use another theme for this album.")
 gettext("Themes control the look and feel of the album.  You can choose a different theme for each album.  If you don't choose a theme, we'll use the %s theme by default.")
 gettext("Use this theme in all subalbums")
 gettext("Choose Theme")
@@ -1108,7 +1104,7 @@ gettext("bullet")
 gettext("url")
 gettext("image")
 gettext("color")
-gettext("You can also use the %scolor name%s for example: %s")
+gettext("You can also use the %scolor name%s for example: %sYour Text%s")
 
 /* templates/ShowItemError.tpl */
 gettext("Configuration Error: Missing Theme")

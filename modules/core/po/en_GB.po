@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.10\n"
+"Project-Id-Version: Gallery: Core 1.2.11\n"
 "POT-Creation-Date: 2003-06-25 11:44+0100\n"
 "PO-Revision-Date: 2007-03-06 18:59+0100\n"
 "Last-Translator: Stephen Ryan <ryaner@gmail.com>\n"
@@ -82,9 +82,8 @@ msgstr "File"
 msgid "&lt;none&gt;"
 msgstr "&lt;none&gt;"
 
-#, fuzzy
 msgid "Link"
-msgstr "Login"
+msgstr "Link"
 
 #, c-format
 msgid "Page %d of %d"
@@ -327,13 +326,6 @@ msgstr "Gallery Item Administration"
 msgid "delete an item"
 msgstr "delete an item"
 
-msgid "delete confirmation"
-msgstr "delete confirmation"
-
-#, c-format
-msgid "delete %s"
-msgstr "delete %s"
-
 #, c-format
 msgid "edit %s"
 msgstr "edit %s"
@@ -545,6 +537,9 @@ msgstr "Make Highlight"
 msgid "Reorder Items"
 msgstr "Reorder Items"
 
+msgid "Delete Items"
+msgstr "Delete Items"
+
 msgid "Site Admin"
 msgstr "Site Admin"
 
@@ -570,7 +565,7 @@ msgid "Performance"
 msgstr "Performance"
 
 msgid "Event Logs"
-msgstr ""
+msgstr "Event Logs"
 
 msgid "Toolkit Priority"
 msgstr "Toolkit Priority"
@@ -1010,6 +1005,10 @@ msgstr "core"
 
 msgid "unknown"
 msgstr "unknown"
+
+#, c-format
+msgid "API = Core %s, Module %s, Theme %s, Embed %s"
+msgstr ""
 
 msgid "Gallery version"
 msgstr "Gallery version"
@@ -1566,48 +1565,38 @@ msgid_plural "%d failed login attempts since the last successful login."
 msgstr[0] "%d failed login attempt since the last successful login."
 msgstr[1] "%d failed login attempts since the last successful login."
 
-#, fuzzy
 msgid "Recent Events"
-msgstr "Reset view counts"
+msgstr "Recent Events"
 
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
-#, fuzzy
 msgid "Location"
-msgstr "Action"
+msgstr "Location"
 
-#, fuzzy
 msgid "Client"
-msgstr "list"
+msgstr "Client"
 
-#, fuzzy
 msgid "No events have been reported yet."
-msgstr "No packages have been selected."
+msgstr "No events have been reported yet."
 
-#, fuzzy
 msgid "Event Details"
-msgstr "Error Detail"
+msgstr "Event Details"
 
-#, fuzzy
 msgid "User Id"
-msgstr "User"
+msgstr "User Id"
 
-#, fuzzy
 msgid "Referer"
-msgstr "Reorder"
+msgstr "Referer"
 
-#, fuzzy
 msgid "Details"
-msgstr "Defaults"
+msgstr "Details"
 
-#, fuzzy
 msgid "no summary"
-msgstr "Summary"
+msgstr "no summary"
 
-#, fuzzy
 msgid "An error occurred while retrieving the event log entry details."
-msgstr "An error has occurred while interacting with the database."
+msgstr "An error occurred while retrieving the event log entry details."
 
 msgid "Group Management"
 msgstr "Group Management"
@@ -1682,33 +1671,38 @@ msgid "The %s task failed to complete successfully."
 msgstr "The %s task failed to complete successfully."
 
 msgid "Maintenance Mode has been turned on."
-msgstr ""
+msgstr "Maintenance Mode has been turned on."
 
 msgid "Maintenance Mode has been turned off."
-msgstr ""
+msgstr "Maintenance Mode has been turned off."
 
-#, fuzzy
 msgid "Maintenance Mode"
-msgstr "Maintenance"
+msgstr "Maintenance Mode"
 
 msgid "Restrict user access to the system while maintenance is being performed."
-msgstr ""
+msgstr "Restrict user access to the system while maintenance is being performed."
 
-#, fuzzy
 msgid "Maintenance Mode Url"
-msgstr "Maintenance"
+msgstr "Maintenance Mode Url"
 
 msgid ""
-"The Maintenance Mode Url is where requests will be redirected to when access to the site has "
-"been restricted by the administrator."
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
+msgstr ""
+"The Maintenance Mode Url specifies where requests will be redirected when access to the site "
+"has been restricted by the administrator."
+
+msgid ""
+"If left blank Gallery will display a default page with an administrator login link. This "
+"page will be themed when the code base is up to date, otherwise it will display a plain "
+"unstyled page."
 msgstr ""
 
-msgid "Example: /maintenance.html"
-msgstr ""
+msgid "For example: /maintenance.html"
+msgstr "For example: /maintenance.html"
 
-#, fuzzy
 msgid "Set"
-msgstr "Setting"
+msgstr "Set"
 
 msgid "Task name"
 msgstr "Task name"
@@ -1808,9 +1802,8 @@ msgstr "Guest Users"
 msgid "Expires after:"
 msgstr "Expires after:"
 
-#, fuzzy
 msgid "Template Cache"
-msgstr "Delete template cache"
+msgstr "Template Cache"
 
 #, c-format
 msgid ""
@@ -1818,10 +1811,12 @@ msgid ""
 "your template files%s, you should disable template caching temporarily so that changes take "
 "effect immediately without clearing the template cache."
 msgstr ""
+"For optimal performance, Gallery caches all templates.  If you would like to %scustomise "
+"your template files%s, you should disable template caching temporarily so that changes take "
+"effect immediately without clearing the template cache."
 
-#, fuzzy
 msgid "Enable template caching"
-msgstr "Delete template cache"
+msgstr "Enable template caching"
 
 msgid "Clear Saved Pages"
 msgstr "Clear Saved Pages"
@@ -1866,7 +1861,7 @@ msgid "Do you really want to uninstall __PLUGIN__?"
 msgstr "Do you really want to uninstall __PLUGIN__?"
 
 msgid "This will also remove any permissions and clean up any data created by this module."
-msgstr ""
+msgstr "This will also remove any permissions and clean up any data created by this module."
 
 msgid ""
 "This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
@@ -1882,8 +1877,11 @@ msgstr "No"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Do you really want to delete __PLUGIN__?"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
-msgstr "This plugin will be uninstalled and its files will be deleted."
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
+msgstr "This plugin will be uninstalled and its files will be deleted permanently."
+
+msgid "The files of this plugin will be deleted permanently."
+msgstr "The files of this plugin will be deleted permanently."
 
 msgid "disabled(__COUNT__)"
 msgstr "disabled(__COUNT__)"
@@ -2284,6 +2282,12 @@ msgstr "Default sort order"
 msgid "with"
 msgstr "with"
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 msgid "New albums"
 msgstr "New albums"
 
@@ -2616,9 +2620,6 @@ msgstr "Assign caption to:"
 msgid "No Thumbnail"
 msgstr "No Thumbnail"
 
-msgid "Delete Items"
-msgstr "Delete Items"
-
 msgid "No items were selected for deletion"
 msgstr "No items were selected for deletion"
 
@@ -2674,24 +2675,17 @@ msgstr "Previous Page"
 msgid "Next Page"
 msgstr "Next Page"
 
-msgid "Deletion Complete"
-msgstr "Deletion Complete"
+msgid "Do you really want to delete "
+msgstr "Do you really want to delete "
 
-msgid "Item successfully deleted"
-msgstr "Item successfully deleted"
+msgid "Deleting... Please wait"
+msgstr "Deleting... Please wait"
 
-#, c-format
-msgid "Are you sure you want to delete this %s?"
-msgstr "Are you sure you want to delete this %s?"
+msgid "OK"
+msgstr "OK"
 
-#, c-format
-msgid "It contains %d item."
-msgid_plural "It contains %d items."
-msgstr[0] "It contains %d item."
-msgstr[1] "It contains %d items."
-
-msgid "There is no undo!"
-msgstr "There is no undo!"
+msgid "Delete more items..."
+msgstr "Delete more items..."
 
 msgid "There was a problem processing your request."
 msgstr "There was a problem processing your request."
@@ -3049,6 +3043,13 @@ msgstr "Choose a theme"
 
 #, c-format
 msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
+
+#, c-format
+msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
@@ -3335,8 +3336,8 @@ msgid "color"
 msgstr "colour"
 
 #, c-format
-msgid "You can also use the %scolor name%s for example: %s"
-msgstr "You can also use the %scolour name%s for example: %s"
+msgid "You can also use the %scolor name%s for example: %sYour Text%s"
+msgstr "You can also use the %scolour name%s for example: %sYour Text%s"
 
 msgid "Configuration Error: Missing Theme"
 msgstr "Configuration Error: Missing Theme"
@@ -3757,9 +3758,3 @@ msgstr "Login block"
 
 msgid "Links to album/photo peers"
 msgstr "Links to album/photo peers"
-
-#~ msgid "key"
-#~ msgstr "key"
-
-#~ msgid "G2.2: Double Double"
-#~ msgstr "G2.2: Double Double"
