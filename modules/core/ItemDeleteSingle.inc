@@ -66,7 +66,8 @@ class ItemDeleteSingleView extends GalleryView {
      */
     function handleCallback() {
 	global $gallery;
-	list ($itemId, $pageItemId) = GalleryUtilities::getRequestVariables('itemId', 'pageId');
+	list ($itemId, $pageItemId, $page) = GalleryUtilities::getRequestVariables(
+	    'itemId', 'pageId', 'page');
 
 	/* The view shouldn't let us get this far if we don't have delete permission */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.delete');
@@ -106,9 +107,12 @@ class ItemDeleteSingleView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$result['redirect'] = $urlGenerator->generateUrl(
-	    array('view' => 'core.ShowItem', 
-		  'itemId' => ($itemId == $pageItemId ? $parentId : $pageItemId), 'return' => 1),
+	$params = array('view' => 'core.ShowItem', 
+	      'itemId' => ($itemId == $pageItemId ? $parentId : $pageItemId));
+	if (!empty($page)) {
+	    $params['page'] = $page;
+	}
+	$result['redirect'] = $urlGenerator->generateUrl($params,
 	    array('forceServerRelativeUrl' => true));
 	$result['status'] = 'success';
 	return array(null, $result);

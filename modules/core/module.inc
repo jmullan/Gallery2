@@ -162,15 +162,18 @@ class CoreModule extends GalleryModule {
 		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
                 $title = smarty_modifier_escape(GalleryUtilities::markup(
 		    $item->getTitle(), 'strip'), 'javascript', 'UTF-8');
-		$thisItemId = GalleryUtilities::getRequestVariables('itemId');
+		list ($thisItemId, $page) = GalleryUtilities::getRequestVariables('itemId', 'page');
 		/* If no page item defined, we will navigate to the parent of the deleted item */
 		if (empty($thisItemId)) {
 		    $thisItemId = $itemId;
 		}
+		$urlParams = array('view' => 'core.ItemDeleteSingle', 'itemId' => $itemId,
+				   'pageId' => $thisItemId);
+		if (!empty($page)) {
+		    $urlParams['page'] = $page;
+		}
 		$urlGenerator =& $gallery->getUrlGenerator();
-		$url = $urlGenerator->generateUrl(
-		    array('view' => 'core.ItemDeleteSingle', 'itemId' => $itemId,
-			  'pageId' => $thisItemId),
+		$url = $urlGenerator->generateUrl($urlParams,
 		    array('useAuthToken' => true, 'forceDirect' => true));
 		$moreUrl = $isAlbum ? '' : $urlGenerator->generateUrl(
 		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemDelete', 
