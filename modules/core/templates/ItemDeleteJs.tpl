@@ -2,16 +2,17 @@
  * $Revision$
  * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
-  var prompt = {ldelim}
-    "header" : '{g->text text="Warning!" forJavascript=true}',
-    "body"   : '{g->text text="Do you really want to delete " forJavascript=true}',
-    "wait"   : '{g->text text="Deleting... Please wait" forJavascript=true}',
-    "yes"    : '{g->text text="Yes" forJavascript=true}',
-    "no"     : '{g->text text="No" forJavascript=true}',
-    "OK"     : '{g->text text="OK" forJavascript=true}',
-    "more"   : '{g->text text="Delete more items..." forJavascript=true}',
-    "errorPageUrl" : '{g->url arg1="view=core.ErrorPage"}'
-  {rdelim};
+var prompt = {ldelim}
+  "header" : '{g->text text="Warning!" forJavascript=true}',
+  "body"   : '{g->text text="Do you really want to delete " forJavascript=true}',
+  "wait"   : '{g->text text="Deleting... Please wait" forJavascript=true}',
+  "yes"    : '{g->text text="Yes" forJavascript=true}',
+  "no"     : '{g->text text="No" forJavascript=true}',
+  "OK"     : '{g->text text="OK" forJavascript=true}',
+  "more"   : '{g->text text="Delete more items..." forJavascript=true}',
+  "errorPageUrl" : '{g->url arg1="view=core.ErrorPage"}',
+  "waitImage"    : '{g->url href="images/rel_interstitial_loading.gif" forceFullUrl=1}'
+{rdelim};
 
 {literal}
 function core_confirmDelete(url, moreUrl, title) {
@@ -25,8 +26,7 @@ function core_confirmDelete(url, moreUrl, title) {
   dialog.setHeader(prompt['header']);
   var bodyText = prompt['body'] + title + '?';
   if (moreUrl != '') {
-    bodyText += '<br /><br /><a href="' + moreUrl + '">' 
-      + prompt['more'] + '</a>';
+    bodyText += '<br /><br /><a href="' + moreUrl + '">' + prompt['more'] + '</a>';
   }
   dialog.setBody(bodyText);
   dialog.cfg.setProperty("icon", YAHOO.widget.SimpleDialog.ICON_WARN);
@@ -79,7 +79,7 @@ function core_confirmDelete(url, moreUrl, title) {
       visible:false, 
       effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.25}});
     waitDialog.setHeader(prompt['wait']);
-    waitDialog.setBody("<img src='images/rel_interstitial_loading.gif'/>");
+    waitDialog.setBody("<img src='" + prompt['waitImage'] + "' />");
     waitDialog.render(document.body);
     waitDialog.show();
     YAHOO.util.Connect.asyncRequest('GET', url, callback);
