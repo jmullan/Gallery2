@@ -568,8 +568,10 @@ class ImageMagickToolkit extends GalleryToolkit {
 		    $args[] = '-deconstruct';
 		}
 	    }
-	    break;
-
+	    if ($outputMimeType == 'image/gif') {
+		break;
+	    }
+	    /* If the output format isn't gif, pick a frame assuming it's an animated GIF. */
 	case 'image/tiff':
 	case 'application/pdf':
 	case 'application/postscript':
