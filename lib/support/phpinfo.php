@@ -1,5 +1,5 @@
-<?php if (!defined('G2_SUPPORT')) { return; } ?>
 <?php
+if (!defined('G2_SUPPORT')) { return; }
 ob_start();
 phpinfo();
 $phpinfo = ob_get_contents();

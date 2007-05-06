@@ -1,5 +1,6 @@
-<?php if (!defined('G2_SUPPORT')) { return; } ?>
 <?php
+if (!defined('G2_SUPPORT')) { return; }
+
 function getCaches() {
     $dirs = array(
 	'cached pages' => array(true, 'clearPageCache', array(), 'Cached HTML pages'),

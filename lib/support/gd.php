@@ -30,7 +30,7 @@
  *
  * @author Ernesto Baschny <ernst@baschny.de>
  */
-if (!defined('G2_SUPPORT')) return;
+if (!defined('G2_SUPPORT')) { return; }
 
 /*
  * Gets a lot of information about our GD installation and return it as a
