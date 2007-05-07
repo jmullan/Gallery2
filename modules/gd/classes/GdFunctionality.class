@@ -545,5 +545,144 @@ class GdFunctionality {
     function imagedestroy($res) {
 	@imagedestroy($res);
     }
+
+    /**
+     * Set the flag to save full alpha channel information (as opposed to single-color transparency)
+     * when saving PNG images
+     *
+     * Requires:
+     * - PHP 4 >= 4.3.2 or PHP 5
+     *
+     * @param resource $res
+     * @param bool $saveFlag
+     * @return array object GalleryStatus
+     *	             bool true on success, false on failure
+     */
+    function imagesavealpha($res, $saveflag) {
+    	if (!function_exists('imagesavealpha')) {
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION),
+			 null);
+    	}
+    	return array(null, @imagesavealpha($res, $saveflag));
+    }
+
+    /**
+     * Set the blending mode for an image
+     *
+     * @param resource $res
+     * @param bool $blendmode
+     * @return bool true on success, false on failure
+     */
+    function imagealphablending($res, $blendmode) {
+    	return @imagealphablending($res, $blendmode);
+    }
+
+    /**
+     * Allocate a color for an image.
+     *
+     * Requires:
+     * - PHP 4 >= 4.3.2 or PHP 5
+     *
+     * @param resource $res
+     * @param int $red
+     * @param int $green
+     * @param int $blue
+     * @param int $alpha
+     * @return array object GalleryStatus
+     *	             int a color identifier, false on failure
+     */
+    function imagecolorallocatealpha($res, $red, $green, $blue, $alpha) {
+    	if (!function_exists('imagecolorallocatealpha')) {
+	    return array(GalleryCoreApi::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION),
+			 null);
+    	}
+    	return array(null, @imagecolorallocatealpha($res, $red, $green, $blue, $alpha));
+    }
+
+    /**
+     * Allocate a color for an image.
+     *
+     * @param resource $res
+     * @param int $red
+     * @param int $green
+     * @param int $blue
+     * @return int a color identifier, false on failure
+     */
+    function imagecolorallocate($res, $red, $green, $blue) {
+    	return @imagecolorallocate($res, $red, $green, $blue);
+    }
+
+    /**
+     * Draw a filled rectangle spanned by 2 points.
+     *
+     * @param resource $res
+     * @param int $x1 x coordinate of point 1
+     * @param int $y1 y coordinate of point 1
+     * @param int $x2 x coordinate of point 2
+     * @param int $y2 y coordinate of point 2
+     * @return bool true on success, false on failure
+     */
+    function imagefilledrectangle($res, $x1, $y1, $x2, $y2, $color) {
+    	return @imagefilledrectangle($res, $x1, $y1, $x2, $y2, $color);
+    }
+
+    /**
+     * Get / set the transparent color.
+     *
+     * @param resource $res
+     * @param int $color (optional) A color identifier
+     * @return The identifier of the new (or current, if none is specified) transparent color.
+     */
+    function imagecolortransparent($res, $color=null) {
+	if ($color !== null) {
+	    return @imagecolortransparent($res, $color); 
+	} else {
+	    return @imagecolortransparent($res);
+	}
+    }
+
+    /**
+     * Convert a true color image to a palette image.
+     * @param resource $res
+     * @param bool $dither
+     * @param int $ncolors
+     * @return true on success, false on failure
+     */
+    function imagetruecolortopalette($res, $dither, $ncolors) {
+	return @imagetruecolortopalette($res, $dither, $ncolors);
+    }
+
+    /**
+     * Get the index of the color of a pixel.
+     * @param resource $res
+     * @param int $x
+     * @param int $y
+     * @return int The index of the color
+     */
+    function imagecolorat($res, $x, $y) {
+	return @imagecolorat($res, $x, $y);
+    }
+
+    /**
+     * set the color of a pixel.
+     * @param resource $res
+     * @param int $x
+     * @param int $y
+     * @param int $color A color identifier
+     * @return bool true on success, false on failure
+     */
+    function imagesetpixel($res, $x, $y, $color) {
+	return @imagesetpixel($res, $x, $y, $color);
+    }
+
+    /**
+     * Get the colors for an index.
+     * @param resource $res
+     * @param int $index
+     * @return array('red' => int, 'green' => int, 'blue' => int, 'alpha' => int)
+     */
+    function imagecolorsforindex($res, $index) {
+	return @imagecolorsforindex($res, $index);
+    }
 }
 ?>

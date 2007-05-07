@@ -87,6 +87,7 @@ class TestGdFunctionality {
 	}
 	return $name;
     }
+
     /**
      * Make a copy of some resource
      */
@@ -97,18 +98,22 @@ class TestGdFunctionality {
 	$this->_resources[$newRes] = $this->_resources[$otherRes];
 	return $newRes;
     }
+
     function setResourceData($res, $field, $value) {
 	$this->_resources[$res][$field] = $value;
     }
+
     function getResourceData($res, $field) {
 	if (isset($this->_resources[$res][$field])) {
 	    return $this->_resources[$res][$field];
 	}
 	return '';
     }
+
     function isValidResource($res) {
 	return isset($this->_resources[$res]);
     }
+
     function saveResource($res, $filename, $mimeType) {
 	$this->_outputFiles[$filename] = array(
 	    'x' => $this->getResourceData($res, 'x'),
@@ -119,7 +124,13 @@ class TestGdFunctionality {
 	if (is_array($other)) {
 	    $this->_outputFiles[$filename] = array_merge($this->_outputFiles[$filename], $other);
 	}
+	$history = $this->getResourceData($res, 'history');
+	if (is_array($history)) {
+	    $history = array('history' => $history);
+	    $this->_outputFiles[$filename] = array_merge($this->_outputFiles[$filename], $history);
+	}
     }
+
     function getOutputFileData($filename) {
 	if (!isset($this->_outputFiles[$filename])) {
 	    return null;
@@ -439,6 +450,10 @@ class TestGdFunctionality {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
+	$previousData = $this->getResourceData($dstRes, 'other');
+	if (!empty($previousData)) {
+	    $this->setResourceData($dstRes, 'history', $previousData);
+	}
 	$this->setResourceData(
 	    $dstRes, 'other',
 	    array('copy' => array(
@@ -497,6 +512,77 @@ class TestGdFunctionality {
     function imagedestroy($res) {
 	$this->_undestroyedResourceCounter--;
 	$this->_resources[$res]['destroyed'] = true;
+    }
+
+    function imagesavealpha($res, $saveflag) {
+    	if (!$this->functionExists('imagesavealpha')) {
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      'Environment: ' . $this->getEnvironmentName()),
+			 null);
+    	}
+	if (!$this->isValidResource($res)) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
+			 null);
+	}
+    	return array(null, true);
+    }
+
+    function imagealphablending($res, $blendmode) {
+	if (!$this->isValidResource($res)) {
+	    return false;
+	}
+    	return true;
+    }
+
+    function imagecolorallocatealpha($res, $red, $green, $blue, $alpha) {
+    	if (!$this->functionExists('imagecolorallocatealpha')) {
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+					      'Environment: ' . $this->getEnvironmentName()),
+			 null);
+    	}
+	if (!$this->isValidResource($res)) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
+			 null);
+	}
+    	return array(null, 1);
+    }
+
+    function imagecolorallocate($res, $red, $green, $blue) {
+    	if (!$this->isValidResource($res)) {
+	    return false;
+	}
+    	return array(null, 1);
+    }
+
+    function imagefilledrectangle($res, $x1, $y1, $x2, $y2, $color) {
+    	return $this->isValidResource($res);
+    }
+
+    function imagecolortransparent($res, $color=null) {
+	if (!$this->isValidResource($res)) {
+	    return false;
+	}
+	if ($color !== null) {
+	    $this->setResourceData($res, 'transparentColor', $color);
+	}
+	$transparentColor = $this->getResourceData($res, 'transparentColor');
+    	return $transparentColor == '' ? 1 : $transparentColor;
+    }
+
+    function imagetruecolortopalette($res, $dither, $ncolors) {
+	return $this->isValidResource($res);
+    }
+
+    function imagecolorat($res, $x, $y) {
+	return 1;
+    }
+
+    function imagesetpixel($res, $x, $y, $color) {
+	return $this->isValidResource($res);
+    }
+
+    function imagecolorsforindex($res, $index) {
+	return array('red' => 11, 'green' => 22, 'blue' => 44, 'alpha' => 66);
     }
 }
 ?>
