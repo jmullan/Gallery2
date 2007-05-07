@@ -51,6 +51,7 @@
 
 	      {if $image.viewInline}
 		{if count($theme.imageViews) > 1}
+		  {capture assign="imageViewLink"}
 		  {if $theme.imageViewsIndex==1 && count($theme.imageViews)==2}
 		    <a href="{g->url params=$theme.pageUrl arg1="itemId=`$theme.item.id`"}">
 		  {else}
@@ -61,19 +62,21 @@
 		    <a href="{g->url params=$theme.pageUrl arg1="itemId=`$theme.item.id`"
 				     arg2="imageViewsIndex=`$imageViewsLink`"}">
 		  {/if}
+		  {/capture}
 		{/if}
 		{if isset($theme.photoFrame)}
                   {g->container type="imageframe.ImageFrame" frame=$theme.photoFrame
                                 width=$image.width height=$image.height}
+                    {if isset($imageViewLink)}{$imageViewLink}{/if}
                     {g->image id="%ID%" item=$theme.item image=$image
                               fallback=$smarty.capture.fallback class="%CLASS%"}
+                    {if isset($imageViewLink)}</a>{/if}
                   {/g->container}
                 {else}
+                  {if isset($imageViewLink)}{$imageViewLink}{/if}
                   {g->image item=$theme.item image=$image fallback=$smarty.capture.fallback}
+                  {if isset($imageViewLink)}</a>{/if}
                 {/if}
-	        {if count($theme.imageViews) > 1}
-		  </a>
-		{/if}
               {else}
                 {$smarty.capture.fallback}
               {/if}
