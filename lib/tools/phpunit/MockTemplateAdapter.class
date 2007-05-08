@@ -26,6 +26,7 @@
 class MockTemplateAdapter {
     function MockTemplateAdapter($useProgressBar=true) {
 	$this->_useProgressBar = $useProgressBar;
+	$this->_callbacks = array();
     }
 
     function registerTrailerCallback($callback, $args) {
