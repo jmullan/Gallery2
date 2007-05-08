@@ -949,6 +949,7 @@ class GalleryTestCase extends TestCase {
 					$className, $implModuleId);
 
 	foreach ($hints as $hint) {
+	    $hint = GalleryUtilities::strToLower($hint);
 	    if (!isset($registry['hints'][$classType][$hint])
 		    || !is_array($registry['hints'][$classType][$hint])) {
 		$registry['hints'][$classType][$hint] = array();
