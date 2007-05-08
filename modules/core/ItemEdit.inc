@@ -102,7 +102,7 @@ class ItemEditController extends GalleryController {
 	if (isset($form['action']['save'])) {
 	    $progressBarOptions = array();
 	    foreach ($optionInstances as $option) {
-		if ($option->requiresProgressBar($form)) {
+		if ($requiresProgressBar || $option->requiresProgressBar($form)) {
 		    $progressBarOptions[] = $option;
 		} else {
 		    list ($ret, $optionErrors, $optionWarnings) =
@@ -151,6 +151,8 @@ class ItemEditController extends GalleryController {
 
 	$error = array();
 	foreach ($options as $option) {
+	    $gallery->guaranteeTimeLimit(60);
+
 	    list ($ret, $optionErrors, $optionWarnings) =
 		$option->handleRequestAfterEdit($form, $item, $preferred);
 	    if ($ret) {
