@@ -1,9 +1,12 @@
 <?php
 function unpack_{$random}($outputDir) {ldelim}
+    global $gallery;
+    $platform =& $gallery->getPlatform();
+ 
     /* Create directory structure. */
 {foreach from=$directories item=directory}
 {if $directory}
-    @mkdir($outputDir . '{$directory}');
+    $platform->mkdir($outputDir . '{$directory}');
 {/if}
 {/foreach}
 
@@ -15,9 +18,11 @@ function unpack_{$random}($outputDir) {ldelim}
 {rdelim}
 
 function expand_{$random}($outputDir, $relativePath, $data) {ldelim}
-    $fd = fopen($outputDir . $relativePath, 'w');
-    fwrite($fd, base64_decode($data));
-    fclose($fd);
+    global $gallery;
+    $platform =& $gallery->getPlatform();
+
+    $platform->file_put_contents($outputDir . $relativePath, base64_decode($data));
+    $platform->chmod($outputDir . $relativePath);
 {rdelim}
 
 $unpackFunction = "unpack_{$random}";
