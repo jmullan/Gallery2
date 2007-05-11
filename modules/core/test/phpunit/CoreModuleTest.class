@@ -60,6 +60,7 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetItemAdminViews() {
+    	global $gallery;
 	$albumId = $this->_parentAlbum->getId();
 	GalleryUtilities::putRequestVariable('itemId', $albumId);
 	list ($ret, $content) = $this->_module->getItemAdminViews($this->_parentAlbum);
@@ -71,8 +72,12 @@ class CoreModuleTest extends GalleryTestCase {
 	GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
 	$albumTitle = smarty_modifier_escape(GalleryUtilities::markup(
 	    $albumTitle, 'strip'), 'javascript', 'UTF-8');
-	$signedUrl = $this->_signUrl('/gallery2/main.php?g2_view=core.'
-            . 'ItemDeleteSingle&amp;g2_itemId=' . $albumId . '&amp;g2_pageId=' . $albumId);
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$url = $urlGenerator->generateUrl(
+		    array('view' => 'core.ItemDeleteSingle', 'itemId' => $albumId,
+			  'pageId' => $albumId),
+		    array('useAuthToken' => false, 'forceDirect' => true));
+	$signedUrl = $this->_signUrl($url);
 	$this->assertEquals(
 	    array(
 		array('name' => $this->_module->_translate(
@@ -125,7 +130,7 @@ class CoreModuleTest extends GalleryTestCase {
 			  array('text' => 'Delete %s',
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
-		      'script' => 'core_confirmDelete(\'' . $signedUrl . '\', \'\', \'' 
+		      'script' => 'core_confirmDelete(\'' . $signedUrl . '\', \'\', \''
 				   . $albumTitle . '\');return false'),
 		array('name' => $this->_module->_translate(
 			  array('text' => 'Move %s',
