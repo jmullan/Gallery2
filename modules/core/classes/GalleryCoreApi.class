@@ -291,6 +291,11 @@ class GalleryCoreApi {
     /**
      * Get the status of all plugins of a given type
      *
+     * Notes:
+     *   - Some array elements are empty for uninstalled plugins
+     *     ('version', 'required*Api', 'callbacks').
+     *   - Installed but unavailable plugins are not listed.
+     *
      * @param string $pluginType
      * @param bool $ignoreCache (optional) true if we want to ignore the cache
      * @return array object GalleryStatus as status code
