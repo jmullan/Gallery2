@@ -73,8 +73,7 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$redirectUrl =
 	    $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
-                                             'itemId' => $this->_album->getId(),
-					      'return' => 1),
+                                             'itemId' => $this->_album->getId()),
 				       array('forceServerRelativeUrl' => true));
 	$this->assertEquals(array('redirect' => $redirectUrl,
 				  'status' => 'success'),
@@ -111,8 +110,7 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$redirectUrl =
 	    $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
-                                             'itemId' => $this->_album->getId(),
-					      'return' => 1),
+                                             'itemId' => $this->_album->getId()),
 				       array('forceServerRelativeUrl' => true));
 	$this->assertEquals(array('redirect' => $redirectUrl,
 				  'status' => 'success'),
@@ -149,8 +147,7 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$redirectUrl =
 	    $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
-                                             'itemId' => $this->_album->getId(),
-					      'return' => 1),
+                                             'itemId' => $this->_album->getId()),
 				       array('forceServerRelativeUrl' => true));
 	$this->assertEquals(array('redirect' => $redirectUrl,
 				  'status' => 'success'),
@@ -183,7 +180,7 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 
 	/* Perform the request and verify that we failed */
 	list ($ret, $result) = $this->_callback->handleCallback();
-	$this->assertEquals($ret->getErrorCode(), ERROR_PERMISSION_DENIED | GALLERY_ERROR, 
+	$this->assertEquals($ret->getErrorCode(), ERROR_PERMISSION_DENIED | GALLERY_ERROR,
 	    'Permissions denied');
 
 	/* make sure it's still there */
