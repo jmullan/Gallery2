@@ -2231,7 +2231,7 @@ class CoreModuleExtras {
 	}
 
 	$gallery->debug('Write new version to versions file');
-	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$versionFile = $gallery->getConfig('data.gallery.version');
 	$versionDatError =  0;
 	if ($fd = $platform->fopen($versionFile, 'wb')) {
 	    $data = sprintf("%s\n%s",

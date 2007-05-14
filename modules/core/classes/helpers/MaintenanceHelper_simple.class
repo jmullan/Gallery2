@@ -127,7 +127,7 @@ class MaintenanceHelper_simple {
 	/* If already in the requested mode, don't have to do anything. */
 	if ($currentMode !== $mode) {
 	    $platform =& $gallery->getPlatform();
-	    $versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	    $versionFile = $gallery->getConfig('data.gallery.version');
 
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	    if ($ret) {

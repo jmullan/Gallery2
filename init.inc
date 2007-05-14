@@ -80,6 +80,7 @@ function GalleryInitFirstPass($params=array()) {
 	$dataBase . 'smarty' . $slash . 'templates_c' . $slash);
     $gallery->setConfig('data.gallery.plugins', $galleryBase . 'plugins' . $slash);
     $gallery->setConfig('data.gallery.plugins_data', $dataBase . 'plugins_data' . $slash);
+    $gallery->setConfig('data.gallery.version', $dataBase . 'versions.dat');
 
     /* Configure our url generator */
     if (!isset($params['noDatabase'])) {

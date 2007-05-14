@@ -48,7 +48,7 @@ class AdminMaintenanceControllerModeTest extends GalleryControllerTestCase {
 
 	$this->_versionFileContents = array($module->getVersion() . "\n",
 					    $module->getGalleryVersion() . "\n");
-	$this->_versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$this->_versionFile = $gallery->getConfig('data.gallery.version');
 	$this->_versionContentsBase = $module->getVersion() . "\n" . $module->getGalleryVersion();
 	GalleryDataCache::remove('CoreModule::installedVersions');
     }

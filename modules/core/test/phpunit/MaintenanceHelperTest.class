@@ -120,7 +120,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	$writeString = $module->getVersion() . "\n" . $module->getGalleryVersion() . "\n"
 	    . 'maintenance-mode';
 
-	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$versionFile = $gallery->getConfig('data.gallery.version');
 
 	$platform->setReply('file_exists', array($versionFile), true);
 	$platform->setReply('file', array($versionFile, false),
@@ -152,7 +152,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 
 	$writeString = $module->getVersion() . "\n" . $module->getGalleryVersion();
 
-	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$versionFile = $gallery->getConfig('data.gallery.version');
 
 	$platform->setReply('atomicWrite', array($versionFile, $writeString), true);
 
@@ -181,7 +181,7 @@ class MaintenanceHelperTest extends GalleryTestCase {
 	$writeString = $module->getVersion() . "\n" . $module->getGalleryVersion() . "\n"
 	    . 'maintenance-mode:http://test.gallery.com/maintenance.html';
 
-	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$versionFile = $gallery->getConfig('data.gallery.version');
 
 	$platform->setReply('file_exists', array($versionFile), true);
 	$platform->setReply('file', array($versionFile, false),

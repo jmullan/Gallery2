@@ -282,7 +282,7 @@ class CoreModuleTest extends GalleryTestCase {
 
 	GalleryDataCache::remove('CoreModule::installedVersions');
 
-	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$versionFile = $gallery->getConfig('data.gallery.version');
 
 	$platform->setReply('file_exists', array($versionFile), false);
 
@@ -298,7 +298,7 @@ class CoreModuleTest extends GalleryTestCase {
 
 	GalleryDataCache::remove('CoreModule::installedVersions');
 
-    	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$versionFile = $gallery->getConfig('data.gallery.version');
 	$versionArray = $platform->file($versionFile);
 
 	$expected['core'] = rtrim($versionArray[0]);
@@ -318,7 +318,7 @@ class CoreModuleTest extends GalleryTestCase {
 
     	$gallery->setConfig('mode.maintenance', 'TEST-VALUE');
 
-	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$versionFile = $gallery->getConfig('data.gallery.version');
 
 	$platform->setReply('file_exists', array($versionFile), true);
 	$platform->setReply('file', array($versionFile, false),
@@ -340,7 +340,7 @@ class CoreModuleTest extends GalleryTestCase {
 
     	$gallery->setConfig('mode.maintenance', 'TEST-VALUE');
 
-	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$versionFile = $gallery->getConfig('data.gallery.version');
 
 	$platform->setReply('file_exists', array($versionFile), true);
 	$platform->setReply('file', array($versionFile, false),
@@ -363,7 +363,7 @@ class CoreModuleTest extends GalleryTestCase {
 
     	$gallery->setConfig('mode.maintenance', 'TEST-VALUE');
 
-	$versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	$versionFile = $gallery->getConfig('data.gallery.version');
 
 	$platform->setReply('file_exists', array($versionFile), true);
 	$platform->setReply('file', array($versionFile, false),

@@ -531,7 +531,7 @@ class CoreModule extends GalleryModule {
 	    $versions = GalleryDataCache::get('CoreModule::installedVersions');
 	} else {
 	    $platform =& $gallery->getPlatform();
-	    $versionFile = $gallery->getConfig('data.gallery.base') . 'versions.dat';
+	    $versionFile = $gallery->getConfig('data.gallery.version');
 
 	    if ($platform->file_exists($versionFile)) {
 		$versionArray = $platform->file($versionFile);
