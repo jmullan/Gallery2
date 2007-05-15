@@ -213,16 +213,16 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$controller = new UploadItemsController();
 
 	GalleryUtilities::putRequestVariable('lcid', 1033, false);
-	$this->assertEquals('Windows-1252', $controller->_getCharsetFromRequest(), 'English');
+	$this->assertEquals('CP1252', $controller->_getCharsetFromRequest(), 'English');
 
 	GalleryUtilities::putRequestVariable('lcid', 1031, false);
-	$this->assertEquals('Windows-1252', $controller->_getCharsetFromRequest(), 'German');
+	$this->assertEquals('CP1252', $controller->_getCharsetFromRequest(), 'German');
 
 	GalleryUtilities::putRequestVariable('lcid', 1025, false);
-	$this->assertEquals('Windows-1256', $controller->_getCharsetFromRequest(), 'Arabic');
+	$this->assertEquals('CP1256', $controller->_getCharsetFromRequest(), 'Arabic');
 
 	GalleryUtilities::removeRequestVariable('lcid', false);
-	$this->assertEquals('Windows-1252', $controller->_getCharsetFromRequest(), 'Default');
+	$this->assertEquals('CP1252', $controller->_getCharsetFromRequest(), 'Default');
     }
 }
 

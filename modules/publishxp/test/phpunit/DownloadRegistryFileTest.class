@@ -56,16 +56,16 @@ class DownloadRegistryFileTest extends GalleryTestCase {
     }
 
     function testGetCharsetFromRequestDefault() {
-	$this->assertEquals('Windows-1252', $this->view->_getCharsetFromRequest(), 'default');
+	$this->assertEquals('CP1252', $this->view->_getCharsetFromRequest(), 'default');
 	
 	$this->_setActiveLanguageCode('en_US');
-	$this->assertEquals('Windows-1252', $this->view->_getCharsetFromRequest(), 'default 2');
+	$this->assertEquals('CP1252', $this->view->_getCharsetFromRequest(), 'default 2');
 
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'ja';
-	$this->assertEquals('Windows-932', $this->view->_getCharsetFromRequest(), 'HTTP override');
+	$this->assertEquals('CP932', $this->view->_getCharsetFromRequest(), 'HTTP override');
 
 	$this->_setActiveLanguageCode('ru_RU');
-	$this->assertEquals('Windows-1251', $this->view->_getCharsetFromRequest(),
+	$this->assertEquals('CP1251', $this->view->_getCharsetFromRequest(),
 			    'session override');
     }
 
@@ -76,24 +76,24 @@ class DownloadRegistryFileTest extends GalleryTestCase {
 	    return $ret;
 	}
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'ja';
-	$this->assertEquals('Windows-932', $this->view->_getCharsetFromRequest(), 'HTTP override');
+	$this->assertEquals('CP932', $this->view->_getCharsetFromRequest(), 'HTTP override');
     }
 
     function testGetCharsetFromRequestChinese() {
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'zh';
-	$this->assertEquals('Windows-950', $this->view->_getCharsetFromRequest(), 'default');
+	$this->assertEquals('CP950', $this->view->_getCharsetFromRequest(), 'default');
 
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'zh-cn';
-	$this->assertEquals('Windows-936', $this->view->_getCharsetFromRequest(), 'Simplified 1');
+	$this->assertEquals('CP936', $this->view->_getCharsetFromRequest(), 'Simplified 1');
 
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'zh-tw';
-	$this->assertEquals('Windows-950', $this->view->_getCharsetFromRequest(), 'Traditional 1');
+	$this->assertEquals('CP950', $this->view->_getCharsetFromRequest(), 'Traditional 1');
 
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'zh-hans_HK';
-	$this->assertEquals('Windows-936', $this->view->_getCharsetFromRequest(), 'Simplified 2');
+	$this->assertEquals('CP936', $this->view->_getCharsetFromRequest(), 'Simplified 2');
 
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'zh-Hant';
-	$this->assertEquals('Windows-950', $this->view->_getCharsetFromRequest(), 'Traditional 2');
+	$this->assertEquals('CP950', $this->view->_getCharsetFromRequest(), 'Traditional 2');
     }
 
     function _setActiveLanguageCode($languageCode) {
