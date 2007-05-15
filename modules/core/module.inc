@@ -67,6 +67,7 @@ class CoreModule extends GalleryModule {
      */
     function getItemLinks($items, $wantsDetailedLinks, $permissions, $userId) {
 	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret) {
@@ -167,14 +168,12 @@ class CoreModule extends GalleryModule {
 		if (empty($thisItemId)) {
 		    $thisItemId = $itemId;
 		}
-		$urlParams = array('view' => 'core.ItemDeleteSingle', 'itemId' => $itemId,
+		$urlParams = array('controller' => 'core.ItemDeleteSingle', 'itemId' => $itemId,
 				   'pageId' => $thisItemId);
 		if (!empty($page)) {
 		    $urlParams['page'] = $page;
 		}
-		$urlGenerator =& $gallery->getUrlGenerator();
-		$url = $urlGenerator->generateUrl($urlParams,
-		    array('useAuthToken' => true, 'forceDirect' => true));
+		$url = $urlGenerator->generateUrl($urlParams);
 		$moreUrl = $isAlbum ? '' : $urlGenerator->generateUrl(
 		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemDelete', 
 			  'itemId' => $item->getParentId(),
@@ -452,9 +451,8 @@ class CoreModule extends GalleryModule {
 		$thisItemId = $itemId;
 		$urlGenerator =& $gallery->getUrlGenerator();
 		$url = $urlGenerator->generateUrl(
-		    array('view' => 'core.ItemDeleteSingle', 'itemId' => $itemId, 
-			  'pageId' => $thisItemId),
-		    array('useAuthToken' => true, 'forceDirect' => true));
+		    array('controller' => 'core.ItemDeleteSingle', 'itemId' => $itemId, 
+			  'pageId' => $thisItemId));
 		$moreUrl = $isAlbum ? '' : $urlGenerator->generateUrl(
 		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemDelete', 
 			  'itemId' => $item->getParentId(),

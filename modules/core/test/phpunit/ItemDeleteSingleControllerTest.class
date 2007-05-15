@@ -21,16 +21,16 @@
 GalleryCoreApi::requireOnce('modules/core/ItemDeleteSingle.inc');
 
 /**
- * ItemDeleteSingle Callback tests
+ * ItemDeleteSingle Controller tests
  * @package GalleryCore
  * @subpackage PHPUnit
  * @author Felix Rabinovich <felix@rabinovich.org>
  * @version $Revision$
  */
-class ItemDeleteSingleCallbackTest extends GalleryTestCase {
+class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 
-    function ItemDeleteSingleCallbackTest($methodName) {
-	$this->GalleryTestCase($methodName);
+    function ItemDeleteSingleControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core.ItemDeleteSingle');
     }
 
     function setUp() {
@@ -38,7 +38,6 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$this->_callback = new ItemDeleteSingleView();
 
 	/* Create an album to hold all of the test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
@@ -66,21 +65,15 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('pageId', $this->_album->getId());
 
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $result) = $this->_callback->handleCallback();
-	if ($ret) {
-	    return $ret;
-	}
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$redirectUrl =
-	    $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
-                                             'itemId' => $this->_album->getId()),
-				       array('forceServerRelativeUrl' => true));
-	$this->assertEquals(array('redirect' => $redirectUrl,
-				  'status' => 'success'),
-			    $result);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
+						      'itemId' => $this->_album->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 
-	/* Make sure the album is actually gone */
-	$this->_verifyMissing($item->getId());
+	/* Make sure the item is actually gone */
+	$ret = $this->_verifyMissing($item->getId());
 	if ($ret) {
 	    return $ret;
 	}
@@ -90,8 +83,6 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
      * Create a random item and verify that we can delete it and move to the parent page
      */
     function testDeletePageItem() {
-	global $gallery;
-
 	/* Create a random item */
 	list ($ret, $item) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret) {
@@ -103,21 +94,15 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('pageId', $item->getId());
 
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $result) = $this->_callback->handleCallback();
-	if ($ret) {
-	    return $ret;
-	}
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$redirectUrl =
-	    $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
-                                             'itemId' => $this->_album->getId()),
-				       array('forceServerRelativeUrl' => true));
-	$this->assertEquals(array('redirect' => $redirectUrl,
-				  'status' => 'success'),
-			    $result);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
+						      'itemId' => $this->_album->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 
-	/* Make sure the album is actually gone */
-	$this->_verifyMissing($item->getId());
+	/* Make sure the item is actually gone */
+	$ret = $this->_verifyMissing($item->getId());
 	if ($ret) {
 	    return $ret;
 	}
@@ -140,21 +125,15 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('pageId', $album->getId());
 
 	/* Perform the request and verify that we succeeded */
-	list ($ret, $result) = $this->_callback->handleCallback();
-	if ($ret) {
-	    return $ret;
-	}
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$redirectUrl =
-	    $urlGenerator->generateUrl(array('view' => 'core.ShowItem',
-                                             'itemId' => $this->_album->getId()),
-				       array('forceServerRelativeUrl' => true));
-	$this->assertEquals(array('redirect' => $redirectUrl,
-				  'status' => 'success'),
-			    $result);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
+						      'itemId' => $this->_album->getId()),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
 
 	/* Make sure the album is actually gone */
-	$this->_verifyMissing($album->getId());
+	$ret = $this->_verifyMissing($album->getId());
 	if ($ret) {
 	    return $ret;
 	}
@@ -179,9 +158,7 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $item->getId());
 
 	/* Perform the request and verify that we failed */
-	list ($ret, $result) = $this->_callback->handleCallback();
-	$this->assertEquals($ret->getErrorCode(), ERROR_PERMISSION_DENIED | GALLERY_ERROR,
-	    'Permissions denied');
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED | GALLERY_ERROR);
 
 	/* make sure it's still there */
 	list ($ret, $item) = $item->refresh();
@@ -200,9 +177,7 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('itemId', $this->_getRootId());
 
 	/* Perform the request and verify that we failed */
-	list ($ret, $result) = $this->_callback->handleCallback();
-	$this->assertEquals($ret->getErrorCode(), ERROR_BAD_PARAMETER | GALLERY_ERROR,
-			    'Root album');
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER | GALLERY_ERROR);
     }
 
     /**
@@ -215,8 +190,7 @@ class ItemDeleteSingleCallbackTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('itemId', 1234567890);
 
 	/* Perform the request and verify that we failed */
-	list ($ret, $result) = $this->_callback->handleCallback();
-	$this->assertEquals($ret->getErrorCode(), ERROR_PERMISSION_DENIED | GALLERY_ERROR, 'Bogus');
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED | GALLERY_ERROR);
     }
 }
 ?>

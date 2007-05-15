@@ -26,50 +26,19 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  * @version $Revision$
  */
-class ItemDeleteSingleView extends GalleryView {
+class ItemDeleteSingleController extends GalleryController {
 
     /**
-     * @see GalleryView::isImmediate
+     * @see GalleryController::handleRequest
      */
-    function isImmediate() {
-	return true;
-    }
-
-    /**
-     * @see GalleryView::isControllerLike
-     */
-    function isControllerLike() {
-	return true;
-    }
-
-    /**
-     * @see GalleryView::renderImmediate
-     */
-    function renderImmediate($status, $error) {
-	list ($ret, $result) = $this->handleCallback();
-	if ($ret) {
-	    $ret->putInSession();
-	    $result['status'] = 'error';
-	}
-	
-	GalleryCoreApi::requireOnce('lib/JSON/JSON.php');
-	$json = new Services_JSON();
-	print $json->encode($result);
-	return null;
-    }
-    
-    /**
-     * Delete the specified item
-     *
-     * @return array object GalleryStatus a status code
-     *               array  interface object for AJAX call
-     */
-    function handleCallback() {
+    function handleRequest($form) {
 	global $gallery;
-	list ($itemId, $pageItemId, $page) = GalleryUtilities::getRequestVariables(
-	    'itemId', 'pageId', 'page');
+	$urlGenerator =& $gallery->getUrlGenerator();
+	
+	list ($itemId, $pageItemId, $page) = 
+	    GalleryUtilities::getRequestVariables('itemId', 'pageId', 'page');
 
-	/* The view shouldn't let us get this far if we don't have delete permission */
+	/* The framework shouldn't let us get this far if we don't have delete permission */
 	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.delete');
 	if ($ret) {
 	    return array($ret, null);
@@ -79,7 +48,6 @@ class ItemDeleteSingleView extends GalleryView {
 	if ($ret) {
 	    return array($ret, null);
 	}
-	$urlGenerator =& $gallery->getUrlGenerator();
 	
 	/* Get the parent *before* we delete the item */	
 	$parentId = $item->getParentId();
@@ -107,14 +75,17 @@ class ItemDeleteSingleView extends GalleryView {
 	    return array($ret, null);
 	}
 
+	/**
+	 * @todo: once there is a common status message, use it to provide feedback on success
+	 */
 	$params = array('view' => 'core.ShowItem', 
 	      'itemId' => ($itemId == $pageItemId ? $parentId : $pageItemId));
 	if (!empty($page)) {
 	    $params['page'] = $page;
 	}
-	$result['redirect'] = $urlGenerator->generateUrl($params,
-	    array('forceServerRelativeUrl' => true));
-	$result['status'] = 'success';
+	$result['redirect'] = $params;
+	$result['status'] = array();
+	$result['error'] = array();
 	return array(null, $result);
     }
 }
