@@ -42,6 +42,13 @@ class AdminMaintenanceController extends GalleryController {
 
 	$results = $status = $error = array();
 	if (isset($form['action']['runTask'])) {
+	    list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    $mode = $gallery->getConfig('mode.maintenance');
+
 	    $taskId = GalleryUtilities::getRequestVariables('taskId');
 
 	    list ($ret, $tasks) = MaintenanceHelper_simple::fetchTasks();
@@ -52,20 +59,27 @@ class AdminMaintenanceController extends GalleryController {
 	    if (isset($tasks[$taskId])) {
 		$task =& $tasks[$taskId];
 
-		if ($task->requiresProgressBar()) {
-		    $templateAdapter =& $gallery->getTemplateAdapter();
-		    $templateAdapter->registerTrailerCallback(
-			array($this, 'runTask'), array($taskId, $task, true));
-		    $results['delegate']['view'] = 'core.ProgressBar';
-		} else {
-		    list ($ret, $success)  = $this->runTask($taskId, $task, false);
-		    if ($ret) {
-			return array($ret, null);
-		    }
+		if (($task->requiresMaintenanceMode() && $mode)
+			|| !$task->requiresMaintenanceMode()) {
+		    if ($task->requiresProgressBar()) {
+			$templateAdapter =& $gallery->getTemplateAdapter();
+			$templateAdapter->registerTrailerCallback(
+					array($this, 'runTask'), array($taskId, $task, true));
+			$results['delegate']['view'] = 'core.ProgressBar';
+		    } else {
+			list ($ret, $success)  = $this->runTask($taskId, $task, false);
+			if ($ret) {
+			    return array($ret, null);
+			}
 
-		    $status['run'] = array('taskId' => $taskId, 'success' => $success);
-		    $redirect['view'] = 'core.SiteAdmin';
-		    $redirect['subView'] = 'core.AdminMaintenance';
+			$status['run'] = array('taskId' => $taskId, 'success' => $success);
+			$redirect['view'] = 'core.SiteAdmin';
+			$redirect['subView'] = 'core.AdminMaintenance';
+		    }
+		} else {
+		    $results['delegate']['view'] = 'core.SiteAdmin';
+		    $results['delegate']['subView'] = 'core.AdminMaintenance';
+		    $error[] = 'form[error][maintenanceModeRequired]';
 		}
 	    }
 	} else if (isset($form['action']['setMode'])) {
@@ -241,6 +255,14 @@ class MaintenanceTask {
      * @return true or false
      */
     function requiresProgressBar() {
+	return false;
+    }
+
+    /**
+     * This task requires that the administrator sets Gallery into mode
+     * @return true or false
+     */
+    function requiresMaintenanceMode() {
 	return false;
     }
 }

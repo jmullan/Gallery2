@@ -6,6 +6,14 @@
   <h2> {g->text text="System Maintenance"} </h2>
 </div>
 
+{if isset($form.error.maintenanceModeRequired)}
+  <div class="gbBlock">
+    <h2 class="giError">
+    {g->text text="Gallery must be in maintenance mode before the task can be run."}
+    </h2>
+  </div>
+{/if}
+
 {if isset($status.run)}
 <div class="gbBlock">
   {capture name=taskTitle}<b>{g->text text=$AdminMaintenance.tasks[$status.run.taskId].title
@@ -16,7 +24,7 @@
     </h2>
   {else}
     <h2 class="giError">
-      {g->text text="The %s task failed to complete successfully." arg1=$smarty.capture.taskTitle}
+    {g->text text="The %s task failed to complete successfully." arg1=$smarty.capture.taskTitle}
     </h2>
   {/if}
 </div>
@@ -86,7 +94,9 @@
 	<span id="task-{$taskId}-toggle"
 	      class="giBlockToggle gcBackground1 gcBorder2"
 	      style="border-width: 1px"
-	      onclick="BlockToggle('task-{$taskId}-description', 'task-{$taskId}-toggle', 'table-row')">{if !isset($status.run) || $status.run.taskId != $taskId}+{else}-{/if}</span>
+	      onclick="BlockToggle('task-{$taskId}-description', 'task-{$taskId}-toggle', 'table-row')">
+	      {if !isset($status.run) || $status.run.taskId != $taskId)}+{else}-{/if}
+	</span>
 	{g->text text=$info.title l10Domain=$info.l10Domain}
       </td><td>
 	{if isset($info.timestamp)}
