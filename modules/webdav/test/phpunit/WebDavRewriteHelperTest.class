@@ -34,14 +34,18 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	    return $ret;
+	}
 	global $gallery;
 
 	/* Try to use the rewrite URL generator */
+	$this->_urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
 	    'GalleryUrlGenerator');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (!isset($this->_urlGenerator)) {
 	    return $this->skip();
@@ -49,22 +53,21 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
 
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
-	$gallery->setUrlGenerator($this->_urlGenerator);
 
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
 	    $this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum(
 	    $this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Register event listeners */
@@ -122,12 +125,12 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     function testFetchLogicalPath() {
 	list ($ret, $path) = WebDavRewriteHelper::fetchLogicalPath($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $expectedPath) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($expectedPath, $path);
@@ -136,17 +139,17 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     function testFetchLogicalPathWithWebDavPath() {
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $path) = WebDavRewriteHelper::fetchLogicalPath($this->_subAlbum);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedPath = '/' . rawurlencode('The Quick!Brown#Fox')
@@ -157,7 +160,7 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     function testParsePathWithItemId() {
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$url = 'w%path%';
@@ -176,7 +179,7 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     function testParsePathWithPath() {
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$url = 'w%path%';
@@ -195,7 +198,7 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     function testParsePathWithStartingKeyword() {
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$url = '%path%';
@@ -214,7 +217,7 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     function testParsePathWithPathSeparator() {
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$url = 'w/%path%';
@@ -233,12 +236,12 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     function testParsePathWithItemIdWithPathAndSpecialCharacters() {
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')
@@ -260,12 +263,12 @@ class WebDavRewriteHelperTest extends GalleryTestCase {
     function testParsePathWithPathAndSpecialCharacters() {
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')

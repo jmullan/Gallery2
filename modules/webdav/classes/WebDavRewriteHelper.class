@@ -63,7 +63,8 @@ class WebDavRewriteHelper {
 	if (empty($parentIds)) {
 	    $parentItems = array();
 	} else {
-	    list ($ret, $parentItems) = GalleryCoreApi::loadEntitiesById($parentIds);
+	    list ($ret, $parentItems) = GalleryCoreApi::loadEntitiesById(
+		$parentIds, 'GalleryAlbumItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }

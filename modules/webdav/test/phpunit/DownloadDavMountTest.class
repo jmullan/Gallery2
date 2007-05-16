@@ -34,7 +34,10 @@ class DownloadDavMountTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Require here to avoid loading if none of our tests will be run */
 	ob_start();
@@ -45,8 +48,8 @@ class DownloadDavMountTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Use DownloadDavMountTestPhpVm */
+	$this->_phpVm =& $gallery->_phpVm;
 	$this->_phpVm = new DownloadDavMountTestPhpVm();
-	$gallery->_phpVm =& $this->_phpVm;
 
 	/* Reset request variables */
 	$_SERVER['QUERY_STRING'] = null;
@@ -54,30 +57,31 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$this->_requestVariables = null;
 
 	/* Reset response headers */
-	$this->_responseHeaders =& GalleryUtilities::_getResponseHeaders();
+	$this->_responseHeaders =& GalleryUtilities::_responseHeaders();
 	$this->_responseHeaders = null;
 
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_subAlbum) =
 	    $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Test the download davmount view */
 	GalleryUtilities::putRequestVariable('view', 'webdav.DownloadDavMount');
 
 	/* Try to use the rewrite URL generator */
-	list ($ret, $this->_urlGenerator) =
-	    GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
+	$this->_urlGenerator =& $gallery->getUrlGenerator();
+	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
+	    'GalleryUrlGenerator');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (!isset($this->_urlGenerator)) {
 	    $this->_urlGenerator = new GalleryUrlGenerator();
@@ -85,9 +89,8 @@ class DownloadDavMountTest extends GalleryTestCase {
 
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
-	$gallery->setUrlGenerator($this->_urlGenerator);
 
 	$this->_user = $gallery->getActiveUser();
 
@@ -103,10 +106,13 @@ class DownloadDavMountTest extends GalleryTestCase {
 	/* Tests fail for Oracle / PostgreSQL without this checkpoint */
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	
-	return parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
     }
 
     function _rename(&$item, $pathComponent) {
@@ -178,7 +184,7 @@ class DownloadDavMountTest extends GalleryTestCase {
     function testWithItemId() {
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	WebDavHelper::putRequestVariable('itemId', $this->_subAlbum->getId());
@@ -191,7 +197,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -214,7 +220,7 @@ class DownloadDavMountTest extends GalleryTestCase {
     function testWithPath() {
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	WebDavHelper::putRequestVariable('path', $path, true, false);
@@ -227,7 +233,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -258,7 +264,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -285,7 +291,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -308,19 +314,19 @@ class DownloadDavMountTest extends GalleryTestCase {
 
 	list ($ret, $anonymousId) = GalleryCoreApi::getAnonymousUserId();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($anonymousId);
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($anonymousId, 'GalleryUser');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$gallery->setActiveUser($user);
 
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	WebDavHelper::putRequestVariable('itemId', $this->_subAlbum->getId());
@@ -333,7 +339,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -355,12 +361,12 @@ class DownloadDavMountTest extends GalleryTestCase {
     function testWithItemIdAndSpecialCharacters() {
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')
@@ -376,7 +382,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -398,12 +404,12 @@ class DownloadDavMountTest extends GalleryTestCase {
     function testWithPathAndSpecialCharacters() {
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_subAlbum, 'Jumps Over%The/Lazy_Dog');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')
@@ -419,7 +425,7 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();

@@ -34,7 +34,10 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Require here to avoid loading if none of our tests will be run */
 	ob_start();
@@ -45,14 +48,15 @@ class WebDavTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Use WebDavTestPhpVm */
+	$this->_phpVm =& $gallery->_phpVm;
 	$this->_phpVm = new WebDavTestPhpVm();
-	$gallery->_phpVm =& $this->_phpVm;
 
 	/* Use WebDavTestPlatform */
+	$platform = $gallery->getPlatform();
+	$this->_platform =& $gallery->getPlatform();
 	$this->_platform = new WebDavTestPlatform();
-	$this->_platform->_platform =& $gallery->getPlatform();
+	$this->_platform->_platform = $platform;
 	$this->_platform->_streams = array();
-	$gallery->setPlatform($this->_platform);
 
 	/* Reset request variables */
 	$_SERVER['QUERY_STRING'] = null;
@@ -60,30 +64,27 @@ class WebDavTest extends GalleryTestCase {
 	$this->_requestVariables = null;
 
 	/* Reset response headers */
-	$this->_responseHeaders =& GalleryUtilities::_getResponseHeaders();
+	$this->_responseHeaders =& GalleryUtilities::_responseHeaders();
 	$this->_responseHeaders = null;
 
 	/* Create test items */
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
 	    $this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/file');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum(
 	    $this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_userId = $gallery->getActiveUserId();
@@ -94,11 +95,11 @@ class WebDavTest extends GalleryTestCase {
 	$this->_streams =& WebDavTestStream::_streams();
 
 	/* Try to use the rewrite URL generator */
+	$this->_urlGenerator =& $gallery->getUrlGenerator();
 	list ($ret, $this->_urlGenerator) = GalleryCoreApi::newFactoryInstance(
 	    'GalleryUrlGenerator');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (!isset($this->_urlGenerator)) {
 	    $this->_urlGenerator = new GalleryUrlGenerator();
@@ -106,10 +107,8 @@ class WebDavTest extends GalleryTestCase {
 
 	$ret = $this->_urlGenerator->init('http://example.com/gallery2/main.php');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
-	$gallery->setUrlGenerator($this->_urlGenerator);
 
 	/* Register event listeners */
 	$this->_registerTestEventListener('Gallery::Error', new WebDavModule());
@@ -123,10 +122,13 @@ class WebDavTest extends GalleryTestCase {
 
 	$ret = $storage->checkPoint();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
     }
 
     function _streamWrapperRegister() {
@@ -216,7 +218,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -233,20 +235,20 @@ class WebDavTest extends GalleryTestCase {
     function testPropfind() {
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_streamWrapperRegister();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
@@ -276,7 +278,7 @@ class WebDavTest extends GalleryTestCase {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -314,24 +316,24 @@ class WebDavTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'core.all');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::removeUserPermission(
 	    $this->_item->getId(), $this->_userId, 'core.view');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 $ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 if ($ret) {
-    return $this->failWithStatus($ret);
+    return $ret;
 }
 	$this->_streamWrapperRegister();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
@@ -361,7 +363,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -386,12 +388,12 @@ if ($ret) {
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_item, 'Jumps Over%The/Lazy_Dog');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')
@@ -424,7 +426,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -461,20 +463,20 @@ if ($ret) {
     function testProppatch() {
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'core.edit');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_streamWrapperRegister();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
@@ -504,7 +506,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -532,7 +534,7 @@ if ($ret) {
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('new title', $this->_item->getTitle());
@@ -545,24 +547,24 @@ if ($ret) {
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'core.all');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::removeUserPermission(
 	    $this->_item->getId(), $this->_userId, 'core.edit');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 $ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 if ($ret) {
-    return $this->failWithStatus($ret);
+    return $ret;
 }
 	$this->_streamWrapperRegister();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
@@ -592,7 +594,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret);
@@ -609,12 +611,12 @@ if ($ret) {
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_item, 'Jumps Over%The/Lazy_Dog');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')
@@ -647,7 +649,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -675,7 +677,7 @@ if ($ret) {
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('new title', $this->_item->getTitle());
@@ -689,7 +691,7 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
@@ -725,7 +727,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -753,7 +755,7 @@ if ($ret) {
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($newTitle, $this->_item->getTitle());
@@ -767,7 +769,7 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$path .= $pathComponent;
 
@@ -783,7 +785,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -794,12 +796,12 @@ if ($ret) {
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryAlbumItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $item->getTitle());
@@ -813,7 +815,7 @@ if ($ret) {
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$pathComponent = 'Jumps Over%The/Lazy_Dog';
@@ -833,7 +835,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -844,12 +846,12 @@ if ($ret) {
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryAlbumItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $item->getTitle());
@@ -866,10 +868,10 @@ if ($ret) {
 	      [WebDavPathComponentMap::itemId] = ?';
 	list ($ret, $results) = $gallery->search($query, $itemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (($result = $results->nextResult()) === false) {
-	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_MISSING_VALUE));
+	    return GalleryCoreApi::error(ERROR_MISSING_VALUE);
 	}
 	$this->assertEquals($pathComponent, $result[0]);
     }
@@ -877,7 +879,7 @@ if ($ret) {
     function testDelete() {
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['REQUEST_METHOD'] = 'DELETE';
@@ -892,7 +894,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -904,7 +906,7 @@ if ($ret) {
 	/* Make sure the album is really gone */
 	$ret = $this->_verifyMissing($this->_subAlbum->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -916,7 +918,7 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$path .= $pathComponent;
 
@@ -944,7 +946,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -955,12 +957,12 @@ if ($ret) {
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryDataItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $item->getTitle());
@@ -975,7 +977,7 @@ if ($ret) {
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
@@ -1010,7 +1012,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -1021,12 +1023,12 @@ if ($ret) {
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryDataItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $item->getTitle());
@@ -1044,10 +1046,10 @@ if ($ret) {
 	      [WebDavPathComponentMap::itemId] = ?';
 	list ($ret, $results) = $gallery->search($query, $itemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (($result = $results->nextResult()) === false) {
-	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_MISSING_VALUE));
+	    return GalleryCoreApi::error(ERROR_MISSING_VALUE);
 	}
 	$this->assertEquals($pathComponent, $result[0]);
     }
@@ -1060,7 +1062,7 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$path .= $pathComponent;
 
@@ -1089,7 +1091,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -1100,12 +1102,12 @@ if ($ret) {
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryDataItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($pathComponent, $item->getTitle());
@@ -1124,7 +1126,7 @@ if ($ret) {
 	GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
 	list ($ret, $data) = ItemAddController::handleRequest(null);
 	if ($ret && !($ret->getErrorCode() & ERROR_REQUEST_FORGED)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret, 'HTTP PUT check was not enforced');
@@ -1136,7 +1138,7 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
@@ -1163,7 +1165,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -1174,7 +1176,7 @@ if ($ret) {
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('application/unknown', $this->_item->getMimeType());
@@ -1190,7 +1192,7 @@ if ($ret) {
 	GalleryCoreApi::requireOnce('modules/core/ItemEdit.inc');
 	list ($ret, $data) = ItemEditController::handleRequest(null);
 	if ($ret && !($ret->getErrorCode() & ERROR_REQUEST_FORGED)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret, 'HTTP PUT check was not enforced');
@@ -1202,7 +1204,7 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
@@ -1229,7 +1231,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_DATA_TYPE)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret);
@@ -1246,14 +1248,14 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$pathComponent = 'testItem-' . rand();
 
 	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$newPath .= $pathComponent;
 
@@ -1276,7 +1278,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -1287,7 +1289,7 @@ if ($ret) {
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($newPath);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_item->getId(), $itemId);
@@ -1298,17 +1300,17 @@ if ($ret) {
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_item, 'Jumps Over%The/Lazy_Dog');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_subAlbum, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')
@@ -1339,7 +1341,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedHeaders = array();
@@ -1350,7 +1352,7 @@ if ($ret) {
 
 	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($newPath);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_item->getId(), $itemId);
@@ -1364,10 +1366,10 @@ if ($ret) {
 	      [WebDavPathComponentMap::itemId] = ?';
 	list ($ret, $results) = $gallery->search($query, $itemId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (($result = $results->nextResult()) === false) {
-	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_MISSING_VALUE));
+	    return GalleryCoreApi::error(ERROR_MISSING_VALUE);
 	}
 	$this->assertEquals($pathComponent, $result[0]);
     }
@@ -1484,19 +1486,19 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $lock) = $this->_testLock($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_responseHeaders = null;
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -1505,12 +1507,12 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $lock) = $this->_testLock($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_responseHeaders = null;
@@ -1530,12 +1532,12 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, list ($lock)) = WebDavHelper::getLocks($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals('exclusive', $lock['scope']);
@@ -1569,7 +1571,7 @@ if ($ret) {
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -1578,19 +1580,19 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $lock) = $this->_testLock($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_responseHeaders = null;
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
@@ -1617,12 +1619,12 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $locks) = WebDavHelper::getLocks($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $locks);
@@ -1646,7 +1648,7 @@ if ($ret) {
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -1655,12 +1657,12 @@ if ($ret) {
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_rename($this->_item, 'Jumps Over%The/Lazy_Dog');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox')
@@ -1668,7 +1670,7 @@ if ($ret) {
 
 	list ($ret, $lock) = $this->_testLock($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 /*
@@ -1700,12 +1702,12 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $locks) = WebDavHelper::getLocks($path);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $locks);
@@ -1730,7 +1732,7 @@ if ($ret) {
 
 	$ret = $this->_testUnlock($lock);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -1739,7 +1741,7 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$path .= $pathComponent;
 
@@ -1755,7 +1757,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret);
@@ -1772,7 +1774,7 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$path .= $pathComponent;
 
@@ -1788,7 +1790,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret);
@@ -1811,7 +1813,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret);
@@ -1828,7 +1830,7 @@ if ($ret) {
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$path .= $pathComponent;
 
@@ -1844,7 +1846,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret);
@@ -1867,7 +1869,7 @@ if ($ret) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($ret);

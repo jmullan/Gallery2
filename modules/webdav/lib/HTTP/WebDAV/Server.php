@@ -106,7 +106,7 @@ class HTTP_WebDAV_Server
         $this->setResponseHeader('X-Dav-Powered-By: ' . $this->dav_powered_by);
 
         // set path
-        if (empty($this->path)) {
+        if (empty($this->path) && !empty($_SERVER['PATH_INFO'])) {
             $this->path = $_SERVER['PATH_INFO'];
         }
 
@@ -122,7 +122,7 @@ class HTTP_WebDAV_Server
             }
             if (!empty($_SERVER['REQUEST_URI'])) {
                 $this->baseUrl = parse_url($_SERVER['REQUEST_URI']);
-                $this->baseUrl['path'] = substr($this->baseUrl['path'], 0, strlen($this->baseUrl['path']) - strlen($_SERVER['PATH_INFO']));
+                $this->baseUrl['path'] = substr($this->baseUrl['path'], 0, strlen($this->baseUrl['path']) - strlen($this->path));
             }
             if (!empty($_SERVER['HTTP_HOST'])) {
                 $this->baseUrl['host'] = $_SERVER['HTTP_HOST'];
@@ -162,25 +162,23 @@ class HTTP_WebDAV_Server
             $wrapper = 'options';
         }
 
-        // simulate HEAD using GET if no HEAD method exists
-        if ($method == 'head' && !method_exists($this, 'head')) {
-            $method = 'get';
-        }
-
-        if (method_exists($this, $method) && method_exists($this, $wrapper)) {
-            $this->$wrapper();
-            return;
-        }
+        // get allowed methods
+        $allow = $this->_allow();
 
         // method not implemented
-        if ($method == 'lock') {
-            $this->setResponseStatus('412 Precondition Failed');
+        if (!in_array(strtoupper($method), $allow)) {
+            if ($method == 'lock') {
+                $this->setResponseStatus('412 Precondition Failed');
+                return;
+            }
+
+            // tell client what's allowed
+            $this->setResponseStatus('405 Method Not Allowed');
+            $this->setResponseHeader('Allow: ' . implode(',', $allow));
             return;
         }
 
-        // tell client what's allowed
-        $this->setResponseStatus('405 Method Not Allowed');
-        $this->setResponseHeader('Allow: ' . implode(',', $this->_allow()));
+        $this->$wrapper();
     }
 
     // }}}
@@ -849,7 +847,7 @@ class HTTP_WebDAV_Server
         }
 
         // set headers before we start printing
-        $this->setResponseStatus($status);
+        $this->setResponseStatus($status, false);
 
         if ($status !== true) {
             return;
@@ -858,11 +856,11 @@ class HTTP_WebDAV_Server
         if (empty($options['mimetype'])) {
             $options['mimetype'] = 'application/octet-stream';
         }
-        $this->setResponseHeader("Content-Type: $options[mimetype]");
+        $this->setResponseHeader("Content-Type: $options[mimetype]", false);
 
         if (!empty($options['mtime'])) {
             $this->setResponseHeader('Last-Modified:'
-                . gmdate('D, d M Y H:i:s', $options['mtime']) . 'GMT');
+                . gmdate('D, d M Y H:i:s', $options['mtime']) . 'GMT', false);
         }
 
         if ($options['stream']) {
@@ -879,35 +877,36 @@ class HTTP_WebDAV_Server
                         fseek($options['stream'], $range['start'], SEEK_SET);
                         if (feof($options['stream'])) {
                             $this->setResponseStatus(
-                                '416 Requested Range Not Satisfiable');
+                                '416 Requested Range Not Satisfiable', false);
                             return;
                         }
 
                         if (!empty($range['end'])) {
                             $size = $range['end'] - $range['start'] + 1;
-                            $this->setResponseStatus('206 Partial');
-                            $this->setResponseHeader("Content-Length: $size");
+                            $this->setResponseStatus('206 Partial', false);
+                            $this->setResponseHeader(
+                                "Content-Length: $size", false);
                             $this->setResponseHeader(
                                 "Content-Range: $range[start]-$range[end]/"
-                                . (!empty($options['size']) ? $options['size'] : '*'));
+                                . (!empty($options['size']) ? $options['size'] : '*'), false);
                             while ($size && !feof($options['stream'])) {
                                 $buffer = fread($options['stream'], 4096);
                                 $size -= strlen($buffer);
                                 echo $buffer;
                             }
                         } else {
-                            $this->setResponseStatus('206 Partial');
+                            $this->setResponseStatus('206 Partial', false);
                             if (!empty($options['size'])) {
                                 $this->setResponseHeader("Content-Length: "
-                                    . ($options['size'] - $range['start']));
+                                    . ($options['size'] - $range['start']), false);
                                 $this->setResponseHeader(
                                     "Content-Range: $range[start]-$range[end]/"
-                                    . (!empty($options['size']) ? $options['size'] : '*'));
+                                    . (!empty($options['size']) ? $options['size'] : '*'), false);
                             }
                             fpassthru($options['stream']);
                         }
                     } else {
-                        $this->setResponseHeader("Content-Length: $range[last]");
+                        $this->setResponseHeader("Content-Length: $range[last]", false);
                         fseek($options['stream'], -$range['last'], SEEK_END);
                         fpassthru($options['stream']);
                     }
@@ -942,7 +941,8 @@ class HTTP_WebDAV_Server
             } else {
                 // normal request or stream isn't seekable, return full content
                 if (!empty($options['size'])) {
-                    $this->setResponseHeader("Content-Length: $options[size]");
+                    $this->setResponseHeader(
+                        "Content-Length: $options[size]", false);
                 }
 
                 fpassthru($options['stream']);
@@ -951,8 +951,8 @@ class HTTP_WebDAV_Server
             if (is_array($options['data'])) {
                 // reply to partial request
             } else {
-                $this->setResponseHeader("Content-Length: "
-                    . strlen($options['data']));
+                $this->setResponseHeader(
+                    "Content-Length: " . strlen($options['data']), false);
                 echo $options['data'];
             }
         }
@@ -984,7 +984,7 @@ class HTTP_WebDAV_Server
                 // generate HTTP header
                 $this->setResponseHeader(
                     'Content-Type: multipart/byteranges; boundary='
-                    . $this->multipart_separator);
+                    . $this->multipart_separator, false);
                 return;
             }
 
@@ -2020,30 +2020,39 @@ class HTTP_WebDAV_Server
      */
     function _allow()
     {
+        $allow = array();
+
         // OPTIONS is always there
-        $allow = array('OPTIONS');
+        $allow[] = 'OPTIONS';
 
         // all other methods need both a method_wrapper() and a method()
         // implementation
         // the base class defines only wrappers
-        foreach(get_class_methods($this) as $method) {
+        foreach (get_class_methods($this) as $method) {
 
             // strncmp breaks with negative len -
             // http://bugs.php.net/bug.php?id=36944
             //if (!strncmp('_wrapper', $method, -8)) {
-            if (!strcmp(substr($method, -8), '_wrapper')) {
-                $method = strtolower(substr($method, 0, -8));
-                if (method_exists($this, $method) &&
-                        ($method != 'lock' && $method != 'unlock' ||
-                        method_exists($this, 'getLocks'))) {
-                    $allow[] = $method;
-                }
+            if (strcmp(substr($method, -8), '_wrapper')) {
+                continue;
             }
-        }
 
-        // we can emulate a missing HEAD implemetation using GET
-        if (in_array('GET', $allow)) {
-            $allow[] = 'HEAD';
+            $method = strtolower(substr($method, 0, -8));
+            if (!method_exists($this, $method)) {
+                continue;
+            }
+
+            if (($method == 'lock' || $method == 'unlock')
+                    && !method_exists($this, 'getLocks')) {
+                continue;
+            }
+
+            $allow[] = strtoupper($method);
+
+            // simulate HEAD using GET if no HEAD method exists
+            if ($method == 'get') {
+                $allow[] = 'HEAD';
+            }
         }
 
         return $allow;

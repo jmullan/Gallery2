@@ -32,7 +32,10 @@ class WebDavModuleTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	    return $ret;
+	}
 	global $gallery;
 	$this->_urlGenerator =& $gallery->getUrlGenerator();
 
@@ -40,29 +43,25 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum(
 	    $this->_getRootId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/file');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_subAlbum) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $this->_derivative) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_items = array($this->_album, $this->_item, $this->_subAlbum);
@@ -74,8 +73,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $this->_permissions) = GalleryCoreApi::fetchPermissionsForItems(
 	    array($this->_album->getId(), $this->_item->getId(), $this->_subAlbum->getId()));
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_userId = $gallery->getActiveUserId();
@@ -83,8 +81,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	/* Load WebDAV module */
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'webdav');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Mock disable WebDAV rewrite rules */
@@ -96,8 +93,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	    'RewriteApi', 'WebDavModuleTestRewriteApi', 'WebDavModuleTestRewriteApi',
 	    'modules/webdav/test/phpunit/WebDavModuleTest.class', 'test');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Use WebDavModuleTestHttpAuthInterface */
@@ -142,10 +138,10 @@ class WebDavModuleTest extends GalleryTestCase {
 	    ''));
 
 	/* Use WebDavModuleTestPlatform */
+	$this->_platform =& $gallery->getPlatform();
 	$this->_platform = new WebDavModuleTestPlatform();
 	$this->_platform->_messages[$this->_optionsRequest] =
 	    $this->_includesDavHeadersResponse;
-	$gallery->setPlatform($this->_platform);
 
 	/* Register event listeners */
 	$this->_registerTestEventListener('Gallery::ActivatePlugin', $this->_module);
@@ -155,14 +151,18 @@ class WebDavModuleTest extends GalleryTestCase {
 
     function tearDown() {
 	GalleryDataCache::reset();
-	parent::tearDown();
+
+	$ret = parent::tearDown();
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
     }
 
     function testGetItemLinks() {
 	list ($ret, $links) = $this->_module->getItemLinks(
 	    $this->_items, $this->_wantsDetailedLinks, $this->_permissions, $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$expectedLinks = array();
@@ -185,7 +185,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $links) = $this->_module->getItemLinks(
 	    $this->_items, array(), $this->_permissions, $this->_userId);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $links, 'Must request detailed links');
@@ -217,7 +217,7 @@ class WebDavModuleTest extends GalleryTestCase {
 			      'pluginId' => 'rewrite'));
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(array('webdav')), $this->_activateCalls);
@@ -231,10 +231,10 @@ class WebDavModuleTest extends GalleryTestCase {
 	$event->setData(array('error' => $error));
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	$this->assertEquals(array(array('suppressBody' => 1)), $results);
+	$this->assertEquals(array(array('suppressBody' => true, 'errorHandled' => true)), $results);
 	$this->assertEquals(array(), $this->_requestCalls,
 	    'Authentication should be requested only on ERROR_PERMISSION_DENIED');
     }
@@ -247,10 +247,10 @@ class WebDavModuleTest extends GalleryTestCase {
 	$event->setData(array('error' => $error));
 	list ($ret, $results) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
-	$this->assertEquals(array(array('suppressBody' => 1)), $results);
+	$this->assertEquals(array(array('suppressBody' => true, 'errorHandled' => true)), $results);
 	$this->assertEquals(array(array()), $this->_requestCalls,
 	    'Authentication should be requested');
     }
@@ -264,13 +264,13 @@ class WebDavModuleTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addMapEntry('WebDavPathComponentMap',
 	    array('itemId' => $this->_item->getId(), 'pathComponent' => $expectedPathComponent));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Delete the item */
-	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
+	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId(), 'GalleryDataItem');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$query = '
@@ -282,7 +282,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	      [WebDavPathComponentMap::itemId] = ?';
 	list ($ret, $results) = $gallery->search($query, $this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(false, $results->nextResult(),
 			    'WebDAV path component should be removed');
@@ -297,21 +297,21 @@ class WebDavModuleTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addMapEntry('WebDavPathComponentMap',
 	    array('itemId' => $this->_item->getId(), 'pathComponent' => $expectedPathComponent));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Write lock the item we're moving */
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Refresh the item in case it changed before it was locked */
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Rename the item */
@@ -319,19 +319,19 @@ class WebDavModuleTest extends GalleryTestCase {
 	$ret = $this->_item->rename('testItem-' . rand());
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_item->save();
 	if ($ret) {
 	    $this->_item->rename($oldPathComponent);
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$query = '
@@ -343,7 +343,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	      [WebDavPathComponentMap::itemId] = ?';
 	list ($ret, $results) = $gallery->search($query, $this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals(false, $results->nextResult(),
 			    'WebDAV path component should be removed');
@@ -354,25 +354,25 @@ class WebDavModuleTest extends GalleryTestCase {
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($this->_derivative->getId());
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Refresh the item in case it changed before it was locked */
 	list ($ret, $this->_derivative) = $this->_derivative->refresh();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_derivative->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
     }
 
@@ -385,21 +385,21 @@ class WebDavModuleTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::addMapEntry('WebDavPathComponentMap',
 	    array('itemId' => $this->_item->getId(), 'pathComponent' => $expectedPathComponent));
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Write lock the item we're moving */
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($this->_item->getId());
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Refresh the item in case it changed before it was locked */
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->_item->setTitle('new title');
@@ -409,12 +409,12 @@ class WebDavModuleTest extends GalleryTestCase {
 	$ret = $this->_item->save();
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$query = '
@@ -426,10 +426,10 @@ class WebDavModuleTest extends GalleryTestCase {
 	      [WebDavPathComponentMap::itemId] = ?';
 	list ($ret, $results) = $gallery->search($query, $this->_item->getId());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	if (($result = $results->nextResult()) === false) {
-	    return $this->failWithStatus(GalleryCoreApi::error(ERROR_MISSING_VALUE));
+	    return GalleryCoreApi::error(ERROR_MISSING_VALUE);
 	}
 	$this->assertEquals($expectedPathComponent, $result[0]);
     }

@@ -48,7 +48,8 @@ class DownloadDavMountView extends GalleryView {
 
 	$itemId = WebDavHelper::getRequestVariable('itemId');
 	if (!empty($itemId)) {
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById(
+		$itemId, 'GalleryFileSystemEntity');
 	    if ($ret) {
 		return $ret;
 	    }

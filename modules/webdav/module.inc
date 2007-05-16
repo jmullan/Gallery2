@@ -35,8 +35,8 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop.'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
 	$this->setCallbacks('getItemLinks|getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 17));
-	$this->setRequiredModuleApi(array(3, 5));
+	$this->setRequiredCoreApi(array(7, 27));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**
@@ -176,6 +176,9 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    if ($ret && !($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED)) {
 		return $ret;
 	    }
+
+	case '1.0.0.1':
+	    /* Merge changes from 1.0.2 into branch_2_2 */
 
 	case '1.0.2':
 	    /* Add special character support */
@@ -402,7 +405,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 
 	    /* Suppress generating HTML error pages for WebDAV clients */
-	    return array(null, array('suppressBody' => true));
+	    return array(null, array('suppressBody' => true, 'errorHandled' => true));
 
 	case 'GalleryEntity::delete':
 	    $entity = $event->getEntity();

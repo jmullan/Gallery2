@@ -783,7 +783,7 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -944,7 +944,7 @@ class WebDavHelper {
 	    return null;
 	}
 
-	list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
+	list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1055,7 +1055,7 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1300,7 +1300,7 @@ class WebDavHelper {
 	/* If we're still here then all are deletable */
 	$count = 0;
 	foreach ($itemIds as $itemId) {
-	    $ret = GalleryCoreApi::deleteEntityById($itemId);
+	    $ret = GalleryCoreApi::deleteEntityById($itemId, 'GalleryItem');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -1336,7 +1336,7 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1556,7 +1556,7 @@ class WebDavHelper {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1604,7 +1604,8 @@ class WebDavHelper {
 		return $ret;
 	    }
 
-	    list ($ret, $newParent) = GalleryCoreApi::loadEntitiesById($newParentId);
+	    list ($ret, $newParent) = GalleryCoreApi::loadEntitiesById(
+		$newParentId, 'GalleryAlbumItem');
 	    if ($ret) {
 		return $ret;
 	    }
