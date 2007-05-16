@@ -62,9 +62,25 @@
       permission['addAlbumItem'][{$id}] = 1;
     {/foreach}
 
+    // Instantiate the Dialog
+    var handleOk = function() {ldelim}
+      this.hide();
+    {rdelim};
+    
+    var gDialog = new YAHOO.widget.SimpleDialog("gDialog", 
+      {ldelim} width: "300px",
+         fixedcenter: true,
+         visible: false,
+         draggable: false,
+         close: true,
+         icon: YAHOO.widget.SimpleDialog.ICON_INFO,
+         constraintoviewport: true,
+         buttons: [ {ldelim} text:"{g->text text="OK"}", handler:handleOk, isDefault:true {rdelim}]
+      {rdelim} );
+         
     // Check what the destination album accepts.  If it can handle data items and
-    // album items then we're done.	 Else, scan the selected items and make sure that
-    // we haven't selected something that we can't handle.	If we have, then remove
+    // album items then we're done.  Else, scan the selected items and make sure that
+    // we haven't selected something that we can't handle. If we have, then remove
     // the selection and alert the user.
     function checkPermissions(form, quiet) {ldelim}
       destinationId = form.elements['{g->formVar var="form[destination]"}'].value;
@@ -91,7 +107,10 @@
 	  form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
 	{/foreach}
 	if (changed && !quiet) {ldelim}
-	  alert("{g->text text="The destination you chose does not accept sub-albums, so all sub-albums have been deselected." forJavascript=true}");
+          gDialog.setHeader("{g->text text="Warning!"}");
+          gDialog.setBody("{g->text text="The destination you chose does not accept sub-albums, so all sub-albums have been deselected." forJavascript=true}");
+          gDialog.render(document.body);
+          gDialog.show();
 	{rdelim}
       {rdelim} else {ldelim}
 	{foreach from=$ItemMove.peerTypes.data key=id item=unused}
@@ -105,7 +124,10 @@
 	  form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
 	{/foreach}
 	if (changed && !quiet) {ldelim}
-	  alert("{g->text text="The destination you chose only accepts sub-albums, so all non-albums have been deselected." forJavascript=true}");
+          gDialog.setHeader("{g->text text="Warning"}");
+          gDialog.setBody("{g->text text="The destination you chose only accepts sub-albums, so all non-albums have been deselected." forJavascript=true}");
+          gDialog.render(document.body);
+          gDialog.show();
 	{rdelim}
       {rdelim}
     {rdelim}
@@ -230,16 +252,61 @@
     {g->text text="Choose a new album for them"}
   </p>
 
-  <select name="{g->formVar var="form[destination]"}"
-   onchange="checkPermissions(this.form)">
+<div id="gTreeDiv"></div>  
+<script type="text/javascript">
+  //<![CDATA[
+  var tree;
+  var nodes=[];
+  var selectedId;
+
+  function treeInit() {ldelim}
+    var expandedNode = null;
+    tree = new YAHOO.widget.TreeView("gTreeDiv");
+    nodes[-1] = tree.getRoot();
+    selectedId = {if empty($form.destination)} {$ItemMove.albumTree[0].data.id} {else} {$form.destination} {/if};
+    {*
+     * $ItemMove contains albums in Depth-first order. Keep the ancestors of the existing
+     * branch in nodes[] array in order to maintain parent ids.
+     *}
     {foreach from=$ItemMove.albumTree item=album}
-      <option value="{$album.data.id}"
-	      {if ($album.data.id == $form.destination)}selected="selected"{/if}>
-	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
-	{$album.data.title|markup:strip|default:$album.data.pathComponent}
-      </option>
+      nodes[{$album.depth}] = new YAHOO.widget.TextNode({ldelim} id: "{$album.data.id}", 
+        label: "{$album.data.title|markup:strip|default:$album.data.pathComponent}",
+        href: "javascript:onLabelClick({$album.data.id})" {rdelim},
+        nodes[{$album.depth-1}], {if $album.depth == 0}true{else}false{/if});
+      {* If the destination album is known, expand starting with top ancestor  *}
+      {if $form.destination == $album.data.id}
+        {* NOTE: apparently, nodes[1].expandAll() does not work in this situation *}
+        for (var i = 1; i < {$album.depth}; i++) {ldelim}
+          nodes[i].expand();
+        {rdelim}
+      {/if}
     {/foreach}
-  </select>
+
+    tree.draw();
+    var node = tree.getNodeByProperty("id", selectedId);
+    node.getLabelEl().setAttribute("class", "ygtvlabelselected");
+    
+    document.getElementById("{g->formVar var="form[destination]"}").value = selectedId;
+  {rdelim}
+  
+  function onLabelClick(id) {ldelim}
+    if (selectedId != id) {ldelim}
+      var node = tree.getNodeByProperty("id", id);
+      node.getLabelEl().setAttribute("class", "ygtvlabelselected");
+
+      node = tree.getNodeByProperty("id", selectedId);
+      node.getLabelEl().setAttribute("class", "ygtvlabel");
+
+      selectedId = id;
+      document.getElementById("{g->formVar var="form[destination]"}").value = id;
+      checkPermissions(document.forms[0]);
+    {rdelim}
+  {rdelim}
+  
+  YAHOO.util.Event.addListener(window, "load", treeInit);
+  //]]>
+</script>
+<input type="hidden" id="{g->formVar var="form[destination]"}" name="{g->formVar var="form[destination]"}""/>
 
   {if !empty($form.error.destination.permission)}
   <div class="giError">
