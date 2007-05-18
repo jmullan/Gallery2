@@ -275,10 +275,9 @@
         nodes[{$album.depth-1}], {if $album.depth == 0}true{else}false{/if});
       {* If the destination album is known, expand starting with top ancestor  *}
       {if $form.destination == $album.data.id}
-        {* NOTE: apparently, nodes[1].expandAll() does not work in this situation *}
-        for (var i = 1; i < {$album.depth}; i++) {ldelim}
-          nodes[i].expand();
-        {rdelim}
+        {* NOTE: YUI requires two calls to expand a tree *}
+        nodes[1].expand();
+        nodes[1].expandAll();
       {/if}
     {/foreach}
 
