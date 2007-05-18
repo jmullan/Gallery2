@@ -921,6 +921,12 @@ class GalleryTemplateAdapter {
 		global $gallery;
 		if ($gallery->getCurrentView() == 'core.ProgressBar') {
 		    $this->errorProgressBar($ret);
+		} else {
+		    $summary = $ret->getErrorMessage();
+		    if (empty($summary)) {
+			$summary = implode(', ', $ret->getErrorCodeConstants($ret->getErrorCode()));
+		    }
+		    GalleryCoreApi::addEventLogEntry('Gallery Error', $summary, $ret->getAsText());
 		}
 	    }
 	}
@@ -1039,6 +1045,15 @@ class GalleryTemplateAdapter {
 	if ($ret) {
 	    $isAdmin = false;
 	}
+
+	/* Log the error */
+	$summary = $status->getErrorMessage();
+	if (empty($summary)) {
+	    $summary = implode(', ', $status->getErrorCodeConstants($status->getErrorCode()));
+	}
+	GalleryCoreApi::addEventLogEntry('Gallery Error', $summary, $status->getAsText());
+
+	/* Display an error message */
 	if ($gallery->getDebug() || $isAdmin) {
 	    $status = $status->getAsHtml($isAdmin);
 	} else {
