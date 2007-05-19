@@ -163,13 +163,16 @@ class GalleryDatabaseExport {
 		return array($ret, null, null);
 	    }
 
-	    foreach ($plugins as $pluginId => $unused) {
+	    foreach ($plugins as $pluginId => $plugin) {
 	    	if ($pluginId != 'core' && !array_key_exists($pluginId, $pluginsList)) {
 		    /* This plugin is not installed so issue a warning message. */
-		    $msg = $coreModule->translate(array('text' => 'The %s "%s" is not available'
+		    $statusText = isset($plugin['version']) ? $coreModule->translate('available')
+							    : $coreModule->translate('installed');
+		    $msg = $coreModule->translate(array('text' => 'The %s "%s" is not %s'
 								. ' and the will not be backed up.',
 							'arg1' => $pluginType,
-							'arg2' => $pluginId));
+							'arg2' => $pluginId,
+							'arg3' => $statusText));
 		    $warnings[] = $msg;
 	    	}
 	    }
