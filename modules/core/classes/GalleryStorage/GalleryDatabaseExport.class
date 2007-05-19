@@ -233,7 +233,7 @@ class GalleryDatabaseExport {
 			 null, null);
 	}
 
-	$platform->chmod($filepath, 0444);
+	$platform->chmod($filepath);
 	return array(null, $filepath, $warnings);
     }
 
