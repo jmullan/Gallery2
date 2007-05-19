@@ -34,7 +34,7 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.3-svn');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.2.11');
+	$this->setVersion('1.2.12');
 	$this->_templateVersion = 1;
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
@@ -42,7 +42,7 @@ class CoreModule extends GalleryModule {
 	$this->setCallbacks('registerEventListeners'
 	    . '|getItemLinks|getSystemLinks'
 	    . '|getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setRequiredCoreApi(array(7, 32));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -175,7 +175,7 @@ class CoreModule extends GalleryModule {
 		}
 		$url = $urlGenerator->generateUrl($urlParams);
 		$moreUrl = $isAlbum ? '' : $urlGenerator->generateUrl(
-		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemDelete', 
+		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemDelete',
 			  'itemId' => $item->getParentId(),
 			  'selectedId' => $itemId, 'return' => 1));
 		$links[$itemId][] =
@@ -238,7 +238,7 @@ class CoreModule extends GalleryModule {
 					    'itemId' => $itemId,
 					    'return' => 1));
 	    }
-	    
+
 	    if (isset($wantsDetailedLinks[$itemId]) && $isAlbum
 		    && isset($permissions[$itemId]['core.edit']) && !empty($childCounts[$itemId])
 		    && $childCounts[$itemId] > 0) {
@@ -451,10 +451,10 @@ class CoreModule extends GalleryModule {
 		$thisItemId = $itemId;
 		$urlGenerator =& $gallery->getUrlGenerator();
 		$url = $urlGenerator->generateUrl(
-		    array('controller' => 'core.ItemDeleteSingle', 'itemId' => $itemId, 
+		    array('controller' => 'core.ItemDeleteSingle', 'itemId' => $itemId,
 			  'pageId' => $thisItemId));
 		$moreUrl = $isAlbum ? '' : $urlGenerator->generateUrl(
-		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemDelete', 
+		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemDelete',
 			  'itemId' => $item->getParentId(),
 			  'selectedId' => $itemId));
 		$views[] = array('name' => $this->_translate(

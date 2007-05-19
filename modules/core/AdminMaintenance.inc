@@ -59,8 +59,7 @@ class AdminMaintenanceController extends GalleryController {
 	    if (isset($tasks[$taskId])) {
 		$task =& $tasks[$taskId];
 
-		if (($task->requiresMaintenanceMode() && $mode)
-			|| !$task->requiresMaintenanceMode()) {
+		if (!$task->requiresMaintenanceMode() || $mode) {
 		    if ($task->requiresProgressBar()) {
 			$templateAdapter =& $gallery->getTemplateAdapter();
 			$templateAdapter->registerTrailerCallback(
@@ -259,7 +258,7 @@ class MaintenanceTask {
     }
 
     /**
-     * This task requires that the administrator sets Gallery into mode
+     * This task requires that the administrator sets Gallery into mainteenance mode.
      * @return true or false
      */
     function requiresMaintenanceMode() {
