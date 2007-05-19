@@ -81,10 +81,10 @@ if ($ret) {
 	    if ($ret) {
 		$templateData['errors'][] = $ret->getAsHtml();
 	    } else if ($errors != null) {
-		if (!is_array($ret)) {
-		    $templateData['errors'][] = $ret->getAsHtml();
+		if (!is_array($errors)) {
+		    $templateData['errors'][] = $errors->getAsHtml();
 		} else {
-		    foreach ($ret as $status) {
+		    foreach ($errors as $status) {
 			$templateData['errors'][] = $status->getAsHtml();
 		    }
 		}
