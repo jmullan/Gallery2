@@ -74,10 +74,8 @@ class CoreModuleTest extends GalleryTestCase {
 	    $albumTitle, 'strip'), 'javascript', 'UTF-8');
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$url = $urlGenerator->generateUrl(
-		    array('view' => 'core.ItemDeleteSingle', 'itemId' => $albumId,
-			  'pageId' => $albumId),
-		    array('useAuthToken' => false, 'forceDirect' => true));
-	$signedUrl = $this->_signUrl($url);
+		    array('controller' => 'core.ItemDeleteSingle', 'itemId' => $albumId,
+			  'pageId' => $albumId));
 	$this->assertEquals(
 	    array(
 		array('name' => $this->_module->_translate(
@@ -91,7 +89,7 @@ class CoreModuleTest extends GalleryTestCase {
 			  array('text' => 'Delete %s',
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
-		      'script' => 'core_confirmDelete(\'' . $signedUrl . '\', \'\', \''
+		      'script' => 'core_confirmDelete(\'' . $url . '\', \'\', \''
 				  . $albumTitle . '\');return false'),
 		array('name' => $this->_module->_translate(
 			  array('text' => 'Move %s',
@@ -130,7 +128,7 @@ class CoreModuleTest extends GalleryTestCase {
 			  array('text' => 'Delete %s',
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
-		      'script' => 'core_confirmDelete(\'' . $signedUrl . '\', \'\', \''
+		      'script' => 'core_confirmDelete(\'' . $url . '\', \'\', \''
 				   . $albumTitle . '\');return false'),
 		array('name' => $this->_module->_translate(
 			  array('text' => 'Move %s',
