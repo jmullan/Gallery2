@@ -2217,7 +2217,6 @@ class CoreModuleExtras {
 	case '1.2.10':
 	    /* Adding new $requiredEntityType parameter to all loadEntitiesById calls */
  	case '1.2.11':
-	    /* Adding database exporter / importer */
 
 	case 'end of upgrade path':
 	    /*
@@ -2991,7 +2990,6 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	$regs[] = array('MaintenanceTask', 'OptimizeDatabaseTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushTemplatesTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushDatabaseCacheTask', 'class', null);
-	$regs[] = array('MaintenanceTask', 'DatabaseBackupTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'BuildDerivativesTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'ResetViewCountsTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'SystemInfoTask', 'class', null);

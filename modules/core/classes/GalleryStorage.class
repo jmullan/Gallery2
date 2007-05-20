@@ -1386,26 +1386,6 @@ class GalleryStorage {
 	    return GalleryCoreApi::utf8Substring($value, 0, $size);
 	}
     }
-
-    /**
-     * This method gets a Gallery Database Exporter object.
-     * @return A GalleryDatabaseExport object.
-     */
-    function getDatabaseExporter() {
-	GalleryCoreApi::requireOnce(
-				'modules/core/classes/GalleryStorage/GalleryDatabaseExport.class');
-	return new GalleryDatabaseExport();
-    }
-
-    /**
-     * This method gets a Gallery Database Importer object.
-     * @return A GalleryDatabaseImport object.
-     */
-    function getDatabaseImporter() {
-	GalleryCoreApi::requireOnce(
-				'modules/core/classes/GalleryStorage/GalleryDatabaseImport.class');
-	return new GalleryDatabaseImport();
-    }
 }
 
 /**

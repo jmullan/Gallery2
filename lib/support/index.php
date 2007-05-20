@@ -7,7 +7,7 @@ require_once(dirname(__FILE__) . '/security.inc');
 /* Tell other scripts we passed security.inc ok */
 define('G2_SUPPORT', true);
 if (!empty($_SERVER['QUERY_STRING'])) {
-    foreach (array('phpinfo', 'cache', 'gd', 'chmod', 'import') as $script) {
+    foreach (array('phpinfo', 'cache', 'gd', 'chmod') as $script) {
     	/*
     	 * Don't use isset($_GET[$script]) since we want to allow for GET args could collide
     	 * with the above mentioned script names
@@ -66,15 +66,6 @@ if (!empty($_SERVER['QUERY_STRING'])) {
       </h2>
       <p class="description">
         Information about your GD configuration
-      </p>
-      <hr class="faint" />
-
-      <h2>
-        <a href="index.php?import">Import Database</a>
-      </h2>
-      <p class="description">
-        Restore your Gallery database from an export that was made from the site administration
-        maintenance screen or from the Database Backup step of the Gallery upgrader.
       </p>
     </div>
   </body>

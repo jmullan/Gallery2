@@ -1144,13 +1144,11 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	return null;
     }
 
-    /**
+    /*
      * Load up the table creation and alteration SQL files for the given module
-     * @param string $moduleId The id of the module of interest.
-     * @return array ('table' => array(), 'alter' => array(),
-     *		      'remove' => array(), 'test' => array())
+     * @access private
      */
-    function getModuleSql($moduleId) {
+    function _getModuleSql($moduleId) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$sqlFile = sprintf('%smodules/%s/classes/GalleryStorage/schema.tpl',
@@ -1164,7 +1162,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			       'remove' => array(), 'test' => array());
 	}
 
-	return $moduleSql;
+	return array(null, $moduleSql);
     }
 
     /**
@@ -1237,7 +1235,10 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	$moduleSql = $this->getModuleSql($moduleId);
+	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Get the metabase info about this database */
 	$this->_gs->_traceStart();
@@ -1251,12 +1252,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * them to be lowercase so that we're consistent.
 	 */
 	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
+	    $metatables[$i] = strtolower($metatables[$i]);
 	}
 
 	/* Do the schema table first */
 	list ($schemaTableName, $unused) = $this->_gs->_translateTableName('Schema');
-	if (!in_array(GalleryUtilities::strToLower($schemaTableName), $metatables)) {
+	if (!in_array(strtolower($schemaTableName), $metatables)) {
 	    $ret = $this->_executeSql($moduleSql['table']['Schema']);
 	    if ($ret) {
 		return $ret;
@@ -1266,9 +1267,11 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    /* Create our sequences now */
 	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID,
 			   DATABASE_SEQUENCE_EVENT_LOG) as $sequenceId) {
-		$ret = $this->createSequence($sequenceId);
-		if ($ret) {
-		    return $ret;
+		$this->_gs->_traceStart();
+		$result = $this->_gs->_db->CreateSequence($this->_gs->_tablePrefix . $sequenceId);
+		$this->_gs->_traceStop();
+		if (empty($result)) {
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 		}
 	    }
 	}
@@ -1288,7 +1291,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $gallery->guaranteeTimeLimit(20);
 	    list ($tableName, $unused, $tableNameInSchema) =
 		$this->_gs->_translateTableName($rawTableName);
-	    if (!in_array(GalleryUtilities::strToLower($tableName), $metatables)) {
+	    if (!in_array(strtolower($tableName), $metatables)) {
 		$ret = $this->_executeSql($sql);
 		if ($ret) {
 		    return $ret;
@@ -1353,7 +1356,10 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	$moduleSql = $this->getModuleSql($moduleId);
+	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Get the metabase info about this database */
 	$this->_gs->_traceStart();
@@ -1367,7 +1373,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * them to be lowercase so that we're consistent.
 	 */
 	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
+	    $metatables[$i] = strtolower($metatables[$i]);
 	}
 
 	/* Load all table versions */
@@ -1384,7 +1390,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 	    list ($tableName, $unused, $tableNameInSchema) =
 		$this->_gs->_translateTableName($rawTableName);
-	    if (in_array(GalleryUtilities::strToLower($tableName), $metatables)) {
+	    if (in_array(strtolower($tableName), $metatables)) {
 		/* The table exists -- see if we should delete it */
 		if (empty($tableVersions[$tableNameInSchema])) {
 		    /*
@@ -1424,7 +1430,10 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	$moduleSql = $this->getModuleSql($moduleId);
+	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Get the metabase info about this database */
 	$this->_gs->_traceStart();
@@ -1438,7 +1447,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * them to be lowercase so that we're consistent.
 	 */
 	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
+	    $metatables[$i] = strtolower($metatables[$i]);
 	}
 
 	/*
@@ -1458,7 +1467,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStart();
 	    list ($tableName, $unused, $tableNameInSchema) =
 		$this->_gs->_translateTableName($rawTableName);
-	    if (in_array(GalleryUtilities::strToLower($tableName), $metatables)) {
+	    if (in_array(strtolower($tableName), $metatables)) {
 		/* Drop the table and yank it from the schema table */
 		$dropQuery = sprintf('DROP TABLE %s', $tableName);
 		$recordSet = $this->_gs->_db->Execute($dropQuery);
@@ -1516,7 +1525,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * as necessary.  Split multiple commands in the file into separate Execute() calls.
      *
      * @return object GalleryStatus a status code
-     * @access protected
+     * @access private
      */
     function _executeSql($buffer) {
 	/*
@@ -1599,12 +1608,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * them to be lowercase so that we're consistent.
 	 */
 	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
+	    $metatables[$i] = strtolower($metatables[$i]);
 	}
 
 	/* If the schema table exists then delete all the tables it lists */
 	list ($schemaTableName, $unused) = $this->_gs->_translateTableName('Schema');
-	if (in_array(GalleryUtilities::strToLower($schemaTableName), $metatables)) {
+	if (in_array(strtolower($schemaTableName), $metatables)) {
 	    /* Load all table versions */
 	    list ($ret, $tableVersions) = $this->_loadTableVersions();
 	    if ($ret) {
@@ -1626,9 +1635,11 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    /* Get rid of our sequences */
 	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID,
 			   DATABASE_SEQUENCE_EVENT_LOG) as $sequenceId) {
-		$ret = $this->dropSequence($sequenceId);
-		if ($ret) {
-		    return $ret;
+		$this->_gs->_traceStart();
+		$recordSet = $this->_gs->_db->DropSequence($this->_gs->_tablePrefix . $sequenceId);
+		$this->_gs->_traceStop();
+		if (empty($recordSet)) {
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
 		}
 	    }
 	}
@@ -2014,64 +2025,5 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 					       'itemId' => 'GalleryStorage_describeEntity',
 					       'id' => '_all'));
     }
-
-    /**
-     * Create a sequence.
-     * @param string $sequenceId Name of the sequence to create.
-     * @param integer $startId (optional) The number to initialize the sequence to. (default 1)
-     * @return object GalleryStatus
-     */
-    function createSequence($sequenceId, $startId=1) {
-	$this->_gs->_traceStart();
-	$result = $this->_gs->_db->CreateSequence($this->_gs->_tablePrefix . $sequenceId, $startId);
-	$this->_gs->_traceStop();
-	if (empty($result)) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, null, null,
-					 'Create Sequence failed for sequence: ' . $sequenceId);
-	}
-	return null;
-    }
-
-    /**
-     * Drop a sequence.
-     * @param string $sequenceId Name of the sequence to drop.
-     * @return object GalleryStatus
-     */
-    function dropSequence($sequenceId) {
-	$this->_gs->_traceStart();
-	$recordSet = $this->_gs->_db->DropSequence($this->_gs->_tablePrefix . $sequenceId);
-	$this->_gs->_traceStop();
-	if (empty($recordSet)) {
-	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, null, null,
-					 'Drop Sequence failed for sequence: ' . $sequenceId);
-	}
-	return null;
-    }
-
-    /**
-     * List columns in a database table as an array of ADOFieldObjects.
-     * @param $table Table name to query.
-     * @param $normalize (optional) Makes column name case-insensitive (required by some databases).
-     * @return array object GalleryStatus
-     * 		     array of Column names for the specified table.
-     */
-    function metaColumns($table, $normalize=true) {
-    	$this->_gs->_traceStart();
-	$fieldObjects = $this->_gs->_db->MetaColumns($table, $normalize);
-	$this->_gs->_traceStop();
-
-	if ($fieldObjects === false) {
-	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE, null, null,
-					 'Failed to retrieve meta column information.'), null);
-	}
-
-	$fields = array();
-	foreach ($fieldObjects as $fieldDetail) {
-	    $fields[] = $fieldDetail->name;
-	}
-
-	return array(null, $fields);
-    }
-
 }
 ?>
