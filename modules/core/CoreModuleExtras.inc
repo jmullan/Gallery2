@@ -2217,6 +2217,8 @@ class CoreModuleExtras {
 	case '1.2.10':
 	    /* Adding new $requiredEntityType parameter to all loadEntitiesById calls */
  	case '1.2.11':
+ 	case '1.2.12':
+ 	    /* remove database backup task from the admin maintenance screen */
 
 	case 'end of upgrade path':
 	    /*
@@ -2540,6 +2542,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.9':
 	case '1.2.10':
  	case '1.2.11':
+ 	case '1.2.12':
 
 	case 'end of upgrade path':
 	    /*
