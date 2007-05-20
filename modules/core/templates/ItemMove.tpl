@@ -77,7 +77,7 @@
          close: true,
          icon: YAHOO.widget.SimpleDialog.ICON_INFO,
          constraintoviewport: true,
-         buttons: [ {ldelim} text:"{g->text text="OK"}", handler:handleOk, isDefault:true {rdelim}]
+         buttons: [ {ldelim} text:"{g->text text="OK" forJavascript=true}", handler:handleOk, isDefault:true {rdelim}]
       {rdelim} );
          
     {*
@@ -111,7 +111,7 @@
 	  form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
 	{/foreach}
 	if (changed && !quiet) {ldelim}
-          gDialog.setHeader("{g->text text="Warning!"}");
+          gDialog.setHeader("{g->text text="Warning!" forJavascript=true}");
           gDialog.setBody("{g->text text="The destination you chose does not accept sub-albums, so all sub-albums have been deselected." forJavascript=true}");
           gDialog.render(document.body);
           gDialog.show();
@@ -128,7 +128,7 @@
 	  form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
 	{/foreach}
 	if (changed && !quiet) {ldelim}
-          gDialog.setHeader("{g->text text="Warning"}");
+          gDialog.setHeader("{g->text text="Warning" forJavascript=true}");
           gDialog.setBody("{g->text text="The destination you chose only accepts sub-albums, so all non-albums have been deselected." forJavascript=true}");
           gDialog.render(document.body);
           gDialog.show();
