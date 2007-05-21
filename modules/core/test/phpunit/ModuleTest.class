@@ -60,7 +60,7 @@ class ModuleTest extends GalleryTestCase {
 
     function tearDown() {
 	/* If a unittest fails it might not deactivate/uninstall the mock module properly */
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'moduletest', true);
 	if ($ret) {
 	    $this->failWithStatus($ret);
 	}
@@ -140,6 +140,14 @@ class ModuleTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	list ($ret, $plugins) = GalleryCoreApi::fetchPluginList('module');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(isset($plugins[$module->getId()]), 'missing PluginMap entry');
+	$this->assert(empty($plugins[$module->getId()]['active']),
+		      'wrong PluginMap value for active');
+
 	/* Verify that the first permission was added*/
 	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
 	if ($ret) {
@@ -189,6 +197,14 @@ class ModuleTest extends GalleryTestCase {
 	}
 	$this->assert($isActive, 'Is active');
 
+	list ($ret, $plugins) = GalleryCoreApi::fetchPluginList('module');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(isset($plugins[$module->getId()]), 'missing PluginMap entry (2)');
+	$this->assert(!empty($plugins[$module->getId()]['active']),
+		      'wrong PluginMap value for active');
+
 	/* Create an entity */
 	$entity = new ModuleTestEntity();
 	$ret = $entity->create();
@@ -235,6 +251,14 @@ class ModuleTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array(), $redirect, 'deactivate redirect');
 
+	list ($ret, $plugins) = GalleryCoreApi::fetchPluginList('module');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(isset($plugins[$module->getId()]), 'missing PluginMap entry (3)');
+	$this->assert(empty($plugins[$module->getId()]['active']),
+		      'wrong PluginMap value for active (3)');
+
 	/* Upgrade the module */
 	$module->setVersion('1.0.1');
 	$ret = $module->installOrUpgrade();
@@ -256,6 +280,12 @@ class ModuleTest extends GalleryTestCase {
 	}
 	$this->assert(!empty($this->_removedDir),
 		      'plugins_data/modules/moduletest directory not removed in uninstall');
+
+	list ($ret, $plugins) = GalleryCoreApi::fetchPluginList('module');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert(!isset($plugins[$module->getId()]), 'PluginMap entry still set');
 
 	/* Flush cached permissions */
 	GalleryDataCache::reset();

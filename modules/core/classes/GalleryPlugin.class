@@ -180,11 +180,7 @@ class GalleryPlugin {
 	}
 
 	/* Flush the cache */
-	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
-	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
-					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
-					       'id' => '_all'));
-	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
+	$this->_flushPluginCache();
 	GalleryDataCache::removeFromDisk(array('type' => 'local-url-map'));
 
 	$templateCacheDir = $gallery->getConfig('data.smarty.templates_c');
@@ -241,12 +237,7 @@ class GalleryPlugin {
 	    return array($ret, null);
 	}
 
-	/* Flush the cache */
-	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
-	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
-					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
-					       'id' => '_all'));
-	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
+	$this->_flushPluginCache();
 
 	if ($postDeactivationEvent) {
 	    $ret = $this->_postDeactivationEvent();
@@ -371,6 +362,14 @@ class GalleryPlugin {
 	    return $ret;
 	}
 
+	$ret = GalleryCoreApi::removeMapEntry('GalleryPluginMap',
+	    array('pluginType' => $this->getPluginType(), 'pluginId' => $this->getId()));
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_flushPluginCache();
+
 	$event = GalleryCoreApi::newEvent('Gallery::UninstallPlugin');
 	$event->setData(array('pluginType' => $this->getPluginType(),
 			      'pluginId' => $this->getId()));
@@ -417,7 +416,40 @@ class GalleryPlugin {
 	    return $ret;
 	}
 
+	list ($ret, $searchResult) = GalleryCoreApi::getMapEntry('GalleryPluginMap',
+	    array('pluginId'),
+	    array('pluginType' => $this->getPluginType(), 'pluginId' => $this->getId()));
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (!$searchResult->resultCount()) {
+	    $ret = GalleryCoreApi::addMapEntry(
+		'GalleryPluginMap',
+		array('pluginType' => $this->getPluginType(),
+		      'pluginId' => $this->getId(),
+		      'active' => 0));
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	$this->_flushPluginCache();
+
 	return null;
+    }
+
+    /**
+     * Flush plugin-related caches.
+     */
+    function _flushPluginCache() {
+	/* Flush the cache */
+	$pluginType = $this->getPluginType();
+	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+					       'id' => '_all'));
+	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
     }
 
     /**

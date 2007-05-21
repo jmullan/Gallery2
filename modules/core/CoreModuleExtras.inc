@@ -2218,7 +2218,45 @@ class CoreModuleExtras {
 	    /* Adding new $requiredEntityType parameter to all loadEntitiesById calls */
  	case '1.2.11':
  	case '1.2.12':
- 	    /* remove database backup task from the admin maintenance screen */
+ 	    /* Remove database backup task from the admin maintenance screen */
+	case '1.2.13':
+	    /*
+	     * Adding PluginMap entries for all installed plugins.  Until now, a plugin was said to
+	     * be installed (vs uninstalled) if the _version parameter is set.  And PluginMap had a
+	     * rather undefined list of entries (at least all active plugins).
+	     */
+	    list ($ret, $installedResults) = GalleryCoreApi::getMapEntry(
+		'GalleryPluginParameterMap',
+		array('pluginType', 'pluginId', 'parameterValue'),
+		array('parameterName' => '_version', 'itemId' => 0));
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    list ($ret, $pluginResults) = GalleryCoreApi::getMapEntry('GalleryPluginMap',
+		array('pluginType', 'pluginId'));
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $installedPlugins = $existingEntries = array();
+	    while (($row = $pluginResults->nextResult()) !== false) {
+		$existingEntries[$row[0]][$row[1]] = 1;
+	    }
+	    while (($row = $installedResults->nextResult()) !== false) {
+		list ($pluginType, $pluginId, $installedVersion) = $row;
+		if (empty($installedVersion) && isset($existingEntries[$pluginType][$pluginId])) {
+		    $ret = GalleryCoreApi::removeMapEntry('GalleryPluginMap',
+			array('pluginType' => $pluginType, 'pluginId' => $pluginId));
+		} else if (!empty($installedVersion)
+			&& !isset($existingEntries[$pluginType][$pluginId])) {
+		    $ret = GalleryCoreApi::addMapEntry('GalleryPluginMap',
+			array('pluginType' => $pluginType, 'pluginId' => $pluginId, 'active' => 0));
+		}
+		if ($ret) {
+		    return $ret;
+		}
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2542,7 +2580,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.9':
 	case '1.2.10':
  	case '1.2.11':
- 	case '1.2.12':
+	case '1.2.12':
+ 	case '1.2.13':
 
 	case 'end of upgrade path':
 	    /*

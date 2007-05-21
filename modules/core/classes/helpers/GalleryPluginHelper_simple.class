@@ -421,20 +421,20 @@ class GalleryPluginHelper_simple {
 		    }
 		}
 
-		/* Find and remove plugins that are active, but not installed */
+		if ($pluginType == 'module') {
+		    /* Force the core module's status */
+		    $plugins['core']['active'] = 1;
+		    $plugins['core']['available'] = 1;
+		}
+
+		/* Find and remove plugins that are installed, but not available */
 		foreach ($plugins as $pluginId => $pluginStatus) {
-		    if (!isset($pluginStatus['available'])) {
+		    if (empty($pluginStatus['available'])) {
 			if ($gallery->getDebug()) {
 			    $gallery->debug("Plugin $pluginId no longer installed");
 			}
 			unset($plugins[$pluginId]);
 		    }
-		}
-
-		if ($pluginType == 'module') {
-		    /* Force the core module's status */
-		    $plugins['core']['active'] = 1;
-		    $plugins['core']['available'] = 1;
 		}
 
 		GalleryDataCache::putToDisk(
