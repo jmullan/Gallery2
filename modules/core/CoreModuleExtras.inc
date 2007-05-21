@@ -2246,6 +2246,7 @@ class CoreModuleExtras {
 	    while (($row = $installedResults->nextResult()) !== false) {
 		list ($pluginType, $pluginId, $installedVersion) = $row;
 		if (empty($installedVersion) && isset($existingEntries[$pluginType][$pluginId])) {
+		    /* Remove entries of formerly installed but now uninstalled plugins */
 		    $ret = GalleryCoreApi::removeMapEntry('GalleryPluginMap',
 			array('pluginType' => $pluginType, 'pluginId' => $pluginId));
 		} else if (!empty($installedVersion)
