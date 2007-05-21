@@ -658,11 +658,11 @@ class GalleryStorage {
 		}
 	    }
 	    $db = $this->_db;
-	}
 
-	$ret = $this->_guaranteeTransaction();
-	if ($ret) {
-	    return $ret;
+	    $ret = $this->_guaranteeTransaction();
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	list ($ret, $mapInfo) = $this->describeMap($mapName);
