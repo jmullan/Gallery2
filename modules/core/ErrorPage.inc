@@ -117,18 +117,14 @@ class ErrorPageView extends GalleryView {
      *
      * @param object GalleryStatus $error
      * @param mixed $g2Data (optional) GalleryMain result, if available
-     * @param boolean $initOk (optional) false if Gallery has not initialized which means
-     *                we can't use the theme system.
+     * @param boolean $initOk @deprecated
      * @return boolean true if the error was handled at the last moment and should therefore
      *                 not be considered an error.
      * @static
      */
-    function errorHandler($error, $g2Data=null, $initOk=true) {
+    function errorHandler($error, $g2Data=null, $initOk=null) {
 	global $gallery;
 	$failsafe = false;
-	if (!$initOk) {
-	    $failsafe = true;
-	}
 
 	/* Post Gallery::Error event */
 	$event = GalleryCoreApi::newEvent('Gallery::Error');
@@ -145,8 +141,7 @@ class ErrorPageView extends GalleryView {
 	    GalleryUtilities::setResponseHeader('HTTP/1.0 500 Internal Server Error', false);
 	}
 
-	$suppressBody = false;
-	$errorHandled = false;
+	$suppressBody = $errorHandled = false;
 	foreach ($eventResults as $eventResult) {
 	    $suppressBody |= !empty($eventResult['suppressBody']);
 	    $errorHandled |= !empty($eventResult['errorHandled']);
@@ -169,11 +164,11 @@ class ErrorPageView extends GalleryView {
 	    if ($ret) {
 		$failsafe = true;
 	    }
-	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $templateAdapter->setTheme($theme);
 	}
 
 	if (!$failsafe) {
+	    $templateAdapter =& $gallery->getTemplateAdapter();
+	    $templateAdapter->setTheme($theme);
 	    list ($ret, $view) = GalleryView::loadView('core.ErrorPage');
 	    if ($ret) {
 		$failsafe = true;
@@ -189,12 +184,11 @@ class ErrorPageView extends GalleryView {
 	    if ($ret) {
 		$failsafe = true;
 	    }
-
-	    $t =& $template->getVariableByReference('theme');
-	    $t['errorTemplate'] = $results['body'];
 	}
 
 	if (!$failsafe) {
+	    $t =& $template->getVariableByReference('theme');
+	    $t['errorTemplate'] = $results['body'];
 	    $template->setVariable('l10Domain', 'modules_core');
 	    list ($ret, $templatePath) = $theme->showErrorPage($template);
 	    if ($ret) {
@@ -212,7 +206,11 @@ class ErrorPageView extends GalleryView {
 
 	if ($failsafe) {
 	    /* A catastrophic failure has occurred so just dump the error out to the browser */
-	    print '<h2>Error</h2>' . $error->getAsHtml($gallery->getDebug());
+	    print '<h2>Error</h2>';
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($gallery->getDebug() || (!$ret && $isAdmin)) {
+		print $error->getAsHtml();
+	    }
 	    if ($gallery->getDebug() == 'buffered') {
 		print '<h3>Debug Output</h3><pre>' . $gallery->getDebugBuffer() . '</pre>';
 	    }

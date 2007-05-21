@@ -88,7 +88,7 @@ if ($gallery->isEmbedded()) {
     require_once(dirname(__FILE__) . '/init.inc');
     $ret = GalleryInitFirstPass();
     if ($ret) {
-	_GalleryMain_errorHandler($ret, null, false);
+	_GalleryMain_errorHandler($ret, null);
 	return;
     }
 
@@ -656,13 +656,12 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
  * error cannot be handled, then add an error in the event log.
  * @param object GalleryStatus a status code
  * @param array $g2Data the results from _GalleryMain
- * @param bool $initOk true if GalleryInitFirstPass succeeded for this request
  */
-function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
+function _GalleryMain_errorHandler($error, $g2Data=null) {
     global $gallery;
 
     GalleryCoreApi::requireOnce('modules/core/ErrorPage.inc');
-    $handledError = ErrorPageView::errorHandler($error, $g2Data, $initOk);
+    $handledError = ErrorPageView::errorHandler($error, $g2Data);
     if (!$handledError) {
 	$summary = $error->getErrorMessage();
 	if (empty($summary)) {
