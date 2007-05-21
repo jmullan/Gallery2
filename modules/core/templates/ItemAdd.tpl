@@ -6,6 +6,12 @@
   <h2> {g->text text="Add Items"} </h2>
 </div>
 
+{if !empty($form.error.itemsAddedDespiteFormErrors)}
+<div class="gbBlock giError">
+  {g->text text="Not all of the specified items have been added successfully."}
+</div>
+{/if}
+
 {if (!$ItemAdd.hasToolkit)}
 <div class="gbBlock giWarning">
   {g->text text="You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add images, you will probably not have any thumbnails."}

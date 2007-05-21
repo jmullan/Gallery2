@@ -1065,10 +1065,17 @@ class GalleryTemplateAdapter {
 
     /**
      * Complete progress bar.
+     * @param string $continueUrl URL shown to continue the process
+     * @param bool $doRedirect Whether to redirect automatically. Defaults to false, requiring
+     *                         user-interaction to follow the continue link.
      */
-    function completeProgressBar($continueUrl) {
+    function completeProgressBar($continueUrl, $doRedirect=false) {
 	$continueUrl = str_replace('&amp;', '&', $continueUrl);
 	printf('<script type="text/javascript">completeProgressBar("%s");</script>', $continueUrl);
+	if ($doRedirect) {
+	    printf('<script type="text/javascript">document.location.href = "%s";</script>',
+		   $continueUrl);
+	}
     }
 }
 ?>
