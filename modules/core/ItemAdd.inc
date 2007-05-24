@@ -158,16 +158,18 @@ class ItemAddController extends GalleryController {
 	    $doRedirect = ($phpVm->time() - $startTime) <= $autoRedirectSeconds;
 
 	    if (empty($status['addedFiles'])) {
-	    	/*
+		/*
 		 * Append all form parameters for the next view request.  Some plugins submit a
 		 * first form to the controller only to forward the request to the view which might
 		 * depend on the same form parameters.
 		 */
-	    	$continueUrl = $urlGenerator->generateUrl(
+		$continueUrl = $urlGenerator->generateUrl(
 		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemAdd',
 			  'addPlugin' => $addPluginId, 'itemId' => $item->getId(),
 			  'statusId' => $statusId, 'form' => $form),
 		    array('forceFullUrl' => true));
+		$templateAdapter->updateProgressBar(
+		    $this->_coreModule->translate('Adding items'), '', 1);
 	    } else {
 		$continueUrl = $urlGenerator->generateUrl(
 		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemAddConfirmation',
