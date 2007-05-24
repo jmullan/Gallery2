@@ -1252,12 +1252,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * them to be lowercase so that we're consistent.
 	 */
 	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = strtolower($metatables[$i]);
+	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
 	}
 
 	/* Do the schema table first */
 	list ($schemaTableName, $unused) = $this->_gs->_translateTableName('Schema');
-	if (!in_array(strtolower($schemaTableName), $metatables)) {
+	if (!in_array(GalleryUtilities::strToLower($schemaTableName), $metatables)) {
 	    $ret = $this->_executeSql($moduleSql['table']['Schema']);
 	    if ($ret) {
 		return $ret;
@@ -1291,7 +1291,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $gallery->guaranteeTimeLimit(20);
 	    list ($tableName, $unused, $tableNameInSchema) =
 		$this->_gs->_translateTableName($rawTableName);
-	    if (!in_array(strtolower($tableName), $metatables)) {
+	    if (!in_array(GalleryUtilities::strToLower($tableName), $metatables)) {
 		$ret = $this->_executeSql($sql);
 		if ($ret) {
 		    return $ret;
@@ -1373,7 +1373,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * them to be lowercase so that we're consistent.
 	 */
 	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = strtolower($metatables[$i]);
+	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
 	}
 
 	/* Load all table versions */
@@ -1390,7 +1390,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 	    list ($tableName, $unused, $tableNameInSchema) =
 		$this->_gs->_translateTableName($rawTableName);
-	    if (in_array(strtolower($tableName), $metatables)) {
+	    if (in_array(GalleryUtilities::strToLower($tableName), $metatables)) {
 		/* The table exists -- see if we should delete it */
 		if (empty($tableVersions[$tableNameInSchema])) {
 		    /*
@@ -1447,7 +1447,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * them to be lowercase so that we're consistent.
 	 */
 	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = strtolower($metatables[$i]);
+	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
 	}
 
 	/*
@@ -1467,7 +1467,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $this->_gs->_traceStart();
 	    list ($tableName, $unused, $tableNameInSchema) =
 		$this->_gs->_translateTableName($rawTableName);
-	    if (in_array(strtolower($tableName), $metatables)) {
+	    if (in_array(GalleryUtilities::strToLower($tableName), $metatables)) {
 		/* Drop the table and yank it from the schema table */
 		$dropQuery = sprintf('DROP TABLE %s', $tableName);
 		$recordSet = $this->_gs->_db->Execute($dropQuery);
@@ -1608,12 +1608,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	 * them to be lowercase so that we're consistent.
 	 */
 	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = strtolower($metatables[$i]);
+	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
 	}
 
 	/* If the schema table exists then delete all the tables it lists */
 	list ($schemaTableName, $unused) = $this->_gs->_translateTableName('Schema');
-	if (in_array(strtolower($schemaTableName), $metatables)) {
+	if (in_array(GalleryUtilities::strToLower($schemaTableName), $metatables)) {
 	    /* Load all table versions */
 	    list ($ret, $tableVersions) = $this->_loadTableVersions();
 	    if ($ret) {
@@ -1990,8 +1990,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if (!isset($entityInfo[$entityName])) {
 	    $parentClass = get_parent_class($entityName);
 	    foreach (array_keys($entityInfo) as $candidate) {
-		if ($parentClass == $candidate || $parentClass == strtr($candidate,
-			    'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijlkmnopqrstuvwxyz')) {
+		if ($parentClass == $candidate
+			|| $parentClass == GalleryUtilities::strToLower($candidate)) {
 		    $entityInfo[$entityName] = array(
 			'members' => array(),
 			'parent' => $candidate,
