@@ -715,8 +715,9 @@ class DatabaseSetupStep extends InstallStep {
      * @return bool success status
      */
     function in_array_cin($strItem, $arItems) {
+	$strItem = GalleryUtilities::strToUpper($strItem);
 	foreach ($arItems as $strValue) {
-	    if (strtoupper($strItem) == strtoupper($strValue)) {
+	    if ($strItem == GalleryUtilities::strToUpper($strValue)) {
 		return true;
 	    }
 	}
