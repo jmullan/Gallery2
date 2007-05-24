@@ -1240,19 +1240,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	/* Get the metabase info about this database */
-	$this->_gs->_traceStart();
-	$metatables = $this->_gs->_db->MetaTables();
-	$this->_gs->_traceStop();
-
-	/*
-	 * Some databases (notably MySQL on Win32) don't support mixed case
-	 * table names.  So, when we get the meta table list back, it's lower
-	 * case.  Force all metatable listings to lower case and then expect
-	 * them to be lowercase so that we're consistent.
-	 */
-	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
+	list ($ret, $metatables) = $this->_metaTables();
+	if ($ret) {
+	    return $ret;
 	}
 
 	/* Do the schema table first */
@@ -1361,19 +1351,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	/* Get the metabase info about this database */
-	$this->_gs->_traceStart();
-	$metatables = $this->_gs->_db->MetaTables();
-	$this->_gs->_traceStop();
-
-	/*
-	 * Some databases (notably MySQL on Win32) don't support mixed case
-	 * table names.  So, when we get the meta table list back, it's lower
-	 * case.  Force all metatable listings to lower case and then expect
-	 * them to be lowercase so that we're consistent.
-	 */
-	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
+	list ($ret, $metatables) = $this->_metaTables();
+	if ($ret) {
+	    return $ret;
 	}
 
 	/* Load all table versions */
@@ -1435,19 +1415,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	/* Get the metabase info about this database */
-	$this->_gs->_traceStart();
-	$metatables = $this->_gs->_db->MetaTables();
-	$this->_gs->_traceStop();
-
-	/*
-	 * Some databases (notably MySQL on Win32) don't support mixed case
-	 * table names.  So, when we get the meta table list back, it's lower
-	 * case.  Force all metatable listings to lower case and then expect
-	 * them to be lowercase so that we're consistent.
-	 */
-	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
+	list ($ret, $metatables) = $this->_metaTables();
+	if ($ret) {
+	    return $ret;
 	}
 
 	/*
@@ -1596,19 +1566,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	/* Get the metabase info about this database */
-	$this->_gs->_traceStart();
-	$metatables = $this->_gs->_db->MetaTables();
-	$this->_gs->_traceStop();
-
-	/*
-	 * Some databases (notably MySQL on Win32) don't support mixed case
-	 * table names.  So, when we get the meta table list back, it's lower
-	 * case.  Force all metatable listings to lower case and then expect
-	 * them to be lowercase so that we're consistent.
-	 */
-	for ($i = 0; $i < count($metatables); $i++) {
-	    $metatables[$i] = GalleryUtilities::strToLower($metatables[$i]);
+	list ($ret, $metatables) = $this->_metaTables();
+	if ($ret) {
+	    return $ret;
 	}
 
 	/* If the schema table exists then delete all the tables it lists */
@@ -1671,13 +1631,14 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return array($ret, null);
 	}
 
-	/* Get the metabase info about this database */
-	$this->_gs->_traceStart();
-	$metatables = $this->_gs->_db->MetaTables();
-	$this->_gs->_traceStop();
+	list ($ret, $metatables) = $this->_metaTables();
+	if ($ret) {
+	    return array($ret, null);
+	}
 
 	list ($schemaTableName) = $this->_gs->_translateTableName('Schema');
-	$isInstalled = preg_match("/\b$schemaTableName\b/i", implode(' ', $metatables));
+	$schemaTableName = GalleryUtilities::strToLower($schemaTableName);
+	$isInstalled = preg_match("/\b$schemaTableName\b/", implode(' ', $metatables));
 	return array(null, $isInstalled);
     }
 
@@ -2024,6 +1985,32 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	GalleryDataCache::removeFromDisk(array('type' => 'module',
 					       'itemId' => 'GalleryStorage_describeEntity',
 					       'id' => '_all'));
+    }
+
+    /**
+     * Get a list of all database tables (not limited to our table-prefix)
+     * @return array object GalleryStatus
+     *               array of table names in lower-case
+     */
+    function _metaTables() {
+	$this->_gs->_traceStart();
+	$metatables = $this->_gs->_db->MetaTables();
+	$this->_gs->_traceStop();
+	if ($metatables === false) {
+	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
+	}
+
+	/*
+	 * Some databases (notably MySQL on Win32) don't support mixed case
+	 * table names.  So, when we get the meta table list back, it's lower
+	 * case.  Force all metatable listings to lower case and then expect
+	 * them to be lowercase so that we're consistent.
+	 */
+	foreach ($metatables as $key => $tableName) {
+	    $metatables[$key] = GalleryUtilities::strToLower($tableName);
+	}
+
+	return array(null, $metatables);
     }
 }
 ?>
