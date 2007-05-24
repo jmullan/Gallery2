@@ -2104,7 +2104,7 @@ class WebDavServer extends HTTP_WebDAV_Server {
     /**
      * @see HTTP_WebDAV_Server::getHref
      */
-    function getHref($path) {
+    function getHref($path=null) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 

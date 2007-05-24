@@ -129,20 +129,17 @@ class WebDavController extends GalleryController {
 		    GalleryUtilities::putRequestVariable('itemId', $parentId);
 		    GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
 
-		    GalleryCoreApi::requireOnce('modules/core/ItemAdd.inc');
-		    list ($ret, $results) = ItemAddController::handleRequest($form);
+		    list ($ret, $controller) = GalleryController::loadController('core.ItemAdd');
 		    if ($ret) {
 			return array($ret, null);
 		    }
 
-		    /*
-		     * Don't send HTTP redirects of HTML status / error back to WebDAV clients since
-		     * we have already set our status code.  Fall through to the standard empty
-		     * return.
-		     */
-		    return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
-					     'status' => array(),
-					     'error' => array()));
+		    list ($ret, $results) = $controller->handleRequest($form);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+
+		    return array(null, $results);
 		}
 
 		return array($ret, null);
@@ -152,19 +149,17 @@ class WebDavController extends GalleryController {
 	    GalleryUtilities::putRequestVariable('itemId', $itemId);
 	    GalleryUtilities::putRequestVariable('editPlugin', 'ItemEditWebDav');
 
-	    GalleryCoreApi::requireOnce('modules/core/ItemEdit.inc');
-	    list ($ret, $results) = ItemEditController::handleRequest($form);
+	    list ($ret, $controller) = GalleryController::loadController('core.ItemEdit');
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
-	    /*
-	     * Don't send HTTP redirects of HTML status / error back to WebDAV clients since we have
-	     * already set our status code.  Fall through to the standard empty return.
-	     */
-	    return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
-				     'status' => array(),
-				     'error' => array()));
+	    list ($ret, $results) = $controller->handleRequest($form);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    return array(null, $results);
 	}
 
 	return array(null, array('delegate' => array('view' => 'webdav.WebDav'),
@@ -206,11 +201,6 @@ class WebDavView extends GalleryView {
     function renderImmediate($status, $error) {
 	$requestMethod = GalleryUtilities::strToLower(
 	    GalleryUtilities::getServerVar('REQUEST_METHOD'));
-	/* If we just completed a PUT request and got delegated here, just silently return */
-	if ($requestMethod == 'put') {
-	    return null;
-	}
-
 	if (!in_array($requestMethod, array('options', 'propfind', 'proppatch', 'mkcol', 'delete',
 					    'move', 'lock', 'unlock'))) {
 	    return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);

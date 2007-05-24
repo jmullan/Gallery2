@@ -525,10 +525,11 @@ class HTTP_WebDAV_Server
         foreach ($files as $file) {
             $response = array();
 
-            if (empty($file['href'])) {
-                $response['href'] = $this->getHref($file['path']);
-            } else {
-                $response['href'] = $file['href'];
+            // copy href to response
+            foreach (array('href', 'path') as $key) {
+                if (!empty($file[$key])) {
+                    $response[$key] = $file[$key];
+                }
             }
 
             $response['propstat'] = array();
@@ -684,10 +685,11 @@ class HTTP_WebDAV_Server
     {
         $response = array();
 
-        if (empty($options['href'])) {
-            $response['href'] = $this->getHref($options['path']);
-        } else {
-            $response['href'] = $options['href'];
+        // copy href to response
+        foreach (array('href', 'path') as $key) {
+            if (!empty($options[$key])) {
+                $response[$key] = $options[$key];
+            }
         }
 
         $response['propstat'] = array();
@@ -1614,10 +1616,11 @@ class HTTP_WebDAV_Server
             foreach ($options['locks'] as $lock) {
                 $response = array();
 
-                if (empty($lock['href'])) {
-                    $response['href'] = $this->getHref($lock['path']);
-                } else {
-                    $response['href'] = $lock['href'];
+                // copy href to response
+                foreach (array('href', 'path') as $key) {
+                    if (!empty($lock[$key])) {
+                        $response[$key] = $lock[$key];
+                    }
                 }
 
                 $response['status'] = '423 Locked';
@@ -1794,6 +1797,14 @@ class HTTP_WebDAV_Server
                 }
             }
             echo "  <D:response$namespaces>\n";
+
+            // print href
+            if (empty($response['href'])) {
+                if (empty($response['path'])) {
+                    $response['path'] = null;
+                }
+                $response['href'] = $this->getHref($response['path']);
+            }
             echo "    <D:href>$response[href]</D:href>\n";
 
             // report all found properties and their values (if any)
@@ -1963,7 +1974,7 @@ class HTTP_WebDAV_Server
         return implode('', $locks);
     }
 
-    function getHref($path)
+    function getHref($path=null)
     {
         return '/' . trim($this->baseUrl['path'], '/') . '/' . $path;
     }

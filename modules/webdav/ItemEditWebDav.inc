@@ -128,18 +128,22 @@ class ItemEditWebDav extends ItemEditPlugin {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret, null, null, null);
 	}
-
-	/* Check if the class hasn't changed */
-	if (!isset($newItem) || $newItem->getClassName() == $item->getClassName()) {
+	if (!isset($newItem)) {
+	    $gallery->debug(
+		'Error in ItemEditWebDav::handleRequest: Failed to get new item by mime type: '
+		. $mimeType);
 	    $newItem = $item;
-	} else {
-	    /* Make the new item as close a copy of the original item as possible */
-	    list ($ret, $newItem) = WebDavHelper::mirrorEntity($item, $newItem);
-	    if ($ret) {
-		GalleryCoreApi::releaseLocks($lockIds);
-		return array($ret, null, null, null);
-	    }
+	}
 
+	/* Make the new item as close a copy of the original item as possible */
+	list ($ret, $newItem) = WebDavHelper::mirrorEntity($item, $newItem);
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null, null);
+	}
+
+	/* Check if the class has changed */
+	if ($newItem->getClassName() != $item->getClassName()) {
 	    /* Fall back on the original item if the new class doesn't support the file content */
 	    $ret = $newItem->rescan();
 	    if ($ret) {
@@ -152,10 +156,7 @@ class ItemEditWebDav extends ItemEditPlugin {
 	    }
 	}
 
-	/*
-	 * Fall back on the original item if the new class doesn't support the file content or the
-	 * class hasn't changed
-	 */
+	/* Check if the class hasn't changed or the new class doesn't support the file content */
 	if ($newItem->getClassName() == $item->getClassName()) {
 	    $ret = $newItem->rescan();
 	    if ($ret) {
@@ -214,7 +215,7 @@ class ItemEditWebDav extends ItemEditPlugin {
 
 	/*
 	 * Restore the file content.  If this fails, we rollback the database transaction but the
-	 * file content is missing.  Is this inconsistent?
+	 * file content is missing.
 	 */
 	if (!$platform->copy($tmpFile, $filePath)) {
 	    @$platform->unlink($tmpFile);
