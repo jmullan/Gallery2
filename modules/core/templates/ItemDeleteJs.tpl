@@ -7,7 +7,7 @@ var prompt = {ldelim}
   "body"   : '{g->text text="Do you really want to delete " forJavascript=true}',
   "yes"    : '{g->text text="Yes" forJavascript=true}',
   "no"     : '{g->text text="No" forJavascript=true}',
-  "more"   : '{g->text text="Delete more items..." forJavascript=true}',
+  "more"   : '{g->text text="Delete more items..." forJavascript=true}'
 {rdelim};
 
 {literal}
