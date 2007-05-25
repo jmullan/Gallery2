@@ -48,8 +48,10 @@ class ItemAddFromWeb extends ItemAddPlugin {
     /**
      * @see ItemAddPlugin::handleRequest
      */
-    function handleRequest($form, &$item) {
+    function handleRequest($form, &$item, &$addController) {
 	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$storage =& $gallery->getStorage();
 
 	$status = $error = array();
 
@@ -64,6 +66,14 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		$extraHeaders =
 		    array('Referer' => str_replace('&amp;', '&', $form['webPage']));
 	    }
+
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'itemadd');
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+
+	    $totalUrls = count($form['webPageUrls']);
+	    $i = 1;
 	    foreach (array_keys($form['webPageUrls']) as $url) {
 		/* Copy the file locally */
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
@@ -106,6 +116,25 @@ class ItemAddFromWeb extends ItemAddPlugin {
 						    'warnings' => array());
 		}
 		@$platform->unlink($tmpFile);
+
+		if ($i % 10 == 0 && !empty($status['addedFiles'])) {
+		    $gallery->guaranteeTimeLimit(60);
+		    list ($ret, $optionErrors) = $addController->postprocessItems($form, $status);
+		    if ($ret) {
+			return array($ret, null, null);
+		    }
+		    $error = array_merge($error, $optionErrors);
+		    if ($optionErrors) {
+		    	break;
+		    }
+		}
+		$gallery->guaranteeTimeLimit(60);
+		$templateAdapter->updateProgressBar($module->translate(
+		    'Adding items'), '', $i++ / $totalUrls);
+		$ret = $storage->checkPoint();
+		if ($ret) {
+		    return array($ret, null, null);
+		}
 	    }
 	}
 

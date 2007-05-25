@@ -325,9 +325,13 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    }
 	    foreach ($dirs as $dirName) {
 		$subalbum = array_shift($subalbums);
-		$this->assert(GalleryUtilities::isA($subalbum, 'GalleryAlbumItem'), 'subalbum');
-		$dirName = $platform->legalizePathComponent($dirName);
-		$this->assertEquals($dirName, $subalbum->getPathComponent(), 'subalbum path');
+		if ($subalbum) {
+		    $this->assert(GalleryUtilities::isA($subalbum, 'GalleryAlbumItem'), 'subalbum');
+		    $dirName = $platform->legalizePathComponent($dirName);
+		    $this->assertEquals($dirName, $subalbum->getPathComponent(), 'subalbum path');
+		} else {
+		    $this->fail("Missing sub-album for expected $dirName");
+		}
 	    }
 	}
 	$addDirectoriesString = $addDirectories ? ' addDirectories' : ' !addDirectories';
@@ -508,6 +512,23 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	switch ($path) {
 	case $this->_baseDir . 'December - <#952>.jpg':
 	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
+	case $this->_baseDir . "t\xebst.png":
+	case $this->_baseDir . 'apo\'strophe.jpg':
+	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
+	    /* The windows path is a little weird -- but we can live with it */
+	case $this->_baseDir . '\\apo\'strophe.jpg':
+	    return true;
+
+	default:
+	    return $this->_delegate->file_exists($path);
+	}
+    }
+
+    function is_readable($path) {
+	switch ($path) {
+	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
+	case $this->_baseDir . "subD\xeer":
 	case $this->_baseDir . "t\xebst.png":
 	case $this->_baseDir . 'apo\'strophe.jpg':
 	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
