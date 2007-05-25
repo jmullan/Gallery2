@@ -6,7 +6,7 @@
     <table-name>Schema</table-name>
     <schema>
 	<schema-major>1</schema-major>
-	<schema-minor>0</schema-minor>
+	<schema-minor>1</schema-minor>
     </schema>
     <column>
 	<column-name>name</column-name>
@@ -25,6 +25,11 @@
 	<column-type>INTEGER</column-type>
 	<column-size>MEDIUM</column-size>
         <not-null/>
+    </column>
+    <column>
+      <column-name>createSql</column-name>
+      <column-type>TEXT</column-type>
+      <column-size>SMALL</column-size>
     </column>
     <key primary="true">
         <column-name>name</column-name>

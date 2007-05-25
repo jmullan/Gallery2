@@ -83,6 +83,14 @@ class CoreModuleExtras {
 	    }
 	}
 
+	if (version_compare($currentVersion, '1.2.15', '<')) {
+	    /* Add the createSql column to the schema table before it's used. */
+	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0'));
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
 	/**
 	 * README: How to update the block below
 	 *
@@ -2253,6 +2261,59 @@ class CoreModuleExtras {
 		    return $ret;
 		}
 	    }
+	case '1.2.14':
+	    /*
+	     * Add a new column to the Schema table to store the creation sql for each table. This
+	     * change is to prepare the way for database export functionality. We have already done
+	     * the configure store. So just populate the createSql column now.
+	     */
+	    $gallery->guaranteeTimeLimit(30);
+
+	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $storageExtras =& $storage->_getExtras();
+
+	    /* Load all table versions */
+	    list ($ret, $tableVersions) = $storageExtras->_loadTableVersions();
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $count = 1;
+	    $total = count($modules);
+	    $statusText = $module->translate('Converting Schema Table');
+
+	    foreach ($modules as $moduleId => $unused) {
+		list ($ret, $sql) = $storageExtras->_getModuleSql($moduleId);
+		if ($ret) {
+		    return $ret;
+		}
+		if (empty($sql['table'])){
+		    continue;
+		}
+
+		foreach ($sql['table'] as $tableName => $tableSql) {
+		    list ($safeName, $unused, $nameInSchema) =
+			$storage->_translateTableName($tableName);
+
+		    if (!array_key_exists($nameInSchema, $tableVersions)) {
+			continue;
+		    }
+		    $ret = $storageExtras->_updateSchemaCreateSql($nameInSchema, $tableSql);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+
+		$ret = $statusMonitor->renderStatusMessage($statusText, '', $count++ / $total);
+		if ($ret) {
+		    return $ret;
+		}
+		$gallery->guaranteeTimeLimit(30);
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2578,6 +2639,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
  	case '1.2.11':
  	case '1.2.12':
  	case '1.2.13':
+ 	case '1.2.14':
 
 	case 'end of upgrade path':
 	    /*
