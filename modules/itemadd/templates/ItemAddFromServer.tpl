@@ -57,9 +57,22 @@
   {/literal}
 {/if}
 
+  function findFiles(path) {ldelim}
+    var url = '{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd"
+	arg3="addPlugin=ItemAddFromServer" arg4="form[localServerPath]=__PATH__"
+	arg5="itemId=`$ItemAdmin.item.id`" arg6="form[action][findFilesFromLocalServer]=1"
+	arg7="form[formName]=ItemAddFromServer" forceFullUrl=true htmlEntities=false}';
+    document.location.href = url.replace('__PATH__', escape(path));
+  {rdelim}
+
+  function getSelectedPath() {ldelim}
+    return document.getElementById('itemAdminForm').elements['{g->formVar
+      var="form[localServerPath]"}'].value;
+  {rdelim}
+
   function selectPath(path) {ldelim}
-  document.getElementById('itemAdminForm').elements['{g->formVar
-    var="form[localServerPath]"}'].value = path;
+    document.getElementById('itemAdminForm').elements['{g->formVar
+      var="form[localServerPath]"}'].value = path;
   {rdelim}
   // ]]>
 </script>
@@ -141,7 +154,8 @@
     {capture name="submitLinks"}
       <input type="submit" class="inputTypeSubmit"
        name="{g->formVar var="form[action][findFilesFromLocalServer]"}"
-       value="{g->text text="Find Files"}"/>
+       value="{g->text text="Find Files"}"
+       onclick="findFiles(getSelectedPath()); return false;"/>
     {/capture}
   {else} {* {if empty($form.localServerFiles)} *}
 
@@ -149,10 +163,7 @@
       {foreach name="pathElements" from=$ItemAddFromServer.pathElements key=idx item=element}
 	{if $idx>1}{$ItemAddFromServer.pathSeparator}{/if}
 	{if ($element.legal && !$smarty.foreach.pathElements.last)}
-	  <a href="{g->url arg1="controller=core.ItemAdd" arg2="addPlugin=ItemAddFromServer"
-	   arg3="form[localServerPath]=`$element.path`" arg4="itemId=`$ItemAdmin.item.id`"
-	   arg5="form[action][findFilesFromLocalServer]=1"
-	   arg6="form[formName]=ItemAddFromServer"}">{$element.name|escape}</a>
+	  <a href="javascript:findFiles('{$element.path|escape:"javascript":"UTF-8"}')">{$element.name|escape}</a>
 	{else}
 	  {$element.name|escape}
 	{/if}
@@ -214,10 +225,7 @@
 	   />
 	</td><td>
 	  {if $file.legal}{strip}
-	    <a href="{g->url arg1="controller=core.ItemAdd" arg2="addPlugin=ItemAddFromServer"
-	     arg3="form[localServerPath]=`$file.filePath`" arg4="itemId=`$ItemAdmin.item.id`"
-	     arg5="form[action][findFilesFromLocalServer]=1"
-	     arg6="form[formName]=ItemAddFromServer"}">
+	    <a href="javascript:findFiles('{$file.filePath|escape:"javascript":"UTF-8"}')">
 	      {if $file.fileName == ".."}
 		&laquo; {g->text text="Parent Directory"} &raquo;
 	      {else}
@@ -288,7 +296,11 @@
        name="{g->formVar var="form[action][addFromLocalServer]"}"
        value="{g->text text="Add Files"}"/>
       <input type="submit" class="inputTypeSubmit"
-       name="{g->formVar var="form[action][startOver]"}" value="{g->text text="Start Over"}"/>
+       name="{g->formVar var="form[action][startOver]"}" value="{g->text text="Start Over"}"
+       onclick="document.location.href = '{g->url arg1="view=core.ItemAdmin"
+	 arg2="subView=core.ItemAdd" arg3="addPlugin=ItemAddFromServer"
+	 arg4="itemId=`$ItemAdmin.item.id`" arg5="form[formName]=ItemAddFromServer"
+	 arg5="form[action][startOver]=1" htmlEntities=false}'; return false;"/>
     {/capture}
     {assign var="showOptions" value="true"}
   {/if} {* {if !empty($form.localServerFiles)} *}

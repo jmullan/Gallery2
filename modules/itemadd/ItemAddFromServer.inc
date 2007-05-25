@@ -546,8 +546,6 @@ class ItemAddFromServer extends ItemAddPlugin {
     /**
      * @see ItemAdd:loadTemplate
      * @todo Don't let the user select folders if the user is missing the core.addAlbum permission.
-     * @todo Submit the file listing requests to the view instead of to the controller.  Currently,
-     *       the controller just passes them to the view resulting in an intermittent progress-bar.
      */
     function loadTemplate(&$template, &$form, $item) {
 	global $gallery;

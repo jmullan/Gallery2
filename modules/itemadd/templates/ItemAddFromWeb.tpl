@@ -15,6 +15,19 @@
   {rdelim}
 {/if}
 
+  function findFiles(url) {ldelim}
+    var redirectUrl = '{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd"
+	arg3="addPlugin=ItemAddFromWeb" arg4="form[webPage]=__TARGET_URL__"
+	arg5="itemId=`$ItemAdmin.item.id`" arg6="form[action][findFilesFromWebPage]=1"
+	arg7="form[formName]=ItemAddFromWeb" forceFullUrl=true htmlEntities=false}';
+    document.location.href = redirectUrl.replace('__TARGET_URL__', escape(url));
+  {rdelim}
+
+  function getSelectedUrl() {ldelim}
+    return document.getElementById('itemAdminForm').elements['{g->formVar
+      var="form[webPage]"}'].value;
+  {rdelim}
+
   function selectUrl(url) {ldelim}
     document.getElementById('itemAdminForm').elements['{g->formVar
       var="form[webPage]"}'].value = url;
@@ -72,7 +85,8 @@
     {capture name="submitButtons"}
       <input type="submit" class="inputTypeSubmit"
        name="{g->formVar var="form[action][findFilesFromWebPage]"}"
-       value="{g->text text="Find Files"}"/>
+       value="{g->text text="Find Files"}"
+       onclick="findFiles(getSelectedUrl()); return false;"/>
     {/capture}
   {else} {* {if empty($form.webPageUrls)} *}
     <strong>
