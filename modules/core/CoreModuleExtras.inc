@@ -53,7 +53,7 @@ class CoreModuleExtras {
 	     * This is either an initial install or an upgrade from version 0.8 (which didn't have
 	     * the core versions.dat file).  Use a module parameter as our acid test.
 	     *
-	     * TODO: Get rid of this when we stop supporting upgrades from alphas
+	     * @todo Get rid of this when we stop supporting upgrades from alphas
 	     */
 	    list ($ret, $paramValue) = $module->getParameter('permissions.directory');
 	    if (isset($paramValue)) {
@@ -83,7 +83,7 @@ class CoreModuleExtras {
 	    }
 	}
 
-	if (version_compare($currentVersion, '1.2.15', '<')) {
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.2.15', '<')) {
 	    /* Add the createSql column to the schema table before it's used. */
 	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0'));
 	    if ($ret) {
@@ -2077,21 +2077,21 @@ class CoreModuleExtras {
 		fwrite($fh, $htaccessContents);
 		fclose($fh);
 	    }
-        case '1.1.15':
-            /* Locked Users */
+	case '1.1.15':
+	    /* Locked Users */
 	    $ret = $storage->configureStore($module->getId(), array('GalleryUser:1.1'));
 	    if ($ret) {
 		return $ret;
 	    }
 
-        case '1.1.16':
+	case '1.1.16':
 	    /* Initialize multiple repositories */
 	    $ret = $module->setParameter('core.repositories', serialize(array('released' => 1)));
 	    if ($ret) {
 		return $ret;
 	    }
 
-            /* Locked plugins */
+	    /* Locked plugins */
 	    $ret = $storage->configureStore($module->getId(), array('GalleryPluginPackageMap:1.0'));
 	    if ($ret) {
 		return $ret;
@@ -2179,7 +2179,7 @@ class CoreModuleExtras {
 	case '1.2.2':
 	    /* Move modules/core/locale/ hierarchy into po/ */
 	case '1.2.3':
-            /* Added template version number */
+	    /* Added template version number */
 	case '1.2.4':
 	    /* Increase allowed length of mime-type strings */
 	    $ret = $storage->configureStore($module->getId(), array('GalleryMimeTypeMap:1.0'));
@@ -2219,9 +2219,9 @@ class CoreModuleExtras {
 	    }
 	case '1.2.10':
 	    /* Adding new $requiredEntityType parameter to all loadEntitiesById calls */
- 	case '1.2.11':
- 	case '1.2.12':
- 	    /* Remove database backup task from the admin maintenance screen */
+	case '1.2.11':
+	case '1.2.12':
+	    /* Remove database backup task from the admin maintenance screen */
 	case '1.2.13':
 	    /*
 	     * Adding PluginMap entries for all installed plugins.  Until now, a plugin was said to
@@ -2265,7 +2265,7 @@ class CoreModuleExtras {
 	    /*
 	     * Add a new column to the Schema table to store the creation sql for each table. This
 	     * change is to prepare the way for database export functionality. We have already done
-	     * the configure store. So just populate the createSql column now.
+	     * the configureStore above, so just populate the createSql column now.
 	     */
 	    $gallery->guaranteeTimeLimit(30);
 
@@ -2636,10 +2636,10 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.8':
 	case '1.2.9':
 	case '1.2.10':
- 	case '1.2.11':
- 	case '1.2.12':
- 	case '1.2.13':
- 	case '1.2.14':
+	case '1.2.11':
+	case '1.2.12':
+	case '1.2.13':
+	case '1.2.14':
 
 	case 'end of upgrade path':
 	    /*
