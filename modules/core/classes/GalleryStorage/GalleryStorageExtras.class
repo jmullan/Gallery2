@@ -1276,6 +1276,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if ($ret) {
 	    return $ret;
 	}
+	
+	list ($major, $minor) = $tableVersions['Schema'];
+	$canStoreSql = version_compare("$major.$minor", '1.1', '>=');
 
 	/*
 	 * Now take care of the rest of the tables.  If the table doesn't exist, apply the current
@@ -1292,9 +1295,11 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		    return $ret;
 		}
 
-		$ret = $this->_updateSchemaCreateSql($tableNameInSchema, $sql);
-		if ($ret) {
-		    return $ret;
+		if ($canStoreSql) {
+		    $ret = $this->_updateSchemaCreateSql($tableNameInSchema, $sql);
+		    if ($ret) {
+		    	return $ret;
+		    }
 		}
 	    } else {
 		while (1) {
@@ -1321,10 +1326,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			    return $ret;
 			}
 
-			$ret = $this->_updateSchemaCreateSql($tableNameInSchema,
+			if ($canStoreSql) {
+			    $ret = $this->_updateSchemaCreateSql($tableNameInSchema,
 							     $moduleSql['table'][$rawTableName]);
-			if ($ret) {
-			    return $ret;
+			    if ($ret) {
+				return $ret;
+			    }
 			}
 			/* Remember altered tables for post-upgrade optimizations */
 			$altered = array($rawTableName);

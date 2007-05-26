@@ -83,14 +83,6 @@ class CoreModuleExtras {
 	    }
 	}
 
-	if (!empty($currentVersion) && version_compare($currentVersion, '1.2.15', '<')) {
-	    /* Add the createSql column to the schema table before it's used. */
-	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0'));
-	    if ($ret) {
-		return $ret;
-	    }
-	}
-
 	/**
 	 * README: How to update the block below
 	 *
@@ -2264,11 +2256,15 @@ class CoreModuleExtras {
 	case '1.2.14':
 	    /*
 	     * Add a new column to the Schema table to store the creation sql for each table. This
-	     * change is to prepare the way for database export functionality. We have already done
-	     * the configureStore above, so just populate the createSql column now.
+	     * change is to prepare the way for database export functionality. 
 	     */
 	    $gallery->guaranteeTimeLimit(30);
 
+	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0'));
+	    if ($ret) {
+		return $ret;
+	    }
+	    
 	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
 	    if ($ret) {
 		return $ret;
