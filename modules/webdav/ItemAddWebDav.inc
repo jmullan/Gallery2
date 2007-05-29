@@ -53,6 +53,18 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 
+	/* If the mime type is unknown try to get a mime type from the file name */
+	list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
+	if ($mimeType == 'application/octet-stream'
+		|| $mimeType == 'application/unknown'
+		|| empty($mimeExtensions)) {
+	    $extension = GalleryUtilities::getFileExtension(basename($path));
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	    if ($ret) {
+		$mimeType = 'application/unknown';
+	    }
+	}
+
 	list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($path);
 	if ($ret) {
 	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -109,17 +121,6 @@ class ItemAddWebDav extends ItemAddPlugin {
 
 	$platform->fclose($handle);
 
-	list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
-	if ($mimeType == 'application/octet-stream'
-		|| $mimeType == 'application/unknown'
-		|| empty($mimeExtensions)) {
-	    $extension = GalleryUtilities::getFileExtension(basename($path));
-	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-	    if ($ret) {
-		$mimeType = 'application/unknown';
-	    }
-	}
-
 	$originalPath = GalleryUtilities::getRequestVariables('originalPath');
 	$title = empty($originalPath) ? basename($path) : basename($originalPath);
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile, basename($path),
@@ -148,32 +149,39 @@ class ItemAddWebDav extends ItemAddPlugin {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryDataItem');
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-
-	list ($ret, $filePath) = $item->fetchPath();
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-
 	/*
 	 * The parent must be read locked at this point to make sure that it's not going to be moved
 	 * around while we're copying a file to its directory
 	 */
-	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($itemId);
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($item->getId());
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 
-	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($itemId);
+	/* Write lock the item we're replacing */
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($item->getId());
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret, null, null);
 	}
 
-	$handle = $platform->fopen($filePath, 'wb');
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryDataItem');
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null);
+	}
+
+	/* Replace the file content */
+	list ($ret, $filePath) = $item->fetchPath();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null);
+	}
+
+	if (($handle = $platform->fopen($filePath, 'wb')) === false) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
+	}
 
 	/* Format PUT response */
 	$ret = WebDavHelper::putResponseHelper($webDavOptions, $handle);
@@ -182,20 +190,102 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 
-	$ret = $item->rescan();
+	$item->setMimeType($mimeType);
+
+	/* Get a new item by mime type */
+	list ($ret, $newItem) = GalleryCoreApi::newItemByMimeType($mimeType);
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null);
+	}
+	if (!isset($newItem)) {
+	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+		'Failed to get new item by mime type: ' . $mimeType), null, null);
+	}
+
+	/* Make the new item as close a copy of the original item as possible */
+	list ($ret, $newItem) = WebDavHelper::mirrorEntity($item, $newItem);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret, null, null);
 	}
 
-	$item->setMimeType($mimeType);
+	/* Fall back on an unknown item if the new class doesn't support the file content */
+	$ret = $newItem->rescan();
+	if ($ret) {
+	    if (!($ret->getErrorCode() & ERROR_BAD_DATA_TYPE)) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return array($ret, null, null);
+	    }
 
-	if ($item->isModified()) {
-	    $ret = $item->save();
+	    $gallery->debug('Error in ItemEditWebDav::handleRequest: ' . $newItem->getClassName()
+		. ' doesn\'t support the file content.  Falling back on an unknown item.');
+
+	    list ($ret, $newItem) = GalleryCoreApi::newFactoryInstanceById('GalleryEntity',
+		'GalleryUnknownItem');
 	    if ($ret) {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return array($ret, null, null);
 	    }
+	    if (!isset($newItem)) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+		    'Failed to get GalleryUnknownItem instance'), null, null);
+	    }
+
+	    /* Make the new item as close a copy of the original item as possible */
+	    list ($ret, $newItem) = WebDavHelper::mirrorEntity($item, $newItem);
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return array($ret, null, null);
+	    }
+
+	    $ret = $newItem->rescan();
+	    if ($ret) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return array($ret, null, null);
+	    }
+	}
+
+	/* Follow pattern from ItemAddWebCam */
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$tmpFile = $platform->tempnam($tmpDir, 'webdav');
+
+	/* Backup the file content */
+	if (!$platform->copy($filePath, $tmpFile)) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
+	}
+
+	$ret = $item->delete();
+	if ($ret) {
+	    @$platform->unlink($tmpFile);
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null);
+	}
+
+	/*
+	 * Restore the file content.  If this fails, we rollback the database transaction but the
+	 * file content is missing.
+	 */
+	if (!$platform->copy($tmpFile, $filePath)) {
+	    @$platform->unlink($tmpFile);
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
+	}
+	@$platform->unlink($tmpFile);
+
+	$newItem->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$ret = $newItem->save();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null);
+	}
+
+	$ret = GalleryCoreApi::addExistingItemToAlbum($newItem, $item->getParentId(), true);
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null);
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
@@ -203,16 +293,8 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 
-	$ret = GalleryCoreApi::expireDerivativeTreeBySourceIds($itemId);
-	if ($ret) {
-	    return array($ret, null, null);
-	}
-
-	/* TODO: a GalleryCoreApi method for replacing file contents would be nice here. */
-
-	return array(
-	    null, array(),
-	    array('addedFiles' => array(array('fileName' => basename($path), 'id' => $itemId))));
+	return array(null, array(), array(
+	    'addedFiles' => array(array('fileName' => basename($path), 'id' => $itemId))));
     }
 
     /**
