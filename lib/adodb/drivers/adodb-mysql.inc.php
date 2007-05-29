@@ -213,19 +213,16 @@ class ADODB_mysql extends ADOConnection {
 			if ($holdtransOK) $this->_transOK = true; //if the status was ok before reset
 			$u = strtoupper($seqname);
 			$this->Execute(sprintf($this->_genSeqSQL,$seqname));
-			// Don't insert a new row if there is already one or if there's an error.
 			$cnt = $this->GetOne(sprintf($this->_genSeqCountSQL,$seqname));
-			if ($cnt !== false && !$cnt) {
-				$this->Execute(sprintf($this->_genSeq2SQL,$seqname,$startID-1));
-			}
+			if (!$cnt) $this->Execute(sprintf($this->_genSeq2SQL,$seqname,$startID-1));
 			$rs = $this->Execute($getnext);
 		}
+		
 		if ($rs) {
 			$this->genID = mysql_insert_id($this->_connectionID);
 			$rs->Close();
-		} else {
+		} else
 			$this->genID = 0;
-		}
 		
 		$this->_logsql = $savelog;
 		return $this->genID;
@@ -450,8 +447,9 @@ class ADODB_mysql extends ADOConnection {
 			$fld->primary_key = ($rs->fields[3] == 'PRI');
 			$fld->auto_increment = (strpos($rs->fields[5], 'auto_increment') !== false);
 			$fld->binary = (strpos($type,'blob') !== false);
-			$fld->unsigned = (strpos($type,'unsigned') !== false);
-				
+			$fld->unsigned = (strpos($type,'unsigned') !== false);	
+			$fld->zerofill = (strpos($type,'zerofill') !== false);
+			
 			if (!$fld->binary) {
 				$d = $rs->fields[4];
 				if ($d != '' && $d != 'NULL') {
