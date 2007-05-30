@@ -62,12 +62,12 @@ class DigibugPrintPhotosViewTest extends GalleryTestCase {
 	list ($ret, $everybodyGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret) {
-	    return ($ret);
+	    return $ret;
 	}
 	$ret = $ret = GalleryCoreApi::addGroupPermission(
 	    $this->_publicItem->getId(), $everybodyGroupId, 'core.all');
 	if ($ret) {
-	    return ($ret);
+	    return $ret;
 	}
     }
 
@@ -81,28 +81,28 @@ class DigibugPrintPhotosViewTest extends GalleryTestCase {
 	/* We only have permission to print and view the thumbnail */
 	$ret = GalleryCoreApi::removeItemPermissions($itemId);
 	if ($ret) {
-	    return ($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $itemId, $gallery->getActiveUserId(), 'digibug.print');
 	if ($ret) {
-	    return ($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::addUserPermission(
 	    $itemId, $gallery->getActiveUserId(), 'core.view');
 	if ($ret) {
-	    return ($ret);
+	    return $ret;
 	}
 
 	ob_start();
 	$ret = $this->_view->renderImmediate(array(), array());
-	if ($ret) {
-	    return ($ret);
-	}
 	$results = ob_get_contents();
 	ob_end_clean();
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Grab session we provide for the raw image */
 	$session =& $gallery->getSession();
@@ -159,11 +159,11 @@ class DigibugPrintPhotosViewTest extends GalleryTestCase {
 
 	ob_start();
 	$ret = $this->_view->renderImmediate(array(), array());
+	$results = ob_get_contents();
+	ob_end_clean();
 	if ($ret) {
 	    return $ret;
 	}
-	$results = ob_get_contents();
-	ob_end_clean();
 
 	/* Grab session we provide for the raw image */
 	$session =& $gallery->getSession();
