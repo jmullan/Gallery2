@@ -2257,6 +2257,7 @@ class CoreModuleExtras {
 	    /*
 	     * Add a new column to the Schema table to store the creation sql for each table. This
 	     * change is to prepare the way for database export functionality. 
+	     * If upgrading from Gallery 2.2.2 the column is already populated, but ok to repeat.
 	     */
 	    $gallery->guaranteeTimeLimit(30);
 

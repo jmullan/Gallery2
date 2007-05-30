@@ -150,6 +150,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	case '1.0.0.1':
 	    /* Changes from version 1.0.2 merged into branch_2_2 */
 	case '1.0.2':
+	case '1.0.0.2':
 
 	case 'end of upgrade path':
 	    break;

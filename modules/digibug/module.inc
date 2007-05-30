@@ -77,6 +77,7 @@ class DigibugModule extends GalleryModule {
 	case '0.9.0':
 	case '0.9.1':
 	case '1.0.0':
+	case '1.0.0.1':
 	    /* .mo file migration */
 	case '1.0.1':
 	case '1.0.2':
