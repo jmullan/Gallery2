@@ -32,7 +32,7 @@ class KeyAlbumModule extends GalleryModule {
 	$this->setId('keyalbum');
 	$this->setName($gallery->i18n('Keyword Albums'));
 	$this->setDescription($gallery->i18n('Dynamic albums based on keyword search'));
-	$this->setVersion('1.0.0');
+	$this->setVersion('1.0.0.2');
 	$this->setGroup('display', $gallery->i18n('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
 	$this->setRequiredCoreApi(array(7, 10));
@@ -70,12 +70,14 @@ class KeyAlbumModule extends GalleryModule {
 		return $ret;
 	    }
 	}
-	if (!empty($currentVersion) && version_compare($currentVersion, '0.9.4', '<')) {
+	if (!empty($currentVersion) && version_compare($currentVersion, '1.0.0.2', '<')) {
 	    /* Format for keyword data changed; force refresh */
-	    foreach (array('allKeywords.time', 'allKeywords.public.time') as $key) {
-		$ret = $this->removeParameter($key);
-		if ($ret) {
-		    return $ret;
+	    foreach (array_keys($params) as $key) {
+		if (preg_match('/^allKeywords.*\.time$/', $key)) {
+		    $ret = $this->removeParameter($key);
+		    if ($ret) {
+			return $ret;
+		    }
 		}
 	    }
 	}
@@ -112,22 +114,41 @@ class KeyAlbumModule extends GalleryModule {
 	}
 
 	$summaries = array();
-	$split = '/[' . $params['split'] . ']+/';
 	$label = $this->translate('Keywords:');
 	foreach ($items as $item) {
-	    if ($item->getKeywords()) {
+	    if ($keywords = $item->getKeywords()) {
 		$itemId = $item->getId();
 		$links = array();
-		foreach (preg_split($split, $item->getKeywords()) as $keyword) {
-		    $keyword = trim($keyword);
+		foreach ($this->splitKeywords($keywords, $params['split']) as $raw => $keyword) {
 		    $links[] = ' <a href="' . $urlGenerator->generateUrl(
-			array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $keyword,
+			array('view' => 'keyalbum.KeywordAlbum', 'keyword' => $raw,
 			      'highlightId' => $itemId)) . '">' . $keyword . '</a>';
 		}
 		$summaries[$itemId] = $label . implode(',', $links);
 	    }
 	}
 	return array(null, $summaries);
+    }
+
+    /**
+     * Split keywords string into separate keywords.
+     * Unsanitized values in array keys of return value should not be used for display,
+     * but can be used in URLs where they are urlencoded (and resanitized when URL is used).
+     * @param string $keywords keywords
+     * @param string $split characters that separate keywords
+     * @return array of keywords (unsanitized string => sanitized string)
+     */
+    function splitKeywords($keywords, $split) {
+	$result = array();
+	GalleryUtilities::unsanitizeInputValues($keywords, false);
+	foreach (preg_split('/[' . $split . ']+/u', $keywords) as $keyword) {
+	    $keyword = $rawKeyword = trim($keyword);
+	    if (!empty($keyword)) {
+		GalleryUtilities::sanitizeInputValues($keyword, false);
+		$result[$rawKeyword] = $keyword;
+	    }
+	}
+	return $result;
     }
 
     /**

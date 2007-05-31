@@ -68,7 +68,8 @@ class KeywordAlbumSiteAdminController extends GalleryController {
 	    foreach (array('themeId' => $form['themeId'],
 			   'orderBy' => (empty($form['presort']) ? '' : $form['presort'] . '|')
 					. $form['orderBy'],
-			    'orderDirection' => $form['orderDirection'],
+			    'orderDirection' => !isset($form['orderDirection']) ? ''
+						: $form['orderDirection'],
 			    'summaryLinks' => $form['summaryLinks'],
 			    'description' => $form['description'],
 			    'split' => $split)

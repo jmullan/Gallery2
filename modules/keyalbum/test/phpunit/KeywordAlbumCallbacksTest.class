@@ -283,31 +283,131 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	$this->assertEquals('1', $weight['testkeyword99999'], 'weight of double keyword');
     }
 
+    function testLoadKeywordsCodePathsWithMockStorage() {
+	global $gallery;
+	list ($ret, $guestId) = GalleryCoreApi::getAnonymousUserId();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$aclCacheKey = "GalleryPermissionHelper::fetchAccessListIds(core.view, $guestId, 1)";
+	$this->_smarty->_tpl_vars['block']['keyalbum'] = array();
+	$block =& $this->_smarty->_tpl_vars['block']['keyalbum'];
+
+	$queries = array(
+		array('/SELECT DISTINCT\s+\[GalleryItem::keywords\]\s+FROM\s+\[GalleryItem\]\s*$/',
+		      array(array('one, two'), array(''),
+			    array('three two'), array('four&amp;five six;7'))),
+		array('/SELECT\s+\[GalleryItem::keywords\]\s+FROM\s+\[GalleryItem\]\s*$/',
+		      array(array('one, two'), array(''), array('one, two'), array(''),
+			    array('three two'), array('four&amp;five six;7'), array('three two'))),
+		array('/SELECT DISTINCT\s+\[GalleryItem::keywords\]\s+FROM\s+\[GalleryItem\]\s*$/',
+		      array(array('one, two'), array('two,;7'),
+			    array('three 7,,6 two'), array('two;four&amp;five 6;7'))),
+		array('/SELECT DISTINCT\s+\[GalleryItem::keywords\]\s+FROM\s+\[GalleryItem\]\s+'
+		      . 'INNER JOIN \[GalleryAccessSubscriberMap.*IN \(\?,\?\)\s*$/s',
+		      array(array('one, two'), array('three two'))),
+		array('/SELECT DISTINCT\s+\[GalleryItem::keywords\]\s+FROM\s+\[GalleryItem\]\s+'
+		      . 'WHERE \[GalleryItem::id\] IS NULL\s*$/',
+		      array()),
+		);
+	$gallery->_storage =& new KeywordAlbumCallbacksTestStorage($gallery->_storage, $queries);
+
+	$expected = array(
+		array(array('name' => 'four&amp;five', 'raw' => 'four&five', 'weight' => '1'),
+		      array('name' => 'one', 'raw' => 'one', 'weight' => '1'),
+		      array('name' => 'six', 'raw' => 'six', 'weight' => '1'),
+		      array('name' => 'three', 'raw' => 'three', 'weight' => '1'),
+		      array('name' => 'two', 'raw' => 'two', 'weight' => '2.27'),
+		      array('name' => '7', 'raw' => '7', 'weight' => '1')),
+		array(array('name' => 'four&amp;five', 'raw' => 'four&five', 'weight' => '1'),
+		      array('name' => 'one', 'raw' => 'one', 'weight' => '1.42'),
+		      array('name' => 'six', 'raw' => 'six', 'weight' => '1'),
+		      array('name' => 'three', 'raw' => 'three', 'weight' => '1.42'),
+		      array('name' => 'two', 'raw' => 'two', 'weight' => '2.68'),
+		      array('name' => '7', 'raw' => '7', 'weight' => '1')),
+		array(array('name' => 'two', 'raw' => 'two', 'weight' => '5.43'),
+		      array('name' => '6', 'raw' => '6', 'weight' => '1.88'),
+		      array('name' => '7', 'raw' => '7', 'weight' => '3.27')),
+		array(array('name' => 'one', 'raw' => 'one', 'weight' => '1'),
+		      array('name' => 'three', 'raw' => 'three', 'weight' => '1'),
+		      array('name' => 'two', 'raw' => 'two', 'weight' => '2.27')),
+		array(),
+		array(array('name' => 'two', 'raw' => 'two', 'weight' => '5.43'),
+		      array('name' => '6', 'raw' => '6', 'weight' => '1.88'),
+		      array('name' => '7', 'raw' => '7', 'weight' => '3.27')),
+		);
+
+	foreach (array(
+		    /* All keywords */
+		    array('allKeywords.time', false, 0, false, 3, array()),
+		    /* All keywords with frequency data */
+		    array('allKeywords.time', false, 0, true, 3, array()),
+		    /* Three most common keywords */
+		    array('allKeywords.3.time', false, 3, false, 6, array()),
+		    /* Keywords for public items */
+		    array('allKeywords.public.time', true, 0, false, 3, array(123, 456)),
+		    /* Keywords for public items but guest has no ACLs */
+		    array('allKeywords.public.time', true, 0, false, 3, array()),
+		    /* Verify cached value is used */
+		    array('allKeywords.public.time', false, 3, false, 3, array()),
+		    ) as $i => $params) {
+	    $ret = GalleryCoreApi::removePluginParameter('module', 'keyalbum', $params[0]);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	    GalleryDataCache::put($aclCacheKey, $params[5]);
+	    $block = array();
+	    $ret = $this->_callbacks->callback(
+		array('onlyPublic' => $params[1], 'sizeLimit' => $params[2],
+		      'includeFrequency' => $params[3], 'maxCloudFontEnlargement' => $params[4]),
+		$this->_smarty, 'LoadKeywords', $this->_userId);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	    $this->assertEquals(array('keywords' => $expected[$i]), $block, "output $i");
+	}
+    }
+
     function testSplitKeywords() {
-	$ret = $this->_callbacks->callback(
-		array('keywords' => 'abc;def ghi,jkl'),
-		$this->_smarty, 'SplitKeywords', $this->_userId);
+	$this->_smarty->_tpl_vars['block']['keyalbum'] = array();
+	$block =& $this->_smarty->_tpl_vars['block']['keyalbum'];
+
+	foreach (array(
+		    '' => array(),
+		    'test' => array('test' => 'test'),
+		    'one,two;three four' => array('one' => 'one', 'two' => 'two',
+						  'three' => 'three', 'four' => 'four'),
+		    ' one ,; two; , , 3 ' => array('one' => 'one', 'two' => 'two', '3' => '3'),
+		    'B&amp;W' => array('B&W' => 'B&amp;W'),
+		    ) as $keywords => $split) {
+	    $ret = $this->_callbacks->callback(array('keywords' => $keywords),
+					       $this->_smarty, 'SplitKeywords', $this->_userId);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	    $this->assertEquals(array('keywords' => $split), $block, $keywords);
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'split', ',;');
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
-	$this->assertEquals(array('abc', 'def', 'ghi', 'jkl'), $data);
-
-	$ret = GalleryCoreApi::setPluginParameter('module', 'keyalbum', 'split', ';');
-	if ($ret) {
-	    return $this->failWithStatus($ret);
+	foreach (array(
+		    '' => array(),
+		    'test' => array('test' => 'test'),
+		    'one,two;three four' => array('one' => 'one', 'two' => 'two',
+						  'three four' => 'three four'),
+		    ' one ,; two; , , 3 ' => array('one' => 'one', 'two' => 'two', '3' => '3'),
+		    'B&amp;W' => array('B&W' => 'B&amp;W'),
+		    ) as $keywords => $split) {
+	    $ret = $this->_callbacks->callback(array('keywords' => $keywords),
+					       $this->_smarty, 'SplitKeywords', $this->_userId);
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	    $this->assertEquals(array('keywords' => $split), $block, "phase 2: $keywords");
 	}
-
-	$ret = $this->_callbacks->callback(
-		array('keywords' => 'abc;def ghi,jkl'),
-		$this->_smarty, 'SplitKeywords', $this->_userId);
-	if ($ret) {
-	    return $this->failWithStatus($ret);
-	}
-
-	$data = $this->_smarty->_tpl_vars['block']['keyalbum']['keywords'];
-	$this->assertEquals(array('abc', 'def ghi,jkl'), $data);
     }
 
     /**
@@ -345,6 +445,64 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	$gallery->setConfig('anonymousUserId', $user->getId());
 
 	return null;
+    }
+}
+
+/**
+ * Mock storage for callbacks tests.
+ */
+class KeywordAlbumCallbacksTestStorage {
+    function KeywordAlbumCallbacksTestStorage(&$storage, $queries) {
+	$this->_storage =& $storage;
+	$this->_queries = $queries;
+    }
+
+    function search($query, $data=array(), $optional=array()) {
+	if (!strpos($query, '[GalleryItem::keywords]')) {
+	    return $this->_storage->search($query, $data, $optional);
+	}
+	if (empty($this->_queries) || !preg_match($this->_queries[0][0], $query)) {
+	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					       'Unexpected query: ' . $query), null);
+	}
+	$result = array_shift($this->_queries);
+	return array(null, new UnitTestStorageSearchResults($result[1]));
+    }
+
+    function addMapEntry($mapName, $entry, $nonTrans=false) {
+	return $this->_storage->addMapEntry($mapName, $entry, $nonTrans);
+    }
+
+    function removeMapEntry($mapName, $entry) {
+	return $this->_storage->removeMapEntry($mapName, $entry);
+    }
+
+    function updateMapEntry($mapName, $match, $change, $nonTrans=false) {
+	return $this->_storage->updateMapEntry($mapName, $match, $change, $nonTrans);
+    }
+
+    function getMapEntry($mapName, $select, $match=array(), $optional=array()) {
+	return $this->_storage->getMapEntry($mapName, $select, $match, $optional);
+    }
+
+    function isTransactional() {
+	return $this->_storage->isTransactional();
+    }
+
+    function rollbackTransaction() {
+	return $this->_storage->rollbackTransaction();
+    }
+
+    function _normalizeValue($value, $memberData, $fromDb=false) {
+	return $this->_storage->_normalizeValue($value, $memberData, $fromDb);
+    }
+
+    function getFunctionSql($functionName, $args) {
+	return  $this->_storage->getFunctionSql($functionName, $args);
+    }
+
+    function convertIntToBits($intVal) {
+	return $this->_storage->convertIntToBits($intVal);
     }
 }
 ?>
