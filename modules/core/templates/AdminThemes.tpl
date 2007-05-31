@@ -82,6 +82,11 @@
       <select name="{g->formVar var="form[default][theme]"}">
 	{html_options options=$AdminThemes.themeList selected=$form.default.theme}
       </select>
+      {if isset($form.error.themeUnavailable)}
+      <div class="giError">
+	{g->text text="The %s theme is incompatible with your Gallery version or no longer available.  Please upgrade the %s theme or pick another default theme." arg1=$AdminThemes.themeId arg2=$AdminThemes.themeId}
+      </div>
+      {/if}
      </td>
   </tr>
   <tr>

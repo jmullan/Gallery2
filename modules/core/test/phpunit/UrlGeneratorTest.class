@@ -46,14 +46,14 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$ret = $this->_urlGenerator->init('phpunit_test.php');
 	if ($ret) {
 	    print $ret->getAsHtml();
-	    return $ret;
+	    return $this->failWithStatus($ret);
 	}
 
 	$this->_origEmbed = null;
@@ -1278,6 +1278,15 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    GalleryDataCache::remove($key);
 	    $this->assert(!GalleryDataCache::containsKey($key), 'Could not remove a GDC var');
 	}
+    }
+
+    function testGenerateUrlWithForceSessionIdFalseOverridesEmbedForceSessionId() {
+	GalleryDataCache::put('G2_EMBED', true);
+	$this->_urlGenerator->_isCookiePathConfigured = false;
+	$url = $this->_urlGenerator->generateUrl(array('view' => 'core.DownloadItem'),
+						 array('forceSessionId' => false));
+
+	$this->assertEquals('phpunit_test.php?g2_view=core.DownloadItem', $url);
     }
 
     function testGenerateFullUrlOn() {

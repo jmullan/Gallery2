@@ -420,22 +420,31 @@ class AdminThemesView extends GalleryView {
 	$AdminThemes['newAlbumsUseDefaultsList'] = $newAlbumsUseDefaultsList;
 
 	/* Load the config settings from the active theme */
-	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId);
+	list ($ret, $theme) = GalleryCoreApi::loadPlugin('theme', $themeId, false, true);
 	if ($ret) {
-	    return array($ret, null);
+	    if ($ret->getErrorCode()
+		    & (ERROR_PLUGIN_VERSION_MISMATCH | ERROR_BAD_PARAMETER | ERROR_BAD_PLUGIN)) {
+		/* The default theme isn't available. Show a warning, don't load any settings. */
+		$theme = null;
+		$form['error']['themeUnavailable'] = true;
+	    } else {
+		return array($ret, null);
+	    }
 	}
 
-	if ($theme->isAdvancedSettings()) {
-	    list ($ret, $tpl) = $theme->loadSettingsTemplate($template, $form);
+	if ($theme) {
+	    if ($theme->isAdvancedSettings()) {
+		list ($ret, $tpl) = $theme->loadSettingsTemplate($template, $form);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		$AdminThemes['customTemplate'] = $tpl;
+	    }
+
+	    list ($ret, $AdminThemes['settings']) = $theme->getSettings(null);
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    $AdminThemes['customTemplate'] = $tpl;
-	}
-
-	list ($ret, $AdminThemes['settings']) = $theme->getSettings(null);
-	if ($ret) {
-	    return array($ret, null);
 	}
 
 	list ($ret, $AdminThemes['availableBlocks']) = GalleryCoreApi::loadAvailableBlocks();
@@ -447,7 +456,7 @@ class AdminThemesView extends GalleryView {
 	    $form['formName'] = 'AdminThemes';
 
 	    $settingTypes = array();
-	    if (isset($AdminThemes['settings'])) {
+	    if ($theme && isset($AdminThemes['settings'])) {
 		foreach ($AdminThemes['settings'] as $setting) {
 		    $key = $setting['key'];
 		    if (!empty($setting['typeParams']['packType'])) {

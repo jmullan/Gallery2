@@ -1243,9 +1243,14 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	/* Do the schema table first */
-	list ($schemaTableName, $unused) = $this->_gs->_translateTableName('Schema');
+	list ($schemaTableName, $unused, $unused2) = $this->_gs->_translateTableName('Schema');
 	if (!in_array(strtolower($schemaTableName), $metatables)) {
 	    $ret = $this->_executeSql($moduleSql['table']['Schema']);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $ret = $this->_updateSchemaCreateSql('Schema', $moduleSql['table']['Schema']);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -1267,6 +1272,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if ($ret) {
 	    return $ret;
 	}
+	
+	list ($major, $minor) = $tableVersions['Schema'];
+	$canStoreSql = version_compare("$major.$minor", '1.1', '>=');
 
 	/*
 	 * Now take care of the rest of the tables.  If the table doesn't exist, apply the current
@@ -1281,6 +1289,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		$ret = $this->_executeSql($sql);
 		if ($ret) {
 		    return $ret;
+		}
+
+		if ($canStoreSql) {
+		    $ret = $this->_updateSchemaCreateSql($tableNameInSchema, $sql);
+		    if ($ret) {
+		    	return $ret;
+		    }
 		}
 	    } else {
 		while (1) {
@@ -1307,6 +1322,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			    return $ret;
 			}
 
+			if ($canStoreSql) {
+			    $ret = $this->_updateSchemaCreateSql($tableNameInSchema,
+							     $moduleSql['table'][$rawTableName]);
+			    if ($ret) {
+				return $ret;
+			    }
+			}
 			/* Remember altered tables for post-upgrade optimizations */
 			$altered = array($rawTableName);
 			$cacheKey = 'GalleryStorage::configureStore::alter';
@@ -1328,6 +1350,21 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    }
 	}
 
+	return null;
+    }
+
+    /**
+     * Convenience function to update the Schema table with the creation SQL for a table.
+     * @param string $tableNameInSchema The name of the table in the schema.
+     * @param string $tableSql The sql that is used to create the table.
+     * @return object GalleryStatus
+     */
+    function _updateSchemaCreateSql($tableNameInSchema, $tableSql) {
+	$query = 'UPDATE [GallerySchema] SET [::createSql] = ? WHERE [::name] = ?';
+	$ret = $this->execute($query, array($tableSql, $tableNameInSchema));
+	if ($ret) {
+	    return $ret;
+	}
 	return null;
     }
 

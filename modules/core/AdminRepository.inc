@@ -309,7 +309,7 @@ class AdminRepositoryView extends GalleryView {
 	    $AdminRepository['showIncompatible'] = 1;
 	}
 
-	$AdminRepository['coreUpgradeAvailable'] = false;
+	$AdminRepository['isCoreUpgradeAvailable'] = false;
 	$AdminRepository['upgradesAvailable'] = false;
 	foreach ($repositories as $source => $repository) {
 	    if (!$repository->localIndexExists()) {

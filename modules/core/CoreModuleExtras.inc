@@ -53,7 +53,7 @@ class CoreModuleExtras {
 	     * This is either an initial install or an upgrade from version 0.8 (which didn't have
 	     * the core versions.dat file).  Use a module parameter as our acid test.
 	     *
-	     * TODO: Get rid of this when we stop supporting upgrades from alphas
+	     * @todo Get rid of this when we stop supporting upgrades from alphas
 	     */
 	    list ($ret, $paramValue) = $module->getParameter('permissions.directory');
 	    if (isset($paramValue)) {
@@ -2066,21 +2066,21 @@ class CoreModuleExtras {
 		fwrite($fh, $htaccessContents);
 		fclose($fh);
 	    }
-        case '1.1.15':
-            /* Locked Users */
+	case '1.1.15':
+	    /* Locked Users */
 	    $ret = $storage->configureStore($module->getId(), array('GalleryUser:1.1'));
 	    if ($ret) {
 		return $ret;
 	    }
 
-        case '1.1.16':
+	case '1.1.16':
 	    /* Initialize multiple repositories */
 	    $ret = $module->setParameter('core.repositories', serialize(array('released' => 1)));
 	    if ($ret) {
 		return $ret;
 	    }
 
-            /* Locked plugins */
+	    /* Locked plugins */
 	    $ret = $storage->configureStore($module->getId(), array('GalleryPluginPackageMap:1.0'));
 	    if ($ret) {
 		return $ret;
@@ -2126,6 +2126,71 @@ class CoreModuleExtras {
 	    /* 2.2 Release! */
 	case '1.2.0':
 	    /* 2.2.1 Bugfix Release */
+	case '1.2.0.1':
+	    /* 2.2.2 Bugfix Release */
+
+	    /*
+	     * Add a new column to the Schema table to store the creation sql for each table. This
+	     * change is to prepare the way for database export functionality. 
+	     */
+	    $gallery->guaranteeTimeLimit(30);
+
+	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0'));
+	    if ($ret) {
+		return $ret;
+	    }
+	    
+	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $storageExtras =& $storage->_getExtras();
+
+	    /* Load all table versions */
+	    list ($ret, $tableVersions) = $storageExtras->_loadTableVersions();
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $count = 1;
+	    $total = count($modules);
+	    $statusText = $module->translate('Converting Schema Table');
+
+	    foreach ($modules as $moduleId => $unused) {
+		list ($ret, $sql) = $storageExtras->_getModuleSql($moduleId);
+		if ($ret) {
+		    return $ret;
+		}
+		if (empty($sql['table'])){
+		    continue;
+		}
+
+		foreach ($sql['table'] as $tableName => $tableSql) {
+		    list ($safeName, $unused, $nameInSchema) =
+			$storage->_translateTableName($tableName);
+
+		    if (!array_key_exists($nameInSchema, $tableVersions)) {
+			continue;
+		    }
+		    $ret = $storageExtras->_updateSchemaCreateSql($nameInSchema, $tableSql);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+
+		$ret = $statusMonitor->renderStatusMessage($statusText, '', $count++ / $total);
+		if ($ret) {
+		    return $ret;
+		}
+		$gallery->guaranteeTimeLimit(30);
+	    }
+
+	    /* Changed the length of the SessionMap data field for mySql & DB2. */
+	    $ret = $storage->configureStore($module->getId(), array('GallerySessionMap:1.0'));
+	    if ($ret) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2438,6 +2503,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	    $configChanges[] = array('remove' => $remove, 'add' => array(), 'edit' => array($edit));
 	case '1.1.31':
 	case '1.2.0':
+	case '1.2.0.1':
 
 	case 'end of upgrade path':
 	    /*

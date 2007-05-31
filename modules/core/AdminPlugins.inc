@@ -66,7 +66,8 @@ class AdminPluginsView extends GalleryView {
 	     */
 	    foreach ($pluginStatus[$type] as $pluginId => $status) {
 		if (!empty($status['active'])) {
-		    list ($ret, $module) = GalleryCoreApi::loadPlugin($type, $pluginId);
+		    list ($ret, $module) =
+			GalleryCoreApi::loadPlugin($type, $pluginId, false, true);
 		    if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 			return array($ret, null);
 		    }

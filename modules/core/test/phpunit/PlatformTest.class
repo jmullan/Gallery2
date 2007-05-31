@@ -257,6 +257,26 @@ class PlatformTest extends GalleryTestCase {
     }
 
     /**
+     * Verify bugfix: quotes around redirect file for stderr output, in case path has a space
+     */
+    function testExecWithSpaceInG2DataPath() {
+	global $gallery;
+	if (GalleryUtilities::isA($this->_platform, 'UnixPlatform')) {
+	    $tmpDir = $gallery->getConfig('data.gallery.tmp') . '/dir with space';
+	    if (!$this->_platform->mkdir($tmpDir)) {
+		$this->fail('failed to make temp dir');
+	    } else {
+		$gallery->setConfig('data.gallery.tmp', $tmpDir);
+		list ($success, $output, $stderr) =
+		    $this->_platform->exec(array(array('ls', '/bogus/path')));
+		$this->assertEquals(false, $success, 'expected exec to return error');
+		$this->assert(!empty($stderr), 'expected some stderr output to be returned');
+		$this->_platform->rmdir($tmpDir);
+	    }
+	}
+    }
+
+    /**
      * Make sure files are written with correct permissions by exec, copy, symlink,
      * atomicWrite; test chmod.
      */
