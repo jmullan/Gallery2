@@ -195,7 +195,7 @@
 </div>
 
 {if isset($AdminRepository.indexMetaData)}
-  {if $AdminRepository.coreUpgradeAvailable}
+  {if $AdminRepository.isCoreUpgradeAvailable}
 <div class="gbBlock">
   <h3>{g->text text="Upgrade Gallery"}</h3>
   <p class="giDescription">
@@ -203,9 +203,8 @@
   </p>
   <p>
     <ol>
-      <li>{g->text text="Review plugin compatibility (on the Themes and Modules tabs)"}</a></li>
-      <li>{g->text text="%sDownload%s Gallery core" arg1="<a href=\"http://codex.gallery2.org/index.php/Downloads\">" arg2="</a>"}</li>
-      <li>{g->text text="Read the %supgrade instructions%s and perform the upgrade" arg1="<a href=\"http://codex.gallery2.org/index.php/CoreUpgradeInstructions\">" arg2="</a>"}</li>
+      <li>{g->text text="%sDownload%s the new Gallery package" arg1="<a href=\"http://codex.gallery2.org/Downloads\">" arg2="</a>"}</li>
+      <li>{g->text text="Read the %supgrade instructions%s and perform the upgrade" arg1="<a href=\"http://codex.gallery2.org/Upgrading\">" arg2="</a>"}</li>
     </ol>
   </p>
 </div>
@@ -215,7 +214,7 @@
 <div class="gbBlock">
   {if isset($AdminRepository.browseData)}
   <p class="giDescription">
-    {if $AdminRepository.coreUpgradeAvailable}
+    {if $AdminRepository.isCoreUpgradeAvailable}
       {if isset($AdminRepository.showIncompatible)}
         {g->text text="Incompatible plugins are marked with an exclamation icon."}
       {else}

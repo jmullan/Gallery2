@@ -73,7 +73,7 @@ class KeyAlbumModule extends GalleryModule {
 	if (!empty($currentVersion) && version_compare($currentVersion, '1.0.0.2', '<')) {
 	    /* Format for keyword data changed; force refresh */
 	    foreach (array_keys($params) as $key) {
-		if (preg_match('/^allKeywords\..*\.time$/', $key)) {
+		if (preg_match('/^allKeywords.*\.time$/', $key)) {
 		    $ret = $this->removeParameter($key);
 		    if ($ret) {
 			return $ret;

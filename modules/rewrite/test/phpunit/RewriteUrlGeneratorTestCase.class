@@ -961,6 +961,46 @@ class RewriteUrlGeneratorTestCase extends GalleryTestCase {
 	}
     }
 
+    function testGenerateUrlEmbeddedForceSessionIdToFalse() {
+	/* Verify that all URLs are free of session ids when forceSessionId is set to false */
+	$env = array('REQUEST_URI' => '/cms/otherpage/?foo=bar',
+		     'G2_EMBED' => true,
+		     'baseUri' => 'https://cms.com/cms/index.php?mod=gallery2',
+		     'g2Uri' => 'http://photos.com:81/gallery2/',
+		     'cookiePath' => '',);
+	$params = $this->_getTestUrlParams();
+	$options = array('forceSessionId' => false, 'forceFullUrl' => true);
+
+	$expectedUrl[0] = 'https://cms.com/cms/index.php?mod=gallery2&amp;g2_view=rand164.NonShort'
+	    . '&amp;g2_foo=bar';
+	$expectedUrl[1] = sprintf('http://photos.com:81/gallery2/d/%d-%d/%s',
+				  $this->_testItem->getId(),
+				  $this->_testItem->getSerialNumber(),
+				  urlencode($this->_testItem->getPathComponent()));
+	$expectedUrl[2] = 'http://href_website.com/foo';
+	$expectedUrl[3] = $this->_signUrl('https://cms.com/cms/index.php?mod=gallery2'
+	    . '&amp;g2_controller=core.ShowItem&amp;g2_itemId=' . $this->_testItem->getId());
+	$expectedUrl[4] = 'http://photos.com:81/gallery2/themes/foo/images/bar.jpg';
+	$expectedUrl[5] = 'https://cms.com/cms/index.php?mod=gallery2';
+	$expectedUrl[6] = 'https://cms.com/cms/v' . $this->_testAlbumPath;
+	$expectedUrl[7] = 'https://cms.com/cms/v' . $this->_testItemPath . '.html';
+	$expectedUrl[8] = 'https://cms.com/cms/index.php?mod=gallery2&amp;g2_itemId=-5759';
+	$expectedUrl[9] = 'https://cms.com/cms/index.php?mod=gallery2&amp;g2_itemId='
+	    . $this->_derivative->getId();
+	$expectedUrl[10] = 'https://cms.com/cms/' . ltrim($this->_testAlbumPath, '/') . 'test.html';
+	$expectedUrl[11] = 'https://cms.com/cms/' . ltrim($this->_testItemPath, '/') . '/test.html';
+	$expectedUrl[12] = 'https://cms.com/cms/t' . rtrim($this->_testAlbumPath, '/') . '.test';
+	$expectedUrl[13] = 'https://cms.com/cms/t' . $this->_testItemPath . '.test';
+	$expectedUrl[14] = 'https://cms.com/cms/phpunit/';
+	$expectedUrl[15] = $this->_signUrl('https://cms.com/cms/phpunit2/');
+	$expectedUrl[16] = 'https://cms.com/cms/phpunit/' . urlencode($this->_urlEncodePath);
+
+	$ret = $this->_runGenerateUrlTest($env, $expectedUrl, $params, $options);
+	if ($ret) {
+	    $this->failWithStatus($ret);
+	}
+    }
+
     function testGenerateUrlOverrideBaseUri() {
 	$env = array('baseUri' => 'index.php?page=photos',
 		     'REQUEST_URI' => '/gallery2/index.php?page=photos');

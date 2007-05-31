@@ -93,7 +93,7 @@ class DigibugPrintPhotosView extends GalleryView {
 	if ($ret) {
 	    return $ret;
 	}
-	$ret = GalleryCoreApi::studyPermissions($itemIds, $anonymousUserId);
+	$ret = GalleryCoreApi::studyPermissions($itemIds, $anonymousUserId, false);
 	if ($ret) {
 	    return $ret;
 	}
@@ -108,7 +108,7 @@ class DigibugPrintPhotosView extends GalleryView {
 		return $ret;
 	    }
 	    list ($ret, $publicPermissions) =
-		GalleryCoreApi::getPermissions($itemId, $anonymousUserId);
+		GalleryCoreApi::getPermissions($itemId, $anonymousUserId, false);
 	    if ($ret) {
 		return $ret;
 	    }

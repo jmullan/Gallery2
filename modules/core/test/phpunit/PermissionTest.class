@@ -648,7 +648,7 @@ class PermissionTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array($this->_albums[1]->getId() => array('core.edit' => true)),
-			    $perms);
+			    $perms, 'Permissions for other user');
 
 	/* Now check active user */
 	list ($ret, $perms) = GalleryCoreApi::fetchPermissionsForItems(
@@ -657,7 +657,15 @@ class PermissionTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret);
 	}
 	$this->assertEquals(array($this->_albums[1]->getId() => array('core.view' => true)),
-			    $perms);
+			    $perms, 'Permissions for active user');
+
+	list ($ret, $perms) = GalleryCoreApi::fetchPermissionsForItems(
+	    array($this->_albums[1]->getId()), $gallery->getActiveUserId(), false);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals(array(), $perms,
+			    'Permissions for active user without session permissions');
     }
 
     /**
@@ -1047,9 +1055,10 @@ class PermissionTest extends GalleryTestCase {
 	$itemId = $this->_albums[0]->getId();
 	GalleryDataCache::reset();
 	GalleryDataCache::clearPermissionCache();
-	$cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId)";
+	$true = true;
+	$cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId,$true)";
 	GalleryDataCache::put($cacheKey, array('core.foo' => 1));
-	$cacheKey = "GalleryPermissionHelper::getPermissions(55,$userId2)";
+	$cacheKey = "GalleryPermissionHelper::getPermissions(55,$userId2,$true)";
 	GalleryDataCache::put($cacheKey, array('core.bar' => 1));
 
 	list ($ret, $hasItemPermission) =

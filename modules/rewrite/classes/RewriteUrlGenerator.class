@@ -125,7 +125,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	}
 
 	/* Check if we are forced to append the session id in embedded */
-	if ($this->embedForceSessionId($params)) {
+	if (!isset($options['forceSessionId']) && $this->embedForceSessionId($params)) {
 	    $options['forceSessionId'] = true;
 	}
 

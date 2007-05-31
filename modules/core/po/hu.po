@@ -22,9 +22,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-04 20:08+0100\n"
+"Project-Id-Version: Gallery: Core 1.2.0.2\n"
+"Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
+"POT-Creation-Date: 2007-05-31 08:25-0700\n"
 "PO-Revision-Date: 2007-03-11 14:44+0100\n"
 "Last-Translator: Sandor Dibuz <ha3pg@dwatt.com>\n"
 "Language-Team: magyar <gallery-devel@lists.sourceforge.net>\n"
@@ -104,7 +104,7 @@ msgid "Updating Repository Index"
 msgstr ""
 
 msgid "Scanning plugins"
-msgstr ""
+msgstr "Pluginek vizsgálata"
 
 msgid "Update Plugin List"
 msgstr "Modulok listájának frissítése"
@@ -113,7 +113,7 @@ msgid "Done."
 msgstr "Kész."
 
 msgid "Updating Packages"
-msgstr ""
+msgstr "Csomagok Frissítése"
 
 #, c-format
 msgid "Preparing %s"
@@ -207,10 +207,10 @@ msgid "All Users"
 msgstr "Minden felhasználó"
 
 msgid "Detecting broken derivatives"
-msgstr ""
+msgstr "Hiányzó/hibás leszármazottak keresése"
 
 msgid "Clearing fast-download cache"
-msgstr ""
+msgstr "Gyors-letöltési gyorsítótár törlése"
 
 #, fuzzy
 msgid "Deleting old fast-download cache"
@@ -220,6 +220,9 @@ msgid "Updating panorama items"
 msgstr "Panoráma elemek frissítése"
 
 msgid "Optimizing AccessSubscriberMap table"
+msgstr "Az AccessSubscriberMap tábla optimalizálása"
+
+msgid "Converting Schema Table"
 msgstr ""
 
 msgid "Site Admins"
@@ -242,7 +245,7 @@ msgstr "MySQL adatbázis konvertálása UTF8 kódolásra"
 
 #, c-format
 msgid "Upgrading permissions (%d items complete, %d remaining)"
-msgstr ""
+msgstr "Upgrading permissions (%d items complete, %d remaining)"
 
 #, c-format
 msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
@@ -303,19 +306,19 @@ msgstr[0] "%d Kilobájt"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
-msgstr ""
+msgstr "%s fájl meghaladja a maximálisan engedélyezett fájlméretet"
 
 #, c-format
 msgid "Input file %s exceeds file size specified in the form"
-msgstr ""
+msgstr "%s fájl meghaladja az űrlapon megadott maximális fájlméretet"
 
 #, c-format
 msgid "Input file %s was only partially uploaded"
-msgstr ""
+msgstr "%s fájl csak részben került feltöltésre"
 
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
-msgstr ""
+msgstr "%s fájl feltöltése nem sikerült. Hiba %d"
 
 msgid "Gallery Item Administration"
 msgstr "Galéria elem adminisztáció"
@@ -345,7 +348,7 @@ msgid "Preparing..."
 msgstr "Feldolgozás..."
 
 msgid "Apply thumbnail settings"
-msgstr ""
+msgstr "Előnézeti kép beállításainak alkalmazása"
 
 #, fuzzy
 msgid "Rebuilding thumbnails..."
@@ -806,11 +809,11 @@ msgid "Donate to the Gallery project"
 msgstr "Támogasd a Galéria projektet"
 
 msgid "G2.2: Double Double"
-msgstr ""
+msgstr "G2.2: Double Double"
 
 #, c-format
 msgid "Powered by Gallery v%s"
-msgstr ""
+msgstr "Gallery v%s alapokon"
 
 #, c-format
 msgid "Estimated time remaining: %d:%02d"
@@ -863,7 +866,7 @@ msgid "Jump to original album"
 msgstr "Ugrás az eredeti albumra"
 
 msgid "Separate link to original album"
-msgstr ""
+msgstr "Külön link az eredeti albumhoz"
 
 msgid "View Samples"
 msgstr "választék megtekintése"
@@ -914,7 +917,7 @@ msgid "Spreadsheet"
 msgstr "Táblázat"
 
 msgid "spreadsheet"
-msgstr ""
+msgstr "táblázat"
 
 msgid "file"
 msgstr "fájl"
@@ -1139,7 +1142,7 @@ msgid "Inactivity Timeout"
 msgstr "Inaktivitási időtúllépés"
 
 msgid "Embedded Markup"
-msgstr ""
+msgstr "Beágyazott jelölő nyelv (markup)"
 
 msgid ""
 "What kind of markup should we allow in user-entered fields?  For security reasons we do not "
@@ -1148,7 +1151,7 @@ msgid ""
 msgstr ""
 
 msgid "Markup"
-msgstr ""
+msgstr "Jelölő nyelv (markup)"
 
 msgid "Email"
 msgstr "E-mail"
@@ -1267,7 +1270,7 @@ msgid "Lock system"
 msgstr "Rendszer zárolása"
 
 msgid "Helper Processes"
-msgstr ""
+msgstr "Segéd Folyamatok"
 
 msgid ""
 "Some Gallery modules will use programs on your server to do image processing, archiving and "
@@ -1497,7 +1500,7 @@ msgid "Options"
 msgstr "Opciók"
 
 msgid "Lock user."
-msgstr ""
+msgstr "Felhasználó zárolása."
 
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
@@ -1720,6 +1723,10 @@ msgstr "Figyelmeztetés!"
 msgid "Do you really want to uninstall __PLUGIN__?"
 msgstr "Valóban törölni akarod a __PLUGIN__ modult?"
 
+#, fuzzy
+msgid "This will also remove any permissions and clean up any data created by this module."
+msgstr "Ezzel eltávolít minden jogosultságot, és átmeneti fájlt, amit ez a modul hozott létre"
+
 msgid ""
 "This plugin will be uninstalled, but its files will be kept so that you can reinstall it."
 msgstr ""
@@ -1735,8 +1742,12 @@ msgstr "Nem"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Biztos, hogy törölni akarod a __PLUGIN__ modult?"
 
-msgid "This plugin will be uninstalled and its files will be deleted."
+#, fuzzy
+msgid "This plugin will be uninstalled and its files will be deleted permanently."
 msgstr "A modul és a hozzá tartozó fájlok is törölve lesznek."
+
+msgid "The files of this plugin will be deleted permanently."
+msgstr ""
 
 msgid "disabled(__COUNT__)"
 msgstr "letiltva (__COUNT__)"
@@ -1767,6 +1778,8 @@ msgid ""
 "Want more features?  New plugins are just a click away.  Just click the %s link to get "
 "started."
 msgstr ""
+"Több szolgáltatást szeretnél? Új modulok csak egy kattintásnyira. Csak kattints a(z) %s "
+"linkre az induláshoz."
 
 msgid ""
 "Gallery features come as separate plugins.  You can download and install plugins to add more "
@@ -1945,16 +1958,13 @@ msgid ""
 "upgrading:"
 msgstr ""
 
-msgid "Review plugin compatibility (on the Themes and Modules tabs)"
-msgstr ""
-
-#, c-format
-msgid "%sDownload%s Gallery core"
-msgstr ""
+#, fuzzy, c-format
+msgid "%sDownload%s the new Gallery package"
+msgstr "Galéria mag %sletöltése%s"
 
 #, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
-msgstr ""
+msgstr "Olvasd el a %sfrissítési utasításokat%s és hajtsd végre a frissítést"
 
 msgid "Incompatible plugins are marked with an exclamation icon."
 msgstr ""
@@ -2114,6 +2124,12 @@ msgstr "Alapértelmezett rendezés"
 msgid "with"
 msgstr "szélesség"
 
+#, c-format
+msgid ""
+"The %s theme is incompatible with your Gallery version or no longer available.  Please "
+"upgrade the %s theme or pick another default theme."
+msgstr ""
+
 msgid "New albums"
 msgstr "Új albumok"
 
@@ -2245,7 +2261,7 @@ msgid "Database Error"
 msgstr "Adatbázis hiba"
 
 msgid "Platform Error"
-msgstr ""
+msgstr "Rendszerhiba"
 
 msgid "Authentication Failure"
 msgstr "Sikertelen azonosítás"
@@ -2534,7 +2550,7 @@ msgid "You must enter a number (greater than zero)"
 msgstr "Adj meg egy számot (nagyobbat mint 0)"
 
 msgid "Use this thumbnail size in all subalbums"
-msgstr ""
+msgstr "Ezen előnézeti képméret használata minden belső albumban"
 
 msgid "Resized Images"
 msgstr "Átméretezett képek"
@@ -2565,9 +2581,15 @@ msgid ""
 "Building images now makes this operation take longer, but saves the time to build and cache "
 "each file when it is first viewed."
 msgstr ""
+"Az előnézeti és átméretezett képek beállításai minden új elemre vonatkozni fognak. Ahhoz, "
+"hogy a beállítások az albumban már meglévő elemekre is hassanak, pipáld ki a megfelelő "
+"négyzetet. A belső albumok bejelölése minden egyes belső album saját beállítását alkalmazza "
+"a maga előnézeti/átméretezett képeire, mely beállítások eltérhetnek a fentebb megadottaktól. "
+"Ha most készülnek el a képek, úgy ez a folyamat tovább tarthat, de a képek megtekintése már "
+"az első alkalommal is gyorsabb lesz így."
 
 msgid "Apply album setting to thumbnails"
-msgstr ""
+msgstr "Album beállításainak alkalmazása az előnézeti képekre"
 
 msgid "... and for all subalbums"
 msgstr "...és ezen belül a további abumokra is"
@@ -2713,7 +2735,7 @@ msgstr ""
 "vagy modosíthatsz előnézeti képeket."
 
 msgid "Unable to create a thumbnail for this item"
-msgstr ""
+msgstr "Nem sikerült az elemhez tartozó előnézeti kép létrehozáa"
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
@@ -2839,6 +2861,8 @@ msgid ""
 "There is no toolkit support to modify the original so operations may only be applied to the "
 "copies"
 msgstr ""
+"Nincs eszközkészlet ami támogatná az eredeti módosítását, ezért a műveletek esetleg csak a "
+"másolatokat érintik"
 
 msgid "Preserve Original Photo"
 msgstr "Eredeti fénykép megtartása"
@@ -2860,6 +2884,13 @@ msgstr "Eredeti visszaállítása"
 
 msgid "Choose a theme"
 msgstr "Válassz ki egy felületet"
+
+#, c-format
+msgid ""
+"This album is configured to use the %s theme which is either incompatible with this Gallery "
+"version or no longer available.  Please upgrade the %s theme or use another theme for this "
+"album."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -3293,7 +3324,7 @@ msgid "Account settings saved successfully"
 msgstr "Felhasználói beállítások sikeresen elmentve"
 
 msgid "(required, password required for change)"
-msgstr ""
+msgstr "(kötelező, jelszó szükséges a változtatáshoz)"
 
 msgid "(suggested, password required for change)"
 msgstr "(használata javasolt, jelszó szükséges a megváltoztatásához)"

@@ -72,7 +72,7 @@ class UnixPlatform extends GalleryPlatform {
 	/* Redirect STDERR to a file */
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
 	$debugFile = tempnam($tmpDir, 'g2dbg');
-	$command = "($command) 2>$debugFile";
+	$command = "($command) 2>\"$debugFile\"";
 
 	if ($gallery->getDebug()) {
 	    $gallery->debug("Executing: $command");
