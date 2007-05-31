@@ -247,7 +247,7 @@ class ItemAddController extends GalleryController {
 	$errors = array();
 
 	/* The number of items a ItemAddOption should be able to process in less than 30 seconds */
-	$batchSize = 50;
+	$batchSize = 20;
 
 	/* Extract all archive-type items and call the ItemAddOption instances for postprocessing */
 	$itemsToProcess = $itemsToProcessKeyMap = array();
