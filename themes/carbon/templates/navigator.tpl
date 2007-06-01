@@ -64,23 +64,12 @@
 	      {/if}
 	    {/foreach}
 	  {/if}
-	  {if $theme.params.photoProperties}
-	  {foreach from=$theme.params.photoBlocks item=block}
-	    {if $block.0 == 'exif.ExifInfo'}
-	      {if empty($item)} {assign var=item value=$theme.item} {/if}
-
-	      {* Load up the EXIF data *}
-	      {g->callback type="exif.LoadExifInfo" itemId=$item.id}
-
-	      {if !empty($block.exif.LoadExifInfo.exifData)}
+	  {if $theme.params.photoProperties && $showExifLink}
 	      <td class="gsActionIcon">
 		<div class="buttonExif"><a href="javascript:void(0);"
 		 onclick="toggleExif('photo','exif'); return false;"
 		 title="{g->text text="Photo Properties"}"></a></div>
 	      </td>
-	      {/if}
-	    {/if}
-	  {/foreach}
 	  {/if}
 	  {if $theme.params.fullSize && !empty($theme.sourceImage) && count($theme.imageViews) > 1}
 	    {capture name="url"}{g->url arg1="view=core.DownloadItem"

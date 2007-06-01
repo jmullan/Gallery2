@@ -33,7 +33,7 @@ class HybridTheme extends GalleryTheme {
 	$this->setId('hybrid');
 	$this->setName($gallery->i18n('Hybrid'));
 	$this->setDescription($gallery->i18n('Combined album/image/slideshow dynamic view'));
-	$this->setVersion('1.1.4');
+	$this->setVersion('1.1.4.1');
 	$this->setRequiredCoreApi(array(7, 10));
 	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(array(
@@ -170,6 +170,10 @@ class HybridTheme extends GalleryTheme {
 	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
 	    if ($ret) {
 		return array($ret, null);
+	    }
+	    if ($renderId != ($itemId = $item->getId()) && $image->getParentId() != $itemId) {
+		/* Malicious URL.. renderId not for this item */
+		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 	    }
 	    $template->setVariable('theme', array('item' => (array)$item,
 						  'image' => (array)$image));
