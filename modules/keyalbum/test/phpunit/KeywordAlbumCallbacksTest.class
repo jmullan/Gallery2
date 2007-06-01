@@ -289,7 +289,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
-	$aclCacheKey = "GalleryPermissionHelper::fetchAccessListIds(core.view, $guestId, 1)";
+	$aclCacheKey = "GalleryPermissionHelper::fetchAccessListIds(core.view,$guestId,1)";
 	$this->_smarty->_tpl_vars['block']['keyalbum'] = array();
 	$block =& $this->_smarty->_tpl_vars['block']['keyalbum'];
 

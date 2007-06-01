@@ -204,7 +204,7 @@
   <p>
     <ol>
       <li>{g->text text="%sDownload%s the new Gallery package" arg1="<a href=\"http://codex.gallery2.org/Downloads\">" arg2="</a>"}</li>
-      <li>{g->text text="Read the %supgrade instructions%s and perform the upgrade" arg1="<a href=\"http://codex.gallery2.org/Upgrading\">" arg2="</a>"}</li>
+      <li>{g->text text="Read the %supgrade instructions%s and perform the upgrade" arg1="<a href=\"http://codex.gallery2.org/Gallery2:Upgrading\">" arg2="</a>"}</li>
     </ol>
   </p>
 </div>
