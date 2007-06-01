@@ -912,7 +912,7 @@ class GalleryUtilities {
     function setResponseHeader($header, $replace=true) {
 	/* Use our PHP VM for testability */
 	global $gallery;
-	$phpVm =& $gallery->getPhpVm();
+	$phpVm = $gallery->getPhpVm();
 
 	$responseHeaders =& GalleryUtilities::_getResponseHeaders();
 
@@ -1591,7 +1591,7 @@ class GalleryUtilities {
 	/* Urldecode value */
 	$val = trim(urldecode($val));
 	/* Add slashes if magic_quotes_gpc is on */
-	$phpVm =& $gallery->getPhpVm();
+	$phpVm = $gallery->getPhpVm();
 	if ($phpVm->get_magic_quotes_gpc()) {
 	    $key = addslashes($key);
 	    $val = addslashes($val);

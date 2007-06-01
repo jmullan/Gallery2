@@ -220,8 +220,8 @@ class UtilitiesTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Use UtilitiesTestSetResponseHeaderPhpVm */
-	$phpVm =& $gallery->_phpVm;
-	$phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$gallery->_phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$phpVm = $gallery->getPhpVm();
 
 	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Foo');
 
@@ -231,15 +231,15 @@ class UtilitiesTest extends GalleryTestCase {
 
 	$expectedCalls = array();
 	$expectedCalls[] = array('HTTP/1.0 123 Foo', null);
-	$this->assertEquals($expectedCalls, $phpVm->_headerCalls, 'Header calls');
+	$this->assertEquals($expectedCalls, $phpVm->getHeaderCalls(), 'Header calls');
     }
 
     function testSetResponseHeaderWithReplace() {
 	global $gallery;
 
 	/* Use UtilitiesTestSetResponseHeaderPhpVm */
-	$phpVm =& $gallery->_phpVm;
-	$phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$gallery->_phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$phpVm = $gallery->getPhpVm();
 
 	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Foo');
 	GalleryUtilities::setResponseHeader('HTTP/1.0 321 Bar');
@@ -251,15 +251,15 @@ class UtilitiesTest extends GalleryTestCase {
 	$expectedCalls = array();
 	$expectedCalls[] = array('HTTP/1.0 123 Foo', null);
 	$expectedCalls[] = array('HTTP/1.0 321 Bar', null);
-	$this->assertEquals($expectedCalls, $phpVm->_headerCalls, 'Header calls');
+	$this->assertEquals($expectedCalls, $phpVm->getHeaderCalls(), 'Header calls');
     }
 
     function testSetResponseHeaderNoReplace() {
 	global $gallery;
 
 	/* Use UtilitiesTestSetResponseHeaderPhpVm */
-	$phpVm =& $gallery->_phpVm;
-	$phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$gallery->_phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$phpVm = $gallery->getPhpVm();
 
 	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Foo', false);
 	GalleryUtilities::setResponseHeader('HTTP/1.0 321 Bar', false);
@@ -270,15 +270,15 @@ class UtilitiesTest extends GalleryTestCase {
 
 	$expectedCalls = array();
 	$expectedCalls[] = array('HTTP/1.0 123 Foo', null);
-	$this->assertEquals($expectedCalls, $phpVm->_headerCalls, 'Header calls');
+	$this->assertEquals($expectedCalls, $phpVm->getHeaderCalls(), 'Header calls');
     }
 
     function testSetLocationResponseHeader() {
 	global $gallery;
 
 	/* Use UtilitiesTestSetResponseHeaderPhpVm */
-	$phpVm =& $gallery->_phpVm;
-	$phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$gallery->_phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$phpVm = $gallery->getPhpVm();
 
 	GalleryUtilities::setResponseHeader('Location: http://example.com/', false);
 
@@ -289,15 +289,15 @@ class UtilitiesTest extends GalleryTestCase {
 
 	$expectedCalls = array();
 	$expectedCalls[] = array('Location: http://example.com/', null);
-	$this->assertEquals($expectedCalls, $phpVm->_headerCalls, 'Header calls');
+	$this->assertEquals($expectedCalls, $phpVm->getHeaderCalls(), 'Header calls');
     }
 
     function testSetLocationResponseHeaderWithReplace() {
 	global $gallery;
 
 	/* Use UtilitiesTestSetResponseHeaderPhpVm */
-	$phpVm =& $gallery->_phpVm;
-	$phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$gallery->_phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$phpVm = $gallery->getPhpVm();
 
 	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Foo');
 	GalleryUtilities::setResponseHeader('Location: http://example.com/');
@@ -310,15 +310,15 @@ class UtilitiesTest extends GalleryTestCase {
 	$expectedCalls = array();
 	$expectedCalls[] = array('HTTP/1.0 123 Foo', null);
 	$expectedCalls[] = array('Location: http://example.com/', null);
-	$this->assertEquals($expectedCalls, $phpVm->_headerCalls, 'Header calls');
+	$this->assertEquals($expectedCalls, $phpVm->getHeaderCalls(), 'Header calls');
     }
 
     function testSetLocationResponseHeaderNoReplace() {
 	global $gallery;
 
 	/* Use UtilitiesTestSetResponseHeaderPhpVm */
-	$phpVm =& $gallery->_phpVm;
-	$phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$gallery->_phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$phpVm = $gallery->getPhpVm();
 
 	GalleryUtilities::setResponseHeader('HTTP/1.0 123 Foo', false);
 	GalleryUtilities::setResponseHeader('Location: http://example.com/', false);
@@ -329,15 +329,15 @@ class UtilitiesTest extends GalleryTestCase {
 
 	$expectedCalls = array();
 	$expectedCalls[] = array('HTTP/1.0 123 Foo', null);
-	$this->assertEquals($expectedCalls, $phpVm->_headerCalls, 'Header calls');
+	$this->assertEquals($expectedCalls, $phpVm->getHeaderCalls(), 'Header calls');
     }
 
     function testSetLocationResponseHeaderNoReplace3xx() {
 	global $gallery;
 
 	/* Use UtilitiesTestSetResponseHeaderPhpVm */
-	$phpVm =& $gallery->_phpVm;
-	$phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$gallery->_phpVm = new UtilitiesTestSetResponseHeaderPhpVm();
+	$phpVm = $gallery->getPhpVm();
 
 	GalleryUtilities::setResponseHeader('HTTP/1.0 321 Bar', false);
 	GalleryUtilities::setResponseHeader('Location: http://example.com/', false);
@@ -350,7 +350,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$expectedCalls = array();
 	$expectedCalls[] = array('HTTP/1.0 321 Bar', null);
 	$expectedCalls[] = array('Location: http://example.com/', null);
-	$this->assertEquals($expectedCalls, $phpVm->_headerCalls, 'Header calls');
+	$this->assertEquals($expectedCalls, $phpVm->getHeaderCalls(), 'Header calls');
     }
 
     function testSanitizeInputValue1() {
@@ -1784,10 +1784,21 @@ class UtilitiesTestDoNotAddSlashesPhpVm extends GalleryPhpVm {
 }
 
 class UtilitiesTestSetResponseHeaderPhpVm extends GalleryPhpVm {
-    var $_headerCalls;
+    function UtilitiesTestSetResponseHeaderPhpVm() {
+	$this->getHeaderCalls(true);
+    }
+
+    function &getHeaderCalls($reset=false) {
+	static $headerCalls = array();
+	if ($reset) {
+	    $headerCalls = array();
+	}
+	return $headerCalls;
+    }
 
     function header($header, $replace=null) {
-	$this->_headerCalls[] = array($header, $replace);
+	$headerCalls =& $this->getHeaderCalls();
+    	$headerCalls[] = array($header, $replace);
     }
 }
 ?>
