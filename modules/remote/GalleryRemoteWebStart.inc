@@ -35,6 +35,20 @@ class GalleryRemoteWebStartView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::isAllowedInEmbedOnly
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
+
+    /**
+     * @see GalleryView::shouldSaveSession
+     */
+    function shouldSaveSession() {
+	return false;
+    }
+
+    /**
      * @see GalleryView::loadTemplate
      */
     function renderImmediate($status, $error) {
@@ -45,12 +59,10 @@ class GalleryRemoteWebStartView extends GalleryView {
 	}
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$codebase = GalleryUrlGenerator::appendParamsToUrl(
-		$urlGenerator->getCurrentUrlDir(true) . 'modules/remote', null);
-
-	$jnlpFile = GalleryUrlGenerator::appendParamsToUrl(
-		$urlGenerator->getCurrentUrlDir(true) . GALLERY_MAIN_PHP,
-		array('view' => 'remote.GalleryRemoteWebStart'));
+	$codebase = $urlGenerator->getCurrentUrlDir(true);
+	$jnlpFile = $urlGenerator->generateUrl(
+		array('view' => 'remote.GalleryRemoteWebStart'),
+		array('forceDirect' => true, 'forceFullUrl' => true, 'forceSessionId' => false));
 
 	$user = $gallery->getActiveUser();
 	if (isset($user)) {
@@ -61,7 +73,7 @@ class GalleryRemoteWebStartView extends GalleryView {
 ?>
 <jnlp
   spec="1.0+"
-  codebase="<?php echo $codebase; ?>"
+  codebase="<?php echo $codebase . 'modules/remote'; ?>"
   href="<?php echo $jnlpFile; ?>">
   <information>
     <title>Gallery Remote</title>
@@ -87,7 +99,7 @@ class GalleryRemoteWebStartView extends GalleryView {
   </resources>
   <application-desc main-class="com.gallery.GalleryRemote.GalleryRemote">
     <argument>-url</argument>
-    <argument><?php echo $urlGenerator->getCurrentUrlDir(true); ?></argument>
+    <argument><?php echo $codebase; ?></argument>
     <?php if (isset($username)) { ?>
     <argument>-username</argument>
     <argument><?php echo $username; ?></argument>
