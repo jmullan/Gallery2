@@ -46,7 +46,7 @@ class GalleryRemoteWebStartView extends GalleryView {
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$codebase = GalleryUrlGenerator::appendParamsToUrl(
-		$urlGenerator->getCurrentUrlDir(true) . 'modules/remote');
+		$urlGenerator->getCurrentUrlDir(true) . 'modules/remote', null);
 
 	$jnlpFile = GalleryUrlGenerator::appendParamsToUrl(
 		$urlGenerator->getCurrentUrlDir(true) . GALLERY_MAIN_PHP,
@@ -56,8 +56,9 @@ class GalleryRemoteWebStartView extends GalleryView {
 	if (isset($user)) {
 	    $username = $user->getUserName();
 	}
+
+	echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 ?>
-<?xml version="1.0" encoding="utf-8"?>
 <jnlp
   spec="1.0+"
   codebase="<?php echo $codebase; ?>"
