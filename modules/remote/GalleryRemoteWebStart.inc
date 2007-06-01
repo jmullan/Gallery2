@@ -23,7 +23,7 @@
  * @package Remote
  * @subpackage UserInterface
  * @author Pierre-Luc Paour <paour@users.sourceforge.net>
- * @version $Revision: 15513 $
+ * @version $Revision$
  */
 class GalleryRemoteWebStartView extends GalleryView {
 
@@ -39,19 +39,19 @@ class GalleryRemoteWebStartView extends GalleryView {
      */
     function renderImmediate($status, $error) {
 	global $gallery;
-	
+
 	if (!headers_sent()) {
 	    header("Content-type: application/x-java-jnlp-file");
 	}
-	
+
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$codebase = GalleryUrlGenerator::appendParamsToUrl(
 		$urlGenerator->getCurrentUrlDir(true) . 'modules/remote');
-	
+
 	$jnlpFile = GalleryUrlGenerator::appendParamsToUrl(
 		$urlGenerator->getCurrentUrlDir(true) . GALLERY_MAIN_PHP,
 		array('view' => 'remote.GalleryRemoteWebStart'));
-	
+
 	$user = $gallery->getActiveUser();
 	if (isset($user)) {
 	    $username = $user->getUserName();
@@ -69,7 +69,7 @@ class GalleryRemoteWebStartView extends GalleryView {
     <description>A Java application you can use to upload pictures to your Gallery</description>
     <icon href="images/rar_icon_32.gif"/>
     <icon kind="splash" href="images/rar_about_gr1.png"/>
-    <offline-allowed/> 
+    <offline-allowed/>
     <shortcut online="false">
       <desktop/>
       <menu submenu="Gallery Remote"/>
