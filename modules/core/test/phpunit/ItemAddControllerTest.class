@@ -524,6 +524,52 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(array(0 => $items[0]->getId(), 1 => $items[1]->getId())),
 			    $addOption->_calls, 'second call');
     }
+
+    function testHandleRequestItemAddWebDavBackwardsCompatibility() {
+	/*
+	 * The webdav module used to invoke ItemAddController::handleRequest() from another
+	 * controller which was a bad hack.  To keep this hack working, ItemAddController needs
+	 * to handle ItemAddWebDav add-plugin requests in a special way, not delegating to the
+	 * progress-bar view.
+	 */
+
+	/* Don't test with the real plugin instance */
+	$this->_registerFactoryImplementationForTest(
+	    'ItemAddPlugin', 'ItemAddControllerTestAddPluginWebDav', 'ItemAddWebDav',
+	    'modules/core/test/phpunit/ItemAddControllerTest.class', 'coreTest');
+
+	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddWebDav');
+
+	ob_start();
+	/* Do a static call, that's how WebDAV invokes / invoked the controller. */
+	list ($ret, $results) = ItemAddController::handleRequest(array());
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.ItemAdmin',
+				      'subView' => 'core.ItemAddConfirmation',
+				      'itemId' => $this->_album->getId()),
+		  'status' => array('addedFiles' => array(
+				array('fileName' => 'foo-' . $item->getId(),
+				      'id' => $item->getId(),
+				      'warnings' => array()))),
+		  'error' => array()),
+	    $results);
+
+	$this->assertEquals(0, $this->_templateAdapter->getCallbackCount(),
+			    'trailer callback count');
+	$this->assertEquals('', $output, 'HTML output');
+    }
 }
 
 /**
@@ -560,6 +606,24 @@ class ItemAddControllerTestPluginSuccess {
 	    $addedFiles[] = array('fileName' => 'foo-' . $id, 'id' => $id, 'warnings' => array());
 	}
 
+	return array(null, array(), array('addedFiles' => $addedFiles));
+    }
+}
+
+/**
+ * ItemAddPlugin to test backwards compatibility with the WebDAV module.
+ */
+class ItemAddControllerTestAddPluginWebDav {
+    function handleRequest($form, &$item) {
+	/* Pretend we just added item(s) that are already there */
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+	$addedFiles = array();
+	foreach ($childIds as $id) {
+	    $addedFiles[] = array('fileName' => 'foo-' . $id, 'id' => $id, 'warnings' => array());
+	}
 	return array(null, array(), array('addedFiles' => $addedFiles));
     }
 }

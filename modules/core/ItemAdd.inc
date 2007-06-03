@@ -80,6 +80,34 @@ class ItemAddController extends GalleryController {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
+	/**
+	 * Special case for backwards-compatibility with the webdav module
+	 * @todo Remove on next major API change
+	 */
+	if ($addPluginId == 'ItemAddWebDav') {
+	    /* WebDAV used to do a static ::handleRequest() call. We need an instance. */
+	    $controller = new ItemAddController();
+	    /* Don't output any HTML (progress-bar) */
+	    ob_start();
+	    $ret = $controller->handleRequestWithProgressBar($form, $item, $addPlugin);
+	    ob_end_clean();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    if (empty($controller->_statusId)) {
+		$results['status'] = array();
+	    } else {
+		$session =& $gallery->getSession();
+		$results['status'] = $session->getStatus($controller->_statusId);
+	    }
+	    $results['redirect'] = array('view' => 'core.ItemAdmin',
+					 'subView' => 'core.ItemAddConfirmation',
+					 'itemId' => $item->getId());
+	    $results['error'] = array();
+	    return array(null, $results);
+	}
+
 	/* Do the actual work in callback of a progress-bar view */
 	$templateAdapter->registerTrailerCallback(
 		    array($this, 'handleRequestWithProgressBar'),
@@ -154,7 +182,7 @@ class ItemAddController extends GalleryController {
 		      'addPlugin' => $addPluginId, 'itemId' => $item->getId()),
 		array('forceFullUrl' => true));
 	} else {
-	    $statusId = $session->putStatus($status);
+	    $this->_statusId = $session->putStatus($status);
 	    $doRedirect = ($phpVm->time() - $startTime) <= $autoRedirectSeconds;
 
 	    if (empty($status['addedFiles'])) {
@@ -166,14 +194,14 @@ class ItemAddController extends GalleryController {
 		$continueUrl = $urlGenerator->generateUrl(
 		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemAdd',
 			  'addPlugin' => $addPluginId, 'itemId' => $item->getId(),
-			  'statusId' => $statusId, 'form' => $form),
+			  'statusId' => $this->_statusId, 'form' => $form),
 		    array('forceFullUrl' => true));
 		$templateAdapter->updateProgressBar(
 		    $this->_coreModule->translate('Adding items'), '', 1);
 	    } else {
 		$continueUrl = $urlGenerator->generateUrl(
 		    array('view' => 'core.ItemAdmin', 'subView' => 'core.ItemAddConfirmation',
-			  'itemId' => $item->getId(), 'statusId' => $statusId),
+			  'itemId' => $item->getId(), 'statusId' => $this->_statusId),
 		    array('forceFullUrl' => true));
 	    }
 	}
