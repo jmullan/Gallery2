@@ -315,45 +315,6 @@ class WebDavHelper {
     }
 
     /**
-     * Take two entities of possibly different classes and make the second entity as close a copy of
-     * the first entity as possible.  Copy the id but not the entity type because the entity type
-     * must always match the class name.
-     * @param object GalleryEntity $sourceEntity entity to copy from
-     * @param object GalleryEntity $mirrorEntity entity to copy to
-     * @return array object GalleryStatus a status code
-     *               object GalleryEntity the mirror entity
-     */
-    function mirrorEntity($sourceEntity, $mirrorEntity) {
-	$className = $mirrorEntity->getClassName();
-	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity($className);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	/*
-	 * Walk down the mirror entity's class hierarchy copying class members from the source
-	 * entity if they are defined
-	 */
-	while (!empty($className)) {
-	    foreach ($entityInfo[$className]['members'] as $memberName => $memberInfo) {
-		if (isset($sourceEntity->$memberName)) {
-		    $mirrorEntity->$memberName = $sourceEntity->$memberName;
-		}
-	    }
-
-	    $className = $entityInfo[$className]['parent'];
-	}
-
-	/*
-	 * Reset the entity type to the mirror entity's class name because the entity type must
-	 * always match the class name
-	 */
-	$mirrorEntity->entityType = $mirrorEntity->getClassName();
-
-	return array(null, $mirrorEntity);
-    }
-
-    /**
      * Get singleton WebDAV server library instance.
      *
      * If it didn't need path and baseUrl, we could eliminate and call library methods staticly.
@@ -1392,7 +1353,6 @@ class WebDavHelper {
      */
     function putResponseHelper($webDavOptions, $stream) {
 	$webDavServer =& WebDavHelper::getWebDavServer();
-	$webDavOptions['new'] = false;
 	$webDavServer->put_response_helper($webDavOptions, $stream);
     }
 

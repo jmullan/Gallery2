@@ -538,68 +538,6 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->assertEquals(array(array(true)), $this->_requestAuthenticationCalls);
     }
 
-    function testMirrorEntity() {
-	list ($ret, $item) = $this->_createRandomDataItem(
-	    $this->_album->getId(), 'test/file');
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret, $item) = WebDavHelper::mirrorEntity($this->_item, $item);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$className = $item->getClassName();
-	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity($className);
-	if ($ret) {
-	    return $ret;
-	}
-
-	while (!empty($className)) {
-	    foreach ($entityInfo[$className]['members'] as $memberName => $memberInfo) {
-		if (isset($this->_item->$memberName) && $memberName != 'entityType') {
-		    $this->assertEquals($this->_item->$memberName, $item->$memberName);
-		}
-	    }
-
-	    $className = $entityInfo[$className]['parent'];
-	}
-
-	$this->assertEquals($item->entityType, 'GalleryUnknownItem');
-    }
-
-    function testMirrorEntityWithNewClass() {
-	list ($ret, $item) = $this->_createRandomDataItem(
-	    $this->_album->getId(), 'image/jpeg');
-	if ($ret) {
-	    return $ret;
-	}
-
-	list ($ret, $item) = WebDavHelper::mirrorEntity($this->_item, $item);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$className = $item->getClassName();
-	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity($className);
-	if ($ret) {
-	    return $ret;
-	}
-
-	while (!empty($className)) {
-	    foreach ($entityInfo[$className]['members'] as $memberName => $memberInfo) {
-		if (isset($this->_item->$memberName) && $memberName != 'entityType') {
-		    $this->assertEquals($this->_item->$memberName, $item->$memberName);
-		}
-	    }
-
-	    $className = $entityInfo[$className]['parent'];
-	}
-
-	$this->assertEquals($item->entityType, 'GalleryPhotoItem');
-    }
-
     function testGetRequestVariable() {
 	$expectedValue = '/The Quick!Brown#Fox/Jumps Over%The/Lazy_Dog';
 	$_SERVER['QUERY_STRING'] =

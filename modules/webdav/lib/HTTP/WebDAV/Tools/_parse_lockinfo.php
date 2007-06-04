@@ -20,7 +20,7 @@
 // $Id$
 
 /**
- * Helper class for parsing LOCK request bodies
+ * Helper for parsing LOCK request bodies
  *
  * @package HTTP_WebDAV_Server
  * @author Hartmut Holzgraefe <hholzgra@php.net>
@@ -78,15 +78,8 @@ class _parse_lockinfo
     {
         // open input stream
         if (!$handle) {
-            $this->success = false;
             return;
         }
-
-        // success state flag
-        $this->success = true;
-
-        // remember if any input was parsed
-        $had_input = false;
 
         // create namespace aware XML parser
         $parser = xml_parser_create_ns('UTF-8', ' ');
@@ -100,18 +93,22 @@ class _parse_lockinfo
         // we want a case sensitive parser
         xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, false);
 
+        // remember if any input was parsed
+        $had_input = false;
+
         // parse input
+        $this->success = true;
         while ($this->success && !feof($handle)) {
             $line = fgets($handle);
             if (is_string($line)) {
                 $had_input = true;
-                $this->success &= xml_parse($parser, $line, false);
+                $this->success = xml_parse($parser, $line, false);
             }
         }
 
         // finish parsing
         if ($had_input) {
-            $this->success &= xml_parse($parser, '', true);
+            $this->success = xml_parse($parser, '', true);
         }
 
         // check if required tags where found

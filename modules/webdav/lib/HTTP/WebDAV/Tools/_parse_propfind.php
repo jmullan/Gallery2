@@ -19,7 +19,7 @@
 // $Id$
 
 /**
- * Helper class for parsing PROPFIND request bodies
+ * Helper for parsing PROPFIND request bodies
  *
  * @package HTTP_WebDAV_Server
  * @author Hartmut Holzgraefe <hholzgra@php.net>
@@ -61,15 +61,8 @@ class _parse_propfind
     {
         // open input stream
         if (!$handle) {
-            $this->success = false;
             return;
         }
-
-        // success state flag
-        $this->success = true;
-
-        // remember if any input was parsed
-        $had_input = false;
 
         // create namespace aware XML parser
         $parser = xml_parser_create_ns('UTF-8', ' ');
@@ -81,7 +74,11 @@ class _parse_propfind
         // we want a case sensitive parser
         xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, false);
 
+        // remember if any input was parsed
+        $had_input = false;
+
         // parse input
+        $this->success = true;
         while ($this->success && !feof($handle)) {
             $line = fgets($handle);
             if (is_string($line)) {

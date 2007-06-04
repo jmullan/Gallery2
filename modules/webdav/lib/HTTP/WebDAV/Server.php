@@ -477,7 +477,7 @@ class HTTP_WebDAV_Server
     // {{{ propfind_request_helper
 
     /**
-     * PROPFIND request helper - prepares data-structures from PROPFIND requests
+     * PROPFIND request helper - prepare data-structures from PROPFIND requests
      *
      * @param options
      * @return void
@@ -648,7 +648,7 @@ class HTTP_WebDAV_Server
     // {{{ proppatch_request_helper
 
     /**
-     * PROPPATCH request helper - prepares data-structures from PROPPATCH requests
+     * PROPPATCH request helper - prepare data-structures from PROPPATCH requests
      *
      * @param options
      * @return void
@@ -789,7 +789,7 @@ class HTTP_WebDAV_Server
     // {{{ get_request_helper
 
     /**
-     * GET request helper - prepares data-structures from GET requests
+     * GET request helper - prepare data-structures from GET requests
      *
      * @param options
      * @return void
@@ -1160,7 +1160,7 @@ class HTTP_WebDAV_Server
             $status = $this->head($options);
         } else {
 
-            // can emulate HEAD using GET
+            // emulate HEAD using GET if no HEAD method exists
             ob_start();
             $status = $this->get($options);
             ob_end_clean();
@@ -1175,7 +1175,7 @@ class HTTP_WebDAV_Server
     // {{{ put_request_helper
 
     /**
-     * PUT request helper - prepares data-structures from PUT requests
+     * PUT request helper - prepare data-structures from PUT requests
      *
      * @param options
      * @return void
@@ -1409,7 +1409,7 @@ class HTTP_WebDAV_Server
     // {{{ copymove_request_helper
 
     /**
-     * COPY/MOVE request helper - prepares data-structures from COPY/MOVE
+     * COPY/MOVE request helper - prepare data-structures from COPY/MOVE
      * requests
      *
      * @param options
@@ -1549,7 +1549,7 @@ class HTTP_WebDAV_Server
     // {{{ lock_request_helper
 
     /**
-     * LOCK request helper - prepares data-structures from LOCK requests
+     * LOCK request helper - prepare data-structures from LOCK requests
      *
      * @param options
      * @return void
@@ -1723,7 +1723,7 @@ class HTTP_WebDAV_Server
     // {{{ unlock_request_helper
 
     /**
-     * UNLOCK request helper - prepares data-structures from UNLOCK requests
+     * UNLOCK request helper - prepare data-structures from UNLOCK requests
      *
      * @param options
      * @return void
@@ -2060,7 +2060,7 @@ class HTTP_WebDAV_Server
 
             $allow[] = strtoupper($method);
 
-            // simulate HEAD using GET if no HEAD method exists
+            // emulate HEAD using GET if no HEAD method exists
             if ($method == 'get') {
                 $allow[] = 'HEAD';
             }

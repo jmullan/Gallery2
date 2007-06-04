@@ -1057,7 +1057,7 @@ if ($ret) {
     /**
      * Mac OS X and GNOME both make PUT requests with empty bodies.
      */
-    function testAddEmptyBody() {
+    function testAddWithEmptyBody() {
 	$pathComponent = 'test1.gif';
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
@@ -1159,13 +1159,120 @@ if ($ret) {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $this->_item) = $this->_item->refresh();
+	/* Make sure the item is really gone */
+	$ret = $this->_verifyMissing($this->_item->getId());
 	if ($ret) {
 	    return $ret;
 	}
 
-	$this->assertEquals('application/unknown', $this->_item->getMimeType());
-	$this->assertEquals($fileSize, $this->_item->getSize());
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($this->_item->getTitle(), $item->getTitle());
+	$this->assertEquals($this->_item->getSummary(), $item->getSummary());
+	$this->assertEquals($this->_item->getDescription(), $item->getDescription());
+	$this->assertEquals('application/unknown', $item->getMimeType());
+	$this->assertEquals($fileSize, $item->getSize());
+    }
+
+    function testReplaceWithSpecialCharacters() {
+	global $gallery;
+
+	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = $this->_rename($this->_item, 'Jumps Over%The/Lazy_Dog');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$fileSize = $this->_platform->filesize($filePath);
+
+	$path = '/' . rawurlencode('The Quick!Brown#Fox')
+	    . '/' . rawurlencode('Jumps Over%The/Lazy_Dog');
+
+	$pathComponent = 'Jumps Over%The/Lazy_Dog';
+
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	$_SERVER['CONTENT_LENGTH'] = $fileSize;
+	$_SERVER['CONTENT_TYPE'] = 'test/file';
+
+	/*
+	 * Regression: Check that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.  These
+	 * variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 204 No Content';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
+
+	/* Make sure the item is really gone */
+	$ret = $this->_verifyMissing($this->_item->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($this->_item->getTitle(), $item->getTitle());
+	$this->assertEquals($this->_item->getSummary(), $item->getSummary());
+	$this->assertEquals($this->_item->getDescription(), $item->getDescription());
+	$this->assertEquals('application/unknown', $item->getMimeType());
+	$this->assertEquals($fileSize, $item->getSize());
+
+	$query = '
+	    SELECT
+	      [WebDavPathComponentMap::pathComponent]
+	    FROM
+	      [WebDavPathComponentMap]
+	    WHERE
+	      [WebDavPathComponentMap::itemId] = ?';
+	list ($ret, $results) = $gallery->search($query, $itemId);
+	if ($ret) {
+	    return $ret;
+	}
+	if (($result = $results->nextResult()) === false) {
+	    return GalleryCoreApi::error(ERROR_MISSING_VALUE);
+	}
+	$this->assertEquals($pathComponent, $result[0]);
     }
 
     function testReplaceWithNewClass() {
@@ -1210,13 +1317,27 @@ if ($ret) {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
-	list ($ret, $this->_item) = $this->_item->refresh();
+	/* Make sure the item is really gone */
+	$ret = $this->_verifyMissing($this->_item->getId());
 	if ($ret) {
 	    return $ret;
 	}
 
-	$this->assertEquals('image/gif', $this->_item->getMimeType());
-	$this->assertEquals($fileSize, $this->_item->getSize());
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($this->_item->getTitle(), $item->getTitle());
+	$this->assertEquals($this->_item->getSummary(), $item->getSummary());
+	$this->assertEquals($this->_item->getDescription(), $item->getDescription());
+	$this->assertEquals('image/gif', $item->getMimeType());
+	$this->assertEquals($fileSize, $item->getSize());
     }
 
     function testReplaceRequiresDataItem() {

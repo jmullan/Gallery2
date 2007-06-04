@@ -80,14 +80,12 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array(GalleryCoreApi::error(ERROR_PLATFORM_FAILURE), null, null);
 	}
 
-	while (!$platform->feof($stream)) {
-	    $buf = $platform->fread($stream, 4096);
-	    if ($platform->fwrite($handle, $buf) != 4096) {
-		break;
-	    }
+	/* Format PUT response */
+	$ret = WebDavHelper::putResponseHelper($webDavOptions, $handle);
+	if ($ret) {
+	    @$platform->unlink($tmpFile);
+	    return array($ret, null, null);
 	}
-
-	$platform->fclose($handle);
 
 	list ($ret, $item) = GalleryCoreApi::addItemToAlbum(
 	    $tmpFile, $pathComponent, $pathComponent, '', '', $mimeType, $parentItem->getId());
@@ -105,7 +103,6 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    }
 	}
 
-	WebDavServer::setResponseStatus('201 Created');
 	return array(null, array(), array('addedFiles' => array(array(
 	    'fileName' => $pathComponent, 'id' => $item->getId()))));
     }
