@@ -607,6 +607,52 @@ class WebDavHelperTest extends GalleryTestCase {
 	    $this->fail('should have failed with ERROR_MISSING_OBJECT');
 	}
     }
+
+    function testMirrorEntitySameEntityType() {
+	list ($ret, $sourceEntity) = $this->_createRandomDataItem($this->_getRootId(),
+	    'test/file', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($sourceEntity);
+
+	list ($ret, $targetEntity) = $this->_createRandomDataItem($this->_getRootId(),
+	    'test/new', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($targetEntity);
+
+	$expectedItemId = $sourceEntity->getId();
+	$targetItemIdBackup = $targetEntity->getId();
+	$expectedPathComponent = $sourceEntity->getPathComponent();
+
+	$expectedTitle = 'Test title';
+	$sourceEntity->setTitle($expectedTitle);
+
+	$expectedDescription = 'Test description';
+	$sourceEntity->setDescription($expectedDescription);
+	$targetEntity->setDescription('New description');
+
+	$expectedRenderer = 'New renderer';
+	$sourceEntity->setRenderer('Test renderer');
+	$targetEntity->setRenderer($expectedRenderer);
+
+	list ($ret, $mirrorEntity) = WebDavHelper::mirrorEntity($sourceEntity, $targetEntity);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals($expectedItemId, $mirrorEntity->getId());
+	$this->assertEquals($expectedPathComponent, $mirrorEntity->getPathComponent());
+	$this->assertEquals($expectedTitle, $mirrorEntity->getTitle());
+	$this->assertEquals($expectedDescription, $mirrorEntity->getDescription());
+	$this->assertEquals($expectedRenderer, $mirrorEntity->getRenderer());
+	$this->assertEquals('test/new', $mirrorEntity->getMimeType());
+
+	/* For tear-down */
+	$targetEntity->id = $targetItemIdBackup;
+    }
 }
 
 class WebDavHelperTestPhpVm extends GalleryPhpVm {

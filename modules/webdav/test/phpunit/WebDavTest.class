@@ -425,7 +425,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals('', $output, 'HTML output');
 
 	list ($ret, $newItemId) = GalleryCoreApi::fetchItemIdByPath($path);
 	if ($ret) {
@@ -526,8 +526,11 @@ class WebDavTest extends GalleryTestCase {
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
 	$fileSize = $this->_platform->filesize($filePath);
 
+	$originalItemId = $this->_item->getId();
+	$originalPathComponent = $this->_item->getPathComponent();
+
 	$_SERVER['CONTENT_LENGTH'] = $fileSize;
-	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
+	$_SERVER['CONTENT_TYPE'] = 'text/plain';
 
 	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
@@ -549,8 +552,11 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$this->assertEquals('foo/bar', $this->_item->getMimeType());
+	$this->assertEquals('text/plain', $this->_item->getMimeType());
 	$this->assertEquals($fileSize, $this->_item->getSize());
+	$this->assertEquals('GalleryUnknownItem', $this->_item->getEntityType());
+	$this->assertEquals($originalItemId, $this->_item->getId());
+	$this->assertEquals($originalPathComponent, $this->_item->getPathComponent());
     }
 
     /**

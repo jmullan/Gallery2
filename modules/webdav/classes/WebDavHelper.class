@@ -331,11 +331,19 @@ class WebDavHelper {
      *               object GalleryEntity the mirror entity
      */
     function mirrorEntity($sourceEntity, $mirrorEntity) {
-	$className = $mirrorEntity->getClassName();
+	$className = $mirrorClassName = $mirrorEntity->getClassName();
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity($className);
 	if ($ret) {
 	    return array($ret, null);
 	}
+
+	list ($ret, $memberAccessInfo) =
+	    GalleryCoreApi::getExternalAccessMemberList($className);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	/* We need to override id and pathComponent */
+	$override = array('id', 'pathComponent');
 
 	/*
 	 * Walk down the mirror entity's class hierarchy copying class members from the source
@@ -343,7 +351,9 @@ class WebDavHelper {
 	 */
 	while (!empty($className)) {
 	    foreach ($entityInfo[$className]['members'] as $memberName => $memberInfo) {
-		if (isset($sourceEntity->$memberName)) {
+		if (isset($sourceEntity->$memberName)
+			&& (!empty($memberAccessInfo[$memberName]['write'])
+			    || in_array($memberName, $override))) {
 		    $mirrorEntity->$memberName = $sourceEntity->$memberName;
 		}
 	    }
@@ -355,7 +365,7 @@ class WebDavHelper {
 	 * Reset the entity type to the mirror entity's class name because the entity type must
 	 * always match the class name
 	 */
-	$mirrorEntity->entityType = $mirrorEntity->getClassName();
+	$mirrorEntity->entityType = $mirrorClassName;
 
 	return array(null, $mirrorEntity);
     }

@@ -92,14 +92,15 @@ class ItemAddWebDav extends ItemAddPlugin {
 
     /**
      * Add new item.
-     * @param object GalleryItem $item
+     * @param object GalleryItem $parentItem The parent item of the item to be added
      * @param array $webDavOptions WebDAV library options
      * @param resource $stream request body file handle
      * @param string $mimeType request content type
      * @param string $path the path to the destination in the Gallery hierarchy
+     * @see ItemAddPlugin::handleRequest for the returned data
      * @access private
      */
-    function _addItem(&$item, $webDavOptions, $stream, $mimeType, $path) {
+    function _addItem($parentItem, $webDavOptions, $stream, $mimeType, $path) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
@@ -124,7 +125,7 @@ class ItemAddWebDav extends ItemAddPlugin {
 	$originalPath = GalleryUtilities::getRequestVariables('originalPath');
 	$title = empty($originalPath) ? basename($path) : basename($originalPath);
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile, basename($path),
-	    $title, '', '', $mimeType, $item->getId());
+	    $title, '', '', $mimeType, $parentItem->getId());
 	@$platform->unlink($tmpFile);
 	if ($ret) {
 	    return array($ret, null, null);
@@ -137,29 +138,30 @@ class ItemAddWebDav extends ItemAddPlugin {
 
     /**
      * Replace existing item.
-     * @param object GalleryItem $item
+     * @param object GalleryItem $parentItem The parent item of the item to be added
      * @param array $webDavOptions WebDAV library options
      * @param resource $stream request body file handle
      * @param string $mimeType request content type
      * @param string $path the path to the destination in the Gallery hierarchy
-     * @param int $itemId
+     * @param int $itemId The id of the item to be replaced
+     * @see ItemAddPlugin::handleRequest for the returned data
      * @access private
      */
-    function _replaceItem(&$item, $webDavOptions, $stream, $mimeType, $path, $itemId) {
+    function _replaceItem($parentItem, $webDavOptions, $stream, $mimeType, $path, $itemId) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
 	/*
-	 * The parent must be read locked at this point to make sure that it's not going to be moved
-	 * around while we're copying a file to its directory
+	 * The parent is already read-locked by the ItemAddController. Read-lock the whole ancestor
+	 * sequence to ensure that filesystem path stays the same.
 	 */
-	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($item->getId());
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($parentItem->getId());
 	if ($ret) {
 	    return array($ret, null, null);
 	}
 
 	/* Write lock the item we're replacing */
-	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($item->getId());
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($itemId);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret, null, null);
@@ -190,8 +192,6 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 
-	$item->setMimeType($mimeType);
-
 	/* Get a new item by mime type */
 	list ($ret, $newItem) = GalleryCoreApi::newItemByMimeType($mimeType);
 	if ($ret) {
@@ -199,8 +199,15 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 	if (!isset($newItem)) {
+	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
 		'Failed to get new item by mime type: ' . $mimeType), null, null);
+	}
+
+	$ret = $newItem->create($parentItem->getId(), $filePath, $mimeType);
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret, null, null);
 	}
 
 	/* Make the new item as close a copy of the original item as possible */
@@ -231,6 +238,12 @@ class ItemAddWebDav extends ItemAddPlugin {
 		GalleryCoreApi::releaseLocks($lockIds);
 		return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
 		    'Failed to get GalleryUnknownItem instance'), null, null);
+	    }
+
+	    $ret = $newItem->create($parentItem->getId(), $filePath, $mimeType);
+		if ($ret) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return array($ret, null, null);
 	    }
 
 	    /* Make the new item as close a copy of the original item as possible */
@@ -282,7 +295,7 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 
-	$ret = GalleryCoreApi::addExistingItemToAlbum($newItem, $item->getParentId(), true);
+	$ret = GalleryCoreApi::addExistingItemToAlbum($newItem, $parentItem->getId(), true);
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret, null, null);
@@ -294,7 +307,8 @@ class ItemAddWebDav extends ItemAddPlugin {
 	}
 
 	return array(null, array(), array(
-	    'addedFiles' => array(array('fileName' => basename($path), 'id' => $itemId))));
+	    'addedFiles' => array(array('fileName' => basename($path),
+					'id' => $newItem->getId()))));
     }
 
     /**
