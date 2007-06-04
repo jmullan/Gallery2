@@ -228,6 +228,13 @@ class ItemAddController extends GalleryController {
 	$this->_templateAdapter =& $gallery->getTemplateAdapter();
 	$this->_storage =& $gallery->getStorage();
 
+	if (!isset($this->_coreModule)) {
+	    list ($ret, $this->_coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
 	$this->_processingItemsMessage = $this->_coreModule->translate('Processing items');
 
 	if (!isset($this->_optionInstances)) {
