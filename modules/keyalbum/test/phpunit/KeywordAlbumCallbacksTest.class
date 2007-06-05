@@ -448,6 +448,14 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
     }
 }
 
+/* Added this class just for 2.2 branch; trunk uses UnitTestStorageSearchResults */
+class KeyalbumUnitTestStorageSearchResults {
+    var $_data;
+    function KeyalbumUnitTestStorageSearchResults($data) { $this->_data = $data; }
+    function resultCount() { return count($this->_data); }
+    function nextResult() { return array_shift($this->_data); }
+}
+
 /**
  * Mock storage for callbacks tests.
  */
@@ -466,7 +474,7 @@ class KeywordAlbumCallbacksTestStorage {
 					       'Unexpected query: ' . $query), null);
 	}
 	$result = array_shift($this->_queries);
-	return array(null, new UnitTestStorageSearchResults($result[1]));
+	return array(null, new KeyalbumUnitTestStorageSearchResults($result[1]));
     }
 
     function addMapEntry($mapName, $entry, $nonTrans=false) {

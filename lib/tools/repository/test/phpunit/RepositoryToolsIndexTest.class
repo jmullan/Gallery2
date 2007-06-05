@@ -87,14 +87,14 @@ class RepositoryToolsIndexTest extends GalleryTestCase {
 		'type' => 'modules',
 		'id' => 'testModule',
 		'version' => '1.0.0',
-		'requiredCoreApi' => array('1', '2'),
-		'requiredPluginApi' => array('3', '4')),
+		'requiredCoreApi' => GalleryCoreApi::getApiVersion(),
+		'requiredPluginApi' => GalleryModule::getApiVersion()),
 	    1 => array(
 		'type' => 'themes',
 		'id' => 'testTheme',
 		'version' => '1.0.0',
-		'requiredCoreApi' => array('1', '2'),
-		'requiredPluginApi' => array('3', '4'))
+		'requiredCoreApi' => GalleryCoreApi::getApiVersion(),
+		'requiredPluginApi' => GalleryTheme::getApiVersion())
 	    ), $pluginInfo, 'Plugin information incorrect.');
     }
 }

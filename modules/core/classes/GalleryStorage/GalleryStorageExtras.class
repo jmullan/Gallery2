@@ -1272,7 +1272,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	if ($ret) {
 	    return $ret;
 	}
-	
+
 	list ($major, $minor) = $tableVersions['Schema'];
 	$canStoreSql = version_compare("$major.$minor", '1.1', '>=');
 
@@ -1335,7 +1335,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			if (GalleryDataCache::containsKey($cacheKey)) {
 			    $altered = array_merge(GalleryDataCache::get($cacheKey), $altered);
 			}
-			GalleryDataCache::put($cacheKey, $altered);
+			GalleryDataCache::put($cacheKey, $altered, true);
 
 			/* Reload all table versions, cause one has now changed */
 			list ($ret, $tableVersions) = $this->_loadTableVersions();
