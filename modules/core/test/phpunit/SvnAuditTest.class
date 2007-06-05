@@ -40,8 +40,9 @@ class SvnAuditTest extends CodeAuditTestCase {
      */
     function shouldCheckFile($fileName) {
 	$base = basename($fileName);
+	/* Removed "po" from list below in 2.2 branch, as we changed props to revert some files */
 	return in_array($base, array('MANIFEST', 'GNUmakefile', 'strings.raw'))
-	    || preg_match('{\.(php|inc|class|tpl|html|css|js|txt|xml|po|mo|png|gif|jpg)$}', $base);
+	    || preg_match('{\.(php|inc|class|tpl|html|css|js|txt|xml|mo|png|gif|jpg)$}', $base);
     }
 
     /**
