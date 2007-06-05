@@ -2300,7 +2300,13 @@ class CoreModuleExtras {
 			continue;
 		    }
 
-		    /* Check if there is a pending alter for the table and skip if there is. */
+		    /* 
+		     * Check if there is a pending alter for the table and skip if there is. There 
+		     * is a chance that the wrong sql can get stored in the createSql, which 
+		     * involves a failed upgrade with two alters. The first one works, and the 
+		     * createSql field is updated, the upgrade continues but fails before the 2nd 
+		     * alter is done.
+		     */
 		    list ($major, $minor) = $tableVersions[$nameInSchema];
 		    if (!empty($sql['alter'][$tableName][$major][$minor])) {
 			continue;
