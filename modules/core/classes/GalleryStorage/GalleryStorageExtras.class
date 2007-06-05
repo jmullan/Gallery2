@@ -1327,6 +1327,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			}
 
 			if ($canStoreSql) {
+			    /*
+			     * Note: this puts the end-state sql into the createSql column, so
+			     * there is a tiny possibility of getting a mismatch with the db if
+			     * this upgrade involves multiple alters and the upgrade fails before
+			     * executing the last one.
+			     */
 			    $ret = $this->_updateSchemaCreateSql($tableNameInSchema,
 							     $moduleSql['table'][$rawTableName]);
 			    if ($ret) {
