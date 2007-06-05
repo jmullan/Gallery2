@@ -2173,6 +2173,16 @@ class CoreModuleExtras {
 		    if (!array_key_exists($nameInSchema, $tableVersions)) {
 			continue;
 		    }
+
+		    /* 
+		     * Check if there is a pending alter for the table and skip if there is.
+		     * Column will be populated when/if that module is upgraded.
+		     */
+		    list ($major, $minor) = $tableVersions[$nameInSchema];
+		    if (!empty($sql['alter'][$tableName][$major][$minor])) {
+			continue;
+		    }
+
 		    $ret = $storageExtras->_updateSchemaCreateSql($nameInSchema, $tableSql);
 		    if ($ret) {
 			return $ret;
