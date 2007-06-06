@@ -2256,7 +2256,7 @@ class CoreModuleExtras {
 	case '1.2.14':
 	    /*
 	     * Add a new column to the Schema table to store the creation sql for each table. This
-	     * change is to prepare the way for database export functionality. 
+	     * change is to prepare the way for database export functionality.
 	     * If upgrading from Gallery 2.2.2 the column is already populated, but ok to repeat.
 	     */
 	    $gallery->guaranteeTimeLimit(30);
@@ -2265,7 +2265,7 @@ class CoreModuleExtras {
 	    if ($ret) {
 		return $ret;
 	    }
-	    
+
 	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
 	    if ($ret) {
 		return $ret;
@@ -2300,7 +2300,7 @@ class CoreModuleExtras {
 			continue;
 		    }
 
-		    /* 
+		    /*
 		     * Check if there is a pending alter for the table and skip if there is.
 		     * Column will be populated when/if that module is upgraded.
 		     */
@@ -2321,6 +2321,54 @@ class CoreModuleExtras {
 		}
 		$gallery->guaranteeTimeLimit(30);
 	    }
+	case '1.2.15':
+	    /*
+	     * Change the installOrUpgrade method to store the Entities.inc and Map.inc in the
+	     * GalleryPluginParameterMap.
+	     */
+	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $count = 1;
+	    $total = count($modules);
+	    $statusText = $module->translate('Loading Table Descriptions');
+
+	    foreach ($modules as $moduleId => $unused) {
+		list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $moduleId, false, true);
+		if ($ret) {
+		    /* On version mismatch, skip the module and hope that it is updated later */
+		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			continue;
+		    }
+		    return $ret;
+		}
+
+		$mapInfo = $plugin->_getMapData();
+		if (isset($mapInfo)) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', $moduleId, '_moduleMaps',
+							      $mapInfo);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+
+		$entityInfo = $plugin->_getEntityData();
+		if (isset($entityInfo)) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', $moduleId,
+							      '_moduleEntities', $entityInfo);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+		$ret = $statusMonitor->renderStatusMessage($statusText, '', $count++ / $total);
+		if ($ret) {
+		    return $ret;
+		}
+		$gallery->guaranteeTimeLimit(30);
+	    }
+
 
 	case 'end of upgrade path':
 	    /*
@@ -2649,6 +2697,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.12':
 	case '1.2.13':
 	case '1.2.14':
+	case '1.2.15':
 
 	case 'end of upgrade path':
 	    /*
