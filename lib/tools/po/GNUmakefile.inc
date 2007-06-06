@@ -20,11 +20,8 @@ MODULE_DIR = $(shell dirname `pwd`)
 TYPE_DIR = $(shell dirname $(MODULE_DIR))
 APPLICATION ?= $(shell basename $(TYPE_DIR))_$(shell basename $(MODULE_DIR))
 
-# It's best to let PHP parse the config.php file to get the g2data directory.  However we can't
-# rely on php's -r flag since that's only available in the CLI version of PHP.  The -a flag is
-# available in both CLI and CGI versions, but it puts the text "Interactive mode enabled" into the
-# output.  Use GNUmake's filter-out command to remove those words.
-G2DATA = $(filter-out Interactive mode enabled, $(shell echo '<?php include("$(GALLERYDIR)/lib/support/GallerySetupUtilities.class"); $$gallery = new GallerySetupUtilitiesStub(); include("$(GALLERYDIR)/config.php"); print $$gallery->getConfig("data.gallery.base"); ?>' | php -a 2>&1))
+# Let PHP parse the config.php file to get the g2data directory.
+G2DATA = $(shell echo '<?php include("$(GALLERYDIR)/lib/support/GallerySetupUtilities.class"); $$gallery = new GallerySetupUtilitiesStub(); include("$(GALLERYDIR)/config.php"); print $$gallery->getConfig("data.gallery.base"); ?>' | php -q 2>&1)
 
 ifdef QUIET
     MSGFMT_FLAGS =
