@@ -195,7 +195,7 @@ class GalleryModule extends GalleryPlugin {
 		    $ret = $this->setParameter($key, $value);
 		    $operation = 'update';
 		} else {
-		    $ret = $this->removeParameter('$key');
+		    $ret = $this->removeParameter($key);
 		    $operation = 'remove';
 		}
 		if ($ret) {
@@ -279,8 +279,8 @@ class GalleryModule extends GalleryPlugin {
      * @access private
      */
     function _getMapData() {
-    	global $gallery;
-    	$platform =& $gallery->getPlatform();
+	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	$mapsFile =
 	    GalleryCoreApi::getCodeBasePath('modules/' . $this->getId() . '/classes/Maps.inc');
@@ -297,8 +297,8 @@ class GalleryModule extends GalleryPlugin {
      * @return string the $entityInfo array as a string.
      */
     function _getEntityData() {
-    	global $gallery;
-    	$platform =& $gallery->getPlatform();
+	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	$entitiesFile =
 	    GalleryCoreApi::getCodeBasePath('modules/' . $this->getId() . '/classes/Entities.inc');
