@@ -275,7 +275,7 @@ class GalleryModule extends GalleryPlugin {
 
     /**
      * Serialize the Maps.inc file for this module.
-     * @return string the $mapInfo array as a string.
+     * @return string the $mapInfo array as a string or null
      * @access private
      */
     function _getMapData() {
@@ -294,7 +294,8 @@ class GalleryModule extends GalleryPlugin {
 
     /**
      * Serialize the Entities.inc file for this module.
-     * @return string the $entityInfo array as a string.
+     * @return string the $entityInfo array as a string or null
+     * @access private
      */
     function _getEntityData() {
 	global $gallery;

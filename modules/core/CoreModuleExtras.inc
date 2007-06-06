@@ -2283,7 +2283,12 @@ class CoreModuleExtras {
 	    $total = count($modules);
 	    $statusText = $module->translate('Converting Schema Table');
 
-	    foreach ($modules as $moduleId => $unused) {
+	    foreach ($modules as $moduleId => $moduleStatus) {
+		/* Skip uninstalled/unavailable modules */
+		if (!isset($moduleStatus['active']) || empty($moduleStatus['available'])) {
+		    continue;
+		}
+
 		list ($ret, $sql) = $storageExtras->_getModuleSql($moduleId);
 		if ($ret) {
 		    return $ret;
@@ -2323,8 +2328,8 @@ class CoreModuleExtras {
 	    }
 	case '1.2.15':
 	    /*
-	     * Change the installOrUpgrade method to store the Entities.inc and Map.inc in the
-	     * GalleryPluginParameterMap.
+	     * Change the installOrUpgrade method to store Entities.inc and Maps.inc in the
+	     * GalleryPluginParameterMap. Populate the values for installed modules now.
 	     */
 	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
 	    if ($ret) {
@@ -2335,7 +2340,11 @@ class CoreModuleExtras {
 	    $total = count($modules);
 	    $statusText = $module->translate('Loading Table Descriptions');
 
-	    foreach ($modules as $moduleId => $unused) {
+	    foreach ($modules as $moduleId => $moduleStatus) {
+		/* Skip uninstalled/unavailable modules */
+		if (!isset($moduleStatus['active']) || empty($moduleStatus['available'])) {
+		    continue;
+		}
 		list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $moduleId, false, true);
 		if ($ret) {
 		    /* On version mismatch, skip the module and hope that it is updated later */
@@ -2347,8 +2356,8 @@ class CoreModuleExtras {
 
 		$mapInfo = $plugin->_getMapData();
 		if (isset($mapInfo)) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', $moduleId, '_moduleMaps',
-							      $mapInfo);
+		    $ret = GalleryCoreApi::setPluginParameter('module', $moduleId,
+							      '_maps', $mapInfo);
 		    if ($ret) {
 			return $ret;
 		    }
@@ -2357,7 +2366,7 @@ class CoreModuleExtras {
 		$entityInfo = $plugin->_getEntityData();
 		if (isset($entityInfo)) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', $moduleId,
-							      '_moduleEntities', $entityInfo);
+							      '_entities', $entityInfo);
 		    if ($ret) {
 			return $ret;
 		    }
