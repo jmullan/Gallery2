@@ -272,6 +272,7 @@ class GalleryItemHelper_advanced {
 
     /**
      * @see GalleryCoreApi::remapOwnerId
+     * @todo Scalability - Lock and load the items in batches (open files limit).
      */
     function remapOwnerId($oldUserId, $newUserId) {
 	global $gallery;
