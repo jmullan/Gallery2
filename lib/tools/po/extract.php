@@ -27,8 +27,11 @@
  */
 
 if (!empty($_SERVER['SERVER_NAME'])) {
-    print "You must run this from the command line\n";
-    exit(1);
+    errorExit("You must run this from the command line\n");
+}
+if (function_exists('token_get_all')) {
+    errorExit("PHP tokenizer required.\n"
+	    . "Must use a PHP binary that is NOT built with --disable-tokenizer\n");
 }
 
 $exts = '(class|php|inc|css|html|tpl)';
@@ -253,11 +256,8 @@ function extractStrings($filename) {
 			. strtr($many, array("\r\n" => '\n', "\n" => '\n')) . '")';
 	    } else {
 		/* Parse error */
-		$stderr = fopen('php://stderr', 'w');
 		$string = str_replace("\n", '\n> ', $string);
-		fwrite($stderr, "extract.php parse error: $filename:\n");
-		fwrite($stderr, "> $string\n");
-		exit(1);
+		errorExit("extract.php parse error: $filename:\n> $string\n");
 	    }
 
 	    if ($cFormatHint) {
@@ -277,5 +277,11 @@ function extractStrings($filename) {
     if (count($strings) == $startSize) {
 	unset($strings["\n/* $filename */"]);
     }
+}
+
+function errorExit($message) {
+    $stderr = fopen('php://stderr', 'w');
+    fwrite($stderr, $message);
+    exit(1);
 }
 ?>
