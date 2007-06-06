@@ -29,7 +29,7 @@
 if (!empty($_SERVER['SERVER_NAME'])) {
     errorExit("You must run this from the command line\n");
 }
-if (function_exists('token_get_all')) {
+if (!function_exists('token_get_all')) {
     errorExit("PHP tokenizer required.\n"
 	    . "Must use a PHP binary that is NOT built with --disable-tokenizer\n");
 }
