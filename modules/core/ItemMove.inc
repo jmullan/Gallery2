@@ -29,6 +29,8 @@ class ItemMoveController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
+     * @todo Scalability - Don't load all album-items into memory. Need a way to load the items
+     *       incrementally, e.g. with an AJAX-powered tree widget.
      */
     function handleRequest($form) {
 	global $gallery;
