@@ -170,16 +170,30 @@ class GalleryModule extends GalleryPlugin {
 		$gallery->debug(sprintf('Update module paramater for the %s module',
 					$this->getId()));
 	    }
+
+	    /*
+	     * @todo Adding _maps & _entities keys are not covered in tests because of the use of
+	     * the include.
+	     */
 	    $data = array('_version' => $this->getVersion(),
 			  '_callbacks' => $this->getCallbacks(),
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
-			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()));
+			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()),
+			  '_maps' => $this->_getMapData(),
+			  '_entities' => $this->_getEntityData());
+
 	    foreach ($data as $key => $value) {
-		$ret = $this->setParameter($key, $value);
+		if (isset($value)) {
+		    $ret = $this->setParameter($key, $value);
+		    $operation = 'update';
+		} else {
+		    $ret = $this->removeParameter($key);
+		    $operation = 'remove';
+		}
 		if ($ret) {
 		    if ($gallery->getDebug()) {
-			$gallery->debug(sprintf('Error: Failed to update the module parameter %s' .
-						', this is the error stack trace: %s', $key,
+			$gallery->debug(sprintf('Error: Failed to %s the module parameter %s, this '
+					. 'is the error stack trace: %s', $operation, $key,
 						$ret->getAsText()));
 		    }
 		    return $ret;
@@ -244,6 +258,44 @@ class GalleryModule extends GalleryPlugin {
 	}
 
 	return null;
+    }
+
+    /**
+     * Serialize the Maps.inc file for this module.
+     * @return string the $mapInfo array as a string or null
+     * @access private
+     */
+    function _getMapData() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$mapsFile = dirname(dirname(dirname(dirname(__FILE__)))) . '/modules/' . $this->getId()
+		  . '/classes/Maps.inc';
+	$mapInfo = null;
+	if ($platform->file_exists($mapsFile)) {
+	    include($mapsFile);
+	}
+
+	return isset($mapInfo) ? serialize($mapInfo) : null;
+    }
+
+    /**
+     * Serialize the Entities.inc file for this module.
+     * @return string the $entityInfo array as a string or null
+     * @access private
+     */
+    function _getEntityData() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$entitiesFile = dirname(dirname(dirname(dirname(__FILE__)))) . '/modules/' . $this->getId()
+		      . '/classes/Entities.inc';
+	$entityInfo = null;
+	if ($platform->file_exists($entitiesFile)) {
+	    include($entitiesFile);
+	}
+
+	return isset($entityInfo) ? serialize($entityInfo) : null;
     }
 
     /**
