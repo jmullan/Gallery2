@@ -67,6 +67,13 @@ class StorageTest extends GalleryTestCase {
 	}
     }
 
+    function _getNonTransactionalResults() {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
+	return $storage->isTransactional() ? $this->_resultsNonTransactional : $this->_results;
+    }
+
     function testTranslateQuery() {
 	/*
 	 * Ensure GalleryStorage::_translateQuery() can handle table and column names
@@ -152,7 +159,7 @@ class StorageTest extends GalleryTestCase {
 			$storage->_tablePrefix, $storage->_columnPrefix,
 			$storage->_columnPrefix),
 		array(0, 1))),
-	    $this->_resultsNonTransactional);
+	    $this->_getNonTransactionalResults());
     }
 
     function testAddMapTruncate() {
@@ -324,7 +331,7 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array($sql, array(1, 4, 2, 5, 3, 6))),
-	    $this->_resultsNonTransactional);
+	    $this->_getNonTransactionalResults());
     }
 
     function testAddMapArrayTruncate() {
@@ -529,7 +536,7 @@ class StorageTest extends GalleryTestCase {
 			'WHERE %2$sexternalId IN (?,?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 			array(54, 38, 40, 42))),
-	    $this->_resultsNonTransactional);
+	    $this->_getNonTransactionalResults());
     }
 
     function testSaveEntity() {
