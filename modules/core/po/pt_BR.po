@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.11\n"
+"Project-Id-Version: Gallery: Core 1.2.16\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
 "PO-Revision-Date: 2006-12-28 16:44-0300\n"
 "Last-Translator: Flávio Ribeiro <flavio_ribsouza@yahoo.com.br>\n"
@@ -258,6 +258,12 @@ msgstr "Otimizando tabela de mapa de acesso de inscritos"
 msgid "Upgrading Plugin Translations"
 msgstr "permissões"
 
+msgid "Converting Schema Table"
+msgstr ""
+
+msgid "Loading Table Descriptions"
+msgstr ""
+
 msgid "Site Admins"
 msgstr "Administradores do Site"
 
@@ -275,6 +281,17 @@ msgstr "Esta é a página principal da sua galeria"
 
 msgid "Converting MySQL data to UTF8"
 msgstr "Convertendo dados MySQL para UTF8"
+
+#, fuzzy
+msgid "Adding items"
+msgstr "adicionar ítens"
+
+#, fuzzy
+msgid "Processing items"
+msgstr "Processando item %d de %d"
+
+msgid "Extracting archive"
+msgstr ""
 
 msgid "add items"
 msgstr "adicionar ítens"
@@ -820,7 +837,7 @@ msgstr "Descendente"
 
 #, c-format
 msgid "Powered by Gallery v%s"
-msgstr ""
+msgstr "Powered by Gallery v%s"
 
 msgid "Validation disabled until you set allowSessionAccess in config.php"
 msgstr "Validação desabilitada até que você defina allowSessionAccess no config.php"
@@ -1682,6 +1699,9 @@ msgstr[1] "%d grupos coincidem com seu filtro"
 msgid "System Maintenance"
 msgstr "Manutenção do sistema"
 
+msgid "Gallery must be in maintenance mode before the task can be run."
+msgstr ""
+
 #, c-format
 msgid "Completed %s task successfully."
 msgstr "Tarefa %s completada com sucesso."
@@ -1864,7 +1884,7 @@ msgid "Status: Incompatible Plugin (Inactive)"
 msgstr "Status: Plugin incompatível (inativo)"
 
 msgid "Status: Inactive (Configuration Required)"
-msgstr ""
+msgstr "Status: Desactivado (Requer Configuração)"
 
 msgid "__PLUGIN__ needs configuration"
 msgstr "__PLUGIN__ necessita ser configurado"
@@ -1933,6 +1953,8 @@ msgid ""
 "Want more features?  New plugins are just a click away.  Just click the %s link to get "
 "started."
 msgstr ""
+"Quer mais características? Novos plugins estão a um passo de um click. Apenas click no link %"
+"s para buscar e começar."
 
 msgid ""
 "Gallery features come as separate plugins.  You can download and install plugins to add more "
@@ -2007,16 +2029,19 @@ msgid ""
 "Your local copy of the repository was broken and has been fixed.  Please download the plugin "
 "list again."
 msgstr ""
+"A sua copia local do repositório está partida e foi corrigida. Por favor download a lista de "
+"plugins outra vez."
 
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Failed to install the %s plugin because the following files/directories could not be "
 "modified:"
 msgstr ""
+"Falhou o donwload do plugin %s, porque os ficheiros /directórios não puderam ser modificados:"
 
 #, c-format
 msgid ""
@@ -2526,6 +2551,9 @@ msgstr "Detalhes do erro"
 msgid "System Information"
 msgstr "Informação do sistema"
 
+msgid "Not all of the specified items have been added successfully."
+msgstr ""
+
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add "
 "images, you will probably not have any thumbnails."
@@ -2699,12 +2727,6 @@ msgstr "Próxima Página"
 #, fuzzy
 msgid "Do you really want to delete "
 msgstr "Você realmente deseja excluir __PLUGIN__?"
-
-msgid "Deleting... Please wait"
-msgstr ""
-
-msgid "OK"
-msgstr ""
 
 #, fuzzy
 msgid "Delete more items..."
@@ -3129,11 +3151,18 @@ msgstr "Origem"
 msgid "Choose the items you want to move"
 msgstr "Escolha os ítens que você quer mover"
 
+msgid "OK"
+msgstr ""
+
 msgid ""
 "The destination you chose does not accept sub-albums, so all sub-albums have been deselected."
 msgstr ""
 "O destino escolhido não aceita sub-álbuns, portanto todos os sub-álbuns não estão mais "
 "selecionados."
+
+#, fuzzy
+msgid "Warning"
+msgstr "Aviso!"
 
 msgid ""
 "The destination you chose only accepts sub-albums, so all non-albums have been deselected."
