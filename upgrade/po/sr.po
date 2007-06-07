@@ -20,9 +20,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Upgrader 2.2\n"
+"Project-Id-Version: Gallery: Upgrader 2.2.2\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-12-20 09:53-0800\n"
+"POT-Creation-Date: 2007-06-07 15:46-0700\n"
 "PO-Revision-Date: 2005-09-07 12:46+0200\n"
 "Last-Translator: Jozef Selesi <selesi@gmail.com>\n"
 "Language-Team: Srpski <en@li.org>\n"
@@ -61,7 +61,7 @@ msgid "System Checks"
 msgstr "Provera sistema"
 
 msgid "Performing system checks"
-msgstr ""
+msgstr "Provera sistema"
 
 #, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
@@ -107,7 +107,7 @@ msgid "Safe Mode"
 msgstr "Safe Mode"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "Regularni izrazi"
 
 #, fuzzy, c-format
 msgid ""
@@ -149,7 +149,7 @@ msgstr ""
 "podataka."
 
 msgid "Filesystem Operations"
-msgstr ""
+msgstr "Operacije sistema datoteka"
 
 #, fuzzy, c-format
 msgid ""
@@ -217,7 +217,7 @@ msgstr ""
 "moguć prenos većih datoteka."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Podrška za prevode"
 
 #, c-format
 msgid ""
@@ -225,18 +225,25 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Vaš web server ne podržava lokalizaciju. Da biste omogućili podršku za dodatne jezike, "
+"molimo vas da tražite od sistem administratora da rekonfiguriše PHP sa omogućenom %sgettext%"
+"s opcijom."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"Vašem PHP-u nedostaje funkcija %sbind_textdomain_codeset%s. Ovo znači da će Galerija možda "
+"netačno prikazivati posebne znake u nekim jezicima."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"Vašem PHP-u nedostaje funkcija %sdngettext%s. Ovo znači da Galerija neće moći da prevodi "
+"oblike množine."
 
 msgid "Zend compatibility mode"
 msgstr "Režim Zend kompatibilnosti"
@@ -271,7 +278,7 @@ msgstr ""
 "podataka."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Baferovanje izlaza je onemogućeno"
 
 #, c-format
 msgid ""
@@ -281,6 +288,12 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Upozorenje: Baferovanje izlaza je u vašem PHP-u uključeno parametrom <b>%s</b> u php.ini "
+"datoteci. Galerija može da funkcioniše sa ovakvim podešavanjem, preuzimanje datoteka je čak "
+"i brže, ali Galerija možda neće biti u mogućnosti da prikazuje velike datoteke (npr. velike "
+"filmove) i dostići će memorijski limit. Takođe, neke funkcije, poput indikatora "
+"napredovanja, možda neće pravilno funkcionisati ako uključeno baferovanje izlaza, osim ako "
+"je dozvoljena ini_set() funkcija."
 
 msgid "Storage Directory Permissions"
 msgstr "Prava direktorijuma za skladištenje"
@@ -311,7 +324,7 @@ msgid "Upgrade Plugins"
 msgstr "Stanje nadogradnje"
 
 msgid "Unable to initialize Gallery session"
-msgstr ""
+msgstr "Nije bilo moguće započeti sesiju Galerije"
 
 #, c-format
 msgid "Unable to load the %s module"
@@ -372,19 +385,23 @@ msgstr "Dobro došli"
 
 #, c-format
 msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
-msgstr ""
+msgstr "<b>Greška:</b> %s nije pronađen. Molimo vas da ga stavite u vaš %s direktorijum."
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
 "file."
 msgstr ""
+"<b>Greška:</b> vaša %s datoteka nije čitljiva. Molimo vas da Galeriji dodelite prava čitanja "
+"na tu datoteku."
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
 "string from below and try again."
 msgstr ""
+"<b>Greška:</b> vaš %s ključ se ne slaže. Molimo vas da iskoristite nov niz znakova za "
+"proveru identiteta dat ispod i ponovo pokušate."
 
 #, fuzzy
 msgid ""
@@ -400,12 +417,14 @@ msgid "Password:"
 msgstr "Lozinka:"
 
 msgid "You have exceeded the maximum attempts to login by entering a password."
-msgstr ""
+msgstr "Prešli ste maksimalan broj dozvoljenih pokušaja prijave lozinkom."
 
 msgid ""
 "To prevent somebody from hacking your website, we now require you to complete a stricter "
 "authentication process."
 msgstr ""
+"Da bismo sprečili nekog da ošteti vaš web sajt, sada ćemo zahtevati strožiji proces provere "
+"identiteta."
 
 #, c-format
 msgid ""
@@ -415,9 +434,15 @@ msgid ""
 "new text file called %s in the %s directory on your webserver (that's the same directory "
 "where %s is located). It must contain the following randomly generated characters:"
 msgstr ""
+"Da bi se nadogradnja nastavila, moramo da potvrdimo da ste onaj za koga se izdajete. "
+"Najbolji način da to uradimo je da vas zamolimo da napravite malu izmenu u osnovnom "
+"direktorijumu Galerije, što će dokazati da imate odgovarajuća prava. Prema tome, zamolićemo "
+"vas da napravite novu tekstualnu datoteku sa nazivom %s u direktorijumu %s vašeg web servera "
+"(to je isti direktorijum u kojem se nalazi %s). Mora sadržati sledeće slučajno generisane "
+"znake:"
 
 msgid "Once you've uploaded the file, click below to continue."
-msgstr ""
+msgstr "Kada postavite datoteku, kliknite ispod da biste nastavili."
 
 msgid "Authenticate Me"
 msgstr "Proverite moj identitet"
@@ -550,7 +575,7 @@ msgstr ""
 "bilo dobro da ih uklonite kako bi vaša instalacija bila čista."
 
 msgid "this script"
-msgstr ""
+msgstr "ovaj skript"
 
 msgid "Upgrade Steps"
 msgstr "Koraci nadogradnje"
@@ -635,7 +660,7 @@ msgstr "Trenutno instalirano"
 
 #, c-format
 msgid "Core Module version: %s (Gallery %s)"
-msgstr ""
+msgstr "Verzija modula sa jezgrom: %s (Galerija %s)"
 
 msgid "New version"
 msgstr "Nova verzija"
@@ -681,13 +706,13 @@ msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
 msgid "Oracle"
-msgstr ""
+msgstr "Oracle"
 
 msgid "IBM DB2"
-msgstr ""
+msgstr "IBM DB2"
 
 msgid "Microsoft SQL Server"
-msgstr ""
+msgstr "Microsoft SQL Server"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -713,6 +738,8 @@ msgid ""
 "<b>Reminder</b>: Now update the permissions on config.php to make sure it is not writeable "
 "by other people.  Right now your config.php has modes of %s.  We suggest that you do this:"
 msgstr ""
+"<b>Podsetnik</b>: Ažurirajte sada prava datoteke config.php da biste osigurali da drugi ne "
+"mogu da ga menjaju. Trenutno je vaš config.php u režimu %s. Predlažemo da uradite sledeće:"
 
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Vaš modul sa jezgrom Galerije nije potrebno nadograđivati!"
@@ -730,13 +757,16 @@ msgstr ""
 "sada donesete ne mora biti konačna."
 
 msgid "Deactivated Plugins"
-msgstr ""
+msgstr "Deaktivirani moduli"
 
 msgid ""
 "The following plugins were active, but they are missing or incompatible with your current "
 "version of Gallery.  They have been deactivated.  Install the latest version of these "
 "plugins to reactivate them."
 msgstr ""
+"Sledeći moduli su bili aktivni, ali nedostaju ili nisu kompatibilni sa vašom sadašnjom "
+"verzijom Galerije, pa su deaktivirani. Instalirajte najnovije verzije modula da biste ih "
+"mogli reaktivirati."
 
 msgid "Module"
 msgstr "Modul"
@@ -757,7 +787,7 @@ msgid "Description"
 msgstr "Opis"
 
 msgid "Incompatible with this version of Gallery"
-msgstr ""
+msgstr "Nekompatibilni sa ovom verzijom Galerije"
 
 msgid "(un)check all"
 msgstr "Obeleži/isključi sve"
@@ -797,6 +827,10 @@ msgid ""
 "visitors a message that the site is temporarily offline, rather than showing everybody this "
 "upgrade page. Edit your config.php file to activate maintenance mode."
 msgstr ""
+"Ako imate sajt sa velikom saobraćajem, razmislite o postavljanju vaše Galerije u režim "
+"održavanja, što će posetiocima prikazati poruku da je sajt privremeno van funkcije, nasuprot "
+"prikazivanja svima ove stranice o nadogradnji. Ažurirajte vaš config.php da biste aktivirali "
+"režim održavanja."
 
 msgid "Select Language:"
 msgstr "Izaberite jezik:"
