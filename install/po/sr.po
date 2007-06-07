@@ -20,9 +20,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Installer 2.2\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-06 19:02+0200\n"
+"Project-Id-Version: Gallery: Installer 2.2.2\n"
+"Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
+"POT-Creation-Date: 2007-06-07 15:43-0700\n"
 "PO-Revision-Date: 2005-09-07 12:42+0200\n"
 "Last-Translator: Jozef Selesi <selesi@gmail.com>\n"
 "Language-Team: Srpski <en@li.org>\n"
@@ -257,7 +257,7 @@ msgstr ""
 "podataka."
 
 msgid "Missing SQL statements"
-msgstr ""
+msgstr "Nedostajuće SQL naredbe"
 
 msgid ""
 "Check the returned error message and README.html for missing privileges and clean up the "
@@ -341,7 +341,7 @@ msgid "System Checks"
 msgstr "Provera sistema"
 
 msgid "Performing system checks"
-msgstr ""
+msgstr "Provera sistema"
 
 #, fuzzy
 msgid "PHP version >= 4.3.0 or >= 5.0.4"
@@ -387,7 +387,7 @@ msgid "Safe Mode"
 msgstr "Safe Mode"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "Regularni izrazi"
 
 #, fuzzy, c-format
 msgid ""
@@ -429,7 +429,7 @@ msgstr ""
 "podataka."
 
 msgid "Filesystem Operations"
-msgstr ""
+msgstr "Operacije sistema datoteka"
 
 #, fuzzy, c-format
 msgid ""
@@ -497,7 +497,7 @@ msgstr ""
 "moguć prenos većih datoteka."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Podrška za prevode"
 
 #, c-format
 msgid ""
@@ -505,18 +505,25 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Vaš web server ne podržava lokalizaciju. Da biste omogućili podršku za dodatne jezike, "
+"molimo vas da tražite od sistem administratora da rekonfiguriše PHP sa omogućenom %sgettext%"
+"s opcijom."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"Vašem PHP-u nedostaje funkcija %sbind_textdomain_codeset%s. Ovo znači da će Galerija možda "
+"netačno prikazivati posebne znake u nekim jezicima."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"Vašem PHP-u nedostaje funkcija %sdngettext%s. Ovo znači da Galerija neće moći da prevodi "
+"oblike množine."
 
 msgid "Zend compatibility mode"
 msgstr "Režim Zend kompatibilnosti"
@@ -550,7 +557,7 @@ msgstr ""
 "podataka."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Baferovanje izlaza je onemogućeno"
 
 #, c-format
 msgid ""
@@ -560,6 +567,12 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Upozorenje: Baferovanje izlaza je u vašem PHP-u uključeno parametrom <b>%s</b> u php.ini "
+"datoteci. Galerija može da funkcioniše sa ovakvim podešavanjem, preuzimanje datoteka je čak "
+"i brže, ali Galerija možda neće biti u mogućnosti da prikazuje velike datoteke (npr. velike "
+"filmove) i dostići će memorijski limit. Takođe, neke funkcije, poput indikatora "
+"napredovanja, možda neće pravilno funkcionisati ako uključeno baferovanje izlaza, osim ako "
+"je dozvoljena ini_set() funkcija."
 
 msgid "Gallery file integrity"
 msgstr "Integritet datoteka Galerije"
@@ -568,11 +581,11 @@ msgid "Test skipped due to other errors."
 msgstr "Test je preskočen zbog drugih grešaka."
 
 msgid "Theme available"
-msgstr ""
+msgstr "Dostupan izgled"
 
 #, c-format
 msgid "Error: There must be at least one theme in the %s folder!"
-msgstr ""
+msgstr "Greška: U direktorijumu %s se mora nalaziti bar jedan izgled!"
 
 msgid "Manifest missing or inaccessible."
 msgstr "Manifest fali ili je nedostupan"
@@ -724,17 +737,21 @@ msgid ""
 "Before we can proceed, you should create a file in your <b>%s</b> directory called <i>config."
 "php</i>.  You must make sure that the webserver will be able to write to it."
 msgstr ""
+"Pre nego što možemo da nastavimo, treba da napravite datotekuu vašem <b>%s</b> direktorijumu "
+"naziva <i>config.php</i>. Uverite se da će web server moći da piše u njega."
 
 msgid "Unix (with shell access)"
 msgstr "Unix (sa shell pristupom)"
 
 msgid "On Windows, you shouldn't have to do anything special."
-msgstr ""
+msgstr "Na Windows-u, verovatno ništa posebno ne morate da uradite."
 
 msgid ""
 "When you've created this file and set the permissions properly, you can proceed.  If there's "
 "a problem, we'll tell you what to fix."
 msgstr ""
+"Kada ste napravili ovu datoteku i pravilno podesili prava pristupa, možete nastaviti. Ako se "
+"pojavi neki problem, reći ćemo vam kako da ga rešite."
 
 msgid "Create config file"
 msgstr "Pravljenje konfiguracione datoteke"
@@ -953,7 +970,7 @@ msgid "Continue to Step %d&raquo;"
 msgstr "Pređi na %d. korak&raquo;"
 
 msgid "Debug Output"
-msgstr ""
+msgstr "Izlaz za otklanjanje grešaka"
 
 msgid "Welcome to the Gallery Installer"
 msgstr "Dobro došli u instalacioni program Galerije"
@@ -1006,7 +1023,7 @@ msgstr ""
 "bilo dobro da ih uklonite kako bi vaša instalacija bila čista."
 
 msgid "Errors occurred. Please see messages below."
-msgstr ""
+msgstr "Desile su se greške. Molimo vas pogledate poruke ispod."
 
 msgid "Please select the installation type"
 msgstr "Molimo vas da izaberete vrstu instalacije:"
@@ -1062,12 +1079,19 @@ msgid ""
 "directories.  You must choose a directory under one of these, or you must modify the "
 "<b>open_basedir</b> setting in your PHP configuration to allow a new directory."
 msgstr ""
+"Direktorijum koji ste uneli ne postoji, ili nema prava pristupa zbog vaše konfiguracije web "
+"servera. Vaš web server je podešen da dozvoli pristup samo sledećim direktorijumima. Morate "
+"izabrati direktorijum pod jednim od njih, ili morate izmeniti <b>open_basedir</b> parametar "
+"u vašoj PHP konfiguraciji da biste dozvolili upis i u neki drugi direktorijum."
 
 msgid ""
 "If your multisite install is in a different virtual host, you should contact your system "
 "administrator and request that they configure your <b>open_basedir</b> setting so that your "
 "virtual hosts can access each other."
 msgstr ""
+"Ako se vaša višesajtna instalacija nalazi u drugom virtuelnom domaćinu, treba da "
+"kontaktirate vašeg sistem administratora i tražite da konfigurišu vaš <b>open_basedir</b> "
+"parametar, kako bi vaši virtualni domaćini mogli pristupati jedan drugom."
 
 msgid "The directory you entered does not exist"
 msgstr "Direktorijum koji ste uneli ne postoji"
@@ -1153,6 +1177,8 @@ msgid ""
 "Please read the %1$sGallery Security Guide%3$s. For a brief overview, take a look at the %2"
 "$sshort check list%3$s within the security guide."
 msgstr ""
+"Molimo vas da pročitate %1$sVodič kroz bezbednost Galerije%3$s. Za brz pregled, pogledajte %2"
+"$skratku kontrolnu listu%3$s unutar Vodiča."
 
 msgid "Check Again"
 msgstr "Proveri ponovo"
@@ -1164,20 +1190,28 @@ msgid ""
 "directory outside of the %sdocument root%s directory or add a random string to the end of "
 "the directory name (e.g. %s)."
 msgstr ""
+"Galeriji je potreban direktorijum za skladištenje vaših slika. Direktorijum koji smo "
+"izabrali će funkcionisati, ali njegova lokacija i sadašnji naziv ne pružaju maksimalnu "
+"bezbednost. Izaberite novi direktorijum van %skorenskog%s direktorijuma, ili dodajte "
+"slučajno odabran niz znakova na kraj naziva direktorijuma (npr. %s)."
 
 #, c-format
 msgid ""
 "For maximum security you should pick a directory that is not %sweb accessible%s. If this is "
 "not possible, specify a randomized name for this directory."
 msgstr ""
+"Radi maksimalne bezbednosti, trebalo bi da izaberete direktorijum kojem nije moguć %spristup "
+"preko weba%s. Ako ovo nije moguće, zadajte mu slučajno izabran naziv."
 
 msgid ""
 "If you choose a randomized name or prefer to stick with the specified directory, please "
 "confirm your choice."
 msgstr ""
+"Ako ste odabrali slučajan naziv ili ipak želite da koristite naveden direktorijum, molimo "
+"vas da potvrdite taj izbor."
 
 msgid "Yes, please omit the security check:"
-msgstr ""
+msgstr "Da, molim vas da preskočite bezbednosnu proveru:"
 
 msgid ""
 "This is a multisite installation. Remember that each multisite requires its own storage "
@@ -1210,7 +1244,7 @@ msgstr "Direktorijum za skladištenje je uspešno podešen."
 
 #, c-format
 msgid "Unable to verify that the storage directory is not %sweb accessible%s."
-msgstr ""
+msgstr "Nije moguće potvrditi da skladišnom direktorijumu nije moguć %spristup preko weba%s."
 
 msgid "Directory path:"
 msgstr "Putanja direktorijuma:"
@@ -1219,6 +1253,8 @@ msgid ""
 "Your webserver needs to be able to write to this directory. To get it working, you can "
 "follow these examples."
 msgstr ""
+"Vaš web server mora biti u stanju da piše u ovaj direktorijum. Da bi u tome uspeo, možete "
+"iskoristiti sledeće primere."
 
 msgid ""
 "Note: these are only examples!  You may find that they don't work quite right on your system."
@@ -1275,6 +1311,8 @@ msgid ""
 "For information on how to secure your Gallery storage directory, please read the %sSecurity "
 "Guide%s."
 msgstr ""
+"Za više informacija o zaštiti skladišnog direktorijuma vaše Galerije, molimo vas da "
+"pročitate %sVodič kroz bezbednost%s."
 
 msgid "Storage directory set successfully."
 msgstr "Direktorijum za skladištenje je uspešno podešen."
