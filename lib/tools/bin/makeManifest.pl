@@ -123,7 +123,7 @@ foreach my $manifest (keys %sections) {
 	  $deleted{$1}++;
 	}
       } else {
-	/^(\S+)\t/;
+	/^(.+?)\t/;
 	unless ($seen{$1}) {
 	  # We used to have it but we don't anymore
 	  $deleted{$1}++;
