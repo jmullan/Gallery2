@@ -152,6 +152,19 @@ class ErrorPageView extends GalleryView {
 	}
 
 	if (!$failsafe) {
+	    $translator =& $gallery->getTranslator();
+	    /**
+	     * @todo Add a fallback mode to the translator to just output untranslated text.
+	     */
+	    if (!isset($translator)) {
+		$ret = $gallery->initTranslator();
+		if ($ret) {
+		    $failsafe = true;
+		}
+	    }
+	}
+
+	if (!$failsafe) {
 	    list ($ret, $themeId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	    if ($ret) {
