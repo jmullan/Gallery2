@@ -16,9 +16,9 @@
 #
 # $Id$
 #
-MODULE_DIR = $(shell dirname `pwd`)
-TYPE_DIR = $(shell dirname $(MODULE_DIR))
-APPLICATION ?= $(shell basename $(TYPE_DIR))_$(shell basename $(MODULE_DIR))
+MODULE_DIR = $(shell dirname "`pwd`")
+TYPE_DIR = $(shell dirname "$(MODULE_DIR)")
+APPLICATION ?= $(shell basename "$(TYPE_DIR)")_$(shell basename "$(MODULE_DIR)")
 
 # Let PHP parse the config.php file to get the g2data directory.
 G2DATA = $(shell echo '<?php include("$(GALLERYDIR)/lib/support/GallerySetupUtilities.class"); $$gallery = new GallerySetupUtilitiesStub(); include("$(GALLERYDIR)/config.php"); print $$gallery->getConfig("data.gallery.base"); ?>' | php -q 2>&1)
@@ -41,28 +41,28 @@ all: install
 all-remove-obsolete: update remove-obsolete install
 
 messages.po: alwaysbuild
-	@php -f $(TOOLDIR)/po/extract.php $(MODULE_DIR) > strings.raw.tmp
+	@php -f "$(TOOLDIR)"/po/extract.php "$(MODULE_DIR)" > strings.raw.tmp
 	@# Don't extract right to strings.raw because extract.php tries to preserve
 	@# some old data from strings.raw and the > redirect blanks it out.
 	@mv strings.raw.tmp strings.raw
 	@xgettext --keyword=_ -C --no-location --add-comments=HINT: \
 		  --msgid-bugs-address=gallery-translations@lists.sourceforge.net strings.raw
 	@sed '1,4 d' < messages.po > messages.tmp
-	@cat $(TOOLDIR)/po/header.txt messages.tmp > messages.po
+	@cat "$(TOOLDIR)"/po/header.txt messages.tmp > messages.po
 	@$(RM) messages.tmp
 
 %.po: messages.po
-	@perl $(TOOLDIR)/po/premerge-messages.pl $@ messages.po > messages.tmp
+	@perl "$(TOOLDIR)"/po/premerge-messages.pl $@ messages.po > messages.tmp
 	@# ignore errors from msgmerge, we'll catch them on the msgfmt command:
 	@-if [ -s messages.tmp ]; then \
 	    msgmerge --quiet --width=95 $(COMPENDIUM) $@ messages.tmp > $@.tmp; \
 	    if [ -s $@.tmp ]; then mv $@.tmp $@; else $(RM) $@.tmp; fi; \
-	    perl -pi $(TOOLDIR)/po/header.pl $@; \
+	    perl -pi "$(TOOLDIR)"/po/header.pl $@; \
 	  elif [ -z "$(NOCREATE)" ]; then \
 	    if [ -n "$(LANGPO)" ]; then \
-	      perl $(TOOLDIR)/po/premerge-messages.pl -2 messages.po $(LANGPO) > $@; \
+	      perl "$(TOOLDIR)"/po/premerge-messages.pl -2 messages.po $(LANGPO) > $@; \
 	    else cp messages.po $@; fi; \
-	    perl -pi $(TOOLDIR)/po/header.pl $@; \
+	    perl -pi "$(TOOLDIR)"/po/header.pl $@; \
 	  fi
 	@$(RM) messages.tmp
 
@@ -104,7 +104,7 @@ install: check-g2data update
             INSTALL_FILE=""; \
 	    if test -z "$${QUIET}"; then echo $${LOCALE}; fi; \
 	    if test -d ../locale; then \
-		if ! $(TOOLDIR)/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
+		if ! "$(TOOLDIR)"/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
 		    echo "Could not create directory: ../locale/$${LOCALE}/LC_MESSAGES"; \
 		    exit 1; \
 		fi; \
