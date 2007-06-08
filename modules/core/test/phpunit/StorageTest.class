@@ -50,6 +50,48 @@ class StorageTest extends GalleryTestCase {
 	$this->_isEmptyAllowedForNotNullColumn = $storage->_isEmptyAllowedForNotNullColumn;
 	$storage->_db = new StorageTestDB($this, '_results');
 	$storage->_nonTransactionalDb = new StorageTestDB($this, '_resultsNonTransactional');
+
+	$map = array('GalleryTestMap' =>
+		       array('field1' => array('type' => STORAGE_TYPE_INTEGER,
+					       'size' => STORAGE_SIZE_MEDIUM, 'notNull' => true),
+			     'field2' => array('type' => STORAGE_TYPE_INTEGER,
+						'size' => STORAGE_SIZE_MEDIUM, 'notNull' => true)),
+		     'GalleryTest2Map' =>
+		       array('field3' => array('type' => STORAGE_TYPE_STRING,
+						   'size' => STORAGE_SIZE_MEDIUM,
+						   'notNull' => true),
+			     'field4' => array('type' => STORAGE_TYPE_STRING,
+						   'size' => STORAGE_SIZE_MEDIUM,
+						   'notNull' => true),
+			     'field5' => array('type' => STORAGE_TYPE_INTEGER,
+						 'size' => STORAGE_SIZE_MEDIUM)));
+	/* Note: keep this cache key in sync with GalleryStorage::describeMap() */
+	GalleryDataCache::put('GalleryStorage::describeMap()', $map);
+
+	$entity = array('GalleryChildEntity'  =>
+			array('members' => array('parentId' => array('type' => STORAGE_TYPE_INTEGER,
+								     'notNull' => 1)),
+			     'parent' => 'GalleryEntity', 'module' => 'core', 'linked' => array()),
+		'GalleryEntity' => array('members' => array('id'  =>
+			array('type' => STORAGE_TYPE_INTEGER | STORAGE_TYPE_ID, 'notNull' => 1,
+				'external-access' => EXTERNAL_ACCESS_READ),
+			'creationTimestamp' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1,
+				'external-access' => EXTERNAL_ACCESS_FULL),
+			'isLinkable' => array('type' => STORAGE_TYPE_BOOLEAN, 'notNull' => 1),
+			'linkId' => array('type' => STORAGE_TYPE_INTEGER),
+			'modificationTimestamp' => array('type' => STORAGE_TYPE_INTEGER,
+				'notNull' => 1, 'external-access' => EXTERNAL_ACCESS_READ),
+			'serialNumber' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1,
+				'external-access' => EXTERNAL_ACCESS_READ),
+			'entityType' => array('type' => STORAGE_TYPE_STRING, 'notNull' => 1,
+				'size' => STORAGE_SIZE_SMALL,
+				'external-access' => EXTERNAL_ACCESS_READ),
+			'onLoadHandlers' => array('type' => STORAGE_TYPE_STRING,
+				'size' => STORAGE_SIZE_MEDIUM)),
+		       'parent' => null, 'module' => 'core', 'linked' => array()));
+
+	/* Note: keep this cache key in sync with GalleryStorageExtras::describeEntity() */
+	GalleryDataCache::put('GalleryStorageExtras::describeEntity()', $entity);
     }
 
     function tearDown() {
@@ -121,19 +163,15 @@ class StorageTest extends GalleryTestCase {
 	 * We really should use a fake map, but it's hard to insert a fake map definition into
 	 * GalleryStorage at the moment.
 	 */
-	$ret = $storage->addMapEntry(
-	    'GalleryUserGroupMap',
-	    array('userId' => 0, 'groupId' => 1));
+	$ret = $storage->addMapEntry('GalleryTestMap', array('field1' => 0, 'field2' => 1));
 	if ($ret) {
 	    return $ret;
 	}
 
-	$this->assertEquals(
-	    array(array(
-		sprintf('INSERT INTO %sUserGroupMap (%suserId, %sgroupId) VALUES (?,?)',
+	$this->assertEquals(array(
+		array(sprintf('INSERT INTO %sTestMap (%sfield1, %sfield2) VALUES (?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix,
-			$storage->_columnPrefix),
-		array(0, 1))),
+			$storage->_columnPrefix), array(0, 1))),
 	    $this->_results);
     }
 
@@ -145,40 +183,46 @@ class StorageTest extends GalleryTestCase {
 	 * We really should use a fake map, but it's hard to insert a fake map definition into
 	 * GalleryStorage at the moment.
 	 */
-	$ret = $storage->addMapEntry(
-	    'GalleryUserGroupMap',
-	    array('userId' => 0, 'groupId' => 1),
-	    true);
+	$ret = $storage->addMapEntry('GalleryTestMap', array('field1' => 0, 'field2' => 1), true);
 	if ($ret) {
 	    return $ret;
 	}
 
-	$this->assertEquals(
-	    array(array(
-		sprintf('INSERT INTO %sUserGroupMap (%suserId, %sgroupId) VALUES (?,?)',
-			$storage->_tablePrefix, $storage->_columnPrefix,
-			$storage->_columnPrefix),
-		array(0, 1))),
-	    $this->_getNonTransactionalResults());
+	$this->assertEquals(array(
+			array(sprintf('INSERT INTO %sTestMap (%sfield1, %sfield2) VALUES (?,?)',
+					$storage->_tablePrefix, $storage->_columnPrefix,
+				$storage->_columnPrefix), array(0, 1))),
+			 $this->_getNonTransactionalResults());
     }
 
     function testAddMapTruncate() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$ret = $storage->addMapEntry(
-	    'ExternalIdMap',
-	    array('externalId' => str_repeat('x', 200),
-		  'entityType' => 'test',
-		  'entityId' => 1));
+	/* Prepare mocked record sets */
+	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field4' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
+								  'size' => STORAGE_SIZE_MEDIUM,
+								  'notNull' => true)));
+	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
+	$storage->_db->setResults(array($recordSet, new StorageTestRecordSet()));
+
+	$ret = $storage->addMapEntry('GalleryTest2Map',
+	    array('field3' => str_repeat('x', 200),
+		  'field4' => 'test',
+		  'field5' => 1));
 	if ($ret) {
 	    return $ret;
 	}
 
 	$this->assertEquals(
-	    array(array(
-		sprintf('INSERT INTO %1$sExternalIdMap (%2$sexternalId, %2$sentityType, ' .
-			'%2$sentityId) VALUES (?,?,?)',
+	    array(array(sprintf('INSERT INTO %1$sTest2Map (%2$sfield3, %2$sfield4, '
+				. '%2$sfield5) VALUES (?,?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 		array(str_repeat('x', 128), 'test', 1))),
 	    $this->_results);
@@ -188,21 +232,34 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
+	/* Prepare mocked record sets */
+	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field4' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
+								  'size' => STORAGE_SIZE_MEDIUM,
+								  'notNull' => true)));
+	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
+	$storage->_db->setResults(array($recordSet, new StorageTestRecordSet()));
+
 	/*
 	 * We really should use a fake map, but it's hard to insert a fake map definition into
 	 * GalleryStorage at the moment.
 	 */
 	$ret = $storage->updateMapEntry(
-	    'ExternalIdMap',
-	    array('externalId' => str_repeat('y', 200)),
-	    array('externalId' => str_repeat('x', 200)));
+	    'GalleryTest2Map',
+	    array('field3' => str_repeat('y', 200)),
+	    array('field3' => str_repeat('x', 200)));
 	if ($ret) {
 	    return $ret;
 	}
 
 	$this->assertEquals(
 	    array(array(
-		sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE %2$sexternalId=?',
+		sprintf('UPDATE %1$sTest2Map SET %2$sfield3=? WHERE %2$sfield3=?',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 		array(str_repeat('x', 128), str_repeat('y', 128)))),
 	    $this->_results);
@@ -212,22 +269,34 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
+	/* Prepare mocked record sets */
+	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field4' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
+								  'size' => STORAGE_SIZE_MEDIUM,
+								  'notNull' => true)));
+	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
+	$storage->_db->setResults(array($recordSet, new StorageTestRecordSet()));
+
 	/*
 	 * We really should use a fake map, but it's hard to insert a fake map definition into
 	 * GalleryStorage at the moment.
 	 */
 	$ret = $storage->updateMapEntry(
-	    'ExternalIdMap',
-	    array('externalId' => array(str_repeat('y', 200), str_repeat('z', 200))),
-	    array('externalId' => str_repeat('x', 200)));
+	    'GalleryTest2Map',
+	    array('field3' => array(str_repeat('y', 200), str_repeat('z', 200))),
+	    array('field3' => str_repeat('x', 200)));
 	if ($ret) {
 	    return $ret;
 	}
 
 	$this->assertEquals(
-	    array(array(
-		sprintf('UPDATE %1$sExternalIdMap SET %2$sexternalId=? WHERE ' .
-			'%2$sexternalId IN (?,?)',
+	    array(array(sprintf('UPDATE %1$sTest2Map SET %2$sfield3=? WHERE '
+				. '%2$sfield3 IN (?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 		array(str_repeat('x', 128), str_repeat('y', 128), str_repeat('z', 128)))),
 	    $this->_results);
@@ -241,15 +310,15 @@ class StorageTest extends GalleryTestCase {
 	 * Make sure that when a value is NULL that we use IS NULL and not = ? in
 	 * the generated SQL
 	 */
-	$ret = $storage->updateMapEntry('GalleryFactoryMap', array('classType' => null),
-					array('classType' => 'testType'));
+	$ret = $storage->updateMapEntry('GalleryTest2Map', array('field5' => null),
+					array('field5' => 'testType'));
 	if ($ret) {
 	    return $ret;
 	}
 
 	$this->assertEquals(
-	    array(array(sprintf('UPDATE %1$sFactoryMap SET %2$sclassType=? WHERE ' .
-				'%2$sclassType IS NULL',
+	    array(array(sprintf('UPDATE %1$sTest2Map SET %2$sfield5=? WHERE '
+				. '%2$sfield5 IS NULL',
 				$storage->_tablePrefix, $storage->_columnPrefix),
 			array('testType'))),
 	    $this->_results);
@@ -263,13 +332,13 @@ class StorageTest extends GalleryTestCase {
 	 * Make sure that when a value is NULL that we use IS NULL and not = ? in
 	 * the generated SQL
 	 */
-	$ret = $storage->removeMapEntry('GalleryFactoryMap', array('classType' => null));
+	$ret = $storage->removeMapEntry('GalleryTest2Map', array('field5' => null));
 	if ($ret) {
 	    return $ret;
 	}
 
 	$this->assertEquals(
-	    array(array(sprintf('DELETE FROM %1$sFactoryMap WHERE %2$sclassType IS NULL',
+	    array(array(sprintf('DELETE FROM %1$sTest2Map WHERE %2$sfield5 IS NULL',
 				$storage->_tablePrefix, $storage->_columnPrefix),
 			array())),
 	    $this->_results);
@@ -283,25 +352,22 @@ class StorageTest extends GalleryTestCase {
 	 * We really should use a fake map, but it's hard to insert a fake map definition into
 	 * GalleryStorage at the moment.
 	 */
-	$ret = $storage->addMapEntry(
-	    'GalleryUserGroupMap',
-	    array('userId' =>array(1, 2, 3), 'groupId' => array(4, 5, 6)));
+	$ret = $storage->addMapEntry('GalleryTestMap', array('field1'  => array(1, 2, 3),
+							     'field2' => array(4, 5, 6)));
 	if ($ret) {
 	    return $ret;
 	}
 
 	list ($ret, $sql) = $storage->getFunctionSql(
 	    'MULTI_INSERT',
-	    array($storage->_tablePrefix . 'UserGroupMap',
-		  array($storage->_columnPrefix . 'userId',
-			$storage->_columnPrefix . 'groupId'), 3));
+	    array($storage->_tablePrefix . 'TestMap',
+		  array($storage->_columnPrefix . 'field1',
+			$storage->_columnPrefix . 'field2'), 3));
 	if ($ret) {
 	    return $ret;
 	}
 
-	$this->assertEquals(
-	    array(array($sql, array(1, 4, 2, 5, 3, 6))),
-	    $this->_results);
+	$this->assertEquals(array(array($sql, array(1, 4, 2, 5, 3, 6))), $this->_results);
     }
 
     function testAddMapArrayNonTransactionalDatabaseConnection() {
@@ -313,8 +379,8 @@ class StorageTest extends GalleryTestCase {
 	 * GalleryStorage at the moment.
 	 */
 	$ret = $storage->addMapEntry(
-	    'GalleryUserGroupMap',
-	    array('userId' =>array(1, 2, 3), 'groupId' => array(4, 5, 6)),
+	    'GalleryTestMap',
+	    array('field1'  => array(1, 2, 3), 'field2' => array(4, 5, 6)),
 	    true);
 	if ($ret) {
 	    return $ret;
@@ -322,9 +388,9 @@ class StorageTest extends GalleryTestCase {
 
 	list ($ret, $sql) = $storage->getFunctionSql(
 	    'MULTI_INSERT',
-	    array($storage->_tablePrefix . 'UserGroupMap',
-		  array($storage->_columnPrefix . 'userId',
-			$storage->_columnPrefix . 'groupId'), 3));
+	    array($storage->_tablePrefix . 'TestMap',
+		  array($storage->_columnPrefix . 'field1',
+			$storage->_columnPrefix . 'field2'), 3));
 	if ($ret) {
 	    return $ret;
 	}
@@ -338,25 +404,38 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
+	/* Prepare mocked record sets */
+	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field4' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
+								  'size' => STORAGE_SIZE_MEDIUM,
+								  'notNull' => true)));
+	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
+	$storage->_db->setResults(array($recordSet, new StorageTestRecordSet()));
+
 	/*
 	 * We really should use a fake map, but it's hard to insert a fake map definition into
 	 * GalleryStorage at the moment.
 	 */
 	$ret = $storage->addMapEntry(
-	    'ExternalIdMap',
-	    array('externalId' => array(str_repeat('x', 200), str_repeat('y', 200)),
-		  'entityType' => array('test1', 'test2'),
-		  'entityId' => array(1, 2)));
+	    'GalleryTest2Map',
+	    array('field3' => array(str_repeat('x', 200), str_repeat('y', 200)),
+		  'field4' => array('test1', 'test2'),
+		  'field5' => array(1, 2)));
 	if ($ret) {
 	    return $ret;
 	}
 
 	list ($ret, $sql) = $storage->getFunctionSql(
 	    'MULTI_INSERT',
-	    array($storage->_tablePrefix . 'ExternalIdMap',
-		  array($storage->_columnPrefix . 'externalId',
-			$storage->_columnPrefix . 'entityType',
-			$storage->_columnPrefix . 'entityId'), 2));
+	    array($storage->_tablePrefix . 'Test2Map',
+		  array($storage->_columnPrefix . 'field3',
+			$storage->_columnPrefix . 'field4',
+			$storage->_columnPrefix . 'field5'), 2));
 	if ($ret) {
 	    return $ret;
 	}
@@ -371,9 +450,9 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$mapName = 'ExternalIdMap';
-	$select = array('entityType', 'externalId', 'entityId');
-	$match = array('externalId' => 40);
+	$mapName = 'GalleryTest2Map';
+	$select = array('field4', 'field3', 'field5');
+	$match = array('field3' => 40);
 
 	/* Prepare mocked record set */
 	$recordSet = new StorageTestRecordSet(array(array(1, 6, '15')));
@@ -386,8 +465,8 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array(
-		sprintf('SELECT %2$sentityType, %2$sexternalId, %2$sentityId ' .
-			'FROM %1$sExternalIdMap WHERE %2$sexternalId=?',
+		sprintf('SELECT %2$sfield4, %2$sfield3, %2$sfield5 ' .
+			'FROM %1$sTest2Map WHERE %2$sfield3=?',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 		array(40))),
 	    $this->_results, 'generated query');
@@ -401,9 +480,9 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$mapName = 'ExternalIdMap';
-	$select = array('entityType');
-	$match = array('externalId' => array(38, 40, 42));
+	$mapName = 'GalleryTest2Map';
+	$select = array('field4');
+	$match = array('field3' => array(38, 40, 42));
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
 	if ($ret) {
@@ -413,8 +492,8 @@ class StorageTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array(array(
 		sprintf(
-		    'SELECT %2$sentityType FROM %1$sExternalIdMap ' .
-		    'WHERE %2$sexternalId IN (?,?,?)',
+		    'SELECT %2$sfield4 FROM %1$sTest2Map ' .
+		    'WHERE %2$sfield3 IN (?,?,?)',
 		    $storage->_tablePrefix, $storage->_columnPrefix),
 		array(38, 40, 42))),
 	    $this->_results);
@@ -424,8 +503,8 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$mapName = 'ExternalIdMap';
-	$select = array('entityType');
+	$mapName = 'GalleryTest2Map';
+	$select = array('field4');
 	$match = array();
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match);
@@ -436,7 +515,7 @@ class StorageTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array(array(
 		sprintf(
-		    'SELECT %2$sentityType FROM %1$sExternalIdMap',
+		    'SELECT %2$sfield4 FROM %1$sTest2Map',
 		    $storage->_tablePrefix, $storage->_columnPrefix),
 		array())),
 	    $this->_results);
@@ -446,9 +525,9 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$mapName = 'ExternalIdMap';
-	$select = array('entityType');
-	$match = array('externalId' => array(38, 40, 42));
+	$mapName = 'GalleryTest2Map';
+	$select = array('field4');
+	$match = array('field3' => array(38, 40, 42));
 	$optional = array('limit' => array('count' => 1, 'offset' => 2));
 
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry($mapName, $select, $match,
@@ -460,7 +539,7 @@ class StorageTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array(array(
 		sprintf(
-		    'SELECT %2$sentityType FROM %1$sExternalIdMap WHERE %2$sexternalId IN (?,?,?)',
+		    'SELECT %2$sfield4 FROM %1$sTest2Map WHERE %2$sfield3 IN (?,?,?)',
 		    $storage->_tablePrefix, $storage->_columnPrefix),
 		1,
 		2,
@@ -472,11 +551,11 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$mapName = 'ExternalIdMap';
-	$select = array('entityType');
-	$match = array('externalId' => array(38, 40, 42));
-	$optional = array('orderBy' => array('entityType' => ORDER_DESCENDING,
-					     'externalId' => ORDER_ASCENDING));
+	$mapName = 'GalleryTest2Map';
+	$select = array('field4');
+	$match = array('field3' => array(38, 40, 42));
+	$optional = array('orderBy' => array('field4' => ORDER_DESCENDING,
+					     'field3' => ORDER_ASCENDING));
 
 	list ($ret, $searchResults) =
 	    GalleryCoreApi::getMapEntry($mapName, $select, $match, $optional);
@@ -487,9 +566,9 @@ class StorageTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array(array(
 		sprintf(
-		    'SELECT %2$sentityType FROM %1$sExternalIdMap ' .
-		    'WHERE %2$sexternalId IN (?,?,?) ' .
-		    'ORDER BY %2$sentityType DESC, %2$sexternalId ASC',
+		    'SELECT %2$sfield4 FROM %1$sTest2Map ' .
+		    'WHERE %2$sfield3 IN (?,?,?) ' .
+		    'ORDER BY %2$sfield4 DESC, %2$sfield3 ASC',
 		    $storage->_tablePrefix, $storage->_columnPrefix),
 		array(38, 40, 42))),
 	    $this->_results);
@@ -499,9 +578,9 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$mapName = 'ExternalIdMap';
-	$match = array('externalId' => array(38, 40, 42));
-	$set = array('entityType' => 54);
+	$mapName = 'GalleryTest2Map';
+	$match = array('field3' => array(38, 40, 42));
+	$set = array('field4' => 54);
 
 	$ret = GalleryCoreApi::updateMapEntry($mapName, $match, $set);
 	if ($ret) {
@@ -510,8 +589,8 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array(
-		sprintf('UPDATE %1$sExternalIdMap SET %2$sentityType=? ' .
-			'WHERE %2$sexternalId IN (?,?,?)',
+		sprintf('UPDATE %1$sTest2Map SET %2$sfield4=? ' .
+			'WHERE %2$sfield3 IN (?,?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 			array(54, 38, 40, 42))),
 	    $this->_results);
@@ -521,9 +600,9 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$mapName = 'ExternalIdMap';
-	$match = array('externalId' => array(38, 40, 42));
-	$set = array('entityType' => 54);
+	$mapName = 'GalleryTestMap';
+	$match = array('field2' => array(38, 40, 42));
+	$set = array('field1' => 54);
 
 	$ret = GalleryCoreApi::updateMapEntry($mapName, $match, $set, true);
 	if ($ret) {
@@ -532,8 +611,8 @@ class StorageTest extends GalleryTestCase {
 
 	$this->assertEquals(
 	    array(array(
-		sprintf('UPDATE %1$sExternalIdMap SET %2$sentityType=? ' .
-			'WHERE %2$sexternalId IN (?,?,?)',
+		sprintf('UPDATE %1$sTestMap SET %2$sfield1=? ' .
+			'WHERE %2$sfield2 IN (?,?,?)',
 			$storage->_tablePrefix, $storage->_columnPrefix),
 			array(54, 38, 40, 42))),
 	    $this->_getNonTransactionalResults());
@@ -542,15 +621,14 @@ class StorageTest extends GalleryTestCase {
     function testSaveEntity() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
+
+	$storage->_db->setResults(array(new StorageTestRecordSet(), new StorageTestRecordSet()));
+
 	$entity = new GalleryChildEntity();
 	$ret = $entity->create(1234);
 	if ($ret) {
 	    return $ret;
 	}
-
-	/* We expect two execute calls */
-	$storage->_db->setResults(array(new StorageTestRecordSet(), new StorageTestRecordSet()));
-
 	$ret = $storage->saveEntity($entity);
 	if ($ret) {
 	    return $ret;
@@ -558,8 +636,7 @@ class StorageTest extends GalleryTestCase {
 
 	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
 	$this->assertEquals(
-	    array(
-		array(
+	    array(array(
 		    sprintf('INSERT INTO %1$sChildEntity (%2$sparentId, %2$sid) VALUES (?,?)',
 			    $storage->_tablePrefix, $storage->_columnPrefix),
 		    array(1234, $entity->id)),
@@ -593,8 +670,7 @@ class StorageTest extends GalleryTestCase {
 
 	/* Only some entity fields are set because we're not calling GalleryEntity::save() here */
 	$this->assertEquals(
-	    array(
-		array(
+	    array(array(
 		    sprintf('INSERT INTO %1$sEntity (%2$sid, %2$screationTimestamp, ' .
 			    '%2$sisLinkable, %2$sserialNumber, %2$sentityType, ' .
 			    '%2$sonLoadHandlers) VALUES (?,?,?,?,?,?)',
@@ -999,104 +1075,97 @@ class StorageTest extends GalleryTestCase {
 	$this->assertEquals($expectedQueries, $this->_results);
     }
 
-    function testDescribeMapWritesToDiskAndMemoryCache() {
+    function testDescribeMapWritesToMemoryCache() {
 	global $gallery;
-	GalleryDataCache::setFileCachingEnabled(true);
+	$storage =& $gallery->getStorage();
+
 	GalleryDataCache::reset();
 
 	/* Mock the list of active modules */
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
 			      array('core' => array('active' => 1)));
-	/* Mock the platform */
-	$platform = new UnitTestPlatform();
-	/* There's nothing cached yet */
-	$platform->setReply('file_exists', array('fuzzy' => '/GalleryStorage_describeMap\.inc/'),
-			    false);
-	$platform->setReply('file_exists', array('fuzzy' => '#module/_all/0/0#'), true);
-	$platform->setReply('is_dir', array('fuzzy' => '#module/_all/0/0#'), true);
-	$platform->setReply('atomicWrite',
-			    array('fuzzy1' => '/GalleryStorage_describeMap\.inc/',
-				  'fuzzy2' => '/|ExternalIdMap/'),
-			    true);
-	$gallery->setPlatform($platform);
 
-	list ($ret, $externalMapInfo) = GalleryCoreApi::describeMap('ExternalIdMap');
+	/* Prepare mocked record sets */
+	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field4' => array('type' => STORAGE_TYPE_STRING,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true),
+					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
+								    'size' => STORAGE_SIZE_MEDIUM,
+								    'notNull' => true)));
+	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
+	$storage->_db->setResults(array($recordSet, $recordSet));
+
+	list ($ret, $externalMapInfo) = GalleryCoreApi::describeMap('GalleryTest2Map');
 	if ($ret) {
 	    return $ret;
 	}
 	$this->assert(!empty($externalMapInfo), 'empty result');
-	$this->assert($platform->isComplete(), $platform->getRemaining());
 
 	/* Verify that a second call reads from memory, no platform activity */
-	list ($ret, $externalMapInfo) = GalleryCoreApi::describeMap('ExternalIdMap');
+	list ($ret, $externalMapInfo) = GalleryCoreApi::describeMap('GalleryTest2Map');
 	if ($ret) {
 	    return $ret;
 	}
 	$this->assert(!empty($externalMapInfo), 'empty result on second call');
     }
 
-    function testDescribeMapReadsFromDiskAndMemoryCache() {
+    function testDescribeMapReadsFromMemoryCache() {
 	global $gallery;
-	GalleryDataCache::setFileCachingEnabled(true);
-	GalleryDataCache::reset();
+	$storage =& $gallery->getStorage();
 
-	/* Mock the platform */
-	$platform = new UnitTestPlatform();
-	/* There's nothing cached yet */
-	$platform->setReply('file_exists', array('fuzzy' => '/GalleryStorage_describeMap\.inc/'),
-			    true);
-	$platform->setReply('file_get_contents',
-			    array('fuzzy' => '/GalleryStorage_describeMap\.inc/'),
-			    '|' . serialize(array('RandomTestMap' => array('TestMember'))));
-	$gallery->setPlatform($platform);
-
-	list ($ret, $testMapInfo) = GalleryCoreApi::describeMap('RandomTestMap');
+	list ($ret, $testMapInfo) = GalleryCoreApi::describeMap('GalleryTestMap');
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals(array('TestMember'), $testMapInfo, 'map info, first call');
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-
-	/*
-	 * Verify that the last operation also cached the result in memory. Expect no platform
-	 * activity.
-	 */
-	list ($ret, $testMapInfo) = GalleryCoreApi::describeMap('RandomTestMap');
-	if ($ret) {
-	    return $ret;
-	}
-	$this->assertEquals(array('TestMember'), $testMapInfo, 'map info, second call');
+	$this->assertEquals(
+		       array('field1' => array('type' => STORAGE_TYPE_INTEGER,
+					       'size' => STORAGE_SIZE_MEDIUM, 'notNull' => true),
+			     'field2' => array('type' => STORAGE_TYPE_INTEGER,
+						'size' => STORAGE_SIZE_MEDIUM, 'notNull' => true)),
+			 $testMapInfo, 'map info, first call');
     }
 
-    function testDescribeEntityWritesToDiskAndMemoryCache() {
+    function testDescribeEntityWritesToMemoryCache() {
 	global $gallery;
-	GalleryDataCache::setFileCachingEnabled(true);
+	$storage =& $gallery->getStorage();
+
 	GalleryDataCache::reset();
 
 	/* Mock the list of active modules */
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
 			      array('core' => array('active' => 1)));
-	/* Mock the platform */
-	$platform = new UnitTestPlatform();
-	/* There's nothing cached yet */
-	$platform->setReply('file_exists', array('fuzzy' => '/GalleryStorage_describeEntity\.inc/'),
-			    false);
-	$platform->setReply('file_exists', array('fuzzy' => '#module/_all/0/0#'), true);
-	$platform->setReply('is_dir', array('fuzzy' => '#module/_all/0/0#'), true);
-	$platform->setReply('atomicWrite',
-			    array('fuzzy1' => '/GalleryStorage_describeEntity\.inc/',
-				  'fuzzy2' => '/|GalleryEntity/'),
-			    true);
-	$gallery->setPlatform($platform);
+
+	$entityEntry = array('GalleryEntity' => array('members' => array('id'  =>
+			array('type' => STORAGE_TYPE_INTEGER | STORAGE_TYPE_ID, 'notNull' => 1,
+				'external-access' => EXTERNAL_ACCESS_READ),
+			'creationTimestamp' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1,
+				'external-access' => EXTERNAL_ACCESS_FULL),
+			'isLinkable' => array('type' => STORAGE_TYPE_BOOLEAN, 'notNull' => 1),
+			'linkId' => array('type' => STORAGE_TYPE_INTEGER),
+			'modificationTimestamp' => array('type' => STORAGE_TYPE_INTEGER,
+				'notNull' => 1, 'external-access' => EXTERNAL_ACCESS_READ),
+			'serialNumber' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1,
+				'external-access' => EXTERNAL_ACCESS_READ),
+			'field4' => array('type' => STORAGE_TYPE_STRING, 'notNull' => 1,
+				'size' => STORAGE_SIZE_SMALL,
+				'external-access' => EXTERNAL_ACCESS_READ),
+			'onLoadHandlers' => array('type' => STORAGE_TYPE_STRING,
+				'size' => STORAGE_SIZE_MEDIUM)),
+		       'parent' => null, 'module' => 'core', 'linked' => array()));
+
+	$recordSet = new StorageTestRecordSet(array(array('core', serialize($entityEntry))));
+	$storage->_db->setResults(array($recordSet));
 
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryEntity');
 	if ($ret) {
 	    return $ret;
 	}
 	$this->assert(!empty($entityInfo), 'empty result');
-	$this->assert($platform->isComplete(), $platform->getRemaining());
 
-	/* Verify that a second call reads from memory, no platform activity */
+	/* Verify that a second call reads from memory, no database activity */
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryEntity');
 	if ($ret) {
 	    return $ret;
@@ -1104,40 +1173,6 @@ class StorageTest extends GalleryTestCase {
 	$this->assert(!empty($entityInfo), 'empty result on second call');
     }
 
-    function testDescribeMapReadsFromDiskCache() {
-	global $gallery;
-	GalleryDataCache::setFileCachingEnabled(true);
-	GalleryDataCache::reset();
-
-	/* Mock the platform */
-	$platform = new UnitTestPlatform();
-	/* There's nothing cached yet */
-	$platform->setReply('file_exists', array('fuzzy' => '/GalleryStorage_describeEntity\.inc/'),
-			    true);
-	$platform->setReply('file_get_contents',
-			    array('fuzzy' => '/GalleryStorage_describeEntity\.inc/'),
-			    '|' . serialize(array('RandomTestEntity' => array('TestMember'))));
-	$gallery->setPlatform($platform);
-
-	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('RandomTestEntity');
-	if ($ret) {
-	    return $ret;
-	}
-	$this->assertEquals(array('RandomTestEntity' => array('TestMember')), $entityInfo,
-			    'entity info, first call');
-	$this->assert($platform->isComplete(), $platform->getRemaining());
-
-	/*
-	 * Verify that the last operation also cached the result in memory. Expect no platform
-	 * activity.
-	 */
-	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('RandomTestEntity');
-	if ($ret) {
-	    return $ret;
-	}
-	$this->assertEquals(array('RandomTestEntity' => array('TestMember')), $entityInfo,
-			    'entity info, second call');
-    }
 }
 
 class StorageTestDB {

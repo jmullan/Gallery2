@@ -1186,53 +1186,20 @@ class GalleryStorage {
 	global $gallery;
 
 	/* Note: keep these cache keys in sync with _clearMapMemberCache() */
-	$cacheKey = "GalleryStorage::describeMap()";
-	$cacheParams = array('type' => 'module',
-			     'itemId' => 'GalleryStorage_describeMap',
-			     'id' => '_all');
+	$cacheKey = 'GalleryStorage::describeMap()';
 
 	/* We only cache the results for active modules */
-	if (!$tryAllModules) {
-	    if (!GalleryDataCache::containsKey($cacheKey)) {
-		$mapInfo =& GalleryDataCache::getFromDisk($cacheParams);
-		if (!empty($mapInfo)) {
-		    GalleryDataCache::put($cacheKey, $mapInfo);
-		}
-	    } else {
-		$mapInfo = GalleryDataCache::get($cacheKey);
-	    }
+	if (!$tryAllModules && GalleryDataCache::containsKey($cacheKey)) {
+	    $mapInfo = GalleryDataCache::get($cacheKey);
 	}
 
 	if (!isset($mapInfo)) {
-	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	    list ($ret, $mapInfo) = $this->_getEntityOrMapInfo('_maps', $tryAllModules);
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
-	    $mapInfo = array();
-	    foreach ($moduleStatus as $moduleId => $moduleInfo) {
-		if (!$tryAllModules && empty($moduleInfo['active'])) {
-		    continue;
-		}
-
-		/*
-		 * Don't use GalleryPlatform here because it can cause difficult-to-eliminate issues
-		 * in the testing code when we use mock platforms. Once we have an abstraction layer
-		 * around GalleryCoreApi we can change this.
-		 */
-		$moduleDir = GalleryCoreApi::getPluginBaseDir('module', $moduleId);
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		$mapsFile = sprintf('%smodules/%s/classes/Maps.inc', $moduleDir, $moduleId);
-		if (file_exists($mapsFile)) {
-		    include($mapsFile);
-		}
-	    }
-
 	    if (!$tryAllModules) {
-		GalleryDataCache::putToDisk($cacheParams, $mapInfo);
 		GalleryDataCache::put($cacheKey, $mapInfo);
 	    }
 	}
@@ -1251,6 +1218,42 @@ class GalleryStorage {
 	}
 
 	return array(null, $mapInfo[$mapName]);
+    }
+
+    /**
+     * Retrieve the entity or map information from the plugin parameter table
+     * @param string $parameterName which parameter name to search on
+     * @param boolean $tryAllModules try all modules, not just active ones
+     * @return array GalleryStatus a status code,
+     *               array member name => member type
+     * @access protected
+     */
+    function _getEntityOrMapInfo($parameterName, $tryAllModules) {
+	if (!$tryAllModules) {
+	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
+
+	$typeInfo = array();
+	$query = 'SELECT [::pluginId], [::parameterValue] FROM [GalleryPluginParameterMap]
+	    	   WHERE [::pluginType] = \'module\' AND [::parameterName] = ?';
+
+	list ($ret, $results) = $this->search($query, array($parameterName));
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	while ($row = $results->nextResult()) {
+	    $moduleId = $row[0];
+	    if (!$tryAllModules && empty($moduleStatus[$moduleId]['active'])) {
+		continue;
+	    }
+	    $typeInfo = array_merge($typeInfo, unserialize($row[1]));
+	}
+
+    	return array(null, $typeInfo);
     }
 
     /**

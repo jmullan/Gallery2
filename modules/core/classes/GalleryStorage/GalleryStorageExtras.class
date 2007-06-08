@@ -1925,54 +1925,21 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     function describeEntity($entityName, $tryAllModules=false) {
 	global $gallery;
 
-	/* Note: keep these cache keys in sync with _clearEntityAndMapCache() */
-	$cacheKey = "GalleryStorage::describeEntity()";
-	$cacheParams = array('type' => 'module',
-			     'itemId' => 'GalleryStorage_describeEntity',
-			     'id' => '_all');
+	/* Note: keep this cache key in sync with GalleryStorageExtras::_clearEntityAndMapCache() */
+	$cacheKey = 'GalleryStorageExtras::describeEntity()';
 
 	/* We only cache the results for active modules */
-	if (!$tryAllModules) {
-	    if (!GalleryDataCache::containsKey($cacheKey)) {
-		$entityInfo =& GalleryDataCache::getFromDisk($cacheParams);
-		if (!empty($entityInfo)) {
-		    GalleryDataCache::put($cacheKey, $entityInfo);
-		}
-	    }  else {
-		$entityInfo = GalleryDataCache::get($cacheKey);
-	    }
+	if (!$tryAllModules && GalleryDataCache::containsKey($cacheKey)) {
+	    $entityInfo = GalleryDataCache::get($cacheKey);
 	}
 
 	if (!isset($entityInfo)) {
-	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	    list ($ret, $entityInfo) = $this->_gs->_getEntityOrMapInfo('_entities', $tryAllModules);
 	    if ($ret) {
 		return array($ret, null);
 	    }
 
-	    $entityInfo = array();
-	    foreach ($moduleStatus as $moduleId => $moduleInfo) {
-		if (!$tryAllModules && empty($moduleInfo['active'])) {
-		    continue;
-		}
-
-		/*
-		 * Don't use GalleryPlatform here because it can cause difficult-to-eliminate
-		 * issues in the testing code when we use mock platforms.  Once we have an
-		 * abstraction layer around GalleryCoreApi we can use the platform here.
-		 */
-		$moduleDir = GalleryCoreApi::getPluginBaseDir('module', $moduleId);
-		if ($ret) {
-		    return array($ret, null);
-		}
-
-		$entitiesFile = sprintf('%smodules/%s/classes/Entities.inc', $moduleDir, $moduleId);
-		if (file_exists($entitiesFile)) {
-		    include($entitiesFile);
-		}
-	    }
-
 	    if (!$tryAllModules) {
-		GalleryDataCache::putToDisk($cacheParams, $entityInfo);
 		GalleryDataCache::put($cacheKey, $entityInfo);
 	    }
 	}
@@ -2017,17 +1984,11 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * Clear out the entity and map caches, which we should do any time we add or remove a table.
      */
     function _clearEntityAndMapCache() {
-	/* Note: keep these cache keys in sync with describeMap() */
-	GalleryDataCache::remove("GalleryStorage::describeMap()");
-	GalleryDataCache::removeFromDisk(array('type' => 'module',
-					       'itemId' => 'GalleryStorage_describeMap',
-					       'id' => '_all'));
+	/* Note: keep this cache key in sync with GalleryStorage::describeMap() */
+	GalleryDataCache::remove('GalleryStorage::describeMap()');
 
-	/* Note: keep these cache keys in sync with describeEntity() */
-	GalleryDataCache::remove("GalleryStorage::describeEntity()");
-	GalleryDataCache::removeFromDisk(array('type' => 'module',
-					       'itemId' => 'GalleryStorage_describeEntity',
-					       'id' => '_all'));
+	/* Note: keep this cache key in sync with GalleryStorageExtras::describeEntity() */
+	GalleryDataCache::remove('GalleryStorageExtras::describeEntity()');
     }
 
     /**
