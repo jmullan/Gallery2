@@ -1095,7 +1095,7 @@ class GalleryPermissionHelper_advanced {
 	$gallery->guaranteeTimeLimit(60);
 	while ($result = $searchResults->nextResult()) {
 	    $aclId = $result[0];
-	    $key = sprintf("%s|%s,", $result[1], $storage->convertIntToBits($result[2]));
+	    $key = sprintf("%s|%d|,", $result[1], $result[2]);
 	    if (!isset($aclIdToKey[$aclId])) {
 		$aclIdToKey[$aclId] = '';
 	    }
