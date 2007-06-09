@@ -39,7 +39,7 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$ret = parent::setUp();
 	if ($ret) {
-	   return $ret;
+	    return $ret;
 	}
 
 	$storage =& $gallery->getStorage();
@@ -159,10 +159,6 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	/*
-	 * We really should use a fake map, but it's hard to insert a fake map definition into
-	 * GalleryStorage at the moment.
-	 */
 	$ret = $storage->addMapEntry('GalleryTestMap', array('field1' => 0, 'field2' => 1));
 	if ($ret) {
 	    return $ret;
@@ -179,10 +175,6 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	/*
-	 * We really should use a fake map, but it's hard to insert a fake map definition into
-	 * GalleryStorage at the moment.
-	 */
 	$ret = $storage->addMapEntry('GalleryTestMap', array('field1' => 0, 'field2' => 1), true);
 	if ($ret) {
 	    return $ret;
@@ -198,19 +190,6 @@ class StorageTest extends GalleryTestCase {
     function testAddMapTruncate() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
-
-	/* Prepare mocked record sets */
-	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
-								    'size' => STORAGE_SIZE_MEDIUM,
-								    'notNull' => true),
-					      'field4' => array('type' => STORAGE_TYPE_STRING,
-								    'size' => STORAGE_SIZE_MEDIUM,
-								    'notNull' => true),
-					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
-								  'size' => STORAGE_SIZE_MEDIUM,
-								  'notNull' => true)));
-	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
-	$storage->_db->setResults(array($recordSet, new StorageTestRecordSet()));
 
 	$ret = $storage->addMapEntry('GalleryTest2Map',
 	    array('field3' => str_repeat('x', 200),
@@ -232,23 +211,6 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	/* Prepare mocked record sets */
-	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
-								    'size' => STORAGE_SIZE_MEDIUM,
-								    'notNull' => true),
-					      'field4' => array('type' => STORAGE_TYPE_STRING,
-								    'size' => STORAGE_SIZE_MEDIUM,
-								    'notNull' => true),
-					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
-								  'size' => STORAGE_SIZE_MEDIUM,
-								  'notNull' => true)));
-	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
-	$storage->_db->setResults(array($recordSet, new StorageTestRecordSet()));
-
-	/*
-	 * We really should use a fake map, but it's hard to insert a fake map definition into
-	 * GalleryStorage at the moment.
-	 */
 	$ret = $storage->updateMapEntry(
 	    'GalleryTest2Map',
 	    array('field3' => str_repeat('y', 200)),
@@ -269,23 +231,6 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	/* Prepare mocked record sets */
-	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
-								    'size' => STORAGE_SIZE_MEDIUM,
-								    'notNull' => true),
-					      'field4' => array('type' => STORAGE_TYPE_STRING,
-								    'size' => STORAGE_SIZE_MEDIUM,
-								    'notNull' => true),
-					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
-								  'size' => STORAGE_SIZE_MEDIUM,
-								  'notNull' => true)));
-	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
-	$storage->_db->setResults(array($recordSet, new StorageTestRecordSet()));
-
-	/*
-	 * We really should use a fake map, but it's hard to insert a fake map definition into
-	 * GalleryStorage at the moment.
-	 */
 	$ret = $storage->updateMapEntry(
 	    'GalleryTest2Map',
 	    array('field3' => array(str_repeat('y', 200), str_repeat('z', 200))),
@@ -348,10 +293,6 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	/*
-	 * We really should use a fake map, but it's hard to insert a fake map definition into
-	 * GalleryStorage at the moment.
-	 */
 	$ret = $storage->addMapEntry('GalleryTestMap', array('field1'  => array(1, 2, 3),
 							     'field2' => array(4, 5, 6)));
 	if ($ret) {
@@ -374,10 +315,6 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	/*
-	 * We really should use a fake map, but it's hard to insert a fake map definition into
-	 * GalleryStorage at the moment.
-	 */
 	$ret = $storage->addMapEntry(
 	    'GalleryTestMap',
 	    array('field1'  => array(1, 2, 3), 'field2' => array(4, 5, 6)),
@@ -404,23 +341,6 @@ class StorageTest extends GalleryTestCase {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	/* Prepare mocked record sets */
-	$map = array('GalleryTest2Map' => array('field3' => array('type' => STORAGE_TYPE_STRING,
-								    'size' => STORAGE_SIZE_MEDIUM,
-								    'notNull' => true),
-					      'field4' => array('type' => STORAGE_TYPE_STRING,
-								    'size' => STORAGE_SIZE_MEDIUM,
-								    'notNull' => true),
-					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
-								  'size' => STORAGE_SIZE_MEDIUM,
-								  'notNull' => true)));
-	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
-	$storage->_db->setResults(array($recordSet, new StorageTestRecordSet()));
-
-	/*
-	 * We really should use a fake map, but it's hard to insert a fake map definition into
-	 * GalleryStorage at the moment.
-	 */
 	$ret = $storage->addMapEntry(
 	    'GalleryTest2Map',
 	    array('field3' => array(str_repeat('x', 200), str_repeat('y', 200)),
