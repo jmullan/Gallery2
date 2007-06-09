@@ -293,21 +293,46 @@ class GalleryModule extends GalleryPlugin {
     	global $gallery;
     	$storage =& $gallery->getStorage();
 
-	if (isset($tableData)) {
-	    $debugMsg = 'load %s.inc';
-	    $query = 'INSERT INTO [GalleryPluginParameterMap] (
-			[::pluginType], [::pluginId], [::itemId], [::parameterName],
-			[::parameterValue]) VALUES (?, ?, ?, ?, ?)';
-	    $data = array('module', $this->getId(), (int)0, $parameterName, $tableData);
-	} else {
-	    $debugMsg = 'remove %s information';
-	    $query = 'DELETE FROM [GalleryPluginParameterMap]
-		       WHERE [::pluginType] = ? AND [::pluginId] = ? AND [::itemId] = ?
-			 AND [::parameterName] = ?';
-	    $data = array('module', $this->getId(), (int)0, $parameterName);
+	$query = 'SELECT [::parameterValue] FROM [GalleryPluginParameterMap]
+		   WHERE [::pluginType] = ?
+		     AND [::pluginId] = ?
+		     AND [::itemId] = ?
+		     AND [::parameterName] = ?';
+	$data = array('module', $this->getId(), (int)0, $parameterName);
+	list ($ret, $result) = $storage->search($query, $data);
+	if ($ret) {
+	    return $ret;
 	}
 
-	$ret = $storage->execute($query, $data);
+	$valueExists = $result->resultCount() > 0;
+	if (isset($tableData)) {
+	    $debugMsg = 'load %s.inc';
+	    if ($valueExists) {
+		$query = 'UPDATE [GalleryPluginParameterMap]
+			     SET [::parameterValue] = ?
+			   WHERE [::pluginType] = ?
+			     AND [::pluginId] = ?
+			     AND [::itemId] = ?
+			     AND [::parameterName] = ?';
+		$data = array($tableData, 'module', $this->getId(), (int)0, $parameterName);
+	    } else {
+		$query = 'INSERT INTO [GalleryPluginParameterMap] (
+				[::pluginType], [::pluginId], [::itemId], [::parameterName],
+				[::parameterValue]) VALUES (?, ?, ?, ?, ?)';
+		$data = array('module', $this->getId(), (int)0, $parameterName, $tableData);
+	    }
+	    $ret = $storage->execute($query, $data);
+	} else {
+	    if ($valueExists) {
+		$debugMsg = 'remove %s information';
+		$query = 'DELETE FROM [GalleryPluginParameterMap]
+			   WHERE [::pluginType] = ? AND [::pluginId] = ? AND [::itemId] = ?
+			     AND [::parameterName] = ?';
+		$data = array('module', $this->getId(), (int)0, $parameterName);
+		$ret = $storage->execute($query, $data);
+	    }
+	}
+
 	if ($ret) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug(sprintf('Error: Failed to load ' . $debugMsg . ' for %s module, '
