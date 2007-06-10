@@ -85,7 +85,7 @@ check-g2data:
 	    echo ""; \
 	    echo "Alternatively, point your browser at gallery2/lib/support, "; \
 	    echo "click the \"Filesystem Permissions\" link and then click "; \
-            echo "the 'Make the locale folder read/write' link"; \
+	    echo "the 'Make the locale folder read/write' link"; \
 	    echo "************************************************************"; \
 	fi
 
@@ -101,7 +101,7 @@ install: check-g2data update
 	COPY_FAIL=0; \
 	echo "Updating $(PO)"; \
 	for LOCALE in `ls $(PO).po | grep -v messages.po | sed 's/\.[^.]*$$//g'`; do \
-            INSTALL_FILE=""; \
+	    INSTALL_FILE=""; \
 	    if test -z "$${QUIET}"; then echo $${LOCALE}; fi; \
 	    if test -d ../locale; then \
 		if ! "$(TOOLDIR)"/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
@@ -109,8 +109,8 @@ install: check-g2data update
 		    exit 1; \
 		fi; \
 		MO_FILE=../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo; \
-            elif test "$(APPLICATION)" = "gallery2_install" \
-	           || test "$(APPLICATION)" = "gallery2_upgrade";  then \
+	    elif test "$(APPLICATION)" = "gallery2_install" \
+		   || test "$(APPLICATION)" = "gallery2_upgrade";  then \
 		if ! $(TOOLDIR)/po/shtool mkdir -p ../../locale/$${LOCALE}/LC_MESSAGES; then \
 		    echo "Could not create directory: ../../locale/$${LOCALE}/LC_MESSAGES"; \
 		    exit 1; \
@@ -118,11 +118,11 @@ install: check-g2data update
 		MO_FILE=../../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo; \
 	    else \
 		MO_FILE=$${LOCALE}.mo; \
-	        INSTALL_DIR="$(G2DATA)/locale/$${LOCALE}/LC_MESSAGES"; \
-	        INSTALL_FILE="$${INSTALL_DIR}/$(APPLICATION).mo"; \
+		INSTALL_DIR="$(G2DATA)/locale/$${LOCALE}/LC_MESSAGES"; \
+		INSTALL_FILE="$${INSTALL_DIR}/$(APPLICATION).mo"; \
 	    fi; \
 	    php -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
-            if $${MSGFMT_CMD} $${MO_FILE} tmp.po; then \
+	    if $${MSGFMT_CMD} $${MO_FILE} tmp.po; then \
 		if test -n "$${QUIET}"; then \
 		    echo -n '.'; \
 		fi; \
@@ -147,21 +147,21 @@ install: check-g2data update
 		echo -n "Fail: $${LOCALE}"; \
 		FAIL=1; \
 	    fi; \
-            $(RM) tmp.po; \
+	    $(RM) tmp.po; \
 	    if test -z "$${QUIET}"; then echo; fi; \
 	done; \
 	if test $${COPY_FAIL} -gt 0; then \
 	    echo "************************************************************"; \
 	    echo "WARNING: Failed to copy some .mo files to the g2data/locale"; \
-            echo "directory! Try changing the permissions on your g2data dir: "; \
+	    echo "directory! Try changing the permissions on your g2data dir: "; \
 	    echo ""; \
 	    echo "chmod -R 777 $(G2DATA)/locale"; \
 	    echo ""; \
 	    echo "Alternatively, point your browser at gallery2/lib/support, "; \
 	    echo "click the \"Filesystem Permissions\" link and then click "; \
-            echo "the 'Make the locale folder read/write' link"; \
+	    echo "the 'Make the locale folder read/write' link"; \
 	    echo "************************************************************"; \
-        fi; \
+	fi; \
 	if test $${FAIL} -gt 0; then exit 1; fi;
 	@echo '';
 
