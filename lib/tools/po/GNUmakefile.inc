@@ -74,14 +74,14 @@ clean:
 update: $(PO).po
 
 check-g2data:
-	@if ! test -d "$(G2DATA)"; then \
+	@if ! test -d '$(G2DATA)'; then \
 	    echo "************************************************************"; \
 	    echo "WARNING: We detected the following as your g2data dir but"; \
 	    echo "this directory does not appear to exist.  We will be unable"; \
 	    echo "to copy new .mo files into the g2data/locale directory until"; \
 	    echo "this is fixed."; \
 	    echo ""; \
-	    echo "$(G2DATA)"; \
+	    echo '$(G2DATA)'; \
 	    echo ""; \
 	    echo "Alternatively, point your browser at gallery2/lib/support, "; \
 	    echo "click the \"Filesystem Permissions\" link and then click "; \
@@ -118,7 +118,7 @@ install: check-g2data update
 		MO_FILE=../../locale/$${LOCALE}/LC_MESSAGES/$(APPLICATION).mo; \
 	    else \
 		MO_FILE=$${LOCALE}.mo; \
-		INSTALL_DIR="$(G2DATA)/locale/$${LOCALE}/LC_MESSAGES"; \
+		INSTALL_DIR='$(G2DATA)'/locale/$${LOCALE}/LC_MESSAGES; \
 		INSTALL_FILE="$${INSTALL_DIR}/$(APPLICATION).mo"; \
 	    fi; \
 	    php -f $(TOOLDIR)/po/trim-po.php `pwd`/$${LOCALE}.po > tmp.po; \
@@ -155,7 +155,7 @@ install: check-g2data update
 	    echo "WARNING: Failed to copy some .mo files to the g2data/locale"; \
 	    echo "directory! Try changing the permissions on your g2data dir: "; \
 	    echo ""; \
-	    echo "chmod -R 777 $(G2DATA)/locale"; \
+	    echo 'chmod -R 777 $(G2DATA)/locale'; \
 	    echo ""; \
 	    echo "Alternatively, point your browser at gallery2/lib/support, "; \
 	    echo "click the \"Filesystem Permissions\" link and then click "; \
