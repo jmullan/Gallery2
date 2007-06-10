@@ -1167,6 +1167,7 @@ class Db2Generator extends BaseGenerator {
 	case 'ALTER':
 	    /* column+ */
 	    for ($i = 0; $i < count($child); $i++) {
+		/* DB2's "ALTER TABLE ALTER COLUMN" is somewhat limited. Use a workaround. */
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' ADD COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp';
 		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false) . ";\n\n";
@@ -1175,10 +1176,17 @@ class Db2Generator extends BaseGenerator {
 		    ' = CAST(DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ' AS ' .
 		    $this->columnDefinition($child[$i]['child'], false) . ");\n\n";
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
-		    ' DROP DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		    ' DROP COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		/* DB2 can't rename columns */
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
-		    ' RENAME DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
-		    ' to DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		    ' ADD COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'];
+		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false) . ";\n\n";
+		$output .= 'UPDATE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' SET DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
+		    ' = DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . "Temp;\n\n";
+		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' DROP COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
+		    "Temp;\n\n";
 		if ($this->getNotNullElement($child[$i]['child'])) {
 		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 			' ALTER DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
