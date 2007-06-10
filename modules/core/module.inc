@@ -34,7 +34,7 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.3-svn');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.2.16');
+	$this->setVersion('1.2.17');
 	$this->_templateVersion = 1;
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
@@ -42,7 +42,7 @@ class CoreModule extends GalleryModule {
 	$this->setCallbacks('registerEventListeners'
 	    . '|getItemLinks|getSystemLinks'
 	    . '|getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(7, 32));
+	$this->setRequiredCoreApi(array(7, 33));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 

@@ -2377,7 +2377,8 @@ class CoreModuleExtras {
 		}
 		$gallery->guaranteeTimeLimit(30);
 	    }
-
+	case '1.2.16':
+ 	    /* Add database export task from the admin maintenance screen */
 
 	case 'end of upgrade path':
 	    /*
@@ -2707,6 +2708,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.13':
 	case '1.2.14':
 	case '1.2.15':
+	case '1.2.16':
 
 	case 'end of upgrade path':
 	    /*
@@ -3155,6 +3157,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	$regs[] = array('ItemAddPlugin', 'ItemAddFromBrowser', 'inc', null, 2);
 	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null);
 	$regs[] = array('MaintenanceTask', 'OptimizeDatabaseTask', 'class', null);
+	$regs[] = array('MaintenanceTask', 'DatabaseBackupTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushTemplatesTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushDatabaseCacheTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'BuildDerivativesTask', 'class', null);

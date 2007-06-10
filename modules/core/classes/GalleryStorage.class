@@ -1325,6 +1325,7 @@ class GalleryStorage {
      *               'size' => STORAGE_SIZE_XXX constant)
      * @param boolean $fromDb (optional) false if value is for SQL, true if value is from the DB
      * @return mixed correctly typed value
+     * @access protected
      */
     function _normalizeValue($value, $memberData, $fromDb=false) {
 	$notNull = !empty($memberData['notNull']) ||
@@ -1388,6 +1389,37 @@ class GalleryStorage {
 	} else {
 	    return GalleryCoreApi::utf8Substring($value, 0, $size);
 	}
+    }
+
+    /**
+     * This method gets a Gallery Database Exporter object.
+     * @return A GalleryDatabaseExport object.
+     */
+    function getDatabaseExporter() {
+	GalleryCoreApi::requireOnce(
+				'modules/core/classes/GalleryStorage/GalleryDatabaseExport.class');
+	return new GalleryDatabaseExport();
+    }
+
+    /**
+     * This method gets a Gallery Database Importer object.
+     * @return A GalleryDatabaseImport object.
+     */
+    function getDatabaseImporter() {
+	GalleryCoreApi::requireOnce(
+				'modules/core/classes/GalleryStorage/GalleryDatabaseImport.class');
+	return new GalleryDatabaseImport();
+    }
+    
+    /**
+     * Examine the schema table and return the version of all the Gallery tables
+     *
+     * @return array object GalleryStatus a status code
+     *               array (name => (major, minor))
+     */
+    function getTableVersions() {
+	$extras =& $this->_getExtras();
+	return $extras->_loadTableVersions();
     }
 }
 

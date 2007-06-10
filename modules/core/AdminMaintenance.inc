@@ -258,7 +258,7 @@ class MaintenanceTask {
     }
 
     /**
-     * This task requires that the administrator sets Gallery into mainteenance mode.
+     * This task requires that the administrator sets Gallery into maintenance mode.
      * @return true or false
      */
     function requiresMaintenanceMode() {

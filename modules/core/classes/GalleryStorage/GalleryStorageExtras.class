@@ -1144,11 +1144,13 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	return null;
     }
 
-    /*
+    /**
      * Load up the table creation and alteration SQL files for the given module
-     * @access private
+     * @param string $moduleId The id of the module of interest.
+     * @return array ('table' => array(), 'alter' => array(),
+     *		      'remove' => array(), 'test' => array())
      */
-    function _getModuleSql($moduleId) {
+    function getModuleSql($moduleId) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	$sqlFile = sprintf('%smodules/%s/classes/GalleryStorage/schema.tpl',
@@ -1162,7 +1164,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			       'remove' => array(), 'test' => array());
 	}
 
-	return array(null, $moduleSql);
+	return $moduleSql;
     }
 
     /**
@@ -1235,10 +1237,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
-	if ($ret) {
-	    return $ret;
-	}
+	$moduleSql = $this->getModuleSql($moduleId);
 
 	list ($ret, $metatables) = $this->_metaTables();
 	if ($ret) {
@@ -1262,11 +1261,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    /* Create our sequences now */
 	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID,
 			   DATABASE_SEQUENCE_EVENT_LOG) as $sequenceId) {
-		$this->_gs->_traceStart();
-		$result = $this->_gs->_db->CreateSequence($this->_gs->_tablePrefix . $sequenceId);
-		$this->_gs->_traceStop();
-		if (empty($result)) {
-		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
+		$ret = $this->createSequence($sequenceId);
+		if ($ret) {
+		    return $ret;
 		}
 	    }
 	}
@@ -1389,10 +1386,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
-	if ($ret) {
-	    return $ret;
-	}
+	$moduleSql = $this->getModuleSql($moduleId);
 
 	list ($ret, $metatables) = $this->_metaTables();
 	if ($ret) {
@@ -1453,10 +1447,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	list ($ret, $moduleSql) = $this->_getModuleSql($moduleId);
-	if ($ret) {
-	    return $ret;
-	}
+	$moduleSql = $this->getModuleSql($moduleId);
 
 	list ($ret, $metatables) = $this->_metaTables();
 	if ($ret) {
@@ -1502,11 +1493,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     }
 
     /**
-     * Examine the schema table and return the version of all the Gallery tables
-     *
-     * @return array object GalleryStatus a status code
-     *               array (name => (major, minor))
-     * @access private
+     * @see GalleryStorage::getTableVersions
      */
     function _loadTableVersions() {
 	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
@@ -1538,7 +1525,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * as necessary.  Split multiple commands in the file into separate Execute() calls.
      *
      * @return object GalleryStatus a status code
-     * @access private
+     * @access protected
      */
     function _executeSql($buffer) {
 	/*
@@ -1638,11 +1625,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    /* Get rid of our sequences */
 	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID,
 			   DATABASE_SEQUENCE_EVENT_LOG) as $sequenceId) {
-		$this->_gs->_traceStart();
-		$recordSet = $this->_gs->_db->DropSequence($this->_gs->_tablePrefix . $sequenceId);
-		$this->_gs->_traceStop();
-		if (empty($recordSet)) {
-		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
+		$ret = $this->dropSequence($sequenceId);
+		if ($ret) {
+		    return $ret;
 		}
 	    }
 	}
@@ -2015,6 +2000,38 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	return array(null, $metatables);
+    }
+
+    /**
+     * Create a sequence.
+     * @param string $sequenceId Name of the sequence to create.
+     * @param integer $startId (optional) The number to initialize the sequence to. (default 1)
+     * @return object GalleryStatus
+     */
+    function createSequence($sequenceId, $startId=1) {
+	$this->_gs->_traceStart();
+	$result = $this->_gs->_db->CreateSequence($this->_gs->_tablePrefix . $sequenceId, $startId);
+	$this->_gs->_traceStop();
+	if (empty($result)) {
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, null, null,
+					 'Create Sequence failed for sequence: ' . $sequenceId);
+	}
+	return null;
+    }
+
+    /**
+     * Drop a sequence.
+     * @param string $sequenceId Name of the sequence to drop.
+     * @return object GalleryStatus
+     */
+    function dropSequence($sequenceId) {
+	$this->_gs->_traceStart();
+	$recordSet = $this->_gs->_db->DropSequence($this->_gs->_tablePrefix . $sequenceId);
+	$this->_gs->_traceStop();
+	if ($recordSet === false) {
+	    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE);
+	}
+	return null;
     }
 }
 ?>

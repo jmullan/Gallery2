@@ -68,6 +68,7 @@ $stepOrder = array();
 $stepOrder[] = 'Welcome';
 $stepOrder[] = 'Authenticate';
 $stepOrder[] = 'SystemChecks';
+$stepOrder[] = 'DatabaseBackup';
 $stepOrder[] = 'UpgradeCoreModule';
 $stepOrder[] = 'UpgradeOtherModules';
 $stepOrder[] = 'CleanCache';
