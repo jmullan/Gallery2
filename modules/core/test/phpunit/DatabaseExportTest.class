@@ -362,8 +362,8 @@ class DatabaseExportTest extends GalleryTestCase {
 				  array(null, new UnitTestStorageSearchResults(array(array('2')))));
 
 	$storage->setReply('describeMap', array('TestTableMap', null),
-				 array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__,
-					       "Undefined map: TestTableMap"), null));
+				 array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__,
+						__LINE__, "Undefined map: TestTableMap"), null));
 
 	$this->_export->_callBack = array('callback' => array($this, 'progressCallback'),
 				 'progress' => 0, 'total' => 100);
