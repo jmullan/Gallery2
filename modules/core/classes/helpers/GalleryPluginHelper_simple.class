@@ -465,6 +465,7 @@ class GalleryPluginHelper_simple {
 
 	$cacheKey = "GalleryPluginHelper::fetchPluginList($pluginType)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    /* Avoid a dependency on describeMap() (possible cyclic dependency) */
 	    $query = '
 	    SELECT
 	      [GalleryPluginMap::pluginId],

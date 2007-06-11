@@ -1230,7 +1230,8 @@ class GalleryStorage {
      */
     function _getEntityOrMapInfo($parameterName, $tryAllModules) {
 	if (!$tryAllModules) {
-	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	    /* Avoid core API methods that could entail cyclic dependencies on describe*() */
+	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginList('module');
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -1238,7 +1239,7 @@ class GalleryStorage {
 
 	$typeInfo = array();
 	$query = 'SELECT [::pluginId], [::parameterValue] FROM [GalleryPluginParameterMap]
-	    	   WHERE [::pluginType] = \'module\' AND [::parameterName] = ?';
+		  WHERE [::pluginType] = \'module\' AND [::parameterName] = ?';
 
 	list ($ret, $results) = $this->search($query, array($parameterName));
 	if ($ret) {

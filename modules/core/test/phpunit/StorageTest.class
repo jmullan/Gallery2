@@ -1002,7 +1002,7 @@ class StorageTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 
 	/* Mock the list of active modules */
-	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)',
 			      array('core' => array('active' => 1)));
 
 	/* Prepare mocked record sets */
@@ -1055,7 +1055,7 @@ class StorageTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 
 	/* Mock the list of active modules */
-	GalleryDataCache::put('GalleryPluginHelper::fetchPluginStatus(module)',
+	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)',
 			      array('core' => array('active' => 1)));
 
 	$entityEntry = array('GalleryEntity' => array('members' => array('id'  =>
@@ -1092,7 +1092,6 @@ class StorageTest extends GalleryTestCase {
 	}
 	$this->assert(!empty($entityInfo), 'empty result on second call');
     }
-
 }
 
 class StorageTestDB {
