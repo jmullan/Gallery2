@@ -380,10 +380,10 @@ class GalleryImportObject {
     /**
      * Constructor
      */
-    function GalleryImportObject(&$parent=null) {
+    function GalleryImportObject($parent=null) {
 	global $gallery;
 
-	$this->_parent =& $parent;
+	$this->_parent = $parent;
 	$this->_storage =& $gallery->getStorage();
     }
 
