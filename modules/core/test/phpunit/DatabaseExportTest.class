@@ -350,26 +350,30 @@ class DatabaseExportTest extends GalleryTestCase {
 	return null;
     }
 
-    function testExportDataDescribeMapFailure() {
+    function testExportDataDescribeFailure() {
 	global $gallery;
  	$storage =& $gallery->getStorage();
  	$platform =& $gallery->getPlatform();
 
-	$storage->setReply('_translateTableName', array('TestTableMap'),
-							array('g2_TestTableMap', null, null));
+	$storage->setReply('_translateTableName', array('TestTable'),
+			   array('g2_TestTable', null, null));
 
-	$storage->setReply('search', array('SELECT COUNT(*) FROM g2_TestTableMap', null, array()),
-				  array(null, new UnitTestStorageSearchResults(array(array('2')))));
+	$storage->setReply('search', array('SELECT COUNT(*) FROM g2_TestTable', null, array()),
+			   array(null, new UnitTestStorageSearchResults(array(array('2')))));
 
-	$storage->setReply('describeMap', array('TestTableMap', null),
-				 array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__,
-						__LINE__, "Undefined map: TestTableMap"), null));
+	$storage->setReply('describeMap', array('TestTable', null),
+			   array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__,
+						 __LINE__, "Undefined map: TestTable"), null));
+
+	$storage->setReply('describeEntity', array('TestTable', null),
+			   array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__,
+						 __LINE__, "Unknown entity: TestTable"), null));
 
 	$this->_export->_callBack = array('callback' => array($this, 'progressCallback'),
 				 'progress' => 0, 'total' => 100);
 
 	$warnings = array();
-	$ret = $this->_export->_exportData('testHandle', 'TestTableMap', $warnings);
+	$ret = $this->_export->_exportData('testHandle', 'TestTable', $warnings);
 	if ($ret) {
 	    return $ret;
 	}
@@ -380,8 +384,8 @@ class DatabaseExportTest extends GalleryTestCase {
 	}
 
 	$expectedMsg = $coreModule->translate(
-			array('text' => 'Unable to load Map description for "%s", no data will be '
-						. 'exported.', 'arg1' => 'TestTableMap'));
+		array('text' => 'Unable to load table description for "%s", no data will be '
+				. 'exported.', 'arg1' => 'TestTable'));
 	$this->assert(count($warnings) > 0, 'Warnings were not issued');
 	$this->assertEquals($expectedMsg, $warnings[0], 'The message was not equal');
 

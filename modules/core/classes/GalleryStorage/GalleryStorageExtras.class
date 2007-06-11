@@ -1958,7 +1958,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	}
 
 	if (!isset($entityInfo[$entityName])) {
-	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__,
 					       "Unknown entity type: $entityName"), null);
 	}
 

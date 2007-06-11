@@ -520,23 +520,16 @@ class GalleryDatabaseExport {
 		$this->_callBack['total'] += $dataChunks;
 	    }
 
-	    /* Only treat names that end with Map as maps. */
-	    if (preg_match('/Map$/', $table)) {
-		list ($ret, $fields) = $storage->describeMap($table);
-		if ($ret && $ret->getErrorCode() & ERROR_MISSING_VALUE) {
-		    $warnings[] = $coreModule->translate(
-			array('text' => 'Unable to load Map description for "%s", no data will be '
-						. 'exported.', 'arg1' => $table));
-		    return null;
-		} else if ($ret) {
-		    return $ret;
-		}
-	    } else {
+	    /* Check for Map definition; if not found try Entity */
+	    list ($ret, $fields) = $storage->describeMap($table);
+	    if ($ret && !($ret->getErrorCode() & ERROR_MISSING_VALUE)) {
+		return $ret;
+	    } else if ($ret) {
 		$fields = array('id' => array('type' => STORAGE_TYPE_INTEGER, 'notNull' => 1));
 		list ($ret, $entityFields) = $storage->describeEntity($table);
 		if ($ret && $ret->getErrorCode() & ERROR_MISSING_VALUE) {
 		    $warnings[] = $coreModule->translate(
-			array('text' => 'Unable to load Entity description for "%s", no data will '
+			array('text' => 'Unable to load table description for "%s", no data will '
 						. 'be exported.', 'arg1' => $table));
 		    return null;
 		} else if ($ret) {
