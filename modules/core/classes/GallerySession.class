@@ -845,14 +845,17 @@ class GallerySession {
 		      'modificationTimestamp', 'data'),
 		array('id' => $this->_sessionId));
 	    if ($ret) {
-		/* When upgrading from versions before 1.0.22, there's no DB table yet */
+		/*
+		 * Before upgrading to 1.2.16, describeMap() (used by getMapEntry) doesn't work
+		 * yet.  And before 1.0.22, there was no SessionMap table yet.
+		 */
 		list ($ret2, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 		if ($ret2) {
 		    return $ret;
 		}
 		$instVersions = $module->getInstalledVersions();
-		if (!empty($instVersions['core']) &&
-			version_compare($instVersions['core'], '1.0.22', '<')) {
+		if (!empty($instVersions['core'])
+			&& version_compare($instVersions['core'], '1.2.16', '<')) {
 		    $this->_emptySessionData();
 		    return null;
 		}
