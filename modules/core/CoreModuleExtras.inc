@@ -2289,10 +2289,8 @@ class CoreModuleExtras {
 		    continue;
 		}
 
-		list ($ret, $sql) = $storageExtras->_getModuleSql($moduleId);
-		if ($ret) {
-		    return $ret;
-		}
+		$sql = $storageExtras->getModuleSql($moduleId);
+
 		if (empty($sql['table'])){
 		    continue;
 		}
