@@ -379,6 +379,8 @@ class GalleryImportObject {
 
     /**
      * Constructor
+     * @param GalleryImportObject $parent The parent object. Used to follow the parent chain in
+     *           order to set error messages and to provide status information to the caller.
      */
     function GalleryImportObject($parent=null) {
 	global $gallery;
@@ -452,7 +454,7 @@ class GalleryConfigImport extends GalleryImportObject {
      */
     var $_contents = '';
 
-    function GalleryConfigImport(&$parent, $attributes=null) {
+    function GalleryConfigImport($parent, $attributes=null) {
 	parent::GalleryImportObject($parent);
 	$this->_currentElement = 'CONFIG';
     }
