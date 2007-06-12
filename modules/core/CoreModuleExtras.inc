@@ -2316,13 +2316,17 @@ class CoreModuleExtras {
 		    if ($ret) {
 			return $ret;
 		    }
+		    $gallery->guaranteeTimeLimit(60);
+		    $ret = $statusMonitor->renderStatusMessage($statusText, '', $count / $total);
+		    if ($ret) {
+			return $ret;
+		    }
 		}
 
 		$ret = $statusMonitor->renderStatusMessage($statusText, '', $count++ / $total);
 		if ($ret) {
 		    return $ret;
 		}
-		$gallery->guaranteeTimeLimit(30);
 	    }
 	case '1.2.15':
 	    /*
@@ -2343,15 +2347,16 @@ class CoreModuleExtras {
 		if (!isset($moduleStatus['active']) || empty($moduleStatus['available'])) {
 		    continue;
 		}
-		list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $moduleId, false, true);
+		/* Skip the version check to prevent module deactivation */
+		list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $moduleId, true, true);
 		if ($ret) {
-		    /* On version mismatch, skip the module and hope that it is updated later */
-		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-			continue;
-		    }
 		    return $ret;
 		}
-
+		/* On version mismatch, skip the module and hope that it is updated later */
+		if ($moduleStatus['version'] != $plugin->getVersion()
+			|| !GalleryPluginHelper_simple::isPluginCompatibleWithApis($plugin)) {
+		    continue;
+		}
 		$mapInfo = $plugin->_getMapData();
 		if (isset($mapInfo)) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', $moduleId,
