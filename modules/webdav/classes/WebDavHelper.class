@@ -755,7 +755,8 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	$namespaces = array(WEBDAV_GALLERY_NAMESPACE => 'G');
+	$namespaces = array();
+	$namespaces[WEBDAV_GALLERY_NAMESPACE] = 'G';
 
 	/* Format PROPFIND response */
 	$ret = WebDavHelper::propfindResponseHelper($webDavOptions, $files, $namespaces);

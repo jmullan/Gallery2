@@ -487,9 +487,14 @@ class HTTP_WebDAV_Server
         $options = array();
         $options['path'] = $this->path;
 
-        // get depth from header (default is 'infinity')
+        // RFC2518 8.1: A client may submit a Depth header with a value of "0",
+        // "1", or "infinity" with a PROPFIND on a collection resource with
+        // internal member URIs.  DAV compliant servers MUST support the "0",
+        // "1" and "infinity" behaviors.  By default, the PROPFIND method
+        // without a Depth header MUST act as if a "Depth: infinity" header was
+        // included.
         $options['depth'] = 'infinity';
-        if (!empty($_SERVER['HTTP_DEPTH'])) {
+        if (isset($_SERVER['HTTP_DEPTH'])) {
             $options['depth'] = $_SERVER['HTTP_DEPTH'];
         }
 
@@ -1379,8 +1384,14 @@ class HTTP_WebDAV_Server
      */
     function delete_wrapper()
     {
-        // RFC2518 9.2 last paragraph
-        if (!empty($_SERVER['HTTP_DEPTH'])
+        // RFC2518 9.2: Please note, however, that it is always an error to
+        // submit a value for the Depth header that is not allowed by the
+        // method's definition.  Thus submitting a "Depth: 1" on a COPY, even
+        // if the resource does not have internal members, will result in a 400
+        // (Bad Request).  The method should fail not because the resource
+        // doesn't have internal members, but because of the illegal value in
+        // the header.
+        if (isset($_SERVER['HTTP_DEPTH'])
                 && $_SERVER['HTTP_DEPTH'] != 'infinity') {
             $this->setResponseStatus('400 Bad Request');
             return;
@@ -1420,8 +1431,13 @@ class HTTP_WebDAV_Server
         $options = array();
         $options['path'] = $this->path;
 
+        // RFC2518 8.8.3: The COPY method on a collection without a Depth
+        // header MUST act as if a Depth header with value "infinity" was
+        // included.  A client may submit a Depth header on a COPY on a
+        // collection with a value of "0" or "infinity".  DAV compliant servers
+        // MUST support the "0" and "infinity" Depth header behaviors.
         $options['depth'] = 'infinity';
-        if (!empty($_SERVER['HTTP_DEPTH'])) {
+        if (isset($_SERVER['HTTP_DEPTH'])) {
             $options['depth'] = $_SERVER['HTTP_DEPTH'];
         }
 
@@ -1569,8 +1585,22 @@ class HTTP_WebDAV_Server
             return true;
         }
 
+        // RFC2518 8.10.4: If no Depth header is submitted on a LOCK request
+        // then the request MUST act as if a "Depth: infinity" had been
+        // submitted.
         $options['depth'] = 'infinity';
-        if (!empty($_SERVER['HTTP_DEPTH'])) {
+        if (isset($_SERVER['HTTP_DEPTH'])) {
+
+            // RFC2518 8.10.4: The Depth header may be used with the LOCK
+            // method.  Values other than 0 or infinity MUST NOT be used with
+            // the Depth header on a LOCK method.  All resources that support
+            // the LOCK method MUST support the Depth header.
+            if ($_SERVER['HTTP_DEPTH'] != 0
+                    || $_SERVER['HTTP_DEPTH'] != 'infinity') {
+                $this->setResponseStatus('400 Bad Request');
+                return;
+            }
+
             $options['depth'] = $_SERVER['HTTP_DEPTH'];
         }
 
