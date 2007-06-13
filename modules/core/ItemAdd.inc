@@ -300,7 +300,7 @@ class ItemAddController extends GalleryController {
 
 	    /* Check if we should extract individual files out of an archive */
 	    if (GalleryUtilities::isA($addedItem, 'GalleryDataItem')
-		    && !empty($this->_extractionToolkitMap[$addedItem->getMimeType()])) {
+		    && isset($this->_extractionToolkitMap[$addedItem->getMimeType()])) {
 		list ($ret, $extractedItems) = $this->_extractAndAddFiles(
 		    $addedItem, $this->_extractionToolkitMap[$addedItem->getMimeType()]);
 		if ($ret) {

@@ -514,7 +514,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->assertEquals(array(array(0 => $items[0]->getId(), 1 => $items[1]->getId())),
-			    $addOption->_calls, 'first call');
+			    $_SERVER['ItemAddControllerTest']['optionCalls'], 'first call');
 
 	list ($ret, $error) = $this->_controller->postProcessItems(array(), $status);
 	if ($ret) {
@@ -522,7 +522,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->assertEquals(array(array(0 => $items[0]->getId(), 1 => $items[1]->getId())),
-			    $addOption->_calls, 'second call');
+			    $_SERVER['ItemAddControllerTest']['optionCalls'], 'second call');
     }
 
     function testHandleRequestItemAddWebDavBackwardsCompatibility() {
@@ -647,7 +647,7 @@ class ItemAddControllerTestPluginFail {
 class ItemAddTestOption extends ItemAddOption {
     function ItemAddTestOption($withError=false) {
 	$this->_withError = $withError;
-	$this->_calls = array();
+	$_SERVER['ItemAddControllerTest']['optionCalls'] = array();
     }
 
     function handleRequestAfterAdd($form, $items) {
@@ -662,7 +662,7 @@ class ItemAddTestOption extends ItemAddOption {
 	    $warnings[$i][] = 'a warning';
 	    $itemIds[$i] = $items[$i]->getId();
 	}
-	$this->_calls[] = $itemIds;
+	$_SERVER['ItemAddControllerTest']['optionCalls'][] = $itemIds;
 	return array(null, $errors, $warnings);
     }
 
