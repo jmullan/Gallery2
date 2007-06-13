@@ -2354,7 +2354,7 @@ class CoreModuleExtras {
 		}
 		/* On version mismatch, skip the module and hope that it is updated later */
 		if ($moduleStatus['version'] != $plugin->getVersion()
-			|| !GalleryPluginHelper_simple::isPluginCompatibleWithApis($plugin)) {
+			|| !GalleryCoreApi::isPluginCompatibleWithApis($plugin)) {
 		    continue;
 		}
 		$mapInfo = $plugin->_getMapData();
