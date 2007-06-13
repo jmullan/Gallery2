@@ -1003,8 +1003,9 @@ class Db2Generator extends BaseGenerator {
 		    case 'COLUMN-NAME':
 			/* column-name */
 			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
-			$output .= ' DROP COLUMN DB_COLUMN_PREFIX' . $c['content'];
-			$output .= ";\n\n";
+			$output .= ' DROP COLUMN DB_COLUMN_PREFIX' . $c['content'] . ";\n\n";
+			$output .= "CALL ADMIN_CMD ('REORG TABLE DB_TABLE_PREFIX";
+			$output .= $parent['child'][0]['content'] . "');\n\n";
 			break;
 
 		    case 'KEY':
@@ -1171,12 +1172,23 @@ class Db2Generator extends BaseGenerator {
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' ADD COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp';
 		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false) . ";\n\n";
+		/* Omit the CAST when the target type is CLOB to avoid invalid SQL state. */
+		$targetType = $this->columnDefinition($child[$i]['child'], false);
+		$copyFrom = 'DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'];
+		if (strpos($targetType, 'CLOB') === false) {
+		    $copyFrom = 'CAST(' . $copyFrom . ' AS ' . $targetType . ')';
+		}
 		$output .= 'UPDATE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' SET DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
-		    ' = CAST(DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ' AS ' .
-		    $this->columnDefinition($child[$i]['child'], false) . ");\n\n";
+		    ' = ' . $copyFrom . ";\n\n";
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' DROP COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		/*
+		 * DROP COLUMN puts the table into a state that requires REORG TABLE before
+		 * it can be accessed again.
+		 */
+		$output .= "CALL ADMIN_CMD ('REORG TABLE DB_TABLE_PREFIX" .
+		    $parent['child'][0]['content'] . "');\n\n";
 		/* DB2 can't rename columns */
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' ADD COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'];
@@ -1187,6 +1199,8 @@ class Db2Generator extends BaseGenerator {
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' DROP COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
 		    "Temp;\n\n";
+		$output .= "CALL ADMIN_CMD ('REORG TABLE DB_TABLE_PREFIX" .
+		    $parent['child'][0]['content'] . "');\n\n";
 		if ($this->getNotNullElement($child[$i]['child'])) {
 		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 			' ALTER DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .

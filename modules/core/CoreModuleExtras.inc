@@ -2190,13 +2190,17 @@ class CoreModuleExtras {
 		    if ($ret) {
 			return $ret;
 		    }
+		    $gallery->guaranteeTimeLimit(60);
+		    $ret = $statusMonitor->renderStatusMessage($statusText, '', $count / $total);
+		    if ($ret) {
+			return $ret;
+		    }
 		}
 
 		$ret = $statusMonitor->renderStatusMessage($statusText, '', $count++ / $total);
 		if ($ret) {
 		    return $ret;
 		}
-		$gallery->guaranteeTimeLimit(30);
 	    }
 	    /* Changed the length of the SessionMap data field for mySql & DB2. */
 	    $ret = $storage->configureStore($module->getId(), array('GallerySessionMap:1.0'));
@@ -2224,15 +2228,16 @@ class CoreModuleExtras {
 		if (!isset($moduleStatus['active']) || empty($moduleStatus['available'])) {
 		    continue;
 		}
-		list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $moduleId, false, true);
+		/* Skip the version check to prevent module deactivation */
+		list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $moduleId, true, true);
 		if ($ret) {
-		    /* On version mismatch, skip the module and hope that it is updated later */
-		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-			continue;
-		    }
 		    return $ret;
 		}
-
+		/* On version mismatch, skip the module and hope that it is updated later */
+		if ($moduleStatus['version'] != $plugin->getVersion()
+			|| !GalleryCoreApi::isPluginCompatibleWithApis($plugin)) {
+		    continue;
+		}
 		$mapInfo = $plugin->_getMapData();
 		if (isset($mapInfo)) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', $moduleId,
