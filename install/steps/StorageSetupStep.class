@@ -53,6 +53,7 @@ class StorageSetupStep extends InstallStep {
 		if (substr($dir, -1) != DIRECTORY_SEPARATOR) {
 		    $dir .= DIRECTORY_SEPARATOR;
 		}
+		$originalDir = $dir;
 		/*
 		 * Make the path absolute since relative to the install/ folder isn't the same as
 		 * relative to the main.php entry file. And also check if it exists.
@@ -73,6 +74,11 @@ class StorageSetupStep extends InstallStep {
 			    chmod($dir, 0700);
 			}
 		    }
+		}
+		/* Ensure that it is an absolute filesystem path */
+		$dir = @realpath($dir);
+		if (!empty($dir) && substr($dir, -1) != DIRECTORY_SEPARATOR) {
+		    $dir .= DIRECTORY_SEPARATOR;
 		}
 		/* Check if the (newly created) dir exists, is writeable etc. */
 		if (!is_dir($dir)) {
@@ -110,7 +116,7 @@ class StorageSetupStep extends InstallStep {
 		    }
 		}
 	    }
-	    $templateData['dir'] = $dir;
+	    $templateData['dir'] = isset($originalDir) ? $originalDir : $this->_dir;
 	} else {
 	    $templateData['dir'] = $this->_dir;
 	}
