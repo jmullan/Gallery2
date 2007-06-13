@@ -73,14 +73,14 @@ class PermalinksOptionTest extends ItemEditOptionTestCase {
 		$ret =
 		    PermalinksMapHelper::deleteAlias($name);
 		if ($ret) {
-		    return $ret;
+		    $this->failWithStatus($ret);
 		}
 	    }
 	}
 
 	$ret = parent::tearDown();
 	if ($ret) {
-	   $this->failWithStatus($ret);
+	   return $ret;
 	}
     }
 
