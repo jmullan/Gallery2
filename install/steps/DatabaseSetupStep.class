@@ -189,6 +189,9 @@ class DatabaseSetupStep extends InstallStep {
 
 		    /* Check the status and get the version of the Gallery database */
 		    $dbVersion = $this->_getDbVersion($result);
+
+		    /* Ensure that the user doesn't have to enter the password again */
+		    $templateData['password'] = strlen($this->_config['password']) ? '******' : '';
 		}
 
 		$this->_captureEnd();
