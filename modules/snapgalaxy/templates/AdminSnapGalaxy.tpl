@@ -30,7 +30,7 @@
     {if isset($form.error.snapgalaxyPartnerId.missing)}
     <tr><td colspan="2">
       <div class="giError">
-  	{g->text text="You must enter a snapgalaxy partner id or set it as <b>default</b> if you do not have one."}
+  	{g->text text="You must enter a snapgalaxy partner id or set it as %s if you do not have one." arg1="<b>default</b>"}
       </div>
     </td></tr>
     {/if}
