@@ -264,6 +264,13 @@ gettext("If you created your database with MySQL 3.x and you upgrade to MySQL 4.
 gettext("Database successfully converted to UTF8")
 gettext("No conversion required")
 
+/* classes/DatabaseBackupTask.class */
+gettext("Backup the database")
+gettext("Backup all your Gallery data (item data, users, comments, etc.) to a single file in your storage folder.  The backup does not include the image files.  Before running the backup, your Gallery installation needs to be set into maintenance mode, as this is not done automatically.")
+gettext("Backing up Gallery Database")
+gettext("Exporting...")
+gettext("Database backup completed and the backup file is located at: %s")
+
 /* classes/DeleteSessionsTask.class */
 gettext("Delete user sessions")
 gettext("Delete all persistent user sessions according to your current session expiration settings.")
@@ -434,6 +441,23 @@ gettext("disabled") /* also in: templates/AdminPluginsLegend.tpl */
 gettext("Locale")
 gettext("Browser") /* also in: templates/ErrorPage.tpl */
 gettext("Rows in %s table = %d")
+
+/* classes/GalleryStorage/GalleryDatabaseExport.class */
+gettext("The %s \"%s\" is not installed and will not be backed up.")
+gettext("\"%s\" has no creation sql and will not be backed up.")
+gettext("Unable to load table description for \"%s\", no data will be exported.")
+
+/* classes/GalleryStorage/GalleryDatabaseImport.class */
+gettext("Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating database import.")
+gettext("The exported file is not the correct version. Expecting %s recieved %s.")
+gettext("Unable to close import file: %s")
+gettext("Unable to open import file: %s")
+gettext("Import file doesn't exist: %s")
+gettext("Plugin %s is not currently available.")
+gettext("The available version of plugin \"%s\" may not be compatible with the imported version.")
+gettext("The currently installed core API version required by \"%s\" may not be compatible with the imported version.")
+gettext("The installed module API version required by \"%s\" may not be compatible with the imported version.")
+gettext("The installed theme API version required by \"%s\" is not compatible with the imported version.")
 
 /* classes/helpers/GalleryThemeHelper_medium.class */
 gettext("Successfully saved theme settings") /* also in: templates/AdminThemes.tpl */
