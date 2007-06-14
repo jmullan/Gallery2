@@ -4,7 +4,7 @@
  *}
 <div id="gsContent" class="gcBorder1">
   <div class="gbBlock gcBackground1">
-    <h2> {g->text text="PhotoAccess Fulfillment Error"} </h2>
+    <h2> {g->text text="PhotoWorks Fulfillment Error"} </h2>
   </div>
 
   <div class="gbBlock">

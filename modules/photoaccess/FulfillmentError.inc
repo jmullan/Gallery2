@@ -36,7 +36,7 @@ class FulfillmentErrorView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	$template->title($module->translate('PhotoAccess Fulfillment Error'));
+	$template->title($module->translate('PhotoWorks Fulfillment Error'));
 	return array(null, array('body' => 'modules/photoaccess/templates/FulfillmentError.tpl'));
     }
 }
