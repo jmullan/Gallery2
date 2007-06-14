@@ -106,24 +106,35 @@ class RewriteHelper {
 	    return array($ret, null, null, null, null);
 	}
 
+	list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret) {
+	    return array($ret, null, null, null, null);
+	}
+
 	$regexRules = array();
 	$shortUrls = array();
 	foreach (array_keys($activeRules) as $moduleId) {
+	    $module = null;
 	    if (isset($upgradeModule) && $upgradeModule->getId() == $moduleId) {
 		/* Avoid PLUGIN_VERSION_MISMATCH during upgrade by passing in module */
 		$module = $upgradeModule;
-	    } else {
-		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+	    } else if (isset($modules[$moduleId]) && !empty($modules[$moduleId]['available'])
+		    && isset($modules[$moduleId]['active'])) {
+		/* Ignore version mismatch to ensure that we don't deactivate any modules */
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId, true, true);
 		if ($ret) {
-		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-			/*
-			 * Add CONFIGURATION_REQUIRED code to more gracefully abort upgrade if a
-			 * dependent module for one of our rules also needs upgrading.
-			 */
-			$ret->addErrorCode(ERROR_CONFIGURATION_REQUIRED);
-		    }
 		    return array($ret, null, null, null, null);
 		}
+	    }
+
+	    if (!isset($module) || !GalleryCoreApi::isPluginCompatibleWithApis($module)) {
+		/* Remove rules for modules that are incompatible or unavailable */
+		$ret = RewriteHelper::setHistoryForModule($moduleId, $activeRules[$moduleId]);
+		if ($ret) {
+		    return array($ret, null, null, null, null);
+		}
+		unset($activeRules[$moduleId]);
+		continue;
 	    }
 
 	    $rules = $module->getRewriteRules();
