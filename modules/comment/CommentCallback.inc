@@ -65,7 +65,7 @@ class CommentCallbackView extends GalleryView {
 		return $ret;
 	    }
 
-	    $ret = GalleryCoreApi::deleteEntityById($commentId);
+	    $ret = GalleryCoreApi::deleteEntityById($commentId, 'GalleryComment');
 	    if ($ret) {
 		return $ret;
 	    }
