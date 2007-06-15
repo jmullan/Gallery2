@@ -19,7 +19,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.16\n"
+"Project-Id-Version: Gallery: Core 1.2.17\n"
 "POT-Creation-Date: 2005-01-01 14:00-0600\n"
 "PO-Revision-Date: 2007-03-14 15:47+0100\n"
 "Last-Translator: Wieland E. Kublun <wieland.kublun@gmx.net>, www.kublun.com\n"
@@ -85,7 +85,7 @@ msgid "File"
 msgstr "Archivo: "
 
 msgid "&lt;none&gt;"
-msgstr ""
+msgstr "&lt;ninguno&gt;"
 
 #, fuzzy
 msgid "Link"
@@ -272,10 +272,10 @@ msgid "Upgrading Plugin Translations"
 msgstr "Actualizando permisos"
 
 msgid "Converting Schema Table"
-msgstr ""
+msgstr "Convirtiendo el Esquema de la Tabla"
 
 msgid "Loading Table Descriptions"
-msgstr ""
+msgstr "Cargando las Descripciones de la Tabla"
 
 #, fuzzy
 msgid "Site Admins"
@@ -306,7 +306,7 @@ msgid "Processing items"
 msgstr "Visualizando p&aacute;gina %d de %d"
 
 msgid "Extracting archive"
-msgstr ""
+msgstr "Extrayendo archivo"
 
 #, fuzzy
 msgid "add items"
@@ -655,7 +655,7 @@ msgid "Performance"
 msgstr "Rendimiento"
 
 msgid "Event Logs"
-msgstr ""
+msgstr "Logs de Evento"
 
 msgid "Toolkit Priority"
 msgstr "Prioridad de la herramienta"
@@ -722,6 +722,28 @@ msgstr "Elemento borrado con &eacute;xito"
 
 msgid "No conversion required"
 msgstr "No se requiere conversión"
+
+#, fuzzy
+msgid "Backup the database"
+msgstr "Optimizar base de datos"
+
+msgid ""
+"Backup all your Gallery data (item data, users, comments, etc.) to a single file in your "
+"storage folder.  The backup does not include the image files.  Before running the backup, "
+"your Gallery installation needs to be set into maintenance mode, as this is not done "
+"automatically."
+msgstr ""
+
+msgid "Backing up Gallery Database"
+msgstr ""
+
+#, fuzzy
+msgid "Exporting..."
+msgstr "Procesando..."
+
+#, c-format
+msgid "Database backup completed and the backup file is located at: %s"
+msgstr ""
 
 #, fuzzy
 msgid "Delete user sessions"
@@ -1152,7 +1174,7 @@ msgstr "desconocido"
 
 #, c-format
 msgid "API = Core %s, Module %s, Theme %s, Embed %s"
-msgstr ""
+msgstr "API = Núcleo %s, Módulo %s, Tema %s, Incrustado en %s"
 
 #, fuzzy
 msgid "Gallery version"
@@ -1202,6 +1224,65 @@ msgstr "Agregar desde su navegador web"
 #, c-format
 msgid "Rows in %s table = %d"
 msgstr "Filas en la tabla %s = %d"
+
+#, c-format
+msgid "The %s \"%s\" is not installed and will not be backed up."
+msgstr ""
+
+#, c-format
+msgid "\"%s\" has no creation sql and will not be backed up."
+msgstr ""
+
+#, c-format
+msgid "Unable to load table description for \"%s\", no data will be exported."
+msgstr ""
+
+msgid ""
+"Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
+"database import."
+msgstr ""
+
+#, c-format
+msgid "The exported file is not the correct version. Expecting %s recieved %s."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Unable to close import file: %s"
+msgstr "No es posible eliminar el directorio %s"
+
+#, fuzzy, c-format
+msgid "Unable to open import file: %s"
+msgstr "No es posible eliminar el directorio %s"
+
+#, c-format
+msgid "Import file doesn't exist: %s"
+msgstr ""
+
+#, c-format
+msgid "Plugin %s is not currently available."
+msgstr ""
+
+#, c-format
+msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
+msgstr ""
+
+#, c-format
+msgid ""
+"The currently installed core API version required by \"%s\" may not be compatible with the "
+"imported version."
+msgstr ""
+
+#, c-format
+msgid ""
+"The installed module API version required by \"%s\" may not be compatible with the imported "
+"version."
+msgstr ""
+
+#, c-format
+msgid ""
+"The installed theme API version required by \"%s\" is not compatible with the imported "
+"version."
+msgstr ""
 
 #, fuzzy
 msgid "Successfully saved theme settings"
@@ -1772,7 +1853,7 @@ msgid "Recent Events"
 msgstr "Reiniciar contadores de visitas"
 
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #, fuzzy
 msgid "Location"
@@ -1882,7 +1963,7 @@ msgid "System Maintenance"
 msgstr "Mantenimiento del Sistema"
 
 msgid "Gallery must be in maintenance mode before the task can be run."
-msgstr ""
+msgstr "Gallery debe estar en modo de mantenimiento antes de que la tarea pueda ser ejecutada."
 
 #, fuzzy, c-format
 msgid "Completed %s task successfully."
@@ -1893,17 +1974,17 @@ msgid "The %s task failed to complete successfully."
 msgstr "Miniatura a sido modificada."
 
 msgid "Maintenance Mode has been turned on."
-msgstr ""
+msgstr "El Modo de Mantenimiento ha sido activado."
 
 msgid "Maintenance Mode has been turned off."
-msgstr ""
+msgstr "El Modo de Mantenimiento ha sido desactivado."
 
 #, fuzzy
 msgid "Maintenance Mode"
 msgstr "Mantenimiento"
 
 msgid "Restrict user access to the system while maintenance is being performed."
-msgstr ""
+msgstr "Restringir el acceso de los usuarios al sistema mientras se realiza el mantenimiento."
 
 #, fuzzy
 msgid "Maintenance Mode Url"
@@ -1913,15 +1994,20 @@ msgid ""
 "The Maintenance Mode Url specifies where requests will be redirected when access to the site "
 "has been restricted by the administrator."
 msgstr ""
+"La URL del Modo de Mantenimiento especifica a donde se redireccionaran las peticiones cuando "
+"el acceso al sitio se encuentre restringido por el administrador."
 
 msgid ""
 "If left blank Gallery will display a default page with an administrator login link. This "
 "page will be themed when the code base is up to date, otherwise it will display a plain "
 "unstyled page."
 msgstr ""
+"Si lo dejas en blanco Gallery muestra una página por defecto con un enlace para acceder como "
+"administrador. Esta página tendrá un tema cuando el código base esté actualizado, si no se "
+"mostrara como una página plana sin estilo."
 
 msgid "For example: /maintenance.html"
-msgstr ""
+msgstr "Por ejemplo: /mantenimiento.html"
 
 #, fuzzy
 msgid "Set"
@@ -2047,6 +2133,10 @@ msgid ""
 "your template files%s, you should disable template caching temporarily so that changes take "
 "effect immediately without clearing the template cache."
 msgstr ""
+"Para un rendimiento óptimo, Galery hace una caché de todas las plantillas. Si tu quisieras %"
+"spersonalizar tus archivos de plantillas%s, deberías desactivar temporalmente el cacheo de "
+"las plantillas para que los cambios tengan efecto inmediatamente sin tener que limpiar la "
+"caché de plantillas. "
 
 #, fuzzy
 msgid "Enable template caching"
@@ -2127,7 +2217,7 @@ msgid "This plugin will be uninstalled and its files will be deleted permanently
 msgstr "Este plugin será desinstalado y sus archivos borrados."
 
 msgid "The files of this plugin will be deleted permanently."
-msgstr ""
+msgstr "Los archivos de este plugin serán borrados permanentemente."
 
 msgid "disabled(__COUNT__)"
 msgstr "deshabilitados(__COUNT__)"
@@ -2254,7 +2344,7 @@ msgstr ""
 
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
-msgstr ""
+msgstr "Fallo al descargar los siguientes paquetes para el plugin %s:"
 
 #, fuzzy, c-format
 msgid ""
@@ -2269,6 +2359,9 @@ msgid ""
 "Some plugins could not be automatically upgraded because they are in use.  Please return to "
 "the %sPlugins%s page and click the upgrade link for each of the following plugins:"
 msgstr ""
+"Algunos plugins no pueden ser actualizados automáticamente porque están en uso.  Por favor "
+"vuelve a la página de %sPlugins%s y haz click en el enlace actualizar de cada uno de los "
+"siguientes plugins:"
 
 msgid "The repository index has been successfully updated."
 msgstr "El índice del repositorio ha sido actualizado con éxito."
@@ -2568,6 +2661,8 @@ msgid ""
 "The %s theme is incompatible with your Gallery version or no longer available.  Please "
 "upgrade the %s theme or pick another default theme."
 msgstr ""
+"El tema %s es incompatible con tu versión de Gallery o no está disponible. Por favor "
+"actualiza el tema %s o escoge otro tema por defecto."
 
 #, fuzzy
 msgid "New albums"
@@ -2575,7 +2670,7 @@ msgstr "&aacute;lbum"
 
 #, c-format
 msgid "To activate more themes visit the %sPlugins%s page."
-msgstr ""
+msgstr "Para activar mas temas visita la página de %sPlugins%s."
 
 #, fuzzy
 msgid "Save Defaults"
@@ -2815,7 +2910,7 @@ msgid "System Information"
 msgstr "Agregar confirmaci&oacute;n de elementos"
 
 msgid "Not all of the specified items have been added successfully."
-msgstr ""
+msgstr "No todos los elementos especificados han sido agregados con éxito."
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add "
@@ -3414,6 +3509,8 @@ msgid ""
 "version or no longer available.  Please upgrade the %s theme or use another theme for this "
 "album."
 msgstr ""
+"Este álbum está configurado para usar el tema %s el cual o bien es incompatible con Gallery "
+"o no está disponible.  Por favor actualiza el tema %s o usa otro tema para este álbum."
 
 #, c-format
 msgid ""
@@ -3478,7 +3575,7 @@ msgid "Choose the items you want to move"
 msgstr "Elija los elementos que desea mover"
 
 msgid "OK"
-msgstr ""
+msgstr "Ok"
 
 msgid ""
 "The destination you chose does not accept sub-albums, so all sub-albums have been deselected."

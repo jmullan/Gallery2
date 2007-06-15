@@ -52,6 +52,25 @@ msgstr "Brisanje keša stranica nije moguće"
 msgid "Unable to commit database transaction"
 msgstr "Nije moguće potvrditi transakciju u bazi podataka"
 
+msgid "Database Backup"
+msgstr ""
+
+msgid "Error attempting to enable maintenance mode."
+msgstr ""
+
+#, fuzzy
+msgid "Backing up the Gallery database"
+msgstr "Pokreni proces instalacije Galerije 2"
+
+msgid "Errors occurred during the database backup"
+msgstr ""
+
+msgid "Error attempting to disable maintenance mode."
+msgstr ""
+
+msgid "Unable to determine if automated backup is available."
+msgstr ""
+
 msgid "Finish Upgrade"
 msgstr "Završi nadogradnju"
 
@@ -524,6 +543,81 @@ msgstr ""
 msgid "Try Again"
 msgstr "Pokušaj ponovo"
 
+#, fuzzy
+msgid ""
+"Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
+"If you fail to make a backup and something goes wrong, there is a strong possibility that we "
+"will not be able to help you recover your data!"
+msgstr ""
+"Pre nadogradnje, <b>posebno preporučujemo</b> da napravite rezervnu kopiju vaše baze "
+"podataka! Ako je ne napravite, a nešto pođe naopako, postoji velika verovatnoća da nećemo "
+"moći da vam pomognemo da vratite svoje podatke! Pogledajte sledeće primere:"
+
+msgid "You have three options:"
+msgstr ""
+
+msgid "You have two options:"
+msgstr ""
+
+msgid "Do the automated backup (<b>recommended</b>)."
+msgstr ""
+
+msgid "Do a manual backup (see below)."
+msgstr ""
+
+msgid "MySQL"
+msgstr "MySQL"
+
+msgid "PostgreSQL"
+msgstr "PostgreSQL"
+
+msgid "Oracle"
+msgstr "Oracle"
+
+msgid "IBM DB2"
+msgstr "IBM DB2"
+
+msgid "Microsoft SQL Server"
+msgstr "Microsoft SQL Server"
+
+msgid "Continue without a backup (<b>discouraged</b>)."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"If you choose to perform the automated backup, please be patient.  If you cancel or reload "
+"the page, you may interfere with the backup process."
+msgstr ""
+"Kada započne proces nadogradnje, budite strpljivi. Ako je otkažete ili ponovo učitate "
+"stranu, možete narušiti proces nadogradnje."
+
+msgid "Begin Database Backup"
+msgstr ""
+
+msgid "Skip Database Backup"
+msgstr ""
+
+#, c-format
+msgid "Continue to Step %d&raquo;"
+msgstr "Pređi na %d. korak&raquo;"
+
+msgid "Stack Trace:"
+msgstr "Stanje steka:"
+
+msgid "Gallery Database Backup successful."
+msgstr ""
+
+#, fuzzy
+msgid "We've successfully backed up the data in your Gallery database."
+msgstr "Uspešno smo nadogradili modul sa jezgrom Galerije."
+
+msgid "The following warnings were produced during the backup process:"
+msgstr ""
+
+#, c-format
+msgid "Your backup is contained in the file %s"
+msgstr ""
+
 msgid "Finished!"
 msgstr "Završeno!"
 
@@ -563,10 +657,6 @@ msgstr "Nadogradnja je %d%% završena"
 
 msgid "Redo this step"
 msgstr "Ponovi ovaj korak"
-
-#, c-format
-msgid "Continue to Step %d&raquo;"
-msgstr "Pređi na %d. korak&raquo;"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr "Galerija: <strong>vaše fotografije</strong> na <strong>vašem web sajtu</strong>"
@@ -631,9 +721,6 @@ msgstr ""
 "možete naći informacije koje će možda pomoći u otklanjanju ove greške. Prenesite ih u %"
 "sGalerijine forume%s i pomoći ćemo vam da otkrijete u čemu je problem."
 
-msgid "Stack Trace:"
-msgstr "Stanje steka:"
-
 msgid "Debug Output:"
 msgstr "Izlaz za otklanjanje grešaka:"
 
@@ -682,30 +769,6 @@ msgstr ""
 "Instalirana verzija je novija od one na koju želite da nadogradite. Nije moguće instalirate "
 "stariju verziju preko nove. Molimo vas da zamenite datoteke Galerije 2 trenutno instaliranom "
 "verzijom ili novijom."
-
-msgid ""
-"Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
-"If you fail to make a backup and something goes wrong, there is a strong possibility that we "
-"will not be able to help you recover your data!  Refer to the following example:"
-msgstr ""
-"Pre nadogradnje, <b>posebno preporučujemo</b> da napravite rezervnu kopiju vaše baze "
-"podataka! Ako je ne napravite, a nešto pođe naopako, postoji velika verovatnoća da nećemo "
-"moći da vam pomognemo da vratite svoje podatke! Pogledajte sledeće primere:"
-
-msgid "MySQL"
-msgstr "MySQL"
-
-msgid "PostgreSQL"
-msgstr "PostgreSQL"
-
-msgid "Oracle"
-msgstr "Oracle"
-
-msgid "IBM DB2"
-msgstr "IBM DB2"
-
-msgid "Microsoft SQL Server"
-msgstr "Microsoft SQL Server"
 
 msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
@@ -851,10 +914,6 @@ msgstr "Kreni"
 
 #~ msgid "Upgrade Modules"
 #~ msgstr "Nadogradnja modula"
-
-#, fuzzy
-#~ msgid "the Gallery website"
-#~ msgstr "Pokreni proces instalacije Galerije 2"
 
 #~ msgid "Upgrade Other Modules"
 #~ msgstr "Nadogradnja drugih modula"
