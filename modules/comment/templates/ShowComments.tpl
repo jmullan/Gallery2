@@ -2,6 +2,8 @@
  * $Revision$
  * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
+{include file="gallery:modules/comment/templates/DeleteComment.js.tpl"}
+
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="View Comments"} </h2>
 </div>
@@ -23,10 +25,11 @@
 {else}
 <div class="gbBlock">
 {foreach from=$ShowComments.comments item=comment}
-  <div class="one-comment gcBorder2">
+  <div id="comment-{$comment.id}" class="one-comment gcBorder2">
   {include file="gallery:modules/comment/templates/Comment.tpl"
 	   comment=$comment item=$ShowComments.item can=$ShowComments.can
-	   user=$ShowComments.commenters[$comment.commenterId]}
+	   user=$ShowComments.commenters[$comment.commenterId]
+           ajaxDeleteCallback="confirmDeleteComment" truncate=1024}
   </div>
 {/foreach}
 </div>

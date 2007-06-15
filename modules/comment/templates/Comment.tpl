@@ -18,8 +18,7 @@
 
 {if $can.delete}
 <span class="delete">
-  <a href="{g->url arg1="view=comment.DeleteComment" arg2="itemId=`$item.id`"
-		   arg3="commentId=`$comment.id`" arg4="return=true"}">
+  <a{if !empty($ajaxDeleteCallback)} onclick="{$ajaxDeleteCallback}({$comment.id}); return false;"{/if} href="{g->url arg1="view=comment.DeleteComment" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="return=true"}">
     {g->text text="delete"}</a>
 </span>
 {/if}
@@ -35,13 +34,12 @@
 	       document.getElementById('comment-full-{$comment.id}').style.display='block';
 	       document.getElementById('comment-more-toggle-{$comment.id}').style.display='none';
 	       document.getElementById('comment-less-toggle-{$comment.id}').style.display='inline';"
-      >{g->text text="show full"}</a>
-  <a id="comment-less-toggle-{$comment.id}"
+      href="">{g->text text="show full"}</a><a id="comment-less-toggle-{$comment.id}"
       onclick="document.getElementById('comment-truncated-{$comment.id}').style.display='block';
 	       document.getElementById('comment-full-{$comment.id}').style.display='none';
 	       document.getElementById('comment-more-toggle-{$comment.id}').style.display='inline';
 	       document.getElementById('comment-less-toggle-{$comment.id}').style.display='none';"
-      style="display: none">{g->text text="show summary"}</a>
+      href="" style="display: none">{g->text text="show summary"}</a>
 
   <p id="comment-truncated-{$comment.id}" class="comment">
     {$truncated}

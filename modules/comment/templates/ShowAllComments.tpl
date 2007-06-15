@@ -2,6 +2,8 @@
  * $Revision$
  * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
+{include file="gallery:modules/comment/templates/DeleteComment.js.tpl"}
+
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="Latest Comments"} </h2>
 </div>
@@ -27,7 +29,7 @@
 {/if}
 <table>
 {foreach from=$ShowAllComments.comments item=comment}
-<tr><td style="text-align: center; padding: 0 4px">
+<tr id="comment-{$comment.id}"><td style="text-align: center; padding: 0 4px">
   {assign var="item" value=$ShowAllComments.itemData[$comment.parentId]}
   <a id="CommentThumb-{$item.id}" href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
     {if isset($item.thumb)}
@@ -52,7 +54,8 @@
   <div class="one-comment gcBorder2">
   {include file="gallery:modules/comment/templates/Comment.tpl"
 	   comment=$comment can=$ShowAllComments.can[$comment.id]
-	   item=$item user=$ShowAllComments.commenters[$comment.commenterId]}
+	   item=$item user=$ShowAllComments.commenters[$comment.commenterId]
+           ajaxDeleteCallback="confirmDeleteComment" truncate=1024}
   </div>
 </td></tr>
 {/foreach}

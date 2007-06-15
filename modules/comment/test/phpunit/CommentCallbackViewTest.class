@@ -1,0 +1,122 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2007 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/comment/CommentCallback.inc');
+GalleryCoreApi::requireOnce('modules/comment/classes/GalleryComment.class');
+
+/**
+ * Test CommentCallback functionality
+ *
+ * @package Comment
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$
+ */
+class CommentCallbackViewTest extends GalleryTestCase {
+
+    function CommentCallbackViewTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+
+	$ret = parent::setUp();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $this->_item) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($this->_item);
+
+	$this->_comment = new GalleryComment();
+	$ret = $this->_comment->create($this->_item->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$ret = $this->_comment->save();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->_view = new CommentCallbackView();
+    }
+
+    function testDeleteComment() {
+	GalleryUtilities::putRequestVariable('command', 'delete');
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment->getId());
+
+	$ret = $this->_view->renderImmediate(array(), array());
+	if ($ret) {
+	    return $ret;
+	}
+
+	return $this->_verifyMissing($this->_comment->getId());
+    }
+
+    function testDeleteNonComment() {
+	GalleryUtilities::putRequestVariable('command', 'delete');
+	GalleryUtilities::putRequestVariable('commentId', $this->_item->getId());
+
+	$ret = $this->_view->renderImmediate(array(), array());
+	$this->assert($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT);
+
+	return $this->_verifyEntity($this->_comment);
+    }
+
+    function testDeleteCommentMissingCommentId() {
+	GalleryUtilities::putRequestVariable('command', 'delete');
+
+	$ret = $this->_view->renderImmediate(array(), array());
+	if ($ret) {
+	    return $ret;
+	}
+
+	return $this->_verifyEntity($this->_comment);
+    }
+
+    function testDeleteCommentNoPermissions() {
+	GalleryUtilities::putRequestVariable('command', 'delete');
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment->getId());
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = $this->_view->renderImmediate(array(), array());
+	$this->assert($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED);
+
+	return $this->_verifyEntity($this->_comment);
+    }
+
+    function testNoCommand() {
+	$ret = $this->_view->renderImmediate(array(), array());
+	if ($ret) {
+	    return $ret;
+	}
+
+	return $this->_verifyEntity($this->_comment);
+    }
+}
+?>
