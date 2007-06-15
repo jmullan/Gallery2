@@ -277,7 +277,7 @@ class DatabaseImportTest extends GalleryTestCase {
 		  . '</definition>'
 		  . '</table>';
 
-	$storage->setReply('commitTransaction', array(), null);
+	$storage->setReply('checkPoint', array(), null);
     	$this->_testObj = new GalleryTableImport($this, array('NAME' => 'GalleryTestTable'));
 	xml_set_object($this->_xmlParser, $this->_testObj);
 
@@ -335,7 +335,7 @@ class DatabaseImportTest extends GalleryTestCase {
 								'notNull' => 1), false), 3);
 	$storage->setReply('execute', array($query, array(24, 3, null)), null);
 
-    	$this->_testObj = new GalleryDataImport($this, 'TestTable');
+    	$this->_testObj = new GalleryDataImport($this, 'TestTable', array());
 
 	$inputXml = '<data>
           <field name="accessListId" type="' . STORAGE_TYPE_INTEGER . '" size="'
