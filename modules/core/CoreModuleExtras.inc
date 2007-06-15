@@ -2336,7 +2336,7 @@ class CoreModuleExtras {
 	case '1.2.17':
  	    /* Store Entities.inc and Maps.inc definitions in the Schema table. */
  	    $gallery->guaranteeTimeLimit(30);
- 	    /* Remove _maps & _entities parameters from GalleryPluginParameterMap. See r16619 */
+ 	    /* Remove _maps & _entities parameters from GalleryPluginParameterMap. See r16620 */
 	    $query = 'DELETE FROM [GalleryPluginParameterMap]
 		       WHERE [::parameterName] in (\'_maps\', \'_entities\')
 		         AND [::pluginType] = \'module\'';
