@@ -279,7 +279,7 @@ class GalleryDatabaseExport {
      * @return string The escaped string.
      * @todo Move this routine to GalleryUtilities as a common function.
      */
-    function _htmlSpecialChars($valueToConvert) {
+    function _encodeHtmlSpecialChars($valueToConvert) {
 	return str_replace(array('&', '"', '<', '>'), array('&amp;', '&quot;', '&lt;', '&gt;'),
 			   $valueToConvert);
     }
@@ -296,8 +296,8 @@ class GalleryDatabaseExport {
 	$file = GALLERY_CONFIG_DIR . '/config.php';
 	$contents = $platform->file_get_contents($file);
 
-	$written = $platform->fwrite($handle,
-			   '  <config>' . $this->_htmlSpecialChars($contents) . '</config>' . "\n");
+	$written = $platform->fwrite($handle, '  <config>'
+				. $this->_encodeHtmlSpecialChars($contents) . '</config>' . "\n");
 	if (!$written) {
 	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					                    'Unable to write to export file');
@@ -325,7 +325,8 @@ class GalleryDatabaseExport {
 	    return null;
 	}
 
-	$line = '  <plugin id="' . $this->_htmlSpecialChars($pluginId) . '" type="module">' . "\n";
+	$line = '  <plugin id="' . $this->_encodeHtmlSpecialChars($pluginId) . '" type="module">'
+			. "\n";
 	$written = $platform->fwrite($handle, $line);
 	if (!$written) {
 	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
@@ -421,20 +422,22 @@ class GalleryDatabaseExport {
 
 	list ($name1, $name2, $nameInSchema) = $storage->_translateTableName($table);
 
-	$query = 'SELECT [::createSql] FROM [GallerySchema] WHERE [::name] = ?';
+	$query = 'SELECT [::createSql], [::pluginId], [::type], [::info]
+		    FROM [GallerySchema]
+		   WHERE [::name] = ?';
 	list ($ret, $results) = $storage->search($query, array($nameInSchema));
 	if ($ret) {
 	    return $ret;
 	}
-	$createSql = $results->nextResult();
-	$createSql = $createSql[0];
+	$row = $results->nextResult();
 
-	if (empty($createSql)) {
+	if (empty($row)) {
 	    $warnings[] = $coreModule->translate(
 		array('text' => '"%s" has no creation sql and will not be backed up.',
 		      'arg1' => $table));
 	    return null;
 	}
+	list ($createSql, $pluginId, $tableType, $tableInfo) = $row;
 
 	$written = $platform->fwrite($handle, '    <table name="' . $table . '">' . "\n");
 	if (!$written) {
@@ -442,9 +445,32 @@ class GalleryDatabaseExport {
 					                    'Unable to write to export file');
 	}
 
-	$line = '      <create-sql>' . '<![CDATA[' . $this->_htmlSpecialChars($createSql) . ']]>'
-			. '      </create-sql>' . "\n";
+	$written =
+	    $platform->fwrite($handle, '      <definition module-id="' . $pluginId .'" >' . "\n");
+	if (!$written) {
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					                    'Unable to write to export file');
+	}
+
+	$line = '        <create-sql>' . '<![CDATA[' . $this->_encodeHtmlSpecialChars($createSql)
+			. ']]></create-sql>' . "\n";
 	$written = $platform->fwrite($handle, $line);
+	if (!$written) {
+	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					                    'Unable to write to export file');
+	}
+
+	if (!empty($tableType) && !empty($tableInfo)) {
+	    $line = '        <table-info type="' . $tableType .'">' . '<![CDATA['
+		    . $this->_encodeHtmlSpecialChars($tableInfo) . ']]>' . '</table-info>' . "\n";
+	    $written = $platform->fwrite($handle, $line);
+	    if (!$written) {
+		return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					                    'Unable to write to export file');
+	    }
+	}
+
+	$written = $platform->fwrite($handle, '      </definition>' . "\n");
 	if (!$written) {
 	    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					                    'Unable to write to export file');
@@ -547,7 +573,7 @@ class GalleryDatabaseExport {
 	    $fieldNames = array();
 	    $fieldDescriptor = array();
 	    foreach ($fields as $fieldName => $definition) {
-		$line = '          <field name="' . $this->_htmlSpecialChars($fieldName)
+		$line = '          <field name="' . $this->_encodeHtmlSpecialChars($fieldName)
 		     . '" type="' . $definition['type'] . '" ';
 		if (!empty($definition['size'])) {
 		     $line .= 'size="' . (int)$definition['size'] . '" ';
@@ -596,7 +622,7 @@ class GalleryDatabaseExport {
 			} else {
 			    $val = $storage->_normalizeValue($val,
 							 $fieldDescriptor[$fieldNames[$key]], true);
-			    $line .= '<f>' . $this->_htmlSpecialChars($val) . '</f>';
+			    $line .= '<f>' . $this->_encodeHtmlSpecialChars($val) . '</f>';
 			}
 		    }
 		    $line .= "</row>\n";

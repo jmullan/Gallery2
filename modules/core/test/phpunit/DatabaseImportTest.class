@@ -264,47 +264,17 @@ class DatabaseImportTest extends GalleryTestCase {
 			   array('g2_GalleryTestTable', null, 'GalleryTestTable'));
 	$storage->setReply('execute', array('DROP TABLE g2_GalleryTestTable', array()), null);
 
-	$buffer = 'CREATE TABLE DB_TABLE_PREFIXTestTable('
-		  . ' DB_COLUMN_PREFIXuserName varchar(32) NOT NULL,'
-		  . ' DB_COLUMN_PREFIXauthString varchar(32) NOT NULL,'
-		  . ' DB_COLUMN_PREFIXrequestExpires int(11) NOT NULL,'
-		  . ' PRIMARY KEY(DB_COLUMN_PREFIXuserName)'
-		  . ') DB_TABLE_TYPE'
-		  . '/*!40100 DEFAULT CHARACTER SET utf8 */;'
-		  . ''
-		  . 'INSERT INTO DB_TABLE_PREFIXSchema ('
-		  . ' DB_COLUMN_PREFIXname,'
-		  . ' DB_COLUMN_PREFIXmajor,'
-		  . ' DB_COLUMN_PREFIXminor'
-		  . ') VALUES(\'TestTable\', 1, 1);';
-	$storage->setExtrasReply('_executeSql', array($buffer), null);
+	$storage->setExtrasReply('_executeSql', array('test create sql'), null);
 
-	$storage->setExtrasReply('_updateSchemaCreateSql',
-				 array('GalleryTestTable', 'CREATE TABLE DB_TABLE_PREFIXTestTable('
-					. ' DB_COLUMN_PREFIXuserName varchar(32) NOT NULL, '
-					. 'DB_COLUMN_PREFIXauthString varchar(32) NOT NULL, '
-					. 'DB_COLUMN_PREFIXrequestExpires int(11) NOT NULL, '
-					. 'PRIMARY KEY(DB_COLUMN_PREFIXuserName)) DB_TABLE_TYPE'
-					. '/*!40100 DEFAULT CHARACTER SET utf8 */;INSERT INTO '
-					. 'DB_TABLE_PREFIXSchema ( DB_COLUMN_PREFIXname, '
-					. 'DB_COLUMN_PREFIXmajor, DB_COLUMN_PREFIXminor) VALUES'
-					. '(\'TestTable\', 1, 1);'), null);
+	$storage->setExtrasReply('_updateSchemaTableInfo',
+				 array('GalleryTestTable', 'test create sql', 'testModule', 'map',
+					'test map definition'), null);
 
 	$inputXml = '<table name="GalleryTestTable">'
-		  . '<create-sql>CREATE TABLE DB_TABLE_PREFIXTestTable('
-		  . ' DB_COLUMN_PREFIXuserName varchar(32) NOT NULL,'
-		  . ' DB_COLUMN_PREFIXauthString varchar(32) NOT NULL,'
-		  . ' DB_COLUMN_PREFIXrequestExpires int(11) NOT NULL,'
-		  . ' PRIMARY KEY(DB_COLUMN_PREFIXuserName)'
-		  . ') DB_TABLE_TYPE'
-		  . '/*!40100 DEFAULT CHARACTER SET utf8 */;'
-		  . ''
-		  . 'INSERT INTO DB_TABLE_PREFIXSchema ('
-		  . ' DB_COLUMN_PREFIXname,'
-		  . ' DB_COLUMN_PREFIXmajor,'
-		  . ' DB_COLUMN_PREFIXminor'
-		  . ') VALUES(\'TestTable\', 1, 1);'
-		  . '</create-sql>'
+		  . '<definition module-id="testModule">'
+		  . '<create-sql><![CDATA[test create sql]]></create-sql>'
+		  . '<table-info type="map"><![CDATA[test map definition]]></table-info>'
+		  . '</definition>'
 		  . '</table>';
 
 	$storage->setReply('commitTransaction', array(), null);

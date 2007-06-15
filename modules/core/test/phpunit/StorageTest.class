@@ -1015,7 +1015,7 @@ class StorageTest extends GalleryTestCase {
 					      'field5' => array('type' => STORAGE_TYPE_INTEGER,
 								    'size' => STORAGE_SIZE_MEDIUM,
 								    'notNull' => true)));
-	$recordSet = new StorageTestRecordSet(array(array('core', serialize($map))));
+	$recordSet = new StorageTestRecordSet(array(array(serialize($map))));
 	$storage->_db->setResults(array($recordSet, $recordSet));
 
 	list ($ret, $externalMapInfo) = GalleryCoreApi::describeMap('GalleryTest2Map');
@@ -1076,7 +1076,7 @@ class StorageTest extends GalleryTestCase {
 				'size' => STORAGE_SIZE_MEDIUM)),
 		       'parent' => null, 'module' => 'core', 'linked' => array()));
 
-	$recordSet = new StorageTestRecordSet(array(array('core', serialize($entityEntry))));
+	$recordSet = new StorageTestRecordSet(array(array(serialize($entityEntry))));
 	$storage->_db->setResults(array($recordSet));
 
 	list ($ret, $entityInfo) = GalleryCoreApi::describeEntity('GalleryEntity');

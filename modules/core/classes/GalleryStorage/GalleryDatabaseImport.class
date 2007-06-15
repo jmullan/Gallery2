@@ -443,6 +443,18 @@ class GalleryImportObject {
 	    $gallery->guaranteeTimeLimit(120);
 	}
     }
+
+    /**
+     * Undo the effects of calling GalleryDatabaseExport::_encodeHtmlspecialchars($value). If the
+     * exported field is contained in a CDATA block, then we need to do the decoding ourselves.
+     * @param $string $valueToConvert String to escape the html special characters.
+     * @return string The decoded string.
+     * @todo Move this routine to GalleryUtilities as a common function.
+     */
+    function _decodeHtmlSpecialChars($valueToConvert) {
+	return str_replace(array('&amp;', '&quot;', '&lt;', '&gt;'), array('&', '"', '<', '>'),
+			   $valueToConvert);
+    }
 }
 
 /**
@@ -454,7 +466,7 @@ class GalleryConfigImport extends GalleryImportObject {
      */
     var $_contents = '';
 
-    function GalleryConfigImport($parent, $attributes=null) {
+    function GalleryConfigImport($parent, $attributes) {
 	parent::GalleryImportObject($parent);
 	$this->_currentElement = 'CONFIG';
     }
@@ -508,7 +520,7 @@ class GalleryPluginImport extends GalleryImportObject {
      */
     var $_id;
 
-    function GalleryPluginImport($parent, $attributes=null) {
+    function GalleryPluginImport($parent, $attributes) {
 	parent::GalleryImportObject($parent);
 	$this->_id = $attributes['ID'];
     }
@@ -565,7 +577,7 @@ class GalleryPluginImport extends GalleryImportObject {
 }
 
 /**
- * GalleryTableImport provides the functionality to import a table definition from an exported file.
+ * GalleryTableImport imports a table definition and data from an exported file.
  */
 class GalleryTableImport extends GalleryImportObject {
     /**
@@ -573,14 +585,86 @@ class GalleryTableImport extends GalleryImportObject {
      */
     var $_name;
 
+    function GalleryTableImport($parent, $attributes) {
+	parent::GalleryImportObject($parent);
+	$this->_name = $attributes['NAME'];
+    }
+
+    /**
+     * XML Callback to process start elements
+     * @access private
+     */
+    function _tagOpen(&$parser, $tag, $attributes) {
+	global $gallery;
+	$this->_currentElement = $tag;
+	/* Start with 2 minutes and we will increase it later. */
+	$gallery->guaranteeTimeLimit(120);
+
+	switch ($this->_currentElement) {
+	case 'DEFINITION':
+	    xml_set_object($parser, new GalleryDefinitionImport($this, $this->_name,
+								    $attributes));
+	    break;
+	case 'DATA':
+	    xml_set_object($parser, new GalleryDataImport($this, $this->_name, $attributes));
+	    break;
+	}
+    }
+
+    /**
+     * XML Callback to process CDATA elements
+     * @access private
+     */
+    function _tagCdata(&$parser, $cdata) {
+    }
+
+    /**
+     * XML Callback to process end elements
+     * @access private
+     */
+    function _tagClose(&$parser, $tag) {
+	$this->_currentElement = '';
+
+	if ($tag == 'TABLE') {
+    	    $this->updateStatus();
+    	    xml_set_object($parser, $this->_parent);
+ 	}
+    }
+}
+
+/**
+ * GalleryTableImport imports a table definition and data from an exported file.
+ */
+class GalleryDefinitionImport extends GalleryImportObject {
+    /**
+     * Variable to hold the table name
+     */
+    var $_name;
+
+    /**
+     * Variable to hold the defining module id
+     */
+    var $_moduleId;
+
     /**
      * Holds the generated insert for this table
      */
     var $_currentSql = '';
 
-    function GalleryTableImport($parent, $attributes=null) {
+    /**
+     * Holds the table description information
+     */
+    var $_tableInfo = null;
+
+    /**
+     * Holds the table type
+     */
+    var $_tableType = null;
+
+    function GalleryDefinitionImport($parent, $tableName, $attributes) {
 	parent::GalleryImportObject($parent);
-	$this->_name = $attributes['NAME'];
+	$this->_name = $tableName;
+	$this->_moduleId = $attributes['MODULE-ID'];
     }
 
     /**
@@ -594,12 +678,13 @@ class GalleryTableImport extends GalleryImportObject {
 	$gallery->guaranteeTimeLimit(120);
 
 	switch ($this->_currentElement) {
-	    case 'CREATE-SQL':
-		$this->_currentSql = '';
-		break;
-	    case 'DATA':
-		xml_set_object($parser, new GalleryDataImport($this, $this->_name, $attributes));
-		break;
+	case 'CREATE-SQL':
+	    $this->_currentSql = '';
+	    break;
+	case 'TABLE-INFO':
+	    $this->_tableInfo = '';
+	    $this->_tableType = $attributes['TYPE'];
+	    break;
 	}
     }
 
@@ -608,8 +693,10 @@ class GalleryTableImport extends GalleryImportObject {
      * @access private
      */
     function _tagCdata(&$parser, $cdata) {
-	 if ($this->_currentElement == 'CREATE-SQL') {
+	if ($this->_currentElement == 'CREATE-SQL') {
 	     $this->_currentSql .= $cdata;
+	} else if ($this->_currentElement == 'TABLE-INFO') {
+	     $this->_tableInfo .= $cdata;
 	}
     }
 
@@ -620,35 +707,34 @@ class GalleryTableImport extends GalleryImportObject {
     function _tagClose(&$parser, $tag) {
 	$this->_currentElement = '';
 
-	switch ($tag) {
-	    case 'CREATE-SQL':
-	    	list ($table, $unused, $nameInSchema) =
-		    $this->_storage->_translateTableName($this->_name);
+	if ($tag == 'DEFINITION') {
+	    list ($table, $unused, $nameInSchema) =
+		$this->_storage->_translateTableName($this->_name);
 
-		$ret = $this->_storage->execute('DROP TABLE ' . $table);
-		/* Don't check the return code. Assume the table doesn't exist and create it. */
+	    $ret = $this->_storage->execute('DROP TABLE ' . $table);
+	    /* Don't check the return code. Assume the table doesn't exist and create it. */
 
-	    	$storageExtras =& $this->_storage->_getExtras();
-		$ret = $storageExtras->_executeSql($this->_currentSql);
-		if ($ret) {
-		    $this->setError($ret);
-		    return null;
-		}
+	    $storageExtras =& $this->_storage->_getExtras();
+	    $ret = $storageExtras->_executeSql($this->_currentSql);
+	    if ($ret) {
+		$this->setError($ret);
+		return null;
+	    }
 
-		$ret = $storageExtras->_updateSchemaCreateSql($nameInSchema, $this->_currentSql);
-		if ($ret) {
-		    $this->setError($ret);
-		    return null;
-		}
-		$ret = $this->_storage->commitTransaction();
-		if ($ret) {
-		    $this->setError($ret);
-		}
-		break;
-	    case 'TABLE':
-	    	$this->updateStatus();
-	    	xml_set_object($parser, $this->_parent);
-		break;
+	    /* Only need to decode if the data is in a CDATA section, which these fields are */
+	    $sql = $this->_decodeHtmlSpecialChars($this->_currentSql);
+	    $info = $this->_decodeHtmlSpecialChars($this->_tableInfo);
+	    $ret = $storageExtras->_updateSchemaTableInfo($nameInSchema, $sql, $this->_moduleId,
+							  $this->_tableType, $info);
+	    if ($ret) {
+		$this->setError($ret);
+		return null;
+	    }
+	    $ret = $this->_storage->checkPoint();
+	    if ($ret) {
+		$this->setError($ret);
+	    }
+    	    xml_set_object($parser, $this->_parent);
  	}
     }
 }
@@ -697,7 +783,7 @@ class GalleryDataImport extends GalleryImportObject {
      */
     var $_currentSql = '';
 
-    function GalleryDataImport($parent, $tableName, $attributes=null) {
+    function GalleryDataImport($parent, $tableName, $attributes) {
 	parent::GalleryImportObject($parent);
 
 	list ($this->_tableName, $fill, $fill) = $this->_storage->_translateTableName($tableName);
@@ -712,36 +798,35 @@ class GalleryDataImport extends GalleryImportObject {
 	$this->_currentElement = $tag;
 
 	switch ($this->_currentElement) {
-	    case 'FIELD':
-		$colName = GalleryUtilities::strToLower($attributes['NAME']);
-		$translatedName = $this->_storage->_translateColumnName($colName);
-		$this->_fields[$translatedName] = array('type' => $attributes['TYPE']);
-		if (!empty($attributes['SIZE'])) {
-		    $this->_fields[$translatedName]['size'] = $attributes['SIZE'];
-		}
-		if (!empty($attributes['NOT-NULL'])) {
-		    $this->_fields[$translatedName]['notNull'] = $attributes['NOT-NULL'];
-		}
-		if (!empty($attributes['NOT-NULL-EMPTY-ALLOWED'])) {
-		    $this->_fields[$translatedName]['notNullEmptyAllowed'] =
+	case 'FIELD':
+	    $colName = GalleryUtilities::strToLower($attributes['NAME']);
+	    $translatedName = $this->_storage->_translateColumnName($colName);
+	    $this->_fields[$translatedName] = array('type' => $attributes['TYPE']);
+	    if (!empty($attributes['SIZE'])) {
+		$this->_fields[$translatedName]['size'] = $attributes['SIZE'];
+	    }
+	    if (!empty($attributes['NOT-NULL'])) {
+		$this->_fields[$translatedName]['notNull'] = $attributes['NOT-NULL'];
+	    }
+	    if (!empty($attributes['NOT-NULL-EMPTY-ALLOWED'])) {
+		$this->_fields[$translatedName]['notNullEmptyAllowed'] =
 		    		$attributes['NOT-NULL-EMPTY-ALLOWED'];
-		}
-		break;
-	    case 'ROW':
-		if (empty($this->_currentSql)) {
-		    $this->_fieldNames = array_keys($this->_fields);
-		    $this->_currentSql = 'INSERT INTO ' . $this->_tableName . ' ('
+	    }
+	    break;
+	case 'ROW':
+	    if (empty($this->_currentSql)) {
+		$this->_fieldNames = array_keys($this->_fields);
+		$this->_currentSql = 'INSERT INTO ' . $this->_tableName . ' ('
 				. implode(', ', $this->_fieldNames) . ') VALUES ('
 				. GalleryUtilities::makeMarkers(count($this->_fieldNames)) . ')';
-		}
-		$this->_rowData = array();
-		$this->_fieldIndex = 0;
-		break;
-	    case 'F':
-		$this->_fieldData = '';
-		$this->_isFieldNull = !empty($attributes['NULL']);
-		break;
-	    default:
+	    }
+	    $this->_rowData = array();
+	    $this->_fieldIndex = 0;
+	    break;
+	case 'F':
+	    $this->_fieldData = '';
+	    $this->_isFieldNull = !empty($attributes['NULL']);
+	    break;
 	}
     }
 
@@ -752,10 +837,8 @@ class GalleryDataImport extends GalleryImportObject {
      * @access private
      */
     function _tagCdata(&$parser, $cdata) {
-	switch ($this->_currentElement) {
-	    case 'F':
-		$this->_fieldData .= $cdata;
-	    default:
+	if ($this->_currentElement == 'F') {
+	    $this->_fieldData .= $cdata;
 	}
     }
 
@@ -767,27 +850,26 @@ class GalleryDataImport extends GalleryImportObject {
 	$this->_currentElement = '';
 
 	switch ($tag) {
-	    case 'F':
-		$memberData = $this->_fields[$this->_fieldNames[$this->_fieldIndex++]];
-		$this->_rowData[] = $this->_isFieldNull ? null
+	case 'F':
+	    $memberData = $this->_fields[$this->_fieldNames[$this->_fieldIndex++]];
+	    $this->_rowData[] = $this->_isFieldNull ? null
 				: $this->_storage->_normalizeValue($this->_fieldData, $memberData);
-		break;
-	    case 'ROW':
-		$ret = $this->_storage->execute($this->_currentSql, $this->_rowData);
-		if ($ret) {
-		    $this->setError($ret);
-		    return null;
-		}
-		$this->_rowCounter++;
-		if ($this->_rowCounter >= $this->_rowChunkSize) {
-		    $this->updateStatus(1, 1);
-		    $this->_rowCounter = 0;
-		}
-		break;
-	    case 'DATA':
-		xml_set_object($parser, $this->_parent);
-		break;
-	    default:
+	    break;
+	case 'ROW':
+	    $ret = $this->_storage->execute($this->_currentSql, $this->_rowData);
+	    if ($ret) {
+		$this->setError($ret);
+		return null;
+	    }
+	    $this->_rowCounter++;
+	    if ($this->_rowCounter >= $this->_rowChunkSize) {
+		$this->updateStatus(1, 1);
+		$this->_rowCounter = 0;
+	    }
+	    break;
+	case 'DATA':
+	    xml_set_object($parser, $this->_parent);
+	    break;
 	}
     }
 }

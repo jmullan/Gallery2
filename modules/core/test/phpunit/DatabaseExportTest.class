@@ -205,11 +205,23 @@ class DatabaseExportTest extends GalleryTestCase {
 								    array(null, null, 'TestTable'));
 
 	$storage->setReply('search',
-	      array('SELECT [::createSql] FROM [GallerySchema] WHERE [::name] = ?',
+	      array('SELECT [::createSql], [::pluginId], [::type], [::info]
+		    FROM [GallerySchema]
+		   WHERE [::name] = ?',
 		    array('TestTable'), array()),
-	      array(null, new UnitTestStorageSearchResults(array(array('Create Sql Statement')))));
+	      array(null, new UnitTestStorageSearchResults(array(
+	      		array('Create Sql Statement', 'testModule', 'map', 'test data')))));
 
-	$expected = '      <create-sql><![CDATA[Create Sql Statement]]>      </create-sql>' . "\n";
+	$expected = '      <definition module-id="testModule" >' . "\n";
+	$platform->setReply('fwrite', array('testHandle', $expected, null), strlen($expected));
+
+	$expected = '        <create-sql><![CDATA[Create Sql Statement]]></create-sql>' . "\n";
+	$platform->setReply('fwrite', array('testHandle', $expected, null), strlen($expected));
+
+	$expected = '        <table-info type="map"><![CDATA[test data]]></table-info>' . "\n";
+	$platform->setReply('fwrite', array('testHandle', $expected, null), strlen($expected));
+
+	$expected = '      </definition>' . "\n";
 	$platform->setReply('fwrite', array('testHandle', $expected, null), strlen($expected));
 
 	$expected = '    </table>' . "\n";
@@ -236,9 +248,11 @@ class DatabaseExportTest extends GalleryTestCase {
 								   array(null, null, 'TestTable2'));
 
 	$storage->setReply('search',
-	      array('SELECT [::createSql] FROM [GallerySchema] WHERE [::name] = ?',
+	      array('SELECT [::createSql], [::pluginId], [::type], [::info]
+		    FROM [GallerySchema]
+		   WHERE [::name] = ?',
 		    array('TestTable2'), array()),
-	      array(null, new UnitTestStorageSearchResults(array(array(null)))));
+	      array(null, new UnitTestStorageSearchResults(array(null))));
 	$warnings = array();
 	$ret = $this->_export->_exportTable('testHandle', 'TestTable2', $warnings);
 	if ($ret) {

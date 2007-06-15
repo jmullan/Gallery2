@@ -1194,7 +1194,7 @@ class GalleryStorage {
 	}
 
 	if (!isset($mapInfo)) {
-	    list ($ret, $mapInfo) = $this->_getEntityOrMapInfo('_maps', $tryAllModules);
+	    list ($ret, $mapInfo) = $this->_getEntityOrMapInfo('map', $tryAllModules);
 	    if ($ret) {
 		return array($ret, null);
 	    }
@@ -1213,8 +1213,7 @@ class GalleryStorage {
 
 	if (!isset($mapInfo[$mapName])) {
 	    return array(GalleryCoreApi::error(ERROR_MISSING_VALUE, __FILE__, __LINE__,
-					       "Undefined map: $mapName"),
-			 null);
+					       "Undefined map: $mapName"), null);
 	}
 
 	return array(null, $mapInfo[$mapName]);
@@ -1222,13 +1221,13 @@ class GalleryStorage {
 
     /**
      * Retrieve the entity or map information from the plugin parameter table
-     * @param string $parameterName which parameter name to search on
+     * @param string $type type of table to retrieve (map | entity)
      * @param boolean $tryAllModules try all modules, not just active ones
      * @return array GalleryStatus a status code,
      *               array member name => member type
      * @access protected
      */
-    function _getEntityOrMapInfo($parameterName, $tryAllModules) {
+    function _getEntityOrMapInfo($type, $tryAllModules) {
 	if (!$tryAllModules) {
 	    /* Avoid core API methods that could entail cyclic dependencies on describe*() */
 	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginList('module');
@@ -1237,24 +1236,28 @@ class GalleryStorage {
 	    }
 	}
 
+	/* @todo Remove the type constraint from selects and have describeXXX use the same map */
 	$typeInfo = array();
-	$query = 'SELECT [::pluginId], [::parameterValue] FROM [GalleryPluginParameterMap]
-		  WHERE [::pluginType] = \'module\' AND [::parameterName] = ?';
+	if (!$tryAllModules) {
+	    $query = 'SELECT [::info] FROM [GalleryPluginMap], [Schema]
+		       WHERE [GalleryPluginMap::pluginId] = [Schema::pluginId]
+			 AND [Schema::type] = ? AND [GalleryPluginMap::active] = ?';
+	    $data = array($type, 1);
+	} else {
+	    $query = 'SELECT [::info] FROM [Schema] WHERE [Schema::type] = ?';
+	    $data = array($type);
+	}
 
-	list ($ret, $results) = $this->search($query, array($parameterName));
+	list ($ret, $results) = $this->search($query, $data);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
+	$tableInfo = array();
 	while ($row = $results->nextResult()) {
-	    $moduleId = $row[0];
-	    if (!$tryAllModules && empty($moduleStatus[$moduleId]['active'])) {
-		continue;
-	    }
-	    $typeInfo = array_merge($typeInfo, unserialize($row[1]));
+	    $tableInfo = array_merge($tableInfo, unserialize($row[0]));
 	}
-
-    	return array(null, $typeInfo);
+    	return array(null, $tableInfo);
     }
 
     /**
@@ -1411,16 +1414,25 @@ class GalleryStorage {
 				'modules/core/classes/GalleryStorage/GalleryDatabaseImport.class');
 	return new GalleryDatabaseImport();
     }
-    
+
     /**
      * Examine the schema table and return the version of all the Gallery tables
-     *
      * @return array object GalleryStatus a status code
      *               array (name => (major, minor))
      */
     function getTableVersions() {
 	$extras =& $this->_getExtras();
 	return $extras->_loadTableVersions();
+    }
+
+    /**
+     * Load the Maps.inc and Entities.inc into the schema table for the specified module
+     * @param string $moduleId
+     * @return object GalleryStatus a status code
+     */
+    function updateTableInfo($moduleId) {
+	$extras =& $this->_getExtras();
+	return $extras->_updateTableInfo($moduleId);
     }
 }
 

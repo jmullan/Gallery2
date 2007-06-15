@@ -14,10 +14,16 @@
 <!ATTLIST sequence
 	name CDATA #REQUIRED
 	start-value CDATA #REQUIRED>
-<!ELEMENT table (create-sql, data*)>
+<!ELEMENT table (definition, data*)>
 <!ATTLIST table
 	name CDATA #REQUIRED>
+<!ELEMENT definition (create-sql, table-info*)>
+<!ATTLIST definition
+	module-id CDATA #REQUIRED>
 <!ELEMENT create-sql (#PCDATA)>
+<!ELEMENT table-info (#PCDATA)>
+<!ATTLIST table-info
+	type (map|entity) #REQUIRED>
 <!ELEMENT data (field*, row*)>
 <!ELEMENT row (f+)>
 <!ELEMENT f (#PCDATA)>

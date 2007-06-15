@@ -260,8 +260,10 @@ class UnitTestStorageExtras extends MockObject {
 	return $this->_makeReply('_executeSql', array($buffer));
     }
 
-    function _updateSchemaCreateSql($tableNameInSchema, $tableSql) {
-	return $this->_makeReply('_updateSchemaCreateSql', array($tableNameInSchema, $tableSql));
+    function _updateSchemaTableInfo($tableNameInSchema, $tableSql, $moduleId, $type=null,
+				    $info=null) {
+	return $this->_makeReply('_updateSchemaTableInfo',
+				array($tableNameInSchema, $tableSql, $moduleId, $type, $info));
     }
 }
 
