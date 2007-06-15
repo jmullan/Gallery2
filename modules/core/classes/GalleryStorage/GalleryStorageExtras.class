@@ -1252,8 +1252,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		return $ret;
 	    }
 
-	    $ret =
-		$this->_updateSchemaTableInfo('Schema', $moduleSql['table']['Schema'], $moduleId);
+	    $ret = $this->_updateSchemaTableInfo(
+		'Schema', $moduleSql['table']['Schema'], $moduleId, null, null, true);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -1317,7 +1317,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 		if ($canStoreSql) {
 		    $ret = $this->_updateSchemaTableInfo($tableNameInSchema, $sql, $moduleId, $type,
-							 $info);
+							 $info, $canStoreTableInfo);
 		    if ($ret) {
 		    	return $ret;
 		    }
@@ -1355,7 +1355,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			     * executing the last one.
 			     */
 			    $ret = $this->_updateSchemaTableInfo($tableNameInSchema,
-				       $moduleSql['table'][$rawTableName], $moduleId, $type, $info);
+				       $moduleSql['table'][$rawTableName], $moduleId, $type, $info,
+				       $canStoreTableInfo);
 			    if ($ret) {
 				return $ret;
 			    }
@@ -1413,17 +1414,22 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * @param string $moduleId
      * @param string $type (optional) An indicator for table type ('map' | 'entity').
      * @param string $info The serialized description of the map or entity.
+     * @param bool $canStoreTableInfo (optional)
      * @return object GalleryStatus
      */
     function _updateSchemaTableInfo($tableNameInSchema, $tableSql, $moduleId, $type=null,
-				    $info=null) {
-	$data = array($tableSql, $moduleId);
-	$query = 'UPDATE [GallerySchema] SET [::createSql] = ?, [::pluginId] = ?';
-	if (isset($type)) {
+				    $info=null, $canStoreTableInfo=false) {
+	$data = array($tableSql);
+	$query = 'UPDATE [GallerySchema] SET [::createSql] = ?';
+	if ($canStoreTableInfo) {
+	    $query .= ', [::pluginId] = ?';
+	    $data[] = $moduleId;
+	}
+	if ($canStoreTableInfo && isset($type)) {
 	    $query .= ', [::type] = ?';
 	    $data[] = $type;
 	}
-	if (isset($info)) {
+	if ($canStoreTableInfo && isset($info)) {
 	    $query .= ', [::info] = ?';
 	    $data[] = $info;
 	}
