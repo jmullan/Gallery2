@@ -1452,8 +1452,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    return $ret;
 	}
 
-	$mapInfo = $this ->_getTableInfo($moduleId, 'map');
-	$entityInfo = $this ->_getTableInfo($moduleId, 'entity');
+	$mapInfo = $this->_getTableInfo($moduleId, 'map');
+	$entityInfo = $this->_getTableInfo($moduleId, 'entity');
 
 	foreach ($sql['table'] as $tableName => $tableSql) {
 	    list ($unused, $unused, $nameInSchema) = $this->_gs->_translateTableName($tableName);
