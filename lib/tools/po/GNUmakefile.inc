@@ -168,19 +168,16 @@ install: check-g2data update
 compendium: messages.po
 	@perl -pi -e 's|^("Content-Type: text/plain; charset)=CHARSET|$$1=UTF-8|' messages.po
 	@for POFILE in `ls $(PO).po | grep -v messages.po`; do \
-	    CORE=`perl -e '$$_="$(TOOLDIR)/../../modules/core/po/'$${POFILE}'"; \
-			   print "-C $$_" if -s'`; \
-	    MATRIX=`perl -e '$$_="$(TOOLDIR)/../../themes/matrix/po/'$${POFILE}'"; \
-			     print "-C $$_" if -s'`; \
-	    if [ -n "$${CORE}" -o -n "$${MATRIX}" ]; then \
-		echo -n "$${POFILE} "; \
-		msgmerge --width=95 -N $${CORE} $${MATRIX} \
-			 --suffix= --update $${POFILE} messages.po; \
-		if [ `svn diff $${POFILE} | grep -c '^+msgstr'` -eq 0 ]; then \
-		    svn revert --quiet $${POFILE}; \
-		fi; \
-	    else \
-		echo "No compendium for $${POFILE}"; \
+	    echo -n "$${POFILE} "; \
+	    COMPENDIUM=; \
+	    for SRC in `ls $(TOOLDIR)/../../*/*/po/$${POFILE} $(TOOLDIR)/../../*/po/$${POFILE}`; \
+	    do \
+		COMPENDIUM="$${COMPENDIUM} -C $${SRC}"; \
+	    done; \
+	    msgmerge --width=95 -N $${COMPENDIUM} \
+		     --suffix= --update $${POFILE} messages.po; \
+	    if [ `svn diff $${POFILE} | wc -l` -lt 16 ]; then \
+		svn revert --quiet $${POFILE}; \
 	    fi; \
 	done;
 

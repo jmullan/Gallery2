@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.3\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-12-20 08:19-0800\n"
+"POT-Creation-Date: 2007-06-14 17:58-0700\n"
 "PO-Revision-Date: 2006-12-20 12:21+0200\n"
 "Last-Translator: Erkka Hakkarainen <erkka.hakkarainen@pp.inet.fi>\n"
 "Language-Team: Finnish <gallery-translations@lists.sourceforge.net>\n"
@@ -39,7 +39,7 @@ msgid "Unknown"
 msgstr "Tuntematon"
 
 msgid "Authenticate"
-msgstr ""
+msgstr "Autentikoida"
 
 msgid "<b>Error:</b> missing password."
 msgstr ""
@@ -54,7 +54,7 @@ msgid "Unable to clear the page cache"
 msgstr ""
 
 msgid "Unable to commit database transaction"
-msgstr ""
+msgstr "Tietokantatapahtumaa ei voitu vahvistaa (commit)"
 
 msgid "Database Backup"
 msgstr ""
@@ -78,13 +78,13 @@ msgid "Finish Upgrade"
 msgstr ""
 
 msgid "System Checks"
-msgstr ""
+msgstr "Järjestelmän tarkistaminen"
 
 msgid "Performing system checks"
-msgstr ""
+msgstr "Suoritetaan järjestelmän tarkistukset"
 
 msgid "PHP version &gt;= 4.3.0 or &gt;= 5.0.4"
-msgstr ""
+msgstr "PHP versio &gt;= 4.3.0 tai &gt;= 5.0.4"
 
 #, c-format
 msgid ""
@@ -92,43 +92,52 @@ msgid ""
 "%s installed. Contact your webserver administrator to request an upgrade, available at the %"
 "sPHP website%s."
 msgstr ""
+"Virhe: Galleria 2 tarvitsee PHP joko version 4.3.0 tai 5.0.4 (tai uudemman). Nykyinen PHP "
+"versio on %s . Ota yhteyttä http-palvelimen ylläpitäjään pyytääksesi versiopäivityksen. "
+"Päivitys on saatavissa %sPHP:n sivuilta%s."
 
 msgid "PHP Version"
-msgstr ""
+msgstr "PHP Versio"
 
 msgid "FILE directive supported"
-msgstr ""
+msgstr "FILE direktiivi on tuettu"
 
 msgid ""
 "Error: your PHP __FILE__ directive is not functioning correctly. Please file a support "
 "request with your webserver administrator or in the Gallery forums."
 msgstr ""
+"Virhe: PHP __FILE__ direktiivi ei toimi oikein. Tee tukipyyntö joko http-palvelimen "
+"ylläpitäjälle tai  Gallerian käyttäjäfoorumiin."
 
 msgid "FILE Directive"
-msgstr ""
+msgstr "FILE Direktiivi"
 
 msgid "Safe mode disabled"
-msgstr ""
+msgstr "Safe mode disabloitu"
 
 msgid ""
 "Error: Your version of PHP is configured with safe mode enabled.  You must disable safe mode "
 "before Gallery will run."
 msgstr ""
+"Virhe: PHP-versiossasi on 'safe mode' enabloituna. Galleria toimii vain, jos se on "
+"disabloituna."
 
 msgid "Safe Mode"
-msgstr ""
+msgstr "Safe Mode"
 
 msgid "Regular expressions"
-msgstr ""
+msgstr "Regular expressions"
 
 #, c-format
 msgid ""
 "Error: Your PHP is configured without support for %sPerl Compatible Regular Expressions%s. "
 "You must enable these functions before Gallery will run."
 msgstr ""
+"Virhe: PHP-versiosi on asennettu ilman %sPerl Compatible Regular Expressions%s -tukea. "
+"Galleria ei toimi ilman näitä funktioita."
 
 msgid "exec() allowed"
-msgstr ""
+msgstr "exec() sallittu"
 
 msgid ""
 "Warning: The exec() function is disabled in your PHP by the <b>disabled_functions</b> "
@@ -136,9 +145,13 @@ msgid ""
 "ImageMagick, NetPBM or Ffmpeg). This can only be set server-wide, so you will need to change "
 "it in the global php.ini."
 msgstr ""
+"Varoitus: PHP-funktio exec() on disabloitu <b>disabled_functions</b> parametrillä php.ini -"
+"tiedostossa. Et voi käyttää moduuleita, jotka käyttävät ulkoisia ohjelmia (esim. "
+"ImageMagick, NetPBM tai Ffmpeg). Asetus koskee koko php-asennusta, joten sinun täytyy "
+"muuttaa se globaalina php.ini:ssä"
 
 msgid "set_time_limit() allowed"
-msgstr ""
+msgstr "set_time_limit() sallittu"
 
 #, c-format
 msgid ""
@@ -147,9 +160,13 @@ msgid ""
 "reliably.  Any operation that takes longer than %d seconds will fail (and in some cases just "
 "return a blank page) possibly leading to data corruption."
 msgstr ""
+"Varoitus: Funktio set_time_limit() on disabloitu <b>disabled_functions</b> parameterillä in "
+"php.ini:ssä. Galleria ei toimi luotettavasti toimii tässä moodissa.Kaikki toiminnot, jotka "
+"kestävät pidempään, kuin %d sekuntia epäonnistuvat (ja joissain tapauksissa palauttavat vain "
+"tyhjän sivun) sekä saattavat korruptoida tallennettuja tietoja."
 
 msgid "Filesystem Operations"
-msgstr ""
+msgstr "Tiedostojärjestelmätoiminnot"
 
 #, c-format
 msgid ""
@@ -157,30 +174,38 @@ msgid ""
 "<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
 "Gallery will run. These functions are missing: %s."
 msgstr ""
+"Virhe: PHP:n tiedostojärjestelmätoiminnot on disabloitu <b>disabled_functions</b> "
+"parameterillä in php.ini:ssä. Toiminnot täytyy sallia, jotta Galleria toimisi. Puuttuvat "
+"funktiot ovat: %s."
 
 msgid "Memory limit"
-msgstr ""
+msgstr "Muistiraja"
 
 msgid "no limit"
-msgstr ""
+msgstr "ei rajaa"
 
 #, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</b> parameter in "
 "php.ini). You should raise this limit to at least <b>%sMB</b> for proper Gallery operation."
 msgstr ""
+"Varoitus: PHP on määritetty rajoittamaan muistinkäyttönsä määrään %sb (<b>memory_limit</b> "
+"parametri php.ini:ssä). Nosta raja ainakin määrään <b>%sMB</b> jotta Galleria toimisi "
+"kunnolla."
 
 msgid "File uploads allowed"
-msgstr ""
+msgstr "Tiedostojen uploadit sallitaan"
 
 msgid ""
 "Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in "
 "php.ini). You will need to enable this option if you want to upload files to your Gallery "
 "with a web browser."
 msgstr ""
+"Varoitus: PHP on määritetty kieltämään tiedostojen uploadit (<b>file_uploads</b> parametri "
+"php.ini:ssä). Toiminto tulee sallia, jos haluat uploadata kuvia Galleriaan Web-selaimella."
 
 msgid "Maximum upload size"
-msgstr ""
+msgstr "Maksimi upload koko"
 
 #, c-format
 msgid ""
@@ -188,9 +213,12 @@ msgid ""
 "(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
 "uploading bigger files."
 msgstr ""
+"Varoitus: PHP on määritetty rajoittamaan uploadattavien tiedostojen kooksi %sb "
+"(<b>upload_max_filesize</b> parametri php.ini:ssä). Nosta kokorajoitusta, jos haluat "
+"uploadata isompia tiedostoja."
 
 msgid "Maximum POST size"
-msgstr ""
+msgstr "Maximi POST -koko"
 
 #, c-format
 msgid ""
@@ -198,9 +226,12 @@ msgid ""
 "(<b>post_max_size</b> parameter in php.ini). You should raise this limit to allow uploading "
 "bigger files."
 msgstr ""
+"Warning: PHP on määritetty rajoittamaan post -tyylisen tiedonsiirron kokoonf %sb "
+"(<b>post_max_size</b> parametri php.ini:ssä). Nosta rajoitusta, jos haluat uploadata isompia "
+"tiedostoja."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Kieliversioiden tuki"
 
 #, c-format
 msgid ""
@@ -208,21 +239,27 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Webselaimesi ei tue lokalisointeja. Jotta tuki eri kieliversioille toimisi, pyydä palvelimen "
+"ylläpitäjää enabloimaan PHP:n %sgettext%s -tuki."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"PHP:stä puuttuu funktio %sbind_textdomain_codeset%s. Galleria saattaa näyttää joidenkin "
+"kielien erikoisemmat merkit väärin."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"PHP:stä puuttuu funktio %sdngettext%s. Gallerian kieliversioiden monikkomuotoiset sanat "
+"eivät toimi."
 
 msgid "Zend compatibility mode"
-msgstr ""
+msgstr "Zend yhteensopivuus"
 
 #, c-format
 msgid ""
@@ -231,18 +268,24 @@ msgid ""
 "you get an error or no response then you must turn off ze1_compatibility_mode before "
 "proceeding."
 msgstr ""
+"Varoitus: PHP on määritetty Zend ze1_compatibility_mode:lla joka saattaa kaataa PHP:n. "
+"Klikkaa %stästä%s testataksesi PHP:n toimivuuden. Jos näet tekstin \"SUCCESS\" PHP toimii. "
+"Jos palautuu virhe, sinun täytyy ottaa ze1_compatibility_mode pois käytöstä jatkaaksesi."
 
 msgid "putenv() allowed"
-msgstr ""
+msgstr "putenv() sallittu"
 
 msgid ""
 "Warning: The putenv() function is disabled in your PHP by the <b>disabled_functions</b> "
 "parameter in php.ini.  Gallery can function with this setting, but on some rare systems "
 "Gallery will be unable to run in other languages than the system language and English."
 msgstr ""
+"Varoitus: PHP:n putenv() funktio on disabloitu <b>disabled_functions</b> parametrillä in php."
+"ini:ssä. Galleria toimii myös tällä asetuksella, mutta joissain harvoissa tapauksissa "
+"Galleria ei saata toimia muilla kieliversioilla kuin englanti."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Output buffering disabloitu"
 
 #, c-format
 msgid ""
@@ -252,12 +295,17 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Varoitus: PHP:n Output buffering on päällä <b>%s</b> parametrillä php.ini:ssä. Galleria "
+"toimii myös näillä asetuksilla (lataaminen on jopa nopeampaa), mutta Galleria ei saata "
+"pystyä jakelemaan suuri tiedostoja (kuten videoita) tai tai Gallerian muistiraja saattaa "
+"tulla vastaan. Jotkut toiminnot, kuten toiminnon edistymistä osoittavat palkit eivät toimi, "
+"jos output buffering on päällä, paitsi jos ini_set() on sallittu."
 
 msgid "Storage Directory Permissions"
 msgstr ""
 
 msgid "Test skipped due to other errors."
-msgstr ""
+msgstr "Testi keskeytettiin muiden virheiden takia."
 
 #, c-format
 msgid ""
@@ -270,29 +318,33 @@ msgid "Inaccessible or missing  files (%d)"
 msgstr ""
 
 msgid "Gallery file integrity"
-msgstr ""
+msgstr "Gallerian tiedostojen turvallisuus"
 
 msgid "Manifest missing or inaccessible."
-msgstr ""
+msgstr "Manifest (tiedosto?) puuttuu tai oikeudet eivät riitä lukemaan sitä."
 
 msgid ""
 "Note: You're running Gallery from SVN, so recently removed files may appear here.  It might "
 "be safe to ignore these."
 msgstr ""
+"Huom! Galleriaa ajetaan SVN:n moodissa, joten lähiaikana poistettuja tiedostoja saattaa "
+"näkyä tässä. On turvallisempaa ohittaa ne."
 
 #, c-format
 msgid "Missing files (%d)"
-msgstr ""
+msgstr "Puuttuvat tiedostot (%d)"
 
 msgid ""
 "Note: You're running Gallery from SVN, so some modified files are to be expected.  You can "
 "probably ignore these, but to be safe you should make sure that you do 'svn update' before "
 "continuing."
 msgstr ""
+"Huom! Galleriaa ajetaan SVN:n moodissa, joten osa tiedostoista on muuttuvia. Voit yleensä "
+"ohittaa ne, mutta varmuuden vuoksi kannattaa suorittaa 'svn update' ennen jatkamista."
 
 #, c-format
 msgid "Modified files (%d)"
-msgstr ""
+msgstr "Muutettuja tiedostoja (%d)"
 
 #, c-format
 msgid ""
@@ -304,7 +356,7 @@ msgstr ""
 
 #, c-format
 msgid "Old files (%d)"
-msgstr ""
+msgstr "Vanhoja tiedostoja (%d)"
 
 #, c-format
 msgid "The storage folder path is not defined in config.php (%s)"
@@ -321,7 +373,7 @@ msgstr ""
 
 #, c-format
 msgid "Unable to load the %s module"
-msgstr ""
+msgstr "Moduulia %s ei voitu ladata"
 
 msgid "Upgrading modules"
 msgstr ""
@@ -346,7 +398,7 @@ msgid "Unable to upgrade the %s theme"
 msgstr ""
 
 msgid "Unable to get the module list"
-msgstr ""
+msgstr "Moduulilistaa ei voitu hakea"
 
 msgid "Unable to get the theme list"
 msgstr ""
@@ -374,7 +426,7 @@ msgid "Unable to deactivate the %s module"
 msgstr ""
 
 msgid "Welcome"
-msgstr ""
+msgstr "Tervetuloa!"
 
 #, c-format
 msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
@@ -399,7 +451,7 @@ msgid ""
 msgstr ""
 
 msgid "Password:"
-msgstr ""
+msgstr "Salasana:"
 
 msgid "You have exceeded the maximum attempts to login by entering a password."
 msgstr ""
@@ -419,13 +471,13 @@ msgid ""
 msgstr ""
 
 msgid "Once you've uploaded the file, click below to continue."
-msgstr ""
+msgstr "Kun login.txt tiedosto on paikoillaan, klikkaa ao. linkkiä jatkaaksesi."
 
 msgid "Authenticate Me"
-msgstr ""
+msgstr "Autentikoi minut"
 
 msgid "Authentication successful!"
-msgstr ""
+msgstr "Autentikointi onnistui"
 
 msgid "Successfully cleaned caches."
 msgstr ""
@@ -451,7 +503,7 @@ msgid ""
 msgstr ""
 
 msgid "Try Again"
-msgstr ""
+msgstr "Yritä uudelleen"
 
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
@@ -502,10 +554,10 @@ msgstr ""
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
-msgstr ""
+msgstr "Jatka vaiheeseen %d&raquo;"
 
 msgid "Stack Trace:"
-msgstr ""
+msgstr "Stack Trace:"
 
 msgid "Gallery Database Backup successful."
 msgstr ""
@@ -521,7 +573,7 @@ msgid "Your backup is contained in the file %s"
 msgstr ""
 
 msgid "Finished!"
-msgstr ""
+msgstr "Valmis!"
 
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
@@ -529,7 +581,7 @@ msgid ""
 msgstr ""
 
 msgid "Go to my Gallery!"
-msgstr ""
+msgstr "Siirry Galleriaan!"
 
 msgid "Upgrader Help"
 msgstr ""
@@ -538,7 +590,7 @@ msgid "Start Over"
 msgstr "Aloita Alusta"
 
 msgid "Warning"
-msgstr ""
+msgstr "Varoitus"
 
 #, c-format
 msgid ""
@@ -554,10 +606,10 @@ msgid "Upgrade %d%% complete"
 msgstr ""
 
 msgid "Redo this step"
-msgstr ""
+msgstr "Toista tämä vaihe"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
-msgstr ""
+msgstr "Galleria: <strong>sinun kuvasi</strong> sinun <strong>www-sivuillasi</strong>"
 
 msgid "Upgrade Steps"
 msgstr ""
@@ -595,6 +647,8 @@ msgid ""
 "If you are using Apache, create a file named .htaccess in the main Gallery directory with "
 "the following content:"
 msgstr ""
+"Jos käytät Apachea http-palvelimena, luo tiedosto .htaccess Gallerian päähakemistoon ja "
+"lisää siihen seuraava sisältö:"
 
 msgid "An error occurred while upgrading Gallery Core Module"
 msgstr ""
@@ -619,20 +673,20 @@ msgid ""
 msgstr ""
 
 msgid "Currently installed"
-msgstr ""
+msgstr "Nykyinen asennus"
 
 #, c-format
 msgid "Core Module version: %s (Gallery %s)"
 msgstr ""
 
 msgid "New version"
-msgstr ""
+msgstr "Uusi versio"
 
 msgid "Config.php upgrade"
 msgstr ""
 
 msgid "Required"
-msgstr ""
+msgstr "Vaadittu"
 
 #, c-format
 msgid "Unable to write to config.php in your %s directory.  Please change its permissions."
@@ -702,7 +756,7 @@ msgid "Current"
 msgstr ""
 
 msgid "New"
-msgstr ""
+msgstr "Uusi"
 
 msgid "Description"
 msgstr "Kuvaus"
@@ -711,7 +765,7 @@ msgid "Incompatible with this version of Gallery"
 msgstr ""
 
 msgid "(un)check all"
-msgstr ""
+msgstr "Valitse kaikki / poista valinnat"
 
 #, c-format
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
@@ -745,7 +799,7 @@ msgid ""
 msgstr ""
 
 msgid "Select Language:"
-msgstr ""
+msgstr "Valitse kieli:"
 
 msgid "Go"
 msgstr "Siirry"
