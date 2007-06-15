@@ -1303,7 +1303,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		    $type = 'entity';
 		    $info = serialize(array($rawTableName => $entityInfo[$rawTableName]));
 		} else {
-		    if (!in_array($nameInSchema, array('Schema', 'Lock'))) {
+		    if (!in_array($tableNameInSchema, array('Schema', 'Lock'))) {
 			return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					    "No map or entity description for: $tableNameInSchema");
 		    }
