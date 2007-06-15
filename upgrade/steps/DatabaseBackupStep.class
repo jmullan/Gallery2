@@ -136,12 +136,12 @@ class DatabaseBackupStep extends UpgradeStep {
 	    $templateData['canDoBackup'] = false;
 	} else {
 	    list ($major, $minor) = $tableVersions['Schema'];
-	    $canDoBackup = version_compare("$major.$minor", '1.1', '>=');
+	    $canDoBackup = version_compare("$major.$minor", '1.2', '>=');
 
 	    if ($canDoBackup) {
-		$query = 'SELECT [::pluginId] FROM [GalleryPluginParameterMap]
-			   WHERE [::pluginType] = \'module\'
-			     AND [::parameterName] in (\'_maps\',  \'_entities\')';
+		/* Verify that the type / info fields are populated */
+		$query = 'SELECT [::name] FROM [GallerySchema]
+			   WHERE [::type] in (\'map\',  \'entity\')';
 		list ($ret, $results) =
 		    $storage->search($query, array(), array('limit' => array('count' => 1)));
 		if ($ret) {
