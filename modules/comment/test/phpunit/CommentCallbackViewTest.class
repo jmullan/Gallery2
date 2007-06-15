@@ -49,11 +49,22 @@ class CommentCallbackViewTest extends GalleryTestCase {
 	}
 	$this->_markForCleanup($this->_item);
 
+	list ($ret, $this->_user) = $this->_createRandomUser();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($this->_user);
+
 	$this->_comment = new GalleryComment();
 	$ret = $this->_comment->create($this->_item->getId());
 	if ($ret) {
 	    return $ret;
 	}
+
+	$this->_comment->setCommenterId($this->_user->getId());
+	$this->_comment->setHost('127.0.0.1');
+	$this->_comment->setDate(time());
+
 	$ret = $this->_comment->save();
 	if ($ret) {
 	    return $ret;
