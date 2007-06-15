@@ -157,20 +157,6 @@ class GalleryModule extends GalleryPlugin {
 		$gallery->debug(sprintf('Upgrade (or install) %s module', $this->getId()));
 	    }
 
-	    /*
-	     * Load the (Entities|Maps).inc file so that the table information is available to
-	     * upgrade method.
-	     */
-	    $ret = $this->_loadTableDescriptors('_maps', $this->_getMapData());
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    $ret = $this->_loadTableDescriptors('_entities', $this->_getEntityData());
-	    if ($ret) {
-		return $ret;
-	    }
-
 	    $ret = $this->upgrade($installedVersion, $statusMonitor);
 	    if ($ret) {
 		if ($gallery->getDebug()) {
@@ -186,10 +172,6 @@ class GalleryModule extends GalleryPlugin {
 					$this->getId()));
 	    }
 
-	    /*
-	     * @todo Adding _maps & _entities keys are not covered in tests because of the use of
-	     * the include.
-	     */
 	    $data = array('_version' => $this->getVersion(),
 			  '_callbacks' => $this->getCallbacks(),
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
@@ -265,110 +247,6 @@ class GalleryModule extends GalleryPlugin {
 	}
 
 	return null;
-    }
-
-    /**
-     * Function to insert the contents of either the Entities.inc or Maps.inc.  On an initial
-     * install we need to insert this prior to the call to upgrade.  On module activation, we do
-     * this to ensure that the map table gets updated.
-     * @param string $parameterName The parameter name to set.
-     * @param string $tableData The serialized content of the Entities.inc or Maps.inc file.
-     * @return object GalleryStatus a status code
-     * @access private
-     */
-    function _loadTableDescriptors($parameterName, $tableData) {
-    	global $gallery;
-    	$storage =& $gallery->getStorage();
-
-	$query = 'SELECT [::parameterValue] FROM [GalleryPluginParameterMap]
-		   WHERE [::pluginType] = ?
-		     AND [::pluginId] = ?
-		     AND [::itemId] = ?
-		     AND [::parameterName] = ?';
-	$data = array('module', $this->getId(), (int)0, $parameterName);
-	list ($ret, $result) = $storage->search($query, $data);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$valueExists = $result->resultCount() > 0;
-	if (isset($tableData)) {
-	    $debugMsg = 'load %s.inc';
-	    if ($valueExists) {
-		$query = 'UPDATE [GalleryPluginParameterMap]
-			     SET [::parameterValue] = ?
-			   WHERE [::pluginType] = ?
-			     AND [::pluginId] = ?
-			     AND [::itemId] = ?
-			     AND [::parameterName] = ?';
-		$data = array($tableData, 'module', $this->getId(), (int)0, $parameterName);
-	    } else {
-		$query = 'INSERT INTO [GalleryPluginParameterMap] (
-				[::pluginType], [::pluginId], [::itemId], [::parameterName],
-				[::parameterValue]) VALUES (?, ?, ?, ?, ?)';
-		$data = array('module', $this->getId(), (int)0, $parameterName, $tableData);
-	    }
-	    $ret = $storage->execute($query, $data);
-	} else {
-	    if ($valueExists) {
-		$debugMsg = 'remove %s information';
-		$query = 'DELETE FROM [GalleryPluginParameterMap]
-			   WHERE [::pluginType] = ? AND [::pluginId] = ? AND [::itemId] = ?
-			     AND [::parameterName] = ?';
-		$data = array('module', $this->getId(), (int)0, $parameterName);
-		$ret = $storage->execute($query, $data);
-	    }
-	}
-
-	if ($ret) {
-	    if ($gallery->getDebug()) {
-		$gallery->debug(sprintf('Error: Failed to load ' . $debugMsg . ' for %s module, '
-				    . 'this is the error stack trace: %s',
-				    ($parameterName == '_maps' ? 'Maps' : 'Entities'),
-				    $this->getId(), $ret->getAsText()));
-	    }
-	    return $ret;
-	}
-
-	return null;
-    }
-
-    /**
-     * Serialize the Maps.inc file for this module.
-     * @return string the $mapInfo array as a string or null
-     * @access private
-     */
-    function _getMapData() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$mapsFile = dirname(dirname(dirname(dirname(__FILE__)))) . '/modules/' . $this->getId()
-		  . '/classes/Maps.inc';
-	$mapInfo = null;
-	if ($platform->file_exists($mapsFile)) {
-	    include($mapsFile);
-	}
-
-	return isset($mapInfo) ? serialize($mapInfo) : null;
-    }
-
-    /**
-     * Serialize the Entities.inc file for this module.
-     * @return string the $entityInfo array as a string or null
-     * @access private
-     */
-    function _getEntityData() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$entitiesFile = dirname(dirname(dirname(dirname(__FILE__)))) . '/modules/' . $this->getId()
-		      . '/classes/Entities.inc';
-	$entityInfo = null;
-	if ($platform->file_exists($entitiesFile)) {
-	    include($entitiesFile);
-	}
-
-	return isset($entityInfo) ? serialize($entityInfo) : null;
     }
 
     /**
@@ -481,6 +359,9 @@ class GalleryModule extends GalleryPlugin {
      * to installOrUpgrade (see the TODO there).
      */
     function activate($postActivationEvent=true) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
 	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
 	    return array(GalleryCoreApi::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
 		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId())), null);
@@ -496,12 +377,7 @@ class GalleryModule extends GalleryPlugin {
 			 null);
 	}
 
-	$ret = $this->_loadTableDescriptors('_maps', $this->_getMapData());
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	$ret = $this->_loadTableDescriptors('_entities', $this->_getEntityData());
+	$ret = $storage->updateTableInfo($this->getId());
 	if ($ret) {
 	    return array($ret, null);
 	}

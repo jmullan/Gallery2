@@ -1250,7 +1250,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 		return $ret;
 	    }
 
-	    $ret = $this->_updateSchemaCreateSql('Schema', $moduleSql['table']['Schema']);
+	    $ret = $this->_updateSchemaTableInfo(
+		'Schema', $moduleSql['table']['Schema'], $moduleId, null, null, true);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -1275,6 +1276,12 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
 	list ($major, $minor) = $tableVersions['Schema'];
 	$canStoreSql = version_compare("$major.$minor", '1.1', '>=');
+	$canStoreTableInfo = version_compare("$major.$minor", '1.2', '>=');
+
+	if ($canStoreTableInfo) {
+	    $mapInfo = $this->_getTableInfo($moduleId, 'map');
+	    $entityInfo = $this->_getTableInfo($moduleId, 'entity');
+	}
 
 	/*
 	 * Now take care of the rest of the tables.  If the table doesn't exist, apply the current
@@ -1285,14 +1292,31 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    $gallery->guaranteeTimeLimit(20);
 	    list ($tableName, $unused, $tableNameInSchema) =
 		$this->_gs->_translateTableName($rawTableName);
-	    if (!in_array(strtolower($tableName), $metatables)) {
+
+	    $type = $info = null;
+	    if ($canStoreTableInfo) {
+		if (isset($mapInfo[$rawTableName])) {
+		    $type = 'map';
+		    $info = serialize(array($rawTableName => $mapInfo[$rawTableName]));
+		} else if (isset($entityInfo[$rawTableName])) {
+		    $type = 'entity';
+		    $info = serialize(array($rawTableName => $entityInfo[$rawTableName]));
+		} else {
+		    if (!in_array($tableNameInSchema, array('Schema', 'Lock'))) {
+			return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+					    "No map or entity description for: $tableNameInSchema");
+		    }
+		}
+	    }
+	    if (!in_array(GalleryUtilities::strToLower($tableName), $metatables)) {
 		$ret = $this->_executeSql($sql);
 		if ($ret) {
 		    return $ret;
 		}
 
 		if ($canStoreSql) {
-		    $ret = $this->_updateSchemaCreateSql($tableNameInSchema, $sql);
+		    $ret = $this->_updateSchemaTableInfo($tableNameInSchema, $sql, $moduleId, $type,
+							 $info, $canStoreTableInfo);
 		    if ($ret) {
 		    	return $ret;
 		    }
@@ -1329,8 +1353,9 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			     * this upgrade involves multiple alters and the upgrade fails before
 			     * executing the last one.
 			     */
-			    $ret = $this->_updateSchemaCreateSql($tableNameInSchema,
-							     $moduleSql['table'][$rawTableName]);
+			    $ret = $this->_updateSchemaTableInfo($tableNameInSchema,
+				       $moduleSql['table'][$rawTableName], $moduleId, $type, $info,
+				       $canStoreTableInfo);
 			    if ($ret) {
 				return $ret;
 			    }
@@ -1344,7 +1369,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 			GalleryDataCache::put($cacheKey, $altered, true);
 
 			/* Reload all table versions, cause one has now changed */
-			list ($ret, $tableVersions) = $this->_loadTableVersions();
+			list ($ret, $tableVersions) = $this->_loadTableVersions(true);
 			if ($ret) {
 			    return $ret;
 			}
@@ -1360,16 +1385,127 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     }
 
     /**
+     * Load the Entities or Maps.inc file.
+     * @param string $moduleId The module for which to retrieve the table information for.
+     * @param string $type String to describe the file to load. ('map' | 'entity')
+     * @return array An array describing either the maps or entities for the module
+     * @access private
+     */
+    function _getTableInfo($moduleId, $type) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$fileBase = $type == 'map' ? 'Maps' : 'Entities';
+	$tableInfoFile = dirname(dirname(dirname(dirname(dirname(__FILE__)))))
+	    . "/modules/$moduleId/classes/$fileBase.inc";
+	$mapInfo = array();
+	$entityInfo = array();
+	if ($platform->file_exists($tableInfoFile)) {
+	    include($tableInfoFile);
+	}
+
+	return $type == 'map' ? $mapInfo : $entityInfo;
+    }
+
+    /**
      * Convenience function to update the Schema table with the creation SQL for a table.
      * @param string $tableNameInSchema The name of the table in the schema.
      * @param string $tableSql The sql that is used to create the table.
+     * @param string $moduleId
+     * @param string $type (optional) An indicator for table type ('map' | 'entity').
+     * @param string $info The serialized description of the map or entity.
+     * @param bool $canStoreTableInfo (optional)
      * @return object GalleryStatus
      */
-    function _updateSchemaCreateSql($tableNameInSchema, $tableSql) {
-	$query = 'UPDATE [GallerySchema] SET [::createSql] = ? WHERE [::name] = ?';
-	$ret = $this->execute($query, array($tableSql, $tableNameInSchema));
+    function _updateSchemaTableInfo($tableNameInSchema, $tableSql, $moduleId, $type=null,
+				    $info=null, $canStoreTableInfo=false) {
+	$data = array($tableSql);
+	$query = 'UPDATE [GallerySchema] SET [::createSql] = ?';
+	if ($canStoreTableInfo) {
+	    $query .= ', [::pluginId] = ?';
+	    $data[] = $moduleId;
+	}
+	if ($canStoreTableInfo && isset($type)) {
+	    $query .= ', [::type] = ?';
+	    $data[] = $type;
+	}
+	if ($canStoreTableInfo && isset($info)) {
+	    $query .= ', [::info] = ?';
+	    $data[] = $info;
+	}
+	$query .= ' WHERE [::name] = ?';
+	$data[] = $tableNameInSchema;
+
+	$ret = $this->execute($query, $data);
 	if ($ret) {
 	    return $ret;
+	}
+	return null;
+    }
+
+    /**
+     * @see GalleryStorage::updateTableInfo
+     */
+    function _updateTableInfo($moduleId) {
+	list ($ret, $sql) = $this->_getModuleSql($moduleId);
+	if ($ret) {
+	    return $ret;
+	}
+
+	if (empty($sql['table'])){
+	    return null;
+	}
+
+	list ($ret, $tableVersions) = $this->_loadTableVersions(false);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$mapInfo = $this ->_getTableInfo($moduleId, 'map');
+	$entityInfo = $this ->_getTableInfo($moduleId, 'entity');
+
+	foreach ($sql['table'] as $tableName => $tableSql) {
+	    list ($unused, $unused, $nameInSchema) = $this->_gs->_translateTableName($tableName);
+
+	    if (!array_key_exists($nameInSchema, $tableVersions)) {
+		continue;
+	    }
+
+	    /*
+	     * Check if there is a pending alter for the table and skip if there is.
+	     * Column will be populated when/if that module is upgraded.
+	     */
+	    list ($major, $minor) = $tableVersions[$nameInSchema];
+	    if (!empty($sql['alter'][$tableName][$major][$minor])) {
+		continue;
+	    }
+
+	    $data = array();
+	    $query = 'UPDATE [Schema] SET ';
+
+	    if (isset($mapInfo[$tableName])) {
+	    	$query .= '[::info] = ?, [::type] = ?,';
+		$data[] = serialize(array($tableName => $mapInfo[$tableName]));
+		$data[] = 'map';
+	    } else if (isset($entityInfo[$tableName])) {
+	    	$query .= '[::info] = ?, [::type] = ?,';
+		$data[] = serialize(array($tableName => $entityInfo[$tableName]));
+		$data[] = 'entity';
+	    } else {
+	    	/* Some tables don't have a map description (i.e. Lock). */
+	    	if (!in_array($nameInSchema, array('Schema', 'Lock'))) {
+		    return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+				    "No map or entity description for: $nameInSchema");
+	    	}
+	    }
+
+	    $query .= '[::pluginId] = ? WHERE [::name] = ?';
+	    $data = array_merge($data, array($moduleId, $nameInSchema));
+
+	    $ret = $this->execute($query, $data);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 	return null;
     }
@@ -1524,7 +1660,14 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      *               array (name => (major, minor))
      * @access private
      */
-    function _loadTableVersions() {
+    function _loadTableVersions($ignoreCache=true) {
+	$cacheKey = 'GalleryStorageExtras::_loadTableVersions()';
+
+	/* If reset requested then ignore the cache and retrieve it again */
+	if (!$ignoreCache && GalleryDataCache::containsKey($cacheKey)) {
+	    return array(null, GalleryDataCache::get($cacheKey));
+	}
+
 	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
 
 	list ($schemaTableName) = $this->_gs->_translateTableName('Schema');
@@ -1545,6 +1688,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	while ($row = $recordSet->FetchRow()) {
 	    $tableVersions[$row[0]] = array($row[1], $row[2]);
 	}
+
+	GalleryDataCache::put($cacheKey, $tableVersions);
 
 	return array(null, $tableVersions);
     }
