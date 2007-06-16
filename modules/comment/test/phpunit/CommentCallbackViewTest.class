@@ -73,11 +73,19 @@ class CommentCallbackViewTest extends GalleryTestCase {
 	$this->_view = new CommentCallbackView();
     }
 
+    function _renderImmediate() {
+	ob_start();
+	$ret = $this->_view->renderImmediate(array(), array());
+	$results = ob_get_contents();
+	ob_end_clean();
+	return array($ret, $results);
+    }
+
     function testDeleteComment() {
 	GalleryUtilities::putRequestVariable('command', 'delete');
 	GalleryUtilities::putRequestVariable('commentId', $this->_comment->getId());
 
-	$ret = $this->_view->renderImmediate(array(), array());
+	list ($ret, $results) = $this->_renderImmediate();
 	if ($ret) {
 	    return $ret;
 	}
@@ -89,16 +97,19 @@ class CommentCallbackViewTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('command', 'delete');
 	GalleryUtilities::putRequestVariable('commentId', $this->_item->getId());
 
-	$ret = $this->_view->renderImmediate(array(), array());
-	$this->assert($ret && $ret->getErrorCode() & ERROR_MISSING_OBJECT);
+	list ($ret, $results) = $this->_renderImmediate();
+	if ($ret) {
+	    return $ret;
+	}
 
+	$this->assertEquals('{"status":"error"}', $results);
 	return $this->_verifyEntity($this->_comment);
     }
 
     function testDeleteCommentMissingCommentId() {
 	GalleryUtilities::putRequestVariable('command', 'delete');
 
-	$ret = $this->_view->renderImmediate(array(), array());
+	list ($ret, $results) = $this->_renderImmediate();
 	if ($ret) {
 	    return $ret;
 	}
@@ -115,14 +126,17 @@ class CommentCallbackViewTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$ret = $this->_view->renderImmediate(array(), array());
-	$this->assert($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED);
+	list ($ret, $results) = $this->_renderImmediate();
+	if ($ret) {
+	    return $ret;
+	}
 
+	$this->assertEquals('{"status":"error"}', $results);
 	return $this->_verifyEntity($this->_comment);
     }
 
     function testNoCommand() {
-	$ret = $this->_view->renderImmediate(array(), array());
+	list ($ret, $results) = $this->_renderImmediate();
 	if ($ret) {
 	    return $ret;
 	}

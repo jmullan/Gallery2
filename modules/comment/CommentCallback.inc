@@ -46,32 +46,51 @@ class CommentCallbackView extends GalleryView {
     function renderImmediate($status, $error) {
 	global $gallery;
 
+	$result = array();
 	list ($command, $commentId) = GalleryUtilities::getRequestVariables('command', 'commentId');
 	switch ($command) {
 	case 'delete':
 	    $commentId = (int)$commentId;
-	    if (empty($commentId)) {
-		break;
-	    }
-
-	    list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId, 'GalleryComment');
+	    $ret = $this->deleteComment($commentId);
 	    if ($ret) {
-		return $ret;
-	    }
-
-	    $ret = GalleryCoreApi::assertHasItemPermission(
-		$comment->getParentId(), 'comment.delete');
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    $ret = GalleryCoreApi::deleteEntityById($commentId, 'GalleryComment');
-	    if ($ret) {
-		return $ret;
+		$result['status'] = 'error';
+		$storage =& $gallery->getStorage();
+		$ret->putInSession();
+	    } else {
+		$result['status'] = 'success';
 	    }
 	}
 
+	GalleryCoreApi::requireOnce('lib/JSON/JSON.php');
+	$json = new Services_JSON();
+	print $json->encode($result);
 	return null;
+    }
+
+    /**
+     * Delete the comment with the given id.
+     * @param $id int the id
+     */
+    function deleteComment($commentId) {
+	if (empty($commentId)) {
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
+	}
+
+	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId, 'GalleryComment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::assertHasItemPermission(
+	    $comment->getParentId(), 'comment.delete');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($commentId, 'GalleryComment');
+	if ($ret) {
+	    return $ret;
+	}
     }
 }
 ?>

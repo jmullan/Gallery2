@@ -9,10 +9,25 @@ var deleteCommentTitle = '{g->text text="Delete this comment?" forJavascript=tru
 var deleteCommentBody = '{g->text text="Are you sure?" forJavascript=true}';
 var deleteCommentYes = '{g->text text="Delete" forJavascript=true}';
 var deleteCommentNo = '{g->text text="Cancel" forJavascript=true}';
+var errorPageUrl = '{g->url arg1="view=core.ErrorPage" htmlEntities=false}';
 
 {literal}
+function handleSuccess(response) {
+  eval("var result = " + response.responseText);
+  if (result['status'] == 'error') {
+      document.location.href = errorPageUrl;
+  }
+}
+
+var handleFailure = function(response) {
+  {* Ignore for now *}
+}
+
 function deleteComment(id) {
-  YAHOO.util.Connect.asyncRequest('GET', deleteUrlPattern.replace('__COMMENT_ID__', id));
+  YAHOO.util.Connect.asyncRequest(
+    'GET',
+    deleteUrlPattern.replace('__COMMENT_ID__', id),
+    { success: handleSuccess, failure: handleFailure, scope: this });
   var anim = new YAHOO.util.Anim(
     'comment-' + id, { opacity: { to: 0.0 }, height: { to: '0' } }, 1,
     YAHOO.util.Easing.bounceOut);
