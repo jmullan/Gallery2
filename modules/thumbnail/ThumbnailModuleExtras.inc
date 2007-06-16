@@ -328,6 +328,7 @@ class ThumbnailModuleExtras {
 	    }
 
 	case '1.0.8':
+	case '1.0.9':
 
 	case 'end of upgrade path':
 	    /*
