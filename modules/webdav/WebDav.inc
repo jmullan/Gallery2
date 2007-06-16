@@ -87,8 +87,8 @@ class WebDavController extends GalleryController {
  	GalleryUtilities::putRequestVariable('originalPath', $path);
 	$pathComponent = basename($path);
 
-	/* Special case to suppress Mac '._' files.  Ignore request but return success. */
-	if (!strncmp($pathComponent, '._', 2)) {
+	/* Special case to suppress Mac '._' and '.DS_Store files.  Ignore but return success. */
+	if (!strncmp($pathComponent, '._', 2) || $pathComponent == '.DS_Store') {
 	    WebDavServer::setResponseStatus('200 OK');
 	    $handle = WebDavServer::openRequestBody();
 	    while (!feof($handle)) {

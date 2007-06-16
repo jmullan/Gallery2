@@ -1047,7 +1047,21 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('', $output);
     }
 
-    function testMacDotUnderscore() {
+    function testIgnoreMacDotUnderscoreFiles() {
+	$ret = $this->_testIgnoreFile('._testItem-' . rand());
+	if ($ret) {
+	    return $ret;
+	}
+    }
+
+    function testIgnoreMacDotDsStoreFiles() {
+	$ret = $this->_testIgnoreFile('.DS_Store');
+	if ($ret) {
+	    return $ret;
+	}
+    }
+
+    function _testIgnoreFile($pathComponent) {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
@@ -1056,7 +1070,6 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$pathComponent = '._testItem-' . rand();
 	$path .= $pathComponent;
 	GalleryUtilities::putRequestVariable('path', $path);
 
@@ -1101,41 +1114,6 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals(array('status' => 'HTTP/1.0 200 OK'), $this->_headers);
 
 	$this->assertEquals('', $output);
-    }
-
-    function testMacDotDsStore() {
-	/* Use valid inputs */
-	$_SERVER['REQUEST_METHOD'] = 'PUT';
-
-	list ($ret, $path) = $this->_album->fetchLogicalPath();
-	if ($ret) {
-	    return $ret;
-	}
-
-	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
-	$fileSize = $this->_platform->filesize($filePath);
-
-	$pathComponent = '.DS_Store';
-	$path .= $pathComponent;
-	GalleryUtilities::putRequestVariable('path', $path);
-
-	$_SERVER['CONTENT_LENGTH'] = $fileSize;
-	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
-	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
-
-	/* Perform the request and verify that we succeeded */
-	ob_start();
-	list ($ret, $g2Data) = _GalleryMain();
-	if ($ret) {
-	    _GalleryMain_errorHandler($ret, $g2Data);
-	}
-	$output = ob_get_contents();
-	ob_end_clean();
-	if ($ret && !($ret->getErrorCode() & ERROR_BAD_PATH)) {
-	    return $ret;
-	}
-
-	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
     }
 
     function testMkcolIllegalPathComponent() {
