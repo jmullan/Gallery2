@@ -1314,7 +1314,10 @@ class HTTP_WebDAV_Server
         } else if (is_resource($status)
                 && get_resource_type($status) == 'stream') {
             $stream = $status;
-            $status = isset($options['new']) && $options['new'] === false ? '204 No Content' : '201 Created';
+            $status = '201 Created';
+            if (isset($options['new']) && $options['new'] === false) {
+                $status = '204 No Content';
+            }
 
             if (!empty($options['ranges'])) {
 
@@ -1596,7 +1599,7 @@ class HTTP_WebDAV_Server
             // the Depth header on a LOCK method.  All resources that support
             // the LOCK method MUST support the Depth header.
             if ($_SERVER['HTTP_DEPTH'] != 0
-                    || $_SERVER['HTTP_DEPTH'] != 'infinity') {
+                    && $_SERVER['HTTP_DEPTH'] != 'infinity') {
                 $this->setResponseStatus('400 Bad Request');
                 return;
             }
