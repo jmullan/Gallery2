@@ -1245,7 +1245,7 @@ class MSSqlGenerator extends BaseGenerator {
     function columnDefinition($child, $includeNotNull=true, $includeDefault=true) {
 	$output = parent::columnDefinition($child, $includeNotNull, $includeDefault);
 
-	if (!$this->getNotNullElement($child)) {
+	if ($includeNotNull && !$this->getNotNullElement($child)) {
 	      $output .= ' NULL';
 	}
 
@@ -1325,33 +1325,8 @@ class MSSqlGenerator extends BaseGenerator {
 		    /* column-name */
 		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
 		    $output .= ' ADD DB_COLUMN_PREFIX' . $c['child'][0]['content'];
-		    $output .= ' ' . $this->columnDefinition($c['child'], false, false);
+		    $output .= ' ' . $this->columnDefinition($c['child']);
 		    $output .= ";\n\n";
-
-		    if ($this->getNotNullElement($c['child'])) {
-			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
-			    ' ALTER COLUMN DB_COLUMN_PREFIX' . $c['child'][0]['content'];// .
-
-			    $key = $c['child'][1]['content'] . '-' .
-			      (!empty($c['child'][2]['content']) ? $c['child'][2]['content'] : '');
-			    if (isset($this->_columnDefinitionMap[$key])) {
-				$output .= ' ' . $this->_columnDefinitionMap[$key];
-			    } else {
-				$output .= ' ' . "2. UNIMPLEMLENTED: $key";
-			    }
-
-			    $output .= " NOT NULL;\n\n";
-		    }
-
-		    $defaultValue = $this->getDefaultElement($c['child']);
-		    if (isset($defaultValue)) {
-			$crc = $this->getIndexCrc(array($c['child'][0]));
-			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
-			$output .= ' ADD CONSTRAINT ';
-			$output .= 'DB_COLUMN_PREFIX' . $c['child'][0]['content'] . '_' . $crc;
-			$output .= " DEFAULT '$defaultValue' FOR ";
-			$output .= 'DB_COLUMN_PREFIX' . $c['child'][0]['content'] . ";\n\n";
-		    }
 		    break;
 
 		case 'KEY':
@@ -1463,6 +1438,7 @@ class MSSqlGenerator extends BaseGenerator {
 	case 'ALTER':
 	    /* column+ */
 	    for ($i = 0; $i < count($child); $i++) {
+		/* MSSQL can't add defaults when altering columns. Use a workaround. */
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
 		    ' ADD DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp';
 		$output .=
@@ -1472,14 +1448,21 @@ class MSSqlGenerator extends BaseGenerator {
 		    ' = CAST(DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ' AS ' .
 		    $this->columnDefinition($child[$i]['child'], false) . ");\n\n";
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
-		    ' DROP DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		    ' DROP COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		/* MSSQL can't rename columns */
 		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
-		    ' RENAME DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . 'Temp' .
-		    ' to DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . ";\n\n";
+		    ' ADD DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'];
+		$output .= ' ' . $this->columnDefinition($child[$i]['child'], false) . ";\n\n";
+		$output .= 'UPDATE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' SET DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
+		    ' = DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] . "Temp;\n\n";
+		$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+		    ' DROP COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
+		    "Temp;\n\n";
 		if ($this->getNotNullElement($child[$i]['child'])) {
 		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
-			' ALTER DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
-			" SET NOT NULL;\n\n";
+			' ALTER COLUMN DB_COLUMN_PREFIX' . $child[$i]['child'][0]['content'] .
+			' ' . $this->columnDefinition($child[$i]['child'], true, false) . ";\n\n";
 		}
 	    }
 	    break;
