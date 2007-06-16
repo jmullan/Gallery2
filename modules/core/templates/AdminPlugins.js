@@ -147,7 +147,7 @@ function performPluginAction(pluginType, pluginId, url) {
     }
 
     var handleFailure = function(response) {
-	// Ignore for now
+	{* Ignore for now *}
     }
 
     var callback = {
