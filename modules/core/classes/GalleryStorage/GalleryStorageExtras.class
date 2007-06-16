@@ -1279,6 +1279,16 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	$canStoreSql = version_compare("$major.$minor", '1.1', '>=');
 	$canStoreTableInfo = version_compare("$major.$minor", '1.2', '>=');
 
+	if (!$canStoreTableInfo && $moduleId == 'core' && !in_array('Schema:1.1', $upgradeInfo)) {
+	    /* Ensure that the table info can be stored after the first configureStore() call */
+	    if (!in_array('Schema:1.0', $upgradeInfo)) {
+		$upgradeInfo[] = 'Schema:1.0';
+	    }
+	    $upgradeInfo[] = 'Schema:1.1';
+
+	    return $this->configureStore($moduleId, $upgradeInfo);
+	}	    
+
 	if ($canStoreTableInfo) {
 	    $mapInfo = $this->_getTableInfo($moduleId, 'map');
 	    $entityInfo = $this->_getTableInfo($moduleId, 'entity');

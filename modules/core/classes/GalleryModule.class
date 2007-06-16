@@ -160,6 +160,11 @@ class GalleryModule extends GalleryPlugin {
 		return $ret;
 	    }
 
+	    $ret = $storage->updateTableInfo($this->getId());
+	    if ($ret) {
+		return $ret;
+	    }
+
 	    if ($gallery->getDebug()) {
 		$gallery->debug(sprintf('Upgrade (or install) %s module', $this->getId()));
 	    }
