@@ -3266,8 +3266,10 @@ function SessionTest_error_handler($errno, $errstr, $errfile, $errline) {
 		' commands ignored until end of transaction block}';
 	    $expected3 = '{db2_exec\(\).*: Statement Execute Failed}';
 	    $expected4 = '{ociexecute\(\).*: ORA-00001: unique constraint.*violated}';
+	    $expected5 = '{Microsoft.*Cannot insert duplicate key}';
 	    if (preg_match($expected1, $errstr) || preg_match($expected2, $errstr)
-		    || preg_match($expected3, $errstr) || preg_match($expected4, $errstr)) {
+		    || preg_match($expected3, $errstr) || preg_match($expected4, $errstr)
+		    || preg_match($expected5, $errstr)) {
 		return;
 	    }
 	}
