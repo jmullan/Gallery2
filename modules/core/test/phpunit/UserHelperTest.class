@@ -226,6 +226,7 @@ class UserHelperTest extends GalleryTestCase {
 	$gallery->_storage = null;
 	$this->_storage =& $gallery->getStorage();
 	$gallery->_storage =& $this->_storage;
+	$this->_phpVm->_time = time();
 
 	/* Create a test user. */
 	list ($ret, $testUser) = $this->_createRandomUser();
@@ -237,7 +238,7 @@ class UserHelperTest extends GalleryTestCase {
 	$testUserId = $testUser->getId();
 
 	/* Check the default language */
-	list ($ret, $defaultLanguageCode) = 
+	list ($ret, $defaultLanguageCode) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
         if ($ret) {
 	    return $ret;
@@ -253,7 +254,7 @@ class UserHelperTest extends GalleryTestCase {
 	$this->assertEquals($defaultLanguageCode, $languageCode, 'should be same as default');
 
 	/*
-	 * Test in case user has a preferred language. 
+	 * Test in case user has a preferred language.
 	 * Invalid language code used, thus it won't be the same as the default for sure.
 	 */
 	$preSetLanguageCode = 'mo_CKUP';
