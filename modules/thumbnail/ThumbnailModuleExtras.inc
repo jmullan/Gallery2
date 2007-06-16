@@ -329,6 +329,7 @@ class ThumbnailModuleExtras {
 
 	case '1.0.8':
 	case '1.0.9':
+	case '1.0.9.1':
 	    /* .mo file migration */
 	case '1.0.10':
 
