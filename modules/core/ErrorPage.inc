@@ -165,6 +165,27 @@ class ErrorPageView extends GalleryView {
 	}
 
 	if (!$failsafe) {
+	    $session =& $gallery->getSession();
+	    if (!isset($session)) {
+		$gallery->initEmptySession();
+	    }
+	}
+
+    	if (!$failsafe) {
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    if (!isset($urlGenerator)) {
+		GalleryCoreApi::requireOnce('modules/core/classes/GalleryUrlGenerator.class');
+		$urlGenerator = new GalleryUrlGenerator();
+		$ret = $urlGenerator->init();
+		if ($ret) {
+		    $failsafe = true;
+		} else {
+		    $gallery->setUrlGenerator($urlGenerator);
+		}
+	    }
+	}
+
+	if (!$failsafe) {
 	    list ($ret, $themeId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	    if ($ret) {
