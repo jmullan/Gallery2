@@ -40,6 +40,7 @@ require_once(dirname(__FILE__) . '/../../embed.php');
 
 $templateData = array();
 $templateData['bodyFile'] = 'ImportRequest.html';
+$renderFullPage = true;
 
 $ret = GalleryEmbed::init(array('fullInit' => false));
 if ($ret) {
@@ -48,7 +49,6 @@ if ($ret) {
     $platform =& $gallery->getPlatform();
     $storage =& $gallery->getStorage();
 
-    $renderFullPage = true;
     if (isset($_REQUEST['importDatabase'])) {
 	$importFile = $_REQUEST['importFile'];
 	/* Sanitize the input */
@@ -107,9 +107,11 @@ if ($ret) {
     }
 }
 
-$ret = GalleryEmbed::done();
-if ($ret) {
-    $templateData['errors'][] = $ret->getAsHtml();
+if (!$ret) {
+    $ret = GalleryEmbed::done();
+    if ($ret) {
+	$templateData['errors'][] = $ret->getAsHtml();
+    }
 }
 
 if ($renderFullPage) {
