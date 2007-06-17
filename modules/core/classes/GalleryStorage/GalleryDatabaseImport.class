@@ -725,7 +725,7 @@ class GalleryDefinitionImport extends GalleryImportObject {
 	    $sql = $this->_decodeHtmlSpecialChars($this->_currentSql);
 	    $info = $this->_decodeHtmlSpecialChars($this->_tableInfo);
 	    $ret = $storageExtras->_updateSchemaTableInfo($nameInSchema, $sql, $this->_moduleId,
-							  $this->_tableType, $info);
+							  $this->_tableType, $info, true);
 	    if ($ret) {
 		$this->setError($ret);
 		return null;
