@@ -1428,7 +1428,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * @return object GalleryStatus
      */
     function _updateSchemaTableInfo($tableNameInSchema, $tableSql, $moduleId, $type=null,
-				    $info=null, $canStoreTableInfo=false) {
+				    $info=null, $canStoreTableInfo=true) {
 	$data = array($tableSql);
 	$query = 'UPDATE [GallerySchema] SET [::createSql] = ?';
 	if ($canStoreTableInfo) {
