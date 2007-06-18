@@ -34,7 +34,10 @@ require_once($g2Base . 'lib/support/SupportStatusTemplate.class');
 
 $templateData = array();
 
-$template = new SupportStatusTemplate('Database Restore');
+$template = new SupportStatusTemplate('Database Import');
+
+$configFilePath =
+    (defined('GALLERY_CONFIG_DIR') ? GALLERY_CONFIG_DIR . '/' : $g2Base) . 'config.php';
 
 require_once(dirname(__FILE__) . '/../../embed.php');
 
@@ -95,12 +98,30 @@ if ($ret) {
 		$templateData['errors'][] = $ret->getAsHtml();
 	    }
 
+	    $stat = stat($configFilePath);
+	    $fileMode = substr(sprintf('%o', $stat['mode']), -3);
+
+	    $templateData['configFileMode'] = $fileMode;
+	    $templateData['fileSecure'] = !((int)$fileMode{1} & 2 || (int)$fileMode{2} & 2);
+	    $templateData['configFilePath'] = realpath($configFilePath);
 	    $templateData['bodyFile'] = 'ImportFinished.html';
 	    $templateData['hideStatusBlock'] = 1;
 	    $renderFullPage = false;
 	}
     } else {
 	getBackupFiles($templateData);
+
+	$configDir = dirname($configFilePath);
+
+	if (!is_writeable($configFilePath)) {
+	    $templateData['errors'][] = 'Unable to write to the <b>config.php</b> configuration '
+		. 'file in your ' . $configDir . ' directory.  Please change its permissions.  If '
+		. 'you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.  Please '
+		. 'click the \'Continue\' below after you have changed the permission.';
+	    $templateData['canWriteConfig'] = 0;
+	} else {
+	    $templateData['canWriteConfig'] = 1;
+	}
 
 	/* Render the output */
 	$templateData['bodyFile'] = 'ImportRequest.html';

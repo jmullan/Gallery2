@@ -12,7 +12,8 @@
     </script>
     
     <form method="post" action="index.php?import">
-       <h2>Choose a file to import from.</h2>
+      <?php if (!empty($templateData['canWriteConfig'])): ?>
+      <h2>Choose a file to import from.</h2>
        <select name="importFile"
 	    onchange="enableSubmit(this.options[this.selectedIndex].value, this.form)">
         <option value="-1">&laquo; select a backup file &raquo;</option>
@@ -41,9 +42,16 @@
       </div>
       <br/><br/>
       <input type="hidden" value="Begin Import" name="importDatabase" />
-    <div class="go" id="importDatabase" style="visibility:hidden">
-      <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
-	<a href="javascript:document.forms[0].submit()">&nbsp;&nbsp;Begin Import&nbsp;&nbsp;</a>
-	  </div></div></div></div></div></div></div></div></div>
-    </div>
+      <div class="go" id="importDatabase" style="visibility:hidden">
+        <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
+	  <a href="javascript:document.forms[0].submit()">&nbsp;&nbsp;Begin Import&nbsp;&nbsp;</a>
+	</div></div></div></div></div></div></div></div></div>
+      </div>
+      <?php else: ?>
+      <div class="go" id="refresh">
+        <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
+	  <a href="javascript:document.forms[0].submit()">&nbsp;&nbsp;Continue&nbsp;&nbsp;</a>
+	</div></div></div></div></div></div></div></div></div>
+      </div>
+      <?php endif; ?>
     </form>
