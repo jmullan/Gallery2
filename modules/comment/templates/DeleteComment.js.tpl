@@ -20,7 +20,6 @@ function handleSuccess(response) {
 }
 
 var handleFailure = function(response) {
-  {* Ignore for now *}
 }
 
 function deleteComment(id) {
