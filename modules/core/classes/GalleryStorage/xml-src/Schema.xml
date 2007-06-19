@@ -6,7 +6,7 @@
     <table-name>Schema</table-name>
     <schema>
 	<schema-major>1</schema-major>
-	<schema-minor>1</schema-minor>
+	<schema-minor>2</schema-minor>
     </schema>
     <column>
 	<column-name>name</column-name>
@@ -30,6 +30,21 @@
       <column-name>createSql</column-name>
       <column-type>TEXT</column-type>
       <column-size>SMALL</column-size>
+    </column>
+    <column>
+      <column-name>pluginId</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+    </column>
+    <column>
+      <column-name>type</column-name>
+      <column-type>STRING</column-type>
+      <column-size>SMALL</column-size>
+    </column>
+    <column>
+      <column-name>info</column-name>
+      <column-type>TEXT</column-type>
+      <column-size>MEDIUM</column-size>
     </column>
     <key primary="true">
         <column-name>name</column-name>

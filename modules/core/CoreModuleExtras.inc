@@ -2186,7 +2186,13 @@ class CoreModuleExtras {
 			continue;
 		    }
 
-		    $ret = $storageExtras->_updateSchemaCreateSql($nameInSchema, $tableSql);
+		    $query = 'UPDATE [GallerySchema] SET [::createSql] = ? WHERE [::name] = ?';
+		    $ret = $storage->execute($query, array($tableSql, $nameInSchema));
+		    if ($ret) {
+			return $ret;
+		    }
+		    $gallery->guaranteeTimeLimit(60);
+		    $ret = $statusMonitor->renderStatusMessage($statusText, '', $count / $total);
 		    if ($ret) {
 			return $ret;
 		    }
@@ -2196,7 +2202,6 @@ class CoreModuleExtras {
 		if ($ret) {
 		    return $ret;
 		}
-		$gallery->guaranteeTimeLimit(30);
 	    }
 	    /* Changed the length of the SessionMap data field for mySql & DB2. */
 	    $ret = $storage->configureStore($module->getId(), array('GallerySessionMap:1.0'));
@@ -2204,12 +2209,26 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 	case '1.2.0.2':
+	    /* 2.2.2 Bugfix Release - Not used */
+	case '1.2.0.3':
 	    /* 2.2.2 Bugfix Release */
 
-	    /*
-	     * Change the installOrUpgrade method to store Entities.inc and Maps.inc in the
-	     * GalleryPluginParameterMap. Populate the values for installed modules now.
-	     */
+	    /* Store Entities.inc and Maps.inc definitions in the Schema table. */
+ 	    $gallery->guaranteeTimeLimit(30);
+ 	    /* Remove _maps & _entities parameters from GalleryPluginParameterMap. See r16620 */
+	    $query = 'DELETE FROM [GalleryPluginParameterMap]
+		       WHERE [::parameterName] in (\'_maps\', \'_entities\')
+		         AND [::pluginType] = \'module\'';
+	    $ret = $storage->execute($query);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $ret = $storage->configureStore($module->getId(), array('Schema:1.1'));
+	    if ($ret) {
+		return $ret;
+	    }
+
 	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
 	    if ($ret) {
 		return $ret;
@@ -2217,44 +2236,28 @@ class CoreModuleExtras {
 
 	    $count = 1;
 	    $total = count($modules);
-	    $statusText = $module->translate('Loading Table Descriptions');
+	    $statusText = $module->translate('Converting Schema Table');
 
 	    foreach ($modules as $moduleId => $moduleStatus) {
 		/* Skip uninstalled/unavailable modules */
 		if (!isset($moduleStatus['active']) || empty($moduleStatus['available'])) {
 		    continue;
 		}
-		list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $moduleId, false, true);
+
+		$ret = $storage->updateTableInfo($moduleId);
 		if ($ret) {
-		    /* On version mismatch, skip the module and hope that it is updated later */
-		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-			continue;
-		    }
 		    return $ret;
 		}
 
-		$mapInfo = $plugin->_getMapData();
-		if (isset($mapInfo)) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', $moduleId,
-							      '_maps', $mapInfo);
-		    if ($ret) {
-			return $ret;
-		    }
-		}
-
-		$entityInfo = $plugin->_getEntityData();
-		if (isset($entityInfo)) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', $moduleId,
-							      '_entities', $entityInfo);
-		    if ($ret) {
-			return $ret;
-		    }
-		}
+		$gallery->guaranteeTimeLimit(30);
 		$ret = $statusMonitor->renderStatusMessage($statusText, '', $count++ / $total);
 		if ($ret) {
 		    return $ret;
 		}
-		$gallery->guaranteeTimeLimit(30);
+	    }
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
 	    }
 
 	case 'end of upgrade path':
@@ -2570,6 +2573,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.0':
 	case '1.2.0.1':
 	case '1.2.0.2':
+	case '1.2.0.3':
 
 	case 'end of upgrade path':
 	    /*

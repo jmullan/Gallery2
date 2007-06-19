@@ -1367,6 +1367,16 @@ class GalleryStorage {
 	    return GalleryCoreApi::utf8Substring($value, 0, $size);
 	}
     }
+
+    /**
+     * Load the Maps.inc and Entities.inc into the schema table for the specified module
+     * @param string $moduleId
+     * @return object GalleryStatus a status code
+     */
+    function updateTableInfo($moduleId) {
+	$extras =& $this->_getExtras();
+	return $extras->_updateTableInfo($moduleId);
+    }
 }
 
 /**

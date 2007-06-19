@@ -156,6 +156,7 @@ class GalleryModule extends GalleryPlugin {
 	    if ($gallery->getDebug()) {
 		$gallery->debug(sprintf('Upgrade (or install) %s module', $this->getId()));
 	    }
+
 	    $ret = $this->upgrade($installedVersion, $statusMonitor);
 	    if ($ret) {
 		if ($gallery->getDebug()) {
@@ -171,29 +172,17 @@ class GalleryModule extends GalleryPlugin {
 					$this->getId()));
 	    }
 
-	    /*
-	     * @todo Adding _maps & _entities keys are not covered in tests because of the use of
-	     * the include.
-	     */
 	    $data = array('_version' => $this->getVersion(),
 			  '_callbacks' => $this->getCallbacks(),
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
-			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()),
-			  '_maps' => $this->_getMapData(),
-			  '_entities' => $this->_getEntityData());
+			  '_requiredModuleApi' => join(',', $this->getRequiredModuleApi()));
 
 	    foreach ($data as $key => $value) {
-		if (isset($value)) {
-		    $ret = $this->setParameter($key, $value);
-		    $operation = 'update';
-		} else {
-		    $ret = $this->removeParameter($key);
-		    $operation = 'remove';
-		}
+		$ret = $this->setParameter($key, $value);
 		if ($ret) {
 		    if ($gallery->getDebug()) {
-			$gallery->debug(sprintf('Error: Failed to %s the module parameter %s, this '
-					. 'is the error stack trace: %s', $operation, $key,
+			$gallery->debug(sprintf('Error: Failed to update the module parameter %s, '
+					. 'this is the error stack trace: %s', $key,
 						$ret->getAsText()));
 		    }
 		    return $ret;
@@ -258,44 +247,6 @@ class GalleryModule extends GalleryPlugin {
 	}
 
 	return null;
-    }
-
-    /**
-     * Serialize the Maps.inc file for this module.
-     * @return string the $mapInfo array as a string or null
-     * @access private
-     */
-    function _getMapData() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$mapsFile = dirname(dirname(dirname(dirname(__FILE__)))) . '/modules/' . $this->getId()
-		  . '/classes/Maps.inc';
-	$mapInfo = null;
-	if ($platform->file_exists($mapsFile)) {
-	    include($mapsFile);
-	}
-
-	return isset($mapInfo) ? serialize($mapInfo) : null;
-    }
-
-    /**
-     * Serialize the Entities.inc file for this module.
-     * @return string the $entityInfo array as a string or null
-     * @access private
-     */
-    function _getEntityData() {
-	global $gallery;
-	$platform =& $gallery->getPlatform();
-
-	$entitiesFile = dirname(dirname(dirname(dirname(__FILE__)))) . '/modules/' . $this->getId()
-		      . '/classes/Entities.inc';
-	$entityInfo = null;
-	if ($platform->file_exists($entitiesFile)) {
-	    include($entitiesFile);
-	}
-
-	return isset($entityInfo) ? serialize($entityInfo) : null;
     }
 
     /**
@@ -408,6 +359,9 @@ class GalleryModule extends GalleryPlugin {
      * to installOrUpgrade (see the TODO there).
      */
     function activate($postActivationEvent=true) {
+	global $gallery;
+	$storage =& $gallery->getStorage();
+
 	if (!GalleryCoreApi::isPluginCompatibleWithApis($this)) {
 	    return array(GalleryCoreApi::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
 		sprintf('incompatible %s %s', $this->getPluginType(), $this->getId())), null);
@@ -421,6 +375,11 @@ class GalleryModule extends GalleryPlugin {
 	if ($needs) {
 	    return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED),
 			 null);
+	}
+
+	$ret = $storage->updateTableInfo($this->getId());
+	if ($ret) {
+	    return array($ret, null);
 	}
 
 	$ret = $this->performFactoryRegistrations();
