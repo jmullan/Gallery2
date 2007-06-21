@@ -2689,7 +2689,7 @@ class JPEG // extends PEAR
         //$tags[0x0C] = 'SubjectReference'; // Repeatable, 13-236 bytes
         //$tags[0x16] = 'FixtureIdentifier'; // 32 bytes max
         //$tags[0x1A] = 'ContentLocationCode'; // repeatable, 3 bytes
-        //$tags[0x1B] = 'ContentLocationName'; // repeatable, 64 bytes
+        $tags[0x1B] = 'ContentLocationName'; // repeatable, 64 bytes
         //$tags[0x1E] = 'ReleaseDate'; // 8 bytes CCYYMMDD
         //$tags[0x23] = 'ReleaseTime'; // 11 bytes HHMMSS+hhmm
         //$tags[0x25] = 'ExpirationDate'; // 8 bytes CCYYMMDD
@@ -2702,7 +2702,7 @@ class JPEG // extends PEAR
         //$tags[0x41] = 'OriginatingProgram'; // 32 bytes max
         //$tags[0x46] = 'ProgramVersion'; // 10 bytes max
         //$tags[0x4B] = 'ObjectCycle';
-        //$tags[0x5C] = 'Sublocation'; // 32 bytes max
+        $tags[0x5C] = 'Sublocation'; // 32 bytes max
         //$tags[0x64] = 'CountryCode'; // 3 bytes
         //$tags[0x76] = 'Contact'; // repeatable, 128 bytes max, person/organisation haveing background info
         //$tags[0x7D] = 'RasterizedCaption';
