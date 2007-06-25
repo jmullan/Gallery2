@@ -870,14 +870,14 @@ class HTTP_WebDAV_Server
                 . gmdate('D, d M Y H:i:s', $options['mtime']) . 'GMT', false);
         }
 
-        if ($options['stream']) {
+        if (!empty($options['stream'])) {
             // GET handler returned a stream
 
-            if (!empty($options['ranges']) &&
-                    (fseek($options['stream'], 0, SEEK_SET) === 0)) {
+            if (!empty($options['ranges'])
+                    && (fseek($options['stream'], 0, SEEK_SET) === 0)) {
                 // partial request and stream is seekable
 
-                if (count($options['ranges']) === 1) {
+                if (count($options['ranges']) == 1) {
                     $range = $options['ranges'][0];
 
                     if (!empty($range['start'])) {
@@ -921,7 +921,7 @@ class HTTP_WebDAV_Server
                     $this->_multipart_byterange_header(); // init multipart
                     foreach ($options['ranges'] as $range) {
 
-                        // TODO what if size unknown? 500?
+                        // TODO: What if size unknown?  500?
                         if (!empty($range['start'])) {
                             $from = $range['start'];
                             $to = !empty($range['end']) ? $range['end'] : $options['size'] - 1;
@@ -931,8 +931,8 @@ class HTTP_WebDAV_Server
                         }
                         $total = !empty($options['size']) ? $options['size'] : '*';
                         $size = $to - $from + 1;
-                        $this->_multipart_byterange_header($options['mimetype'],
-                            $from, $to, $total);
+                        $this->_multipart_byterange_header(
+                            $options['mimetype'], $from, $to, $total);
 
                         fseek($options['stream'], $start, SEEK_SET);
                         while ($size && !feof($options['stream'])) {
@@ -1034,119 +1034,6 @@ class HTTP_WebDAV_Server
 
     // }}}
 
-    // {{{ head_response_helper
-
-    /**
-     * HEAD response helper - format HEAD response
-     *
-     * @param options
-     * @param status
-     * @return void
-     */
-    function head_response_helper($options, $status)
-    {
-        if (empty($status)) {
-            $status = '404 Not Found';
-        }
-
-        // set headers before we start printing
-        $this->setResponseStatus($status);
-
-        if ($status !== true) {
-            return;
-        }
-
-        if (empty($options['mimetype'])) {
-            $options['mimetype'] = 'application/octet-stream';
-        }
-        $this->setResponseHeader("Content-Type: $options[mimetype]");
-
-        if (!empty($options['mtime'])) {
-            $this->setResponseHeader('Last-Modified:'
-                . gmdate('D, d M Y H:i:s', $options['mtime']) . 'GMT');
-        }
-
-        if (!empty($options['stream'])) {
-            // GET handler returned a stream
-
-            if (!empty($options['ranges'])
-                    && (fseek($options['stream'], 0, SEEK_SET) === 0)) {
-                // partial request and stream is seekable
-
-                if (count($options['ranges']) === 1) {
-                    $range = $options['ranges'][0];
-
-                    if (!empty($range['start'])) {
-                        fseek($options['stream'], $range['start'], SEEK_SET);
-                        if (feof($options['stream'])) {
-                            $this->setResponseStatus(
-                                '416 Requested Range Not Satisfiable');
-                            return;
-                        }
-
-                        if (!empty($range['end'])) {
-                            $size = $range['end'] - $range['start'] + 1;
-                            $this->setResponseStatus('206 Partial');
-                            $this->setResponseHeader("Content-Length: $size");
-                            $this->setResponseHeader(
-                                "Content-Range: $range[start]-$range[end]/"
-                                . (!empty($options['size']) ? $options['size'] : '*'));
-                        } else {
-                            $this->setResponseStatus('206 Partial');
-                            if (!empty($options['size'])) {
-                                $this->setResponseHeader("Content-Length: "
-                                    . ($options['size'] - $range['start']));
-                                $this->setResponseHeader(
-                                    "Content-Range: $start-$end/"
-                                    . (!empty($options['size']) ? $options['size'] : '*'));
-                            }
-                        }
-                    } else {
-                        $this->setResponseHeader(
-                            "Content-Length: $range[last]");
-                        fseek($options['stream'], -$range['last'], SEEK_END);
-                    }
-                } else {
-                    $this->_multipart_byterange_header(); // init multipart
-                    foreach ($options['ranges'] as $range) {
-
-                        // TODO what if size unknown? 500?
-                        if (!empty($range['start'])) {
-                            $from = $range['start'];
-                            $to = !empty($range['end']) ? $range['end'] :
-                                $options['size'] - 1;
-                        } else {
-                            $from = $options['size'] - $range['last'] - 1;
-                            $to = $options['size'] - 1;
-                        }
-                        $total = !empty($options['size']) ? $options['size'] :
-                            '*';
-                        $size = $to - $from + 1;
-                        $this->_multipart_byterange_header($options['mimetype'],
-                            $from, $to, $total);
-
-                        fseek($options['stream'], $start, SEEK_SET);
-                    }
-                    $this->_multipart_byterange_header(); // end multipart
-                }
-            } else {
-                // normal request or stream isn't seekable, return full content
-                if (!empty($options['size'])) {
-                    $this->setResponseHeader("Content-Length: $options[size]");
-                }
-            }
-        } else if (!empty($options['data']))  {
-            if (is_array($options['data'])) {
-                // reply to partial request
-            } else {
-                $this->setResponseHeader("Content-Length: "
-                    . strlen($options['data']));
-            }
-        }
-    }
-
-    // }}}
-
     // {{{ head_wrapper
 
     /**
@@ -1160,19 +1047,22 @@ class HTTP_WebDAV_Server
         $options = array();
         $options['path'] = $this->path;
 
+	// TODO: get_response_helper needn't do any output in case of HEAD
+	// responses.  Is the advantage to optimizing it worthwhile?
+        ob_start();
+
         // call user handler
         if (method_exists($this, 'head')) {
             $status = $this->head($options);
         } else {
 
             // emulate HEAD using GET if no HEAD method exists
-            ob_start();
             $status = $this->get($options);
-            ob_end_clean();
         }
 
         // format HEAD response
-        $this->head_response_helper($options, $status);
+        $this->get_response_helper($options, $status);
+        ob_end_clean();
     }
 
     // }}}
