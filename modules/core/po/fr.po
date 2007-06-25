@@ -19,9 +19,9 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.17\n"
+"Project-Id-Version: Gallery: Core 1.2.18\n"
 "POT-Creation-Date: 2003-08-10 04:27+0200\n"
-"PO-Revision-Date: 2007-02-25 00:00+0100\n"
+"PO-Revision-Date: 2007-06-17 00:00+0100\n"
 "Last-Translator: Arnaud MOURONVAL <Arnaud.Mouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -81,11 +81,10 @@ msgid "File"
 msgstr "Fichier"
 
 msgid "&lt;none&gt;"
-msgstr ""
+msgstr "&lt;aucun&gt;"
 
-#, fuzzy
 msgid "Link"
-msgstr "Connexion"
+msgstr "Lien"
 
 #, c-format
 msgid "Page %d of %d"
@@ -133,9 +132,8 @@ msgstr "Activation de %s"
 msgid "Deleting Language Packs"
 msgstr "Suppression des packages de langue"
 
-#, fuzzy
 msgid "Synchronizing Language Packs"
-msgstr "Suppression des packages de langue"
+msgstr "Synchronisation des packages de langue"
 
 msgid "Update completed with errors."
 msgstr "Mise à jour terminée avec des erreurs."
@@ -255,15 +253,11 @@ msgstr "Mise à jour des éléments \"panoramas\""
 msgid "Optimizing AccessSubscriberMap table"
 msgstr "Optimisation de la table AccessSubscriberMap"
 
-#, fuzzy
 msgid "Upgrading Plugin Translations"
-msgstr "Mise à jour des permissions"
+msgstr "Mise à jour des traductions de composants"
 
 msgid "Converting Schema Table"
-msgstr ""
-
-msgid "Loading Table Descriptions"
-msgstr ""
+msgstr "Conversion du schéma de la table"
 
 msgid "Site Admins"
 msgstr "Adminstrateurs du site"
@@ -283,16 +277,14 @@ msgstr "Ceci est la page principale de votre installation de Gallery"
 msgid "Converting MySQL data to UTF8"
 msgstr "Conversion en cours des données MySQL en UTF8"
 
-#, fuzzy
 msgid "Adding items"
-msgstr "ajouter des éléments"
+msgstr "Ajout des éléments"
 
-#, fuzzy
 msgid "Processing items"
-msgstr "Traitement de l'élément %d sur %d"
+msgstr "Traitement des éléments"
 
 msgid "Extracting archive"
-msgstr ""
+msgstr "Extraction de l'archive"
 
 msgid "add items"
 msgstr "ajouter des éléments"
@@ -591,7 +583,7 @@ msgid "Performance"
 msgstr "Performance"
 
 msgid "Event Logs"
-msgstr ""
+msgstr "Journal des évènements"
 
 msgid "Toolkit Priority"
 msgstr "Priorité des boîtes à outils"
@@ -656,9 +648,8 @@ msgstr "Base de données convertie en UTF8 avec succès"
 msgid "No conversion required"
 msgstr "Aucune conversion requise"
 
-#, fuzzy
 msgid "Backup the database"
-msgstr "Optimiser la base de données"
+msgstr "Sauvegarde de la base de données"
 
 msgid ""
 "Backup all your Gallery data (item data, users, comments, etc.) to a single file in your "
@@ -666,17 +657,23 @@ msgid ""
 "your Gallery installation needs to be set into maintenance mode, as this is not done "
 "automatically."
 msgstr ""
+"Sauvegarder tous les éléments de votre installation de Gallery (données sur les éléments,"
+"commentaires, etc.) dans un seul fichier de votre dossier de stockage. Cette sauvegarde "
+"n'inclut pas les fichiers de vos images. Avant d'effectuer une sauvegarde, votre "
+"installation de Gallery doit passer en mode de maintenance. Vous devez réaliser cette "
+"opération manuellement."
 
 msgid "Backing up Gallery Database"
-msgstr ""
+msgstr "Sauvegarde de la base de données de Gallery"
 
-#, fuzzy
 msgid "Exporting..."
-msgstr "Préparation en cours..."
+msgstr "Export en cours..."
 
 #, c-format
 msgid "Database backup completed and the backup file is located at: %s"
 msgstr ""
+"La sauvegarde de la base de données est terminée et le fichier de sauvegarde se trouve "
+"à&nbsp;: %s"
 
 msgid "Delete user sessions"
 msgstr "Supprimer les sessions des utilisateurs"
@@ -715,7 +712,6 @@ msgstr "Impossible de supprimer le répertoire %s"
 msgid "Delete template cache"
 msgstr "Effacer le cache des templates"
 
-#, fuzzy
 msgid ""
 "Gallery compiles template files and saves them for increased performance.  If you're "
 "experiencing problems that say <i>Smarty error</i> then you might try running this task.  "
@@ -724,8 +720,8 @@ msgid ""
 msgstr ""
 "Gallery compile les fichiers template et les sauvegarde pour améliorer les performances. Si "
 "vous rencontrez des problèmes qui indiquent <i>Smarty error</i> alors vous pouvez exécuter "
-"cette tâche. Veuillez aussi l'exécuter si vous supprimez un fichier local/*.tpl de telle "
-"sorte que Smarty rebasculera sur le fichier .tpl par défaut."
+"cette tâche. Veuillez aussi l'exécuter si vous ajoutez ou supprimez un fichier local/*.tpl "
+"ou unemodification d'un thème afin que Smarty retrouve le bon fichier."
 
 msgid "Template cache deleted successfully"
 msgstr "Le cache des templates a été effacé avec succès."
@@ -1065,7 +1061,7 @@ msgstr "inconnu"
 
 #, c-format
 msgid "API = Core %s, Module %s, Theme %s, Embed %s"
-msgstr ""
+msgstr "API = Noyau %s, Module %s, Thème %s, Intégré %s"
 
 msgid "Gallery version"
 msgstr "Gallery version"
@@ -1109,62 +1105,74 @@ msgstr "Lignes dans la table %s = %d"
 
 #, c-format
 msgid "The %s \"%s\" is not installed and will not be backed up."
-msgstr ""
+msgstr "Le %s \"%s\" n'est pas installé et ne sera pas sauvegardé."
 
 #, c-format
 msgid "\"%s\" has no creation sql and will not be backed up."
-msgstr ""
+msgstr "\"%s\" n'a pas de création sql et ne sera pas sauvegardé."
 
 #, c-format
 msgid "Unable to load table description for \"%s\", no data will be exported."
 msgstr ""
+"Impossible de lire la description de la table de \"%s\", aucune donnée ne sera exportée."
 
 msgid ""
 "Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
 "database import."
 msgstr ""
+"Impossible de trouver l'analyseur XML. L'extension de traitement XML de PHP doit être "
+"chargée. Fin"
 
 #, c-format
 msgid "The exported file is not the correct version. Expecting %s recieved %s."
 msgstr ""
+"Le fichier exporté n'est pas dans la version correcte. Version attendue&nbsp;: %s. Version "
+"reçue&nbsp;:%s."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to close import file: %s"
-msgstr "Impossible de supprimer le répertoire %s"
+msgstr "Impossible de fermer le fichier d'import&nbsp;: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open import file: %s"
-msgstr "Impossible de supprimer le répertoire %s"
+msgstr "Impossible d'ouvrir le fichier d'import&nbsp;: %s"
 
 #, c-format
 msgid "Import file doesn't exist: %s"
-msgstr ""
+msgstr "Le fichier d'import n'existe pas&nbsp;: %s"
 
 #, c-format
 msgid "Plugin %s is not currently available."
-msgstr ""
+msgstr "Le composant %s n'est actuellement pas disponible."
 
 #, c-format
 msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
 msgstr ""
+"La version disponible du plugin \"%s\" peut ne pas être compatible avec la version importée."
 
 #, c-format
 msgid ""
 "The currently installed core API version required by \"%s\" may not be compatible with the "
 "imported version."
 msgstr ""
+"La version actuellement installée de l'API noyau requise par \"%s\" peut ne pas être "
+"compatible avec la version importée."
 
 #, c-format
 msgid ""
 "The installed module API version required by \"%s\" may not be compatible with the imported "
 "version."
 msgstr ""
+"La version installée de l'API module requise par \"%s\" peut ne pas être compatible avec la "
+"version importée."
 
 #, c-format
 msgid ""
 "The installed theme API version required by \"%s\" is not compatible with the imported "
 "version."
 msgstr ""
+"La version installée de l'API thème requise par \"%s\" n'est pas compatible avec la version "
+"importée."
 
 msgid "Successfully saved theme settings"
 msgstr "Paramètres du thème sauvegardés avec succès"
@@ -1700,48 +1708,38 @@ msgstr[0] ""
 msgstr[1] ""
 "%d tentatives d'authentification en échec depuis votre dernière authentification réussie."
 
-#, fuzzy
 msgid "Recent Events"
-msgstr "Réinitialiser les compteurs de vues"
+msgstr "Évènements récents"
 
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
-#, fuzzy
 msgid "Location"
-msgstr "Opération"
+msgstr "Localisation"
 
-#, fuzzy
 msgid "Client"
-msgstr "liste"
+msgstr "Client"
 
-#, fuzzy
 msgid "No events have been reported yet."
-msgstr "Aucun package n'a été sélectionné."
+msgstr "Aucun évènement n'a encore été rapporté."
 
-#, fuzzy
 msgid "Event Details"
-msgstr "Description de l'erreur"
+msgstr "Détails de l'évènement"
 
-#, fuzzy
 msgid "User Id"
-msgstr "Utilisateur"
+msgstr "Identifiant d'utilisateur"
 
-#, fuzzy
 msgid "Referer"
-msgstr "Réorganiser"
+msgstr "Referer"
 
-#, fuzzy
 msgid "Details"
-msgstr "Valeurs par défaut"
+msgstr "Détails"
 
-#, fuzzy
 msgid "no summary"
-msgstr "Résumé"
+msgstr "aucun résumé"
 
-#, fuzzy
 msgid "An error occurred while retrieving the event log entry details."
-msgstr "Une erreur est survenue en accédant à la base de données."
+msgstr "Une erreur est survenue en accédant aux détails de l'évènement."
 
 msgid "Group Management"
 msgstr "Gestion des groupes"
@@ -1809,6 +1807,7 @@ msgstr "Maintenance du système"
 
 msgid "Gallery must be in maintenance mode before the task can be run."
 msgstr ""
+"Gallery doit être en mode de maintenance avant que cette tâche ne puisse être exécutée."
 
 #, c-format
 msgid "Completed %s task successfully."
@@ -1819,39 +1818,42 @@ msgid "The %s task failed to complete successfully."
 msgstr "La tâche %s a échoué."
 
 msgid "Maintenance Mode has been turned on."
-msgstr ""
+msgstr "Le mode de maintenance a été activé."
 
 msgid "Maintenance Mode has been turned off."
-msgstr ""
+msgstr "Le mode de maintenance a été désactivé."
 
-#, fuzzy
 msgid "Maintenance Mode"
-msgstr "Maintenance"
+msgstr "Mode de maintenance"
 
 msgid "Restrict user access to the system while maintenance is being performed."
 msgstr ""
+"Restreindre l'accès des utilisateurs au système pendant que la maintenance est en cours."
 
-#, fuzzy
 msgid "Maintenance Mode Url"
-msgstr "Maintenance"
+msgstr "URL du mode de maintenance"
 
 msgid ""
 "The Maintenance Mode Url specifies where requests will be redirected when access to the site "
 "has been restricted by the administrator."
 msgstr ""
+"L'URL du mode de maintenance spécifie où les requêtes des utilisateurs seront redirigés "
+"pendant que l'accès à ce site a été restreint par l'utilisateur."
 
 msgid ""
 "If left blank Gallery will display a default page with an administrator login link. This "
 "page will be themed when the code base is up to date, otherwise it will display a plain "
 "unstyled page."
 msgstr ""
+"Si laissée vide, Gallery affichera une page par défaut avec un lien pour authentifier les "
+"administrateurs. Cette page sera stylée quand le code sera mis à jour, autrement elle sera "
+"une simple page sans style."
 
 msgid "For example: /maintenance.html"
-msgstr ""
+msgstr "Par exemple&nbsp;: /maintenance.html"
 
-#, fuzzy
 msgid "Set"
-msgstr "Paramètre"
+msgstr "Appliquer"
 
 msgid "Task name"
 msgstr "Nom de tâche"
@@ -1955,9 +1957,8 @@ msgstr "Utilisateurs invités"
 msgid "Expires after:"
 msgstr "Expire après&nbsp;:"
 
-#, fuzzy
 msgid "Template Cache"
-msgstr "Effacer le cache des templates"
+msgstr "Cache des templates"
 
 #, c-format
 msgid ""
@@ -1965,10 +1966,13 @@ msgid ""
 "your template files%s, you should disable template caching temporarily so that changes take "
 "effect immediately without clearing the template cache."
 msgstr ""
+"Pour des performances optimales, Gallery cache tous les templates. Si vous souhaitez %"
+"smodifier les fichiers de vos templates%s, vous devrez désactiver temporairement le cache "
+"des templates de telle sorte que vos modifications soient tout de suite visibles sans vider "
+"ce cache."
 
-#, fuzzy
 msgid "Enable template caching"
-msgstr "Effacer le cache des templates"
+msgstr "Activer le cache de templates"
 
 msgid "Clear Saved Pages"
 msgstr "Effacer les pages sauvegardées"
@@ -2032,12 +2036,12 @@ msgstr "Non"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Voulez-vous vraiment supprimer __PLUGIN__&nbsp;?"
 
-#, fuzzy
 msgid "This plugin will be uninstalled and its files will be deleted permanently."
-msgstr "Ce composant sera désinstallé et tous ses fichiers seront supprimés."
+msgstr ""
+"Ce composant sera désinstallé et tous ses fichiers seront supprimés de façon définitive."
 
 msgid "The files of this plugin will be deleted permanently."
-msgstr ""
+msgstr "Les fichiers de ce composant seront supprimés de façon définitive."
 
 msgid "disabled(__COUNT__)"
 msgstr "désactivé(__COUNT__)"
@@ -2149,21 +2153,24 @@ msgstr ""
 
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
-msgstr ""
+msgstr "Impossible de télécharger les packages suivants pour le composant %s&nbsp;:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to install the %s plugin because the following files/directories could not be "
 "modified:"
 msgstr ""
-"Impossible de télécharger le composant %s car les fichiers ou répertoires suivants n'ont pas "
-"pu être modifiés&nbsp;:"
+"Impossible d'installer le composant %s car les fichiers ou répertoires suivants n'ont pas pu "
+"être modifiés&nbsp;:"
 
 #, c-format
 msgid ""
 "Some plugins could not be automatically upgraded because they are in use.  Please return to "
 "the %sPlugins%s page and click the upgrade link for each of the following plugins:"
 msgstr ""
+"Certains composants n'ont pas pu être automatiquement mis à jour car ils étaient en cours "
+"d'utilisation. Veuillez retourner sur la page des %sComposants%s et utiliser le lien 'mettre "
+"à jour' pour chacun des composants suivants&nbsp;:"
 
 msgid "The repository index has been successfully updated."
 msgstr "L'index de l'entrepôt des composants a été mis à jour avec succès"
@@ -2270,9 +2277,9 @@ msgstr ""
 "Une nouvelle version de Gallery est disponible mais ne peut pas être mise à jour à l'aide de "
 "cette interface. La mettre à jour pourrait rendre certains de vos composants inopérents."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sDownload%s the new Gallery package"
-msgstr "%sTélécharger%s le noyau de Gallery"
+msgstr "%sTélécharger%s le nouveau package Gallery"
 
 #, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
@@ -2448,13 +2455,15 @@ msgid ""
 "The %s theme is incompatible with your Gallery version or no longer available.  Please "
 "upgrade the %s theme or pick another default theme."
 msgstr ""
+"Le thème %s est incompatible avec votre version de Gallery ou n'est plus disponible. "
+"Veuillez mettre à jour le thème %s ou choisir un autre thème par défaut."
 
 msgid "New albums"
 msgstr "Nouveaux albums"
 
 #, c-format
 msgid "To activate more themes visit the %sPlugins%s page."
-msgstr ""
+msgstr "Pour activer d'autres thème, visitez la page des %scomposants%s."
 
 msgid "Save Defaults"
 msgstr "Sauvegarder les valeurs par défaut"
@@ -2678,7 +2687,7 @@ msgid "System Information"
 msgstr "Informations sur le système"
 
 msgid "Not all of the specified items have been added successfully."
-msgstr ""
+msgstr "Les éléments spécifiés n'ont pas tous été ajoutés avec succès."
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add "
@@ -2687,10 +2696,9 @@ msgstr ""
 "Vous n'avez pas de boîte à outils graphique activée qui puisse traiter les images JPEG. Si "
 "vous ajoutez des images, vous n'aurez probablement pas de vignette."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Visit the %sModules%s page to activate a Graphics Toolkit."
-msgstr ""
-"Visitez la page des <a href=\"%s\">Modules</a> pour activer une boîte à outils graphiques."
+msgstr "Visitez la page des %sModules%s pour activer une boîte à outils graphiques."
 
 msgid "Add Sub-Album"
 msgstr "Ajouter un sous-album"
@@ -2854,13 +2862,11 @@ msgstr "Page précédente"
 msgid "Next Page"
 msgstr "Page suivante"
 
-#, fuzzy
 msgid "Do you really want to delete "
-msgstr "Voulez-vous vraiment supprimer __PLUGIN__&nbsp;?"
+msgstr "Voulez-vous vraiment supprimer "
 
-#, fuzzy
 msgid "Delete more items..."
-msgstr "Supprimer des éléments"
+msgstr "Supprimer plus d'éléments..."
 
 msgid "There was a problem processing your request."
 msgstr "Il y a eu un problème lors du traitement de votre requête."
@@ -3233,6 +3239,9 @@ msgid ""
 "version or no longer available.  Please upgrade the %s theme or use another theme for this "
 "album."
 msgstr ""
+"Cet album est configuré pour utiliser le thème %s qui soit incompatible avec cette version "
+"de Gallery, soit plus disponible. Veuillez mettre à jour le thème %s ou utiliser un autre "
+"thème pour cet album."
 
 #, c-format
 msgid ""
@@ -3292,7 +3301,7 @@ msgid "Choose the items you want to move"
 msgstr "Choisissez les éléments à déplacer"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid ""
 "The destination you chose does not accept sub-albums, so all sub-albums have been deselected."
@@ -3300,9 +3309,8 @@ msgstr ""
 "La destination choisie n'accepte pas les sous-albums, aussi tous les sous-albums ont été dé-"
 "sélectionnés."
 
-#, fuzzy
 msgid "Warning"
-msgstr "Attention&nbsp;!"
+msgstr "Attention"
 
 msgid ""
 "The destination you chose only accepts sub-albums, so all non-albums have been deselected."
@@ -3534,11 +3542,10 @@ msgstr "image"
 msgid "color"
 msgstr "couleur"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You can also use the %scolor name%s for example: %sYour Text%s"
 msgstr ""
-"Vous pouvez également utiliser  le <a href=\"%s\" target=\"_new\">nom de couleur</a> par "
-"exemple&nbsp;: %s "
+"Vous pouvez également utiliser le %snom de lacouleur%s par exemple&nbsp;: %sVotre texte%s"
 
 msgid "Configuration Error: Missing Theme"
 msgstr "Erreur de configuration&nbsp;: thème manquant"
@@ -3659,23 +3666,23 @@ msgstr "Identifiant de connexion à votre compte"
 msgid "Your password has been recovered, please login."
 msgstr "Votre mot de passe vous a été envoyé. Veuillez vous authentifier."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
 "for access to be restored, or use the %srecover password%s page to re-enable this account."
 msgstr ""
 "Ce compte est temporairement bloqué compte tenu d'un trop grand nombre de tentatives "
 "d'authentification en échec. Veuillez attendre que l'accès soit rétabli ou utiliser la page "
-"de <a href=\"%s\">restauration de mot de passe</a> pour réactiver ce compte."
+"de %srestauration de mot de passe%s pour réactiver ce compte."
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Vos informations de connexion sont incorrectes. Merci de réessayer."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Lost or forgotten passwords can be retrieved using the %srecover password%s page"
 msgstr ""
-"Les mots de passe perdus ou oubliés peuvent être récupérés à partir de la page de <a href=\"%"
-"s\">récupération du mot de passe</a>"
+"Les mots de passe perdus ou oubliés peuvent être récupérés à partir de la page de %"
+"srécupération du mot de passe%s"
 
 #, c-format
 msgid "Welcome, %s!"
@@ -3822,22 +3829,21 @@ msgstr "Rafraîchir"
 msgid "This page will allow you to reset the password on your account."
 msgstr "Cette page vous permet de réinitialiser le mot de passe pour votre compte."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "There is no request which matches the username and authorization provided. Request a new "
 "authorization from the %slost password page%s."
 msgstr ""
 "Cette requête ne correspond pas à l'utilisateur et à l'autorisation fournie. Demandez une "
-"nouvelle autorisation depuis la page de <a href=\"%s\">récupération des mots de passe "
-"oubliés</a>"
+"nouvelle autorisation depuis la page de %srécupération des mots de passe oubliés%s."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The request you are trying to access has expired.  Request a new authorization from the %"
 "slost password page%s."
 msgstr ""
 "Cette requête de récupération du mot de passe a expiré. Demandez une nouvelle autorisation "
-"depuis la page de <a href=\"%s\">récupération des mots de passe oubliés</a>"
+"depuis la page de %srécupération des mots de passe oubliés%s."
 
 msgid "Authorization missing"
 msgstr "Autorisation manquante"
@@ -3970,32 +3976,3 @@ msgstr "Bloc de connexion"
 
 msgid "Links to album/photo peers"
 msgstr "Liens vers les éléments voisins"
-
-#~ msgid "delete confirmation"
-#~ msgstr "confirmation de suppression"
-
-#~ msgid "delete %s"
-#~ msgstr "supprimer %s"
-
-#~ msgid "Deletion Complete"
-#~ msgstr "Suppression terminée"
-
-#~ msgid "Item successfully deleted"
-#~ msgstr "Élément supprimé avec succès"
-
-#~ msgid "Are you sure you want to delete this %s?"
-#~ msgstr "Voulez vous vraiment supprimer cet élément %s&nbsp;?"
-
-#~ msgid "It contains %d item."
-#~ msgid_plural "It contains %d items."
-#~ msgstr[0] "Il contient %d élément."
-#~ msgstr[1] "Il contient %d éléments."
-
-#~ msgid "There is no undo!"
-#~ msgstr "Il n'y a pas d'annulation possible&nbsp;!"
-
-#~ msgid "key"
-#~ msgstr "clé"
-
-#~ msgid "G2.2: Double Double"
-#~ msgstr "G2.2&nbsp;: Double Double"
