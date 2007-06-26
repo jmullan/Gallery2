@@ -35,6 +35,13 @@ class ExternalView extends GalleryView {
     }
 
     /**
+     * @see GalleryView::isAllowedInEmbedOnly
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
+
+    /**
      * Specify the template instance to use for our immediate view.  Used by our test code.
      * @param object GalleryTemplate $template
      */
