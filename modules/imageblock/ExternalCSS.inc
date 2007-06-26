@@ -70,6 +70,13 @@ class ExternalCSSController extends GalleryController {
 	 */
 	return true;
     }
+
+    /**
+     * @see GalleryController::isAllowedInEmbedOnly
+     */
+    function isAllowedInEmbedOnly() {
+	return true;
+    }
 }
 
 /**
@@ -81,6 +88,13 @@ class ExternalCSSView extends GalleryView {
      * @see GalleryView::isImmediate
      */
     function isImmediate() {
+	return true;
+    }
+
+    /**
+     * @see GalleryView::isAllowedInEmbedOnly
+     */
+    function isAllowedInEmbedOnly() {
 	return true;
     }
 
