@@ -270,6 +270,7 @@ class MainTest extends GalleryTestCase {
 
     function testDoRedirectConvertsToAbsoluteUrl() {
 	global $gallery;
+	GalleryDataCache::reset(); /* Ensure getCurrentRequestUri result isn't cached */
 
 	/* Make sure the redirect has no sessionId in it */
 	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
@@ -283,7 +284,7 @@ class MainTest extends GalleryTestCase {
 	$this->assertEquals(false, $session->isUsingCookies(), 'isUsingCookies');
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'SESSION_TEMP_ID');
 
-	/* Execute the function under test */
+	/* Execute the function under test - also checks trailing ? & and spaces are trimmed */
 	$this->assertEquals(array(null, array('isDone' => true)),
 			    _GalleryMain_doRedirect('main.php?&amp; '),
 			    'Unexpected return value');

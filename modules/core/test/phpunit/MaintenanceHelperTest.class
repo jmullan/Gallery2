@@ -122,10 +122,10 @@ class MaintenanceHelperTest extends GalleryTestCase {
 
 	$versionFile = $gallery->getConfig('data.gallery.version');
 
-	$platform->setReply('file_exists', array($versionFile), true);
+	$platform->setReply('file_exists', array($versionFile), true, true);
 	$platform->setReply('file', array($versionFile, false),
 			    array($module->getVersion() . "\n",
-				  $module->getGalleryVersion() . "\n"));
+				  $module->getGalleryVersion() . "\n"), true);
 	$platform->setReply('atomicWrite', array($versionFile, $writeString), true);
 
 	$ret = GalleryCoreApi::setMaintenanceMode(true);
@@ -154,6 +154,10 @@ class MaintenanceHelperTest extends GalleryTestCase {
 
 	$versionFile = $gallery->getConfig('data.gallery.version');
 
+	$platform->setReply('file_exists', array($versionFile), true, true);
+	$platform->setReply('file', array($versionFile, false),
+			    array($module->getVersion() . "\n",
+				  $module->getGalleryVersion() . "\n"), true);
 	$platform->setReply('atomicWrite', array($versionFile, $writeString), true);
 
 	$ret = GalleryCoreApi::setMaintenanceMode(false);
