@@ -244,7 +244,7 @@ class MainTest extends GalleryTestCase {
 	    foreach (array_merge($okControllers, $needFixControllers) as $controller) {
 		foreach (array_merge($okUrls, $needFixUrls) as $url) {
 		    /* Execute the function under test */
-		    $this->assertEquals(array('isDone' => true),
+		    $this->assertEquals(array(null, array('isDone' => true)),
 					_GalleryMain_doRedirect($base . $url, null, $controller),
 					"Unexpected return value for $server, $url, $controller");
 
@@ -284,7 +284,7 @@ class MainTest extends GalleryTestCase {
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'SESSION_TEMP_ID');
 
 	/* Execute the function under test */
-	$this->assertEquals(array('isDone' => true),
+	$this->assertEquals(array(null, array('isDone' => true)),
 			    _GalleryMain_doRedirect('main.php?&amp; '),
 			    'Unexpected return value');
 
@@ -307,7 +307,7 @@ class MainTest extends GalleryTestCase {
 	$this->assertEquals(SESSION_TEMP_ID, $session->getId(), 'SESSION_TEMP_ID');
 
 	/* Execute the function under test */
-	$this->assertEquals(array('isDone' => true),
+	$this->assertEquals(array(null, array('isDone' => true)),
 			    _GalleryMain_doRedirect('http://example.com/main.php?&amp; '),
 			    'Unexpected return value');
 

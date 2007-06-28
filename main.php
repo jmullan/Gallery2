@@ -196,7 +196,9 @@ function _GalleryMain($embedded=false) {
 	    $gallery->debug('Redirect to the upgrade wizard, core module version is out of date');
 	    $redirectUrl = $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php';
 	}
-	return array(null, _GalleryMain_doRedirect($redirectUrl));
+	list ($ret, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
+	/* Ignore errors */
+	return array(null, $results);
     }
 
     $ret = GalleryInitSecondPass();
@@ -219,7 +221,9 @@ function _GalleryMain($embedded=false) {
 	    if (($redirectUrl = $gallery->getConfig('mode.embed.only')) === true) {
 		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	    }
-	    return array(null, _GalleryMain_doRedirect($redirectUrl));
+	    list ($ret, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
+	    /* Ignore errors */
+	    return array(null, $results);
 	}
 
 	if ($gallery->getConfig('mode.maintenance') && !$controller->isAllowedInMaintenance()) {
@@ -234,7 +238,9 @@ function _GalleryMain($embedded=false) {
 		    $redirectUrl = $urlGenerator->generateUrl(
 			array('view' => 'core.MaintenanceMode'), array('forceFullUrl' => true));
 		}
-		return array(null, _GalleryMain_doRedirect($redirectUrl));
+		list ($ret, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
+		/* Ignore errors */
+		return array(null, $results);
 	    }
 	}
 
@@ -304,7 +310,7 @@ function _GalleryMain($embedded=false) {
 
 	/* If we have a redirect URL use it */
 	if (!empty($redirectUrl)) {
-	    return array(null, _GalleryMain_doRedirect($redirectUrl, null, $controllerName));
+	    return _GalleryMain_doRedirect($redirectUrl, null, $controllerName);
 	}
 
 	/* Let the controller specify the next view */
@@ -351,7 +357,9 @@ function _GalleryMain($embedded=false) {
 
 	if (!$isAdmin) {
 	    if (($redirectUrl = $gallery->getConfig('mode.maintenance')) !== true) {
-		return array(null, _GalleryMain_doRedirect($redirectUrl));
+		list ($ret, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
+		/* Ignore errors */
+		return array(null, $results);
 	    }
 
 	    $viewName = 'core.MaintenanceMode';
@@ -367,7 +375,7 @@ function _GalleryMain($embedded=false) {
 	if (($redirectUrl = $gallery->getConfig('mode.embed.only')) === true) {
 	    return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	}
-	return array(null, _GalleryMain_doRedirect($redirectUrl));
+	return _GalleryMain_doRedirect($redirectUrl);
     }
 
     /* Check if the page is cached and return the cached version, else generate the page */
@@ -473,7 +481,7 @@ function _GalleryMain($embedded=false) {
 							      array('forceFullUrl' => true));
 		}
 
-		return array(null, _GalleryMain_doRedirect($redirectUrl, $template));
+		return _GalleryMain_doRedirect($redirectUrl, $template);
 	    }
 
 	    if (empty($results['body'])) {
@@ -583,7 +591,8 @@ function _GalleryMain($embedded=false) {
     return array(null, $data);
 }
 
-function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null) {
+function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null,
+				 $ignoreErrors=false) {
     global $gallery;
     $session =& $gallery->getSession();
     $urlGenerator =& $gallery->getUrlGenerator();
@@ -591,7 +600,12 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
     /* Create a valid sessionId for guests, if required */
     $ret = $session->start();
     if ($ret) {
-	return array($ret, null);
+	if ($ignoreErrors) {
+	    $gallery->debug("_GalleryMain_doRedirect: Failed to start the session, error stack:\n"
+		. $ret->getAsHtml);
+	} else {
+	    return array($ret, null);
+	}
     }
     $redirectUrl = $session->replaceTempSessionIdIfNecessary($redirectUrl);
     $session->doNotUseTempId();
@@ -645,10 +659,11 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null)
 	}
 
 	GalleryUtilities::setResponseHeader("Location: $redirectUrl");
-	return array('isDone' => true);
+	return array(null, array('isDone' => true));
     }
 
-    return array('isDone' => true, 'redirectUrl' => $redirectUrl, 'template' => $template);
+    return array(null, array('isDone' => true, 'redirectUrl' => $redirectUrl,
+			     'template' => $template));
 }
 
 /**
