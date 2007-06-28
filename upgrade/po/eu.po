@@ -16,20 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
-# Piarres Beobide <pi@beobide.net>, 2005.
-#
+# Piarres Beobide <pi@beobide.net>, 2005, 2007.
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.3\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
-"POT-Creation-Date: 2007-06-14 17:58-0700\n"
-"PO-Revision-Date: 2006-05-22 15:45+0200\n"
-"Last-Translator: \n"
-"Language-Team:  <eu@li.org>\n"
+"POT-Creation-Date: 2006-12-20 09:58-0800\n"
+"PO-Revision-Date: 2007-06-26 11:26+0200\n"
+"Last-Translator: Piarres Beobide <pi@beobide.net>\n"
+"Language-Team: Euskara <Librezale@librezale.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.2\n"
+"X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Unknown"
@@ -163,17 +162,17 @@ msgstr ""
 "(kasu batzuetan orri zuri bat itzuliaz) datu apurtze aukeraz."
 
 msgid "Filesystem Operations"
-msgstr ""
+msgstr "Fitxategi sistema Ekintzak"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error: Essential filesystem operations are disabled in your PHP by the "
 "<b>disabled_functions</b> parameter in php.ini. You must allow these functions before "
 "Gallery will run. These functions are missing: %s."
 msgstr ""
-"Abisua: zure putenv()  funtzioa ezgaiturik dago php.ini fitxategiko <b>disabled_functions</"
-"b> parametroaren bidez.  Gallery-k ezarpena hauez funtziona dezake baina sistema arraro "
-"batzuetan ezin izango da abiarazi ingelesaz beste hizkuntzarik."
+"Abisua: Beharrezko fitxategi sistema  funtzio batzuek ezgaiturik daude php.ini fitxategiko "
+"<b>disabled_functions</b> parametroaren bidez.  Gallery-k funtziona dezan funtzio horiek "
+"gaitu behar dituzu. Hauek dira behar diren funtzioak: %s."
 
 msgid "Memory limit"
 msgstr "Memoria muga"
@@ -205,7 +204,7 @@ msgstr ""
 msgid "Maximum upload size"
 msgstr "Gehienezko igoera tamaina"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured to limit the size of file uploads to %sb "
 "(<b>upload_max_filesize</b> parameter in php.ini). You should raise this limit to allow "
@@ -213,7 +212,7 @@ msgid ""
 msgstr ""
 "Abisua: Zure PHP igotako fitxategi tamaina %sb-ra mugatzeko konfiguraturik dago (php.ini "
 "fitxategiko <b>upload_max_filesize</b> parametroaren bidez). Muga hau handitu beharko zenuke "
-"fitxategi handiagoak onartzeko"
+"fitxategi handiagoak onartzeko."
 
 msgid "Maximum POST size"
 msgstr "Gehienezko MEZU tamaina"
@@ -259,7 +258,7 @@ msgstr ""
 msgid "Zend compatibility mode"
 msgstr "Zend bateragarritasun modua"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click %shere%s to test your PHP.  If you see \"SUCCESS\" then your PHP is ok.  If "
@@ -267,8 +266,8 @@ msgid ""
 "proceeding."
 msgstr ""
 "Abisua: PHP Zend ze1_compatibility_mode onarpenaz konfiguraturik dago, honek PHP apurtzea "
-"eragin dezake %sHemen</b> klikatu zure PHP probatzeko. \"Lortua\" ikusi ezkero PHP ondo "
-"dago. Errorea bat eman ezkero ze1_compatibility_mode ezgaitu beharko zenuke aurrera jarraitu "
+"eragin dezake. %sHemen%s sakatu zure PHP probatzeko. \"Lortua\" ikusi ezkero PHP ondo dago. "
+"Errorea bat eman ezkero ze1_compatibility_mode ezgaitu beharko zenuke aurrera jarraitu "
 "aurretik."
 
 msgid "putenv() allowed"
@@ -286,7 +285,7 @@ msgstr ""
 msgid "Output buffering disabled"
 msgstr "Irteera buferra ezgaiturik"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
@@ -298,7 +297,7 @@ msgstr ""
 "Galleryk ezarpen hauekin funtziona dezake - fitxategiak deskargatzea azkarragoa da - baina "
 "ezingo ditu fitxategi handiak zerbitzatu (adib. bideo luzeak) eta memoriarekin arazoak izan "
 "ditzake. Baita aurrerapen barra bezalako beste zenbait ezaugarrik ez dute behar bezala "
-"funtzionatuko irteera buferra gaiturik badago nahiz ini_set() gaiturik egon."
+"funtzionatuko irteera buferra gaiturik badago ini_set() gaiturik ez badago."
 
 msgid "Storage Directory Permissions"
 msgstr "Biltegiratze Direktorio Baimenak"
@@ -315,9 +314,9 @@ msgstr ""
 "zerbitzari erabiltzaileaz idazgarriak. chown -R WebErabiltzailea %s edo chmod -R 777 %s "
 "abiarazi."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Inaccessible or missing  files (%d)"
-msgstr "Fitxategiak falta dira (%d)"
+msgstr "Fitxategiak falta dira edo ez daude eskuragarri (%d)"
 
 msgid "Gallery file integrity"
 msgstr "Gallery fitxategi integritatea"
@@ -330,7 +329,7 @@ msgid ""
 "be safe to ignore these."
 msgstr ""
 "Oharra: Zu SVN-ko Gallery erabiltzen ari zara, beraz azken aldian ezabaturiko fitxategi "
-"batzu agertu daitezke. Abisuari kasu ez egitea segurua izan daiteke."
+"batzuk agertu daitezke. Abisuari kasu ez egitea segurua izan daiteke."
 
 #, c-format
 msgid "Missing files (%d)"
@@ -349,7 +348,7 @@ msgstr ""
 msgid "Modified files (%d)"
 msgstr "Aldatutako fitxategiak (%d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "These files are no longer part of Gallery. They probably won't cause any problems but it is "
 "a good idea to remove them to keep your install clean.  Gallery can't remove these files for "
@@ -358,8 +357,8 @@ msgid ""
 msgstr ""
 "Fitxategi hauek ez dira hemendik aurrera Gallery-ren zati.  Ziurrenik ez dute arazorik "
 "sortuko baina ideia ona izaten da ezabatzea instalazio garbi bat mantentzeko. Gallery2-k "
-"ezin ditu fitxategi hauek ezabatu baina %s deskargatu eta gallery2 direktorioan abiaraziaz "
-"ezabatuko dira."
+"ezin ditu fitxategi hauek ezabatu baina %sskript hau%s  deskargatu eta gallery2 direktorioan "
+"abiaraziaz ezabatuko dira."
 
 #, c-format
 msgid "Old files (%d)"
@@ -367,14 +366,13 @@ msgstr "Fitxategi zaharrak (%d)"
 
 #, c-format
 msgid "The storage folder path is not defined in config.php (%s)"
-msgstr ""
+msgstr "Biltegiratze karpetaren biez ez dago zehazturik config.php fitxategian (%s)"
 
 msgid "Upgrade Core"
 msgstr "Muina Bertsio berritu"
 
-#, fuzzy
 msgid "Upgrade Plugins"
-msgstr "Moduluak Bertsio berritu"
+msgstr "Pluginak Bertsio berritu"
 
 msgid "Unable to initialize Gallery session"
 msgstr "Ezin da Gallery saioa abiarazi"
@@ -411,48 +409,51 @@ msgstr "Ezin da modulu zerrenda eskuratu"
 msgid "Unable to get the theme list"
 msgstr "Ezin da gai zerrenda eskuratu"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to query the %s module"
-msgstr "Ezin da %s modulua bertsio berritu"
+msgstr "Ezin da %s modulua galdezkatu"
 
 msgid "Other"
 msgstr "Bestelakoak"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to query the %s theme"
-msgstr "Ezin da %s gaia bertsio berritu"
+msgstr "Ezin da %s gaia galdezkatu"
 
 msgid "Themes"
 msgstr "Gaiak"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to deactivate the %s theme"
-msgstr "Ezin da %s gaia kargatu"
+msgstr "Ezin da %s gaia ezgaitu"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to deactivate the %s module"
-msgstr "Ezin da %s modulua kargatu"
+msgstr "Ezin da %s modulua ezgaitu"
 
 msgid "Welcome"
 msgstr "Ongi etorri"
 
 #, c-format
 msgid "<b>Error:</b> could not locate %s.  Please place it in your %s directory."
-msgstr ""
+msgstr "<b>Errorea:</b> ezin da %s kokatu. Mesedez aldatu zure %s direktorioa."
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
 "file."
 msgstr ""
+"<b>Errorea:</b> ezin da %s fitxategia irakurri. Mesedez eman Gallry-ri baimenak fitxategi "
+"horretan."
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
 "string from below and try again."
 msgstr ""
+"<b>Errorea:</b> %s gakoa ez da parekoa. Mesedez behekaldeko autentifikazio kate berria "
+"erabili eta berriz saiatu."
 
-#, fuzzy
 msgid ""
 "In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
 "When you performed the install, you entered a password which went into your config.php.  "
@@ -461,18 +462,20 @@ msgstr ""
 "Instalazioarekin aurrera jarraitu ahal izateko zu esaten duzuna zarela ziurtatu behar dugu.  "
 "Instalazioa egiterakoan config.php fitxategian gordetzen den pasahitz bat idatzi duzu.  "
 "Idatzi pasahitz hori orain.  Begiratu config.php fitxategia zein pasahitz sartu zenuen "
-"gogoratzen ez bazara"
+"gogoratzen ez baduzu."
 
 msgid "Password:"
 msgstr "Pasahitza:"
 
 msgid "You have exceeded the maximum attempts to login by entering a password."
-msgstr ""
+msgstr "Pasahitza sartuaz saioa hasteko saiakera muga gainditu duzu."
 
 msgid ""
 "To prevent somebody from hacking your website, we now require you to complete a stricter "
 "authentication process."
 msgstr ""
+"Inork zure webgunea erasotzea saihesteko, orain autentifikazio modu zorrotzago bat erabiliko "
+"dugu."
 
 #, c-format
 msgid ""
@@ -482,9 +485,14 @@ msgid ""
 "new text file called %s in the %s directory on your webserver (that's the same directory "
 "where %s is located). It must contain the following randomly generated characters:"
 msgstr ""
+"Bertsio eguneratze prozesua abiarazi ahal izateko, esaten duzuna zarela egiaztatu behar "
+"dugu.  Hau egiteko modu seguruena Gallery direktorioan aldaketa bat egitea eskatzea da behar "
+"dituzun baimenak dituzula ziurtatzeko.  Beraz %s izeneko fitxategi bat sortzeko eskatuko "
+"dizugu %s direktorioan (%s kokaturik dagoen direktorio berdina). Fitxategi horrek hurrengo "
+"ausazko karaktere katea eduki behar du:"
 
 msgid "Once you've uploaded the file, click below to continue."
-msgstr "Behin fitxategia igo duzunean, behean klik egin aurrera jarraitzeko."
+msgstr "Behin fitxategia igo duzunean, jarraitu sakatu aurrera egiteko."
 
 msgid "Authenticate Me"
 msgstr "Egiaztatu iezadazu"
@@ -534,8 +542,8 @@ msgid ""
 "will not be able to help you recover your data!"
 msgstr ""
 "Bertsio berritzearen aurretik zure datu-basearen babeskopia bat egitea <b>oso gomendagarria</"
-"b> da!  Babeskopia ez egin eta zerbait oker atera ezkero posible da zure datuak ezin "
-"berreskuratu izatea!  Hurrengo adibideak begiratu:"
+"b> da!  Babeskopia ez baduzu egiten eta zerbait oker atera ezkero posible da zure datuak "
+"ezin berreskuratu izatea!  Hurrengo adibideak begiratu:"
 
 msgid "You have three options:"
 msgstr ""
@@ -556,13 +564,13 @@ msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
 msgid "Oracle"
-msgstr ""
+msgstr "ºOracle"
 
 msgid "IBM DB2"
-msgstr ""
+msgstr "IBM DB2"
 
 msgid "Microsoft SQL Server"
-msgstr ""
+msgstr "Microsoft SQL Zerbitzaria"
 
 msgid "Continue without a backup (<b>discouraged</b>)."
 msgstr ""
@@ -572,8 +580,8 @@ msgid ""
 "If you choose to perform the automated backup, please be patient.  If you cancel or reload "
 "the page, you may interfere with the backup process."
 msgstr ""
-"Bein bertsio berritzea hasi dela, mesedez itxoin.  Orrialdea utzi edo freskatuz gero bertsio "
-"berritze prozesua apur daiteke."
+"Behin bertsio berritzea hasi dela, mesedez itxoin.  Orrialdea utzi edo freskatuz gero "
+"bertsio berritze prozesua apur daiteke."
 
 msgid "Begin Database Backup"
 msgstr ""
@@ -605,13 +613,12 @@ msgstr ""
 msgid "Finished!"
 msgstr "Amaituta!"
 
-#, fuzzy
 msgid ""
 "Congratulations! Your Gallery 2 upgrade is complete!  To upgrade any additional Gallery 2 "
 "plugins you may use the Site Administrator interface."
 msgstr ""
-"Zorionak! Gallery 2 bertsio berritzea osatua da.  Beste modulu gehigarriak bertsio "
-"berritzeko gune kudeaketa interfazea erabil dezakezu."
+"Zorionak! Gallery 2 bertsio berritzea osatua da.! Beste plugin gehigarriak bertsio "
+"berritzeko guneko Kudeaketa Interfazea erabili dezakezu."
 
 msgid "Go to my Gallery!"
 msgstr "Joan Galeriara!"
@@ -709,7 +716,7 @@ msgid "Debug Output:"
 msgstr "Arazpen Irteera:"
 
 msgid "Upgrading the Gallery Core Module"
-msgstr "Galeria Muin Modulua Bertsio berritzeb"
+msgstr "Galeria Muin Modulua Bertsio berritzen"
 
 msgid ""
 "The Gallery Core Module is the heart of the Gallery application.  You can upgrade most other "
@@ -725,7 +732,7 @@ msgstr "Dagoeneko instalaturik"
 
 #, c-format
 msgid "Core Module version: %s (Gallery %s)"
-msgstr ""
+msgstr "Muin Modulu bertsioa: %s (Gallery %s)"
 
 msgid "New version"
 msgstr "Bertsio berria"
@@ -758,8 +765,8 @@ msgid ""
 "Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may "
 "interfere with the upgrade process."
 msgstr ""
-"Bein bertsio berritzea hasi dela, mesedez itxoin.  Orrialdea utzi edo freskatuz gero bertsio "
-"berritze prozesua apur daiteke."
+"Behin bertsio berritzea hasi dela, mesedez itxoin.  Orrialdea utzi edo freskatuz gero "
+"bertsio berritze prozesua apur daiteke."
 
 msgid "Begin Upgrade"
 msgstr "Bertsio berritzea hasi"
@@ -778,30 +785,33 @@ msgid ""
 "<b>Reminder</b>: Now update the permissions on config.php to make sure it is not writeable "
 "by other people.  Right now your config.php has modes of %s.  We suggest that you do this:"
 msgstr ""
+"<b>Gogorarazlea</b>: Orain config.php fitxategiko baimenak aldatu beste inork idatz ezin "
+"izateko. Orain zure config.php fitxategiaren modua %s da. Hau egitea gomendatzen dizugu:"
 
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Galeria Muina Modulua eguneraturik dago!"
 
-#, fuzzy
 msgid ""
 "The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
 msgstr ""
-"Honako modulu hauek automatikoki bertsio berritu daitezke.  Orain ez eguneratzea hautatu "
+"Honako plugin hauek automatikoki bertsio berritu daitezke.  Orain ez eguneratzea hautatu "
 "ezkero galeriarekin arazoak izan ditzakezu.  Edozein momentuan moduluak Gune Kudeaketa "
 "orrian bertsio berritu edo ezgaitu ditzakezu edo honera itzuli eta eguneraketa egin beraz "
-"orain emandako erabakia beranduago alda dezakezu"
+"orain emandako erabakia beranduago alda dezakezu."
 
 msgid "Deactivated Plugins"
-msgstr ""
+msgstr "Ezgaituriko Pluginak"
 
 msgid ""
 "The following plugins were active, but they are missing or incompatible with your current "
 "version of Gallery.  They have been deactivated.  Install the latest version of these "
 "plugins to reactivate them."
 msgstr ""
+"Hurrengo pluginak daude gaiturik, baina edo ez daude edo ez dira gallery bertsio honekin "
+"bateragarriak. Ezgaituak izan dira. Plugin hauen azken bertsioa instalatu gaitu ahal izateko."
 
 msgid "Module"
 msgstr "Modulua"
@@ -822,7 +832,7 @@ msgid "Description"
 msgstr "Azalpena"
 
 msgid "Incompatible with this version of Gallery"
-msgstr ""
+msgstr "Ez da gallery bertsio honekin bateragarria"
 
 msgid "(un)check all"
 msgstr "(des)markatu denak"
@@ -831,9 +841,8 @@ msgstr "(des)markatu denak"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "Saltatu Bertsio berritzea eta Jarraitu %d Urratsera&raquo;"
 
-#, fuzzy
 msgid "Upgrade Selected Plugins"
-msgstr "Hautatutako Moduluak Bertsio berritu"
+msgstr "Hautatutako Pluginak Bertsio berritu"
 
 #, c-format
 msgid "Upgraded the %s module successfully"
@@ -843,9 +852,8 @@ msgstr "%s modulua behar bezala bertsio berritu da"
 msgid "Upgraded the %s theme successfully"
 msgstr "%s gaia behar bezala bertsio berritu da"
 
-#, fuzzy
 msgid "Upgrade More Plugins"
-msgstr "Moduluak Bertsio berritu"
+msgstr "Plugin Gehiago Berritu"
 
 #, c-format
 msgid ""
@@ -872,6 +880,3 @@ msgstr "Hizkuntza Hautatu:"
 
 msgid "Go"
 msgstr "Joan"
-
-#~ msgid "this script"
-#~ msgstr "skript hau"
