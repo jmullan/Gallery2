@@ -4,7 +4,7 @@
  *}
 <div class="gbBlock">
   <h3>
-    {g->text text="Type the word appearing in the picture."}
+    {g->text text="Type the number appearing in the picture."}
   </h3>
   <div>
     <img src="{g->url arg1="view=captcha.CaptchaImage"}" width="100" height="100" alt=""/>
