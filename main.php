@@ -196,8 +196,7 @@ function _GalleryMain($embedded=false) {
 	    $gallery->debug('Redirect to the upgrade wizard, core module version is out of date');
 	    $redirectUrl = $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php';
 	}
-	list ($ret, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
-	/* Ignore errors */
+	list ($ignored, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
 	return array(null, $results);
     }
 
@@ -221,8 +220,7 @@ function _GalleryMain($embedded=false) {
 	    if (($redirectUrl = $gallery->getConfig('mode.embed.only')) === true) {
 		return array(GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null);
 	    }
-	    list ($ret, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
-	    /* Ignore errors */
+	    list ($ignored, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
 	    return array(null, $results);
 	}
 
@@ -238,8 +236,7 @@ function _GalleryMain($embedded=false) {
 		    $redirectUrl = $urlGenerator->generateUrl(
 			array('view' => 'core.MaintenanceMode'), array('forceFullUrl' => true));
 		}
-		list ($ret, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
-		/* Ignore errors */
+		list ($ignored, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
 		return array(null, $results);
 	    }
 	}
@@ -357,8 +354,7 @@ function _GalleryMain($embedded=false) {
 
 	if (!$isAdmin) {
 	    if (($redirectUrl = $gallery->getConfig('mode.maintenance')) !== true) {
-		list ($ret, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
-		/* Ignore errors */
+		list ($ignored, $results) = _GalleryMain_doRedirect($redirectUrl, null, null, true);
 		return array(null, $results);
 	    }
 
