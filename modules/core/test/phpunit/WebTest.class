@@ -249,6 +249,7 @@ class WebTest extends GalleryTestCase {
     }
 
     function testFetchWebPageTooManyRedirects() {
+	GalleryCoreApi::requireOnce('modules/core/classes/helpers/WebHelper_simple.class');
 	list ($success, $body, $response, $headers, $actualUrl) =
 	    WebHelper_simple::fetchWebPage('http://www.test.server/testFetchRedirectedWebPage',
 					   array(), 6);
