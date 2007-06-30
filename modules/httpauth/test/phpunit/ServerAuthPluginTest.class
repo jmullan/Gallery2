@@ -51,7 +51,7 @@ class ServerAuthPluginTest extends GalleryTestCase {
 	$this->_plugin = new ServerAuthPlugin();
 
 	$this->_saveSession = $gallery->_session;
-	$gallery->_session = new HttpAuthPluginTestSession();
+	$gallery->_session = new ServerAuthPluginTestSession();
     }
 
     function tearDown() {
