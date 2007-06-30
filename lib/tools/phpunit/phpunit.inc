@@ -497,7 +497,7 @@ class TestSuite /* implements Test */ {
     /* Number of TestCases comprising this TestSuite (including those
        in any constituent TestSuites) */
     $count = 0;
-    reset($fTests);
+    reset($this->fTests);
     while (list($na, $test_case) = each($this->fTests)) {
       $count += $test_case->countTestCases();
     }
