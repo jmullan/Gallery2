@@ -398,7 +398,7 @@ class GalleryTestCase extends TestCase {
 	    if ($ret && !($ret->getErrorCode() & ERROR_COLLISION)) {
 		break;
 	    }
-	} while (isset($ret) && --$retries > 0);
+	} while ($ret && --$retries > 0);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -592,7 +592,7 @@ class GalleryTestCase extends TestCase {
 		if ($ret && !($ret->getErrorCode() & ERROR_COLLISION)) {
 		    break;
 		}
-	    } while (isset($ret) && --$retries > 0);
+	    } while ($ret && --$retries > 0);
 	} else {
 	    $ret = $user->create('testuser-' . $userTag);
 	}
@@ -638,7 +638,7 @@ class GalleryTestCase extends TestCase {
 		if ($ret && !($ret->getErrorCode() & ERROR_COLLISION)) {
 		    break;
 		}
-	    } while (isset($ret) && --$retries > 0);
+	    } while ($ret && --$retries > 0);
 	} else {
 	    $ret = $group->create('Test Group ' . $groupTag);
 	}
@@ -765,7 +765,7 @@ class GalleryTestCase extends TestCase {
 	    if ($ret && !($ret->getErrorCode() & ERROR_COLLISION)) {
 		break;
 	    }
-	} while (isset($ret) && --$retries > 0);
+	} while ($ret && --$retries > 0);
 	if ($ret) {
 	    return array($ret, null);
 	}
