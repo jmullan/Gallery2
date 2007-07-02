@@ -57,7 +57,8 @@ class GalleryControllerTestCase extends GalleryTestCase {
 							  $ret->getErrorCode()))));
 	    }
 	} else if ($ret) {
-	    return ($ret);
+	    $this->fail($ret->getAsHtml());
+	    return array();
 	} else {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($results['status']), 'controller results missing status');

@@ -390,11 +390,15 @@ class GalleryTestCase extends TestCase {
 	if (empty($parentId)) {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
-
-	list ($ret, $album) = GalleryCoreApi::createAlbum(
-	    $parentId, 'albumtest' . rand(),
-	    'I am Jack\'s title', 'This is my summary',
-	    'This is my description', null);
+	$retries = 5;
+	/* Try to avoid duplicate album id's and ugly ERROR_COLLISON status during a test. */
+	do {
+	    list ($ret, $album) = GalleryCoreApi::createAlbum($parentId, 'albumtest' . mt_rand(),
+		'I am Jack\'s title', 'This is my summary', 'This is my description', null);
+	    if ($ret && !($ret->getErrorCode() & ERROR_COLLISION)) {
+		break;
+	    }
+	} while (isset($ret) && --$retries > 0);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -477,7 +481,7 @@ class GalleryTestCase extends TestCase {
 	}
 
 	$ret = $item->create($parentId, $inputFile, $mimeType,
-			     'test-' . rand(1, 5000) . '.dat');
+			     'test-' . mt_rand(1, 5000) . '.dat');
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -581,10 +585,17 @@ class GalleryTestCase extends TestCase {
 	}
 
 	if (!isset($userTag)) {
-	    $userTag = rand();
+	    $retries = 5;
+	    /* Try to avoid duplicate user id's and ugly ERROR_COLLISON status during a test. */
+	    do {
+		$ret = $user->create('testuser-' . mt_rand());
+		if ($ret && !($ret->getErrorCode() & ERROR_COLLISION)) {
+		    break;
+		}
+	    } while (isset($ret) && --$retries > 0);
+	} else {
+	    $ret = $user->create('testuser-' . $userTag);
 	}
-
-	$ret = $user->create('testuser-' . $userTag);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -620,10 +631,17 @@ class GalleryTestCase extends TestCase {
 	}
 
 	if (!isset($groupTag)) {
-	    $groupTag = rand();
+	    $retries = 5;
+	    /* Try to avoid duplicate group id's and ugly ERROR_COLLISON status during a test. */
+	    do {
+		$ret = $group->create('Test Group ' . mt_rand());
+		if ($ret && !($ret->getErrorCode() & ERROR_COLLISION)) {
+		    break;
+		}
+	    } while (isset($ret) && --$retries > 0);
+	} else {
+	    $ret = $group->create('Test Group ' . $groupTag);
 	}
-
-	$ret = $group->create('Test Group ' . $groupTag);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -740,7 +758,14 @@ class GalleryTestCase extends TestCase {
 			 null);
 	}
 
-	$ret = $user->create('testuser-'.rand());
+	$retries = 5;
+	/* Try to avoid duplicate user id's and ugly ERROR_COLLISON status during a test. */
+	do {
+	    $ret = $user->create('testuser-' . mt_rand());
+	    if ($ret && !($ret->getErrorCode() & ERROR_COLLISION)) {
+		break;
+	    }
+	} while (isset($ret) && --$retries > 0);
 	if ($ret) {
 	    return array($ret, null);
 	}
