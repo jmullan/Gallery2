@@ -18,6 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/core/classes/GallerySmarty.class');
+GalleryCoreApi::requireOnce('modules/imageblock/Callbacks.inc');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
+
 /**
  * Test Image Block functionality
  *
@@ -857,8 +862,6 @@ class ImageBlockTest extends GalleryTestCase {
 	return $result;
     }
 }
-
-GalleryCoreApi::requireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkit
