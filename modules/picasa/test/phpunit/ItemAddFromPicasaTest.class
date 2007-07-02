@@ -64,10 +64,7 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 
 	$gallery->_lockSystem = new MockLockSystem();
 
-	list ($ret, $this->_temporaryAlbum) = GalleryCoreApi::createAlbum(
-		$this->_getRootId(), 'albumtest',
-		'This is my title', 'This is my summary',
-		'This is my description', null);
+	list ($ret, $this->_temporaryAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    return $ret;
 	}
