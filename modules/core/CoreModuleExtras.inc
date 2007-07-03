@@ -83,6 +83,55 @@ class CoreModuleExtras {
 	    }
 	}
 
+	/*
+	 * Store Entities.inc and Maps.inc definitions in the Schema table. Do this upgrade before
+	 * the general upgrade code to ensure that all map methods work for the other upgrade code.
+	 */
+	if (version_compare($currentVersion, '1.2.18', '<')) {
+    	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0', 'Schema:1.1'));
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    $count = 1;
+	    $total = count($modules);
+	    $statusText = $module->translate('Converting Schema Table');
+	    $gallery->guaranteeTimeLimit(30);
+	    foreach ($modules as $moduleId => $moduleStatus) {
+		/* Skip uninstalled/unavailable modules */
+		if (!isset($moduleStatus['active']) || empty($moduleStatus['available'])) {
+		    continue;
+		}
+
+		$ret = $storage->updateTableInfo($moduleId);
+		if ($ret) {
+		    return $ret;
+		}
+
+		$gallery->guaranteeTimeLimit(30);
+		$ret = $statusMonitor->renderStatusMessage($statusText, '', $count++ / $total);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	if (version_compare($currentVersion, '1.2.5', '<')) {
+	    $ret = $storage->configureStore($module->getId(), array('GalleryMimeTypeMap:1.0'));
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
 	/**
 	 * README: How to update the block below
 	 *
@@ -2173,11 +2222,7 @@ class CoreModuleExtras {
 	case '1.2.3':
 	    /* Added template version number */
 	case '1.2.4':
-	    /* Increase allowed length of mime-type strings */
-	    $ret = $storage->configureStore($module->getId(), array('GalleryMimeTypeMap:1.0'));
-	    if ($ret) {
-		return $ret;
-	    }
+	    /* Increase allowed length of mime-type strings (mime type map) */
 	case '1.2.5':
 	    /* Expose smarty.compile_check flag as a new option and set the default to false */
 	    $ret = $module->setParameter('smarty.compile_check', '0');
@@ -2344,42 +2389,7 @@ class CoreModuleExtras {
 	    if ($ret) {
 		return $ret;
 	    }
-
-	    $ret = $storage->configureStore($module->getId(), array('Schema:1.1'));
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
-	    if ($ret) {
-		return $ret;
-	    }
-
-	    $count = 1;
-	    $total = count($modules);
-	    $statusText = $module->translate('Converting Schema Table');
-
-	    foreach ($modules as $moduleId => $moduleStatus) {
-		/* Skip uninstalled/unavailable modules */
-		if (!isset($moduleStatus['active']) || empty($moduleStatus['available'])) {
-		    continue;
-		}
-
-		$ret = $storage->updateTableInfo($moduleId);
-		if ($ret) {
-		    return $ret;
-		}
-
-		$gallery->guaranteeTimeLimit(30);
-		$ret = $statusMonitor->renderStatusMessage($statusText, '', $count++ / $total);
-		if ($ret) {
-		    return $ret;
-		}
-	    }
-	    $ret = $storage->checkPoint();
-	    if ($ret) {
-		return $ret;
-	    }
+	    /* This upgrade is done before the general upgrade code */
 
 	case 'end of upgrade path':
 	    /*
