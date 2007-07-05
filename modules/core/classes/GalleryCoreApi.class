@@ -3194,7 +3194,7 @@ class GalleryCoreApi {
     function addEventLogEntry($type, $summary, $details) {
 	GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryEventLogHelper_medium.class');
-	return GalleryEventLogHelper_advanced::addEventLogEntry($type, $summary, $details);
+	return GalleryEventLogHelper_medium::addEventLogEntry($type, $summary, $details);
     }
 }
 ?>
