@@ -1587,7 +1587,8 @@ class GalleryTheme extends GalleryPlugin {
 	    foreach (array_keys($thumbnail) as $id) {
 		if (!($thumbnail[$id]->getWidth() && $thumbnail[$id]->getHeight())) {
 		    list ($ret, $thumbnail[$id]) =
-			GalleryCoreApi::rebuildDerivativeCache($thumbnail[$id]->getId());
+			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
+			    $thumbnail[$id]->getId());
 		    if ($ret) {
 			return $ret;
 		    }
