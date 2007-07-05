@@ -247,6 +247,12 @@ class ItemMoveSingleView extends GalleryView {
 
 	$template->setVariable('ItemMoveSingle', $ItemMoveSingle);
 	$template->setVariable('controller', 'core.ItemMoveSingle');
+	$template->javascript('lib/yui/yahoo-min.js');
+	$template->javascript('lib/yui/dom-min.js');
+	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/container-min.js');
+	$template->javascript('lib/yui/treeview-min.js');
+	$template->style('modules/core/data/tree.css');
 	return array(null, array('body' => 'modules/core/templates/ItemMoveSingle.tpl'));
     }
 
