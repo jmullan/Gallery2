@@ -309,7 +309,7 @@
   YAHOO.util.Event.addListener(window, "load", treeInit);
   //]]>
 </script>
-<input type="hidden" id="{g->formVar var="form[destination]"}" name="{g->formVar var="form[destination]"}""/>
+<input type="hidden" id="{g->formVar var="form[destination]"}" name="{g->formVar var="form[destination]"}"/>
 
   {if !empty($form.error.destination.permission)}
   <div class="giError">
