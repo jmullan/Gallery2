@@ -234,9 +234,13 @@ class ItemAddLinkItem extends ItemAddPlugin {
 	}
 	$template->setVariable('ItemAddLinkItem',
 	    array('albumTree' => GalleryUtilities::createAlbumTree($albums)));
-
-	return array(null,
-		     'modules/linkitem/templates/ItemAddLinkItem.tpl', 'modules_linkitem');
+	$template->javascript('lib/yui/yahoo-min.js');
+	$template->javascript('lib/yui/dom-min.js');
+	$template->javascript('lib/yui/event-min.js');
+	$template->javascript('lib/yui/container-min.js');
+	$template->javascript('lib/yui/treeview-min.js');
+	$template->style('modules/core/data/tree.css');
+	return array(null, 'modules/linkitem/templates/ItemAddLinkItem.tpl', 'modules_linkitem');
     }
 
     /**

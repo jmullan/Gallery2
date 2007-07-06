@@ -22,15 +22,59 @@
   <p class="giDescription">
     {g->text text="Choose a destination album"}
   </p>
+<div id="gTreeDiv"></div>  
+<script type="text/javascript">
+  //<![CDATA[
+  var tree;
+  var nodes=[];
+  var selectedId;
 
-  <select name="{g->formVar var="form[destination]"}" onchange="checkPermissions(this.form)">
+  function treeInit() {ldelim}
+    var expandedNode = null;
+    tree = new YAHOO.widget.TreeView("gTreeDiv");
+    nodes[-1] = tree.getRoot();
+    selectedId = {if empty($form.destination)} {$ItemCreateReplicaSingle.albumTree[0].data.id} {else} {$form.destination} {/if};
+    {*
+     * $ItemCreateReplicaSingle contains albums in Depth-first order. Keep the ancestors of the existing
+     * branch in nodes[] array in order to maintain parent ids.
+     *}
     {foreach from=$ItemCreateReplicaSingle.albumTree item=album}
-      <option value="{$album.data.id}" {if ($album.data.id == $form.destination)}selected="selected"{/if}>
-	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
-	{$album.data.title|markup:strip|default:$album.data.pathComponent}
-      </option>
+      nodes[{$album.depth}] = new YAHOO.widget.TextNode({ldelim} id: "{$album.data.id}", 
+        label: "{$album.data.title|markup:strip|default:$album.data.pathComponent}",
+        href: "javascript:onLabelClick({$album.data.id})" {rdelim},
+        nodes[{$album.depth-1}], {if $album.depth == 0}true{else}false{/if});
+      {* If the destination album is known, expand starting with top ancestor *}
+      {if $form.destination == $album.data.id}
+        {* NOTE: YUI requires two calls to expand a tree *}
+        nodes[1].expand();
+        nodes[1].expandAll();
+      {/if}
     {/foreach}
-  </select>
+
+    tree.draw();
+    var node = tree.getNodeByProperty("id", selectedId);
+    node.getLabelEl().setAttribute("class", "ygtvlabelselected");
+    
+    document.getElementById("{g->formVar var="form[destination]"}").value = selectedId;
+  {rdelim}
+  
+  function onLabelClick(id) {ldelim}
+    if (selectedId != id) {ldelim}
+      var node = tree.getNodeByProperty("id", id);
+      node.getLabelEl().setAttribute("class", "ygtvlabelselected");
+
+      node = tree.getNodeByProperty("id", selectedId);
+      node.getLabelEl().setAttribute("class", "ygtvlabel");
+
+      selectedId = id;
+      document.getElementById("{g->formVar var="form[destination]"}").value = id;
+    {rdelim}
+  {rdelim}
+  
+  YAHOO.util.Event.addListener(window, "load", treeInit);
+  //]]>
+</script>
+<input type="hidden" id="{g->formVar var="form[destination]"}" name="{g->formVar var="form[destination]"}"/>
 
   {if isset($form.error.destination.empty)}
   <div class="giError">

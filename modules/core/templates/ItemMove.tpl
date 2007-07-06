@@ -277,7 +277,7 @@
         label: "{$album.data.title|markup:strip|default:$album.data.pathComponent}",
         href: "javascript:onLabelClick({$album.data.id})" {rdelim},
         nodes[{$album.depth-1}], {if $album.depth == 0}true{else}false{/if});
-      {* If the destination album is known, expand starting with top ancestor  *}
+      {* If the destination album is known, expand starting with top ancestor *}
       {if $form.destination == $album.data.id}
         {* NOTE: YUI requires two calls to expand a tree *}
         nodes[1].expand();
