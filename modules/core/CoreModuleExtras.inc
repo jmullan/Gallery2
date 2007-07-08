@@ -88,7 +88,7 @@ class CoreModuleExtras {
 	 * the general upgrade code to ensure that all map methods work for the other upgrade code.
 	 */
 	if (version_compare($currentVersion, '1.2.18', '<')) {
-    	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0', 'Schema:1.1'));
+	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0', 'Schema:1.1'));
 	    if ($ret) {
 		return $ret;
 	    }
