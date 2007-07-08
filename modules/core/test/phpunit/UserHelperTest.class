@@ -37,6 +37,7 @@ class UserHelperTest extends GalleryTestCase {
 	   return $ret;
 	}
 
+	$this->_originalStorage = $gallery->_storage;
 	$gallery->_storage = new UserHelperTestMockStorage();
 	$this->_storage =& $gallery->getStorage();
 	$gallery->_phpVm = new UserHelperTestPhpVm();
@@ -222,10 +223,8 @@ class UserHelperTest extends GalleryTestCase {
     function testFetchLanguageCodeForUser() {
 	global $gallery;
 
-	/* Get a real storage instead of mockup. */
-	$gallery->_storage = null;
-	$this->_storage =& $gallery->getStorage();
-	$gallery->_storage =& $this->_storage;
+	/* Use the real storage instead of the mockup. */
+	$gallery->_storage = $this->_originalStorage;
 	$this->_phpVm->_time = time();
 
 	/* Create a test user. */
