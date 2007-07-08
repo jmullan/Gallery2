@@ -600,7 +600,7 @@ class GalleryTestCase extends TestCase {
 	    return array($ret, null);
 	}
 
-	$user->setFullName('User ' . $userTag);
+	$user->setFullName(isset($userTag) ? 'User ' . $userTag : 'User');
 	$user->changePassword($password);
 	$user->setEmail('user-' . $userTag . '@example.com');
 
