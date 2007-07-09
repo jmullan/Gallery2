@@ -1911,7 +1911,7 @@ if ($ret) {
 	$this->assertEquals(array(''), split("\r?\n", $output));
     }
 
-    function testMacDotUnderscore() {
+    function testSuppressMacDotUnderscore() {
 	$pathComponent = '._testItem-' . rand();
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
@@ -1943,6 +1943,13 @@ if ($ret) {
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
 
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
 	$this->_responseHeaders = null;
 
 	$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -1967,7 +1974,7 @@ if ($ret) {
 	$this->assertEquals(array(''), split("\r?\n", $output));
     }
 
-    function testMacDotDsStore() {
+    function testSuppressMacDotDsStore() {
 	$pathComponent = '.DS_Store';
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
@@ -1998,6 +2005,13 @@ if ($ret) {
 	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
+
+	list ($ret, $itemId) = WebDavHelper::fetchItemIdByPath($path);
+	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
 
 	$this->_responseHeaders = null;
 
