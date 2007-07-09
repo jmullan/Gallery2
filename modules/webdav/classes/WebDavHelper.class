@@ -716,14 +716,14 @@ class WebDavHelper {
      * Wrapper around HTTP_WebDAV_Server::propfind_response_helper which formats PROPFIND responses.
      *
      * @param array $webDavOptions WebDAV library options
-     * @param array $files files for WebDAV response (path, props)
+     * @param array $status files for WebDAV response (path, props)
      * @param array $namespaces namespaces for WebDAV response (URI => prefix)
      * @see HTTP_WebDAV_Server::propfind_response_helper
      */
-    function propfindResponseHelper($webDavOptions, $files, $namespaces) {
+    function propfindResponseHelper($webDavOptions, $status, $namespaces) {
 	$webDavServer =& WebDavHelper::getWebDavServer();
 	$webDavOptions['namespaces'] = $namespaces;
-	$webDavServer->propfind_response_helper($webDavOptions, $files);
+	$webDavServer->propfind_response_helper($webDavOptions, $status);
     }
 
     /**
@@ -749,8 +749,8 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	$files = array();
-	$ret = WebDavHelper::_propfindFiles($item, $path, $depth, $files);
+	$status = array();
+	$ret = WebDavHelper::_propfindFiles($item, $path, $depth, $status);
 	if ($ret) {
 	    return $ret;
 	}
@@ -759,7 +759,7 @@ class WebDavHelper {
 	$namespaces[WEBDAV_GALLERY_NAMESPACE] = 'G';
 
 	/* Format PROPFIND response */
-	$ret = WebDavHelper::propfindResponseHelper($webDavOptions, $files, $namespaces);
+	$ret = WebDavHelper::propfindResponseHelper($webDavOptions, $status, $namespaces);
 	if ($ret) {
 	    return $ret;
 	}

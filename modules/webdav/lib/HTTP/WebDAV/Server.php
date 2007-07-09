@@ -519,15 +519,21 @@ class HTTP_WebDAV_Server
      * PROPFIND response helper - format PROPFIND response
      *
      * @param options
-     * @param files
+     * @param status
      * @return void
      */
-    function propfind_response_helper($options, $files)
+    function propfind_response_helper($options, $status)
     {
+        // set response status
+        if (empty($status) || !is_array($status)) {
+            $this->setResponseStatus($status, false);
+            return;
+        }
+
         $responses = array();
 
         // now loop over all returned files
-        foreach ($files as $file) {
+        foreach ($status as $file) {
             $response = array();
 
             // copy href to response
@@ -640,12 +646,10 @@ class HTTP_WebDAV_Server
         }
 
         // call user handler
-        if (!$this->propfind($options, $files)) {
-            return;
-        }
+        $status = $this->propfind($options);
 
         // format PROPFIND response
-        $this->propfind_response_helper($options, $files);
+        $this->propfind_response_helper($options, $status);
     }
 
     // }}}
@@ -849,11 +853,7 @@ class HTTP_WebDAV_Server
      */
     function get_response_helper($options, $status)
     {
-        if (empty($status)) {
-            $status = '404 Not Found';
-        }
-
-        // set headers before we start printing
+        // set response headers before we start printing
         $this->setResponseStatus($status, false);
 
         if ($status !== true) {
@@ -1047,8 +1047,8 @@ class HTTP_WebDAV_Server
         $options = array();
         $options['path'] = $this->path;
 
-	// TODO: get_response_helper needn't do any output in case of HEAD
-	// responses.  Is the advantage to optimizing it worthwhile?
+        // TODO: get_response_helper needn't do any output in case of HEAD
+        // responses.  Is the advantage to optimizing it worthwhile?
         ob_start();
 
         // call user handler
@@ -1562,7 +1562,7 @@ class HTTP_WebDAV_Server
             $status = '423 Locked';
         }
 
-        // set headers before we start printing
+        // set response headers before we start printing
         $this->setResponseStatus($status);
 
         if ($status{0} == 2) { // 2xx states are ok
@@ -1937,11 +1937,7 @@ class HTTP_WebDAV_Server
         $options['props'][] = $this->mkprop('DAV:', 'lockdiscovery', null);
 
         // call user handler
-        if (!$this->propfind($options, $files)) {
-            return;
-        }
-
-        return $files;
+        return $this->propfind($options);
     }
 
     // {{{ _allow()
@@ -2419,14 +2415,14 @@ class HTTP_WebDAV_Server
      */
     function setResponseStatus($status, $replace=true)
     {
-        // simplified success case
-        if ($status === true) {
-            $status = '200 OK';
+        // failure
+        if (empty($status)) {
+            $status = '404 Not Found';
         }
 
-        // didn't set a more specific status code
-        if (empty($status)) {
-            $status = '500 Internal Server Error';
+        // success
+        if ($status === true) {
+            $status = '200 OK';
         }
 
         // generate HTTP status response
