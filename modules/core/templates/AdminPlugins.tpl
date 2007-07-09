@@ -210,7 +210,7 @@
 	</td>
 
 	<td style="width: 150px">
-          {if ($plugin.type == 'module' && $plugin.id == 'core') || $plugin.state == 'incompatible' || ($plugin.type == 'theme' && $plugin.id == $AdminPlugins.defaultTheme && $plugin.state == 'active')}
+          {if ($plugin.type == 'module' && $plugin.id == 'core') || $plugin.state == 'incompatible'}
 	    &nbsp;
 	  {else}
             <span id="action-install-{$plugin.type}-{$plugin.id}" style="display: none">
@@ -233,6 +233,8 @@
                 {g->text text="activate"}
               </a> |
             </span>
+	    {* Omit some actions for default theme *}
+	    {if !($plugin.type == 'theme' && $plugin.id == $AdminPlugins.defaultTheme && $plugin.state == 'active')}
             <span id="action-deactivate-{$plugin.type}-{$plugin.id}" style="display: none">
               <a style="cursor: pointer" onclick="performPluginAction('{$plugin.type}', '{$plugin.id}', '{g->url arg1="view=core.PluginCallback" arg2="pluginId=`$plugin.id`" arg3="pluginType=`$plugin.type`" arg4="command=deactivate" useAuthToken=1}')">
                 {g->text text="deactivate"}
@@ -249,6 +251,7 @@
                 {g->text text="delete"}
               </a>
             </span>
+            {/if}
             {/if}
 	  {/if}
           <script type="text/javascript"> updatePluginState('{$plugin.type}', '{$plugin.id}', '{$plugin.state}', false); </script>
