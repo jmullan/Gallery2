@@ -345,7 +345,12 @@ class GalleryDatabaseExport {
 	    unset($sql['table']['Schema']);
 	    $this->updateStatus();
 
-	    /* Create our sequences now */
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
+	    }
+	    
+	    /* Export our sequences now */
 	    foreach (array(DATABASE_SEQUENCE_LOCK, DATABASE_SEQUENCE_ID,
 			   DATABASE_SEQUENCE_EVENT_LOG) as $sequenceId) {
 		$ret = $this->_exportSequence($handle, $sequenceId);
