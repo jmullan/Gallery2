@@ -202,9 +202,6 @@ class GalleryDerivative extends GalleryChildEntity {
 	/* Expire our cache, and don't abort if this fails */
 	$ret = $this->expireCache();
 
-	GalleryDataCache::removeFromDisk(
-	    array('type' => 'derivative-meta', 'itemId' => $this->getId()));
-
 	return null;
     }
 
@@ -485,9 +482,6 @@ class GalleryDerivative extends GalleryChildEntity {
 	if ($ret) {
 	    return $ret;
 	}
-
-	GalleryDataCache::putToDisk(
-	    array('type' => 'derivative-meta', 'itemId' => $this->getId()), $data);
 
 	GalleryCoreApi::deleteFastDownloadFileById($this->getId());
 	$ret = GalleryCoreApi::createFastDownloadFile($this);

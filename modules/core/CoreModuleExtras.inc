@@ -2245,11 +2245,15 @@ class CoreModuleExtras {
 	    }
 	case '1.2.9':
 	    /**
-	     * Added EventLogMap.  Note that we don't need to do this at install time because at
-	     * that time, all core sequences are created in GalleryStorage::configureStore.  If the
-	     * sequence doesn't exist, then the getUniqueId() will actual cause the sequence to be
-	     * created.
+	     * Added EventLogMap.  A new G2 install will create this sequence in
+	     * GalleryStorage::configureStore.  Here in an upgrade we call getUniqueId which will
+	     * create the sequence if it doesn't exist.  Checkpoint first because the error that
+	     * leads to sequence creation may invalidate a pending transaction (postgres).
 	     */
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
+	    }
 	    list ($ret, $sequenceValue) = $storage->getUniqueId(DATABASE_SEQUENCE_EVENT_LOG);
 	    if ($ret) {
 		return $ret;
@@ -2390,6 +2394,39 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 	    /* This upgrade is done before the general upgrade code */
+	case '1.2.18':
+	    /* Remove unused derivative-meta cache files */
+	    $statusText = $module->translate('Deleting old fast-download cache');
+	    $basePath = $gallery->getConfig('data.gallery.cache') . 'derivative';
+	    for ($i = 0; $i <= 9; $i++) {
+		$ret = $statusMonitor->renderStatusMessage($statusText, '', $i / 10);
+		if ($ret) {
+		    return $ret;
+		}
+		for ($j = 0; $j <= 9; $j++) {
+		    $gallery->guaranteeTimeLimit(120);
+		    $fileList = @$platform->glob("$basePath/$i/$j/*-meta.inc");
+		    if ($fileList) {
+			$gallery->guaranteeTimeLimit(120);
+			$count = 0;
+			foreach ($fileList as $file) {
+			    if (++$count % 100 == 0) {
+				$gallery->guaranteeTimeLimit(120);
+				$ret = $statusMonitor->renderStatusMessage($statusText, '',
+									   $i / 10 + $j / 100);
+				if ($ret) {
+				    return $ret;
+				}
+			    }
+			    @$platform->unlink($file);
+			}
+		    }
+		}
+	    }
+	    $ret = $statusMonitor->renderStatusMessage($statusText, '', 1);
+	    if ($ret) {
+		return $ret;
+	    }
 
 	case 'end of upgrade path':
 	    /*
@@ -2721,6 +2758,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.15':
 	case '1.2.16':
 	case '1.2.17':
+	case '1.2.18':
 
 	case 'end of upgrade path':
 	    /*

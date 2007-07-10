@@ -75,7 +75,7 @@ class PostgreSqlStorage extends GalleryStorage {
      * @see GalleryStorage::configureStore
      */
     function configureStore($moduleId, $upgradeInfo=array()) {
-	if ($moduleId == 'core') {
+	if ($moduleId == 'core' && empty($upgradeInfo)) {
 	    $query = '
 	    CREATE AGGREGATE BIT_OR
 	    (

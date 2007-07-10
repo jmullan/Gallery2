@@ -309,7 +309,7 @@ class GalleryDataCache {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 	if (in_array($pathInfo['type'],
-		     array('entity', 'derivative-meta', 'module-data', 'local-url-map'))
+		     array('entity', 'module-data', 'local-url-map'))
 		|| isset($pathInfo['id'])) {
 	    $cacheFile = GalleryDataCache::getCachePath($pathInfo);
 	    if ($platform->file_exists($cacheFile)) {
@@ -389,7 +389,8 @@ class GalleryDataCache {
      * Given a path info descriptor, return the path to the appropriate cache file.
      *
      * Path info contains the following variables:
-     *  type:    entity, derivative, derivative-meta, module, theme
+     *  type:    entity, derivative, derivative-relative, fast-download,
+     *           module, module-data, theme, local-url-map
      *  itemId:  the item id
      *  id:      (module, theme only) a refinement of the type
      *
@@ -417,12 +418,6 @@ class GalleryDataCache {
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
 	    $cacheFile = sprintf('derivative/%s/%s/%d.dat',
 				 $first, $second, $pathInfo['itemId']);
-	    break;
-
-	case 'derivative-meta':
-	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
-	    $cacheFile = sprintf('%sderivative/%s/%s/%d-meta.inc',
-				 $base, $first, $second, $pathInfo['itemId']);
 	    break;
 
 	case 'fast-download':
