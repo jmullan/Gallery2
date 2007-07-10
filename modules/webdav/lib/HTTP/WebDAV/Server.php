@@ -55,14 +55,14 @@ class HTTP_WebDAV_Server
      *
      * @var string
      */
-    var $http_auth_realm = 'PHP WebDAV';
+    var $authRealm = 'PHP WebDAV';
 
     /**
      * String to be used in "X-Dav-Powered-By" header
      *
      * @var string
      */
-    var $dav_powered_by = '';
+    var $poweredBy;
 
     /**
      * Remember parsed If: (RFC2518 9.4) header conditions
@@ -72,11 +72,11 @@ class HTTP_WebDAV_Server
     var $_if_header_uris = array();
 
     /**
-     * HTTP response headers
+     * Array of response headers which have already been sent
      *
      * @var array
      */
-    var $headers = array();
+    var $responseHeaders;
 
     /**
      * Encoding of property values passed in
@@ -84,6 +84,50 @@ class HTTP_WebDAV_Server
      * @var string
      */
     var $_prop_encoding = 'utf-8';
+
+    // }}}
+
+    // {{{ init
+
+    /**
+     * Initialize
+     *
+     * @param void
+     * @return void
+     */
+    function init()
+    {
+        // auth realm
+        $this->authRealm = 'PHP WebDAV';
+
+        // identify ourselves
+        $this->poweredBy = 'PHP class: ' . get_class($this);
+
+        // set path
+        if (!empty($_SERVER['PATH_INFO'])) {
+            $this->path = $_SERVER['PATH_INFO'];
+        }
+
+        // undo damage caused by magic_quotes
+        if (ini_get('magic_quotes_gpc')) {
+            $this->path = stripslashes($this->path);
+        }
+
+        // set base URL
+        if (!empty($_SERVER['SCRIPT_NAME'])) {
+            $this->baseUrl = parse_url($_SERVER['SCRIPT_NAME']);
+        }
+        if (!empty($_SERVER['REQUEST_URI'])) {
+            $this->baseUrl = parse_url($_SERVER['REQUEST_URI']);
+            $this->baseUrl['path'] = substr($this->baseUrl['path'], 0, strlen($this->baseUrl['path']) - strlen($this->path));
+        }
+        if (!empty($_SERVER['HTTP_HOST'])) {
+            $this->baseUrl['host'] = $_SERVER['HTTP_HOST'];
+        }
+        if (!empty($_SERVER['QUERY_STRING'])) {
+            $this->baseUrl['query'] = $_SERVER['QUERY_STRING'];
+        }
+    }
 
     // }}}
 
@@ -99,37 +143,12 @@ class HTTP_WebDAV_Server
      */
     function handleRequest()
     {
+        // initialize
+        $this->init();
+
         // identify ourselves
-        if (empty($this->dav_powered_by)) {
-            $this->dav_powered_by = 'PHP class: ' . get_class($this);
-        }
-        $this->setResponseHeader('X-Dav-Powered-By: ' . $this->dav_powered_by);
-
-        // set path
-        if (empty($this->path) && !empty($_SERVER['PATH_INFO'])) {
-            $this->path = $_SERVER['PATH_INFO'];
-        }
-
-        // undo damage caused by magic_quotes
-        if (ini_get('magic_quotes_gpc')) {
-            $this->path = stripslashes($this->path);
-        }
-
-        // set base URL
-        if (empty($this->baseUrl)) {
-            if (!empty($_SERVER['SCRIPT_NAME'])) {
-                $this->baseUrl = parse_url($_SERVER['SCRIPT_NAME']);
-            }
-            if (!empty($_SERVER['REQUEST_URI'])) {
-                $this->baseUrl = parse_url($_SERVER['REQUEST_URI']);
-                $this->baseUrl['path'] = substr($this->baseUrl['path'], 0, strlen($this->baseUrl['path']) - strlen($this->path));
-            }
-            if (!empty($_SERVER['HTTP_HOST'])) {
-                $this->baseUrl['host'] = $_SERVER['HTTP_HOST'];
-            }
-            if (!empty($_SERVER['QUERY_STRING'])) {
-                $this->baseUrl['query'] = $_SERVER['QUERY_STRING'];
-            }
+        if (!empty($this->poweredBy)) {
+            $this->setResponseHeader('X-Dav-Powered-By: ' . $this->poweredBy);
         }
 
         // check authentication
@@ -139,7 +158,7 @@ class HTTP_WebDAV_Server
             // clients do not support Digest and we don't support NTLM or
             // Kerberos so we are stuck with Basic here
             $this->setResponseHeader('WWW-Authenticate: Basic realm="'
-                . $this->http_auth_realm . '"');
+                . $this->authRealm . '"');
 
             // Windows seems to require this being the last header sent
             // (changed according to PECL bug #3138)
@@ -2401,9 +2420,9 @@ class HTTP_WebDAV_Server
             $key = strtolower(substr($header, 0, strpos($header, ':')));
         }
 
-        if ($replace || empty($this->headers[$key])) {
+        if ($replace || empty($this->responseHeaders[$key])) {
             header($header);
-            $this->headers[$key] = $header;
+            $this->responseHeaders[$key] = $header;
         }
     }
 
