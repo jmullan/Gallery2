@@ -144,7 +144,8 @@ class AlbumSelectCallbacks {
 		    }
 		    $links[$id] = $urlGenerator->generateUrl(
 			    array('view' => 'core.ShowItem', 'itemId' => $id),
-			    array('htmlEntities' => false, 'forceServerRelativeUrl' => true));
+			    array('htmlEntities' => false, 'forceServerRelativeUrl' => true,
+			          'forceSessionId' => false));
 		    /* Find common prefix across all URLs */
 		    if (!isset($links['prefix'])) {
 			$links['prefix'] = $links[$id];
@@ -172,6 +173,17 @@ class AlbumSelectCallbacks {
 
 	    $translator =& $gallery->getTranslator();
 	    $params['rtl'] = $translator->isRightToLeft() ? '_rtl' : '';
+
+	    /* Add a sessionId to the URLs if necessary */
+	    $session =& $gallery->getSession();
+	    if (!$session->isUsingCookies()) {
+		foreach ($links as $id => $url) {
+		    if ($id != 'prefix') {
+			$links[$id] = GalleryUrlGenerator::appendParamsToUrl(
+			    $url, array($session->getKey() => $session->getId()), true, false);
+		    }
+		}
+	    }
 
 	    $block =& $smarty->_tpl_vars['block'];
 	    $type = isset($callbackParams['albumTree']) ? 'albumTree' : 'albumSelect';
