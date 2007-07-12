@@ -477,7 +477,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals('HTTP/1.0 201 Created', $this->_headers['status']);
 
-	$this->assertEquals('', $output);
+	$this->assertEquals('', $output, 'output');
 
 	list ($ret, $newItemId) = GalleryCoreApi::fetchItemIdByPath($path);
 	if ($ret) {
@@ -1226,7 +1226,8 @@ class WebDavTestStream {
  * returns a PHP error when operating on an empty file.
  */
 function WebDavTest_error_handler($errno, $errstr, $errfile, $errline) {
-    if ($errno == 2) {
+    /* Usually E_WARNING(2), but PHP 5.2.3 gets E_NOTICE(8) from getimagesize */
+    if ($errno == 2 || $errno == 8) {
 	$expected1 = '{getimagesize().*: Read error}';
 	$expected2 = '{imagecreatefromgif().*:.* is not a valid GIF file}';
 	if (preg_match($expected1, $errstr) || preg_match($expected2, $errstr)) {
