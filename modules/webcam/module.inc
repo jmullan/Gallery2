@@ -177,6 +177,10 @@ class WebCamModule extends GalleryModule {
 	    return $ret;
 	}
 	if (time() - $item->getModificationTimestamp() > $duration && !$loop) {
+	    if (GalleryCoreApi::isWriteLocked($id)) {
+		/* Item already busy (maybe being deleted).. don't update now */
+		return null;
+	    }
 	    /* Lock and refresh to ensure another request didn't just update image.. */
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
 	    if ($ret) {
@@ -205,6 +209,10 @@ class WebCamModule extends GalleryModule {
 
 	    $urlComponents = parse_url($url);
 	    if ($urlComponents['scheme'] == 'file') {
+		/* PHP 4.3.0 trips on file:///path/here (triple slash).. result lands in 'host' */
+		if (!isset($urlComponents['path']) && isset($urlComponents['host'])) {
+		    $urlComponents['path'] = $urlComponents['host'];
+		}
 		$tmpFile = $urlComponents['path'];
 		$successfullyCopied = $platform->file_exists($tmpFile);
 	    } else {

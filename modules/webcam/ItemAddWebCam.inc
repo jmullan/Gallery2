@@ -44,16 +44,24 @@ class ItemAddWebCam extends ItemAddPlugin {
 	    GalleryUtilities::unsanitizeInputValues($url, false);
 	    $urlComponents = parse_url($url);
 
-	    if ($urlComponents['scheme'] == 'http') {
+	    if (empty($urlComponents['scheme'])
+		    || !in_array($urlComponents['scheme'], array('http', 'file'))) {
+		$error[] = 'form[error][imageUrl][invalid]';
+		$successfullyCopied = true;
+	    } else if ($urlComponents['scheme'] == 'http') {
 		$tmpFile = $platform->tempnam($tmpDir, 'webcam');
 		list ($successfullyCopied, $response, $headers) =
 		    GalleryCoreApi::fetchWebFile($url, $tmpFile);
-	    } else if ($urlComponents['scheme'] == 'file') {
+		if (!$successfullyCopied) {
+		    @$platform->unlink($tmpFile);
+		}
+	    } else {
+		/* PHP 4.3.0 trips on file:///path/here (triple slash).. result lands in 'host' */
+		if (!isset($urlComponents['path']) && isset($urlComponents['host'])) {
+		    $urlComponents['path'] = $urlComponents['host'];
+		}
 		$tmpFile = $urlComponents['path'];
 		$successfullyCopied = $platform->file_exists($tmpFile);
-	    } else {
-		$error[] = 'form[error][imageUrl][invalid]';
-		$successfullyCopied = true;
 	    }
 	    if (!$successfullyCopied) {
 		$error[] = 'form[error][imageUrl][unavailable]';
@@ -115,8 +123,6 @@ class ItemAddWebCam extends ItemAddPlugin {
 
 		    $error[] = 'form[error][imageUrl][notImage]';
 		}
-	    } else if ($urlComponents['scheme'] == 'http') {
-		@$platform->unlink($tmpFile);
 	    }
 	}
 
