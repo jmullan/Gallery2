@@ -1465,8 +1465,10 @@ class SessionTest extends GalleryTestCase {
 	$this->_markSessionForCleanup($session);
 
 	/* Assert a default DB connection was used */
-	$this->assert(!empty($storage->_nonTransactionalDb), 'non transactional db driver');
-	$this->assert(empty($storage->_db), 'transactional db driver');
+	if ($storage->isTransactional()) {
+	    $this->assert(!empty($storage->_nonTransactionalDb), 'non transactional db driver');
+	    $this->assert(empty($storage->_db), 'transactional db driver');
+	}
 
 	/* Assert a map entry has been inserted */
 	$this->assert(!empty($session->_sessionId), 'sid');
