@@ -34,81 +34,61 @@ class RepositoryTestStorage {
     var $_searches;
     var $_removedMapData;
 
-    function &getSingleton() {
-	static $singleton;
-	if (!isset($singleton)) {
-	    $singleton = new RepositoryTestStorage();
-	}
-
-	return $singleton;
-    }
-
     function reset() {
-	$singleton =& $this->getSingleton();
-	$singleton->_searches = array();
-	$singleton->_searchResults = array();
-	$singleton->_addedMapData = array();
-	$singleton->_updatedMapData = array();
-	$singleton->_removedMapData = array();
+	$this->_searches = array();
+	$this->_searchResults = array();
+	$this->_addedMapData = array();
+	$this->_updatedMapData = array();
+	$this->_removedMapData = array();
     }
 
     function search($query, $args) {
-	$singleton =& $this->getSingleton();
-	$singleton->_searches[] = array('query' => $query, 'arguments' => $args);
+	$this->_searches[] = array('query' => $query, 'arguments' => $args);
 
 	return array(null,
-		     new RepositoryTestSearchResults($singleton->_searchResults));
+		     new RepositoryTestSearchResults($this->_searchResults));
     }
 
     function setSearchResults($results) {
-	$singleton =& $this->getSingleton();
-	$singleton->_searchResults = $results;
+	$this->_searchResults = $results;
     }
 
     function getSearches() {
-	$singleton =& $this->getSingleton();
-	return $singleton->_searches;
+	return $this->_searches;
     }
 
     function addMapEntry($map, $data) {
-	$singleton =& $this->getSingleton();
-	$singleton->_addedMapData[$map][] = $data;
+	$this->_addedMapData[$map][] = $data;
 	return null;
     }
 
     function getMapEntry($map, $data, $match) {
-	$singleton =& $this->getSingleton();
-	$singleton->_searches[] = array('map' => $map, 'select' => $data, 'where' => $match);
+	$this->_searches[] = array('map' => $map, 'select' => $data, 'where' => $match);
 
 	return array(null,
-		     new RepositoryTestSearchResults($singleton->_searchResults));
+		     new RepositoryTestSearchResults($this->_searchResults));
     }
 
     function getAddedMapData() {
-	$singleton =& $this->getSingleton();
-	return $singleton->_addedMapData;
+	return $this->_addedMapData;
     }
 
     function updateMapEntry($map, $match, $change) {
-	$singleton =& $this->getSingleton();
-	$singleton->_updatedMapData[$map][] = array('match' => $match, 'change' => $change);
+	$this->_updatedMapData[$map][] = array('match' => $match, 'change' => $change);
 	return null;
     }
 
     function removeMapEntry($map, $match) {
-	$singleton =& $this->getSingleton();
-	$singleton->_removedMapData[$map][] = array('match' => $match);
+	$this->_removedMapData[$map][] = array('match' => $match);
 	return null;
     }
 
     function getUpdatedMapData() {
-	$singleton =& $this->getSingleton();
-	return $singleton->_updatedMapData;
+	return $this->_updatedMapData;
     }
 
     function getRemovedMapData() {
-	$singleton =& $this->getSingleton();
-	return $singleton->_removedMapData;
+	return $this->_removedMapData;
     }
 
     function rollbackTransaction() {

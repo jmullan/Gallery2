@@ -92,6 +92,12 @@ class GalleryTestCase extends TestCase {
 			  ' change the platform before calling parent::setUp in your test case?');
 	}
 
+	$storage =& $gallery->getStorage();
+	$ret = $storage->beginTransaction();
+	if ($ret) {
+	    return $ret;
+	}
+
 	/* Save useful vars so that tests don't have to worry about overwriting them */
 	$this->_saveVars[] = $_GET;
 	$this->_saveVars[] = $_POST;
@@ -100,7 +106,7 @@ class GalleryTestCase extends TestCase {
 	$this->_saveVars[] = $_COOKIE;
 	$this->_saveVars[] = $_SERVER;
 	$this->_saveVars[] = $_ENV;
-	$this->_saveVars[] = $gallery->getStorage();
+	$this->_saveVars[] = $storage;
 	$this->_saveVars[] = $gallery->getPlatform();
 	$this->_saveVars[] = $gallery->getActiveUser();
 	$this->_saveVars[] = $gallery->getUrlGenerator();
@@ -108,7 +114,6 @@ class GalleryTestCase extends TestCase {
 	$this->_saveVars[] = $gallery->_config;
 	$this->_saveVars[] = $gallery->_phpVm;
 	$this->_saveVars[] = isset($gallery->_lockSystem) ? $gallery->_lockSystem : null;
-	$this->_saveVars[] = $gallery->_storage;
 
 	$_GET = array();
 	$_POST = array();
@@ -139,12 +144,6 @@ class GalleryTestCase extends TestCase {
 	/* Preload a few things to lighten the load on our dummy platforms */
 	GalleryCoreApi::fetchPluginStatus('module');
 	GalleryCoreApi::fetchPluginStatus('theme');
-
-	$storage =& $gallery->getStorage();
-	$ret = $storage->beginTransaction();
-	if ($ret) {
-	    return $ret;
-	}
 
 	list ($ret, $this->_rootAlbumId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
@@ -190,7 +189,6 @@ class GalleryTestCase extends TestCase {
 	}
 
 	$gallery->_lockSystem = array_shift($this->_saveVars);
-	$gallery->_storage = array_shift($this->_saveVars);
 	$gallery->_shutdownActions = null;
 	$gallery->_templateAdapter = null;
 

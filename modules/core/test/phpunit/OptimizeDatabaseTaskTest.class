@@ -46,8 +46,8 @@ class OptimizeDatabaseTaskTest extends GalleryTestCase {
     function testRun() {
 	global $gallery;
 
-	$mockStorage = new OptimizeDatabaseTaskTestStorage();
-	$gallery->_storage =& $mockStorage;
+	$gallery->_storage = new OptimizeDatabaseTaskTestStorage();
+	$mockStorage =& $gallery->_storage;
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {

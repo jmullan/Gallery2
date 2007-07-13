@@ -44,10 +44,9 @@ class RepositoryTest extends GalleryTestCase {
 
 	/* Set up mock storage. */
 	global $gallery;
-	$this->_galleryStorage =& $gallery->_storage;
-	$this->_testStorage =& RepositoryTestStorage::getSingleton();
+	$gallery->_storage = new RepositoryTestStorage();
+	$this->_testStorage =& $gallery->_storage;
 	$this->_testStorage->reset();
-	$gallery->_storage =& $this->_testStorage;
 
 	/* Prepare test index. */
 	include(dirname(__FILE__) . '/../../../../lib/tools/repository/test/data/SampleIndex.inc');
@@ -55,17 +54,6 @@ class RepositoryTest extends GalleryTestCase {
 	$this->_index = new GalleryRepositoryIndex('test');
 	$this->_index->_index = $this->_sampleIndex;
 	$this->_index->_isLoaded = true;
-    }
-
-    function tearDown() {
-	/* Return original storage. */
-	global $gallery;
-	$gallery->_storage =& $this->_galleryStorage;
-
-	$ret = parent::tearDown();
-	if ($ret) {
-	   $this->failWithStatus($ret);
-	}
     }
 
     /**

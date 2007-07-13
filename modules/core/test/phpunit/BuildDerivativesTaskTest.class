@@ -51,10 +51,10 @@ class BuildDerivativesTaskTest extends GalleryTestCase {
 	 * @todo A better test could create a test item with no derivative and another
 	 * with a broken derivative and verify the queries found those ids..
 	 */
-	$mockStorage = new BuildDerivativesTaskTestStorage($gallery->getStorage());
-	$gallery->_storage =& $mockStorage;
-	$mockAdapter = new MockTemplateAdapter();
-	$gallery->_templateAdapter =& $mockAdapter;
+	$gallery->_storage = new BuildDerivativesTaskTestStorage($gallery->getStorage());
+	$mockStorage =& $gallery->_storage;
+	$gallery->_templateAdapter = new MockTemplateAdapter();
+	$mockAdapter =& $gallery->_templateAdapter;
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {

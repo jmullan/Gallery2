@@ -305,7 +305,7 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
 		      . 'WHERE \[GalleryItem::id\] IS NULL\s*$/',
 		      array()),
 		);
-	$gallery->_storage =& new KeywordAlbumCallbacksTestStorage($gallery->_storage, $queries);
+	$gallery->_storage = new KeywordAlbumCallbacksTestStorage($gallery->_storage, $queries);
 
 	$expected = array(
 		array(array('name' => 'four&amp;five', 'raw' => 'four&five', 'weight' => '1'),
@@ -447,8 +447,11 @@ class KeywordAlbumCallbacksTest extends GalleryTestCase {
  * Mock storage for callbacks tests.
  */
 class KeywordAlbumCallbacksTestStorage {
-    function KeywordAlbumCallbacksTestStorage(&$storage, $queries) {
-	$this->_storage =& $storage;
+    function KeywordAlbumCallbacksTestStorage($storage, $queries) {
+	/* Avoid weird reference thing in php4 that makes _extras->_gs point to mock storage */
+	$storage->_extras = null;
+
+	$this->_storage = $storage;
 	$this->_queries = $queries;
     }
 

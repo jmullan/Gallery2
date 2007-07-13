@@ -33,8 +33,6 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
  */
 class RepositoryUtilitiesTest extends GalleryTestCase {
 
-    var $_galleryStorage;
-
     function setUp() {
 	$ret = parent::setUp();
 	if ($ret) {
@@ -42,25 +40,13 @@ class RepositoryUtilitiesTest extends GalleryTestCase {
 	}
 
 	global $gallery;
-	$this->_galleryStorage =& $gallery->_storage;
-	$this->_testStorage =& RepositoryTestStorage::getSingleton();
-	$gallery->_storage =& $this->_testStorage;
-
+	$gallery->_storage = new RepositoryTestStorage();
+	$this->_testStorage =& $gallery->_storage;
 
 	$this->_apis = sprintf('coreApi=%s&moduleApi=%s&themeApi=%s',
 			       join('.', GalleryCoreApi::getApiVersion()),
 			       join('.', GalleryModule::getApiVersion()),
 			       join('.', GalleryTheme::getApiVersion()));
-    }
-
-    function tearDown() {
-	global $gallery;
-	$gallery->_storage =& $this->_galleryStorage;
-
-	$ret = parent::tearDown();
-	if ($ret) {
-	   $this->failWithStatus($ret);
-	}
     }
 
     function testCompareVersions() {

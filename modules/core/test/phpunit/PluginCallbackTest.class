@@ -566,9 +566,9 @@ class PluginCallbackTest extends GalleryTestCase {
     function testFailureInPluginStatesBeforeHandlingRequestTriggersRollback() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('command', 'test');
-	$mockStorage =& new PluginCallbackMockStorage();
 	$saveStorage = $gallery->_storage;
-	$gallery->_storage =& $mockStorage;
+	$gallery->_storage = new PluginCallbackMockStorage();
+	$mockStorage =& $gallery->_storage;
 	$callback = new PluginCallbackWithFakeHandler();
 	$callback->setReply('getPluginStates', array(new MockGalleryStatus(), null));
 
@@ -589,9 +589,9 @@ class PluginCallbackTest extends GalleryTestCase {
     function testFailureInCallbackTriggersRollback() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('command', 'test');
-	$mockStorage =& new PluginCallbackMockStorage();
 	$saveStorage = $gallery->_storage;
-	$gallery->_storage =& $mockStorage;
+	$gallery->_storage = new PluginCallbackMockStorage();
+	$mockStorage =& $gallery->_storage;
 	$callback = new PluginCallbackWithFakeHandler();
 	$callback->setReply('getPluginStates', array(null, null));
 	$callback->setReply('handleCallback', new MockGalleryStatus());
@@ -613,9 +613,9 @@ class PluginCallbackTest extends GalleryTestCase {
     function testFailureInPluginStatesAfterHandlingRequestTriggersRollback() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('command', 'test');
-	$mockStorage =& new PluginCallbackMockStorage();
 	$saveStorage = $gallery->_storage;
-	$gallery->_storage =& $mockStorage;
+	$gallery->_storage = new PluginCallbackMockStorage();
+	$mockStorage =& $gallery->_storage;
 	$callback = new PluginCallbackWithFakeHandler();
 	$callback->setReply('getPluginStates', array(null, array()));
 	$callback->setReply('handleCallback', null);
