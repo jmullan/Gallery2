@@ -63,6 +63,7 @@ class DigibugModule extends GalleryModule {
 		return $ret;
 	    }
 	    /* Give everybody print permission by default */
+	    $gallery->guaranteeTimeLimit(300);
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'digibug.print', true);

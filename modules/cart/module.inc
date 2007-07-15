@@ -64,6 +64,7 @@ class CartModule extends GalleryModule {
 		return $ret;
 	    }
 	    /* Give everybody cart permission by default */
+	    $gallery->guaranteeTimeLimit(300);
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'], 'cart.add', true);
 	    if ($ret) {

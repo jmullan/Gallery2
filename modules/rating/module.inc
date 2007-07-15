@@ -195,6 +195,7 @@ class RatingModule extends GalleryModule {
 	    }
 
 	    /* Give everybody rating permission by default */
+	    $gallery->guaranteeTimeLimit(300);
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'rating.all', true);

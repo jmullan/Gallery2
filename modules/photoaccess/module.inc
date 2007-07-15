@@ -66,6 +66,7 @@ class PhotoAccessModule extends GalleryModule {
 		return $ret;
 	    }
 	    /* Give everybody print permission by default */
+	    $gallery->guaranteeTimeLimit(300);
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'photoaccess.print', true);
@@ -80,6 +81,7 @@ class PhotoAccessModule extends GalleryModule {
 	    if ($ret) {
 		return $ret;
 	    }
+	    $gallery->guaranteeTimeLimit(300);
 	    $ret = GalleryCoreApi::addGroupPermission(
 		$coreParams['id.rootAlbum'], $coreParams['id.everybodyGroup'],
 		'photoaccess.print', true);
