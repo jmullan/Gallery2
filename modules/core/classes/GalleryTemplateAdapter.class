@@ -1015,7 +1015,7 @@ class GalleryTemplateAdapter {
 	/* Need to escape for javascript (backslash, ..) */
 	GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
 	$title = smarty_modifier_escape($title, 'javascript');
-	$description = smarty_modifier_escape($description, 'javascript');
+	$description = smarty_modifier_escape($description, 'javascript', 'UTF-8');
 
 	$memoryInfo = $coreModule->translate(
 	    array('text' => 'Memory used: %s, total: %s',
@@ -1060,6 +1060,8 @@ class GalleryTemplateAdapter {
 	    $status = 'Error ('
 		    . implode(', ', $status->getErrorCodeConstants($status->getErrorCode())) . ')';
 	}
+	GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	$status = smarty_modifier_escape($status, 'javascript', 'UTF-8');
 	printf('<script type="text/javascript">errorProgressBar("%s");</script>', $status);
     }
 
