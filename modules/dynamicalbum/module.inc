@@ -64,7 +64,17 @@ class DynamicAlbumModule extends GalleryModule {
 	if (!isset($params['themeSettingsId'])) {
 	    list ($ret, $entity) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryEntity');
-	    $entity->create();
+	    if ($ret) {
+		return $ret;
+	    }
+	    if (!isset($entity)) {
+		return GalleryCoreApi::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+					     'Unable to get a GalleryEntity instance');
+	    }
+	    $ret = $entity->create();
+	    if ($ret) {
+		return $ret;
+	    }
 	    $ret = $entity->save(false);
 	    if ($ret) {
 		return $ret;
