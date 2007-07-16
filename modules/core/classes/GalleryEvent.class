@@ -51,7 +51,7 @@ class GalleryEvent {
 
     function GalleryEvent() {
 	$this->setEventName(null);
-	$this->setEntity(null);
+	$this->setEntity($null=null);
 	$this->setData(null);
     }
 
@@ -75,15 +75,15 @@ class GalleryEvent {
      * Set this event's entity
      * @param object GalleryEntity $entity
      */
-    function setEntity($entity) {
-	$this->_entity = $entity;
+    function setEntity(&$entity) {
+	$this->_entity =& $entity;
     }
 
     /**
      * Return the event's entity
      * @return object GalleryEntity
      */
-    function getEntity() {
+    function &getEntity() {
 	return $this->_entity;
     }
 

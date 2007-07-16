@@ -91,7 +91,7 @@ class EventTest extends GalleryTestCase {
 	GalleryCoreApi::registerEventListener($eventName, $listener);
 
 	$event = GalleryCoreApi::newEvent($eventName);
-	$event->setEntity('bogus entity');
+	$event->setEntity($bogus='bogus entity');
 	$event->setData('some data');
 	list ($ret, $result) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
@@ -109,7 +109,7 @@ class EventTest extends GalleryTestCase {
 	GalleryCoreApi::registerEventListener($eventName, $listener);
 
 	$event = GalleryCoreApi::newEvent($eventName);
-	$event->setEntity('bogus entity');
+	$event->setEntity($bogus='bogus entity');
 	$event->setData('send result');
 	list ($ret, $result) = GalleryCoreApi::postEvent($event);
 	if ($ret) {
@@ -169,6 +169,22 @@ class EventTest extends GalleryTestCase {
 	}
 
 	$this->assert($listener->_factory !== null, 'null factory');
+    }
+
+    function testEmbeddedEntityIsAReference() {
+	$event = new GalleryEvent();
+	$entity = new GalleryEntity();
+	$event->setEntity($entity);
+
+	/* Embedded entity has the new value, even if we don't get it by reference */
+	$entity->setId(1000);
+	$embeddedEntity = $event->getEntity();
+	$this->assertEquals(1000, $embeddedEntity->getId());
+
+	/* Get embedded entity by reference and change it, then see that it affects the original */
+	$embeddedEntity =& $event->getEntity();
+	$embeddedEntity->setId(2000);
+	$this->assertEquals(2000, $entity->getId());
     }
 }
 
