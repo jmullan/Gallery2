@@ -4,7 +4,7 @@
  *}
 var prompt = {ldelim}
   "header" : '{g->text text="Warning!" forJavascript=true}',
-  "body"   : '{g->text text="Do you really want to delete " forJavascript=true}',
+  "body"   : '{g->text text="Do you really want to delete %s?" forJavascript=true}',
   "yes"    : '{g->text text="Yes" forJavascript=true}',
   "no"     : '{g->text text="No" forJavascript=true}',
   "more"   : '{g->text text="Delete more items..." forJavascript=true}'
@@ -20,9 +20,10 @@ function core_confirmDelete(url, moreUrl, title) {
     draggable: false });
     
   dialog.setHeader(prompt['header']);
-  var bodyText = prompt['body'] + title + '?';
-  if (moreUrl != '') {
-    bodyText += '<br /><br /><a href="' + moreUrl + '">' + prompt['more'] + '</a>';
+  var bodyText = prompt['body'].replace('%s', title);
+  if (moreUrl) {
+    bodyText += '<br /><br /><a href="" onclick="document.location.href=\''
+	     + moreUrl + '\';return false">' + prompt['more'] + '</a>';
   }
   dialog.setBody(bodyText);
   dialog.cfg.setProperty("icon", YAHOO.widget.SimpleDialog.ICON_WARN);
