@@ -719,7 +719,7 @@ class GalleryTemplateAdapter {
 	    }
 	    $buf .= '</div>';
 	}
-	if ($debug) {
+	if ($debug == 'buffered') {
 	    /* Smarty debug console */
 	    GalleryCoreApi::requireOnce('lib/smarty/plugins/function.debug.php');
 	    $buf .= smarty_function_debug($params, $smarty);
