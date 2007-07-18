@@ -2428,6 +2428,9 @@ class CoreModuleExtras {
 		return $ret;
 	    }
 
+	case '1.2.19':
+	    /* Use lightweight event system */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we always
@@ -2759,6 +2762,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.16':
 	case '1.2.17':
 	case '1.2.18':
+	case '1.2.19':
 
 	case 'end of upgrade path':
 	    /*
@@ -3175,7 +3179,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations($module) {
-	/* Register all of our factory implementations. */
+	/* Register all our factory implementations */
 	$regs[] = array('GalleryEntity', 'GalleryEntity', 'class', null);
 	$regs[] = array('GalleryEntity', 'GalleryChildEntity', 'class', null);
 	$regs[] = array('GalleryEntity', 'GalleryAlbumItem', 'class', null);
@@ -3223,29 +3227,46 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	 * registrations may still be around from before.  Unregister them now before reregistering
 	 * them all.
 	 */
-	/* Unregister all factory implementations */
 	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($module->getId());
 	if ($ret) {
 	    return $ret;
 	}
 
 	foreach ($regs as $entry) {
-	    $ret = GalleryCoreApi::registerFactoryImplementation(
-		$entry[0], $entry[1], $entry[1],
-		$entry[2] == 'class' ?
-		  sprintf('modules/core/classes/%s.class', $entry[1]) :
-		  sprintf('modules/core/%s.inc', $entry[1]),
-		'core', $entry[3], isset($entry[4]) ? (string)$entry[4] : '4');
+	    $ret = GalleryCoreApi::registerFactoryImplementation($entry[0],
+		$entry[1], $entry[1], $entry[2] == 'class'
+		    ? 'modules/core/classes/' . $entry[1] . '.class'
+		    : 'modules/core/' . $entry[1] . '.inc',
+		'core', $entry[3], isset($entry[4]) ? $entry[4] : 4);
 	    if ($ret) {
 		return $ret;
 	    }
 	}
 
 	/* Special cases */
-	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'GalleryAuthPlugin', 'SessionAuthPlugin', 'SessionAuthPlugin',
-	    'modules/core/classes/GallerySession.class',
-	    'core', null, 4);
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryAuthPlugin',
+	    'SessionAuthPlugin', 'SessionAuthPlugin',
+	    'modules/core/classes/GallerySession.class', 'core', null, 4);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEventListener',
+	    'GalleryItemHelper_medium', 'GalleryItemHelper_medium',
+	    'modules/core/classes/helpers/GalleryItemHelper_medium.class', 'core',
+	    array('Gallery::ViewableTreeChange',
+		  'Gallery::RemovePermission',
+		  'GalleryEntity::save',
+		  'GalleryEntity::delete'), 4);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEventListener',
+	    'GalleryUserHelper_medium', 'GalleryUserHelper_medium',
+	    'modules/core/classes/helpers/GalleryItemHelper_medium.class', 'core',
+	    array('Gallery::FailedLogin',
+		  'Gallery::Login'), 4);
 	if ($ret) {
 	    return $ret;
 	}

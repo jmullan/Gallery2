@@ -78,9 +78,11 @@ class GalleryCoreApi {
      * - remove resourceGetTemplateBaseDir from GalleryTemplate class
      * - delete GalleryTestCase::failWithStatus
      * - loadEntitiesById and deleteEntity: make optional $requiredEntityType mandatory
+     * - remove GalleryCoreApi::registerEventListener
+     *   use GalleryCoreApi::registerFactoryImplementation('GalleryEventListener', ...
      */
     function getApiVersion() {
-	return array(7, 33);
+	return array(7, 34);
     }
 
     /**
@@ -2133,8 +2135,8 @@ class GalleryCoreApi {
     }
 
     /**
-     * Create a new event with the given name
-     * @param string $eventName
+     * Create a new event with the given name.
+     * @param string $eventName the name of the event, e.g. GalleryEntity::save
      * @return object GalleryEvent an event with the given name
      */
     function newEvent($eventName) {
@@ -2143,21 +2145,20 @@ class GalleryCoreApi {
     }
 
     /**
-     * Register an event listener
-     *
-     * @param string $eventName the name of the event (eg. "GalleryEntity::save")
-     * @param object GalleryEventListener $listener
+     * Register an event listener.
+     * @param string $eventName the name of the event, e.g. GalleryEntity::save
+     * @param object GalleryEventListener $eventListener
      * @param boolean $disableForUnitTests (optional) if true, disable event listener during tests
+     * @deprecated Use GalleryCoreApi::registerFactoryImplementation('GalleryEventListener', ...
      */
-    function registerEventListener($eventName, &$listener, $disableForUnitTests=false) {
+    function registerEventListener($eventName, &$eventListener, $disableForUnitTests=false) {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryEventHelper_simple.class');
-	return GalleryEventHelper_simple::registerEventListener($eventName, $listener,
-								$disableForUnitTests);
+	return GalleryEventHelper_simple::registerEventListener(
+	    $eventName, $eventListener, $disableForUnitTests);
     }
 
     /**
-     * Deliver an event to anybody listening
-     *
+     * Deliver an event to anybody listening.
      * @param object GalleryEvent $event
      * @return array object GalleryStatus a status code
      *               array data returned from listeners, if any

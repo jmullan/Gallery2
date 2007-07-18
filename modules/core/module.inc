@@ -19,7 +19,7 @@
  */
 
 /**
- * The implementation of the core-module
+ * Gallery core module.
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  * @version $Revision$
@@ -34,32 +34,15 @@ class CoreModule extends GalleryModule {
 	$this->setGalleryVersion('2.3-svn');
 
 	/* Don't forget to update CoreModuleExtras::upgrade and _prepareConfigUpgrade too! */
-	$this->setVersion('1.2.19');
+	$this->setVersion('1.2.20');
 	$this->_templateVersion = 1;
 
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
-	$this->setCallbacks('registerEventListeners'
-	    . '|getItemLinks|getSystemLinks'
-	    . '|getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(7, 33));
+	$this->setCallbacks(
+	    'getItemLinks|getSystemLinks|getItemAdminViews|getSiteAdminViews|getUserAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
-    }
-
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
-	$handler = new GalleryItemHelper_medium();
-	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', $handler);
-	GalleryCoreApi::registerEventListener('Gallery::RemovePermission', $handler);
-	GalleryCoreApi::registerEventListener('GalleryEntity::save', $handler);
-	GalleryCoreApi::registerEventListener('GalleryEntity::delete', $handler);
-	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryUserHelper_medium.class');
-	$handler2 = new GalleryUserHelper_medium();
-	GalleryCoreApi::registerEventListener('Gallery::FailedLogin', $handler2, true);
-	GalleryCoreApi::registerEventListener('Gallery::Login', $handler2, true);
     }
 
     /**
