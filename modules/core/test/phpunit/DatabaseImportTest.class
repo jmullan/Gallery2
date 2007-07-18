@@ -42,8 +42,8 @@ class DatabaseImportTest extends GalleryTestCase {
 
     	global $gallery;
 
-	$this->_xmlParser =& GalleryDatabaseImport::_createParser();
-
+	$this->_xmlParser =& new GalleryXmlProcessor($this);
+	
     	$gallery->setPlatform(new UnitTestPlatform());
     	$gallery->_storage = new UnitTestStorage();
     	$storage =& $gallery->getStorage();
@@ -56,8 +56,8 @@ class DatabaseImportTest extends GalleryTestCase {
     	$platform =& $gallery->getPlatform();
     	$storage =& $gallery->getStorage();
 
-	xml_parser_free($this->_xmlParser);
-
+	$this->_xmlParser->release();
+	
 	$this->assert($platform->isComplete(), $platform->getRemaining());
 	$this->assert($storage->isComplete(), $storage->getRemaining());
 	$extras =& $storage->_getExtras();
@@ -206,8 +206,8 @@ class DatabaseImportTest extends GalleryTestCase {
 	$writeString = implode("\n", array('C2.4', 'G2.2', 'maintenance-mode'));
 	$platform->setReply('atomicWrite', array($versionFile, $writeString), true);
 
-    	$this->_testObj = new GalleryDatabaseImport();
-    	$this->_testObj->writeVersions('C2.4', 'G2.2');
+	$attributes = array('core-version' => 'C2.4', 'gallery-version' => 'G2.2', 'tables' => '5');
+    	$this->_testObj = new _GalleryExportTag($this, $attributes);
     }
 
     function testImportConfig() {
@@ -229,16 +229,10 @@ class DatabaseImportTest extends GalleryTestCase {
 	$configFile = GALLERY_CONFIG_DIR . '/config.php';
 
 	$platform->setReply('file_put_contents', array($configFile, $configContents), true);
-	$storage->setReply('setDebug', array(false), null);
+	$storage->setReply('setDebug', array($gallery->getDebug()), null);
 
-	$this->_testObj = new GalleryConfigImport($this, array());
-	xml_set_object($this->_xmlParser, $this->_testObj);
-
-	if (!xml_parse($this->_xmlParser, $inputXml, true)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, null, null,
-				    sprintf("XML error: %s at line %d",
-					    xml_error_string(xml_get_error_code($this->_xmlParser)),
-					    xml_get_current_line_number($this->_xmlParser)));
+	if (!$this->_xmlParser->xmlParse($inputXml, true)) {
+	    return $this->_xmlParser->getParserError(); 
 	}
     }
 
@@ -249,10 +243,10 @@ class DatabaseImportTest extends GalleryTestCase {
 	$storage->setExtrasReply('dropSequence', array('testSequence'), null);
 	$storage->setExtrasReply('createSequence', array('testSequence', '46'), null);
 
-    	$this->_testObj = new GalleryPluginImport($this, array('ID' => 'moduleId'));
-    	$ret = $this->_testObj->importSequence('testSequence', '46');
-	if ($ret) {
-	    return $ret;
+    	$inputXml = '<sequence name="testSequence" start-value="46" />';
+	
+	if (!$this->_xmlParser->xmlParse($inputXml, true)) {
+	    return $this->_xmlParser->getParserError(); 
 	}
     }
 
@@ -270,6 +264,8 @@ class DatabaseImportTest extends GalleryTestCase {
 				 array('GalleryTestTable', 'test create sql', 'testModule', 'map',
 					'test map definition'), null);
 
+	$storage->setReply('checkPoint', array(), null);
+
 	$inputXml = '<table name="GalleryTestTable">'
 		  . '<definition module-id="testModule">'
 		  . '<create-sql><![CDATA[test create sql]]></create-sql>'
@@ -277,15 +273,8 @@ class DatabaseImportTest extends GalleryTestCase {
 		  . '</definition>'
 		  . '</table>';
 
-	$storage->setReply('checkPoint', array(), null);
-    	$this->_testObj = new GalleryTableImport($this, array('NAME' => 'GalleryTestTable'));
-	xml_set_object($this->_xmlParser, $this->_testObj);
-
-	if (!xml_parse($this->_xmlParser, $inputXml, true)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, null, null,
-				    sprintf("XML error: %s at line %d",
-					    xml_error_string(xml_get_error_code($this->_xmlParser)),
-					    xml_get_current_line_number($this->_xmlParser)));
+	if (!$this->_xmlParser->xmlParse($inputXml, true)) {
+	    return $this->_xmlParser->getParserError(); 
 	}
     }
 
@@ -335,8 +324,6 @@ class DatabaseImportTest extends GalleryTestCase {
 								'notNull' => 1), false), 3);
 	$storage->setReply('execute', array($query, array(24, 3, null)), null);
 
-    	$this->_testObj = new GalleryDataImport($this, 'TestTable', array());
-
 	$inputXml = '<data>
           <field name="accessListId" type="' . STORAGE_TYPE_INTEGER . '" size="'
 			       . STORAGE_SIZE_MEDIUM . '" not-null="1" />
@@ -349,14 +336,42 @@ class DatabaseImportTest extends GalleryTestCase {
           <row><f>24</f><f>3</f><f null="1" /></row>
         </data>';
 
-	xml_set_object($this->_xmlParser, $this->_testObj);
-
-	if (!xml_parse($this->_xmlParser, $inputXml, true)) {
-	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER, null, null,
-				    sprintf("XML error: %s at line %d",
-					    xml_error_string(xml_get_error_code($this->_xmlParser)),
-					    xml_get_current_line_number($this->_xmlParser)));
+	if (!$this->_xmlParser->xmlParse($inputXml, true)) {
+	    return $this->_xmlParser->getParserError(); 
 	}
+    }
+
+    /**
+     * XML Callback to process start elements
+     */
+    function _processStartElement($tag, $attributes) {
+    	if ($tag == 'export') {
+	    return new _GalleryExportTag($this, $attributes);
+    	} else if ($tag == 'config') {
+	    return new _GalleryConfigTag($this, $attributes);
+    	} else if ($tag == 'sequence') {
+	    return new _GallerySequenceTag($this, $attributes);
+    	} else if ($tag == 'table') {
+	    return new _GalleryTableTag($this, $attributes);
+    	} else if ($tag == 'data') {
+	    return new _GalleryDataTag($this, 'TestTable', $attributes);
+    	} else {
+   	    $this->fail('Unexepected xml tag: "' . $tag . '"');
+   	}
+    }
+
+    /**
+     * XML Callback to process end elements
+     * @protected
+     */
+    function _processEndElement($tag) {
+    }
+
+    /**
+     * This callback processes the child as it is popped off the stack
+     * @protected
+     */
+    function _processChildElement($childElement) {
     }
 }
 

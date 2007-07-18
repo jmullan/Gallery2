@@ -1,0 +1,169 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2007 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+/* This class is extensively based on the adodb-sxmlschema03 class developed by Richard Tango-Lowy &
+ * Dan Cech, Released under both BSD license and Lesser GPL library license.  Whenever there is any
+ * discrepancy between the two licenses, the BSD license will take precedence.  The orignal class
+ * was copyright: Copyright (c) 2004-2005 ars Cognita Inc., all rights reserved.
+ */
+
+/**
+ * GalleryXmlProcessor provides a simple xml processor. It doesn't support anything fancy like 
+ * namespaces and such.
+ * @package GalleryCore
+ * @subpackage Storage
+ * @author Tim Almdal <tnalmdal@shaw.ca>
+ * @version $Revision$
+ */
+class GalleryXmlProcessor {
+    /**
+     * Push down stack for xml processing.
+     */
+    var $_elementStack = array();
+    /**
+     * a reference to the PHP supplied XML parser.
+     */
+    var $_xmlParser;
+    
+    function GalleryXmlProcessor($rootElement) {
+	GalleryXmlProcessor::__construct($rootElement);
+    }
+
+    function __construct($rootElement) {
+	$this->_elementStack[] = $rootElement;
+
+	$this->_xmlParser = xml_parser_create('UTF-8');
+	xml_parser_set_option($this->_xmlParser, XML_OPTION_CASE_FOLDING, 0);
+	xml_set_object($this->_xmlParser, $this);
+
+	/* Initialize the XML callback functions */
+	xml_set_element_handler($this->_xmlParser, '_processStartElement', '_processEndElement');
+	xml_set_character_data_handler($this->_xmlParser, '_processCData');
+    }  
+
+    /**
+     * Parses the data buffer.
+     * @param string $data The buffer of data to parse.
+     * @param boolean $isFinal Flag to indicate if this is the final buffer of data.
+     * @return boolean Returns true on success.
+     */
+    function xmlParse($data, $isFinal) {
+	return xml_parse($this->_xmlParser, $data, $isFinal);
+    }
+
+    /**
+     * This method releases the php parser.
+     * @todo After PHP 4.x.x then change to a __destruct and change the call to an unset()
+     */
+    function release() {
+	xml_parser_free($this->_xmlParser);
+    }
+    
+    function getParserError() { 
+	return GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+				     sprintf('XML error: %s at line %d',
+					   xml_error_string(xml_get_error_code($this->_xmlParser)),
+					   xml_get_current_line_number($this->_xmlParser)));
+    }
+    
+    /**
+     * XML Callback to process start elements. Called by the PHP Xml parser
+     * @param object $parser A reference to the php parser
+     * @param string $tag The name of the tage being processed
+     * @param array $attributes The attributes that were present on the xml element.
+     * @access private
+     */
+    function _processStartElement(&$parser, $tag, $attributes) {
+    	$topItem =& $this->_elementStack[count($this->_elementStack) - 1];
+	$newChild = $topItem->_processStartElement($tag, $attributes);
+	if (isset($newChild)) {
+	    
+	    $this->_elementStack[] = $newChild;
+	} else {
+	    /* Put a dummy entry on the stack */
+	    $this->_elementStack[] = new GalleryXmlHandler();
+	}
+    }
+
+    /**
+     * XML Callback to process CDATA elements.  Called by the PHP Xml parser
+     * @param object $parser A reference to the php parser
+     * @param string $cdata A buffer of data that represents the body of the xml element
+     * @access private
+     */
+    function _processCData(&$parser, $cdata) {
+	$topItem =& $this->_elementStack[count($this->_elementStack) - 1];
+	$topItem->_processCData($cdata);
+    }
+
+    /**
+     * XML Callback to process end elements. Called by the PHP Xml parser
+     * @param object $parser A reference to the php parser
+     * @param string $tag The name of the tage being processed
+     * @access private
+     */
+    function _processEndElement(&$parser, $tag) {
+	$topItem = array_pop($this->_elementStack);
+	$topItem->_processEndElement($tag);
+	$newTopItem =& $this->_elementStack[count($this->_elementStack) - 1];
+	$newTopItem->_processChildElement($topItem);
+    }
+}
+
+/**
+ * Base Import Element. This class provides the basic methods that content handlers need to 
+ * implement.  It can't just be an interface or flagged as abstract, because it is used as a 
+ * place holder, the the content handler doesn't supply a new class on start element.
+ */
+class GalleryXmlHandler {
+    /**
+     * XML Callback to process start elements
+     * @param string $tag The name of the tage being processed
+     * @param array $attributes The attributes that were present on the xml element.
+     * @protected
+     */
+    function _processStartElement($tag, $attributes) {
+    }
+
+    /**
+     * XML Callback to process CDATA elements
+     * @param string $cdata A buffer of data that represents the body of the xml element
+     * @protected
+     */
+    function _processCData($cdata) {
+    }
+
+    /**
+     * XML Callback to process end elements
+     * @param string $tag The name of the tage being processed
+     * @protected
+     */
+    function _processEndElement($tag) {
+    }
+
+    /**
+     * This call back processes the child as it is pooped off the stack. Allows the parent element
+     * to aggregate data from the children elements.
+     * @param object $childeElement The child element that was just completed.
+     * @protected
+     */
+    function _processChildElement($childElement) {
+    }
+}
+?>
