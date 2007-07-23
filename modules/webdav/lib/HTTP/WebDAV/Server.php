@@ -22,8 +22,6 @@ define('HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE',
     'urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882');
 
 /**
- * Virtual base class for implementing WebDAV servers
- *
  * WebDAV server base class, needs to be extended to do useful work
  *
  * @package HTTP_WebDAV_Server
@@ -117,13 +115,24 @@ class HTTP_WebDAV_Server
         if (!empty($_SERVER['SCRIPT_NAME'])) {
             $this->baseUrl = parse_url($_SERVER['SCRIPT_NAME']);
         }
+
         if (!empty($_SERVER['REQUEST_URI'])) {
+            $scriptUrl = $this->baseUrl;
+
             $this->baseUrl = parse_url($_SERVER['REQUEST_URI']);
-            $this->baseUrl['path'] = substr($this->baseUrl['path'], 0, strlen($this->baseUrl['path']) - strlen($this->path));
+
+            if (!empty($scriptUrl['path'])) {
+                $this->path = substr($this->baseUrl['path'], strlen($scriptUrl['path']));
+                $this->baseUrl['path'] = $scriptUrl['path'];
+            } else if (!empty($this->path)) {
+                $this->baseUrl['path'] = substr($this->baseUrl['path'], 0, strlen($this->baseUrl['path']) - strlen($this->path));
+            }
         }
+
         if (!empty($_SERVER['HTTP_HOST'])) {
             $this->baseUrl['host'] = $_SERVER['HTTP_HOST'];
         }
+
         if (!empty($_SERVER['QUERY_STRING'])) {
             $this->baseUrl['query'] = $_SERVER['QUERY_STRING'];
         }
@@ -182,10 +191,10 @@ class HTTP_WebDAV_Server
         }
 
         // get allowed methods
-        $allow = $this->_allow();
+        $allowedMethods = $this->getAllowedMethods();
 
         // method not implemented
-        if (!in_array(strtoupper($method), $allow)) {
+        if (!in_array(strtoupper($method), $allowedMethods)) {
             if ($method == 'lock') {
                 $this->setResponseStatus('412 Precondition Failed');
                 return;
@@ -193,7 +202,7 @@ class HTTP_WebDAV_Server
 
             // tell client what's allowed
             $this->setResponseStatus('405 Method Not Allowed');
-            $this->setResponseHeader('Allow: ' . implode(',', $allow));
+            $this->setResponseHeader('Allow: ' . implode(',', $allowedMethods));
             return;
         }
 
@@ -416,7 +425,7 @@ class HTTP_WebDAV_Server
      * @abstract
      * @param string type Authentication type, e.g. "basic" or "digest"
      * @param string username Transmitted username
-     * @param string passwort Transmitted password
+     * @param string password Transmitted password
      * @returns bool Authentication status
      */
 
@@ -462,7 +471,7 @@ class HTTP_WebDAV_Server
      * OPTIONS method handler
      *
      * The OPTIONS method handler creates a valid OPTIONS reply including Dav:
-     * and Allowed: heaers based on the implemented methods found in the actual
+     * and Allow: headers based on the implemented methods found in the actual
      * instance
      *
      * @param void
@@ -471,16 +480,17 @@ class HTTP_WebDAV_Server
     function options()
     {
         // get allowed methods
-        $allow = $this->_allow();
+        $allowedMethods = $this->getAllowedMethods();
 
         // dav header
         $dav = array(1); // assume we are always dav class 1 compliant
-        if (in_array('LOCK', $allow) && in_array('UNLOCK', $allow)) {
+        if (in_array('LOCK', $allowedMethods)
+                && in_array('UNLOCK', $allowedMethods)) {
             $dav[] = 2; // dav class 2 requires that locking is supported
         }
 
         // tell clients what we found
-        $this->setResponseHeader('Allow: ' . implode(',', $allow));
+        $this->setResponseHeader('Allow: ' . implode(',', $allowedMethods));
         $this->setResponseHeader('DAV: ' . implode(',', $dav));
         $this->setResponseHeader('Content-Length: 0');
 
@@ -566,14 +576,13 @@ class HTTP_WebDAV_Server
 
             // collect namespaces here
             $response['namespaces'] = array();
-            if (!empty($options['namespaces'])) {
-                $response['namespaces'] = $options['namespaces'];
-            }
 
             // Microsoft needs this special namespace for date and time values
             $response['namespaces'][HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE] =
                 'ns' . count($response['namespaces']);
 
+            // $options['props'] is guaranteed to be set.  handle empty array
+            // here.
             if (is_array($options['props'])) {
 
                 // loop over all requested properties
@@ -583,10 +592,6 @@ class HTTP_WebDAV_Server
 
                     if (!empty($prop['status'])) {
                         $status = $prop['status'];
-                    }
-
-                    if (empty($response['propstat'][$status])) {
-                        $response['propstat'][$status] = array();
                     }
 
                     $response['propstat'][$status][] = $prop;
@@ -609,10 +614,6 @@ class HTTP_WebDAV_Server
 
                     if (!empty($prop['status'])) {
                         $status = $prop['status'];
-                    }
-
-                    if (empty($response['propstat'][$status])) {
-                        $response['propstat'][$status] = array();
                     }
 
                     if ($options['props'] == 'propname') {
@@ -644,7 +645,7 @@ class HTTP_WebDAV_Server
             $responses[] = $response;
         }
 
-        $this->_multistatusResponseHelper($responses);
+        $this->multistatusResponseHelper($options, $responses);
     }
 
     // }}}
@@ -709,14 +710,21 @@ class HTTP_WebDAV_Server
      * @param responsedescr
      * @return void
      */
-    function proppatch_response_helper($options, $responsedescription=null)
+    function proppatch_response_helper($options, $status)
     {
+        // set response status
+        if (empty($status) || !is_array($status)) {
+            $this->setResponseStatus($status, false);
+            return;
+        }
+
+        $file = $status;
         $response = array();
 
         // copy href to response
-        foreach (array('href', 'path') as $key) {
-            if (!empty($options[$key])) {
-                $response[$key] = $options[$key];
+        foreach (array('href', 'path', 'responsedescription') as $key) {
+            if (!empty($file[$key])) {
+                $response[$key] = $file[$key];
             }
         }
 
@@ -759,7 +767,7 @@ class HTTP_WebDAV_Server
             $response['status'] = $options['status'];
         }
 
-        $this->_multistatusResponseHelper(array($response));
+        $this->multistatusResponseHelper($options, array($response));
     }
 
     // }}}
@@ -786,10 +794,10 @@ class HTTP_WebDAV_Server
         }
 
         // call user handler
-        $responsedescription = $this->proppatch($options);
+        $status = $this->proppatch($options);
 
         // format PROPPATCH response
-        $this->proppatch_response_helper($options, $responsedescription);
+        $this->proppatch_response_helper($options, $status);
     }
 
     // }}}
@@ -1075,7 +1083,7 @@ class HTTP_WebDAV_Server
             $status = $this->head($options);
         } else {
 
-            // emulate HEAD using GET if no HEAD method exists
+            // emulate HEAD using GET
             $status = $this->get($options);
         }
 
@@ -1570,7 +1578,7 @@ class HTTP_WebDAV_Server
                 $responses[] = $response;
             }
 
-            $this->_multistatusResponseHelper($responses);
+            $this->multistatusResponseHelper($options, $responses);
 
             return;
         }
@@ -1617,7 +1625,7 @@ class HTTP_WebDAV_Server
             echo "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
             echo "<D:prop xmlns:D=\"DAV:\">\n";
             echo "  <D:lockdiscovery>\n";
-            echo '    ' . $this->_activelocksResponseHelper(array($lock))
+            echo '    ' . $this->activelocksResponseHelper(array($lock))
                 . "\n";
             echo "  </D:lockdiscovery>\n";
             echo "</D:prop>\n";
@@ -1715,27 +1723,29 @@ class HTTP_WebDAV_Server
 
     // }}}
 
-    function _multistatusResponseHelper($responses)
+    function multistatusResponseHelper($options, $responses)
     {
         // now we generate the response header...
         $this->setResponseStatus('207 Multi-Status', false);
         $this->setResponseHeader('Content-Type: text/xml; charset="utf-8"');
 
-        // ...& payload
+        // ...and body
+        $options['namespaces']['DAV:'] = 'D';
+
+        $namespaces = '';
+        foreach ($options['namespaces'] as $namespace => $prefix) {
+            $namespaces .= " xmlns:$prefix=\"$namespace\"";
+        }
+
         echo "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
-        echo "<D:multistatus xmlns:D=\"DAV:\">\n";
+        echo "<D:multistatus$namespaces>\n";
 
         foreach ($responses as $response) {
 
-            // ignore empty or incomplete entries
-            if (!is_array($response) || empty($response)) {
-                continue;
-            }
-
             $namespaces = '';
             if (!empty($response['namespaces'])) {
-                foreach ($response['namespaces'] as $name => $prefix) {
-                    $namespaces .= " xmlns:$prefix=\"$name\"";
+                foreach ($response['namespaces'] as $namespace => $prefix) {
+                    $namespaces .= " xmlns:$prefix=\"$namespace\"";
                 }
             }
             echo "  <D:response$namespaces>\n";
@@ -1751,8 +1761,8 @@ class HTTP_WebDAV_Server
 
             // report all found properties and their values (if any)
             // nothing to do if no properties were returend for a file
-            if (!empty($response['propstat']) &&
-                    is_array($response['propstat'])) {
+            if (!empty($response['propstat'])
+                    && is_array($response['propstat'])) {
 
                 foreach ($response['propstat'] as $status => $props) {
                     echo "    <D:propstat>\n";
@@ -1777,7 +1787,7 @@ class HTTP_WebDAV_Server
                                 continue;
                             }
 
-                            echo "        <$prop[name] xmlns=\"\"/>";
+                            echo "        <$prop[name] xmlns=\"\"/>\n";
                             continue;
                         }
 
@@ -1799,9 +1809,9 @@ class HTTP_WebDAV_Server
 
                             case 'supportedlock':
 
-                                if (is_array($prop['value'])) {
+                                if (!empty($prop['value']) && is_array($prop['value'])) {
                                     $prop['value'] =
-                                        $this->_lockentriesResponseHelper(
+                                        $this->lockentriesResponseHelper(
                                             $prop['value']);
                                 }
                                 echo "        <D:supportedlock>\n";
@@ -1811,9 +1821,9 @@ class HTTP_WebDAV_Server
 
                             case 'lockdiscovery':
 
-                                if (is_array($prop['value'])) {
+                                if (!empty($prop['value']) && is_array($prop['value'])) {
                                     $prop['value'] =
-                                        $this->_activelocksResponseHelper(
+                                        $this->activelocksResponseHelper(
                                             $prop['value']);
                                 }
                                 echo "        <D:lockdiscovery>\n";
@@ -1857,14 +1867,14 @@ class HTTP_WebDAV_Server
         echo "</D:multistatus>\n";
     }
 
-    function _activelocksResponseHelper($locks)
+    function activelocksResponseHelper($locks)
     {
-        if (!is_array($locks) || empty($locks)) {
+        if (empty($locks) || !is_array($locks)) {
             return '';
         }
 
         foreach ($locks as $key => $lock) {
-            if (!is_array($lock) || empty($lock)) {
+            if (empty($lock) || !is_array($lock)) {
                 continue;
             }
 
@@ -1896,14 +1906,14 @@ class HTTP_WebDAV_Server
         return implode('', $locks);
     }
 
-    function _lockentriesResponseHelper($locks)
+    function lockentriesResponseHelper($locks)
     {
-        if (!is_array($locks) || empty($locks)) {
+        if (empty($locks) || !is_array($locks)) {
             return '';
         }
 
         foreach ($locks as $key => $lock) {
-            if (!is_array($lock) || empty($lock)) {
+            if (empty($lock) || !is_array($lock)) {
                 continue;
             }
 
@@ -1959,20 +1969,20 @@ class HTTP_WebDAV_Server
         return $this->propfind($options);
     }
 
-    // {{{ _allow()
+    // {{{ getAllowedMethods()
 
     /**
-     * List implemented methods
+     * Get allowed methods
      *
      * @param void
-     * @return array something
+     * @return array of allowed methods
      */
-    function _allow()
+    function getAllowedMethods()
     {
-        $allow = array();
+        $allowedMethods = array();
 
         // OPTIONS is always there
-        $allow[] = 'OPTIONS';
+        $allowedMethods[] = 'OPTIONS';
 
         // all other methods need both a method_wrapper() and a method()
         // implementation
@@ -1996,15 +2006,15 @@ class HTTP_WebDAV_Server
                 continue;
             }
 
-            $allow[] = strtoupper($method);
+            $allowedMethods[] = strtoupper($method);
 
-            // emulate HEAD using GET if no HEAD method exists
+            // emulate HEAD using GET
             if ($method == 'get') {
-                $allow[] = 'HEAD';
+                $allowedMethods[] = 'HEAD';
             }
         }
 
-        return $allow;
+        return $allowedMethods;
     }
 
     // }}}
@@ -2396,7 +2406,7 @@ class HTTP_WebDAV_Server
      * testing.  This function also collects all instances of opening the
      * request body in one place.
      *
-     * @return resource a file descriptor
+     * @return resource request body input stream
      */
     function openRequestBody()
     {
@@ -2518,4 +2528,3 @@ class HTTP_WebDAV_Server
 // tab-width: 4
 // c-basic-offset: 4
 // End:
-?>
