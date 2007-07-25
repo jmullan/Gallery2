@@ -47,17 +47,23 @@ class ServerAuthPlugin /* extends GalleryAuthPlugin */ {
 	    $authtype = GalleryUtilities::getServerVar('REDIRECT_AUTH_TYPE');
 	    $username = GalleryUtilities::getServerVar('REDIRECT_REMOTE_USER');
 	}
+	if (empty($username) || strncmp($username, '__LOGOUT__', 10) === 0) {
+	    return array(null, null);
+	}
 
 	list ($ret, $user) = HttpAuthHelper::getUser($authtype, $username);
 	if ($ret) {
 	    return array($ret, null);
 	}
+	if (!isset($user)) {
+	    return array(null, null, array('view' => 'core.UserAdmin',
+					   'subView' => 'register.UserSelfRegistration',
+					   'return' => true));
+	}
 
-	if (!empty($user)) {
-	    $ret = HttpAuthHelper::regenerateSessionIfNecessary($user);
-	    if ($ret) {
-		return array($ret, null);
-	    }
+	$ret = HttpAuthHelper::regenerateSessionIfNecessary($user);
+	if ($ret) {
+	    return array($ret, null);
 	}
 
 	return array(null, $user);

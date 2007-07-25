@@ -34,11 +34,11 @@ class ServerAuthPluginTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $gallery;
 	$ret = parent::setUp();
 	if ($ret) {
 	   return $ret;
 	}
+	global $gallery;
 
 	/* Create test user */
 	list ($ret, $this->_user) = $this->_createRandomUser();
@@ -51,7 +51,8 @@ class ServerAuthPluginTest extends GalleryTestCase {
 	$this->_plugin = new ServerAuthPlugin();
 
 	$this->_saveSession = $gallery->_session;
-	$gallery->_session = new ServerAuthPluginTestSession();
+	$this->_session =& $gallery->getSession();
+	$this->_session = new ServerAuthPluginTestSession();
     }
 
     function tearDown() {
@@ -65,23 +66,20 @@ class ServerAuthPluginTest extends GalleryTestCase {
 
 	$ret = parent::tearDown();
 	if ($ret) {
-	   $this->failWithStatus($ret);
+	   return $ret;
 	}
     }
 
     function testValidUser() {
-	global $gallery;
-	$session =& $gallery->getSession();
-
 	$_SERVER['REMOTE_USER'] = $this->_user->getUserName();
 
 	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
-	    return ($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_user, $user);
-	$this->assert($session->regenerateWasCalled(), 'Session has not been regenerated!');
+	$this->assert($this->_session->regenerateWasCalled(), 'Session has not been regenerated!');
     }
 
     function testInvalidUser() {
@@ -89,17 +87,15 @@ class ServerAuthPluginTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
-	    return ($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(null, $user);
     }
 }
 
-/**
- * Mock Session
- */
 class ServerAuthPluginTestSession {
+
     function ServerAuthPluginTestSession() {
 	$this->_regenerateWasCalled = false;
     }

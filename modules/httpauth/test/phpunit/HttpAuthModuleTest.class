@@ -86,30 +86,31 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	    '')) . "\n\n\n\n";
 
 	/* Use HttpAuthModuleTestPlatform */
-	$this->_platform =& new HttpAuthModuleTestPlatform();
+	$this->_platform =& $gallery->getPlatform();
+	$this->_platform = new HttpAuthModuleTestPlatform();
 	$this->_platform->_messages[$this->_httpAuthWorksRequest] =
 	    $this->_accessAuthorizationResponse;
-	$gallery->setPlatform($this->_platform);
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'httpauth');
 	if ($ret) {
 	    return $ret;
 	}
 
+	/* Set plugin parameters */
 	foreach (array('httpAuthPlugin' => true, 'useGlobally' => true) as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', $key, $value);
+	    $ret = $this->_module->setParameter($key, $value);
 	    if ($ret) {
 		return $ret;
 	    }
 	}
 
 	/* Use HttpAuthModuleTestPhpVm */
+	$this->_phpVm =& $gallery->getPhpVm();
 	$this->_phpVm = new HttpAuthModuleTestPhpVm();
-	$gallery->_phpVm =& $this->_phpVm;
 
-	/* Clear response headers */
-	$this->_headers =& GalleryUtilities::_getResponseHeaders();
-	$this->_headers = array();
+	/* Reset response headers */
+	$this->_responseHeaders =& GalleryUtilities::_getResponseHeaders();
+	$this->_responseHeaders = array();
 
 	/* Reset auth related server and request variables */
 	unset($_SERVER['PHP_AUTH_USER']);
@@ -126,7 +127,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 	$ret = parent::tearDown();
 	if ($ret) {
-	   $this->failWithStatus($ret);
+	   return $ret;
 	}
     }
 
@@ -176,9 +177,10 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$this->assertEquals(array('status' => 'HTTP/1.0 401 Unauthorized',
-		'www-authenticate' => "WWW-Authenticate: Basic realm='$params[authName]'"),
-	    $this->_headers);
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$expectedHeaders['www-authenticate'] = "WWW-Authenticate: Basic realm='$params[authName]'";
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
     }
 
     function testHandleEventErrorPermissionDeniedIgnoredIfUseGloballyDisabled() {
@@ -195,7 +197,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$this->assertEquals(array(), $this->_headers);
+	$this->assertEquals(array(), $this->_responseHeaders);
     }
 
     function testHandleEventLogoutNoUsername() {
@@ -255,7 +257,6 @@ class HttpAuthModuleTestPhpVm extends GalleryPhpVm {
 }
 
 class HttpAuthModuleTestRewriteApi {
-    var $foo;
 
     function &_fetchActiveRulesForModule($moduleId) {
 	static $activeRules;

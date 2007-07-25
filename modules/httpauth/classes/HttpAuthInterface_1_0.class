@@ -19,9 +19,8 @@
  */
 
 /**
- * This is an interface for the httpauth module.  Modules that wish to opt-in for HTTPauth can
- * utilize an implementation of this interface.
- *
+ * This is an interface for the HTTP auth module.  Modules that wish to opt-in for HTTP auth can
+ * use an implementation of this interface.
  * @see HttpAuthPlugin
  * @see ServerAuthPlugin
  * @package HttpAuth
@@ -33,24 +32,21 @@
 class HttpAuthInterface_1_0 {
 
     /**
-     * Checks if HTTP authentication is enabled.
-     * @return array object GalleryStatus a status code,
-     *               bool true if HTTPAuth is enabled,
-     *               bool true if ServerAuth is enabled
-     *               bool true if it is enabled globally or
-     *                    false if it is only enabled for specific modules
+     * Check if HTTP auth is enabled.
+     * @return array object GalleryStatus a status code
+     *               boolean true if HTTP auth is enabled
+     *               boolean true if server auth is enabled
+     *               boolean true if HTTP auth is enabled for all modules
      */
     function getConfiguration() {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null, null, null);
     }
 
     /**
-     * Registers the HTTP authentication Gallery authentication plugin.
-     * @param bool $enableHttpAuth Set to true to activate HTTP auth, false to deactivate.
-     * @param bool $enableServerAuth (optional) Set to true to activate Server auth, false to
-     *                                          deactivate (defaults to false).
-     * @param bool $useGlobally (optional) Set to true to activate auth for all modules, false to
-     *                                     require modules to opt-in for HTTP auth (default),
+     * Register HTTP auth plugins.
+     * @param boolean $enableHttpAuth true to enable HTTP auth
+     * @param boolean $enableServerAuth (optional) true to enable server auth
+     * @param boolean $useGlobally (optional) true to enable auth for all modules
      * @return object GalleryStatus a status code
      */
     function setConfiguration($enableHttpAuth, $enableServerAuth=false, $useGlobally=false) {
@@ -59,9 +55,11 @@ class HttpAuthInterface_1_0 {
 
     /**
      * Prompt the user via HTTP authentication for username / password.
+     * @param boolean $force (optional) request authentication regardless of
+     *     whether HTTP auth is enabled for all modules
      * @return object GalleryStatus a status code
      */
-    function requestAuthentication() {
+    function requestAuthentication($force=false) {
 	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
     }
 }

@@ -39,7 +39,7 @@
 
     <p class="giDescription">
       {capture assign="adminPluginsUrl"}{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminPlugins" return=true}{/capture}
-      {g->text text="PHP Path Info rewrite doesn't support the rule to fall back on passing HTTP usernames and passwords to Gallery.  You should uninstall and reinstall the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminPluginsUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:httpauth\">" arg4="</a>"}
+      {g->text text="PHP path info doesn't support the rule to fall back on passing HTTP usernames and passwords to Gallery.  You should uninstall and reinstall the URL rewrite module in the %sSite Admin Plugins option%s and choose either Apache mod_rewrite or ISAPI_Rewrite.  Troubleshooting documentation is in the %sGallery Codex%s." arg1="<a href=\"$adminPluginsUrl\">" arg2="</a>" arg3="<a href=\"http://codex.gallery2.org/index.php/Gallery2:Modules:httpauth\">" arg4="</a>"}
     </p>
   </div>
 {/if}
@@ -125,7 +125,7 @@
 
 <div class="gbBlock" id="cbUsernameRegex" {if empty($form.regexAuthPlugin)} style="display: none"{/if}>
   <p class="giDescription">
-    {g->text text="Specify here a regular expression which the username must match for authentication to proceed and a string with which to replace it.  See PHP %s documentation for more information." arg1="<a href=\"http://php.net/preg_replace\"> preg_replace </a>"}
+    {g->text text="Specify here a regular expression which the username must match for authentication to proceed and a string with which to replace it.  See PHP %spreg_replace%s documentation." arg1="<a href=\"http://php.net/preg_replace\">" arg2="</a>"}
   </p>
 
   {g->text text="Username Pattern:"}

@@ -39,16 +39,16 @@ class TryLogoutView extends GalleryView {
 
 	/* Ask browser to authenticate with bogus authtype */
 	GalleryUtilities::setResponseHeader('HTTP/1.0 401 Unauthorized', false);
-	GalleryUtilities::setResponseHeader('WWW-Authenticate: Bogus');
+	GalleryUtilities::setResponseHeader('WWW-Authenticate: Bogus', false);
 
-	/* Redirect using random username and password */
+	/* Redirect with random username and password */
 	$TryLogout = array();
 	foreach (array('scriptUrl', 'hrefUrl') as $key) {
 	    $url = $urlGenerator->generateUrl(array('view' => 'httpauth.FinishLogout'),
 					      array('forceFullUrl' => true,
 						    'htmlEntities' => $key == 'hrefUrl'));
-	    $TryLogout[$key] =
-		HttpAuthHelper::addHttpAuthToUrl($url, '__LOGOUT__' . rand(), rand());
+	    $TryLogout[$key] = HttpAuthHelper::addHttpAuthToUrl(
+		$url, '__LOGOUT__' . rand(), rand());
 	}
 
 	/* Render HTML body */

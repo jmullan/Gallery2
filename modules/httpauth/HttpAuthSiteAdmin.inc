@@ -66,8 +66,9 @@ class HttpAuthSiteAdminController extends GalleryController {
 		return array($ret, null);
 	    }
 
-	    foreach (array('httpAuthPlugin', 'useGlobally', 'serverAuthPlugin', 'regexAuthPlugin',
-		    'authtypePattern', 'usernamePattern', 'usernameReplace', 'authName') as $key) {
+	    foreach (array('httpAuthPlugin', 'authName', 'serverAuthPlugin', 'regexAuthPlugin',
+			   'authtypePattern', 'usernamePattern', 'usernameReplace', 'useGlobally')
+		    as $key) {
 		if (isset($form[$key])) {
 		    $ret = $module->setParameter($key, $form[$key]);
 		    if ($ret) {
@@ -130,8 +131,9 @@ class HttpAuthSiteAdminView extends GalleryView {
 	/* Load our default values if we didn't just come from this form */
 	if ($form['formName'] != 'HttpAuthSiteAdmin') {
 	    $form['formName'] = 'HttpAuthSiteAdmin';
-	    foreach (array('httpAuthPlugin', 'useGlobally', 'serverAuthPlugin', 'regexAuthPlugin',
-		    'authtypePattern', 'usernamePattern', 'usernameReplace', 'authName') as $key) {
+	    foreach (array('httpAuthPlugin', 'authName', 'serverAuthPlugin', 'regexAuthPlugin',
+			   'authtypePattern', 'usernamePattern', 'usernameReplace', 'useGlobally')
+		    as $key) {
 		if (!empty($params[$key])) {
 		    $form[$key] = $params[$key];
 		}

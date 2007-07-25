@@ -124,17 +124,23 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 	    return array(null, true);
 	}
 
-	/*
-	 * Use the Basic auth-type for tests. PHP does not define auth variables for arbitrary
-	 * auth-types.
-	 */
-	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage($urlGenerator->generateUrl(
-		array('view' => 'httpauth.HttpAuthWorks'),
-		array('forceFullUrl' => true,
-		      'htmlEntities' => false)),
-	    'GET', array('Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD')));
+	/* Use Basic authtype because AUTH_TYPE is not defined for arbitrary authtypes */
+	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage(
+	    $urlGenerator->generateUrl(array('view' => 'httpauth.HttpAuthWorks'),
+				       array('forceFullUrl' => true,
+					     'htmlEntities' => false)),
+	    'GET',
+	    array('Authorization' => 'Basic ' . base64_encode('USERNAME:PASSWORD')));
 
-	return array(null, trim($body) == "Basic\nUSERNAME\nPASSWORD");
+	if (!preg_match('/^HTTP\/[0-9]\.[0-9] 200/', $status)) {
+	    return array(null, false);
+	}
+
+	if (trim($body) != "AUTHTYPE\nUSERNAME\nPASSWORD") {
+	    return array(null, false);
+	}
+
+	return array(null, true);
     }
 
     /**
@@ -149,18 +155,24 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 	$username = GalleryUtilities::getServerVar('PHP_AUTH_USER');
 	$password = GalleryUtilities::getServerVar('PHP_AUTH_PW');
 
-	$authorization = GalleryUtilities::getRequestVariables('authorization');
-	if (empty($authorization)) {
-	    /* IIS ISAPI PHP defines HTTP_AUTHORIZATION */
+	if (empty($username)) {
 	    $authorization = GalleryUtilities::getServerVar('HTTP_AUTHORIZATION');
-	}
-	if (!empty($authorization)) {
+	    if (empty($authorization)) {
+		$authorization = GalleryUtilities::getRequestVariables('authorization');
+		if (empty($authorization)) {
+		    return array($authtype, $username, $password);
+		}
+	    }
+
 	    list ($authtype, $authdata) = explode(' ', $authorization);
 	    list ($username, $password) = explode(':', base64_decode($authdata));
+	    if (empty($username)) {
+		return array($authtype, $username, $password);
+	    }
 	}
 
-	/* AUTH_TYPE is often not defined, assume a default. */
-	if (!empty($username) && empty($authtype)) {
+	/* AUTH_TYPE is often not defined, assume a default */
+	if (empty($authtype)) {
 	    $authtype = 'Basic';
 	}
 
@@ -170,10 +182,10 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
     /**
      * Common code from HttpAuthPlugin::getUser and ServerAuthPlugin::getUser.
      *
-     * Potentially filters authentication type and username with regular expressions before
-     * returning active user.
+     * Potentially filters authtype and username with regular expressions before returning active
+     * user.
      *
-     * @param string authentication type (Basic, Negotiate, etc.)
+     * @param string authtype (Basic, Negotiate, etc.)
      * @param string username
      * @return array object GalleryStatus a status code
      *               object GalleryUser the active user or null
@@ -186,7 +198,7 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 
 	if (!empty($params['regexAuthPlugin'])) {
 	    if (!preg_match($params['authtypePattern'], $authtype)) {
-		/* Reject authentication type */
+		/* Reject authtype */
 	    	return array(null, null);
 	    }
 
@@ -195,8 +207,8 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 	    	return array(null, null);
 	    }
 
-	    $username =
-		preg_replace($params['usernamePattern'], $params['usernameReplace'], $username);
+	    $username = preg_replace(
+		$params['usernamePattern'], $params['usernameReplace'], $username);
 	}
 
 	if (empty($username)) {
@@ -223,7 +235,8 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
     }
 
     /**
-     * Regenerate the session if this request might the initial login (active auth vs passive auth).
+     * Regenerate the session if this request might be the initial login (active auth vs. passive
+     * auth).
      * @param object GalleryUser $authenticatedUser user authenticated for this request
      * @return object GalleryStatus a status code
      */
@@ -244,8 +257,8 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
     }
 
     /**
-     * Adds the given pair of username / password to the given URL as HTTP auth user:pass@hostname. 
-     * @param string $url An absolute URL
+     * Add the given username / password pair to the given URL as HTTP auth user:pass@hostname. 
+     * @param string $url an absolute URL
      * @param string $username
      * @param string $password
      */
@@ -257,7 +270,7 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
     }
 
     /**
-     * Removes user:pass from the given URL.
+     * Remove user:pass from the given URL.
      * @param string $url An absolute URL
      */
     function stripHttpAuthFromUrl($url) {
@@ -312,7 +325,7 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
     /**
      * @see HttpAuthInterface_1_0::requestAuthentication
      */
-    function requestAuthentication($ignoreUseGloballyFlag=true) {
+    function requestAuthentication($force=false) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
 	if ($ret) {
 	    return $ret;
@@ -322,13 +335,13 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 	    return null;
 	}
 
-	if (!$ignoreUseGloballyFlag && empty($params['useGlobally'])) {
+	if (!$force && empty($params['useGlobally'])) {
 	    return null;
 	}
 
 	GalleryUtilities::setResponseHeader('HTTP/1.0 401 Unauthorized', false);
-	GalleryUtilities::setResponseHeader("WWW-Authenticate: Basic realm='$params[authName]'",
-					    false);
+	GalleryUtilities::setResponseHeader(
+	    "WWW-Authenticate: Basic realm='$params[authName]'", false);
 
 	return null;
     }

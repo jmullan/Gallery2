@@ -46,15 +46,24 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	    return $ret;
 	}
 	$this->_markForCleanup($this->_user);
+
 	$_SERVER['AUTH_TYPE'] = 'Test';
 
 	$this->_plugin = new HttpAuthPlugin();
 
-	$this->_saveSession = $gallery->_session;	
-	$gallery->_session = new HttpAuthPluginTestSession();
+	/* Use HttpAuthPluginTestSession */
+	$this->_saveSession = $gallery->_session;
+	$this->_session =& $gallery->getSession();
+	$this->_session = new HttpAuthPluginTestSession();
 
-	$this->_listener = new NullEventListener();
-	$this->_registerTestEventListener('Gallery::FailedLogin', $this->_listener);
+	/* Use NullEventListener */
+	$this->_event =& NullEventListener::_event();
+	$this->_event = null;
+
+	$this->_markFactoryForCleanup();
+	$this->_registerFactoryImplementationForTest('GalleryEventListener',
+	    'NullEventListener', 'NullEventListener',
+	    'lib/tools/phpunit/GalleryTestCase.class', 'test', array('Gallery::FailedLogin'));
     }
 
     function tearDown() {
@@ -73,9 +82,6 @@ class HttpAuthPluginTest extends GalleryTestCase {
     }
 
     function testValidUser() {
-	global $gallery;
-	$session =& $gallery->getSession();
-
 	$_SERVER['PHP_AUTH_USER'] = $this->_user->getUserName();
 	$_SERVER['PHP_AUTH_PW'] = 'password';
 
@@ -85,8 +91,11 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals($this->_user, $user);
-	$this->assert(!isset($this->_listener->_event), 'There was a FailedLogin event!');
-	$this->assert($session->regenerateWasCalled(), 'Session has not been regenerated!');
+
+	$this->assert(!isset($this->_event), 'There was a FailedLogin event!');
+
+	$this->assertEquals(array(array()), $this->_session->_regenerateCalls,
+	    'Session should have been regenerated');
     }
 
     function testInvalidUser() {
@@ -100,12 +109,12 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	$this->assert(!isset($user));
 
-	if (!isset($this->_listener->_event)) {
-	    $this->assert(false, 'Listener didn\'t receive event!');
-	} else {
-	    $eventData = $this->_listener->_event->getData();
-	    $this->assertEquals($_SERVER['PHP_AUTH_USER'], $eventData['userName']);
+	if (!isset($this->_event)) {
+	    return $this->fail('Should have handled an event');
 	}
+
+	$data = $this->_event->getData();
+	$this->assertEquals($_SERVER['PHP_AUTH_USER'], $data['userName']);
     }
 
     function testValidUserInvalidPassword() {
@@ -119,12 +128,12 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	$this->assert(!isset($user));
 
-	if (!isset($this->_listener->_event)) {
-	    $this->assert(false, 'Listener didn\'t receive event!');
-	} else {
-	    $eventData = $this->_listener->_event->getData();
-	    $this->assertEquals($this->_user->getUserName(), $eventData['userName']);
+	if (!isset($this->_event)) {
+	    return $this->fail('Should have handled an event');
 	}
+
+	$data = $this->_event->getData();
+	$this->assertEquals($_SERVER['PHP_AUTH_USER'], $data['userName']);
     }
 
     function testNoFailedLoginEventForSpecialLogoutUsername() {
@@ -137,28 +146,20 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	}
 
 	$this->assert(!isset($user));
-	$this->assert(!isset($this->_listener->_event), 'There was a FailedLogin event!');
+
+	$this->assert(!isset($this->_event), 'There was a FailedLogin event!');
     }
 }
 
-/**
- * Mock Session
- */
 class HttpAuthPluginTestSession {
-    function HttpAuthPluginTestSession() {
-	$this->_regenerateWasCalled = false;
-    }
+    var $_regenerateCalls;
 
     function getUserId() {
 	return null;
     }
 
     function regenerate() {
-	$this->_regenerateWasCalled = true;
-    }
-
-    function regenerateWasCalled() {
-	return $this->_regenerateWasCalled;
+	$this->_regenerateCalls[] = array();
     }
 }
 ?>
