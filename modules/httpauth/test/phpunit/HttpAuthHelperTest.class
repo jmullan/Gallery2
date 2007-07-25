@@ -34,7 +34,10 @@ class HttpAuthHelperTest extends GalleryTestCase {
     }
 
     function setUp() {
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
@@ -91,7 +94,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'httpauth');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	/* Configure plugin */
@@ -102,24 +105,21 @@ class HttpAuthHelperTest extends GalleryTestCase {
 		       'authName' => 'TEST_AUTH_NAME') as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', $key, $value);
 	    if ($ret) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
 	/* Create test user */
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_user);
 
 	list ($ret, $this->_authInterface) =
 		GalleryCoreApi::newFactoryInstance('HttpAuthInterface_1_0');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(isset($this->_authInterface), 'Could not instantiate auth interface.');
 
@@ -143,7 +143,10 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 	$gallery->_session = $this->_saveSession;
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
 
 	if (!empty($this->_resetFactory)) {    
 	    /* After the plugin parameters have been reset, reset the factory as well */
@@ -172,7 +175,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
     function testCheckConfiguration() {
 	list ($ret, $code) = HttpAuthHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(0, $code, 'unexpected error code');
@@ -186,7 +189,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = HttpAuthHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(HTTPAUTH_STATUS_MISSING_AUTHORIZATION
@@ -200,7 +203,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = HttpAuthHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(HTTPAUTH_STATUS_MISSING_AUTHORIZATION
@@ -214,7 +217,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = HttpAuthHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(HTTPAUTH_STATUS_MISSING_AUTHORIZATION
@@ -227,7 +230,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = HttpAuthHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(HTTPAUTH_STATUS_MISSING_AUTHORIZATION
@@ -242,7 +245,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	list ($ret, $code) = HttpAuthHelper::checkConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!$code);
@@ -251,7 +254,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
     function testCheckHttpAuth() {
 	list ($ret, $success) = HttpAuthHelper::checkHttpAuth();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($success);
@@ -263,7 +266,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	list ($ret, $success) = HttpAuthHelper::checkHttpAuth();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!$success);
@@ -274,12 +277,12 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	    $this->_missingAuthorizationResponse;
 	$ret = GalleryCoreApi::removePluginParameter('module', 'httpauth', 'httpAuthPlugin');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $success) = HttpAuthHelper::checkHttpAuth();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($success);
@@ -340,7 +343,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
     function testGetUser() {
 	list ($ret, $user) = HttpAuthHelper::getUser('Test', $this->_user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_user, $user);
@@ -349,7 +352,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
     function testGetUserInvalidUser() {
 	list ($ret, $user) = HttpAuthHelper::getUser('Test', 'bogusUser-' . rand());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(null, $user);
@@ -358,12 +361,12 @@ class HttpAuthHelperTest extends GalleryTestCase {
     function testGetUserDisabledUser() {
 	$ret = $this->_disableUserName($this->_user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $user) = HttpAuthHelper::getUser('Test', $this->_user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(null, $user);
@@ -373,18 +376,18 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'httpauth', 'regexAuthPlugin', true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'httpauth', 'authtypePattern', '/^Bogus$/');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $user) = HttpAuthHelper::getUser('Test', $this->_user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(null, $user);
@@ -394,12 +397,12 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'httpauth', 'usernamePattern', '/^bogusUser-' . rand() . '$/');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $user) = HttpAuthHelper::getUser('Test', $this->_user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(null, $user);
@@ -409,7 +412,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	list ($ret, $user) =
 	    HttpAuthHelper::getUser('Test', $this->_user->getUserName() . '@REALM.TLD');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_user, $user);
@@ -418,12 +421,12 @@ class HttpAuthHelperTest extends GalleryTestCase {
     function testGetUserIgnoresUseGloballyFlag() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', 'useGlobally', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $user) = HttpAuthHelper::getUser('Test', $this->_user->getUserName());
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assertEquals($this->_user, $user);
     }
@@ -474,7 +477,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	list ($ret, $authPluginEnabled, $serverPluginEnabled, $usedGlobally) = 
 		$this->_authInterface->getConfiguration();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(true, false, true),
@@ -485,12 +488,12 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	$this->_resetFactory = true;
 	$ret = $this->_authInterface->setConfiguration(false, true, false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!(bool)$params['httpAuthPlugin'], 'wrong httpAuthPlugin value');
@@ -499,7 +502,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	list ($ret, $authPlugins) =
 		GalleryCoreApi::getAllFactoryImplementationIds('GalleryAuthPlugin');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->assert(!isset($authPlugins['HttpAuthPlugin']), 'HttpAuthPlugin still registerd');
 	$this->assert(isset($authPlugins['ServerAuthPlugin']), 'ServerAuthPlugin not registered');
@@ -509,12 +512,12 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	$this->_resetFactory = true;
 	$ret = $this->_authInterface->setConfiguration(true);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert((bool)$params['httpAuthPlugin'], 'wrong httpAuthPlugin value');
@@ -525,12 +528,12 @@ class HttpAuthHelperTest extends GalleryTestCase {
     function testRequestAuthentication() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', 'useGlobally', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = $this->_authInterface->requestAuthentication();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 401 Unauthorized',
@@ -541,12 +544,12 @@ class HttpAuthHelperTest extends GalleryTestCase {
     function testRequestAuthenticationDoNotIgnoreUseGloballyFlag() {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', 'useGlobally', false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$ret = HttpAuthHelper::requestAuthentication(false);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $this->_headers);
@@ -556,13 +559,13 @@ class HttpAuthHelperTest extends GalleryTestCase {
 	foreach (array('httpAuthPlugin' => false, 'serverAuthPlugin' => true) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'httpauth', $key, $value);
 	    if ($ret) {
-		return $this->failWithStatus($ret);
+		return $ret;
 	    }
 	}
 
 	$ret = HttpAuthHelper::requestAuthentication();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array(), $this->_headers);
@@ -573,7 +576,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	$ret = HttpAuthHelper::requestAuthentication();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals(array('status' => 'HTTP/1.0 401 Unauthorized',
@@ -587,7 +590,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	$ret = HttpAuthHelper::regenerateSessionIfNecessary($this->_user);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($gallery->_session->regenerateWasCalled());
@@ -599,7 +602,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	$ret = HttpAuthHelper::regenerateSessionIfNecessary($this->_user);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!$gallery->_session->regenerateWasCalled());
@@ -611,7 +614,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	$ret = HttpAuthHelper::regenerateSessionIfNecessary($this->_user);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert($gallery->_session->regenerateWasCalled());
@@ -623,7 +626,7 @@ class HttpAuthHelperTest extends GalleryTestCase {
 
 	$ret = HttpAuthHelper::regenerateSessionIfNecessary(null);
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!$gallery->_session->regenerateWasCalled());

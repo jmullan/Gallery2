@@ -35,13 +35,15 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
-	parent::setUp();
+	$ret = parent::setUp();
+	if ($ret) {
+	   return $ret;
+	}
 
 	/* Create test user */
 	list ($ret, $this->_user) = $this->_createRandomUser(null, 'password');
 	if ($ret) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 	$this->_markForCleanup($this->_user);
 	$_SERVER['AUTH_TYPE'] = 'Test';
@@ -64,7 +66,10 @@ class HttpAuthPluginTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	parent::tearDown();
+	$ret = parent::tearDown();
+	if ($ret) {
+	   $this->failWithStatus($ret);
+	}
     }
 
     function testValidUser() {
@@ -76,7 +81,7 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assertEquals($this->_user, $user);
@@ -90,7 +95,7 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!isset($user));
@@ -109,7 +114,7 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!isset($user));
@@ -128,7 +133,7 @@ class HttpAuthPluginTest extends GalleryTestCase {
 
 	list ($ret, $user) = $this->_plugin->getUser();
 	if ($ret) {
-	    return $this->failWithStatus($ret);
+	    return $ret;
 	}
 
 	$this->assert(!isset($user));

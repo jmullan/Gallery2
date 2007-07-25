@@ -31,12 +31,13 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('httpauth');
 	$this->setName($gallery->i18n('HTTP Auth'));
-	$this->setVersion('1.0.0'); /* Update upgrade() too! */
+	$this->setVersion('1.0.1'); /* Update upgrade() too! */
+	$this->_templateVersion = 1;
 	$this->setDescription($gallery->i18n('Login using HTTP authentication.'));
 	$this->setGroup('authentication', $gallery->i18n('Authentication'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 15));
-	$this->setRequiredModuleApi(array(3, 5));
+	$this->setRequiredCoreApi(array(7, 20));
+	$this->setRequiredModuleApi(array(3, 6));
     }
 
     /**
@@ -222,6 +223,9 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 	case '0.5.1':
 	    /* Version 1.0.0 for Gallery 2.2 release */
 
+	case '1.0.0':
+	    /* .mo file migration */
+
 	case 'end of upgrade path':
 	    break;
 
@@ -344,7 +348,7 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 		return array($ret, null);
 	    }
 
-	    return array(null, null);
+	    return array(null, array('errorHandled' => true));
 
 	case 'Gallery::Logout':
 	    /*
