@@ -46,9 +46,9 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	}
 
 	/* Mock disable HTTP auth URL rewrite rules */
-	$this->_activeRules =& HttpAuthModuleTestRewriteApi::_fetchActiveRulesForModule('httpauth');
-	$this->_activeRules = array();
-	$this->_activateCalls =& HttpAuthModuleTestRewriteApi::_getActivateCalls();
+	$this->_activeRules =& HttpAuthModuleTestRewriteApi::_activeRules();
+	$this->_activeRules = array(null, array());
+	$this->_activateCalls =& HttpAuthModuleTestRewriteApi::_activateCalls();
 	$this->_markFactoryForCleanup();
 	$this->_registerFactoryImplementationForTest(
 	    'RewriteApi', 'HttpAuthModuleTestRewriteApi', 'HttpAuthModuleTestRewriteApi',
@@ -74,7 +74,9 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	    'Connection: close',
 	    'Content-Type: text/html',
 	    '',
-	    '')) .  "Basic\nUSERNAME\nPASSWORD";
+	    'Basic',
+	    'USERNAME',
+	    'PASSWORD'));
 	$this->_missingAuthorizationResponse = implode("\r\n", array(
 	    'HTTP/1.1 200 OK',
 	    'Date: Mon, 24 Nov 2003 05:40:03 GMT',
@@ -83,7 +85,7 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	    'Connection: close',
 	    'Content-Type: text/html',
 	    '',
-	    '')) . "\n\n\n\n";
+	    ''));
 
 	/* Use HttpAuthModuleTestPlatform */
 	$this->_platform =& $gallery->getPlatform();
@@ -112,15 +114,19 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	$this->_responseHeaders =& GalleryUtilities::_getResponseHeaders();
 	$this->_responseHeaders = array();
 
-	/* Reset auth related server and request variables */
-	unset($_SERVER['PHP_AUTH_USER']);
-	unset($_SERVER['PHP_AUTH_PW']);
-	unset($_SERVER['REMOTE_USER']);
+	/* Reset server and request variables */
+	$_SERVER['PHP_AUTH_USER'] = null;
+	$_SERVER['PHP_AUTH_PW'] = null;
+	$_SERVER['REMOTE_USER'] = null;
+	$_SERVER['HTTP_AUTHORIZATION'] = null;
+
 	GalleryUtilities::removeRequestVariable('authorization');
 
-	$this->_registerTestEventListener('Gallery::ActivatePlugin', $this->_module);
-	$this->_registerTestEventListener('Gallery::Error', $this->_module);
-	$this->_registerTestEventListener('Gallery::Logout', $this->_module);
+	/* Register event listeners */
+	$this->_isAppropriate =& HttpAuthModule::_isAppropriate();
+	$this->_isAppropriate['Gallery::ActivatePlugin'] = true;
+	$this->_isAppropriate['Gallery::Error'] = true;
+	$this->_isAppropriate['Gallery::Logout'] = true;
     }
 
     function tearDown() {
@@ -136,14 +142,14 @@ class HttpAuthModuleTest extends GalleryTestCase {
 	$this->assertEquals(array(), array_keys($rules));
     }
 
-    function testGetRewriteRulesAuthorizationRuleActive() {
-	$this->_activeRules = array('authorization');
+    function testGetRewriteRulesWithAuthorizationRuleActive() {
+	$this->_activeRules = array(null, array('authorization'));
 
 	$rules = $this->_module->getRewriteRules();
 	$this->assertEquals(array('authorization'), array_keys($rules));
     }
 
-    function testGetRewriteRulesMissingAuthorization() {
+    function testGetRewriteRulesWithMissingAuthorization() {
 	$this->_platform->_messages[$this->_httpAuthWorksRequest] =
 	    $this->_missingAuthorizationResponse;
 
@@ -258,12 +264,12 @@ class HttpAuthModuleTestPhpVm extends GalleryPhpVm {
 
 class HttpAuthModuleTestRewriteApi {
 
-    function &_fetchActiveRulesForModule($moduleId) {
+    function &_activeRules() {
 	static $activeRules;
 	return $activeRules;
     }
 
-    function &_getActivateCalls() {
+    function &_activateCalls() {
 	static $activateCalls;
 	return $activateCalls;
     }
@@ -273,11 +279,11 @@ class HttpAuthModuleTestRewriteApi {
     }
 
     function fetchActiveRulesForModule($moduleId) {
-	return array(null, HttpAuthModuleTestRewriteApi::_fetchActiveRulesForModule($moduleId));
+	return HttpAuthModuleTestRewriteApi::_activeRules();
     }
 
     function activateRewriteRulesForModule($moduleId) {
-	$activateCalls =& HttpAuthModuleTestRewriteApi::_getActivateCalls();
+	$activateCalls =& HttpAuthModuleTestRewriteApi::_activateCalls();
 	$activateCalls[] = array($moduleId);
     }
 }
@@ -321,6 +327,8 @@ class HttpAuthModuleTestPlatform extends GalleryPlatform {
 	    $this->_buffer = $this->_messages[$string];
 	    return strlen($string);
 	}
+
+	print "Unexpected fwrite: $string";
     }
 
     function fflush($handle) {

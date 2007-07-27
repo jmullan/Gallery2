@@ -31,7 +31,7 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('httpauth');
 	$this->setName($gallery->i18n('HTTP Auth'));
-	$this->setVersion('1.0.1'); /* Update upgrade() too! */
+	$this->setVersion('1.0.2'); /* Update upgrade() too! */
 	$this->_templateVersion = 1;
 	$this->setDescription($gallery->i18n('Login with HTTP authentication.'));
 	$this->setGroup('authentication', $gallery->i18n('Authentication'));
@@ -73,34 +73,12 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
-	list ($ret, $params) = $this->fetchParameters();
-	if ($ret) {
-	    return $ret;
-	}
-
-	if (!empty($params['httpAuthPlugin'])) {
-	    $ret = GalleryCoreApi::registerFactoryImplementation('GalleryAuthPlugin',
-		'HttpAuthPlugin', 'HttpAuthPlugin',
-		'modules/httpauth/classes/HttpAuthPlugin.class', 'httpauth', null, 3);
-	    if ($ret) {
-		return $ret;
-	    }
-	}
-
-	if (!empty($params['serverAuthPlugin'])) {
-	    $ret = GalleryCoreApi::registerFactoryImplementation('GalleryAuthPlugin',
-		'ServerAuthPlugin', 'ServerAuthPlugin',
-		'modules/httpauth/classes/ServerAuthPlugin.class', 'httpauth', null, 3);
-	    if ($ret) {
-		return $ret;
-	    }
-	}
-
 	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEventListener',
 	    'HttpAuthModule', 'HttpAuthModule',
 	    'modules/httpauth/module.inc', 'httpauth',
 	    array('Gallery::ActivatePlugin',
 		  'Gallery::Error',
+		  'Gallery::Init',
 		  'Gallery::Logout'));
 	if ($ret) {
 	    return $ret;
@@ -218,7 +196,10 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 	    /* Decrease HTTP and server auth plugin order weight to increase priority */
 
 	case '1.0.2':
-	   /* Use lightweight event system */
+	    /* Use lightweight event system */
+
+	case '1.0.3':
+	    /* Switch from auth plugins to Gallery::Init event listener */
 
 	case 'end of upgrade path':
 	    break;
@@ -349,6 +330,36 @@ class HttpAuthModule extends GalleryModule /* and GalleryEventListener */ {
 		return array($ret, null);
 	    }
 	    return array(null, array('errorHandled' => true));
+
+	case 'Gallery::Init':
+	    list ($ret, $params) = $this->fetchParameters();
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    if (!empty($params['httpAuthPlugin'])) {
+		GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+		list ($ret, $eventResults) = HttpAuthHelper::httpAuth();
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (!empty($eventResults)) {
+		    return array(null, $eventResults);
+		}
+	    }
+
+	    if (!empty($params['serverAuthPlugin'])) {
+		GalleryCoreApi::requireOnce('modules/httpauth/classes/HttpAuthHelper.class');
+		list ($ret, $eventResults) = HttpAuthHelper::serverAuth();
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (!empty($eventResults)) {
+		    return array(null, $eventResults);
+		}
+	    }
+
+	    return array(null, null);
 
 	case 'Gallery::Logout':
 	    /*

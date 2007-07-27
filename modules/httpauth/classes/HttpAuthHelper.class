@@ -136,7 +136,7 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 	    return array(null, false);
 	}
 
-	if (trim($body) != "AUTHTYPE\nUSERNAME\nPASSWORD") {
+	if (split("\r?\n", $body) != array('Basic', 'USERNAME', 'PASSWORD')) {
 	    return array(null, false);
 	}
 
@@ -232,6 +232,107 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 	}
 
 	return array(null, $user);
+    }
+
+    /**
+     * Set active user from username and password in HTTP headers.
+     *
+     * HTTP authentication takes place between Gallery and the useragent.  Gallery is responsible for
+     * authenticating the username / password pair.
+     */
+    function httpAuth() {
+	global $gallery;
+	$user = $gallery->getActiveUser();
+	if (isset($user)) {
+	    return array(null, null);
+	}
+
+	list ($authtype, $username, $password) = HttpAuthHelper::getHttpAuth();
+	if (empty($username) || strncmp($username, '__LOGOUT__', 10) === 0) {
+	    return array(null, null);
+	}
+
+	list ($ret, $user) = HttpAuthHelper::getUser($authtype, $username);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/*
+	 * We're effectively logging in on every request with this plugin.  We can't post a login
+	 * event each time we do this, but we need to post FailedLogin events.
+	 */
+	if (!isset($user) || !$user->isCorrectPassword($password)) {
+	    $event = GalleryCoreApi::newEvent('Gallery::FailedLogin');
+	    $event->setData(array('username' => $username,
+				  'password' => $password));
+	    list ($ret, $eventResults) = GalleryCoreApi::postEvent($event);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (!empty($eventResults[0])) {
+		return array(null, $eventResults[0]);
+	    }
+
+	    return array(null, null);
+	}
+
+	$ret = HttpAuthHelper::regenerateSessionIfNecessary($user);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$gallery->setActiveUser($user);
+	return array(null, null);
+    }
+
+    /**
+     * Set active user from username authenticated by web server.
+     *
+     * With server authentication Gallery delegates authentication to the web server and trusts the
+     * username from the REMOTE_USER variable without doing any authentication of its own (same as
+     * in GalleryEmbed).  It's the web server's responsibility to do authentication in some way.
+     */
+    function serverAuth() {
+	global $gallery;
+	$user = $gallery->getActiveUser();
+	if (isset($user)) {
+	    return array(null, null);
+	}
+
+	$authtype = GalleryUtilities::getServerVar('AUTH_TYPE');
+	$username = GalleryUtilities::getServerVar('REMOTE_USER');
+
+	/* TODO: http://issues.apache.org/bugzilla/show_bug.cgi?id=38325 */
+	if (empty($username)) {
+	    $authtype = GalleryUtilities::getServerVar('REDIRECT_AUTH_TYPE');
+	    $username = GalleryUtilities::getServerVar('REDIRECT_REMOTE_USER');
+	}
+	if (empty($username) || strncmp($username, '__LOGOUT__', 10) === 0) {
+	    return array(null, null);
+	}
+
+	list ($ret, $user) = HttpAuthHelper::getUser($authtype, $username);
+	if ($ret) {
+	    return array($ret, null);
+	}
+	if (!isset($user)) {
+	    /*
+	     * The web server authenticated the username but a corresponding Gallery user doesn't
+	     * exist.  Send the useragent to the registration page.
+	     */
+	    return array(null, array('redirect' => array(
+		'view' => 'core.UserAdmin',
+		'subView' => 'register.UserSelfRegistration',
+		'return' => true)));
+	}
+
+	$ret = HttpAuthHelper::regenerateSessionIfNecessary($user);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$gallery->setActiveUser($user);
+	return array(null, null);
     }
 
     /**
