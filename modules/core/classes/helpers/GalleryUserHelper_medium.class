@@ -26,7 +26,7 @@
  * @version $Revision$
  * @static
  */
-class GalleryUserHelper_medium {
+class GalleryUserHelper_medium /* extends GalleryEventListener */ {
 
     /**
      * @see GalleryCoreApi::fetchUsernames
@@ -158,17 +158,17 @@ class GalleryUserHelper_medium {
      */
     function fetchLanguageCodeForUser($userId) {
 	global $gallery;
-	
+
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId, 'GalleryUser');
 	if ($ret) {
 	    return array($ret, null);
 	}
-	
+
 	$language = $user->getLanguage();
 	if (empty($language)) {
-	    list ($ret, $language) = 
+	    list ($ret, $language) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
-            if ($ret) {
+	    if ($ret) {
 		return array($ret, null);
 	    }
 	}

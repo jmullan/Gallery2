@@ -77,9 +77,9 @@ class GalleryCoreApi {
      *   and from getPackageNames() in lib/tools/repository/classes/RepositoryDescriptor.class
      * - remove resourceGetTemplateBaseDir from GalleryTemplate class
      * - delete GalleryTestCase::failWithStatus
-     * - loadEntitiesById and deleteEntity: make optional $requiredEntityType mandatory
-     * - remove GalleryCoreApi::registerEventListener
-     *   use GalleryCoreApi::registerFactoryImplementation('GalleryEventListener', ...
+     * - loadEntitiesById and deleteEntityById: make optional $requiredEntityType mandatory
+     * - remove GalleryCoreApi::registerEventListener and other code marked for removal
+     *   in helpers/GalleryEventHelper_simple.class
      */
     function getApiVersion() {
 	return array(7, 34);

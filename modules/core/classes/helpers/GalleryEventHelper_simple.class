@@ -56,21 +56,16 @@ class GalleryEventHelper_simple {
 		return array($ret, null);
 	    }
 
-	    list ($ret, $eventResults[]) = $eventListener->handleEvent($event);
+	    list ($ret, $data) = $eventListener->handleEvent($event);
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    if (!isset($eventResults[count($eventResults) - 1])) {
-	    	array_pop($eventResults);
+	    if (isset($data)) {
+		$eventResults[] = $data;
 	    }
 	}
 
-	/** @todo Remove the following on next major API bump */
-
-	/*
-	 * Can't check isset($allListeners) because registerEventListener might be called before
-	 * postEvent
-	 */
+	/** @todo Remove from here to comment with "--END--" on next major API bump */
 	static $allListenersRegistered;
 	if (!isset($allListenersRegistered)) {
 	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
@@ -98,10 +93,7 @@ class GalleryEventHelper_simple {
 		    continue;
 		}
 
-		$ret = $module->registerEventListeners();
-		if ($ret) {
-		    return array($ret, null);
-		}
+		$module->registerEventListeners();
 	    }
 
 	    $allListenersRegistered = true;
@@ -119,34 +111,33 @@ class GalleryEventHelper_simple {
 		}
 	    }
 	}
+	/* --END-- of section to remove on next major API bump */
 
 	return array(null, $eventResults);
     }
-
-    /** @todo Remove the following on next major API bump */
 
     /**
      * Static array of registered event listeners.
      * @return array
      * @access private
+     * @todo Remove on next major API bump
      */
     function &_getEventListeners() {
-	static $allListeners;
+	static $allListeners = array();
 	return $allListeners;
     }
 
     /**
      * @see GalleryCoreApi::registerEventListener
+     * @todo Remove on next major API bump
      */
-    function registerEventListener($eventName, &$eventListener, $disableForTests=null) {
-	if (!empty($disableForTests) && class_exists('GalleryTestCase')) {
-	    return null;
+    function registerEventListener($eventName, &$eventListener, $disableForTests=false) {
+	if ($disableForTests && class_exists('GalleryTestCase')) {
+	    return;
 	}
 
 	$allListeners =& GalleryEventHelper_simple::_getEventListeners();
 	$allListeners[$eventName][] =& $eventListener;
-
-	return null;
     }
 }
 ?>
