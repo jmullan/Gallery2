@@ -37,16 +37,17 @@ class DcrawToolkit extends GalleryToolkit {
     function getProperty($mimeType, $propertyName, $sourceFilename) {
 	global $gallery;
 
-	if ($mimeType != 'image/x-dcraw') {
-	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION),
-			 null);
+	if (!in_array($mimeType, array('image/x-dcraw', 'image/x-adobe-dng'))) {
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION), null);
 	}
 
-	switch($propertyName) {
+	switch ($propertyName) {
 	case 'dimensions':
 	    /*
-	     * Look to see if there's another toolkit that supports dimensions for PPM.  If we
-	     * find one, then convert the image to PPM and let that toolkit tell us its dimensions.
+	     * @todo In dcraw v7.90 or newer we can get dimensions directly from dcraw -i -v.
+	     * For older dcraw versions we'll look to see if there's another toolkit that
+	     * supports dimensions for PPM.  If we find one, then convert the image to PPM
+	     * and let that toolkit tell us its dimensions.
 	     */
 	    list ($ret, $toolkit) =
 		GalleryCoreApi::getToolkitByProperty('image/x-portable-pixmap', 'dimensions');
@@ -91,12 +92,11 @@ class DcrawToolkit extends GalleryToolkit {
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
 
-	if ($mimeType != 'image/x-dcraw') {
-	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION),
-			 null, null);
+	if (!in_array($mimeType, array('image/x-dcraw', 'image/x-adobe-dng'))) {
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION), null, null);
 	}
 
-	switch($operationName) {
+	switch ($operationName) {
 	case 'convert-to-image/x-portable-pixmap':
 	    list ($ret, $dcraw) = GalleryCoreApi::getPluginParameter('module', 'dcraw', 'path');
 	    if ($ret) {
@@ -108,8 +108,7 @@ class DcrawToolkit extends GalleryToolkit {
 	    $tmpFilename = $platform->tempnam($tmpDir, 'dcraw_');
 	    if (empty($tmpFilename)) {
 		/* This can happen if the $tmpDir path is bad */
-		return array(GalleryCoreApi::error(ERROR_BAD_PATH),
-			     null, null);
+		return array(GalleryCoreApi::error(ERROR_BAD_PATH), null, null);
 	    }
 
 	    list ($ret, $version) =
@@ -118,8 +117,12 @@ class DcrawToolkit extends GalleryToolkit {
 		return array($ret, null, null);
 	    }
 
+	    /*
+	     * Interpolation setting.  Using high speed / lower quality setting by default.
+	     * If desired, change '0' to a different value for dcraw 7.73+ or remove the '-q'
+	     * for older versions.  See http://cybercom.net/~dcoffin/dcraw/dcraw.1.html
+	     */
 	    if (version_compare($version, '7.73', '>=')) {
-		/* -q takes a numeric argument in 7.73+ */
 		$cmd = array($dcraw, '-c', '-a', '-q', '0', $sourceFilename, '>', $tmpFilename);
 	    } else {
 		$cmd = array($dcraw, '-c', '-a', '-q', $sourceFilename, '>', $tmpFilename);

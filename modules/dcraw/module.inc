@@ -36,7 +36,7 @@ class DcrawModule extends GalleryModule {
 	$this->setName($gallery->i18n('Dcraw'));
 	$this->setDescription(
 	    $gallery->i18n('Graphics toolkit for processing images in raw format'));
-	$this->setVersion('1.0.9');
+	$this->setVersion('1.0.10');
 	$this->_templateVersion = 1;
 	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
@@ -64,6 +64,23 @@ class DcrawModule extends GalleryModule {
      */
     function activate($postActivationEvent=true) {
 	global $gallery;
+	GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkitHelper.class');
+
+	list ($ret, $path) = $this->getParameter('path');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	/* Detect the version of the binary (it may have changed since last activation) */
+	list ($ret, $testResults, $version) = DcrawToolkitHelper::testBinary($path);
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$ret = $this->setParameter('version', $version);
+	if ($ret) {
+	    return array($ret, null);
+	}
 
 	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Dcraw');
 	if ($ret) {
@@ -78,15 +95,21 @@ class DcrawModule extends GalleryModule {
 	    $priority = min($priority + 1, 40);
 	}
 
+	$mimeTypes = array('image/x-dcraw');
+	if (version_compare($version, '7', '>=')) {
+	    /* dcraw supports Adobe Digital Negative starting in v7.0 */
+	    $mimeTypes[] = 'image/x-adobe-dng';
+	}
+
 	$ret = GalleryCoreApi::registerToolkitOperation(
-	    'Dcraw', array('image/x-dcraw'), 'convert-to-image/x-portable-pixmap',
+	    'Dcraw', $mimeTypes, 'convert-to-image/x-portable-pixmap',
 	    array(), $gallery->i18n('Convert to PPM'), 'image/x-portable-pixmap', $priority);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	$ret = GalleryCoreApi::registerToolkitProperty(
-	    'Dcraw', array('image/x-dcraw'), 'dimensions', 'int,int',
+	    'Dcraw', $mimeTypes, 'dimensions', 'int,int',
 	    $gallery->i18n('Get the width and height of the image'));
 	if ($ret) {
 	    return array($ret, null);
@@ -95,31 +118,14 @@ class DcrawModule extends GalleryModule {
 	/* Assign all extensions we handle to our image mime type */
 	foreach (array('bay', 'bmq', 'cr2', 'crw', 'cs1', 'dc2', 'dcr',
 		       'fff', 'k25', 'kdc', 'mos', 'mrw', 'nef', 'orf',
-		       'pef', 'raf', 'rdc', 'srf', 'x3f') as $extension) {
-	    $ret = GalleryCoreApi::addMimeType($extension, 'image/x-dcraw', 0);
+		       'pef', 'raf', 'rdc', 'srf', 'x3f', 'dng') as $extension) {
+	    $mimeType = ($extension == 'dng') ? 'image/x-adobe-dng' : 'image/x-dcraw';
+	    $ret = GalleryCoreApi::addMimeType($extension, $mimeType, 0);
 	    if ($ret) {
 		if (!($ret->getErrorCode() & ERROR_COLLISION)) {
 		    return array($ret, null);
 		}
 	    }
-	}
-
-	/* Detect the version of the binary (it may have changed since last activation) */
-	GalleryCoreApi::requireOnce('modules/dcraw/classes/DcrawToolkitHelper.class');
-
-	list ($ret, $path) = $this->getParameter('path');
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	list ($ret, $testResults, $version) = DcrawToolkitHelper::testBinary($path);
-	if ($ret) {
-	    return array($ret, null);
-	}
-
-	$ret = $this->setParameter('version', $version);
-	if ($ret) {
-	    return array($ret, null);
 	}
 
 	list ($ret, $redirect) = parent::activate($postActivationEvent);
