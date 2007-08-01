@@ -189,6 +189,7 @@ function _GalleryMain($embedded=false) {
 	if ($redirectUrl = @$gallery->getConfig('mode.maintenance')) {
 	    /* Maintenance mode - redirect if given URL, else simple message */
 	    if ($redirectUrl === true) {
+		header('Content-Type: text/html; charset=UTF-8');
 		print $core->translate('Site is temporarily down for maintenance.');
 		exit;
 	    }
