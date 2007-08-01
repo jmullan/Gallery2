@@ -3209,7 +3209,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	$regs[] = array('ItemEditPlugin', 'ItemEditRotateAndScalePhoto', 'inc', null, 3);
 	$regs[] = array('ItemEditPlugin', 'ItemEditPhotoThumbnail', 'inc', null, 4);
 	$regs[] = array('ItemAddPlugin', 'ItemAddFromBrowser', 'inc', null, 2);
-	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null);
+	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null, 8);
 	$regs[] = array('MaintenanceTask', 'OptimizeDatabaseTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'DatabaseBackupTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushTemplatesTask', 'class', null);
