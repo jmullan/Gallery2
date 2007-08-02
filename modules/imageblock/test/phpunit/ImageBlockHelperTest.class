@@ -293,6 +293,11 @@ class ImageBlockHelperTest extends GalleryTestCase {
     function testMaxSizeWithoutViewSourcePermission() {
 	global $gallery;
 
+	$listener = new ImageBlockHelper();
+	$this->_registerTestEventListener('Gallery::ViewableTreeChange', $listener);
+	$this->_registerTestEventListener('GalleryEntity::save', $listener);
+	$this->_registerTestEventListener('GalleryEntity::delete', $listener);
+
 	list ($ret, $top) = $this->_createTopAlbum();
 	if ($ret) {
 	    return $ret;

@@ -72,9 +72,6 @@ class GalleryTestCase extends TestCase {
     function setUp() {
 	global $gallery;
 
-	$counter =& GalleryTestCase::getEntityCounter();
-	$counter->setCount(0);
-
 	GalleryDataCache::setFileCachingEnabled(false);
 
 	$ret = parent::setUp();
@@ -127,10 +124,13 @@ class GalleryTestCase extends TestCase {
 	$this->_saveSID = $session->getId();
 	$this->_saveVars[] = $session->get('core.language');
 
-	$ret = $this->_markEventListenersForCleanup();
+	$this->_markFactoryForCleanup();
+	$ret = $this->_initEventListenersForTest();
 	if ($ret) {
 	    return $ret;
 	}
+	$counter =& GalleryTestCase::getEntityCounter();
+	$counter->setCount(0);
 
 	/*
 	 * Try to ensure enough time for this test to complete.  If a test
@@ -945,6 +945,38 @@ class GalleryTestCase extends TestCase {
     }
 
     /**
+     * Disable all but some core event listeners by default.
+     */
+    function _initEventListenersForTest() {
+	/* First unregister all event listeners that are registered through the deprecated API */
+	$ret = $this->_markEventListenersForCleanup();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
+	$eventListeners = array();
+
+	/* Unregister all event listeners (in-memory only) */
+	$this->_unregisterFactoryImplementationForTest('GalleryEventListener');
+
+	/* Register a few core event listeners by default */
+	$this->_registerFactoryImplementationForTest('GalleryEventListener',
+	    'GalleryItemHelper_medium', 'GalleryItemHelper_medium',
+	    'modules/core/classes/helpers/GalleryItemHelper_medium.class', 'core',
+	    array('Gallery::ViewableTreeChange',
+		  'Gallery::RemovePermission',
+		  'GalleryEntity::save',
+		  'GalleryEntity::delete'), 4);
+
+	$counter =& GalleryTestCase::getEntityCounter();
+	$this->_registerTestEventListener('GalleryEntity::save', $counter);
+	$this->_registerTestEventListener('GalleryEntity::delete', $counter);
+
+	return null;
+    }
+
+    /**
      * Register a factory implementation temporarily for this test.
      * You need to call _markFactoryForCleanup() before changing the factory during a test.
      * Will register the new implementation always with top priority.
@@ -1033,14 +1065,15 @@ class GalleryTestCase extends TestCase {
 	if (isset($registry['hints'][$classType])) {
 	    foreach ($registry['hints'][$classType] as $hint => $implementation) {
 		list ($implementationId, $ignore) = each($implementation);
-		if (!isset($implId) || $implementationId == $implId) {
+		if ($implementationId == $implId) {
 		    unset($registry['hints'][$classType][$hint][$implId]);
 		}
+		if (empty($registry['hints'][$classType][$hint])) {
+		    unset($registry['hints'][$classType][$hint]);
+		}
 	    }
-	    if (empty($registry['hints'][$classType][$hint])) {
-		unset($registry['hints'][$classType][$hint]);
-	    }
-	    if (empty($registry['hints'][$classType])) {
+
+	    if (empty($registry['hints'][$classType]) || !isset($implId)) {
 		unset($registry['hints'][$classType]);
 	    }
 	}

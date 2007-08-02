@@ -42,6 +42,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	   return $ret;
 	}
 
+	$this->_registerTestEventListener('GalleryEntity::delete', new WatermarkModule());
+
 	list ($ret, $this->_user) = $this->_createUser();
 	if ($ret) {
 	    return $ret;

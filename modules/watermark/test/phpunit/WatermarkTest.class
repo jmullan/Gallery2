@@ -41,6 +41,8 @@ class WatermarkTest extends GalleryTestCase {
 	   return $ret;
 	}
 
+	$this->_registerTestEventListener('GalleryEntity::delete', new WatermarkModule());
+
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    return $ret;

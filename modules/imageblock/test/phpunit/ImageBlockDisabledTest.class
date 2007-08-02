@@ -21,6 +21,7 @@
 GalleryCoreApi::requireOnce('modules/core/classes/GallerySmarty.class');
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplate.class');
 GalleryCoreApi::requireOnce('modules/imageblock/Callbacks.inc');
+GalleryCoreApi::requireOnce('modules/imageblock/classes/ImageBlockHelper.class');
 
 /**
  * ImageBlockOption tests
@@ -59,6 +60,11 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+
+	$listener = new ImageBlockHelper();
+	$this->_registerTestEventListener('Gallery::ViewableTreeChange', $listener);
+	$this->_registerTestEventListener('GalleryEntity::save', $listener);
+	$this->_registerTestEventListener('GalleryEntity::delete', $listener);
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
 	if ($ret || !isset($this->_module)) {

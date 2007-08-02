@@ -123,10 +123,6 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
 	}
     }
 
-    $counter =& GalleryTestCase::getEntityCounter();
-    GalleryCoreApi::registerEventListener('GalleryEntity::save', $counter);
-    GalleryCoreApi::registerEventListener('GalleryEntity::delete', $counter);
-
     return null;
 }
 

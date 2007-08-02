@@ -33,6 +33,8 @@ class LinkItemTest extends GalleryTestCase {
 	   return $ret;
 	}
 
+	$this->_registerTestEventListener('GalleryEntity::delete', new LinkItemModule());
+
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret) {
 	    return $ret;

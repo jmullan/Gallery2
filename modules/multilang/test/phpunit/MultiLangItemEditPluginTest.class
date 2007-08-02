@@ -41,6 +41,8 @@ class MultiLangItemEditPluginTest extends ItemEditPluginTestCase {
 	   return $ret;
 	}
 
+	$this->_registerTestEventListener('GalleryEntity::delete', new MultiLangModule());
+
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
 	    array('title' => 'title', 'summary' => 'summary', 'description' => 'description',
 		  'onLoadHandlers' => '|MultiLang|'));
