@@ -112,7 +112,7 @@ class GalleryFactoryHelper_simple {
 	$hints[] = '*';
 
 	foreach ($hints as $hint) {
-	    $hint = strtolower($hint);
+	    $hint = GalleryUtilities::strToLower($hint);
 	    if (!empty($registry['hints'][$classType][$hint])) {
 		$classNames = array_values($registry['hints'][$classType][$hint]);
 		break;
