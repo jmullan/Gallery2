@@ -807,6 +807,10 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 
     function testAlbumProperties() {
 	/* Set the preferences */
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_rootAlbum->getId());
+	if ($ret) {
+	    return $ret;
+	}
 	$ret = GalleryCoreApi::addDerivativePreference(
 		1, $this->_rootAlbum->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|640,640');
 	if ($ret) {
