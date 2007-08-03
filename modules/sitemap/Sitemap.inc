@@ -80,6 +80,7 @@ class SitemapView extends GalleryView {
 	print 'http://www.google.com/schemas/sitemap/0.84/sitemap.xsd">';
 	print "\n";
 
+	$gallery->guaranteeTimeLimit(120);
 	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds(
 	    'core.view', $gallery->getActiveUserId());
 	if ($ret) {
@@ -126,6 +127,7 @@ class SitemapView extends GalleryView {
 	    ', $phpVm->time(), $matchJoin, $matchFrag,
 	       GalleryUtilities::makeMarkers(count($aclIds)));
 
+	    $gallery->guaranteeTimeLimit(120);
 	    list ($ret, $searchResults) = $gallery->search($query, array_merge($data, $aclIds));
 	    if ($ret) {
 		return $ret;
@@ -138,6 +140,9 @@ class SitemapView extends GalleryView {
 		30 * 24 * 3600 => 'monthly',
 		365 * 24 * 3600 => 'yearly');
 	    while ($result = $searchResults->nextResult()) {
+		if (($i++ % 100) == 0) {
+		    $gallery->guaranteeTimeLimit(200);
+		}
 		$loc = $urlGenerator->generateUrl(
 		    array('view' => 'core.ShowItem', 'itemId' => $result[0]),
 		    array('forceSessionId' => false, 'forceFullUrl' => true));
