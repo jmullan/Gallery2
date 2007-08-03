@@ -520,9 +520,9 @@ class getid3_quicktime
 						$atomstructure['time_to_sample_table'][$i]['sample_duration'] = getid3_lib::BigEndian2Int(substr($atomdata, $sttsEntriesDataOffset, 4));
 						$sttsEntriesDataOffset += 4;
 
-						if (!empty($ThisFileInfo['quicktime']['time_scale'])) {
+						if (!empty($ThisFileInfo['quicktime']['time_scale']) && (@$atomstructure['time_to_sample_table'][$i]['sample_duration'] > 0)) {
 							$stts_new_framerate = $ThisFileInfo['quicktime']['time_scale'] / $atomstructure['time_to_sample_table'][$i]['sample_duration'];
-							if (($stts_new_framerate <= 60) && isset($ThisFileInfo['video']['frame_rate'])) {
+							if ($stts_new_framerate <= 60 && isset($ThisFileInfo['video']['frame_rate'])) {
 								// some atoms have durations of "1" giving a very large framerate, which probably is not right
 								$ThisFileInfo['video']['frame_rate'] = max(@$ThisFileInfo['video']['frame_rate'], $stts_new_framerate);
 							}
@@ -853,8 +853,10 @@ class getid3_quicktime
 					$ThisFileInfo['video']['resolution_x'] = $atomstructure['width'];
 					$ThisFileInfo['video']['resolution_y'] = $atomstructure['height'];
 				}
-				$ThisFileInfo['video']['resolution_x'] = max($ThisFileInfo['video']['resolution_x'], $atomstructure['width']);
-				$ThisFileInfo['video']['resolution_y'] = max($ThisFileInfo['video']['resolution_y'], $atomstructure['height']);
+				if ($atomstructure['flags']['enabled'] == 1) {
+					$ThisFileInfo['video']['resolution_x'] = max($ThisFileInfo['video']['resolution_x'], $atomstructure['width']);
+					$ThisFileInfo['video']['resolution_y'] = max($ThisFileInfo['video']['resolution_y'], $atomstructure['height']);
+				}
 				if (!empty($ThisFileInfo['video']['resolution_x']) && !empty($ThisFileInfo['video']['resolution_y'])) {
 					$ThisFileInfo['quicktime']['video']['resolution_x'] = $ThisFileInfo['video']['resolution_x'];
 					$ThisFileInfo['quicktime']['video']['resolution_y'] = $ThisFileInfo['video']['resolution_y'];

@@ -434,8 +434,12 @@ class getid3_ogg
 
 				$ThisFileInfo['ogg']['comments'][strtolower($ThisFileInfo['ogg']['comments_raw'][$i]['key'])][] = $ThisFileInfo['ogg']['comments_raw'][$i]['value'];
 
-				$imagechunkcheck = getid3_lib::GetDataImageSize($ThisFileInfo['ogg']['comments_raw'][$i]['data']);
-				$ThisFileInfo['ogg']['comments_raw'][$i]['image_mime'] = getid3_lib::image_type_to_mime_type($imagechunkcheck[2]);
+				// most fields are text, not image data.. getimagesize generates a
+				// php error which causes unit tests to fail.
+				// we're not using any image data in G2 anyway, just comment this
+				//$imagechunkcheck = getid3_lib::GetDataImageSize($ThisFileInfo['ogg']['comments_raw'][$i]['data']);
+				  $ThisFileInfo['ogg']['comments_raw'][$i]['image_mime'] = false;
+				//$ThisFileInfo['ogg']['comments_raw'][$i]['image_mime'] = getid3_lib::image_type_to_mime_type($imagechunkcheck[2]);
 				if (!$ThisFileInfo['ogg']['comments_raw'][$i]['image_mime'] || ($ThisFileInfo['ogg']['comments_raw'][$i]['image_mime'] == 'application/octet-stream')) {
 					unset($ThisFileInfo['ogg']['comments_raw'][$i]['image_mime']);
 					unset($ThisFileInfo['ogg']['comments_raw'][$i]['data']);

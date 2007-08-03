@@ -21,11 +21,6 @@ class getid3_gzip {
 
 	function getid3_gzip(&$fd, &$ThisFileInfo) {
 		$ThisFileInfo['fileformat'] = 'gzip';
-		return $this->read_gzip($fd, $ThisFileInfo);
-	}
-
-	// Reads the gzip-file
-	function read_gzip($fd, &$ThisFileInfo) {
 
 		$start_length = 10;
 		$unpack_header = 'a1id1/a1id2/a1cmethod/a1flags/a4mtime/a1xflags/a1os';
@@ -203,7 +198,17 @@ class getid3_gzip {
 	        			case 'tar':
 							// view TAR-file info
 							if (file_exists(GETID3_INCLUDEPATH.$determined_format['include']) && @include_once(GETID3_INCLUDEPATH.$determined_format['include'])) {
-								getid3_tar::read_tar($inflated, $ThisFileInfo['gzip']['member_header'][$idx]);
+								//getid3_tar::read_tar($inflated, $ThisFileInfo['gzip']['member_header'][$idx]);
+								//read_tar function is gone!  local fix:
+							    if (($temp_file_name = tempnam('*', 'getID3')) && ($tmp = fopen($temp_file_name, 'wb'))) {
+								fwrite($tmp, $inflated);
+								fclose($tmp);
+								if ($temp_fp = fopen($temp_file_name, 'rb')) {
+								    new getid3_tar($temp_fp, $ThisFileInfo['gzip']['member_header'][$idx]);
+								    fclose($temp_fp);
+								    unlink($temp_file_name);
+								}
+							    }
 							}
 							break;
 
