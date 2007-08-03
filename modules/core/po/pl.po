@@ -18,9 +18,9 @@
 # Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.17\n"
+"Project-Id-Version: Gallery: Core 1.2.20\n"
 "POT-Creation-Date: 2006-02-23 10:15+0100\n"
-"PO-Revision-Date: 2007-03-29 16:48+0100\n"
+"PO-Revision-Date: 2007-07-24 15:26+0100\n"
 "Last-Translator: Kappana <kappana@gnoms.net>\n"
 "Language-Team: Polish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -89,9 +89,8 @@ msgstr "Plik"
 msgid "&lt;none&gt;"
 msgstr "&lt;nic&gt;"
 
-#, fuzzy
 msgid "Link"
-msgstr "Zaloguj się"
+msgstr "Link"
 
 #, c-format
 msgid "Page %d of %d"
@@ -168,6 +167,9 @@ msgstr "Pobierz ustawienia z macierzystego albumu"
 
 msgid "Use these settings"
 msgstr "Użyj tych ustawień"
+
+msgid "Converting Schema Table"
+msgstr "Konwertowanie schematu tabeli"
 
 msgid "Installing the core module"
 msgstr "Instalacja modułu głównego"
@@ -259,12 +261,6 @@ msgstr "Optymalizacja tabeli AccessSubscriberMap"
 msgid "Upgrading Plugin Translations"
 msgstr "Aktualizacja lokalizacji modułu"
 
-msgid "Converting Schema Table"
-msgstr ""
-
-msgid "Loading Table Descriptions"
-msgstr ""
-
 msgid "Site Admins"
 msgstr "Administratorzy strony"
 
@@ -283,16 +279,14 @@ msgstr "To jest początek twojej galerii"
 msgid "Converting MySQL data to UTF8"
 msgstr "Konwertowanie danych MySQL do UTF8"
 
-#, fuzzy
 msgid "Adding items"
-msgstr "dodaj pozycję"
+msgstr "Dodawanie pozycji"
 
-#, fuzzy
 msgid "Processing items"
-msgstr "Przetwarzanie %d z %d pozycji"
+msgstr "Przetwarzanie pozycji"
 
 msgid "Extracting archive"
-msgstr ""
+msgstr "Wypakowywanie archiwum"
 
 msgid "add items"
 msgstr "dodaj pozycję"
@@ -479,7 +473,7 @@ msgid "reorder items"
 msgstr "zmień porządek pozycji"
 
 msgid "Maintenance"
-msgstr "Obsługa"
+msgstr "Konserwacja"
 
 msgid "Gallery Site Administration"
 msgstr "Administracja stroną galerii"
@@ -593,7 +587,7 @@ msgid "Performance"
 msgstr "Wydajność"
 
 msgid "Event Logs"
-msgstr ""
+msgstr "Dziennik zdarzeń"
 
 msgid "Toolkit Priority"
 msgstr "Priorytet narzędzi"
@@ -658,9 +652,8 @@ msgstr "Baza danych została przekonwertowana do UTF8"
 msgid "No conversion required"
 msgstr "Konwersja nie wymagana"
 
-#, fuzzy
 msgid "Backup the database"
-msgstr "Optymalizacja bazy danych"
+msgstr "Tworzenie kopii zapasowej bazy danych"
 
 msgid ""
 "Backup all your Gallery data (item data, users, comments, etc.) to a single file in your "
@@ -668,17 +661,21 @@ msgid ""
 "your Gallery installation needs to be set into maintenance mode, as this is not done "
 "automatically."
 msgstr ""
+"Tworzy kopię zapasową danych galerii (pozycje, użytkownicy, komentarze, itp.).  Uwaga: kopia "
+"zapasowa nie zawiera samych plików zdjęć.  Zanim proces kopiowania zostanie uruchomiony, "
+"galeria musi być ustawiona w trybie koserwacji, jako, że nie jest to robione automatycznie."
 
 msgid "Backing up Gallery Database"
-msgstr ""
+msgstr "Tworzenie kopii zapasowej bazy danych galerii"
 
-#, fuzzy
 msgid "Exporting..."
-msgstr "Przygotowywanie..."
+msgstr "Eksportowanie..."
 
 #, c-format
 msgid "Database backup completed and the backup file is located at: %s"
 msgstr ""
+"Tworzenie kopii zapasowej bazy danych galerii zostało zakończone. Plik kopii zapasowej "
+"znajduje się w: %s"
 
 msgid "Delete user sessions"
 msgstr "Kasowanie sesje użytkowników"
@@ -716,7 +713,6 @@ msgstr "Nie można usunąć katalogu: %s"
 msgid "Delete template cache"
 msgstr "Usuwanie pamięci podręcznej szablonów"
 
-#, fuzzy
 msgid ""
 "Gallery compiles template files and saves them for increased performance.  If you're "
 "experiencing problems that say <i>Smarty error</i> then you might try running this task.  "
@@ -725,9 +721,8 @@ msgid ""
 msgstr ""
 "Galeria przekompiluje pliki szablonów w celu zwiększenia wydajności działania. Jeżeli "
 "wystąpi problem typu <i>Smarty error</i> uruchomienie tego zadania może pomóc w usunięciu "
-"tego problemu. Zadanie to należy również uruchomić w przypadku, gdy usunięte zostały pliki "
-"local/*.tpl - Smarty wykorzysta wtedy domyślne pliki tpl, aby poprawnie wyświetlić strony "
-"WWW."
+"tego problemu. Zadanie to należy również uruchomić w przypadku, gdy został dodany lub "
+"usunięty jakikolwiek plik local/*.tpl lub został napisany temat."
 
 msgid "Template cache deleted successfully"
 msgstr "Pamięć podręczna szablonów usunięta"
@@ -1067,7 +1062,7 @@ msgstr "nieznany"
 
 #, c-format
 msgid "API = Core %s, Module %s, Theme %s, Embed %s"
-msgstr ""
+msgstr "API = Core %s, Module %s, Theme %s, Embed %s"
 
 msgid "Gallery version"
 msgstr "Wersja galerii"
@@ -1111,62 +1106,70 @@ msgstr "Rzędów w tabeli %s = %d"
 
 #, c-format
 msgid "The %s \"%s\" is not installed and will not be backed up."
-msgstr ""
+msgstr "%s \"%s\" nie jest zainstalowany i nie jest dla niego tworzona kopia zapasowa."
 
 #, c-format
 msgid "\"%s\" has no creation sql and will not be backed up."
-msgstr ""
+msgstr "\"%s\" nie tworzy sql i nie jest dla niego tworzona kopia zapasowa."
 
 #, c-format
 msgid "Unable to load table description for \"%s\", no data will be exported."
-msgstr ""
+msgstr "Nie można załadować opisu tabeli dla \"%s\", żadne dane nie będą eksportowane."
 
 msgid ""
 "Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
 "database import."
 msgstr ""
+"Nie można zlokalizować parsera XML. Konieczne jest załadowanie rozszerzenia parsera PHP/"
+"XML.  Import bazy danych został przerwany."
 
 #, c-format
 msgid "The exported file is not the correct version. Expecting %s recieved %s."
-msgstr ""
+msgstr "Wyeksportowany plik nie jest prawidłowej wersji. Oczekiwano %s, otrzymano %s."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to close import file: %s"
-msgstr "Nie można usunąć katalogu: %s"
+msgstr "Nie można zamknąć pliku importu: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open import file: %s"
-msgstr "Nie można usunąć katalogu: %s"
+msgstr "Nie można otworzyć pliku importu: %s"
 
 #, c-format
 msgid "Import file doesn't exist: %s"
-msgstr ""
+msgstr "Plik importu nie istnieje: %s"
 
 #, c-format
 msgid "Plugin %s is not currently available."
-msgstr ""
+msgstr "Moduł %s nie jest obecnie dostępny."
 
 #, c-format
 msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
-msgstr ""
+msgstr "Dostępna wersja modułu \"%s\" może nie być kompatybilna z importowaną wersją."
 
 #, c-format
 msgid ""
 "The currently installed core API version required by \"%s\" may not be compatible with the "
 "imported version."
 msgstr ""
+"Aktualnie zainstalowana wersja API modułu głównego wymagana przez \"%s\" może nie być "
+"kompatybilna z importowaną wersją."
 
 #, c-format
 msgid ""
 "The installed module API version required by \"%s\" may not be compatible with the imported "
 "version."
 msgstr ""
+"Aktualnie zainstalowana wersja API modułu wymagana przez \"%s\" może nie być kompatybilna z "
+"importowaną wersją."
 
 #, c-format
 msgid ""
 "The installed theme API version required by \"%s\" is not compatible with the imported "
 "version."
 msgstr ""
+"Aktualnie zainstalowana wersja API tematu wymagana przez \"%s\" może nie być kompatybilna z "
+"importowaną wersją."
 
 msgid "Successfully saved theme settings"
 msgstr "Ustawienia tematu zapisano poprawnie"
@@ -1690,48 +1693,38 @@ msgstr[0] "Jedna błędna próba logowania od ostatniego zalogowania."
 msgstr[1] "%d błędne próby logowania od ostatniego zalogowania."
 msgstr[2] "%d błędnych prób logowania od ostatniego zalogowania."
 
-#, fuzzy
 msgid "Recent Events"
-msgstr "Zerowanie liczników wyświetleń"
+msgstr "Ostatnie zdarzenia"
 
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
-#, fuzzy
 msgid "Location"
-msgstr "Akcja"
+msgstr "Lokalizacja"
 
-#, fuzzy
 msgid "Client"
-msgstr "Lista numerowana"
+msgstr "Klient"
 
-#, fuzzy
 msgid "No events have been reported yet."
-msgstr "Żaden pakiet nie został wybrany."
+msgstr "Żadne zdarzenie nie zostało odnotowane."
 
-#, fuzzy
 msgid "Event Details"
-msgstr "Szczegóły błędu"
+msgstr "Szczegóły zdarzenia"
 
-#, fuzzy
 msgid "User Id"
-msgstr "Użytkownik"
+msgstr "Id użytkownika"
 
-#, fuzzy
 msgid "Referer"
-msgstr "Zmień porządek"
+msgstr "Odnośnik"
 
-#, fuzzy
 msgid "Details"
-msgstr "Wartości standardowe"
+msgstr "Właściwości"
 
-#, fuzzy
 msgid "no summary"
-msgstr "Podsumowanie"
+msgstr "brak podsumowania"
 
-#, fuzzy
 msgid "An error occurred while retrieving the event log entry details."
-msgstr "Wystąpił błąd podczas komunikacji z bazą danych."
+msgstr "Wystąpił błąd podczas pobierania szczegółów wejściowych dziennika zdarzeń."
 
 msgid "Group Management"
 msgstr "Zarządzanie grupą"
@@ -1800,7 +1793,7 @@ msgid "System Maintenance"
 msgstr "Konserwacja systemu"
 
 msgid "Gallery must be in maintenance mode before the task can be run."
-msgstr ""
+msgstr "Galeria musi być w trybie konserwacji, zanim zostanie uruchomione to zadanie."
 
 #, c-format
 msgid "Completed %s task successfully."
@@ -1811,39 +1804,42 @@ msgid "The %s task failed to complete successfully."
 msgstr "Nie udało się zakończyć zadania %s."
 
 msgid "Maintenance Mode has been turned on."
-msgstr ""
+msgstr "Tryb konserwacji został włączony."
 
 msgid "Maintenance Mode has been turned off."
-msgstr ""
+msgstr "Tryb konserwacji został wyłączony."
 
-#, fuzzy
 msgid "Maintenance Mode"
-msgstr "Obsługa"
+msgstr "Tryb konserwacji"
 
 msgid "Restrict user access to the system while maintenance is being performed."
-msgstr ""
+msgstr "Zablokuj dostęp użytkownikom na czas trwania konserwacji."
 
-#, fuzzy
 msgid "Maintenance Mode Url"
-msgstr "Obsługa"
+msgstr "URL trybu konserwacji"
 
 msgid ""
 "The Maintenance Mode Url specifies where requests will be redirected when access to the site "
 "has been restricted by the administrator."
 msgstr ""
+"URL trybu konserwacji określa gdzie będą przekierowywane zapytania podczas trwania procesu "
+"konsweracji."
 
 msgid ""
 "If left blank Gallery will display a default page with an administrator login link. This "
 "page will be themed when the code base is up to date, otherwise it will display a plain "
 "unstyled page."
 msgstr ""
+"Jeśli adres URL nie zostanie podany, wówczas galeria wyświetli domyślną stronę z linkiem "
+"logowania administratora. Strona ta będzie wyświetlona w określonym temacie o ile kod "
+"źródłowy tematu będzie aktualny, w przeciwnym razie wyświetlana strona będzie pozbawiona "
+"jakiejkolwiek szaty graficznej."
 
 msgid "For example: /maintenance.html"
-msgstr ""
+msgstr "Na przykład: /maintenance.html"
 
-#, fuzzy
 msgid "Set"
-msgstr "Ustawienie"
+msgstr "Ustaw"
 
 msgid "Task name"
 msgstr "Nazwa zadania"
@@ -1944,9 +1940,8 @@ msgstr "Goście"
 msgid "Expires after:"
 msgstr "Wygasa po:"
 
-#, fuzzy
 msgid "Template Cache"
-msgstr "Usuwanie pamięci podręcznej szablonów"
+msgstr "Pamięć podręczna szablonów"
 
 #, c-format
 msgid ""
@@ -1954,10 +1949,13 @@ msgid ""
 "your template files%s, you should disable template caching temporarily so that changes take "
 "effect immediately without clearing the template cache."
 msgstr ""
+"Dla lepszej wydajności, galeria zapisuje wszystkie szablony w pamięci podręcznej. W "
+"przypadku gdy zachodzi potrzeba ich %smodyfikacji%s, konieczne jest czasowe wyłączenie "
+"pamięci podręcznej szablonów. Dzięki temu zmiana będzie widoczna natychmiast bez "
+"konieczności czyszczenia pamięci."
 
-#, fuzzy
 msgid "Enable template caching"
-msgstr "Usuwanie pamięci podręcznej szablonów"
+msgstr "Włącz pamięć podręczną szablonów "
 
 msgid "Clear Saved Pages"
 msgstr "Wyczyść zapisane strony"
@@ -2021,12 +2019,11 @@ msgstr "Nie"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "Czy napewno chcesz skasować moduł __PLUGIN__?"
 
-#, fuzzy
 msgid "This plugin will be uninstalled and its files will be deleted permanently."
 msgstr "Ten moduł będzie odinstalowany, a jego pliki zostaną skasowane."
 
 msgid "The files of this plugin will be deleted permanently."
-msgstr ""
+msgstr "Pliki tego modułu zostaną nieodwracalnie skasowane."
 
 msgid "disabled(__COUNT__)"
 msgstr "wyłączonych (__COUNT__)"
@@ -2435,6 +2432,8 @@ msgid ""
 "The %s theme is incompatible with your Gallery version or no longer available.  Please "
 "upgrade the %s theme or pick another default theme."
 msgstr ""
+"Temat %s jest niekompatybilny z aktualną wersją galerii lub też nie jest dłużej dostępny. "
+"Proszę zaktualizować temat %s lub ustawić inny jako domyślny."
 
 msgid "New albums"
 msgstr "Nowe albumy"
@@ -2658,7 +2657,7 @@ msgid "System Information"
 msgstr "Informacja o systemie"
 
 msgid "Not all of the specified items have been added successfully."
-msgstr ""
+msgstr "Nie wszystkie wybrane pozycje zostały dodane."
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add "
@@ -2834,13 +2833,12 @@ msgstr "Poprzednia strona"
 msgid "Next Page"
 msgstr "Następna strona"
 
-#, fuzzy
-msgid "Do you really want to delete "
-msgstr "Czy napewno chcesz skasować moduł __PLUGIN__?"
+#, fuzzy, c-format
+msgid "Do you really want to delete %s?"
+msgstr "Czy napewno chcesz skasować "
 
-#, fuzzy
 msgid "Delete more items..."
-msgstr "Usuń pozycje"
+msgstr "Usuń więcej pozycji..."
 
 msgid "There was a problem processing your request."
 msgstr "Wystapił błąd podczas przetwarzania."
@@ -3207,6 +3205,9 @@ msgid ""
 "version or no longer available.  Please upgrade the %s theme or use another theme for this "
 "album."
 msgstr ""
+"Ten album został skonfigurowany w ten sposób, aby używać tematu %s. Niestety temat ten jest "
+"niekompatybilny z aktualną wersją galerii lub też nie jest dłużej dostępny. Proszę "
+"zaktualizować temat %s lub ustawić inny dla tego albumu."
 
 #, c-format
 msgid ""
@@ -3268,7 +3269,7 @@ msgid "Choose the items you want to move"
 msgstr "Proszę wybrać pozycje, które chcesz przenieść"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid ""
 "The destination you chose does not accept sub-albums, so all sub-albums have been deselected."
@@ -3276,9 +3277,8 @@ msgstr ""
 "Wybrane miejsce docelowe nie akceptuje podalbumów, tak więc wszystkie podalbumy zostały "
 "pozostawione."
 
-#, fuzzy
 msgid "Warning"
-msgstr "Uwaga!"
+msgstr "Uwaga"
 
 msgid ""
 "The destination you chose only accepts sub-albums, so all non-albums have been deselected."
@@ -3473,7 +3473,7 @@ msgstr ""
 "Javastript jest włączony, a następnie sprobować ponownie."
 
 msgid "Site is temporarily down for maintenance."
-msgstr "W związku z aktualizacją strona jest tymczasowo niedostępna."
+msgstr "W związku z konserwacją, strona jest tymczasowo niedostępna."
 
 msgid "Admin Login"
 msgstr "Admin Login"
@@ -3510,9 +3510,9 @@ msgstr "obrazek"
 msgid "color"
 msgstr "kolor"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You can also use the %scolor name%s for example: %sYour Text%s"
-msgstr "Możliwe jest również użycie %skolorowych nazw%s np.: %s"
+msgstr "Możliwe jest również użycie %skolorowych nazw%s np.: %sTekst przykładowy%s"
 
 msgid "Configuration Error: Missing Theme"
 msgstr "Błąd konfiguracji: brak tematu"
@@ -3930,32 +3930,5 @@ msgstr "Blok loginu"
 msgid "Links to album/photo peers"
 msgstr "Linki do albumów i zdjęć znajomych"
 
-#~ msgid "delete confirmation"
-#~ msgstr "potwierdzenie usunięcia"
-
-#~ msgid "delete %s"
-#~ msgstr "usuń %s"
-
-#~ msgid "Deletion Complete"
-#~ msgstr "Usuwanie zakończone"
-
-#~ msgid "Item successfully deleted"
-#~ msgstr "Pozycja została skasowana"
-
-#~ msgid "Are you sure you want to delete this %s?"
-#~ msgstr "Czy napewno chcesz usunąć pozycję %s?"
-
-#~ msgid "It contains %d item."
-#~ msgid_plural "It contains %d items."
-#~ msgstr[0] "Zawiera %d pozycję."
-#~ msgstr[1] "Zawiera %d pozycje."
-#~ msgstr[2] "Zawiera %d pozycji."
-
-#~ msgid "There is no undo!"
-#~ msgstr "Operacja jest nieodwracalna!"
-
-#~ msgid "key"
-#~ msgstr "klucz"
-
-#~ msgid "G2.2: Double Double"
-#~ msgstr "G2.2: Double Double"
+#~ msgid "Loading Table Descriptions"
+#~ msgstr "Ładowanie opisów tabeli"

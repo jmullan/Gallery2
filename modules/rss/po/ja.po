@@ -87,7 +87,7 @@ msgstr "設定されたRSSフィードの名前"
 msgid "Short URL for Configurable RSS Feeds"
 msgstr "設定可能なRSSフィードの短いURL"
 
-#, fuzzy, c-format
+#, c-format
 msgid "In album %s"
 msgstr "%s アルバム内"
 
@@ -109,13 +109,11 @@ msgstr "アイテムへのコメント"
 msgid "Comments for an album and its subalbums"
 msgstr "アルバムとそのサブアルバムへのコメント"
 
-#, fuzzy
 msgid "Random items in an album"
-msgstr "アルバム内のアイテム"
+msgstr "アルバム内のランダムアイテム"
 
-#, fuzzy
 msgid "Random items in an album and its subalbums"
-msgstr "アルバムとそのサブアルバム内のアイテム"
+msgstr "アルバムとそのサブアルバム内のランダムアイテム"
 
 msgid "RSS Feeds"
 msgstr "RSS フィード"
@@ -202,13 +200,11 @@ msgstr "このアルバムに対するコメント"
 msgid "Comments for this album and its subalbums"
 msgstr "このアルバムとそのサブアルバムに対するコメント"
 
-#, fuzzy
 msgid "Random pictures inside this album"
-msgstr "このアルバムのアイテム"
+msgstr "このアルバムのランダム画像"
 
-#, fuzzy
 msgid "Random pictures inside this album and its subalbums"
-msgstr "このアルバムとサブアルバム内のアイテム"
+msgstr "このアルバムとサブアルバム内のランダム画像"
 
 msgid "Comments for this item"
 msgstr "このアイテムに対するコメント"
@@ -258,19 +254,16 @@ msgstr "TTLタグ"
 msgid "Invalid time to live, this must be a number of minutes (0 to disable ttl)"
 msgstr "無効な Time to live です。これは分数でなければなりません (0でTTLを無効に)"
 
-#, fuzzy
 msgid ""
 "Time to live: this must be a number of minutes (0 to disable ttl) aggregators should wait "
 "between checks of whether the feed has been updated"
 msgstr ""
-"Time to live: この数字は分を表すものでなければなりません\n"
-"Time to live: this must be a number of minutes (0 to disable ttl) aggregators should wait "
-"between checks of whether the feed has been updated"
+"持続時間: これはアグリゲータがフィードをアップデートしたかどうかのチェックの間に待つべき分数"
+"(0はttlを無効にする)"
 
 msgid "Copyright"
 msgstr "著作権"
 
-#, fuzzy
 msgid "Invalid copyright"
 msgstr "無効な著作権"
 
@@ -286,37 +279,37 @@ msgstr "これはこのアイテムのサムネイルに対応するメイン画
 msgid "Invalid value"
 msgstr "無効な値"
 
-#, fuzzy
 msgid "Use enclosures"
 msgstr "囲みを使用する"
 
 msgid "Include enclosure tags"
-msgstr ""
+msgstr "囲みタグを含める"
 
 msgid ""
 "This adds an enclosure to each image in the feed, that contains the full resolution image"
-msgstr ""
+msgstr "これは囲いをフィード内の各画像に追加をして、最大解像度の画像を含めます"
 
 msgid "Use Media RSS"
-msgstr ""
+msgstr "メディアRSSを使用する"
 
-#, fuzzy
 msgid "Include Media RSS tags"
-msgstr "イメージタグを含む"
+msgstr "メディアRSSタグを含む"
 
 msgid ""
 "This adds Media RSS tags to the feed, which allows media-oriented clients to display the "
 "feed in a more useful fashion"
 msgstr ""
+"これはRSSがメディア指向のクライアントがより役に立つファッションのフィードを表示するために"
+"フィードにタグ付けをします。"
 
 msgid "about Media RSS"
-msgstr ""
+msgstr "MediaRSSについて"
 
 msgid "Cloud tag (RSS 2.0)"
-msgstr ""
+msgstr "タグ集(RSS 2.0)"
 
 msgid "If you want to use the cloud tag, you can set up its properties here"
-msgstr ""
+msgstr "タグ集を使用したいなら、ここでそのプロパティをセットアップできます。"
 
 msgid "Example: "
 msgstr "例: "
@@ -331,16 +324,16 @@ msgid "path"
 msgstr "パス"
 
 msgid "registerProcedure"
-msgstr ""
+msgstr "登録手続き"
 
 msgid "protocol"
 msgstr "プロトコル"
 
 msgid "Cloud tag"
-msgstr ""
+msgstr "タグ集"
 
 msgid "Include the cloud tag"
-msgstr ""
+msgstr "タグ集を含める"
 
 msgid "Invalid string"
 msgstr "無効な文字列"
@@ -408,13 +401,11 @@ msgstr "フィード内の最大アイテム数"
 msgid "Invalid maximum number"
 msgstr "無効な最大数"
 
-#, fuzzy
 msgid "Maximum age for items in feeds"
-msgstr "フィード内の最大アイテム数"
+msgstr "フィード内のアイテムの最大期間"
 
-#, fuzzy
 msgid "Invalid maximum age number"
-msgstr "無効な最大数"
+msgstr "無効な最大期間数"
 
 msgid "Default ttl"
 msgstr "デフォルトTTL"
@@ -443,17 +434,21 @@ msgid ""
 msgstr "シンプルフィードの設定をするには、画面上部の対応するタブを利用してください。"
 
 msgid "Allow configurable RSS feeds to be used"
-msgstr ""
+msgstr "設定可能なRSSフィードの使用を許可する"
 
 msgid ""
 "Only album owners will be able to define such feeds. They can set parameters for the type of "
 "feed they want."
 msgstr ""
+"アルバム所有者だけはどんなフィードの定義も可能になります。アルバム所有者はほしいフィードのタ"
+"イプのパラメータを設定することができます。"
 
 msgid ""
 "Once a feed is defined, users will be able to subscribe to those feeds if they can view the "
 "associated item."
 msgstr ""
+"フィードが一旦定義されると、関連するアイテムを見ることができるなら、ユーザはそれらのフィード"
+"を購読することができるでしょう。"
 
 msgid "Allow RSS feeds of photos inside an album"
 msgstr "アルバム内の画像のRSSフィードを許可する"
@@ -473,29 +468,23 @@ msgstr "アルバムおよびそのサブアルバム内の画像のRSSフィー
 msgid "Slower"
 msgstr "やや遅い"
 
-#, fuzzy
 msgid "Allow RSS feeds of comments of a photo"
 msgstr "画像へのコメントのRSSフィードを許可する"
 
-#, fuzzy
 msgid "Allow RSS feeds of comments of an album"
 msgstr "アルバムへのコメントのRSSフィードを許可する"
 
-#, fuzzy
 msgid "Allow RSS feeds of comments for an album and its subalbums"
 msgstr "アルバムとそのサブアルバムへのコメントのRSSフィードを許可する"
 
-#, fuzzy
 msgid "Allow RSS feeds of random photos inside an album"
 msgstr "アルバム内の画像のRSSフィードを許可する"
 
-#, fuzzy
 msgid "Allow RSS feeds of random photos inside an album and its subalbums"
 msgstr "アルバムおよびそのサブアルバム内の画像のRSSフィードを許可する"
 
-#, fuzzy
 msgid "Slowest"
-msgstr "やや遅い"
+msgstr "最も遅い"
 
 msgid "Save Settings"
 msgstr "設定を保存"
@@ -518,18 +507,21 @@ msgid ""
 "get a list of all feeds); and hidden page headers that modern web browsers will use to make "
 "it easier for the user to subscribe to the feeds."
 msgstr ""
+"これは2つの効果を持っています: ブロック自体(全てのフィードのリストを手に入れて、ユーザはそれ"
+"からフィードを見て選択することができます); そして一般的なウェブブラウザがフィードを購読するこ"
+"とをより簡単するために使用する隠されたページのヘッダ"
 
 msgid "Global list of RSS feeds"
-msgstr ""
+msgstr "RSSフィードのグローバルリスト"
 
 msgid "On item"
-msgstr ""
+msgstr "アイテム上"
 
 msgid "Simple Feed settings"
 msgstr "シンプルフィードの設定"
 
 msgid "For albums"
-msgstr ""
+msgstr "アルバムのための"
 
 msgid "Items in the album"
 msgstr "アルバム内のアイテム"
@@ -544,10 +536,10 @@ msgid "Comments for the album"
 msgstr "アルバムへのコメント"
 
 msgid "For items"
-msgstr ""
+msgstr "アイテムのための"
 
 msgid "Comments for items (always selected)"
-msgstr ""
+msgstr "アイテムへのコメント(常に選択されます)"
 
 msgid "List all RSS Feeds"
 msgstr "全てのRSSフィードへの一覧"

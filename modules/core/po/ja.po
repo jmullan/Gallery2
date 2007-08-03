@@ -21,7 +21,7 @@
 # - Kennichi Uehara <ken.w3m+nospam@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.17\n"
+"Project-Id-Version: Gallery: Core 1.2.20\n"
 "POT-Creation-Date: 2005-08-06 00:53+0900\n"
 "PO-Revision-Date: 2007-03-15 15:18+0900\n"
 "Last-Translator: Yosuke Suzuki <yosuke.suzuki@gmail.com>\n"
@@ -79,11 +79,10 @@ msgid "File"
 msgstr "ファイル"
 
 msgid "&lt;none&gt;"
-msgstr ""
+msgstr "&lt;無し&gt;"
 
-#, fuzzy
 msgid "Link"
-msgstr "ログイン"
+msgstr "リンク"
 
 #, c-format
 msgid "Page %d of %d"
@@ -102,7 +101,7 @@ msgid "Themes"
 msgstr "テーマ"
 
 msgid "Updating Repository Index"
-msgstr "レポジトリインデックスをアップデート"
+msgstr "リポジトリインデックスをアップデート"
 
 msgid "Scanning plugins"
 msgstr "プラグインをスキャンしています"
@@ -131,13 +130,11 @@ msgstr "%s を有効化中"
 msgid "Deleting Language Packs"
 msgstr "言語パックを削除中"
 
-#, fuzzy
 msgid "Synchronizing Language Packs"
-msgstr "言語パックを削除中"
+msgstr "言語パックを同期中"
 
-#, fuzzy
 msgid "Update completed with errors."
-msgstr "アップデートは完了したが、エラーが発生しました"
+msgstr "アップデートは完了しましたが、エラーが発生しました"
 
 msgid "Update complete."
 msgstr "更新完了"
@@ -162,6 +159,9 @@ msgstr "親アルバムから設定を継承する"
 
 msgid "Use these settings"
 msgstr "これらの設定を使う"
+
+msgid "Converting Schema Table"
+msgstr "スキーマテーブルを変換中"
 
 msgid "Installing the core module"
 msgstr "Gallery Core モジュールをインストール中"
@@ -215,22 +215,22 @@ msgstr "全てのユーザー"
 msgid "Detecting broken derivatives"
 msgstr "壊れた派生物を検出"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, loading (%d derivatives checked, %d remaining)"
 msgstr "壊れた派生物を検出しています　ロード中 (%d がチェック済み、残り %d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives (%d derivatives checked, %d remaining)"
-msgstr "壊れた派生物を検出しています　ロード中 (%d がチェック済み、残り %d)"
+msgstr "壊れた派生物を検出しています　(%d がチェック済み、残り %d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Detecting broken derivatives, saving (%d derivatives checked, %d remaining)"
 msgstr "壊れた派生物を検出しています 保存中 (%d がチェック済み、残り %d)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Detecting broken derivatives, saving item %d of %d (%d derivatives complete, %d remaining)"
-msgstr "パーミッションを更新中（ %d の項目が完了、残り %d）"
+msgstr "壊れた派生物を検出しています アイテムを保存中 %d / %d（ %d が完了、残り %d）"
 
 msgid "Clearing fast-download cache"
 msgstr "高速ダウンロードキャッシュをクリアしています"
@@ -248,15 +248,8 @@ msgstr "パノラマアイテムをアップデート"
 msgid "Optimizing AccessSubscriberMap table"
 msgstr "AccessSubscriberMap テーブルを最適化する"
 
-#, fuzzy
 msgid "Upgrading Plugin Translations"
-msgstr "パーミッションをアップグレード"
-
-msgid "Converting Schema Table"
-msgstr ""
-
-msgid "Loading Table Descriptions"
-msgstr ""
+msgstr "翻訳プラグインをアップグレード"
 
 msgid "Site Admins"
 msgstr "サイト管理者"
@@ -276,16 +269,14 @@ msgstr "これはあなたのGalleryのメインページです"
 msgid "Converting MySQL data to UTF8"
 msgstr "MySQLのデータをUTF8に変換する"
 
-#, fuzzy
 msgid "Adding items"
 msgstr "アイテム追加"
 
-#, fuzzy
 msgid "Processing items"
-msgstr "アイテムの処理中 %d / %d"
+msgstr "アイテムの処理中"
 
 msgid "Extracting archive"
-msgstr ""
+msgstr "アーカイブの展開中"
 
 msgid "add items"
 msgstr "アイテム追加"
@@ -301,19 +292,19 @@ msgstr "アイテムの確認を追加する"
 
 #, c-format
 msgid "Input file %s exceeds maximum permitted file size"
-msgstr ""
+msgstr "入力ファイル%sは許可された最大ファイルサイズを超えています。"
 
 #, c-format
 msgid "Input file %s exceeds file size specified in the form"
-msgstr ""
+msgstr "入力ファイル%sはフォームで指定されたファイルサイズを超えています。"
 
 #, c-format
 msgid "Input file %s was only partially uploaded"
-msgstr ""
+msgstr "入力ファイル%sは部分的にアップロードされただけです。"
 
 #, c-format
 msgid "Input file %s was not uploaded. Error %d"
-msgstr ""
+msgstr "入力ファイル%sはアップロードされませんでした。エラー：%d"
 
 #, c-format
 msgid "%d megabyte"
@@ -582,7 +573,7 @@ msgid "Performance"
 msgstr "パフォーマンス"
 
 msgid "Event Logs"
-msgstr ""
+msgstr "イベントログ"
 
 msgid "Toolkit Priority"
 msgstr "ツールキットの優先順位"
@@ -634,6 +625,11 @@ msgid ""
 "After using this, you should run the 'Delete database cache' task to get rid of any "
 "corruption in your cache."
 msgstr ""
+"あなたがMySQL3.xでデータベースを作成していて、MySQL4.xにアップグレードをするなら、UTF8を扱う"
+"ためにデータベースを変換するまで文字化けが発生するでしょう。データベースが既に変換してあるな"
+"らこの操作は特に必要ありませんが、不確かであるなら変換は安全に試してください。これを行った後"
+"にあなたはキャッシュにおけるどんな誤りも取り除くために「データベースキャッシュを削除」という"
+"タスクを動かしてください。"
 
 msgid "Database successfully converted to UTF8"
 msgstr "データベースのUTF-8への変換に成功しました"
@@ -641,9 +637,8 @@ msgstr "データベースのUTF-8への変換に成功しました"
 msgid "No conversion required"
 msgstr "変換は必要ありません"
 
-#, fuzzy
 msgid "Backup the database"
-msgstr "データベースを最適化"
+msgstr "データベースをバックアップ"
 
 msgid ""
 "Backup all your Gallery data (item data, users, comments, etc.) to a single file in your "
@@ -651,17 +646,20 @@ msgid ""
 "your Gallery installation needs to be set into maintenance mode, as this is not done "
 "automatically."
 msgstr ""
+"あなたのストレージフォルダの単一のファイルへGalleryのデータ(アイテムデータ、ユーザ、コメン"
+"ト、その他)を全てバックアップしてください。バックアップは画像ファイルを含みません。バックアッ"
+"プを実行する前に、Galleryのインストールは自動的にこれを実行しないようにメンテナンスモードに設"
+"定する必要があります。"
 
 msgid "Backing up Gallery Database"
-msgstr ""
+msgstr "Galleryデータベースをバックアップ"
 
-#, fuzzy
 msgid "Exporting..."
-msgstr "準備中..."
+msgstr "エクスポート中..."
 
 #, c-format
 msgid "Database backup completed and the backup file is located at: %s"
-msgstr ""
+msgstr "データベースバックアップは完了して次の場所にバックアップファイルを置きました：%s"
 
 msgid "Delete user sessions"
 msgstr "ユーザのセッションを削除"
@@ -697,7 +695,6 @@ msgstr "ディレクトリを削除できませんでした: %s"
 msgid "Delete template cache"
 msgstr "テンプレートキャッシュ削除"
 
-#, fuzzy
 msgid ""
 "Gallery compiles template files and saves them for increased performance.  If you're "
 "experiencing problems that say <i>Smarty error</i> then you might try running this task.  "
@@ -787,7 +784,7 @@ msgstr ""
 "さい"
 
 msgid "Official Release Repository"
-msgstr "公式リリースレポジトリ"
+msgstr "公式リリースリポジトリ"
 
 msgid "Experimental Repository"
 msgstr "実験的なリポジトリ"
@@ -909,7 +906,7 @@ msgid "Jump to original album"
 msgstr "元のアルバムに飛ぶ"
 
 msgid "Separate link to original album"
-msgstr ""
+msgstr "オリジナルアルバムへのリンクを区切る"
 
 msgid "View Samples"
 msgstr "サンプルを見る"
@@ -1043,7 +1040,7 @@ msgstr "未知"
 
 #, c-format
 msgid "API = Core %s, Module %s, Theme %s, Embed %s"
-msgstr ""
+msgstr "API = コア %s ・ モジュール %s ・ テーマ %s ・ 埋め込み %s"
 
 msgid "Gallery version"
 msgstr "Gallery バージョン"
@@ -1083,66 +1080,77 @@ msgstr "ブラウザ"
 
 #, c-format
 msgid "Rows in %s table = %d"
-msgstr ""
+msgstr "%s内の行 テーブル＝%d"
 
 #, c-format
 msgid "The %s \"%s\" is not installed and will not be backed up."
-msgstr ""
+msgstr "%s「%s」はインストールされていないため、バックアップされません。"
 
 #, c-format
 msgid "\"%s\" has no creation sql and will not be backed up."
-msgstr ""
+msgstr "「%s」はsqlを作成しないため、バックアップされません。"
 
 #, c-format
 msgid "Unable to load table description for \"%s\", no data will be exported."
-msgstr ""
+msgstr "「%s」のテーブル説明を読み込めませんでした。データは何もエクスポートされません。"
 
 msgid ""
 "Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
 "database import."
 msgstr ""
+"XMLパーサを見つけられません。PHPのXMLパース拡張をロードしなければなりません。データベースのイ"
+"ンポートを終了します。"
 
 #, c-format
 msgid "The exported file is not the correct version. Expecting %s recieved %s."
 msgstr ""
+"エクスポートされたファイルは正しいバージョンではありません。おそらくは%sですが、受け取ったも"
+"のは%sです。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to close import file: %s"
-msgstr "ディレクトリを削除できませんでした: %s"
+msgstr "インポートファイルを閉じられませんでした: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open import file: %s"
-msgstr "ディレクトリを削除できませんでした: %s"
+msgstr "インポートファイルを開けませんでした: %s"
 
 #, c-format
 msgid "Import file doesn't exist: %s"
-msgstr ""
+msgstr "インポートファイルは存在しません: %s"
 
 #, c-format
 msgid "Plugin %s is not currently available."
-msgstr ""
+msgstr "プラグイン%sは現在有効ではありません。"
 
 #, c-format
 msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
 msgstr ""
+"プラグイン「%s」の有効なバージョンはインポートされたバージョンと互換性がなければなりません。"
 
 #, c-format
 msgid ""
 "The currently installed core API version required by \"%s\" may not be compatible with the "
 "imported version."
 msgstr ""
+"現在インストールされた「%s」で必要とされるコアAPIのバージョンはインポートされたバージョンと互"
+"換性がなければなりません。"
 
 #, c-format
 msgid ""
 "The installed module API version required by \"%s\" may not be compatible with the imported "
 "version."
 msgstr ""
+"インストールされた「%s」で必要とされるモジュールAPIのバージョンはインポートされたバージョンと"
+"互換性がなければなりません"
 
 #, c-format
 msgid ""
 "The installed theme API version required by \"%s\" is not compatible with the imported "
 "version."
 msgstr ""
+"インストールされた「%s｣で必要とされるテーマAPIのバージョンはインポートされたバージョンと互換"
+"性がありません。"
 
 msgid "Successfully saved theme settings"
 msgstr "テーマの保存に成功しました。"
@@ -1639,6 +1647,7 @@ msgstr "ユーザをロック"
 msgid ""
 "Locked users are unable to edit their own account information. (Password, Name, Email, etc.)"
 msgstr ""
+"ロックされたユーザは自身のアカウント情報を編集できません。(パスワード・名前・メール・その他)"
 
 msgid "Reset failed login count."
 msgstr "ログイン失敗回数をリセット"
@@ -1646,50 +1655,40 @@ msgstr "ログイン失敗回数をリセット"
 #, c-format
 msgid "%d failed login attempt since the last successful login."
 msgid_plural "%d failed login attempts since the last successful login."
-msgstr[0] ""
+msgstr[0] "最後にログインに成功してから%d回ログインに失敗しました。"
 
-#, fuzzy
 msgid "Recent Events"
-msgstr "閲覧回数をリセット"
+msgstr "最近のイベント"
 
 msgid "Type"
-msgstr ""
+msgstr "タイプ"
 
-#, fuzzy
 msgid "Location"
-msgstr "アクション"
+msgstr "場所"
 
-#, fuzzy
 msgid "Client"
-msgstr "リスト"
+msgstr "クライアント"
 
-#, fuzzy
 msgid "No events have been reported yet."
-msgstr "一つもパッケージが選択されていません"
+msgstr "イベントはレポートされていません。"
 
-#, fuzzy
 msgid "Event Details"
-msgstr "エラーの詳細"
+msgstr "イベントの詳細"
 
-#, fuzzy
 msgid "User Id"
-msgstr "ユーザー"
+msgstr "ユーザーID"
 
-#, fuzzy
 msgid "Referer"
-msgstr "並べ替え"
+msgstr "参照"
 
-#, fuzzy
 msgid "Details"
-msgstr "デフォルト"
+msgstr "詳細"
 
-#, fuzzy
 msgid "no summary"
-msgstr "概要"
+msgstr "概要無し"
 
-#, fuzzy
 msgid "An error occurred while retrieving the event log entry details."
-msgstr "データベースと通信中にエラーが発生しました。"
+msgstr "イベントログエントリの詳細の検索中にエラーが発生しました。"
 
 msgid "Group Management"
 msgstr "グループ管理"
@@ -1754,7 +1753,7 @@ msgid "System Maintenance"
 msgstr "システムメインテナンス"
 
 msgid "Gallery must be in maintenance mode before the task can be run."
-msgstr ""
+msgstr "Galleryはタスクを動かす前にメンテナンスモードにしなければなりません。"
 
 #, c-format
 msgid "Completed %s task successfully."
@@ -1765,37 +1764,39 @@ msgid "The %s task failed to complete successfully."
 msgstr "%s の作業が、うまく完了しませんでした。"
 
 msgid "Maintenance Mode has been turned on."
-msgstr ""
+msgstr "メンテナンスモードはオンです"
 
 msgid "Maintenance Mode has been turned off."
-msgstr ""
+msgstr "メンテナンスモードはオフです"
 
-#, fuzzy
 msgid "Maintenance Mode"
-msgstr "メンテナンス"
+msgstr "メンテナンスモード"
 
 msgid "Restrict user access to the system while maintenance is being performed."
-msgstr ""
+msgstr "メンテナンスが実行されている間、システムへアクセスするユーザを制限する。"
 
-#, fuzzy
 msgid "Maintenance Mode Url"
-msgstr "メンテナンス"
+msgstr "メンテナンスモードURL"
 
 msgid ""
 "The Maintenance Mode Url specifies where requests will be redirected when access to the site "
 "has been restricted by the administrator."
 msgstr ""
+"メンテナンスモードURLは、サイトへのアクセスが管理者によって制限されたとき、リクエストがどこへ"
+"リダイレクトされるかを指定します。"
 
 msgid ""
 "If left blank Gallery will display a default page with an administrator login link. This "
 "page will be themed when the code base is up to date, otherwise it will display a plain "
 "unstyled page."
 msgstr ""
+"空白のままにすると、Galleryは管理者ログインリンクがあるデフォルトページを表示します。コード"
+"ベースが最新であるならこのページはテーマされたものになります。さもなければ、それは簡単なスタ"
+"イルされていないページを表示します。"
 
 msgid "For example: /maintenance.html"
-msgstr ""
+msgstr "例：/maintenance.html"
 
-#, fuzzy
 msgid "Set"
 msgstr "設定"
 
@@ -1895,9 +1896,8 @@ msgstr "ゲストユーザ"
 msgid "Expires after:"
 msgstr "消去までの時間:"
 
-#, fuzzy
 msgid "Template Cache"
-msgstr "テンプレートキャッシュ削除"
+msgstr "テンプレートキャッシュ"
 
 #, c-format
 msgid ""
@@ -1905,10 +1905,12 @@ msgid ""
 "your template files%s, you should disable template caching temporarily so that changes take "
 "effect immediately without clearing the template cache."
 msgstr ""
+"最高の性能のために、Galleryは全てのテンプレートをキャッシュします。あなたの%sテンプレートファ"
+"イルをカスタマイズしたい%sなら、一時的にテンプレートキャッシュを無効にすることで、テンプレー"
+"トキャッシュをクリアせずに変更をすぐに適用することができます。"
 
-#, fuzzy
 msgid "Enable template caching"
-msgstr "テンプレートキャッシュ削除"
+msgstr "テンプレートキャッシュを有効にする"
 
 msgid "Clear Saved Pages"
 msgstr "保存されたページを削除"
@@ -1952,7 +1954,6 @@ msgstr "警告!"
 msgid "Do you really want to uninstall __PLUGIN__?"
 msgstr "__PLUGIN__ を本当にアンインストールしますか?"
 
-#, fuzzy
 msgid "This will also remove any permissions and clean up any data created by this module."
 msgstr ""
 "この作業では、このモジュールによって作成されたあらゆるパーミッションやデータを削除します"
@@ -1972,12 +1973,11 @@ msgstr "いいえ"
 msgid "Do you really want to delete __PLUGIN__?"
 msgstr "__PLUGIN__ を本当にアンインストールしますか?"
 
-#, fuzzy
 msgid "This plugin will be uninstalled and its files will be deleted permanently."
 msgstr "このプラグインはアンインストールされ、そのファイルは削除されます。"
 
 msgid "The files of this plugin will be deleted permanently."
-msgstr ""
+msgstr "このプラグインのファイルは削除されます。"
 
 msgid "disabled(__COUNT__)"
 msgstr "無効(__COUNT__)"
@@ -2075,28 +2075,34 @@ msgstr "インターネット接続が正しく設定されているか確認す
 
 #, c-format
 msgid "Failed to scan status from plugin: %s."
-msgstr ""
+msgstr "プラグインから状態をスキャンすることに失敗しました: %s"
 
 msgid ""
 "Your local copy of the repository was broken and has been fixed.  Please download the plugin "
 "list again."
 msgstr ""
+"リポジトリのローカルコピーは破損おり、修復されました。プラグインリストから再度ダウンロードし"
+"てください。"
 
 #, c-format
 msgid "Failed to download the following packages for the %s plugin:"
-msgstr ""
+msgstr "%sプラグインの以下のパッケージをダウンロードできませんでした: "
 
 #, c-format
 msgid ""
 "Failed to install the %s plugin because the following files/directories could not be "
 "modified:"
 msgstr ""
+"以下のファイル/ディレクトリが更新できなかったため、プラグイン%sをインストールできませんでし"
+"た:"
 
 #, c-format
 msgid ""
 "Some plugins could not be automatically upgraded because they are in use.  Please return to "
 "the %sPlugins%s page and click the upgrade link for each of the following plugins:"
 msgstr ""
+"いくつかのプラグインは使用中のため自動的にアップグレードすることができませんでした。%sプラグ"
+"イン%sページに戻ってそれぞれ以下のプラグインのアップグレードリンクをクリックしてください。"
 
 msgid "The repository index has been successfully updated."
 msgstr "リポジトリインデックスの更新に成功しました"
@@ -2106,9 +2112,9 @@ msgstr "全てのプラグインは最新です。"
 
 #, c-format
 msgid "%s plugin updated."
-msgstr ""
+msgstr "%sプラグインを更新しました。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d language pack deleted."
 msgid_plural "%d language packs deleted."
 msgstr[0] "%d の言語パッケージが削除されました。"
@@ -2117,6 +2123,8 @@ msgid ""
 "No personal information about you or your Gallery installation is sent to the Gallery server "
 "at any time."
 msgstr ""
+"いついかなるときもあなたに関する個人情報もGalleryのインストール情報もGalleryのサーバに送信し"
+"ません。"
 
 #, c-format
 msgid ""
@@ -2126,10 +2134,16 @@ msgid ""
 "chosen, you must periodically download the latest plugin list to find out about available "
 "updates. %s On slower connections the process might take a minute or two."
 msgstr ""
+"新しいプラグインを簡単、用意にダウンロードをしてインストールします。プラグインが好み出なけれ"
+"ばあなたのGalleryからそれを削除することができます。複数の異なるプラグインのリポジトリがあっ"
+"て、あなたはどれを利用したいかを選択することができます。(すぐにそれらを全て使用することもOKで"
+"す)一旦選択すると、定期的に利用可能な%sのアップデートに関して最新のプラグインリストをダウン"
+"ロードしなければなりません。処理には1分程度かかるかもしれません(より遅い接続の場合は2分以上か"
+"かるかもしれません)"
 
 #, c-format
 msgid "Officially Released Gallery Project plugins (%srecommended%s)"
-msgstr ""
+msgstr "公式にリリースされたGalleryプロジェクトのプラグイン(%s推奨%s)"
 
 #, c-format
 msgid "last updated on %s"
@@ -2138,10 +2152,12 @@ msgstr "最終更新は %s"
 #, c-format
 msgid "Experimental Gallery Project plugins (%scool new features, might be buggy%s)"
 msgstr ""
+"実験的なGalleryプロジェクトのプラグイン(%s新機能がありますが、バグを含んでいるかもしれません%"
+"s)"
 
 #, c-format
 msgid "Community plugins (%suse at your own risk!%s)"
-msgstr ""
+msgstr "コミュニティのプラグイン(%s利用には自己責任で%s)"
 
 msgid "Repository Error"
 msgstr "リポジトリエラー"
@@ -2159,11 +2175,16 @@ msgid ""
 "Before you can proceed, you have to change some permissions so that Gallery can install "
 "plugins for you.  It's easy.  Just execute the following in a shell or via your ftp client:"
 msgstr ""
+"進める前に、Galleryがあなたのためにプラグインをインストールすることができるようにいくつかの"
+"パーミッションを変更しなければなりません。それは簡単です。シェルの中か、ftpクライアントで以下"
+"をただ実行するだけです："
 
 msgid ""
 "If you have trouble changing permissions, ask your system administrator for assistance.  "
 "When you've fixed the permissions, click the Continue button to proceed."
 msgstr ""
+"パーミッションの変更に問題がある場合は、解決方法をシステム管理者に尋ねてください。パーミッ"
+"ションを修正したら、進めるために続けるボタンをクリックしてください。"
 
 msgid "Continue"
 msgstr "続ける"
@@ -2188,9 +2209,9 @@ msgstr ""
 "バージョンの特長に依存するプラグインが利用できるようになるかもしれません。こちらが推奨される"
 "アップグレードのステップです。:"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%sDownload%s the new Gallery package"
-msgstr "Gallery core を %sDownload%s"
+msgstr "新しいGalleryパッケージを %sDownload%s"
 
 #, c-format
 msgid "Read the %supgrade instructions%s and perform the upgrade"
@@ -2264,6 +2285,9 @@ msgid ""
 "of the package to download.  Language packages are optional, You only need to download the "
 "ones that you want to use on your site."
 msgstr ""
+"このプラグインを使用するためにパッケージをダウンロードしてください。ダウンロードすべきパッ"
+"ケージのより新しいバージョンを選ぶことで、アップグレードをすることができます。言語パッケージ"
+"はオプションです。単にサイト上で使用したいものをダウンロードする必要があります。"
 
 msgid "Base Packages"
 msgstr "ベースパッケージ"
@@ -2274,22 +2298,22 @@ msgstr "%s: バージョン %s (ビルド %s)"
 
 #, c-format
 msgid "%s: version %s (build %s) %sdowngrading is not supported!%s"
-msgstr ""
+msgstr "%s: バージョン %s (build %s) %sダウングレードはサポートしていません！%s"
 
 #, c-format
 msgid "%sCurrently Installed%s: version %s (build %s)"
-msgstr ""
+msgstr "%s現在インストールされたバージョン%s: %s (build %s)"
 
 msgid "Language Packages"
 msgstr "言語パッケージ"
 
 #, c-format
 msgid "(%sselect all%s%sselect none%s)"
-msgstr ""
+msgstr "(%s全て選択%s%s全て選択解除%s)"
 
 #, c-format
 msgid "%s version %s (upgrading from %s)"
-msgstr ""
+msgstr "%s バージョン %s ( %sからアップグレード )"
 
 #, c-format
 msgid "%s version %s"
@@ -2297,11 +2321,11 @@ msgstr "%s バージョン %s"
 
 #, c-format
 msgid "%s version %s (%snewer version %s is installed%s)"
-msgstr ""
+msgstr "%s バージョン %s (%s新しいバージョン%sはインストールされました%s)"
 
 #, c-format
 msgid "%s version %s (currently installed)"
-msgstr ""
+msgstr "%s バージョン %s (現在インストールされています)"
 
 msgid "No compatible language packages available"
 msgstr "互換性のある言語パッケージがありません"
@@ -2360,13 +2384,15 @@ msgid ""
 "The %s theme is incompatible with your Gallery version or no longer available.  Please "
 "upgrade the %s theme or pick another default theme."
 msgstr ""
+"%sテーマはあなたのGalleryのバージョンと互換性がないか、もはや利用可能ではありません。%sテーマ"
+"を改良していただくか、あるいは別のデフォルトテーマを使用してください。"
 
 msgid "New albums"
 msgstr "新しいアルバム"
 
 #, c-format
 msgid "To activate more themes visit the %sPlugins%s page."
-msgstr ""
+msgstr "より多くのテーマを有効にするには%sプラグイン%sページへ行ってください。"
 
 msgid "Save Defaults"
 msgstr "デフォルトを保存"
@@ -2464,7 +2490,6 @@ msgstr "ユーザ編集 (リスト)"
 msgid "Locked"
 msgstr "ロックされている"
 
-#, fuzzy
 msgid "Failed Logins"
 msgstr "ログインに失敗した回数"
 
@@ -2479,13 +2504,13 @@ msgid ""
 msgstr ""
 "Gallery はアップロード時にサムネイルを作成するか、もしくはサムネイルを初めて見る時に作成でき"
 "ます。どちらのやり方にしろ、サムネイルは一度作成され、保存されます。アップロード時に作成する"
-"と、アップロードの時間はかかりますが、初めてアルバム��見る時の表示が��くなります。"
+"と、アップロードの時間はかかりますが、初めてアルバムを見る時の表示が速くなります。"
 
 msgid "Create thumbnails now"
-msgstr "いますぐサムネ�ルを生成"
+msgstr "いますぐサムネイルを生成"
 
 msgid "This is a test email from Gallery2"
-msgstr "これはGallery2からのテストメール�す。"
+msgstr "これはGallery2からのテストメールです。"
 
 msgid "Edit Conflict!"
 msgstr "衝突を編集"
@@ -2520,6 +2545,8 @@ msgid ""
 "If this problem happens repeatedly, it may be because of corruption in your cache.  Site "
 "Administrators can clear out this cache."
 msgstr ""
+"この問題が繰り返し起こる場合は、あなたのキャッシュの不正のためかも知れません。サイト管理者は"
+"このキャッシュをクリアすることができます。"
 
 msgid "Clear the cache"
 msgstr "キャッシュを削除"
@@ -2534,6 +2561,8 @@ msgid ""
 "Your change cannot be completed due to a loss of session data. Please try again. If it still "
 "doesn't work, try logging out and logging back in."
 msgstr ""
+"あなたの変更はセッションデータの損失の為、完了することができません。再試行してください。それ"
+"でもまだ動かないなら、一旦ログアウトをして、再度ログインしなおしてみてください。"
 
 msgid "An error has occurred while interacting with the database."
 msgstr "データベースと通信中にエラーが発生しました。"
@@ -2576,7 +2605,7 @@ msgid "System Information"
 msgstr "システム情報"
 
 msgid "Not all of the specified items have been added successfully."
-msgstr ""
+msgstr "指定されたアイテム全ては正常に追加されませんでした。"
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add "
@@ -2585,10 +2614,9 @@ msgstr ""
 "JPEG画像を処理することのできる画像処理ツールキットがありません。画像を追加しても、サムネイル"
 "が作成できません"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Visit the %sModules%s page to activate a Graphics Toolkit."
-msgstr ""
-"<a href=\"%s\">モジュール</a> ページを訪れてグラフィックツールキットを有効化してください。"
+msgstr "画像ツールキットを有効化するために%sモジュール%sページを訪れてください。"
 
 msgid "Add Sub-Album"
 msgstr "サブアルバム追加"
@@ -2745,13 +2773,12 @@ msgstr "前のページ"
 msgid "Next Page"
 msgstr "次のページ"
 
-#, fuzzy
-msgid "Do you really want to delete "
-msgstr "__PLUGIN__ を本当にアンインストールしますか?"
+#, c-format
+msgid "Do you really want to delete %s?"
+msgstr "本当に次を削除してもよろしいですか？： %s"
 
-#, fuzzy
 msgid "Delete more items..."
-msgstr "アイテム削除"
+msgstr "他のアイテムも削除..."
 
 msgid "There was a problem processing your request."
 msgstr "要求の処理中に問題が発生しました"
@@ -2809,6 +2836,11 @@ msgid ""
 "Building images now makes this operation take longer, but saves the time to build and cache "
 "each file when it is first viewed."
 msgstr ""
+"サムネイルとリサイズされた画像の設定は全ての新しいアイテムに適用されます。アルバムの中の全て"
+"のアイテムにこれらの設定を適用するためにはチェックボックスへ適切にチェックしてください。サブ"
+"アルバムを含んでいる場合はサムネイル/リサイズの自身の設定をそれぞれのアルバム自身の設定を適用"
+"します。(リサイズは上の設定とはマッチしないかもしれません)現在画像を構築すると、この操作に時"
+"間がかかりますが、各ファイルの構築とキャッシュは最初に閲覧されるときに短くなります。"
 
 msgid "Apply album setting to thumbnails"
 msgstr "アルバムの設定をサムネイルに適用"
@@ -2954,7 +2986,6 @@ msgstr ""
 msgid "Unable to create a thumbnail for this item"
 msgstr "このアイテムのサムネイルを作成できません"
 
-#, fuzzy
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the movie's width and "
 "height.  If you have installed a graphics toolkit that can handle movie types, then these "
@@ -2962,7 +2993,12 @@ msgid ""
 "values here, the movie may appear distorted when viewed in your web browser.  Note that "
 "changing these values do <b>not</b> change the movie itself so experimentation won't cause "
 "harm."
-msgstr "この動画を適切に再生するためには、動画の幅と高さを知る必要があります。"
+msgstr ""
+"この動画を適切に再生するためには、動画の幅と高さを知る必要があります。動画タイプを扱うことの"
+"できるグラフィックツールキットをインストールしているなら、これらの値は、既に設定されているか"
+"もしれません。そうでなければそれらは0に設定されているかもしれません。あなたがここで正確な値を"
+"入力しなければ、動画はあなたがブラウザで見たときに、歪んで見えるかもしれません。これらの値を"
+"変更して、動画自体に差し支えないように注意してください。"
 
 msgid "Resized Photos"
 msgstr "リサイズされた画像"
@@ -3073,6 +3109,8 @@ msgid ""
 "There is no toolkit support to modify the original so operations may only be applied to the "
 "copies"
 msgstr ""
+"オリジナルを変更するためのツールキットが全くないため、オペレーションはコピーだけを適用するか"
+"もしれません。"
 
 msgid "Preserve Original Photo"
 msgstr "オリジナル画像を保護"
@@ -3100,12 +3138,18 @@ msgid ""
 "version or no longer available.  Please upgrade the %s theme or use another theme for this "
 "album."
 msgstr ""
+"このアルバムはこのGalleryのバージョンと非互換かもう利用できない%sテーマを使用するように設定さ"
+"れています。%sテーマをアップグレードさせるか、又はこのアルバムに別のテーマを使用してくださ"
+"い。"
 
 #, c-format
 msgid ""
 "Themes control the look and feel of the album.  You can choose a different theme for each "
 "album.  If you don't choose a theme, we'll use the %s theme by default."
 msgstr ""
+"テーマはアルバムの視覚と感覚をコントロールします。それぞれのアルバムのために異なるテーマを選"
+"択することができます。あなたがテーマを選択しなければ私たちはデフォルトで%sテーマを使用するで"
+"しょう。"
 
 msgid "Use this theme in all subalbums"
 msgstr "このテーマをすべてのサブアルバムで使う"
@@ -3154,7 +3198,7 @@ msgid "Choose the items you want to move"
 msgstr "移動したいアイテムを選択してください"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid ""
 "The destination you chose does not accept sub-albums, so all sub-albums have been deselected."
@@ -3162,9 +3206,8 @@ msgstr ""
 "選択した宛先はサブアルバムが許可されていませんので、全てのサブアルバムは選択が解除されまし"
 "た。"
 
-#, fuzzy
 msgid "Warning"
-msgstr "警告!"
+msgstr "警告"
 
 msgid ""
 "The destination you chose only accepts sub-albums, so all non-albums have been deselected."
@@ -3352,6 +3395,10 @@ msgid ""
 "is either disabled or not supported by your browser. Please enable JavaScript by changing "
 "your browser options, then try again."
 msgstr ""
+"このページを適切に閲覧できるようにするにはJavaScriptを有効にしなければなりません。しかし、あ"
+"なたのブラウザがJavaScriptをサポートしていないか、何らかの障害で無効になっている場合は適切に"
+"閲覧できません。ブラウザのオプションを変更してJavaScriptを利用可能にして、再度確認してみてく"
+"ださい。"
 
 msgid "Site is temporarily down for maintenance."
 msgstr "サイトは、メンテナンスのため一時的に停止しています"
@@ -3393,7 +3440,7 @@ msgstr "文字色"
 
 #, c-format
 msgid "You can also use the %scolor name%s for example: %sYour Text%s"
-msgstr ""
+msgstr "また、あなたは%sカラー名%sを使用することができます。例： %sテキスト%s"
 
 msgid "Configuration Error: Missing Theme"
 msgstr "コンフィグレーションエラー: テーマ欠落"
@@ -3499,11 +3546,14 @@ msgid ""
 "This account is not allowed to modify account settings.  Please contact your Gallery "
 "administrator"
 msgstr ""
+"このアカウントはアカウント設定の変更を許可されていません。Gallery管理者へお問合せください。"
 
 msgid ""
 "Your administrator has locked this account, preventing changes from being made to the "
 "account information."
 msgstr ""
+"あなたの管理者はこのアカウントをロックしました。アカウント情報の作成から変更まで行うことはで"
+"きません。"
 
 msgid "Login to your account"
 msgstr "あなたのアカウントにログイン"
@@ -3516,19 +3566,22 @@ msgid ""
 "Logins to this account are temporarily disabled due to multiple failed login attempts.  Wait "
 "for access to be restored, or use the %srecover password%s page to re-enable this account."
 msgstr ""
+"このアカウントへのログインは複数回ログインに失敗したため、一時的に無効になっています。サイド"
+"ログインできるようになるまで待つか、%sパスワードを回復する%sページへ行ってこのアカウントを回"
+"復してください。"
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "ログイン情報が間違っています。もう一度試してください。"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Lost or forgotten passwords can be retrieved using the %srecover password%s page"
 msgstr ""
-"パスワードをなくしたか忘れてしまった場合、<a href=\"%s\">パスワードを回復する</a> ページから"
-"回復させることができます"
+"パスワードをなくしたか忘れてしまった場合、%sパスワードを回復する%sページから回復させることが"
+"できます"
 
 #, c-format
 msgid "Welcome, %s!"
-msgstr "ようこそ、 %s ！"
+msgstr "ようこそ、 %sさん ！"
 
 msgid "Account settings saved successfully"
 msgstr "アカウント設定の保存に成功しました。"
@@ -3664,21 +3717,21 @@ msgstr "更新"
 msgid "This page will allow you to reset the password on your account."
 msgstr "このページでは、あなたのアカウントのパスワードをリセットすることができます"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "There is no request which matches the username and authorization provided. Request a new "
 "authorization from the %slost password page%s."
 msgstr ""
-"ユーザー名と与えられた権限に適合するリクエストがありません。<a href=\"%s\">パスワードをなくし"
-"た場合のページ</a>で新しい権限を要求してください"
+"ユーザー名と与えられた権限に適合するリクエストがありません。%sパスワードをなくした場合のペー"
+"ジ%sで新しい権限を要求してください"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The request you are trying to access has expired.  Request a new authorization from the %"
 "slost password page%s."
 msgstr ""
-"あなたがアクセスしようとしているリクエストはなくなりました。<a href=\"%s\">パスワードをなくし"
-"た場合のページ</a>から新たな権限を要求してください"
+"あなたがアクセスしようとしているリクエストはなくなりました。%sパスワードをなくした場合のペー"
+"ジ%sから新たな権限を要求してください"
 
 msgid "Authorization missing"
 msgstr "権限がありません"
@@ -3809,30 +3862,5 @@ msgstr "ログインブロック"
 msgid "Links to album/photo peers"
 msgstr "アルバム／画像へのリンク"
 
-#~ msgid "delete confirmation"
-#~ msgstr "削除の確認"
-
-#~ msgid "delete %s"
-#~ msgstr "%s 削除"
-
-#~ msgid "Deletion Complete"
-#~ msgstr "削除完了"
-
-#~ msgid "Item successfully deleted"
-#~ msgstr "アイテムの削除に成功しました"
-
-#~ msgid "Are you sure you want to delete this %s?"
-#~ msgstr "この %s を本当に削除しますか?"
-
-#~ msgid "It contains %d item."
-#~ msgid_plural "It contains %d items."
-#~ msgstr[0] "それは、%d の項目を含みます"
-
-#~ msgid "There is no undo!"
-#~ msgstr "やり直しはありません"
-
-#~ msgid "key"
-#~ msgstr "キー"
-
-#~ msgid "G2.2: Double Double"
-#~ msgstr "G2.2: Double Double"
+#~ msgid "Loading Table Descriptions"
+#~ msgstr "テーブルの説明をロード中"

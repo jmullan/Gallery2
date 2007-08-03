@@ -24,8 +24,8 @@ msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.3\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
 "POT-Creation-Date: 2007-06-14 17:58-0700\n"
-"PO-Revision-Date: 2007-03-12 19:46+0900\n"
-"Last-Translator: Yosuke Suzuki\n"
+"PO-Revision-Date: 2007-07-20 13:26+0900\n"
+"Last-Translator: momo-i\n"
 "Language-Team: Japanese <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -53,22 +53,22 @@ msgid "Unable to commit database transaction"
 msgstr "データベーストランザクションをコミットできません"
 
 msgid "Database Backup"
-msgstr ""
+msgstr "データベースのバックアップ"
 
 msgid "Error attempting to enable maintenance mode."
-msgstr ""
+msgstr "メンテナンスモードを有効にする最中のエラー。"
 
 msgid "Backing up the Gallery database"
-msgstr ""
+msgstr "Galleryデータベースをバックアップ中"
 
 msgid "Errors occurred during the database backup"
-msgstr ""
+msgstr "データベースバックアップ中にエラーが発生しました"
 
 msgid "Error attempting to disable maintenance mode."
-msgstr ""
+msgstr "メンテナンスモードを無効にする最中のエラー。"
 
 msgid "Unable to determine if automated backup is available."
-msgstr ""
+msgstr "自動バックアップが有効にできるかどうか判断することができませんでした。"
 
 msgid "Finish Upgrade"
 msgstr "アップグレードを完了"
@@ -229,16 +229,15 @@ msgstr ""
 msgid "Translation support"
 msgstr "翻訳の対応"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Your webserver does not support localization. To enable support for additional languages "
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
-"ウェブサーバがローカライゼーションをサポートしていません。\n"
-"Your webserver does not support localization. To enable support for additional languages "
-"please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
-"enabled."
+"ウェブサーバがローカライゼーションをサポートしていません。追加言語のサポートを有効にするに"
+"は、%sgettext%sオプションを有効にするようにPHPで再設定するようにシステム管理者にお願いしてく"
+"ださい。"
 
 #, c-format
 msgid ""
@@ -259,7 +258,7 @@ msgstr ""
 msgid "Zend compatibility mode"
 msgstr "Zend 互換モード"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to "
 "crash.  Click %shere%s to test your PHP.  If you see \"SUCCESS\" then your PHP is ok.  If "
@@ -286,7 +285,7 @@ msgstr ""
 msgid "Output buffering disabled"
 msgstr "出力バッファーが無効"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: Output buffering is enabled in your PHP by the <b>%s</b> parameter(s) in php.ini.  "
 "Gallery can function with this setting - downloading files is even faster - but Gallery "
@@ -316,7 +315,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "Inaccessible or missing  files (%d)"
-msgstr "欠落したファイル (%d)"
+msgstr "アクセス不可、又は欠落したファイル (%d)"
 
 msgid "Gallery file integrity"
 msgstr "Gallery ファイルの完全性"
@@ -417,7 +416,7 @@ msgstr "その他"
 
 #, c-format
 msgid "Unable to query the %s theme"
-msgstr ""
+msgstr "テーマ %s について確認することができません"
 
 msgid "Themes"
 msgstr "テーマ"
@@ -442,14 +441,17 @@ msgid ""
 "<b>Error:</b> your %s file is not readable.  Please give Gallery read permissions on the "
 "file."
 msgstr ""
+"<b>エラー：</b>%sファイルは読み込み不可です。Galleryが読めるパーミッションに変更してくださ"
+"い。"
 
 #, c-format
 msgid ""
 "<b>Error:</b> your %s key does not match correctly.  Please use the new authentication "
 "string from below and try again."
 msgstr ""
+"<b>エラー：</b>%sキーは現在のものとマッチしません。下から新しい認証文字列を使用して再試行して"
+"ください。"
 
-#, fuzzy
 msgid ""
 "In order to proceed with the upgrade process, we have to verify that you are who you claim.  "
 "When you performed the install, you entered a password which went into your config.php.  "
@@ -463,12 +465,14 @@ msgid "Password:"
 msgstr "パスワード:"
 
 msgid "You have exceeded the maximum attempts to login by entering a password."
-msgstr ""
+msgstr "パスワードの入力でログインの最大回数を超えました。"
 
 msgid ""
 "To prevent somebody from hacking your website, we now require you to complete a stricter "
 "authentication process."
 msgstr ""
+"誰かがあなたのWebサイトをハッキングすることを防ぐために、より厳しい認証プロセスを完了させてく"
+"ださい。"
 
 #, c-format
 msgid ""
@@ -478,6 +482,11 @@ msgid ""
 "new text file called %s in the %s directory on your webserver (that's the same directory "
 "where %s is located). It must contain the following randomly generated characters:"
 msgstr ""
+"アップグレードを続けるために、あなたが続行すべき人かを確認しなければなりません。最も良い方法"
+"は、あなたに正しい権限がある事を立証するする為にGalleryディレクトリに小さな変更を行ってくださ"
+"い。それは、%sと呼ばれるテキストファイルをあなたのWebサーバの%sディレクトリに作成することで"
+"す。(それは%sが置いてあるディレクトリと同じ場所です)作成するファイルの内容は次のランダムな文"
+"字列を記入してください："
 
 msgid "Once you've uploaded the file, click below to continue."
 msgstr "ファイルをアップロードしたら、下をクリックして続けてください。"
@@ -522,7 +531,6 @@ msgstr ""
 msgid "Try Again"
 msgstr "もう一度実行する"
 
-#, fuzzy
 msgid ""
 "Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  "
 "If you fail to make a backup and something goes wrong, there is a strong possibility that we "
@@ -533,16 +541,16 @@ msgstr ""
 "て高いです。次の例を参照してください:"
 
 msgid "You have three options:"
-msgstr ""
+msgstr "3つのオプションがあります："
 
 msgid "You have two options:"
-msgstr ""
+msgstr "2つのオプションがあります："
 
 msgid "Do the automated backup (<b>recommended</b>)."
-msgstr ""
+msgstr "自動バックアップを行う(<b>推奨</b>)"
 
 msgid "Do a manual backup (see below)."
-msgstr ""
+msgstr "手動バックアップを行う(以下を参照)"
 
 msgid "MySQL"
 msgstr "MySQL"
@@ -551,18 +559,17 @@ msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
 msgid "Oracle"
-msgstr ""
+msgstr "Oracle"
 
 msgid "IBM DB2"
-msgstr ""
+msgstr "IBM DB2"
 
 msgid "Microsoft SQL Server"
-msgstr ""
+msgstr "Microsoft SQL Server"
 
 msgid "Continue without a backup (<b>discouraged</b>)."
-msgstr ""
+msgstr "バックアップしないで続ける(<b>非推奨</b>)"
 
-#, fuzzy
 msgid ""
 "If you choose to perform the automated backup, please be patient.  If you cancel or reload "
 "the page, you may interfere with the backup process."
@@ -571,10 +578,10 @@ msgstr ""
 "レードプロセスがうまく行かない可能性があります"
 
 msgid "Begin Database Backup"
-msgstr ""
+msgstr "データベースのバックアップを始める"
 
 msgid "Skip Database Backup"
-msgstr ""
+msgstr "データベースのバックアップをスキップする"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
@@ -584,18 +591,17 @@ msgid "Stack Trace:"
 msgstr "スタックトレース:"
 
 msgid "Gallery Database Backup successful."
-msgstr ""
+msgstr "Galleryデータベースのバックアップに成功しました。"
 
-#, fuzzy
 msgid "We've successfully backed up the data in your Gallery database."
-msgstr "Gallery のコアモジュールのアップグレードに成功しました"
+msgstr "Galleryデータベースのバックアップに成功しました"
 
 msgid "The following warnings were produced during the backup process:"
-msgstr ""
+msgstr "以下の警告はバックアップ中に作り出されました："
 
 #, c-format
 msgid "Your backup is contained in the file %s"
-msgstr ""
+msgstr "バックアップは%sファイルに含まれました"
 
 msgid "Finished!"
 msgstr "完了！"
@@ -638,7 +644,7 @@ msgid "Redo this step"
 msgstr "このステップをもう一度"
 
 msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
-msgstr "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
+msgstr "Gallery: <strong>あなたのWebサイト</strong>上の<strong>写真</strong>"
 
 msgid "Upgrade Steps"
 msgstr "アップグレードのステップ"
@@ -717,7 +723,7 @@ msgstr "現在インストールされているもの"
 
 #, c-format
 msgid "Core Module version: %s (Gallery %s)"
-msgstr ""
+msgstr "コアモジュールのバージョン：%s (Galleryは%s)"
 
 msgid "New version"
 msgstr "新しいバージョン"
@@ -773,14 +779,13 @@ msgstr ""
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Gallery のコアモジュールは最新の状態です"
 
-#, fuzzy
 msgid ""
 "The following plugins can be automatically upgraded for you.  If you choose not to upgrade "
 "them now, you may experience problems with your Gallery.   You can always upgrade or "
 "deactivate them on the Site Administration page, or return to this page later so any "
 "decision you make here is not permanent."
 msgstr ""
-"次のモジュールは自動的にアップグレードできます。もしアップグレードしないと、問題が発生するか"
+"次のプラグインは自動的にアップグレードできます。もしアップグレードしないと、問題が発生するか"
 "もしれません。ただし、いつでも、サイト管理のページでアップグレードおよび無効化できます。ここ"
 "での決定は、恒久的なものではなく、いつでもこのページに戻ってくることができます"
 
@@ -826,9 +831,8 @@ msgstr "すべてをチェック (しない)"
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
 msgstr "アップグレードをスキップし、ステップ Step %d に続く&raquo;"
 
-#, fuzzy
 msgid "Upgrade Selected Plugins"
-msgstr "選択したモジュールをアップグレード"
+msgstr "選択したプラグインをアップグレード"
 
 #, c-format
 msgid "Upgraded the %s module successfully"
@@ -838,11 +842,10 @@ msgstr "%s モジュールのアップグレードに成功"
 msgid "Upgraded the %s theme successfully"
 msgstr "%s テーマのアップグレードに成功"
 
-#, fuzzy
 msgid "Upgrade More Plugins"
-msgstr "アップグレードの状況"
+msgstr "もっとプラグインをアップグレードする"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Upgrading Gallery 2 requires %d steps. This upgrade tool will guide you through these steps "
 "and provide assistance along the way if additional steps are required. Please read the %"
@@ -866,6 +869,3 @@ msgstr "言語選択:"
 
 msgid "Go"
 msgstr "進む"
-
-#~ msgid "this script"
-#~ msgstr "このスクリプト"
