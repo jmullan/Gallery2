@@ -391,17 +391,86 @@
 	with no loss in image quality.
       </li>
       <li>
+	New SnapGalaxy module for prints from
+	<a href="http://www.snapgalaxy.com/" target="_blank">snapgalaxy.com</a>.
+      </li>
+      <li>
 	EXIF block now uses AJAX to switch between summary and detail display.
       </li>
       <li>
+	Support in RSS module for Media RSS format and random RSS streams.
+      </li>
+      <li>
+	Remote module now bundles the Gallery Remote client and makes it available via
+	<a href="http://java.sun.com/products/javawebstart/index.jsp"
+	target="_blank">Java Web Start</a>.  Users with a Java enabled browser can then
+	launch Gallery Remote with a single click instead of manually downloading and installing.
+      </li>
+      <li>
 	Webcam module now accepts file:// URLs to retrieve image from local filesystem.
+      </li>
+      <li>
+	Dcraw module now supports Adobe Digital Negative (dng) files, when used with
+	dcraw v7.0 or newer.
+      </li>
+      <li>
+	Added support for Windows Vista in PublishXP module.
+      </li>
+      <li>
+	New database backup feature.  Backup at start of upgrade, or anytime from Site Admin /
+	Maintenance.  Restore a backup from lib/support interface.
+      </li>
+      <li>
+	Can now put Gallery into maintenance mode from Site Admin / Maintenance.
+	Setting in config.php file is still available too.
+      </li>
+      <li>
+	New event logging system records Gallery errors, viewable in the Site Admin interface.
       </li>
       <li>
 	Themes can now override module template files, allowing a themed look to
 	more aspects of the application.
       </li>
       <li>
-	Restructuring to greatly reduce the number of directories for language files.
+	User interface changes.
+	<ul><li>
+	  Use AJAX to speed up deleting comments(spam) on items/albums.
+	</li><li>
+	  Use quick DHTML confirm dialog for deleting single items.  Dialog offers link to
+	  bulk delete several items from an album.
+	</li><li>
+	  Use YUI ItemTree instead of plain select box to select target album when
+	  moving items, creating replicas or link items.
+	</li></ul>
+      </li>
+      <li>
+	Performance improvements.
+	<ul><li>
+	  Smarty templates now permanently cached by default.  Turn this off in
+	  Site Admin / Performance when working on tpl files, so changes take effect
+	  immediately during development.
+	</li><li>
+	  Avoid reading EXIF data multiple times in Carbon theme.
+	</li><li>
+	  Some added caching in GalleryUrlGenerator.
+	</li><li>
+	  Use progress bar when adding items to avoid server or browser timeouts.
+	  Particularly helpful when adding many items from local server.
+	</li><li>
+	  Restructuring to greatly reduce the number of directories for language files.
+	</li><li>
+	  Refactor of translator hints to avoid some processing when translations
+	  are not used (en_US).
+	</li><li>
+	  Refactor of event system working towards a performance improvement in the next release.
+	</li></ul>
+      </li>
+      <li>
+	Upgraded to newer versions of several bundled software packages: YUI! 2.2, ADOdb 4.95a,
+	Smarty 2.6.18, GetID3 1.7.7
+      </li>
+      <li>
+	Many bugs fixed.
       </li>
     </ol>
 
