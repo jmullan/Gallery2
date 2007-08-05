@@ -42,6 +42,13 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+
+	foreach (array('akismet.apiKey' => '', 'akismet.active' => '0') as $key => $value) {
+	    $value = GalleryCoreApi::setPluginParameter('module', 'comment', $key, $value);
+	    if ($ret) {
+		return $ret;
+	    }
+	}
     }
 
     function testCommentSiteAdminControllerReset() {
@@ -58,8 +65,10 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
     function testCommentSiteAdminControllerSave() {
 	GalleryUtilities::putRequestVariable('form[latest]', 1);
 	GalleryUtilities::putRequestVariable('form[show]', '12');
+	GalleryUtilities::putRequestVariable('form[apiKey]', '3');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
+	$this->_controller->_akismet = new CommentSiteAdminControllerTest_FakeAkismetApi(true);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
 						      'subView' => 'comment.CommentSiteAdmin'),
@@ -67,9 +76,12 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	foreach (array('latest' => '1', 'show' => '12') as $key => $expectedValue) {
+	foreach (array('comments.latest' => '1',
+		       'comments.show' => '12',
+		       'akismet.apiKey' => '3',
+		       'akismet.active' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) =
-		GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.' . $key);
+		GalleryCoreApi::getPluginParameter('module', 'comment', $key);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -98,6 +110,150 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array('form[error][show]')),
 			    $results);
+    }
+
+    function testEmptyAkismetApiKeyDisablesAkismet() {
+	GalleryUtilities::putRequestVariable('form[latest]', 1);
+	GalleryUtilities::putRequestVariable('form[show]', '12');
+	GalleryUtilities::putRequestVariable('form[apiKey]', '');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$this->_controller->_akismet = new CommentSiteAdminControllerTest_FakeAkismetApi(true);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'comment.CommentSiteAdmin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	foreach (array('akismet.apiKey' => '',
+		       'akismet.active' => '0') as $key => $expectedValue) {
+	    list ($ret, $value) =
+		GalleryCoreApi::getPluginParameter('module', 'comment', $key);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $this->assertEquals($expectedValue, $value, $key);
+	}
+    }
+
+    function testMalformedAkismetApiKeyCausesError() {
+	GalleryUtilities::putRequestVariable('form[latest]', 1);
+	GalleryUtilities::putRequestVariable('form[show]', '12');
+	GalleryUtilities::putRequestVariable('form[apiKey]', 'somethinginvalid');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$this->_controller->_akismet = new CommentSiteAdminControllerTest_FakeAkismetApi(false);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'comment.CommentSiteAdmin'),
+				  'status' => array(),
+				  'error' => array('form[error][apiKey][invalid]')),
+			    $results);
+
+	foreach (array('akismet.apiKey' => '',
+		       'akismet.active' => '0') as $key => $expectedValue) {
+	    list ($ret, $value) =
+		GalleryCoreApi::getPluginParameter('module', 'comment', $key);
+	    if ($ret) {
+		return $ret;
+	    }
+	    $this->assertEquals($expectedValue, $value, $key);
+	}
+    }
+
+    function testCheckAllWithAkismet() {
+	GalleryUtilities::putRequestVariable('form[action][checkAllWithAkismet]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core.ProgressBar'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testCheckAllWithAkismetCallback() {
+	global $gallery;
+	$mockTemplateAdapter = new MockTemplateAdapter();
+	$gallery->_templateAdapter =& $mockTemplateAdapter;
+
+	list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $album) = $this->_createRandomAlbum($rootId);
+	if ($ret) {
+	    return $ret;
+	}
+	$this->_markForCleanup($album);
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'id.rootAlbum', $album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	for ($i = 0; $i < 2; $i++) {
+	    $comment[$i] = new GalleryComment();
+	    $comment[$i]->create($album->getId());
+	    $comment[$i]->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
+	    $ret = $comment[$i]->save();
+	    if ($ret) {
+		return $ret;
+	    }
+	}
+
+	$ret = $this->_controller->checkAllWithAkismet(
+	    new CommentSiteAdminControllerTest_FakeAkismetApi());
+	if ($ret) {
+	    return $ret;
+	}
+
+	$status = $this->_getStatusFromProgressBar();
+	$this->assertEquals(array('checked' => array(
+				      'total' => 2,
+				      'spamCount' => 2)),
+			    $status);
+
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $comment[$i]) = $comment[$i]->refresh();
+	    if ($ret) {
+		return $ret;
+	    }
+	    $this->assertEquals(COMMENT_PUBLISH_STATUS_SPAM, $comment[$i]->getPublishStatus());
+	}
+    }
+
+    /**
+     * This should probably get moved into GalleryTestCase
+     */
+    function _getStatusFromProgressBar() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$progress = $gallery->_templateAdapter->getProgressBarDump();
+	preg_match('/statusId=([^,]*)/', $progress[count($progress)-1], $matches);
+	return $session->getStatus($matches[1]);
+    }
+}
+
+class CommentSiteAdminControllerTest_FakeAkismetApi {
+    function CommentSiteAdminControllerTest_FakeAkismetApi($legal=false) {
+	$this->_legal = $legal;
+    }
+
+    function verifyApiKey($apiKey) {
+	return array(null, $this->_legal);
+    }
+
+    function checkComment(&$comment) {
+	return array(null, true);
     }
 }
 ?>

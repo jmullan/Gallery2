@@ -2,7 +2,7 @@
  * $Revision$
  * Read this before changing templates!  http://codex.gallery2.org/Gallery2:Editing_Templates
  *}
-{include file="gallery:modules/comment/templates/DeleteComment.js.tpl"}
+{include file="gallery:modules/comment/templates/ChangeComment.js.tpl"}
 
 <div class="gbBlock gcBackground1">
   <h2> {g->text text="View Comments"} </h2>
@@ -29,7 +29,7 @@
   {include file="gallery:modules/comment/templates/Comment.tpl"
 	   comment=$comment item=$ShowComments.item can=$ShowComments.can
 	   user=$ShowComments.commenters[$comment.commenterId]
-           ajaxDeleteCallback="confirmDeleteComment" truncate=1024}
+           ajaxChangeCallback="confirmChangeComment" truncate=1024}
   </div>
 {/foreach}
 </div>

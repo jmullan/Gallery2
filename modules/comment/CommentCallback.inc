@@ -48,17 +48,30 @@ class CommentCallbackView extends GalleryView {
 
 	$result = array();
 	list ($command, $commentId) = GalleryUtilities::getRequestVariables('command', 'commentId');
+	$commentId = (int)$commentId;
 	switch ($command) {
 	case 'delete':
-	    $commentId = (int)$commentId;
 	    $ret = $this->deleteComment($commentId);
-	    if ($ret) {
-		$result['status'] = 'error';
-		$storage =& $gallery->getStorage();
-		$ret->putInSession();
-	    } else {
-		$result['status'] = 'success';
-	    }
+	    break;
+
+	case 'spam':
+	    $ret = $this->changePublishStatus($commentId, COMMENT_PUBLISH_STATUS_SPAM);
+	    break;
+
+	case 'despam':
+	    $ret = $this->changePublishStatus($commentId, COMMENT_PUBLISH_STATUS_PUBLISHED);
+	    break;
+
+	default:
+	    $ret = GalleryCoreApi::error(ERROR_BAD_PARAMETER);
+	}
+
+	if ($ret) {
+	    $result['status'] = 'error';
+	    $storage =& $gallery->getStorage();
+	    $ret->putInSession();
+	} else {
+	    $result['status'] = 'success';
 	}
 
 	GalleryCoreApi::requireOnce('lib/JSON/JSON.php');
@@ -81,8 +94,7 @@ class CommentCallbackView extends GalleryView {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::assertHasItemPermission(
-	    $comment->getParentId(), 'comment.delete');
+	$ret = GalleryCoreApi::assertHasItemPermission($comment->getParentId(), 'comment.delete');
 	if ($ret) {
 	    return $ret;
 	}
@@ -91,6 +103,48 @@ class CommentCallbackView extends GalleryView {
 	if ($ret) {
 	    return $ret;
 	}
+    }
+
+    /**
+     * Set the publish status for the comment with the given id to given value
+     * @param $commentId int the id
+     * @param $newPublishStatus the new publish status
+     */
+    function changePublishStatus($commentId, $newPublishStatus) {
+	if (empty($commentId)) {
+	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
+	}
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($commentId));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $comment) = GalleryCoreApi::loadEntitiesById($commentId, 'GalleryComment');
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::assertHasItemPermission($comment->getParentId(), 'comment.edit');
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret;
+	}
+
+	$comment->setPublishStatus($newPublishStatus);
+	$ret = $comment->save();
+	if ($ret) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret) {
+	    return $ret;
+	}
+
+	return null;
     }
 }
 ?>

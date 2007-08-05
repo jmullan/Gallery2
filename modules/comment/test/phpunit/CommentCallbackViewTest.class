@@ -64,6 +64,7 @@ class CommentCallbackViewTest extends GalleryTestCase {
 	$this->_comment->setCommenterId($this->_user->getId());
 	$this->_comment->setHost('127.0.0.1');
 	$this->_comment->setDate(time());
+	$this->_comment->setPublishStatus(COMMENT_PUBLISH_STATUS_UNPUBLISHED);
 
 	$ret = $this->_comment->save();
 	if ($ret) {
@@ -141,7 +142,88 @@ class CommentCallbackViewTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	$this->assertEquals('{"status":"error"}', $results);
 	return $this->_verifyEntity($this->_comment);
+    }
+
+    function testMarkCommentAsSpam() {
+	GalleryUtilities::putRequestVariable('command', 'spam');
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment->getId());
+
+	list ($ret, $results) = $this->_renderImmediate();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('{"status":"success"}', $results);
+
+	list ($ret, $this->_comment) = $this->_comment->refresh();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(COMMENT_PUBLISH_STATUS_SPAM, $this->_comment->getPublishStatus());
+    }
+
+    function testMarkCommentAsSpamNoPermissions() {
+	GalleryUtilities::putRequestVariable('command', 'spam');
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment->getId());
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $results) = $this->_renderImmediate();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('{"status":"error"}', $results);
+
+	list ($ret, $this->_comment) = $this->_comment->refresh();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(
+	    COMMENT_PUBLISH_STATUS_UNPUBLISHED, $this->_comment->getPublishStatus());
+    }
+
+    function testMarkCommentAsNotSpam() {
+	GalleryUtilities::putRequestVariable('command', 'despam');
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment->getId());
+
+	list ($ret, $results) = $this->_renderImmediate();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('{"status":"success"}', $results);
+
+	list ($ret, $this->_comment) = $this->_comment->refresh();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(COMMENT_PUBLISH_STATUS_PUBLISHED, $this->_comment->getPublishStatus());
+    }
+
+    function testMarkCommentAsNotSpamNoPermissions() {
+	GalleryUtilities::putRequestVariable('command', 'despam');
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment->getId());
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $results) = $this->_renderImmediate();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('{"status":"error"}', $results);
+
+	list ($ret, $this->_comment) = $this->_comment->refresh();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(
+	    COMMENT_PUBLISH_STATUS_UNPUBLISHED, $this->_comment->getPublishStatus());
     }
 }
 ?>

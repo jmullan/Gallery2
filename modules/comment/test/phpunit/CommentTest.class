@@ -50,8 +50,8 @@ class CommentTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	/* Create a few comments */
-	for ($i = 0; $i < 3; $i++) {
+	/* Create 4 comments.  The 4th one is unpublished. */
+	for ($i = 0; $i < 4; $i++) {
 	    list ($ret, $this->_comment[$i]) =
 		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 	    if ($ret) {
@@ -64,6 +64,9 @@ class CommentTest extends GalleryTestCase {
 	    $this->_comment[$i]->setHost('127.0.0.1');
 	    $this->_comment[$i]->setComment('this is a test comment #' . $i);
 	    $this->_comment[$i]->setDate(time()+$i);
+	    if ($i == 3) {
+		$this->_comment[$i]->setPublishStatus(COMMENT_PUBLISH_STATUS_UNPUBLISHED);
+	    }
 	    $ret = $this->_comment[$i]->save();
 	    if ($ret) {
 		return $ret;
@@ -135,7 +138,7 @@ class CommentTest extends GalleryTestCase {
 	}
 
 	list ($ret, $comments) = GalleryCommentHelper::fetchAllComments(
-				 $this->_album->getId(), 3, null, ORDER_DESCENDING);
+	    $this->_album->getId(), 3, null, ORDER_DESCENDING);
 	if ($ret) {
 	    return $ret;
 	}
@@ -149,6 +152,15 @@ class CommentTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array($this->_comment[0], $this->_comment[1], $this->_comment[2]),
 			    $comments, 'guest');
+
+	list ($ret, $comments) = GalleryCommentHelper::fetchAllComments(
+	    $this->_album->getId(), 4, null, ORDER_ASCENDING, null);
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array($this->_comment[0], $this->_comment[1],
+				  $this->_comment[2], $this->_comment[3]),
+			    $comments, 'all publish status types');
 
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchAllComments($this->_album->getId(), 2, 2, ORDER_DESCENDING);
@@ -269,7 +281,8 @@ class CommentTest extends GalleryTestCase {
 	}
 
 	/* Assert that everything is as expected before executing the test */
-	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
+	list ($ret, $comments) = GalleryCommentHelper::fetchComments(
+	    $this->_item->getId(), null, ORDER_ASCENDING, null);
 	if ($ret) {
 	    return $ret;
 	}
@@ -309,6 +322,191 @@ class CommentTest extends GalleryTestCase {
 	    $this->assertEquals($this->_item->getOwnerId(), $comment->getCommenterId(),
 				'commenterId wrong after the test');
 	}
+    }
+
+    function testFetchCommentsWithPublishStatus() {
+	list ($ret, $comments) = GalleryCommentHelper::fetchComments(
+		$this->_item->getId(), 2, ORDER_ASCENDING, COMMENT_PUBLISH_STATUS_UNPUBLISHED);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(array($this->_comment[3]), $comments);
+    }
+
+    function testFetchAllCommentsWithPublishStatus() {
+	list ($ret, $comments) = GalleryCommentHelper::fetchAllComments(
+	    $this->_album->getId(), 3, null, ORDER_DESCENDING, COMMENT_PUBLISH_STATUS_UNPUBLISHED);
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array($this->_comment[3]), $comments);
+    }
+
+    function testSaveCommentChecksWithAkismetWhenAkismetActive() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $akismetActive) =
+	    GalleryCoreApi::setPluginParameter('module', 'comment', 'akismet.active', 1);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$helper = new CommentTest_GalleryCommentHelper_MockCheckWithAkismet();
+	$event = new GalleryEvent();
+	$event->setEventName('GalleryEntity::save');
+	$event->setEntity(new GalleryComment());
+	$helper->handleEvent($event);
+
+	$this->assert($helper->wasCalled('checkWithAkismet'));
+    }
+
+    function testSaveCommentDoesntCheckWithAkismetWhenAkismetIsInactive() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $akismetActive) =
+	    GalleryCoreApi::setPluginParameter('module', 'comment', 'akismet.active', 0);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$helper = new CommentTest_GalleryCommentHelper_MockCheckWithAkismet();
+	$event = new GalleryEvent();
+	$event->setEventName('GalleryEntity::save');
+	$event->setEntity(new GalleryComment());
+	$helper->handleEvent($event);
+
+	$this->assert(!$helper->wasCalled('checkWithAkismet'));
+    }
+
+    function testSaveCommentDoesntCheckWithAkismetWhenListenerIsDisabled() {
+	$ret = $this->_markPluginParametersForCleanup('module', 'comment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $akismetActive) =
+	    GalleryCoreApi::setPluginParameter('module', 'comment', 'akismet.active', 0);
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryCommentHelper::setAkismetSaveListenerSwitch(false);
+
+	$helper = new CommentTest_GalleryCommentHelper_MockCheckWithAkismet();
+	$event = new GalleryEvent();
+	$event->setEventName('GalleryEntity::save');
+	$event->setEntity(new GalleryComment());
+	$helper->handleEvent($event);
+
+	$this->assert(!$helper->wasCalled('checkWithAkismet'));
+
+	GalleryCommentHelper::setAkismetSaveListenerSwitch(true);
+    }
+
+    function testCheckWithAkismet_NewSpamComment() {
+	$comment = new GalleryComment();
+	$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
+	$comment->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$akismet = new CommentTest_MockAkismetApi();
+	$akismet->setReturnFor('checkComment', array(null, true));
+	$ret = GalleryCommentHelper::checkWithAkismet($comment, $akismet);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($akismet->wasCalled('checkComment'));
+	$this->assertEquals(COMMENT_PUBLISH_STATUS_SPAM, $comment->getPublishStatus());
+    }
+
+    function testCheckWithAkismet_NewNonSpamComment() {
+	$comment = new GalleryComment();
+	$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
+	$comment->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$akismet = new CommentTest_MockAkismetApi();
+	$akismet->setReturnFor('checkComment', array(null, false));
+	$ret = GalleryCommentHelper::checkWithAkismet($comment, $akismet);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($akismet->wasCalled('checkComment'));
+	$this->assertEquals(COMMENT_PUBLISH_STATUS_PUBLISHED, $comment->getPublishStatus());
+    }
+
+    function testCheckWithAkismet_MarkedAsSpam() {
+	$comment = new GalleryComment();
+	$comment->_persistentStatus['originalValue']['publishStatus'] =
+	    COMMENT_PUBLISH_STATUS_PUBLISHED;
+	$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_SPAM);
+	$akismet = new CommentTest_MockAkismetApi();
+	$akismet->setReturnFor('submitSpam', null);
+	$ret = GalleryCommentHelper::checkWithAkismet($comment, $akismet);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($akismet->wasCalled('submitSpam'));
+    }
+
+    function testCheckWithAkismet_MarkedAsHam() {
+	$comment = new GalleryComment();
+	$comment->_persistentStatus['originalValue']['publishStatus'] = COMMENT_PUBLISH_STATUS_SPAM;
+	$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
+	$akismet = new CommentTest_MockAkismetApi();
+	$akismet->setReturnFor('submitHam', null);
+	$ret = GalleryCommentHelper::checkWithAkismet($comment, $akismet);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($akismet->wasCalled('submitHam'));
+    }
+}
+
+class CommentTest_MockAkismetApi {
+    function checkComment($comment) {
+	$_GET['mock']['called']['checkComment'] = true;
+	return $_GET['mock']['returnFor']['checkComment'];
+    }
+
+    function submitSpam($comment) {
+	$_GET['mock']['called']['submitSpam'] = true;
+	return $_GET['mock']['returnFor']['submitSpam'];
+    }
+
+    function submitHam($comment) {
+	$_GET['mock']['called']['submitHam'] = true;
+	return $_GET['mock']['returnFor']['submitHam'];
+    }
+
+    function setReturnFor($function, $return) {
+	$_GET['mock']['returnFor'][$function] = $return;
+    }
+
+    function wasCalled($function) {
+	return !empty($_GET['mock']['called'][$function]);
+    }
+}
+
+class CommentTest_GalleryCommentHelper_MockCheckWithAkismet extends GalleryCommentHelper {
+    function GalleryCommentHelper_MockCheckWithAkismet() {
+	$this->_checkWithAkismetCalled = false;
+    }
+
+    function wasCalled($function) {
+	return !empty($this->_calls[$function]);
+    }
+
+    function checkWithAkismet() {
+	$this->_calls['checkWithAkismet'] = true;
+	return null;
     }
 }
 ?>

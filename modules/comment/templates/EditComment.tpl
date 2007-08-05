@@ -86,6 +86,13 @@
       {g->text text="You must enter a comment"}
     </div>
     {/if}
+
+    <h4>
+      {g->text text="Publish Status"}
+    </h4>
+    <select name="{g->formVar var="form[publishStatus]"}">
+      {html_options options=$EditComment.publishStatusList selected=$form.publishStatus}
+    </select>
   </div>
 
   <div class="gbBlock gcBackground1">

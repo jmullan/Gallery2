@@ -35,10 +35,13 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      * @param int $itemId GalleryItem id
      * @param int $count (optional) max number to retrieve
      * @param string $orderDirection (optional) ORDER_DESCENDING to list newest first
+     * @param int $publishStatus One of the COMMENT_PUBLISH_STATUS_XXX constants or null to
+     *            get all comments
      * @return array (object GalleryStatus a status code,
      *                array (entityId => GalleryComment, ...)
      */
-    function fetchComments($itemId, $count=null, $orderDirection=ORDER_ASCENDING) {
+    function fetchComments($itemId, $count=null, $orderDirection=ORDER_ASCENDING,
+			   $publishStatus=COMMENT_PUBLISH_STATUS_PUBLISHED) {
 	global $gallery;
 
 	switch($orderDirection) {
@@ -54,6 +57,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null);
 	}
 
+	$data = array((int)$itemId);
 	$query = '
 	SELECT
 	  [GalleryComment::id]
@@ -63,12 +67,20 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	  [GalleryChildEntity::parentId] = ?
 	  AND
 	  [GalleryChildEntity::id] = [GalleryComment::id]
+        ';
+	if (isset($publishStatus)) {
+	    $query .= '
+          AND
+          [GalleryComment::publishStatus] = ?
+            ';
+	    $data[] = $publishStatus;
+	}
+	$query .= '
 	ORDER BY
 	  [GalleryComment::date] ' . $direction . '
 	';
-	list ($ret, $searchResults) =
-		$gallery->search($query, array((int)$itemId),
-					       array('limit' => array('count' => (int)$count)));
+	list ($ret, $searchResults) = $gallery->search(
+	    $query, $data, array('limit' => array('count' => (int)$count)));
 
 	if ($ret) {
 	    return array($ret, null);
@@ -99,11 +111,14 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
      * @param int $count (optional) max number to retrieve
      * @param int $offset (optional) start of the range
      * @param string $orderDirection (optional) ORDER_DESCENDING to list newest first
+     * @param int $publishStatus One of the COMMENT_PUBLISH_STATUS_XXX constants or null to
+     *            get all comments
      * @return array (object GalleryStatus a status code,
      *                array (entityId => GalleryComment, ...)
      *                int total number of comments available
      */
-    function fetchAllComments($itemId, $count=null, $offset=null, $orderDirection=ORDER_ASCENDING) {
+    function fetchAllComments($itemId, $count=null, $offset=null, $orderDirection=ORDER_ASCENDING,
+			      $publishStatus=COMMENT_PUBLISH_STATUS_PUBLISHED) {
 	global $gallery;
 
 	switch($orderDirection) {
@@ -119,7 +134,6 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER),
 			 null, null);
 	}
-
 	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($itemId);
 	if ($ret) {
 	    return array($ret, null, null);
@@ -150,7 +164,13 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	   OR
 	   [GalleryItemAttributesMap::parentSequence] LIKE ?)
 	 AND
-	   [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]
+	   [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]';
+	if ($publishStatus !== null) {
+	    $queryBase .= '
+	 AND
+	   [GalleryComment::publishStatus] = ?';
+	}
+	$queryBase .= '
 	 AND
 	   [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
 	 AND
@@ -164,7 +184,11 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	ORDER BY
 	  [GalleryComment::date] ' . $direction . '
 	';
-	$data = array_merge(array((int)$itemId, $sequence), $aclIds);
+	$data = array((int)$itemId, $sequence);
+	if ($publishStatus !== null) {
+	    $data[] = $publishStatus;
+	};
+	$data = array_merge($data, $aclIds);
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query, $data, array('limit' => array('count' => (int)$count,
@@ -230,11 +254,15 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 	  [GalleryChildEntity::parentId] IN (' . $markers . ')
 	  AND
 	  [GalleryChildEntity::id] = [GalleryComment::id]
+          AND
+          [GalleryComment::publishStatus] = ?
 	GROUP BY
 	  [GalleryChildEntity::parentId]
 	';
 
-	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
+	$data = $itemIds;
+	$data[] = COMMENT_PUBLISH_STATUS_PUBLISHED;
+	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret) {
 	    return array($ret, null);
 	}
@@ -333,13 +361,16 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
     }
 
      /**
-     * Event handler for GalleryEntity::delete
-     *
-     * Delete all comments by a user
-     * (Item deletion and their attached comments is already handled in GalleryItem::delete)
-     *
-     * @see GalleryEventListener::handleEvent
-     */
+      * Event handler.
+      *
+      * GalleryEntity::delete
+      *   Delete all comments by a user (Item deletion and their attached comments is already
+      *   handled in GalleryItem::delete).
+      * GalleryEntity::save
+      *   Run newly created comments through Akismet and unpublish spam.
+      *
+      * @see GalleryEventListener::handleEvent
+      */
     function handleEvent($event) {
 	global $gallery;
 
@@ -371,9 +402,92 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 		    return array($ret, null);
 		}
 	    }
+	    break;
+
+	case 'GalleryEntity::save':
+	    if (!GalleryCommentHelper::getAkismetSaveListenerSwitch()) {
+		break;
+	    }
+	    $comment =& $event->getEntity();
+	    if (GalleryUtilities::isA($comment, 'GalleryComment')) {
+		list ($ret, $akismetActive) =
+		    GalleryCoreApi::getPluginParameter('module', 'comment', 'akismet.active');
+		if ($ret) {
+		    return $ret;
+		}
+		if ($akismetActive) {
+		    GalleryCoreApi::requireOnce('modules/comment/classes/AkismetApi.class');
+		    $akismet = new AkismetApi();
+		    $ret = $this->checkWithAkismet($comment, $akismet);
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		}
+	    }
+	    break;
 	}
 
 	return array(null, null);
+    }
+
+    /**
+     * Enable or disable the Akismet save listener for the rest of this request.  Set this value
+     * to false to ignore changes to entities for the rest of this request.  You should disable
+     * the save listener if you're changing a comment's publish status to match what you learned
+     * with checkWithAkismet, so that we don't report a comment back to Akismet as spam, if it was
+     * Akismet that told us this in the first place. The initial value for this switch is true.
+     * @param $enabled bool true to enable the listener, false to disable it
+     * @static
+     */
+    function setAkismetSaveListenerSwitch($enabled) {
+	$switch =& GalleryCommentHelper::getAkismetSaveListenerSwitch();
+	$switch = $enabled;
+    }
+
+    /**
+     * Return a reference to a boolean that controls whether Akismet is used for this request.
+     * @return bool the current status
+     * @static
+     */
+    function &getAkismetSaveListenerSwitch() {
+	static $enabled = true;
+	return $enabled;
+    }
+
+    /**
+     * Run a comment by Akismet.  If it's a new comment, check with Akismet to see if the comment
+     * is spam.  If it's a modified comment, submit it as ham or spam as appropriate of the
+     * publish status has changed.
+     *
+     * @param $comment an instance of GalleryComment
+     * @param $akismet an instance of AkismetApi
+     * @return object GalleryStatus a status code
+     */
+    function checkWithAkismet(&$comment, $akismet) {
+	if ($comment->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	    list ($ret, $isSpam) = $akismet->checkComment($comment);
+	    if ($ret) {
+		return $ret;
+	    }
+	    if ($isSpam) {
+		$comment->setPublishStatus(COMMENT_PUBLISH_STATUS_SPAM);
+	    }
+	} else {
+	    $oldStatus = $comment->getOriginalValue('publishStatus');
+	    if ($comment->isModified('publishStatus')) {
+		if ($oldStatus == COMMENT_PUBLISH_STATUS_SPAM) {
+		    $ret = $akismet->submitHam($comment);
+		    if ($ret) {
+			return $ret;
+		    }
+		} else if ($comment->getPublishStatus() == COMMENT_PUBLISH_STATUS_SPAM) {
+		    $ret = $akismet->submitSpam($comment);
+		    if ($ret) {
+			return $ret;
+		    }
+		}
+	    }
+	}
     }
 }
 ?>

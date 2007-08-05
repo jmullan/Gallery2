@@ -18,48 +18,109 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');
+
+/**
+ * Controller for moderating spam
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ * @version $Revision$
+ */
+class AdminModerateSpamController extends GalleryController {
+    /**
+     * @see GalleryController::handleRequest
+     */
+    function handleRequest($form) {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
+	if ($ret) {
+	    return array($ret, null);
+	}
+
+	$status = $error = array();
+	if (isset($form['action']['deleteAllSpam'])) {
+	    $batchSize = 100;
+	    while (true) {
+		/** @todo use a progress bar here */
+		list ($ret, $comments, $count) = GalleryCommentHelper::fetchAllComments(
+		    $rootId, $batchSize, null, ORDER_ASCENDING, COMMENT_PUBLISH_STATUS_SPAM);
+		if ($ret) {
+		    return array($ret, null);
+		}
+
+		foreach ($comments as $comment) {
+		    $ret = GalleryCoreApi::deleteEntityById($comment->getId());
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		}
+
+		if ($count <= $batchSize) {
+		    break;
+		}
+	    }
+
+	    $status['allSpamDeleted'] = 1;
+	}
+
+	/* Figure out where to redirect upon success */
+	$method = empty($error) ? 'redirect' : 'delegate';
+	$results[$method]['view'] = 'core.SiteAdmin';
+	$results[$method]['subView'] = 'comment.AdminModerateSpam';
+	$results['status'] = $status;
+	$results['error'] = $error;
+
+	return array(null, $results);
+    }
+}
+
 /**
  * This view will show all comments stored in the Gallery
  * @package Comment
  * @subpackage UserInterface
- * @author Johannes Schmittat <Johannes@Schmittat.com>
+ * @author Bharat Mediratta <bharat@menalto.com>
  * @version $Revision$
  */
-class ShowAllCommentsView extends GalleryView {
-
+class AdminModerateSpamView extends GalleryView {
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');
-
-	list ($ret, $item) = $this->getItem();
-	if ($ret) {
-	    return array($ret, null);
-	}
-	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.view');
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
 	}
 
+	list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
+	if ($ret) {
+	    return array($ret, null);
+	}
 	list ($ret, $showCount) =
 	    GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.show');
 	if ($ret) {
 	    return array($ret, null);
 	}
+
 	$page = GalleryUtilities::getRequestVariables('page');
 	if (empty($page)) {
 	    $page = 1;
 	}
 
 	list ($ret, $comments, $count) = GalleryCommentHelper::fetchAllComments(
-	    $item->getId(), $showCount, ($page - 1) * $showCount, ORDER_DESCENDING);
+	    $rootId, $showCount, ($page - 1) * $showCount, ORDER_DESCENDING,
+	    COMMENT_PUBLISH_STATUS_SPAM);
 	if ($ret) {
 	    return array($ret, null);
 	}
 
 	$commenters = $itemIds = $can = $itemData = array();
-	for ($i = 0; $i < count($comments); $i++) {
+	foreach ($comments as $i => $comment) {
 	    /* Get the commenter ids */
 	    $commenters[$comments[$i]->getCommenterId()] = 1;
 	    $itemIds[$comments[$i]->getParentId()] = 1;
@@ -75,6 +136,7 @@ class ShowAllCommentsView extends GalleryView {
 		return array($ret, null);
 	    }
 
+	    $commenters = array();
 	    foreach ($commentersList as $commenter) {
 		$commenters[$commenter->getId()] = (array)$commenter;
 	    }
@@ -108,7 +170,7 @@ class ShowAllCommentsView extends GalleryView {
 	    }
 	    foreach (array('delete' => 'comment.delete',
 			   'edit' => 'comment.edit',
-			   'markSpam' => 'comment.edit') as $canFlag => $permission) {
+			   'markNotSpam' => 'comment.edit') as $canFlag => $permission) {
 		$can[$comment['id']][$canFlag] = isset($permissions[$permission]);
 	    }
 
@@ -130,25 +192,26 @@ class ShowAllCommentsView extends GalleryView {
 
 	$navigator = array('page' => $page, 'pageCount' => ceil($count/$showCount));
 	if ($page > 1) {
-	    $navigator['first'] = array('urlParams' => array('view' => 'comment.ShowAllComments',
-				  'itemId' => $item->getId(), 'page' => 1));
-	    $navigator['back'] = array('urlParams' => array('view' => 'comment.ShowAllComments',
-				 'itemId' => $item->getId(), 'page' => $page - 1));
+	    $navigator['first'] = array('urlParams' => array('view' => 'comment.AdminModerateSpam',
+				  'itemId' => $rootId, 'page' => 1));
+	    $navigator['back'] = array('urlParams' => array('view' => 'comment.AdminModerateSpam',
+				 'itemId' => $rootId, 'page' => $page - 1));
 	}
 	if ($page < $navigator['pageCount']) {
-	    $navigator['next'] = array('urlParams' => array('view' => 'comment.ShowAllComments',
-				 'itemId' => $item->getId(), 'page' => $page + 1));
-	    $navigator['last'] = array('urlParams' => array('view' => 'comment.ShowAllComments',
-				 'itemId' => $item->getId(), 'page' => $navigator['pageCount']));
+	    $navigator['next'] = array('urlParams' => array('view' => 'comment.AdminModerateSpam',
+				 'itemId' => $rootId, 'page' => $page + 1));
+	    $navigator['last'] = array('urlParams' => array('view' => 'comment.AdminModerateSpam',
+				 'itemId' => $rootId, 'page' => $navigator['pageCount']));
 	}
 
-	$template->setVariable('ShowAllComments', array(
+	$template->setVariable('controller', 'comment.AdminModerateSpam');
+	$template->setVariable('AdminModerateSpam', array(
 	    'comments' => $comments,
 	    'commenters' => $commenters,
 	    'can' => $can,
-	    'item' => (array)$item,
 	    'itemData' => $itemData,
-	    'navigator' => $navigator));
+	    'navigator' => $navigator,
+	    'total' => $count));
 	$template->style('modules/comment/comment.css');
 	$template->javascript('lib/yui/yahoo-min.js');
 	$template->javascript('lib/yui/dom-min.js');
@@ -156,8 +219,7 @@ class ShowAllCommentsView extends GalleryView {
  	$template->javascript('lib/yui/connection-min.js');
  	$template->javascript('lib/yui/animation-min.js');
 	$template->javascript('lib/yui/container-min.js');
-	return array(null,
-		     array('body' => 'modules/comment/templates/ShowAllComments.tpl'));
+	return array(null, array('body' => 'modules/comment/templates/AdminModerateSpam.tpl'));
     }
 
     /**
@@ -169,7 +231,7 @@ class ShowAllCommentsView extends GalleryView {
 	    return array($ret, null);
 	}
 
-	return array(null, $module->translate('show comments'));
+	return array(null, $module->translate('moderate spam'));
     }
 }
 ?>

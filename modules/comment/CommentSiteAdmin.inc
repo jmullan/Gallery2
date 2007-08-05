@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+GalleryCoreApi::requireOnce('modules/comment/classes/AkismetApi.class');
+GalleryCoreApi::requireOnce('modules/comment/classes/GalleryCommentHelper.class');
+
 /**
  * Settings for comments
  * @package Comment
@@ -27,11 +30,17 @@
  * @version $Revision$
  */
 class CommentSiteAdminController extends GalleryController {
+    var $_akismet;
+
+    function CommentSiteAdminController() {
+	$this->_akismet = new AkismetApi();
+    }
 
     /**
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
+	global $gallery;
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret) {
 	    return array($ret, null);
@@ -39,33 +48,169 @@ class CommentSiteAdminController extends GalleryController {
 
 	$status = $error = array();
 	if (isset($form['action']['save'])) {
-	   if (!isset($form['show']) || !is_numeric($form['show'])) {
+	    if (!isset($form['show']) || !is_numeric($form['show'])) {
 		$error[] = 'form[error][show]';
 	    }
 
+	    $validApiKey = false;
+
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    list ($ret, $currentApiKey) = $module->getParameter('akismet.apiKey');
+	    if ($ret) {
+		return array($ret, null);
+	    }
+
+	    if (!empty($form['apiKey']) && $form['apiKey'] != $currentApiKey) {
+		list ($ret, $validApiKey) = $this->_akismet->verifyApiKey($form['apiKey']);
+		if ($ret) {
+		    return array($ret, null);
+		}
+
+		if (!$validApiKey) {
+		    $error[] = 'form[error][apiKey][invalid]';
+		}
+	    }
+
 	    if (empty($error)) {
-		$ret = GalleryCoreApi::setPluginParameter('module', 'comment',
-							  'comments.show', $form['show']);
+		$ret = $module->setParameter('comments.show', $form['show']);
 		if ($ret) {
 		    return array($ret, null);
 		}
-		$ret = GalleryCoreApi::setPluginParameter('module', 'comment',
-			'comments.latest', (isset($form['latest']) && $form['latest']) ? 1 : 0);
+		$ret = $module->setParameter(
+		    'comments.latest', (isset($form['latest']) && $form['latest']) ? 1 : 0);
 		if ($ret) {
 		    return array($ret, null);
 		}
+
+		$ret = $module->setParameter('akismet.apiKey', $form['apiKey']);
+		if ($ret) {
+		    return array($ret, null);
+		}
+
+		$ret = $module->setParameter('akismet.active', !empty($form['apiKey']) ? 1 : 0);
+		if ($ret) {
+		    return array($ret, null);
+		}
+
 		$status['saved'] = 1;
 	    }
-	} /* else $form['action']['reset'] */
+	} else if (isset($form['action']['checkAllWithAkismet'])) {
+	    $templateAdapter =& $gallery->getTemplateAdapter();
+	    $templateAdapter->registerTrailerCallback(
+		array($this, 'checkAllWithAkismet'), array(new AkismetApi()));
+	    $delegate['view'] = 'core.ProgressBar';
+	}
 
 	/* Figure out where to redirect upon success */
-	$method = empty($error) ? 'redirect' : 'delegate';
-	$results[$method]['view'] = 'core.SiteAdmin';
-	$results[$method]['subView'] = 'comment.CommentSiteAdmin';
+	if (empty($delegate)) {
+	    $method = empty($error) ? 'redirect' : 'delegate';
+	    $results[$method]['view'] = 'core.SiteAdmin';
+	    $results[$method]['subView'] = 'comment.CommentSiteAdmin';
+	} else {
+	    $results['delegate'] = $delegate;
+	}
 	$results['status'] = $status;
 	$results['error'] = $error;
 
 	return array(null, $results);
+    }
+
+    /**
+     * Check all existing comments against Akismet.
+     * @param $akismet object AkismetApi instance
+     * @return object GalleryStatus a status code
+     */
+    function checkAllWithAkismet($akismet) {
+	global $gallery;
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$session =& $gallery->getSession();
+	$urlGenerator =& $gallery->getUrlGenerator();
+
+	list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$status = array();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'comment');
+	if ($ret) {
+	    return $ret;
+	}
+
+	/*
+	 * Disable the Akismet GalleryEntity::save listener so that if Akismet reports a message
+	 * as spam and we change its publish status, we don't report it back to Akismet.
+	 */
+	GalleryCommentHelper::setAkismetSaveListenerSwitch(false);
+
+	$checkingCommentMessage = $module->translate('Checking all comments with Akismet');
+	$checkedCount = 0;
+	$spamCount = 0;
+	while (true) {
+	    $batchSize = 100;
+	    list ($ret, $comments, $total) = GalleryCommentHelper::fetchAllComments(
+		$rootId, $batchSize, null, ORDER_ASCENDING, COMMENT_PUBLISH_STATUS_PUBLISHED);
+	    if ($ret) {
+		return $ret;
+	    }
+
+	    foreach ($comments as $comment) {
+		$templateAdapter->updateProgressBar(
+		    $checkingCommentMessage,
+		    GalleryUtilities::utf8Substring(
+			$comment->getSubject() . ' ' . $comment->getComment(), 0, 100),
+		    ++$checkedCount / $total);
+
+		list ($ret, $isSpam) = $akismet->checkComment($comment);
+		if ($ret) {
+		    return $ret;
+		}
+		if ($isSpam) {
+		    /** @todo lock all of these at once */
+		    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($comment->getId());
+		    if ($ret) {
+			return $ret;
+		    }
+
+		    list ($ret, $comment) = $comment->refresh();
+		    if ($ret) {
+			return $ret;
+		    }
+
+		    $comment->setPublishStatus(COMMENT_PUBLISH_STATUS_SPAM);
+		    $ret = $comment->save();
+		    if ($ret) {
+			return $ret;
+		    }
+
+		    $ret = GalleryCoreApi::releaseLocks($lockId);
+		    if ($ret) {
+			return $ret;
+		    }
+		    $spamCount++;
+		}
+	    }
+
+	    if ($total <= $batchSize) {
+		break;
+	    }
+	}
+
+	GalleryCommentHelper::setAkismetSaveListenerSwitch(true);
+
+	$status['checked'] = array('total' => $total, 'spamCount' => $spamCount);
+	$statusId = $session->putStatus($status);
+	$continueUrl = $urlGenerator->generateUrl(
+	    array('view' => 'core.SiteAdmin', 'subView' => 'comment.CommentSiteAdmin',
+		  'statusId' => $statusId),
+	    array('forceFullUrl' => true));
+	$templateAdapter->completeProgressBar($continueUrl, false);
+
+	return null;
     }
 }
 
@@ -83,27 +228,24 @@ class CommentSiteAdminView extends GalleryView {
 	    return array($ret, null);
 	}
 
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'comment');
+	if ($ret) {
+	    return array($ret, null);
+	}
+
 	if ($form['formName'] != 'CommentSiteAdmin') {
 	    $form['formName'] = 'CommentSiteAdmin';
-	    foreach (array('latest', 'show') as $key) {
-		list ($ret, $value) =
-		    GalleryCoreApi::getPluginParameter('module', 'comment', 'comments.' . $key);
-		if ($ret) {
-		    return array($ret, null);
-		}
-		$form[$key] = $value;
-	    }
+
+	    $form['latest'] = isset($params['comments.latest']) ? $params['comments.latest'] : '';
+	    $form['show'] = !empty($params['comments.latest']);
+	    $form['apiKey'] = isset($params['akismet.apiKey']) ? $params['akismet.apiKey'] : '';
 	} else if (!isset($form['latest'])) {
 	    $form['latest'] = false;
 	}
 
-	list ($ret, $pluginInstances) =
-	    GalleryCoreApi::getAllFactoryImplementationIds('GalleryValidationPlugin');
-	if ($ret) {
-	    return array($ret, null);
-	}
-	$form['canValidate'] = !empty($pluginInstances);
-
+	$CommentSiteAdmin = array();
+	$CommentSiteAdmin['akismetActive'] = !empty($params['akismet.active']);
+	$template->setVariable('CommentSiteAdmin', $CommentSiteAdmin);
 	$template->setVariable('controller', 'comment.CommentSiteAdmin');
 	return array(null,
 		     array('body' => 'modules/comment/templates/CommentSiteAdmin.tpl'));

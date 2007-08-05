@@ -66,8 +66,8 @@ class CommentSearchTest extends GalleryTestCase {
 
 	    $this->_markForCleanup($this->_item[$j]);
 
-	    /* Create some comments */
-	    for ($i = 0; $i < 2; $i++) {
+	    /* Create 3 comments.  The 3rd one is unpublished. */
+	    for ($i = 0; $i < 3; $i++) {
 		list ($ret, $this->_comment[$j][$i]) =
 		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
 		if ($ret) {
@@ -84,6 +84,9 @@ class CommentSearchTest extends GalleryTestCase {
 		    $this->_comment[$j][$i]->setAuthor($this->_randomKey . ": test author($j,$i)");
 		}
 		$this->_comment[$j][$i]->setDate(time());
+		if ($i == 2) {
+		    $this->_comment[$j][$i]->setPublishStatus(COMMENT_PUBLISH_STATUS_UNPUBLISHED);
+		}
 		$ret = $this->_comment[$j][$i]->save();
 		if ($ret) {
 		    return $ret;

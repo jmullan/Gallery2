@@ -10,17 +10,33 @@
 
 {if $can.edit}
 <span class="edit">
-  <a href="{g->url arg1="view=comment.EditComment" arg2="itemId=`$item.id`"
-		   arg3="commentId=`$comment.id`" arg4="return=true"}">
-    {g->text text="edit"}</a>
+  <a href="{g->url arg1="view=comment.EditComment" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="return=true"}">{g->text text="edit"}</a>
 </span>
+{assign var="needSeparator" value="true"}
 {/if}
 
 {if $can.delete}
+{if $needSeparator}|{/if}
 <span class="delete">
-  <a{if !empty($ajaxDeleteCallback)} onclick="{$ajaxDeleteCallback}({$comment.id}); return false;"{/if} href="{g->url arg1="view=comment.DeleteComment" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="return=true"}">
-    {g->text text="delete"}</a>
+  <a{if !empty($ajaxChangeCallback)} onclick="{$ajaxChangeCallback}({$comment.id}, 'delete'); return false;"{/if} href="{g->url arg1="view=comment.DeleteComment" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="return=true"}">{g->text text="delete"}</a>
 </span>
+{assign var="needSeparator" value="true"}
+{/if}
+
+{if !empty($can.markNotSpam)}
+{if $needSeparator}|{/if}
+<span class="marknotspam">
+  <a {if !empty($ajaxChangeCallback)} onclick="{$ajaxChangeCallback}({$comment.id}, 'despam'); return false;"{/if} href="{g->url arg1="controller=comment.AdminModerateSpam" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="action=markNotSpam" arg5="return=true"}">{g->text text="mark as not spam"}</a>
+</span>
+{assign var="needSeparator" value="true"}
+{/if}
+
+{if !empty($can.markSpam)}
+{if $needSeparator}|{/if}
+<span class="markSpam">
+  <a {if !empty($ajaxChangeCallback)} onclick="{$ajaxChangeCallback}({$comment.id}, 'spam'); return false;"{/if} href="{g->url arg1="controller=comment.AdminModerateSpam" arg2="itemId=`$item.id`" arg3="commentId=`$comment.id`" arg4="action=markSpam" arg5="return=true"}">{g->text text="mark as spam"}</a>
+</span>
+{assign var="needSeparator" value="true"}
 {/if}
 
 {assign var="commentText" value=$comment.comment|markup}
@@ -29,18 +45,20 @@
 {/if}
 
 {if isset($truncate) && ($truncated != $commentText)}
+<span class="showFull">
+  {if $needSeparator}| {/if}
   <a id="comment-more-toggle-{$comment.id}"
       onclick="document.getElementById('comment-truncated-{$comment.id}').style.display='none';
 	       document.getElementById('comment-full-{$comment.id}').style.display='block';
 	       document.getElementById('comment-more-toggle-{$comment.id}').style.display='none';
-	       document.getElementById('comment-less-toggle-{$comment.id}').style.display='inline';"
+	       document.getElementById('comment-less-toggle-{$comment.id}').style.display='inline'; return false;"
       href="">{g->text text="show full"}</a><a id="comment-less-toggle-{$comment.id}"
       onclick="document.getElementById('comment-truncated-{$comment.id}').style.display='block';
 	       document.getElementById('comment-full-{$comment.id}').style.display='none';
 	       document.getElementById('comment-more-toggle-{$comment.id}').style.display='inline';
-	       document.getElementById('comment-less-toggle-{$comment.id}').style.display='none';"
+	       document.getElementById('comment-less-toggle-{$comment.id}').style.display='none'; return false;"
       href="" style="display: none">{g->text text="show summary"}</a>
-
+</span>
   <p id="comment-truncated-{$comment.id}" class="comment">
     {$truncated}
   </p>
