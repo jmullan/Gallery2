@@ -129,6 +129,7 @@ class CommentSiteAdminController extends GalleryController {
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$session =& $gallery->getSession();
 	$urlGenerator =& $gallery->getUrlGenerator();
+	$storage =& $gallery->getStorage();
 
 	list ($ret, $rootId) = GalleryCoreApi::getDefaultAlbumId();
 	if ($ret) {
@@ -150,10 +151,12 @@ class CommentSiteAdminController extends GalleryController {
 	$checkingCommentMessage = $module->translate('Checking all comments with Akismet');
 	$checkedCount = 0;
 	$spamCount = 0;
+	$total = null;
 	while (true) {
 	    $batchSize = 100;
 	    list ($ret, $comments, $total) = GalleryCommentHelper::fetchAllComments(
-		$rootId, $batchSize, null, ORDER_ASCENDING, COMMENT_PUBLISH_STATUS_PUBLISHED);
+		$rootId, $batchSize, $checkedCount, ORDER_ASCENDING,
+		COMMENT_PUBLISH_STATUS_PUBLISHED);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -195,10 +198,17 @@ class CommentSiteAdminController extends GalleryController {
 		}
 	    }
 
-	    if ($total <= $batchSize) {
+	    if ($checkedCount >= $total) {
 		break;
 	    }
+
+	    $ret = $storage->checkPoint();
+	    if ($ret) {
+		return $ret;
+	    }
 	}
+
+	$templateAdapter->updateProgressBar($module->translate('Done checking comments'), '', 1);
 
 	GalleryCommentHelper::setAkismetSaveListenerSwitch(true);
 
@@ -237,7 +247,7 @@ class CommentSiteAdminView extends GalleryView {
 	    $form['formName'] = 'CommentSiteAdmin';
 
 	    $form['latest'] = isset($params['comments.latest']) ? $params['comments.latest'] : '';
-	    $form['show'] = !empty($params['comments.latest']);
+	    $form['show'] = $params['comments.show'];
 	    $form['apiKey'] = isset($params['akismet.apiKey']) ? $params['akismet.apiKey'] : '';
 	} else if (!isset($form['latest'])) {
 	    $form['latest'] = false;
