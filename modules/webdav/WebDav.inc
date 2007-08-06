@@ -42,10 +42,8 @@ class WebDavController extends GalleryController {
 	 * registered for this request.  Since this is the WebDAV controller, we know it is a WebDAV
 	 * request.
 	 */
-	$ret = GalleryCoreApi::registerEventListener('Gallery::Error', new WebDavModule(), true);
-	if ($ret) {
-	    return array($ret, null);
-	}
+	$isAppropriate =& WebDavModule::_isAppropriate();
+	$isAppropriate['Gallery::Error'] = true;
 
 	/*
 	 * Windows Web Folders doesn't respect HTTP auth in PUT responses, so the user is not
@@ -203,6 +201,7 @@ class WebDavView extends GalleryView {
 	    GalleryUtilities::getServerVar('REQUEST_METHOD'));
 	if (!in_array($requestMethod, array('options', 'propfind', 'proppatch', 'mkcol', 'delete',
 					    'move', 'lock', 'unlock'))) {
+	    WebDavServer::setResponseStatus('405 Method Not Allowed');
 	    return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
 	}
 

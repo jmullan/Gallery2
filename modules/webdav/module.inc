@@ -31,11 +31,11 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('webdav');
 	$this->setName($gallery->i18n('WebDAV'));
-	$this->setVersion('1.0.4'); /* Update upgrade() too! */
+	$this->setVersion('1.0.5'); /* Update upgrade() too! */
 	$this->setDescription($gallery->i18n('Mount Gallery on your desktop.'));
 	$this->setGroup('interfaces', $gallery->i18n('Remote Interfaces'));
-	$this->setCallbacks('getItemLinks|getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(7, 27));
+	$this->setCallbacks('getItemLinks|getSiteAdminViews');
+	$this->setRequiredCoreApi(array(7, 34));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
@@ -43,6 +43,17 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEventListener',
+	    'WebDavModule', 'WebDavModule',
+	    'modules/webdav/module.inc', 'webdav',
+	    array('Gallery::ActivatePlugin',
+		  'Gallery::Error',
+		  'GalleryEntity::delete',
+		  'GalleryEntity::save'));
+	if ($ret) {
+	    return $ret;
+	}
+
 	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
 	    'ItemAddWebDav', 'ItemAddWebDav',
 	    'modules/webdav/ItemAddWebDav.inc', 'webdav', null);
@@ -53,31 +64,6 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	$ret = GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
 	    'ItemEditWebDav', 'ItemEditWebDav',
 	    'modules/webdav/ItemEditWebDav.inc', 'webdav', null);
-	if ($ret) {
-	    return $ret;
-	}
-
-	return null;
-    }
-
-    /**
-     * @see GalleryModule::registerEventListeners
-     */
-    function registerEventListeners() {
-	$ret = GalleryCoreApi::registerEventListener(
-	    'Gallery::ActivatePlugin', new WebDavModule(), true);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$ret = GalleryCoreApi::registerEventListener(
-	    'GalleryEntity::delete', new WebDavModule(), true);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$ret = GalleryCoreApi::registerEventListener(
-	    'GalleryEntity::save', new WebDavModule(), true);
 	if ($ret) {
 	    return $ret;
 	}
@@ -141,7 +127,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	case '0.6.0':
 	    /* Remove view with WebDAV permission */
-	    $ret = GalleryCoreApi::unregisterModulePermissions($this->getId());
+	    $ret = GalleryCoreApi::unregisterModulePermissions('webdav');
 	    if ($ret) {
 		return $ret;
 	    }
@@ -185,6 +171,9 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
 	case '1.0.3':
 	    /* Add ItemEditWebDav to require correct permissions when replacing an item */
+
+	case '1.0.4':
+	    /* Use lightweight event system */
 
 	case 'end of upgrade path':
 	    break;
@@ -304,9 +293,9 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    'pattern' => 'w%path%',
 	    'keywords' => array(
 		'path' => array(
+		    'help' => $this->translate('Path to an item (e.g. /album/image.jpg.html)'),
 		    'pattern' => '(/[^?]*)?',
-		    'function' => array('webdav', 'WebDavRewriteHelper', 'parsePath'),
-		    'help' => $this->translate('Path to an item (e.g. /album/image.jpg.html)'))));
+		    'function' => array('webdav', 'WebDavRewriteHelper', 'parsePath'))));
 
 	/* Give davmount resources the correct extension */
 	$rules['davmount'] = array(
@@ -317,9 +306,9 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    'pattern' => 'v/%path%.davmount',
 	    'keywords' => array(
 		'path' => array(
+		    'help' => $this->translate('Path to an item (e.g. /album/image.jpg.html)'),
 		    'pattern' => '([^?]+)',
-		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parsePath'),
-		    'help' => $this->translate('Path to an item (e.g. /album/image.jpg.html)'))),
+		    'function' => array('rewrite', 'RewriteSimpleHelper', 'parsePath'))),
 	    'onLoad' => array('rewrite', 'RewriteSimpleHelper', 'loadItemIdFromPath'));
 
 	/*
@@ -344,7 +333,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $rules;
 	}
 
-	list ($ret, $activeRules) = $rewriteApi->fetchActiveRulesForModule($this->getId());
+	list ($ret, $activeRules) = $rewriteApi->fetchActiveRulesForModule('webdav');
 	if ($ret) {
 	    $gallery->debug('Error in WebDavModule::getRewriteRules: ' . $ret->getAsText());
 	    return $rules;
@@ -375,9 +364,24 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
+     * Is this event listener appropriate at this time?
+     * @return array $eventName => boolean
+     * @static
+     */
+    function &_isAppropriate() {
+	static $isAppropriate;
+	return $isAppropriate;
+    }
+
+    /**
      * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
+	$isAppropriate = WebDavModule::_isAppropriate();
+	if (empty($isAppropriate[$event->getEventName()]) && class_exists('GalleryTestCase')) {
+	    return array(null, null);
+	}
+
 	switch ($event->getEventName()) {
 	case 'Gallery::ActivatePlugin':
 	    /* Activate essential rewrite rules */
@@ -462,7 +466,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 	    return GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED);
 	}
 
-	list ($ret, $success) = $rewriteApi->activateRewriteRulesForModule($this->getId());
+	list ($ret, $success) = $rewriteApi->activateRewriteRulesForModule('webdav');
 	if ($ret) {
 	    return $ret;
 	}

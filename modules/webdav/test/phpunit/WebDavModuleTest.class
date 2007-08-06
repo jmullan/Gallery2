@@ -144,9 +144,10 @@ class WebDavModuleTest extends GalleryTestCase {
 	    $this->_includesDavHeadersResponse;
 
 	/* Register event listeners */
-	$this->_registerTestEventListener('Gallery::ActivatePlugin', $this->_module);
-	$this->_registerTestEventListener('GalleryEntity::delete', $this->_module);
-	$this->_registerTestEventListener('GalleryEntity::save', $this->_module);
+	$this->_isAppropriate =& WebDavModule::_isAppropriate();
+	$this->_isAppropriate['Gallery::ActivatePlugin'] = true;
+	$this->_isAppropriate['GalleryEntity::delete'] = true;
+	$this->_isAppropriate['GalleryEntity::save'] = true;
     }
 
     function tearDown() {
@@ -224,7 +225,7 @@ class WebDavModuleTest extends GalleryTestCase {
     }
 
     function testHandleEventError() {
-	$this->_registerTestEventListener('Gallery::Error', $this->_module);
+	$this->_isAppropriate['Gallery::Error'] = true;
 
 	$error = GalleryCoreApi::error(GALLERY_ERROR);
 	$event = GalleryCoreApi::newEvent('Gallery::Error');
@@ -240,7 +241,7 @@ class WebDavModuleTest extends GalleryTestCase {
     }
 
     function testHandleEventErrorPermissionDenied() {
-	$this->_registerTestEventListener('Gallery::Error', $this->_module);
+	$this->_isAppropriate['Gallery::Error'] = true;
 
 	$error = GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	$event = GalleryCoreApi::newEvent('Gallery::Error');
