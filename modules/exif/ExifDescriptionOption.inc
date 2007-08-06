@@ -208,7 +208,9 @@ class ExifDescriptionOption extends ItemAddOption {
 				    $operation, $args, $preserveOriginal, $currentItems[$i],
 				    empty($preferred) ? null : $preferred[$itemId]);
 			    if ($ret) {
-				return array($ret, null, null);
+				/* Just write to error log; allow (unrotated) photo to be added */
+				GalleryCoreApi::addEventLogEntry('Gallery Error',
+					'Unable to rotate item ' . $itemId, $ret->getAsText());
 			    }
 			}
 		    }

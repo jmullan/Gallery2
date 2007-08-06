@@ -203,6 +203,11 @@
       {g->text text="Rotate pictures automatically"}
     </label>
   </p>
+  {if !$AdminExif.canRotate}
+  <p class="giWarning">
+    {g->text text="Warning: No toolkit support for rotation of JPEG images.  Make sure to activate a toolkit module if using this option."}
+  </p>
+  {/if}
   <p class="giDescription">
     <input type="checkbox" id="cbItemExifRotatePreserve"{if $form.item.exifrotatepreserve} checked="checked"{/if}
      name="{g->formVar var="form[item][exifrotatepreserve]"}"/>
