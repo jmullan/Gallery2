@@ -76,6 +76,24 @@ if (!empty($_SERVER['QUERY_STRING'])) {
         Restore your Gallery database from an export that was made from the site administration
         maintenance screen or from the Database Backup step of the Gallery upgrader.
       </p>
+      <hr class="faint" />
+
+      <h2>
+	<?php
+	  require_once('../../embed.php');
+	  $ret = GalleryEmbed::init(array('fullInit' => false, 'noDatabase' => true));
+	  /* Ignore error */
+	  $url = '../../' . GALLERY_MAIN_PHP . '?'
+		 . GALLERY_FORM_VARIABLE_PREFIX . 'view=core.UserAdmin&amp;'
+		 . GALLERY_FORM_VARIABLE_PREFIX . 'subView=core.UserRecoverPasswordAdmin';
+	?>
+	<a href="<?php print $url ?>">Reset User Password</a>
+      </h2>
+      <p class="description">
+	Set new password for any user.  Can be used to regain access to an administrator
+	account when the "forgot password" feature cannot be used due to invalid/missing
+	email address or other email problems.
+      </p>
     </div>
   </body>
 </html>
