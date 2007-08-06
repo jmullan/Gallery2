@@ -1874,14 +1874,22 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
      * @see GalleryStorage::getAffectedRows
      */
-    function getAffectedRows() {
-	$ret = $this->_dbInit(true);
-	if ($ret) {
-	    return array($ret, null);
+    function getAffectedRows($useNonTransactionalConnection) {
+	if ($useNonTransactionalConnection && $this->_gs->isTransactional()) {
+	    list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	} else {
+	    $ret = $this->_dbInit(true);
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $db = $this->_gs->_db;
 	}
 
 	$this->_gs->_traceStart();
-	$affectedRows = $this->_gs->_db->Affected_Rows();
+	$affectedRows = $db->Affected_Rows();
 	$this->_gs->_traceStop();
 
 	return array(null, $affectedRows);

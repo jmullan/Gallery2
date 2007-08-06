@@ -196,8 +196,8 @@ class UnitTestStorage extends MockObject {
 	return $this->_makeReply('optimize', array($tableNames));
     }
 
-    function getAffectedRows() {
-	return $this->_makeReply('getAffectedRows', array());
+    function getAffectedRows($useNonTransactionalConnection=false) {
+	return $this->_makeReply('getAffectedRows', array($useNonTransactionalConnection));
     }
 
     function describeEntity($entityName, $tryAllModules=false) {

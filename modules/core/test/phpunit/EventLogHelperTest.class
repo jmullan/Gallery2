@@ -79,7 +79,7 @@ class EventLogHelperTest extends GalleryTestCase {
 	    null);
 	$this->_storage->setReply(
 	    'getAffectedRows',
-	    array(),
+	    array(true),
 	    array(null, 1));
 
 	$ret = GalleryCoreApi::addEventLogEntry('TYPE', 'SUMMARY', 'DETAILS');
@@ -112,7 +112,7 @@ class EventLogHelperTest extends GalleryTestCase {
 	    null);
 	$this->_storage->setReply(
 	    'getAffectedRows',
-	    array(),
+	    array(true),
 	    array(null, 0));
 	$this->_storage->setReply(
 	    'addMapEntry',

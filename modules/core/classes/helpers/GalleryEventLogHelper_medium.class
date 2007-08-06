@@ -74,7 +74,7 @@ class GalleryEventLogHelper_medium {
 	    return $ret;
 	}
 
-	list ($ret, $affectedRows) = $storage->getAffectedRows();
+	list ($ret, $affectedRows) = $storage->getAffectedRows(true);
 	if ($ret) {
 	    return $ret;
 	}
