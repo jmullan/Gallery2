@@ -160,7 +160,7 @@ function GalleryInitSecondPass() {
 	return $ret;
     }
 
-    foreach ($pluginIds as $pluginId) {
+    foreach ($pluginIds as $pluginId => $className) {
 	list ($ret, $plugin) =
 	    GalleryCoreApi::newFactoryInstanceById('GalleryAuthPlugin', $pluginId);
 	if ($ret) {
