@@ -47,6 +47,7 @@ class SystemInfoTask extends MaintenanceTask {
     function run() {
 	global $gallery;
 	$storage =& $gallery->getStorage();
+	$platform =& $gallery->getPlatform();
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret) {
@@ -61,6 +62,20 @@ class SystemInfoTask extends MaintenanceTask {
 	$version = !empty($version)
 	    ? $version['gallery'] . ' ' . $core->translate('core') . ' ' . $version['core']
 	    : $core->translate('unknown');
+
+	if ($platform->is_dir(GalleryCoreApi::getCodeBasePath('.svn'))) {
+	    /* Try to determine svn revision; ignore any error */
+	    list ($success, $output) =
+		$platform->exec(array(array('svn', 'info', GalleryCoreApi::getCodeBasePath())));
+	    if ($success && is_array($output)) {
+		foreach ($output as $line) {
+		    if (!strncmp($line, 'Revision: ', 10)) {
+			$version .= ' r' . substr($line, 10);
+			break;
+		    }
+		}
+	    }
+	}
 
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryTheme.class');
 	GalleryCoreApi::requireOnce('modules/core/classes/GalleryEmbed.class');
