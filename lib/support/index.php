@@ -83,9 +83,8 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 	  require_once('../../embed.php');
 	  $ret = GalleryEmbed::init(array('fullInit' => false, 'noDatabase' => true));
 	  /* Ignore error */
-	  $url = '../../' . GALLERY_MAIN_PHP . '?'
-		 . GALLERY_FORM_VARIABLE_PREFIX . 'view=core.UserAdmin&amp;'
-		 . GALLERY_FORM_VARIABLE_PREFIX . 'subView=core.UserRecoverPasswordAdmin';
+	  $url = GalleryUrlGenerator::appendParamsToUrl('../../' . GALLERY_MAIN_PHP,
+		  array('view' => 'core.UserAdmin', 'subView' => 'core.UserRecoverPasswordAdmin'));
 	?>
 	<a href="<?php print $url ?>">Reset User Password</a>
       </h2>
