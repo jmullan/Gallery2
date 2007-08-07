@@ -413,7 +413,7 @@ class GalleryCommentHelper /* implements GalleryEventListener */ {
 		list ($ret, $akismetActive) =
 		    GalleryCoreApi::getPluginParameter('module', 'comment', 'akismet.active');
 		if ($ret) {
-		    return $ret;
+		    return array($ret, null);
 		}
 		if ($akismetActive) {
 		    GalleryCoreApi::requireOnce('modules/comment/classes/AkismetApi.class');

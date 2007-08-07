@@ -55,7 +55,7 @@ class AdminModerateSpamController extends GalleryController {
 		}
 
 		foreach ($comments as $comment) {
-		    $ret = GalleryCoreApi::deleteEntityById($comment->getId());
+		    $ret = GalleryCoreApi::deleteEntityById($comment->getId(), 'GalleryComment');
 		    if ($ret) {
 			return array($ret, null);
 		    }

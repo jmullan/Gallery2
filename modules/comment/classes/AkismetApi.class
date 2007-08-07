@@ -99,8 +99,7 @@ class AkismetApi {
     }
 
     /**
-     * Internal helper method used to submit comments back to Akismet to change their
-     * status.
+     * Internal helper method used to submit comments back to Akismet to change their status.
      * @param string $action the Akismet action to take (legal values are
      *                       'submit-spam' and 'submit-ham'
      * @param object GalleryComment $comment a reference to a GalleryComment instance
@@ -110,7 +109,7 @@ class AkismetApi {
     function _submit($action, &$comment) {
 	list ($ret, $body, $status, $headers) = $this->_request($action, $comment, false);
 	if ($ret) {
-	    return array($ret, null);
+	    return $ret;
 	}
 
         if ($status != 'HTTP/1.0 200 OK') {

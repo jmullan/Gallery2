@@ -139,6 +139,7 @@ class SitemapView extends GalleryView {
 		7 * 24 * 3600 => 'weekly',
 		30 * 24 * 3600 => 'monthly',
 		365 * 24 * 3600 => 'yearly');
+	    $i = 0;
 	    while ($result = $searchResults->nextResult()) {
 		if (($i++ % 100) == 0) {
 		    $gallery->guaranteeTimeLimit(200);
