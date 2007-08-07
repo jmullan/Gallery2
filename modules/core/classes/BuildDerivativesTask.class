@@ -71,6 +71,18 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    return array($ret, null, null);
 	}
 
+	/*
+	 * With MSSQL if the next query gets any results it will generate a warning which
+	 * causes us to error out.  Turn off warnings to avoid this.
+	 */
+	$storage =& $gallery->getStorage();
+	if (GalleryUtilities::isA($storage, 'MSSqlStorage')) {
+	    $ret = $storage->execute('SET ANSI_WARNINGS OFF');
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	}
+
 	/* Also attempt to add derivatives to items without them (no toolkit when item added) */
 	$query = '
 	SELECT
