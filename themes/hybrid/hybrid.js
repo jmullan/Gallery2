@@ -322,8 +322,8 @@ function image_precache(i) {
   }
 }
 function image_loaded() {
-  var i = slide_nextindex(); if (i < 0 || image_iscached[i]) i = slide_previndex();
-  if (i >= 0) image_precache(i);
+  var i = slide_nextindex(), j = i; if (j < 0 || image_iscached[j]) j = slide_previndex();
+  if (j >= 0) image_precache(j);
   slide_go(i);
 }
 function image_next() {
