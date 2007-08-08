@@ -33,7 +33,7 @@ class HybridTheme extends GalleryTheme {
 	$this->setId('hybrid');
 	$this->setName($gallery->i18n('Hybrid'));
 	$this->setDescription($gallery->i18n('Combined album/image/slideshow dynamic view'));
-	$this->setVersion('1.1.4.1');
+	$this->setVersion('1.1.4.2');
 	$this->setRequiredCoreApi(array(7, 10));
 	$this->setRequiredThemeApi(array(2, 5));
 	$this->setStandardSettings(array(
@@ -141,19 +141,29 @@ class HybridTheme extends GalleryTheme {
 	$theme['cookiePath'] = preg_replace('#^.*?://.*?(/|$)#', '/',
 					    $urlGenerator->getCurrentUrlDir());
 
-	$showId = GalleryUtilities::getRequestVariables('showId');
-	if (!empty($showId)) {
+	list ($showId, $show, $slide) =
+	    GalleryUtilities::getRequestVariables('showId', 'show', 'slide');
+	if ($show == 'first' && !empty($imageWidths)) {
+	    $viewIndex = 0;
+	}
+	else if ($show == 'last' && !empty($imageWidths)) {
+	    $viewIndex = count($imageWidths) - 1;
+	}
+	else if (!empty($showId)) {
 	    /* Start with initial view of this item */
 	    foreach ($theme['children'] as $tmp) {
 		if ($tmp['id'] == $showId) {
 		    if (isset($tmp['imageIndex'])) {
-			$theme['viewIndex'] = $tmp['imageIndex'];
-			/* Set cookie to popup image just once */
-			setcookie('G2_hybrid_view', '1');
+			$viewIndex = $tmp['imageIndex'];
 		    }
 		    break;
 		}
 	    }
+	}
+	if (isset($viewIndex)) {
+	    $theme['viewIndex'] = $viewIndex;
+	    /* Set cookie to popup image just once */
+	    setcookie('G2_hybrid_view', $slide ? '2' : '1');
 	}
 
 	$template->head('themes/hybrid/templates/header.tpl');
