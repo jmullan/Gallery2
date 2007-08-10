@@ -36,7 +36,12 @@
 	    {if isset($choiceParams.active)}
 	      {$choiceName}
 	    {else}
-	      <a href="{g->url params=$choiceParams}"{if isset($choiceParams.script)} onclick="{$choiceParams.script}"{/if}> {$choiceName} </a>
+	      {assign var=script value=$choiceParams.script|default:""}
+	      {if isset($choiceParams.script)}
+		{assign var=choiceParams
+			value=$ItemAdmin.unsetCallback|@call_user_func:$choiceParams:"script"}
+	      {/if}
+	      <a href="{g->url params=$choiceParams}"{if !empty($script)} onclick="{$script}"{/if}> {$choiceName} </a>
 	    {/if}
 	    </li>
 	  {/foreach}

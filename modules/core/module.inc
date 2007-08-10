@@ -442,6 +442,7 @@ class CoreModule extends GalleryModule {
 			  'selectedId' => $itemId));
 		$views[] = array('name' => $this->_translate(
 		    array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]), $itemTypeNames[2]),
+		    'view' => 'core.ItemDeleteSingle', /* just for g->linkId used by icons */
 		    'script' => "core_confirmDelete('$url', '$moreUrl', '$title');return false");
 
 		$views[] = array('name' => $this->_translate(

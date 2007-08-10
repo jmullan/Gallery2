@@ -176,6 +176,7 @@ class ItemAdminView extends GalleryView {
 	$ItemAdmin['subViewChoices'] = $subViewChoices;
 	$ItemAdmin['viewL10Domain'] = $subView->getL10Domain();
 	$ItemAdmin['isSiteAdmin'] = $isSiteAdmin;
+	$ItemAdmin['unsetCallback'] = create_function('$a,$k', 'unset($a[$k]);return $a;');
 
 	if (!isset($ItemAdmin['enctype'])) {
 	    $ItemAdmin['enctype'] = 'application/x-www-form-urlencoded';
