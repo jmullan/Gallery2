@@ -4,11 +4,23 @@
 gettext("Add Comment") /* also in: module.inc templates/AddComment.tpl templates/blocks/AddComment.tpl templates/blocks/blocks.inc */
 gettext("add comment")
 
+/* AdminModerateSpam.inc */
+gettext("moderate spam")
+
+/* CommentSiteAdmin.inc */
+gettext("Checking all comments with Akismet")
+gettext("Done checking comments")
+
+/* EditComment.inc */
+gettext("Published")
+gettext("Unpublished")
+gettext("Spam")
+
 /* ShowAllComments.inc */
 gettext("show comments") /* also in: ShowComments.inc */
 
 /* module.inc */
-gettext("Comments") /* also in: classes/GalleryCommentSearch.class */
+gettext("Comments") /* also in: classes/GalleryCommentSearch.class templates/CommentSiteAdmin.tpl */
 gettext("User commenting system")
 gettext("Extra Data")
 gettext("[comment] Add comments")
@@ -19,6 +31,7 @@ gettext("[comment] All access")
 gettext("View Latest Comments")
 gettext("Comments: %d")
 gettext("View Comments") /* also in: templates/ShowComments.tpl */
+gettext("Moderate Spam")
 
 /* classes/CommentCaptchaAdminOption.class */
 gettext("Guest Comments")
@@ -40,11 +53,32 @@ gettext("(required)") /* also in: templates/EditComment.tpl */
 gettext("You must enter a comment!")
 gettext("Preview") /* also in: templates/EditComment.tpl */
 gettext("Save") /* also in: templates/CommentSiteAdmin.tpl templates/EditComment.tpl */
-gettext("Cancel") /* also in: templates/DeleteComment.js.tpl templates/DeleteComment.tpl templates/EditComment.tpl */
+gettext("Cancel") /* also in: templates/ChangeComment.js.tpl templates/DeleteComment.tpl templates/EditComment.tpl */
+
+/* templates/AdminModerateSpam.tpl */
+gettext("Spam Comments")
+gettext("All spam comments deleted.")
+gettext("There are no spam comments in the queue.")
+ngettext("There is %d spam comment in the queue.", "There are %d spam comments in the queue.")
+gettext("You can delete all spam comments at once, but check them carefully because you can't restore deleted comments.")
+gettext("Delete All Spam")
+
+/* templates/ChangeComment.js.tpl */
+gettext("Delete this comment?") /* also in: templates/DeleteComment.tpl */
+gettext("Are you sure you want to delete this comment?")
+gettext("Delete all spam comments?")
+gettext("Are you sure you want to delete all comments marked as spam?")
+gettext("Mark this comment as not spam?")
+gettext("Are you sure you want to mark this comment as not spam?")
+gettext("Mark this comment as spam?")
+gettext("Are you sure you want to mark this comment as spam?")
+gettext("Yes")
 
 /* templates/Comment.tpl */
 gettext("edit")
 gettext("delete")
+gettext("mark as not spam")
+gettext("mark as spam")
 gettext("show full")
 gettext("show summary")
 gettext("Posted by %s on %s (%s)")
@@ -60,20 +94,26 @@ gettext("Comment modified successfully")
 gettext("Back to %s")
 
 /* templates/CommentSiteAdmin.tpl */
-gettext("Comments Settings")
 gettext("Settings saved successfully")
+ngettext("Checked %d comment.", "Checked %d comments.")
+ngettext("Found %d spam comment.", "Found %d spam comments.")
+gettext("General Settings")
 gettext("Show link for Latest Comments:")
 gettext("Number of comments on Latest Comments page:")
 gettext("Invalid value")
+gettext("Anti-Spam Settings")
+gettext("You can reduce the amount of spam comments that you receive by using a service called %sAkismet%s.  This service is free for personal use.  In order to use it, you will need to %sregister for an API key%s and enter that key in the box below.")
+gettext("Akismet is active.")
+gettext("Akismet is not active.")
+gettext("API key:")
+gettext("Invalid API key.")
+gettext("Check all comments now")
 gettext("Reset")
 
-/* templates/DeleteComment.js.tpl */
-gettext("Delete this comment?") /* also in: templates/DeleteComment.tpl */
-gettext("Are you sure?") /* also in: templates/DeleteComment.tpl */
-gettext("Delete") /* also in: templates/DeleteComment.tpl */
-
 /* templates/DeleteComment.tpl */
+gettext("Are you sure?")
 gettext("Delete this comment?  There is no undo!")
+gettext("Delete")
 
 /* templates/EditComment.tpl */
 gettext("Edit comment")
@@ -81,6 +121,7 @@ gettext("You must enter a username.")
 gettext("The username you entered is invalid.")
 gettext("Host")
 gettext("You must enter a comment")
+gettext("Publish Status")
 
 /* templates/ShowAllComments.tpl */
 gettext("Latest Comments")
