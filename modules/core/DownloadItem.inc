@@ -153,7 +153,18 @@ class DownloadItemView extends GalleryView {
 	$phpVm->header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');
 	$stats = $platform->stat($data['derivativePath']);
 	$phpVm->header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
-	$phpVm->header('Expires: ' . GalleryUtilities::getHttpDate(time() + 31536000));
+	$phpVm->header('Expires: ' . GalleryUtilities::getHttpDate(2147483647));
+
+	/**
+	 * If the file is publicly visible we could set this cache control to public (as we
+	 * do for fast download) but that would require us to do some extra calculations here that
+	 * would duplicate what we have in GalleryEntityHelper::createFastDownloadfile, so for now
+	 * just set the cache control to private.
+	 *
+	 * @todo: refactor the GalleryEntityHelper code so that we can do the permission check
+	 * here too and set Cache-Control to public when appropriate.
+	 */
+	$phpVm->header('Cache-Control: private');
 
 	/* If the request method is HEAD, don't send back the body */
 	if ($requestMethod == 'head') {
