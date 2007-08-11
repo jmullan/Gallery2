@@ -849,7 +849,8 @@ class Gallery {
 	    header('Last-Modified: ' . $lastModified);
 	    header('Content-type: ' . $mimeType);
 	    header('Content-length: ' . $contentLength);
-	    header('Expires: ' . $this->getHttpDate(time() + 31536000));
+	    header('Expires: ' . $this->getHttpDate(2147483647));
+	    header('Cache-Control: public');
 	    set_magic_quotes_runtime(0);
 	    set_time_limit(0);
 	    while (!feof($fd)) {
