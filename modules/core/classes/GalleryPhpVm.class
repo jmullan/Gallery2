@@ -246,8 +246,8 @@ class GalleryPhpVm {
     /**
      * Inflate a deflated string
      *
-     * @param string data compresed by gzdeflate
-     * @param int (optional) maximum length to decode
+     * @param string $data data compresed by gzdeflate
+     * @param int $length (optional) maximum length to decode
      * @return string uncompressed data
      */
     function gzinflate($data, $length=null) {
@@ -265,6 +265,22 @@ class GalleryPhpVm {
      */
     function class_exists($class_name) {
 	return class_exists($class_name);
+    }
+
+    /**
+     * Create a gzip compressed string
+     * @param string $data The data to encode
+     * @param int $level The level of compression
+     * @param int $encodingMode The encoding mode. Can be FORCE_GZIP (default) or FORCE_DEFLATE.
+     */
+    function gzencode($data, $level=null, $encodingMode=null) {
+	if (isset($level) && isset($encodingMode)) {
+	    return gzencode($data, $level, $encodingMode);
+	} else if (isset($level)) {
+	    return gzencode($data, $level);
+	} else {
+	    return gzencode($data);
+	}
     }
 }
 ?>
