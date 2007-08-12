@@ -19,7 +19,7 @@
  */
 
 /**
- * Base class for mock objects (UnitTestStorage and UnitTestPlatform) that provides
+ * Base class for mock objects (UnitTestStorage, UnitTestPlatform and UnitTestPhpVm) that provides
  * an easy way to specify the replies for a call sequence.
  *
  * To mock up an individual class, extend MockObject and then mimic the API that you want to mock.
@@ -79,8 +79,7 @@ class MockObject {
 	       $function, print_r($request, true));
 	printf("Expected:<br/>\nFunction: %s<br/>\nRequest: <pre>%s</pre><br/>\n",
 	       $expected[0], print_r($expected[1], true));
-	$ret = GalleryCoreApi::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
-				    'Unhandled reply in UnitTestStorage');
+	$ret = GalleryCoreApi::error(ERROR_UNKNOWN, null, null, 'Unhandled reply in MockObject');
 	print $ret->getAsHtml();
     }
 
