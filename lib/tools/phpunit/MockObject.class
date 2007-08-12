@@ -88,6 +88,10 @@ class MockObject {
     }
 
     function _parametersMatch($expected, $actual) {
+	if ($expected === '*') {
+	    return 1;
+	}
+
 	$i = 0;
 	foreach ($expected as $key => $value) {
 	    if ($i >= count($actual)) {
