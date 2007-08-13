@@ -1651,6 +1651,18 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals(serialize($expected), serialize($actual));
     }
     */
+
+    function testIsValidEmailString() {
+	foreach (array('blah@blah.com', 'aqy-BMZ+09_test@ary_BNZ-059.test-2B.Test',
+		       'user@mydomain.travel', 'curator@my.museum', 'short@a.bc') as $valid) {
+	    $this->assert(GalleryUtilities::isValidEmailString($valid), $valid);
+	}
+	foreach (array('no-at.com', 'no-dot@com', 'bad-&-char@test.com', 'sp ace@fun.com',
+		       'test@sp ace.com', 'test@bad+char.com', 'test@tld-is.tooLong',
+		       'two@ats@fun.com') as $invalid) {
+	    $this->assert(!GalleryUtilities::isValidEmailString($invalid), $invalid);
+	}
+    }
 }
 
 class UtilitiesTestPlatform {
