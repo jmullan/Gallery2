@@ -42,8 +42,8 @@
     <td>
       <select name="{g->formVar var="form[viewRootId]"}">
       {foreach from=$Multiroot.albumTree item=album}
-	<option value="{$album.data.id}"{if $album.data.id==$form.viewRootId}
-	 selected="selected"{/if}>
+	<option value="{$album.data.id}"{if $album.data.id==$form.viewRootId
+	 } selected="selected"{/if}>
 	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
 	  {$album.data.title|markup:strip|default:$album.data.pathComponent}
 	</option>

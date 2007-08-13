@@ -60,6 +60,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    );
 
 	$this->_exception['textInJavascript'] = array();
+	$this->_exception['trailingIfs'] = array();
 
 	/* Get rid of backslashes so that we can perform string compares later */
 	for ($i = 0; $i < sizeof($this->_expectedHeaderLines); $i++) {
@@ -90,10 +91,19 @@ class TemplateAuditTest extends CodeAuditTestCase {
     function checkFile($fileName, $buffer) {
 	$truncatedFileName = substr($fileName,
 				    strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
+	$lines = split("(\r\n|\n)", $buffer);
 
-	$this->_checkHiddenFormVars($truncatedFileName, $buffer);
+	if (!in_array($truncatedFileName, $this->_exception['hiddenFormVars'])) {
+	    $this->_checkHiddenFormVars($truncatedFileName, $lines);
+	}
 
-	$this->_checkTextInJavascript($truncatedFileName, $buffer);
+	if (!in_array($truncatedFileName, $this->_exception['textInJavascript'])) {
+	    $this->_checkTextInJavascript($truncatedFileName, $lines);
+	}
+
+	if (!in_array($truncatedFileName, $this->_exception['trailingIfs'])) {
+	    $this->_checkTrailingIfs($truncatedFileName, $lines);
+	}
 
 	if (preg_match('#^' . $this->_headerPattern . '#', $buffer)) {
 	    return;
@@ -134,17 +144,10 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	}
     }
 
-    function _checkHiddenFormVars($fileName, $buffer) {
-	$inHtmlForm = false;
-	$hasHiddenFormVars = false;
-	$formStartLine = 0;
-	$lines = split("(\r\n|\n)", $buffer);
+    function _checkHiddenFormVars($fileName, &$lines) {
+	$inHtmlForm = $hasHiddenFormVars = false;
 
-	if (in_array($fileName, $this->_exception['hiddenFormVars'])) {
-	    return;
-	}
-
-	for ($i = 0; $i < count($lines); $i++) {
+	for ($i = $formStartLine = 0; $i < count($lines); $i++) {
 	    if (preg_match('/<form\s/', $lines[$i], $matches)) {
 		$inHtmlForm = true;
 		$formStartLine = $i;
@@ -155,19 +158,13 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    if (preg_match('/<\/form>/', $lines[$i], $matches)) {
 		$this->assert($hasHiddenFormVars, "$fileName: Form (line $formStartLine) is " .
 				"missing hidden form vars");
-		$inHtmlForm = false;
-		$hasHiddenFormVars = false;
+		$inHtmlForm = $hasHiddenFormVars = false;
 	    }
 	}
     }
 
-    function _checkTextInJavascript($fileName, $buffer) {
-	if (in_array($fileName, $this->_exception['textInJavascript'])) {
-	    return;
-	}
-
+    function _checkTextInJavascript($fileName, &$lines) {
 	$inScriptTag = false;
-	$lines = split("(\r\n|\n)", $buffer);
 	/* Parsing for the closing brace of {g->text } is too complex. Using check-sum instead. */
 	$scriptStartLine = $textCount = $forJsCount = 0;
 
@@ -190,6 +187,15 @@ class TemplateAuditTest extends CodeAuditTestCase {
 			"without the forJavascript=true attribute.");
 		$inScriptTag = false;
 		$textCount = $forJsCount = 0;
+	    }
+	}
+    }
+
+    function _checkTrailingIfs($fileName, &$lines) {
+	for ($i = 0; $i < count($lines); $i++) {
+	    if (preg_match('/[^\s}]{if[^}]*}$/', $lines[$i])) {
+		$this->fail("Warning: newline will be stripped at $fileName:$i");
+		$this->_errorCount++;
 	    }
 	}
     }

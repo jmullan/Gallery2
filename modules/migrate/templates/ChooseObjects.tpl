@@ -117,8 +117,8 @@
 
     <select name="{g->formVar var="form[destinationAlbumID]"}">
       {foreach from=$ChooseObjects.g2AlbumTree item=album}
-	<option value="{$album.data.id}"{if $form.destinationAlbumID==$album.data.id}
-	 selected="selected"{/if}>
+	<option value="{$album.data.id}"{if $form.destinationAlbumID==$album.data.id
+	 } selected="selected"{/if}>
 	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
 	  {$album.data.title|markup:strip|default:$album.data.pathComponent}
 	</option>
@@ -187,8 +187,8 @@
 	<label for="rbTitleCustom"> {g->text text="Custom Field:"} </label>
 	<input type="text" name="{g->formVar var="form[customfield][title]"}" size="20"
 	 {if isset($form.customfield.title)}value="{$form.customfield.title}"
-	 {/if}id="customTitle" style="margin-left:0.6em"{if $form.set.title!="custom"}
-	 disabled="disabled"{/if}/>
+	 {/if}id="customTitle" style="margin-left:0.6em"{if $form.set.title!="custom"
+	 } disabled="disabled"{/if}/>
 	{if isset($form.error.emptyCustomField.title)}
 	  <span class="giError"> {g->text text="Enter a custom field name"} </span>
 	{/if}
@@ -218,8 +218,8 @@
 	<label for="rbSummaryCustom"> {g->text text="Custom Field:"} </label>
 	<input type="text" name="{g->formVar var="form[customfield][summary]"}" size="20"
 	 {if isset($form.customfield.summary)}value="{$form.customfield.summary}"
-	 {/if}id="customSummary" style="margin-left:0.6em"{if $form.set.summary!="custom"}
-	 disabled="disabled"{/if}/>
+	 {/if}id="customSummary" style="margin-left:0.6em"{if $form.set.summary!="custom"
+	 } disabled="disabled"{/if}/>
 	{if isset($form.error.emptyCustomField.summary)}
 	  <span class="giError"> {g->text text="Enter a custom field name"} </span>
 	{/if}
@@ -249,8 +249,8 @@
 	<label for="rbDescriptionCustom"> {g->text text="Custom Field:"} </label>
 	<input type="text" name="{g->formVar var="form[customfield][description]"}" size="20"
 	 {if isset($form.customfield.description)}value="{$form.customfield.description}"
-	 {/if}id="customDescription" style="margin-left:0.6em"{if $form.set.description!="custom"}
-	 disabled="disabled"{/if}/>
+	 {/if}id="customDescription" style="margin-left:0.6em"{if $form.set.description!="custom"
+	 } disabled="disabled"{/if}/>
 	{if isset($form.error.emptyCustomField.description)}
 	  <span class="giError"> {g->text text="Enter a custom field name"} </span>
 	{/if}
@@ -291,14 +291,14 @@
       {g->text text="Custom fields will not be imported.  Activate Custom Fields module to enable this option."}
     </p>
     {else}
-      <input type="checkbox" id="cbCustomFields"{if !empty($form.customFields)}
-       checked="checked"{/if} name="{g->formVar var="form[customFields]"}"/>
+      <input type="checkbox" id="cbCustomFields"{if !empty($form.customFields)
+       } checked="checked"{/if} name="{g->formVar var="form[customFields]"}"/>
       <label for="cbCustomFields">
 	{g->text text="Import custom fields"}
       </label>
       <br/>
-      <input type="checkbox" id="cbSkipCustomItemFields"{if !empty($form.skipCustomItemFields)}
-       checked="checked"{/if} name="{g->formVar var="form[skipCustomItemFields]"}"/>
+      <input type="checkbox" id="cbSkipCustomItemFields"{if !empty($form.skipCustomItemFields)
+       } checked="checked"{/if} name="{g->formVar var="form[skipCustomItemFields]"}"/>
       <label for="cbSkipCustomItemFields">
 	{g->text text="Do not create Gallery 2 custom fields for fields selected above for title, summary or description"}
       </label>

@@ -33,8 +33,8 @@
 
   <select name="{g->formVar var="form[destinationAlbumId]"}">
     {foreach from=$SelectPicasaExportPath.g2AlbumTree item=album}
-      <option value="{$album.data.id}"{if $form.destinationAlbumId==$album.data.id}
-          selected="selected"{/if}>
+      <option value="{$album.data.id}"{if $form.destinationAlbumId==$album.data.id
+       } selected="selected"{/if}>
         {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
         {$album.data.title|markup:strip|default:$album.data.pathComponent}
       </option>
