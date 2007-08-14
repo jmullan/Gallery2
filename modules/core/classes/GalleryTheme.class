@@ -889,16 +889,15 @@ class GalleryTheme extends GalleryPlugin {
 			    return array($ret, null);
 			}
 
-			/*
-			 * Load up our child count so that we can figure out the max pages.  We do
-			 * this after we get the child ids because the 'childCount' common template
-			 * data also gets the child counts for the child albums.
-			 */
-			$ret = $this->loadCommonTemplateData(
-				$template, $item, $params, array('childCount'), $childIds, false);
+			/* Load up our child count so that we can figure out the max pages */
+			$itemId = $item->getId();
+			list ($ret, $childCount) = GalleryCoreApi::fetchChildCounts(
+						    array($itemId), $theme['actingUserId']);
 			if ($ret) {
 			    return array($ret, null);
 			}
+			$theme['childCount'] =
+			    isset($childCount[$itemId]) ? $childCount[$itemId] : count($childIds);
 
 			/* Store the total pages in the theme */
 			$theme['totalPages'] = ceil($theme['childCount'] / $perPage);
@@ -1354,7 +1353,7 @@ class GalleryTheme extends GalleryPlugin {
 	 * --------------------------------------------------------------------------------------
 	 * 'childCount'
 	 */
-	if (isset($load['childCount']) && !isset($theme['childCount'])) {
+	if (isset($load['childCount'])) {
 	    if (!empty($allAlbumIds)) {
 		list ($ret, $childCount) =
 		    GalleryCoreApi::fetchChildCounts($allAlbumIds, $theme['actingUserId']);
