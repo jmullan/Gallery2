@@ -13,7 +13,7 @@
  *}
 {assign var="buttonId" value="defaultSubmitBtn`$callCount`"}
 <input type="submit" name="{g->formVar var=$name}" value="" id="{$buttonId}" tabindex="-1"
- style="background-color: transparent !important; border-style:none; position:absolute; right:0"/>
+ style="background-color: transparent !important; border-style:none; position:absolute; width:0; right:0"/>
 <script type="text/javascript">
   // <![CDATA[
   var a = navigator.userAgent.toLowerCase(), b = document.getElementById('{$buttonId}');
