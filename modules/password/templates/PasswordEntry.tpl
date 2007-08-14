@@ -8,6 +8,7 @@
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
     <input type="hidden" name="{g->formVar var="form[itemId]"}" value="{$form.itemId}"/>
+    <input type="hidden" name="{g->formVar var="itemId"}" value="{$form.itemId}"/>
 </div>
 
 <div class="gbBlock gcBackground1">

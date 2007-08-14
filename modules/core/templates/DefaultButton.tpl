@@ -9,10 +9,11 @@
  * or IE won't use it.  We need to set display:none for opera because it doesn't allow styling
  * button borders.  IE also needs more than one text field in the form or it won't pass the
  * name/value for any submit button when enter is pressed.. we add an extra field below.
+ * !important on background-color below is for IE7 so !important in colorpack doesn't override.
  *}
 {assign var="buttonId" value="defaultSubmitBtn`$callCount`"}
-<input type="submit" name="{g->formVar var=$name}" value="" id="{$buttonId}"
- style="background-color: transparent; border-style: none; position: absolute; right: 0"/>
+<input type="submit" name="{g->formVar var=$name}" value="" id="{$buttonId}" tabindex="-1"
+ style="background-color: transparent !important; border-style:none; position:absolute; right:0"/>
 <script type="text/javascript">
   // <![CDATA[
   var a = navigator.userAgent.toLowerCase(), b = document.getElementById('{$buttonId}');
