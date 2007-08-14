@@ -195,8 +195,9 @@ class GalleryTranslator {
 	    $defaultCountry['sl'] = 'SI';
 
 	    /* Serbian */
-	    $supportedLanguages['sr']['YU']['description'] = 'Srpski';
-	    $defaultCountry['sr'] = 'YU';
+	    /* Note: our sr.po files are actually sr_CS@Latn - sr_CS script should be cyrillic */
+	    $supportedLanguages['sr']['CS']['description'] = 'Srpski';
+	    $defaultCountry['sr'] = 'CS';
 
 	    /* Finnish */
 	    $supportedLanguages['fi']['FI']['description'] = 'Suomi';
@@ -344,7 +345,11 @@ class GalleryTranslator {
 	}
 	/* For Norwegian try nb language code in addition to no */
 	if (substr($locale, 0, 2) == 'no') {
-	    return GalleryTranslator::_setlocale($category, 'nb' . substr($locale, 2));
+	    return GalleryTranslator::_setlocale($category, substr_replace($locale, 'nb', 0, 2));
+	}
+	/* For Serbia & Montenegro also try the old country code for Yugoslavia */
+	if (substr($locale, 3, 2) == 'CS') {
+	    return GalleryTranslator::_setlocale($category, substr_replace($locale, 'YU', 3, 2));
 	}
 	$gallery->debug("Warning: Unable to select locale $locale");
 	return false;
