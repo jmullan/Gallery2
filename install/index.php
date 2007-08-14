@@ -91,10 +91,10 @@ if (empty($_SESSION['language'])) {
     $_SESSION['language'] = GalleryTranslator::getLanguageCodeFromRequest();
 }
 if (function_exists('dgettext')) {
-    $galleryStub2 = new GalleryStub();
+    $gallery = new GalleryStub();
     $translator = new GalleryTranslator();
     $translator->init($_SESSION['language'], true);
-    unset($galleryStub2);
+    unset($gallery);
     bindtextdomain('gallery2_install', dirname(dirname(__FILE__)) . '/locale');
     textdomain('gallery2_install');
     if (function_exists('bind_textdomain_codeset')) {
