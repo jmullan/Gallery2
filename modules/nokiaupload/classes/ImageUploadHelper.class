@@ -454,7 +454,7 @@ class ImageUploadHelper {
      * Create new group for mobile phone users.  All users who try to use the Nokia Image Uploader
      * module will be added to this group in LoginController.
      * @param string $name name for group
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      *         int id of the Mobile user group
      */
     function createMobileUserGroup($name) {
@@ -488,7 +488,7 @@ class ImageUploadHelper {
      * Create new album for uploading images.
      * @param string $title title for album
      * @param int $parentId id of parent album
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      *         int id of the upload album
      */
     function createUploadAlbum($title, $parentId) {
@@ -566,7 +566,7 @@ class ImageUploadHelper {
      * we want.
      * @param int $albumId
      * @param int $groupId id of mobile users group
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
    function setAlbumPermissions($albumId, $groupId) {
 	/* Few ids that we will need */

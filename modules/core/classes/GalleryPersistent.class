@@ -77,7 +77,7 @@ class GalleryPersistent {
      * Reset all original values to the current values in the entity (or null if so specified).
      *
      * @param boolean $resetToNull (optional) reset all original values to null if true
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function resetOriginalValues($resetToNull=false) {
 	list ($ret, $data) = GalleryCoreApi::describeEntity($this->entityType);
@@ -136,7 +136,7 @@ class GalleryPersistent {
     /**
      * Return the relative path to the class for this entity
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string a path like modules/core/classes/GalleryUser.class
      */
     function getClassFile() {

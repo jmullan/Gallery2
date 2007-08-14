@@ -32,7 +32,7 @@ class UserRecoverPasswordController extends GalleryController {
     /**
      * ValidationPlugin instances to use when handling this request.  Only used by test code.
      *
-     * @var array (pluginId => object ValidationPlugin) $_pluginInstances
+     * @var array (pluginId => ValidationPlugin) $_pluginInstances
      * @access private
      */
     var $_pluginInstances;

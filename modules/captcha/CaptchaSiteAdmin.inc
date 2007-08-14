@@ -168,7 +168,7 @@ class CaptchaAdminOption {
     /**
      * Return all available options.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array of string optionId => CaptchaAdminOption instance
      * @static
      */
@@ -214,7 +214,7 @@ class CaptchaAdminOption {
     /**
      * Get data about this configuration option.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string localized title for this option
      *               array(pluginType, pluginId, parameterName) to configure
      *               array of string choices (any of HIGH, MEDIUM, LOW, OFF)

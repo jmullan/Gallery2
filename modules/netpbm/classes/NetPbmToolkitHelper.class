@@ -33,7 +33,7 @@ class NetPbmToolkitHelper {
      * NetPbmToolkit and return them.
      *
      * @param boolean $saveParameters (optional) true to save module parameters
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      *         array('operations' => ..., 'properties' => ...)
      */
     function getOperationsAndProperties($saveParameters=false) {
@@ -166,7 +166,7 @@ class NetPbmToolkitHelper {
      * This is done by calling jhead with the -V flag
      *
      * @param string $jheadPath path to the jhead binary
-     * @return array object GalleryStatus general status of tests
+     * @return array GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successful?
      *		      'message' => string: the error message
@@ -210,7 +210,7 @@ class NetPbmToolkitHelper {
      * making sure they run properly.
      *
      * @param string $netPbmPath path to the NetPbm we are testing
-     * @return array object GalleryStatus general status of tests
+     * @return array GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successful?
      *		      'message' => string: the error message
@@ -297,7 +297,7 @@ class NetPbmToolkitHelper {
      * Save module parameters based on test results.
      *
      * @param array $tests testBinaries test results
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function saveParameters($tests) {
 	$paramList = array('pnmtojpeg' => 'p.mtojpeg', 'bmptopnm' => 'bmptop.m',

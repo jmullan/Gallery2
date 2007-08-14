@@ -326,7 +326,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
      * @param string $url url
      * @param array $headers (optional) http response headers
      * @param boolean $getFileName (optional) true to also figure out filename
-     * @return array object GalleryStatus a status object
+     * @return array GalleryStatus a status object
      *               string mime type
      *               string filename or null if not requested
      * @access private
@@ -394,7 +394,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
      * @param string $url url
      * @param string $htmlAttribute (optional) html attribute this url was parsed from
      * @param array $headers (optional) http response headers
-     * @return array object GalleryStatus a status object
+     * @return array GalleryStatus a status object
      *               string type name
      * @access private
      */

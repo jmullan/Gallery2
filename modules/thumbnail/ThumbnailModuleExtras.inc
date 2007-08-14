@@ -404,8 +404,8 @@ class ThumbnailModuleExtras {
 
     /**
      * Create the container entity for all the custom thumbnails.
-     * @param object $module ThumbnailModule
-     * @return object GalleryStatus a status code
+     * @param ThumbnailModule $module
+     * @return GalleryStatus a status code
      */
     function _createThumbnailContainer($module) {
 	list ($ret, $container) =

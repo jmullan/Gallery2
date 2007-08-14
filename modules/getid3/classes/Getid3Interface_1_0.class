@@ -36,8 +36,8 @@ class Getid3Interface_1_0 {
      * @param mixed $itemIds array of GalleryDataItem ids or a single id
      * @param mixed $properties array of properties to return or a single property name;
      *        if empty or omitted return all available properties
-     * @return array(object GalleryStatus a status code,
-     *               array( id => array(property=>value,...) ))
+     * @return array GalleryStatus a status code,
+     *               array( id => array(property=>value,...) )
      */
     function getMetaData($itemIds, $properties=array()) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED), null);

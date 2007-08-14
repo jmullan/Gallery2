@@ -75,7 +75,7 @@ class ConfirmImportController extends GalleryController {
      *
      * @param array $form the form variables
      * @param string $albumsPath the albums path
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function performImport($form, $albumsPath) {
 	global $gallery;
@@ -1477,7 +1477,7 @@ class ConfirmImportController extends GalleryController {
      * @param int $itemId
      * @param string $g1AlbumName G1 album name
      * @param string $g1ItemName (optional) G1 item name
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @author Joseph Elwell <jelwell@yahoo.com>
      */
     function createG1ToG2Mapping($itemId, $g1AlbumName, $g1ItemName=null) {

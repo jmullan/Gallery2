@@ -348,8 +348,8 @@ class ItemEditPlugin {
     /**
      * Does this plugin support the given item type?
      *
-     * @param object GalleryItem $item
-     * @param object GalleryDerivative $thumbnail item's thumbnail
+     * @param GalleryItem $item
+     * @param GalleryDerivative $thumbnail item's thumbnail
      * @return boolean true if it's supported
      */
     function isSupported($item, $thumbnail) {
@@ -360,11 +360,11 @@ class ItemEditPlugin {
      * Load the template with data from this plugin
      * @see GalleryView::loadTemplate
      *
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      * @param array $form the form values
-     * @param object GalleryItem $item
-     * @param object GalleryDerivative $thumbnail item's thumbnail
-     * @return array object GalleryStatus a status code
+     * @param GalleryItem $item
+     * @param GalleryDerivative $thumbnail item's thumbnail
+     * @return array GalleryStatus a status code
      *               string the path to a template file to include
      *               string localization domain for the template file
      */
@@ -377,9 +377,9 @@ class ItemEditPlugin {
      * @see GalleryController::handleRequest
      *
      * @param array $form the form values
-     * @param object GalleryItem $item
-     * @param object GalleryDerivative $preferred item's preferred derivative, if there is one
-     * @return array object GalleryStatus a status code
+     * @param GalleryItem $item
+     * @param GalleryDerivative $preferred item's preferred derivative, if there is one
+     * @return array GalleryStatus a status code
      *               array error messages
      *               string localized status message
      *               boolean true if progress bar is needed
@@ -392,7 +392,7 @@ class ItemEditPlugin {
     /**
      * Return a localized title for this plugin, suitable for display to the user
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string localized title
      */
     function getTitle() {
@@ -404,7 +404,7 @@ class ItemEditPlugin {
      *
      * @param string $operation the operation (eg. 'rotate' or 'scale')
      * @param array $mimeTypes
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               bool true if any of the mime types are supported
      * @access protected
      */
@@ -436,10 +436,10 @@ class ItemEditOption {
      * Return all the available option plugins
      *
      * @param string $editPlugin name of ItemEditPlugin
-     * @param object GalleryItem $item
-     * @param object GalleryDerivative $thumbnail
-     * @return array object GalleryStatus a status code
-     *               array object ItemEditOption instances
+     * @param GalleryItem $item
+     * @param GalleryDerivative $thumbnail
+     * @return array GalleryStatus a status code
+     *               array ItemEditOption instances
      * @static
      */
     function getAllOptions($editPlugin, $item, $thumbnail) {
@@ -474,10 +474,10 @@ class ItemEditOption {
      * Load the template with data from this plugin
      * @see GalleryView::loadTemplate
      *
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      * @param array $form the form values
-     * @param object GalleryItem $item
-     * @return array object GalleryStatus a status code
+     * @param GalleryItem $item
+     * @return array GalleryStatus a status code
      *               string the path to a template file to include
      *               string localization domain for the template file
      */
@@ -490,9 +490,9 @@ class ItemEditOption {
      * @see GalleryController::handleRequest
      *
      * @param array $form the form values
-     * @param object GalleryItem $item reference to the item
-     * @param object GalleryDerivative $preferred reference to preferred derivative
-     * @return array object GalleryStatus a status code
+     * @param GalleryItem $item reference to the item
+     * @param GalleryDerivative $preferred reference to preferred derivative
+     * @return array GalleryStatus a status code
      *               array error messages
      *               array localized warning messages
      */
@@ -503,9 +503,9 @@ class ItemEditOption {
     /**
      * Is this option appropriate at this time?
      *
-     * @param object GalleryItem $item
-     * @param object GalleryDerivative $thumbnail
-     * @return array object GalleryStatus a status code
+     * @param GalleryItem $item
+     * @param GalleryDerivative $thumbnail
+     * @return array GalleryStatus a status code
      *               boolean true or false
      */
     function isAppropriate($item, $thumbnail) {

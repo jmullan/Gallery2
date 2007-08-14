@@ -32,7 +32,7 @@ class ImageMagickToolkitHelper {
      * Figure out what operations and properties are supported by the
      * ImageMagickToolkit and return them.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      *         array('operations' => ..., 'properties' => ...)
      */
     function getOperationsAndProperties() {
@@ -187,7 +187,7 @@ class ImageMagickToolkitHelper {
      *
      * @param string $cmd an ImageMagick command (eg. "convert")
      * @param string $imageMagickPath (optional) ImageMagick path (default=module configuration)
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               array commands
      */
     function getCommand($cmd, $imageMagickPath=null) {
@@ -226,7 +226,7 @@ class ImageMagickToolkitHelper {
      *
      * @param string $imageMagickPath (optional) path to the ImageMagick we are testing;
      *	       if not given, use the 'imagemagick.path' module parameter
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       array supported mime-types
      */
     function discoverMimeTypes($imageMagickPath=null) {
@@ -329,7 +329,7 @@ class ImageMagickToolkitHelper {
      * This is done by trying to run 'identify' on a sample image.
      *
      * @param string $imageMagickPath path to the ImageMagick we are testing
-     * @return array object GalleryStatus general status of tests
+     * @return array GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successful?
      *		      'message' => string: the error message, in case of
@@ -522,7 +522,7 @@ class ImageMagickToolkitHelper {
      * ImageMagick 5.x, 6.x: <none>
      * GraphicsMagick: "gm"
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               string name of the binary
      */
     function discoverBinary($imageMagickPath=null) {
@@ -551,7 +551,7 @@ class ImageMagickToolkitHelper {
     /**
      * Discovers the version of the installed ImageMagick/GraphicsMagick
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               array string "ImageMagick" | "GraphicsMagick"
      *                     string version
      *               boolean true if version is vulnerable to
@@ -589,7 +589,7 @@ class ImageMagickToolkitHelper {
      * ImageMagick 5.x, 6.x: composite
      * GraphicsMagick: composite
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               string name of the binary (defaults to composite)
      */
     function discoverCompositeCmd($imageMagickPath=null) {
@@ -634,7 +634,7 @@ class ImageMagickToolkitHelper {
      * ImageMagick 5.x, 6.x, GraphicsMagick: +profile '*'
      * ImageMagick 6.x: -strip
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               array the needed parameters
      */
     function discoverRemoveMetaDataSwitch($imageMagickPath=null) {
@@ -676,7 +676,7 @@ class ImageMagickToolkitHelper {
     /**
      * Checks if we can detect and convert jpegs with CMYK colorspace
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               boolean true if CMYK is supported
      */
     function discoverColorspaceSupport($imageMagickPath=null) {
@@ -728,7 +728,7 @@ class ImageMagickToolkitHelper {
      * Given a imageMagickPath, discover and store some platform-specific
      * settings in the plugins parameter map
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function savePlatformParameters($imageMagickPath=null) {
 	/* Find out if we are GraphicsMagick, using "gm" as a binary */

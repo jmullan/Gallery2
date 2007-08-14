@@ -37,7 +37,7 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 
     /**
      * Check this module's configuration.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int HTTP auth status code
      */
     function checkConfiguration() {
@@ -105,7 +105,7 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 
     /**
      * Check that Gallery can access HTTP usernames and passwords.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean true if Gallery can access HTTP usernames and passwords
      */
     function checkHttpAuth() {
@@ -175,8 +175,8 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
      *
      * @param string authentication type (Basic, Negotiate, etc.)
      * @param string username
-     * @return array object GalleryStatus a status code
-     *               object GalleryUser the active user or null
+     * @return array GalleryStatus a status code
+     *               GalleryUser the active user or null
      */
     function getUser($authtype, $username) {
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'httpauth');
@@ -224,8 +224,8 @@ class HttpAuthHelper /* extends HttpAuthInterface_1_0 */ {
 
     /**
      * Regenerate the session if this request might the initial login (active auth vs passive auth).
-     * @param object GalleryUser $authenticatedUser user authenticated for this request
-     * @return object GalleryStatus a status code
+     * @param GalleryUser $authenticatedUser user authenticated for this request
+     * @return GalleryStatus a status code
      */
     function regenerateSessionIfNecessary($authenticatedUser) {
 	global $gallery;

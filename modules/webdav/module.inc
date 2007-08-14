@@ -360,7 +360,7 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
 
     /**
      * Activate essential rewrite rules.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function _activateRewriteRules() {
 	list ($ret, $rewriteApi) = GalleryCoreApi::newFactoryInstance('RewriteApi');

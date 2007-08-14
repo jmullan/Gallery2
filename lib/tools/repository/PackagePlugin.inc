@@ -37,7 +37,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
     /**
      * Displays the available plugins that can be packaged.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function showAvailablePlugins() {
 	list ($ret, $plugins) = $this->getAvailablePluginList(array(
@@ -57,7 +57,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
     /**
      * Creates all packages for the selected plugin and displays a summary page when completed.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function packagePlugin() {
 	list ($pluginId, $pluginType) =
@@ -85,7 +85,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
     /**
      * Creates packages for all plugins that match the 'filter' request variable.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function packagePlugins() {
 	global $gallery;
@@ -120,7 +120,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
     /**
      * Creates all packages for the specified plugin.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array('pluginId' => ..., 'outputDir' => ...,
      *                     'packageInfo' => ..., 'errors' => ...)
      */
@@ -182,7 +182,7 @@ class PackagePluginControllerAndView extends RepositoryControllerAndView {
      * Creates a list of all existing plugins with optional action links.
      *
      * @param array $links 'action' => array(UrlGeneratorParameters)
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     array plugin list
      */
     function getAvailablePluginList($links) {

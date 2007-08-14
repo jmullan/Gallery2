@@ -121,8 +121,8 @@ class CommentSiteAdminController extends GalleryController {
 
     /**
      * Check all existing comments against Akismet.
-     * @param $akismet object AkismetApi instance
-     * @return object GalleryStatus a status code
+     * @param AkismetApi $akismet AkismetApi instance
+     * @return GalleryStatus a status code
      */
     function checkAllWithAkismet($akismet) {
 	global $gallery;

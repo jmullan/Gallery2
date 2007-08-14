@@ -131,7 +131,7 @@ class ItemAddFromPicasa extends ItemAddPlugin {
      *
      * @param string $picasaXmlPath the export path, integer the ID of the destination album,
      *        array the form variables
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function performImport($picasaXmlPath, $destinationAlbumId, $form) {
 	global $gallery;

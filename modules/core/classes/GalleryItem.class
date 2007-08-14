@@ -169,7 +169,7 @@ class GalleryItem extends GalleryFileSystemEntity {
      *
      * @param int $parentId the id of the GalleryEntity parent of this object
      * @param string $path the path component of this new object
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function create($parentId, $path) {
 	global $gallery;
@@ -218,7 +218,7 @@ class GalleryItem extends GalleryFileSystemEntity {
      * Create a root level instance of this GalleryEntity in the persistent store.
      * Let the parent do its work, then add any initialization specific to this class.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function createRoot() {
 	global $gallery;
@@ -282,7 +282,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 
     /**
      * Delete this GalleryEntity.  Delete all of its children also, if it has any.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function delete() {
 	global $gallery;
@@ -355,7 +355,7 @@ class GalleryItem extends GalleryFileSystemEntity {
      * Move item to a new parent
      *
      * @param int $newParentId the id of the new parent GalleryItem
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function move($newParentId) {
 	$parentId = $this->getParentId();
@@ -389,7 +389,7 @@ class GalleryItem extends GalleryFileSystemEntity {
     /**
      * Save the changes to this GalleryItem.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function save($postEvent=true) {
 	global $gallery;

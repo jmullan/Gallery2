@@ -110,7 +110,7 @@ class GalleryDataItem extends GalleryItem {
      * @param string $targetName (optional) the desired name of the new item
      * @param boolean $symlink (optional) a boolean true if we should symlink instead
      *        of copy (default is false).
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function create($parentId, $inputFileName, $mimeType, $targetName=null, $symlink=false) {
 	global $gallery;
@@ -227,7 +227,7 @@ class GalleryDataItem extends GalleryItem {
 
     /**
      * Delete this GalleryEntity
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function delete() {
 	global $gallery;
@@ -260,7 +260,7 @@ class GalleryDataItem extends GalleryItem {
 
     /**
      * Scan this item's data for changes.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function rescan() {
 	global $gallery;
@@ -281,7 +281,7 @@ class GalleryDataItem extends GalleryItem {
      * Rename this DataItem
      *
      * @param string $newName the path component
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function rename($newName) {
 	global $gallery;
@@ -357,7 +357,7 @@ class GalleryDataItem extends GalleryItem {
     /**
      * Get the full path to the data file.
      *
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               string a path where children can store their data files
      */
     function fetchPath() {

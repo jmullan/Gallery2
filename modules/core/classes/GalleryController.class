@@ -99,7 +99,7 @@ class GalleryController {
      * should return to the URL where the login link was clicked.
      *
      * @param array $form the form values
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               return-array
      */
     function handleRequest($form) {
@@ -112,8 +112,8 @@ class GalleryController {
      * Be very security conscious about checking the inputs for possible misuse
      *
      * @param string $controllerName a controller name (eg. 'core.Logout')
-     * @return array object GalleryStatus a status code
-     *               object GalleryController a controller
+     * @return array GalleryStatus a status code
+     *               GalleryController a controller
      * @static
      */
     function loadController($controllerName) {
@@ -213,7 +213,7 @@ class GalleryController {
      * 
      * All requests that modify data must be signed, except the request is by a guest.
      * 
-     * @return object GalleryStatus a status code null on success, ERROR_REQUEST_FORGED on failure
+     * @return GalleryStatus a status code null on success, ERROR_REQUEST_FORGED on failure
      * @static
      */
     function assertIsGenuineRequest() {

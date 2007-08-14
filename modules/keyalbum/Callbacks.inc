@@ -86,7 +86,7 @@ class KeyAlbumCallbacks {
      * @param int $maxWeight max value for font enlargement in keyword cloud
      * @param boolean $includeFrequency false to only get distinct keywords, but not consider their
      *        frequency (cloud requires frequency)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @static
      */
     function _findAllKeywords($param, $onlyPublic, $sizeLimit, $maxWeight, $includeFrequency) {

@@ -117,7 +117,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
      * Find out what mime types currently have support for:
      *    thumbnail, select-page, page-count
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array mime types
      */
     function _getSupportedMultiPageTypes() {
@@ -151,7 +151,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
      * Find out what mime types currently have support for:
      *   convert-to-image/jpeg, select-offset, dimensions-and-duration
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array mime types
      */
     function _getSupportedMovieTypes() {

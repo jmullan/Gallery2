@@ -31,8 +31,8 @@ class UserAlbumHelper {
     /**
      * Create a new user album
      *
-     * @param object GalleryUser $user new user
-     * @return object GalleryStatus a status code
+     * @param GalleryUser $user new user
+     * @return GalleryStatus a status code
      */
     function createUserAlbum($user) {
 	list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');

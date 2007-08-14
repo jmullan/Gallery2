@@ -31,7 +31,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Load image block data into template.
      *
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      * @param array $params (optional) image block parameters (to override module settings)
      * @return GalleryStatus a status code
      */
@@ -670,7 +670,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Cache viewable data for user
      * @param int $userId
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function cacheViewableTree($userId) {
 	global $gallery;
@@ -849,11 +849,11 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     /**
      * Set the disabled flag for an album
      *
-     * @param object GalleryAlbumItem $parentAlbum AlbumItem which is to be flagged
+     * @param GalleryAlbumItem $parentAlbum AlbumItem which is to be flagged
      * @param boolean $recursive whether to set the disabledFlag recursively to all subalbums
      * @param boolean $disabled whether to set the disabledFlag to true or to false
      * @param boolean $useProgressBar (optional) use a progressbar during update? (default=false)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function setDisabledFlag($parentAlbum, $recursive, $disabled, $useProgressBar=false) {
 	global $gallery;
@@ -944,7 +944,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * Get the disabled flag for an item
      *
      * @param int $itemId entityId of a GalleryItem for which the flag is to be retrieved
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean disabledFlag for the GalleryDataItem
      */
     function getDisabledFlag($itemId) {

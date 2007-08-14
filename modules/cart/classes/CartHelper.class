@@ -31,7 +31,7 @@ class CartHelper {
     /**
      * Return the ids of the items in the cart
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array (itemId => count, itemId => count, ..)
      */
     function fetchCartItemCounts() {
@@ -52,7 +52,7 @@ class CartHelper {
      *  cart.add permission)
      *
      * @param array $ids int item ids
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function addItemsToCart($ids) {
 	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
@@ -93,7 +93,7 @@ class CartHelper {
      * Store cart contents
      *
      * @param array $cartItemIds (itemId => count, itemId => count, ..)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function setCartItemCounts($cartItemIds) {
 	global $gallery;
@@ -112,7 +112,7 @@ class CartHelper {
      * Load entities for all cart items.
      * Remove any invalid ids from cart.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array of items
      */
     function loadCartItems() {

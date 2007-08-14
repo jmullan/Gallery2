@@ -63,7 +63,7 @@ class RepositoryObject {
     /**
      * Template for formatting the object's data.
      *
-     * @var object GalleryTemplate
+     * @var GalleryTemplate
      * @access private
      */
     var $_template;
@@ -71,7 +71,7 @@ class RepositoryObject {
     /**
      * File name of this object's template.
      *
-     * @var object RepositoryTemplate
+     * @var RepositoryTemplate
      * @access private
      */
     var $_templateFile;
@@ -79,7 +79,7 @@ class RepositoryObject {
     /**
      * Repository utilities reference.
      *
-     * @var object GalleryRepositoryUtilities
+     * @var GalleryRepositoryUtilities
      * @access private
      */
     var $_utilities;
@@ -99,7 +99,7 @@ class RepositoryObject {
      * Checks to make sure the specified directory exists are made before setting the directory.
      *
      * @param string $outputDir object output directory
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function setOutputDir($outputDir) {
 	global $gallery;
@@ -122,7 +122,7 @@ class RepositoryObject {
      *
      * @param boolean $overwriteFile overwrite file if it exists
      * @param boolean $compressToo optionally write a compressed version of the file
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     boolean whether the file was written to disk
      */
     function writeToDisk($overwriteFile=false, $compressToo=false) {

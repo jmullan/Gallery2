@@ -832,7 +832,7 @@ class GalleryUrlGenerator {
      * requestVariables, but before we start generating URLs with generateUrl().  Currently it's
      * called from GalleryInitSecondPass
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function initNavigation() {
 	global $gallery;
@@ -953,7 +953,7 @@ class GalleryUrlGenerator {
      * Get a list of navigation links to go back to where we came from.
      *
      * @param int $depth set this to get links back to a certain depth
-     * @return array ( object GalleryStatus a status code,
+     * @return array ( GalleryStatus a status code,
      *                 array of navigational links: array('url' => ...,
      *                                            'name' => 'Back to ...'))
      */

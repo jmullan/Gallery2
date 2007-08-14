@@ -33,7 +33,7 @@ class GdToolkitHelper {
      * image* functions in the PHP installation and return them.
      *
      * @param object a $gd GdFunctionality-object to work with
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      *	 array('operations' => ...
      *	       'properties' => ...)
      */
@@ -226,7 +226,7 @@ class GdToolkitHelper {
      * "1.6.2 or higher", it can be as high as 1.8.2, depending on the PHP
      * version and which functionality they test for.
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *         string the GD version number or '0' if there is no GD support
      *                Prefixed with '>' if PHP says "or higher"
      */
@@ -269,7 +269,7 @@ class GdToolkitHelper {
      * See if this GD version is supported by this module.  Currently GD >= 2.0 is supported.
      *
      * @param string $gdVersion A gd version string or empty to check the current version
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       boolean true if supported, false otherwise
      */
     function isGdVersionSupported($gdVersion=null, $gd=null) {
@@ -295,7 +295,7 @@ class GdToolkitHelper {
      * The bundled library provides some functionality that is currently
      * not available on the standard GD library. Those are tested here.
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       boolean true if it is the bundled library, false otherwise
      */
     function isBundled($gd=null) {
@@ -312,7 +312,7 @@ class GdToolkitHelper {
     /**
      * Find out which mime types are supported on this GD.
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       array supported mime-types
      */
     function discoverMimeTypes($gd=null) {
@@ -379,7 +379,7 @@ class GdToolkitHelper {
 
     /**
      * Factory to get a new GdFunctionality object.
-     * @return object GdFunctionality
+     * @return GdFunctionality
      */
     function &getGdFunctionality() {
 	static $gdFunctionality;

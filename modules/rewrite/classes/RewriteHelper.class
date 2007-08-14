@@ -40,8 +40,8 @@ class RewriteHelper {
      * Load and initialize the rewrite plugin.  If no plugin has been configured yet it returns a
      * GalleryStatus ERROR_MISSING_VALUE.
      * @param boolean $new (optional) true if we need a new instance
-     * @return array object GalleryStatus a status code
-     *               object RewritePlugin a loaded parser
+     * @return array GalleryStatus a status code
+     *               RewritePlugin a loaded parser
      */
     function getRewriteParser($new=false) {
 	global $gallery;
@@ -74,10 +74,10 @@ class RewriteHelper {
      * Parse active rules into an array of regular expressions for parsing URLs during page requests
      * and build an array for the URL generator to use when generating short URLs.
      * @param array $activeRules array array ('pattern' => string pattern) active rules by reference
-     * @param object RewriteParser $rewriteParser
-     * @param object GalleryModule $upgradeModule (optional) passed in during activate / upgrade
+     * @param RewriteParser $rewriteParser
+     * @param GalleryModule $upgradeModule (optional) passed in during activate / upgrade
      * @param array $flags optional definition of default and mandatory flags
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      *               array parsed patterns translated to regular expressions
      *               array short URLs which will used by to generate URLs
@@ -274,7 +274,7 @@ class RewriteHelper {
      * @param array $regexRules of parsed rules
      * @param array $rule rewrite rule
      * @param array $activeRule array ('pattern' => string pattern)
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      * @access private
      */
@@ -408,7 +408,7 @@ class RewriteHelper {
     /**
      * Get the rewrite rule history for a specific module.
      * @param string $moduleId id of the module
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array (mixed ruleId => array ('pattern' => string pattern))
      */
     function getHistoryForModule($moduleId) {
@@ -426,7 +426,7 @@ class RewriteHelper {
      * Store the rewrite rule history for a specific module.
      * @param string $moduleId id of the module
      * @param array $history array (mixed ruleId => array ('pattern' => string pattern))
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function setHistoryForModule($moduleId, $history) {
 	if (!empty($history)) {

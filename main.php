@@ -166,7 +166,7 @@ function GalleryMain($embedded=false) {
 
 /**
  * Process our request.
- * @return array object GalleryStatus a status code
+ * @return array GalleryStatus a status code
  *               array
  */
 function _GalleryMain($embedded=false) {
@@ -666,7 +666,7 @@ function _GalleryMain_doRedirect($redirectUrl, $template=null, $controller=null,
 /**
  * Handle an error condition that happened somewhere in our main request processing code.  If the
  * error cannot be handled, then add an error in the event log.
- * @param object GalleryStatus a status code
+ * @param GalleryStatus a status code
  * @param array $g2Data the results from _GalleryMain
  */
 function _GalleryMain_errorHandler($error, $g2Data=null) {

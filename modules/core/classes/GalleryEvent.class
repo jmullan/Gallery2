@@ -36,7 +36,7 @@ class GalleryEvent {
 
     /**
      * Target entity
-     * @var object GalleryEntity
+     * @var GalleryEntity
      * @access private
      */
     var $_entity;
@@ -73,7 +73,7 @@ class GalleryEvent {
 
     /**
      * Set this event's entity
-     * @param object GalleryEntity $entity
+     * @param GalleryEntity $entity
      */
     function setEntity(&$entity) {
 	$this->_entity =& $entity;
@@ -81,7 +81,7 @@ class GalleryEvent {
 
     /**
      * Return the event's entity
-     * @return object GalleryEntity
+     * @return GalleryEntity
      */
     function &getEntity() {
 	return $this->_entity;

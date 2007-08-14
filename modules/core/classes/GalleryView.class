@@ -64,7 +64,7 @@ class GalleryView {
      *
      * @param array $status any status information from a delegating controller
      * @param array $error any error information from a delegating controller
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function renderImmediate($status, $error) {
 	return null;
@@ -73,9 +73,9 @@ class GalleryView {
     /**
      * Load the template with data from this view.
      *
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      * @param array $form the form values
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array ('body' => string template or 'redirect' => array)
      */
     function loadTemplate(&$template, &$form) {
@@ -133,8 +133,8 @@ class GalleryView {
      *   that is loaded is the <classname>View, that must extend GalleryView class
      *
      * @param string $viewName a view name in the format <module>.<classname> (eg 'core.ShowItem')
-     * @return array object GalleryStatus a status code
-     *               object GalleryView a view
+     * @return array GalleryStatus a status code
+     *               GalleryView a view
      * @static
      */
     function loadView($viewName) {
@@ -212,9 +212,9 @@ class GalleryView {
      * (like the theme, the form variables, the status variables, etc. then call the view's
      * loadTemplate() method and pass in the given template.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array ('body' => string template or 'redirect' => array)
-     *               object GalleryTheme the current theme
+     *               GalleryTheme the current theme
      */
     function doLoadTemplate(&$template) {
 	global $gallery;
@@ -319,7 +319,7 @@ class GalleryView {
      * It might return a static description or generate a dynamic description using the current
      * request status
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               string localized description
      */
     function getViewDescription() {
@@ -337,8 +337,8 @@ class GalleryView {
     /**
      * Return the current item, as specified in the itemId request variable.
      *
-     * @return array object GalleryStatus a status code
-     *               object GalleryItem an item
+     * @return array GalleryStatus a status code
+     *               GalleryItem an item
      *               boolean true if item was specified, false if default was used
      */
     function getItem() {
@@ -367,8 +367,8 @@ class GalleryView {
     /**
      * Return the current item, as specified in the itemId request variable.
      *
-     * @return array object GalleryStatus a status code
-     *               object GalleryItem an item
+     * @return array GalleryStatus a status code
+     *               GalleryItem an item
      *               boolean true if item was specified, false if default was used
      * @deprecated Please use getItem() instead.
      */
@@ -379,10 +379,10 @@ class GalleryView {
     /**
      * Load theme, theme parameters and item to use for this view.
      *
-     * @return array object GalleryStatus a status code
-     *               object GalleryTheme a theme instance, or null on loadPlugin failure
+     * @return array GalleryStatus a status code
+     *               GalleryTheme a theme instance, or null on loadPlugin failure
      *               array theme parameters
-     *               object GalleryEntity item context
+     *               GalleryEntity item context
      */
     function loadThemeAndParameters() {
 	list ($ret, $item, $wasSpecified) = $this->getItem();
@@ -413,9 +413,9 @@ class GalleryView {
     /**
      * Get the theme for this item by finding the theme id for the nearest album.
      *
-     * @param object GalleryItem $item (optional) omit or pass null to load default theme
-     * @return array object GalleryStatus a status code
-     *               object GalleryTheme a theme instance
+     * @param GalleryItem $item (optional) omit or pass null to load default theme
+     * @return array GalleryStatus a status code
+     *               GalleryTheme a theme instance
      */
     function loadThemeForItem($item=null) {
 	if (!isset($item)) {
@@ -455,8 +455,8 @@ class GalleryView {
      * Load the given theme if it's active.
      *
      * @param string $themeId
-     * @return array object GalleryStatus a status code
-     *               object GalleryTheme theme or null
+     * @return array GalleryStatus a status code
+     *               GalleryTheme theme or null
      * @access private
      * @static
      */

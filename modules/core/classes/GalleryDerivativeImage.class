@@ -76,7 +76,7 @@ class GalleryDerivativeImage extends GalleryDerivative {
      *
      * @param int $parentId the id of the parent GalleryItem
      * @param int $derivativeType the type of derivative image
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function create($parentId, $derivativeType) {
 	global $gallery;
@@ -139,7 +139,7 @@ class GalleryDerivativeImage extends GalleryDerivative {
      * Break apart the derivative commands and feed them into the appropriate graphics toolkits
      * to perform the transformation necessary to create this derivative from its source.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function rebuildCache() {
 	global $gallery;

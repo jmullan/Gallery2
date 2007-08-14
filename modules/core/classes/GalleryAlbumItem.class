@@ -82,7 +82,7 @@ class GalleryAlbumItem extends GalleryItem {
      * Also create the album directory on the filesystem.
      *
      * @param int $parentId the id of the parent of this object
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function create($parentId, $albumName) {
 	global $gallery;
@@ -164,7 +164,7 @@ class GalleryAlbumItem extends GalleryItem {
 
     /**
      * Create a new root level album
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function createRoot() {
 	global $gallery;
@@ -251,7 +251,7 @@ class GalleryAlbumItem extends GalleryItem {
      * Delete this AlbumItem.
      * Delete all children and then remove the album directory.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function delete() {
 	global $gallery;
@@ -296,7 +296,7 @@ class GalleryAlbumItem extends GalleryItem {
      * Rename this album
      *
      * @param string $newName the path component
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function rename($newName) {
 	global $gallery;
@@ -373,7 +373,7 @@ class GalleryAlbumItem extends GalleryItem {
      * Move this item to a new parent
      *
      * @param int $newParentId the id of the GalleryItem parent
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function move($newParentId) {
 	/* Get the current parent sequence */

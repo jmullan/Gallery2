@@ -149,7 +149,7 @@ class UpdatesAlbumView extends GalleryView {
     /**
      * Dynamic query for items
      * @param int $userId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array of item ids
      * @static
      */

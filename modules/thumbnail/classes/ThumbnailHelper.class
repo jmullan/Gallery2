@@ -38,7 +38,7 @@ class ThumbnailHelper {
      * @param int $count (optional) the number of items desired
      * @param int $offset (optional) the start of the range
      * @param string $substring (optional) a substring to match
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array of itemId=>fileName
      */
     function fetchThumbnails($listAll=false, $count=null, $offset=null, $substring=null) {
@@ -82,8 +82,8 @@ class ThumbnailHelper {
      * Fetch ThumbnailImage for given item
      *
      * @param int $itemId
-     * @return array object GalleryStatus a status code
-     *               object ThumbnailImage or null
+     * @return array GalleryStatus a status code
+     *               ThumbnailImage or null
      */
     function fetchThumbnail($itemId) {
 	global $gallery;
@@ -111,7 +111,7 @@ class ThumbnailHelper {
     /**
      * Get supported mime types
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array of mimeType=>itemId
      */
     function fetchMimeTypeMap() {
@@ -135,9 +135,9 @@ class ThumbnailHelper {
      * Get information about thumbnail support from other toolkits
      *
      * @param boolean $byMimeType (optional) true for data by-mimeType, false for data by-toolkit
-     * @return array :object GalleryStatus a status code
+     * @return array GalleryStatus a status code,
      *               :by-mimeType: array of mimeType=>array(toolkit ids)
-     *                or by-toolkit: array of toolkitId=>array(mimeTypes)
+     *                or by-toolkit: array of toolkitId=>array(mimeTypes),
      *               :by-mimeType: null
      *                or by-toolkit: array of mimeType conflicts
      */
@@ -172,7 +172,7 @@ class ThumbnailHelper {
     /**
      * Register toolkit operation for given mime type(s).
      * @param mixed $mimeTypes array or single string
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function registerToolkitOperation($mimeTypes) {
 	global $gallery;
@@ -206,10 +206,10 @@ class ThumbnailHelper {
      * @param string $tmpfile path to image file
      * @param string $fileMimeType mime type of image file
      * @param array $knownSize known width and height of image (used if toolkit unable to get size)
-     * @param object ThumbnailImage $item (optional -- if you don't provide it we'll
+     * @param ThumbnailImage $item (optional -- if you don't provide it we'll
      *                                     get one from the Factory)
-     * @return array object GalleryStatus a status code
-     *               id of newly created object
+     * @return array GalleryStatus a status code,
+     *               int id of newly created object
      */
     function addItem($mimeType, $parentId,
 		     $filename, $tmpfile, $fileMimeType, $knownSize=array(), $item=null) {
@@ -287,7 +287,7 @@ class ThumbnailHelper {
      * @param int $itemId id of the ThumbnailImage
      * @param string $mimeType mime type
      * @param boolean $isAdd (optional) true to add mime type, false to delete
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function updateItem($itemId, $mimeType, $isAdd=true) {
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'ThumbnailImage');
@@ -338,9 +338,9 @@ class ThumbnailHelper {
     /**
      * Create or update thumbnail derivative to be sourced from a ThumbnailImage
      *
-     * @param object GalleryItem $item
+     * @param GalleryItem $item
      * @param int $thumbnailId id of ThumbnailImage
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function applyThumbnail(&$item, $thumbnailId) {
 	list ($ret, $derivative) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
@@ -421,7 +421,7 @@ class ThumbnailHelper {
     /**
      * Return mime types and applicable file extensions
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array (string mime type => string list of extensions)
      */
     function getMimeTypeMap() {

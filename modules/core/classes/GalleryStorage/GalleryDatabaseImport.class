@@ -300,7 +300,7 @@ class GalleryDatabaseImport extends GalleryImportElement {
      * restore the config.ini file and reset the versions.dat file.
      * @param string $fileName Name of the file containing file database backup to restore.
      * @param string $progressCallback Name of the routine to return call with progress reports
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               array Array of GalleryStatus's containing errors encountered or null on success
      */
     function importToDb($fileName, $progressCallback) {
@@ -385,7 +385,7 @@ class _GalleryExportTag extends GalleryImportElement {
      * When writing, set Gallery into maintenance mode.
      * @param string $coreVersion The core API version number to write.
      * @param string $galleryVersion The Gallery API version number to write.
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function writeVersions($coreVersion, $galleryVersion) {
 	global $gallery;

@@ -50,7 +50,7 @@ class Gallery1DataParser {
      * Load and return user metadata from given file
      *
      * @param string $fileName Path to user file to unserialize
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               object Unserialized user metadata
      */
     function loadFile($fileName) {
@@ -90,7 +90,7 @@ class Gallery1DataParser {
      * Fetch an array of albums from a given path
      *
      * @param string $path Path to albums directory
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               array of objects
      */
     function getAlbumList($path) {
@@ -120,7 +120,7 @@ class Gallery1DataParser {
      * Fetch an associative array of parentalbum names from a given path to gallery1 albums
      *
      * @param string $path Path to albums directory
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               array of albums and their parents
      */
     function getParentAlbumList($path) {
@@ -148,7 +148,7 @@ class Gallery1DataParser {
      * Build a data tree of albums
      *
      * @param string $path Path to albums directory
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               array of albumnames and their children, and their children...
      */
     function getAlbumHierarchy($path) {
@@ -177,7 +177,7 @@ class Gallery1DataParser {
      * Fetch an array of albums with no parents
      *
      * @param string $path Path to albums directory
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               array of albumnames
      */
     function getRootAlbums($path) {
@@ -207,7 +207,7 @@ class Gallery1DataParser {
      * Load and return album metadata from given directory
      *
      * @param string $path Path to album directory
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               object Unserialized album metadata
      */
     function loadAlbumFields($path) {
@@ -237,7 +237,7 @@ class Gallery1DataParser {
      * Count the number of photos in an album dir
      *
      * @param string $path Path to album directory
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               integer Count of photos
      */
     function getPhotoCount($path) {
@@ -253,8 +253,8 @@ class Gallery1DataParser {
      * Count the photo data from an album dir
      *
      * @param string $path Path to album directory
-     * @return array object GalleryStatus a status code,
-     *               array object Galleryphotos
+     * @return array GalleryStatus a status code,
+     *               array Galleryphotos
      */
     function getPhotos($path) {
 	global $gallery;
@@ -272,7 +272,7 @@ class Gallery1DataParser {
      * Load user uids from path
      *
      * @param string $path Path to album directory
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               array Associative array of uids and usernames
      */
     function getUserUids($path) {
@@ -354,7 +354,7 @@ class Gallery1DataParser {
      *
      * @param string $path Path to album directory
      * @param string $uid Uid to import
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               array User metadata
      */
     function getUserFieldsByUid($path, $uid) {
@@ -389,7 +389,7 @@ class Gallery1DataParser {
      *
      * @param string $path Path to album directory
      * @param string $username Username to import
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               array User metadata
      */
     function getUserFieldsByUsername($path, $username) {

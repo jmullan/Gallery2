@@ -173,7 +173,7 @@ class GallerySession {
 
     /**
      * Either create a new session, or attach to an existing one.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function init() {
 	global $gallery;
@@ -277,7 +277,7 @@ class GallerySession {
 
     /**
      * Start session by ensuring we've got a valid, unique sessionId and send cookie if necessary.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function start() {
 	if (!$this->_isPersistentSessionAllowedForRequest() && !$this->_forceSaveSession) {
@@ -331,7 +331,7 @@ class GallerySession {
      * yet.  Triggers the expiration of existing persistent sessions in 2% of all calls.
      * @param boolean $useNonTransactionalConnection (optional) set to true if we should save this
      *                session outside of any existing transaction.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function save($useNonTransactionalConnection=false) {
 	global $gallery;
@@ -401,7 +401,7 @@ class GallerySession {
      * Set a new/unused sessionid.
      * @param boolean $emptyRemoteId (optional) if true don't initialize remoteIdentifier
      * @param int $userId (optional) user for session, defaults to anonymous
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function initEmpty($emptyRemoteId=false, $userId=null) {
 	$this->_emptySessionData();
@@ -430,7 +430,7 @@ class GallerySession {
 
     /**
      * Clean/remove and reinitialize a session.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function reset() {
 	global $gallery;
@@ -468,7 +468,7 @@ class GallerySession {
 
     /**
      * Regenerate the session id to prevent a session fixation attack by a hostile website.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function regenerate() {
 	/* Store the current session data */
@@ -522,7 +522,7 @@ class GallerySession {
     /**
      * Send back a cookie to the browser.
      * @param boolean $delete (optional) whether to delete the cookie
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _setCookie($delete=false) {
@@ -655,7 +655,7 @@ class GallerySession {
 
     /**
      * Acquire a new persistent session and guarantee we've got a valid, unqiue sessionId.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function _acquireNewPersistentSession() {
 	global $gallery;
@@ -715,7 +715,7 @@ class GallerySession {
      * the session based permission cache and the navigation isn't regarded important enough to
      * create a session.
      *
-     * @return array object GalleryStatus a status code, boolean session is necessary
+     * @return array GalleryStatus a status code, boolean session is necessary
      * @access private
      */
     function _isPersistentSessionRequired() {
@@ -814,7 +814,7 @@ class GallerySession {
     /**
      * Load the session data or generate a new session with new data.  Also sets
      * $this->_isPersistent to true if loaded from persistent store.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _loadSessionData() {
@@ -1022,7 +1022,7 @@ class GallerySession {
     /**
      * Get rid of any sessions that have not been accessed within our inactivity timeout or have
      * exceeded the max lifetime.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _expireSessions() {
@@ -1164,8 +1164,8 @@ class GallerySession {
      * By default, don't set the cookie domain.  Only set it, if Gallery is configured to set it
      * (eg. because it is a) embedded AND b) different subdomains are involved)
      *
-     * @return array (object GalleryStatus a status code,
-     *                string the cookie domain, or '' if no cookie domain should be set)
+     * @return array GalleryStatus a status code,
+     *               string the cookie domain, or '' if no cookie domain should be set
      */
     function getCookieDomain() {
 	if (!isset($this->_cookieDomain)) {

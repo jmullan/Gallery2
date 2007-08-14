@@ -304,7 +304,7 @@ class GalleryTestCase extends TestCase {
 	return (int)$this->_rootAlbumId;
     }
 
-    /** @param object GalleryEntity $entity to delete in tearDown */
+    /** @param GalleryEntity $entity to delete in tearDown */
     function _markForCleanup($entity) {
 	$this->_cleanup['entity'][] = $entity;
     }
@@ -324,7 +324,7 @@ class GalleryTestCase extends TestCase {
      *
      * @param string $pluginType
      * @param string $pluginId
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function _markPluginParametersForCleanup($pluginType, $pluginId) {
 	list($ret, $pluginParams) =
@@ -341,7 +341,7 @@ class GalleryTestCase extends TestCase {
      * Set core parameter for markup type.
      * @param string $markup markup type
      * @param bool $saveParams (optional) true to first mark core parameters for cleanup
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function _setMarkupType($markup, $saveParams=false) {
 	if ($saveParams) {
@@ -378,8 +378,8 @@ class GalleryTestCase extends TestCase {
      *
      * @param int $parentId the id of the parent album
      * @param array $fields (optional) fields to set in the new instance (field => value, ..)
-     * @return array object GalleryStatus a status code
-     *               object GalleryAlbumItem
+     * @return array GalleryStatus a status code
+     *               GalleryAlbumItem
      * @access protected
      */
     function _createRandomAlbum($parentId, $fields=array()) {
@@ -445,8 +445,8 @@ class GalleryTestCase extends TestCase {
      * @param array $fields (optional) fields to set in the new instance (field => value, ..)
      * @param string $inputFile (optional) data file (default __FILE__)
      * @param string $itemClass (optional) class to instantiate (default from factory)
-     * @return array object GalleryStatus a status code
-     *               object GalleryDataItem
+     * @return array GalleryStatus a status code
+     *               GalleryDataItem
      * @access protected
      */
     function _createRandomDataItem($parentId, $mimeType='application/unknown',
@@ -521,9 +521,9 @@ class GalleryTestCase extends TestCase {
      * Create a random link item
      *
      * @param int $parentId the id of the parent album
-     * @param object GalleryItem $targetItem target item
-     * @return array object GalleryStatus a status code
-     *               object GalleryDataItem
+     * @param GalleryItem $targetItem target item
+     * @return array GalleryStatus a status code
+     *               GalleryDataItem
      * @access protected
      */
     function _createLinkedItem($parentId, $targetItem) {
@@ -568,8 +568,8 @@ class GalleryTestCase extends TestCase {
      *
      * @param string $userTag (optional) suffix to add on username
      * @param string $password (optional)
-     * @return array object GalleryStatus a status code
-     *               object GalleryUser
+     * @return array GalleryStatus a status code
+     *               GalleryUser
      * @access protected
      */
     function _createRandomUser($userTag=null, $password='password') {
@@ -614,8 +614,8 @@ class GalleryTestCase extends TestCase {
      * Create a random group
      *
      * @param string $groupTag (optional) suffix to add on group name
-     * @return array object GalleryStatus a status code
-     *               object GalleryGroup
+     * @return array GalleryStatus a status code
+     *               GalleryGroup
      * @access protected
      */
     function _createRandomGroup($groupTag=null) {
@@ -899,7 +899,7 @@ class GalleryTestCase extends TestCase {
     /**
      * Convenience method to mark a username as disabled.
      * @param string $userName the username
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function _disableUserName($userName) {
 	return GalleryCoreApi::addMapEntry(

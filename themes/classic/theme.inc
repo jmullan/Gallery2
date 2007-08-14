@@ -194,7 +194,7 @@ class ClassicTheme extends GalleryTheme {
 
     /**
      * Build template data for subalbum tree
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _buildTree($childIds, &$treeList, &$treeItems, $maxDepth, $subalbumSort, $userId) {
@@ -238,7 +238,7 @@ class ClassicTheme extends GalleryTheme {
 
     /**
      * Helper function for _buildTree
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _doBuildTree($album, $branchId, &$treeList, &$treeItems, $maxDepth, $userId, $depth) {

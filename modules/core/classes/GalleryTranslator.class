@@ -283,7 +283,7 @@ class GalleryTranslator {
      *
      * @param string $languageCode the language code hint (eg. 'en_US' or 'zh_CN')
      * @param boolean $dontUseDatabase (optional) true if we should not use the database
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string language code
      */
     function init($languageCode=null, $dontUseDatabase=false) {
@@ -358,7 +358,7 @@ class GalleryTranslator {
     /**
      * Get default language code for this request.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string language code
      * @static
      */
@@ -463,7 +463,7 @@ class GalleryTranslator {
      *
      * @param string $domain the domain (eg. pluginType . 's_' . pluginId)
      * @param mixed $data a single string, or an array of parameters
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string the localized value
      */
     function translateDomain($domain, $data) {

@@ -32,7 +32,7 @@ class GalleryQuotasHelper {
      * Get the total size of all the user's current files, excluding the files in the
      * excludeIds param array.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               integer user's disk usage in bytes
      */
     function getUserDiskUsage($userId, $excludeIds=array()) {
@@ -81,7 +81,7 @@ class GalleryQuotasHelper {
      * If the user belongs to one or more groups with quotas, the group with the highest quota
      * is used as their quota.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               bool does a quota exists for this user
      *               integer user's disk quota in Kilobytes
      */
@@ -115,7 +115,7 @@ class GalleryQuotasHelper {
      * Get the users highest group quota, if they have multiple (or one), or return no
      * quota if they have no group quotas assigned.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean: does a quota exists for this user
      *               array('quota' => integer user's disk quota in Kilobytes,
      *                     'name' => string group's name)
@@ -169,7 +169,7 @@ class GalleryQuotasHelper {
     /**
      * Convert Kilobytes to a human readable format (ie: KB, MB, GB)
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string user's quota in human readable format
      *               string the unit of measurement for the user's quota (ie: KB, MB, GB)
      */
@@ -195,7 +195,7 @@ class GalleryQuotasHelper {
     /**
      * Get list of groups who have quotas
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array(groupId => array('quota' => group's disk quota,
      *                                      'name' => group's groupname))
      */
@@ -237,7 +237,7 @@ class GalleryQuotasHelper {
      * Get the users highest group quota, if they have multiple (or one), or return no
      * quota if they have no group quotas assigned.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               integer the number of groups that have quotas assigned
      */
     function fetchQuotaGroupCount() {
@@ -268,7 +268,7 @@ class GalleryQuotasHelper {
     /**
      * Get list of user's who have quotas
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array(groupId => array('quota' => user's disk quota,
      *                                      'name' => user's username))
      */
@@ -308,7 +308,7 @@ class GalleryQuotasHelper {
     /**
      * Get the number of users that have a quota assigned directly to them
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               integer the number of users that have quotas assigned
      */
     function fetchQuotaUserCount() {
@@ -339,7 +339,7 @@ class GalleryQuotasHelper {
     /**
      * Get the quota assigned to a group
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean does a quota exist
      *               array('id' => group's groupId
      *                     'quota' => group's disk quota,
@@ -384,7 +384,7 @@ class GalleryQuotasHelper {
     /**
      * Get the quota assigned to a user
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean does a quota exist
      *               array('id' => user's userId
      *                     'quota' => user's disk quota,

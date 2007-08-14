@@ -32,8 +32,8 @@ class EcardHelper {
     /**
      * Returns the smallest size of an item
      * @param int $itemId
-     * @return array object GalleryStatus a status code
-     *               object GalleryItem an item
+     * @return array GalleryStatus a status code
+     *               GalleryItem an item
      */
     function getSmallestSize($itemId) {
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
@@ -111,7 +111,7 @@ class EcardHelper {
     /**
      * Determine if we should use validation plugins.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean true to use validation plugins
      */
     function useValidationPlugins() {

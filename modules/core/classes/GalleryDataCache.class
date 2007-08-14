@@ -577,7 +577,7 @@ class GalleryDataCache {
      *
      * @param string $type the page type
      * @param mixed $keyData data to use to generate the unique key for this cache entry
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string the page data
      */
     function getPageData($type, $keyData) {
@@ -648,7 +648,7 @@ class GalleryDataCache {
      * @param int $itemId the itemId of the item this page is rendering
      * @param mixed $keyData data to use to generate the unique key for this cache entry
      * @param string $value the page data
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function putPageData($type, $itemId, $keyData, $value) {
 	global $gallery;
@@ -711,7 +711,7 @@ class GalleryDataCache {
      * Remove all cached page data for the given item ids
      *
      * @param mixed $itemIds one item id, or an array of item ids
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function removePageData($itemIds) {
 	$ret = GalleryCoreApi::removeMapEntry('GalleryCacheMap', array('itemId' => $itemIds));
@@ -728,7 +728,7 @@ class GalleryDataCache {
      *
      * @param string $action
      * @param string $type the page type
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function shouldCache($action, $type) {
 	global $gallery;
@@ -774,7 +774,7 @@ class GalleryDataCache {
      * @todo The extra key for exif module is a quick fix, not a permanent fix; it should be
      *       cached on the block level not on page level.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string extra cache key
      */
     function _getExtraPageCacheKey() {
@@ -800,7 +800,7 @@ class GalleryDataCache {
     /**
      * Delete value of obsolete cache data.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function _cleanPageDataCache() {
 	global $gallery;

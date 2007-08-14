@@ -92,7 +92,7 @@ class ItemAddWebDav extends ItemAddPlugin {
 
     /**
      * Add new item.
-     * @param object GalleryItem $parentItem The parent item of the item to be added
+     * @param GalleryItem $parentItem The parent item of the item to be added
      * @param array $webDavOptions WebDAV library options
      * @param resource $stream request body file handle
      * @param string $mimeType request content type
@@ -138,7 +138,7 @@ class ItemAddWebDav extends ItemAddPlugin {
 
     /**
      * Replace existing item.
-     * @param object GalleryItem $parentItem The parent item of the item to be added
+     * @param GalleryItem $parentItem The parent item of the item to be added
      * @param array $webDavOptions WebDAV library options
      * @param resource $stream request body file handle
      * @param string $mimeType request content type

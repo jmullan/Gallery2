@@ -179,7 +179,7 @@ class IsapiRewriteHelper {
      * Return the httpd.ini content given a set of rewrite rules.
      * @param array $regexRules regular expression rules with settings
      * @param boolean $embedded (optional) true if embedded httpd.ini content is wanted
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string the gallery .htaccess section
      */
     function getHttpdiniContent($regexRules, $embedded=false) {
@@ -394,7 +394,7 @@ class IsapiRewriteHelper {
 
     /**
      * Return the absolute path to the httpd.ini file.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string httpd.ini file path
      */
     function getHttpdiniPath() {
@@ -409,7 +409,7 @@ class IsapiRewriteHelper {
 
     /**
      * Check if the httpd.ini file is writeable.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      */
     function checkFile() {
@@ -443,7 +443,7 @@ class IsapiRewriteHelper {
      *     REWRITE_STATUS_OK                  everything is fine
      *     REWRITE_STATUS_NO_ISAPI_REWRITE    no ISAPI_Rewrite support
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      *               int true rewrite status code (REWRITE_STATUS_OK on success)
      */
@@ -475,7 +475,7 @@ class IsapiRewriteHelper {
     /**
      * Write Gallery data to the httpd.ini file.
      * @param array $regexRules regular expression rules with settings
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int rewrite status code
      */
     function writeFile($regexRules) {
@@ -619,7 +619,7 @@ class IsapiRewriteHelper {
 
     /**
      * @param array $param config values
-     * @param object IsapiRewriteParser $parser
+     * @param IsapiRewriteParser $parser
      * @param boolean $saveActiveRules true if we want to write the httpd.ini
      */
     function saveEmbedConfig($param, $parser, $saveActiveRules) {

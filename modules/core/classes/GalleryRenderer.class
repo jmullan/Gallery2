@@ -31,7 +31,7 @@ class GalleryRenderer {
     /**
      * Can this renderer display the given item?
      *
-     * @param object GalleryDataItem $item
+     * @param GalleryDataItem $item
      * @return boolean true if this data item can be viewed inline
      */
     function canBeViewedInline($item) {
@@ -49,8 +49,8 @@ class GalleryRenderer {
      * entity would be a GalleryDerivative and the item would be the GalleryPhotoItem.
      *
      * @param string $format the format (eg. "HTML")
-     * @param object GalleryEntity $entity the entity to render
-     * @param object GalleryItem $item the parent item
+     * @param GalleryEntity $entity the entity to render
+     * @param GalleryItem $item the parent item
      * @param array $params format specific key value pairs
      * @return string formatted output
      */

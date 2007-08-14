@@ -621,7 +621,7 @@ class WebDavTest extends GalleryTestCase {
     /**
      * Helper function for lock tests.
      * @param string $path resource to lock
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array new WebDAV lock (scope, type, depth, owner, expires, token, path)
      */
     function _testLock($path) {
@@ -688,7 +688,7 @@ class WebDavTest extends GalleryTestCase {
     /**
      * Helper function for lock tests.
      * @param array $lock WebDAV lock to unlock (scope, type, depth, owner, expires, token, path)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function _testUnlock($lock) {
 	/* Use valid inputs */

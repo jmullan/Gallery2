@@ -78,7 +78,7 @@ class PathInfoHelper {
     /**
      * Save the rules in a way the parser can grab quickly and compare against the request.
      * @param array $regexRules regular expression rules used by the parser
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function saveParser($regexRules) {
 	$static = $dynamic = array();
@@ -114,7 +114,7 @@ class PathInfoHelper {
      *   REWRITE_STATUS_OK                              everything is fine
      *   REWRITE_STATUS_NO_PATH_INFO                    no path info support
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int rewrite status code (REWRITE_STATUS_OK on success)
      *               int true rewrite status code (REWRITE_STATUS_OK on success)
      */

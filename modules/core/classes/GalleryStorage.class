@@ -70,21 +70,21 @@ class GalleryStorage {
 
     /**
      * Internal pointer to ADOdb database object
-     * @var object ADOdb
+     * @var ADOdb
      * @access protected
      */
     var $_db;
 
     /**
      * Internal pointer to a non-transactional ADOdb database object
-     * @var object ADOdb
+     * @var ADOdb
      * @access protected
      */
     var $_nonTransactionalDb;
 
     /**
      * Internal pointer to our DatabaseStorageExtras object
-     * @var object DatabaseStorageExtras
+     * @var DatabaseStorageExtras
      * @access protected
      */
     var $_extras;
@@ -195,7 +195,7 @@ class GalleryStorage {
     /**
      * Connect to the database
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               object a database resource
      * @access protected
      */
@@ -259,7 +259,7 @@ class GalleryStorage {
      * Set the connection/client/server encoding and other parameters
      *
      * @param object adodb $db database handle
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access protected
      */
     function _setConnectionSettings(&$db) {
@@ -270,7 +270,7 @@ class GalleryStorage {
      * Get the reference to our GalleryStorageExtras instance where we put less frequently used code
      * (most code that's used to modify the database).
      *
-     * @return object GalleryStorageExtras
+     * @return GalleryStorageExtras
      * @access protected
      */
     function &_getExtras() {
@@ -295,7 +295,7 @@ class GalleryStorage {
      * Load the GalleryEntities with the ids specified
      *
      * @param mixed $ids array of ids of the GalleryEntities to load or a single int id
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
     function loadEntities($ids) {
@@ -306,8 +306,8 @@ class GalleryStorage {
     /**
      * Save the changes to the GalleryEntity
      *
-     * @param object GalleryEntity $entity the GalleryEntity to save
-     * @return object GalleryStatus a status code
+     * @param GalleryEntity $entity the GalleryEntity to save
+     * @return GalleryStatus a status code
      */
     function saveEntity(&$entity) {
 	$extras =& $this->_getExtras();
@@ -317,8 +317,8 @@ class GalleryStorage {
     /**
      * Delete the GalleryEntity
      *
-     * @param object GalleryEntity $entity the GalleryEntity to delete
-     * @return object GalleryStatus a status code
+     * @param GalleryEntity $entity the GalleryEntity to delete
+     * @return GalleryStatus a status code
      */
     function deleteEntity(&$entity) {
 	$extras =& $this->_getExtras();
@@ -328,8 +328,8 @@ class GalleryStorage {
     /**
      * Create a new GalleryEntity
      *
-     * @param object GalleryEntity $entity the GalleryEntity to put the data in
-     * @return object GalleryStatus a status code
+     * @param GalleryEntity $entity the GalleryEntity to put the data in
+     * @return GalleryStatus a status code
      */
     function newEntity(&$entity) {
 	$extras =& $this->_getExtras();
@@ -340,7 +340,7 @@ class GalleryStorage {
      * Get a new, unique id
      *
      * @param string $sequence An optional sequence name, DATABASE_SEQUENCE_ID by default.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int an id
      */
     function getUniqueId($sequence=DATABASE_SEQUENCE_ID) {
@@ -351,9 +351,9 @@ class GalleryStorage {
     /**
      * Refresh a GalleryEntity from the database if it has changed
      *
-     * @param object GalleryEntity $entity the object to refresh
-     * @return array object GalleryStatus a status code,
-     *               object GalleryEntity the fresh entity
+     * @param GalleryEntity $entity the object to refresh
+     * @return array GalleryStatus a status code,
+     *               GalleryEntity the fresh entity
      */
     function refreshEntity($entity) {
 	$extras =& $this->_getExtras();
@@ -365,7 +365,7 @@ class GalleryStorage {
      *
      * @param mixed $entityIds array of ids or single int id
      * @param int $timeout timeout before giving up on the lock
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array lock data
      */
     function acquireReadLock($entityIds, $timeout) {
@@ -378,7 +378,7 @@ class GalleryStorage {
      *
      * @param mixed $entityIds array of ids or single int id
      * @param int $timeout timeout before giving up on the lock
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array lock data
      */
     function acquireWriteLock($entityIds, $timeout) {
@@ -391,7 +391,7 @@ class GalleryStorage {
      *
      * @param array $lockIds the lock ids
      * @param int $freshUntil the new "fresh until" timestamp
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function refreshLocks($lockIds, $freshUntil) {
 	$extras =& $this->_getExtras();
@@ -402,7 +402,7 @@ class GalleryStorage {
      * Release the given locks.
      *
      * @param mixed $lockIds array of lock ids or single id
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function releaseLocks($lockIds) {
 	$extras =& $this->_getExtras();
@@ -414,7 +414,7 @@ class GalleryStorage {
      *
      * @param array $lock lock data
      * @param array $ids ids to remove
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function removeIdsFromLock($lock, $ids) {
 	$extras =& $this->_getExtras();
@@ -427,7 +427,7 @@ class GalleryStorage {
      * @param array $relock of lockId => object ids
      * @param int $newLockId the new lockId
      * @param int $lockType LOCK_READ or LOCK_WRITE
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function moveIdsBetweenLocks($relock, $newLockId, $lockType) {
 	$extras =& $this->_getExtras();
@@ -437,7 +437,7 @@ class GalleryStorage {
     /**
      * Generate a new lock id.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int lock id
      */
     function newLockId() {
@@ -451,8 +451,8 @@ class GalleryStorage {
      * @param string $query the search query
      * @param array $data any explicit data values required by the query
      * @param array $optional optional arguments (eg. limits)
-     * @return array object GalleryStatus a status code,
-     *               object GallerySearchResults the result values
+     * @return array GalleryStatus a status code,
+     *               GallerySearchResults the result values
      */
     function search($query, $data=array(), $optional=array()) {
 	if (!isset($this->_db)) {
@@ -492,7 +492,7 @@ class GalleryStorage {
      *
      * @param string $statement the SQL statement
      * @param array $data any explicit data values required by the query
-     * @return object GalleryStatus a status code,
+     * @return GalleryStatus a status code,
      */
     function execute($statement, $data=array()) {
 	$extras =& $this->_getExtras();
@@ -506,7 +506,7 @@ class GalleryStorage {
      * @param array $entry an associative array of data about the entry
      * @param boolean $useNonTransactionalConnection (optional) set to true if we should use a new
      *                non transactional database connection for this operation.  Default is false.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function addMapEntry($mapName, $entry, $useNonTransactionalConnection=false) {
 	$extras =& $this->_getExtras();
@@ -518,7 +518,7 @@ class GalleryStorage {
      *
      * @param string $mapName the map we're working on
      * @param array $entry an associative array of data about the entries to match
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function removeMapEntry($mapName, $entry) {
 	$extras =& $this->_getExtras();
@@ -529,7 +529,7 @@ class GalleryStorage {
      * Remove ALL entries from a map.  Use with caution!
      *
      * @param string $mapName the map we're working on
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function removeAllMapEntries($mapName) {
 	$extras =& $this->_getExtras();
@@ -545,8 +545,8 @@ class GalleryStorage {
      * @param array $optional optional arguments (eg. limit, orderBy)
      *              array('limit' => array('count' => #, 'offset' => #),
      *                    'orderBy' => array(columnName => ORDER_ASCENDING|ORDER_DESCENDING, ...))
-     * @return array object GalleryStatus a status code
-     *               object GallerySearchResults the results
+     * @return array GalleryStatus a status code
+     *               GallerySearchResults the results
      */
     function getMapEntry($mapName, $select, $match=array(), $optional=array()) {
 	if (!isset($this->_db)) {
@@ -641,7 +641,7 @@ class GalleryStorage {
      * @param array $change the values to change
      * @param boolean $useNonTransactionalConnection (optional) set to true if we should use a new
      *                non transactional database connection for this operation.  Default is false.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function updateMapEntry($mapName, $match, $change, $useNonTransactionalConnection=false) {
 	if ($useNonTransactionalConnection && $this->isTransactional()) {
@@ -752,7 +752,7 @@ class GalleryStorage {
      *
      * @param string $moduleId
      * @param array $upgradeInfo (optional) of (classname => old schema version)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function configureStore($moduleId, $upgradeInfo=array()) {
 	$extras =& $this->_getExtras();
@@ -763,7 +763,7 @@ class GalleryStorage {
      * Perform any cleanup necessary after installing or upgrading the given module.
      *
      * @param string $moduleId
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function configureStoreCleanup($moduleId) {
 	$extras =& $this->_getExtras();
@@ -773,7 +773,7 @@ class GalleryStorage {
     /**
      * Uninstall the database schema for the given module
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function unconfigureStore($moduleId) {
 	$extras =& $this->_getExtras();
@@ -783,7 +783,7 @@ class GalleryStorage {
     /**
      * Clean out and reset the persistent store for this strategy.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function cleanStore() {
 	$extras =& $this->_getExtras();
@@ -793,7 +793,7 @@ class GalleryStorage {
     /**
      * Begin a new transaction, if the storage layer supports them.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function beginTransaction() {
 	if (!isset($this->_db)) {
@@ -819,7 +819,7 @@ class GalleryStorage {
     /**
      * Commit our transaction, if the storage layer supports them.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function commitTransaction() {
 	if ($this->_isTransactional && isset($this->_db) && $this->_db->transCnt > 0) {
@@ -856,7 +856,7 @@ class GalleryStorage {
      * Mark a storage checkpoint, which will commit pending transactions and perform any future
      * tied-tasks
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function checkPoint() {
 	if (!isset($this->_db)) {
@@ -874,7 +874,7 @@ class GalleryStorage {
     /**
      * Rollback our transaction, if the storage layer supports them.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function rollbackTransaction() {
 	if ($this->_isTransactional && isset($this->_db) && $this->_db->transCnt > 0) {
@@ -910,7 +910,7 @@ class GalleryStorage {
     /**
      * Begin transaction if not already in one.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access protected
      */
     function _guaranteeTransaction() {
@@ -1009,7 +1009,7 @@ class GalleryStorage {
      * Return true if enough of this storage system is installed that there'll be a conflict if you
      * try to do another install.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean true if the tables are installed
      */
     function isInstalled() {
@@ -1021,7 +1021,7 @@ class GalleryStorage {
      * Optimize the database.
      * @param array $tableNames (optional) of string tableName 1, tableName 2. Leave null to
      *        optimize all tables.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function optimize($tableNames=null) {
 	$extras =& $this->_getExtras();
@@ -1036,7 +1036,7 @@ class GalleryStorage {
      *
      * @param boolean $useNonTransactionalConnection (optional) set to true if we should check the
      *                non transactional database connection for this operation.  Default is false.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int the number of affected rows
      */
     function getAffectedRows($useNonTransactionalConnection=false) {
@@ -1049,7 +1049,7 @@ class GalleryStorage {
      *
      * @param string $entityName a class name
      * @param boolean $tryAllModules true if we should scan all modules, not just the active ones
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               entity associative array
      */
     function describeEntity($entityName, $tryAllModules=false) {
@@ -1062,7 +1062,7 @@ class GalleryStorage {
      * Split multiple commands in the file into separate Execute() calls.
      *
      * @param string $fileName absolute path of the sql file
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access protected
      */
     function _executeSqlFile($fileName) {
@@ -1419,7 +1419,7 @@ class GalleryStorage {
 
     /**
      * Examine the schema table and return the version of all the Gallery tables
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array (name => (major, minor))
      */
     function getTableVersions() {
@@ -1430,7 +1430,7 @@ class GalleryStorage {
     /**
      * Load the Maps.inc and Entities.inc into the schema table for the specified module
      * @param string $moduleId
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function updateTableInfo($moduleId) {
 	$extras =& $this->_getExtras();
@@ -1449,7 +1449,7 @@ class GallerySearchResults {
      * Internal record set object
      *
      * @access private
-     * @var object ADORecordSet $_recordSet
+     * @var ADORecordSet $_recordSet
      */
     var $_recordSet;
 

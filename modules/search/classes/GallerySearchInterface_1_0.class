@@ -33,7 +33,7 @@ class GallerySearchInterface_1_0 {
     /**
      * Return the name, description and searchable options of this searchable subsystem
      *
-     * @return array array(object GalleryStatus a status code,
+     * @return array array GalleryStatus a status code,
      *                     array('name' => '...',
      *                           'description' => '...',
      *                           'options' => array('option_key_1' =>
@@ -44,7 +44,7 @@ class GallerySearchInterface_1_0 {
      *                                                        'enabled' => 0),
      *                                              'option_key_3' =>
      *                                                  array('description' => 'Option 3',
-     *                                                        'enabled' => 1))))
+     *                                                        'enabled' => 1)))
      */
     function getSearchModuleInfo() {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),
@@ -58,7 +58,7 @@ class GallerySearchInterface_1_0 {
      * @param string $criteria search criteria
      * @param int $offset (optional) which hit to start with
      * @param int $count (optional) how many hits to show
-     * @return array(object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               array('start' => 1..#,
      *                     'end' => 1..#,
      *                     'count' => #,
@@ -68,7 +68,7 @@ class GallerySearchInterface_1_0 {
      *                                              array('key' => 'localized title',
      *                                                    'value' => 'localized text'),
      *                                              array('key' => 'localized title',
-     *                                                    'value' => 'localized text')))))
+     *                                                    'value' => 'localized text'))))
      */
     function search($options, $criteria, $offset=0, $count=-1) {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED),

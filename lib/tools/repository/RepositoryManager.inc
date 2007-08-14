@@ -37,7 +37,7 @@ class RepositoryManagerControllerAndView extends RepositoryControllerAndView {
     /**
      * Displays the contents of the repository.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function browse() {
 	global $gallery;

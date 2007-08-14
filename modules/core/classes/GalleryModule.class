@@ -112,7 +112,7 @@ class GalleryModule extends GalleryPlugin {
      * Modules should not need to override this method.  Instead they should
      * override the upgrade method and put all their module specific logic there.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function installOrUpgrade($bootstrap=false, $statusMonitor=null) {
 	global $gallery;
@@ -275,7 +275,7 @@ class GalleryModule extends GalleryPlugin {
     /**
      * Remove this module's plugin parameters and all of its database tables.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function uninstall() {
 	global $gallery;
@@ -311,7 +311,7 @@ class GalleryModule extends GalleryPlugin {
 
     /**
      * Delete all entities with a type registered by this module.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _deleteModuleEntities() {
@@ -426,7 +426,7 @@ class GalleryModule extends GalleryPlugin {
     /**
      * Does this module require configuration before it can be activated?
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean
      */
     function needsConfiguration() {
@@ -440,7 +440,7 @@ class GalleryModule extends GalleryPlugin {
      * even if nothing has to be done to get a successful configuration.  This method
      * should accept all the module's defaults wherever possible.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean was module able to autoconfigure
      */
     function autoConfigure() {
@@ -453,7 +453,7 @@ class GalleryModule extends GalleryPlugin {
      * module.  Note that the text value is localized since they will be displayed directly to the
      * user.  Include group/groupLabel in data to override the values from getGroup().
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array( array('name' => name, 'view' => view,
      *                 [optional: 'group' => group, 'groupLabel' => localized label]), ...)
      */
@@ -467,8 +467,8 @@ class GalleryModule extends GalleryPlugin {
      * applicable for the authenticated user.  As with getSiteAdminViews(), the view title text
      * must be localized.
      *
-     * @param object GalleryItem $item
-     * @return array object GalleryStatus a status code
+     * @param GalleryItem $item
+     * @return array GalleryStatus a status code
      *               array( array('name' => name, 'view' => view), ...)
      */
     function getItemAdminViews($item) {
@@ -481,8 +481,8 @@ class GalleryModule extends GalleryPlugin {
      * applicable for the authenticated user.  As with getSiteAdminViews(), the view title text
      * must be localized.
      *
-     * @param object GalleryUser $user
-     * @return array object GalleryStatus a status code
+     * @param GalleryUser $user
+     * @return array GalleryStatus a status code
      *               array( array('name' => name, 'view' => view), ...)
      */
     function getUserAdminViews($user) {
@@ -505,7 +505,7 @@ class GalleryModule extends GalleryPlugin {
      * It may be one that is also listed in getSiteAdminViews().  As with getSiteAdminViews(),
      * the view title text must be localized.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array(string linkId => array('text' => 'localized text',
      *                                            'params' => array(key => value, key => value))
      *                     ...)
@@ -519,11 +519,11 @@ class GalleryModule extends GalleryPlugin {
      * These are links to item specific module views.  For example, the
      * comments module uses this to link to the "add comments" view.
      *
-     * @param array $items array of object GalleryItem
+     * @param array $items array of GalleryItem
      * @param array $wantsDetailedLinks (id => 1, id => 1) we want detailed links for these ids
      * @param array $permissions id => array(permission => 1, ...) of item permissions
      * @param int $userId id of user viewing links
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array(itemId => array(array('text' => 'localized text',
      *                                           'params' => array(key => value, key => value))
      *                                     ...))
@@ -535,10 +535,10 @@ class GalleryModule extends GalleryPlugin {
     /**
      * Return module-specific summary content about the item
      *
-     * @param array $items array of object GalleryItem
+     * @param array $items array of GalleryItem
      * @param array $permissions id => array(permission => 1, ...) of item permissions
-     * @param object GalleryTemplate $template the master template instance
-     * @return array object GalleryStatus a status code
+     * @param GalleryTemplate $template the master template instance
+     * @return array GalleryStatus a status code
      *               array (id => string HTML content, ..)
      */
     function getItemSummaries($items, $permissions, &$template) {
@@ -549,7 +549,7 @@ class GalleryModule extends GalleryPlugin {
      * Register any factory implementations.  This is called at module activation time.
      * All implementations are unregistered when the module is deactivated.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function performFactoryRegistrations() {
 	return null;
@@ -680,7 +680,7 @@ class GalleryModule extends GalleryPlugin {
     /**
      * Remove obsolete blocks from existing themes (bug #1636339).
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function _removeObsoleteThemeBlocks() {
 	/* Get all available blocks, even from inactive modules; and used blocks. */

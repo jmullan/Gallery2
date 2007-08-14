@@ -30,8 +30,8 @@ class MaintenanceHelper_simple {
 
     /**
      * Fetch all the available maintenance tasks
-     * @return array object GalleryStatus a status code
-     *               array(taskId => object MaintenanceTask, ...)
+     * @return array GalleryStatus a status code
+     *               array(taskId => MaintenanceTask, ...)
      */
     function fetchTasks() {
 	/* Get all the option plugins */
@@ -58,7 +58,7 @@ class MaintenanceHelper_simple {
      * Return information about the last run of this task.
      *
      * @param string $taskId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array(runId => int,
      *                     timestamp => int,
      *                     success => bool,
@@ -91,7 +91,7 @@ class MaintenanceHelper_simple {
      * @param int $timestamp when the run happened
      * @param bool $success task success/failure
      * @param array $details string task details
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function addRun($taskId, $timestamp, $success, $details) {
 	global $gallery;

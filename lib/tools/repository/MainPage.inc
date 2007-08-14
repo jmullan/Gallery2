@@ -33,7 +33,7 @@ class MainPageControllerAndView extends RepositoryControllerAndView {
     /**
      * Displays the available actions in the repository tools.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
      function showAvailableActions() {
 	global $gallery;

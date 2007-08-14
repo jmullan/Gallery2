@@ -32,7 +32,7 @@ class Gallery {
 
     /**
      * The active GalleryUser instance
-     * @var object GalleryUser
+     * @var GalleryUser
      * @access private
      */
     var $_activeUser;
@@ -82,14 +82,14 @@ class Gallery {
 
     /**
      * The active GalleryLockSystem implementation
-     * @var object GalleryLockSystem
+     * @var GalleryLockSystem
      * @access private
      */
     var $_lockSystem;
 
     /**
      * An instance of the GalleryPlatform class
-     * @var object GalleryPlatform
+     * @var GalleryPlatform
      * @access private
      */
     var $_platform;
@@ -103,14 +103,14 @@ class Gallery {
 
     /**
      * Storage for all session variables.
-     * @var object GallerySession
+     * @var GallerySession
      * @access private
      */
     var $_session;
 
     /**
      * The backend persistent store for the Gallery class
-     * @var object GalleryStorage
+     * @var GalleryStorage
      * @access private
      */
     var $_storage;
@@ -118,21 +118,21 @@ class Gallery {
     /**
      * The adapter between the template system and any Gallery callbacks that want to use in the
      * template process.
-     * @var object GalleryTemplateAdapter
+     * @var GalleryTemplateAdapter
      * @access private
      */
     var $_templateAdapter;
 
     /**
      * Instance of the GalleryTranslator class
-     * @var object GalleryTranslator
+     * @var GalleryTranslator
      * @access private
      */
     var $_translator;
 
     /**
      * Instance of the GalleryUrlGenerator class
-     * @var object GalleryUrlGenerator
+     * @var GalleryUrlGenerator
      * @access private
      */
     var $_urlGenerator;
@@ -162,7 +162,7 @@ class Gallery {
      * A facade in front of the PHP virtual machine.  We use this as an abstraction layer to let us
      * interpose mock objects between our code and the VM for testing purposes.  When we're not in a
      * test environment, this is always an instance of GalleryPhpVm.
-     * @var object GalleryPhpVm
+     * @var GalleryPhpVm
      * @access private
      */
     var $_phpVm = null;
@@ -210,7 +210,7 @@ class Gallery {
     /**
      * Set the id of the active user.  The active user is the user who is logged on in this session.
      *
-     * @param object GalleryUser $user the current user
+     * @param GalleryUser $user the current user
      */
     function setActiveUser($user) {
 	$this->_activeUser = $user;
@@ -248,7 +248,7 @@ class Gallery {
      * Get the active user.
      * Cache the results of the first call and return that same value each time.
      *
-     * @return object GalleryUser the active user
+     * @return GalleryUser the active user
      */
     function getActiveUser() {
 	return $this->_activeUser;
@@ -278,7 +278,7 @@ class Gallery {
     /**
      * Initialize session.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function initSession() {
 	GalleryCoreApi::requireOnce('modules/core/classes/GallerySession.class');
@@ -306,7 +306,7 @@ class Gallery {
      * Return a reference to the unique Gallery session object.  Any changes made to this object
      * will be saved in the session.
      *
-     * @return object GallerySession a session instance
+     * @return GallerySession a session instance
      */
     function &getSession() {
 	return $this->_session;
@@ -315,7 +315,7 @@ class Gallery {
     /**
      * Set the Gallery platform object.
      *
-     * @param object GalleryPlatform $platform the Gallery platform object
+     * @param GalleryPlatform $platform the Gallery platform object
      */
     function setPlatform(&$platform) {
 	unset($this->_platform);
@@ -326,7 +326,7 @@ class Gallery {
      * Get the Gallery platform object.
      * Return a reference to the unique Gallery platform object.
      *
-     * @return object GalleryPlatform the Gallery platform object
+     * @return GalleryPlatform the Gallery platform object
      */
     function &getPlatform() {
 	return $this->_platform;
@@ -336,8 +336,8 @@ class Gallery {
      * Return the active lock system.
      *
      * @param boolean $canInit (optional) if false and lockSystem isn't yet initialized, return null
-     * @return array object GalleryStatus a status code
-     *               object GalleryLockSystem the lock implementation (reference)
+     * @return array GalleryStatus a status code
+     *               GalleryLockSystem the lock implementation (reference)
      */
     function &getLockSystem($canInit=true) {
 	if (!isset($this->_lockSystem)) {
@@ -407,7 +407,7 @@ class Gallery {
     /**
      * Return an instance of the GalleryStorage class
      *
-     * @return object GalleryStorage a storage instance
+     * @return GalleryStorage a storage instance
      */
     function &getStorage() {
 	if (!isset($this->_storage)) {
@@ -470,7 +470,7 @@ class Gallery {
     /**
      * Set the URL generator
      *
-     * @param object GalleryUrlGenerator $urlGenerator
+     * @param GalleryUrlGenerator $urlGenerator
      */
     function setUrlGenerator(&$urlGenerator) {
 	unset($this->_urlGenerator);
@@ -480,7 +480,7 @@ class Gallery {
     /**
      * Get the URL generator
      *
-     * @return object GalleryUrlGenerator
+     * @return GalleryUrlGenerator
      */
     function &getUrlGenerator() {
 	return $this->_urlGenerator;
@@ -507,7 +507,7 @@ class Gallery {
     /**
      * Return a reference to our GalleryTranslator instance
      *
-     * @return object GalleryTranslator
+     * @return GalleryTranslator
      */
     function &getTranslator() {
 	return $this->_translator;
@@ -517,7 +517,7 @@ class Gallery {
      * Initialize our GalleryTranslator
      *
      * @param boolean $dontUseDatabase (optional) true if we should not use the database
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function initTranslator($dontUseDatabase=false) {
 	if (empty($this->_translator)) {
@@ -548,7 +548,7 @@ class Gallery {
     /**
      * Get the active language code.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string language code
      */
     function getActiveLanguageCode() {
@@ -567,7 +567,7 @@ class Gallery {
      * Set the active language code for this session.
      *
      * @param string $language language code
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function setActiveLanguageCode($language) {
 	$session =& $this->getSession();
@@ -783,7 +783,7 @@ class Gallery {
     /**
      * Return the template adapter.  There is only ever one in the system.
      *
-     * @return object GalleryTemplateAdapter
+     * @return GalleryTemplateAdapter
      */
     function &getTemplateAdapter() {
 	if (!isset($this->_templateAdapter)) {
@@ -949,7 +949,7 @@ class Gallery {
     /**
      * Return our PHP virtual machine abstraction
      *
-     * @return object GalleryPhpVm
+     * @return GalleryPhpVm
      */
     function getPhpVm() {
 	if (!isset($this->_phpVm)) {

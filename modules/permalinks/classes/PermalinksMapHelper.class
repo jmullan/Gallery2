@@ -32,7 +32,7 @@ class PermalinksMapHelper {
      * Return the aliases defined for a given item
      *
      * @param int $itemId (optional) item id or null for all aliases
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *         array of aliase names
      */
     function fetchAliasesForItem($itemId=null) {
@@ -54,7 +54,7 @@ class PermalinksMapHelper {
      * Return the item id the alias name refers to, if any
      *
      * @param string $aliasName
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               int item id
      */
     function fetchItemIdForAlias($aliasName) {
@@ -77,7 +77,7 @@ class PermalinksMapHelper {
      *
      * @param string $aliasName
      * @param int $itemId
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function createAlias($aliasName, $itemId) {
 	/* first, check for collision */
@@ -104,7 +104,7 @@ class PermalinksMapHelper {
      * Delete an alias
      *
      * @param int $aliasName
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function deleteAlias($aliasName) {
 	/* Remove this alias from our groups table. */

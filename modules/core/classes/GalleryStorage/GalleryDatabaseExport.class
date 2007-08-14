@@ -74,7 +74,7 @@ class GalleryDatabaseExport {
      *      @see DatabaseBackupTask::progressCallBack and DatabaseBackupStep::backupCallback.
      * @param string $fileName (optional) Name of the file to write the database extract xml to,
      *      if not supplied will default to g2data/backups/backup_date.xml.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     string Path name of the backup file
      *		     array of warning messages to be displayed to the administrator.
      * @todo When the progress bar handling is standardized for both upgrades and maintenance
@@ -287,7 +287,7 @@ class GalleryDatabaseExport {
     /**
      * Export the config.php file to the exported stream.
      * @param resource $handle Handle to output export file.
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function _exportConfigFile($handle) {
 	global $gallery;
@@ -311,7 +311,7 @@ class GalleryDatabaseExport {
      * @param resource $handle Handle to output export file
      * @param string $pluginId A plugin id
      * @param array $warnings An array of warning messages to be updated.
-     * @return object GalleryStatus A status code.
+     * @return GalleryStatus A status code.
      */
     function _exportModule($handle, $pluginId, &$warnings) {
 	global $gallery;
@@ -383,7 +383,7 @@ class GalleryDatabaseExport {
      * calling adoDB directly.
      * @param resource $handle Handle to output export file
      * @param string $sequenceId The sequence Id to export.
-     * @return object GalleryStatus A status code.
+     * @return GalleryStatus A status code.
      */
     function _exportSequence($handle, $sequenceId) {
 	global $gallery;
@@ -413,7 +413,7 @@ class GalleryDatabaseExport {
      * @param resource $handle Handle to output export file
      * @param string $table The table to export.
      * @param array $warnings An array of warning messages to be updated.
-     * @return object GalleryStatus A status code.
+     * @return GalleryStatus A status code.
      */
     function _exportTable($handle, $table, &$warnings) {
 	global $gallery;
@@ -512,7 +512,7 @@ class GalleryDatabaseExport {
      * @param resource $handle Handle to output export file
      * @param string $table The table to export.
      * @param array $warnings An array of warning messages to be updated.
-     * @return object GalleryStatus A status code.
+     * @return GalleryStatus A status code.
      */
     function _exportData($handle, $table, &$warnings) {
 	global $gallery;
@@ -674,7 +674,7 @@ class GalleryDatabaseExport {
      *
      * @param string $fileName (optional) Name of the file to write the database extract xml to,
      *		 if not supplied will default to g2data/backups/g2backup_date.txt
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               fileHandle file handle to the open file
      *               string path name of the backup file
      */

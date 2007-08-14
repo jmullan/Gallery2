@@ -102,7 +102,7 @@ class GalleryTheme extends GalleryPlugin {
      *   value:       the current value for this setting
      *
      * @param int $itemId (optional)
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               settings array
      *               params array (useful for a theme overriding this function)
      */
@@ -468,10 +468,10 @@ class GalleryTheme extends GalleryPlugin {
      *
      * @see isAdvancedSettings
      *
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      * @param array $form array the form values
      * @param int $itemId the item id or null for site wide settings
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string path to the body template
      */
     function loadSettingsTemplate(&$template, &$form, $itemId=null) {
@@ -486,7 +486,7 @@ class GalleryTheme extends GalleryPlugin {
      *
      * @param array $form the form values
      * @param int $itemId the item id or null for site wide settings
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array error messages
      *               string status message (itemId!=null) or status key (itemId==null)
      */
@@ -550,7 +550,7 @@ class GalleryTheme extends GalleryPlugin {
      * Themes should not need to override this method.  Instead they should override the upgrade
      * method and put all their theme specific logic there
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function installOrUpgrade() {
 	global $gallery;
@@ -632,7 +632,7 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Remove this theme from all albums.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function uninstall() {
 	global $gallery;
@@ -717,12 +717,12 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load the template with data from this view.
      *
-     * @param object GalleryView $view
-     * @param object GalleryTemplate $template
-     * @param object GalleryItem $item the item to display
+     * @param GalleryView $view
+     * @param GalleryTemplate $template
+     * @param GalleryItem $item the item to display
      * @param array $params theme parameters
      * @param array $viewResults results from the view
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array ('body' => string template or 'redirect' => array)
      */
     function loadTemplate($view, &$template, $item, $params, $viewResults) {
@@ -1034,10 +1034,10 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Call preload for given block if the module is active and a preload exists.
      *
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      * @param string $blockId (module.blockName)
      * @param array $blockParams (optional) block parameters
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function preloadBlock(&$template, $blockId, $blockParams=array()) {
 	global $gallery;
@@ -1114,13 +1114,13 @@ class GalleryTheme extends GalleryPlugin {
      *               a permission in smarty you'd do:
      *                   {if isset($theme.permissions.core_addDataItem)}
      *
-     * @param object GalleryTemplate $template
-     * @param object GalleryItem $item the item to display
+     * @param GalleryTemplate $template
+     * @param GalleryItem $item the item to display
      * @param array $params theme parameters
      * @param array $dataToLoad (string data key, ..) data to load into template
      * @param array $childIds (optional) ids of child items to display
      * @param boolean $useCache (optional)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function loadCommonTemplateData(&$template, $item, $params, $dataToLoad,
 				    $childIds=array(), $useCache=true) {
@@ -1865,11 +1865,11 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render a page for an album.
      *
-     * @param object GalleryTemplate $template
-     * @param object GalleryAlbumItem $item the album item to render
+     * @param GalleryTemplate $template
+     * @param GalleryAlbumItem $item the album item to render
      * @param array $params the theme parameters
      * @param int $childIds the child item ids
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
      */
@@ -1880,10 +1880,10 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render a page for a single item.
      *
-     * @param object GalleryTemplate $template
-     * @param object GalleryItem $item the item to render, can be any subclass of GalleryItem
+     * @param GalleryTemplate $template
+     * @param GalleryItem $item the item to render, can be any subclass of GalleryItem
      * @param array $params the theme parameters
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
      */
@@ -1894,11 +1894,11 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render a page for an administrative (or other) view.
      *
-     * @param object GalleryTemplate $template
-     * @param object GalleryItem $item the item to render
+     * @param GalleryTemplate $template
+     * @param GalleryItem $item the item to render
      * @param array $params the theme parameters
      * @param string $templateFile the body template file from the view
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
      */
@@ -1910,11 +1910,11 @@ class GalleryTheme extends GalleryPlugin {
      * Load all the necessary template data to render a page for a module view (any views that
      * aren't user, site, or item admin eg slideshow or members list).
      *
-     * @param object GalleryTemplate $template
-     * @param object GalleryItem $item the item to render
+     * @param GalleryTemplate $template
+     * @param GalleryItem $item the item to render
      * @param array $params the theme parameters
      * @param string $templateFile the body template file from the view
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
      */
@@ -1925,8 +1925,8 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render an error page.
      *
-     * @param object GalleryTemplate $template
-     * @return array object GalleryStatus a status code
+     * @param GalleryTemplate $template
+     * @return array GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
      */
@@ -1937,10 +1937,10 @@ class GalleryTheme extends GalleryPlugin {
     /**
      * Load all the necessary template data to render a progress bar page.
      *
-     * @param object GalleryTemplate $template
-     * @param object GalleryItem $item the item to render
+     * @param GalleryTemplate $template
+     * @param GalleryItem $item the item to render
      * @param array $params the theme parameters
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *         string path to a template file or array(html/redirect)
      * @access private
      */

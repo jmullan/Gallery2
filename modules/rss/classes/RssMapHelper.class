@@ -32,7 +32,7 @@ class RssMapHelper {
      * Return the feeds defined for a given item
      *
      * @param int $itemId (optional) item id or null for all feeds
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *         array of array 'name' => feed name
      *                        'itemId' => item associated with the feed
      *                        'ownerId' => owner of the feed
@@ -85,7 +85,7 @@ class RssMapHelper {
      * Return all the feed names
      *
      * @param int $limit optional limit to the number of feeds
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *         array of feed names
      */
     function fetchFeedNames($limit=0) {
@@ -120,7 +120,7 @@ class RssMapHelper {
      * Fetch a feed
      *
      * @param string $feedName
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function fetchFeed($feedName) {
 	list ($ret, $searchResults) = GalleryCoreApi::getMapEntry('RssMap',
@@ -150,7 +150,7 @@ class RssMapHelper {
      *
      * @param string $feedName
      * @param array $params parameters
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function createFeed($feedName, $params) {
 	global $gallery;
@@ -181,7 +181,7 @@ class RssMapHelper {
      *
      * @param string $feedName
      * @param array $params parameters
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function updateFeed($feedName, $params) {
 	$ret = GalleryCoreApi::updateMapEntry('RssMap',
@@ -200,7 +200,7 @@ class RssMapHelper {
      * Delete a feed
      *
      * @param string $feedName
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function deleteFeed($feedName) {
 	$ret = GalleryCoreApi::removeMapEntry('RssMap', array('feedName' => $feedName));
@@ -214,11 +214,11 @@ class RssMapHelper {
     /**
      * Check whether configuring feeds is allowed.
      *
-     * @param object GalleryItem $item
+     * @param GalleryItem $item
      * @param array $params module parameters
      * @param int $userId
      * @param boolean $assert (optional) if true, throw error if not allowed
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean true if allowed
      */
     function canConfigureFeed($item, $params, $userId, $assert=false) {

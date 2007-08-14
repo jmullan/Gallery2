@@ -40,7 +40,7 @@ class GalleryTemplate {
 
     /**
      * The Smarty instance
-     * @var object Smarty
+     * @var Smarty
      * @access private
      */
     var $_smarty;
@@ -171,7 +171,7 @@ class GalleryTemplate {
      * Render the properly localized template
      *
      * @param string $templateName
-     * @return array object GalleryStatus the status of the call
+     * @return array GalleryStatus the status of the call
      *         string the HTML content
      */
     function fetch($templateName) {
@@ -195,7 +195,7 @@ class GalleryTemplate {
      * Display the properly localized template
      *
      * @param string $templateName
-     * @return object GalleryStatus the status of the call
+     * @return GalleryStatus the status of the call
      */
     function display($templateName) {
 	$this->_smarty->template_dir = $this->_templateDir;
@@ -221,7 +221,7 @@ class GalleryTemplate {
      * templates so that no name clashes occur. This subdirectory will be
      * created on demand here.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      */
     function _initCompiledTemplateDir() {
 	global $gallery;
@@ -275,7 +275,7 @@ class GalleryTemplate {
      * be creating more than one GalleryTemplate and hence, more than one Smarty instance per
      * request.  However, having it as a static object makes it less testable.
      *
-     * @return object Smarty
+     * @return Smarty
      * @static
      * @access private
      */
@@ -349,7 +349,7 @@ class GalleryTemplate {
     /**
      * Remove leading whitespace when compiling tpl to produce smaller html page sizes.
      * @param string $source tpl content
-     * @param object GallerySmarty smarty
+     * @param GallerySmarty smarty
      * @return string processed tpl content ready for compilation
      * @static
      */
@@ -368,7 +368,7 @@ class GalleryTemplate {
      * @author Jozef Selesi (selesi at gmail dot com)
      *
      * @param string $templateName Template to get base directory for.
-     * @param object Smarty $smarty
+     * @param Smarty $smarty
      * @deprecated
      */
     function resourceGetTemplateBaseDir($templateName, &$smarty) {
@@ -436,7 +436,7 @@ class GalleryTemplate {
      * /fullpath/foo/bar/path/file.tpl
      *
      * @param string $templateName base template name
-     * @param object Smarty $smarty
+     * @param Smarty $smarty
      * @return string path to the current active template file for the specified template name
      * @static
      * @access private
@@ -507,7 +507,7 @@ class GalleryTemplate {
 
     /**
      * Return the themeid for the current item.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string ThemeId
      * @static
      * @access private

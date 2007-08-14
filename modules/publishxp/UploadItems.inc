@@ -33,7 +33,7 @@
 class UploadItemsController extends GalleryController {
     /**
      * ItemAddOption instances to use when handling this request.  Only used by test code.
-     * @var array (optionId => object ItemAddOption) $_optionInstances
+     * @var array (optionId => ItemAddOption) $_optionInstances
      * @access private
      */
     var $_optionInstances;

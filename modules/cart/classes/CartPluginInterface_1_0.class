@@ -44,7 +44,7 @@ class CartPluginInterface_1_0 {
     /**
      * Get the localized name of the action (eg. "Print with Shutterfly") to show to users.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string the action display name
      */
     function getActionDisplayName() {
@@ -54,7 +54,7 @@ class CartPluginInterface_1_0 {
     /**
      * Do whatever magic this plugin wants to do with the cart
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array url components that can be passed to the UrlGenerator
      */
     function fulfillCart($cartItemIds) {

@@ -162,7 +162,7 @@ class GalleryDerivative extends GalleryChildEntity {
     /**
      * Delete this GalleryEntity
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function delete() {
 	global $gallery;
@@ -209,7 +209,7 @@ class GalleryDerivative extends GalleryChildEntity {
      * Create a new GalleryDerivative
      *
      * @param int $parentId the id of the parent GalleryItem
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function create($parentId) {
 	$ret = parent::create($parentId);
@@ -266,7 +266,7 @@ class GalleryDerivative extends GalleryChildEntity {
      *
      * Rebuilds the cache and marks the derivative as broken if we failed.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function rebuildCache() {
 	global $gallery;
@@ -339,7 +339,7 @@ class GalleryDerivative extends GalleryChildEntity {
      * Rebuild the cache.  This should never be called directly; instead you
      * should call GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivativeId)
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _rebuildCache() {
@@ -498,8 +498,8 @@ class GalleryDerivative extends GalleryChildEntity {
      * all the operations that must be performed in order to create the correct output
      * file, including the post filter.
      *
-     * @return array object GalleryStatus a status code
-     *               object GalleryDataItem data item or GalleryDerivative preferred derivative
+     * @return array GalleryStatus a status code
+     *               GalleryDataItem data item or GalleryDerivative preferred derivative
      *               array the operations
      */
     function fetchFinalOperations() {
@@ -594,7 +594,7 @@ class GalleryDerivative extends GalleryChildEntity {
      * Is the cache for this item still current?
      * If the cache is expired, it can be rebuilt with rebuildCache()
      *
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               boolean false if the item is expired (ie, empty cache)
      */
     function isCacheCurrent() {
@@ -612,7 +612,7 @@ class GalleryDerivative extends GalleryChildEntity {
 
     /**
      * Expire the cache.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function expireCache() {
 	global $gallery;
@@ -635,7 +635,7 @@ class GalleryDerivative extends GalleryChildEntity {
     /**
      * Get the full path to the data file.
      *
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               string a path where children can store their data files
      */
     function fetchPath() {
@@ -651,7 +651,7 @@ class GalleryDerivative extends GalleryChildEntity {
      * GalleryDerivativeImage may want to render as an <img> tag in the HTML format.
      *
      * @param string $format the format (eg. HTML)
-     * @param object GalleryDataItem $item the data item
+     * @param GalleryDataItem $item the data item
      * @param array $params format specific key value pairs
      * @return string output
      */

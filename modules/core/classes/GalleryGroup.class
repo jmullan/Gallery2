@@ -73,7 +73,7 @@ class GalleryGroup extends GalleryEntity {
      *
      * @param string $groupName the name of the new group
      * @param int $groupType the type of group
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function create($groupName, $groupType=GROUP_NORMAL) {
 	global $gallery;
@@ -114,7 +114,7 @@ class GalleryGroup extends GalleryEntity {
      * Delete this GalleryGroup.
      * Do some bookkeeping, like removing any user/group mappings.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function delete() {
 	/* Don't allow to delete the special groups (admin, registered, everybody) */

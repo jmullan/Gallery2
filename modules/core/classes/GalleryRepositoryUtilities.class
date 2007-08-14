@@ -36,7 +36,7 @@ class GalleryRepositoryUtilities {
      *  <DOLLAR>Revision: 13690 <DOLLAR>
      *
      * @param string $string to exract revision from
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string revision
      */
     function extractRevision($string) {
@@ -66,7 +66,7 @@ class GalleryRepositoryUtilities {
      * @param string $version2 second version
      * @param int $build1 first build (yyyymmddhhmmss)
      * @param int $build2 second build
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		      string 'older', 'equal', 'newer'
      */
     function compareVersions($version1, $version2, $build1=null, $build2=null) {
@@ -131,7 +131,7 @@ class GalleryRepositoryUtilities {
      *
      * @param string $path file path
      * @param int $bytes bytes to read
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string first line from file
      */
     function getFirstBytesFromFile($path, $bytes) {
@@ -154,7 +154,7 @@ class GalleryRepositoryUtilities {
      *
      * @param string $pluginType
      * @param string $pluginId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     string strings.raw timestamp
      */
     function getLanguageBaseRevision($pluginType, $pluginId) {
@@ -190,7 +190,7 @@ class GalleryRepositoryUtilities {
      *
      * @param string $pluginType
      * @param string $pluginId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     boolean availability
      */
     function isPluginAvailable($pluginType, $pluginId) {
@@ -275,7 +275,7 @@ class GalleryRepositoryUtilities {
      *
      * @param string $pluginType
      * @param string $pluginId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     array[$packageName] => array('version' => $version, 'build' => $build)
      */
     function getPluginPackages($pluginType, $pluginId) {
@@ -305,7 +305,7 @@ class GalleryRepositoryUtilities {
      * eg. en_US => English (US)
      *
      * @param string $languageCode
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     string language description
      */
     function getLanguageDescription($languageCode) {
@@ -334,7 +334,7 @@ class GalleryRepositoryUtilities {
      *
      * @param string $pluginType
      * @param string $pluginId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     string version
      */
     function getPluginVersion($pluginType, $pluginId) {

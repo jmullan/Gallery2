@@ -51,7 +51,7 @@ class Getid3Helper {
      * Reset the given view mode back to its default settings
      *
      * @param int $viewMode
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function setDefaultProperties($viewMode) {
 	switch($viewMode) {
@@ -179,7 +179,7 @@ class Getid3Helper {
      *
      * @param string $path the path to the file
      * @param int $viewMode
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array title/value pairs
      */
     function getId3Data($path, $viewMode) {
@@ -383,7 +383,7 @@ class Getid3Helper {
      *
      * @param array $source the data source
      * @param array $keyPath
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string value
      * @access private
      */
@@ -404,7 +404,7 @@ class Getid3Helper {
      * Return the target properties for the given view mode
      *
      * @param int $viewMode the view mode (GETID3_SUMMARY, etc)
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array logical exif property names
      */
     function getProperties($viewMode) {
@@ -428,7 +428,7 @@ class Getid3Helper {
      *
      * @param int $viewMode the view mode (GETID3_SUMMARY, etc)
      * @param array $properties logical property key/value pairs
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function setProperties($viewMode, $properties) {
 	/* Remove all old map entries */

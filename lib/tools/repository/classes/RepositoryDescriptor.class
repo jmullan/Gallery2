@@ -64,7 +64,7 @@ class RepositoryDescriptor extends RepositoryObject {
      * meta data required for a complete descriptor definition.
      *
      * @param string $outputDir directory to write the descriptor to
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function init($outputDir) {
 	parent::init();
@@ -82,8 +82,8 @@ class RepositoryDescriptor extends RepositoryObject {
      * Build up all the package information, in preparation for it to be written out
      * with (eg) writeToDisk()
      *
-     * @param object GalleryPlugin $plugin the plugin
-     * @return object GalleryStatus a status code
+     * @param GalleryPlugin $plugin the plugin
+     * @return GalleryStatus a status code
      */
     function generate($plugin) {
 	global $gallery;
@@ -209,7 +209,7 @@ class RepositoryDescriptor extends RepositoryObject {
      *
      * @param string $pluginDir
      * @param array $data array to write meta data to
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function getFileMetaData($pluginDir, &$data) {
 	global $gallery;

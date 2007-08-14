@@ -200,7 +200,7 @@ if ($currentStep->processRequest()) {
  * Find admin user and set as active user
  * @param bool $fallback (optional) whether we should try to fall back if the
  *             API to load the admin user object fails
- * @return object GalleryStatus a status code
+ * @return GalleryStatus a status code
  */
 function selectAdminUser($fallback=false) {
     global $gallery;

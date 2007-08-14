@@ -81,7 +81,7 @@ class GdToolkit extends GalleryToolkit {
     /**
      * Do we have a working version of imageCreateTrueColor()?
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       boolean true if this function should work
      * @access private
      */
@@ -452,7 +452,7 @@ class GdToolkit extends GalleryToolkit {
      *
      * @param string $mimeType the mime-type of the image
      * @param string $filename the path to the file to read
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *	       resource the GD resource
      * @access private
      */
@@ -499,7 +499,7 @@ class GdToolkit extends GalleryToolkit {
      * @param int $height
      * @param bool $prepareAlpha (optional) whether the resource should be prepared to host any
      *                                      transparencies
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       resource the GD resource
      * @access private
      */
@@ -555,7 +555,7 @@ class GdToolkit extends GalleryToolkit {
      * @param string $mimeType the mime-type of the image
      * @param bool $hasTransparency (optional) set to false to prevent dithering
      * @param string $jpegQuality (optional)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _saveImageResourceToFile($res, $filename, $mimeType, $hasTransparency=true,
@@ -610,7 +610,7 @@ class GdToolkit extends GalleryToolkit {
      * @param int $destWidth the destination width
      * @param int $destHeight the destination height
      * @param bool $hasAlpha (optional) whether the source image has any transparency
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       resource the destination GD-resource
      * @access private
      */
@@ -676,7 +676,7 @@ class GdToolkit extends GalleryToolkit {
     /**
      * Get the image dimentions for an already opened GD resource.
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       int width
      *	       int height
      * @access private
@@ -703,7 +703,7 @@ class GdToolkit extends GalleryToolkit {
      * We will use GD's "resample" functionality and fallback to "resize"
      * if "resample" is not available.
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      * @access private
      */
     function _imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY,
@@ -734,7 +734,7 @@ class GdToolkit extends GalleryToolkit {
      * @param resource $res 
      * @param int $width
      * @param int $height
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function _prepareResourceForAlphaChannel(&$res) {
 	$gd =& $this->_getGdFunctionality();
@@ -782,7 +782,7 @@ class GdToolkit extends GalleryToolkit {
      *
      * @param resource $res
      * @param string $outputMimeType
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function _flattenAlphaChannel($res, $outputMimeType) {
 	$gd =& $this->_getGdFunctionality();

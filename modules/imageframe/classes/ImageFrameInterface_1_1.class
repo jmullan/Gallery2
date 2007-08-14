@@ -33,8 +33,8 @@ class ImageFrameInterface_1_1 {
     /**
      * Get list of available image frames
      *
-     * @return array(object GalleryStatus a status code,
-     *               array(frame_id=>localized_frame_name))
+     * @return array GalleryStatus a status code,
+     *               array(frame_id=>localized_frame_name)
      */
     function getImageFrameList() {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
@@ -47,9 +47,9 @@ class ImageFrameInterface_1_1 {
      * class="%CLASS%".  See example in SampleHead.tpl/SampleBody.tpl.
      * This method may be called more than once in a request.
      *
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      * @param mixed $frameIds array of frame ids to prepare for use or single frame id
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function init(&$template, $frameIds) {
 	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);
@@ -59,7 +59,7 @@ class ImageFrameInterface_1_1 {
      * Get url for displaying samples of all image frames.  Pass an itemId to the view to use the
      * thumbnail of that item in the samples; otherwise a default image will be used.
      *
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               string view url
      */
     function getSampleUrl($itemId=null) {

@@ -52,7 +52,7 @@ class GalleryRepositoryIndex {
 
     /**
      * Repository utilities.
-     * @var object GalleryRepositoryUtilities
+     * @var GalleryRepositoryUtilities
      * @access private
      */
     var $_utilities;
@@ -66,7 +66,7 @@ class GalleryRepositoryIndex {
     /**
      * Downloads the repostory index from the Gallery server and
      * writes it to the local repository cache.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function update() {
 	global $gallery;
@@ -133,7 +133,7 @@ class GalleryRepositoryIndex {
      * Gets index meta data, which currently includes the local index timestamp (set when the index
      * has been downloaded) and each plugin type count.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     array 'timestamp' => integer (Unix timestamp)
      *			   'moduleCount' => integer
      *			   'themeCount' => integer
@@ -169,7 +169,7 @@ class GalleryRepositoryIndex {
 
     /**
      * Loads and unserializes the index from the local filesystem into memory.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function load() {
 	global $gallery;
@@ -197,7 +197,7 @@ class GalleryRepositoryIndex {
 
     /**
      * Unserializes the index into memory.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function unserializeIndex(&$index) {
 	if (false === ($this->_index = @unserialize($index))) {
@@ -213,7 +213,7 @@ class GalleryRepositoryIndex {
      *
      * @param string $pluginType
      * @param string $pluginId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     string plugin build
      */
     function getPluginHeader($pluginType, $pluginId) {
@@ -237,7 +237,7 @@ class GalleryRepositoryIndex {
      *
      * @param string $pluginType
      * @param string $pluginId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     array languageCode => revision
      */
     function getAvailableLanguagesInPlugin($pluginType, $pluginId) {
@@ -283,7 +283,7 @@ class GalleryRepositoryIndex {
      *
      * @param string $pluginType
      * @param string $pluginId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     string the plugin name
      */
     function getPluginName($pluginType, $pluginId) {
@@ -322,7 +322,7 @@ class GalleryRepositoryIndex {
      *
      * @param string $pluginType
      * @param string $pluginId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     string descriptor URL
      */
     function getDescriptorUrl($pluginType, $pluginId) {
@@ -347,7 +347,7 @@ class GalleryRepositoryIndex {
      * @param string $pluginType
      * @param string $pluginId
      * @param string $package package name
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     string package URL
      */
     function getPackageUrl($pluginType, $pluginId, $package) {
@@ -376,7 +376,7 @@ class GalleryRepositoryIndex {
      * @param string $pluginType
      * @param string $pluginId
      * @param string $package package name
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     string version/revision
      *		     string build/revision
      */

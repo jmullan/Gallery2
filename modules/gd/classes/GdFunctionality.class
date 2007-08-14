@@ -32,7 +32,7 @@
  */
 class GdFunctionality {
     /**
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       string phpinfo output
      */
     function phpinfo($section=null) {
@@ -118,7 +118,7 @@ class GdFunctionality {
      * Requires:
      * - PHP 4 >= 4.3.0, PHP 5
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       array the output of gd_info
      */
     function gd_info() {
@@ -145,7 +145,7 @@ class GdFunctionality {
      * Requires:
      * - any PHP
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       res GD-resource
      */
     function imageCreate($width, $height) {
@@ -171,7 +171,7 @@ class GdFunctionality {
      * (which at the current stage of this module will always be the case,
      * since this is the minimal required version).
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       res GD-resource
      */
     function imageCreateTruecolor($width, $height) {
@@ -204,7 +204,7 @@ class GdFunctionality {
     /**
      * Check if a resource that is based on $filename is valid
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       resource GD resource
      */
     function checkResource($res, $filename) {
@@ -226,7 +226,7 @@ class GdFunctionality {
      * - any PHP version
      * - GD with GIF support
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       res GD-resource
      */
     function imageCreateFromGif($filename) {
@@ -250,7 +250,7 @@ class GdFunctionality {
      * - any PHP >= 3.0.16
      * - GD >= 1.8 (for JPEG support)
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       res GD-resource
      */
     function imageCreateFromJpeg($filename) {
@@ -265,7 +265,7 @@ class GdFunctionality {
      * - any PHP >= 3.0.13
      * - GD (with PNG support)
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       res GD-resource
      */
     function imageCreateFromPng($filename) {
@@ -280,7 +280,7 @@ class GdFunctionality {
      * - PHP 4 >= 4.0.1 or PHP 5
      * - GD >= 1.8 (for WBMP support)
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       res GD-resource
      */
     function imageCreateFromWbmp($filename) {
@@ -295,7 +295,7 @@ class GdFunctionality {
      * - PHP 4 >= 4.0.1 or PHP 5
      * - GD
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       res GD-resource
      */
     function imageCreateFromXbm($filename) {
@@ -310,7 +310,7 @@ class GdFunctionality {
      * - PHP 4 >= 4.0.1 or PHP 5
      * - GD
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       res GD-resource
      */
     function imageCreateFromXpm($filename) {
@@ -325,7 +325,7 @@ class GdFunctionality {
      * - any PHP
      * - GD with GIF support
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function imageGif($res, $filename) {
 	if (!function_exists('imageGif')) {
@@ -346,7 +346,7 @@ class GdFunctionality {
      * - any PHP >= 3.0.16
      * - GD >= 1.8
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function imageJpeg($res, $filename, $quality) {
 	if (!function_exists('imageJpeg')) {
@@ -367,7 +367,7 @@ class GdFunctionality {
      * - any PHP 3>= 3.0.13
      * - GD
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function imagePng($res, $filename) {
 	if (!function_exists('imagePng')) {
@@ -388,7 +388,7 @@ class GdFunctionality {
      * - PHP 3>= 3.0.15 or PHP 4 >= 4.0.1 or PHP 5
      * - GD >= 1.8 (for WBMP support)
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function imageWbmp($res, $filename) {
 	if (!function_exists('imageWbmp')) {
@@ -408,7 +408,7 @@ class GdFunctionality {
      * Requires:
      * - PHP 5
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function imageXbm($res, $filename) {
 	if (!function_exists('imageXbm')) {
@@ -429,7 +429,7 @@ class GdFunctionality {
      * - PHP 4 >= 4.0.6 or PHP 5
      * - GD >= 2.0.1
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function imageCopyResampled(
 	    $dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
@@ -451,7 +451,7 @@ class GdFunctionality {
      * Requires:
      * - any PHP
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY,
 			      $dstW, $dstH, $srcW, $srcH) {
@@ -470,7 +470,7 @@ class GdFunctionality {
      * Requires:
      * - PHP 4 >= 4.0.1 or PHP 5
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function imageCopyMerge($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $pct) {
 	$result = @imageCopyMerge($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $pct);
@@ -487,7 +487,7 @@ class GdFunctionality {
      * Requires:
      * - any PHP >= 3.0.6
      *
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function imageCopy($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH) {
 	$result = @imageCopy($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH);
@@ -522,7 +522,7 @@ class GdFunctionality {
      * Requires:
      * - PHP 4 >= 4.3.0 or PHP 5
      *
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	       resource new gd resource
      */
     function imageRotate($srcRes, $angle, $bgdColor) {
@@ -555,7 +555,7 @@ class GdFunctionality {
      *
      * @param resource $res
      * @param bool $saveFlag
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	             bool true on success, false on failure
      */
     function imagesavealpha($res, $saveflag) {
@@ -588,7 +588,7 @@ class GdFunctionality {
      * @param int $green
      * @param int $blue
      * @param int $alpha
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *	             int a color identifier, false on failure
      */
     function imagecolorallocatealpha($res, $red, $green, $blue, $alpha) {

@@ -32,7 +32,7 @@ class CoreModuleExtras {
 
     /**
      * @see GalleryModule::upgrade
-     * @param object GalleryModule $module the core module
+     * @param GalleryModule $module the core module
      * @param string $currentVersion the current installed version
      */
     function upgrade($module, $currentVersion, $statusMonitor) {
@@ -2793,7 +2793,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
      * Perform upgrade of config.php file.
      *
      * @param string $currentVersion current core version
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function performConfigUpgrade($currentVersion) {
 	global $gallery;
@@ -2849,8 +2849,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
     /**
      * Create the initial all users group.
      *
-     * @param object GalleryModule $module the core module
-     * @return object GalleryStatus a status code
+     * @param GalleryModule $module the core module
+     * @return GalleryStatus a status code
      */
     function _createAllUsersGroup($module) {
 	global $gallery;
@@ -2889,8 +2889,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
     /**
      * Create the site admins group.
      *
-     * @param object GalleryModule $module the core module
-     * @return object GalleryStatus a status code
+     * @param GalleryModule $module the core module
+     * @return GalleryStatus a status code
      */
     function _createSiteAdminsGroup($module) {
 	global $gallery;
@@ -2929,8 +2929,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
     /**
      * Create the everybody group.
      *
-     * @param object GalleryModule $module the core module
-     * @return object GalleryStatus a status code
+     * @param GalleryModule $module the core module
+     * @return GalleryStatus a status code
      */
     function _createEverybodyGroup($module) {
 	global $gallery;
@@ -2969,8 +2969,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
     /**
      * Create the initial anonymous user.
      *
-     * @param object GalleryModule $module the core module
-     * @return object GalleryStatus a status code
+     * @param GalleryModule $module the core module
+     * @return GalleryStatus a status code
      */
     function _createAnonymousUser($module) {
 	global $gallery;
@@ -3022,8 +3022,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
     /**
      * Create the initial admin user.
      *
-     * @param object GalleryModule $module the core module
-     * @return object GalleryStatus a status code
+     * @param GalleryModule $module the core module
+     * @return GalleryStatus a status code
      */
     function _createAdminUser($module) {
 	global $gallery;
@@ -3085,8 +3085,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
     /**
      * Create the root album item.
      *
-     * @param object GalleryModule $module the core module
-     * @return object GalleryStatus a status code
+     * @param GalleryModule $module the core module
+     * @return GalleryStatus a status code
      */
     function _createRootAlbumItem($module) {
 	global $gallery;
@@ -3147,8 +3147,8 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
     /**
      * Create the access list compactor lock entity.
      *
-     * @param object GalleryModule $module the core module
-     * @return object GalleryStatus a status code
+     * @param GalleryModule $module the core module
+     * @return GalleryStatus a status code
      */
     function _createAccessListCompacterLock($module) {
 	global $gallery;
@@ -3278,7 +3278,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
      * Change character set encoding to utf 8 for MySQL if necessary.  This is public because it
      * is also used by ConvertDatabaseToUtf8Task.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               bool true if any conversions took place
      * @access public
      */

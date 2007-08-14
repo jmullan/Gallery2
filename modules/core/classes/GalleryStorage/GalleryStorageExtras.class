@@ -28,7 +28,7 @@
  */
 class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
-     * @param object GalleryStorage $galleryStorage the database storage instance
+     * @param GalleryStorage $galleryStorage the database storage instance
      */
     function GalleryStorageExtras(&$galleryStorage) {
 	$this->_gs =& $galleryStorage;
@@ -38,8 +38,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * Return a non transactional database connection.
      * On occasion we'll need a non-transactional connection to do things like locking and
      * sequence handling, since they have to be consistent across may concurrent requests.
-     * @return array object GalleryStatus a status code
-     *               object ADOdb a database connection
+     * @return array GalleryStatus a status code
+     *               ADOdb a database connection
      */
     function _getNonTransactionalDatabaseConnection() {
 	if ($this->_gs->_isTransactional) {
@@ -61,7 +61,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
     /**
      * Connect to database if needed and optionally guarantee db transaction.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _dbInit($transaction=false) {
@@ -810,7 +810,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
     /**
      * Delete all not-so-fresh locks.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _expireLocks() {
@@ -1026,8 +1026,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * @param string $tableName the translated table name
      * @param array $entry an associative array of data about the entry
      *              each data element is an array of values
-     * @param object ADOdb $db the database connection to use
-     * @return object GalleryStatus a status code
+     * @param ADOdb $db the database connection to use
+     * @return GalleryStatus a status code
      * @access private
      */
     function _addMapEntries($mapInfo, $tableName, $entry, $db) {
@@ -1425,7 +1425,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * @param string $type (optional) An indicator for table type ('map' | 'entity').
      * @param string $info The serialized description of the map or entity.
      * @param bool $canStoreTableInfo (optional)
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function _updateSchemaTableInfo($tableNameInSchema, $tableSql, $moduleId, $type=null,
 				    $info=null, $canStoreTableInfo=true) {
@@ -1675,7 +1675,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * Execute a given SQL against the database.  Prefix table and column names
      * as necessary.  Split multiple commands in the file into separate Execute() calls.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access protected
      */
     function _executeSql($buffer) {
@@ -1901,7 +1901,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * Request clearance to acquire locks and then wait until it's our turn.
      *
      * @param int $cutoffTime the time to stop trying to get clearance
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function _getLockClearance($cutoffTime) {
 	/* Get the true name of the lock table */
@@ -2063,7 +2063,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * @param string $entityName a class name
      * @param boolean $tryAllModules true if we should scan all modules, not just the active ones
      * @access protected
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               entity associative array
      */
     function describeEntity($entityName, $tryAllModules=false) {
@@ -2137,7 +2137,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 
     /**
      * Get a list of all database tables (not limited to our table-prefix)
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               array of table names in lower-case
      */
     function _metaTables() {
@@ -2165,7 +2165,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
      * Create a sequence.
      * @param string $sequenceId Name of the sequence to create.
      * @param integer $startId (optional) The number to initialize the sequence to. (default 1)
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function createSequence($sequenceId, $startId=1) {
 	$this->_gs->_traceStart();
@@ -2181,7 +2181,7 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
     /**
      * Drop a sequence.
      * @param string $sequenceId Name of the sequence to drop.
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function dropSequence($sequenceId) {
 	$this->_gs->_traceStart();

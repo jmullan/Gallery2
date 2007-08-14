@@ -66,7 +66,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      *
      * @param int $parentId the id of the parent GalleryChildEntity
      * @param string $pathComponent the path component of this entity
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function create($parentId, $pathComponent) {
 	if (empty($pathComponent)) {
@@ -103,7 +103,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * Create a new root level instance of this FileSystemEntity in the persistent store.
      * Let the parent do its work, then add any initialization specific to this class.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function createRoot() {
 	$ret = parent::createRoot();
@@ -142,7 +142,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * Rename this item
      *
      * @param string $newPathComponent the path component
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function rename($newPathComponent) {
 	if (!$this->getParentId()) {
@@ -173,7 +173,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * Move item to a new parent
      *
      * @param int $newParentId the id of the new parent GalleryItem
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @todo Make sure that 'order' stuff is maintained, so that the moved
      *       items become the last in order in the new album if that album is marked as unordered
      */
@@ -244,7 +244,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 
     /**
      * Delete this GalleryFileSystemEntity
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function delete() {
 	/*
@@ -270,7 +270,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      *
      * Subclasses should specify their container-ness by overloading isContainer()
      *
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *               string a path where children can store their data files
      */
     function fetchContainerPath() {
@@ -311,7 +311,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      * Return the logical path to this item.  Note that this path is only valid as
      * long as the entire tree is at least read locked.
      *
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *         array path component names
      */
     function fetchLogicalPath() {

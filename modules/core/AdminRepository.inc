@@ -155,7 +155,7 @@ class AdminRepositoryController extends GalleryController {
      *
      * @param $pluginStatus status of all available installed plugins
      * @param $repositories the repositories available for new plugins
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function updatePluginStatus($pluginStatus, $repositories) {
 	global $gallery;

@@ -40,7 +40,7 @@ class GalleryToolkit {
      * @param string $mimeType
      * @param string $propertyName
      * @param string $sourceFilename
-     * @return array object GalleryStatus a status code,
+     * @return array GalleryStatus a status code,
      *	       mixed the value of the property
      */
     function getProperty($mimeType, $propertyName, $sourceFilename) {
@@ -63,7 +63,7 @@ class GalleryToolkit {
      * @param string $destFilename the destination file name (it will be overwritten if it exists)
      * @param array $parameters
      * @param array $context (optional) context data
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string the output mime type
      *               array context data
      */
@@ -222,8 +222,8 @@ class GalleryToolkit {
     /**
      * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
      *
-     * @param object GalleryDerivativeImage $derivative
-     * @param object GalleryEntity $source (probably a GalleryPhotoItem or GalleryMovieItem)
+     * @param GalleryDerivativeImage $derivative
+     * @param GalleryEntity $source (probably a GalleryPhotoItem or GalleryMovieItem)
      * @static
      */
     function estimateDimensions(&$derivative, $source) {

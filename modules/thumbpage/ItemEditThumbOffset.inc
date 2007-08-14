@@ -135,8 +135,8 @@ class ItemEditThumbOffset extends ItemEditPlugin {
 
     /**
      * Get the movie duration
-     * @param object GalleryDataItem $item
-     * @return array object GalleryStatus a status code
+     * @param GalleryDataItem $item
+     * @return array GalleryStatus a status code
      *               float duration
      * @access private
      */

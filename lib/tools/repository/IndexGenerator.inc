@@ -37,7 +37,7 @@ class IndexGeneratorControllerAndView extends RepositoryControllerAndView {
     /**
      * Regenerates the repository index.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function generate() {
 	global $gallery;

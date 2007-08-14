@@ -152,8 +152,8 @@ class AdminRepositoryDownloadController extends GalleryController {
      *
      * @param array $installPackages packages to install
      * @param array $deleteLanguages language packages to delete
-     * @param array an array of object GalleryRepository
-     * @return object GalleryStatus a status code
+     * @param array an array of GalleryRepository
+     * @return GalleryStatus a status code
      */
     function performDownloadAndInstallation($installPackages, $deleteLanguages, $repositories) {
 	global $gallery;

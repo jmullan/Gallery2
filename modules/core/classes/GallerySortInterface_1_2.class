@@ -31,7 +31,7 @@ class GallerySortInterface_1_2 {
     /**
      * Return information about this sort
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string localized name
      *               boolean true for presort
      */
@@ -48,7 +48,7 @@ class GallerySortInterface_1_2 {
      * This references the base table and id column in the query.
      *
      * @param string $direction either '' for ascending or ' DESC' for descending
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string order by clause
      *               string select clause,
      *               string optional row matching condition
@@ -62,7 +62,7 @@ class GallerySortInterface_1_2 {
      * Get information about available sort orders
      *
      * @param boolean $includeDefault (optional) false to omit "default sort order" selection
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array of orderBy => localized name for sort orders
      *               array of orderBy => localized name for presorts
      *               array of orderDirection => localized name for direction

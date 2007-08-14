@@ -34,8 +34,8 @@ class CustomFieldInterface_1_0 {
      *
      * @param array $fieldNames of string field names
      * @param int $containerId id of container; for album-specific settings
-     * @return array(object GalleryStatus a status code,
-     *               array(string duplicate field names))
+     * @return array GalleryStatus a status code,
+     *               array(string duplicate field names)
      */
     function createCustomFields($fieldNames, $containerId=0) {
 	return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED), null);
@@ -46,7 +46,7 @@ class CustomFieldInterface_1_0 {
      *
      * @param int $itemId
      * @param array $data field values
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function setCustomFieldValues($itemId, $data) {
 	return GalleryCoreApi::error(ERROR_UNIMPLEMENTED);

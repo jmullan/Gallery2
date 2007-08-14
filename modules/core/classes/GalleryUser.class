@@ -121,7 +121,7 @@ class GalleryUser extends GalleryEntity {
     /**
      * Create a new instance of this user in the persistent store
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function create($userName) {
 	global $gallery;
@@ -196,7 +196,7 @@ class GalleryUser extends GalleryEntity {
      * Save the changes to this GalleryUser.
      * Do some bookkeeping, like adding the user to the all user and everybody groups.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function save($postEvent=true) {
 	$isNew = $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
@@ -230,7 +230,7 @@ class GalleryUser extends GalleryEntity {
      * Do some bookkeeping, like removing the user from all groups, remapping his items to
      * a site admin user and removing all of his permissions.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function delete() {
 	global $gallery;

@@ -38,7 +38,7 @@ class GalleryTemplateAdapter {
 
     /**
      * The active theme
-     * @var object GalleryTheme
+     * @var GalleryTheme
      * @access private
      */
     var $_theme;
@@ -75,7 +75,7 @@ class GalleryTemplateAdapter {
 
     /**
      * Set the theme
-     * @param object GalleryTheme $theme
+     * @param GalleryTheme $theme
      */
     function setTheme($theme) {
 	$this->_theme = $theme;
@@ -90,7 +90,7 @@ class GalleryTemplateAdapter {
      * @see GalleryUrlGenerator::generateUrl
      *
      * @param array $params data in key/value pairs
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      * @return string a URL
      */
     function url($params, &$smarty) {
@@ -129,7 +129,7 @@ class GalleryTemplateAdapter {
      * forward, for example.
      *
      * @param array $params data in key/value pairs
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      * @return a series of XHTML 1.0 compliant <input> elements
      */
     function hiddenFormVars($params, &$smarty) {
@@ -190,7 +190,7 @@ class GalleryTemplateAdapter {
      * @todo This needs to be refactored.
      *
      * @param array $params data in key/value pairs
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      * @return string date
      */
     function date($params, &$smarty) {
@@ -252,7 +252,7 @@ class GalleryTemplateAdapter {
      * Useful when we are trying to change a value recursively.
      *
      * @param array $params key => value attributes
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      * @return HTML content
      */
     function changeInDescendents($params, &$smarty) {
@@ -290,7 +290,7 @@ class GalleryTemplateAdapter {
      * @todo Figure out a more graceful way to deal with errors here.
      *
      * @param array $params containing item, image, maxSize, fallback, and any img attributes
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      * @return string HTML content
      */
     function image($params, &$smarty) {
@@ -375,7 +375,7 @@ class GalleryTemplateAdapter {
      * Render head content
      *
      * @param array $params
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      * @return string HTML content
      */
     function head($params, &$smarty) {
@@ -423,7 +423,7 @@ class GalleryTemplateAdapter {
      *
      * @param array $params params
      * @param string $content content
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      */
     function autoComplete($params, $content, &$smarty) {
 	global $gallery;
@@ -460,7 +460,7 @@ class GalleryTemplateAdapter {
      * Include form inputs for dimensions.
      *
      * @param array $params params
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      */
     function dimensions($params, &$smarty) {
 	if (!isset($this->_callCount['dimensions'])) {
@@ -486,7 +486,7 @@ class GalleryTemplateAdapter {
      * Include this before any submit buttons are added to the form.
      *
      * @param array $params params
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      */
     function defaultButton($params, &$smarty) {
 	if (!isset($this->_callCount['defaultButton'])) {
@@ -600,7 +600,7 @@ class GalleryTemplateAdapter {
     /**
      * Render logo button image.
      * @param array $params ('type' => logo type)
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      * @return HTML content
      */
     function logoButton($params, &$smarty) {
@@ -737,7 +737,7 @@ class GalleryTemplateAdapter {
      *   url  => url to a file inside the themes dir
      *
      * @param array $params ('include' => ..., 'url' => ...)
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      */
     function theme($params, &$smarty) {
 	global $gallery;
@@ -780,7 +780,7 @@ class GalleryTemplateAdapter {
      * eg: "core.LoginBlock".  Any other parameters get passed on to the block itself.
      *
      * @param array $params ('type' => <block descriptor>, ...)
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      */
     function block($params, &$smarty) {
 	list ($module, $file) = explode('.', $params['type']);
@@ -820,7 +820,7 @@ class GalleryTemplateAdapter {
      *
      * @param array $params ('type' => <block descriptor>, ...)
      * @param string $content
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      */
     function container($params, $content, &$smarty) {
 	if (!isset($content)) {
@@ -854,7 +854,7 @@ class GalleryTemplateAdapter {
      * Any other parameters get passed on to the block itself.
      *
      * @param array $params ('type' => <block descriptor>, ...)
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      */
     function callback($params, &$smarty) {
 	global $gallery;
@@ -890,7 +890,7 @@ class GalleryTemplateAdapter {
      *
      * @param array $params
      * @param string $content
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      */
     function addToTrailer($params, $content, &$smarty) {
 	if (!isset($content)) {
@@ -940,7 +940,7 @@ class GalleryTemplateAdapter {
      * Use GalleryUtilities::shrinkDimensionsToFit to scale template vars to new target size.
      *
      * @param array $params args; should contain widthVar, heightVar, maxSize keys
-     * @param object Smarty $smarty the smarty instance
+     * @param Smarty $smarty the smarty instance
      */
     function shrinkDimensions($params, &$smarty) {
 	if (!isset($params['widthVar']) || !isset($params['heightVar']) ||
@@ -1043,7 +1043,7 @@ class GalleryTemplateAdapter {
 
     /**
      * Display error progress bar.
-     * @param object GalleryStatus $status
+     * @param GalleryStatus $status
      */
     function errorProgressBar($status) {
 	global $gallery;

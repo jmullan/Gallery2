@@ -149,7 +149,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
      *    thumbnail, dimensions and crop [or composite]
      *
      * @param boolean $useComposite true to include types with composite support
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array mime types
      * @access private
      */

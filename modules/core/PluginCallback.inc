@@ -29,7 +29,7 @@
  */
 class PluginCallbackView extends GalleryView {
     /**
-     * @var object GalleryRepository
+     * @var GalleryRepository
      * @access private
      */
     var $_repository;
@@ -138,7 +138,7 @@ class PluginCallbackView extends GalleryView {
      *
      * @param string $command (eg. "installModule")
      * @param array $result the location for result data to be sent back to the browser
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @static
      */
     function handleCallback($command, &$result) {
@@ -366,7 +366,7 @@ class PluginCallbackView extends GalleryView {
     /**
      * Get the state ('active', 'inactive', 'uninstalled', etc) of all modules
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array(moduleId => state, ...)
      * @static
      */
@@ -399,9 +399,9 @@ class PluginCallbackView extends GalleryView {
      * Get the state ('active', 'inactive', 'uninstalled', etc) of a given module
      *
      * @param string $type ('module' or 'theme')
-     * @param object GalleryPlugin $plugin
+     * @param GalleryPlugin $plugin
      * @param array $status status of the plugin (from GalleryCoreApi::fetchPluginStatus)
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string a state
      * @static
      */

@@ -241,7 +241,7 @@ class MaintenanceTask {
 
     /**
      * Execute the task
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean success or failure
      *               array string output text
      */

@@ -39,12 +39,12 @@ class HiddenHelper extends HiddenInterface_1_0 {
      * If an album, cascades the effects to all contained items that aren't already hidden.
      * Thus all contents of the album are hidden and become visible when the album is accessed.
      *
-     * @param object GalleryItem $item the item to be hidden
+     * @param GalleryItem $item the item to be hidden
      * @param boolean $useProgressBar (default is false)
      * @param int $hideId used in recursive calls
      * @param int $hiddenAncestor used in recursive calls
      * @param int $passwordAncestor used in recursive calls
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function hideItem(&$item, $useProgressBar=false,
 		      $hideId=null, $hiddenAncestor=null, $passwordAncestor=null) {
@@ -217,12 +217,12 @@ class HiddenHelper extends HiddenInterface_1_0 {
      * user or everybody group if they have either core.viewResizes or core.viewSource.
      * If an album, cascade the effects to all child items that are not hidden themselves.
      *
-     * @param object GalleryItem $item the item to unhide
+     * @param GalleryItem $item the item to unhide
      * @param boolean $useProgressBar (default is false)
      * @param int $hideId used in recursive calls
      * @param int $hiddenAncestor used in recursive calls
      * @param int $passwordAncestor used in recursive calls
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function unHideItem(&$item, $useProgressBar=false,
 			$hideId=null, $hiddenAncestor=null, $passwordAncestor=null) {
@@ -424,9 +424,9 @@ class HiddenHelper extends HiddenInterface_1_0 {
     /**
      * Check for nearest hidden/password ancestor of given item
      *
-     * @param object GalleryItem $item
+     * @param GalleryItem $item
      * @param mixed $passwordInterface instance of PasswordInterface or false
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               mixed id of nearest hidden ancestor or false
      *               mixed id of nearest password protected ancestor or false
      * @access private
@@ -457,8 +457,8 @@ class HiddenHelper extends HiddenInterface_1_0 {
     /**
      * Update permissions as needed for appropriate hidden status when moving an item.
      *
-     * @param object GalleryItem $item item that has moved
-     * @return object GalleryStatus a status code
+     * @param GalleryItem $item item that has moved
+     * @return GalleryStatus a status code
      */
     function handleMoveItem($item) {
 	global $gallery;

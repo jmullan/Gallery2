@@ -114,7 +114,7 @@ class CaptchaValidationPlugin extends GalleryValidationPlugin {
      * Determine if captcha validation should be enforced
      *
      * @param array $options
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean true to validate
      *               int current failure count, if applicable
      * @access private

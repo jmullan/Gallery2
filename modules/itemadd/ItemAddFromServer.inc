@@ -279,7 +279,7 @@ class ItemAddFromServer extends ItemAddPlugin {
      * @param array $textFields Flags about the title, summary and description field.
      * @param array $status See ItemAddPlugin::handleRequest for the specified structure.
      * @param array $error An array of template error codes.
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function addItem($parentId, $file, $useSymlink, $textFields, &$status, &$error) {
 	$fileName = basename($file);
@@ -314,7 +314,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	return null;
     }
 
-    /** @return array object GalleryStatus, mixed id of new album or false */
+    /** @return array GalleryStatus, mixed id of new album or false */
     function addDirectory($parentId, $path, $useSymlink, $textFields, &$status, &$error) {
 	global $gallery;
 
@@ -370,7 +370,7 @@ class ItemAddFromServer extends ItemAddPlugin {
      * @param array $form The request form from the item add controller.
      * @param array $status See ItemAddPlugin::handleRequest for the specified structure.
      * @param array $error An array of template error codes.
-     * @return object GalleryStatus
+     * @return GalleryStatus
      */
     function processDirectory($albumId, $path, $useSymlink, $textFields, $form, &$status, &$error) {
 	global $gallery;
@@ -523,9 +523,9 @@ class ItemAddFromServer extends ItemAddPlugin {
     }
 
     /*
-     * @return array (object GalleryStatus a status code,
-     *                array of UTF-8 strings localServerDirList,
-     *                array of system charset strings localServerDirList)
+     * @return array GalleryStatus a status code,
+     *               array of UTF-8 strings localServerDirList,
+     *               array of system charset strings localServerDirList
      */
     function fetchLocalServerDirList() {
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'itemadd');

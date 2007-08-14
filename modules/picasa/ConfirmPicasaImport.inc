@@ -70,7 +70,7 @@ class ConfirmPicasaImportController extends GalleryController {
      * Actually performs the import from Picasa into G2
      *
      * @param array $form the form variables
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function performImport($form) {
 	global $gallery;

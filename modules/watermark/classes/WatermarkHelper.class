@@ -37,7 +37,7 @@ class WatermarkHelper {
      * @param int $count (optional) the number of items desired
      * @param int $offset (optional) the start of the range
      * @param string $substring (optional) a substring to match
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array of itemId=>watermark
      */
     function fetchWatermarks($count=null, $offset=null, $substring=null) {
@@ -113,7 +113,7 @@ class WatermarkHelper {
      * Return all watermark ids owned by a given user id
      *
      * @param int $ownerId
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array of itemIds
      */
     function fetchWatermarkIdsByOwnerId($ownerId) {
@@ -144,8 +144,8 @@ class WatermarkHelper {
     /**
      * Find items watermarked with the given watermark image.
      *
-     * @param object WatermarkImage $watermark
-     * @return array object GalleryStatus a status code
+     * @param WatermarkImage $watermark
+     * @return array GalleryStatus a status code
      *               array (int GalleryItem id, ...)
      */
     function fetchWatermarkedItemIds($watermark) {
@@ -182,7 +182,7 @@ class WatermarkHelper {
      * @param int $itemId id of watermark image
      * @param boolean $forceDelete (optional) if true, delete even if watermark is used
      *        (and remove those uses)
-     * @return array object GalleryStatus a status object
+     * @return array GalleryStatus a status object
      *               boolean true if deleted
      */
     function deleteWatermarkImageById($itemId, $forceDelete=false) {
@@ -244,12 +244,12 @@ class WatermarkHelper {
     /**
      * Apply the given watermark to the given item.  Expect the item to be locked already.
      *
-     * @param object WatermarkImage $watermark the watermark
-     * @param object GalleryDataItem $item an image
+     * @param WatermarkImage $watermark the watermark
+     * @param GalleryDataItem $item an image
      * @param string $xPercent the x overlay location (in percentage)
      * @param string $yPercent the y overlay location (in percentage)
      * @param array $whichDerivatives an array of DERIVATIVE_TYPE_IMAGE_XXX => true/false
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function watermarkItem($watermark, $item, $xPercent, $yPercent, $whichDerivatives) {
 	list ($ret, $derivativeTable) =
@@ -433,8 +433,8 @@ class WatermarkHelper {
      *
      * @param array $form
      * @param boolean $isPublic (optional) true to make watermark available to all users
-     * @return array object GalleryStatus a status code
-     *               object WatermarkImage
+     * @return array GalleryStatus a status code
+     *               WatermarkImage
      */
     function createWatermarkImage(&$form, $isPublic=false) {
 	global $gallery;
@@ -492,7 +492,7 @@ class WatermarkHelper {
      * @param string $view parent view
      * @param string $subViewSuccess subView redirect on success
      * @param string $subViewError subView delegate on error
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array controller results
      */
     function handleEditRequest($form, $view, $subViewSuccess, $subViewError) {
@@ -638,7 +638,7 @@ class WatermarkHelper {
      * @param array $form form data
      * @param string $formName form name
      * @param string $pageName page name
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function loadEditTemplate(&$template, &$form, $formName, $pageName) {
 	$itemId = GalleryUtilities::getRequestVariables('watermarkId');

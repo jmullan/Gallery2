@@ -115,7 +115,7 @@ class ErrorPageView extends GalleryView {
     /**
      * Entry point from main.php
      *
-     * @param object GalleryStatus $error
+     * @param GalleryStatus $error
      * @param mixed $g2Data (optional) GalleryMain result, if available
      * @param boolean $initOk @deprecated
      * @return boolean true if the error was handled at the last moment and should therefore

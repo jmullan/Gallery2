@@ -30,8 +30,8 @@
 class AkismetApi {
     /**
      * Check a comment to see if it's spam.
-     * @param object GalleryComment $comment a reference to a GalleryComment instance
-     * @return array object GalleryStatus a status code
+     * @param GalleryComment $comment a reference to a GalleryComment instance
+     * @return array GalleryStatus a status code
      *               true if the comment is spam.
      */
     function checkComment(&$comment) {
@@ -52,8 +52,8 @@ class AkismetApi {
 
     /**
      * Submit this comment back to Akismet as spam.
-     * @param object GalleryComment $comment a reference to a GalleryComment instance
-     * @return object GalleryStatus a status code
+     * @param GalleryComment $comment a reference to a GalleryComment instance
+     * @return GalleryStatus a status code
      */
     function submitSpam(&$comment) {
 	return $this->_submit('submit-spam', $comment);
@@ -61,8 +61,8 @@ class AkismetApi {
 
     /**
      * Submit this comment back to Akismet as ham (not spam).
-     * @param object GalleryComment $comment a reference to a GalleryComment instance
-     * @return object GalleryStatus a status code
+     * @param GalleryComment $comment a reference to a GalleryComment instance
+     * @return GalleryStatus a status code
      */
     function submitHam(&$comment) {
 	return $this->_submit('submit-ham', $comment);
@@ -71,7 +71,7 @@ class AkismetApi {
     /**
      * Verify an Akismet API key.
      * @param string $apiKey the api key
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               true if the api key is valid
      */
     function verifyApiKey($apiKey) {
@@ -102,8 +102,8 @@ class AkismetApi {
      * Internal helper method used to submit comments back to Akismet to change their status.
      * @param string $action the Akismet action to take (legal values are
      *                       'submit-spam' and 'submit-ham'
-     * @param object GalleryComment $comment a reference to a GalleryComment instance
-     * @return array object GalleryStatus a status code
+     * @param GalleryComment $comment a reference to a GalleryComment instance
+     * @return array GalleryStatus a status code
      * @access private
      */
     function _submit($action, &$comment) {
@@ -124,13 +124,13 @@ class AkismetApi {
      * body, status and header values.
      * @param string $type the type of Akismet request (legal values are 'comment-check',
      *                     'submit-ham', 'submit-spam')
-     * @param object GalleryComment $comment a reference to a GalleryComment instance
+     * @param GalleryComment $comment a reference to a GalleryComment instance
      * @param bool $includeBrowserSpecificDetails set to true to pass along specific details
      *             from the request that triggered this action (such as the USER_AGENT, etc).
      *             Only set this to true if the user initiatiating the call to _request is the
      *             one who originated the comment.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string the HTTP response body
      *               string the HTTP response status
      *               string the HTTP response headers

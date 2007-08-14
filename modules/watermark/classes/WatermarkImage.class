@@ -222,7 +222,7 @@ class WatermarkImage extends GalleryEntity {
      * @param string $inputFileName the path to a data file to be contained
      * @param string $mimeType the mime type of the new item
      * @param string $targetName the desired name of the new item
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null) {
 	GalleryCoreApi::requireOnce('modules/watermark/classes/WatermarkHelper.class');
@@ -298,7 +298,7 @@ class WatermarkImage extends GalleryEntity {
 
     /**
      * Determine file size and dimensions
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function rescan() {
 	global $gallery;
@@ -360,7 +360,8 @@ class WatermarkImage extends GalleryEntity {
     /**
      * Full path to image file
      *
-     * @return array(object GalleryStatus a status code, string path)
+     * @return array GalleryStatus a status code,
+     *               string path
      */
     function fetchPath() {
 	return array(null, $this->getWatermarkDir() . $this->getFileName());

@@ -32,14 +32,14 @@ class GalleryRepository {
 
     /**
      * Repository utilities.
-     * @var object GalleryRepositoryUtilities
+     * @var GalleryRepositoryUtilities
      * @access private
      */
     var $_utilities;
 
     /**
      * Local repository index.
-     * @var object RepositoryIndex
+     * @var RepositoryIndex
      * @access private
      */
     var $_index;
@@ -61,8 +61,8 @@ class GalleryRepository {
      *                       If this is left empty, use the value stored in core.repositories.
      * @param string $repositoryClassName (optional) the name of the repository class to use.
      *               should be GalleryRepository, except for test code.
-     * @return array object GalleryStatus a status code
-     *               array repository name => object GalleryRepository the repository
+     * @return array GalleryStatus a status code
+     *               array repository name => GalleryRepository the repository
      *               int error count (repositories that failed to load for some reason)
      * @static
      */
@@ -116,7 +116,7 @@ class GalleryRepository {
     /**
      * Determines whether a core module upgrade is available.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     boolean availability
      *		     array repository core and plugin api versions
      */
@@ -166,7 +166,7 @@ class GalleryRepository {
     /**
      * Determines which packages of the specified packages are newer in the repository.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     array package list
      */
     function getPluginUpgradeInfo($pluginType, $pluginId) {
@@ -276,7 +276,7 @@ class GalleryRepository {
      * @param boolean $showAllPlugins show incompatible plugins
      * @param array $coreApis core APIs to base compatibility check on
      *		    'core'/'module'/'theme' => array(versionMajor, versionMinor)
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     array plugin list
      */
     function getRepositoryPluginList($pluginType, $showAllPlugins=false, $coreApis=null) {
@@ -400,7 +400,7 @@ class GalleryRepository {
      * It goes through all installed plugins and checks if an update is available to any of their
      * packages and adds it to a list if it is.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     array package list
      */
     function getAllUpgradeablePackages() {
@@ -454,7 +454,7 @@ class GalleryRepository {
      * @param string $packageName
      * @param string $packageVersion
      * @param string $packageBuild
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function updatePackageMetaData(
 	$pluginType, $pluginId, $packageName, $packageVersion, $packageBuild, $locked) {
@@ -531,7 +531,7 @@ class GalleryRepository {
      * Creates a list of URLs that
      *
      * @param array $pluginData array(pluginType => array(pluginId => array(packages)))
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     array list of packages with corresponding URLs
      */
     function getDownloadFileList($pluginData) {
@@ -583,7 +583,7 @@ class GalleryRepository {
      * @param string $pluginId
      * @param string $packageName
      * @param string $relativePackageUrl URL of the package to download relative to repository URL
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *		     array descriptor
      */
     function downloadAndUnpack($pluginType, $pluginId, $packageName, $relativePackageUrl) {
@@ -698,7 +698,7 @@ class GalleryRepository {
      *
      * @param string $packageName name of the package to check
      * @param array $descriptor descriptor of the plugin the package belongs to
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function verifyPackageIntegrity($packageName, $descriptor) {
 	global $gallery;
@@ -750,7 +750,7 @@ class GalleryRepository {
      *
      * @param $pluginType the plugin type ('module' or 'theme')
      * @param $pluginId the plugin id (eg 'albumselect' or 'cart')
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function scanPlugin($pluginType, $pluginId) {
 	global $gallery;
@@ -851,7 +851,7 @@ class GalleryRepository {
      * Translate the repository tag to its localized name
      *
      * @param $source string the name (released, experimental, community)
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string the localized name
      * @static
      * @public

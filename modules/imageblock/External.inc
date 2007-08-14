@@ -43,7 +43,7 @@ class ExternalView extends GalleryView {
 
     /**
      * Specify the template instance to use for our immediate view.  Used by our test code.
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      */
     function setTemplate(&$template) {
 	$this->_template =& $template;

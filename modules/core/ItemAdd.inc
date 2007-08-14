@@ -29,7 +29,7 @@ class ItemAddController extends GalleryController {
     /**
      * ItemAddOption instances to use when handling this request.  Only used by test code.
      *
-     * @var array (optionId => object ItemAddOption) $_optionInstances
+     * @var array (optionId => ItemAddOption) $_optionInstances
      * @access private
      */
     var $_optionInstances;
@@ -120,9 +120,9 @@ class ItemAddController extends GalleryController {
     /**
      * Handles the add item request and is expected to be called as a progress-bar callback.
      * @param array $form
-     * @param object GalleryItem $item The container to which we're adding child-items
-     * @param object ItemAddPlugin $addPlugin The plugin that handles this add item request
-     * @return object GalleryStatus
+     * @param GalleryItem $item The container to which we're adding child-items
+     * @param ItemAddPlugin $addPlugin The plugin that handles this add item request
+     * @return GalleryStatus
      */
     function handleRequestWithProgressBar($form, $item, $addPlugin) {
 	global $gallery;
@@ -220,7 +220,7 @@ class ItemAddController extends GalleryController {
      * @param array $form
      * @param array $status An array including the list of all added items
      * @see ItemAddPlugin::handleRequest() for the structure of the $status array
-     * @return array object GalleryStatus
+     * @return array GalleryStatus
      *               array $error request parameter errors
      */
     function postprocessItems($form, &$status) {
@@ -381,9 +381,9 @@ class ItemAddController extends GalleryController {
 
     /**
      * Extract files from an archive item and add new items to the same album.
-     * @param object GalleryDataItem $archiveItem archive
-     * @param object GalleryToolkit $toolkit toolkit that supports extract operation
-     * @return array object GalleryStatus a status code
+     * @param GalleryDataItem $archiveItem archive
+     * @param GalleryToolkit $toolkit toolkit that supports extract operation
+     * @return array GalleryStatus a status code
      *               array of array('fileName' => '..', 'id' => ##, 'warnings' => array of string)
      * @access private
      */
@@ -448,7 +448,7 @@ class ItemAddController extends GalleryController {
 
     /**
      * Recursively add files from extracted archive.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _recursiveAddDir($dir, $parentId, &$addedFiles, &$archiveItem, $titleMode) {
@@ -697,10 +697,10 @@ class ItemAddPlugin {
      * Load the template with data from this plugin
      * @see GalleryView::loadTemplate
      *
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      * @param array $form the form values
-     * @param object GalleryItem $item
-     * @return array object GalleryStatus a status code
+     * @param GalleryItem $item
+     * @return array GalleryStatus a status code
      *               string the path to a template file to include
      *               string localization domain for the template file
      */
@@ -713,10 +713,10 @@ class ItemAddPlugin {
      * @see GalleryController::handleRequest
      *
      * @param array $form the form values
-     * @param object GalleryItem $item
-     * @param object GalleryItemAddController $addController A reference to the ItemAddController
+     * @param GalleryItem $item
+     * @param GalleryItemAddController $addController A reference to the ItemAddController
      *               to be used for the post-processing calls.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array error messages (request parameter errors). Stop processing on errors.
      *               array status data, 'addedFiles' entry should contain:
      *                                   array(array('fileName' => '...', 'id' => ##,
@@ -729,7 +729,7 @@ class ItemAddPlugin {
     /**
      * Return a localized title for this plugin, suitable for display to the user
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               return-array (same as GalleryController::handleRequest)
      */
     function getTitle() {
@@ -739,7 +739,7 @@ class ItemAddPlugin {
     /**
      * Is this plugin appropriate at this time?  Default is true.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean true or false
      */
     function isAppropriate() {
@@ -758,8 +758,8 @@ class ItemAddOption {
     /**
      * Return all the available option plugins
      *
-     * @return array object GalleryStatus a status code
-     *               array object ItemAddOption instances
+     * @return array GalleryStatus a status code
+     *               array ItemAddOption instances
      * @static
      */
     function getAllAddOptions() {
@@ -795,10 +795,10 @@ class ItemAddOption {
      * Load the template with data from this plugin
      * @see GalleryView::loadTemplate
      *
-     * @param object GalleryTemplate $template
+     * @param GalleryTemplate $template
      * @param array $form the form values
-     * @param object GalleryItem $item
-     * @return array object GalleryStatus a status code
+     * @param GalleryItem $item
+     * @return array GalleryStatus a status code
      *               string the path to a template file to include
      *               string localization domain for the template file
      */
@@ -812,7 +812,7 @@ class ItemAddOption {
      *
      * @param array $form the form values
      * @param array $items GalleryDataItems
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array localized error messages.  Attempt to continue processing on errors since
      *                     the items have already been added and post-processing will continue.
      *               array localized warning messages
@@ -824,7 +824,7 @@ class ItemAddOption {
     /**
      * Is this option appropriate at this time?
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean true or false
      */
     function isAppropriate() {

@@ -143,7 +143,7 @@ class GalleryPlugin {
      * @param boolean $postActivationEvent (optional) should we post an activation event?  Normally
      *                true, but the upgrader may choose to suppress this event so that it can
      *                reactivate a module without causing a ripple effect.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
     function activate($postActivationEvent=true) {
@@ -221,7 +221,7 @@ class GalleryPlugin {
      * @param bool $postDeactivationEvent (optional) should we post a deactivation event?  Normally
      *             true, but the upgrader may choose to suppress this event so that it can
      *             reactivate a module without causing a ripple effect.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
     function deactivate($postDeactivationEvent=true) {
@@ -255,7 +255,7 @@ class GalleryPlugin {
      * immediately follow and we don't want other plugins to sense this deactivation and
      * deactivate themselves.  If the plugin isn't currently active, don't do anything.
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
     function reactivate() {
@@ -317,7 +317,7 @@ class GalleryPlugin {
     /**
      * Post a deactivation event for this plugin.  Used by deactivate and reactivate.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _postDeactivationEvent() {
@@ -335,7 +335,7 @@ class GalleryPlugin {
     /**
      * Remove this plugin's parameters
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function uninstall() {
 	global $gallery;
@@ -388,7 +388,7 @@ class GalleryPlugin {
      * override the upgrade method and put all their plugin specific logic
      * there.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function installOrUpgrade() {
 	global $gallery;
@@ -455,7 +455,7 @@ class GalleryPlugin {
     /**
      * Is this plugin active?
      *
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               boolean true if active
      */
     function isActive() {
@@ -481,7 +481,7 @@ class GalleryPlugin {
      *
      * @param string $parameterName
      * @param int $itemId (optional)
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               mixed value
      */
     function getParameter($parameterName, $itemId=0) {
@@ -500,7 +500,7 @@ class GalleryPlugin {
      * @param string $parameterName
      * @param string $parameterValue
      * @param int $itemId (optional)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function setParameter($parameterName, $parameterValue, $itemId=0) {
 	$ret = GalleryCoreApi::setPluginParameter(
@@ -517,7 +517,7 @@ class GalleryPlugin {
      *
      * @param string $parameterName
      * @param int $itemId (optional)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function removeParameter($parameterName, $itemId=0) {
 	$ret = GalleryCoreApi::removePluginParameter(
@@ -535,7 +535,7 @@ class GalleryPlugin {
      * item specific ones ones override the global ones.
      *
      * @param int $itemId (optional)
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               array parameters in key => value form
      */
     function fetchParameters($itemId=null) {
@@ -569,7 +569,7 @@ class GalleryPlugin {
      *
      * This method will be called with a null version on an initial install.
      * @param string $currentVersion the current version (null if this is an initial install)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access protected
      */
     function upgrade($currentVersion) {

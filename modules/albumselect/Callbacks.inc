@@ -229,7 +229,7 @@ class AlbumSelectCallbacks {
 
     /**
      * Build template data for subalbum tree (apply sort preference of each album)
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      * @access private
      */
     function _buildTree($album, &$treeList, &$titles, &$nodeId, $userId,

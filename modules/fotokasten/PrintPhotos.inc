@@ -230,7 +230,7 @@ class PrintPhotosController extends GalleryController {
 
     /**
      * Initialize fotokasten session.
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function getFotokastenSession() {
 	global $gallery;
@@ -275,7 +275,7 @@ class PrintPhotosController extends GalleryController {
 
     /**
      * Send basket to fotokasten.
-     * @return array object GalleryStatus a status code
+     * @return array GalleryStatus a status code
      *               string url for redirect to shopping basket
      */
     function sendFotokastenCart($basket) {

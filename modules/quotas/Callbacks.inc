@@ -32,7 +32,7 @@ class QuotasCallbacks {
      *             Data includes current size of usage, any user/group quotas and
      *            their associated size, and a percent value of used/unused space.
      *
-     * @return object GalleryStatus a status code
+     * @return GalleryStatus a status code
      */
     function callback($params, &$smarty, $callback, $userId=null) {
 	global $gallery;
