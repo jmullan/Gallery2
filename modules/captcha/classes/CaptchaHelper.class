@@ -59,12 +59,13 @@ class CaptchaHelper {
      */
     function generateCaptchaSessionKey() {
 	global $gallery;
-	list ($usec, $sec) = explode(' ', microtime());
-	$random_num = rand();
-	$datekey = date('H i s');
-	$rcode = hexdec(md5(GalleryUtilities::getServerVar('HTTP_USER_AGENT') .
-			    $random_num . $datekey));
-	$code = substr($rcode, 2, 6);
+
+	/* These letters are relatively unambiguous when made hard to read */
+	$goodChars = 'ABEHJKMNPSUWXZ';
+	$code = '' ;
+	for ($i = 0; $i < 6; $i++) {
+	    $code .= substr($goodChars, rand(0, strlen($goodChars) - 1), 1);
+	}
 	$session =& $gallery->getSession();
 	$session->put('captcha.key', $code);
     }
