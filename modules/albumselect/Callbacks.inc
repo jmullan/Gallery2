@@ -134,7 +134,9 @@ class AlbumSelectCallbacks {
 		}
 
 		/* Need to double escape for javascript (double-quote delimiter, backslash, ..) */
-		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+		if (!function_exists('smarty_modifier_escape')) {
+		    GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+		}
 		$urlGenerator =& $gallery->getUrlGenerator();
 		$titlesForJs = $links = array();
 		foreach ($titles as $id => $title) {

@@ -143,7 +143,9 @@ class CoreModule extends GalleryModule {
 		    /* Specific translations: */
 		    _('Delete Album'); _('Delete Photo'); _('Delete Movie');
 		}
-		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+		if (!function_exists('smarty_modifier_escape')) {
+		    GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+		}
                 $title = smarty_modifier_escape(GalleryUtilities::markup(
 		    $item->getTitle(), 'strip'), 'javascript', 'UTF-8');
 		list ($thisItemId, $page) = GalleryUtilities::getRequestVariables('itemId', 'page');
@@ -427,7 +429,9 @@ class CoreModule extends GalleryModule {
 	if (isset($permissions['core.delete'])) {
 	    $itemId = $item->getId();
 	    if ($itemId != $rootId) {
-		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+		if (!function_exists('smarty_modifier_escape')) {
+		    GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+		}
                 $title = smarty_modifier_escape(GalleryUtilities::markup(
 		    $item->getTitle(), 'strip'), 'javascript', 'UTF-8');
 		/* This is ItemAdmin view, hence page item is the one we are deleting */

@@ -238,7 +238,9 @@ class GalleryTemplateAdapter {
 	}
 
 	if (!empty($params['forJavascript'])) {
-	    GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	    if (!function_exists('smarty_modifier_escape')) {
+		GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	    }
 	    $text = smarty_modifier_escape($text, 'javascript', 'UTF-8');
 	}
 
@@ -721,7 +723,9 @@ class GalleryTemplateAdapter {
 	}
 	if ($debug == 'buffered') {
 	    /* Smarty debug console */
-	    GalleryCoreApi::requireOnce('lib/smarty/plugins/function.debug.php');
+	    if (!function_exists('smarty_function_debug')) {
+		GalleryCoreApi::requireOnce('lib/smarty/plugins/function.debug.php');
+	    }
 	    $buf .= smarty_function_debug($params, $smarty);
 	}
 	return $buf;
@@ -1013,7 +1017,9 @@ class GalleryTemplateAdapter {
 	$percentComplete = GalleryUtilities::roundToString($percentComplete, 2);
 
 	/* Need to escape for javascript (backslash, ..) */
-	GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	if (!function_exists('smarty_modifier_escape')) {
+	    GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	}
 	$title = smarty_modifier_escape($title, 'javascript');
 	$description = smarty_modifier_escape($description, 'javascript', 'UTF-8');
 
@@ -1060,7 +1066,9 @@ class GalleryTemplateAdapter {
 	    $status = 'Error ('
 		    . implode(', ', $status->getErrorCodeConstants($status->getErrorCode())) . ')';
 	}
-	GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	if (!function_exists('smarty_modifier_escape')) {
+	    GalleryCoreApi::requireOnce('lib/smarty/plugins/modifier.escape.php');
+	}
 	$status = smarty_modifier_escape($status, 'javascript', 'UTF-8');
 	printf('<script type="text/javascript">errorProgressBar("%s");</script>', $status);
     }
