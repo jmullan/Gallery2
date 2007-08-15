@@ -207,13 +207,6 @@ class GalleryDerivativeImage extends GalleryDerivative {
 		    $item->getTitle() ? GalleryUtilities::markup($item->getTitle(), 'strip')
 				      : $item->getPathComponent();
 	    }
-	    if (!isset($params['longdesc'])) {
-		$longdesc = preg_replace('/[\r\n]+/', ' ',
-			GalleryUtilities::markup($item->getDescription(), 'strip'));
-		if (!empty($longdesc)) {
-		    $params['longdesc'] = $longdesc;
-		}
-	    }
 
 	    $html = sprintf('<img src="%s"%s', $src, $sizeStr);
 	    unset($params['fallback']);
