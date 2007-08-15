@@ -201,8 +201,15 @@ class CommentSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	for ($i = 0; $i < 2; $i++) {
 	    $comment[$i] = new GalleryComment();
-	    $comment[$i]->create($album->getId());
+	    $ret = $comment[$i]->create($album->getId());
+	    if ($ret) {
+		return $ret;
+	    }
 	    $comment[$i]->setPublishStatus(COMMENT_PUBLISH_STATUS_PUBLISHED);
+	    $comment[$i]->setCommenterId($gallery->getActiveUserId());
+	    $comment[$i]->setSubject('this is a test subject');
+	    $comment[$i]->setComment('this is a test comment');
+	    $comment[$i]->setHost('127.0.0.1');
 	    $ret = $comment[$i]->save();
 	    if ($ret) {
 		return $ret;

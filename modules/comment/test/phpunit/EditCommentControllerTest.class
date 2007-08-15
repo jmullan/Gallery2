@@ -55,7 +55,10 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	    }
 
 	    $this->assert(isset($this->_comment[$i]), 'Missing comment instance');
-	    $this->_comment[$i]->create($this->_item[$i]->getId());
+	    $ret = $this->_comment[$i]->create($this->_item[$i]->getId());
+	    if ($ret) {
+		return $ret;
+	    }
 	    $this->_comment[$i]->setCommenterId($gallery->getActiveUserId());
 	    $this->_comment[$i]->setHost('127.0.0.1');
 	    $this->_comment[$i]->setSubject('this is a test subject');
