@@ -892,10 +892,11 @@ class GalleryTheme extends GalleryPlugin {
 			/* Load up our child count so that we can figure out the max pages */
 			$itemId = $item->getId();
 			list ($ret, $childCount) = GalleryCoreApi::fetchChildCounts(
-						    array($itemId), $theme['actingUserId']);
+				array($itemId), $theme['actingUserId']);
 			if ($ret) {
 			    return array($ret, null);
 			}
+			/* $childCount shouldn't be empty; check/fallback here anyway */
 			$theme['childCount'] =
 			    isset($childCount[$itemId]) ? $childCount[$itemId] : count($childIds);
 
