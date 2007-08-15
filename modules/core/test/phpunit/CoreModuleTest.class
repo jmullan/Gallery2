@@ -60,7 +60,7 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetItemAdminViews() {
-    	global $gallery;
+	global $gallery;
 	$albumId = $this->_parentAlbum->getId();
 	GalleryUtilities::putRequestVariable('itemId', $albumId);
 	list ($ret, $content) = $this->_module->getItemAdminViews($this->_parentAlbum);
@@ -89,6 +89,7 @@ class CoreModuleTest extends GalleryTestCase {
 			  array('text' => 'Delete %s',
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
+		      'view' => 'core.ItemDeleteSingle',
 		      'script' => 'core_confirmDelete(\'' . $url . '\', \'\', \''
 				  . $albumTitle . '\');return false'),
 		array('name' => $this->_module->_translate(
@@ -128,6 +129,7 @@ class CoreModuleTest extends GalleryTestCase {
 			  array('text' => 'Delete %s',
 				'arg1' => $this->_module->translate('Album')),
 			  'Album'),
+		      'view' => 'core.ItemDeleteSingle',
 		      'script' => 'core_confirmDelete(\'' . $url . '\', \'\', \''
 				   . $albumTitle . '\');return false'),
 		array('name' => $this->_module->_translate(
@@ -291,8 +293,8 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetInstalledVersions() {
-    	global $gallery;
-    	$platform =& $gallery->getPlatform();
+	global $gallery;
+	$platform =& $gallery->getPlatform();
 
 	GalleryDataCache::remove('CoreModule::installedVersions');
 
@@ -308,13 +310,13 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetInstalledVersions2LinesReturned() {
-    	global $gallery;
-   	$gallery->setPlatform(new UnitTestPlatform());
-    	$platform =& $gallery->getPlatform();
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
 
 	GalleryDataCache::remove('CoreModule::installedVersions');
 
-    	$gallery->setConfig('mode.maintenance', 'TEST-VALUE');
+	$gallery->setConfig('mode.maintenance', 'TEST-VALUE');
 
 	$versionFile = $gallery->getConfig('data.gallery.version');
 
@@ -330,13 +332,13 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetInstalledVersionsSetsMaintenanceModeFromFile() {
-    	global $gallery;
-   	$gallery->setPlatform(new UnitTestPlatform());
-    	$platform =& $gallery->getPlatform();
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
 
 	GalleryDataCache::remove('CoreModule::installedVersions');
 
-    	$gallery->setConfig('mode.maintenance', 'TEST-VALUE');
+	$gallery->setConfig('mode.maintenance', 'TEST-VALUE');
 
 	$versionFile = $gallery->getConfig('data.gallery.version');
 
@@ -353,13 +355,13 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testGetInstalledVersionsSetsMaintenanceModeFromFileWithAbsoluteUrl() {
-    	global $gallery;
-   	$gallery->setPlatform(new UnitTestPlatform());
-    	$platform =& $gallery->getPlatform();
+	global $gallery;
+	$gallery->setPlatform(new UnitTestPlatform());
+	$platform =& $gallery->getPlatform();
 
 	GalleryDataCache::remove('CoreModule::installedVersions');
 
-    	$gallery->setConfig('mode.maintenance', 'TEST-VALUE');
+	$gallery->setConfig('mode.maintenance', 'TEST-VALUE');
 
 	$versionFile = $gallery->getConfig('data.gallery.version');
 
