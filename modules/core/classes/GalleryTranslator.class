@@ -387,6 +387,14 @@ class GalleryTranslator {
     }
 
     /**
+     * Return supported locale that was selected after initialization.
+     * @return string locale
+     */
+    function getActiveLanguageCode() {
+	return $this->_languageCode;
+    }
+
+    /**
      * Find a supported locale from given string.
      *
      * @param string $languageCode the language code hint

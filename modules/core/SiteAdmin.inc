@@ -55,6 +55,10 @@ class SiteAdminView extends GalleryView {
 	 */
 	$subView = GalleryUtilities::getRequestVariables('subView');
 	$showAllSiteAdminViews = ($subView == 'core.AdminPlugins');
+	if ($showAllSiteAdminViews) {
+	    /* Ensure translations available even for uninstalled plugins */
+	    GalleryCoreApi::installTranslationsForLocale();
+	}
 
 	foreach ($moduleStatus as $moduleId => $status) {
 	    if (empty($status['active']) && !$showAllSiteAdminViews) {

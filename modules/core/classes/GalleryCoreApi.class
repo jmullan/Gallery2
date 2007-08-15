@@ -80,9 +80,11 @@ class GalleryCoreApi {
      * - loadEntitiesById and deleteEntityById: make optional $requiredEntityType mandatory
      * - remove GalleryCoreApi::registerEventListener, GalleryModule::registerEventListeners
      *   and other code marked for removal in helpers/GalleryEventHelper_simple.class
+     * - consider renaming everything using "languageCode" to "locale" for correct terminology
+     *   (GalleryTranslator.class and Gallery.class)
      */
     function getApiVersion() {
-	return array(7, 34);
+	return array(7, 35);
     }
 
     /**
@@ -3145,6 +3147,18 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
 	return GalleryTranslatorHelper_medium::removeTranslationsForPlugin($pluginType, $pluginId);
+    }
+
+    /**
+     * Copy the translations for a given locale into our locale hierarchy.
+     * Copies for all available (even uninstalled) plugins.
+     * @param string $locale (optional) Defaults to translator's current locale
+     * @return GalleryStatus a status code
+     */
+    function installTranslationsForLocale($locale=null) {
+	GalleryCoreApi::requireOnce(
+		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
+	return GalleryTranslatorHelper_medium::installTranslationsForLocale($locale);
     }
 
     /**

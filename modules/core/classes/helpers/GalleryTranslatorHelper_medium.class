@@ -91,5 +91,51 @@ class GalleryTranslatorHelper_medium {
 	}
 	return $success ? null : GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
     }
+
+    /**
+     * @see GalleryCoreApi::installTranslationsForLocale
+     */
+    function installTranslationsForLocale($locale=null) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$codeBase = GalleryCoreApi::getCodeBasePath();
+	$localeBase = $gallery->getConfig('data.gallery.base') . 'locale/';
+
+	if (!isset($locale)) {
+	    $translator =& $gallery->getTranslator();
+	    $locale = $translator->getActiveLanguageCode();
+	}
+	if (empty($locale) || $locale == 'en_US') {
+	    /* Nothing to do */
+	    return null;
+	}
+	$language = substr($locale, 0, 2);
+
+	foreach (array('modules', 'themes') as $pluginType) {
+	    $gallery->guaranteeTimeLimit(30);
+	    $poDirs = $platform->glob("$codeBase$pluginType/*/po");
+	    $gallery->guaranteeTimeLimit(60);
+	    foreach ($poDirs as $poDir) {
+		preg_match('{/(\w+)/po$}', $poDir, $matches);
+		$filename = $pluginType . '_' . $matches[1] . '.mo';
+		foreach (array($locale, $language) as $prefix) {
+		    $destinationDir = $localeBase . $prefix . '/LC_MESSAGES/';
+		    $sourcePath = "$poDir/$prefix.mo";
+		    if (!$platform->file_exists($destinationDir . $filename)
+			    && $platform->file_exists($sourcePath)) {
+			list ($success) = GalleryUtilities::guaranteeDirExists($destinationDir);
+			if (!$success) {
+			    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
+			}
+			$success = $platform->copy($sourcePath, $destinationDir . $filename);
+			if (!$success) {
+			    return GalleryCoreApi::error(ERROR_PLATFORM_FAILURE);
+			}
+		    }
+		}
+	    }
+	}
+	return null;
+    }
 }
 ?>

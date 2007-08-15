@@ -131,6 +131,9 @@ class InstallCoreModuleStep extends InstallStep {
 
 	if (empty($templateData['errors'])) {
 	    if (!$isInstalled) {
+		/* Ensure translations for active language are available */
+		GalleryCoreApi::installTranslationsForLocale();
+
 		$gallery->debug('Install core module now!');
 		$ret = $core->installOrUpgrade(true, $template);
 		if ($ret) {
