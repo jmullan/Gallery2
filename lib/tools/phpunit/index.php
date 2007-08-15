@@ -29,6 +29,7 @@ include('../../../bootstrap.inc');
 require_once('../../../init.inc');
 require_once('phpunit.inc');
 require_once('GalleryTestCase.class');
+require_once('GalleryImmediateViewTestCase.class');
 require_once('GalleryControllerTestCase.class');
 require_once('ItemAddPluginTestCase.class');
 require_once('ItemEditPluginTestCase.class');
@@ -37,6 +38,8 @@ require_once('CodeAuditTestCase.class');
 require_once('MockObject.class');
 require_once('UnitTestPlatform.class');
 require_once('UnitTestStorage.class');
+require_once('UnitTestPhpVm.class');
+require_once('UnitTestUrlGenerator.class');
 require_once('MockTemplateAdapter.class');
 
 @ini_set('output_buffering', 0);
