@@ -3131,7 +3131,7 @@ class GalleryCoreApi {
     function installTranslationsForPlugin($pluginType, $pluginId) {
 	GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
-	GalleryTranslatorHelper_medium::installTranslationsForPlugin($pluginType, $pluginId);
+	return GalleryTranslatorHelper_medium::installTranslationsForPlugin($pluginType, $pluginId);
     }
 
     /**
@@ -3144,7 +3144,7 @@ class GalleryCoreApi {
     function removeTranslationsForPlugin($pluginType, $pluginId) {
 	GalleryCoreApi::requireOnce(
 		'modules/core/classes/helpers/GalleryTranslatorHelper_medium.class');
-	GalleryTranslatorHelper_medium::removeTranslationsForPlugin($pluginType, $pluginId);
+	return GalleryTranslatorHelper_medium::removeTranslationsForPlugin($pluginType, $pluginId);
     }
 
     /**
