@@ -191,7 +191,7 @@ class TranslatorTest extends GalleryTestCase {
 
     /*
      * The translator should init to the site-wide default language if session/request defines no
-     * preference
+     * preference.  Also check GalleryTranslator::getActiveLanguageCode.
      */
     function testInitToDefaultLanguage() {
 	global $gallery;
@@ -208,7 +208,9 @@ class TranslatorTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals('fr_FR', $langCode);
+	$this->assertEquals('fr_FR', $langCode, 'from $gallery');
+	$translator =& $gallery->getTranslator();
+	$this->assertEquals('fr_FR', $translator->getActiveLanguageCode(), 'from $translator');
     }
 
     /* If we init without database support, fallback to en_US */
@@ -512,6 +514,98 @@ class TranslatorTest extends GalleryTestCase {
 	$gallery->setPlatform($platform);
 
 	$ret = GalleryCoreApi::removeTranslationsForPlugin('module', 'TranslatorTest');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testInstallTranslationsForLocale() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+
+	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$codeBase = GalleryCoreApi::getCodeBasePath();
+	$platform->setReply('glob', array("${codeBase}modules/*/po", null),
+			    array("${codeBase}modules/test/po"));
+	$platform->setReply('file_exists',
+		array('/g2data/locale/wx_YZ/LC_MESSAGES/modules_test.mo'), false);
+	$platform->setReply('file_exists',
+		array("${codeBase}modules/test/po/wx_YZ.mo"), false);
+	$platform->setReply('file_exists',
+		array('/g2data/locale/wx/LC_MESSAGES/modules_test.mo'), false);
+	$platform->setReply('file_exists',
+		array("${codeBase}modules/test/po/wx.mo"), true);
+
+	/* This next block is what GalleryUtilities::guaranteeDirExists requires */
+	$platform->setReply('file_exists', array('/g2data/locale/wx/LC_MESSAGES/'), false);
+	$platform->setReply('file_exists', array('/g2data/locale/wx/LC_MESSAGES/'), false);
+	$platform->setReply('file_exists', array('/g2data/locale/wx'), false);
+	$platform->setReply('file_exists', array('/g2data/locale'), true);
+	$platform->setReply('is_dir', array('/g2data/locale'), true);
+	$platform->setReply('mkdir', array('/g2data/locale/wx', 755), true);
+	$platform->setReply('mkdir', array('/g2data/locale/wx/LC_MESSAGES/', 755), true);
+
+	$platform->setReply('copy',
+		array("${codeBase}modules/test/po/wx.mo",
+		      '/g2data/locale/wx/LC_MESSAGES/modules_test.mo'),
+		true);
+
+	$platform->setReply('glob', array("${codeBase}themes/*/po", null),
+			    array("${codeBase}themes/matrix/po"));
+	$platform->setReply('file_exists',
+		array('/g2data/locale/wx_YZ/LC_MESSAGES/themes_matrix.mo'), false);
+	$platform->setReply('file_exists',
+		array("${codeBase}themes/matrix/po/wx_YZ.mo"), false);
+	$platform->setReply('file_exists',
+		array('/g2data/locale/wx/LC_MESSAGES/themes_matrix.mo'), true);
+
+	$gallery->setPlatform($platform);
+
+	$ret = GalleryCoreApi::installTranslationsForLocale('wx_YZ');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testInstallTranslationsForLocaleNoParam() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+	$translator =& $gallery->getTranslator();
+
+	$gallery->setConfig('data.gallery.base', '/g2data/');
+	$codeBase = GalleryCoreApi::getCodeBasePath();
+	$locale = $translator->getActiveLanguageCode();
+	if ($locale != 'en_US') {
+	    $language = substr($locale, 0, 2);
+	    $platform->setReply('glob', array("${codeBase}modules/*/po", null),
+				array("${codeBase}modules/test/po"));
+	    $platform->setReply('file_exists',
+		    array("/g2data/locale/$locale/LC_MESSAGES/modules_test.mo"), true);
+	    $platform->setReply('file_exists',
+		    array("/g2data/locale/$language/LC_MESSAGES/modules_test.mo"), true);
+	    $platform->setReply('glob', array("${codeBase}themes/*/po", null), array());
+	}
+
+	$gallery->setPlatform($platform);
+
+	$ret = GalleryCoreApi::installTranslationsForLocale();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
+    }
+
+    function testInstallTranslationsForLocaleEnUS() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+	$gallery->setPlatform($platform);
+
+	$ret = GalleryCoreApi::installTranslationsForLocale('en_US');
 	if ($ret) {
 	    return $ret;
 	}
