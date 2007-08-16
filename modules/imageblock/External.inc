@@ -106,13 +106,28 @@ class ExternalView extends GalleryView {
 	    $ImageBlockData =& $template->getVariableByReference('ImageBlockData');
 	    $ImageBlockData['forceFullUrl'] = 1;
 
-	    $template->setVariable('l10Domain', 'modules_imageblock');
+	    /* Check for rawImage - if requested, send binary image (only one image) */
+	    if (isset($params['show']) && $params['show'] === 'rawImage') {
+		if (isset($ImageBlockData['blocks'][0]['deriv']['id'])) {
+		    GalleryUtilities::putRequestVariable('itemId',
+			    $ImageBlockData['blocks'][0]['deriv']['id']);
 
-	    if (!headers_sent()) {
-		header("Content-type: text/html; charset=UTF-8");
+		    list ($ret, $view) = GalleryView::loadView('core.DownloadItem');
+		    if ($ret) {
+			return $ret;
+		    }
+		    return $view->renderImmediate(null, null);
+		} else if (!headers_sent()) {
+		    header('HTTP/1.0 404 Not Found');
+		}
+	    } else {
+		if (!headers_sent()) {
+		    header("Content-type: text/html; charset=UTF-8");
+		}
+
+		$template->setVariable('l10Domain', 'modules_imageblock');
+		$template->display('gallery:modules/imageblock/templates/ImageBlock.tpl');
 	    }
-
-	    $template->display('gallery:modules/imageblock/templates/ImageBlock.tpl');
 	}
 
 	return null;
