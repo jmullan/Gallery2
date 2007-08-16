@@ -134,7 +134,7 @@ class ShowItemTest extends GalleryTestCase {
     }
 
     function testUserNoPermission() {
-	/* Verify registered user is redirected to root album if no core.view permission */
+	/* Verify registered user gets error page (used to redirect to root album) */
 	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
 	if ($ret) {
 	    return $ret;
@@ -142,53 +142,7 @@ class ShowItemTest extends GalleryTestCase {
 
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->assertEquals(
-	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => $this->_getRootId())),
-	    $result);
-    }
-
-    function testNoPermissionAlternateRoot() {
-	global $gallery;
-	$gallery->setConfig('defaultAlbumId', 123);
-
-	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret) {
-	    return $ret;
-	}
-
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->assertEquals(
-	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => 123)),
-	    $result);
-    }
-
-    function testUserNoRootPermission() {
-	global $gallery;
-	$gallery->setConfig('defaultAlbumId', $this->_item->getId());
-
-	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret) {
-	    return $ret;
-	}
-
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	list ($ret, $result, $theme) = $this->_view->doLoadTemplate($this->_template);
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->assertEquals(
-	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin',
-				      'return' => true)), $result);
+	$this->assert($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED, 'expect error');
     }
 
     function testAlbumSourcePermission() {

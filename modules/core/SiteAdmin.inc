@@ -34,9 +34,9 @@ class SiteAdminView extends GalleryView {
 	global $gallery;
 
 	/* Make sure we have adequate permissions */
-	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	$ret = $this->_permissionCheck(GalleryCoreApi::assertUserIsSiteAdministrator());
 	if ($ret) {
-	    return array($ret, null);
+	    return array($ret[0], $ret[1]);
 	}
 
 	/* Load the module list */
