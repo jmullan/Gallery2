@@ -102,7 +102,7 @@
     <td> {g->text text="Pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum, dailyImage, weeklyImage, monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum, specificItem; default is randomImage"} </td>
   </tr><tr>
     <td> {$ImageBlockSiteAdmin.prefix}show&nbsp;*</td>
-    <td> {g->text text="Pipe(|) separated list chosen from: title, date, views, owner, heading, fullSize; the value can also be: none"} </td>
+    <td> {g->text text="Pipe(|) separated list chosen from: title, date, views, owner, heading, fullSize, rawImage; the value can also be: none"} </td>
   </tr><tr>
     <td> {$ImageBlockSiteAdmin.prefix}itemId </td>
     <td> {g->text text="Limit the item selection to the subtree of the gallery under the album with the given id; or the id of the item to display when used with specificItem block type"} </td>
