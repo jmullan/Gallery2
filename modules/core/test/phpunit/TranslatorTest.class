@@ -48,9 +48,9 @@ class TranslatorTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	/* Disable browser check and set default lang != hardcoded lang */
-	foreach (array('default.language' => 'fr_FR', 'language.useBrowserPref' => '0')
-		 as $param => $value) {
+	/* Disable browser check, set default lang != hardcoded lang, set dir perms */
+	foreach (array('default.language' => 'fr_FR', 'language.useBrowserPref' => '0',
+		       'permissions.directory' => '755') as $param => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $param, $value);
 	    if ($ret) {
 		return $ret;
