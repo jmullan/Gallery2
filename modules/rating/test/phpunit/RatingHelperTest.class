@@ -327,6 +327,30 @@ class RatingHelperTest extends GalleryTestCase {
 	$this->assert(!isset($RatingData['userRating']), 'no user rating');
     }
 
+    function testFetchRatingsForUser() {
+	/* Used to be a bug with missing keys in data for item rated by others but not this user */
+	list ($ret) = RatingHelper::rateItem($this->_item->getId(), 4, $this->_users[0]->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $RatingData) = RatingHelper::fetchRatings(array($this->_item->getId()),
+							      $this->_users[1]->getId());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(
+		array($this->_item->getId() => array('itemId' => $this->_item->getId(),
+						     'rating' => '4',
+						     'votes' => 1,
+						     'averagePercent' => '80',
+						     'stars' => 8,
+						     'userRating' => 'N/A',
+						     'userStars' => 0)
+		    ),
+		$RatingData);
+    }
+
     function testGetItemSummaries() {
 	/* Need to enable rating for our test album first */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'rating', 'enabled', 1,
