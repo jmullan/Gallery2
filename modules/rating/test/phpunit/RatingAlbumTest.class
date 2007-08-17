@@ -176,14 +176,9 @@ class RatingAlbumTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('limit', '4');
 	GalleryUtilities::putRequestVariable('itemId', $this->_items[1]->getId());
 
+	/* ShowItem handling used to redirect to root album; now returns permission error */
 	list ($ret, $result) = $this->_view->loadTemplate($this->_template, $form = array());
-	if ($ret) {
-	    return $ret;
-	}
-
-	$this->assertEquals(
-	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => $this->_getRootId())),
-	    $result, 'redirect');
+	$this->assert($ret && $ret->getErrorCode() & ERROR_PERMISSION_DENIED, 'expected error');
     }
 
     function testLimitTooLow() {
