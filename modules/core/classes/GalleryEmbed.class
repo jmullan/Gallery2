@@ -20,13 +20,14 @@
 
 /**
  * Access point for external application in which Gallery is embedded.
- * See http://codex.gallery2.org/index.php/Gallery2:Embedding for more information
+ * See {@link http://codex.gallery2.org/index.php/Gallery2:Embedding} for more information
  * on embedding / integration.
+ *
  * Three interaction modes:
- *  1) GalleryEmbed::init(array(..)) followed by GalleryEmbed::handleRequest()
- *  2) GalleryEmbed::init(array(.., 'fullInit' => true)) followed by other
- *     GalleryEmbed/G2 calls, end with GalleryEmbed::done() <-- REQUIRED
- *  3) Single GalleryEmbed::logout(array(..)) call
+ * - 1. GalleryEmbed::init(array(..)) followed by GalleryEmbed::handleRequest()
+ * - 2. GalleryEmbed::init(array(.., 'fullInit' => true)) followed by other
+ *      GalleryEmbed/G2 calls, end with GalleryEmbed::done() <-- REQUIRED
+ * - 3. Single GalleryEmbed::logout(array(..)) call
  *
  * All of these methods should be accessed in a static sense, ie: GalleryEmbed::handleRequest();
  *
@@ -166,9 +167,12 @@ class GalleryEmbed {
      * (redirect, or output from G2 immediate view like core.DownloadItem) and
      * CMS should not send any additional output.  If isDone is false then check
      * headHtml and bodyHtml keys for content to display via CMS.
+     *
      * Include activeUserName parameter if integration is not calling GalleryEmbed::login()
      * at CMS login time.
-     * themeData is set if isDone is false and populated with the corresponding template variable.
+     *
+     * themeData is set if isDone is false and populated with the corresponding template
+     * variable.
      *
      * @return array ('isDone' => boolean,
      *                [optional: 'headHtml' => string, 'bodyHtml' => string,
@@ -607,8 +611,8 @@ class GalleryEmbed {
      * @param string $searchString search criteria
      * @param int $resultsPerModule (optional) max number of results to return from each module,
      *            defaults to 3
-     * @return array GalleryStatus a status object
-     *               array of {module_id} => results array plus 'name' key with module name
+     * @return array GalleryStatus a status object,
+     *               array of {module_id} => results array plus 'name' key with module name>
      * @see GallerySearchInterface_1_0::search for contents of results arrays
      */
     function searchScan($searchString, $resultsPerModule=3) {
@@ -714,8 +718,8 @@ class GalleryEmbed {
      * Parse html (headHtml) for css links, javascript and page title
      *
      * @param string $headhtml
-     * @return array(string title, array (string css1, string css2, ...),
-     *               array (string javascript1, string javascript2, ...))
+     * @return array string title, array (string css1, string css2, ...),
+     *               array (string javascript1, string javascript2, ...)
      */
     function parseHead($headhtml) {
 	$title = '';
@@ -749,22 +753,23 @@ class GalleryEmbed {
 
     /**
      * Get HTML for an image block
+     * Example:
+     *   list ($ret, $html, $headHtml) =
+     *       GalleryEmbed::getImageBlock(array('blocks' => 'randomImage', 'show' => 'title|date'));
      *
      * @param array $params ('blocks' => string, 'show' => string, (optional)'heading' => int,
      *        (optional)'itemId' => int, (optional)'maxSize' => int, (optional)'exactSize' => int,
      *        (optional)'itemFrame' => frameId, (optional)'albumFrame' => frameId)
-     * 'blocks' is a pipe (|) separated list, of one or more possible blocks which are:
-     * randomImage|recentImage|viewedImage|randomAlbum|recentAlbum|viewedAlbum|specificItem
-     * dailyImage|weeklyImage|monthlyImage|dailyAlbum|weeklyAlbum|monthlyAlbum
-     * 'show' is a pipe (|) separated list of one or more possible choices which are:
-     * title|date|views|owner|heading|fullSize or just 'none'
-     * If you choose 'blocks' => 'specificItem', you must specify 'itemId' too.
-     * example: GalleryEmbed::getImageBlock(array('blocks' => 'randomImage',
-     *                                            'show' => 'title|date'));
-     * itemFrame/albumFrame may require CSS to be displayed.
-     * See Image Block Site Admin page for info on optional parameters.
-     * @return array GalleryStatus
-     *               string html content
+     * - 'blocks' is a pipe (|) separated list, of one or more possible blocks which are:
+     *   randomImage|recentImage|viewedImage|randomAlbum|recentAlbum|viewedAlbum|specificItem
+     *   dailyImage|weeklyImage|monthlyImage|dailyAlbum|weeklyAlbum|monthlyAlbum
+     * - 'show' is a pipe (|) separated list of one or more possible choices which are:
+     *   title|date|views|owner|heading|fullSize or just 'none'
+     * - If you choose 'blocks' => 'specificItem', you must specify 'itemId' too.<li>
+     * - itemFrame/albumFrame may require CSS to be displayed.
+     * - See Image Block Site Admin page for info on optional parameters.
+     * @return array GalleryStatus,
+     *               string html content,
      *               string head content or null if none required
      */
     function getImageBlock($params) {
@@ -831,7 +836,8 @@ class GalleryEmbed {
 
     /**
      * Add an externalId<->entityId map entry for existing G2/emApp users/groups
-     * example: GalleryEmbed::addExternalIdMapEntry($uid, $g2user->getId(), 'GalleryUser');
+     * Example:
+     *   <code>GalleryEmbed::addExternalIdMapEntry($uid, $g2user->getId(), 'GalleryUser');</code>
      *
      * @param string $externalId the user/group id in the embedded application
      * @param int $entityId the entityId of the user/group in G2
@@ -851,11 +857,11 @@ class GalleryEmbed {
     }
 
     /**
-     * Get the complete externalId<->entityId map (for users and groups),
-     * the return array is organized by externalId or by entityId
+     * Get the complete externalId<->entityId map (for users and groups).
+     * The return array is organized by externalId or by entityId.
      *
      * @param string $key 'externalId' or 'entityId', array is organized by this key
-     * @return array GalleryStatus
+     * @return array GalleryStatus,
      *               array(externalId|entityId => array(externalId => int/string,
      *                                                  entityId => int, entityType => string))
      */
@@ -885,9 +891,9 @@ class GalleryEmbed {
 
     /**
      * Check if externalId is mapped to a G2 user/group.
-     * If GalleryStatus is a success, the externalId is mapped. Else, check for the status code.
-     * ERROR_MISSING_OBJECT -> externalId is not mapped to a G2 entity.
-     * other error codes -> unexpected behavior / bug.
+     * - If GalleryStatus is a success, the externalId is mapped. Else, check for the status code.
+     * - ERROR_MISSING_OBJECT -> externalId is not mapped to a G2 entity.
+     * - other error codes -> unexpected behavior / bug.
      *
      * @param string $externalId the user/group id in the embedded application
      * @param string $entityType 'GalleryUser' for user mapping, 'GalleryGroup' for group mapping
