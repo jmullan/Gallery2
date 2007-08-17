@@ -165,7 +165,7 @@ function image_show(i) {
   image_index = i;
   ui_sethtml('title', document.getElementById('title_'+image_index).innerHTML);
   image_setsize();
-  if (options_on) options_setsize();
+  if (options_on) { options_setsize(); options_setItemLinks(i); }
   if (image_map && app_is_ie) {
     document.getElementById('prevArrow').style.visibility = 'hidden';
     document.getElementById('nextArrow').style.visibility = 'hidden';
