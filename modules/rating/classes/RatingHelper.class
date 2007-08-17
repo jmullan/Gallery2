@@ -54,7 +54,8 @@ class RatingHelper {
 		    'rating' => GalleryUtilities::roundToString($rating, 3),
 		    'votes' => (int)$result[2],
 		    'averagePercent' => GalleryUtilities::roundToString(($rating * 100 / 5), 3),
-		    'stars' => round($rating * 2)
+		    'stars' => round($rating * 2),
+		    'userRating' => 'N/A', 'userStars' => 0
 		    );
 
 	    if ($rating == 0) {
