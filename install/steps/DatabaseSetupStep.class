@@ -135,7 +135,6 @@ class DatabaseSetupStep extends InstallStep {
 
 		$this->_captureStart();
 		$this->_db =& ADONewConnection($this->_config['type']);
-		$this->_db->debug = true;
 		$this->_captureEnd();
 
 		if (empty($this->_db)) {
@@ -146,6 +145,7 @@ class DatabaseSetupStep extends InstallStep {
 
 		if (empty($templateData['errors'])) {
 		    $this->_captureStart();
+		    $this->_db->debug = true;
 		    if ($dbPlatformType != 'mssql') {
 			$result = $this->_db->NConnect($this->_config['hostname'],
 						       $this->_config['username'],
