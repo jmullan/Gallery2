@@ -167,10 +167,11 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->_translate(
 			  array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0]),
 			  	$itemTypeNames[2]),
-			  /* Params are only for g->linkId that is used by icons */
+			  /* Params are for g->linkId used by icons, or themes ignoring 'script' */
 			  'params' => array('view' => 'core.ItemAdmin',
-					    'subView' => 'core.ItemDeleteSingle',
-					    'itemId' => $itemId),
+					    'subView' => 'core.ItemDelete',
+					    'itemId' => $item->getParentId(),
+					    'selectedId' => $itemId),
 			  'script' => "core_confirmDelete('$url', '$moreUrl', '$title')");
 	    }
 

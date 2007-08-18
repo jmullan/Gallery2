@@ -1547,6 +1547,12 @@ class GalleryTheme extends GalleryPlugin {
 		    foreach ($links as $id => $list) {
 			foreach ($list as $link) {
 			    $link['moduleId'] = $moduleId;
+			    if (!isset($link['params'])) {
+				$link['params'] = array();
+			    }
+			    if (!isset($link['options'])) {
+				$link['options'] = array();
+			    }
 			    $itemLinks[$id][] = $link;
 			}
 		    }

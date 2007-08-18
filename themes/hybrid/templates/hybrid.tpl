@@ -240,8 +240,10 @@
       {/if}
 	{if isset($it.itemLinks)}
 	  <span id="links_{$i}" style="display: none">
-	  {foreach from=$it.itemLinks item=itemLink}
-	    <a href="{g->url params=$itemLink.params}">{$itemLink.text}</a><br/>
+	  {foreach from=$it.itemLinks item=link}
+	    <a href="{g->url params=$link.params options=$link.options}"{if
+	     isset($link.script)} onclick="{$link.script};return false"{/if}{if
+	     isset($link.attrs) {$link.attrs}{/if}>{$link.text}</a><br/>
 	  {/foreach}
 	  </span>
 	{/if}

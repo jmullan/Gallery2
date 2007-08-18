@@ -28,7 +28,7 @@
 	  {/if}
 	</option>
 	{foreach from=$links item="link"}
-	  <option value="{if isset($link.script)}{$link.script}{else}window.location = '{g->url params=$link.params|default:null options=$link.options|default:null}'{/if}"
+	  <option value="{if isset($link.script)}{$link.script}{else}window.location = '{g->url params=$link.params options=$link.options}'{/if}"
 		{if !empty($link.selected)} selected="selected"{/if}>
 	    {if $lowercase}
 	      {$link.text|lower}
@@ -40,7 +40,7 @@
       </select>
     {else}
       {foreach from=$links item="link"}
-        <a class="gbAdminLink {g->linkid urlParams=$link.params|default:null}" href="{g->url params=$link.params|default:null options=$link.options|default:null}"{if isset($link.script)} onclick="{$link.script};return false"{/if}{if isset($link.attrs)} {$link.attrs}{/if}>{if $lowercase}{$link.text|lower}{else}{$link.text}{/if}</a>
+        <a class="gbAdminLink {g->linkid urlParams=$link.params}" href="{g->url params=$link.params options=$link.options}"{if isset($link.script)} onclick="{$link.script};return false"{/if}{if isset($link.attrs)} {$link.attrs}{/if}>{if $lowercase}{$link.text|lower}{else}{$link.text}{/if}</a>
       {/foreach}
     {/if}
   </div>
