@@ -397,9 +397,8 @@ class GalleryTemplateAdapter {
 	}
 
 	/* Javascript */
-	foreach ($head['javascript'] as $path => $unused) {
-	    $output[] = sprintf('<script type="text/javascript" src="%s"></script>' . "\n",
-				$urlGenerator->generateUrl(array('href' => $path)));
+	if (!empty($head['javascript'])) {
+	    $this->_combineJavascriptFiles(array_keys($head['javascript']), $output);
 	}
 
 	/* Tpl to include. */
@@ -416,6 +415,73 @@ class GalleryTemplateAdapter {
 	$output[] = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>';
 
 	return implode('', $output);
+    }
+
+    /**
+     * Combine as many static Javascript files as possible into a single request to
+     * core.CombinedJavascript to minimize the number of connections required by the browser to
+     * retrieve them, which improves performance on slower connections.
+     * @param array $files relative paths to javascript files
+     * @param array $output output buffer to add lines.
+     */
+    function _combineJavascriptFiles($files, &$output) {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$phpVm = $gallery->getPhpVm();
+
+	$filteredFiles = array();
+	$key = '';
+	$codeBase = GalleryCoreApi::getCodeBasePath();
+	$pattern = '<script type="text/javascript" src="%s"></script>';
+	foreach ($files as $file) {
+	    /*
+	     * Don't do caching if it's a dynamic request, for which we use the quick and dirty
+	     * approach of checking for a ? in the path.  This will fail if you register a short
+	     * url for a JS immediate view, which seems pretty unlikely.
+	     */
+	    $path = $codeBase . $file;
+	    if (strpos($file, '?') === false && $platform->file_exists($path)) {
+		/* 7 == size, 9 == mtime, see http://php.net/stat */
+		$stats = $platform->stat($path);
+		$key .= "$file $stats[7] $stats[9],";
+		$filteredFiles[] = $file;
+	    } else {
+		$output[] = sprintf(
+		    $pattern, $urlGenerator->generateUrl(array('href' => $file)));
+	    }
+	}
+
+	if ($filteredFiles) {
+	    $key = $phpVm->md5($key);
+	    $cacheFile = GalleryDataCache::getCachePath(
+		array('type' => 'module',
+		      'itemId' => 'CombinedJavascript_' . $key,
+		      'id' => '_all'));
+	    if (!$platform->file_exists($cacheFile)) {
+		$contents = '';
+		foreach ($filteredFiles as $file) {
+		    $contents .= $platform->file_get_contents($codeBase . $file);
+		}
+
+		GalleryDataCache::putToDisk(
+		    array('type' => 'module',
+			  'itemId' => 'CombinedJavascript_' . $key,
+			  'id' => '_all'),
+		    $contents);
+		if ($phpVm->function_exists('gzencode')) {
+		    GalleryDataCache::putToDisk(
+			array('type' => 'module',
+			      'itemId' => 'CombinedJavascript_gzip_' . $key,
+			      'id' => '_all'),
+			$phpVm->gzencode($contents, 9, FORCE_GZIP));
+		}
+	    }
+
+	    $output[] = sprintf($pattern, $urlGenerator->generateUrl(
+				    array('view' => 'core.CombinedJavascript',
+					  'key' => $key)));
+	}
     }
 
     /**

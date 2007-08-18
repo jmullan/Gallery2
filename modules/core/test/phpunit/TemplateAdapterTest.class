@@ -18,6 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+/* Define FORCE_GZIP for PHP environments without the zlib extension */
+if (!defined('FORCE_GZIP')) {
+    define('FORCE_GZIP', 'FORCE_GZIP');
+}
+
 GalleryCoreApi::requireOnce('modules/core/classes/GalleryTemplateAdapter.class');
 
 /**
@@ -244,6 +249,58 @@ class TemplateAdapterTest extends GalleryTestCase {
 						 'url' => $expectedUrl,
 			      'callCount' => 1)),
 	    $this->_mockSmarty->_includes[0]);
+    }
+
+    function testCombineJavascriptFiles() {
+	global $gallery;
+	$gallery->_phpVm = new UnitTestPhpVm();
+	$gallery->_platform = new UnitTestPlatform();
+	$gallery->_urlGenerator = new UnitTestUrlGenerator();
+	GalleryDataCache::setFileCachingEnabled(true);
+	$gallery->setConfig('data.gallery.cache', '/cache/');
+
+	$base = GalleryCoreApi::getCodeBasePath();
+	$gallery->_platform->setReply('file_exists', array($base . 'path/file1.js'), true);
+	$gallery->_platform->setReply(
+	    'stat', array($base . 'path/file1.js'), array(7 => 7, 9 => 9));
+	$gallery->_platform->setReply('file_exists', array($base . 'path/file2.txt'), true);
+	$gallery->_platform->setReply(
+	    'stat', array($base . 'path/file2.txt'), array(7 => 7, 9 => 9));
+	$gallery->_phpVm->setReply('md5', array('path/file1.js 7 9,path/file2.txt 7 9,'), 'MD5KEY');
+	$gallery->_platform->setReply(
+	    'file_exists', array('/cache/module/_all/0/0/CombinedJavascript_MD5KEY.inc'), false);
+	$gallery->_platform->setReply('file_get_contents', array($base . 'path/file1.js'), 'ONE');
+	$gallery->_phpVm->setReply('function_exists', array('gzencode'), true);
+	$gallery->_platform->setReply('file_get_contents', array($base . 'path/file2.txt'), 'TWO');
+	$gallery->_platform->setReply('file_exists', array('/cache/module/_all/0/0'), true);
+	$gallery->_platform->setReply('is_dir', array('/cache/module/_all/0/0'), true);
+	$gallery->_platform->setReply(
+	    'atomicWrite',
+	    array('/cache/module/_all/0/0/CombinedJavascript_MD5KEY.inc', '|s:6:"ONETWO";'),
+	    true);
+	$gallery->_platform->setReply('file_exists', array('/cache/module/_all/0/0'), true);
+	$gallery->_platform->setReply('is_dir', array('/cache/module/_all/0/0'), true);
+	$gallery->_phpVm->setReply('gzencode', array('ONETWO', 9, FORCE_GZIP), 'gzencode(ONETWO)');
+	$gallery->_platform->setReply(
+	    'atomicWrite',
+	    array('/cache/module/_all/0/0/CombinedJavascript_gzip_MD5KEY.inc',
+		  '|s:16:"gzencode(ONETWO)";'),
+	    true);
+
+	$templateAdapter = new GalleryTemplateAdapter();
+	$templateAdapter->_combineJavascriptFiles(
+	    array('path/file1.js', 'path/file2.txt', 'main.php?foo=bar'),
+	    $output);
+
+	$this->assertEquals(
+	    array('<script type="text/javascript" ' .
+		  'src="http://gallery2|href=main.php?foo=bar"></script>',
+		  '<script type="text/javascript" ' .
+		  'src="http://gallery2|view=core.CombinedJavascript|key=MD5KEY"></script>'),
+	    $output);
+
+	$this->assert($gallery->_phpVm->isComplete());
+	$this->assert($gallery->_platform->isComplete());
     }
 }
 
