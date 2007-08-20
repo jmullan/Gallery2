@@ -57,26 +57,36 @@ class JpegtranToolkit extends GalleryToolkit {
 	    return array(GalleryCoreApi::error(ERROR_BAD_PATH), null, null);
 	}
 
+	if (isset($context['width'])) {
+	    $width = $context['width'];
+	    $height = $context['height'];
+	}
+
 	switch($operationName) {
 	case 'rotate':
 	    switch($parameters[0]) {
 	    case -90:
 	    case 270:
-		$rotateAmount = "270";
+		$rotateAmount = '270';
 		break;
 
 	    case 90:
-		$rotateAmount = "90";
+		$rotateAmount = '90';
 		break;
 
 	    case -180:
 	    case 180:
-		$rotateAmount = "180";
+		$rotateAmount = '180';
 		break;
 
 	    default:
 		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 				"Bad rotation argument: $parameters[0]"), null, null);
+	    }
+	    if (isset($width) && $rotateAmount != '180') {
+		$tmp = $width;
+		$width = $height;
+		$height = $tmp;
 	    }
 
 	    $cmd = array($jpegtran, '-verbose', '-copy', 'all', '-rotate', $rotateAmount);
@@ -84,9 +94,11 @@ class JpegtranToolkit extends GalleryToolkit {
 
 	case 'crop':
 	    /* Source dimensions are required to convert from percentages to pixels */
-	    list ($ret, $width, $height) = $this->_getImageDimensions($sourceFilename);
-	    if ($ret) {
-		return array($ret, null, null);
+	    if (!isset($width)) {
+		list ($ret, $width, $height) = $this->_getImageDimensions($sourceFilename);
+		if ($ret) {
+		    return array($ret, null, null);
+		}
 	    }
 
 	    /* Source dimensions are required to convert from percentages to pixels  */
@@ -96,7 +108,7 @@ class JpegtranToolkit extends GalleryToolkit {
 	    $height = round($parameters[3] / 100 * $height);
 
 	    $cmd = array($jpegtran, '-verbose', '-copy', 'all', '-crop',
-			 sprintf('%sx%s+%s+%s', $width, $height, $pixelX, $pixelY)); 
+			 sprintf('%sx%s+%s+%s', $width, $height, $pixelX, $pixelY));
 	    break;
 
 	default:
@@ -124,6 +136,11 @@ class JpegtranToolkit extends GalleryToolkit {
 			 null, null);
 	}
 	$platform->chmod($destFilename);
+
+	if (isset($width)) {
+	    $context['width'] = $width;
+	    $context['height'] = $height;
+	}
 
 	return array(null, $mimeType, $context);
     }

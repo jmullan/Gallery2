@@ -175,12 +175,25 @@ class JpegtranToolkitTest extends GalleryTestCase {
     function testPerformOperationCrop() {
 	$this->_platform->setTestEnvironment('normal');
 	list ($ret, $mimeType, $context) = $this->_toolkit->performOperation('image/jpeg', 'crop',
-			'SOURCE', 'DEST', array('10', '20', '60', '40.4'), array('IGNORE'));
+			'SOURCE', 'DEST', array('10', '20', '60', '40.4'), array());
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	$this->assertEquals(array('IGNORE'), $context, 'context altered');
+	$this->assertEquals(array('width' => 60, 'height' => 323), $context, 'context');
+	$this->assertEquals('image/jpeg', $mimeType, 'output mimetype != input mimetype');
+    }
+
+    function testPerformOperationCropWithContext() {
+	$this->_platform->setTestEnvironment('hasGetImageSize');
+	list ($ret, $mimeType, $context) = $this->_toolkit->performOperation('image/jpeg', 'crop',
+		'SOURCE', 'DEST', array('10', '20', '60', '40.4'),
+		array('width' => 200, 'height' => 50));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('width' => 120, 'height' => 20), $context, 'context');
 	$this->assertEquals('image/jpeg', $mimeType, 'output mimetype != input mimetype');
     }
 
@@ -193,6 +206,19 @@ class JpegtranToolkitTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array('IGNORE'), $context, 'context altered');
+	$this->assertEquals('image/pjpeg', $mimeType, 'output mimetype != input mimetype');
+    }
+
+    function testPerformOperationRotateWithContext() {
+	$this->_platform->setTestEnvironment('normal');
+	list ($ret, $mimeType, $context) = $this->_toolkit->performOperation('image/pjpeg',
+		'rotate', 'SOURCE', 'DEST', array('-90'),
+		array('width' => 200, 'height' => 50));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('width' => 50, 'height' => 200), $context, 'context');
 	$this->assertEquals('image/pjpeg', $mimeType, 'output mimetype != input mimetype');
     }
 
