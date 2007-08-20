@@ -85,6 +85,8 @@ function deletePlugin(pluginType, pluginId) {
 
     addMessage(pluginType, pluginId, stateData['deleted']['message']['text'],
 	       stateData['deleted']['message']['type']);
+    pluginData[pluginType][pluginId]['state'] = 'deleted';
+    updateStateCounts();
 }
 
 function copyVersionToInstalledVersion(pluginType, pluginId) {
