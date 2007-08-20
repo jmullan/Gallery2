@@ -302,6 +302,38 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$this->assert($gallery->_phpVm->isComplete());
 	$this->assert($gallery->_platform->isComplete());
     }
+
+    function testItemLink() {
+	$this->_setupAdapterWithMocks();
+	$this->assertEquals('[missing link]', $this->_templateAdapter->itemLink(array()));
+
+	$link = array('params' => array('view' => 'test.View'),
+		      'options' => array(), 'text' => 'test link');
+	$this->assertEquals('<a href="Array" class="gbAdminLink gbLink-test_View">test link</a>',
+			    $this->_templateAdapter->itemLink(array('link' => $link)), 1);
+	$this->assertEquals(array(array($link['params'], $link['options'])),
+			    $this->_mockUrlGenerator->_calls, 1);
+	$this->_mockUrlGenerator->_calls = array();
+
+	$link = array('params' => array('view' => 'test.View'),
+		      'options' => array('forceFullUrl' => true), 'text' => 'Test Link',
+		      'script' => 'alert(\'hi\')', 'attrs' => 'title="fun"');
+	$this->assertEquals('<a href="Array" onclick="alert(\'hi\');return false" title="fun" '
+		. 'target="_blank">test link</a>',
+		$this->_templateAdapter->itemLink(array('link' => $link, 'lowercase' => true,
+							'class' => null, 'target' => '_blank')), 2);
+	$this->assertEquals(array(array($link['params'], $link['options'])),
+			    $this->_mockUrlGenerator->_calls, 2);
+	$this->_mockUrlGenerator->_calls = array();
+
+	$link = array('params' => array('view' => 'test.View'),
+		      'options' => array(), 'text' => 'Test link');
+	$this->assertEquals('<option value="window.location=\'Array\'">Test link</option>',
+	    $this->_templateAdapter->itemLink(array('link' => $link, 'type' => 'option')), 3);
+	$this->assertEquals(array(array($link['params'], $link['options'])),
+			    $this->_mockUrlGenerator->_calls, 3);
+	$this->_mockUrlGenerator->_calls = array();
+    }
 }
 
 class TemplateAdapterMockTheme {

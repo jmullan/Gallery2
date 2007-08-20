@@ -37,9 +37,7 @@
 	{g->text text="&laquo; actions &raquo;"}
       </option>
       {foreach from=$theme.itemLinks item=link}
-	<option label="{$link.text}"
-		value="{if isset($link.script)}{$link.script}{else}window.location='{g->url
-		  params=$link.params options=$link.options}'{/if}">{$link.text}</option>
+	{g->itemLink link=$link type="option"}
       {/foreach}
     </select>
   </div>

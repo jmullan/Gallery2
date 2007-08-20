@@ -606,6 +606,50 @@ class GalleryTemplateAdapter {
     }
 
     /**
+     * Render a single item link as an <option> or <a>.
+     * @param array $params 'link' => getItemLinks data for one link
+     *                      'type' => (optional) 'link' or 'option' (default=link)
+     *                      'lowercase' => (optional) true to convert link text to lowercase
+     *                      Other keys are used as attributes.
+     * @return string
+     */
+    function itemLink($params) {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	if (empty($params['link'])) {
+	    return '[missing link]';
+	}
+	$link = $params['link'];
+	$type = isset($params['type']) ? $params['type'] : 'link';
+	$lowercase = !empty($params['lowercase']);
+	unset($params['link']);
+	unset($params['type']);
+	unset($params['lowercase']);
+
+	if ($type == 'option') {
+	    $tag = '<option value="' . (isset($link['script']) ? $link['script']
+		: ('window.location=\''
+		   . $urlGenerator->generateUrl($link['params'], $link['options']) . '\'')) . '"';
+	    $endTag = '</option>';
+	} else {
+	    if (!array_key_exists('class', $params)) {
+		/* Use default classes */
+		$params['class'] = $this->linkId(array('urlParams' => $link['params']));
+	    }
+	    $tag = '<a href="' . $urlGenerator->generateUrl($link['params'], $link['options']) . '"'
+		. (isset($link['script']) ? ' onclick="' . $link['script'] . ';return false"' : '')
+		. (isset($link['attrs']) ? ' ' . $link['attrs'] : '');
+	    $endTag = '</a>';
+	}
+	foreach ($params as $key => $value) {
+	    if (isset($value)) {
+		$tag .= " $key=\"$value\"";
+	    }
+	}
+	return $tag . '>' . ($lowercase ? strtolower($link['text']) : $link['text']) . $endTag;
+    }
+
+    /**
      * This removes unsafe characters from a string so they can be used as a class
      * name or id in html and be addressed via css
      *

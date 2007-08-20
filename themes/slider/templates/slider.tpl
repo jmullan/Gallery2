@@ -15,9 +15,7 @@
     <span id="title_{$it.imageIndex}">{$it.title|markup}</span>
     <select id="links_{$it.imageIndex}">
      {foreach from=$it.itemLinks item=link}
-      <option label="{$link.text}"
-	      value="{if isset($link.script)}{$link.script}{else}window.location='{g->url
-		params=$link.params options=$link.options}'{/if}">{$link.text}</option>
+      {g->itemLink link=$link type="option"}
      {/foreach}
     </select>
   {/if}
