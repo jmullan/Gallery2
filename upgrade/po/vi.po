@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Upgrader 2.3\n"
 "Report-Msgid-Bugs-To: gallery-translations@lists.sourceforge.net\n"
-"POT-Creation-Date: 2007-06-14 17:58-0700\n"
+"POT-Creation-Date: 2007-08-21 10:03-0700\n"
 "PO-Revision-Date: 2005-08-29 15:17+0100\n"
 "Last-Translator: Trung Dong Huynh <trungdong@donggiang.com>\n"
 "Language-Team: Vietnamese <gallery-devel@lists.sourceforge.net>\n"
@@ -77,7 +77,7 @@ msgid "System Checks"
 msgstr "Các kiểm tra hệ thống"
 
 msgid "Performing system checks"
-msgstr ""
+msgstr "Đang thực hiện các kiểm tra hệ thống"
 
 msgid "PHP version &gt;= 4.3.0 or &gt;= 5.0.4"
 msgstr "Phiên bản PHP &gt;= 4.3.0 hoặc &gt;= 5.0.4"
@@ -162,7 +162,7 @@ msgstr ""
 "trường hợp chỉ hiển thị một trang trắng) và có khả năng dẫn đến hỏng dữ liệu."
 
 msgid "Filesystem Operations"
-msgstr ""
+msgstr "Các thao tác trên hệ thống tập tin"
 
 #, fuzzy, c-format
 msgid ""
@@ -229,7 +229,7 @@ msgstr ""
 "các tập tin có kích thước lớn hơn."
 
 msgid "Translation support"
-msgstr ""
+msgstr "Hỗ trợ bản dịch"
 
 #, c-format
 msgid ""
@@ -237,18 +237,24 @@ msgid ""
 "please instruct your system administrator to reconfigure PHP with the %sgettext%s option "
 "enabled."
 msgstr ""
+"Máy chủ web của bạn không hỗ trợ bản địa hóa. Để bật hỗ trợ cho các ngôn ngữ khác, bạn hãy "
+"yêu cầu quản trị hệ thống của bạn cấu hình lại PHP với lựa chọn %sgettext%s được bật."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sbind_textdomain_codeset%s. This means Gallery may display "
 "extended characters for some languages incorrectly."
 msgstr ""
+"Bản PHP của bạn thiếu chức năng %sbind_textdomain_codeset%s, nghĩa là Gallery có thể sẽ hiển "
+"thị các ký tự mở rộng của một số ngôn ngữ không chính xác."
 
 #, c-format
 msgid ""
 "Your PHP is missing the function %sdngettext%s. This means Gallery will be unable to "
 "translate plural forms."
 msgstr ""
+"Bản PHP của bạn thiếu chức năng %sdngettext%s, nghĩa là Gallery sẽ không thể phiên dịch các "
+"từ số nhiều."
 
 msgid "Zend compatibility mode"
 msgstr "Chế độ tương thích với Zend"
@@ -281,7 +287,7 @@ msgstr ""
 "trường hợp chỉ hiển thị một trang trắng) và có khả năng dẫn đến hỏng dữ liệu."
 
 msgid "Output buffering disabled"
-msgstr ""
+msgstr "Tính năng Output buffering đang bị tắt"
 
 #, c-format
 msgid ""
@@ -291,6 +297,11 @@ msgid ""
 "Also, some features like the progress bars might not work correctly if output buffering is "
 "enabled unless ini_set() is allowed."
 msgstr ""
+"Cảnh báo: Bản PHP của bạn có bật lựa chọn output buffering trong tập tin php.ini ở các thông "
+"số <b>%s</b>. Gallery vẫn có thể hoạt động với cài đặt này - tải tập tin còn nhanh hơn - "
+"nhưng Gallery có thể sẽ không tải được các tập tin lớn (ví dụ như các tập tin video lớn) và "
+"sẽ vấp phải giới hạn bộ nhớ. Ngoài ra, một số chức năng khác như thanh tiến độ sẽ không hoạt "
+"động chính xác nếu có output buffering trừ phi PHP cho phép hàm ini_set()."
 
 msgid "Storage Directory Permissions"
 msgstr "Quyền hạn trong thư mục lưu trữ"
