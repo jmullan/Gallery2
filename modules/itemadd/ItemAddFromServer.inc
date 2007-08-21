@@ -333,6 +333,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	/* Create new Album */
 	$dirName = basename($path);
 	$dirNameUtf8 = GalleryCoreApi::convertToUtf8($dirName);
+	GalleryUtilities::sanitizeInputValues($dirNameUtf8);
 	$dirTitle = $textFields['title'] ? $dirNameUtf8 : null;
 	$dirSummary = $textFields['summary'] ? $dirNameUtf8 : null;
 	$dirDescription = $textFields['description'] ? $dirNameUtf8 : null;

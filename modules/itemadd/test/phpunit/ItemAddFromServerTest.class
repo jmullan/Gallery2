@@ -409,12 +409,15 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	/* This is what the browser will send us (urlencoded): */
 	GalleryUtilities::putRequestVariable(
 	    'form[localServerFiles][' . urlencode('December - <#952>.jpg') . '][selected]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[localServerDirectories][' . urlencode('Black&White') . '][selected]', 1);
 
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array(), $results[0]);
 	$this->assertEquals(1, count($results[1]));
 	$this->assertEquals(1, count($results[1]['addedFiles']));
 
+	/* Verify added item */
 	list ($ret, $item) =
 	    GalleryCoreApi::loadEntitiesById($results[1]['addedFiles'][0]['id'], 'GalleryDataItem');
 	if ($ret) {
@@ -424,6 +427,24 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$this->assertEquals('December - &lt;#952&gt;', $item->getTitle(), 'title');
 	$this->assertEquals('December - &lt;#952&gt;', $item->getSummary(), 'summary');
 	$this->assertEquals('', $item->getDescription(), 'description');
+
+	/* Verify added album */
+	list ($ret, $albumIds) = GalleryCoreApi::fetchChildAlbumItemIds($this->_rootAlbum);
+	if ($ret) {
+	    return $ret;
+	}
+	if (empty($albumIds) || count($albumIds) != 1) {
+	    $this->fail('album id ' . print_r($albumIds, true));
+	} else {
+	    list ($ret, $album) =
+		GalleryCoreApi::loadEntitiesById($albumIds[0], 'GalleryAlbumItem');
+	    if ($ret) {
+		return $ret;
+	    }
+	    $this->assertEquals('Black&amp;White', $album->getTitle(), 'album title');
+	    $this->assertEquals('Black&amp;White', $album->getSummary(), 'album summary');
+	    $this->assertEquals(null, $album->getDescription(), 'album description');
+	}
     }
 
     /**
@@ -511,6 +532,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function file_exists($path) {
 	switch ($path) {
 	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . 'Black&White':
 	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
 	case $this->_baseDir . "t\xebst.png":
 	case $this->_baseDir . 'apo\'strophe.jpg':
@@ -527,6 +549,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function is_readable($path) {
 	switch ($path) {
 	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . 'Black&White':
 	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
 	case $this->_baseDir . "subD\xeer":
 	case $this->_baseDir . "t\xebst.png":
@@ -582,7 +605,8 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     }
 
     function opendir($path) {
-	if ($path == $this->_baseDir . "subD\xeer") {
+	if (in_array($path,
+		     array($this->_baseDir . "subD\xeer", $this->_baseDir . 'Black&White'))) {
 	    return 'testHandle';
 	}
 	return $this->_delegate->opendir($path);
