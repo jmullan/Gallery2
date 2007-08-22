@@ -264,7 +264,6 @@
   var selectedId;
 
   function treeInit() {ldelim}
-    var expandedNode = null;
     tree = new YAHOO.widget.TreeView("gTreeDiv");
     nodes[-1] = tree.getRoot();
     selectedId = {if empty($form.destination)} {$ItemMove.albumTree[0].data.id} {else} {$form.destination} {/if};

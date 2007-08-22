@@ -19,7 +19,6 @@
   var selectedId;
 
   function treeInit() {ldelim}
-    var expandedNode = null;
     tree = new YAHOO.widget.TreeView("gTreeDiv");
     nodes[-1] = tree.getRoot();
     selectedId = {if empty($form.linkedAlbumId)} {$ItemAddLinkItem.albumTree[0].data.id} {else} {$form.linkedAlbumId} {/if};
@@ -33,7 +32,7 @@
         href: "javascript:onLabelClick({$album.data.id})" {rdelim},
         nodes[{$album.depth-1}], {if $album.depth == 0}true{else}false{/if});
       {* If the destination album is known, expand starting with top ancestor *}
-      {if $form.linkedAlbumId == $album.data.id}
+      {if $form.linkedAlbumId == $album.data.id && $album.depth > 0}
         {* NOTE: YUI requires two calls to expand a tree *}
         nodes[1].expand();
         nodes[1].expandAll();
