@@ -37,7 +37,7 @@ class RegisterModule extends GalleryModule {
 	$this->_templateVersion = 1;
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSystemLinks|getUserAdminViews|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(7, 29));
+	$this->setRequiredCoreApi(array(7, 35));
 	$this->setRequiredModuleApi(array(3, 6));
     }
 
