@@ -40,8 +40,9 @@ class AdminSelfRegistrationController extends GalleryController {
 	if (isset($form['action']['save'])) {
 
 	    $form['emailadmins'] = isset($form['emailadmins']) ? 1 : 0;
-	    foreach (array('confirmation', 'emailadmins', 'adminsubject', 'subject', 'from')
-		    as $key) {
+	    $form['emailusers'] = isset($form['emailusers']) ? 1 : 0;
+	    foreach (array('confirmation', 'emailadmins', 'adminsubject', 'subject', 'from',
+			   'emailusers', 'usersubject') as $key) {
 		if (isset($form[$key])) {
 		    $ret = GalleryCoreApi::setPluginParameter(
 					   'module', 'register', $key, trim($form[$key]));
@@ -131,8 +132,8 @@ class AdminSelfRegistrationView extends GalleryView {
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminSelfRegistration') {
-	    foreach (array('confirmation', 'emailadmins', 'adminsubject', 'subject', 'from')
-		    as $key) {
+	    foreach (array('confirmation', 'emailadmins', 'adminsubject', 'subject', 'from',
+			   'emailusers', 'usersubject') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'register', $key);
 		if ($ret) {

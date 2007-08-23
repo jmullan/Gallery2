@@ -141,7 +141,8 @@ class GalleryPendingUserHelper {
      * @param GalleryPendingUser $pendingUser
      * @return GalleryStatus a status code
      */
-    function sendConfirmationEmail(&$pendingUser) {
+    function sendConfirmationEmail(&$pendingUser,
+	    $tplFile='ConfirmationEmail.tpl', $subjectParam='subject', $userIdForLocale=null) {
 	global $gallery;
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
@@ -165,8 +166,23 @@ class GalleryPendingUserHelper {
 	$baseUrl = $generator->generateUrl(array(),
 	    array('forceFullUrl' => true, 'forceSessionId' => false, 'htmlEntities' => false));
 
+	if (isset($userIdForLocale)) {
+	    $translator =& $gallery->getTranslator();
+	    $currentLanguageCode = $translator->getActiveLanguageCode();
+	    list ($ret, $language) = GalleryCoreApi::fetchLanguageCodeForUser($userIdForLocale);
+	    if ($ret) {
+		return $ret;
+	    }
+	    if ($language != $currentLanguageCode) {
+		list ($ret) = $translator->init($language);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
 	$ret = GalleryCoreApi::sendTemplatedEmail(
-		'modules/register/templates/ConfirmationEmail.tpl',
+		'modules/register/templates/' . $tplFile,
 		array(
 		    'name' => $pendingUser->getFullName(),
 		    /* We send plain text email so decode entities in username */
@@ -176,9 +192,16 @@ class GalleryPendingUserHelper {
 		    'l10Domain' => 'modules_register'),
 		$params['from'],
 		$pendingUser->getEmail(),
-		$module->translate($params['subject']));
+		$module->translate($params[$subjectParam]));
 	if ($ret) {
 	    return $ret;
+	}
+
+	if (isset($userIdForLocale) && $language != $currentLanguageCode) {
+	    list ($ret) = $translator->init($currentLanguageCode);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	return null;
@@ -221,7 +244,7 @@ class GalleryPendingUserHelper {
 	    if (!empty($email)) {
 		$toList[] = $email;
 		list ($ret, $language) = GalleryCoreApi::fetchLanguageCodeForUser($admin->getId());
-            	if ($ret) {
+		if ($ret) {
 		    return $ret;
 		}
 		$languageCodeList[] = $language;
@@ -244,20 +267,19 @@ class GalleryPendingUserHelper {
 		    list ($ret, $currentLanguageCode) =
 			$translator->init($languageCodeList[$index]);
 		    if ($ret) {
-			if ($defaultLanguageCode != $currentLanguageCode) {
-			    list ($ret2, $currentLanguageCode) =
-				$translator->init($defaultLanguageCode);
+			if ($defaultLanguageCode != $languageCodeList[$index]) {
+			    list ($ret2) = $translator->init($defaultLanguageCode);
 			    if ($ret2) {
-	    		        return $ret2;
+				return $ret2;
 			    }
 			}
-	    		return $ret;
+			return $ret;
 		    }
 		}
 		$ret = GalleryCoreApi::sendTemplatedEmail(
 			'modules/register/templates/AdminEmail.tpl',
-		        array('name' => $pendingUser->getFullName(),
-		    	      /* We send plain text email so decode entities in username */
+			array('name' => $pendingUser->getFullName(),
+			      /* We send plain text email so decode entities in username */
 			      'username' => $decodedUserName,
 			      'email' => $pendingUser->getEmail(),
 			      'l10Domain' => 'modules_register'),
@@ -269,7 +291,7 @@ class GalleryPendingUserHelper {
 			list ($ret2, $currentLanguageCode) =
 			    $translator->init($defaultLanguageCode);
 			if ($ret2) {
-		    	    return $ret2;
+			    return $ret2;
 			}
 		    }
 		    return $ret;
@@ -278,7 +300,7 @@ class GalleryPendingUserHelper {
 	    if ($defaultLanguageCode != $currentLanguageCode) {
 		list ($ret, $currentLanguageCode) = $translator->init($defaultLanguageCode);
 		if ($ret) {
-	    	    return $ret;
+		    return $ret;
 		}
 	    }
 	}
@@ -298,7 +320,6 @@ class GalleryPendingUserHelper {
 	if ($ret) {
 	    return $ret;
 	}
-
 	if (!isset($user)) {
 	    return GalleryCoreApi::error(ERROR_MISSING_OBJECT);
 	}
@@ -308,7 +329,7 @@ class GalleryPendingUserHelper {
 	    return $ret;
 	}
 
-	/* copy all values to the new "real" user */
+	/* Copy all values to the new "real" user */
 	$user->setEmail($pendingUser->getEmail());
 	$user->setFullName($pendingUser->getFullName());
 	$user->setLanguage($pendingUser->getLanguage());
@@ -319,7 +340,18 @@ class GalleryPendingUserHelper {
 	    return $ret;
 	}
 
-	/* notify gallery event system */
+	/* Send welcome email if selected in module settings */
+	list ($ret, $sendEmail) =
+	    GalleryCoreApi::getPluginParameter('module', 'register', 'emailusers');
+	if ($ret) {
+	    return $ret;
+	}
+	if ($sendEmail) {
+	    GalleryPendingUserHelper::sendConfirmationEmail($pendingUser,
+		    'WelcomeEmail.tpl', 'usersubject', $user->getId());
+	}
+
+	/* Notify gallery event system */
 	$event = GalleryCoreApi::newEvent('GalleryPendingUser::createGalleryUser');
 	$event->setEntity($pendingUser);
 	list ($ret) = GalleryCoreApi::postEvent($event);

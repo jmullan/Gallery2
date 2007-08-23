@@ -33,7 +33,7 @@ class RegisterModule extends GalleryModule {
 	$this->setId('register');
 	$this->setName($gallery->i18n('Registration'));
 	$this->setDescription($gallery->i18n('New User Registration'));
-	$this->setVersion('1.0.11');
+	$this->setVersion('1.0.12');
 	$this->_templateVersion = 1;
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('getSystemLinks|getUserAdminViews|getSiteAdminViews');
@@ -50,9 +50,10 @@ class RegisterModule extends GalleryModule {
 	    return $ret;
 	}
 
-	foreach (array('confirmation' => 'admin', 'emailadmins' => 1,
+	foreach (array('confirmation' => 'admin', 'emailadmins' => 1, 'emailusers' => 1,
 		       'subject' => $this->translate('Account activation'),
 		       'adminsubject' => $this->translate('New user registration'),
+		       'usersubject' => $this->translate('Welcome to Gallery'),
 		       'from' => 'webmaster@' . GalleryUtilities::getServerVar('SERVER_NAME'),
 		       'validation.level' => 'HIGH')
 		as $key => $value) {
