@@ -10,8 +10,8 @@
       }
       // ]]>
     </script>
-    
-    <form method="post" action="index.php?import">
+
+    <?php startForm('index.php?import') ?>
       <?php if (!empty($templateData['canWriteConfig'])): ?>
       <h2>Choose a file to import from.</h2>
        <select name="importFile"
@@ -36,8 +36,8 @@
           <?php endforeach; ?>
           </p>
           <p>If you are restoring the database because of a failed upgrade, you should be alright.
-          <p>Otherwise, restore the above modules to the indicated versions or risk the possiblity of
-          seriously damaging your installation.</p>
+	  <p>Otherwise, restore the above modules to the indicated versions or risk the possibility
+	  of seriously damaging your installation.</p>
 	<?php endif; ?>
       </div>
       <br/><br/>

@@ -569,7 +569,9 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
   <body>
     <div id="content">
       <div id="title">
-        <a href="../../">Gallery</a> &raquo; <a href="index.php">Support</a> &raquo; Change Filesystem Permissions
+	<a href="../../">Gallery</a> &raquo;
+	<a href="<?php generateUrl('index.php') ?>">Support</a> &raquo;
+	Change Filesystem Permissions
       </div>
       <h2>
         This tool lets you change the filesystem permissions of files and folders owned
@@ -597,8 +599,8 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
 
       <?php if (!isModulesOrThemesDirWriteable()): ?>
       <h2>
-	<a href="index.php?chmod&amp;command=<?php
-           print CMD_CHMOD_MODULES_AND_THEMES_DIR; ?>&amp;mode=open">Make modules &amp; themes directories writeable</a>
+	<a href="<?php generateUrl('index.php?chmod&amp;command=' . CMD_CHMOD_MODULES_AND_THEMES_DIR
+	 . '&amp;mode=open') ?>">Make modules &amp; themes directories writeable</a>
       </h2>
       <p class="description">
 	Useful when adding a new module or theme.  This makes your modules and
@@ -608,7 +610,8 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
       </p>
       <?php else: ?>
       <h2>
-	<a href="index.php?chmod&amp;command=<?php print CMD_CHMOD_MODULES_AND_THEMES_DIR; ?>&amp;mode=secure">Make modules &amp; themes directories read-only</a>
+	<a href="<?php generateUrl('index.php?chmod&amp;command=' . CMD_CHMOD_MODULES_AND_THEMES_DIR
+	 . '&amp;mode=secure') ?>">Make modules &amp; themes directories read-only</a>
       </h2>
       <p class="description">
 	Useful when you're not going to be making changes by hand. This makes your
@@ -620,8 +623,7 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
 
       <hr class="faint"/>
 
-      <form name="pluginForm" method="POST" action="index.php?chmod&amp;command=<?php
-      print CMD_CHMOD_PLUGIN_DIR; ?>">
+      <?php startForm('index.php?chmod&amp;command=' . CMD_CHMOD_PLUGIN_DIR, 'pluginForm'); ?>
 	<h2 id="themeOrModule">
 	  Make a specific theme or module editable
 	</h2>
@@ -647,7 +649,7 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
 
       <hr class="faint"/>
 
-      <h2><a href="index.php?chmod&amp;command=<?php print CMD_CHMOD_STORAGE_DIR;
+      <h2><a href="<?php generateUrl('index.php?chmod&amp;command=' . CMD_CHMOD_STORAGE_DIR)
       ?>">Make the data folder read/write</a></h2>
       <p class="description">
         For some reason, your Gallery data folder might no longer be writeable by Gallery itself
@@ -658,7 +660,7 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
 
       <hr class="faint"/>
 
-      <h2><a href="index.php?chmod&amp;command=<?php print CMD_CHMOD_LOCALE_DIR;
+      <h2><a href="<?php generateUrl('index.php?chmod&amp;command=' . CMD_CHMOD_LOCALE_DIR)
       ?>">Make the locale folder read/write</a></h2>
       <p class="description">
         If you're localizing Gallery, you may see warnings when you compile up your localization
@@ -669,7 +671,7 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
       <hr class="faint"/>
 
       <?php if (isGalleryDirWriteable()): ?>
-      <h2><a href="index.php?chmod&amp;command=<?php print CMD_CHMOD_GALLERY_DIR;
+      <h2><a href="<?php generateUrl('index.php?chmod&amp;command=' . CMD_CHMOD_GALLERY_DIR)
       ?>&amp;mode=open">Make everything read/write</a></h2>
       <p class="description">
         If your Gallery has been installed with the pre-installer, you might have to make the
@@ -677,7 +679,7 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
         installation.
       </p>
       <?php else: ?>
-      <h2><a href="index.php?chmod&amp;command=<?php print CMD_CHMOD_GALLERY_DIR;
+      <h2><a href="<?php generateUrl('index.php?chmod&amp;command=' . CMD_CHMOD_GALLERY_DIR)
       ?>&amp;mode=secure">Make everything read-only</a></h2>
       <p class="description">
         If your Gallery has been installed with the pre-installer you may want to change
@@ -688,7 +690,7 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
       <hr class="faint"/>
 
       <h2>Advanced: Choose the path and the permissions manually</h2>
-      <form method="POST" action="index.php?chmod&amp;command=<?php print CMD_ADVANCED; ?>">
+      <?php startForm('index.php?chmod&amp;command=' . CMD_ADVANCED); ?>
 	<p class="description">
 	  <b> Path to change: </b>
 	  <input type="text" name="path" size="50" value="<?php print $path; ?>"/>
@@ -701,13 +703,15 @@ function printPageWithoutFooter($plugins, $path, $filePermissions, $folderPermis
           <b> New permissions: </b>
 	  <?php
 	   foreach ($permissionBitSets as $permissionBitSet):
-	       $checked = ($permissionBitSet[1]->equals($filePermissions)) ? 'checked' : '';
+	       $checked = $permissionBitSet[1]->equals($filePermissions) ? 'checked="checked"' : '';
 	       $value = $permissionBitSet[0]->getAsString() . $permissionBitSet[1]->getAsString();
           ?>
 	  <br/>
 	  <input id="set_<?php print $value?>" type="radio" name="permissions" value="<?php print $value ?>" <?php print $checked ?>>
-            <label for="set_<?php print $value?>" <span class="hasToolTip" title="Files: <?php print $permissionBitSet[1]->getAsString(); ?>, Folders: <?php print $permissionBitSet[0]->getAsString(); ?>"> <?php print $permissionBitSet[1]->getDescription() ?></span> </label>
-          </input>
+	    <label for="set_<?php print $value?>">
+	      <span class="hasToolTip" title="Files: <?php print $permissionBitSet[1]->getAsString(); ?>, Folders: <?php print $permissionBitSet[0]->getAsString(); ?>"> <?php print $permissionBitSet[1]->getDescription() ?></span>
+	    </label>
+	  </input>
 	  <?php endforeach; ?>
 	  <br/><br/>
 

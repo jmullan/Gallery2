@@ -197,7 +197,7 @@ class GallerySetupUtilities {
      * @static
      */
     function isSessionAuthenticated() {
-	return (!empty($_SESSION['authenticated']));
+	return !empty($_SESSION['authenticated']);
     }
 
     /**
@@ -208,7 +208,13 @@ class GallerySetupUtilities {
     function redirectBackToSelf() {
 	require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryUrlGenerator.class');
 	$urlGenerator = new GalleryUrlGenerator();
-	header('Location: ' . $urlGenerator->getCurrentUrl());
+	$url = $urlGenerator->getCurrentUrl();
+	if (GallerySetupUtilities::isSessionAuthenticated()
+		&& !GallerySetupUtilities::areCookiesSupported()) {
+	    $url = GalleryUrlGenerator::appendParamsToUrl(
+		    $url, array(session_name() => session_id()), false);
+	}
+	header('Location: ' . $url);
     }
 
     /**
@@ -359,17 +365,21 @@ class GallerySetupUtilities {
 	$remoteId = GallerySession::getRemoteIdentifier();
 	$cutoff = time() - G2_SUPPORT_MAX_SESSION_LIFETIME;
 	$configDir = GallerySetupUtilities::getConfigDir();
-	if ((!isset($_SESSION['_remoteId']) ||
-	     GallerySession::compareIdentifiers($_SESSION['_remoteId'], $remoteId) == 0) ||
-	    (!isset($_SESSION['_startTime']) || $_SESSION['_startTime'] < $cutoff) ||
-	    (!isset($_SESSION['_path']) || $_SESSION['_path'] != $configDir)) {
-
+	if (!empty($sessionId) && (
+		    !isset($_SESSION['_remoteId'])
+		    || GallerySession::compareIdentifiers($_SESSION['_remoteId'], $remoteId) == 0
+		    || !isset($_SESSION['_startTime']) || $_SESSION['_startTime'] < $cutoff
+		    || !isset($_SESSION['_path']) || $_SESSION['_path'] != $configDir)) {
 	    /*
 	     * Empty or invalid session (possibly a session fixation attack).  Get a new session
 	     * id, delete all data from this session and bless the new session.
 	     */
 	    GallerySetupUtilities::regenerateSession();
 	    session_unset();
+	    $sessionId = null;
+	}
+	if (empty($sessionId)) {
+	    /* Add session details for brand new or just-regenerated session */
 	    $_SESSION['_path'] = $configDir;
 	    $_SESSION['_remoteId'] = $remoteId;
 	    $_SESSION['_startTime'] = time();

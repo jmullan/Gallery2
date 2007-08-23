@@ -154,7 +154,8 @@ if (isset($_REQUEST['clear']) && isset($_REQUEST['target'])) {
   <body>
     <div id="content">
       <div id="title">
-        <a href="../../">Gallery</a> &raquo; <a href="index.php">Support</a> &raquo; Cache Maintenance
+	<a href="../../">Gallery</a> &raquo;
+	<a href="<?php generateUrl('index.php') ?>">Support</a> &raquo; Cache Maintenance
       </div>
       <h2>
 	Gallery caches data on disk to increase performance.
@@ -171,7 +172,7 @@ if (isset($_REQUEST['clear']) && isset($_REQUEST['target'])) {
       </div>
       <?php endif; ?>
 
-      <form method="POST">
+      <?php startForm(); ?>
         <p>
 	  <?php $caches = getCaches(); ?>
 	  <?php foreach ($caches as $key => $info): ?>

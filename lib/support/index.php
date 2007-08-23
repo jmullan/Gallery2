@@ -19,6 +19,17 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 	}
     }
 }
+function generateUrl($uri, $print=true) {
+    /* If session.use_trans_sid is on then it will add the session id. */
+    if (!GallerySetupUtilities::areCookiesSupported() && !ini_get('session.use_trans_sid')) {
+	$sid = session_name() . '=' . session_id();
+	$uri .= (!strpos($uri, '?') ? '?' : '&amp;') . $sid;
+    }
+    if ($print) {
+	print $uri;
+    }
+    return $uri;
+}
 ?>
 <html>
   <head>
@@ -38,7 +49,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
       </h2>
 
       <h2>
-        <a href="index.php?phpinfo">PHP Info</a>
+        <a href="<?php generateUrl('index.php?phpinfo') ?>">PHP Info</a>
       </h2>
       <p class="description">
         PHP configuration information
@@ -46,7 +57,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
       <hr class="faint" />
 
       <h2>
-        <a href="index.php?cache">Cache Maintenance</a>
+        <a href="<?php generateUrl('index.php?cache') ?>">Cache Maintenance</a>
       </h2>
       <p class="description">
         Delete files from the Gallery data cache
@@ -54,7 +65,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
       <hr class="faint" />
 
       <h2>
-        <a href="index.php?chmod">Filesystem Permissions</a>
+        <a href="<?php generateUrl('index.php?chmod') ?>">Filesystem Permissions</a>
       </h2>
       <p class="description">
         Change the filesystem permissions of your Gallery and your storage folder.
@@ -62,7 +73,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
       <hr class="faint" />
 
       <h2>
-        <a href="index.php?gd">GD</a>
+        <a href="<?php generateUrl('index.php?gd') ?>">GD</a>
       </h2>
       <p class="description">
         Information about your GD configuration
@@ -70,7 +81,7 @@ if (!empty($_SERVER['QUERY_STRING'])) {
       <hr class="faint" />
 
       <h2>
-        <a href="index.php?import">Import Database</a>
+        <a href="<?php generateUrl('index.php?import') ?>">Import Database</a>
       </h2>
       <p class="description">
         Restore your Gallery database from an export that was made from the site administration
