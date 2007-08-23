@@ -104,6 +104,7 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
 	}
 
 	$suiteArray = array();
+	$gallery->guaranteeTimeLimit(120);
 	foreach ($moduleStatusList as $moduleId => $moduleStatus) {
 	    $modulesDir = GalleryCoreApi::getPluginBaseDir('module', $moduleId) . 'modules/';
 	    if (empty($moduleStatus['active'])) {
