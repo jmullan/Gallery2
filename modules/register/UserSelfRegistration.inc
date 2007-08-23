@@ -103,8 +103,7 @@ class UserSelfRegistrationController extends GalleryController {
 		}
 
 		if (!isset($user)) {
-		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT),
-				 null);
+		    return array(GalleryCoreApi::error(ERROR_MISSING_OBJECT), null);
 		}
 
 		$ret = $user->create($form['userName']);
@@ -126,10 +125,7 @@ class UserSelfRegistrationController extends GalleryController {
 			return array($ret, null);
 		    }
 
-		    /*
-		     * send a confirmation email if activated in module settings
-		     * otherwise create the "real" user right now
-		     */
+		    /* Send confirmation email or create the "real" user, per module settings */
 		    list ($ret, $params) =
 			GalleryCoreApi::fetchAllPluginParameters('module', 'register');
 		    if ($ret) {
@@ -137,7 +133,7 @@ class UserSelfRegistrationController extends GalleryController {
 		    }
 
 		    if ($params['confirmation'] == 'email') {
-			/* send confirmation email */
+			/* Send confirmation email */
 			$ret = GalleryPendingUserHelper::sendConfirmationEmail($user);
 			if ($ret) {
 			    return array($ret, null);
@@ -145,7 +141,7 @@ class UserSelfRegistrationController extends GalleryController {
 			$redirect['pending'] = true;
 			$redirect['sentConfirmationEmail'] = true;
 		    } else if ($params['confirmation'] == 'auto') {
-			/* turn the pending user into a real user right now */
+			/* Turn the pending user into a real user right now */
 			$ret = GalleryPendingUserHelper::createGalleryUser($user);
 			if ($ret) {
 			    return array($ret, null);

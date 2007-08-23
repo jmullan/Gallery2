@@ -53,6 +53,14 @@
        name="{g->formVar var="form[subject]"}" value="{$form.subject}"/>
     </td>
   </tr><tr>
+    <td colspan="2">
+      <input type="checkbox" id="cbEmailAdmins"{if $form.emailadmins} checked="checked"{/if}
+       name="{g->formVar var="form[emailadmins]"}"/>
+      <label for="cbEmailAdmins">
+	{g->text text="Email Site Administrators for all new registrations"}
+      </label>
+    </td>
+  </tr><tr>
     <td>
       {g->text text="Admin Email Subject:"}
     </td><td>
@@ -61,11 +69,18 @@
     </td>
   </tr><tr>
     <td colspan="2">
-      <input type="checkbox" id="cbEmailAdmins"{if $form.emailadmins} checked="checked"{/if}
-       name="{g->formVar var="form[emailadmins]"}"/>
-      <label for="cbEmailAdmins">
-	{g->text text="Email Site Administrators for all new registrations"}
+      <input type="checkbox" id="cbEmailUsers"{if $form.emailusers} checked="checked"{/if}
+       name="{g->formVar var="form[emailusers]"}"/>
+      <label for="cbEmailUsers">
+	{g->text text="Email new users upon account activation"}
       </label>
+    </td>
+  </tr><tr>
+    <td>
+      {g->text text="Welcome Email Subject:"}
+    </td><td>
+      <input type="text" size="30"
+       name="{g->formVar var="form[usersubject]"}" value="{$form.usersubject}"/>
     </td>
   </tr></table>
 </div>
