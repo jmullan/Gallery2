@@ -347,8 +347,11 @@ class GalleryPendingUserHelper {
 	    return $ret;
 	}
 	if ($sendEmail) {
-	    GalleryPendingUserHelper::sendConfirmationEmail($pendingUser,
+	    $ret = GalleryPendingUserHelper::sendConfirmationEmail($pendingUser,
 		    'WelcomeEmail.tpl', 'usersubject', $user->getId());
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
 	/* Notify gallery event system */
