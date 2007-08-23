@@ -165,16 +165,16 @@ class UnitTestPlatform extends MockObject {
 	return $this->_makeReply('mkdir', array($path, $stringPerms));
     }
 
-    function isLegalPathComponent($component) {
-	return $this->_makeReply('isLegalPathComponent', array($component));
+    function isLegalPathComponent($component, $forDirectory=false) {
+	return $this->_makeReply('isLegalPathComponent', array($component, $forDirectory));
     }
 
     function getLegalPathCharacters() {
 	return $this->_makeReply('getLegalPathCharacters', array());
     }
 
-    function legalizePathComponent($component) {
-	return $this->_makeReply('legalizePathComponent', array($component));
+    function legalizePathComponent($component, $forDirectory=false) {
+	return $this->_makeReply('legalizePathComponent', array($component, $forDirectory));
     }
 
     function exec($cmdArray) {

@@ -175,10 +175,56 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
+	$id = $this->_getChildId();
 	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
 						      'subView' => 'core.ItemEdit',
 						      'editPlugin' => 'ItemEditAlbum',
-						      'itemId' => ($id = $this->_getChildId())),
+						      'itemId' => $id),
+				  'status' => array('editMessage' =>
+						$core->translate('Album created successfully.')),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id, 'GalleryAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(trim($name), $newAlbum->getPathComponent(), 'path component');
+
+	list ($ret, $path) = $newAlbum->fetchPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assert($platform->is_dir($path), "directory '$path'");
+	$this->assertEquals(trim($name), basename($path),
+			    'directory name: "' . basename($path) . '"');
+    }
+
+    function testAddAlbumWithPeriodInName() {
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
+	$name = ' testalbum-' . rand() . '.foobarbaz';
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $name);
+	GalleryUtilities::putRequestVariable('form[title]', 'title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'description');
+
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$id = $this->_getChildId();
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemEdit',
+						      'editPlugin' => 'ItemEditAlbum',
+						      'itemId' => $id),
 				  'status' => array('editMessage' =>
 						$core->translate('Album created successfully.')),
 				  'error' => array()),

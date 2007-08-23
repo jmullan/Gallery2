@@ -199,6 +199,11 @@ class PlatformTest extends GalleryTestCase {
 			    $this->_platform->legalizePathComponent('test.php.jpg'));
     }
 
+    function testLegalizePathComponentForDirectory() {
+	$this->assertEquals('test_.php.jpg_',
+			    $this->_platform->legalizePathComponent('test!.php.jpg$', true));
+    }
+
     function testPathComponentLegalCharactersConserved() {
 	$this->assertEquals(true,
 			    $this->_platform->isLegalPathComponent('TheQuickBrownFox'));
@@ -246,6 +251,11 @@ class PlatformTest extends GalleryTestCase {
 			    $this->_platform->isLegalPathComponent('._test'));
 	$this->assertEquals('__test',
 			    $this->_platform->legalizePathComponent('._test'));
+    }
+
+    function testIsLegalPathComponentWithDotForDirectory() {
+	$this->assertEquals(true,
+			    $this->_platform->isLegalPathComponent('some._test', true));
     }
 
     /**

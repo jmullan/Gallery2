@@ -92,15 +92,12 @@ class GalleryAlbumItem extends GalleryItem {
 	}
 
 	/* Let our superclass take care of creation in the persistent store */
-	$ret = parent::create($parentId, $albumName);
+	$ret = parent::create($parentId, $albumName, true);
 	if ($ret) {
 	    return $ret;
 	}
 
 	$albumName = $this->getPathComponent();
-
-	/* Albums can contain children */
-	$this->setCanContainChildren(true);
 
 	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId, 'GalleryItem');
 	if ($ret) {

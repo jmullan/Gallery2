@@ -72,12 +72,12 @@ class GalleryFileSystemEntityHelper_medium {
     /**
      * @see GalleryCoreApi::getLegalPathComponent
      */
-    function getLegalPathComponent($pathComponent, $parentId, $selfId=null) {
+    function getLegalPathComponent($pathComponent, $parentId, $selfId=null, $forDirectory=false) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
 
 	/* Make sure our path component uses legal characters */
-	$pathComponent = $platform->legalizePathComponent(trim($pathComponent));
+	$pathComponent = $platform->legalizePathComponent(trim($pathComponent), $forDirectory);
 
 	/* Get the parent, just to verify id is valid */
 	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($parentId, 'GalleryEntity');

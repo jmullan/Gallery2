@@ -66,9 +66,11 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
      *
      * @param int $parentId the id of the parent GalleryChildEntity
      * @param string $pathComponent the path component of this entity
+     * @param boolean $isDirectory (optional) Used for legal path component characters.
+     *        Defaults to false.
      * @return GalleryStatus a status code
      */
-    function create($parentId, $pathComponent) {
+    function create($parentId, $pathComponent, $isDirectory=false) {
 	if (empty($pathComponent)) {
 	    return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	}
@@ -83,7 +85,7 @@ class GalleryFileSystemEntity extends GalleryChildEntity {
 	}
 
 	list ($ret, $pathComponent) =
-	    GalleryCoreApi::getLegalPathComponent($pathComponent, $parentId);
+	    GalleryCoreApi::getLegalPathComponent($pathComponent, $parentId, null, $isDirectory);
 	if ($ret) {
 	    return $ret;
 	}

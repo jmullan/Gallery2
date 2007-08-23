@@ -1858,14 +1858,16 @@ class GalleryCoreApi {
      * @param string $pathComponent the starting path component (eg. "IMG_10293.JPG")
      * @param int $parentId the target parent id
      * @param int $selfId (optional) ignore path collision with this id
+     * @param boolean $forDirectory (optional) Whether the path component is for a directory.
+     *        Defaults to false. Periods are allowed anywhere in directories.
      * @return array GalleryStatus a status code
      *               string the legal path component
      */
-    function getLegalPathComponent($pathComponent, $parentId, $selfId=null) {
+    function getLegalPathComponent($pathComponent, $parentId, $selfId=null, $forDirectory=false) {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryFileSystemEntityHelper_medium.class');
-	return GalleryFileSystemEntityHelper_medium::getLegalPathComponent($pathComponent,
-									   $parentId, $selfId);
+	return GalleryFileSystemEntityHelper_medium::getLegalPathComponent(
+						$pathComponent, $parentId, $selfId, $forDirectory);
     }
 
     /**

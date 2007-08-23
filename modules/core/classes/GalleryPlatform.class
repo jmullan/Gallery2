@@ -559,10 +559,12 @@ class GalleryPlatform {
     /**
      * Return true if the path component specified is composed of legal characters.
      * @param string $component the path component (must not contain path separators)
+     * @param boolean $forDirectory (optional) Whether the path component is for a directory.
+     *        Defaults to false. Periods are allowed anywhere in directories.
      * @return true if yes
      */
-    function isLegalPathComponent($component) {
-	return !strcmp($this->legalizePathComponent($component), $component);
+    function isLegalPathComponent($component, $forDirectory=false) {
+	return !strcmp($this->legalizePathComponent($component, $forDirectory), $component);
     }
 
     /**
@@ -582,47 +584,55 @@ class GalleryPlatform {
 
     /**
      * Remove any illegal characters from the path component.
+     * @param string $component the path component (must not contain path separators)
+     * @param boolean $forDirectory (optional) Whether the path component is for a directory.
+     *        Defaults to false. Periods are allowed anywhere in directories.
+     * @return string the legalized path component
      */
-    function legalizePathComponent($component) {
+    function legalizePathComponent($component, $forDirectory=false) {
 	global $gallery;
 	$legalChars = $this->getLegalPathCharacters();
 
 	/* Scrub out all the illegal characters */
 	$component = ereg_replace("[^$legalChars]", '_', $component);
 
-	/* Break it into filebase and extension */
-	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($component);
+	if (!$forDirectory) {
+	    /* Break it into filebase and extension */
+	    list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($component);
 
-	/*
-	 * Convert all dots to underscores in the fileBase.  This prevents malicious users from
-	 * uploading files like 'foo.php.jpg' which will be treated like a JPEG by Gallery, but
-	 * could be treated like a .php file by Apache opening a security hole.
-	 */
-	$fileBase = str_replace('.', '_', $fileBase);
+	    /*
+	     * Convert all dots to underscores in the fileBase.  This prevents malicious users from
+	     * uploading files like 'foo.php.jpg' which will be treated like a JPEG by Gallery, but
+	     * could be treated like a .php file by Apache opening a security hole.
+	     */
+	    $fileBase = str_replace('.', '_', $fileBase);
 
-	/*
-	 * If we don't know exactly what type this file is, we have to assume that it's something
-	 * malicious.  In that case, it might be a server side script of some kind and we don't want
-	 * that to wind up in the albums directory in a pure state because it may open up a security
-	 * hole on systems that have placed the gallery data directory inside the document root.  So
-	 * mangle the extension to make sure that the webserver doesn't execute it.
-	 */
-	list ($ret, $tmp) = GalleryCoreApi::convertExtensionToMime($extension);
-	if ($ret && $gallery->getDebug()) {
-	    $gallery->debug('Error: convertExtensionToMime in ' .
-		'GalleryPlatform::legalizePathComponent');
+	    /*
+	     * If we don't know exactly what type this file is, we have to assume that it's
+	     * something malicious.  In that case, it might be a server side script of some kind and
+	     * we don't want that to wind up in the albums directory in a pure state because it may
+	     * open up a security hole on systems that have placed the gallery data directory inside
+	     * the document root.  So mangle the extension to make sure that the webserver doesn't
+	     * execute it.
+	     */
+	    list ($ret, $tmp) = GalleryCoreApi::convertExtensionToMime($extension);
+	    if ($ret && $gallery->getDebug()) {
+		$gallery->debug('Error: convertExtensionToMime in ' .
+				'GalleryPlatform::legalizePathComponent');
+	    }
+	    if (($ret || $tmp == 'application/unknown') && !empty($extension)) {
+		$fileBase = $fileBase . '_' . $extension;
+		$extension = null;
+	    }
+
+	    /* Rebuild the baseName according to our transforms above */
+	    if (!empty($extension)) {
+		$fileBase .= '.' . $extension;
+	    }
+	    $component = $fileBase;
 	}
-	if (($ret || $tmp == 'application/unknown') && !empty($extension)) {
-	    $fileBase = $fileBase . '_' . $extension;
-	    $extension = null;
-	}
 
-	/* Rebuild the baseName according to our transforms above */
-	if (!empty($extension)) {
-	    $fileBase .= '.' . $extension;
-	}
-
-	return $fileBase;
+	return $component;
     }
 
     /**

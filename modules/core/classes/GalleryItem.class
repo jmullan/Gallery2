@@ -169,9 +169,11 @@ class GalleryItem extends GalleryFileSystemEntity {
      *
      * @param int $parentId the id of the GalleryEntity parent of this object
      * @param string $path the path component of this new object
+     * @param boolean $canContainChildren (optional) Used for legal path component characters.
+     *        Defaults to false.
      * @return GalleryStatus a status code
      */
-    function create($parentId, $path) {
+    function create($parentId, $path, $canContainChildren=false) {
 	global $gallery;
 
 	if (!isset($path) || !isset($parentId)) {
@@ -187,7 +189,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	    return GalleryCoreApi::error(ERROR_ILLEGAL_CHILD);
 	}
 
-	$ret = parent::create($parentId, $path);
+	$ret = parent::create($parentId, $path, $canContainChildren);
 	if ($ret) {
 	    return $ret;
 	}
@@ -199,7 +201,7 @@ class GalleryItem extends GalleryFileSystemEntity {
 	$this->setViewedSinceTimestamp(time());
 
 	/* By default, items can't contain children */
-	$this->setCanContainChildren(false);
+	$this->setCanContainChildren($canContainChildren);
 
 	/* Origination timestamp defaults to now */
 	$this->setOriginationTimestamp(time());
