@@ -72,15 +72,15 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 	list ($ret, $error, $warning) = $this->_option->handleRequestAfterEdit(
 		$form, $item, $preferred, $this->_statusMonitor);
 	if (isset($errorCode)) {
-	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
-		$this->assert(false,
-			sprintf('Expected error code (%s) but received (%s)',
+	    if (!$ret || ($ret->getErrorCode() & $errorCode) != $errorCode) {
+		$this->fail(sprintf('Expected error code (%s) but received (%s)',
 			    implode(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
-			    implode(' | ', GalleryStatus::getErrorCodeConstants(
-							  $ret->getErrorCode()))));
+			    $ret ? implode(' | ',
+				     GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))
+				 : 'success'));
 	    }
 	} else if ($ret) {
-	    return ($ret);
+	    return $ret;
 	} else {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($error) && is_array($error), 'option error results missing');

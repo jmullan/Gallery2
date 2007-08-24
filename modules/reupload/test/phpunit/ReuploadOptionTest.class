@@ -137,6 +137,23 @@ class ReuploadOptionTest extends ItemEditOptionTestCase {
 	$this->assertEquals(array(), $errors, 'Errors');
 	$this->assertEquals(array(), $warnings, 'Warnings');
     }
+
+    /**
+     * Verify that attempt to reupload to a linked entity is blocked (UI doesn't allow it).
+     */
+    function testReuploadLinkedEntity() {
+	list ($ret, $linkedEntity) = $this->_createLinkedItem($this->_album->getId(), $this->_item);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$form['tmp_name']['reupload'] = 'bogus.tmp';
+	$form['size']['reupload'] = 800;
+	$form['serialNumber'] = $this->_item->getSerialNumber();
+
+	/* Perform the request and verify that we failed */
+	$this->_handleRequestAfterEdit($form, $this->_item, ERROR_BAD_PARAMETER);
+    }
 }
 
 /**
