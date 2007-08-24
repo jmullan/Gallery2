@@ -1459,8 +1459,13 @@ class GalleryTheme extends GalleryPlugin {
 			return $ret;
 		    }
 		    $urlGenerator =& $gallery->getUrlGenerator();
+		    /*
+		     * Need forceFullUrl because values given to ->javascript() are later run thru
+		     * generateUrl(array('href'=>$path)); need full url to avoid any distortion.
+		     * (that later call will actually shorten the URL again if appropriate)
+		     */
 		    $url = $urlGenerator->generateUrl(array('view' => 'core.ItemDeleteJs', 
-			'lang' => $lang), array('forceDirect' => true));
+			'lang' => $lang), array('forceDirect' => true, 'forceFullUrl' => true));
 		    $template->javascript($url);
 		    break;
 		}
