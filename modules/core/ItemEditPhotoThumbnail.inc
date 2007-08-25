@@ -74,14 +74,15 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		$cropWidth = 100;
 		$cropHeight = 100;
 	    } else {
+		/* Sanitize inputs to fit within 0-100 (if cropper miscalculates) */
 		$cropX = GalleryUtilities::roundToString(
-				100 * $form['crop']['x'] / $source->getWidth(), 3);
+			max(0, 100 * $form['crop']['x'] / $source->getWidth()), 3);
 		$cropY = GalleryUtilities::roundToString(
-				100 * $form['crop']['y'] / $source->getHeight(), 3);
+			max(0, 100 * $form['crop']['y'] / $source->getHeight()), 3);
 		$cropWidth = GalleryUtilities::roundToString(
-				100 * $form['crop']['width'] / $source->getWidth(), 3);
+			min(100, 100 * $form['crop']['width'] / $source->getWidth()), 3);
 		$cropHeight = GalleryUtilities::roundToString(
-				100 * $form['crop']['height'] / $source->getHeight(), 3);
+			min(100, 100 * $form['crop']['height'] / $source->getHeight()), 3);
 	    }
 
 	    list ($ret, $operations) =
