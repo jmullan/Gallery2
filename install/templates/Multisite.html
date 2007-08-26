@@ -85,7 +85,7 @@
 	  document.getElementById('linkContinue').style.display = m ? 'none' : 'inline';
 	  document.getElementById('linkSelect').style.display = m ? 'inline' : 'none';
 	}
-	// ]]>
+		// ]]>
       </script>
       <br/>
 
@@ -103,16 +103,10 @@ lib/support/index.php (optional)
     </form>
 
     <div class="go">
-	  <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
-	<a href="javascript:document.forms[0].submit()">
-	  <span id="linkContinue"
-	    <?php if ($templateData['isMultisite']) print ' style="display: none"' ?>>
-	    <?php printf(_('Continue to Step %d&raquo;'), $stepNumber + 1) ?>
-	  </span>
-	  <span id="linkSelect"
-	    <?php if (!$templateData['isMultisite']) print ' style="display: none"' ?>>
-	    <?php print _('Select Directory') ?>
-	  </span>
-	</a>
-	  </div></div></div></div></div></div></div></div></div>
+	  <a href="javascript:document.forms[0].submit()"<?php if ($templateData['isMultisite']) print ' style="display:none"' ?>
+	  	 id="linkContinue" class="btn continue"><i></i><span><span></span><i></i>
+	    <?php printf(_('Continue to Step %d&raquo;'), $stepNumber + 1) ?></span></a>
+	  <a href="javascript:document.forms[0].submit()"<?php if (!$templateData['isMultisite']) print ' style="display:none"' ?>
+	  	 id="linkSelect" class="btn continue"><i></i><span><span></span><i></i>
+	    <?php print _('Select Directory') ?></span></a>
     </div>

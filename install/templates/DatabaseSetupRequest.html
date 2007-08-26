@@ -122,17 +122,11 @@
 
     <div class="go">
       <?php if (isset($templateData['showConfirmCleanInstall'])): ?>
-	  <div class="btn btn-warn"><div><div><div><div><div><div><div><div>
-	<a href="javascript:document.forms[0].confirmCleanInstall.value='true'; document.forms[0].submit()"><?php print _('Erase Data For A Clean Install') ?></a>
-	  </div></div></div></div></div></div></div></div></div>
+	  <a href="javascript:document.forms[0].confirmCleanInstall.value='true'; document.forms[0].submit()" class="btn warn"><i></i><span><span></span><i></i><?php print _('Erase Data For A Clean Install') ?></span></a>
       <?php endif; ?>
-	  <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
-	<a href="javascript:document.forms[0].submit()"><?php print _('Save') ?></a>
-	  </div></div></div></div></div></div></div></div></div>
+	  <a href="javascript:document.forms[0].submit()" class="btn continue"><i></i><span><span></span><i></i><?php print _('Save') ?></span></a>
       <?php if (isset($templateData['showConfirmReuseTables'])): ?>
-	  <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
-	<a href="javascript:document.forms[0].confirmReuseTables.value='true'; document.forms[0].submit()"><?php print _('Reuse Existing Tables') ?></a>
-	  </div></div></div></div></div></div></div></div></div>
+	  <a href="javascript:document.forms[0].confirmReuseTables.value='true'; document.forms[0].submit()" class="btn continue"><i></i><span><span></span><i></i><?php print _('Reuse Existing Tables') ?></span></a>
       <?php endif; ?>
     </div>
 

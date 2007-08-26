@@ -63,18 +63,13 @@
     <div class="go">
     <?php $nextStep = $stepNumber + 1 ?>
     <?php if (!empty($templateData['canDoBackup'])): ?>
-       <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
-       <a href="<?php generateUrl('index.php?step=' . $stepNumber . '&amp;backupDatabase=1') ?>">
-	 <?php print _('Begin Database Backup') ?>
-       </a>
-       </div></div></div></div></div></div></div></div></div>
-      <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
-	   <a href="<?php generateUrl('index.php?step=' . $nextStep) ?>"><?php print _('Skip Database Backup') ?></a>
-       </div></div></div></div></div></div></div></div></div>
+       <a href="<?php generateUrl('index.php?step=' . $stepNumber . '&amp;backupDatabase=1') ?>" class="btn continue"><i></i><span><span></span><i></i>
+         <?php print _('Begin Database Backup') ?></span></a>
+	   <a href="<?php generateUrl('index.php?step=' . $nextStep) ?>" class="btn continue"><i></i><span><span></span><i></i>
+	     <?php print _('Skip Database Backup') ?></span></a>
     <?php else: ?>
-      <div class="btn btn-continue"><div><div><div><div><div><div><div><div>
-	   <a href="<?php generateUrl('index.php?step=' . $nextStep) ?>"><?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?></a>
-       </div></div></div></div></div></div></div></div></div>
+	   <a href="<?php generateUrl('index.php?step=' . $nextStep) ?>" class="btn continue"><i></i><span><span></span><i></i>
+	     <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?></span></a>
     <?php endif; ?>
     <?php else: ?>
     <h2>
