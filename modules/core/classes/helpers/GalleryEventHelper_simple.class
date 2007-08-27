@@ -101,8 +101,14 @@ class GalleryEventHelper_simple {
 
 	$allListeners =& GalleryEventHelper_simple::_getEventListeners();
 	if (!empty($allListeners[$event->getEventName()])) {
-	    foreach ($allListeners[$event->getEventName()] as $eventListener) {
-		list ($ret, $data) = $eventListener->handleEvent($event);
+	    /*
+	     * Walk the loop using an index so that we're working with the original referenced
+	     * object.  If we use foreach ($array as $instance) we wind up working with a
+	     * copy of the listener on PHP4.
+	     */
+	    $listeners = $allListeners[$event->getEventName()];
+	    for ($i = 0; $i < count($listeners); $i++) {
+		list ($ret, $data) = $listeners[$i]->handleEvent($event);
 		if ($ret) {
 		    return array($ret, null);
 		}
