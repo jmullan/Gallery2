@@ -695,8 +695,11 @@ function _GalleryMain_errorHandler($error, $g2Data=null) {
  * @return boolean true if we should skip the regular PHP error handler
  */
 function _GalleryMain_phpErrorHandler($errorNumber, $errorString, $file, $line, $context) {
-    if (error_reporting() == 0) {
-	/* The @ error suppression operator was used, so ignore this */
+    if (error_reporting() == 0 || !class_exists('GalleryCoreApi')) {
+	/*
+	 * The @ error suppression operator was used, or this error happened before we initialized
+	 * the Gallery framework, so fall back to the internal error handler
+	 */
 	return false;
     }
 
@@ -716,6 +719,7 @@ function _GalleryMain_phpErrorHandler($errorNumber, $errorString, $file, $line, 
 		$errorString, $file, $line),
 	$errorString);
 
+    /* Fall back to the internal error handler */
     return false;
 }
 ?>
