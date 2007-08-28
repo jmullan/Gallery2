@@ -49,7 +49,8 @@
 	</tr>
 	<?php endif; ?>
         </thead>
-        <tbody id="hostSettings">
+        <tbody id="hostSettings"<?php
+	 if (!empty($templateData['dbSelected']['pdo_sqlite'])) print ' style="display:none"'; ?>>
 	<tr>
 	  <td class="label"><?php print _('DB Hostname:') ?></td>
 	  <td>
@@ -81,7 +82,8 @@
 	      value="<?php print $templateData['config']['database'] ?>" />
 	  </td>
 	</tr>
-	<tr id="dbSchema" style="display:none">
+	<tr id="dbSchema"<?php
+	 if (empty($templateData['dbSelected']['postgres7'])) print ' style="display:none"'; ?>>
 	  <td class="label"><?php print _('DB Schema:') ?></td>
 	  <td>
 	    <input name="schema" type="text" size="30"
