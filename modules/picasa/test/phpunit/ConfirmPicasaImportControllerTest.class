@@ -193,10 +193,10 @@ class ConfirmPicasaImportControllerTest extends GalleryControllerTestCase {
 	$this->_platform->setReply('file_exists', array('/index.xml'), true);
 	$this->_platform->setReply('is_readable', array('/index.xml'), true);
 	$this->_platform->setReply('file', array('/index.xml', ''), $testXmlData);
-	$this->_platform->setReply('legalizePathComponent', array('GalleryTest 2'),
+	$this->_platform->setReply('legalizePathComponent', array('GalleryTest 2', false),
 	    'GalleryTest 2');
-	$this->_platform->setReply('isLegalPathComponent', array('GalleryTest 2'), true);
-	$this->_platform->setReply('legalizePathComponent', array('GalleryTest 2'),
+	$this->_platform->setReply('isLegalPathComponent', array('GalleryTest 2', false), true);
+	$this->_platform->setReply('legalizePathComponent', array('GalleryTest 2', true),
 	    'GalleryTest 2');
 	$this->_platform->setReply('getDirectorySeparator', array(), '/');
 	$this->_platform->setReply('file_exists', array('fuzzy' => '{.*GalleryTest 2}'), false);
@@ -210,7 +210,8 @@ class ConfirmPicasaImportControllerTest extends GalleryControllerTestCase {
 
 	    $this->_platform->setReply('is_uploaded_file', array('/images/' . $testImage . ''),
 		true);
-	    $this->_platform->setReply('legalizePathComponent', array($testImage), $testImage);
+	    $this->_platform->setReply('legalizePathComponent', array($testImage, false),
+		$testImage);
 	    $this->_platform->setReply('getDirectorySeparator', array(), '/');
 	    $this->_platform->setReply('copy',
 		array('/images/' . $testImage . '', 'fuzzy'=>'{.*/' . $testImage . '}'),
