@@ -146,7 +146,7 @@ class CombinedJavascriptTest extends GalleryImmediateViewTestCase {
 	$_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip,and,other,stuff';
 	GalleryUtilities::putRequestVariable('key', '123');
 	$gallery->_phpVm->setReply('function_exists', array('getallheaders'), false);
-	$gallery->_phpVm->setReply('function_exists', array('apache_setenv'), true);
+	$gallery->_phpVm->setReply('function_exists', array('apache_setenv'), false);
 	$gallery->_phpVm->setReply('header', array('Content-Encoding: gzip', null), null);
 	$gallery->_phpVm->setReply(
 	    'header', array('Cache-Control: private, x-gzip-ok="public"', null), null);
