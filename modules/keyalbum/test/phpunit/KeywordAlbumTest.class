@@ -186,6 +186,10 @@ class KeywordAlbumTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $ret;
+	}
 
 	GalleryUtilities::putRequestVariable('keyword', 'testkey');
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
@@ -196,7 +200,8 @@ class KeywordAlbumTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core.ShowItem', 'itemId' => $this->_getRootId())),
+	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin',
+		  'return' => true)),
 	    $result, 'redirect');
     }
 
