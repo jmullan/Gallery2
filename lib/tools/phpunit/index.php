@@ -93,8 +93,7 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
 	return;
     }
 
-    if ($isSiteAdmin) {
-
+    if ($isSiteAdmin && $filter !== false) {
 	/*
 	 * Load the test cases for every active module.
 	 */
@@ -351,7 +350,7 @@ if (isset($_GET['filter'])) {
 	}
     }
 } else {
-    $filter = 'match_nothing';
+    $filter = false;
     $displayFilter = null;
     $range = array(array(1, FILTER_MAX));
 }
@@ -409,10 +408,12 @@ print "</pre>";
 include(dirname(__FILE__) . '/index.tpl');
 
 /* Compact any ACLs that were created during this test run */
-$ret = GalleryCoreApi::compactAccessLists();
-if ($ret) {
-    print $ret->getAsHtml();
-    return;
+if ($testSuite->countTestCases() > 0) {
+    $ret = GalleryCoreApi::compactAccessLists();
+    if ($ret) {
+	print $ret->getAsHtml();
+	return;
+    }
 }
 
 $storage =& $gallery->getStorage();
