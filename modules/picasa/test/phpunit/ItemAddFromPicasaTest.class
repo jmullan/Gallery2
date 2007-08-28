@@ -160,10 +160,10 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	$this->_platform->setReply('file_exists', array('/tmp.dir/index.xml'), true);
 	$this->_platform->setReply('is_readable', array('/tmp.dir/index.xml'), true);
 	$this->_platform->setReply('file', array('/tmp.dir/index.xml', ''), $testXmlData);
-	$this->_platform->setReply('legalizePathComponent',  array('GalleryTest 2'),
+	$this->_platform->setReply('legalizePathComponent',  array('GalleryTest 2', false),
 	    'GalleryTest 2');
-	$this->_platform->setReply('isLegalPathComponent', array('GalleryTest 2'), true);
-	$this->_platform->setReply('legalizePathComponent', array('GalleryTest 2'),
+	$this->_platform->setReply('isLegalPathComponent', array('GalleryTest 2', false), true);
+	$this->_platform->setReply('legalizePathComponent', array('GalleryTest 2', true),
 	    'GalleryTest 2');
 	$this->_platform->setReply('getDirectorySeparator', array(), '/');
 	$this->_platform->setReply('file_exists', array('fuzzy' => '{.*GalleryTest 2}'), false);
@@ -176,7 +176,8 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    $this->_platform->setReply('is_uploaded_file',
 		array('/tmp.dir/images/' . $testImage . ''),
 		true);
-	    $this->_platform->setReply('legalizePathComponent', array($testImage), $testImage);
+	    $this->_platform->setReply('legalizePathComponent', array($testImage, false),
+		$testImage);
 	    $this->_platform->setReply('getDirectorySeparator', array(), '/');
 	    $this->_platform->setReply('copy',
 		array('/tmp.dir/images/' . $testImage . '', 'fuzzy'=>'{.*/' . $testImage . '}'),
@@ -246,7 +247,8 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	$i = 0;
 
 	foreach ($testImages as $testImage) {
-	    $this->_platform->setReply('legalizePathComponent',  array($testImage), $testImage);
+	    $this->_platform->setReply('legalizePathComponent',  array($testImage, false),
+		$testImage);
 	}
 
 	foreach ($items as $item) {
