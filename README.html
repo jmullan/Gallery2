@@ -292,7 +292,8 @@
 	3.x, 4.x or 5.x, <a href="http://www.postgresql.org/" target="_blank">PostgreSQL</a>
 	7.x or 8.x, <a href="http://www.oracle.com/" target="_blank">Oracle</a> 9i or 10g,
 	<a href="http://www.ibm.com/software/data/db2/" target="_blank">IBM DB2</a> 9.x,
-	<a href="http://www.microsoft.com/sql/" target="_blank">Microsoft SQL Server</a> 2005.
+	<a href="http://www.microsoft.com/sql/" target="_blank">Microsoft SQL Server</a> 2005,
+	<a href="http://www.sqlite.org/" target="_blank">SQLite</a> 3.x
       </li>
       <li>
 	One of the following graphics toolkits: <a href="http://netpbm.sourceforge.net/"
@@ -399,6 +400,9 @@
 	<a href="http://www.snapgalaxy.com/" target="_blank">snapgalaxy.com</a>.
       </li>
       <li>
+	Registration module can now send a welcome email to new users upon account activation.
+      </li>
+      <li>
 	EXIF block now uses AJAX to switch between summary and detail display.
       </li>
       <li>
@@ -477,6 +481,15 @@
 	  are not used (en_US).
 	</li><li>
 	  Refactor of event system working towards a performance improvement in the next release.
+	</li></ul>
+      </li>
+      <li>
+	New database options.
+	<ul><li>
+	  Support for <a href="http://www.sqlite.org/" target="_blank">SQLite</a> 3.x
+	</li><li>
+	  Support for <a href="http://www.postgresql.org/docs/current/static/ddl-schemas.html"
+	  target="_blank">PostgreSQL schemas</a>
 	</li></ul>
       </li>
       <li>
@@ -1872,8 +1885,9 @@
 	<a href="http://www.postgresql.org/mirrors-ftp.html" target="_blank">PostgreSQL</a>,
 	<a href="http://www.oracle.com/technology/software/index.html"
 	target="_blank">Oracle</a>,
-	<a href="http://www.ibm.com/software/data/db2/" target="_blank">IBM DB2</a> and
-	<a href="http://www.microsoft.com/sql/" target="_blank">Microsoft SQL Server</a>.
+	<a href="http://www.ibm.com/software/data/db2/" target="_blank">IBM DB2</a>,
+	<a href="http://www.microsoft.com/sql/" target="_blank">Microsoft SQL Server</a> and
+	<a href="http://www.sqlite.org/" target="_blank">SQLite</a>.
 	The databases most commonly used with Gallery 2 are MySQL and PostgreSQL.
 	MySQL is generally faster than PostgreSQL.
 	We require you to create the database yourself.
@@ -1996,6 +2010,14 @@
 	    target="_blank">Microsoft SQL Server documentation page</a>
 	  </li>
 	</ul>
+
+	<div class="instructions">
+	  <h3>SQLite</h3>
+	  <p>
+	    Your PHP must include <a href="http://php.net/pdo" target="_blank">PHP
+	    Data Objects</a> support, but no other setup is required.
+	  </p>
+	</div>
       </li>
 
       <li>
