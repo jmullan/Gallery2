@@ -46,15 +46,16 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    return $ret;
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'emailadmins', '0');
-	if ($ret) {
-	    return $ret;
-	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'validation.level', 'HIGH');
-	if ($ret) {
-	    return $ret;
+	foreach (array('emailadmins' => 0, 'emailusers' => 1,
+		       'subject' => 'ConfEmail', 'usersubject' => 'WelcomeEmail',
+		       'validation.level' => 'HIGH') as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'register', $key, $value);
+	    if ($ret) {
+		return $ret;
+	    }
 	}
 
+	$this->_emailSubject = '';
 	$this->_controller->setPluginInstances(array());
     }
 
@@ -68,6 +69,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     }
 
     function testRegisterWithAutomaticActivation() {
+	global $gallery;
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'auto');
 	if ($ret) {
 	    return $ret;
@@ -82,6 +84,9 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password1]', 'password');
 	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 
+	$savePlatform =& $gallery->getPlatform();
+	$gallery->setPlatform(new RegisterDummyPlatform($savePlatform, $this));
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
 				      'view' => 'core.UserAdmin',
@@ -91,14 +96,19 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    $results,
 	    'Failed to register user with automatic activation');
 
-	/* the newly registered user is a real user by now */
+	$gallery->setPlatform($savePlatform);
+
+	/* The newly registered user is a real user by now */
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals(GalleryUtilities::isA($user, 'GalleryUser'), true);
-
+	$this->assert(GalleryUtilities::isA($user, 'GalleryUser'), 'type is GalleryUser');
 	$this->_markForCleanup($user);
+
+	/* Make sure welcome email was "sent" */
+	$this->assert(!empty($this->_emailBody), 'test platform mail() should have been called');
+	$this->assertEquals('WelcomeEmail', $this->_emailSubject, 'email subject');
     }
 
     function testRegisterWithEMailActivation() {
@@ -133,12 +143,16 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$gallery->setPlatform($savePlatform);
 
-	/* make sure the pending user exists */
+	/* Make sure the pending user exists */
 	list ($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUserName($userName);
 	if ($ret) {
 	    return $ret;
 	}
 	$this->_markForCleanup($user);
+
+	/* Make sure confirmation email was "sent" */
+	$this->assert(!empty($this->_emailBody), 'test platform mail() should have been called');
+	$this->assertEquals('ConfEmail', $this->_emailSubject, 'email subject');
     }
 
     function testEntities() {
@@ -499,6 +513,7 @@ class RegisterDummyPlatform {
 
     function mail($to, $subject, $body, $headers=null) {
 	/* Don't actually send email */
+	$this->_test->_emailSubject .= $subject;
 	$this->_test->_emailBody = $body;
 	return true;
     }

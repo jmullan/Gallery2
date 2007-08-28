@@ -43,6 +43,10 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	if ($ret) {
 	    return $ret;
 	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'emailusers', '0');
+	if ($ret) {
+	    return $ret;
+	}
 
 	/* Create a pending user.. */
 	list ($ret, $pendingUser) =
@@ -64,8 +68,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	if (isset($this->_pendingUser)) {
-	    $ret = GalleryCoreApi::deleteEntityById($this->_pendingUser->getId(),
-						    'GalleryEntity');
+	    $ret = GalleryCoreApi::deleteEntityById($this->_pendingUser->getId(), 'GalleryEntity');
 	    if ($ret) {
 		$this->failWithStatus($ret);
 	    }
@@ -81,6 +84,8 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[from]', 'tester@nobody.org');
 	GalleryUtilities::putRequestVariable('form[subject]', 'Testmail');
 	GalleryUtilities::putRequestVariable('form[adminsubject]', 'Testmail');
+	GalleryUtilities::putRequestVariable('form[usersubject]', 'Testmail');
+	GalleryUtilities::putRequestVariable('form[emailusers]', 'on');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
@@ -97,7 +102,9 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 		'from' => 'tester@nobody.org',
 		'subject' => 'Testmail',
 		'adminsubject' => 'Testmail',
+		'usersubject' => 'Testmail',
 		'emailadmins' => '0',
+		'emailusers' => '1',
 	);
 	foreach ($valueMap as $key => $expectedValue) {
 	    list ($ret, $realValue) =
@@ -149,7 +156,6 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
     }
 
     function testAdminSelfRegistrationControllerDelete() {
-
 	GalleryUtilities::putRequestVariable('form[userId]', $this->_pendingUser->getId());
 	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
 
