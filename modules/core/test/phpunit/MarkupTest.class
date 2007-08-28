@@ -145,28 +145,33 @@ class MarkupTest extends GalleryTestCase {
 
     function testUrl1() {
 	$results = $this->_bbcode->parse('[url]http://example.com/a.html[/url]');
-	$this->assertEquals('<a href="http://example.com/a.html">http://example.com/a.html</a>',
+	$this->assertEquals('<a href="http://example.com/a.html" rel="nofollow">' .
+			    'http://example.com/a.html</a>',
 			    $results);
     }
 
     function testUrl2() {
 	$results = $this->_bbcode->parse('[url=http://example.com/a.html]content[/url]');
-	$this->assertEquals('<a href="http://example.com/a.html">content</a>', $results);
+	$this->assertEquals('<a href="http://example.com/a.html" rel="nofollow">' .
+			    'content</a>', $results);
     }
 
     function testUrl3() {
+	/* Seems kind of silly that we add rel="nofollow" to mailto: urls, but it doesn't hurt */
 	$results = $this->_bbcode->parse('[url=mailto:monkey@fruit.com]content[/url]');
-	$this->assertEquals('<a href="mailto:monkey@fruit.com">content</a>', $results);
+	$this->assertEquals('<a href="mailto:monkey@fruit.com" rel="nofollow">content</a>',
+			    $results);
     }
 
     function testUrl4() {
 	$results = $this->_bbcode->parse('[url=https://example.com/secure.html]content[/url]');
-	$this->assertEquals('<a href="https://example.com/secure.html">content</a>', $results);
+	$this->assertEquals('<a href="https://example.com/secure.html" rel="nofollow">' .
+			    'content</a>', $results);
     }
 
     function testUrl5() {
 	$results = $this->_bbcode->parse('[url=ftp://example.com/]content[/url]');
-	$this->assertEquals('<a href="ftp://example.com/">content</a>', $results);
+	$this->assertEquals('<a href="ftp://example.com/" rel="nofollow">content</a>', $results);
     }
 
     function testUrl6() {
@@ -176,7 +181,7 @@ class MarkupTest extends GalleryTestCase {
 
     function testUrl7() {
 	$results = $this->_bbcode->parse('[url=/path/file.php]content[/url]');
-	$this->assertEquals('<a href="/path/file.php">content</a>', $results);
+	$this->assertEquals('<a href="/path/file.php" rel="nofollow">content</a>', $results);
     }
 
     function testUrl8() {
@@ -195,15 +200,15 @@ class MarkupTest extends GalleryTestCase {
         $results = $this->_bbcode->parse('[color=green]content[/color]');
         $this->assertEquals('<font color="green">content</font>', $results);
     }
-    
+
     /*
      * Regression test. This sequence led to an "uninitialized string offset error"
-     * in earlier bbcode implementations. 
+     * in earlier bbcode implementations.
      */
     function testHeavyNesting() {
 	$results = $this->_bbcode->parse('[url=http://a.cc/blah.jpg\[url]\]\[[\]' .
 					 '[/url][/url][url=[[[[]\]\][\[][[[[]\]\][\[[/url]');
-	$this->assertEquals('<a href="http://a.cc/blah.jpg\[url">\]\[[\]</a>' .
+	$this->assertEquals('<a href="http://a.cc/blah.jpg\[url" rel="nofollow">\]\[[\]</a>' .
 			    '[/url][url=[[[[]\]\][\[][[[[]\]\][\[[/url]', $results);
     }
 
@@ -215,13 +220,13 @@ class MarkupTest extends GalleryTestCase {
     function testUnicodeCharacters() {
 	$results = $this->_bbcode->parse('[url=https://example.com/secure.html]' .
 					 "Elemente hinzuf\xfcgen[/url] Seitenverh\xe4ltnis");
-	$this->assertEquals("<a href=\"https://example.com/secure.html\">Elemente " .
-			    "hinzuf\xfcgen</a> Seitenverh\xe4ltnis", $results);
+	$this->assertEquals("<a href=\"https://example.com/secure.html\" rel=\"nofollow\">" .
+			    "Elemente hinzuf\xfcgen</a> Seitenverh\xe4ltnis", $results);
     }
 
     function testNonBbcodeMarkers() {
 	$results = $this->_bbcode->parse('[url=http://foo] [go] [/url]');
-	$this->assertEquals('<a href="http://foo"> [go] </a>', $results);
+	$this->assertEquals('<a href="http://foo" rel="nofollow"> [go] </a>', $results);
     }
 
     function testMarkupNone() {
