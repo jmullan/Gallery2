@@ -27,7 +27,7 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class');
  * @package GalleryCore
  * @subpackage Storage
  * @author Brian Kirchoff <briankircho@gmail.com>
- * @version $Revision: 15513 $
+ * @version $Revision$
  */
 class SQLiteStorage extends GalleryStorage {
 
@@ -54,22 +54,22 @@ class SQLiteStorage extends GalleryStorage {
 	    break;
 
 	case 'BITAND':
-        $sql = 'lower('.$args[0] . " & " . $args[1].')';
+	    $sql = 'lower(' . $args[0] . ' & ' . $args[1] . ')';
 	    break;
 
-   	case 'BIT_OR':
+	case 'BIT_OR':
 	    /*
 	     * By default don't use BIT_OR aggregate, but OR together values in PHP.
 	     */
-   	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION), null);
-   	    break;
+	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION), null);
+	    break;
 
 	case 'AS':
 	    $sql = '';
 	    break;
 
 	case 'SUBSTRING':
-            if (count($args) == 2) {
+	    if (count($args) == 2) {
 		$args[2] = 'LENGTH(' . $args[0] . ') - ' . $args[1] . ' + 1';
 	    }
 	    $sql = sprintf('SUBSTR(%s)', implode(', ', $args));
@@ -114,7 +114,7 @@ class SQLiteStorage extends GalleryStorage {
 
 	default:
 	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
-					      $functionName . ' ' . implode(' ', $args)), null);
+					       $functionName . ' ' . implode(' ', $args)), null);
 	}
 
 	return array(null, $sql);
@@ -125,11 +125,11 @@ class SQLiteStorage extends GalleryStorage {
      * @return string version
      */
     function getVersion() {
-        if($this->_db) {
-            return $this->getType() . ' ' . $this->_db->GetOne('SELECT sqlite_version(*)');
-        } else {
-            return $this->getType();
-        }
+	if ($this->_db) {
+	    return $this->getType() . ' ' . $this->_db->GetOne('SELECT sqlite_version(*)');
+	} else {
+	    return $this->getType();
+	}
     }
 
     /**
@@ -152,6 +152,5 @@ class SQLiteStorage extends GalleryStorage {
     function _getOptimizeStatements() {
 	return array('VACUUM `%s`;', 'ANALYZE `%s`;');
     }
-
 }
 ?>
