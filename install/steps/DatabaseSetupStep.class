@@ -46,6 +46,10 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_config['columnPrefix'] = 'g_';
 		$firstConfig = true;
 	    }
+	    /* All keys but 'schema' exist in all versions of G2 */
+	    if (!isset($this->_config['schema'])) {
+		$this->_config['schema'] = '';
+	    }
 	}
 
 	$templateData['password'] = strlen($this->_config['password']) ? '******' : '';
