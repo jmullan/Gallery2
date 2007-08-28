@@ -1537,6 +1537,9 @@ class SQLiteGenerator extends BaseGenerator {
 	    }
 	    $output .= ");\n\n";
 
+	    /**
+	     * @todo XXX Use PK / UK instead of general index syntax. 
+	     */
 	    for ($i = $firstNonColumn; $i < count($child); $i++) {
 		$crc = $this->getIndexCrc($child[$i]['child']);
 		$output .= 'CREATE INDEX DB_TABLE_PREFIX' . $child[0]['content'] . '_' . $crc
@@ -1577,7 +1580,11 @@ class SQLiteGenerator extends BaseGenerator {
 
 		    break;
 
-		default:
+		case 'KEY':
+		    /**
+		     * @todo XXX Use PK / UK instead of general index syntax for keys.
+		     */
+		case 'INDEX':
 		    /* column-name */
 		    $output .= 'CREATE INDEX ';
 		    $nameKey = strtoupper('name_' . $this->getDbType());
@@ -1598,6 +1605,9 @@ class SQLiteGenerator extends BaseGenerator {
 		    $output .= ')';
 		    $output .= ";\n\n";
 		    break;
+
+		default:
+		    $output .= "6. UNIMPLEMLENTED: ADD $c[name]\n";
 		}
 	    }
 	    break;
@@ -1615,7 +1625,10 @@ class SQLiteGenerator extends BaseGenerator {
 		    $c = $child[$i];
 		    switch($c['name']) {
 		    case 'COLUMN-NAME':
-			/* column-name */
+			/**
+			 * @todo Find a better way to handle DROP COLUMN. The below code doesn't
+			 * work in SQLite 3 and our adodb driver intercepts and handles it instead.
+			 */
 			$output .= 'ALTER TABLE DB_TABLE_PREFIX'  . $parent['child'][0]['content'];
 			$output .= ' DROP COLUMN DB_COLUMN_PREFIX' . $c['content'];
 			$output .= ";\n\n";
@@ -1655,9 +1668,10 @@ class SQLiteGenerator extends BaseGenerator {
 	    break;
 
 	case 'ALTER':
-	    /* 
+	    /*
 	     * No support for ALTER TABLE ALTER COLUMN in SQLite but
-	     * shoulden't effect anything since columns store any value 
+	     * shoulden't affect type changes since columns store any value.
+	     * @todo How to handle DEFAULT, (NOT) NULL, ...)?
 	     */
 	    break;
 
