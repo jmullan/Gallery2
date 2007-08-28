@@ -2,7 +2,7 @@
 
     <p><?php print _('Please select your database type and enter your database authentication information.  The installer will not create the database for you, so you must create one yourself and enter the database name here.  If you are installing Gallery into a database that already has tables in it, the table and column prefixes will keep Gallery data from conflicting with what you already have.') ?> </p>
 
-    <?php if (isset($templateData['isMultisite']) && $templateData['isMultisite']): ?>
+    <?php if (!empty($templateData['isMultisite'])): ?>
     <div class="warning">
       <?php print _("This is a multisite installation. Remember that each multisite requires its own database tables. Either choose a different database or a different table prefix for each multisite!"); ?>
     </div>
@@ -16,7 +16,7 @@
 	  </td>
 
 	  <td>
-	    <select name="type">
+	    <select name="type" onchange="dbTypeChange(this)">
 	      <?php foreach ($templateData['dbList'] as $key => $value): ?>
 	      <option value="<?php print $key ?>"
 		<?php if (!empty($templateData['dbSelected'][$key])): ?>
@@ -25,6 +25,15 @@
 		><?php print $value ?></option>
 	      <?php endforeach; ?>
 	    </select>
+	    <script type="text/javascript">
+	      // <![CDATA[
+	      function dbTypeChange(sel) {
+		var type = sel.options[sel.selectedIndex].value;
+		document.getElementById('dbSchema').style.display =
+		  (type == 'postgres7') ? '' : 'none';
+	      }
+	      // ]]>
+	    </script>
 	  </td>
 	</tr>
 	<?php if (!empty($templateData['error']['phpDbMissing'])): ?>
@@ -68,6 +77,14 @@
 	      value="<?php print $templateData['config']['database'] ?>" />
 	  </td>
 	</tr>
+	<tr id="dbSchema" style="display:none">
+	  <td class="label"><?php print _('DB Schema:') ?></td>
+	  <td>
+	    <input name="schema" type="text" size="30"
+	      value="<?php print $templateData['config']['schema'] ?>" />
+	    <?php print _('(optional)') ?>
+	  </td>
+	</tr>
 	<tr>
 	  <td class="label"><?php print _('Table Prefix:') ?></td>
 	  <td>
@@ -106,7 +123,7 @@
     <?php if (!empty($templateData['errors'])): ?>
     <div class="error">
       <h2>
-        <?php print _('We received the following database related errors:') ?>
+	<?php print _('We received the following database related errors:') ?>
       </h2>
     </div>
     <div class="debug">

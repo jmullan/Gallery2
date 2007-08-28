@@ -111,7 +111,18 @@ class PostgreSqlStorage extends GalleryStorage {
 	}
 
 	return null;
-     }
+    }
+
+    /**
+     * @see GalleryStorage::_setConnectionSettings
+     */
+    function _setConnectionSettings(&$db) {
+	if (!empty($this->_schema)) {
+	    $this->_traceStart();
+	    $db->Execute('set search_path to ' . $this->_schema);
+	    $this->_traceStop();
+	}
+    }
 
     /**
      * @see GalleryStorage::convertIntToBits

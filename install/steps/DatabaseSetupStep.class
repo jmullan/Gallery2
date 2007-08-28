@@ -41,6 +41,7 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_config['username'] = 'root';
 		$this->_config['password'] = '';
 		$this->_config['database'] = 'gallery2';
+		$this->_config['schema'] = '';
 		$this->_config['tablePrefix'] = 'g2_';
 		$this->_config['columnPrefix'] = 'g_';
 		$firstConfig = true;
@@ -50,7 +51,7 @@ class DatabaseSetupStep extends InstallStep {
 	$templateData['password'] = strlen($this->_config['password']) ? '******' : '';
 
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
-	    foreach (array('type', 'hostname', 'username', 'database',
+	    foreach (array('type', 'hostname', 'username', 'database', 'schema',
 			   'tablePrefix', 'columnPrefix') as $key) {
 		$this->_config[$key] = $this->sanitize($_POST[$key]);
 	    }
@@ -158,11 +159,13 @@ class DatabaseSetupStep extends InstallStep {
 				. $this->_config['database'],
 			    $this->_config['username'], $this->_config['password'], 'MSDASQL');
 		    }
-		    $this->_captureEnd();
 		    if ($result === false) {
 			$templateData['errors'][] =
 			    _('Unable to connect to database with the information provided.');
+		    } else if ($dbPlatformType == 'postgres7' && !empty($this->_config['schema'])) {
+			$this->_db->Execute('set search_path to ' . $this->_config['schema']);
 		    }
+		    $this->_captureEnd();
 		}
 	    }
 

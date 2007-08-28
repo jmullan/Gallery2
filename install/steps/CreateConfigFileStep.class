@@ -156,7 +156,7 @@ class CreateConfigFileStep extends InstallStep {
 	    }
 
 	    foreach (array('type', 'hostname', 'database', 'username',
-			   'password', 'tablePrefix', 'columnPrefix') as $key) {
+			   'password', 'schema', 'tablePrefix', 'columnPrefix') as $key) {
 		if (preg_match("/^.storeConfig\['$key'\] = '.*';/", $line)) {
 		    $newStoreConfig[$key] = strtr($newStoreConfig[$key], $addslashes);
 		    $line = "\$storeConfig['$key'] = '$newStoreConfig[$key]';\n";

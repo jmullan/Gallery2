@@ -132,6 +132,13 @@ class GalleryStorage {
     var $_isTransactional;
 
     /**
+     * Database schema to use (not used by all db types)
+     * @var string
+     * @access protected
+     */
+    var $_schema;
+
+    /**
      * A string to prepend to table names
      * @var string
      * @access protected
@@ -186,6 +193,7 @@ class GalleryStorage {
 	$this->_usePersistentConnections = !isset($config['usePersistentConnections'])
 	    || !empty($config['usePersistentConnections']);
 
+	$this->_schema = isset($config['schema']) ? $config['schema'] : '';
 	$this->_tablePrefix = isset($config['tablePrefix']) ? $config['tablePrefix']
 							    : DATABASE_TABLE_PREFIX;
 	$this->_columnPrefix = isset($config['columnPrefix']) ? $config['columnPrefix']
