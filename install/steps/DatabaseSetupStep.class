@@ -67,6 +67,11 @@ class DatabaseSetupStep extends InstallStep {
 	    $this->_config['type'] = 'mysqli';
 	    $mysqltType = 'mysqli';
 	}
+	if ($this->_config['type'] == 'sqlite') {    
+                $this->_config['hostname'] = 'sqlite:' . 
+                    $galleryStub->getConfig('data.gallery.base') . 'gallery2.db';
+                $this->_config['database'] = '';      
+        }
 	switch ($this->_config['type']) {
 	    case 'mysql':
 	    case 'mysqlt':
@@ -111,6 +116,13 @@ class DatabaseSetupStep extends InstallStep {
 		}
 		$dbPlatformType = 'mssql';
 		break;
+            case 'pdo_sqlite':
+                if (!$firstConfig && !class_exists('PDO')) {
+                    $templateData['error']['phpDbMissing'] =
+                        _('You must have the PHP Data Object(PDO) PHP module installed');
+                }
+                $dbPlatformType = 'sqlite';
+                break;		
 	}
 
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
@@ -143,7 +155,7 @@ class DatabaseSetupStep extends InstallStep {
 			_('Unable to create a database connection of type %s'),
 			$this->_config['type']);
 		}
-
+                
 		if (empty($templateData['errors'])) {
 		    $this->_captureStart();
 		    $this->_db->debug = true;
@@ -336,7 +348,8 @@ class DatabaseSetupStep extends InstallStep {
 			   'postgres7' => _('PostgreSQL v7.x and newer'),
 			   'oci8po' => _('Oracle (9i and newer)'),
 			   'db2' => _('IBM DB2 (v9.x and newer)'),
-			   'ado_mssql' => _('Microsoft SQL Server 2005 and newer'))
+			   'ado_mssql' => _('Microsoft SQL Server 2005 and newer'),
+                           'pdo_sqlite' => _('SQLite v3.x'))
 		     as $key => $value) {
 		$templateData['dbList'][$key] = $value;
 	    }
@@ -344,6 +357,7 @@ class DatabaseSetupStep extends InstallStep {
 
 	    $templateData['bodyFile'] = 'DatabaseSetupRequest.html';
 	}
+	unset($this->_db);
     }
 
     function _captureStart() {

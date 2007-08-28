@@ -1,0 +1,157 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2007 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+GalleryCoreApi::requireOnce('modules/core/classes/GalleryStorage.class');
+
+/**
+ * SQLite extension of the GalleryStorage class.
+ * This object implements the hooks for saving and restoring objects in an SQLite database.
+ *
+ * @package GalleryCore
+ * @subpackage Storage
+ * @author Brian Kirchoff <briankircho@gmail.com>
+ * @version $Revision: 15513 $
+ */
+class SQLiteStorage extends GalleryStorage {
+
+    function SQLiteStorage($config) {
+	$this->GalleryStorage($config);
+	$this->_isTransactional = false;
+    }
+
+    /**
+     * Return the type of this database
+     * @return string
+     */
+    function getType() {
+	return 'sqlite';
+    }
+
+    /**
+     * @see GalleryStorage::getFunctionsSql
+     */
+    function getFunctionSql($functionName, $args) {
+	switch ($functionName) {
+	case 'CONCAT':
+	    $sql = implode(' || ', $args);
+	    break;
+
+	case 'BITAND':
+        $sql = 'lower('.$args[0] . " & " . $args[1].')';
+	    break;
+
+   	case 'BIT_OR':
+	    /*
+	     * By default don't use BIT_OR aggregate, but OR together values in PHP.
+	     */
+   	    return array(GalleryCoreApi::error(ERROR_UNSUPPORTED_OPERATION), null);
+   	    break;
+
+	case 'AS':
+	    $sql = '';
+	    break;
+
+	case 'SUBSTRING':
+            if (count($args) == 2) {
+		$args[2] = 'LENGTH(' . $args[0] . ') - ' . $args[1] . ' + 1';
+	    }
+	    $sql = sprintf('SUBSTR(%s)', implode(', ', $args));
+	    break;
+
+	case 'RAND':
+	    $sql = sprintf('RANDOM(%s)', empty($args) ? '' : $args[0]);
+	    break;
+
+	case 'LIMIT':
+	    $sql = $args[1] . ' LIMIT ' . $args[0];
+	    break;
+
+	case 'CASE':
+	    $sql = array();
+	    while (count($args) > 1) {
+		$sql[] = 'WHEN ' . array_shift($args) . ' THEN ' . array_shift($args);
+	    }
+	    $sql = 'CASE ' . implode(' ', $sql) . ' ELSE ' . $args[0] . ' END';
+	    break;
+
+	case 'LIKE':
+	    $sql = $args[0] . ' LIKE ' . $args[1];
+	    break;
+
+	case 'MULTI_INSERT':
+	    /*
+	     * 0 - table name
+	     * 1 - array of column names
+	     * 2 - number of rows
+	     */
+	    $markers = GalleryUtilities::makeMarkers(sizeof($args[1]));
+	    $rowList = array_fill(0, $args[2], 'SELECT ' . $markers);
+	    $sql = 'INSERT INTO ' . $args[0] . ' (';
+	    $sql .= implode(', ', $args[1]);
+	    $sql .= ') ' . implode(' UNION ALL ', $rowList);
+	    break;
+
+	case 'AVG':
+	    $sql = sprintf('AVG(%s)', $args[0]);
+	    break;
+
+	default:
+	    return array(GalleryCoreApi::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
+					      $functionName . ' ' . implode(' ', $args)), null);
+	}
+
+	return array(null, $sql);
+    }
+
+    /**
+     * Get database version.
+     * @return string version
+     */
+    function getVersion() {
+        if($this->_db) {
+            return $this->getType() . ' ' . $this->_db->GetOne('SELECT sqlite_version(*)');
+        } else {
+            return $this->getType();
+        }
+    }
+
+    /**
+     * @see GalleryStorage::encodeBlob
+     */
+    function encodeBlob($blob) {
+	return base64_encode($blob);
+    }
+
+    /**
+     * @see GalleryStorage::decodeBlob
+     */
+    function decodeBlob($blob) {
+	return base64_decode($blob);
+    }
+
+    /**
+     * @see GalleryStorage::getOptimizeStatements
+     */
+    function _getOptimizeStatements() {
+	return array('VACUUM `%s`;', 'ANALYZE `%s`;');
+    }
+
+}
+?>

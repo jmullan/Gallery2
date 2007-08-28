@@ -26,7 +26,7 @@ if (!empty($_SERVER['SERVER_NAME'])) {
 require_once(dirname(__FILE__) . '/XmlParser.inc');
 
 $output = '';
-foreach (array('mysql', 'postgres', 'oracle', 'db2', 'mssql') as $db) {
+foreach (array('mysql', 'postgres', 'oracle', 'db2', 'mssql', 'sqlite') as $db) {
     $output .= '## ' . $db . "\n";
     $xmlFiles = glob('tmp/dbxml/*.xml');
     if (empty($xmlFiles)) {
@@ -48,6 +48,7 @@ foreach (array('mysql', 'postgres', 'oracle', 'db2', 'mssql') as $db) {
 	$output .= $generator->createSql($root[0], 0, 0, null);
     }
 }
+
 $fd = fopen('schema.tpl', 'w');
 fwrite($fd, $output);
 fclose($fd);
@@ -1476,6 +1477,199 @@ class MSSqlGenerator extends BaseGenerator {
 
     function getDbType() {
 	return 'mssql';
+    }
+}
+
+
+
+class SQLiteGenerator extends BaseGenerator {
+    function SQLiteGenerator() {
+	$this->setColumnDefinitionMap(
+	    array(
+		'INTEGER-' => 'INTEGER',
+		'INTEGER-MEDIUM' => 'INTEGER',
+		'INTEGER-LARGE' => 'INTEGER',
+		'BIT-LARGE' => 'TEXT',
+		'BIT-MEDIUM' => 'TEXT',
+		'STRING-SMALL' => 'TEXT',
+		'STRING-MEDIUM' => 'TEXT',
+		'STRING-LARGE' => 'TEXT',
+		'TEXT-SMALL' => 'TEXT',
+		'TEXT-' => 'TEXT',
+		'TEXT-MEDIUM' => 'TEXT',
+		'TEXT-LARGE' => 'TEXT',
+		'BOOLEAN-' => 'INTEGER',
+		'BOOLEAN-MEDIUM' => 'INTEGER',
+		'TIMESTAMP-' => 'INTEGER'));
+    }
+
+    function columnDefinition($child, $includeNotNull=true, $includeDefault=true) {
+	$output = parent::columnDefinition($child, $includeNotNull, false);
+
+	if ($includeDefault) {
+	    $defaultValue = $this->getDefaultElement($child);
+	    if (isset($defaultValue)) {
+		$output .= " DEFAULT '$defaultValue'";
+	    }
+	}
+
+	return $output;
+    }
+
+    function createSql($node, $index, $lastPeerIndex, $parent) {
+        $output = '';
+
+        $child = $node['child'] = isset($node['child']) ? $node['child'] : array();
+       	switch ($node['name']) {
+        	case 'TABLE':
+        	    /* table-name, schema, column+, (key | index)* */
+        	    $output .= 'CREATE TABLE DB_TABLE_PREFIX' . $child[0]['content'] . "(\n";
+        	    for ($i = 2; $i < count($child); $i++) {
+        		if ($child[$i]['name'] != 'COLUMN') {
+        		    $output .= "\n";
+        		    break;
+        		}
+        		if ($i > 2) {
+        		    $output .= ",\n";
+        		}
+        		$output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
+        		$firstNonColumn = $i + 1;
+        	    }
+        	    $output .= ");\n\n";
+
+        	    for ($i = $firstNonColumn; $i < count($child); $i++) {
+
+        		    $crc = $this->getIndexCrc($child[$i]['child']);
+        		    $output .= 'CREATE INDEX DB_TABLE_PREFIX' . $child[0]['content'] . '_' . $crc .
+        			' ON DB_TABLE_PREFIX' . $child[0]['content'] . "(";
+        		    for ($j = 0; $j < count($child[$i]['child']); $j++) {
+        			$output .= 'DB_COLUMN_PREFIX' . $child[$i]['child'][$j]['content'];
+        			if ($j < count($child[$i]['child']) - 1) {
+        			    $output .= ", ";
+        			}
+        		    }
+        		    $output .= ");\n\n";
+        	    }
+
+        	    /* Schema info */
+        	    $output .= $this->createSql($child[1], 0, 0, $node);
+        	    break;
+
+            case 'CHANGE':
+        	    /* table-name, schema-from, schema-to, (add, alter, remove)+ */
+        	    for ($i = 3; $i < count($child); $i++) {
+        		$output .= $this->createSql($child[$i], $i, count($child) - 1, $node);
+        	    }
+        	    $output .= $this->generateSchemaUpdate($child);
+        	    break;
+
+            case 'ADD':
+        	    /* (column, key, index)+ */
+        	    foreach ($child as $c) {
+            		switch ($c['name']) {
+            		case 'COLUMN':
+            		    /* column-name */
+            		    $output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+            		    $output .= ' ADD DB_COLUMN_PREFIX' . $c['child'][0]['content'];
+            		    $output .= ' ' . $this->columnDefinition($c['child']);
+            		    $output .= ";\n";
+            		    $output .= 'VACUUM DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+            		    $output .= ";\n\n";
+            		    
+            		    break;
+
+            		default:
+            		    /* column-name */
+            		    $output .= 'CREATE INDEX ';
+            		    $nameKey = strtoupper('name_' . $this->getDbType());
+            		    $columns = $c['child'];
+            		    if (isset($c['attrs'][$nameKey])) {
+            			$output .= $c['attrs'][$nameKey];
+            		    } else {
+            			$output .= 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+            			    '_' . $this->getIndexCrc($columns);
+            		    }
+            		    $output .= ' ON ' . 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] . '(';
+            		    for ($i = 0; $i < count($columns); $i++) {
+            			$output .= 'DB_COLUMN_PREFIX' . $columns[$i]['content'];
+            			if ($i < count($columns) - 1) {
+            			    $output .= ', ';
+            			}
+            		    }
+            		    $output .= ')';
+            		    $output .= ";\n\n";
+            		    break;
+                    }
+                }
+                break;
+
+            case 'REMOVE':
+          	    if (!isset($parent['name'])) {
+          		$output .= 'DROP TABLE DB_TABLE_PREFIX' . $node['child'][0]['content'] . ";\n\n";
+          		if ($node['child'][0]['content'] != 'Schema') {
+          		    $output .= "DELETE FROM DB_TABLE_PREFIXSchema WHERE DB_COLUMN_PREFIXname='" .
+          			$node['child'][0]['content'] . "';\n\n";
+          		}
+          	    } else if ($parent['name'] == 'CHANGE') {
+          		/* (column-name, key, index)+ */
+          		for ($i = 0; $i < count($child); $i++) {
+          		    $c = $child[$i];
+          		    switch($c['name']) {
+          		    case 'COLUMN-NAME':
+          			/* column-name */
+          			$output .= 'ALTER TABLE DB_TABLE_PREFIX' . $parent['child'][0]['content'];
+          			$output .= ' DROP COLUMN DB_COLUMN_PREFIX' . $c['content'];
+          			$output .= ";\n\n";
+          			break;
+
+          		    case 'KEY':
+          			if (empty($c['attrs']['PRIMARY'])) {
+          			    $crc = $this->getIndexCrc($c['child']);
+          			    $output .= 'DROP INDEX ' .
+          				$parent['child'][0]['content'] . '_' . $crc . ";\n\n";
+          			} else {
+          			    $output .= 'ALTER TABLE DB_TABLE_PREFIX' .
+          				$parent['child'][0]['content'] . ' DROP CONSTRAINT DB_TABLE_PREFIX'
+          				. $parent['child'][0]['content'] . "_pkey;\n\n";
+          			}
+          			break;
+
+          		    case 'INDEX':
+          			/* column-name */
+          			$output .= 'DROP INDEX ';
+          			$nameKey = strtoupper('name_' . $this->getDbType());
+          			if (isset($c['attrs'][$nameKey])) {
+          			    $output .= $c['attrs'][$nameKey];
+          			} else {
+          			    $output .= 'DB_TABLE_PREFIX' . $parent['child'][0]['content'] .
+          				'_' . $this->getIndexCrc($c['child']);
+          			}
+          			$output .= ";\n\n";
+          			break;
+
+          		    default:
+          			$output .= "5. UNIMPLEMENTED: REMOVE $c[name]\n";
+          		    }
+          		}
+          	    }
+          	    break;
+
+            case 'ALTER':
+                    /* 
+                    * No support for ALTER TABLE ALTER COLUMN in SQLite but
+                    * shoulden't effect anything since columns store any value 
+                    */
+        	    break;
+
+            default:
+	            $output .= parent::createSql($node, $index, $lastPeerIndex, $parent);
+        }
+
+	return $output;
+    }
+
+    function getDbType() {
+	return 'sqlite';
     }
 }
 ?>

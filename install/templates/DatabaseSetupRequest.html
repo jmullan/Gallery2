@@ -10,6 +10,7 @@
 
     <form method="post" action="<?php generateUrl(sprintf('%s?step=%s', INDEX_PHP, $stepNumber)) ?>">
       <table>
+        <thead>
 	<tr>
 	  <td class="label">
 	    <?php print _('Database type:') ?>
@@ -31,6 +32,8 @@
 		var type = sel.options[sel.selectedIndex].value;
 		document.getElementById('dbSchema').style.display =
 		  (type == 'postgres7') ? '' : 'none';
+		document.getElementById('hostSettings').style.display = 
+                  (type == 'pdo_sqlite') ? 'none' : '';
 	      }
 	      // ]]>
 	    </script>
@@ -45,7 +48,8 @@
 	  </td>
 	</tr>
 	<?php endif; ?>
-
+        </thead>
+        <tbody id="hostSettings">
 	<tr>
 	  <td class="label"><?php print _('DB Hostname:') ?></td>
 	  <td>
@@ -108,6 +112,8 @@
 	      value="<?php print $templateData['config']['columnPrefix'] ?>" />
 	  </td>
 	</tr>
+	</tbody>
+	<tfoot>
 	<?php if (!empty($templateData['error']['columnPrefix'])): ?>
 	<tr>
 	  <td colspan="2">
@@ -117,6 +123,7 @@
 	  </td>
 	</tr>
 	<?php endif; ?>
+	</tfoot>
       </table>
     </form>
 

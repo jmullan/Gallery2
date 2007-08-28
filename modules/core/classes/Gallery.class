@@ -447,6 +447,12 @@ class Gallery {
 		$this->_storage = new MSSqlStorage($config);
 		break;
 
+	    case 'pdo_sqlite':
+		GalleryCoreApi::requireOnce(
+			'modules/core/classes/GalleryStorage/SQLiteStorage.class');
+		$this->_storage = new SQLiteStorage($config);
+		break;
+
 	    default:
 		$this->debug('Unknown storage type');
 		$this->debug_r($config);
