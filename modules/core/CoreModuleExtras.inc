@@ -2381,14 +2381,14 @@ class CoreModuleExtras {
 	case '1.2.15':
 	    /* Not used. */
 	case '1.2.16':
- 	    /* Add database export task from the admin maintenance screen */
+	    /* Add database export task from the admin maintenance screen */
 	case '1.2.17':
- 	    /* Store Entities.inc and Maps.inc definitions in the Schema table. */
- 	    $gallery->guaranteeTimeLimit(30);
- 	    /* Remove _maps & _entities parameters from GalleryPluginParameterMap. See r16620 */
+	    /* Store Entities.inc and Maps.inc definitions in the Schema table. */
+	    $gallery->guaranteeTimeLimit(30);
+	    /* Remove _maps & _entities parameters from GalleryPluginParameterMap. See r16620 */
 	    $query = 'DELETE FROM [GalleryPluginParameterMap]
 		       WHERE [::parameterName] in (\'_maps\', \'_entities\')
-		         AND [::pluginType] = \'module\'';
+			 AND [::pluginType] = \'module\'';
 	    $ret = $storage->execute($query);
 	    if ($ret) {
 		return $ret;
@@ -2430,6 +2430,7 @@ class CoreModuleExtras {
 
 	case '1.2.19':
 	    /* Use lightweight event system */
+	case '1.2.20':
 
 	case 'end of upgrade path':
 	    /*
@@ -2763,6 +2764,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.17':
 	case '1.2.18':
 	case '1.2.19':
+	case '1.2.20':
 
 	case 'end of upgrade path':
 	    /*
