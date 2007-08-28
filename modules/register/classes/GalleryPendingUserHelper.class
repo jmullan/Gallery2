@@ -139,6 +139,12 @@ class GalleryPendingUserHelper {
      * Send an email with a confirmation link
      *
      * @param GalleryPendingUser $pendingUser
+     * @param string $tplFile (optional) Path to the template file of the email. Defaults to
+     *                                   'ConfirmationEmail.tpl'. 
+     * @param string $subjectParam (optional) Name of the module parameter to use as subject of the
+     *                                        email. Defaults to 'subject'.
+     * @param int $userIdForLocale (optional) GalleryUser id of the recipient. Used to determine the
+     *                                        locale for the email.
      * @return GalleryStatus a status code
      */
     function sendConfirmationEmail(&$pendingUser,
