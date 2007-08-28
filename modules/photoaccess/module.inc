@@ -61,7 +61,7 @@ class PhotoAccessModule extends GalleryModule {
 	case '0':
 	    /* Register our permission */
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'photoaccess.print',
-						      $gallery->i18n('[photoaccess] Print'));
+						      $gallery->i18n('[photoworks] Print'));
 	    if ($ret) {
 		return $ret;
 	    }
@@ -77,7 +77,7 @@ class PhotoAccessModule extends GalleryModule {
 
 	case '1.0.0':
 	    $ret = GalleryCoreApi::registerPermission($this->getId(), 'photoaccess.print',
-						      $gallery->i18n('[photoaccess] Print'));
+						      $gallery->i18n('[photoworks] Print'));
 	    if ($ret) {
 		return $ret;
 	    }
