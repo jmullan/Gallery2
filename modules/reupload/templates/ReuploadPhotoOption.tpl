@@ -16,6 +16,9 @@
     {g->text text="Upload a new revision of this picture instead of the old one."}
   </p>
 
+  {if $ReuploadPhotoOption.hasLinkedEntity}
+    <b>{g->text text="You cannot reupload this item because it shares its data file with other items."}</b>
+  {else}
   {if $ReuploadPhotoOption.maxFileSize != 0}
   <p class="giDescription">
       {g->text text="<b>Note:</b> The new file cannot be larger than %s. If you want to upload a larger file you must ask your system administrator to allow larger uploads."
@@ -42,6 +45,7 @@
   <div class="gbBlock giError">
     {g->text text="Unable to reupload file. Are you sure the file is of the same type (image, movie) as the original?"}
   </div>
+  {/if}
   {/if}
   {/if}
 </div>
