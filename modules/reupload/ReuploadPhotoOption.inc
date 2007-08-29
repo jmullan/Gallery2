@@ -49,6 +49,15 @@ class ReuploadPhotoOption extends ItemEditOption {
 		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null, null);
 	    }
 
+	    list ($ret, $hasLinkedEntity) = $this->_hasLinkedEntity($item);
+	    if ($ret) {
+		return array($ret, null, null);
+	    }
+	    if ($hasLinkedEntity) {
+		/* UI does not allow this */
+		return array(GalleryCoreApi::error(ERROR_BAD_PARAMETER), null, null);
+	    }
+
 	    list ($ret, $path) = $item->fetchPath();
 	    if ($ret) {
 		return array($ret, null, null);
@@ -172,10 +181,15 @@ class ReuploadPhotoOption extends ItemEditOption {
 						    'arg1' => (int)($maxFileSize / (1024))));
 	}
 
+	list ($ret, $hasLinkedEntity) = $this->_hasLinkedEntity($item);
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
 	$template->setVariable('ReuploadPhotoOption',
 		array('maxFileSize' => $maxFileSize,
-		      'uploadsPermitted' => $fileUploadsBool));
-
+		      'uploadsPermitted' => $fileUploadsBool,
+		      'hasLinkedEntity' => $hasLinkedEntity));
 
 	return array(null, 'modules/reupload/templates/ReuploadPhotoOption.tpl',
 			   'modules_reupload');
@@ -186,6 +200,25 @@ class ReuploadPhotoOption extends ItemEditOption {
      */
     function isAppropriate($item, $thumbnail) {
 	return array(null, GalleryUtilities::isA($item, 'GalleryPhotoItem'));
+    }
+
+    /**
+     * Determine if item is part of a linked(replica) set.
+     * @param GalleryItem $item
+     * @return array GalleryStatus a status code
+     *               bool true if linked
+     * @access private
+     */
+    function _hasLinkedEntity($item) {
+	$hasLink = $item->isLinked();
+	if (!$hasLink) {
+	    list ($ret, $linkedIds) = GalleryCoreApi::fetchEntitiesLinkedTo($item->getId());
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $hasLink = !empty($linkedIds);
+	}
+	return array(null, $hasLink);
     }
 }
 ?>

@@ -574,6 +574,7 @@ class WebDavHelper {
 	if ($ret) {
 	    return $ret;
 	}
+	$depth = trim(GalleryUtilities::strToLower($depth));
 
 	$path = GalleryUtilities::getRequestVariables('path');
 	$path = trim($path, '/');
@@ -591,6 +592,11 @@ class WebDavHelper {
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
 	if ($ret) {
 	    return $ret;
 	}
@@ -718,7 +724,7 @@ class WebDavHelper {
 
 	$files[] = $file;
 
-	if ($depth <= 0) {
+	if (!$item->getCanContainChildren() || $depth != 'infinity' && $depth <= 0) {
 	    return null;
 	}
 
@@ -743,7 +749,9 @@ class WebDavHelper {
 		$childPath = "$path/" . $childPath;
 	    }
 
-	    $ret = WebDavHelper::_propfindFiles($childItem, $childPath, $depth - 1, $files);
+	    $ret = WebDavHelper::_propfindFiles($childItem, $childPath,
+		$depth == 'infinity' ? $depth : $depth - 1,
+		$files);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -824,6 +832,11 @@ class WebDavHelper {
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1313,7 +1326,7 @@ class WebDavHelper {
 	    $error[] = 'form[error][destination][empty]';
 	}
 
-	if (!empty($newParent)) {
+	if (empty($error)) {
 	    $newParentId = $newParent->getId();
 
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($newParentId);
@@ -1326,7 +1339,9 @@ class WebDavHelper {
 	    if (!$canAddAlbum && !$canAddItem) {
 		$error[] = 'form[error][destination][permission]';
 	    }
+	}
 
+	if (empty($error)) {
 	    if (!GalleryUtilities::isA($newParent, 'GalleryAlbumItem')) {
 		/* The view should never let this happen */
 		return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE), null);
@@ -1478,6 +1493,11 @@ class WebDavHelper {
 
 		/* If all errors were permission denied return more specific error */
 		return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
+	    }
+	} else {
+	    $ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.edit');
+	    if ($ret) {
+		return $ret;
 	    }
 	}
 
@@ -1739,6 +1759,15 @@ class WebDavHelper {
 	    if ($ret) {
 		return $ret;
 	    }
+	}
+
+	list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(array($itemId));
+	if ($ret) {
+	    return $ret;
+	}
+	if (empty($permissions[$itemId]['core.edit'])
+		&& empty($permissions[$itemId]['core.delete'])) {
+	    return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	}
 
 	/* Refresh lock */

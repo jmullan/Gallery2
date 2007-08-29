@@ -66,6 +66,18 @@ class WebDavTest extends GalleryTestCase {
 	}
 	$this->_markForCleanup($this->_album);
 
+	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $gallery->getActiveUserId(), 'core.all');
+	if ($ret) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret);
+	}
+
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 	    'test/file');
 	if ($ret) {
@@ -113,6 +125,56 @@ class WebDavTest extends GalleryTestCase {
 	$gallery->setUrlGenerator($this->_urlGenerator);
 
 	$this->_registerTestEventListener('Gallery::Error', new WebDavModule());
+    }
+
+    /**
+     * Same as GalleryTestCase::_becomeGuestUser but also adds the specified permissions for the
+     * test items.
+     *
+     * @param array $permissions (optional) An array of Gallery permission ids.
+     * @return GalleryStatus
+     */
+    function _becomeGuestUserWithPermission($permissions=array()) {
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Set permissions as admin (applyToChildren requires core.changePermissions) */
+	if (!empty($permissions)) {
+	    foreach ($permissions as $permission) {
+		$ret = GalleryCoreApi::addUserPermission(
+		    $this->_album->getId(), $anonymousUserId, $permission, true);
+		if ($ret) {
+		    return $ret;
+		}
+	    }
+	}
+
+	return $this->_becomeGuestUser();
+    }
+
+    /**
+     * Assert a specific error code.
+     *
+     * @param GalleryStatus|null $ret
+     * @param int $errorCode A GalleryStatus error code (constant)
+     * @param string $failMessage (optional) Message to be shown if there's no error at all.
+     * @return unknown
+     */
+    function _assertError($ret, $errorCode, $failMessage='Operation succeeded unexpectedly') {
+	if ($ret) {
+	    if (!($ret->getErrorCode() & $errorCode)) {
+		$this->fail(sprintf('Wrong error code (expected %s)',
+		    GalleryStatus::getErrorCodeConstants($errorCode)));
+		return $ret;
+	    }
+	} else {
+	    $this->fail($failMessage);
+	}
+
+	return null;
     }
 
     function tearDown() {
@@ -178,6 +240,11 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->skip();
 	}
 
+	$ret = $this->_becomeGuestUserWithPermission(array('core.view'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
 
@@ -240,9 +307,142 @@ class WebDavTest extends GalleryTestCase {
 '), split("\r?\n", $output));
     }
 
+    function testPropfindWithoutViewPermission() {
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.edit', 'core.addDataItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:propfind xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
+  <D:prop>
+    <D:creationdate/>
+    <D:displayname/>
+    <D:getlastmodified/>
+    <G:summary/>
+    <G:description/>
+    <G:keywords/>
+  </D:prop>
+</D:propfind>';
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we failed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('', $output, 'output');
+    }
+
+    function testPropfindRecursiveWithoutViewPermission() {
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
+
+	$ret = GalleryCoreApi::removeItemPermissions($this->_subAlbum->getId());
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
+	$_SERVER['HTTP_DEPTH'] = 'infinity';
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $itemPath) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:propfind xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
+  <D:prop>
+    <D:creationdate/>
+  </D:prop>
+</D:propfind>';
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
+	    $this->_headers);
+
+	$path = ltrim($path, '/');
+	$itemPath = ltrim($itemPath, '/');
+
+	/* The sub-album without view permissions shouldn't be listed */
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
+			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
+    <D:href>' . $this->_getHref($path) . '</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:creationdate ns1:dt="dateTime.tz">'
+	    . gmdate('Y-m-d\TH:i:s\Z', $this->_album->getCreationTimestamp())
+	    . '</D:creationdate>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+  <D:response xmlns:G="http://gallery2.org/dav/props/" '
+			. 'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
+    <D:href>' .  $this->_getHref($itemPath) . '</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:creationdate ns1:dt="dateTime.tz">'
+	    . gmdate('Y-m-d\TH:i:s\Z', $this->_item->getCreationTimestamp())
+	    . '</D:creationdate>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+'), split("\r?\n", $output));
+    }
+
     function testProppatch() {
 	if (!function_exists('stream_wrapper_register')) {
 	    return $this->skip();
+	}
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.edit'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
 	}
 
 	/* Use valid inputs */
@@ -311,9 +511,68 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('new keywords', $this->_item->getKeywords());
     }
 
+    function testProppatchWithoutEditPermission() {
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.delete', 'core.addDataItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PROPPATCH';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$summary = $this->_item->getSummary();
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:propertyupdate xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
+  <D:set>
+    <D:prop>
+      <D:displayname>new title</D:displayname>
+      <G:summary>new summary</G:summary>
+      <G:description>new description</G:description>
+      <G:keywords>new keywords</G:keywords>
+    </D:prop>
+  </D:set>
+</D:propertyupdate>';
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('', $output, 'HTTP output');
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($summary, $item->getSummary(), 'item summary changed');
+    }
+
     function testMkcol() {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.addAlbumItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
@@ -354,9 +613,50 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('', $newAlbum->getKeywords());
     }
 
+    function testMkcolWithoutAddAlbumPermission() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.view', 'core.addDataItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'testAlbum-' . rand();
+	$path .= $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	/* Perform the request and verify that we failed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('', $output, 'output');
+
+	list ($ret, $newAlbumId) = GalleryCoreApi::fetchItemIdByPath($path);
+	if ($ret && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    $this->fail('Wrong error code (expected ERROR_MISSING_OBJECT)');
+	    return $this->failWithStatus($ret);
+	}
+    }
+
     function testDelete() {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'DELETE';
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.delete'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
@@ -386,9 +686,48 @@ class WebDavTest extends GalleryTestCase {
 	}
     }
 
+    function testDeleteWithoutDeletePermission() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'DELETE';
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.view', 'core.edit'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('', $output, 'output');
+
+	/* Make sure the album is still there */
+	$ret = $this->_verifyEntity($this->_subAlbum);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
     function testAdd() {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.addDataItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
 	if ($ret) {
@@ -512,10 +851,69 @@ class WebDavTest extends GalleryTestCase {
 	$this->assert($ret, 'HTTP PUT check was not enforced');
     }
 
+    function testPutWithoutAddItemPermission() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	$ret = $this->_becomeGuestUserWithPermission(array('core.addAlbumItem', 'core.view'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$fileSize = $this->_platform->filesize($filePath);
+
+	$pathComponent = basename($filePath);
+	$path .= $pathComponent;
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$_SERVER['CONTENT_LENGTH'] = $fileSize;
+	$_SERVER['CONTENT_TYPE'] = 'foo/bar';
+
+	/*
+	 * Regression: Ensure that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.
+	 * These variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
+
+	/* Perform the request and verify that we failed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals('', $output, 'HTML output');
+
+	list ($ret, $newItemId) = GalleryCoreApi::fetchItemIdByPath($path);
+	if (!$ret || !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+	    $this->fail('Wrong error code (expected ERROR_MISSING_OBJECT)');
+	    if ($ret) {
+		return $this->failWithStatus($ret);
+	    }
+	}
+    }
+
     function testReplace() {
 	global $gallery;
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	/** @todo Don't require core.addDataItem permission */
+	$ret = $this->_becomeGuestUserWithPermission(array('core.edit', 'core.addDataItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
@@ -567,11 +965,127 @@ class WebDavTest extends GalleryTestCase {
 	}
     }
 
+    function testReplaceWithoutEditPermissions() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	/** @todo Don't require core.addDataItem permission */
+	$ret = $this->_becomeGuestUserWithPermission(array('core.addDataItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$mimeType = $this->_item->getMimeType();
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$fileSize = $this->_platform->filesize($filePath);
+
+	$originalItemId = $this->_item->getId();
+	$originalPathComponent = $this->_item->getPathComponent();
+
+	$_SERVER['CONTENT_LENGTH'] = $fileSize;
+	$_SERVER['CONTENT_TYPE'] = 'text/plain';
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
+
+	/* Perform the request and verify that we failed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($mimeType, $this->_item->getMimeType(), 'mimetype changed');
+    }
+
+    function testReplaceLinkedItemFails() {
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	/** @todo Don't require core.addDataItem permission */
+	$ret = $this->_becomeGuestUserWithPermission(array('core.edit', 'core.addDataItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $linkedEntity) = $this->_createLinkedItem($this->_album->getId(), $this->_item);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $path) = $linkedEntity->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$mimeType = $linkedEntity->getMimeType();
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$fileSize = $this->_platform->filesize($filePath);
+
+	$originalItemId = $linkedEntity->getId();
+	$originalPathComponent = $linkedEntity->getPathComponent();
+
+	$_SERVER['CONTENT_LENGTH'] = $fileSize;
+	$_SERVER['CONTENT_TYPE'] = 'text/plain';
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
+
+	/* Perform the request and verify that we failed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $this->_item) = $linkedEntity->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($mimeType, $linkedEntity->getMimeType(), 'mimetype changed');
+    }
+
     /**
      * @todo What does a query-string based WebDAV client send in HTTP_DESTINATION?
      */
     function testMove() {
 	global $gallery;
+
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $gallery->getActiveUserId(), 'core.delete');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $gallery->getActiveUserId(), 'core.addDataItem');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
 
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'MOVE';
@@ -626,15 +1140,284 @@ class WebDavTest extends GalleryTestCase {
 	}
     }
 
+    function testMoveWithoutDeletePermission() {
+	global $gallery;
+
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $gallery->getActiveUserId(), 'core.edit');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $gallery->getActiveUserId(), 'core.addDataItem');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'MOVE';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'testItem-' . rand();
+	$newPath .= $pathComponent;
+
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
+	}
+
+	/* Perform the request and verify that we failed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $pathAfterTest) = $item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($path, $pathAfterTest, 'item path');
+
+	/* Make the the transaction visible to the test framework (tearDown) */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testMoveWithoutAddPermission() {
+	global $gallery;
+
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $gallery->getActiveUserId(), 'core.delete');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $gallery->getActiveUserId(), 'core.addAlbumItem');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'MOVE';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$pathComponent = 'testItem-' . rand();
+	$newPath .= $pathComponent;
+
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
+	}
+
+	/* Perform the request and verify that we failed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $pathAfterTest) = $item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$this->assertEquals($path, $pathAfterTest, 'item path');
+
+	/* Make the the transaction visible to the test framework (tearDown) */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testRename() {
+	global $gallery;
+
+	$ret = $this->_becomeGuestUser();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $gallery->getActiveUserId(), 'core.edit');
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'MOVE';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$newPath = $path . '-renamed';
+
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
+	}
+
+	/* Perform the request and verify that we succeeded */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 201 Created'),
+			    $this->_headers);
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($newPath);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($this->_item->getId(), $itemId);
+
+	/* Make the the transaction visible to the test framework (tearDown) */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
+    function testRenameWithoutEditPermission() {
+	global $gallery;
+
+	/* Become a user without core.edit permission */
+	$ret = $this->_becomeGuestUserWithPermission(
+	    array('core.view', 'core.addDataItem', 'core.delete', 'core.addAlbumItem'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$_SERVER['REQUEST_METHOD'] = 'MOVE';
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$newPath = $path . '-renamed';
+
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
+	}
+
+	/* Perform the request and verify that we failed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	$ret = $this->_assertError($ret, ERROR_PERMISSION_DENIED);
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals('', $output);
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+	list ($ret, $pathAfterTest) = $item->fetchLogicalPath();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	$this->assertEquals($path, $pathAfterTest, 'item path');
+
+	/* Make the the transaction visible to the test framework (tearDown) */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->checkPoint();
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+    }
+
     /**
      * Helper function for lock tests.
-     * @param string $path resource to lock
+     * @param string $path (optional) resource to lock. Defaults to test item.
      * @return array object GalleryStatus a status code
      *               array new WebDAV lock (scope, type, depth, owner, expires, token, path)
      */
-    function _testLock($path) {
+    function _testLock($path=null) {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'LOCK';
+
+	if (!isset($path)) {
+	    list ($ret, $path) = $this->_item->fetchLogicalPath();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	}
 
 	GalleryUtilities::putRequestVariable('path', $path);
 
@@ -730,12 +1513,12 @@ class WebDavTest extends GalleryTestCase {
 	    return $this->skip();
 	}
 
-	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	$ret = $this->_becomeGuestUserWithPermission(array('core.edit'));
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
 
-	list ($ret, $lock) = $this->_testLock($path);
+	list ($ret, $lock) = $this->_testLock();
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
@@ -895,6 +1678,17 @@ class WebDavTest extends GalleryTestCase {
 	if ($ret) {
 	    return $this->failWithStatus($ret);
 	}
+    }
+
+    function testLockWithoutPermission() {
+	/* Require edit or delete permission for locking */
+	$ret = $this->_becomeGuestUserWithPermission(array('core.view'));
+	if ($ret) {
+	    return $this->failWithStatus($ret);
+	}
+
+	list ($ret, $ignored) = $this->_testLock();
+	return $this->_assertError($ret, ERROR_PERMISSION_DENIED);
     }
 
     function testMissingObject() {
