@@ -724,7 +724,7 @@ class WebDavHelper {
 
 	$files[] = $file;
 
-	if (!$item->getCanContainChildren() || $depth <= 0 && !$depth == 'infinity') {
+	if (!$item->getCanContainChildren() || $depth != 'infinity' && $depth <= 0) {
 	    return null;
 	}
 
