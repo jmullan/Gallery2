@@ -959,7 +959,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals($originalPathComponent, $this->_item->getPathComponent());
     }
 
-    function testReplaceWithoutEditermissions() {
+    function testReplaceWithoutEditPermissions() {
 	/* Use valid inputs */
 	$_SERVER['REQUEST_METHOD'] = 'PUT';
 
@@ -1368,7 +1368,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->assertEquals($path, $pathAfterTest, 'item path');
 
-    	/* Make the the transaction visible to the test framework (tearDown) */
+	/* Make the the transaction visible to the test framework (tearDown) */
 	$storage =& $gallery->getStorage();
 	$ret = $storage->checkPoint();
 	if ($ret) {
