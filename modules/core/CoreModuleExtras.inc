@@ -64,6 +64,7 @@ class CoreModuleExtras {
 	}
 	$gallery->debug('Old version: ' . $currentVersion
 			. '   New version: ' . $module->getVersion());
+	$currentExactVersion = $currentVersion;
 	/* Enable upgrade from any patch release of earlier versions */
 	$currentVersion = preg_replace('/^(1\.[0-2]\.0)\.\d+$/', '$1.x', $currentVersion);
 
@@ -86,8 +87,10 @@ class CoreModuleExtras {
 	/*
 	 * Store Entities.inc and Maps.inc definitions in the Schema table. Do this upgrade before
 	 * the general upgrade code to ensure that all map methods work for the other upgrade code.
+	 * (but skip if upgrading from 1.2.0.4 or newer 1.2.0.x, as this upgrade was done in 2.2.2)
 	 */
-	if (version_compare($currentVersion, '1.2.18', '<')) {
+	if (version_compare($currentVersion, '1.2.18', '<') && !($currentVersion == '1.2.0.x'
+		    && version_compare($currentExactVersion, '1.2.0.4', '>='))) {
 	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0', 'Schema:1.1'));
 	    if ($ret) {
 		return $ret;
@@ -2306,23 +2309,28 @@ class CoreModuleExtras {
 	    /*
 	     * Add a new column to the Schema table to store the creation sql for each table. This
 	     * change is to prepare the way for database export functionality.
-	     * If upgrading from Gallery 2.2.2 the column is already populated, but ok to repeat.
 	     */
 	    $gallery->guaranteeTimeLimit(30);
 
 	    /* configureStore for Schema:1.0 removed; see code above switch ($currentVersion) */
 
-	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
-	    if ($ret) {
-		return $ret;
-	    }
+	    if ($currentVersion == '1.2.0.x'
+		    && version_compare($currentExactVersion, '1.2.0.2', '>=')) {
+		/* Skip this for 1.2.0.2 or newer 1.2.0.x, as this upgrade was done in 2.2.2 */
+		$modules = array();
+	    } else {
+		list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
+		if ($ret) {
+		    return $ret;
+		}
 
-	    $storageExtras =& $storage->_getExtras();
+		$storageExtras =& $storage->_getExtras();
 
-	    /* Load all table versions */
-	    list ($ret, $tableVersions) = $storageExtras->_loadTableVersions();
-	    if ($ret) {
-		return $ret;
+		/* Load all table versions */
+		list ($ret, $tableVersions) = $storageExtras->_loadTableVersions();
+		if ($ret) {
+		    return $ret;
+		}
 	    }
 
 	    $count = 1;
