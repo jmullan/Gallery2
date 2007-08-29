@@ -2310,10 +2310,7 @@ class CoreModuleExtras {
 	     */
 	    $gallery->guaranteeTimeLimit(30);
 
-	    $ret = $storage->configureStore($module->getId(), array('Schema:1.0'));
-	    if ($ret) {
-		return $ret;
-	    }
+	    /* configureStore for Schema:1.0 removed; see code above switch ($currentVersion) */
 
 	    list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module', true);
 	    if ($ret) {
