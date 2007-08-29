@@ -1230,7 +1230,8 @@ class GalleryStorage {
     }
 
     /**
-     * Retrieve the entity or map information from the plugin parameter table
+     * Retrieve the entity or map information from the Schema table. If tryAllModules is false
+     * then only consider plugins that are active.
      * @param string $type type of table to retrieve (map | entity)
      * @param boolean $tryAllModules try all modules, not just active ones
      * @return array GalleryStatus a status code,
