@@ -81,6 +81,11 @@ class ItemAddWebDav extends ItemAddPlugin {
 	    return array($ret, null, null);
 	}
 
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
+	if ($ret) {
+	    return array($ret, null, null);
+	}
+
 	list ($ret, $error, $status) = $this->_replaceItem(
 	    $item, $webDavOptions, $stream, $mimeType, $path, $itemId);
 	if ($ret) {
@@ -171,6 +176,12 @@ class ItemAddWebDav extends ItemAddPlugin {
 	if ($ret) {
 	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret, null, null);
+	}
+
+	list ($ret, $hasLink) = $this->_hasLinkedEntity($item);
+	if ($ret || $hasLink) {
+	    GalleryCoreApi::releaseLocks($lockIds);
+	    return array($ret ? $ret : GalleryCoreApi::error(ERROR_PERMISSION_DENIED), null, null);
 	}
 
 	/* Replace the file content */
@@ -328,6 +339,25 @@ class ItemAddWebDav extends ItemAddPlugin {
 	}
 
 	return array(null, $module->translate('WebDAV'));
+    }
+
+    /**
+     * Determine if item is part of a linked(replica) set.
+     * @param GalleryItem $item
+     * @return array GalleryStatus a status code,
+     *               bool true if linked
+     * @access private
+     */
+    function _hasLinkedEntity($item) {
+	$hasLink = $item->isLinked();
+	if (!$hasLink) {
+	    list ($ret, $linkedIds) = GalleryCoreApi::fetchEntitiesLinkedTo($item->getId());
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $hasLink = !empty($linkedIds);
+	}
+	return array(null, $hasLink);
     }
 }
 ?>

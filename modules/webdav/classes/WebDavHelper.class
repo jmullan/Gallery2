@@ -595,6 +595,11 @@ class WebDavHelper {
 	    return $ret;
 	}
 
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$files = array();
 	$ret = WebDavHelper::_propfindFiles($item, $path, $depth, $files);
 	if ($ret) {
@@ -824,6 +829,11 @@ class WebDavHelper {
 	}
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId, 'GalleryItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret) {
 	    return $ret;
 	}
@@ -1313,7 +1323,7 @@ class WebDavHelper {
 	    $error[] = 'form[error][destination][empty]';
 	}
 
-	if (!empty($newParent)) {
+	if (empty($error)) {
 	    $newParentId = $newParent->getId();
 
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($newParentId);
@@ -1326,7 +1336,9 @@ class WebDavHelper {
 	    if (!$canAddAlbum && !$canAddItem) {
 		$error[] = 'form[error][destination][permission]';
 	    }
+	}
 
+	if (empty($error)) {
 	    if (!GalleryUtilities::isA($newParent, 'GalleryAlbumItem')) {
 		/* The view should never let this happen */
 		return array(GalleryCoreApi::error(ERROR_BAD_DATA_TYPE), null);
@@ -1478,6 +1490,11 @@ class WebDavHelper {
 
 		/* If all errors were permission denied return more specific error */
 		return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
+	    }
+	} else {
+	    $ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.edit');
+	    if ($ret) {
+		return $ret;
 	    }
 	}
 
@@ -1739,6 +1756,15 @@ class WebDavHelper {
 	    if ($ret) {
 		return $ret;
 	    }
+	}
+
+	list ($ret, $permissions) = GalleryCoreApi::fetchPermissionsForItems(array($itemId));
+	if ($ret) {
+	    return $ret;
+	}
+	if (empty($permissions[$itemId]['core.edit'])
+		&& empty($permissions[$itemId]['core.delete'])) {
+	    return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	}
 
 	/* Refresh lock */
