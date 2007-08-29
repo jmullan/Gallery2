@@ -176,7 +176,7 @@ class ImageBlockTest extends GalleryTestCase {
 	return array(null, $item, $thumb);
     }
 
-    function _addDerivative(&$item, &$src, $derivativeType, $size) {
+    function _addDerivative(&$item, &$src, $derivativeType, $size, $forceSize=false) {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $src->getEntityType());
 	if ($ret) {
@@ -196,7 +196,10 @@ class ImageBlockTest extends GalleryTestCase {
 	    /* Set scaled size: */
 	    $w = $src->getWidth();
 	    $h = $src->getHeight();
-	    if ($w <= $size && $h <= $size &&
+	    if ($forceSize) {
+		$derivative->setWidth($size);
+		$derivative->setHeight($size);
+	    } else if ($w <= $size && $h <= $size &&
 		    $derivativeType==DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 		$derivative->setWidth($w);
 		$derivative->setHeight($h);
@@ -447,6 +450,56 @@ class ImageBlockTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
 	GalleryUtilities::putRequestVariable('itemId', $this->_photo3->getId());
 	GalleryUtilities::putRequestVariable('exactSize', '175');
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	$external->setTemplate($template);
+	$ret = $external->renderImmediate(array(), array());
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals('gallery:modules/imageblock/templates/ImageBlock.tpl',
+			    $template->getPath());
+	$data = $template->_data;
+	$this->assertEquals(1, count($data['ImageBlockData']['blocks']), 'One block');
+	$this->assertBlock($data['ImageBlockData']['blocks'][0]);
+	$this->assertEquals($resized->getId(),
+			    $data['ImageBlockData']['blocks'][0]['deriv']['id'],
+			    'Derivative did not match resized');
+    }
+
+    function testExternalImageBlockExactSizeForAlbumItem() {
+	/* See bug 1730427 */
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
+	if ($ret) {
+	    return $ret;
+	}
+
+	/* Precondition: Check for the case where the album's thumb has a chain of source items */
+	$albumId = $this->_album->getId();
+	list ($ret, $thumbs) = GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $thumbSource) = GalleryCoreApi::loadEntitiesById(
+	    $thumbs[$albumId]->getDerivativeSourceId(), array('GalleryDerivative'));
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $sourceItem) = GalleryCoreApi::loadEntitiesById(
+	    $thumbSource->getDerivativeSourceId(), array('GalleryPhotoItem'));
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $resized) = $this->_addDerivative(
+	    $this->_photo, $this->_photo, DERIVATIVE_TYPE_IMAGE_RESIZE, 200, true);
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
+	GalleryUtilities::putRequestVariable('itemId', $albumId);
+	GalleryUtilities::putRequestVariable('exactSize', '198');
 
 	$template = new ImageBlockDummyGalleryTemplate();
 	$external->setTemplate($template);

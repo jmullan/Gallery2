@@ -333,10 +333,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		}
 		if (isset($thumbnail[$id])) {
 		    $image = $thumbnail[$id];
+		    $derivativeParentId = $item->getId();
 
-		    if (($fullSize || $maxSize) &&
-			    GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-			/* Fullsize for album highlight.. get preferred derivative source */
+		    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+			/* Find derivative source for album thumbnail */
 			$source = $image;
 			while (GalleryUtilities::isA($source, 'GalleryDerivative') &&
 			       $source->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
@@ -348,41 +348,51 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			    }
 			}
 
-			list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission(
-			    (GalleryUtilities::isA($source, 'GalleryDerivative') ?
-			     $source->getParentId() : $source->getId()),
-			    'core.viewSource');
-			if ($ret) {
-			    return array($ret, null);
-			}
+			$derivativeParentId = GalleryUtilities::isA($source, 'GalleryDerivative')
+			    ? $source->getParentId() : $source->getId();
 
-			if ($hasPermission) {
-			    $image = $source;
-			} else {
-			    if ($fullSize) {
-				/* Ignore permission error.. just don't add a block */
-				continue;
+			if ($fullSize || $maxSize) {
+			    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission(
+				$derivativeParentId, 'core.viewSource');
+			    if ($ret) {
+				return array($ret, null);
 			    }
 
-			    /*
-			     * We can't use this preferred because we don't have permissions
-			     * for it.  But we may still be able to use the thumbnail.
-			     */
-			    $image = $thumbnail[$id];
+			    if ($hasPermission) {
+				$image = $source;
+			    } else {
+				if ($fullSize) {
+				    /* Ignore permission error.. just don't add a block */
+				    continue;
+				}
+
+				/*
+				 * We can't use this preferred because we don't have permissions
+				 * for it.  But we may still be able to use the thumbnail.
+				 */
+				$image = $thumbnail[$id];
+			    }
 			}
 		    }
 
 		    if ($maxSize && !$fullSize) {
 			/* Get the preferred item object */
 			if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-			    list ($ret, $preferred) =
-				GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
+			    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission(
+				$derivativeParentId, 'core.viewSource');
 			    if ($ret) {
 				return array($ret, null);
 			    }
 
-			    /* Fetch resized images for size comparisons */
-			    $image = isset($preferred[$id]) ? $preferred[$id] : $item;
+			    if ($hasPermission) {
+				list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(
+				    array($derivativeParentId));
+				if ($ret) {
+				    return array($ret, null);
+				}
+
+				$image = isset($preferred[$id]) ? $preferred[$id] : $item;
+			    }
 			}
 
 			/* Fetch thumbnail for size comparison */
@@ -390,7 +400,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 			    $thumb = $thumbnail[$id];
 			}
 
-			if ($thumb->getWidth() >= $maxSize || $thumb->getHeight() >= $maxSize) {
+			if (isset($thumb) && ($thumb->getWidth() >= $maxSize
+				|| $thumb->getHeight() >= $maxSize)) {
 			    $image = $thumb;
 			} else {
 			    /*
@@ -417,10 +428,18 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 						     ($thumb->getWidth() - $maxSize));
 
 			    /* Get the list of resizes */
-			    list ($ret, $resizes) =
-				GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
+			    $resizes = array();
+			    list ($ret, $hasResizePermission) = GalleryCoreApi::hasItemPermission(
+				$derivativeParentId, 'core.viewResizes');
 			    if ($ret) {
 				return array($ret, null);
+			    }
+			    if ($hasResizePermission) {
+				list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(
+				    array($derivativeParentId));
+				if ($ret) {
+				    return array($ret, null);
+				}
 			    }
 
 			    if (!empty($resizes)) {
