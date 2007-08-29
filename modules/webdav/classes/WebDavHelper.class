@@ -574,6 +574,7 @@ class WebDavHelper {
 	if ($ret) {
 	    return $ret;
 	}
+	$depth = trim(GalleryUtilities::strToLower($depth));
 
 	$path = GalleryUtilities::getRequestVariables('path');
 	$path = trim($path, '/');
@@ -723,7 +724,7 @@ class WebDavHelper {
 
 	$files[] = $file;
 
-	if ($depth <= 0) {
+	if (!$item->getCanContainChildren() || $depth <= 0 && !$depth == 'infinity') {
 	    return null;
 	}
 
@@ -748,7 +749,9 @@ class WebDavHelper {
 		$childPath = "$path/" . $childPath;
 	    }
 
-	    $ret = WebDavHelper::_propfindFiles($childItem, $childPath, $depth - 1, $files);
+	    $ret = WebDavHelper::_propfindFiles($childItem, $childPath,
+		$depth == 'infinity' ? $depth : $depth - 1,
+		$files);
 	    if ($ret) {
 		return $ret;
 	    }
