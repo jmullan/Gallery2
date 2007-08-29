@@ -2212,6 +2212,8 @@ class CoreModuleExtras {
 	    /* 2.2.2 Bugfix Release - Not used */
 	case '1.2.0.3':
 	    /* 2.2.2 Bugfix Release */
+	case '1.2.0.4':
+	    /* 2.2.3 Security Release */
 
 	    /* Store Entities.inc and Maps.inc definitions in the Schema table. */
  	    $gallery->guaranteeTimeLimit(30);
@@ -2574,6 +2576,7 @@ if (!isset($gallery) || !method_exists($gallery, \'setConfig\')) {
 	case '1.2.0.1':
 	case '1.2.0.2':
 	case '1.2.0.3':
+	case '1.2.0.4':
 
 	case 'end of upgrade path':
 	    /*
