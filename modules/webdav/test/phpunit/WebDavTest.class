@@ -200,13 +200,17 @@ class WebDavTest extends GalleryTestCase {
 	}
     }
 
-    function _getHref($path) {
+    function _getHref($path, $addController=true) {
 	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	if (GalleryUtilities::isA($this->_urlGenerator, 'PathInfoUrlGenerator')) {
+	    return '/gallery2/main.php/w/' . $path;
+	} else if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
 	    return '/gallery2/w/' . $path;
 	}
 
-	return '/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_path=' . urlencode($path);
+	return $addController
+	    ? '/gallery2/main.php?g2_controller=webdav.WebDav&amp;g2_path=' . urlencode($path)
+	    : '/gallery2/main.php/' . $path;
     }
 
     function testOptions() {
@@ -1095,11 +1099,7 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'testItem-' . rand();
 	$newPath .= $pathComponent;
 
-	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com' . $this->_getHref($newPath, false);
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -1166,11 +1166,7 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'testItem-' . rand();
 	$newPath .= $pathComponent;
 
-	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com' . $this->_getHref($newPath, false);
 
 	/* Perform the request and verify that we failed */
 	ob_start();
@@ -1238,11 +1234,7 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'testItem-' . rand();
 	$newPath .= $pathComponent;
 
-	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com' . $this->_getHref($newPath, false);
 
 	/* Perform the request and verify that we failed */
 	ob_start();
@@ -1299,11 +1291,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$newPath = $path . '-renamed';
 
-	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com' . $this->_getHref($newPath, false);
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
@@ -1355,11 +1343,7 @@ class WebDavTest extends GalleryTestCase {
 
 	$newPath = $path . '-renamed';
 
-	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com' . $this->_getHref($newPath, false);
 
 	/* Perform the request and verify that we failed */
 	ob_start();
@@ -1813,11 +1797,7 @@ class WebDavTest extends GalleryTestCase {
 	$pathComponent = 'The!Quick$Brown#Fox';
 	$newPath .= $pathComponent;
 
-	$_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/main.php/' . $newPath;
-	/* Assuming that the WebDAV rewrite rules are enabled */
-	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
-	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w/' . $newPath;
-	}
+	$_SERVER['HTTP_DESTINATION'] = 'http://example.com' . $this->_getHref($newPath, false);
 
 	/* Perform the request and verify that we succeeded */
 	ob_start();
