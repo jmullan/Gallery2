@@ -561,6 +561,10 @@ class RegisterDummyPlatform {
     function fclose($handle) {
 	return $this->_platform->fclose($handle);
     }
+
+    function flock($handle, $operation, &$wouldblock) {
+	return $this->_platform->flock($handle, $operation, $wouldblock);
+    }
 }
 
 
