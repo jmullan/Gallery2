@@ -167,7 +167,8 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	    'GalleryTest 2');
 	$this->_platform->setReply('getDirectorySeparator', array(), '/');
 	$this->_platform->setReply('file_exists', array('fuzzy' => '{.*GalleryTest 2}'), false);
-	$this->_platform->setReply('mkdir', array('fuzzy' => '{.*GalleryTest 2}', '0755'), true);
+	$this->_platform->setReply('mkdir', array('fuzzy' => '{.*GalleryTest 2}',
+		    'fuzzy2' => '{\d+}'), true);
 
 	/* Image creation */
 	$testImages =
@@ -190,7 +191,13 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	$this->_platform->setReply('unlink', array('/tmp'), true);
 
 	/* Perform the request and verify that we succeeded */
-	list ($error, $status) = $this->handleRequest($this->_temporaryAlbum);
+	$results = $this->handleRequest($this->_temporaryAlbum);
+	if (count($results) == 2) {
+	    list ($error, $status) = $results;
+	} else {
+	    $this->fail('unexpected results: ' . print_r($results, true));
+	    return;
+	}
 	$i = 0;
 
 	/* We don't know the ids, but we can verify everything else */
@@ -297,7 +304,13 @@ class ItemAddFromPicasaTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[set][description]', 0);
 
 	/* Perform the request and verify that we succeeded */
-	list ($error, $status) = $this->handleRequest($this->_temporaryAlbum);
+	$results = $this->handleRequest($this->_temporaryAlbum);
+	if (count($results) == 2) {
+	    list ($error, $status) = $results;
+	} else {
+	    $this->fail('unexpected results: ' . print_r($results, true));
+	    return;
+	}
 	$i = 0;
 
 	$this->assertEquals(array(), $status, 'count of imported items');

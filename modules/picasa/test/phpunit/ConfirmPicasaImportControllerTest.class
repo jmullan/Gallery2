@@ -200,7 +200,8 @@ class ConfirmPicasaImportControllerTest extends GalleryControllerTestCase {
 	    'GalleryTest 2');
 	$this->_platform->setReply('getDirectorySeparator', array(), '/');
 	$this->_platform->setReply('file_exists', array('fuzzy' => '{.*GalleryTest 2}'), false);
-	$this->_platform->setReply('mkdir', array('fuzzy' => '{.*GalleryTest 2}', '0755'), true);
+	$this->_platform->setReply('mkdir', array('fuzzy' => '{.*GalleryTest 2}',
+		    'fuzzy2' => '{\d+}'), true);
 
 	/* Image creation */
 	$testImages = array('ajipankachile5.jpg0', 'californiadriedchile5.jpg0',
