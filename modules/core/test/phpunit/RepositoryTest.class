@@ -744,11 +744,11 @@ class RepositoryTest extends GalleryTestCase {
 	/* dirname('/cache/') returns \ on Windows. */
 	$platform->setReply('file_exists', array($slash), true);
 	$platform->setReply('is_dir', array($slash), true);
-	$platform->setReply('mkdir', array('/cache/', 755), true);
+	$platform->setReply('mkdir', array('/cache/', 'fuzzy' => '{\d+}'), true);
 	$platform->setReply('is_dir', array('/cache/modules'), false);
-	$platform->setReply('mkdir', array('/cache/modules', 755), true);
+	$platform->setReply('mkdir', array('/cache/modules', 'fuzzy' => '{\d+}'), true);
 	$platform->setReply('is_dir', array('/cache/themes'), false);
-	$platform->setReply('mkdir', array('/cache/themes', 755), true);
+	$platform->setReply('mkdir', array('/cache/themes', 'fuzzy' => '{\d+}'), true);
 	list ($isSetUp, $message) = $repository->createPluginsDirectory();
 	$this->assert($isSetUp, $message);
 
