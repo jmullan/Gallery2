@@ -33,6 +33,11 @@ class SQLiteStorage extends GalleryStorage {
 
     function SQLiteStorage($config) {
 	$this->GalleryStorage($config);
+	/**
+	 * SQLite supports transactions, but they seem to hang on some pages and some select
+	 * statements seem to hang too.
+	 * @todo Research these issues and see if we can enable transactions for SQLite too.
+	 */
 	$this->_isTransactional = false;
     }
 
