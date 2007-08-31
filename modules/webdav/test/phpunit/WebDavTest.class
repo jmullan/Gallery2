@@ -1655,6 +1655,10 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testLockWithoutPermission() {
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
+
 	/* Require edit or delete permission for locking */
 	$ret = $this->_becomeGuestUserWithPermission(array('core.view'));
 	if ($ret) {
