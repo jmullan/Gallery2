@@ -1392,7 +1392,8 @@ class GalleryStorageExtras /* the other half of GalleryStorage */ {
 	    }
 	}
 
-	return null;
+	/* Commit changes */
+	return $this->_gs->checkPoint();
     }
 
     /**
