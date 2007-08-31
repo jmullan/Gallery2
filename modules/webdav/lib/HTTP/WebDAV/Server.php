@@ -527,7 +527,12 @@ class HTTP_WebDAV_Server
             $options['depth'] = $_SERVER['HTTP_DEPTH'];
         }
 
-        // analyze request payload
+        $options['namespaces'] = array();
+
+        // Microsoft needs this special namespace for date and time values
+        $options['namespaces'][HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE] = 'T';
+
+        // analyze request body
         require_once(dirname(__FILE__) . '/Tools/_parse_propfind.php');
         $parser = new _parse_propfind($this->openRequestBody());
         if (!$parser->success) {
@@ -574,13 +579,6 @@ class HTTP_WebDAV_Server
 
             $response['propstat'] = array();
 
-            // collect namespaces here
-            $response['namespaces'] = array();
-
-            // Microsoft needs this special namespace for date and time values
-            $response['namespaces'][HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE] =
-                'ns' . count($response['namespaces']);
-
             // $options['props'] is guaranteed to be set.  handle empty array
             // here.
             if (is_array($options['props'])) {
@@ -597,16 +595,16 @@ class HTTP_WebDAV_Server
                     $response['propstat'][$status][] = $prop;
 
                     // namespace handling
-                    if (empty($prop['ns']) || // empty namespace
-                            $prop['ns'] == 'DAV:' || // default namespace
-                            !empty($response['namespaces'][$prop['ns']])) { // already known
+                    if (empty($prop['ns'])
+                            || !empty($options['namespaces'][$prop['ns']])) {
                         continue;
                     }
 
                     // register namespace
-                    $response['namespaces'][$prop['ns']] = 'ns' . count($response['namespaces']);
+                    $options['namespaces'][$prop['ns']] =
+                        'ns' . count($options['namespaces']);
                 }
-            } else if (is_array($file['props'])) {
+            } else if (!empty($file['props']) && is_array($file['props'])) {
 
                 // loop over all returned properties
                 foreach ($file['props'] as $prop) {
@@ -624,17 +622,16 @@ class HTTP_WebDAV_Server
                     }
 
                     $response['propstat'][$status][] = $prop;
-                        unset($prop['value']);
 
                     // namespace handling
-                    if (empty($prop['ns']) || // empty namespace
-                            $prop['ns'] == 'DAV:' || // default namespace
-                            !empty($response['namespaces'][$prop['ns']])) { // already known
+                    if (empty($prop['ns'])
+                            || !empty($options['namespaces'][$prop['ns']])) {
                         continue;
                     }
 
                     // register namespace
-                    $response['namespaces'][$prop['ns']] = 'ns' . count($response['namespaces']);
+                    $options['namespaces'][$prop['ns']] =
+                        'ns' . count($options['namespaces']);
                 }
             }
 
@@ -687,6 +684,12 @@ class HTTP_WebDAV_Server
         $options = array();
         $options['path'] = $this->path;
 
+        $options['namespaces'] = array();
+
+        // Microsoft needs this special namespace for date and time values
+        $options['namespaces'][HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE] = 'T';
+
+        // analyze request body
         require_once(dirname(__FILE__) . '/Tools/_parse_proppatch.php');
         $parser = new _parse_proppatch($this->openRequestBody());
         if (!$parser->success) {
@@ -730,41 +733,30 @@ class HTTP_WebDAV_Server
 
         $response['propstat'] = array();
 
-        // collect namespaces here
-        $response['namespaces'] = array();
-        if (!empty($options['namespaces'])) {
-            $response['namespaces'] = $options['namespaces'];
-        }
+        // loop over all requested properties
+        foreach ($options['props'] as $reqprop) {
+            $status = '200 OK';
+            $prop = $this->getProp($reqprop, $file, $options);
 
-        if (!empty($options['props']) && is_array($options['props'])) {
-            foreach ($options['props'] as $prop) {
-                $status = '200 OK';
-                if (!empty($prop['status'])) {
-                    $status = $prop['status'];
-                }
-
-                if (empty($response['propstat'][$status])) {
-                    $response['propstat'][$status] = array();
-                }
-
-                $response['propstat'][$status][] = $prop;
-
-                // namespace handling
-                if (empty($prop['ns']) || // empty namespace
-                        $prop['ns'] == 'DAV:' || // default namespace
-                        !empty($response['namespaces'][$prop['ns']])) { // already known
-                    continue;
-                }
-
-                // register namespace
-                $response['namespaces'][$prop['ns']] = 'ns' . count($response['namespaces']);
+            if (!empty($prop['status'])) {
+                $status = $prop['status'];
             }
+
+            $response['propstat'][$status][] = $prop;
+
+            // namespace handling
+            if (empty($prop['ns'])
+                    || !empty($options['namespaces'][$prop['ns']])) {
+                continue;
+            }
+
+            // register namespace
+            $options['namespaces'][$prop['ns']] =
+                'ns' . count($options['namespaces']);
         }
 
-        $response['responsedescription'] = $responsedescription;
-
-        if (!empty($options['status'])) {
-            $response['status'] = $options['status'];
+        if (!empty($file['status'])) {
+            $response['status'] = $file['status'];
         }
 
         $this->multistatusResponseHelper($options, array($response));
@@ -1528,7 +1520,9 @@ class HTTP_WebDAV_Server
             $options['timeout'] = explode(',', $_SERVER['HTTP_TIMEOUT']);
         }
 
-        // extract lock request information from request XML payload
+        $options['namespaces'] = array();
+
+        // analyze request body
         require_once(dirname(__FILE__) . '/Tools/_parse_lockinfo.php');
         $parser = new _parse_lockinfo($this->openRequestBody());
         if (!$parser->success) {
@@ -1536,7 +1530,6 @@ class HTTP_WebDAV_Server
             return;
         }
 
-        // new lock
         $options['scope'] = $parser->lockscope;
         $options['type']  = $parser->locktype;
         $options['owner'] = $parser->owner;
@@ -1731,6 +1724,7 @@ class HTTP_WebDAV_Server
 
         // ...and body
         $options['namespaces']['DAV:'] = 'D';
+	asort($options['namespaces']);
 
         $namespaces = '';
         foreach ($options['namespaces'] as $namespace => $prefix) {
@@ -1741,14 +1735,7 @@ class HTTP_WebDAV_Server
         echo "<D:multistatus$namespaces>\n";
 
         foreach ($responses as $response) {
-
-            $namespaces = '';
-            if (!empty($response['namespaces'])) {
-                foreach ($response['namespaces'] as $namespace => $prefix) {
-                    $namespaces .= " xmlns:$prefix=\"$namespace\"";
-                }
-            }
-            echo "  <D:response$namespaces>\n";
+            echo "  <D:response>\n";
 
             // print href
             if (empty($response['href'])) {
@@ -1783,7 +1770,7 @@ class HTTP_WebDAV_Server
                             }
 
                             if (!empty($prop['ns'])) {
-                                echo '        <' . $response['namespaces'][$prop['ns']] . ":$prop[name]/>\n";
+                                echo '        <' . $options['namespaces'][$prop['ns']] . ":$prop[name]/>\n";
                                 continue;
                             }
 
@@ -1796,11 +1783,11 @@ class HTTP_WebDAV_Server
 
                             switch ($prop['name']) {
                             case 'creationdate':
-                                echo '        <D:creationdate ' . $response['namespaces'][HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE] . ':dt="dateTime.tz">' . gmdate('Y-m-d\TH:i:s\Z', $prop['value']) . "</D:creationdate>\n";
+                                echo '        <D:creationdate ' . $options['namespaces'][HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE] . ':dt="dateTime.tz">' . gmdate('Y-m-d\TH:i:s\Z', $prop['value']) . "</D:creationdate>\n";
                                 break;
 
                             case 'getlastmodified':
-                                echo '        <D:getlastmodified ' . $response['namespaces'][HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE] . ':dt="dateTime.rfc1123">' . gmdate('D, d M Y H:i:s', $prop['value']) . " UTC</D:getlastmodified>\n";
+                                echo '        <D:getlastmodified ' . $options['namespaces'][HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE] . ':dt="dateTime.rfc1123">' . gmdate('D, d M Y H:i:s', $prop['value']) . " UTC</D:getlastmodified>\n";
                                 break;
 
                             case 'resourcetype':
@@ -1839,7 +1826,7 @@ class HTTP_WebDAV_Server
                         }
 
                         if (!empty($prop['ns'])) {
-                            echo '        <' . $response['namespaces'][$prop['ns']] . ":$prop[name]>" . $this->_prop_encode(htmlspecialchars($prop['value'])) . '</' . $response['namespaces'][$prop['ns']] . ":$prop[name]>\n";
+                            echo '        <' . $options['namespaces'][$prop['ns']] . ":$prop[name]>" . $this->_prop_encode(htmlspecialchars($prop['value'])) . '</' . $options['namespaces'][$prop['ns']] . ":$prop[name]>\n";
 
                             continue;
                         }
@@ -1853,12 +1840,12 @@ class HTTP_WebDAV_Server
                 }
             }
 
-            if (!empty($response['status'])) {
-                echo "    <D:status>HTTP/1.1 $response[status]</D:status>\n";
-            }
-
             if (!empty($response['responsedescription'])) {
                 echo '    <D:responsedescription>' . $this->_prop_encode(htmlspecialchars($response['responsedescription'])) . "</D:responsedescription>\n";
+            }
+
+            if (!empty($response['status'])) {
+                echo "    <D:status>HTTP/1.1 $response[status]</D:status>\n";
             }
 
             echo "  </D:response>\n";

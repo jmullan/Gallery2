@@ -66,12 +66,6 @@ class WebDavHelperTest extends GalleryTestCase {
 			      'rewrite' => array('active' => true));
 	GalleryDataCache::put('GalleryPluginHelper::fetchPluginList(module)', $moduleStatus);
 
-	/* Mock activate an HTTP auth plugin */
-	$this->_markFactoryForCleanup();
-	$this->_registerFactoryImplementationForTest('GalleryAuthPlugin',
-	    'WebDavHelperTestHttpAuthPlugin', 'WebDavHelperTestHttpAuthPlugin',
-	    'modules/webdav/test/phpunit/WebDavHelperTest.class', 'httpauth');
-
 	/* Mock preGallery rewrite parser.  Mock activate WebDAV rewrite rules. */
 	$this->_parserType =& WebDavHelperTestRewriteApi::_parserType();
 	$this->_parserType = 'preGallery';
@@ -173,6 +167,8 @@ class WebDavHelperTest extends GalleryTestCase {
 	$_SERVER['HTTP_USER_AGENT'] = 'Test';
 
 	/* Use WebDavHelperTestHttpAuthInterface */
+	$this->_configuration =& WebDavHelperTestHttpAuthInterface::_configuration();
+	$this->_configuration = array(null, true, false);
 	$this->_requestAuthenticationCalls =&
 	    WebDavHelperTestHttpAuthInterface::_requestAuthenticationCalls();
 	$this->_requestAuthenticationCalls = null;
@@ -200,9 +196,11 @@ class WebDavHelperTest extends GalleryTestCase {
 	$this->_requestVariables = null;
 
 	/* Register event listeners */
-	$this->_isAppropriate =& WebDavModule::_isAppropriate();
-	$this->_isAppropriate['GalleryEntity::delete'] = true;
-	$this->_isAppropriate['GalleryEntity::save'] = true;
+	$this->_registerFactoryImplementationForTest('GalleryEventListener',
+	    'WebDavModule', 'WebDavModule',
+	    'modules/webdav/module.inc', 'webdav',
+	    array('GalleryEntity::delete',
+		  'GalleryEntity::save'));
     }
 
     function tearDown() {
@@ -309,7 +307,7 @@ class WebDavHelperTest extends GalleryTestCase {
      * Though the HTTP auth module is active, all its plugins might be disabled.
      */
     function testCheckConfigurationHttpAuthPluginsDisabled() {
-	$this->_unregisterFactoryImplementationForTest('GalleryAuthPlugin');
+	$this->_configuration = array(null, false, false);
 
 	list ($ret, $code) = WebDavHelper::checkConfiguration();
 	if ($ret) {
@@ -964,9 +962,18 @@ class WebDavHelperTest extends GalleryTestCase {
 
 class WebDavHelperTestHttpAuthInterface /* extends HttpAuthInterface_1_0 */ {
 
+    function &_configuration() {
+	static $configuration;
+	return $configuration;
+    }
+
     function &_requestAuthenticationCalls() {
 	static $requestAuthenticationCalls;
 	return $requestAuthenticationCalls;
+    }
+
+    function getConfiguration() {
+	return WebDavHelperTestHttpAuthInterface::_configuration();
     }
 
     function requestAuthentication($ignoreGloballyEnabled=false) {

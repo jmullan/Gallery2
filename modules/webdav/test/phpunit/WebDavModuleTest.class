@@ -85,20 +85,23 @@ class WebDavModuleTest extends GalleryTestCase {
 	}
 
 	/* Mock disable WebDAV rewrite rules */
-	$this->_activeRules =& WebDavModuleTestRewriteApi::_fetchActiveRulesForModule('webdav');
-	$this->_activeRules = array();
+	$this->_activeRules =& WebDavModuleTestRewriteApi::_activeRules();
+	$this->_activeRules = array(null, array());
 	$this->_activateCalls =& WebDavModuleTestRewriteApi::_activateCalls();
 	$this->_markFactoryForCleanup();
-	$this->_registerFactoryImplementationForTest(
-	    'RewriteApi', 'WebDavModuleTestRewriteApi', 'WebDavModuleTestRewriteApi',
+	$this->_registerFactoryImplementationForTest('RewriteApi',
+	    'WebDavModuleTestRewriteApi', 'WebDavModuleTestRewriteApi',
 	    'modules/webdav/test/phpunit/WebDavModuleTest.class', 'test');
 	if ($ret) {
 	    return $ret;
 	}
 
 	/* Use WebDavModuleTestHttpAuthInterface */
-	$this->_requestCalls =& WebDavModuleTestHttpAuthInterface::_requestCalls();
-	$this->_requestCalls = array();
+	$this->_configuration =& WebDavModuleTestHttpAuthInterface::_configuration();
+	$this->_configuration = array(null, true, false);
+	$this->_requestAuthenticationCalls =&
+	    WebDavModuleTestHttpAuthInterface::_requestAuthenticationCalls();
+	$this->_requestAuthenticationCalls = array();
 	$this->_registerFactoryImplementationForTest('HttpAuthInterface_1_0',
 	    'WebDavModuleTestHttpAuthInterface', 'WebDavModuleTestHttpAuthInterface',
 	    'module/webdav/test/phpunit/WebDavModuleTest.class', 'test');
@@ -144,10 +147,13 @@ class WebDavModuleTest extends GalleryTestCase {
 	    $this->_includesDavHeadersResponse;
 
 	/* Register event listeners */
-	$this->_isAppropriate =& WebDavModule::_isAppropriate();
-	$this->_isAppropriate['Gallery::ActivatePlugin'] = true;
-	$this->_isAppropriate['GalleryEntity::delete'] = true;
-	$this->_isAppropriate['GalleryEntity::save'] = true;
+	$this->_registerFactoryImplementationForTest('GalleryEventListener',
+	    'WebDavModule', 'WebDavModule',
+	    'modules/webdav/module.inc', 'webdav',
+	    array('Gallery::ActivatePlugin',
+		  'Gallery::Error',
+		  'GalleryEntity::delete',
+		  'GalleryEntity::save'));
     }
 
     function tearDown() {
@@ -198,7 +204,7 @@ class WebDavModuleTest extends GalleryTestCase {
     }
 
     function testGetRewriteRulesOptionsRuleActive() {
-	$this->_activeRules = array('options');
+	$this->_activeRules = array(null, array('options'));
 
 	$rules = $this->_module->getRewriteRules();
 	$this->assertEquals(array('connect', 'davmount', 'options'), array_keys($rules));
@@ -225,8 +231,6 @@ class WebDavModuleTest extends GalleryTestCase {
     }
 
     function testHandleEventError() {
-	$this->_isAppropriate['Gallery::Error'] = true;
-
 	$error = GalleryCoreApi::error(GALLERY_ERROR);
 	$event = GalleryCoreApi::newEvent('Gallery::Error');
 	$event->setData(array('error' => $error));
@@ -236,13 +240,11 @@ class WebDavModuleTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array(array('suppressBody' => true, 'errorHandled' => true)), $results);
-	$this->assertEquals(array(), $this->_requestCalls,
+	$this->assertEquals(array(), $this->_requestAuthenticationCalls,
 	    'Authentication should be requested only on ERROR_PERMISSION_DENIED');
     }
 
     function testHandleEventErrorPermissionDenied() {
-	$this->_isAppropriate['Gallery::Error'] = true;
-
 	$error = GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	$event = GalleryCoreApi::newEvent('Gallery::Error');
 	$event->setData(array('error' => $error));
@@ -252,7 +254,7 @@ class WebDavModuleTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array(array('suppressBody' => true, 'errorHandled' => true)), $results);
-	$this->assertEquals(array(array()), $this->_requestCalls,
+	$this->assertEquals(array(array()), $this->_requestAuthenticationCalls,
 	    'Authentication should be requested');
     }
 
@@ -438,7 +440,7 @@ class WebDavModuleTest extends GalleryTestCase {
 
 class WebDavModuleTestRewriteApi {
 
-    function &_fetchActiveRulesForModule($moduleId) {
+    function &_activeRules() {
 	static $activeRules;
 	return $activeRules;
     }
@@ -453,7 +455,7 @@ class WebDavModuleTestRewriteApi {
     }
 
     function fetchActiveRulesForModule($moduleId) {
-	return array(null, WebDavModuleTestRewriteApi::_fetchActiveRulesForModule($moduleId));
+	return WebDavModuleTestRewriteApi::_activeRules();
     }
 
     function activateRewriteRulesForModule($moduleId) {
@@ -464,14 +466,24 @@ class WebDavModuleTestRewriteApi {
 
 class WebDavModuleTestHttpAuthInterface /* extends HttpAuthInterface_1_0 */ {
 
-    function &_requestCalls() {
-	static $requestCalls;
-	return $requestCalls;
+    function &_configuration() {
+	static $configuration;
+	return $configuration;
+    }
+
+    function &_requestAuthenticationCalls() {
+	static $requestAuthenticationCalls;
+	return $requestAuthenticationCalls;
+    }
+
+    function getConfiguration() {
+	return WebDavModuleTestHttpAuthInterface::_configuration();
     }
 
     function requestAuthentication() {
-	$requestCalls =& WebDavModuleTestHttpAuthInterface::_requestCalls();
-	$requestCalls[] = array();
+	$requestAuthenticationCalls =&
+	    WebDavModuleTestHttpAuthInterface::_requestAuthenticationCalls();
+	$requestAuthenticationCalls[] = array();
     }
 }
 

@@ -95,9 +95,11 @@ class DownloadDavMountTest extends GalleryTestCase {
 	$this->_user = $gallery->getActiveUser();
 
 	/* Register event listeners */
-	$this->_isAppropriate =& WebDavModule::_isAppropriate();
-	$this->_isAppropriate['GalleryEntity::delete'] = true;
-	$this->_isAppropriate['GalleryEntity::save'] = true;
+	$this->_registerFactoryImplementationForTest('GalleryEventListener',
+	    'WebDavModule', 'WebDavModule',
+	    'modules/webdav/module.inc', 'webdav',
+	    array('GalleryEntity::delete',
+		  'GalleryEntity::save'));
     }
 
     function tearDown() {

@@ -378,7 +378,8 @@ class WebDavModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function handleEvent($event) {
 	$isAppropriate = WebDavModule::_isAppropriate();
-	if (empty($isAppropriate[$event->getEventName()]) && class_exists('GalleryTestCase')) {
+	if (empty($isAppropriate[$event->getEventName()])
+		&& $event->getEventName() == 'Gallery::Error') {
 	    return array(null, null);
 	}
 

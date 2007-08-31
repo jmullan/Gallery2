@@ -148,12 +148,21 @@ class WebDavHelper {
 	    $code |= WEBDAV_STATUS_HTTPAUTH_MODULE_DISABLED;
 	} else {
 	    /* Check that HTTP auth plugins are enabled */
-	    list ($ret, $pluginIds) = GalleryCoreApi::getAllFactoryImplementationIds(
-		'GalleryAuthPlugin');
+	    list ($ret, $httpAuthInterface) = GalleryCoreApi::newFactoryInstance(
+		'HttpAuthInterface_1_0');
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    if (empty($pluginIds['HttpAuthPlugin']) && empty($pluginIds['ServerAuthPlugin'])) {
+	    if (!isset($httpAuthInterface)) {
+		return array(GalleryCoreApi::error(ERROR_CONFIGURATION_REQUIRED), null);
+	    }
+
+	    list ($ret, $httpAuthEnabled, $serverAuthEnabled) =
+		$httpAuthInterface->getConfiguration();
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    if (empty($httpAuthEnabled) && empty($serverAuthEnabled)) {
 		$code |= WEBDAV_STATUS_HTTPAUTH_PLUGINS_DISABLED;
 	    }
 	}
@@ -707,6 +716,9 @@ class WebDavHelper {
 	    return array(GalleryCoreApi::error(ERROR_UNKNOWN), null, null);
 	}
 
+	/* Gallery property namespace prefix */
+	$webDavOptions['namespaces'][WEBDAV_GALLERY_NAMESPACE] = 'G';
+
 	return array(null, $webDavOptions, $webDavOptions['depth']);
     }
 
@@ -717,12 +729,10 @@ class WebDavHelper {
      *
      * @param array $webDavOptions WebDAV library options
      * @param array $status files for WebDAV response (path, props)
-     * @param array $namespaces namespaces for WebDAV response (URI => prefix)
      * @see HTTP_WebDAV_Server::propfind_response_helper
      */
-    function propfindResponseHelper($webDavOptions, $status, $namespaces) {
+    function propfindResponseHelper($webDavOptions, $status) {
 	$webDavServer =& WebDavHelper::getWebDavServer();
-	$webDavOptions['namespaces'] = $namespaces;
 	$webDavServer->propfind_response_helper($webDavOptions, $status);
     }
 
@@ -755,11 +765,8 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	$namespaces = array();
-	$namespaces[WEBDAV_GALLERY_NAMESPACE] = 'G';
-
 	/* Format PROPFIND response */
-	$ret = WebDavHelper::propfindResponseHelper($webDavOptions, $status, $namespaces);
+	$ret = WebDavHelper::propfindResponseHelper($webDavOptions, $status);
 	if ($ret) {
 	    return $ret;
 	}
@@ -967,6 +974,9 @@ class WebDavHelper {
 	    return array(GalleryCoreApi::error(ERROR_UNKNOWN), null, null);
 	}
 
+	/* Gallery property namespace prefix */
+	$webDavOptions['namespaces'][WEBDAV_GALLERY_NAMESPACE] = 'G';
+
 	return array(null, $webDavOptions, $webDavOptions['props']);
     }
 
@@ -978,19 +988,12 @@ class WebDavHelper {
      *
      * @param array $webDavOptions WebDAV library options
      * @param string $path
-     * @param array $props properties set (ns => namespace,
-     					   name => name,
-					   val => value,
-					   status => status)
-     * @param array $namespace namespaces for WebDAV response (URI => prefix)
+     * @param array $status files for WebDAV response (path, props)
      * @see HTTP_WebDAV_Server::proppatch_response_helper
      */
-    function proppatchResponseHelper($webDavOptions, $path, $props, $namespaces) {
+    function proppatchResponseHelper($webDavOptions, $status) {
 	$webDavServer =& WebDavHelper::getWebDavServer();
-	$webDavOptions['path'] = $path;
-	$webDavOptions['props'] = $props;
-	$webDavOptions['namespaces'] = $namespaces;
-	$webDavServer->proppatch_response_helper($webDavOptions);
+	$webDavServer->proppatch_response_helper($webDavOptions, $status);
     }
 
     /**
@@ -1050,10 +1053,12 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	$namespaces = array(WEBDAV_GALLERY_NAMESPACE => 'G');
+	$status = array();
+	$status['path'] = $path;
+	$status['props'] = $props;
 
 	/* Format PROPPATCH response */
-	$ret = WebDavHelper::proppatchResponseHelper($webDavOptions, $path, $props, $namespaces);
+	$ret = WebDavHelper::proppatchResponseHelper($webDavOptions, $status);
 	if ($ret) {
 	    return $ret;
 	}
@@ -1095,7 +1100,8 @@ class WebDavHelper {
 	    }
 
 	    $setter = 'set' . $name;
-	    if (!isset($memberInfo[$name])|| !$memberInfo[$name]['write']
+	    if (empty($memberInfo[$name])
+		    || empty($memberInfo[$name]['write'])
 		    || !method_exists($item, $setter)) {
 		$props[$key]['status'] = '403 Forbidden';
 		continue;
@@ -1229,10 +1235,6 @@ class WebDavHelper {
      * @see ItemDeleteController::handleRequest
      */
     function deleteHelper($itemIds) {
-        if (!is_array($itemIds)) {
-	    $itemIds = array($itemIds);
-	}
-
 	/* Cache permissions in memory */
 	$ret = GalleryCoreApi::studyPermissions($itemIds);
 	if ($ret) {
@@ -1303,7 +1305,7 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	list ($ret, $count) = WebDavHelper::deleteHelper($itemId);
+	list ($ret, $count) = WebDavHelper::deleteHelper(array($itemId));
 	if ($ret) {
 	    return $ret;
 	}
@@ -1391,7 +1393,7 @@ class WebDavHelper {
 	}
 
 	/* Copying to remote servers not yet supported */
-	if (isset($webDavOptions['dest_url'])) {
+	if (!empty($webDavOptions['dest_url'])) {
 	    /*
 	     * 502 (Bad Gateway) - This may occur when the destination is on another server and the
 	     * destination server refuses to accept the resource.
@@ -1419,10 +1421,6 @@ class WebDavHelper {
      * @see ItemMoveController::handleRequest
      */
     function moveValidateHelper($items, $newParent) {
-        if (!is_array($items)) {
-	    $items = array($items);
-	}
-
 	$error = array();
 
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($newParent->getId());
@@ -1430,8 +1428,8 @@ class WebDavHelper {
 	    return array($ret, null);
 	}
 
-	$canAddItem = isset($permissions['core.addDataItem']);
-	$canAddAlbum = isset($permissions['core.addAlbumItem']);
+	$canAddItem = !empty($permissions['core.addDataItem']);
+	$canAddAlbum = !empty($permissions['core.addAlbumItem']);
 	if (!$canAddAlbum && !$canAddItem) {
 	    $error[] = 'form[error][destination][permission]';
 	}
@@ -1462,7 +1460,7 @@ class WebDavHelper {
 	    }
 
 	    /* Can we delete this item from here? */
-	    if (!isset($permissions['core.delete'])) {
+	    if (empty($permissions['core.delete'])) {
 		$error[] = 'form[error][source][' . $item->getId() . '][permission][delete]';
 	    }
 
@@ -1547,6 +1545,13 @@ class WebDavHelper {
 
 	$pathComponent = urldecode(basename($path));
 	$newPathComponent = urldecode(basename($newPath));
+	if ($newPathComponent != $pathComponent) {
+	    /* Check we have permission to edit this item */
+	    $ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
+	    if ($ret) {
+		return $ret;
+	    }
+	}
 
 	$parentPath = WebDavHelper::getParentPath($path);
 	$newParentPath = WebDavHelper::getParentPath($newPath);
@@ -1571,7 +1576,7 @@ class WebDavHelper {
 		return $ret;
 	    }
 
-	    list ($ret, $error) = WebDavHelper::moveValidateHelper($item, $newParent);
+	    list ($ret, $error) = WebDavHelper::moveValidateHelper(array($item), $newParent);
 	    if ($ret) {
 		return $ret;
 	    }
@@ -1582,7 +1587,7 @@ class WebDavHelper {
 		    }
 		}
 
-		/* If all errors were permission denied return more specific error */
+		/* If all errors were permission denied, return more specific error */
 		return GalleryCoreApi::error(ERROR_PERMISSION_DENIED);
 	    }
 	}
@@ -1602,7 +1607,7 @@ class WebDavHelper {
 		return GalleryCoreApi::error(ERROR_COLLISION);
 	    }
 
-	    list ($ret, $count) = WebDavHelper::deleteHelper($conflictingItemId);
+	    list ($ret, $count) = WebDavHelper::deleteHelper(array($conflictingItemId));
 	    if ($ret) {
 		return $ret;
 	    }
@@ -1772,7 +1777,7 @@ class WebDavHelper {
 			 null, null, null, null, null, null, null, null);
 	}
 
-	if (isset($webDavOptions['update'])) {
+	if (!empty($webDavOptions['update'])) {
 	    return array(null, $webDavOptions,
 	    		 $webDavOptions['update'], null, null, null, null, null, null);
 	}
@@ -1887,7 +1892,7 @@ class WebDavHelper {
 
 	    /* Check that the Gallery lock didn't disappear before the WebDAV lock */
 	    if (GalleryCoreApi::isWriteLocked($itemId)) {
-		/* TODO: Need an interface to update g_freshUntil for only $lockId */
+		/** @todo Need an interface to update g_freshUntil for only $lockId */
 	    } else {
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
 		if ($ret) {

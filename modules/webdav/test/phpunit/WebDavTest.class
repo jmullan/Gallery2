@@ -75,6 +75,11 @@ class WebDavTest extends GalleryTestCase {
 	}
 	$this->_markForCleanup($this->_album);
 
+	$ret = GalleryCoreApi::removeItemPermissions($this->_album->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
 	list ($ret, $this->_item) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/file');
 	if ($ret) {
@@ -87,6 +92,8 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
+	/* Become guest user */
+	$this->_becomeGuestUser();
 	$this->_userId = $gallery->getActiveUserId();
 
 	/* Test the WebDAV controller */
@@ -111,9 +118,13 @@ class WebDavTest extends GalleryTestCase {
 	}
 
 	/* Register event listeners */
-	$this->_isAppropriate =& WebDavModule::_isAppropriate();
-	$this->_isAppropriate['GalleryEntity::delete'] = true;
-	$this->_isAppropriate['GalleryEntity::save'] = true;
+	$this->_registerFactoryImplementationForTest('GalleryEventListener',
+	    'WebDavModule', 'WebDavModule',
+	    'modules/webdav/module.inc', 'webdav',
+	    array('Gallery::ActivatePlugin',
+		  'Gallery::Error',
+		  'GalleryEntity::delete',
+		  'GalleryEntity::save'));
     }
 
     function tearDown() {
@@ -233,11 +244,6 @@ class WebDavTest extends GalleryTestCase {
     }
 
     function testPropfind() {
-	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret) {
-	    return $ret;
-	}
-
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'core.view');
 	if ($ret) {
@@ -287,17 +293,18 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
-	    '<D:multistatus xmlns:D="DAV:">',
-	    '  <D:response xmlns:G="http://gallery2.org/dav/props/"'
-	    . ' xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '<D:multistatus xmlns:D="DAV:"'
+	    . ' xmlns:G="http://gallery2.org/dav/props/"'
+	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '  <D:response>',
 	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
-	    '        <D:creationdate ns1:dt="dateTime.tz">'
+	    '        <D:creationdate T:dt="dateTime.tz">'
 	    . gmdate('Y-m-d\TH:i:s\Z', $this->_item->getCreationTimestamp())
 	    . '</D:creationdate>',
 	    '        <D:displayname>' . $this->_item->getTitle() . '</D:displayname>',
-	    '        <D:getlastmodified ns1:dt="dateTime.rfc1123">'
+	    '        <D:getlastmodified T:dt="dateTime.rfc1123">'
 	    . gmdate('D, d M Y H:i:s', $this->_item->getModificationTimestamp())
 	    . ' UTC</D:getlastmodified>',
 	    '        <G:summary>' . $this->_item->getSummary() . '</G:summary>',
@@ -325,10 +332,6 @@ class WebDavTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-if ($ret) {
-    return $ret;
-}
 	$this->_streamWrapperRegister();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
@@ -372,9 +375,10 @@ if ($ret) {
 	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
-	    '<D:multistatus xmlns:D="DAV:">',
-	    '  <D:response xmlns:G="http://gallery2.org/dav/props/"'
-	    . ' xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '<D:multistatus xmlns:D="DAV:"'
+	    . ' xmlns:G="http://gallery2.org/dav/props/"'
+	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '  <D:response>',
 	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
 	    '    <D:status>HTTP/1.1 401 Unauthorized</D:status>',
 	    '  </D:response>',
@@ -384,6 +388,12 @@ if ($ret) {
     }
 
     function testPropfindWithSpecialCharacters() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.view');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$this->_streamWrapperRegister();
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
@@ -435,17 +445,18 @@ if ($ret) {
 	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
-	    '<D:multistatus xmlns:D="DAV:">',
-	    '  <D:response xmlns:G="http://gallery2.org/dav/props/"'
-	    . ' xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '<D:multistatus xmlns:D="DAV:"'
+	    . ' xmlns:G="http://gallery2.org/dav/props/"'
+	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '  <D:response>',
 	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
-	    '        <D:creationdate ns1:dt="dateTime.tz">'
+	    '        <D:creationdate T:dt="dateTime.tz">'
 	    . gmdate('Y-m-d\TH:i:s\Z', $this->_item->getCreationTimestamp())
 	    . '</D:creationdate>',
 	    '        <D:displayname>' . $this->_item->getTitle() . '</D:displayname>',
-	    '        <D:getlastmodified ns1:dt="dateTime.rfc1123">'
+	    '        <D:getlastmodified T:dt="dateTime.rfc1123">'
 	    . gmdate('D, d M Y H:i:s', $this->_item->getModificationTimestamp())
 	    . ' UTC</D:getlastmodified>',
 	    '        <G:summary>' . $this->_item->getSummary() . '</G:summary>',
@@ -461,11 +472,6 @@ if ($ret) {
     }
 
     function testProppatch() {
-	$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-	if ($ret) {
-	    return $ret;
-	}
-
 	$ret = GalleryCoreApi::addUserPermission(
 	    $this->_item->getId(), $this->_userId, 'core.edit');
 	if ($ret) {
@@ -515,8 +521,10 @@ if ($ret) {
 	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
-	    '<D:multistatus xmlns:D="DAV:">',
-	    '  <D:response xmlns:G="http://gallery2.org/dav/props/">',
+	    '<D:multistatus xmlns:D="DAV:"'
+	    . ' xmlns:G="http://gallery2.org/dav/props/"'
+	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '  <D:response>',
 	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
@@ -556,10 +564,6 @@ if ($ret) {
 	    return $ret;
 	}
 
-$ret = GalleryCoreApi::removeItemPermissions($this->_item->getId());
-if ($ret) {
-    return $ret;
-}
 	$this->_streamWrapperRegister();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
@@ -601,12 +605,19 @@ if ($ret) {
 
 	$expectedHeaders = array();
 	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$expectedHeaders['www-authenticate'] = 'WWW-Authenticate: Basic realm=\'Gallery\'';
 	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$this->assertEquals(array(''), split("\r?\n", $output));
     }
 
     function testProppatchWithSpecialCharacters() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$this->_streamWrapperRegister();
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
@@ -658,8 +669,10 @@ if ($ret) {
 	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
-	    '<D:multistatus xmlns:D="DAV:">',
-	    '  <D:response xmlns:G="http://gallery2.org/dav/props/">',
+	    '<D:multistatus xmlns:D="DAV:"'
+	    . ' xmlns:G="http://gallery2.org/dav/props/"'
+	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '  <D:response>',
 	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
@@ -687,6 +700,12 @@ if ($ret) {
     }
 
     function testProppatchWithCharsetConversion() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$this->_streamWrapperRegister();
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
@@ -736,8 +755,10 @@ if ($ret) {
 	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
 
 	$expectedOutput = array('<?xml version="1.0" encoding="utf-8" ?>',
-	    '<D:multistatus xmlns:D="DAV:">',
-	    '  <D:response xmlns:G="http://gallery2.org/dav/props/">',
+	    '<D:multistatus xmlns:D="DAV:"'
+	    . ' xmlns:G="http://gallery2.org/dav/props/"'
+	    . ' xmlns:T="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">',
+	    '  <D:response>',
 	    '    <D:href>' . $this->_getHref($path) . '</D:href>',
 	    '    <D:propstat>',
 	    '      <D:prop>',
@@ -765,6 +786,12 @@ if ($ret) {
     }
 
     function testMkcol() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $this->_userId, 'core.addAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$pathComponent = 'testAlbum-' . rand();
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
@@ -810,8 +837,60 @@ if ($ret) {
 	$this->assertEquals('', $item->getKeywords());
     }
 
+    function testMkcolRequiresAddAlbumItemPermission() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_album->getId(), $this->_userId, 'core.addAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$pathComponent = 'testAlbum-' . rand();
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$path .= $pathComponent;
+
+	$_SERVER['REQUEST_METHOD'] = 'MKCOL';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$expectedHeaders['www-authenticate'] = 'WWW-Authenticate: Basic realm=\'Gallery\'';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
+    }
+
     function testMkcolWithSpecialCharacters() {
 	global $gallery;
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $this->_userId, 'core.addAlbumItem');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
@@ -877,6 +956,12 @@ if ($ret) {
     }
 
     function testDelete() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.delete');
+	if ($ret) {
+	    return $ret;
+	}
+
 	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
 	    return $ret;
@@ -910,7 +995,56 @@ if ($ret) {
 	}
     }
 
+    function testDeleteRequiresDeletePermission() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.delete');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$_SERVER['REQUEST_METHOD'] = 'DELETE';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$expectedHeaders['www-authenticate'] = 'WWW-Authenticate: Basic realm=\'Gallery\'';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
+    }
+
     function testAdd() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $this->_userId, 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
 	$fileSize = $this->_platform->filesize($filePath);
 
@@ -972,8 +1106,75 @@ if ($ret) {
 	$this->assertEquals($fileSize, $item->getSize());
     }
 
+    function testAddRequiresAddDataItemPermission() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_album->getId(), $this->_userId, 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$fileSize = $this->_platform->filesize($filePath);
+
+	$pathComponent = basename($filePath);
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$path .= $pathComponent;
+
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	$_SERVER['CONTENT_LENGTH'] = $fileSize;
+	$_SERVER['CONTENT_TYPE'] = 'test/file';
+
+	/*
+	 * Regression: Check that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.  These
+	 * variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$expectedHeaders['www-authenticate'] = 'WWW-Authenticate: Basic realm=\'Gallery\'';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
+    }
+
     function testAddWithSpecialCharacters() {
 	global $gallery;
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $this->_userId, 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
@@ -1058,6 +1259,12 @@ if ($ret) {
      * Mac OS X and GNOME both make PUT requests with empty bodies.
      */
     function testAddWithEmptyBody() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $this->_userId, 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$pathComponent = 'test1.gif';
 
 	list ($ret, $path) = $this->_album->fetchLogicalPath();
@@ -1118,6 +1325,12 @@ if ($ret) {
     }
 
     function testReplace() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
 	$fileSize = $this->_platform->filesize($filePath);
 
@@ -1182,8 +1395,72 @@ if ($ret) {
 	$this->assertEquals($fileSize, $item->getSize());
     }
 
+    function testReplaceRequiresEditPermission() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	$fileSize = $this->_platform->filesize($filePath);
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$_SERVER['REQUEST_METHOD'] = 'PUT';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	$_SERVER['CONTENT_LENGTH'] = $fileSize;
+	$_SERVER['CONTENT_TYPE'] = 'test/file';
+
+	/*
+	 * Regression: Check that HTTP_CONTENT_LENGTH and HTTP_CONTENT_TYPE are ignored.  These
+	 * variables are defined on IIS + mod_php.
+	 */
+	$_SERVER['HTTP_CONTENT_LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+	$_SERVER['HTTP_CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$expectedHeaders['www-authenticate'] = 'WWW-Authenticate: Basic realm=\'Gallery\'';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
+    }
+
     function testReplaceWithSpecialCharacters() {
 	global $gallery;
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
@@ -1276,6 +1553,12 @@ if ($ret) {
     }
 
     function testReplaceWithNewClass() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
 	$fileSize = $this->_platform->filesize($filePath);
 
@@ -1341,10 +1624,16 @@ if ($ret) {
     }
 
     function testReplaceRequiresDataItem() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
 	$filePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
 	$fileSize = $this->_platform->filesize($filePath);
 
-	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	list ($ret, $path) = $this->_subAlbum->fetchLogicalPath();
 	if ($ret) {
 	    return $ret;
 	}
@@ -1386,7 +1675,23 @@ if ($ret) {
     }
 
     function testMove() {
-	global $gallery;
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.delete');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
 
 	list ($ret, $path) = $this->_item->fetchLogicalPath();
 	if ($ret) {
@@ -1437,8 +1742,224 @@ if ($ret) {
 	$this->assertEquals($this->_item->getId(), $itemId);
     }
 
+    function testMoveRequiresEditPermission() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$pathComponent = 'testItem-' . rand();
+
+	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$newPath .= $pathComponent;
+
+	$_SERVER['REQUEST_METHOD'] = 'MOVE';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	$_SERVER['HTTP_DESTINATION'] =
+	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w' . $newPath;
+	}
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$expectedHeaders['www-authenticate'] = 'WWW-Authenticate: Basic realm=\'Gallery\'';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
+    }
+
+    function testMoveRequiresDeletePermission() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.delete');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$pathComponent = 'testItem-' . rand();
+
+	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$newPath .= $pathComponent;
+
+	$_SERVER['REQUEST_METHOD'] = 'MOVE';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	$_SERVER['HTTP_DESTINATION'] =
+	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w' . $newPath;
+	}
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$expectedHeaders['www-authenticate'] = 'WWW-Authenticate: Basic realm=\'Gallery\'';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
+    }
+
+    function testMoveRequiresAddDataItemPermission() {
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.delete');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.all');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::removeUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $path) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$pathComponent = 'testItem-' . rand();
+
+	list ($ret, $newPath) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	$newPath .= $pathComponent;
+
+	$_SERVER['REQUEST_METHOD'] = 'MOVE';
+
+	WebDavHelper::putRequestVariable('path', $path, true, false);
+
+	$_SERVER['HTTP_DESTINATION'] =
+	    'http://example.com/gallery2/main.php' . $newPath . '?g2_controller=webdav.WebDav';
+	/* Assuming that the WebDAV rewrite rules are enabled */
+	if (GalleryUtilities::isA($this->_urlGenerator, 'RewriteUrlGenerator')) {
+	    $_SERVER['HTTP_DESTINATION'] = 'http://example.com/gallery2/w' . $newPath;
+	}
+
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	if ($ret) {
+	    _GalleryMain_errorHandler($ret, $g2Data);
+	}
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret && !($ret->getErrorCode() & ERROR_PERMISSION_DENIED)) {
+	    return $ret;
+	}
+
+	$this->assert($ret);
+
+	$expectedHeaders = array();
+	$expectedHeaders['status'] = 'HTTP/1.0 401 Unauthorized';
+	$expectedHeaders['www-authenticate'] = 'WWW-Authenticate: Basic realm=\'Gallery\'';
+	$this->assertEquals($expectedHeaders, $this->_responseHeaders);
+
+	$this->assertEquals(array(''), split("\r?\n", $output));
+    }
+
     function testMoveWithSpecialCharacters() {
 	global $gallery;
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.edit');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_item->getId(), $this->_userId, 'core.delete');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_subAlbum->getId(), $this->_userId, 'core.addDataItem');
+	if ($ret) {
+	    return $ret;
+	}
 
 	$ret = $this->_rename($this->_album, 'The Quick!Brown#Fox');
 	if ($ret) {
@@ -1815,7 +2336,6 @@ if ($ret) {
 	    return $ret;
 	}
 
-/*
 	$this->_responseHeaders = null;
 
 	$path = '/' . rawurlencode('The Quick!Brown#Fox') . '/';
@@ -1868,7 +2388,6 @@ if ($ret) {
 	    '</D:multistatus>',
 	    '');
 	$this->assertEquals($expectedOutput, split("\r?\n", $output));
-*/
 
 	$this->_responseHeaders = null;
 
@@ -2096,17 +2615,18 @@ class WebDavTestStream {
     }
 }
 
-/*
- * Our default unit test error_handler doesn't allow the suppression of errors, but getImageSize()
- * returns a PHP error when operating on an empty file.
+/**
+ * Default unit test error_handler doesn't allow suppression of errors, but getImageSize() returns a
+ * PHP error when called on an empty file.
  */
 function WebDavTest_error_handler($errno, $errstr, $errfile, $errline) {
-    if ($errno == 2 && preg_match('/(getimagesize().*: Read error)'
-	    . '|(imagecreatefromgif().*:.* is not a valid GIF file)/', $errstr)) {
+    if ($errno == E_NOTICE && preg_match(
+	    '/getimagesize\(\).*: Read error|imagecreatefromgif\(\).*:.* is not a valid GIF file/',
+	    $errstr)) {
 	return null;
     }
 
-    /* Call our default error_handler */
+    /* Call default error_handler */
     return PHPUnit_error_handler($errno, $errstr, $errfile, $errline);
 }
 ?>
