@@ -313,6 +313,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     }
 
     function testCreateDuplicateUser() {
+	global $gallery;
+
 	$userName = 'user-selfreg' . rand();
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'auto');
@@ -329,6 +331,9 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password1]', 'password');
 	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 
+	$savePlatform =& $gallery->getPlatform();
+	$gallery->setPlatform(new RegisterDummyPlatform($savePlatform, $this));
+
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'core.UserAdmin',
@@ -338,8 +343,10 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    $results,
 	    'Failed to create first user');
 
+	$gallery->setPlatform($savePlatform);
+
 	/* Create a second user with the same name */
-	/* fails because we have the existing  user */
+	/* Fails because we have the existing  user */
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('delegate' => array('view' => 'core.UserAdmin',
@@ -348,7 +355,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 		  'error' => array('form[error][userName][exists]')),
 	    $results, 'Create duplicate');
 
-	/* find userid */
+	/* Find userid */
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret) {
 	    return $ret;
@@ -428,6 +435,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
      * No plugin errors - user is created successfully
      */
     function testPlugins3() {
+	global $gallery;
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'confirmation', 'auto');
 	if ($ret) {
 	    return $ret;
@@ -448,6 +457,9 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$this->_controller->setPluginInstances(array($plugin));
 
+	$savePlatform =& $gallery->getPlatform();
+	$gallery->setPlatform(new RegisterDummyPlatform($savePlatform, $this));
+
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'core.UserAdmin',
@@ -455,6 +467,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 		  'status' => array(),
 		  'error' => array()),
 	    $results);
+
+	$gallery->setPlatform($savePlatform);
 
 	/* find userid */
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
@@ -465,6 +479,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     }
 
     function testPluginsOff() {
+	global $gallery;
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'validation.level', 'OFF');
 	if ($ret) {
 	    return $ret;
@@ -489,6 +505,9 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	$plugin->setContinue(false);
 	$this->_controller->setPluginInstances(array($plugin));
 
+	$savePlatform =& $gallery->getPlatform();
+	$gallery->setPlatform(new RegisterDummyPlatform($savePlatform, $this));
+
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('redirect' => array('view' => 'core.UserAdmin',
@@ -496,6 +515,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 		  'status' => array(),
 		  'error' => array()),
 	    $results);
+
+	$gallery->setPlatform($savePlatform);
 
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret) {
