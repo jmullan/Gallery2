@@ -60,7 +60,7 @@ class WebTest extends GalleryTestCase {
 	$expectedBody[] = 'test';
 
 	$this->assert($success);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody) . "\n", $body);
 	$this->assertEquals('http://www.test.server/testFetchWebPage', $actualUrl);
@@ -136,7 +136,7 @@ class WebTest extends GalleryTestCase {
 	$expectedBody[] = '';			  /* newline at the end of the file */
 
 	$this->assert($success);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody), $body);
 	$this->assertEquals('http://www.test.server/testFetchWebPage%20With%20Spaces', $actualUrl);
@@ -189,7 +189,7 @@ class WebTest extends GalleryTestCase {
 	$expectedBody[] = '';			  /* newline at the end of the file */
 
 	$this->assert($success);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody), $body);
 	$this->assertEquals('http://www.test.server2:8080/testFetchWebPage', $actualUrl);
@@ -198,7 +198,7 @@ class WebTest extends GalleryTestCase {
     function testFetchWebPageWithQueryString() {
 	list ($success, $body, $response, $headers, $actualUrl) =
 	    GalleryCoreApi::fetchWebPage(
-		'http://www.test.server/testFetchWebPage?foo=bar&baz=blat');
+		'http://www.test.server/testFetchWebPage?foo=bar&baz=blat&amp;hoho=blah');
 
 	$expectedHeaders['Connection'] = 'close';
 	$expectedHeaders['Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
@@ -216,14 +216,15 @@ class WebTest extends GalleryTestCase {
 	$expectedBody[] = '';			  /* newline at the end of the file */
 
 	$this->assert($success);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody), $body);
-	$this->assertEquals('http://www.test.server/testFetchWebPage?foo=bar&baz=blat', $actualUrl);
+	$this->assertEquals('http://www.test.server/testFetchWebPage?foo=bar&baz=blat&hoho=blah',
+		$actualUrl, 'url; &amp; should be converted to & too');
     }
 
     function testFetchRedirectedWebPage() {
-	list ($success,$body, $response, $headers, $actualUrl) =
+	list ($success, $body, $response, $headers, $actualUrl) =
 	    GalleryCoreApi::fetchWebPage('http://www.test.server/testFetchRedirectedWebPage');
 
 	$expectedHeaders['Connection'] = 'close';
@@ -242,9 +243,36 @@ class WebTest extends GalleryTestCase {
 	$expectedBody[] = '';			  /* newline at the end of the file */
 
 	$this->assert($success);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody), $body);
+	$this->assertEquals($actualUrl, 'http://www.test.server/testFetchWebPage');
+    }
+
+    function testFetchRedirectedWebPageRelativeRedirect() {
+	/* Make sure we redirect ok if Location header isn't absolute */
+	list ($success, $body, $response, $headers, $actualUrl) =
+	    GalleryCoreApi::fetchWebPage('http://my.test.server:81/testFetchRelativeRedirect');
+
+	$expectedHeaders['Connection'] = 'close';
+	$expectedHeaders['Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Accept-Ranges'] = 'bytes';
+	$expectedHeaders['ETag'] = '"122ae4-5-3fc199b0"';
+	$expectedHeaders['Server'] = 'Apache/1.3.28 (Unix)';
+	$expectedHeaders['Content-Length'] = '5';
+	$expectedHeaders['Content-Type'] = 'text/html';
+	$expectedHeaders['Last-Modified'] = 'Mon, 24 Nov 2003 05:40:00 GMT';
+	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
+	$expectedHeaders['Client-Response-Num'] = '1';
+
+	$expectedBody[] = 'test';
+	$expectedBody[] = '';			  /* newline at the end of the file */
+
+	$this->assert($success);
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
+	$this->assertEquals($expectedHeaders, $headers);
+	$this->assertEquals(implode("\n", $expectedBody), $body);
 	$this->assertEquals($actualUrl, 'http://www.test.server/testFetchWebPage');
     }
 
@@ -281,7 +309,7 @@ class WebTest extends GalleryTestCase {
 	$expectedBody[] = '';			  /* newline at the end of the file */
 
 	$this->assert($success);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody), $body);
 	$this->assertEquals($actualUrl, 'http://www.test.server/testFetchWebPage');
@@ -308,7 +336,7 @@ class WebTest extends GalleryTestCase {
 	$expectedBody[] = '';			  /* newline at the end of the file */
 
 	$this->assert($success);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody), $body);
 	$this->assertEquals($actualUrl, 'http://www.test.server/testFetchCookieWebPage');
@@ -336,7 +364,7 @@ class WebTest extends GalleryTestCase {
 	$expectedBody[] = 'post successful';
 	$expectedBody[] = '';			  /* newline at the end of the file */
 
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody), $body);
     }
@@ -344,7 +372,7 @@ class WebTest extends GalleryTestCase {
     function testFetchWebFile() {
 	list ($return, $response, $headers) =
 	    GalleryCoreApi::fetchWebFile(
-		'http://www.test.server/testFetchWebFile', 'testFetchWebFile.tmp');
+		'http://www.test.server/testFetchWebFile?a=b&amp;c=d', 'testFetchWebFile.tmp');
 
 	$expectedHeaders['Connection'] = 'close';
 	$expectedHeaders['Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
@@ -360,7 +388,7 @@ class WebTest extends GalleryTestCase {
 
 
 	$this->assertEquals(true, $return);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals("test\n",
 			    $this->_outputFile['testFetchWebFile.tmp']);
     }
@@ -384,7 +412,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Response-Num'] = '1';
 
 	$this->assertEquals(true, $return);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
 	$this->assertEquals("test\n",
 			    $this->_outputFile['testFetchWebFile.tmp']);
     }
@@ -415,6 +443,74 @@ class WebTest extends GalleryTestCase {
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody), $body);
     }
+
+    function testRequestWebPageWithBadChars() {
+	/* Verify requestWebPage translates spaces and &amp; (previously only fetch* did this) */
+	list ($status, $headers, $body) = GalleryCoreApi::requestWebPage(
+		'http://www.test.server/testFetchWebPage With Spaces?a=b&amp;c=d');
+
+	$expectedHeaders['Connection'] = 'close';
+	$expectedHeaders['Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Accept-Ranges'] = 'bytes';
+	$expectedHeaders['ETag'] = '"122ae4-5-3fc199b0"';
+	$expectedHeaders['Server'] = 'Apache/1.3.28 (Unix)';
+	$expectedHeaders['Content-Length'] = '5';
+	$expectedHeaders['Content-Type'] = 'text/html';
+	$expectedHeaders['Last-Modified'] = 'Mon, 24 Nov 2003 05:40:00 GMT';
+	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
+	$expectedHeaders['Client-Response-Num'] = '1';
+
+	$this->assertEquals('HTTP/1.1 200 OK', $status);
+	$this->assertEquals($expectedHeaders, $headers);
+	$this->assertEquals("test\n", $body);
+    }
+
+    function testFetchHttpsWebPage() {
+	list ($success, $body, $response, $headers, $actualUrl) =
+	    GalleryCoreApi::fetchWebPage('https://secure.test.server/testFetchHttpsWebPage');
+
+	$expectedHeaders['Connection'] = 'close';
+	$expectedHeaders['Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Accept-Ranges'] = 'bytes';
+	$expectedHeaders['ETag'] = '"122ae4-5-3fc199b0"';
+	$expectedHeaders['Server'] = 'Apache/1.3.28 (Unix)';
+	$expectedHeaders['Content-Length'] = '5';
+	$expectedHeaders['Content-Type'] = 'text/html';
+	$expectedHeaders['Last-Modified'] = 'Mon, 24 Nov 2003 05:40:00 GMT';
+	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
+	$expectedHeaders['Client-Response-Num'] = '1';
+
+	$this->assert($success);
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
+	$this->assertEquals($expectedHeaders, $headers);
+	$this->assertEquals("test\n", $body);
+	$this->assertEquals('https://secure.test.server/testFetchHttpsWebPage', $actualUrl);
+    }
+
+    function testFetchHttpsWebFile() {
+	list ($return, $response, $headers) =
+	    GalleryCoreApi::fetchWebFile('https://secure.nice.server:83/testFetchHttpsWebFile',
+					 'testFetchHttpsWebFile.tmp');
+
+	$expectedHeaders['Connection'] = 'close';
+	$expectedHeaders['Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Accept-Ranges'] = 'bytes';
+	$expectedHeaders['ETag'] = '"122ae4-5-3fc199b0"';
+	$expectedHeaders['Server'] = 'Apache/1.3.28 (Unix)';
+	$expectedHeaders['Content-Length'] = '5';
+	$expectedHeaders['Content-Type'] = 'text/html';
+	$expectedHeaders['Last-Modified'] = 'Mon, 24 Nov 2003 05:40:00 GMT';
+	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
+	$expectedHeaders['Client-Response-Num'] = '1';
+
+	$this->assertEquals(true, $return);
+	$this->assertEquals('HTTP/1.1 200 OK', $response);
+	$this->assertEquals("test\n",
+			    $this->_outputFile['testFetchHttpsWebFile.tmp']);
+    }
 }
 
 /**
@@ -428,11 +524,11 @@ class WebTestPlatform {
     }
 
     function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
-	if ($target == 'www.test.server' && $port == '80') {
-	    return 'test-resource-1';
-	}
-
-	if ($target == 'www.test.server2' && $port == '8080') {
+	if ($target == 'www.test.server' && $port == '80'
+		|| $target == 'www.test.server2' && $port == '8080'
+		|| $target == 'my.test.server' && $port == '81'
+		|| $target == 'ssl://secure.test.server' && $port == '443'
+		|| $target == 'ssl://secure.nice.server' && $port == '83') {
 	    return 'test-resource-1';
 	}
 
@@ -442,20 +538,23 @@ class WebTestPlatform {
 
     function fwrite($handle, $string, $length=0) {
 	if ($handle == 'test-resource-1') {
-	    switch($string) {
+	    switch ($string) {
 	    case "GET /testFetchWebPage HTTP/1.0\r\n" .
 		"Host: www.test.server\r\n" .
 		"\r\n":
-	    case "GET /testFetchWebFile HTTP/1.0\r\n" .
+	    case "GET /testFetchWebFile?a=b&c=d HTTP/1.0\r\n" .
 		"Host: www.test.server\r\n" .
 		"\r\n":
 	    case "GET /testFetchWebPage%20With%20Spaces HTTP/1.0\r\n" .
 		"Host: www.test.server\r\n" .
 		"\r\n":
+	    case "GET /testFetchWebPage%20With%20Spaces?a=b&c=d HTTP/1.0\r\n" .
+		"Host: www.test.server\r\n" .
+		"\r\n":
 	    case "GET /testFetchWebPage HTTP/1.0\r\n" .
 		"Host: www.test.server2\r\n" .
 		"\r\n":
-	    case "GET /testFetchWebPage?foo=bar&baz=blat HTTP/1.0\r\n" .
+	    case "GET /testFetchWebPage?foo=bar&baz=blat&hoho=blah HTTP/1.0\r\n" .
 		"Host: www.test.server\r\n" .
 		"\r\n":
 	    case "GET /testFetchWebPageExtraHeaders HTTP/1.0\r\n" .
@@ -465,6 +564,12 @@ class WebTestPlatform {
 	    case "GET /testFetchWebFileExtraHeaders HTTP/1.0\r\n" .
 		"Host: www.test.server\r\n" .
 		"ExtraHeader: ExtraValue\r\n" .
+		"\r\n":
+	    case "GET /testFetchHttpsWebPage HTTP/1.0\r\n" .
+		"Host: secure.test.server\r\n" .
+		"\r\n":
+	    case "GET /testFetchHttpsWebFile HTTP/1.0\r\n" .
+		"Host: secure.nice.server\r\n" .
 		"\r\n":
 		$buffer = array();
 		$buffer[] = 'HTTP/1.1 200 OK';
@@ -553,6 +658,32 @@ class WebTestPlatform {
 		$this->_readBuffer[$handle] = $buffer;
 		return strlen($string);
 
+	    case "GET /testFetchRelativeRedirect HTTP/1.0\r\n" .
+		"Host: my.test.server\r\n" .
+		"\r\n":
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 302 Found';
+		$buffer[] = 'Date: Mon, 24 Nov 2003 06:35:01 GMT';
+		$buffer[] = 'Server: Apache/1.3.26 (Unix) PHP/4.1.2';
+		$buffer[] = 'Location: /testFetchRelativeRedirect2?query';
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Content-Type: text/html; charset=iso-8859-1';
+		$buffer[] = '';
+		$buffer[] = '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">';
+		$buffer[] = '<HTML><HEAD>';
+		$buffer[] = '<TITLE>302 Found</TITLE>';
+		$buffer[] = '</HEAD><BODY>';
+		$buffer[] = '<H1>Found</H1>';
+		$buffer[] = 'The document has moved.';
+		$buffer[] = '<HR>';
+		$buffer[] = '<ADDRESS>Apache/1.3.26 Server at my.test.server Port 81</ADDRESS>';
+		$buffer[] = '</BODY></HTML>';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    case "GET /testFetchRelativeRedirect2?query HTTP/1.0\r\n" .
+		"Host: my.test.server\r\n" .
+		"\r\n":
 	    case "GET /testFetchRedirectedWebPage2 HTTP/1.0\r\n" .
 		"Host: www.test.server\r\n" .
 		"\r\n":
@@ -647,7 +778,7 @@ class WebTestPlatform {
 	    }
 	}
 
-	if ($handle == 'testFetchWebFile.tmp') {
+	if (in_array($handle, array('testFetchWebFile.tmp', 'testFetchHttpsWebFile.tmp'))) {
 	    if (!isset($this->_testCase->_outputFile[$handle])) {
 		$this->_testCase->_outputFile[$handle] = '';
 	    }
@@ -695,7 +826,7 @@ class WebTestPlatform {
     }
 
     function fclose($handle) {
-	switch($handle) {
+	switch ($handle) {
 	case 'test-resource-1':
 	    unset($this->_readBuffer[$handle]);
 	    return true;
@@ -706,7 +837,7 @@ class WebTestPlatform {
     }
 
     function fflush($handle) {
-	switch($handle) {
+	switch ($handle) {
 	case 'test-resource-1':
 	    return true;
 
@@ -724,7 +855,7 @@ class WebTestPlatform {
     }
 
     function file_exists($path) {
-	switch(realpath($path)) {
+	switch (realpath($path)) {
 	case __FILE__:
 	case realpath(dirname(__FILE__) . '/../../classes/GalleryAlbumItem.class'):
 	    return true;
@@ -735,7 +866,8 @@ class WebTestPlatform {
     }
 
     function fopen($filename, $modes) {
-	if ($filename == 'testFetchWebFile.tmp' && $modes == 'wb') {
+	if (in_array($filename, array('testFetchWebFile.tmp', 'testFetchHttpsWebFile.tmp'))
+		&& $modes == 'wb') {
 	    $this->_fileBuffer[$filename] = '';
 	    return $filename;
 	}
