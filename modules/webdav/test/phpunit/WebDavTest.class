@@ -1993,7 +1993,12 @@ class WebDavTestStream {
 
     function stream_eof() {
 	$streams = WebDavTestStream::_getStreams();
-	return $this->_position >= strlen($streams[$this->_filename]);
+	$eof = $this->_position >= strlen($streams[$this->_filename]);
+	/* Buggy PHP 5.0.x, see www.php.net/manual/en/function.stream-wrapper-register.php#71057 */
+	if(version_compare(PHP_VERSION, '5.0', '>=') && version_compare(PHP_VERSION, '5.1', '<')) {
+	    $eof = !$eof;
+	}
+        return $eof;
     }
 }
 
