@@ -84,7 +84,7 @@ class GalleryCoreApi {
      *   (GalleryTranslator.class and Gallery.class)
      */
     function getApiVersion() {
-	return array(7, 36);
+	return array(7, 37);
     }
 
     /**
@@ -173,6 +173,35 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce(
 	    'modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
 	return GalleryFactoryHelper_medium::getAllImplementationIdsWithHint($classType, $hint);
+    }
+
+    /**
+     * Return the Hints for the specified class type and implId.
+     *
+     * @param string $classType Class type of the factory
+     * @parma string $implId the implementation id of interest
+     * @return array GalleryStatus
+     *               array Hints for the specified implementation id and class type
+     */
+    function getFactoryDefinitionHints($classType, $implId) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
+	return GalleryFactoryHelper_medium::getFactoryDefinitionHints($classType, $implId);
+    }
+
+    /**
+     * Return the Hints for the specified class type and implId.
+     *
+     * @param string $classType Class type of the factory
+     * @parma string $implId the implementation id of interest
+     * @param mixed $hints array of hints to try (in order) or single string hint (eg. 'image/jpeg')
+     * @return GalleryStatus
+     */
+    function updateFactoryDefinitionHints($classType, $implId, $hints) {
+	GalleryCoreApi::requireOnce(
+	    'modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
+	return 
+	    GalleryFactoryHelper_medium::updateFactoryDefinitionHints($classType, $implId, $hints);
     }
 
     /**
@@ -290,7 +319,6 @@ class GalleryCoreApi {
 	return GalleryPluginHelper_medium::removeParameterByValue($pluginType, $pluginId,
 								  $parameterName, $parameterValue);
     }
-
 
     /**
      * Get the status of all plugins of a given type
@@ -613,7 +641,6 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce('modules/core/classes/helpers/GalleryGroupHelper_simple.class');
 	return GalleryGroupHelper_simple::fetchGroupByGroupName($groupName);
     }
-
 
     /**
      * Return the permission bits for a set of permission ids

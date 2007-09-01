@@ -41,6 +41,13 @@ class FactoryTest extends GalleryTestCase {
 
 	$path = 'modules/core/test/phpunit/FactoryTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'FactoryTest', 'FactoryTestDummy', 'FactoryTestDummyId3',
+	    $path, 'factoryTest', null);
+	if ($ret) {
+	    return $ret;
+	}
+	
+	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'FactoryTest', 'FactoryTestDummy', 'FactoryTestDummyId',
 	    $path, 'factoryTest', array('dummy', '*'));
 	if ($ret) {
@@ -49,7 +56,7 @@ class FactoryTest extends GalleryTestCase {
 	$this->_markFactoryModuleForCleanup('factoryTest');
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'FactoryTest', 'FactoryTestDummy', 'FactoryTestDummyId2',
+	    'FactoryTest', 'FactoryTestDummy2', 'FactoryTestDummyId2',
 	    $path, 'factoryTest2', array('dummy'));
 	if ($ret) {
 	    return $ret;
@@ -57,13 +64,18 @@ class FactoryTest extends GalleryTestCase {
 
 	$this->_markFactoryModuleForCleanup('factoryTest2');
 
-	foreach (array('factoryTest', 'factoryTest2') as $moduleId) {
-	    GalleryPluginHelper_medium::setPluginInstance(
-		'module', $moduleId, new FactoryTestModule($moduleId));
-	    list ($ret, $ignored) = GalleryCoreApi::activatePlugin('module', $moduleId);
-	    if ($ret) {
-		return $ret;
-	    }
+	GalleryPluginHelper_medium::setPluginInstance(
+		'module', 'factoryTest', new FactoryTestModule());
+	list ($ret, $ignored) = GalleryCoreApi::activatePlugin('module', 'factoryTest');
+	if ($ret) {
+	    return $ret;
+	}
+	
+	GalleryPluginHelper_medium::setPluginInstance(
+		'module', 'factoryTest2', new FactoryTestModule2());
+	list ($ret, $ignored) = GalleryCoreApi::activatePlugin('module', 'factoryTest2');
+	if ($ret) {
+	    return $ret;
 	}
     }
 
@@ -199,8 +211,9 @@ class FactoryTest extends GalleryTestCase {
 	    return $ret;
 	}
 
-	$this->assertEquals(array('FactoryTestDummyId' => 'FactoryTestDummy',
-				  'FactoryTestDummyId2' => 'FactoryTestDummy'),
+	$this->assertEquals(array('FactoryTestDummyId3' => 'FactoryTestDummy',
+				  'FactoryTestDummyId' => 'FactoryTestDummy',
+				  'FactoryTestDummyId2' => 'FactoryTestDummy2'),
 			    $ids);
     }
 
@@ -212,7 +225,7 @@ class FactoryTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array('FactoryTestDummyId' => 'FactoryTestDummy',
-				  'FactoryTestDummyId2' => 'FactoryTestDummy'),
+				  'FactoryTestDummyId2' => 'FactoryTestDummy2'),
 			    $ids);
     }
 
@@ -235,7 +248,7 @@ class FactoryTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals(array('FactoryTestDummyId2' => 'FactoryTestDummy'),
+	$this->assertEquals(array('FactoryTestDummyId2' => 'FactoryTestDummy2'),
 			    $ids,
 			    'getAllFactoryImplementationIdsWithHint');
 
@@ -243,7 +256,7 @@ class FactoryTest extends GalleryTestCase {
 	if ($ret) {
 	    return $ret;
 	}
-	$this->assertEquals(array('FactoryTestDummyId2' => 'FactoryTestDummy'),
+	$this->assertEquals(array('FactoryTestDummyId2' => 'FactoryTestDummy2'),
 			    $ids,
 			    'getAllFactoryImplementationIds');
 
@@ -273,6 +286,31 @@ class FactoryTest extends GalleryTestCase {
 	}
 	$this->assertEquals(null, $instance, 'newFactoryInstanceById');
     }
+
+    function testGetFactoryDefinitionHints() {
+	list ($ret, $hints) = GalleryCoreApi::getFactoryDefinitionHints('FactoryTest',
+									'FactoryTestDummyId3');
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(array(), $hints, 'Unexpected hints on get');
+    }
+
+    function testUpdateFactoryDefinitionHints() {
+	$ret = GalleryCoreApi::updateFactoryDefinitionHints('FactoryTest', 'FactoryTestDummyId3',
+							    array('new hint'));
+	if ($ret) {
+	    return $ret;
+	}
+	
+	list ($ret, $hints) = GalleryCoreApi::getFactoryDefinitionHints('FactoryTest',
+									'FactoryTestDummyId3');
+	if ($ret) {
+	    return $ret;
+	}
+	$this->assertEquals(array('new hint'), $hints, 'Unexpected hints on update');
+    }
 }
 
 /**
@@ -282,16 +320,24 @@ class FactoryTest extends GalleryTestCase {
  * @subpackage PHPUnit
  */
 class FactoryTestDummy { }
+class FactoryTestDummy2 { }
 
 /**
- * Bogus class that we can feed to the factory
+ * Bogus classes that we can feed to the factory
  *
  * @package GalleryCore
  * @subpackage PHPUnit
  */
 class FactoryTestModule extends GalleryModule {
-    function FactoryTestModule($id) {
-	$this->setId($id);
+    function FactoryTestModule() {
+	$this->setId('factoryTest');
+	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$this->setRequiredModuleApi(GalleryModule::getApiVersion());
+    }
+}
+class FactoryTestModule2 extends GalleryModule {
+    function FactoryTestModule2() {
+	$this->setId('factoryTest2');
 	$this->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
 	$this->setRequiredModuleApi(GalleryModule::getApiVersion());
     }
