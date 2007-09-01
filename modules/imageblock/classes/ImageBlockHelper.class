@@ -314,188 +314,155 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    if ($ret) {
 		return array($ret, null);
 	    }
-	    $image = null;
-	    if ($fullSize && GalleryUtilities::isA($item, 'GalleryDataItem')) {
-		$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.viewSource');
+	    list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
+	    if ($ret) {
+		return array($ret, null);
+	    }
+	    $thumbnail = isset($thumbnail[$id]) ? $thumbnail[$id] : null;
+	    $image = $source = null;
+	    $derivativeParentId = $id;
+	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem') && ($fullSize || $maxSize)) {
+		/* If we may use a size larger than thumbnail, find derivative source for album */
+		if (!isset($thumbnail)) {
+		    /* No thumbnail, no source for larger size.. just skip this block */
+		    continue;
+		}
+		$source = $thumbnail;
+		while (GalleryUtilities::isA($source, 'GalleryDerivative')
+			&& $source->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
+		    list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
+			    $source->getDerivativeSourceId(),
+			    array('GalleryFileSystemEntity', 'GalleryDerivative'));
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		}
+
+		$derivativeParentId = GalleryUtilities::isA($source, 'GalleryDerivative')
+		    ? $source->getParentId() : $source->getId();
+
+		list ($ret, $ok) = GalleryCoreApi::hasItemPermission(
+			$derivativeParentId, 'core.view', $userId);
 		if ($ret) {
+		    return array($ret, null);
+		}
+		if (!$ok) {
+		    if ($fullSize) {
+			/* Can't view source item, so no fullsize is available */
+			continue;
+		    }
+		    /* Can't view source item, so just stick with album thumbnail */
+		    $derivativeParentId = $id;
+		    $source = null;
+		}
+	    }
+	    if ($fullSize) {
+		list ($ret, $ok) = GalleryCoreApi::hasItemPermission(
+			$derivativeParentId, 'core.viewSource', $userId);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if (!$ok) {
 		    /* Ignore permission error.. just don't add a block */
 		    continue;
 		}
-		list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($id));
-		if ($ret) {
-		    return array($ret, null);
+		if (isset($source)) {
+		    /* Use full size source of album thumbnail, located above */
+		    $image = $source;
+		} else {
+		    list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(array($id));
+		    if ($ret) {
+			return array($ret, null);
+		    }
+		    $image = isset($preferred[$id]) ? $preferred[$id] : $item;
 		}
-		$image = isset($preferred[$id]) ? $preferred[$id] : $item;
+	    } else if ($maxSize && isset($thumbnail) && ($thumbnail->getWidth() >= $maxSize
+			|| $thumbnail->getHeight() >= $maxSize)) {
+		/* Thumbnail is big enough */
+		$image = $thumbnail;
+	    } else if (!$maxSize) {
+		/* Use thumbnail if there is one */
+		$image = $thumbnail;
 	    } else {
-		list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
+		/*
+		 * Gather the differences in image sizes from the requested max size.
+		 *
+		 * We use absolute values for the differentials because they could be a negative
+		 * value.  We want the closest match, so -100 is closer than +125.
+		 *
+		 * If $biggerOnly is set, then we don't want any negative differentials.
+		 */
+
+		/* Get the preferred item object */
+		list ($ret, $ok) = GalleryCoreApi::hasItemPermission(
+			$derivativeParentId, 'core.viewSource', $userId);
 		if ($ret) {
 		    return array($ret, null);
 		}
-		if (isset($thumbnail[$id])) {
-		    $image = $thumbnail[$id];
-		    $derivativeParentId = $item->getId();
-
-		    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-			/* Find derivative source for album thumbnail */
-			$source = $image;
-			while (GalleryUtilities::isA($source, 'GalleryDerivative') &&
-			       $source->getDerivativeType() != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
-			    list ($ret, $source) = GalleryCoreApi::loadEntitiesById(
-				$source->getDerivativeSourceId(),
-				array('GalleryFileSystemEntity', 'GalleryDerivative'));
-			    if ($ret) {
-				return array($ret, null);
-			    }
+		if ($ok) {
+		    if (isset($source)) {
+			/* Use full size source of album thumbnail, located above */
+			$image = $source;
+		    } else {
+			list ($ret, $preferred) =
+			    GalleryCoreApi::fetchPreferredsByItemIds(array($id));
+			if ($ret) {
+			    return array($ret, null);
 			}
-
-			$derivativeParentId = GalleryUtilities::isA($source, 'GalleryDerivative')
-			    ? $source->getParentId() : $source->getId();
-
-			if ($fullSize || $maxSize) {
-			    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission(
-				$derivativeParentId, 'core.viewSource');
-			    if ($ret) {
-				return array($ret, null);
-			    }
-
-			    if ($hasPermission) {
-				$image = $source;
-			    } else {
-				if ($fullSize) {
-				    /* Ignore permission error.. just don't add a block */
-				    continue;
-				}
-
-				/*
-				 * We can't use this preferred because we don't have permissions
-				 * for it.  But we may still be able to use the thumbnail.
-				 */
-				$image = $thumbnail[$id];
-			    }
-			}
+			$image = isset($preferred[$id]) ? $preferred[$id] : $item;
 		    }
+		}
+		/*
+		 * Start with an arbitrarily large differential, in case we can't view the full
+		 * size or we don't have a height/width for the raw image (maybe it's not viewable?)
+		 */
+		$imageDifferential = $imageSize = 1000000;
+		if (isset($image) && method_exists($image, 'getWidth')) {
+		    $imageDifferential = abs(($image->getHeight() - $maxSize)
+					     + ($image->getWidth() - $maxSize));
+		    $imageSize = $image->getHeight() * $image->getWidth();
+		}
 
-		    if ($maxSize && !$fullSize) {
-			/* Get the preferred item object */
-			if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-			    list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission(
-				$derivativeParentId, 'core.viewSource');
-			    if ($ret) {
-				return array($ret, null);
-			    }
-
-			    if ($hasPermission) {
-				list ($ret, $preferred) = GalleryCoreApi::fetchPreferredsByItemIds(
-				    array($derivativeParentId));
-				if ($ret) {
-				    return array($ret, null);
-				}
-
-				$image = isset($preferred[$id]) ? $preferred[$id] : $item;
-			    }
-			}
-
-			/* Fetch thumbnail for size comparison */
-			if (isset($thumbnail[$id])) {
-			    $thumb = $thumbnail[$id];
-			}
-
-			if (isset($thumb) && ($thumb->getWidth() >= $maxSize
-				|| $thumb->getHeight() >= $maxSize)) {
-			    $image = $thumb;
-			} else {
-			    /*
-			     * Gather the differences in image sizes from the requested max size
-			     *
-			     * We use absolute values for the differentials because they
-			     * could be a negative value.  We want the closest match, so
-			     * -100 is closer than +125.
-			     *
-			     * If $biggerOnly is set, then we don't want any negative differentials.
-			     */
-			    if (method_exists($image, 'getWidth')) {
-				$imageDifferential = abs(($image->getHeight() - $maxSize) +
-							 ($image->getWidth() - $maxSize));
-			    } else {
-				/*
-				 * We don't have a height/width for the raw image (maybe it's not
-				 * viewable?)  Use an arbitrarily large differential to avoid it
-				 * getting picked.
-				 */
-				$imageDifferential = 1000000;
-			    }
-			    $thumbDifferential = abs(($thumb->getHeight() - $maxSize) +
-						     ($thumb->getWidth() - $maxSize));
-
-			    /* Get the list of resizes */
-			    $resizes = array();
-			    list ($ret, $hasResizePermission) = GalleryCoreApi::hasItemPermission(
-				$derivativeParentId, 'core.viewResizes');
-			    if ($ret) {
-				return array($ret, null);
-			    }
-			    if ($hasResizePermission) {
-				list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(
-				    array($derivativeParentId));
-				if ($ret) {
-				    return array($ret, null);
-				}
-			    }
-
-			    if (!empty($resizes)) {
-				foreach ($resizes as $resizedImage) {
-				    foreach ($resizedImage as $imageObject) {
-					$rawDifferential = ($imageObject->getHeight() - $maxSize) +
-					    ($imageObject->getWidth() - $maxSize);
-					if ($biggerOnly && $rawDifferential < 0) {
-					    continue;
-					}
-					$resizeDifferential = abs($rawDifferential);
-					$resizeSize =
-					    $imageObject->getHeight() * $imageObject->getWidth();
-
-					/*
-					 * If this is the first resize, or if this differential is
-					 * smaller than the last, update the image target and the
-					 * comparison value
-					 *
-					 * If two differentials are equidistant, use the larger of
-					 * the two based on image size
-					 */
-					if ($resizeDifferential < $imageDifferential) {
-					    if (!isset($lastDifferential)
-						    || ($resizeDifferential <= $lastDifferential
-							&& $resizeSize > $lastSize)) {
-						$image = $imageObject;
-						$lastDifferential = abs($resizeDifferential);
-						$lastSize = $resizeSize;
-					    } else {
-						continue;
-					    }
-					}
-				    }
-				}
-			    }
-
-
-			    /*
-			     * If the thumbnail is a closer match to the target than the full size
-			     * image or any of the resizes, use the thumbnail, unless we only want
-			     * to use bigger images to avoid having whitespace.
-			     */
-			    if (!isset($lastDifferential)) {
-				$lastDifferential = $imageDifferential;
-			    }
-
-			    if (!$biggerOnly && $thumbDifferential < $lastDifferential) {
-				$image = $thumb;
-			    }
-			}
+		/* Get the list of resizes */
+		$resizes = array();
+		list ($ret, $ok) = GalleryCoreApi::hasItemPermission(
+			$derivativeParentId, 'core.viewResizes', $userId);
+		if ($ret) {
+		    return array($ret, null);
+		}
+		if ($ok) {
+		    list ($ret, $resizes) =
+			GalleryCoreApi::fetchResizesByItemIds(array($derivativeParentId));
+		    if ($ret) {
+			return array($ret, null);
 		    }
+		    $resizes = isset($resizes[$derivativeParentId]) ? $resizes[$derivativeParentId]
+								    : array();
+		}
+		if (isset($thumbnail)) {
+		    $resizes[] = $thumbnail;
+		}
 
-		    /* {g->image} won't work with item!=image and image not a derivative */
-		    if (!GalleryUtilities::isA($image, 'GalleryDerivative')) {
-			$forceItem = true;
+		foreach ($resizes as $imageObject) {
+		    $rawDifferential = ($imageObject->getHeight() - $maxSize)
+				     + ($imageObject->getWidth() - $maxSize);
+		    if ($biggerOnly && $rawDifferential < 0) {
+			continue;
+		    }
+		    $resizeDifferential = abs($rawDifferential);
+		    $resizeSize = $imageObject->getHeight() * $imageObject->getWidth();
+
+		    /*
+		     * If this differential is smaller than the last, update the image target and
+		     * the comparison value.
+		     * If two differentials are equidistant, use the larger based on image size.
+		     */
+		    if ($resizeDifferential < $imageDifferential
+			    || $resizeDifferential == $imageDifferential
+			       && $resizeSize > $imageSize) {
+			$image = $imageObject;
+			$imageDifferential = $resizeDifferential;
+			$imageSize = $resizeSize;
 		    }
 		}
 	    }
@@ -505,7 +472,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		$itemData['deriv'] = (array)$image;
 		$itemData['owner'] = (array)$owner;
 		$itemData['thumb'] = (array)$image;
-		if (isset($forceItem)) {
+		/* {g->image} won't work with item!=image and image not a derivative */
+		if ($image->getId() != $id && !GalleryUtilities::isA($image, 'GalleryDerivative')) {
 		    $itemData['forceItem'] = true;
 		}
 		$blocks[] = $itemData;
