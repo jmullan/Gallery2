@@ -30,6 +30,10 @@ GalleryCoreApi::requireOnce('modules/core/classes/GalleryEmbed.class');
  */
 class EmbedTest extends GalleryTestCase {
 
+    function EmbedTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
     function setUp() {
 	$ret = parent::setUp();
 	if ($ret) {
@@ -65,10 +69,6 @@ class EmbedTest extends GalleryTestCase {
 	if ($ret) {
 	   $this->failWithStatus($ret);
 	}
-    }
-
-    function EmbedTest($methodName) {
-	$this->GalleryTestCase($methodName);
     }
 
     /**
@@ -408,6 +408,27 @@ class EmbedTest extends GalleryTestCase {
 	if ($ret && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 	    return $ret;
 	}
+    }
+
+    function testEmbeddingAppSpecifiesDifferentAdodbFetchMode() {
+	global $gallery;
+
+	$save = $GLOBALS['ADODB_FETCH_MODE'];
+	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_ASSOC;
+
+	$storage =& $gallery->getStorage();
+
+	/*
+	 * Break encapsulation and verify internals here.  This will probably be a little bit
+	 * error prone when the underlying implementation changes.
+	 */
+	$storage->_getConnection(true);
+
+	/* The new connection is FETCH_NUM and we didn't change the global state */
+	$this->assertEquals(ADODB_FETCH_NUM, $storage->_db->fetchMode);
+	$this->assertEquals(ADODB_FETCH_ASSOC, $GLOBALS['ADODB_FETCH_MODE']);
+
+	$GLOBALS['ADODB_FETCH_MODE'] = $save;
     }
 }
 ?>
