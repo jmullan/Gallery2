@@ -250,6 +250,8 @@ class GalleryStorage {
 	    return array(GalleryCoreApi::error(ERROR_STORAGE_FAILURE), null);
 	}
 
+	$db->SetFetchMode(ADODB_FETCH_NUM);
+
 	return array(null, $db);
     }
 
@@ -473,8 +475,6 @@ class GalleryStorage {
 	$query = $this->_translateQuery($query);
 
 	/* Run it with the right limits and return the results */
-	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
-
 	if (!empty($optional['limit'])) {
 	    $count = empty($optional['limit']['count']) ? -1 : $optional['limit']['count'];
 	    $offset = empty($optional['limit']['offset']) ? -1 : $optional['limit']['offset'];
@@ -619,8 +619,6 @@ class GalleryStorage {
 	}
 
 	/* Run it with the right limits and return the results */
-	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
-
 	if (!empty($optional['limit'])) {
 	    $count = empty($optional['limit']['count']) ? -1 : $optional['limit']['count'];
 	    $offset = empty($optional['limit']['offset']) ? -1 : $optional['limit']['offset'];
