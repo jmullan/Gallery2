@@ -674,30 +674,42 @@ class GalleryDataCache {
 
 	$phpVm = $gallery->getPhpVm();
 	$now = $phpVm->time();
-	$ret = GalleryCoreApi::updateMapEntry(
-	    'GalleryCacheMap',
-	    array('key' => $key, 'userId' => $userId, 'itemId' => $itemId, 'type' => $type),
-	    array('value' => $value, 'timestamp' => $now, 'isEmpty' => 0));
-
-	$storage =& $gallery->getStorage();
-	list ($ret, $affectedRows) = $storage->getAffectedRows();
-	if ($ret) {
-	    return $ret;
-	}
-
-	if (!$affectedRows) {
-	    $ret = GalleryCoreApi::addMapEntry(
+	for ($i = 0; $i < 2; $i++) {
+	    $ret = GalleryCoreApi::updateMapEntry(
 		'GalleryCacheMap',
-		array('key' => $key, 'value' => $value, 'userId' => $userId,
-		      'itemId' => $itemId, 'type' => $type, 'timestamp' => $now, 'isEmpty' => 0));
+		array('key' => $key, 'userId' => $userId, 'itemId' => $itemId, 'type' => $type),
+		array('value' => $value, 'timestamp' => $now, 'isEmpty' => 0));
+
+	    $storage =& $gallery->getStorage();
+	    list ($ret, $affectedRows) = $storage->getAffectedRows();
 	    if ($ret) {
 		return $ret;
 	    }
+
+	    if (!$affectedRows) {
+		$ret = GalleryCoreApi::addMapEntry(
+		    'GalleryCacheMap',
+		    array('key' => $key, 'value' => $value, 'userId' => $userId, 'type' => $type,
+			  'itemId' => $itemId, 'timestamp' => $now, 'isEmpty' => 0));
+		if ($ret) {
+		    /*
+		     * Nearly always this update/insert should be OK in one pass.
+		     * However, 2 simultaneous requests may both fail to update, then both
+		     * try to insert.. the 2nd insert will fail.  In this rare case we'll
+		     * loop and try once more to update.. if it still fails we'll error out.
+		     */
+		    if ($i < 1) {
+			continue;
+		    }
+		    return $ret;
+		}
+	    }
+	    break;
 	}
 
 	/* Clear expired data only 5% of the time. */
-	$dieRoll = $phpVm->rand(1,100);
-	if($dieRoll <= 5){
+	$dieRoll = $phpVm->rand(1, 100);
+	if ($dieRoll <= 5){
 	    $ret = GalleryDataCache::_cleanPageDataCache();
 	    if ($ret) {
 		return $ret;
