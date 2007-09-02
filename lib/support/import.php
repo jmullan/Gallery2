@@ -73,6 +73,16 @@ if ($ret) {
 	    $doImportFlag = verifyVersions($templateData, $importFile);
 	}
 
+	$configDir = dirname($configFilePath);
+	if (!is_writeable($configFilePath)) {
+	    $templateData['errors'][] = 'Unable to write to the <b>config.php</b> configuration '
+		. 'file in your ' . $configDir . ' directory.  Please change its permissions.  If '
+		. 'you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.';
+	    $doImportFlag = false;
+	    getBackupFiles($templateData);
+	    $templateData['warnings'] = array();
+	}
+
 	if ($doImportFlag) {
 	    $template->renderHeader(true);
 	    $template->renderStatusMessage('Restoring Gallery Database', '', 0);
@@ -114,10 +124,9 @@ if ($ret) {
 	$configDir = dirname($configFilePath);
 
 	if (!is_writeable($configFilePath)) {
-	    $templateData['errors'][] = 'Unable to write to the <b>config.php</b> configuration '
+	    $templateData['warnings'][] = 'Unable to write to the <b>config.php</b> configuration '
 		. 'file in your ' . $configDir . ' directory.  Please change its permissions.  If '
-		. 'you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.  Please '
-		. 'click the \'Continue\' below after you have changed the permission.';
+		. 'you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.';
 	    $templateData['canWriteConfig'] = 0;
 	} else {
 	    $templateData['canWriteConfig'] = 1;
@@ -157,9 +166,9 @@ function verifyVersions(&$templateData, $importFile) {
     $errors = $importer->verifyVersions($importFile);
 
     if (!empty($errors['warnings'])) {
-	$templateData['warnings'] = $errors['warnings'];
+	$templateData['versionWarnings'] = $errors['warnings'];
     } else {
-	$templateData['warnings'] = null;
+	$templateData['versionWarnings'] = null;
     }
 
     if (!empty($errors['errors'])) {
@@ -192,8 +201,10 @@ function getBackupFiles(&$templateData) {
 
     $files = array();
     foreach ($platform->glob($backupFiles) as $fileName) {
-       $files[] = $fileName;
+       $files[filectime($fileName) . $fileName] = $fileName;
     }
+    krsort($files);
+
     $templateData['backupFiles'] = $files;
     if (count($files) == 0) {
         $templateData['errors'][] =
