@@ -24,6 +24,11 @@
   <p class="giDescription">
     {g->text text="FFMPEG is a graphics toolkit that can be used to process video files that you upload to Gallery.  You must install the FFMPEG binary on your server, then enter the path to it in the text box below.  If you're on a Unix machine, don't forget to make the binary executable (<i>chmod 755 ffmpeg</i> in the right directory should do it)"}
   </p>
+{if !$AdminFfmpeg.canExec}
+  <p class="giWarning">
+    {g->text text="The exec() function is disabled in your PHP by the <b>disabled_functions</b> parameter in php.ini.  This module cannot be used until that setting is changed."}
+  </p>
+{else}
   {if $AdminFfmpeg.canWatermark}
     <img src="{g->url href="modules/ffmpeg/images/sample.jpg"}" width="100" height="75" alt=""
      style="float: right"/>
@@ -88,6 +93,7 @@
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Settings"}"/>
+{/if}
   {if $AdminFfmpeg.isConfigure}
     <input type="submit" class="inputTypeSubmit"
      name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>

@@ -265,6 +265,7 @@ class AdminNetPbmView extends GalleryView {
 	$AdminNetPbm['failCount'] = $failCount;
 	$AdminNetPbm['debugSnippet'] = $debugSnippet;
 	$AdminNetPbm['isConfigure'] = !$isActive;
+	$AdminNetPbm['canExec'] = !in_array('exec', split(',\s*', ini_get('disable_functions')));
 
 	if ($failCount > 0) {
 	    $template->javascript('lib/javascript/BlockToggle.js');

@@ -21,6 +21,11 @@
     {g->text text="<b>Note</b>: Gallery supports Dcraw v5.40 and more recent."}
   </p>
 
+{if !$AdminDcraw.canExec}
+  <p class="giWarning">
+    {g->text text="The exec() function is disabled in your PHP by the <b>disabled_functions</b> parameter in php.ini.  This module cannot be used until that setting is changed."}
+  </p>
+{else}
   <table class="gbDataTable">
     <tr>
       <td>
@@ -64,6 +69,7 @@
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Settings"}"/>
+{/if}
   {if $AdminDcraw.isConfigure}
     <input type="submit" class="inputTypeSubmit"
      name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>

@@ -149,6 +149,7 @@ class ArchiveUploadSiteAdminView extends GalleryView {
 	    return array($ret, null);
 	}
 	$form['isConfigure'] = !$isActive;
+	$form['canExec'] = !in_array('exec', split(',\s*', ini_get('disable_functions')));
 
 	if (isset($form['action']['test'])) {
 	    if (empty($form['error']['unzipPath'])) {

@@ -60,11 +60,15 @@ class ZipCartModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
+	/* This module requires exec() */
+	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	    return array(null, true);
+	}
+
 	list ($ret, $value) = $this->getParameter('path');
 	if ($ret) {
 	    return array($ret, null);
 	}
-
 	return array(null, empty($value));
     }
 
@@ -73,6 +77,11 @@ class ZipCartModule extends GalleryModule {
      */
     function autoConfigure() {
 	global $gallery;
+
+	/* This module requires exec() */
+	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	    return array(null, false);
+	}
 
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {

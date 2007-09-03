@@ -140,16 +140,19 @@ class DcrawModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
+	/* This module requires exec() */
+	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	    return array(null, true);
+	}
+
 	list ($ret, $path) = $this->getParameter('path');
 	if ($ret) {
 	    return array($ret, null);
 	}
-
 	list ($ret, $version) = $this->getParameter('version');
 	if ($ret) {
 	    return array($ret, null);
 	}
-
 	return array(null, empty($path) || empty($version));
     }
 
@@ -159,11 +162,15 @@ class DcrawModule extends GalleryModule {
     function autoConfigure() {
 	global $gallery;
 
+	/* This module requires exec() */
+	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	    return array(null, false);
+	}
+
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
 	    return array($ret, false);
 	}
-
 	if (!$needsConfiguration) {
 	    return array(null, true);
 	}

@@ -110,11 +110,15 @@ class FfmpegModule extends GalleryModule {
     function autoConfigure() {
 	global $gallery;
 
+	/* This module requires exec() */
+	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	    return array(null, false);
+	}
+
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
 	    return array($ret, false);
 	}
-
 	if (!$needsConfiguration) {
 	    return array(null, true);
 	}
@@ -257,6 +261,10 @@ class FfmpegModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
+	/* This module requires exec() */
+	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	    return array(null, true);
+	}
 	/* This module requires all fields to be filled out before it can be activated. */
 	foreach (array('path') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
@@ -268,7 +276,6 @@ class FfmpegModule extends GalleryModule {
 		return array(null, true);
 	    }
 	}
-
 	return array(null, false);
     }
 

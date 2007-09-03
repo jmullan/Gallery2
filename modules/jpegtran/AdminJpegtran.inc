@@ -221,6 +221,7 @@ class AdminJpegtranView extends GalleryView {
 	$AdminJpegtran['debugSnippet'] = $debugSnippet;
 	$AdminJpegtran['failCount'] = $failCount;
 	$AdminJpegtran['isConfigure'] = !$isActive;
+	$AdminJpegtran['canExec'] = !in_array('exec', split(',\s*', ini_get('disable_functions')));
 
 	if ($failCount > 0) {
 	    $template->javascript('lib/javascript/BlockToggle.js');
@@ -229,8 +230,7 @@ class AdminJpegtranView extends GalleryView {
 	$template->setVariable('AdminJpegtran', $AdminJpegtran);
 	$template->setVariable('controller', 'jpegtran.AdminJpegtran');
 
-	return array(null,
-		     array('body' => 'modules/jpegtran/templates/AdminJpegtran.tpl'));
+	return array(null, array('body' => 'modules/jpegtran/templates/AdminJpegtran.tpl'));
     }
 }
 ?>

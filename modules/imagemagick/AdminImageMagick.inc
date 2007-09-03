@@ -289,6 +289,8 @@ class AdminImageMagickView extends GalleryView {
 	$AdminImageMagick['debugSnippet'] = $debugSnippet;
 	$AdminImageMagick['failCount'] = $failCount;
 	$AdminImageMagick['isConfigure'] = !$isActive;
+	$AdminImageMagick['canExec'] =
+	    !in_array('exec', split(',\s*', ini_get('disable_functions')));
 
 	if ($failCount > 0) {
 	    $template->javascript('lib/javascript/BlockToggle.js');

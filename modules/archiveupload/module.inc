@@ -80,6 +80,11 @@ class ArchiveUploadModule extends GalleryModule {
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
+	/* This module requires exec() */
+	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	    return array(null, false);
+	}
+
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret) {
 	    return array($ret, false);
@@ -107,6 +112,11 @@ class ArchiveUploadModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
+	/* This module requires exec() */
+	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
+	    return array(null, true);
+	}
+
 	foreach (array('unzipPath') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret) {
@@ -117,7 +127,6 @@ class ArchiveUploadModule extends GalleryModule {
 		return array(null, true);
 	    }
 	}
-
 	return array(null, false);
     }
 
