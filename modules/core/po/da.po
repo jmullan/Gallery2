@@ -20,13 +20,12 @@
 # Allan Beaufour <allan@beaufour.dk>, 2005.
 # - Bjørn Graabek <bjorn@graabek.com>, 2006-2007
 #
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery: Core 1.2.20\n"
+"Project-Id-Version: Gallery: Core 1.2.21\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-10-15 09:02+0200\n"
-"PO-Revision-Date: 2007-06-17 20:08+0100\n"
+"PO-Revision-Date: 2007-09-03 20:40+0100\n"
 "Last-Translator: Jens Hyllegaard <Jens@linushvj.dk>\n"
 "Language-Team: Danish <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -648,9 +647,8 @@ msgstr "Databasen er blevet konverteret til UTF8 format"
 msgid "No conversion required"
 msgstr "Ingen konvertering nødvendig"
 
-#, fuzzy
 msgid "Backup the database"
-msgstr "Optimer databasen"
+msgstr "Sikkerheskopier databasen"
 
 msgid ""
 "Backup all your Gallery data (item data, users, comments, etc.) to a single file in your "
@@ -658,17 +656,20 @@ msgid ""
 "your Gallery installation needs to be set into maintenance mode, as this is not done "
 "automatically."
 msgstr ""
+"Sikkerhedskopiér alle dine Gallery data (emnedata, brugere, kommentarer osv.) til en enkelt "
+"fil i din datamappe. Sikkerhedskopien indeholder ikke billedfilerne. Før du kører denne "
+"sikkerhedskopiering, skal din Gallery installation sættes i vedligeholdelses tilstand, da "
+"dette ikke gøres automatisk."
 
 msgid "Backing up Gallery Database"
-msgstr ""
+msgstr "Sikkerhedskopierer Gallery databasen"
 
-#, fuzzy
 msgid "Exporting..."
-msgstr "Forbereder..."
+msgstr "Eksporterer..."
 
 #, c-format
 msgid "Database backup completed and the backup file is located at: %s"
-msgstr ""
+msgstr "Sikkerhedskopieringen af databasen er færdig, og sikkerhedskopien er placeret her: %s"
 
 msgid "Delete user sessions"
 msgstr "Slet bruger 'sessions'"
@@ -1093,62 +1094,72 @@ msgstr "Rækker i %s tabel = %d"
 
 #, c-format
 msgid "The %s \"%s\" is not installed and will not be backed up."
-msgstr ""
+msgstr "%s \"%s\" er ikke installeret og vil ikke blive sikkerhedskopieret."
 
 #, c-format
 msgid "\"%s\" has no creation sql and will not be backed up."
-msgstr ""
+msgstr "\"%s\" har ikke nogen oprettelses sql og vil ikke blive sikkerhedskopieret."
 
 #, c-format
 msgid "Unable to load table description for \"%s\", no data will be exported."
-msgstr ""
+msgstr "Kunne ikke indlæse tabelbeskrivelsen for \"%s\", ingen data vil blive eksporteret."
 
 msgid ""
 "Unable to find the XML parser.  The PHP XML parsing extension must be loaded.  Terminating "
 "database import."
 msgstr ""
+"Kunne ikke finde XML fortolkeren. PHP XML fortolker udvidelsen skal være indlæst. Afbryder "
+"database importen."
 
 #, c-format
 msgid "The exported file is not the correct version. Expecting %s recieved %s."
-msgstr ""
+msgstr "Den eksporterede fil er ikke den korrekte version. Forventede %s men modtog %s."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to close import file: %s"
-msgstr "Kunne ikke slette biblioteket: %s"
+msgstr "Kunne ikke lukke importfilen: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open import file: %s"
-msgstr "Kunne ikke slette biblioteket: %s"
+msgstr "Kunne ikke åbne importfilen: %s"
 
 #, c-format
 msgid "Import file doesn't exist: %s"
-msgstr ""
+msgstr "Importfilen eksisterer ikke: %s"
 
 #, c-format
 msgid "Plugin %s is not currently available."
-msgstr ""
+msgstr "Udvidelsen %s er ikke tilgængelig."
 
 #, c-format
 msgid "The available version of plugin \"%s\" may not be compatible with the imported version."
 msgstr ""
+"Den tilgængelige version af udvidelsen \"%s\" er muligvis ikke kompatibel med den "
+"importerede version."
 
 #, c-format
 msgid ""
 "The currently installed core API version required by \"%s\" may not be compatible with the "
 "imported version."
 msgstr ""
+"Den aktuelt installerede core API version der kræves af \"%s\" er muligvis ikke kompatibel "
+"med den importerede version."
 
 #, c-format
 msgid ""
 "The installed module API version required by \"%s\" may not be compatible with the imported "
 "version."
 msgstr ""
+"Den installerede modul API version der kræves af \"%s\" er muligvis ikke kompatibel med den "
+"importerede version."
 
 #, c-format
 msgid ""
 "The installed theme API version required by \"%s\" is not compatible with the imported "
 "version."
 msgstr ""
+"Den installerede tema API version der kræves af \"%s\" er muligvis ikke kompatibel med den "
+"importerede version."
 
 msgid "Successfully saved theme settings"
 msgstr "Layoutopsætningen blev gemt"
@@ -2791,9 +2802,9 @@ msgstr "Forrige side"
 msgid "Next Page"
 msgstr "Næste side"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Do you really want to delete %s?"
-msgstr "Vil du virkelig slette "
+msgstr "Vil du virkelig slette %s?"
 
 msgid "Delete more items..."
 msgstr "Slet flere emner"

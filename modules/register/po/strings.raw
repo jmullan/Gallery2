@@ -13,6 +13,7 @@ gettext("New User Registration")
 gettext("Gallery")
 gettext("Account activation")
 gettext("New user registration")
+gettext("Welcome to Gallery")
 gettext("Register") /* also in: templates/UserSelfRegistration.tpl */
 
 /* templates/AdminEmail.tpl */
@@ -33,8 +34,10 @@ gettext("Choose policy:")
 gettext("Email details")
 gettext("Sender(From) Email Address:")
 gettext("Confirmation Email Subject:")
-gettext("Admin Email Subject:")
 gettext("Email Site Administrators for all new registrations")
+gettext("Admin Email Subject:")
+gettext("Email new users upon account activation")
+gettext("Welcome Email Subject:")
 gettext("Save")
 gettext("Reset")
 gettext("Pending Registrations")
@@ -59,12 +62,12 @@ gettext("Your account has been activated.")
 gettext("You can now login to your account with your username and password.")
 
 /* templates/ConfirmationEmail.tpl */
-gettext("Hello %s,")
-gettext("You receive this email because you have registered at %s")
-gettext("Your username is: %s")
+gettext("Hello %s,") /* also in: templates/WelcomeEmail.tpl */
+gettext("You receive this email because you have registered at %s") /* also in: templates/WelcomeEmail.tpl */
+gettext("Your username is: %s") /* also in: templates/WelcomeEmail.tpl */
 gettext("To finish the registration process please click the following link:")
 gettext("If you did not register at this site then please ignore this email.  The registration will not become valid and you will not receive any further emails.  Sorry for the inconvenience.")
-gettext("Thank you!")
+gettext("Thank you!") /* also in: templates/WelcomeEmail.tpl */
 
 /* templates/SelfRegistrationSuccess.tpl */
 gettext("Registration successful")
@@ -89,3 +92,6 @@ gettext("Verify Password")
 gettext("You must enter the password a second time")
 gettext("The passwords you entered did not match")
 gettext("Cancel")
+
+/* templates/WelcomeEmail.tpl */
+gettext("Your account is now active. Visit the site listed above to login.")
