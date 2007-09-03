@@ -838,6 +838,8 @@ class Gallery {
      * @return boolean true if we transferred the file successfully
      */
     function fastDownload($relativePath, $filename, $lastModified, $mimeType, $contentLength) {
+	global $gallery;
+
 	/*
 	 * Note: don't use GalleryPlatform or GalleryUtilities here because this code is
 	 * a shortcut that is used before we load those classes.
@@ -846,6 +848,14 @@ class Gallery {
 	$requestFileName = isset($_GET[$fileNameParam]) ? $_GET[$fileNameParam] : null;
 	if (!empty($requestFileName) && $requestFileName != $filename) {
 	    return false;
+	}
+
+	/**
+	 * Try to prevent Apache's mod_deflate from gzipping this output since it's likely already
+	 * a binary file and broken versions of mod_deflate sometimes get the byte count wrong.
+	 */
+	if (function_exists('apache_setenv') && !$gallery->getConfig('apacheSetenvBroken')) {
+	    apache_setenv('no-gzip', '1');
 	}
 
 	$base = $this->getConfig('data.gallery.base');

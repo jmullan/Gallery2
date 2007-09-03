@@ -120,8 +120,11 @@ class DownloadItemView extends GalleryView {
 	$session =& $gallery->getSession();
 	$phpVm = $gallery->getPhpVm();
 
-	/* Try to prevent Apache's mod_deflate from gzipping the output a 2nd time. */
-	if (function_exists('apache_setenv')) {
+	/**
+	 * Try to prevent Apache's mod_deflate from gzipping the output since it's likely already
+	 * a binary file and broken versions of mod_deflate sometimes get the byte count wrong.
+	 */
+	if (function_exists('apache_setenv') && !@$gallery->getConfig('apacheSetenvBroken')) {
 	    @apache_setenv('no-gzip', '1');
 	}
 

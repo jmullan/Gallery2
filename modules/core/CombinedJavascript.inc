@@ -64,8 +64,12 @@ class CombinedJavascriptView extends GalleryView {
 		      'itemId' => 'CombinedJavascript_gzip_' . $key,
 		      'id' => '_all'));
 	    if (isset($cacheData)) {
-		/* Try to prevent Apache's mod_deflate from gzipping the output a 2nd time. */
-		if ($phpVm->function_exists('apache_setenv')) {
+		/**
+		 * Try to prevent Apache's mod_deflate from gzipping the output a 2nd time
+		 * since broken versions of mod_deflate sometimes get the byte count wrong.
+		 */
+		if ($phpVm->function_exists('apache_setenv')
+		        && !@$gallery->getConfig('apacheSetenvBroken')) {
 		    @apache_setenv('no-gzip', '1');
 		}
 

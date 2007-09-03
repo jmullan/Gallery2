@@ -492,7 +492,13 @@ function _GalleryMain($embedded=false) {
 
 	    if ($viewName == 'core.ProgressBar') {
 		@ini_set('output_buffering', '0');
-		if (function_exists('apache_setenv')) {
+
+		/**
+		 * Try to prevent Apache's mod_deflate from gzipping the output since that
+		 * can interfere with streamed output.
+		 */
+		if (function_exists('apache_setenv')
+		        && !@$gallery->getConfig('apacheSetenvBroken')) {
 		    @apache_setenv('no-gzip', '1');
 		}
 
