@@ -321,6 +321,7 @@ class GalleryUrlGenerator {
      *        as baseUri
      * @param string $embedSessionString (optional) when embedded in CMS app that supports
      *        cookieless browsing, key=value string for CMS session key and id
+     * @return GalleryStatus a status code
      */
     function init($baseUri=null, $g2Uri=null, $embedSessionString=null) {
 	$this->_embedSessionString = $embedSessionString;
@@ -832,7 +833,7 @@ class GalleryUrlGenerator {
      * requestVariables, but before we start generating URLs with generateUrl().  Currently it's
      * called from GalleryInitSecondPass
      *
-     * @return GalleryStatus
+     * @return GalleryStatus a status code
      */
     function initNavigation() {
 	global $gallery;
