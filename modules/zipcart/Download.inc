@@ -53,7 +53,7 @@ class DownloadView extends GalleryView {
 	     * broken versions of mod_deflate sometimes get the byte count wrong.
 	     */
 	    @$phpVm->ini_set('zlib.output_compression', 0);
-	    if (function_exists('apache_setenv') && !$gallery->getConfig('apacheSetenvBroken')) {
+	    if (function_exists('apache_setenv') && !@$gallery->getConfig('apacheSetenvBroken')) {
 		@apache_setenv('no-gzip', '1');
 	    }
 

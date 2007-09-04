@@ -854,7 +854,7 @@ class Gallery {
 	 * Try to prevent Apache's mod_deflate from gzipping this output since it's likely already
 	 * a binary file and broken versions of mod_deflate sometimes get the byte count wrong.
 	 */
-	if (function_exists('apache_setenv') && !$gallery->getConfig('apacheSetenvBroken')) {
+	if (function_exists('apache_setenv') && !@$gallery->getConfig('apacheSetenvBroken')) {
 	    apache_setenv('no-gzip', '1');
 	}
 
