@@ -1728,6 +1728,8 @@ class WebDavTest extends GalleryTestCase {
 
 	$this->_platform->_streams['php://input'] = $this->_platform->fopen($filePath, 'rb');
 
+	set_error_handler('WebDavTest_error_handler');
+
 	/* Perform the request and verify that we succeeded */
 	ob_start();
 	list ($ret, $g2Data) = _GalleryMain();
@@ -2014,6 +2016,10 @@ function WebDavTest_error_handler($errno, $errstr, $errfile, $errline) {
 	if (preg_match($expected1, $errstr) || preg_match($expected2, $errstr)) {
 	    return;
 	}
+    }
+
+    if (error_reporting() == 0 && preg_match('/Undefined index:\s+apacheSetenvBroken/', $errstr)) {
+	return;
     }
 
     /* Else call our default error_handler */
