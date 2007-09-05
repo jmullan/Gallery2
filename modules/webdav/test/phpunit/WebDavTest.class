@@ -356,7 +356,7 @@ class WebDavTest extends GalleryTestCase {
 	$this->assertEquals('', $output, 'output');
     }
 
-    function testPropfindRecursiveWithoutViewPermission() {
+    function testPropfindCollectionDepthInfinityWithoutViewPermission() {
 	if (!function_exists('stream_wrapper_register')) {
 	    return $this->skip();
 	}
@@ -428,6 +428,168 @@ class WebDavTest extends GalleryTestCase {
       <D:prop>
         <D:creationdate ns1:dt="dateTime.tz">'
 	    . gmdate('Y-m-d\TH:i:s\Z', $this->_item->getCreationTimestamp())
+	    . '</D:creationdate>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+'), split("\r?\n", $output));
+    }
+
+    function testPropfindCollectionDepth0() {
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
+	$_SERVER['HTTP_DEPTH'] = '0';
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:propfind xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
+  <D:prop>
+    <D:creationdate/>
+  </D:prop>
+</D:propfind>';
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
+	    $this->_headers);
+
+	$path = ltrim($path, '/');
+
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
+			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
+    <D:href>' . $this->_getHref($path) . '</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:creationdate ns1:dt="dateTime.tz">'
+	    . gmdate('Y-m-d\TH:i:s\Z', $this->_album->getCreationTimestamp())
+	    . '</D:creationdate>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+'), split("\r?\n", $output));
+    }
+
+    function testPropfindCollectionDepth1() {
+	if (!function_exists('stream_wrapper_register')) {
+	    return $this->skip();
+	}
+
+	/* Use valid inputs */
+	$_SERVER['REQUEST_METHOD'] = 'PROPFIND';
+	$_SERVER['HTTP_DEPTH'] = '1';
+
+	/* Add some sub-sub items to verify that they don't get listed */
+    	list ($ret, $subItem) = $this->_createRandomDataItem($this->_subAlbum->getId(),
+	    'test/file');
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $subSubAlbum) = $this->_createRandomAlbum($this->_subAlbum->getId());
+	if ($ret) {
+	    return $ret;
+	}
+
+	list ($ret, $path) = $this->_album->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $itemPath) = $this->_item->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+	list ($ret, $subAlbumPath) = $this->_subAlbum->fetchLogicalPath();
+	if ($ret) {
+	    return $ret;
+	}
+
+	GalleryUtilities::putRequestVariable('path', $path);
+
+	$this->_streams['test://input'] = '<?xml version="1.0" encoding="utf-8" ?>
+<D:propfind xmlns:D="DAV:" xmlns:G="http://gallery2.org/dav/props/">
+  <D:prop>
+    <D:creationdate/>
+  </D:prop>
+</D:propfind>';
+
+	$this->_platform->_streams['php://input'] = $this->_platform->fopen('test://input', 'rb');
+
+	/* Perform the request and verify that we succeed */
+	ob_start();
+	list ($ret, $g2Data) = _GalleryMain();
+	$output = ob_get_contents();
+	ob_end_clean();
+	if ($ret) {
+	    return $ret;
+	}
+
+	$this->assertEquals(array('status' => 'HTTP/1.0 207 Multi-Status',
+		'content-type' => 'Content-Type: text/xml; charset="utf-8"'),
+	    $this->_headers);
+
+	$path = ltrim($path, '/');
+	$itemPath = ltrim($itemPath, '/');
+	$subAlbumPath = ltrim($subAlbumPath, '/');
+
+	/* The sub-album without view permissions shouldn't be listed */
+	$this->assertEquals(split("\r?\n", '<?xml version="1.0" encoding="utf-8" ?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response xmlns:G="http://gallery2.org/dav/props/" ' .
+			    'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
+    <D:href>' . $this->_getHref($path) . '</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:creationdate ns1:dt="dateTime.tz">'
+	    . gmdate('Y-m-d\TH:i:s\Z', $this->_album->getCreationTimestamp())
+	    . '</D:creationdate>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+  <D:response xmlns:G="http://gallery2.org/dav/props/" '
+			. 'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
+    <D:href>' .  $this->_getHref($itemPath) . '</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:creationdate ns1:dt="dateTime.tz">'
+	    . gmdate('Y-m-d\TH:i:s\Z', $this->_item->getCreationTimestamp())
+	    . '</D:creationdate>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+  <D:response xmlns:G="http://gallery2.org/dav/props/" '
+			. 'xmlns:ns1="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882">
+    <D:href>' .  $this->_getHref($subAlbumPath) . '</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:creationdate ns1:dt="dateTime.tz">'
+	    . gmdate('Y-m-d\TH:i:s\Z', $this->_subAlbum->getCreationTimestamp())
 	    . '</D:creationdate>
       </D:prop>
       <D:status>HTTP/1.1 200 OK</D:status>
