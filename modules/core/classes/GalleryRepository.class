@@ -164,7 +164,7 @@ class GalleryRepository {
     }
 
     /**
-     * Determines which packages of the specified packages are newer in the repository.
+     * Determines which packages of the specified plugin are newer in the repository.
      *
      * @return array GalleryStatus a status code
      *		     array package list
@@ -244,7 +244,6 @@ class GalleryRepository {
 		$currentBuild = null;
 		$locked = 0;
 	    }
-
 
 	    $relation = $this->_utilities->compareRevisions($currentBuild, $revision);
 	    $upgradeInfo['languages'][$language] = array(
@@ -714,23 +713,18 @@ class GalleryRepository {
 	    foreach ($metaData['packages'] as $descriptorPackage) {
 		if ($descriptorPackage == $packageName) {
 		    $filePath = $pluginOutputDir . $filePath;
-
-		    if (!$platform->file_exists($filePath)) {
-			$errorMessage = "'$filePath' doesn't exist.";
-		    }
-
-		    if ($platform->filesize($filePath) != $metaData['bytes']) {
-			$errorMessage = "Size of '$filePath' not {$metaData['bytes']}.";
-		    }
-
-		    if (false === ($contents = $platform->file_get_contents($filePath))) {
-			$errorMessage = "Couldn't read '$filePath'.";
-		    }
-
+		    $contents = $platform->file_get_contents($filePath);
 		    $checksum = strlen($metaData['hash']) == 32
 			? md5($contents)
 			: sprintf("%u", crc32($contents));
-		    if ($checksum != $metaData['hash']) {
+ 
+		    if (!$platform->file_exists($filePath)) {
+			$errorMessage = "'$filePath' doesn't exist.";
+		    } else if ($platform->filesize($filePath) != $metaData['bytes']) {
+			$errorMessage = "Size of '$filePath' not {$metaData['bytes']}.";
+		    } else if (false === $contents) {
+			$errorMessage = "Couldn't read '$filePath'.";
+		    } else if ($checksum != $metaData['hash']) {
 			$errorMessage = "Integrity check failed for '$filePath'.";
 		    }
 
