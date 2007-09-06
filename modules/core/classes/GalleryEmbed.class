@@ -144,6 +144,8 @@ class GalleryEmbed {
      */
     function done() {
 	global $gallery;
+	global $gallerySaveErrorHandler;
+
 	$session =& $gallery->getSession();
 	$ret = $session->save();
 	if ($ret) {
@@ -155,6 +157,11 @@ class GalleryEmbed {
 	    if ($ret) {
 		return $ret;
 	    }
+	}
+
+	if (isset($gallerySaveErrorHandler)) {
+	    set_error_handler($gallerySaveErrorHandler);
+	    $gallerySaveErrorHandler = null;
 	}
 	return null;
     }
@@ -178,7 +185,13 @@ class GalleryEmbed {
      *                           'themeData' => mixed theme data]
      */
     function handleRequest() {
+	global $gallerySaveErrorHandler;
 	$result = GalleryMain(true);
+
+	if (isset($gallerySaveErrorHandler)) {
+	    set_error_handler($gallerySaveErrorHandler);
+	    $gallerySaveErrorHandler = null;
+	}
 	return $result;
     }
 

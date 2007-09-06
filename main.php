@@ -22,15 +22,7 @@
  * @package Gallery
  */
 
-if (version_compare(phpversion(), '5.0') < 0) {
-    /*
-     * PHP5 requires static methods to be marked static, or it generates an error.  PHP4 cannot
-     * parse that syntax, so we cannot modify the code.  So since setting an error handler for
-     * PHP5 results in a measurable performance hit, we only set it for PHP4.
-     */
-    $gallerySaveErrorHandler = set_error_handler('_GalleryMain_phpErrorHandler');
-}
-
+$gallerySaveErrorHandler = null;
 include(dirname(__FILE__) . '/bootstrap.inc');
 
 /*
@@ -687,45 +679,5 @@ function _GalleryMain_errorHandler($error, $g2Data=null) {
 	}
 	GalleryCoreApi::addEventLogEntry('Gallery Error', $summary, $error->getAsText());
     }
-}
-
-/**
- * Replacement for the standard PHP error handler.
- * @see http://www.php.net/manual/en/function.set-error-handler.php
- *
- * @param int $errorNumber the code for the error
- * @param string $errorString an error message
- * @param string $file the file where the error occurred
- * @param int $line the line number of the error
- * @param mixed $context the complete context at the time of the error
- * @return boolean true if we should skip the regular PHP error handler
- */
-function _GalleryMain_phpErrorHandler($errorNumber, $errorString, $file, $line, $context) {
-    if (error_reporting() == 0 || !class_exists('GalleryCoreApi')) {
-	/*
-	 * The @ error suppression operator was used, or this error happened before we initialized
-	 * the Gallery framework, so fall back to the internal error handler
-	 */
-	return false;
-    }
-
-    $errorType = array(
-	E_ERROR => 'Error', E_WARNING => 'Warning', E_PARSE => 'Parsing Error',
-	E_NOTICE => 'Notice', E_CORE_ERROR => 'Core Error', E_CORE_WARNING => 'Core Warning',
-	E_COMPILE_ERROR => 'Compile Error', E_COMPILE_WARNING => 'Compile Warning',
-	E_USER_ERROR => 'User Error', E_USER_WARNING => 'User Warning',
-	E_USER_NOTICE => 'User Notice',
-	/* PHP5+: E_STRICT => 'Runtime Notice' */
-	/* PHP5.2+: E_RECOVERABLE_ERROR => 'Catchable Fatal Error' */
-	);
-
-    GalleryCoreApi::addEventLogEntry(
-	'PHP Error',
-	sprintf("[%s] %s in file %s on line %d", $errorType[$errorNumber],
-		$errorString, $file, $line),
-	$errorString);
-
-    /* Fall back to the internal error handler */
-    return false;
 }
 ?>
