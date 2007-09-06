@@ -484,7 +484,7 @@ class HTTP_WebDAV_Server
 
         // get depth from header (default is 'infinity')
         $options['depth'] = 'infinity';
-        if (!empty($_SERVER['HTTP_DEPTH'])) {
+        if ($this->_hasNonEmptyDepthRequestHeader()) {
             $options['depth'] = $_SERVER['HTTP_DEPTH'];
         }
 
@@ -1362,8 +1362,8 @@ class HTTP_WebDAV_Server
     function delete_wrapper()
     {
         // RFC2518 9.2 last paragraph
-        if (!empty($_SERVER['HTTP_DEPTH'])
-                && $_SERVER['HTTP_DEPTH'] != 'infinity') {
+        if (isset($_SERVER['HTTP_DEPTH'])
+                && $_SERVER['HTTP_DEPTH'] !== 'infinity') {
             $this->setResponseStatus('400 Bad Request');
             return;
         }
@@ -1403,7 +1403,7 @@ class HTTP_WebDAV_Server
         $options['path'] = $this->path;
 
         $options['depth'] = 'infinity';
-        if (!empty($_SERVER['HTTP_DEPTH'])) {
+        if ($this->_hasNonEmptyDepthRequestHeader()) {
             $options['depth'] = $_SERVER['HTTP_DEPTH'];
         }
 
@@ -1552,7 +1552,7 @@ class HTTP_WebDAV_Server
         }
 
         $options['depth'] = 'infinity';
-        if (!empty($_SERVER['HTTP_DEPTH'])) {
+        if ($this->_hasNonEmptyDepthRequestHeader()) {
             $options['depth'] = $_SERVER['HTTP_DEPTH'];
         }
 
@@ -2534,6 +2534,15 @@ class HTTP_WebDAV_Server
         }
 
         return $path;
+    }
+
+    /**
+     * Verify that the Depth request header is set and has a non-empty value.
+     * Doesn't verify for allowed values though.
+     * @return boolean true if set and not empty
+     */
+    function _hasNonEmptyDepthRequestHeader() {
+        return isset($_SERVER['HTTP_DEPTH']) && strlen(trim((string)$_SERVER['HTTP_DEPTH']));
     }
 }
 

@@ -724,7 +724,7 @@ class WebDavHelper {
 
 	$files[] = $file;
 
-	if (!$item->getCanContainChildren() || $depth != 'infinity' && $depth <= 0) {
+	if (!$item->getCanContainChildren() || $depth !== 'infinity' && $depth <= 0) {
 	    return null;
 	}
 
@@ -750,7 +750,7 @@ class WebDavHelper {
 	    }
 
 	    $ret = WebDavHelper::_propfindFiles($childItem, $childPath,
-		$depth == 'infinity' ? $depth : $depth - 1,
+		$depth === 'infinity' ? $depth : $depth - 1,
 		$files);
 	    if ($ret) {
 		return $ret;
@@ -1448,7 +1448,7 @@ class WebDavHelper {
 	    return $ret;
 	}
 
-	if (GalleryUtilities::isA($item, 'GalleryAlbumItem') && $depth != 'infinity') {
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem') && $depth !== 'infinity') {
 	    /*
 	     * The MOVE method on a collection MUST act as if a "Depth: infinity" header was used on
 	     * it.  A client MUST NOT submit a Depth header on a MOVE on a collection with any value
@@ -1826,7 +1826,7 @@ class WebDavHelper {
 		return GalleryCoreApi::error(ERROR_BAD_PARAMETER);
 	    }
 
-	    if ($depth == 'infinity') {
+	    if ($depth === 'infinity') {
 		list ($ret, $locks) = WebDavHelper::getDescendentsLocks($path);
 		if ($ret) {
 		    return $ret;
