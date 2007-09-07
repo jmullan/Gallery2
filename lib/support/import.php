@@ -52,6 +52,7 @@ if ($ret) {
     $platform =& $gallery->getPlatform();
     $storage =& $gallery->getStorage();
 
+    $templateData['warnings'] = array();
     if (isset($_REQUEST['importDatabase'])) {
 	$importFile = $_REQUEST['importFile'];
 	/* Sanitize the input */
@@ -80,7 +81,6 @@ if ($ret) {
 		. 'you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.';
 	    $doImportFlag = false;
 	    getBackupFiles($templateData);
-	    $templateData['warnings'] = array();
 	}
 
 	if ($doImportFlag) {

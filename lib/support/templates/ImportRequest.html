@@ -31,11 +31,9 @@
         <h4>Warning</h4>
         <p class="description">Restoring the database to a backup that does not match the images in the Gallery data directory could severely damage your Gallery installation.</p>
         
-	<?php if (!empty($templateData['warnings'])): ?>
-	  <?php foreach ($templateData['warnings'] as $warning): ?>
-	    <p class="description"><?php print $warning ?><br/></p>
-	  <?php endforeach; ?>
-	<?php endif; ?>
+	<?php foreach ($templateData['warnings'] as $warning): ?>
+	  <p class="description"><?php print $warning ?><br/></p>
+	<?php endforeach; ?>
 	<?php if (!empty($templateData['versionWarnings'])): ?>
           <h4>Version Incompatibilities Detected</h4>
           <p>
