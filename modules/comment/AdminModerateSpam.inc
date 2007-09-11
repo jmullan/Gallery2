@@ -191,17 +191,18 @@ class AdminModerateSpamView extends GalleryView {
 	}
 
 	$navigator = array('page' => $page, 'pageCount' => ceil($count/$showCount));
+	$urlParams = array('view' => 'core.SiteAdmin', 'subView' => 'comment.AdminModerateSpam');
 	if ($page > 1) {
-	    $navigator['first'] = array('urlParams' => array('view' => 'comment.AdminModerateSpam',
-				  'itemId' => $rootId, 'page' => 1));
-	    $navigator['back'] = array('urlParams' => array('view' => 'comment.AdminModerateSpam',
-				 'itemId' => $rootId, 'page' => $page - 1));
+	    $navigator['first'] = array('urlParams' =>
+		array_merge($urlParams, array('itemId' => $rootId, 'page' => 1)));
+	    $navigator['back'] = array('urlParams' =>
+		array_merge($urlParams, array('itemId' => $rootId, 'page' => $page - 1)));
 	}
 	if ($page < $navigator['pageCount']) {
-	    $navigator['next'] = array('urlParams' => array('view' => 'comment.AdminModerateSpam',
-				 'itemId' => $rootId, 'page' => $page + 1));
-	    $navigator['last'] = array('urlParams' => array('view' => 'comment.AdminModerateSpam',
-				 'itemId' => $rootId, 'page' => $navigator['pageCount']));
+	    $navigator['next'] = array('urlParams' =>
+		array_merge($urlParams, array('itemId' => $rootId, 'page' => $page + 1)));
+	    $navigator['last'] = array('urlParams' => array_merge($urlParams,
+		array('itemId' => $rootId, 'page' => $navigator['pageCount'])));
 	}
 
 	$template->setVariable('controller', 'comment.AdminModerateSpam');
