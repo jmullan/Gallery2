@@ -1248,7 +1248,7 @@ class GalleryStorage {
 	/* @todo Remove the type constraint from selects and have describeXXX use the same map */
 	$typeInfo = array();
 	if (!$tryAllModules) {
-	    $query = 'SELECT [::info] FROM [GalleryPluginMap], [Schema]
+	    $query = 'SELECT [Schema::info] FROM [GalleryPluginMap], [Schema]
 		       WHERE [GalleryPluginMap::pluginId] = [Schema::pluginId]
 			 AND [Schema::type] = ? AND [GalleryPluginMap::active] = ?';
 	    $data = array($type, 1);
