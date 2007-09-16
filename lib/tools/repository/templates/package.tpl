@@ -1,12 +1,9 @@
 <?php
 function unpack_{$random}($outputDir) {ldelim}
-    global $gallery;
-    $platform =& $gallery->getPlatform();
- 
     /* Create directory structure. */
 {foreach from=$directories item=directory}
 {if $directory}
-    $platform->mkdir($outputDir . '{$directory}');
+    GalleryUtilities::guaranteeDirExists($outputDir . '{$directory}');
 {/if}
 {/foreach}
 
