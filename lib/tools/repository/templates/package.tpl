@@ -3,7 +3,7 @@ function unpack_{$random}($outputDir) {ldelim}
     /* Create directory structure. */
 {foreach from=$directories item=directory}
 {if $directory}
-    @mkdir($outputDir . '{$directory}');
+    GalleryUtilities::guaranteeDirExists($outputDir . '{$directory}');
 {/if}
 {/foreach}
 
